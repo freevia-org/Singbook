@@ -84,12 +84,14 @@ void main() {
     SongDocument(id: id, title: id, artist: 'A', body: body),
   );
 
+  // A timestamp is recorded before the final reload completes. Wait for idle
+  // before installing cloud hooks or asserting the outcome of the next run.
   test('startup sync runs for a restored session and records the time', () async {
     await device.saveSong('s', 'one');
     final app = await start();
     expect(app.syncConnected, isTrue);
     expect(app.lastSyncAt, isNull);
-    await until(() => app.lastSyncAt != null);
+    await until(() => app.lastSyncAt != null && !app.syncBusy);
     expect(cloud.names, ['song-s.cho']);
     expect(app.lastSyncErrorCode, isNull);
     expect(app.lastSyncConflicts, 0);
@@ -100,7 +102,7 @@ void main() {
 
   test('automatic sync is debounced: many edits, one sync', () async {
     final app = await start(delay: const Duration(milliseconds: 300));
-    await until(() => app.lastSyncAt != null);
+    await until(() => app.lastSyncAt != null && !app.syncBusy);
     cloud.resetCounters();
     for (var i = 0; i < 5; i++) {
       await addSong(app, 's$i', 'body $i');
@@ -115,7 +117,7 @@ void main() {
   test('turning automatic sync off is persisted and stops background runs',
       () async {
     final app = await start();
-    await until(() => app.lastSyncAt != null);
+    await until(() => app.lastSyncAt != null && !app.syncBusy);
     expect(app.autoSyncEnabled, isTrue);
     await app.setAutoSync(false);
     expect(app.autoSyncEnabled, isFalse);
@@ -137,7 +139,7 @@ void main() {
   test('syncs never overlap; a change during a run triggers one more run',
       () async {
     final app = await start();
-    await until(() => app.lastSyncAt != null);
+    await until(() => app.lastSyncAt != null && !app.syncBusy);
     final gate = Completer<void>();
     var concurrent = 0, maxConcurrent = 0;
     cloud.hook = (op, target) async {
@@ -164,7 +166,7 @@ void main() {
 
   test('retryable failures back off exponentially, then recover', () async {
     final app = await start();
-    await until(() => app.lastSyncAt != null);
+    await until(() => app.lastSyncAt != null && !app.syncBusy);
     final times = <DateTime>[];
     cloud.hook = (op, target) {
       if (op == 'list') {
@@ -189,7 +191,7 @@ void main() {
 
   test('errors that need the user are not retried in the background', () async {
     final app = await start();
-    await until(() => app.lastSyncAt != null);
+    await until(() => app.lastSyncAt != null && !app.syncBusy);
     cloud.hook = (op, target) {
       if (op == 'list') throw const SyncException('authorization_required');
     };
@@ -206,7 +208,7 @@ void main() {
 
   test('resuming syncs only when the last sync is old', () async {
     final app = await start(stale: const Duration(milliseconds: 150));
-    await until(() => app.lastSyncAt != null);
+    await until(() => app.lastSyncAt != null && !app.syncBusy);
     cloud.resetCounters();
     app.onAppResumed();
     await settle(100);
@@ -265,7 +267,7 @@ void main() {
     await other.saveSong('s', 'base');
     await other.sync.sync();
     final app = await start();
-    await until(() => app.lastSyncAt != null);
+    await until(() => app.lastSyncAt != null && !app.syncBusy);
     await app.setAutoSync(false);
     await app.saveSong((await app.loadSong('s'))!.copyWith(body: 'mine'));
     await other.editSong('s', 'theirs');
@@ -284,7 +286,7 @@ void main() {
 
   test('dispose cancels timers and an in-flight sync', () async {
     final app = await start();
-    await until(() => app.lastSyncAt != null);
+    await until(() => app.lastSyncAt != null && !app.syncBusy);
     await addSong(app, 'a', '1'); // schedules a run
     cloud.resetCounters();
     controllers.remove(app);
@@ -310,7 +312,7 @@ void main() {
     final other = await Device.create(cloud);
     addTearDown(other.close);
     final app = await start();
-    await until(() => app.lastSyncAt != null);
+    await until(() => app.lastSyncAt != null && !app.syncBusy);
     await app.setAutoSync(false);
     for (var i = 0; i < 3; i++) {
       await other.saveSong('p$i', 'body $i');
@@ -331,7 +333,7 @@ void main() {
 
   test('a wiped cloud asks before deleting; the user can keep or confirm', () async {
     final app = await start();
-    await until(() => app.lastSyncAt != null);
+    await until(() => app.lastSyncAt != null && !app.syncBusy);
     await app.setAutoSync(false);
     for (var i = 0; i < 6; i++) {
       await addSong(app, 'w$i', 'body $i');
