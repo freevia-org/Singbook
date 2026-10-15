@@ -136,6 +136,15 @@ Windows probes use the test-only curl transport to handle HTTP Early Hints;
 mobile lookup continues to use Cronet/NSURLSession. Every probe has a bounded
 deadline and cancellation, and transport retries/pacing still apply.
 
+`integration_test/source_catalog_device_test.dart` exercises the native HTTP
+client and asset/cache lifecycle. Run Flutter integration tests only on an
+isolated test installation with no user library. This Flutter SDK defaults to
+uninstalling its application package at teardown; explicitly pass
+`--no-uninstall` when package retention is required. A later `adb install -r` cannot preserve
+data from a package already removed by the runner. Normal app upgrades use the
+approved build script and replacement installation; never use integration-test
+deployment as a data-preserving upgrade path.
+
 ## Daily repair and discovery procedure
 
 The daily Codex automation attached to the Datasources chat runs at 09:00
