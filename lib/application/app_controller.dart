@@ -18,6 +18,8 @@ import '../providers/source_catalog_client.dart';
 import '../providers/configurable_provider.dart';
 import 'file_actions.dart';
 import '../sync/google_drive_sync.dart';
+import 'youtube_music_consent.dart';
+import '../providers/youtube_music_session.dart';
 
 /// A user-visible outcome of an operation, identified by a stable [code] (never
 /// free text, never containing credentials) that the UI maps to a localized
@@ -58,6 +60,7 @@ class AppController extends ChangeNotifier {
     LibraryRepository? repository,
     SourceDiscoveryService? discovery,
     GoogleDriveSyncService? sync,
+    YoutubeMusicConsent? youtubeMusicConsent,
     Duration autoSyncDelay = const Duration(seconds: 25),
     Duration autoSyncStartDelay = const Duration(seconds: 3),
     Duration autoSyncStaleAfter = const Duration(minutes: 5),
@@ -71,16 +74,18 @@ class AppController extends ChangeNotifier {
       autoSyncBackoff,
       autoSyncMaxBackoff,
     );
+    final consent = youtubeMusicConsent ?? YoutubeMusicConsent();
     if (discovery != null) {
-      return AppController._(repository, discovery, null, sync, timing);
+      return AppController._(repository, discovery, null, sync, timing, consent);
     }
     final transport = ProviderTransport();
     return AppController._(
       repository,
-      _createDiscovery(transport),
+      _createDiscovery(transport, consent.session),
       transport,
       sync,
       timing,
+      consent,
     );
   }
 
@@ -90,12 +95,17 @@ class AppController extends ChangeNotifier {
     this._ownedTransport,
     this._sync,
     this._timing,
+    this.youtubeMusicConsent,
   );
   final _AutoSyncTiming _timing;
+  final YoutubeMusicConsent youtubeMusicConsent;
 
-  static SourceDiscoveryService _createDiscovery(ProviderTransport transport) {
+  static SourceDiscoveryService _createDiscovery(
+    ProviderTransport transport,
+    YoutubeMusicSession youtubeMusicSession,
+  ) {
     return SourceDiscoveryService([
-      ...createCoreProviders(transport: transport),
+      ...createCoreProviders(transport: transport, youtubeMusicSession: youtubeMusicSession),
       ...createExtraProviders(transport: transport),
     ]);
   }
@@ -313,6 +323,8 @@ class AppController extends ChangeNotifier {
     }
     _sync ??= GoogleDriveSyncService(repository: repository);
     settings = jsonMap(await repository.getSetting('app'));
+    if (_disposed) return;
+    await youtubeMusicConsent.restore();
     if (_disposed) return;
     await _initializeSourceCatalog();
     if (_disposed) return;

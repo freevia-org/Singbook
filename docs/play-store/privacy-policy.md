@@ -1,6 +1,6 @@
 # Singbook Privacy Policy
 
-**Effective date:** 15 October 2026
+**Effective date:** 16 October 2026
 **App:** Singbook (Android package `org.freevia.singbook`), version 0.2.0
 **Publisher:** Freevia EOOD, contact privacy@freevia.org
 **Policy URL:** https://freevia.org/singbook/privacy/
@@ -11,6 +11,7 @@
 - Singbook has **no server, no Singbook accounts, no advertising and no analytics**. The publisher does not receive, collect or store your data.
 - When you search for songs or open one, the app contacts third-party song sources **directly from your device**. Those services receive your search terms and your IP address (section 3).
 - Signing in with Google for Drive sync is optional (section 5). It uses only a private app-data folder in your own Google Drive, and the publisher never receives that data.
+- An optional YouTube Music consent browser lets you make Google's cookie choice on your device. This is separate from Google account sign-in and Drive sync (section 3).
 
 ## 2. Data stored on your device
 
@@ -19,6 +20,7 @@ Singbook stores the following only on your device, in the app's private storage:
 - Your song library: lyrics, chords, notes, timing data, source links, attribution and rights notes, kept in a local SQLite database and as ChordPro content.
 - Setlists, favourites, and app settings (theme, palette, language, reader text size, enabled sources).
 - Temporary files and caches (for example cached source responses, PDF export files). These are excluded from Android backup.
+- If you use the YouTube Music consent screen, Google's page stores browser cookies in this app's private WebView store. Only the `SOCS` and `CONSENT` consent cookies are passed to the lyrics adapter, in memory. They are not stored in your library, exported, included in Drive sync, or sent to the publisher. Android excludes the WebView store from cloud backup and device transfer.
 
 Android Auto Backup / device transfer may copy the app's library and preferences (including, if you used Google Drive sync, the e-mail address and a hash of the Google account the library is linked to, plus the sync bookkeeping that records which items were synced) to your Google account backup or to a new device if you have Android backup turned on in system settings. That backup is handled by Google and Android under your device settings, not by the publisher.
 
@@ -36,7 +38,8 @@ What each service can receive: the **search text or the song title/artist/album/
 | `www.songsterr.com` | Chord sheet and song data lookup. |
 | `www.ultimate-guitar.com`, `tabs.ultimate-guitar.com` | Public chord sheet lookup. |
 | `lrclib.net` | Plain and time-synchronised lyrics. |
-| `music.youtube.com` (and Google image hosts such as `i.ytimg.com`, `*.googleusercontent.com` for artwork) | Song matching, lyrics shelf, artwork. |
+| `music.youtube.com` (and Google image hosts such as `i.ytimg.com`, `*.googleusercontent.com` for artwork) | Song matching, lyrics shelf, artwork. If you completed consent, requests include only your anonymous consent cookies. |
+| `consent.youtube.com` and resources loaded by Google's consent page | Only when you explicitly open the optional consent screen. Google receives normal browser requests and may set browser cookies under its own policy. |
 | `lyrics.ovh`, `api.deezer.com` (and Deezer image hosts) | Lyrics and song suggestions with album, duration and artwork. |
 | `synclrc.dev` | Synchronised lyric search. |
 | `better-lyrics.boidu.dev` | Cached word-timed lyrics (TTML). |
@@ -47,6 +50,8 @@ What each service can receive: the **search text or the song title/artist/album/
 | Artwork and media link hosts | Cover art may be downloaded from the provider's own image host and shown in the app. Playback links open in your browser or another app only when you tap them. |
 
 Ozbcoz and Worship Together are import-only: Singbook does not contact them automatically; you download a file yourself and import it.
+
+The YouTube Music consent screen is an experimental, unofficial integration. You make the choice on Google's actual page; Singbook does not accept or reject it for you. Google account sign-in is blocked in this screen. The native bridge returns only the consent cookies applicable to YouTube Music, never Google account authentication cookies. Those consent cookies are sent only to `music.youtube.com`, not to other sources or the cloud maintenance service. You can review or clear the consent choice in Settings → Sources. Clearing it does not disconnect Drive. Expiry, regional restrictions, challenges, and unavailable lyrics can still prevent access.
 
 These services are independent of the publisher and have their own privacy policies and terms; they may log requests, and your IP address reveals an approximate location. Singbook does not control what they do. You can reduce exposure by turning off sources you do not want (where the app offers that setting) and by not searching.
 
@@ -76,6 +81,7 @@ Because the publisher does not receive or store your data, there is normally no 
 
 - **Local data:** delete a song or setlist in the app, clear the app's storage in Android Settings, Apps, Singbook, Storage, **Clear data**, or uninstall Singbook.
 - **Android backup:** manage or delete backups in Android Settings, Google, Backup.
+- **YouTube Music consent:** Settings → Sources → YouTube Music → Clear consent removes the scoped consent cookies and in-memory copy. If clearing fails, the app reports it and offers a retry. This does not change Drive sign-in or delete your songs.
 - **Google Drive app data (only if you used sync):** disconnect (sign out) in the app, then remove the app's access and data through your Google account. Remove access: Google Account, Security, Your connections to third-party apps and services (myaccount.google.com/linkedapps), select Singbook, then Remove access. Delete the stored data: on a computer open Google Drive, Settings (gear), Manage apps, find Singbook, Options, then Delete hidden app data (or Disconnect from Drive) where offered. Uninstalling the app from your Google Drive removes its folder as well. Your local songs are not affected and stay on your device.
 - **Exported files and shares:** files you have exported or sent to others are outside the app's control and must be removed by you.
 

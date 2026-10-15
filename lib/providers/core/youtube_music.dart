@@ -1,14 +1,18 @@
 import 'dart:convert';
 import '../../domain/models.dart';
 import '../provider.dart';
+import '../youtube_music_session.dart';
 import 'common.dart';
 
 /// Public YouTube Music web responses. No logged-in cookies or player scraping.
 class YoutubeMusicProvider implements LyricsProvider {
-  YoutubeMusicProvider(this.http);
+  YoutubeMusicProvider(this.http, {YoutubeMusicSession? session})
+    : session = session ?? YoutubeMusicSession();
   final ProviderTransport http;
+  final YoutubeMusicSession session;
   JsonMap? _configuration;
   DateTime? _expires;
+  int? _configurationRevision;
   @override
   ProviderDefinition get definition => const ProviderDefinition(
     id: 'youtubemusic',
@@ -18,41 +22,77 @@ class YoutubeMusicProvider implements LyricsProvider {
     website: 'https://music.youtube.com',
   );
   Future<JsonMap>? _pending;
+  int? _pendingRevision;
 
-  bool get _hasFreshConfig =>
-      _configuration != null && _expires!.isAfter(DateTime.now());
+  bool get _hasFreshConfig {
+    if (_configurationRevision != session.revision) {
+      _configuration = null;
+      _expires = null;
+    }
+    return _configuration != null && _expires!.isAfter(DateTime.now());
+  }
 
   /// Overlapping callers share one homepage download.
-  Future<JsonMap> _config(CancellationToken? cancel) async {
+  Future<JsonMap> _config(
+    CancellationToken? cancel, [
+    int revisionRetries = 0,
+  ]) async {
     if (_hasFreshConfig) return _configuration!;
-    final shared = _pending ??= _loadConfig(cancel).whenComplete(() {
-      _pending = null;
-    });
+    final revision = session.revision;
+    if (_pendingRevision != revision) {
+      _pendingRevision = revision;
+      late final Future<JsonMap> load;
+      load = _loadConfig(cancel, revision, revisionRetries).whenComplete(() {
+        if (identical(_pending, load)) {
+          _pending = null;
+          _pendingRevision = null;
+        }
+      });
+      _pending = load;
+    }
+    final shared = _pending!;
     try {
-      return await shared;
+      final config = await shared;
+      if (revision != session.revision) {
+        if (revisionRetries >= 2) throw const ProviderException('cancelled');
+        return _config(cancel, revisionRetries + 1);
+      }
+      return config;
     } on ProviderException catch (e) {
       // The download belonged to another caller that was cancelled.
       if (e.code == 'cancelled' && cancel?.isCancelled != true) {
-        return _config(cancel);
+        if (revisionRetries >= 2) rethrow;
+        return _config(cancel, revisionRetries + 1);
       }
       rethrow;
     }
   }
 
-  Future<JsonMap> _loadConfig(CancellationToken? cancel) async {
-    // No consent-bypass cookie is sent: a consent interstitial is reported as
-    // a blocked source instead of being skipped programmatically.
+  Future<JsonMap> _loadConfig(
+    CancellationToken? cancel,
+    int revision,
+    int revisionRetries,
+  ) async {
     final String source;
     try {
       source = await http.getText(
         Uri.parse('https://music.youtube.com/'),
+        headers: {'Cookie': ?session.cookieHeader},
         cancel: cancel,
       );
     } on ProviderException catch (e) {
+      if (revision != session.revision) {
+        if (revisionRetries >= 2) throw const ProviderException('cancelled');
+        return _config(cancel, revisionRetries + 1);
+      }
       if (e.code == 'redirect' && e.message.contains('consent.')) {
         throw const ProviderException('blocked', 'consent_required');
       }
       rethrow;
+    }
+    if (revision != session.revision) {
+      if (revisionRetries >= 2) throw const ProviderException('cancelled');
+      return _config(cancel, revisionRetries + 1);
     }
     JsonMap? config;
     for (final match in RegExp(
@@ -107,6 +147,7 @@ class YoutubeMusicProvider implements LyricsProvider {
     }
     _configuration = {'version': version, 'visitor': ?visitor};
     _expires = DateTime.now().add(const Duration(hours: 1));
+    _configurationRevision = revision;
     return _configuration!;
   }
 
@@ -135,12 +176,14 @@ class YoutubeMusicProvider implements LyricsProvider {
     CancellationToken? cancel,
   ) async {
     final config = await _config(cancel);
+    final revision = session.revision;
     final response = object(
       await http.requestJson(
         Uri.parse('https://music.youtube.com/youtubei/v1/$endpoint?alt=json'),
         method: 'POST',
         headers: {
           'Origin': 'https://music.youtube.com',
+          'Cookie': ?session.cookieHeader,
           if (config['visitor'] != null)
             'X-Goog-Visitor-Id': config['visitor'] as String,
         },
@@ -158,6 +201,11 @@ class YoutubeMusicProvider implements LyricsProvider {
         cancel: cancel,
       ),
     );
+    if (revision != session.revision) {
+      _configuration = null;
+      _expires = null;
+      throw const ProviderException('cancelled');
+    }
     if (response['error'] != null) {
       throw const ProviderException('invalid_response');
     }
@@ -252,9 +300,7 @@ class YoutubeMusicProvider implements LyricsProvider {
     final thumbs =
         (thumbnails is List ? thumbnails : [])
             .map(jsonMap)
-            .where(
-              (t) => httpsUrl(t['url'], hosts: youtubeImageHosts) != null,
-            )
+            .where((t) => httpsUrl(t['url'], hosts: youtubeImageHosts) != null)
             .toList()
           ..sort(
             (a, b) => ((b['width'] as num?) ?? 0).compareTo(
