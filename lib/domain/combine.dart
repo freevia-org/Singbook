@@ -11,14 +11,20 @@ String _version(String title) => RegExp(
   r'\b(live|acoustic|remix|instrumental|karaoke|demo)\b',
   caseSensitive: false,
 ).allMatches(title).map((m) => m.group(0)!.toLowerCase()).join(' ');
+const _versionWords =
+    r'(?:live|acoustic|remix|instrumental|karaoke|demo|remaster(?:ed)?|mix|version|edit|mono|stereo)';
+// "(Remastered 2011)" and "- Remastered 2011" / "- Live" / "- 2011 Mix" are
+// edition qualifiers, not part of the song's name.
+final _bracketQualifier = RegExp(
+  r'\s*[\(\[][^\)\]]*\b' + _versionWords + r'\b[^\)\]]*[\)\]]',
+  caseSensitive: false,
+);
+final _dashQualifier = RegExp(
+  r'\s+[-\u2013\u2014]\s+(?=.*\b' + _versionWords + r'\b).*$',
+  caseSensitive: false,
+);
 String _baseTitle(String title) => _norm(
-  title.replaceAll(
-    RegExp(
-      r'\s*[\(\[][^\)\]]*\b(?:live|acoustic|remix|instrumental|karaoke|demo|remaster)\b[^\)\]]*[\)\]]',
-      caseSensitive: false,
-    ),
-    '',
-  ),
+  title.replaceAll(_bracketQualifier, '').replaceAll(_dashQualifier, ''),
 );
 bool _sameSong(SongCandidate a, SongCandidate b) {
   final artist = _norm(a.artist), title = _baseTitle(a.title);
@@ -26,6 +32,7 @@ bool _sameSong(SongCandidate a, SongCandidate b) {
   if (artist.isEmpty || title.isEmpty) return false;
   return artist == _norm(b.artist) && title == _baseTitle(b.title);
 }
+
 bool _hasRecordingIdentityScope(SongCandidate candidate) =>
     candidate.metadata['identityScope'] == 'recording';
 bool _demonstrationTimingSelected(

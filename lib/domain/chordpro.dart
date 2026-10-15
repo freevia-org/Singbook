@@ -9,6 +9,9 @@ class ChordProCodec {
   static const chunkSize = 4096;
   static const maxEncoded = 16 * 1024 * 1024;
   static const maxDecoded = 12 * 1024 * 1024;
+  static const maxDocument = 24 * 1024 * 1024;
+  // Total characters of raw timing text that rawRef resolution may produce.
+  static const _maxExpanded = 32 * 1024 * 1024;
   static const _meta = {
     'album': 'album',
     'key': 'key',
@@ -137,15 +140,19 @@ class ChordProCodec {
       }
       headers.addAll(song.preservedExtensions);
     }
-    return '${headers.join('\n')}\n\n${song.body}';
+    final document = '${headers.join('\n')}\n\n${song.body}';
+    // decode() refuses larger documents, so never write what cannot be read.
+    if (document.length > maxDocument) {
+      throw const FormatException('Song file exceeds the 24 MiB limit.');
+    }
+    return document;
   }
 
   SongDocument decode(String input) {
-    if (input.length > 24 * 1024 * 1024) {
+    if (input.length > maxDocument) {
       throw const FormatException('Song file exceeds the 24 MiB import limit.');
     }
-    final lines = input
-        .replaceFirst('\uFEFF', '')
+    final lines = (input.startsWith('\uFEFF') ? input.substring(1) : input)
         .replaceAll('\r\n', '\n')
         .split('\n');
     var title = '', artist = '';
@@ -220,6 +227,29 @@ class ChordProCodec {
     var tracks = <TimingTrack>[];
     var sources = <SourceResult>[];
     SongCandidate? selected;
+    final stale =
+        payload['lyricOrderHash'] != null &&
+        payload['lyricOrderHash'] != lyricOrderHash(bodyText);
+    // A track whose cues fail validation is kept but marked invalid (cues
+    // dropped, raw input retained); an edited body makes usable tracks stale.
+    // Source copies receive the same treatment as the song's own list.
+    var invalidIds = <String>{};
+    TimingTrack adjust(TimingTrack t) {
+      if (invalidIds.contains(t.id)) {
+        return t.copyWith(
+          status: TimingStatus.invalid,
+          cues: const [],
+          extra: {
+            ...t.extra,
+            'parseError': 'Timing cues are outside the supported bounds.',
+          },
+        );
+      }
+      return stale && t.status == TimingStatus.usable
+          ? t.copyWith(status: TimingStatus.stale)
+          : t;
+    }
+
     try {
       tracks = (payload['timingTracks'] as List? ?? [])
           .map((t) => TimingTrack.fromJson(jsonMap(t)))
@@ -248,7 +278,7 @@ class ChordProCodec {
           jsonMap(payload['selectedRecording']),
         );
       }
-      _validateTracks(
+      invalidIds = _validateTracks(
         {
           ...tracksById,
           for (final source in sources)
@@ -259,24 +289,22 @@ class ChordProCodec {
       if (active != null && !tracks.any((t) => t.id == active)) {
         throw const FormatException('The active timing track is missing.');
       }
+      tracks = tracks.map(adjust).toList();
+      sources = sources
+          .map(
+            (s) => s.timingTracks.isEmpty
+                ? s
+                : s.copyWith(timingTracks: s.timingTracks.map(adjust).toList()),
+          )
+          .toList();
     } on Object catch (_) {
+      // Structural damage: the timing/source data cannot be trusted, but the
+      // document-level fields (id, favorite, revision, dates, metadata, extra)
+      // stay in `payload` and the opaque x_verse lines are preserved verbatim.
       error = 'Singbook timing has invalid fields or references.';
-      payload = {};
       tracks = [];
       sources = [];
       selected = null;
-    }
-    final stale =
-        payload['lyricOrderHash'] != null &&
-        payload['lyricOrderHash'] != lyricOrderHash(bodyText);
-    if (stale) {
-      tracks = tracks
-          .map(
-            (t) => t.status == TimingStatus.usable
-                ? t.copyWith(status: TimingStatus.stale)
-                : t,
-          )
-          .toList();
     }
     final extra = {...payload}
       ..removeWhere(
@@ -395,6 +423,11 @@ class ChordProCodec {
       throw const FormatException('Invalid Singbook document fields.');
     }
     final assets = jsonMap(data['rawAssets']);
+    // Each asset is decoded and hashed once however often it is referenced,
+    // and the total text produced is capped, so a crafted file with many
+    // references cannot expand a small payload into gigabytes.
+    final decodedAssets = <String, String>{};
+    var expanded = 0;
     dynamic unpack(dynamic value, int depth) {
       if (depth > 64) {
         throw const FormatException('Singbook data is nested too deeply.');
@@ -410,11 +443,21 @@ class ChordProCodec {
           if (asset['encoding'] != 'base64' || asset['bytes'] is! String) {
             throw const FormatException('Missing source timing payload.');
           }
-          final original = base64.decode(asset['bytes'] as String);
-          if (sha256.convert(original).toString() != ref) {
-            throw const FormatException('Source timing payload hash mismatch.');
+          var text = decodedAssets[ref];
+          if (text == null) {
+            final original = base64.decode(asset['bytes'] as String);
+            if (sha256.convert(original).toString() != ref) {
+              throw const FormatException(
+                'Source timing payload hash mismatch.',
+              );
+            }
+            text = decodedAssets[ref as String] = utf8.decode(original);
           }
-          result['raw'] = utf8.decode(original);
+          expanded += text.length;
+          if (expanded > _maxExpanded) {
+            throw const FormatException('Singbook data expands too far.');
+          }
+          result['raw'] = text;
           result.remove('rawRef');
         }
         return result;
@@ -425,13 +468,29 @@ class ChordProCodec {
     return jsonMap(unpack(data, 0));
   }
 
-  void _validateTracks(List<TimingTrack> tracks) {
+  /// Throws on structural problems (too many cues overall). Returns the ids of
+  /// tracks whose cues are individually invalid so the caller can mark just
+  /// those tracks invalid instead of discarding the whole song's metadata.
+  Set<String> _validateTracks(List<TimingTrack> tracks) {
     if (tracks.fold<int>(0, (n, t) => n + t.cues.length) > 100000) {
       throw const FormatException('Too many timing cues.');
     }
+    final invalid = <String>{};
     for (final track in tracks) {
+      try {
+        _validateTrack(track);
+      } on FormatException {
+        invalid.add(track.id);
+      }
+    }
+    return invalid;
+  }
+
+  void _validateTrack(TimingTrack track) {
+    {
       final ids = <String>{};
       final lines = track.sourceLyrics.split('\n');
+      final lengths = <int, int>{};
       var previousStart = -1;
       for (final cue in track.cues) {
         if (!ids.add(cue.id) ||
@@ -456,7 +515,8 @@ class ChordProCodec {
           final index = int.parse(occurrence[1]!);
           if (index >= lines.length ||
               cue.graphemeEnd != null &&
-                  cue.graphemeEnd! > lines[index].characters.length) {
+                  cue.graphemeEnd! >
+                      (lengths[index] ??= lines[index].characters.length)) {
             throw const FormatException(
               'Timing span exceeds its source lyric occurrence.',
             );

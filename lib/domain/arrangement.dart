@@ -3,8 +3,11 @@ import 'package:characters/characters.dart';
 import 'package:crypto/crypto.dart';
 import 'models.dart';
 
+/// Digit runs are matched by exactly one alternative (`(?!\d)` forbids
+/// splitting a run into 1- and 2-digit pieces), so an unterminated chord such as
+/// `[C1111...` fails in linear time instead of backtracking exponentially.
 final chordPattern = RegExp(
-  r'(?<!\\)\[((?:[A-G](?:#|b|♯|♭){0,2}(?:(?:maj|min|dim|aug|sus|add|omit|no|M|m|Δ|ø|°)|\d{1,2}|[#b♯♭+−-]\d{0,2}|\/(?:9|11|13)|\([A-Za-z0-9#b♯♭,+−-]{1,20}\))*(?:\/[A-G](?:#|b|♯|♭){0,2})?|N\.?C\.?))\]',
+  r'(?<!\\)\[((?:[A-G](?:#|b|♯|♭){0,2}(?:(?:maj|min|dim|aug|sus|add|omit|no|M|m|Δ|ø|°)|\d{1,2}(?!\d)|[#b♯♭+−-]\d{0,2}(?!\d)|\/(?:9|11|13)|\([A-Za-z0-9#b♯♭,+−-]{1,20}\))*(?:\/[A-G](?:#|b|♯|♭){0,2})?|N\.?C\.?))\]',
 );
 String unescapeChordPro(String text) =>
     text.replaceAllMapped(RegExp(r'\\([\\\[\]{}#])'), (m) => m[1]!);
@@ -120,21 +123,20 @@ List<ArrangementLine> parseArrangement(String body) =>
       if (line.trimLeft().startsWith('{')) {
         return ArrangementLine(line, const [], directive: true);
       }
+      // Single pass: the grapheme offset of each chord is accumulated from the
+      // text segments between chords instead of re-scanning the whole prefix.
       final chords = <ChordAnchor>[];
+      final text = StringBuffer();
+      var last = 0, offset = 0;
       for (final m in chordPattern.allMatches(line)) {
-        chords.add(
-          ChordAnchor(
-            unescapeChordPro(
-              line.substring(0, m.start).replaceAll(chordPattern, ''),
-            ).characters.length,
-            m.group(1)!,
-          ),
-        );
+        final segment = unescapeChordPro(line.substring(last, m.start));
+        text.write(segment);
+        offset += segment.characters.length;
+        chords.add(ChordAnchor(offset, m.group(1)!));
+        last = m.end;
       }
-      return ArrangementLine(
-        unescapeChordPro(line.replaceAll(chordPattern, '')),
-        chords,
-      );
+      text.write(unescapeChordPro(line.substring(last)));
+      return ArrangementLine(text.toString(), chords);
     }).toList();
 
 String transposeChord(String chord, int semitones) {
@@ -212,10 +214,19 @@ String transposeChord(String chord, int semitones) {
   });
 }
 
-String transposeBody(String body, int semitones) => body.replaceAllMapped(
-  chordPattern,
-  (match) => '[${transposeChord(match.group(1)!, semitones)}]',
-);
+String transposeBody(String body, int semitones) => body
+    .split('\n')
+    .map(
+      // Directive lines ({comment: Capo [D] shape}) are never transposed; this
+      // is the same test parseArrangement uses to classify them.
+      (line) => line.trimLeft().startsWith('{')
+          ? line
+          : line.replaceAllMapped(
+              chordPattern,
+              (match) => '[${transposeChord(match.group(1)!, semitones)}]',
+            ),
+    )
+    .join('\n');
 
 SongDocument editSong(
   SongDocument song, {
@@ -229,11 +240,10 @@ SongDocument editSong(
   final recordingChanged =
       artist != null && artist != song.artist ||
       metadata != null &&
-          [
-            'durationSeconds',
-            'recordingIds',
-            'version',
-          ].any((key) => jsonEncode(metadata[key]) != jsonEncode(song.metadata[key]));
+          ['durationSeconds', 'recordingIds', 'version'].any(
+            (key) =>
+                jsonEncode(metadata[key]) != jsonEncode(song.metadata[key]),
+          );
   final origins = jsonMap(song.extra['fieldOrigins']);
   if (title != null && title != song.title) origins['title'] = 'user';
   if (artist != null && artist != song.artist) origins['artist'] = 'user';

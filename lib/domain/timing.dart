@@ -6,8 +6,45 @@ import 'package:xml/xml.dart';
 import 'models.dart';
 import 'arrangement.dart';
 
-String _trackId(String source, String raw) =>
-    '$source:${sha256.convert(utf8.encode(raw)).toString().substring(0, 20)}';
+/// Largest timing payload that is parsed and retained. The raw text is stored
+/// twice in a song file (decoded `raw` asset plus `rawBytesBase64`, each
+/// base64), so this keeps a valid track well inside the 12 MiB file limit.
+const maxTimingBytes = 3 * 1024 * 1024;
+
+/// Latest cue time accepted (7 days); the song codec enforces the same bound.
+const _maxCueUs = 604800000000;
+const _maxLrcTimestampsPerLine = 64;
+const _maxCues = 100000;
+
+/// Profile and recording change how a document is interpreted, so they take part
+/// in the id; without either the id is the historic `source:hash(raw)`.
+String _trackId(
+  String source,
+  String raw, {
+  String? profile,
+  String? recordingId,
+}) {
+  final key = profile == null && recordingId == null
+      ? raw
+      : '$raw\u0000${profile ?? ''}\u0000${recordingId ?? ''}';
+  return '$source:${sha256.convert(utf8.encode(key)).toString().substring(0, 20)}';
+}
+
+/// `prefix[i]` is the number of grapheme clusters in `text.substring(0, i)`,
+/// built in one pass so per-word offsets do not rescan the line.
+List<int> _graphemePrefix(String text) {
+  final prefix = List<int>.filled(text.length + 1, 0);
+  var unit = 0, count = 0;
+  for (final cluster in text.characters) {
+    prefix[unit] = count;
+    count++;
+    for (var i = 1; i <= cluster.length; i++) {
+      prefix[unit + i] = count;
+    }
+    unit += cluster.length;
+  }
+  return prefix;
+}
 
 /// A user-imported timing file defines its own timeline; it makes no claim about
 /// an independently selected catalog recording. Exact ordered text is required.
@@ -56,12 +93,25 @@ TimingTrack parseTimingBytes(
   String? encoding,
   String? profile,
 }) {
+  if (bytes.length > maxTimingBytes) {
+    // Over-limit input is rejected without retaining its bytes: keeping them
+    // would make the whole song unsaveable.
+    return TimingTrack(
+      id: '$sourceDocumentId:${sha256.convert(bytes)}',
+      sourceDocumentId: sourceDocumentId,
+      sourceLyrics: '',
+      format: format,
+      recordingId: recordingId,
+      status: TimingStatus.invalid,
+      extra: {
+        'parseError':
+            'Timing payload exceeds ${maxTimingBytes ~/ (1024 * 1024)} MiB.',
+      },
+    );
+  }
   var detected = encoding?.toLowerCase();
   String? text;
   try {
-    if (bytes.length > 8 * 1024 * 1024) {
-      throw const FormatException('Timing payload exceeds 8 MiB.');
-    }
     if (bytes.length >= 2 && bytes[0] == 255 && bytes[1] == 254) {
       detected = 'utf-16le';
     }
@@ -87,7 +137,8 @@ TimingTrack parseTimingBytes(
     } else if (detected == 'iso-8859-1' || detected == 'latin1') {
       text = latin1.decode(bytes);
     } else {
-      text = utf8.decode(bytes).replaceFirst('\uFEFF', '');
+      text = utf8.decode(bytes);
+      if (text.startsWith('\uFEFF')) text = text.substring(1);
       detected = 'utf-8';
     }
   } catch (_) {
@@ -160,31 +211,52 @@ TimingTrack parseLrc(
     r'\[offset:\s*([+-]?\d+)\]',
     caseSensitive: false,
   ).firstMatch(raw);
-  final offsetUs = (int.tryParse(offsetMatch?.group(1) ?? '') ?? 0) * 1000;
-  if (utf8.encode(raw).length > 8 * 1024 * 1024) {
+  // Clamped to a day so the millisecond-to-microsecond product cannot overflow.
+  final offsetUs =
+      (int.tryParse(offsetMatch?.group(1) ?? '') ?? 0).clamp(
+        -86400000,
+        86400000,
+      ) *
+      1000;
+  if (raw.length > maxTimingBytes || utf8.encode(raw).length > maxTimingBytes) {
     return TimingTrack(
       id: id,
       sourceDocumentId: sourceDocumentId,
       sourceLyrics: '',
       format: 'lrc',
-      raw: raw,
       status: TimingStatus.invalid,
-      extra: {'parseError': 'Timing payload exceeds 8 MiB.'},
+      extra: {
+        'parseError':
+            'Timing payload exceeds ${maxTimingBytes ~/ (1024 * 1024)} MiB.',
+      },
     );
   }
   final timestamp = RegExp(r'\[(\d+):(\d{2}(?:\.\d+)?)\]');
+  // Only consecutive tags at the start of a line are time tags; a "[12:30]"
+  // inside the lyric text belongs to the text.
+  final leadingTags = RegExp(r'^(?:\s*\[\d+:\d{2}(?:\.\d+)?\])+');
+  final markerPattern = RegExp(r'<(\d+):(\d{2}(?:\.\d+)?)>');
+  var overflow = false;
+  lines:
   for (final line in raw.replaceAll('\r\n', '\n').split('\n')) {
-    final times = timestamp.allMatches(line).toList();
+    final tags = leadingTags.firstMatch(line);
+    if (tags == null) continue;
+    final times = timestamp.allMatches(tags.group(0)!).toList();
     if (times.isEmpty) continue;
-    final content = line.substring(times.last.end);
-    final wordMarkers = RegExp(
-      r'<(\d+):(\d{2}(?:\.\d+)?)>',
-    ).allMatches(content).toList();
-    final text = content
-        .replaceAll(RegExp(r'<\d+:\d{2}(?:\.\d+)?>'), '')
-        .trim();
+    if (times.length > _maxLrcTimestampsPerLine) {
+      overflow = true;
+      break;
+    }
+    final content = line.substring(tags.end);
+    final wordMarkers = markerPattern.allMatches(content).toList();
+    final text = content.replaceAll(markerPattern, '').trim();
+    final prefix = wordMarkers.isEmpty ? const <int>[] : _graphemePrefix(text);
     final firstRaw = _lrcUs(times.first.group(1)!, times.first.group(2)!);
     for (final time in times) {
+      if (cues.length > _maxCues) {
+        overflow = true;
+        break lines;
+      }
       final rawUs = _lrcUs(time.group(1)!, time.group(2)!);
       // LRC [offset:+n] makes lyrics appear n ms sooner: timestamp minus offset.
       // Times that land before zero are clamped rather than rejecting the file.
@@ -211,6 +283,10 @@ TimingTrack parseLrc(
       if (wordMarkers.isNotEmpty) enhanced = true;
       var cursor = 0;
       for (var i = 0; i < wordMarkers.length; i++) {
+        if (cues.length > _maxCues) {
+          overflow = true;
+          break lines;
+        }
         final marker = wordMarkers[i];
         final word = content
             .substring(
@@ -241,11 +317,8 @@ TimingTrack parseLrc(
             occurrenceId: occurrence,
             text: word,
             startUs: wordStart,
-            graphemeStart: text.substring(0, wordIndex).characters.length,
-            graphemeEnd: text
-                .substring(0, wordIndex + word.length)
-                .characters
-                .length,
+            graphemeStart: prefix[wordIndex],
+            graphemeEnd: prefix[wordIndex + word.length],
             originalBegin: marker.group(0),
           ),
         );
@@ -253,7 +326,9 @@ TimingTrack parseLrc(
       }
     }
   }
-  if (cues.isEmpty || cues.length > 100000) status = TimingStatus.invalid;
+  if (overflow || cues.isEmpty || cues.length > _maxCues) {
+    status = TimingStatus.invalid;
+  }
   _sortCues(cues);
   final orderedLines = cues.where((cue) => cue.graphemeStart == null).toList();
   final occurrenceMap = {
@@ -306,10 +381,16 @@ TimingTrack parseTtml(
   String? recordingId,
   String? profile,
 }) {
-  final id = _trackId(sourceDocumentId, raw);
+  final id = _trackId(
+    sourceDocumentId,
+    raw,
+    profile: profile,
+    recordingId: recordingId,
+  );
   var text = '';
   try {
-    if (utf8.encode(raw).length > 8 * 1024 * 1024 ||
+    if (raw.length > maxTimingBytes ||
+        utf8.encode(raw).length > maxTimingBytes ||
         RegExp(
           r'<!\s*(?:DOCTYPE|ENTITY)',
           caseSensitive: false,
@@ -321,7 +402,9 @@ TimingTrack parseTtml(
     final document = XmlDocument.parse(raw);
     final root = document.rootElement;
     final hasTiming = root.descendants.whereType<XmlElement>().any(
-      (e) => e.attributes.any((a) => {'begin', 'end'}.contains(a.name.local)),
+      (e) => e.attributes.any(
+        (a) => {'begin', 'end', 'dur'}.contains(a.name.local),
+      ),
     );
     final appleProfile =
         profile == 'apple-lyrics' ||
@@ -449,6 +532,11 @@ TimingTrack parseTtml(
       if (start < 0 || end != null && end < start) {
         throw const FormatException('Invalid cue interval.');
       }
+      // The song file format rejects cues beyond this bound, so a track that
+      // exceeds it must not be accepted (it could never be read back).
+      if (start > _maxCueUs || end != null && end > _maxCueUs) {
+        throw const FormatException('Cue time exceeds the supported range.');
+      }
       timed[node] =
           (parentTimed ?? false) ||
           begin != null ||
@@ -523,7 +611,11 @@ TimingTrack parseTtml(
         );
       }
       var cursor = 0;
+      final prefix = timedSpans.isEmpty ? const <int>[] : _graphemePrefix(line);
       for (final span in timedSpans) {
+        if (cues.length > _maxCues) {
+          throw const FormatException('Too many timing cues.');
+        }
         final word = content(span);
         if (word.isEmpty) continue;
         // Nested timing spans may overlap. Their own exact grapheme range is retained.
@@ -542,11 +634,8 @@ TimingTrack parseTtml(
             text: word,
             startUs: spanRange.$1,
             endUs: spanRange.$2,
-            graphemeStart: line.substring(0, index).characters.length,
-            graphemeEnd: line
-                .substring(0, index + word.length)
-                .characters
-                .length,
+            graphemeStart: prefix[index],
+            graphemeEnd: prefix[index + word.length],
             voice: attr(span, 'agent') ?? attr(p, 'agent'),
             originalBegin: attr(span, 'begin'),
             originalEnd: attr(span, 'end'),
@@ -557,7 +646,7 @@ TimingTrack parseTtml(
       }
     }
     text = lyrics.join('\n');
-    if (cues.length > 100000) {
+    if (cues.length > _maxCues) {
       throw const FormatException('Too many timing cues.');
     }
     _sortCues(cues);

@@ -197,7 +197,14 @@ void main() {
             SetlistDocument(
               id: 'list',
               name: 'Broken',
-              entries: [const SetlistEntry(id: 'entry', songId: 'missing')],
+              // Not JSON-encodable: the write fails after the song was stored.
+              entries: [
+                SetlistEntry(
+                  id: 'entry',
+                  songId: '1',
+                  overrides: {'bad': Object()},
+                ),
+              ],
             ),
           ],
         ),

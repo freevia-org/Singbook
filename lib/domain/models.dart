@@ -189,6 +189,7 @@ class TimingTrack {
     String? lyricHash,
     String? origin,
     JsonMap? extra,
+    List<TimingCue>? cues,
   }) => TimingTrack(
     id: id,
     sourceDocumentId: sourceDocumentId,
@@ -199,7 +200,7 @@ class TimingTrack {
     language: language,
     voice: voice,
     lyricHash: lyricHash ?? this.lyricHash,
-    cues: cues,
+    cues: cues ?? this.cues,
     status: status ?? this.status,
     origin: origin ?? this.origin,
     granularity: granularity,

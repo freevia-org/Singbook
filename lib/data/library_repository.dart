@@ -43,13 +43,13 @@ class LibraryRepository {
     final db = await dbFactory.openDatabase(
       location,
       options: OpenDatabaseOptions(
-        version: 2,
+        version: 3,
         onConfigure: (db) async {
           await db.execute('PRAGMA foreign_keys = ON');
         },
         onCreate: (db, version) async {
           await db.execute(
-            'CREATE TABLE songs (id TEXT PRIMARY KEY, title TEXT NOT NULL, artist TEXT NOT NULL, album TEXT, favorite INTEGER NOT NULL DEFAULT 0, document TEXT NOT NULL, content_hash TEXT NOT NULL, lyric_hash TEXT NOT NULL, source_identity TEXT, revision INTEGER NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL)',
+            'CREATE TABLE songs (id TEXT PRIMARY KEY, title TEXT NOT NULL, artist TEXT NOT NULL, album TEXT, favorite INTEGER NOT NULL DEFAULT 0, document TEXT NOT NULL, content_hash TEXT NOT NULL, lyric_hash TEXT NOT NULL, source_identity TEXT, revision INTEGER NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, search_text TEXT)',
           );
           await db.execute(
             'CREATE INDEX songs_title_artist ON songs(title COLLATE NOCASE,artist COLLATE NOCASE)',
@@ -76,26 +76,79 @@ class LibraryRepository {
             'CREATE TABLE outbox (id TEXT PRIMARY KEY, object_id TEXT NOT NULL, object_kind TEXT NOT NULL, action TEXT NOT NULL, revision INTEGER, created_at TEXT NOT NULL)',
           );
           await _createSyncItems(db);
+          await _createEntrySongIndex(db);
         },
         onUpgrade: (db, oldVersion, newVersion) async {
           if (oldVersion < 2) await _createSyncItems(db);
+          if (oldVersion < 3) {
+            await _addSearchText(db);
+            await _createEntrySongIndex(db);
+          }
         },
       ),
     );
     return LibraryRepository._(db);
   }
 
+  /// Cascading song deletes and "which setlists use this song" look entries up
+  /// by song_id.
+  static Future<void> _createEntrySongIndex(Database db) async {
+    final tables = await db.rawQuery(
+      "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'setlist_entries'",
+    );
+    if (tables.isEmpty) return;
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS setlist_entries_song ON setlist_entries(song_id)',
+    );
+  }
+
+  /// Adds the normalized search column and fills it for existing songs.
+  static Future<void> _addSearchText(Database db) async {
+    await db.execute('ALTER TABLE songs ADD COLUMN search_text TEXT');
+    final codec = ChordProCodec();
+    final rows = await db.query(
+      'songs',
+      columns: ['id', 'title', 'artist', 'album', 'document'],
+    );
+    for (final row in rows) {
+      String? lyrics;
+      try {
+        lyrics = plainLyrics(codec.decode(row['document'] as String).body);
+      } on Object {
+        lyrics = null;
+      }
+      await db.update(
+        'songs',
+        {
+          'search_text': searchText(
+            row['title'] as String,
+            row['artist'] as String,
+            row['album'] as String?,
+            lyrics ?? '',
+          ),
+        },
+        where: 'id = ?',
+        whereArgs: [row['id']],
+      );
+    }
+  }
+
+  /// Case-folded text a search query is matched against. SQLite's LIKE and
+  /// NOCASE only fold ASCII on many builds, so folding is done here with full
+  /// Unicode lower-casing; chords and directives are excluded via [lyrics].
+  static String searchText(
+    String title,
+    String artist,
+    String? album,
+    String lyrics,
+  ) => [title, artist, album ?? '', lyrics].join('\n').toLowerCase();
+
   static Future<void> _createSyncItems(Database db) => db.execute(
     'CREATE TABLE IF NOT EXISTS sync_items (account TEXT NOT NULL, kind TEXT NOT NULL, item_id TEXT NOT NULL, cloud_hash TEXT NOT NULL, local_hash TEXT NOT NULL, PRIMARY KEY(account, kind, item_id))',
   );
 
-  /// The song text after the header block. Headers end at the first blank line
-  /// and carry the base64 x_verse_data chunks, which must never match a search.
-  static const _bodySql =
-      'substr(document, instr(document, char(10) || char(10)) + 2)';
-
   static String _likePattern(String query) =>
-      '%${query.trim().replaceAll('\\', '\\\\').replaceAll('%', '\\%').replaceAll('_', '\\_')}%';
+      '%${query.trim().toLowerCase().replaceAll('\\', '\\\\').replaceAll('%', '\\%').replaceAll('_', '\\_')}%';
 
   Future<List<SongDocument>> listSongs({
     String query = '',
@@ -106,19 +159,17 @@ class LibraryRepository {
     final clauses = <String>[], args = <Object?>[];
     if (favoritesOnly) clauses.add('favorite = 1');
     if (query.trim().isNotEmpty) {
-      clauses.add(
-        '(title LIKE ? ESCAPE \'\\\' OR artist LIKE ? ESCAPE \'\\\' OR album LIKE ? ESCAPE \'\\\' OR $_bodySql LIKE ? ESCAPE \'\\\')',
-      );
-      final pattern = _likePattern(query);
-      args.addAll([pattern, pattern, pattern, pattern]);
+      clauses.add('search_text LIKE ? ESCAPE \'\\\'');
+      args.add(_likePattern(query));
     }
     final rows = await database.query(
       'songs',
       where: clauses.isEmpty ? null : clauses.join(' AND '),
       whereArgs: args,
       orderBy: 'updated_at DESC, id',
-      limit: limit,
-      offset: limit == null ? null : offset,
+      // An offset without a limit still has to skip rows (-1 = no limit).
+      limit: limit ?? (offset > 0 ? -1 : null),
+      offset: limit == null && offset <= 0 ? null : offset,
     );
     return rows.map(_readSong).toList();
   }
@@ -156,13 +207,17 @@ class LibraryRepository {
   /// song is absent, [expectedHash] is null or the hashes match. Returns false
   /// (and writes nothing) when the stored song differs, so the caller can keep
   /// the edit as a conflict copy without a check-then-write race.
+  ///
+  /// A null [expectedHash] normally means "write unconditionally". With
+  /// [mustNotExist] it means the song must still be absent.
   Future<bool> saveSongIfUnchanged(
     SongDocument song,
-    String? expectedHash,
-  ) async {
+    String? expectedHash, {
+    bool mustNotExist = false,
+  }) async {
     final document = _codec.encode(song);
     return database.transaction((txn) async {
-      if (expectedHash != null) {
+      if (expectedHash != null || mustNotExist) {
         final rows = await txn.query(
           'songs',
           columns: ['content_hash'],
@@ -170,7 +225,9 @@ class LibraryRepository {
           whereArgs: [song.id],
           limit: 1,
         );
-        if (rows.isNotEmpty && rows.single['content_hash'] != expectedHash) {
+        if (rows.isNotEmpty &&
+            (expectedHash == null ||
+                rows.single['content_hash'] != expectedHash)) {
           return false;
         }
       }
@@ -194,6 +251,12 @@ class LibraryRepository {
       'document': document,
       'content_hash': sha256.convert(utf8.encode(document)).toString(),
       'lyric_hash': lyricOrderHash(song.body),
+      'search_text': searchText(
+        song.title,
+        song.artist,
+        song.metadata['album']?.toString(),
+        plainLyrics(song.body),
+      ),
       'source_identity': song.extra['selectedSourceId'] as String?,
       'revision': song.revision,
       'created_at': song.createdAt.toUtc().toIso8601String(),
@@ -223,9 +286,14 @@ class LibraryRepository {
         );
         for (final row in rows) {
           final existing = _readSong(row);
+          // An opaque (unreadable) extension block is written back verbatim, so
+          // merged sources/timing would be reported as saved but never stored.
+          if (existing.extensionError != null) continue;
           final fields = ['key', 'capo', 'tuning', 'tempo', 'timeSignature'];
+          // Provider copies may differ only in line endings.
+          String lf(String text) => text.replaceAll('\r\n', '\n');
           if (existingId != null ||
-              existing.body == song.body &&
+              lf(existing.body) == lf(song.body) &&
                   fields.every(
                     (f) => existing.metadata[f] == song.metadata[f],
                   )) {
@@ -251,7 +319,17 @@ class LibraryRepository {
               sources: sources.values.toList(),
               timingTracks: tracks.values.toList(),
               metadata: {...song.metadata, ...existing.metadata},
-              extra: {...song.extra, ...existing.extra},
+              extra: {
+                ...song.extra,
+                ...existing.extra,
+                // Provenance maps merge key by key; the existing entry wins.
+                for (final key in const ['fieldOrigins', 'conflicts'])
+                  if (song.extra[key] is Map || existing.extra[key] is Map)
+                    key: {
+                      ...jsonMap(song.extra[key]),
+                      ...jsonMap(existing.extra[key]),
+                    },
+              },
             );
             await _writeSong(txn, merged, _codec.encode(merged));
             await _queue(txn, merged.id, 'song', 'save', merged.revision);
@@ -333,15 +411,17 @@ class LibraryRepository {
   }) async {
     final rows = await database.query(
       'setlists',
-      where: [
-        if (query.trim().isNotEmpty) 'name LIKE ? ESCAPE \'\\\'',
-        if (favoritesOnly) 'favorite = 1',
-      ].join(' AND ').emptyToNull,
-      whereArgs: [if (query.trim().isNotEmpty) _likePattern(query)],
+      where: favoritesOnly ? 'favorite = 1' : null,
       orderBy: 'updated_at DESC,id',
     );
+    // Matched in Dart: SQLite LIKE only case-folds ASCII.
+    final needle = query.trim().toLowerCase();
     final result = <SetlistDocument>[];
     for (final row in rows) {
+      if (needle.isNotEmpty &&
+          !(row['name'] as String).toLowerCase().contains(needle)) {
+        continue;
+      }
       result.add(await _setlist(database, row));
     }
     return result;
@@ -395,9 +475,10 @@ class LibraryRepository {
   /// as returned by [getSetlistHash].
   Future<bool> saveSetlistIfUnchanged(
     SetlistDocument setlist,
-    String? expectedHash,
-  ) => database.transaction((txn) async {
-    if (expectedHash != null) {
+    String? expectedHash, {
+    bool mustNotExist = false,
+  }) => database.transaction((txn) async {
+    if (expectedHash != null || mustNotExist) {
       final rows = await txn.query(
         'setlists',
         where: 'id = ?',
@@ -405,13 +486,28 @@ class LibraryRepository {
         limit: 1,
       );
       if (rows.isNotEmpty &&
-          _setlistHashOf(await _setlist(txn, rows.single)) != expectedHash) {
+          (expectedHash == null ||
+              _setlistHashOf(await _setlist(txn, rows.single)) !=
+                  expectedHash)) {
         return false;
       }
     }
     await _writeSetlist(txn, setlist);
     return true;
   });
+
+  /// Entry ids may be regenerated on write, so only name, notes, favorite and
+  /// the ordered (song, overrides) pairs decide whether two setlists match.
+  static bool _sameSetlistContent(SetlistDocument a, SetlistDocument b) =>
+      a.name == b.name &&
+      a.notes == b.notes &&
+      a.favorite == b.favorite &&
+      jsonEncode([
+            for (final e in a.entries) [e.songId, e.overrides],
+          ]) ==
+          jsonEncode([
+            for (final e in b.entries) [e.songId, e.overrides],
+          ]);
 
   static String _setlistHashOf(SetlistDocument setlist) =>
       sha256.convert(utf8.encode(jsonEncode(setlist.toJson()))).toString();
@@ -488,28 +584,55 @@ class LibraryRepository {
         if (result.forked) remapped[song.id] = result.song.id;
       }
       for (final setlist in setlists) {
-        // Entries follow the imported copy of a song that had to be forked.
-        await _writeSetlist(
-          txn,
-          remapped.isEmpty
-              ? setlist
-              : SetlistDocument(
-                  id: setlist.id,
-                  name: setlist.name,
-                  notes: setlist.notes,
-                  favorite: setlist.favorite,
-                  createdAt: setlist.createdAt,
-                  updatedAt: setlist.updatedAt,
-                  entries: [
-                    for (final e in setlist.entries)
-                      SetlistEntry(
-                        id: e.id,
-                        songId: remapped[e.songId] ?? e.songId,
-                        overrides: e.overrides,
-                      ),
-                  ],
-                ),
+        // Entries follow the imported copy of a song that had to be forked;
+        // entries whose song is in neither the file nor the library are
+        // dropped rather than failing the whole import on the foreign key.
+        final entries = <SetlistEntry>[];
+        for (final e in setlist.entries) {
+          final songId = remapped[e.songId] ?? e.songId;
+          final present = await txn.query(
+            'songs',
+            columns: ['id'],
+            where: 'id = ?',
+            whereArgs: [songId],
+            limit: 1,
+          );
+          if (present.isEmpty) continue;
+          entries.add(
+            SetlistEntry(id: e.id, songId: songId, overrides: e.overrides),
+          );
+        }
+        var imported = SetlistDocument(
+          id: setlist.id,
+          name: setlist.name,
+          notes: setlist.notes,
+          favorite: setlist.favorite,
+          createdAt: setlist.createdAt,
+          updatedAt: setlist.updatedAt,
+          entries: entries,
         );
+        // A local setlist with the same id but different content is kept; the
+        // imported one is stored as a separate copy (like songs).
+        final existing = await txn.query(
+          'setlists',
+          where: 'id = ?',
+          whereArgs: [setlist.id],
+          limit: 1,
+        );
+        if (existing.isNotEmpty) {
+          final local = await _setlist(txn, existing.single);
+          if (_sameSetlistContent(local, imported)) continue;
+          imported = SetlistDocument(
+            id: newId(),
+            name: imported.name,
+            notes: imported.notes,
+            favorite: imported.favorite,
+            createdAt: imported.createdAt,
+            updatedAt: imported.updatedAt,
+            entries: imported.entries,
+          );
+        }
+        await _writeSetlist(txn, imported);
       }
     });
   }
@@ -891,8 +1014,4 @@ class LibraryRepository {
   }
 
   Future<void> close() => database.close();
-}
-
-extension on String {
-  String? get emptyToNull => isEmpty ? null : this;
 }
