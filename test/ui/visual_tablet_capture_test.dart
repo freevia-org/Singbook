@@ -471,6 +471,7 @@ class _Fixture {
 class _MemoryRepository implements LibraryRepository {
   final List<SongDocument> songs = [];
   final List<SetlistDocument> setlists = [];
+  final List<ActivityEntry> activity = [];
 
   @override
   Future<List<SongDocument>> listSongs({
@@ -493,7 +494,37 @@ class _MemoryRepository implements LibraryRepository {
   }) async => [];
 
   @override
-  Future<void> addActivity(ActivityEntry entry) async {}
+  Future<void> addActivity(ActivityEntry entry) async => activity.add(entry);
+
+  @override
+  Future<List<ActivityEntry>> listRecentActivity({
+    int limit = 50,
+    int offset = 0,
+  }) async {
+    final ordered = [...activity]
+      ..sort((a, b) {
+        final time = b.occurredAt.compareTo(a.occurredAt);
+        return time == 0 ? b.id.compareTo(a.id) : time;
+      });
+    final counts = <(String, String), int>{};
+    final latest = <(String, String), ActivityEntry>{};
+    for (final entry in ordered) {
+      final key = (entry.objectKind, entry.objectId);
+      latest.putIfAbsent(key, () => entry);
+      if (entry.action == 'opened') counts[key] = (counts[key] ?? 0) + 1;
+    }
+    return latest.entries.skip(offset).take(limit).map((item) {
+      final entry = item.value;
+      return ActivityEntry(
+        id: entry.id,
+        objectId: entry.objectId,
+        objectKind: entry.objectKind,
+        action: entry.action,
+        occurredAt: entry.occurredAt,
+        openCount: counts[item.key] ?? 0,
+      );
+    }).toList();
+  }
 
   @override
   Future<void> setSetting(String key, Object? value) async {}
