@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -9,6 +10,12 @@ import 'package:singbook/ui/widgets/chord_lyrics_line.dart';
 
 const _testSansFamily = 'ChordLyricsTestSans';
 const _testArabicFamily = 'ChordLyricsTestArabic';
+
+// Keep exact comparisons on both hosts: bundled fonts still rasterize
+// differently in the Windows and Linux Flutter test engines.
+String _goldenPath(String name) =>
+    'goldens/${Platform.isLinux ? 'linux/' : ''}chord_lyrics_line_$name.png';
+
 const _lyricStyle = TextStyle(
   fontFamily: _testSansFamily,
   color: Color(0xff17243a),
@@ -294,12 +301,12 @@ void main() {
         );
         await expectLater(
           find.byKey(const ValueKey('captured-line')),
-          matchesGoldenFile('goldens/chord_lyrics_line_wrapped_large.png'),
+          matchesGoldenFile(_goldenPath('wrapped_large')),
         );
       } else if (scenario.width == 360 && scenario.height == 250) {
         await expectLater(
           find.byKey(const ValueKey('captured-line')),
-          matchesGoldenFile('goldens/chord_lyrics_line_landscape.png'),
+          matchesGoldenFile(_goldenPath('landscape')),
         );
       }
       expect(tester.takeException(), isNull);
@@ -407,7 +414,7 @@ void main() {
     expect(tester.takeException(), isNull);
     await expectLater(
       find.byKey(const ValueKey('unicode-rtl-capture')),
-      matchesGoldenFile('goldens/chord_lyrics_line_rtl.png'),
+      matchesGoldenFile(_goldenPath('rtl')),
     );
   });
 
@@ -531,7 +538,7 @@ void main() {
     expect(tester.takeException(), isNull);
     await expectLater(
       find.byKey(const ValueKey('collision-capture')),
-      matchesGoldenFile('goldens/chord_lyrics_line_collision.png'),
+      matchesGoldenFile(_goldenPath('collision')),
     );
   });
 
@@ -678,7 +685,7 @@ void main() {
     expect(tester.takeException(), isNull);
     await expectLater(
       find.byKey(const ValueKey('chord-rows-capture')),
-      matchesGoldenFile('goldens/chord_lyrics_line_chord_only.png'),
+      matchesGoldenFile(_goldenPath('chord_only')),
     );
   });
 

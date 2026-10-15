@@ -53,16 +53,11 @@ jobs:
       - name: Test
         run: flutter test
 
-      # Temporary integration capture; baselines are reviewed before acceptance.
-      - name: Capture Linux renderer baselines for review
-        if: failure()
-        run: flutter test test/ui/chord_lyrics_line_test.dart --update-goldens
-
       - name: Upload visual test evidence
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: renderer-visual-evidence
-          path: |
-            test/ui/failures/**
-            test/ui/goldens/chord_lyrics_line_*.png
+          name: visual-test-failures
+          path: test/**/failures/**
+          if-no-files-found: ignore
+          retention-days: 7
