@@ -11,6 +11,7 @@ import '../format.dart';
 import '../library_actions.dart';
 import '../player_section_timeline.dart';
 import '../verse_ui_state.dart';
+import '../widgets/chord_lyrics_line.dart';
 import '../widgets/subpage_header.dart';
 import 'screen_awake.dart';
 import 'section_labels.dart';
@@ -683,49 +684,25 @@ class _PlayerScreenState extends State<PlayerScreen>
       );
     }
     if (line.isBlank) return SizedBox(height: 15, key: key);
-    final chords = [...line.chords]
-      ..sort((a, b) => a.graphemeOffset.compareTo(b.graphemeOffset));
-    final graphemes = line.text.characters.toList();
-    final spans = <InlineSpan>[];
-    var cursor = 0;
-    for (final chord in state.showChords ? chords : const <LyricChord>[]) {
-      final offset = chord.graphemeOffset.clamp(cursor, graphemes.length);
-      if (offset > cursor) {
-        spans.add(TextSpan(text: graphemes.sublist(cursor, offset).join()));
-      }
-      spans.add(
-        WidgetSpan(
-          alignment: PlaceholderAlignment.top,
-          child: Transform.translate(
-            offset: const Offset(0, -7),
-            child: Text(
-              chord.symbol,
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: theme.colorScheme.primary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ),
-      );
-      cursor = offset;
-    }
-    if (cursor < graphemes.length) {
-      spans.add(TextSpan(text: graphemes.sublist(cursor).join()));
-    }
     final current = _currentLineId == line.id;
     return Padding(
       key: key,
       padding: const EdgeInsets.only(bottom: 12),
       child: Semantics(
         selected: current,
-        child: Text.rich(
-          TextSpan(children: spans),
+        child: ChordLyricsLine(
+          text: line.text,
+          chords: line.chords,
+          showChords: state.showChords,
           style: theme.textTheme.bodyLarge?.copyWith(
             fontSize: state.lyricsFontSize,
             height: 1.35,
             fontWeight: current ? FontWeight.w600 : FontWeight.w400,
             color: current ? theme.colorScheme.primary : null,
+          ),
+          chordStyle: theme.textTheme.labelMedium?.copyWith(
+            color: theme.colorScheme.primary,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
