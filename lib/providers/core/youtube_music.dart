@@ -4,6 +4,27 @@ import '../provider.dart';
 import '../youtube_music_session.dart';
 import 'common.dart';
 
+/// The transport checks this predicate after its host queue and pacing wait,
+/// before each dispatch (including retries and redirects). A session change
+/// therefore invalidates captured headers that have not left the device yet.
+/// Parent cancellation still wakes an in-flight request; revision changes are
+/// also checked while reading and before accepting any completed response.
+class _SessionRequestCancellation extends CancellationToken {
+  _SessionRequestCancellation(this.session, this.revision, this.parent);
+  final YoutubeMusicSession session;
+  final int revision;
+  final CancellationToken? parent;
+
+  @override
+  bool get isCancelled =>
+      super.isCancelled ||
+      parent?.isCancelled == true ||
+      revision != session.revision;
+
+  @override
+  Future<void> get cancelled => parent?.cancelled ?? super.cancelled;
+}
+
 /// Public YouTube Music web responses. No logged-in cookies or player scraping.
 class YoutubeMusicProvider implements LyricsProvider {
   YoutubeMusicProvider(this.http, {YoutubeMusicSession? session})
@@ -78,7 +99,7 @@ class YoutubeMusicProvider implements LyricsProvider {
       source = await http.getText(
         Uri.parse('https://music.youtube.com/'),
         headers: {'Cookie': ?session.cookieHeader},
-        cancel: cancel,
+        cancel: _SessionRequestCancellation(session, revision, cancel),
       );
     } on ProviderException catch (e) {
       if (revision != session.revision) {
@@ -145,7 +166,11 @@ class YoutubeMusicProvider implements LyricsProvider {
       throwIfBlocked(source);
       throw const ProviderException('extraction_failed');
     }
-    _configuration = {'version': version, 'visitor': ?visitor};
+    _configuration = {
+      'version': version,
+      'visitor': ?visitor,
+      'sessionRevision': revision,
+    };
     _expires = DateTime.now().add(const Duration(hours: 1));
     _configurationRevision = revision;
     return _configuration!;
@@ -177,6 +202,9 @@ class YoutubeMusicProvider implements LyricsProvider {
   ) async {
     final config = await _config(cancel);
     final revision = session.revision;
+    if (config['sessionRevision'] != revision) {
+      throw const ProviderException('cancelled');
+    }
     final response = object(
       await http.requestJson(
         Uri.parse('https://music.youtube.com/youtubei/v1/$endpoint?alt=json'),
@@ -198,7 +226,7 @@ class YoutubeMusicProvider implements LyricsProvider {
             'user': {},
           },
         },
-        cancel: cancel,
+        cancel: _SessionRequestCancellation(session, revision, cancel),
       ),
     );
     if (revision != session.revision) {

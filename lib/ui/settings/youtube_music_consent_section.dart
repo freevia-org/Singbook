@@ -108,8 +108,6 @@ class _YoutubeMusicConsentSectionState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(labels.title, style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 6),
           Text(labels.explanation),
           if (saved)
             Padding(

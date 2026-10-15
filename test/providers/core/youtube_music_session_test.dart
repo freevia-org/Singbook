@@ -240,4 +240,75 @@ void main() {
       await t.close();
     }
   });
+
+  for (final cached in [false, true]) {
+    test(
+      'clear prevents a queued ${cached ? 'API' : 'homepage'} cookie send',
+      () async {
+        final blockerStarted = Completer<void>();
+        final releaseBlocker = Completer<void>();
+        final seen = <http.Request>[];
+        final session = YoutubeMusicSession()
+          ..setConsentCookies({'SOCS': 'old-fixture'});
+        final t = transport((request) async {
+          seen.add(request);
+          if (request.url.path == '/queue-blocker') {
+            blockerStarted.complete();
+            await releaseBlocker.future;
+            return http.Response('ok', 200);
+          }
+          return request.url.path == '/'
+              ? homepage()
+              : http.Response(
+                  '{"contents":{"sectionListRenderer":{"contents":[]}}}',
+                  200,
+                );
+        });
+        final provider = YoutubeMusicProvider(t, session: session);
+        try {
+          if (cached) await provider.search('warmup');
+          final blocker = t.getText(
+            Uri.parse('https://music.youtube.com/queue-blocker'),
+          );
+          await blockerStarted.future;
+          final queued = provider.search('queued');
+          // All request-setup microtasks run before this timer. The held host
+          // queue prevents either homepage or cached API dispatch until release.
+          await Future<void>.delayed(Duration.zero);
+          final beforeClear = seen.length;
+          final outcome = cached
+              ? expectLater(
+                  queued,
+                  throwsA(
+                    isA<ProviderException>().having(
+                      (e) => e.code,
+                      'code',
+                      'cancelled',
+                    ),
+                  ),
+                )
+              : expectLater(queued, completes);
+          session.clear();
+          releaseBlocker.complete();
+          await blocker;
+          await outcome;
+          final afterClear = seen.skip(beforeClear);
+          expect(
+            afterClear.map((r) => r.headers['cookie']),
+            everyElement(isNull),
+          );
+          if (cached) {
+            expect(afterClear, isEmpty);
+          } else {
+            // The stale homepage was cancelled; a fresh anonymous attempt may
+            // still proceed, without transmitting the removed consent choice.
+            expect(afterClear.where((r) => r.url.path == '/'), hasLength(1));
+          }
+        } finally {
+          if (!releaseBlocker.isCompleted) releaseBlocker.complete();
+          await t.close();
+        }
+      },
+    );
+  }
 }

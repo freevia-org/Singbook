@@ -109,10 +109,11 @@ void main() {
           );
         }
       }
-      await tester.ensureVisible(
-        find.byKey(const ValueKey('youtube-consent-clear')),
-      );
-      await tester.tap(find.byKey(const ValueKey('youtube-consent-clear')));
+      final clear = find.byKey(const ValueKey('youtube-consent-clear'));
+      await Scrollable.ensureVisible(tester.element(clear), alignment: .5);
+      await tester.pumpAndSettle();
+      expect(clear.hitTestable(), findsOneWidget);
+      await tester.tap(clear);
       await tester.pumpAndSettle();
       expect(controller.clears, 1);
       expect(find.text(l10nOf(tester).youtubeConsentSaved), findsNothing);
