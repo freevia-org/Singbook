@@ -215,6 +215,27 @@ class AppLocalizationsKo extends AppLocalizations {
   String get searchChooseVersion => '이 버전 선택';
 
   @override
+  String get searchFullPreview => '전체 미리보기';
+
+  @override
+  String get searchArrangementNotes => '편곡 메모';
+
+  @override
+  String get searchOpenLyrics => '가사 열기';
+
+  @override
+  String get searchContributions => '사용된 출처';
+
+  @override
+  String get searchVersionChecking => '이 버전 확인 중…';
+
+  @override
+  String get searchVersionUnavailable => '이 버전은 사용할 수 없습니다. 다른 버전을 선택하세요.';
+
+  @override
+  String get searchPreviewUnavailable => '가사 미리보기를 사용할 수 없습니다.';
+
+  @override
   String get searchSongMatch => '노래 일치';
 
   @override

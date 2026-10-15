@@ -218,6 +218,29 @@ class AppLocalizationsDa extends AppLocalizations {
   String get searchChooseVersion => 'Vælg denne version';
 
   @override
+  String get searchFullPreview => 'Fuld forhåndsvisning';
+
+  @override
+  String get searchArrangementNotes => 'Bemærkninger om arrangementet';
+
+  @override
+  String get searchOpenLyrics => 'Åbn sangteksten';
+
+  @override
+  String get searchContributions => 'Anvendte kilder';
+
+  @override
+  String get searchVersionChecking => 'Kontrollerer denne version…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Denne version kan ikke bruges. Vælg en anden version.';
+
+  @override
+  String get searchPreviewUnavailable =>
+      'Ingen forhåndsvisning af sangteksten tilgængelig.';
+
+  @override
   String get searchSongMatch => 'Sangmatch';
 
   @override

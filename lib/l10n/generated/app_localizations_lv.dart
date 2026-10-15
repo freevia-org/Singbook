@@ -219,6 +219,29 @@ class AppLocalizationsLv extends AppLocalizations {
   String get searchChooseVersion => 'Izvēlēties šo versiju';
 
   @override
+  String get searchFullPreview => 'Pilns priekšskatījums';
+
+  @override
+  String get searchArrangementNotes => 'Piezīmes par aranžējumu';
+
+  @override
+  String get searchOpenLyrics => 'Atvērt dziesmas vārdus';
+
+  @override
+  String get searchContributions => 'Izmantotie avoti';
+
+  @override
+  String get searchVersionChecking => 'Notiek šīs versijas pārbaude…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Šo versiju nevar izmantot. Izvēlieties citu versiju.';
+
+  @override
+  String get searchPreviewUnavailable =>
+      'Dziesmas vārdu priekšskatījums nav pieejams.';
+
+  @override
   String get searchSongMatch => 'Dziesmas atbilstība';
 
   @override

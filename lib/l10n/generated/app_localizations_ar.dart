@@ -219,6 +219,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String get searchChooseVersion => 'اختيار هذا الإصدار';
 
   @override
+  String get searchFullPreview => 'معاينة كاملة';
+
+  @override
+  String get searchArrangementNotes => 'ملاحظات التوزيع الموسيقي';
+
+  @override
+  String get searchOpenLyrics => 'فتح الكلمات';
+
+  @override
+  String get searchContributions => 'المصادر المستخدمة';
+
+  @override
+  String get searchVersionChecking => 'جارٍ التحقق من هذا الإصدار…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'يتعذر استخدام هذا الإصدار. اختر إصدارًا آخر.';
+
+  @override
+  String get searchPreviewUnavailable => 'لا تتوفر معاينة للكلمات.';
+
+  @override
   String get searchSongMatch => 'تطابق الأغنية';
 
   @override

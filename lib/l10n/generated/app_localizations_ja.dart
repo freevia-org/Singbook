@@ -215,6 +215,27 @@ class AppLocalizationsJa extends AppLocalizations {
   String get searchChooseVersion => 'このバージョンを選択';
 
   @override
+  String get searchFullPreview => '全体をプレビュー';
+
+  @override
+  String get searchArrangementNotes => '編曲メモ';
+
+  @override
+  String get searchOpenLyrics => '歌詞を開く';
+
+  @override
+  String get searchContributions => '使用したソース';
+
+  @override
+  String get searchVersionChecking => 'このバージョンを確認中…';
+
+  @override
+  String get searchVersionUnavailable => 'このバージョンは使用できません。別のバージョンを選んでください。';
+
+  @override
+  String get searchPreviewUnavailable => '歌詞のプレビューはありません。';
+
+  @override
   String get searchSongMatch => '曲の一致';
 
   @override

@@ -219,6 +219,28 @@ class AppLocalizationsSk extends AppLocalizations {
   String get searchChooseVersion => 'Vybrať túto verziu';
 
   @override
+  String get searchFullPreview => 'Úplný náhľad';
+
+  @override
+  String get searchArrangementNotes => 'Poznámky k aranžmánu';
+
+  @override
+  String get searchOpenLyrics => 'Otvoriť text';
+
+  @override
+  String get searchContributions => 'Použité zdroje';
+
+  @override
+  String get searchVersionChecking => 'Kontroluje sa táto verzia…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Túto verziu nemožno použiť. Vyberte inú verziu.';
+
+  @override
+  String get searchPreviewUnavailable => 'Náhľad textu nie je k dispozícii.';
+
+  @override
   String get searchSongMatch => 'Zhoda piesne';
 
   @override

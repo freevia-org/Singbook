@@ -219,6 +219,28 @@ class AppLocalizationsLt extends AppLocalizations {
   String get searchChooseVersion => 'Pasirinkti šią versiją';
 
   @override
+  String get searchFullPreview => 'Visa peržiūra';
+
+  @override
+  String get searchArrangementNotes => 'Pastabos apie aranžuotę';
+
+  @override
+  String get searchOpenLyrics => 'Atverti dainos žodžius';
+
+  @override
+  String get searchContributions => 'Naudoti šaltiniai';
+
+  @override
+  String get searchVersionChecking => 'Tikrinama ši versija…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Šios versijos naudoti negalima. Pasirinkite kitą versiją.';
+
+  @override
+  String get searchPreviewUnavailable => 'Dainos žodžių peržiūra nepasiekiama.';
+
+  @override
   String get searchSongMatch => 'Dainos atitikmuo';
 
   @override

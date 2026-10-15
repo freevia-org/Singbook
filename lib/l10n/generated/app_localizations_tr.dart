@@ -218,6 +218,29 @@ class AppLocalizationsTr extends AppLocalizations {
   String get searchChooseVersion => 'Bu sürümü seç';
 
   @override
+  String get searchFullPreview => 'Tam önizleme';
+
+  @override
+  String get searchArrangementNotes => 'Aranjman notları';
+
+  @override
+  String get searchOpenLyrics => 'Şarkı sözlerini aç';
+
+  @override
+  String get searchContributions => 'Kullanılan kaynaklar';
+
+  @override
+  String get searchVersionChecking => 'Bu sürüm kontrol ediliyor…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Bu sürüm kullanılamıyor. Başka bir sürüm seçin.';
+
+  @override
+  String get searchPreviewUnavailable =>
+      'Şarkı sözü önizlemesi kullanılamıyor.';
+
+  @override
   String get searchSongMatch => 'Şarkı eşleşmesi';
 
   @override

@@ -216,6 +216,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchChooseVersion => 'Choose this version';
 
   @override
+  String get searchFullPreview => 'Full preview';
+
+  @override
+  String get searchArrangementNotes => 'Arrangement notes';
+
+  @override
+  String get searchOpenLyrics => 'Open lyrics';
+
+  @override
+  String get searchContributions => 'Sources used';
+
+  @override
+  String get searchVersionChecking => 'Checking this version…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'This version can’t be used. Choose another version.';
+
+  @override
+  String get searchPreviewUnavailable => 'No lyric preview available.';
+
+  @override
   String get searchSongMatch => 'Song match';
 
   @override

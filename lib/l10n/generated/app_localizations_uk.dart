@@ -220,6 +220,29 @@ class AppLocalizationsUk extends AppLocalizations {
   String get searchChooseVersion => 'Вибрати цю версію';
 
   @override
+  String get searchFullPreview => 'Повний перегляд';
+
+  @override
+  String get searchArrangementNotes => 'Примітки щодо аранжування';
+
+  @override
+  String get searchOpenLyrics => 'Відкрити текст';
+
+  @override
+  String get searchContributions => 'Використані джерела';
+
+  @override
+  String get searchVersionChecking => 'Перевірка цієї версії…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Цю версію не можна використати. Виберіть іншу.';
+
+  @override
+  String get searchPreviewUnavailable =>
+      'Попередній перегляд тексту недоступний.';
+
+  @override
   String get searchSongMatch => 'Збіг пісні';
 
   @override

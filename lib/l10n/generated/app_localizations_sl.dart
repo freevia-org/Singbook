@@ -220,6 +220,28 @@ class AppLocalizationsSl extends AppLocalizations {
   String get searchChooseVersion => 'Izberi to različico';
 
   @override
+  String get searchFullPreview => 'Celoten predogled';
+
+  @override
+  String get searchArrangementNotes => 'Opombe o aranžmaju';
+
+  @override
+  String get searchOpenLyrics => 'Odpri besedilo';
+
+  @override
+  String get searchContributions => 'Uporabljeni viri';
+
+  @override
+  String get searchVersionChecking => 'Preverjanje te različice…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Te različice ni mogoče uporabiti. Izberi drugo različico.';
+
+  @override
+  String get searchPreviewUnavailable => 'Predogled besedila ni na voljo.';
+
+  @override
   String get searchSongMatch => 'Ujemanje pesmi';
 
   @override

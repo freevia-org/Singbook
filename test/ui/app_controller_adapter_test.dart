@@ -779,6 +779,199 @@ void main() {
   );
 
   test(
+    'source previews keep the full arrangement and skip setup rows in summaries',
+    () async {
+      const selected = SongCandidate(
+        providerId: 'catalog',
+        id: 'preview-song',
+        title: 'Preview Song',
+        artist: 'Test Artist',
+        metadata: {'genre': 'folk'},
+      );
+      const source = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'lyrics',
+          id: 'preview-song',
+          title: 'Preview Song',
+          artist: 'Test Artist',
+        ),
+        body:
+            '{title: Preview Song}\n[Intro]\ne|--0---\nA9sus4     x05435\n'
+            'A/G   3x222x or x-10-x-9-10-9\nCapo: 2\n[C]First words\n'
+            '{start_of_verse:1}\n[G]Second words\n[Chorus]\n'
+            '[D]Third words\n[E]Fourth words',
+        matchKind: MatchKind.sameSong,
+      );
+      ui.dispose();
+      app.dispose();
+      app = AppController(
+        repository: repository,
+        discovery: SourceDiscoveryService([]),
+      );
+      await app.initialize();
+      ui = AppControllerAdapter(app);
+      ui.setQuery('preview song');
+      await ui.submitSearch();
+      app.suggestions = [selected];
+      await ui.selectReference(
+        const SearchReferenceData(
+          id: 'catalog:preview-song',
+          title: 'Preview Song',
+          artist: 'Test Artist',
+        ),
+      );
+      app.results = [source];
+      app.combined = combineSources(selected, app.results);
+      app.notifyListeners();
+
+      final version = ui.state.comparison!.alternatives.single;
+      expect(version.bodyLines.length, 12);
+      expect(version.bodyLines[1].section, 'Intro');
+      expect(version.bodyLines[6].chords.single.graphemeOffset, 0);
+      expect(version.bodyPreview.map((line) => line.text), [
+        'First words',
+        'Second words',
+        'Third words',
+      ]);
+      expect(version.bodyLines.last.text, 'Fourth words');
+      final combined = ui.state.comparison!.suggested!;
+      expect(
+        {
+          for (final item in combined.contributions)
+            item.providerName: item.roles,
+        },
+        {
+          'lyrics': ['lyrics', 'chords'],
+          'catalog': ['metadata'],
+        },
+      );
+    },
+  );
+
+  test(
+    'malformed chord-shape tokens stay visible without unbounded matching',
+    () async {
+      final malformed = [
+        'A${'m' * 2000} xxxxx!',
+        'A${'1' * 2000} xxxxx!',
+        'A${'m' * 24} xxxxx!',
+        'A${'1' * 24} xxxxx!',
+        'e|${' ' * 2000}!',
+        '123456789',
+      ];
+      await app.saveSong(_song(body: malformed.join('\n')));
+      await ui.openSong('song');
+      expect(ui.state.songLines.map((line) => line.text), malformed);
+      expect(
+        ui.state.songLines.every((line) => !line.isArrangementNote),
+        isTrue,
+      );
+    },
+  );
+
+  test(
+    'stream updates keep first arrival order and rejected explicit choice selected',
+    () async {
+      const selected = SongCandidate(
+        providerId: 'catalog',
+        id: 'ordered-song',
+        title: 'Ordered Song',
+        artist: 'Test Artist',
+      );
+      const first = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'first',
+          id: 'ordered-song',
+          title: 'Ordered Song',
+          artist: 'Test Artist',
+        ),
+        body: 'First provider lyrics that are long enough',
+        matchKind: MatchKind.sameSong,
+      );
+      const second = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'second',
+          id: 'ordered-song',
+          title: 'Ordered Song',
+          artist: 'Test Artist',
+        ),
+        body: '[C]Second provider lyrics that are long enough',
+        matchKind: MatchKind.sameSong,
+      );
+      const rejected = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'second',
+          id: 'ordered-song',
+          title: 'Ordered Song',
+          artist: 'Test Artist',
+        ),
+        body: '[G]Rejected provider lyrics that are long enough',
+        matchKind: MatchKind.rejected,
+      );
+      ui.dispose();
+      app.dispose();
+      app = AppController(
+        repository: repository,
+        discovery: SourceDiscoveryService([]),
+      );
+      await app.initialize();
+      ui = AppControllerAdapter(app);
+      ui.setQuery('ordered song');
+      await ui.submitSearch();
+      app.suggestions = [selected];
+      await ui.selectReference(
+        const SearchReferenceData(
+          id: 'catalog:ordered-song',
+          title: 'Ordered Song',
+          artist: 'Test Artist',
+        ),
+      );
+      app.results = [first, second];
+      app.discovering = true;
+      app.combined = combineSources(selected, [first]);
+      app.notifyListeners();
+      ui.selectVersion(second.id);
+
+      expect(ui.state.comparison!.alternatives.map((item) => item.id), [
+        first.id,
+        second.id,
+      ]);
+      expect(ui.state.comparison!.selectedVersionId, second.id);
+      expect(ui.state.comparison!.alternatives.last.isChecking, isTrue);
+
+      // Provider progress replaces its result and appends it to the controller
+      // list. The adapter retains its first-seen position across that update.
+      app.results = [first, second.copyWith(timingTracks: const [])];
+      app.results = [app.results.last, app.results.first];
+      app.notifyListeners();
+      expect(ui.state.comparison!.alternatives.map((item) => item.id), [
+        first.id,
+        second.id,
+      ]);
+
+      app.results = [first, rejected];
+      app.discovering = false;
+      app.combined = combineSources(selected, [first]);
+      app.notifyListeners();
+
+      expect(ui.state.comparison!.alternatives.map((item) => item.id), [
+        first.id,
+        rejected.id,
+      ]);
+      expect(ui.state.comparison!.selectedVersionId, second.id);
+      expect(ui.state.comparison!.selected!.id, second.id);
+      expect(ui.state.comparison!.selected!.isUsableVersion, isFalse);
+      expect(ui.state.comparison!.selected!.canSave, isFalse);
+      await ui.saveSelectedVersion();
+      expect(
+        app.songs,
+        isEmpty,
+        reason: 'an invalid explicit choice cannot fall back',
+      );
+    },
+  );
+
+  test(
     'explicit version choice survives asynchronous discovery completion',
     () async {
       ui.dispose();
@@ -837,6 +1030,64 @@ void main() {
       await selecting;
 
       expect(ui.state.comparison?.selectedVersionId, 'catalog:sample-song');
+    },
+  );
+
+  test(
+    'an explicit rejected choice survives the discovery completion callback',
+    () async {
+      ui.dispose();
+      app.dispose();
+      const candidate = SongCandidate(
+        providerId: 'first',
+        id: 'stream',
+        title: 'Stream Song',
+        artist: 'Test Artist',
+      );
+      const source = SourceResult(
+        candidate: candidate,
+        body: '[C]The first available arrangement',
+        matchKind: MatchKind.sameSong,
+      );
+      final discovery = _StreamingDiscovery(candidate, source);
+      app = AppController(repository: repository, discovery: discovery);
+      await app.initialize();
+      ui = AppControllerAdapter(app);
+      ui.setQuery('stream song');
+      await ui.submitSearch();
+      final selecting = ui.selectReference(
+        const SearchReferenceData(
+          id: 'first:stream',
+          title: 'Stream Song',
+          artist: 'Test Artist',
+        ),
+      );
+      await discovery.started.future;
+      ui.selectVersion(source.id);
+      expect(ui.state.comparison?.selectedVersionId, source.id);
+      const alternative = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'other',
+          id: 'stream',
+          title: 'Stream Song',
+          artist: 'Test Artist',
+        ),
+        body: 'The complete matching song arrangement',
+        matchKind: MatchKind.sameSong,
+      );
+      discovery.finished.complete([
+        const SourceResult(
+          candidate: candidate,
+          body: '[C]The first available arrangement',
+          matchKind: MatchKind.rejected,
+        ),
+        alternative,
+      ]);
+      await selecting;
+      expect(ui.state.comparison?.selectedVersionId, source.id);
+      expect(ui.state.comparison?.selected?.canSave, isFalse);
+      await ui.saveSelectedVersion();
+      expect(app.songs, isEmpty);
     },
   );
 
@@ -958,6 +1209,38 @@ TimingTrack _track({JsonMap extra = const {}}) => TimingTrack(
   ],
   extra: extra,
 );
+
+class _StreamingDiscovery extends SourceDiscoveryService {
+  _StreamingDiscovery(this.candidate, this.source) : super([]);
+  final SongCandidate candidate;
+  final SourceResult source;
+  final started = Completer<void>();
+  final finished = Completer<List<SourceResult>>();
+  @override
+  Future<List<SongCandidate>> search(
+    String query, {
+    String? providerId,
+    CancellationToken? cancel,
+  }) async => [candidate];
+  @override
+  Future<List<SourceResult>> discover(
+    SongCandidate selection, {
+    Set<String>? enabledIds,
+    void Function(ProviderCheck)? onProgress,
+    CancellationToken? cancel,
+    Duration alternativeTimeout = const Duration(seconds: 30),
+  }) async {
+    onProgress?.call(
+      ProviderCheck(
+        providerId: candidate.providerId,
+        state: 'found',
+        result: source,
+      ),
+    );
+    started.complete();
+    return finished.future;
+  }
+}
 
 class _StatusProvider implements LyricsProvider {
   const _StatusProvider({

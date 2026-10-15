@@ -218,6 +218,29 @@ class AppLocalizationsSv extends AppLocalizations {
   String get searchChooseVersion => 'Välj den här versionen';
 
   @override
+  String get searchFullPreview => 'Fullständig förhandsvisning';
+
+  @override
+  String get searchArrangementNotes => 'Arrangemangsanteckningar';
+
+  @override
+  String get searchOpenLyrics => 'Öppna låttexten';
+
+  @override
+  String get searchContributions => 'Använda källor';
+
+  @override
+  String get searchVersionChecking => 'Kontrollerar den här versionen…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Den här versionen kan inte användas. Välj en annan version.';
+
+  @override
+  String get searchPreviewUnavailable =>
+      'Förhandsvisning av låttexten är inte tillgänglig.';
+
+  @override
   String get searchSongMatch => 'Låtträff';
 
   @override
