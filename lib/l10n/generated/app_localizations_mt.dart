@@ -126,6 +126,12 @@ class AppLocalizationsMt extends AppLocalizations {
   String get searchCatalogHint => 'Fittex kanzunetta jew artist';
 
   @override
+  String get searchChangeSong => 'Ibdel il-kanzunetta';
+
+  @override
+  String get searchSelectedPreview => 'Previżjoni magħżula';
+
+  @override
   String get searchSubmit => 'Fittex';
 
   @override
@@ -275,8 +281,17 @@ class AppLocalizationsMt extends AppLocalizations {
   String get searchLanguage => 'Lingwa';
 
   @override
+  String get searchViewVersions => 'Ara verżjonijiet';
+
+  @override
   String get searchSaved =>
       'Il-kanzunetta ġiet issejvjata fil-librerija tiegħek.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Issejvja u iftaħ il-lirika';
+
+  @override
+  String get searchOtherResults => 'Riżultati oħra';
 
   @override
   String get searchSaveFailed =>
@@ -550,6 +565,9 @@ class AppLocalizationsMt extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Issejvjat';
+
+  @override
   String get readerEdit => 'Editja l-lirika u d-dettalji';
 
   @override
@@ -581,7 +599,21 @@ class AppLocalizationsMt extends AppLocalizations {
   String get playerTimedLyrics => 'Lirika b’ħin';
 
   @override
+  String get playerStartScroll => 'Ibda skrolljar awtomatiku';
+
+  @override
   String get playerEstimatedPace => 'Ritmu stmat';
+
+  @override
+  String get playerScrollSpeed => 'Veloċità tal-iskrolljar';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Tul stmat: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Skrolljar tal-lirika · mingħajr awdjo';
 
   @override
   String get playerManualScroll => 'Skrolljar manwali';

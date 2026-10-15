@@ -126,6 +126,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get searchCatalogHint => 'Pesquise uma música ou um artista';
 
   @override
+  String get searchChangeSong => 'Alterar música';
+
+  @override
+  String get searchSelectedPreview => 'Pré-visualização selecionada';
+
+  @override
   String get searchSubmit => 'Pesquisar';
 
   @override
@@ -275,7 +281,16 @@ class AppLocalizationsPt extends AppLocalizations {
   String get searchLanguage => 'Idioma';
 
   @override
+  String get searchViewVersions => 'Ver versões';
+
+  @override
   String get searchSaved => 'Música salva na sua biblioteca.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Guardar e abrir a letra';
+
+  @override
+  String get searchOtherResults => 'Outros resultados';
 
   @override
   String get searchSaveFailed => 'Não foi possível salvar esta música.';
@@ -546,6 +561,9 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Guardado';
+
+  @override
   String get readerEdit => 'Editar letras e detalhes';
 
   @override
@@ -577,7 +595,21 @@ class AppLocalizationsPt extends AppLocalizations {
   String get playerTimedLyrics => 'Letras sincronizadas';
 
   @override
+  String get playerStartScroll => 'Iniciar deslocamento automático';
+
+  @override
   String get playerEstimatedPace => 'Ritmo estimado';
+
+  @override
+  String get playerScrollSpeed => 'Velocidade de deslocamento';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Duração estimada: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Deslocamento da letra · sem áudio';
 
   @override
   String get playerManualScroll => 'Rolagem manual';

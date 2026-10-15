@@ -125,6 +125,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get searchCatalogHint => '曲名またはアーティストを検索';
 
   @override
+  String get searchChangeSong => '曲を変更';
+
+  @override
+  String get searchSelectedPreview => '選択したプレビュー';
+
+  @override
   String get searchSubmit => '検索';
 
   @override
@@ -271,7 +277,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get searchLanguage => '言語';
 
   @override
+  String get searchViewVersions => 'バージョンを見る';
+
+  @override
   String get searchSaved => '曲をライブラリに保存しました。';
+
+  @override
+  String get searchSaveOpenLyrics => '歌詞を保存して開く';
+
+  @override
+  String get searchOtherResults => 'その他の結果';
 
   @override
   String get searchSaveFailed => '曲を保存できませんでした。';
@@ -537,6 +552,9 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => '保存済み';
+
+  @override
   String get readerEdit => '歌詞と詳細を編集';
 
   @override
@@ -568,7 +586,21 @@ class AppLocalizationsJa extends AppLocalizations {
   String get playerTimedLyrics => 'タイミング付き歌詞';
 
   @override
+  String get playerStartScroll => '自動スクロールを開始';
+
+  @override
   String get playerEstimatedPace => '推定速度';
+
+  @override
+  String get playerScrollSpeed => 'スクロール速度';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return '推定時間：$time';
+  }
+
+  @override
+  String get playerLyricsOnly => '歌詞スクロール・音声なし';
 
   @override
   String get playerManualScroll => '手動スクロール';

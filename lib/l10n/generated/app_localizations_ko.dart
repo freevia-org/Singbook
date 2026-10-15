@@ -125,6 +125,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get searchCatalogHint => '노래 또는 아티스트 검색';
 
   @override
+  String get searchChangeSong => '곡 변경';
+
+  @override
+  String get searchSelectedPreview => '선택한 미리보기';
+
+  @override
   String get searchSubmit => '검색';
 
   @override
@@ -271,7 +277,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get searchLanguage => '언어';
 
   @override
+  String get searchViewVersions => '버전 보기';
+
+  @override
   String get searchSaved => '노래를 라이브러리에 저장했습니다.';
+
+  @override
+  String get searchSaveOpenLyrics => '가사 저장 후 열기';
+
+  @override
+  String get searchOtherResults => '기타 결과';
 
   @override
   String get searchSaveFailed => '노래를 저장할 수 없습니다.';
@@ -538,6 +553,9 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => '저장됨';
+
+  @override
   String get readerEdit => '가사 및 세부정보 수정';
 
   @override
@@ -569,7 +587,21 @@ class AppLocalizationsKo extends AppLocalizations {
   String get playerTimedLyrics => '타이밍이 적용된 가사';
 
   @override
+  String get playerStartScroll => '자동 스크롤 시작';
+
+  @override
   String get playerEstimatedPace => '예상 속도';
+
+  @override
+  String get playerScrollSpeed => '스크롤 속도';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return '예상 시간: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => '가사 스크롤 · 오디오 없음';
 
   @override
   String get playerManualScroll => '수동 스크롤';

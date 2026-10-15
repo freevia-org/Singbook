@@ -381,14 +381,26 @@ abstract class AppLocalizations {
   /// No description provided for @searchHint.
   ///
   /// In en, this message translates to:
-  /// **'Search songs, artists, or lyrics'**
+  /// **'Song, artist or lyrics'**
   String get searchHint;
 
   /// No description provided for @searchCatalogHint.
   ///
   /// In en, this message translates to:
-  /// **'Search for a song or artist'**
+  /// **'Song or artist'**
   String get searchCatalogHint;
+
+  /// No description provided for @searchChangeSong.
+  ///
+  /// In en, this message translates to:
+  /// **'Change song'**
+  String get searchChangeSong;
+
+  /// No description provided for @searchSelectedPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected preview'**
+  String get searchSelectedPreview;
 
   /// No description provided for @searchSubmit.
   ///
@@ -660,11 +672,29 @@ abstract class AppLocalizations {
   /// **'Language'**
   String get searchLanguage;
 
+  /// No description provided for @searchViewVersions.
+  ///
+  /// In en, this message translates to:
+  /// **'View versions'**
+  String get searchViewVersions;
+
   /// No description provided for @searchSaved.
   ///
   /// In en, this message translates to:
   /// **'Song saved to your library.'**
   String get searchSaved;
+
+  /// No description provided for @searchSaveOpenLyrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Save & open lyrics'**
+  String get searchSaveOpenLyrics;
+
+  /// No description provided for @searchOtherResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Other results'**
+  String get searchOtherResults;
 
   /// No description provided for @searchSaveFailed.
   ///
@@ -1080,6 +1110,12 @@ abstract class AppLocalizations {
   /// **'Transpose by {count, plural, =0{0 semitones} =1{1 semitone} other{{count} semitones}}'**
   String readerTransposeSemitones(int count);
 
+  /// No description provided for @readerSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get readerSaved;
+
   /// No description provided for @readerEdit.
   ///
   /// In en, this message translates to:
@@ -1134,11 +1170,35 @@ abstract class AppLocalizations {
   /// **'Timed lyrics'**
   String get playerTimedLyrics;
 
+  /// No description provided for @playerStartScroll.
+  ///
+  /// In en, this message translates to:
+  /// **'Start auto-scroll'**
+  String get playerStartScroll;
+
   /// No description provided for @playerEstimatedPace.
   ///
   /// In en, this message translates to:
   /// **'Estimated pace'**
   String get playerEstimatedPace;
+
+  /// No description provided for @playerScrollSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Scroll speed'**
+  String get playerScrollSpeed;
+
+  /// No description provided for @playerEstimatedDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated {time}'**
+  String playerEstimatedDuration(String time);
+
+  /// No description provided for @playerLyricsOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Lyric scrolling · no audio'**
+  String get playerLyricsOnly;
 
   /// No description provided for @playerManualScroll.
   ///

@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/data/library_repository.dart';
+import 'package:singbook/domain/combine.dart';
 import 'package:singbook/domain/models.dart';
 import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/providers/provider.dart';
@@ -60,6 +63,274 @@ void main() {
     },
   );
 
+  test('explicit version duration survives save and reader reopen', () async {
+    const selected = SongCandidate(
+      providerId: 'genius',
+      id: 'amazing-grace',
+      title: 'Amazing Grace',
+      artist: 'Judy Collins',
+      durationSeconds: 90,
+    );
+    const source = SourceResult(
+      candidate: SongCandidate(
+        providerId: 'lrclib',
+        id: 'amazing-grace-recording',
+        title: 'Amazing Grace',
+        artist: 'Judy Collins',
+      ),
+      body: 'Amazing grace, how sweet the sound',
+      metadata: {'durationSeconds': 247},
+      matchKind: MatchKind.sameSong,
+    );
+    app.selection = selected;
+    app.results = [source];
+    app.combined = combineSources(selected, app.results);
+    ui.selectVersion(source.id);
+
+    await ui.saveSelectedVersion();
+    final saved = app.songs.single;
+
+    expect(saved.metadata['durationSeconds'], 247);
+    expect(ui.state.song?.id, saved.id);
+    expect(ui.state.readerDurationEstimated, isFalse);
+    expect(ui.state.readerSource, isNotNull);
+    await ui.back();
+    await ui.openSong(saved.id);
+    expect(ui.state.song?.durationSeconds, 247);
+  });
+
+  test(
+    'resaving a source repairs stale duration without replacing user edits',
+    () async {
+      const selected = SongCandidate(
+        providerId: 'genius',
+        id: 'amazing-grace',
+        title: 'Amazing Grace',
+        artist: 'Judy Collins',
+        durationSeconds: 90,
+      );
+      const source = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'lrclib',
+          id: 'amazing-grace-recording',
+          title: 'Amazing Grace',
+          artist: 'Judy Collins',
+        ),
+        body: 'Amazing grace, how sweet the sound',
+        metadata: {'durationSeconds': 247},
+        matchKind: MatchKind.sameSong,
+      );
+      final previous = combineSources(selected, [source]).copyWith(
+        id: 'existing-song',
+        body: '[D]My edited lyric stays here',
+        metadata: {'durationSeconds': 90, 'key': 'D'},
+        extra: {
+          ...combineSources(selected, [source]).extra,
+          'savedSourceId': source.id,
+          'fieldOrigins': {'durationSeconds': selected.identity, 'key': 'user'},
+        },
+      );
+      await app.saveSong(previous);
+      app.selection = selected;
+      app.results = [source];
+      app.combined = combineSources(selected, [source]);
+      ui.selectVersion(source.id);
+
+      await ui.saveSelectedVersion();
+
+      final repaired = app.findSong('existing-song')!;
+      expect(app.songs, hasLength(1));
+      expect(repaired.metadata['durationSeconds'], 247);
+      expect(repaired.metadata['key'], 'D');
+      expect(repaired.body, '[D]My edited lyric stays here');
+      expect(repaired.extra['fieldOrigins']['durationSeconds'], source.id);
+    },
+  );
+
+  test(
+    'resave uses candidate metadata as duration provenance fallback',
+    () async {
+      const selected = SongCandidate(
+        providerId: 'genius',
+        id: 'amazing-grace',
+        title: 'Amazing Grace',
+        artist: 'Judy Collins',
+        durationSeconds: 90,
+      );
+      const previousSource = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'lrclib',
+          id: 'amazing-grace-recording',
+          title: 'Amazing Grace',
+          artist: 'Judy Collins',
+          metadata: {'durationSeconds': 90},
+        ),
+        body: 'Amazing grace, how sweet the sound',
+        matchKind: MatchKind.sameSong,
+      );
+      final previousCombined = combineSources(selected, [
+        previousSource,
+      ], preferredSourceId: previousSource.id);
+      await app.saveSong(
+        previousCombined.copyWith(
+          extra: {
+            ...previousCombined.extra,
+            'savedSourceId': previousSource.id,
+          },
+        ),
+      );
+
+      const updatedSource = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'lrclib',
+          id: 'amazing-grace-recording',
+          title: 'Amazing Grace',
+          artist: 'Judy Collins',
+          metadata: {'durationSeconds': 247},
+        ),
+        body: 'Amazing grace, how sweet the sound',
+        matchKind: MatchKind.sameSong,
+      );
+      app.selection = selected;
+      app.results = [updatedSource];
+      app.combined = combineSources(selected, [updatedSource]);
+      ui.selectVersion(updatedSource.id);
+
+      await ui.saveSelectedVersion();
+
+      expect(app.songs, hasLength(1));
+      expect(app.songs.single.metadata['durationSeconds'], 247);
+      expect(
+        app.songs.single.extra['fieldOrigins']['durationSeconds'],
+        updatedSource.id,
+      );
+    },
+  );
+
+  test('resaving a source preserves a user-edited duration', () async {
+    const selected = SongCandidate(
+      providerId: 'genius',
+      id: 'amazing-grace',
+      title: 'Amazing Grace',
+      artist: 'Judy Collins',
+      durationSeconds: 90,
+    );
+    const source = SourceResult(
+      candidate: SongCandidate(
+        providerId: 'lrclib',
+        id: 'amazing-grace-recording',
+        title: 'Amazing Grace',
+        artist: 'Judy Collins',
+      ),
+      body: 'Amazing grace, how sweet the sound',
+      metadata: {'durationSeconds': 247},
+      matchKind: MatchKind.sameSong,
+    );
+    final combined = combineSources(selected, [source]);
+    final edited = combined.copyWith(
+      id: 'edited-song',
+      metadata: {'durationSeconds': 111},
+      extra: {
+        ...combined.extra,
+        'savedSourceId': source.id,
+        'fieldOrigins': {'durationSeconds': 'user'},
+      },
+    );
+    await app.saveSong(edited);
+    app.selection = selected;
+    app.results = [source];
+    app.combined = combined;
+    ui.selectVersion(source.id);
+
+    await ui.saveSelectedVersion();
+
+    expect(app.songs, hasLength(1));
+    expect(app.findSong('edited-song')!.metadata['durationSeconds'], 111);
+  });
+
+  test(
+    'repository ignores invalid imported durations on source re-save',
+    () async {
+      const selected = SongCandidate(
+        providerId: 'genius',
+        id: 'amazing-grace',
+        title: 'Amazing Grace',
+        artist: 'Judy Collins',
+        durationSeconds: 90,
+      );
+      const goodSource = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'lrclib',
+          id: 'amazing-grace-recording',
+          title: 'Amazing Grace',
+          artist: 'Judy Collins',
+        ),
+        body: 'Amazing grace, how sweet the sound',
+        metadata: {'durationSeconds': 247},
+        matchKind: MatchKind.sameSong,
+      );
+      final saved = await repository.saveImportedSong(
+        combineSources(selected, [
+          goodSource,
+        ], preferredSourceId: goodSource.id).copyWith(
+          extra: {
+            ...combineSources(selected, [
+              goodSource,
+            ], preferredSourceId: goodSource.id).extra,
+            'savedSourceId': goodSource.id,
+          },
+        ),
+      );
+
+      for (final invalid in <double>[
+        0,
+        -1,
+        double.infinity,
+        double.nan,
+        86401,
+      ]) {
+        final invalidSource = SourceResult(
+          candidate: SongCandidate(
+            providerId: goodSource.candidate.providerId,
+            id: goodSource.candidate.id,
+            title: goodSource.candidate.title,
+            artist: goodSource.candidate.artist,
+            durationSeconds: invalid,
+          ),
+          body: goodSource.body,
+          metadata: {'durationSeconds': invalid},
+          matchKind: MatchKind.sameSong,
+        );
+        final incoming =
+            combineSources(selected, [
+              invalidSource,
+            ], preferredSourceId: invalidSource.id).copyWith(
+              metadata: {'durationSeconds': invalid},
+              extra: {
+                ...combineSources(selected, [
+                  invalidSource,
+                ], preferredSourceId: invalidSource.id).extra,
+                'savedSourceId': invalidSource.id,
+                'fieldOrigins': {'durationSeconds': invalidSource.id},
+              },
+            );
+
+        final merged = await repository.saveImportedSong(
+          incoming,
+          existingId: saved.id,
+        );
+
+        expect(merged.id, saved.id);
+        expect(merged.metadata['durationSeconds'], 247, reason: '$invalid');
+        expect(merged.sources.single.candidate.durationSeconds, isNull);
+        expect(
+          merged.sources.single.metadata,
+          isNot(contains('durationSeconds')),
+        );
+      }
+    },
+  );
+
   test('editing a query clears stale search errors immediately', () async {
     app.query = 'signal';
     app.errorCode = 'search_failed';
@@ -100,6 +371,199 @@ void main() {
       'catalog:two',
     ]);
   });
+
+  test(
+    'filtering a selected source saves the source currently shown as selected',
+    () async {
+      ui.dispose();
+      app.dispose();
+      const selected = SongCandidate(
+        providerId: 'plain',
+        id: 'sample-song',
+        title: 'Sample Song',
+        artist: 'Test Artist',
+      );
+      app = AppController(
+        repository: repository,
+        discovery: SourceDiscoveryService([
+          _StatusProvider(
+            id: 'plain',
+            capabilities: const {'lyrics'},
+            selected: selected,
+            body: 'A plain lyric line\nAnother plain line',
+          ),
+          _StatusProvider(
+            id: 'chords',
+            capabilities: const {'lyrics'},
+            selected: selected,
+            body: '[C]A chord lyric line\n[G]Another chord line',
+          ),
+        ]),
+      );
+      await app.initialize();
+      app.settings['catalog'] = 'plain';
+      ui = AppControllerAdapter(app);
+      ui.setQuery('sample song');
+      await ui.submitSearch();
+      await ui.selectReference(
+        const SearchReferenceData(
+          id: 'plain:sample-song',
+          title: 'Sample Song',
+          artist: 'Test Artist',
+        ),
+      );
+      expect(
+        ui.state.comparison,
+        isNotNull,
+        reason:
+            'selection=${app.selection?.identity}; query=${ui.state.query}; '
+            'suggestions=${app.suggestions.map((item) => item.identity).toList()}; '
+            'results=${app.results.map((item) => item.id).toList()}; '
+            'combined=${app.combined?.extra['selectedSourceId']}',
+      );
+      ui.selectVersion('plain:sample-song');
+
+      ui.setSearchFilter('chordsOnly', true);
+      final displayedSelection = ui.state.comparison!.selected;
+      expect(displayedSelection?.id, 'combined');
+      expect(ui.state.comparison!.selectedVersionId, 'combined');
+
+      await ui.saveSelectedVersion();
+
+      final saved = app.songs.single;
+      expect(
+        saved.extra['selectedSourceId'],
+        app.combined!.extra['selectedSourceId'],
+      );
+      expect(saved.extra['selectedSourceId'], isNot('plain:sample-song'));
+    },
+  );
+
+  test('saving is blocked when filters leave no usable selection', () async {
+    ui.dispose();
+    app.dispose();
+    const selected = SongCandidate(
+      providerId: 'plain',
+      id: 'sample-song',
+      title: 'Sample Song',
+      artist: 'Test Artist',
+    );
+    app = AppController(
+      repository: repository,
+      discovery: SourceDiscoveryService([
+        _StatusProvider(
+          id: 'plain',
+          capabilities: const {'lyrics'},
+          selected: selected,
+          body: 'A plain lyric line\nAnother plain line',
+        ),
+      ]),
+    );
+    await app.initialize();
+    app.settings['catalog'] = 'plain';
+    ui = AppControllerAdapter(app);
+    ui.setQuery('sample song');
+    await ui.submitSearch();
+    await ui.selectReference(
+      const SearchReferenceData(
+        id: 'plain:sample-song',
+        title: 'Sample Song',
+        artist: 'Test Artist',
+      ),
+    );
+    ui.setSearchFilter('chordsOnly', true);
+
+    expect(ui.state.comparison!.selected, isNull);
+    await ui.saveSelectedVersion();
+
+    expect(app.songs, isEmpty);
+  });
+
+  test('version duration falls back to valid result metadata', () async {
+    ui.dispose();
+    app.dispose();
+    const selected = SongCandidate(
+      providerId: 'plain',
+      id: 'sample-song',
+      title: 'Sample Song',
+      artist: 'Test Artist',
+      durationSeconds: double.infinity,
+    );
+    app = AppController(
+      repository: repository,
+      discovery: SourceDiscoveryService([
+        _StatusProvider(
+          id: 'plain',
+          capabilities: const {'lyrics'},
+          selected: selected,
+          body: 'A plain lyric line\nAnother plain line',
+          resultMetadata: const {'durationSeconds': 247},
+        ),
+      ]),
+    );
+    await app.initialize();
+    app.settings['catalog'] = 'plain';
+    ui = AppControllerAdapter(app);
+    ui.setQuery('sample song');
+    await ui.submitSearch();
+    await ui.selectReference(
+      const SearchReferenceData(
+        id: 'plain:sample-song',
+        title: 'Sample Song',
+        artist: 'Test Artist',
+      ),
+    );
+
+    expect(ui.state.comparison!.alternatives.single.durationSeconds, 247);
+    expect(ui.state.comparison!.suggested!.durationSeconds, 247);
+  });
+
+  test(
+    'autocomplete ranks song matches and removes release calendar pages',
+    () {
+      ui.setQuery('Amazing Grace Judy Collins');
+      app.query = 'Amazing Grace Judy Collins';
+      app.suggestions = [
+        const SongCandidate(
+          providerId: 'genius',
+          id: 'unrelated',
+          title: 'Some Other Song',
+          artist: 'Another Artist',
+        ),
+        const SongCandidate(
+          providerId: 'genius',
+          id: 'live',
+          title: 'Amazing Grace (Live)',
+          artist: 'Judy Collins',
+        ),
+        const SongCandidate(
+          providerId: 'genius',
+          id: 'calendar',
+          title: 'Singles Release Calendar',
+          artist: 'Genius',
+        ),
+        const SongCandidate(
+          providerId: 'catalog',
+          id: 'editorial',
+          title: 'A Music Story',
+          artist: 'Editorial Desk',
+          metadata: {'kind': 'editorial'},
+        ),
+        const SongCandidate(
+          providerId: 'genius',
+          id: 'match',
+          title: 'Amazing Grace',
+          artist: 'Judy Collins',
+        ),
+      ];
+
+      expect(ui.state.autocomplete.map((item) => item.id), [
+        'genius:match',
+        'genius:live',
+        'genius:unrelated',
+      ]);
+    },
+  );
 
   test(
     'provider checks preserve found metadata and timing-only matches',
@@ -221,6 +685,160 @@ void main() {
 
     expect(ui.state.currentLineId, 'line-1');
   });
+
+  test(
+    'reader state reports timing availability and estimated duration',
+    () async {
+      await app.saveSong(
+        _song(timingTracks: [_track()], metadata: {'durationSeconds': 0}),
+      );
+      app.settings['timingMode'] = 'timed';
+
+      await ui.openSong('song');
+      expect(ui.state.readerHasTiming, isTrue);
+      expect(ui.state.readerDurationEstimated, isTrue);
+
+      await ui.setTimingMode('estimated');
+      expect(ui.state.readerHasTiming, isFalse);
+    },
+  );
+
+  test('playback speed accepts supported session values', () async {
+    await app.saveSong(_song());
+    await ui.openSong('song');
+
+    await ui.setPlaybackSpeed(1.5);
+    expect(ui.state.playbackSpeed, 1.5);
+    await ui.setPlaybackSpeed(3);
+    expect(ui.state.playbackSpeed, 1.5);
+  });
+
+  test(
+    'reader can reopen its comparison and return to cached search',
+    () async {
+      ui.dispose();
+      app.dispose();
+      const selected = SongCandidate(
+        providerId: 'catalog',
+        id: 'sample-song',
+        title: 'Sample Song',
+        artist: 'Test Artist',
+      );
+      app = AppController(
+        repository: repository,
+        discovery: SourceDiscoveryService([
+          _StatusProvider(
+            id: 'catalog',
+            capabilities: const {'lyrics'},
+            selected: selected,
+            body: 'A complete sample song lyric arrangement',
+          ),
+        ]),
+      );
+      await app.initialize();
+      app.settings['catalog'] = 'catalog';
+      ui = AppControllerAdapter(app);
+      ui.setQuery('sample song');
+      await ui.submitSearch();
+      await ui.selectReference(
+        const SearchReferenceData(
+          id: 'catalog:sample-song',
+          title: 'Sample Song',
+          artist: 'Test Artist',
+        ),
+      );
+      expect(app.results, isNotEmpty);
+      expect(app.combined, isNotNull);
+      await ui.saveSelectedVersion();
+
+      expect(
+        ui.state.readerCanCompareVersions,
+        isTrue,
+        reason:
+            'reference=${ui.state.comparison?.reference.id}; '
+            'recording=${ui.state.song?.id}; '
+            'selection=${app.selection?.identity}; '
+            'songs=${app.songs.length}',
+      );
+      await ui.compareCurrentSongVersions();
+      expect(ui.state.comparison, isNotNull);
+      expect(ui.state.comparison!.suggested!.providerName, 'catalog');
+      expect(
+        ui.state.comparison!.suggested!.underlyingSourceId,
+        'catalog:sample-song',
+      );
+      expect(ui.state.comparison!.suggested!.savedSongId, app.songs.single.id);
+
+      await ui.openSong(app.songs.single.id);
+      ui.changeSearchSong();
+      expect(ui.state.query, 'sample song');
+      expect(ui.state.autocomplete.map((item) => item.id), [
+        'catalog:sample-song',
+      ]);
+    },
+  );
+
+  test(
+    'explicit version choice survives asynchronous discovery completion',
+    () async {
+      ui.dispose();
+      app.dispose();
+      const selected = SongCandidate(
+        providerId: 'catalog',
+        id: 'sample-song',
+        title: 'Sample Song',
+        artist: 'Test Artist',
+      );
+      final releaseSlowProvider = Completer<void>();
+      final firstResult = Completer<void>();
+      app = AppController(
+        repository: repository,
+        discovery: SourceDiscoveryService([
+          _StatusProvider(
+            id: 'catalog',
+            capabilities: const {'lyrics'},
+            selected: selected,
+            body: 'A complete sample song lyric arrangement',
+          ),
+          _StatusProvider(
+            id: 'other',
+            capabilities: const {'lyrics'},
+            selected: selected,
+            body: 'A complete sample song lyric arrangement',
+            waitBeforeResolve: releaseSlowProvider.future,
+          ),
+        ]),
+      );
+      await app.initialize();
+      app.settings['catalog'] = 'catalog';
+      ui = AppControllerAdapter(app);
+      app.addListener(() {
+        if (app.results.isNotEmpty && !firstResult.isCompleted) {
+          firstResult.complete();
+        }
+      });
+      ui.setQuery('sample song');
+      await ui.submitSearch();
+      final selecting = ui.selectReference(
+        const SearchReferenceData(
+          id: 'catalog:sample-song',
+          title: 'Sample Song',
+          artist: 'Test Artist',
+        ),
+      );
+      await firstResult.future.timeout(const Duration(seconds: 2));
+      ui.selectVersion('catalog:sample-song');
+      expect(
+        ui.state.comparison?.selected?.id,
+        'catalog:sample-song',
+        reason: 'explicit selection remains visible while discovery is active',
+      );
+      releaseSlowProvider.complete();
+      await selecting;
+
+      expect(ui.state.comparison?.selectedVersionId, 'catalog:sample-song');
+    },
+  );
 
   test(
     'repeated setlist occurrences advance from the selected entry',
@@ -349,7 +967,9 @@ class _StatusProvider implements LyricsProvider {
     this.body = '',
     this.timingOnly = false,
     this.metadataOnly = false,
+    this.resultMetadata = const {},
     this.failureCode,
+    this.waitBeforeResolve,
   });
 
   final String id;
@@ -357,7 +977,9 @@ class _StatusProvider implements LyricsProvider {
   final SongCandidate selected;
   final String body;
   final bool timingOnly, metadataOnly;
+  final JsonMap resultMetadata;
   final String? failureCode;
+  final Future<void>? waitBeforeResolve;
 
   @override
   ProviderDefinition get definition =>
@@ -383,11 +1005,12 @@ class _StatusProvider implements LyricsProvider {
     SongCandidate candidate, {
     CancellationToken? cancel,
   }) async {
+    await waitBeforeResolve;
     if (failureCode != null) throw ProviderException(failureCode!);
     return SourceResult(
       candidate: _candidate,
       body: body,
-      metadata: metadataOnly ? const {'title': 'Sample Song'} : const {},
+      metadata: {if (metadataOnly) 'title': 'Sample Song', ...resultMetadata},
       timingTracks: timingOnly
           ? const [
               TimingTrack(

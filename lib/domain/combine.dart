@@ -7,6 +7,12 @@ String _norm(String text) => text
     .toLowerCase()
     .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
     .trim();
+double? _validDuration(Object? value) {
+  if (value is! num) return null;
+  final seconds = value.toDouble();
+  return seconds.isFinite && seconds > 0 && seconds <= 86400 ? seconds : null;
+}
+
 String _version(String title) => RegExp(
   r'\b(live|acoustic|remix|instrumental|karaoke|demo)\b',
   caseSensitive: false,
@@ -188,14 +194,33 @@ SongDocument combineSources(
   final metadata = <String, dynamic>{
     ...selected.metadata,
     if (selected.album != null) 'album': selected.album,
-    if (selected.durationSeconds != null)
-      'durationSeconds': selected.durationSeconds,
   };
+  final selectedDuration =
+      _validDuration(selected.durationSeconds) ??
+      _validDuration(selected.metadata['durationSeconds']);
+  if (selectedDuration == null) {
+    metadata.remove('durationSeconds');
+  } else {
+    metadata['durationSeconds'] = selectedDuration;
+  }
   metadata.removeWhere((key, _) => arrangementFields.contains(key));
   final origins = <String, dynamic>{
     for (final k in metadata.keys) k: selected.identity,
   };
   final conflicts = <String, dynamic>{};
+  // An explicit version choice should carry the duration shown on that
+  // version card. Automatic combination keeps the selected catalog record's
+  // metadata as the default, as it has no user-selected source to prefer.
+  if (preferredSourceId != null) {
+    final preferredDuration =
+        _validDuration(best.candidate.durationSeconds) ??
+        _validDuration(best.metadata['durationSeconds']) ??
+        _validDuration(best.candidate.metadata['durationSeconds']);
+    if (preferredDuration != null) {
+      metadata['durationSeconds'] = preferredDuration;
+      origins['durationSeconds'] = best.id;
+    }
+  }
   const songFields = {
     'genre',
     'language',
@@ -208,13 +233,24 @@ SongDocument combineSources(
     'attribution',
   };
   for (final source in [best, ...matching.where((s) => s.id != best.id)]) {
+    final candidateDuration =
+        _validDuration(source.candidate.durationSeconds) ??
+        _validDuration(source.candidate.metadata['durationSeconds']);
     final facts = {
       ...source.candidate.metadata,
       if (source.candidate.album != null) 'album': source.candidate.album,
-      if (source.candidate.durationSeconds != null)
-        'durationSeconds': source.candidate.durationSeconds,
+      'durationSeconds': candidateDuration,
       ...source.metadata,
     };
+    final sourceDuration =
+        _validDuration(source.metadata['durationSeconds']) ??
+        candidateDuration ??
+        _validDuration(facts['durationSeconds']);
+    if (facts.containsKey('durationSeconds') && sourceDuration == null) {
+      facts.remove('durationSeconds');
+    } else if (sourceDuration != null) {
+      facts['durationSeconds'] = sourceDuration;
+    }
     final sameRecording = recordingCompatible(selected, source);
     for (final entry in facts.entries) {
       if (entry.value == null || entry.value == '') continue;

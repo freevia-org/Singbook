@@ -126,6 +126,12 @@ class AppLocalizationsUk extends AppLocalizations {
   String get searchCatalogHint => 'Шукайте пісню або виконавця';
 
   @override
+  String get searchChangeSong => 'Змінити пісню';
+
+  @override
+  String get searchSelectedPreview => 'Вибраний перегляд';
+
+  @override
   String get searchSubmit => 'Шукати';
 
   @override
@@ -276,7 +282,16 @@ class AppLocalizationsUk extends AppLocalizations {
   String get searchLanguage => 'Мова';
 
   @override
+  String get searchViewVersions => 'Переглянути версії';
+
+  @override
   String get searchSaved => 'Пісню збережено у вашій бібліотеці.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Зберегти й відкрити текст';
+
+  @override
+  String get searchOtherResults => 'Інші результати';
 
   @override
   String get searchSaveFailed => 'Не вдалося зберегти пісню.';
@@ -553,6 +568,9 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Збережено';
+
+  @override
   String get readerEdit => 'Редагувати текст і відомості';
 
   @override
@@ -584,7 +602,21 @@ class AppLocalizationsUk extends AppLocalizations {
   String get playerTimedLyrics => 'Текст із таймінгом';
 
   @override
+  String get playerStartScroll => 'Почати автопрокручування';
+
+  @override
   String get playerEstimatedPace => 'Приблизний темп';
+
+  @override
+  String get playerScrollSpeed => 'Швидкість прокручування';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Орієнтовна тривалість: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Прокручування тексту · без аудіо';
 
   @override
   String get playerManualScroll => 'Ручне прокручування';

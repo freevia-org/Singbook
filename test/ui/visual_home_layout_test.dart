@@ -316,13 +316,20 @@ void main() {
       );
       addTearDown(controller.dispose);
       await _pumpHome(tester, controller: controller);
-      final l10n = AppLocalizations.of(tester.element(find.byType(TextField)));
-      expect(find.text('${l10n.searchOnlineTab} (1)'), findsOneWidget);
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(VerseHomeScreen)),
+      );
       expect(
         find.byKey(const ValueKey('home-search-comparison-counts')),
         findsOneWidget,
       );
-      expect(find.text(l10n.searchSongMatchCount(1)), findsOneWidget);
+      expect(find.byType(TextField), findsNothing);
+      expect(find.byKey(const ValueKey('home-mode-scroll')), findsNothing);
+      expect(
+        find.byKey(const ValueKey('version-selection-footer')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const ValueKey('save-open-lyrics')), findsOneWidget);
       expect(find.text(l10n.searchSourceVersionsCount(3)), findsOneWidget);
       final combinedSourcesLabel = l10n.searchCombinedFromSources(5);
       expect(
@@ -331,7 +338,7 @@ void main() {
               widget is Text &&
               widget.data?.contains(combinedSourcesLabel) == true,
         ),
-        findsOneWidget,
+        findsNWidgets(2),
       );
       expect(find.text(l10n.searchAutocompleteLabel), findsNothing);
       expect(tester.takeException(), isNull);
@@ -508,15 +515,28 @@ void main() {
       ),
     );
     addTearDown(controller.dispose);
-    await _pumpHome(tester, controller: controller);
-    var l10n = AppLocalizations.of(tester.element(find.byType(TextField)));
+    await _pumpHome(tester, controller: controller, settle: false);
+    var l10n = AppLocalizations.of(
+      tester.element(find.byType(VerseHomeScreen)),
+    );
     expect(find.byKey(const ValueKey('discovery-progress')), findsOneWidget);
     expect(find.text(l10n.searchDiscoveryProgress(1, 2)), findsOneWidget);
     expect(
-      find.byKey(const ValueKey('discovery-provider-checks')),
+      find.byKey(const PageStorageKey('discovery-provider-checks')),
       findsOneWidget,
     );
-
+    expect(
+      find.byKey(const ValueKey('discovery-provider-catalog')),
+      findsNothing,
+    );
+    await tester.tap(
+      find.byKey(const PageStorageKey('discovery-provider-checks')),
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(
+      find.byKey(const ValueKey('discovery-provider-catalog')),
+      findsOneWidget,
+    );
     controller._state = const VerseUiState(
       homeListMode: HomeListMode.online,
       query: 'signal',
@@ -536,7 +556,7 @@ void main() {
     );
     controller.notifyListeners();
     await tester.pumpAndSettle();
-    l10n = AppLocalizations.of(tester.element(find.byType(TextField)));
+    l10n = AppLocalizations.of(tester.element(find.byType(VerseHomeScreen)));
     expect(find.byKey(const ValueKey('discovery-no-lyrics')), findsOneWidget);
     expect(find.text(l10n.searchDiscoveryNoLyricsDetails), findsOneWidget);
     expect(find.text(l10n.searchSourcesUnavailableCount(1)), findsOneWidget);
@@ -763,7 +783,7 @@ void main() {
       expect(queryScroll.offset, greaterThan(0));
 
       final l10n = AppLocalizations.of(tester.element(find.byType(TextField)));
-      await tester.tap(find.byTooltip(l10n.searchSubmit));
+      await tester.tap(find.text(l10n.searchSubmit));
       await tester.pumpAndSettle();
       editable = tester.widget<EditableText>(find.byType(EditableText));
       expect(editable.controller.text, query);
@@ -860,6 +880,7 @@ Future<void> _pumpHome(
   double scale = 1,
   String fontFamily = 'sans-serif',
   _VisualHomeController? controller,
+  bool settle = true,
 }) async {
   final homeController = controller ?? _VisualHomeController();
   await tester.pumpWidget(
@@ -881,6 +902,13 @@ Future<void> _pumpHome(
       home: AnimatedBuilder(
         animation: homeController,
         builder: (context, _) => Scaffold(
+          appBar: homeController.state.comparison == null
+              ? null
+              : AppBar(
+                  toolbarHeight: 48,
+                  leading: const BackButton(),
+                  title: const Text('Compare'),
+                ),
           body: VerseHomeScreen(
             controller: homeController,
             state: homeController.state,
@@ -889,7 +917,11 @@ Future<void> _pumpHome(
       ),
     ),
   );
-  await tester.pumpAndSettle();
+  if (settle) {
+    await tester.pumpAndSettle();
+  } else {
+    await tester.pump(const Duration(milliseconds: 300));
+  }
 }
 
 class _VisualHomeController extends VerseUiController {
@@ -899,6 +931,7 @@ class _VisualHomeController extends VerseUiController {
   bool searchSubmitted = false;
   bool retryRequested = false;
   String? selectedReferenceId;
+  String? selectedVersionId;
 
   @override
   VerseUiState get state => _state;
@@ -927,6 +960,27 @@ class _VisualHomeController extends VerseUiController {
   @override
   Future<void> retrySelectedSongDiscovery() async {
     retryRequested = true;
+  }
+
+  @override
+  void selectVersion(String versionId) {
+    selectedVersionId = versionId;
+    final comparison = _state.comparison;
+    if (comparison == null) return;
+    _state = VerseUiState(
+      homeListMode: _state.homeListMode,
+      query: _state.query,
+      searchState: _state.searchState,
+      comparison: SearchComparisonData(
+        reference: comparison.reference,
+        suggested: comparison.suggested,
+        alternatives: comparison.alternatives,
+        selectedVersionId: versionId,
+        discovering: comparison.discovering,
+        providerChecks: comparison.providerChecks,
+      ),
+    );
+    notifyListeners();
   }
 
   @override

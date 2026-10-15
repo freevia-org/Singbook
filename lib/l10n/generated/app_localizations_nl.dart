@@ -126,6 +126,12 @@ class AppLocalizationsNl extends AppLocalizations {
   String get searchCatalogHint => 'Zoek een nummer of artiest';
 
   @override
+  String get searchChangeSong => 'Nummer wijzigen';
+
+  @override
+  String get searchSelectedPreview => 'Geselecteerd voorbeeld';
+
+  @override
   String get searchSubmit => 'Zoeken';
 
   @override
@@ -275,7 +281,16 @@ class AppLocalizationsNl extends AppLocalizations {
   String get searchLanguage => 'Taal';
 
   @override
+  String get searchViewVersions => 'Versies bekijken';
+
+  @override
   String get searchSaved => 'Nummer opgeslagen in je bibliotheek.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Tekst opslaan en openen';
+
+  @override
+  String get searchOtherResults => 'Andere resultaten';
 
   @override
   String get searchSaveFailed => 'Nummer opslaan is niet gelukt.';
@@ -548,6 +563,9 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Opgeslagen';
+
+  @override
   String get readerEdit => 'Songteksten en gegevens bewerken';
 
   @override
@@ -579,7 +597,21 @@ class AppLocalizationsNl extends AppLocalizations {
   String get playerTimedLyrics => 'Gesynchroniseerde songteksten';
 
   @override
+  String get playerStartScroll => 'Automatisch scrollen starten';
+
+  @override
   String get playerEstimatedPace => 'Geschatte snelheid';
+
+  @override
+  String get playerScrollSpeed => 'Scrollsnelheid';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Geschatte duur: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Songtekst scrollen · geen audio';
 
   @override
   String get playerManualScroll => 'Handmatig scrollen';

@@ -9,7 +9,6 @@ import '../application/app_controller.dart';
 import '../application/file_actions.dart';
 import '../l10n/generated/app_localizations.dart';
 import 'app_controller_adapter.dart';
-import 'app_version.dart';
 import 'home/home_screen.dart';
 import 'library/editor_screen.dart';
 import 'library/setlists_screen.dart';
@@ -386,6 +385,10 @@ class _VerseAppShellState extends State<VerseAppShell>
 
   void _showNotice(UiNotice notice) {
     if (!mounted) return;
+    if (notice == UiNotice.songSaved &&
+        widget.controller.state.route == VerseRoute.reader) {
+      return;
+    }
     final messenger = ScaffoldMessenger.maybeOf(context);
     if (messenger == null) return;
     messenger
@@ -397,9 +400,9 @@ class _VerseAppShellState extends State<VerseAppShell>
       );
   }
 
-  /// Goes back, first asking whether unsaved editor changes may be discarded.
   bool _backInFlight = false;
 
+  /// Goes back, first asking whether unsaved editor changes may be discarded.
   Future<void> _requestBack() async {
     if (_backInFlight) return;
     _backInFlight = true;
@@ -412,6 +415,13 @@ class _VerseAppShellState extends State<VerseAppShell>
 
   Future<void> _goBack() async {
     final state = widget.controller.state;
+    if (state.route == VerseRoute.main &&
+        state.activeTab == VerseTab.home &&
+        state.homeListMode == HomeListMode.online &&
+        state.comparison != null) {
+      widget.controller.changeSearchSong();
+      return;
+    }
     if (state.route == VerseRoute.editor && state.editorDirty) {
       FocusManager.instance.primaryFocus?.unfocus();
       await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
@@ -510,8 +520,11 @@ class _VerseAppShellState extends State<VerseAppShell>
     final navigationTextScale = MediaQuery.textScalerOf(context).scale(14) / 14;
     final navigationBarHeight =
         80 + ((navigationTextScale - 1).clamp(0, 2) * 48).toDouble();
-    final showVersion =
-        size.width >= 400 && MediaQuery.textScalerOf(context).scale(1) <= 1.2;
+    final comparisonMode =
+        state.route == VerseRoute.main &&
+        state.activeTab == VerseTab.home &&
+        state.homeListMode == HomeListMode.online &&
+        state.comparison != null;
     // Navigation follows available width so portrait tablets keep the rail.
     // A compact landscape phone gets it too, but only when the four rail
     // destinations (which do not scroll) fit under the app bar.
@@ -520,60 +533,54 @@ class _VerseAppShellState extends State<VerseAppShell>
         (size.width >= 600 || (size.width >= 500 && size.height <= 600)) &&
         size.height >= railHeight;
     return PopScope(
-      canPop: state.route == VerseRoute.main,
+      canPop: state.route == VerseRoute.main && !comparisonMode,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _requestBack();
       },
       child: Scaffold(
         appBar: state.route == VerseRoute.main
             ? AppBar(
-                toolbarHeight: 54,
-                titleSpacing: 20,
-                title: Row(
-                  children: [
-                    const SingbookMark(size: 36, excludeSemantics: true),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Row(
+                toolbarHeight: 48,
+                titleSpacing: 16,
+                leading: comparisonMode
+                    ? BackButton(onPressed: controller.changeSearchSong)
+                    : null,
+                title: comparisonMode
+                    ? Text(l10n.searchCompare)
+                    : Row(
                         children: [
-                          Flexible(
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              alignment: AlignmentDirectional.centerStart,
-                              child: singbookWordmark(
-                                context,
-                                l10n,
-                                key: const ValueKey('appbar-brand-title'),
-                                style: Theme.of(context).textTheme.titleLarge
-                                    ?.copyWith(
-                                      fontFamily: 'SingbookSerif',
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: -.25,
+                          const SingbookMark(size: 36, excludeSemantics: true),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Flexible(
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    alignment: AlignmentDirectional.centerStart,
+                                    child: singbookWordmark(
+                                      context,
+                                      l10n,
+                                      key: const ValueKey('appbar-brand-title'),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge
+                                          ?.copyWith(
+                                            fontFamily: 'SingbookSerif',
+                                            fontWeight: FontWeight.w700,
+                                            letterSpacing: -.25,
+                                          ),
                                     ),
-                              ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          if (showVersion) ...[
-                            const SizedBox(width: 8),
-                            Text(
-                              l10n.appVersion(singbookVersion),
-                              key: const ValueKey('appbar-version'),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.labelSmall
-                                  ?.copyWith(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurfaceVariant,
-                                  ),
-                            ),
-                          ],
                         ],
                       ),
-                    ),
-                  ],
-                ),
-                actions: [_cloudButton(l10n, state), const SizedBox(width: 8)],
+                actions: comparisonMode
+                    ? null
+                    : [_cloudButton(l10n, state), const SizedBox(width: 8)],
               )
             : null,
         body: SafeArea(
@@ -581,7 +588,9 @@ class _VerseAppShellState extends State<VerseAppShell>
           bottom: false,
           child: Row(
             children: [
-              if (state.route == VerseRoute.main && useRail)
+              if (state.route == VerseRoute.main &&
+                  useRail &&
+                  !comparisonMode)
                 NavigationRail(
                   key: const ValueKey('tablet-navigation-rail'),
                   selectedIndex: state.activeTab.index,
@@ -619,7 +628,8 @@ class _VerseAppShellState extends State<VerseAppShell>
             ],
           ),
         ),
-        bottomNavigationBar: state.route == VerseRoute.main && !useRail
+        bottomNavigationBar:
+            state.route == VerseRoute.main && !useRail && !comparisonMode
             ? NavigationBar(
                 height: navigationBarHeight,
                 selectedIndex: state.activeTab.index,

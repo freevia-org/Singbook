@@ -126,6 +126,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get searchCatalogHint => 'Bir şarkı veya sanatçı ara';
 
   @override
+  String get searchChangeSong => 'Şarkıyı değiştir';
+
+  @override
+  String get searchSelectedPreview => 'Seçili önizleme';
+
+  @override
   String get searchSubmit => 'Ara';
 
   @override
@@ -274,7 +280,16 @@ class AppLocalizationsTr extends AppLocalizations {
   String get searchLanguage => 'Dil';
 
   @override
+  String get searchViewVersions => 'Sürümleri gör';
+
+  @override
   String get searchSaved => 'Şarkı kitaplığınıza kaydedildi.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Şarkı sözlerini kaydet ve aç';
+
+  @override
+  String get searchOtherResults => 'Diğer sonuçlar';
 
   @override
   String get searchSaveFailed => 'Bu şarkı kaydedilemedi.';
@@ -545,6 +560,9 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Kaydedildi';
+
+  @override
   String get readerEdit => 'Şarkı sözlerini ve ayrıntıları düzenle';
 
   @override
@@ -576,7 +594,21 @@ class AppLocalizationsTr extends AppLocalizations {
   String get playerTimedLyrics => 'Zamanlanmış şarkı sözleri';
 
   @override
+  String get playerStartScroll => 'Otomatik kaydırmayı başlat';
+
+  @override
   String get playerEstimatedPace => 'Tahmini hız';
+
+  @override
+  String get playerScrollSpeed => 'Kaydırma hızı';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Tahmini süre: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Şarkı sözü kaydırma · ses yok';
 
   @override
   String get playerManualScroll => 'Elle kaydırma';

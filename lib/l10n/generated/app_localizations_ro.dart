@@ -126,6 +126,12 @@ class AppLocalizationsRo extends AppLocalizations {
   String get searchCatalogHint => 'Caută o melodie sau un artist';
 
   @override
+  String get searchChangeSong => 'Schimbă melodia';
+
+  @override
+  String get searchSelectedPreview => 'Previzualizare selectată';
+
+  @override
   String get searchSubmit => 'Caută';
 
   @override
@@ -276,7 +282,16 @@ class AppLocalizationsRo extends AppLocalizations {
   String get searchLanguage => 'Limba';
 
   @override
+  String get searchViewVersions => 'Vezi versiunile';
+
+  @override
   String get searchSaved => 'Melodia a fost salvată în bibliotecă.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Salvează și deschide versurile';
+
+  @override
+  String get searchOtherResults => 'Alte rezultate';
 
   @override
   String get searchSaveFailed => 'Melodia nu a putut fi salvată.';
@@ -552,6 +567,9 @@ class AppLocalizationsRo extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Salvat';
+
+  @override
   String get readerEdit => 'Editează versurile și detaliile';
 
   @override
@@ -583,7 +601,21 @@ class AppLocalizationsRo extends AppLocalizations {
   String get playerTimedLyrics => 'Versuri sincronizate';
 
   @override
+  String get playerStartScroll => 'Pornește derularea automată';
+
+  @override
   String get playerEstimatedPace => 'Ritm estimat';
+
+  @override
+  String get playerScrollSpeed => 'Viteza de derulare';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Durată estimată: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Derularea versurilor · fără sunet';
 
   @override
   String get playerManualScroll => 'Derulare manuală';

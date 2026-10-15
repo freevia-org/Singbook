@@ -126,6 +126,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get searchCatalogHint => 'Cari lagu atau artis';
 
   @override
+  String get searchChangeSong => 'Ganti lagu';
+
+  @override
+  String get searchSelectedPreview => 'Pratinjau terpilih';
+
+  @override
   String get searchSubmit => 'Cari';
 
   @override
@@ -274,7 +280,16 @@ class AppLocalizationsId extends AppLocalizations {
   String get searchLanguage => 'Bahasa';
 
   @override
+  String get searchViewVersions => 'Lihat versi';
+
+  @override
   String get searchSaved => 'Lagu disimpan ke pustaka Anda.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Simpan & buka lirik';
+
+  @override
+  String get searchOtherResults => 'Hasil lainnya';
 
   @override
   String get searchSaveFailed => 'Lagu ini tidak dapat disimpan.';
@@ -548,6 +563,9 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Tersimpan';
+
+  @override
   String get readerEdit => 'Edit lirik dan detail';
 
   @override
@@ -579,7 +597,21 @@ class AppLocalizationsId extends AppLocalizations {
   String get playerTimedLyrics => 'Lirik bertanda waktu';
 
   @override
+  String get playerStartScroll => 'Mulai gulir otomatis';
+
+  @override
   String get playerEstimatedPace => 'Kecepatan perkiraan';
+
+  @override
+  String get playerScrollSpeed => 'Kecepatan gulir';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Perkiraan durasi: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Gulir lirik · tanpa audio';
 
   @override
   String get playerManualScroll => 'Gulir manual';

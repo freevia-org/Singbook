@@ -127,6 +127,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get searchCatalogHint => 'Rechercher une chanson ou un artiste';
 
   @override
+  String get searchChangeSong => 'Changer de chanson';
+
+  @override
+  String get searchSelectedPreview => 'Aperçu sélectionné';
+
+  @override
   String get searchSubmit => 'Rechercher';
 
   @override
@@ -276,7 +282,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get searchLanguage => 'Langue';
 
   @override
+  String get searchViewVersions => 'Voir les versions';
+
+  @override
   String get searchSaved => 'Chanson enregistrée dans votre bibliothèque.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Enregistrer et ouvrir les paroles';
+
+  @override
+  String get searchOtherResults => 'Autres résultats';
 
   @override
   String get searchSaveFailed => 'Impossible d’enregistrer cette chanson.';
@@ -552,6 +567,9 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Enregistré';
+
+  @override
   String get readerEdit => 'Modifier les paroles et les détails';
 
   @override
@@ -583,7 +601,21 @@ class AppLocalizationsFr extends AppLocalizations {
   String get playerTimedLyrics => 'Paroles synchronisées';
 
   @override
+  String get playerStartScroll => 'Démarrer le défilement automatique';
+
+  @override
   String get playerEstimatedPace => 'Vitesse estimée';
+
+  @override
+  String get playerScrollSpeed => 'Vitesse de défilement';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Durée estimée : $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Défilement des paroles · sans audio';
 
   @override
   String get playerManualScroll => 'Défilement manuel';

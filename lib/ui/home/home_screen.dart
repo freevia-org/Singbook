@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import '../../l10n/generated/app_localizations.dart';
 import '../format.dart';
 import '../library_actions.dart';
@@ -313,6 +313,9 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final state = widget.state;
+    if (state.homeListMode == HomeListMode.online && state.comparison != null) {
+      return _comparison(context, l10n, state.comparison!);
+    }
     final groups = _groups(l10n);
     return Stack(
       key: _viewport,
@@ -381,16 +384,6 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
                 suffixIcon: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    IconButton(
-                      tooltip: l10n.searchFilters,
-                      onPressed: widget.controller.toggleSearchFilters,
-                      icon: Icon(
-                        Icons.tune_rounded,
-                        color: state.searchFiltersExpanded
-                            ? Theme.of(context).colorScheme.primary
-                            : null,
-                      ),
-                    ),
                     if (_query.text.isNotEmpty)
                       IconButton(
                         tooltip: l10n.accessibilityClearSearch,
@@ -400,18 +393,37 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
                         },
                         icon: const Icon(Icons.close_rounded),
                       ),
-                    IconButton(
-                      tooltip: l10n.searchSubmit,
-                      onPressed: _submitSearch,
-                      icon: const Icon(Icons.arrow_forward_rounded),
-                    ),
+                    if (MediaQuery.textScalerOf(context).scale(1) <= 1.3)
+                      TextButton(
+                        onPressed: _submitSearch,
+                        child: Text(l10n.searchSubmit),
+                      ),
                   ],
                 ),
               ),
             ),
           ),
+          IconButton(
+            tooltip: l10n.searchFilters,
+            onPressed: widget.controller.toggleSearchFilters,
+            icon: Icon(
+              Icons.tune_rounded,
+              color: state.searchFiltersExpanded
+                  ? Theme.of(context).colorScheme.primary
+                  : null,
+            ),
+          ),
         ],
       ),
+      if (MediaQuery.textScalerOf(context).scale(1) > 1.3)
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: TextButton.icon(
+            onPressed: _submitSearch,
+            icon: const Icon(Icons.search_rounded),
+            label: Text(l10n.searchSubmit),
+          ),
+        ),
       AnimatedCrossFade(
         duration: const Duration(milliseconds: 180),
         crossFadeState: state.searchFiltersExpanded
@@ -599,9 +611,8 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
               child: state.loadingMoreRecent
                   ? const CircularProgressIndicator()
                   : TextButton(
-                      onPressed: () => unawaited(
-                        widget.controller.loadMoreRecent(),
-                      ),
+                      onPressed: () =>
+                          unawaited(widget.controller.loadMoreRecent()),
                       child: Text(l10n.homeAllHistory),
                     ),
             ),
@@ -835,22 +846,51 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
           itemCount: state.autocomplete.length,
           itemBuilder: (context, index) {
             final item = state.autocomplete[index];
-            final song = SongCardData(
-              id: item.id,
-              title: item.title,
-              artist: item.artist,
-              album: item.album,
-              durationSeconds: item.durationSeconds,
-              artworkUrl: item.artworkUrl,
-            );
-            return SongRow(
-              song: song,
-              accessibilityLabel: '${item.title}, ${item.artist}',
-              favoriteAddLabel: l10n.songFavoriteAdd,
-              favoriteRemoveLabel: l10n.songFavoriteRemove,
-              menuLabel: l10n.songMenuLabel,
-              showFavorite: false,
-              onOpen: () => _openReference(item),
+            return ListTile(
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 4,
+                vertical: 4,
+              ),
+              leading: VerseArtwork(url: item.artworkUrl, size: 44),
+              title: Text(
+                item.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.artist,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (item.album?.isNotEmpty == true ||
+                      item.durationSeconds != null)
+                    Text(
+                      [
+                        if (item.album?.isNotEmpty == true) item.album!,
+                        if (item.durationSeconds != null)
+                          formatDuration(item.durationSeconds!),
+                      ].join(' · '),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                ],
+              ),
+              trailing: Tooltip(
+                message: l10n.searchViewVersions,
+                child: Icon(
+                  Directionality.of(context) == TextDirection.rtl
+                      ? Icons.chevron_left_rounded
+                      : Icons.chevron_right_rounded,
+                ),
+              ),
+              onTap: () => _openReference(item),
             );
           },
           separatorBuilder: (_, _) => const Divider(indent: 60),
@@ -860,143 +900,284 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     return out;
   }
 
+  String _sourceName(AppLocalizations l10n, SourceVersionData version) =>
+      version.sourceCount != null && version.sourceCount! > 1
+      ? l10n.searchCombinedFromSources(version.sourceCount!)
+      : version.providerName.isNotEmpty
+      ? version.providerName
+      : l10n.searchSuggested;
+
   Widget _comparison(
     BuildContext context,
     AppLocalizations l10n,
     SearchComparisonData comparison,
   ) {
     final chosen = comparison.selected;
-    final alternatives = comparison.alternatives
-        .where((version) => version.id != chosen?.id)
+    // Selection changes the outline and preview, never the order of the rows.
+    final allVersions = <SourceVersionData>[
+      if (comparison.suggested != null) comparison.suggested!,
+      ...comparison.alternatives.where(
+        (item) => item.id != comparison.suggested?.id,
+      ),
+    ];
+    final suggested = comparison.suggested;
+    bool duplicatesSuggestion(SourceVersionData item) =>
+        suggested?.sourceCount == 1 &&
+        item.id == suggested?.underlyingSourceId &&
+        item.durationSeconds == suggested?.durationSeconds &&
+        item.hasChords == suggested?.hasChords &&
+        item.hasTiming == suggested?.hasTiming;
+    final versions = allVersions
+        .where((item) => !duplicatesSuggestion(item))
         .toList();
-    final visibleVersionIds = {
-      for (final version in [?chosen, ...alternatives])
-        if (version.providerId != 'combined' && version.isUsableVersion)
-          version.id,
-    };
-    final visibleVersionCount = visibleVersionIds.length;
-    final comparisonCounts = Padding(
-      padding: const EdgeInsets.fromLTRB(4, 4, 4, 10),
-      child: Wrap(
-        key: const ValueKey('home-search-comparison-counts'),
-        spacing: 8,
-        runSpacing: 4,
-        children: [
-          Text(
-            l10n.searchSongMatchCount(1),
-            style: Theme.of(context).textTheme.labelLarge,
-          ),
-          Text(
-            l10n.searchSourceVersionsCount(visibleVersionCount),
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
-      ),
-    );
-    final referenceCard = Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                VerseArtwork(url: comparison.reference.artworkUrl),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        comparison.reference.title,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.w700),
-                      ),
-                      Text(
-                        comparison.reference.artist,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            if (comparison.reference.matchReason?.isNotEmpty == true)
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Text(
-                  localizedMatchReason(l10n, comparison.reference.matchReason),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-    final sourceCards = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    final selectedRowId = chosen != null && duplicatesSuggestion(chosen)
+        ? suggested?.id
+        : chosen?.id;
+    final usable = versions
+        .where(
+          (item) =>
+              item.isUsableVersion ||
+              (item.id == comparison.suggested?.id && item.hasLyrics),
+        )
+        .toList();
+    final other = versions.where((item) => !usable.contains(item)).toList();
+    final colors = Theme.of(context).colorScheme;
+    final count = allVersions
+        .where((item) => item.providerId != 'combined' && item.isUsableVersion)
+        .length;
+    final checked = comparison.providerChecks
+        .where((item) => item.state != 'pending')
+        .length;
+    final reference = comparison.reference;
+    final list = ListView(
+      key: const PageStorageKey('version-list'),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       children: [
-        if (chosen != null)
+        Padding(
+          key: const ValueKey('home-search-comparison-counts'),
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          child: Text(
+            l10n.searchSourceVersionsCount(count),
+            style: Theme.of(context).textTheme.labelMedium,
+          ),
+        ),
+        if (usable.isEmpty &&
+            !comparison.discovering &&
+            !comparison.noUsableLyrics &&
+            comparison.discoveryError == null)
+          VerseEmptyState(
+            key: const ValueKey('version-filters-empty'),
+            icon: Icons.filter_alt_off_outlined,
+            title: l10n.emptyFiltered,
+            actionLabel: l10n.actionClear,
+            onAction: () {
+              widget.controller.setSearchFilter('chordsOnly', false);
+              widget.controller.setSearchFilter('timedOnly', false);
+              widget.controller.setSearchFilter('language', '');
+              widget.controller.setSearchFilter('durationBucket', '');
+            },
+          ),
+        for (final version in usable)
           _sourceVersionCard(
             context,
             l10n,
-            chosen,
-            suggested: chosen.id == comparison.suggested?.id,
-            onSave: chosen.canSave
-                ? widget.controller.saveSelectedVersion
-                : null,
+            version,
+            suggested: version.id == comparison.suggested?.id,
+            selected: version.id == selectedRowId,
+            onSelect: () => widget.controller.selectVersion(version.id),
           ),
-        if (alternatives.isNotEmpty)
-          Card(
-            child: ExpansionTile(
-              title: Text(l10n.searchAlternatives),
-              children: alternatives
-                  .map(
-                    (version) => _sourceVersionCard(
-                      context,
-                      l10n,
-                      version,
-                      suggested: false,
-                      onSave: null,
-                      onSelect: () =>
-                          widget.controller.selectVersion(version.id),
-                    ),
-                  )
-                  .toList(),
-            ),
+        if (other.isNotEmpty)
+          ExpansionTile(
+            key: const PageStorageKey('other-version-results'),
+            tilePadding: const EdgeInsets.symmetric(horizontal: 8),
+            title: Text('${l10n.searchOtherResults} (${other.length})'),
+            children: [
+              for (final version in other)
+                _sourceVersionCard(
+                  context,
+                  l10n,
+                  version,
+                  suggested: false,
+                  selected: version.id == chosen?.id,
+                  onSelect: version.isUsableVersion
+                      ? () => widget.controller.selectVersion(version.id)
+                      : null,
+                ),
+            ],
           ),
+        _discoveryStatus(context, l10n, comparison),
       ],
     );
+    final footer = chosen == null
+        ? const SizedBox.shrink()
+        : _versionFooter(context, l10n, chosen, comparison.discovering);
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        comparisonCounts,
-        _discoveryStatus(context, l10n, comparison),
-        LayoutBuilder(
-          builder: (context, constraints) => constraints.maxWidth >= 700
-              ? Row(
-                  key: const ValueKey('tablet-search-split'),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 8, 16, 8),
+          child: Row(
+            children: [
+              VerseArtwork(url: reference.artworkUrl, size: 40),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(flex: 2, child: referenceCard),
-                    const SizedBox(width: 12),
-                    Expanded(flex: 3, child: sourceCards),
+                    Text(
+                      reference.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      [
+                        reference.artist,
+                        if (reference.album?.isNotEmpty == true)
+                          reference.album!,
+                      ].join(' · '),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
                   ],
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [referenceCard, sourceCards],
                 ),
+              ),
+              IconButton(
+                tooltip: l10n.searchFilters,
+                onPressed: widget.controller.toggleSearchFilters,
+                icon: const Icon(Icons.tune_rounded),
+              ),
+            ],
+          ),
+        ),
+        if (widget.state.searchFiltersExpanded)
+          Flexible(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: _searchFilters(context, l10n, widget.state),
+              ),
+            ),
+          ),
+        if (comparison.discovering) ...[
+          const LinearProgressIndicator(
+            key: ValueKey('discovery-progress'),
+            minHeight: 2,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+            child: Text(
+              l10n.searchDiscoveryProgress(
+                checked,
+                comparison.providerChecks.length,
+              ),
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ),
+        ],
+        Expanded(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth >= 700 || constraints.maxHeight < 340) {
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(flex: 6, child: list),
+                    Expanded(
+                      flex: 5,
+                      child: SingleChildScrollView(child: footer),
+                    ),
+                  ],
+                );
+              }
+              return Column(
+                children: [
+                  Expanded(child: list),
+                  footer,
+                ],
+              );
+            },
+          ),
         ),
       ],
+    );
+  }
+
+  Widget _versionFooter(
+    BuildContext context,
+    AppLocalizations l10n,
+    SourceVersionData version,
+    bool discovering,
+  ) {
+    final colors = Theme.of(context).colorScheme;
+    final compact =
+        MediaQuery.sizeOf(context).height < 600 ||
+        MediaQuery.textScalerOf(context).scale(1) > 1.3;
+    final preview = version.bodyPreview
+        .where((line) => line.text.trim().isNotEmpty)
+        .take(compact ? 1 : 3);
+    return SafeArea(
+      top: false,
+      child: Container(
+        key: const ValueKey('version-selection-footer'),
+        width: double.infinity,
+        padding: const EdgeInsets.fromLTRB(20, 10, 20, 12),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          border: Border(top: BorderSide(color: colors.outlineVariant)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              '${l10n.searchSelectedPreview} · ${_sourceName(l10n, version)}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(
+                context,
+              ).textTheme.labelSmall?.copyWith(color: colors.primary),
+            ),
+            const SizedBox(height: 4),
+            for (final line in preview)
+              Text.rich(
+                TextSpan(
+                  children: [
+                    if (line.chords.isNotEmpty)
+                      TextSpan(
+                        text:
+                            '${line.chords.map((chord) => chord.symbol).join('  ')}  ',
+                        style: TextStyle(
+                          color: colors.primary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    TextSpan(text: line.text),
+                  ],
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            const SizedBox(height: 10),
+            FilledButton.icon(
+              key: const ValueKey('save-open-lyrics'),
+              onPressed:
+                  !discovering &&
+                      (version.canSave || version.savedSongId != null)
+                  ? widget.controller.saveSelectedVersion
+                  : null,
+              icon: const Icon(Icons.menu_book_rounded),
+              label: Text(l10n.searchSaveOpenLyrics),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -1005,103 +1186,57 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     AppLocalizations l10n,
     SearchComparisonData comparison,
   ) {
-    final checked = comparison.providerChecks
-        .where((check) => check.state != 'pending')
-        .length;
     final unavailable = comparison.providerChecks
         .where(
           (check) => check.state == 'failed' || check.state == 'unavailable',
         )
         .length;
-    final children = <Widget>[];
-    if (comparison.discovering) {
-      final total = comparison.providerChecks.length;
-      children.add(
-        Card(
-          key: const ValueKey('discovery-progress'),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                LinearProgressIndicator(
-                  value: total == 0 ? null : checked / total,
-                ),
-                const SizedBox(height: 10),
-                Text(l10n.searchDiscoveryProgress(checked, total)),
-              ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (comparison.discoveryError != null ||
+            (!comparison.discovering && comparison.noUsableLyrics))
+          VerseEmptyState(
+            key: ValueKey(
+              comparison.discoveryError != null
+                  ? 'discovery-error'
+                  : 'discovery-no-lyrics',
             ),
+            icon: Icons.lyrics_outlined,
+            title: comparison.discoveryError != null
+                ? l10n.searchDiscoveryError
+                : l10n.searchDiscoveryNoLyrics,
+            message: comparison.discoveryError != null
+                ? l10n.searchErrorDetails
+                : l10n.searchDiscoveryNoLyricsDetails,
+            actionLabel: l10n.searchDiscoveryRetry,
+            onAction: () =>
+                unawaited(widget.controller.retrySelectedSongDiscovery()),
           ),
-        ),
-      );
-    }
-    if (comparison.discoveryError != null) {
-      children.add(
-        VerseEmptyState(
-          key: const ValueKey('discovery-error'),
-          icon: Icons.wifi_off_rounded,
-          title: l10n.searchDiscoveryError,
-          message: l10n.searchErrorDetails,
-          actionLabel: l10n.searchDiscoveryRetry,
-          onAction: () =>
-              unawaited(widget.controller.retrySelectedSongDiscovery()),
-        ),
-      );
-    } else if (!comparison.discovering && comparison.noUsableLyrics) {
-      children.add(
-        VerseEmptyState(
-          key: const ValueKey('discovery-no-lyrics'),
-          icon: Icons.lyrics_outlined,
-          title: l10n.searchDiscoveryNoLyrics,
-          message: l10n.searchDiscoveryNoLyricsDetails,
-          actionLabel: l10n.searchDiscoveryRetry,
-          onAction: () =>
-              unawaited(widget.controller.retrySelectedSongDiscovery()),
-        ),
-      );
-    }
-    if (unavailable > 0) {
-      children.add(
-        Padding(
-          padding: const EdgeInsets.fromLTRB(4, 0, 4, 8),
-          child: Text(l10n.searchSourcesUnavailableCount(unavailable)),
-        ),
-      );
-    }
-    if (comparison.providerChecks.isNotEmpty) {
-      children.add(
-        Card(
-          key: const ValueKey('discovery-provider-checks'),
-          child: ExpansionTile(
-            title: Text(l10n.searchProviderChecks),
+        if (comparison.providerChecks.isNotEmpty)
+          ExpansionTile(
+            key: const PageStorageKey('discovery-provider-checks'),
+            tilePadding: const EdgeInsets.symmetric(horizontal: 8),
+            title: Text(
+              l10n.searchProviderChecks,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
             children: [
+              if (unavailable > 0)
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Text(l10n.searchSourcesUnavailableCount(unavailable)),
+                ),
               for (final check in comparison.providerChecks)
                 ListTile(
                   key: ValueKey('discovery-provider-${check.id}'),
                   dense: true,
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(check.name),
-                      Text(
-                        _providerCheckLabel(l10n, check.state),
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
+                  title: Text(check.name),
+                  subtitle: Text(_providerCheckLabel(l10n, check.state)),
                 ),
             ],
           ),
-        ),
-      );
-    }
-    if (children.isEmpty) return const SizedBox.shrink();
-    return Column(
-      key: const ValueKey('discovery-status'),
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: children,
+      ],
     );
   }
 
@@ -1120,157 +1255,105 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     AppLocalizations l10n,
     SourceVersionData version, {
     required bool suggested,
-    VoidCallback? onSave,
+    bool selected = false,
     VoidCallback? onSelect,
   }) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10),
-      child: InkWell(
-        onTap: onSelect,
-        borderRadius: BorderRadius.circular(18),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (suggested)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 5),
-                            child: Text(
-                              l10n.searchSuggested,
-                              style: Theme.of(context).textTheme.labelSmall
-                                  ?.copyWith(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                            ),
-                          ),
-                        Text(
-                          version.title,
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.w700),
+    final colors = Theme.of(context).colorScheme;
+    final detail = [
+      if (version.album?.trim().isNotEmpty == true &&
+          version.album!.toLowerCase() != 'unknown')
+        version.album!,
+      if (version.durationSeconds != null)
+        formatDuration(version.durationSeconds!),
+    ].join(' · ');
+    return Semantics(
+      selected: selected,
+      button: onSelect != null,
+      child: Card(
+        key: ValueKey('version-row-${version.id}'),
+        margin: const EdgeInsets.only(bottom: 6),
+        color: selected ? colors.primaryContainer.withValues(alpha: .3) : null,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(
+            color: selected ? colors.primary : colors.outlineVariant,
+            width: selected ? 1.5 : .5,
+          ),
+        ),
+        child: InkWell(
+          onTap: onSelect,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              children: [
+                Icon(
+                  selected
+                      ? Icons.radio_button_checked
+                      : Icons.radio_button_off,
+                  color: onSelect == null ? colors.outline : colors.primary,
+                  size: 22,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _sourceName(l10n, version),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
                         ),
+                      ),
+                      if (detail.isNotEmpty)
                         Text(
-                          version.artist,
+                          detail,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurfaceVariant,
-                              ),
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
-                      ],
-                    ),
-                  ),
-                  if (version.rating != null)
-                    Chip(
-                      avatar: const Icon(Icons.star_rounded, size: 16),
-                      label: Text(version.rating!.toStringAsFixed(1)),
-                    ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Text(
-                  '${version.sourceCount == null ? version.providerName : l10n.searchCombinedFromSources(version.sourceCount!)} · ${version.album ?? '${l10n.searchAlbum}: ${l10n.unknownValue}'} · ${version.durationSeconds == null ? l10n.searchDurationUnknown : formatDuration(version.durationSeconds!)}',
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 6,
-                runSpacing: 4,
-                children: [
-                  _FactPill(
-                    icon: Icons.lyrics_rounded,
-                    label: version.hasLyrics
-                        ? l10n.searchLyricsAvailable
-                        : l10n.searchLyricsUnavailable,
-                  ),
-                  _FactPill(
-                    icon: Icons.music_note_rounded,
-                    label: version.hasChords
-                        ? l10n.searchChordsAvailable
-                        : l10n.searchChordsUnavailable,
-                  ),
-                  _FactPill(
-                    icon: Icons.schedule_rounded,
-                    label: version.hasTiming
-                        ? l10n.searchTimingAvailable
-                        : l10n.searchTimingUnavailable,
-                  ),
-                  _FactPill(
-                    icon: Icons.album_rounded,
-                    label: version.sameRecording
-                        ? l10n.searchMatchExact
-                        : l10n.searchMatchUnverified,
-                  ),
-                ],
-              ),
-              if (version.matchSummary.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Text(
-                    localizedMatchReason(l10n, version.matchSummary),
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ),
-              if (version.bodyPreview.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 12),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceContainerLow,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: version.bodyPreview
-                          .take(3)
-                          .map(
-                            (line) => Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 2),
-                              child: Text(
-                                '${line.chords.isEmpty ? '' : '${line.chords.map((chord) => chord.symbol).join('  ')} · '}${line.text}',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                      const SizedBox(height: 3),
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 2,
+                        children: [
+                          if (version.hasChords)
+                            _FactPill(
+                              icon: Icons.music_note_rounded,
+                              label: l10n.providerCapabilityChords,
                             ),
-                          )
-                          .toList(),
-                    ),
+                          _FactPill(
+                            icon: version.hasTiming
+                                ? Icons.schedule_rounded
+                                : Icons.lyrics_outlined,
+                            label: version.hasTiming
+                                ? l10n.playerTimedLyrics
+                                : l10n.providerCapabilityLyrics,
+                          ),
+                          if (suggested)
+                            Text(
+                              l10n.searchSuggested,
+                              style: Theme.of(context).textTheme.labelSmall
+                                  ?.copyWith(color: colors.primary),
+                            ),
+                        ],
+                      ),
+                      if (!version.sameRecording &&
+                          version.matchSummary.isNotEmpty)
+                        Text(
+                          localizedMatchReason(l10n, version.matchSummary),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: colors.onSurfaceVariant),
+                        ),
+                    ],
                   ),
                 ),
-              if (onSave != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 12),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: FilledButton.icon(
-                      onPressed: onSave,
-                      icon: const Icon(Icons.download_rounded),
-                      label: Text(l10n.searchChooseVersion),
-                    ),
-                  ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -1536,11 +1619,12 @@ class _FactPill extends StatelessWidget {
   final IconData icon;
   final String label;
   @override
-  Widget build(BuildContext context) => Chip(
-    avatar: Icon(icon, size: 15),
-    label: Text(label),
-    labelStyle: Theme.of(context).textTheme.labelSmall,
-    visualDensity: VisualDensity.compact,
-    padding: const EdgeInsets.symmetric(horizontal: 3),
+  Widget build(BuildContext context) => Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(icon, size: 13),
+      const SizedBox(width: 3),
+      Text(label, style: Theme.of(context).textTheme.labelSmall),
+    ],
   );
 }

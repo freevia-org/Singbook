@@ -40,6 +40,7 @@ void main() {
               title: 'Small Hours',
               artist: 'Freevia Test',
               hasLyrics: true,
+              isUsableVersion: true,
             ),
           ],
         ),
@@ -74,21 +75,23 @@ void main() {
         );
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull, reason: 'Comparison at $size');
+        final list = tester.getRect(
+          find.byKey(const PageStorageKey('version-list')),
+        );
+        final preview = tester.getRect(
+          find.byKey(const ValueKey('version-selection-footer')),
+        );
+        final saveButton = tester.getRect(
+          find.byKey(const ValueKey('save-open-lyrics')),
+        );
+        expect(find.text('A quiet room, a song to share'), findsOneWidget);
+        expect(saveButton.bottom, lessThanOrEqualTo(size.height));
         if (size.width >= 800) {
-          expect(
-            find.byKey(const ValueKey('tablet-search-split')),
-            findsOneWidget,
-          );
-          final reference = tester.getTopLeft(find.text('Small Hours').first);
-          final preview = tester.getTopLeft(
-            find.text('A quiet room, a song to share'),
-          );
-          expect(reference.dx, lessThan(preview.dx));
+          expect(list.right, lessThanOrEqualTo(preview.left));
+          expect(list.top, lessThan(preview.bottom));
+          expect(preview.top, lessThan(list.bottom));
         } else {
-          expect(
-            find.byKey(const ValueKey('tablet-search-split')),
-            findsNothing,
-          );
+          expect(preview.top, greaterThan(list.top));
         }
       }
       await tester.pumpWidget(const SizedBox.shrink());

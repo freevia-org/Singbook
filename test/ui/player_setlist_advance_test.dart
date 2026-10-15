@@ -168,7 +168,7 @@ void main() {
     },
   );
 
-  testWidgets('non-setlist controls stay disabled when no sections exist', (
+  testWidgets('non-setlist section controls are hidden without sections', (
     tester,
   ) async {
     await tester.runAsync(() => controller.openSong('song'));
@@ -185,9 +185,7 @@ void main() {
 
     expect(controller.state.playerSections, isEmpty);
     for (final button in [previousButton, nextButton]) {
-      expect(button, findsOneWidget);
-      expect(tester.widget<IconButton>(button).onPressed, isNull);
-      expect(tester.widget<IconButton>(button).onLongPress, isNull);
+      expect(button, findsNothing);
     }
   });
 

@@ -6,6 +6,71 @@ import '../domain/models.dart';
 import '../domain/chordpro.dart';
 import '../domain/arrangement.dart';
 
+double? _validDuration(Object? value) {
+  if (value is! num) return null;
+  final seconds = value.toDouble();
+  return seconds.isFinite && seconds > 0 && seconds <= 86400 ? seconds : null;
+}
+
+JsonMap _withoutInvalidDuration(JsonMap metadata) {
+  final clean = {...metadata};
+  if (metadata.containsKey('durationSeconds') &&
+      _validDuration(metadata['durationSeconds']) == null) {
+    clean.remove('durationSeconds');
+  }
+  return clean;
+}
+
+SongCandidate _sanitizeCandidateDuration(SongCandidate candidate) =>
+    SongCandidate(
+      providerId: candidate.providerId,
+      id: candidate.id,
+      title: candidate.title,
+      artist: candidate.artist,
+      album: candidate.album,
+      url: candidate.url,
+      durationSeconds: _validDuration(candidate.durationSeconds),
+      metadata: _withoutInvalidDuration(candidate.metadata),
+      recordingIds: candidate.recordingIds,
+      extra: candidate.extra,
+    );
+
+SongDocument _sanitizeImportedDurations(SongDocument song) {
+  final sources = song.sources.map((source) {
+    return SourceResult(
+      candidate: _sanitizeCandidateDuration(source.candidate),
+      body: source.body,
+      metadata: _withoutInvalidDuration(source.metadata),
+      timingTracks: source.timingTracks,
+      matchKind: source.matchKind,
+      attribution: source.attribution,
+      matchReason: source.matchReason,
+      retrievedAt: source.retrievedAt,
+      extra: source.extra,
+    );
+  }).toList();
+  return SongDocument(
+    id: song.id,
+    title: song.title,
+    artist: song.artist,
+    body: song.body,
+    metadata: _withoutInvalidDuration(song.metadata),
+    sources: sources,
+    timingTracks: song.timingTracks,
+    favorite: song.favorite,
+    createdAt: song.createdAt,
+    updatedAt: song.updatedAt,
+    selectedRecording: song.selectedRecording == null
+        ? null
+        : _sanitizeCandidateDuration(song.selectedRecording!),
+    activeTimingTrackId: song.activeTimingTrackId,
+    revision: song.revision,
+    extra: song.extra,
+    preservedExtensions: song.preservedExtensions,
+    extensionError: song.extensionError,
+  );
+}
+
 /// What this device and the cloud agreed on for one item the last time they
 /// were in sync. Present = "we had synced it": a later absence on one side is a
 /// deletion there, not "never existed". [kind] is `song` or `setlist`.
@@ -276,6 +341,7 @@ class LibraryRepository {
     SongDocument song, {
     String? existingId,
   }) async {
+    song = _sanitizeImportedDurations(song);
     return database.transaction((txn) async {
       final source = song.extra['selectedSourceId'];
       if (source is String || existingId != null) {
@@ -315,21 +381,85 @@ class LibraryRepository {
                     : track,
               for (final track in existing.timingTracks) track.id: track,
             };
+            final existingOrigins = jsonMap(existing.extra['fieldOrigins']);
+            final incomingOrigins = jsonMap(song.extra['fieldOrigins']);
+            final incomingSourceId = song.extra['savedSourceId'];
+            final incomingSource = incomingSourceId is String
+                ? song.sources
+                      .where((item) => item.id == incomingSourceId)
+                      .firstOrNull
+                : null;
+            final incomingDuration = incomingSource == null
+                ? null
+                : _validDuration(incomingSource.candidate.durationSeconds) ??
+                      _validDuration(
+                        incomingSource.metadata['durationSeconds'],
+                      ) ??
+                      _validDuration(
+                        incomingSource.candidate.metadata['durationSeconds'],
+                      );
+            final existingDuration = _validDuration(
+              existing.metadata['durationSeconds'],
+            );
+            bool sameDuration(double? a, double? b) =>
+                a != null && b != null && (a - b).abs() < .001;
+            final durationOrigin = existingOrigins['durationSeconds'];
+            SourceResult? existingSourceResult;
+            for (final item in existing.sources) {
+              if (item.id == durationOrigin) {
+                existingSourceResult = item;
+                break;
+              }
+            }
+            final existingDurationSource =
+                existing.selectedRecording?.identity == durationOrigin
+                ? existing.selectedRecording
+                : existingSourceResult?.candidate;
+            final provenExistingDuration =
+                _validDuration(existingDurationSource?.durationSeconds) ??
+                _validDuration(
+                  existingSourceResult?.metadata['durationSeconds'],
+                ) ??
+                _validDuration(
+                  existingDurationSource?.metadata['durationSeconds'],
+                );
+            final incomingDurationIsProven =
+                incomingDuration != null &&
+                incomingSourceId is String &&
+                incomingOrigins['durationSeconds'] == incomingSourceId &&
+                sameDuration(
+                  incomingDuration,
+                  _validDuration(song.metadata['durationSeconds']),
+                );
+            final shouldRefreshDuration =
+                existingOrigins['durationSeconds'] != 'user' &&
+                incomingDurationIsProven &&
+                (existingDuration == null ||
+                    sameDuration(existingDuration, provenExistingDuration));
+            final mergedMetadata = {...song.metadata, ...existing.metadata};
+            final mergedExtra = {
+              ...song.extra,
+              ...existing.extra,
+              // Provenance maps merge key by key; the existing entry wins.
+              for (final key in const ['fieldOrigins', 'conflicts'])
+                if (song.extra[key] is Map || existing.extra[key] is Map)
+                  key: {
+                    ...jsonMap(song.extra[key]),
+                    ...jsonMap(existing.extra[key]),
+                  },
+            };
+            if (shouldRefreshDuration) {
+              mergedMetadata['durationSeconds'] = incomingDuration;
+              mergedExtra['fieldOrigins'] = {
+                ...jsonMap(mergedExtra['fieldOrigins']),
+                'durationSeconds': incomingSourceId,
+              };
+            }
             final merged = existing.copyWith(
               sources: sources.values.toList(),
               timingTracks: tracks.values.toList(),
-              metadata: {...song.metadata, ...existing.metadata},
-              extra: {
-                ...song.extra,
-                ...existing.extra,
-                // Provenance maps merge key by key; the existing entry wins.
-                for (final key in const ['fieldOrigins', 'conflicts'])
-                  if (song.extra[key] is Map || existing.extra[key] is Map)
-                    key: {
-                      ...jsonMap(song.extra[key]),
-                      ...jsonMap(existing.extra[key]),
-                    },
-              },
+              metadata: mergedMetadata,
+              extra: mergedExtra,
             );
             await _writeSong(txn, merged, _codec.encode(merged));
             await _queue(txn, merged.id, 'song', 'save', merged.revision);

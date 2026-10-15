@@ -126,6 +126,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get searchCatalogHint => 'Nach einem Song oder Künstler suchen';
 
   @override
+  String get searchChangeSong => 'Song ändern';
+
+  @override
+  String get searchSelectedPreview => 'Ausgewählte Vorschau';
+
+  @override
   String get searchSubmit => 'Suchen';
 
   @override
@@ -275,7 +281,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get searchLanguage => 'Sprache';
 
   @override
+  String get searchViewVersions => 'Versionen ansehen';
+
+  @override
   String get searchSaved => 'Song wurde in deiner Bibliothek gespeichert.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Text speichern & öffnen';
+
+  @override
+  String get searchOtherResults => 'Weitere Ergebnisse';
 
   @override
   String get searchSaveFailed => 'Song konnte nicht gespeichert werden.';
@@ -546,6 +561,9 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Gespeichert';
+
+  @override
   String get readerEdit => 'Liedtexte und Details bearbeiten';
 
   @override
@@ -577,7 +595,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get playerTimedLyrics => 'Synchronisierte Liedtexte';
 
   @override
+  String get playerStartScroll => 'Auto-Scroll starten';
+
+  @override
   String get playerEstimatedPace => 'Geschätztes Tempo';
+
+  @override
+  String get playerScrollSpeed => 'Scroll-Geschwindigkeit';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Geschätzte Dauer: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Liedtext-Scrollen · kein Audio';
 
   @override
   String get playerManualScroll => 'Manuelles Scrollen';

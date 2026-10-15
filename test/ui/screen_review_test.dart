@@ -36,6 +36,7 @@ VerseUiState _reader({
   bool playing = false,
   bool autoscroll = true,
   double? duration = 200,
+  bool durationEstimated = false,
   List<LyricLineData>? lines,
   List<PlayerSectionMarker>? sections,
   VerseRoute route = VerseRoute.reader,
@@ -51,6 +52,7 @@ VerseUiState _reader({
   songLines: lines ?? _lines,
   isPlaying: playing,
   autoscroll: autoscroll,
+  readerDurationEstimated: durationEstimated,
   playerSections:
       sections ??
       const [
@@ -312,11 +314,10 @@ void main() {
       final c = FakeUiController((_) => _reader());
       addTearDown(c.dispose);
       await pumpShell(tester, c);
-      final l10n = l10nOf(tester);
 
       c.positionNotifier.value = const PlayerPosition(200, 'line-59');
       await tester.pump();
-      await tester.tap(find.byTooltip(l10n.playerPlay));
+      await tester.tap(find.byKey(const ValueKey('start-lyric-scroll')));
       await tester.pump();
       expect(c.calls.where((c) => c == 'seek(0.0)' || c == 'playPause'), [
         'seek(0.0)',
@@ -328,24 +329,26 @@ void main() {
       final c = FakeUiController((_) => _reader());
       addTearDown(c.dispose);
       await pumpShell(tester, c);
-      final l10n = l10nOf(tester);
 
       c.positionNotifier.value = const PlayerPosition(80, 'line-20');
       await tester.pump();
-      await tester.tap(find.byTooltip(l10n.playerPlay));
+      await tester.tap(find.byKey(const ValueKey('start-lyric-scroll')));
       await tester.pump();
       expect(c.calls.where((call) => call.startsWith('seek(')), isEmpty);
       expect(c.calls, contains('playPause'));
     });
 
-    testWidgets('a missing duration is shown as unknown, not invented', (
+    testWidgets('an estimated duration is labelled, not shown as real', (
       tester,
     ) async {
-      final c = FakeUiController((_) => _reader(duration: null));
+      final c = FakeUiController(
+        (_) => _reader(duration: null, durationEstimated: true),
+      );
       addTearDown(c.dispose);
       await pumpShell(tester, c);
-      expect(find.text('–:––'), findsOneWidget);
-      // 60 lines would be estimated at 3:24; that must not be displayed.
+      final l10n = l10nOf(tester);
+      // 60 lines are estimated at 3:24; it must only appear as an estimate.
+      expect(find.text(l10n.playerEstimatedDuration('3:24')), findsOneWidget);
       expect(find.text('3:24'), findsNothing);
       expect(find.text('3:20'), findsNothing);
     });
@@ -355,7 +358,6 @@ void main() {
       addTearDown(c.dispose);
       await pumpShell(tester, c);
       expect(find.text('3:20'), findsOneWidget);
-      expect(find.text('–:––'), findsNothing);
     });
 
     testWidgets('dragging the lyrics seeks while autoscroll is on', (

@@ -126,6 +126,12 @@ class AppLocalizationsLv extends AppLocalizations {
   String get searchCatalogHint => 'Meklēt dziesmu vai izpildītāju';
 
   @override
+  String get searchChangeSong => 'Mainīt dziesmu';
+
+  @override
+  String get searchSelectedPreview => 'Atlasītais priekšskatījums';
+
+  @override
   String get searchSubmit => 'Meklēt';
 
   @override
@@ -275,7 +281,16 @@ class AppLocalizationsLv extends AppLocalizations {
   String get searchLanguage => 'Valoda';
 
   @override
+  String get searchViewVersions => 'Skatīt versijas';
+
+  @override
   String get searchSaved => 'Dziesma ir saglabāta jūsu bibliotēkā.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Saglabāt un atvērt vārdus';
+
+  @override
+  String get searchOtherResults => 'Citi rezultāti';
 
   @override
   String get searchSaveFailed => 'Dziesmu neizdevās saglabāt.';
@@ -548,6 +563,9 @@ class AppLocalizationsLv extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Saglabāts';
+
+  @override
   String get readerEdit => 'Rediģēt dziesmas vārdus un informāciju';
 
   @override
@@ -579,7 +597,21 @@ class AppLocalizationsLv extends AppLocalizations {
   String get playerTimedLyrics => 'Dziesmu vārdi ar laika atzīmēm';
 
   @override
+  String get playerStartScroll => 'Sākt automātisko ritināšanu';
+
+  @override
   String get playerEstimatedPace => 'Aprēķinātais ritināšanas ātrums';
+
+  @override
+  String get playerScrollSpeed => 'Ritināšanas ātrums';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Paredzamais ilgums: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Dziesmas vārdu ritināšana · bez audio';
 
   @override
   String get playerManualScroll => 'Manuāla ritināšana';
