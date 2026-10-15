@@ -681,4 +681,147 @@ void main() {
       matchesGoldenFile('goldens/chord_lyrics_line_chord_only.png'),
     );
   });
+
+  testWidgets('semantics include visible chords in lyric anchor order', (
+    tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+    try {
+      var showChords = true;
+      await tester.pumpWidget(
+        _host(
+          StatefulBuilder(
+            builder: (context, setState) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ChordLyricsLine(
+                  key: const ValueKey('spoken-line'),
+                  text: 'Amazing grace always',
+                  // Deliberately reverse input order; speech follows the lyric
+                  // anchors and moves a mid-word chord to the word boundary.
+                  chords: const [
+                    LyricChord(graphemeOffset: 8, symbol: 'G'),
+                    LyricChord(graphemeOffset: 3, symbol: 'C'),
+                  ],
+                  showChords: showChords,
+                  style: _lyricStyle,
+                  chordStyle: _chordStyle,
+                ),
+                ChordLyricsLine(
+                  key: const ValueKey('spoken-override'),
+                  text: 'Full lyric words',
+                  chords: const [LyricChord(graphemeOffset: 0, symbol: 'Am')],
+                  showChords: true,
+                  style: _lyricStyle,
+                  chordStyle: _chordStyle,
+                  semanticsLabel: 'Custom spoken description',
+                ),
+                ChordLyricsLine(
+                  key: const ValueKey('spoken-chord-only'),
+                  text: '',
+                  chords: const [
+                    LyricChord(graphemeOffset: 0, symbol: 'C'),
+                    LyricChord(graphemeOffset: 0, symbol: 'G'),
+                  ],
+                  showChords: true,
+                  style: _lyricStyle,
+                  chordStyle: _chordStyle,
+                ),
+                TextButton(
+                  key: const ValueKey('toggle-spoken-chords'),
+                  onPressed: () => setState(() => showChords = !showChords),
+                  child: const Text('Toggle chords'),
+                ),
+              ],
+            ),
+          ),
+          width: 360,
+          height: 340,
+        ),
+      );
+
+      expect(find.bySemanticsLabel('C Amazing G grace always'), findsOneWidget);
+      expect(
+        find.bySemanticsLabel('Custom spoken description'),
+        findsOneWidget,
+      );
+      expect(find.bySemanticsLabel('C, G'), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('toggle-spoken-chords')));
+      await tester.pump();
+      expect(find.bySemanticsLabel('Amazing grace always'), findsOneWidget);
+      expect(find.bySemanticsLabel('C Amazing G grace always'), findsNothing);
+      expect(
+        find.bySemanticsLabel('Custom spoken description'),
+        findsOneWidget,
+      );
+    } finally {
+      semantics.dispose();
+    }
+  });
+
+  testWidgets(
+    'empty RTL chord-only rows place coincident chords at right edge',
+    (tester) async {
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(360, 180);
+      await tester.pumpWidget(
+        _host(
+          RepaintBoundary(
+            key: const ValueKey('rtl-empty-chord-capture'),
+            child: DecoratedBox(
+              decoration: const BoxDecoration(color: Colors.white),
+              child: Directionality(
+                textDirection: TextDirection.rtl,
+                child: _line('', const [
+                  LyricChord(graphemeOffset: 0, symbol: 'C'),
+                  LyricChord(graphemeOffset: 0, symbol: 'G'),
+                ], key: const ValueKey('rtl-empty-chord-line')),
+              ),
+            ),
+          ),
+          width: 360,
+          height: 180,
+        ),
+      );
+
+      final bounds = await _chordPixelBounds(
+        tester,
+        find.byKey(const ValueKey('rtl-empty-chord-capture')),
+      );
+      final components = await _chordPixelComponents(
+        tester,
+        find.byKey(const ValueKey('rtl-empty-chord-capture')),
+      );
+      expect(components, hasLength(2));
+      expect(
+        bounds.height,
+        lessThan(20),
+        reason: 'coincident chords share a row',
+      );
+      expect(
+        components[0].right,
+        lessThanOrEqualTo(components[1].left),
+        reason: 'the coincident chord labels occupy separate horizontal slots',
+      );
+      expect(components[0].top, closeTo(components[1].top, 1));
+      expect(components[0].bottom, closeTo(components[1].bottom, 1));
+      expect(
+        bounds.right,
+        closeTo(
+          tester
+              .getSize(find.byKey(const ValueKey('rtl-empty-chord-line')))
+              .width,
+          3,
+        ),
+        reason:
+            'empty RTL rows anchor the chord run at the available right edge',
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
 }

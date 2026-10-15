@@ -94,11 +94,7 @@ class _ChordLyricsLineState extends State<ChordLyricsLine> {
         );
         _replaceLayout(nextLayout);
         return Semantics(
-          label:
-              widget.semanticsLabel ??
-              (widget.text.trim().isEmpty
-                  ? widget.chords.map((chord) => chord.symbol).join(', ')
-                  : widget.text),
+          label: _semanticsLabel(),
           textDirection: direction,
           child: ExcludeSemantics(
             child: CustomPaint(
@@ -129,6 +125,49 @@ class _ChordLyricsLineState extends State<ChordLyricsLine> {
         );
       },
     );
+  }
+
+  String _semanticsLabel() {
+    final override = widget.semanticsLabel;
+    if (override != null) return override;
+    if (widget.text.trim().isEmpty) {
+      return widget.chords.map((chord) => chord.symbol).join(', ');
+    }
+    if (!widget.showChords || widget.chords.isEmpty) return widget.text;
+
+    final graphemes = widget.text.characters.toList();
+    final ordered = widget.chords.indexed.toList()
+      ..sort((a, b) {
+        final byOffset = a.$2.graphemeOffset.compareTo(b.$2.graphemeOffset);
+        return byOffset != 0 ? byOffset : a.$1.compareTo(b.$1);
+      });
+    final parts = <String>[];
+    var cursor = 0;
+    for (final (_, chord) in ordered) {
+      final anchor = chord.graphemeOffset.clamp(cursor, graphemes.length);
+      var offset = anchor;
+      if (offset < graphemes.length && graphemes[offset].trim().isEmpty) {
+        while (offset < graphemes.length && graphemes[offset].trim().isEmpty) {
+          offset++;
+        }
+      } else {
+        while (offset > 0 && graphemes[offset - 1].trim().isNotEmpty) {
+          offset--;
+        }
+      }
+      offset = offset.clamp(cursor, graphemes.length);
+      final wordsBefore = graphemes
+          .skip(cursor)
+          .take(offset - cursor)
+          .join()
+          .trim();
+      if (wordsBefore.isNotEmpty) parts.add(wordsBefore);
+      if (chord.symbol.trim().isNotEmpty) parts.add(chord.symbol);
+      cursor = offset;
+    }
+    final remainingWords = graphemes.skip(cursor).join().trim();
+    if (remainingWords.isNotEmpty) parts.add(remainingWords);
+    return parts.join(' ');
   }
 
   Widget _plainText(
@@ -265,12 +304,9 @@ class _ChordLineLayout {
         0,
         codeUnitOffsets.length - 1,
       );
-      final anchor = _anchorGeometry(
-        lyrics,
-        codeUnitOffsets,
-        graphemeOffset,
-        direction,
-      );
+      final anchor = text.isEmpty && direction == TextDirection.rtl
+          ? _ChordAnchorGeometry(Offset(width, 0), direction)
+          : _anchorGeometry(lyrics, codeUnitOffsets, graphemeOffset, direction);
       final lineIndex = _lineForTop(lines, anchor.caret.dy);
       final label = TextPainter(
         text: TextSpan(text: chord.symbol, style: chordStyle),
