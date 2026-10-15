@@ -8,6 +8,25 @@ import 'package:singbook/domain/models.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  test('clipboard text preserves song headings and chords without copyright', () {
+    final song = SongDocument(
+      id: 'copy-song',
+      title: 'Evening Song',
+      artist: 'Sample Artist',
+      metadata: const {'copyright': 'UNVERIFIED_COPYRIGHT_MUST_NOT_APPEAR'},
+      body:
+          '{comment: Verse 1}\n[C]The room is warm tonight\n[G]We sing our own refrain\n\n{start_of_chorus}\n[F]Carry the light through the dark\n{end_of_chorus}',
+    );
+
+    final text = songPlainText(song);
+
+    expect(text, startsWith('Evening Song\nSample Artist'));
+    expect(text, contains('Verse 1\nC\nThe room is warm tonight'));
+    expect(text, contains('Chorus\nF\nCarry the light through the dark'));
+    expect(text, isNot(contains('UNVERIFIED_COPYRIGHT_MUST_NOT_APPEAR')));
+    expect(text, isNot(contains('{')));
+  });
+
   test('timing import shares as exactly one self-contained ChordPro', () {
     final song = decodeSongText(
       '[ti:Our song]\n[ar:Us]\n[00:01.25]Our first line\n[00:03.40]Our next line',

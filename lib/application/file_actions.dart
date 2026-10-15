@@ -409,13 +409,16 @@ String songPlainText(SongDocument song) {
   if (song.artist.isNotEmpty) out.write('\n${song.artist}');
   out.writeln('\n');
   for (final line in parseArrangement(song.body)) {
-    if (line.directive) continue;
+    if (line.directive) {
+      final heading = _pdfSectionHeading(line.text);
+      if (heading != null) {
+        out.write('\n');
+        out.writeln(heading);
+      }
+      continue;
+    }
     if (line.chords.isNotEmpty) out.writeln(_chordRow(line));
     out.writeln(line.text);
-  }
-  final copyright = song.metadata['copyright'];
-  if (copyright is String && copyright.isNotEmpty) {
-    out.write('\n$copyright\n');
   }
   return out.toString().trimRight();
 }
