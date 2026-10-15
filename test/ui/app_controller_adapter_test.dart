@@ -849,6 +849,27 @@ void main() {
   );
 
   test(
+    'malformed chord-shape tokens stay visible without unbounded matching',
+    () async {
+      final malformed = [
+        'A${'m' * 2000} xxxxx!',
+        'A${'1' * 2000} xxxxx!',
+        'A${'m' * 24} xxxxx!',
+        'A${'1' * 24} xxxxx!',
+        'e|${' ' * 2000}!',
+        '123456789',
+      ];
+      await app.saveSong(_song(body: malformed.join('\n')));
+      await ui.openSong('song');
+      expect(ui.state.songLines.map((line) => line.text), malformed);
+      expect(
+        ui.state.songLines.every((line) => !line.isArrangementNote),
+        isTrue,
+      );
+    },
+  );
+
+  test(
     'stream updates keep first arrival order and rejected explicit choice selected',
     () async {
       const selected = SongCandidate(

@@ -905,24 +905,52 @@ class AppControllerAdapter extends VerseUiController {
           ?.name ??
       providerId;
 
-  static final _guitarFingeringPattern = RegExp(
-    r'^\s*[eEBGDA]\s*[|:]\s*(?:[-0-9xX|:/\\\s]+)\s*$',
-  );
-  static final _chordShapeRowPattern = RegExp(
-    r'^\s*[A-G](?:#|b)?(?:maj|min|m|M|dim|aug|sus|add|omit|no|\d{1,2})*(?:/[A-G](?:#|b)?)?\s+[xX0-9-]{5,}(?:\s+or\s+[xX0-9-]{5,})?\s*$',
-    caseSensitive: false,
-  );
-  static final _fingeringOnlyPattern = RegExp(r'^\s*[xX0-9-]{5,}\s*$');
   static final _setupRowPattern = RegExp(
-    r'^\s*(?:capo(?:\s+position)?|tuning|key|tempo|time\s+signature)\s*[:=-]',
+    r'^(?:capo(?: position)?|tuning|key|tempo|time signature)\s*[:=-]',
     caseSensitive: false,
   );
 
-  static bool _isArrangementNote(String text) =>
-      _guitarFingeringPattern.hasMatch(text) ||
-      _chordShapeRowPattern.hasMatch(text) ||
-      _fingeringOnlyPattern.hasMatch(text) ||
-      _setupRowPattern.hasMatch(text);
+  static bool _isArrangementNote(String text, {bool hasChords = false}) {
+    final value = text.trim();
+    // Setup rows are short. Long or malformed provider text stays visible as
+    // content; never feed an unbounded chord token into a repeated regex.
+    if (value.isEmpty || value.length > 256) return false;
+    if (_setupRowPattern.hasMatch(value)) return true;
+    if ('eEBGDA'.contains(value[0]) && value.length > 1) {
+      final tail = value.substring(1).trimLeft();
+      if ((tail.startsWith('|') || tail.startsWith(':')) &&
+          tail.length > 1 &&
+          tail
+              .substring(1)
+              .split('')
+              .every(
+                (character) => '-0123456789xX|:/\\ \t'.contains(character),
+              ))
+        return true;
+    }
+    bool shape(String token) =>
+        token.length >= 5 &&
+        token.length <= 64 &&
+        token
+            .split('')
+            .every((character) => '0123456789xX-'.contains(character));
+    final tokens = value.split(RegExp(r'\s+'));
+    if (tokens.length == 1) {
+      // A bare number may be a lyric, rather than a guitar diagram.
+      return shape(tokens.first) &&
+          (hasChords || tokens.first.contains(RegExp(r'[xX-]')));
+    }
+    if (tokens.length != 2 && tokens.length != 4) return false;
+    if (!shape(tokens[1]) ||
+        (tokens.length == 4 &&
+            (tokens[2].toLowerCase() != 'or' || !shape(tokens[3]))))
+      return false;
+    final chord = tokens.first;
+    if (chord.length > 32) return false;
+    final wrapped = '[$chord]';
+    final match = arrangement.chordPattern.firstMatch(wrapped);
+    return match != null && match.start == 0 && match.end == wrapped.length;
+  }
 
   static List<LyricLineData> _previewLines(List<LyricLineData> lines) => lines
       .where(
@@ -967,7 +995,10 @@ class AppControllerAdapter extends VerseUiController {
         text: section != null || line.directive ? '' : line.text,
         section: section,
         chords: chords,
-        isArrangementNote: _isArrangementNote(line.text),
+        isArrangementNote: _isArrangementNote(
+          line.text,
+          hasChords: chords.isNotEmpty,
+        ),
         isBlank:
             section != null || line.directive || (!hasLyrics && chords.isEmpty),
       );

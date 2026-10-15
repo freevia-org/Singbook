@@ -97,6 +97,59 @@ Widget _app(
 );
 
 void main() {
+  testWidgets('switching versions preserves the later repeated chorus', (
+    tester,
+  ) async {
+    final controller = _Controller();
+    final lines = [
+      for (var chorus = 0; chorus < 3; chorus++) ...[
+        LyricLineData(id: 'chorus-$chorus', section: 'Chorus', isBlank: true),
+        for (var line = 0; line < 12; line++)
+          LyricLineData(
+            id: 'chorus-$chorus-line-$line',
+            text: 'Repeated chorus lyric $line',
+          ),
+      ],
+    ];
+    controller.versions = [
+      for (final id in ['a', 'b'])
+        SourceVersionData(
+          id: id,
+          providerId: id,
+          providerName: id,
+          title: 'Repeated choruses',
+          artist: 'Test Artist',
+          hasLyrics: true,
+          isUsableVersion: true,
+          canSave: true,
+          bodyLines: lines,
+          bodyPreview: [lines[1]],
+        ),
+    ];
+    addTearDown(controller.dispose);
+    await tester.pumpWidget(_app(controller));
+    final scrollable = find
+        .descendant(
+          of: find.byKey(const ValueKey('full-preview-body')),
+          matching: find.byType(Scrollable),
+        )
+        .first;
+    final later = find.byKey(const ValueKey('preview-line-chorus-2'));
+    await tester.scrollUntilVisible(later, 200, scrollable: scrollable);
+    await Scrollable.ensureVisible(tester.element(later), alignment: 0);
+    await tester.pump();
+    final position = tester.state<ScrollableState>(scrollable).position;
+    final before = position.pixels;
+    expect(before, greaterThan(1000));
+    await tester.tap(find.byKey(const ValueKey('preview-next')));
+    await tester.pump();
+    await tester.pump();
+    expect(controller.selected, 'b');
+    expect(position.pixels, closeTo(before, 100));
+    expect(later, findsOneWidget);
+    expect(controller.saves, 0);
+  });
+
   testWidgets('leading setup notes remain expandable while lyrics come first', (
     tester,
   ) async {

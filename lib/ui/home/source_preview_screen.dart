@@ -92,6 +92,7 @@ class _SourcePreviewScreenState extends State<SourcePreviewScreen> {
   // wording falls back to the same proportional place in the document.
   void _switchTo(SourceVersionData version, SourceVersionData? previous) {
     String? anchor;
+    var occurrence = 0;
     final viewport = _viewport.currentContext?.findRenderObject() as RenderBox?;
     final top = viewport?.localToGlobal(Offset.zero).dy;
     if (previous != null && top != null) {
@@ -102,6 +103,18 @@ class _SourcePreviewScreenState extends State<SourcePreviewScreen> {
           final text = line.text.trim().isNotEmpty ? line.text : line.section;
           if (text?.trim().isNotEmpty == true) {
             anchor = text!.trim().toLowerCase();
+            occurrence = previous.bodyLines
+                .takeWhile((item) => item.id != line.id)
+                .where(
+                  (item) =>
+                      (item.text.trim().isNotEmpty
+                              ? item.text
+                              : item.section ?? '')
+                          .trim()
+                          .toLowerCase() ==
+                      anchor,
+                )
+                .length;
             break;
           }
         }
@@ -113,16 +126,19 @@ class _SourcePreviewScreenState extends State<SourcePreviewScreen> {
     widget.controller.selectVersion(version.id);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_scroll.hasClients) return;
-      final matches = version.bodyLines.where(
-        (line) =>
-            (line.text.trim().isNotEmpty ? line.text : line.section ?? '')
-                .trim()
-                .toLowerCase() ==
-            anchor,
-      );
+      final matches = version.bodyLines
+          .where(
+            (line) =>
+                (line.text.trim().isNotEmpty ? line.text : line.section ?? '')
+                    .trim()
+                    .toLowerCase() ==
+                anchor,
+          )
+          .toList();
       final target = matches.isEmpty
           ? null
-          : _lineKeys[matches.first.id]?.currentContext;
+          : _lineKeys[matches[occurrence.clamp(0, matches.length - 1)].id]
+                ?.currentContext;
       if (target != null) {
         Scrollable.ensureVisible(target, alignment: .08);
       } else {
@@ -342,6 +358,7 @@ class _PreviewLine extends StatelessWidget {
     final theme = Theme.of(context);
     if (line.section != null) {
       return Padding(
+        key: ValueKey('preview-line-${line.id}'),
         padding: const EdgeInsets.only(top: 18, bottom: 8),
         child: Text(
           localizedSectionName(AppLocalizations.of(context), line.section!),
@@ -352,7 +369,8 @@ class _PreviewLine extends StatelessWidget {
         ),
       );
     }
-    if (line.isBlank) return const SizedBox(height: 15);
+    if (line.isBlank)
+      return SizedBox(key: ValueKey('preview-line-${line.id}'), height: 15);
     final graphemes = line.text.characters.toList();
     final chords = [...line.chords]
       ..sort((a, b) => a.graphemeOffset.compareTo(b.graphemeOffset));
@@ -384,6 +402,7 @@ class _PreviewLine extends StatelessWidget {
       spans.add(TextSpan(text: graphemes.sublist(cursor).join()));
     }
     return Padding(
+      key: ValueKey('preview-line-${line.id}'),
       padding: const EdgeInsets.only(bottom: 12),
       child: Text.rich(
         TextSpan(children: spans),
