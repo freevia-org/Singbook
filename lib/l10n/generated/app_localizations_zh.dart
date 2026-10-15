@@ -1424,7 +1424,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get accountReplaceConfirmAction => '删除并替换';
 
   @override
-  String get accountSuspiciousTitle => 'Google 云端硬盘中缺少项目。';
+  String get accountSuspiciousTitle => 'Google 云端硬盘中缺少项目';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1438,7 +1438,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get accountSuspiciousDelete => '也在此处删除';
+  String get accountSuspiciousDelete => '也从此设备删除';
 
   @override
   String get accountSuspiciousKeep => '保留我的歌曲并重新上传';
@@ -1465,7 +1465,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      '尚未删除任何内容。请选择也在此处删除，或重新上传。';
+      '尚未删除任何内容。请选择也从此设备删除，或重新上传。';
 
   @override
   String get syncErrorRemoteChanged => '同步期间 Google 云端硬盘发生了更改。';

@@ -1514,7 +1514,8 @@ class AppLocalizationsSl extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Izbriši in zamenjaj';
 
   @override
-  String get accountSuspiciousTitle => 'V Googlovem Drive manjkajo elementi.';
+  String get accountSuspiciousTitle =>
+      'V storitvi Google Drive manjkajo elementi';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1522,11 +1523,15 @@ class AppLocalizationsSl extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count elementi, ki jih je ta naprava že sinhronizirala, manjkajo v Googlovem Drive.',
+          '$count elementov, ki jih je ta naprava že sinhronizirala, manjka v storitvi Google Drive.',
+      few:
+          '$count elementi, ki jih je ta naprava že sinhronizirala, manjkajo v storitvi Google Drive.',
+      two:
+          '$count elementa, ki ju je ta naprava že sinhronizirala, manjkata v storitvi Google Drive.',
       one:
-          '$count element, ki ga je ta naprava že sinhronizirala, manjka v Googlovem Drive.',
+          '$count element, ki ga je ta naprava že sinhronizirala, manjka v storitvi Google Drive.',
     );
-    return '$_temp0 To se lahko zgodi, če so bili podatki aplikacije izbrisani v Googlovih nastavitvah. Nič še ni bilo izbrisano.';
+    return '$_temp0 To se lahko zgodi, če so bili podatki aplikacije izbrisani v nastavitvah Google. Nič še ni bilo izbrisano.';
   }
 
   @override
@@ -1540,7 +1545,9 @@ class AppLocalizationsSl extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Želite izbrisati $count elementa iz te naprave?',
+      other: 'Želite izbrisati $count elementov iz te naprave?',
+      few: 'Želite izbrisati $count elemente iz te naprave?',
+      two: 'Želite izbrisati $count elementa iz te naprave?',
       one: 'Želite izbrisati $count element iz te naprave?',
     );
     return '$_temp0';
@@ -1555,7 +1562,7 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get syncErrorRemoteListingSuspicious =>
-      'V Googlovem Drive manjkajo elementi.';
+      'V storitvi Google Drive manjkajo elementi.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>

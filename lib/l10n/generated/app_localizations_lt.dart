@@ -1519,9 +1519,11 @@ class AppLocalizationsLt extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count elementų, kuriuos šis įrenginys anksčiau sinchronizavo, nerasta „Google“ diske.',
+          '$count elementų, kuriuos šis įrenginys anksčiau sinchronizavo, nerasta Google Drive saugykloje.',
+      few:
+          '$count elementai, kuriuos šis įrenginys anksčiau sinchronizavo, nerasti Google Drive saugykloje.',
       one:
-          '$count elementas, kurį šis įrenginys anksčiau sinchronizavo, nerastas „Google“ diske.',
+          '$count elementas, kurį šis įrenginys anksčiau sinchronizavo, nerastas Google Drive saugykloje.',
     );
     return '$_temp0 Taip gali nutikti, jei „Google“ nustatymuose buvo išvalyti programos duomenys. Kol kas niekas neištrinta.';
   }
@@ -1537,7 +1539,8 @@ class AppLocalizationsLt extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Ištrinti $count elemento iš šio įrenginio?',
+      other: 'Ištrinti $count elementų iš šio įrenginio?',
+      few: 'Ištrinti $count elementus iš šio įrenginio?',
       one: 'Ištrinti $count elementą iš šio įrenginio?',
     );
     return '$_temp0';

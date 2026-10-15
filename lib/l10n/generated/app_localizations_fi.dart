@@ -1518,7 +1518,7 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'Nämä kappaleet ja kappalelistat poistetaan pysyvästi tältä laitteelta. Tätä ei voi perua.';
+      'Nämä kappaleet ja settilistat poistetaan pysyvästi tältä laitteelta. Tätä ei voi perua.';
 
   @override
   String get accountSuspiciousDeleteConfirmAction => 'Poista tältä laitteelta';
@@ -1545,14 +1545,13 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'Kappaletta tai kappalelistaa ei voitu lukea. Tuo se tai luo se uudelleen ja synkronoi sitten uudelleen.';
+      'Kappaletta tai settilistaa ei voitu lukea. Tuo se tai luo se uudelleen ja synkronoi sitten uudelleen.';
 
   @override
   String get syncErrorNoAccountChange => 'Ratkaistavaa tilimuutosta ei ole.';
 
   @override
-  String get syncErrorNoAccountChangeHint =>
-      'Jatka synkronointia synkronoimalla uudelleen.';
+  String get syncErrorNoAccountChangeHint => 'Jatka synkronoimalla uudelleen.';
 
   @override
   String get accountSyncWarningTitle =>
@@ -1588,7 +1587,7 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get setlistSaveConflict =>
-      'Kappalelista muuttui muualla. Muokkauksesi tallennettiin erillisenä kopiona.';
+      'Settilista muuttui muualla. Muokkauksesi tallennettiin erillisenä kopiona.';
 
   @override
   String get sectionVerse => 'Säe';

@@ -682,7 +682,7 @@
   "accountReplaceConfirmTitle": "Ta bort lokala låtar?",
   "accountReplaceConfirmBody": "Låtar och setlistor på den här enheten som inte finns i det nya kontot tas bort permanent. Det går inte att ångra.",
   "accountReplaceConfirmAction": "Ta bort och ersätt",
-  "accountSuspiciousTitle": "Objekt saknas på Google Drive.",
+  "accountSuspiciousTitle": "Objekt saknas på Google Drive",
   "accountSuspiciousBody": "{count, plural, one{{count} objekt som den här enheten har synkroniserat tidigare saknas på Google Drive.} other{{count} objekt som den här enheten har synkroniserat tidigare saknas på Google Drive.}} Det kan hända om appdata har rensats i Googles inställningar. Inget har tagits bort ännu.",
   "@accountSuspiciousBody": {"placeholders": {"count": {"type": "int"}}},
   "accountSuspiciousDelete": "Ta bort dem här också",

@@ -1509,15 +1509,15 @@ class AppLocalizationsMt extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count oġġetti li dan it-tagħmir issinkronizza qabel huma neqsin minn Google Drive.',
+          '$count oġġetti li dan l-apparat issinkronizza qabel huma neqsin minn Google Drive.',
       one:
-          '$count oġġett li dan it-tagħmir issinkronizza qabel huwa nieqes minn Google Drive.',
+          '$count oġġett li dan l-apparat issinkronizza qabel huwa nieqes minn Google Drive.',
     );
     return '$_temp0 Dan jista’ jiġri jekk id-data tal-app tħassret fis-settings ta’ Google. Għadu ma tħassar xejn.';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Ħassarhom hawn ukoll';
+  String get accountSuspiciousDelete => 'Ħassarhom minn dan l-apparat ukoll';
 
   @override
   String get accountSuspiciousKeep =>
@@ -1528,19 +1528,19 @@ class AppLocalizationsMt extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Tħassar $count oġġetti minn dan it-tagħmir?',
-      one: 'Tħassar $count oġġett minn dan it-tagħmir?',
+      other: 'Tħassar $count oġġetti minn dan l-apparat?',
+      one: 'Tħassar $count oġġett minn dan l-apparat?',
     );
     return '$_temp0';
   }
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'Dawn il-kanzunetti u l-listi se jitħassru għal dejjem minn dan it-tagħmir. Ma tistax treġġa’ lura din l-azzjoni.';
+      'Dawn il-kanzunetti u l-listi se jitħassru għal dejjem minn dan l-apparat. Ma tistax treġġa’ lura din l-azzjoni.';
 
   @override
   String get accountSuspiciousDeleteConfirmAction =>
-      'Ħassar minn dan it-tagħmir';
+      'Ħassar minn dan l-apparat';
 
   @override
   String get syncErrorRemoteListingSuspicious =>
@@ -1548,7 +1548,7 @@ class AppLocalizationsMt extends AppLocalizations {
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Ma tħassar xejn. Agħżel jekk tridx tħassarhom hawn ukoll jew ittellagħhom mill-ġdid.';
+      'Ma tħassar xejn. Agħżel jekk tridx tħassarhom minn dan l-apparat ukoll jew ittellagħhom mill-ġdid.';
 
   @override
   String get syncErrorRemoteChanged =>
@@ -1560,7 +1560,7 @@ class AppLocalizationsMt extends AppLocalizations {
 
   @override
   String get syncErrorInvalidLocalData =>
-      'Xi data fuq dan it-tagħmir ma setgħetx tiġi ssinkronizzata.';
+      'Xi data fuq dan l-apparat ma setgħetx tiġi ssinkronizzata.';
 
   @override
   String get syncErrorInvalidLocalDataHint =>

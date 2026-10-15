@@ -1482,7 +1482,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Ta bort och ersätt';
 
   @override
-  String get accountSuspiciousTitle => 'Objekt saknas på Google Drive.';
+  String get accountSuspiciousTitle => 'Objekt saknas på Google Drive';
 
   @override
   String accountSuspiciousBody(int count) {

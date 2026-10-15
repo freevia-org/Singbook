@@ -1578,7 +1578,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get accountSyncWarningTooLarge =>
-      'El archivo era demasiado grande para sincronizarlo y se omitió. Todo lo demás está actualizado.';
+      'Un archivo era demasiado grande para sincronizarlo y se omitió. Todo lo demás está actualizado.';
 
   @override
   String get accountSyncWarningInvalid =>

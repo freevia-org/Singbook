@@ -1510,7 +1510,7 @@ class AppLocalizationsGa extends AppLocalizations {
   }
 
   @override
-  String get accountSuspiciousDelete => 'Scrios anseo iad freisin';
+  String get accountSuspiciousDelete => 'Scrios ón ngléas seo iad freisin';
 
   @override
   String get accountSuspiciousKeep =>
@@ -1540,7 +1540,7 @@ class AppLocalizationsGa extends AppLocalizations {
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Níor scriosadh aon rud. Roghnaigh ar cheart iad a scriosadh anseo freisin nó iad a uaslódáil arís.';
+      'Níor scriosadh aon rud. Roghnaigh ar cheart iad a scriosadh ón ngléas seo freisin nó iad a uaslódáil arís.';
 
   @override
   String get syncErrorRemoteChanged =>

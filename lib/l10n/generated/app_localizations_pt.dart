@@ -1489,7 +1489,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Excluir e substituir';
 
   @override
-  String get accountSuspiciousTitle => 'Faltam itens no Google Drive.';
+  String get accountSuspiciousTitle => 'Faltam itens no Google Drive';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1497,38 +1497,38 @@ class AppLocalizationsPt extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count itens sincronizados anteriormente por este dispositivo estão em falta no Google Drive.',
+          '$count itens sincronizados anteriormente por este dispositivo estão ausentes do Google Drive.',
       one:
-          '$count item sincronizado anteriormente por este dispositivo está em falta no Google Drive.',
+          '$count item sincronizado anteriormente por este dispositivo está ausente do Google Drive.',
     );
-    return '$_temp0 Isto pode acontecer se os dados da aplicação tiverem sido apagados nas definições da Google. Nada foi eliminado ainda.';
+    return '$_temp0 Isso pode acontecer se os dados do app tiverem sido apagados nas configurações do Google. Nada foi excluído ainda.';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Eliminar também aqui';
+  String get accountSuspiciousDelete => 'Excluir também aqui';
 
   @override
   String get accountSuspiciousKeep =>
-      'Manter as minhas músicas e carregá-las novamente';
+      'Manter minhas músicas e enviá-las novamente';
 
   @override
   String accountSuspiciousDeleteConfirmTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Eliminar $count itens deste dispositivo?',
-      one: 'Eliminar $count item deste dispositivo?',
+      other: 'Excluir $count itens deste dispositivo?',
+      one: 'Excluir $count item deste dispositivo?',
     );
     return '$_temp0';
   }
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'Estas músicas e listas serão eliminadas permanentemente deste dispositivo. Não é possível desfazer.';
+      'Estas músicas e listas serão excluídas permanentemente deste dispositivo. Não é possível desfazer.';
 
   @override
   String get accountSuspiciousDeleteConfirmAction =>
-      'Eliminar deste dispositivo';
+      'Excluir deste dispositivo';
 
   @override
   String get syncErrorRemoteListingSuspicious =>
@@ -1536,7 +1536,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Nada foi eliminado. Escolha se também os quer eliminar aqui ou carregá-los novamente.';
+      'Nada foi excluído. Escolha se quer excluí-los também aqui ou enviá-los novamente.';
 
   @override
   String get syncErrorRemoteChanged =>
@@ -1564,39 +1564,39 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get accountSyncWarningTitle =>
-      'Sincronizado, mas alguns ficheiros foram ignorados';
+      'Sincronizado, mas alguns arquivos foram ignorados';
 
   @override
   String get accountSyncWarningBody =>
-      'Não foi possível utilizar alguns ficheiros e foram deixados como estavam. O resto está atualizado.';
+      'Alguns arquivos não puderam ser usados e foram deixados como estavam. O restante está atualizado.';
 
   @override
   String get accountSyncWarningTooLarge =>
-      'Um ficheiro era demasiado grande para sincronizar e foi ignorado. O resto está atualizado.';
+      'Um arquivo era grande demais para ser sincronizado e foi ignorado. O restante está atualizado.';
 
   @override
   String get accountSyncWarningInvalid =>
-      'Não foi possível ler um ficheiro, que foi ignorado. O resto está atualizado.';
+      'Um arquivo não pôde ser lido e foi ignorado. O restante está atualizado.';
 
   @override
   String get accountNoticeSyncSkipped =>
-      'Sincronizado. Alguns ficheiros foram ignorados.';
+      'Sincronizado. Alguns arquivos foram ignorados.';
 
   @override
   String get settingsExportPdfTooLarge =>
-      'Este PDF ficaria demasiado grande. Experimente menos músicas ou partilhe como texto.';
+      'Este PDF ficaria grande demais. Tente com menos músicas ou compartilhe como texto.';
 
   @override
   String get settingsTimingTooLarge =>
-      'Os dados de temporização são demasiado grandes (mais de 3 MB).';
+      'Os dados de temporização são grandes demais (mais de 3 MB).';
 
   @override
   String get settingsImportDuplicateSongId =>
-      'Esta cópia de segurança inclui a mesma música duas vezes; nada foi importado.';
+      'Este backup inclui a mesma música duas vezes, então nada foi importado.';
 
   @override
   String get setlistSaveConflict =>
-      'A lista de músicas foi alterada noutro local. As suas alterações foram guardadas numa cópia separada.';
+      'A lista de músicas foi alterada em outro lugar. Suas alterações foram salvas como uma cópia separada.';
 
   @override
   String get sectionVerse => 'Estrofe';

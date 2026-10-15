@@ -1515,7 +1515,7 @@ class AppLocalizationsAr extends AppLocalizations {
       count,
       locale: localeName,
       other: '$count عنصر سبق لهذا الجهاز مزامنته مفقود من Google Drive.',
-      many: '$count عنصرًا سبق لهذا الجهاز مزامنتها مفقود من Google Drive.',
+      many: '$count عنصرًا سبق لهذا الجهاز مزامنته مفقود من Google Drive.',
       few: '$count عناصر سبق لهذا الجهاز مزامنتها مفقودة من Google Drive.',
       two: 'عنصران سبق لهذا الجهاز مزامنتهما مفقودان من Google Drive.',
       one: 'عنصر واحد سبق لهذا الجهاز مزامنته مفقود من Google Drive.',

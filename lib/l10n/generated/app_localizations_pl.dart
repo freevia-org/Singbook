@@ -1507,7 +1507,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Usuń i zastąp';
 
   @override
-  String get accountSuspiciousTitle => 'Brakuje elementów na Dysku Google.';
+  String get accountSuspiciousTitle => 'Brakuje elementów na Dysku Google';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1515,6 +1515,10 @@ class AppLocalizationsPl extends AppLocalizations {
       count,
       locale: localeName,
       other:
+          '$count elementu zsynchronizowanego wcześniej przez to urządzenie nie jest dostępnego na Dysku Google.',
+      many:
+          '$count elementów zsynchronizowanych wcześniej przez to urządzenie nie jest dostępnych na Dysku Google.',
+      few:
           '$count elementy zsynchronizowane wcześniej przez to urządzenie nie są dostępne na Dysku Google.',
       one:
           '$count element zsynchronizowany wcześniej przez to urządzenie nie jest dostępny na Dysku Google.',
@@ -1533,7 +1537,9 @@ class AppLocalizationsPl extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Usunąć $count elementy z tego urządzenia?',
+      other: 'Usunąć $count elementu z tego urządzenia?',
+      many: 'Usunąć $count elementów z tego urządzenia?',
+      few: 'Usunąć $count elementy z tego urządzenia?',
       one: 'Usunąć $count element z tego urządzenia?',
     );
     return '$_temp0';

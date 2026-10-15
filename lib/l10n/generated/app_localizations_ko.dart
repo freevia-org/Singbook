@@ -1454,7 +1454,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get accountSuspiciousDelete => '여기서도 삭제';
+  String get accountSuspiciousDelete => '이 기기에서도 삭제';
 
   @override
   String get accountSuspiciousKeep => '노래를 유지하고 다시 업로드';
@@ -1483,7 +1483,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      '삭제된 항목은 없습니다. 여기서도 삭제할지 다시 업로드할지 선택하세요.';
+      '삭제된 항목은 없습니다. 이 기기에서도 삭제할지 다시 업로드할지 선택하세요.';
 
   @override
   String get syncErrorRemoteChanged => '동기화 중 Google Drive가 변경되었습니다.';

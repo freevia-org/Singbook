@@ -1496,8 +1496,10 @@ class AppLocalizationsHu extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count korábban szinkronizált elem hiányzik a Google Drive-ból.',
-      one: '$count korábban szinkronizált elem hiányzik a Google Drive-ból.',
+      other:
+          '$count elem, amelyet ez az eszköz korábban szinkronizált, hiányzik a Google Drive-ból.',
+      one:
+          '$count elem, amelyet ez az eszköz korábban szinkronizált, hiányzik a Google Drive-ból.',
     );
     return '$_temp0 Ez akkor fordulhat elő, ha a Google beállításaiban törölték az alkalmazás adatait. Még semmi sem lett törölve.';
   }
@@ -1514,8 +1516,8 @@ class AppLocalizationsHu extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Törlöd ezt a $count elemet erről az eszközről?',
-      one: 'Törlöd ezt az $count elemet erről az eszközről?',
+      other: 'Törlöd erről az eszközről: $count elem?',
+      one: 'Törlöd erről az eszközről: $count elem?',
     );
     return '$_temp0';
   }

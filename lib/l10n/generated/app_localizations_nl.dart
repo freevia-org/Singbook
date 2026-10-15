@@ -1500,7 +1500,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Verwijderen en vervangen';
 
   @override
-  String get accountSuspiciousTitle => 'Items ontbreken op Google Drive.';
+  String get accountSuspiciousTitle => 'Items ontbreken op Google Drive';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1595,7 +1595,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get settingsExportPdfTooLarge =>
-      'Deze PDF zou te groot worden. Probeer minder nummers of deel de tekst.';
+      'Deze PDF zou te groot worden. Probeer minder nummers of deel het als tekst.';
 
   @override
   String get settingsTimingTooLarge =>

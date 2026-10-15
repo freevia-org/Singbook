@@ -1450,7 +1450,7 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get accountSuspiciousDelete => 'ここからも削除';
+  String get accountSuspiciousDelete => 'このデバイスからも削除';
 
   @override
   String get accountSuspiciousKeep => '曲を残して再アップロード';
@@ -1478,7 +1478,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      '何も削除されていません。ここからも削除するか、再アップロードするかを選んでください。';
+      '何も削除されていません。このデバイスからも削除するか、再アップロードするかを選んでください。';
 
   @override
   String get syncErrorRemoteChanged => '同期中に Google Drive が変更されました。';

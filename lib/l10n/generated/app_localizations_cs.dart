@@ -1493,7 +1493,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Smazat a nahradit';
 
   @override
-  String get accountSuspiciousTitle => 'Na Disku Google chybí položky';
+  String get accountSuspiciousTitle => 'Na Google Drive chybí položky';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1501,11 +1501,11 @@ class AppLocalizationsCs extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count položek, které toto zařízení dříve synchronizovalo, na Disku Google chybí.',
+          '$count položek, které toto zařízení dříve synchronizovalo, na Google Drive chybí.',
       few:
-          '$count položky, které toto zařízení dříve synchronizovalo, na Disku Google chybí.',
+          '$count položky, které toto zařízení dříve synchronizovalo, na Google Drive chybí.',
       one:
-          '$count položka, kterou toto zařízení dříve synchronizovalo, na Disku Google chybí.',
+          '$count položka, kterou toto zařízení dříve synchronizovalo, na Google Drive chybí.',
     );
     return '$_temp0 Může se to stát, pokud byla data aplikace vymazána v nastavení Google. Zatím nebylo nic smazáno.';
   }
@@ -1530,14 +1530,14 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'Tyto písně a seznamy skladeb budou z tohoto zařízení trvale smazány. Tuto akci nelze vrátit zpět.';
+      'Tyto písně a koncertní programy budou z tohoto zařízení trvale smazány. Tuto akci nelze vrátit zpět.';
 
   @override
   String get accountSuspiciousDeleteConfirmAction => 'Smazat z tohoto zařízení';
 
   @override
   String get syncErrorRemoteListingSuspicious =>
-      'Na Disku Google chybí položky.';
+      'Na Google Drive chybí položky.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
@@ -1545,7 +1545,7 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get syncErrorRemoteChanged =>
-      'Disk Google se během synchronizace změnil.';
+      'Google Drive se během synchronizace změnil.';
 
   @override
   String get syncErrorRemoteChangedHint =>
@@ -1557,7 +1557,7 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'Píseň nebo seznam skladeb se nepodařilo přečíst. Importujte je nebo znovu vytvořte a potom synchronizujte znovu.';
+      'Píseň nebo koncertní program se nepodařilo přečíst. Importujte je nebo znovu vytvořte a potom synchronizujte znovu.';
 
   @override
   String get syncErrorNoAccountChange =>
@@ -1601,7 +1601,7 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get setlistSaveConflict =>
-      'Seznam skladeb byl změněn jinde. Vaše úpravy byly uloženy jako samostatná kopie.';
+      'Koncertní program byl změněn jinde. Vaše úpravy byly uloženy jako samostatná kopie.';
 
   @override
   String get sectionVerse => 'Sloka';

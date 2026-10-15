@@ -1508,7 +1508,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Удалить и заменить';
 
   @override
-  String get accountSuspiciousTitle => 'В Google Диске не хватает элементов.';
+  String get accountSuspiciousTitle => 'В Google Drive не хватает элементов';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1516,9 +1516,13 @@ class AppLocalizationsRu extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count элемента, ранее синхронизированных с этого устройства, отсутствуют на Google Диске.',
+          '$count элемента, ранее синхронизированных с этого устройства, отсутствуют на Google Drive.',
+      many:
+          '$count элементов, ранее синхронизированных с этого устройства, отсутствуют на Google Drive.',
+      few:
+          '$count элемента, ранее синхронизированных с этого устройства, отсутствуют на Google Drive.',
       one:
-          '$count элемент, ранее синхронизированный с этого устройства, отсутствует на Google Диске.',
+          '$count элемент, ранее синхронизированный с этого устройства, отсутствует на Google Drive.',
     );
     return '$_temp0 Такое может произойти, если данные приложения были очищены в настройках Google. Ничего ещё не удалено.';
   }
@@ -1535,6 +1539,8 @@ class AppLocalizationsRu extends AppLocalizations {
       count,
       locale: localeName,
       other: 'Удалить $count элемента с этого устройства?',
+      many: 'Удалить $count элементов с этого устройства?',
+      few: 'Удалить $count элемента с этого устройства?',
       one: 'Удалить $count элемент с этого устройства?',
     );
     return '$_temp0';
@@ -1542,7 +1548,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'Эти песни и сет-листы будут удалены с устройства навсегда. Это действие нельзя отменить.';
+      'Эти песни и сет-листы будут навсегда удалены с этого устройства. Это действие нельзя отменить.';
 
   @override
   String get accountSuspiciousDeleteConfirmAction =>
@@ -1550,19 +1556,19 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get syncErrorRemoteListingSuspicious =>
-      'В Google Диске не хватает элементов.';
+      'В Google Drive не хватает элементов.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Ничего не удалено. Выберите, удалить ли их здесь или загрузить снова.';
+      'Ничего не удалено. Выбери, удалить ли их здесь или загрузить снова.';
 
   @override
   String get syncErrorRemoteChanged =>
-      'Google Диск изменился во время синхронизации.';
+      'Google Drive изменился во время синхронизации.';
 
   @override
   String get syncErrorRemoteChangedHint =>
-      'Ничего не потеряно. Синхронизируйте снова, чтобы получить последние изменения.';
+      'Ничего не потеряно. Синхронизируй снова, чтобы получить последние изменения.';
 
   @override
   String get syncErrorInvalidLocalData =>
@@ -1570,7 +1576,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'Не удалось прочитать песню или сет-лист. Импортируйте или создайте их заново, затем синхронизируйте.';
+      'Не удалось прочитать песню или сет-лист. Импортируй или создай их заново, затем синхронизируй.';
 
   @override
   String get syncErrorNoAccountChange =>
@@ -1578,7 +1584,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get syncErrorNoAccountChangeHint =>
-      'Синхронизируйте снова, чтобы продолжить.';
+      'Синхронизируй снова, чтобы продолжить.';
 
   @override
   String get accountSyncWarningTitle =>
@@ -1602,7 +1608,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get settingsExportPdfTooLarge =>
-      'Этот PDF будет слишком большим. Выберите меньше песен или отправьте текст.';
+      'Этот PDF будет слишком большим. Выбери меньше песен или отправь текст.';
 
   @override
   String get settingsTimingTooLarge =>
@@ -1614,7 +1620,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get setlistSaveConflict =>
-      'Сет-лист изменился в другом месте. Ваши изменения сохранены отдельной копией.';
+      'Сет-лист изменился в другом месте. Твои изменения сохранены отдельной копией.';
 
   @override
   String get sectionVerse => 'Куплет';
