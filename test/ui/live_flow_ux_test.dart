@@ -261,6 +261,9 @@ void main() {
         hasLyrics: true,
         isUsableVersion: true,
         canSave: true,
+        bodyPreview: [
+          LyricLineData(id: 'raw', text: 'Explicit raw source lyrics'),
+        ],
       );
       const other = SourceVersionData(
         id: 'two',
@@ -272,34 +275,45 @@ void main() {
         isUsableVersion: true,
         canSave: true,
       );
-      VerseUiState state(int count) => VerseUiState(
-        homeListMode: HomeListMode.online,
-        query: 'signal',
-        comparison: SearchComparisonData(
-          reference: const SearchReferenceData(
-            id: 'signal',
-            title: 'Signal Song',
-            artist: 'The Signals',
-          ),
-          suggested: SourceVersionData(
-            id: 'combined',
-            providerId: 'combined',
-            providerName: 'Catalog',
-            title: 'Signal Song',
-            artist: 'The Signals',
-            sourceCount: count,
-            underlyingSourceId: count == 1 ? 'one' : null,
-            hasLyrics: true,
-            isUsableVersion: true,
-            canSave: true,
-          ),
-          alternatives: const [source, other],
-          selectedVersionId: 'one',
-        ),
-      );
-      final controller = _LiveFlowController(state(1));
+      VerseUiState state(int count, [String selectedId = 'one']) =>
+          VerseUiState(
+            homeListMode: HomeListMode.online,
+            query: 'signal',
+            comparison: SearchComparisonData(
+              reference: const SearchReferenceData(
+                id: 'signal',
+                title: 'Signal Song',
+                artist: 'The Signals',
+              ),
+              suggested: SourceVersionData(
+                id: 'combined',
+                providerId: 'combined',
+                providerName: 'Catalog',
+                title: 'Signal Song',
+                artist: 'The Signals',
+                sourceCount: count,
+                bodyPreview: const [
+                  LyricLineData(
+                    id: 'recipe',
+                    text: 'Future combined recipe lyrics',
+                  ),
+                ],
+                underlyingSourceId: count == 1 ? 'one' : null,
+                hasLyrics: true,
+                isUsableVersion: true,
+                canSave: true,
+              ),
+              alternatives: const [source, other],
+              selectedVersionId: selectedId,
+            ),
+          );
+      final controller = _LiveFlowController(state(1, 'combined'));
       addTearDown(controller.dispose);
       await _pumpHome(tester, controller);
+      await tester.tap(find.byKey(const ValueKey('version-row-combined')));
+      await tester.pump();
+      expect(controller.state.comparison?.selectedVersionId, 'one');
+      expect(find.text('Explicit raw source lyrics'), findsOneWidget);
       final raw = find.byKey(const ValueKey('version-row-one'));
       final alternate = find.byKey(const ValueKey('version-row-two'));
       expect(
@@ -310,6 +324,7 @@ void main() {
       controller.notifyListeners();
       await tester.pump();
       expect(controller.state.comparison?.selectedVersionId, 'one');
+      expect(find.text('Explicit raw source lyrics'), findsOneWidget);
       expect(
         find.descendant(
           of: raw,
@@ -325,6 +340,10 @@ void main() {
         find.byKey(const ValueKey('version-row-combined')),
         findsOneWidget,
       );
+      await tester.tap(find.byKey(const ValueKey('version-row-combined')));
+      await tester.pump();
+      expect(controller.state.comparison?.selectedVersionId, 'combined');
+      expect(find.text('Future combined recipe lyrics'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );

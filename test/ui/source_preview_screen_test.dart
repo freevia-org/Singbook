@@ -38,6 +38,7 @@ class _Controller extends VerseUiController {
     _version('a'),
     _version('b', ready: false),
   ];
+  SourceVersionData? suggested;
   String selected = 'a';
   int saves = 0;
   bool opened = false;
@@ -52,7 +53,7 @@ class _Controller extends VerseUiController {
         title: 'Test song',
         artist: 'The Testers',
       ),
-      suggested: null,
+      suggested: suggested,
       alternatives: versions,
       selectedVersionId: selected,
       discovering: true,
@@ -97,6 +98,49 @@ Widget _app(
 );
 
 void main() {
+  testWidgets(
+    'preview navigation pins the source behind a single-source alias',
+    (tester) async {
+      final controller = _Controller();
+      controller.selected = 'b';
+      controller.suggested = const SourceVersionData(
+        id: 'combined',
+        providerId: 'combined',
+        providerName: 'Lyrics A',
+        title: 'Test song',
+        artist: 'The Testers',
+        sourceCount: 1,
+        underlyingSourceId: 'a',
+        hasLyrics: true,
+        isUsableVersion: true,
+        canSave: true,
+        bodyLines: [
+          LyricLineData(
+            id: 'facade-section',
+            section: 'Verse 1',
+            isBlank: true,
+          ),
+          LyricLineData(id: 'facade-line', text: 'An opening line'),
+        ],
+      );
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(_app(controller));
+      await tester.tap(find.byKey(const ValueKey('preview-previous')));
+      await tester.pump();
+      expect(controller.selected, 'a');
+      expect(find.text('Lyrics A'), findsOneWidget);
+      expect(
+        find.textContaining('A fourth line beyond the summary'),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const ValueKey('preview-next')));
+      await tester.pump();
+      expect(controller.selected, 'b');
+      expect(controller.saves, 0);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('switching versions preserves the later repeated chorus', (
     tester,
   ) async {

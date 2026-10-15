@@ -33,6 +33,13 @@ String versionName(AppLocalizations l10n, SourceVersionData version) =>
     ? version.providerName
     : l10n.searchSuggested;
 
+/// A single-source recommendation is displayed under that source's name.
+/// Choosing it must pin that source rather than a future combined recipe.
+String versionSelectionId(SourceVersionData version) =>
+    version.sourceCount == 1 && version.underlyingSourceId != null
+    ? version.underlyingSourceId!
+    : version.id;
+
 class SourceContributions extends StatelessWidget {
   const SourceContributions({super.key, required this.version});
   final SourceVersionData version;
@@ -123,10 +130,11 @@ class _SourcePreviewScreenState extends State<SourcePreviewScreen> {
     final fraction = _scroll.hasClients && _scroll.position.maxScrollExtent > 0
         ? _scroll.offset / _scroll.position.maxScrollExtent
         : 0.0;
-    widget.controller.selectVersion(version.id);
+    widget.controller.selectVersion(versionSelectionId(version));
+    final resolved = widget.controller.state.comparison?.selected ?? version;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_scroll.hasClients) return;
-      final matches = version.bodyLines
+      final matches = resolved.bodyLines
           .where(
             (line) =>
                 (line.text.trim().isNotEmpty ? line.text : line.section ?? '')
