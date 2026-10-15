@@ -1121,19 +1121,36 @@ class AppControllerAdapter extends VerseUiController {
   SetlistDocument? _setlistById(String id) =>
       app.setlists.where((item) => item.id == id).firstOrNull;
 
+  SongDocument? _readerPdfSong(String id) {
+    final song = app.findSong(id);
+    if (song == null || _route != VerseRoute.reader || _songId != id) {
+      return song;
+    }
+
+    final metadata = Map<String, Object?>.from(song.metadata);
+    final key = displayedKey;
+    final capo = displayedCapo;
+    if (key != null) metadata['key'] = key;
+    if (capo != null) metadata['capo'] = capo;
+    return song.copyWith(
+      body: arrangement.transposeBody(song.body, _effectiveTranspose(song)),
+      metadata: metadata,
+    );
+  }
+
   @override
   Future<void> shareSong(String id) => _export(app.findSong(id), onShareSong);
 
   @override
   Future<void> shareSongPdf(String id) =>
-      _export(app.findSong(id), onShareSongPdf);
+      _export(_readerPdfSong(id), onShareSongPdf);
 
   @override
   Future<void> copySongChordPro(String id) =>
       _export(app.findSong(id), onCopySong, copy: true);
 
   @override
-  Future<void> printSong(String id) => _export(app.findSong(id), onPrintSong);
+  Future<void> printSong(String id) => _export(_readerPdfSong(id), onPrintSong);
 
   @override
   Future<void> shareSetlist(String id) =>
