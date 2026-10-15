@@ -97,6 +97,71 @@ void main() {
     }
   });
 
+  test('consent cookies are stripped from an allowed www redirect', () async {
+    final session = YoutubeMusicSession()
+      ..setConsentCookies({'SOCS': 'fixture'});
+    final seen = <http.Request>[];
+    final t = transport((request) {
+      seen.add(request);
+      if (request.url.host == 'music.youtube.com' && request.url.path == '/') {
+        return http.Response(
+          '',
+          302,
+          headers: {'location': 'https://www.music.youtube.com/'},
+        );
+      }
+      return request.url.path == '/'
+          ? homepage()
+          : http.Response(
+              '{"contents":{"sectionListRenderer":{"contents":[]}}}',
+              200,
+            );
+    });
+    try {
+      await YoutubeMusicProvider(t, session: session).search('fixture');
+      expect(seen[0].headers['cookie'], 'SOCS=fixture');
+      expect(seen[1].url.host, 'www.music.youtube.com');
+      expect(seen[1].headers['cookie'], isNull);
+      expect(seen.last.url.host, 'music.youtube.com');
+      expect(seen.last.headers['cookie'], 'SOCS=fixture');
+    } finally {
+      await t.close();
+    }
+  });
+
+  test(
+    'a saved decision does not bypass a renewed Google consent requirement',
+    () async {
+      var calls = 0;
+      final session = YoutubeMusicSession()
+        ..setConsentCookies({'SOCS': 'fixture'});
+      final t = transport((request) {
+        calls++;
+        expect(request.url.host, 'music.youtube.com');
+        return http.Response(
+          '',
+          302,
+          headers: {
+            'location': 'https://consent.youtube.com/m?continue=synthetic',
+          },
+        );
+      });
+      try {
+        await expectLater(
+          YoutubeMusicProvider(t, session: session).search('fixture'),
+          throwsA(
+            isA<ProviderException>()
+                .having((error) => error.code, 'code', 'blocked')
+                .having((error) => error.message, 'reason', 'consent_required'),
+          ),
+        );
+        expect(calls, 1);
+      } finally {
+        await t.close();
+      }
+    },
+  );
+
   test(
     'session revision discards an in-flight stale homepage config',
     () async {
