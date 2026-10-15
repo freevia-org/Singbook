@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -79,6 +81,83 @@ ChordLyricsLine _line(
 
 RenderParagraph _paragraph(WidgetTester tester, Finder finder) =>
     tester.renderObject<RenderParagraph>(finder);
+
+Future<List<Rect>> _chordPixelComponents(
+  WidgetTester tester,
+  Finder finder,
+) async {
+  final boundary = tester.renderObject<RenderRepaintBoundary>(finder);
+  final capturedImage = await tester.runAsync(
+    () => boundary.toImage(pixelRatio: 1),
+  );
+  expect(capturedImage, isNotNull);
+  final image = capturedImage!;
+  try {
+    final data = await tester.runAsync(
+      () => image.toByteData(format: ui.ImageByteFormat.rawRgba),
+    );
+    expect(data, isNotNull);
+    final pixels = data!;
+    final activeColumns = <int>[];
+    for (var x = 0; x < image.width; x++) {
+      var hasChordPixel = false;
+      for (var y = 0; y < image.height && !hasChordPixel; y++) {
+        final offset = (y * image.width + x) * 4;
+        final red = pixels.getUint8(offset);
+        final green = pixels.getUint8(offset + 1);
+        final blue = pixels.getUint8(offset + 2);
+        hasChordPixel = blue > red + 35 && blue > green + 15;
+      }
+      if (hasChordPixel) activeColumns.add(x);
+    }
+    final components = <Rect>[];
+    for (var cursor = 0; cursor < activeColumns.length;) {
+      final left = activeColumns[cursor];
+      var right = left;
+      cursor++;
+      while (cursor < activeColumns.length &&
+          activeColumns[cursor] == right + 1) {
+        right = activeColumns[cursor++];
+      }
+      var top = image.height;
+      var bottom = -1;
+      for (var x = left; x <= right; x++) {
+        for (var y = 0; y < image.height; y++) {
+          final offset = (y * image.width + x) * 4;
+          final red = pixels.getUint8(offset);
+          final green = pixels.getUint8(offset + 1);
+          final blue = pixels.getUint8(offset + 2);
+          if (blue > red + 35 && blue > green + 15) {
+            top = y < top ? y : top;
+            bottom = y > bottom ? y : bottom;
+          }
+        }
+      }
+      components.add(
+        Rect.fromLTRB(
+          left.toDouble(),
+          top.toDouble(),
+          right + 1.0,
+          bottom + 1.0,
+        ),
+      );
+    }
+    return components;
+  } finally {
+    image.dispose();
+  }
+}
+
+Future<Rect> _chordPixelBounds(WidgetTester tester, Finder finder) async {
+  final components = await _chordPixelComponents(tester, finder);
+  expect(components, isNotEmpty, reason: 'chord pixels exist');
+  return Rect.fromLTRB(
+    components.map((rect) => rect.left).reduce((a, b) => a < b ? a : b),
+    components.map((rect) => rect.top).reduce((a, b) => a < b ? a : b),
+    components.map((rect) => rect.right).reduce((a, b) => a > b ? a : b),
+    components.map((rect) => rect.bottom).reduce((a, b) => a > b ? a : b),
+  );
+}
 
 List<Rect> _glyphBoxes(RenderParagraph paragraph, int start, int end) =>
     paragraph
@@ -474,14 +553,44 @@ void main() {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _line('', const [
-                  LyricChord(graphemeOffset: 0, symbol: 'C'),
-                  LyricChord(graphemeOffset: 0, symbol: 'G'),
-                ], key: const ValueKey('chord-only')),
-                _line('    ', const [
-                  LyricChord(graphemeOffset: 1, symbol: 'F'),
-                  LyricChord(graphemeOffset: 3, symbol: 'Am'),
-                ], key: const ValueKey('space-only')),
+                RepaintBoundary(
+                  key: const ValueKey('chord-only-pixels'),
+                  child: DecoratedBox(
+                    decoration: const BoxDecoration(color: Colors.white),
+                    child: _line('', const [
+                      LyricChord(graphemeOffset: 0, symbol: 'C'),
+                      LyricChord(graphemeOffset: 0, symbol: 'G'),
+                    ], key: const ValueKey('chord-only')),
+                  ),
+                ),
+                RepaintBoundary(
+                  key: const ValueKey('space-only-pixels'),
+                  child: DecoratedBox(
+                    decoration: const BoxDecoration(color: Colors.white),
+                    child: _line('    ', const [
+                      LyricChord(graphemeOffset: 1, symbol: 'F'),
+                      LyricChord(graphemeOffset: 3, symbol: 'Am'),
+                    ], key: const ValueKey('space-only')),
+                  ),
+                ),
+                RepaintBoundary(
+                  key: const ValueKey('rtl-space-pixels'),
+                  child: DecoratedBox(
+                    decoration: const BoxDecoration(color: Colors.white),
+                    child: Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: _line(
+                        '          ',
+                        const [
+                          LyricChord(graphemeOffset: 1, symbol: 'F'),
+                          LyricChord(graphemeOffset: 6, symbol: 'Am'),
+                        ],
+                        key: const ValueKey('rtl-space-only'),
+                        style: _arabicStyle,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -503,6 +612,68 @@ void main() {
     expect(
       tester.getSize(find.byKey(const ValueKey('space-only'))).height,
       greaterThan(0),
+    );
+    final coincidentBounds = await _chordPixelBounds(
+      tester,
+      find.byKey(const ValueKey('chord-only-pixels')),
+    );
+    final spacedBounds = await _chordPixelBounds(
+      tester,
+      find.byKey(const ValueKey('space-only-pixels')),
+    );
+    final spacedComponents = await _chordPixelComponents(
+      tester,
+      find.byKey(const ValueKey('space-only-pixels')),
+    );
+    expect(spacedComponents, hasLength(2));
+    expect(
+      spacedBounds.width,
+      greaterThan(coincidentBounds.width + 5),
+      reason: 'F and Am use their distinct prefix-space anchors',
+    );
+    expect(
+      spacedBounds.height,
+      lessThan(20),
+      reason: 'the two whitespace-anchored chords share one baseline',
+    );
+    final spaceText = _paragraph(
+      tester,
+      find.descendant(
+        of: find.byKey(const ValueKey('space-only')),
+        matching: find.byType(Text),
+      ),
+    );
+    final firstSpace = _glyphBoxes(spaceText, 1, 2).single;
+    final thirdSpace = _glyphBoxes(spaceText, 3, 4).single;
+    final captureOrigin = tester.getTopLeft(
+      find.byKey(const ValueKey('space-only-pixels')),
+    );
+    final textOrigin = tester.getTopLeft(
+      find.descendant(
+        of: find.byKey(const ValueKey('space-only')),
+        matching: find.byType(Text),
+      ),
+    );
+    final textOffset = textOrigin.dx - captureOrigin.dx;
+    expect(
+      spacedComponents[0].left,
+      closeTo(textOffset + firstSpace.left, 3),
+      reason: 'F begins at the first selected prefix space',
+    );
+    expect(
+      spacedComponents[1].left,
+      closeTo(textOffset + thirdSpace.left, 3),
+      reason: 'Am begins at the third selected prefix space',
+    );
+    final rtlSpaceBounds = await _chordPixelBounds(
+      tester,
+      find.byKey(const ValueKey('rtl-space-pixels')),
+    );
+    expect(rtlSpaceBounds.width, greaterThan(20));
+    expect(
+      rtlSpaceBounds.height,
+      lessThan(20),
+      reason: 'RTL whitespace anchors remain on one baseline',
     );
     expect(tester.takeException(), isNull);
     await expectLater(

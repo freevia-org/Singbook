@@ -255,7 +255,7 @@ class _ChordLineLayout {
         final byOffset = a.$2.graphemeOffset.compareTo(b.$2.graphemeOffset);
         return byOffset != 0 ? byOffset : a.$1.compareTo(b.$1);
       });
-    final width = text.isEmpty && constraints.maxWidth.isFinite
+    final width = text.trim().isEmpty && constraints.maxWidth.isFinite
         ? constraints.maxWidth
         : constraints.constrainWidth(lyrics.width);
     var previousOffset = -1;
@@ -475,9 +475,9 @@ class _ChordLyricsPainter extends CustomPainter {
         canvas.clipRect(
           Rect.fromLTRB(
             0,
-            line.baseline - line.ascent - 1,
+            line.baseline - line.ascent,
             size.width,
-            line.baseline + line.descent + 1,
+            line.baseline + line.descent,
           ),
         );
         layout.textPainter.paint(canvas, Offset.zero);
