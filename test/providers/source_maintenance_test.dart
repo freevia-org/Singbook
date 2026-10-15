@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/domain/models.dart';
+import 'package:singbook/domain/timing.dart';
 import 'package:singbook/providers/provider.dart';
 import 'package:singbook/providers/source_catalog.dart';
 import 'package:singbook/providers/source_maintenance.dart';
@@ -30,6 +31,34 @@ void main() {
       expect(_probe(report)['reason'], 'resolved_candidate_changed');
     });
 
+    test(
+      'distinguishes empty search availability from wrong identities',
+      () async {
+        final empty = await SourceMaintenanceHarness(
+          providers: [_Provider(searchResults: const [])],
+        ).run(_catalog(searchProbe: true));
+        expect(_probe(empty)['status'], 'unavailable');
+        expect(_probe(empty)['reason'], 'empty_search_results');
+
+        final wrong = await SourceMaintenanceHarness(
+          providers: [
+            _Provider(
+              searchResults: const [
+                SongCandidate(
+                  providerId: 'fake',
+                  id: 'other',
+                  title: 'Other song',
+                  artist: 'Other artist',
+                ),
+              ],
+            ),
+          ],
+        ).run(_catalog(searchProbe: true));
+        expect(_probe(wrong)['status'], 'identity_mismatch');
+        expect(_probe(wrong)['reason'], 'expected_candidate_not_found');
+      },
+    );
+
     test('reports a missing required metadata path as schema change', () async {
       final report = await SourceMaintenanceHarness(
         providers: [_Provider()],
@@ -46,6 +75,31 @@ void main() {
       ).run(_catalog(requiredFields: ['body', 'metadata', 'lineTiming']));
       expect(_probe(report)['status'], 'changed_schema');
       expect(_probe(report)['missingFields'], ['lineTiming']);
+    });
+
+    test('retains unsupported TTML sequence without verifying timing', () async {
+      const raw =
+          '<tt><body timeContainer="seq"><p begin="1s">Synthetic words</p></body></tt>';
+      final track = parseTtml(raw, sourceDocumentId: 'test-sequence');
+      expect(track.status, TimingStatus.unsupported);
+      expect(track.cues, isNotEmpty);
+      expect(track.raw, raw);
+      final report =
+          await SourceMaintenanceHarness(
+            providers: [
+              _Provider(timingTracks: [track]),
+            ],
+          ).run(
+            _catalog(
+              requiredFields: ['body', 'timing', 'lineTiming', 'wordTiming'],
+            ),
+          );
+      expect(_probe(report)['status'], 'changed_schema');
+      expect(_probe(report)['missingFields'], [
+        'timing',
+        'lineTiming',
+        'wordTiming',
+      ]);
     });
 
     test('does not accept cues without retained raw timing data', () async {
@@ -240,6 +294,7 @@ JsonMap _probe(JsonMap report) =>
 SourceCatalog _catalog({
   String status = 'active',
   bool includeProbe = true,
+  bool searchProbe = false,
   List<String> requiredMetadataFields = const [],
   List<String> capabilities = const ['catalog', 'lyrics', 'metadata'],
   List<String> requiredFields = const ['body', 'metadata'],
@@ -264,12 +319,14 @@ SourceCatalog _catalog({
         if (includeProbe)
           {
             'id': 'known-song',
-            'candidate': {
-              'providerId': 'fake',
-              'id': 'song-1',
-              'title': 'Known Song',
-              'artist': 'Known Artist',
-            },
+            if (searchProbe) 'query': 'Known Song Known Artist',
+            if (!searchProbe)
+              'candidate': {
+                'providerId': 'fake',
+                'id': 'song-1',
+                'title': 'Known Song',
+                'artist': 'Known Artist',
+              },
             'expectedTitle': 'Known Song',
             'expectedArtist': 'Known Artist',
             'requiredFields': requiredFields,
@@ -287,11 +344,13 @@ class _Provider implements LyricsProvider {
     this.resolvedId,
     this.error,
     this.timingTracks = const [],
+    this.searchResults,
   });
   final String body;
   final String? resolvedId;
   final Object? error;
   final List<TimingTrack> timingTracks;
+  final List<SongCandidate>? searchResults;
 
   @override
   ProviderDefinition get definition => const ProviderDefinition(
@@ -304,14 +363,16 @@ class _Provider implements LyricsProvider {
   Future<List<SongCandidate>> search(
     String query, {
     CancellationToken? cancel,
-  }) async => [
-    const SongCandidate(
-      providerId: 'fake',
-      id: 'song-1',
-      title: 'Known Song',
-      artist: 'Known Artist',
-    ),
-  ];
+  }) async =>
+      searchResults ??
+      [
+        const SongCandidate(
+          providerId: 'fake',
+          id: 'song-1',
+          title: 'Known Song',
+          artist: 'Known Artist',
+        ),
+      ];
 
   @override
   Future<SourceResult> resolve(

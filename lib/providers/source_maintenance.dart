@@ -225,6 +225,13 @@ class SourceMaintenanceHarness {
         }
         final candidates = await provider.search(query, cancel: cancel);
         searchedCatalog = true;
+        if (candidates.isEmpty) {
+          return {
+            'id': id,
+            'status': 'unavailable',
+            'reason': 'empty_search_results',
+          };
+        }
         final matches = candidates
             .where(
               (candidate) =>
@@ -523,7 +530,11 @@ class SourceMaintenanceHarness {
       value?.trim().toLowerCase().replaceAll(RegExp(r'\s+'), '');
 
   bool _hasUsableTiming(TimingTrack track) =>
-      track.raw != null && track.raw!.isNotEmpty && track.cues.any(_isValidCue);
+      track.status != TimingStatus.invalid &&
+      track.status != TimingStatus.unsupported &&
+      track.raw != null &&
+      track.raw!.isNotEmpty &&
+      track.cues.any(_isValidCue);
 
   bool _hasLineTiming(Iterable<TimingTrack> tracks) => tracks.any(
     (track) =>
