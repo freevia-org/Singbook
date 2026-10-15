@@ -114,6 +114,14 @@ varies by song must not become required for every song. Optional variants not
 required by a canary remain unverified, even when that canary is healthy. Reports
 show the timing granularities actually observed. Embedded selection IDs, such as
 SyncLRC's encoded records, are reported as fingerprints instead of raw IDs.
+Line/word cue checks require nonempty raw documents and valid parsed cues. Line
+coverage requires an explicit line cue; word coverage requires positioned word
+cues with valid grapheme bounds. A combined word track may contain both. A raw
+document alone proves retention, not working cues.
+Reports list `coverage.verifiedCapabilities` and `coverage.unverifiedCapabilities`;
+passing canaries with advertised but untested capabilities are `partial_coverage`,
+which also returns exit 1. Extend coverage when a representative real canary is
+available; incomplete coverage alone does not justify retiring a source.
 
 Reports include timestamp, source/probe IDs, outcome, missing field names,
 lengths/counts and metadata field names. They contain no full lyrics, raw source

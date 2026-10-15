@@ -38,6 +38,131 @@ void main() {
       expect(_probe(report)['missingMetadataFields'], ['license.status']);
     });
 
+    test('does not accept raw timing without parsed cues', () async {
+      final report = await SourceMaintenanceHarness(
+        providers: [
+          _Provider(timingTracks: [_timing(cues: const [])]),
+        ],
+      ).run(_catalog(requiredFields: ['body', 'metadata', 'lineTiming']));
+      expect(_probe(report)['status'], 'changed_schema');
+      expect(_probe(report)['missingFields'], ['lineTiming']);
+    });
+
+    test('does not accept cues without retained raw timing data', () async {
+      final report = await SourceMaintenanceHarness(
+        providers: [
+          _Provider(timingTracks: [_timing(raw: '')]),
+        ],
+      ).run(_catalog(requiredFields: ['body', 'metadata', 'lineTiming']));
+      expect(_probe(report)['status'], 'changed_schema');
+      expect(_probe(report)['missingFields'], ['lineTiming']);
+    });
+
+    test('rejects unsupported timing granularity', () async {
+      final report = await SourceMaintenanceHarness(
+        providers: [
+          _Provider(timingTracks: [_timing(granularity: 'unsupported')]),
+        ],
+      ).run(_catalog(requiredFields: ['body', 'metadata', 'lineTiming']));
+      expect(_probe(report)['status'], 'changed_schema');
+      expect(_probe(report)['missingFields'], ['lineTiming']);
+    });
+
+    test('requires positioned word cues', () async {
+      final report = await SourceMaintenanceHarness(
+        providers: [
+          _Provider(timingTracks: [_timing(granularity: 'word')]),
+        ],
+      ).run(_catalog(requiredFields: ['body', 'metadata', 'wordTiming']));
+      expect(_probe(report)['status'], 'changed_schema');
+      expect(_probe(report)['missingFields'], ['wordTiming']);
+    });
+
+    test('one word track can prove its explicit line and word cues', () async {
+      final cues = [
+        const TimingCue(
+          id: 'line-cue',
+          occurrenceId: 'line-1',
+          text: 'verified line',
+          startUs: 1000000,
+        ),
+        const TimingCue(
+          id: 'word-cue',
+          occurrenceId: 'line-1',
+          text: 'verified',
+          startUs: 1000000,
+          endUs: 1200000,
+          graphemeStart: 0,
+          graphemeEnd: 8,
+        ),
+      ];
+      final report =
+          await SourceMaintenanceHarness(
+            providers: [
+              _Provider(
+                timingTracks: [_timing(granularity: 'word', cues: cues)],
+              ),
+            ],
+          ).run(
+            _catalog(
+              capabilities: [
+                'catalog',
+                'lyrics',
+                'metadata',
+                'lineTiming',
+                'wordTiming',
+              ],
+              requiredFields: [
+                'body',
+                'metadata',
+                'timing',
+                'lineTiming',
+                'wordTiming',
+              ],
+            ),
+          );
+      final source = (report['sources'] as List).single as JsonMap;
+      final coverage = source['coverage'] as JsonMap;
+      expect(_probe(report)['status'], 'healthy');
+      expect(coverage['verifiedCapabilities'], [
+        'lineTiming',
+        'lyrics',
+        'metadata',
+        'wordTiming',
+      ]);
+      expect(coverage['unverifiedCapabilities'], ['catalog']);
+    });
+
+    test('reports observed and unverified advertised capabilities', () async {
+      final report =
+          await SourceMaintenanceHarness(
+            providers: [
+              _Provider(timingTracks: [_timing()]),
+            ],
+          ).run(
+            _catalog(
+              capabilities: [
+                'catalog',
+                'lyrics',
+                'metadata',
+                'lineTiming',
+                'wordTiming',
+              ],
+              requiredFields: ['body', 'metadata', 'lineTiming'],
+            ),
+          );
+      final source = (report['sources'] as List).single as JsonMap;
+      final coverage = source['coverage'] as JsonMap;
+      expect(source['status'], 'partial_coverage');
+      expect(_probe(report)['status'], 'healthy');
+      expect(coverage['verifiedCapabilities'], [
+        'lineTiming',
+        'lyrics',
+        'metadata',
+      ]);
+      expect(coverage['unverifiedCapabilities'], ['catalog', 'wordTiming']);
+    });
+
     test('chords are checked only for chord-specific probes', () async {
       final provider = _Provider();
       final ordinaryProbe =
@@ -157,10 +282,16 @@ SourceCatalog _catalog({
 });
 
 class _Provider implements LyricsProvider {
-  _Provider({this.body = 'verified lyric body', this.resolvedId, this.error});
+  _Provider({
+    this.body = 'verified lyric body',
+    this.resolvedId,
+    this.error,
+    this.timingTracks = const [],
+  });
   final String body;
   final String? resolvedId;
   final Object? error;
+  final List<TimingTrack> timingTracks;
 
   @override
   ProviderDefinition get definition => const ProviderDefinition(
@@ -198,6 +329,30 @@ class _Provider implements LyricsProvider {
       candidate: resolved,
       body: body,
       metadata: const {'kind': 'test'},
+      timingTracks: timingTracks,
     );
   }
 }
+
+TimingTrack _timing({
+  String granularity = 'line',
+  String raw = '[00:01.00] verified lyric body',
+  List<TimingCue>? cues,
+}) => TimingTrack(
+  id: 'track-1',
+  sourceDocumentId: 'song-1',
+  sourceLyrics: 'verified lyric body',
+  format: 'lrc',
+  raw: raw,
+  granularity: granularity,
+  cues:
+      cues ??
+      const [
+        TimingCue(
+          id: 'cue-1',
+          occurrenceId: 'line-1',
+          text: 'verified lyric body',
+          startUs: 1000000,
+        ),
+      ],
+);

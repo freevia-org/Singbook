@@ -12,7 +12,7 @@
         "https://github.com/better-lyrics/unison"
       ],
       "endpoint": "https://unison.betterlyrics.org",
-      "reason": "Three deterministic canaries passed on 2026-10-15: exact search for Give It Up / Don Toliver, direct ID 31, and direct ID 1494 Love Never Felt So Good / Michael Jackson. All retained raw line timing. Source attribution is https://unison.boidu.dev; individual lyric-text rights remain unverified and no ODbL claim is made."
+      "reason": "Three deterministic canaries passed on 2026-10-15: exact search for Give It Up / Don Toliver, direct ID 31, and direct ID 1494 Love Never Felt So Good / Michael Jackson. Direct reads retained raw TTML; parsed tracks have 341/441 cues including explicit line and positioned word cues. Source attribution is https://unison.boidu.dev; individual lyric-text rights remain unverified and no ODbL claim is made."
     },
     {
       "id": "startjamming",

@@ -510,6 +510,7 @@ void main() {
               id: 'genius',
               name: 'Genius',
               enabledByDefault: true,
+              accessMode: 'app_token',
             ),
           ),
         );
@@ -520,11 +521,28 @@ void main() {
               id: 'genius',
               name: 'Genius',
               enabledByDefault: false,
+              accessMode: 'app_token',
             ),
           ),
         );
         expect(available.definition.enabledByDefault, isTrue);
         expect(unavailable.definition.enabledByDefault, isFalse);
+
+        final publicOverride = ConfiguredBuiltinProvider(
+          SourceCatalogEntry.fromJson(
+            source(id: 'genius', accessMode: 'public', enabled: true),
+          ),
+          FakeProvider(
+            const ProviderDefinition(
+              id: 'genius',
+              name: 'Genius',
+              enabledByDefault: false,
+              accessMode: 'app_token',
+            ),
+          ),
+        );
+        expect(publicOverride.definition.accessMode, 'public');
+        expect(publicOverride.definition.enabledByDefault, isFalse);
       },
     );
   });

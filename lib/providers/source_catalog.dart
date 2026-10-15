@@ -494,6 +494,7 @@ class ConfiguredBuiltinProvider implements LyricsProvider {
   @override
   ProviderDefinition get definition {
     final configured = entry.definition;
+    final compiled = delegate.definition;
     return ProviderDefinition(
       id: configured.id,
       name: configured.name,
@@ -501,8 +502,7 @@ class ConfiguredBuiltinProvider implements LyricsProvider {
       accessMode: configured.accessMode,
       enabledByDefault:
           configured.enabledByDefault &&
-          (entry.accessMode != 'app_token' ||
-              delegate.definition.enabledByDefault),
+          (compiled.accessMode != 'app_token' || compiled.enabledByDefault),
       description: configured.description,
       website: configured.website,
     );

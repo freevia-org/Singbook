@@ -720,4 +720,59 @@ void main() {
       expect(result.attribution, 'Catalog test source');
     },
   );
+
+  test(
+    'parses Unison TTML absolute partial-clock cues and retains raw XML',
+    () async {
+      const ttml =
+          '<tt xmlns="http://www.w3.org/ns/ttml" timeBase="media" composer="https://composer.boidu.dev/ttml"><body><div><p begin="0:13.532" end="0:15.126"><span begin="0:13.532" end="0:13.930">First words</span><span begin="0:13.930" end="0:15.126">second words</span></p></div></body></tt>';
+      final source = entry(
+        searchResponse: 'json',
+        itemsPath: 'data',
+        searchFields: {'id': 'id', 'title': 'song', 'artist': 'artist'},
+        resolveResponse: 'json',
+        rootPath: 'data',
+        resolveFields: {
+          'body': 'lyrics',
+          'title': 'song',
+          'artist': 'artist',
+          'format': 'format',
+        },
+        bodyFormat: 'auto',
+        resolveUrl: 'https://lyrics.example.com/lyrics/{id}',
+        searchUrl: 'https://lyrics.example.com/lyrics/search?q={query}',
+      );
+      final provider = ConfigurableProvider(
+        source,
+        transport(
+          (request) async => http.Response(
+            request.url.path.endsWith('/search')
+                ? jsonEncode({
+                    'data': [
+                      {'id': '31', 'song': 'A Song', 'artist': 'The Band'},
+                    ],
+                  })
+                : jsonEncode({
+                    'data': {
+                      'song': 'A Song',
+                      'artist': 'The Band',
+                      'lyrics': ttml,
+                      'format': 'ttml',
+                    },
+                  }),
+            200,
+          ),
+        ),
+      );
+
+      final candidate = (await provider.search('A Song')).single;
+      final result = await provider.resolve(candidate);
+      final track = result.timingTracks.single;
+      expect(track.raw, ttml);
+      expect(track.cues, isNotEmpty);
+      expect(track.cues.first.startUs, 13532000);
+      expect(track.extra['timingProfile'], 'unison-ttml');
+      expect(result.body, contains('First words'));
+    },
+  );
 }

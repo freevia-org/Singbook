@@ -42,6 +42,20 @@ void main() {
         expect(result.body.trim().isNotEmpty, isTrue);
         expect(result.timingTracks.isNotEmpty, isTrue);
         expect(
+          result.timingTracks.any(
+            (track) =>
+                track.granularity == 'word' &&
+                track.extra['timingProfile'] == 'unison-ttml' &&
+                track.cues.any(
+                  (cue) =>
+                      cue.graphemeStart != null &&
+                      cue.graphemeEnd != null &&
+                      cue.graphemeEnd! > cue.graphemeStart!,
+                ),
+          ),
+          isTrue,
+        );
+        expect(
           result.timingTracks.every((track) => track.raw?.isNotEmpty == true),
           isTrue,
         );

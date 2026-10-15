@@ -65,6 +65,7 @@ class SourceMaintenanceHarness {
       return {
         ...base,
         'status': entry.status,
+        'coverage': _coverage(entry, const {}, live: false),
         'probes': [
           for (final probe in entry.probes)
             {'id': probe['id'], 'status': entry.status},
@@ -76,6 +77,7 @@ class SourceMaintenanceHarness {
       return {
         ...base,
         'status': 'import_only',
+        'coverage': _coverage(entry, const {}, live: false),
         'probes': [
           for (final probe in entry.probes)
             {'id': probe['id'], 'status': 'import_only'},
@@ -89,6 +91,7 @@ class SourceMaintenanceHarness {
       return {
         ...base,
         'status': 'offline_unverified',
+        'coverage': _coverage(entry, const {}, live: false),
         'probes': [
           for (final probe in entry.probes)
             {'id': probe['id'], 'status': 'offline_unverified'},
@@ -101,6 +104,7 @@ class SourceMaintenanceHarness {
         ...base,
         'status': 'coverage_gap',
         'reason': 'provider_missing',
+        'coverage': _coverage(entry, const {}, live: true),
         'probes': [
           for (final probe in entry.probes)
             {
@@ -116,8 +120,16 @@ class SourceMaintenanceHarness {
       probeReports.add(await _probe(entry, provider, probe));
     }
     final statuses = probeReports.map((p) => p['status'] as String).toSet();
+    final verifiedCapabilities = <String>{
+      for (final report in probeReports)
+        ...((report['verifiedCapabilities'] as List?)?.cast<String>() ??
+            const <String>[]),
+    };
+    final coverage = _coverage(entry, verifiedCapabilities, live: true);
     final status = statuses.length == 1 && statuses.single == 'healthy'
-        ? 'healthy'
+        ? ((coverage['unverifiedCapabilities'] as List).isEmpty
+              ? 'healthy'
+              : 'partial_coverage')
         : statuses.contains('changed_schema')
         ? 'changed_schema'
         : statuses.contains('identity_mismatch')
@@ -133,7 +145,30 @@ class SourceMaintenanceHarness {
         : statuses.contains('coverage_gap')
         ? 'coverage_gap'
         : 'unavailable';
-    return {...base, 'status': status, 'probes': probeReports};
+    return {
+      ...base,
+      'status': status,
+      'coverage': coverage,
+      'probes': probeReports,
+    };
+  }
+
+  JsonMap _coverage(
+    SourceCatalogEntry entry,
+    Set<String> verified, {
+    required bool live,
+  }) {
+    final observed = verified.intersection(entry.capabilities).toList()..sort();
+    final unverified = entry.capabilities.difference(verified).toList()..sort();
+    return {
+      'status': !live
+          ? 'unverified'
+          : unverified.isEmpty
+          ? 'complete'
+          : 'partial',
+      'verifiedCapabilities': observed,
+      'unverifiedCapabilities': unverified,
+    };
   }
 
   Future<JsonMap> _probe(
@@ -168,9 +203,10 @@ class SourceMaintenanceHarness {
       final expectedTitle = _normalized(probe['expectedTitle']?.toString());
       final expectedArtist = _normalized(probe['expectedArtist']?.toString());
       final expectedAlbum = _normalized(probe['expectedAlbum']?.toString());
-      final expectedDuration =
-          (probe['expectedDurationSeconds'] as num?)?.toDouble();
+      final expectedDuration = (probe['expectedDurationSeconds'] as num?)
+          ?.toDouble();
       SongCandidate selected;
+      var searchedCatalog = false;
       final candidateJson = probe['candidate'];
       if (candidateJson is Map) {
         selected = SongCandidate.fromJson(
@@ -188,6 +224,7 @@ class SourceMaintenanceHarness {
           };
         }
         final candidates = await provider.search(query, cancel: cancel);
+        searchedCatalog = true;
         final matches = candidates
             .where(
               (candidate) =>
@@ -199,7 +236,10 @@ class SourceMaintenanceHarness {
                   (expectedAlbum == null ||
                       _normalized(candidate.album) == expectedAlbum) &&
                   (expectedDuration == null ||
-                      _durationMatches(candidate.durationSeconds, expectedDuration)),
+                      _durationMatches(
+                        candidate.durationSeconds,
+                        expectedDuration,
+                      )),
             )
             .toList();
         if (matches.length != 1) {
@@ -257,7 +297,10 @@ class SourceMaintenanceHarness {
           expectedAlbum != null &&
               _normalized(result.candidate.album) != expectedAlbum ||
           expectedDuration != null &&
-              !_durationMatches(result.candidate.durationSeconds, expectedDuration)) {
+              !_durationMatches(
+                result.candidate.durationSeconds,
+                expectedDuration,
+              )) {
         return {
           'id': id,
           'status': 'identity_mismatch',
@@ -276,21 +319,22 @@ class SourceMaintenanceHarness {
       if (required.contains('metadata') && result.metadata.isEmpty) {
         missing.add('metadata');
       }
-      if (required.contains('timing') && result.timingTracks.isEmpty) {
+      if (required.contains('timing') &&
+          !result.timingTracks.any(_hasUsableTiming)) {
         missing.add('timing');
       }
       if (required.contains('timing') &&
-          result.timingTracks.any((track) => track.raw == null)) {
+          result.timingTracks.any(
+            (track) => track.raw == null || track.raw!.isEmpty,
+          )) {
         missing.add('timingRaw');
       }
       if (required.contains('lineTiming') &&
-          !result.timingTracks.any(
-            (track) => {'line', 'word'}.contains(track.granularity),
-          )) {
+          !_hasLineTiming(result.timingTracks)) {
         missing.add('lineTiming');
       }
       if (required.contains('wordTiming') &&
-          !result.timingTracks.any((track) => track.granularity == 'word')) {
+          !_hasWordTiming(result.timingTracks)) {
         missing.add('wordTiming');
       }
       if (required.contains('chords') && !result.hasChords) {
@@ -317,6 +361,39 @@ class SourceMaintenanceHarness {
           'missingMetadataFields': absentMetadataPaths,
         };
       }
+      final verifiedCapabilities = <String>{};
+      if (searchedCatalog && entry.capabilities.contains('catalog')) {
+        verifiedCapabilities.add('catalog');
+      }
+      if (result.body.trim().isNotEmpty &&
+          entry.capabilities.contains('lyrics')) {
+        verifiedCapabilities.add('lyrics');
+      }
+      if (result.metadata.isNotEmpty &&
+          entry.capabilities.contains('metadata')) {
+        verifiedCapabilities.add('metadata');
+      }
+      if (result.hasChords && entry.capabilities.contains('chords')) {
+        verifiedCapabilities.add('chords');
+      }
+      final cueTracks = result.timingTracks.where(_hasUsableTiming).toList();
+      if (cueTracks.isNotEmpty && entry.capabilities.contains('timing')) {
+        verifiedCapabilities.add('timing');
+      }
+      if (_hasLineTiming(cueTracks) &&
+          entry.capabilities.contains('lineTiming')) {
+        verifiedCapabilities.add('lineTiming');
+      }
+      if (_hasWordTiming(cueTracks) &&
+          entry.capabilities.contains('wordTiming')) {
+        verifiedCapabilities.add('wordTiming');
+      }
+      if (entry.capabilities.contains('artwork') &&
+          result.metadata['licensedImages'] is List &&
+          (result.metadata['licensedImages'] as List).isNotEmpty) {
+        verifiedCapabilities.add('artwork');
+      }
+      final verified = verifiedCapabilities.toList()..sort();
       return {
         'id': id,
         'status': 'healthy',
@@ -327,15 +404,22 @@ class SourceMaintenanceHarness {
         'providerId': result.candidate.providerId,
         'bodyCharacters': result.body.length,
         'metadataFields': result.metadata.keys.toList()..sort(),
+        'verifiedCapabilities': verified,
         'timingTrackCount': result.timingTracks.length,
-        'timingGranularities': result.timingTracks
-            .map((track) => track.granularity)
-            .toSet()
-            .toList()
-          ..sort(),
-        'timingRawRetained': result.timingTracks.every(
-          (track) => track.raw == null || track.toJson()['raw'] == track.raw,
-        ),
+        'timingGranularities':
+            result.timingTracks
+                .map((track) => track.granularity)
+                .toSet()
+                .toList()
+              ..sort(),
+        'timingRawRetained':
+            result.timingTracks.isNotEmpty &&
+            result.timingTracks.every(
+              (track) =>
+                  track.raw != null &&
+                  track.raw!.isNotEmpty &&
+                  track.toJson()['raw'] == track.raw,
+            ),
         'hasChords': result.hasChords,
       };
     } catch (error) {
@@ -377,6 +461,19 @@ class SourceMaintenanceHarness {
             restored.sourceLyrics != actual.sourceLyrics ||
             restored.cues.length != actual.cues.length) {
           return 'timing_shape_changed';
+        }
+        for (var cueIndex = 0; cueIndex < actual.cues.length; cueIndex++) {
+          final cue = actual.cues[cueIndex];
+          final decodedCue = restored.cues[cueIndex];
+          if (decodedCue.id != cue.id ||
+              decodedCue.occurrenceId != cue.occurrenceId ||
+              decodedCue.text != cue.text ||
+              decodedCue.startUs != cue.startUs ||
+              decodedCue.endUs != cue.endUs ||
+              decodedCue.graphemeStart != cue.graphemeStart ||
+              decodedCue.graphemeEnd != cue.graphemeEnd) {
+            return 'timing_cue_shape_changed';
+          }
         }
       }
     } catch (_) {
@@ -425,6 +522,40 @@ class SourceMaintenanceHarness {
   String? _normalized(String? value) =>
       value?.trim().toLowerCase().replaceAll(RegExp(r'\s+'), '');
 
+  bool _hasUsableTiming(TimingTrack track) =>
+      track.raw != null && track.raw!.isNotEmpty && track.cues.any(_isValidCue);
+
+  bool _hasLineTiming(Iterable<TimingTrack> tracks) => tracks.any(
+    (track) =>
+        _hasUsableTiming(track) &&
+        {'line', 'word'}.contains(track.granularity) &&
+        track.cues.any(
+          (cue) =>
+              _isValidCue(cue) &&
+              cue.graphemeStart == null &&
+              cue.graphemeEnd == null,
+        ),
+  );
+
+  bool _hasWordTiming(Iterable<TimingTrack> tracks) => tracks.any(
+    (track) =>
+        _hasUsableTiming(track) &&
+        track.granularity == 'word' &&
+        track.cues.any(
+          (cue) =>
+              _isValidCue(cue) &&
+              cue.graphemeStart != null &&
+              cue.graphemeStart! >= 0 &&
+              cue.graphemeEnd != null &&
+              cue.graphemeEnd! > cue.graphemeStart!,
+        ),
+  );
+
+  bool _isValidCue(TimingCue cue) =>
+      cue.startUs >= 0 &&
+      cue.text.trim().isNotEmpty &&
+      (cue.endUs == null || cue.endUs! >= cue.startUs);
+
   bool _durationMatches(double? actual, double expected) =>
       actual != null && (actual - expected).abs() <= 0.5;
 
@@ -450,14 +581,17 @@ class SourceMaintenanceHarness {
 
   String _reportedCandidateId(String providerId, String id) {
     final safe = switch (providerId) {
-      'genius' || 'lrclib' || 'lyricsovh' || 'unison' =>
-        RegExp(r'^\d{1,32}$').hasMatch(id),
+      'genius' ||
+      'lrclib' ||
+      'lyricsovh' ||
+      'unison' => RegExp(r'^\d{1,32}$').hasMatch(id),
       'musicbrainz' => RegExp(r'^[a-f0-9-]{36}$').hasMatch(id),
       'wikidata' => RegExp(r'^Q\d{1,20}$').hasMatch(id),
       'songsterr' || 'ultimateguitar' || 'chordie' || 'seanmcgrathmusic' =>
         id.length <= 80 && RegExp(r'^/[A-Za-z0-9._~/-]+$').hasMatch(id),
       'wikimediacommons' =>
-        id.length <= 100 && RegExp(r'^File:[A-Za-z0-9 _.,()\x27-]+$').hasMatch(id),
+        id.length <= 100 &&
+            RegExp(r'^File:[A-Za-z0-9 _.,()\x27-]+$').hasMatch(id),
       _ => false,
     };
     if (safe) return id;

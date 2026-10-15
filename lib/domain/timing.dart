@@ -320,20 +320,6 @@ TimingTrack parseTtml(
     }
     final document = XmlDocument.parse(raw);
     final root = document.rootElement;
-    final hasTiming = root.descendants.whereType<XmlElement>().any(
-      (e) => e.attributes.any((a) => {'begin', 'end'}.contains(a.name.local)),
-    );
-    final appleProfile =
-        profile == 'apple-lyrics' ||
-        root.attributes.any(
-          (a) => a.value == 'http://itunes.apple.com/lyric-ttml-extensions',
-        );
-    text = root.descendants
-        .whereType<XmlElement>()
-        .where((e) => e.name.local == 'p')
-        .map((p) => p.innerText.replaceAll(RegExp(r'\s+'), ' ').trim())
-        .where((line) => line.isNotEmpty)
-        .join('\n');
     String? attr(XmlElement e, String name) {
       for (final a in e.attributes) {
         if (a.name.local == name) return a.value;
@@ -341,6 +327,25 @@ TimingTrack parseTtml(
       return null;
     }
 
+    final hasTiming = root.descendants.whereType<XmlElement>().any(
+      (e) => e.attributes.any((a) => {'begin', 'end'}.contains(a.name.local)),
+    );
+    final unisonProfile =
+        root.name.local == 'tt' &&
+        attr(root, 'composer') == 'https://composer.boidu.dev/ttml' &&
+        attr(root, 'timeBase') == 'media';
+    final appleProfile =
+        profile == 'apple-lyrics' ||
+        root.attributes.any(
+          (a) => a.value == 'http://itunes.apple.com/lyric-ttml-extensions',
+        );
+    final absoluteClockProfile = appleProfile || unisonProfile;
+    text = root.descendants
+        .whereType<XmlElement>()
+        .where((e) => e.name.local == 'p')
+        .map((p) => p.innerText.replaceAll(RegExp(r'\s+'), ' ').trim())
+        .where((line) => line.isNotEmpty)
+        .join('\n');
     final declaredFrameRate = double.tryParse(attr(root, 'frameRate') ?? '');
     final frameRate = declaredFrameRate ?? 30;
     final multiplier = (attr(root, 'frameRateMultiplier') ?? '1 1').split(
@@ -361,14 +366,21 @@ TimingTrack parseTtml(
       final partialClock = RegExp(
         r'^(\d+):(\d{2}(?:\.\d+)?)$',
       ).firstMatch(expr);
-      if (appleProfile && partialClock != null) {
-        if (double.parse(partialClock[2]!) >= 60) {
+      if (absoluteClockProfile && partialClock != null) {
+        final minutesText = partialClock[1]!;
+        final minutes = int.tryParse(minutesText);
+        final seconds = double.tryParse(partialClock[2]!);
+        if (minutesText.length > 9 ||
+            minutes == null ||
+            seconds == null ||
+            seconds >= 60) {
           throw const FormatException('Invalid clock seconds.');
         }
-        return ((int.parse(partialClock[1]!) * 60 +
-                    double.parse(partialClock[2]!)) *
-                1000000)
-            .round();
+        final microseconds = ((minutes * 60 + seconds) * 1000000).round();
+        if (microseconds > 604800000000) {
+          throw const FormatException('Clock time exceeds seven days.');
+        }
+        return microseconds;
       }
       final clock = RegExp(
         r'^(\d+):(\d{2}):(\d{2}(?:\.\d+)?)$',
@@ -429,9 +441,10 @@ TimingTrack parseTtml(
       }
       if (attr(node, 'timeContainer') == 'seq') unsupported = true;
       final begin = attr(node, 'begin');
-      // Apple's published lyric profile uses absolute media clocks even in children.
-      // Generic TTML retains W3C parent-relative timing semantics.
-      final base = appleProfile ? 0 : parentStart;
+      // Apple's published lyric profile and Unison's declared media-clock
+      // profile use absolute child clocks. Generic TTML retains W3C
+      // parent-relative timing semantics.
+      final base = absoluteClockProfile ? 0 : parentStart;
       var start = begin == null ? parentStart : base + time(begin);
       final explicitEnd = attr(node, 'end'), duration = attr(node, 'dur');
       int? end = explicitEnd != null
@@ -577,8 +590,12 @@ TimingTrack parseTtml(
       granularity: wordTiming ? 'word' : 'line',
       lyricHash: lyricOrderHash(text),
       extra: {
-        'parserVersion': 'verse-ttml-2',
-        'timingProfile': appleProfile ? 'apple-lyrics' : 'w3c-ttml',
+        'parserVersion': 'verse-ttml-3',
+        'timingProfile': appleProfile
+            ? 'apple-lyrics'
+            : unisonProfile
+            ? 'unison-ttml'
+            : 'w3c-ttml',
         'frameRate': effectiveFrames,
         'tickRate': tickRate,
         'subFrameRate': subFrameRate,
@@ -599,7 +616,7 @@ TimingTrack parseTtml(
       raw: raw,
       recordingId: recordingId,
       status: TimingStatus.invalid,
-      extra: {'parserVersion': 'verse-ttml-2', 'parseError': error.toString()},
+      extra: {'parserVersion': 'verse-ttml-3', 'parseError': error.toString()},
     );
   }
 }

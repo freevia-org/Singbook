@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "extractionSchemaVersion": 1,
-  "revision": 1,
-  "publishedAt": "2026-10-15T00:00:00Z",
+  "revision": 2,
+  "publishedAt": "2026-10-15T19:59:49Z",
   "sources": [
     {
       "id": "genius",
@@ -102,7 +102,7 @@
       "name": "LRCLIB",
       "adapter": "builtin",
       "status": "active",
-      "revision": 1,
+      "revision": 2,
       "capabilities": [
         "catalog",
         "lyrics",
@@ -124,7 +124,8 @@
           "requiredFields": [
             "body",
             "metadata",
-            "timing"
+            "timing",
+            "lineTiming"
           ]
         }
       ]
@@ -192,7 +193,7 @@
       "name": "SyncLRC",
       "adapter": "builtin",
       "status": "active",
-      "revision": 1,
+      "revision": 2,
       "capabilities": [
         "catalog",
         "lyrics",
@@ -215,7 +216,8 @@
           "requiredFields": [
             "body",
             "metadata",
-            "timing"
+            "timing",
+            "lineTiming"
           ]
         }
       ]
@@ -258,7 +260,7 @@
       "name": "Unison",
       "adapter": "json",
       "status": "active",
-      "revision": 1,
+      "revision": 2,
       "capabilities": [
         "catalog",
         "lyrics",
@@ -272,7 +274,7 @@
       "hosts": [
         "unison.betterlyrics.org"
       ],
-      "changeReason": "Verified 2026-10-15 against documented public search/by-ID API; 3 canaries passed with raw line timing retained. Attribution: https://unison.boidu.dev. Individual lyric-text rights remain unverified; no ODbL claim.",
+      "changeReason": "Verified 2026-10-15 against documented public API; IDs 31/1494 pass with raw TTML and explicit line+word cues (341/441 cues). Attribution: https://unison.boidu.dev; individual lyric-text rights remain unverified; no ODbL claim.",
       "extraction": {
         "search": {
           "url": "https://unison.betterlyrics.org/lyrics/search?q={query}",
@@ -306,7 +308,9 @@
           "expectedArtist": "Don Toliver",
           "requiredFields": [
             "body",
-            "timing"
+            "timing",
+            "lineTiming",
+            "wordTiming"
           ]
         },
         {
@@ -321,7 +325,9 @@
           "expectedArtist": "Don Toliver",
           "requiredFields": [
             "body",
-            "timing"
+            "timing",
+            "lineTiming",
+            "wordTiming"
           ]
         },
         {
@@ -336,7 +342,9 @@
           "expectedArtist": "Michael Jackson",
           "requiredFields": [
             "body",
-            "timing"
+            "timing",
+            "lineTiming",
+            "wordTiming"
           ]
         }
       ]
@@ -555,7 +563,7 @@
       "name": "Wikidata",
       "adapter": "builtin",
       "status": "active",
-      "revision": 1,
+      "revision": 2,
       "capabilities": [
         "catalog",
         "metadata"
@@ -565,10 +573,17 @@
       "website": "https://www.wikidata.org/",
       "hosts": [],
       "description": "compositionMetadataOnly",
+      "changeReason": "Pinned Q333266 after live search for Imagine John Lennon returned an unrelated film; exact composition metadata remains validated, while catalog search coverage is explicitly unverified.",
       "probes": [
         {
           "id": "imagine-composition",
-          "query": "Imagine John Lennon",
+          "candidate": {
+            "providerId": "wikidata",
+            "id": "Q333266",
+            "title": "Imagine",
+            "artist": "John Lennon",
+            "url": "https://www.wikidata.org/wiki/Q333266"
+          },
           "expectedTitle": "Imagine",
           "expectedArtist": "John Lennon",
           "requiredFields": [
