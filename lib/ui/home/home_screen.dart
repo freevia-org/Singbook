@@ -930,8 +930,8 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     SearchComparisonData comparison,
   ) {
     final chosen = comparison.selected;
-    // Keep unavailable and checking versions in place, so finishing a check
-    // cannot move a different row under the user's finger.
+    // Keep checking/unavailable versions visible and raw sources in arrival
+    // order. A newly available combined option can appear above those rows.
     final allVersions = comparisonVersions(comparison);
     final versions = allVersions;
     final selectedRowId = chosen?.id;
@@ -943,8 +943,10 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
         )
         .toList();
     final colors = Theme.of(context).colorScheme;
-    final count = allVersions
+    final count = comparison.alternatives
         .where((item) => item.providerId != 'combined' && item.isUsableVersion)
+        .map((item) => item.id)
+        .toSet()
         .length;
     final checked = comparison.providerChecks
         .where((item) => item.state != 'pending')
