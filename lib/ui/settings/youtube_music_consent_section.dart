@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../application/youtube_music_consent.dart';
+import '../../application/youtube_music_consent_entry.dart';
 
 /// Labels are supplied by the settings screen's localization boundary.
 class YoutubeConsentLabels {
@@ -264,7 +265,9 @@ class _YoutubeMusicConsentScreenState extends State<YoutubeMusicConsentScreen> {
       );
       if (!mounted || epoch != _webEpoch) return;
       setState(() => _web = web);
-      await web.loadRequest(Uri.parse('https://music.youtube.com/'));
+      final entry = await resolveYoutubeMusicConsentEntry();
+      if (!mounted || epoch != _webEpoch) return;
+      await web.loadRequest(entry);
     } catch (_) {
       if (mounted && epoch == _webEpoch) {
         setState(() => _error = widget.labels.loadFailed);

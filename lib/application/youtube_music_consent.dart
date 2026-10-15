@@ -89,13 +89,15 @@ class YoutubeMusicConsentNavigation {
 
   void started(String url) {
     canFinish = false;
+  }
+
+  void finished(String url) {
+    // A server redirect through this host is not evidence that Google's
+    // decision page was presented to the person using the app.
     if (isYoutubeMusicConsentUrl(url) &&
         Uri.parse(url).host == 'consent.youtube.com') {
       _sawConsent = true;
     }
-  }
-
-  void finished(String url) {
     canFinish = _sawConsent && isYoutubeMusicReturnUrl(url);
   }
 }

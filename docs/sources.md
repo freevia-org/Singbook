@@ -53,6 +53,12 @@ chooses consent, logs in to a Google account, or copies a logged-in browser
 session. Account sign-in and navigation outside the exact YouTube Music and
 YouTube consent hosts are blocked in that browser screen.
 
+An anonymous request to the fixed Music homepage resolves Google's regional
+chooser URL before opening it. A fresh Dart HTTP client has no shared native
+cookie store; response cookies are never imported. Only the validated Google
+region/language and fixed Music return enter the chooser URL. An automatic
+redirect through the consent host does not count as presenting a decision page.
+
 Only `SOCS` and legacy `CONSENT` cookies applicable to the YouTube Music root
 cross the native bridge. They stay in the app's browser cookie store and an
 in-memory adapter session, never library settings, ChordPro, Drive sync, reports,

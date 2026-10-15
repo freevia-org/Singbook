@@ -8,6 +8,14 @@ import 'package:singbook/providers/core/youtube_music.dart';
 import 'package:singbook/ui/app_controller_adapter.dart';
 
 void main() {
+  test('an automatic chooser redirect cannot stand in for a decision page', () {
+    final navigation = YoutubeMusicConsentNavigation();
+    navigation.started('https://consent.youtube.com/m?continue=synthetic');
+    navigation.started('https://music.youtube.com/?cbrd=1');
+    navigation.finished('https://music.youtube.com/?cbrd=1');
+    expect(navigation.canFinish, isFalse);
+  });
+
   test('initial Music load cannot finish a consent flow', () {
     final navigation = YoutubeMusicConsentNavigation();
     navigation.started('https://music.youtube.com/');
