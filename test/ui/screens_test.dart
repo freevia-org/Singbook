@@ -389,7 +389,11 @@ void main() {
       for (var i = 0; i < 60; i++)
         LyricLineData(id: 'line-$i', text: 'Lyric number $i'),
     ];
-    VerseUiState reader(FakeUiController c, {bool favorite = false}) =>
+    VerseUiState reader(
+      FakeUiController c, {
+      bool favorite = false,
+      List<PlayerSectionMarker>? sections,
+    }) =>
         VerseUiState(
           route: VerseRoute.reader,
           song: SongCardData(
@@ -400,8 +404,12 @@ void main() {
             favorite: favorite,
           ),
           songLines: lines,
-          playerSections: const [
-            PlayerSectionMarker(name: 'Verse', startSeconds: 0, lineId: 'line-0'),
+          playerSections: sections ?? const [
+            PlayerSectionMarker(
+              name: 'Verse 1',
+              startSeconds: 0,
+              lineId: 'line-0',
+            ),
             PlayerSectionMarker(
               name: 'Chorus',
               startSeconds: 100,
@@ -427,6 +435,83 @@ void main() {
       await tester.pump();
       expect(c.calls.where((call) => call.startsWith('seek(')), isNotEmpty);
       expect(c.positionNotifier.value.seconds, greaterThan(0));
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('section labels adapt to the player width', (tester) async {
+      final c = FakeUiController(reader);
+      addTearDown(c.dispose);
+
+      for (final (width, textScale, firstLabel, secondLabel) in [
+        (360.0, 1.0, 'V1', 'C'),
+        (360.0, 2.0, 'V1', 'C'),
+        (430.0, 1.0, 'V1', 'CH'),
+        (800.0, 1.0, 'Verse 1', 'Chorus'),
+      ]) {
+        await pumpShell(
+          tester,
+          c,
+          size: Size(width, 640),
+          textScale: textScale,
+        );
+        expect(find.text(firstLabel), findsWidgets, reason: '$width dp');
+        expect(find.text(secondLabel), findsOneWidget, reason: '$width dp');
+        expect(tester.takeException(), isNull, reason: '$width dp');
+      }
+    });
+
+    testWidgets('long localized section labels remain bounded', (tester) async {
+      const longSection =
+          'Приспів із надзвичайно довгою назвою для інструментального переходу, '
+          'повторена ще раз для перевірки безпечного відображення на екрані';
+      final c = FakeUiController(
+        (c) => reader(
+          c,
+          sections: const [
+            PlayerSectionMarker(
+              name: longSection,
+              startSeconds: 0,
+              lineId: 'line-0',
+            ),
+            PlayerSectionMarker(
+              name: 'Chorus',
+              startSeconds: 53,
+              lineId: 'line-30',
+            ),
+          ],
+        ),
+      );
+      addTearDown(c.dispose);
+
+      await pumpShell(
+        tester,
+        c,
+        size: const Size(360, 640),
+        textScale: 2,
+      );
+      expect(find.text('ПІ'), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+          (widget) => widget is Text && widget.semanticsLabel == longSection,
+        ),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+
+      await pumpShell(
+        tester,
+        c,
+        size: const Size(800, 640),
+        textScale: 2,
+      );
+      expect(find.text(longSection), findsWidgets);
+      expect(find.text('Chorus'), findsNothing);
+      expect(
+        find.byWidgetPredicate(
+          (widget) => widget is Text && widget.semanticsLabel == longSection,
+        ),
+        findsOneWidget,
+      );
       expect(tester.takeException(), isNull);
     });
 

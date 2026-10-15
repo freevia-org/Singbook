@@ -1,5 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'dart:async';
+import 'dart:math' as math;
+
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 
@@ -596,19 +598,48 @@ class _PlayerScreenState extends State<PlayerScreen> {
               durationSeconds: duration,
             ),
           ),
-          child: Slider(
-            min: 0,
-            max: maxValue,
-            value: position.seconds.clamp(0, maxValue).toDouble(),
-            semanticFormatterCallback: (value) {
-              final section = _sectionAt(state.playerSections, value);
-              return '${section?.name ?? l10n.playerCurrentSection}, '
-                  '${formatDuration(value)}';
-            },
-            onChanged: (value) {
-              _instantSeek = true;
-              controller.seek(value);
-            },
+          child: SizedBox(
+            height: 48,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final sliderTheme = SliderTheme.of(context);
+                return Stack(
+                  children: [
+                    Positioned.fill(
+                      child: Slider(
+                        min: 0,
+                        max: maxValue,
+                        value: position.seconds.clamp(0, maxValue).toDouble(),
+                        semanticFormatterCallback: (value) {
+                          final section = _sectionAt(
+                            state.playerSections,
+                            value,
+                          );
+                          return '${section?.name ?? l10n.playerCurrentSection}, '
+                              '${formatDuration(value)}';
+                        },
+                        onChanged: (value) {
+                          _instantSeek = true;
+                          controller.seek(value);
+                        },
+                      ),
+                    ),
+                    ..._sectionMarkerLabelWidgets(
+                      markers: state.playerSections,
+                      durationSeconds: duration,
+                      progressSeconds: position.seconds,
+                      width: constraints.maxWidth,
+                      textDirection: Directionality.of(context),
+                      labelColor: Theme.of(
+                        context,
+                      ).colorScheme.onSurfaceVariant,
+                      sliderTheme: sliderTheme,
+                      textScaler: MediaQuery.textScalerOf(context),
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ],
@@ -766,4 +797,149 @@ class _SectionMarkerSliderTrackShape extends RoundedRectSliderTrackShape {
       context.canvas.drawCircle(Offset(x, trackRect.center.dy), 2.2, paint);
     }
   }
+}
+
+List<Widget> _sectionMarkerLabelWidgets({
+  required List<PlayerSectionMarker> markers,
+  required double durationSeconds,
+  required double progressSeconds,
+  required double width,
+  required TextDirection textDirection,
+  required Color labelColor,
+  required SliderThemeData sliderTheme,
+  required TextScaler textScaler,
+}) {
+  if (markers.isEmpty ||
+      durationSeconds <= 0 ||
+      !width.isFinite ||
+      width <= 0) {
+    return const [];
+  }
+  final thumbWidth = (sliderTheme.thumbShape ?? const RoundSliderThumbShape())
+      .getPreferredSize(true, false)
+      .width;
+  final overlayWidth =
+      (sliderTheme.overlayShape ?? const RoundSliderOverlayShape())
+          .getPreferredSize(true, false)
+          .width;
+  final inset = sliderTheme.padding == null
+      ? math.max(thumbWidth, overlayWidth) / 2
+      : 0.0;
+  final left = inset;
+  final right = width - inset;
+  final trackWidth = math.max(0.0, right - left);
+  if (trackWidth <= 0) return const [];
+  final progressFraction = (progressSeconds / durationSeconds).clamp(0.0, 1.0);
+  final thumbX = textDirection == TextDirection.rtl
+      ? right - trackWidth * progressFraction
+      : left + trackWidth * progressFraction;
+  final fontSize = width >= 560 ? 10.0 : 9.0;
+  final style = TextStyle(
+    color: labelColor,
+    fontSize: fontSize,
+    fontWeight: FontWeight.w600,
+    height: 1,
+  );
+  final maxLabelWidth = trackWidth * .45;
+  final candidates =
+      <
+        ({double center, String label, String sectionName, double labelWidth})
+      >[];
+  for (final marker in markers) {
+    final fraction = (marker.startSeconds / durationSeconds).clamp(0.0, 1.0);
+    final x = textDirection == TextDirection.rtl
+        ? right - trackWidth * fraction
+        : left + trackWidth * fraction;
+    final label = _sectionMarkerLabel(
+      marker.name,
+      compact: width < 400,
+      expanded: width >= 560,
+    );
+    final measure = TextPainter(
+      text: TextSpan(text: label, style: style),
+      textDirection: textDirection,
+      textScaler: textScaler,
+      maxLines: 1,
+      ellipsis: '…',
+    )..layout(maxWidth: maxLabelWidth);
+    final labelWidth = math.min(measure.width, maxLabelWidth);
+    final center = x
+        .clamp(left + labelWidth / 2, right - labelWidth / 2)
+        .toDouble();
+    candidates.add((
+      center: center,
+      label: label,
+      sectionName: marker.name,
+      labelWidth: labelWidth,
+    ));
+  }
+
+  // Keep labels above the line and leave breathing room between them. When
+  // sections are densely packed, show the labels nearest the playhead first.
+  final prioritized = [...candidates]
+    ..sort(
+      (a, b) => (a.center - thumbX).abs().compareTo((b.center - thumbX).abs()),
+    );
+  final visible =
+      <
+        ({double center, String label, String sectionName, double labelWidth})
+      >[];
+  for (final candidate in prioritized) {
+    final collides = visible.any((existing) {
+      final needed = (candidate.labelWidth + existing.labelWidth) / 2 + 5;
+      return (candidate.center - existing.center).abs() < needed;
+    });
+    if (!collides) visible.add(candidate);
+  }
+  return [
+    for (final candidate in visible)
+      Positioned(
+        left: candidate.center - candidate.labelWidth / 2,
+        width: candidate.labelWidth,
+        top: 2,
+        child: IgnorePointer(
+          child: Text(
+            candidate.label,
+            semanticsLabel: candidate.sectionName,
+            maxLines: 1,
+            softWrap: false,
+            overflow: TextOverflow.ellipsis,
+            style: style,
+          ),
+        ),
+      ),
+  ];
+}
+
+String _sectionMarkerLabel(
+  String section, {
+  required bool compact,
+  required bool expanded,
+}) {
+  if (expanded) return section;
+  final normalized = section.trim().toLowerCase();
+  final match = RegExp(
+    r'^(verse|chorus|bridge|intro|outro|pre-chorus)\s*(\d*)$',
+  ).firstMatch(normalized);
+  if (match == null) {
+    final words = normalized
+        .split(RegExp(r'\s+'))
+        .where((part) => part.isNotEmpty);
+    final initials = words.map((part) => part[0]).join().toUpperCase();
+    return initials.length <= (compact ? 2 : 3)
+        ? initials
+        : initials.substring(0, compact ? 2 : 3);
+  }
+  final kind = match.group(1)!;
+  final number = match.group(2)!;
+  final code = switch (kind) {
+    'verse' => compact ? 'V' : 'V',
+    'chorus' => compact ? 'C' : 'CH',
+    'bridge' => compact ? 'B' : 'BR',
+    'intro' => compact ? 'I' : 'IN',
+    'outro' => compact ? 'O' : 'OUT',
+    'pre-chorus' => compact ? 'P' : 'PC',
+    _ => kind.substring(0, 1).toUpperCase(),
+  };
+  return '$code$number';
 }
