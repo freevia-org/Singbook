@@ -92,3 +92,30 @@ INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
 DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
 OTHER DEALINGS IN THE FONT SOFTWARE.
+
+
+-----------------------------------------------------------
+ADDITIONAL NOTO FONTS (PDF fallback fonts)
+-----------------------------------------------------------
+
+The following fonts are used only to print scripts that Noto Sans and Noto
+Sans Mono do not cover. Each is licensed under the SIL Open Font License,
+Version 1.1, reproduced above.
+
+NotoSansArabic-Regular.ttf
+  Copyright 2022 The Noto Project Authors (https://github.com/notofonts/arabic)
+NotoSansHebrew-Regular.ttf
+  Copyright 2024 The Noto Project Authors (https://github.com/notofonts/hebrew)
+NotoSansDevanagari-Regular.ttf
+  Copyright 2022 The Noto Project Authors (https://github.com/notofonts/devanagari)
+NotoSansThai-Regular.ttf
+  Copyright 2022 The Noto Project Authors (https://github.com/notofonts/thai)
+NotoSansSC-Subset-Regular.ttf
+  Copyright 2014-2021 Adobe (http://www.adobe.com/), with Reserved Font Name
+  'Source'. A Regular-weight subset (GB 2312 and JIS X 0208 ideographs,
+  kana, CJK symbols) of Noto Sans SC, made with fontTools; the font is
+  not renamed to or distributed under the reserved name.
+NotoSansKR-Hangul-Regular.ttf
+  Copyright 2014-2021 Adobe (http://www.adobe.com/), with Reserved Font Name
+  'Source'. A Regular-weight Hangul (KS X 1001) subset of Noto Sans KR,
+  made with fontTools.

@@ -1,4 +1,7 @@
 // Opt-in PDF preview: flutter test test/application/print_brand_preview.dart.
+// Not a *_test.dart file, so a normal `flutter test` never runs it. PDFs go to
+// $SINGBOOK_PDF_PREVIEW_DIR, or a fresh system temp directory (never the
+// repository), and the path is printed.
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -9,6 +12,14 @@ import 'package:singbook/domain/models.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   test('render a setlist PDF preview with populated and sparse metadata', () async {
+    final configured = Platform.environment['SINGBOOK_PDF_PREVIEW_DIR'];
+    final outputDir = configured != null && configured.isNotEmpty
+        ? Directory(configured)
+        : Directory.systemTemp.createTempSync('singbook-pdf-preview-');
+    outputDir.createSync(recursive: true);
+    // ignore: avoid_print
+    print('PDF preview output: ${outputDir.path}');
+    File out(String name) => File('${outputDir.path}/$name');
     final songs = [
       SongDocument(
         id: 'print-one',
@@ -48,13 +59,13 @@ void main() {
       ],
     );
     final bytes = await createSongPdf(songs, setlist: setlist);
-    final output = File('output/pdf/Setlist-preview.pdf');
+    final output = out('Setlist-preview.pdf');
     await output.parent.create(recursive: true);
     await output.writeAsBytes(bytes);
     expect(bytes.length, greaterThan(10000));
 
     final standaloneBytes = await createSongPdf([songs.first]);
-    final standaloneOutput = File('output/pdf/Standalone-song-review.pdf');
+    final standaloneOutput = out('Standalone-song-review.pdf');
     await standaloneOutput.parent.create(recursive: true);
     await standaloneOutput.writeAsBytes(standaloneBytes);
 
@@ -65,7 +76,7 @@ void main() {
       entries: const [],
     );
     final emptyBytes = await createSongPdf([], setlist: emptySetlist);
-    final emptyOutput = File('output/pdf/Empty-setlist-review.pdf');
+    final emptyOutput = out('Empty-setlist-review.pdf');
     await emptyOutput.parent.create(recursive: true);
     await emptyOutput.writeAsBytes(emptyBytes);
     expect(emptyBytes.length, greaterThan(1000));
@@ -89,7 +100,7 @@ void main() {
           ),
       ],
     );
-    final longListOutput = File('output/pdf/Long-setlist-cover-review.pdf');
+    final longListOutput = out('Long-setlist-cover-review.pdf');
     await longListOutput.parent.create(recursive: true);
     await longListOutput.writeAsBytes(
       await createSongPdf(longListSongs, setlist: longList),
@@ -116,16 +127,14 @@ void main() {
           '[C]BEGIN_LONG_LYRIC $longText [G]MIDDLE_LONG_LYRIC $longText [Am]END_LONG_LYRIC\n${List.generate(52, (i) => '[C]Line ${i + 1} carries the melody across the quiet night').join('\n')}',
     );
     final longBytes = await createSongPdf([longSong]);
-    final longOutput = File('output/pdf/Setlist-long-song-review.pdf');
+    final longOutput = out('Setlist-long-song-review.pdf');
     await longOutput.parent.create(recursive: true);
     await longOutput.writeAsBytes(longBytes);
     for (final entry in {
       'a5': PdfPageFormat.a5,
       'letter': PdfPageFormat.letter,
     }.entries) {
-      await File(
-        'output/pdf/Long-song-${entry.key}-review.pdf',
-      ).writeAsBytes(await createSongPdf([longSong], format: entry.value));
+      await out('Long-song-${entry.key}-review.pdf').writeAsBytes(await createSongPdf([longSong], format: entry.value));
     }
   });
 }

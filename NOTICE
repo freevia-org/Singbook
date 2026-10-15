@@ -9,6 +9,9 @@ SIL Open Font Licenses and copyright notices in assets/fonts/LICENSE,
 assets/fonts/SingbookSerif-OFL.txt, assets/fonts/LibreBaskerville-LICENSE.txt,
 assets/fonts/brand-candidates/Lora-OFL.txt, and
 assets/fonts/brand-candidates/Bitter-OFL.txt.
+The Noto Sans Arabic, Hebrew, Devanagari, Thai, SC (subset) and KR (Hangul
+subset) fonts used as PDF fallbacks are covered by the same OFL notice in
+assets/fonts/LICENSE.
 
 The Apache license does not grant trademark rights in the Singbook or Freevia
 names or marks. It also does not license songs, lyrics, chord charts, cover art,

@@ -1,10 +1,13 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data' show BytesBuilder;
+import 'dart:isolate';
+import 'dart:typed_data';
 import 'package:archive/archive.dart';
 import 'package:characters/characters.dart';
 import 'package:crypto/crypto.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as paths;
 import 'package:path_provider/path_provider.dart';
@@ -17,6 +20,7 @@ import '../domain/arrangement.dart';
 import '../domain/chordpro.dart';
 import '../domain/models.dart';
 import '../domain/timing.dart';
+import 'pdf_font_face.dart';
 
 /// Largest single text/timing file accepted by an import.
 const maxImportBytes = 24 * 1024 * 1024;
@@ -61,56 +65,136 @@ String _decodeUtf16(List<int> bytes, {required bool bigEndian}) {
   return String.fromCharCodes(units);
 }
 
-/// Decodes imported text without failing on common legacy encodings: UTF-8
-/// (with or without BOM), UTF-16 with BOM, then Windows-1251 for Cyrillic
-/// (Bulgarian/Ukrainian) text, otherwise Latin-1.
-String decodeImportedText(List<int> bytes) {
+// Windows-1252 0x80..0x9F; the five undefined slots keep their C1 code point.
+const _cp1252Upper = <int>[
+  0x20AC, 0x0081, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, //
+  0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0x008D, 0x017D, 0x008F,
+  0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014,
+  0x02DC, 0x2122, 0x0161, 0x203A, 0x0153, 0x009D, 0x017E, 0x0178,
+];
+
+class _DecodedText {
+  const _DecodedText(this.text, this.encoding);
+  final String text;
+
+  /// Lower-case name of the detected encoding ("utf-8", "utf-16le", ...).
+  final String encoding;
+}
+
+_DecodedText _decodeImported(List<int> bytes) {
   if (bytes.length >= 2 && bytes[0] == 0xff && bytes[1] == 0xfe) {
-    return _decodeUtf16(bytes.sublist(2), bigEndian: false);
+    return _DecodedText(
+      _decodeUtf16(bytes.sublist(2), bigEndian: false),
+      'utf-16le',
+    );
   }
   if (bytes.length >= 2 && bytes[0] == 0xfe && bytes[1] == 0xff) {
-    return _decodeUtf16(bytes.sublist(2), bigEndian: true);
+    return _DecodedText(
+      _decodeUtf16(bytes.sublist(2), bigEndian: true),
+      'utf-16be',
+    );
   }
   try {
-    return utf8.decode(bytes);
+    return _DecodedText(utf8.decode(bytes), 'utf-8');
   } on FormatException {
     // Not UTF-8: fall through to single-byte encodings.
   }
   // Cyrillic letters are 0xC0..0xFF in Windows-1251, which in Latin-1 would be
-  // accented vowels. Choose by the share of such bytes among all letters.
-  var cyrillic = 0, letters = 0;
-  for (final byte in bytes) {
+  // accented vowels. Cyrillic words are runs of such bytes, whereas accented
+  // Latin letters are almost always isolated between ASCII letters, so only
+  // bytes in runs of two or more count towards Cyrillic.
+  var cyrillic = 0, letters = 0, run = 0, inTag = false;
+  for (var i = 0; i < bytes.length; i++) {
+    final byte = bytes[i];
+    // Markup (TTML/XML tag names and attributes) is ASCII whatever the text
+    // language is, so it must not dilute the share of Cyrillic letters.
+    if (byte == 0x3c) {
+      inTag = true;
+    } else if (byte == 0x3e) {
+      inTag = false;
+    }
     if (byte >= 0xc0) {
-      cyrillic++;
       letters++;
-    } else if (byte >= 0x80 ||
-        (byte >= 0x41 && byte <= 0x5a) ||
-        (byte >= 0x61 && byte <= 0x7a)) {
+      run++;
+      if (run == 2) {
+        cyrillic += 2;
+      } else if (run > 2) {
+        cyrillic++;
+      }
+      continue;
+    }
+    run = 0;
+    if (byte >= 0x80 ||
+        (!inTag &&
+            ((byte >= 0x41 && byte <= 0x5a) ||
+                (byte >= 0x61 && byte <= 0x7a)))) {
       letters++;
     }
   }
   if (cyrillic > 0 && cyrillic * 2 >= letters) {
-    return String.fromCharCodes([
-      for (final byte in bytes)
-        if (byte < 0x80)
-          byte
-        else if (byte < 0xc0)
-          _cp1251Upper[byte - 0x80]
-        else
-          0x0410 + (byte - 0xc0),
-    ]);
+    return _DecodedText(
+      String.fromCharCodes([
+        for (final byte in bytes)
+          if (byte < 0x80)
+            byte
+          else if (byte < 0xc0)
+            _cp1251Upper[byte - 0x80]
+          else
+            0x0410 + (byte - 0xc0),
+      ]),
+      'windows-1251',
+    );
   }
-  return latin1.decode(bytes);
+  return _DecodedText(
+    String.fromCharCodes([
+      for (final byte in bytes)
+        if (byte >= 0x80 && byte < 0xa0) _cp1252Upper[byte - 0x80] else byte,
+    ]),
+    'windows-1252',
+  );
 }
+
+/// Decodes imported text without failing on common legacy encodings: UTF-8
+/// (with or without BOM), UTF-16 with BOM, then Windows-1251 for Cyrillic
+/// (Bulgarian/Ukrainian) text, otherwise Windows-1252 (a superset of Latin-1
+/// that also maps curly quotes, dashes and the euro sign).
+String decodeImportedText(List<int> bytes) => _decodeImported(bytes).text;
 
 /// Matches a document whose root element is `<set>`, after an optional BOM,
 /// XML declaration and comments. Lyrics that merely mention `<set>` elsewhere
-/// are not setlists.
-final _setlistRoot = RegExp(
-  r'^﻿?\s*(?:<\?xml[^>]*\?>\s*)?(?:<!--.*?-->\s*)*<set(?=[\s>/])',
-  dotAll: true,
-);
-bool looksLikeSetlistXml(String text) => _setlistRoot.hasMatch(text);
+/// are not setlists. This is a linear scan on purpose: a regular expression
+/// with a repeated comment group backtracks exponentially on a crafted file.
+bool looksLikeSetlistXml(String text) {
+  var i = 0;
+  final n = text.length;
+  bool space(int unit) =>
+      unit == 0x20 || unit == 0x09 || unit == 0x0a || unit == 0x0d;
+  void skipSpace() {
+    while (i < n && space(text.codeUnitAt(i))) {
+      i++;
+    }
+  }
+
+  if (i < n && text.codeUnitAt(i) == 0xfeff) i++;
+  skipSpace();
+  if (text.startsWith('<?xml', i)) {
+    final end = text.indexOf('?>', i + 5);
+    if (end < 0) return false;
+    i = end + 2;
+    skipSpace();
+  }
+  while (text.startsWith('<!--', i)) {
+    final end = text.indexOf('-->', i + 4);
+    if (end < 0) return false;
+    i = end + 3;
+    skipSpace();
+  }
+  if (!text.startsWith('<set', i)) return false;
+  i += 4;
+  if (i >= n) return false;
+  final next = text.codeUnitAt(i);
+  return space(next) || next == 0x3e /* > */ || next == 0x2f /* / */;
+}
 
 /// Imports timing without implying that the user's file identifies a recording.
 List<SongDocument> decodeSongText(String input, {String? fileName}) {
@@ -188,15 +272,39 @@ List<SongDocument> decodePickedSongs(PickedDocument file) {
   if (extension != '.lrc' && extension != '.ttml') {
     return decodeSongText(file.lenientText, fileName: file.name);
   }
+  if (file.bytes.length > maxImportBytes) {
+    throw const FormatException('file_too_large');
+  }
   final id = newId();
-  final raw = parseTimingBytes(
-    file.bytes,
+  // parseTimingBytes only understands UTF-8 and UTF-16. A Windows-1251 or
+  // Windows-1252 file is transcoded for parsing, while the original bytes and
+  // their detected encoding stay on the track so provenance is not lost.
+  final decoded = _decodeImported(file.bytes);
+  final legacy = decoded.encoding.startsWith('windows-');
+  var raw = parseTimingBytes(
+    legacy ? utf8.encode(decoded.text) : file.bytes,
     sourceDocumentId: 'import:$id',
     format: extension.substring(1),
   );
+  if (raw.status == TimingStatus.unsupported) {
+    throw const FormatException('invalid_timing');
+  }
+  if (legacy) {
+    raw = raw.copyWith(
+      extra: {
+        ...raw.extra,
+        'rawBytesBase64': base64.encode(file.bytes),
+        'rawByteHash': sha256.convert(file.bytes).toString(),
+        'rawEncoding': decoded.encoding,
+      },
+    );
+  }
   final track = bindImportedTiming(raw, raw.sourceLyrics);
   if (track.status == TimingStatus.invalid) {
     throw const FormatException('invalid_timing');
+  }
+  if (track.sourceLyrics.trim().isEmpty) {
+    throw const FormatException('empty_file');
   }
   final title =
       RegExp(
@@ -308,12 +416,19 @@ class VerseFileActions {
     List<SongDocument> songs,
     List<SetlistDocument> setlists, {
     Rect? origin,
-  }) => _share(
+  }) async => _share(
     'Singbook-${DateTime.now().toIso8601String().substring(0, 10)}.lyrics-setlist',
-    encodeLibraryPackage(songs, setlists),
+    await encodeLibraryPackageAsync(songs, setlists),
     'application/zip',
     'Singbook',
     origin,
+  );
+
+  /// Removes stale temporary share copies. Android reports no outcome for a
+  /// share, so its copies are otherwise only swept by the next share; call
+  /// this at app start or resume too.
+  Future<void> cleanUpShareCache() async => _sweepShareDirectories(
+    Directory(paths.join((await _temporaryDirectory()).path, 'verse-share')),
   );
 
   Future<ShareResult> _share(
@@ -392,15 +507,58 @@ class VerseFileActions {
   }
 }
 
+/// The songs of [setlist] in order, each with its entry's key and capo
+/// overrides applied (chords transposed to the override key), exactly as the
+/// reader shows them. Entries whose song is missing are skipped.
 List<SongDocument> _songsInSetlist(
   SetlistDocument setlist,
   List<SongDocument> songs,
 ) {
   final byId = {for (final song in songs) song.id: song};
-  return setlist.entries
-      .map((entry) => byId[entry.songId])
-      .whereType<SongDocument>()
-      .toList();
+  return [
+    for (final entry in setlist.entries)
+      if (byId[entry.songId] case final song?)
+        _applyEntryOverrides(song, entry),
+  ];
+}
+
+/// Same name as the song list the PDF/print/copy paths use, for tests.
+@visibleForTesting
+List<SongDocument> songsForSetlist(
+  SetlistDocument setlist,
+  List<SongDocument> songs,
+) => _songsInSetlist(setlist, songs);
+
+int? _keyPitch(String key) {
+  final match = RegExp(r'^\s*([A-G])([#b♯♭]?)').firstMatch(key);
+  if (match == null) return null;
+  const pitches = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11};
+  final accidental = match.group(2);
+  final shift = accidental == '#' || accidental == '♯'
+      ? 1
+      : accidental == 'b' || accidental == '♭'
+      ? -1
+      : 0;
+  return (pitches[match.group(1)]! + shift + 12) % 12;
+}
+
+SongDocument _applyEntryOverrides(SongDocument song, SetlistEntry entry) {
+  final key = entry.overrides['key']?.toString().trim() ?? '';
+  final capo = entry.overrides['capo'];
+  final hasCapo = capo != null && capo.toString().trim().isNotEmpty;
+  if (key.isEmpty && !hasCapo) return song;
+  final metadata = Map<String, Object?>.from(song.metadata);
+  var body = song.body;
+  if (key.isNotEmpty) {
+    final from = _keyPitch(song.metadata['key']?.toString() ?? '');
+    final to = _keyPitch(key);
+    if (from != null && to != null && from != to) {
+      body = transposeBody(body, (to - from + 12) % 12);
+    }
+    metadata['key'] = key;
+  }
+  if (hasCapo) metadata['capo'] = capo;
+  return song.copyWith(body: body, metadata: metadata);
 }
 
 /// Plain text counterpart to the song PDF: title, artist, chord rows, lyrics.
@@ -512,6 +670,11 @@ Uint8List encodeLibraryPackage(
   final hashes = <String, String>{};
   var uncompressed = 0;
   for (final song in songs) {
+    // Entry names come from a running index, so two songs with one id can
+    // never share a slot and produce an archive the manifest does not describe.
+    if (names.containsKey(song.id)) {
+      throw const FormatException('duplicate_song_id');
+    }
     final name = 'songs/${names.length}.cho';
     names[song.id] = name;
     final text = ChordProCodec().encode(song);
@@ -585,12 +748,56 @@ Uint8List _readEntry(ArchiveFile file, int limit, List<int> budget) {
   return data;
 }
 
+/// [encodeLibraryPackage] on a background isolate, for large libraries.
+Future<Uint8List> encodeLibraryPackageAsync(
+  List<SongDocument> songs,
+  List<SetlistDocument> setlists,
+) => _runInBackground(() => encodeLibraryPackage(songs, setlists));
+
+/// [decodeLibraryPackage] on a background isolate, for large backups.
+Future<ImportedCollection> decodeLibraryPackageAsync(Uint8List bytes) =>
+    _runInBackground(() => decodeLibraryPackage(bytes));
+
+/// Runs [work] on a worker isolate so zip, hashing and PDF layout never block
+/// frames. Falls back to the calling isolate only when the arguments cannot be
+/// sent to another isolate; errors thrown by [work] are rethrown unchanged.
+Future<T> _runInBackground<T>(FutureOr<T> Function() work) async {
+  try {
+    return await Isolate.run(work);
+  } on IsolateSpawnException {
+    return work();
+  } on ArgumentError {
+    return work();
+  }
+}
+
+/// Number of entries the zip's End Of Central Directory record declares, or
+/// null when it cannot be located (or the archive uses ZIP64 counts). Reading
+/// it first lets a hostile archive with a million tiny entries be rejected
+/// before the decoder allocates an object for each one.
+int? _declaredZipEntries(Uint8List bytes) {
+  final earliest = bytes.length > 22 + 0xffff ? bytes.length - 22 - 0xffff : 0;
+  final view = ByteData.sublistView(bytes);
+  for (var i = bytes.length - 22; i >= earliest; i--) {
+    if (view.getUint32(i, Endian.little) == 0x06054b50) {
+      final total = view.getUint16(i + 10, Endian.little);
+      return total == 0xffff ? null : total;
+    }
+  }
+  return null;
+}
+
 /// Complete validation precedes any database writes. No archive paths are extracted.
 ImportedCollection decodeLibraryPackage(Uint8List bytes) {
   if (bytes.length > maxBackupBytes) {
     throw const FormatException('file_too_large');
   }
   if (!looksLikeZip(bytes)) throw const FormatException('invalid_archive');
+  final declaredEntries = _declaredZipEntries(bytes);
+  if (declaredEntries != null &&
+      declaredEntries > maxBackupSongs + 1 + _maxBackupDirectoryEntries) {
+    throw const FormatException('invalid_archive');
+  }
   final decoder = ZipDecoder();
   final Archive archive;
   try {
@@ -742,20 +949,368 @@ SetlistDocument decodeSetlistReferences(
   );
 }
 
+// ---------------------------------------------------------------------------
+// PDF export
+// ---------------------------------------------------------------------------
+
+const _lyricSize = 10.0;
+const _chordSize = 8.5;
+
+/// Largest number of lyric lines one export may lay out. Beyond this the work
+/// would stall a phone for minutes and exhaust memory.
+const maxPdfLines = 60000;
+
+const _regularAsset = 'assets/fonts/NotoSans-Regular.ttf';
+const _boldAsset = 'assets/fonts/NotoSans-Bold.ttf';
+const _monoAsset = 'assets/fonts/NotoSansMono-Regular.ttf';
+
+/// Scripts the Latin/Cyrillic/Greek Noto Sans fonts cannot draw. Each is a
+/// separate regular-weight file; the CJK pair is large, so it is only loaded
+/// (and only embedded in the PDF) when the text needs it.
+const _scriptFallbackAssets = [
+  'assets/fonts/NotoSansArabic-Regular.ttf',
+  'assets/fonts/NotoSansHebrew-Regular.ttf',
+  'assets/fonts/NotoSansDevanagari-Regular.ttf',
+  'assets/fonts/NotoSansThai-Regular.ttf',
+];
+const _cjkFallbackAssets = [
+  'assets/fonts/NotoSansSC-Subset-Regular.ttf',
+  'assets/fonts/NotoSansKR-Hangul-Regular.ttf',
+];
+
+// CJK symbols and ideographs, kana, Hangul, compatibility and full-width forms.
+final _cjkPattern = RegExp(r'[⺀-힯豈-﫿＀-￯]');
+
+final _fontAssetCache = <String, Future<Uint8List>>{};
+
+Future<Uint8List> _fontAsset(String path) {
+  return _fontAssetCache.putIfAbsent(path, () async {
+    try {
+      final data = await rootBundle.load(path);
+      return data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+    } catch (_) {
+      _fontAssetCache.remove(path);
+      rethrow;
+    }
+  });
+}
+
+/// Font files for one PDF job (plain bytes, so they can cross isolates).
+class _PdfFontBytes {
+  const _PdfFontBytes(this.regular, this.bold, this.mono, this.fallbacks);
+  final Uint8List regular, bold, mono;
+  final List<Uint8List> fallbacks;
+}
+
+class _PdfFonts {
+  _PdfFonts(_PdfFontBytes bytes)
+    : regular = pw.Font.ttf(ByteData.sublistView(bytes.regular)),
+      bold = pw.Font.ttf(ByteData.sublistView(bytes.bold)),
+      mono = pw.Font.ttf(ByteData.sublistView(bytes.mono)),
+      _fallbackFonts = [
+        for (final data in bytes.fallbacks)
+          pw.Font.ttf(ByteData.sublistView(data)),
+      ] {
+    final regularFace = PdfFontFace.parse(bytes.regular);
+    final monoFace = PdfFontFace.parse(bytes.mono);
+    final faces = [for (final data in bytes.fallbacks) PdfFontFace.parse(data)];
+    sansFaces = [regularFace, monoFace, ...faces];
+    monoFaces = [monoFace, regularFace, ...faces];
+  }
+
+  final pw.Font regular, bold, mono;
+  final List<pw.Font> _fallbackFonts;
+
+  /// Coverage chains in drawing order (primary font first), used both to
+  /// measure text and to find characters no bundled font can draw.
+  late final List<PdfFontFace> sansFaces, monoFaces;
+
+  /// Fonts the pdf package tries, in order, for a character the style's own
+  /// font lacks. Mono comes first because only it has the sharp/flat signs
+  /// and the true minus sign that key and capo fields use.
+  List<pw.Font> get fallback => [mono, regular, ..._fallbackFonts];
+
+  pw.TextStyle sans({
+    double? fontSize,
+    pw.FontWeight? fontWeight,
+    PdfColor? color,
+  }) => pw.TextStyle(
+    fontSize: fontSize,
+    fontWeight: fontWeight,
+    color: color,
+    fontFallback: fallback,
+  );
+
+  pw.TextStyle monospace({
+    required double fontSize,
+    pw.FontWeight? fontWeight,
+    PdfColor? color,
+  }) => pw.TextStyle(
+    font: mono,
+    fontSize: fontSize,
+    fontWeight: fontWeight,
+    color: color,
+    fontFallback: fallback,
+  );
+}
+
+/// Replaces characters that no bundled font can draw with U+FFFD and removes
+/// invisible format characters, remembering what was replaced so the PDF can
+/// say so. The pdf package would otherwise draw an empty box silently.
+class _Sanitizer {
+  final Set<int> missing = {};
+
+  static bool _ignorable(int rune) =>
+      (rune >= 0x200b && rune <= 0x200f) ||
+      (rune >= 0x2028 && rune <= 0x202e) ||
+      (rune >= 0x2060 && rune <= 0x2064) ||
+      (rune >= 0xfe00 && rune <= 0xfe0f) ||
+      rune == 0xfeff;
+
+  String clean(String text, List<PdfFontFace> chain) {
+    final out = StringBuffer();
+    for (final rune in text.runes) {
+      if (rune == 0x0a) {
+        out.writeCharCode(rune);
+      } else if (rune == 0x09) {
+        out.write('    ');
+      } else if (rune < 0x20 || rune == 0x7f || _ignorable(rune)) {
+        continue;
+      } else if (chain.any((face) => face.supports(rune))) {
+        out.writeCharCode(rune);
+      } else {
+        missing.add(rune);
+        out.writeCharCode(0xfffd);
+      }
+    }
+    return out.toString();
+  }
+
+  /// One line for the page, or null when everything could be drawn.
+  String? get notice {
+    if (missing.isEmpty) return null;
+    final sample = (missing.toList()..sort())
+        .take(4)
+        .map((rune) => 'U+${rune.toRadixString(16).toUpperCase()}')
+        .join(', ');
+    final more = missing.length > 4 ? ', ...' : '';
+    return 'Note: ${missing.length} character(s) in this text are not '
+        'available in the PDF fonts and are shown as \u{FFFD} ($sample$more).';
+  }
+}
+
+double _measure(String text, List<PdfFontFace> chain, double size) {
+  var width = 0.0;
+  for (final rune in text.runes) {
+    for (final face in chain) {
+      if (face.supports(rune)) {
+        width += face.advance(rune, size);
+        break;
+      }
+    }
+  }
+  return width;
+}
+
+final _letter = RegExp(r'\p{L}', unicode: true);
+final _rtlLetter = RegExp(r'[֐-ࣿיִ-﷿ﹰ-﻿]', unicode: true);
+
+/// True when most letters of [text] belong to a right-to-left script.
+bool isRightToLeftText(String text) {
+  var letters = 0, rtl = 0;
+  for (final match in _letter.allMatches(text)) {
+    letters++;
+    if (_rtlLetter.hasMatch(match.group(0)!)) rtl++;
+  }
+  return letters > 0 && rtl * 2 > letters;
+}
+
+class _ChordPlacement {
+  const _ChordPlacement(this.x, this.label);
+  final double x;
+  final String label;
+}
+
+class _LineChunk {
+  const _LineChunk(this.text, this.chords, {this.rtl = false});
+  final String text;
+  final List<_ChordPlacement> chords;
+  final bool rtl;
+}
+
+/// Splits one chorded lyric line into rows that fit [maxWidth] and positions
+/// each chord at the measured width of the lyric before it. Chords (8.5 pt)
+/// and lyrics (10 pt) share one monospaced face but not one column pitch, so
+/// padding with spaces drifts; absolute positions do not. Offsets in
+/// [ArrangementLine.chords] count grapheme clusters, so rows are cut on
+/// cluster boundaries and chords keep their anchor.
+List<_LineChunk> _layoutChordedLine(
+  ArrangementLine line,
+  _Sanitizer sanitizer,
+  List<PdfFontFace> chain,
+  double maxWidth,
+) {
+  if (isRightToLeftText(line.text)) {
+    // Syllable anchoring is not defined for bidirectional text: list the
+    // chords above the line instead of placing them over wrong letters.
+    final labels = [
+      for (final anchor in line.chords) sanitizer.clean(anchor.chord, chain),
+    ];
+    final texts = _pdfTextChunks(sanitizer.clean(line.text, chain));
+    return [
+      for (var index = 0; index < texts.length; index++)
+        _LineChunk(texts[index], [
+          if (index == 0 && labels.isNotEmpty)
+            _ChordPlacement(0, labels.join('   ')),
+        ], rtl: true),
+    ];
+  }
+  final graphemes = [
+    for (final cluster in line.text.characters) sanitizer.clean(cluster, chain),
+  ];
+  final widths = [
+    for (final cluster in graphemes) _measure(cluster, chain, _lyricSize),
+  ];
+  final limit = maxWidth * 0.995;
+  final minGap = _measure(' ', chain, _chordSize);
+  final chunks = <_LineChunk>[];
+  var start = 0;
+  do {
+    var width = 0.0, end = start, lastBreak = -1;
+    while (end < graphemes.length) {
+      if (width + widths[end] > limit && end > start) break;
+      width += widths[end];
+      end++;
+      final cluster = graphemes[end - 1];
+      if (cluster.isNotEmpty && cluster.trim().isEmpty) lastBreak = end;
+    }
+    if (end < graphemes.length && lastBreak > start) end = lastBreak;
+    final last = end >= graphemes.length;
+    final placements = <_ChordPlacement>[];
+    var previousEnd = -minGap;
+    for (final anchor in line.chords) {
+      final at = anchor.offset;
+      if (at < start || (!last && at >= end)) continue;
+      final offset = at > end ? end : at;
+      var x = 0.0;
+      for (var i = start; i < offset; i++) {
+        x += widths[i];
+      }
+      final label = sanitizer.clean(anchor.chord, chain);
+      final labelWidth = _measure(label, chain, _chordSize);
+      // Keep neighbours apart, and keep the final chord on the page.
+      if (x < previousEnd + minGap) x = previousEnd + minGap;
+      if (x + labelWidth > limit) {
+        final shifted = limit - labelWidth;
+        x = shifted > previousEnd + minGap ? shifted : previousEnd + minGap;
+      }
+      placements.add(_ChordPlacement(x, label));
+      previousEnd = x + labelWidth;
+    }
+    chunks.add(_LineChunk(graphemes.sublist(start, end).join(), placements));
+    start = end;
+  } while (start < graphemes.length);
+  return chunks;
+}
+
+/// Row text and chord x positions (points) for [line] as the PDF lays them
+/// out, for tests.
+@visibleForTesting
+List<({String text, List<({double x, String chord})> chords})>
+layoutChordedRowsForTest(
+  ArrangementLine line,
+  List<PdfFontFace> chain,
+  double maxWidth,
+) => [
+  for (final chunk in _layoutChordedLine(line, _Sanitizer(), chain, maxWidth))
+    (
+      text: chunk.text,
+      chords: [for (final c in chunk.chords) (x: c.x, chord: c.label)],
+    ),
+];
+
+/// Everything a PDF job needs, as plain data that can cross isolates.
+class _PdfJob {
+  _PdfJob(this.songs, this.format, this.setlist, this.fonts);
+  final List<SongDocument> songs;
+  final PdfPageFormat format;
+  final SetlistDocument? setlist;
+  final _PdfFontBytes fonts;
+}
+
+/// Only what printing reads, so large timing payloads are not copied between
+/// isolates.
+SongDocument _printable(SongDocument song) => SongDocument(
+  id: song.id,
+  title: song.title,
+  artist: song.artist,
+  body: song.body,
+  metadata: song.metadata,
+);
+
+bool _hasCjk(SongDocument song) =>
+    _cjkPattern.hasMatch(song.title) ||
+    _cjkPattern.hasMatch(song.artist) ||
+    _cjkPattern.hasMatch(song.body) ||
+    song.metadata.values.any((value) => _cjkPattern.hasMatch('$value'));
+
+/// Code points in [texts] that no bundled PDF font can draw (they print as a
+/// visible U+FFFD with a note on the page). Lets a caller warn before export.
+Future<List<int>> unprintableCharacters(Iterable<String> texts) async {
+  final all = texts.toList();
+  final needsCjk = all.any(_cjkPattern.hasMatch);
+  final chain = [
+    PdfFontFace.parse(await _fontAsset(_regularAsset)),
+    PdfFontFace.parse(await _fontAsset(_monoAsset)),
+    for (final path in [
+      ..._scriptFallbackAssets,
+      if (needsCjk) ..._cjkFallbackAssets,
+    ])
+      PdfFontFace.parse(await _fontAsset(path)),
+  ];
+  final sanitizer = _Sanitizer();
+  for (final text in all) {
+    sanitizer.clean(text, chain);
+  }
+  return sanitizer.missing.toList()..sort();
+}
+
 Future<Uint8List> createSongPdf(
   List<SongDocument> songs, {
   PdfPageFormat format = PdfPageFormat.a4,
   SetlistDocument? setlist,
 }) async {
-  final regular = pw.Font.ttf(
-    await rootBundle.load('assets/fonts/NotoSans-Regular.ttf'),
+  final needsCjk =
+      songs.any(_hasCjk) ||
+      (setlist != null &&
+          (_cjkPattern.hasMatch(setlist.name) ||
+              _cjkPattern.hasMatch(setlist.notes)));
+  final fonts = _PdfFontBytes(
+    await _fontAsset(_regularAsset),
+    await _fontAsset(_boldAsset),
+    await _fontAsset(_monoAsset),
+    [
+      for (final path in [
+        ..._scriptFallbackAssets,
+        if (needsCjk) ..._cjkFallbackAssets,
+      ])
+        await _fontAsset(path),
+    ],
   );
-  final bold = pw.Font.ttf(
-    await rootBundle.load('assets/fonts/NotoSans-Bold.ttf'),
+  final job = _PdfJob(
+    [for (final song in songs) _printable(song)],
+    format,
+    setlist,
+    fonts,
   );
-  final mono = pw.Font.ttf(
-    await rootBundle.load('assets/fonts/NotoSansMono-Regular.ttf'),
-  );
+  return _runInBackground(() => _buildSongPdf(job));
+}
+
+Future<Uint8List> _buildSongPdf(_PdfJob job) async {
+  final songs = job.songs;
+  final format = job.format;
+  final setlist = job.setlist;
+  final fonts = _PdfFonts(job.fonts);
   const navy = PdfColor.fromInt(0xff173454);
   const muted = PdfColor.fromInt(0xff5f6b78);
   const paleBlue = PdfColor.fromInt(0xfff1f5f9);
@@ -828,57 +1383,82 @@ Future<Uint8List> createSongPdf(
     keywords: songs.length == 1
         ? songKeywords(songs.single)
         : 'setlist, lyrics, chords',
-    theme: pw.ThemeData.withFont(base: regular, bold: bold),
+    theme: pw.ThemeData.withFont(
+      base: fonts.regular,
+      bold: fonts.bold,
+      fontFallback: fonts.fallback,
+    ),
   );
   if (setlist != null) {
     document.addPage(
       pw.MultiPage(
         pageFormat: format,
         maxPages: 1000,
-        build: (context) => [
-          pw.Text(
-            setlist.name,
-            style: pw.TextStyle(
-              fontSize: 28,
-              fontWeight: pw.FontWeight.bold,
-              color: navy,
-            ),
-          ),
-          if (setlist.notes.isNotEmpty)
-            pw.Padding(
-              padding: const pw.EdgeInsets.only(top: 2, bottom: 4),
-              child: pw.Text(
-                setlist.notes,
-                style: const pw.TextStyle(fontSize: 12, color: muted),
+        build: (context) {
+          final sanitizer = _Sanitizer();
+          String clean(String text) => sanitizer.clean(text, fonts.sansFaces);
+          final widgets = <pw.Widget>[
+            pw.Text(
+              clean(setlist.name),
+              style: fonts.sans(
+                fontSize: 28,
+                fontWeight: pw.FontWeight.bold,
+                color: navy,
               ),
             ),
-          for (var i = 0; i < songs.length; i++)
-            pw.Padding(
-              padding: const pw.EdgeInsets.symmetric(vertical: 8),
-              child: pw.Text(
-                '${i + 1}. ${songs[i].title}${songs[i].artist.trim().isEmpty ? '' : ' — ${songs[i].artist.trim()}'}',
-                style: const pw.TextStyle(fontSize: 22),
-                overflow: pw.TextOverflow.span,
+            if (setlist.notes.isNotEmpty)
+              pw.Padding(
+                padding: const pw.EdgeInsets.only(top: 2, bottom: 4),
+                child: pw.Text(
+                  clean(setlist.notes),
+                  style: fonts.sans(fontSize: 12, color: muted),
+                ),
               ),
-            ),
-        ],
+            for (var i = 0; i < songs.length; i++)
+              pw.Padding(
+                padding: const pw.EdgeInsets.symmetric(vertical: 8),
+                child: pw.Text(
+                  clean(
+                    '${i + 1}. ${songs[i].title}${songs[i].artist.trim().isEmpty ? '' : ' — ${songs[i].artist.trim()}'}',
+                  ),
+                  style: fonts.sans(fontSize: 22),
+                  overflow: pw.TextOverflow.span,
+                ),
+              ),
+          ];
+          final notice = sanitizer.notice;
+          if (notice != null) {
+            widgets.add(
+              pw.Padding(
+                padding: const pw.EdgeInsets.only(top: 6),
+                child: pw.Text(
+                  notice,
+                  style: fonts.sans(fontSize: 8, color: muted),
+                ),
+              ),
+            );
+          }
+          return widgets;
+        },
       ),
     );
   }
+  var totalLines = 0;
   for (var songIndex = 0; songIndex < songs.length; songIndex++) {
     final song = songs[songIndex];
     final lines = parseArrangement(song.body);
+    totalLines += lines.length;
+    if (totalLines > maxPdfLines) {
+      throw const FormatException('pdf_too_large');
+    }
     document.addPage(
       pw.MultiPage(
         pageFormat: format,
         maxPages: 1000,
-        build: (context) => [
-          pw.Text(
-            song.title,
-            style: pw.TextStyle(fontSize: 22, fontWeight: pw.FontWeight.bold),
-          ),
-          pw.SizedBox(height: 8),
-          ..._pdfSongBody(
+        build: (context) {
+          final sanitizer = _Sanitizer();
+          final title = sanitizer.clean(song.title, fonts.sansFaces);
+          final body = _pdfSongBody(
             lines,
             context: context,
             format: format,
@@ -887,12 +1467,30 @@ Future<Uint8List> createSongPdf(
                 'Artist: ${song.artist.trim()}',
               ...metadataLines(song),
             ],
-            mono: mono,
+            fonts: fonts,
+            sanitizer: sanitizer,
             navy: navy,
             muted: muted,
             paleBlue: paleBlue,
-          ),
-        ],
+          );
+          final notice = sanitizer.notice;
+          return [
+            pw.Text(
+              title,
+              style: fonts.sans(fontSize: 22, fontWeight: pw.FontWeight.bold),
+            ),
+            pw.SizedBox(height: 8),
+            if (notice != null)
+              pw.Padding(
+                padding: const pw.EdgeInsets.only(bottom: 6),
+                child: pw.Text(
+                  notice,
+                  style: fonts.sans(fontSize: 8, color: muted),
+                ),
+              ),
+            ...body,
+          ];
+        },
       ),
     );
   }
@@ -904,20 +1502,82 @@ List<pw.Widget> _pdfSongBody(
   required pw.Context context,
   required PdfPageFormat format,
   required List<String> metadata,
-  required pw.Font mono,
+  required _PdfFonts fonts,
+  required _Sanitizer sanitizer,
   required PdfColor navy,
   required PdfColor muted,
   required PdfColor paleBlue,
 }) {
+  final margin = pw.PageTheme(
+    pageFormat: format,
+  ).margin!.resolve(pw.TextDirection.ltr);
+  final contentWidth = format.width - margin.horizontal;
+  final columnWidth = contentWidth - 10;
+  final lyricWidth = metadata.isEmpty ? contentWidth : columnWidth * .7;
+  final metadataWidth = columnWidth * .3;
+  final chordStyle = fonts.monospace(
+    fontSize: _chordSize,
+    fontWeight: pw.FontWeight.bold,
+    color: navy,
+  );
+
+  pw.Widget lyricRow(_LineChunk chunk) {
+    pw.Widget? chordRow;
+    if (chunk.chords.isNotEmpty) {
+      if (chunk.rtl) {
+        chordRow = pw.SizedBox(
+          width: lyricWidth,
+          child: pw.Text(
+            chunk.chords.first.label,
+            style: chordStyle,
+            textAlign: pw.TextAlign.right,
+            softWrap: false,
+          ),
+        );
+      } else {
+        var previousEnd = 0.0;
+        final cells = <pw.Widget>[];
+        for (final chord in chunk.chords) {
+          cells
+            ..add(pw.SizedBox(width: chord.x - previousEnd))
+            ..add(pw.Text(chord.label, style: chordStyle, softWrap: false));
+          previousEnd =
+              chord.x + _measure(chord.label, fonts.monoFaces, _chordSize);
+        }
+        chordRow = pw.Row(mainAxisSize: pw.MainAxisSize.min, children: cells);
+      }
+    }
+    final lyric = pw.Text(
+      chunk.text.isEmpty ? ' ' : chunk.text,
+      style: fonts.monospace(fontSize: _lyricSize),
+      textDirection: chunk.rtl ? pw.TextDirection.rtl : null,
+      textAlign: chunk.rtl ? pw.TextAlign.right : null,
+    );
+    return pw.Padding(
+      padding: const pw.EdgeInsets.only(bottom: 0.8),
+      child: pw.Inseparable(
+        child: pw.Column(
+          mainAxisSize: pw.MainAxisSize.min,
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            ?chordRow,
+            chunk.rtl ? pw.SizedBox(width: lyricWidth, child: lyric) : lyric,
+          ],
+        ),
+      ),
+    );
+  }
+
   final lyricRows = <pw.Widget>[];
   for (final line in lines) {
-    if (line.directive && _pdfSectionHeading(line.text) != null) {
+    final heading = line.directive ? _pdfSectionHeading(line.text) : null;
+    if (heading != null) {
       lyricRows.add(
         pw.Padding(
           padding: const pw.EdgeInsets.only(top: 5, bottom: 2),
           child: pw.Text(
-            _pdfSectionHeading(line.text)!,
-            style: pw.TextStyle(
+            sanitizer.clean(heading, fonts.sansFaces),
+            style: fonts.sans(
               fontSize: 8,
               fontWeight: pw.FontWeight.bold,
               color: muted,
@@ -930,41 +1590,21 @@ List<pw.Widget> _pdfSongBody(
         line.chords.isEmpty) {
       lyricRows.add(pw.SizedBox(height: 5));
     } else if (!line.directive) {
-      for (final chunk in _pdfLineChunks(line)) {
-        lyricRows.add(
-          pw.Padding(
-            padding: const pw.EdgeInsets.only(bottom: 0.8),
-            child: pw.Inseparable(
-              child: pw.Column(
-                mainAxisSize: pw.MainAxisSize.min,
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  if (chunk.chords.isNotEmpty)
-                    pw.Text(
-                      _chordRow(chunk),
-                      style: pw.TextStyle(
-                        font: mono,
-                        fontSize: 8.5,
-                        fontWeight: pw.FontWeight.bold,
-                        color: navy,
-                      ),
-                    ),
-                  pw.Text(
-                    chunk.text.isEmpty ? ' ' : chunk.text,
-                    style: pw.TextStyle(font: mono, fontSize: 10),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      }
+      final chunks = line.chords.isEmpty
+          ? [
+              for (final text in _pdfTextChunks(
+                sanitizer.clean(line.text, fonts.monoFaces),
+              ))
+                _LineChunk(text, const [], rtl: isRightToLeftText(text)),
+            ]
+          : _layoutChordedLine(line, sanitizer, fonts.monoFaces, lyricWidth);
+      lyricRows.addAll(chunks.map(lyricRow));
     }
   }
 
   final metadataWidgets = <pw.Widget>[];
   for (final value in metadata) {
-    final chunks = _pdfTextChunks(value);
+    final chunks = _pdfTextChunks(sanitizer.clean(value, fonts.sansFaces));
     for (var index = 0; index < chunks.length; index++) {
       metadataWidgets.add(
         pw.Container(
@@ -976,7 +1616,7 @@ List<pw.Widget> _pdfSongBody(
           ),
           child: pw.Text(
             index == 0 ? chunks[index] : '(continued) ${chunks[index]}',
-            style: pw.TextStyle(fontSize: 8, color: navy),
+            style: fonts.sans(fontSize: 8, color: navy),
           ),
         ),
       );
@@ -985,13 +1625,6 @@ List<pw.Widget> _pdfSongBody(
 
   if (metadataWidgets.isEmpty) return lyricRows;
 
-  final margin = pw.PageTheme(
-    pageFormat: format,
-  ).margin!.resolve(pw.TextDirection.ltr);
-  final contentWidth = format.width - margin.horizontal;
-  final columnWidth = contentWidth - 10;
-  final lyricWidth = columnWidth * .7;
-  final metadataWidth = columnWidth * .3;
   // Measure actual font wrapping at the printed width. Keep each block well
   // below a fresh page so MultiPage can paginate it as one unit. The sidebar
   // flows independently; lyrics fill its height instead of leaving a fixed
@@ -1056,36 +1689,13 @@ List<pw.Widget> _pdfSongBody(
   return blocks;
 }
 
-/// Break exceptional single ChordPro rows into bounded continuations so each
-/// chord/lyric pair can stay together and still fit on a page. The limit is a
-/// conservative text-size bound, not a page-height estimate; ordinary lines
-/// remain unchanged. Chunk boundaries prefer whitespace and never split a
-/// grapheme cluster when a long unbroken token needs splitting.
+/// Break exceptional single rows into bounded continuations so each piece can
+/// stay together and still fit on a page. The limit is a conservative text-size
+/// bound, not a page-height estimate; ordinary text remains unchanged. Chunk
+/// boundaries prefer whitespace and never split a grapheme cluster when a long
+/// unbroken token needs splitting. Chorded lines are cut by measured width
+/// instead (see [_layoutChordedLine]).
 const _pdfTextChunkLength = 320;
-
-List<ArrangementLine> _pdfLineChunks(ArrangementLine line) {
-  final chunks = _pdfTextChunks(line.text);
-  if (chunks.length == 1) return [line];
-
-  final result = <ArrangementLine>[];
-  var start = 0;
-  for (var index = 0; index < chunks.length; index++) {
-    final text = chunks[index];
-    final end = start + text.length;
-    final anchors = line.chords
-        .where(
-          (anchor) =>
-              anchor.offset >= start &&
-              (anchor.offset < end ||
-                  (index == chunks.length - 1 && anchor.offset == end)),
-        )
-        .map((anchor) => ChordAnchor(anchor.offset - start, anchor.chord))
-        .toList(growable: false);
-    result.add(ArrangementLine(text, anchors));
-    start = end;
-  }
-  return result;
-}
 
 List<String> _pdfTextChunks(String value) {
   if (value.length <= _pdfTextChunkLength) return [value];
@@ -1128,30 +1738,56 @@ String _chordRow(ArrangementLine line) {
   return row.toString();
 }
 
+/// Directive names that carry free text which the reader shows as a note.
+const _commentDirectives = {
+  'comment',
+  'c',
+  'comment italic',
+  'ci',
+  'comment box',
+  'cb',
+};
+
+const _sectionLabels = {
+  'verse': 'Verse',
+  'chorus': 'Chorus',
+  'bridge': 'Bridge',
+  'pre chorus': 'Pre-Chorus',
+  'post chorus': 'Post-Chorus',
+  'intro': 'Intro',
+  'outro': 'Outro',
+  'interlude': 'Interlude',
+  'instrumental': 'Instrumental',
+  'solo': 'Solo',
+  'refrain': 'Refrain',
+  'hook': 'Hook',
+  'breakdown': 'Breakdown',
+  'coda': 'Coda',
+  'tag': 'Tag',
+  'ending': 'Ending',
+  // ChordPro short forms.
+  'sov': 'Verse',
+  'soc': 'Chorus',
+  'sob': 'Bridge',
+};
+
+/// Heading or note text for a directive line, or null when it prints nothing.
+/// Section directives and every `{comment: ...}` (the reader shows them all)
+/// produce text; metadata directives and `{end_of_...}` do not.
 String? _pdfSectionHeading(String directive) {
   final match = RegExp(
-    r'^\{(?:start_of_)?([a-z_]+)(?::\s*([^}]+))?\}$',
+    r'^\{\s*(?:start_of_)?([a-z_]+)\s*(?::\s*([^}]*))?\}$',
     caseSensitive: false,
   ).firstMatch(directive.trim());
   if (match == null) return null;
   final name = match.group(1)!.replaceAll('_', ' ').toLowerCase();
   final detail = match.group(2)?.trim();
-  const labels = {
-    'verse': 'Verse',
-    'chorus': 'Chorus',
-    'bridge': 'Bridge',
-    'pre chorus': 'Pre-Chorus',
-    'intro': 'Intro',
-    'outro': 'Outro',
-    'interlude': 'Interlude',
-    'tag': 'Tag',
-    'ending': 'Ending',
-  };
-  if (name == 'comment' && detail != null && detail.isNotEmpty) {
-    final kind = detail.split(RegExp(r'\s+')).first.toLowerCase();
-    if (labels.containsKey(kind)) return detail;
+  if (_commentDirectives.contains(name)) {
+    return detail == null || detail.isEmpty ? null : detail;
   }
-  final label = labels[name];
+  final label = _sectionLabels[name];
   if (label == null) return null;
-  return detail == null || detail.isEmpty ? label : '$label · $detail';
+  if (detail == null || detail.isEmpty) return label;
+  if (detail.toLowerCase().startsWith(label.toLowerCase())) return detail;
+  return '$label · $detail';
 }
