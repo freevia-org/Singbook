@@ -219,6 +219,29 @@ class AppLocalizationsEl extends AppLocalizations {
   String get searchChooseVersion => 'Επιλογή αυτής της έκδοσης';
 
   @override
+  String get searchFullPreview => 'Πλήρης προεπισκόπηση';
+
+  @override
+  String get searchArrangementNotes => 'Σημειώσεις ενορχήστρωσης';
+
+  @override
+  String get searchOpenLyrics => 'Άνοιγμα στίχων';
+
+  @override
+  String get searchContributions => 'Πηγές που χρησιμοποιήθηκαν';
+
+  @override
+  String get searchVersionChecking => 'Έλεγχος αυτής της έκδοσης…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Δεν είναι δυνατή η χρήση αυτής της έκδοσης. Επιλέξτε άλλη έκδοση.';
+
+  @override
+  String get searchPreviewUnavailable =>
+      'Δεν υπάρχει διαθέσιμη προεπισκόπηση στίχων.';
+
+  @override
   String get searchSongMatch => 'Αντιστοιχία τραγουδιού';
 
   @override

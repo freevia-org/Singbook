@@ -552,6 +552,48 @@ abstract class AppLocalizations {
   /// **'Choose this version'**
   String get searchChooseVersion;
 
+  /// No description provided for @searchFullPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Full preview'**
+  String get searchFullPreview;
+
+  /// No description provided for @searchArrangementNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrangement notes'**
+  String get searchArrangementNotes;
+
+  /// No description provided for @searchOpenLyrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Open lyrics'**
+  String get searchOpenLyrics;
+
+  /// No description provided for @searchContributions.
+  ///
+  /// In en, this message translates to:
+  /// **'Sources used'**
+  String get searchContributions;
+
+  /// No description provided for @searchVersionChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking this version…'**
+  String get searchVersionChecking;
+
+  /// No description provided for @searchVersionUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This version can’t be used. Choose another version.'**
+  String get searchVersionUnavailable;
+
+  /// No description provided for @searchPreviewUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No lyric preview available.'**
+  String get searchPreviewUnavailable;
+
   /// No description provided for @searchSongMatch.
   ///
   /// In en, this message translates to:

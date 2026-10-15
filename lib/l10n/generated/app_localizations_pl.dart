@@ -220,6 +220,28 @@ class AppLocalizationsPl extends AppLocalizations {
   String get searchChooseVersion => 'Wybierz tę wersję';
 
   @override
+  String get searchFullPreview => 'Pełny podgląd';
+
+  @override
+  String get searchArrangementNotes => 'Uwagi dotyczące aranżacji';
+
+  @override
+  String get searchOpenLyrics => 'Otwórz tekst';
+
+  @override
+  String get searchContributions => 'Użyte źródła';
+
+  @override
+  String get searchVersionChecking => 'Sprawdzanie tej wersji…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Nie można użyć tej wersji. Wybierz inną.';
+
+  @override
+  String get searchPreviewUnavailable => 'Podgląd tekstu jest niedostępny.';
+
+  @override
   String get searchSongMatch => 'Dopasowanie utworu';
 
   @override

@@ -219,6 +219,28 @@ class AppLocalizationsHr extends AppLocalizations {
   String get searchChooseVersion => 'Odaberi ovu verziju';
 
   @override
+  String get searchFullPreview => 'Cijeli pregled';
+
+  @override
+  String get searchArrangementNotes => 'Napomene o aranžmanu';
+
+  @override
+  String get searchOpenLyrics => 'Otvori tekst';
+
+  @override
+  String get searchContributions => 'Korišteni izvori';
+
+  @override
+  String get searchVersionChecking => 'Provjera ove verzije…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Ova se verzija ne može upotrijebiti. Odaberi drugu verziju.';
+
+  @override
+  String get searchPreviewUnavailable => 'Pregled teksta nije dostupan.';
+
+  @override
   String get searchSongMatch => 'Podudaranje pjesme';
 
   @override

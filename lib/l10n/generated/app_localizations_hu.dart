@@ -218,6 +218,28 @@ class AppLocalizationsHu extends AppLocalizations {
   String get searchChooseVersion => 'Verzió kiválasztása';
 
   @override
+  String get searchFullPreview => 'Teljes előnézet';
+
+  @override
+  String get searchArrangementNotes => 'Hangszerelési megjegyzések';
+
+  @override
+  String get searchOpenLyrics => 'Dalszöveg megnyitása';
+
+  @override
+  String get searchContributions => 'Felhasznált források';
+
+  @override
+  String get searchVersionChecking => 'Verzió ellenőrzése…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Ez a verzió nem használható. Válassz másik verziót.';
+
+  @override
+  String get searchPreviewUnavailable => 'Nem érhető el dalszöveg-előnézet.';
+
+  @override
   String get searchSongMatch => 'Dal egyezése';
 
   @override

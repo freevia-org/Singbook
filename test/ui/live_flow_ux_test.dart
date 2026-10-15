@@ -67,7 +67,7 @@ void main() {
 
     const suggested = SourceVersionData(
       id: 'suggested',
-      providerId: 'catalog',
+      providerId: 'combined',
       providerName: 'Suggested',
       title: 'Signal Song',
       artist: 'The Signals',
@@ -135,20 +135,21 @@ void main() {
     final alternativeRow = find.byKey(
       const ValueKey('version-row-alternative'),
     );
-    expect(suggestedRow, findsOneWidget);
+    final rawRow = find.byKey(const ValueKey('version-row-raw-source'));
+    expect(suggestedRow, findsNothing);
     expect(alternativeRow, findsOneWidget);
-    expect(find.byKey(const ValueKey('version-row-raw-source')), findsNothing);
-    expect(find.text(l10n.searchSourceVersionsCount(3)), findsOneWidget);
+    expect(rawRow, findsOneWidget);
+    expect(find.text(l10n.searchSourceVersionsCount(2)), findsOneWidget);
     expect(
       find.descendant(
-        of: suggestedRow,
+        of: rawRow,
         matching: find.byIcon(Icons.radio_button_checked),
       ),
       findsOneWidget,
     );
     expect(find.text('Raw selected preview'), findsOneWidget);
     final orderBefore = [
-      tester.getTopLeft(suggestedRow).dy,
+      tester.getTopLeft(rawRow).dy,
       tester.getTopLeft(alternativeRow).dy,
     ];
 
@@ -156,7 +157,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(controller.state.comparison!.selectedVersionId, 'alternative');
     expect(find.text('Archive preview'), findsOneWidget);
-    expect(find.text(l10n.searchSourceVersionsCount(3)), findsOneWidget);
+    expect(find.text(l10n.searchSourceVersionsCount(2)), findsOneWidget);
     expect([
       tester.getTopLeft(suggestedRow).dy,
       tester.getTopLeft(alternativeRow).dy,
@@ -164,6 +165,169 @@ void main() {
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
   });
+
+  testWidgets('a combined-provider alias counts its underlying source once', (
+    tester,
+  ) async {
+    const source = SourceVersionData(
+      id: 'one',
+      providerId: 'catalog',
+      providerName: 'Catalog',
+      title: 'Signal Song',
+      artist: 'The Signals',
+      hasLyrics: true,
+      isUsableVersion: true,
+      canSave: true,
+    );
+    const suggested = SourceVersionData(
+      id: 'combined',
+      providerId: 'combined',
+      providerName: 'Catalog',
+      title: 'Signal Song',
+      artist: 'The Signals',
+      sourceCount: 1,
+      underlyingSourceId: 'one',
+      hasLyrics: true,
+      isUsableVersion: true,
+      canSave: true,
+    );
+    const other = SourceVersionData(
+      id: 'two',
+      providerId: 'archive',
+      providerName: 'Archive',
+      title: 'Signal Song',
+      artist: 'The Signals',
+      hasLyrics: true,
+      isUsableVersion: true,
+      canSave: true,
+    );
+    final controller = _LiveFlowController(
+      const VerseUiState(
+        homeListMode: HomeListMode.online,
+        query: 'signal',
+        comparison: SearchComparisonData(
+          reference: SearchReferenceData(
+            id: 'signal',
+            title: 'Signal Song',
+            artist: 'The Signals',
+          ),
+          suggested: suggested,
+          alternatives: [source],
+          selectedVersionId: 'combined',
+        ),
+      ),
+    );
+    addTearDown(controller.dispose);
+    await _pumpHome(tester, controller);
+    final l10n = AppLocalizations.of(
+      tester.element(find.byType(VerseHomeScreen)),
+    );
+    expect(find.text(l10n.searchSourceVersionsCount(1)), findsOneWidget);
+    expect(find.byKey(const ValueKey('version-row-one')), findsNothing);
+    controller._state = const VerseUiState(
+      homeListMode: HomeListMode.online,
+      query: 'signal',
+      comparison: SearchComparisonData(
+        reference: SearchReferenceData(
+          id: 'signal',
+          title: 'Signal Song',
+          artist: 'The Signals',
+        ),
+        suggested: suggested,
+        alternatives: [source, other],
+        selectedVersionId: 'combined',
+      ),
+    );
+    controller.notifyListeners();
+    await tester.pump();
+    expect(find.text(l10n.searchSourceVersionsCount(2)), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('version-row-two')));
+    await tester.pump();
+    expect(controller.state.comparison?.selectedVersionId, 'two');
+    expect(find.text(l10n.searchSourceVersionsCount(2)), findsOneWidget);
+    expect(find.byKey(const ValueKey('version-row-one')), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'late combined contributors retain the explicit raw choice and raw order',
+    (tester) async {
+      const source = SourceVersionData(
+        id: 'one',
+        providerId: 'catalog',
+        providerName: 'Catalog',
+        title: 'Signal Song',
+        artist: 'The Signals',
+        hasLyrics: true,
+        isUsableVersion: true,
+        canSave: true,
+      );
+      const other = SourceVersionData(
+        id: 'two',
+        providerId: 'archive',
+        providerName: 'Archive',
+        title: 'Signal Song',
+        artist: 'The Signals',
+        hasLyrics: true,
+        isUsableVersion: true,
+        canSave: true,
+      );
+      VerseUiState state(int count) => VerseUiState(
+        homeListMode: HomeListMode.online,
+        query: 'signal',
+        comparison: SearchComparisonData(
+          reference: const SearchReferenceData(
+            id: 'signal',
+            title: 'Signal Song',
+            artist: 'The Signals',
+          ),
+          suggested: SourceVersionData(
+            id: 'combined',
+            providerId: 'combined',
+            providerName: 'Catalog',
+            title: 'Signal Song',
+            artist: 'The Signals',
+            sourceCount: count,
+            underlyingSourceId: count == 1 ? 'one' : null,
+            hasLyrics: true,
+            isUsableVersion: true,
+            canSave: true,
+          ),
+          alternatives: const [source, other],
+          selectedVersionId: 'one',
+        ),
+      );
+      final controller = _LiveFlowController(state(1));
+      addTearDown(controller.dispose);
+      await _pumpHome(tester, controller);
+      final raw = find.byKey(const ValueKey('version-row-one'));
+      final alternate = find.byKey(const ValueKey('version-row-two'));
+      expect(
+        tester.getTopLeft(raw).dy,
+        lessThan(tester.getTopLeft(alternate).dy),
+      );
+      controller._state = state(2);
+      controller.notifyListeners();
+      await tester.pump();
+      expect(controller.state.comparison?.selectedVersionId, 'one');
+      expect(
+        find.descendant(
+          of: raw,
+          matching: find.byIcon(Icons.radio_button_checked),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        tester.getTopLeft(raw).dy,
+        lessThan(tester.getTopLeft(alternate).dy),
+      );
+      expect(
+        find.byKey(const ValueKey('version-row-combined')),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets(
     'filtered empty state clears all version filters and cannot save',

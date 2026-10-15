@@ -215,6 +215,27 @@ class AppLocalizationsZh extends AppLocalizations {
   String get searchChooseVersion => '选择此版本';
 
   @override
+  String get searchFullPreview => '完整预览';
+
+  @override
+  String get searchArrangementNotes => '编曲备注';
+
+  @override
+  String get searchOpenLyrics => '打开歌词';
+
+  @override
+  String get searchContributions => '使用的来源';
+
+  @override
+  String get searchVersionChecking => '正在检查此版本…';
+
+  @override
+  String get searchVersionUnavailable => '此版本无法使用。请选择其他版本。';
+
+  @override
+  String get searchPreviewUnavailable => '没有可用的歌词预览。';
+
+  @override
   String get searchSongMatch => '歌曲匹配';
 
   @override

@@ -219,6 +219,29 @@ class AppLocalizationsMt extends AppLocalizations {
   String get searchChooseVersion => 'Agħżel din il-verżjoni';
 
   @override
+  String get searchFullPreview => 'Previżjoni sħiħa';
+
+  @override
+  String get searchArrangementNotes => 'Noti dwar l-arranġament';
+
+  @override
+  String get searchOpenLyrics => 'Iftaħ il-lirika';
+
+  @override
+  String get searchContributions => 'Sorsi użati';
+
+  @override
+  String get searchVersionChecking => 'Qed niċċekkja din il-verżjoni…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Din il-verżjoni ma tistax tintuża. Agħżel verżjoni oħra.';
+
+  @override
+  String get searchPreviewUnavailable =>
+      'M’hemmx previżjoni tal-lirika disponibbli.';
+
+  @override
   String get searchSongMatch => 'Taqbil tal-kanzunetta';
 
   @override

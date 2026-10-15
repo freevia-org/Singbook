@@ -76,12 +76,14 @@ class LyricLineData {
     this.section,
     this.chords = const [],
     this.isBlank = false,
+    this.isArrangementNote = false,
   });
   final String id;
   final String text;
   final String? section;
   final List<LyricChord> chords;
   final bool isBlank;
+  final bool isArrangementNote;
 }
 
 @immutable
@@ -276,6 +278,9 @@ class SourceVersionData {
     this.isUsableVersion = false,
     this.status = LoadState.loaded,
     this.bodyPreview = const [],
+    this.bodyLines = const [],
+    this.contributions = const [],
+    this.isChecking = false,
     this.canSave = false,
     this.savedSongId,
     this.underlyingSourceId,
@@ -290,8 +295,26 @@ class SourceVersionData {
   final bool isUsableVersion;
   final LoadState status;
   final List<LyricLineData> bodyPreview;
+
+  /// Complete parsed arrangement for the full source preview.
+  final List<LyricLineData> bodyLines;
+  final List<SourceContributionData> contributions;
+
+  /// True while final validation can still change this source's usability.
+  final bool isChecking;
   final String? savedSongId;
   final String? underlyingSourceId;
+}
+
+@immutable
+class SourceContributionData {
+  const SourceContributionData({
+    required this.providerName,
+    required this.roles,
+  });
+
+  final String providerName;
+  final List<String> roles;
 }
 
 @immutable
@@ -314,10 +337,12 @@ class SearchComparisonData {
   final bool discovering, noUsableLyrics;
   final List<SearchProviderCheckData> providerChecks;
   SourceVersionData? get selected {
+    final id = selectedVersionId;
+    if (id == null) return suggested;
     for (final item in [?suggested, ...alternatives]) {
-      if (item.id == selectedVersionId) return item;
+      if (item.id == id) return item;
     }
-    return suggested;
+    return null;
   }
 }
 

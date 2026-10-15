@@ -219,6 +219,28 @@ class AppLocalizationsCs extends AppLocalizations {
   String get searchChooseVersion => 'Vybrat tuto verzi';
 
   @override
+  String get searchFullPreview => 'Úplný náhled';
+
+  @override
+  String get searchArrangementNotes => 'Poznámky k aranžmá';
+
+  @override
+  String get searchOpenLyrics => 'Otevřít text';
+
+  @override
+  String get searchContributions => 'Použité zdroje';
+
+  @override
+  String get searchVersionChecking => 'Ověřování této verze…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Tuto verzi nelze použít. Vyberte jinou verzi.';
+
+  @override
+  String get searchPreviewUnavailable => 'Náhled textu není k dispozici.';
+
+  @override
   String get searchSongMatch => 'Shoda písně';
 
   @override

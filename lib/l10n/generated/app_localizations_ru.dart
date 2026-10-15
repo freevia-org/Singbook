@@ -219,6 +219,28 @@ class AppLocalizationsRu extends AppLocalizations {
   String get searchChooseVersion => 'Выбрать эту версию';
 
   @override
+  String get searchFullPreview => 'Полный предпросмотр';
+
+  @override
+  String get searchArrangementNotes => 'Примечания к аранжировке';
+
+  @override
+  String get searchOpenLyrics => 'Открыть текст';
+
+  @override
+  String get searchContributions => 'Использованные источники';
+
+  @override
+  String get searchVersionChecking => 'Проверка этой версии…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Эту версию нельзя использовать. Выберите другую.';
+
+  @override
+  String get searchPreviewUnavailable => 'Предпросмотр текста недоступен.';
+
+  @override
   String get searchSongMatch => 'Совпадение песни';
 
   @override
