@@ -305,4 +305,97 @@ void main() {
     controllers.remove(fresh);
     fresh.dispose();
   });
+
+  test('a failed sync still refreshes the cache from what it committed', () async {
+    final other = await Device.create(cloud);
+    addTearDown(other.close);
+    final app = await start();
+    await until(() => app.lastSyncAt != null);
+    await app.setAutoSync(false);
+    for (var i = 0; i < 3; i++) {
+      await other.saveSong('p$i', 'body $i');
+    }
+    await other.sync.sync();
+    var reads = 0;
+    cloud.hook = (op, target) {
+      if (op == 'read' && ++reads == 3) throw const SyncException('network');
+    };
+    await app.syncNow();
+    cloud.hook = null;
+    expect(app.lastSyncErrorCode, 'network');
+    expect(app.songs, hasLength(2), reason: 'pulled items are committed');
+    final pulled = app.songs.first;
+    expect(app.songHash(pulled.id), isNotNull);
+    expect(await app.saveSong(pulled.copyWith(body: 'edited')), isTrue);
+  });
+
+  test('a wiped cloud asks before deleting; the user can keep or confirm', () async {
+    final app = await start();
+    await until(() => app.lastSyncAt != null);
+    await app.setAutoSync(false);
+    for (var i = 0; i < 6; i++) {
+      await addSong(app, 'w$i', 'body $i');
+    }
+    await app.syncNow();
+    expect(cloud.names, hasLength(6));
+    for (final name in List.of(cloud.names)) {
+      cloud.remove(name);
+    }
+    await app.syncNow();
+    expect(app.lastSyncErrorCode, 'remote_listing_suspicious');
+    expect(app.syncSuspiciousDeletionCount, 6);
+    expect(app.songs, hasLength(6));
+    await app.keepLocalAfterRemoteDeletions();
+    expect(app.lastSyncErrorCode, isNull);
+    expect(cloud.names, hasLength(6));
+    expect(app.songs, hasLength(6));
+    for (final name in List.of(cloud.names)) {
+      cloud.remove(name);
+    }
+    await app.syncNow();
+    expect(app.lastSyncErrorCode, 'remote_listing_suspicious');
+    await app.confirmRemoteDeletions();
+    expect(app.lastSyncErrorCode, isNull);
+    expect(app.songs, isEmpty);
+  });
+
+  test('a favourite tap flips the stored value, not a stale snapshot', () async {
+    final app = await start();
+    await addSong(app, 'f', 'x');
+    final snapshot = app.songs.single;
+    expect(snapshot.favorite, isFalse);
+    // Changed elsewhere (e.g. by a sync) while the UI still shows the snapshot.
+    await device.repo.saveSong((await device.repo.getSong('f'))!.copyWith(favorite: true));
+    await app.toggleFavorite(snapshot);
+    expect((await app.loadSong('f'))!.favorite, isFalse);
+  });
+
+  test('concurrent writes leave the cache and hashes on the newest state', () async {
+    final app = await start();
+    await app.setAutoSync(false);
+    await Future.wait([
+      addSong(app, 'c1', 'one'),
+      addSong(app, 'c2', 'two'),
+      addSong(app, 'c3', 'three'),
+    ]);
+    expect(app.songs.map((s) => s.id).toSet(), {'c1', 'c2', 'c3'});
+    for (final id in ['c1', 'c2', 'c3']) {
+      expect(app.songHash(id), await device.repo.getSongHash(id));
+    }
+  });
+
+  test('an edit made just before the app was killed syncs on the next start', () async {
+    await device.saveSong('a', 'one');
+    await device.sync.sync();
+    await device.saveSong('b', 'unsynced edit');
+    final app = await start(stale: const Duration(hours: 1));
+    await until(() => cloud.names.contains('song-b.cho'));
+    expect(app.lastSyncErrorCode, isNull);
+  });
+
+  test('overlapping initialize calls open the library once', () async {
+    final app = await start();
+    await Future.wait([app.initialize(), app.initialize()]);
+    expect(app.initialized, isTrue);
+  });
 }

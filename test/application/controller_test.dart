@@ -129,12 +129,18 @@ void main() {
             SetlistDocument(
               id: 'broken',
               name: 'Broken',
-              entries: [SetlistEntry(id: 'entry', songId: 'absent')],
+              entries: [
+                SetlistEntry(
+                  id: 'entry',
+                  songId: 'new',
+                  overrides: {'bad': Object()},
+                ),
+              ],
             ),
           ],
         ),
       ),
-      throwsException,
+      throwsA(anything),
     );
     expect(await repo.listSongs(), isEmpty);
     expect(await repo.listSetlists(), isEmpty);

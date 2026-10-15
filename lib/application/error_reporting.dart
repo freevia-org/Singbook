@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 final _secretPatterns = <RegExp>[
   RegExp(r'Bearer\s+[A-Za-z0-9._~+/=-]+', caseSensitive: false),
   RegExp(r'ya29\.[A-Za-z0-9._-]+'),
+  RegExp(r'\b1//[A-Za-z0-9_-]{20,}'),
+  RegExp(r'GOCSPX-[A-Za-z0-9_-]+'),
   RegExp(r'AIza[0-9A-Za-z_-]{20,}'),
   RegExp(r'eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]*'),
   RegExp(

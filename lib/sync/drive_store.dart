@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import '../domain/models.dart';
 import '../providers/native_client.dart';
@@ -172,7 +173,12 @@ class DriveAppDataStore implements SyncCloudStore {
       request.bodyBytes = utf8.encode(body);
     }
     try {
-      final response = await _client.send(request).timeout(requestTimeout);
+      // The deadline covers the whole upload: grow it with the body size
+      // (about 100 kB/s minimum) so a big song on a slow link can finish.
+      final sendTimeout =
+          requestTimeout +
+          Duration(seconds: body == null ? 0 : request.bodyBytes.length ~/ 100000);
+      final response = await _client.send(request).timeout(sendTimeout);
       if (response.statusCode < 200 || response.statusCode >= 300) {
         final errorBody = await _readErrorBody(response);
         throw _classify(
@@ -185,14 +191,14 @@ class DriveAppDataStore implements SyncCloudStore {
       if (declared != null && declared > maxFileBytes) {
         throw const SyncException('remote_file_too_large');
       }
-      final bytes = <int>[];
+      final bytes = BytesBuilder(copy: false);
       await for (final part in response.stream.timeout(requestTimeout)) {
         if (bytes.length + part.length > maxFileBytes) {
           throw const SyncException('remote_file_too_large');
         }
-        bytes.addAll(part);
+        bytes.add(part);
       }
-      return utf8.decode(bytes);
+      return utf8.decode(bytes.takeBytes());
     } on SyncException {
       rethrow;
     } on _HttpFailure {
@@ -205,14 +211,14 @@ class DriveAppDataStore implements SyncCloudStore {
   }
 
   Future<String> _readErrorBody(http.StreamedResponse response) async {
-    final bytes = <int>[];
+    final bytes = BytesBuilder(copy: false);
     try {
       await for (final part in response.stream.timeout(requestTimeout)) {
         if (bytes.length + part.length > _maxErrorBodyBytes) break;
-        bytes.addAll(part);
+        bytes.add(part);
       }
     } catch (_) {}
-    return utf8.decode(bytes, allowMalformed: true);
+    return utf8.decode(bytes.takeBytes(), allowMalformed: true);
   }
 
   _HttpFailure _classify(int status, String body, String? retryAfter) {

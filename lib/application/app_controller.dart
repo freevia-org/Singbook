@@ -121,6 +121,15 @@ class AppController extends ChangeNotifier {
   String? get syncAccountEmail => _sync?.accountEmail;
   bool syncBusy = false;
 
+  /// Code of the first unusable remote/local file the last (otherwise
+  /// successful) sync skipped, or null. Mirrors what [syncError] also reports
+  /// for such a sync, without meaning that the sync failed.
+  String? syncWarning;
+
+  /// While [syncError] is `remote_listing_suspicious`: how many local items the
+  /// refused sync would have deleted.
+  int get syncSuspiciousDeletionCount => _sync?.suspiciousDeletionCount ?? 0;
+
   /// Stable code of the last sync problem (see [lastSyncErrorCode]), or null.
   String? syncError;
   SyncReport? syncReport;
@@ -137,7 +146,10 @@ class AppController extends ChangeNotifier {
   /// `access_denied`, `rate_limited`, `storage_full`, `network`,
   /// `account_changed`, `remote_library_too_large`, `library_too_large`,
   /// `remote_file_too_large`, `invalid_remote_data`, `local_file_too_large`,
-  /// `sign_in_failed`, `sync_failed`, `not_initialized`.
+  /// `sign_in_failed`, `sync_failed`, `not_initialized`,
+  /// `remote_listing_suspicious` (the cloud no longer lists many items that
+  /// were synced before; nothing was deleted, see [confirmRemoteDeletions] and
+  /// [keepLocalAfterRemoteDeletions]), `no_account_change`.
   /// `remote_file_too_large` / `invalid_remote_data` mean the sync completed
   /// but left some unusable remote files untouched.
   String? get lastSyncErrorCode => syncError;
@@ -267,7 +279,20 @@ class AppController extends ChangeNotifier {
     if (!_disposed) notifyListeners();
   }
 
-  Future<void> initialize() async {
+  Future<void>? _initializing;
+
+  Future<void> initialize() {
+    // Two overlapping calls must not open the database twice.
+    final running = _initializing;
+    if (running != null) return running;
+    final attempt = _initialize();
+    _initializing = attempt;
+    return attempt.whenComplete(() {
+      if (identical(_initializing, attempt)) _initializing = null;
+    });
+  }
+
+  Future<void> _initialize() async {
     if (_disposed) return;
     if (_repository == null) {
       final opened = await LibraryRepository.open();
@@ -319,23 +344,42 @@ class AppController extends ChangeNotifier {
     }
     syncPreviousAccountEmail = null;
     if (syncError == 'account_changed') syncError = null;
-    if (!startup || _isStale()) {
+    // Edits are recorded in the outbox until a sync acknowledges them, so a
+    // change made just before the app was killed still triggers a sync.
+    if (!startup || _isStale() || await repository.outboxMark() > 0) {
       _scheduleAutoSync(after: _timing.startDelay);
     }
   }
 
-  bool _isStale() =>
-      lastSyncAt == null ||
-      DateTime.now().toUtc().difference(lastSyncAt!) > _timing.staleAfter;
+  bool _isStale() {
+    final last = lastSyncAt;
+    if (last == null) return true;
+    final age = DateTime.now().toUtc().difference(last);
+    // A last sync "in the future" means the clock moved back: sync again.
+    return age.isNegative || age > _timing.staleAfter;
+  }
 
-  Future<void> _reload() async {
+  int _reloadEpoch = 0;
+  Future<void>? _latestReload;
+
+  /// Reloads the cached library. Overlapping reloads are sequenced: only the
+  /// newest one publishes, so an older snapshot (and its hashes) can never
+  /// replace a newer one; an older call waits for the newest to finish.
+  Future<void> _reload() {
+    final epoch = ++_reloadEpoch;
+    final run = _loadSnapshot(epoch);
+    _latestReload = run;
+    return run.then((_) => _latestReload ?? run);
+  }
+
+  Future<void> _loadSnapshot(int epoch) async {
     final loadedSongs = await repository.listSongs();
     final loadedSetlists = await repository.listSetlists();
     final hashRows = await repository.database.query(
       'songs',
       columns: ['id', 'content_hash'],
     );
-    if (_disposed) return;
+    if (_disposed || epoch != _reloadEpoch) return;
     songs = loadedSongs;
     setlists = loadedSetlists;
     _songHashes = {
@@ -589,7 +633,11 @@ class AppController extends ChangeNotifier {
         final expected = baseHash ?? _songHashes[song.id];
         // Atomic compare-and-set: a stale save never overwrites, even when a
         // sync lands between the check and the write.
-        if (!await repository.saveSongIfUnchanged(song, expected)) {
+        if (!await repository.saveSongIfUnchanged(
+          song,
+          expected,
+          mustNotExist: expected == null,
+        )) {
           final text = ChordProCodec().encode(song);
           final copyId = conflictDocumentId(
             song.id,
@@ -633,17 +681,18 @@ class AppController extends ChangeNotifier {
   Future<void> toggleFavorite(SongDocument song) => _tracked('save', () async {
     // Read-modify-write as compare-and-set; a background sync landing in
     // between makes it retry on the newer stored song instead of overwriting.
-    for (var attempt = 0; attempt < 4; attempt++) {
+    var saved = false;
+    for (var attempt = 0; attempt < 4 && !saved; attempt++) {
       final hash = await repository.getSongHash(song.id);
       final current = await repository.getSong(song.id) ?? song;
-      if (await repository.saveSongIfUnchanged(
-        current.copyWith(favorite: !song.favorite),
+      saved = await repository.saveSongIfUnchanged(
+        current.copyWith(favorite: !current.favorite),
         hash,
-      )) {
-        break;
-      }
+        mustNotExist: hash == null,
+      );
     }
     await _afterWrite();
+    if (!saved) postMessage('save_conflict', operation: 'save', isError: false);
   });
 
   /// Saves [setlist]; like [saveSong], a stale snapshot never overwrites a
@@ -652,7 +701,11 @@ class AppController extends ChangeNotifier {
   Future<bool> saveSetlist(SetlistDocument setlist, {String? baseHash}) =>
       _tracked('save', () async {
         final expected = baseHash ?? _setlistHashes[setlist.id];
-        if (!await repository.saveSetlistIfUnchanged(setlist, expected)) {
+        if (!await repository.saveSetlistIfUnchanged(
+          setlist,
+          expected,
+          mustNotExist: expected == null,
+        )) {
           final copyId = conflictDocumentId(
             setlist.id,
             _setlistHash(setlist),
@@ -695,24 +748,27 @@ class AppController extends ChangeNotifier {
 
   Future<void> toggleSetlistFavorite(SetlistDocument value) =>
       _tracked('save', () async {
-        for (var attempt = 0; attempt < 4; attempt++) {
+        var saved = false;
+        for (var attempt = 0; attempt < 4 && !saved; attempt++) {
           final stored = await repository.getSetlist(value.id);
           final current = stored ?? value;
-          if (await repository.saveSetlistIfUnchanged(
+          saved = await repository.saveSetlistIfUnchanged(
             SetlistDocument(
               id: current.id,
               name: current.name,
               notes: current.notes,
               entries: current.entries,
-              favorite: !value.favorite,
+              favorite: !current.favorite,
               createdAt: current.createdAt,
             ),
             stored == null ? null : _setlistHash(stored),
-          )) {
-            break;
-          }
+            mustNotExist: stored == null,
+          );
         }
         await _afterWrite(songsChanged: false);
+        if (!saved) {
+          postMessage('save_conflict', operation: 'save', isError: false);
+        }
       });
 
   /// Appends [songId] to the stored setlist. Returns false (and posts
@@ -835,6 +891,23 @@ class AppController extends ChangeNotifier {
         await _syncBody();
       });
 
+  /// The user's decision after `remote_listing_suspicious`: the cloud really
+  /// lost those items, so delete them locally too (runs a sync). Ask the user
+  /// to confirm: it removes up to [syncSuspiciousDeletionCount] songs and
+  /// setlists from this device.
+  Future<void> confirmRemoteDeletions() => _runSyncAction(() async {
+    _sync!.confirmRemoteDeletions();
+    await _syncBody();
+  });
+
+  /// The user's other decision after `remote_listing_suspicious`: keep the
+  /// local library and upload the missing items to the cloud again (runs a
+  /// sync). Nothing is deleted.
+  Future<void> keepLocalAfterRemoteDeletions() => _runSyncAction(() async {
+    await _sync!.keepLocalAfterSuspiciousListing();
+    await _syncBody();
+  });
+
   Future<void> _syncBody() async {
     final report = await _sync!.sync();
     if (_disposed) return;
@@ -845,7 +918,8 @@ class AppController extends ChangeNotifier {
     _backoffUntil = null;
     // Some remote files could not be used: the rest is synced, and the problem
     // stays visible with its code.
-    syncError = report.skipCodes.isEmpty ? null : report.skipCodes.first;
+    syncWarning = report.skipCodes.isEmpty ? null : report.skipCodes.first;
+    syncError = syncWarning;
     await _reload();
     if (_disposed) return;
     _indexSaved();
@@ -889,10 +963,22 @@ class AppController extends ChangeNotifier {
     'sign_in_failed',
     'not_initialized',
     'cancelled',
+    // Permanent for the data at hand: retrying changes nothing.
+    'remote_listing_suspicious',
+    'invalid_remote_data',
+    'invalid_local_data',
+    'remote_file_too_large',
+    'local_file_too_large',
+    'no_account_change',
   };
+
+  /// After this many consecutive automatic failures the background retries stop
+  /// until the user acts (a manual sync) or a sync succeeds.
+  static const _maxAutoFailures = 8;
 
   bool get _autoEligible =>
       !_disposed &&
+      _autoFailures < _maxAutoFailures &&
       initialized &&
       _sync != null &&
       syncConnected &&
@@ -920,7 +1006,9 @@ class AppController extends ChangeNotifier {
     var wait = after;
     final until = _backoffUntil;
     if (until != null) {
-      final left = until.difference(DateTime.now());
+      var left = until.difference(DateTime.now());
+      // A clock moved back must not postpone the retry beyond the cap.
+      if (left > _timing.maxBackoff) left = _timing.maxBackoff;
       if (left > wait) wait = left;
     }
     _autoTimer?.cancel();
@@ -975,8 +1063,10 @@ class AppController extends ChangeNotifier {
       await action();
     } on SyncException catch (error) {
       _failSync(error.code, automatic);
+      await _reloadAfterFailure();
     } catch (_) {
       _failSync('sync_failed', automatic);
+      await _reloadAfterFailure();
     } finally {
       syncBusy = false;
       _emit();
@@ -985,6 +1075,16 @@ class AppController extends ChangeNotifier {
         _scheduleAutoSync(after: _timing.delay);
       }
     }
+  }
+
+  /// A failed or cancelled sync may still have committed some items; the cache
+  /// and the content hashes must reflect the database again.
+  Future<void> _reloadAfterFailure() async {
+    if (_disposed || _repository == null) return;
+    try {
+      await _reload();
+      if (!_disposed) _indexSaved();
+    } catch (_) {}
   }
 
   void _failSync(String code, bool automatic) {
@@ -1013,7 +1113,7 @@ class AppController extends ChangeNotifier {
       _tracked('import', () async {
         final bytes = file.bytes;
         if (looksLikeZip(bytes)) {
-          return importCollection(decodeLibraryPackage(bytes));
+          return importCollection(await decodeLibraryPackageAsync(bytes));
         }
         if (bytes.length > maxImportBytes) {
           throw const FormatException('file_too_large');
@@ -1144,7 +1244,16 @@ class AppController extends ChangeNotifier {
     _sync?.cancel();
     _searchCancel?.cancel();
     _discoveryCancel?.cancel();
-    _sync?.close();
+    // Close the HTTP client only once the cancelled sync has stopped, so its
+    // workers do not spend retries on a closed client.
+    final closing = _sync;
+    if (closing != null) {
+      unawaited(
+        (_activeSyncAction ?? Future<void>.value())
+            .catchError((Object _) {})
+            .then<void>((_) => closing.close()),
+      );
+    }
     final transport = _ownedTransport;
     if (transport != null) {
       unawaited(

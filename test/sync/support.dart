@@ -183,11 +183,19 @@ class MemoryCloud implements SyncCloudStore {
   }
 
   /// Creates a second file with an already used name (a race on create).
-  String putDuplicate(String name, String content) => _write(
+  String putDuplicate(
+    String name,
+    String content, {
+    Map<String, String>? properties,
+  }) => _write(
     null,
     name,
     content,
-    {'kind': name.startsWith('song-') ? 'song' : 'setlist', 'hash': syncHash(content)},
+    properties ??
+        {
+          'kind': name.startsWith('song-') ? 'song' : 'setlist',
+          'hash': syncHash(content),
+        },
   ).id;
 
   void remove(String name) =>

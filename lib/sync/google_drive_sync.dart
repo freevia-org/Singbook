@@ -59,11 +59,23 @@ class _Pulled {
 }
 
 class _Run {
-  _Run(this.account, this.replace);
+  _Run(
+    this.account,
+    this.replace, {
+    this.replaceKeys,
+    this.confirmDeletions = false,
+  });
   final String account;
 
   /// The account was just adopted with "replace the local library".
   final bool replace;
+
+  /// Items that existed locally when "replace" was chosen; only those are
+  /// removed by it. Null (an old persisted flag) means every unknown item.
+  final Set<String>? replaceKeys;
+
+  /// The user approved a mass deletion that would otherwise be refused.
+  final bool confirmDeletions;
   final puts = <String, SyncBaseline>{};
   final removes = <String>{};
   int uploaded = 0,
@@ -135,6 +147,17 @@ class GoogleDriveSyncService {
       _activeStore ??= _providedStore ?? DriveAppDataStore(authorization: auth);
   final _codec = ChordProCodec();
   bool _busy = false, _cancelled = false;
+  bool _confirmDeletions = false;
+
+  /// Number of local items the last refused sync would have deleted (see
+  /// `remote_listing_suspicious`), else 0.
+  int suspiciousDeletionCount = 0;
+  Set<String> _suspiciousKeys = {};
+
+  /// A sync deleting at least [_minMassDeletes] items that were agreed with the
+  /// cloud before, and more than half of them (or at least [_minEmptyListing]
+  /// when the cloud lists no item at all), is refused as a suspicious listing.
+  static const _minMassDeletes = 5, _minEmptyListing = 3;
 
   bool get configured => auth.configured;
   bool get isConnected => auth.isConnected;
@@ -203,7 +226,15 @@ class GoogleDriveSyncService {
     if (!auth.isConnected || id == null) {
       throw const SyncException('not_signed_in');
     }
+    // Only a real account change may be adopted: a stray or repeated call must
+    // not wipe the baselines and arm a destructive replace.
+    if (!await hasAccountMismatch()) {
+      throw const SyncException('no_account_change');
+    }
     final account = _accountHash(id);
+    // Remember what exists now: "replace" only removes these items, never
+    // songs created while the replace sync was still waiting to run.
+    final existing = mergeLocal ? null : (await _localSnapshot()).keys.toList();
     await repository.clearSyncBaselines();
     await repository.setSetting(_bindingKey, {
       'id': account,
@@ -212,8 +243,31 @@ class GoogleDriveSyncService {
     if (mergeLocal) {
       await repository.setSetting(_replaceKey, null);
     } else {
-      await repository.setSetting(_replaceKey, account);
+      await repository.setSetting(_replaceKey, {
+        'account': account,
+        'keys': existing,
+      });
     }
+  }
+
+  /// The user approved the deletions that a sync refused with
+  /// `remote_listing_suspicious`; the next [sync] applies them.
+  void confirmRemoteDeletions() => _confirmDeletions = true;
+
+  /// The user rejected those deletions: the items the cloud lacks are treated
+  /// as new local items and uploaded again by the next [sync].
+  Future<void> keepLocalAfterSuspiciousListing() async {
+    if (_busy) throw const SyncException('sync_in_progress');
+    final id = auth.accountId;
+    if (id == null) throw const SyncException('not_signed_in');
+    if (_suspiciousKeys.isEmpty) return;
+    await repository.writeSyncBaselines(
+      _accountHash(id),
+      puts: const [],
+      removeKeys: _suspiciousKeys.toList(),
+    );
+    _suspiciousKeys = {};
+    suspiciousDeletionCount = 0;
   }
 
   Future<DateTime?> lastSuccessfulSync() async {
@@ -248,9 +302,22 @@ class GoogleDriveSyncService {
       } else if (bound['id'] != account) {
         throw const SyncException('account_changed');
       }
-      final replace = await repository.getSetting(_replaceKey) == account;
-      final run = _Run(account, replace);
+      final pending = await repository.getSetting(_replaceKey);
+      final replace =
+          pending == account ||
+          (pending is Map && pending['account'] == account);
+      final replaceKeys = pending is Map && pending['keys'] is List
+          ? {for (final k in pending['keys'] as List) k.toString()}
+          : null;
+      final run = _Run(
+        account,
+        replace,
+        replaceKeys: replaceKeys,
+        confirmDeletions: _confirmDeletions,
+      );
+      _confirmDeletions = false;
       final outboxMark = await repository.outboxMark();
+      Object? failed;
       try {
         for (var round = 0; round < 3; round++) {
           run.cascadeDeletes = 0;
@@ -259,10 +326,18 @@ class GoogleDriveSyncService {
           // setlists are uploaded by one more round.
           if (run.cascadeDeletes == 0) break;
         }
+      } catch (error) {
+        failed = error;
+        rethrow;
       } finally {
         // Whatever was uploaded or agreed is remembered even when a later item
-        // failed: the next sync converges from there.
-        await _flush(run);
+        // failed: the next sync converges from there. A failing flush must not
+        // hide the error that started the unwinding.
+        try {
+          await _flush(run);
+        } catch (_) {
+          if (failed == null) rethrow;
+        }
       }
       if (replace) await repository.setSetting(_replaceKey, null);
       await repository.clearOutboxThrough(outboxMark);
@@ -410,6 +485,15 @@ class GoogleDriveSyncService {
           deleteCloud.add(it);
       }
     }
+    await _guardDeletions(
+      run,
+      items,
+      deleteLocal['song']!.length + deleteLocal['setlist']!.length,
+      groups.isEmpty,
+    );
+    for (final kind in const ['song', 'setlist']) {
+      deleteLocal[kind] = await _confirmAbsent(run, deleteLocal[kind]!);
+    }
     await _flush(run);
 
     // Songs first, so a setlist pulled in this round finds its songs; setlists
@@ -422,6 +506,57 @@ class GoogleDriveSyncService {
     await _flush(run);
   }
 
+  /// Refuses to apply a sync that would delete a large part of the library
+  /// only because the cloud no longer lists it (a wiped appDataFolder, a
+  /// partial listing). Nothing has been changed yet when this throws; the user
+  /// decides with [confirmRemoteDeletions] or [keepLocalAfterSuspiciousListing].
+  Future<void> _guardDeletions(
+    _Run run,
+    List<_Item> items,
+    int deletes,
+    bool emptyListing,
+  ) async {
+    if (run.replace || run.confirmDeletions || deletes == 0) return;
+    final known = items.where((i) => i.base != null && i.local != null).length;
+    final suspicious =
+        (deletes >= _minMassDeletes && deletes * 2 > known) ||
+        (emptyListing && deletes >= _minEmptyListing);
+    if (!suspicious) return;
+    _suspiciousKeys = {
+      for (final i in items)
+        if (i.base != null &&
+            i.local != null &&
+            i.cloud == null &&
+            !i.cloudInvalid &&
+            i.local == i.base!.localHash)
+          i.key,
+    };
+    suspiciousDeletionCount = deletes;
+    throw const SyncException('remote_listing_suspicious');
+  }
+
+  /// A file missing from the listing is only a deletion when a second listing
+  /// agrees (Drive search can lag). Others are left for the next sync.
+  Future<List<_Item>> _confirmAbsent(_Run run, List<_Item> candidates) async {
+    if (candidates.isEmpty || run.replace) return candidates;
+    if (!candidates.any((i) => i.cloud == null)) return candidates;
+    _check(run);
+    final present = <String>{};
+    for (final file in await _store.listFiles()) {
+      final parsed = parseSyncFileName(file.name);
+      if (parsed != null) present.add('${parsed.kind}:${parsed.id}');
+    }
+    final result = <_Item>[];
+    for (final it in candidates) {
+      if (it.cloud == null && present.contains(it.key)) {
+        run.pending++;
+      } else {
+        result.add(it);
+      }
+    }
+    return result;
+  }
+
   bool _validCloud(_Item it) {
     final file = it.cloud!;
     if (!isSyncHash(file.hash)) return false;
@@ -432,7 +567,9 @@ class GoogleDriveSyncService {
   _Act _decide(_Run run, _Item it) {
     final l = it.local, c = it.cloud, b = it.base;
     if (l == null && c == null) return b == null ? _Act.none : _Act.forget;
-    if (run.replace && b == null) {
+    final inReplaceScope =
+        run.replaceKeys == null || run.replaceKeys!.contains(it.key);
+    if (run.replace && b == null && inReplaceScope) {
       // A freshly adopted account whose library replaces the local one.
       if (c == null) return _Act.deleteLocal;
       if (l == null) return _Act.pull;
@@ -462,6 +599,8 @@ class GoogleDriveSyncService {
     return c!.hash == b.cloudHash ? _Act.deleteCloud : _Act.pull;
   }
 
+  static const _baselineBatch = 10;
+
   Future<void> _phase(_Run run, List<_Item> items) async {
     if (items.isEmpty) return;
     var next = 0;
@@ -474,7 +613,9 @@ class GoogleDriveSyncService {
         try {
           _check(run);
           await _process(run, items[index]);
-          if (run.puts.length >= 200) await _flush(run);
+          // Remember agreed uploads in small batches: a kill must not turn the
+          // next edit of an uploaded item into a spurious conflict.
+          if (run.puts.length >= _baselineBatch) await _flush(run);
         } catch (error, stack) {
           failure ??= error;
           trace ??= stack;
@@ -487,7 +628,11 @@ class GoogleDriveSyncService {
         worker(),
     ]);
     // Downloaded items are kept even when another item failed.
-    await _flushPulls(run);
+    try {
+      await _flushPulls(run);
+    } catch (_) {
+      if (failure == null) rethrow;
+    }
     if (failure != null) Error.throwWithStackTrace(failure!, trace!);
   }
 
@@ -761,12 +906,23 @@ class GoogleDriveSyncService {
       return;
     }
     final copyId = conflictDocumentId(it.id, local.hash);
-    final copy = it.kind == 'song'
-        ? _songCopy(_codec.decode(local.content), copyId, cloud.hash!, 'concurrent_edit')
-        : _setlistCopy(
-            SetlistDocument.fromJson(jsonMap(jsonDecode(local.content))),
-            copyId,
-          );
+    final Object copy;
+    try {
+      copy = it.kind == 'song'
+          ? _songCopy(
+              _codec.decode(local.content),
+              copyId,
+              cloud.hash!,
+              'concurrent_edit',
+            )
+          : _setlistCopy(
+              SetlistDocument.fromJson(jsonMap(jsonDecode(local.content))),
+              copyId,
+            );
+    } on FormatException {
+      // A damaged local document is a local problem, not remote data.
+      throw const SyncException('invalid_local_data');
+    }
     final result = await _apply(
       run,
       it,
@@ -844,15 +1000,15 @@ class GoogleDriveSyncService {
   /// conflict copy, so a race on create never loses an edit.
   Future<void> _dropDuplicates(_Run run, _Item it) async {
     if (it.duplicates.isEmpty) return;
-    final known = {
+    final known = <String?>{
       it.cloud?.hash,
       it.local,
       it.base?.cloudHash,
       it.base?.localHash,
-    };
+    }.whereType<String>().toSet();
     for (final extra in List.of(it.duplicates)) {
+      if (!isSyncHash(extra.hash)) continue; // untrusted: leave it alone
       if (!known.contains(extra.hash)) {
-        if (!isSyncHash(extra.hash)) continue; // untrusted: leave it alone
         try {
           final document = _parse(it, await _download(it, extra));
           final copyId = conflictDocumentId(it.id, extra.hash!);

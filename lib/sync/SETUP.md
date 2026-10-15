@@ -206,3 +206,13 @@ References:
 - https://developers.google.com/workspace/drive/api/guides/appdata
 - https://developers.google.com/workspace/drive/api/guides/manage-uploads
 - https://developers.google.com/workspace/drive/api/guides/handle-errors
+
+## Suspicious cloud listings
+
+If a sync would delete locally at least 5 items that were agreed with the cloud
+before, and more than half of them (or 3+ when the cloud lists nothing at all),
+it stops with `remote_listing_suspicious` and changes nothing. Single deletions
+are additionally confirmed by a second listing. The user then chooses
+`confirmRemoteDeletions()` (apply the deletions) or
+`keepLocalAfterRemoteDeletions()` (upload the library again). "Replace local
+library" only removes items that existed when it was chosen.

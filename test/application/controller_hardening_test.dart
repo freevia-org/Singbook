@@ -424,6 +424,15 @@ void main() {
       expect(redactSecrets('plain message'), 'plain message');
     });
 
+    test('redaction removes bare Google refresh tokens and client secrets', () {
+      final clean = redactSecrets(
+        'failed 1//0gAbCdEfGhIjKlMnOpQrStUv and GOCSPX-abc_DEF-123456 end',
+      );
+      expect(clean, isNot(contains('1//0g')));
+      expect(clean, isNot(contains('GOCSPX')));
+      expect(clean, contains('end'));
+    });
+
     test('handlers log a redacted line and swallow the error', () {
       final previousFlutter = FlutterError.onError;
       final previousPlatform = PlatformDispatcher.instance.onError;

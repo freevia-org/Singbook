@@ -160,6 +160,29 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
     }
   }
 
+  /// Only a lapsed grant / needed user interaction is `authorization_required`
+  /// (it stops automatic sync until the user reconnects). Every other failure
+  /// (offline, Play services busy, platform timeout, interrupted) is transient
+  /// and reported as `network`, so the back-off retry applies.
+  @visibleForTesting
+  static SyncException mapAuthorizationFailure(Object error) {
+    if (error is SyncException) return error;
+    if (error is GoogleSignInException) {
+      switch (error.code) {
+        case GoogleSignInExceptionCode.canceled:
+        case GoogleSignInExceptionCode.userMismatch:
+        case GoogleSignInExceptionCode.uiUnavailable:
+        case GoogleSignInExceptionCode.clientConfigurationError:
+        case GoogleSignInExceptionCode.providerConfigurationError:
+          return const SyncException('authorization_required');
+        case GoogleSignInExceptionCode.interrupted:
+        case GoogleSignInExceptionCode.unknownError:
+          return const SyncException('network');
+      }
+    }
+    return const SyncException('network');
+  }
+
   @override
   Future<String> accessToken() async {
     final account = _account;
@@ -168,8 +191,8 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
     try {
       authorization = await account.authorizationClient
           .authorizationForScopes(scopes);
-    } catch (_) {
-      throw const SyncException('authorization_required');
+    } catch (error) {
+      throw mapAuthorizationFailure(error);
     }
     if (authorization == null) {
       throw const SyncException('authorization_required');
