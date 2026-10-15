@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Singbook Privacy Policy</title>
+<style>
+:root { color-scheme: light dark; }
+body { font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; max-width: 46rem; margin: 0 auto; padding: 1.25rem 16px 3rem; }
+h1 { font-size: 1.8rem; } h2 { font-size: 1.25rem; margin-top: 2rem; }
+table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+th, td { border: 1px solid #8884; padding: .4rem .55rem; text-align: left; vertical-align: top; }
+code { font-size: .9em; word-break: break-word; }
+</style>
+</head>
+<body>
+<h1>Singbook Privacy Policy</h1>
+<p><strong>Effective date:</strong> 15 October 2026</p>
+<p><strong>App:</strong> Singbook (Android package <code>org.freevia.verse</code>), version 0.2.0</p>
+<p><strong>Publisher:</strong> Freevia EOOD, contact privacy@freevia.org</p>
+<p><strong>Policy URL:</strong> https://freevia.org/singbook/privacy/</p>
+<h2>1. Summary</h2>
+<ul>
+<li>Singbook is a local-first songbook. Your songs, setlists and settings are stored on your device.</li>
+<li>Singbook has <strong>no server, no Singbook accounts, no advertising and no analytics</strong>. The publisher does not receive, collect or store your data.</li>
+<li>When you search for songs or open one, the app contacts third-party song sources <strong>directly from your device</strong>. Those services receive your search terms and your IP address (section 3).</li>
+<li>Signing in with Google for Drive sync is optional (section 5). It uses only a private app-data folder in your own Google Drive, and the publisher never receives that data.</li>
+</ul>
+<h2>2. Data stored on your device</h2>
+<p>Singbook stores the following only on your device, in the app's private storage:</p>
+<ul>
+<li>Your song library: lyrics, chords, notes, timing data, source links, attribution and rights notes, kept in a local SQLite database and as ChordPro content.</li>
+<li>Setlists, favourites, and app settings (theme, palette, language, reader text size, enabled sources).</li>
+<li>Temporary files and caches (for example cached source responses, PDF export files). These are excluded from Android backup.</li>
+</ul>
+<p>Android Auto Backup / device transfer may copy the app's library and preferences to your Google account backup or to a new device if you have Android backup turned on in system settings. That backup is handled by Google and Android under your device settings, not by the publisher.</p>
+<p>Files you import, export, print or share leave the app only when you choose to (for example through the Android share sheet or a PDF you save). Singbook does not read other files or your contacts, location, camera, microphone or photos. The only declared Android permission of consequence is <code>INTERNET</code> (to reach the sources in section 3); the app also uses the normal network-state permission added by its networking library.</p>
+<h2>3. Data sent to third-party sources</h2>
+<p>There is no Singbook backend. When you search for a song, open a song, or when the app looks up metadata, the app on your device makes HTTPS requests to the services below. Which of them are contacted depends on which sources are enabled and which songs you open; some are only contacted on demand.</p>
+<p>What each service can receive: the <strong>search text or the song title/artist/album/duration you looked up</strong>, standard request information such as your <strong>IP address</strong>, device network details, and a User-Agent header of the form <code>Singbook/&lt;version&gt;</code> (with the publisher's contact URL if configured). Singbook does not send your library, your name, email address, device identifiers or advertising identifiers to these services, and it does not log in to them (except the token below).</p>
+<table><thead><tr><th>Host</th><th>Purpose</th></tr></thead><tbody>
+<tr><td><code>api.genius.com</code>, <code>genius.com</code></td><td>Song catalog search and song details; lyrics page text. Requests include the app's Genius client access token (application configuration, not your credential).</td></tr>
+<tr><td><code>www.songsterr.com</code></td><td>Chord sheet and song data lookup.</td></tr>
+<tr><td><code>www.ultimate-guitar.com</code>, <code>tabs.ultimate-guitar.com</code></td><td>Public chord sheet lookup.</td></tr>
+<tr><td><code>lrclib.net</code></td><td>Plain and time-synchronised lyrics.</td></tr>
+<tr><td><code>music.youtube.com</code> (and Google image hosts such as <code>i.ytimg.com</code>, <code>*.googleusercontent.com</code> for artwork)</td><td>Song matching, lyrics shelf, artwork.</td></tr>
+<tr><td><code>lyrics.ovh</code>, <code>api.deezer.com</code> (and Deezer image hosts)</td><td>Lyrics and song suggestions with album, duration and artwork.</td></tr>
+<tr><td><code>synclrc.dev</code></td><td>Synchronised lyric search.</td></tr>
+<tr><td><code>better-lyrics.boidu.dev</code></td><td>Cached word-timed lyrics (TTML).</td></tr>
+<tr><td><code>musicbrainz.org</code>, <code>www.wikidata.org</code>, <code>commons.wikimedia.org</code> (and <code>upload.wikimedia.org</code>), <code>en.wikisource.org</code></td><td>Recording, work and artwork metadata; optional public-domain text.</td></tr>
+<tr><td><code>raw.githubusercontent.com</code>, <code>github.com</code></td><td>Open-licensed WorshipCommons catalogue.</td></tr>
+<tr><td><code>seanmcgrathmusic.com</code>, <code>filksongbook.com</code></td><td>Open-licensed songs.</td></tr>
+<tr><td><code>www.chordie.com</code></td><td>Chord sheet lookup.</td></tr>
+<tr><td>Artwork and media link hosts</td><td>Cover art may be downloaded from the provider's own image host and shown in the app. Playback links open in your browser or another app only when you tap them.</td></tr>
+</tbody></table>
+<p>Ozbcoz and Worship Together are import-only: Singbook does not contact them automatically; you download a file yourself and import it.</p>
+<p>These services are independent of the publisher and have their own privacy policies and terms; they may log requests, and your IP address reveals an approximate location. Singbook does not control what they do. You can reduce exposure by turning off sources you do not want (where the app offers that setting) and by not searching.</p>
+<p>Singbook sends no data to any other server. Tapping a link in the app opens it in your browser, governed by that site's policy.</p>
+<h2>4. No tracking, ads or analytics</h2>
+<p>Singbook contains no advertising SDKs, analytics or crash-reporting services, does not use advertising IDs, does not build profiles and does not sell or share personal data. The publisher does not receive data from the app.</p>
+<h2>5. Google sign-in and Drive sync (optional)</h2>
+<p>Singbook can offer sign-in with Google to sync your library between your own devices. It is available only in builds configured for it, is off until you tap Connect, and Singbook works fully without it.</p>
+<ul>
+<li>Sign-in happens only when you tap Connect. Once connected, your songs and setlists sync automatically in the background of normal use; you can disconnect at any time.</li>
+<li>The app requests only the scope <code>https://www.googleapis.com/auth/drive.appdata</code>, which gives access to a hidden folder reserved for this app in <strong>your own</strong> Google Drive. It cannot see, list or change any of your other Drive files, and other apps cannot read this folder.</li>
+<li>What is stored there: each song as a ChordPro file (lyrics, chords, notes, timing data, source links, attribution and rights notes), each setlist, and small technical records the sync needs (for example revision information and deletion markers). It counts toward your Google storage. If the same song was changed on two devices, both versions are kept as separate copies rather than overwritten.</li>
+<li>What the app receives from Google: your account's email address (shown in the app so you can see which account is connected) and the authorisation to use the Drive app-data folder. The sign-in uses Google's sign-in libraries on your device; the resulting access tokens are held by Google's libraries and Android on your device, are not written into your song files and are never sent to the publisher.</li>
+<li>There is no Singbook server. Your songs travel only between your devices and your own Google account, under Google's privacy policy. The publisher cannot access your Drive data or your Google account.</li>
+<li>Singbook's use and transfer to any other app of information received from Google APIs will adhere to the <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including the Limited Use requirements. Data from Google APIs is used only to provide the sync feature you asked for: it is not used for advertising, not sold, not transferred to third parties and not read by people.</li>
+<li>To stop syncing, disconnect (sign out) in the app. To remove the stored cloud copy and the app's access, see section 7.</li>
+</ul>
+<h2>6. Legal basis and your rights</h2>
+<p>Because the publisher does not receive or store your data, there is normally no personal data held by the publisher to access, correct or delete. Data on your device is under your control. If you are in the EEA, UK or another region with data protection rights, you may contact privacy@freevia.org with any request; the publisher will explain what, if anything, it holds. Your rights toward the third-party services in section 3 are exercised with those services.</p>
+<h2>7. Deleting your data</h2>
+<ul>
+<li><strong>Local data:</strong> delete a song or setlist in the app, clear the app's storage in Android Settings, Apps, Singbook, Storage, <strong>Clear data</strong>, or uninstall Singbook.</li>
+<li><strong>Android backup:</strong> manage or delete backups in Android Settings, Google, Backup.</li>
+<li><strong>Google Drive app data (only if you used sync):</strong> disconnect (sign out) in the app, then remove the app's access and data through your Google account. Remove access: Google Account, Security, Your connections to third-party apps and services (<a href="https://myaccount.google.com/linkedapps">https://myaccount.google.com/linkedapps</a>), select Singbook, then Remove access. Delete the stored data: on a computer open Google Drive, Settings (gear), Manage apps, find Singbook, Options, then Delete hidden app data (or Disconnect from Drive) where offered. Uninstalling the app from your Google Drive removes its folder as well. Your local songs are not affected and stay on your device.</li>
+<li><strong>Exported files and shares:</strong> files you have exported or sent to others are outside the app's control and must be removed by you.</li>
+</ul>
+<h2>8. Security</h2>
+<p>Network requests use HTTPS only; Singbook refuses plain-HTTP source requests and only follows redirects within the same site. Imported and downloaded song text is parsed as data and never executed. Local data is protected by Android's app sandbox; Singbook does not add its own encryption of the local database. No method of electronic storage is perfectly secure. If you use Drive sync, data in transit and at rest in your Drive is protected by Google's security; Singbook keeps sign-in tokens out of its own database and files.</p>
+<h2>9. Children</h2>
+<p>Singbook is not directed to children under 13 (or the minimum age in your country) and is not designed to attract them. The app collects no personal information from anyone, including children. Searches are sent to third-party music sources whose content may be unsuitable for young users.</p>
+<h2>10. Copyright and content</h2>
+<p>Singbook does not host lyrics or chord sheets. Text appears because you ask your device to fetch it from third-party sources. Copyright owners can send content questions or removal requests to privacy@freevia.org; the publisher cannot remove text from third-party sources or from other people's devices, but will review and act on reports regarding the app, including source availability.</p>
+<h2>11. Changes</h2>
+<p>The publisher may update this policy when the app or its sources change. The effective date above shows the current version; material changes will be described in the app's release notes.</p>
+<h2>12. Contact</h2>
+<p>Freevia EOOD, privacy@freevia.org</p>
+<hr>
+<h2>Bulgarian (Български) - кратко резюме</h2>
+<p><em>Това е кратко резюме. Пълната политика на английски език е по-горе.</em></p>
+<ul>
+<li>Singbook пази библиотеката ви (песни, сетлисти, настройки) само на вашето устройство. Няма сървър на Singbook, профили, реклами или анализи. Издателят не получава ваши данни.</li>
+<li>Когато търсите или отваряте песен, устройството ви се свързва директно (HTTPS) с външни източници (Genius, Songsterr, Ultimate Guitar, LRCLIB, YouTube Music, Lyrics.ovh/Deezer, SyncLRC, Better Lyrics, MusicBrainz, Wikidata, Wikimedia, GitHub за WorshipCommons, seanmcgrathmusic.com, filksongbook.com, Chordie). Те получават думите за търсене и IP адреса ви и имат собствени политики.</li>
+<li>Вход с Google за синхронизиране с Drive е по избор. Песните и сетлистите (със запазени копия при конфликт) се записват само в скритата папка на приложението (<code>drive.appdata</code>) във вашия Google Drive, синхронизират се автоматично и достъп до тях има само вашият акаунт; издателят няма достъп. Спиране: излезте в приложението; изтриване: премахнете достъпа и данните на приложението от Google акаунта и Google Drive (Настройки, Управление на приложения).</li>
+<li>Изтриване: изтрийте песни в приложението, "Изчистване на данните" в Настройки на Android, деинсталирайте приложението, или (при синхронизиране) изтрийте данните на приложението от Google Drive.</li>
+<li>Приложението не е предназначено за деца под 13 г. и не събира лични данни.</li>
+<li>Контакт: privacy@freevia.org</li>
+</ul>
+<h2>Ukrainian (Українська) - короткий виклад</h2>
+<p><em>Це короткий виклад. Повний текст політики англійською мовою наведено вище.</em></p>
+<ul>
+<li>Singbook зберігає вашу бібліотеку (пісні, сетлисти, налаштування) лише на вашому пристрої. Немає сервера Singbook, облікових записів, реклами чи аналітики. Видавець не отримує ваших даних.</li>
+<li>Коли ви шукаєте або відкриваєте пісню, пристрій напряму (HTTPS) звертається до сторонніх джерел (Genius, Songsterr, Ultimate Guitar, LRCLIB, YouTube Music, Lyrics.ovh/Deezer, SyncLRC, Better Lyrics, MusicBrainz, Wikidata, Wikimedia, GitHub для WorshipCommons, seanmcgrathmusic.com, filksongbook.com, Chordie). Вони отримують пошукові слова та вашу IP-адресу й мають власні політики.</li>
+<li>Вхід через Google для синхронізації з Drive необов'язковий. Пісні та сетлисти (із копіями у разі конфлікту) зберігаються лише в прихованій папці застосунку (<code>drive.appdata</code>) у вашому Google Drive, синхронізуються автоматично й доступні лише вашому обліковому запису; видавець доступу не має. Зупинити: вийдіть у застосунку; видалити: приберіть доступ і дані застосунку в обліковому записі Google та Google Drive (Налаштування, Керування застосунками).</li>
+<li>Видалення: видаліть пісні в застосунку, "Очистити дані" в налаштуваннях Android, видаліть застосунок або (у разі синхронізації) видаліть дані застосунку з Google Drive.</li>
+<li>Застосунок не призначений для дітей до 13 років і не збирає персональних даних.</li>
+<li>Контакт: privacy@freevia.org</li>
+</ul>
+</body>
+</html>

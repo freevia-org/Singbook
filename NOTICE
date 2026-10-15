@@ -1,0 +1,15 @@
+Singbook
+Copyright 2026 Freevia EOOD
+
+The original Singbook source code, documentation, and app artwork are licensed
+under the Apache License, Version 2.0, in the repository-root LICENSE file.
+
+Bundled font files are not covered by Apache-2.0. They retain their respective
+SIL Open Font Licenses and copyright notices in assets/fonts/LICENSE,
+assets/fonts/SingbookSerif-OFL.txt, assets/fonts/LibreBaskerville-LICENSE.txt,
+assets/fonts/brand-candidates/Lora-OFL.txt, and
+assets/fonts/brand-candidates/Bitter-OFL.txt.
+
+The Apache license does not grant trademark rights in the Singbook or Freevia
+names or marks. It also does not license songs, lyrics, chord charts, cover art,
+or other material obtained from third-party services or imported by users.

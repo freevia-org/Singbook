@@ -1,0 +1,147 @@
+import '../l10n/generated/app_localizations.dart';
+import 'verse_ui_state.dart' show UiNotice;
+
+String localizedMatchReason(AppLocalizations l10n, String? code) {
+  if (code == null || code.isEmpty) return '';
+  return switch (code) {
+    'same_recording' => l10n.searchMatchExact,
+    'same_song' => l10n.searchMatchSameSong,
+    'arrangement_requires_agreement' ||
+    'uncorroborated_arrangement' => l10n.searchMatchNeedsAgreement,
+    'incomplete_or_different_lyrics' => l10n.searchMatchDifferentLyrics,
+    'identity_mismatch' => l10n.searchMatchUnverified,
+    'combined_sources' => l10n.searchMatchCombinedSources,
+    'best_available' => l10n.searchMatchBestAvailable,
+    _ =>
+      RegExp(r'^[a-z][A-Za-z0-9_]+$').hasMatch(code)
+          ? l10n.searchMatchUnverified
+          : code,
+  };
+}
+
+String localizedProviderDescription(AppLocalizations l10n, String value) {
+  final descriptions = <String, String Function(AppLocalizations)>{
+    'downloadChordProThenImport': (l10n) =>
+        l10n.providerDescDownloadChordProThenImport,
+    'freeAccountDownloadThenImport': (l10n) =>
+        l10n.providerDescFreeAccountDownloadThenImport,
+    'publicChordSheets': (l10n) => l10n.providerDescPublicChordSheets,
+    'historicalTextPerWorkLicense': (l10n) =>
+        l10n.providerDescHistoricalTextPerWorkLicense,
+    'licensedCatalog': (l10n) => l10n.providerDescLicensedCatalog,
+    'originalSongsCcBy': (l10n) => l10n.providerDescOriginalSongsCcBy,
+    'perSongLicense': (l10n) => l10n.providerDescPerSongLicense,
+    'recordingMetadataOnly': (l10n) => l10n.providerDescRecordingMetadataOnly,
+    'compositionMetadataOnly': (l10n) =>
+        l10n.providerDescCompositionMetadataOnly,
+    'exactFileArtworkOnly': (l10n) => l10n.providerDescExactFileArtworkOnly,
+  };
+  final description = descriptions[value];
+  if (description != null) return description(l10n);
+
+  final capabilities = <String, String Function(AppLocalizations)>{
+    'lyrics': (l10n) => l10n.providerCapabilityLyrics,
+    'chords': (l10n) => l10n.providerCapabilityChords,
+    'timing': (l10n) => l10n.providerCapabilityTiming,
+    'search': (l10n) => l10n.providerCapabilitySearch,
+    'metadata': (l10n) => l10n.providerCapabilityMetadata,
+  };
+  final parts = value.split(' · ');
+  if (parts.length > 1 || capabilities.containsKey(value)) {
+    final translated = parts.map((part) => capabilities[part]?.call(l10n));
+    if (translated.every((part) => part != null)) {
+      return translated.whereType<String>().join(' · ');
+    }
+  }
+  return RegExp(r'^[a-z][A-Za-z0-9_]+$').hasMatch(value)
+      ? l10n.providerDescriptionUnknown
+      : value;
+}
+
+/// Text for a short outcome message (see [UiNotice]).
+String noticeMessage(AppLocalizations l10n, UiNotice notice) =>
+    switch (notice) {
+      UiNotice.songSaved => l10n.searchSaved,
+      UiNotice.songSaveFailed => l10n.searchSaveFailed,
+      UiNotice.songDeleted => l10n.songDeleted,
+      UiNotice.setlistDeleted => l10n.setlistDeleted,
+      UiNotice.copied => l10n.settingsCopied,
+      UiNotice.historyCleared => l10n.settingsHistoryCleared,
+      UiNotice.importSuccess => l10n.settingsImportSuccess,
+      UiNotice.importFailed => l10n.settingsImportFailed,
+      UiNotice.importUnsupported => l10n.settingsImportUnsupported,
+      UiNotice.importTooLarge => l10n.settingsImportTooLarge,
+      UiNotice.exportFailed => l10n.settingsExportFailed,
+      UiNotice.editorSaved => l10n.editorSaved,
+      UiNotice.editorSaveFailed => l10n.editorSaveFailed,
+      UiNotice.editorSaveConflict => l10n.editorSaveConflict,
+      UiNotice.syncSucceeded => l10n.accountSynced,
+      UiNotice.syncFailed => l10n.accountSyncFailed,
+      UiNotice.syncConflictsFound => l10n.accountNoticeConflicts,
+      UiNotice.signedIn => l10n.accountNoticeSignedIn,
+      UiNotice.signedOut => l10n.accountNoticeSignedOut,
+      UiNotice.genericError => l10n.errorGeneric,
+    };
+
+/// A human explanation of a sync failure and what to do about it.
+typedef SyncErrorText = ({String message, String hint});
+
+/// Maps a sync error code to localized text. Unknown codes read as a generic
+/// failure; raw exception text is never shown.
+SyncErrorText syncErrorText(AppLocalizations l10n, String? code) =>
+    switch (code) {
+      'not_configured' => (
+        message: l10n.syncErrorNotConfigured,
+        hint: l10n.syncErrorNotConfiguredHint,
+      ),
+      'not_signed_in' => (
+        message: l10n.syncErrorNotSignedIn,
+        hint: l10n.syncErrorNotSignedInHint,
+      ),
+      'authorization_required' => (
+        message: l10n.syncErrorAuthorizationRequired,
+        hint: l10n.syncErrorAuthorizationRequiredHint,
+      ),
+      'access_denied' => (
+        message: l10n.syncErrorAccessDenied,
+        hint: l10n.syncErrorAccessDeniedHint,
+      ),
+      'rate_limited' => (
+        message: l10n.syncErrorRateLimited,
+        hint: l10n.syncErrorRateLimitedHint,
+      ),
+      'storage_full' => (
+        message: l10n.syncErrorStorageFull,
+        hint: l10n.syncErrorStorageFullHint,
+      ),
+      'network' => (
+        message: l10n.syncErrorNetwork,
+        hint: l10n.syncErrorNetworkHint,
+      ),
+      'account_changed' => (
+        message: l10n.syncErrorAccountChanged,
+        hint: l10n.syncErrorAccountChangedHint,
+      ),
+      'remote_library_too_large' => (
+        message: l10n.syncErrorRemoteLibraryTooLarge,
+        hint: l10n.syncErrorRemoteLibraryTooLargeHint,
+      ),
+      'sign_in_failed' => (
+        message: l10n.syncErrorSignInFailed,
+        hint: l10n.syncErrorSignInFailedHint,
+      ),
+      _ => (
+        message: l10n.syncErrorGeneric,
+        hint: l10n.syncErrorGenericHint,
+      ),
+    };
+
+/// "Synced 5 minutes ago" / "Never synced".
+String lastSyncedLabel(AppLocalizations l10n, DateTime? at, DateTime now) {
+  if (at == null) return l10n.accountNeverSynced;
+  final age = now.difference(at);
+  if (age.inMinutes < 1) return l10n.accountSyncedJustNow;
+  if (age.inHours < 1) return l10n.accountSyncedMinutesAgo(age.inMinutes);
+  if (age.inDays < 1) return l10n.accountSyncedHoursAgo(age.inHours);
+  return l10n.accountSyncedDaysAgo(age.inDays);
+}

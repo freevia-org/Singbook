@@ -1,0 +1,13 @@
+* text=auto
+*.dart text eol=lf
+*.arb text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+*.sh text eol=lf
+gradlew text eol=lf
+*.bat text eol=crlf
+*.png -text
+*.ttf -text
+*.jar -text

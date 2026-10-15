@@ -1,0 +1,9 @@
+{
+  "mode": "edit",
+  "tool": "image_gen.imagegen",
+  "output": "assets/branding/singbook-mark-foreground.png",
+  "reference": "Existing Singbook open-book icon",
+  "prompt_summary": "Preserve the approved Singbook identity: an open two-page songbook with curved blue lyric lines and chord labels C, G, Am, F, and a floating gold eighth music note. Create a refined production-ready icon foreground on a transparent background. Use parchment #F7F3E9, navy #081B33, muted blue #315D82, warm amber #EFB746. Enlarge and strengthen the note with a thick stem and large oval head. Keep the open central fold and simplify details for 48px launcher rendering. Reduce glossy gradients and deep shadows. No app name, wordmark, captions, background panel, or extra symbols.",
+  "packaging": "scripts/generate_singbook_native_assets.py performs only technical alpha trimming, resizing, centering, background composition, and native icon packaging."
+}
+

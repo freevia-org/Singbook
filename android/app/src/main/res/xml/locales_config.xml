@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Per-app languages (Android 13+) and the language list shown by Google Play. -->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="en" />
+    <locale android:name="bg" />
+    <locale android:name="uk" />
+</locale-config>

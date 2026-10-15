@@ -1,0 +1,25 @@
+import '../provider.dart';
+import 'import_sources.dart';
+import 'metadata.dart';
+import 'open_catalogs.dart';
+
+export 'import_sources.dart';
+export 'metadata.dart';
+export 'open_catalogs.dart';
+
+/// All sources in the architecture, including truthful file-import-only routes.
+List<LyricsProvider> createExtraProviders({ProviderTransport? transport}) {
+  final http = transport ?? ProviderTransport();
+  return [
+    OzbcozProvider(),
+    ChordieProvider(http),
+    WorshipCommonsProvider(http),
+    OpenFilkProvider(http),
+    SeanMcGrathProvider(http),
+    WorshipTogetherProvider(),
+    MusicBrainzProvider(http),
+    WikidataProvider(http),
+    WikimediaCommonsProvider(http),
+    WikisourceProvider(http),
+  ];
+}

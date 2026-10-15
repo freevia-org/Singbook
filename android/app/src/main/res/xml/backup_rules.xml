@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 11 and older (android:fullBackupContent). The song library (SQLite
+  database, preferences) is the user's data and is backed up; caches and
+  temporary files are not.
+-->
+<full-backup-content>
+    <exclude domain="file" path="cache/" />
+    <exclude domain="file" path="tmp/" />
+    <exclude domain="root" path="code_cache/" />
+</full-backup-content>
