@@ -1493,7 +1493,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Elimina e sostituisci';
 
   @override
-  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+  String get accountSuspiciousTitle => 'Elementi mancanti su Google Drive';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1501,100 +1501,106 @@ class AppLocalizationsIt extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count items that this device synced earlier are missing from Google Drive.',
+          '$count elementi sincronizzati in precedenza da questo dispositivo sono mancanti su Google Drive.',
       one:
-          '$count item that this device synced earlier is missing from Google Drive.',
+          '$count elemento sincronizzato in precedenza da questo dispositivo è mancante su Google Drive.',
     );
-    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+    return '$_temp0 Può succedere se i dati dell’app sono stati cancellati nelle impostazioni Google. Non è stato eliminato nulla.';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Delete them here too';
+  String get accountSuspiciousDelete => 'Eliminali anche qui';
 
   @override
-  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+  String get accountSuspiciousKeep =>
+      'Conserva i miei brani e caricali di nuovo';
 
   @override
   String accountSuspiciousDeleteConfirmTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete $count items from this device?',
-      one: 'Delete $count item from this device?',
+      other: 'Eliminare $count elementi da questo dispositivo?',
+      one: 'Eliminare $count elemento da questo dispositivo?',
     );
     return '$_temp0';
   }
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+      'Questi brani e scalette verranno eliminati definitivamente da questo dispositivo. L’operazione non può essere annullata.';
 
   @override
-  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+  String get accountSuspiciousDeleteConfirmAction =>
+      'Elimina da questo dispositivo';
 
   @override
   String get syncErrorRemoteListingSuspicious =>
-      'Items are missing from Google Drive.';
+      'Elementi mancanti su Google Drive.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+      'Non è stato eliminato nulla. Scegli se eliminarli anche qui o caricarli di nuovo.';
 
   @override
-  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+  String get syncErrorRemoteChanged =>
+      'Google Drive è cambiato durante la sincronizzazione.';
 
   @override
   String get syncErrorRemoteChangedHint =>
-      'Nothing was lost. Sync again to pick up the latest changes.';
+      'Non è andato perso nulla. Sincronizza di nuovo per recuperare le modifiche più recenti.';
 
   @override
   String get syncErrorInvalidLocalData =>
-      'Some data on this device couldn\'t be synced.';
+      'Non è stato possibile sincronizzare alcuni dati su questo dispositivo.';
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'A song or setlist could not be read. Import or recreate it, then sync again.';
+      'Non è stato possibile leggere un brano o una scaletta. Importalo o ricrealo, poi sincronizza di nuovo.';
 
   @override
   String get syncErrorNoAccountChange =>
-      'There is no account change to resolve.';
+      'Non c’è alcun cambio di account da risolvere.';
 
   @override
-  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+  String get syncErrorNoAccountChangeHint =>
+      'Sincronizza di nuovo per continuare.';
 
   @override
-  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+  String get accountSyncWarningTitle =>
+      'Sincronizzazione completata, ma alcuni file sono stati ignorati';
 
   @override
   String get accountSyncWarningBody =>
-      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+      'Alcuni file non erano utilizzabili e sono stati lasciati invariati. Tutto il resto è aggiornato.';
 
   @override
   String get accountSyncWarningTooLarge =>
-      'A file was too large to sync and was skipped. Everything else is up to date.';
+      'Un file era troppo grande per la sincronizzazione ed è stato ignorato. Tutto il resto è aggiornato.';
 
   @override
   String get accountSyncWarningInvalid =>
-      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+      'Non è stato possibile leggere un file, che è stato ignorato. Tutto il resto è aggiornato.';
 
   @override
-  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+  String get accountNoticeSyncSkipped =>
+      'Sincronizzazione completata. Alcuni file sono stati ignorati.';
 
   @override
   String get settingsExportPdfTooLarge =>
-      'This PDF would be too large. Try fewer songs, or share it as text.';
+      'Questo PDF sarebbe troppo grande. Prova con meno brani o condividilo come testo.';
 
   @override
   String get settingsTimingTooLarge =>
-      'The timing data is too large (over 3 MB).';
+      'I dati di timing sono troppo grandi (oltre 3 MB).';
 
   @override
   String get settingsImportDuplicateSongId =>
-      'This backup lists the same song twice, so nothing was imported.';
+      'Questo backup contiene due volte lo stesso brano, quindi non è stato importato nulla.';
 
   @override
   String get setlistSaveConflict =>
-      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+      'La scaletta è stata modificata altrove. Le tue modifiche sono state salvate in una copia separata.';
 
   @override
   String get sectionVerse => 'Strofa';

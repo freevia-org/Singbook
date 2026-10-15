@@ -1456,23 +1456,23 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get editorDurationInvalid =>
-      'सेकंड या मिनट:सेकंड दर्ज करें, जैसे 3:45।';
+      'सेकंड या मिनट और सेकंड दर्ज करें, जैसे 3:45।';
 
   @override
-  String get editorNumberInvalid => 'कोई संख्या दर्ज करें।';
+  String get editorNumberInvalid => 'एक संख्या दर्ज करें।';
 
   @override
   String get accountReplaceConfirmTitle => 'स्थानीय गीत हटाएँ?';
 
   @override
   String get accountReplaceConfirmBody =>
-      'इस डिवाइस पर मौजूद वे गीत और गीत-सूचियाँ, जो नए खाते में नहीं हैं, हमेशा के लिए हटा दी जाएँगी। इसे पूर्ववत नहीं किया जा सकता।';
+      'इस डिवाइस के वे गीत और गीत-सूचियाँ, जो नए खाते में नहीं हैं, हमेशा के लिए हटा दी जाएँगी। इसे पूर्ववत नहीं किया जा सकता।';
 
   @override
   String get accountReplaceConfirmAction => 'हटाएँ और बदलें';
 
   @override
-  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+  String get accountSuspiciousTitle => 'Google Drive में आइटम नहीं मिल रहे';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1480,103 +1480,108 @@ class AppLocalizationsHi extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count items that this device synced earlier are missing from Google Drive.',
+          '$count आइटम, जिन्हें इस डिवाइस ने पहले सिंक किया था, Google Drive में नहीं हैं।',
       one:
-          '$count item that this device synced earlier is missing from Google Drive.',
+          '$count आइटम, जिसे इस डिवाइस ने पहले सिंक किया था, Google Drive में नहीं है।',
     );
-    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+    return '$_temp0 ऐसा Google सेटिंग में ऐप का डेटा मिटाने पर हो सकता है। अभी कुछ भी नहीं हटाया गया है।';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Delete them here too';
+  String get accountSuspiciousDelete => 'उन्हें यहाँ से भी हटाएँ';
 
   @override
-  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+  String get accountSuspiciousKeep =>
+      'मेरे गीत रखें और उन्हें फिर से अपलोड करें';
 
   @override
   String accountSuspiciousDeleteConfirmTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete $count items from this device?',
-      one: 'Delete $count item from this device?',
+      other: 'इस डिवाइस से $count आइटम हटाएँ?',
+      one: 'इस डिवाइस से $count आइटम हटाएँ?',
     );
     return '$_temp0';
   }
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+      'ये गीत और गीत-सूचियाँ इस डिवाइस से हमेशा के लिए हटा दी जाएँगी। इसे पूर्ववत नहीं किया जा सकता।';
 
   @override
-  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+  String get accountSuspiciousDeleteConfirmAction => 'इस डिवाइस से हटाएँ';
 
   @override
   String get syncErrorRemoteListingSuspicious =>
-      'Items are missing from Google Drive.';
+      'Google Drive में आइटम नहीं मिल रहे।';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+      'कुछ भी नहीं हटाया गया। चुनें कि उन्हें यहाँ से भी हटाना है या फिर से अपलोड करना है।';
 
   @override
-  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+  String get syncErrorRemoteChanged =>
+      'सिंक के दौरान Google Drive में बदलाव हुआ।';
 
   @override
   String get syncErrorRemoteChangedHint =>
-      'Nothing was lost. Sync again to pick up the latest changes.';
+      'कुछ भी खोया नहीं है। नवीनतम बदलाव पाने के लिए फिर से सिंक करें।';
 
   @override
   String get syncErrorInvalidLocalData =>
-      'Some data on this device couldn\'t be synced.';
+      'इस डिवाइस का कुछ डेटा सिंक नहीं हो सका।';
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'A song or setlist could not be read. Import or recreate it, then sync again.';
+      'गीत या गीत-सूची पढ़ी नहीं जा सकी। उसे इंपोर्ट करें या फिर से बनाएँ, फिर सिंक करें।';
 
   @override
   String get syncErrorNoAccountChange =>
-      'There is no account change to resolve.';
+      'हल करने के लिए खाते में कोई बदलाव नहीं है।';
 
   @override
-  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+  String get syncErrorNoAccountChangeHint =>
+      'जारी रखने के लिए फिर से सिंक करें।';
 
   @override
-  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+  String get accountSyncWarningTitle =>
+      'सिंक हो गया, लेकिन कुछ फ़ाइलें छोड़ दी गईं';
 
   @override
   String get accountSyncWarningBody =>
-      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+      'कुछ फ़ाइलों का उपयोग नहीं हो सका और उन्हें वैसा ही रखा गया। बाकी सब अपडेट है।';
 
   @override
   String get accountSyncWarningTooLarge =>
-      'A file was too large to sync and was skipped. Everything else is up to date.';
+      'एक फ़ाइल सिंक के लिए बहुत बड़ी थी, इसलिए छोड़ दी गई। बाकी सब अपडेट है।';
 
   @override
   String get accountSyncWarningInvalid =>
-      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+      'एक फ़ाइल पढ़ी नहीं जा सकी, इसलिए छोड़ दी गई। बाकी सब अपडेट है।';
 
   @override
-  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+  String get accountNoticeSyncSkipped =>
+      'सिंक हो गया। कुछ फ़ाइलें छोड़ दी गईं।';
 
   @override
   String get settingsExportPdfTooLarge =>
-      'This PDF would be too large. Try fewer songs, or share it as text.';
+      'यह PDF बहुत बड़ी होगी। कम गीत चुनें या इसे टेक्स्ट के रूप में साझा करें।';
 
   @override
   String get settingsTimingTooLarge =>
-      'The timing data is too large (over 3 MB).';
+      'टाइमिंग डेटा बहुत बड़ा है (3 MB से अधिक)।';
 
   @override
   String get settingsImportDuplicateSongId =>
-      'This backup lists the same song twice, so nothing was imported.';
+      'इस बैकअप में एक ही गीत दो बार है, इसलिए कुछ भी इंपोर्ट नहीं किया गया।';
 
   @override
   String get setlistSaveConflict =>
-      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+      'गीत-सूची कहीं और बदली गई। आपके संपादन अलग कॉपी के रूप में सहेजे गए।';
 
   @override
-  String get sectionVerse => 'छंद';
+  String get sectionVerse => 'अंतरा';
 
   @override
   String get sectionChorus => 'कोरस';
@@ -1597,7 +1602,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get sectionPostChorus => 'पोस्ट-कोरस';
 
   @override
-  String get sectionInstrumental => 'इंस्ट्रुमेंटल';
+  String get sectionInstrumental => 'वाद्य भाग';
 
   @override
   String get sectionInterlude => 'इंटरल्यूड';
@@ -1621,5 +1626,5 @@ class AppLocalizationsHi extends AppLocalizations {
   String get sectionTag => 'टैग';
 
   @override
-  String get sectionEnding => 'अंत';
+  String get sectionEnding => 'समापन';
 }

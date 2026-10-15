@@ -1514,7 +1514,7 @@ class AppLocalizationsSl extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Izbriši in zamenjaj';
 
   @override
-  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+  String get accountSuspiciousTitle => 'V Googlovem Drive manjkajo elementi.';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1522,100 +1522,104 @@ class AppLocalizationsSl extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count items that this device synced earlier are missing from Google Drive.',
+          '$count elementi, ki jih je ta naprava že sinhronizirala, manjkajo v Googlovem Drive.',
       one:
-          '$count item that this device synced earlier is missing from Google Drive.',
+          '$count element, ki ga je ta naprava že sinhronizirala, manjka v Googlovem Drive.',
     );
-    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+    return '$_temp0 To se lahko zgodi, če so bili podatki aplikacije izbrisani v Googlovih nastavitvah. Nič še ni bilo izbrisano.';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Delete them here too';
+  String get accountSuspiciousDelete => 'Izbriši jih tudi tukaj';
 
   @override
-  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+  String get accountSuspiciousKeep => 'Obdrži pesmi in jih znova naloži';
 
   @override
   String accountSuspiciousDeleteConfirmTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete $count items from this device?',
-      one: 'Delete $count item from this device?',
+      other: 'Želite izbrisati $count elementa iz te naprave?',
+      one: 'Želite izbrisati $count element iz te naprave?',
     );
     return '$_temp0';
   }
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+      'Te pesmi in koncertni seznami bodo trajno izbrisani iz te naprave. Tega ni mogoče razveljaviti.';
 
   @override
-  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+  String get accountSuspiciousDeleteConfirmAction => 'Izbriši iz te naprave';
 
   @override
   String get syncErrorRemoteListingSuspicious =>
-      'Items are missing from Google Drive.';
+      'V Googlovem Drive manjkajo elementi.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+      'Nič ni bilo izbrisano. Izberite, ali jih želite izbrisati tudi tukaj ali znova naložiti.';
 
   @override
-  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+  String get syncErrorRemoteChanged =>
+      'Google Drive se je med sinhronizacijo spremenil.';
 
   @override
   String get syncErrorRemoteChangedHint =>
-      'Nothing was lost. Sync again to pick up the latest changes.';
+      'Nič se ni izgubilo. Znova sinhronizirajte, da pridobite najnovejše spremembe.';
 
   @override
   String get syncErrorInvalidLocalData =>
-      'Some data on this device couldn\'t be synced.';
+      'Nekaterih podatkov v tej napravi ni bilo mogoče sinhronizirati.';
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'A song or setlist could not be read. Import or recreate it, then sync again.';
+      'Pesmi ali koncertnega seznama ni bilo mogoče prebrati. Uvozite ga ali znova ustvarite in nato sinhronizirajte.';
 
   @override
   String get syncErrorNoAccountChange =>
-      'There is no account change to resolve.';
+      'Ni spremembe računa, ki bi jo bilo treba razrešiti.';
 
   @override
-  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+  String get syncErrorNoAccountChangeHint =>
+      'Znova sinhronizirajte za nadaljevanje.';
 
   @override
-  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+  String get accountSyncWarningTitle =>
+      'Sinhronizacija je končana, nekatere datoteke so izpuščene';
 
   @override
   String get accountSyncWarningBody =>
-      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+      'Nekaterih datotek ni bilo mogoče uporabiti, zato so ostale nespremenjene. Vse drugo je posodobljeno.';
 
   @override
   String get accountSyncWarningTooLarge =>
-      'A file was too large to sync and was skipped. Everything else is up to date.';
+      'Datoteka je bila prevelika za sinhronizacijo in je izpuščena. Vse drugo je posodobljeno.';
 
   @override
   String get accountSyncWarningInvalid =>
-      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+      'Datoteke ni bilo mogoče prebrati, zato je izpuščena. Vse drugo je posodobljeno.';
 
   @override
-  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+  String get accountNoticeSyncSkipped =>
+      'Sinhronizirano. Nekatere datoteke so izpuščene.';
 
   @override
   String get settingsExportPdfTooLarge =>
-      'This PDF would be too large. Try fewer songs, or share it as text.';
+      'Ta PDF bi bil prevelik. Poskusite z manj pesmimi ali ga delite kot besedilo.';
 
   @override
   String get settingsTimingTooLarge =>
-      'The timing data is too large (over 3 MB).';
+      'Podatki o časovnih oznakah so preveliki (več kot 3 MB).';
 
   @override
   String get settingsImportDuplicateSongId =>
-      'This backup lists the same song twice, so nothing was imported.';
+      'Ta varnostna kopija navaja isto pesem dvakrat, zato ni bilo uvoženo nič.';
 
   @override
   String get setlistSaveConflict =>
-      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+      'Koncertni seznam je bil spremenjen drugje. Vaše spremembe so shranjene v ločeni kopiji.';
 
   @override
   String get sectionVerse => 'Kitica';

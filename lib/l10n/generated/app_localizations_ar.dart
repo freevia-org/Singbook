@@ -1507,108 +1507,114 @@ class AppLocalizationsAr extends AppLocalizations {
   String get accountReplaceConfirmAction => 'حذف واستبدال';
 
   @override
-  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+  String get accountSuspiciousTitle => 'عناصر مفقودة من Google Drive';
 
   @override
   String accountSuspiciousBody(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          '$count items that this device synced earlier are missing from Google Drive.',
-      one:
-          '$count item that this device synced earlier is missing from Google Drive.',
+      other: '$count عنصر سبق لهذا الجهاز مزامنته مفقود من Google Drive.',
+      many: '$count عنصرًا سبق لهذا الجهاز مزامنتها مفقود من Google Drive.',
+      few: '$count عناصر سبق لهذا الجهاز مزامنتها مفقودة من Google Drive.',
+      two: 'عنصران سبق لهذا الجهاز مزامنتهما مفقودان من Google Drive.',
+      one: 'عنصر واحد سبق لهذا الجهاز مزامنته مفقود من Google Drive.',
+      zero: 'لا توجد عناصر سبق لهذا الجهاز مزامنتها مفقودة من Google Drive.',
     );
-    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+    return '$_temp0 قد يحدث هذا إذا مُسحت بيانات التطبيق من إعدادات Google. لم يُحذف أي شيء بعد.';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Delete them here too';
+  String get accountSuspiciousDelete => 'احذفها هنا أيضًا';
 
   @override
-  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+  String get accountSuspiciousKeep => 'احتفظ بأغنياتي وارفعها مرة أخرى';
 
   @override
   String accountSuspiciousDeleteConfirmTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete $count items from this device?',
-      one: 'Delete $count item from this device?',
+      other: 'حذف $count عنصر من هذا الجهاز؟',
+      many: 'حذف $count عنصرًا من هذا الجهاز؟',
+      few: 'حذف $count عناصر من هذا الجهاز؟',
+      two: 'حذف عنصرين من هذا الجهاز؟',
+      one: 'حذف عنصر واحد من هذا الجهاز؟',
+      zero: 'حذف 0 عنصر من هذا الجهاز؟',
     );
     return '$_temp0';
   }
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+      'ستُحذف هذه الأغاني وقوائم الأغاني نهائيًا من هذا الجهاز. لا يمكن التراجع عن ذلك.';
 
   @override
-  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+  String get accountSuspiciousDeleteConfirmAction => 'الحذف من هذا الجهاز';
 
   @override
   String get syncErrorRemoteListingSuspicious =>
-      'Items are missing from Google Drive.';
+      'توجد عناصر مفقودة من Google Drive.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+      'لم يُحذف شيء. اختر ما إذا كنت تريد حذفها هنا أيضًا أم إعادة رفعها.';
 
   @override
-  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+  String get syncErrorRemoteChanged => 'تغيّر Google Drive أثناء المزامنة.';
 
   @override
   String get syncErrorRemoteChangedHint =>
-      'Nothing was lost. Sync again to pick up the latest changes.';
+      'لم يُفقد أي شيء. أعد المزامنة لجلب أحدث التغييرات.';
 
   @override
   String get syncErrorInvalidLocalData =>
-      'Some data on this device couldn\'t be synced.';
+      'تعذّرت مزامنة بعض البيانات على هذا الجهاز.';
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'A song or setlist could not be read. Import or recreate it, then sync again.';
+      'تعذرت قراءة أغنية أو قائمة أغاني. استوردها أو أنشئها من جديد، ثم أعد المزامنة.';
 
   @override
   String get syncErrorNoAccountChange =>
-      'There is no account change to resolve.';
+      'لا يوجد تغيير في الحساب يحتاج إلى معالجة.';
 
   @override
-  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+  String get syncErrorNoAccountChangeHint => 'أعد المزامنة للمتابعة.';
 
   @override
-  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+  String get accountSyncWarningTitle => 'تمت المزامنة، لكن تم تخطي بعض الملفات';
 
   @override
   String get accountSyncWarningBody =>
-      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+      'تعذّر استخدام بعض الملفات، فبقيت كما هي. كل ما عدا ذلك محدّث.';
 
   @override
   String get accountSyncWarningTooLarge =>
-      'A file was too large to sync and was skipped. Everything else is up to date.';
+      'كان أحد الملفات كبيرًا جدًا للمزامنة، لذا تم تخطيه. كل ما عدا ذلك محدّث.';
 
   @override
   String get accountSyncWarningInvalid =>
-      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+      'تعذّرت قراءة أحد الملفات، لذا تم تخطيه. كل ما عدا ذلك محدّث.';
 
   @override
-  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+  String get accountNoticeSyncSkipped => 'تمت المزامنة. تم تخطي بعض الملفات.';
 
   @override
   String get settingsExportPdfTooLarge =>
-      'This PDF would be too large. Try fewer songs, or share it as text.';
+      'سيكون ملف PDF هذا كبيرًا جدًا. جرّب عددًا أقل من الأغاني أو شاركه كنص.';
 
   @override
   String get settingsTimingTooLarge =>
-      'The timing data is too large (over 3 MB).';
+      'بيانات التوقيت كبيرة جدًا (أكثر من 3 ميغابايت).';
 
   @override
   String get settingsImportDuplicateSongId =>
-      'This backup lists the same song twice, so nothing was imported.';
+      'تتضمن هذه النسخة الاحتياطية الأغنية نفسها مرتين، لذا لم يتم استيراد أي شيء.';
 
   @override
   String get setlistSaveConflict =>
-      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+      'تم تغيير قائمة الأغاني في مكان آخر. تم حفظ تعديلاتك كنسخة منفصلة.';
 
   @override
   String get sectionVerse => 'مقطع';

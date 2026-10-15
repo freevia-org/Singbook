@@ -1424,108 +1424,93 @@ class AppLocalizationsZh extends AppLocalizations {
   String get accountReplaceConfirmAction => '删除并替换';
 
   @override
-  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+  String get accountSuspiciousTitle => 'Google 云端硬盘中缺少项目。';
 
   @override
   String accountSuspiciousBody(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          '$count items that this device synced earlier are missing from Google Drive.',
-      one:
-          '$count item that this device synced earlier is missing from Google Drive.',
+      other: '此设备之前同步的 $count 个项目在 Google 云端硬盘中缺失。',
+      one: '此设备之前同步的 $count 个项目在 Google 云端硬盘中缺失。',
     );
-    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+    return '$_temp0 如果在 Google 设置中清除了应用数据，就可能发生这种情况。目前尚未删除任何内容。';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Delete them here too';
+  String get accountSuspiciousDelete => '也在此处删除';
 
   @override
-  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+  String get accountSuspiciousKeep => '保留我的歌曲并重新上传';
 
   @override
   String accountSuspiciousDeleteConfirmTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete $count items from this device?',
-      one: 'Delete $count item from this device?',
+      other: '要从此设备删除 $count 个项目吗？',
+      one: '要从此设备删除 $count 个项目吗？',
     );
     return '$_temp0';
   }
 
   @override
-  String get accountSuspiciousDeleteConfirmBody =>
-      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+  String get accountSuspiciousDeleteConfirmBody => '这些歌曲和歌单将从此设备永久删除，且无法撤销。';
 
   @override
-  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+  String get accountSuspiciousDeleteConfirmAction => '从此设备删除';
 
   @override
-  String get syncErrorRemoteListingSuspicious =>
-      'Items are missing from Google Drive.';
+  String get syncErrorRemoteListingSuspicious => 'Google 云端硬盘中缺少项目。';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+      '尚未删除任何内容。请选择也在此处删除，或重新上传。';
 
   @override
-  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+  String get syncErrorRemoteChanged => '同步期间 Google 云端硬盘发生了更改。';
 
   @override
-  String get syncErrorRemoteChangedHint =>
-      'Nothing was lost. Sync again to pick up the latest changes.';
+  String get syncErrorRemoteChangedHint => '没有内容丢失。请重新同步以获取最新更改。';
 
   @override
-  String get syncErrorInvalidLocalData =>
-      'Some data on this device couldn\'t be synced.';
+  String get syncErrorInvalidLocalData => '此设备上的部分数据无法同步。';
 
   @override
-  String get syncErrorInvalidLocalDataHint =>
-      'A song or setlist could not be read. Import or recreate it, then sync again.';
+  String get syncErrorInvalidLocalDataHint => '无法读取某首歌曲或歌单。请重新导入或创建，然后再次同步。';
 
   @override
-  String get syncErrorNoAccountChange =>
-      'There is no account change to resolve.';
+  String get syncErrorNoAccountChange => '没有需要处理的账号更改。';
 
   @override
-  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+  String get syncErrorNoAccountChangeHint => '请重新同步以继续。';
 
   @override
-  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+  String get accountSyncWarningTitle => '已同步，但跳过了部分文件';
 
   @override
-  String get accountSyncWarningBody =>
-      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+  String get accountSyncWarningBody => '部分文件无法使用，因此保持原样。其他内容均已更新。';
 
   @override
-  String get accountSyncWarningTooLarge =>
-      'A file was too large to sync and was skipped. Everything else is up to date.';
+  String get accountSyncWarningTooLarge => '某个文件过大，无法同步，因此已跳过。其他内容均已更新。';
 
   @override
-  String get accountSyncWarningInvalid =>
-      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+  String get accountSyncWarningInvalid => '某个文件无法读取，因此已跳过。其他内容均已更新。';
 
   @override
-  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+  String get accountNoticeSyncSkipped => '已同步。跳过了部分文件。';
 
   @override
-  String get settingsExportPdfTooLarge =>
-      'This PDF would be too large. Try fewer songs, or share it as text.';
+  String get settingsExportPdfTooLarge => '此 PDF 会过大。请减少歌曲数量，或以文本形式分享。';
 
   @override
-  String get settingsTimingTooLarge =>
-      'The timing data is too large (over 3 MB).';
+  String get settingsTimingTooLarge => '计时数据过大（超过 3 MB）。';
 
   @override
-  String get settingsImportDuplicateSongId =>
-      'This backup lists the same song twice, so nothing was imported.';
+  String get settingsImportDuplicateSongId => '此备份中同一首歌曲重复出现，因此未导入任何内容。';
 
   @override
-  String get setlistSaveConflict =>
-      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+  String get setlistSaveConflict => '歌单已在其他位置更改。你的修改已另存为一个副本。';
 
   @override
   String get sectionVerse => '主歌';

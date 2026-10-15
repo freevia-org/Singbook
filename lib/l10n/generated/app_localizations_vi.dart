@@ -1481,7 +1481,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Xóa và thay thế';
 
   @override
-  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+  String get accountSuspiciousTitle => 'Google Drive đang thiếu một số mục.';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1489,100 +1489,100 @@ class AppLocalizationsVi extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count items that this device synced earlier are missing from Google Drive.',
+          'Các mục $count mà thiết bị này đã đồng bộ trước đây hiện không có trên Google Drive.',
       one:
-          '$count item that this device synced earlier is missing from Google Drive.',
+          'Mục $count mà thiết bị này đã đồng bộ trước đây hiện không có trên Google Drive.',
     );
-    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+    return '$_temp0 Điều này có thể xảy ra nếu dữ liệu ứng dụng bị xóa trong phần cài đặt Google. Chưa có gì bị xóa.';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Delete them here too';
+  String get accountSuspiciousDelete => 'Xóa chúng ở đây luôn';
 
   @override
-  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+  String get accountSuspiciousKeep => 'Giữ bài hát và tải lên lại';
 
   @override
   String accountSuspiciousDeleteConfirmTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete $count items from this device?',
-      one: 'Delete $count item from this device?',
+      other: 'Xóa $count mục khỏi thiết bị này?',
+      one: 'Xóa $count mục khỏi thiết bị này?',
     );
     return '$_temp0';
   }
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+      'Các bài hát và danh sách này sẽ bị xóa vĩnh viễn khỏi thiết bị. Không thể hoàn tác.';
 
   @override
-  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+  String get accountSuspiciousDeleteConfirmAction => 'Xóa khỏi thiết bị này';
 
   @override
   String get syncErrorRemoteListingSuspicious =>
-      'Items are missing from Google Drive.';
+      'Google Drive đang thiếu một số mục.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+      'Chưa có gì bị xóa. Hãy chọn xóa chúng ở đây hoặc tải lên lại.';
 
   @override
-  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+  String get syncErrorRemoteChanged =>
+      'Google Drive đã thay đổi trong khi đồng bộ.';
 
   @override
   String get syncErrorRemoteChangedHint =>
-      'Nothing was lost. Sync again to pick up the latest changes.';
+      'Không có dữ liệu nào bị mất. Hãy đồng bộ lại để nhận các thay đổi mới nhất.';
 
   @override
   String get syncErrorInvalidLocalData =>
-      'Some data on this device couldn\'t be synced.';
+      'Không thể đồng bộ một số dữ liệu trên thiết bị này.';
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'A song or setlist could not be read. Import or recreate it, then sync again.';
+      'Không thể đọc bài hát hoặc danh sách. Hãy nhập hoặc tạo lại rồi đồng bộ lại.';
 
   @override
   String get syncErrorNoAccountChange =>
-      'There is no account change to resolve.';
+      'Không có thay đổi tài khoản nào cần giải quyết.';
 
   @override
-  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+  String get syncErrorNoAccountChangeHint => 'Hãy đồng bộ lại để tiếp tục.';
 
   @override
-  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+  String get accountSyncWarningTitle => 'Đã đồng bộ nhưng bỏ qua một số tệp';
 
   @override
   String get accountSyncWarningBody =>
-      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+      'Không thể sử dụng một số tệp nên chúng được giữ nguyên. Mọi nội dung khác đã cập nhật.';
 
   @override
   String get accountSyncWarningTooLarge =>
-      'A file was too large to sync and was skipped. Everything else is up to date.';
+      'Một tệp quá lớn để đồng bộ nên đã bị bỏ qua. Mọi nội dung khác đã cập nhật.';
 
   @override
   String get accountSyncWarningInvalid =>
-      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+      'Không thể đọc một tệp nên đã bỏ qua. Mọi nội dung khác đã cập nhật.';
 
   @override
-  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+  String get accountNoticeSyncSkipped => 'Đã đồng bộ. Đã bỏ qua một số tệp.';
 
   @override
   String get settingsExportPdfTooLarge =>
-      'This PDF would be too large. Try fewer songs, or share it as text.';
+      'PDF này sẽ quá lớn. Hãy chọn ít bài hát hơn hoặc chia sẻ dưới dạng văn bản.';
 
   @override
-  String get settingsTimingTooLarge =>
-      'The timing data is too large (over 3 MB).';
+  String get settingsTimingTooLarge => 'Dữ liệu thời gian quá lớn (trên 3 MB).';
 
   @override
   String get settingsImportDuplicateSongId =>
-      'This backup lists the same song twice, so nothing was imported.';
+      'Bản sao lưu liệt kê cùng một bài hát hai lần nên không có gì được nhập.';
 
   @override
   String get setlistSaveConflict =>
-      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+      'Danh sách bài hát đã thay đổi ở nơi khác. Các chỉnh sửa đã được lưu thành bản sao riêng.';
 
   @override
   String get sectionVerse => 'Đoạn';

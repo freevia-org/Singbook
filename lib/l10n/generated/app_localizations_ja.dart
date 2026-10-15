@@ -1436,108 +1436,100 @@ class AppLocalizationsJa extends AppLocalizations {
   String get accountReplaceConfirmAction => '削除して置き換え';
 
   @override
-  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+  String get accountSuspiciousTitle => 'Google Drive にない項目';
 
   @override
   String accountSuspiciousBody(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          '$count items that this device synced earlier are missing from Google Drive.',
-      one:
-          '$count item that this device synced earlier is missing from Google Drive.',
+      other: '$count 件の項目が Google Drive にありません。このデバイスでは以前同期されていました。',
+      one: '$count 件の項目が Google Drive にありません。このデバイスでは以前同期されていました。',
     );
-    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+    return '$_temp0 Google の設定でアプリのデータを消去すると、この状態になることがあります。まだ何も削除されていません。';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Delete them here too';
+  String get accountSuspiciousDelete => 'ここからも削除';
 
   @override
-  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+  String get accountSuspiciousKeep => '曲を残して再アップロード';
 
   @override
   String accountSuspiciousDeleteConfirmTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete $count items from this device?',
-      one: 'Delete $count item from this device?',
+      other: 'このデバイスから $count 件の項目を削除しますか?',
+      one: 'このデバイスから $count 件の項目を削除しますか?',
     );
     return '$_temp0';
   }
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+      'これらの曲とセットリストはこのデバイスから完全に削除されます。この操作は元に戻せません。';
 
   @override
-  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+  String get accountSuspiciousDeleteConfirmAction => 'このデバイスから削除';
 
   @override
-  String get syncErrorRemoteListingSuspicious =>
-      'Items are missing from Google Drive.';
+  String get syncErrorRemoteListingSuspicious => 'Google Drive にない項目があります。';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+      '何も削除されていません。ここからも削除するか、再アップロードするかを選んでください。';
 
   @override
-  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+  String get syncErrorRemoteChanged => '同期中に Google Drive が変更されました。';
 
   @override
   String get syncErrorRemoteChangedHint =>
-      'Nothing was lost. Sync again to pick up the latest changes.';
+      'データは失われていません。最新の変更を取り込むため、もう一度同期してください。';
 
   @override
-  String get syncErrorInvalidLocalData =>
-      'Some data on this device couldn\'t be synced.';
+  String get syncErrorInvalidLocalData => 'このデバイスの一部のデータを同期できませんでした。';
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'A song or setlist could not be read. Import or recreate it, then sync again.';
+      '曲またはセットリストを読み込めませんでした。インポートするか作り直してから、もう一度同期してください。';
 
   @override
-  String get syncErrorNoAccountChange =>
-      'There is no account change to resolve.';
+  String get syncErrorNoAccountChange => '解決するアカウント変更はありません。';
 
   @override
-  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+  String get syncErrorNoAccountChangeHint => '続けるにはもう一度同期してください。';
 
   @override
-  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+  String get accountSyncWarningTitle => '同期しましたが、一部のファイルをスキップしました';
 
   @override
   String get accountSyncWarningBody =>
-      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+      '一部のファイルを使用できなかったため、そのまま残しました。それ以外は最新です。';
 
   @override
   String get accountSyncWarningTooLarge =>
-      'A file was too large to sync and was skipped. Everything else is up to date.';
+      '同期するにはファイルが大きすぎたため、スキップしました。それ以外は最新です。';
 
   @override
-  String get accountSyncWarningInvalid =>
-      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+  String get accountSyncWarningInvalid => 'ファイルを読み込めなかったため、スキップしました。それ以外は最新です。';
 
   @override
-  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+  String get accountNoticeSyncSkipped => '同期しました。一部のファイルをスキップしました。';
 
   @override
   String get settingsExportPdfTooLarge =>
-      'This PDF would be too large. Try fewer songs, or share it as text.';
+      'この PDF は大きくなりすぎます。曲数を減らすか、テキストとして共有してください。';
 
   @override
-  String get settingsTimingTooLarge =>
-      'The timing data is too large (over 3 MB).';
+  String get settingsTimingTooLarge => 'タイミングデータが大きすぎます（3 MB 超）。';
 
   @override
   String get settingsImportDuplicateSongId =>
-      'This backup lists the same song twice, so nothing was imported.';
+      'このバックアップには同じ曲が重複しているため、何もインポートされませんでした。';
 
   @override
-  String get setlistSaveConflict =>
-      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+  String get setlistSaveConflict => 'セットリストが別の場所で変更されました。編集内容は別のコピーとして保存されました。';
 
   @override
   String get sectionVerse => 'ヴァース';

@@ -1478,23 +1478,23 @@ class AppLocalizationsGa extends AppLocalizations {
 
   @override
   String get editorDurationInvalid =>
-      'Enter seconds or minutes and seconds, such as 3:45.';
+      'Cuir isteach soicind nó nóiméid agus soicind, mar shampla 3:45.';
 
   @override
-  String get editorNumberInvalid => 'Enter a number.';
+  String get editorNumberInvalid => 'Cuir isteach uimhir.';
 
   @override
-  String get accountReplaceConfirmTitle => 'Delete local songs?';
+  String get accountReplaceConfirmTitle => 'Scrios amhráin áitiúla?';
 
   @override
   String get accountReplaceConfirmBody =>
-      'Songs and setlists on this device that are not in the new account will be permanently deleted. This can\'t be undone.';
+      'Scriosfar go buan na hamhráin agus na liostaí amhrán ar an ngléas seo nach bhfuil sa chuntas nua. Ní féidir é seo a chealú.';
 
   @override
-  String get accountReplaceConfirmAction => 'Delete and replace';
+  String get accountReplaceConfirmAction => 'Scrios agus cuir ina n-ionad';
 
   @override
-  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+  String get accountSuspiciousTitle => 'Míreanna ar iarraidh ó Google Drive';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1502,100 +1502,104 @@ class AppLocalizationsGa extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count items that this device synced earlier are missing from Google Drive.',
+          'Tá $count mhír a shioncronaigh an gléas seo roimhe seo ar iarraidh ó Google Drive.',
       one:
-          '$count item that this device synced earlier is missing from Google Drive.',
+          'Tá mír amháin a shioncronaigh an gléas seo roimhe seo ar iarraidh ó Google Drive.',
     );
-    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+    return '$_temp0 D’fhéadfadh sé seo tarlú má glanadh sonraí na haipe i socruithe Google. Níl aon rud scriosta fós.';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Delete them here too';
+  String get accountSuspiciousDelete => 'Scrios anseo iad freisin';
 
   @override
-  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+  String get accountSuspiciousKeep =>
+      'Coinnigh mo chuid amhrán agus uaslódáil arís iad';
 
   @override
   String accountSuspiciousDeleteConfirmTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete $count items from this device?',
-      one: 'Delete $count item from this device?',
+      other: 'Scrios $count mhír ón ngléas seo?',
+      one: 'Scrios $count mhír ón ngléas seo?',
     );
     return '$_temp0';
   }
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+      'Scriosfar na hamhráin agus na seinmliostaí seo go buan ón ngléas seo. Ní féidir é sin a chur ar ceal.';
 
   @override
-  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+  String get accountSuspiciousDeleteConfirmAction => 'Scrios ón ngléas seo';
 
   @override
   String get syncErrorRemoteListingSuspicious =>
-      'Items are missing from Google Drive.';
+      'Tá míreanna ar iarraidh ó Google Drive.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+      'Níor scriosadh aon rud. Roghnaigh ar cheart iad a scriosadh anseo freisin nó iad a uaslódáil arís.';
 
   @override
-  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+  String get syncErrorRemoteChanged =>
+      'Athraíodh Google Drive le linn an tsioncronaithe.';
 
   @override
   String get syncErrorRemoteChangedHint =>
-      'Nothing was lost. Sync again to pick up the latest changes.';
+      'Níor cailleadh aon rud. Sioncronaigh arís chun na hathruithe is déanaí a fháil.';
 
   @override
   String get syncErrorInvalidLocalData =>
-      'Some data on this device couldn\'t be synced.';
+      'Níorbh fhéidir roinnt sonraí ar an ngléas seo a shioncronú.';
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'A song or setlist could not be read. Import or recreate it, then sync again.';
+      'Níorbh fhéidir amhrán nó seinmliosta a léamh. Iompórtáil nó cruthaigh arís é, ansin sioncronaigh arís.';
 
   @override
-  String get syncErrorNoAccountChange =>
-      'There is no account change to resolve.';
+  String get syncErrorNoAccountChange => 'Níl aon athrú cuntais le réiteach.';
 
   @override
-  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+  String get syncErrorNoAccountChangeHint =>
+      'Sioncronaigh arís chun leanúint ar aghaidh.';
 
   @override
-  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+  String get accountSyncWarningTitle =>
+      'Sioncrónaíodh é, ach scipeáladh roinnt comhad';
 
   @override
   String get accountSyncWarningBody =>
-      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+      'Níorbh fhéidir roinnt comhad a úsáid agus fágadh mar a bhí siad. Tá gach rud eile cothrom le dáta.';
 
   @override
   String get accountSyncWarningTooLarge =>
-      'A file was too large to sync and was skipped. Everything else is up to date.';
+      'Bhí comhad rómhór le sioncrónú agus scipeáladh é. Tá gach rud eile cothrom le dáta.';
 
   @override
   String get accountSyncWarningInvalid =>
-      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+      'Níorbh fhéidir comhad a léamh agus scipeáladh é. Tá gach rud eile cothrom le dáta.';
 
   @override
-  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+  String get accountNoticeSyncSkipped =>
+      'Sioncrónaíodh é. Scipeáladh roinnt comhad.';
 
   @override
   String get settingsExportPdfTooLarge =>
-      'This PDF would be too large. Try fewer songs, or share it as text.';
+      'Bheadh an PDF seo rómhór. Bain triail as níos lú amhrán, nó roinn mar théacs é.';
 
   @override
   String get settingsTimingTooLarge =>
-      'The timing data is too large (over 3 MB).';
+      'Tá na sonraí uainiúcháin rómhór (os cionn 3 MB).';
 
   @override
   String get settingsImportDuplicateSongId =>
-      'This backup lists the same song twice, so nothing was imported.';
+      'Tá an t-amhrán céanna faoi dhó sa chúltaca seo, mar sin níor iompórtáladh aon rud.';
 
   @override
   String get setlistSaveConflict =>
-      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+      'Athraíodh an seinmliosta in áit eile. Sábháladh do chuid athruithe mar chóip ar leith.';
 
   @override
   String get sectionVerse => 'Véarsa';

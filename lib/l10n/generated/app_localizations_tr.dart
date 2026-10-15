@@ -1483,7 +1483,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Sil ve değiştir';
 
   @override
-  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+  String get accountSuspiciousTitle => 'Google Drive\'da bazı öğeler eksik.';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1491,100 +1491,102 @@ class AppLocalizationsTr extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count items that this device synced earlier are missing from Google Drive.',
+          '$count öğe, bu cihaz tarafından daha önce eşitlendi ancak Google Drive\'da bulunamıyor.',
       one:
-          '$count item that this device synced earlier is missing from Google Drive.',
+          '$count öğe, bu cihaz tarafından daha önce eşitlendi ancak Google Drive\'da bulunamıyor.',
     );
-    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+    return '$_temp0 Bu durum, uygulama verileri Google ayarlarından temizlendiğinde oluşabilir. Henüz hiçbir şey silinmedi.';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Delete them here too';
+  String get accountSuspiciousDelete => 'Onları burada da sil';
 
   @override
-  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+  String get accountSuspiciousKeep => 'Şarkılarımı koru ve yeniden yükle';
 
   @override
   String accountSuspiciousDeleteConfirmTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete $count items from this device?',
-      one: 'Delete $count item from this device?',
+      other: '$count öğe bu cihazdan silinsin mi?',
+      one: '$count öğe bu cihazdan silinsin mi?',
     );
     return '$_temp0';
   }
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+      'Bu şarkılar ve şarkı listeleri bu cihazdan kalıcı olarak silinecek. Bu işlem geri alınamaz.';
 
   @override
-  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+  String get accountSuspiciousDeleteConfirmAction => 'Bu cihazdan sil';
 
   @override
   String get syncErrorRemoteListingSuspicious =>
-      'Items are missing from Google Drive.';
+      'Google Drive\'da bazı öğeler eksik.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+      'Hiçbir şey silinmedi. Bunları burada da silmeyi veya yeniden yüklemeyi seçin.';
 
   @override
-  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+  String get syncErrorRemoteChanged =>
+      'Eşitleme sırasında Google Drive değişti.';
 
   @override
   String get syncErrorRemoteChangedHint =>
-      'Nothing was lost. Sync again to pick up the latest changes.';
+      'Hiçbir şey kaybolmadı. En son değişiklikleri almak için yeniden eşitleyin.';
 
   @override
   String get syncErrorInvalidLocalData =>
-      'Some data on this device couldn\'t be synced.';
+      'Bu cihazdaki bazı veriler eşitlenemedi.';
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'A song or setlist could not be read. Import or recreate it, then sync again.';
+      'Bir şarkı veya şarkı listesi okunamadı. İçe aktarın ya da yeniden oluşturun, ardından tekrar eşitleyin.';
 
   @override
-  String get syncErrorNoAccountChange =>
-      'There is no account change to resolve.';
+  String get syncErrorNoAccountChange => 'Çözülecek bir hesap değişikliği yok.';
 
   @override
-  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+  String get syncErrorNoAccountChangeHint =>
+      'Devam etmek için yeniden eşitleyin.';
 
   @override
-  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+  String get accountSyncWarningTitle =>
+      'Eşitlendi, ancak bazı dosyalar atlandı';
 
   @override
   String get accountSyncWarningBody =>
-      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+      'Bazı dosyalar kullanılamadı ve olduğu gibi bırakıldı. Diğer her şey güncel.';
 
   @override
   String get accountSyncWarningTooLarge =>
-      'A file was too large to sync and was skipped. Everything else is up to date.';
+      'Bir dosya eşitlenemeyecek kadar büyüktü ve atlandı. Diğer her şey güncel.';
 
   @override
   String get accountSyncWarningInvalid =>
-      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+      'Bir dosya okunamadı ve atlandı. Diğer her şey güncel.';
 
   @override
-  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+  String get accountNoticeSyncSkipped => 'Eşitlendi. Bazı dosyalar atlandı.';
 
   @override
   String get settingsExportPdfTooLarge =>
-      'This PDF would be too large. Try fewer songs, or share it as text.';
+      'Bu PDF çok büyük olur. Daha az şarkı seçin veya metin olarak paylaşın.';
 
   @override
   String get settingsTimingTooLarge =>
-      'The timing data is too large (over 3 MB).';
+      'Zamanlama verileri çok büyük (3 MB üzerinde).';
 
   @override
   String get settingsImportDuplicateSongId =>
-      'This backup lists the same song twice, so nothing was imported.';
+      'Bu yedek aynı şarkıyı iki kez içeriyor; hiçbir şey içe aktarılmadı.';
 
   @override
   String get setlistSaveConflict =>
-      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+      'Şarkı listesi başka bir yerde değiştirildi. Düzenlemeleriniz ayrı bir kopya olarak kaydedildi.';
 
   @override
   String get sectionVerse => 'Kıta';

@@ -1495,7 +1495,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Eliminar y reemplazar';
 
   @override
-  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+  String get accountSuspiciousTitle => 'Faltan elementos en Google Drive';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1503,100 +1503,106 @@ class AppLocalizationsEs extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count items that this device synced earlier are missing from Google Drive.',
+          'Faltan $count elementos que este dispositivo había sincronizado anteriormente en Google Drive.',
       one:
-          '$count item that this device synced earlier is missing from Google Drive.',
+          'Falta 1 elemento que este dispositivo había sincronizado anteriormente en Google Drive.',
     );
-    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+    return '$_temp0 Esto puede ocurrir si se borraron los datos de la aplicación en los ajustes de Google. Todavía no se ha eliminado nada.';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Delete them here too';
+  String get accountSuspiciousDelete => 'Eliminarlos también aquí';
 
   @override
-  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+  String get accountSuspiciousKeep =>
+      'Conservar mis canciones y volver a subirlas';
 
   @override
   String accountSuspiciousDeleteConfirmTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete $count items from this device?',
-      one: 'Delete $count item from this device?',
+      other: '¿Eliminar $count elementos de este dispositivo?',
+      one: '¿Eliminar $count elemento de este dispositivo?',
     );
     return '$_temp0';
   }
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+      'Estas canciones y listas se eliminarán permanentemente de este dispositivo. Esta acción no se puede deshacer.';
 
   @override
-  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+  String get accountSuspiciousDeleteConfirmAction =>
+      'Eliminar de este dispositivo';
 
   @override
   String get syncErrorRemoteListingSuspicious =>
-      'Items are missing from Google Drive.';
+      'Faltan elementos en Google Drive.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+      'No se ha eliminado nada. Elige si quieres eliminarlos también aquí o volver a subirlos.';
 
   @override
-  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+  String get syncErrorRemoteChanged =>
+      'Google Drive ha cambiado durante la sincronización.';
 
   @override
   String get syncErrorRemoteChangedHint =>
-      'Nothing was lost. Sync again to pick up the latest changes.';
+      'No se ha perdido nada. Vuelve a sincronizar para obtener los cambios más recientes.';
 
   @override
   String get syncErrorInvalidLocalData =>
-      'Some data on this device couldn\'t be synced.';
+      'No se han podido sincronizar algunos datos de este dispositivo.';
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'A song or setlist could not be read. Import or recreate it, then sync again.';
+      'No se ha podido leer una canción o una lista. Impórtala o créala de nuevo y vuelve a sincronizar.';
 
   @override
   String get syncErrorNoAccountChange =>
-      'There is no account change to resolve.';
+      'No hay ningún cambio de cuenta que resolver.';
 
   @override
-  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+  String get syncErrorNoAccountChangeHint =>
+      'Vuelve a sincronizar para continuar.';
 
   @override
-  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+  String get accountSyncWarningTitle =>
+      'Sincronizado, pero se omitieron algunos archivos';
 
   @override
   String get accountSyncWarningBody =>
-      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+      'No se pudieron usar algunos archivos y se dejaron tal como estaban. Todo lo demás está actualizado.';
 
   @override
   String get accountSyncWarningTooLarge =>
-      'A file was too large to sync and was skipped. Everything else is up to date.';
+      'El archivo era demasiado grande para sincronizarlo y se omitió. Todo lo demás está actualizado.';
 
   @override
   String get accountSyncWarningInvalid =>
-      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+      'No se pudo leer un archivo y se omitió. Todo lo demás está actualizado.';
 
   @override
-  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+  String get accountNoticeSyncSkipped =>
+      'Sincronizado. Se omitieron algunos archivos.';
 
   @override
   String get settingsExportPdfTooLarge =>
-      'This PDF would be too large. Try fewer songs, or share it as text.';
+      'Este PDF sería demasiado grande. Prueba con menos canciones o compártelo como texto.';
 
   @override
   String get settingsTimingTooLarge =>
-      'The timing data is too large (over 3 MB).';
+      'Los datos de tiempos son demasiado grandes (más de 3 MB).';
 
   @override
   String get settingsImportDuplicateSongId =>
-      'This backup lists the same song twice, so nothing was imported.';
+      'Esta copia de seguridad incluye la misma canción dos veces, así que no se ha importado nada.';
 
   @override
   String get setlistSaveConflict =>
-      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+      'La lista cambió en otro lugar. Tus cambios se guardaron como una copia aparte.';
 
   @override
   String get sectionVerse => 'Estrofa';

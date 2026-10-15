@@ -1500,7 +1500,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Löschen und ersetzen';
 
   @override
-  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+  String get accountSuspiciousTitle => 'Elemente fehlen in Google Drive';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1508,100 +1508,105 @@ class AppLocalizationsDe extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count items that this device synced earlier are missing from Google Drive.',
+          '$count Elemente, die dieses Gerät zuvor synchronisiert hat, fehlen in Google Drive.',
       one:
-          '$count item that this device synced earlier is missing from Google Drive.',
+          '$count Element, das dieses Gerät zuvor synchronisiert hat, fehlt in Google Drive.',
     );
-    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+    return '$_temp0 Das kann passieren, wenn App-Daten in den Google-Einstellungen gelöscht wurden. Bisher wurde nichts gelöscht.';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Delete them here too';
+  String get accountSuspiciousDelete => 'Auch hier löschen';
 
   @override
-  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+  String get accountSuspiciousKeep =>
+      'Meine Songs behalten und erneut hochladen';
 
   @override
   String accountSuspiciousDeleteConfirmTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete $count items from this device?',
-      one: 'Delete $count item from this device?',
+      other: '$count Elemente von diesem Gerät löschen?',
+      one: '$count Element von diesem Gerät löschen?',
     );
     return '$_temp0';
   }
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+      'Diese Songs und Setlists werden dauerhaft von diesem Gerät gelöscht. Das kann nicht rückgängig gemacht werden.';
 
   @override
-  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+  String get accountSuspiciousDeleteConfirmAction => 'Von diesem Gerät löschen';
 
   @override
   String get syncErrorRemoteListingSuspicious =>
-      'Items are missing from Google Drive.';
+      'Elemente fehlen in Google Drive.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+      'Es wurde nichts gelöscht. Wähle, ob du sie auch hier löschen oder erneut hochladen möchtest.';
 
   @override
-  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+  String get syncErrorRemoteChanged =>
+      'Google Drive wurde während der Synchronisierung geändert.';
 
   @override
   String get syncErrorRemoteChangedHint =>
-      'Nothing was lost. Sync again to pick up the latest changes.';
+      'Es ist nichts verloren gegangen. Synchronisiere erneut, um die neuesten Änderungen abzurufen.';
 
   @override
   String get syncErrorInvalidLocalData =>
-      'Some data on this device couldn\'t be synced.';
+      'Einige Daten auf diesem Gerät konnten nicht synchronisiert werden.';
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'A song or setlist could not be read. Import or recreate it, then sync again.';
+      'Ein Song oder eine Setlist konnte nicht gelesen werden. Importiere oder erstelle sie neu und synchronisiere anschließend erneut.';
 
   @override
   String get syncErrorNoAccountChange =>
-      'There is no account change to resolve.';
+      'Es gibt keine Kontoänderung, die behoben werden muss.';
 
   @override
-  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+  String get syncErrorNoAccountChangeHint =>
+      'Synchronisiere erneut, um fortzufahren.';
 
   @override
-  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+  String get accountSyncWarningTitle =>
+      'Synchronisiert, aber einige Dateien wurden übersprungen';
 
   @override
   String get accountSyncWarningBody =>
-      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+      'Einige Dateien konnten nicht verwendet werden und blieben unverändert. Alles andere ist auf dem neuesten Stand.';
 
   @override
   String get accountSyncWarningTooLarge =>
-      'A file was too large to sync and was skipped. Everything else is up to date.';
+      'Eine Datei war für die Synchronisierung zu groß und wurde übersprungen. Alles andere ist auf dem neuesten Stand.';
 
   @override
   String get accountSyncWarningInvalid =>
-      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+      'Eine Datei konnte nicht gelesen werden und wurde übersprungen. Alles andere ist auf dem neuesten Stand.';
 
   @override
-  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+  String get accountNoticeSyncSkipped =>
+      'Synchronisiert. Einige Dateien wurden übersprungen.';
 
   @override
   String get settingsExportPdfTooLarge =>
-      'This PDF would be too large. Try fewer songs, or share it as text.';
+      'Diese PDF-Datei wäre zu groß. Versuche es mit weniger Songs oder teile sie als Text.';
 
   @override
   String get settingsTimingTooLarge =>
-      'The timing data is too large (over 3 MB).';
+      'Die Timing-Daten sind zu groß (über 3 MB).';
 
   @override
   String get settingsImportDuplicateSongId =>
-      'This backup lists the same song twice, so nothing was imported.';
+      'In diesem Backup ist derselbe Song zweimal enthalten. Deshalb wurde nichts importiert.';
 
   @override
   String get setlistSaveConflict =>
-      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+      'Die Setlist wurde an anderer Stelle geändert. Deine Änderungen wurden als separate Kopie gespeichert.';
 
   @override
   String get sectionVerse => 'Strophe';
