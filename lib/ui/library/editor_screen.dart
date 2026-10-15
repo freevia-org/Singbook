@@ -110,16 +110,18 @@ class _EditorScreenState extends State<EditorScreen> {
       setState(() => _titleMissing = true);
       return;
     }
+    _saving = true;
+    setState(() {});
     // Return to the reader with the full viewport. Keeping the multiline
     // editor focused leaves a landscape phone with too little height for the
     // reader controls while the Android keyboard is still open.
-    FocusManager.instance.primaryFocus?.unfocus();
-    await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
-    // Android can animate the IME out while the saved reader is being built.
-    // Let the inset update first so the reader lays out against the full height.
-    await Future<void>.delayed(const Duration(milliseconds: 220));
-    _saving = true;
     try {
+      FocusManager.instance.primaryFocus?.unfocus();
+      await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
+      // Android can animate the IME out while the saved reader is being built.
+      // Let the inset update first so the reader lays out against the full height.
+      await Future<void>.delayed(const Duration(milliseconds: 220));
+      if (!mounted) return;
       await widget.controller.saveLyricsEdit(
         [
           '{title: ${_safeHeader(_title.text)}}',
@@ -135,7 +137,9 @@ class _EditorScreenState extends State<EditorScreen> {
         ].join('\n'),
       );
     } finally {
-      _saving = false;
+      if (mounted) {
+        setState(() => _saving = false);
+      }
     }
   }
 
@@ -165,7 +169,7 @@ class _EditorScreenState extends State<EditorScreen> {
           actions: [
             IconButton(
               tooltip: l10n.actionSave,
-              onPressed: _save,
+              onPressed: _saving ? null : _save,
               icon: const Icon(Icons.check_rounded),
             ),
           ],

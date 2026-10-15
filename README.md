@@ -34,6 +34,11 @@ flutter analyze
 flutter run -d emulator-5554 --dart-define-from-file=config/local.defines.json --dart-define=cronetHttpNoPlay=true
 ```
 
+Deterministic fixture-E2E builds can opt into the temporary AGP 9 Cronet
+workaround by setting `ORG_GRADLE_PROJECT_singbookFixtureE2e=true` for that build
+only. Unset it afterward. It excludes a Cronet runtime dependency in debug
+configurations, so leave it unset for normal builds and live-provider tests.
+
 The release build is written to `build/app/outputs/flutter-apk/app-release.apk`.
 Install a preview over an earlier preview with `adb install -r <apk-path>` to
 preserve the local library. A release build stops with an error when

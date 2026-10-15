@@ -6,11 +6,12 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// Temporary phone-E2E build workaround for AGP 9: two Cronet AARs currently
-// declare the same dummy namespace. The journey uses in-process fixtures, so
-// it does not need cronet-shared at runtime.
+// Opt-in workaround for deterministic fixture E2E builds under AGP 9.
+// Ordinary debug builds use embedded Cronet for real providers and must keep
+// its cronet-shared runtime dependency.
+val fixtureE2e = providers.gradleProperty("singbookFixtureE2e").orNull == "true"
 configurations.configureEach {
-    if (name.contains("Debug", ignoreCase = true)) {
+    if (fixtureE2e && name.contains("Debug", ignoreCase = true)) {
         exclude(group = "org.chromium.net", module = "cronet-shared")
     }
 }
