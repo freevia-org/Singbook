@@ -12,6 +12,12 @@ import 'format.dart';
 import 'player_section_timeline.dart';
 import 'verse_ui_state.dart';
 
+double? _validDuration(Object? value) {
+  if (value is! num) return null;
+  final seconds = value.toDouble();
+  return seconds.isFinite && seconds > 0 && seconds <= 86400 ? seconds : null;
+}
+
 /// Adapts the durable domain controller to the deliberately small UI contract.
 /// Account and file actions are injected by the app shell when those integrations
 /// are configured; absent integrations remain visibly unavailable.
@@ -234,7 +240,7 @@ class AppControllerAdapter extends VerseUiController {
           );
     final playerDuration = song == null
         ? 0.0
-        : (song.metadata['durationSeconds'] as num?)?.toDouble() ??
+        : _validDuration(song.metadata['durationSeconds']) ??
               _estimatedDuration(data.length);
     final playerSections = song == null
         ? const <PlayerSectionMarker>[]
@@ -395,7 +401,8 @@ class AppControllerAdapter extends VerseUiController {
       readerTempo: tempo?.toString(),
       readerHasTiming: readerHasTiming,
       readerDurationEstimated:
-          song != null && song.metadata['durationSeconds'] is! num,
+          song != null &&
+          _validDuration(song.metadata['durationSeconds']) == null,
       readerSource: readerSource,
       readerCanCompareVersions: readerCanCompareVersions,
     );
@@ -423,7 +430,7 @@ class AppControllerAdapter extends VerseUiController {
     artist: song.artist,
     album: song.metadata['album'] as String?,
     artworkUrl: song.metadata['artworkUrl'] as String?,
-    durationSeconds: (song.metadata['durationSeconds'] as num?)?.toDouble(),
+    durationSeconds: _validDuration(song.metadata['durationSeconds']),
     key: song.metadata['key'] as String?,
     favorite: song.favorite,
     modifiedAt: song.updatedAt,
@@ -468,7 +475,9 @@ class AppControllerAdapter extends VerseUiController {
     title: value.title,
     artist: value.artist,
     album: value.album,
-    durationSeconds: value.durationSeconds,
+    durationSeconds:
+        _validDuration(value.durationSeconds) ??
+        _validDuration(value.metadata['durationSeconds']),
     artworkUrl: value.artworkUrl,
   );
 
@@ -567,8 +576,9 @@ class AppControllerAdapter extends VerseUiController {
             title: combined.title,
             artist: combined.artist,
             album: combined.metadata['album'] as String?,
-            durationSeconds: (combined.metadata['durationSeconds'] as num?)
-                ?.toDouble(),
+            durationSeconds: _validDuration(
+              combined.metadata['durationSeconds'],
+            ),
             artworkUrl: combined.metadata['artworkUrl'] as String?,
             hasLyrics: arrangement.plainLyrics(combined.body).trim().isNotEmpty,
             hasChords: combined.hasChords,
@@ -585,8 +595,7 @@ class AppControllerAdapter extends VerseUiController {
             savedSongId: app.savedResultId(),
             underlyingSourceId: contributorCount == 1 ? chosenSource?.id : null,
           );
-    final chosenId =
-        _selectedVersionId ?? suggested?.id ?? alternatives.firstOrNull?.id;
+    final chosenId = _effectiveSelectionId(suggested?.id, alternatives);
     final checks = app.checks.values
         .map(
           (check) => SearchProviderCheckData(
@@ -615,6 +624,28 @@ class AppControllerAdapter extends VerseUiController {
           !app.discovering && !app.results.any(_isUsableLyricResult),
       providerChecks: checks,
     );
+  }
+
+  String? _effectiveSelectionId(
+    String? suggestedId,
+    List<SourceVersionData> alternatives,
+  ) {
+    final selectedAlternative = alternatives
+        .where((item) => item.id == _selectedVersionId && item.isUsableVersion)
+        .firstOrNull;
+    if (_selectedVersionId == 'combined' && suggestedId != null) {
+      return 'combined';
+    }
+    return selectedAlternative?.id ??
+        suggestedId ??
+        alternatives
+            .where(
+              (item) =>
+                  item.isUsableVersion &&
+                  (item.canSave || item.savedSongId != null),
+            )
+            .firstOrNull
+            ?.id;
   }
 
   bool _songMatchesSearchReference(SongDocument song, String referenceId) =>
@@ -664,8 +695,9 @@ class AppControllerAdapter extends VerseUiController {
       artist: candidate.artist,
       album: candidate.album ?? result.metadata['album'] as String?,
       durationSeconds:
-          candidate.durationSeconds ??
-          (result.metadata['durationSeconds'] as num?)?.toDouble(),
+          _validDuration(candidate.durationSeconds) ??
+          _validDuration(result.metadata['durationSeconds']) ??
+          _validDuration(candidate.metadata['durationSeconds']),
       artworkUrl:
           candidate.artworkUrl ?? result.metadata['artworkUrl'] as String?,
       rating: (result.metadata['rating'] as num?)?.toDouble(),
@@ -809,7 +841,7 @@ class AppControllerAdapter extends VerseUiController {
     }
     if (timingMode == 'timed') return null;
     final duration =
-        (song.metadata['durationSeconds'] as num?)?.toDouble() ??
+        _validDuration(song.metadata['durationSeconds']) ??
         _estimatedDuration(lines.length);
     if (duration <= 0) return null;
     final visibleLines = lines.where((line) => !line.isBlank).toList();
@@ -826,8 +858,8 @@ class AppControllerAdapter extends VerseUiController {
 
   String _subtitle(SongDocument song) => [
     if (song.metadata['album'] is String) song.metadata['album'],
-    if (song.metadata['durationSeconds'] is num)
-      formatDuration((song.metadata['durationSeconds'] as num).toDouble()),
+    if (_validDuration(song.metadata['durationSeconds']) case final duration?)
+      formatDuration(duration),
   ].join(' · ');
 
   static AppThemeMode _themeMode(Object? value) => switch (value) {
@@ -937,6 +969,10 @@ class AppControllerAdapter extends VerseUiController {
           ? value as String
           : _filters.durationBucket,
     );
+    final effectiveSelection = _comparison()?.selectedVersionId;
+    if (effectiveSelection != null || _selectedVersionId != null) {
+      _selectedVersionId = effectiveSelection;
+    }
     notifyListeners();
   }
 
@@ -1032,12 +1068,28 @@ class AppControllerAdapter extends VerseUiController {
   @override
   Future<void> saveSelectedVersion() async {
     if (app.discovering) return;
-    final version =
-        _selectedVersionId == null || _selectedVersionId == 'combined'
+    final comparison = _comparison();
+    final availableAlternatives = comparison == null
+        ? app.results.map(_version).where(_versionMatchesFilters).toList()
+        : comparison.alternatives;
+    final selectedId =
+        comparison?.selectedVersionId ??
+        _effectiveSelectionId(
+          _combinedMatchesFilters(app.combined) ? 'combined' : null,
+          availableAlternatives,
+        );
+    if (selectedId == null) {
+      postNotice(UiNotice.songSaveFailed);
+      return;
+    }
+    final version = selectedId == 'combined'
         ? null
-        : app.results
-              .where((item) => item.id == _selectedVersionId)
-              .firstOrNull;
+        : app.results.where((item) => item.id == selectedId).firstOrNull;
+    if (selectedId != 'combined' &&
+        (version == null || !_isUsableLyricResult(version))) {
+      postNotice(UiNotice.songSaveFailed);
+      return;
+    }
     final SongDocument song;
     try {
       song = await app.saveResult(source: version);
@@ -1313,7 +1365,7 @@ class AppControllerAdapter extends VerseUiController {
 
   double _playerDuration() {
     final song = currentSong;
-    return (song?.metadata['durationSeconds'] as num?)?.toDouble() ??
+    return _validDuration(song?.metadata['durationSeconds']) ??
         _estimatedDuration(_baseState().songLines.length);
   }
 

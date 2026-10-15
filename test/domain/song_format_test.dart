@@ -452,27 +452,61 @@ void main() {
         title: 'Song',
         artist: 'Artist',
       );
-      const sourceWithDuration = SourceResult(
-        candidate: SongCandidate(
-          providerId: 'genius',
-          id: '1',
-          title: 'Song',
-          artist: 'Artist',
-          durationSeconds: 247,
-        ),
-        body: 'Hello\nworld',
-        matchKind: MatchKind.sameRecording,
-      );
+      for (final metadata in <JsonMap>[
+        const {},
+        {'durationSeconds': double.infinity},
+        {'durationSeconds': 0},
+      ]) {
+        final sourceWithDuration = SourceResult(
+          candidate: const SongCandidate(
+            providerId: 'genius',
+            id: '1',
+            title: 'Song',
+            artist: 'Artist',
+            durationSeconds: 247,
+          ),
+          body: 'Hello\nworld',
+          metadata: metadata,
+          matchKind: MatchKind.sameRecording,
+        );
 
-      final combined = combineSources(missingCatalog, [sourceWithDuration]);
+        final combined = combineSources(missingCatalog, [sourceWithDuration]);
 
-      expect(combined.metadata['durationSeconds'], 247);
-      expect(
-        combined.extra['fieldOrigins']['durationSeconds'],
-        sourceWithDuration.id,
-      );
+        expect(combined.metadata['durationSeconds'], 247);
+        expect(
+          combined.extra['fieldOrigins']['durationSeconds'],
+          sourceWithDuration.id,
+        );
+      }
     },
   );
+  test('result duration metadata wins candidate metadata when selected', () {
+    const catalog = SongCandidate(
+      providerId: 'genius',
+      id: '1',
+      title: 'Song',
+      artist: 'Artist',
+      durationSeconds: 120,
+    );
+    const sourceWithConflictingDurations = SourceResult(
+      candidate: SongCandidate(
+        providerId: 'lrclib',
+        id: '1',
+        title: 'Song',
+        artist: 'Artist',
+        metadata: {'durationSeconds': 111},
+      ),
+      body: 'Hello\nworld',
+      metadata: {'durationSeconds': 247},
+      matchKind: MatchKind.sameSong,
+    );
+
+    final selected = combineSources(catalog, [
+      sourceWithConflictingDurations,
+    ], preferredSourceId: sourceWithConflictingDurations.id);
+
+    expect(selected.metadata['durationSeconds'], 247);
+  });
   test(
     'explicit source duration must be finite and within supported bounds',
     () {

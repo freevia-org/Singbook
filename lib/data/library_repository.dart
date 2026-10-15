@@ -326,6 +326,9 @@ class LibraryRepository {
                 : _validDuration(incomingSource.candidate.durationSeconds) ??
                       _validDuration(
                         incomingSource.metadata['durationSeconds'],
+                      ) ??
+                      _validDuration(
+                        incomingSource.candidate.metadata['durationSeconds'],
                       );
             final existingDuration = _validDuration(
               existing.metadata['durationSeconds'],
@@ -348,6 +351,9 @@ class LibraryRepository {
                 _validDuration(existingDurationSource?.durationSeconds) ??
                 _validDuration(
                   existingSourceResult?.metadata['durationSeconds'],
+                ) ??
+                _validDuration(
+                  existingDurationSource?.metadata['durationSeconds'],
                 );
             final incomingDurationIsProven =
                 incomingDuration != null &&

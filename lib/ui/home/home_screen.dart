@@ -961,6 +961,22 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
             style: Theme.of(context).textTheme.labelMedium,
           ),
         ),
+        if (usable.isEmpty &&
+            !comparison.discovering &&
+            !comparison.noUsableLyrics &&
+            comparison.discoveryError == null)
+          VerseEmptyState(
+            key: const ValueKey('version-filters-empty'),
+            icon: Icons.filter_alt_off_outlined,
+            title: l10n.emptyFiltered,
+            actionLabel: l10n.actionClear,
+            onAction: () {
+              widget.controller.setSearchFilter('chordsOnly', false);
+              widget.controller.setSearchFilter('timedOnly', false);
+              widget.controller.setSearchFilter('language', '');
+              widget.controller.setSearchFilter('durationBucket', '');
+            },
+          ),
         for (final version in usable)
           _sourceVersionCard(
             context,

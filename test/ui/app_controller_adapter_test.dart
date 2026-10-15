@@ -147,6 +147,66 @@ void main() {
     },
   );
 
+  test(
+    'resave uses candidate metadata as duration provenance fallback',
+    () async {
+      const selected = SongCandidate(
+        providerId: 'genius',
+        id: 'amazing-grace',
+        title: 'Amazing Grace',
+        artist: 'Judy Collins',
+        durationSeconds: 90,
+      );
+      const previousSource = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'lrclib',
+          id: 'amazing-grace-recording',
+          title: 'Amazing Grace',
+          artist: 'Judy Collins',
+          metadata: {'durationSeconds': 90},
+        ),
+        body: 'Amazing grace, how sweet the sound',
+        matchKind: MatchKind.sameSong,
+      );
+      final previousCombined = combineSources(selected, [
+        previousSource,
+      ], preferredSourceId: previousSource.id);
+      await app.saveSong(
+        previousCombined.copyWith(
+          extra: {
+            ...previousCombined.extra,
+            'savedSourceId': previousSource.id,
+          },
+        ),
+      );
+
+      const updatedSource = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'lrclib',
+          id: 'amazing-grace-recording',
+          title: 'Amazing Grace',
+          artist: 'Judy Collins',
+          metadata: {'durationSeconds': 247},
+        ),
+        body: 'Amazing grace, how sweet the sound',
+        matchKind: MatchKind.sameSong,
+      );
+      app.selection = selected;
+      app.results = [updatedSource];
+      app.combined = combineSources(selected, [updatedSource]);
+      ui.selectVersion(updatedSource.id);
+
+      await ui.saveSelectedVersion();
+
+      expect(app.songs, hasLength(1));
+      expect(app.songs.single.metadata['durationSeconds'], 247);
+      expect(
+        app.songs.single.extra['fieldOrigins']['durationSeconds'],
+        updatedSource.id,
+      );
+    },
+  );
+
   test('resaving a source preserves a user-edited duration', () async {
     const selected = SongCandidate(
       providerId: 'genius',
@@ -310,6 +370,152 @@ void main() {
       'catalog:one',
       'catalog:two',
     ]);
+  });
+
+  test(
+    'filtering a selected source saves the source currently shown as selected',
+    () async {
+      ui.dispose();
+      app.dispose();
+      const selected = SongCandidate(
+        providerId: 'plain',
+        id: 'sample-song',
+        title: 'Sample Song',
+        artist: 'Test Artist',
+      );
+      app = AppController(
+        repository: repository,
+        discovery: SourceDiscoveryService([
+          _StatusProvider(
+            id: 'plain',
+            capabilities: const {'lyrics'},
+            selected: selected,
+            body: 'A plain lyric line\nAnother plain line',
+          ),
+          _StatusProvider(
+            id: 'chords',
+            capabilities: const {'lyrics'},
+            selected: selected,
+            body: '[C]A chord lyric line\n[G]Another chord line',
+          ),
+        ]),
+      );
+      await app.initialize();
+      app.settings['catalog'] = 'plain';
+      ui = AppControllerAdapter(app);
+      ui.setQuery('sample song');
+      await ui.submitSearch();
+      await ui.selectReference(
+        const SearchReferenceData(
+          id: 'plain:sample-song',
+          title: 'Sample Song',
+          artist: 'Test Artist',
+        ),
+      );
+      expect(
+        ui.state.comparison,
+        isNotNull,
+        reason:
+            'selection=${app.selection?.identity}; query=${ui.state.query}; '
+            'suggestions=${app.suggestions.map((item) => item.identity).toList()}; '
+            'results=${app.results.map((item) => item.id).toList()}; '
+            'combined=${app.combined?.extra['selectedSourceId']}',
+      );
+      ui.selectVersion('plain:sample-song');
+
+      ui.setSearchFilter('chordsOnly', true);
+      final displayedSelection = ui.state.comparison!.selected;
+      expect(displayedSelection?.id, 'combined');
+      expect(ui.state.comparison!.selectedVersionId, 'combined');
+
+      await ui.saveSelectedVersion();
+
+      final saved = app.songs.single;
+      expect(
+        saved.extra['selectedSourceId'],
+        app.combined!.extra['selectedSourceId'],
+      );
+      expect(saved.extra['selectedSourceId'], isNot('plain:sample-song'));
+    },
+  );
+
+  test('saving is blocked when filters leave no usable selection', () async {
+    ui.dispose();
+    app.dispose();
+    const selected = SongCandidate(
+      providerId: 'plain',
+      id: 'sample-song',
+      title: 'Sample Song',
+      artist: 'Test Artist',
+    );
+    app = AppController(
+      repository: repository,
+      discovery: SourceDiscoveryService([
+        _StatusProvider(
+          id: 'plain',
+          capabilities: const {'lyrics'},
+          selected: selected,
+          body: 'A plain lyric line\nAnother plain line',
+        ),
+      ]),
+    );
+    await app.initialize();
+    app.settings['catalog'] = 'plain';
+    ui = AppControllerAdapter(app);
+    ui.setQuery('sample song');
+    await ui.submitSearch();
+    await ui.selectReference(
+      const SearchReferenceData(
+        id: 'plain:sample-song',
+        title: 'Sample Song',
+        artist: 'Test Artist',
+      ),
+    );
+    ui.setSearchFilter('chordsOnly', true);
+
+    expect(ui.state.comparison!.selected, isNull);
+    await ui.saveSelectedVersion();
+
+    expect(app.songs, isEmpty);
+  });
+
+  test('version duration falls back to valid result metadata', () async {
+    ui.dispose();
+    app.dispose();
+    const selected = SongCandidate(
+      providerId: 'plain',
+      id: 'sample-song',
+      title: 'Sample Song',
+      artist: 'Test Artist',
+      durationSeconds: double.infinity,
+    );
+    app = AppController(
+      repository: repository,
+      discovery: SourceDiscoveryService([
+        _StatusProvider(
+          id: 'plain',
+          capabilities: const {'lyrics'},
+          selected: selected,
+          body: 'A plain lyric line\nAnother plain line',
+          resultMetadata: const {'durationSeconds': 247},
+        ),
+      ]),
+    );
+    await app.initialize();
+    app.settings['catalog'] = 'plain';
+    ui = AppControllerAdapter(app);
+    ui.setQuery('sample song');
+    await ui.submitSearch();
+    await ui.selectReference(
+      const SearchReferenceData(
+        id: 'plain:sample-song',
+        title: 'Sample Song',
+        artist: 'Test Artist',
+      ),
+    );
+
+    expect(ui.state.comparison!.alternatives.single.durationSeconds, 247);
+    expect(ui.state.comparison!.suggested!.durationSeconds, 247);
   });
 
   test(
@@ -483,7 +689,9 @@ void main() {
   test(
     'reader state reports timing availability and estimated duration',
     () async {
-      await app.saveSong(_song(timingTracks: [_track()]));
+      await app.saveSong(
+        _song(timingTracks: [_track()], metadata: {'durationSeconds': 0}),
+      );
       app.settings['timingMode'] = 'timed';
 
       await ui.openSong('song');
@@ -620,6 +828,11 @@ void main() {
       );
       await firstResult.future.timeout(const Duration(seconds: 2));
       ui.selectVersion('catalog:sample-song');
+      expect(
+        ui.state.comparison?.selected?.id,
+        'catalog:sample-song',
+        reason: 'explicit selection remains visible while discovery is active',
+      );
       releaseSlowProvider.complete();
       await selecting;
 
@@ -754,6 +967,7 @@ class _StatusProvider implements LyricsProvider {
     this.body = '',
     this.timingOnly = false,
     this.metadataOnly = false,
+    this.resultMetadata = const {},
     this.failureCode,
     this.waitBeforeResolve,
   });
@@ -763,6 +977,7 @@ class _StatusProvider implements LyricsProvider {
   final SongCandidate selected;
   final String body;
   final bool timingOnly, metadataOnly;
+  final JsonMap resultMetadata;
   final String? failureCode;
   final Future<void>? waitBeforeResolve;
 
@@ -795,7 +1010,7 @@ class _StatusProvider implements LyricsProvider {
     return SourceResult(
       candidate: _candidate,
       body: body,
-      metadata: metadataOnly ? const {'title': 'Sample Song'} : const {},
+      metadata: {if (metadataOnly) 'title': 'Sample Song', ...resultMetadata},
       timingTracks: timingOnly
           ? const [
               TimingTrack(

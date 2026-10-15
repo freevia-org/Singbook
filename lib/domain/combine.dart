@@ -208,7 +208,8 @@ SongDocument combineSources(
   if (preferredSourceId != null) {
     final preferredDuration =
         _validDuration(best.candidate.durationSeconds) ??
-        _validDuration(best.metadata['durationSeconds']);
+        _validDuration(best.metadata['durationSeconds']) ??
+        _validDuration(best.candidate.metadata['durationSeconds']);
     if (preferredDuration != null) {
       metadata['durationSeconds'] = preferredDuration;
       origins['durationSeconds'] = best.id;
@@ -226,14 +227,19 @@ SongDocument combineSources(
     'attribution',
   };
   for (final source in [best, ...matching.where((s) => s.id != best.id)]) {
+    final candidateDuration =
+        _validDuration(source.candidate.durationSeconds) ??
+        _validDuration(source.candidate.metadata['durationSeconds']);
     final facts = {
       ...source.candidate.metadata,
       if (source.candidate.album != null) 'album': source.candidate.album,
-      if (_validDuration(source.candidate.durationSeconds) != null)
-        'durationSeconds': _validDuration(source.candidate.durationSeconds),
+      if (candidateDuration != null) 'durationSeconds': candidateDuration,
       ...source.metadata,
     };
-    final sourceDuration = _validDuration(facts['durationSeconds']);
+    final sourceDuration =
+        _validDuration(source.metadata['durationSeconds']) ??
+        candidateDuration ??
+        _validDuration(facts['durationSeconds']);
     if (facts.containsKey('durationSeconds') && sourceDuration == null) {
       facts.remove('durationSeconds');
     } else if (sourceDuration != null) {

@@ -164,6 +164,73 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets(
+    'filtered empty state clears all version filters and cannot save',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(360, 640);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+
+      final controller = _LiveFlowController(
+        const VerseUiState(
+          homeListMode: HomeListMode.online,
+          query: 'signal',
+          searchState: LoadState.loaded,
+          searchFilters: SearchFilterData(
+            chordsOnly: true,
+            timedOnly: true,
+            language: 'uk',
+            durationBucket: 'short',
+          ),
+          comparison: SearchComparisonData(
+            reference: SearchReferenceData(
+              id: 'signal',
+              title: 'Signal Song',
+              artist: 'The Signals',
+            ),
+            suggested: null,
+            alternatives: [
+              SourceVersionData(
+                id: 'lyrics-only',
+                providerId: 'catalog',
+                providerName: 'Catalog',
+                title: 'Signal Song',
+                artist: 'The Signals',
+                hasLyrics: true,
+                isUsableVersion: false,
+              ),
+            ],
+          ),
+        ),
+      );
+      addTearDown(controller.dispose);
+      await _pumpHome(tester, controller);
+
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(VerseHomeScreen)),
+      );
+      expect(
+        find.byKey(const ValueKey('version-filters-empty')),
+        findsOneWidget,
+      );
+      expect(find.text(l10n.emptyFiltered), findsOneWidget);
+      expect(find.text(l10n.actionClear), findsOneWidget);
+      expect(find.byKey(const ValueKey('save-open-lyrics')), findsNothing);
+
+      await tester.tap(find.text(l10n.actionClear));
+      await tester.pumpAndSettle();
+      expect(controller.searchFilterChanges, [
+        ('chordsOnly', false),
+        ('timedOnly', false),
+        ('language', ''),
+        ('durationBucket', ''),
+      ]);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+  );
+
   testWidgets('large text comparison remains usable in landscape', (
     tester,
   ) async {
@@ -460,6 +527,7 @@ class _LiveFlowController extends VerseUiController {
   bool estimatedTimingRequested = false;
   bool playbackStarted = false;
   double? selectedSpeed;
+  final searchFilterChanges = <(String, Object?)>[];
 
   @override
   VerseUiState get state => _state;
@@ -499,6 +567,11 @@ class _LiveFlowController extends VerseUiController {
   @override
   Future<void> setPlaybackSpeed(double speed) async {
     selectedSpeed = speed;
+  }
+
+  @override
+  void setSearchFilter(String key, Object? value) {
+    searchFilterChanges.add((key, value));
   }
 
   @override
