@@ -1478,20 +1478,20 @@ class AppLocalizationsGa extends AppLocalizations {
 
   @override
   String get editorDurationInvalid =>
-      'Enter seconds or minutes and seconds, such as 3:45.';
+      'Cuir isteach soicind nó nóiméid agus soicind, mar shampla 3:45.';
 
   @override
-  String get editorNumberInvalid => 'Enter a number.';
+  String get editorNumberInvalid => 'Cuir isteach uimhir.';
 
   @override
-  String get accountReplaceConfirmTitle => 'Delete local songs?';
+  String get accountReplaceConfirmTitle => 'Scrios amhráin áitiúla?';
 
   @override
   String get accountReplaceConfirmBody =>
-      'Songs and setlists on this device that are not in the new account will be permanently deleted. This can\'t be undone.';
+      'Scriosfar go buan na hamhráin agus na liostaí amhrán ar an ngléas seo nach bhfuil sa chuntas nua. Ní féidir é seo a chealú.';
 
   @override
-  String get accountReplaceConfirmAction => 'Delete and replace';
+  String get accountReplaceConfirmAction => 'Scrios agus cuir ina n-ionad';
 
   @override
   String get accountSuspiciousTitle => 'Míreanna ar iarraidh ó Google Drive';
