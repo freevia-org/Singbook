@@ -60,5 +60,14 @@ database names and `x_verse` ChordPro payloads, timing, and provenance compatibl
 - Run `adb devices` first and reuse the existing emulator when available.
 - Coordinate physical-device use with its current owner. Preserve app data;
   do not uninstall or clear a physical app to work around an install failure.
+- Flutter integration tests uninstall their application package at teardown by
+  default. Use an isolated test installation without a user library, and pass
+  `--no-uninstall` whenever package retention is required. A later
+  `adb install -r` cannot recover data from a package already uninstalled.
+- Before testing an existing installation, preserve a complete, consistent
+  library snapshot and verify song IDs and content hashes after normal launch.
+  Check signer/version compatibility before installing: Flutter can also retry
+  a failed installation by uninstalling the package. Never allow that fallback
+  against an installation whose data must be preserved.
 - Serialize operations sharing build directories or device state. Do not stop
   unrelated processes or reset an ADB server used by another session.
