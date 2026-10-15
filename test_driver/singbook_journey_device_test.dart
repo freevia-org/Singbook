@@ -131,7 +131,7 @@ class _NativeScreenshotWatcher {
       );
       if (window.exitCode != 0 ||
           !RegExp(
-            r'mCurrentFocus=.*org\.freevia\.verse',
+            r'mCurrentFocus=.*org\.freevia\.singbook(?:[/\s}]|$)',
           ).hasMatch(window.stdout as String)) {
         throw StateError('org.freevia.singbook is not the focused window');
       }

@@ -11,9 +11,14 @@ A local-first Flutter songbook for Android and iOS. Search Genius, compare lyric
 Use Flutter 3.44.8 / Dart 3.12, JDK 21 and Android SDK 36. The app ID is `org.freevia.singbook`. Android 24+ is supported. iOS builds require macOS/Xcode; they have not been validated on this Windows workspace.
 
 Singbook uses its open-book and floating-note artwork, navy/parchment
-light theme and navy/amber dark theme. The existing application ID, local
-database name and `x_verse` file directives remain stable so the branded update
-preserves installed libraries and previously exported songs.
+light theme and navy/amber dark theme. The database name and `x_verse` file
+directives remain stable for saved-song compatibility.
+
+The release application ID is `org.freevia.singbook`. Earlier test builds used
+`org.freevia.verse`, so the release installs as a separate app and cannot read
+that app's private library automatically. Export the library from the old app
+and import it into the new app before removing the old installation. Keep the
+old app and its data until the imported songs and setlists have been verified.
 
 Copy `config/defines.example.json` to `config/local.defines.json` and supply a Genius **client access token**. Do not supply a client secret. The local file is ignored by Git. A token bundled in a mobile binary is public configuration and can be extracted.
 
