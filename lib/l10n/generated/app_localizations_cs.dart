@@ -624,10 +624,10 @@ class AppLocalizationsCs extends AppLocalizations {
       'Další část · podržením přejdete na další píseň v programu';
 
   @override
-  String get playerPreviousSong => 'Předchozí skladba';
+  String get playerPreviousSong => 'Předchozí píseň';
 
   @override
-  String get playerNextSong => 'Následující skladba';
+  String get playerNextSong => 'Následující píseň';
 
   @override
   String get editorTitle => 'Upravit píseň';
