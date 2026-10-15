@@ -126,6 +126,12 @@ class AppLocalizationsBg extends AppLocalizations {
   String get searchCatalogHint => 'Търсене на песен или изпълнител';
 
   @override
+  String get searchChangeSong => 'Смени песента';
+
+  @override
+  String get searchSelectedPreview => 'Избран преглед';
+
+  @override
   String get searchSubmit => 'Търсене';
 
   @override
@@ -275,7 +281,16 @@ class AppLocalizationsBg extends AppLocalizations {
   String get searchLanguage => 'Език';
 
   @override
+  String get searchViewVersions => 'Виж версиите';
+
+  @override
   String get searchSaved => 'Песента е запазена в библиотеката.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Запази и отвори текста';
+
+  @override
+  String get searchOtherResults => 'Други резултати';
 
   @override
   String get searchSaveFailed => 'Песента не бе запазена.';
@@ -546,6 +561,9 @@ class AppLocalizationsBg extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Запазено';
+
+  @override
   String get readerEdit => 'Редактиране на текста и данните';
 
   @override
@@ -577,7 +595,21 @@ class AppLocalizationsBg extends AppLocalizations {
   String get playerTimedLyrics => 'Текст с времеви маркери';
 
   @override
+  String get playerStartScroll => 'Започни автоматично превъртане';
+
+  @override
   String get playerEstimatedPace => 'Приблизително темпо';
+
+  @override
+  String get playerScrollSpeed => 'Скорост на превъртане';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Очаквана продължителност: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Превъртане на текста · без звук';
 
   @override
   String get playerManualScroll => 'Ръчно превъртане';

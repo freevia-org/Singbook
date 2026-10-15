@@ -126,6 +126,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get searchCatalogHint => 'ابحث عن أغنية أو فنان';
 
   @override
+  String get searchChangeSong => 'تغيير الأغنية';
+
+  @override
+  String get searchSelectedPreview => 'معاينة محددة';
+
+  @override
   String get searchSubmit => 'بحث';
 
   @override
@@ -275,7 +281,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get searchLanguage => 'اللغة';
 
   @override
+  String get searchViewVersions => 'عرض النسخ';
+
+  @override
   String get searchSaved => 'تم حفظ الأغنية في مكتبتك.';
+
+  @override
+  String get searchSaveOpenLyrics => 'حفظ وفتح الكلمات';
+
+  @override
+  String get searchOtherResults => 'نتائج أخرى';
 
   @override
   String get searchSaveFailed => 'تعذّر حفظ هذه الأغنية.';
@@ -554,6 +569,9 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'تم الحفظ';
+
+  @override
   String get readerEdit => 'تعديل الكلمات والتفاصيل';
 
   @override
@@ -585,7 +603,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get playerTimedLyrics => 'كلمات متزامنة';
 
   @override
+  String get playerStartScroll => 'بدء التمرير التلقائي';
+
+  @override
   String get playerEstimatedPace => 'سرعة تقديرية';
+
+  @override
+  String get playerScrollSpeed => 'سرعة التمرير';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'المدة المقدرة: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'تمرير الكلمات · بدون صوت';
 
   @override
   String get playerManualScroll => 'تمرير يدوي';

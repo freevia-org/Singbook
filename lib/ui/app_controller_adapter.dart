@@ -59,13 +59,14 @@ class AppControllerAdapter extends VerseUiController {
   String _query = '';
   String? _songId, _setlistId, _setlistEntryId, _selectedVersionId;
   String? _selectedQuery;
+  List<SongCandidate> _cachedAutocomplete = const [];
   SongDocument? _draftSong;
   SongEditorData? _editorData;
   bool _editing = false, _playing = false, _editingSetlist = false;
   bool _editorDirty = false, _loadingMoreRecent = false, _disposed = false;
   bool _conflictFilter = false;
   String? _editorBaseHash;
-  double _progress = 0, _transpose = 0;
+  double _progress = 0, _transpose = 0, _playbackSpeed = 1;
   Timer? _searchDebounce, _playerTimer;
   final _codec = ChordProCodec();
 
@@ -281,18 +282,52 @@ class AppControllerAdapter extends VerseUiController {
       }
     }
     final comparison = _comparison();
+    final autocompleteCandidates = app.suggestions.isNotEmpty
+        ? app.suggestions
+        : _cachedAutocomplete;
+    final rankedAutocomplete =
+        autocompleteCandidates
+            .asMap()
+            .entries
+            .where((entry) => _matchesFilters(entry.value))
+            .toList()
+          ..sort((a, b) {
+            final relevance = _candidateRelevance(
+              b.value,
+              _query,
+            ).compareTo(_candidateRelevance(a.value, _query));
+            return relevance != 0 ? relevance : a.key.compareTo(b.key);
+          });
     final tuning = song?.metadata['tuning'];
     final tempo = song?.metadata['tempo'];
+    final selectedSourceId = song?.extra['selectedSourceId'];
+    final selectedSource = song?.sources
+        .where((source) => source.id == selectedSourceId)
+        .firstOrNull;
+    final sourceProviderId = selectedSource?.candidate.providerId;
+    final readerSource = sourceProviderId == null
+        ? null
+        : app.providers
+                  .where((provider) => provider.id == sourceProviderId)
+                  .firstOrNull
+                  ?.name ??
+              sourceProviderId;
+    final readerHasTiming =
+        timingMode == 'timed' &&
+        song != null &&
+        _timedLineStarts(data, song, timingMode).isNotEmpty;
+    final readerCanCompareVersions =
+        song != null &&
+        comparison != null &&
+        _songMatchesSearchReference(song, comparison.reference.id);
     return VerseUiState(
       route: _route,
       activeTab: _tab,
       homeListMode: _homeMode,
       query: _query,
-      autocomplete: app.suggestions
-          .where((candidate) => _query.trim() == app.query.trim())
-          .where(_matchesFilters)
-          .map(_reference)
-          .toList(),
+      autocomplete: _query.trim() == app.query.trim()
+          ? rankedAutocomplete.map((entry) => _reference(entry.value)).toList()
+          : const [],
       searchState: comparison != null
           ? LoadState.loaded
           : _query.trim().length >= 2 && _query != app.query
@@ -347,6 +382,7 @@ class AppControllerAdapter extends VerseUiController {
       song: song == null ? null : _songCard(song),
       songLines: data,
       isPlaying: _playing,
+      playbackSpeed: _playbackSpeed,
       playerSections: playerSections,
       activeSetlist: setlist == null ? null : _setlistCard(setlist),
       editing: _editing,
@@ -357,6 +393,11 @@ class AppControllerAdapter extends VerseUiController {
       readerCapo: displayedCapo?.toString(),
       readerTuning: tuning?.toString(),
       readerTempo: tempo?.toString(),
+      readerHasTiming: readerHasTiming,
+      readerDurationEstimated:
+          song != null && song.metadata['durationSeconds'] is! num,
+      readerSource: readerSource,
+      readerCanCompareVersions: readerCanCompareVersions,
     );
   }
 
@@ -394,9 +435,7 @@ class AppControllerAdapter extends VerseUiController {
   );
 
   SetlistCardData _setlistCard(SetlistDocument value) {
-    final entries = [
-      for (final entry in value.entries) _entryData(entry),
-    ];
+    final entries = [for (final entry in value.entries) _entryData(entry)];
     return SetlistCardData(
       id: value.id,
       title: value.name,
@@ -434,6 +473,7 @@ class AppControllerAdapter extends VerseUiController {
   );
 
   bool _matchesFilters(SongCandidate candidate) {
+    if (_isEditorialCandidate(candidate)) return false;
     if (_filters.field == 'title' && !_contains(candidate.title, _query)) {
       return false;
     }
@@ -448,6 +488,41 @@ class AppControllerAdapter extends VerseUiController {
 
   bool _contains(String value, String query) =>
       value.toLowerCase().contains(query.trim().toLowerCase());
+
+  bool _isEditorialCandidate(SongCandidate candidate) {
+    final kind = candidate.metadata['kind']?.toString().toLowerCase();
+    if (const {
+      'article',
+      'editorial',
+      'news',
+      'release_calendar',
+    }.contains(kind)) {
+      return true;
+    }
+    return RegExp(
+      r'\brelease\s+calendar\b',
+      caseSensitive: false,
+    ).hasMatch(candidate.title);
+  }
+
+  int _candidateRelevance(SongCandidate candidate, String query) {
+    final tokens = RegExp(
+      r'[\p{L}\p{N}]+',
+      unicode: true,
+    ).allMatches(query.toLowerCase()).map((match) => match.group(0)!).toSet();
+    if (tokens.isEmpty) return 0;
+    final title = RegExp(r'[\p{L}\p{N}]+', unicode: true)
+        .allMatches(candidate.title.toLowerCase())
+        .map((match) => match.group(0)!)
+        .toSet();
+    final artist = RegExp(r'[\p{L}\p{N}]+', unicode: true)
+        .allMatches(candidate.artist.toLowerCase())
+        .map((match) => match.group(0)!)
+        .toSet();
+    return tokens.where(title.contains).length * 4 +
+        tokens.where(artist.contains).length -
+        title.difference(tokens).length;
+  }
 
   SearchComparisonData? _comparison() {
     final candidate = app.selection;
@@ -477,7 +552,17 @@ class AppControllerAdapter extends VerseUiController {
             providerId: 'combined',
             // The UI renders combined entries from [sourceCount]; there is no
             // provider name to show.
-            providerName: '',
+            providerName: contributorCount == 1 && chosenSource != null
+                ? app.providers
+                          .where(
+                            (provider) =>
+                                provider.id ==
+                                chosenSource.candidate.providerId,
+                          )
+                          .firstOrNull
+                          ?.name ??
+                      chosenSource.candidate.providerId
+                : '',
             sourceCount: contributorCount,
             title: combined.title,
             artist: combined.artist,
@@ -497,6 +582,8 @@ class AppControllerAdapter extends VerseUiController {
                 !app.discovering &&
                 combined.body.trim().isNotEmpty &&
                 app.savedResultId() == null,
+            savedSongId: app.savedResultId(),
+            underlyingSourceId: contributorCount == 1 ? chosenSource?.id : null,
           );
     final chosenId =
         _selectedVersionId ?? suggested?.id ?? alternatives.firstOrNull?.id;
@@ -529,6 +616,10 @@ class AppControllerAdapter extends VerseUiController {
       providerChecks: checks,
     );
   }
+
+  bool _songMatchesSearchReference(SongDocument song, String referenceId) =>
+      song.selectedRecording?.identity == referenceId ||
+      song.extra['combinedSelection'] == referenceId;
 
   bool _versionMatchesFilters(SourceVersionData item) =>
       (!_filters.chordsOnly || item.hasChords) &&
@@ -595,6 +686,7 @@ class AppControllerAdapter extends VerseUiController {
           _isUsableLyricResult(result) &&
           app.combined != null &&
           savedId == null,
+      savedSongId: savedId,
     );
   }
 
@@ -787,6 +879,7 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   void setQuery(String value) {
+    if (_query.trim() != value.trim()) _cachedAutocomplete = const [];
     _query = value;
     app.errorCode = null;
     if (_selectedQuery != value.trim()) {
@@ -809,10 +902,21 @@ class AppControllerAdapter extends VerseUiController {
   }
 
   @override
+  void changeSearchSong() {
+    _selectedQuery = null;
+    _selectedVersionId = null;
+    _route = VerseRoute.main;
+    _tab = VerseTab.home;
+    _homeMode = HomeListMode.online;
+    notifyListeners();
+  }
+
+  @override
   Future<void> submitSearch() async {
     _homeMode = HomeListMode.online;
     _searchDebounce?.cancel();
     await app.search(_query);
+    _cachedAutocomplete = app.suggestions;
     notifyListeners();
   }
 
@@ -867,7 +971,11 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> selectReference(SearchReferenceData reference) async {
-    final candidate = app.suggestions
+    final candidates = app.suggestions.isNotEmpty
+        ? app.suggestions
+        : _cachedAutocomplete;
+    if (app.suggestions.isNotEmpty) _cachedAutocomplete = app.suggestions;
+    final candidate = candidates
         .where((item) => item.identity == reference.id)
         .firstOrNull;
     if (candidate == null) return;
@@ -893,6 +1001,18 @@ class AppControllerAdapter extends VerseUiController {
     if (_disposed) return;
     final combined = app.combined;
     final combinedMatchesFilters = _combinedMatchesFilters(combined);
+    if (_selectedVersionId == 'combined' && combinedMatchesFilters) return;
+    if (_selectedVersionId != null) {
+      final selectedResult = app.results
+          .where((item) => item.id == _selectedVersionId)
+          .firstOrNull;
+      if (selectedResult != null &&
+          selectedResult.matchKind != MatchKind.rejected &&
+          _isUsableLyricResult(selectedResult) &&
+          _versionMatchesFilters(_version(selectedResult))) {
+        return;
+      }
+    }
     _selectedVersionId = combinedMatchesFilters
         ? null
         : app.results
@@ -930,6 +1050,27 @@ class AppControllerAdapter extends VerseUiController {
     _homeMode = HomeListMode.recent;
     await _openSong(song.id);
     postNotice(UiNotice.songSaved);
+  }
+
+  @override
+  Future<void> compareCurrentSongVersions() async {
+    final song = currentSong;
+    final referenceId = app.selection?.identity;
+    if (song == null ||
+        referenceId == null ||
+        !_songMatchesSearchReference(song, referenceId) ||
+        _selectedQuery != _query.trim() ||
+        _query.trim() != app.query.trim()) {
+      return;
+    }
+    _setlistId = null;
+    _setlistEntryId = null;
+    _route = VerseRoute.main;
+    _tab = VerseTab.home;
+    _homeMode = HomeListMode.online;
+    _selectedQuery = app.query.trim();
+    _selectedVersionId = song.extra['selectedSourceId'] as String?;
+    notifyListeners();
   }
 
   @override
@@ -1199,11 +1340,26 @@ class AppControllerAdapter extends VerseUiController {
     if (_playing) {
       _resetPlayClock();
       _playerTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-        _advancePlayer(_playBase + _playWatch.elapsedMilliseconds / 1000);
+        _advancePlayer(
+          _playBase + _playWatch.elapsedMilliseconds / 1000 * _playbackSpeed,
+        );
       });
     } else {
       _playWatch.stop();
     }
+    notifyListeners();
+  }
+
+  @override
+  Future<void> setPlaybackSpeed(double speed) async {
+    if (![.5, 1, 1.5, 2].contains(speed) || speed == _playbackSpeed) return;
+    if (_playing) {
+      _advancePlayer(
+        _playBase + _playWatch.elapsedMilliseconds / 1000 * _playbackSpeed,
+      );
+    }
+    _playbackSpeed = speed;
+    if (_playing) _resetPlayClock();
     notifyListeners();
   }
 

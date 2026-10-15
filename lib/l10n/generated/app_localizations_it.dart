@@ -126,6 +126,12 @@ class AppLocalizationsIt extends AppLocalizations {
   String get searchCatalogHint => 'Cerca un brano o un artista';
 
   @override
+  String get searchChangeSong => 'Cambia canzone';
+
+  @override
+  String get searchSelectedPreview => 'Anteprima selezionata';
+
+  @override
   String get searchSubmit => 'Cerca';
 
   @override
@@ -275,7 +281,16 @@ class AppLocalizationsIt extends AppLocalizations {
   String get searchLanguage => 'Lingua';
 
   @override
+  String get searchViewVersions => 'Vedi versioni';
+
+  @override
   String get searchSaved => 'Brano salvato nella tua raccolta.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Salva e apri il testo';
+
+  @override
+  String get searchOtherResults => 'Altri risultati';
 
   @override
   String get searchSaveFailed => 'Impossibile salvare il brano.';
@@ -547,6 +562,9 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Salvato';
+
+  @override
   String get readerEdit => 'Modifica testo e dettagli';
 
   @override
@@ -578,7 +596,21 @@ class AppLocalizationsIt extends AppLocalizations {
   String get playerTimedLyrics => 'Testi sincronizzati';
 
   @override
+  String get playerStartScroll => 'Avvia scorrimento automatico';
+
+  @override
   String get playerEstimatedPace => 'Velocità stimata';
+
+  @override
+  String get playerScrollSpeed => 'Velocità di scorrimento';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Durata stimata: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Scorrimento testo · senza audio';
 
   @override
   String get playerManualScroll => 'Scorrimento manuale';

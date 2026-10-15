@@ -126,6 +126,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get searchCatalogHint => 'Поиск песни или исполнителя';
 
   @override
+  String get searchChangeSong => 'Сменить песню';
+
+  @override
+  String get searchSelectedPreview => 'Выбранный предпросмотр';
+
+  @override
   String get searchSubmit => 'Найти';
 
   @override
@@ -275,7 +281,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get searchLanguage => 'Язык';
 
   @override
+  String get searchViewVersions => 'Посмотреть версии';
+
+  @override
   String get searchSaved => 'Песня сохранена в библиотеке.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Сохранить и открыть текст';
+
+  @override
+  String get searchOtherResults => 'Другие результаты';
 
   @override
   String get searchSaveFailed => 'Не удалось сохранить песню.';
@@ -548,6 +563,9 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Сохранено';
+
+  @override
   String get readerEdit => 'Изменить текст и сведения';
 
   @override
@@ -579,7 +597,21 @@ class AppLocalizationsRu extends AppLocalizations {
   String get playerTimedLyrics => 'Синхронизированный текст';
 
   @override
+  String get playerStartScroll => 'Начать автопрокрутку';
+
+  @override
   String get playerEstimatedPace => 'Примерная скорость';
+
+  @override
+  String get playerScrollSpeed => 'Скорость прокрутки';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Примерная длительность: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Прокрутка текста · без аудио';
 
   @override
   String get playerManualScroll => 'Ручная прокрутка';

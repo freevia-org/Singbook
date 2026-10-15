@@ -272,6 +272,8 @@ class SourceVersionData {
     this.status = LoadState.loaded,
     this.bodyPreview = const [],
     this.canSave = false,
+    this.savedSongId,
+    this.underlyingSourceId,
   });
   final String id, providerId, providerName, title, artist;
   final String? album, artworkUrl;
@@ -283,6 +285,8 @@ class SourceVersionData {
   final bool isUsableVersion;
   final LoadState status;
   final List<LyricLineData> bodyPreview;
+  final String? savedSongId;
+  final String? underlyingSourceId;
 }
 
 @immutable
@@ -385,6 +389,11 @@ class VerseUiState {
     this.showChords = true,
     this.autoscroll = true,
     this.timingMode = 'estimated',
+    this.readerHasTiming = false,
+    this.readerDurationEstimated = false,
+    this.readerSource,
+    this.readerCanCompareVersions = false,
+    this.playbackSpeed = 1,
     this.languageCode,
     this.song,
     this.songLines = const [],
@@ -442,6 +451,11 @@ class VerseUiState {
       showChords = o.showChords,
       autoscroll = o.autoscroll,
       timingMode = o.timingMode,
+      readerHasTiming = o.readerHasTiming,
+      readerDurationEstimated = o.readerDurationEstimated,
+      readerSource = o.readerSource,
+      readerCanCompareVersions = o.readerCanCompareVersions,
+      playbackSpeed = o.playbackSpeed,
       languageCode = o.languageCode,
       song = o.song,
       songLines = o.songLines,
@@ -495,6 +509,10 @@ class VerseUiState {
   final double lyricsFontSize;
   final bool showChords, autoscroll;
   final String timingMode;
+  final bool readerHasTiming, readerDurationEstimated;
+  final String? readerSource;
+  final bool readerCanCompareVersions;
+  final double playbackSpeed;
   final String? languageCode;
   final SongCardData? song;
   final List<LyricLineData> songLines;
@@ -515,10 +533,8 @@ abstract class VerseUiController extends ChangeNotifier {
   VerseUiState get state;
 
   /// Playback position; ticks here do not notify the controller's listeners.
-  ValueListenable<PlayerPosition> get playerPosition =>
-      _fallbackPosition ??= ValueNotifier(
-        PlayerPosition(state.progressSeconds, state.currentLineId),
-      );
+  ValueListenable<PlayerPosition> get playerPosition => _fallbackPosition ??=
+      ValueNotifier(PlayerPosition(state.progressSeconds, state.currentLineId));
   ValueNotifier<PlayerPosition>? _fallbackPosition;
 
   /// Outcomes to report to the person (see [UiNotice]).
@@ -528,6 +544,7 @@ abstract class VerseUiController extends ChangeNotifier {
   void setTab(VerseTab tab);
   void setHomeListMode(HomeListMode mode);
   void setQuery(String value);
+  void changeSearchSong() => setQuery('');
   Future<void> submitSearch();
   void toggleSearchFilters();
   void setSearchFilter(String key, Object? value);
@@ -537,6 +554,7 @@ abstract class VerseUiController extends ChangeNotifier {
   Future<void> retrySelectedSongDiscovery() async {}
   void selectVersion(String versionId);
   Future<void> saveSelectedVersion();
+  Future<void> compareCurrentSongVersions() async {}
   Future<void> openSong(String id);
   Future<void> openSetlist(String id);
   Future<void> editSong(String id);
@@ -558,6 +576,7 @@ abstract class VerseUiController extends ChangeNotifier {
   Future<void> copySetlist(String id);
   Future<void> printSetlist(String id);
   Future<void> playPause();
+  Future<void> setPlaybackSpeed(double speed) async {}
   Future<void> seek(double seconds);
   Future<void> nextSong();
   Future<void> previousSong();

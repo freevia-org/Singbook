@@ -126,6 +126,12 @@ class AppLocalizationsLt extends AppLocalizations {
   String get searchCatalogHint => 'Ieškoti dainos arba atlikėjo';
 
   @override
+  String get searchChangeSong => 'Keisti dainą';
+
+  @override
+  String get searchSelectedPreview => 'Pasirinkta peržiūra';
+
+  @override
   String get searchSubmit => 'Ieškoti';
 
   @override
@@ -275,7 +281,16 @@ class AppLocalizationsLt extends AppLocalizations {
   String get searchLanguage => 'Kalba';
 
   @override
+  String get searchViewVersions => 'Peržiūrėti versijas';
+
+  @override
   String get searchSaved => 'Daina išsaugota jūsų bibliotekoje.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Išsaugoti ir atverti žodžius';
+
+  @override
+  String get searchOtherResults => 'Kiti rezultatai';
 
   @override
   String get searchSaveFailed => 'Nepavyko išsaugoti dainos.';
@@ -554,6 +569,9 @@ class AppLocalizationsLt extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Išsaugota';
+
+  @override
   String get readerEdit => 'Redaguoti dainos tekstą ir informaciją';
 
   @override
@@ -585,7 +603,21 @@ class AppLocalizationsLt extends AppLocalizations {
   String get playerTimedLyrics => 'Dainų tekstai su laiko žymomis';
 
   @override
+  String get playerStartScroll => 'Pradėti automatinį slinkimą';
+
+  @override
   String get playerEstimatedPace => 'Numatomas tempas';
+
+  @override
+  String get playerScrollSpeed => 'Slinkimo greitis';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Numatoma trukmė: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Dainos žodžių slinkimas · be garso';
 
   @override
   String get playerManualScroll => 'Rankinis slinkimas';

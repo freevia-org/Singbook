@@ -126,6 +126,12 @@ class AppLocalizationsSl extends AppLocalizations {
   String get searchCatalogHint => 'Iščite pesem ali izvajalca';
 
   @override
+  String get searchChangeSong => 'Spremeni pesem';
+
+  @override
+  String get searchSelectedPreview => 'Izbrani predogled';
+
+  @override
   String get searchSubmit => 'Išči';
 
   @override
@@ -276,7 +282,16 @@ class AppLocalizationsSl extends AppLocalizations {
   String get searchLanguage => 'Jezik';
 
   @override
+  String get searchViewVersions => 'Prikaži različice';
+
+  @override
   String get searchSaved => 'Pesem je shranjena v vaši knjižnici.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Shrani in odpri besedilo';
+
+  @override
+  String get searchOtherResults => 'Drugi rezultati';
 
   @override
   String get searchSaveFailed => 'Pesmi ni bilo mogoče shraniti.';
@@ -554,6 +569,9 @@ class AppLocalizationsSl extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Shranjeno';
+
+  @override
   String get readerEdit => 'Uredi besedilo pesmi in podatke';
 
   @override
@@ -585,7 +603,21 @@ class AppLocalizationsSl extends AppLocalizations {
   String get playerTimedLyrics => 'Časovno usklajena besedila';
 
   @override
+  String get playerStartScroll => 'Začni samodejno drsenje';
+
+  @override
   String get playerEstimatedPace => 'Ocenjena hitrost';
+
+  @override
+  String get playerScrollSpeed => 'Hitrost drsenja';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Predvideno trajanje: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Drsenje besedila · brez zvoka';
 
   @override
   String get playerManualScroll => 'Ročno drsenje';

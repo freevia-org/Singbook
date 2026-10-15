@@ -126,6 +126,12 @@ class AppLocalizationsHi extends AppLocalizations {
   String get searchCatalogHint => 'कोई गीत या कलाकार खोजें';
 
   @override
+  String get searchChangeSong => 'गाना बदलें';
+
+  @override
+  String get searchSelectedPreview => 'चुना हुआ पूर्वावलोकन';
+
+  @override
   String get searchSubmit => 'खोजें';
 
   @override
@@ -272,7 +278,16 @@ class AppLocalizationsHi extends AppLocalizations {
   String get searchLanguage => 'भाषा';
 
   @override
+  String get searchViewVersions => 'संस्करण देखें';
+
+  @override
   String get searchSaved => 'गीत आपकी लाइब्रेरी में सहेजा गया।';
+
+  @override
+  String get searchSaveOpenLyrics => 'गीत सहेजें और खोलें';
+
+  @override
+  String get searchOtherResults => 'अन्य परिणाम';
 
   @override
   String get searchSaveFailed => 'यह गीत सहेजा नहीं जा सका।';
@@ -543,6 +558,9 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'सहेजा गया';
+
+  @override
   String get readerEdit => 'बोल और विवरण संपादित करें';
 
   @override
@@ -574,7 +592,21 @@ class AppLocalizationsHi extends AppLocalizations {
   String get playerTimedLyrics => 'समयबद्ध बोल';
 
   @override
+  String get playerStartScroll => 'ऑटो-स्क्रॉल शुरू करें';
+
+  @override
   String get playerEstimatedPace => 'अनुमानित गति';
+
+  @override
+  String get playerScrollSpeed => 'स्क्रॉल गति';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'अनुमानित अवधि: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'गीत स्क्रॉल · ऑडियो नहीं';
 
   @override
   String get playerManualScroll => 'मैन्युअल स्क्रॉल';

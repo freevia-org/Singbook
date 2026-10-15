@@ -125,6 +125,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get searchCatalogHint => '搜索歌曲或艺人';
 
   @override
+  String get searchChangeSong => '更换歌曲';
+
+  @override
+  String get searchSelectedPreview => '已选预览';
+
+  @override
   String get searchSubmit => '搜索';
 
   @override
@@ -271,7 +277,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get searchLanguage => '语言';
 
   @override
+  String get searchViewVersions => '查看版本';
+
+  @override
   String get searchSaved => '歌曲已保存到你的曲库。';
+
+  @override
+  String get searchSaveOpenLyrics => '保存并打开歌词';
+
+  @override
+  String get searchOtherResults => '其他结果';
 
   @override
   String get searchSaveFailed => '无法保存此歌曲。';
@@ -537,6 +552,9 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => '已保存';
+
+  @override
   String get readerEdit => '编辑歌词和详情';
 
   @override
@@ -568,7 +586,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get playerTimedLyrics => '带时间同步的歌词';
 
   @override
+  String get playerStartScroll => '开始自动滚动';
+
+  @override
   String get playerEstimatedPace => '估算速度';
+
+  @override
+  String get playerScrollSpeed => '滚动速度';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return '预计时长：$time';
+  }
+
+  @override
+  String get playerLyricsOnly => '歌词滚动 · 无音频';
 
   @override
   String get playerManualScroll => '手动滚动';

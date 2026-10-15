@@ -428,7 +428,7 @@ void main() {
 
       expect(find.textContaining('${l10n.editorKeyField}: D'), findsOneWidget);
       expect(find.byTooltip(l10n.songFavoriteAdd), findsOneWidget);
-      await tester.tap(find.byTooltip(l10n.playerPlay));
+      await tester.tap(find.byKey(const ValueKey('start-lyric-scroll')));
       expect(c.calls, contains('playPause'));
 
       await tester.drag(find.byType(Slider), const Offset(120, 0));

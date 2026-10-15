@@ -126,6 +126,12 @@ class AppLocalizationsCs extends AppLocalizations {
   String get searchCatalogHint => 'Hledat píseň nebo interpreta';
 
   @override
+  String get searchChangeSong => 'Změnit píseň';
+
+  @override
+  String get searchSelectedPreview => 'Vybraný náhled';
+
+  @override
   String get searchSubmit => 'Hledat';
 
   @override
@@ -275,7 +281,16 @@ class AppLocalizationsCs extends AppLocalizations {
   String get searchLanguage => 'Jazyk';
 
   @override
+  String get searchViewVersions => 'Zobrazit verze';
+
+  @override
   String get searchSaved => 'Píseň byla uložena do vaší knihovny.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Uložit a otevřít text';
+
+  @override
+  String get searchOtherResults => 'Další výsledky';
 
   @override
   String get searchSaveFailed => 'Píseň se nepodařilo uložit.';
@@ -548,6 +563,9 @@ class AppLocalizationsCs extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Uloženo';
+
+  @override
   String get readerEdit => 'Upravit text písně a informace';
 
   @override
@@ -579,7 +597,21 @@ class AppLocalizationsCs extends AppLocalizations {
   String get playerTimedLyrics => 'Texty s časováním';
 
   @override
+  String get playerStartScroll => 'Spustit automatické posouvání';
+
+  @override
   String get playerEstimatedPace => 'Odhadované tempo';
+
+  @override
+  String get playerScrollSpeed => 'Rychlost posouvání';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Odhadovaná délka: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Posouvání textu · bez zvuku';
 
   @override
   String get playerManualScroll => 'Ruční posouvání';

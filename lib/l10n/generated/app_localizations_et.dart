@@ -126,6 +126,12 @@ class AppLocalizationsEt extends AppLocalizations {
   String get searchCatalogHint => 'Otsi laulu või esitajat';
 
   @override
+  String get searchChangeSong => 'Vaheta laulu';
+
+  @override
+  String get searchSelectedPreview => 'Valitud eelvaade';
+
+  @override
   String get searchSubmit => 'Otsi';
 
   @override
@@ -274,7 +280,16 @@ class AppLocalizationsEt extends AppLocalizations {
   String get searchLanguage => 'Keel';
 
   @override
+  String get searchViewVersions => 'Vaata versioone';
+
+  @override
   String get searchSaved => 'Laul salvestati sinu kogusse.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Salvesta ja ava sõnad';
+
+  @override
+  String get searchOtherResults => 'Muud tulemused';
 
   @override
   String get searchSaveFailed => 'Laulu salvestamine ebaõnnestus.';
@@ -544,6 +559,9 @@ class AppLocalizationsEt extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Salvestatud';
+
+  @override
   String get readerEdit => 'Muuda sõnu ja andmeid';
 
   @override
@@ -575,7 +593,21 @@ class AppLocalizationsEt extends AppLocalizations {
   String get playerTimedLyrics => 'Ajastatud laulusõnad';
 
   @override
+  String get playerStartScroll => 'Alusta automaatset kerimist';
+
+  @override
   String get playerEstimatedPace => 'Hinnanguline kerimiskiirus';
+
+  @override
+  String get playerScrollSpeed => 'Kerimise kiirus';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Hinnanguline kestus: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Laulusõnade kerimine · helita';
 
   @override
   String get playerManualScroll => 'Käsitsi kerimine';

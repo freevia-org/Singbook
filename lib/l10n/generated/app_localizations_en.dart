@@ -120,10 +120,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get actionNext => 'Next';
 
   @override
-  String get searchHint => 'Search songs, artists, or lyrics';
+  String get searchHint => 'Song, artist or lyrics';
 
   @override
-  String get searchCatalogHint => 'Search for a song or artist';
+  String get searchCatalogHint => 'Song or artist';
+
+  @override
+  String get searchChangeSong => 'Change song';
+
+  @override
+  String get searchSelectedPreview => 'Selected preview';
 
   @override
   String get searchSubmit => 'Search';
@@ -272,7 +278,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchLanguage => 'Language';
 
   @override
+  String get searchViewVersions => 'View versions';
+
+  @override
   String get searchSaved => 'Song saved to your library.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Save & open lyrics';
+
+  @override
+  String get searchOtherResults => 'Other results';
 
   @override
   String get searchSaveFailed => 'Could not save this song.';
@@ -543,6 +558,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Saved';
+
+  @override
   String get readerEdit => 'Edit lyrics and details';
 
   @override
@@ -574,7 +592,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get playerTimedLyrics => 'Timed lyrics';
 
   @override
+  String get playerStartScroll => 'Start auto-scroll';
+
+  @override
   String get playerEstimatedPace => 'Estimated pace';
+
+  @override
+  String get playerScrollSpeed => 'Scroll speed';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Estimated $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Lyric scrolling · no audio';
 
   @override
   String get playerManualScroll => 'Manual scroll';

@@ -126,6 +126,12 @@ class AppLocalizationsPl extends AppLocalizations {
   String get searchCatalogHint => 'Szukaj utworu lub wykonawcy';
 
   @override
+  String get searchChangeSong => 'Zmień utwór';
+
+  @override
+  String get searchSelectedPreview => 'Wybrany podgląd';
+
+  @override
   String get searchSubmit => 'Szukaj';
 
   @override
@@ -276,7 +282,16 @@ class AppLocalizationsPl extends AppLocalizations {
   String get searchLanguage => 'Język';
 
   @override
+  String get searchViewVersions => 'Zobacz wersje';
+
+  @override
   String get searchSaved => 'Utwór został zapisany w bibliotece.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Zapisz i otwórz tekst';
+
+  @override
+  String get searchOtherResults => 'Pozostałe wyniki';
 
   @override
   String get searchSaveFailed => 'Nie udało się zapisać tego utworu.';
@@ -548,6 +563,9 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Zapisano';
+
+  @override
   String get readerEdit => 'Edytuj tekst i szczegóły';
 
   @override
@@ -579,7 +597,21 @@ class AppLocalizationsPl extends AppLocalizations {
   String get playerTimedLyrics => 'Tekst zsynchronizowany';
 
   @override
+  String get playerStartScroll => 'Rozpocznij automatyczne przewijanie';
+
+  @override
   String get playerEstimatedPace => 'Szacowane tempo';
+
+  @override
+  String get playerScrollSpeed => 'Szybkość przewijania';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Szacowany czas: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Przewijanie tekstu · bez dźwięku';
 
   @override
   String get playerManualScroll => 'Przewijanie ręczne';

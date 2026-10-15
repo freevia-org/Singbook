@@ -126,6 +126,12 @@ class AppLocalizationsDa extends AppLocalizations {
   String get searchCatalogHint => 'Søg efter en sang eller kunstner';
 
   @override
+  String get searchChangeSong => 'Skift sang';
+
+  @override
+  String get searchSelectedPreview => 'Valgt forhåndsvisning';
+
+  @override
   String get searchSubmit => 'Søg';
 
   @override
@@ -274,7 +280,16 @@ class AppLocalizationsDa extends AppLocalizations {
   String get searchLanguage => 'Sprog';
 
   @override
+  String get searchViewVersions => 'Se versioner';
+
+  @override
   String get searchSaved => 'Sangen er gemt i dit bibliotek.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Gem og åbn teksten';
+
+  @override
+  String get searchOtherResults => 'Andre resultater';
 
   @override
   String get searchSaveFailed => 'Sangen kunne ikke gemmes.';
@@ -543,6 +558,9 @@ class AppLocalizationsDa extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Gemt';
+
+  @override
   String get readerEdit => 'Rediger sangtekst og detaljer';
 
   @override
@@ -574,7 +592,21 @@ class AppLocalizationsDa extends AppLocalizations {
   String get playerTimedLyrics => 'Tidsinddelte sangtekster';
 
   @override
+  String get playerStartScroll => 'Start automatisk rulning';
+
+  @override
   String get playerEstimatedPace => 'Anslået tempo';
+
+  @override
+  String get playerScrollSpeed => 'Rullehastighed';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Anslået varighed: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Rulning af sangtekst · ingen lyd';
 
   @override
   String get playerManualScroll => 'Manuel rulning';

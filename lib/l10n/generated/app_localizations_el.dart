@@ -126,6 +126,12 @@ class AppLocalizationsEl extends AppLocalizations {
   String get searchCatalogHint => 'Αναζήτησε τραγούδι ή καλλιτέχνη';
 
   @override
+  String get searchChangeSong => 'Αλλαγή τραγουδιού';
+
+  @override
+  String get searchSelectedPreview => 'Επιλεγμένη προεπισκόπηση';
+
+  @override
   String get searchSubmit => 'Αναζήτηση';
 
   @override
@@ -275,7 +281,16 @@ class AppLocalizationsEl extends AppLocalizations {
   String get searchLanguage => 'Γλώσσα';
 
   @override
+  String get searchViewVersions => 'Προβολή εκδόσεων';
+
+  @override
   String get searchSaved => 'Το τραγούδι αποθηκεύτηκε στη συλλογή σου.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Αποθήκευση και άνοιγμα στίχων';
+
+  @override
+  String get searchOtherResults => 'Άλλα αποτελέσματα';
 
   @override
   String get searchSaveFailed =>
@@ -551,6 +566,9 @@ class AppLocalizationsEl extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Αποθηκεύτηκε';
+
+  @override
   String get readerEdit => 'Επεξεργασία στίχων και στοιχείων';
 
   @override
@@ -582,7 +600,21 @@ class AppLocalizationsEl extends AppLocalizations {
   String get playerTimedLyrics => 'Συγχρονισμένοι στίχοι';
 
   @override
+  String get playerStartScroll => 'Έναρξη αυτόματης κύλισης';
+
+  @override
   String get playerEstimatedPace => 'Εκτιμώμενος ρυθμός';
+
+  @override
+  String get playerScrollSpeed => 'Ταχύτητα κύλισης';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Εκτιμώμενη διάρκεια: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Κύλιση στίχων · χωρίς ήχο';
 
   @override
   String get playerManualScroll => 'Χειροκίνητη κύλιση';

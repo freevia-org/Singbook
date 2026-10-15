@@ -126,6 +126,12 @@ class AppLocalizationsHu extends AppLocalizations {
   String get searchCatalogHint => 'Dal vagy előadó keresése';
 
   @override
+  String get searchChangeSong => 'Dal módosítása';
+
+  @override
+  String get searchSelectedPreview => 'Kiválasztott előnézet';
+
+  @override
   String get searchSubmit => 'Keresés';
 
   @override
@@ -274,7 +280,16 @@ class AppLocalizationsHu extends AppLocalizations {
   String get searchLanguage => 'Nyelv';
 
   @override
+  String get searchViewVersions => 'Verziók megtekintése';
+
+  @override
   String get searchSaved => 'A dal mentve a könyvtáradba.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Dalszöveg mentése és megnyitása';
+
+  @override
+  String get searchOtherResults => 'További találatok';
 
   @override
   String get searchSaveFailed => 'A dal mentése nem sikerült.';
@@ -546,6 +561,9 @@ class AppLocalizationsHu extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Mentve';
+
+  @override
   String get readerEdit => 'Dalszöveg és adatok szerkesztése';
 
   @override
@@ -577,7 +595,21 @@ class AppLocalizationsHu extends AppLocalizations {
   String get playerTimedLyrics => 'Időzített dalszöveg';
 
   @override
+  String get playerStartScroll => 'Automatikus görgetés indítása';
+
+  @override
   String get playerEstimatedPace => 'Becsült tempó';
+
+  @override
+  String get playerScrollSpeed => 'Görgetési sebesség';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Becsült időtartam: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Dalszöveg görgetése · hang nélkül';
 
   @override
   String get playerManualScroll => 'Kézi görgetés';

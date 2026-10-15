@@ -422,6 +422,137 @@ void main() {
     },
   );
   test(
+    'explicit source duration wins while automatic combine keeps catalog',
+    () {
+      final selected = SongCandidate(
+        providerId: 'genius',
+        id: '1',
+        title: 'Song',
+        artist: 'Artist',
+        durationSeconds: 90,
+      );
+      final chosen = source('lrclib', 'Hello\nworld', duration: 247);
+
+      final automatic = combineSources(selected, [chosen]);
+      final explicit = combineSources(selected, [
+        chosen,
+      ], preferredSourceId: chosen.id);
+
+      expect(automatic.metadata['durationSeconds'], 90);
+      expect(explicit.metadata['durationSeconds'], 247);
+      expect(explicit.extra['fieldOrigins']['durationSeconds'], chosen.id);
+    },
+  );
+  test(
+    'automatic combine uses a valid source candidate duration as fallback',
+    () {
+      const missingCatalog = SongCandidate(
+        providerId: 'genius',
+        id: '1',
+        title: 'Song',
+        artist: 'Artist',
+      );
+      const sourceWithDuration = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'genius',
+          id: '1',
+          title: 'Song',
+          artist: 'Artist',
+          durationSeconds: 247,
+        ),
+        body: 'Hello\nworld',
+        matchKind: MatchKind.sameRecording,
+      );
+
+      final combined = combineSources(missingCatalog, [sourceWithDuration]);
+
+      expect(combined.metadata['durationSeconds'], 247);
+      expect(
+        combined.extra['fieldOrigins']['durationSeconds'],
+        sourceWithDuration.id,
+      );
+    },
+  );
+  test(
+    'explicit source duration must be finite and within supported bounds',
+    () {
+      const catalog = SongCandidate(
+        providerId: 'genius',
+        id: '1',
+        title: 'Song',
+        artist: 'Artist',
+        durationSeconds: 120,
+      );
+      for (final invalid in <double>[
+        0,
+        -1,
+        double.infinity,
+        double.nan,
+        86401,
+      ]) {
+        final invalidSource = SourceResult(
+          candidate: const SongCandidate(
+            providerId: 'lrclib',
+            id: 'invalid-duration',
+            title: 'Song',
+            artist: 'Artist',
+          ),
+          body: 'Hello\nworld',
+          metadata: {'durationSeconds': invalid},
+          matchKind: MatchKind.sameSong,
+        );
+
+        final result = combineSources(catalog, [
+          invalidSource,
+        ], preferredSourceId: invalidSource.id);
+
+        expect(result.metadata['durationSeconds'], 120, reason: '$invalid');
+
+        final invalidCandidateDuration = SourceResult(
+          candidate: SongCandidate(
+            providerId: 'genius',
+            id: '1',
+            title: 'Song',
+            artist: 'Artist',
+            durationSeconds: invalid,
+          ),
+          body: 'Hello\nworld',
+          matchKind: MatchKind.sameRecording,
+        );
+        final candidateDurationResult = combineSources(catalog, [
+          invalidCandidateDuration,
+        ], preferredSourceId: invalidCandidateDuration.id);
+        expect(
+          candidateDurationResult.metadata['durationSeconds'],
+          120,
+          reason: 'candidate: $invalid',
+        );
+      }
+
+      const missingCatalog = SongCandidate(
+        providerId: 'genius',
+        id: '1',
+        title: 'Song',
+        artist: 'Artist',
+      );
+      final invalid = SourceResult(
+        candidate: const SongCandidate(
+          providerId: 'lrclib',
+          id: 'invalid-duration',
+          title: 'Song',
+          artist: 'Artist',
+        ),
+        body: 'Hello\nworld',
+        metadata: {'durationSeconds': double.infinity},
+        matchKind: MatchKind.sameSong,
+      );
+      final withoutDuration = combineSources(missingCatalog, [
+        invalid,
+      ], preferredSourceId: invalid.id);
+      expect(withoutDuration.metadata, isNot(contains('durationSeconds')));
+    },
+  );
+  test(
     'complete chord chart wins over matching long lyrics and retains timing',
     () {
       const lyrics =

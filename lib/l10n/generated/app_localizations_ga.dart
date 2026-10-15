@@ -126,6 +126,12 @@ class AppLocalizationsGa extends AppLocalizations {
   String get searchCatalogHint => 'Cuardaigh amhrán nó ealaíontóir';
 
   @override
+  String get searchChangeSong => 'Athraigh amhrán';
+
+  @override
+  String get searchSelectedPreview => 'Réamhamharc roghnaithe';
+
+  @override
   String get searchSubmit => 'Cuardaigh';
 
   @override
@@ -275,7 +281,16 @@ class AppLocalizationsGa extends AppLocalizations {
   String get searchLanguage => 'Teanga';
 
   @override
+  String get searchViewVersions => 'Féach ar leaganacha';
+
+  @override
   String get searchSaved => 'Sábháladh an t-amhrán i do leabharlann.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Sábháil agus oscail na liricí';
+
+  @override
+  String get searchOtherResults => 'Torthaí eile';
 
   @override
   String get searchSaveFailed => 'Níorbh fhéidir an t-amhrán seo a shábháil.';
@@ -548,6 +563,9 @@ class AppLocalizationsGa extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Sábháilte';
+
+  @override
   String get readerEdit => 'Cuir liricí agus sonraí in eagar';
 
   @override
@@ -579,7 +597,21 @@ class AppLocalizationsGa extends AppLocalizations {
   String get playerTimedLyrics => 'Liricí uainithe';
 
   @override
+  String get playerStartScroll => 'Tosaigh scrollú uathoibríoch';
+
+  @override
   String get playerEstimatedPace => 'Luas measta';
+
+  @override
+  String get playerScrollSpeed => 'Luas scrollaithe';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Fad measta: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Scrollú liricí · gan fuaim';
 
   @override
   String get playerManualScroll => 'Scrollú láimhe';

@@ -126,6 +126,12 @@ class AppLocalizationsFi extends AppLocalizations {
   String get searchCatalogHint => 'Hae kappaletta tai artistia';
 
   @override
+  String get searchChangeSong => 'Vaihda kappaletta';
+
+  @override
+  String get searchSelectedPreview => 'Valittu esikatselu';
+
+  @override
   String get searchSubmit => 'Hae';
 
   @override
@@ -273,7 +279,16 @@ class AppLocalizationsFi extends AppLocalizations {
   String get searchLanguage => 'Kieli';
 
   @override
+  String get searchViewVersions => 'Näytä versiot';
+
+  @override
   String get searchSaved => 'Kappale tallennettiin kirjastoosi.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Tallenna ja avaa sanat';
+
+  @override
+  String get searchOtherResults => 'Muut tulokset';
 
   @override
   String get searchSaveFailed => 'Kappaletta ei voitu tallentaa.';
@@ -544,6 +559,9 @@ class AppLocalizationsFi extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Tallennettu';
+
+  @override
   String get readerEdit => 'Muokkaa sanoituksia ja tietoja';
 
   @override
@@ -575,7 +593,21 @@ class AppLocalizationsFi extends AppLocalizations {
   String get playerTimedLyrics => 'Ajastetut sanoitukset';
 
   @override
+  String get playerStartScroll => 'Aloita automaattinen vieritys';
+
+  @override
   String get playerEstimatedPace => 'Arvioitu nopeus';
+
+  @override
+  String get playerScrollSpeed => 'Vieritysnopeus';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Arvioitu kesto: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Sanojen vieritys · ei ääntä';
 
   @override
   String get playerManualScroll => 'Manuaalinen vieritys';

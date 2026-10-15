@@ -126,6 +126,12 @@ class AppLocalizationsSv extends AppLocalizations {
   String get searchCatalogHint => 'Sök efter en låt eller artist';
 
   @override
+  String get searchChangeSong => 'Byt låt';
+
+  @override
+  String get searchSelectedPreview => 'Vald förhandsvisning';
+
+  @override
   String get searchSubmit => 'Sök';
 
   @override
@@ -274,7 +280,16 @@ class AppLocalizationsSv extends AppLocalizations {
   String get searchLanguage => 'Språk';
 
   @override
+  String get searchViewVersions => 'Visa versioner';
+
+  @override
   String get searchSaved => 'Låten har sparats i ditt bibliotek.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Spara och öppna texten';
+
+  @override
+  String get searchOtherResults => 'Andra resultat';
 
   @override
   String get searchSaveFailed => 'Det gick inte att spara låten.';
@@ -542,6 +557,9 @@ class AppLocalizationsSv extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Sparad';
+
+  @override
   String get readerEdit => 'Redigera låttext och information';
 
   @override
@@ -573,7 +591,21 @@ class AppLocalizationsSv extends AppLocalizations {
   String get playerTimedLyrics => 'Tidsinställd låttext';
 
   @override
+  String get playerStartScroll => 'Starta automatisk rullning';
+
+  @override
   String get playerEstimatedPace => 'Uppskattat tempo';
+
+  @override
+  String get playerScrollSpeed => 'Rullningshastighet';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Beräknad längd: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Rulla låttext · inget ljud';
 
   @override
   String get playerManualScroll => 'Manuell rullning';

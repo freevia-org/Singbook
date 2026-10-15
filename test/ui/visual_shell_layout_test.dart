@@ -108,7 +108,7 @@ void main() {
     }
   });
 
-  testWidgets('version label remains secondary chrome at normal scale', (
+  testWidgets('home header keeps version details out of the main flow', (
     tester,
   ) async {
     tester.view.devicePixelRatio = 1;
@@ -122,7 +122,7 @@ void main() {
     final controller = AppControllerAdapter(app);
     await _pumpShell(tester, const Locale('bg'), controller);
 
-    expect(find.byKey(const ValueKey('appbar-version')), findsOneWidget);
+    expect(find.byKey(const ValueKey('appbar-version')), findsNothing);
     final brand = tester.widget<Text>(
       find.byKey(const ValueKey('appbar-brand-title')),
     );

@@ -126,6 +126,12 @@ class AppLocalizationsVi extends AppLocalizations {
   String get searchCatalogHint => 'Tìm bài hát hoặc nghệ sĩ';
 
   @override
+  String get searchChangeSong => 'Đổi bài hát';
+
+  @override
+  String get searchSelectedPreview => 'Bản xem trước đã chọn';
+
+  @override
   String get searchSubmit => 'Tìm kiếm';
 
   @override
@@ -275,7 +281,16 @@ class AppLocalizationsVi extends AppLocalizations {
   String get searchLanguage => 'Ngôn ngữ';
 
   @override
+  String get searchViewVersions => 'Xem các phiên bản';
+
+  @override
   String get searchSaved => 'Đã lưu bài hát vào thư viện của bạn.';
+
+  @override
+  String get searchSaveOpenLyrics => 'Lưu và mở lời bài hát';
+
+  @override
+  String get searchOtherResults => 'Kết quả khác';
 
   @override
   String get searchSaveFailed => 'Không thể lưu bài hát này.';
@@ -546,6 +561,9 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String get readerSaved => 'Đã lưu';
+
+  @override
   String get readerEdit => 'Chỉnh sửa lời bài hát và thông tin';
 
   @override
@@ -577,7 +595,21 @@ class AppLocalizationsVi extends AppLocalizations {
   String get playerTimedLyrics => 'Lời bài hát có thời gian';
 
   @override
+  String get playerStartScroll => 'Bắt đầu tự cuộn';
+
+  @override
   String get playerEstimatedPace => 'Tốc độ ước tính';
+
+  @override
+  String get playerScrollSpeed => 'Tốc độ cuộn';
+
+  @override
+  String playerEstimatedDuration(String time) {
+    return 'Thời lượng ước tính: $time';
+  }
+
+  @override
+  String get playerLyricsOnly => 'Cuộn lời bài hát · không có âm thanh';
 
   @override
   String get playerManualScroll => 'Cuộn thủ công';
