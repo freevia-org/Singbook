@@ -52,3 +52,12 @@ jobs:
 
       - name: Test
         run: flutter test
+
+      - name: Upload visual test evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-test-failures
+          path: test/**/failures/**
+          if-no-files-found: ignore
+          retention-days: 7

@@ -5,6 +5,7 @@ import 'package:singbook/l10n/generated/app_localizations.dart';
 import 'package:singbook/ui/home/home_screen.dart';
 import 'package:singbook/ui/home/source_preview_screen.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
+import 'package:singbook/ui/widgets/chord_lyrics_line.dart';
 
 const _lines = [
   LyricLineData(id: 's', section: 'Verse 1', isBlank: true),
@@ -237,7 +238,20 @@ void main() {
       addTearDown(controller.dispose);
       await tester.pumpWidget(_app(controller));
       expect(find.text('Verse 1'), findsOneWidget);
-      expect(find.text('Am'), findsOneWidget);
+      // Chords are painted above the uninterrupted text. Preserve both the
+      // symbol and its exact lyric anchor when wiring the preview renderer.
+      final chordLine = tester.widget<ChordLyricsLine>(
+        find.descendant(
+          of: find.byKey(const ValueKey('preview-line-a')),
+          matching: find.byType(ChordLyricsLine),
+        ),
+      );
+      expect(chordLine.text, 'An opening line');
+      expect(chordLine.showChords, isTrue);
+      expect(
+        chordLine.chords.map((chord) => (chord.symbol, chord.graphemeOffset)),
+        [('Am', 3)],
+      );
       expect(
         find.textContaining('A fourth line beyond the summary'),
         findsOneWidget,

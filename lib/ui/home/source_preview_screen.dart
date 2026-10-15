@@ -4,6 +4,7 @@ import '../../l10n/generated/app_localizations.dart';
 import '../format.dart';
 import '../player/section_labels.dart';
 import '../verse_ui_state.dart';
+import '../widgets/chord_lyrics_line.dart';
 
 /// The same choices are used by the comparison list and the full preview.
 List<SourceVersionData> comparisonVersions(SearchComparisonData comparison) {
@@ -380,44 +381,20 @@ class _PreviewLine extends StatelessWidget {
     if (line.isBlank) {
       return SizedBox(key: ValueKey('preview-line-${line.id}'), height: 15);
     }
-    final graphemes = line.text.characters.toList();
-    final chords = [...line.chords]
-      ..sort((a, b) => a.graphemeOffset.compareTo(b.graphemeOffset));
-    final spans = <InlineSpan>[];
-    var cursor = 0;
-    for (final chord in showChords ? chords : const <LyricChord>[]) {
-      final offset = chord.graphemeOffset.clamp(cursor, graphemes.length);
-      if (offset > cursor) {
-        spans.add(TextSpan(text: graphemes.sublist(cursor, offset).join()));
-      }
-      spans.add(
-        WidgetSpan(
-          alignment: PlaceholderAlignment.top,
-          child: Transform.translate(
-            offset: const Offset(0, -7),
-            child: Text(
-              chord.symbol,
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: theme.colorScheme.primary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ),
-      );
-      cursor = offset;
-    }
-    if (cursor < graphemes.length) {
-      spans.add(TextSpan(text: graphemes.sublist(cursor).join()));
-    }
     return Padding(
       key: ValueKey('preview-line-${line.id}'),
       padding: const EdgeInsets.only(bottom: 12),
-      child: Text.rich(
-        TextSpan(children: spans),
+      child: ChordLyricsLine(
+        text: line.text,
+        chords: line.chords,
+        showChords: showChords,
         style: theme.textTheme.bodyLarge?.copyWith(
           fontSize: fontSize,
           height: 1.35,
+        ),
+        chordStyle: theme.textTheme.labelMedium?.copyWith(
+          color: theme.colorScheme.primary,
+          fontWeight: FontWeight.w700,
         ),
       ),
     );
