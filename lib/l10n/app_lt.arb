@@ -730,5 +730,12 @@
   "sectionBreakdown": "Instrumentinė ištrauka",
   "sectionCoda": "Koda",
   "sectionTag": "Tagas",
-  "sectionEnding": "Pabaiga"
+  "sectionEnding": "Pabaiga",
+  "youtubeConsentHint": "Eksperimentinė funkcija. Pasirinkite slapukus „Google“ puslapyje ir išbandykite dainų žodžių paiešką. Prisijungti prie „Google“ paskyros nereikia. Jūsų pasirinkimas liks šiame įrenginyje.",
+  "youtubeConsentOpen": "Peržiūrėti „Google“ sutikimą",
+  "youtubeConsentSaved": "Sutikimas išsaugotas",
+  "youtubeConsentClear": "Išvalyti sutikimą",
+  "youtubeConsentInstructions": "Užbaikite slapukų pasirinkimą ir palaukite, kol grįš „YouTube Music“. Tada išsaugokite šią sesiją ir dar kartą ieškokite dainos.",
+  "youtubeConsentError": "Nepavyko atnaujinti „Google“ sutikimo pasirinkimo. Bandykite dar kartą.",
+  "youtubeConsentBlocked": "Čia galima atidaryti tik „YouTube Music“ ir „Google“ sutikimo puslapį. Prisijungti prie paskyros negalima."
 }

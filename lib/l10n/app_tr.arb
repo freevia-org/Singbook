@@ -730,5 +730,12 @@
   "sectionBreakdown": "Breakdown",
   "sectionCoda": "Koda",
   "sectionTag": "Tag",
-  "sectionEnding": "Bitiş"
+  "sectionEnding": "Bitiş",
+  "youtubeConsentHint": "Deneysel. Şarkı sözü aramayı denemek için Google sayfasında çerez seçiminizi yapın. Google hesabınızda oturum açmanız gerekmez. Seçiminiz bu cihazda kalır.",
+  "youtubeConsentOpen": "Google izin tercihini incele",
+  "youtubeConsentSaved": "İzin tercihi kaydedildi",
+  "youtubeConsentClear": "İzin tercihini temizle",
+  "youtubeConsentInstructions": "Çerez seçiminizi tamamlayın ve YouTube Music'in geri dönmesini bekleyin. Ardından bu oturumu kaydedip şarkıyı yeniden arayın.",
+  "youtubeConsentError": "Google izin tercihi güncellenemedi. Yeniden deneyin.",
+  "youtubeConsentBlocked": "Burada yalnızca YouTube Music ve Google izin sayfası açılabilir. Hesapta oturum açma kullanılamaz."
 }

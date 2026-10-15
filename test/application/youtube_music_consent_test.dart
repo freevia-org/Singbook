@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/application/youtube_music_consent.dart';
+import 'package:singbook/application/app_controller.dart';
+import 'package:singbook/providers/core/youtube_music.dart';
+import 'package:singbook/ui/app_controller_adapter.dart';
 
 void main() {
   test('initial Music load cannot finish a consent flow', () {
@@ -25,6 +28,38 @@ void main() {
   final messenger =
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
   tearDown(() => messenger.setMockMethodCallHandler(channel, null));
+
+  test(
+    'app factory and UI actions share the same session without synced settings',
+    () async {
+      messenger.setMockMethodCallHandler(
+        channel,
+        (call) async => call.method == 'getConsentCookies'
+            ? {'SOCS': 'synthetic-choice'}
+            : null,
+      );
+      final consent = YoutubeMusicConsent(supported: true);
+      final app = AppController(youtubeMusicConsent: consent);
+      final adapter = AppControllerAdapter(app);
+      addTearDown(() {
+        adapter.dispose();
+        app.dispose();
+      });
+      final provider = app.discovery.providers
+          .whereType<YoutubeMusicProvider>()
+          .single;
+      expect(identical(provider.session, consent.session), isTrue);
+      expect(adapter.youtubeMusicConsentSupported, isTrue);
+      expect(await adapter.completeYoutubeMusicConsent(), isTrue);
+      expect(adapter.youtubeMusicConsentSaved, isTrue);
+      expect(provider.session.cookieHeader, 'SOCS=synthetic-choice');
+      expect(app.settings, isEmpty);
+      expect(await adapter.clearYoutubeMusicConsent(), isTrue);
+      expect(adapter.youtubeMusicConsentSaved, isFalse);
+      expect(provider.session.cookieHeader, isNull);
+      expect(app.settings, isEmpty);
+    },
+  );
 
   test(
     'restores anonymous consent only and clears through the native jar',

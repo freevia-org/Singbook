@@ -730,5 +730,12 @@
   "sectionBreakdown": "Breakdown",
   "sectionCoda": "Κόδα",
   "sectionTag": "Tag",
-  "sectionEnding": "Τέλος"
+  "sectionEnding": "Τέλος",
+  "youtubeConsentHint": "Πειραματική λειτουργία. Επιλέξτε τις ρυθμίσεις cookie στη σελίδα της Google για να δοκιμάσετε την αναζήτηση στίχων. Δεν χρειάζεται σύνδεση σε λογαριασμό Google. Η επιλογή σας παραμένει σε αυτήν τη συσκευή.",
+  "youtubeConsentOpen": "Έλεγχος συγκατάθεσης Google",
+  "youtubeConsentSaved": "Η συγκατάθεση αποθηκεύτηκε",
+  "youtubeConsentClear": "Εκκαθάριση συγκατάθεσης",
+  "youtubeConsentInstructions": "Ολοκληρώστε την επιλογή cookie και περιμένετε να επιστρέψει το YouTube Music. Έπειτα αποθηκεύστε αυτήν τη συνεδρία και δοκιμάστε ξανά την αναζήτηση τραγουδιού.",
+  "youtubeConsentError": "Δεν ήταν δυνατή η ενημέρωση της επιλογής συγκατάθεσης Google. Δοκιμάστε ξανά.",
+  "youtubeConsentBlocked": "Εδώ μπορούν να ανοίξουν μόνο το YouTube Music και η σελίδα συγκατάθεσης της Google. Η σύνδεση σε λογαριασμό δεν είναι διαθέσιμη."
 }

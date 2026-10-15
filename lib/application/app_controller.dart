@@ -105,7 +105,10 @@ class AppController extends ChangeNotifier {
     YoutubeMusicSession youtubeMusicSession,
   ) {
     return SourceDiscoveryService([
-      ...createCoreProviders(transport: transport, youtubeMusicSession: youtubeMusicSession),
+      ...createCoreProviders(
+        transport: transport,
+        youtubeMusicSession: youtubeMusicSession,
+      ),
       ...createExtraProviders(transport: transport),
     ]);
   }
@@ -513,6 +516,18 @@ class AppController extends ChangeNotifier {
       ...jsonMap(settings['providers']),
       id: enabled,
     });
+  }
+
+  Future<bool> completeYoutubeMusicConsent() async {
+    final captured = await youtubeMusicConsent.capture();
+    if (!_disposed) _emit();
+    return captured;
+  }
+
+  Future<bool> clearYoutubeMusicConsent() async {
+    final cleared = await youtubeMusicConsent.clear();
+    if (!_disposed) _emit();
+    return cleared;
   }
 
   Future<void> setSetting(String key, dynamic value) async {

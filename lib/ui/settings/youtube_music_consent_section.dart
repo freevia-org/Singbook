@@ -182,6 +182,7 @@ class _YoutubeMusicConsentScreenState extends State<YoutubeMusicConsentScreen> {
   final _navigation = YoutubeMusicConsentNavigation();
   bool _atMusic = false, _busy = false;
   bool _blockedLoad = false;
+  bool _initializing = true;
   int _webEpoch = 0;
   int _progress = 0;
   String? _error;
@@ -270,6 +271,10 @@ class _YoutubeMusicConsentScreenState extends State<YoutubeMusicConsentScreen> {
       if (mounted && epoch == _webEpoch) {
         setState(() => _error = widget.labels.loadFailed);
       }
+    } finally {
+      if (mounted && epoch == _webEpoch) {
+        setState(() => _initializing = false);
+      }
     }
   }
 
@@ -322,6 +327,7 @@ class _YoutubeMusicConsentScreenState extends State<YoutubeMusicConsentScreen> {
       _atMusic = false;
       _error = null;
       _progress = 0;
+      _initializing = true;
     });
     // A new controller also isolates any late blank-document callbacks from
     // the blocked view. The native consent jar remains shared with this app.
@@ -337,11 +343,11 @@ class _YoutubeMusicConsentScreenState extends State<YoutubeMusicConsentScreen> {
         actions: [
           IconButton(
             tooltip: labels.retry,
-            onPressed: _web == null ? null : _retry,
+            onPressed: _initializing || _busy ? null : _retry,
             icon: const Icon(Icons.refresh_rounded),
           ),
           TextButton(
-            onPressed: _atMusic && !_busy ? _finish : null,
+            onPressed: _atMusic && !_busy && !_initializing ? _finish : null,
             child: Text(labels.done),
           ),
         ],
