@@ -629,7 +629,9 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     RecentItemData item,
   ) {
     return Row(
-      key: ValueKey('recent-row-${item.id}'),
+      key: ValueKey(
+        item.isSetlist ? 'recent-setlist-row-${item.id}' : 'recent-row-${item.id}',
+      ),
       children: [
         Expanded(
           child: InkWell(
@@ -1010,7 +1012,7 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     );
     final footer = chosen == null
         ? const SizedBox.shrink()
-        : _versionFooter(context, l10n, chosen, comparison.discovering);
+        : _versionFooter(context, l10n, chosen);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -1112,7 +1114,6 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     BuildContext context,
     AppLocalizations l10n,
     SourceVersionData version,
-    bool discovering,
   ) {
     final colors = Theme.of(context).colorScheme;
     final compact =
@@ -1167,9 +1168,7 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
             const SizedBox(height: 10),
             FilledButton.icon(
               key: const ValueKey('save-open-lyrics'),
-              onPressed:
-                  !discovering &&
-                      (version.canSave || version.savedSongId != null)
+              onPressed: version.canSave || version.savedSongId != null
                   ? widget.controller.saveSelectedVersion
                   : null,
               icon: const Icon(Icons.menu_book_rounded),

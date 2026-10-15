@@ -248,7 +248,7 @@ class AppControllerAdapter extends VerseUiController {
     final opens = <String, int>{};
     for (final event in app.recent) {
       if (event.objectKind == 'song') {
-        opens[event.objectId] = (opens[event.objectId] ?? 0) + 1;
+        opens[event.objectId] = (opens[event.objectId] ?? 0) + event.openCount;
       }
     }
     _opens = opens;
@@ -345,9 +345,7 @@ class AppControllerAdapter extends VerseUiController {
         song != null &&
         _timedLineStarts(data, song, timingMode).isNotEmpty;
     final readerCanCompareVersions =
-        song != null &&
-        comparison != null &&
-        _songMatchesSearchReference(song, comparison.reference.id);
+        song != null && _comparisonReference(song) != null;
     return VerseUiState(
       route: _route,
       activeTab: _tab,
@@ -621,9 +619,7 @@ class AppControllerAdapter extends VerseUiController {
                 : 'best_available',
             bodyPreview: _lines(combined.body).take(3).toList(),
             canSave:
-                !app.discovering &&
-                combined.body.trim().isNotEmpty &&
-                app.savedResultId() == null,
+                combined.body.trim().isNotEmpty && app.savedResultId() == null,
             savedSongId: app.savedResultId(),
             underlyingSourceId: contributorCount == 1 ? chosenSource?.id : null,
           );
@@ -683,6 +679,14 @@ class AppControllerAdapter extends VerseUiController {
   bool _songMatchesSearchReference(SongDocument song, String referenceId) =>
       song.selectedRecording?.identity == referenceId ||
       song.extra['combinedSelection'] == referenceId;
+
+  SongCandidate? _comparisonReference(SongDocument song) =>
+      song.selectedRecording ??
+      song.sources
+          .where((source) => source.id == song.extra['selectedSourceId'])
+          .firstOrNull
+          ?.candidate ??
+      song.sources.where(_isUsableLyricResult).firstOrNull?.candidate;
 
   bool _versionMatchesFilters(SourceVersionData item) =>
       (!_filters.chordsOnly || item.hasChords) &&
@@ -745,7 +749,7 @@ class AppControllerAdapter extends VerseUiController {
           : LoadState.loaded,
       bodyPreview: _lines(result.body).take(3).toList(),
       canSave:
-          !app.discovering &&
+          app.isSourceReady(result) &&
           result.matchKind != MatchKind.rejected &&
           _isUsableLyricResult(result) &&
           app.combined != null &&
@@ -1099,7 +1103,6 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> saveSelectedVersion() async {
-    if (app.discovering) return;
     final comparison = _comparison();
     final availableAlternatives = comparison == null
         ? app.results.map(_version).where(_versionMatchesFilters).toList()
@@ -1122,6 +1125,18 @@ class AppControllerAdapter extends VerseUiController {
       postNotice(UiNotice.songSaveFailed);
       return;
     }
+    if (version != null && !app.isSourceReady(version)) {
+      final savedId = app.savedResultId(source: version);
+      if (savedId == null) {
+        postNotice(UiNotice.songSaveFailed);
+        return;
+      }
+      _setlistId = null;
+      _setlistEntryId = null;
+      _homeMode = HomeListMode.recent;
+      await _openSong(savedId);
+      return;
+    }
     final SongDocument song;
     try {
       song = await app.saveResult(source: version);
@@ -1139,21 +1154,47 @@ class AppControllerAdapter extends VerseUiController {
   @override
   Future<void> compareCurrentSongVersions() async {
     final song = currentSong;
-    final referenceId = app.selection?.identity;
-    if (song == null ||
-        referenceId == null ||
-        !_songMatchesSearchReference(song, referenceId) ||
-        _selectedQuery != _query.trim() ||
-        _query.trim() != app.query.trim()) {
-      return;
-    }
+    if (song == null) return;
+    final reference = _comparisonReference(song);
+    if (reference == null) return;
+    final reuseComparison =
+        app.selection?.identity == reference.identity &&
+        _songMatchesSearchReference(song, reference.identity) &&
+        _selectedQuery == _query.trim() &&
+        _query.trim() == app.query.trim();
+    _searchDebounce?.cancel();
+    _stopPlayer();
     _setlistId = null;
     _setlistEntryId = null;
     _route = VerseRoute.main;
     _tab = VerseTab.home;
     _homeMode = HomeListMode.online;
+    _selectedVersionId = song.extra['combinedSelection'] == reference.identity
+        ? 'combined'
+        : song.extra['selectedSourceId'] as String?;
+    // A saved recording reference survives restart and avoids a new catalog
+    // search choosing a different artist or recording with the same title.
+    if (!reuseComparison) {
+      _filters = const SearchFilterData();
+      _filtersExpanded = false;
+      _query = [
+        reference.title,
+        reference.artist,
+      ].where((part) => part.trim().isNotEmpty).join(' ');
+      _selectedQuery = _query.trim();
+      _cachedAutocomplete = [reference];
+      final refresh = app.selectCandidate(
+        reference,
+        searchQuery: _query,
+        cachedResults: song.sources,
+      );
+      notifyListeners();
+      await refresh;
+      _chooseFallbackVersion();
+      notifyListeners();
+      return;
+    }
     _selectedQuery = app.query.trim();
-    _selectedVersionId = song.extra['selectedSourceId'] as String?;
     notifyListeners();
   }
 
