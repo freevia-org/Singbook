@@ -768,7 +768,9 @@ Future<Uint8List> createSongPdf(
     add('Capo', song.metadata['capo']);
     add('Tuning', song.metadata['tuning']);
     final tempo = song.metadata['tempo'];
-    if (tempo != null) add('Tempo', '$tempo BPM');
+    if (tempo != null && tempo.toString().trim().isNotEmpty) {
+      add('Tempo', '${tempo.toString().trim()} BPM');
+    }
     add('Time', song.metadata['timeSignature']);
     final duration = song.metadata['durationSeconds'];
     if (duration is num && duration > 0) {
@@ -785,7 +787,7 @@ Future<Uint8List> createSongPdf(
 
   String songKeywords(SongDocument song) => [
     song.title,
-    if (song.artist.isNotEmpty) song.artist,
+    if (song.artist.trim().isNotEmpty) song.artist.trim(),
     'lyrics',
     if (song.hasChords) 'chords',
     for (final key in const [
@@ -798,7 +800,8 @@ Future<Uint8List> createSongPdf(
       'composer',
       'lyricist',
     ])
-      if (song.metadata[key] != null) song.metadata[key].toString(),
+      if (song.metadata[key]?.toString().trim().isNotEmpty == true)
+        song.metadata[key].toString().trim(),
   ].join(', ');
   final songCredits = songs.length == 1
       ? {
@@ -812,8 +815,12 @@ Future<Uint8List> createSongPdf(
     title: setlist?.name ?? songs.map((song) => song.title).join(', '),
     author: songCredits.isEmpty ? null : songCredits,
     subject: setlist == null
-        ? 'Song lyrics and chords'
-        : 'Setlist with song lyrics and chords',
+        ? songs.any((song) => song.hasChords)
+              ? 'Song lyrics and chords'
+              : 'Song lyrics'
+        : songs.any((song) => song.hasChords)
+        ? 'Setlist with song lyrics and chords'
+        : 'Setlist with song lyrics',
     keywords: songs.length == 1
         ? songKeywords(songs.single)
         : 'setlist, lyrics, chords',
@@ -837,7 +844,7 @@ Future<Uint8List> createSongPdf(
             pw.Padding(
               padding: const pw.EdgeInsets.symmetric(vertical: 5),
               child: pw.Text(
-                '${i + 1}. ${songs[i].title}${songs[i].artist.isEmpty ? '' : ' — ${songs[i].artist}'}',
+                '${i + 1}. ${songs[i].title}${songs[i].artist.trim().isEmpty ? '' : ' — ${songs[i].artist.trim()}'}',
               ),
             ),
         ],
@@ -855,11 +862,11 @@ Future<Uint8List> createSongPdf(
             song.title,
             style: pw.TextStyle(fontSize: 22, fontWeight: pw.FontWeight.bold),
           ),
-          if (song.artist.isNotEmpty)
+          if (song.artist.trim().isNotEmpty)
             pw.Padding(
               padding: const pw.EdgeInsets.only(top: 2),
               child: pw.Text(
-                'Artist: ${song.artist}',
+                'Artist: ${song.artist.trim()}',
                 style: const pw.TextStyle(fontSize: 12, color: muted),
               ),
             ),
@@ -922,14 +929,6 @@ Future<Uint8List> createSongPdf(
                   ],
                 ),
               ),
-          if (song.metadata['copyright'] is String)
-            pw.Padding(
-              padding: const pw.EdgeInsets.only(top: 16),
-              child: pw.Text(
-                song.metadata['copyright'] as String,
-                style: const pw.TextStyle(fontSize: 8),
-              ),
-            ),
         ],
       ),
     );

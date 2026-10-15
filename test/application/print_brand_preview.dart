@@ -24,7 +24,7 @@ void main() {
           'durationSeconds': 184,
           'composer': 'Sample Composer',
           'lyricist': 'Sample Lyricist',
-          'copyright': '© 2026 Sample Lyricist. Sample lyrics for preview.',
+          'copyright': 'UNVERIFIED_CREDIT_SHOULD_NOT_PRINT',
         },
         body:
             '{comment: Verse 1}\n[C]The room is warm tonight\n[G]We sing our own refrain\n[Am]The city fades beyond the door\n[F]We find our place again\n[E7]\n{start_of_chorus}\n[F]Carry the light through the dark\n[C]Hold every note in your heart\n[Am]When morning comes, we will still be here\n[G]Singing the song we share\n{end_of_chorus}\n{comment: Verse 2}\n[C]Our voices travel through the night\n[G]And meet beneath the morning sky\n[Am]Наші слова звучать разом\n[F]Нашите думи звучат заедно',
