@@ -10,11 +10,19 @@ export '../sanitize.dart'
         safeHttpsUrl,
         stripVerseDirectives,
         throwIfBlocked,
+        htmlTooDeep,
+        parseHtml,
         blockedPageReason;
 
 String stringValue(Object? value) => value is String ? value.trim() : '';
-String textValue(Object? value) =>
-    html.parseFragment(stringValue(value)).text ?? '';
+String textValue(Object? value) {
+  try {
+    final fragment = html.parseFragment(stringValue(value));
+    return htmlTooDeep(fragment) ? '' : fragment.text ?? '';
+  } on StackOverflowError {
+    return '';
+  }
+}
 List<JsonMap> maps(Object? value) => value is List
     ? value.whereType<Map>().map((m) => Map<String, dynamic>.from(m)).toList()
     : [];
@@ -26,6 +34,15 @@ bool queryMatches(String query, String text) {
   final haystack = normalized(text);
   final tokens = normalized(query).split(' ').where((t) => t.isNotEmpty);
   return tokens.isNotEmpty && tokens.every(haystack.contains);
+}
+
+/// Maps a MediaWiki API `error` object to a typed failure: replication lag
+/// (`maxlag`) is a retryable `provider_busy`, anything else is `unavailable`.
+void throwIfApiError(JsonMap data) {
+  final error = data['error'];
+  if (error == null) return;
+  final code = error is Map ? error['code'] : null;
+  throw ProviderException(code == 'maxlag' ? 'provider_busy' : 'unavailable');
 }
 
 Uri checkedUrl(String value, Set<String> hosts, {String? prefix}) {
@@ -131,7 +148,9 @@ JsonMap chordProMetadata(String document) {
       }
     } else if (key == 'capo' || key == 'year') {
       final n = int.tryParse(value);
-      if (n != null && n >= 0) result[key] = n;
+      if (n != null && n >= 0 && (key == 'year' ? n >= 1000 && n <= 9999 : n <= 24)) {
+        result[key] = n;
+      }
     } else if (key == 'durationSeconds') {
       final parts = value.split(':');
       final n = parts.length == 2
@@ -140,7 +159,8 @@ JsonMap chordProMetadata(String document) {
           : double.tryParse(value);
       if (n != null && n > 0 && n < 86400) result[key] = n;
     } else {
-      result[key] = value;
+      final text = boundedText(value, max: 500);
+      if (text.isNotEmpty) result[key] = text;
     }
   }
   return result;
@@ -157,6 +177,113 @@ String? chordProTitle(String document, String key) {
     caseSensitive: false,
     multiLine: true,
   ).firstMatch(document)?[1]?.trim();
+}
+
+final _metadataControls = RegExp(
+  r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f\u202a-\u202e\u2066-\u2069]',
+);
+
+/// Single-line, control-free, length-capped text from an untrusted source;
+/// empty string when [value] is not usable text.
+String boundedText(Object? value, {int max = 300}) {
+  if (value is! String) return '';
+  var text = value
+      .replaceAll(_metadataControls, '')
+      .replaceAll(RegExp(r'\s+'), ' ')
+      .trim();
+  if (text.length > max) {
+    text = text.substring(0, max);
+    final last = text.codeUnitAt(text.length - 1);
+    if (last >= 0xd800 && last <= 0xdbff) {
+      text = text.substring(0, text.length - 1);
+    }
+    text = text.trimRight();
+  }
+  return text;
+}
+
+Object? _boundedValue(Object? value, int depth) {
+  if (value is String) {
+    final text = boundedText(value, max: 500);
+    return text.isEmpty ? null : text;
+  }
+  if (value is num) return value.isFinite && value.abs() < 1e15 ? value : null;
+  if (value is bool) return value;
+  if (depth >= 6) return null;
+  if (value is List) {
+    return value
+        .take(30)
+        .map((v) => _boundedValue(v, depth + 1))
+        .nonNulls
+        .toList();
+  }
+  if (value is Map) {
+    final out = <String, dynamic>{};
+    for (final entry in value.entries.take(50)) {
+      final key = boundedText(entry.key.toString(), max: 80);
+      final v = _boundedValue(entry.value, depth + 1);
+      if (key.isNotEmpty && v != null) out[key] = v;
+    }
+    return out;
+  }
+  return null;
+}
+
+num? _ranged(Object? value, num min, num max, {bool whole = false}) {
+  final n = value is String ? num.tryParse(value.trim()) : value;
+  if (n is! num || !n.isFinite || n < min || n > max) return null;
+  if (whole && n != n.round()) return null;
+  return n;
+}
+
+/// Bounds metadata from a non-core provider before it is stored: known numeric
+/// facts are range-checked (capo 0-24, tempo 1-500, years 1000-9999), media
+/// links are normalised to `{kind, label?, url}` with safe https URLs, and every
+/// other value is limited in type, nesting depth, list/map size and text length.
+JsonMap sanitizeExtraMetadata(JsonMap input) {
+  final result = <String, dynamic>{};
+  const numeric = {
+    'capo': (0, 24, true),
+    'tempo': (1, 500, false),
+    'year': (1000, 9999, true),
+    'compositionYear': (1000, 9999, true),
+    'durationSeconds': (0, 86400, false),
+  };
+  for (final entry in input.entries) {
+    final key = boundedText(entry.key, max: 80);
+    if (key.isEmpty) continue;
+    if (key == 'mediaLinks') {
+      final links = <JsonMap>[];
+      final seen = <String>{};
+      for (final raw in maps(entry.value).take(30)) {
+        final url = httpsLink(raw['url']);
+        final kind = boundedText(raw['kind'] ?? raw['type'], max: 60);
+        final label = boundedText(raw['label']);
+        if (url != null && kind.isNotEmpty && seen.add(url)) {
+          links.add({'kind': kind, 'url': url, if (label.isNotEmpty) 'label': label});
+        }
+      }
+      if (links.isNotEmpty) result[key] = links;
+      continue;
+    }
+    final rule = numeric[key];
+    if (rule != null) {
+      final n = _ranged(entry.value, rule.$1, rule.$2, whole: rule.$3);
+      if (n != null) result[key] = n;
+      continue;
+    }
+    if (key == 'artworkUrl' ||
+        key == 'sourceIllustrationUrl' ||
+        key == 'originalSourceUrl' ||
+        key == 'sourcePageUrl') {
+      final url = httpsLink(entry.value);
+      if (url != null) result[key] = url;
+      continue;
+    }
+    final v = _boundedValue(entry.value, 0);
+    if (v != null) result[key] = v;
+  }
+  return result;
 }
 
 /// Remote ChordPro must not carry Singbook's own provenance, rights or timing

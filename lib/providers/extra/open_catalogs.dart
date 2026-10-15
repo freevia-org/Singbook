@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'package:characters/characters.dart';
-import 'package:html/parser.dart' as html;
 import '../../domain/models.dart';
 import '../provider.dart';
 import 'common.dart';
+
+/// Catalog ids may be strings or numbers; anything else is not an id.
+String _rowId(Object? value) =>
+    value is String ? value.trim() : (value is int ? value.toString() : '');
 
 class WorshipCommonsProvider implements LyricsProvider {
   WorshipCommonsProvider(this.transport);
@@ -41,6 +44,8 @@ class WorshipCommonsProvider implements LyricsProvider {
         // The registry is large; an oversized file fails as invalid_response
         // (never a truncated catalog).
         maxBytes: _catalogLimit,
+        // Several MB on a slow link; still inside discover's 30 s ceiling.
+        timeout: const Duration(seconds: 28),
       ),
     );
     if (data['rows'] is! List) {
@@ -52,23 +57,25 @@ class WorshipCommonsProvider implements LyricsProvider {
         .where(
           (r) =>
               {'PD', 'CC-BY', 'CC-BY-SA'}.contains(r['license']) &&
-              r['status'] == 'approved',
+              r['status'] == 'approved' &&
+              _rowId(r['id']).isNotEmpty &&
+              stringValue(r['title']).isNotEmpty,
         )
         .toList();
   }
 
   SongCandidate _candidate(JsonMap r) => SongCandidate(
     providerId: definition.id,
-    id: stringValue(r['id']),
-    title: stringValue(r['title']),
-    artist: stringValue(r['writer']),
+    id: _rowId(r['id']),
+    title: boundedText(r['title']),
+    artist: boundedText(r['writer']),
     url: '${base}catalog.json',
-    metadata: {
+    metadata: sanitizeExtraMetadata({
       'identityScope': 'composition',
       'writer': r['writer'],
       if (r['language'] != null) 'language': r['language'],
       if (r['year'] != null) 'compositionYear': r['year'],
-    },
+    }),
   );
   @override
   Future<List<SongCandidate>> search(
@@ -87,7 +94,7 @@ class WorshipCommonsProvider implements LyricsProvider {
   }) async {
     var rows = await _rows(cancel);
     rows = candidate.providerId == definition.id
-        ? rows.where((r) => r['id'] == candidate.id).toList()
+        ? rows.where((r) => _rowId(r['id']) == candidate.id).toList()
         : rows
               .where(
                 (r) =>
@@ -157,7 +164,7 @@ class WorshipCommonsProvider implements LyricsProvider {
           directive('title', found.title) +
           directive('artist', found.artist) +
           body,
-      metadata: metadata,
+      metadata: sanitizeExtraMetadata(metadata),
       timingTracks: tracks,
       attribution: attribution,
       retrievedAt: DateTime.now().toUtc(),
@@ -278,25 +285,28 @@ class SeanMcGrathProvider implements LyricsProvider {
     CancellationToken? cancel,
   }) async {
     if (_catalog == null) {
-      final doc = html.parse(
+      final doc = parseHtml(
         await transport.getText(base.resolve('songs/'), cancel: cancel),
       );
       final found = <String, SongCandidate>{};
       for (final a in doc.querySelectorAll('a[href]')) {
         final u = base.resolve(a.attributes['href']!);
-        if (u.host != base.host ||
+        if (u.scheme != 'https' ||
+            u.host != base.host ||
             !RegExp(r'^/songs/[^/]+/$').hasMatch(u.path) ||
             a.text.trim().isEmpty) {
           continue;
         }
-        found[u.path] = SongCandidate(
+        // The first (title) link wins; later 'Listen'/'More' anchors to the same
+        // song must not rename it.
+        found.putIfAbsent(u.path, () => SongCandidate(
           providerId: definition.id,
           id: u.path,
-          title: a.text.trim(),
+          title: boundedText(a.text),
           artist: 'Sean McGrath',
           url: u.toString(),
           metadata: const {'identityScope': 'composition'},
-        );
+        ));
       }
       _catalog = found.values.toList();
     }
@@ -327,7 +337,7 @@ class SeanMcGrathProvider implements LyricsProvider {
     if (!RegExp(r'^/songs/[^/]+/$').hasMatch(url.path)) {
       throw const ProviderException('invalid_url');
     }
-    final page = html.parse(await transport.getText(url, cancel: cancel));
+    final page = parseHtml(await transport.getText(url, cancel: cancel));
     final links = page
         .querySelectorAll('a[href]')
         .map((a) => url.resolve(a.attributes['href']!))
@@ -370,11 +380,11 @@ class SeanMcGrathProvider implements LyricsProvider {
     return SourceResult(
       candidate: found,
       body: original,
-      metadata: {
+      metadata: sanitizeExtraMetadata({
         ...found.metadata,
         ...chordProMetadata(original),
         if (media.isNotEmpty) 'mediaLinks': media,
-      },
+      }),
       attribution: 'Sean McGrath Music / @seanmcgrathmusic',
       retrievedAt: DateTime.now().toUtc(),
       extra: sourceEvidence(
@@ -416,7 +426,7 @@ class OpenFilkProvider implements LyricsProvider {
     CancellationToken? cancel,
   }) async {
     if (_catalog == null) {
-      final doc = html.parse(await transport.getText(index, cancel: cancel));
+      final doc = parseHtml(await transport.getText(index, cancel: cancel));
       final found = <SongCandidate>[];
       for (final li in doc.querySelectorAll('li')) {
         final anchors = li.querySelectorAll('a[href]');
@@ -500,13 +510,18 @@ class OpenFilkProvider implements LyricsProvider {
       caseSensitive: false,
       multiLine: true,
     ).allMatches(original).map((m) => m[0]!).toList();
+    // No blanket assumption: a file without its own license line is recorded as
+    // undeclared (the site's default license is only noted as provenance).
     final license = licenseLines.isEmpty
-        ? 'Filksongbook Minimal License (source default)'
-        : licenseLines.join('\n');
+        ? null
+        : licenseLines.take(5).map((l) => boundedText(l, max: 200)).join('\n');
     return SourceResult(
       candidate: found,
       body: original,
-      metadata: {...found.metadata, ...chordProMetadata(original)},
+      metadata: sanitizeExtraMetadata({
+        ...found.metadata,
+        ...chordProMetadata(original),
+      }),
       attribution: found.artist,
       retrievedAt: DateTime.now().toUtc(),
       extra: sourceEvidence(
@@ -515,8 +530,13 @@ class OpenFilkProvider implements LyricsProvider {
         licenseUrl: 'https://filksongbook.com/info/en/licenses/',
         attribution: found.artist,
         original: original,
+        provenanceNote: license == null
+            ? 'The source site states a default license at '
+                  'https://filksongbook.com/info/en/licenses/; this file does '
+                  'not declare one.'
+            : null,
         permissions: {
-          'status': 'per_file',
+          'status': license == null ? 'unknown' : 'per_file',
           'offline': true,
           'redistribute': 'see_original_license',
           'modifyLyrics': 'see_original_license',

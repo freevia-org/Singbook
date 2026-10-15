@@ -17,10 +17,29 @@ class YoutubeMusicProvider implements LyricsProvider {
     accessMode: 'public_web',
     website: 'https://music.youtube.com',
   );
+  Future<JsonMap>? _pending;
+
+  bool get _hasFreshConfig =>
+      _configuration != null && _expires!.isAfter(DateTime.now());
+
+  /// Overlapping callers share one homepage download.
   Future<JsonMap> _config(CancellationToken? cancel) async {
-    if (_configuration != null && _expires!.isAfter(DateTime.now())) {
-      return _configuration!;
+    if (_hasFreshConfig) return _configuration!;
+    final shared = _pending ??= _loadConfig(cancel).whenComplete(() {
+      _pending = null;
+    });
+    try {
+      return await shared;
+    } on ProviderException catch (e) {
+      // The download belonged to another caller that was cancelled.
+      if (e.code == 'cancelled' && cancel?.isCancelled != true) {
+        return _config(cancel);
+      }
+      rethrow;
     }
+  }
+
+  Future<JsonMap> _loadConfig(CancellationToken? cancel) async {
     // No consent-bypass cookie is sent: a consent interstitial is reported as
     // a blocked source instead of being skipped programmatically.
     final String source;
@@ -92,6 +111,25 @@ class YoutubeMusicProvider implements LyricsProvider {
   }
 
   Future<JsonMap> _request(
+    String endpoint,
+    JsonMap fields,
+    CancellationToken? cancel,
+  ) async {
+    final cached = _hasFreshConfig;
+    try {
+      return await _send(endpoint, fields, cancel);
+    } on ProviderException catch (e) {
+      // A rotated client version fails with a client error: forget the cached
+      // value, and retry once with a freshly fetched one.
+      const keep = {'cancelled', 'timeout', 'rate_limited', 'blocked'};
+      if (keep.contains(e.code)) rethrow;
+      _configuration = null;
+      if (cached) return _send(endpoint, fields, cancel);
+      rethrow;
+    }
+  }
+
+  Future<JsonMap> _send(
     String endpoint,
     JsonMap fields,
     CancellationToken? cancel,

@@ -1,6 +1,32 @@
+import 'package:html/dom.dart' show Document, Node;
+import 'package:html/parser.dart' as html;
 import 'transport.dart';
 
+/// True when [root] nests deeper than any real markup. Recursive DOM helpers
+/// (`clone`, `.text`) overflow the stack on such trees, so callers reject them
+/// first. The walk itself is iterative.
+bool htmlTooDeep(Node root, [int limit = 500]) {
+  final stack = <(Node, int)>[(root, 0)];
+  while (stack.isNotEmpty) {
+    final (node, depth) = stack.removeLast();
+    if (depth > limit) return true;
+    for (final child in node.nodes) {
+      stack.add((child, depth + 1));
+    }
+  }
+  return false;
+}
+
 /// Shared hardening for everything a remote provider can hand us.
+
+/// Parses HTML and rejects documents nested deeper than any real page: the
+/// parser is iterative, but selector evaluation, `clone` and `.text` are
+/// recursive and overflow the stack on such input.
+Document parseHtml(String source) {
+  final document = html.parse(source);
+  if (htmlTooDeep(document)) throw const ProviderException('extraction_failed');
+  return document;
+}
 
 /// Validates a user/provider search phrase before it is sent anywhere.
 String queryText(String query) {

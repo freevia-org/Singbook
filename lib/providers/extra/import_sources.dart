@@ -3,6 +3,7 @@ import 'package:crypto/crypto.dart';
 import 'package:html/parser.dart' as html;
 import '../../domain/models.dart';
 import '../provider.dart';
+import '../core/common.dart' show plainToChordPro;
 import 'common.dart';
 
 /// A real file/paste ingestion route, deliberately distinct from remote lookup.
@@ -122,7 +123,7 @@ class ChordieProvider implements LyricsProvider {
           .replace(queryParameters: {'q': queryText(query)}),
       cancel: cancel,
     );
-    final doc = html.parse(source);
+    final doc = parseHtml(source);
     final found = <String, SongCandidate>{};
     for (final anchor in doc.querySelectorAll('a[href]')) {
       final spans = anchor.querySelectorAll('span');
@@ -166,7 +167,7 @@ class ChordieProvider implements LyricsProvider {
       base.host,
     }, prefix: '/chord.pere/');
     final source = await transport.getText(uri, cancel: cancel);
-    final doc = html.parse(source);
+    final doc = parseHtml(source);
     // Fallback selectors tolerate small markup changes.
     final node =
         doc.querySelector('textarea#chordproContent') ??
@@ -243,7 +244,7 @@ class WikisourceProvider implements LyricsProvider {
         cancel: cancel,
       ),
     );
-    if (result['error'] != null) throw const ProviderException('unavailable');
+    throwIfApiError(result);
     return result;
   }
 
@@ -308,9 +309,12 @@ class WikisourceProvider implements LyricsProvider {
         )
         .toList();
     if (rights.isEmpty) throw const ProviderException('rights_review_required');
-    final doc = html.parse(stringValue(parsed['text']));
+    final doc = parseHtml(stringValue(parsed['text']));
     final poems = doc.querySelectorAll('.poem');
     if (poems.isEmpty) throw const ProviderException('unavailable');
+    if (poems.any(htmlTooDeep)) {
+      throw const ProviderException('extraction_failed');
+    }
     final blocks = <String>[];
     for (final poem in poems) {
       for (final br in poem.querySelectorAll('br')) {
@@ -319,7 +323,9 @@ class WikisourceProvider implements LyricsProvider {
       final text = poem.text.trim();
       if (text.isNotEmpty) blocks.add(text);
     }
-    final body = blocks.join('\n\n');
+    // Wiki text is editable by anyone: drop Singbook directives, then escape
+    // ChordPro syntax so poem brackets never become chords or directives.
+    final body = plainToChordPro(remoteChordPro(blocks.join('\n\n')));
     requireSongText(body);
     final authors = doc
         .querySelectorAll('a[href^="/wiki/Author:"]')

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io' show gzip;
-import 'package:html/parser.dart' as html;
 import 'package:html/dom.dart';
 import '../../domain/models.dart';
 import '../../domain/timing.dart';
@@ -134,7 +133,7 @@ class GeniusProvider implements LyricsProvider {
   }
 
   static String extractLyrics(String source) {
-    final document = html.parse(source);
+    final document = parseHtml(source);
     // Fallback selectors keep extraction working across Genius layout variants.
     var containers = <Element>[];
     for (final selector in const [
@@ -158,6 +157,7 @@ class GeniusProvider implements LyricsProvider {
         parent = parent.parent;
       }
       if (nested) continue;
+      if (htmlTooDeep(container)) continue;
       final node = container.clone(true);
       for (final removed in node.querySelectorAll(
         'script,style,noscript,iframe,svg,button,form,h1,h2,[hidden],[aria-hidden="true"],[data-exclude-from-selection="true"]',

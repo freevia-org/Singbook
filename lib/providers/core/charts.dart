@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:html/parser.dart' as html;
+import 'package:html/dom.dart' as dom;
 import '../../domain/models.dart';
 import '../provider.dart';
 import 'common.dart';
@@ -67,9 +67,9 @@ class SongsterrProvider implements LyricsProvider {
     accessMode: 'public_page',
     website: 'https://www.songsterr.com',
   );
-  static JsonMap _state(String source) {
+  static JsonMap _state(String source, [dom.Document? parsed]) {
     try {
-      final document = html.parse(source);
+      final document = parsed ?? parseHtml(source);
       // The type attribute is optional in fallback markup.
       final node =
           document.querySelector('script#state[type="application/json"]') ??
@@ -95,8 +95,8 @@ class SongsterrProvider implements LyricsProvider {
     metadata: metadata,
   );
   static List<SongCandidate> parseSearch(String source) {
-    final doc = html.parse(source),
-        state = _state(source),
+    final doc = parseHtml(source),
+        state = _state(source, doc),
         paths = <String, String>{};
     for (final a in doc.querySelectorAll('a[href]')) {
       try {
@@ -146,13 +146,13 @@ class SongsterrProvider implements LyricsProvider {
 
   static SourceResult parsePage(String source, String requestedId) {
     final path = _chartPath(requestedId, 'songsterr', selection: true),
-        state = _state(source);
+        document = parseHtml(source),
+        state = _state(source, document);
     final current = jsonMap(jsonMap(state['chords'])['current']);
     if (current['songId'].toString() != _pathId(path)) {
       throw const ProviderException('invalid_response', 'Different chart');
     }
-    final canonical = html
-        .parse(source)
+    final canonical = document
         .querySelector('link[rel="canonical"]')
         ?.attributes['href'];
     if (canonical != null &&
@@ -243,7 +243,7 @@ class SongsterrProvider implements LyricsProvider {
           lyricCharacters += lyricText.trim().length;
         }
       } else if (type == 'section' || type == 'comment') {
-        final label = clean(row['text']);
+        final label = clean(row['text'])?.replaceAll(RegExp(r'\s*\n\s*'), ' ');
         if (label != null) lines.add(_Line('[$label]'));
       } else {
         if (!{
@@ -361,11 +361,11 @@ class UltimateGuitarProvider implements LyricsProvider {
     accessMode: 'public_page',
     website: 'https://www.ultimate-guitar.com',
   );
-  static JsonMap _data(String source) {
+  static JsonMap _data(String source, [dom.Document? parsed]) {
     try {
-      final nodes = html
-          .parse(source)
-          .querySelectorAll('.js-store[data-content]');
+      final nodes = (parsed ?? parseHtml(source)).querySelectorAll(
+        '.js-store[data-content]',
+      );
       // Prefer the single store node; if the layout has several, use the first
       // whose store.page.data is an object.
       for (final node in nodes) {
@@ -438,17 +438,97 @@ class UltimateGuitarProvider implements LyricsProvider {
         r'^\s*(?:[A-Geb]?\|)?[-|x\d~hpbr/\\]{4,}',
         caseSensitive: false,
       ).hasMatch(value);
-  static bool _validChord(String s) =>
-      s.length <= 60 &&
-      RegExp(
-        r'^(?:[A-G](?:#|b|♯|♭){0,2}(?:(?:maj|min|dim|aug|sus|add|omit|no|M|m|Δ|ø|°)|\d{1,2}|[#b♯♭+−-]\d{0,2}|\/(?:9|11|13)|\([A-Za-z0-9#b♯♭,+−-]{1,20}\))*(?:\/[A-G](?:#|b|♯|♭){0,2})?|N\.?C\.?)$',
-      ).hasMatch(s);
-  static String _expand(String value, int start) {
-    var result = '';
-    for (final char in value.split('')) {
-      result += char == '\t' ? ' ' * (8 - ((start + result.length) % 8)) : char;
+  static const _accidentals = '#b♯♭';
+  static const _chordWords = [
+    'maj', 'min', 'dim', 'aug', 'sus', 'add', 'omit', 'no', 'M', 'm', 'Δ', 'ø',
+    '°',
+  ];
+
+  /// Linear-time chord grammar (no regex backtracking on hostile input):
+  /// root, any run of suffix tokens, optional slash bass, or N.C.
+  static bool _validChord(String s) {
+    if (s.length > 60) return false;
+    if (const {'NC', 'N.C', 'NC.', 'N.C.'}.contains(s)) return true;
+    var i = 0;
+    bool isRoot(int c) => c >= 0x41 && c <= 0x47;
+    bool isDigit(int c) => c >= 0x30 && c <= 0x39;
+    // Accidentals up to two long, starting at [from]; returns the end index.
+    int accidentals(int from) {
+      var j = from;
+      while (j < s.length && j - from < 2 && _accidentals.contains(s[j])) {
+        j++;
+      }
+      return j;
     }
-    return result;
+
+    if (s.isEmpty || !isRoot(s.codeUnitAt(0))) return false;
+    i = accidentals(1);
+    const symbols = '#b♯♭+−-';
+    const parenChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#b♯♭,+−-';
+    while (i < s.length) {
+      final c = s.codeUnitAt(i);
+      if (isDigit(c)) {
+        while (i < s.length && isDigit(s.codeUnitAt(i))) {
+          i++;
+        }
+        continue;
+      }
+      if (symbols.contains(s[i])) {
+        i++;
+        continue;
+      }
+      if (c == 0x28) {
+        final close = s.indexOf(')', i + 1);
+        if (close < 0 || close - i - 1 < 1 || close - i - 1 > 20) return false;
+        for (var k = i + 1; k < close; k++) {
+          if (!parenChars.contains(s[k])) return false;
+        }
+        i = close + 1;
+        continue;
+      }
+      if (c == 0x2f) {
+        final rest = s.substring(i + 1);
+        if (rest.startsWith('9')) {
+          i += 2;
+          continue;
+        }
+        if (rest.startsWith('11') || rest.startsWith('13')) {
+          i += 3;
+          continue;
+        }
+        break;
+      }
+      String? word;
+      for (final w in _chordWords) {
+        if (s.startsWith(w, i)) {
+          word = w;
+          break;
+        }
+      }
+      if (word == null) return false;
+      i += word.length;
+    }
+    if (i == s.length) return true;
+    // Optional slash bass note.
+    if (s.codeUnitAt(i) != 0x2f || i + 1 >= s.length) return false;
+    if (!isRoot(s.codeUnitAt(i + 1))) return false;
+    return accidentals(i + 2) == s.length;
+  }
+
+  static String _expand(String value, int start) {
+    final result = StringBuffer();
+    var length = 0;
+    for (final unit in value.codeUnits) {
+      if (unit == 0x09) {
+        final pad = 8 - ((start + length) % 8);
+        result.write(' ' * pad);
+        length += pad;
+      } else {
+        result.writeCharCode(unit);
+        length++;
+      }
+    }
+    return result.toString();
   }
 
   static _UgRow _row(String raw) {
@@ -525,11 +605,13 @@ class UltimateGuitarProvider implements LyricsProvider {
     if (content.isEmpty || content.length > 200000) {
       throw const ProviderException('invalid_response');
     }
-    final rows = content
-        .replaceAll(RegExp(r'\r\n?'), '\n')
-        .split('\n')
-        .map(_row)
-        .toList();
+    final rawLines = content.replaceAll(RegExp(r'\r\n?'), '\n').split('\n');
+    // Markup is removed per row, so allow slack over the 20000-char row cap but
+    // reject before any per-character work on absurd lines.
+    if (rawLines.any((l) => l.length > 40000)) {
+      throw const ProviderException('invalid_response');
+    }
+    final rows = rawLines.map(_row).toList();
     final firstChord = rows.indexWhere((r) => r.positions.isNotEmpty);
     if (firstChord < 0) throw const ProviderException('unavailable');
     final firstSection = rows.indexWhere(
@@ -599,11 +681,13 @@ class UltimateGuitarProvider implements LyricsProvider {
     final content = clean(jsonMap(view['wiki_tab'])['content'], 200000);
     if (content != null) {
       for (final raw in content.split('\n')) {
+        // Preamble facts are short; never run the matchers on hostile lines.
+        if (raw.length > 200) continue;
         final line = raw.trim();
         if (_section(line) || line.contains('[ch]')) break;
         RegExpMatch? match;
         if ((match = RegExp(
-              r'^capo\s*(?::|=|-)?\s*(?:on\s+(?:the\s+)?)?(\d{1,2})(?:st|nd|rd|th)?(?:\s+fret)?[.!]?$',
+              r'^capo[ \t]{0,10}[:=-]?[ \t]{0,10}(?:on\s+(?:the\s+)?)?(\d{1,2})(?:st|nd|rd|th)?(?:\s+fret)?[.!]?$',
               caseSensitive: false,
             ).firstMatch(line)) !=
             null) {
@@ -678,7 +762,8 @@ class UltimateGuitarProvider implements LyricsProvider {
 
   static SourceResult parsePage(String source, String requestedId) {
     final path = _chartPath(requestedId, 'ultimateguitar', selection: true),
-        data = _data(source);
+        document = parseHtml(source),
+        data = _data(source, document);
     final tab = object(data['tab']), view = object(data['tab_view']);
     if (tab['id'].toString() != _pathId(path) ||
         _pathId(
@@ -687,8 +772,7 @@ class UltimateGuitarProvider implements LyricsProvider {
             _pathId(path)) {
       throw const ProviderException('invalid_response');
     }
-    final canonical = html
-        .parse(source)
+    final canonical = document
         .querySelector('link[rel="canonical"]')
         ?.attributes['href'];
     if (canonical != null &&

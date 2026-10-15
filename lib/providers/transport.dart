@@ -92,7 +92,14 @@ class ProviderTransport {
     Map<String, String> headers = const {},
     CancellationToken? cancel,
     int? maxBytes,
-  }) => requestText(url, headers: headers, cancel: cancel, maxBytes: maxBytes);
+    Duration? timeout,
+  }) => requestText(
+    url,
+    headers: headers,
+    cancel: cancel,
+    maxBytes: maxBytes,
+    timeout: timeout,
+  );
 
   Future<dynamic> requestJson(
     Uri url, {
@@ -101,6 +108,7 @@ class ProviderTransport {
     Object? body,
     CancellationToken? cancel,
     int? maxBytes,
+    Duration? timeout,
   }) async {
     final text = await requestText(
       url,
@@ -109,6 +117,7 @@ class ProviderTransport {
       body: body,
       cancel: cancel,
       maxBytes: maxBytes,
+      timeout: timeout,
     );
     try {
       return jsonDecode(text);
@@ -132,6 +141,7 @@ class ProviderTransport {
     Object? body,
     CancellationToken? cancel,
     int? maxBytes,
+    Duration? timeout,
   }) async {
     if (_closed) throw const ProviderException('transport_closed');
     if (!_validUrl(url)) throw const ProviderException('invalid_url');
@@ -139,7 +149,7 @@ class ProviderTransport {
     final limit = (maxBytes ?? this.maxBytes).clamp(1, _hardMaxBytes);
     final previous = _queues[url.host] ?? Future<void>.value();
     final result = previous.then(
-      (_) => _run(url, method, headers, body, cancel, limit),
+      (_) => _run(url, method, headers, body, cancel, limit, timeout),
     );
     _queues[url.host] = result.then<void>((_) {}, onError: (Object _) {});
     return _cancellable(result, cancel);
@@ -170,6 +180,7 @@ class ProviderTransport {
     Object? body,
     CancellationToken? cancel,
     int limit,
+    Duration? timeout,
   ) async {
     if (_closed) throw const ProviderException('transport_closed');
     cancel?.throwIfCancelled();
@@ -178,7 +189,15 @@ class ProviderTransport {
     var hops = 0, retries = 0;
     while (true) {
       await _pace(url.host, cancel);
-      final reply = await _once(url, verb, sent, payload, cancel, limit);
+      final reply = await _once(
+        url,
+        verb,
+        sent,
+        payload,
+        cancel,
+        limit,
+        timeout,
+      );
       final code = reply.status;
       if (code >= 200 && code < 300) return reply.text!;
       if ({301, 302, 303, 307, 308}.contains(code)) {
@@ -251,6 +270,7 @@ class ProviderTransport {
     Object? body,
     CancellationToken? cancel,
     int limit,
+    Duration? timeout,
   ) async {
     final abort = Completer<void>();
     void abortRequest() {
@@ -303,7 +323,7 @@ class ProviderTransport {
         cancel,
         onCancel: abortRequest,
       ).timeout(
-        timeout,
+        timeout ?? this.timeout,
         onTimeout: () {
           abortRequest();
           throw const ProviderException('timeout');

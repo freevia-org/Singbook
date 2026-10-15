@@ -170,6 +170,11 @@ Future<SourceResult> findMatchingSource(
   LyricsProvider provider,
   SongCandidate selection, {
   CancellationToken? cancel,
+  // Candidate ids already tried by an earlier pass.
+  Set<String> exclude = const {},
+  // Extra acceptance test (for example lyrics corroboration). A result that
+  // fails it is skipped so the next candidate can be tried.
+  bool Function(SourceResult result)? accept,
 }) async {
   final metadataOnly =
       provider.definition.capabilities.contains('metadata') &&
@@ -206,7 +211,10 @@ Future<SourceResult> findMatchingSource(
     );
   }
   var attempts = 0;
-  final seen = <String>{};
+  final seen = <String>{...exclude};
+  // The first identity rejection is kept, but only returned once every
+  // candidate has been tried.
+  SourceResult? rejected;
   // Every soft failure is kept (candidate id and code), not just the first.
   final unresolved = <ProviderException>[];
   Future<SourceResult?> attempt(SongCandidate candidate) async {
@@ -240,7 +248,8 @@ Future<SourceResult> findMatchingSource(
         song.id != candidate.id ||
         !sameSong(candidate, song) ||
         (!strict && !sameArrangement(selection, song, provider))) {
-      return _matched(result, MatchKind.rejected, 'identity_mismatch');
+      rejected ??= _matched(result, MatchKind.rejected, 'identity_mismatch');
+      return null;
     }
     if (result.body.trim().isEmpty && !result.timingTracks.any((track)=>track.raw?.isNotEmpty == true)) {
       return null;
@@ -259,7 +268,7 @@ Future<SourceResult> findMatchingSource(
     final recording = provider.definition.id != 'lyricsovh' &&
         !{'composition','arrangement','image','work'}.contains(scope) &&
         (exact || verifiedRecording);
-    return _matched(
+    final matched = _matched(
       result,
       recording ? MatchKind.sameRecording : MatchKind.sameSong,
       recording
@@ -269,6 +278,8 @@ Future<SourceResult> findMatchingSource(
           : 'arrangement_requires_agreement',
       extra: !strict ? {'requiresLyricsAgreement': true} : {},
     );
+    if (accept != null && !accept(matched)) return null;
+    return matched;
   }
 
   if (selection.providerId == provider.definition.id) {
@@ -301,6 +312,7 @@ Future<SourceResult> findMatchingSource(
     final result = await attempt(candidate);
     if (result != null) return result;
   }
+  if (rejected != null) return rejected!;
   if (unresolved.isEmpty) throw const ProviderException('unavailable');
   // 'blocked' is rethrown at once (hammering a bot wall helps nobody); layout
   // failures from every attempted candidate are reported together.
@@ -429,11 +441,51 @@ class SourceDiscoveryService {
           );
         }
       } else if (!_agreement(result.body, references.first.body)) {
-        results[i] = _matched(
-          result,
-          MatchKind.rejected,
-          'incomplete_or_different_lyrics',
+        // The first chart may be a truncated or different-lyrics version: try
+        // the provider's other candidates against the same reference.
+        SourceResult? alternative;
+        final owners = active.where(
+          (p) => p.definition.id == result.candidate.providerId,
         );
+        if (owners.isNotEmpty) {
+          final referenceBody = references.first.body;
+          try {
+            cancel?.throwIfCancelled();
+            alternative = await findMatchingSource(
+              owners.first,
+              selection,
+              cancel: cancel,
+              exclude: {result.candidate.id},
+              accept: (r) =>
+                  r.hasChords && _agreement(r.body, referenceBody),
+            ).timeout(const Duration(seconds: 30));
+            if (alternative.matchKind == MatchKind.rejected ||
+                !alternative.hasChords) {
+              alternative = null;
+            }
+          } on ProviderException catch (e) {
+            if (e.code == 'cancelled') rethrow;
+            alternative = null;
+          } catch (_) {
+            alternative = null;
+          }
+        }
+        if (alternative != null) {
+          results[i] = alternative;
+          onProgress?.call(
+            ProviderCheck(
+              providerId: alternative.candidate.providerId,
+              state: 'found',
+              result: alternative,
+            ),
+          );
+        } else {
+          results[i] = _matched(
+            result,
+            MatchKind.rejected,
+            'incomplete_or_different_lyrics',
+          );
+        }
       }
       if (results[i].matchKind == MatchKind.rejected) {
         onProgress?.call(

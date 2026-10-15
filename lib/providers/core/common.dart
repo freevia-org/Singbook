@@ -9,15 +9,28 @@ export '../sanitize.dart'
         safeHttpsUrl,
         stripVerseDirectives,
         throwIfBlocked,
+        htmlTooDeep,
+        parseHtml,
         blockedPageReason,
         geniusImageHosts,
         deezerImageHosts,
         youtubeImageHosts;
 
-String? clean(dynamic value, [int max = 300]) =>
-    value is String && value.trim().isNotEmpty && value.length <= max
-    ? value.replaceAll('\r\n', '\n').trim()
-    : null;
+final _controlChars = RegExp(
+  r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f\u202a-\u202e\u2066-\u2069]',
+);
+
+/// Normalises provider text: control and bidi-override characters are removed,
+/// lone CR / U+2028 / U+2029 become line feeds, and the result is trimmed.
+/// Over-length or blank values yield null.
+String? clean(dynamic value, [int max = 300]) {
+  if (value is! String || value.length > max) return null;
+  final text = value
+      .replaceAll(_controlChars, '')
+      .replaceAll(RegExp(r'\r\n?|[\u2028\u2029]'), '\n')
+      .trim();
+  return text.isEmpty ? null : text;
+}
 Map<String, dynamic> object(dynamic value) {
   if (value is! Map) throw const ProviderException('invalid_response');
   return Map<String, dynamic>.from(value);
@@ -29,10 +42,15 @@ List<dynamic> array(dynamic value) {
 }
 
 String requiredText(dynamic value, [int max = 300]) {
-  final text = clean(value, max);
+  var text = clean(value, max);
   if (text == null) {
+    if (value is String && value.length > max && value.trim().isNotEmpty) {
+      throw const ProviderException('invalid_response', 'too_large');
+    }
     throw const ProviderException('invalid_response', 'Missing identity');
   }
+  // Identity fields are single-line; long documents (lyrics, TTML) are not.
+  if (max <= 1500) text = text.replaceAll(RegExp(r'\s*\n\s*'), ' ');
   return text;
 }
 
@@ -45,7 +63,7 @@ String numericId(dynamic value) {
 }
 
 double? durationValue(dynamic value) =>
-    value is num && value.isFinite && value >= 0 && value <= 86400
+    value is num && value.isFinite && value > 0 && value <= 86400
     ? value.toDouble()
     : null;
 /// https only, no userinfo, public-looking host; null (dropped) otherwise.
@@ -171,6 +189,9 @@ String plainToChordPro(String plain) => plain
     })
     .join('\n');
 String meaningfulLyrics(dynamic value) {
+  if (value is String && value.length > 200000) {
+    throw const ProviderException('invalid_response', 'too_large');
+  }
   final text = clean(value, 200000);
   if (text == null ||
       !text

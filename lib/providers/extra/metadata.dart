@@ -68,7 +68,7 @@ class MusicBrainzProvider implements LyricsProvider {
       durationSeconds: length is num && length > 0 ? length / 1000 : null,
       url: 'https://musicbrainz.org/recording/$id',
       recordingIds: {'musicbrainz': id},
-      metadata: {
+      metadata: sanitizeExtraMetadata({
         'identityScope': 'recording',
         if (stringValue(r['disambiguation']).isNotEmpty)
           'version': r['disambiguation'],
@@ -93,7 +93,7 @@ class MusicBrainzProvider implements LyricsProvider {
               },
             )
             .toList(),
-      },
+      }),
     );
   }
 
@@ -184,7 +184,7 @@ class MusicBrainzProvider implements LyricsProvider {
     return SourceResult(
       candidate: found,
       body: '',
-      metadata: metadata,
+      metadata: sanitizeExtraMetadata(metadata),
       attribution: 'MusicBrainz',
       retrievedAt: DateTime.now().toUtc(),
       extra: {
@@ -249,13 +249,7 @@ class WikidataProvider implements LyricsProvider {
         cancel: cancel,
       ),
     );
-    if (data['error'] != null) {
-      throw ProviderException(
-        jsonMap(data['error'])['code'] == 'maxlag'
-            ? 'provider_busy'
-            : 'unavailable',
-      );
-    }
+    throwIfApiError(data);
     return data;
   }
 
@@ -356,7 +350,7 @@ class WikidataProvider implements LyricsProvider {
             title: entityLabel(e.value),
             artist: artists.join(', '),
             url: 'https://www.wikidata.org/wiki/${e.key}',
-            metadata: metadata,
+            metadata: sanitizeExtraMetadata(metadata),
           );
         })
         .where((c) => c.title.isNotEmpty)
@@ -488,6 +482,7 @@ class WikimediaCommonsProvider implements LyricsProvider {
         cancel: cancel,
       ),
     );
+    throwIfApiError(data);
     final pages = maps(jsonMap(data['query'])['pages']);
     final page = pages.where((p) => p['missing'] != true).firstOrNull;
     final info = maps(page?['imageinfo']).firstOrNull;
@@ -495,7 +490,11 @@ class WikimediaCommonsProvider implements LyricsProvider {
     final ext = jsonMap(info['extmetadata']);
     String value(String key) => textValue(jsonMap(ext[key])['value']);
     final license = value('LicenseShortName');
-    final licenseUrl = value('LicenseUrl');
+    // Only license pages on known hosts are kept; anything else is dropped.
+    final licenseUrl = httpsLink(
+      value('LicenseUrl'),
+      hosts: const {'creativecommons.org', 'wikimedia.org', 'wikipedia.org'},
+    );
     final approved = RegExp(
       r'^(?:CC BY(?:-SA)?(?: [0-9.]+)?|CC0(?: [0-9.]+)?|Public domain)$',
       caseSensitive: false,
@@ -503,7 +502,10 @@ class WikimediaCommonsProvider implements LyricsProvider {
     if (!approved || value('Restrictions').isNotEmpty) {
       throw const ProviderException('rights_review_required');
     }
-    final imageUrl = httpsLink(info['thumburl']) ?? httpsLink(info['url']);
+    const imageHosts = {'wikimedia.org'};
+    final imageUrl =
+        httpsLink(info['thumburl'], hosts: imageHosts) ??
+        httpsLink(info['url'], hosts: imageHosts);
     if (imageUrl == null || !stringValue(info['mime']).startsWith('image/')) {
       throw const ProviderException('invalid_response');
     }
@@ -522,9 +524,9 @@ class WikimediaCommonsProvider implements LyricsProvider {
       'url': imageUrl,
       'sourceUrl': sourceUrl,
       'license': license,
-      'licenseUrl': licenseUrl,
-      'author': value('Artist'),
-      'credit': value('Credit'),
+      'licenseUrl': ?licenseUrl,
+      'author': boundedText(value('Artist'), max: 500),
+      'credit': boundedText(value('Credit'), max: 500),
       'sha1': info['sha1'],
       'role': 'entityImage',
       'title': title,
