@@ -911,11 +911,7 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
   void _openFullPreview() {
     final selected = widget.controller.state.comparison?.selected;
     if (selected != null) {
-      widget.controller.selectVersion(
-        selected.sourceCount == 1 && selected.underlyingSourceId != null
-            ? selected.underlyingSourceId!
-            : selected.id,
-      );
+      widget.controller.selectVersion(versionSelectionId(selected));
     }
     Navigator.of(context).push<void>(
       MaterialPageRoute(
@@ -987,7 +983,8 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
             version,
             suggested: version.id == comparison.suggested?.id,
             selected: version.id == selectedRowId,
-            onSelect: () => widget.controller.selectVersion(version.id),
+            onSelect: () =>
+                widget.controller.selectVersion(versionSelectionId(version)),
           ),
         _discoveryStatus(context, l10n, comparison),
       ],
