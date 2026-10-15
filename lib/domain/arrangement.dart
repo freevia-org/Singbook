@@ -139,6 +139,84 @@ List<ArrangementLine> parseArrangement(String body) =>
       return ArrangementLine(text.toString(), chords);
     }).toList();
 
+/// Adds inferred Verse and Chorus directives when an arrangement has
+/// paragraph breaks but no explicit section markers.
+///
+/// Paragraphs with the same lyric text after case, punctuation, whitespace,
+/// and chord normalization are treated as choruses. Other lyric paragraphs
+/// are numbered verses. This changes only the combined copy of the body;
+/// callers retain the provider's original body in source provenance.
+String inferSectionDirectives(String body) {
+  final normalizedBody = body.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
+  final lines = normalizedBody.split('\n');
+  final arrangementLines = parseArrangement(normalizedBody);
+  final hasExplicitSection = arrangementLines.any((line) {
+    if (sectionLabelForLine(line) != null) return true;
+    return line.directive &&
+        RegExp(
+          r'^\s*\{(?:(?:start|end)_of_(?:pre_chorus|post_chorus|verse|chorus|bridge|intro|outro|instrumental|interlude|solo|refrain|hook|breakdown|coda|tag|ending)|chorus)(?:\s*:[^}]*)?\}\s*$',
+          caseSensitive: false,
+        ).hasMatch(line.text);
+  });
+  if (hasExplicitSection) return body;
+
+  final paragraphs = <({int start, int end, String lyrics})>[];
+  var index = 0;
+  while (index < lines.length) {
+    while (index < lines.length && lines[index].trim().isEmpty) {
+      index++;
+    }
+    if (index == lines.length) break;
+    final start = index;
+    while (index < lines.length && lines[index].trim().isNotEmpty) {
+      index++;
+    }
+    final lyricText = arrangementLines
+        .sublist(start, index)
+        .where((line) => !line.directive)
+        .map((line) => line.text)
+        .join(' ')
+        .toLowerCase()
+        .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
+        .trim();
+    if (lyricText.isNotEmpty) {
+      paragraphs.add((start: start, end: index, lyrics: lyricText));
+    }
+  }
+  if (paragraphs.length < 2) return body;
+
+  final frequencies = <String, int>{};
+  for (final paragraph in paragraphs) {
+    frequencies.update(
+      paragraph.lyrics,
+      (count) => count + 1,
+      ifAbsent: () => 1,
+    );
+  }
+
+  final labelsAtLine = <int, String>{};
+  final endChorusAfterLine = <int>{};
+  var verseNumber = 0;
+  for (final paragraph in paragraphs) {
+    final isChorus = frequencies[paragraph.lyrics]! > 1;
+    labelsAtLine[paragraph.start] = isChorus
+        ? 'chorus'
+        : 'verse: ${++verseNumber}';
+    if (isChorus) endChorusAfterLine.add(paragraph.end - 1);
+  }
+
+  final output = <String>[];
+  for (var line = 0; line < lines.length; line++) {
+    final label = labelsAtLine[line];
+    if (label != null) {
+      output.add(label == 'chorus' ? '{start_of_chorus}' : '{start_of_$label}');
+    }
+    output.add(lines[line]);
+    if (endChorusAfterLine.contains(line)) output.add('{end_of_chorus}');
+  }
+  return output.join('\n');
+}
+
 String transposeChord(String chord, int semitones) {
   const sharp = [
     'C',
