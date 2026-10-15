@@ -925,8 +925,9 @@ class AppControllerAdapter extends VerseUiController {
               .split('')
               .every(
                 (character) => '-0123456789xX|:/\\ \t'.contains(character),
-              ))
+              )) {
         return true;
+      }
     }
     bool shape(String token) =>
         token.length >= 5 &&
@@ -943,8 +944,9 @@ class AppControllerAdapter extends VerseUiController {
     if (tokens.length != 2 && tokens.length != 4) return false;
     if (!shape(tokens[1]) ||
         (tokens.length == 4 &&
-            (tokens[2].toLowerCase() != 'or' || !shape(tokens[3]))))
+            (tokens[2].toLowerCase() != 'or' || !shape(tokens[3])))) {
       return false;
+    }
     final chord = tokens.first;
     if (chord.length > 32) return false;
     final wrapped = '[$chord]';

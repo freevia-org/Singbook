@@ -369,8 +369,9 @@ class _PreviewLine extends StatelessWidget {
         ),
       );
     }
-    if (line.isBlank)
+    if (line.isBlank) {
       return SizedBox(key: ValueKey('preview-line-${line.id}'), height: 15);
+    }
     final graphemes = line.text.characters.toList();
     final chords = [...line.chords]
       ..sort((a, b) => a.graphemeOffset.compareTo(b.graphemeOffset));
