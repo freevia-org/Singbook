@@ -183,8 +183,10 @@ if ($ext -eq '.apk') {
         elseif (($zaOut -join "`n") -match 'Verification FAILED|\(BAD\)') {
             Write-Host 'FAIL: zipalign -c -P 16 reports misalignment (not 16 KB compatible).' -ForegroundColor Red; $failed = $true
         } else {
-            Write-Warning "zipalign exited $zaCode without an alignment verdict (build-tools too old for -P?); relying on the ELF check below."
+            Write-Host "FAIL: UNVERIFIED zip entry alignment. zipalign exited $zaCode without an alignment verdict (build-tools too old for -P?). The ELF check below covers native library segments only, not ZIP entry alignment." -ForegroundColor Red; $failed = $true
         }
+    } else {
+        Write-Host 'FAIL: UNVERIFIED zip entry alignment. zipalign.exe was not found in the Android SDK build-tools; the ELF check below covers native library segments only, not ZIP entry alignment.' -ForegroundColor Red; $failed = $true
     }
     $elfBad = Test-ElfAlignment $Path
     if ($elfBad -gt 0) { $failed = $true }
