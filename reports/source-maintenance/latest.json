@@ -1,0 +1,288 @@
+{
+  "schemaVersion": 1,
+  "kind": "scheduled_cloud_smoke",
+  "executedAtUtc": "2026-10-15T21:05:46.910712Z",
+  "runtime": {
+    "provider": "managed_cloud",
+    "repositoryPath": "/workspace/Singbook",
+    "platform": "linux_x64",
+    "dartVersion": "3.12.2",
+    "networkPolicy": "unrestricted/enforced",
+    "configurationRevision": "11",
+    "trigger": "hosted scheduled instruction delivered to existing Codex thread"
+  },
+  "baseCommit": "c160435a203ca01e8f265571930700900dcdf903",
+  "command": "dart run tool/source_maintenance.dart --offline --report /workspace/work/scheduled-datasource-smoke/offline.json",
+  "exitCode": 0,
+  "status": "offline_unverified",
+  "localDefinesPresent": false,
+  "repositoryCodeChanged": false,
+  "catalogRevision": 2,
+  "summary": {
+    "offline_unverified": 17,
+    "import_only": 2
+  },
+  "sources": [
+    {
+      "id": "genius",
+      "status": "offline_unverified",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "lyrics",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "songsterr",
+      "status": "offline_unverified",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "ultimateguitar",
+      "status": "offline_unverified",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "lrclib",
+      "status": "offline_unverified",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "youtubemusic",
+      "status": "offline_unverified",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "lyrics",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "lyricsovh",
+      "status": "offline_unverified",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "lyrics",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "synclrc",
+      "status": "offline_unverified",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "metadata",
+          "wordTiming"
+        ]
+      }
+    },
+    {
+      "id": "betterlyrics",
+      "status": "offline_unverified",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "metadata",
+          "wordTiming"
+        ]
+      }
+    },
+    {
+      "id": "unison",
+      "status": "offline_unverified",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "wordTiming"
+        ]
+      }
+    },
+    {
+      "id": "ozbcoz",
+      "status": "import_only",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "chords",
+          "fileImport",
+          "lyrics",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "chordie",
+      "status": "offline_unverified",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "chords",
+          "fileImport",
+          "lyrics",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "worshipcommons",
+      "status": "offline_unverified",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata",
+          "timing"
+        ]
+      }
+    },
+    {
+      "id": "openfilksongbook",
+      "status": "offline_unverified",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "seanmcgrathmusic",
+      "status": "offline_unverified",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "worshiptogether",
+      "status": "import_only",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "chords",
+          "fileImport",
+          "lyrics",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "musicbrainz",
+      "status": "offline_unverified",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "wikidata",
+      "status": "offline_unverified",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "wikimediacommons",
+      "status": "offline_unverified",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "artwork",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "wikisource",
+      "status": "offline_unverified",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "fileImport",
+          "lyrics",
+          "metadata"
+        ]
+      }
+    }
+  ]
+}
