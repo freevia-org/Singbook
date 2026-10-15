@@ -17,6 +17,7 @@ import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/providers/provider.dart';
 import 'package:singbook/ui/verse_app.dart';
 import 'package:singbook/ui/home/home_screen.dart';
+import 'package:singbook/ui/player/player_screen.dart';
 import 'package:singbook/ui/settings/settings_screen.dart';
 
 const _catalogId = 'journey_catalog';
@@ -111,7 +112,9 @@ void main() {
         'all',
       );
       _expectHomeModeCount('online', 5);
-      expect(find.text('Signal Song 5'), findsOneWidget);
+      final lastSignalResult = find.text('Signal Song 5');
+      await _scrollIntoView(tester, lastSignalResult);
+      expect(lastSignalResult, findsOneWidget);
       await _capture(binding, '04_search_five_results');
       await _search(tester, 'fixtures');
       _expectHomeModeCount('online', 5);
@@ -129,13 +132,30 @@ void main() {
       );
       expect(find.text('Timed lyrics'), findsNothing);
       await _selectDropdown(tester, 'Song details', 'Song title');
-      expect(find.text('No results'), findsOneWidget);
+      final titleFilteredState = tester
+          .widget<VerseHomeScreen>(find.byType(VerseHomeScreen))
+          .state;
+      expect(titleFilteredState.searchFilters.field, 'title');
+      expect(
+        titleFilteredState.autocomplete,
+        isEmpty,
+        reason: 'Title filtering should remove artist-only catalog matches.',
+      );
+      final emptySearchMessage = find.text(
+        'No songs found. Try a different search.',
+      );
+      await _scrollIntoView(tester, emptySearchMessage);
+      expect(emptySearchMessage, findsOneWidget);
       await _capture(binding, '05_search_title_filter_zero_results');
       await _selectDropdown(tester, 'Song details', 'Artist');
       await tester.pumpAndSettle();
       _expectHomeModeCount('online', 5);
-      expect(find.text('Signal Song 1'), findsOneWidget);
-      expect(find.text('Signal Song 5'), findsOneWidget);
+      final firstArtistResult = find.text('Signal Song 1');
+      final lastArtistResult = find.text('Signal Song 5');
+      await _scrollIntoView(tester, firstArtistResult);
+      expect(firstArtistResult, findsOneWidget);
+      await _scrollIntoView(tester, lastArtistResult);
+      expect(lastArtistResult, findsOneWidget);
       await _capture(binding, '06_search_artist_filter_five_results');
       await _selectDropdown(tester, 'Song details', 'Any');
       await tester.pumpAndSettle();
@@ -144,7 +164,11 @@ void main() {
       await tester.pumpAndSettle();
 
       await _search(tester, 'synthetic missing title');
-      expect(find.text('No results'), findsOneWidget);
+      final missingTitleMessage = find.text(
+        'No songs found. Try a different search.',
+      );
+      await _scrollIntoView(tester, missingTitleMessage);
+      expect(missingTitleMessage, findsOneWidget);
       expect(
         find.text('No songs found. Try a different search.'),
         findsOneWidget,
@@ -154,10 +178,13 @@ void main() {
       await _search(tester, 'retry');
       expect(find.text('Search could not be completed.'), findsOneWidget);
       expect(find.text('search_failed'), findsNothing);
-      expect(find.text('Try again'), findsOneWidget);
+      final retrySearch = find.text('Try again');
+      await _scrollIntoView(tester, retrySearch);
+      expect(retrySearch, findsOneWidget);
       await _capture(binding, '08_search_retry_error');
-      await tester.tap(find.text('Try again'));
+      await tester.tap(retrySearch);
       await tester.pumpAndSettle();
+      await _scrollIntoView(tester, _homeMode('online'));
       _expectHomeModeCount('online', 1);
       await _capture(binding, '09_search_retry_success');
 
@@ -177,14 +204,22 @@ void main() {
         await tester.pump(const Duration(milliseconds: 100));
       }
       expect(fixture.cancelSearchStarted.isCompleted, isTrue);
-      expect(find.text('Searching songs…'), findsOneWidget);
-      await tester.tap(find.byTooltip('Clear search text'));
+      expect(app.searching, isTrue);
+      final clearSearch = find.byTooltip('Clear search text');
+      await tester.tap(clearSearch);
       await tester.pumpAndSettle();
-      expect(find.text('Enter a song or artist to search.'), findsOneWidget);
+      tester
+          .widget<TextField>(find.byType(TextField).first)
+          .focusNode
+          ?.unfocus();
+      await tester.pumpAndSettle();
+      final idleSearchMessage = find.text('Enter a song or artist to search.');
+      await _scrollIntoView(tester, idleSearchMessage);
+      expect(idleSearchMessage, findsOneWidget);
       fixture.cancelSearchRelease.complete();
       await tester.pump(const Duration(milliseconds: 200));
       await tester.pumpAndSettle();
-      expect(find.text('Enter a song or artist to search.'), findsOneWidget);
+      expect(idleSearchMessage, findsOneWidget);
       expect(find.text('No results'), findsNothing);
       await _capture(binding, '10_search_cancelled_to_idle');
 
@@ -258,19 +293,31 @@ void main() {
       await _ensureBelowPinnedHeader(tester, timedFilter);
       await tester.tap(timedFilter);
       await tester.pumpAndSettle();
-      expect(find.text('1 source version'), findsOneWidget);
+      final comparisonCounts = find.byKey(
+        const ValueKey('home-search-comparison-counts'),
+      );
+      await _scrollIntoView(tester, comparisonCounts);
+      expect(
+        find.textContaining(RegExp(r'1 source\s+version')),
+        findsOneWidget,
+      );
       await _capture(binding, '15_source_timed_filter_one_version');
+      await _ensureBelowPinnedHeader(tester, timedFilter);
       await tester.tap(timedFilter);
       await tester.pumpAndSettle();
+      await _scrollIntoView(tester, comparisonCounts);
       expect(find.text('3 source versions'), findsOneWidget);
-      await tester.tap(find.byTooltip('Search options'));
+      final searchOptions = find.byTooltip('Search options');
+      await _scrollIntoView(tester, searchOptions);
+      await tester.tap(searchOptions);
       await tester.pumpAndSettle();
-      await _ensureBelowPinnedHeader(tester, find.text('Source checks'));
-      await tester.tap(find.text('Source checks'));
+      final sourceChecks = find.text('Source checks');
+      await _scrollIntoView(tester, sourceChecks);
+      await tester.tap(sourceChecks);
       await tester.pumpAndSettle();
       expect(find.text('Check failed'), findsOneWidget);
-      await _ensureBelowPinnedHeader(tester, find.text('Source checks'));
-      await tester.tap(find.text('Source checks'));
+      await _scrollIntoView(tester, sourceChecks);
+      await tester.tap(sourceChecks);
       await tester.pumpAndSettle();
       expect(
         tester.view.viewInsets.bottom,
@@ -334,7 +381,8 @@ void main() {
       expect(tester.widget<Slider>(find.byType(Slider)).value, greaterThan(0));
       await tester.tap(_iconButtonWithTooltip('Edit'));
       await tester.pumpAndSettle();
-      final editorBody = find.byType(TextField).last;
+      final editorBody = find.byKey(const ValueKey('editor-lyrics-input'));
+      await _scrollIntoView(tester, editorBody);
       await tester.tap(editorBody);
       await tester.pumpAndSettle();
       await _capture(binding, '19_editor_keyboard');
@@ -344,20 +392,29 @@ void main() {
       );
       await tester.tap(_iconButtonWithTooltip('Save'));
       await tester.pumpAndSettle();
+      expect(tester.view.viewInsets.bottom, 0);
       expect(
         app.songs.single.body,
         contains('Lanterns light the winding road'),
       );
       expect(app.songs.single.body, contains(_savedLine));
+      final readerController = tester
+          .widget<PlayerScreen>(find.byType(PlayerScreen))
+          .controller;
       expect(
-        find.textContaining(RegExp(r'Lanterns\s+light the winding road')),
-        findsOneWidget,
+        readerController.state.songLines.map((line) => line.text).join('\n'),
+        contains('Lanterns light the winding road'),
       );
+      final savedReaderLine = find.textContaining(
+        RegExp(r'Lanterns\s+light the winding road'),
+      );
+      await _scrollIntoView(tester, savedReaderLine);
+      expect(savedReaderLine, findsOneWidget);
       expect(find.textContaining(_savedLine), findsOneWidget);
       await tester.tap(_iconButtonWithTooltip('Edit'));
       await tester.pumpAndSettle();
       await tester.enterText(
-        find.byType(TextField).last,
+        find.byKey(const ValueKey('editor-lyrics-input')),
         '[C]This change is cancelled',
       );
       await tester.tap(_iconButtonWithTooltip('Back'));
@@ -367,7 +424,12 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Discard changes?'), findsNothing);
       expect(
-        tester.widget<TextField>(find.byType(TextField).last).controller!.text,
+        tester
+            .widget<TextField>(
+              find.byKey(const ValueKey('editor-lyrics-input')),
+            )
+            .controller!
+            .text,
         '[C]This change is cancelled',
       );
       await tester.tap(_iconButtonWithTooltip('Back'));
@@ -452,7 +514,9 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Add songs'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(_title).last);
+      final pickerSong = find.text(_title).last;
+      await _scrollIntoView(tester, pickerSong);
+      await tester.tap(pickerSong);
       await tester.pumpAndSettle();
       final addSelectedSongs = find.ancestor(
         of: find.text('Add songs (1)'),
@@ -468,13 +532,17 @@ void main() {
         reason: 'The picker confirmation must stay above the Android keyboard.',
       );
       await _capture(binding, '22a_setlist_song_picker_keyboard');
+      await _scrollIntoView(tester, addSelectedSongs);
       await tester.tap(addSelectedSongs);
       await tester.pumpAndSettle();
       expect(app.setlists.single.entries, hasLength(1));
       await tester.tap(find.text('Add songs'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(_title).last);
+      final secondPickerSong = find.text(_title).last;
+      await _scrollIntoView(tester, secondPickerSong);
+      await tester.tap(secondPickerSong);
       await tester.pumpAndSettle();
+      await _scrollIntoView(tester, addSelectedSongs);
       await tester.tap(addSelectedSongs);
       await tester.pumpAndSettle();
       expect(find.text(_title), findsNWidgets(2));
@@ -570,7 +638,9 @@ void main() {
       );
       await tester.tap(disposableMenu);
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Delete').last);
+      final deleteMenuItem = find.text('Delete').last;
+      await _scrollIntoView(tester, deleteMenuItem);
+      await tester.tap(deleteMenuItem);
       await tester.pumpAndSettle();
       expect(find.text('Delete setlist?'), findsOneWidget);
       await _capture(binding, '23b_setlist_delete_confirmation');
@@ -583,7 +653,8 @@ void main() {
       );
       await tester.tap(disposableMenu);
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Delete').last);
+      await _scrollIntoView(tester, deleteMenuItem);
+      await tester.tap(deleteMenuItem);
       await tester.pumpAndSettle();
       await tester.tap(find.text('Delete').last);
       await tester.pumpAndSettle();
@@ -805,8 +876,9 @@ void _expectVisibleQuery(WidgetTester tester, String query) {
 }
 
 Future<void> _focusSearchInput(WidgetTester tester) async {
-  final field = find.byType(TextField).first;
-  await _ensureBelowPinnedHeader(tester, field);
+  final fields = find.byType(TextField);
+  await _scrollIntoView(tester, fields);
+  final field = fields.first;
   tester.widget<TextField>(field).focusNode!.requestFocus();
   // Wait for the native keyboard resize before entering text so the Search
   // field is ready to receive input.
@@ -824,7 +896,9 @@ Future<void> _ensureBelowPinnedHeader(
 ) async {
   await Scrollable.ensureVisible(
     tester.element(target),
-    alignment: 0.25,
+    // The app keeps a tall branded header pinned above the body. Place controls
+    // well below it so they remain tappable on short landscape viewports.
+    alignment: 0.65,
     duration: Duration.zero,
   );
   await tester.pumpAndSettle(

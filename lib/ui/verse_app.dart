@@ -165,8 +165,8 @@ class _VerseAppState extends State<VerseApp> {
           ThemeMode.dark => Brightness.dark,
           ThemeMode.system => platformBrightness,
         };
-        final colors = (brightness == Brightness.dark ? _dark : _light)
-            .colorScheme;
+        final colors =
+            (brightness == Brightness.dark ? _dark : _light).colorScheme;
         final dark = brightness == Brightness.dark;
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle(
@@ -341,7 +341,9 @@ class _VerseAppShellState extends State<VerseAppShell>
     messenger
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        SnackBar(content: Text(noticeMessage(AppLocalizations.of(context), notice))),
+        SnackBar(
+          content: Text(noticeMessage(AppLocalizations.of(context), notice)),
+        ),
       );
   }
 
@@ -349,16 +351,23 @@ class _VerseAppShellState extends State<VerseAppShell>
   Future<void> _requestBack() async {
     final state = widget.controller.state;
     if (state.route == VerseRoute.editor && state.editorDirty) {
+      FocusManager.instance.primaryFocus?.unfocus();
+      await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
+      await Future<void>.delayed(const Duration(milliseconds: 220));
+      if (!mounted) return;
       if (!await confirmDiscardEdits(context)) return;
+      if (!mounted) return;
+      FocusManager.instance.primaryFocus?.unfocus();
+      await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
+      await Future<void>.delayed(const Duration(milliseconds: 220));
+      if (!mounted) return;
     }
     await widget.controller.back();
   }
 
   @override
-  Widget build(BuildContext context) => ListenableBuilder(
-    listenable: widget.controller,
-    builder: _buildShell,
-  );
+  Widget build(BuildContext context) =>
+      ListenableBuilder(listenable: widget.controller, builder: _buildShell);
 
   void _promptAccountChange(VerseUiState state) {
     final changed = state.syncErrorCode == 'account_changed';
@@ -486,10 +495,7 @@ class _VerseAppShellState extends State<VerseAppShell>
                     ),
                   ],
                 ),
-                actions: [
-                  _cloudButton(l10n, state),
-                  const SizedBox(width: 8),
-                ],
+                actions: [_cloudButton(l10n, state), const SizedBox(width: 8)],
               )
             : null,
         body: Row(

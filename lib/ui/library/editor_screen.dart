@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../verse_ui_state.dart';
@@ -8,7 +9,11 @@ import '../widgets/subpage_header.dart';
 /// [VerseUiController.setEditorDirty] so the shell can ask before discarding
 /// them, and requires a title before saving.
 class EditorScreen extends StatefulWidget {
-  const EditorScreen({super.key, required this.controller, required this.onBack});
+  const EditorScreen({
+    super.key,
+    required this.controller,
+    required this.onBack,
+  });
   final VerseUiController controller;
 
   /// Leaves the editor (the shell confirms first when there are changes).
@@ -105,6 +110,14 @@ class _EditorScreenState extends State<EditorScreen> {
       setState(() => _titleMissing = true);
       return;
     }
+    // Return to the reader with the full viewport. Keeping the multiline
+    // editor focused leaves a landscape phone with too little height for the
+    // reader controls while the Android keyboard is still open.
+    FocusManager.instance.primaryFocus?.unfocus();
+    await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
+    // Android can animate the IME out while the saved reader is being built.
+    // Let the inset update first so the reader lays out against the full height.
+    await Future<void>.delayed(const Duration(milliseconds: 220));
     _saving = true;
     try {
       await widget.controller.saveLyricsEdit(
@@ -160,7 +173,7 @@ class _EditorScreenState extends State<EditorScreen> {
         Expanded(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              if (constraints.maxWidth >= 700) {
+              if (constraints.maxWidth >= 700 && constraints.maxHeight >= 420) {
                 final metadataWidth = (constraints.maxWidth * .42)
                     .clamp(300.0, 380.0)
                     .toDouble();
@@ -227,6 +240,7 @@ class _EditorScreenState extends State<EditorScreen> {
                             ),
                             Expanded(
                               child: TextField(
+                                key: const ValueKey('editor-lyrics-input'),
                                 controller: _body,
                                 expands: true,
                                 minLines: null,
@@ -286,6 +300,7 @@ class _EditorScreenState extends State<EditorScreen> {
                     ),
                   ),
                   TextField(
+                    key: const ValueKey('editor-lyrics-input'),
                     controller: _body,
                     minLines: 12,
                     maxLines: 24,

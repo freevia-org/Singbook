@@ -143,47 +143,54 @@ class VerseEmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final compact = MediaQuery.sizeOf(context).height < 430;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 44),
+      padding: EdgeInsets.symmetric(horizontal: 28, vertical: compact ? 8 : 44),
       child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                color: colors.primaryContainer.withValues(alpha: .65),
-                borderRadius: BorderRadius.circular(22),
-              ),
-              child: Icon(icon, size: 28, color: colors.primary),
-            ),
-            const SizedBox(height: 18),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
-            ),
-            if (message != null) ...[
-              const SizedBox(height: 6),
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 300),
-                child: Text(
-                  message!,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: compact ? 40 : 64,
+                height: compact ? 40 : 64,
+                decoration: BoxDecoration(
+                  color: colors.primaryContainer.withValues(alpha: .65),
+                  borderRadius: BorderRadius.circular(compact ? 14 : 22),
+                ),
+                child: Icon(
+                  icon,
+                  size: compact ? 22 : 28,
+                  color: colors.primary,
                 ),
               ),
+              SizedBox(height: compact ? 8 : 18),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              if (message != null) ...[
+                const SizedBox(height: 6),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 300),
+                  child: Text(
+                    message!,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ],
+              if (actionLabel != null && onAction != null) ...[
+                SizedBox(height: compact ? 8 : 16),
+                FilledButton(onPressed: onAction, child: Text(actionLabel!)),
+              ],
             ],
-            if (actionLabel != null && onAction != null) ...[
-              const SizedBox(height: 16),
-              FilledButton(onPressed: onAction, child: Text(actionLabel!)),
-            ],
-          ],
+          ),
         ),
       ),
     );

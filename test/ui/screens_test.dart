@@ -160,6 +160,9 @@ void main() {
       expect(c.calls, contains('setEditorDirty(true)'));
 
       await tester.tap(find.byTooltip(l10n.navBack));
+      // The app waits for the Android IME hide transition before presenting
+      // the discard prompt so the dialog is laid out at the full viewport.
+      await tester.pump(const Duration(milliseconds: 250));
       await tester.pumpAndSettle();
       expect(find.text(l10n.editorUnsavedTitle), findsOneWidget);
       expect(find.text(l10n.editorUnsavedMessage), findsOneWidget);
@@ -171,6 +174,7 @@ void main() {
 
       // The system back gesture is intercepted the same way.
       await tester.binding.handlePopRoute();
+      await tester.pump(const Duration(milliseconds: 250));
       await tester.pumpAndSettle();
       expect(find.text(l10n.editorUnsavedTitle), findsOneWidget);
       await tester.tap(find.text(l10n.actionDiscard));
@@ -225,6 +229,8 @@ void main() {
       expect(find.text(l10n.editorFieldRequired), findsNothing);
 
       await tester.tap(find.byTooltip(l10n.actionSave));
+      // A valid save waits for the keyboard inset to clear before navigating.
+      await tester.pump(const Duration(milliseconds: 250));
       await tester.pump();
       expect(
         c.calls.singleWhere((call) => call.startsWith('saveLyricsEdit')),

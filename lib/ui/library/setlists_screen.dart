@@ -169,6 +169,9 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                 ),
                 PopupMenuButton<String>(
                   tooltip: l10n.accessibilitySetlistMenu(value.title),
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.sizeOf(context).height * .72,
+                  ),
                   itemBuilder: (_) => [
                     PopupMenuItem(
                       value: 'share',
@@ -196,8 +199,12 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                       child: Text(l10n.actionDelete),
                     ),
                   ],
-                  onSelected: (action) =>
-                      handleSetlistAction(context, controller, value.id, action),
+                  onSelected: (action) => handleSetlistAction(
+                    context,
+                    controller,
+                    value.id,
+                    action,
+                  ),
                 ),
               ],
             ),
@@ -360,22 +367,27 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
           ],
         ),
         if (editing)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
-            child: Column(
-              children: [
-                TextField(
-                  controller: _name,
-                  decoration: InputDecoration(labelText: l10n.setlistNameHint),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _notes,
-                  minLines: 2,
-                  maxLines: 4,
-                  decoration: InputDecoration(labelText: l10n.setlistNotes),
-                ),
-              ],
+          Flexible(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: _name,
+                    decoration: InputDecoration(
+                      labelText: l10n.setlistNameHint,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _notes,
+                    minLines: 2,
+                    maxLines: 4,
+                    decoration: InputDecoration(labelText: l10n.setlistNotes),
+                  ),
+                ],
+              ),
             ),
           ),
         Expanded(
@@ -397,8 +409,14 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
                       entryOrder: [for (final entry in entries) entry.id],
                     );
                   },
-                  itemBuilder: (context, index) =>
-                      _entryTile(context, l10n, value, value.entries[index], index, editing),
+                  itemBuilder: (context, index) => _entryTile(
+                    context,
+                    l10n,
+                    value,
+                    value.entries[index],
+                    index,
+                    editing,
+                  ),
                 ),
         ),
         SafeArea(

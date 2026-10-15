@@ -6,6 +6,15 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Temporary phone-E2E build workaround for AGP 9: two Cronet AARs currently
+// declare the same dummy namespace. The journey uses in-process fixtures, so
+// it does not need cronet-shared at runtime.
+configurations.configureEach {
+    if (name.contains("Debug", ignoreCase = true)) {
+        exclude(group = "org.chromium.net", module = "cronet-shared")
+    }
+}
+
 // Release signing. Create android/key.properties (git-ignored) with:
 //   storeFile=/absolute/or/app-relative/path/to/upload-keystore.jks
 //   storePassword=...

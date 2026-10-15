@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../l10n/generated/app_localizations.dart';
@@ -225,6 +226,12 @@ class _SongPickerSheetState extends State<_SongPickerSheet> {
   final _query = TextEditingController();
   final _selected = <String>{};
 
+  Future<void> _close([List<String>? result]) async {
+    FocusManager.instance.primaryFocus?.unfocus();
+    await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
+    if (mounted) Navigator.pop(context, result);
+  }
+
   @override
   void dispose() {
     _query.dispose();
@@ -249,6 +256,7 @@ class _SongPickerSheetState extends State<_SongPickerSheet> {
           mediaQuery.size.height,
         );
     final height = availableHeight * .9;
+    final compact = height < 220;
     return AnimatedPadding(
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeOut,
@@ -259,37 +267,72 @@ class _SongPickerSheetState extends State<_SongPickerSheet> {
           height: height,
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
-                child: Row(
-                  children: [
-                    IconButton(
-                      tooltip: l10n.navClose,
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close_rounded),
+              if (compact)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                  child: SizedBox(
+                    height: 48,
+                    child: Row(
+                      children: [
+                        IconButton(
+                          tooltip: l10n.navClose,
+                          onPressed: _close,
+                          icon: const Icon(Icons.close_rounded),
+                        ),
+                        Expanded(
+                          child: TextField(
+                            controller: _query,
+                            autofocus:
+                                mediaQuery.size.width <= mediaQuery.size.height,
+                            textAlignVertical: TextAlignVertical.center,
+                            decoration: InputDecoration(
+                              isDense: true,
+                              hintText: l10n.searchHint,
+                              prefixIcon: const Icon(Icons.search_rounded),
+                              border: const OutlineInputBorder(),
+                            ),
+                            onChanged: (_) => setState(() {}),
+                          ),
+                        ),
+                      ],
                     ),
-                    Expanded(
-                      child: Text(
-                        widget.title,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-                child: TextField(
-                  controller: _query,
-                  autofocus: true,
-                  decoration: InputDecoration(
-                    hintText: l10n.searchHint,
-                    prefixIcon: const Icon(Icons.search_rounded),
-                    border: const OutlineInputBorder(),
                   ),
-                  onChanged: (_) => setState(() {}),
+                )
+              else ...[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        tooltip: l10n.navClose,
+                        onPressed: _close,
+                        icon: const Icon(Icons.close_rounded),
+                      ),
+                      Expanded(
+                        child: Text(
+                          widget.title,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+                  child: TextField(
+                    controller: _query,
+                    // Keep a landscape phone's short song list usable; the
+                    // search field still opens the keyboard when tapped.
+                    autofocus: mediaQuery.size.width <= mediaQuery.size.height,
+                    decoration: InputDecoration(
+                      hintText: l10n.searchHint,
+                      prefixIcon: const Icon(Icons.search_rounded),
+                      border: const OutlineInputBorder(),
+                    ),
+                    onChanged: (_) => setState(() {}),
+                  ),
+                ),
+              ],
               Expanded(
                 child: songs.isEmpty
                     ? Center(child: Text(l10n.songsEmptySearch))
@@ -299,6 +342,9 @@ class _SongPickerSheetState extends State<_SongPickerSheet> {
                           final song = songs[index];
                           return CheckboxListTile(
                             value: _selected.contains(song.id),
+                            visualDensity: compact
+                                ? VisualDensity.compact
+                                : VisualDensity.standard,
                             title: Text(song.title),
                             subtitle: song.artist.isEmpty
                                 ? null
@@ -316,19 +362,22 @@ class _SongPickerSheetState extends State<_SongPickerSheet> {
                       ),
               ),
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(compact ? 6 : 16),
                 child: SizedBox(
                   width: double.infinity,
-                  child: FilledButton.icon(
-                    onPressed: _selected.isEmpty
-                        ? null
-                        : () => Navigator.pop(
-                            context,
-                            _selected.toList(growable: false),
-                          ),
-                    icon: const Icon(Icons.add_rounded),
-                    label: Text(
-                      '${l10n.setlistAddSongs} (${_selected.length})',
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: compact ? 38 : 48,
+                      maxHeight: compact ? 44 : 56,
+                    ),
+                    child: FilledButton.icon(
+                      onPressed: _selected.isEmpty
+                          ? null
+                          : () => _close(_selected.toList(growable: false)),
+                      icon: const Icon(Icons.add_rounded),
+                      label: Text(
+                        '${l10n.setlistAddSongs} (${_selected.length})',
+                      ),
                     ),
                   ),
                 ),
@@ -357,6 +406,7 @@ Future<void> editEntryOverrides(
   final saved = await showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
+      scrollable: true,
       title: Text(l10n.setlistEntryOverride),
       content: Column(
         mainAxisSize: MainAxisSize.min,

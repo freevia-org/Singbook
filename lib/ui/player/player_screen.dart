@@ -345,112 +345,146 @@ class _PlayerScreenState extends State<PlayerScreen> {
     _pruneLineKeys(state.songLines);
     final duration = _durationOf(state);
     final colors = Theme.of(context).colorScheme;
-    return Column(
-      children: [
-        SubpageHeader(
-          title: song.title,
-          onBack: controller.back,
-          actions: [
-            IconButton(
-              tooltip: song.favorite
-                  ? l10n.songFavoriteRemove
-                  : l10n.songFavoriteAdd,
-              onPressed: () => controller.toggleSongFavorite(song.id),
-              icon: Icon(
-                song.favorite
-                    ? Icons.favorite_rounded
-                    : Icons.favorite_border_rounded,
-              ),
-            ),
-            IconButton(
-              tooltip: l10n.actionEdit,
-              onPressed: () => controller.editSong(song.id),
-              icon: const Icon(Icons.edit_outlined),
-            ),
-            PopupMenuButton<String>(
-              tooltip: l10n.songMenuLabel,
-              itemBuilder: (_) => [
-                PopupMenuItem(value: 'info', child: Text(l10n.songInfo)),
-                PopupMenuItem(value: 'add', child: Text(l10n.songAddToSetlist)),
-                PopupMenuItem(
-                  value: 'share',
-                  child: Text(l10n.settingsShareSong),
+    final lyrics = Center(
+      key: const ValueKey('tablet-reader-content'),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 960),
+        child: NotificationListener<ScrollUpdateNotification>(
+          onNotification: _handleLyricsScroll,
+          child: ListView.builder(
+            controller: _lyricsScroll,
+            padding: const EdgeInsets.fromLTRB(28, 18, 28, 32),
+            itemCount: state.songLines.length,
+            itemBuilder: (context, index) =>
+                _lyricLine(context, state, state.songLines[index]),
+          ),
+        ),
+      ),
+    );
+    Widget controls({required bool compact}) => SafeArea(
+      top: false,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ValueListenableBuilder<PlayerPosition>(
+            valueListenable: _position,
+            builder: (context, position, _) =>
+                _seekBar(context, l10n, state, position, duration),
+          ),
+          _transport(context, l10n, state),
+          if (song.hasChords) _chordControls(l10n, state, compact: compact),
+        ],
+      ),
+    );
+    final metadata = [
+      song.artist,
+      song.album,
+      if (state.readerKey != null) '${l10n.editorKeyField}: ${state.readerKey}',
+      if (state.readerCapo != null)
+        '${l10n.editorCapoField}: ${state.readerCapo}',
+      if (state.readerTuning != null)
+        '${l10n.editorTuningField}: ${state.readerTuning}',
+      if (state.readerTempo != null)
+        '${l10n.editorTempoField}: ${state.readerTempo}',
+    ].whereType<String>().where((v) => v.isNotEmpty).join(' · ');
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final compactLandscape =
+            constraints.maxWidth > constraints.maxHeight &&
+            constraints.maxHeight < 430;
+        return Column(
+          children: [
+            SubpageHeader(
+              title: song.title,
+              onBack: controller.back,
+              actions: [
+                IconButton(
+                  tooltip: song.favorite
+                      ? l10n.songFavoriteRemove
+                      : l10n.songFavoriteAdd,
+                  onPressed: () => controller.toggleSongFavorite(song.id),
+                  icon: Icon(
+                    song.favorite
+                        ? Icons.favorite_rounded
+                        : Icons.favorite_border_rounded,
+                  ),
                 ),
-                PopupMenuItem(
-                  value: 'share_pdf',
-                  child: Text(l10n.settingsSharePdf),
+                IconButton(
+                  tooltip: l10n.actionEdit,
+                  onPressed: () => controller.editSong(song.id),
+                  icon: const Icon(Icons.edit_outlined),
                 ),
-                PopupMenuItem(
-                  value: 'copy',
-                  child: Text(l10n.settingsCopySong),
-                ),
-                PopupMenuItem(
-                  value: 'print',
-                  child: Text(l10n.settingsPrintSong),
+                PopupMenuButton<String>(
+                  tooltip: l10n.songMenuLabel,
+                  itemBuilder: (_) => [
+                    PopupMenuItem(value: 'info', child: Text(l10n.songInfo)),
+                    PopupMenuItem(
+                      value: 'add',
+                      child: Text(l10n.songAddToSetlist),
+                    ),
+                    PopupMenuItem(
+                      value: 'share',
+                      child: Text(l10n.settingsShareSong),
+                    ),
+                    PopupMenuItem(
+                      value: 'share_pdf',
+                      child: Text(l10n.settingsSharePdf),
+                    ),
+                    PopupMenuItem(
+                      value: 'copy',
+                      child: Text(l10n.settingsCopySong),
+                    ),
+                    PopupMenuItem(
+                      value: 'print',
+                      child: Text(l10n.settingsPrintSong),
+                    ),
+                  ],
+                  onSelected: (action) => handleSongMenuAction(
+                    context,
+                    controller,
+                    song.id,
+                    action,
+                  ),
                 ),
               ],
-              onSelected: (action) =>
-                  handleSongMenuAction(context, controller, song.id, action),
             ),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(24, 2, 24, 0),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              [
-                song.artist,
-                song.album,
-                if (state.readerKey != null)
-                  '${l10n.editorKeyField}: ${state.readerKey}',
-                if (state.readerCapo != null)
-                  '${l10n.editorCapoField}: ${state.readerCapo}',
-                if (state.readerTuning != null)
-                  '${l10n.editorTuningField}: ${state.readerTuning}',
-                if (state.readerTempo != null)
-                  '${l10n.editorTempoField}: ${state.readerTempo}',
-              ].whereType<String>().where((v) => v.isNotEmpty).join(' · '),
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Center(
-            key: const ValueKey('tablet-reader-content'),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 960),
-              child: NotificationListener<ScrollUpdateNotification>(
-                onNotification: _handleLyricsScroll,
-                child: ListView.builder(
-                  controller: _lyricsScroll,
-                  padding: const EdgeInsets.fromLTRB(28, 18, 28, 32),
-                  itemCount: state.songLines.length,
-                  itemBuilder: (context, index) =>
-                      _lyricLine(context, state, state.songLines[index]),
+            if (metadata.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 2, 24, 0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    metadata,
+                    maxLines: compactLandscape ? 1 : null,
+                    overflow: compactLandscape ? TextOverflow.ellipsis : null,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-        ),
-        SafeArea(
-          top: false,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ValueListenableBuilder<PlayerPosition>(
-                valueListenable: _position,
-                builder: (context, position, _) =>
-                    _seekBar(context, l10n, state, position, duration),
-              ),
-              _transport(context, l10n, state),
-              if (song.hasChords) _chordControls(l10n, state),
+            if (compactLandscape)
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(child: lyrics),
+                    const SizedBox(width: 8),
+                    SizedBox(
+                      width: (constraints.maxWidth * .36)
+                          .clamp(260.0, 320.0)
+                          .toDouble(),
+                      child: controls(compact: true),
+                    ),
+                  ],
+                ),
+              )
+            else ...[
+              Expanded(child: lyrics),
+              controls(compact: false),
             ],
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 
@@ -632,7 +666,11 @@ class _PlayerScreenState extends State<PlayerScreen> {
     ),
   );
 
-  Widget _chordControls(AppLocalizations l10n, VerseUiState state) => Padding(
+  Widget _chordControls(
+    AppLocalizations l10n,
+    VerseUiState state, {
+    bool compact = false,
+  }) => Padding(
     padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -642,7 +680,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
           onPressed: () => controller.transpose(-1),
           icon: const Icon(Icons.remove_circle_outline),
         ),
-        const SizedBox(width: 24),
+        SizedBox(width: compact ? 8 : 24),
         IconButton(
           tooltip: state.showChords
               ? l10n.readerHideChords
@@ -654,7 +692,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 : Icons.music_off_rounded,
           ),
         ),
-        const SizedBox(width: 24),
+        SizedBox(width: compact ? 8 : 24),
         IconButton(
           tooltip: l10n.readerTransposeSemitones(1),
           onPressed: () => controller.transpose(1),
