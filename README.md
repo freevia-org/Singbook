@@ -16,9 +16,11 @@ directives remain stable for saved-song compatibility.
 
 The release application ID is `org.freevia.singbook`. Earlier test builds used
 `org.freevia.verse`, so the release installs as a separate app and cannot read
-that app's private library automatically. Export the library from the old app
-and import it into the new app before removing the old installation. Keep the
-old app and its data until the imported songs and setlists have been verified.
+that app's private library automatically. Share songs from the old app as
+ChordPro files, or use its setlist sharing action, then import those files in
+the new app through Settings > Import songs. The complete-library backup API
+is not yet exposed in the UI. Keep the old app and its data until the imported
+songs, timing, provenance, and setlists have been verified.
 
 Copy `config/defines.example.json` to `config/local.defines.json` and supply a Genius **client access token**. Do not supply a client secret. The local file is ignored by Git. A token bundled in a mobile binary is public configuration and can be extracted.
 
@@ -107,7 +109,7 @@ Songs work without signing in. Google Drive sync is optional and is available wh
 
 ## Languages and themes
 
-User-visible strings belong in `lib/l10n/app_*.arb`; run `flutter gen-l10n` after changes. English, Bulgarian and Ukrainian catalogs are included. UI colors use theme tokens, with light/dark/system mode and selectable palettes. Reader typography is independent of the application text scale.
+User-visible strings belong in `lib/l10n/app_*.arb`; run `flutter gen-l10n` after changes. Catalogs for 34 languages are included and selectable by their native names. Irish and Maltese plural grammar still needs native-speaker review before release. UI colors use theme tokens, with light/dark/system mode and selectable palettes. Reader typography is independent of the application text scale.
 
 Layouts adapt to the available window width, including tablet portrait and
 split-screen windows. Navigation uses a rail from 600 logical pixels; song and
