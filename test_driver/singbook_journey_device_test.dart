@@ -26,6 +26,10 @@ Future<void> main() async {
     await watcher.close();
   }
 
+  expectedScreenshots.addAll(watcher.requestedScreenshots);
+  if (expectedScreenshots.isEmpty) {
+    throw StateError('No screenshot checkpoints were received from the app.');
+  }
   final missed = expectedScreenshots.difference(watcher.capturedScreenshots);
   if (missed.isNotEmpty) {
     throw StateError(
@@ -34,9 +38,17 @@ Future<void> main() async {
   }
 }
 
-final _outputDirectory = Directory(
-  path.join(Directory.current.path, 'artifacts', 'singbook-e2e'),
-);
+final _outputDirectory = Directory(_screenshotDirectory());
+
+String _screenshotDirectory() {
+  final configured = Platform.environment['SINGBOOK_SCREENSHOT_DIR']?.trim();
+  if (configured == null || configured.isEmpty) {
+    return path.join(Directory.current.path, 'artifacts', 'singbook-e2e');
+  }
+  return path.isAbsolute(configured)
+      ? path.normalize(configured)
+      : path.normalize(path.join(Directory.current.path, configured));
+}
 
 String? _safeName(String name) {
   final safe = name
@@ -51,6 +63,7 @@ class _NativeScreenshotWatcher {
 
   final Process _process;
   final String serial;
+  final requestedScreenshots = <String>{};
   final capturedScreenshots = <String>{};
   final _pending = <Future<void>>[];
   late final StreamSubscription<String> _subscription;
@@ -103,6 +116,7 @@ class _NativeScreenshotWatcher {
     if (match == null) return;
     final name = _safeName(match.group(1)!);
     if (name == null || capturedScreenshots.contains(name)) return;
+    requestedScreenshots.add(name);
     final capture = _capture(name);
     _pending.add(capture);
   }

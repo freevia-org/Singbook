@@ -13,7 +13,7 @@ import 'package:verse_mobile/ui/verse_app.dart';
 const _skipScreenshots = bool.fromEnvironment('SINGBOOK_SKIP_SCREENSHOTS');
 
 void main() {
-  final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets(
     'app renders, rotates, and restores the saved library and settings',
@@ -69,11 +69,6 @@ void main() {
       await controller.setSetting('locale', 'uk');
       await controller.setSetting('defaultView', 'songs');
 
-      if (!_skipScreenshots) {
-        debugPrint('SINGBOOK_DEVICE surface_conversion_start');
-        await binding.convertFlutterSurfaceToImage();
-        debugPrint('SINGBOOK_DEVICE surface_conversion_done');
-      }
       tester.view.devicePixelRatio = 1;
       tester.view.physicalSize = const Size(400, 850);
       final originalPadding = tester.view.padding;
@@ -98,7 +93,7 @@ void main() {
         Theme.of(tester.element(find.text('Singbook'))).brightness,
         Brightness.dark,
       );
-      await _capture(binding, 'populated_library_mobile_dark_ukrainian');
+      await _capture('populated_library_mobile_dark_ukrainian');
 
       // Test logical window sizes, including a tablet split-screen window.
       tester.platformDispatcher.textScaleFactorTestValue = 1.4;
@@ -130,7 +125,7 @@ void main() {
         }
         expect(tester.takeException(), isNull, reason: 'Library at $size');
         final viewport = '${size.width.toInt()}x${size.height.toInt()}';
-        await _capture(binding, 'populated_library_$viewport');
+        await _capture('populated_library_$viewport');
 
         await tester.tap(find.text('Small Hours').first);
         await tester.pumpAndSettle();
@@ -141,7 +136,7 @@ void main() {
         );
         expect(tester.getSize(lyricsList).width, lessThanOrEqualTo(960));
         expect(tester.takeException(), isNull, reason: 'Reader at $size');
-        await _capture(binding, 'populated_reader_$viewport');
+        await _capture('populated_reader_$viewport');
 
         await tester.tap(find.byIcon(Icons.edit_outlined));
         await tester.pumpAndSettle();
@@ -169,7 +164,7 @@ void main() {
           isNull,
           reason: 'Editor with keyboard at $size',
         );
-        await _capture(binding, 'populated_editor_keyboard_$viewport');
+        await _capture('populated_editor_keyboard_$viewport');
         tester.view.viewInsets = FakeViewPadding.zero;
         await tester.pumpAndSettle();
         await tester.tap(find.byIcon(Icons.arrow_back_rounded));
@@ -190,7 +185,7 @@ void main() {
         await tester.tap(find.byIcon(Icons.tune_rounded).first);
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull, reason: 'Settings at $size');
-        await _capture(binding, 'populated_settings_$viewport');
+        await _capture('populated_settings_$viewport');
         await tester.tap(find.byIcon(Icons.music_note_rounded).first);
         await tester.pumpAndSettle();
       }
@@ -245,13 +240,8 @@ void main() {
   );
 }
 
-Future<void> _capture(
-  IntegrationTestWidgetsFlutterBinding binding,
-  String name,
-) async {
+Future<void> _capture(String name) async {
   if (_skipScreenshots) return;
-  final image = await binding.takeScreenshot(name);
   debugPrint('SINGBOOK_E2E_CAPTURE:$name');
   await Future<void>.delayed(const Duration(seconds: 2));
-  expect(image, isNotEmpty, reason: 'Screenshot $name should be captured');
 }

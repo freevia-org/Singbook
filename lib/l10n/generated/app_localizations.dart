@@ -1150,6 +1150,18 @@ abstract class AppLocalizations {
   /// **'Next section · hold for next setlist song'**
   String get playerNextSectionSong;
 
+  /// No description provided for @playerPreviousSong.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous song'**
+  String get playerPreviousSong;
+
+  /// No description provided for @playerNextSong.
+  ///
+  /// In en, this message translates to:
+  /// **'Next song'**
+  String get playerNextSong;
+
   /// No description provided for @editorTitle.
   ///
   /// In en, this message translates to:

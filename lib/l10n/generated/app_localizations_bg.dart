@@ -622,6 +622,12 @@ class AppLocalizationsBg extends AppLocalizations {
       'Следваща част · задръжте за следващата песен от списъка';
 
   @override
+  String get playerPreviousSong => 'Предишна песен';
+
+  @override
+  String get playerNextSong => 'Следваща песен';
+
+  @override
   String get editorTitle => 'Редактиране на песен';
 
   @override

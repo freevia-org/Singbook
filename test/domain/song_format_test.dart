@@ -147,6 +147,42 @@ void main() {
       );
     },
   );
+  test('ChordPro section labels do not rewrite source directives', () {
+    const body =
+        '{comment: Verse 1}\n'
+        '{comment: Pre-Chorus}\n'
+        '{comment: Chorus should be sung softly}\n'
+        '{start_of_verse}\n'
+        '{start_of_chorus: 2}\n'
+        '[Verse 2]\n'
+        '[C]First lyric';
+    final lines = parseArrangement(body);
+
+    expect(lines.take(5).map((line) => line.text), [
+      '{comment: Verse 1}',
+      '{comment: Pre-Chorus}',
+      '{comment: Chorus should be sung softly}',
+      '{start_of_verse}',
+      '{start_of_chorus: 2}',
+    ]);
+    expect(lines.take(5).every((line) => line.directive), isTrue);
+    expect(lines[5].directive, isFalse);
+    expect(sectionLabelForLine(lines[0]), 'Verse 1');
+    expect(sectionLabelForLine(lines[1]), 'Pre-Chorus');
+    expect(sectionLabelForLine(lines[2]), isNull);
+    expect(sectionLabelForLine(lines[3]), 'Verse');
+    expect(sectionLabelForLine(lines[4]), 'Chorus 2');
+    expect(sectionLabelForLine(lines[5]), 'Verse 2');
+    expect(codec.decode(codec.encode(song(body: body))).body, body);
+
+    final edited = editSong(
+      song(body: body),
+      body: body.replaceFirst('[C]First lyric', '[C]Updated lyric'),
+    );
+    expect(edited.body, contains('{comment: Chorus should be sung softly}'));
+    expect(edited.body, contains('{comment: Pre-Chorus}'));
+    expect(edited.body, contains('[C]Updated lyric'));
+  });
   test(
     'chord anchors count graphemes across emoji and combining characters',
     () {

@@ -607,7 +607,9 @@ class AppControllerAdapter extends VerseUiController {
     var lyricIndex = 0;
     return arrangement.parseArrangement(body).asMap().entries.map((entry) {
       final line = entry.value;
-      final section = _sectionPattern.firstMatch(line.text);
+      final section =
+          arrangement.sectionLabelForLine(line) ??
+          _sectionPattern.firstMatch(line.text)?.group(1)?.trim();
       final chords = line.chords
           .map(
             (chord) =>
@@ -615,8 +617,10 @@ class AppControllerAdapter extends VerseUiController {
           )
           .toList();
       final hasLyrics = line.text.trim().isNotEmpty;
-      final id = section != null || line.directive
+      final id = section != null
           ? 'section-${entry.key}'
+          : line.directive
+          ? 'directive-${entry.key}'
           : hasLyrics
           ? 'line-${lyricIndex++}'
           : chords.isNotEmpty
@@ -625,8 +629,7 @@ class AppControllerAdapter extends VerseUiController {
       return LyricLineData(
         id: id,
         text: section != null || line.directive ? '' : line.text,
-        section:
-            section?.group(1)?.trim() ?? (line.directive ? line.text : null),
+        section: section,
         chords: chords,
         isBlank:
             section != null || line.directive || (!hasLyrics && chords.isEmpty),
@@ -1035,6 +1038,9 @@ class AppControllerAdapter extends VerseUiController {
   @override
   Future<void> createSong() {
     final song = SongDocument(id: newId(), title: '', artist: '', body: '');
+    _stopPlayer();
+    _progress = 0;
+    _transpose = 0;
     _setlistId = null;
     _setlistEntryId = null;
     _songId = song.id;
@@ -1115,19 +1121,36 @@ class AppControllerAdapter extends VerseUiController {
   SetlistDocument? _setlistById(String id) =>
       app.setlists.where((item) => item.id == id).firstOrNull;
 
+  SongDocument? _readerPdfSong(String id) {
+    final song = app.findSong(id);
+    if (song == null || _route != VerseRoute.reader || _songId != id) {
+      return song;
+    }
+
+    final metadata = Map<String, Object?>.from(song.metadata);
+    final key = displayedKey;
+    final capo = displayedCapo;
+    if (key != null) metadata['key'] = key;
+    if (capo != null) metadata['capo'] = capo;
+    return song.copyWith(
+      body: arrangement.transposeBody(song.body, _effectiveTranspose(song)),
+      metadata: metadata,
+    );
+  }
+
   @override
   Future<void> shareSong(String id) => _export(app.findSong(id), onShareSong);
 
   @override
   Future<void> shareSongPdf(String id) =>
-      _export(app.findSong(id), onShareSongPdf);
+      _export(_readerPdfSong(id), onShareSongPdf);
 
   @override
   Future<void> copySongChordPro(String id) =>
       _export(app.findSong(id), onCopySong, copy: true);
 
   @override
-  Future<void> printSong(String id) => _export(app.findSong(id), onPrintSong);
+  Future<void> printSong(String id) => _export(_readerPdfSong(id), onPrintSong);
 
   @override
   Future<void> shareSetlist(String id) =>

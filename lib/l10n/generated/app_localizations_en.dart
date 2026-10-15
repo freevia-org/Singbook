@@ -619,6 +619,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'Next section · hold for next setlist song';
 
   @override
+  String get playerPreviousSong => 'Previous song';
+
+  @override
+  String get playerNextSong => 'Next song';
+
+  @override
   String get editorTitle => 'Edit song';
 
   @override
