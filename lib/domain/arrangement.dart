@@ -88,6 +88,10 @@ final _sectionDirectivePattern = RegExp(
   r'^\s*\{start_of_(pre_chorus|post_chorus|verse|chorus|bridge|intro|outro|instrumental|interlude|solo|refrain|hook|breakdown|coda|tag|ending)(?:\s*:\s*(\d+))?\}\s*$',
   caseSensitive: false,
 );
+final _sectionAliasPattern = RegExp(
+  r'^\s*\{(soc|eoc|sov|eov|sob|eob)\}\s*$',
+  caseSensitive: false,
+);
 
 String? _sectionName(String value) =>
     _sectionNamePattern.firstMatch(value)?.group(1)?.trim();
@@ -100,6 +104,20 @@ String? sectionLabelForLine(ArrangementLine line) {
   if (line.directive) {
     final comment = _commentDirectivePattern.firstMatch(line.text);
     if (comment != null) return _sectionName(comment.group(1)!);
+
+    final alias = _sectionAliasPattern.firstMatch(line.text)?.group(1);
+    switch (alias?.toLowerCase()) {
+      case 'soc':
+        return 'Chorus';
+      case 'sov':
+        return 'Verse';
+      case 'sob':
+        return 'Bridge';
+      case 'eoc':
+      case 'eov':
+      case 'eob':
+        return null;
+    }
 
     final section = _sectionDirectivePattern.firstMatch(line.text);
     if (section == null) return null;
@@ -154,7 +172,7 @@ String inferSectionDirectives(String body) {
     if (sectionLabelForLine(line) != null) return true;
     return line.directive &&
         RegExp(
-          r'^\s*\{(?:(?:start|end)_of_(?:pre_chorus|post_chorus|verse|chorus|bridge|intro|outro|instrumental|interlude|solo|refrain|hook|breakdown|coda|tag|ending)|chorus)(?:\s*:[^}]*)?\}\s*$',
+          r'^\s*\{(?:(?:start|end)_of_(?:pre_chorus|post_chorus|verse|chorus|bridge|intro|outro|instrumental|interlude|solo|refrain|hook|breakdown|coda|tag|ending)|chorus|soc|eoc|sov|eov|sob|eob)(?:\s*:[^}]*)?\}\s*$',
           caseSensitive: false,
         ).hasMatch(line.text);
   });
