@@ -343,6 +343,7 @@ class SourceDiscoveryService {
     Set<String>? enabledIds,
     void Function(ProviderCheck)? onProgress,
     CancellationToken? cancel,
+    Duration alternativeTimeout = const Duration(seconds: 30),
   }) async {
     final active = providers
         .where(
@@ -449,25 +450,41 @@ class SourceDiscoveryService {
         );
         if (owners.isNotEmpty) {
           final referenceBody = references.first.body;
+          // Linked local token: a timeout (or the caller cancelling) must stop
+          // the underlying lookup, not just stop waiting for it, so a slow
+          // retry cannot keep issuing requests after discover has returned.
+          final alternativeCancel = CancellationToken();
+          cancel?.cancelled.then((_) => alternativeCancel.cancel());
           try {
             cancel?.throwIfCancelled();
-            alternative = await findMatchingSource(
-              owners.first,
-              selection,
-              cancel: cancel,
-              exclude: {result.candidate.id},
-              accept: (r) =>
-                  r.hasChords && _agreement(r.body, referenceBody),
-            ).timeout(const Duration(seconds: 30));
+            alternative =
+                await findMatchingSource(
+                  owners.first,
+                  selection,
+                  cancel: alternativeCancel,
+                  exclude: {result.candidate.id},
+                  accept: (r) =>
+                      r.hasChords && _agreement(r.body, referenceBody),
+                ).timeout(
+                  alternativeTimeout,
+                  onTimeout: () {
+                    alternativeCancel.cancel();
+                    throw const ProviderException('timeout');
+                  },
+                );
             if (alternative.matchKind == MatchKind.rejected ||
                 !alternative.hasChords) {
               alternative = null;
             }
           } on ProviderException catch (e) {
-            if (e.code == 'cancelled') rethrow;
+            if (e.code == 'cancelled' && (cancel?.isCancelled ?? false)) {
+              rethrow;
+            }
             alternative = null;
           } catch (_) {
             alternative = null;
+          } finally {
+            alternativeCancel.cancel();
           }
         }
         if (alternative != null) {

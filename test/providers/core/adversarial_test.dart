@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -97,6 +98,43 @@ class _Chart implements LyricsProvider {
           )
         : c;
     return SourceResult(candidate: returned, body: bodies[c.id]!);
+  }
+}
+
+/// First chart is truncated; the alternative lookups then hang until their
+/// cancellation token fires (as a slow network retry would).
+class _HangingAlternatives implements LyricsProvider {
+  final resolved = <String>[];
+  final released = Completer<bool>();
+  @override
+  ProviderDefinition get definition => const ProviderDefinition(
+    id: 'chart',
+    name: 'chart',
+    capabilities: {'catalog', 'lyrics', 'chords'},
+  );
+  SongCandidate _c(String id) => SongCandidate(
+    providerId: 'chart',
+    id: id,
+    title: 'Paper Satellites',
+    artist: 'Fixture Ensemble',
+  );
+  @override
+  Future<List<SongCandidate>> search(
+    String q, {
+    CancellationToken? cancel,
+  }) async => [_c('short'), _c('slow-1'), _c('slow-2')];
+  @override
+  Future<SourceResult> resolve(
+    SongCandidate c, {
+    CancellationToken? cancel,
+  }) async {
+    resolved.add(c.id);
+    if (c.id == 'short') {
+      return SourceResult(candidate: c, body: '[C]A paper satellite');
+    }
+    await cancel!.cancelled; // blocks until the caller cancels it
+    if (!released.isCompleted) released.complete(true);
+    throw const ProviderException('cancelled');
   }
 }
 
@@ -307,6 +345,32 @@ void main() {
       expect(found.matchKind, isNot(MatchKind.rejected));
       expect(found.candidate.id, 'full');
       expect(chart.resolved, ['short', 'full']);
+    });
+
+    test('a timed-out alternative lookup is cancelled, not abandoned', () async {
+      final chart = _HangingAlternatives();
+      final results = await SourceDiscoveryService([
+        chart,
+        _Reference(),
+      ]).discover(
+        selection(),
+        alternativeTimeout: const Duration(milliseconds: 60),
+      );
+      // The source is reported rejected (no usable alternative) ...
+      expect(
+        results.firstWhere((r) => r.candidate.providerId == 'chart').matchKind,
+        MatchKind.rejected,
+      );
+      // ... the blocked lookup was released by cancellation ...
+      expect(
+        await chart.released.future.timeout(const Duration(seconds: 2)),
+        isTrue,
+      );
+      // ... and no further candidate was requested after the timeout.
+      final before = List<String>.of(chart.resolved);
+      await Future<void>.delayed(const Duration(milliseconds: 150));
+      expect(chart.resolved, before);
+      expect(chart.resolved, ['short', 'slow-1']);
     });
 
     test('when no chart agrees the source is still rejected', () async {
