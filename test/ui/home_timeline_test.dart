@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/l10n/generated/app_localizations.dart';
 import 'package:singbook/ui/home/home_screen.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
+import 'package:singbook/ui/verse_app.dart';
 
 void main() {
   testWidgets('recent timeline only overlays the list while scrolling', (
@@ -26,12 +26,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
+        localizationsDelegates: singbookLocalizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: VerseHomeScreen(
@@ -161,12 +156,7 @@ void main() {
 Future<void> _pumpHome(WidgetTester tester, _HomeController controller) async {
   await tester.pumpWidget(
     MaterialApp(
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
+      localizationsDelegates: singbookLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(
         body: VerseHomeScreen(controller: controller, state: controller.state),

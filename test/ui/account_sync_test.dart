@@ -109,7 +109,10 @@ void main() {
     testWidgets('signing in shows progress and cannot be repeated', (
       tester,
     ) async {
-      final c = await _pump(tester, () => _account(signedIn: false, busy: true));
+      final c = await _pump(
+        tester,
+        () => _account(signedIn: false, busy: true),
+      );
       final button = tester.widget<ButtonStyleButton>(
         find.byKey(const ValueKey('account-sign-in')),
       );
@@ -127,7 +130,10 @@ void main() {
     testWidgets('a sign-in failure is explained while signed out', (
       tester,
     ) async {
-      await _pump(tester, () => _account(signedIn: false, error: 'sign_in_failed'));
+      await _pump(
+        tester,
+        () => _account(signedIn: false, error: 'sign_in_failed'),
+      );
       final l10n = l10nOf(tester);
       expect(find.text(l10n.syncErrorSignInFailed), findsOneWidget);
       expect(find.text(l10n.syncErrorSignInFailedHint), findsOneWidget);
@@ -146,7 +152,9 @@ void main() {
       await _pump(
         tester,
         () => _account(
-          syncedAt: DateTime.now().subtract(const Duration(minutes: 5, seconds: 3)),
+          syncedAt: DateTime.now().subtract(
+            const Duration(minutes: 5, seconds: 3),
+          ),
         ),
       );
       expect(find.text('Synced 5 minutes ago'), findsOneWidget);
@@ -176,8 +184,10 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(l10n.accountSyncing), findsWidgets);
-      await tester.tap(find.byKey(const ValueKey('account-sync-now')),
-          warnIfMissed: false);
+      await tester.tap(
+        find.byKey(const ValueKey('account-sync-now')),
+        warnIfMissed: false,
+      );
       expect(c.calls.where((call) => call == 'syncNow'), hasLength(1));
     });
 
@@ -185,7 +195,11 @@ void main() {
       var auto = true;
       final c = await _pump(tester, () => _account(autoSync: auto));
       expect(
-        tester.widget<SwitchListTile>(find.byKey(const ValueKey('account-auto-sync'))).value,
+        tester
+            .widget<SwitchListTile>(
+              find.byKey(const ValueKey('account-auto-sync')),
+            )
+            .value,
         isTrue,
       );
       await _tapKey(tester, 'account-auto-sync');
@@ -221,7 +235,9 @@ void main() {
       final c = await _pump(tester, () => _account());
       await _tapKey(tester, 'account-use-different');
       expect(
-        c.calls.where((call) => call.endsWith('ForSync') || call.startsWith('signOut')),
+        c.calls.where(
+          (call) => call.endsWith('ForSync') || call.startsWith('signOut'),
+        ),
         ['signOutFromSync', 'signInForSync'],
       );
     });
@@ -235,7 +251,10 @@ void main() {
     );
 
     testWidgets('are counted, explained, and can be reviewed', (tester) async {
-      final c = await _pump(tester, () => _account(conflicts: 2, songs: [copy]));
+      final c = await _pump(
+        tester,
+        () => _account(conflicts: 2, songs: [copy]),
+      );
       final l10n = l10nOf(tester);
       expect(find.text(l10n.accountConflictsTitle(2)), findsOneWidget);
       expect(find.text(l10n.accountConflictsBody), findsOneWidget);
@@ -309,11 +328,18 @@ void main() {
           final text = syncErrorText(l10n, value);
           expect(text.message, isNotEmpty, reason: value);
           expect(text.hint, isNotEmpty, reason: value);
-          expect(seen.add(text.message), value == 'something_new_and_unknown' ? isFalse : isTrue,
-              reason: '$value has its own message');
+          expect(
+            seen.add(text.message),
+            value == 'something_new_and_unknown' ? isFalse : isTrue,
+            reason: '$value has its own message',
+          );
           if (locale.languageCode != 'en') {
             final en = syncErrorText(english, value);
-            expect(text.message, isNot(en.message), reason: '$value untranslated');
+            expect(
+              text.message,
+              isNot(en.message),
+              reason: '$value untranslated',
+            );
             expect(text.hint, isNot(en.hint), reason: '$value untranslated');
           }
         }
@@ -322,7 +348,12 @@ void main() {
         addTearDown(controller.dispose);
         for (final value in _codes) {
           code = value;
-          await pumpShell(tester, controller, locale: locale, syncFocusRequest: 1);
+          await pumpShell(
+            tester,
+            controller,
+            locale: locale,
+            syncFocusRequest: 1,
+          );
           // account_changed also opens its dialog; leave it for its own test.
           if (value == 'account_changed') continue;
           final text = syncErrorText(l10n, value);
@@ -389,7 +420,10 @@ void main() {
         focusAccount: false,
       );
       final l10n = l10nOf(tester);
-      expect(find.byKey(const ValueKey('account-change-dialog')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('account-change-dialog')),
+        findsOneWidget,
+      );
       expect(find.text(l10n.accountChangedTitle), findsOneWidget);
 
       await tester.tap(find.byKey(const ValueKey('account-change-merge')));
@@ -410,6 +444,28 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('account-change-replace')));
       await tester.pumpAndSettle();
+      // Replace deletes local songs, so one tap is not enough: a second
+      // dialog states the consequence and asks again.
+      expect(c.calls, isNot(contains('adoptAccount(mergeLocal: false)')));
+      expect(
+        find.byKey(const ValueKey('account-replace-confirm-dialog')),
+        findsOneWidget,
+      );
+      expect(find.text(l10n.accountReplaceConfirmBody), findsOneWidget);
+
+      // Declining returns to the choices without doing anything.
+      await tester.tap(find.byKey(const ValueKey('account-replace-cancel')));
+      await tester.pumpAndSettle();
+      expect(c.calls, isNot(contains('adoptAccount(mergeLocal: false)')));
+      expect(
+        find.byKey(const ValueKey('account-change-dialog')),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.byKey(const ValueKey('account-change-replace')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('account-replace-confirm')));
+      await tester.pumpAndSettle();
       expect(c.calls, contains('adoptAccount(mergeLocal: false)'));
 
       error = 'sync_failed';
@@ -424,16 +480,16 @@ void main() {
     });
 
     testWidgets('can be reopened from the Account section', (tester) async {
-      final c = await _pump(
-        tester,
-        () => _account(error: 'account_changed'),
-      );
+      final c = await _pump(tester, () => _account(error: 'account_changed'));
       await tester.tap(find.byKey(const ValueKey('account-change-sign-out')));
       await tester.pumpAndSettle();
       c.calls.clear();
       await tester.tap(find.text(l10nOf(tester).accountChooseAction));
       await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('account-change-dialog')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('account-change-dialog')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('fits a narrow screen at large text', (tester) async {
@@ -468,7 +524,9 @@ void main() {
       await _pump(tester, () => state, focusAccount: false);
       final l10n = l10nOf(tester);
       expect(
-        tester.widget<IconButton>(find.byKey(const ValueKey('cloud-button'))).tooltip,
+        tester
+            .widget<IconButton>(find.byKey(const ValueKey('cloud-button')))
+            .tooltip,
         tooltip(l10n),
       );
       expect(find.byTooltip(tooltip(l10n)), findsOneWidget);
@@ -594,7 +652,11 @@ void main() {
         'Synced 3 hours ago',
       );
       expect(
-        lastSyncedLabel(l10n, now.subtract(const Duration(days: 2, hours: 5)), now),
+        lastSyncedLabel(
+          l10n,
+          now.subtract(const Duration(days: 2, hours: 5)),
+          now,
+        ),
         'Synced 2 days ago',
       );
     });
@@ -632,13 +694,11 @@ void main() {
       'signing in': () => _account(signedIn: false, busy: true),
       'signed in': () => _account(syncedAt: DateTime.now()),
       'busy': () => _account(busy: true),
-      'conflicts': () => _account(
-        syncedAt: DateTime.now(),
-        conflicts: 12,
-        songs: [copy],
-      ),
+      'conflicts': () =>
+          _account(syncedAt: DateTime.now(), conflicts: 12, songs: [copy]),
       'long name, error': () => _account(
-        name: 'a.very.long.address.for.a.musician@subdomain.example-organisation.org',
+        name:
+            'a.very.long.address.for.a.musician@subdomain.example-organisation.org',
         error: 'remote_library_too_large',
         conflicts: 3,
         songs: [copy],

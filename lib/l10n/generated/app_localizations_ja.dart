@@ -1386,4 +1386,172 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get syncErrorGenericHint => 'しばらくしてからもう一度お試しください。曲はこの端末に安全に保存されています。';
+
+  @override
+  String get editorDurationInvalid => '秒、または「分:秒」の形式で入力してください(例: 3:45)。';
+
+  @override
+  String get editorNumberInvalid => '数字を入力してください。';
+
+  @override
+  String get accountReplaceConfirmTitle => 'ローカルの曲を削除しますか?';
+
+  @override
+  String get accountReplaceConfirmBody =>
+      'このデバイスにある曲とセットリストのうち、新しいアカウントにないものは完全に削除されます。この操作は元に戻せません。';
+
+  @override
+  String get accountReplaceConfirmAction => '削除して置き換え';
+
+  @override
+  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+
+  @override
+  String accountSuspiciousBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count items that this device synced earlier are missing from Google Drive.',
+      one:
+          '$count item that this device synced earlier is missing from Google Drive.',
+    );
+    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+  }
+
+  @override
+  String get accountSuspiciousDelete => 'Delete them here too';
+
+  @override
+  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+
+  @override
+  String accountSuspiciousDeleteConfirmTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Delete $count items from this device?',
+      one: 'Delete $count item from this device?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get accountSuspiciousDeleteConfirmBody =>
+      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+
+  @override
+  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+
+  @override
+  String get syncErrorRemoteListingSuspicious =>
+      'Items are missing from Google Drive.';
+
+  @override
+  String get syncErrorRemoteListingSuspiciousHint =>
+      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+
+  @override
+  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+
+  @override
+  String get syncErrorRemoteChangedHint =>
+      'Nothing was lost. Sync again to pick up the latest changes.';
+
+  @override
+  String get syncErrorInvalidLocalData =>
+      'Some data on this device couldn\'t be synced.';
+
+  @override
+  String get syncErrorInvalidLocalDataHint =>
+      'A song or setlist could not be read. Import or recreate it, then sync again.';
+
+  @override
+  String get syncErrorNoAccountChange =>
+      'There is no account change to resolve.';
+
+  @override
+  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+
+  @override
+  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+
+  @override
+  String get accountSyncWarningBody =>
+      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+
+  @override
+  String get accountSyncWarningTooLarge =>
+      'A file was too large to sync and was skipped. Everything else is up to date.';
+
+  @override
+  String get accountSyncWarningInvalid =>
+      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+
+  @override
+  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+
+  @override
+  String get settingsExportPdfTooLarge =>
+      'This PDF would be too large. Try fewer songs, or share it as text.';
+
+  @override
+  String get settingsTimingTooLarge =>
+      'The timing data is too large (over 3 MB).';
+
+  @override
+  String get settingsImportDuplicateSongId =>
+      'This backup lists the same song twice, so nothing was imported.';
+
+  @override
+  String get setlistSaveConflict =>
+      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+
+  @override
+  String get sectionVerse => 'ヴァース';
+
+  @override
+  String get sectionChorus => 'コーラス';
+
+  @override
+  String get sectionBridge => 'ブリッジ';
+
+  @override
+  String get sectionIntro => 'イントロ';
+
+  @override
+  String get sectionOutro => 'アウトロ';
+
+  @override
+  String get sectionPreChorus => 'プレコーラス';
+
+  @override
+  String get sectionPostChorus => 'ポストコーラス';
+
+  @override
+  String get sectionInstrumental => 'インスト';
+
+  @override
+  String get sectionInterlude => '間奏';
+
+  @override
+  String get sectionSolo => 'ソロ';
+
+  @override
+  String get sectionRefrain => 'リフレイン';
+
+  @override
+  String get sectionHook => 'フック';
+
+  @override
+  String get sectionBreakdown => 'ブレイクダウン';
+
+  @override
+  String get sectionCoda => 'コーダ';
+
+  @override
+  String get sectionTag => 'タグ';
+
+  @override
+  String get sectionEnding => 'エンディング';
 }

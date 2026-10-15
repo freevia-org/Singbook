@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/application/file_actions.dart';
@@ -256,12 +255,7 @@ Future<void> _pumpShell(
   await tester.pumpWidget(
     MaterialApp(
       locale: locale,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
+      localizationsDelegates: singbookLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: verseTheme(
         brightness: Brightness.light,

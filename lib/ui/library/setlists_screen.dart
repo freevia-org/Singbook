@@ -5,6 +5,7 @@ import '../library_actions.dart';
 import '../verse_ui_state.dart';
 import '../widgets/subpage_header.dart';
 import '../widgets/verse_components.dart';
+import 'collation.dart';
 
 class SetlistsScreen extends StatefulWidget {
   const SetlistsScreen({super.key, required this.controller});
@@ -33,17 +34,17 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final state = widget.controller.state;
-    final needle = _query.toLowerCase();
+    final needle = foldForSearch(_query);
     final lists = state.setlists
         .where(
           (value) =>
-              '${value.title} ${value.notes}'.toLowerCase().contains(needle),
+              foldForSearch('${value.title} ${value.notes}').contains(needle),
         )
         .toList();
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 8, 12, 8),
+          padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 12, 8),
           child: Row(
             children: [
               Expanded(
@@ -99,8 +100,8 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                           children: List.generate(columns, (column) {
                             final index = rowIndex * columns + column;
                             return Padding(
-                              padding: EdgeInsets.only(
-                                right: column == 0 && wide ? 8 : 0,
+                              padding: EdgeInsetsDirectional.only(
+                                end: column == 0 && wide ? 8 : 0,
                               ),
                               child: SizedBox(
                                 width: cardWidth.toDouble(),
@@ -132,9 +133,14 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
         title.isEmpty ? l10n.setlistSongMissing : title,
     ];
     final preview = expanded ? titles : titles.take(2).toList();
+    final summary =
+        '${l10n.setlistSongsCount(value.songTitles.length)}  ·  ${l10n.setlistDurationUnknown}';
+    void toggleExpanded() => setState(
+      () => expanded ? _expanded.remove(value.id) : _expanded.add(value.id),
+    );
     return Card(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 8, 10),
+        padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 8, 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -143,12 +149,17 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                 Expanded(
                   child: InkWell(
                     onTap: () => controller.openSetlist(value.id),
-                    child: Text(
-                      value.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: 48),
+                      child: Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: Text(
+                          value.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w700),
+                        ),
                       ),
                     ),
                   ),
@@ -208,29 +219,44 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                 ),
               ],
             ),
-            InkWell(
-              onTap: () => setState(
-                () => expanded
-                    ? _expanded.remove(value.id)
-                    : _expanded.add(value.id),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      '${l10n.setlistSongsCount(value.songTitles.length)}  ·  ${l10n.setlistDurationUnknown}',
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+            Semantics(
+              button: true,
+              expanded: expanded,
+              label: expanded
+                  ? l10n.accessibilityCollapseSetlist(value.title)
+                  : l10n.accessibilityExpandSetlist(value.title),
+              value: summary,
+              excludeSemantics: true,
+              onTap: toggleExpanded,
+              child: InkWell(
+                onTap: toggleExpanded,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 48),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          summary,
+                          style: Theme.of(context).textTheme.labelMedium
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
+                        ),
                       ),
-                    ),
+                      Padding(
+                        padding: const EdgeInsetsDirectional.only(end: 8),
+                        child: Icon(
+                          expanded
+                              ? Icons.expand_less_rounded
+                              : Icons.expand_more_rounded,
+                          size: 20,
+                        ),
+                      ),
+                    ],
                   ),
-                  Icon(
-                    expanded
-                        ? Icons.expand_less_rounded
-                        : Icons.expand_more_rounded,
-                    size: 20,
-                  ),
-                ],
+                ),
               ),
             ),
             if (preview.isNotEmpty)
@@ -267,6 +293,7 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
   late final TextEditingController _name;
   late final TextEditingController _notes;
   String? _loadedSetlistId;
+  bool _wasEditing = false;
   VerseUiController get controller => widget.controller;
 
   @override
@@ -274,6 +301,7 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
     super.initState();
     final value = controller.state.activeSetlist;
     _loadedSetlistId = value?.id;
+    _wasEditing = controller.state.editingSetlist;
     _name = TextEditingController(text: value?.title ?? '');
     _notes = TextEditingController(text: value?.notes ?? '');
   }
@@ -281,12 +309,23 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
   @override
   void didUpdateWidget(covariant SetlistDetailScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final value = controller.state.activeSetlist;
-    if (value != null && value.id != _loadedSetlistId) {
-      _loadedSetlistId = value.id;
-      _name.text = value.title;
-      _notes.text = value.notes;
+    final state = controller.state;
+    final value = state.activeSetlist;
+    final editing = state.editingSetlist;
+    if (value != null) {
+      // Reload the fields when another setlist opens, when editing starts and
+      // while not editing (a sync may have changed the stored text), but never
+      // under text being typed, so Save cannot overwrite newer stored data
+      // with a stale copy.
+      final reload =
+          value.id != _loadedSetlistId || (editing && !_wasEditing) || !editing;
+      if (reload) {
+        _loadedSetlistId = value.id;
+        if (_name.text != value.title) _name.text = value.title;
+        if (_notes.text != value.notes) _notes.text = value.notes;
+      }
     }
+    _wasEditing = editing;
   }
 
   @override

@@ -4,13 +4,22 @@ import '../verse_ui_state.dart';
 
 /// The approved Singbook mark, composed over a theme-aware brand surface.
 class SingbookMark extends StatelessWidget {
-  const SingbookMark({super.key, this.size = 36});
+  const SingbookMark({
+    super.key,
+    this.size = 36,
+    this.excludeSemantics = false,
+  });
   final double size;
+
+  /// Hide the mark from assistive technology when a visible wordmark beside
+  /// it already announces the brand.
+  final bool excludeSemantics;
 
   @override
   Widget build(BuildContext context) => Semantics(
     image: true,
     label: 'Singbook',
+    excludeSemantics: excludeSemantics,
     child: ClipRRect(
       borderRadius: BorderRadius.circular(size * .23),
       child: Container(
@@ -66,6 +75,7 @@ class VerseArtwork extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme;
+    final pixels = (size * MediaQuery.devicePixelRatioOf(context)).round();
     return ClipRRect(
       borderRadius: BorderRadius.circular(rounded),
       child: SizedBox(
@@ -83,6 +93,9 @@ class VerseArtwork extends StatelessWidget {
             : Image.network(
                 url!,
                 fit: BoxFit.cover,
+                cacheWidth: pixels,
+                cacheHeight: pixels,
+                excludeFromSemantics: true,
                 errorBuilder: (_, _, _) => ColoredBox(
                   color: color.primaryContainer.withValues(alpha: .6),
                   child: Icon(
@@ -225,6 +238,15 @@ class SongRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    // The spoken label carries what is shown (album, length, caption) too,
+    // leaving out empty parts such as a missing artist.
+    final spoken = [
+      accessibilityLabel.replaceAll(RegExp(r'[,\s]+$'), ''),
+      if (caption != null) caption,
+      if (caption == null && song.album?.isNotEmpty == true) song.album,
+      if (caption == null && song.durationSeconds != null)
+        formatDuration(song.durationSeconds!),
+    ].whereType<String>().where((part) => part.isNotEmpty).join(', ');
     // Only the open area is one labelled button; the favorite and menu
     // buttons are siblings, so screen readers announce each exactly once.
     return Row(
@@ -232,7 +254,7 @@ class SongRow extends StatelessWidget {
         Expanded(
           child: Semantics(
             button: true,
-            label: accessibilityLabel,
+            label: spoken,
             excludeSemantics: true,
             onTap: onOpen,
             child: InkWell(

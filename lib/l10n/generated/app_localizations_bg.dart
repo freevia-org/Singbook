@@ -1430,4 +1430,178 @@ class AppLocalizationsBg extends AppLocalizations {
   @override
   String get syncErrorGenericHint =>
       'Опитайте отново след малко. Песните са в безопасност на устройството.';
+
+  @override
+  String get editorDurationInvalid =>
+      'Въведете секунди или минути и секунди, например 3:45.';
+
+  @override
+  String get editorNumberInvalid => 'Въведете число.';
+
+  @override
+  String get accountReplaceConfirmTitle => 'Да се изтрият ли локалните песни?';
+
+  @override
+  String get accountReplaceConfirmBody =>
+      'Песните и списъците на това устройство, които не са в новия акаунт, ще бъдат изтрити завинаги. Действието не може да бъде отменено.';
+
+  @override
+  String get accountReplaceConfirmAction => 'Изтрий и замени';
+
+  @override
+  String get accountSuspiciousTitle => 'Липсват елементи в Google Drive';
+
+  @override
+  String accountSuspiciousBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count елемента, които това устройство е синхронизирало преди, липсват в Google Drive.',
+      one:
+          '$count елемент, който това устройство е синхронизирало преди, липсва в Google Drive.',
+    );
+    return '$_temp0 Това може да се случи, ако данните на приложението са изчистени от настройките на Google. Нищо още не е изтрито.';
+  }
+
+  @override
+  String get accountSuspiciousDelete => 'Изтрий ги и тук';
+
+  @override
+  String get accountSuspiciousKeep => 'Запази песните ми и ги качи отново';
+
+  @override
+  String accountSuspiciousDeleteConfirmTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Да се изтрият ли $count елемента от това устройство?',
+      one: 'Да се изтрие ли $count елемент от това устройство?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get accountSuspiciousDeleteConfirmBody =>
+      'Тези песни и списъци ще бъдат изтрити завинаги от това устройство. Действието не може да бъде отменено.';
+
+  @override
+  String get accountSuspiciousDeleteConfirmAction =>
+      'Изтрий от това устройство';
+
+  @override
+  String get syncErrorRemoteListingSuspicious =>
+      'В Google Drive липсват елементи.';
+
+  @override
+  String get syncErrorRemoteListingSuspiciousHint =>
+      'Нищо не е изтрито. Изберете дали да ги изтриете и тук, или да ги качите отново.';
+
+  @override
+  String get syncErrorRemoteChanged =>
+      'Google Drive се промени по време на синхронизирането.';
+
+  @override
+  String get syncErrorRemoteChangedHint =>
+      'Нищо не е загубено. Синхронизирайте отново, за да получите последните промени.';
+
+  @override
+  String get syncErrorInvalidLocalData =>
+      'Някои данни на това устройство не можаха да се синхронизират.';
+
+  @override
+  String get syncErrorInvalidLocalDataHint =>
+      'Песен или списък не можа да бъде прочетен. Импортирайте или създайте го отново и синхронизирайте пак.';
+
+  @override
+  String get syncErrorNoAccountChange =>
+      'Няма промяна на акаунта за разрешаване.';
+
+  @override
+  String get syncErrorNoAccountChangeHint =>
+      'Синхронизирайте отново, за да продължите.';
+
+  @override
+  String get accountSyncWarningTitle =>
+      'Синхронизирано, но някои файлове са пропуснати';
+
+  @override
+  String get accountSyncWarningBody =>
+      'Някои файлове не можаха да се използват и са оставени непроменени. Всичко останало е актуално.';
+
+  @override
+  String get accountSyncWarningTooLarge =>
+      'Един файл е твърде голям за синхронизиране и е пропуснат. Всичко останало е актуално.';
+
+  @override
+  String get accountSyncWarningInvalid =>
+      'Един файл не можа да бъде прочетен и е пропуснат. Всичко останало е актуално.';
+
+  @override
+  String get accountNoticeSyncSkipped =>
+      'Синхронизирано. Някои файлове са пропуснати.';
+
+  @override
+  String get settingsExportPdfTooLarge =>
+      'Този PDF би бил твърде голям. Опитайте с по-малко песни или го споделете като текст.';
+
+  @override
+  String get settingsTimingTooLarge =>
+      'Данните за тайминга са твърде големи (над 3 МБ).';
+
+  @override
+  String get settingsImportDuplicateSongId =>
+      'Този архив съдържа една и съща песен два пъти, затова нищо не е импортирано.';
+
+  @override
+  String get setlistSaveConflict =>
+      'Списъкът е променен другаде. Вашите промени са запазени като отделно копие.';
+
+  @override
+  String get sectionVerse => 'Куплет';
+
+  @override
+  String get sectionChorus => 'Припев';
+
+  @override
+  String get sectionBridge => 'Бридж';
+
+  @override
+  String get sectionIntro => 'Интро';
+
+  @override
+  String get sectionOutro => 'Аутро';
+
+  @override
+  String get sectionPreChorus => 'Предприпев';
+
+  @override
+  String get sectionPostChorus => 'Следприпев';
+
+  @override
+  String get sectionInstrumental => 'Инструментал';
+
+  @override
+  String get sectionInterlude => 'Интерлюдия';
+
+  @override
+  String get sectionSolo => 'Соло';
+
+  @override
+  String get sectionRefrain => 'Рефрен';
+
+  @override
+  String get sectionHook => 'Хук';
+
+  @override
+  String get sectionBreakdown => 'Брейкдаун';
+
+  @override
+  String get sectionCoda => 'Кода';
+
+  @override
+  String get sectionTag => 'Таг';
+
+  @override
+  String get sectionEnding => 'Край';
 }

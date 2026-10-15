@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../l10n/generated/app_localizations.dart';
@@ -11,6 +13,9 @@ const _signInAgainCodes = {
   'not_signed_in',
   'sign_in_failed',
 };
+
+/// The sync refused to delete items the cloud no longer lists.
+const _suspiciousCode = 'remote_listing_suspicious';
 
 /// Codes where retrying cannot help or would only repeat the failure.
 const _noRetryCodes = {'not_configured'};
@@ -63,12 +68,7 @@ class AccountSection extends StatelessWidget {
         title: Text(l10n.accountSignedOut),
         subtitle: Text(l10n.accountSignedOutBenefits),
       ),
-      if (code != null)
-        _ErrorCallout(
-          code: code,
-          action: null,
-          onAction: null,
-        ),
+      if (code != null) _ErrorCallout(code: code, action: null, onAction: null),
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
         child: FilledButton.icon(
@@ -79,9 +79,7 @@ class AccountSection extends StatelessWidget {
               ? const _Spinner()
               : const Icon(Icons.login_rounded),
           label: Text(
-            state.syncBusy
-                ? l10n.accountWorking
-                : l10n.accountSignInWithGoogle,
+            state.syncBusy ? l10n.accountWorking : l10n.accountSignInWithGoogle,
           ),
         ),
       ),
@@ -94,18 +92,16 @@ class AccountSection extends StatelessWidget {
     VerseUiState state,
   ) {
     final code = state.syncBusy ? null : state.syncErrorCode;
-    final status = state.syncBusy
-        ? l10n.accountSyncing
-        : lastSyncedLabel(l10n, state.lastSyncAt, now ?? DateTime.now());
     final hasConflictCopies = state.songs.any((song) => song.isConflictCopy);
     return [
       ListTile(
         key: const ValueKey('account-signed-in'),
         leading: const Icon(Icons.account_circle_outlined),
         title: Text(state.accountName ?? l10n.accountTitle),
-        subtitle: Semantics(
-          liveRegion: true,
-          child: Text(status, key: const ValueKey('account-status')),
+        subtitle: _SyncStatus(
+          busy: state.syncBusy,
+          lastSyncAt: state.lastSyncAt,
+          now: now,
         ),
       ),
       if (state.lastSyncConflicts > 0)
@@ -116,9 +112,12 @@ class AccountSection extends StatelessWidget {
       if (code != null)
         _ErrorCallout(
           code: code,
+          suspiciousCount: state.syncSuspiciousDeletionCount,
           action: _errorActionLabel(l10n, code),
           onAction: _errorAction(context, code),
         ),
+      if (code == null && state.syncWarningCode != null && !state.syncBusy)
+        _WarningCallout(code: state.syncWarningCode!),
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
         child: FilledButton.tonalIcon(
@@ -159,7 +158,9 @@ class AccountSection extends StatelessWidget {
 
   String? _errorActionLabel(AppLocalizations l10n, String code) {
     if (_noRetryCodes.contains(code)) return null;
-    if (code == 'account_changed') return l10n.accountChooseAction;
+    if (code == 'account_changed' || code == _suspiciousCode) {
+      return l10n.accountChooseAction;
+    }
     if (_signInAgainCodes.contains(code)) return l10n.accountSignInAgain;
     return l10n.actionRetry;
   }
@@ -168,6 +169,9 @@ class AccountSection extends StatelessWidget {
     if (_noRetryCodes.contains(code)) return null;
     if (code == 'account_changed') {
       return () => showAccountChangeDialog(context, controller);
+    }
+    if (code == _suspiciousCode) {
+      return () => showRemoteDeletionsDialog(context, controller);
     }
     if (_signInAgainCodes.contains(code)) return controller.signInForSync;
     return controller.syncNow;
@@ -202,6 +206,118 @@ class AccountSection extends StatelessWidget {
   }
 }
 
+/// How the person answered a `remote_listing_suspicious` stop.
+enum RemoteDeletionsChoice { deleteHere, keepLocal }
+
+/// Explains that items this device synced before are missing from Google Drive
+/// and asks what to do, then applies the choice. Keeping the local library is
+/// the default; deleting needs a second, explicit confirmation, and declining
+/// that returns to the choices. Returns the choice, or null when cancelled.
+Future<RemoteDeletionsChoice?> showRemoteDeletionsDialog(
+  BuildContext context,
+  VerseUiController controller,
+) async {
+  final count = controller.state.syncSuspiciousDeletionCount;
+  RemoteDeletionsChoice? choice;
+  while (true) {
+    choice = await _askRemoteDeletions(context, count);
+    if (choice != RemoteDeletionsChoice.deleteHere) break;
+    if (!context.mounted) return null;
+    if (await _confirmRemoteDeletions(context, count) == true) break;
+    if (!context.mounted) return null;
+  }
+  switch (choice) {
+    case RemoteDeletionsChoice.deleteHere:
+      await controller.confirmRemoteDeletions();
+    case RemoteDeletionsChoice.keepLocal:
+      await controller.keepLocalAfterRemoteDeletions();
+    case null:
+      break;
+  }
+  return choice;
+}
+
+Future<RemoteDeletionsChoice?> _askRemoteDeletions(
+  BuildContext context,
+  int count,
+) => showDialog<RemoteDeletionsChoice>(
+  context: context,
+  barrierDismissible: false,
+  builder: (context) {
+    final l10n = AppLocalizations.of(context);
+    void pop([RemoteDeletionsChoice? value]) =>
+        Navigator.of(context).pop(value);
+    return AlertDialog(
+      key: const ValueKey('remote-deletions-dialog'),
+      scrollable: true,
+      title: Text(l10n.accountSuspiciousTitle),
+      content: Text(l10n.accountSuspiciousBody(count)),
+      actionsOverflowDirection: VerticalDirection.down,
+      actionsOverflowAlignment: OverflowBarAlignment.end,
+      actions: [
+        FilledButton(
+          key: const ValueKey('remote-deletions-keep'),
+          autofocus: true,
+          style: FilledButton.styleFrom(minimumSize: const Size(64, 48)),
+          onPressed: () => pop(RemoteDeletionsChoice.keepLocal),
+          child: Text(l10n.accountSuspiciousKeep, textAlign: TextAlign.center),
+        ),
+        OutlinedButton(
+          key: const ValueKey('remote-deletions-delete'),
+          style: OutlinedButton.styleFrom(minimumSize: const Size(64, 48)),
+          onPressed: () => pop(RemoteDeletionsChoice.deleteHere),
+          child: Text(
+            l10n.accountSuspiciousDelete,
+            textAlign: TextAlign.center,
+          ),
+        ),
+        TextButton(
+          key: const ValueKey('remote-deletions-cancel'),
+          style: TextButton.styleFrom(minimumSize: const Size(64, 48)),
+          onPressed: pop,
+          child: Text(l10n.actionCancel),
+        ),
+      ],
+    );
+  },
+);
+
+Future<bool?> _confirmRemoteDeletions(BuildContext context, int count) =>
+    showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        final l10n = AppLocalizations.of(context);
+        final scheme = Theme.of(context).colorScheme;
+        return AlertDialog(
+          key: const ValueKey('remote-deletions-confirm-dialog'),
+          scrollable: true,
+          icon: Icon(Icons.warning_amber_rounded, color: scheme.error),
+          title: Text(l10n.accountSuspiciousDeleteConfirmTitle(count)),
+          content: Text(l10n.accountSuspiciousDeleteConfirmBody),
+          actions: [
+            TextButton(
+              key: const ValueKey('remote-deletions-confirm-cancel'),
+              autofocus: true,
+              style: TextButton.styleFrom(minimumSize: const Size(64, 48)),
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.actionCancel),
+            ),
+            FilledButton(
+              key: const ValueKey('remote-deletions-confirm'),
+              style: FilledButton.styleFrom(
+                minimumSize: const Size(64, 48),
+                backgroundColor: scheme.error,
+                foregroundColor: scheme.onError,
+              ),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(l10n.accountSuspiciousDeleteConfirmAction),
+            ),
+          ],
+        );
+      },
+    );
+
 /// Which way the person resolved an account change.
 enum AccountChangeChoice { merge, replace, signOut }
 
@@ -211,7 +327,66 @@ Future<AccountChangeChoice?> showAccountChangeDialog(
   BuildContext context,
   VerseUiController controller,
 ) async {
-  final choice = await showDialog<AccountChangeChoice>(
+  AccountChangeChoice? choice;
+  // "Replace" deletes local content, so it needs a second, explicit answer;
+  // declining returns to the choices instead of closing the decision.
+  while (true) {
+    choice = await _askAccountChange(context);
+    if (choice != AccountChangeChoice.replace) break;
+    if (!context.mounted) return null;
+    if (await _confirmReplace(context) == true) break;
+    if (!context.mounted) return null;
+  }
+  switch (choice) {
+    case AccountChangeChoice.merge:
+      await controller.adoptAccount(mergeLocal: true);
+    case AccountChangeChoice.replace:
+      await controller.adoptAccount(mergeLocal: false);
+    case AccountChangeChoice.signOut:
+      await controller.signOutFromSync();
+    case null:
+      break;
+  }
+  return choice;
+}
+
+Future<bool?> _confirmReplace(BuildContext context) => showDialog<bool>(
+  context: context,
+  barrierDismissible: false,
+  builder: (context) {
+    final l10n = AppLocalizations.of(context);
+    final scheme = Theme.of(context).colorScheme;
+    return AlertDialog(
+      key: const ValueKey('account-replace-confirm-dialog'),
+      scrollable: true,
+      icon: Icon(Icons.warning_amber_rounded, color: scheme.error),
+      title: Text(l10n.accountReplaceConfirmTitle),
+      content: Text(l10n.accountReplaceConfirmBody),
+      actions: [
+        TextButton(
+          key: const ValueKey('account-replace-cancel'),
+          autofocus: true,
+          style: TextButton.styleFrom(minimumSize: const Size(64, 48)),
+          onPressed: () => Navigator.of(context).pop(false),
+          child: Text(l10n.actionCancel),
+        ),
+        FilledButton(
+          key: const ValueKey('account-replace-confirm'),
+          style: FilledButton.styleFrom(
+            minimumSize: const Size(64, 48),
+            backgroundColor: scheme.error,
+            foregroundColor: scheme.onError,
+          ),
+          onPressed: () => Navigator.of(context).pop(true),
+          child: Text(l10n.accountReplaceConfirmAction),
+        ),
+      ],
+    );
+  },
+);
+
+Future<AccountChangeChoice?> _askAccountChange(BuildContext context) {
+  return showDialog<AccountChangeChoice>(
     context: context,
     barrierDismissible: false,
     builder: (context) {
@@ -235,7 +410,10 @@ Future<AccountChangeChoice?> showAccountChangeDialog(
               key: const ValueKey('account-change-merge'),
               style: FilledButton.styleFrom(minimumSize: const Size(64, 48)),
               onPressed: () => pop(AccountChangeChoice.merge),
-              child: Text(l10n.accountChangedMerge, textAlign: TextAlign.center),
+              child: Text(
+                l10n.accountChangedMerge,
+                textAlign: TextAlign.center,
+              ),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(4, 4, 4, 14),
@@ -268,17 +446,59 @@ Future<AccountChangeChoice?> showAccountChangeDialog(
       );
     },
   );
-  switch (choice) {
-    case AccountChangeChoice.merge:
-      await controller.adoptAccount(mergeLocal: true);
-    case AccountChangeChoice.replace:
-      await controller.adoptAccount(mergeLocal: false);
-    case AccountChangeChoice.signOut:
-      await controller.signOutFromSync();
-    case null:
-      break;
+}
+
+/// "Synced 3 minutes ago", refreshed every half minute while it is on screen
+/// so the relative time does not go stale. A fixed [now] (tests) turns the
+/// refresh off.
+class _SyncStatus extends StatefulWidget {
+  const _SyncStatus({
+    required this.busy,
+    required this.lastSyncAt,
+    required this.now,
+  });
+  final bool busy;
+  final DateTime? lastSyncAt;
+  final DateTime? now;
+
+  @override
+  State<_SyncStatus> createState() => _SyncStatusState();
+}
+
+class _SyncStatusState extends State<_SyncStatus> {
+  Timer? _refresh;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.now == null) {
+      _refresh = Timer.periodic(const Duration(seconds: 30), (_) {
+        if (mounted && !widget.busy) setState(() {});
+      });
+    }
   }
-  return choice;
+
+  @override
+  void dispose() {
+    _refresh?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final status = widget.busy
+        ? l10n.accountSyncing
+        : lastSyncedLabel(
+            l10n,
+            widget.lastSyncAt,
+            widget.now ?? DateTime.now(),
+          );
+    return Semantics(
+      liveRegion: true,
+      child: Text(status, key: const ValueKey('account-status')),
+    );
+  }
 }
 
 class _Spinner extends StatelessWidget {
@@ -313,13 +533,35 @@ class _ConflictCallout extends StatelessWidget {
   }
 }
 
+/// A neutral notice: the sync worked but skipped some unusable files.
+class _WarningCallout extends StatelessWidget {
+  const _WarningCallout({required this.code});
+  final String code;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final text = syncWarningText(AppLocalizations.of(context), code);
+    return _Callout(
+      key: const ValueKey('account-warning'),
+      background: scheme.surfaceContainerHighest,
+      foreground: scheme.onSurface,
+      icon: Icons.info_outline_rounded,
+      title: text.message,
+      body: text.hint,
+    );
+  }
+}
+
 class _ErrorCallout extends StatelessWidget {
   const _ErrorCallout({
     required this.code,
     required this.action,
     required this.onAction,
+    this.suspiciousCount = 0,
   });
   final String code;
+  final int suspiciousCount;
   final String? action;
   final VoidCallback? onAction;
 
@@ -327,7 +569,12 @@ class _ErrorCallout extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
-    final text = syncErrorText(l10n, code);
+    final text = code == _suspiciousCode && suspiciousCount > 0
+        ? (
+            message: l10n.accountSuspiciousTitle,
+            hint: l10n.accountSuspiciousBody(suspiciousCount),
+          )
+        : syncErrorText(l10n, code);
     return _Callout(
       key: const ValueKey('account-error'),
       background: scheme.errorContainer,

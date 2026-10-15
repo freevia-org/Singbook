@@ -56,6 +56,12 @@ Color verseCardColor(Brightness brightness) => brightness == Brightness.light
     ? const Color(0xFFFFFDF8)
     : const Color(0xFF102743);
 
+/// Outline of text fields. It is the muted text color, so it keeps at least
+/// 3:1 non-text contrast (WCAG 1.4.11) against both the field fill and the
+/// surrounding surface in every palette.
+Color verseFieldBorderColor(Brightness brightness) =>
+    verseMutedColor(brightness);
+
 ThemeData verseTheme({
   required Brightness brightness,
   required String palette,
@@ -178,9 +184,7 @@ ThemeData verseTheme({
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide(
-          color: scheme.outlineVariant.withValues(alpha: .45),
-        ),
+        borderSide: BorderSide(color: verseFieldBorderColor(brightness)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),

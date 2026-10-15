@@ -72,12 +72,17 @@ String noticeMessage(AppLocalizations l10n, UiNotice notice) =>
       UiNotice.importUnsupported => l10n.settingsImportUnsupported,
       UiNotice.importTooLarge => l10n.settingsImportTooLarge,
       UiNotice.exportFailed => l10n.settingsExportFailed,
+      UiNotice.exportPdfTooLarge => l10n.settingsExportPdfTooLarge,
+      UiNotice.timingTooLarge => l10n.settingsTimingTooLarge,
+      UiNotice.importDuplicateSongId => l10n.settingsImportDuplicateSongId,
       UiNotice.editorSaved => l10n.editorSaved,
       UiNotice.editorSaveFailed => l10n.editorSaveFailed,
       UiNotice.editorSaveConflict => l10n.editorSaveConflict,
+      UiNotice.setlistSaveConflict => l10n.setlistSaveConflict,
       UiNotice.syncSucceeded => l10n.accountSynced,
       UiNotice.syncFailed => l10n.accountSyncFailed,
       UiNotice.syncConflictsFound => l10n.accountNoticeConflicts,
+      UiNotice.syncSkipped => l10n.accountNoticeSyncSkipped,
       UiNotice.signedIn => l10n.accountNoticeSignedIn,
       UiNotice.signedOut => l10n.accountNoticeSignedOut,
       UiNotice.genericError => l10n.errorGeneric,
@@ -126,15 +131,41 @@ SyncErrorText syncErrorText(AppLocalizations l10n, String? code) =>
         message: l10n.syncErrorRemoteLibraryTooLarge,
         hint: l10n.syncErrorRemoteLibraryTooLargeHint,
       ),
+      'remote_listing_suspicious' => (
+        message: l10n.syncErrorRemoteListingSuspicious,
+        hint: l10n.syncErrorRemoteListingSuspiciousHint,
+      ),
+      'remote_changed' => (
+        message: l10n.syncErrorRemoteChanged,
+        hint: l10n.syncErrorRemoteChangedHint,
+      ),
+      'invalid_local_data' => (
+        message: l10n.syncErrorInvalidLocalData,
+        hint: l10n.syncErrorInvalidLocalDataHint,
+      ),
+      'no_account_change' => (
+        message: l10n.syncErrorNoAccountChange,
+        hint: l10n.syncErrorNoAccountChangeHint,
+      ),
       'sign_in_failed' => (
         message: l10n.syncErrorSignInFailed,
         hint: l10n.syncErrorSignInFailedHint,
       ),
-      _ => (
-        message: l10n.syncErrorGeneric,
-        hint: l10n.syncErrorGenericHint,
-      ),
+      _ => (message: l10n.syncErrorGeneric, hint: l10n.syncErrorGenericHint),
     };
+
+/// Neutral explanation of the file a successful sync skipped (see
+/// `VerseUiState.syncWarningCode`); it is not a failure.
+SyncErrorText syncWarningText(AppLocalizations l10n, String? code) => (
+  message: l10n.accountSyncWarningTitle,
+  hint: switch (code) {
+    'remote_file_too_large' ||
+    'local_file_too_large' => l10n.accountSyncWarningTooLarge,
+    'invalid_remote_data' ||
+    'invalid_local_data' => l10n.accountSyncWarningInvalid,
+    _ => l10n.accountSyncWarningBody,
+  },
+);
 
 /// "Synced 5 minutes ago" / "Never synced".
 String lastSyncedLabel(AppLocalizations l10n, DateTime? at, DateTime now) {

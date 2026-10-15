@@ -65,6 +65,10 @@ class AppControllerAdapter extends VerseUiController {
   bool _editorDirty = false, _loadingMoreRecent = false, _disposed = false;
   bool _conflictFilter = false;
   String? _editorBaseHash;
+
+  /// Stored hash of the setlist when editing began, so a save after a
+  /// background sync changed it becomes a conflict copy, not an overwrite.
+  String? _setlistBaseHash;
   double _progress = 0, _transpose = 0;
   Timer? _searchDebounce, _playerTimer;
   final _codec = ChordProCodec();
@@ -198,7 +202,25 @@ class AppControllerAdapter extends VerseUiController {
     final cached = _base;
     if (cached != null && _builtRevision == _revision) return cached;
     _builtRevision = _revision;
-    return _base = _buildState();
+    // Index the library once for this rebuild instead of scanning it for every
+    // recent event and setlist entry.
+    final index = <String, SongDocument>{};
+    for (final song in app.songs) {
+      index.putIfAbsent(song.id, () => song);
+    }
+    _songIndex = index;
+    try {
+      return _base = _buildState();
+    } finally {
+      _songIndex = null;
+    }
+  }
+
+  Map<String, SongDocument>? _songIndex;
+
+  SongDocument? _lookupSong(String id) {
+    final index = _songIndex;
+    return index == null ? app.findSong(id) : index[id];
   }
 
   /// Publishes the playback position for the current progress and song.
@@ -233,7 +255,7 @@ class AppControllerAdapter extends VerseUiController {
           );
     final playerDuration = song == null
         ? 0.0
-        : (song.metadata['durationSeconds'] as num?)?.toDouble() ??
+        : _metaDouble(song.metadata['durationSeconds']) ??
               _estimatedDuration(data.length);
     final playerSections = song == null
         ? const <PlayerSectionMarker>[]
@@ -245,7 +267,7 @@ class AppControllerAdapter extends VerseUiController {
     final recent = <RecentItemData>[];
     for (final event in app.recent) {
       if (event.objectKind == 'song') {
-        final item = app.findSong(event.objectId);
+        final item = _lookupSong(event.objectId);
         if (item != null) {
           recent.add(
             RecentItemData(
@@ -253,7 +275,7 @@ class AppControllerAdapter extends VerseUiController {
               title: item.title,
               artist: item.artist,
               subtitle: _subtitle(item),
-              artworkUrl: item.metadata['artworkUrl'] as String?,
+              artworkUrl: _metaString(item.metadata['artworkUrl']),
               occurredAt: event.occurredAt,
               isSetlist: false,
               favorite: item.favorite,
@@ -309,7 +331,7 @@ class AppControllerAdapter extends VerseUiController {
       recent: recent,
       recentHasMore: app.hasMoreRecent,
       loadingMoreRecent: _loadingMoreRecent,
-      songs: app.songs.map(_songCard).toList()..sort(_alphabeticalSong),
+      songs: _sortedSongCards(),
       setlists: app.setlists.map(_setlistCard).toList(),
       providers: app.providers
           .map(
@@ -327,10 +349,12 @@ class AppControllerAdapter extends VerseUiController {
       syncSignedIn: app.syncConnected,
       syncBusy: app.syncBusy,
       accountName: app.syncAccountEmail,
-      accountError: app.syncError,
+      accountError: _syncWarningOnly ? null : app.syncError,
       lastSyncAt: _lastSyncAt,
       lastSyncConflicts: _lastSyncConflicts,
-      lastSyncErrorCode: _lastSyncErrorCode,
+      lastSyncErrorCode: _syncWarningOnly ? null : _lastSyncErrorCode,
+      syncWarningCode: _syncWarningOnly ? app.syncWarning : null,
+      syncSuspiciousDeletionCount: app.syncSuspiciousDeletionCount,
       autoSyncEnabled: _autoSyncEnabled,
       songsConflictFilter: _conflictFilter,
       darkTheme: _themeMode(app.settings['themeMode']),
@@ -342,6 +366,7 @@ class AppControllerAdapter extends VerseUiController {
       autoscroll:
           (app.settings['autoscroll'] as bool? ?? true) &&
           timingMode != 'manual',
+      autoscrollPreference: app.settings['autoscroll'] as bool? ?? true,
       timingMode: timingMode,
       languageCode: app.settings['locale'] as String?,
       song: song == null ? null : _songCard(song),
@@ -360,8 +385,15 @@ class AppControllerAdapter extends VerseUiController {
     );
   }
 
-  static int _alphabeticalSong(SongCardData a, SongCardData b) =>
-      a.title.toLowerCase().compareTo(b.title.toLowerCase());
+  /// Song cards in title order; the lower-case sort key is computed once per
+  /// song rather than inside every comparison.
+  List<SongCardData> _sortedSongCards() {
+    final keyed = [
+      for (final song in app.songs)
+        (key: song.title.toLowerCase(), card: _songCard(song)),
+    ]..sort((a, b) => a.key.compareTo(b.key));
+    return [for (final entry in keyed) entry.card];
+  }
 
   bool _isUsableLyricResult(SourceResult result) {
     final incompleteSourceIds =
@@ -380,10 +412,10 @@ class AppControllerAdapter extends VerseUiController {
     id: song.id,
     title: song.title,
     artist: song.artist,
-    album: song.metadata['album'] as String?,
-    artworkUrl: song.metadata['artworkUrl'] as String?,
-    durationSeconds: (song.metadata['durationSeconds'] as num?)?.toDouble(),
-    key: song.metadata['key'] as String?,
+    album: _metaString(song.metadata['album']),
+    artworkUrl: _metaString(song.metadata['artworkUrl']),
+    durationSeconds: _metaDouble(song.metadata['durationSeconds']),
+    key: _metaString(song.metadata['key']),
     favorite: song.favorite,
     modifiedAt: song.updatedAt,
     authored: song.sources.isEmpty,
@@ -394,9 +426,7 @@ class AppControllerAdapter extends VerseUiController {
   );
 
   SetlistCardData _setlistCard(SetlistDocument value) {
-    final entries = [
-      for (final entry in value.entries) _entryData(entry),
-    ];
+    final entries = [for (final entry in value.entries) _entryData(entry)];
     return SetlistCardData(
       id: value.id,
       title: value.name,
@@ -410,7 +440,7 @@ class AppControllerAdapter extends VerseUiController {
   }
 
   SetlistEntryData _entryData(SetlistEntry entry) {
-    final song = app.findSong(entry.songId);
+    final song = _lookupSong(entry.songId);
     final key = entry.overrides['key']?.toString();
     final capo = entry.overrides['capo']?.toString();
     return SetlistEntryData(
@@ -481,10 +511,9 @@ class AppControllerAdapter extends VerseUiController {
             sourceCount: contributorCount,
             title: combined.title,
             artist: combined.artist,
-            album: combined.metadata['album'] as String?,
-            durationSeconds: (combined.metadata['durationSeconds'] as num?)
-                ?.toDouble(),
-            artworkUrl: combined.metadata['artworkUrl'] as String?,
+            album: _metaString(combined.metadata['album']),
+            durationSeconds: _metaDouble(combined.metadata['durationSeconds']),
+            artworkUrl: _metaString(combined.metadata['artworkUrl']),
             hasLyrics: arrangement.plainLyrics(combined.body).trim().isNotEmpty,
             hasChords: combined.hasChords,
             hasTiming: _hasUsableTiming(combined.timingTracks),
@@ -549,7 +578,7 @@ class AppControllerAdapter extends VerseUiController {
       return false;
     }
     if (_filters.language.isNotEmpty &&
-        (combined.metadata['language'] as String?)?.toLowerCase() !=
+        _metaString(combined.metadata['language'])?.toLowerCase() !=
             _filters.language.toLowerCase()) {
       return false;
     }
@@ -571,14 +600,14 @@ class AppControllerAdapter extends VerseUiController {
           candidate.providerId,
       title: candidate.title,
       artist: candidate.artist,
-      album: candidate.album ?? result.metadata['album'] as String?,
+      album: candidate.album ?? _metaString(result.metadata['album']),
       durationSeconds:
           candidate.durationSeconds ??
-          (result.metadata['durationSeconds'] as num?)?.toDouble(),
+          _metaDouble(result.metadata['durationSeconds']),
       artworkUrl:
-          candidate.artworkUrl ?? result.metadata['artworkUrl'] as String?,
-      rating: (result.metadata['rating'] as num?)?.toDouble(),
-      ratingCount: result.metadata['ratingCount'] as int?,
+          candidate.artworkUrl ?? _metaString(result.metadata['artworkUrl']),
+      rating: _metaDouble(result.metadata['rating']),
+      ratingCount: _metaInt(result.metadata['ratingCount']),
       hasLyrics: arrangement.plainLyrics(result.body).trim().isNotEmpty,
       isUsableVersion: _isUsableLyricResult(result),
       hasChords: result.hasChords,
@@ -717,7 +746,7 @@ class AppControllerAdapter extends VerseUiController {
     }
     if (timingMode == 'timed') return null;
     final duration =
-        (song.metadata['durationSeconds'] as num?)?.toDouble() ??
+        _metaDouble(song.metadata['durationSeconds']) ??
         _estimatedDuration(lines.length);
     if (duration <= 0) return null;
     final visibleLines = lines.where((line) => !line.isBlank).toList();
@@ -760,7 +789,7 @@ class AppControllerAdapter extends VerseUiController {
     _route = VerseRoute.main;
     _setlistId = null;
     _setlistEntryId = null;
-    unawaited(app.setSetting('defaultView', tab.name));
+    unawaited(_guard(() => app.setSetting('defaultView', tab.name)));
     notifyListeners();
   }
 
@@ -769,7 +798,7 @@ class AppControllerAdapter extends VerseUiController {
     _homeMode = mode;
     if (mode == HomeListMode.online) {
       _normalizeOnlineMetadataFilter();
-      unawaited(submitSearch());
+      unawaited(_guard(submitSearch));
     }
     notifyListeners();
   }
@@ -802,7 +831,7 @@ class AppControllerAdapter extends VerseUiController {
     if (value.trim().length >= 2) {
       _searchDebounce = Timer(
         const Duration(milliseconds: 360),
-        () => unawaited(app.search(value)),
+        () => unawaited(_guard(() => app.search(value))),
       );
     }
     notifyListeners();
@@ -960,7 +989,7 @@ class AppControllerAdapter extends VerseUiController {
     _stopPlayer();
     _progress = 0;
     _transpose = 0;
-    await app.recordUse('song', id);
+    await _guard(() => app.recordUse('song', id));
     notifyListeners();
   }
 
@@ -979,10 +1008,23 @@ class AppControllerAdapter extends VerseUiController {
   Future<void> editSong(String id) async {
     final song = app.findSong(id);
     if (song == null) return;
+    // Editing from the song's own reader keeps its transpose and position;
+    // editing another song starts from a clean reader state.
+    _editorReturnsToReader = _route == VerseRoute.reader && _songId == id;
+    if (_songId != id) {
+      _stopPlayer();
+      _progress = 0;
+      _transpose = 0;
+      _setlistEntryId = null;
+    }
     _songId = id;
     _openEditor(song, isNew: false);
     notifyListeners();
   }
+
+  /// Whether leaving the open editor returns to the song's reader (it was
+  /// entered from there) rather than to the list it was opened from.
+  bool _editorReturnsToReader = true;
 
   void _openEditor(SongDocument song, {required bool isNew}) {
     final metadata = song.metadata;
@@ -1017,6 +1059,7 @@ class AppControllerAdapter extends VerseUiController {
   Future<void> editSetlist(String id) async {
     _setlistId = id;
     _editingSetlist = true;
+    _setlistBaseHash = app.setlistHash(id);
     _route = VerseRoute.setlistDetail;
     notifyListeners();
   }
@@ -1045,6 +1088,7 @@ class AppControllerAdapter extends VerseUiController {
     _setlistEntryId = null;
     _songId = song.id;
     _draftSong = song;
+    _editorReturnsToReader = false;
     _openEditor(song, isNew: true);
     notifyListeners();
     return Future<void>.value();
@@ -1113,9 +1157,26 @@ class AppControllerAdapter extends VerseUiController {
     try {
       await action(value);
       if (copy) postNotice(UiNotice.copied);
+    } on FormatException catch (error) {
+      postNotice(_failureNotice(error, UiNotice.exportFailed));
     } catch (_) {
       postNotice(UiNotice.exportFailed);
     }
+  }
+
+  /// Maps a file action's stable [FormatException] code (or the timing
+  /// payload size message) to the notice that explains it.
+  static UiNotice _failureNotice(FormatException error, UiNotice fallback) {
+    final message = error.message;
+    return switch (message) {
+      'file_too_large' || 'backup_too_large' => UiNotice.importTooLarge,
+      'unsupported_file' => UiNotice.importUnsupported,
+      'pdf_too_large' => UiNotice.exportPdfTooLarge,
+      'duplicate_song_id' => UiNotice.importDuplicateSongId,
+      _ when message.startsWith('Timing payload exceeds') =>
+        UiNotice.timingTooLarge,
+      _ => fallback,
+    };
   }
 
   SetlistDocument? _setlistById(String id) =>
@@ -1172,7 +1233,7 @@ class AppControllerAdapter extends VerseUiController {
 
   double _playerDuration() {
     final song = currentSong;
-    return (song?.metadata['durationSeconds'] as num?)?.toDouble() ??
+    return _metaDouble(song?.metadata['durationSeconds']) ??
         _estimatedDuration(_baseState().songLines.length);
   }
 
@@ -1197,6 +1258,9 @@ class AppControllerAdapter extends VerseUiController {
     _playerTimer?.cancel();
     _playerTimer = null;
     if (_playing) {
+      // Playing again after the song ended starts over from the beginning.
+      final duration = _playerDuration();
+      if (duration > 0 && _progress >= duration) _progress = 0;
       _resetPlayClock();
       _playerTimer = Timer.periodic(const Duration(seconds: 1), (_) {
         _advancePlayer(_playBase + _playWatch.elapsedMilliseconds / 1000);
@@ -1244,7 +1308,13 @@ class AppControllerAdapter extends VerseUiController {
     if (index < 0) {
       index = list.entries.indexWhere((entry) => entry.songId == _songId);
     }
-    final next = index + direction;
+    var next = index + direction;
+    // Entries whose song was deleted cannot be opened; step over them.
+    while (next >= 0 &&
+        next < list.entries.length &&
+        app.findSong(list.entries[next].songId) == null) {
+      next += direction;
+    }
     if (next < 0 || next >= list.entries.length) return;
     _songId = list.entries[next].songId;
     _setlistEntryId = list.entries[next].id;
@@ -1252,6 +1322,27 @@ class AppControllerAdapter extends VerseUiController {
     _transpose = 0;
     if (_playing) _resetPlayClock();
     notifyListeners();
+    // The song was opened from the setlist: it belongs in Recent too. Recorded
+    // after navigating so the player never waits for the database.
+    final opened = _songId;
+    if (opened != null) {
+      final record = _guard(() => app.recordUse('song', opened));
+      _pendingRecentRecords.add(record);
+      unawaited(
+        record.whenComplete(() => _pendingRecentRecords.remove(record)),
+      );
+    }
+  }
+
+  final Set<Future<bool>> _pendingRecentRecords = {};
+
+  /// Completes when the Recent entries recorded by Next/Previous are stored
+  /// (for tests, which must await real database work in `runAsync`).
+  @visibleForTesting
+  Future<void> settleRecentRecords() async {
+    while (_pendingRecentRecords.isNotEmpty) {
+      await Future.wait(_pendingRecentRecords.toList());
+    }
   }
 
   @override
@@ -1287,11 +1378,12 @@ class AppControllerAdapter extends VerseUiController {
     }, failure: UiNotice.editorSaveFailed)) {
       return;
     }
+    final wasDraft = old.id == _draftSong?.id;
     _draftSong = null;
     _editing = false;
     _editorData = null;
     _editorDirty = false;
-    _route = VerseRoute.reader;
+    _leaveEditor(savedNewSong: wasDraft);
     notifyListeners();
     postNotice(conflicted ? UiNotice.editorSaveConflict : UiNotice.editorSaved);
   }
@@ -1371,16 +1463,14 @@ class AppControllerAdapter extends VerseUiController {
     final orderedEntries = entryOrder == null
         ? current.entries
         : _orderEntries(current.entries, entryOrder);
-    final saved = await _guard(
-      () => app.saveSetlist(
-        SetlistDocument(
-          id: current.id,
-          name: name.trim().isEmpty ? current.name : name.trim(),
-          notes: notes,
-          favorite: current.favorite,
-          createdAt: current.createdAt,
-          entries: orderedEntries,
-        ),
+    final saved = await _saveSetlistDocument(
+      SetlistDocument(
+        id: current.id,
+        name: name.trim().isEmpty ? current.name : name.trim(),
+        notes: notes,
+        favorite: current.favorite,
+        createdAt: current.createdAt,
+        entries: orderedEntries,
       ),
     );
     if (saved && finishEditing) {
@@ -1422,18 +1512,35 @@ class AppControllerAdapter extends VerseUiController {
     required List<SetlistEntry> entries,
     String? name,
     String? notes,
-  }) => _guard(
-    () => app.saveSetlist(
-      SetlistDocument(
-        id: current.id,
-        name: name == null || name.trim().isEmpty ? current.name : name.trim(),
-        notes: notes ?? current.notes,
-        favorite: current.favorite,
-        createdAt: current.createdAt,
-        entries: entries,
-      ),
+  }) => _saveSetlistDocument(
+    SetlistDocument(
+      id: current.id,
+      name: name == null || name.trim().isEmpty ? current.name : name.trim(),
+      notes: notes ?? current.notes,
+      favorite: current.favorite,
+      createdAt: current.createdAt,
+      entries: entries,
     ),
   );
+
+  /// Saves [setlist]; while it is being edited the save is checked against the
+  /// hash captured when editing began. Returns whether the write succeeded (a
+  /// stale save is kept as a conflict copy and announced).
+  Future<bool> _saveSetlistDocument(SetlistDocument setlist) async {
+    final editing = _editingSetlist && _setlistId == setlist.id;
+    var inPlace = true;
+    final ok = await _guard(() async {
+      inPlace = await app.saveSetlist(
+        setlist,
+        baseHash: editing ? _setlistBaseHash : null,
+      );
+    });
+    if (ok && inPlace && editing) {
+      _setlistBaseHash = app.setlistHash(setlist.id);
+    }
+    if (ok && !inPlace) postNotice(UiNotice.setlistSaveConflict);
+    return ok;
+  }
 
   @override
   Future<void> saveSetlistEntryOverrides(
@@ -1548,6 +1655,11 @@ class AppControllerAdapter extends VerseUiController {
   DateTime? get _lastSyncAt => app.lastSyncAt;
   int get _lastSyncConflicts => app.lastSyncConflicts;
   String? get _lastSyncErrorCode => app.lastSyncErrorCode;
+
+  /// The sync completed and only skipped unusable files: the code is a notice,
+  /// not a failure.
+  bool get _syncWarningOnly =>
+      app.syncWarning != null && app.syncError == app.syncWarning;
   bool get _autoSyncEnabled => app.autoSyncEnabled;
 
   @override
@@ -1559,6 +1671,20 @@ class AppControllerAdapter extends VerseUiController {
   @override
   Future<void> adoptAccount({required bool mergeLocal}) =>
       app.adoptAccount(mergeLocal: mergeLocal);
+
+  @override
+  Future<void> confirmRemoteDeletions() async {
+    final conflictsBefore = _lastSyncConflicts;
+    await app.confirmRemoteDeletions();
+    _postSyncOutcome(conflictsBefore);
+  }
+
+  @override
+  Future<void> keepLocalAfterRemoteDeletions() async {
+    final conflictsBefore = _lastSyncConflicts;
+    await app.keepLocalAfterRemoteDeletions();
+    _postSyncOutcome(conflictsBefore);
+  }
 
   @override
   void reviewSyncConflicts() {
@@ -1600,8 +1726,18 @@ class AppControllerAdapter extends VerseUiController {
     if (!app.syncConnected) return;
     final conflictsBefore = _lastSyncConflicts;
     await app.syncNow();
-    if (app.syncError != null) {
-      postNotice(UiNotice.syncFailed);
+    _postSyncOutcome(conflictsBefore);
+  }
+
+  void _postSyncOutcome(int conflictsBefore) {
+    if (_syncWarningOnly) {
+      postNotice(UiNotice.syncSkipped);
+    } else if (app.syncError != null) {
+      // A refused deletion waits for the person's decision (the dialog); it is
+      // not announced as a failed sync as well.
+      if (app.syncError != 'remote_listing_suspicious') {
+        postNotice(UiNotice.syncFailed);
+      }
     } else {
       postNotice(
         _lastSyncConflicts > conflictsBefore
@@ -1617,13 +1753,18 @@ class AppControllerAdapter extends VerseUiController {
     try {
       await onImport!();
     } on FormatException catch (error) {
-      postNotice(switch (error.message) {
-        'file_too_large' => UiNotice.importTooLarge,
-        'unsupported_file' => UiNotice.importUnsupported,
-        _ => UiNotice.importFailed,
-      });
+      postNotice(_failureNotice(error, UiNotice.importFailed));
     } catch (_) {
       postNotice(UiNotice.importFailed);
+    }
+  }
+
+  void _leaveEditor({bool savedNewSong = false}) {
+    if (_editorReturnsToReader || savedNewSong) {
+      _route = VerseRoute.reader;
+    } else {
+      _songId = null;
+      _route = VerseRoute.main;
     }
   }
 
@@ -1639,7 +1780,7 @@ class AppControllerAdapter extends VerseUiController {
         _songId = null;
         _route = VerseRoute.main;
       } else {
-        _route = VerseRoute.reader;
+        _leaveEditor();
       }
     } else if (_route == VerseRoute.reader) {
       if (_setlistId != null) {
@@ -1674,3 +1815,27 @@ class AppControllerAdapter extends VerseUiController {
 extension _FirstOrNull<T> on Iterable<T> {
   T? get firstOrNull => isEmpty ? null : first;
 }
+
+/// Metadata comes from imported files and synced documents, so values may have
+/// an unexpected type. These read them without throwing.
+double? _metaDouble(Object? value) {
+  final number = switch (value) {
+    num() => value.toDouble(),
+    String() => double.tryParse(value.trim()),
+    _ => null,
+  };
+  return number != null && number.isFinite ? number : null;
+}
+
+int? _metaInt(Object? value) => switch (value) {
+  int() => value,
+  num() when value.isFinite => value.toInt(),
+  String() => int.tryParse(value.trim()),
+  _ => null,
+};
+
+String? _metaString(Object? value) => switch (value) {
+  String() => value,
+  num() || bool() => value.toString(),
+  _ => null,
+};

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/l10n/generated/app_localizations.dart';
 import 'package:singbook/ui/home/home_screen.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
+import 'package:singbook/ui/verse_app.dart';
 
 void main() {
   testWidgets(
@@ -59,12 +59,7 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             locale: const Locale('uk'),
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
+            localizationsDelegates: singbookLocalizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             builder: (context, child) => MediaQuery(
               data: MediaQuery.of(context).copyWith(

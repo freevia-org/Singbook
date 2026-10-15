@@ -1430,4 +1430,173 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get syncErrorGenericHint =>
       'Hãy thử lại sau. Bài hát vẫn an toàn trên thiết bị này.';
+
+  @override
+  String get editorDurationInvalid =>
+      'Nhập số giây, hoặc phút và giây, ví dụ 3:45.';
+
+  @override
+  String get editorNumberInvalid => 'Nhập một số.';
+
+  @override
+  String get accountReplaceConfirmTitle => 'Xóa các bài hát trên thiết bị?';
+
+  @override
+  String get accountReplaceConfirmBody =>
+      'Các bài hát và danh sách trên thiết bị này không có trong tài khoản mới sẽ bị xóa vĩnh viễn. Không thể hoàn tác.';
+
+  @override
+  String get accountReplaceConfirmAction => 'Xóa và thay thế';
+
+  @override
+  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+
+  @override
+  String accountSuspiciousBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count items that this device synced earlier are missing from Google Drive.',
+      one:
+          '$count item that this device synced earlier is missing from Google Drive.',
+    );
+    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+  }
+
+  @override
+  String get accountSuspiciousDelete => 'Delete them here too';
+
+  @override
+  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+
+  @override
+  String accountSuspiciousDeleteConfirmTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Delete $count items from this device?',
+      one: 'Delete $count item from this device?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get accountSuspiciousDeleteConfirmBody =>
+      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+
+  @override
+  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+
+  @override
+  String get syncErrorRemoteListingSuspicious =>
+      'Items are missing from Google Drive.';
+
+  @override
+  String get syncErrorRemoteListingSuspiciousHint =>
+      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+
+  @override
+  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+
+  @override
+  String get syncErrorRemoteChangedHint =>
+      'Nothing was lost. Sync again to pick up the latest changes.';
+
+  @override
+  String get syncErrorInvalidLocalData =>
+      'Some data on this device couldn\'t be synced.';
+
+  @override
+  String get syncErrorInvalidLocalDataHint =>
+      'A song or setlist could not be read. Import or recreate it, then sync again.';
+
+  @override
+  String get syncErrorNoAccountChange =>
+      'There is no account change to resolve.';
+
+  @override
+  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+
+  @override
+  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+
+  @override
+  String get accountSyncWarningBody =>
+      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+
+  @override
+  String get accountSyncWarningTooLarge =>
+      'A file was too large to sync and was skipped. Everything else is up to date.';
+
+  @override
+  String get accountSyncWarningInvalid =>
+      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+
+  @override
+  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+
+  @override
+  String get settingsExportPdfTooLarge =>
+      'This PDF would be too large. Try fewer songs, or share it as text.';
+
+  @override
+  String get settingsTimingTooLarge =>
+      'The timing data is too large (over 3 MB).';
+
+  @override
+  String get settingsImportDuplicateSongId =>
+      'This backup lists the same song twice, so nothing was imported.';
+
+  @override
+  String get setlistSaveConflict =>
+      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+
+  @override
+  String get sectionVerse => 'Đoạn';
+
+  @override
+  String get sectionChorus => 'Điệp khúc';
+
+  @override
+  String get sectionBridge => 'Đoạn chuyển';
+
+  @override
+  String get sectionIntro => 'Dạo đầu';
+
+  @override
+  String get sectionOutro => 'Kết';
+
+  @override
+  String get sectionPreChorus => 'Tiền điệp khúc';
+
+  @override
+  String get sectionPostChorus => 'Hậu điệp khúc';
+
+  @override
+  String get sectionInstrumental => 'Đoạn nhạc';
+
+  @override
+  String get sectionInterlude => 'Dạo giữa';
+
+  @override
+  String get sectionSolo => 'Độc tấu';
+
+  @override
+  String get sectionRefrain => 'Điệp khúc lặp';
+
+  @override
+  String get sectionHook => 'Hook';
+
+  @override
+  String get sectionBreakdown => 'Breakdown';
+
+  @override
+  String get sectionCoda => 'Coda';
+
+  @override
+  String get sectionTag => 'Tag';
+
+  @override
+  String get sectionEnding => 'Kết thúc';
 }

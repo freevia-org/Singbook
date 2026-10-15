@@ -72,6 +72,26 @@ void main() {
     }
   }
 
+  for (final brightness in Brightness.values) {
+    for (final palette in versePalettes) {
+      test('${palette.name} ${brightness.name} field borders reach 3:1', () {
+        final theme = verseTheme(brightness: brightness, palette: palette.name);
+        final border = theme.inputDecorationTheme.enabledBorder!.borderSide;
+        final fill = theme.inputDecorationTheme.fillColor!;
+        expect(border.color.a, 1.0);
+        expect(contrastRatio(border.color, fill), greaterThanOrEqualTo(3));
+        expect(
+          contrastRatio(border.color, theme.colorScheme.surface),
+          greaterThanOrEqualTo(3),
+        );
+        expect(
+          contrastRatio(border.color, theme.colorScheme.surfaceContainerHigh),
+          greaterThanOrEqualTo(3),
+        );
+      });
+    }
+  }
+
   test('muted text is the color used for inactive navigation labels', () {
     for (final brightness in Brightness.values) {
       final theme = verseTheme(brightness: brightness, palette: 'navy');

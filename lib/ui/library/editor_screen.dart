@@ -5,6 +5,25 @@ import '../../l10n/generated/app_localizations.dart';
 import '../verse_ui_state.dart';
 import '../widgets/subpage_header.dart';
 
+final _secondsPattern = RegExp(r'^\d+(\.\d+)?$');
+final _minutesSecondsPattern = RegExp(r'^\d+:[0-5]?\d(\.\d+)?$');
+
+/// Whether [value] is a duration the song format understands: empty, plain
+/// seconds ("225" or "225.5") or minutes and seconds ("3:45"). Anything else
+/// would be stored as text and break code that expects a number.
+bool isValidEditorDuration(String value) {
+  final text = value.trim();
+  return text.isEmpty ||
+      _secondsPattern.hasMatch(text) ||
+      _minutesSecondsPattern.hasMatch(text);
+}
+
+/// Whether [value] is empty or a non-negative number (tempo, capo).
+bool isValidEditorNumber(String value) {
+  final text = value.trim();
+  return text.isEmpty || _secondsPattern.hasMatch(text);
+}
+
 /// Song editor. Reports unsaved changes through
 /// [VerseUiController.setEditorDirty] so the shell can ask before discarding
 /// them, and requires a title before saving.
@@ -35,6 +54,7 @@ class _EditorScreenState extends State<EditorScreen> {
   late final TextEditingController _body;
   late final List<TextEditingController> _all;
   bool _titleMissing = false;
+  bool _showFieldErrors = false;
   bool _saving = false;
   bool _reportedDirty = false;
 
@@ -99,7 +119,21 @@ class _EditorScreenState extends State<EditorScreen> {
     if (_titleMissing && _title.text.trim().isNotEmpty) {
       setState(() => _titleMissing = false);
     }
+    // Re-check the numeric fields as they are corrected after a failed save.
+    if (_showFieldErrors) setState(() {});
   }
+
+  // A value that was already stored (and so already unreadable) is not blocked
+  // again; only text the person changed must be valid.
+  bool _durationInvalid() =>
+      _duration.text != _initial.duration &&
+      !isValidEditorDuration(_duration.text);
+  bool _numberInvalid(TextEditingController field, String initial) =>
+      field.text != initial && !isValidEditorNumber(field.text);
+  bool get _hasFieldErrors =>
+      _durationInvalid() ||
+      _numberInvalid(_tempo, _initial.tempo) ||
+      _numberInvalid(_capo, _initial.capo);
 
   String _safeHeader(String value) =>
       value.replaceAll(RegExp(r'[\r\n{}]'), ' ').trim();
@@ -108,6 +142,10 @@ class _EditorScreenState extends State<EditorScreen> {
     if (_saving) return;
     if (_title.text.trim().isEmpty) {
       setState(() => _titleMissing = true);
+      return;
+    }
+    if (_hasFieldErrors) {
+      setState(() => _showFieldErrors = true);
       return;
     }
     _saving = true;
@@ -148,11 +186,16 @@ class _EditorScreenState extends State<EditorScreen> {
     String label,
     double width, {
     String? errorText,
+    TextInputType? keyboardType,
+    bool numeric = false,
   }) => SizedBox(
     width: width,
     child: TextField(
       controller: controller,
-      textCapitalization: TextCapitalization.sentences,
+      keyboardType: keyboardType,
+      textCapitalization: numeric
+          ? TextCapitalization.none
+          : TextCapitalization.sentences,
       decoration: InputDecoration(labelText: label, errorText: errorText),
     ),
   );
@@ -161,6 +204,16 @@ class _EditorScreenState extends State<EditorScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final titleError = _titleMissing ? l10n.editorFieldRequired : null;
+    final durationError = _showFieldErrors && _durationInvalid()
+        ? l10n.editorDurationInvalid
+        : null;
+    final capoError = _showFieldErrors && _numberInvalid(_capo, _initial.capo)
+        ? l10n.editorNumberInvalid
+        : null;
+    final tempoError =
+        _showFieldErrors && _numberInvalid(_tempo, _initial.tempo)
+        ? l10n.editorNumberInvalid
+        : null;
     return Column(
       children: [
         SubpageHeader(
@@ -189,7 +242,12 @@ class _EditorScreenState extends State<EditorScreen> {
                     SizedBox(
                       width: metadataWidth,
                       child: ListView(
-                        padding: const EdgeInsets.fromLTRB(20, 4, 16, 28),
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                          20,
+                          4,
+                          16,
+                          28,
+                        ),
                         children: [
                           Column(
                             children: [
@@ -206,17 +264,34 @@ class _EditorScreenState extends State<EditorScreen> {
                               ),
                               _field(_album, l10n.editorAlbumField, fieldWidth),
                               _field(_key, l10n.editorKeyField, fieldWidth),
-                              _field(_capo, l10n.editorCapoField, fieldWidth),
+                              _field(
+                                _capo,
+                                l10n.editorCapoField,
+                                fieldWidth,
+                                errorText: capoError,
+                                numeric: true,
+                                keyboardType: TextInputType.number,
+                              ),
                               _field(
                                 _tuning,
                                 l10n.editorTuningField,
                                 fieldWidth,
                               ),
-                              _field(_tempo, l10n.editorTempoField, fieldWidth),
+                              _field(
+                                _tempo,
+                                l10n.editorTempoField,
+                                fieldWidth,
+                                errorText: tempoError,
+                                numeric: true,
+                                keyboardType: TextInputType.number,
+                              ),
                               _field(
                                 _duration,
                                 l10n.editorDurationField,
                                 fieldWidth,
+                                errorText: durationError,
+                                numeric: true,
+                                keyboardType: TextInputType.datetime,
                               ),
                             ],
                           ),
@@ -288,10 +363,31 @@ class _EditorScreenState extends State<EditorScreen> {
                       _field(_artist, l10n.editorArtistField, fieldWidth),
                       _field(_album, l10n.editorAlbumField, fieldWidth),
                       _field(_key, l10n.editorKeyField, fieldWidth),
-                      _field(_capo, l10n.editorCapoField, fieldWidth),
+                      _field(
+                        _capo,
+                        l10n.editorCapoField,
+                        fieldWidth,
+                        errorText: capoError,
+                        numeric: true,
+                        keyboardType: TextInputType.number,
+                      ),
                       _field(_tuning, l10n.editorTuningField, fieldWidth),
-                      _field(_tempo, l10n.editorTempoField, fieldWidth),
-                      _field(_duration, l10n.editorDurationField, fieldWidth),
+                      _field(
+                        _tempo,
+                        l10n.editorTempoField,
+                        fieldWidth,
+                        errorText: tempoError,
+                        numeric: true,
+                        keyboardType: TextInputType.number,
+                      ),
+                      _field(
+                        _duration,
+                        l10n.editorDurationField,
+                        fieldWidth,
+                        errorText: durationError,
+                        numeric: true,
+                        keyboardType: TextInputType.datetime,
+                      ),
                     ],
                   ),
                   Padding(

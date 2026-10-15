@@ -3,7 +3,6 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/application/app_controller.dart';
@@ -322,12 +321,7 @@ Future<void> _pumpShell(
     AnimatedBuilder(
       animation: Listenable.merge([brightness, locale]),
       builder: (context, _) => MaterialApp(
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
+        localizationsDelegates: singbookLocalizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         locale: locale.value,
         theme: _captureTheme(brightness: Brightness.light),

@@ -26,12 +26,17 @@ enum UiNotice {
   importUnsupported,
   importTooLarge,
   exportFailed,
+  exportPdfTooLarge,
+  timingTooLarge,
+  importDuplicateSongId,
   editorSaved,
   editorSaveFailed,
   editorSaveConflict,
+  setlistSaveConflict,
   syncSucceeded,
   syncFailed,
   syncConflictsFound,
+  syncSkipped,
   signedIn,
   signedOut,
   genericError,
@@ -376,6 +381,8 @@ class VerseUiState {
     this.lastSyncAt,
     this.lastSyncConflicts = 0,
     this.lastSyncErrorCode,
+    this.syncWarningCode,
+    this.syncSuspiciousDeletionCount = 0,
     this.autoSyncEnabled = true,
     this.songsConflictFilter = false,
     this.darkTheme = AppThemeMode.system,
@@ -384,6 +391,7 @@ class VerseUiState {
     this.lyricsFontSize = 24,
     this.showChords = true,
     this.autoscroll = true,
+    bool? autoscrollPreference,
     this.timingMode = 'estimated',
     this.languageCode,
     this.song,
@@ -401,7 +409,7 @@ class VerseUiState {
     this.readerCapo,
     this.readerTuning,
     this.readerTempo,
-  });
+  }) : autoscrollPreference = autoscrollPreference ?? autoscroll;
 
   /// The same state with a new playback position; every other field, including
   /// the large lists, is shared with [o].
@@ -433,6 +441,8 @@ class VerseUiState {
       lastSyncAt = o.lastSyncAt,
       lastSyncConflicts = o.lastSyncConflicts,
       lastSyncErrorCode = o.lastSyncErrorCode,
+      syncWarningCode = o.syncWarningCode,
+      syncSuspiciousDeletionCount = o.syncSuspiciousDeletionCount,
       autoSyncEnabled = o.autoSyncEnabled,
       songsConflictFilter = o.songsConflictFilter,
       darkTheme = o.darkTheme,
@@ -441,6 +451,7 @@ class VerseUiState {
       lyricsFontSize = o.lyricsFontSize,
       showChords = o.showChords,
       autoscroll = o.autoscroll,
+      autoscrollPreference = o.autoscrollPreference,
       timingMode = o.timingMode,
       languageCode = o.languageCode,
       song = o.song,
@@ -483,6 +494,14 @@ class VerseUiState {
   /// Machine code of the last sync failure (`authorization_required`,
   /// `storage_full`, ...), or null. Falls back to [accountError].
   final String? lastSyncErrorCode;
+
+  /// Code of an unusable file the last (otherwise successful) sync skipped.
+  /// A neutral notice, not a failure; never also reported as an error.
+  final String? syncWarningCode;
+
+  /// While [syncErrorCode] is `remote_listing_suspicious`: how many items on
+  /// this device the refused sync would have deleted.
+  final int syncSuspiciousDeletionCount;
   final bool autoSyncEnabled;
 
   /// The Songs list shows only conflict copies.
@@ -494,6 +513,10 @@ class VerseUiState {
   final String palette, fontFamily;
   final double lyricsFontSize;
   final bool showChords, autoscroll;
+
+  /// The stored "autoscroll by default" preference, which stays on while the
+  /// effective [autoscroll] is off (manual timing).
+  final bool autoscrollPreference;
   final String timingMode;
   final String? languageCode;
   final SongCardData? song;
@@ -515,10 +538,8 @@ abstract class VerseUiController extends ChangeNotifier {
   VerseUiState get state;
 
   /// Playback position; ticks here do not notify the controller's listeners.
-  ValueListenable<PlayerPosition> get playerPosition =>
-      _fallbackPosition ??= ValueNotifier(
-        PlayerPosition(state.progressSeconds, state.currentLineId),
-      );
+  ValueListenable<PlayerPosition> get playerPosition => _fallbackPosition ??=
+      ValueNotifier(PlayerPosition(state.progressSeconds, state.currentLineId));
   ValueNotifier<PlayerPosition>? _fallbackPosition;
 
   /// Outcomes to report to the person (see [UiNotice]).
@@ -581,6 +602,14 @@ abstract class VerseUiController extends ChangeNotifier {
   /// Resolves an `account_changed` sync stop: merge this device's library into
   /// the newly signed-in account, or replace local content with the account's.
   Future<void> adoptAccount({required bool mergeLocal}) async {}
+
+  /// After `remote_listing_suspicious`: the cloud really lost those items, so
+  /// delete them on this device too. Ask for a second confirmation first.
+  Future<void> confirmRemoteDeletions() async {}
+
+  /// After `remote_listing_suspicious`: keep this device's library and upload
+  /// the missing items to the cloud again.
+  Future<void> keepLocalAfterRemoteDeletions() async {}
 
   /// The app returned to the foreground; sync may refresh.
   void onAppResumed() {}

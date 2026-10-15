@@ -191,6 +191,65 @@ void main() {
     },
   );
 
+  test('every translation keeps its placeholders and plural fallback', () {
+    final template = _arb('en');
+    final locales = Directory('lib/l10n')
+        .listSync()
+        .whereType<File>()
+        .map((file) => file.uri.pathSegments.last)
+        .where((name) => RegExp(r'^app_[a-z]{2}\.arb$').hasMatch(name))
+        .map((name) => name.substring(4, 6));
+    final problems = <String>[];
+    for (final locale in locales) {
+      final arb = _arb(locale);
+      for (final key in template.keys.where((key) => !key.startsWith('@'))) {
+        final value = arb[key];
+        if (value is! String) continue;
+        final placeholders =
+            (template['@$key']?['placeholders'] as Map?)?.keys ?? const [];
+        for (final name in placeholders) {
+          if (!RegExp('\\{$name[,}]').hasMatch(value)) {
+            problems.add('$locale.$key lacks {$name}');
+          }
+        }
+        if (value.contains(', plural,') && !value.contains('other{')) {
+          problems.add('$locale.$key has no "other" plural arm');
+        }
+        var depth = 0;
+        for (final unit in value.codeUnits) {
+          if (unit == 0x7B) depth++;
+          if (unit == 0x7D) depth--;
+          if (depth < 0) break;
+        }
+        if (depth != 0) problems.add('$locale.$key has unbalanced braces');
+      }
+    }
+    expect(problems, isEmpty);
+  });
+
+  test('section names are translated for the main languages', () {
+    final english = _arb('en');
+    for (final locale in [
+      'bg',
+      'uk',
+      'de',
+      'fr',
+      'es',
+      'it',
+      'pt',
+      'nl',
+      'pl',
+    ]) {
+      final arb = _arb(locale);
+      for (final key in ['sectionVerse', 'sectionChorus', 'sectionBridge']) {
+        if (key == 'sectionBridge' && {'de', 'it', 'pl'}.contains(locale)) {
+          continue; // "Bridge" is the usual term there.
+        }
+        expect(arb[key], isNot(english[key]), reason: '$locale $key');
+      }
+    }
+  });
+
   test('the displayed version matches pubspec.yaml', () {
     final pubspec = File('pubspec.yaml').readAsStringSync();
     final match = RegExp(

@@ -338,7 +338,9 @@ void main() {
       await sub.cancel();
 
       expect(notices, [UiNotice.editorSaved]);
-      expect(ui.state.route, VerseRoute.reader);
+      // Edited from the list, so saving returns to the list, not a reader.
+      expect(ui.state.route, VerseRoute.main);
+      expect(ui.state.song, isNull);
       expect(ui.state.editorDirty, isFalse);
       expect(ui.state.editor, isNull);
       expect(app.findSong('a')?.title, 'Alpha 2');

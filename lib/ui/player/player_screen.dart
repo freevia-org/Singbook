@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollDirection;
 
 import '../../l10n/generated/app_localizations.dart';
 import '../format.dart';
@@ -11,6 +12,8 @@ import '../library_actions.dart';
 import '../player_section_timeline.dart';
 import '../verse_ui_state.dart';
 import '../widgets/subpage_header.dart';
+import 'screen_awake.dart';
+import 'section_labels.dart';
 
 /// The lyric reader and player: scrolling lyrics, a seek bar with section
 /// markers and transport controls.
@@ -18,13 +21,17 @@ import '../widgets/subpage_header.dart';
 /// Only this screen listens to the playback position, so one-second ticks and
 /// scrubbing rebuild the seek bar and the highlighted line, not the app.
 class PlayerScreen extends StatefulWidget {
-  const PlayerScreen({super.key, required this.controller});
+  const PlayerScreen({super.key, required this.controller, this.screenAwake});
   final VerseUiController controller;
+
+  /// Keeps the display on while playing; [defaultScreenAwake] when null.
+  final ScreenAwake? screenAwake;
   @override
   State<PlayerScreen> createState() => _PlayerScreenState();
 }
 
-class _PlayerScreenState extends State<PlayerScreen> {
+class _PlayerScreenState extends State<PlayerScreen>
+    with WidgetsBindingObserver {
   final _lyricsScroll = ScrollController();
   final _lineKeys = <String, GlobalKey>{};
   late ValueListenable<PlayerPosition> _position;
@@ -42,9 +49,55 @@ class _PlayerScreenState extends State<PlayerScreen> {
   List<LyricLineData>? _pointsLines;
   VerseUiController get controller => widget.controller;
 
+  bool _userScrolling = false;
+  double? _dragValue;
+  bool _awakeHeld = false;
+  bool _inForeground = true;
+  bool _leaving = false;
+
+  /// The song's real length, or an estimate from the line count that drives
+  /// scrolling and the slider when the song has none.
   double _durationOf(VerseUiState state) =>
       state.song?.durationSeconds ??
       (state.songLines.length * 3.4).clamp(90, 600).toDouble();
+
+  ScreenAwake get _screenAwake => widget.screenAwake ?? defaultScreenAwake;
+
+  /// Holds the wake lock exactly while the song plays and the app is in front.
+  /// Plugin failures (unsupported platform, tests) never reach the player.
+  Future<void> _applyWakeLock() async {
+    final want = !_leaving && _inForeground && controller.state.isPlaying;
+    if (want == _awakeHeld) return;
+    _awakeHeld = want;
+    try {
+      if (want) {
+        await _screenAwake.enable();
+      } else {
+        await _screenAwake.disable();
+      }
+    } catch (error) {
+      debugPrint('Screen wake lock unavailable: $error');
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    _inForeground = state == AppLifecycleState.resumed;
+    _applyWakeLock();
+  }
+
+  /// Play, or play again from the start when the song has finished.
+  Future<void> _playPause() async {
+    final state = controller.state;
+    final duration = _durationOf(state);
+    if (!state.isPlaying &&
+        duration > 0 &&
+        _position.value.seconds >= duration - .05) {
+      _instantSeek = true;
+      await controller.seek(0);
+    }
+    await controller.playPause();
+  }
 
   void _skipSection(int direction) {
     final state = controller.state;
@@ -71,6 +124,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _position = controller.playerPosition..addListener(_onPosition);
     _lastSongId = controller.state.song?.id;
     _lastProgress = _position.value.seconds;
@@ -123,15 +177,40 @@ class _PlayerScreenState extends State<PlayerScreen> {
     }
   }
 
-  bool _handleLyricsScroll(ScrollUpdateNotification notification) {
-    if (notification.dragDetails == null) return false;
-    final state = controller.state;
-    if (state.songLines.isEmpty) return false;
+  void _beginManualScroll() {
+    _userScrolling = true;
     _manualLyricsScroll = true;
     _manualScrollIdle?.cancel();
-    _manualScrollIdle = Timer(const Duration(milliseconds: 220), () {
+  }
+
+  /// Keeps autoscroll from pulling the lyrics back for a moment after the
+  /// finger lifts and a fling settles.
+  void _endManualScrollSoon() {
+    _userScrolling = false;
+    _manualScrollIdle?.cancel();
+    _manualScrollIdle = Timer(const Duration(milliseconds: 700), () {
       _manualLyricsScroll = false;
     });
+  }
+
+  /// Follows the person's own scrolling - drags, flings that carry on after
+  /// release, and wheel or scrollbar moves - and, when autoscroll is on, moves
+  /// the playback position to the line in the middle. Autoscroll never fights
+  /// it; with autoscroll off the lyrics scroll freely without seeking.
+  bool _handleLyricsScroll(ScrollNotification notification) {
+    if (notification is UserScrollNotification) {
+      if (notification.direction == ScrollDirection.idle) {
+        _endManualScrollSoon();
+      } else {
+        _beginManualScroll();
+      }
+      return false;
+    }
+    if (notification is! ScrollUpdateNotification) return false;
+    if (notification.dragDetails != null) _beginManualScroll();
+    if (!_userScrolling) return false;
+    final state = controller.state;
+    if (state.songLines.isEmpty || !state.autoscroll) return false;
 
     final selectedIndex = _lineNearestCenter(notification, state.songLines);
     if (selectedIndex >= 0) {
@@ -324,6 +403,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _leaving = true;
+    _applyWakeLock();
     _position.removeListener(_onPosition);
     _manualScrollIdle?.cancel();
     _lyricsScroll.dispose();
@@ -344,6 +426,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
     final l10n = AppLocalizations.of(context);
     final song = state.song;
     if (song == null) return const SizedBox.shrink();
+    unawaited(_applyWakeLock());
     _pruneLineKeys(state.songLines);
     final duration = _durationOf(state);
     final colors = Theme.of(context).colorScheme;
@@ -351,7 +434,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
       key: const ValueKey('tablet-reader-content'),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 960),
-        child: NotificationListener<ScrollUpdateNotification>(
+        child: NotificationListener<ScrollNotification>(
           onNotification: _handleLyricsScroll,
           child: ListView.builder(
             controller: _lyricsScroll,
@@ -370,8 +453,14 @@ class _PlayerScreenState extends State<PlayerScreen> {
         children: [
           ValueListenableBuilder<PlayerPosition>(
             valueListenable: _position,
-            builder: (context, position, _) =>
-                _seekBar(context, l10n, state, position, duration),
+            builder: (context, position, _) => _seekBar(
+              context,
+              l10n,
+              state,
+              position,
+              duration,
+              hasDuration: song.durationSeconds != null,
+            ),
           ),
           _transport(context, l10n, state),
           if (song.hasChords) _chordControls(l10n, state, compact: compact),
@@ -454,7 +543,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 2, 24, 0),
                 child: Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: AlignmentDirectional.centerStart,
                   child: Text(
                     metadata,
                     maxLines: compactLandscape ? 1 : null,
@@ -502,7 +591,10 @@ class _PlayerScreenState extends State<PlayerScreen> {
         key: key,
         padding: const EdgeInsets.only(top: 18, bottom: 8),
         child: Text(
-          line.section!.replaceAll(RegExp(r'[\[\]{}:]'), ''),
+          localizedSectionName(
+            AppLocalizations.of(context),
+            line.section!.replaceAll(RegExp(r'[\[\]{}:]'), ''),
+          ),
           style: theme.textTheme.labelLarge?.copyWith(
             color: theme.colorScheme.primary,
             fontWeight: FontWeight.w700,
@@ -545,13 +637,16 @@ class _PlayerScreenState extends State<PlayerScreen> {
     return Padding(
       key: key,
       padding: const EdgeInsets.only(bottom: 12),
-      child: Text.rich(
-        TextSpan(children: spans),
-        style: theme.textTheme.bodyLarge?.copyWith(
-          fontSize: state.lyricsFontSize,
-          height: 1.35,
-          fontWeight: current ? FontWeight.w600 : FontWeight.w400,
-          color: current ? theme.colorScheme.primary : null,
+      child: Semantics(
+        selected: current,
+        child: Text.rich(
+          TextSpan(children: spans),
+          style: theme.textTheme.bodyLarge?.copyWith(
+            fontSize: state.lyricsFontSize,
+            height: 1.35,
+            fontWeight: current ? FontWeight.w600 : FontWeight.w400,
+            color: current ? theme.colorScheme.primary : null,
+          ),
         ),
       ),
     );
@@ -562,8 +657,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
     AppLocalizations l10n,
     VerseUiState state,
     PlayerPosition position,
-    double duration,
-  ) {
+    double duration, {
+    required bool hasDuration,
+  }) {
     final currentSection = _sectionAt(state.playerSections, position.seconds);
     final maxValue = duration > 0 ? duration : 1.0;
     return Column(
@@ -577,7 +673,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  currentSection?.name ?? l10n.playerCurrentSection,
+                  currentSection == null
+                      ? l10n.playerCurrentSection
+                      : localizedSectionName(l10n, currentSection.name),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
@@ -587,7 +685,11 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 ),
               ),
               const SizedBox(width: 12),
-              Text(formatDuration(duration)),
+              // Without a stored length the slider runs on an estimate, which
+              // must not be shown as if it were the song's real duration.
+              hasDuration
+                  ? Text(formatDuration(duration))
+                  : Text('–:––', semanticsLabel: l10n.playerDurationUnknown),
             ],
           ),
         ),
@@ -609,19 +711,25 @@ class _PlayerScreenState extends State<PlayerScreen> {
                       child: Slider(
                         min: 0,
                         max: maxValue,
-                        value: position.seconds.clamp(0, maxValue).toDouble(),
+                        // While the thumb is held, clock ticks must not move it.
+                        value: (_dragValue ?? position.seconds)
+                            .clamp(0, maxValue)
+                            .toDouble(),
                         semanticFormatterCallback: (value) {
                           final section = _sectionAt(
                             state.playerSections,
                             value,
                           );
-                          return '${section?.name ?? l10n.playerCurrentSection}, '
+                          return '${section == null ? l10n.playerCurrentSection : localizedSectionName(l10n, section.name)}, '
                               '${formatDuration(value)}';
                         },
+                        onChangeStart: (value) => _dragValue = value,
                         onChanged: (value) {
+                          _dragValue = value;
                           _instantSeek = true;
                           controller.seek(value);
                         },
+                        onChangeEnd: (_) => _dragValue = null,
                       ),
                     ),
                     ..._sectionMarkerLabelWidgets(
@@ -635,6 +743,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                       ).colorScheme.onSurfaceVariant,
                       sliderTheme: sliderTheme,
                       textScaler: MediaQuery.textScalerOf(context),
+                      l10n: l10n,
                     ),
                   ],
                 );
@@ -673,7 +782,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
         ),
         IconButton.filled(
           tooltip: state.isPlaying ? l10n.playerPause : l10n.playerPlay,
-          onPressed: controller.playPause,
+          onPressed: _playPause,
           icon: Icon(
             state.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
           ),
@@ -808,6 +917,7 @@ List<Widget> _sectionMarkerLabelWidgets({
   required Color labelColor,
   required SliderThemeData sliderTheme,
   required TextScaler textScaler,
+  required AppLocalizations l10n,
 }) {
   if (markers.isEmpty ||
       durationSeconds <= 0 ||
@@ -850,11 +960,10 @@ List<Widget> _sectionMarkerLabelWidgets({
     final x = textDirection == TextDirection.rtl
         ? right - trackWidth * fraction
         : left + trackWidth * fraction;
-    final label = _sectionMarkerLabel(
-      marker.name,
-      compact: width < 400,
-      expanded: width >= 560,
-    );
+    final sectionName = localizedSectionName(l10n, marker.name);
+    final label = width >= 560
+        ? sectionName
+        : sectionAbbreviation(l10n, marker.name, compact: width < 400);
     final measure = TextPainter(
       text: TextSpan(text: label, style: style),
       textDirection: textDirection,
@@ -869,7 +978,7 @@ List<Widget> _sectionMarkerLabelWidgets({
     candidates.add((
       center: center,
       label: label,
-      sectionName: marker.name,
+      sectionName: sectionName,
       labelWidth: labelWidth,
     ));
   }
@@ -909,37 +1018,4 @@ List<Widget> _sectionMarkerLabelWidgets({
         ),
       ),
   ];
-}
-
-String _sectionMarkerLabel(
-  String section, {
-  required bool compact,
-  required bool expanded,
-}) {
-  if (expanded) return section;
-  final normalized = section.trim().toLowerCase();
-  final match = RegExp(
-    r'^(verse|chorus|bridge|intro|outro|pre-chorus)\s*(\d*)$',
-  ).firstMatch(normalized);
-  if (match == null) {
-    final words = normalized
-        .split(RegExp(r'\s+'))
-        .where((part) => part.isNotEmpty);
-    final initials = words.map((part) => part[0]).join().toUpperCase();
-    return initials.length <= (compact ? 2 : 3)
-        ? initials
-        : initials.substring(0, compact ? 2 : 3);
-  }
-  final kind = match.group(1)!;
-  final number = match.group(2)!;
-  final code = switch (kind) {
-    'verse' => compact ? 'V' : 'V',
-    'chorus' => compact ? 'C' : 'CH',
-    'bridge' => compact ? 'B' : 'BR',
-    'intro' => compact ? 'I' : 'IN',
-    'outro' => compact ? 'O' : 'OUT',
-    'pre-chorus' => compact ? 'P' : 'PC',
-    _ => kind.substring(0, 1).toUpperCase(),
-  };
-  return '$code$number';
 }

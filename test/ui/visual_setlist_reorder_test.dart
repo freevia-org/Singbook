@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/application/file_actions.dart';
@@ -130,12 +129,7 @@ Future<void> _pumpShell(
   addTearDown(tester.view.resetPhysicalSize);
   await tester.pumpWidget(
     MaterialApp(
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
+      localizationsDelegates: singbookLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: verseTheme(brightness: Brightness.light, palette: 'navy'),
       builder: (context, child) => MediaQuery(
@@ -238,8 +232,9 @@ class _MemoryLibraryRepository implements LibraryRepository {
   @override
   Future<bool> saveSetlistIfUnchanged(
     SetlistDocument setlist,
-    String? expectedHash,
-  ) async {
+    String? expectedHash, {
+    bool mustNotExist = false,
+  }) async {
     await saveSetlist(setlist);
     return true;
   }

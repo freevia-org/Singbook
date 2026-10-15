@@ -1454,4 +1454,173 @@ class AppLocalizationsRo extends AppLocalizations {
   @override
   String get syncErrorGenericHint =>
       'Încearcă din nou peste puțin timp. Melodiile sunt în siguranță pe acest dispozitiv.';
+
+  @override
+  String get editorDurationInvalid =>
+      'Introdu secunde sau minute și secunde, de exemplu 3:45.';
+
+  @override
+  String get editorNumberInvalid => 'Introdu un număr.';
+
+  @override
+  String get accountReplaceConfirmTitle => 'Ștergi melodiile locale?';
+
+  @override
+  String get accountReplaceConfirmBody =>
+      'Melodiile și listele de pe acest dispozitiv care nu se află în contul nou vor fi șterse definitiv. Acțiunea nu poate fi anulată.';
+
+  @override
+  String get accountReplaceConfirmAction => 'Șterge și înlocuiește';
+
+  @override
+  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+
+  @override
+  String accountSuspiciousBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count items that this device synced earlier are missing from Google Drive.',
+      one:
+          '$count item that this device synced earlier is missing from Google Drive.',
+    );
+    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+  }
+
+  @override
+  String get accountSuspiciousDelete => 'Delete them here too';
+
+  @override
+  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+
+  @override
+  String accountSuspiciousDeleteConfirmTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Delete $count items from this device?',
+      one: 'Delete $count item from this device?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get accountSuspiciousDeleteConfirmBody =>
+      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+
+  @override
+  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+
+  @override
+  String get syncErrorRemoteListingSuspicious =>
+      'Items are missing from Google Drive.';
+
+  @override
+  String get syncErrorRemoteListingSuspiciousHint =>
+      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+
+  @override
+  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+
+  @override
+  String get syncErrorRemoteChangedHint =>
+      'Nothing was lost. Sync again to pick up the latest changes.';
+
+  @override
+  String get syncErrorInvalidLocalData =>
+      'Some data on this device couldn\'t be synced.';
+
+  @override
+  String get syncErrorInvalidLocalDataHint =>
+      'A song or setlist could not be read. Import or recreate it, then sync again.';
+
+  @override
+  String get syncErrorNoAccountChange =>
+      'There is no account change to resolve.';
+
+  @override
+  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+
+  @override
+  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+
+  @override
+  String get accountSyncWarningBody =>
+      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+
+  @override
+  String get accountSyncWarningTooLarge =>
+      'A file was too large to sync and was skipped. Everything else is up to date.';
+
+  @override
+  String get accountSyncWarningInvalid =>
+      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+
+  @override
+  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+
+  @override
+  String get settingsExportPdfTooLarge =>
+      'This PDF would be too large. Try fewer songs, or share it as text.';
+
+  @override
+  String get settingsTimingTooLarge =>
+      'The timing data is too large (over 3 MB).';
+
+  @override
+  String get settingsImportDuplicateSongId =>
+      'This backup lists the same song twice, so nothing was imported.';
+
+  @override
+  String get setlistSaveConflict =>
+      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+
+  @override
+  String get sectionVerse => 'Strofă';
+
+  @override
+  String get sectionChorus => 'Refren';
+
+  @override
+  String get sectionBridge => 'Pod';
+
+  @override
+  String get sectionIntro => 'Intro';
+
+  @override
+  String get sectionOutro => 'Outro';
+
+  @override
+  String get sectionPreChorus => 'Pre-refren';
+
+  @override
+  String get sectionPostChorus => 'Post-refren';
+
+  @override
+  String get sectionInstrumental => 'Instrumental';
+
+  @override
+  String get sectionInterlude => 'Interludiu';
+
+  @override
+  String get sectionSolo => 'Solo';
+
+  @override
+  String get sectionRefrain => 'Reluare';
+
+  @override
+  String get sectionHook => 'Hook';
+
+  @override
+  String get sectionBreakdown => 'Breakdown';
+
+  @override
+  String get sectionCoda => 'Codă';
+
+  @override
+  String get sectionTag => 'Tag';
+
+  @override
+  String get sectionEnding => 'Final';
 }

@@ -229,7 +229,7 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     final groups = <String, _HistoryGroup>{};
     for (final item in filtered) {
       final day = DateUtils.dateOnly(item.occurredAt.toLocal());
-      final key = DateFormat('yyyy-MM-dd').format(day);
+      final key = DateFormat('yyyy-MM-dd', 'en').format(day);
       (groups[key] ??= _HistoryGroup(key, day, l10n)).items.add(item);
     }
     _dayKeys.removeWhere((key, _) => !groups.containsKey(key));
@@ -335,8 +335,8 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
           ],
         ),
         if (state.homeListMode == HomeListMode.recent && groups.isNotEmpty)
-          Positioned(
-            right: 4,
+          PositionedDirectional(
+            end: 4,
             top: 0,
             bottom: 0,
             child: IgnorePointer(
@@ -533,7 +533,7 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
           sliver: SliverToBoxAdapter(
             child: Align(
-              alignment: Alignment.centerRight,
+              alignment: AlignmentDirectional.centerEnd,
               child: TextButton(
                 onPressed: () =>
                     confirmClearHistory(context, widget.controller),
@@ -1144,14 +1144,13 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 5),
                             child: Text(
-                              l10n.searchSuggested.toUpperCase(),
+                              l10n.searchSuggested,
                               style: Theme.of(context).textTheme.labelSmall
                                   ?.copyWith(
                                     color: Theme.of(
                                       context,
                                     ).colorScheme.primary,
                                     fontWeight: FontWeight.w800,
-                                    letterSpacing: .8,
                                   ),
                             ),
                           ),
@@ -1308,9 +1307,11 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
       itemCount: groups.length,
       itemBuilder: (context, index) {
         final group = groups[index];
-        final date = DateFormat.MMMd(
+        final date = formatLocalizedDate(
+          DateFormat.MMMd,
+          group.date,
           Localizations.localeOf(context).toString(),
-        ).format(group.date);
+        );
         return Semantics(
           label: l10n.accessibilityTimeline(date),
           button: true,
@@ -1455,7 +1456,9 @@ class _HomeModeSelectorState extends State<_HomeModeSelector> {
                     ? Border.all(color: colors.outlineVariant)
                     : index == 0
                     ? null
-                    : Border(left: BorderSide(color: colors.outlineVariant)),
+                    : BorderDirectional(
+                        start: BorderSide(color: colors.outlineVariant),
+                      ),
               ),
               child: Text(
                 widget.labels[index],
@@ -1521,7 +1524,7 @@ class _HistoryGroup {
               DateTime.now().subtract(const Duration(days: 1)),
             )
           ? l10n.dateYesterday
-          : DateFormat.yMMMMd(l10n.localeName).format(date);
+          : formatLocalizedDate(DateFormat.yMMMMd, date, l10n.localeName);
   final String key;
   final DateTime date;
   final String label;

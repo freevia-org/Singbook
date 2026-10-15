@@ -97,13 +97,13 @@ void main() {
     expect(tester.widget<IconButton>(nextButton).onPressed, isNotNull);
     expect(tester.widget<IconButton>(nextButton).onLongPress, isNotNull);
 
-    await tester.tap(nextButton);
+    await _advance(tester, controller, nextButton);
     await _pumpPlayer(tester);
     expect(controller.activeSetlistEntry?.id, 'base-entry');
     expect(controller.state.readerKey, 'C');
     expect(find.textContaining('${l10n.editorKeyField}: C'), findsOneWidget);
 
-    await tester.tap(previousButton);
+    await _advance(tester, controller, previousButton);
     await _pumpPlayer(tester);
     expect(controller.activeSetlistEntry?.id, 'd-entry');
     expect(controller.state.readerKey, 'D');
@@ -119,7 +119,7 @@ void main() {
             widget is IconButton && widget.tooltip == l10n.playerNextSong,
       );
 
-      await tester.longPress(nextButton);
+      await _advance(tester, controller, nextButton, longPress: true);
       await _pumpPlayer(tester);
 
       expect(
@@ -155,13 +155,13 @@ void main() {
       );
 
       expect(controller.state.playerSections, hasLength(2));
-      await tester.tap(nextButton);
+      await _advance(tester, controller, nextButton);
       await _pumpPlayer(tester);
       expect(controller.activeSetlistEntry?.id, 'd-entry');
       expect(controller.state.readerKey, 'D');
       expect(controller.state.progressSeconds, greaterThan(0));
 
-      await tester.longPress(nextButton);
+      await _advance(tester, controller, nextButton, longPress: true);
       await _pumpPlayer(tester);
       expect(controller.activeSetlistEntry?.id, 'base-entry');
       expect(controller.state.readerKey, 'C');
@@ -199,7 +199,10 @@ void main() {
 
     expect(controller.activeSetlistEntry?.id, 'd-entry');
     expect(controller.state.readerKey, 'D');
-    await controller.nextSong();
+    await tester.runAsync(() async {
+      await controller.nextSong();
+      await controller.settleRecentRecords();
+    });
     await _pumpPlayer(tester);
 
     expect(controller.activeSetlistEntry?.id, 'base-entry');
@@ -285,4 +288,21 @@ void main() {
 Future<void> _pumpPlayer(WidgetTester tester) async {
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 450));
+}
+
+/// Presses a player button. Next/Previous record the opened song in Recent
+/// with a real database call; it must finish in `runAsync` or its lock-warning
+/// timer would outlive the test.
+Future<void> _advance(
+  WidgetTester tester,
+  AppControllerAdapter controller,
+  Finder button, {
+  bool longPress = false,
+}) async {
+  if (longPress) {
+    await tester.longPress(button);
+  } else {
+    await tester.tap(button);
+  }
+  await tester.runAsync(controller.settleRecentRecords);
 }

@@ -2549,6 +2549,276 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try again in a moment. Your songs are still safe on this device.'**
   String get syncErrorGenericHint;
+
+  /// No description provided for @editorDurationInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter seconds or minutes and seconds, such as 3:45.'**
+  String get editorDurationInvalid;
+
+  /// No description provided for @editorNumberInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a number.'**
+  String get editorNumberInvalid;
+
+  /// No description provided for @accountReplaceConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete local songs?'**
+  String get accountReplaceConfirmTitle;
+
+  /// No description provided for @accountReplaceConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Songs and setlists on this device that are not in the new account will be permanently deleted. This can\'t be undone.'**
+  String get accountReplaceConfirmBody;
+
+  /// No description provided for @accountReplaceConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete and replace'**
+  String get accountReplaceConfirmAction;
+
+  /// No description provided for @accountSuspiciousTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Items missing from Google Drive'**
+  String get accountSuspiciousTitle;
+
+  /// No description provided for @accountSuspiciousBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} item that this device synced earlier is missing from Google Drive.} other{{count} items that this device synced earlier are missing from Google Drive.}} This can happen if app data was cleared in Google settings. Nothing has been deleted yet.'**
+  String accountSuspiciousBody(int count);
+
+  /// No description provided for @accountSuspiciousDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete them here too'**
+  String get accountSuspiciousDelete;
+
+  /// No description provided for @accountSuspiciousKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep my songs and upload them again'**
+  String get accountSuspiciousKeep;
+
+  /// No description provided for @accountSuspiciousDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Delete {count} item from this device?} other{Delete {count} items from this device?}}'**
+  String accountSuspiciousDeleteConfirmTitle(int count);
+
+  /// No description provided for @accountSuspiciousDeleteConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'These songs and setlists will be permanently deleted from this device. This can\'t be undone.'**
+  String get accountSuspiciousDeleteConfirmBody;
+
+  /// No description provided for @accountSuspiciousDeleteConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete from this device'**
+  String get accountSuspiciousDeleteConfirmAction;
+
+  /// No description provided for @syncErrorRemoteListingSuspicious.
+  ///
+  /// In en, this message translates to:
+  /// **'Items are missing from Google Drive.'**
+  String get syncErrorRemoteListingSuspicious;
+
+  /// No description provided for @syncErrorRemoteListingSuspiciousHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing was deleted. Choose whether to delete them here too or upload them again.'**
+  String get syncErrorRemoteListingSuspiciousHint;
+
+  /// No description provided for @syncErrorRemoteChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Drive changed while syncing.'**
+  String get syncErrorRemoteChanged;
+
+  /// No description provided for @syncErrorRemoteChangedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing was lost. Sync again to pick up the latest changes.'**
+  String get syncErrorRemoteChangedHint;
+
+  /// No description provided for @syncErrorInvalidLocalData.
+  ///
+  /// In en, this message translates to:
+  /// **'Some data on this device couldn\'t be synced.'**
+  String get syncErrorInvalidLocalData;
+
+  /// No description provided for @syncErrorInvalidLocalDataHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A song or setlist could not be read. Import or recreate it, then sync again.'**
+  String get syncErrorInvalidLocalDataHint;
+
+  /// No description provided for @syncErrorNoAccountChange.
+  ///
+  /// In en, this message translates to:
+  /// **'There is no account change to resolve.'**
+  String get syncErrorNoAccountChange;
+
+  /// No description provided for @syncErrorNoAccountChangeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync again to continue.'**
+  String get syncErrorNoAccountChangeHint;
+
+  /// No description provided for @accountSyncWarningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Synced, but some files were skipped'**
+  String get accountSyncWarningTitle;
+
+  /// No description provided for @accountSyncWarningBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Some files couldn\'t be used and were left as they are. Everything else is up to date.'**
+  String get accountSyncWarningBody;
+
+  /// No description provided for @accountSyncWarningTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'A file was too large to sync and was skipped. Everything else is up to date.'**
+  String get accountSyncWarningTooLarge;
+
+  /// No description provided for @accountSyncWarningInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'A file couldn\'t be read and was skipped. Everything else is up to date.'**
+  String get accountSyncWarningInvalid;
+
+  /// No description provided for @accountNoticeSyncSkipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Synced. Some files were skipped.'**
+  String get accountNoticeSyncSkipped;
+
+  /// No description provided for @settingsExportPdfTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'This PDF would be too large. Try fewer songs, or share it as text.'**
+  String get settingsExportPdfTooLarge;
+
+  /// No description provided for @settingsTimingTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'The timing data is too large (over 3 MB).'**
+  String get settingsTimingTooLarge;
+
+  /// No description provided for @settingsImportDuplicateSongId.
+  ///
+  /// In en, this message translates to:
+  /// **'This backup lists the same song twice, so nothing was imported.'**
+  String get settingsImportDuplicateSongId;
+
+  /// No description provided for @setlistSaveConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'The setlist changed elsewhere. Your edits were saved as a separate copy.'**
+  String get setlistSaveConflict;
+
+  /// No description provided for @sectionVerse.
+  ///
+  /// In en, this message translates to:
+  /// **'Verse'**
+  String get sectionVerse;
+
+  /// No description provided for @sectionChorus.
+  ///
+  /// In en, this message translates to:
+  /// **'Chorus'**
+  String get sectionChorus;
+
+  /// No description provided for @sectionBridge.
+  ///
+  /// In en, this message translates to:
+  /// **'Bridge'**
+  String get sectionBridge;
+
+  /// No description provided for @sectionIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Intro'**
+  String get sectionIntro;
+
+  /// No description provided for @sectionOutro.
+  ///
+  /// In en, this message translates to:
+  /// **'Outro'**
+  String get sectionOutro;
+
+  /// No description provided for @sectionPreChorus.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-Chorus'**
+  String get sectionPreChorus;
+
+  /// No description provided for @sectionPostChorus.
+  ///
+  /// In en, this message translates to:
+  /// **'Post-Chorus'**
+  String get sectionPostChorus;
+
+  /// No description provided for @sectionInstrumental.
+  ///
+  /// In en, this message translates to:
+  /// **'Instrumental'**
+  String get sectionInstrumental;
+
+  /// No description provided for @sectionInterlude.
+  ///
+  /// In en, this message translates to:
+  /// **'Interlude'**
+  String get sectionInterlude;
+
+  /// No description provided for @sectionSolo.
+  ///
+  /// In en, this message translates to:
+  /// **'Solo'**
+  String get sectionSolo;
+
+  /// No description provided for @sectionRefrain.
+  ///
+  /// In en, this message translates to:
+  /// **'Refrain'**
+  String get sectionRefrain;
+
+  /// No description provided for @sectionHook.
+  ///
+  /// In en, this message translates to:
+  /// **'Hook'**
+  String get sectionHook;
+
+  /// No description provided for @sectionBreakdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Breakdown'**
+  String get sectionBreakdown;
+
+  /// No description provided for @sectionCoda.
+  ///
+  /// In en, this message translates to:
+  /// **'Coda'**
+  String get sectionCoda;
+
+  /// No description provided for @sectionTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag'**
+  String get sectionTag;
+
+  /// No description provided for @sectionEnding.
+  ///
+  /// In en, this message translates to:
+  /// **'Ending'**
+  String get sectionEnding;
 }
 
 class _AppLocalizationsDelegate

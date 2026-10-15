@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart' show CupertinoLocalizations;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -55,6 +56,7 @@ class _VerseAppState extends State<VerseApp> {
     _ownsApp = widget.controller == null;
     _app = widget.controller ?? AppController();
     _files = VerseFileActions();
+    unawaited(_files.cleanUpShareCache());
     _controller = AppControllerAdapter(
       _app,
       onShareSong: _files.shareSong,
@@ -151,13 +153,9 @@ class _VerseAppState extends State<VerseApp> {
       darkTheme: _dark,
       themeMode: mode,
       locale: languageCode == null ? null : Locale(languageCode),
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
+      localizationsDelegates: singbookLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
+      localeResolutionCallback: resolveAppLocale,
       builder: (context, child) {
         final platformBrightness = MediaQuery.platformBrightnessOf(context);
         final brightness = switch (mode) {
@@ -210,6 +208,58 @@ class _VerseAppState extends State<VerseApp> {
             ),
     );
   }
+}
+
+/// Supplies [base]'s localizations in English for locales it has no data for.
+/// Flutter ships no Material or Cupertino strings for Maltese, and without a
+/// delegate for the type every text field and chip in the app would throw.
+class _EnglishFallbackDelegate<T> extends LocalizationsDelegate<T> {
+  const _EnglishFallbackDelegate(this._base);
+  final LocalizationsDelegate<T> _base;
+
+  @override
+  bool isSupported(Locale locale) => true;
+
+  @override
+  Future<T> load(Locale locale) =>
+      _base.load(_base.isSupported(locale) ? locale : const Locale('en'));
+
+  @override
+  bool shouldReload(covariant _EnglishFallbackDelegate<T> old) => false;
+}
+
+/// The app's localization delegates: its own strings, then Flutter's, with an
+/// English fallback behind the Material and Cupertino ones.
+const singbookLocalizationsDelegates = <LocalizationsDelegate<dynamic>>[
+  AppLocalizations.delegate,
+  GlobalMaterialLocalizations.delegate,
+  GlobalWidgetsLocalizations.delegate,
+  GlobalCupertinoLocalizations.delegate,
+  _EnglishFallbackDelegate<MaterialLocalizations>(
+    GlobalMaterialLocalizations.delegate,
+  ),
+  _EnglishFallbackDelegate<CupertinoLocalizations>(
+    GlobalCupertinoLocalizations.delegate,
+  ),
+];
+
+/// Picks the app locale: an exact match, then a language match, and otherwise
+/// English. Flutter's default would fall back to the first supported locale,
+/// which is Arabic in the generated list.
+Locale resolveAppLocale(Locale? locale, Iterable<Locale> supported) {
+  if (locale != null) {
+    for (final candidate in supported) {
+      if (candidate.languageCode == locale.languageCode &&
+          candidate.scriptCode == locale.scriptCode &&
+          candidate.countryCode == locale.countryCode) {
+        return candidate;
+      }
+    }
+    for (final candidate in supported) {
+      if (candidate.languageCode == locale.languageCode) return candidate;
+    }
+  }
+  return const Locale('en');
 }
 
 /// The parts of [VerseUiState] the MaterialApp itself renders from.
@@ -302,7 +352,7 @@ class _VerseAppShellState extends State<VerseAppShell>
 
   /// The account-change dialog was shown for the current `account_changed`
   /// stop; cleared when the stop is resolved so it can appear again.
-  bool _accountChangePrompted = false;
+  bool _accountChangePrompted = false, _remoteDeletionsPrompted = false;
 
   @override
   void initState() {
@@ -348,7 +398,19 @@ class _VerseAppShellState extends State<VerseAppShell>
   }
 
   /// Goes back, first asking whether unsaved editor changes may be discarded.
+  bool _backInFlight = false;
+
   Future<void> _requestBack() async {
+    if (_backInFlight) return;
+    _backInFlight = true;
+    try {
+      await _goBack();
+    } finally {
+      _backInFlight = false;
+    }
+  }
+
+  Future<void> _goBack() async {
     final state = widget.controller.state;
     if (state.route == VerseRoute.editor && state.editorDirty) {
       FocusManager.instance.primaryFocus?.unfocus();
@@ -379,6 +441,21 @@ class _VerseAppShellState extends State<VerseAppShell>
     _accountChangePrompted = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) showAccountChangeDialog(context, widget.controller);
+    });
+  }
+
+  /// Asks once per occurrence what to do when the cloud no longer lists items
+  /// this device synced before.
+  void _promptRemoteDeletions(VerseUiState state) {
+    if (state.syncErrorCode != 'remote_listing_suspicious' ||
+        !state.syncSignedIn) {
+      _remoteDeletionsPrompted = false;
+      return;
+    }
+    if (_remoteDeletionsPrompted) return;
+    _remoteDeletionsPrompted = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) showRemoteDeletionsDialog(context, widget.controller);
     });
   }
 
@@ -428,6 +505,7 @@ class _VerseAppShellState extends State<VerseAppShell>
     final state = controller.state;
     final l10n = AppLocalizations.of(context);
     _promptAccountChange(state);
+    _promptRemoteDeletions(state);
     final size = MediaQuery.sizeOf(context);
     final navigationTextScale = MediaQuery.textScalerOf(context).scale(14) / 14;
     final navigationBarHeight =
@@ -453,7 +531,7 @@ class _VerseAppShellState extends State<VerseAppShell>
                 titleSpacing: 20,
                 title: Row(
                   children: [
-                    const SingbookMark(size: 36),
+                    const SingbookMark(size: 36, excludeSemantics: true),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Row(
@@ -461,7 +539,7 @@ class _VerseAppShellState extends State<VerseAppShell>
                           Flexible(
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
-                              alignment: Alignment.centerLeft,
+                              alignment: AlignmentDirectional.centerStart,
                               child: singbookWordmark(
                                 context,
                                 l10n,
@@ -498,44 +576,48 @@ class _VerseAppShellState extends State<VerseAppShell>
                 actions: [_cloudButton(l10n, state), const SizedBox(width: 8)],
               )
             : null,
-        body: Row(
-          children: [
-            if (state.route == VerseRoute.main && useRail)
-              NavigationRail(
-                key: const ValueKey('tablet-navigation-rail'),
-                selectedIndex: state.activeTab.index,
-                onDestinationSelected: (index) =>
-                    controller.setTab(VerseTab.values[index]),
-                labelType: NavigationRailLabelType.all,
-                destinations: [
-                  NavigationRailDestination(
-                    icon: const Icon(Icons.search_rounded),
-                    label: Text(l10n.navHome),
+        body: SafeArea(
+          top: false,
+          bottom: false,
+          child: Row(
+            children: [
+              if (state.route == VerseRoute.main && useRail)
+                NavigationRail(
+                  key: const ValueKey('tablet-navigation-rail'),
+                  selectedIndex: state.activeTab.index,
+                  onDestinationSelected: (index) =>
+                      controller.setTab(VerseTab.values[index]),
+                  labelType: NavigationRailLabelType.all,
+                  destinations: [
+                    NavigationRailDestination(
+                      icon: const Icon(Icons.search_rounded),
+                      label: Text(l10n.navHome),
+                    ),
+                    NavigationRailDestination(
+                      icon: const Icon(Icons.music_note_rounded),
+                      label: Text(l10n.navSongs),
+                    ),
+                    NavigationRailDestination(
+                      icon: const Icon(Icons.queue_music_rounded),
+                      label: Text(l10n.navSetlists),
+                    ),
+                    NavigationRailDestination(
+                      icon: const Icon(Icons.tune_rounded),
+                      label: Text(l10n.navSettings),
+                    ),
+                  ],
+                ),
+              Expanded(
+                child: Center(
+                  child: ConstrainedBox(
+                    key: const ValueKey('tablet-content-frame'),
+                    constraints: const BoxConstraints(maxWidth: 1200),
+                    child: _body(context, state),
                   ),
-                  NavigationRailDestination(
-                    icon: const Icon(Icons.music_note_rounded),
-                    label: Text(l10n.navSongs),
-                  ),
-                  NavigationRailDestination(
-                    icon: const Icon(Icons.queue_music_rounded),
-                    label: Text(l10n.navSetlists),
-                  ),
-                  NavigationRailDestination(
-                    icon: const Icon(Icons.tune_rounded),
-                    label: Text(l10n.navSettings),
-                  ),
-                ],
-              ),
-            Expanded(
-              child: Center(
-                child: ConstrainedBox(
-                  key: const ValueKey('tablet-content-frame'),
-                  constraints: const BoxConstraints(maxWidth: 1200),
-                  child: _body(context, state),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         bottomNavigationBar: state.route == VerseRoute.main && !useRail
             ? NavigationBar(

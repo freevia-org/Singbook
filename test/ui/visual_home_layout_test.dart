@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/l10n/generated/app_localizations.dart';
 import 'package:singbook/ui/home/home_screen.dart';
 import 'package:singbook/ui/theme/verse_theme.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
+import 'package:singbook/ui/verse_app.dart';
 
 void main() {
   testWidgets('localized count messages preserve numeric counts and plurals', (
@@ -132,12 +132,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           locale: locale,
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
+          localizationsDelegates: singbookLocalizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           home: Builder(
             builder: (context) {
@@ -372,12 +367,7 @@ void main() {
       controller.notifyListeners();
       await tester.pumpWidget(
         MaterialApp(
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
+          localizationsDelegates: singbookLocalizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           theme: verseTheme(brightness: Brightness.light, palette: 'navy'),
           home: AnimatedBuilder(
@@ -875,12 +865,7 @@ Future<void> _pumpHome(
   await tester.pumpWidget(
     MaterialApp(
       locale: locale,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
+      localizationsDelegates: singbookLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: verseTheme(
         brightness: Brightness.light,

@@ -11,6 +11,12 @@ void main() {
     yield LicenseEntryWithLineBreaks([
       'Noto Sans',
       'Noto Sans Mono',
+      'Noto Sans Arabic',
+      'Noto Sans Hebrew',
+      'Noto Sans Devanagari',
+      'Noto Sans Thai',
+      'Noto Sans SC (subset)',
+      'Noto Sans KR (Hangul subset)',
     ], await rootBundle.loadString('assets/fonts/LICENSE'));
     yield LicenseEntryWithLineBreaks(
       ['Singbook Brand (derived from Libre Baskerville)'],

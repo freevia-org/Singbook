@@ -80,7 +80,7 @@ void main() {
       expect(songIndexLetter('  zebra'), 'Z');
       expect(songIndexLetter(''), '#');
       expect(songIndexLetter('😀 Smile'), '😀');
-      expect(songIndexLetter('éclair'), 'É');
+      expect(songIndexLetter('éclair'), 'E');
     });
 
     for (final entry in {

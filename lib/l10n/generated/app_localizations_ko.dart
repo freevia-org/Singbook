@@ -1390,4 +1390,172 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get syncErrorGenericHint => '잠시 후 다시 시도하세요. 노래는 이 기기에 안전하게 보관되어 있습니다.';
+
+  @override
+  String get editorDurationInvalid => '초 또는 분:초 형식으로 입력하세요(예: 3:45).';
+
+  @override
+  String get editorNumberInvalid => '숫자를 입력하세요.';
+
+  @override
+  String get accountReplaceConfirmTitle => '로컬 노래를 삭제할까요?';
+
+  @override
+  String get accountReplaceConfirmBody =>
+      '이 기기에 있는 노래와 세트리스트 중 새 계정에 없는 항목은 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다.';
+
+  @override
+  String get accountReplaceConfirmAction => '삭제 후 교체';
+
+  @override
+  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+
+  @override
+  String accountSuspiciousBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count items that this device synced earlier are missing from Google Drive.',
+      one:
+          '$count item that this device synced earlier is missing from Google Drive.',
+    );
+    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+  }
+
+  @override
+  String get accountSuspiciousDelete => 'Delete them here too';
+
+  @override
+  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+
+  @override
+  String accountSuspiciousDeleteConfirmTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Delete $count items from this device?',
+      one: 'Delete $count item from this device?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get accountSuspiciousDeleteConfirmBody =>
+      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+
+  @override
+  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+
+  @override
+  String get syncErrorRemoteListingSuspicious =>
+      'Items are missing from Google Drive.';
+
+  @override
+  String get syncErrorRemoteListingSuspiciousHint =>
+      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+
+  @override
+  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+
+  @override
+  String get syncErrorRemoteChangedHint =>
+      'Nothing was lost. Sync again to pick up the latest changes.';
+
+  @override
+  String get syncErrorInvalidLocalData =>
+      'Some data on this device couldn\'t be synced.';
+
+  @override
+  String get syncErrorInvalidLocalDataHint =>
+      'A song or setlist could not be read. Import or recreate it, then sync again.';
+
+  @override
+  String get syncErrorNoAccountChange =>
+      'There is no account change to resolve.';
+
+  @override
+  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+
+  @override
+  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+
+  @override
+  String get accountSyncWarningBody =>
+      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+
+  @override
+  String get accountSyncWarningTooLarge =>
+      'A file was too large to sync and was skipped. Everything else is up to date.';
+
+  @override
+  String get accountSyncWarningInvalid =>
+      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+
+  @override
+  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+
+  @override
+  String get settingsExportPdfTooLarge =>
+      'This PDF would be too large. Try fewer songs, or share it as text.';
+
+  @override
+  String get settingsTimingTooLarge =>
+      'The timing data is too large (over 3 MB).';
+
+  @override
+  String get settingsImportDuplicateSongId =>
+      'This backup lists the same song twice, so nothing was imported.';
+
+  @override
+  String get setlistSaveConflict =>
+      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+
+  @override
+  String get sectionVerse => '벌스';
+
+  @override
+  String get sectionChorus => '후렴';
+
+  @override
+  String get sectionBridge => '브리지';
+
+  @override
+  String get sectionIntro => '인트로';
+
+  @override
+  String get sectionOutro => '아웃트로';
+
+  @override
+  String get sectionPreChorus => '프리코러스';
+
+  @override
+  String get sectionPostChorus => '포스트코러스';
+
+  @override
+  String get sectionInstrumental => '연주';
+
+  @override
+  String get sectionInterlude => '간주';
+
+  @override
+  String get sectionSolo => '솔로';
+
+  @override
+  String get sectionRefrain => '리프레인';
+
+  @override
+  String get sectionHook => '훅';
+
+  @override
+  String get sectionBreakdown => '브레이크다운';
+
+  @override
+  String get sectionCoda => '코다';
+
+  @override
+  String get sectionTag => '태그';
+
+  @override
+  String get sectionEnding => '엔딩';
 }

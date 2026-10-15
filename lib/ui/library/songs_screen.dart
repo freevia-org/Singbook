@@ -4,12 +4,12 @@ import '../../l10n/generated/app_localizations.dart';
 import '../library_actions.dart';
 import '../verse_ui_state.dart';
 import '../widgets/verse_components.dart';
+import 'collation.dart';
 
-/// First grapheme of a title, upper-cased; `#` for an untitled song.
-String songIndexLetter(String title) {
-  final trimmed = title.trim();
-  return trimmed.isEmpty ? '#' : trimmed.characters.first.toUpperCase();
-}
+/// First character of a title with diacritics folded and upper-cased ("Éclair"
+/// is filed under E); `#` for an untitled song. Matches the order of
+/// [sortedByTitle], so each letter forms one contiguous section.
+String songIndexLetter(String title) => titleIndexLetter(title);
 
 class SongsScreen extends StatefulWidget {
   const SongsScreen({super.key, required this.controller});
@@ -80,23 +80,32 @@ class _SongsScreenState extends State<SongsScreen> {
     final controller = widget.controller;
     final state = controller.state;
     final l10n = AppLocalizations.of(context);
-    final needle = _query.toLowerCase();
+    final needle = foldForSearch(_query);
     final conflictsOnly = state.songsConflictFilter;
-    final songs = state.songs
-        .where((song) => !conflictsOnly || song.isConflictCopy)
-        .where(
-          (song) => '${song.title} ${song.artist} ${song.album ?? ''}'
-              .toLowerCase()
-              .contains(needle),
-        )
-        .toList();
-    final letters = songs.map((song) => songIndexLetter(song.title)).toSet();
-    final sortedLetters = letters.toList()..sort();
+    final songs = sortedByTitle(
+      state.songs
+          .where((song) => !conflictsOnly || song.isConflictCopy)
+          .where(
+            (song) => foldForSearch(
+              '${song.title} ${song.artist} ${song.album ?? ''}',
+            ).contains(needle),
+          ),
+      (song) => song.title,
+    );
+    // Letters in list order, so the rail always matches the list.
+    final sortedLetters = <String>[];
+    for (final song in songs) {
+      final letter = songIndexLetter(song.title);
+      if (sortedLetters.isEmpty || sortedLetters.last != letter) {
+        sortedLetters.add(letter);
+      }
+    }
+    final letters = sortedLetters.toSet();
     _letterKeys.removeWhere((letter, _) => !letters.contains(letter));
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 8, 12, 8),
+          padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 12, 8),
           child: Row(
             children: [
               Expanded(
@@ -127,7 +136,7 @@ class _SongsScreenState extends State<SongsScreen> {
         ),
         if (conflictsOnly)
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 12, 4),
+            padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 12, 4),
             child: Row(
               key: const ValueKey('songs-conflict-filter'),
               children: [
@@ -184,7 +193,8 @@ class _SongsScreenState extends State<SongsScreen> {
                                     _songListItem(context, l10n, songs, index),
                               ),
                       ),
-                      if (sortedLetters.length > 5 && constraints.maxWidth < 640)
+                      if (sortedLetters.length > 5 &&
+                          constraints.maxWidth < 640)
                         _LetterRail(
                           letters: sortedLetters,
                           label: l10n.songsAlphabetNavigation,

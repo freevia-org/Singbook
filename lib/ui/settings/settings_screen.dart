@@ -200,6 +200,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 max: 36,
                 divisions: 9,
                 label: fontSize.round().toString(),
+                semanticFormatterCallback: (value) => value.round().toString(),
                 onChanged: (value) => setState(() => _draggingFontSize = value),
                 onChangeEnd: (value) {
                   controller.setLyricsFontSize(value);
@@ -231,8 +232,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             SwitchListTile(
               title: Text(l10n.settingsDefaultAutoscroll),
               subtitle: Text(l10n.settingsDefaultAutoscrollHint),
-              value: state.autoscroll,
-              onChanged: controller.setAutoscroll,
+              // In manual timing the effective value is always off, so the
+              // switch is disabled instead of silently ignoring taps; the
+              // hint below already explains that it is not used.
+              value: state.autoscrollPreference,
+              onChanged: state.timingMode == 'manual'
+                  ? null
+                  : controller.setAutoscroll,
             ),
             _LabeledDropdown<String>(
               label: l10n.settingsDefaultTiming,
@@ -299,6 +305,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
+        scrollable: true,
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -364,35 +371,42 @@ class _LabeledDropdown<T> extends StatelessWidget {
   final List<(T, String)> entries;
   final ValueChanged<T?> onChanged;
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ExcludeSemantics(
-          child: Text(label, style: Theme.of(context).textTheme.titleSmall),
-        ),
-        Semantics(
-          label: label,
-          child: DropdownButton<T>(
-            isExpanded: true,
-            value: value,
-            items: entries
-                .map(
-                  (entry) => DropdownMenuItem<T>(
-                    value: entry.$1,
-                    child: Text(
-                      entry.$2,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                )
-                .toList(),
-            onChanged: onChanged,
+  Widget build(BuildContext context) {
+    // A stored value that is not on offer (an old or edited setting) shows the
+    // first entry, which is the default, instead of failing or going blank.
+    final effective = entries.any((entry) => entry.$1 == value)
+        ? value
+        : entries.first.$1;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ExcludeSemantics(
+            child: Text(label, style: Theme.of(context).textTheme.titleSmall),
           ),
-        ),
-      ],
-    ),
-  );
+          Semantics(
+            label: label,
+            child: DropdownButton<T>(
+              isExpanded: true,
+              value: effective,
+              items: entries
+                  .map(
+                    (entry) => DropdownMenuItem<T>(
+                      value: entry.$1,
+                      child: Text(
+                        entry.$2,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  )
+                  .toList(),
+              onChanged: onChanged,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

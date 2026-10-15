@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/application/file_actions.dart';
 import 'package:singbook/l10n/generated/app_localizations.dart';
@@ -84,7 +83,8 @@ class FakeUiController extends VerseUiController {
     required String notes,
     List<String>? entryOrder,
     bool finishEditing = false,
-  }) => _record('saveSetlistDetails($name, $notes, $entryOrder, $finishEditing)');
+  }) =>
+      _record('saveSetlistDetails($name, $notes, $entryOrder, $finishEditing)');
 
   @override
   Future<void> setLyricsFontSize(double size) =>
@@ -129,6 +129,13 @@ class FakeUiController extends VerseUiController {
       _record('adoptAccount(mergeLocal: $mergeLocal)');
 
   @override
+  Future<void> confirmRemoteDeletions() => _record('confirmRemoteDeletions');
+
+  @override
+  Future<void> keepLocalAfterRemoteDeletions() =>
+      _record('keepLocalAfterRemoteDeletions');
+
+  @override
   void onAppResumed() => calls.add('onAppResumed');
 
   @override
@@ -170,13 +177,9 @@ Future<void> pumpShell(
   await tester.pumpWidget(
     MaterialApp(
       locale: locale,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
+      localizationsDelegates: singbookLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
+      localeResolutionCallback: resolveAppLocale,
       theme: verseTheme(brightness: Brightness.light, palette: 'navy'),
       builder: (context, child) => MediaQuery(
         data: MediaQuery.of(
