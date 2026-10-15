@@ -1,0 +1,670 @@
+{
+  "@@locale": "el",
+  "appTitle": "Singbook",
+  "aboutDescription": "Ένας ήρεμος χώρος για να βρίσκεις, να οργανώνεις και να τραγουδάς από τη συλλογή τραγουδιών σου.",
+  "aboutMadeForSinging": "Φτιαγμένο για να τραγουδάμε μαζί",
+  "appVersion": "Έκδοση {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "Αρχική",
+  "navSongs": "Τραγούδια",
+  "navSetlists": "Λίστες",
+  "navSettings": "Ρυθμίσεις",
+  "navSettingsCompact": "Ρυθμίσεις",
+  "navSearch": "Αναζήτηση",
+  "navBack": "Πίσω",
+  "navClose": "Κλείσιμο",
+  "navMore": "Περισσότερες ενέργειες",
+  "actionCancel": "Ακύρωση",
+  "actionSave": "Αποθήκευση",
+  "actionDone": "Τέλος",
+  "actionEdit": "Επεξεργασία",
+  "actionDelete": "Διαγραφή",
+  "actionShare": "Κοινοποίηση",
+  "actionPrint": "Εκτύπωση",
+  "actionCopy": "Αντιγραφή",
+  "actionClear": "Εκκαθάριση",
+  "actionRetry": "Δοκιμή ξανά",
+  "actionRefresh": "Ανανέωση",
+  "actionImport": "Εισαγωγή",
+  "actionExport": "Εξαγωγή",
+  "actionExpand": "Ανάπτυξη",
+  "actionCollapse": "Σύμπτυξη",
+  "actionAdd": "Προσθήκη",
+  "actionCreate": "Δημιουργία",
+  "actionRemove": "Αφαίρεση",
+  "actionDuplicate": "Δημιουργία αντιγράφου",
+  "actionMoveUp": "Μετακίνηση προς τα πάνω",
+  "actionMoveDown": "Μετακίνηση προς τα κάτω",
+  "actionPrevious": "Προηγούμενο",
+  "actionNext": "Επόμενο",
+  "searchHint": "Αναζήτησε τραγούδια, καλλιτέχνες ή στίχους",
+  "searchCatalogHint": "Αναζήτησε τραγούδι ή καλλιτέχνη",
+  "searchSubmit": "Αναζήτηση",
+  "searchFilters": "Επιλογές αναζήτησης",
+  "searchFiltersShow": "Εμφάνιση επιλογών αναζήτησης",
+  "searchFiltersHide": "Απόκρυψη επιλογών αναζήτησης",
+  "searchFilterArtist": "Καλλιτέχνης",
+  "searchFilterTitle": "Τίτλος τραγουδιού",
+  "searchFilterLyrics": "Στίχοι",
+  "searchFilterChords": "Με συγχορδίες",
+  "searchFilterTimed": "Συγχρονισμένοι στίχοι",
+  "searchFilterLanguage": "Γλώσσα",
+  "searchFilterAll": "Οποιοδήποτε",
+  "searchAutocompleteLabel": "Προτάσεις",
+  "searchResultCount": "{count, plural, =0{Δεν υπάρχουν αποτελέσματα} =1{1 αποτέλεσμα} other{{count} αποτελέσματα}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "Πληκτρολόγησε τραγούδι, καλλιτέχνη ή στίχο για αναζήτηση.",
+  "searchCatalogEmptyQuery": "Πληκτρολόγησε τραγούδι ή καλλιτέχνη για αναζήτηση.",
+  "searchNoResults": "Δεν βρέθηκαν τραγούδια. Δοκίμασε διαφορετική αναζήτηση.",
+  "searchLoading": "Αναζήτηση τραγουδιών…",
+  "searchError": "Δεν ήταν δυνατή η ολοκλήρωση της αναζήτησης.",
+  "searchOnlineTab": "Διαδικτυακά",
+  "searchRecentTab": "Πρόσφατα",
+  "searchFavoritesTab": "Αγαπημένα",
+  "searchSuggested": "Προτεινόμενη αντιστοιχία",
+  "searchAlternatives": "Άλλες αντιστοιχίες",
+  "searchCompare": "Σύγκριση εκδόσεων",
+  "searchChooseVersion": "Επιλογή αυτής της έκδοσης",
+  "searchSongMatch": "Αντιστοιχία τραγουδιού",
+  "searchRecordingMatch": "Αντιστοιχία ηχογράφησης",
+  "searchMatchUnverified": "Η ηχογράφηση δεν έχει επαληθευτεί",
+  "searchMatchExact": "Ακριβής αντιστοιχία ηχογράφησης",
+  "searchMatchPossible": "Πιθανή αντιστοιχία",
+  "searchAvailability": "Διαθεσιμότητα",
+  "searchLyricsAvailable": "Οι στίχοι είναι διαθέσιμοι",
+  "searchLyricsUnavailable": "Οι στίχοι δεν είναι διαθέσιμοι",
+  "searchChordsAvailable": "Οι συγχορδίες είναι διαθέσιμες",
+  "searchChordsUnavailable": "Χωρίς συγχορδίες",
+  "searchTimingAvailable": "Ο χρονισμός είναι διαθέσιμος",
+  "searchTimingUnavailable": "Χωρίς χρονισμό",
+  "searchDurationUnknown": "Άγνωστη διάρκεια",
+  "searchRating": "Βαθμολογία {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "Πηγή",
+  "searchMetadata": "Στοιχεία τραγουδιού",
+  "searchAlbum": "Άλμπουμ",
+  "searchArtist": "Καλλιτέχνης",
+  "searchYear": "Έτος",
+  "searchLanguage": "Γλώσσα",
+  "searchSaved": "Το τραγούδι αποθηκεύτηκε στη συλλογή σου.",
+  "searchSaveFailed": "Δεν ήταν δυνατή η αποθήκευση αυτού του τραγουδιού.",
+  "homeRecentSongs": "Πρόσφατα τραγούδια",
+  "homeRecentlyPlayed": "Πρόσφατες αναπαραγωγές",
+  "homeFavorites": "Αγαπημένα",
+  "homeHistory": "Ιστορικό",
+  "homeHistoryClear": "Εκκαθάριση ιστορικού",
+  "homeHistoryCleared": "Το ιστορικό διαγράφηκε.",
+  "homeHistoryEmpty": "Τα τραγούδια που ανοίγεις θα εμφανίζονται εδώ.",
+  "homeFavoritesEmpty": "Τα αγαπημένα τραγούδια και οι λίστες σου θα εμφανίζονται εδώ.",
+  "homeItemsShownCount": "{count, plural, =0{Εμφανίζονται 0 στοιχεία} =1{Εμφανίζεται 1 στοιχείο} other{Εμφανίζονται {count} στοιχεία}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "Τα πρόσφατα τραγούδια και οι λίστες σου θα εμφανίζονται εδώ.",
+  "homeTimelineLabel": "Χρονολόγιο ιστορικού",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "Πλήρες ιστορικό",
+  "homeShowFavorites": "Εμφάνιση αγαπημένων",
+  "homeShowRecent": "Εμφάνιση πρόσφατων",
+  "songsTitle": "Τραγούδια",
+  "songsEmpty": "Τα τραγούδια σου θα εμφανίζονται εδώ.",
+  "songsEmptySearch": "Κανένα τραγούδι δεν ταιριάζει με την αναζήτησή σου.",
+  "songsAdd": "Προσθήκη τραγουδιού",
+  "songsSortAlphabetical": "Ταξινόμηση αλφαβητικά",
+  "songsAlphabetNavigation": "Ευρετήριο τραγουδιών",
+  "songsUsageCount": "{count, plural, =0{Δεν έχει ανοιχτεί ποτέ} =1{Ανοίχτηκε μία φορά} other{Ανοίχτηκε {count} φορές}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "Προσθήκη στα αγαπημένα",
+  "songFavoriteRemove": "Αφαίρεση από τα αγαπημένα",
+  "songMenuLabel": "Ενέργειες τραγουδιού",
+  "songInfo": "Στοιχεία τραγουδιού",
+  "setlistMenuLabel": "Ενέργειες λίστας τραγουδιών",
+  "songAddToSetlist": "Προσθήκη στη λίστα τραγουδιών",
+  "songCopyChordPro": "Αντιγραφή ChordPro",
+  "songDeleteConfirmTitle": "Διαγραφή τραγουδιού;",
+  "songDeleteConfirmMessage": "Αυτό το τραγούδι θα αφαιρεθεί από τη συλλογή σου.",
+  "songDeleted": "Το τραγούδι διαγράφηκε.",
+  "setlistsTitle": "Λίστες τραγουδιών",
+  "setlistsEmpty": "Δημιούργησε μια λίστα για την επόμενη πρόβα ή εμφάνισή σου.",
+  "setlistsEmptySearch": "Καμία λίστα δεν ταιριάζει με την αναζήτησή σου.",
+  "setlistCreate": "Νέα λίστα τραγουδιών",
+  "setlistNameHint": "Όνομα λίστας",
+  "setlistNotes": "Σημειώσεις",
+  "setlistEntryOverride": "Τονικότητα και capo για το συγκεκριμένο τραγούδι",
+  "setlistSongsCount": "{count, plural, =0{Κανένα τραγούδι} =1{1 τραγούδι} other{{count} τραγούδια}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "Τουλάχιστον {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "Άγνωστη διάρκεια",
+  "setlistActivity": "Τελευταία δραστηριότητα {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "Δημιουργήθηκε {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "Τροποποιήθηκε {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "Αναπαράχθηκε τελευταία φορά {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "Αυτή η λίστα δεν έχει ακόμη τραγούδια.",
+  "setlistAddSongs": "Προσθήκη τραγουδιών",
+  "setlistReorder": "Αλλαγή σειράς τραγουδιών",
+  "setlistMoveSongUp": "Μετακίνηση του {song} προς τα πάνω",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "Μετακίνηση του {song} προς τα κάτω",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "Αφαίρεση του {song} από τη λίστα",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "Δημιουργία αντιγράφου λίστας",
+  "setlistFavoriteAdd": "Προσθήκη λίστας στα αγαπημένα",
+  "setlistFavoriteRemove": "Αφαίρεση λίστας από τα αγαπημένα",
+  "setlistShare": "Κοινοποίηση ως αρχείο λίστας τραγουδιών",
+  "setlistSharePdf": "Κοινοποίηση ως PDF",
+  "setlistPrint": "Εκτύπωση",
+  "setlistDeleteConfirmTitle": "Διαγραφή λίστας;",
+  "setlistDeleteConfirmMessage": "Η λίστα θα αφαιρεθεί. Τα τραγούδια στη συλλογή σου θα παραμείνουν.",
+  "setlistDeleted": "Η λίστα διαγράφηκε.",
+  "readerTitle": "Στίχοι",
+  "readerNoLyrics": "Δεν έχουν προστεθεί ακόμη στίχοι.",
+  "readerShowChords": "Εμφάνιση συγχορδιών",
+  "readerHideChords": "Απόκρυψη συγχορδιών",
+  "readerTranspose": "Μεταφορά συγχορδιών",
+  "readerTransposeSemitones": "Μεταφορά κατά {count, plural, =0{0 ημιτόνια} =1{1 ημιτόνιο} other{{count} ημιτόνια}}",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "Επεξεργασία στίχων και στοιχείων",
+  "playerPlay": "Έναρξη κύλισης στίχων",
+  "playerPause": "Παύση κύλισης στίχων",
+  "playerResume": "Συνέχιση κύλισης στίχων",
+  "playerSeek": "Θέση αναπαραγωγής",
+  "playerElapsed": "Χρόνος που πέρασε {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "Χρόνος που απομένει {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "Λειτουργία κύλισης",
+  "playerTimedLyrics": "Συγχρονισμένοι στίχοι",
+  "playerEstimatedPace": "Εκτιμώμενος ρυθμός",
+  "playerManualScroll": "Χειροκίνητη κύλιση",
+  "playerTimingStatusReady": "Οι στίχοι θα ακολουθούν τον διαθέσιμο χρονισμό.",
+  "playerTimingStatusEstimated": "Ο ρυθμός κύλισης εκτιμάται από τη διάρκεια του τραγουδιού.",
+  "playerTimingStatusManual": "Κύλησε τους στίχους χειροκίνητα.",
+  "playerTimingStatusUnavailable": "Η συγχρονισμένη κύλιση δεν είναι διαθέσιμη για αυτό το τραγούδι.",
+  "playerDurationUnknown": "Πρόσθεσε διάρκεια τραγουδιού για να χρησιμοποιήσεις την εκτιμώμενη κύλιση.",
+  "playerProgressLabel": "Πρόοδος τραγουδιού",
+  "playerCurrentSection": "Τρέχον μέρος",
+  "playerPreviousSection": "Προηγούμενο μέρος",
+  "playerNextSection": "Επόμενο μέρος",
+  "playerPreviousSectionSong": "Προηγούμενο μέρος · κράτησε πατημένο για το προηγούμενο τραγούδι της λίστας",
+  "playerNextSectionSong": "Επόμενο μέρος · κράτησε πατημένο για το επόμενο τραγούδι της λίστας",
+  "playerPreviousSong": "Προηγούμενο τραγούδι",
+  "playerNextSong": "Επόμενο τραγούδι",
+  "editorTitle": "Επεξεργασία τραγουδιού",
+  "editorTitleField": "Τίτλος τραγουδιού",
+  "editorArtistField": "Καλλιτέχνης",
+  "editorAlbumField": "Άλμπουμ",
+  "editorLyricsField": "Στίχοι",
+  "editorChordsField": "Συγχορδίες",
+  "editorKeyField": "Τονικότητα",
+  "editorCapoField": "Capo",
+  "editorTuningField": "Κούρδισμα",
+  "editorTempoField": "Τέμπο",
+  "editorDurationField": "Διάρκεια",
+  "editorTimeSignatureField": "Μέτρο",
+  "editorLanguageField": "Γλώσσα",
+  "editorYearField": "Έτος",
+  "editorComposerField": "Συνθέτης",
+  "editorLyricistField": "Στιχουργός",
+  "editorCopyrightField": "Πνευματικά δικαιώματα",
+  "editorLicenseField": "Άδεια",
+  "songInfoSources": "Πηγές και συντελεστές",
+  "searchMatchSameSong": "Ίδιο τραγούδι· η ηχογράφηση δεν επιβεβαιώθηκε",
+  "searchMatchNeedsAgreement": "Το φύλλο συγχορδιών χρειάζεται επιβεβαίωση στίχων",
+  "searchMatchDifferentLyrics": "Οι στίχοι διαφέρουν από το επιλεγμένο τραγούδι",
+  "searchMatchCombinedSources": "Στοιχεία από πολλές πηγές συνδυάστηκαν",
+  "searchCombinedFromSources": "{count, plural, =1{Συνδυάστηκε από 1 πηγή} other{Συνδυάστηκε από {count} πηγές}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, =0{0 αντιστοιχίες τραγουδιών} =1{1 αντιστοιχία τραγουδιού} other{{count} αντιστοιχίες τραγουδιών}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, =0{0 εκδόσεις πηγής} =1{1 έκδοση πηγής} other{{count} εκδόσεις πηγής}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "Καλύτερη διαθέσιμη αντιστοιχία",
+  "providerDescriptionUnknown": "Πηγή τραγουδιού",
+  "providerDescDownloadChordProThenImport": "Κατέβασε ένα αρχείο ChordPro από την πηγή και έπειτα εισήγαγέ το.",
+  "providerDescFreeAccountDownloadThenImport": "Κατέβασε το αρχείο με δωρεάν λογαριασμό και έπειτα εισήγαγέ το.",
+  "providerDescPublicChordSheets": "Δημόσια φύλλα συγχορδιών.",
+  "providerDescHistoricalTextPerWorkLicense": "Ιστορικοί στίχοι με άδεια ανά έργο.",
+  "providerDescLicensedCatalog": "Κατάλογος αδειοδοτημένων στίχων.",
+  "providerDescOriginalSongsCcBy": "Πρωτότυπα τραγούδια με άδεια Creative Commons BY.",
+  "providerDescPerSongLicense": "Στίχοι με άδεια ανά τραγούδι.",
+  "providerDescRecordingMetadataOnly": "Μόνο στοιχεία ηχογράφησης και κυκλοφορίας.",
+  "providerDescCompositionMetadataOnly": "Μόνο στοιχεία σύνθεσης.",
+  "providerDescExactFileArtworkOnly": "Εξώφυλλα μόνο για ακριβείς αντιστοιχίες ηχογραφήσεων.",
+  "providerCapabilityLyrics": "Στίχοι",
+  "providerCapabilityChords": "Συγχορδίες",
+  "providerCapabilityTiming": "Συγχρονισμένοι στίχοι",
+  "providerCapabilitySearch": "Αναζήτηση",
+  "providerCapabilityMetadata": "Στοιχεία τραγουδιού",
+  "editorArtworkField": "Σύνδεσμος εξωφύλλου",
+  "editorLyricsHint": "Άγγιξε έναν στίχο για να επεξεργαστείς τους στίχους ή τις συγχορδίες.",
+  "editorSave": "Αποθήκευση αλλαγών",
+  "editorSaved": "Οι αλλαγές αποθηκεύτηκαν.",
+  "editorSaveFailed": "Δεν ήταν δυνατή η αποθήκευση των αλλαγών.",
+  "editorSaveConflict": "Το τραγούδι άλλαξε αλλού. Οι αλλαγές σου αποθηκεύτηκαν ως ξεχωριστό αντίγραφο.",
+  "editorUnsavedTitle": "Απόρριψη αλλαγών;",
+  "editorUnsavedMessage": "Οι αλλαγές σου δεν έχουν αποθηκευτεί.",
+  "editorFieldRequired": "Πληκτρολόγησε τίτλο τραγουδιού.",
+  "settingsTitle": "Ρυθμίσεις",
+  "settingsAppearance": "Εμφάνιση",
+  "settingsTheme": "Θέμα",
+  "settingsThemeSystem": "Χρήση ρύθμισης συσκευής",
+  "settingsThemeLight": "Φωτεινό",
+  "settingsThemeDark": "Σκούρο",
+  "settingsColorPalette": "Παλέτα χρωμάτων",
+  "settingsFont": "Γραμματοσειρά",
+  "settingsTextSize": "Μέγεθος κειμένου",
+  "settingsLyricsPreview": "Προεπισκόπηση στίχων",
+  "settingsPlayer": "Αναπαραγωγή στίχων",
+  "settingsDefaultShowChords": "Εμφάνιση συγχορδιών από προεπιλογή",
+  "settingsDefaultAutoscroll": "Αυτόματη κύλιση στίχων",
+  "settingsDefaultTiming": "Προεπιλεγμένη λειτουργία κύλισης",
+  "settingsLanguage": "Γλώσσα εφαρμογής",
+  "settingsLanguageSystem": "Χρήση γλώσσας συσκευής",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageBulgarian": "Български",
+  "settingsLanguageUkrainian": "Українська",
+  "settingsSources": "Πηγές στίχων",
+  "settingsSourceEnabled": "Ενεργοποίηση πηγής {source}",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "Ανανέωση λίστας πηγών",
+  "settingsSourcesUpdated": "Οι πηγές ενημερώθηκαν.",
+  "settingsSourcesUpdateFailed": "Δεν ήταν δυνατή η ανανέωση των πηγών.",
+  "settingsImport": "Εισαγωγή τραγουδιών",
+  "settingsImportChordPro": "Εισαγωγή αρχείου ChordPro",
+  "settingsImportSetlist": "Εισαγωγή αρχείου λίστας τραγουδιών",
+  "settingsImportSuccess": "Η εισαγωγή ολοκληρώθηκε.",
+  "settingsImportFailed": "Δεν ήταν δυνατή η εισαγωγή αυτού του αρχείου.",
+  "settingsImportUnsupported": "Αυτός ο τύπος αρχείου δεν υποστηρίζεται.",
+  "settingsShareSong": "Κοινοποίηση ως ChordPro",
+  "settingsSharePdf": "Κοινοποίηση ως PDF",
+  "settingsCopySong": "Αντιγραφή στο πρόχειρο",
+  "settingsPrintSong": "Εκτύπωση μόνο τραγουδιού",
+  "settingsPrintSetlist": "Εκτύπωση λίστας με στίχους",
+  "settingsExportFailed": "Δεν ήταν δυνατή η προετοιμασία του αρχείου.",
+  "settingsCopied": "Αντιγράφηκε στο πρόχειρο.",
+  "settingsAbout": "Σχετικά",
+  "settingsPrivacy": "Απόρρητο",
+  "settingsLegal": "Νομικά",
+  "settingsClearHistory": "Εκκαθάριση ιστορικού",
+  "settingsClearHistoryConfirm": "Να διαγραφεί το ιστορικό τραγουδιών και λιστών;",
+  "settingsHistoryCleared": "Το ιστορικό διαγράφηκε.",
+  "accountTitle": "Λογαριασμός και συγχρονισμός",
+  "accountUnavailable": "Ο συγχρονισμός απαιτεί έκδοση του Singbook με ρυθμισμένη σύνδεση Google. Αυτή η έκδοση διατηρεί τα τραγούδια σου μόνο σε αυτήν τη συσκευή.",
+  "accountSyncNow": "Συγχρονισμός τώρα",
+  "accountConnected": "Συνδέθηκες. Επίλεξε «Συγχρονισμός τώρα» για να ενημερώσεις το αντίγραφο ασφαλείας.",
+  "accountSignIn": "Σύνδεση λογαριασμού",
+  "accountSignOut": "Αποσύνδεση",
+  "accountChange": "Αλλαγή λογαριασμού",
+  "accountSignedOut": "Δεν έχει συνδεθεί",
+  "accountSyncing": "Γίνεται συγχρονισμός της συλλογής…",
+  "accountSynced": "Η συλλογή συγχρονίστηκε.",
+  "accountSyncFailed": "Δεν ήταν δυνατός ο συγχρονισμός της συλλογής.",
+  "accessibilityFavorite": "Αγαπημένο",
+  "accessibilityNotFavorite": "Δεν είναι αγαπημένο",
+  "accessibilitySearchField": "Αναζήτηση τραγουδιών",
+  "accessibilityClearSearch": "Εκκαθάριση κειμένου αναζήτησης",
+  "accessibilitySongMenu": "Ενέργειες για το {song}",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "Ενέργειες για τη λίστα {setlist}",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "Ανάπτυξη τραγουδιών στη λίστα {setlist}",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "Σύμπτυξη τραγουδιών στη λίστα {setlist}",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "Πρόοδος αναπαραγωγής, {percent} τοις εκατό",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "Χρονολόγιο ιστορικού, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "Φόρτωση…",
+  "loadingSongs": "Φόρτωση τραγουδιών…",
+  "loadingSetlists": "Φόρτωση λιστών…",
+  "errorGeneric": "Κάτι πήγε στραβά.",
+  "errorOffline": "Φαίνεται ότι είσαι εκτός σύνδεσης.",
+  "errorPermission": "Απαιτείται άδεια για να συνεχίσεις.",
+  "emptyFiltered": "Κανένα στοιχείο δεν ταιριάζει με αυτά τα φίλτρα.",
+  "unknownValue": "Άγνωστο",
+  "durationUnknown": "Άγνωστη διάρκεια",
+  "metadataNotSet": "Δεν έχει οριστεί",
+  "dateToday": "Σήμερα",
+  "dateYesterday": "Χθες",
+  "daySongCount": "{count, plural, =0{Κανένα τραγούδι} =1{1 τραγούδι} other{{count} τραγούδια}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "Μπλε σκούρο",
+  "settingsPaletteSage": "Πράσινο φασκόμηλου",
+  "settingsPaletteOcean": "Ωκεανός",
+  "settingsPaletteClay": "Πηλός",
+  "settingsPalettePlum": "Δαμασκηνί",
+  "settingsFontSystem": "Σύστημα",
+  "settingsFontSerif": "Με πατούρες",
+  "settingsFontMonospace": "Σταθερού πλάτους",
+  "settingsLyricsPreviewExample": "Όταν έρθει το πρωί, θα τραγουδήσουμε ξανά.",
+  "searchDiscoveryProgress": "Έλεγχος πηγών στίχων: ολοκληρώθηκαν {checked} από {total}.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "Δεν βρέθηκαν αξιοποιήσιμοι στίχοι.",
+  "searchDiscoveryNoLyricsDetails": "Το επιλεγμένο τραγούδι ελέγχθηκε στις ενεργοποιημένες πηγές, αλλά καμία δεν επέστρεψε αξιοποιήσιμη έκδοση στίχων.",
+  "searchDiscoveryError": "Δεν ήταν δυνατός ο έλεγχος των πηγών στίχων.",
+  "searchDiscoveryRetry": "Επανάληψη αναζήτησης στίχων",
+  "searchSourcesUnavailableCount": "{count, plural, =0{0 πηγές μη διαθέσιμες} =1{1 πηγή μη διαθέσιμη} other{{count} πηγές μη διαθέσιμες}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "Έλεγξε τη σύνδεσή σου και δοκίμασε ξανά.",
+  "searchProviderChecks": "Έλεγχοι πηγών",
+  "searchProviderPending": "Γίνεται έλεγχος",
+  "searchProviderFound": "Βρέθηκε αντιστοιχία",
+  "searchProviderRejected": "Δεν ταιριάζει",
+  "searchProviderFailed": "Ο έλεγχος απέτυχε",
+  "searchProviderUnavailable": "Δεν υπάρχουν αξιοποιήσιμοι στίχοι",
+  "searchCatalogFilterHint": "Επίλεξε τραγούδι για να φιλτράρεις εκδόσεις στίχων με βάση τις συγχορδίες, τον χρονισμό ή τη γλώσσα.",
+  "startupErrorTitle": "Δεν ήταν δυνατό το άνοιγμα της συλλογής σου.",
+  "setlistCopyName": "Αντίγραφο του {name}",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "Τραγούδι που λείπει",
+  "settingsImportTooLarge": "Αυτό το αρχείο είναι πολύ μεγάλο για εισαγωγή.",
+  "songsJumpToLetter": "Μετάβαση στο {letter}",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "Απόρριψη",
+  "editorKeepEditing": "Συνέχιση επεξεργασίας",
+  "settingsDefaultShowChordsHint": "Εμφάνιση συγχορδιών πάνω από τους στίχους όταν το τραγούδι έχει συγχορδίες.",
+  "settingsDefaultAutoscrollHint": "Οι στίχοι κυλούν μαζί με το τραγούδι. Δεν χρησιμοποιείται στη χειροκίνητη κύλιση.",
+  "accountUnavailableTitle": "Ο συγχρονισμός δεν έχει ρυθμιστεί",
+  "accountSignedOutBenefits": "Συνδέσου με Google για να δημιουργήσεις αντίγραφα ασφαλείας των τραγουδιών και των λιστών σου στο Google Drive και να συγχρονίσεις τις συσκευές σου. Τα τραγούδια σου παραμένουν σε αυτήν τη συσκευή ούτως ή άλλως.",
+  "accountSignInWithGoogle": "Σύνδεση με Google",
+  "accountWorking": "Γίνεται επεξεργασία…",
+  "accountNeverSynced": "Δεν συγχρονίστηκε ποτέ",
+  "accountSyncedJustNow": "Μόλις συγχρονίστηκε",
+  "accountSyncedMinutesAgo": "{count, plural, one{Συγχρονίστηκε πριν από 1 λεπτό} other{Συγχρονίστηκε πριν από {count} λεπτά}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{Συγχρονίστηκε πριν από 1 ώρα} other{Συγχρονίστηκε πριν από {count} ώρες}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{Συγχρονίστηκε πριν από 1 ημέρα} other{Συγχρονίστηκε πριν από {count} ημέρες}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{1 αντικρουόμενη αλλαγή αποθηκεύτηκε ως αντίγραφο} other{{count} αντικρουόμενες αλλαγές αποθηκεύτηκαν ως αντίγραφα}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "Το ίδιο τραγούδι ή η ίδια λίστα τροποποιήθηκε σε δύο σημεία. Δεν χάθηκε τίποτα: η άλλη έκδοση αποθηκεύτηκε ως ξεχωριστό αντίγραφο.",
+  "accountReviewConflicts": "Έλεγχος αντιγράφων",
+  "songsConflictFilterActive": "Εμφανίζονται μόνο αντίγραφα με διένεξη",
+  "songsConflictFilterClear": "Εμφάνιση όλων των τραγουδιών",
+  "songsConflictBadge": "Αντίγραφο με διένεξη",
+  "songsConflictEmpty": "Δεν υπάρχουν αντίγραφα με διένεξη.",
+  "accountAutoSync": "Αυτόματος συγχρονισμός",
+  "accountAutoSyncHint": "Διατήρησε τη συλλογή ενημερωμένη όταν ανοίγεις την εφαρμογή και μετά από αλλαγές.",
+  "accountSignOutTitle": "Αποσύνδεση από αυτόν τον λογαριασμό;",
+  "accountSignOutBody": "Τα τραγούδια και οι λίστες σου παραμένουν σε αυτήν τη συσκευή. Δεν θα δημιουργούνται αντίγραφα ασφαλείας ούτε θα συγχρονίζονται μέχρι να συνδεθείς ξανά.",
+  "accountUseDifferent": "Χρήση άλλου λογαριασμού",
+  "accountSignInAgain": "Σύνδεση ξανά",
+  "accountChooseAction": "Επίλεξε πώς θέλεις να συνεχίσεις",
+  "accountChangedTitle": "Διαφορετικός λογαριασμός Google",
+  "accountChangedBody": "Αυτή η συσκευή συγχρονίστηκε τελευταία φορά με διαφορετικό λογαριασμό Google. Επίλεξε τι θα γίνει με τα τραγούδια και τις λίστες σε αυτήν τη συσκευή.",
+  "accountChangedMerge": "Συγχώνευση με τον νέο λογαριασμό",
+  "accountChangedMergeHint": "Διατήρησε τα πάντα σε αυτήν τη συσκευή και πρόσθεσέ τα στον νέο λογαριασμό.",
+  "accountChangedReplace": "Αντικατάσταση με τη συλλογή του νέου λογαριασμού",
+  "accountChangedReplaceHint": "Τα τραγούδια αυτής της συσκευής που δεν υπάρχουν στον νέο λογαριασμό θα αφαιρεθούν.",
+  "accountChangedSignOut": "Ακύρωση και αποσύνδεση",
+  "accountStatusSignedOut": "Λογαριασμός και συγχρονισμός: αποσυνδεδεμένος",
+  "accountStatusSignedIn": "Λογαριασμός και συγχρονισμός: συνδεδεμένος",
+  "accountStatusSyncing": "Λογαριασμός και συγχρονισμός: γίνεται συγχρονισμός",
+  "accountStatusSynced": "Λογαριασμός και συγχρονισμός: η συλλογή είναι ενημερωμένη",
+  "accountStatusError": "Λογαριασμός και συγχρονισμός: πρόβλημα, πάτησε για έλεγχο",
+  "accountNoticeConflicts": "Ορισμένα τραγούδια τροποποιήθηκαν σε δύο σημεία. Τα αντίγραφα διατηρήθηκαν.",
+  "accountNoticeSignedIn": "Συνδέθηκες.",
+  "accountNoticeSignedOut": "Αποσυνδέθηκες. Τα τραγούδια σου παραμένουν σε αυτήν τη συσκευή.",
+  "syncErrorNotConfigured": "Ο συγχρονισμός δεν έχει ρυθμιστεί σε αυτήν την έκδοση.",
+  "syncErrorNotConfiguredHint": "Χρησιμοποίησε έκδοση του Singbook με ρυθμισμένη σύνδεση Google.",
+  "syncErrorNotSignedIn": "Δεν έχεις συνδεθεί.",
+  "syncErrorNotSignedInHint": "Συνδέσου για να συγχρονίσεις τη συλλογή σου.",
+  "syncErrorAuthorizationRequired": "Η Google χρειάζεται να συνδεθείς ξανά.",
+  "syncErrorAuthorizationRequiredHint": "Συνδέσου ξανά για να συνεχιστεί ο συγχρονισμός. Τα τραγούδια σου είναι ασφαλή σε αυτήν τη συσκευή.",
+  "syncErrorAccessDenied": "Το Singbook δεν έχει άδεια χρήσης του Google Drive.",
+  "syncErrorAccessDeniedHint": "Συνδέσου ξανά και επίτρεψε την πρόσβαση στο Drive όταν σου ζητηθεί.",
+  "syncErrorRateLimited": "Η Google περιορίζει προσωρινά τα αιτήματα.",
+  "syncErrorRateLimitedHint": "Περίμενε λίγα λεπτά και δοκίμασε ξανά.",
+  "syncErrorStorageFull": "Ο χώρος στο Google Drive έχει γεμίσει.",
+  "syncErrorStorageFullHint": "Ελευθέρωσε χώρο στο Drive και δοκίμασε ξανά.",
+  "syncErrorNetwork": "Δεν ήταν δυνατή η σύνδεση με την Google.",
+  "syncErrorNetworkHint": "Έλεγξε τη σύνδεσή σου στο διαδίκτυο και δοκίμασε ξανά.",
+  "syncErrorAccountChanged": "Χρησιμοποιήθηκε διαφορετικός λογαριασμός Google.",
+  "syncErrorAccountChangedHint": "Επίλεξε αν θα συγχωνευτεί η συλλογή αυτής της συσκευής με τον λογαριασμό ή αν θα αντικατασταθεί.",
+  "syncErrorRemoteLibraryTooLarge": "Η συγχρονισμένη συλλογή σου είναι μεγαλύτερη από όσο μπορεί να διαχειριστεί το Singbook.",
+  "syncErrorRemoteLibraryTooLargeHint": "Αφαίρεσε μερικά τραγούδια ή λίστες από τη συγχρονισμένη συλλογή και δοκίμασε ξανά.",
+  "syncErrorSignInFailed": "Η σύνδεση δεν ολοκληρώθηκε.",
+  "syncErrorSignInFailedHint": "Δοκίμασε να συνδεθείς ξανά.",
+  "syncErrorGeneric": "Δεν ήταν δυνατός ο συγχρονισμός της συλλογής σου.",
+  "syncErrorGenericHint": "Δοκίμασε ξανά σε λίγο. Τα τραγούδια σου παραμένουν ασφαλή σε αυτήν τη συσκευή."
+}

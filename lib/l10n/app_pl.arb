@@ -1,0 +1,670 @@
+{
+  "@@locale": "pl",
+  "appTitle": "Singbook",
+  "aboutDescription": "Spokojne miejsce do wyszukiwania, porządkowania i śpiewania utworów z Twojej biblioteki.",
+  "aboutMadeForSinging": "Stworzone do wspólnego śpiewania",
+  "appVersion": "Wersja {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "Strona główna",
+  "navSongs": "Utwory",
+  "navSetlists": "Listy utworów",
+  "navSettings": "Ustawienia",
+  "navSettingsCompact": "Ustawienia",
+  "navSearch": "Szukaj",
+  "navBack": "Wstecz",
+  "navClose": "Zamknij",
+  "navMore": "Więcej działań",
+  "actionCancel": "Anuluj",
+  "actionSave": "Zapisz",
+  "actionDone": "Gotowe",
+  "actionEdit": "Edytuj",
+  "actionDelete": "Usuń",
+  "actionShare": "Udostępnij",
+  "actionPrint": "Drukuj",
+  "actionCopy": "Kopiuj",
+  "actionClear": "Wyczyść",
+  "actionRetry": "Spróbuj ponownie",
+  "actionRefresh": "Odśwież",
+  "actionImport": "Importuj",
+  "actionExport": "Eksportuj",
+  "actionExpand": "Rozwiń",
+  "actionCollapse": "Zwiń",
+  "actionAdd": "Dodaj",
+  "actionCreate": "Utwórz",
+  "actionRemove": "Usuń",
+  "actionDuplicate": "Duplikuj",
+  "actionMoveUp": "Przenieś wyżej",
+  "actionMoveDown": "Przenieś niżej",
+  "actionPrevious": "Poprzedni",
+  "actionNext": "Następny",
+  "searchHint": "Szukaj utworów, wykonawców lub tekstów",
+  "searchCatalogHint": "Szukaj utworu lub wykonawcy",
+  "searchSubmit": "Szukaj",
+  "searchFilters": "Opcje wyszukiwania",
+  "searchFiltersShow": "Pokaż opcje wyszukiwania",
+  "searchFiltersHide": "Ukryj opcje wyszukiwania",
+  "searchFilterArtist": "Wykonawca",
+  "searchFilterTitle": "Tytuł utworu",
+  "searchFilterLyrics": "Tekst",
+  "searchFilterChords": "Zawiera akordy",
+  "searchFilterTimed": "Tekst zsynchronizowany",
+  "searchFilterLanguage": "Język",
+  "searchFilterAll": "Dowolny",
+  "searchAutocompleteLabel": "Sugestie",
+  "searchResultCount": "{count, plural, one{{count} wynik} few{{count} wyniki} many{{count} wyników} other{{count} wyniku}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "Wpisz utwór, wykonawcę lub fragment tekstu, aby wyszukać.",
+  "searchCatalogEmptyQuery": "Wpisz utwór lub wykonawcę, aby wyszukać.",
+  "searchNoResults": "Nie znaleziono utworów. Spróbuj wyszukać coś innego.",
+  "searchLoading": "Wyszukiwanie utworów…",
+  "searchError": "Nie udało się ukończyć wyszukiwania.",
+  "searchOnlineTab": "Online",
+  "searchRecentTab": "Ostatnie",
+  "searchFavoritesTab": "Ulubione",
+  "searchSuggested": "Sugerowane dopasowanie",
+  "searchAlternatives": "Inne dopasowania",
+  "searchCompare": "Porównaj wersje",
+  "searchChooseVersion": "Wybierz tę wersję",
+  "searchSongMatch": "Dopasowanie utworu",
+  "searchRecordingMatch": "Dopasowanie nagrania",
+  "searchMatchUnverified": "Nagranie niezweryfikowane",
+  "searchMatchExact": "Dokładne dopasowanie nagrania",
+  "searchMatchPossible": "Możliwe dopasowanie",
+  "searchAvailability": "Dostępność",
+  "searchLyricsAvailable": "Tekst dostępny",
+  "searchLyricsUnavailable": "Tekst niedostępny",
+  "searchChordsAvailable": "Akordy dostępne",
+  "searchChordsUnavailable": "Brak akordów",
+  "searchTimingAvailable": "Synchronizacja dostępna",
+  "searchTimingUnavailable": "Brak synchronizacji",
+  "searchDurationUnknown": "Nieznany czas trwania",
+  "searchRating": "Ocena {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "Źródło",
+  "searchMetadata": "Szczegóły utworu",
+  "searchAlbum": "Album",
+  "searchArtist": "Wykonawca",
+  "searchYear": "Rok",
+  "searchLanguage": "Język",
+  "searchSaved": "Utwór został zapisany w bibliotece.",
+  "searchSaveFailed": "Nie udało się zapisać tego utworu.",
+  "homeRecentSongs": "Ostatnie utwory",
+  "homeRecentlyPlayed": "Ostatnio odtwarzane",
+  "homeFavorites": "Ulubione",
+  "homeHistory": "Historia",
+  "homeHistoryClear": "Wyczyść historię",
+  "homeHistoryCleared": "Historia została wyczyszczona.",
+  "homeHistoryEmpty": "Otwarte utwory pojawią się tutaj.",
+  "homeFavoritesEmpty": "Ulubione utwory i listy pojawią się tutaj.",
+  "homeItemsShownCount": "{count, plural, one{Wyświetlono {count} element} few{Wyświetlono {count} elementy} many{Wyświetlono {count} elementów} other{Wyświetlono {count} elementu}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "Ostatnie utwory i listy pojawią się tutaj.",
+  "homeTimelineLabel": "Oś czasu historii",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "Pełna historia",
+  "homeShowFavorites": "Pokaż ulubione",
+  "homeShowRecent": "Pokaż ostatnie",
+  "songsTitle": "Utwory",
+  "songsEmpty": "Twoje utwory pojawią się tutaj.",
+  "songsEmptySearch": "Żaden utwór nie pasuje do wyszukiwania.",
+  "songsAdd": "Dodaj utwór",
+  "songsSortAlphabetical": "Sortuj alfabetycznie",
+  "songsAlphabetNavigation": "Indeks utworów",
+  "songsUsageCount": "Otwarto {count, plural, one{raz} few{{count} razy} many{{count} razy} other{{count} raza}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "Dodaj do ulubionych",
+  "songFavoriteRemove": "Usuń z ulubionych",
+  "songMenuLabel": "Działania dotyczące utworu",
+  "songInfo": "Szczegóły utworu",
+  "setlistMenuLabel": "Działania dotyczące listy",
+  "songAddToSetlist": "Dodaj do listy",
+  "songCopyChordPro": "Kopiuj ChordPro",
+  "songDeleteConfirmTitle": "Usunąć utwór?",
+  "songDeleteConfirmMessage": "Utwór zostanie usunięty z biblioteki.",
+  "songDeleted": "Utwór został usunięty.",
+  "setlistsTitle": "Listy utworów",
+  "setlistsEmpty": "Utwórz listę na następną próbę lub występ.",
+  "setlistsEmptySearch": "Żadna lista nie pasuje do wyszukiwania.",
+  "setlistCreate": "Nowa lista",
+  "setlistNameHint": "Nazwa listy",
+  "setlistNotes": "Notatki",
+  "setlistEntryOverride": "Tonacja i capo dla tego utworu",
+  "setlistSongsCount": "{count, plural, one{{count} utwór} few{{count} utwory} many{{count} utworów} other{{count} utworu}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "Co najmniej {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "Nieznany czas trwania",
+  "setlistActivity": "Ostatnia aktywność {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "Utworzono {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "Edytowano {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "Ostatnio odtwarzano {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "Ta lista nie zawiera jeszcze utworów.",
+  "setlistAddSongs": "Dodaj utwory",
+  "setlistReorder": "Zmień kolejność utworów",
+  "setlistMoveSongUp": "Przenieś utwór {song} wyżej",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "Przenieś utwór {song} niżej",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "Usuń utwór {song} z listy",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "Duplikuj listę",
+  "setlistFavoriteAdd": "Dodaj listę do ulubionych",
+  "setlistFavoriteRemove": "Usuń listę z ulubionych",
+  "setlistShare": "Udostępnij jako plik listy",
+  "setlistSharePdf": "Udostępnij jako PDF",
+  "setlistPrint": "Drukuj",
+  "setlistDeleteConfirmTitle": "Usunąć listę?",
+  "setlistDeleteConfirmMessage": "Lista zostanie usunięta. Utwory w bibliotece pozostaną.",
+  "setlistDeleted": "Lista została usunięta.",
+  "readerTitle": "Tekst",
+  "readerNoLyrics": "Tekst nie został jeszcze dodany.",
+  "readerShowChords": "Pokaż akordy",
+  "readerHideChords": "Ukryj akordy",
+  "readerTranspose": "Transponuj akordy",
+  "readerTransposeSemitones": "Transponuj o {count, plural, one{{count} półton} few{{count} półtony} many{{count} półtonów} other{{count} półtonu}}",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "Edytuj tekst i szczegóły",
+  "playerPlay": "Włącz przewijanie tekstu",
+  "playerPause": "Wstrzymaj przewijanie tekstu",
+  "playerResume": "Wznów przewijanie tekstu",
+  "playerSeek": "Pozycja odtwarzania",
+  "playerElapsed": "Czas, który upłynął: {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "Pozostały czas: {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "Tryb przewijania",
+  "playerTimedLyrics": "Tekst zsynchronizowany",
+  "playerEstimatedPace": "Szacowane tempo",
+  "playerManualScroll": "Przewijanie ręczne",
+  "playerTimingStatusReady": "Tekst będzie przewijany zgodnie z dostępną synchronizacją.",
+  "playerTimingStatusEstimated": "Tempo przewijania jest szacowane na podstawie długości utworu.",
+  "playerTimingStatusManual": "Przewijaj tekst samodzielnie.",
+  "playerTimingStatusUnavailable": "Synchronizowane przewijanie jest niedostępne dla tego utworu.",
+  "playerDurationUnknown": "Dodaj czas trwania utworu, aby użyć szacowanego przewijania.",
+  "playerProgressLabel": "Postęp utworu",
+  "playerCurrentSection": "Bieżąca część",
+  "playerPreviousSection": "Poprzednia część",
+  "playerNextSection": "Następna część",
+  "playerPreviousSectionSong": "Poprzednia część · przytrzymaj, aby przejść do poprzedniego utworu na liście",
+  "playerNextSectionSong": "Następna część · przytrzymaj, aby przejść do następnego utworu na liście",
+  "playerPreviousSong": "Poprzedni utwór",
+  "playerNextSong": "Następny utwór",
+  "editorTitle": "Edytuj utwór",
+  "editorTitleField": "Tytuł utworu",
+  "editorArtistField": "Wykonawca",
+  "editorAlbumField": "Album",
+  "editorLyricsField": "Tekst",
+  "editorChordsField": "Akordy",
+  "editorKeyField": "Tonacja",
+  "editorCapoField": "Capo",
+  "editorTuningField": "Strojenie",
+  "editorTempoField": "Tempo",
+  "editorDurationField": "Czas trwania",
+  "editorTimeSignatureField": "Metrum",
+  "editorLanguageField": "Język",
+  "editorYearField": "Rok",
+  "editorComposerField": "Kompozytor",
+  "editorLyricistField": "Autor tekstu",
+  "editorCopyrightField": "Prawa autorskie",
+  "editorLicenseField": "Licencja",
+  "songInfoSources": "Źródła i informacje o autorach",
+  "searchMatchSameSong": "Ten sam utwór; nagranie nie zostało potwierdzone",
+  "searchMatchNeedsAgreement": "Akordy wymagają potwierdzenia tekstu",
+  "searchMatchDifferentLyrics": "Tekst różni się od tekstu wybranego utworu",
+  "searchMatchCombinedSources": "Szczegóły połączono z wielu źródeł",
+  "searchCombinedFromSources": "{count, plural, one{Połączono z {count} źródła} few{Połączono z {count} źródeł} many{Połączono z {count} źródeł} other{Połączono z {count} źródła}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, one{{count} dopasowanie utworu} few{{count} dopasowania utworu} many{{count} dopasowań utworu} other{{count} dopasowania utworu}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, one{{count} wersja ze źródła} few{{count} wersje ze źródła} many{{count} wersji ze źródła} other{{count} wersji ze źródła}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "Najlepsze dostępne dopasowanie",
+  "providerDescriptionUnknown": "Źródło utworu",
+  "providerDescDownloadChordProThenImport": "Pobierz plik ChordPro ze źródła, a następnie go zaimportuj.",
+  "providerDescFreeAccountDownloadThenImport": "Pobierz plik przy użyciu bezpłatnego konta, a następnie go zaimportuj.",
+  "providerDescPublicChordSheets": "Publiczne śpiewniki z akordami.",
+  "providerDescHistoricalTextPerWorkLicense": "Historyczne teksty licencjonowane dla każdego utworu.",
+  "providerDescLicensedCatalog": "Licencjonowany katalog tekstów.",
+  "providerDescOriginalSongsCcBy": "Oryginalne utwory na licencji Creative Commons BY.",
+  "providerDescPerSongLicense": "Teksty licencjonowane dla każdego utworu.",
+  "providerDescRecordingMetadataOnly": "Tylko informacje o nagraniu i wydaniu.",
+  "providerDescCompositionMetadataOnly": "Tylko informacje o kompozycji.",
+  "providerDescExactFileArtworkOnly": "Okładka tylko dla dokładnie dopasowanych nagrań.",
+  "providerCapabilityLyrics": "Tekst",
+  "providerCapabilityChords": "Akordy",
+  "providerCapabilityTiming": "Tekst zsynchronizowany",
+  "providerCapabilitySearch": "Wyszukiwanie",
+  "providerCapabilityMetadata": "Szczegóły utworu",
+  "editorArtworkField": "Link do okładki",
+  "editorLyricsHint": "Dotknij wersu, aby edytować tekst lub akordy.",
+  "editorSave": "Zapisz zmiany",
+  "editorSaved": "Zmiany zostały zapisane.",
+  "editorSaveFailed": "Nie udało się zapisać zmian.",
+  "editorSaveConflict": "Utwór został zmieniony w innym miejscu. Twoje zmiany zapisano jako osobną kopię.",
+  "editorUnsavedTitle": "Odrzucić zmiany?",
+  "editorUnsavedMessage": "Twoje zmiany nie zostały zapisane.",
+  "editorFieldRequired": "Wpisz tytuł utworu.",
+  "settingsTitle": "Ustawienia",
+  "settingsAppearance": "Wygląd",
+  "settingsTheme": "Motyw",
+  "settingsThemeSystem": "Użyj ustawień urządzenia",
+  "settingsThemeLight": "Jasny",
+  "settingsThemeDark": "Ciemny",
+  "settingsColorPalette": "Paleta kolorów",
+  "settingsFont": "Czcionka",
+  "settingsTextSize": "Rozmiar tekstu",
+  "settingsLyricsPreview": "Podgląd tekstu",
+  "settingsPlayer": "Odtwarzacz tekstu",
+  "settingsDefaultShowChords": "Domyślnie pokazuj akordy",
+  "settingsDefaultAutoscroll": "Automatycznie rozpocznij przewijanie tekstu",
+  "settingsDefaultTiming": "Domyślny tryb przewijania",
+  "settingsLanguage": "Język aplikacji",
+  "settingsLanguageSystem": "Użyj języka urządzenia",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageBulgarian": "Български",
+  "settingsLanguageUkrainian": "Українська",
+  "settingsSources": "Źródła tekstów",
+  "settingsSourceEnabled": "Włącz źródło {source}",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "Odśwież listę źródeł",
+  "settingsSourcesUpdated": "Źródła zostały zaktualizowane.",
+  "settingsSourcesUpdateFailed": "Nie udało się odświeżyć listy źródeł.",
+  "settingsImport": "Importuj utwory",
+  "settingsImportChordPro": "Importuj plik ChordPro",
+  "settingsImportSetlist": "Importuj plik listy utworów",
+  "settingsImportSuccess": "Import zakończony.",
+  "settingsImportFailed": "Nie udało się zaimportować tego pliku.",
+  "settingsImportUnsupported": "Ten typ pliku nie jest obsługiwany.",
+  "settingsShareSong": "Udostępnij jako ChordPro",
+  "settingsSharePdf": "Udostępnij jako PDF",
+  "settingsCopySong": "Kopiuj do schowka",
+  "settingsPrintSong": "Drukuj tylko utwór",
+  "settingsPrintSetlist": "Drukuj listę z tekstami",
+  "settingsExportFailed": "Nie udało się przygotować pliku.",
+  "settingsCopied": "Skopiowano do schowka.",
+  "settingsAbout": "Informacje",
+  "settingsPrivacy": "Prywatność",
+  "settingsLegal": "Informacje prawne",
+  "settingsClearHistory": "Wyczyść historię",
+  "settingsClearHistoryConfirm": "Wyczyścić historię utworów i list?",
+  "settingsHistoryCleared": "Historia została wyczyszczona.",
+  "accountTitle": "Konto i synchronizacja",
+  "accountUnavailable": "Synchronizacja wymaga wersji Singbook skonfigurowanej do logowania przez Google. Ta wersja przechowuje utwory tylko na tym urządzeniu.",
+  "accountSyncNow": "Synchronizuj teraz",
+  "accountConnected": "Połączono. Wybierz „Synchronizuj teraz”, aby zaktualizować kopię zapasową.",
+  "accountSignIn": "Połącz konto",
+  "accountSignOut": "Wyloguj się",
+  "accountChange": "Zmień konto",
+  "accountSignedOut": "Nie połączono",
+  "accountSyncing": "Synchronizowanie biblioteki…",
+  "accountSynced": "Biblioteka została zsynchronizowana.",
+  "accountSyncFailed": "Nie udało się zsynchronizować biblioteki.",
+  "accessibilityFavorite": "Ulubiony",
+  "accessibilityNotFavorite": "Nie jest ulubiony",
+  "accessibilitySearchField": "Szukaj utworów",
+  "accessibilityClearSearch": "Wyczyść tekst wyszukiwania",
+  "accessibilitySongMenu": "Działania dotyczące utworu {song}",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "Działania dotyczące listy {setlist}",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "Rozwiń utwory na liście {setlist}",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "Zwiń utwory na liście {setlist}",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "Postęp odtwarzania, {percent} procent",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "Oś czasu historii, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "Ładowanie…",
+  "loadingSongs": "Ładowanie utworów…",
+  "loadingSetlists": "Ładowanie list…",
+  "errorGeneric": "Coś poszło nie tak.",
+  "errorOffline": "Wygląda na to, że nie masz połączenia z internetem.",
+  "errorPermission": "Do kontynuowania potrzebne są uprawnienia.",
+  "emptyFiltered": "Żaden element nie pasuje do tych filtrów.",
+  "unknownValue": "Nieznane",
+  "durationUnknown": "Nieznany czas trwania",
+  "metadataNotSet": "Nie ustawiono",
+  "dateToday": "Dzisiaj",
+  "dateYesterday": "Wczoraj",
+  "daySongCount": "{count, plural, one{{count} utwór} few{{count} utwory} many{{count} utworów} other{{count} utworu}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "Granatowy",
+  "settingsPaletteSage": "Szałwiowy",
+  "settingsPaletteOcean": "Oceaniczny",
+  "settingsPaletteClay": "Gliniany",
+  "settingsPalettePlum": "Śliwkowy",
+  "settingsFontSystem": "Systemowa",
+  "settingsFontSerif": "Szeryfowa",
+  "settingsFontMonospace": "Monospace",
+  "settingsLyricsPreviewExample": "Gdy nadejdzie poranek, znów zaśpiewamy.",
+  "searchDiscoveryProgress": "Sprawdzanie źródeł tekstów: ukończono {checked} z {total}.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "Nie znaleziono tekstu, którego można użyć.",
+  "searchDiscoveryNoLyricsDetails": "Wybrany utwór sprawdzono we włączonych źródłach, ale żadne z nich nie zwróciło użytecznej wersji tekstu.",
+  "searchDiscoveryError": "Nie udało się sprawdzić źródeł tekstów.",
+  "searchDiscoveryRetry": "Ponów wyszukiwanie tekstu",
+  "searchSourcesUnavailableCount": "{count, plural, one{{count} niedostępne źródło} few{{count} niedostępne źródła} many{{count} niedostępnych źródeł} other{{count} niedostępnego źródła}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "Sprawdź połączenie i spróbuj ponownie.",
+  "searchProviderChecks": "Sprawdzanie źródeł",
+  "searchProviderPending": "Sprawdzanie",
+  "searchProviderFound": "Znaleziono dopasowanie",
+  "searchProviderRejected": "Nie pasuje",
+  "searchProviderFailed": "Sprawdzanie nie powiodło się",
+  "searchProviderUnavailable": "Brak tekstu, którego można użyć",
+  "searchCatalogFilterHint": "Wybierz utwór, aby filtrować wersje tekstu według akordów, synchronizacji lub języka.",
+  "startupErrorTitle": "Nie udało się otworzyć biblioteki.",
+  "setlistCopyName": "Kopia: {name}",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "Brak utworu",
+  "settingsImportTooLarge": "Ten plik jest za duży, aby go zaimportować.",
+  "songsJumpToLetter": "Przejdź do litery {letter}",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "Odrzuć",
+  "editorKeepEditing": "Kontynuuj edycję",
+  "settingsDefaultShowChordsHint": "Pokazuj akordy nad tekstem, jeśli są dostępne dla utworu.",
+  "settingsDefaultAutoscrollHint": "Tekst przewija się razem z utworem. Nie dotyczy trybu przewijania ręcznego.",
+  "accountUnavailableTitle": "Synchronizacja nie jest skonfigurowana",
+  "accountSignedOutBenefits": "Zaloguj się przez Google, aby tworzyć kopie zapasowe utworów i list na Dysku Google oraz synchronizować wszystkie urządzenia. Utwory pozostaną na tym urządzeniu niezależnie od tego.",
+  "accountSignInWithGoogle": "Zaloguj się przez Google",
+  "accountWorking": "Przetwarzanie…",
+  "accountNeverSynced": "Nigdy nie synchronizowano",
+  "accountSyncedJustNow": "Zsynchronizowano przed chwilą",
+  "accountSyncedMinutesAgo": "{count, plural, one{Zsynchronizowano minutę temu} few{Zsynchronizowano {count} minuty temu} many{Zsynchronizowano {count} minut temu} other{Zsynchronizowano {count} minuty temu}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{Zsynchronizowano godzinę temu} few{Zsynchronizowano {count} godziny temu} many{Zsynchronizowano {count} godzin temu} other{Zsynchronizowano {count} godziny temu}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{Zsynchronizowano dzień temu} few{Zsynchronizowano {count} dni temu} many{Zsynchronizowano {count} dni temu} other{Zsynchronizowano {count} dnia temu}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{1 konfliktowa edycja została zachowana jako kopia} few{{count} konfliktowe edycje zachowano jako kopie} many{{count} konfliktowych edycji zachowano jako kopie} other{{count} konfliktowej edycji zachowano jako kopii}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "Ten sam utwór lub lista zostały edytowane w dwóch miejscach. Nic nie utracono: druga wersja została zapisana jako osobna kopia.",
+  "accountReviewConflicts": "Przejrzyj kopie",
+  "songsConflictFilterActive": "Wyświetlane są tylko kopie konfliktowe",
+  "songsConflictFilterClear": "Pokaż wszystkie utwory",
+  "songsConflictBadge": "Kopia konfliktowa",
+  "songsConflictEmpty": "Brak kopii konfliktowych.",
+  "accountAutoSync": "Synchronizuj automatycznie",
+  "accountAutoSyncHint": "Aktualizuj bibliotekę po otwarciu aplikacji i po wprowadzeniu zmian.",
+  "accountSignOutTitle": "Wylogować się z tego konta?",
+  "accountSignOutBody": "Utwory i listy pozostaną na tym urządzeniu. Nie będą tworzone ich kopie zapasowe ani synchronizowane, dopóki nie zalogujesz się ponownie.",
+  "accountUseDifferent": "Użyj innego konta",
+  "accountSignInAgain": "Zaloguj się ponownie",
+  "accountChooseAction": "Wybierz, jak kontynuować",
+  "accountChangedTitle": "Inne konto Google",
+  "accountChangedBody": "To urządzenie było ostatnio synchronizowane z innym kontem Google. Wybierz, co zrobić z utworami i listami na tym urządzeniu.",
+  "accountChangedMerge": "Scal z nowym kontem",
+  "accountChangedMergeHint": "Zachowaj wszystko na tym urządzeniu i dodaj do nowego konta.",
+  "accountChangedReplace": "Zastąp biblioteką z nowego konta",
+  "accountChangedReplaceHint": "Utwory z tego urządzenia, których nie ma na nowym koncie, zostaną usunięte.",
+  "accountChangedSignOut": "Anuluj i wyloguj się",
+  "accountStatusSignedOut": "Konto i synchronizacja: wylogowano",
+  "accountStatusSignedIn": "Konto i synchronizacja: zalogowano",
+  "accountStatusSyncing": "Konto i synchronizacja: trwa synchronizacja",
+  "accountStatusSynced": "Konto i synchronizacja: biblioteka aktualna",
+  "accountStatusError": "Konto i synchronizacja: problem, dotknij, aby sprawdzić",
+  "accountNoticeConflicts": "Niektóre utwory edytowano w dwóch miejscach. Zachowano kopie.",
+  "accountNoticeSignedIn": "Zalogowano.",
+  "accountNoticeSignedOut": "Wylogowano. Utwory pozostają na tym urządzeniu.",
+  "syncErrorNotConfigured": "Synchronizacja nie jest skonfigurowana w tej wersji.",
+  "syncErrorNotConfiguredHint": "Użyj wersji Singbook skonfigurowanej do logowania przez Google.",
+  "syncErrorNotSignedIn": "Nie jesteś zalogowany.",
+  "syncErrorNotSignedInHint": "Zaloguj się, aby zsynchronizować bibliotekę.",
+  "syncErrorAuthorizationRequired": "Google wymaga ponownego zalogowania.",
+  "syncErrorAuthorizationRequiredHint": "Zaloguj się ponownie, aby kontynuować synchronizację. Utwory są bezpieczne na tym urządzeniu.",
+  "syncErrorAccessDenied": "Singbook nie ma uprawnień do korzystania z Dysku Google.",
+  "syncErrorAccessDeniedHint": "Zaloguj się ponownie i zezwól na dostęp do Dysku, gdy pojawi się prośba.",
+  "syncErrorRateLimited": "Google tymczasowo ogranicza liczbę żądań.",
+  "syncErrorRateLimitedHint": "Odczekaj kilka minut i spróbuj ponownie.",
+  "syncErrorStorageFull": "Dysk Google jest pełny.",
+  "syncErrorStorageFullHint": "Zwolnij miejsce na Dysku i spróbuj ponownie.",
+  "syncErrorNetwork": "Nie udało się połączyć z Google.",
+  "syncErrorNetworkHint": "Sprawdź połączenie z internetem i spróbuj ponownie.",
+  "syncErrorAccountChanged": "Użyto innego konta Google.",
+  "syncErrorAccountChangedHint": "Wybierz, czy scalić bibliotekę z tego urządzenia z biblioteką konta, czy ją zastąpić.",
+  "syncErrorRemoteLibraryTooLarge": "Zsynchronizowana biblioteka jest zbyt duża dla Singbook.",
+  "syncErrorRemoteLibraryTooLargeHint": "Usuń kilka utworów lub list ze zsynchronizowanej biblioteki i spróbuj ponownie.",
+  "syncErrorSignInFailed": "Logowanie nie zostało ukończone.",
+  "syncErrorSignInFailedHint": "Spróbuj zalogować się ponownie.",
+  "syncErrorGeneric": "Nie udało się zsynchronizować biblioteki.",
+  "syncErrorGenericHint": "Spróbuj ponownie za chwilę. Utwory są bezpieczne na tym urządzeniu."
+}

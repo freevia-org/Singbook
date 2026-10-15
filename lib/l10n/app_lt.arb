@@ -1,0 +1,670 @@
+{
+  "@@locale": "lt",
+  "appTitle": "Singbook",
+  "aboutDescription": "Rami vieta, kurioje galite rasti dainas, tvarkyti jų rinkinį ir dainuoti kartu.",
+  "aboutMadeForSinging": "Sukurta dainuoti kartu",
+  "appVersion": "Versija {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "Pradžia",
+  "navSongs": "Dainos",
+  "navSetlists": "Sąrašai",
+  "navSettings": "Nustatymai",
+  "navSettingsCompact": "Nustatymai",
+  "navSearch": "Paieška",
+  "navBack": "Atgal",
+  "navClose": "Uždaryti",
+  "navMore": "Daugiau veiksmų",
+  "actionCancel": "Atšaukti",
+  "actionSave": "Išsaugoti",
+  "actionDone": "Atlikta",
+  "actionEdit": "Redaguoti",
+  "actionDelete": "Ištrinti",
+  "actionShare": "Bendrinti",
+  "actionPrint": "Spausdinti",
+  "actionCopy": "Kopijuoti",
+  "actionClear": "Išvalyti",
+  "actionRetry": "Bandyti dar kartą",
+  "actionRefresh": "Atnaujinti",
+  "actionImport": "Importuoti",
+  "actionExport": "Eksportuoti",
+  "actionExpand": "Išskleisti",
+  "actionCollapse": "Suskleisti",
+  "actionAdd": "Pridėti",
+  "actionCreate": "Sukurti",
+  "actionRemove": "Pašalinti",
+  "actionDuplicate": "Dubliuoti",
+  "actionMoveUp": "Perkelti aukštyn",
+  "actionMoveDown": "Perkelti žemyn",
+  "actionPrevious": "Ankstesnis",
+  "actionNext": "Kitas",
+  "searchHint": "Ieškoti dainų, atlikėjų arba dainų tekstų",
+  "searchCatalogHint": "Ieškoti dainos arba atlikėjo",
+  "searchSubmit": "Ieškoti",
+  "searchFilters": "Paieškos parinktys",
+  "searchFiltersShow": "Rodyti paieškos parinktis",
+  "searchFiltersHide": "Slėpti paieškos parinktis",
+  "searchFilterArtist": "Atlikėjas",
+  "searchFilterTitle": "Dainos pavadinimas",
+  "searchFilterLyrics": "Dainų tekstai",
+  "searchFilterChords": "Yra akordai",
+  "searchFilterTimed": "Dainų tekstai su laiko žymomis",
+  "searchFilterLanguage": "Kalba",
+  "searchFilterAll": "Bet kuri",
+  "searchAutocompleteLabel": "Pasiūlymai",
+  "searchResultCount": "{count, plural, one{{count} rezultatas} few{{count} rezultatai} many{{count} rezultatų} other{{count} rezultatų}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "Įveskite dainą, atlikėją ar dainos eilutę paieškai.",
+  "searchCatalogEmptyQuery": "Įveskite dainą arba atlikėją paieškai.",
+  "searchNoResults": "Dainų nerasta. Pabandykite pakeisti paiešką.",
+  "searchLoading": "Ieškoma dainų…",
+  "searchError": "Nepavyko atlikti paieškos.",
+  "searchOnlineTab": "Internetu",
+  "searchRecentTab": "Naujausios",
+  "searchFavoritesTab": "Mėgstamos",
+  "searchSuggested": "Siūlomas atitikmuo",
+  "searchAlternatives": "Kiti atitikmenys",
+  "searchCompare": "Palyginti versijas",
+  "searchChooseVersion": "Pasirinkti šią versiją",
+  "searchSongMatch": "Dainos atitikmuo",
+  "searchRecordingMatch": "Įrašo atitikmuo",
+  "searchMatchUnverified": "Įrašas nepatvirtintas",
+  "searchMatchExact": "Tikslus įrašo atitikmuo",
+  "searchMatchPossible": "Galimas atitikmuo",
+  "searchAvailability": "Prieinamumas",
+  "searchLyricsAvailable": "Dainų tekstai prieinami",
+  "searchLyricsUnavailable": "Dainų tekstai neprieinami",
+  "searchChordsAvailable": "Akordai prieinami",
+  "searchChordsUnavailable": "Akordų nėra",
+  "searchTimingAvailable": "Laiko žymos yra",
+  "searchTimingUnavailable": "Laiko žymų nėra",
+  "searchDurationUnknown": "Trukmė nežinoma",
+  "searchRating": "Įvertinimas {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "Šaltinis",
+  "searchMetadata": "Dainos informacija",
+  "searchAlbum": "Albumas",
+  "searchArtist": "Atlikėjas",
+  "searchYear": "Metai",
+  "searchLanguage": "Kalba",
+  "searchSaved": "Daina išsaugota jūsų bibliotekoje.",
+  "searchSaveFailed": "Nepavyko išsaugoti dainos.",
+  "homeRecentSongs": "Naujausios dainos",
+  "homeRecentlyPlayed": "Neseniai grotos",
+  "homeFavorites": "Mėgstamos",
+  "homeHistory": "Istorija",
+  "homeHistoryClear": "Išvalyti istoriją",
+  "homeHistoryCleared": "Istorija išvalyta.",
+  "homeHistoryEmpty": "Čia bus rodomos jūsų atvertos dainos.",
+  "homeFavoritesEmpty": "Čia bus rodomos mėgstamos dainos ir koncertinės programos.",
+  "homeItemsShownCount": "{count, plural, one{Rodomas {count} elementas} few{Rodomi {count} elementai} many{Rodoma {count} elementų} other{Rodoma {count} elementų}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "Čia bus rodomos naujausios dainos ir koncertinės programos.",
+  "homeTimelineLabel": "Istorijos laiko juosta",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "Visa istorija",
+  "homeShowFavorites": "Rodyti mėgstamas",
+  "homeShowRecent": "Rodyti naujausias",
+  "songsTitle": "Dainos",
+  "songsEmpty": "Čia bus rodomos jūsų dainos.",
+  "songsEmptySearch": "Nė viena daina neatitinka paieškos.",
+  "songsAdd": "Pridėti dainą",
+  "songsSortAlphabetical": "Rikiuoti pagal abėcėlę",
+  "songsAlphabetNavigation": "Dainų rodyklė",
+  "songsUsageCount": "Atverta {count, plural, one{{count} kartą} few{{count} kartus} many{{count} kartų} other{{count} kartų}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "Pridėti prie mėgstamų",
+  "songFavoriteRemove": "Pašalinti iš mėgstamų",
+  "songMenuLabel": "Dainos veiksmai",
+  "songInfo": "Dainos informacija",
+  "setlistMenuLabel": "Koncertinės programos veiksmai",
+  "songAddToSetlist": "Pridėti prie koncertinės programos",
+  "songCopyChordPro": "Kopijuoti ChordPro",
+  "songDeleteConfirmTitle": "Ištrinti dainą?",
+  "songDeleteConfirmMessage": "Ši daina bus pašalinta iš jūsų bibliotekos.",
+  "songDeleted": "Daina ištrinta.",
+  "setlistsTitle": "Koncertinės programos",
+  "setlistsEmpty": "Sukurkite koncertinę programą kitai repeticijai ar pasirodymui.",
+  "setlistsEmptySearch": "Nė viena koncertinė programa neatitinka paieškos.",
+  "setlistCreate": "Nauja koncertinė programa",
+  "setlistNameHint": "Koncertinės programos pavadinimas",
+  "setlistNotes": "Pastabos",
+  "setlistEntryOverride": "Atskiras dainos tonacijos ir kapodastro nustatymas",
+  "setlistSongsCount": "{count, plural, one{{count} daina} few{{count} dainos} many{{count} dainų} other{{count} dainų}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "Bent {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "Trukmė nežinoma",
+  "setlistActivity": "Paskutinė veikla {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "Sukurta {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "Redaguota {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "Paskutinį kartą grota {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "Šioje koncertinėje programoje dar nėra dainų.",
+  "setlistAddSongs": "Pridėti dainų",
+  "setlistReorder": "Keisti dainų tvarką",
+  "setlistMoveSongUp": "Perkelti dainą „{song}“ aukštyn",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "Perkelti dainą „{song}“ žemyn",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "Pašalinti dainą „{song}“ iš koncertinės programos",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "Dubliuoti koncertinę programą",
+  "setlistFavoriteAdd": "Pridėti koncertinę programą prie mėgstamų",
+  "setlistFavoriteRemove": "Pašalinti koncertinę programą iš mėgstamų",
+  "setlistShare": "Bendrinti kaip koncertinės programos failą",
+  "setlistSharePdf": "Bendrinti kaip PDF",
+  "setlistPrint": "Spausdinti",
+  "setlistDeleteConfirmTitle": "Ištrinti koncertinę programą?",
+  "setlistDeleteConfirmMessage": "Koncertinė programa bus pašalinta. Bibliotekoje esančios dainos liks.",
+  "setlistDeleted": "Koncertinė programa ištrinta.",
+  "readerTitle": "Dainų tekstai",
+  "readerNoLyrics": "Dainos tekstas dar nepridėtas.",
+  "readerShowChords": "Rodyti akordus",
+  "readerHideChords": "Slėpti akordus",
+  "readerTranspose": "Transponuoti akordus",
+  "readerTransposeSemitones": "Transponuoti per {count, plural, one{{count} pustonį} few{{count} pustonius} many{{count} pustonių} other{{count} pustonių}}",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "Redaguoti dainos tekstą ir informaciją",
+  "playerPlay": "Pradėti slinkti dainos tekstą",
+  "playerPause": "Pristabdyti dainos teksto slinkimą",
+  "playerResume": "Tęsti dainos teksto slinkimą",
+  "playerSeek": "Atkūrimo vieta",
+  "playerElapsed": "Praėjęs laikas {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "Liko laiko {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "Slinkimo režimas",
+  "playerTimedLyrics": "Dainų tekstai su laiko žymomis",
+  "playerEstimatedPace": "Numatomas tempas",
+  "playerManualScroll": "Rankinis slinkimas",
+  "playerTimingStatusReady": "Dainos tekstas slinks pagal turimas laiko žymas.",
+  "playerTimingStatusEstimated": "Slinkimo tempas apskaičiuotas pagal dainos trukmę.",
+  "playerTimingStatusManual": "Slinkite dainos tekstą patys.",
+  "playerTimingStatusUnavailable": "Šiai dainai slinkimas pagal laiko žymas negalimas.",
+  "playerDurationUnknown": "Įveskite dainos trukmę, kad būtų galima naudoti numatomą slinkimą.",
+  "playerProgressLabel": "Dainos eiga",
+  "playerCurrentSection": "Dabartinė dalis",
+  "playerPreviousSection": "Ankstesnė dalis",
+  "playerNextSection": "Kita dalis",
+  "playerPreviousSectionSong": "Ankstesnė dalis · palaikykite, kad pereitumėte prie ankstesnės programos dainos",
+  "playerNextSectionSong": "Kita dalis · palaikykite, kad pereitumėte prie kitos programos dainos",
+  "playerPreviousSong": "Ankstesnė daina",
+  "playerNextSong": "Kita daina",
+  "editorTitle": "Redaguoti dainą",
+  "editorTitleField": "Dainos pavadinimas",
+  "editorArtistField": "Atlikėjas",
+  "editorAlbumField": "Albumas",
+  "editorLyricsField": "Dainos tekstas",
+  "editorChordsField": "Akordai",
+  "editorKeyField": "Tonacija",
+  "editorCapoField": "Kapodastro padėtis",
+  "editorTuningField": "Derinimas",
+  "editorTempoField": "Tempas",
+  "editorDurationField": "Trukmė",
+  "editorTimeSignatureField": "Metras",
+  "editorLanguageField": "Kalba",
+  "editorYearField": "Metai",
+  "editorComposerField": "Kompozitorius",
+  "editorLyricistField": "Dainos teksto autorius",
+  "editorCopyrightField": "Autorių teisės",
+  "editorLicenseField": "Licencija",
+  "songInfoSources": "Šaltiniai ir autorių informacija",
+  "searchMatchSameSong": "Ta pati daina; įrašas nepatvirtintas",
+  "searchMatchNeedsAgreement": "Akordų įrašą reikia patvirtinti pagal dainos tekstą",
+  "searchMatchDifferentLyrics": "Dainos tekstas skiriasi nuo pasirinktos dainos",
+  "searchMatchCombinedSources": "Informacija sujungta iš kelių šaltinių",
+  "searchCombinedFromSources": "{count, plural, one{Sujungta iš {count} šaltinio} few{Sujungta iš {count} šaltinių} many{Sujungta iš {count} šaltinių} other{Sujungta iš {count} šaltinių}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, one{{count} dainos atitikmuo} few{{count} dainų atitikmenys} many{{count} dainų atitikmenų} other{{count} dainų atitikmenų}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, one{{count} šaltinio versija} few{{count} šaltinio versijos} many{{count} šaltinio versijų} other{{count} šaltinio versijų}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "Geriausias galimas atitikmuo",
+  "providerDescriptionUnknown": "Dainos šaltinis",
+  "providerDescDownloadChordProThenImport": "Atsisiųskite ChordPro failą iš šaltinio, tada jį importuokite.",
+  "providerDescFreeAccountDownloadThenImport": "Atsisiųskite failą naudodami nemokamą paskyrą, tada jį importuokite.",
+  "providerDescPublicChordSheets": "Viešai prieinami akordų įrašai.",
+  "providerDescHistoricalTextPerWorkLicense": "Istoriniai dainų tekstai licencijuojami kiekvienam kūriniui.",
+  "providerDescLicensedCatalog": "Licencijuotas dainų tekstų katalogas.",
+  "providerDescOriginalSongsCcBy": "Originalios dainos pagal Creative Commons BY licenciją.",
+  "providerDescPerSongLicense": "Dainų tekstai licencijuojami kiekvienai dainai atskirai.",
+  "providerDescRecordingMetadataOnly": "Tik įrašo ir leidimo informacija.",
+  "providerDescCompositionMetadataOnly": "Tik kūrinio informacija.",
+  "providerDescExactFileArtworkOnly": "Viršelio vaizdas pateikiamas tik tiksliai sutapus įrašui.",
+  "providerCapabilityLyrics": "Dainų tekstai",
+  "providerCapabilityChords": "Akordai",
+  "providerCapabilityTiming": "Laiko žymos",
+  "providerCapabilitySearch": "Paieška",
+  "providerCapabilityMetadata": "Dainos informacija",
+  "editorArtworkField": "Viršelio nuoroda",
+  "editorLyricsHint": "Palieskite eilutę, kad redaguotumėte tekstą arba akordus.",
+  "editorSave": "Išsaugoti pakeitimus",
+  "editorSaved": "Pakeitimai išsaugoti.",
+  "editorSaveFailed": "Nepavyko išsaugoti pakeitimų.",
+  "editorSaveConflict": "Daina buvo pakeista kitoje vietoje. Jūsų pakeitimai išsaugoti kaip atskira kopija.",
+  "editorUnsavedTitle": "Atmesti pakeitimus?",
+  "editorUnsavedMessage": "Jūsų pakeitimai neišsaugoti.",
+  "editorFieldRequired": "Įveskite dainos pavadinimą.",
+  "settingsTitle": "Nustatymai",
+  "settingsAppearance": "Išvaizda",
+  "settingsTheme": "Tema",
+  "settingsThemeSystem": "Naudoti įrenginio nustatymą",
+  "settingsThemeLight": "Šviesi",
+  "settingsThemeDark": "Tamsi",
+  "settingsColorPalette": "Spalvų paletė",
+  "settingsFont": "Šriftas",
+  "settingsTextSize": "Teksto dydis",
+  "settingsLyricsPreview": "Dainos teksto peržiūra",
+  "settingsPlayer": "Dainų tekstų grotuvas",
+  "settingsDefaultShowChords": "Pagal numatytuosius nustatymus rodyti akordus",
+  "settingsDefaultAutoscroll": "Automatiškai pradėti slinkti dainos tekstą",
+  "settingsDefaultTiming": "Numatytasis slinkimo režimas",
+  "settingsLanguage": "Programos kalba",
+  "settingsLanguageSystem": "Naudoti įrenginio kalbą",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageBulgarian": "Български",
+  "settingsLanguageUkrainian": "Українська",
+  "settingsSources": "Dainų tekstų šaltiniai",
+  "settingsSourceEnabled": "Įjungti šaltinį {source}",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "Atnaujinti šaltinių sąrašą",
+  "settingsSourcesUpdated": "Šaltiniai atnaujinti.",
+  "settingsSourcesUpdateFailed": "Nepavyko atnaujinti šaltinių.",
+  "settingsImport": "Importuoti dainas",
+  "settingsImportChordPro": "Importuoti ChordPro failą",
+  "settingsImportSetlist": "Importuoti koncertinės programos failą",
+  "settingsImportSuccess": "Importavimas baigtas.",
+  "settingsImportFailed": "Nepavyko importuoti šio failo.",
+  "settingsImportUnsupported": "Šio tipo failas nepalaikomas.",
+  "settingsShareSong": "Bendrinti kaip ChordPro",
+  "settingsSharePdf": "Bendrinti kaip PDF",
+  "settingsCopySong": "Kopijuoti į iškarpinę",
+  "settingsPrintSong": "Spausdinti tik dainą",
+  "settingsPrintSetlist": "Spausdinti koncertinę programą su dainų tekstais",
+  "settingsExportFailed": "Nepavyko paruošti failo.",
+  "settingsCopied": "Nukopijuota į iškarpinę.",
+  "settingsAbout": "Apie programą",
+  "settingsPrivacy": "Privatumas",
+  "settingsLegal": "Teisinė informacija",
+  "settingsClearHistory": "Išvalyti istoriją",
+  "settingsClearHistoryConfirm": "Išvalyti dainų ir koncertinių programų istoriją?",
+  "settingsHistoryCleared": "Istorija išvalyta.",
+  "accountTitle": "Paskyra ir sinchronizavimas",
+  "accountUnavailable": "Sinchronizavimui reikalinga Singbook versija, kurioje sukonfigūruotas prisijungimas per Google. Šioje versijoje dainos saugomos tik šiame įrenginyje.",
+  "accountSyncNow": "Sinchronizuoti dabar",
+  "accountConnected": "Prisijungta. Pasirinkite „Sinchronizuoti dabar“, kad atnaujintumėte atsarginę kopiją.",
+  "accountSignIn": "Prijungti paskyrą",
+  "accountSignOut": "Atsijungti",
+  "accountChange": "Pakeisti paskyrą",
+  "accountSignedOut": "Neprisijungta",
+  "accountSyncing": "Sinchronizuojama jūsų biblioteka…",
+  "accountSynced": "Biblioteka sinchronizuota.",
+  "accountSyncFailed": "Nepavyko sinchronizuoti bibliotekos.",
+  "accessibilityFavorite": "Mėgstama",
+  "accessibilityNotFavorite": "Nėra mėgstama",
+  "accessibilitySearchField": "Ieškoti dainų",
+  "accessibilityClearSearch": "Išvalyti paieškos tekstą",
+  "accessibilitySongMenu": "Dainos „{song}“ veiksmai",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "Koncertinės programos „{setlist}“ veiksmai",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "Išskleisti koncertinės programos „{setlist}“ dainas",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "Suskleisti koncertinės programos „{setlist}“ dainas",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "Atkūrimo eiga, {percent} proc.",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "Istorijos laiko juosta, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "Įkeliama…",
+  "loadingSongs": "Įkeliamos dainos…",
+  "loadingSetlists": "Įkeliamos koncertinės programos…",
+  "errorGeneric": "Įvyko klaida.",
+  "errorOffline": "Panašu, kad nesate prisijungę prie interneto.",
+  "errorPermission": "Norint tęsti, reikia leidimo.",
+  "emptyFiltered": "Nė vienas elementas neatitinka šių filtrų.",
+  "unknownValue": "Nežinoma",
+  "durationUnknown": "Trukmė nežinoma",
+  "metadataNotSet": "Nenustatyta",
+  "dateToday": "Šiandien",
+  "dateYesterday": "Vakar",
+  "daySongCount": "{count, plural, one{{count} daina} few{{count} dainos} many{{count} dainų} other{{count} dainų}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "Tamsiai mėlyna",
+  "settingsPaletteSage": "Šalavijo žalia",
+  "settingsPaletteOcean": "Vandenyno mėlyna",
+  "settingsPaletteClay": "Molio",
+  "settingsPalettePlum": "Slyvų",
+  "settingsFontSystem": "Sistemos",
+  "settingsFontSerif": "Su užraitais",
+  "settingsFontMonospace": "Vienodo pločio",
+  "settingsLyricsPreviewExample": "Kai išauš rytas, vėl dainuosime.",
+  "searchDiscoveryProgress": "Tikrinami dainų tekstų šaltiniai: baigta {checked} iš {total}.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "Nerasta tinkamų dainų tekstų.",
+  "searchDiscoveryNoLyricsDetails": "Pasirinkta daina patikrinta visuose įjungtuose šaltiniuose, tačiau nė viename nerasta tinkamos teksto versijos.",
+  "searchDiscoveryError": "Nepavyko patikrinti dainų tekstų šaltinių.",
+  "searchDiscoveryRetry": "Pakartoti dainų tekstų paiešką",
+  "searchSourcesUnavailableCount": "{count, plural, one{{count} nepasiekiamas šaltinis} few{{count} nepasiekiami šaltiniai} many{{count} nepasiekiamų šaltinių} other{{count} nepasiekiamų šaltinių}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "Patikrinkite ryšį ir bandykite dar kartą.",
+  "searchProviderChecks": "Šaltinių patikros",
+  "searchProviderPending": "Tikrinama",
+  "searchProviderFound": "Rastas atitikmuo",
+  "searchProviderRejected": "Neatitinka",
+  "searchProviderFailed": "Patikra nepavyko",
+  "searchProviderUnavailable": "Tinkamų dainų tekstų nėra",
+  "searchCatalogFilterHint": "Pasirinkite dainą, kad filtruotumėte teksto versijas pagal akordus, laiko žymas arba kalbą.",
+  "startupErrorTitle": "Nepavyko atverti jūsų bibliotekos.",
+  "setlistCopyName": "{name} kopija",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "Daina nerasta",
+  "settingsImportTooLarge": "Šis failas per didelis, kad jį būtų galima importuoti.",
+  "songsJumpToLetter": "Pereiti prie raidės {letter}",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "Atmesti",
+  "editorKeepEditing": "Tęsti redagavimą",
+  "settingsDefaultShowChordsHint": "Jei dainoje yra akordų, rodyti juos virš teksto.",
+  "settingsDefaultAutoscrollHint": "Dainos tekstas slenka kartu su daina. Šis nustatymas netaikomas rankinio slinkimo režimui.",
+  "accountUnavailableTitle": "Sinchronizavimas nesukonfigūruotas",
+  "accountSignedOutBenefits": "Prisijunkite per Google, kad sukurtumėte dainų ir koncertinių programų atsarginę kopiją Google Drive ir sinchronizuotumėte visus įrenginius. Dainos bet kuriuo atveju liks šiame įrenginyje.",
+  "accountSignInWithGoogle": "Prisijungti per Google",
+  "accountWorking": "Vykdoma…",
+  "accountNeverSynced": "Dar nesinchronizuota",
+  "accountSyncedJustNow": "Sinchronizuota ką tik",
+  "accountSyncedMinutesAgo": "{count, plural, one{Sinchronizuota prieš {count} minutę} few{Sinchronizuota prieš {count} minutes} many{Sinchronizuota prieš {count} minučių} other{Sinchronizuota prieš {count} minučių}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{Sinchronizuota prieš {count} valandą} few{Sinchronizuota prieš {count} valandas} many{Sinchronizuota prieš {count} valandų} other{Sinchronizuota prieš {count} valandų}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{Sinchronizuota prieš {count} dieną} few{Sinchronizuota prieš {count} dienas} many{Sinchronizuota prieš {count} dienų} other{Sinchronizuota prieš {count} dienų}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{{count} dėl konflikto kilęs pakeitimas išsaugotas kaip kopija} few{{count} dėl konflikto kilę pakeitimai išsaugoti kaip kopijos} many{{count} dėl konflikto kilusių pakeitimų išsaugota kaip kopijos} other{{count} dėl konflikto kilusių pakeitimų išsaugota kaip kopijos}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "Ta pati daina arba koncertinė programa buvo redaguota dviejose vietose. Nieko nepraradote: kita versija išsaugota kaip atskira kopija.",
+  "accountReviewConflicts": "Peržiūrėti kopijas",
+  "songsConflictFilterActive": "Rodomos tik konfliktinės kopijos",
+  "songsConflictFilterClear": "Rodyti visas dainas",
+  "songsConflictBadge": "Konfliktinė kopija",
+  "songsConflictEmpty": "Konfliktinių kopijų nėra.",
+  "accountAutoSync": "Sinchronizuoti automatiškai",
+  "accountAutoSyncHint": "Biblioteka atnaujinama, kai atveriate programą ir atliekate pakeitimų.",
+  "accountSignOutTitle": "Atsijungti nuo šios paskyros?",
+  "accountSignOutBody": "Dainos ir koncertinės programos liks šiame įrenginyje. Jų atsarginės kopijos nebus kuriamos ir jos nebus sinchronizuojamos, kol vėl neprisijungsite.",
+  "accountUseDifferent": "Naudoti kitą paskyrą",
+  "accountSignInAgain": "Prisijungti dar kartą",
+  "accountChooseAction": "Pasirinkite, kaip tęsti",
+  "accountChangedTitle": "Kita Google paskyra",
+  "accountChangedBody": "Šis įrenginys paskutinį kartą buvo sinchronizuotas su kita Google paskyra. Pasirinkite, kas nutiks šiame įrenginyje esančioms dainoms ir koncertinėms programoms.",
+  "accountChangedMerge": "Sujungti su nauja paskyra",
+  "accountChangedMergeHint": "Palikti viską šiame įrenginyje ir pridėti prie naujos paskyros.",
+  "accountChangedReplace": "Pakeisti naujos paskyros biblioteka",
+  "accountChangedReplaceHint": "Šiame įrenginyje esančios dainos, kurių nėra naujoje paskyroje, bus pašalintos.",
+  "accountChangedSignOut": "Atšaukti ir atsijungti",
+  "accountStatusSignedOut": "Paskyra ir sinchronizavimas: neprisijungta",
+  "accountStatusSignedIn": "Paskyra ir sinchronizavimas: prisijungta",
+  "accountStatusSyncing": "Paskyra ir sinchronizavimas: sinchronizuojama",
+  "accountStatusSynced": "Paskyra ir sinchronizavimas: biblioteka atnaujinta",
+  "accountStatusError": "Paskyra ir sinchronizavimas: iškilo problema, palieskite, kad peržiūrėtumėte",
+  "accountNoticeConflicts": "Kai kurios dainos buvo redaguotos dviejose vietose. Kopijos išsaugotos.",
+  "accountNoticeSignedIn": "Prisijungėte.",
+  "accountNoticeSignedOut": "Atsijungėte. Dainos liks šiame įrenginyje.",
+  "syncErrorNotConfigured": "Šioje versijoje sinchronizavimas nesukonfigūruotas.",
+  "syncErrorNotConfiguredHint": "Naudokite Singbook versiją su sukonfigūruotu prisijungimu per Google.",
+  "syncErrorNotSignedIn": "Esate neprisijungę.",
+  "syncErrorNotSignedInHint": "Prisijunkite, kad sinchronizuotumėte biblioteką.",
+  "syncErrorAuthorizationRequired": "Google prašo prisijungti iš naujo.",
+  "syncErrorAuthorizationRequiredHint": "Prisijunkite dar kartą, kad tęstumėte sinchronizavimą. Dainos šiame įrenginyje saugios.",
+  "syncErrorAccessDenied": "Singbook neturi leidimo naudoti Google Drive.",
+  "syncErrorAccessDeniedHint": "Prisijunkite iš naujo ir, kai būsite paprašyti, leiskite prieigą prie Drive.",
+  "syncErrorRateLimited": "Google laikinai riboja užklausas.",
+  "syncErrorRateLimitedHint": "Palaukite kelias minutes ir bandykite dar kartą.",
+  "syncErrorStorageFull": "Google Drive pilnas.",
+  "syncErrorStorageFullHint": "Atlaisvinkite vietos Drive ir bandykite dar kartą.",
+  "syncErrorNetwork": "Nepavyko pasiekti Google.",
+  "syncErrorNetworkHint": "Patikrinkite interneto ryšį ir bandykite dar kartą.",
+  "syncErrorAccountChanged": "Naudota kita Google paskyra.",
+  "syncErrorAccountChangedHint": "Pasirinkite, ar sujungti šio įrenginio biblioteką su ja, ar ją pakeisti.",
+  "syncErrorRemoteLibraryTooLarge": "Sinchronizuota biblioteka per didelė, kad Singbook galėtų ją apdoroti.",
+  "syncErrorRemoteLibraryTooLargeHint": "Pašalinkite dainų ar koncertinių programų iš sinchronizuotos bibliotekos ir bandykite dar kartą.",
+  "syncErrorSignInFailed": "Prisijungti nepavyko.",
+  "syncErrorSignInFailedHint": "Bandykite prisijungti dar kartą.",
+  "syncErrorGeneric": "Nepavyko sinchronizuoti bibliotekos.",
+  "syncErrorGenericHint": "Netrukus bandykite dar kartą. Dainos šiame įrenginyje vis dar saugios."
+}

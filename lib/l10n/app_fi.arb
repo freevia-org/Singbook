@@ -1,0 +1,670 @@
+{
+  "@@locale": "fi",
+  "appTitle": "Singbook",
+  "aboutDescription": "Rauhallinen paikka, jossa löydät ja järjestät kappaleesi ja laulat niiden mukana.",
+  "aboutMadeForSinging": "Tehty yhdessä laulamiseen",
+  "appVersion": "Versio {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "Etusivu",
+  "navSongs": "Kappaleet",
+  "navSetlists": "Settilistat",
+  "navSettings": "Asetukset",
+  "navSettingsCompact": "Asetukset",
+  "navSearch": "Haku",
+  "navBack": "Takaisin",
+  "navClose": "Sulje",
+  "navMore": "Lisää toimintoja",
+  "actionCancel": "Peruuta",
+  "actionSave": "Tallenna",
+  "actionDone": "Valmis",
+  "actionEdit": "Muokkaa",
+  "actionDelete": "Poista",
+  "actionShare": "Jaa",
+  "actionPrint": "Tulosta",
+  "actionCopy": "Kopioi",
+  "actionClear": "Tyhjennä",
+  "actionRetry": "Yritä uudelleen",
+  "actionRefresh": "Päivitä",
+  "actionImport": "Tuo",
+  "actionExport": "Vie",
+  "actionExpand": "Laajenna",
+  "actionCollapse": "Kutista",
+  "actionAdd": "Lisää",
+  "actionCreate": "Luo",
+  "actionRemove": "Poista",
+  "actionDuplicate": "Monista",
+  "actionMoveUp": "Siirrä ylös",
+  "actionMoveDown": "Siirrä alas",
+  "actionPrevious": "Edellinen",
+  "actionNext": "Seuraava",
+  "searchHint": "Hae kappaleita, artisteja tai sanoituksia",
+  "searchCatalogHint": "Hae kappaletta tai artistia",
+  "searchSubmit": "Hae",
+  "searchFilters": "Hakuasetukset",
+  "searchFiltersShow": "Näytä hakuasetukset",
+  "searchFiltersHide": "Piilota hakuasetukset",
+  "searchFilterArtist": "Artisti",
+  "searchFilterTitle": "Kappaleen nimi",
+  "searchFilterLyrics": "Sanoitukset",
+  "searchFilterChords": "Sisältää soinnut",
+  "searchFilterTimed": "Ajastetut sanoitukset",
+  "searchFilterLanguage": "Kieli",
+  "searchFilterAll": "Mikä tahansa",
+  "searchAutocompleteLabel": "Ehdotukset",
+  "searchResultCount": "{count, plural, =0{Ei tuloksia} =1{1 tulos} other{{count} tulosta}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "Anna haettava kappale, artisti tai sanoituksen kohta.",
+  "searchCatalogEmptyQuery": "Anna haettava kappale tai artisti.",
+  "searchNoResults": "Kappaleita ei löytynyt. Kokeile toista hakua.",
+  "searchLoading": "Haetaan kappaleita…",
+  "searchError": "Hakua ei voitu suorittaa.",
+  "searchOnlineTab": "Verkossa",
+  "searchRecentTab": "Viimeisimmät",
+  "searchFavoritesTab": "Suosikit",
+  "searchSuggested": "Ehdotettu osuma",
+  "searchAlternatives": "Muut osumat",
+  "searchCompare": "Vertaa versioita",
+  "searchChooseVersion": "Valitse tämä versio",
+  "searchSongMatch": "Kappaleosuma",
+  "searchRecordingMatch": "Ääniteosuma",
+  "searchMatchUnverified": "Äänitettä ei ole vahvistettu",
+  "searchMatchExact": "Täsmällinen ääniteosuma",
+  "searchMatchPossible": "Mahdollinen osuma",
+  "searchAvailability": "Saatavuus",
+  "searchLyricsAvailable": "Sanoitukset saatavilla",
+  "searchLyricsUnavailable": "Sanoituksia ei saatavilla",
+  "searchChordsAvailable": "Soinnut saatavilla",
+  "searchChordsUnavailable": "Ei sointuja",
+  "searchTimingAvailable": "Ajastus saatavilla",
+  "searchTimingUnavailable": "Ei ajastusta",
+  "searchDurationUnknown": "Kesto tuntematon",
+  "searchRating": "Arvio {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "Lähde",
+  "searchMetadata": "Kappaleen tiedot",
+  "searchAlbum": "Albumi",
+  "searchArtist": "Artisti",
+  "searchYear": "Vuosi",
+  "searchLanguage": "Kieli",
+  "searchSaved": "Kappale tallennettiin kirjastoosi.",
+  "searchSaveFailed": "Kappaletta ei voitu tallentaa.",
+  "homeRecentSongs": "Viimeisimmät kappaleet",
+  "homeRecentlyPlayed": "Viimeksi soitettu",
+  "homeFavorites": "Suosikit",
+  "homeHistory": "Historia",
+  "homeHistoryClear": "Tyhjennä historia",
+  "homeHistoryCleared": "Historia tyhjennetty.",
+  "homeHistoryEmpty": "Avaamasi kappaleet näkyvät täällä.",
+  "homeFavoritesEmpty": "Suosikkikappaleesi ja settilistasi näkyvät täällä.",
+  "homeItemsShownCount": "{count, plural, =0{0 kohdetta näkyvissä} =1{1 kohde näkyvissä} other{{count} kohdetta näkyvissä}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "Viimeisimmät kappaleesi ja settilistasi näkyvät täällä.",
+  "homeTimelineLabel": "Historian aikajana",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "Koko historia",
+  "homeShowFavorites": "Näytä suosikit",
+  "homeShowRecent": "Näytä viimeisimmät",
+  "songsTitle": "Kappaleet",
+  "songsEmpty": "Kappaleesi näkyvät täällä.",
+  "songsEmptySearch": "Yksikään kappale ei vastaa hakuasi.",
+  "songsAdd": "Lisää kappale",
+  "songsSortAlphabetical": "Lajittele aakkosjärjestykseen",
+  "songsAlphabetNavigation": "Kappalehakemisto",
+  "songsUsageCount": "Avattu {count, plural, =0{ei koskaan} =1{kerran} other{{count} kertaa}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "Lisää suosikkeihin",
+  "songFavoriteRemove": "Poista suosikeista",
+  "songMenuLabel": "Kappaleen toiminnot",
+  "songInfo": "Kappaleen tiedot",
+  "setlistMenuLabel": "Settilistan toiminnot",
+  "songAddToSetlist": "Lisää settilistaan",
+  "songCopyChordPro": "Kopioi ChordPro",
+  "songDeleteConfirmTitle": "Poistetaanko kappale?",
+  "songDeleteConfirmMessage": "Kappale poistetaan kirjastostasi.",
+  "songDeleted": "Kappale poistettu.",
+  "setlistsTitle": "Settilistat",
+  "setlistsEmpty": "Luo settilista seuraavaa harjoitusta tai esiintymistä varten.",
+  "setlistsEmptySearch": "Yksikään settilista ei vastaa hakuasi.",
+  "setlistCreate": "Uusi settilista",
+  "setlistNameHint": "Settilistan nimi",
+  "setlistNotes": "Muistiinpanot",
+  "setlistEntryOverride": "Kappalekohtainen sävellaji ja capo",
+  "setlistSongsCount": "{count, plural, =0{Ei kappaleita} =1{1 kappale} other{{count} kappaletta}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "Vähintään {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "Kesto tuntematon",
+  "setlistActivity": "Viimeisin toiminta {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "Luotu {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "Muokattu {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "Soitettu viimeksi {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "Tässä settilistassa ei ole vielä kappaleita.",
+  "setlistAddSongs": "Lisää kappaleita",
+  "setlistReorder": "Järjestä kappaleet uudelleen",
+  "setlistMoveSongUp": "Siirrä {song} ylös",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "Siirrä {song} alas",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "Poista {song} settilistasta",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "Monista settilista",
+  "setlistFavoriteAdd": "Lisää settilista suosikkeihin",
+  "setlistFavoriteRemove": "Poista settilista suosikeista",
+  "setlistShare": "Jaa settilistatiedostona",
+  "setlistSharePdf": "Jaa PDF-tiedostona",
+  "setlistPrint": "Tulosta",
+  "setlistDeleteConfirmTitle": "Poistetaanko settilista?",
+  "setlistDeleteConfirmMessage": "Settilista poistetaan. Kirjastosi kappaleet säilyvät.",
+  "setlistDeleted": "Settilista poistettu.",
+  "readerTitle": "Sanoitukset",
+  "readerNoLyrics": "Sanoituksia ei ole vielä lisätty.",
+  "readerShowChords": "Näytä soinnut",
+  "readerHideChords": "Piilota soinnut",
+  "readerTranspose": "Transponoi soinnut",
+  "readerTransposeSemitones": "Transponoi {count, plural, =0{0 puolisävelaskelta} =1{1 puolisävelaskel} other{{count} puolisävelaskelta}}",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "Muokkaa sanoituksia ja tietoja",
+  "playerPlay": "Aloita sanoitusten vieritys",
+  "playerPause": "Keskeytä sanoitusten vieritys",
+  "playerResume": "Jatka sanoitusten vieritystä",
+  "playerSeek": "Toistokohta",
+  "playerElapsed": "Kulunut aika {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "Aikaa jäljellä {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "Vieritystila",
+  "playerTimedLyrics": "Ajastetut sanoitukset",
+  "playerEstimatedPace": "Arvioitu nopeus",
+  "playerManualScroll": "Manuaalinen vieritys",
+  "playerTimingStatusReady": "Sanoitukset seuraavat käytettävissä olevaa ajastusta.",
+  "playerTimingStatusEstimated": "Vieritysnopeus arvioidaan kappaleen keston perusteella.",
+  "playerTimingStatusManual": "Vieritä sanoituksia itse.",
+  "playerTimingStatusUnavailable": "Ajastettu vieritys ei ole käytettävissä tälle kappaleelle.",
+  "playerDurationUnknown": "Lisää kappaleen kesto, jotta voit käyttää arvioitua vieritystä.",
+  "playerProgressLabel": "Kappaleen eteneminen",
+  "playerCurrentSection": "Nykyinen osio",
+  "playerPreviousSection": "Edellinen osio",
+  "playerNextSection": "Seuraava osio",
+  "playerPreviousSectionSong": "Edellinen osio · pidä painettuna siirtyäksesi settilistan edelliseen kappaleeseen",
+  "playerNextSectionSong": "Seuraava osio · pidä painettuna siirtyäksesi settilistan seuraavaan kappaleeseen",
+  "playerPreviousSong": "Edellinen kappale",
+  "playerNextSong": "Seuraava kappale",
+  "editorTitle": "Muokkaa kappaletta",
+  "editorTitleField": "Kappaleen nimi",
+  "editorArtistField": "Artisti",
+  "editorAlbumField": "Albumi",
+  "editorLyricsField": "Sanoitukset",
+  "editorChordsField": "Soinnut",
+  "editorKeyField": "Sävellaji",
+  "editorCapoField": "Capo",
+  "editorTuningField": "Vire",
+  "editorTempoField": "Tempo",
+  "editorDurationField": "Kesto",
+  "editorTimeSignatureField": "Tahtilaji",
+  "editorLanguageField": "Kieli",
+  "editorYearField": "Vuosi",
+  "editorComposerField": "Säveltäjä",
+  "editorLyricistField": "Sanoittaja",
+  "editorCopyrightField": "Tekijänoikeus",
+  "editorLicenseField": "Lisenssi",
+  "songInfoSources": "Lähteet ja tekijätiedot",
+  "searchMatchSameSong": "Sama kappale; äänitettä ei ole vahvistettu",
+  "searchMatchNeedsAgreement": "Kappaleen sanat on vahvistettava nuottien perusteella",
+  "searchMatchDifferentLyrics": "Sanoitukset eroavat valitusta kappaleesta",
+  "searchMatchCombinedSources": "Tiedot koottu useista lähteistä",
+  "searchCombinedFromSources": "{count, plural, =1{Koottu yhdestä lähteestä} other{Koottu {count} lähteestä}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, =0{0 kappaleosumaa} =1{1 kappaleosuma} other{{count} kappaleosumaa}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, =0{0 lähdeversiota} =1{1 lähdeversio} other{{count} lähdeversiota}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "Paras saatavilla oleva osuma",
+  "providerDescriptionUnknown": "Kappaleen lähde",
+  "providerDescDownloadChordProThenImport": "Lataa lähteestä ChordPro-tiedosto ja tuo se sitten.",
+  "providerDescFreeAccountDownloadThenImport": "Lataa tiedosto maksuttomalla tilillä ja tuo se sitten.",
+  "providerDescPublicChordSheets": "Julkisia sointulehtiä.",
+  "providerDescHistoricalTextPerWorkLicense": "Historiallisilla sanoituksilla on teoskohtainen lisenssi.",
+  "providerDescLicensedCatalog": "Lisensoitu sanoituskatalogi.",
+  "providerDescOriginalSongsCcBy": "Alkuperäiskappaleita Creative Commons BY -lisenssillä.",
+  "providerDescPerSongLicense": "Sanoitukset lisensoidaan kappalekohtaisesti.",
+  "providerDescRecordingMetadataOnly": "Vain äänitteen ja julkaisun tiedot.",
+  "providerDescCompositionMetadataOnly": "Vain sävellyksen tiedot.",
+  "providerDescExactFileArtworkOnly": "Kansikuvat vain täsmääville äänitteille.",
+  "providerCapabilityLyrics": "Sanoitukset",
+  "providerCapabilityChords": "Soinnut",
+  "providerCapabilityTiming": "Ajastetut sanoitukset",
+  "providerCapabilitySearch": "Haku",
+  "providerCapabilityMetadata": "Kappaleen tiedot",
+  "editorArtworkField": "Kansikuvan linkki",
+  "editorLyricsHint": "Muokkaa sanoituksia tai sointuja napauttamalla riviä.",
+  "editorSave": "Tallenna muutokset",
+  "editorSaved": "Muutokset tallennettu.",
+  "editorSaveFailed": "Muutoksia ei voitu tallentaa.",
+  "editorSaveConflict": "Kappaletta muokattiin muualla. Muutoksesi tallennettiin erillisenä kopiona.",
+  "editorUnsavedTitle": "Hylätäänkö muutokset?",
+  "editorUnsavedMessage": "Muutoksia ei ole tallennettu.",
+  "editorFieldRequired": "Anna kappaleen nimi.",
+  "settingsTitle": "Asetukset",
+  "settingsAppearance": "Ulkoasu",
+  "settingsTheme": "Teema",
+  "settingsThemeSystem": "Käytä laitteen asetusta",
+  "settingsThemeLight": "Vaalea",
+  "settingsThemeDark": "Tumma",
+  "settingsColorPalette": "Väripaletti",
+  "settingsFont": "Fontti",
+  "settingsTextSize": "Tekstin koko",
+  "settingsLyricsPreview": "Sanoitusten esikatselu",
+  "settingsPlayer": "Sanoitusten soitin",
+  "settingsDefaultShowChords": "Näytä soinnut oletuksena",
+  "settingsDefaultAutoscroll": "Vieritä sanoituksia automaattisesti",
+  "settingsDefaultTiming": "Oletusvieritystila",
+  "settingsLanguage": "Sovelluksen kieli",
+  "settingsLanguageSystem": "Käytä laitteen kieltä",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageBulgarian": "Български",
+  "settingsLanguageUkrainian": "Українська",
+  "settingsSources": "Sanoituslähteet",
+  "settingsSourceEnabled": "Ota lähde {source} käyttöön",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "Päivitä lähdeluettelo",
+  "settingsSourcesUpdated": "Lähteet päivitetty.",
+  "settingsSourcesUpdateFailed": "Lähteitä ei voitu päivittää.",
+  "settingsImport": "Tuo kappaleita",
+  "settingsImportChordPro": "Tuo ChordPro-tiedosto",
+  "settingsImportSetlist": "Tuo settilistatiedosto",
+  "settingsImportSuccess": "Tuonti valmis.",
+  "settingsImportFailed": "Tätä tiedostoa ei voitu tuoda.",
+  "settingsImportUnsupported": "Tätä tiedostotyyppiä ei tueta.",
+  "settingsShareSong": "Jaa ChordPro-muodossa",
+  "settingsSharePdf": "Jaa PDF-tiedostona",
+  "settingsCopySong": "Kopioi leikepöydälle",
+  "settingsPrintSong": "Tulosta vain kappale",
+  "settingsPrintSetlist": "Tulosta settilista sanoituksineen",
+  "settingsExportFailed": "Tiedostoa ei voitu valmistella.",
+  "settingsCopied": "Kopioitu leikepöydälle.",
+  "settingsAbout": "Tietoja",
+  "settingsPrivacy": "Tietosuoja",
+  "settingsLegal": "Lakiasiat",
+  "settingsClearHistory": "Tyhjennä historia",
+  "settingsClearHistoryConfirm": "Tyhjennetäänkö kappaleiden ja settilistojen historia?",
+  "settingsHistoryCleared": "Historia tyhjennetty.",
+  "accountTitle": "Tili ja synkronointi",
+  "accountUnavailable": "Synkronointi edellyttää Singbook-versiota, jossa Google-kirjautuminen on määritetty. Tässä versiossa kappaleet säilyvät vain tällä laitteella.",
+  "accountSyncNow": "Synkronoi nyt",
+  "accountConnected": "Yhdistetty. Päivitä varmuuskopio valitsemalla Synkronoi nyt.",
+  "accountSignIn": "Yhdistä tili",
+  "accountSignOut": "Kirjaudu ulos",
+  "accountChange": "Vaihda tiliä",
+  "accountSignedOut": "Ei yhdistetty",
+  "accountSyncing": "Kirjastoa synkronoidaan…",
+  "accountSynced": "Kirjasto synkronoitu.",
+  "accountSyncFailed": "Kirjastoa ei voitu synkronoida.",
+  "accessibilityFavorite": "Suosikki",
+  "accessibilityNotFavorite": "Ei suosikki",
+  "accessibilitySearchField": "Hae kappaleita",
+  "accessibilityClearSearch": "Tyhjennä hakuteksti",
+  "accessibilitySongMenu": "Kappaleen {song} toiminnot",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "Settilistan {setlist} toiminnot",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "Laajenna settilistan {setlist} kappaleet",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "Kutista settilistan {setlist} kappaleet",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "Toiston eteneminen, {percent} prosenttia",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "Historian aikajana, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "Ladataan…",
+  "loadingSongs": "Ladataan kappaleita…",
+  "loadingSetlists": "Ladataan settilistoja…",
+  "errorGeneric": "Jokin meni pieleen.",
+  "errorOffline": "Vaikuttaa siltä, että et ole verkossa.",
+  "errorPermission": "Jatkamiseen tarvitaan käyttöoikeus.",
+  "emptyFiltered": "Yksikään kohde ei vastaa näitä suodattimia.",
+  "unknownValue": "Tuntematon",
+  "durationUnknown": "Kesto tuntematon",
+  "metadataNotSet": "Ei asetettu",
+  "dateToday": "Tänään",
+  "dateYesterday": "Eilen",
+  "daySongCount": "{count, plural, =0{Ei kappaleita} =1{1 kappale} other{{count} kappaletta}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "Laivastonsininen",
+  "settingsPaletteSage": "Salvianvihreä",
+  "settingsPaletteOcean": "Meri",
+  "settingsPaletteClay": "Savi",
+  "settingsPalettePlum": "Luumu",
+  "settingsFontSystem": "Järjestelmä",
+  "settingsFontSerif": "Serif",
+  "settingsFontMonospace": "Tasalevyinen",
+  "settingsLyricsPreviewExample": "Kun aamu koittaa, laulamme taas.",
+  "searchDiscoveryProgress": "Tarkistetaan sanoituslähteitä: {checked}/{total} valmiina.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "Käyttökelpoisia sanoituksia ei löytynyt.",
+  "searchDiscoveryNoLyricsDetails": "Valittu kappale tarkistettiin käytössä olevista lähteistä, mutta mikään niistä ei palauttanut käyttökelpoista sanoitusversiota.",
+  "searchDiscoveryError": "Sanoituslähteitä ei voitu tarkistaa.",
+  "searchDiscoveryRetry": "Hae sanoituksia uudelleen",
+  "searchSourcesUnavailableCount": "{count, plural, =0{0 lähdettä ei ole käytettävissä} =1{1 lähde ei ole käytettävissä} other{{count} lähdettä ei ole käytettävissä}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "Tarkista yhteys ja yritä uudelleen.",
+  "searchProviderChecks": "Lähteiden tarkistukset",
+  "searchProviderPending": "Tarkistetaan",
+  "searchProviderFound": "Osuma löytyi",
+  "searchProviderRejected": "Ei vastaa",
+  "searchProviderFailed": "Tarkistus epäonnistui",
+  "searchProviderUnavailable": "Käyttökelpoisia sanoituksia ei ole",
+  "searchCatalogFilterHint": "Suodata sanoitusversioita sointujen, ajastuksen tai kielen mukaan valitsemalla kappale.",
+  "startupErrorTitle": "Kirjastoa ei voitu avata.",
+  "setlistCopyName": "{name} – kopio",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "Puuttuva kappale",
+  "settingsImportTooLarge": "Tämä tiedosto on liian suuri tuotavaksi.",
+  "songsJumpToLetter": "Siirry kohtaan {letter}",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "Hylkää",
+  "editorKeepEditing": "Jatka muokkausta",
+  "settingsDefaultShowChordsHint": "Näytä soinnut sanoitusten yläpuolella, kun kappaleessa on soinnut.",
+  "settingsDefaultAutoscrollHint": "Sanoitukset vierivät kappaleen tahdissa. Ei käytössä manuaalisessa vieritystilassa.",
+  "accountUnavailableTitle": "Synkronointia ei ole määritetty",
+  "accountSignedOutBenefits": "Kirjaudu Google-tilillä varmuuskopioidaksesi kappaleet ja settilistat Google Driveen ja pitääksesi kaikki laitteesi ajan tasalla. Kappaleet säilyvät joka tapauksessa tällä laitteella.",
+  "accountSignInWithGoogle": "Kirjaudu Google-tilillä",
+  "accountWorking": "Käsitellään…",
+  "accountNeverSynced": "Ei koskaan synkronoitu",
+  "accountSyncedJustNow": "Synkronoitu juuri nyt",
+  "accountSyncedMinutesAgo": "{count, plural, one{Synkronoitu 1 minuutti sitten} other{Synkronoitu {count} minuuttia sitten}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{Synkronoitu 1 tunti sitten} other{Synkronoitu {count} tuntia sitten}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{Synkronoitu 1 päivä sitten} other{Synkronoitu {count} päivää sitten}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{1 ristiriitainen muokkaus säilytetty kopiona} other{{count} ristiriitaista muokkausta säilytetty kopioina}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "Samaa kappaletta tai settilistaa muokattiin kahdessa paikassa. Mitään ei kadonnut: toinen versio tallennettiin erillisenä kopiona.",
+  "accountReviewConflicts": "Tarkista kopiot",
+  "songsConflictFilterActive": "Näytetään vain ristiriitaiset kopiot",
+  "songsConflictFilterClear": "Näytä kaikki kappaleet",
+  "songsConflictBadge": "Ristiriitainen kopio",
+  "songsConflictEmpty": "Ei ristiriitaisia kopioita.",
+  "accountAutoSync": "Synkronoi automaattisesti",
+  "accountAutoSyncHint": "Pidä kirjasto ajan tasalla, kun avaat sovelluksen ja muutosten jälkeen.",
+  "accountSignOutTitle": "Kirjaudutaanko tältä tililtä ulos?",
+  "accountSignOutBody": "Kappaleet ja settilistat säilyvät tällä laitteella. Niitä ei varmuuskopioida tai synkronoida ennen kuin kirjaudut uudelleen sisään.",
+  "accountUseDifferent": "Käytä toista tiliä",
+  "accountSignInAgain": "Kirjaudu uudelleen sisään",
+  "accountChooseAction": "Valitse, miten jatkat",
+  "accountChangedTitle": "Toinen Google-tili",
+  "accountChangedBody": "Tämä laite synkronoitiin viimeksi toisella Google-tilillä. Valitse, mitä tällä laitteella oleville kappaleille ja settilistoille tehdään.",
+  "accountChangedMerge": "Yhdistä uuteen tiliin",
+  "accountChangedMergeHint": "Säilytä kaikki tällä laitteella ja lisää ne uuteen tiliin.",
+  "accountChangedReplace": "Korvaa uuden tilin kirjastolla",
+  "accountChangedReplaceHint": "Tältä laitteelta poistetaan kappaleet, joita ei ole uudella tilillä.",
+  "accountChangedSignOut": "Peruuta ja kirjaudu ulos",
+  "accountStatusSignedOut": "Tili ja synkronointi: ei kirjautunut",
+  "accountStatusSignedIn": "Tili ja synkronointi: kirjautunut",
+  "accountStatusSyncing": "Tili ja synkronointi: synkronoidaan",
+  "accountStatusSynced": "Tili ja synkronointi: kirjasto ajan tasalla",
+  "accountStatusError": "Tili ja synkronointi: ongelma, tarkista napauttamalla",
+  "accountNoticeConflicts": "Joitakin kappaleita muokattiin kahdessa paikassa. Kopiot säilytettiin.",
+  "accountNoticeSignedIn": "Kirjautunut sisään.",
+  "accountNoticeSignedOut": "Kirjautunut ulos. Kappaleet säilyvät tällä laitteella.",
+  "syncErrorNotConfigured": "Synkronointia ei ole määritetty tässä versiossa.",
+  "syncErrorNotConfiguredHint": "Käytä Singbook-versiota, jossa Google-kirjautuminen on määritetty.",
+  "syncErrorNotSignedIn": "Et ole kirjautunut sisään.",
+  "syncErrorNotSignedInHint": "Synkronoi kirjasto kirjautumalla sisään.",
+  "syncErrorAuthorizationRequired": "Google edellyttää, että kirjaudut uudelleen sisään.",
+  "syncErrorAuthorizationRequiredHint": "Jatka synkronointia kirjautumalla uudelleen sisään. Kappaleet ovat turvassa tällä laitteella.",
+  "syncErrorAccessDenied": "Singbookilla ei ole oikeutta käyttää Google Drivea.",
+  "syncErrorAccessDeniedHint": "Kirjaudu uudelleen sisään ja salli Drive-käyttö pyydettäessä.",
+  "syncErrorRateLimited": "Google rajoittaa pyyntöjä tällä hetkellä.",
+  "syncErrorRateLimitedHint": "Odota muutama minuutti ja yritä uudelleen.",
+  "syncErrorStorageFull": "Google Drive on täynnä.",
+  "syncErrorStorageFullHint": "Vapauta tilaa Drivesta ja yritä uudelleen.",
+  "syncErrorNetwork": "Googleen ei saatu yhteyttä.",
+  "syncErrorNetworkHint": "Tarkista internetyhteys ja yritä uudelleen.",
+  "syncErrorAccountChanged": "Käytössä oli toinen Google-tili.",
+  "syncErrorAccountChangedHint": "Valitse, yhdistetäänkö tämän laitteen kirjasto tiliin vai korvataanko se.",
+  "syncErrorRemoteLibraryTooLarge": "Synkronoitu kirjasto on liian suuri Singbookin käsiteltäväksi.",
+  "syncErrorRemoteLibraryTooLargeHint": "Poista synkronoidusta kirjastosta kappaleita tai settilistoja ja yritä uudelleen.",
+  "syncErrorSignInFailed": "Sisäänkirjautuminen ei valmistunut.",
+  "syncErrorSignInFailedHint": "Yritä kirjautua uudelleen sisään.",
+  "syncErrorGeneric": "Kirjastoa ei voitu synkronoida.",
+  "syncErrorGenericHint": "Yritä hetken kuluttua uudelleen. Kappaleet ovat yhä turvassa tällä laitteella."
+}

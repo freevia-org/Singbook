@@ -1,0 +1,670 @@
+{
+  "@@locale": "ro",
+  "appTitle": "Singbook",
+  "aboutDescription": "Un loc liniștit în care îți găsești, organizezi și cânți melodiile din bibliotecă.",
+  "aboutMadeForSinging": "Creat pentru a cânta împreună",
+  "appVersion": "Versiunea {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "Acasă",
+  "navSongs": "Melodii",
+  "navSetlists": "Liste de piese",
+  "navSettings": "Setări",
+  "navSettingsCompact": "Setări",
+  "navSearch": "Caută",
+  "navBack": "Înapoi",
+  "navClose": "Închide",
+  "navMore": "Mai multe acțiuni",
+  "actionCancel": "Anulează",
+  "actionSave": "Salvează",
+  "actionDone": "Gata",
+  "actionEdit": "Editează",
+  "actionDelete": "Șterge",
+  "actionShare": "Partajează",
+  "actionPrint": "Imprimă",
+  "actionCopy": "Copiază",
+  "actionClear": "Șterge",
+  "actionRetry": "Încearcă din nou",
+  "actionRefresh": "Reîmprospătează",
+  "actionImport": "Importă",
+  "actionExport": "Exportă",
+  "actionExpand": "Extinde",
+  "actionCollapse": "Restrânge",
+  "actionAdd": "Adaugă",
+  "actionCreate": "Creează",
+  "actionRemove": "Elimină",
+  "actionDuplicate": "Duplică",
+  "actionMoveUp": "Mută în sus",
+  "actionMoveDown": "Mută în jos",
+  "actionPrevious": "Anterior",
+  "actionNext": "Următorul",
+  "searchHint": "Caută melodii, artiști sau versuri",
+  "searchCatalogHint": "Caută o melodie sau un artist",
+  "searchSubmit": "Caută",
+  "searchFilters": "Opțiuni de căutare",
+  "searchFiltersShow": "Afișează opțiunile de căutare",
+  "searchFiltersHide": "Ascunde opțiunile de căutare",
+  "searchFilterArtist": "Artist",
+  "searchFilterTitle": "Titlul melodiei",
+  "searchFilterLyrics": "Versuri",
+  "searchFilterChords": "Are acorduri",
+  "searchFilterTimed": "Versuri sincronizate",
+  "searchFilterLanguage": "Limba",
+  "searchFilterAll": "Oricare",
+  "searchAutocompleteLabel": "Sugestii",
+  "searchResultCount": "{count, plural, =0{Niciun rezultat} =1{1 rezultat} few{{count} rezultate} other{{count} de rezultate}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "Introdu o melodie, un artist sau versuri pentru a căuta.",
+  "searchCatalogEmptyQuery": "Introdu o melodie sau un artist pentru a căuta.",
+  "searchNoResults": "Nu s-au găsit melodii. Încearcă o altă căutare.",
+  "searchLoading": "Se caută melodii…",
+  "searchError": "Căutarea nu a putut fi finalizată.",
+  "searchOnlineTab": "Online",
+  "searchRecentTab": "Recente",
+  "searchFavoritesTab": "Favorite",
+  "searchSuggested": "Potrivire sugerată",
+  "searchAlternatives": "Alte potriviri",
+  "searchCompare": "Compară versiunile",
+  "searchChooseVersion": "Alege această versiune",
+  "searchSongMatch": "Potrivire pentru melodie",
+  "searchRecordingMatch": "Potrivire pentru înregistrare",
+  "searchMatchUnverified": "Înregistrare neverificată",
+  "searchMatchExact": "Potrivire exactă a înregistrării",
+  "searchMatchPossible": "Potrivire posibilă",
+  "searchAvailability": "Disponibilitate",
+  "searchLyricsAvailable": "Versuri disponibile",
+  "searchLyricsUnavailable": "Versuri indisponibile",
+  "searchChordsAvailable": "Acorduri disponibile",
+  "searchChordsUnavailable": "Fără acorduri",
+  "searchTimingAvailable": "Sincronizare disponibilă",
+  "searchTimingUnavailable": "Fără sincronizare",
+  "searchDurationUnknown": "Durată necunoscută",
+  "searchRating": "Evaluare {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "Sursă",
+  "searchMetadata": "Detalii despre melodie",
+  "searchAlbum": "Album",
+  "searchArtist": "Artist",
+  "searchYear": "An",
+  "searchLanguage": "Limba",
+  "searchSaved": "Melodia a fost salvată în bibliotecă.",
+  "searchSaveFailed": "Melodia nu a putut fi salvată.",
+  "homeRecentSongs": "Melodii recente",
+  "homeRecentlyPlayed": "Ascultate recent",
+  "homeFavorites": "Favorite",
+  "homeHistory": "Istoric",
+  "homeHistoryClear": "Șterge istoricul",
+  "homeHistoryCleared": "Istoricul a fost șters.",
+  "homeHistoryEmpty": "Melodiile pe care le deschizi vor apărea aici.",
+  "homeFavoritesEmpty": "Melodiile și listele tale favorite vor apărea aici.",
+  "homeItemsShownCount": "{count, plural, =0{0 elemente afișate} =1{1 element afișat} few{{count} elemente afișate} other{{count} de elemente afișate}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "Melodiile și listele recente vor apărea aici.",
+  "homeTimelineLabel": "Cronologia istoricului",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "Tot istoricul",
+  "homeShowFavorites": "Afișează favoritele",
+  "homeShowRecent": "Afișează elementele recente",
+  "songsTitle": "Melodii",
+  "songsEmpty": "Melodiile tale vor apărea aici.",
+  "songsEmptySearch": "Nicio melodie nu corespunde căutării.",
+  "songsAdd": "Adaugă o melodie",
+  "songsSortAlphabetical": "Sortează alfabetic",
+  "songsAlphabetNavigation": "Indexul melodiilor",
+  "songsUsageCount": "Deschisă {count, plural, =0{niciodată} =1{o dată} few{de {count} ori} other{de {count} de ori}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "Adaugă la favorite",
+  "songFavoriteRemove": "Elimină de la favorite",
+  "songMenuLabel": "Acțiuni pentru melodie",
+  "songInfo": "Detalii despre melodie",
+  "setlistMenuLabel": "Acțiuni pentru listă",
+  "songAddToSetlist": "Adaugă în listă",
+  "songCopyChordPro": "Copiază ChordPro",
+  "songDeleteConfirmTitle": "Ștergi melodia?",
+  "songDeleteConfirmMessage": "Melodia va fi eliminată din bibliotecă.",
+  "songDeleted": "Melodia a fost ștearsă.",
+  "setlistsTitle": "Liste de piese",
+  "setlistsEmpty": "Creează o listă pentru următoarea repetiție sau interpretare.",
+  "setlistsEmptySearch": "Nicio listă nu corespunde căutării.",
+  "setlistCreate": "Listă nouă",
+  "setlistNameHint": "Numele listei",
+  "setlistNotes": "Note",
+  "setlistEntryOverride": "Tonalitate și capo pentru această melodie",
+  "setlistSongsCount": "{count, plural, =0{Nicio melodie} =1{1 melodie} few{{count} melodii} other{{count} de melodii}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "Cel puțin {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "Durată necunoscută",
+  "setlistActivity": "Ultima activitate {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "Creată {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "Editată {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "Redată ultima dată {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "Lista nu conține încă melodii.",
+  "setlistAddSongs": "Adaugă melodii",
+  "setlistReorder": "Reordonează melodiile",
+  "setlistMoveSongUp": "Mută {song} în sus",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "Mută {song} în jos",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "Elimină {song} din listă",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "Duplică lista",
+  "setlistFavoriteAdd": "Adaugă lista la favorite",
+  "setlistFavoriteRemove": "Elimină lista de la favorite",
+  "setlistShare": "Partajează ca fișier de listă",
+  "setlistSharePdf": "Partajează ca PDF",
+  "setlistPrint": "Imprimă",
+  "setlistDeleteConfirmTitle": "Ștergi lista?",
+  "setlistDeleteConfirmMessage": "Lista va fi eliminată. Melodiile din bibliotecă vor rămâne.",
+  "setlistDeleted": "Lista a fost ștearsă.",
+  "readerTitle": "Versuri",
+  "readerNoLyrics": "Versurile nu au fost adăugate încă.",
+  "readerShowChords": "Afișează acordurile",
+  "readerHideChords": "Ascunde acordurile",
+  "readerTranspose": "Transpune acordurile",
+  "readerTransposeSemitones": "Transpune cu {count, plural, =0{0 semitonuri} =1{1 semiton} few{{count} semitonuri} other{{count} de semitonuri}}",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "Editează versurile și detaliile",
+  "playerPlay": "Pornește derularea versurilor",
+  "playerPause": "Întrerupe derularea versurilor",
+  "playerResume": "Reia derularea versurilor",
+  "playerSeek": "Poziția redării",
+  "playerElapsed": "Timp scurs {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "Timp rămas {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "Mod de derulare",
+  "playerTimedLyrics": "Versuri sincronizate",
+  "playerEstimatedPace": "Ritm estimat",
+  "playerManualScroll": "Derulare manuală",
+  "playerTimingStatusReady": "Versurile vor urma sincronizarea disponibilă.",
+  "playerTimingStatusEstimated": "Ritmul de derulare este estimat pe baza duratei melodiei.",
+  "playerTimingStatusManual": "Derulează manual versurile.",
+  "playerTimingStatusUnavailable": "Derularea sincronizată nu este disponibilă pentru această melodie.",
+  "playerDurationUnknown": "Adaugă durata melodiei pentru a folosi derularea estimată.",
+  "playerProgressLabel": "Progresul melodiei",
+  "playerCurrentSection": "Secțiunea curentă",
+  "playerPreviousSection": "Secțiunea anterioară",
+  "playerNextSection": "Secțiunea următoare",
+  "playerPreviousSectionSong": "Secțiunea anterioară · ține apăsat pentru melodia anterioară din listă",
+  "playerNextSectionSong": "Secțiunea următoare · ține apăsat pentru melodia următoare din listă",
+  "playerPreviousSong": "Melodia anterioară",
+  "playerNextSong": "Melodia următoare",
+  "editorTitle": "Editează melodia",
+  "editorTitleField": "Titlul melodiei",
+  "editorArtistField": "Artist",
+  "editorAlbumField": "Album",
+  "editorLyricsField": "Versuri",
+  "editorChordsField": "Acorduri",
+  "editorKeyField": "Tonalitate",
+  "editorCapoField": "Capo",
+  "editorTuningField": "Acordaj",
+  "editorTempoField": "Tempo",
+  "editorDurationField": "Durată",
+  "editorTimeSignatureField": "Măsura",
+  "editorLanguageField": "Limba",
+  "editorYearField": "An",
+  "editorComposerField": "Compozitor",
+  "editorLyricistField": "Textier",
+  "editorCopyrightField": "Drepturi de autor",
+  "editorLicenseField": "Licență",
+  "songInfoSources": "Surse și credite",
+  "searchMatchSameSong": "Aceeași melodie; înregistrarea nu este confirmată",
+  "searchMatchNeedsAgreement": "Partitura necesită confirmarea versurilor",
+  "searchMatchDifferentLyrics": "Versurile diferă de cele ale melodiei selectate",
+  "searchMatchCombinedSources": "Detalii combinate din mai multe surse",
+  "searchCombinedFromSources": "{count, plural, =1{Combinat dintr-o sursă} few{Combinat din {count} surse} other{Combinat din {count} de surse}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, =0{0 potriviri pentru melodii} =1{1 potrivire pentru melodie} few{{count} potriviri pentru melodii} other{{count} de potriviri pentru melodii}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, =0{0 versiuni din surse} =1{1 versiune dintr-o sursă} few{{count} versiuni din surse} other{{count} de versiuni din surse}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "Cea mai bună potrivire disponibilă",
+  "providerDescriptionUnknown": "Sursă pentru melodie",
+  "providerDescDownloadChordProThenImport": "Descarcă un fișier ChordPro de la sursă, apoi importă-l.",
+  "providerDescFreeAccountDownloadThenImport": "Descarcă fișierul cu un cont gratuit, apoi importă-l.",
+  "providerDescPublicChordSheets": "Partituri publice cu acorduri.",
+  "providerDescHistoricalTextPerWorkLicense": "Versuri istorice licențiate pentru fiecare operă.",
+  "providerDescLicensedCatalog": "Catalog de versuri licențiat.",
+  "providerDescOriginalSongsCcBy": "Melodii originale sub licența Creative Commons BY.",
+  "providerDescPerSongLicense": "Versuri licențiate pentru fiecare melodie.",
+  "providerDescRecordingMetadataOnly": "Doar detalii despre înregistrare și lansare.",
+  "providerDescCompositionMetadataOnly": "Doar detalii despre compoziție.",
+  "providerDescExactFileArtworkOnly": "Copertă doar pentru potriviri exacte ale înregistrării.",
+  "providerCapabilityLyrics": "Versuri",
+  "providerCapabilityChords": "Acorduri",
+  "providerCapabilityTiming": "Versuri sincronizate",
+  "providerCapabilitySearch": "Căutare",
+  "providerCapabilityMetadata": "Detalii despre melodie",
+  "editorArtworkField": "Link către copertă",
+  "editorLyricsHint": "Atinge un vers pentru a edita versurile sau acordurile.",
+  "editorSave": "Salvează modificările",
+  "editorSaved": "Modificările au fost salvate.",
+  "editorSaveFailed": "Modificările nu au putut fi salvate.",
+  "editorSaveConflict": "Melodia a fost modificată în altă parte. Modificările tale au fost salvate ca o copie separată.",
+  "editorUnsavedTitle": "Renunți la modificări?",
+  "editorUnsavedMessage": "Modificările tale nu au fost salvate.",
+  "editorFieldRequired": "Introdu titlul melodiei.",
+  "settingsTitle": "Setări",
+  "settingsAppearance": "Aspect",
+  "settingsTheme": "Temă",
+  "settingsThemeSystem": "Folosește setarea dispozitivului",
+  "settingsThemeLight": "Luminoasă",
+  "settingsThemeDark": "Întunecată",
+  "settingsColorPalette": "Paletă de culori",
+  "settingsFont": "Font",
+  "settingsTextSize": "Dimensiunea textului",
+  "settingsLyricsPreview": "Previzualizarea versurilor",
+  "settingsPlayer": "Player de versuri",
+  "settingsDefaultShowChords": "Afișează acordurile implicit",
+  "settingsDefaultAutoscroll": "Pornește automat derularea versurilor",
+  "settingsDefaultTiming": "Mod implicit de derulare",
+  "settingsLanguage": "Limba aplicației",
+  "settingsLanguageSystem": "Folosește limba dispozitivului",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageBulgarian": "Български",
+  "settingsLanguageUkrainian": "Українська",
+  "settingsSources": "Surse pentru versuri",
+  "settingsSourceEnabled": "Activează sursa {source}",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "Reîmprospătează lista surselor",
+  "settingsSourcesUpdated": "Sursele au fost actualizate.",
+  "settingsSourcesUpdateFailed": "Lista surselor nu a putut fi reîmprospătată.",
+  "settingsImport": "Importă melodii",
+  "settingsImportChordPro": "Importă un fișier ChordPro",
+  "settingsImportSetlist": "Importă un fișier cu lista de piese",
+  "settingsImportSuccess": "Import finalizat.",
+  "settingsImportFailed": "Fișierul nu a putut fi importat.",
+  "settingsImportUnsupported": "Acest tip de fișier nu este acceptat.",
+  "settingsShareSong": "Partajează ca ChordPro",
+  "settingsSharePdf": "Partajează ca PDF",
+  "settingsCopySong": "Copiază în clipboard",
+  "settingsPrintSong": "Imprimă doar melodia",
+  "settingsPrintSetlist": "Imprimă lista cu versuri",
+  "settingsExportFailed": "Fișierul nu a putut fi pregătit.",
+  "settingsCopied": "Copiat în clipboard.",
+  "settingsAbout": "Despre",
+  "settingsPrivacy": "Confidențialitate",
+  "settingsLegal": "Informații legale",
+  "settingsClearHistory": "Șterge istoricul",
+  "settingsClearHistoryConfirm": "Ștergi istoricul melodiilor și listelor?",
+  "settingsHistoryCleared": "Istoricul a fost șters.",
+  "accountTitle": "Cont și sincronizare",
+  "accountUnavailable": "Sincronizarea necesită o versiune Singbook configurată pentru autentificarea Google. Această versiune păstrează melodiile doar pe acest dispozitiv.",
+  "accountSyncNow": "Sincronizează acum",
+  "accountConnected": "Conectat. Alege „Sincronizează acum” pentru a actualiza copia de siguranță.",
+  "accountSignIn": "Conectează contul",
+  "accountSignOut": "Deconectează-te",
+  "accountChange": "Schimbă contul",
+  "accountSignedOut": "Neconectat",
+  "accountSyncing": "Se sincronizează biblioteca…",
+  "accountSynced": "Biblioteca a fost sincronizată.",
+  "accountSyncFailed": "Biblioteca nu a putut fi sincronizată.",
+  "accessibilityFavorite": "Favorită",
+  "accessibilityNotFavorite": "Nu este favorită",
+  "accessibilitySearchField": "Caută melodii",
+  "accessibilityClearSearch": "Șterge textul căutării",
+  "accessibilitySongMenu": "Acțiuni pentru {song}",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "Acțiuni pentru {setlist}",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "Extinde melodiile din {setlist}",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "Restrânge melodiile din {setlist}",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "Progresul redării, {percent} la sută",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "Cronologia istoricului, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "Se încarcă…",
+  "loadingSongs": "Se încarcă melodiile…",
+  "loadingSetlists": "Se încarcă listele…",
+  "errorGeneric": "A apărut o eroare.",
+  "errorOffline": "Se pare că nu ai conexiune la internet.",
+  "errorPermission": "Este necesară o permisiune pentru a continua.",
+  "emptyFiltered": "Niciun element nu corespunde acestor filtre.",
+  "unknownValue": "Necunoscut",
+  "durationUnknown": "Durată necunoscută",
+  "metadataNotSet": "Nesetat",
+  "dateToday": "Astăzi",
+  "dateYesterday": "Ieri",
+  "daySongCount": "{count, plural, =0{Nicio melodie} =1{1 melodie} few{{count} melodii} other{{count} de melodii}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "Bleumarin",
+  "settingsPaletteSage": "Salvie",
+  "settingsPaletteOcean": "Ocean",
+  "settingsPaletteClay": "Argilă",
+  "settingsPalettePlum": "Prună",
+  "settingsFontSystem": "Sistem",
+  "settingsFontSerif": "Serif",
+  "settingsFontMonospace": "Monospațiat",
+  "settingsLyricsPreviewExample": "Când vine dimineața, vom cânta din nou.",
+  "searchDiscoveryProgress": "Se verifică sursele de versuri: {checked} din {total} finalizate.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "Nu s-au găsit versuri utilizabile.",
+  "searchDiscoveryNoLyricsDetails": "Melodia selectată a fost verificată în sursele activate, dar niciuna nu a returnat o versiune utilizabilă a versurilor.",
+  "searchDiscoveryError": "Sursele de versuri nu au putut fi verificate.",
+  "searchDiscoveryRetry": "Reîncearcă căutarea versurilor",
+  "searchSourcesUnavailableCount": "{count, plural, =0{0 surse indisponibile} =1{1 sursă indisponibilă} few{{count} surse indisponibile} other{{count} de surse indisponibile}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "Verifică-ți conexiunea și încearcă din nou.",
+  "searchProviderChecks": "Verificarea surselor",
+  "searchProviderPending": "Se verifică",
+  "searchProviderFound": "Potrivire găsită",
+  "searchProviderRejected": "Nu se potrivește",
+  "searchProviderFailed": "Verificarea a eșuat",
+  "searchProviderUnavailable": "Nu există versuri utilizabile",
+  "searchCatalogFilterHint": "Selectează o melodie pentru a filtra versiunile versurilor după acorduri, sincronizare sau limbă.",
+  "startupErrorTitle": "Biblioteca nu a putut fi deschisă.",
+  "setlistCopyName": "Copia {name}",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "Melodie lipsă",
+  "settingsImportTooLarge": "Fișierul este prea mare pentru a fi importat.",
+  "songsJumpToLetter": "Sari la {letter}",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "Renunță",
+  "editorKeepEditing": "Continuă editarea",
+  "settingsDefaultShowChordsHint": "Afișează acordurile deasupra versurilor când melodia le are.",
+  "settingsDefaultAutoscrollHint": "Versurile se derulează odată cu melodia. Nu se folosește în modul de derulare manuală.",
+  "accountUnavailableTitle": "Sincronizarea nu este configurată",
+  "accountSignedOutBenefits": "Conectează-te cu Google pentru a face o copie de siguranță a melodiilor și listelor în Google Drive și pentru a le sincroniza pe toate dispozitivele. Melodiile rămân oricum pe acest dispozitiv.",
+  "accountSignInWithGoogle": "Conectează-te cu Google",
+  "accountWorking": "Se procesează…",
+  "accountNeverSynced": "Niciodată sincronizată",
+  "accountSyncedJustNow": "Sincronizată chiar acum",
+  "accountSyncedMinutesAgo": "{count, plural, one{Sincronizată acum un minut} few{Sincronizată acum {count} minute} other{Sincronizată acum {count} de minute}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{Sincronizată acum o oră} few{Sincronizată acum {count} ore} other{Sincronizată acum {count} de ore}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{Sincronizată acum o zi} few{Sincronizată acum {count} zile} other{Sincronizată acum {count} de zile}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{O modificare în conflict a fost păstrată ca o copie} few{{count} modificări în conflict au fost păstrate ca copii} other{{count} de modificări în conflict au fost păstrate ca copii}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "Aceeași melodie sau listă a fost editată în două locuri. Nimic nu s-a pierdut: cealaltă versiune a fost salvată ca o copie separată.",
+  "accountReviewConflicts": "Examinează copiile",
+  "songsConflictFilterActive": "Se afișează doar copiile aflate în conflict",
+  "songsConflictFilterClear": "Afișează toate melodiile",
+  "songsConflictBadge": "Copie în conflict",
+  "songsConflictEmpty": "Nu există copii în conflict.",
+  "accountAutoSync": "Sincronizează automat",
+  "accountAutoSyncHint": "Păstrează biblioteca actualizată când deschizi aplicația și după modificări.",
+  "accountSignOutTitle": "Te deconectezi de la acest cont?",
+  "accountSignOutBody": "Melodiile și listele rămân pe acest dispozitiv. Nu vor fi salvate sau sincronizate până când te conectezi din nou.",
+  "accountUseDifferent": "Folosește alt cont",
+  "accountSignInAgain": "Conectează-te din nou",
+  "accountChooseAction": "Alege cum vrei să continui",
+  "accountChangedTitle": "Alt cont Google",
+  "accountChangedBody": "Acest dispozitiv a fost sincronizat ultima dată cu un alt cont Google. Alege ce se întâmplă cu melodiile și listele de pe acest dispozitiv.",
+  "accountChangedMerge": "Unește cu noul cont",
+  "accountChangedMergeHint": "Păstrează totul pe acest dispozitiv și adaugă la noul cont.",
+  "accountChangedReplace": "Înlocuiește cu biblioteca noului cont",
+  "accountChangedReplaceHint": "Melodiile de pe acest dispozitiv care nu există în noul cont vor fi eliminate.",
+  "accountChangedSignOut": "Anulează și deconectează-te",
+  "accountStatusSignedOut": "Cont și sincronizare: deconectat",
+  "accountStatusSignedIn": "Cont și sincronizare: conectat",
+  "accountStatusSyncing": "Cont și sincronizare: se sincronizează",
+  "accountStatusSynced": "Cont și sincronizare: biblioteca este actualizată",
+  "accountStatusError": "Cont și sincronizare: problemă, atinge pentru detalii",
+  "accountNoticeConflicts": "Unele melodii au fost editate în două locuri. Au fost păstrate copii.",
+  "accountNoticeSignedIn": "Conectat.",
+  "accountNoticeSignedOut": "Deconectat. Melodiile rămân pe acest dispozitiv.",
+  "syncErrorNotConfigured": "Sincronizarea nu este configurată în această versiune.",
+  "syncErrorNotConfiguredHint": "Folosește o versiune Singbook configurată pentru autentificarea Google.",
+  "syncErrorNotSignedIn": "Nu ești conectat.",
+  "syncErrorNotSignedInHint": "Conectează-te pentru a sincroniza biblioteca.",
+  "syncErrorAuthorizationRequired": "Google îți cere să te conectezi din nou.",
+  "syncErrorAuthorizationRequiredHint": "Conectează-te din nou pentru a continua sincronizarea. Melodiile sunt în siguranță pe acest dispozitiv.",
+  "syncErrorAccessDenied": "Singbook nu are permisiunea de a folosi Google Drive.",
+  "syncErrorAccessDeniedHint": "Conectează-te din nou și permite accesul la Drive când ți se solicită.",
+  "syncErrorRateLimited": "Google limitează momentan solicitările.",
+  "syncErrorRateLimitedHint": "Așteaptă câteva minute, apoi încearcă din nou.",
+  "syncErrorStorageFull": "Google Drive este plin.",
+  "syncErrorStorageFullHint": "Eliberează spațiu în Drive, apoi încearcă din nou.",
+  "syncErrorNetwork": "Nu s-a putut contacta Google.",
+  "syncErrorNetworkHint": "Verifică conexiunea la internet și încearcă din nou.",
+  "syncErrorAccountChanged": "A fost folosit un alt cont Google.",
+  "syncErrorAccountChangedHint": "Alege dacă unești biblioteca acestui dispozitiv cu cea a contului sau o înlocuiești.",
+  "syncErrorRemoteLibraryTooLarge": "Biblioteca sincronizată este prea mare pentru Singbook.",
+  "syncErrorRemoteLibraryTooLargeHint": "Elimină câteva melodii sau liste din biblioteca sincronizată, apoi încearcă din nou.",
+  "syncErrorSignInFailed": "Conectarea nu s-a finalizat.",
+  "syncErrorSignInFailedHint": "Încearcă să te conectezi din nou.",
+  "syncErrorGeneric": "Biblioteca nu a putut fi sincronizată.",
+  "syncErrorGenericHint": "Încearcă din nou peste puțin timp. Melodiile sunt în siguranță pe acest dispozitiv."
+}

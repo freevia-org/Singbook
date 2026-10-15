@@ -1,0 +1,670 @@
+{
+  "@@locale": "ga",
+  "appTitle": "Singbook",
+  "aboutDescription": "Áit shuaimhneach chun do leabharlann amhrán a aimsiú, a eagrú agus amhráin a chanadh léi.",
+  "aboutMadeForSinging": "Déanta chun amhráin a chanadh le chéile",
+  "appVersion": "Leagan {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "Baile",
+  "navSongs": "Amhráin",
+  "navSetlists": "Liostaí amhrán",
+  "navSettings": "Socruithe",
+  "navSettingsCompact": "Socruithe",
+  "navSearch": "Cuardach",
+  "navBack": "Ar ais",
+  "navClose": "Dún",
+  "navMore": "Tuilleadh gníomhartha",
+  "actionCancel": "Cealaigh",
+  "actionSave": "Sábháil",
+  "actionDone": "Déanta",
+  "actionEdit": "Cuir in eagar",
+  "actionDelete": "Scrios",
+  "actionShare": "Comhroinn",
+  "actionPrint": "Priontáil",
+  "actionCopy": "Cóipeáil",
+  "actionClear": "Glan",
+  "actionRetry": "Bain triail eile as",
+  "actionRefresh": "Athnuaigh",
+  "actionImport": "Iompórtáil",
+  "actionExport": "Easpórtáil",
+  "actionExpand": "Leathnaigh",
+  "actionCollapse": "Laghdaigh",
+  "actionAdd": "Cuir leis",
+  "actionCreate": "Cruthaigh",
+  "actionRemove": "Bain",
+  "actionDuplicate": "Dúblaigh",
+  "actionMoveUp": "Bog suas",
+  "actionMoveDown": "Bog síos",
+  "actionPrevious": "Roimhe seo",
+  "actionNext": "Ar aghaidh",
+  "searchHint": "Cuardaigh amhráin, ealaíontóirí nó liricí",
+  "searchCatalogHint": "Cuardaigh amhrán nó ealaíontóir",
+  "searchSubmit": "Cuardaigh",
+  "searchFilters": "Roghanna cuardaigh",
+  "searchFiltersShow": "Taispeáin roghanna cuardaigh",
+  "searchFiltersHide": "Folaigh roghanna cuardaigh",
+  "searchFilterArtist": "Ealaíontóir",
+  "searchFilterTitle": "Teideal an amhráin",
+  "searchFilterLyrics": "Liricí",
+  "searchFilterChords": "Le cordaí",
+  "searchFilterTimed": "Liricí uainithe",
+  "searchFilterLanguage": "Teanga",
+  "searchFilterAll": "Aon cheann",
+  "searchAutocompleteLabel": "Moltaí",
+  "searchResultCount": "{count, plural, =0{Gan toradh} =1{1 toradh} other{{count} toradh}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "Cuir isteach amhrán, ealaíontóir nó liric le cuardach.",
+  "searchCatalogEmptyQuery": "Cuir isteach amhrán nó ealaíontóir le cuardach.",
+  "searchNoResults": "Níor aimsíodh amhrán ar bith. Bain triail as cuardach eile.",
+  "searchLoading": "Amhráin á gcuardach…",
+  "searchError": "Níorbh fhéidir an cuardach a chríochnú.",
+  "searchOnlineTab": "Ar líne",
+  "searchRecentTab": "Le déanaí",
+  "searchFavoritesTab": "Ceanáin",
+  "searchSuggested": "Meaitseáil molta",
+  "searchAlternatives": "Meaitseálacha eile",
+  "searchCompare": "Cuir leaganacha i gcomparáid",
+  "searchChooseVersion": "Roghnaigh an leagan seo",
+  "searchSongMatch": "Meaitseáil amhráin",
+  "searchRecordingMatch": "Meaitseáil taifeadta",
+  "searchMatchUnverified": "Níl an taifeadadh fíoraithe",
+  "searchMatchExact": "Meaitseáil chruinn taifeadta",
+  "searchMatchPossible": "Meaitseáil fhéideartha",
+  "searchAvailability": "Infhaighteacht",
+  "searchLyricsAvailable": "Liricí ar fáil",
+  "searchLyricsUnavailable": "Níl liricí ar fáil",
+  "searchChordsAvailable": "Cordaí ar fáil",
+  "searchChordsUnavailable": "Gan cordaí",
+  "searchTimingAvailable": "Uainiú ar fáil",
+  "searchTimingUnavailable": "Gan uainiú",
+  "searchDurationUnknown": "Fad anaithnid",
+  "searchRating": "Rátáil {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "Foinse",
+  "searchMetadata": "Sonraí an amhráin",
+  "searchAlbum": "Albam",
+  "searchArtist": "Ealaíontóir",
+  "searchYear": "Bliain",
+  "searchLanguage": "Teanga",
+  "searchSaved": "Sábháladh an t-amhrán i do leabharlann.",
+  "searchSaveFailed": "Níorbh fhéidir an t-amhrán seo a shábháil.",
+  "homeRecentSongs": "Amhráin le déanaí",
+  "homeRecentlyPlayed": "Seinnte le déanaí",
+  "homeFavorites": "Ceanáin",
+  "homeHistory": "Stair",
+  "homeHistoryClear": "Glan an stair",
+  "homeHistoryCleared": "Glanadh an stair.",
+  "homeHistoryEmpty": "Beidh na hamhráin a osclaíonn tú le feiceáil anseo.",
+  "homeFavoritesEmpty": "Beidh na hamhráin agus na liostaí amhrán is ansa leat le feiceáil anseo.",
+  "homeItemsShownCount": "{count, plural, =0{Taispeántar 0 mír} =1{Taispeántar 1 mhír} other{Taispeántar {count} mír}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "Beidh na hamhráin agus na liostaí amhrán is déanaí agat le feiceáil anseo.",
+  "homeTimelineLabel": "Amlíne na staire",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "An stair ar fad",
+  "homeShowFavorites": "Taispeáin ceanáin",
+  "homeShowRecent": "Taispeáin na cinn is déanaí",
+  "songsTitle": "Amhráin",
+  "songsEmpty": "Beidh d’amhráin le feiceáil anseo.",
+  "songsEmptySearch": "Ní mheaitseálann aon amhrán do chuardach.",
+  "songsAdd": "Cuir amhrán leis",
+  "songsSortAlphabetical": "Sórtáil in ord aibítre",
+  "songsAlphabetNavigation": "Innéacs amhrán",
+  "songsUsageCount": "{count, plural, =0{Níor osclaíodh riamh} =1{Osclaíodh uair amháin} other{Osclaíodh {count} uair}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "Cuir le ceanáin",
+  "songFavoriteRemove": "Bain de cheanáin",
+  "songMenuLabel": "Gníomhartha amhráin",
+  "songInfo": "Sonraí an amhráin",
+  "setlistMenuLabel": "Gníomhartha liosta amhrán",
+  "songAddToSetlist": "Cuir leis an liosta amhrán",
+  "songCopyChordPro": "Cóipeáil ChordPro",
+  "songDeleteConfirmTitle": "Scrios an t-amhrán?",
+  "songDeleteConfirmMessage": "Bainfear an t-amhrán seo de do leabharlann.",
+  "songDeleted": "Scriosadh an t-amhrán.",
+  "setlistsTitle": "Liostaí amhrán",
+  "setlistsEmpty": "Cruthaigh liosta amhrán don chéad chleachtadh nó léiriú eile.",
+  "setlistsEmptySearch": "Ní mheaitseálann aon liosta amhrán do chuardach.",
+  "setlistCreate": "Liosta amhrán nua",
+  "setlistNameHint": "Ainm an liosta amhrán",
+  "setlistNotes": "Nótaí",
+  "setlistEntryOverride": "Eochair agus capo don amhrán seo",
+  "setlistSongsCount": "{count, plural, =0{Gan amhrán} =1{1 amhrán} other{{count} amhrán}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "Ar a laghad {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "Fad anaithnid",
+  "setlistActivity": "Gníomhaíocht dheireanach {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "Cruthaithe {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "Curtha in eagar {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "Seinnte an uair dheireanach {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "Níl aon amhrán sa liosta seo fós.",
+  "setlistAddSongs": "Cuir amhráin leis",
+  "setlistReorder": "Athordaigh na hamhráin",
+  "setlistMoveSongUp": "Bog {song} suas",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "Bog {song} síos",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "Bain {song} den liosta amhrán",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "Dúblaigh an liosta amhrán",
+  "setlistFavoriteAdd": "Cuir an liosta amhrán le ceanáin",
+  "setlistFavoriteRemove": "Bain an liosta amhrán de cheanáin",
+  "setlistShare": "Comhroinn mar chomhad liosta amhrán",
+  "setlistSharePdf": "Comhroinn mar PDF",
+  "setlistPrint": "Priontáil",
+  "setlistDeleteConfirmTitle": "Scrios an liosta amhrán?",
+  "setlistDeleteConfirmMessage": "Bainfear an liosta amhrán. Fanfaidh na hamhráin i do leabharlann.",
+  "setlistDeleted": "Scriosadh an liosta amhrán.",
+  "readerTitle": "Liricí",
+  "readerNoLyrics": "Níor cuireadh liricí leis fós.",
+  "readerShowChords": "Taispeáin cordaí",
+  "readerHideChords": "Folaigh cordaí",
+  "readerTranspose": "Trasuigh cordaí",
+  "readerTransposeSemitones": "Trasuigh {count, plural, =0{0 leath-thón} =1{1 leath-thón} other{{count} leath-thón}}",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "Cuir liricí agus sonraí in eagar",
+  "playerPlay": "Tosaigh ag scrollú na liricí",
+  "playerPause": "Cuir scrollú na liricí ar sos",
+  "playerResume": "Lean ar aghaidh ag scrollú na liricí",
+  "playerSeek": "Suíomh athsheinnte",
+  "playerElapsed": "Am caite {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "Am fágtha {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "Mód scrollaithe",
+  "playerTimedLyrics": "Liricí uainithe",
+  "playerEstimatedPace": "Luas measta",
+  "playerManualScroll": "Scrollú láimhe",
+  "playerTimingStatusReady": "Leanfaidh na liricí an t-uainiú atá ar fáil.",
+  "playerTimingStatusEstimated": "Meastar luas an scrollaithe ó fhad an amhráin.",
+  "playerTimingStatusManual": "Scrollaigh na liricí tú féin.",
+  "playerTimingStatusUnavailable": "Níl scrollú uainithe ar fáil don amhrán seo.",
+  "playerDurationUnknown": "Cuir fad an amhráin leis chun scrollú measta a úsáid.",
+  "playerProgressLabel": "Dul chun cinn an amhráin",
+  "playerCurrentSection": "Rannóg reatha",
+  "playerPreviousSection": "Rannóg roimhe seo",
+  "playerNextSection": "An chéad rannóg eile",
+  "playerPreviousSectionSong": "Rannóg roimhe seo · coinnigh síos don amhrán roimhe seo sa liosta",
+  "playerNextSectionSong": "An chéad rannóg eile · coinnigh síos don chéad amhrán eile sa liosta",
+  "playerPreviousSong": "Amhrán roimhe seo",
+  "playerNextSong": "An chéad amhrán eile",
+  "editorTitle": "Cuir amhrán in eagar",
+  "editorTitleField": "Teideal an amhráin",
+  "editorArtistField": "Ealaíontóir",
+  "editorAlbumField": "Albam",
+  "editorLyricsField": "Liricí",
+  "editorChordsField": "Cordaí",
+  "editorKeyField": "Eochair",
+  "editorCapoField": "Capo",
+  "editorTuningField": "Tiúnadh",
+  "editorTempoField": "Luas",
+  "editorDurationField": "Fad",
+  "editorTimeSignatureField": "Méadar",
+  "editorLanguageField": "Teanga",
+  "editorYearField": "Bliain",
+  "editorComposerField": "Cumadóir",
+  "editorLyricistField": "Údar liricí",
+  "editorCopyrightField": "Cóipcheart",
+  "editorLicenseField": "Ceadúnas",
+  "songInfoSources": "Foinsí agus creidiúintí",
+  "searchMatchSameSong": "An t-amhrán céanna; níl an taifeadadh deimhnithe",
+  "searchMatchNeedsAgreement": "Ní mór liricí an chairte a dheimhniú",
+  "searchMatchDifferentLyrics": "Tá na liricí difriúil ón amhrán roghnaithe",
+  "searchMatchCombinedSources": "Cuireadh sonraí ó fhoinsí éagsúla le chéile",
+  "searchCombinedFromSources": "{count, plural, =1{Cuireadh le chéile ó 1 fhoinse} other{Cuireadh le chéile ó {count} fhoinse}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, =0{0 meaitseáil amhráin} =1{1 mheaitseáil amhráin} other{{count} meaitseáil amhráin}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, =0{0 leagan foinse} =1{1 leagan foinse} other{{count} leagan foinse}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "An mheaitseáil is fearr atá ar fáil",
+  "providerDescriptionUnknown": "Foinse amhráin",
+  "providerDescDownloadChordProThenImport": "Íoslódáil comhad ChordPro ón bhfoinse, ansin iompórtáil é.",
+  "providerDescFreeAccountDownloadThenImport": "Íoslódáil an comhad le cuntas saor in aisce, ansin iompórtáil é.",
+  "providerDescPublicChordSheets": "Bileoga cordaí poiblí.",
+  "providerDescHistoricalTextPerWorkLicense": "Liricí stairiúla ceadúnaithe de réir saothair.",
+  "providerDescLicensedCatalog": "Catalóg liricí cheadúnaithe.",
+  "providerDescOriginalSongsCcBy": "Amhráin bhunaidh faoi Creative Commons BY.",
+  "providerDescPerSongLicense": "Liricí ceadúnaithe de réir amhráin.",
+  "providerDescRecordingMetadataOnly": "Sonraí taifeadta agus eisithe amháin.",
+  "providerDescCompositionMetadataOnly": "Sonraí cumadóireachta amháin.",
+  "providerDescExactFileArtworkOnly": "Saothar ealaíne do mheaitseálacha cruinne taifeadta amháin.",
+  "providerCapabilityLyrics": "Liricí",
+  "providerCapabilityChords": "Cordaí",
+  "providerCapabilityTiming": "Liricí uainithe",
+  "providerCapabilitySearch": "Cuardach",
+  "providerCapabilityMetadata": "Sonraí amhráin",
+  "editorArtworkField": "Nasc chuig saothar ealaíne",
+  "editorLyricsHint": "Tapáil líne chun liricí nó cordaí a chur in eagar.",
+  "editorSave": "Sábháil athruithe",
+  "editorSaved": "Sábháladh na hathruithe.",
+  "editorSaveFailed": "Níorbh fhéidir na hathruithe a shábháil.",
+  "editorSaveConflict": "Athraíodh an t-amhrán in áit eile. Sábháladh do chuid athruithe mar chóip ar leith.",
+  "editorUnsavedTitle": "Caith uait na hathruithe?",
+  "editorUnsavedMessage": "Níor sábháladh do chuid athruithe.",
+  "editorFieldRequired": "Cuir isteach teideal amhráin.",
+  "settingsTitle": "Socruithe",
+  "settingsAppearance": "Cuma",
+  "settingsTheme": "Téama",
+  "settingsThemeSystem": "Úsáid socrú an ghléis",
+  "settingsThemeLight": "Geal",
+  "settingsThemeDark": "Dorcha",
+  "settingsColorPalette": "Pailéad dathanna",
+  "settingsFont": "Cló",
+  "settingsTextSize": "Méid an téacs",
+  "settingsLyricsPreview": "Réamhamharc liricí",
+  "settingsPlayer": "Seinnteoir liricí",
+  "settingsDefaultShowChords": "Taispeáin cordaí de réir réamhshocraithe",
+  "settingsDefaultAutoscroll": "Scrollaigh liricí go huathoibríoch",
+  "settingsDefaultTiming": "Mód scrollaithe réamhshocraithe",
+  "settingsLanguage": "Teanga na haipe",
+  "settingsLanguageSystem": "Úsáid teanga an ghléis",
+  "settingsLanguageEnglish": "Béarla",
+  "settingsLanguageBulgarian": "Bulgáiris",
+  "settingsLanguageUkrainian": "Úcráinis",
+  "settingsSources": "Foinsí liricí",
+  "settingsSourceEnabled": "Cumasaigh foinse {source}",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "Athnuaigh liosta na bhfoinsí",
+  "settingsSourcesUpdated": "Nuashonraíodh na foinsí.",
+  "settingsSourcesUpdateFailed": "Níorbh fhéidir na foinsí a athnuachan.",
+  "settingsImport": "Iompórtáil amhráin",
+  "settingsImportChordPro": "Iompórtáil comhad ChordPro",
+  "settingsImportSetlist": "Iompórtáil comhad liosta amhrán",
+  "settingsImportSuccess": "Iompórtáil críochnaithe.",
+  "settingsImportFailed": "Níorbh fhéidir an comhad seo a iompórtáil.",
+  "settingsImportUnsupported": "Ní thacaítear leis an gcineál comhaid seo.",
+  "settingsShareSong": "Comhroinn mar ChordPro",
+  "settingsSharePdf": "Comhroinn mar PDF",
+  "settingsCopySong": "Cóipeáil chuig an ngearrthaisce",
+  "settingsPrintSong": "Priontáil an t-amhrán amháin",
+  "settingsPrintSetlist": "Priontáil liosta amhrán leis na liricí",
+  "settingsExportFailed": "Níorbh fhéidir an comhad a ullmhú.",
+  "settingsCopied": "Cóipeáladh chuig an ngearrthaisce.",
+  "settingsAbout": "Faoi",
+  "settingsPrivacy": "Príobháideachas",
+  "settingsLegal": "Cúrsaí dlí",
+  "settingsClearHistory": "Glan an stair",
+  "settingsClearHistoryConfirm": "Glan stair na n-amhrán agus na liostaí amhrán?",
+  "settingsHistoryCleared": "Glanadh an stair.",
+  "accountTitle": "Cuntas agus sioncronú",
+  "accountUnavailable": "Teastaíonn leagan de Singbook atá cumraithe le síniú isteach le Google chun sioncronú a dhéanamh. Ní choinníonn an leagan seo d’amhráin ach ar an ngléas seo.",
+  "accountSyncNow": "Sioncrónaigh anois",
+  "accountConnected": "Nasctha. Roghnaigh Sioncrónaigh anois chun do chúltaca a nuashonrú.",
+  "accountSignIn": "Ceangail cuntas",
+  "accountSignOut": "Sínigh amach",
+  "accountChange": "Athraigh cuntas",
+  "accountSignedOut": "Gan nasc",
+  "accountSyncing": "Do leabharlann á sioncronú…",
+  "accountSynced": "Sioncrónaíodh an leabharlann.",
+  "accountSyncFailed": "Níorbh fhéidir do leabharlann a shioncronú.",
+  "accessibilityFavorite": "Ceanán",
+  "accessibilityNotFavorite": "Ní ceanán é",
+  "accessibilitySearchField": "Cuardaigh amhráin",
+  "accessibilityClearSearch": "Glan téacs cuardaigh",
+  "accessibilitySongMenu": "Gníomhartha do {song}",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "Gníomhartha do {setlist}",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "Leathnaigh amhráin in {setlist}",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "Laghdaigh amhráin in {setlist}",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "Dul chun cinn athsheinnte, {percent} faoin gcéad",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "Amlíne na staire, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "Ag lódáil…",
+  "loadingSongs": "Amhráin á lódáil…",
+  "loadingSetlists": "Liostaí á lódáil…",
+  "errorGeneric": "Tharla earráid.",
+  "errorOffline": "Is cosúil nach bhfuil tú ar líne.",
+  "errorPermission": "Tá cead ag teastáil chun leanúint ar aghaidh.",
+  "emptyFiltered": "Ní mheaitseálann aon mhír na scagairí seo.",
+  "unknownValue": "Anaithnid",
+  "durationUnknown": "Fad anaithnid",
+  "metadataNotSet": "Gan socrú",
+  "dateToday": "Inniu",
+  "dateYesterday": "Inné",
+  "daySongCount": "{count, plural, =0{Gan amhrán} =1{1 amhrán} other{{count} amhrán}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "Dúghorm",
+  "settingsPaletteSage": "Glas sáiste",
+  "settingsPaletteOcean": "Aigéan",
+  "settingsPaletteClay": "Cré",
+  "settingsPalettePlum": "Pluma",
+  "settingsFontSystem": "Córas",
+  "settingsFontSerif": "Serif",
+  "settingsFontMonospace": "Aonleithead",
+  "settingsLyricsPreviewExample": "Nuair a thiocfaidh an mhaidin, canfaimid arís.",
+  "searchDiscoveryProgress": "Foinsí liricí á seiceáil: {checked} as {total} críochnaithe.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "Níor aimsíodh liricí inúsáidte.",
+  "searchDiscoveryNoLyricsDetails": "Seiceáladh an t-amhrán roghnaithe sna foinsí cumasaithe, ach níor thug aon cheann acu leagan liricí inúsáidte ar ais.",
+  "searchDiscoveryError": "Níorbh fhéidir foinsí liricí a sheiceáil.",
+  "searchDiscoveryRetry": "Déan cuardach liricí arís",
+  "searchSourcesUnavailableCount": "{count, plural, =0{0 foinse nach bhfuil ar fáil} =1{1 fhoinse nach bhfuil ar fáil} other{{count} foinse nach bhfuil ar fáil}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "Seiceáil do nasc agus bain triail eile as.",
+  "searchProviderChecks": "Seiceálacha foinsí",
+  "searchProviderPending": "Á sheiceáil",
+  "searchProviderFound": "Aimsíodh meaitseáil",
+  "searchProviderRejected": "Ní mheaitseálann",
+  "searchProviderFailed": "Theip ar an tseiceáil",
+  "searchProviderUnavailable": "Níl liricí inúsáidte ar fáil",
+  "searchCatalogFilterHint": "Roghnaigh amhrán chun leaganacha liricí a scagadh de réir cordaí, uainiúcháin nó teanga.",
+  "startupErrorTitle": "Níorbh fhéidir do leabharlann a oscailt.",
+  "setlistCopyName": "Cóip de {name}",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "Amhrán ar iarraidh",
+  "settingsImportTooLarge": "Tá an comhad seo rómhór le hiompórtáil.",
+  "songsJumpToLetter": "Léim chuig {letter}",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "Caith uait",
+  "editorKeepEditing": "Lean leis an eagarthóireacht",
+  "settingsDefaultShowChordsHint": "Taispeáin cordaí os cionn na liricí nuair atá cordaí ag amhrán.",
+  "settingsDefaultAutoscrollHint": "Scrollaíonn na liricí leis an amhrán. Ní úsáidtear é sa mhód scrollaithe láimhe.",
+  "accountUnavailableTitle": "Níl sioncronú socraithe",
+  "accountSignedOutBenefits": "Sínigh isteach le Google chun cúltaca a dhéanamh de d’amhráin agus do liostaí amhrán in Google Drive agus do ghléasanna uile a choinneáil sioncronaithe. Fanann d’amhráin ar an ngléas seo ar aon nós.",
+  "accountSignInWithGoogle": "Sínigh isteach le Google",
+  "accountWorking": "Ag obair…",
+  "accountNeverSynced": "Níor sioncrónaíodh riamh",
+  "accountSyncedJustNow": "Sioncrónaíodh díreach anois",
+  "accountSyncedMinutesAgo": "{count, plural, one{Sioncrónaíodh 1 nóiméad ó shin} other{Sioncrónaíodh {count} nóiméad ó shin}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{Sioncrónaíodh 1 uair ó shin} other{Sioncrónaíodh {count} uair ó shin}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{Sioncrónaíodh 1 lá ó shin} other{Sioncrónaíodh {count} lá ó shin}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{Sábháladh 1 athrú contrártha mar chóip} other{Sábháladh {count} athrú contrártha mar chóipeanna}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "Cuireadh an t-amhrán nó an liosta céanna in eagar in dhá áit. Níor cailleadh tada: sábháladh an leagan eile mar chóip ar leith.",
+  "accountReviewConflicts": "Athbhreithnigh cóipeanna",
+  "songsConflictFilterActive": "Cóipeanna contrártha amháin á dtaispeáint",
+  "songsConflictFilterClear": "Taispeáin gach amhrán",
+  "songsConflictBadge": "Cóip chontrártha",
+  "songsConflictEmpty": "Níl cóipeanna contrártha ann.",
+  "accountAutoSync": "Sioncrónaigh go huathoibríoch",
+  "accountAutoSyncHint": "Coinnigh do leabharlann cothrom le dáta nuair a osclaíonn tú an aip agus tar éis athruithe.",
+  "accountSignOutTitle": "Sínigh amach as an gcuntas seo?",
+  "accountSignOutBody": "Fanann d’amhráin agus do liostaí amhrán ar an ngléas seo. Ní dhéanfar cúltaca ná sioncronú díobh go dtí go síneoidh tú isteach arís.",
+  "accountUseDifferent": "Úsáid cuntas eile",
+  "accountSignInAgain": "Sínigh isteach arís",
+  "accountChooseAction": "Roghnaigh conas leanúint ar aghaidh",
+  "accountChangedTitle": "Cuntas Google eile",
+  "accountChangedBody": "Sioncrónaíodh an gléas seo le cuntas Google eile an uair dheireanach. Roghnaigh cad ba cheart a dhéanamh leis na hamhráin agus na liostaí ar an ngléas seo.",
+  "accountChangedMerge": "Cumaisc leis an gcuntas nua",
+  "accountChangedMergeHint": "Coinnigh gach rud ar an ngléas seo agus cuir leis an gcuntas nua é.",
+  "accountChangedReplace": "Cuir leabharlann an chuntais nua ina hionad",
+  "accountChangedReplaceHint": "Bainfear na hamhráin ar an ngléas seo nach bhfuil sa chuntas nua.",
+  "accountChangedSignOut": "Cealaigh agus sínigh amach",
+  "accountStatusSignedOut": "Cuntas agus sioncronú: níl síniú isteach déanta",
+  "accountStatusSignedIn": "Cuntas agus sioncronú: síníodh isteach",
+  "accountStatusSyncing": "Cuntas agus sioncronú: á sioncronú",
+  "accountStatusSynced": "Cuntas agus sioncronú: tá an leabharlann cothrom le dáta",
+  "accountStatusError": "Cuntas agus sioncronú: fadhb, tapáil chun athbhreithniú a dhéanamh",
+  "accountNoticeConflicts": "Cuireadh roinnt amhrán in eagar in dhá áit. Coinníodh cóipeanna.",
+  "accountNoticeSignedIn": "Síníodh isteach.",
+  "accountNoticeSignedOut": "Síníodh amach. Fanann d’amhráin ar an ngléas seo.",
+  "syncErrorNotConfigured": "Níl sioncronú socraithe sa leagan seo.",
+  "syncErrorNotConfiguredHint": "Úsáid leagan de Singbook atá cumraithe le síniú isteach le Google.",
+  "syncErrorNotSignedIn": "Níl síniú isteach déanta agat.",
+  "syncErrorNotSignedInHint": "Sínigh isteach chun do leabharlann a shioncronú.",
+  "syncErrorAuthorizationRequired": "Iarrann Google ort síniú isteach arís.",
+  "syncErrorAuthorizationRequiredHint": "Sínigh isteach arís chun leanúint leis an sioncronú. Tá d’amhráin slán ar an ngléas seo.",
+  "syncErrorAccessDenied": "Níl cead ag Singbook Google Drive a úsáid.",
+  "syncErrorAccessDeniedHint": "Sínigh isteach arís agus ceadaigh rochtain ar Drive nuair a iarrtar ort é.",
+  "syncErrorRateLimited": "Tá Google ag teorannú iarratais faoi láthair.",
+  "syncErrorRateLimitedHint": "Fan cúpla nóiméad agus bain triail eile as.",
+  "syncErrorStorageFull": "Tá do Google Drive lán.",
+  "syncErrorStorageFullHint": "Saor spás in Drive agus bain triail eile as.",
+  "syncErrorNetwork": "Níorbh fhéidir Google a bhaint amach.",
+  "syncErrorNetworkHint": "Seiceáil do nasc idirlín agus bain triail eile as.",
+  "syncErrorAccountChanged": "Úsáideadh cuntas Google eile.",
+  "syncErrorAccountChangedHint": "Roghnaigh ar cheart leabharlann an ghléis seo a chumasc leis an gcuntas nó í a ionadú.",
+  "syncErrorRemoteLibraryTooLarge": "Tá do leabharlann shioncronaithe níos mó ná mar is féidir le Singbook a láimhseáil.",
+  "syncErrorRemoteLibraryTooLargeHint": "Bain roinnt amhrán nó liostaí den leabharlann shioncronaithe agus bain triail eile as.",
+  "syncErrorSignInFailed": "Níor críochnaíodh an síniú isteach.",
+  "syncErrorSignInFailedHint": "Bain triail eile as síniú isteach.",
+  "syncErrorGeneric": "Níorbh fhéidir do leabharlann a shioncronú.",
+  "syncErrorGenericHint": "Bain triail eile as ar ball. Tá d’amhráin fós slán ar an ngléas seo."
+}

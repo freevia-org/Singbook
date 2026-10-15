@@ -1,0 +1,670 @@
+{
+  "@@locale": "tr",
+  "appTitle": "Singbook",
+  "aboutDescription": "Şarkı kitaplığınızdaki parçaları bulup düzenleyebileceğiniz ve söyleyebileceğiniz sakin bir alan.",
+  "aboutMadeForSinging": "Birlikte şarkı söylemek için tasarlandı",
+  "appVersion": "Sürüm {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "Ana Sayfa",
+  "navSongs": "Şarkılar",
+  "navSetlists": "Şarkı listeleri",
+  "navSettings": "Ayarlar",
+  "navSettingsCompact": "Ayarlar",
+  "navSearch": "Ara",
+  "navBack": "Geri",
+  "navClose": "Kapat",
+  "navMore": "Diğer işlemler",
+  "actionCancel": "İptal",
+  "actionSave": "Kaydet",
+  "actionDone": "Tamam",
+  "actionEdit": "Düzenle",
+  "actionDelete": "Sil",
+  "actionShare": "Paylaş",
+  "actionPrint": "Yazdır",
+  "actionCopy": "Kopyala",
+  "actionClear": "Temizle",
+  "actionRetry": "Tekrar dene",
+  "actionRefresh": "Yenile",
+  "actionImport": "İçe aktar",
+  "actionExport": "Dışa aktar",
+  "actionExpand": "Genişlet",
+  "actionCollapse": "Daralt",
+  "actionAdd": "Ekle",
+  "actionCreate": "Oluştur",
+  "actionRemove": "Kaldır",
+  "actionDuplicate": "Çoğalt",
+  "actionMoveUp": "Yukarı taşı",
+  "actionMoveDown": "Aşağı taşı",
+  "actionPrevious": "Önceki",
+  "actionNext": "Sonraki",
+  "searchHint": "Şarkı, sanatçı veya şarkı sözü ara",
+  "searchCatalogHint": "Bir şarkı veya sanatçı ara",
+  "searchSubmit": "Ara",
+  "searchFilters": "Arama seçenekleri",
+  "searchFiltersShow": "Arama seçeneklerini göster",
+  "searchFiltersHide": "Arama seçeneklerini gizle",
+  "searchFilterArtist": "Sanatçı",
+  "searchFilterTitle": "Şarkı adı",
+  "searchFilterLyrics": "Şarkı sözleri",
+  "searchFilterChords": "Akor içeriyor",
+  "searchFilterTimed": "Zamanlanmış şarkı sözleri",
+  "searchFilterLanguage": "Dil",
+  "searchFilterAll": "Tümü",
+  "searchAutocompleteLabel": "Öneriler",
+  "searchResultCount": "{count, plural, =0{Sonuç yok} =1{1 sonuç} other{{count} sonuç}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "Aramak için bir şarkı, sanatçı veya şarkı sözü girin.",
+  "searchCatalogEmptyQuery": "Aramak için bir şarkı veya sanatçı girin.",
+  "searchNoResults": "Şarkı bulunamadı. Farklı bir arama deneyin.",
+  "searchLoading": "Şarkılar aranıyor…",
+  "searchError": "Arama tamamlanamadı.",
+  "searchOnlineTab": "Çevrimiçi",
+  "searchRecentTab": "Son aramalar",
+  "searchFavoritesTab": "Favoriler",
+  "searchSuggested": "Önerilen eşleşme",
+  "searchAlternatives": "Diğer eşleşmeler",
+  "searchCompare": "Sürümleri karşılaştır",
+  "searchChooseVersion": "Bu sürümü seç",
+  "searchSongMatch": "Şarkı eşleşmesi",
+  "searchRecordingMatch": "Kayıt eşleşmesi",
+  "searchMatchUnverified": "Kayıt doğrulanmadı",
+  "searchMatchExact": "Tam kayıt eşleşmesi",
+  "searchMatchPossible": "Olası eşleşme",
+  "searchAvailability": "Kullanılabilirlik",
+  "searchLyricsAvailable": "Şarkı sözleri mevcut",
+  "searchLyricsUnavailable": "Şarkı sözleri mevcut değil",
+  "searchChordsAvailable": "Akorlar mevcut",
+  "searchChordsUnavailable": "Akor yok",
+  "searchTimingAvailable": "Zamanlama mevcut",
+  "searchTimingUnavailable": "Zamanlama yok",
+  "searchDurationUnknown": "Süre bilinmiyor",
+  "searchRating": "Puan {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "Kaynak",
+  "searchMetadata": "Şarkı ayrıntıları",
+  "searchAlbum": "Albüm",
+  "searchArtist": "Sanatçı",
+  "searchYear": "Yıl",
+  "searchLanguage": "Dil",
+  "searchSaved": "Şarkı kitaplığınıza kaydedildi.",
+  "searchSaveFailed": "Bu şarkı kaydedilemedi.",
+  "homeRecentSongs": "Son şarkılar",
+  "homeRecentlyPlayed": "Son çalınanlar",
+  "homeFavorites": "Favoriler",
+  "homeHistory": "Geçmiş",
+  "homeHistoryClear": "Geçmişi temizle",
+  "homeHistoryCleared": "Geçmiş temizlendi.",
+  "homeHistoryEmpty": "Açtığınız şarkılar burada görünür.",
+  "homeFavoritesEmpty": "Favori şarkılarınız ve listeleriniz burada görünür.",
+  "homeItemsShownCount": "{count, plural, =0{0 öğe gösterildi} =1{1 öğe gösterildi} other{{count} öğe gösterildi}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "Son şarkılarınız ve listeleriniz burada görünür.",
+  "homeTimelineLabel": "Geçmiş zaman çizelgesi",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "Tüm geçmiş",
+  "homeShowFavorites": "Favorileri göster",
+  "homeShowRecent": "Son öğeleri göster",
+  "songsTitle": "Şarkılar",
+  "songsEmpty": "Şarkılarınız burada görünür.",
+  "songsEmptySearch": "Aramanızla eşleşen şarkı yok.",
+  "songsAdd": "Şarkı ekle",
+  "songsSortAlphabetical": "Alfabetik sırala",
+  "songsAlphabetNavigation": "Şarkı dizini",
+  "songsUsageCount": "{count, plural, =0{Hiç açılmadı} =1{Bir kez açıldı} other{{count} kez açıldı}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "Favorilere ekle",
+  "songFavoriteRemove": "Favorilerden kaldır",
+  "songMenuLabel": "Şarkı işlemleri",
+  "songInfo": "Şarkı ayrıntıları",
+  "setlistMenuLabel": "Liste işlemleri",
+  "songAddToSetlist": "Listeye ekle",
+  "songCopyChordPro": "ChordPro'yu kopyala",
+  "songDeleteConfirmTitle": "Şarkı silinsin mi?",
+  "songDeleteConfirmMessage": "Bu şarkı kitaplığınızdan kaldırılacak.",
+  "songDeleted": "Şarkı silindi.",
+  "setlistsTitle": "Şarkı listeleri",
+  "setlistsEmpty": "Bir sonraki provanız veya performansınız için bir liste oluşturun.",
+  "setlistsEmptySearch": "Aramanızla eşleşen liste yok.",
+  "setlistCreate": "Yeni liste",
+  "setlistNameHint": "Liste adı",
+  "setlistNotes": "Notlar",
+  "setlistEntryOverride": "Şarkıya özel ton ve capo",
+  "setlistSongsCount": "{count, plural, =0{Şarkı yok} =1{1 şarkı} other{{count} şarkı}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "En az {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "Süre bilinmiyor",
+  "setlistActivity": "Son etkinlik {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "Oluşturulma {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "Düzenlenme {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "Son çalınma {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "Bu listede henüz şarkı yok.",
+  "setlistAddSongs": "Şarkı ekle",
+  "setlistReorder": "Şarkıların sırasını değiştir",
+  "setlistMoveSongUp": "{song} şarkısını yukarı taşı",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "{song} şarkısını aşağı taşı",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "{song} şarkısını listeden kaldır",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "Listeyi çoğalt",
+  "setlistFavoriteAdd": "Listeyi favorilere ekle",
+  "setlistFavoriteRemove": "Listeyi favorilerden kaldır",
+  "setlistShare": "Liste dosyası olarak paylaş",
+  "setlistSharePdf": "PDF olarak paylaş",
+  "setlistPrint": "Yazdır",
+  "setlistDeleteConfirmTitle": "Liste silinsin mi?",
+  "setlistDeleteConfirmMessage": "Liste kaldırılacak. Kitaplığınızdaki şarkılar kalacak.",
+  "setlistDeleted": "Liste silindi.",
+  "readerTitle": "Şarkı sözleri",
+  "readerNoLyrics": "Henüz şarkı sözü eklenmedi.",
+  "readerShowChords": "Akorları göster",
+  "readerHideChords": "Akorları gizle",
+  "readerTranspose": "Akorları transpoze et",
+  "readerTransposeSemitones": "{count, plural, =0{0 yarım ton} =1{1 yarım ton} other{{count} yarım ton}} transpoze et",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "Şarkı sözlerini ve ayrıntıları düzenle",
+  "playerPlay": "Şarkı sözü kaydırmayı başlat",
+  "playerPause": "Şarkı sözü kaydırmayı duraklat",
+  "playerResume": "Şarkı sözü kaydırmayı sürdür",
+  "playerSeek": "Çalma konumu",
+  "playerElapsed": "Geçen süre {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "Kalan süre {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "Kaydırma modu",
+  "playerTimedLyrics": "Zamanlanmış şarkı sözleri",
+  "playerEstimatedPace": "Tahmini hız",
+  "playerManualScroll": "Elle kaydırma",
+  "playerTimingStatusReady": "Şarkı sözleri mevcut zamanlamaya göre ilerler.",
+  "playerTimingStatusEstimated": "Kaydırma hızı şarkı süresine göre tahmin edilir.",
+  "playerTimingStatusManual": "Şarkı sözlerini kendiniz kaydırın.",
+  "playerTimingStatusUnavailable": "Bu şarkı için zamanlanmış kaydırma kullanılamıyor.",
+  "playerDurationUnknown": "Tahmini kaydırmayı kullanmak için şarkı süresi ekleyin.",
+  "playerProgressLabel": "Şarkı ilerlemesi",
+  "playerCurrentSection": "Geçerli bölüm",
+  "playerPreviousSection": "Önceki bölüm",
+  "playerNextSection": "Sonraki bölüm",
+  "playerPreviousSectionSong": "Önceki bölüm · listedeki önceki şarkı için basılı tutun",
+  "playerNextSectionSong": "Sonraki bölüm · listedeki sonraki şarkı için basılı tutun",
+  "playerPreviousSong": "Önceki şarkı",
+  "playerNextSong": "Sonraki şarkı",
+  "editorTitle": "Şarkıyı düzenle",
+  "editorTitleField": "Şarkı adı",
+  "editorArtistField": "Sanatçı",
+  "editorAlbumField": "Albüm",
+  "editorLyricsField": "Şarkı sözleri",
+  "editorChordsField": "Akorlar",
+  "editorKeyField": "Ton",
+  "editorCapoField": "Capo",
+  "editorTuningField": "Akort",
+  "editorTempoField": "Tempo",
+  "editorDurationField": "Süre",
+  "editorTimeSignatureField": "Ölçü",
+  "editorLanguageField": "Dil",
+  "editorYearField": "Yıl",
+  "editorComposerField": "Besteci",
+  "editorLyricistField": "Söz yazarı",
+  "editorCopyrightField": "Telif hakkı",
+  "editorLicenseField": "Lisans",
+  "songInfoSources": "Kaynaklar ve katkıda bulunanlar",
+  "searchMatchSameSong": "Aynı şarkı; kayıt doğrulanmadı",
+  "searchMatchNeedsAgreement": "Şarkı sözleri onaylanmalı",
+  "searchMatchDifferentLyrics": "Şarkı sözleri seçilen şarkıdan farklı",
+  "searchMatchCombinedSources": "Ayrıntılar birden çok kaynaktan birleştirildi",
+  "searchCombinedFromSources": "{count, plural, =1{1 kaynaktan birleştirildi} other{{count} kaynaktan birleştirildi}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, =0{0 şarkı eşleşmesi} =1{1 şarkı eşleşmesi} other{{count} şarkı eşleşmesi}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, =0{0 kaynak sürümü} =1{1 kaynak sürümü} other{{count} kaynak sürümü}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "Mevcut en iyi eşleşme",
+  "providerDescriptionUnknown": "Şarkı kaynağı",
+  "providerDescDownloadChordProThenImport": "Kaynak sitesinden bir ChordPro dosyası indirin, ardından içe aktarın.",
+  "providerDescFreeAccountDownloadThenImport": "Ücretsiz bir hesapla dosyayı indirin, ardından içe aktarın.",
+  "providerDescPublicChordSheets": "Herkese açık akor sayfaları.",
+  "providerDescHistoricalTextPerWorkLicense": "Eser başına lisanslanmış tarihî şarkı sözleri.",
+  "providerDescLicensedCatalog": "Lisanslı şarkı sözü kataloğu.",
+  "providerDescOriginalSongsCcBy": "Creative Commons BY kapsamında özgün şarkılar.",
+  "providerDescPerSongLicense": "Şarkı başına lisanslanmış şarkı sözleri.",
+  "providerDescRecordingMetadataOnly": "Yalnızca kayıt ve yayın ayrıntıları.",
+  "providerDescCompositionMetadataOnly": "Yalnızca beste ayrıntıları.",
+  "providerDescExactFileArtworkOnly": "Yalnızca tam kayıt eşleşmeleri için kapak görseli.",
+  "providerCapabilityLyrics": "Şarkı sözleri",
+  "providerCapabilityChords": "Akorlar",
+  "providerCapabilityTiming": "Zamanlanmış şarkı sözleri",
+  "providerCapabilitySearch": "Arama",
+  "providerCapabilityMetadata": "Şarkı ayrıntıları",
+  "editorArtworkField": "Kapak görseli bağlantısı",
+  "editorLyricsHint": "Şarkı sözlerini veya akorları düzenlemek için bir satıra dokunun.",
+  "editorSave": "Değişiklikleri kaydet",
+  "editorSaved": "Değişiklikler kaydedildi.",
+  "editorSaveFailed": "Değişiklikler kaydedilemedi.",
+  "editorSaveConflict": "Şarkı başka bir yerde değiştirildi. Düzenlemeleriniz ayrı bir kopya olarak kaydedildi.",
+  "editorUnsavedTitle": "Değişiklikler silinsin mi?",
+  "editorUnsavedMessage": "Düzenlemeleriniz kaydedilmedi.",
+  "editorFieldRequired": "Bir şarkı adı girin.",
+  "settingsTitle": "Ayarlar",
+  "settingsAppearance": "Görünüm",
+  "settingsTheme": "Tema",
+  "settingsThemeSystem": "Cihaz ayarını kullan",
+  "settingsThemeLight": "Açık",
+  "settingsThemeDark": "Koyu",
+  "settingsColorPalette": "Renk paleti",
+  "settingsFont": "Yazı tipi",
+  "settingsTextSize": "Metin boyutu",
+  "settingsLyricsPreview": "Şarkı sözü önizlemesi",
+  "settingsPlayer": "Şarkı sözü oynatıcı",
+  "settingsDefaultShowChords": "Akorları varsayılan olarak göster",
+  "settingsDefaultAutoscroll": "Şarkı sözü kaydırmayı otomatik başlat",
+  "settingsDefaultTiming": "Varsayılan kaydırma modu",
+  "settingsLanguage": "Uygulama dili",
+  "settingsLanguageSystem": "Cihaz dilini kullan",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageBulgarian": "Български",
+  "settingsLanguageUkrainian": "Українська",
+  "settingsSources": "Şarkı sözü kaynakları",
+  "settingsSourceEnabled": "{source} kaynağını etkinleştir",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "Kaynak listesini yenile",
+  "settingsSourcesUpdated": "Kaynaklar güncellendi.",
+  "settingsSourcesUpdateFailed": "Kaynak listesi yenilenemedi.",
+  "settingsImport": "Şarkıları içe aktar",
+  "settingsImportChordPro": "ChordPro dosyasını içe aktar",
+  "settingsImportSetlist": "Şarkı listesi dosyasını içe aktar",
+  "settingsImportSuccess": "İçe aktarma tamamlandı.",
+  "settingsImportFailed": "Bu dosya içe aktarılamadı.",
+  "settingsImportUnsupported": "Bu dosya türü desteklenmiyor.",
+  "settingsShareSong": "ChordPro olarak paylaş",
+  "settingsSharePdf": "PDF olarak paylaş",
+  "settingsCopySong": "Panoya kopyala",
+  "settingsPrintSong": "Yalnızca yazdır",
+  "settingsPrintSetlist": "Şarkı listesini sözlerle birlikte yazdır",
+  "settingsExportFailed": "Dosya hazırlanamadı.",
+  "settingsCopied": "Panoya kopyalandı.",
+  "settingsAbout": "Hakkında",
+  "settingsPrivacy": "Gizlilik",
+  "settingsLegal": "Yasal bilgiler",
+  "settingsClearHistory": "Geçmişi temizle",
+  "settingsClearHistoryConfirm": "Şarkı ve liste geçmişi temizlensin mi?",
+  "settingsHistoryCleared": "Geçmiş temizlendi.",
+  "accountTitle": "Hesap ve senkronizasyon",
+  "accountUnavailable": "Senkronizasyon için Google oturum açma özelliği yapılandırılmış bir Singbook derlemesi gerekir. Bu derleme şarkılarınızı yalnızca bu cihazda tutar.",
+  "accountSyncNow": "Şimdi senkronize et",
+  "accountConnected": "Bağlandı. Yedeklemenizi güncellemek için Şimdi senkronize et'i seçin.",
+  "accountSignIn": "Hesabı bağla",
+  "accountSignOut": "Oturumu kapat",
+  "accountChange": "Hesabı değiştir",
+  "accountSignedOut": "Bağlı değil",
+  "accountSyncing": "Kitaplığınız senkronize ediliyor…",
+  "accountSynced": "Kitaplık senkronize edildi.",
+  "accountSyncFailed": "Kitaplığınız senkronize edilemedi.",
+  "accessibilityFavorite": "Favori",
+  "accessibilityNotFavorite": "Favori değil",
+  "accessibilitySearchField": "Şarkı ara",
+  "accessibilityClearSearch": "Arama metnini temizle",
+  "accessibilitySongMenu": "{song} için işlemler",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "{setlist} için işlemler",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "{setlist} listesindeki şarkıları genişlet",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "{setlist} listesindeki şarkıları daralt",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "Çalma ilerlemesi, yüzde {percent}",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "Geçmiş zaman çizelgesi, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "Yükleniyor…",
+  "loadingSongs": "Şarkılar yükleniyor…",
+  "loadingSetlists": "Listeler yükleniyor…",
+  "errorGeneric": "Bir sorun oluştu.",
+  "errorOffline": "Çevrimdışı görünüyorsunuz.",
+  "errorPermission": "Devam etmek için izin gerekiyor.",
+  "emptyFiltered": "Bu filtrelerle eşleşen öğe yok.",
+  "unknownValue": "Bilinmiyor",
+  "durationUnknown": "Süre bilinmiyor",
+  "metadataNotSet": "Ayarlanmadı",
+  "dateToday": "Bugün",
+  "dateYesterday": "Dün",
+  "daySongCount": "{count, plural, =0{Şarkı yok} =1{1 şarkı} other{{count} şarkı}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "Lacivert",
+  "settingsPaletteSage": "Adaçayı",
+  "settingsPaletteOcean": "Okyanus",
+  "settingsPaletteClay": "Kil",
+  "settingsPalettePlum": "Erik",
+  "settingsFontSystem": "Sistem",
+  "settingsFontSerif": "Tırnaklı",
+  "settingsFontMonospace": "Eş aralıklı",
+  "settingsLyricsPreviewExample": "Sabah olduğunda yine şarkı söyleyeceğiz.",
+  "searchDiscoveryProgress": "Şarkı sözü kaynakları kontrol ediliyor: {total} kaynaktan {checked} tanesi tamamlandı.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "Kullanılabilir şarkı sözü bulunamadı.",
+  "searchDiscoveryNoLyricsDetails": "Seçilen şarkı etkin kaynaklarda arandı ancak hiçbiri kullanılabilir bir söz sürümü döndürmedi.",
+  "searchDiscoveryError": "Şarkı sözü kaynakları kontrol edilemedi.",
+  "searchDiscoveryRetry": "Şarkı sözlerini yeniden ara",
+  "searchSourcesUnavailableCount": "{count, plural, =0{0 kaynak kullanılamıyor} =1{1 kaynak kullanılamıyor} other{{count} kaynak kullanılamıyor}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "Bağlantınızı kontrol edip tekrar deneyin.",
+  "searchProviderChecks": "Kaynak kontrolleri",
+  "searchProviderPending": "Kontrol ediliyor",
+  "searchProviderFound": "Eşleşme bulundu",
+  "searchProviderRejected": "Eşleşmiyor",
+  "searchProviderFailed": "Kontrol başarısız",
+  "searchProviderUnavailable": "Kullanılabilir şarkı sözü yok",
+  "searchCatalogFilterHint": "Şarkı sözü sürümlerini akor, zamanlama veya dile göre filtrelemek için bir şarkı seçin.",
+  "startupErrorTitle": "Kitaplığınız açılamadı.",
+  "setlistCopyName": "{name} kopyası",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "Şarkı eksik",
+  "settingsImportTooLarge": "Bu dosya içe aktarılamayacak kadar büyük.",
+  "songsJumpToLetter": "{letter} harfine git",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "At",
+  "editorKeepEditing": "Düzenlemeye devam et",
+  "settingsDefaultShowChordsHint": "Şarkıda akor varsa şarkı sözlerinin üzerinde göster.",
+  "settingsDefaultAutoscrollHint": "Şarkı sözleri şarkıyla birlikte kayar. Elle kaydırma modunda kullanılmaz.",
+  "accountUnavailableTitle": "Senkronizasyon ayarlanmamış",
+  "accountSignedOutBenefits": "Şarkılarınızı ve listelerinizi Google Drive'a yedeklemek ve tüm cihazlarınızı senkronize tutmak için Google ile oturum açın. Şarkılarınız her durumda bu cihazda kalır.",
+  "accountSignInWithGoogle": "Google ile oturum aç",
+  "accountWorking": "İşleniyor…",
+  "accountNeverSynced": "Hiç senkronize edilmedi",
+  "accountSyncedJustNow": "Az önce senkronize edildi",
+  "accountSyncedMinutesAgo": "{count, plural, one{1 dakika önce senkronize edildi} other{{count} dakika önce senkronize edildi}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{1 saat önce senkronize edildi} other{{count} saat önce senkronize edildi}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{1 gün önce senkronize edildi} other{{count} gün önce senkronize edildi}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{Çakışan 1 düzenleme kopya olarak saklandı} other{Çakışan {count} düzenleme kopya olarak saklandı}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "Aynı şarkı veya liste iki yerde düzenlendi. Hiçbir şey kaybolmadı: diğer sürüm ayrı bir kopya olarak kaydedildi.",
+  "accountReviewConflicts": "Kopyaları gözden geçir",
+  "songsConflictFilterActive": "Yalnızca çakışan kopyalar gösteriliyor",
+  "songsConflictFilterClear": "Tüm şarkıları göster",
+  "songsConflictBadge": "Çakışan kopya",
+  "songsConflictEmpty": "Çakışan kopya yok.",
+  "accountAutoSync": "Otomatik senkronize et",
+  "accountAutoSyncHint": "Uygulamayı açtığınızda ve değişikliklerden sonra kitaplığınızı güncel tutun.",
+  "accountSignOutTitle": "Bu hesaptan çıkış yapılsın mı?",
+  "accountSignOutBody": "Şarkılarınız ve listeleriniz bu cihazda kalır. Yeniden oturum açana kadar yedeklenmez veya senkronize edilmez.",
+  "accountUseDifferent": "Farklı bir hesap kullan",
+  "accountSignInAgain": "Tekrar oturum aç",
+  "accountChooseAction": "Nasıl devam edeceğinizi seçin",
+  "accountChangedTitle": "Farklı Google hesabı",
+  "accountChangedBody": "Bu cihaz en son başka bir Google hesabıyla senkronize edildi. Bu cihazdaki şarkı ve listelere ne olacağını seçin.",
+  "accountChangedMerge": "Yeni hesapla birleştir",
+  "accountChangedMergeHint": "Bu cihazdaki her şeyi koruyup yeni hesaba ekleyin.",
+  "accountChangedReplace": "Yeni hesabın kitaplığıyla değiştir",
+  "accountChangedReplaceHint": "Bu cihazda olup yeni hesapta bulunmayan şarkılar kaldırılır.",
+  "accountChangedSignOut": "İptal et ve oturumu kapat",
+  "accountStatusSignedOut": "Hesap ve senkronizasyon: oturum açılmadı",
+  "accountStatusSignedIn": "Hesap ve senkronizasyon: oturum açıldı",
+  "accountStatusSyncing": "Hesap ve senkronizasyon: senkronize ediliyor",
+  "accountStatusSynced": "Hesap ve senkronizasyon: kitaplık güncel",
+  "accountStatusError": "Hesap ve senkronizasyon: sorun var, incelemek için dokunun",
+  "accountNoticeConflicts": "Bazı şarkılar iki yerde düzenlendi. Kopyaları saklandı.",
+  "accountNoticeSignedIn": "Oturum açıldı.",
+  "accountNoticeSignedOut": "Oturum kapatıldı. Şarkılarınız bu cihazda kalır.",
+  "syncErrorNotConfigured": "Bu derlemede senkronizasyon ayarlanmamış.",
+  "syncErrorNotConfiguredHint": "Google oturum açma özelliği yapılandırılmış bir Singbook derlemesi kullanın.",
+  "syncErrorNotSignedIn": "Oturum açmadınız.",
+  "syncErrorNotSignedInHint": "Kitaplığınızı senkronize etmek için oturum açın.",
+  "syncErrorAuthorizationRequired": "Google yeniden oturum açmanızı istiyor.",
+  "syncErrorAuthorizationRequiredHint": "Senkronizasyona devam etmek için tekrar oturum açın. Şarkılarınız bu cihazda güvende.",
+  "syncErrorAccessDenied": "Singbook'un Google Drive'ı kullanma izni yok.",
+  "syncErrorAccessDeniedHint": "Tekrar oturum açın ve sorulduğunda Drive erişimine izin verin.",
+  "syncErrorRateLimited": "Google şu anda istekleri sınırlıyor.",
+  "syncErrorRateLimitedHint": "Birkaç dakika bekleyip tekrar deneyin.",
+  "syncErrorStorageFull": "Google Drive'ınız dolu.",
+  "syncErrorStorageFullHint": "Drive'da yer açıp tekrar deneyin.",
+  "syncErrorNetwork": "Google'a ulaşılamadı.",
+  "syncErrorNetworkHint": "İnternet bağlantınızı kontrol edip tekrar deneyin.",
+  "syncErrorAccountChanged": "Farklı bir Google hesabı kullanıldı.",
+  "syncErrorAccountChangedHint": "Bu cihazın kitaplığını hesaba eklemek veya hesabın kitaplığıyla değiştirmek arasında seçim yapın.",
+  "syncErrorRemoteLibraryTooLarge": "Senkronize edilen kitaplığınız Singbook'un işleyebileceğinden büyük.",
+  "syncErrorRemoteLibraryTooLargeHint": "Senkronize edilen kitaplıktan birkaç şarkı veya liste kaldırıp tekrar deneyin.",
+  "syncErrorSignInFailed": "Oturum açma tamamlanmadı.",
+  "syncErrorSignInFailedHint": "Tekrar oturum açmayı deneyin.",
+  "syncErrorGeneric": "Kitaplığınız senkronize edilemedi.",
+  "syncErrorGenericHint": "Birazdan tekrar deneyin. Şarkılarınız bu cihazda güvende."
+}

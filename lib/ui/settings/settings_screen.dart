@@ -10,6 +10,45 @@ import '../widgets/singbook_wordmark.dart';
 import '../widgets/verse_components.dart';
 import 'account_section.dart';
 
+/// Native names keep the language picker understandable regardless of the
+/// currently selected app language.
+const _languageNames = <String, String>{
+  'ar': 'العربية',
+  'bg': 'Български',
+  'cs': 'Čeština',
+  'da': 'Dansk',
+  'de': 'Deutsch',
+  'el': 'Ελληνικά',
+  'en': 'English',
+  'es': 'Español',
+  'et': 'Eesti',
+  'fi': 'Suomi',
+  'fr': 'Français',
+  'ga': 'Gaeilge',
+  'hi': 'हिन्दी',
+  'hr': 'Hrvatski',
+  'hu': 'Magyar',
+  'id': 'Bahasa Indonesia',
+  'it': 'Italiano',
+  'ja': '日本語',
+  'ko': '한국어',
+  'lt': 'Lietuvių',
+  'lv': 'Latviešu',
+  'mt': 'Malti',
+  'nl': 'Nederlands',
+  'pl': 'Polski',
+  'pt': 'Português',
+  'ro': 'Română',
+  'ru': 'Русский',
+  'sk': 'Slovenčina',
+  'sl': 'Slovenščina',
+  'sv': 'Svenska',
+  'tr': 'Türkçe',
+  'uk': 'Українська',
+  'vi': 'Tiếng Việt',
+  'zh': '中文',
+};
+
 /// Appearance, player, sources, import, account and about settings.
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({
@@ -90,9 +129,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
               value: state.languageCode ?? 'system',
               entries: [
                 ('system', l10n.settingsLanguageSystem),
-                ('en', l10n.settingsLanguageEnglish),
-                ('bg', l10n.settingsLanguageBulgarian),
-                ('uk', l10n.settingsLanguageUkrainian),
+                ('en', _languageNames['en']!),
+                ('bg', _languageNames['bg']!),
+                ('uk', _languageNames['uk']!),
+                ...AppLocalizations.supportedLocales
+                    .where(
+                      (locale) => !const {
+                        'en',
+                        'bg',
+                        'uk',
+                      }.contains(locale.languageCode),
+                    )
+                    .map(
+                      (locale) => (
+                        locale.languageCode,
+                        _languageNames[locale.languageCode] ??
+                            locale.languageCode,
+                      ),
+                    ),
               ],
               onChanged: (value) {
                 if (value != null) {

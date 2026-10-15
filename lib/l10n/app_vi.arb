@@ -1,0 +1,670 @@
+{
+  "@@locale": "vi",
+  "appTitle": "Singbook",
+  "aboutDescription": "Không gian yên bình để tìm, sắp xếp và hát các bài hát trong thư viện của bạn.",
+  "aboutMadeForSinging": "Được tạo để cùng nhau ca hát",
+  "appVersion": "Phiên bản {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "Trang chủ",
+  "navSongs": "Bài hát",
+  "navSetlists": "Danh sách",
+  "navSettings": "Cài đặt",
+  "navSettingsCompact": "Cài đặt",
+  "navSearch": "Tìm kiếm",
+  "navBack": "Quay lại",
+  "navClose": "Đóng",
+  "navMore": "Thao tác khác",
+  "actionCancel": "Hủy",
+  "actionSave": "Lưu",
+  "actionDone": "Xong",
+  "actionEdit": "Chỉnh sửa",
+  "actionDelete": "Xóa",
+  "actionShare": "Chia sẻ",
+  "actionPrint": "In",
+  "actionCopy": "Sao chép",
+  "actionClear": "Xóa",
+  "actionRetry": "Thử lại",
+  "actionRefresh": "Làm mới",
+  "actionImport": "Nhập",
+  "actionExport": "Xuất",
+  "actionExpand": "Mở rộng",
+  "actionCollapse": "Thu gọn",
+  "actionAdd": "Thêm",
+  "actionCreate": "Tạo",
+  "actionRemove": "Gỡ",
+  "actionDuplicate": "Nhân bản",
+  "actionMoveUp": "Di chuyển lên",
+  "actionMoveDown": "Di chuyển xuống",
+  "actionPrevious": "Trước",
+  "actionNext": "Tiếp theo",
+  "searchHint": "Tìm bài hát, nghệ sĩ hoặc lời bài hát",
+  "searchCatalogHint": "Tìm bài hát hoặc nghệ sĩ",
+  "searchSubmit": "Tìm kiếm",
+  "searchFilters": "Tùy chọn tìm kiếm",
+  "searchFiltersShow": "Hiện tùy chọn tìm kiếm",
+  "searchFiltersHide": "Ẩn tùy chọn tìm kiếm",
+  "searchFilterArtist": "Nghệ sĩ",
+  "searchFilterTitle": "Tên bài hát",
+  "searchFilterLyrics": "Lời bài hát",
+  "searchFilterChords": "Có hợp âm",
+  "searchFilterTimed": "Lời bài hát có thời gian",
+  "searchFilterLanguage": "Ngôn ngữ",
+  "searchFilterAll": "Bất kỳ",
+  "searchAutocompleteLabel": "Gợi ý",
+  "searchResultCount": "{count, plural, =0{Không có kết quả} =1{1 kết quả} other{{count} kết quả}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "Nhập bài hát, nghệ sĩ hoặc lời bài hát để tìm kiếm.",
+  "searchCatalogEmptyQuery": "Nhập bài hát hoặc nghệ sĩ để tìm kiếm.",
+  "searchNoResults": "Không tìm thấy bài hát. Hãy thử tìm kiếm khác.",
+  "searchLoading": "Đang tìm bài hát…",
+  "searchError": "Không thể hoàn tất tìm kiếm.",
+  "searchOnlineTab": "Trực tuyến",
+  "searchRecentTab": "Gần đây",
+  "searchFavoritesTab": "Yêu thích",
+  "searchSuggested": "Kết quả phù hợp được đề xuất",
+  "searchAlternatives": "Kết quả phù hợp khác",
+  "searchCompare": "So sánh các phiên bản",
+  "searchChooseVersion": "Chọn phiên bản này",
+  "searchSongMatch": "Bài hát phù hợp",
+  "searchRecordingMatch": "Bản ghi âm phù hợp",
+  "searchMatchUnverified": "Bản ghi âm chưa được xác minh",
+  "searchMatchExact": "Bản ghi âm khớp chính xác",
+  "searchMatchPossible": "Có thể phù hợp",
+  "searchAvailability": "Tình trạng",
+  "searchLyricsAvailable": "Có lời bài hát",
+  "searchLyricsUnavailable": "Không có lời bài hát",
+  "searchChordsAvailable": "Có hợp âm",
+  "searchChordsUnavailable": "Không có hợp âm",
+  "searchTimingAvailable": "Có dữ liệu thời gian",
+  "searchTimingUnavailable": "Không có dữ liệu thời gian",
+  "searchDurationUnknown": "Thời lượng không xác định",
+  "searchRating": "Đánh giá {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "Nguồn",
+  "searchMetadata": "Thông tin bài hát",
+  "searchAlbum": "Album",
+  "searchArtist": "Nghệ sĩ",
+  "searchYear": "Năm",
+  "searchLanguage": "Ngôn ngữ",
+  "searchSaved": "Đã lưu bài hát vào thư viện của bạn.",
+  "searchSaveFailed": "Không thể lưu bài hát này.",
+  "homeRecentSongs": "Bài hát gần đây",
+  "homeRecentlyPlayed": "Đã phát gần đây",
+  "homeFavorites": "Yêu thích",
+  "homeHistory": "Lịch sử",
+  "homeHistoryClear": "Xóa lịch sử",
+  "homeHistoryCleared": "Đã xóa lịch sử.",
+  "homeHistoryEmpty": "Các bài hát bạn mở sẽ xuất hiện ở đây.",
+  "homeFavoritesEmpty": "Bài hát và danh sách yêu thích sẽ xuất hiện ở đây.",
+  "homeItemsShownCount": "{count, plural, =0{Đã hiển thị 0 mục} =1{Đã hiển thị 1 mục} other{Đã hiển thị {count} mục}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "Bài hát và danh sách gần đây sẽ xuất hiện ở đây.",
+  "homeTimelineLabel": "Dòng thời gian lịch sử",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "Toàn bộ lịch sử",
+  "homeShowFavorites": "Hiện mục yêu thích",
+  "homeShowRecent": "Hiện mục gần đây",
+  "songsTitle": "Bài hát",
+  "songsEmpty": "Bài hát của bạn sẽ xuất hiện ở đây.",
+  "songsEmptySearch": "Không có bài hát nào khớp với tìm kiếm.",
+  "songsAdd": "Thêm bài hát",
+  "songsSortAlphabetical": "Sắp xếp theo bảng chữ cái",
+  "songsAlphabetNavigation": "Mục lục bài hát",
+  "songsUsageCount": "{count, plural, =0{Chưa từng mở} =1{Đã mở một lần} other{Đã mở {count} lần}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "Thêm vào mục yêu thích",
+  "songFavoriteRemove": "Xóa khỏi mục yêu thích",
+  "songMenuLabel": "Thao tác với bài hát",
+  "songInfo": "Thông tin bài hát",
+  "setlistMenuLabel": "Thao tác với danh sách",
+  "songAddToSetlist": "Thêm vào danh sách",
+  "songCopyChordPro": "Sao chép ChordPro",
+  "songDeleteConfirmTitle": "Xóa bài hát?",
+  "songDeleteConfirmMessage": "Bài hát này sẽ bị xóa khỏi thư viện của bạn.",
+  "songDeleted": "Đã xóa bài hát.",
+  "setlistsTitle": "Danh sách bài hát",
+  "setlistsEmpty": "Tạo danh sách cho buổi tập hoặc buổi biểu diễn tiếp theo.",
+  "setlistsEmptySearch": "Không có danh sách nào khớp với tìm kiếm.",
+  "setlistCreate": "Danh sách mới",
+  "setlistNameHint": "Tên danh sách",
+  "setlistNotes": "Ghi chú",
+  "setlistEntryOverride": "Tông và capo riêng cho bài hát",
+  "setlistSongsCount": "{count, plural, =0{Không có bài hát} =1{1 bài hát} other{{count} bài hát}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "Ít nhất {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "Thời lượng không xác định",
+  "setlistActivity": "Hoạt động gần nhất {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "Đã tạo {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "Đã chỉnh sửa {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "Phát lần cuối {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "Danh sách này chưa có bài hát.",
+  "setlistAddSongs": "Thêm bài hát",
+  "setlistReorder": "Sắp xếp lại bài hát",
+  "setlistMoveSongUp": "Di chuyển {song} lên trên",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "Di chuyển {song} xuống dưới",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "Xóa {song} khỏi danh sách",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "Nhân bản danh sách",
+  "setlistFavoriteAdd": "Thêm danh sách vào mục yêu thích",
+  "setlistFavoriteRemove": "Xóa danh sách khỏi mục yêu thích",
+  "setlistShare": "Chia sẻ dưới dạng tệp danh sách",
+  "setlistSharePdf": "Chia sẻ dưới dạng PDF",
+  "setlistPrint": "In",
+  "setlistDeleteConfirmTitle": "Xóa danh sách?",
+  "setlistDeleteConfirmMessage": "Danh sách sẽ bị xóa. Các bài hát trong thư viện vẫn được giữ lại.",
+  "setlistDeleted": "Đã xóa danh sách.",
+  "readerTitle": "Lời bài hát",
+  "readerNoLyrics": "Chưa thêm lời bài hát.",
+  "readerShowChords": "Hiện hợp âm",
+  "readerHideChords": "Ẩn hợp âm",
+  "readerTranspose": "Dịch tông hợp âm",
+  "readerTransposeSemitones": "Dịch tông {count, plural, =0{0 nửa cung} =1{1 nửa cung} other{{count} nửa cung}}",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "Chỉnh sửa lời bài hát và thông tin",
+  "playerPlay": "Bắt đầu cuộn lời bài hát",
+  "playerPause": "Tạm dừng cuộn lời bài hát",
+  "playerResume": "Tiếp tục cuộn lời bài hát",
+  "playerSeek": "Vị trí phát",
+  "playerElapsed": "Thời gian đã phát {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "Thời gian còn lại {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "Chế độ cuộn",
+  "playerTimedLyrics": "Lời bài hát có thời gian",
+  "playerEstimatedPace": "Tốc độ ước tính",
+  "playerManualScroll": "Cuộn thủ công",
+  "playerTimingStatusReady": "Lời bài hát sẽ chạy theo dữ liệu thời gian hiện có.",
+  "playerTimingStatusEstimated": "Tốc độ cuộn được ước tính dựa trên thời lượng bài hát.",
+  "playerTimingStatusManual": "Tự cuộn lời bài hát.",
+  "playerTimingStatusUnavailable": "Không thể cuộn theo thời gian cho bài hát này.",
+  "playerDurationUnknown": "Thêm thời lượng bài hát để dùng chế độ cuộn ước tính.",
+  "playerProgressLabel": "Tiến độ bài hát",
+  "playerCurrentSection": "Đoạn hiện tại",
+  "playerPreviousSection": "Đoạn trước",
+  "playerNextSection": "Đoạn tiếp theo",
+  "playerPreviousSectionSong": "Đoạn trước · nhấn giữ để chuyển đến bài trước trong danh sách",
+  "playerNextSectionSong": "Đoạn tiếp theo · nhấn giữ để chuyển đến bài tiếp theo trong danh sách",
+  "playerPreviousSong": "Bài hát trước",
+  "playerNextSong": "Bài hát tiếp theo",
+  "editorTitle": "Chỉnh sửa bài hát",
+  "editorTitleField": "Tên bài hát",
+  "editorArtistField": "Nghệ sĩ",
+  "editorAlbumField": "Album",
+  "editorLyricsField": "Lời bài hát",
+  "editorChordsField": "Hợp âm",
+  "editorKeyField": "Tông",
+  "editorCapoField": "Capo",
+  "editorTuningField": "Cách lên dây",
+  "editorTempoField": "Nhịp độ",
+  "editorDurationField": "Thời lượng",
+  "editorTimeSignatureField": "Nhịp",
+  "editorLanguageField": "Ngôn ngữ",
+  "editorYearField": "Năm",
+  "editorComposerField": "Nhạc sĩ",
+  "editorLyricistField": "Tác giả lời",
+  "editorCopyrightField": "Bản quyền",
+  "editorLicenseField": "Giấy phép",
+  "songInfoSources": "Nguồn và ghi công",
+  "searchMatchSameSong": "Cùng bài hát; chưa xác nhận bản ghi âm",
+  "searchMatchNeedsAgreement": "Cần xác nhận lời trong bản nhạc",
+  "searchMatchDifferentLyrics": "Lời bài hát khác với bài đã chọn",
+  "searchMatchCombinedSources": "Thông tin được tổng hợp từ nhiều nguồn",
+  "searchCombinedFromSources": "{count, plural, =1{Tổng hợp từ 1 nguồn} other{Tổng hợp từ {count} nguồn}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, =0{0 bài hát phù hợp} =1{1 bài hát phù hợp} other{{count} bài hát phù hợp}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, =0{0 phiên bản nguồn} =1{1 phiên bản nguồn} other{{count} phiên bản nguồn}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "Kết quả phù hợp nhất hiện có",
+  "providerDescriptionUnknown": "Nguồn bài hát",
+  "providerDescDownloadChordProThenImport": "Tải tệp ChordPro từ nguồn, sau đó nhập tệp.",
+  "providerDescFreeAccountDownloadThenImport": "Tải tệp bằng tài khoản miễn phí, sau đó nhập tệp.",
+  "providerDescPublicChordSheets": "Bản nhạc hợp âm công khai.",
+  "providerDescHistoricalTextPerWorkLicense": "Lời bài hát lịch sử được cấp phép theo từng tác phẩm.",
+  "providerDescLicensedCatalog": "Danh mục lời bài hát được cấp phép.",
+  "providerDescOriginalSongsCcBy": "Bài hát gốc theo giấy phép Creative Commons BY.",
+  "providerDescPerSongLicense": "Lời bài hát được cấp phép theo từng bài.",
+  "providerDescRecordingMetadataOnly": "Chỉ có thông tin về bản ghi âm và bản phát hành.",
+  "providerDescCompositionMetadataOnly": "Chỉ có thông tin về tác phẩm.",
+  "providerDescExactFileArtworkOnly": "Ảnh bìa chỉ dành cho bản ghi âm khớp chính xác.",
+  "providerCapabilityLyrics": "Lời bài hát",
+  "providerCapabilityChords": "Hợp âm",
+  "providerCapabilityTiming": "Lời bài hát có thời gian",
+  "providerCapabilitySearch": "Tìm kiếm",
+  "providerCapabilityMetadata": "Thông tin bài hát",
+  "editorArtworkField": "Liên kết ảnh bìa",
+  "editorLyricsHint": "Chạm vào một dòng để chỉnh sửa lời bài hát hoặc hợp âm.",
+  "editorSave": "Lưu thay đổi",
+  "editorSaved": "Đã lưu thay đổi.",
+  "editorSaveFailed": "Không thể lưu thay đổi.",
+  "editorSaveConflict": "Bài hát đã được thay đổi ở nơi khác. Các chỉnh sửa của bạn đã được lưu thành bản sao riêng.",
+  "editorUnsavedTitle": "Bỏ thay đổi?",
+  "editorUnsavedMessage": "Các chỉnh sửa của bạn chưa được lưu.",
+  "editorFieldRequired": "Nhập tên bài hát.",
+  "settingsTitle": "Cài đặt",
+  "settingsAppearance": "Giao diện",
+  "settingsTheme": "Chủ đề",
+  "settingsThemeSystem": "Dùng cài đặt thiết bị",
+  "settingsThemeLight": "Sáng",
+  "settingsThemeDark": "Tối",
+  "settingsColorPalette": "Bảng màu",
+  "settingsFont": "Phông chữ",
+  "settingsTextSize": "Cỡ chữ",
+  "settingsLyricsPreview": "Xem trước lời bài hát",
+  "settingsPlayer": "Trình phát lời bài hát",
+  "settingsDefaultShowChords": "Mặc định hiện hợp âm",
+  "settingsDefaultAutoscroll": "Tự động bắt đầu cuộn lời bài hát",
+  "settingsDefaultTiming": "Chế độ cuộn mặc định",
+  "settingsLanguage": "Ngôn ngữ ứng dụng",
+  "settingsLanguageSystem": "Dùng ngôn ngữ thiết bị",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageBulgarian": "Български",
+  "settingsLanguageUkrainian": "Українська",
+  "settingsSources": "Nguồn lời bài hát",
+  "settingsSourceEnabled": "Bật nguồn {source}",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "Làm mới danh sách nguồn",
+  "settingsSourcesUpdated": "Đã cập nhật nguồn.",
+  "settingsSourcesUpdateFailed": "Không thể làm mới nguồn.",
+  "settingsImport": "Nhập bài hát",
+  "settingsImportChordPro": "Nhập tệp ChordPro",
+  "settingsImportSetlist": "Nhập tệp danh sách bài hát",
+  "settingsImportSuccess": "Đã nhập xong.",
+  "settingsImportFailed": "Không thể nhập tệp này.",
+  "settingsImportUnsupported": "Không hỗ trợ loại tệp này.",
+  "settingsShareSong": "Chia sẻ dưới dạng ChordPro",
+  "settingsSharePdf": "Chia sẻ dưới dạng PDF",
+  "settingsCopySong": "Sao chép vào bảng nhớ tạm",
+  "settingsPrintSong": "Chỉ in bài hát",
+  "settingsPrintSetlist": "In danh sách kèm lời bài hát",
+  "settingsExportFailed": "Không thể chuẩn bị tệp.",
+  "settingsCopied": "Đã sao chép vào bảng nhớ tạm.",
+  "settingsAbout": "Giới thiệu",
+  "settingsPrivacy": "Quyền riêng tư",
+  "settingsLegal": "Pháp lý",
+  "settingsClearHistory": "Xóa lịch sử",
+  "settingsClearHistoryConfirm": "Xóa lịch sử bài hát và danh sách?",
+  "settingsHistoryCleared": "Đã xóa lịch sử.",
+  "accountTitle": "Tài khoản và đồng bộ hóa",
+  "accountUnavailable": "Đồng bộ hóa yêu cầu bản dựng Singbook đã cấu hình đăng nhập Google. Bản dựng này chỉ lưu bài hát trên thiết bị này.",
+  "accountSyncNow": "Đồng bộ hóa ngay",
+  "accountConnected": "Đã kết nối. Chọn “Đồng bộ hóa ngay” để cập nhật bản sao lưu.",
+  "accountSignIn": "Kết nối tài khoản",
+  "accountSignOut": "Đăng xuất",
+  "accountChange": "Đổi tài khoản",
+  "accountSignedOut": "Chưa kết nối",
+  "accountSyncing": "Đang đồng bộ hóa thư viện…",
+  "accountSynced": "Đã đồng bộ hóa thư viện.",
+  "accountSyncFailed": "Không thể đồng bộ hóa thư viện.",
+  "accessibilityFavorite": "Yêu thích",
+  "accessibilityNotFavorite": "Không yêu thích",
+  "accessibilitySearchField": "Tìm bài hát",
+  "accessibilityClearSearch": "Xóa nội dung tìm kiếm",
+  "accessibilitySongMenu": "Thao tác cho {song}",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "Thao tác cho {setlist}",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "Mở rộng các bài hát trong {setlist}",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "Thu gọn các bài hát trong {setlist}",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "Tiến độ phát, {percent} phần trăm",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "Dòng thời gian lịch sử, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "Đang tải…",
+  "loadingSongs": "Đang tải bài hát…",
+  "loadingSetlists": "Đang tải danh sách…",
+  "errorGeneric": "Đã xảy ra lỗi.",
+  "errorOffline": "Có vẻ như bạn đang ngoại tuyến.",
+  "errorPermission": "Cần có quyền để tiếp tục.",
+  "emptyFiltered": "Không có mục nào khớp với các bộ lọc này.",
+  "unknownValue": "Không xác định",
+  "durationUnknown": "Thời lượng không xác định",
+  "metadataNotSet": "Chưa đặt",
+  "dateToday": "Hôm nay",
+  "dateYesterday": "Hôm qua",
+  "daySongCount": "{count, plural, =0{Không có bài hát} =1{1 bài hát} other{{count} bài hát}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "Xanh navy",
+  "settingsPaletteSage": "Xanh xô thơm",
+  "settingsPaletteOcean": "Đại dương",
+  "settingsPaletteClay": "Đất sét",
+  "settingsPalettePlum": "Mận",
+  "settingsFontSystem": "Hệ thống",
+  "settingsFontSerif": "Có chân",
+  "settingsFontMonospace": "Đơn cách",
+  "settingsLyricsPreviewExample": "Khi bình minh lên, chúng ta sẽ lại hát.",
+  "searchDiscoveryProgress": "Đang kiểm tra nguồn lời bài hát: hoàn tất {checked}/{total}.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "Không tìm thấy lời bài hát có thể sử dụng.",
+  "searchDiscoveryNoLyricsDetails": "Bài hát đã chọn được kiểm tra với các nguồn đang bật, nhưng không nguồn nào trả về phiên bản lời bài hát có thể sử dụng.",
+  "searchDiscoveryError": "Không thể kiểm tra các nguồn lời bài hát.",
+  "searchDiscoveryRetry": "Tìm lời bài hát lại",
+  "searchSourcesUnavailableCount": "{count, plural, =0{0 nguồn không khả dụng} =1{1 nguồn không khả dụng} other{{count} nguồn không khả dụng}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "Kiểm tra kết nối rồi thử lại.",
+  "searchProviderChecks": "Kiểm tra nguồn",
+  "searchProviderPending": "Đang kiểm tra",
+  "searchProviderFound": "Đã tìm thấy kết quả phù hợp",
+  "searchProviderRejected": "Không khớp",
+  "searchProviderFailed": "Kiểm tra thất bại",
+  "searchProviderUnavailable": "Không có lời bài hát khả dụng",
+  "searchCatalogFilterHint": "Chọn bài hát để lọc phiên bản lời theo hợp âm, thời gian hoặc ngôn ngữ.",
+  "startupErrorTitle": "Không thể mở thư viện của bạn.",
+  "setlistCopyName": "Bản sao của {name}",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "Thiếu bài hát",
+  "settingsImportTooLarge": "Tệp này quá lớn để nhập.",
+  "songsJumpToLetter": "Chuyển đến {letter}",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "Bỏ",
+  "editorKeepEditing": "Tiếp tục chỉnh sửa",
+  "settingsDefaultShowChordsHint": "Hiện hợp âm phía trên lời bài hát nếu có.",
+  "settingsDefaultAutoscrollHint": "Lời bài hát cuộn theo bài hát. Không dùng trong chế độ cuộn thủ công.",
+  "accountUnavailableTitle": "Chưa thiết lập đồng bộ hóa",
+  "accountSignedOutBenefits": "Đăng nhập bằng Google để sao lưu bài hát và danh sách lên Google Drive, đồng thời đồng bộ hóa tất cả thiết bị. Dù thế nào, bài hát vẫn được lưu trên thiết bị này.",
+  "accountSignInWithGoogle": "Đăng nhập bằng Google",
+  "accountWorking": "Đang xử lý…",
+  "accountNeverSynced": "Chưa từng đồng bộ hóa",
+  "accountSyncedJustNow": "Vừa đồng bộ hóa",
+  "accountSyncedMinutesAgo": "{count, plural, one{Đã đồng bộ hóa 1 phút trước} other{Đã đồng bộ hóa {count} phút trước}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{Đã đồng bộ hóa 1 giờ trước} other{Đã đồng bộ hóa {count} giờ trước}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{Đã đồng bộ hóa 1 ngày trước} other{Đã đồng bộ hóa {count} ngày trước}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{Đã giữ 1 chỉnh sửa xung đột dưới dạng bản sao} other{Đã giữ {count} chỉnh sửa xung đột dưới dạng bản sao}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "Cùng một bài hát hoặc danh sách đã được chỉnh sửa ở hai nơi. Không có gì bị mất: phiên bản còn lại đã được lưu thành bản sao riêng.",
+  "accountReviewConflicts": "Xem lại các bản sao",
+  "songsConflictFilterActive": "Chỉ hiển thị các bản sao xung đột",
+  "songsConflictFilterClear": "Hiện tất cả bài hát",
+  "songsConflictBadge": "Bản sao xung đột",
+  "songsConflictEmpty": "Không có bản sao xung đột.",
+  "accountAutoSync": "Tự động đồng bộ hóa",
+  "accountAutoSyncHint": "Luôn cập nhật thư viện khi bạn mở ứng dụng và sau khi có thay đổi.",
+  "accountSignOutTitle": "Đăng xuất khỏi tài khoản này?",
+  "accountSignOutBody": "Bài hát và danh sách vẫn trên thiết bị này. Chúng sẽ không được sao lưu hoặc đồng bộ hóa cho đến khi bạn đăng nhập lại.",
+  "accountUseDifferent": "Dùng tài khoản khác",
+  "accountSignInAgain": "Đăng nhập lại",
+  "accountChooseAction": "Chọn cách tiếp tục",
+  "accountChangedTitle": "Tài khoản Google khác",
+  "accountChangedBody": "Lần đồng bộ gần nhất của thiết bị này dùng một tài khoản Google khác. Chọn cách xử lý bài hát và danh sách trên thiết bị.",
+  "accountChangedMerge": "Hợp nhất vào tài khoản mới",
+  "accountChangedMergeHint": "Giữ mọi thứ trên thiết bị này và thêm vào tài khoản mới.",
+  "accountChangedReplace": "Thay bằng thư viện của tài khoản mới",
+  "accountChangedReplaceHint": "Các bài hát trên thiết bị này không có trong tài khoản mới sẽ bị xóa.",
+  "accountChangedSignOut": "Hủy và đăng xuất",
+  "accountStatusSignedOut": "Tài khoản và đồng bộ hóa: chưa đăng nhập",
+  "accountStatusSignedIn": "Tài khoản và đồng bộ hóa: đã đăng nhập",
+  "accountStatusSyncing": "Tài khoản và đồng bộ hóa: đang đồng bộ",
+  "accountStatusSynced": "Tài khoản và đồng bộ hóa: thư viện đã cập nhật",
+  "accountStatusError": "Tài khoản và đồng bộ hóa: có sự cố, chạm để xem",
+  "accountNoticeConflicts": "Một số bài hát được chỉnh sửa ở hai nơi. Đã giữ lại các bản sao.",
+  "accountNoticeSignedIn": "Đã đăng nhập.",
+  "accountNoticeSignedOut": "Đã đăng xuất. Bài hát vẫn trên thiết bị này.",
+  "syncErrorNotConfigured": "Bản dựng này chưa thiết lập đồng bộ hóa.",
+  "syncErrorNotConfiguredHint": "Dùng bản dựng Singbook đã cấu hình đăng nhập Google.",
+  "syncErrorNotSignedIn": "Bạn chưa đăng nhập.",
+  "syncErrorNotSignedInHint": "Đăng nhập để đồng bộ hóa thư viện.",
+  "syncErrorAuthorizationRequired": "Google yêu cầu bạn đăng nhập lại.",
+  "syncErrorAuthorizationRequiredHint": "Đăng nhập lại để tiếp tục đồng bộ hóa. Bài hát vẫn an toàn trên thiết bị này.",
+  "syncErrorAccessDenied": "Singbook không có quyền sử dụng Google Drive.",
+  "syncErrorAccessDeniedHint": "Đăng nhập lại và cho phép truy cập Drive khi được hỏi.",
+  "syncErrorRateLimited": "Google đang giới hạn yêu cầu trong lúc này.",
+  "syncErrorRateLimitedHint": "Đợi vài phút rồi thử lại.",
+  "syncErrorStorageFull": "Google Drive của bạn đã đầy.",
+  "syncErrorStorageFullHint": "Giải phóng dung lượng Drive rồi thử lại.",
+  "syncErrorNetwork": "Không thể kết nối với Google.",
+  "syncErrorNetworkHint": "Kiểm tra kết nối Internet rồi thử lại.",
+  "syncErrorAccountChanged": "Đã sử dụng một tài khoản Google khác.",
+  "syncErrorAccountChangedHint": "Chọn hợp nhất thư viện trên thiết bị này vào tài khoản đó hay thay thế thư viện.",
+  "syncErrorRemoteLibraryTooLarge": "Thư viện đã đồng bộ quá lớn để Singbook xử lý.",
+  "syncErrorRemoteLibraryTooLargeHint": "Xóa một số bài hát hoặc danh sách khỏi thư viện đã đồng bộ rồi thử lại.",
+  "syncErrorSignInFailed": "Chưa hoàn tất đăng nhập.",
+  "syncErrorSignInFailedHint": "Thử đăng nhập lại.",
+  "syncErrorGeneric": "Không thể đồng bộ hóa thư viện.",
+  "syncErrorGenericHint": "Hãy thử lại sau. Bài hát vẫn an toàn trên thiết bị này."
+}

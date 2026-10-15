@@ -1,0 +1,670 @@
+{
+  "@@locale": "et",
+  "appTitle": "Singbook",
+  "aboutDescription": "Rahulik koht oma laulude leidmiseks, korrastamiseks ja laulmiseks.",
+  "aboutMadeForSinging": "Loodud koos laulmiseks",
+  "appVersion": "Versioon {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "Avaleht",
+  "navSongs": "Laulud",
+  "navSetlists": "Laulunimekirjad",
+  "navSettings": "Seaded",
+  "navSettingsCompact": "Seaded",
+  "navSearch": "Otsi",
+  "navBack": "Tagasi",
+  "navClose": "Sulge",
+  "navMore": "Veel toiminguid",
+  "actionCancel": "Tühista",
+  "actionSave": "Salvesta",
+  "actionDone": "Valmis",
+  "actionEdit": "Muuda",
+  "actionDelete": "Kustuta",
+  "actionShare": "Jaga",
+  "actionPrint": "Prindi",
+  "actionCopy": "Kopeeri",
+  "actionClear": "Tühjenda",
+  "actionRetry": "Proovi uuesti",
+  "actionRefresh": "Värskenda",
+  "actionImport": "Impordi",
+  "actionExport": "Ekspordi",
+  "actionExpand": "Laienda",
+  "actionCollapse": "Ahenda",
+  "actionAdd": "Lisa",
+  "actionCreate": "Loo",
+  "actionRemove": "Eemalda",
+  "actionDuplicate": "Tee koopia",
+  "actionMoveUp": "Liiguta üles",
+  "actionMoveDown": "Liiguta alla",
+  "actionPrevious": "Eelmine",
+  "actionNext": "Järgmine",
+  "searchHint": "Otsi laule, esitajaid või sõnu",
+  "searchCatalogHint": "Otsi laulu või esitajat",
+  "searchSubmit": "Otsi",
+  "searchFilters": "Otsinguvalikud",
+  "searchFiltersShow": "Näita otsinguvalikuid",
+  "searchFiltersHide": "Peida otsinguvalikud",
+  "searchFilterArtist": "Esitaja",
+  "searchFilterTitle": "Laulu pealkiri",
+  "searchFilterLyrics": "Laulusõnad",
+  "searchFilterChords": "Akordidega",
+  "searchFilterTimed": "Ajastatud laulusõnad",
+  "searchFilterLanguage": "Keel",
+  "searchFilterAll": "Kõik",
+  "searchAutocompleteLabel": "Soovitused",
+  "searchResultCount": "{count, plural, =0{Tulemusi pole} =1{1 tulemus} other{{count} tulemust}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "Sisesta otsimiseks laulu pealkiri, esitaja või sõnad.",
+  "searchCatalogEmptyQuery": "Sisesta otsimiseks laulu pealkiri või esitaja.",
+  "searchNoResults": "Laule ei leitud. Proovi teist otsingut.",
+  "searchLoading": "Laulude otsimine…",
+  "searchError": "Otsingut ei õnnestunud teha.",
+  "searchOnlineTab": "Veebist",
+  "searchRecentTab": "Hiljutised",
+  "searchFavoritesTab": "Lemmikud",
+  "searchSuggested": "Soovitatud vaste",
+  "searchAlternatives": "Muud vasted",
+  "searchCompare": "Võrdle versioone",
+  "searchChooseVersion": "Vali see versioon",
+  "searchSongMatch": "Laulu vaste",
+  "searchRecordingMatch": "Salvestise vaste",
+  "searchMatchUnverified": "Salvestis pole kinnitatud",
+  "searchMatchExact": "Salvestis vastab täpselt",
+  "searchMatchPossible": "Võimalik vaste",
+  "searchAvailability": "Saadavus",
+  "searchLyricsAvailable": "Laulusõnad on saadaval",
+  "searchLyricsUnavailable": "Laulusõnad pole saadaval",
+  "searchChordsAvailable": "Akordid on saadaval",
+  "searchChordsUnavailable": "Akorde pole",
+  "searchTimingAvailable": "Ajastus on saadaval",
+  "searchTimingUnavailable": "Ajastus puudub",
+  "searchDurationUnknown": "Kestus teadmata",
+  "searchRating": "Hinnang {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "Allikas",
+  "searchMetadata": "Laulu andmed",
+  "searchAlbum": "Album",
+  "searchArtist": "Esitaja",
+  "searchYear": "Aasta",
+  "searchLanguage": "Keel",
+  "searchSaved": "Laul salvestati sinu kogusse.",
+  "searchSaveFailed": "Laulu salvestamine ebaõnnestus.",
+  "homeRecentSongs": "Hiljutised laulud",
+  "homeRecentlyPlayed": "Hiljuti esitatud",
+  "homeFavorites": "Lemmikud",
+  "homeHistory": "Ajalugu",
+  "homeHistoryClear": "Kustuta ajalugu",
+  "homeHistoryCleared": "Ajalugu kustutati.",
+  "homeHistoryEmpty": "Siin kuvatakse avatud laulud.",
+  "homeFavoritesEmpty": "Siin kuvatakse sinu lemmiklaulud ja laulunimekirjad.",
+  "homeItemsShownCount": "{count, plural, =0{Kuvatud 0 üksust} =1{Kuvatud 1 üksus} other{Kuvatud {count} üksust}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "Siin kuvatakse sinu hiljutised laulud ja laulunimekirjad.",
+  "homeTimelineLabel": "Ajaloo ajajoon",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "Kogu ajalugu",
+  "homeShowFavorites": "Näita lemmikuid",
+  "homeShowRecent": "Näita hiljutisi",
+  "songsTitle": "Laulud",
+  "songsEmpty": "Siin kuvatakse sinu laulud.",
+  "songsEmptySearch": "Ükski laul ei vasta otsingule.",
+  "songsAdd": "Lisa laul",
+  "songsSortAlphabetical": "Sorteeri tähestiku järgi",
+  "songsAlphabetNavigation": "Laulude register",
+  "songsUsageCount": "Avatud {count, plural, =0{mitte kordagi} =1{üks kord} other{{count} korda}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "Lisa lemmikutesse",
+  "songFavoriteRemove": "Eemalda lemmikutest",
+  "songMenuLabel": "Laulu toimingud",
+  "songInfo": "Laulu andmed",
+  "setlistMenuLabel": "Laulunimekirja toimingud",
+  "songAddToSetlist": "Lisa laulunimekirja",
+  "songCopyChordPro": "Kopeeri ChordPro",
+  "songDeleteConfirmTitle": "Kas kustutada laul?",
+  "songDeleteConfirmMessage": "See laul eemaldatakse sinu kogust.",
+  "songDeleted": "Laul kustutati.",
+  "setlistsTitle": "Laulunimekirjad",
+  "setlistsEmpty": "Loo laulunimekiri järgmiseks prooviks või esinemiseks.",
+  "setlistsEmptySearch": "Ükski laulunimekiri ei vasta otsingule.",
+  "setlistCreate": "Uus laulunimekiri",
+  "setlistNameHint": "Laulunimekirja nimi",
+  "setlistNotes": "Märkmed",
+  "setlistEntryOverride": "Laulupõhine helistik ja capo",
+  "setlistSongsCount": "{count, plural, =0{Laule pole} =1{1 laul} other{{count} laulu}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "Vähemalt {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "Kestus teadmata",
+  "setlistActivity": "Viimane tegevus {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "Loodud {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "Muudetud {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "Viimati esitatud {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "Selles laulunimekirjas pole veel laule.",
+  "setlistAddSongs": "Lisa laule",
+  "setlistReorder": "Muuda laulude järjekorda",
+  "setlistMoveSongUp": "Liiguta {song} üles",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "Liiguta {song} alla",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "Eemalda {song} laulunimekirjast",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "Tee laulunimekirjast koopia",
+  "setlistFavoriteAdd": "Lisa laulunimekiri lemmikutesse",
+  "setlistFavoriteRemove": "Eemalda laulunimekiri lemmikutest",
+  "setlistShare": "Jaga laulunimekirja failina",
+  "setlistSharePdf": "Jaga PDF-ina",
+  "setlistPrint": "Prindi",
+  "setlistDeleteConfirmTitle": "Kas kustutada laulunimekiri?",
+  "setlistDeleteConfirmMessage": "Laulunimekiri eemaldatakse. Sinu kogus olevad laulud jäävad alles.",
+  "setlistDeleted": "Laulunimekiri kustutati.",
+  "readerTitle": "Laulusõnad",
+  "readerNoLyrics": "Laulusõnu pole veel lisatud.",
+  "readerShowChords": "Näita akorde",
+  "readerHideChords": "Peida akordid",
+  "readerTranspose": "Transponeeri akorde",
+  "readerTransposeSemitones": "Transponeeri {count, plural, =0{0 pooltooni} =1{1 pooltoon} other{{count} pooltooni}}",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "Muuda sõnu ja andmeid",
+  "playerPlay": "Alusta laulusõnade kerimist",
+  "playerPause": "Peata laulusõnade kerimine",
+  "playerResume": "Jätka laulusõnade kerimist",
+  "playerSeek": "Taasesituse asukoht",
+  "playerElapsed": "Möödunud aeg {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "Aega jäänud {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "Kerimise režiim",
+  "playerTimedLyrics": "Ajastatud laulusõnad",
+  "playerEstimatedPace": "Hinnanguline kerimiskiirus",
+  "playerManualScroll": "Käsitsi kerimine",
+  "playerTimingStatusReady": "Laulusõnad liiguvad olemasoleva ajastuse järgi.",
+  "playerTimingStatusEstimated": "Kerimiskiirus on hinnatud laulu kestuse järgi.",
+  "playerTimingStatusManual": "Keri laulusõnu ise.",
+  "playerTimingStatusUnavailable": "Selle laulu ajastatud kerimine pole saadaval.",
+  "playerDurationUnknown": "Lisa laulu kestus, et kasutada hinnangulist kerimist.",
+  "playerProgressLabel": "Laulu edenemine",
+  "playerCurrentSection": "Praegune osa",
+  "playerPreviousSection": "Eelmine osa",
+  "playerNextSection": "Järgmine osa",
+  "playerPreviousSectionSong": "Eelmine osa · hoia all eelmise laulunimekirja laulu jaoks",
+  "playerNextSectionSong": "Järgmine osa · hoia all järgmise laulunimekirja laulu jaoks",
+  "playerPreviousSong": "Eelmine laul",
+  "playerNextSong": "Järgmine laul",
+  "editorTitle": "Muuda laulu",
+  "editorTitleField": "Laulu pealkiri",
+  "editorArtistField": "Esitaja",
+  "editorAlbumField": "Album",
+  "editorLyricsField": "Laulusõnad",
+  "editorChordsField": "Akordid",
+  "editorKeyField": "Helistik",
+  "editorCapoField": "Capo",
+  "editorTuningField": "Häälestus",
+  "editorTempoField": "Tempo",
+  "editorDurationField": "Kestus",
+  "editorTimeSignatureField": "Mõõt",
+  "editorLanguageField": "Keel",
+  "editorYearField": "Aasta",
+  "editorComposerField": "Helilooja",
+  "editorLyricistField": "Sõnade autor",
+  "editorCopyrightField": "Autoriõigus",
+  "editorLicenseField": "Litsents",
+  "songInfoSources": "Allikad ja autoriteave",
+  "searchMatchSameSong": "Sama laul; salvestis pole kinnitatud",
+  "searchMatchNeedsAgreement": "Laulu noodistus vajab sõnade kinnitust",
+  "searchMatchDifferentLyrics": "Laulusõnad erinevad valitud laulust",
+  "searchMatchCombinedSources": "Andmed on ühendatud mitmest allikast",
+  "searchCombinedFromSources": "{count, plural, =1{Ühendatud 1 allikast} other{Ühendatud {count} allikast}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, =0{0 laulu vastet} =1{1 laulu vaste} other{{count} laulu vastet}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, =0{0 allikaversiooni} =1{1 allikaversioon} other{{count} allikaversiooni}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "Parim saadaolev vaste",
+  "providerDescriptionUnknown": "Laulu allikas",
+  "providerDescDownloadChordProThenImport": "Laadi allikast alla ChordPro-fail ja impordi see.",
+  "providerDescFreeAccountDownloadThenImport": "Laadi fail tasuta kontoga alla ja impordi see.",
+  "providerDescPublicChordSheets": "Avalikud akordilehed.",
+  "providerDescHistoricalTextPerWorkLicense": "Ajalooliste laulusõnade litsents määratakse teose kaupa.",
+  "providerDescLicensedCatalog": "Litsentsitud laulusõnade kataloog.",
+  "providerDescOriginalSongsCcBy": "Originaallaulud Creative Commons BY litsentsi alusel.",
+  "providerDescPerSongLicense": "Laulusõnade litsents määratakse laulu kaupa.",
+  "providerDescRecordingMetadataOnly": "Ainult salvestise ja väljaande andmed.",
+  "providerDescCompositionMetadataOnly": "Ainult heliteose andmed.",
+  "providerDescExactFileArtworkOnly": "Kaanepilt ainult täpselt vastavate salvestiste puhul.",
+  "providerCapabilityLyrics": "Laulusõnad",
+  "providerCapabilityChords": "Akordid",
+  "providerCapabilityTiming": "Ajastatud laulusõnad",
+  "providerCapabilitySearch": "Otsing",
+  "providerCapabilityMetadata": "Laulu andmed",
+  "editorArtworkField": "Kaanepildi link",
+  "editorLyricsHint": "Puuduta rida, et muuta laulusõnu või akorde.",
+  "editorSave": "Salvesta muudatused",
+  "editorSaved": "Muudatused salvestati.",
+  "editorSaveFailed": "Muudatuste salvestamine ebaõnnestus.",
+  "editorSaveConflict": "Laulu muudeti mujal. Sinu muudatused salvestati eraldi koopiana.",
+  "editorUnsavedTitle": "Kas loobuda muudatustest?",
+  "editorUnsavedMessage": "Sinu muudatusi pole salvestatud.",
+  "editorFieldRequired": "Sisesta laulu pealkiri.",
+  "settingsTitle": "Seaded",
+  "settingsAppearance": "Välimus",
+  "settingsTheme": "Teema",
+  "settingsThemeSystem": "Kasuta seadme seadet",
+  "settingsThemeLight": "Hele",
+  "settingsThemeDark": "Tume",
+  "settingsColorPalette": "Värvipalett",
+  "settingsFont": "Font",
+  "settingsTextSize": "Teksti suurus",
+  "settingsLyricsPreview": "Laulusõnade eelvaade",
+  "settingsPlayer": "Laulusõnade mängija",
+  "settingsDefaultShowChords": "Näita vaikimisi akorde",
+  "settingsDefaultAutoscroll": "Alusta laulusõnade automaatset kerimist",
+  "settingsDefaultTiming": "Vaikimisi kerimisrežiim",
+  "settingsLanguage": "Rakenduse keel",
+  "settingsLanguageSystem": "Kasuta seadme keelt",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageBulgarian": "Български",
+  "settingsLanguageUkrainian": "Українська",
+  "settingsSources": "Laulusõnade allikad",
+  "settingsSourceEnabled": "Luba allikas {source}",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "Värskenda allikate loendit",
+  "settingsSourcesUpdated": "Allikad värskendati.",
+  "settingsSourcesUpdateFailed": "Allikaid ei õnnestunud värskendada.",
+  "settingsImport": "Impordi laulud",
+  "settingsImportChordPro": "Impordi ChordPro-fail",
+  "settingsImportSetlist": "Impordi laulunimekirja fail",
+  "settingsImportSuccess": "Importimine lõpetatud.",
+  "settingsImportFailed": "Faili importimine ebaõnnestus.",
+  "settingsImportUnsupported": "Seda failitüüpi ei toetata.",
+  "settingsShareSong": "Jaga ChordPro-failina",
+  "settingsSharePdf": "Jaga PDF-ina",
+  "settingsCopySong": "Kopeeri lõikelauale",
+  "settingsPrintSong": "Prindi ainult laul",
+  "settingsPrintSetlist": "Prindi laulunimekiri koos laulusõnadega",
+  "settingsExportFailed": "Faili ettevalmistamine ebaõnnestus.",
+  "settingsCopied": "Lõikelauale kopeeritud.",
+  "settingsAbout": "Teave",
+  "settingsPrivacy": "Privaatsus",
+  "settingsLegal": "Õigusteave",
+  "settingsClearHistory": "Kustuta ajalugu",
+  "settingsClearHistoryConfirm": "Kas kustutada laulude ja laulunimekirjade ajalugu?",
+  "settingsHistoryCleared": "Ajalugu kustutati.",
+  "accountTitle": "Konto ja sünkroonimine",
+  "accountUnavailable": "Sünkroonimiseks on vaja Singbooki versiooni, kus Google'i sisselogimine on seadistatud. Selles versioonis hoitakse laule ainult selles seadmes.",
+  "accountSyncNow": "Sünkrooni kohe",
+  "accountConnected": "Ühendatud. Vali varukoopia uuendamiseks „Sünkrooni kohe”.",
+  "accountSignIn": "Ühenda konto",
+  "accountSignOut": "Logi välja",
+  "accountChange": "Vaheta kontot",
+  "accountSignedOut": "Ühendamata",
+  "accountSyncing": "Sinu kogu sünkroonimine…",
+  "accountSynced": "Kogu sünkrooniti.",
+  "accountSyncFailed": "Kogu sünkroonimine ebaõnnestus.",
+  "accessibilityFavorite": "Lemmik",
+  "accessibilityNotFavorite": "Pole lemmik",
+  "accessibilitySearchField": "Otsi laule",
+  "accessibilityClearSearch": "Kustuta otsingutekst",
+  "accessibilitySongMenu": "Laulu {song} toimingud",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "Laulunimekirja {setlist} toimingud",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "Laienda laulunimekirja {setlist} laule",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "Ahenda laulunimekirja {setlist} laulud",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "Taasesituse edenemine, {percent} protsenti",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "Ajaloo ajajoon, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "Laadimine…",
+  "loadingSongs": "Laulude laadimine…",
+  "loadingSetlists": "Laulunimekirjade laadimine…",
+  "errorGeneric": "Midagi läks valesti.",
+  "errorOffline": "Paistab, et internetiühendus puudub.",
+  "errorPermission": "Jätkamiseks on vaja luba.",
+  "emptyFiltered": "Ükski üksus ei vasta nendele filtritele.",
+  "unknownValue": "Teadmata",
+  "durationUnknown": "Kestus teadmata",
+  "metadataNotSet": "Määramata",
+  "dateToday": "Täna",
+  "dateYesterday": "Eile",
+  "daySongCount": "{count, plural, =0{Laule pole} =1{1 laul} other{{count} laulu}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "Meresinine",
+  "settingsPaletteSage": "Salveiroheline",
+  "settingsPaletteOcean": "Ookean",
+  "settingsPaletteClay": "Savi",
+  "settingsPalettePlum": "Ploom",
+  "settingsFontSystem": "Süsteem",
+  "settingsFontSerif": "Seriif",
+  "settingsFontMonospace": "Monolaiusega",
+  "settingsLyricsPreviewExample": "Kui hommik saabub, laulame jälle.",
+  "searchDiscoveryProgress": "Laulusõnade allikate kontrollimine: {checked} / {total} tehtud.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "Kasutatavaid laulusõnu ei leitud.",
+  "searchDiscoveryNoLyricsDetails": "Valitud laulu kontrolliti lubatud allikatest, kuid ükski neist ei tagastanud kasutatavat laulusõnade versiooni.",
+  "searchDiscoveryError": "Laulusõnade allikaid ei õnnestunud kontrollida.",
+  "searchDiscoveryRetry": "Otsi laulusõnu uuesti",
+  "searchSourcesUnavailableCount": "{count, plural, =0{0 allikat pole saadaval} =1{1 allikas pole saadaval} other{{count} allikat pole saadaval}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "Kontrolli internetiühendust ja proovi uuesti.",
+  "searchProviderChecks": "Allikate kontrollid",
+  "searchProviderPending": "Kontrollimine",
+  "searchProviderFound": "Leiti vaste",
+  "searchProviderRejected": "Ei sobi",
+  "searchProviderFailed": "Kontroll ebaõnnestus",
+  "searchProviderUnavailable": "Kasutatavaid laulusõnu pole",
+  "searchCatalogFilterHint": "Vali laul, et filtreerida laulusõnade versioone akordide, ajastuse või keele järgi.",
+  "startupErrorTitle": "Sinu kogu avamine ebaõnnestus.",
+  "setlistCopyName": "{name} koopia",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "Puuduv laul",
+  "settingsImportTooLarge": "See fail on importimiseks liiga suur.",
+  "songsJumpToLetter": "Hüppa tähe {letter} juurde",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "Loobu",
+  "editorKeepEditing": "Jätka muutmist",
+  "settingsDefaultShowChordsHint": "Näita akordidega laulu puhul akorde laulusõnade kohal.",
+  "settingsDefaultAutoscrollHint": "Laulusõnad kerivad koos lauluga. Käsitsi kerimise režiimis seda ei kasutata.",
+  "accountUnavailableTitle": "Sünkroonimine pole seadistatud",
+  "accountSignedOutBenefits": "Logi Google'iga sisse, et varundada laulud ja laulunimekirjad Google Drive'i ning hoida kõik seadmed sünkroonis. Laulud jäävad igal juhul sellesse seadmesse.",
+  "accountSignInWithGoogle": "Logi sisse Google'iga",
+  "accountWorking": "Töötamine…",
+  "accountNeverSynced": "Pole kunagi sünkroonitud",
+  "accountSyncedJustNow": "Äsja sünkroonitud",
+  "accountSyncedMinutesAgo": "{count, plural, one{Sünkroonitud 1 minuti eest} other{Sünkroonitud {count} minuti eest}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{Sünkroonitud 1 tunni eest} other{Sünkroonitud {count} tunni eest}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{Sünkroonitud 1 päeva eest} other{Sünkroonitud {count} päeva eest}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{1 vastuoluline muudatus salvestati koopiana} other{{count} vastuolulist muudatust salvestati koopiatena}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "Sama laulu või laulunimekirja muudeti kahes kohas. Midagi ei läinud kaduma: teine versioon salvestati eraldi koopiana.",
+  "accountReviewConflicts": "Vaata koopiad üle",
+  "songsConflictFilterActive": "Kuvatakse ainult konflikti koopiaid",
+  "songsConflictFilterClear": "Näita kõiki laule",
+  "songsConflictBadge": "Konflikti koopia",
+  "songsConflictEmpty": "Konflikti koopiaid pole.",
+  "accountAutoSync": "Sünkrooni automaatselt",
+  "accountAutoSyncHint": "Hoia kogu ajakohasena rakenduse avamisel ja pärast muudatusi.",
+  "accountSignOutTitle": "Kas logida sellelt kontolt välja?",
+  "accountSignOutBody": "Sinu laulud ja laulunimekirjad jäävad sellesse seadmesse. Neid ei varundata ega sünkroonita enne, kui uuesti sisse logid.",
+  "accountUseDifferent": "Kasuta teist kontot",
+  "accountSignInAgain": "Logi uuesti sisse",
+  "accountChooseAction": "Vali, kuidas jätkata",
+  "accountChangedTitle": "Teine Google'i konto",
+  "accountChangedBody": "See seade sünkrooniti viimati teise Google'i kontoga. Vali, mis saab selles seadmes olevatest lauludest ja laulunimekirjadest.",
+  "accountChangedMerge": "Ühenda uue kontoga",
+  "accountChangedMergeHint": "Hoia kõik selles seadmes alles ja lisa see uuele kontole.",
+  "accountChangedReplace": "Asenda uue konto koguga",
+  "accountChangedReplaceHint": "Laulud sellest seadmest, mida uuel kontol pole, eemaldatakse.",
+  "accountChangedSignOut": "Tühista ja logi välja",
+  "accountStatusSignedOut": "Konto ja sünkroonimine: pole sisse logitud",
+  "accountStatusSignedIn": "Konto ja sünkroonimine: sisse logitud",
+  "accountStatusSyncing": "Konto ja sünkroonimine: sünkroonimine",
+  "accountStatusSynced": "Konto ja sünkroonimine: kogu on ajakohane",
+  "accountStatusError": "Konto ja sünkroonimine: probleem, puuduta ülevaatamiseks",
+  "accountNoticeConflicts": "Mõnda laulu muudeti kahes kohas. Koopiad jäeti alles.",
+  "accountNoticeSignedIn": "Sisse logitud.",
+  "accountNoticeSignedOut": "Välja logitud. Sinu laulud jäävad sellesse seadmesse.",
+  "syncErrorNotConfigured": "Selles versioonis pole sünkroonimine seadistatud.",
+  "syncErrorNotConfiguredHint": "Kasuta Singbooki versiooni, kus Google'i sisselogimine on seadistatud.",
+  "syncErrorNotSignedIn": "Sa pole sisse logitud.",
+  "syncErrorNotSignedInHint": "Kogu sünkroonimiseks logi sisse.",
+  "syncErrorAuthorizationRequired": "Google nõuab uuesti sisselogimist.",
+  "syncErrorAuthorizationRequiredHint": "Sünkroonimise jätkamiseks logi uuesti sisse. Sinu laulud on selles seadmes alles.",
+  "syncErrorAccessDenied": "Singbookil pole luba Google Drive'i kasutada.",
+  "syncErrorAccessDeniedHint": "Logi uuesti sisse ja luba küsimisel Drive'i kasutamine.",
+  "syncErrorRateLimited": "Google piirab praegu päringuid.",
+  "syncErrorRateLimitedHint": "Oota mõni minut ja proovi uuesti.",
+  "syncErrorStorageFull": "Sinu Google Drive on täis.",
+  "syncErrorStorageFullHint": "Vabasta Drive'is ruumi ja proovi uuesti.",
+  "syncErrorNetwork": "Google'iga ei õnnestunud ühendust luua.",
+  "syncErrorNetworkHint": "Kontrolli internetiühendust ja proovi uuesti.",
+  "syncErrorAccountChanged": "Kasutati teist Google'i kontot.",
+  "syncErrorAccountChangedHint": "Vali, kas ühendada selle seadme kogu kontoga või see asendada.",
+  "syncErrorRemoteLibraryTooLarge": "Sünkroonitud kogu on Singbooki jaoks liiga suur.",
+  "syncErrorRemoteLibraryTooLargeHint": "Eemalda sünkroonitud kogust mõned laulud või laulunimekirjad ja proovi uuesti.",
+  "syncErrorSignInFailed": "Sisselogimine jäi pooleli.",
+  "syncErrorSignInFailedHint": "Proovi uuesti sisse logida.",
+  "syncErrorGeneric": "Kogu sünkroonimine ebaõnnestus.",
+  "syncErrorGenericHint": "Proovi veidi aja pärast uuesti. Sinu laulud on selles seadmes alles."
+}

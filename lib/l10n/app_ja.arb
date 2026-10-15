@@ -1,0 +1,670 @@
+{
+  "@@locale": "ja",
+  "appTitle": "Singbook",
+  "aboutDescription": "曲を見つけて整理し、ライブラリの曲をみんなで歌うための落ち着いた場所です。",
+  "aboutMadeForSinging": "みんなで歌うために",
+  "appVersion": "バージョン {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "ホーム",
+  "navSongs": "曲",
+  "navSetlists": "セットリスト",
+  "navSettings": "設定",
+  "navSettingsCompact": "設定",
+  "navSearch": "検索",
+  "navBack": "戻る",
+  "navClose": "閉じる",
+  "navMore": "その他の操作",
+  "actionCancel": "キャンセル",
+  "actionSave": "保存",
+  "actionDone": "完了",
+  "actionEdit": "編集",
+  "actionDelete": "削除",
+  "actionShare": "共有",
+  "actionPrint": "印刷",
+  "actionCopy": "コピー",
+  "actionClear": "クリア",
+  "actionRetry": "再試行",
+  "actionRefresh": "更新",
+  "actionImport": "インポート",
+  "actionExport": "エクスポート",
+  "actionExpand": "展開",
+  "actionCollapse": "折りたたむ",
+  "actionAdd": "追加",
+  "actionCreate": "作成",
+  "actionRemove": "削除",
+  "actionDuplicate": "複製",
+  "actionMoveUp": "上へ移動",
+  "actionMoveDown": "下へ移動",
+  "actionPrevious": "前へ",
+  "actionNext": "次へ",
+  "searchHint": "曲名、アーティスト、歌詞を検索",
+  "searchCatalogHint": "曲名またはアーティストを検索",
+  "searchSubmit": "検索",
+  "searchFilters": "検索オプション",
+  "searchFiltersShow": "検索オプションを表示",
+  "searchFiltersHide": "検索オプションを非表示",
+  "searchFilterArtist": "アーティスト",
+  "searchFilterTitle": "曲名",
+  "searchFilterLyrics": "歌詞",
+  "searchFilterChords": "コードあり",
+  "searchFilterTimed": "タイミング付き歌詞",
+  "searchFilterLanguage": "言語",
+  "searchFilterAll": "すべて",
+  "searchAutocompleteLabel": "候補",
+  "searchResultCount": "{count, plural, =0{結果はありません} =1{1件の結果} other{{count}件の結果}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "検索する曲名、アーティスト名、または歌詞を入力してください。",
+  "searchCatalogEmptyQuery": "検索する曲名またはアーティスト名を入力してください。",
+  "searchNoResults": "曲が見つかりませんでした。別のキーワードでお試しください。",
+  "searchLoading": "曲を検索しています…",
+  "searchError": "検索を完了できませんでした。",
+  "searchOnlineTab": "オンライン",
+  "searchRecentTab": "最近",
+  "searchFavoritesTab": "お気に入り",
+  "searchSuggested": "おすすめの一致",
+  "searchAlternatives": "その他の一致",
+  "searchCompare": "バージョンを比較",
+  "searchChooseVersion": "このバージョンを選択",
+  "searchSongMatch": "曲の一致",
+  "searchRecordingMatch": "録音の一致",
+  "searchMatchUnverified": "録音は未確認です",
+  "searchMatchExact": "録音が完全に一致",
+  "searchMatchPossible": "一致する可能性があります",
+  "searchAvailability": "利用状況",
+  "searchLyricsAvailable": "歌詞あり",
+  "searchLyricsUnavailable": "歌詞なし",
+  "searchChordsAvailable": "コードあり",
+  "searchChordsUnavailable": "コードなし",
+  "searchTimingAvailable": "タイミング情報あり",
+  "searchTimingUnavailable": "タイミング情報なし",
+  "searchDurationUnknown": "長さ不明",
+  "searchRating": "評価 {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "ソース",
+  "searchMetadata": "曲の詳細",
+  "searchAlbum": "アルバム",
+  "searchArtist": "アーティスト",
+  "searchYear": "年",
+  "searchLanguage": "言語",
+  "searchSaved": "曲をライブラリに保存しました。",
+  "searchSaveFailed": "曲を保存できませんでした。",
+  "homeRecentSongs": "最近の曲",
+  "homeRecentlyPlayed": "最近再生した曲",
+  "homeFavorites": "お気に入り",
+  "homeHistory": "履歴",
+  "homeHistoryClear": "履歴を消去",
+  "homeHistoryCleared": "履歴を消去しました。",
+  "homeHistoryEmpty": "開いた曲がここに表示されます。",
+  "homeFavoritesEmpty": "お気に入りの曲とセットリストがここに表示されます。",
+  "homeItemsShownCount": "{count, plural, =0{0件を表示中} =1{1件を表示中} other{{count}件を表示中}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "最近の曲とセットリストがここに表示されます。",
+  "homeTimelineLabel": "履歴のタイムライン",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "すべての履歴",
+  "homeShowFavorites": "お気に入りを表示",
+  "homeShowRecent": "最近の項目を表示",
+  "songsTitle": "曲",
+  "songsEmpty": "曲がここに表示されます。",
+  "songsEmptySearch": "検索に一致する曲はありません。",
+  "songsAdd": "曲を追加",
+  "songsSortAlphabetical": "アルファベット順に並べ替え",
+  "songsAlphabetNavigation": "曲の索引",
+  "songsUsageCount": "開いた回数: {count, plural, =0{0回} =1{1回} other{{count}回}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "お気に入りに追加",
+  "songFavoriteRemove": "お気に入りから削除",
+  "songMenuLabel": "曲の操作",
+  "songInfo": "曲の詳細",
+  "setlistMenuLabel": "セットリストの操作",
+  "songAddToSetlist": "セットリストに追加",
+  "songCopyChordPro": "ChordProをコピー",
+  "songDeleteConfirmTitle": "曲を削除しますか？",
+  "songDeleteConfirmMessage": "この曲はライブラリから削除されます。",
+  "songDeleted": "曲を削除しました。",
+  "setlistsTitle": "セットリスト",
+  "setlistsEmpty": "次のリハーサルや演奏に向けてセットリストを作成しましょう。",
+  "setlistsEmptySearch": "検索に一致するセットリストはありません。",
+  "setlistCreate": "新しいセットリスト",
+  "setlistNameHint": "セットリスト名",
+  "setlistNotes": "メモ",
+  "setlistEntryOverride": "曲ごとのキーとカポ",
+  "setlistSongsCount": "{count, plural, =0{曲はありません} =1{1曲} other{{count}曲}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "少なくとも {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "長さ不明",
+  "setlistActivity": "最終操作 {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "作成日 {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "編集日 {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "最終再生日 {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "このセットリストにはまだ曲がありません。",
+  "setlistAddSongs": "曲を追加",
+  "setlistReorder": "曲の順序を変更",
+  "setlistMoveSongUp": "「{song}」を上へ移動",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "「{song}」を下へ移動",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "「{song}」をセットリストから削除",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "セットリストを複製",
+  "setlistFavoriteAdd": "セットリストをお気に入りに追加",
+  "setlistFavoriteRemove": "セットリストをお気に入りから削除",
+  "setlistShare": "セットリストファイルとして共有",
+  "setlistSharePdf": "PDFとして共有",
+  "setlistPrint": "印刷",
+  "setlistDeleteConfirmTitle": "セットリストを削除しますか？",
+  "setlistDeleteConfirmMessage": "セットリストは削除されます。ライブラリ内の曲はそのまま残ります。",
+  "setlistDeleted": "セットリストを削除しました。",
+  "readerTitle": "歌詞",
+  "readerNoLyrics": "歌詞はまだ追加されていません。",
+  "readerShowChords": "コードを表示",
+  "readerHideChords": "コードを非表示",
+  "readerTranspose": "コードを移調",
+  "readerTransposeSemitones": "{count, plural, =0{0半音} =1{1半音} other{{count}半音}}だけ移調",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "歌詞と詳細を編集",
+  "playerPlay": "歌詞のスクロールを開始",
+  "playerPause": "歌詞のスクロールを一時停止",
+  "playerResume": "歌詞のスクロールを再開",
+  "playerSeek": "再生位置",
+  "playerElapsed": "経過時間 {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "残り時間 {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "スクロールモード",
+  "playerTimedLyrics": "タイミング付き歌詞",
+  "playerEstimatedPace": "推定速度",
+  "playerManualScroll": "手動スクロール",
+  "playerTimingStatusReady": "利用可能なタイミングに合わせて歌詞がスクロールします。",
+  "playerTimingStatusEstimated": "曲の長さからスクロール速度を推定します。",
+  "playerTimingStatusManual": "歌詞を手動でスクロールしてください。",
+  "playerTimingStatusUnavailable": "この曲ではタイミング付きスクロールを利用できません。",
+  "playerDurationUnknown": "推定スクロールを使うには曲の長さを追加してください。",
+  "playerProgressLabel": "曲の進行状況",
+  "playerCurrentSection": "現在のセクション",
+  "playerPreviousSection": "前のセクション",
+  "playerNextSection": "次のセクション",
+  "playerPreviousSectionSong": "前のセクション · 長押しで前のセットリストの曲へ",
+  "playerNextSectionSong": "次のセクション · 長押しで次のセットリストの曲へ",
+  "playerPreviousSong": "前の曲",
+  "playerNextSong": "次の曲",
+  "editorTitle": "曲を編集",
+  "editorTitleField": "曲名",
+  "editorArtistField": "アーティスト",
+  "editorAlbumField": "アルバム",
+  "editorLyricsField": "歌詞",
+  "editorChordsField": "コード",
+  "editorKeyField": "キー",
+  "editorCapoField": "カポ",
+  "editorTuningField": "チューニング",
+  "editorTempoField": "テンポ",
+  "editorDurationField": "長さ",
+  "editorTimeSignatureField": "拍子",
+  "editorLanguageField": "言語",
+  "editorYearField": "年",
+  "editorComposerField": "作曲者",
+  "editorLyricistField": "作詞者",
+  "editorCopyrightField": "著作権",
+  "editorLicenseField": "ライセンス",
+  "songInfoSources": "ソースとクレジット",
+  "searchMatchSameSong": "同じ曲ですが、録音は確認されていません",
+  "searchMatchNeedsAgreement": "コード譜を歌詞と照合する必要があります",
+  "searchMatchDifferentLyrics": "選択した曲と歌詞が異なります",
+  "searchMatchCombinedSources": "複数のソースから詳細を統合しました",
+  "searchCombinedFromSources": "{count, plural, =1{1つのソースから統合} other{{count}個のソースから統合}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, =0{0曲の一致} =1{1曲の一致} other{{count}曲の一致}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, =0{0個のソースバージョン} =1{1個のソースバージョン} other{{count}個のソースバージョン}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "最適な一致",
+  "providerDescriptionUnknown": "曲のソース",
+  "providerDescDownloadChordProThenImport": "ソースからChordProファイルをダウンロードしてインポートしてください。",
+  "providerDescFreeAccountDownloadThenImport": "無料アカウントでファイルをダウンロードしてからインポートしてください。",
+  "providerDescPublicChordSheets": "公開されているコード譜。",
+  "providerDescHistoricalTextPerWorkLicense": "歴史的な歌詞は作品ごとにライセンスされています。",
+  "providerDescLicensedCatalog": "ライセンス済みの歌詞カタログ。",
+  "providerDescOriginalSongsCcBy": "Creative Commons BYライセンスのオリジナル曲。",
+  "providerDescPerSongLicense": "歌詞は曲ごとにライセンスされています。",
+  "providerDescRecordingMetadataOnly": "録音とリリースの詳細のみ。",
+  "providerDescCompositionMetadataOnly": "楽曲の詳細のみ。",
+  "providerDescExactFileArtworkOnly": "アートワークは録音が完全に一致する場合のみ利用できます。",
+  "providerCapabilityLyrics": "歌詞",
+  "providerCapabilityChords": "コード",
+  "providerCapabilityTiming": "タイミング付き歌詞",
+  "providerCapabilitySearch": "検索",
+  "providerCapabilityMetadata": "曲の詳細",
+  "editorArtworkField": "アートワークのリンク",
+  "editorLyricsHint": "行をタップして歌詞やコードを編集します。",
+  "editorSave": "変更を保存",
+  "editorSaved": "変更を保存しました。",
+  "editorSaveFailed": "変更を保存できませんでした。",
+  "editorSaveConflict": "別の場所で曲が変更されました。編集内容は別のコピーとして保存されました。",
+  "editorUnsavedTitle": "変更を破棄しますか？",
+  "editorUnsavedMessage": "編集内容は保存されていません。",
+  "editorFieldRequired": "曲名を入力してください。",
+  "settingsTitle": "設定",
+  "settingsAppearance": "外観",
+  "settingsTheme": "テーマ",
+  "settingsThemeSystem": "端末の設定を使用",
+  "settingsThemeLight": "ライト",
+  "settingsThemeDark": "ダーク",
+  "settingsColorPalette": "カラーパレット",
+  "settingsFont": "フォント",
+  "settingsTextSize": "文字サイズ",
+  "settingsLyricsPreview": "歌詞のプレビュー",
+  "settingsPlayer": "歌詞プレーヤー",
+  "settingsDefaultShowChords": "デフォルトでコードを表示",
+  "settingsDefaultAutoscroll": "歌詞の自動スクロールを開始",
+  "settingsDefaultTiming": "デフォルトのスクロールモード",
+  "settingsLanguage": "アプリの言語",
+  "settingsLanguageSystem": "端末の言語を使用",
+  "settingsLanguageEnglish": "英語",
+  "settingsLanguageBulgarian": "ブルガリア語",
+  "settingsLanguageUkrainian": "ウクライナ語",
+  "settingsSources": "歌詞のソース",
+  "settingsSourceEnabled": "ソース {source} を有効にする",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "ソース一覧を更新",
+  "settingsSourcesUpdated": "ソースを更新しました。",
+  "settingsSourcesUpdateFailed": "ソースを更新できませんでした。",
+  "settingsImport": "曲をインポート",
+  "settingsImportChordPro": "ChordProファイルをインポート",
+  "settingsImportSetlist": "セットリストファイルをインポート",
+  "settingsImportSuccess": "インポートが完了しました。",
+  "settingsImportFailed": "このファイルをインポートできませんでした。",
+  "settingsImportUnsupported": "このファイル形式はサポートされていません。",
+  "settingsShareSong": "ChordProとして共有",
+  "settingsSharePdf": "PDFとして共有",
+  "settingsCopySong": "クリップボードにコピー",
+  "settingsPrintSong": "曲のみ印刷",
+  "settingsPrintSetlist": "歌詞付きセットリストを印刷",
+  "settingsExportFailed": "ファイルを準備できませんでした。",
+  "settingsCopied": "クリップボードにコピーしました。",
+  "settingsAbout": "アプリについて",
+  "settingsPrivacy": "プライバシー",
+  "settingsLegal": "法的情報",
+  "settingsClearHistory": "履歴を消去",
+  "settingsClearHistoryConfirm": "曲とセットリストの履歴を消去しますか？",
+  "settingsHistoryCleared": "履歴を消去しました。",
+  "accountTitle": "アカウントと同期",
+  "accountUnavailable": "同期にはGoogleログインを設定したSingbookのビルドが必要です。このビルドでは曲はこの端末にのみ保存されます。",
+  "accountSyncNow": "今すぐ同期",
+  "accountConnected": "接続しました。「今すぐ同期」を選択してバックアップを更新してください。",
+  "accountSignIn": "アカウントを接続",
+  "accountSignOut": "ログアウト",
+  "accountChange": "アカウントを変更",
+  "accountSignedOut": "未接続",
+  "accountSyncing": "ライブラリを同期しています…",
+  "accountSynced": "ライブラリを同期しました。",
+  "accountSyncFailed": "ライブラリを同期できませんでした。",
+  "accessibilityFavorite": "お気に入り",
+  "accessibilityNotFavorite": "お気に入りではありません",
+  "accessibilitySearchField": "曲を検索",
+  "accessibilityClearSearch": "検索文字列を消去",
+  "accessibilitySongMenu": "「{song}」の操作",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "「{setlist}」の操作",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "「{setlist}」の曲を展開",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "「{setlist}」の曲を折りたたむ",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "再生の進行状況、{percent}パーセント",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "履歴のタイムライン、{date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "読み込み中…",
+  "loadingSongs": "曲を読み込み中…",
+  "loadingSetlists": "セットリストを読み込み中…",
+  "errorGeneric": "問題が発生しました。",
+  "errorOffline": "オフラインのようです。",
+  "errorPermission": "続行するには権限が必要です。",
+  "emptyFiltered": "これらのフィルターに一致する項目はありません。",
+  "unknownValue": "不明",
+  "durationUnknown": "長さ不明",
+  "metadataNotSet": "未設定",
+  "dateToday": "今日",
+  "dateYesterday": "昨日",
+  "daySongCount": "{count, plural, =0{曲はありません} =1{1曲} other{{count}曲}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "ネイビー",
+  "settingsPaletteSage": "セージ",
+  "settingsPaletteOcean": "オーシャン",
+  "settingsPaletteClay": "クレイ",
+  "settingsPalettePlum": "プラム",
+  "settingsFontSystem": "システム",
+  "settingsFontSerif": "セリフ",
+  "settingsFontMonospace": "等幅",
+  "settingsLyricsPreviewExample": "朝が来たら、また一緒に歌いましょう。",
+  "searchDiscoveryProgress": "歌詞ソースを確認中: {total}件中{checked}件完了。",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "使用できる歌詞が見つかりませんでした。",
+  "searchDiscoveryNoLyricsDetails": "選択した曲を有効なソースで確認しましたが、使用できる歌詞のバージョンは見つかりませんでした。",
+  "searchDiscoveryError": "歌詞ソースを確認できませんでした。",
+  "searchDiscoveryRetry": "歌詞を再検索",
+  "searchSourcesUnavailableCount": "{count, plural, =0{利用できないソースは0件} =1{利用できないソースは1件} other{利用できないソースは{count}件}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "接続を確認して、もう一度お試しください。",
+  "searchProviderChecks": "ソースの確認",
+  "searchProviderPending": "確認中",
+  "searchProviderFound": "一致が見つかりました",
+  "searchProviderRejected": "一致しません",
+  "searchProviderFailed": "確認に失敗しました",
+  "searchProviderUnavailable": "使用できる歌詞がありません",
+  "searchCatalogFilterHint": "曲を選択すると、コード、タイミング、言語で歌詞のバージョンを絞り込めます。",
+  "startupErrorTitle": "ライブラリを開けませんでした。",
+  "setlistCopyName": "{name}のコピー",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "曲が見つかりません",
+  "settingsImportTooLarge": "このファイルは大きすぎてインポートできません。",
+  "songsJumpToLetter": "{letter}に移動",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "破棄",
+  "editorKeepEditing": "編集を続ける",
+  "settingsDefaultShowChordsHint": "曲にコードがある場合、歌詞の上に表示します。",
+  "settingsDefaultAutoscrollHint": "曲に合わせて歌詞がスクロールします。手動スクロールモードでは使用されません。",
+  "accountUnavailableTitle": "同期が設定されていません",
+  "accountSignedOutBenefits": "Googleでログインすると、曲とセットリストをGoogle Driveにバックアップし、すべての端末を同期できます。曲はどちらの場合もこの端末に残ります。",
+  "accountSignInWithGoogle": "Googleでログイン",
+  "accountWorking": "処理中…",
+  "accountNeverSynced": "未同期",
+  "accountSyncedJustNow": "たった今同期",
+  "accountSyncedMinutesAgo": "{count, plural, one{1分前に同期} other{{count}分前に同期}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{1時間前に同期} other{{count}時間前に同期}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{1日前に同期} other{{count}日前に同期}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{競合した編集1件をコピーとして保存しました} other{競合した編集{count}件をコピーとして保存しました}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "同じ曲またはセットリストが2か所で編集されました。データは失われていません。もう一方のバージョンは別のコピーとして保存されました。",
+  "accountReviewConflicts": "コピーを確認",
+  "songsConflictFilterActive": "競合コピーのみを表示中",
+  "songsConflictFilterClear": "すべての曲を表示",
+  "songsConflictBadge": "競合コピー",
+  "songsConflictEmpty": "競合コピーはありません。",
+  "accountAutoSync": "自動同期",
+  "accountAutoSyncHint": "アプリを開いたときや変更後にライブラリを最新の状態に保ちます。",
+  "accountSignOutTitle": "このアカウントからログアウトしますか？",
+  "accountSignOutBody": "曲とセットリストはこの端末に残ります。再度ログインするまでバックアップと同期は行われません。",
+  "accountUseDifferent": "別のアカウントを使用",
+  "accountSignInAgain": "再度ログイン",
+  "accountChooseAction": "続行方法を選択",
+  "accountChangedTitle": "別のGoogleアカウント",
+  "accountChangedBody": "この端末は最後に別のGoogleアカウントと同期しました。この端末の曲とセットリストをどうするか選択してください。",
+  "accountChangedMerge": "新しいアカウントに統合",
+  "accountChangedMergeHint": "この端末のすべてを保持し、新しいアカウントに追加します。",
+  "accountChangedReplace": "新しいアカウントのライブラリに置き換え",
+  "accountChangedReplaceHint": "新しいアカウントにないこの端末の曲は削除されます。",
+  "accountChangedSignOut": "キャンセルしてログアウト",
+  "accountStatusSignedOut": "アカウントと同期: 未ログイン",
+  "accountStatusSignedIn": "アカウントと同期: ログイン済み",
+  "accountStatusSyncing": "アカウントと同期: 同期中",
+  "accountStatusSynced": "アカウントと同期: ライブラリは最新です",
+  "accountStatusError": "アカウントと同期: 問題があります。タップして確認してください",
+  "accountNoticeConflicts": "一部の曲が2か所で編集されました。コピーを保存しました。",
+  "accountNoticeSignedIn": "ログインしました。",
+  "accountNoticeSignedOut": "ログアウトしました。曲はこの端末に残ります。",
+  "syncErrorNotConfigured": "このビルドでは同期が設定されていません。",
+  "syncErrorNotConfiguredHint": "Googleログインが設定されたSingbookのビルドを使用してください。",
+  "syncErrorNotSignedIn": "ログインしていません。",
+  "syncErrorNotSignedInHint": "ライブラリを同期するにはログインしてください。",
+  "syncErrorAuthorizationRequired": "Googleへの再ログインが必要です。",
+  "syncErrorAuthorizationRequiredHint": "同期を続けるには再度ログインしてください。曲はこの端末に安全に保存されています。",
+  "syncErrorAccessDenied": "SingbookにはGoogle Driveを使用する権限がありません。",
+  "syncErrorAccessDeniedHint": "再度ログインし、表示されたらDriveへのアクセスを許可してください。",
+  "syncErrorRateLimited": "Googleは現在リクエストを制限しています。",
+  "syncErrorRateLimitedHint": "数分待ってから、もう一度お試しください。",
+  "syncErrorStorageFull": "Google Driveの空き容量がありません。",
+  "syncErrorStorageFullHint": "Driveの空き容量を増やしてから、もう一度お試しください。",
+  "syncErrorNetwork": "Googleに接続できませんでした。",
+  "syncErrorNetworkHint": "インターネット接続を確認して、もう一度お試しください。",
+  "syncErrorAccountChanged": "別のGoogleアカウントが使用されました。",
+  "syncErrorAccountChangedHint": "この端末のライブラリをそのアカウントに統合するか、置き換えるか選択してください。",
+  "syncErrorRemoteLibraryTooLarge": "同期されたライブラリが大きすぎてSingbookで処理できません。",
+  "syncErrorRemoteLibraryTooLargeHint": "同期されたライブラリから曲またはセットリストを削除して、もう一度お試しください。",
+  "syncErrorSignInFailed": "ログインを完了できませんでした。",
+  "syncErrorSignInFailedHint": "もう一度ログインしてください。",
+  "syncErrorGeneric": "ライブラリを同期できませんでした。",
+  "syncErrorGenericHint": "しばらくしてからもう一度お試しください。曲はこの端末に安全に保存されています。"
+}

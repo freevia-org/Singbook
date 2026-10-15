@@ -1,0 +1,670 @@
+{
+  "@@locale": "mt",
+  "appTitle": "Singbook",
+  "aboutDescription": "Post paċifiku fejn issib, torganizza u tkanta l-kanzunetti tiegħek.",
+  "aboutMadeForSinging": "Magħmul biex inkantaw flimkien",
+  "appVersion": "Verżjoni {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "Dar",
+  "navSongs": "Kanzunetti",
+  "navSetlists": "Listi ta’ kanzunetti",
+  "navSettings": "Issettjar",
+  "navSettingsCompact": "Issettjar",
+  "navSearch": "Fittex",
+  "navBack": "Lura",
+  "navClose": "Agħlaq",
+  "navMore": "Aktar azzjonijiet",
+  "actionCancel": "Ikkanċella",
+  "actionSave": "Issejvja",
+  "actionDone": "Lest",
+  "actionEdit": "Editja",
+  "actionDelete": "Ħassar",
+  "actionShare": "Aqsam",
+  "actionPrint": "Ipprintja",
+  "actionCopy": "Ikkopja",
+  "actionClear": "Neħħi",
+  "actionRetry": "Erġa’ pprova",
+  "actionRefresh": "Aġġorna",
+  "actionImport": "Importa",
+  "actionExport": "Esporta",
+  "actionExpand": "Espandi",
+  "actionCollapse": "Itwi",
+  "actionAdd": "Żid",
+  "actionCreate": "Oħloq",
+  "actionRemove": "Neħħi",
+  "actionDuplicate": "Idduplika",
+  "actionMoveUp": "Mexxi ’il fuq",
+  "actionMoveDown": "Mexxi ’l isfel",
+  "actionPrevious": "Preċedenti",
+  "actionNext": "Li jmiss",
+  "searchHint": "Fittex kanzunetti, artisti jew lirika",
+  "searchCatalogHint": "Fittex kanzunetta jew artist",
+  "searchSubmit": "Fittex",
+  "searchFilters": "Għażliet tat-tiftix",
+  "searchFiltersShow": "Uri l-għażliet tat-tiftix",
+  "searchFiltersHide": "Aħbi l-għażliet tat-tiftix",
+  "searchFilterArtist": "Artist",
+  "searchFilterTitle": "Titlu tal-kanzunetta",
+  "searchFilterLyrics": "Lirika",
+  "searchFilterChords": "Għandha akkordi",
+  "searchFilterTimed": "Lirika b’ħin",
+  "searchFilterLanguage": "Lingwa",
+  "searchFilterAll": "Kwalunkwe",
+  "searchAutocompleteLabel": "Suġġerimenti",
+  "searchResultCount": "{count, plural, =0{Ebda riżultat} =1{Riżultat wieħed} other{{count} riżultati}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "Daħħal kanzunetta, artist jew lirika biex tfittex.",
+  "searchCatalogEmptyQuery": "Daħħal kanzunetta jew artist biex tfittex.",
+  "searchNoResults": "Ma nstabet ebda kanzunetta. Ipprova tfittxija oħra.",
+  "searchLoading": "Qed infittex kanzunetti…",
+  "searchError": "Ma setgħetx titlesta t-tfittxija.",
+  "searchOnlineTab": "Online",
+  "searchRecentTab": "Riċenti",
+  "searchFavoritesTab": "Favoriti",
+  "searchSuggested": "Taqbil issuġġerit",
+  "searchAlternatives": "Riżultati oħra",
+  "searchCompare": "Qabbel il-verżjonijiet",
+  "searchChooseVersion": "Agħżel din il-verżjoni",
+  "searchSongMatch": "Taqbil tal-kanzunetta",
+  "searchRecordingMatch": "Taqbil tar-reġistrazzjoni",
+  "searchMatchUnverified": "Ir-reġistrazzjoni mhix ivverifikata",
+  "searchMatchExact": "Taqbil eżatt tar-reġistrazzjoni",
+  "searchMatchPossible": "Taqbil possibbli",
+  "searchAvailability": "Disponibbiltà",
+  "searchLyricsAvailable": "Lirika disponibbli",
+  "searchLyricsUnavailable": "Lirika mhux disponibbli",
+  "searchChordsAvailable": "Akkordi disponibbli",
+  "searchChordsUnavailable": "Ebda akkordi",
+  "searchTimingAvailable": "Ħin disponibbli",
+  "searchTimingUnavailable": "Ebda ħin",
+  "searchDurationUnknown": "Tul mhux magħruf",
+  "searchRating": "Klassifikazzjoni {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "Sors",
+  "searchMetadata": "Dettalji tal-kanzunetta",
+  "searchAlbum": "Album",
+  "searchArtist": "Artist",
+  "searchYear": "Sena",
+  "searchLanguage": "Lingwa",
+  "searchSaved": "Il-kanzunetta ġiet issejvjata fil-librerija tiegħek.",
+  "searchSaveFailed": "Ma setgħetx tiġi ssejvjata din il-kanzunetta.",
+  "homeRecentSongs": "Kanzunetti riċenti",
+  "homeRecentlyPlayed": "Daqqew riċentement",
+  "homeFavorites": "Favoriti",
+  "homeHistory": "Kronoloġija",
+  "homeHistoryClear": "Ħassar il-kronoloġija",
+  "homeHistoryCleared": "Il-kronoloġija tħassret.",
+  "homeHistoryEmpty": "Il-kanzunetti li tiftaħ jidhru hawn.",
+  "homeFavoritesEmpty": "Il-kanzunetti u l-listi favoriti tiegħek jidhru hawn.",
+  "homeItemsShownCount": "{count, plural, =0{Ma ntwera ebda element} =1{Intwera element wieħed} other{{count} elementi ntwerew}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "Il-kanzunetti u l-listi riċenti tiegħek jidhru hawn.",
+  "homeTimelineLabel": "Kronoloġija tal-istorja",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "Kronoloġija sħiħa",
+  "homeShowFavorites": "Uri l-favoriti",
+  "homeShowRecent": "Uri r-riċenti",
+  "songsTitle": "Kanzunetti",
+  "songsEmpty": "Il-kanzunetti tiegħek jidhru hawn.",
+  "songsEmptySearch": "Ebda kanzunetta ma taqbel mat-tfittxija tiegħek.",
+  "songsAdd": "Żid kanzunetta",
+  "songsSortAlphabetical": "Ordna alfabetikament",
+  "songsAlphabetNavigation": "Indiċi tal-kanzunetti",
+  "songsUsageCount": "{count, plural, =0{Qatt ma nfetħet} =1{Infetħet darba} other{Infetħet {count} darbiet}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "Żid mal-favoriti",
+  "songFavoriteRemove": "Neħħi mill-favoriti",
+  "songMenuLabel": "Azzjonijiet tal-kanzunetta",
+  "songInfo": "Dettalji tal-kanzunetta",
+  "setlistMenuLabel": "Azzjonijiet tal-lista",
+  "songAddToSetlist": "Żid mal-lista",
+  "songCopyChordPro": "Ikkopja ChordPro",
+  "songDeleteConfirmTitle": "Tħassar il-kanzunetta?",
+  "songDeleteConfirmMessage": "Din il-kanzunetta se titneħħa mil-librerija tiegħek.",
+  "songDeleted": "Il-kanzunetta tħassret.",
+  "setlistsTitle": "Listi ta’ kanzunetti",
+  "setlistsEmpty": "Oħloq lista għall-prova jew l-eżekuzzjoni li jmiss tiegħek.",
+  "setlistsEmptySearch": "Ebda lista ma taqbel mat-tfittxija tiegħek.",
+  "setlistCreate": "Lista ġdida",
+  "setlistNameHint": "Isem il-lista",
+  "setlistNotes": "Noti",
+  "setlistEntryOverride": "Tonalità u capo għal din il-kanzunetta",
+  "setlistSongsCount": "{count, plural, =0{Ebda kanzunetta} =1{Kanzunetta waħda} other{{count} kanzunetti}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "Mill-inqas {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "Tul mhux magħruf",
+  "setlistActivity": "L-aħħar attività {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "Inħolqot {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "Ġiet editjata {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "L-aħħar daqq {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "Din il-lista għadha bla kanzunetti.",
+  "setlistAddSongs": "Żid kanzunetti",
+  "setlistReorder": "Ibdel l-ordni tal-kanzunetti",
+  "setlistMoveSongUp": "Mexxi {song} ’il fuq",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "Mexxi {song} ’l isfel",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "Neħħi {song} mil-lista",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "Idduplika l-lista",
+  "setlistFavoriteAdd": "Żid il-lista mal-favoriti",
+  "setlistFavoriteRemove": "Neħħi l-lista mill-favoriti",
+  "setlistShare": "Aqsam bħala fajl tal-lista",
+  "setlistSharePdf": "Aqsam bħala PDF",
+  "setlistPrint": "Ipprintja",
+  "setlistDeleteConfirmTitle": "Tħassar il-lista?",
+  "setlistDeleteConfirmMessage": "Il-lista se titneħħa. Il-kanzunetti fil-librerija tiegħek jibqgħu.",
+  "setlistDeleted": "Il-lista tħassret.",
+  "readerTitle": "Lirika",
+  "readerNoLyrics": "Għadha ma żdiedetx il-lirika.",
+  "readerShowChords": "Uri l-akkordi",
+  "readerHideChords": "Aħbi l-akkordi",
+  "readerTranspose": "Ibdel it-tonalità tal-akkordi",
+  "readerTransposeSemitones": "Ibdel b’{count, plural, =0{0 semitoni} =1{semitonu wieħed} other{{count} semitoni}}",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "Editja l-lirika u d-dettalji",
+  "playerPlay": "Ibda l-iskrolljar tal-lirika",
+  "playerPause": "Waqqaf l-iskrolljar tal-lirika",
+  "playerResume": "Kompli l-iskrolljar tal-lirika",
+  "playerSeek": "Pożizzjoni tad-daqq",
+  "playerElapsed": "Ħin li għadda {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "Ħin li fadal {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "Mod tal-iskrolljar",
+  "playerTimedLyrics": "Lirika b’ħin",
+  "playerEstimatedPace": "Ritmu stmat",
+  "playerManualScroll": "Skrolljar manwali",
+  "playerTimingStatusReady": "Il-lirika se ssegwi l-ħin disponibbli.",
+  "playerTimingStatusEstimated": "Ir-ritmu tal-iskrolljar huwa stmat mit-tul tal-kanzunetta.",
+  "playerTimingStatusManual": "Skrollja l-lirika int.",
+  "playerTimingStatusUnavailable": "L-iskrolljar bil-ħin mhuwiex disponibbli għal din il-kanzunetta.",
+  "playerDurationUnknown": "Żid it-tul tal-kanzunetta biex tuża skrolljar stmat.",
+  "playerProgressLabel": "Progress tal-kanzunetta",
+  "playerCurrentSection": "Parti attwali",
+  "playerPreviousSection": "Parti ta’ qabel",
+  "playerNextSection": "Parti li jmiss",
+  "playerPreviousSectionSong": "Parti ta’ qabel · żomm għal kanzunetta ta’ qabel fil-lista",
+  "playerNextSectionSong": "Parti li jmiss · żomm għal kanzunetta li jmiss fil-lista",
+  "playerPreviousSong": "Kanzunetta ta’ qabel",
+  "playerNextSong": "Il-kanzunetta li jmiss",
+  "editorTitle": "Editja l-kanzunetta",
+  "editorTitleField": "Titlu tal-kanzunetta",
+  "editorArtistField": "Artist",
+  "editorAlbumField": "Album",
+  "editorLyricsField": "Lirika",
+  "editorChordsField": "Akkordi",
+  "editorKeyField": "Tonalità",
+  "editorCapoField": "Capo",
+  "editorTuningField": "Intunatura",
+  "editorTempoField": "Tempo",
+  "editorDurationField": "Tul",
+  "editorTimeSignatureField": "Metru",
+  "editorLanguageField": "Lingwa",
+  "editorYearField": "Sena",
+  "editorComposerField": "Kompożitur",
+  "editorLyricistField": "Kittieb tal-lirika",
+  "editorCopyrightField": "Drittijiet tal-awtur",
+  "editorLicenseField": "Liċenzja",
+  "songInfoSources": "Sorsi u krediti",
+  "searchMatchSameSong": "L-istess kanzunetta; ir-reġistrazzjoni mhix ikkonfermata",
+  "searchMatchNeedsAgreement": "Il-lirika tal-partitura trid tiġi kkonfermata",
+  "searchMatchDifferentLyrics": "Il-lirika hija differenti minn dik tal-kanzunetta magħżula",
+  "searchMatchCombinedSources": "Dettalji magħquda minn diversi sorsi",
+  "searchCombinedFromSources": "{count, plural, =1{Magħquda minn sors wieħed} other{Magħquda minn {count} sorsi}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, =0{Ebda taqbil ta’ kanzunetta} =1{Taqbil wieħed ta’ kanzunetta} other{{count} taqbiliet ta’ kanzunetti}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, =0{Ebda verżjoni minn sors} =1{Verżjoni waħda minn sors} other{{count} verżjonijiet minn sorsi}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "L-aħjar taqbil disponibbli",
+  "providerDescriptionUnknown": "Sors tal-kanzunetta",
+  "providerDescDownloadChordProThenImport": "Niżżel fajl ChordPro mis-sors, imbagħad importah.",
+  "providerDescFreeAccountDownloadThenImport": "Niżżel fajl b’kont bla ħlas, imbagħad importah.",
+  "providerDescPublicChordSheets": "Partituri pubbliċi bl-akkordi.",
+  "providerDescHistoricalTextPerWorkLicense": "Lirika storika liċenzjata għal kull xogħol.",
+  "providerDescLicensedCatalog": "Katalgu tal-lirika liċenzjat.",
+  "providerDescOriginalSongsCcBy": "Kanzunetti oriġinali taħt Creative Commons BY.",
+  "providerDescPerSongLicense": "Lirika liċenzjata għal kull kanzunetta.",
+  "providerDescRecordingMetadataOnly": "Dettalji tar-reġistrazzjoni u tar-rilaxx biss.",
+  "providerDescCompositionMetadataOnly": "Dettalji tal-kompożizzjoni biss.",
+  "providerDescExactFileArtworkOnly": "Kopertina biss għal reġistrazzjonijiet li jaqblu eżatt.",
+  "providerCapabilityLyrics": "Lirika",
+  "providerCapabilityChords": "Akkordi",
+  "providerCapabilityTiming": "Lirika b’ħin",
+  "providerCapabilitySearch": "Tiftix",
+  "providerCapabilityMetadata": "Dettalji tal-kanzunetta",
+  "editorArtworkField": "Link tal-kopertina",
+  "editorLyricsHint": "Tektek linja biex teditja l-lirika jew l-akkordi.",
+  "editorSave": "Issejvja l-bidliet",
+  "editorSaved": "Il-bidliet ġew issejvjati.",
+  "editorSaveFailed": "Ma setgħux jiġu ssejvjati l-bidliet.",
+  "editorSaveConflict": "Il-kanzunetta nbidlet f’post ieħor. L-editji tiegħek ġew issejvjati bħala kopja separata.",
+  "editorUnsavedTitle": "Tarmi l-bidliet?",
+  "editorUnsavedMessage": "L-editji tiegħek għadhom ma ġewx issejvjati.",
+  "editorFieldRequired": "Daħħal titlu tal-kanzunetta.",
+  "settingsTitle": "Issettjar",
+  "settingsAppearance": "Dehra",
+  "settingsTheme": "Tema",
+  "settingsThemeSystem": "Uża l-issettjar tal-apparat",
+  "settingsThemeLight": "Ċara",
+  "settingsThemeDark": "Skura",
+  "settingsColorPalette": "Paletta tal-kuluri",
+  "settingsFont": "Font",
+  "settingsTextSize": "Daqs tat-test",
+  "settingsLyricsPreview": "Previżjoni tal-lirika",
+  "settingsPlayer": "Plejer tal-lirika",
+  "settingsDefaultShowChords": "Uri l-akkordi b’mod predefinit",
+  "settingsDefaultAutoscroll": "Ibda l-iskrolljar tal-lirika awtomatikament",
+  "settingsDefaultTiming": "Mod tal-iskrolljar predefinit",
+  "settingsLanguage": "Lingwa tal-app",
+  "settingsLanguageSystem": "Uża l-lingwa tal-apparat",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageBulgarian": "Български",
+  "settingsLanguageUkrainian": "Українська",
+  "settingsSources": "Sorsi tal-lirika",
+  "settingsSourceEnabled": "Attiva s-sors {source}",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "Aġġorna l-lista tas-sorsi",
+  "settingsSourcesUpdated": "Is-sorsi ġew aġġornati.",
+  "settingsSourcesUpdateFailed": "Ma setgħetx tiġġedded il-lista tas-sorsi.",
+  "settingsImport": "Importa kanzunetti",
+  "settingsImportChordPro": "Importa fajl ChordPro",
+  "settingsImportSetlist": "Importa fajl tal-lista",
+  "settingsImportSuccess": "L-importazzjoni tlestiet.",
+  "settingsImportFailed": "Ma setax jiġi importat dan il-fajl.",
+  "settingsImportUnsupported": "Dan it-tip ta’ fajl mhuwiex appoġġjat.",
+  "settingsShareSong": "Aqsam bħala ChordPro",
+  "settingsSharePdf": "Aqsam bħala PDF",
+  "settingsCopySong": "Ikkopja fil-clipboard",
+  "settingsPrintSong": "Ipprintja biss",
+  "settingsPrintSetlist": "Ipprintja l-lista bil-lirika",
+  "settingsExportFailed": "Ma setax jitħejja l-fajl.",
+  "settingsCopied": "Ġie kkupjat fil-clipboard.",
+  "settingsAbout": "Dwar",
+  "settingsPrivacy": "Privatezza",
+  "settingsLegal": "Legali",
+  "settingsClearHistory": "Ħassar il-kronoloġija",
+  "settingsClearHistoryConfirm": "Tħassar il-kronoloġija tal-kanzunetti u l-listi?",
+  "settingsHistoryCleared": "Il-kronoloġija tħassret.",
+  "accountTitle": "Kont u sinkronizzazzjoni",
+  "accountUnavailable": "Is-sinkronizzazzjoni teħtieġ verżjoni ta’ Singbook b’aċċess għal Google kkonfigurat. Din il-verżjoni żżomm il-kanzunetti tiegħek fuq dan l-apparat biss.",
+  "accountSyncNow": "Issinkronizza issa",
+  "accountConnected": "Imqabbad. Agħżel “Issinkronizza issa” biex taġġorna l-backup tiegħek.",
+  "accountSignIn": "Qabbad kont",
+  "accountSignOut": "Oħroġ mill-kont",
+  "accountChange": "Ibdel il-kont",
+  "accountSignedOut": "Mhux imqabbad",
+  "accountSyncing": "Qed nissinkronizza l-librerija tiegħek…",
+  "accountSynced": "Il-librerija ġiet issinkronizzata.",
+  "accountSyncFailed": "Ma setgħetx tiġi sinkronizzata l-librerija tiegħek.",
+  "accessibilityFavorite": "Favorit",
+  "accessibilityNotFavorite": "Mhux favorit",
+  "accessibilitySearchField": "Fittex kanzunetti",
+  "accessibilityClearSearch": "Neħħi t-test tat-tfittxija",
+  "accessibilitySongMenu": "Azzjonijiet għal {song}",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "Azzjonijiet għal {setlist}",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "Espandi l-kanzunetti f’{setlist}",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "Itwi l-kanzunetti f’{setlist}",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "Progress tad-daqq, {percent} fil-mija",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "Kronoloġija tal-istorja, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "Qed jitgħabba…",
+  "loadingSongs": "Qed jitgħabbew il-kanzunetti…",
+  "loadingSetlists": "Qed jitgħabbew il-listi…",
+  "errorGeneric": "Xi ħaġa marret ħażin.",
+  "errorOffline": "Jidher li m’intix online.",
+  "errorPermission": "Hemm bżonn permess biex tkompli.",
+  "emptyFiltered": "Ebda element ma jaqbel ma’ dawn il-filtri.",
+  "unknownValue": "Mhux magħruf",
+  "durationUnknown": "Tul mhux magħruf",
+  "metadataNotSet": "Mhux issettjat",
+  "dateToday": "Illum",
+  "dateYesterday": "Ilbieraħ",
+  "daySongCount": "{count, plural, =0{Ebda kanzunetta} =1{Kanzunetta waħda} other{{count} kanzunetti}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "Blu navy",
+  "settingsPaletteSage": "Aħdar salvja",
+  "settingsPaletteOcean": "Oċean",
+  "settingsPaletteClay": "Tafal",
+  "settingsPalettePlum": "Għanbaqar",
+  "settingsFontSystem": "Sistema",
+  "settingsFontSerif": "Serif",
+  "settingsFontMonospace": "Monospazju",
+  "settingsLyricsPreviewExample": "Meta jasal filgħodu, nerġgħu nkantaw.",
+  "searchDiscoveryProgress": "Qed niċċekkja s-sorsi tal-lirika: {checked} minn {total} lesti.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "Ma nstabet ebda lirika li tista’ tintuża.",
+  "searchDiscoveryNoLyricsDetails": "Il-kanzunetta magħżula ġiet iċċekkjata mas-sorsi attivati, iżda ħadd minnhom ma rritorna verżjoni tal-lirika li tista’ tintuża.",
+  "searchDiscoveryError": "Ma setgħux jiġu ċċekkjati s-sorsi tal-lirika.",
+  "searchDiscoveryRetry": "Erġa’ fittex il-lirika",
+  "searchSourcesUnavailableCount": "{count, plural, =0{0 sors mhux disponibbli} =1{sors wieħed mhux disponibbli} other{{count} sorsi mhux disponibbli}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "Iċċekkja l-konnessjoni tiegħek u erġa’ pprova.",
+  "searchProviderChecks": "Iċċekkjar tas-sorsi",
+  "searchProviderPending": "Qed jiċċekkja",
+  "searchProviderFound": "Instab taqbil",
+  "searchProviderRejected": "Ma jaqbilx",
+  "searchProviderFailed": "L-iċċekkjar falla",
+  "searchProviderUnavailable": "Ebda lirika li tista’ tintuża",
+  "searchCatalogFilterHint": "Agħżel kanzunetta biex tiffiltra l-verżjonijiet tal-lirika skont l-akkordi, il-ħin jew il-lingwa.",
+  "startupErrorTitle": "Ma setgħetx tinfetaħ il-librerija tiegħek.",
+  "setlistCopyName": "Kopja ta’ {name}",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "Kanzunetta nieqsa",
+  "settingsImportTooLarge": "Dan il-fajl huwa kbir wisq biex jiġi importat.",
+  "songsJumpToLetter": "Mur għal {letter}",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "Armi",
+  "editorKeepEditing": "Kompli editja",
+  "settingsDefaultShowChordsHint": "Uri l-akkordi fuq il-lirika meta jkun hemm.",
+  "settingsDefaultAutoscrollHint": "Il-lirika tiskrollja mal-kanzunetta. Ma jintużax fil-mod ta’ skrolljar manwali.",
+  "accountUnavailableTitle": "Is-sinkronizzazzjoni mhix ikkonfigurata",
+  "accountSignedOutBenefits": "Idħol b’Google biex tagħmel backup tal-kanzunetti u l-listi tiegħek fuq Google Drive u żżomm l-apparati kollha tiegħek sinkronizzati. Il-kanzunetti tiegħek jibqgħu fuq dan l-apparat fi kwalunkwe każ.",
+  "accountSignInWithGoogle": "Idħol b’Google",
+  "accountWorking": "Qed jaħdem…",
+  "accountNeverSynced": "Qatt ma ġiet sinkronizzata",
+  "accountSyncedJustNow": "Sinkronizzata issa stess",
+  "accountSyncedMinutesAgo": "{count, plural, one{Sinkronizzata minuta ilu} other{Sinkronizzata {count} minuti ilu}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{Sinkronizzata siegħa ilu} other{Sinkronizzata {count} sigħat ilu}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{Sinkronizzata ġurnata ilu} other{Sinkronizzata {count} ijiem ilu}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{Editja konfliġġenti waħda nżammet bħala kopja} other{{count} editji konfliġġenti nżammu bħala kopji}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "L-istess kanzunetta jew lista ġiet editjata f’żewġ postijiet. Ma ntilef xejn: il-verżjoni l-oħra ġiet issejvjata bħala kopja separata.",
+  "accountReviewConflicts": "Irrevedi l-kopji",
+  "songsConflictFilterActive": "Qed jintwerew biss kopji konfliġġenti",
+  "songsConflictFilterClear": "Uri l-kanzunetti kollha",
+  "songsConflictBadge": "Kopja konfliġġenti",
+  "songsConflictEmpty": "Ebda kopja konfliġġenti.",
+  "accountAutoSync": "Issinkronizza awtomatikament",
+  "accountAutoSyncHint": "Żomm il-librerija tiegħek aġġornata meta tiftaħ l-app u wara l-bidliet.",
+  "accountSignOutTitle": "Toħroġ minn dan il-kont?",
+  "accountSignOutBody": "Il-kanzunetti u l-listi tiegħek jibqgħu fuq dan l-apparat. Mhux se jsir backup jew sinkronizzazzjoni sakemm terġa’ tidħol.",
+  "accountUseDifferent": "Uża kont ieħor",
+  "accountSignInAgain": "Idħol mill-ġdid",
+  "accountChooseAction": "Agħżel kif tkompli",
+  "accountChangedTitle": "Kont Google differenti",
+  "accountChangedBody": "Dan l-apparat issinkronizza l-aħħar ma’ kont Google ieħor. Agħżel x’għandu jiġri lill-kanzunetti u l-listi fuq dan l-apparat.",
+  "accountChangedMerge": "Għaqqad mal-kont il-ġdid",
+  "accountChangedMergeHint": "Żomm kollox fuq dan l-apparat u żidu mal-kont il-ġdid.",
+  "accountChangedReplace": "Ibdel bil-librerija tal-kont il-ġdid",
+  "accountChangedReplaceHint": "Jitneħħew il-kanzunetti fuq dan l-apparat li mhumiex fil-kont il-ġdid.",
+  "accountChangedSignOut": "Ikkanċella u oħroġ",
+  "accountStatusSignedOut": "Kont u sinkronizzazzjoni: mhux illoggjat",
+  "accountStatusSignedIn": "Kont u sinkronizzazzjoni: illoggjat",
+  "accountStatusSyncing": "Kont u sinkronizzazzjoni: qed tissinkronizza",
+  "accountStatusSynced": "Kont u sinkronizzazzjoni: il-librerija hija aġġornata",
+  "accountStatusError": "Kont u sinkronizzazzjoni: problema, tektek biex tirrevedi",
+  "accountNoticeConflicts": "Xi kanzunetti ġew editjati f’żewġ postijiet. Inżammu kopji.",
+  "accountNoticeSignedIn": "Dħalt fil-kont.",
+  "accountNoticeSignedOut": "Ħriġt mill-kont. Il-kanzunetti tiegħek jibqgħu fuq dan l-apparat.",
+  "syncErrorNotConfigured": "Is-sinkronizzazzjoni mhix ikkonfigurata f’din il-verżjoni.",
+  "syncErrorNotConfiguredHint": "Uża verżjoni ta’ Singbook b’aċċess għal Google kkonfigurat.",
+  "syncErrorNotSignedIn": "M’intix illoggjat.",
+  "syncErrorNotSignedInHint": "Idħol biex tissinkronizza l-librerija tiegħek.",
+  "syncErrorAuthorizationRequired": "Google teħtieġ li terġa’ tidħol.",
+  "syncErrorAuthorizationRequiredHint": "Idħol mill-ġdid biex tkompli tissinkronizza. Il-kanzunetti tiegħek huma siguri fuq dan l-apparat.",
+  "syncErrorAccessDenied": "Singbook m’għandhiex permess tuża Google Drive.",
+  "syncErrorAccessDeniedHint": "Idħol mill-ġdid u agħti aċċess għal Drive meta tintalab.",
+  "syncErrorRateLimited": "Google qed tillimita t-talbiet għalissa.",
+  "syncErrorRateLimitedHint": "Stenna ftit minuti, imbagħad erġa’ pprova.",
+  "syncErrorStorageFull": "Google Drive tiegħek mimli.",
+  "syncErrorStorageFullHint": "Ħeles ftit spazju f’Drive, imbagħad erġa’ pprova.",
+  "syncErrorNetwork": "Ma rnexxilniex nilħqu lil Google.",
+  "syncErrorNetworkHint": "Iċċekkja l-konnessjoni tal-internet u erġa’ pprova.",
+  "syncErrorAccountChanged": "Intuża kont Google differenti.",
+  "syncErrorAccountChangedHint": "Agħżel jekk tgħaqqadx il-librerija ta’ dan l-apparat miegħu jew tissostitwixxihiex.",
+  "syncErrorRemoteLibraryTooLarge": "Il-librerija sinkronizzata tiegħek hija akbar milli tista’ timmaniġġa Singbook.",
+  "syncErrorRemoteLibraryTooLargeHint": "Neħħi xi kanzunetti jew listi mil-librerija sinkronizzata, imbagħad erġa’ pprova.",
+  "syncErrorSignInFailed": "Id-dħul fil-kont ma tlestiex.",
+  "syncErrorSignInFailedHint": "Erġa’ pprova tidħol.",
+  "syncErrorGeneric": "Ma setgħetx tiġi sinkronizzata l-librerija tiegħek.",
+  "syncErrorGenericHint": "Erġa’ pprova dalwaqt. Il-kanzunetti tiegħek għadhom siguri fuq dan l-apparat."
+}

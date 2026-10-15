@@ -1,0 +1,670 @@
+{
+  "@@locale": "hu",
+  "appTitle": "Singbook",
+  "aboutDescription": "Nyugodt hely, ahol megtalálhatod, rendszerezheted és énekelheted a dalaidat.",
+  "aboutMadeForSinging": "Közös énekléshez készült",
+  "appVersion": "Verzió: {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "Kezdőlap",
+  "navSongs": "Dalok",
+  "navSetlists": "Setlisták",
+  "navSettings": "Beállítások",
+  "navSettingsCompact": "Beállítások",
+  "navSearch": "Keresés",
+  "navBack": "Vissza",
+  "navClose": "Bezárás",
+  "navMore": "További műveletek",
+  "actionCancel": "Mégse",
+  "actionSave": "Mentés",
+  "actionDone": "Kész",
+  "actionEdit": "Szerkesztés",
+  "actionDelete": "Törlés",
+  "actionShare": "Megosztás",
+  "actionPrint": "Nyomtatás",
+  "actionCopy": "Másolás",
+  "actionClear": "Törlés",
+  "actionRetry": "Újra",
+  "actionRefresh": "Frissítés",
+  "actionImport": "Importálás",
+  "actionExport": "Exportálás",
+  "actionExpand": "Kibontás",
+  "actionCollapse": "Összecsukás",
+  "actionAdd": "Hozzáadás",
+  "actionCreate": "Létrehozás",
+  "actionRemove": "Eltávolítás",
+  "actionDuplicate": "Másolat készítése",
+  "actionMoveUp": "Mozgatás felfelé",
+  "actionMoveDown": "Mozgatás lefelé",
+  "actionPrevious": "Előző",
+  "actionNext": "Következő",
+  "searchHint": "Dalok, előadók vagy dalszövegek keresése",
+  "searchCatalogHint": "Dal vagy előadó keresése",
+  "searchSubmit": "Keresés",
+  "searchFilters": "Keresési beállítások",
+  "searchFiltersShow": "Keresési beállítások megjelenítése",
+  "searchFiltersHide": "Keresési beállítások elrejtése",
+  "searchFilterArtist": "Előadó",
+  "searchFilterTitle": "Dal címe",
+  "searchFilterLyrics": "Dalszöveg",
+  "searchFilterChords": "Akkordokkal",
+  "searchFilterTimed": "Időzített dalszöveg",
+  "searchFilterLanguage": "Nyelv",
+  "searchFilterAll": "Bármelyik",
+  "searchAutocompleteLabel": "Javaslatok",
+  "searchResultCount": "{count, plural, =0{Nincs találat} =1{1 találat} other{{count} találat}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "Adj meg egy dalt, előadót vagy dalszövegrészletet a kereséshez.",
+  "searchCatalogEmptyQuery": "Adj meg egy dalt vagy előadót a kereséshez.",
+  "searchNoResults": "Nem található dal. Próbálj másképp keresni.",
+  "searchLoading": "Dalok keresése…",
+  "searchError": "A keresés nem fejeződött be.",
+  "searchOnlineTab": "Online",
+  "searchRecentTab": "Legutóbbi",
+  "searchFavoritesTab": "Kedvencek",
+  "searchSuggested": "Javasolt egyezés",
+  "searchAlternatives": "További egyezések",
+  "searchCompare": "Verziók összehasonlítása",
+  "searchChooseVersion": "Verzió kiválasztása",
+  "searchSongMatch": "Dal egyezése",
+  "searchRecordingMatch": "Felvétel egyezése",
+  "searchMatchUnverified": "A felvétel nincs ellenőrizve",
+  "searchMatchExact": "Pontos felvételegyezés",
+  "searchMatchPossible": "Lehetséges egyezés",
+  "searchAvailability": "Elérhetőség",
+  "searchLyricsAvailable": "Dalszöveg elérhető",
+  "searchLyricsUnavailable": "Dalszöveg nem érhető el",
+  "searchChordsAvailable": "Akkordok elérhetők",
+  "searchChordsUnavailable": "Nincsenek akkordok",
+  "searchTimingAvailable": "Időzítés elérhető",
+  "searchTimingUnavailable": "Nincs időzítés",
+  "searchDurationUnknown": "Ismeretlen időtartam",
+  "searchRating": "Értékelés: {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "Forrás",
+  "searchMetadata": "Dal adatai",
+  "searchAlbum": "Album",
+  "searchArtist": "Előadó",
+  "searchYear": "Év",
+  "searchLanguage": "Nyelv",
+  "searchSaved": "A dal mentve a könyvtáradba.",
+  "searchSaveFailed": "A dal mentése nem sikerült.",
+  "homeRecentSongs": "Legutóbbi dalok",
+  "homeRecentlyPlayed": "Nemrég lejátszott",
+  "homeFavorites": "Kedvencek",
+  "homeHistory": "Előzmények",
+  "homeHistoryClear": "Előzmények törlése",
+  "homeHistoryCleared": "Előzmények törölve.",
+  "homeHistoryEmpty": "Itt jelennek meg a megnyitott dalok.",
+  "homeFavoritesEmpty": "Itt jelennek meg a kedvenc dalaid és setlistáid.",
+  "homeItemsShownCount": "{count, plural, =0{0 elem megjelenítve} =1{1 elem megjelenítve} other{{count} elem megjelenítve}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "Itt jelennek meg a legutóbbi dalaid és setlistáid.",
+  "homeTimelineLabel": "Előzmények idővonala",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "Teljes előzmények",
+  "homeShowFavorites": "Kedvencek megjelenítése",
+  "homeShowRecent": "Legutóbbiak megjelenítése",
+  "songsTitle": "Dalok",
+  "songsEmpty": "Itt jelennek meg a dalaid.",
+  "songsEmptySearch": "Egyik dal sem felel meg a keresésednek.",
+  "songsAdd": "Dal hozzáadása",
+  "songsSortAlphabetical": "Rendezés ábécésorrendben",
+  "songsAlphabetNavigation": "Dalok indexe",
+  "songsUsageCount": "Megnyitva {count, plural, =0{soha} =1{egyszer} other{{count} alkalommal}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "Hozzáadás a kedvencekhez",
+  "songFavoriteRemove": "Eltávolítás a kedvencekből",
+  "songMenuLabel": "Dal műveletei",
+  "songInfo": "Dal adatai",
+  "setlistMenuLabel": "Setlista műveletei",
+  "songAddToSetlist": "Hozzáadás a setlistához",
+  "songCopyChordPro": "ChordPro másolása",
+  "songDeleteConfirmTitle": "Törlöd a dalt?",
+  "songDeleteConfirmMessage": "A dal eltávolításra kerül a könyvtáradból.",
+  "songDeleted": "Dal törölve.",
+  "setlistsTitle": "Setlisták",
+  "setlistsEmpty": "Készíts setlistát a következő próbádhoz vagy fellépésedhez.",
+  "setlistsEmptySearch": "Egyik setlista sem felel meg a keresésednek.",
+  "setlistCreate": "Új setlista",
+  "setlistNameHint": "Setlista neve",
+  "setlistNotes": "Jegyzetek",
+  "setlistEntryOverride": "A dalhoz tartozó hangnem és capo",
+  "setlistSongsCount": "{count, plural, =0{Nincs dal} =1{1 dal} other{{count} dal}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "Legalább {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "Ismeretlen időtartam",
+  "setlistActivity": "Utolsó tevékenység: {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "Létrehozva: {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "Szerkesztve: {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "Utoljára lejátszva: {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "Ez a setlista még nem tartalmaz dalokat.",
+  "setlistAddSongs": "Dalok hozzáadása",
+  "setlistReorder": "Dalok átrendezése",
+  "setlistMoveSongUp": "{song} mozgatása felfelé",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "{song} mozgatása lefelé",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "{song} eltávolítása a setlistáról",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "Setlista másolása",
+  "setlistFavoriteAdd": "Setlista hozzáadása a kedvencekhez",
+  "setlistFavoriteRemove": "Setlista eltávolítása a kedvencekből",
+  "setlistShare": "Megosztás setlistafájlként",
+  "setlistSharePdf": "Megosztás PDF-ként",
+  "setlistPrint": "Nyomtatás",
+  "setlistDeleteConfirmTitle": "Törlöd a setlistát?",
+  "setlistDeleteConfirmMessage": "A setlista eltávolításra kerül. A könyvtáradban lévő dalok megmaradnak.",
+  "setlistDeleted": "Setlista törölve.",
+  "readerTitle": "Dalszövegek",
+  "readerNoLyrics": "Még nincs dalszöveg hozzáadva.",
+  "readerShowChords": "Akkordok megjelenítése",
+  "readerHideChords": "Akkordok elrejtése",
+  "readerTranspose": "Akkordok transzponálása",
+  "readerTransposeSemitones": "Transzponálás {count, plural, =0{0 félhanggal} =1{1 félhanggal} other{{count} félhanggal}}",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "Dalszöveg és adatok szerkesztése",
+  "playerPlay": "Dalszöveg görgetésének indítása",
+  "playerPause": "Dalszöveg görgetésének szüneteltetése",
+  "playerResume": "Dalszöveg görgetésének folytatása",
+  "playerSeek": "Lejátszási pozíció",
+  "playerElapsed": "Eltelt idő: {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "Hátralévő idő: {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "Görgetési mód",
+  "playerTimedLyrics": "Időzített dalszöveg",
+  "playerEstimatedPace": "Becsült tempó",
+  "playerManualScroll": "Kézi görgetés",
+  "playerTimingStatusReady": "A dalszöveg a rendelkezésre álló időzítést követi.",
+  "playerTimingStatusEstimated": "A görgetési sebesség a dal időtartama alapján becsült.",
+  "playerTimingStatusManual": "Görgesd a dalszöveget kézzel.",
+  "playerTimingStatusUnavailable": "Ehhez a dalhoz nem érhető el időzített görgetés.",
+  "playerDurationUnknown": "Add meg a dal időtartamát a becsült görgetés használatához.",
+  "playerProgressLabel": "Dal előrehaladása",
+  "playerCurrentSection": "Jelenlegi rész",
+  "playerPreviousSection": "Előző rész",
+  "playerNextSection": "Következő rész",
+  "playerPreviousSectionSong": "Előző rész · tartsd lenyomva az előző setlistadalhoz",
+  "playerNextSectionSong": "Következő rész · tartsd lenyomva a következő setlistadalhoz",
+  "playerPreviousSong": "Előző dal",
+  "playerNextSong": "Következő dal",
+  "editorTitle": "Dal szerkesztése",
+  "editorTitleField": "Dal címe",
+  "editorArtistField": "Előadó",
+  "editorAlbumField": "Album",
+  "editorLyricsField": "Dalszöveg",
+  "editorChordsField": "Akkordok",
+  "editorKeyField": "Hangnem",
+  "editorCapoField": "Capo",
+  "editorTuningField": "Hangolás",
+  "editorTempoField": "Tempó",
+  "editorDurationField": "Időtartam",
+  "editorTimeSignatureField": "Ütemmutató",
+  "editorLanguageField": "Nyelv",
+  "editorYearField": "Év",
+  "editorComposerField": "Zeneszerző",
+  "editorLyricistField": "Dalszövegíró",
+  "editorCopyrightField": "Szerzői jog",
+  "editorLicenseField": "Licenc",
+  "songInfoSources": "Források és közreműködők",
+  "searchMatchSameSong": "Ugyanaz a dal; a felvétel nincs megerősítve",
+  "searchMatchNeedsAgreement": "A dalszöveget össze kell vetni a kottával",
+  "searchMatchDifferentLyrics": "A dalszöveg eltér a kiválasztott dalétól",
+  "searchMatchCombinedSources": "Több forrásból összeállított adatok",
+  "searchCombinedFromSources": "{count, plural, =1{1 forrásból összeállítva} other{{count} forrásból összeállítva}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, =0{0 dalegyezés} =1{1 dalegyezés} other{{count} dalegyezés}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, =0{0 forrásverzió} =1{1 forrásverzió} other{{count} forrásverzió}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "Legjobb elérhető egyezés",
+  "providerDescriptionUnknown": "Dal forrása",
+  "providerDescDownloadChordProThenImport": "Tölts le egy ChordPro-fájlt a forrásból, majd importáld.",
+  "providerDescFreeAccountDownloadThenImport": "Töltsd le a fájlt ingyenes fiókkal, majd importáld.",
+  "providerDescPublicChordSheets": "Nyilvános akkordlapok.",
+  "providerDescHistoricalTextPerWorkLicense": "Történelmi dalszövegek művenkénti licenccel.",
+  "providerDescLicensedCatalog": "Licencelt dalszövegkatalógus.",
+  "providerDescOriginalSongsCcBy": "Eredeti dalok Creative Commons BY licenccel.",
+  "providerDescPerSongLicense": "Dalszövegek dalonkénti licenccel.",
+  "providerDescRecordingMetadataOnly": "Csak a felvétel és a kiadás adatai.",
+  "providerDescCompositionMetadataOnly": "Csak a zenemű adatai.",
+  "providerDescExactFileArtworkOnly": "Borítók csak pontos felvételegyezés esetén.",
+  "providerCapabilityLyrics": "Dalszöveg",
+  "providerCapabilityChords": "Akkordok",
+  "providerCapabilityTiming": "Időzített dalszöveg",
+  "providerCapabilitySearch": "Keresés",
+  "providerCapabilityMetadata": "Dal adatai",
+  "editorArtworkField": "Borító hivatkozása",
+  "editorLyricsHint": "Koppints egy sorra a dalszöveg vagy az akkordok szerkesztéséhez.",
+  "editorSave": "Módosítások mentése",
+  "editorSaved": "Módosítások mentve.",
+  "editorSaveFailed": "A módosításokat nem sikerült menteni.",
+  "editorSaveConflict": "A dalt máshol módosították. A módosításaid külön másolatként lettek mentve.",
+  "editorUnsavedTitle": "Elveted a módosításokat?",
+  "editorUnsavedMessage": "A módosításaid nincsenek mentve.",
+  "editorFieldRequired": "Add meg a dal címét.",
+  "settingsTitle": "Beállítások",
+  "settingsAppearance": "Megjelenés",
+  "settingsTheme": "Téma",
+  "settingsThemeSystem": "Eszközbeállítás használata",
+  "settingsThemeLight": "Világos",
+  "settingsThemeDark": "Sötét",
+  "settingsColorPalette": "Színpaletta",
+  "settingsFont": "Betűtípus",
+  "settingsTextSize": "Szövegméret",
+  "settingsLyricsPreview": "Dalszöveg előnézete",
+  "settingsPlayer": "Dalszöveg-lejátszó",
+  "settingsDefaultShowChords": "Akkordok megjelenítése alapértelmezés szerint",
+  "settingsDefaultAutoscroll": "Dalszöveg automatikus görgetése",
+  "settingsDefaultTiming": "Alapértelmezett görgetési mód",
+  "settingsLanguage": "Alkalmazás nyelve",
+  "settingsLanguageSystem": "Eszköz nyelvének használata",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageBulgarian": "Български",
+  "settingsLanguageUkrainian": "Українська",
+  "settingsSources": "Dalszövegforrások",
+  "settingsSourceEnabled": "A(z) {source} forrás engedélyezése",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "Forráslista frissítése",
+  "settingsSourcesUpdated": "Források frissítve.",
+  "settingsSourcesUpdateFailed": "Nem sikerült frissíteni a forrásokat.",
+  "settingsImport": "Dalok importálása",
+  "settingsImportChordPro": "ChordPro-fájl importálása",
+  "settingsImportSetlist": "Setlistafájl importálása",
+  "settingsImportSuccess": "Importálás kész.",
+  "settingsImportFailed": "A fájl importálása nem sikerült.",
+  "settingsImportUnsupported": "Ez a fájltípus nem támogatott.",
+  "settingsShareSong": "Megosztás ChordPro-ként",
+  "settingsSharePdf": "Megosztás PDF-ként",
+  "settingsCopySong": "Másolás a vágólapra",
+  "settingsPrintSong": "Csak a dal nyomtatása",
+  "settingsPrintSetlist": "Setlista nyomtatása dalszövegekkel",
+  "settingsExportFailed": "Nem sikerült előkészíteni a fájlt.",
+  "settingsCopied": "Vágólapra másolva.",
+  "settingsAbout": "Névjegy",
+  "settingsPrivacy": "Adatvédelem",
+  "settingsLegal": "Jogi információk",
+  "settingsClearHistory": "Előzmények törlése",
+  "settingsClearHistoryConfirm": "Törlöd a dalok és setlisták előzményeit?",
+  "settingsHistoryCleared": "Előzmények törölve.",
+  "accountTitle": "Fiók és szinkronizálás",
+  "accountUnavailable": "A szinkronizáláshoz olyan Singbook-verzió szükséges, amelyben be van állítva a Google-bejelentkezés. Ez a verzió csak ezen az eszközön tárolja a dalokat.",
+  "accountSyncNow": "Szinkronizálás most",
+  "accountConnected": "Csatlakoztatva. A biztonsági mentés frissítéséhez válaszd a Szinkronizálás most lehetőséget.",
+  "accountSignIn": "Fiók csatlakoztatása",
+  "accountSignOut": "Kijelentkezés",
+  "accountChange": "Fiókváltás",
+  "accountSignedOut": "Nincs csatlakoztatva",
+  "accountSyncing": "A könyvtár szinkronizálása…",
+  "accountSynced": "Könyvtár szinkronizálva.",
+  "accountSyncFailed": "Nem sikerült szinkronizálni a könyvtárat.",
+  "accessibilityFavorite": "Kedvenc",
+  "accessibilityNotFavorite": "Nem kedvenc",
+  "accessibilitySearchField": "Dalok keresése",
+  "accessibilityClearSearch": "Keresési szöveg törlése",
+  "accessibilitySongMenu": "Műveletek ehhez: {song}",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "Műveletek ehhez: {setlist}",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "A(z) {setlist} dalainak kibontása",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "A(z) {setlist} dalainak összecsukása",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "Lejátszás előrehaladása, {percent} százalék",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "Előzmények idővonala, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "Betöltés…",
+  "loadingSongs": "Dalok betöltése…",
+  "loadingSetlists": "Setlisták betöltése…",
+  "errorGeneric": "Hiba történt.",
+  "errorOffline": "Úgy tűnik, nincs internetkapcsolat.",
+  "errorPermission": "A folytatáshoz engedély szükséges.",
+  "emptyFiltered": "Egyetlen elem sem felel meg ezeknek a szűrőknek.",
+  "unknownValue": "Ismeretlen",
+  "durationUnknown": "Ismeretlen időtartam",
+  "metadataNotSet": "Nincs megadva",
+  "dateToday": "Ma",
+  "dateYesterday": "Tegnap",
+  "daySongCount": "{count, plural, =0{Nincs dal} =1{1 dal} other{{count} dal}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "Sötétkék",
+  "settingsPaletteSage": "Zsályazöld",
+  "settingsPaletteOcean": "Óceán",
+  "settingsPaletteClay": "Agyag",
+  "settingsPalettePlum": "Szilva",
+  "settingsFontSystem": "Rendszer",
+  "settingsFontSerif": "Talpas",
+  "settingsFontMonospace": "Rögzített szélességű",
+  "settingsLyricsPreviewExample": "Amikor eljön a reggel, újra énekelni fogunk.",
+  "searchDiscoveryProgress": "Dalszövegforrások ellenőrzése: {checked}/{total} kész.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "Nem található használható dalszöveg.",
+  "searchDiscoveryNoLyricsDetails": "A kiválasztott dalt ellenőriztük az engedélyezett forrásokban, de egyik sem adott vissza használható dalszövegverziót.",
+  "searchDiscoveryError": "Nem sikerült ellenőrizni a dalszövegforrásokat.",
+  "searchDiscoveryRetry": "Dalszövegkeresés újra",
+  "searchSourcesUnavailableCount": "{count, plural, =0{0 forrás nem érhető el} =1{1 forrás nem érhető el} other{{count} forrás nem érhető el}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "Ellenőrizd a kapcsolatot, majd próbáld újra.",
+  "searchProviderChecks": "Forrásellenőrzések",
+  "searchProviderPending": "Ellenőrzés",
+  "searchProviderFound": "Egyezés található",
+  "searchProviderRejected": "Nem egyezik",
+  "searchProviderFailed": "Az ellenőrzés nem sikerült",
+  "searchProviderUnavailable": "Nincs használható dalszöveg",
+  "searchCatalogFilterHint": "Válassz dalt a dalszövegverziók akkord, időzítés vagy nyelv szerinti szűréséhez.",
+  "startupErrorTitle": "Nem sikerült megnyitni a könyvtáradat.",
+  "setlistCopyName": "{name} másolata",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "Hiányzó dal",
+  "settingsImportTooLarge": "Ez a fájl túl nagy az importáláshoz.",
+  "songsJumpToLetter": "Ugrás ide: {letter}",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "Elvetés",
+  "editorKeepEditing": "Szerkesztés folytatása",
+  "settingsDefaultShowChordsHint": "Akkordok megjelenítése a dalszöveg felett, ha a dalhoz tartoznak akkordok.",
+  "settingsDefaultAutoscrollHint": "A dalszöveg a dallal együtt görget. Kézi görgetési módban nincs használatban.",
+  "accountUnavailableTitle": "A szinkronizálás nincs beállítva",
+  "accountSignedOutBenefits": "Jelentkezz be Google-fiókkal, hogy biztonsági másolatot készíts a dalaidról és setlistáidról a Google Drive-ra, és szinkronban tartsd az eszközeidet. A dalaid ettől függetlenül ezen az eszközön maradnak.",
+  "accountSignInWithGoogle": "Bejelentkezés Google-fiókkal",
+  "accountWorking": "Folyamatban…",
+  "accountNeverSynced": "Még soha nem szinkronizált",
+  "accountSyncedJustNow": "Épp most szinkronizálva",
+  "accountSyncedMinutesAgo": "{count, plural, one{1 perce szinkronizálva} other{{count} perce szinkronizálva}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{1 órája szinkronizálva} other{{count} órája szinkronizálva}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{1 napja szinkronizálva} other{{count} napja szinkronizálva}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{1 ütköző módosítás másolatként megőrizve} other{{count} ütköző módosítás másolatként megőrizve}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "Ugyanazt a dalt vagy setlistát két helyen módosították. Semmi sem veszett el: a másik verzió külön másolatként lett mentve.",
+  "accountReviewConflicts": "Másolatok áttekintése",
+  "songsConflictFilterActive": "Csak az ütköző másolatok láthatók",
+  "songsConflictFilterClear": "Összes dal megjelenítése",
+  "songsConflictBadge": "Ütköző másolat",
+  "songsConflictEmpty": "Nincsenek ütköző másolatok.",
+  "accountAutoSync": "Automatikus szinkronizálás",
+  "accountAutoSyncHint": "Tartsd naprakészen a könyvtáradat az alkalmazás megnyitásakor és módosítások után.",
+  "accountSignOutTitle": "Kijelentkezel ebből a fiókból?",
+  "accountSignOutBody": "A dalaid és setlistáid ezen az eszközön maradnak. Nem készül róluk biztonsági mentés, és nem szinkronizálódnak, amíg újra be nem jelentkezel.",
+  "accountUseDifferent": "Másik fiók használata",
+  "accountSignInAgain": "Bejelentkezés újra",
+  "accountChooseAction": "Válaszd ki, hogyan folytatod",
+  "accountChangedTitle": "Másik Google-fiók",
+  "accountChangedBody": "Ezt az eszközt legutóbb egy másik Google-fiókkal szinkronizálták. Válaszd ki, mi történjen az eszközön lévő dalokkal és setlistákkal.",
+  "accountChangedMerge": "Egyesítés az új fiókkal",
+  "accountChangedMergeHint": "Tarts meg mindent ezen az eszközön, és add hozzá az új fiókhoz.",
+  "accountChangedReplace": "Csere az új fiók könyvtárára",
+  "accountChangedReplaceHint": "Az eszközről törlődnek azok a dalok, amelyek nincsenek meg az új fiókban.",
+  "accountChangedSignOut": "Mégse és kijelentkezés",
+  "accountStatusSignedOut": "Fiók és szinkronizálás: nincs bejelentkezve",
+  "accountStatusSignedIn": "Fiók és szinkronizálás: bejelentkezve",
+  "accountStatusSyncing": "Fiók és szinkronizálás: szinkronizálás folyamatban",
+  "accountStatusSynced": "Fiók és szinkronizálás: a könyvtár naprakész",
+  "accountStatusError": "Fiók és szinkronizálás: probléma, koppints az áttekintéshez",
+  "accountNoticeConflicts": "Néhány dalt két helyen módosítottak. A másolatok megmaradtak.",
+  "accountNoticeSignedIn": "Bejelentkezve.",
+  "accountNoticeSignedOut": "Kijelentkezve. A dalaid ezen az eszközön maradnak.",
+  "syncErrorNotConfigured": "Ebben a verzióban nincs beállítva a szinkronizálás.",
+  "syncErrorNotConfiguredHint": "Használj olyan Singbook-verziót, amelyben be van állítva a Google-bejelentkezés.",
+  "syncErrorNotSignedIn": "Nincs bejelentkezve.",
+  "syncErrorNotSignedInHint": "Jelentkezz be a könyvtár szinkronizálásához.",
+  "syncErrorAuthorizationRequired": "A Google kéri, hogy jelentkezz be újra.",
+  "syncErrorAuthorizationRequiredHint": "A szinkronizálás folytatásához jelentkezz be újra. A dalaid biztonságban vannak ezen az eszközön.",
+  "syncErrorAccessDenied": "A Singbook nem kapott engedélyt a Google Drive használatához.",
+  "syncErrorAccessDeniedHint": "Jelentkezz be újra, és engedélyezd a Drive-hozzáférést, amikor a rendszer kéri.",
+  "syncErrorRateLimited": "A Google jelenleg korlátozza a kéréseket.",
+  "syncErrorRateLimitedHint": "Várj néhány percet, majd próbáld újra.",
+  "syncErrorStorageFull": "Megtelt a Google Drive.",
+  "syncErrorStorageFullHint": "Szabadíts fel helyet a Drive-on, majd próbáld újra.",
+  "syncErrorNetwork": "Nem sikerült elérni a Google-t.",
+  "syncErrorNetworkHint": "Ellenőrizd az internetkapcsolatot, majd próbáld újra.",
+  "syncErrorAccountChanged": "Másik Google-fiókot használtak.",
+  "syncErrorAccountChangedHint": "Válaszd ki, hogy egyesíted-e az eszköz könyvtárát a fiókéval, vagy lecseréled.",
+  "syncErrorRemoteLibraryTooLarge": "A szinkronizált könyvtárad nagyobb annál, mint amit a Singbook kezelni tud.",
+  "syncErrorRemoteLibraryTooLargeHint": "Távolíts el néhány dalt vagy setlistát a szinkronizált könyvtárból, majd próbáld újra.",
+  "syncErrorSignInFailed": "A bejelentkezés nem fejeződött be.",
+  "syncErrorSignInFailedHint": "Próbálj meg újra bejelentkezni.",
+  "syncErrorGeneric": "Nem sikerült szinkronizálni a könyvtáradat.",
+  "syncErrorGenericHint": "Próbáld újra egy kicsit később. A dalaid továbbra is biztonságban vannak ezen az eszközön."
+}

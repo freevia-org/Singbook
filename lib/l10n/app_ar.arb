@@ -1,0 +1,670 @@
+{
+  "@@locale": "ar",
+  "appTitle": "Singbook",
+  "aboutDescription": "مساحة هادئة للعثور على مكتبة أغانيك وتنظيمها والغناء منها.",
+  "aboutMadeForSinging": "صُمم للغناء معًا",
+  "appVersion": "الإصدار {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "الرئيسية",
+  "navSongs": "الأغاني",
+  "navSetlists": "قوائم الأغاني",
+  "navSettings": "الإعدادات",
+  "navSettingsCompact": "الإعدادات",
+  "navSearch": "بحث",
+  "navBack": "رجوع",
+  "navClose": "إغلاق",
+  "navMore": "مزيد من الإجراءات",
+  "actionCancel": "إلغاء",
+  "actionSave": "حفظ",
+  "actionDone": "تم",
+  "actionEdit": "تعديل",
+  "actionDelete": "حذف",
+  "actionShare": "مشاركة",
+  "actionPrint": "طباعة",
+  "actionCopy": "نسخ",
+  "actionClear": "مسح",
+  "actionRetry": "إعادة المحاولة",
+  "actionRefresh": "تحديث",
+  "actionImport": "استيراد",
+  "actionExport": "تصدير",
+  "actionExpand": "توسيع",
+  "actionCollapse": "طي",
+  "actionAdd": "إضافة",
+  "actionCreate": "إنشاء",
+  "actionRemove": "إزالة",
+  "actionDuplicate": "إنشاء نسخة",
+  "actionMoveUp": "نقل إلى الأعلى",
+  "actionMoveDown": "نقل إلى الأسفل",
+  "actionPrevious": "السابق",
+  "actionNext": "التالي",
+  "searchHint": "ابحث عن الأغاني أو الفنانين أو الكلمات",
+  "searchCatalogHint": "ابحث عن أغنية أو فنان",
+  "searchSubmit": "بحث",
+  "searchFilters": "خيارات البحث",
+  "searchFiltersShow": "إظهار خيارات البحث",
+  "searchFiltersHide": "إخفاء خيارات البحث",
+  "searchFilterArtist": "الفنان",
+  "searchFilterTitle": "عنوان الأغنية",
+  "searchFilterLyrics": "الكلمات",
+  "searchFilterChords": "تحتوي على أكوردات",
+  "searchFilterTimed": "كلمات متزامنة",
+  "searchFilterLanguage": "اللغة",
+  "searchFilterAll": "الكل",
+  "searchAutocompleteLabel": "اقتراحات",
+  "searchResultCount": "{count, plural, zero{لا توجد نتائج} one{نتيجة واحدة} two{نتيجتان} few{{count} نتائج} many{{count} نتيجة} other{{count} نتيجة}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "أدخل أغنية أو فنانًا أو كلمات للبحث.",
+  "searchCatalogEmptyQuery": "أدخل أغنية أو فنانًا للبحث.",
+  "searchNoResults": "لم يتم العثور على أغانٍ. جرّب بحثًا مختلفًا.",
+  "searchLoading": "جارٍ البحث عن الأغاني…",
+  "searchError": "تعذّر إكمال البحث.",
+  "searchOnlineTab": "عبر الإنترنت",
+  "searchRecentTab": "الأخيرة",
+  "searchFavoritesTab": "المفضلة",
+  "searchSuggested": "تطابق مقترح",
+  "searchAlternatives": "تطابقات أخرى",
+  "searchCompare": "مقارنة الإصدارات",
+  "searchChooseVersion": "اختيار هذا الإصدار",
+  "searchSongMatch": "تطابق الأغنية",
+  "searchRecordingMatch": "تطابق التسجيل",
+  "searchMatchUnverified": "لم يتم التحقق من التسجيل",
+  "searchMatchExact": "تطابق التسجيل تمامًا",
+  "searchMatchPossible": "تطابق محتمل",
+  "searchAvailability": "التوفر",
+  "searchLyricsAvailable": "الكلمات متوفرة",
+  "searchLyricsUnavailable": "الكلمات غير متوفرة",
+  "searchChordsAvailable": "الأكوردات متوفرة",
+  "searchChordsUnavailable": "لا توجد أكوردات",
+  "searchTimingAvailable": "التوقيت متوفر",
+  "searchTimingUnavailable": "لا يوجد توقيت",
+  "searchDurationUnknown": "المدة غير معروفة",
+  "searchRating": "التقييم {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "المصدر",
+  "searchMetadata": "تفاصيل الأغنية",
+  "searchAlbum": "الألبوم",
+  "searchArtist": "الفنان",
+  "searchYear": "السنة",
+  "searchLanguage": "اللغة",
+  "searchSaved": "تم حفظ الأغنية في مكتبتك.",
+  "searchSaveFailed": "تعذّر حفظ هذه الأغنية.",
+  "homeRecentSongs": "الأغاني الأخيرة",
+  "homeRecentlyPlayed": "تم تشغيلها مؤخرًا",
+  "homeFavorites": "المفضلة",
+  "homeHistory": "السجل",
+  "homeHistoryClear": "مسح السجل",
+  "homeHistoryCleared": "تم مسح السجل.",
+  "homeHistoryEmpty": "ستظهر هنا الأغاني التي تفتحها.",
+  "homeFavoritesEmpty": "ستظهر هنا أغانيك وقوائمك المفضلة.",
+  "homeItemsShownCount": "{count, plural, zero{لم يتم عرض أي عناصر} one{تم عرض عنصر واحد} two{تم عرض عنصرين} few{تم عرض {count} عناصر} many{تم عرض {count} عنصرًا} other{تم عرض {count} عنصر}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "ستظهر هنا أغانيك وقوائمك الأخيرة.",
+  "homeTimelineLabel": "الخط الزمني للسجل",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "السجل الكامل",
+  "homeShowFavorites": "إظهار المفضلة",
+  "homeShowRecent": "إظهار الأخيرة",
+  "songsTitle": "الأغاني",
+  "songsEmpty": "ستظهر أغانيك هنا.",
+  "songsEmptySearch": "لا تتطابق أي أغنية مع بحثك.",
+  "songsAdd": "إضافة أغنية",
+  "songsSortAlphabetical": "ترتيب أبجدي",
+  "songsAlphabetNavigation": "فهرس الأغاني",
+  "songsUsageCount": "{count, plural, zero{لم يتم فتحها مطلقًا} one{تم فتحها مرة واحدة} two{تم فتحها مرتين} few{تم فتحها {count} مرات} many{تم فتحها {count} مرة} other{تم فتحها {count} مرة}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "إضافة إلى المفضلة",
+  "songFavoriteRemove": "إزالة من المفضلة",
+  "songMenuLabel": "إجراءات الأغنية",
+  "songInfo": "تفاصيل الأغنية",
+  "setlistMenuLabel": "إجراءات قائمة الأغاني",
+  "songAddToSetlist": "إضافة إلى قائمة الأغاني",
+  "songCopyChordPro": "نسخ ChordPro",
+  "songDeleteConfirmTitle": "حذف الأغنية؟",
+  "songDeleteConfirmMessage": "ستتم إزالة هذه الأغنية من مكتبتك.",
+  "songDeleted": "تم حذف الأغنية.",
+  "setlistsTitle": "قوائم الأغاني",
+  "setlistsEmpty": "أنشئ قائمة أغاني للتدريب أو العرض القادم.",
+  "setlistsEmptySearch": "لا تتطابق أي قائمة مع بحثك.",
+  "setlistCreate": "قائمة أغاني جديدة",
+  "setlistNameHint": "اسم قائمة الأغاني",
+  "setlistNotes": "ملاحظات",
+  "setlistEntryOverride": "المقام والكابو الخاصان بالأغنية",
+  "setlistSongsCount": "{count, plural, zero{لا توجد أغانٍ} one{أغنية واحدة} two{أغنيتان} few{{count} أغانٍ} many{{count} أغنية} other{{count} أغنية}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "على الأقل {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "المدة غير معروفة",
+  "setlistActivity": "آخر نشاط {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "أُنشئت في {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "عُدّلت في {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "آخر تشغيل في {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "لا تحتوي هذه القائمة على أغانٍ بعد.",
+  "setlistAddSongs": "إضافة أغانٍ",
+  "setlistReorder": "إعادة ترتيب الأغاني",
+  "setlistMoveSongUp": "نقل {song} إلى الأعلى",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "نقل {song} إلى الأسفل",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "إزالة {song} من قائمة الأغاني",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "إنشاء نسخة من قائمة الأغاني",
+  "setlistFavoriteAdd": "إضافة قائمة الأغاني إلى المفضلة",
+  "setlistFavoriteRemove": "إزالة قائمة الأغاني من المفضلة",
+  "setlistShare": "مشاركة كملف قائمة أغاني",
+  "setlistSharePdf": "مشاركة كملف PDF",
+  "setlistPrint": "طباعة",
+  "setlistDeleteConfirmTitle": "حذف قائمة الأغاني؟",
+  "setlistDeleteConfirmMessage": "ستتم إزالة قائمة الأغاني، وستبقى الأغاني في مكتبتك.",
+  "setlistDeleted": "تم حذف قائمة الأغاني.",
+  "readerTitle": "الكلمات",
+  "readerNoLyrics": "لم تتم إضافة كلمات بعد.",
+  "readerShowChords": "إظهار الأكوردات",
+  "readerHideChords": "إخفاء الأكوردات",
+  "readerTranspose": "نقل الأكوردات",
+  "readerTransposeSemitones": "النقل بمقدار {count, plural, zero{0 نصف درجة} one{نصف درجة واحدة} two{درجتين نصفيتين} few{{count} أنصاف درجات} many{{count} نصف درجة} other{{count} نصف درجة}}",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "تعديل الكلمات والتفاصيل",
+  "playerPlay": "بدء تمرير الكلمات",
+  "playerPause": "إيقاف تمرير الكلمات مؤقتًا",
+  "playerResume": "استئناف تمرير الكلمات",
+  "playerSeek": "موضع التشغيل",
+  "playerElapsed": "الوقت المنقضي {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "الوقت المتبقي {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "وضع التمرير",
+  "playerTimedLyrics": "كلمات متزامنة",
+  "playerEstimatedPace": "سرعة تقديرية",
+  "playerManualScroll": "تمرير يدوي",
+  "playerTimingStatusReady": "ستتبع الكلمات التوقيت المتاح.",
+  "playerTimingStatusEstimated": "تُقدّر سرعة التمرير استنادًا إلى مدة الأغنية.",
+  "playerTimingStatusManual": "مرّر الكلمات يدويًا.",
+  "playerTimingStatusUnavailable": "التمرير المتزامن غير متاح لهذه الأغنية.",
+  "playerDurationUnknown": "أضف مدة الأغنية لاستخدام التمرير التقديري.",
+  "playerProgressLabel": "تقدم الأغنية",
+  "playerCurrentSection": "المقطع الحالي",
+  "playerPreviousSection": "المقطع السابق",
+  "playerNextSection": "المقطع التالي",
+  "playerPreviousSectionSong": "المقطع السابق · اضغط مطولًا للانتقال إلى الأغنية السابقة في القائمة",
+  "playerNextSectionSong": "المقطع التالي · اضغط مطولًا للانتقال إلى الأغنية التالية في القائمة",
+  "playerPreviousSong": "الأغنية السابقة",
+  "playerNextSong": "الأغنية التالية",
+  "editorTitle": "تعديل الأغنية",
+  "editorTitleField": "عنوان الأغنية",
+  "editorArtistField": "الفنان",
+  "editorAlbumField": "الألبوم",
+  "editorLyricsField": "الكلمات",
+  "editorChordsField": "الأكوردات",
+  "editorKeyField": "المقام",
+  "editorCapoField": "الكابو",
+  "editorTuningField": "الضبط",
+  "editorTempoField": "الإيقاع",
+  "editorDurationField": "المدة",
+  "editorTimeSignatureField": "الميزان",
+  "editorLanguageField": "اللغة",
+  "editorYearField": "السنة",
+  "editorComposerField": "الملحن",
+  "editorLyricistField": "كاتب الكلمات",
+  "editorCopyrightField": "حقوق النشر",
+  "editorLicenseField": "الترخيص",
+  "songInfoSources": "المصادر والاعتمادات",
+  "searchMatchSameSong": "الأغنية نفسها؛ لم يتم تأكيد التسجيل",
+  "searchMatchNeedsAgreement": "يجب تأكيد كلمات ورقة الأكوردات",
+  "searchMatchDifferentLyrics": "تختلف الكلمات عن الأغنية المحددة",
+  "searchMatchCombinedSources": "تم جمع التفاصيل من مصادر متعددة",
+  "searchCombinedFromSources": "{count, plural, zero{لم يتم الجمع من أي مصدر} one{تم الجمع من مصدر واحد} two{تم الجمع من مصدرين} few{تم الجمع من {count} مصادر} many{تم الجمع من {count} مصدرًا} other{تم الجمع من {count} مصدر}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, zero{0 تطابقات للأغاني} one{تطابق واحد للأغنية} two{تطابقان للأغنية} few{{count} تطابقات للأغاني} many{{count} تطابقًا للأغاني} other{{count} تطابق للأغاني}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, zero{0 إصدارات للمصدر} one{إصدار واحد للمصدر} two{إصداران للمصدر} few{{count} إصدارات للمصدر} many{{count} إصدارًا للمصدر} other{{count} إصدار للمصدر}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "أفضل تطابق متاح",
+  "providerDescriptionUnknown": "مصدر الأغنية",
+  "providerDescDownloadChordProThenImport": "نزّل ملف ChordPro من المصدر، ثم استورده.",
+  "providerDescFreeAccountDownloadThenImport": "نزّل الملف باستخدام حساب مجاني، ثم استورده.",
+  "providerDescPublicChordSheets": "أوراق أكوردات عامة.",
+  "providerDescHistoricalTextPerWorkLicense": "كلمات تاريخية مرخصة لكل عمل.",
+  "providerDescLicensedCatalog": "كتالوج كلمات مرخص.",
+  "providerDescOriginalSongsCcBy": "أغانٍ أصلية بترخيص Creative Commons BY.",
+  "providerDescPerSongLicense": "كلمات مرخصة لكل أغنية.",
+  "providerDescRecordingMetadataOnly": "تفاصيل التسجيل والإصدار فقط.",
+  "providerDescCompositionMetadataOnly": "تفاصيل التأليف فقط.",
+  "providerDescExactFileArtworkOnly": "أغلفة للتسجيلات المطابقة تمامًا فقط.",
+  "providerCapabilityLyrics": "الكلمات",
+  "providerCapabilityChords": "الأكوردات",
+  "providerCapabilityTiming": "كلمات متزامنة",
+  "providerCapabilitySearch": "البحث",
+  "providerCapabilityMetadata": "تفاصيل الأغنية",
+  "editorArtworkField": "رابط الغلاف",
+  "editorLyricsHint": "المس سطرًا لتعديل الكلمات أو الأكوردات.",
+  "editorSave": "حفظ التغييرات",
+  "editorSaved": "تم حفظ التغييرات.",
+  "editorSaveFailed": "تعذّر حفظ التغييرات.",
+  "editorSaveConflict": "تم تعديل الأغنية في مكان آخر. حُفظت تعديلاتك كنسخة منفصلة.",
+  "editorUnsavedTitle": "هل تريد تجاهل التغييرات؟",
+  "editorUnsavedMessage": "لم يتم حفظ تغييراتك.",
+  "editorFieldRequired": "أدخل عنوان الأغنية.",
+  "settingsTitle": "الإعدادات",
+  "settingsAppearance": "المظهر",
+  "settingsTheme": "السمة",
+  "settingsThemeSystem": "استخدام إعداد الجهاز",
+  "settingsThemeLight": "فاتح",
+  "settingsThemeDark": "داكن",
+  "settingsColorPalette": "لوحة الألوان",
+  "settingsFont": "الخط",
+  "settingsTextSize": "حجم النص",
+  "settingsLyricsPreview": "معاينة الكلمات",
+  "settingsPlayer": "مشغل الكلمات",
+  "settingsDefaultShowChords": "إظهار الأكوردات افتراضيًا",
+  "settingsDefaultAutoscroll": "بدء تمرير الكلمات تلقائيًا",
+  "settingsDefaultTiming": "وضع التمرير الافتراضي",
+  "settingsLanguage": "لغة التطبيق",
+  "settingsLanguageSystem": "استخدام لغة الجهاز",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageBulgarian": "Български",
+  "settingsLanguageUkrainian": "Українська",
+  "settingsSources": "مصادر الكلمات",
+  "settingsSourceEnabled": "تفعيل المصدر {source}",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "تحديث قائمة المصادر",
+  "settingsSourcesUpdated": "تم تحديث المصادر.",
+  "settingsSourcesUpdateFailed": "تعذّر تحديث المصادر.",
+  "settingsImport": "استيراد الأغاني",
+  "settingsImportChordPro": "استيراد ملف ChordPro",
+  "settingsImportSetlist": "استيراد ملف قائمة أغاني",
+  "settingsImportSuccess": "اكتمل الاستيراد.",
+  "settingsImportFailed": "تعذّر استيراد هذا الملف.",
+  "settingsImportUnsupported": "نوع الملف هذا غير مدعوم.",
+  "settingsShareSong": "مشاركة كـ ChordPro",
+  "settingsSharePdf": "مشاركة كـ PDF",
+  "settingsCopySong": "نسخ إلى الحافظة",
+  "settingsPrintSong": "طباعة الأغنية فقط",
+  "settingsPrintSetlist": "طباعة قائمة الأغاني مع الكلمات",
+  "settingsExportFailed": "تعذّر تجهيز الملف.",
+  "settingsCopied": "تم النسخ إلى الحافظة.",
+  "settingsAbout": "حول",
+  "settingsPrivacy": "الخصوصية",
+  "settingsLegal": "معلومات قانونية",
+  "settingsClearHistory": "مسح السجل",
+  "settingsClearHistoryConfirm": "هل تريد مسح سجل الأغاني وقوائمها؟",
+  "settingsHistoryCleared": "تم مسح السجل.",
+  "accountTitle": "الحساب والمزامنة",
+  "accountUnavailable": "تتطلب المزامنة إصدارًا من Singbook تم إعداد تسجيل الدخول إلى Google فيه. يحتفظ هذا الإصدار بأغانيك على هذا الجهاز فقط.",
+  "accountSyncNow": "مزامنة الآن",
+  "accountConnected": "تم الربط. اختر «مزامنة الآن» لتحديث النسخة الاحتياطية.",
+  "accountSignIn": "ربط حساب",
+  "accountSignOut": "تسجيل الخروج",
+  "accountChange": "تغيير الحساب",
+  "accountSignedOut": "غير مرتبط",
+  "accountSyncing": "جارٍ مزامنة مكتبتك…",
+  "accountSynced": "تمت مزامنة المكتبة.",
+  "accountSyncFailed": "تعذّرت مزامنة مكتبتك.",
+  "accessibilityFavorite": "مفضل",
+  "accessibilityNotFavorite": "ليس مفضلًا",
+  "accessibilitySearchField": "البحث عن الأغاني",
+  "accessibilityClearSearch": "مسح نص البحث",
+  "accessibilitySongMenu": "إجراءات {song}",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "إجراءات {setlist}",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "توسيع الأغاني في {setlist}",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "طي الأغاني في {setlist}",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "تقدم التشغيل، {percent} بالمئة",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "الخط الزمني للسجل، {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "جارٍ التحميل…",
+  "loadingSongs": "جارٍ تحميل الأغاني…",
+  "loadingSetlists": "جارٍ تحميل القوائم…",
+  "errorGeneric": "حدث خطأ ما.",
+  "errorOffline": "يبدو أنك غير متصل بالإنترنت.",
+  "errorPermission": "يلزم الحصول على إذن للمتابعة.",
+  "emptyFiltered": "لا تتطابق أي عناصر مع هذه الفلاتر.",
+  "unknownValue": "غير معروف",
+  "durationUnknown": "المدة غير معروفة",
+  "metadataNotSet": "غير محدد",
+  "dateToday": "اليوم",
+  "dateYesterday": "أمس",
+  "daySongCount": "{count, plural, zero{لا توجد أغانٍ} one{أغنية واحدة} two{أغنيتان} few{{count} أغانٍ} many{{count} أغنية} other{{count} أغنية}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "أزرق داكن",
+  "settingsPaletteSage": "أخضر المريمية",
+  "settingsPaletteOcean": "المحيط",
+  "settingsPaletteClay": "طيني",
+  "settingsPalettePlum": "برقوقي",
+  "settingsFontSystem": "النظام",
+  "settingsFontSerif": "ذو زوائد",
+  "settingsFontMonospace": "أحادي المسافة",
+  "settingsLyricsPreviewExample": "عندما يأتي الصباح، سنغني مجددًا.",
+  "searchDiscoveryProgress": "جارٍ التحقق من مصادر الكلمات: اكتمل {checked} من {total}.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "لم يتم العثور على كلمات قابلة للاستخدام.",
+  "searchDiscoveryNoLyricsDetails": "تم التحقق من الأغنية المحددة في المصادر المفعّلة، لكن لم يُرجع أي منها نسخة كلمات قابلة للاستخدام.",
+  "searchDiscoveryError": "تعذّر التحقق من مصادر الكلمات.",
+  "searchDiscoveryRetry": "إعادة البحث عن الكلمات",
+  "searchSourcesUnavailableCount": "{count, plural, zero{0 مصادر غير متاحة} one{مصدر واحد غير متاح} two{مصدران غير متاحين} few{{count} مصادر غير متاحة} many{{count} مصدرًا غير متاح} other{{count} مصدر غير متاح}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "تحقق من اتصالك ثم حاول مرة أخرى.",
+  "searchProviderChecks": "عمليات التحقق من المصادر",
+  "searchProviderPending": "جارٍ التحقق",
+  "searchProviderFound": "تم العثور على تطابق",
+  "searchProviderRejected": "غير مطابق",
+  "searchProviderFailed": "فشل التحقق",
+  "searchProviderUnavailable": "لا توجد كلمات قابلة للاستخدام",
+  "searchCatalogFilterHint": "اختر أغنية لتصفية نسخ الكلمات حسب الأكوردات أو التوقيت أو اللغة.",
+  "startupErrorTitle": "تعذّر فتح مكتبتك.",
+  "setlistCopyName": "نسخة من {name}",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "أغنية مفقودة",
+  "settingsImportTooLarge": "هذا الملف كبير جدًا لاستيراده.",
+  "songsJumpToLetter": "الانتقال إلى {letter}",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "تجاهل",
+  "editorKeepEditing": "متابعة التعديل",
+  "settingsDefaultShowChordsHint": "إظهار الأكوردات فوق الكلمات عندما تحتوي الأغنية عليها.",
+  "settingsDefaultAutoscrollHint": "تتحرك الكلمات مع الأغنية. لا يُستخدم ذلك في وضع التمرير اليدوي.",
+  "accountUnavailableTitle": "المزامنة غير مُعدّة",
+  "accountSignedOutBenefits": "سجّل الدخول باستخدام Google للاحتفاظ بنسخة احتياطية من أغانيك وقوائمك على Google Drive ومزامنة أجهزتك. ستبقى أغانيك على هذا الجهاز في كل الأحوال.",
+  "accountSignInWithGoogle": "تسجيل الدخول باستخدام Google",
+  "accountWorking": "جارٍ العمل…",
+  "accountNeverSynced": "لم تتم المزامنة مطلقًا",
+  "accountSyncedJustNow": "تمت المزامنة للتو",
+  "accountSyncedMinutesAgo": "{count, plural, zero{تمت المزامنة قبل 0 دقيقة} one{تمت المزامنة قبل دقيقة واحدة} two{تمت المزامنة قبل دقيقتين} few{تمت المزامنة قبل {count} دقائق} many{تمت المزامنة قبل {count} دقيقة} other{تمت المزامنة قبل {count} دقيقة}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, zero{تمت المزامنة قبل 0 ساعة} one{تمت المزامنة قبل ساعة واحدة} two{تمت المزامنة قبل ساعتين} few{تمت المزامنة قبل {count} ساعات} many{تمت المزامنة قبل {count} ساعة} other{تمت المزامنة قبل {count} ساعة}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, zero{تمت المزامنة قبل 0 يوم} one{تمت المزامنة قبل يوم واحد} two{تمت المزامنة قبل يومين} few{تمت المزامنة قبل {count} أيام} many{تمت المزامنة قبل {count} يومًا} other{تمت المزامنة قبل {count} يوم}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, zero{لا توجد تعديلات متعارضة محفوظة كنسخ} one{تم حفظ تعديل متعارض واحد كنسخة} two{تم حفظ تعديلين متعارضين كنسختين} few{تم حفظ {count} تعديلات متعارضة كنسخ} many{تم حفظ {count} تعديلًا متعارضًا كنسخ} other{تم حفظ {count} تعديل متعارض كنسخة}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "تم تعديل الأغنية أو قائمة الأغاني نفسها في مكانين. لم يضع شيء: تم حفظ الإصدار الآخر كنسخة منفصلة.",
+  "accountReviewConflicts": "مراجعة النسخ",
+  "songsConflictFilterActive": "عرض النسخ المتعارضة فقط",
+  "songsConflictFilterClear": "إظهار جميع الأغاني",
+  "songsConflictBadge": "نسخة متعارضة",
+  "songsConflictEmpty": "لا توجد نسخ متعارضة.",
+  "accountAutoSync": "مزامنة تلقائية",
+  "accountAutoSyncHint": "حافظ على تحديث مكتبتك عند فتح التطبيق وبعد إجراء تغييرات.",
+  "accountSignOutTitle": "تسجيل الخروج من هذا الحساب؟",
+  "accountSignOutBody": "ستبقى أغانيك وقوائمك على هذا الجهاز. لن يتم نسخها احتياطيًا أو مزامنتها حتى تسجل الدخول مجددًا.",
+  "accountUseDifferent": "استخدام حساب آخر",
+  "accountSignInAgain": "تسجيل الدخول مجددًا",
+  "accountChooseAction": "اختر كيفية المتابعة",
+  "accountChangedTitle": "حساب Google مختلف",
+  "accountChangedBody": "تمت مزامنة هذا الجهاز آخر مرة مع حساب Google آخر. اختر ما يجب فعله بالأغاني والقوائم الموجودة على هذا الجهاز.",
+  "accountChangedMerge": "الدمج مع الحساب الجديد",
+  "accountChangedMergeHint": "احتفظ بكل شيء على هذا الجهاز وأضفه إلى الحساب الجديد.",
+  "accountChangedReplace": "الاستبدال بمكتبة الحساب الجديد",
+  "accountChangedReplaceHint": "ستتم إزالة الأغاني الموجودة على هذا الجهاز وغير الموجودة في الحساب الجديد.",
+  "accountChangedSignOut": "إلغاء وتسجيل الخروج",
+  "accountStatusSignedOut": "الحساب والمزامنة: لم يتم تسجيل الدخول",
+  "accountStatusSignedIn": "الحساب والمزامنة: تم تسجيل الدخول",
+  "accountStatusSyncing": "الحساب والمزامنة: جارٍ المزامنة",
+  "accountStatusSynced": "الحساب والمزامنة: المكتبة محدّثة",
+  "accountStatusError": "الحساب والمزامنة: مشكلة، المس للمراجعة",
+  "accountNoticeConflicts": "تم تعديل بعض الأغاني في مكانين. تم الاحتفاظ بالنسخ.",
+  "accountNoticeSignedIn": "تم تسجيل الدخول.",
+  "accountNoticeSignedOut": "تم تسجيل الخروج. ستبقى أغانيك على هذا الجهاز.",
+  "syncErrorNotConfigured": "المزامنة غير مُعدّة في هذا الإصدار.",
+  "syncErrorNotConfiguredHint": "استخدم إصدارًا من Singbook مُعَدًّا لتسجيل الدخول إلى Google.",
+  "syncErrorNotSignedIn": "لم تسجل الدخول.",
+  "syncErrorNotSignedInHint": "سجّل الدخول لمزامنة مكتبتك.",
+  "syncErrorAuthorizationRequired": "تطلب Google تسجيل الدخول مرة أخرى.",
+  "syncErrorAuthorizationRequiredHint": "سجّل الدخول مرة أخرى لمتابعة المزامنة. أغانيك آمنة على هذا الجهاز.",
+  "syncErrorAccessDenied": "ليس لدى Singbook إذن لاستخدام Google Drive.",
+  "syncErrorAccessDeniedHint": "سجّل الدخول مجددًا واسمح بالوصول إلى Drive عند الطلب.",
+  "syncErrorRateLimited": "تقيّد Google الطلبات حاليًا.",
+  "syncErrorRateLimitedHint": "انتظر بضع دقائق ثم حاول مرة أخرى.",
+  "syncErrorStorageFull": "مساحة Google Drive ممتلئة.",
+  "syncErrorStorageFullHint": "أفرغ بعض المساحة في Drive ثم حاول مرة أخرى.",
+  "syncErrorNetwork": "تعذّر الوصول إلى Google.",
+  "syncErrorNetworkHint": "تحقق من اتصال الإنترنت ثم حاول مرة أخرى.",
+  "syncErrorAccountChanged": "تم استخدام حساب Google مختلف.",
+  "syncErrorAccountChangedHint": "اختر ما إذا كنت تريد دمج مكتبة هذا الجهاز مع الحساب أو استبدالها.",
+  "syncErrorRemoteLibraryTooLarge": "مكتبتك المتزامنة أكبر مما يستطيع Singbook التعامل معه.",
+  "syncErrorRemoteLibraryTooLargeHint": "أزل بعض الأغاني أو القوائم من المكتبة المتزامنة ثم حاول مرة أخرى.",
+  "syncErrorSignInFailed": "لم يكتمل تسجيل الدخول.",
+  "syncErrorSignInFailedHint": "حاول تسجيل الدخول مرة أخرى.",
+  "syncErrorGeneric": "تعذّرت مزامنة مكتبتك.",
+  "syncErrorGenericHint": "حاول مرة أخرى بعد قليل. لا تزال أغانيك آمنة على هذا الجهاز."
+}

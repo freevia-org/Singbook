@@ -1,0 +1,670 @@
+{
+  "@@locale": "sk",
+  "appTitle": "Singbook",
+  "aboutDescription": "Pokojné miesto, kde nájdete a usporiadate piesne zo svojej knižnice a budete ich spievať spolu.",
+  "aboutMadeForSinging": "Stvorené na spoločné spievanie",
+  "appVersion": "Verzia {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "Domov",
+  "navSongs": "Piesne",
+  "navSetlists": "Koncertné programy",
+  "navSettings": "Nastavenia",
+  "navSettingsCompact": "Nastavenia",
+  "navSearch": "Hľadať",
+  "navBack": "Späť",
+  "navClose": "Zavrieť",
+  "navMore": "Ďalšie akcie",
+  "actionCancel": "Zrušiť",
+  "actionSave": "Uložiť",
+  "actionDone": "Hotovo",
+  "actionEdit": "Upraviť",
+  "actionDelete": "Odstrániť",
+  "actionShare": "Zdieľať",
+  "actionPrint": "Tlačiť",
+  "actionCopy": "Kopírovať",
+  "actionClear": "Vymazať",
+  "actionRetry": "Skúsiť znova",
+  "actionRefresh": "Obnoviť",
+  "actionImport": "Importovať",
+  "actionExport": "Exportovať",
+  "actionExpand": "Rozbaliť",
+  "actionCollapse": "Zbaliť",
+  "actionAdd": "Pridať",
+  "actionCreate": "Vytvoriť",
+  "actionRemove": "Odobrať",
+  "actionDuplicate": "Duplikovať",
+  "actionMoveUp": "Posunúť nahor",
+  "actionMoveDown": "Posunúť nadol",
+  "actionPrevious": "Predchádzajúce",
+  "actionNext": "Nasledujúce",
+  "searchHint": "Hľadať piesne, interpretov alebo texty piesní",
+  "searchCatalogHint": "Hľadať pieseň alebo interpreta",
+  "searchSubmit": "Hľadať",
+  "searchFilters": "Možnosti vyhľadávania",
+  "searchFiltersShow": "Zobraziť možnosti vyhľadávania",
+  "searchFiltersHide": "Skryť možnosti vyhľadávania",
+  "searchFilterArtist": "Interpret",
+  "searchFilterTitle": "Názov piesne",
+  "searchFilterLyrics": "Texty piesní",
+  "searchFilterChords": "Obsahuje akordy",
+  "searchFilterTimed": "Časované texty piesní",
+  "searchFilterLanguage": "Jazyk",
+  "searchFilterAll": "Ľubovoľný",
+  "searchAutocompleteLabel": "Návrhy",
+  "searchResultCount": "{count, plural, one{1 výsledok} few{{count} výsledky} other{{count} výsledkov}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "Zadajte pieseň, interpreta alebo verš, ktorý chcete vyhľadať.",
+  "searchCatalogEmptyQuery": "Zadajte pieseň alebo interpreta, ktorého chcete vyhľadať.",
+  "searchNoResults": "Nenašli sa žiadne piesne. Skúste iné vyhľadávanie.",
+  "searchLoading": "Vyhľadávajú sa piesne…",
+  "searchError": "Vyhľadávanie sa nepodarilo dokončiť.",
+  "searchOnlineTab": "Online",
+  "searchRecentTab": "Nedávne",
+  "searchFavoritesTab": "Obľúbené",
+  "searchSuggested": "Navrhovaná zhoda",
+  "searchAlternatives": "Ďalšie zhody",
+  "searchCompare": "Porovnať verzie",
+  "searchChooseVersion": "Vybrať túto verziu",
+  "searchSongMatch": "Zhoda piesne",
+  "searchRecordingMatch": "Zhoda nahrávky",
+  "searchMatchUnverified": "Nahrávka nie je overená",
+  "searchMatchExact": "Presná zhoda nahrávky",
+  "searchMatchPossible": "Možná zhoda",
+  "searchAvailability": "Dostupnosť",
+  "searchLyricsAvailable": "Text piesne je dostupný",
+  "searchLyricsUnavailable": "Text piesne nie je dostupný",
+  "searchChordsAvailable": "Akordy sú dostupné",
+  "searchChordsUnavailable": "Bez akordov",
+  "searchTimingAvailable": "Časovanie je dostupné",
+  "searchTimingUnavailable": "Časovanie nie je dostupné",
+  "searchDurationUnknown": "Trvanie nie je známe",
+  "searchRating": "Hodnotenie {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "Zdroj",
+  "searchMetadata": "Informácie o piesni",
+  "searchAlbum": "Album",
+  "searchArtist": "Interpret",
+  "searchYear": "Rok",
+  "searchLanguage": "Jazyk",
+  "searchSaved": "Pieseň bola uložená do vašej knižnice.",
+  "searchSaveFailed": "Pieseň sa nepodarilo uložiť.",
+  "homeRecentSongs": "Nedávne piesne",
+  "homeRecentlyPlayed": "Nedávno prehrávané",
+  "homeFavorites": "Obľúbené",
+  "homeHistory": "História",
+  "homeHistoryClear": "Vymazať históriu",
+  "homeHistoryCleared": "História bola vymazaná.",
+  "homeHistoryEmpty": "Tu sa zobrazia piesne, ktoré otvoríte.",
+  "homeFavoritesEmpty": "Tu sa zobrazia vaše obľúbené piesne a koncertné programy.",
+  "homeItemsShownCount": "{count, plural, one{Zobrazená 1 položka} few{Zobrazené {count} položky} other{Zobrazených {count} položiek}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "Tu sa zobrazia vaše nedávne piesne a koncertné programy.",
+  "homeTimelineLabel": "Časová os histórie",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "Celá história",
+  "homeShowFavorites": "Zobraziť obľúbené",
+  "homeShowRecent": "Zobraziť nedávne",
+  "songsTitle": "Piesne",
+  "songsEmpty": "Tu sa zobrazia vaše piesne.",
+  "songsEmptySearch": "Žiadna pieseň nezodpovedá vyhľadávaniu.",
+  "songsAdd": "Pridať pieseň",
+  "songsSortAlphabetical": "Zoradiť podľa abecedy",
+  "songsAlphabetNavigation": "Register piesní",
+  "songsUsageCount": "Otvorené {count, plural, one{raz} few{{count}-krát} other{{count}-krát}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "Pridať medzi obľúbené",
+  "songFavoriteRemove": "Odstrániť z obľúbených",
+  "songMenuLabel": "Akcie s piesňou",
+  "songInfo": "Informácie o piesni",
+  "setlistMenuLabel": "Akcie s koncertným programom",
+  "songAddToSetlist": "Pridať do koncertného programu",
+  "songCopyChordPro": "Kopírovať ChordPro",
+  "songDeleteConfirmTitle": "Odstrániť pieseň?",
+  "songDeleteConfirmMessage": "Táto pieseň sa odstráni z vašej knižnice.",
+  "songDeleted": "Pieseň bola odstránená.",
+  "setlistsTitle": "Koncertné programy",
+  "setlistsEmpty": "Vytvorte koncertný program na najbližšiu skúšku alebo vystúpenie.",
+  "setlistsEmptySearch": "Žiadny koncertný program nezodpovedá vyhľadávaniu.",
+  "setlistCreate": "Nový koncertný program",
+  "setlistNameHint": "Názov koncertného programu",
+  "setlistNotes": "Poznámky",
+  "setlistEntryOverride": "Tónina a kapodaster pre konkrétnu pieseň",
+  "setlistSongsCount": "{count, plural, one{1 pieseň} few{{count} piesne} other{{count} piesní}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "Aspoň {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "Trvanie nie je známe",
+  "setlistActivity": "Posledná aktivita {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "Vytvorené {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "Upravené {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "Naposledy hrané {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "V tomto koncertnom programe zatiaľ nie sú žiadne piesne.",
+  "setlistAddSongs": "Pridať piesne",
+  "setlistReorder": "Zmeniť poradie piesní",
+  "setlistMoveSongUp": "Posunúť pieseň „{song}“ nahor",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "Posunúť pieseň „{song}“ nadol",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "Odstrániť pieseň „{song}“ z koncertného programu",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "Duplikovať koncertný program",
+  "setlistFavoriteAdd": "Pridať koncertný program medzi obľúbené",
+  "setlistFavoriteRemove": "Odstrániť koncertný program z obľúbených",
+  "setlistShare": "Zdieľať ako súbor koncertného programu",
+  "setlistSharePdf": "Zdieľať ako PDF",
+  "setlistPrint": "Tlačiť",
+  "setlistDeleteConfirmTitle": "Odstrániť koncertný program?",
+  "setlistDeleteConfirmMessage": "Koncertný program sa odstráni. Piesne vo vašej knižnici zostanú.",
+  "setlistDeleted": "Koncertný program bol odstránený.",
+  "readerTitle": "Texty piesní",
+  "readerNoLyrics": "Text piesne zatiaľ nebol pridaný.",
+  "readerShowChords": "Zobraziť akordy",
+  "readerHideChords": "Skryť akordy",
+  "readerTranspose": "Transponovať akordy",
+  "readerTransposeSemitones": "Transponovať o {count, plural, one{1 poltón} few{{count} poltóny} other{{count} poltónov}}",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "Upraviť text piesne a informácie",
+  "playerPlay": "Spustiť posúvanie textu piesne",
+  "playerPause": "Pozastaviť posúvanie textu piesne",
+  "playerResume": "Pokračovať v posúvaní textu piesne",
+  "playerSeek": "Pozícia prehrávania",
+  "playerElapsed": "Uplynutý čas {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "Zostávajúci čas {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "Režim posúvania",
+  "playerTimedLyrics": "Časované texty piesní",
+  "playerEstimatedPace": "Odhadované tempo",
+  "playerManualScroll": "Manuálne posúvanie",
+  "playerTimingStatusReady": "Text piesne sa bude posúvať podľa dostupného časovania.",
+  "playerTimingStatusEstimated": "Tempo posúvania sa odhaduje podľa dĺžky piesne.",
+  "playerTimingStatusManual": "Posúvajte text piesne sami.",
+  "playerTimingStatusUnavailable": "Časované posúvanie nie je pre túto pieseň dostupné.",
+  "playerDurationUnknown": "Ak chcete použiť odhadované posúvanie, zadajte trvanie piesne.",
+  "playerProgressLabel": "Priebeh piesne",
+  "playerCurrentSection": "Aktuálna časť",
+  "playerPreviousSection": "Predchádzajúca časť",
+  "playerNextSection": "Nasledujúca časť",
+  "playerPreviousSectionSong": "Predchádzajúca časť · podržaním prejdete na predchádzajúcu pieseň v programe",
+  "playerNextSectionSong": "Nasledujúca časť · podržaním prejdete na ďalšiu pieseň v programe",
+  "playerPreviousSong": "Predchádzajúca pieseň",
+  "playerNextSong": "Nasledujúca pieseň",
+  "editorTitle": "Upraviť pieseň",
+  "editorTitleField": "Názov piesne",
+  "editorArtistField": "Interpret",
+  "editorAlbumField": "Album",
+  "editorLyricsField": "Text piesne",
+  "editorChordsField": "Akordy",
+  "editorKeyField": "Tónina",
+  "editorCapoField": "Kapodaster",
+  "editorTuningField": "Ladenie",
+  "editorTempoField": "Tempo",
+  "editorDurationField": "Trvanie",
+  "editorTimeSignatureField": "Takt",
+  "editorLanguageField": "Jazyk",
+  "editorYearField": "Rok",
+  "editorComposerField": "Skladateľ",
+  "editorLyricistField": "Autor textu",
+  "editorCopyrightField": "Autorské práva",
+  "editorLicenseField": "Licencia",
+  "songInfoSources": "Zdroje a zásluhy",
+  "searchMatchSameSong": "Rovnaká pieseň; nahrávka nie je potvrdená",
+  "searchMatchNeedsAgreement": "Zápis akordov treba potvrdiť podľa textu piesne",
+  "searchMatchDifferentLyrics": "Text sa líši od vybranej piesne",
+  "searchMatchCombinedSources": "Informácie spojené z viacerých zdrojov",
+  "searchCombinedFromSources": "{count, plural, one{Skombinované z {count} zdroja} few{Skombinované z {count} zdrojov} other{Skombinované z {count} zdrojov}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, one{1 zhoda piesne} few{{count} zhody piesní} other{{count} zhôd piesní}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, one{1 verzia zdroja} few{{count} verzie zdroja} other{{count} verzií zdroja}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "Najlepšia dostupná zhoda",
+  "providerDescriptionUnknown": "Zdroj piesne",
+  "providerDescDownloadChordProThenImport": "Stiahnite súbor ChordPro zo zdroja a potom ho importujte.",
+  "providerDescFreeAccountDownloadThenImport": "Stiahnite súbor pomocou bezplatného účtu a potom ho importujte.",
+  "providerDescPublicChordSheets": "Verejné zápisy akordov.",
+  "providerDescHistoricalTextPerWorkLicense": "Historické texty piesní licencované pre každé dielo osobitne.",
+  "providerDescLicensedCatalog": "Licencovaný katalóg textov piesní.",
+  "providerDescOriginalSongsCcBy": "Pôvodné piesne pod licenciou Creative Commons BY.",
+  "providerDescPerSongLicense": "Texty piesní licencované osobitne pre každú pieseň.",
+  "providerDescRecordingMetadataOnly": "Len informácie o nahrávke a vydaní.",
+  "providerDescCompositionMetadataOnly": "Len informácie o skladbe.",
+  "providerDescExactFileArtworkOnly": "Obal je dostupný len pri presnej zhode nahrávky.",
+  "providerCapabilityLyrics": "Texty piesní",
+  "providerCapabilityChords": "Akordy",
+  "providerCapabilityTiming": "Časované texty piesní",
+  "providerCapabilitySearch": "Vyhľadávanie",
+  "providerCapabilityMetadata": "Informácie o piesni",
+  "editorArtworkField": "Odkaz na obal",
+  "editorLyricsHint": "Ťuknutím na riadok upravíte text piesne alebo akordy.",
+  "editorSave": "Uložiť zmeny",
+  "editorSaved": "Zmeny boli uložené.",
+  "editorSaveFailed": "Zmeny sa nepodarilo uložiť.",
+  "editorSaveConflict": "Pieseň bola zmenená inde. Vaše úpravy sa uložili ako samostatná kópia.",
+  "editorUnsavedTitle": "Zahodiť zmeny?",
+  "editorUnsavedMessage": "Vaše úpravy neboli uložené.",
+  "editorFieldRequired": "Zadajte názov piesne.",
+  "settingsTitle": "Nastavenia",
+  "settingsAppearance": "Vzhľad",
+  "settingsTheme": "Motív",
+  "settingsThemeSystem": "Použiť nastavenie zariadenia",
+  "settingsThemeLight": "Svetlý",
+  "settingsThemeDark": "Tmavý",
+  "settingsColorPalette": "Paleta farieb",
+  "settingsFont": "Písmo",
+  "settingsTextSize": "Veľkosť textu",
+  "settingsLyricsPreview": "Ukážka textu piesne",
+  "settingsPlayer": "Prehrávač textov piesní",
+  "settingsDefaultShowChords": "Predvolene zobrazovať akordy",
+  "settingsDefaultAutoscroll": "Automaticky spustiť posúvanie textu piesne",
+  "settingsDefaultTiming": "Predvolený režim posúvania",
+  "settingsLanguage": "Jazyk aplikácie",
+  "settingsLanguageSystem": "Použiť jazyk zariadenia",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageBulgarian": "Български",
+  "settingsLanguageUkrainian": "Українська",
+  "settingsSources": "Zdroje textov piesní",
+  "settingsSourceEnabled": "Povoliť zdroj {source}",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "Obnoviť zoznam zdrojov",
+  "settingsSourcesUpdated": "Zdroje boli aktualizované.",
+  "settingsSourcesUpdateFailed": "Zdroje sa nepodarilo obnoviť.",
+  "settingsImport": "Importovať piesne",
+  "settingsImportChordPro": "Importovať súbor ChordPro",
+  "settingsImportSetlist": "Importovať súbor koncertného programu",
+  "settingsImportSuccess": "Importovanie dokončené.",
+  "settingsImportFailed": "Tento súbor sa nepodarilo importovať.",
+  "settingsImportUnsupported": "Tento typ súboru nie je podporovaný.",
+  "settingsShareSong": "Zdieľať ako ChordPro",
+  "settingsSharePdf": "Zdieľať ako PDF",
+  "settingsCopySong": "Kopírovať do schránky",
+  "settingsPrintSong": "Tlačiť iba pieseň",
+  "settingsPrintSetlist": "Vytlačiť koncertný program s textami piesní",
+  "settingsExportFailed": "Súbor sa nepodarilo pripraviť.",
+  "settingsCopied": "Skopírované do schránky.",
+  "settingsAbout": "O aplikácii",
+  "settingsPrivacy": "Súkromie",
+  "settingsLegal": "Právne informácie",
+  "settingsClearHistory": "Vymazať históriu",
+  "settingsClearHistoryConfirm": "Vymazať históriu piesní a koncertných programov?",
+  "settingsHistoryCleared": "História bola vymazaná.",
+  "accountTitle": "Účet a synchronizácia",
+  "accountUnavailable": "Synchronizácia vyžaduje verziu aplikácie Singbook s nakonfigurovaným prihlasovaním cez Google. Táto verzia ukladá vaše piesne iba v tomto zariadení.",
+  "accountSyncNow": "Synchronizovať teraz",
+  "accountConnected": "Pripojené. Výberom možnosti Synchronizovať teraz aktualizujete zálohu.",
+  "accountSignIn": "Pripojiť účet",
+  "accountSignOut": "Odhlásiť sa",
+  "accountChange": "Zmeniť účet",
+  "accountSignedOut": "Nepripojené",
+  "accountSyncing": "Synchronizuje sa vaša knižnica…",
+  "accountSynced": "Knižnica je synchronizovaná.",
+  "accountSyncFailed": "Knižnicu sa nepodarilo synchronizovať.",
+  "accessibilityFavorite": "Obľúbené",
+  "accessibilityNotFavorite": "Nie je obľúbené",
+  "accessibilitySearchField": "Hľadať piesne",
+  "accessibilityClearSearch": "Vymazať text vyhľadávania",
+  "accessibilitySongMenu": "Akcie s piesňou {song}",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "Akcie s koncertným programom {setlist}",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "Rozbaliť piesne v programe {setlist}",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "Zbaliť piesne v programe {setlist}",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "Priebeh prehrávania, {percent} percent",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "Časová os histórie, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "Načítava sa…",
+  "loadingSongs": "Načítavajú sa piesne…",
+  "loadingSetlists": "Načítavajú sa koncertné programy…",
+  "errorGeneric": "Niečo sa pokazilo.",
+  "errorOffline": "Zdá sa, že ste offline.",
+  "errorPermission": "Na pokračovanie je potrebné povolenie.",
+  "emptyFiltered": "Žiadna položka nezodpovedá týmto filtrom.",
+  "unknownValue": "Neznáme",
+  "durationUnknown": "Trvanie nie je známe",
+  "metadataNotSet": "Nenastavené",
+  "dateToday": "Dnes",
+  "dateYesterday": "Včera",
+  "daySongCount": "{count, plural, one{1 pieseň} few{{count} piesne} other{{count} piesní}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "Tmavomodrá",
+  "settingsPaletteSage": "Šalviová",
+  "settingsPaletteOcean": "Oceánska",
+  "settingsPaletteClay": "Hlinená",
+  "settingsPalettePlum": "Slivková",
+  "settingsFontSystem": "Systémové",
+  "settingsFontSerif": "Pätkové",
+  "settingsFontMonospace": "Neproporcionálne",
+  "settingsLyricsPreviewExample": "Keď príde ráno, budeme znova spievať.",
+  "searchDiscoveryProgress": "Kontrolujú sa zdroje textov piesní: dokončené {checked} z {total}.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "Nenašli sa použiteľné texty piesní.",
+  "searchDiscoveryNoLyricsDetails": "Vybraná pieseň sa skontrolovala v povolených zdrojoch, ale žiadny z nich neposkytol použiteľnú verziu textu.",
+  "searchDiscoveryError": "Zdroje textov piesní sa nepodarilo skontrolovať.",
+  "searchDiscoveryRetry": "Znova vyhľadať texty piesní",
+  "searchSourcesUnavailableCount": "{count, plural, one{1 nedostupný zdroj} few{{count} nedostupné zdroje} other{{count} nedostupných zdrojov}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "Skontrolujte pripojenie a skúste to znova.",
+  "searchProviderChecks": "Kontroly zdrojov",
+  "searchProviderPending": "Kontroluje sa",
+  "searchProviderFound": "Zhoda sa našla",
+  "searchProviderRejected": "Nezodpovedá",
+  "searchProviderFailed": "Kontrola zlyhala",
+  "searchProviderUnavailable": "Žiadne použiteľné texty piesní",
+  "searchCatalogFilterHint": "Vyberte pieseň a filtrujte verzie textu podľa akordov, časovania alebo jazyka.",
+  "startupErrorTitle": "Knižnicu sa nepodarilo otvoriť.",
+  "setlistCopyName": "Kópia: {name}",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "Chýbajúca pieseň",
+  "settingsImportTooLarge": "Tento súbor je príliš veľký na importovanie.",
+  "songsJumpToLetter": "Prejsť na písmeno {letter}",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "Zahodiť",
+  "editorKeepEditing": "Pokračovať v úpravách",
+  "settingsDefaultShowChordsHint": "Ak pieseň obsahuje akordy, zobrazovať ich nad textom.",
+  "settingsDefaultAutoscrollHint": "Text sa posúva spolu s piesňou. V režime manuálneho posúvania sa táto možnosť nepoužíva.",
+  "accountUnavailableTitle": "Synchronizácia nie je nastavená",
+  "accountSignedOutBenefits": "Prihláste sa cez Google a zálohujte si piesne a koncertné programy na svoj Google Drive a synchronizujte všetky zariadenia. Vaše piesne zostanú v tomto zariadení bez ohľadu na to.",
+  "accountSignInWithGoogle": "Prihlásiť sa cez Google",
+  "accountWorking": "Pracuje sa…",
+  "accountNeverSynced": "Ešte nesynchronizované",
+  "accountSyncedJustNow": "Práve synchronizované",
+  "accountSyncedMinutesAgo": "{count, plural, one{Synchronizované pred 1 minútou} few{Synchronizované pred {count} minútami} other{Synchronizované pred {count} minútami}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{Synchronizované pred 1 hodinou} few{Synchronizované pred {count} hodinami} other{Synchronizované pred {count} hodinami}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{Synchronizované pred 1 dňom} few{Synchronizované pred {count} dňami} other{Synchronizované pred {count} dňami}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{1 konfliktná úprava sa uložila ako kópia} few{{count} konfliktné úpravy sa uložili ako kópie} other{{count} konfliktných úprav sa uložilo ako kópie}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "Tá istá pieseň alebo ten istý koncertný program boli upravené na dvoch miestach. Nič sa nestratilo: druhá verzia sa uložila ako samostatná kópia.",
+  "accountReviewConflicts": "Skontrolovať kópie",
+  "songsConflictFilterActive": "Zobrazujú sa iba konfliktné kópie",
+  "songsConflictFilterClear": "Zobraziť všetky piesne",
+  "songsConflictBadge": "Konfliktná kópia",
+  "songsConflictEmpty": "Žiadne konfliktné kópie.",
+  "accountAutoSync": "Synchronizovať automaticky",
+  "accountAutoSyncHint": "Udržiavať knižnicu aktuálnu pri otvorení aplikácie a po vykonaní zmien.",
+  "accountSignOutTitle": "Odhlásiť sa z tohto účtu?",
+  "accountSignOutBody": "Vaše piesne a koncertné programy zostanú v tomto zariadení. Nebudú sa zálohovať ani synchronizovať, kým sa znova neprihlásite.",
+  "accountUseDifferent": "Použiť iný účet",
+  "accountSignInAgain": "Znova sa prihlásiť",
+  "accountChooseAction": "Vyberte, ako chcete pokračovať",
+  "accountChangedTitle": "Iný účet Google",
+  "accountChangedBody": "Toto zariadenie sa naposledy synchronizovalo s iným účtom Google. Vyberte, čo sa má stať s piesňami a koncertnými programami v tomto zariadení.",
+  "accountChangedMerge": "Zlúčiť s novým účtom",
+  "accountChangedMergeHint": "Ponechať všetko v tomto zariadení a pridať to do nového účtu.",
+  "accountChangedReplace": "Nahradiť knižnicou nového účtu",
+  "accountChangedReplaceHint": "Piesne v tomto zariadení, ktoré nie sú v novom účte, sa odstránia.",
+  "accountChangedSignOut": "Zrušiť a odhlásiť sa",
+  "accountStatusSignedOut": "Účet a synchronizácia: odhlásené",
+  "accountStatusSignedIn": "Účet a synchronizácia: prihlásené",
+  "accountStatusSyncing": "Účet a synchronizácia: synchronizuje sa",
+  "accountStatusSynced": "Účet a synchronizácia: knižnica je aktuálna",
+  "accountStatusError": "Účet a synchronizácia: problém, ťuknutím zobrazíte podrobnosti",
+  "accountNoticeConflicts": "Niektoré piesne boli upravené na dvoch miestach. Kópie sa zachovali.",
+  "accountNoticeSignedIn": "Prihlásili ste sa.",
+  "accountNoticeSignedOut": "Odhlásili ste sa. Vaše piesne zostávajú v tomto zariadení.",
+  "syncErrorNotConfigured": "V tomto zostavení nie je synchronizácia nastavená.",
+  "syncErrorNotConfiguredHint": "Použite verziu aplikácie Singbook s nakonfigurovaným prihlasovaním cez Google.",
+  "syncErrorNotSignedIn": "Nie ste prihlásení.",
+  "syncErrorNotSignedInHint": "Prihláste sa a synchronizujte svoju knižnicu.",
+  "syncErrorAuthorizationRequired": "Google vyžaduje, aby ste sa znova prihlásili.",
+  "syncErrorAuthorizationRequiredHint": "Znova sa prihláste a pokračujte v synchronizácii. Vaše piesne sú v tomto zariadení v bezpečí.",
+  "syncErrorAccessDenied": "Aplikácia Singbook nemá povolenie používať Google Drive.",
+  "syncErrorAccessDeniedHint": "Znova sa prihláste a po výzve povoľte prístup k Drive.",
+  "syncErrorRateLimited": "Google momentálne obmedzuje počet požiadaviek.",
+  "syncErrorRateLimitedHint": "Počkajte niekoľko minút a skúste to znova.",
+  "syncErrorStorageFull": "Váš Google Drive je plný.",
+  "syncErrorStorageFullHint": "Uvoľnite miesto na Drive a skúste to znova.",
+  "syncErrorNetwork": "Nepodarilo sa spojiť so službou Google.",
+  "syncErrorNetworkHint": "Skontrolujte internetové pripojenie a skúste to znova.",
+  "syncErrorAccountChanged": "Použil sa iný účet Google.",
+  "syncErrorAccountChangedHint": "Vyberte, či chcete knižnicu z tohto zariadenia zlúčiť s novým účtom alebo ju nahradiť.",
+  "syncErrorRemoteLibraryTooLarge": "Synchronizovaná knižnica je príliš veľká na spracovanie aplikáciou Singbook.",
+  "syncErrorRemoteLibraryTooLargeHint": "Odstráňte niektoré piesne alebo koncertné programy zo synchronizovanej knižnice a skúste to znova.",
+  "syncErrorSignInFailed": "Prihlásenie sa nedokončilo.",
+  "syncErrorSignInFailedHint": "Skúste sa znova prihlásiť.",
+  "syncErrorGeneric": "Knižnicu sa nepodarilo synchronizovať.",
+  "syncErrorGenericHint": "O chvíľu to skúste znova. Vaše piesne sú v tomto zariadení stále v bezpečí."
+}

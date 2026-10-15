@@ -1,0 +1,1447 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Slovak (`sk`).
+class AppLocalizationsSk extends AppLocalizations {
+  AppLocalizationsSk([String locale = 'sk']) : super(locale);
+
+  @override
+  String get appTitle => 'Singbook';
+
+  @override
+  String get aboutDescription =>
+      'Pokojné miesto, kde nájdete a usporiadate piesne zo svojej knižnice a budete ich spievať spolu.';
+
+  @override
+  String get aboutMadeForSinging => 'Stvorené na spoločné spievanie';
+
+  @override
+  String appVersion(String version) {
+    return 'Verzia $version';
+  }
+
+  @override
+  String get navHome => 'Domov';
+
+  @override
+  String get navSongs => 'Piesne';
+
+  @override
+  String get navSetlists => 'Koncertné programy';
+
+  @override
+  String get navSettings => 'Nastavenia';
+
+  @override
+  String get navSettingsCompact => 'Nastavenia';
+
+  @override
+  String get navSearch => 'Hľadať';
+
+  @override
+  String get navBack => 'Späť';
+
+  @override
+  String get navClose => 'Zavrieť';
+
+  @override
+  String get navMore => 'Ďalšie akcie';
+
+  @override
+  String get actionCancel => 'Zrušiť';
+
+  @override
+  String get actionSave => 'Uložiť';
+
+  @override
+  String get actionDone => 'Hotovo';
+
+  @override
+  String get actionEdit => 'Upraviť';
+
+  @override
+  String get actionDelete => 'Odstrániť';
+
+  @override
+  String get actionShare => 'Zdieľať';
+
+  @override
+  String get actionPrint => 'Tlačiť';
+
+  @override
+  String get actionCopy => 'Kopírovať';
+
+  @override
+  String get actionClear => 'Vymazať';
+
+  @override
+  String get actionRetry => 'Skúsiť znova';
+
+  @override
+  String get actionRefresh => 'Obnoviť';
+
+  @override
+  String get actionImport => 'Importovať';
+
+  @override
+  String get actionExport => 'Exportovať';
+
+  @override
+  String get actionExpand => 'Rozbaliť';
+
+  @override
+  String get actionCollapse => 'Zbaliť';
+
+  @override
+  String get actionAdd => 'Pridať';
+
+  @override
+  String get actionCreate => 'Vytvoriť';
+
+  @override
+  String get actionRemove => 'Odobrať';
+
+  @override
+  String get actionDuplicate => 'Duplikovať';
+
+  @override
+  String get actionMoveUp => 'Posunúť nahor';
+
+  @override
+  String get actionMoveDown => 'Posunúť nadol';
+
+  @override
+  String get actionPrevious => 'Predchádzajúce';
+
+  @override
+  String get actionNext => 'Nasledujúce';
+
+  @override
+  String get searchHint => 'Hľadať piesne, interpretov alebo texty piesní';
+
+  @override
+  String get searchCatalogHint => 'Hľadať pieseň alebo interpreta';
+
+  @override
+  String get searchSubmit => 'Hľadať';
+
+  @override
+  String get searchFilters => 'Možnosti vyhľadávania';
+
+  @override
+  String get searchFiltersShow => 'Zobraziť možnosti vyhľadávania';
+
+  @override
+  String get searchFiltersHide => 'Skryť možnosti vyhľadávania';
+
+  @override
+  String get searchFilterArtist => 'Interpret';
+
+  @override
+  String get searchFilterTitle => 'Názov piesne';
+
+  @override
+  String get searchFilterLyrics => 'Texty piesní';
+
+  @override
+  String get searchFilterChords => 'Obsahuje akordy';
+
+  @override
+  String get searchFilterTimed => 'Časované texty piesní';
+
+  @override
+  String get searchFilterLanguage => 'Jazyk';
+
+  @override
+  String get searchFilterAll => 'Ľubovoľný';
+
+  @override
+  String get searchAutocompleteLabel => 'Návrhy';
+
+  @override
+  String searchResultCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count výsledkov',
+      few: '$count výsledky',
+      one: '1 výsledok',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchEmptyQuery =>
+      'Zadajte pieseň, interpreta alebo verš, ktorý chcete vyhľadať.';
+
+  @override
+  String get searchCatalogEmptyQuery =>
+      'Zadajte pieseň alebo interpreta, ktorého chcete vyhľadať.';
+
+  @override
+  String get searchNoResults =>
+      'Nenašli sa žiadne piesne. Skúste iné vyhľadávanie.';
+
+  @override
+  String get searchLoading => 'Vyhľadávajú sa piesne…';
+
+  @override
+  String get searchError => 'Vyhľadávanie sa nepodarilo dokončiť.';
+
+  @override
+  String get searchOnlineTab => 'Online';
+
+  @override
+  String get searchRecentTab => 'Nedávne';
+
+  @override
+  String get searchFavoritesTab => 'Obľúbené';
+
+  @override
+  String get searchSuggested => 'Navrhovaná zhoda';
+
+  @override
+  String get searchAlternatives => 'Ďalšie zhody';
+
+  @override
+  String get searchCompare => 'Porovnať verzie';
+
+  @override
+  String get searchChooseVersion => 'Vybrať túto verziu';
+
+  @override
+  String get searchSongMatch => 'Zhoda piesne';
+
+  @override
+  String get searchRecordingMatch => 'Zhoda nahrávky';
+
+  @override
+  String get searchMatchUnverified => 'Nahrávka nie je overená';
+
+  @override
+  String get searchMatchExact => 'Presná zhoda nahrávky';
+
+  @override
+  String get searchMatchPossible => 'Možná zhoda';
+
+  @override
+  String get searchAvailability => 'Dostupnosť';
+
+  @override
+  String get searchLyricsAvailable => 'Text piesne je dostupný';
+
+  @override
+  String get searchLyricsUnavailable => 'Text piesne nie je dostupný';
+
+  @override
+  String get searchChordsAvailable => 'Akordy sú dostupné';
+
+  @override
+  String get searchChordsUnavailable => 'Bez akordov';
+
+  @override
+  String get searchTimingAvailable => 'Časovanie je dostupné';
+
+  @override
+  String get searchTimingUnavailable => 'Časovanie nie je dostupné';
+
+  @override
+  String get searchDurationUnknown => 'Trvanie nie je známe';
+
+  @override
+  String searchRating(String rating) {
+    return 'Hodnotenie $rating';
+  }
+
+  @override
+  String get searchSourceLabel => 'Zdroj';
+
+  @override
+  String get searchMetadata => 'Informácie o piesni';
+
+  @override
+  String get searchAlbum => 'Album';
+
+  @override
+  String get searchArtist => 'Interpret';
+
+  @override
+  String get searchYear => 'Rok';
+
+  @override
+  String get searchLanguage => 'Jazyk';
+
+  @override
+  String get searchSaved => 'Pieseň bola uložená do vašej knižnice.';
+
+  @override
+  String get searchSaveFailed => 'Pieseň sa nepodarilo uložiť.';
+
+  @override
+  String get homeRecentSongs => 'Nedávne piesne';
+
+  @override
+  String get homeRecentlyPlayed => 'Nedávno prehrávané';
+
+  @override
+  String get homeFavorites => 'Obľúbené';
+
+  @override
+  String get homeHistory => 'História';
+
+  @override
+  String get homeHistoryClear => 'Vymazať históriu';
+
+  @override
+  String get homeHistoryCleared => 'História bola vymazaná.';
+
+  @override
+  String get homeHistoryEmpty => 'Tu sa zobrazia piesne, ktoré otvoríte.';
+
+  @override
+  String get homeFavoritesEmpty =>
+      'Tu sa zobrazia vaše obľúbené piesne a koncertné programy.';
+
+  @override
+  String homeItemsShownCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Zobrazených $count položiek',
+      few: 'Zobrazené $count položky',
+      one: 'Zobrazená 1 položka',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get homeRecentEmpty =>
+      'Tu sa zobrazia vaše nedávne piesne a koncertné programy.';
+
+  @override
+  String get homeTimelineLabel => 'Časová os histórie';
+
+  @override
+  String homeTimelineDate(String date) {
+    return '$date';
+  }
+
+  @override
+  String get homeAllHistory => 'Celá história';
+
+  @override
+  String get homeShowFavorites => 'Zobraziť obľúbené';
+
+  @override
+  String get homeShowRecent => 'Zobraziť nedávne';
+
+  @override
+  String get songsTitle => 'Piesne';
+
+  @override
+  String get songsEmpty => 'Tu sa zobrazia vaše piesne.';
+
+  @override
+  String get songsEmptySearch => 'Žiadna pieseň nezodpovedá vyhľadávaniu.';
+
+  @override
+  String get songsAdd => 'Pridať pieseň';
+
+  @override
+  String get songsSortAlphabetical => 'Zoradiť podľa abecedy';
+
+  @override
+  String get songsAlphabetNavigation => 'Register piesní';
+
+  @override
+  String songsUsageCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count-krát',
+      few: '$count-krát',
+      one: 'raz',
+    );
+    return 'Otvorené $_temp0';
+  }
+
+  @override
+  String get songFavoriteAdd => 'Pridať medzi obľúbené';
+
+  @override
+  String get songFavoriteRemove => 'Odstrániť z obľúbených';
+
+  @override
+  String get songMenuLabel => 'Akcie s piesňou';
+
+  @override
+  String get songInfo => 'Informácie o piesni';
+
+  @override
+  String get setlistMenuLabel => 'Akcie s koncertným programom';
+
+  @override
+  String get songAddToSetlist => 'Pridať do koncertného programu';
+
+  @override
+  String get songCopyChordPro => 'Kopírovať ChordPro';
+
+  @override
+  String get songDeleteConfirmTitle => 'Odstrániť pieseň?';
+
+  @override
+  String get songDeleteConfirmMessage =>
+      'Táto pieseň sa odstráni z vašej knižnice.';
+
+  @override
+  String get songDeleted => 'Pieseň bola odstránená.';
+
+  @override
+  String get setlistsTitle => 'Koncertné programy';
+
+  @override
+  String get setlistsEmpty =>
+      'Vytvorte koncertný program na najbližšiu skúšku alebo vystúpenie.';
+
+  @override
+  String get setlistsEmptySearch =>
+      'Žiadny koncertný program nezodpovedá vyhľadávaniu.';
+
+  @override
+  String get setlistCreate => 'Nový koncertný program';
+
+  @override
+  String get setlistNameHint => 'Názov koncertného programu';
+
+  @override
+  String get setlistNotes => 'Poznámky';
+
+  @override
+  String get setlistEntryOverride => 'Tónina a kapodaster pre konkrétnu pieseň';
+
+  @override
+  String setlistSongsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count piesní',
+      few: '$count piesne',
+      one: '1 pieseň',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String setlistDuration(String duration) {
+    return '$duration';
+  }
+
+  @override
+  String setlistDurationPartial(String duration) {
+    return 'Aspoň $duration';
+  }
+
+  @override
+  String get setlistDurationUnknown => 'Trvanie nie je známe';
+
+  @override
+  String setlistActivity(String date) {
+    return 'Posledná aktivita $date';
+  }
+
+  @override
+  String setlistActivityCreated(String date) {
+    return 'Vytvorené $date';
+  }
+
+  @override
+  String setlistActivityEdited(String date) {
+    return 'Upravené $date';
+  }
+
+  @override
+  String setlistActivityUsed(String date) {
+    return 'Naposledy hrané $date';
+  }
+
+  @override
+  String get setlistSongsEmpty =>
+      'V tomto koncertnom programe zatiaľ nie sú žiadne piesne.';
+
+  @override
+  String get setlistAddSongs => 'Pridať piesne';
+
+  @override
+  String get setlistReorder => 'Zmeniť poradie piesní';
+
+  @override
+  String setlistMoveSongUp(String song) {
+    return 'Posunúť pieseň „$song“ nahor';
+  }
+
+  @override
+  String setlistMoveSongDown(String song) {
+    return 'Posunúť pieseň „$song“ nadol';
+  }
+
+  @override
+  String setlistRemoveSong(String song) {
+    return 'Odstrániť pieseň „$song“ z koncertného programu';
+  }
+
+  @override
+  String get setlistDuplicate => 'Duplikovať koncertný program';
+
+  @override
+  String get setlistFavoriteAdd => 'Pridať koncertný program medzi obľúbené';
+
+  @override
+  String get setlistFavoriteRemove =>
+      'Odstrániť koncertný program z obľúbených';
+
+  @override
+  String get setlistShare => 'Zdieľať ako súbor koncertného programu';
+
+  @override
+  String get setlistSharePdf => 'Zdieľať ako PDF';
+
+  @override
+  String get setlistPrint => 'Tlačiť';
+
+  @override
+  String get setlistDeleteConfirmTitle => 'Odstrániť koncertný program?';
+
+  @override
+  String get setlistDeleteConfirmMessage =>
+      'Koncertný program sa odstráni. Piesne vo vašej knižnici zostanú.';
+
+  @override
+  String get setlistDeleted => 'Koncertný program bol odstránený.';
+
+  @override
+  String get readerTitle => 'Texty piesní';
+
+  @override
+  String get readerNoLyrics => 'Text piesne zatiaľ nebol pridaný.';
+
+  @override
+  String get readerShowChords => 'Zobraziť akordy';
+
+  @override
+  String get readerHideChords => 'Skryť akordy';
+
+  @override
+  String get readerTranspose => 'Transponovať akordy';
+
+  @override
+  String readerTransposeSemitones(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count poltónov',
+      few: '$count poltóny',
+      one: '1 poltón',
+    );
+    return 'Transponovať o $_temp0';
+  }
+
+  @override
+  String get readerEdit => 'Upraviť text piesne a informácie';
+
+  @override
+  String get playerPlay => 'Spustiť posúvanie textu piesne';
+
+  @override
+  String get playerPause => 'Pozastaviť posúvanie textu piesne';
+
+  @override
+  String get playerResume => 'Pokračovať v posúvaní textu piesne';
+
+  @override
+  String get playerSeek => 'Pozícia prehrávania';
+
+  @override
+  String playerElapsed(String time) {
+    return 'Uplynutý čas $time';
+  }
+
+  @override
+  String playerRemaining(String time) {
+    return 'Zostávajúci čas $time';
+  }
+
+  @override
+  String get playerTimingMode => 'Režim posúvania';
+
+  @override
+  String get playerTimedLyrics => 'Časované texty piesní';
+
+  @override
+  String get playerEstimatedPace => 'Odhadované tempo';
+
+  @override
+  String get playerManualScroll => 'Manuálne posúvanie';
+
+  @override
+  String get playerTimingStatusReady =>
+      'Text piesne sa bude posúvať podľa dostupného časovania.';
+
+  @override
+  String get playerTimingStatusEstimated =>
+      'Tempo posúvania sa odhaduje podľa dĺžky piesne.';
+
+  @override
+  String get playerTimingStatusManual => 'Posúvajte text piesne sami.';
+
+  @override
+  String get playerTimingStatusUnavailable =>
+      'Časované posúvanie nie je pre túto pieseň dostupné.';
+
+  @override
+  String get playerDurationUnknown =>
+      'Ak chcete použiť odhadované posúvanie, zadajte trvanie piesne.';
+
+  @override
+  String get playerProgressLabel => 'Priebeh piesne';
+
+  @override
+  String get playerCurrentSection => 'Aktuálna časť';
+
+  @override
+  String get playerPreviousSection => 'Predchádzajúca časť';
+
+  @override
+  String get playerNextSection => 'Nasledujúca časť';
+
+  @override
+  String get playerPreviousSectionSong =>
+      'Predchádzajúca časť · podržaním prejdete na predchádzajúcu pieseň v programe';
+
+  @override
+  String get playerNextSectionSong =>
+      'Nasledujúca časť · podržaním prejdete na ďalšiu pieseň v programe';
+
+  @override
+  String get playerPreviousSong => 'Predchádzajúca pieseň';
+
+  @override
+  String get playerNextSong => 'Nasledujúca pieseň';
+
+  @override
+  String get editorTitle => 'Upraviť pieseň';
+
+  @override
+  String get editorTitleField => 'Názov piesne';
+
+  @override
+  String get editorArtistField => 'Interpret';
+
+  @override
+  String get editorAlbumField => 'Album';
+
+  @override
+  String get editorLyricsField => 'Text piesne';
+
+  @override
+  String get editorChordsField => 'Akordy';
+
+  @override
+  String get editorKeyField => 'Tónina';
+
+  @override
+  String get editorCapoField => 'Kapodaster';
+
+  @override
+  String get editorTuningField => 'Ladenie';
+
+  @override
+  String get editorTempoField => 'Tempo';
+
+  @override
+  String get editorDurationField => 'Trvanie';
+
+  @override
+  String get editorTimeSignatureField => 'Takt';
+
+  @override
+  String get editorLanguageField => 'Jazyk';
+
+  @override
+  String get editorYearField => 'Rok';
+
+  @override
+  String get editorComposerField => 'Skladateľ';
+
+  @override
+  String get editorLyricistField => 'Autor textu';
+
+  @override
+  String get editorCopyrightField => 'Autorské práva';
+
+  @override
+  String get editorLicenseField => 'Licencia';
+
+  @override
+  String get songInfoSources => 'Zdroje a zásluhy';
+
+  @override
+  String get searchMatchSameSong => 'Rovnaká pieseň; nahrávka nie je potvrdená';
+
+  @override
+  String get searchMatchNeedsAgreement =>
+      'Zápis akordov treba potvrdiť podľa textu piesne';
+
+  @override
+  String get searchMatchDifferentLyrics => 'Text sa líši od vybranej piesne';
+
+  @override
+  String get searchMatchCombinedSources =>
+      'Informácie spojené z viacerých zdrojov';
+
+  @override
+  String searchCombinedFromSources(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Skombinované z $count zdrojov',
+      few: 'Skombinované z $count zdrojov',
+      one: 'Skombinované z $count zdroja',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchSongMatchCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count zhôd piesní',
+      few: '$count zhody piesní',
+      one: '1 zhoda piesne',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchSourceVersionsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count verzií zdroja',
+      few: '$count verzie zdroja',
+      one: '1 verzia zdroja',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchMatchBestAvailable => 'Najlepšia dostupná zhoda';
+
+  @override
+  String get providerDescriptionUnknown => 'Zdroj piesne';
+
+  @override
+  String get providerDescDownloadChordProThenImport =>
+      'Stiahnite súbor ChordPro zo zdroja a potom ho importujte.';
+
+  @override
+  String get providerDescFreeAccountDownloadThenImport =>
+      'Stiahnite súbor pomocou bezplatného účtu a potom ho importujte.';
+
+  @override
+  String get providerDescPublicChordSheets => 'Verejné zápisy akordov.';
+
+  @override
+  String get providerDescHistoricalTextPerWorkLicense =>
+      'Historické texty piesní licencované pre každé dielo osobitne.';
+
+  @override
+  String get providerDescLicensedCatalog =>
+      'Licencovaný katalóg textov piesní.';
+
+  @override
+  String get providerDescOriginalSongsCcBy =>
+      'Pôvodné piesne pod licenciou Creative Commons BY.';
+
+  @override
+  String get providerDescPerSongLicense =>
+      'Texty piesní licencované osobitne pre každú pieseň.';
+
+  @override
+  String get providerDescRecordingMetadataOnly =>
+      'Len informácie o nahrávke a vydaní.';
+
+  @override
+  String get providerDescCompositionMetadataOnly => 'Len informácie o skladbe.';
+
+  @override
+  String get providerDescExactFileArtworkOnly =>
+      'Obal je dostupný len pri presnej zhode nahrávky.';
+
+  @override
+  String get providerCapabilityLyrics => 'Texty piesní';
+
+  @override
+  String get providerCapabilityChords => 'Akordy';
+
+  @override
+  String get providerCapabilityTiming => 'Časované texty piesní';
+
+  @override
+  String get providerCapabilitySearch => 'Vyhľadávanie';
+
+  @override
+  String get providerCapabilityMetadata => 'Informácie o piesni';
+
+  @override
+  String get editorArtworkField => 'Odkaz na obal';
+
+  @override
+  String get editorLyricsHint =>
+      'Ťuknutím na riadok upravíte text piesne alebo akordy.';
+
+  @override
+  String get editorSave => 'Uložiť zmeny';
+
+  @override
+  String get editorSaved => 'Zmeny boli uložené.';
+
+  @override
+  String get editorSaveFailed => 'Zmeny sa nepodarilo uložiť.';
+
+  @override
+  String get editorSaveConflict =>
+      'Pieseň bola zmenená inde. Vaše úpravy sa uložili ako samostatná kópia.';
+
+  @override
+  String get editorUnsavedTitle => 'Zahodiť zmeny?';
+
+  @override
+  String get editorUnsavedMessage => 'Vaše úpravy neboli uložené.';
+
+  @override
+  String get editorFieldRequired => 'Zadajte názov piesne.';
+
+  @override
+  String get settingsTitle => 'Nastavenia';
+
+  @override
+  String get settingsAppearance => 'Vzhľad';
+
+  @override
+  String get settingsTheme => 'Motív';
+
+  @override
+  String get settingsThemeSystem => 'Použiť nastavenie zariadenia';
+
+  @override
+  String get settingsThemeLight => 'Svetlý';
+
+  @override
+  String get settingsThemeDark => 'Tmavý';
+
+  @override
+  String get settingsColorPalette => 'Paleta farieb';
+
+  @override
+  String get settingsFont => 'Písmo';
+
+  @override
+  String get settingsTextSize => 'Veľkosť textu';
+
+  @override
+  String get settingsLyricsPreview => 'Ukážka textu piesne';
+
+  @override
+  String get settingsPlayer => 'Prehrávač textov piesní';
+
+  @override
+  String get settingsDefaultShowChords => 'Predvolene zobrazovať akordy';
+
+  @override
+  String get settingsDefaultAutoscroll =>
+      'Automaticky spustiť posúvanie textu piesne';
+
+  @override
+  String get settingsDefaultTiming => 'Predvolený režim posúvania';
+
+  @override
+  String get settingsLanguage => 'Jazyk aplikácie';
+
+  @override
+  String get settingsLanguageSystem => 'Použiť jazyk zariadenia';
+
+  @override
+  String get settingsLanguageEnglish => 'English';
+
+  @override
+  String get settingsLanguageBulgarian => 'Български';
+
+  @override
+  String get settingsLanguageUkrainian => 'Українська';
+
+  @override
+  String get settingsSources => 'Zdroje textov piesní';
+
+  @override
+  String settingsSourceEnabled(String source) {
+    return 'Povoliť zdroj $source';
+  }
+
+  @override
+  String get settingsSourceRefresh => 'Obnoviť zoznam zdrojov';
+
+  @override
+  String get settingsSourcesUpdated => 'Zdroje boli aktualizované.';
+
+  @override
+  String get settingsSourcesUpdateFailed => 'Zdroje sa nepodarilo obnoviť.';
+
+  @override
+  String get settingsImport => 'Importovať piesne';
+
+  @override
+  String get settingsImportChordPro => 'Importovať súbor ChordPro';
+
+  @override
+  String get settingsImportSetlist => 'Importovať súbor koncertného programu';
+
+  @override
+  String get settingsImportSuccess => 'Importovanie dokončené.';
+
+  @override
+  String get settingsImportFailed => 'Tento súbor sa nepodarilo importovať.';
+
+  @override
+  String get settingsImportUnsupported =>
+      'Tento typ súboru nie je podporovaný.';
+
+  @override
+  String get settingsShareSong => 'Zdieľať ako ChordPro';
+
+  @override
+  String get settingsSharePdf => 'Zdieľať ako PDF';
+
+  @override
+  String get settingsCopySong => 'Kopírovať do schránky';
+
+  @override
+  String get settingsPrintSong => 'Tlačiť iba pieseň';
+
+  @override
+  String get settingsPrintSetlist =>
+      'Vytlačiť koncertný program s textami piesní';
+
+  @override
+  String get settingsExportFailed => 'Súbor sa nepodarilo pripraviť.';
+
+  @override
+  String get settingsCopied => 'Skopírované do schránky.';
+
+  @override
+  String get settingsAbout => 'O aplikácii';
+
+  @override
+  String get settingsPrivacy => 'Súkromie';
+
+  @override
+  String get settingsLegal => 'Právne informácie';
+
+  @override
+  String get settingsClearHistory => 'Vymazať históriu';
+
+  @override
+  String get settingsClearHistoryConfirm =>
+      'Vymazať históriu piesní a koncertných programov?';
+
+  @override
+  String get settingsHistoryCleared => 'História bola vymazaná.';
+
+  @override
+  String get accountTitle => 'Účet a synchronizácia';
+
+  @override
+  String get accountUnavailable =>
+      'Synchronizácia vyžaduje verziu aplikácie Singbook s nakonfigurovaným prihlasovaním cez Google. Táto verzia ukladá vaše piesne iba v tomto zariadení.';
+
+  @override
+  String get accountSyncNow => 'Synchronizovať teraz';
+
+  @override
+  String get accountConnected =>
+      'Pripojené. Výberom možnosti Synchronizovať teraz aktualizujete zálohu.';
+
+  @override
+  String get accountSignIn => 'Pripojiť účet';
+
+  @override
+  String get accountSignOut => 'Odhlásiť sa';
+
+  @override
+  String get accountChange => 'Zmeniť účet';
+
+  @override
+  String get accountSignedOut => 'Nepripojené';
+
+  @override
+  String get accountSyncing => 'Synchronizuje sa vaša knižnica…';
+
+  @override
+  String get accountSynced => 'Knižnica je synchronizovaná.';
+
+  @override
+  String get accountSyncFailed => 'Knižnicu sa nepodarilo synchronizovať.';
+
+  @override
+  String get accessibilityFavorite => 'Obľúbené';
+
+  @override
+  String get accessibilityNotFavorite => 'Nie je obľúbené';
+
+  @override
+  String get accessibilitySearchField => 'Hľadať piesne';
+
+  @override
+  String get accessibilityClearSearch => 'Vymazať text vyhľadávania';
+
+  @override
+  String accessibilitySongMenu(String song) {
+    return 'Akcie s piesňou $song';
+  }
+
+  @override
+  String accessibilitySetlistMenu(String setlist) {
+    return 'Akcie s koncertným programom $setlist';
+  }
+
+  @override
+  String accessibilityExpandSetlist(String setlist) {
+    return 'Rozbaliť piesne v programe $setlist';
+  }
+
+  @override
+  String accessibilityCollapseSetlist(String setlist) {
+    return 'Zbaliť piesne v programe $setlist';
+  }
+
+  @override
+  String accessibilityPlaybackProgress(int percent) {
+    return 'Priebeh prehrávania, $percent percent';
+  }
+
+  @override
+  String accessibilityTimeline(String date) {
+    return 'Časová os histórie, $date';
+  }
+
+  @override
+  String get loading => 'Načítava sa…';
+
+  @override
+  String get loadingSongs => 'Načítavajú sa piesne…';
+
+  @override
+  String get loadingSetlists => 'Načítavajú sa koncertné programy…';
+
+  @override
+  String get errorGeneric => 'Niečo sa pokazilo.';
+
+  @override
+  String get errorOffline => 'Zdá sa, že ste offline.';
+
+  @override
+  String get errorPermission => 'Na pokračovanie je potrebné povolenie.';
+
+  @override
+  String get emptyFiltered => 'Žiadna položka nezodpovedá týmto filtrom.';
+
+  @override
+  String get unknownValue => 'Neznáme';
+
+  @override
+  String get durationUnknown => 'Trvanie nie je známe';
+
+  @override
+  String get metadataNotSet => 'Nenastavené';
+
+  @override
+  String get dateToday => 'Dnes';
+
+  @override
+  String get dateYesterday => 'Včera';
+
+  @override
+  String daySongCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count piesní',
+      few: '$count piesne',
+      one: '1 pieseň',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get settingsPaletteNavy => 'Tmavomodrá';
+
+  @override
+  String get settingsPaletteSage => 'Šalviová';
+
+  @override
+  String get settingsPaletteOcean => 'Oceánska';
+
+  @override
+  String get settingsPaletteClay => 'Hlinená';
+
+  @override
+  String get settingsPalettePlum => 'Slivková';
+
+  @override
+  String get settingsFontSystem => 'Systémové';
+
+  @override
+  String get settingsFontSerif => 'Pätkové';
+
+  @override
+  String get settingsFontMonospace => 'Neproporcionálne';
+
+  @override
+  String get settingsLyricsPreviewExample =>
+      'Keď príde ráno, budeme znova spievať.';
+
+  @override
+  String searchDiscoveryProgress(int checked, int total) {
+    return 'Kontrolujú sa zdroje textov piesní: dokončené $checked z $total.';
+  }
+
+  @override
+  String get searchDiscoveryNoLyrics => 'Nenašli sa použiteľné texty piesní.';
+
+  @override
+  String get searchDiscoveryNoLyricsDetails =>
+      'Vybraná pieseň sa skontrolovala v povolených zdrojoch, ale žiadny z nich neposkytol použiteľnú verziu textu.';
+
+  @override
+  String get searchDiscoveryError =>
+      'Zdroje textov piesní sa nepodarilo skontrolovať.';
+
+  @override
+  String get searchDiscoveryRetry => 'Znova vyhľadať texty piesní';
+
+  @override
+  String searchSourcesUnavailableCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count nedostupných zdrojov',
+      few: '$count nedostupné zdroje',
+      one: '1 nedostupný zdroj',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchErrorDetails => 'Skontrolujte pripojenie a skúste to znova.';
+
+  @override
+  String get searchProviderChecks => 'Kontroly zdrojov';
+
+  @override
+  String get searchProviderPending => 'Kontroluje sa';
+
+  @override
+  String get searchProviderFound => 'Zhoda sa našla';
+
+  @override
+  String get searchProviderRejected => 'Nezodpovedá';
+
+  @override
+  String get searchProviderFailed => 'Kontrola zlyhala';
+
+  @override
+  String get searchProviderUnavailable => 'Žiadne použiteľné texty piesní';
+
+  @override
+  String get searchCatalogFilterHint =>
+      'Vyberte pieseň a filtrujte verzie textu podľa akordov, časovania alebo jazyka.';
+
+  @override
+  String get startupErrorTitle => 'Knižnicu sa nepodarilo otvoriť.';
+
+  @override
+  String setlistCopyName(String name) {
+    return 'Kópia: $name';
+  }
+
+  @override
+  String get setlistSongMissing => 'Chýbajúca pieseň';
+
+  @override
+  String get settingsImportTooLarge =>
+      'Tento súbor je príliš veľký na importovanie.';
+
+  @override
+  String songsJumpToLetter(String letter) {
+    return 'Prejsť na písmeno $letter';
+  }
+
+  @override
+  String get actionDiscard => 'Zahodiť';
+
+  @override
+  String get editorKeepEditing => 'Pokračovať v úpravách';
+
+  @override
+  String get settingsDefaultShowChordsHint =>
+      'Ak pieseň obsahuje akordy, zobrazovať ich nad textom.';
+
+  @override
+  String get settingsDefaultAutoscrollHint =>
+      'Text sa posúva spolu s piesňou. V režime manuálneho posúvania sa táto možnosť nepoužíva.';
+
+  @override
+  String get accountUnavailableTitle => 'Synchronizácia nie je nastavená';
+
+  @override
+  String get accountSignedOutBenefits =>
+      'Prihláste sa cez Google a zálohujte si piesne a koncertné programy na svoj Google Drive a synchronizujte všetky zariadenia. Vaše piesne zostanú v tomto zariadení bez ohľadu na to.';
+
+  @override
+  String get accountSignInWithGoogle => 'Prihlásiť sa cez Google';
+
+  @override
+  String get accountWorking => 'Pracuje sa…';
+
+  @override
+  String get accountNeverSynced => 'Ešte nesynchronizované';
+
+  @override
+  String get accountSyncedJustNow => 'Práve synchronizované';
+
+  @override
+  String accountSyncedMinutesAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Synchronizované pred $count minútami',
+      few: 'Synchronizované pred $count minútami',
+      one: 'Synchronizované pred 1 minútou',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String accountSyncedHoursAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Synchronizované pred $count hodinami',
+      few: 'Synchronizované pred $count hodinami',
+      one: 'Synchronizované pred 1 hodinou',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String accountSyncedDaysAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Synchronizované pred $count dňami',
+      few: 'Synchronizované pred $count dňami',
+      one: 'Synchronizované pred 1 dňom',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String accountConflictsTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count konfliktných úprav sa uložilo ako kópie',
+      few: '$count konfliktné úpravy sa uložili ako kópie',
+      one: '1 konfliktná úprava sa uložila ako kópia',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get accountConflictsBody =>
+      'Tá istá pieseň alebo ten istý koncertný program boli upravené na dvoch miestach. Nič sa nestratilo: druhá verzia sa uložila ako samostatná kópia.';
+
+  @override
+  String get accountReviewConflicts => 'Skontrolovať kópie';
+
+  @override
+  String get songsConflictFilterActive => 'Zobrazujú sa iba konfliktné kópie';
+
+  @override
+  String get songsConflictFilterClear => 'Zobraziť všetky piesne';
+
+  @override
+  String get songsConflictBadge => 'Konfliktná kópia';
+
+  @override
+  String get songsConflictEmpty => 'Žiadne konfliktné kópie.';
+
+  @override
+  String get accountAutoSync => 'Synchronizovať automaticky';
+
+  @override
+  String get accountAutoSyncHint =>
+      'Udržiavať knižnicu aktuálnu pri otvorení aplikácie a po vykonaní zmien.';
+
+  @override
+  String get accountSignOutTitle => 'Odhlásiť sa z tohto účtu?';
+
+  @override
+  String get accountSignOutBody =>
+      'Vaše piesne a koncertné programy zostanú v tomto zariadení. Nebudú sa zálohovať ani synchronizovať, kým sa znova neprihlásite.';
+
+  @override
+  String get accountUseDifferent => 'Použiť iný účet';
+
+  @override
+  String get accountSignInAgain => 'Znova sa prihlásiť';
+
+  @override
+  String get accountChooseAction => 'Vyberte, ako chcete pokračovať';
+
+  @override
+  String get accountChangedTitle => 'Iný účet Google';
+
+  @override
+  String get accountChangedBody =>
+      'Toto zariadenie sa naposledy synchronizovalo s iným účtom Google. Vyberte, čo sa má stať s piesňami a koncertnými programami v tomto zariadení.';
+
+  @override
+  String get accountChangedMerge => 'Zlúčiť s novým účtom';
+
+  @override
+  String get accountChangedMergeHint =>
+      'Ponechať všetko v tomto zariadení a pridať to do nového účtu.';
+
+  @override
+  String get accountChangedReplace => 'Nahradiť knižnicou nového účtu';
+
+  @override
+  String get accountChangedReplaceHint =>
+      'Piesne v tomto zariadení, ktoré nie sú v novom účte, sa odstránia.';
+
+  @override
+  String get accountChangedSignOut => 'Zrušiť a odhlásiť sa';
+
+  @override
+  String get accountStatusSignedOut => 'Účet a synchronizácia: odhlásené';
+
+  @override
+  String get accountStatusSignedIn => 'Účet a synchronizácia: prihlásené';
+
+  @override
+  String get accountStatusSyncing => 'Účet a synchronizácia: synchronizuje sa';
+
+  @override
+  String get accountStatusSynced =>
+      'Účet a synchronizácia: knižnica je aktuálna';
+
+  @override
+  String get accountStatusError =>
+      'Účet a synchronizácia: problém, ťuknutím zobrazíte podrobnosti';
+
+  @override
+  String get accountNoticeConflicts =>
+      'Niektoré piesne boli upravené na dvoch miestach. Kópie sa zachovali.';
+
+  @override
+  String get accountNoticeSignedIn => 'Prihlásili ste sa.';
+
+  @override
+  String get accountNoticeSignedOut =>
+      'Odhlásili ste sa. Vaše piesne zostávajú v tomto zariadení.';
+
+  @override
+  String get syncErrorNotConfigured =>
+      'V tomto zostavení nie je synchronizácia nastavená.';
+
+  @override
+  String get syncErrorNotConfiguredHint =>
+      'Použite verziu aplikácie Singbook s nakonfigurovaným prihlasovaním cez Google.';
+
+  @override
+  String get syncErrorNotSignedIn => 'Nie ste prihlásení.';
+
+  @override
+  String get syncErrorNotSignedInHint =>
+      'Prihláste sa a synchronizujte svoju knižnicu.';
+
+  @override
+  String get syncErrorAuthorizationRequired =>
+      'Google vyžaduje, aby ste sa znova prihlásili.';
+
+  @override
+  String get syncErrorAuthorizationRequiredHint =>
+      'Znova sa prihláste a pokračujte v synchronizácii. Vaše piesne sú v tomto zariadení v bezpečí.';
+
+  @override
+  String get syncErrorAccessDenied =>
+      'Aplikácia Singbook nemá povolenie používať Google Drive.';
+
+  @override
+  String get syncErrorAccessDeniedHint =>
+      'Znova sa prihláste a po výzve povoľte prístup k Drive.';
+
+  @override
+  String get syncErrorRateLimited =>
+      'Google momentálne obmedzuje počet požiadaviek.';
+
+  @override
+  String get syncErrorRateLimitedHint =>
+      'Počkajte niekoľko minút a skúste to znova.';
+
+  @override
+  String get syncErrorStorageFull => 'Váš Google Drive je plný.';
+
+  @override
+  String get syncErrorStorageFullHint =>
+      'Uvoľnite miesto na Drive a skúste to znova.';
+
+  @override
+  String get syncErrorNetwork => 'Nepodarilo sa spojiť so službou Google.';
+
+  @override
+  String get syncErrorNetworkHint =>
+      'Skontrolujte internetové pripojenie a skúste to znova.';
+
+  @override
+  String get syncErrorAccountChanged => 'Použil sa iný účet Google.';
+
+  @override
+  String get syncErrorAccountChangedHint =>
+      'Vyberte, či chcete knižnicu z tohto zariadenia zlúčiť s novým účtom alebo ju nahradiť.';
+
+  @override
+  String get syncErrorRemoteLibraryTooLarge =>
+      'Synchronizovaná knižnica je príliš veľká na spracovanie aplikáciou Singbook.';
+
+  @override
+  String get syncErrorRemoteLibraryTooLargeHint =>
+      'Odstráňte niektoré piesne alebo koncertné programy zo synchronizovanej knižnice a skúste to znova.';
+
+  @override
+  String get syncErrorSignInFailed => 'Prihlásenie sa nedokončilo.';
+
+  @override
+  String get syncErrorSignInFailedHint => 'Skúste sa znova prihlásiť.';
+
+  @override
+  String get syncErrorGeneric => 'Knižnicu sa nepodarilo synchronizovať.';
+
+  @override
+  String get syncErrorGenericHint =>
+      'O chvíľu to skúste znova. Vaše piesne sú v tomto zariadení stále v bezpečí.';
+}

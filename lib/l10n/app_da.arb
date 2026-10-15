@@ -1,0 +1,670 @@
+{
+  "@@locale": "da",
+  "appTitle": "Singbook",
+  "aboutDescription": "Et roligt sted at finde, organisere og synge fra dit sangbibliotek.",
+  "aboutMadeForSinging": "Skabt til at synge sammen",
+  "appVersion": "Version {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "Hjem",
+  "navSongs": "Sange",
+  "navSetlists": "Sanglister",
+  "navSettings": "Indstillinger",
+  "navSettingsCompact": "Indstillinger",
+  "navSearch": "Søg",
+  "navBack": "Tilbage",
+  "navClose": "Luk",
+  "navMore": "Flere handlinger",
+  "actionCancel": "Annuller",
+  "actionSave": "Gem",
+  "actionDone": "Færdig",
+  "actionEdit": "Rediger",
+  "actionDelete": "Slet",
+  "actionShare": "Del",
+  "actionPrint": "Udskriv",
+  "actionCopy": "Kopiér",
+  "actionClear": "Ryd",
+  "actionRetry": "Prøv igen",
+  "actionRefresh": "Opdatér",
+  "actionImport": "Importér",
+  "actionExport": "Eksportér",
+  "actionExpand": "Udvid",
+  "actionCollapse": "Fold sammen",
+  "actionAdd": "Tilføj",
+  "actionCreate": "Opret",
+  "actionRemove": "Fjern",
+  "actionDuplicate": "Duplikér",
+  "actionMoveUp": "Flyt op",
+  "actionMoveDown": "Flyt ned",
+  "actionPrevious": "Forrige",
+  "actionNext": "Næste",
+  "searchHint": "Søg efter sange, kunstnere eller sangtekster",
+  "searchCatalogHint": "Søg efter en sang eller kunstner",
+  "searchSubmit": "Søg",
+  "searchFilters": "Søgemuligheder",
+  "searchFiltersShow": "Vis søgemuligheder",
+  "searchFiltersHide": "Skjul søgemuligheder",
+  "searchFilterArtist": "Kunstner",
+  "searchFilterTitle": "Sangtitel",
+  "searchFilterLyrics": "Sangtekster",
+  "searchFilterChords": "Har akkorder",
+  "searchFilterTimed": "Tidsinddelte sangtekster",
+  "searchFilterLanguage": "Sprog",
+  "searchFilterAll": "Alle",
+  "searchAutocompleteLabel": "Forslag",
+  "searchResultCount": "{count, plural, =0{Ingen resultater} =1{1 resultat} other{{count} resultater}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "Indtast en sang, kunstner eller sangtekst, du vil søge efter.",
+  "searchCatalogEmptyQuery": "Indtast en sang eller kunstner, du vil søge efter.",
+  "searchNoResults": "Ingen sange fundet. Prøv en anden søgning.",
+  "searchLoading": "Søger efter sange…",
+  "searchError": "Søgningen kunne ikke gennemføres.",
+  "searchOnlineTab": "Online",
+  "searchRecentTab": "Seneste",
+  "searchFavoritesTab": "Favoritter",
+  "searchSuggested": "Foreslået match",
+  "searchAlternatives": "Andre match",
+  "searchCompare": "Sammenlign versioner",
+  "searchChooseVersion": "Vælg denne version",
+  "searchSongMatch": "Sangmatch",
+  "searchRecordingMatch": "Indspilningsmatch",
+  "searchMatchUnverified": "Indspilningen er ikke bekræftet",
+  "searchMatchExact": "Nøjagtigt indspilningsmatch",
+  "searchMatchPossible": "Muligt match",
+  "searchAvailability": "Tilgængelighed",
+  "searchLyricsAvailable": "Sangtekst tilgængelig",
+  "searchLyricsUnavailable": "Sangtekst ikke tilgængelig",
+  "searchChordsAvailable": "Akkorder tilgængelige",
+  "searchChordsUnavailable": "Ingen akkorder",
+  "searchTimingAvailable": "Tidsinddeling tilgængelig",
+  "searchTimingUnavailable": "Ingen tidsinddeling",
+  "searchDurationUnknown": "Varighed ukendt",
+  "searchRating": "Bedømmelse {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "Kilde",
+  "searchMetadata": "Sangdetaljer",
+  "searchAlbum": "Album",
+  "searchArtist": "Kunstner",
+  "searchYear": "År",
+  "searchLanguage": "Sprog",
+  "searchSaved": "Sangen er gemt i dit bibliotek.",
+  "searchSaveFailed": "Sangen kunne ikke gemmes.",
+  "homeRecentSongs": "Seneste sange",
+  "homeRecentlyPlayed": "Afspillet for nylig",
+  "homeFavorites": "Favoritter",
+  "homeHistory": "Historik",
+  "homeHistoryClear": "Ryd historik",
+  "homeHistoryCleared": "Historikken er ryddet.",
+  "homeHistoryEmpty": "Sange, du åbner, vises her.",
+  "homeFavoritesEmpty": "Dine favoritsange og sanglister vises her.",
+  "homeItemsShownCount": "{count, plural, =0{0 elementer vist} =1{1 element vist} other{{count} elementer vist}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "Dine seneste sange og sanglister vises her.",
+  "homeTimelineLabel": "Historikforløb",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "Hele historikken",
+  "homeShowFavorites": "Vis favoritter",
+  "homeShowRecent": "Vis seneste",
+  "songsTitle": "Sange",
+  "songsEmpty": "Dine sange vises her.",
+  "songsEmptySearch": "Ingen sange matcher din søgning.",
+  "songsAdd": "Tilføj sang",
+  "songsSortAlphabetical": "Sortér alfabetisk",
+  "songsAlphabetNavigation": "Sangindeks",
+  "songsUsageCount": "{count, plural, =0{Aldrig åbnet} =1{Åbnet én gang} other{Åbnet {count} gange}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "Føj til favoritter",
+  "songFavoriteRemove": "Fjern fra favoritter",
+  "songMenuLabel": "Sanghandlinger",
+  "songInfo": "Sangdetaljer",
+  "setlistMenuLabel": "Sanglistehandlinger",
+  "songAddToSetlist": "Føj til sangliste",
+  "songCopyChordPro": "Kopiér ChordPro",
+  "songDeleteConfirmTitle": "Slet sang?",
+  "songDeleteConfirmMessage": "Sangen fjernes fra dit bibliotek.",
+  "songDeleted": "Sangen er slettet.",
+  "setlistsTitle": "Sanglister",
+  "setlistsEmpty": "Opret en sangliste til din næste øvegang eller optræden.",
+  "setlistsEmptySearch": "Ingen sanglister matcher din søgning.",
+  "setlistCreate": "Ny sangliste",
+  "setlistNameHint": "Sanglistens navn",
+  "setlistNotes": "Notater",
+  "setlistEntryOverride": "Sangspecifik toneart og capo",
+  "setlistSongsCount": "{count, plural, =0{Ingen sange} =1{1 sang} other{{count} sange}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "Mindst {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "Varighed ukendt",
+  "setlistActivity": "Seneste aktivitet {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "Oprettet {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "Redigeret {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "Sidst spillet {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "Denne sangliste indeholder ingen sange endnu.",
+  "setlistAddSongs": "Tilføj sange",
+  "setlistReorder": "Ændr rækkefølge på sange",
+  "setlistMoveSongUp": "Flyt {song} op",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "Flyt {song} ned",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "Fjern {song} fra sanglisten",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "Duplikér sangliste",
+  "setlistFavoriteAdd": "Føj sangliste til favoritter",
+  "setlistFavoriteRemove": "Fjern sangliste fra favoritter",
+  "setlistShare": "Del som sanglistefil",
+  "setlistSharePdf": "Del som PDF",
+  "setlistPrint": "Udskriv",
+  "setlistDeleteConfirmTitle": "Slet sangliste?",
+  "setlistDeleteConfirmMessage": "Sanglisten fjernes. Sangene i dit bibliotek bevares.",
+  "setlistDeleted": "Sanglisten er slettet.",
+  "readerTitle": "Sangtekster",
+  "readerNoLyrics": "Der er ikke tilføjet sangtekst endnu.",
+  "readerShowChords": "Vis akkorder",
+  "readerHideChords": "Skjul akkorder",
+  "readerTranspose": "Transponér akkorder",
+  "readerTransposeSemitones": "Transponér {count, plural, =0{0 halvtoner} =1{1 halvtone} other{{count} halvtoner}}",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "Rediger sangtekst og detaljer",
+  "playerPlay": "Start rulning af sangteksten",
+  "playerPause": "Sæt rulning af sangteksten på pause",
+  "playerResume": "Fortsæt rulning af sangteksten",
+  "playerSeek": "Afspilningsposition",
+  "playerElapsed": "Forløbet tid {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "Resterende tid {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "Rulletilstand",
+  "playerTimedLyrics": "Tidsinddelte sangtekster",
+  "playerEstimatedPace": "Anslået tempo",
+  "playerManualScroll": "Manuel rulning",
+  "playerTimingStatusReady": "Sangteksten følger den tilgængelige tidsinddeling.",
+  "playerTimingStatusEstimated": "Rulletempoet er anslået ud fra sangens varighed.",
+  "playerTimingStatusManual": "Rul selv gennem sangteksten.",
+  "playerTimingStatusUnavailable": "Tidsinddelt rulning er ikke tilgængelig for denne sang.",
+  "playerDurationUnknown": "Tilføj sangens varighed for at bruge anslået rulning.",
+  "playerProgressLabel": "Sangens forløb",
+  "playerCurrentSection": "Aktuelt afsnit",
+  "playerPreviousSection": "Forrige afsnit",
+  "playerNextSection": "Næste afsnit",
+  "playerPreviousSectionSong": "Forrige afsnit · hold for forrige sang på sanglisten",
+  "playerNextSectionSong": "Næste afsnit · hold for næste sang på sanglisten",
+  "playerPreviousSong": "Forrige sang",
+  "playerNextSong": "Næste sang",
+  "editorTitle": "Rediger sang",
+  "editorTitleField": "Sangtitel",
+  "editorArtistField": "Kunstner",
+  "editorAlbumField": "Album",
+  "editorLyricsField": "Sangtekst",
+  "editorChordsField": "Akkorder",
+  "editorKeyField": "Toneart",
+  "editorCapoField": "Capo",
+  "editorTuningField": "Stemning",
+  "editorTempoField": "Tempo",
+  "editorDurationField": "Varighed",
+  "editorTimeSignatureField": "Taktart",
+  "editorLanguageField": "Sprog",
+  "editorYearField": "År",
+  "editorComposerField": "Komponist",
+  "editorLyricistField": "Tekstforfatter",
+  "editorCopyrightField": "Ophavsret",
+  "editorLicenseField": "Licens",
+  "songInfoSources": "Kilder og kreditering",
+  "searchMatchSameSong": "Samme sang; indspilning ikke bekræftet",
+  "searchMatchNeedsAgreement": "Akkordarket skal bekræftes mod sangteksten",
+  "searchMatchDifferentLyrics": "Sangteksten adskiller sig fra den valgte sang",
+  "searchMatchCombinedSources": "Detaljer samlet fra flere kilder",
+  "searchCombinedFromSources": "{count, plural, =1{Samlet fra 1 kilde} other{Samlet fra {count} kilder}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, =0{0 sangmatch} =1{1 sangmatch} other{{count} sangmatch}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, =0{0 kildeversioner} =1{1 kildeversion} other{{count} kildeversioner}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "Bedste tilgængelige match",
+  "providerDescriptionUnknown": "Sangkilde",
+  "providerDescDownloadChordProThenImport": "Download en ChordPro-fil fra kilden, og importér den derefter.",
+  "providerDescFreeAccountDownloadThenImport": "Download filen med en gratis konto, og importér den derefter.",
+  "providerDescPublicChordSheets": "Offentlige akkordark.",
+  "providerDescHistoricalTextPerWorkLicense": "Historiske sangtekster licenseret for hvert værk.",
+  "providerDescLicensedCatalog": "Licenseret sangtekstkatalog.",
+  "providerDescOriginalSongsCcBy": "Originalsange under Creative Commons BY.",
+  "providerDescPerSongLicense": "Sangtekster licenseret pr. sang.",
+  "providerDescRecordingMetadataOnly": "Kun oplysninger om indspilning og udgivelse.",
+  "providerDescCompositionMetadataOnly": "Kun oplysninger om kompositionen.",
+  "providerDescExactFileArtworkOnly": "Omslag kun for nøjagtige indspilningsmatch.",
+  "providerCapabilityLyrics": "Sangtekster",
+  "providerCapabilityChords": "Akkorder",
+  "providerCapabilityTiming": "Tidsinddelte sangtekster",
+  "providerCapabilitySearch": "Søgning",
+  "providerCapabilityMetadata": "Sangdetaljer",
+  "editorArtworkField": "Link til omslag",
+  "editorLyricsHint": "Tryk på en linje for at redigere sangtekst eller akkorder.",
+  "editorSave": "Gem ændringer",
+  "editorSaved": "Ændringer gemt.",
+  "editorSaveFailed": "Ændringerne kunne ikke gemmes.",
+  "editorSaveConflict": "Sangen er blevet ændret et andet sted. Dine ændringer blev gemt som en separat kopi.",
+  "editorUnsavedTitle": "Kassér ændringer?",
+  "editorUnsavedMessage": "Dine ændringer er ikke gemt.",
+  "editorFieldRequired": "Indtast en sangtitel.",
+  "settingsTitle": "Indstillinger",
+  "settingsAppearance": "Udseende",
+  "settingsTheme": "Tema",
+  "settingsThemeSystem": "Brug enhedens indstilling",
+  "settingsThemeLight": "Lys",
+  "settingsThemeDark": "Mørk",
+  "settingsColorPalette": "Farvepalet",
+  "settingsFont": "Skrifttype",
+  "settingsTextSize": "Tekststørrelse",
+  "settingsLyricsPreview": "Forhåndsvisning af sangtekst",
+  "settingsPlayer": "Sangtekstafspiller",
+  "settingsDefaultShowChords": "Vis akkorder som standard",
+  "settingsDefaultAutoscroll": "Start automatisk rulning af sangteksten",
+  "settingsDefaultTiming": "Standardindstilling for rulning",
+  "settingsLanguage": "Appens sprog",
+  "settingsLanguageSystem": "Brug enhedens sprog",
+  "settingsLanguageEnglish": "Engelsk",
+  "settingsLanguageBulgarian": "Bulgarsk",
+  "settingsLanguageUkrainian": "Ukrainsk",
+  "settingsSources": "Sangtekstkilder",
+  "settingsSourceEnabled": "Aktivér kilden {source}",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "Opdatér kildelisten",
+  "settingsSourcesUpdated": "Kilder opdateret.",
+  "settingsSourcesUpdateFailed": "Kilderne kunne ikke opdateres.",
+  "settingsImport": "Importér sange",
+  "settingsImportChordPro": "Importér ChordPro-fil",
+  "settingsImportSetlist": "Importér sanglistefil",
+  "settingsImportSuccess": "Import fuldført.",
+  "settingsImportFailed": "Filen kunne ikke importeres.",
+  "settingsImportUnsupported": "Denne filtype understøttes ikke.",
+  "settingsShareSong": "Del som ChordPro",
+  "settingsSharePdf": "Del som PDF",
+  "settingsCopySong": "Kopiér til udklipsholder",
+  "settingsPrintSong": "Udskriv kun sangen",
+  "settingsPrintSetlist": "Udskriv sangliste med sangtekster",
+  "settingsExportFailed": "Filen kunne ikke klargøres.",
+  "settingsCopied": "Kopieret til udklipsholder.",
+  "settingsAbout": "Om",
+  "settingsPrivacy": "Privatliv",
+  "settingsLegal": "Juridisk",
+  "settingsClearHistory": "Ryd historik",
+  "settingsClearHistoryConfirm": "Ryd historikken over dine sange og sanglister?",
+  "settingsHistoryCleared": "Historikken er ryddet.",
+  "accountTitle": "Konto og synkronisering",
+  "accountUnavailable": "Synkronisering kræver en version af Singbook med Google-login konfigureret. I denne version gemmes dine sange kun på denne enhed.",
+  "accountSyncNow": "Synkronisér nu",
+  "accountConnected": "Forbundet. Vælg Synkronisér nu for at opdatere din sikkerhedskopi.",
+  "accountSignIn": "Forbind konto",
+  "accountSignOut": "Log ud",
+  "accountChange": "Skift konto",
+  "accountSignedOut": "Ikke forbundet",
+  "accountSyncing": "Synkroniserer dit bibliotek…",
+  "accountSynced": "Bibliotek synkroniseret.",
+  "accountSyncFailed": "Biblioteket kunne ikke synkroniseres.",
+  "accessibilityFavorite": "Favorit",
+  "accessibilityNotFavorite": "Ikke en favorit",
+  "accessibilitySearchField": "Søg efter sange",
+  "accessibilityClearSearch": "Ryd søgetekst",
+  "accessibilitySongMenu": "Handlinger for {song}",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "Handlinger for {setlist}",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "Udvid sangene i {setlist}",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "Fold sangene i {setlist} sammen",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "Afspilningsforløb, {percent} procent",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "Historikforløb, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "Indlæser…",
+  "loadingSongs": "Indlæser sange…",
+  "loadingSetlists": "Indlæser sanglister…",
+  "errorGeneric": "Der opstod en fejl.",
+  "errorOffline": "Du ser ud til at være offline.",
+  "errorPermission": "Der kræves tilladelse for at fortsætte.",
+  "emptyFiltered": "Ingen elementer matcher disse filtre.",
+  "unknownValue": "Ukendt",
+  "durationUnknown": "Varighed ukendt",
+  "metadataNotSet": "Ikke angivet",
+  "dateToday": "I dag",
+  "dateYesterday": "I går",
+  "daySongCount": "{count, plural, =0{Ingen sange} =1{1 sang} other{{count} sange}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "Marineblå",
+  "settingsPaletteSage": "Salviegrøn",
+  "settingsPaletteOcean": "Hav",
+  "settingsPaletteClay": "Ler",
+  "settingsPalettePlum": "Blomme",
+  "settingsFontSystem": "System",
+  "settingsFontSerif": "Serif",
+  "settingsFontMonospace": "Monospatieret",
+  "settingsLyricsPreviewExample": "Når morgenen kommer, synger vi igen.",
+  "searchDiscoveryProgress": "Kontrollerer sangtekstkilder: {checked} af {total} fuldført.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "Ingen brugbare sangtekster fundet.",
+  "searchDiscoveryNoLyricsDetails": "Den valgte sang blev kontrolleret mod de aktiverede kilder, men ingen af dem fandt en brugbar version af sangteksten.",
+  "searchDiscoveryError": "Sangtekstkilderne kunne ikke kontrolleres.",
+  "searchDiscoveryRetry": "Prøv at søge efter sangtekster igen",
+  "searchSourcesUnavailableCount": "{count, plural, =0{0 kilder utilgængelige} =1{1 kilde utilgængelig} other{{count} kilder utilgængelige}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "Kontrollér din forbindelse, og prøv igen.",
+  "searchProviderChecks": "Kildekontroller",
+  "searchProviderPending": "Kontrollerer",
+  "searchProviderFound": "Match fundet",
+  "searchProviderRejected": "Matcher ikke",
+  "searchProviderFailed": "Kontrollen mislykkedes",
+  "searchProviderUnavailable": "Ingen brugbare sangtekster",
+  "searchCatalogFilterHint": "Vælg en sang for at filtrere sangtekstversioner efter akkorder, tidsinddeling eller sprog.",
+  "startupErrorTitle": "Dit bibliotek kunne ikke åbnes.",
+  "setlistCopyName": "{name} kopi",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "Manglende sang",
+  "settingsImportTooLarge": "Denne fil er for stor til at importere.",
+  "songsJumpToLetter": "Gå til {letter}",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "Kassér",
+  "editorKeepEditing": "Fortsæt redigering",
+  "settingsDefaultShowChordsHint": "Vis akkorder over sangteksten, når sangen indeholder akkorder.",
+  "settingsDefaultAutoscrollHint": "Sangteksten ruller med sangen. Bruges ikke ved manuel rulning.",
+  "accountUnavailableTitle": "Synkronisering er ikke konfigureret",
+  "accountSignedOutBenefits": "Log ind med Google for at sikkerhedskopiere dine sange og sanglister til dit Google Drev og holde alle dine enheder synkroniserede. Dine sange forbliver på denne enhed uanset hvad.",
+  "accountSignInWithGoogle": "Log ind med Google",
+  "accountWorking": "Arbejder…",
+  "accountNeverSynced": "Aldrig synkroniseret",
+  "accountSyncedJustNow": "Synkroniseret lige nu",
+  "accountSyncedMinutesAgo": "{count, plural, one{Synkroniseret for 1 minut siden} other{Synkroniseret for {count} minutter siden}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{Synkroniseret for 1 time siden} other{Synkroniseret for {count} timer siden}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{Synkroniseret for 1 dag siden} other{Synkroniseret for {count} dage siden}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{1 modstridende redigering gemt som kopi} other{{count} modstridende redigeringer gemt som kopier}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "Den samme sang eller sangliste blev redigeret to steder. Intet gik tabt: den anden version blev gemt som en separat kopi.",
+  "accountReviewConflicts": "Gennemgå kopier",
+  "songsConflictFilterActive": "Viser kun konfliktkopier",
+  "songsConflictFilterClear": "Vis alle sange",
+  "songsConflictBadge": "Konfliktkopi",
+  "songsConflictEmpty": "Ingen konfliktkopier.",
+  "accountAutoSync": "Synkronisér automatisk",
+  "accountAutoSyncHint": "Hold dit bibliotek opdateret, når du åbner appen og efter ændringer.",
+  "accountSignOutTitle": "Log ud af denne konto?",
+  "accountSignOutBody": "Dine sange og sanglister forbliver på denne enhed. De bliver ikke sikkerhedskopieret eller synkroniseret, før du logger ind igen.",
+  "accountUseDifferent": "Brug en anden konto",
+  "accountSignInAgain": "Log ind igen",
+  "accountChooseAction": "Vælg, hvordan du vil fortsætte",
+  "accountChangedTitle": "En anden Google-konto",
+  "accountChangedBody": "Denne enhed blev sidst synkroniseret med en anden Google-konto. Vælg, hvad der skal ske med sangene og sanglisterne på denne enhed.",
+  "accountChangedMerge": "Flet ind i den nye konto",
+  "accountChangedMergeHint": "Behold alt på denne enhed, og føj det til den nye konto.",
+  "accountChangedReplace": "Erstat med det nye kontos bibliotek",
+  "accountChangedReplaceHint": "Sange på denne enhed, som ikke findes på den nye konto, fjernes.",
+  "accountChangedSignOut": "Annuller, og log ud",
+  "accountStatusSignedOut": "Konto og synkronisering: ikke logget ind",
+  "accountStatusSignedIn": "Konto og synkronisering: logget ind",
+  "accountStatusSyncing": "Konto og synkronisering: synkroniserer",
+  "accountStatusSynced": "Konto og synkronisering: biblioteket er opdateret",
+  "accountStatusError": "Konto og synkronisering: problem, tryk for at gennemgå",
+  "accountNoticeConflicts": "Nogle sange blev redigeret to steder. Kopier blev gemt.",
+  "accountNoticeSignedIn": "Logget ind.",
+  "accountNoticeSignedOut": "Logget ud. Dine sange forbliver på denne enhed.",
+  "syncErrorNotConfigured": "Synkronisering er ikke konfigureret i denne version.",
+  "syncErrorNotConfiguredHint": "Brug en Singbook-version med Google-login konfigureret.",
+  "syncErrorNotSignedIn": "Du er ikke logget ind.",
+  "syncErrorNotSignedInHint": "Log ind for at synkronisere dit bibliotek.",
+  "syncErrorAuthorizationRequired": "Google kræver, at du logger ind igen.",
+  "syncErrorAuthorizationRequiredHint": "Log ind igen for at fortsætte synkroniseringen. Dine sange er sikre på denne enhed.",
+  "syncErrorAccessDenied": "Singbook har ikke tilladelse til at bruge Google Drev.",
+  "syncErrorAccessDeniedHint": "Log ind igen, og giv adgang til Drev, når du bliver spurgt.",
+  "syncErrorRateLimited": "Google begrænser forespørgsler lige nu.",
+  "syncErrorRateLimitedHint": "Vent et par minutter, og prøv igen.",
+  "syncErrorStorageFull": "Dit Google Drev er fuldt.",
+  "syncErrorStorageFullHint": "Frigør plads i Drev, og prøv igen.",
+  "syncErrorNetwork": "Der kunne ikke oprettes forbindelse til Google.",
+  "syncErrorNetworkHint": "Kontrollér din internetforbindelse, og prøv igen.",
+  "syncErrorAccountChanged": "Der blev brugt en anden Google-konto.",
+  "syncErrorAccountChangedHint": "Vælg, om du vil flette denne enheds bibliotek ind i kontoen eller erstatte det.",
+  "syncErrorRemoteLibraryTooLarge": "Dit synkroniserede bibliotek er større, end Singbook kan håndtere.",
+  "syncErrorRemoteLibraryTooLargeHint": "Fjern nogle sange eller sanglister fra det synkroniserede bibliotek, og prøv igen.",
+  "syncErrorSignInFailed": "Login blev ikke fuldført.",
+  "syncErrorSignInFailedHint": "Prøv at logge ind igen.",
+  "syncErrorGeneric": "Biblioteket kunne ikke synkroniseres.",
+  "syncErrorGenericHint": "Prøv igen om lidt. Dine sange er stadig sikre på denne enhed."
+}

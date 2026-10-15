@@ -1,0 +1,670 @@
+{
+  "@@locale": "lv",
+  "appTitle": "Singbook",
+  "aboutDescription": "Mierīga vieta, kur atrast un sakārtot dziesmas un kopīgi dziedāt no savas dziesmu bibliotēkas.",
+  "aboutMadeForSinging": "Radīta kopīgai dziedāšanai",
+  "appVersion": "Versija {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "Sākums",
+  "navSongs": "Dziesmas",
+  "navSetlists": "Koncertprogrammas",
+  "navSettings": "Iestatījumi",
+  "navSettingsCompact": "Iestatījumi",
+  "navSearch": "Meklēt",
+  "navBack": "Atpakaļ",
+  "navClose": "Aizvērt",
+  "navMore": "Citas darbības",
+  "actionCancel": "Atcelt",
+  "actionSave": "Saglabāt",
+  "actionDone": "Gatavs",
+  "actionEdit": "Rediģēt",
+  "actionDelete": "Dzēst",
+  "actionShare": "Kopīgot",
+  "actionPrint": "Drukāt",
+  "actionCopy": "Kopēt",
+  "actionClear": "Notīrīt",
+  "actionRetry": "Mēģināt vēlreiz",
+  "actionRefresh": "Atsvaidzināt",
+  "actionImport": "Importēt",
+  "actionExport": "Eksportēt",
+  "actionExpand": "Izvērst",
+  "actionCollapse": "Sakļaut",
+  "actionAdd": "Pievienot",
+  "actionCreate": "Izveidot",
+  "actionRemove": "Noņemt",
+  "actionDuplicate": "Dublēt",
+  "actionMoveUp": "Pārvietot augšup",
+  "actionMoveDown": "Pārvietot lejup",
+  "actionPrevious": "Iepriekšējais",
+  "actionNext": "Nākamais",
+  "searchHint": "Meklēt dziesmas, izpildītājus vai dziesmu vārdus",
+  "searchCatalogHint": "Meklēt dziesmu vai izpildītāju",
+  "searchSubmit": "Meklēt",
+  "searchFilters": "Meklēšanas opcijas",
+  "searchFiltersShow": "Rādīt meklēšanas opcijas",
+  "searchFiltersHide": "Paslēpt meklēšanas opcijas",
+  "searchFilterArtist": "Izpildītājs",
+  "searchFilterTitle": "Dziesmas nosaukums",
+  "searchFilterLyrics": "Dziesmu vārdi",
+  "searchFilterChords": "Ir akordi",
+  "searchFilterTimed": "Dziesmu vārdi ar laika atzīmēm",
+  "searchFilterLanguage": "Valoda",
+  "searchFilterAll": "Jebkura",
+  "searchAutocompleteLabel": "Ieteikumi",
+  "searchResultCount": "{count, plural, zero{{count} rezultātu} one{{count} rezultāts} other{{count} rezultāti}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "Ievadiet dziesmu, izpildītāju vai dziesmas rindu, ko meklēt.",
+  "searchCatalogEmptyQuery": "Ievadiet dziesmu vai izpildītāju, ko meklēt.",
+  "searchNoResults": "Dziesmas nav atrastas. Pamēģiniet citu meklējumu.",
+  "searchLoading": "Meklē dziesmas…",
+  "searchError": "Meklēšanu neizdevās pabeigt.",
+  "searchOnlineTab": "Tiešsaistē",
+  "searchRecentTab": "Nesenās",
+  "searchFavoritesTab": "Izlase",
+  "searchSuggested": "Ieteikta atbilstība",
+  "searchAlternatives": "Citas atbilstības",
+  "searchCompare": "Salīdzināt versijas",
+  "searchChooseVersion": "Izvēlēties šo versiju",
+  "searchSongMatch": "Dziesmas atbilstība",
+  "searchRecordingMatch": "Ieraksta atbilstība",
+  "searchMatchUnverified": "Ieraksts nav pārbaudīts",
+  "searchMatchExact": "Precīza ieraksta atbilstība",
+  "searchMatchPossible": "Iespējama atbilstība",
+  "searchAvailability": "Pieejamība",
+  "searchLyricsAvailable": "Dziesmu vārdi ir pieejami",
+  "searchLyricsUnavailable": "Dziesmu vārdi nav pieejami",
+  "searchChordsAvailable": "Akordi ir pieejami",
+  "searchChordsUnavailable": "Akordu nav",
+  "searchTimingAvailable": "Laika atzīmes ir pieejamas",
+  "searchTimingUnavailable": "Laika atzīmju nav",
+  "searchDurationUnknown": "Ilgums nav zināms",
+  "searchRating": "Vērtējums {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "Avots",
+  "searchMetadata": "Dziesmas informācija",
+  "searchAlbum": "Albums",
+  "searchArtist": "Izpildītājs",
+  "searchYear": "Gads",
+  "searchLanguage": "Valoda",
+  "searchSaved": "Dziesma ir saglabāta jūsu bibliotēkā.",
+  "searchSaveFailed": "Dziesmu neizdevās saglabāt.",
+  "homeRecentSongs": "Nesenās dziesmas",
+  "homeRecentlyPlayed": "Nesen atskaņotās",
+  "homeFavorites": "Izlase",
+  "homeHistory": "Vēsture",
+  "homeHistoryClear": "Notīrīt vēsturi",
+  "homeHistoryCleared": "Vēsture ir notīrīta.",
+  "homeHistoryEmpty": "Šeit būs redzamas jūsu atvērtās dziesmas.",
+  "homeFavoritesEmpty": "Šeit būs redzamas jūsu iecienītās dziesmas un koncertprogrammas.",
+  "homeItemsShownCount": "{count, plural, zero{Rādīts {count} vienumu} one{Rādīts {count} vienums} other{Rādīti {count} vienumi}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "Šeit būs redzamas jūsu nesenās dziesmas un koncertprogrammas.",
+  "homeTimelineLabel": "Vēstures laika skala",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "Visa vēsture",
+  "homeShowFavorites": "Rādīt izlasi",
+  "homeShowRecent": "Rādīt nesenās",
+  "songsTitle": "Dziesmas",
+  "songsEmpty": "Šeit būs redzamas jūsu dziesmas.",
+  "songsEmptySearch": "Neviena dziesma neatbilst meklējumam.",
+  "songsAdd": "Pievienot dziesmu",
+  "songsSortAlphabetical": "Kārtot alfabētiski",
+  "songsAlphabetNavigation": "Dziesmu rādītājs",
+  "songsUsageCount": "Atvērta {count, plural, zero{{count} reižu} one{{count} reizi} other{{count} reizes}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "Pievienot izlasei",
+  "songFavoriteRemove": "Noņemt no izlases",
+  "songMenuLabel": "Dziesmas darbības",
+  "songInfo": "Dziesmas informācija",
+  "setlistMenuLabel": "Koncertprogrammas darbības",
+  "songAddToSetlist": "Pievienot koncertprogrammai",
+  "songCopyChordPro": "Kopēt ChordPro",
+  "songDeleteConfirmTitle": "Dzēst dziesmu?",
+  "songDeleteConfirmMessage": "Dziesma tiks noņemta no jūsu bibliotēkas.",
+  "songDeleted": "Dziesma ir izdzēsta.",
+  "setlistsTitle": "Koncertprogrammas",
+  "setlistsEmpty": "Izveidojiet koncertprogrammu nākamajam mēģinājumam vai uzstāšanās reizei.",
+  "setlistsEmptySearch": "Neviena koncertprogramma neatbilst meklējumam.",
+  "setlistCreate": "Jauna koncertprogramma",
+  "setlistNameHint": "Koncertprogrammas nosaukums",
+  "setlistNotes": "Piezīmes",
+  "setlistEntryOverride": "Atsevišķa dziesmas tonalitāte un kapodastrs",
+  "setlistSongsCount": "{count, plural, zero{{count} dziesmu} one{{count} dziesma} other{{count} dziesmas}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "Vismaz {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "Ilgums nav zināms",
+  "setlistActivity": "Pēdējā darbība {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "Izveidota {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "Rediģēta {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "Pēdējo reizi atskaņota {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "Šajā koncertprogrammā vēl nav dziesmu.",
+  "setlistAddSongs": "Pievienot dziesmas",
+  "setlistReorder": "Mainīt dziesmu secību",
+  "setlistMoveSongUp": "Pārvietot dziesmu “{song}” augšup",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "Pārvietot dziesmu “{song}” lejup",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "Noņemt dziesmu “{song}” no koncertprogrammas",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "Dublēt koncertprogrammu",
+  "setlistFavoriteAdd": "Pievienot koncertprogrammu izlasei",
+  "setlistFavoriteRemove": "Noņemt koncertprogrammu no izlases",
+  "setlistShare": "Kopīgot kā koncertprogrammas failu",
+  "setlistSharePdf": "Kopīgot kā PDF",
+  "setlistPrint": "Drukāt",
+  "setlistDeleteConfirmTitle": "Dzēst koncertprogrammu?",
+  "setlistDeleteConfirmMessage": "Koncertprogramma tiks noņemta. Jūsu bibliotēkas dziesmas paliks.",
+  "setlistDeleted": "Koncertprogramma ir izdzēsta.",
+  "readerTitle": "Dziesmu vārdi",
+  "readerNoLyrics": "Dziesmas vārdi vēl nav pievienoti.",
+  "readerShowChords": "Rādīt akordus",
+  "readerHideChords": "Paslēpt akordus",
+  "readerTranspose": "Transponēt akordus",
+  "readerTransposeSemitones": "Transponēt par {count, plural, zero{{count} pustoņiem} one{{count} pustoni} other{{count} pustoņiem}}",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "Rediģēt dziesmas vārdus un informāciju",
+  "playerPlay": "Sākt dziesmas vārdu ritināšanu",
+  "playerPause": "Pauzēt dziesmas vārdu ritināšanu",
+  "playerResume": "Atsākt dziesmas vārdu ritināšanu",
+  "playerSeek": "Atskaņošanas pozīcija",
+  "playerElapsed": "Pagājušais laiks {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "Atlikušais laiks {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "Ritināšanas režīms",
+  "playerTimedLyrics": "Dziesmu vārdi ar laika atzīmēm",
+  "playerEstimatedPace": "Aprēķinātais ritināšanas ātrums",
+  "playerManualScroll": "Manuāla ritināšana",
+  "playerTimingStatusReady": "Dziesmas vārdi ritinās atbilstoši pieejamajām laika atzīmēm.",
+  "playerTimingStatusEstimated": "Ritināšanas ātrums aprēķināts pēc dziesmas ilguma.",
+  "playerTimingStatusManual": "Ritiniet dziesmas vārdus paši.",
+  "playerTimingStatusUnavailable": "Šai dziesmai laika atzīmju ritināšana nav pieejama.",
+  "playerDurationUnknown": "Pievienojiet dziesmas ilgumu, lai izmantotu aprēķināto ritināšanu.",
+  "playerProgressLabel": "Dziesmas progress",
+  "playerCurrentSection": "Pašreizējā daļa",
+  "playerPreviousSection": "Iepriekšējā daļa",
+  "playerNextSection": "Nākamā daļa",
+  "playerPreviousSectionSong": "Iepriekšējā daļa · turiet nospiestu, lai pārietu uz iepriekšējo koncertprogrammas dziesmu",
+  "playerNextSectionSong": "Nākamā daļa · turiet nospiestu, lai pārietu uz nākamo koncertprogrammas dziesmu",
+  "playerPreviousSong": "Iepriekšējā dziesma",
+  "playerNextSong": "Nākamā dziesma",
+  "editorTitle": "Rediģēt dziesmu",
+  "editorTitleField": "Dziesmas nosaukums",
+  "editorArtistField": "Izpildītājs",
+  "editorAlbumField": "Albums",
+  "editorLyricsField": "Dziesmas vārdi",
+  "editorChordsField": "Akordi",
+  "editorKeyField": "Tonalitāte",
+  "editorCapoField": "Kapodastrs",
+  "editorTuningField": "Skaņojums",
+  "editorTempoField": "Temps",
+  "editorDurationField": "Ilgums",
+  "editorTimeSignatureField": "Taktsmērs",
+  "editorLanguageField": "Valoda",
+  "editorYearField": "Gads",
+  "editorComposerField": "Komponists",
+  "editorLyricistField": "Dziesmas vārdu autors",
+  "editorCopyrightField": "Autortiesības",
+  "editorLicenseField": "Licence",
+  "songInfoSources": "Avoti un norādes",
+  "searchMatchSameSong": "Tā pati dziesma; ieraksts nav apstiprināts",
+  "searchMatchNeedsAgreement": "Akordu ieraksts jāsalīdzina ar dziesmas vārdiem",
+  "searchMatchDifferentLyrics": "Dziesmas vārdi atšķiras no atlasītās dziesmas",
+  "searchMatchCombinedSources": "Informācija apkopota no vairākiem avotiem",
+  "searchCombinedFromSources": "{count, plural, zero{Apkopots no {count} avotiem} one{Apkopots no {count} avota} other{Apkopots no {count} avotiem}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, zero{{count} dziesmu atbilstību} one{{count} dziesmas atbilstība} other{{count} dziesmu atbilstības}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, zero{{count} avota versiju} one{{count} avota versija} other{{count} avota versijas}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "Labākā pieejamā atbilstība",
+  "providerDescriptionUnknown": "Dziesmas avots",
+  "providerDescDownloadChordProThenImport": "Lejupielādējiet ChordPro failu no avota un pēc tam importējiet to.",
+  "providerDescFreeAccountDownloadThenImport": "Lejupielādējiet failu ar bezmaksas kontu un pēc tam importējiet to.",
+  "providerDescPublicChordSheets": "Publiski akordu pieraksti.",
+  "providerDescHistoricalTextPerWorkLicense": "Vēsturiskie dziesmu vārdi licencēti katram darbam atsevišķi.",
+  "providerDescLicensedCatalog": "Licencēts dziesmu vārdu katalogs.",
+  "providerDescOriginalSongsCcBy": "Oriģināldziesmas ar Creative Commons BY licenci.",
+  "providerDescPerSongLicense": "Dziesmu vārdi licencēti katrai dziesmai atsevišķi.",
+  "providerDescRecordingMetadataOnly": "Tikai ieraksta un izdevuma informācija.",
+  "providerDescCompositionMetadataOnly": "Tikai skaņdarba informācija.",
+  "providerDescExactFileArtworkOnly": "Vāka attēls pieejams tikai precīzām ieraksta atbilstībām.",
+  "providerCapabilityLyrics": "Dziesmu vārdi",
+  "providerCapabilityChords": "Akordi",
+  "providerCapabilityTiming": "Dziesmu vārdi ar laika atzīmēm",
+  "providerCapabilitySearch": "Meklēšana",
+  "providerCapabilityMetadata": "Dziesmas informācija",
+  "editorArtworkField": "Vāka saite",
+  "editorLyricsHint": "Pieskarieties rindai, lai rediģētu dziesmas vārdus vai akordus.",
+  "editorSave": "Saglabāt izmaiņas",
+  "editorSaved": "Izmaiņas saglabātas.",
+  "editorSaveFailed": "Neizdevās saglabāt izmaiņas.",
+  "editorSaveConflict": "Dziesma ir mainīta citur. Jūsu labojumi saglabāti kā atsevišķa kopija.",
+  "editorUnsavedTitle": "Atmest izmaiņas?",
+  "editorUnsavedMessage": "Jūsu labojumi nav saglabāti.",
+  "editorFieldRequired": "Ievadiet dziesmas nosaukumu.",
+  "settingsTitle": "Iestatījumi",
+  "settingsAppearance": "Izskats",
+  "settingsTheme": "Tēma",
+  "settingsThemeSystem": "Izmantot ierīces iestatījumu",
+  "settingsThemeLight": "Gaiša",
+  "settingsThemeDark": "Tumša",
+  "settingsColorPalette": "Krāsu palete",
+  "settingsFont": "Fonts",
+  "settingsTextSize": "Teksta lielums",
+  "settingsLyricsPreview": "Dziesmas vārdu priekšskatījums",
+  "settingsPlayer": "Dziesmu vārdu atskaņotājs",
+  "settingsDefaultShowChords": "Pēc noklusējuma rādīt akordus",
+  "settingsDefaultAutoscroll": "Automātiski sākt dziesmas vārdu ritināšanu",
+  "settingsDefaultTiming": "Noklusējuma ritināšanas režīms",
+  "settingsLanguage": "Lietotnes valoda",
+  "settingsLanguageSystem": "Izmantot ierīces valodu",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageBulgarian": "Български",
+  "settingsLanguageUkrainian": "Українська",
+  "settingsSources": "Dziesmu vārdu avoti",
+  "settingsSourceEnabled": "Iespējot avotu {source}",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "Atsvaidzināt avotu sarakstu",
+  "settingsSourcesUpdated": "Avoti ir atjaunināti.",
+  "settingsSourcesUpdateFailed": "Neizdevās atjaunināt avotus.",
+  "settingsImport": "Importēt dziesmas",
+  "settingsImportChordPro": "Importēt ChordPro failu",
+  "settingsImportSetlist": "Importēt koncertprogrammas failu",
+  "settingsImportSuccess": "Importēšana pabeigta.",
+  "settingsImportFailed": "Neizdevās importēt šo failu.",
+  "settingsImportUnsupported": "Šis faila veids netiek atbalstīts.",
+  "settingsShareSong": "Kopīgot kā ChordPro",
+  "settingsSharePdf": "Kopīgot kā PDF",
+  "settingsCopySong": "Kopēt starpliktuvē",
+  "settingsPrintSong": "Drukāt tikai dziesmu",
+  "settingsPrintSetlist": "Drukāt koncertprogrammu ar dziesmu vārdiem",
+  "settingsExportFailed": "Neizdevās sagatavot failu.",
+  "settingsCopied": "Nokopēts starpliktuvē.",
+  "settingsAbout": "Par lietotni",
+  "settingsPrivacy": "Konfidencialitāte",
+  "settingsLegal": "Juridiskā informācija",
+  "settingsClearHistory": "Notīrīt vēsturi",
+  "settingsClearHistoryConfirm": "Notīrīt dziesmu un koncertprogrammu vēsturi?",
+  "settingsHistoryCleared": "Vēsture ir notīrīta.",
+  "accountTitle": "Konts un sinhronizācija",
+  "accountUnavailable": "Sinhronizēšanai vajadzīga Singbook versija ar konfigurētu pierakstīšanos Google kontā. Šajā versijā dziesmas tiek glabātas tikai šajā ierīcē.",
+  "accountSyncNow": "Sinhronizēt tūlīt",
+  "accountConnected": "Savienots. Izvēlieties “Sinhronizēt tūlīt”, lai atjauninātu dublējumu.",
+  "accountSignIn": "Pievienot kontu",
+  "accountSignOut": "Izrakstīties",
+  "accountChange": "Mainīt kontu",
+  "accountSignedOut": "Nav savienots",
+  "accountSyncing": "Sinhronizē jūsu bibliotēku…",
+  "accountSynced": "Bibliotēka sinhronizēta.",
+  "accountSyncFailed": "Neizdevās sinhronizēt bibliotēku.",
+  "accessibilityFavorite": "Izlasē",
+  "accessibilityNotFavorite": "Nav izlasē",
+  "accessibilitySearchField": "Meklēt dziesmas",
+  "accessibilityClearSearch": "Notīrīt meklēšanas tekstu",
+  "accessibilitySongMenu": "Dziesmas “{song}” darbības",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "Koncertprogrammas “{setlist}” darbības",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "Izvērst koncertprogrammas “{setlist}” dziesmas",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "Sakļaut koncertprogrammas “{setlist}” dziesmas",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "Atskaņošanas progress, {percent, plural, zero{{percent} procentu} one{{percent} procents} other{{percent} procenti}}",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "Vēstures laika skala, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "Notiek ielāde…",
+  "loadingSongs": "Notiek dziesmu ielāde…",
+  "loadingSetlists": "Notiek koncertprogrammu ielāde…",
+  "errorGeneric": "Radās kļūda.",
+  "errorOffline": "Šķiet, ka neesat tiešsaistē.",
+  "errorPermission": "Lai turpinātu, nepieciešama atļauja.",
+  "emptyFiltered": "Neviens vienums neatbilst šiem filtriem.",
+  "unknownValue": "Nezināms",
+  "durationUnknown": "Ilgums nav zināms",
+  "metadataNotSet": "Nav iestatīts",
+  "dateToday": "Šodien",
+  "dateYesterday": "Vakar",
+  "daySongCount": "{count, plural, zero{{count} dziesmu} one{{count} dziesma} other{{count} dziesmas}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "Tumši zila",
+  "settingsPaletteSage": "Salvijas zaļa",
+  "settingsPaletteOcean": "Okeāna zila",
+  "settingsPaletteClay": "Māla krāsa",
+  "settingsPalettePlum": "Plūmju violeta",
+  "settingsFontSystem": "Sistēmas",
+  "settingsFontSerif": "Serifa",
+  "settingsFontMonospace": "Vienāda platuma",
+  "settingsLyricsPreviewExample": "Kad pienāks rīts, mēs atkal dziedāsim.",
+  "searchDiscoveryProgress": "Pārbauda dziesmu vārdu avotus: pabeigti {checked} no {total}.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "Nav atrasti izmantojami dziesmu vārdi.",
+  "searchDiscoveryNoLyricsDetails": "Atlasītā dziesma tika pārbaudīta iespējotajos avotos, taču neviens no tiem neatgrieza izmantojamu dziesmu vārdu versiju.",
+  "searchDiscoveryError": "Neizdevās pārbaudīt dziesmu vārdu avotus.",
+  "searchDiscoveryRetry": "Meklēt dziesmu vārdus vēlreiz",
+  "searchSourcesUnavailableCount": "{count, plural, zero{{count} avotu nav pieejami} one{{count} avots nav pieejams} other{{count} avoti nav pieejami}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "Pārbaudiet savienojumu un mēģiniet vēlreiz.",
+  "searchProviderChecks": "Avotu pārbaudes",
+  "searchProviderPending": "Pārbauda",
+  "searchProviderFound": "Atbilstība atrasta",
+  "searchProviderRejected": "Neatbilst",
+  "searchProviderFailed": "Pārbaude neizdevās",
+  "searchProviderUnavailable": "Nav izmantojamu dziesmu vārdu",
+  "searchCatalogFilterHint": "Atlasiet dziesmu, lai filtrētu dziesmu vārdu versijas pēc akordiem, laika atzīmēm vai valodas.",
+  "startupErrorTitle": "Neizdevās atvērt jūsu bibliotēku.",
+  "setlistCopyName": "{name} kopija",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "Dziesma nav atrasta",
+  "settingsImportTooLarge": "Šis fails ir pārāk liels, lai to importētu.",
+  "songsJumpToLetter": "Pāriet uz burtu {letter}",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "Atmest",
+  "editorKeepEditing": "Turpināt rediģēt",
+  "settingsDefaultShowChordsHint": "Rādīt akordus virs dziesmas vārdiem, ja tie ir pieejami.",
+  "settingsDefaultAutoscrollHint": "Dziesmas vārdi ritinās līdzi dziesmai. Manuālās ritināšanas režīmā tas netiek izmantots.",
+  "accountUnavailableTitle": "Sinhronizācija nav iestatīta",
+  "accountSignedOutBenefits": "Pierakstieties Google kontā, lai dublētu dziesmas un koncertprogrammas Google Drive un sinhronizētu visas ierīces. Dziesmas jebkurā gadījumā paliks šajā ierīcē.",
+  "accountSignInWithGoogle": "Pierakstīties Google kontā",
+  "accountWorking": "Notiek darbība…",
+  "accountNeverSynced": "Nekad nav sinhronizēts",
+  "accountSyncedJustNow": "Sinhronizēts tikko",
+  "accountSyncedMinutesAgo": "{count, plural, zero{Sinhronizēts pirms {count} minūtēm} one{Sinhronizēts pirms {count} minūtes} other{Sinhronizēts pirms {count} minūtēm}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, zero{Sinhronizēts pirms {count} stundām} one{Sinhronizēts pirms {count} stundas} other{Sinhronizēts pirms {count} stundām}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, zero{Sinhronizēts pirms {count} dienām} one{Sinhronizēts pirms {count} dienas} other{Sinhronizēts pirms {count} dienām}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, zero{Kā kopijas saglabāts {count} konfliktējošu labojumu} one{Kā kopija saglabāts {count} konfliktējošais labojums} other{Kā kopijas saglabāti {count} konfliktējošie labojumi}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "Viena un tā pati dziesma vai koncertprogramma tika rediģēta divās vietās. Nekas nav pazaudēts: otra versija saglabāta kā atsevišķa kopija.",
+  "accountReviewConflicts": "Pārskatīt kopijas",
+  "songsConflictFilterActive": "Rāda tikai konflikta kopijas",
+  "songsConflictFilterClear": "Rādīt visas dziesmas",
+  "songsConflictBadge": "Konflikta kopija",
+  "songsConflictEmpty": "Konflikta kopiju nav.",
+  "accountAutoSync": "Sinhronizēt automātiski",
+  "accountAutoSyncHint": "Atjaunināt bibliotēku, kad atverat lietotni un pēc izmaiņām.",
+  "accountSignOutTitle": "Izrakstīties no šī konta?",
+  "accountSignOutBody": "Dziesmas un koncertprogrammas paliks šajā ierīcē. To dublēšana un sinhronizēšana nenotiks, līdz pierakstīsieties vēlreiz.",
+  "accountUseDifferent": "Izmantot citu kontu",
+  "accountSignInAgain": "Pierakstīties vēlreiz",
+  "accountChooseAction": "Izvēlieties, kā turpināt",
+  "accountChangedTitle": "Cits Google konts",
+  "accountChangedBody": "Šī ierīce pēdējo reizi tika sinhronizēta ar citu Google kontu. Izvēlieties, kas notiks ar šajā ierīcē esošajām dziesmām un koncertprogrammām.",
+  "accountChangedMerge": "Apvienot ar jauno kontu",
+  "accountChangedMergeHint": "Paturēt visu šajā ierīcē un pievienot jaunajam kontam.",
+  "accountChangedReplace": "Aizstāt ar jaunā konta bibliotēku",
+  "accountChangedReplaceHint": "Dziesmas šajā ierīcē, kuru nav jaunajā kontā, tiks noņemtas.",
+  "accountChangedSignOut": "Atcelt un izrakstīties",
+  "accountStatusSignedOut": "Konts un sinhronizācija: nav pierakstīts",
+  "accountStatusSignedIn": "Konts un sinhronizācija: pierakstīts",
+  "accountStatusSyncing": "Konts un sinhronizācija: notiek sinhronizācija",
+  "accountStatusSynced": "Konts un sinhronizācija: bibliotēka ir atjaunināta",
+  "accountStatusError": "Konts un sinhronizācija: radusies problēma, pieskarieties, lai pārskatītu",
+  "accountNoticeConflicts": "Dažas dziesmas tika rediģētas divās vietās. Kopijas ir saglabātas.",
+  "accountNoticeSignedIn": "Pierakstījāties.",
+  "accountNoticeSignedOut": "Izrakstījāties. Dziesmas paliek šajā ierīcē.",
+  "syncErrorNotConfigured": "Šajā versijā sinhronizācija nav iestatīta.",
+  "syncErrorNotConfiguredHint": "Izmantojiet Singbook versiju ar konfigurētu pierakstīšanos Google kontā.",
+  "syncErrorNotSignedIn": "Pierakstīšanās nav veikta.",
+  "syncErrorNotSignedInHint": "Pierakstieties, lai sinhronizētu bibliotēku.",
+  "syncErrorAuthorizationRequired": "Google pieprasa pierakstīties vēlreiz.",
+  "syncErrorAuthorizationRequiredHint": "Pierakstieties vēlreiz, lai turpinātu sinhronizēšanu. Dziesmas šajā ierīcē ir drošībā.",
+  "syncErrorAccessDenied": "Singbook nav atļaujas izmantot Google Drive.",
+  "syncErrorAccessDeniedHint": "Pierakstieties vēlreiz un, kad tiek prasīts, atļaujiet piekļuvi Drive.",
+  "syncErrorRateLimited": "Google pašlaik ierobežo pieprasījumus.",
+  "syncErrorRateLimitedHint": "Uzgaidiet dažas minūtes un mēģiniet vēlreiz.",
+  "syncErrorStorageFull": "Jūsu Google Drive ir pilns.",
+  "syncErrorStorageFullHint": "Atbrīvojiet vietu Drive un mēģiniet vēlreiz.",
+  "syncErrorNetwork": "Neizdevās sasniegt Google.",
+  "syncErrorNetworkHint": "Pārbaudiet interneta savienojumu un mēģiniet vēlreiz.",
+  "syncErrorAccountChanged": "Tika izmantots cits Google konts.",
+  "syncErrorAccountChangedHint": "Izvēlieties, vai apvienot šīs ierīces bibliotēku ar šo kontu vai to aizstāt.",
+  "syncErrorRemoteLibraryTooLarge": "Sinhronizētā bibliotēka ir pārāk liela, lai Singbook to apstrādātu.",
+  "syncErrorRemoteLibraryTooLargeHint": "Noņemiet dziesmas vai koncertprogrammas no sinhronizētās bibliotēkas un mēģiniet vēlreiz.",
+  "syncErrorSignInFailed": "Pierakstīšanās neizdevās.",
+  "syncErrorSignInFailedHint": "Mēģiniet pierakstīties vēlreiz.",
+  "syncErrorGeneric": "Neizdevās sinhronizēt bibliotēku.",
+  "syncErrorGenericHint": "Pēc brīža mēģiniet vēlreiz. Dziesmas šajā ierīcē joprojām ir drošībā."
+}

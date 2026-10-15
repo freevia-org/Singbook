@@ -1,0 +1,670 @@
+{
+  "@@locale": "ko",
+  "appTitle": "Singbook",
+  "aboutDescription": "노래 라이브러리에서 곡을 찾고 정리해 함께 부를 수 있는 편안한 공간입니다.",
+  "aboutMadeForSinging": "함께 노래하기 위해 만들었습니다",
+  "appVersion": "버전 {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "홈",
+  "navSongs": "노래",
+  "navSetlists": "세트리스트",
+  "navSettings": "설정",
+  "navSettingsCompact": "설정",
+  "navSearch": "검색",
+  "navBack": "뒤로",
+  "navClose": "닫기",
+  "navMore": "추가 작업",
+  "actionCancel": "취소",
+  "actionSave": "저장",
+  "actionDone": "완료",
+  "actionEdit": "수정",
+  "actionDelete": "삭제",
+  "actionShare": "공유",
+  "actionPrint": "인쇄",
+  "actionCopy": "복사",
+  "actionClear": "지우기",
+  "actionRetry": "다시 시도",
+  "actionRefresh": "새로고침",
+  "actionImport": "가져오기",
+  "actionExport": "내보내기",
+  "actionExpand": "펼치기",
+  "actionCollapse": "접기",
+  "actionAdd": "추가",
+  "actionCreate": "만들기",
+  "actionRemove": "제거",
+  "actionDuplicate": "복제",
+  "actionMoveUp": "위로 이동",
+  "actionMoveDown": "아래로 이동",
+  "actionPrevious": "이전",
+  "actionNext": "다음",
+  "searchHint": "노래, 아티스트 또는 가사 검색",
+  "searchCatalogHint": "노래 또는 아티스트 검색",
+  "searchSubmit": "검색",
+  "searchFilters": "검색 옵션",
+  "searchFiltersShow": "검색 옵션 표시",
+  "searchFiltersHide": "검색 옵션 숨기기",
+  "searchFilterArtist": "아티스트",
+  "searchFilterTitle": "노래 제목",
+  "searchFilterLyrics": "가사",
+  "searchFilterChords": "코드 있음",
+  "searchFilterTimed": "타이밍이 적용된 가사",
+  "searchFilterLanguage": "언어",
+  "searchFilterAll": "모두",
+  "searchAutocompleteLabel": "추천",
+  "searchResultCount": "{count, plural, =0{결과 없음} =1{결과 1개} other{결과 {count}개}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "검색할 노래, 아티스트 또는 가사를 입력하세요.",
+  "searchCatalogEmptyQuery": "검색할 노래 또는 아티스트를 입력하세요.",
+  "searchNoResults": "노래를 찾을 수 없습니다. 다른 검색어를 입력해 보세요.",
+  "searchLoading": "노래 검색 중…",
+  "searchError": "검색을 완료할 수 없습니다.",
+  "searchOnlineTab": "온라인",
+  "searchRecentTab": "최근",
+  "searchFavoritesTab": "즐겨찾기",
+  "searchSuggested": "추천 일치 항목",
+  "searchAlternatives": "다른 일치 항목",
+  "searchCompare": "버전 비교",
+  "searchChooseVersion": "이 버전 선택",
+  "searchSongMatch": "노래 일치",
+  "searchRecordingMatch": "녹음 일치",
+  "searchMatchUnverified": "녹음이 확인되지 않음",
+  "searchMatchExact": "녹음이 정확히 일치",
+  "searchMatchPossible": "일치 가능성 있음",
+  "searchAvailability": "사용 가능 여부",
+  "searchLyricsAvailable": "가사 사용 가능",
+  "searchLyricsUnavailable": "가사 사용 불가",
+  "searchChordsAvailable": "코드 사용 가능",
+  "searchChordsUnavailable": "코드 없음",
+  "searchTimingAvailable": "타이밍 사용 가능",
+  "searchTimingUnavailable": "타이밍 없음",
+  "searchDurationUnknown": "길이 알 수 없음",
+  "searchRating": "평점 {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "출처",
+  "searchMetadata": "노래 세부정보",
+  "searchAlbum": "앨범",
+  "searchArtist": "아티스트",
+  "searchYear": "연도",
+  "searchLanguage": "언어",
+  "searchSaved": "노래를 라이브러리에 저장했습니다.",
+  "searchSaveFailed": "노래를 저장할 수 없습니다.",
+  "homeRecentSongs": "최근 노래",
+  "homeRecentlyPlayed": "최근 재생",
+  "homeFavorites": "즐겨찾기",
+  "homeHistory": "기록",
+  "homeHistoryClear": "기록 지우기",
+  "homeHistoryCleared": "기록을 지웠습니다.",
+  "homeHistoryEmpty": "열어 본 노래가 여기에 표시됩니다.",
+  "homeFavoritesEmpty": "즐겨찾는 노래와 세트리스트가 여기에 표시됩니다.",
+  "homeItemsShownCount": "{count, plural, =0{항목 0개 표시} =1{항목 1개 표시} other{항목 {count}개 표시}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "최근 노래와 세트리스트가 여기에 표시됩니다.",
+  "homeTimelineLabel": "기록 타임라인",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "전체 기록",
+  "homeShowFavorites": "즐겨찾기 표시",
+  "homeShowRecent": "최근 항목 표시",
+  "songsTitle": "노래",
+  "songsEmpty": "노래가 여기에 표시됩니다.",
+  "songsEmptySearch": "검색과 일치하는 노래가 없습니다.",
+  "songsAdd": "노래 추가",
+  "songsSortAlphabetical": "가나다순 정렬",
+  "songsAlphabetNavigation": "노래 색인",
+  "songsUsageCount": "열린 횟수: {count, plural, =0{0회} =1{1회} other{{count}회}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "즐겨찾기에 추가",
+  "songFavoriteRemove": "즐겨찾기에서 제거",
+  "songMenuLabel": "노래 작업",
+  "songInfo": "노래 세부정보",
+  "setlistMenuLabel": "세트리스트 작업",
+  "songAddToSetlist": "세트리스트에 추가",
+  "songCopyChordPro": "ChordPro 복사",
+  "songDeleteConfirmTitle": "노래를 삭제할까요?",
+  "songDeleteConfirmMessage": "이 노래가 라이브러리에서 제거됩니다.",
+  "songDeleted": "노래를 삭제했습니다.",
+  "setlistsTitle": "세트리스트",
+  "setlistsEmpty": "다음 리허설이나 공연을 위한 세트리스트를 만들어 보세요.",
+  "setlistsEmptySearch": "검색과 일치하는 세트리스트가 없습니다.",
+  "setlistCreate": "새 세트리스트",
+  "setlistNameHint": "세트리스트 이름",
+  "setlistNotes": "메모",
+  "setlistEntryOverride": "노래별 키와 카포",
+  "setlistSongsCount": "{count, plural, =0{노래 없음} =1{노래 1곡} other{노래 {count}곡}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "최소 {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "길이 알 수 없음",
+  "setlistActivity": "마지막 활동 {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "만든 날짜 {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "수정한 날짜 {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "마지막 재생 {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "이 세트리스트에는 아직 노래가 없습니다.",
+  "setlistAddSongs": "노래 추가",
+  "setlistReorder": "노래 순서 변경",
+  "setlistMoveSongUp": "“{song}” 위로 이동",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "“{song}” 아래로 이동",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "세트리스트에서 “{song}” 제거",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "세트리스트 복제",
+  "setlistFavoriteAdd": "세트리스트를 즐겨찾기에 추가",
+  "setlistFavoriteRemove": "세트리스트를 즐겨찾기에서 제거",
+  "setlistShare": "세트리스트 파일로 공유",
+  "setlistSharePdf": "PDF로 공유",
+  "setlistPrint": "인쇄",
+  "setlistDeleteConfirmTitle": "세트리스트를 삭제할까요?",
+  "setlistDeleteConfirmMessage": "세트리스트가 제거됩니다. 라이브러리의 노래는 그대로 유지됩니다.",
+  "setlistDeleted": "세트리스트를 삭제했습니다.",
+  "readerTitle": "가사",
+  "readerNoLyrics": "아직 가사가 추가되지 않았습니다.",
+  "readerShowChords": "코드 표시",
+  "readerHideChords": "코드 숨기기",
+  "readerTranspose": "코드 조옮김",
+  "readerTransposeSemitones": "{count, plural, =0{0 반음} =1{1 반음} other{{count} 반음}} 단위로 조옮김",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "가사 및 세부정보 수정",
+  "playerPlay": "가사 스크롤 시작",
+  "playerPause": "가사 스크롤 일시정지",
+  "playerResume": "가사 스크롤 재개",
+  "playerSeek": "재생 위치",
+  "playerElapsed": "경과 시간 {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "남은 시간 {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "스크롤 모드",
+  "playerTimedLyrics": "타이밍이 적용된 가사",
+  "playerEstimatedPace": "예상 속도",
+  "playerManualScroll": "수동 스크롤",
+  "playerTimingStatusReady": "사용 가능한 타이밍에 맞춰 가사가 스크롤됩니다.",
+  "playerTimingStatusEstimated": "노래 길이를 기준으로 스크롤 속도를 예상합니다.",
+  "playerTimingStatusManual": "가사를 직접 스크롤하세요.",
+  "playerTimingStatusUnavailable": "이 노래는 타이밍 기반 스크롤을 사용할 수 없습니다.",
+  "playerDurationUnknown": "예상 스크롤을 사용하려면 노래 길이를 추가하세요.",
+  "playerProgressLabel": "노래 진행률",
+  "playerCurrentSection": "현재 구간",
+  "playerPreviousSection": "이전 구간",
+  "playerNextSection": "다음 구간",
+  "playerPreviousSectionSong": "이전 구간 · 길게 눌러 세트리스트의 이전 노래로 이동",
+  "playerNextSectionSong": "다음 구간 · 길게 눌러 세트리스트의 다음 노래로 이동",
+  "playerPreviousSong": "이전 곡",
+  "playerNextSong": "다음 곡",
+  "editorTitle": "노래 수정",
+  "editorTitleField": "노래 제목",
+  "editorArtistField": "아티스트",
+  "editorAlbumField": "앨범",
+  "editorLyricsField": "가사",
+  "editorChordsField": "코드",
+  "editorKeyField": "키",
+  "editorCapoField": "카포",
+  "editorTuningField": "튜닝",
+  "editorTempoField": "템포",
+  "editorDurationField": "길이",
+  "editorTimeSignatureField": "박자표",
+  "editorLanguageField": "언어",
+  "editorYearField": "연도",
+  "editorComposerField": "작곡가",
+  "editorLyricistField": "작사가",
+  "editorCopyrightField": "저작권",
+  "editorLicenseField": "라이선스",
+  "songInfoSources": "출처 및 크레딧",
+  "searchMatchSameSong": "같은 노래지만 녹음은 확인되지 않음",
+  "searchMatchNeedsAgreement": "코드 차트를 가사와 대조해 확인해야 합니다",
+  "searchMatchDifferentLyrics": "선택한 노래와 가사가 다릅니다",
+  "searchMatchCombinedSources": "여러 출처의 세부정보를 결합했습니다",
+  "searchCombinedFromSources": "{count, plural, =1{출처 1곳에서 결합} other{출처 {count}곳에서 결합}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, =0{노래 일치 0개} =1{노래 일치 1개} other{노래 일치 {count}개}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, =0{출처 버전 0개} =1{출처 버전 1개} other{출처 버전 {count}개}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "사용 가능한 최선의 일치 항목",
+  "providerDescriptionUnknown": "노래 출처",
+  "providerDescDownloadChordProThenImport": "출처에서 ChordPro 파일을 다운로드한 다음 가져오세요.",
+  "providerDescFreeAccountDownloadThenImport": "무료 계정으로 파일을 다운로드한 다음 가져오세요.",
+  "providerDescPublicChordSheets": "공개 코드 차트.",
+  "providerDescHistoricalTextPerWorkLicense": "역사적 가사는 작품별로 라이선스가 부여됩니다.",
+  "providerDescLicensedCatalog": "라이선스가 있는 가사 카탈로그.",
+  "providerDescOriginalSongsCcBy": "Creative Commons BY 라이선스가 적용된 오리지널 노래.",
+  "providerDescPerSongLicense": "가사는 노래별로 라이선스가 부여됩니다.",
+  "providerDescRecordingMetadataOnly": "녹음 및 발매 정보만 제공됩니다.",
+  "providerDescCompositionMetadataOnly": "작곡 정보만 제공됩니다.",
+  "providerDescExactFileArtworkOnly": "녹음이 정확히 일치하는 경우에만 아트워크를 사용할 수 있습니다.",
+  "providerCapabilityLyrics": "가사",
+  "providerCapabilityChords": "코드",
+  "providerCapabilityTiming": "타이밍이 적용된 가사",
+  "providerCapabilitySearch": "검색",
+  "providerCapabilityMetadata": "노래 세부정보",
+  "editorArtworkField": "아트워크 링크",
+  "editorLyricsHint": "가사나 코드를 수정하려면 행을 탭하세요.",
+  "editorSave": "변경사항 저장",
+  "editorSaved": "변경사항을 저장했습니다.",
+  "editorSaveFailed": "변경사항을 저장할 수 없습니다.",
+  "editorSaveConflict": "다른 곳에서 노래가 변경되었습니다. 수정사항은 별도 복사본으로 저장했습니다.",
+  "editorUnsavedTitle": "변경사항을 버릴까요?",
+  "editorUnsavedMessage": "수정사항이 저장되지 않았습니다.",
+  "editorFieldRequired": "노래 제목을 입력하세요.",
+  "settingsTitle": "설정",
+  "settingsAppearance": "모양",
+  "settingsTheme": "테마",
+  "settingsThemeSystem": "기기 설정 사용",
+  "settingsThemeLight": "밝게",
+  "settingsThemeDark": "어둡게",
+  "settingsColorPalette": "색상 팔레트",
+  "settingsFont": "글꼴",
+  "settingsTextSize": "텍스트 크기",
+  "settingsLyricsPreview": "가사 미리보기",
+  "settingsPlayer": "가사 플레이어",
+  "settingsDefaultShowChords": "기본으로 코드 표시",
+  "settingsDefaultAutoscroll": "가사 자동 스크롤 시작",
+  "settingsDefaultTiming": "기본 스크롤 모드",
+  "settingsLanguage": "앱 언어",
+  "settingsLanguageSystem": "기기 언어 사용",
+  "settingsLanguageEnglish": "영어",
+  "settingsLanguageBulgarian": "불가리아어",
+  "settingsLanguageUkrainian": "우크라이나어",
+  "settingsSources": "가사 출처",
+  "settingsSourceEnabled": "출처 {source} 사용",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "출처 목록 새로고침",
+  "settingsSourcesUpdated": "출처를 업데이트했습니다.",
+  "settingsSourcesUpdateFailed": "출처를 새로고침할 수 없습니다.",
+  "settingsImport": "노래 가져오기",
+  "settingsImportChordPro": "ChordPro 파일 가져오기",
+  "settingsImportSetlist": "세트리스트 파일 가져오기",
+  "settingsImportSuccess": "가져오기가 완료되었습니다.",
+  "settingsImportFailed": "이 파일을 가져올 수 없습니다.",
+  "settingsImportUnsupported": "지원되지 않는 파일 형식입니다.",
+  "settingsShareSong": "ChordPro로 공유",
+  "settingsSharePdf": "PDF로 공유",
+  "settingsCopySong": "클립보드에 복사",
+  "settingsPrintSong": "노래만 인쇄",
+  "settingsPrintSetlist": "가사가 포함된 세트리스트 인쇄",
+  "settingsExportFailed": "파일을 준비할 수 없습니다.",
+  "settingsCopied": "클립보드에 복사했습니다.",
+  "settingsAbout": "정보",
+  "settingsPrivacy": "개인정보 보호",
+  "settingsLegal": "법률 정보",
+  "settingsClearHistory": "기록 지우기",
+  "settingsClearHistoryConfirm": "노래 및 세트리스트 기록을 지울까요?",
+  "settingsHistoryCleared": "기록을 지웠습니다.",
+  "accountTitle": "계정 및 동기화",
+  "accountUnavailable": "동기화하려면 Google 로그인이 설정된 Singbook 빌드가 필요합니다. 이 빌드에서는 노래가 이 기기에만 저장됩니다.",
+  "accountSyncNow": "지금 동기화",
+  "accountConnected": "연결되었습니다. 백업을 업데이트하려면 지금 동기화를 선택하세요.",
+  "accountSignIn": "계정 연결",
+  "accountSignOut": "로그아웃",
+  "accountChange": "계정 변경",
+  "accountSignedOut": "연결되지 않음",
+  "accountSyncing": "라이브러리 동기화 중…",
+  "accountSynced": "라이브러리를 동기화했습니다.",
+  "accountSyncFailed": "라이브러리를 동기화할 수 없습니다.",
+  "accessibilityFavorite": "즐겨찾기",
+  "accessibilityNotFavorite": "즐겨찾기가 아님",
+  "accessibilitySearchField": "노래 검색",
+  "accessibilityClearSearch": "검색어 지우기",
+  "accessibilitySongMenu": "{song} 작업",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "{setlist} 작업",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "{setlist}의 노래 펼치기",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "{setlist}의 노래 접기",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "재생 진행률, {percent}퍼센트",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "기록 타임라인, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "불러오는 중…",
+  "loadingSongs": "노래 불러오는 중…",
+  "loadingSetlists": "세트리스트 불러오는 중…",
+  "errorGeneric": "문제가 발생했습니다.",
+  "errorOffline": "오프라인 상태인 것 같습니다.",
+  "errorPermission": "계속하려면 권한이 필요합니다.",
+  "emptyFiltered": "필터와 일치하는 항목이 없습니다.",
+  "unknownValue": "알 수 없음",
+  "durationUnknown": "길이 알 수 없음",
+  "metadataNotSet": "설정되지 않음",
+  "dateToday": "오늘",
+  "dateYesterday": "어제",
+  "daySongCount": "{count, plural, =0{노래 없음} =1{노래 1곡} other{노래 {count}곡}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "네이비",
+  "settingsPaletteSage": "세이지",
+  "settingsPaletteOcean": "오션",
+  "settingsPaletteClay": "클레이",
+  "settingsPalettePlum": "플럼",
+  "settingsFontSystem": "시스템",
+  "settingsFontSerif": "세리프",
+  "settingsFontMonospace": "고정폭",
+  "settingsLyricsPreviewExample": "아침이 오면 우리는 다시 노래할 거예요.",
+  "searchDiscoveryProgress": "가사 출처 확인 중: {total}개 중 {checked}개 완료.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "사용할 수 있는 가사를 찾지 못했습니다.",
+  "searchDiscoveryNoLyricsDetails": "선택한 노래를 사용 설정된 출처에서 확인했지만 사용할 수 있는 가사 버전을 찾지 못했습니다.",
+  "searchDiscoveryError": "가사 출처를 확인할 수 없습니다.",
+  "searchDiscoveryRetry": "가사 다시 검색",
+  "searchSourcesUnavailableCount": "{count, plural, =0{사용할 수 없는 출처 0개} =1{사용할 수 없는 출처 1개} other{사용할 수 없는 출처 {count}개}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "연결을 확인하고 다시 시도하세요.",
+  "searchProviderChecks": "출처 확인",
+  "searchProviderPending": "확인 중",
+  "searchProviderFound": "일치 항목을 찾았습니다",
+  "searchProviderRejected": "일치하지 않음",
+  "searchProviderFailed": "확인 실패",
+  "searchProviderUnavailable": "사용할 수 있는 가사 없음",
+  "searchCatalogFilterHint": "노래를 선택하면 코드, 타이밍 또는 언어로 가사 버전을 필터링할 수 있습니다.",
+  "startupErrorTitle": "라이브러리를 열 수 없습니다.",
+  "setlistCopyName": "{name} 복사본",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "누락된 노래",
+  "settingsImportTooLarge": "이 파일은 가져오기에는 너무 큽니다.",
+  "songsJumpToLetter": "{letter}(으)로 이동",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "버리기",
+  "editorKeepEditing": "계속 수정",
+  "settingsDefaultShowChordsHint": "노래에 코드가 있으면 가사 위에 표시합니다.",
+  "settingsDefaultAutoscrollHint": "노래에 맞춰 가사가 스크롤됩니다. 수동 스크롤 모드에서는 사용되지 않습니다.",
+  "accountUnavailableTitle": "동기화가 설정되지 않음",
+  "accountSignedOutBenefits": "Google로 로그인하면 노래와 세트리스트를 Google Drive에 백업하고 모든 기기를 동기화할 수 있습니다. 노래는 어느 경우든 이 기기에 남습니다.",
+  "accountSignInWithGoogle": "Google로 로그인",
+  "accountWorking": "작업 중…",
+  "accountNeverSynced": "동기화한 적 없음",
+  "accountSyncedJustNow": "방금 동기화됨",
+  "accountSyncedMinutesAgo": "{count, plural, one{1분 전에 동기화됨} other{{count}분 전에 동기화됨}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{1시간 전에 동기화됨} other{{count}시간 전에 동기화됨}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{1일 전에 동기화됨} other{{count}일 전에 동기화됨}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{충돌한 수정사항 1개를 복사본으로 저장함} other{충돌한 수정사항 {count}개를 복사본으로 저장함}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "같은 노래나 세트리스트가 두 곳에서 수정되었습니다. 데이터는 손실되지 않았습니다. 다른 버전은 별도 복사본으로 저장되었습니다.",
+  "accountReviewConflicts": "복사본 검토",
+  "songsConflictFilterActive": "충돌 복사본만 표시 중",
+  "songsConflictFilterClear": "모든 노래 표시",
+  "songsConflictBadge": "충돌 복사본",
+  "songsConflictEmpty": "충돌 복사본이 없습니다.",
+  "accountAutoSync": "자동 동기화",
+  "accountAutoSyncHint": "앱을 열 때와 변경 후에 라이브러리를 최신 상태로 유지합니다.",
+  "accountSignOutTitle": "이 계정에서 로그아웃할까요?",
+  "accountSignOutBody": "노래와 세트리스트는 이 기기에 남습니다. 다시 로그인할 때까지 백업되거나 동기화되지 않습니다.",
+  "accountUseDifferent": "다른 계정 사용",
+  "accountSignInAgain": "다시 로그인",
+  "accountChooseAction": "계속할 방법 선택",
+  "accountChangedTitle": "다른 Google 계정",
+  "accountChangedBody": "이 기기는 마지막으로 다른 Google 계정과 동기화되었습니다. 이 기기의 노래와 세트리스트를 어떻게 처리할지 선택하세요.",
+  "accountChangedMerge": "새 계정에 병합",
+  "accountChangedMergeHint": "이 기기의 모든 항목을 유지하고 새 계정에 추가합니다.",
+  "accountChangedReplace": "새 계정의 라이브러리로 교체",
+  "accountChangedReplaceHint": "새 계정에 없는 이 기기의 노래는 제거됩니다.",
+  "accountChangedSignOut": "취소하고 로그아웃",
+  "accountStatusSignedOut": "계정 및 동기화: 로그인되지 않음",
+  "accountStatusSignedIn": "계정 및 동기화: 로그인됨",
+  "accountStatusSyncing": "계정 및 동기화: 동기화 중",
+  "accountStatusSynced": "계정 및 동기화: 라이브러리가 최신 상태임",
+  "accountStatusError": "계정 및 동기화: 문제 발생, 탭하여 확인",
+  "accountNoticeConflicts": "일부 노래가 두 곳에서 수정되었습니다. 복사본을 보관했습니다.",
+  "accountNoticeSignedIn": "로그인했습니다.",
+  "accountNoticeSignedOut": "로그아웃했습니다. 노래는 이 기기에 남습니다.",
+  "syncErrorNotConfigured": "이 빌드에서는 동기화가 설정되지 않았습니다.",
+  "syncErrorNotConfiguredHint": "Google 로그인이 설정된 Singbook 빌드를 사용하세요.",
+  "syncErrorNotSignedIn": "로그인되어 있지 않습니다.",
+  "syncErrorNotSignedInHint": "라이브러리를 동기화하려면 로그인하세요.",
+  "syncErrorAuthorizationRequired": "Google에 다시 로그인해야 합니다.",
+  "syncErrorAuthorizationRequiredHint": "동기화를 계속하려면 다시 로그인하세요. 노래는 이 기기에 안전하게 보관되어 있습니다.",
+  "syncErrorAccessDenied": "Singbook에 Google Drive 사용 권한이 없습니다.",
+  "syncErrorAccessDeniedHint": "다시 로그인하고 메시지가 표시되면 Drive 액세스를 허용하세요.",
+  "syncErrorRateLimited": "Google이 현재 요청을 제한하고 있습니다.",
+  "syncErrorRateLimitedHint": "몇 분 기다린 후 다시 시도하세요.",
+  "syncErrorStorageFull": "Google Drive 저장공간이 가득 찼습니다.",
+  "syncErrorStorageFullHint": "Drive 공간을 확보한 다음 다시 시도하세요.",
+  "syncErrorNetwork": "Google에 연결할 수 없습니다.",
+  "syncErrorNetworkHint": "인터넷 연결을 확인하고 다시 시도하세요.",
+  "syncErrorAccountChanged": "다른 Google 계정이 사용되었습니다.",
+  "syncErrorAccountChangedHint": "이 기기의 라이브러리를 해당 계정에 병합할지 교체할지 선택하세요.",
+  "syncErrorRemoteLibraryTooLarge": "동기화된 라이브러리가 Singbook에서 처리하기에 너무 큽니다.",
+  "syncErrorRemoteLibraryTooLargeHint": "동기화된 라이브러리에서 노래나 세트리스트를 일부 제거한 다음 다시 시도하세요.",
+  "syncErrorSignInFailed": "로그인을 완료하지 못했습니다.",
+  "syncErrorSignInFailedHint": "다시 로그인해 보세요.",
+  "syncErrorGeneric": "라이브러리를 동기화할 수 없습니다.",
+  "syncErrorGenericHint": "잠시 후 다시 시도하세요. 노래는 이 기기에 안전하게 보관되어 있습니다."
+}

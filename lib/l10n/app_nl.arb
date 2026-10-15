@@ -1,0 +1,670 @@
+{
+  "@@locale": "nl",
+  "appTitle": "Singbook",
+  "aboutDescription": "Een rustige plek om de nummers in je bibliotheek te vinden, te ordenen en te zingen.",
+  "aboutMadeForSinging": "Gemaakt om samen te zingen",
+  "appVersion": "Versie {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "Start",
+  "navSongs": "Nummers",
+  "navSetlists": "Setlijsten",
+  "navSettings": "Instellingen",
+  "navSettingsCompact": "Instellingen",
+  "navSearch": "Zoeken",
+  "navBack": "Terug",
+  "navClose": "Sluiten",
+  "navMore": "Meer acties",
+  "actionCancel": "Annuleren",
+  "actionSave": "Opslaan",
+  "actionDone": "Klaar",
+  "actionEdit": "Bewerken",
+  "actionDelete": "Verwijderen",
+  "actionShare": "Delen",
+  "actionPrint": "Afdrukken",
+  "actionCopy": "Kopiëren",
+  "actionClear": "Wissen",
+  "actionRetry": "Opnieuw proberen",
+  "actionRefresh": "Vernieuwen",
+  "actionImport": "Importeren",
+  "actionExport": "Exporteren",
+  "actionExpand": "Uitvouwen",
+  "actionCollapse": "Invouwen",
+  "actionAdd": "Toevoegen",
+  "actionCreate": "Maken",
+  "actionRemove": "Verwijderen",
+  "actionDuplicate": "Dupliceren",
+  "actionMoveUp": "Omhoog verplaatsen",
+  "actionMoveDown": "Omlaag verplaatsen",
+  "actionPrevious": "Vorige",
+  "actionNext": "Volgende",
+  "searchHint": "Zoek nummers, artiesten of songteksten",
+  "searchCatalogHint": "Zoek een nummer of artiest",
+  "searchSubmit": "Zoeken",
+  "searchFilters": "Zoekopties",
+  "searchFiltersShow": "Zoekopties tonen",
+  "searchFiltersHide": "Zoekopties verbergen",
+  "searchFilterArtist": "Artiest",
+  "searchFilterTitle": "Nummertitel",
+  "searchFilterLyrics": "Songteksten",
+  "searchFilterChords": "Met akkoorden",
+  "searchFilterTimed": "Gesynchroniseerde songteksten",
+  "searchFilterLanguage": "Taal",
+  "searchFilterAll": "Alle",
+  "searchAutocompleteLabel": "Suggesties",
+  "searchResultCount": "{count, plural, =0{Geen resultaten} =1{1 resultaat} other{{count} resultaten}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "Voer een nummer, artiest of songtekst in om te zoeken.",
+  "searchCatalogEmptyQuery": "Voer een nummer of artiest in om te zoeken.",
+  "searchNoResults": "Geen nummers gevonden. Probeer een andere zoekopdracht.",
+  "searchLoading": "Nummers zoeken…",
+  "searchError": "Zoeken is niet gelukt.",
+  "searchOnlineTab": "Online",
+  "searchRecentTab": "Recent",
+  "searchFavoritesTab": "Favorieten",
+  "searchSuggested": "Voorgestelde overeenkomst",
+  "searchAlternatives": "Andere overeenkomsten",
+  "searchCompare": "Versies vergelijken",
+  "searchChooseVersion": "Deze versie kiezen",
+  "searchSongMatch": "Nummerovereenkomst",
+  "searchRecordingMatch": "Opnameovereenkomst",
+  "searchMatchUnverified": "Opname niet geverifieerd",
+  "searchMatchExact": "Exacte opnameovereenkomst",
+  "searchMatchPossible": "Mogelijke overeenkomst",
+  "searchAvailability": "Beschikbaarheid",
+  "searchLyricsAvailable": "Songtekst beschikbaar",
+  "searchLyricsUnavailable": "Songtekst niet beschikbaar",
+  "searchChordsAvailable": "Akkoorden beschikbaar",
+  "searchChordsUnavailable": "Geen akkoorden",
+  "searchTimingAvailable": "Timing beschikbaar",
+  "searchTimingUnavailable": "Geen timing",
+  "searchDurationUnknown": "Duur onbekend",
+  "searchRating": "Beoordeling {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "Bron",
+  "searchMetadata": "Nummergegevens",
+  "searchAlbum": "Album",
+  "searchArtist": "Artiest",
+  "searchYear": "Jaar",
+  "searchLanguage": "Taal",
+  "searchSaved": "Nummer opgeslagen in je bibliotheek.",
+  "searchSaveFailed": "Nummer opslaan is niet gelukt.",
+  "homeRecentSongs": "Recente nummers",
+  "homeRecentlyPlayed": "Onlangs afgespeeld",
+  "homeFavorites": "Favorieten",
+  "homeHistory": "Geschiedenis",
+  "homeHistoryClear": "Geschiedenis wissen",
+  "homeHistoryCleared": "Geschiedenis gewist.",
+  "homeHistoryEmpty": "Nummers die je opent, verschijnen hier.",
+  "homeFavoritesEmpty": "Je favoriete nummers en setlijsten verschijnen hier.",
+  "homeItemsShownCount": "{count, plural, =0{0 items getoond} =1{1 item getoond} other{{count} items getoond}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "Je recente nummers en setlijsten verschijnen hier.",
+  "homeTimelineLabel": "Tijdlijn van de geschiedenis",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "Volledige geschiedenis",
+  "homeShowFavorites": "Favorieten tonen",
+  "homeShowRecent": "Recente tonen",
+  "songsTitle": "Nummers",
+  "songsEmpty": "Je nummers verschijnen hier.",
+  "songsEmptySearch": "Geen nummers komen overeen met je zoekopdracht.",
+  "songsAdd": "Nummer toevoegen",
+  "songsSortAlphabetical": "Alfabetisch sorteren",
+  "songsAlphabetNavigation": "Nummerindex",
+  "songsUsageCount": "{count, plural, =0{Nooit geopend} =1{Eén keer geopend} other{{count} keer geopend}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "Aan favorieten toevoegen",
+  "songFavoriteRemove": "Uit favorieten verwijderen",
+  "songMenuLabel": "Nummeracties",
+  "songInfo": "Nummergegevens",
+  "setlistMenuLabel": "Setlijstacties",
+  "songAddToSetlist": "Aan setlijst toevoegen",
+  "songCopyChordPro": "ChordPro kopiëren",
+  "songDeleteConfirmTitle": "Nummer verwijderen?",
+  "songDeleteConfirmMessage": "Dit nummer wordt uit je bibliotheek verwijderd.",
+  "songDeleted": "Nummer verwijderd.",
+  "setlistsTitle": "Setlijsten",
+  "setlistsEmpty": "Maak een setlijst voor je volgende repetitie of optreden.",
+  "setlistsEmptySearch": "Geen setlijsten komen overeen met je zoekopdracht.",
+  "setlistCreate": "Nieuwe setlijst",
+  "setlistNameHint": "Naam van setlijst",
+  "setlistNotes": "Notities",
+  "setlistEntryOverride": "Toonsoort en capo voor dit nummer",
+  "setlistSongsCount": "{count, plural, =0{Geen nummers} =1{1 nummer} other{{count} nummers}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "Ten minste {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "Duur onbekend",
+  "setlistActivity": "Laatste activiteit {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "Gemaakt op {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "Bewerkt op {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "Laatst afgespeeld op {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "Deze setlijst bevat nog geen nummers.",
+  "setlistAddSongs": "Nummers toevoegen",
+  "setlistReorder": "Nummers opnieuw ordenen",
+  "setlistMoveSongUp": "{song} omhoog verplaatsen",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "{song} omlaag verplaatsen",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "{song} uit de setlijst verwijderen",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "Setlijst dupliceren",
+  "setlistFavoriteAdd": "Setlijst aan favorieten toevoegen",
+  "setlistFavoriteRemove": "Setlijst uit favorieten verwijderen",
+  "setlistShare": "Delen als setlijstbestand",
+  "setlistSharePdf": "Delen als PDF",
+  "setlistPrint": "Afdrukken",
+  "setlistDeleteConfirmTitle": "Setlijst verwijderen?",
+  "setlistDeleteConfirmMessage": "De setlijst wordt verwijderd. Nummers in je bibliotheek blijven behouden.",
+  "setlistDeleted": "Setlijst verwijderd.",
+  "readerTitle": "Songteksten",
+  "readerNoLyrics": "Er zijn nog geen songteksten toegevoegd.",
+  "readerShowChords": "Akkoorden tonen",
+  "readerHideChords": "Akkoorden verbergen",
+  "readerTranspose": "Akkoorden transponeren",
+  "readerTransposeSemitones": "Transponeren met {count, plural, =0{0 halve tonen} =1{1 halve toon} other{{count} halve tonen}}",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "Songteksten en gegevens bewerken",
+  "playerPlay": "Songteksten automatisch laten scrollen",
+  "playerPause": "Automatisch scrollen pauzeren",
+  "playerResume": "Automatisch scrollen hervatten",
+  "playerSeek": "Afspeelpositie",
+  "playerElapsed": "Verstreken tijd {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "Resterende tijd {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "Scrollmodus",
+  "playerTimedLyrics": "Gesynchroniseerde songteksten",
+  "playerEstimatedPace": "Geschatte snelheid",
+  "playerManualScroll": "Handmatig scrollen",
+  "playerTimingStatusReady": "De songteksten volgen de beschikbare timing.",
+  "playerTimingStatusEstimated": "De scrollsnelheid wordt geschat op basis van de duur van het nummer.",
+  "playerTimingStatusManual": "Scroll zelf door de songteksten.",
+  "playerTimingStatusUnavailable": "Gesynchroniseerd scrollen is niet beschikbaar voor dit nummer.",
+  "playerDurationUnknown": "Voeg de duur van het nummer toe om scrollen op basis van een schatting te gebruiken.",
+  "playerProgressLabel": "Voortgang van nummer",
+  "playerCurrentSection": "Huidig deel",
+  "playerPreviousSection": "Vorig deel",
+  "playerNextSection": "Volgend deel",
+  "playerPreviousSectionSong": "Vorig deel · houd ingedrukt voor het vorige nummer in de setlijst",
+  "playerNextSectionSong": "Volgend deel · houd ingedrukt voor het volgende nummer in de setlijst",
+  "playerPreviousSong": "Vorig nummer",
+  "playerNextSong": "Volgend nummer",
+  "editorTitle": "Nummer bewerken",
+  "editorTitleField": "Nummertitel",
+  "editorArtistField": "Artiest",
+  "editorAlbumField": "Album",
+  "editorLyricsField": "Songtekst",
+  "editorChordsField": "Akkoorden",
+  "editorKeyField": "Toonsoort",
+  "editorCapoField": "Capo",
+  "editorTuningField": "Stemming",
+  "editorTempoField": "Tempo",
+  "editorDurationField": "Duur",
+  "editorTimeSignatureField": "Maatsoort",
+  "editorLanguageField": "Taal",
+  "editorYearField": "Jaar",
+  "editorComposerField": "Componist",
+  "editorLyricistField": "Tekstschrijver",
+  "editorCopyrightField": "Auteursrecht",
+  "editorLicenseField": "Licentie",
+  "songInfoSources": "Bronnen en credits",
+  "searchMatchSameSong": "Hetzelfde nummer; opname niet bevestigd",
+  "searchMatchNeedsAgreement": "De songtekst moet met het akkoordenschema worden bevestigd",
+  "searchMatchDifferentLyrics": "De songtekst verschilt van die van het geselecteerde nummer",
+  "searchMatchCombinedSources": "Gegevens gecombineerd uit meerdere bronnen",
+  "searchCombinedFromSources": "{count, plural, =1{Gecombineerd uit 1 bron} other{Gecombineerd uit {count} bronnen}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, =0{0 nummerovereenkomsten} =1{1 nummerovereenkomst} other{{count} nummerovereenkomsten}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, =0{0 bronversies} =1{1 bronversie} other{{count} bronversies}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "Beste beschikbare overeenkomst",
+  "providerDescriptionUnknown": "Muziekbron",
+  "providerDescDownloadChordProThenImport": "Download een ChordPro-bestand van de bron en importeer het daarna.",
+  "providerDescFreeAccountDownloadThenImport": "Download het bestand met een gratis account en importeer het daarna.",
+  "providerDescPublicChordSheets": "Openbare akkoordenschema's.",
+  "providerDescHistoricalTextPerWorkLicense": "Historische songteksten met een licentie per werk.",
+  "providerDescLicensedCatalog": "Catalogus met gelicentieerde songteksten.",
+  "providerDescOriginalSongsCcBy": "Originele nummers onder Creative Commons BY.",
+  "providerDescPerSongLicense": "Songteksten met een licentie per nummer.",
+  "providerDescRecordingMetadataOnly": "Alleen opname- en releasegegevens.",
+  "providerDescCompositionMetadataOnly": "Alleen compositiegegevens.",
+  "providerDescExactFileArtworkOnly": "Albumhoezen alleen voor exacte opnameovereenkomsten.",
+  "providerCapabilityLyrics": "Songteksten",
+  "providerCapabilityChords": "Akkoorden",
+  "providerCapabilityTiming": "Gesynchroniseerde songteksten",
+  "providerCapabilitySearch": "Zoeken",
+  "providerCapabilityMetadata": "Nummergegevens",
+  "editorArtworkField": "Link naar albumhoes",
+  "editorLyricsHint": "Tik op een regel om songteksten of akkoorden te bewerken.",
+  "editorSave": "Wijzigingen opslaan",
+  "editorSaved": "Wijzigingen opgeslagen.",
+  "editorSaveFailed": "Wijzigingen opslaan is niet gelukt.",
+  "editorSaveConflict": "Het nummer is ergens anders gewijzigd. Je wijzigingen zijn als aparte kopie opgeslagen.",
+  "editorUnsavedTitle": "Wijzigingen verwerpen?",
+  "editorUnsavedMessage": "Je wijzigingen zijn niet opgeslagen.",
+  "editorFieldRequired": "Voer een nummertitel in.",
+  "settingsTitle": "Instellingen",
+  "settingsAppearance": "Weergave",
+  "settingsTheme": "Thema",
+  "settingsThemeSystem": "Apparaatinstelling gebruiken",
+  "settingsThemeLight": "Licht",
+  "settingsThemeDark": "Donker",
+  "settingsColorPalette": "Kleurenpalet",
+  "settingsFont": "Lettertype",
+  "settingsTextSize": "Tekstgrootte",
+  "settingsLyricsPreview": "Voorbeeld van songteksten",
+  "settingsPlayer": "Songtekstspeler",
+  "settingsDefaultShowChords": "Akkoorden standaard tonen",
+  "settingsDefaultAutoscroll": "Songteksten automatisch laten scrollen",
+  "settingsDefaultTiming": "Standaard scrollmodus",
+  "settingsLanguage": "App-taal",
+  "settingsLanguageSystem": "Apparaattaal gebruiken",
+  "settingsLanguageEnglish": "Engels",
+  "settingsLanguageBulgarian": "Bulgaars",
+  "settingsLanguageUkrainian": "Oekraïens",
+  "settingsSources": "Songtekstbronnen",
+  "settingsSourceEnabled": "Bron {source} inschakelen",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "Bronnenlijst vernieuwen",
+  "settingsSourcesUpdated": "Bronnen bijgewerkt.",
+  "settingsSourcesUpdateFailed": "Bronnen vernieuwen is niet gelukt.",
+  "settingsImport": "Nummers importeren",
+  "settingsImportChordPro": "ChordPro-bestand importeren",
+  "settingsImportSetlist": "Setlijstbestand importeren",
+  "settingsImportSuccess": "Importeren voltooid.",
+  "settingsImportFailed": "Dit bestand kon niet worden geïmporteerd.",
+  "settingsImportUnsupported": "Dit bestandstype wordt niet ondersteund.",
+  "settingsShareSong": "Delen als ChordPro",
+  "settingsSharePdf": "Delen als PDF",
+  "settingsCopySong": "Naar klembord kopiëren",
+  "settingsPrintSong": "Alleen nummer afdrukken",
+  "settingsPrintSetlist": "Setlijst met songteksten afdrukken",
+  "settingsExportFailed": "Bestand voorbereiden is niet gelukt.",
+  "settingsCopied": "Gekopieerd naar klembord.",
+  "settingsAbout": "Over",
+  "settingsPrivacy": "Privacy",
+  "settingsLegal": "Juridisch",
+  "settingsClearHistory": "Geschiedenis wissen",
+  "settingsClearHistoryConfirm": "De geschiedenis van je nummers en setlijsten wissen?",
+  "settingsHistoryCleared": "Geschiedenis gewist.",
+  "accountTitle": "Account en synchronisatie",
+  "accountUnavailable": "Voor synchronisatie is een versie van Singbook nodig waarin Google-aanmelding is ingesteld. In deze versie blijven je nummers alleen op dit apparaat.",
+  "accountSyncNow": "Nu synchroniseren",
+  "accountConnected": "Verbonden. Kies ‘Nu synchroniseren’ om je back-up bij te werken.",
+  "accountSignIn": "Account koppelen",
+  "accountSignOut": "Afmelden",
+  "accountChange": "Account wijzigen",
+  "accountSignedOut": "Niet verbonden",
+  "accountSyncing": "Je bibliotheek synchroniseren…",
+  "accountSynced": "Bibliotheek gesynchroniseerd.",
+  "accountSyncFailed": "Je bibliotheek synchroniseren is niet gelukt.",
+  "accessibilityFavorite": "Favoriet",
+  "accessibilityNotFavorite": "Geen favoriet",
+  "accessibilitySearchField": "Nummers zoeken",
+  "accessibilityClearSearch": "Zoektekst wissen",
+  "accessibilitySongMenu": "Acties voor {song}",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "Acties voor {setlist}",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "Nummers in {setlist} uitvouwen",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "Nummers in {setlist} invouwen",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "Afspeelvoortgang, {percent} procent",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "Tijdlijn van de geschiedenis, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "Laden…",
+  "loadingSongs": "Nummers laden…",
+  "loadingSetlists": "Setlijsten laden…",
+  "errorGeneric": "Er is iets misgegaan.",
+  "errorOffline": "Je lijkt offline te zijn.",
+  "errorPermission": "Er is toestemming nodig om door te gaan.",
+  "emptyFiltered": "Geen items komen overeen met deze filters.",
+  "unknownValue": "Onbekend",
+  "durationUnknown": "Duur onbekend",
+  "metadataNotSet": "Niet ingesteld",
+  "dateToday": "Vandaag",
+  "dateYesterday": "Gisteren",
+  "daySongCount": "{count, plural, =0{Geen nummers} =1{1 nummer} other{{count} nummers}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "Marineblauw",
+  "settingsPaletteSage": "Saliegroen",
+  "settingsPaletteOcean": "Oceaan",
+  "settingsPaletteClay": "Klei",
+  "settingsPalettePlum": "Pruim",
+  "settingsFontSystem": "Systeem",
+  "settingsFontSerif": "Met schreef",
+  "settingsFontMonospace": "Monospace",
+  "settingsLyricsPreviewExample": "Wanneer de ochtend komt, zingen we opnieuw.",
+  "searchDiscoveryProgress": "Songtekstbronnen controleren: {checked} van {total} voltooid.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "Geen bruikbare songteksten gevonden.",
+  "searchDiscoveryNoLyricsDetails": "Het geselecteerde nummer is gecontroleerd bij de ingeschakelde bronnen, maar geen daarvan leverde een bruikbare versie van de songtekst.",
+  "searchDiscoveryError": "Songtekstbronnen konden niet worden gecontroleerd.",
+  "searchDiscoveryRetry": "Songteksten opnieuw zoeken",
+  "searchSourcesUnavailableCount": "{count, plural, =0{0 bronnen niet beschikbaar} =1{1 bron niet beschikbaar} other{{count} bronnen niet beschikbaar}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "Controleer je verbinding en probeer het opnieuw.",
+  "searchProviderChecks": "Broncontroles",
+  "searchProviderPending": "Controleren",
+  "searchProviderFound": "Overeenkomst gevonden",
+  "searchProviderRejected": "Komt niet overeen",
+  "searchProviderFailed": "Controle mislukt",
+  "searchProviderUnavailable": "Geen bruikbare songteksten",
+  "searchCatalogFilterHint": "Selecteer een nummer om songtekstversies te filteren op akkoorden, timing of taal.",
+  "startupErrorTitle": "Je bibliotheek kon niet worden geopend.",
+  "setlistCopyName": "Kopie van {name}",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "Nummer ontbreekt",
+  "settingsImportTooLarge": "Dit bestand is te groot om te importeren.",
+  "songsJumpToLetter": "Ga naar {letter}",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "Verwerpen",
+  "editorKeepEditing": "Doorgaan met bewerken",
+  "settingsDefaultShowChordsHint": "Akkoorden boven de songtekst tonen als een nummer akkoorden heeft.",
+  "settingsDefaultAutoscrollHint": "De songteksten scrollen mee met het nummer. Dit wordt niet gebruikt in de modus voor handmatig scrollen.",
+  "accountUnavailableTitle": "Synchronisatie niet ingesteld",
+  "accountSignedOutBenefits": "Meld je aan met Google om een back-up van je nummers en setlijsten op Google Drive te maken en al je apparaten gelijk te houden. Je nummers blijven hoe dan ook op dit apparaat staan.",
+  "accountSignInWithGoogle": "Aanmelden met Google",
+  "accountWorking": "Bezig…",
+  "accountNeverSynced": "Nog nooit gesynchroniseerd",
+  "accountSyncedJustNow": "Zojuist gesynchroniseerd",
+  "accountSyncedMinutesAgo": "{count, plural, one{1 minuut geleden gesynchroniseerd} other{{count} minuten geleden gesynchroniseerd}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{1 uur geleden gesynchroniseerd} other{{count} uur geleden gesynchroniseerd}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{1 dag geleden gesynchroniseerd} other{{count} dagen geleden gesynchroniseerd}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{1 conflicterende wijziging als kopie bewaard} other{{count} conflicterende wijzigingen als kopieën bewaard}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "Hetzelfde nummer of dezelfde setlijst is op twee plekken bewerkt. Er is niets verloren gegaan: de andere versie is als aparte kopie opgeslagen.",
+  "accountReviewConflicts": "Kopieën controleren",
+  "songsConflictFilterActive": "Alleen conflictkopieën worden getoond",
+  "songsConflictFilterClear": "Alle nummers tonen",
+  "songsConflictBadge": "Conflictkopie",
+  "songsConflictEmpty": "Geen conflictkopieën.",
+  "accountAutoSync": "Automatisch synchroniseren",
+  "accountAutoSyncHint": "Houd je bibliotheek actueel wanneer je de app opent en na wijzigingen.",
+  "accountSignOutTitle": "Afmelden bij dit account?",
+  "accountSignOutBody": "Je nummers en setlijsten blijven op dit apparaat. Ze worden pas weer geback-upt of gesynchroniseerd nadat je je opnieuw hebt aangemeld.",
+  "accountUseDifferent": "Ander account gebruiken",
+  "accountSignInAgain": "Opnieuw aanmelden",
+  "accountChooseAction": "Kies hoe je verder wilt gaan",
+  "accountChangedTitle": "Ander Google-account",
+  "accountChangedBody": "Dit apparaat is voor het laatst gesynchroniseerd met een ander Google-account. Kies wat er met de nummers en setlijsten op dit apparaat moet gebeuren.",
+  "accountChangedMerge": "Samenvoegen met het nieuwe account",
+  "accountChangedMergeHint": "Bewaar alles op dit apparaat en voeg het toe aan het nieuwe account.",
+  "accountChangedReplace": "Vervangen door de bibliotheek van het nieuwe account",
+  "accountChangedReplaceHint": "Nummers op dit apparaat die niet in het nieuwe account staan, worden verwijderd.",
+  "accountChangedSignOut": "Annuleren en afmelden",
+  "accountStatusSignedOut": "Account en synchronisatie: niet aangemeld",
+  "accountStatusSignedIn": "Account en synchronisatie: aangemeld",
+  "accountStatusSyncing": "Account en synchronisatie: synchroniseren",
+  "accountStatusSynced": "Account en synchronisatie: bibliotheek bijgewerkt",
+  "accountStatusError": "Account en synchronisatie: probleem, tik om te bekijken",
+  "accountNoticeConflicts": "Sommige nummers zijn op twee plekken bewerkt. Kopieën zijn bewaard.",
+  "accountNoticeSignedIn": "Aangemeld.",
+  "accountNoticeSignedOut": "Afgemeld. Je nummers blijven op dit apparaat.",
+  "syncErrorNotConfigured": "Synchronisatie is in deze versie niet ingesteld.",
+  "syncErrorNotConfiguredHint": "Gebruik een versie van Singbook waarin Google-aanmelding is ingesteld.",
+  "syncErrorNotSignedIn": "Je bent niet aangemeld.",
+  "syncErrorNotSignedInHint": "Meld je aan om je bibliotheek te synchroniseren.",
+  "syncErrorAuthorizationRequired": "Google vraagt je om je opnieuw aan te melden.",
+  "syncErrorAuthorizationRequiredHint": "Meld je opnieuw aan om verder te synchroniseren. Je nummers zijn veilig op dit apparaat.",
+  "syncErrorAccessDenied": "Singbook heeft geen toestemming om Google Drive te gebruiken.",
+  "syncErrorAccessDeniedHint": "Meld je opnieuw aan en geef toegang tot Drive wanneer daarom wordt gevraagd.",
+  "syncErrorRateLimited": "Google beperkt momenteel het aantal verzoeken.",
+  "syncErrorRateLimitedHint": "Wacht een paar minuten en probeer het opnieuw.",
+  "syncErrorStorageFull": "Je Google Drive is vol.",
+  "syncErrorStorageFullHint": "Maak ruimte vrij in Drive en probeer het opnieuw.",
+  "syncErrorNetwork": "Google kon niet worden bereikt.",
+  "syncErrorNetworkHint": "Controleer je internetverbinding en probeer het opnieuw.",
+  "syncErrorAccountChanged": "Er is een ander Google-account gebruikt.",
+  "syncErrorAccountChangedHint": "Kies of je de bibliotheek op dit apparaat wilt samenvoegen met die van dit account of wilt vervangen.",
+  "syncErrorRemoteLibraryTooLarge": "Je gesynchroniseerde bibliotheek is groter dan Singbook aankan.",
+  "syncErrorRemoteLibraryTooLargeHint": "Verwijder nummers of setlijsten uit de gesynchroniseerde bibliotheek en probeer het opnieuw.",
+  "syncErrorSignInFailed": "Aanmelden is niet voltooid.",
+  "syncErrorSignInFailedHint": "Probeer je opnieuw aan te melden.",
+  "syncErrorGeneric": "Je bibliotheek synchroniseren is niet gelukt.",
+  "syncErrorGenericHint": "Probeer het zo nog eens. Je nummers zijn nog steeds veilig op dit apparaat."
+}

@@ -1,0 +1,670 @@
+{
+  "@@locale": "sl",
+  "appTitle": "Singbook",
+  "aboutDescription": "Mirno mesto, kjer lahko najdete in uredite svojo knjižnico pesmi ter skupaj pojete.",
+  "aboutMadeForSinging": "Ustvarjeno za skupno petje",
+  "appVersion": "Različica {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "Domov",
+  "navSongs": "Pesmi",
+  "navSetlists": "Koncertni seznami",
+  "navSettings": "Nastavitve",
+  "navSettingsCompact": "Nastavitve",
+  "navSearch": "Iskanje",
+  "navBack": "Nazaj",
+  "navClose": "Zapri",
+  "navMore": "Več dejanj",
+  "actionCancel": "Prekliči",
+  "actionSave": "Shrani",
+  "actionDone": "Končano",
+  "actionEdit": "Uredi",
+  "actionDelete": "Izbriši",
+  "actionShare": "Deli",
+  "actionPrint": "Natisni",
+  "actionCopy": "Kopiraj",
+  "actionClear": "Počisti",
+  "actionRetry": "Poskusi znova",
+  "actionRefresh": "Osveži",
+  "actionImport": "Uvozi",
+  "actionExport": "Izvozi",
+  "actionExpand": "Razširi",
+  "actionCollapse": "Strni",
+  "actionAdd": "Dodaj",
+  "actionCreate": "Ustvari",
+  "actionRemove": "Odstrani",
+  "actionDuplicate": "Podvoji",
+  "actionMoveUp": "Premakni navzgor",
+  "actionMoveDown": "Premakni navzdol",
+  "actionPrevious": "Prejšnje",
+  "actionNext": "Naslednje",
+  "searchHint": "Iščite pesmi, izvajalce ali besedila pesmi",
+  "searchCatalogHint": "Iščite pesem ali izvajalca",
+  "searchSubmit": "Išči",
+  "searchFilters": "Možnosti iskanja",
+  "searchFiltersShow": "Pokaži možnosti iskanja",
+  "searchFiltersHide": "Skrij možnosti iskanja",
+  "searchFilterArtist": "Izvajalec",
+  "searchFilterTitle": "Naslov pesmi",
+  "searchFilterLyrics": "Besedila pesmi",
+  "searchFilterChords": "Vsebuje akorde",
+  "searchFilterTimed": "Časovno usklajena besedila",
+  "searchFilterLanguage": "Jezik",
+  "searchFilterAll": "Kateri koli",
+  "searchAutocompleteLabel": "Predlogi",
+  "searchResultCount": "{count, plural, one{{count} rezultat} two{{count} rezultata} few{{count} rezultati} other{{count} rezultatov}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "Vnesite pesem, izvajalca ali del besedila za iskanje.",
+  "searchCatalogEmptyQuery": "Vnesite pesem ali izvajalca za iskanje.",
+  "searchNoResults": "Ni najdenih pesmi. Poskusite z drugačnim iskanjem.",
+  "searchLoading": "Iskanje pesmi…",
+  "searchError": "Iskanja ni bilo mogoče dokončati.",
+  "searchOnlineTab": "Na spletu",
+  "searchRecentTab": "Nedavno",
+  "searchFavoritesTab": "Priljubljeno",
+  "searchSuggested": "Predlagano ujemanje",
+  "searchAlternatives": "Druga ujemanja",
+  "searchCompare": "Primerjaj različice",
+  "searchChooseVersion": "Izberi to različico",
+  "searchSongMatch": "Ujemanje pesmi",
+  "searchRecordingMatch": "Ujemanje posnetka",
+  "searchMatchUnverified": "Posnetek ni preverjen",
+  "searchMatchExact": "Natančno ujemanje posnetka",
+  "searchMatchPossible": "Možno ujemanje",
+  "searchAvailability": "Razpoložljivost",
+  "searchLyricsAvailable": "Besedilo pesmi je na voljo",
+  "searchLyricsUnavailable": "Besedilo pesmi ni na voljo",
+  "searchChordsAvailable": "Akordi so na voljo",
+  "searchChordsUnavailable": "Ni akordov",
+  "searchTimingAvailable": "Časovno usklajevanje je na voljo",
+  "searchTimingUnavailable": "Časovno usklajevanje ni na voljo",
+  "searchDurationUnknown": "Trajanje ni znano",
+  "searchRating": "Ocena {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "Vir",
+  "searchMetadata": "Podatki o pesmi",
+  "searchAlbum": "Album",
+  "searchArtist": "Izvajalec",
+  "searchYear": "Leto",
+  "searchLanguage": "Jezik",
+  "searchSaved": "Pesem je shranjena v vaši knjižnici.",
+  "searchSaveFailed": "Pesmi ni bilo mogoče shraniti.",
+  "homeRecentSongs": "Nedavne pesmi",
+  "homeRecentlyPlayed": "Nedavno predvajano",
+  "homeFavorites": "Priljubljeno",
+  "homeHistory": "Zgodovina",
+  "homeHistoryClear": "Počisti zgodovino",
+  "homeHistoryCleared": "Zgodovina je počiščena.",
+  "homeHistoryEmpty": "Tukaj bodo prikazane pesmi, ki jih odprete.",
+  "homeFavoritesEmpty": "Tukaj bodo prikazane vaše priljubljene pesmi in koncertni seznami.",
+  "homeItemsShownCount": "{count, plural, one{Prikazan je {count} element} two{Prikazana sta {count} elementa} few{Prikazani so {count} elementi} other{Prikazanih je {count} elementov}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "Tukaj bodo prikazane vaše nedavne pesmi in koncertni seznami.",
+  "homeTimelineLabel": "Časovnica zgodovine",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "Celotna zgodovina",
+  "homeShowFavorites": "Pokaži priljubljeno",
+  "homeShowRecent": "Pokaži nedavne",
+  "songsTitle": "Pesmi",
+  "songsEmpty": "Tukaj bodo prikazane vaše pesmi.",
+  "songsEmptySearch": "Nobena pesem se ne ujema z iskanjem.",
+  "songsAdd": "Dodaj pesem",
+  "songsSortAlphabetical": "Razvrsti po abecedi",
+  "songsAlphabetNavigation": "Kazalo pesmi",
+  "songsUsageCount": "Odprto {count, plural, one{{count}-krat} two{{count}-krat} few{{count}-krat} other{{count}-krat}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "Dodaj med priljubljene",
+  "songFavoriteRemove": "Odstrani iz priljubljenih",
+  "songMenuLabel": "Dejanja za pesem",
+  "songInfo": "Podatki o pesmi",
+  "setlistMenuLabel": "Dejanja za koncertni seznam",
+  "songAddToSetlist": "Dodaj na koncertni seznam",
+  "songCopyChordPro": "Kopiraj ChordPro",
+  "songDeleteConfirmTitle": "Izbrišem pesem?",
+  "songDeleteConfirmMessage": "Ta pesem bo odstranjena iz vaše knjižnice.",
+  "songDeleted": "Pesem je izbrisana.",
+  "setlistsTitle": "Koncertni seznami",
+  "setlistsEmpty": "Ustvarite koncertni seznam za naslednjo vajo ali nastop.",
+  "setlistsEmptySearch": "Noben koncertni seznam se ne ujema z iskanjem.",
+  "setlistCreate": "Nov koncertni seznam",
+  "setlistNameHint": "Ime koncertnega seznama",
+  "setlistNotes": "Opombe",
+  "setlistEntryOverride": "Tonacija in kapodaster za posamezno pesem",
+  "setlistSongsCount": "{count, plural, one{{count} pesem} two{{count} pesmi} few{{count} pesmi} other{{count} pesmi}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "Vsaj {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "Trajanje ni znano",
+  "setlistActivity": "Zadnja dejavnost {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "Ustvarjeno {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "Urejeno {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "Nazadnje predvajano {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "Na tem koncertnem seznamu še ni pesmi.",
+  "setlistAddSongs": "Dodaj pesmi",
+  "setlistReorder": "Spremeni vrstni red pesmi",
+  "setlistMoveSongUp": "Premakni pesem »{song}« navzgor",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "Premakni pesem »{song}« navzdol",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "Odstrani pesem »{song}« s koncertnega seznama",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "Podvoji koncertni seznam",
+  "setlistFavoriteAdd": "Dodaj koncertni seznam med priljubljene",
+  "setlistFavoriteRemove": "Odstrani koncertni seznam iz priljubljenih",
+  "setlistShare": "Deli kot datoteko koncertnega seznama",
+  "setlistSharePdf": "Deli kot PDF",
+  "setlistPrint": "Natisni",
+  "setlistDeleteConfirmTitle": "Izbrišem koncertni seznam?",
+  "setlistDeleteConfirmMessage": "Koncertni seznam bo odstranjen. Pesmi v vaši knjižnici bodo ostale.",
+  "setlistDeleted": "Koncertni seznam je izbrisan.",
+  "readerTitle": "Besedila pesmi",
+  "readerNoLyrics": "Besedilo pesmi še ni dodano.",
+  "readerShowChords": "Pokaži akorde",
+  "readerHideChords": "Skrij akorde",
+  "readerTranspose": "Transponiraj akorde",
+  "readerTransposeSemitones": "Transponiraj za {count, plural, one{{count} polton} two{{count} poltona} few{{count} poltone} other{{count} poltonov}}",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "Uredi besedilo pesmi in podatke",
+  "playerPlay": "Začni drsenje besedila pesmi",
+  "playerPause": "Začasno ustavi drsenje besedila pesmi",
+  "playerResume": "Nadaljuj drsenje besedila pesmi",
+  "playerSeek": "Položaj predvajanja",
+  "playerElapsed": "Pretečeni čas {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "Preostali čas {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "Način drsenja",
+  "playerTimedLyrics": "Časovno usklajena besedila",
+  "playerEstimatedPace": "Ocenjena hitrost",
+  "playerManualScroll": "Ročno drsenje",
+  "playerTimingStatusReady": "Besedilo pesmi se bo pomikalo glede na razpoložljive časovne oznake.",
+  "playerTimingStatusEstimated": "Hitrost drsenja je ocenjena glede na trajanje pesmi.",
+  "playerTimingStatusManual": "Besedilo pesmi pomikajte sami.",
+  "playerTimingStatusUnavailable": "Časovno usklajeno drsenje za to pesem ni na voljo.",
+  "playerDurationUnknown": "Dodajte trajanje pesmi, da uporabite ocenjeno drsenje.",
+  "playerProgressLabel": "Potek pesmi",
+  "playerCurrentSection": "Trenutni del",
+  "playerPreviousSection": "Prejšnji del",
+  "playerNextSection": "Naslednji del",
+  "playerPreviousSectionSong": "Prejšnji del · pridržite za prejšnjo pesem na koncertnem seznamu",
+  "playerNextSectionSong": "Naslednji del · pridržite za naslednjo pesem na koncertnem seznamu",
+  "playerPreviousSong": "Prejšnja pesem",
+  "playerNextSong": "Naslednja pesem",
+  "editorTitle": "Uredi pesem",
+  "editorTitleField": "Naslov pesmi",
+  "editorArtistField": "Izvajalec",
+  "editorAlbumField": "Album",
+  "editorLyricsField": "Besedilo pesmi",
+  "editorChordsField": "Akordi",
+  "editorKeyField": "Tonacija",
+  "editorCapoField": "Kapodaster",
+  "editorTuningField": "Uglasitev",
+  "editorTempoField": "Tempo",
+  "editorDurationField": "Trajanje",
+  "editorTimeSignatureField": "Taktovski način",
+  "editorLanguageField": "Jezik",
+  "editorYearField": "Leto",
+  "editorComposerField": "Skladatelj",
+  "editorLyricistField": "Avtor besedila",
+  "editorCopyrightField": "Avtorske pravice",
+  "editorLicenseField": "Licenca",
+  "songInfoSources": "Viri in zasluge",
+  "searchMatchSameSong": "Ista pesem; posnetek ni potrjen",
+  "searchMatchNeedsAgreement": "Zapis akordov je treba potrditi z besedilom pesmi",
+  "searchMatchDifferentLyrics": "Besedilo se razlikuje od izbrane pesmi",
+  "searchMatchCombinedSources": "Podatki so združeni iz več virov",
+  "searchCombinedFromSources": "{count, plural, one{Združeno iz {count} vira} two{Združeno iz {count} virov} few{Združeno iz {count} virov} other{Združeno iz {count} virov}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, one{{count} ujemanje pesmi} two{{count} ujemanji pesmi} few{{count} ujemanja pesmi} other{{count} ujemanj pesmi}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, one{{count} različica vira} two{{count} različici vira} few{{count} različice vira} other{{count} različic vira}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "Najboljše razpoložljivo ujemanje",
+  "providerDescriptionUnknown": "Vir pesmi",
+  "providerDescDownloadChordProThenImport": "Prenesite datoteko ChordPro iz vira in jo nato uvozite.",
+  "providerDescFreeAccountDownloadThenImport": "Prenesite datoteko z brezplačnim računom in jo nato uvozite.",
+  "providerDescPublicChordSheets": "Javno dostopni zapisi akordov.",
+  "providerDescHistoricalTextPerWorkLicense": "Zgodovinska besedila so licencirana za vsako delo posebej.",
+  "providerDescLicensedCatalog": "Licenciran katalog besedil pesmi.",
+  "providerDescOriginalSongsCcBy": "Izvirne pesmi pod licenco Creative Commons BY.",
+  "providerDescPerSongLicense": "Besedila pesmi so licencirana za vsako pesem posebej.",
+  "providerDescRecordingMetadataOnly": "Samo podatki o posnetku in izdaji.",
+  "providerDescCompositionMetadataOnly": "Samo podatki o skladbi.",
+  "providerDescExactFileArtworkOnly": "Naslovnica je na voljo samo za natančna ujemanja posnetkov.",
+  "providerCapabilityLyrics": "Besedila pesmi",
+  "providerCapabilityChords": "Akordi",
+  "providerCapabilityTiming": "Časovno usklajena besedila",
+  "providerCapabilitySearch": "Iskanje",
+  "providerCapabilityMetadata": "Podatki o pesmi",
+  "editorArtworkField": "Povezava do naslovnice",
+  "editorLyricsHint": "Tapnite vrstico, da uredite besedilo pesmi ali akorde.",
+  "editorSave": "Shrani spremembe",
+  "editorSaved": "Spremembe so shranjene.",
+  "editorSaveFailed": "Sprememb ni bilo mogoče shraniti.",
+  "editorSaveConflict": "Pesem je bila spremenjena drugje. Vaši popravki so shranjeni kot ločena kopija.",
+  "editorUnsavedTitle": "Zavržem spremembe?",
+  "editorUnsavedMessage": "Vaši popravki niso shranjeni.",
+  "editorFieldRequired": "Vnesite naslov pesmi.",
+  "settingsTitle": "Nastavitve",
+  "settingsAppearance": "Videz",
+  "settingsTheme": "Tema",
+  "settingsThemeSystem": "Uporabi nastavitev naprave",
+  "settingsThemeLight": "Svetla",
+  "settingsThemeDark": "Temna",
+  "settingsColorPalette": "Barvna paleta",
+  "settingsFont": "Pisava",
+  "settingsTextSize": "Velikost besedila",
+  "settingsLyricsPreview": "Predogled besedila pesmi",
+  "settingsPlayer": "Predvajalnik besedil pesmi",
+  "settingsDefaultShowChords": "Privzeto pokaži akorde",
+  "settingsDefaultAutoscroll": "Samodejno začni drsenje besedila",
+  "settingsDefaultTiming": "Privzeti način drsenja",
+  "settingsLanguage": "Jezik aplikacije",
+  "settingsLanguageSystem": "Uporabi jezik naprave",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageBulgarian": "Български",
+  "settingsLanguageUkrainian": "Українська",
+  "settingsSources": "Viri besedil pesmi",
+  "settingsSourceEnabled": "Omogoči vir {source}",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "Osveži seznam virov",
+  "settingsSourcesUpdated": "Viri so posodobljeni.",
+  "settingsSourcesUpdateFailed": "Virov ni bilo mogoče osvežiti.",
+  "settingsImport": "Uvozi pesmi",
+  "settingsImportChordPro": "Uvozi datoteko ChordPro",
+  "settingsImportSetlist": "Uvozi datoteko koncertnega seznama",
+  "settingsImportSuccess": "Uvoz je končan.",
+  "settingsImportFailed": "Te datoteke ni bilo mogoče uvoziti.",
+  "settingsImportUnsupported": "Ta vrsta datoteke ni podprta.",
+  "settingsShareSong": "Deli kot ChordPro",
+  "settingsSharePdf": "Deli kot PDF",
+  "settingsCopySong": "Kopiraj v odložišče",
+  "settingsPrintSong": "Natisni samo pesem",
+  "settingsPrintSetlist": "Natisni koncertni seznam z besedili",
+  "settingsExportFailed": "Datoteke ni bilo mogoče pripraviti.",
+  "settingsCopied": "Kopirano v odložišče.",
+  "settingsAbout": "O aplikaciji",
+  "settingsPrivacy": "Zasebnost",
+  "settingsLegal": "Pravne informacije",
+  "settingsClearHistory": "Počisti zgodovino",
+  "settingsClearHistoryConfirm": "Počistim zgodovino pesmi in koncertnih seznamov?",
+  "settingsHistoryCleared": "Zgodovina je počiščena.",
+  "accountTitle": "Račun in sinhronizacija",
+  "accountUnavailable": "Za sinhronizacijo je potrebna različica Singbook s konfigurirano prijavo prek storitve Google. Ta različica hrani pesmi samo v tej napravi.",
+  "accountSyncNow": "Sinhroniziraj zdaj",
+  "accountConnected": "Povezano. Izberite »Sinhroniziraj zdaj«, da posodobite varnostno kopijo.",
+  "accountSignIn": "Poveži račun",
+  "accountSignOut": "Odjavi se",
+  "accountChange": "Zamenjaj račun",
+  "accountSignedOut": "Ni povezano",
+  "accountSyncing": "Sinhronizacija knjižnice…",
+  "accountSynced": "Knjižnica je sinhronizirana.",
+  "accountSyncFailed": "Knjižnice ni bilo mogoče sinhronizirati.",
+  "accessibilityFavorite": "Priljubljeno",
+  "accessibilityNotFavorite": "Ni priljubljeno",
+  "accessibilitySearchField": "Iskanje pesmi",
+  "accessibilityClearSearch": "Počisti besedilo iskanja",
+  "accessibilitySongMenu": "Dejanja za pesem {song}",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "Dejanja za koncertni seznam {setlist}",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "Razširi pesmi na koncertnem seznamu {setlist}",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "Strni pesmi na koncertnem seznamu {setlist}",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "Potek predvajanja, {percent, plural, one{{percent} odstotek} two{{percent} odstotka} few{{percent} odstotki} other{{percent} odstotkov}}",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "Časovnica zgodovine, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "Nalaganje…",
+  "loadingSongs": "Nalaganje pesmi…",
+  "loadingSetlists": "Nalaganje koncertnih seznamov…",
+  "errorGeneric": "Prišlo je do napake.",
+  "errorOffline": "Videti je, da niste povezani.",
+  "errorPermission": "Za nadaljevanje je potrebno dovoljenje.",
+  "emptyFiltered": "Noben element se ne ujema s temi filtri.",
+  "unknownValue": "Neznano",
+  "durationUnknown": "Trajanje ni znano",
+  "metadataNotSet": "Ni nastavljeno",
+  "dateToday": "Danes",
+  "dateYesterday": "Včeraj",
+  "daySongCount": "{count, plural, one{{count} pesem} two{{count} pesmi} few{{count} pesmi} other{{count} pesmi}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "Mornarsko modra",
+  "settingsPaletteSage": "Žajbljevo zelena",
+  "settingsPaletteOcean": "Oceanska",
+  "settingsPaletteClay": "Glinena",
+  "settingsPalettePlum": "Slivova",
+  "settingsFontSystem": "Sistemska",
+  "settingsFontSerif": "Serifna",
+  "settingsFontMonospace": "Enakomerno široka",
+  "settingsLyricsPreviewExample": "Ko pride jutro, bomo spet peli.",
+  "searchDiscoveryProgress": "Preverjanje virov besedil pesmi: dokončano {checked} od {total}.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "Ni najdenega uporabnega besedila pesmi.",
+  "searchDiscoveryNoLyricsDetails": "Izbrana pesem je bila preverjena v omogočenih virih, vendar noben ni vrnil uporabne različice besedila.",
+  "searchDiscoveryError": "Virov besedil pesmi ni bilo mogoče preveriti.",
+  "searchDiscoveryRetry": "Znova poišči besedilo pesmi",
+  "searchSourcesUnavailableCount": "{count, plural, one{{count} vir ni na voljo} two{{count} vira nista na voljo} few{{count} viri niso na voljo} other{{count} virov ni na voljo}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "Preverite povezavo in poskusite znova.",
+  "searchProviderChecks": "Preverjanja virov",
+  "searchProviderPending": "Preverjanje",
+  "searchProviderFound": "Ujemanje je najdeno",
+  "searchProviderRejected": "Se ne ujema",
+  "searchProviderFailed": "Preverjanje ni uspelo",
+  "searchProviderUnavailable": "Ni uporabnega besedila pesmi",
+  "searchCatalogFilterHint": "Izberite pesem, da filtrirate različice besedila po akordih, časovnih oznakah ali jeziku.",
+  "startupErrorTitle": "Knjižnice ni bilo mogoče odpreti.",
+  "setlistCopyName": "Kopija: {name}",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "Manjkajoča pesem",
+  "settingsImportTooLarge": "Ta datoteka je prevelika za uvoz.",
+  "songsJumpToLetter": "Pojdi na črko {letter}",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "Zavrzi",
+  "editorKeepEditing": "Nadaljuj urejanje",
+  "settingsDefaultShowChordsHint": "Če pesem vsebuje akorde, so prikazani nad besedilom.",
+  "settingsDefaultAutoscrollHint": "Besedilo se pomika skupaj s pesmijo. V načinu ročnega drsenja se ne uporablja.",
+  "accountUnavailableTitle": "Sinhronizacija ni nastavljena",
+  "accountSignedOutBenefits": "Prijavite se prek storitve Google, da varnostno kopirate pesmi in koncertne sezname v Google Drive ter sinhronizirate vse naprave. Pesmi bodo v vsakem primeru ostale v tej napravi.",
+  "accountSignInWithGoogle": "Prijava prek storitve Google",
+  "accountWorking": "Obdelava…",
+  "accountNeverSynced": "Še ni sinhronizirano",
+  "accountSyncedJustNow": "Pravkar sinhronizirano",
+  "accountSyncedMinutesAgo": "{count, plural, one{Sinhronizirano pred {count} minuto} two{Sinhronizirano pred {count} minutama} few{Sinhronizirano pred {count} minutami} other{Sinhronizirano pred {count} minutami}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{Sinhronizirano pred {count} uro} two{Sinhronizirano pred {count} urama} few{Sinhronizirano pred {count} urami} other{Sinhronizirano pred {count} urami}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{Sinhronizirano pred {count} dnevom} two{Sinhronizirano pred {count} dnevoma} few{Sinhronizirano pred {count} dnevi} other{Sinhronizirano pred {count} dnevi}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{{count} sporna sprememba je shranjena kot kopija} two{{count} sporni spremembi sta shranjeni kot kopiji} few{{count} sporne spremembe so shranjene kot kopije} other{{count} spornih sprememb je shranjenih kot kopije}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "Ista pesem ali koncertni seznam je bil urejen na dveh mestih. Nič ni izgubljeno: druga različica je shranjena kot ločena kopija.",
+  "accountReviewConflicts": "Preglej kopije",
+  "songsConflictFilterActive": "Prikazane so samo konfliktne kopije",
+  "songsConflictFilterClear": "Prikaži vse pesmi",
+  "songsConflictBadge": "Konfliktna kopija",
+  "songsConflictEmpty": "Ni konfliktnih kopij.",
+  "accountAutoSync": "Samodejna sinhronizacija",
+  "accountAutoSyncHint": "Knjižnica se posodobi ob odprtju aplikacije in po spremembah.",
+  "accountSignOutTitle": "Se želite odjaviti iz tega računa?",
+  "accountSignOutBody": "Pesmi in koncertni seznami bodo ostali v tej napravi. Ne bodo varnostno kopirani ali sinhronizirani, dokler se znova ne prijavite.",
+  "accountUseDifferent": "Uporabi drug račun",
+  "accountSignInAgain": "Znova se prijavi",
+  "accountChooseAction": "Izberite, kako želite nadaljevati",
+  "accountChangedTitle": "Drug račun Google",
+  "accountChangedBody": "Ta naprava je bila nazadnje sinhronizirana z drugim računom Google. Izberite, kaj naj se zgodi s pesmimi in koncertnimi seznami v tej napravi.",
+  "accountChangedMerge": "Združi z novim računom",
+  "accountChangedMergeHint": "Vse v tej napravi bo ohranjeno in dodano v novi račun.",
+  "accountChangedReplace": "Zamenjaj s knjižnico novega računa",
+  "accountChangedReplaceHint": "Pesmi v tej napravi, ki jih ni v novem računu, bodo odstranjene.",
+  "accountChangedSignOut": "Prekliči in se odjavi",
+  "accountStatusSignedOut": "Račun in sinhronizacija: niste prijavljeni",
+  "accountStatusSignedIn": "Račun in sinhronizacija: prijavljeni ste",
+  "accountStatusSyncing": "Račun in sinhronizacija: sinhronizacija poteka",
+  "accountStatusSynced": "Račun in sinhronizacija: knjižnica je posodobljena",
+  "accountStatusError": "Račun in sinhronizacija: težava, tapnite za pregled",
+  "accountNoticeConflicts": "Nekatere pesmi so bile urejene na dveh mestih. Kopije so ohranjene.",
+  "accountNoticeSignedIn": "Prijavljeni ste.",
+  "accountNoticeSignedOut": "Odjavljeni ste. Pesmi ostanejo v tej napravi.",
+  "syncErrorNotConfigured": "Sinhronizacija v tej različici ni nastavljena.",
+  "syncErrorNotConfiguredHint": "Uporabite različico Singbook s konfigurirano prijavo prek storitve Google.",
+  "syncErrorNotSignedIn": "Niste prijavljeni.",
+  "syncErrorNotSignedInHint": "Prijavite se za sinhronizacijo knjižnice.",
+  "syncErrorAuthorizationRequired": "Google zahteva, da se znova prijavite.",
+  "syncErrorAuthorizationRequiredHint": "Znova se prijavite za nadaljevanje sinhronizacije. Vaše pesmi so v tej napravi varne.",
+  "syncErrorAccessDenied": "Singbook nima dovoljenja za uporabo Google Drive.",
+  "syncErrorAccessDeniedHint": "Znova se prijavite in ob pozivu dovolite dostop do Drive.",
+  "syncErrorRateLimited": "Google trenutno omejuje število zahtev.",
+  "syncErrorRateLimitedHint": "Počakajte nekaj minut in poskusite znova.",
+  "syncErrorStorageFull": "Vaš Google Drive je poln.",
+  "syncErrorStorageFullHint": "Sprostite prostor v Drive in poskusite znova.",
+  "syncErrorNetwork": "Povezava s storitvijo Google ni uspela.",
+  "syncErrorNetworkHint": "Preverite internetno povezavo in poskusite znova.",
+  "syncErrorAccountChanged": "Uporabljen je bil drug račun Google.",
+  "syncErrorAccountChangedHint": "Izberite, ali želite knjižnico te naprave združiti z njim ali jo zamenjati.",
+  "syncErrorRemoteLibraryTooLarge": "Sinhronizirana knjižnica je prevelika, da bi jo Singbook lahko obdelal.",
+  "syncErrorRemoteLibraryTooLargeHint": "Odstranite nekaj pesmi ali koncertnih seznamov iz sinhronizirane knjižnice in poskusite znova.",
+  "syncErrorSignInFailed": "Prijava ni bila dokončana.",
+  "syncErrorSignInFailedHint": "Poskusite se znova prijaviti.",
+  "syncErrorGeneric": "Knjižnice ni bilo mogoče sinhronizirati.",
+  "syncErrorGenericHint": "Poskusite znova čez nekaj trenutkov. Vaše pesmi so v tej napravi še vedno varne."
+}

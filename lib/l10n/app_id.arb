@@ -1,0 +1,670 @@
+{
+  "@@locale": "id",
+  "appTitle": "Singbook",
+  "aboutDescription": "Tempat yang nyaman untuk menemukan, mengatur, dan bernyanyi bersama koleksi lagu Anda.",
+  "aboutMadeForSinging": "Dibuat untuk bernyanyi bersama",
+  "appVersion": "Versi {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "Beranda",
+  "navSongs": "Lagu",
+  "navSetlists": "Daftar lagu",
+  "navSettings": "Pengaturan",
+  "navSettingsCompact": "Pengaturan",
+  "navSearch": "Cari",
+  "navBack": "Kembali",
+  "navClose": "Tutup",
+  "navMore": "Tindakan lainnya",
+  "actionCancel": "Batal",
+  "actionSave": "Simpan",
+  "actionDone": "Selesai",
+  "actionEdit": "Edit",
+  "actionDelete": "Hapus",
+  "actionShare": "Bagikan",
+  "actionPrint": "Cetak",
+  "actionCopy": "Salin",
+  "actionClear": "Bersihkan",
+  "actionRetry": "Coba lagi",
+  "actionRefresh": "Muat ulang",
+  "actionImport": "Impor",
+  "actionExport": "Ekspor",
+  "actionExpand": "Perluas",
+  "actionCollapse": "Ciutkan",
+  "actionAdd": "Tambahkan",
+  "actionCreate": "Buat",
+  "actionRemove": "Hapus",
+  "actionDuplicate": "Duplikasi",
+  "actionMoveUp": "Pindahkan ke atas",
+  "actionMoveDown": "Pindahkan ke bawah",
+  "actionPrevious": "Sebelumnya",
+  "actionNext": "Berikutnya",
+  "searchHint": "Cari lagu, artis, atau lirik",
+  "searchCatalogHint": "Cari lagu atau artis",
+  "searchSubmit": "Cari",
+  "searchFilters": "Opsi pencarian",
+  "searchFiltersShow": "Tampilkan opsi pencarian",
+  "searchFiltersHide": "Sembunyikan opsi pencarian",
+  "searchFilterArtist": "Artis",
+  "searchFilterTitle": "Judul lagu",
+  "searchFilterLyrics": "Lirik",
+  "searchFilterChords": "Memiliki akor",
+  "searchFilterTimed": "Lirik bertanda waktu",
+  "searchFilterLanguage": "Bahasa",
+  "searchFilterAll": "Apa saja",
+  "searchAutocompleteLabel": "Saran",
+  "searchResultCount": "{count, plural, =0{Tidak ada hasil} =1{1 hasil} other{{count} hasil}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "Masukkan lagu, artis, atau lirik untuk mencari.",
+  "searchCatalogEmptyQuery": "Masukkan lagu atau artis untuk mencari.",
+  "searchNoResults": "Lagu tidak ditemukan. Coba pencarian lain.",
+  "searchLoading": "Mencari lagu…",
+  "searchError": "Pencarian tidak dapat diselesaikan.",
+  "searchOnlineTab": "Online",
+  "searchRecentTab": "Terbaru",
+  "searchFavoritesTab": "Favorit",
+  "searchSuggested": "Kecocokan yang disarankan",
+  "searchAlternatives": "Kecocokan lainnya",
+  "searchCompare": "Bandingkan versi",
+  "searchChooseVersion": "Pilih versi ini",
+  "searchSongMatch": "Kecocokan lagu",
+  "searchRecordingMatch": "Kecocokan rekaman",
+  "searchMatchUnverified": "Rekaman belum diverifikasi",
+  "searchMatchExact": "Rekaman cocok persis",
+  "searchMatchPossible": "Kemungkinan cocok",
+  "searchAvailability": "Ketersediaan",
+  "searchLyricsAvailable": "Lirik tersedia",
+  "searchLyricsUnavailable": "Lirik tidak tersedia",
+  "searchChordsAvailable": "Akor tersedia",
+  "searchChordsUnavailable": "Tidak ada akor",
+  "searchTimingAvailable": "Penanda waktu tersedia",
+  "searchTimingUnavailable": "Tidak ada penanda waktu",
+  "searchDurationUnknown": "Durasi tidak diketahui",
+  "searchRating": "Penilaian {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "Sumber",
+  "searchMetadata": "Detail lagu",
+  "searchAlbum": "Album",
+  "searchArtist": "Artis",
+  "searchYear": "Tahun",
+  "searchLanguage": "Bahasa",
+  "searchSaved": "Lagu disimpan ke pustaka Anda.",
+  "searchSaveFailed": "Lagu ini tidak dapat disimpan.",
+  "homeRecentSongs": "Lagu terbaru",
+  "homeRecentlyPlayed": "Baru diputar",
+  "homeFavorites": "Favorit",
+  "homeHistory": "Riwayat",
+  "homeHistoryClear": "Hapus riwayat",
+  "homeHistoryCleared": "Riwayat dihapus.",
+  "homeHistoryEmpty": "Lagu yang Anda buka akan muncul di sini.",
+  "homeFavoritesEmpty": "Lagu dan daftar lagu favorit Anda akan muncul di sini.",
+  "homeItemsShownCount": "{count, plural, =0{0 item ditampilkan} =1{1 item ditampilkan} other{{count} item ditampilkan}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "Lagu dan daftar lagu terbaru Anda akan muncul di sini.",
+  "homeTimelineLabel": "Linimasa riwayat",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "Semua riwayat",
+  "homeShowFavorites": "Tampilkan favorit",
+  "homeShowRecent": "Tampilkan terbaru",
+  "songsTitle": "Lagu",
+  "songsEmpty": "Lagu Anda akan muncul di sini.",
+  "songsEmptySearch": "Tidak ada lagu yang cocok dengan pencarian Anda.",
+  "songsAdd": "Tambahkan lagu",
+  "songsSortAlphabetical": "Urutkan menurut abjad",
+  "songsAlphabetNavigation": "Indeks lagu",
+  "songsUsageCount": "{count, plural, =0{Tidak pernah dibuka} =1{Dibuka sekali} other{Dibuka {count} kali}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "Tambahkan ke favorit",
+  "songFavoriteRemove": "Hapus dari favorit",
+  "songMenuLabel": "Tindakan lagu",
+  "songInfo": "Detail lagu",
+  "setlistMenuLabel": "Tindakan daftar lagu",
+  "songAddToSetlist": "Tambahkan ke daftar lagu",
+  "songCopyChordPro": "Salin ChordPro",
+  "songDeleteConfirmTitle": "Hapus lagu?",
+  "songDeleteConfirmMessage": "Lagu ini akan dihapus dari pustaka Anda.",
+  "songDeleted": "Lagu dihapus.",
+  "setlistsTitle": "Daftar lagu",
+  "setlistsEmpty": "Buat daftar lagu untuk latihan atau pertunjukan berikutnya.",
+  "setlistsEmptySearch": "Tidak ada daftar lagu yang cocok dengan pencarian Anda.",
+  "setlistCreate": "Daftar lagu baru",
+  "setlistNameHint": "Nama daftar lagu",
+  "setlistNotes": "Catatan",
+  "setlistEntryOverride": "Nada dasar dan capo khusus untuk lagu ini",
+  "setlistSongsCount": "{count, plural, =0{Tidak ada lagu} =1{1 lagu} other{{count} lagu}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "Setidaknya {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "Durasi tidak diketahui",
+  "setlistActivity": "Aktivitas terakhir {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "Dibuat {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "Diedit {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "Terakhir diputar {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "Belum ada lagu dalam daftar ini.",
+  "setlistAddSongs": "Tambahkan lagu",
+  "setlistReorder": "Atur ulang lagu",
+  "setlistMoveSongUp": "Pindahkan {song} ke atas",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "Pindahkan {song} ke bawah",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "Hapus {song} dari daftar lagu",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "Duplikasi daftar lagu",
+  "setlistFavoriteAdd": "Tambahkan daftar lagu ke favorit",
+  "setlistFavoriteRemove": "Hapus daftar lagu dari favorit",
+  "setlistShare": "Bagikan sebagai file daftar lagu",
+  "setlistSharePdf": "Bagikan sebagai PDF",
+  "setlistPrint": "Cetak",
+  "setlistDeleteConfirmTitle": "Hapus daftar lagu?",
+  "setlistDeleteConfirmMessage": "Daftar lagu akan dihapus. Lagu di pustaka Anda akan tetap ada.",
+  "setlistDeleted": "Daftar lagu dihapus.",
+  "readerTitle": "Lirik",
+  "readerNoLyrics": "Lirik belum ditambahkan.",
+  "readerShowChords": "Tampilkan akor",
+  "readerHideChords": "Sembunyikan akor",
+  "readerTranspose": "Transposisikan akor",
+  "readerTransposeSemitones": "Transposisikan {count, plural, =0{0 semiton} =1{1 semiton} other{{count} semiton}}",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "Edit lirik dan detail",
+  "playerPlay": "Mulai gulir lirik",
+  "playerPause": "Jeda gulir lirik",
+  "playerResume": "Lanjutkan gulir lirik",
+  "playerSeek": "Posisi pemutaran",
+  "playerElapsed": "Waktu berlalu {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "Sisa waktu {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "Mode gulir",
+  "playerTimedLyrics": "Lirik bertanda waktu",
+  "playerEstimatedPace": "Kecepatan perkiraan",
+  "playerManualScroll": "Gulir manual",
+  "playerTimingStatusReady": "Lirik akan mengikuti penanda waktu yang tersedia.",
+  "playerTimingStatusEstimated": "Kecepatan gulir diperkirakan dari durasi lagu.",
+  "playerTimingStatusManual": "Gulir lirik secara manual.",
+  "playerTimingStatusUnavailable": "Gulir tersinkronisasi tidak tersedia untuk lagu ini.",
+  "playerDurationUnknown": "Tambahkan durasi lagu untuk menggunakan gulir perkiraan.",
+  "playerProgressLabel": "Progres lagu",
+  "playerCurrentSection": "Bagian saat ini",
+  "playerPreviousSection": "Bagian sebelumnya",
+  "playerNextSection": "Bagian berikutnya",
+  "playerPreviousSectionSong": "Bagian sebelumnya · tahan untuk lagu sebelumnya dalam daftar",
+  "playerNextSectionSong": "Bagian berikutnya · tahan untuk lagu berikutnya dalam daftar",
+  "playerPreviousSong": "Lagu sebelumnya",
+  "playerNextSong": "Lagu berikutnya",
+  "editorTitle": "Edit lagu",
+  "editorTitleField": "Judul lagu",
+  "editorArtistField": "Artis",
+  "editorAlbumField": "Album",
+  "editorLyricsField": "Lirik",
+  "editorChordsField": "Akor",
+  "editorKeyField": "Nada dasar",
+  "editorCapoField": "Capo",
+  "editorTuningField": "Penyetelan",
+  "editorTempoField": "Tempo",
+  "editorDurationField": "Durasi",
+  "editorTimeSignatureField": "Tanda birama",
+  "editorLanguageField": "Bahasa",
+  "editorYearField": "Tahun",
+  "editorComposerField": "Komposer",
+  "editorLyricistField": "Penulis lirik",
+  "editorCopyrightField": "Hak cipta",
+  "editorLicenseField": "Lisensi",
+  "songInfoSources": "Sumber dan kredit",
+  "searchMatchSameSong": "Lagu yang sama; rekaman belum dikonfirmasi",
+  "searchMatchNeedsAgreement": "Lirik pada lembar akor perlu dikonfirmasi",
+  "searchMatchDifferentLyrics": "Lirik berbeda dari lagu yang dipilih",
+  "searchMatchCombinedSources": "Detail digabungkan dari beberapa sumber",
+  "searchCombinedFromSources": "{count, plural, =1{Digabungkan dari 1 sumber} other{Digabungkan dari {count} sumber}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, =0{0 kecocokan lagu} =1{1 kecocokan lagu} other{{count} kecocokan lagu}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, =0{0 versi sumber} =1{1 versi sumber} other{{count} versi sumber}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "Kecocokan terbaik yang tersedia",
+  "providerDescriptionUnknown": "Sumber lagu",
+  "providerDescDownloadChordProThenImport": "Unduh file ChordPro dari sumber, lalu impor.",
+  "providerDescFreeAccountDownloadThenImport": "Unduh file dengan akun gratis, lalu impor.",
+  "providerDescPublicChordSheets": "Lembar akor publik.",
+  "providerDescHistoricalTextPerWorkLicense": "Lirik historis berlisensi per karya.",
+  "providerDescLicensedCatalog": "Katalog lirik berlisensi.",
+  "providerDescOriginalSongsCcBy": "Lagu orisinal berlisensi Creative Commons BY.",
+  "providerDescPerSongLicense": "Lirik berlisensi per lagu.",
+  "providerDescRecordingMetadataOnly": "Hanya detail rekaman dan rilis.",
+  "providerDescCompositionMetadataOnly": "Hanya detail komposisi.",
+  "providerDescExactFileArtworkOnly": "Sampul hanya untuk rekaman yang cocok persis.",
+  "providerCapabilityLyrics": "Lirik",
+  "providerCapabilityChords": "Akor",
+  "providerCapabilityTiming": "Lirik bertanda waktu",
+  "providerCapabilitySearch": "Pencarian",
+  "providerCapabilityMetadata": "Detail lagu",
+  "editorArtworkField": "Tautan sampul",
+  "editorLyricsHint": "Ketuk baris untuk mengedit lirik atau akor.",
+  "editorSave": "Simpan perubahan",
+  "editorSaved": "Perubahan disimpan.",
+  "editorSaveFailed": "Perubahan tidak dapat disimpan.",
+  "editorSaveConflict": "Lagu diubah di tempat lain. Perubahan Anda disimpan sebagai salinan terpisah.",
+  "editorUnsavedTitle": "Buang perubahan?",
+  "editorUnsavedMessage": "Perubahan Anda belum disimpan.",
+  "editorFieldRequired": "Masukkan judul lagu.",
+  "settingsTitle": "Pengaturan",
+  "settingsAppearance": "Tampilan",
+  "settingsTheme": "Tema",
+  "settingsThemeSystem": "Gunakan pengaturan perangkat",
+  "settingsThemeLight": "Terang",
+  "settingsThemeDark": "Gelap",
+  "settingsColorPalette": "Palet warna",
+  "settingsFont": "Font",
+  "settingsTextSize": "Ukuran teks",
+  "settingsLyricsPreview": "Pratinjau lirik",
+  "settingsPlayer": "Pemutar lirik",
+  "settingsDefaultShowChords": "Tampilkan akor secara default",
+  "settingsDefaultAutoscroll": "Mulai gulir lirik secara otomatis",
+  "settingsDefaultTiming": "Mode gulir default",
+  "settingsLanguage": "Bahasa aplikasi",
+  "settingsLanguageSystem": "Gunakan bahasa perangkat",
+  "settingsLanguageEnglish": "Inggris",
+  "settingsLanguageBulgarian": "Bulgaria",
+  "settingsLanguageUkrainian": "Ukraina",
+  "settingsSources": "Sumber lirik",
+  "settingsSourceEnabled": "Aktifkan sumber {source}",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "Muat ulang daftar sumber",
+  "settingsSourcesUpdated": "Sumber diperbarui.",
+  "settingsSourcesUpdateFailed": "Sumber tidak dapat dimuat ulang.",
+  "settingsImport": "Impor lagu",
+  "settingsImportChordPro": "Impor file ChordPro",
+  "settingsImportSetlist": "Impor file daftar lagu",
+  "settingsImportSuccess": "Impor selesai.",
+  "settingsImportFailed": "File ini tidak dapat diimpor.",
+  "settingsImportUnsupported": "Jenis file ini tidak didukung.",
+  "settingsShareSong": "Bagikan sebagai ChordPro",
+  "settingsSharePdf": "Bagikan sebagai PDF",
+  "settingsCopySong": "Salin ke papan klip",
+  "settingsPrintSong": "Cetak lagu saja",
+  "settingsPrintSetlist": "Cetak daftar lagu beserta lirik",
+  "settingsExportFailed": "File tidak dapat disiapkan.",
+  "settingsCopied": "Disalin ke papan klip.",
+  "settingsAbout": "Tentang",
+  "settingsPrivacy": "Privasi",
+  "settingsLegal": "Informasi hukum",
+  "settingsClearHistory": "Hapus riwayat",
+  "settingsClearHistoryConfirm": "Hapus riwayat lagu dan daftar lagu?",
+  "settingsHistoryCleared": "Riwayat dihapus.",
+  "accountTitle": "Akun dan sinkronisasi",
+  "accountUnavailable": "Sinkronisasi memerlukan versi Singbook yang dikonfigurasi untuk login Google. Versi ini hanya menyimpan lagu di perangkat ini.",
+  "accountSyncNow": "Sinkronkan sekarang",
+  "accountConnected": "Terhubung. Pilih Sinkronkan sekarang untuk memperbarui cadangan Anda.",
+  "accountSignIn": "Hubungkan akun",
+  "accountSignOut": "Keluar",
+  "accountChange": "Ganti akun",
+  "accountSignedOut": "Tidak terhubung",
+  "accountSyncing": "Menyinkronkan pustaka Anda…",
+  "accountSynced": "Pustaka disinkronkan.",
+  "accountSyncFailed": "Pustaka Anda tidak dapat disinkronkan.",
+  "accessibilityFavorite": "Favorit",
+  "accessibilityNotFavorite": "Bukan favorit",
+  "accessibilitySearchField": "Cari lagu",
+  "accessibilityClearSearch": "Hapus teks pencarian",
+  "accessibilitySongMenu": "Tindakan untuk {song}",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "Tindakan untuk {setlist}",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "Perluas lagu dalam {setlist}",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "Ciutkan lagu dalam {setlist}",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "Progres pemutaran, {percent} persen",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "Linimasa riwayat, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "Memuat…",
+  "loadingSongs": "Memuat lagu…",
+  "loadingSetlists": "Memuat daftar lagu…",
+  "errorGeneric": "Terjadi kesalahan.",
+  "errorOffline": "Sepertinya Anda sedang offline.",
+  "errorPermission": "Izin diperlukan untuk melanjutkan.",
+  "emptyFiltered": "Tidak ada item yang cocok dengan filter ini.",
+  "unknownValue": "Tidak diketahui",
+  "durationUnknown": "Durasi tidak diketahui",
+  "metadataNotSet": "Belum diatur",
+  "dateToday": "Hari ini",
+  "dateYesterday": "Kemarin",
+  "daySongCount": "{count, plural, =0{Tidak ada lagu} =1{1 lagu} other{{count} lagu}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "Biru tua",
+  "settingsPaletteSage": "Hijau sage",
+  "settingsPaletteOcean": "Samudra",
+  "settingsPaletteClay": "Tanah liat",
+  "settingsPalettePlum": "Prem",
+  "settingsFontSystem": "Sistem",
+  "settingsFontSerif": "Serif",
+  "settingsFontMonospace": "Monospace",
+  "settingsLyricsPreviewExample": "Saat pagi tiba, kita akan bernyanyi lagi.",
+  "searchDiscoveryProgress": "Memeriksa sumber lirik: {checked} dari {total} selesai.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "Tidak ditemukan lirik yang dapat digunakan.",
+  "searchDiscoveryNoLyricsDetails": "Lagu yang dipilih telah diperiksa pada sumber yang diaktifkan, tetapi tidak ada yang memberikan versi lirik yang dapat digunakan.",
+  "searchDiscoveryError": "Sumber lirik tidak dapat diperiksa.",
+  "searchDiscoveryRetry": "Cari lirik lagi",
+  "searchSourcesUnavailableCount": "{count, plural, =0{0 sumber tidak tersedia} =1{1 sumber tidak tersedia} other{{count} sumber tidak tersedia}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "Periksa koneksi Anda lalu coba lagi.",
+  "searchProviderChecks": "Pemeriksaan sumber",
+  "searchProviderPending": "Memeriksa",
+  "searchProviderFound": "Kecocokan ditemukan",
+  "searchProviderRejected": "Tidak cocok",
+  "searchProviderFailed": "Pemeriksaan gagal",
+  "searchProviderUnavailable": "Tidak ada lirik yang dapat digunakan",
+  "searchCatalogFilterHint": "Pilih lagu untuk memfilter versi lirik berdasarkan akor, penanda waktu, atau bahasa.",
+  "startupErrorTitle": "Pustaka Anda tidak dapat dibuka.",
+  "setlistCopyName": "Salinan {name}",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "Lagu tidak ditemukan",
+  "settingsImportTooLarge": "File ini terlalu besar untuk diimpor.",
+  "songsJumpToLetter": "Lompat ke {letter}",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "Buang",
+  "editorKeepEditing": "Lanjutkan mengedit",
+  "settingsDefaultShowChordsHint": "Tampilkan akor di atas lirik jika lagu memilikinya.",
+  "settingsDefaultAutoscrollHint": "Lirik bergulir mengikuti lagu. Tidak digunakan dalam mode gulir manual.",
+  "accountUnavailableTitle": "Sinkronisasi belum disiapkan",
+  "accountSignedOutBenefits": "Login dengan Google untuk mencadangkan lagu dan daftar lagu ke Google Drive serta menyinkronkan semua perangkat Anda. Lagu tetap tersimpan di perangkat ini.",
+  "accountSignInWithGoogle": "Login dengan Google",
+  "accountWorking": "Memproses…",
+  "accountNeverSynced": "Belum pernah disinkronkan",
+  "accountSyncedJustNow": "Baru saja disinkronkan",
+  "accountSyncedMinutesAgo": "{count, plural, one{Disinkronkan 1 menit yang lalu} other{Disinkronkan {count} menit yang lalu}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{Disinkronkan 1 jam yang lalu} other{Disinkronkan {count} jam yang lalu}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{Disinkronkan 1 hari yang lalu} other{Disinkronkan {count} hari yang lalu}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{1 perubahan yang bertentangan disimpan sebagai salinan} other{{count} perubahan yang bertentangan disimpan sebagai salinan}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "Lagu atau daftar lagu yang sama diedit di dua tempat. Tidak ada yang hilang: versi lainnya disimpan sebagai salinan terpisah.",
+  "accountReviewConflicts": "Tinjau salinan",
+  "songsConflictFilterActive": "Hanya menampilkan salinan yang bertentangan",
+  "songsConflictFilterClear": "Tampilkan semua lagu",
+  "songsConflictBadge": "Salinan yang bertentangan",
+  "songsConflictEmpty": "Tidak ada salinan yang bertentangan.",
+  "accountAutoSync": "Sinkronkan otomatis",
+  "accountAutoSyncHint": "Jaga agar pustaka tetap terbaru saat Anda membuka aplikasi dan setelah perubahan.",
+  "accountSignOutTitle": "Keluar dari akun ini?",
+  "accountSignOutBody": "Lagu dan daftar lagu Anda tetap ada di perangkat ini. Lagu tidak akan dicadangkan atau disinkronkan sampai Anda login kembali.",
+  "accountUseDifferent": "Gunakan akun lain",
+  "accountSignInAgain": "Login kembali",
+  "accountChooseAction": "Pilih cara untuk melanjutkan",
+  "accountChangedTitle": "Akun Google berbeda",
+  "accountChangedBody": "Perangkat ini terakhir disinkronkan dengan akun Google lain. Pilih tindakan untuk lagu dan daftar lagu di perangkat ini.",
+  "accountChangedMerge": "Gabungkan ke akun baru",
+  "accountChangedMergeHint": "Simpan semua yang ada di perangkat ini dan tambahkan ke akun baru.",
+  "accountChangedReplace": "Ganti dengan pustaka akun baru",
+  "accountChangedReplaceHint": "Lagu di perangkat ini yang tidak ada di akun baru akan dihapus.",
+  "accountChangedSignOut": "Batal dan keluar",
+  "accountStatusSignedOut": "Akun dan sinkronisasi: belum login",
+  "accountStatusSignedIn": "Akun dan sinkronisasi: sudah login",
+  "accountStatusSyncing": "Akun dan sinkronisasi: sedang menyinkronkan",
+  "accountStatusSynced": "Akun dan sinkronisasi: pustaka terbaru",
+  "accountStatusError": "Akun dan sinkronisasi: ada masalah, ketuk untuk meninjau",
+  "accountNoticeConflicts": "Beberapa lagu diedit di dua tempat. Salinannya dipertahankan.",
+  "accountNoticeSignedIn": "Login berhasil.",
+  "accountNoticeSignedOut": "Anda telah keluar. Lagu Anda tetap ada di perangkat ini.",
+  "syncErrorNotConfigured": "Sinkronisasi belum disiapkan di versi ini.",
+  "syncErrorNotConfiguredHint": "Gunakan versi Singbook yang dikonfigurasi untuk login Google.",
+  "syncErrorNotSignedIn": "Anda belum login.",
+  "syncErrorNotSignedInHint": "Login untuk menyinkronkan pustaka Anda.",
+  "syncErrorAuthorizationRequired": "Google meminta Anda untuk login kembali.",
+  "syncErrorAuthorizationRequiredHint": "Login kembali untuk melanjutkan sinkronisasi. Lagu Anda aman di perangkat ini.",
+  "syncErrorAccessDenied": "Singbook tidak memiliki izin untuk menggunakan Google Drive.",
+  "syncErrorAccessDeniedHint": "Login kembali dan izinkan akses ke Drive saat diminta.",
+  "syncErrorRateLimited": "Google sedang membatasi permintaan.",
+  "syncErrorRateLimitedHint": "Tunggu beberapa menit, lalu coba lagi.",
+  "syncErrorStorageFull": "Google Drive Anda penuh.",
+  "syncErrorStorageFullHint": "Kosongkan ruang di Drive, lalu coba lagi.",
+  "syncErrorNetwork": "Google tidak dapat dijangkau.",
+  "syncErrorNetworkHint": "Periksa koneksi internet Anda, lalu coba lagi.",
+  "syncErrorAccountChanged": "Akun Google yang berbeda telah digunakan.",
+  "syncErrorAccountChangedHint": "Pilih apakah pustaka perangkat ini akan digabungkan dengan akun atau diganti.",
+  "syncErrorRemoteLibraryTooLarge": "Pustaka yang disinkronkan lebih besar daripada yang dapat ditangani Singbook.",
+  "syncErrorRemoteLibraryTooLargeHint": "Hapus beberapa lagu atau daftar dari pustaka yang disinkronkan, lalu coba lagi.",
+  "syncErrorSignInFailed": "Login tidak selesai.",
+  "syncErrorSignInFailedHint": "Coba login lagi.",
+  "syncErrorGeneric": "Pustaka Anda tidak dapat disinkronkan.",
+  "syncErrorGenericHint": "Coba lagi sebentar lagi. Lagu Anda tetap aman di perangkat ini."
+}

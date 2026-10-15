@@ -1,0 +1,670 @@
+{
+  "@@locale": "hi",
+  "appTitle": "Singbook",
+  "aboutDescription": "अपनी गीत लाइब्रेरी में गीत खोजने, व्यवस्थित करने और गाने के लिए एक शांत जगह।",
+  "aboutMadeForSinging": "साथ मिलकर गाने के लिए बनाया गया",
+  "appVersion": "संस्करण {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "होम",
+  "navSongs": "गीत",
+  "navSetlists": "गीत-सूचियाँ",
+  "navSettings": "सेटिंग",
+  "navSettingsCompact": "सेटिंग",
+  "navSearch": "खोजें",
+  "navBack": "वापस",
+  "navClose": "बंद करें",
+  "navMore": "और कार्रवाइयाँ",
+  "actionCancel": "रद्द करें",
+  "actionSave": "सहेजें",
+  "actionDone": "हो गया",
+  "actionEdit": "संपादित करें",
+  "actionDelete": "हटाएँ",
+  "actionShare": "साझा करें",
+  "actionPrint": "प्रिंट करें",
+  "actionCopy": "कॉपी करें",
+  "actionClear": "साफ़ करें",
+  "actionRetry": "फिर से कोशिश करें",
+  "actionRefresh": "रिफ़्रेश करें",
+  "actionImport": "आयात करें",
+  "actionExport": "निर्यात करें",
+  "actionExpand": "बड़ा करें",
+  "actionCollapse": "समेटें",
+  "actionAdd": "जोड़ें",
+  "actionCreate": "बनाएँ",
+  "actionRemove": "हटाएँ",
+  "actionDuplicate": "डुप्लिकेट करें",
+  "actionMoveUp": "ऊपर ले जाएँ",
+  "actionMoveDown": "नीचे ले जाएँ",
+  "actionPrevious": "पिछला",
+  "actionNext": "अगला",
+  "searchHint": "गीत, कलाकार या बोल खोजें",
+  "searchCatalogHint": "कोई गीत या कलाकार खोजें",
+  "searchSubmit": "खोजें",
+  "searchFilters": "खोज विकल्प",
+  "searchFiltersShow": "खोज विकल्प दिखाएँ",
+  "searchFiltersHide": "खोज विकल्प छिपाएँ",
+  "searchFilterArtist": "कलाकार",
+  "searchFilterTitle": "गीत का शीर्षक",
+  "searchFilterLyrics": "बोल",
+  "searchFilterChords": "कॉर्ड उपलब्ध हैं",
+  "searchFilterTimed": "समयबद्ध बोल",
+  "searchFilterLanguage": "भाषा",
+  "searchFilterAll": "कोई भी",
+  "searchAutocompleteLabel": "सुझाव",
+  "searchResultCount": "{count, plural, =0{कोई परिणाम नहीं} =1{1 परिणाम} other{{count} परिणाम}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "खोजने के लिए गीत, कलाकार या बोल दर्ज करें।",
+  "searchCatalogEmptyQuery": "खोजने के लिए गीत या कलाकार दर्ज करें।",
+  "searchNoResults": "कोई गीत नहीं मिला। कोई दूसरा शब्द खोजें।",
+  "searchLoading": "गीत खोजे जा रहे हैं…",
+  "searchError": "खोज पूरी नहीं हो सकी।",
+  "searchOnlineTab": "ऑनलाइन",
+  "searchRecentTab": "हाल के",
+  "searchFavoritesTab": "पसंदीदा",
+  "searchSuggested": "सुझाया गया मेल",
+  "searchAlternatives": "अन्य मेल",
+  "searchCompare": "संस्करणों की तुलना करें",
+  "searchChooseVersion": "यह संस्करण चुनें",
+  "searchSongMatch": "गीत का मेल",
+  "searchRecordingMatch": "रिकॉर्डिंग का मेल",
+  "searchMatchUnverified": "रिकॉर्डिंग की पुष्टि नहीं हुई",
+  "searchMatchExact": "रिकॉर्डिंग का सटीक मेल",
+  "searchMatchPossible": "संभावित मेल",
+  "searchAvailability": "उपलब्धता",
+  "searchLyricsAvailable": "बोल उपलब्ध हैं",
+  "searchLyricsUnavailable": "बोल उपलब्ध नहीं हैं",
+  "searchChordsAvailable": "कॉर्ड उपलब्ध हैं",
+  "searchChordsUnavailable": "कॉर्ड नहीं हैं",
+  "searchTimingAvailable": "टाइमिंग उपलब्ध है",
+  "searchTimingUnavailable": "टाइमिंग उपलब्ध नहीं है",
+  "searchDurationUnknown": "अवधि अज्ञात",
+  "searchRating": "रेटिंग {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "स्रोत",
+  "searchMetadata": "गीत का विवरण",
+  "searchAlbum": "एल्बम",
+  "searchArtist": "कलाकार",
+  "searchYear": "वर्ष",
+  "searchLanguage": "भाषा",
+  "searchSaved": "गीत आपकी लाइब्रेरी में सहेजा गया।",
+  "searchSaveFailed": "यह गीत सहेजा नहीं जा सका।",
+  "homeRecentSongs": "हाल के गीत",
+  "homeRecentlyPlayed": "हाल में चलाए गए",
+  "homeFavorites": "पसंदीदा",
+  "homeHistory": "इतिहास",
+  "homeHistoryClear": "इतिहास मिटाएँ",
+  "homeHistoryCleared": "इतिहास मिटा दिया गया।",
+  "homeHistoryEmpty": "आपके खोले हुए गीत यहाँ दिखाई देंगे।",
+  "homeFavoritesEmpty": "आपके पसंदीदा गीत और गीत-सूचियाँ यहाँ दिखाई देंगी।",
+  "homeItemsShownCount": "{count, plural, =0{0 आइटम दिखाए गए} =1{1 आइटम दिखाया गया} other{{count} आइटम दिखाए गए}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "आपके हाल के गीत और गीत-सूचियाँ यहाँ दिखाई देंगी।",
+  "homeTimelineLabel": "इतिहास की समयरेखा",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "पूरा इतिहास",
+  "homeShowFavorites": "पसंदीदा दिखाएँ",
+  "homeShowRecent": "हाल के दिखाएँ",
+  "songsTitle": "गीत",
+  "songsEmpty": "आपके गीत यहाँ दिखाई देंगे।",
+  "songsEmptySearch": "आपकी खोज से कोई गीत मेल नहीं खाता।",
+  "songsAdd": "गीत जोड़ें",
+  "songsSortAlphabetical": "वर्णानुक्रम में क्रमबद्ध करें",
+  "songsAlphabetNavigation": "गीत अनुक्रमणिका",
+  "songsUsageCount": "{count, plural, =0{कभी नहीं खोला गया} =1{एक बार खोला गया} other{{count} बार खोला गया}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "पसंदीदा में जोड़ें",
+  "songFavoriteRemove": "पसंदीदा से हटाएँ",
+  "songMenuLabel": "गीत की कार्रवाइयाँ",
+  "songInfo": "गीत का विवरण",
+  "setlistMenuLabel": "गीत-सूची की कार्रवाइयाँ",
+  "songAddToSetlist": "गीत-सूची में जोड़ें",
+  "songCopyChordPro": "ChordPro कॉपी करें",
+  "songDeleteConfirmTitle": "गीत हटाएँ?",
+  "songDeleteConfirmMessage": "यह गीत आपकी लाइब्रेरी से हटा दिया जाएगा।",
+  "songDeleted": "गीत हटा दिया गया।",
+  "setlistsTitle": "गीत-सूचियाँ",
+  "setlistsEmpty": "अपनी अगली रिहर्सल या प्रस्तुति के लिए गीत-सूची बनाएँ।",
+  "setlistsEmptySearch": "आपकी खोज से कोई गीत-सूची मेल नहीं खाती।",
+  "setlistCreate": "नई गीत-सूची",
+  "setlistNameHint": "गीत-सूची का नाम",
+  "setlistNotes": "नोट",
+  "setlistEntryOverride": "इस गीत का अलग स्वर और capo",
+  "setlistSongsCount": "{count, plural, =0{कोई गीत नहीं} =1{1 गीत} other{{count} गीत}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "कम से कम {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "अवधि अज्ञात",
+  "setlistActivity": "आख़िरी गतिविधि {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "बनाई गई {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "संपादित की गई {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "आख़िरी बार चलाई गई {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "इस गीत-सूची में अभी कोई गीत नहीं है।",
+  "setlistAddSongs": "गीत जोड़ें",
+  "setlistReorder": "गीतों का क्रम बदलें",
+  "setlistMoveSongUp": "{song} को ऊपर ले जाएँ",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "{song} को नीचे ले जाएँ",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "{song} को गीत-सूची से हटाएँ",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "गीत-सूची की कॉपी बनाएँ",
+  "setlistFavoriteAdd": "गीत-सूची को पसंदीदा बनाएँ",
+  "setlistFavoriteRemove": "गीत-सूची को पसंदीदा से हटाएँ",
+  "setlistShare": "गीत-सूची फ़ाइल के रूप में साझा करें",
+  "setlistSharePdf": "PDF के रूप में साझा करें",
+  "setlistPrint": "प्रिंट करें",
+  "setlistDeleteConfirmTitle": "गीत-सूची हटाएँ?",
+  "setlistDeleteConfirmMessage": "गीत-सूची हटा दी जाएगी। आपकी लाइब्रेरी के गीत बने रहेंगे।",
+  "setlistDeleted": "गीत-सूची हटा दी गई।",
+  "readerTitle": "बोल",
+  "readerNoLyrics": "अभी तक बोल नहीं जोड़े गए हैं।",
+  "readerShowChords": "कॉर्ड दिखाएँ",
+  "readerHideChords": "कॉर्ड छिपाएँ",
+  "readerTranspose": "कॉर्ड का स्वर बदलें",
+  "readerTransposeSemitones": "{count, plural, =0{0 सेमीटोन} =1{1 सेमीटोन} other{{count} सेमीटोन}} से स्वर बदलें",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "बोल और विवरण संपादित करें",
+  "playerPlay": "बोलों की स्क्रॉलिंग चलाएँ",
+  "playerPause": "बोलों की स्क्रॉलिंग रोकें",
+  "playerResume": "बोलों की स्क्रॉलिंग फिर शुरू करें",
+  "playerSeek": "प्लेबैक की स्थिति",
+  "playerElapsed": "बिता हुआ समय {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "बाकी समय {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "स्क्रॉलिंग मोड",
+  "playerTimedLyrics": "समयबद्ध बोल",
+  "playerEstimatedPace": "अनुमानित गति",
+  "playerManualScroll": "मैन्युअल स्क्रॉल",
+  "playerTimingStatusReady": "बोल उपलब्ध टाइमिंग के अनुसार चलेंगे।",
+  "playerTimingStatusEstimated": "स्क्रॉलिंग की गति गीत की अवधि से अनुमानित है।",
+  "playerTimingStatusManual": "बोलों को स्वयं स्क्रॉल करें।",
+  "playerTimingStatusUnavailable": "इस गीत के लिए समयबद्ध स्क्रॉलिंग उपलब्ध नहीं है।",
+  "playerDurationUnknown": "अनुमानित स्क्रॉलिंग इस्तेमाल करने के लिए गीत की अवधि जोड़ें।",
+  "playerProgressLabel": "गीत की प्रगति",
+  "playerCurrentSection": "वर्तमान भाग",
+  "playerPreviousSection": "पिछला भाग",
+  "playerNextSection": "अगला भाग",
+  "playerPreviousSectionSong": "पिछला भाग · सूची का पिछला गीत खोलने के लिए दबाकर रखें",
+  "playerNextSectionSong": "अगला भाग · सूची का अगला गीत खोलने के लिए दबाकर रखें",
+  "playerPreviousSong": "पिछला गीत",
+  "playerNextSong": "अगला गीत",
+  "editorTitle": "गीत संपादित करें",
+  "editorTitleField": "गीत का शीर्षक",
+  "editorArtistField": "कलाकार",
+  "editorAlbumField": "एल्बम",
+  "editorLyricsField": "बोल",
+  "editorChordsField": "कॉर्ड",
+  "editorKeyField": "स्वर",
+  "editorCapoField": "Capo",
+  "editorTuningField": "ट्यूनिंग",
+  "editorTempoField": "गति",
+  "editorDurationField": "अवधि",
+  "editorTimeSignatureField": "ताल संकेत",
+  "editorLanguageField": "भाषा",
+  "editorYearField": "वर्ष",
+  "editorComposerField": "संगीतकार",
+  "editorLyricistField": "गीतकार",
+  "editorCopyrightField": "कॉपीराइट",
+  "editorLicenseField": "लाइसेंस",
+  "songInfoSources": "स्रोत और श्रेय",
+  "searchMatchSameSong": "वही गीत; रिकॉर्डिंग की पुष्टि नहीं हुई",
+  "searchMatchNeedsAgreement": "चार्ट के बोलों की पुष्टि ज़रूरी है",
+  "searchMatchDifferentLyrics": "बोल चुने गए गीत से अलग हैं",
+  "searchMatchCombinedSources": "कई स्रोतों से विवरण जोड़ा गया",
+  "searchCombinedFromSources": "{count, plural, =1{1 स्रोत से जोड़ा गया} other{{count} स्रोतों से जोड़ा गया}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, =0{0 गीत मेल खाते हैं} =1{1 गीत मेल खाता है} other{{count} गीत मेल खाते हैं}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, =0{0 स्रोत संस्करण} =1{1 स्रोत संस्करण} other{{count} स्रोत संस्करण}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "सबसे अच्छा उपलब्ध मेल",
+  "providerDescriptionUnknown": "गीत का स्रोत",
+  "providerDescDownloadChordProThenImport": "स्रोत से ChordPro फ़ाइल डाउनलोड करें, फिर उसे आयात करें।",
+  "providerDescFreeAccountDownloadThenImport": "मुफ़्त खाते से फ़ाइल डाउनलोड करें, फिर उसे आयात करें।",
+  "providerDescPublicChordSheets": "सार्वजनिक कॉर्ड शीट।",
+  "providerDescHistoricalTextPerWorkLicense": "प्रत्येक रचना के लिए लाइसेंस प्राप्त ऐतिहासिक बोल।",
+  "providerDescLicensedCatalog": "लाइसेंस प्राप्त गीत-संग्रह।",
+  "providerDescOriginalSongsCcBy": "Creative Commons BY के अंतर्गत मौलिक गीत।",
+  "providerDescPerSongLicense": "हर गीत के लिए लाइसेंस प्राप्त बोल।",
+  "providerDescRecordingMetadataOnly": "केवल रिकॉर्डिंग और रिलीज़ का विवरण।",
+  "providerDescCompositionMetadataOnly": "केवल रचना का विवरण।",
+  "providerDescExactFileArtworkOnly": "केवल सटीक रिकॉर्डिंग मेल के लिए कवर आर्ट।",
+  "providerCapabilityLyrics": "बोल",
+  "providerCapabilityChords": "कॉर्ड",
+  "providerCapabilityTiming": "समयबद्ध बोल",
+  "providerCapabilitySearch": "खोज",
+  "providerCapabilityMetadata": "गीत का विवरण",
+  "editorArtworkField": "कवर आर्ट लिंक",
+  "editorLyricsHint": "बोल या कॉर्ड संपादित करने के लिए किसी पंक्ति पर टैप करें।",
+  "editorSave": "बदलाव सहेजें",
+  "editorSaved": "बदलाव सहेज दिए गए।",
+  "editorSaveFailed": "बदलाव सहेजे नहीं जा सके।",
+  "editorSaveConflict": "गीत कहीं और बदला गया था। आपके संपादन अलग कॉपी के रूप में सहेजे गए।",
+  "editorUnsavedTitle": "बदलाव छोड़ें?",
+  "editorUnsavedMessage": "आपके संपादन सहेजे नहीं गए हैं।",
+  "editorFieldRequired": "गीत का शीर्षक दर्ज करें।",
+  "settingsTitle": "सेटिंग",
+  "settingsAppearance": "दिखावट",
+  "settingsTheme": "थीम",
+  "settingsThemeSystem": "डिवाइस सेटिंग इस्तेमाल करें",
+  "settingsThemeLight": "हल्की",
+  "settingsThemeDark": "गहरी",
+  "settingsColorPalette": "रंग पैलेट",
+  "settingsFont": "फ़ॉन्ट",
+  "settingsTextSize": "टेक्स्ट का आकार",
+  "settingsLyricsPreview": "बोलों का पूर्वावलोकन",
+  "settingsPlayer": "बोल प्लेयर",
+  "settingsDefaultShowChords": "डिफ़ॉल्ट रूप से कॉर्ड दिखाएँ",
+  "settingsDefaultAutoscroll": "बोलों की स्क्रॉलिंग अपने-आप शुरू करें",
+  "settingsDefaultTiming": "डिफ़ॉल्ट स्क्रॉलिंग मोड",
+  "settingsLanguage": "ऐप की भाषा",
+  "settingsLanguageSystem": "डिवाइस की भाषा इस्तेमाल करें",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageBulgarian": "Български",
+  "settingsLanguageUkrainian": "Українська",
+  "settingsSources": "बोलों के स्रोत",
+  "settingsSourceEnabled": "{source} स्रोत चालू करें",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "स्रोत सूची रिफ़्रेश करें",
+  "settingsSourcesUpdated": "स्रोत अपडेट किए गए।",
+  "settingsSourcesUpdateFailed": "स्रोत रिफ़्रेश नहीं किए जा सके।",
+  "settingsImport": "गीत आयात करें",
+  "settingsImportChordPro": "ChordPro फ़ाइल आयात करें",
+  "settingsImportSetlist": "गीत-सूची फ़ाइल आयात करें",
+  "settingsImportSuccess": "आयात पूरा हुआ।",
+  "settingsImportFailed": "यह फ़ाइल आयात नहीं की जा सकी।",
+  "settingsImportUnsupported": "यह फ़ाइल प्रकार समर्थित नहीं है।",
+  "settingsShareSong": "ChordPro के रूप में साझा करें",
+  "settingsSharePdf": "PDF के रूप में साझा करें",
+  "settingsCopySong": "क्लिपबोर्ड पर कॉपी करें",
+  "settingsPrintSong": "केवल प्रिंट करें",
+  "settingsPrintSetlist": "बोलों सहित गीत-सूची प्रिंट करें",
+  "settingsExportFailed": "फ़ाइल तैयार नहीं की जा सकी।",
+  "settingsCopied": "क्लिपबोर्ड पर कॉपी किया गया।",
+  "settingsAbout": "ऐप के बारे में",
+  "settingsPrivacy": "गोपनीयता",
+  "settingsLegal": "कानूनी जानकारी",
+  "settingsClearHistory": "इतिहास मिटाएँ",
+  "settingsClearHistoryConfirm": "गीतों और गीत-सूचियों का इतिहास मिटाएँ?",
+  "settingsHistoryCleared": "इतिहास मिटा दिया गया।",
+  "accountTitle": "खाता और सिंक",
+  "accountUnavailable": "सिंक के लिए Google साइन-इन कॉन्फ़िगर किया हुआ Singbook बिल्ड चाहिए। यह बिल्ड आपके गीत केवल इसी डिवाइस पर रखता है।",
+  "accountSyncNow": "अभी सिंक करें",
+  "accountConnected": "कनेक्ट किया गया। बैकअप अपडेट करने के लिए “अभी सिंक करें” चुनें।",
+  "accountSignIn": "खाता कनेक्ट करें",
+  "accountSignOut": "साइन आउट करें",
+  "accountChange": "खाता बदलें",
+  "accountSignedOut": "कनेक्ट नहीं है",
+  "accountSyncing": "आपकी लाइब्रेरी सिंक हो रही है…",
+  "accountSynced": "लाइब्रेरी सिंक हो गई।",
+  "accountSyncFailed": "आपकी लाइब्रेरी सिंक नहीं हो सकी।",
+  "accessibilityFavorite": "पसंदीदा",
+  "accessibilityNotFavorite": "पसंदीदा नहीं",
+  "accessibilitySearchField": "गीत खोजें",
+  "accessibilityClearSearch": "खोज टेक्स्ट साफ़ करें",
+  "accessibilitySongMenu": "{song} के लिए कार्रवाइयाँ",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "{setlist} के लिए कार्रवाइयाँ",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "{setlist} के गीत दिखाएँ",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "{setlist} के गीत छिपाएँ",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "प्लेबैक प्रगति, {percent} प्रतिशत",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "इतिहास की समयरेखा, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "लोड हो रहा है…",
+  "loadingSongs": "गीत लोड हो रहे हैं…",
+  "loadingSetlists": "गीत-सूचियाँ लोड हो रही हैं…",
+  "errorGeneric": "कुछ गड़बड़ हुई।",
+  "errorOffline": "लगता है आप ऑफ़लाइन हैं।",
+  "errorPermission": "जारी रखने के लिए अनुमति ज़रूरी है।",
+  "emptyFiltered": "इन फ़िल्टर से कोई आइटम मेल नहीं खाता।",
+  "unknownValue": "अज्ञात",
+  "durationUnknown": "अवधि अज्ञात",
+  "metadataNotSet": "सेट नहीं है",
+  "dateToday": "आज",
+  "dateYesterday": "कल",
+  "daySongCount": "{count, plural, =0{कोई गीत नहीं} =1{1 गीत} other{{count} गीत}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "गहरा नीला",
+  "settingsPaletteSage": "सेज",
+  "settingsPaletteOcean": "समुद्री नीला",
+  "settingsPaletteClay": "मिट्टी जैसा",
+  "settingsPalettePlum": "बेर",
+  "settingsFontSystem": "सिस्टम",
+  "settingsFontSerif": "सेरिफ़",
+  "settingsFontMonospace": "मोनोस्पेस",
+  "settingsLyricsPreviewExample": "सुबह होते ही, हम फिर गाएँगे।",
+  "searchDiscoveryProgress": "बोलों के स्रोत जाँचे जा रहे हैं: {total} में से {checked} पूरे।",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "इस्तेमाल करने योग्य बोल नहीं मिले।",
+  "searchDiscoveryNoLyricsDetails": "चुने गए गीत को चालू स्रोतों में खोजा गया, लेकिन किसी ने भी इस्तेमाल करने योग्य बोलों का संस्करण नहीं दिया।",
+  "searchDiscoveryError": "बोलों के स्रोत नहीं जाँचे जा सके।",
+  "searchDiscoveryRetry": "बोलों की खोज फिर से करें",
+  "searchSourcesUnavailableCount": "{count, plural, =0{0 स्रोत उपलब्ध नहीं} =1{1 स्रोत उपलब्ध नहीं} other{{count} स्रोत उपलब्ध नहीं}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "अपना कनेक्शन जाँचें और फिर कोशिश करें।",
+  "searchProviderChecks": "स्रोत जाँच",
+  "searchProviderPending": "जाँच हो रही है",
+  "searchProviderFound": "मेल मिला",
+  "searchProviderRejected": "मेल नहीं खाता",
+  "searchProviderFailed": "जाँच विफल",
+  "searchProviderUnavailable": "इस्तेमाल करने योग्य बोल नहीं",
+  "searchCatalogFilterHint": "कॉर्ड, टाइमिंग या भाषा के आधार पर बोलों के संस्करण फ़िल्टर करने के लिए कोई गीत चुनें।",
+  "startupErrorTitle": "आपकी लाइब्रेरी नहीं खुल सकी।",
+  "setlistCopyName": "{name} की कॉपी",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "गीत मौजूद नहीं है",
+  "settingsImportTooLarge": "यह फ़ाइल आयात करने के लिए बहुत बड़ी है।",
+  "songsJumpToLetter": "{letter} पर जाएँ",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "छोड़ें",
+  "editorKeepEditing": "संपादन जारी रखें",
+  "settingsDefaultShowChordsHint": "गीत में कॉर्ड हों, तो उन्हें बोलों के ऊपर दिखाएँ।",
+  "settingsDefaultAutoscrollHint": "बोल गीत के साथ स्क्रॉल होते हैं। मैन्युअल स्क्रॉल मोड में इस्तेमाल नहीं होता।",
+  "accountUnavailableTitle": "सिंक सेट अप नहीं है",
+  "accountSignedOutBenefits": "अपने गीतों और गीत-सूचियों का Google Drive पर बैकअप लेने और सभी डिवाइस सिंक रखने के लिए Google से साइन इन करें। आपके गीत किसी भी स्थिति में इस डिवाइस पर रहेंगे।",
+  "accountSignInWithGoogle": "Google से साइन इन करें",
+  "accountWorking": "काम हो रहा है…",
+  "accountNeverSynced": "कभी सिंक नहीं हुआ",
+  "accountSyncedJustNow": "अभी-अभी सिंक हुआ",
+  "accountSyncedMinutesAgo": "{count, plural, one{{count} मिनट पहले सिंक हुआ} other{{count} मिनट पहले सिंक हुआ}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{{count} घंटे पहले सिंक हुआ} other{{count} घंटे पहले सिंक हुआ}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{{count} दिन पहले सिंक हुआ} other{{count} दिन पहले सिंक हुआ}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{टकराव वाला {count} संपादन कॉपी के रूप में रखा गया} other{टकराव वाले {count} संपादन कॉपी के रूप में रखे गए}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "एक ही गीत या गीत-सूची को दो जगहों पर संपादित किया गया। कुछ भी खोया नहीं: दूसरा संस्करण अलग कॉपी के रूप में सहेजा गया।",
+  "accountReviewConflicts": "कॉपियों की समीक्षा करें",
+  "songsConflictFilterActive": "केवल टकराव वाली कॉपियाँ दिखाई जा रही हैं",
+  "songsConflictFilterClear": "सभी गीत दिखाएँ",
+  "songsConflictBadge": "टकराव वाली कॉपी",
+  "songsConflictEmpty": "टकराव वाली कोई कॉपी नहीं।",
+  "accountAutoSync": "अपने-आप सिंक करें",
+  "accountAutoSyncHint": "ऐप खोलने और बदलावों के बाद अपनी लाइब्रेरी अपडेट रखें।",
+  "accountSignOutTitle": "इस खाते से साइन आउट करें?",
+  "accountSignOutBody": "आपके गीत और गीत-सूचियाँ इस डिवाइस पर रहेंगे। दोबारा साइन इन करने तक उनका बैकअप या सिंक नहीं होगा।",
+  "accountUseDifferent": "दूसरा खाता इस्तेमाल करें",
+  "accountSignInAgain": "फिर से साइन इन करें",
+  "accountChooseAction": "आगे बढ़ने का तरीका चुनें",
+  "accountChangedTitle": "दूसरा Google खाता",
+  "accountChangedBody": "यह डिवाइस आख़िरी बार किसी दूसरे Google खाते से सिंक हुआ था। चुनें कि इस डिवाइस के गीतों और गीत-सूचियों के साथ क्या करना है।",
+  "accountChangedMerge": "नए खाते में मिलाएँ",
+  "accountChangedMergeHint": "इस डिवाइस पर सब कुछ रखें और उसे नए खाते में जोड़ें।",
+  "accountChangedReplace": "नए खाते की लाइब्रेरी से बदलें",
+  "accountChangedReplaceHint": "इस डिवाइस के वे गीत जो नए खाते में नहीं हैं, हटा दिए जाएँगे।",
+  "accountChangedSignOut": "रद्द करें और साइन आउट करें",
+  "accountStatusSignedOut": "खाता और सिंक: साइन इन नहीं है",
+  "accountStatusSignedIn": "खाता और सिंक: साइन इन है",
+  "accountStatusSyncing": "खाता और सिंक: सिंक हो रहा है",
+  "accountStatusSynced": "खाता और सिंक: लाइब्रेरी अपडेट है",
+  "accountStatusError": "खाता और सिंक: समस्या, समीक्षा के लिए टैप करें",
+  "accountNoticeConflicts": "कुछ गीत दो जगहों पर संपादित किए गए। उनकी कॉपी रखी गई।",
+  "accountNoticeSignedIn": "साइन इन हो गया।",
+  "accountNoticeSignedOut": "साइन आउट हो गया। आपके गीत इस डिवाइस पर रहेंगे।",
+  "syncErrorNotConfigured": "इस बिल्ड में सिंक सेट अप नहीं है।",
+  "syncErrorNotConfiguredHint": "Google साइन-इन कॉन्फ़िगर किया हुआ Singbook बिल्ड इस्तेमाल करें।",
+  "syncErrorNotSignedIn": "आप साइन इन नहीं हैं।",
+  "syncErrorNotSignedInHint": "अपनी लाइब्रेरी सिंक करने के लिए साइन इन करें।",
+  "syncErrorAuthorizationRequired": "Google को आपसे फिर से साइन इन करने की ज़रूरत है।",
+  "syncErrorAuthorizationRequiredHint": "सिंक जारी रखने के लिए फिर से साइन इन करें। आपके गीत इस डिवाइस पर सुरक्षित हैं।",
+  "syncErrorAccessDenied": "Singbook को Google Drive इस्तेमाल करने की अनुमति नहीं है।",
+  "syncErrorAccessDeniedHint": "फिर से साइन इन करें और पूछे जाने पर Drive का ऐक्सेस दें।",
+  "syncErrorRateLimited": "Google अभी अनुरोध सीमित कर रहा है।",
+  "syncErrorRateLimitedHint": "कुछ मिनट रुकें, फिर कोशिश करें।",
+  "syncErrorStorageFull": "आपका Google Drive भर गया है।",
+  "syncErrorStorageFullHint": "Drive में जगह खाली करें, फिर कोशिश करें।",
+  "syncErrorNetwork": "Google से संपर्क नहीं हो सका।",
+  "syncErrorNetworkHint": "अपना इंटरनेट कनेक्शन जाँचें और फिर कोशिश करें।",
+  "syncErrorAccountChanged": "दूसरा Google खाता इस्तेमाल किया गया।",
+  "syncErrorAccountChangedHint": "चुनें कि इस डिवाइस की लाइब्रेरी को उसमें मिलाना है या उससे बदलना है।",
+  "syncErrorRemoteLibraryTooLarge": "आपकी सिंक की गई लाइब्रेरी Singbook की क्षमता से बड़ी है।",
+  "syncErrorRemoteLibraryTooLargeHint": "सिंक की गई लाइब्रेरी से कुछ गीत या गीत-सूचियाँ हटाएँ, फिर कोशिश करें।",
+  "syncErrorSignInFailed": "साइन-इन पूरा नहीं हुआ।",
+  "syncErrorSignInFailedHint": "फिर से साइन इन करने की कोशिश करें।",
+  "syncErrorGeneric": "आपकी लाइब्रेरी सिंक नहीं हो सकी।",
+  "syncErrorGenericHint": "थोड़ी देर बाद फिर कोशिश करें। आपके गीत इस डिवाइस पर सुरक्षित हैं।"
+}

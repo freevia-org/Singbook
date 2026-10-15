@@ -1,0 +1,670 @@
+{
+  "@@locale": "zh",
+  "appTitle": "Singbook",
+  "aboutDescription": "一个宁静的空间，让你查找、整理并跟着自己的歌曲库一起歌唱。",
+  "aboutMadeForSinging": "为一起歌唱而打造",
+  "appVersion": "版本 {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "首页",
+  "navSongs": "歌曲",
+  "navSetlists": "歌单",
+  "navSettings": "设置",
+  "navSettingsCompact": "设置",
+  "navSearch": "搜索",
+  "navBack": "返回",
+  "navClose": "关闭",
+  "navMore": "更多操作",
+  "actionCancel": "取消",
+  "actionSave": "保存",
+  "actionDone": "完成",
+  "actionEdit": "编辑",
+  "actionDelete": "删除",
+  "actionShare": "分享",
+  "actionPrint": "打印",
+  "actionCopy": "复制",
+  "actionClear": "清除",
+  "actionRetry": "重试",
+  "actionRefresh": "刷新",
+  "actionImport": "导入",
+  "actionExport": "导出",
+  "actionExpand": "展开",
+  "actionCollapse": "收起",
+  "actionAdd": "添加",
+  "actionCreate": "创建",
+  "actionRemove": "移除",
+  "actionDuplicate": "创建副本",
+  "actionMoveUp": "上移",
+  "actionMoveDown": "下移",
+  "actionPrevious": "上一个",
+  "actionNext": "下一个",
+  "searchHint": "搜索歌曲、艺人或歌词",
+  "searchCatalogHint": "搜索歌曲或艺人",
+  "searchSubmit": "搜索",
+  "searchFilters": "搜索选项",
+  "searchFiltersShow": "显示搜索选项",
+  "searchFiltersHide": "隐藏搜索选项",
+  "searchFilterArtist": "艺人",
+  "searchFilterTitle": "歌曲名称",
+  "searchFilterLyrics": "歌词",
+  "searchFilterChords": "包含和弦",
+  "searchFilterTimed": "带时间同步的歌词",
+  "searchFilterLanguage": "语言",
+  "searchFilterAll": "不限",
+  "searchAutocompleteLabel": "建议",
+  "searchResultCount": "{count, plural, =0{没有结果} =1{1 个结果} other{{count} 个结果}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "输入歌曲、艺人或歌词进行搜索。",
+  "searchCatalogEmptyQuery": "输入歌曲或艺人进行搜索。",
+  "searchNoResults": "未找到歌曲。请尝试其他搜索。",
+  "searchLoading": "正在搜索歌曲…",
+  "searchError": "无法完成搜索。",
+  "searchOnlineTab": "在线",
+  "searchRecentTab": "最近",
+  "searchFavoritesTab": "收藏",
+  "searchSuggested": "建议匹配",
+  "searchAlternatives": "其他匹配",
+  "searchCompare": "比较版本",
+  "searchChooseVersion": "选择此版本",
+  "searchSongMatch": "歌曲匹配",
+  "searchRecordingMatch": "录音匹配",
+  "searchMatchUnverified": "录音未经验证",
+  "searchMatchExact": "录音完全匹配",
+  "searchMatchPossible": "可能匹配",
+  "searchAvailability": "可用性",
+  "searchLyricsAvailable": "歌词可用",
+  "searchLyricsUnavailable": "歌词不可用",
+  "searchChordsAvailable": "和弦可用",
+  "searchChordsUnavailable": "没有和弦",
+  "searchTimingAvailable": "时间信息可用",
+  "searchTimingUnavailable": "没有时间信息",
+  "searchDurationUnknown": "时长未知",
+  "searchRating": "评分 {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "来源",
+  "searchMetadata": "歌曲详情",
+  "searchAlbum": "专辑",
+  "searchArtist": "艺人",
+  "searchYear": "年份",
+  "searchLanguage": "语言",
+  "searchSaved": "歌曲已保存到你的曲库。",
+  "searchSaveFailed": "无法保存此歌曲。",
+  "homeRecentSongs": "最近的歌曲",
+  "homeRecentlyPlayed": "最近播放",
+  "homeFavorites": "收藏",
+  "homeHistory": "历史记录",
+  "homeHistoryClear": "清除历史记录",
+  "homeHistoryCleared": "历史记录已清除。",
+  "homeHistoryEmpty": "你打开的歌曲会显示在这里。",
+  "homeFavoritesEmpty": "你收藏的歌曲和歌单会显示在这里。",
+  "homeItemsShownCount": "{count, plural, =0{显示 0 项} =1{显示 1 项} other{显示 {count} 项}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "你最近的歌曲和歌单会显示在这里。",
+  "homeTimelineLabel": "历史时间线",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "全部历史记录",
+  "homeShowFavorites": "显示收藏",
+  "homeShowRecent": "显示最近项目",
+  "songsTitle": "歌曲",
+  "songsEmpty": "你的歌曲会显示在这里。",
+  "songsEmptySearch": "没有歌曲符合你的搜索条件。",
+  "songsAdd": "添加歌曲",
+  "songsSortAlphabetical": "按字母顺序排序",
+  "songsAlphabetNavigation": "歌曲索引",
+  "songsUsageCount": "{count, plural, =0{从未打开} =1{打开过一次} other{打开过 {count} 次}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "添加到收藏",
+  "songFavoriteRemove": "从收藏中移除",
+  "songMenuLabel": "歌曲操作",
+  "songInfo": "歌曲详情",
+  "setlistMenuLabel": "歌单操作",
+  "songAddToSetlist": "添加到歌单",
+  "songCopyChordPro": "复制 ChordPro",
+  "songDeleteConfirmTitle": "删除歌曲？",
+  "songDeleteConfirmMessage": "此歌曲将从你的曲库中移除。",
+  "songDeleted": "歌曲已删除。",
+  "setlistsTitle": "歌单",
+  "setlistsEmpty": "为下次排练或演出创建一个歌单。",
+  "setlistsEmptySearch": "没有歌单符合你的搜索条件。",
+  "setlistCreate": "新建歌单",
+  "setlistNameHint": "歌单名称",
+  "setlistNotes": "备注",
+  "setlistEntryOverride": "此歌曲专属的调性和变调夹",
+  "setlistSongsCount": "{count, plural, =0{没有歌曲} =1{1 首歌曲} other{{count} 首歌曲}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "至少 {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "时长未知",
+  "setlistActivity": "最近活动：{date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "创建于 {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "编辑于 {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "最近播放于 {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "此歌单中还没有歌曲。",
+  "setlistAddSongs": "添加歌曲",
+  "setlistReorder": "重新排列歌曲",
+  "setlistMoveSongUp": "将 {song} 上移",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "将 {song} 下移",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "从歌单中移除 {song}",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "复制歌单",
+  "setlistFavoriteAdd": "将歌单添加到收藏",
+  "setlistFavoriteRemove": "从收藏中移除歌单",
+  "setlistShare": "分享为歌单文件",
+  "setlistSharePdf": "分享为 PDF",
+  "setlistPrint": "打印",
+  "setlistDeleteConfirmTitle": "删除歌单？",
+  "setlistDeleteConfirmMessage": "歌单将被移除。曲库中的歌曲会保留。",
+  "setlistDeleted": "歌单已删除。",
+  "readerTitle": "歌词",
+  "readerNoLyrics": "尚未添加歌词。",
+  "readerShowChords": "显示和弦",
+  "readerHideChords": "隐藏和弦",
+  "readerTranspose": "移调和弦",
+  "readerTransposeSemitones": "移调 {count, plural, =0{0 个半音} =1{1 个半音} other{{count} 个半音}}",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "编辑歌词和详情",
+  "playerPlay": "开始滚动歌词",
+  "playerPause": "暂停滚动歌词",
+  "playerResume": "继续滚动歌词",
+  "playerSeek": "播放位置",
+  "playerElapsed": "已用时间 {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "剩余时间 {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "滚动模式",
+  "playerTimedLyrics": "带时间同步的歌词",
+  "playerEstimatedPace": "估算速度",
+  "playerManualScroll": "手动滚动",
+  "playerTimingStatusReady": "歌词将按照可用的时间信息滚动。",
+  "playerTimingStatusEstimated": "滚动速度根据歌曲时长估算。",
+  "playerTimingStatusManual": "手动滚动歌词。",
+  "playerTimingStatusUnavailable": "此歌曲不支持时间同步滚动。",
+  "playerDurationUnknown": "添加歌曲时长后即可使用估算滚动。",
+  "playerProgressLabel": "歌曲进度",
+  "playerCurrentSection": "当前段落",
+  "playerPreviousSection": "上一段",
+  "playerNextSection": "下一段",
+  "playerPreviousSectionSong": "上一段 · 按住可切换到歌单中的上一首",
+  "playerNextSectionSong": "下一段 · 按住可切换到歌单中的下一首",
+  "playerPreviousSong": "上一首歌曲",
+  "playerNextSong": "下一首歌曲",
+  "editorTitle": "编辑歌曲",
+  "editorTitleField": "歌曲名称",
+  "editorArtistField": "艺人",
+  "editorAlbumField": "专辑",
+  "editorLyricsField": "歌词",
+  "editorChordsField": "和弦",
+  "editorKeyField": "调性",
+  "editorCapoField": "变调夹",
+  "editorTuningField": "调弦",
+  "editorTempoField": "速度",
+  "editorDurationField": "时长",
+  "editorTimeSignatureField": "拍号",
+  "editorLanguageField": "语言",
+  "editorYearField": "年份",
+  "editorComposerField": "作曲",
+  "editorLyricistField": "作词",
+  "editorCopyrightField": "版权",
+  "editorLicenseField": "许可",
+  "songInfoSources": "来源和署名",
+  "searchMatchSameSong": "同一首歌曲；录音尚未确认",
+  "searchMatchNeedsAgreement": "需要确认谱面中的歌词",
+  "searchMatchDifferentLyrics": "歌词与所选歌曲不同",
+  "searchMatchCombinedSources": "详情由多个来源合并而成",
+  "searchCombinedFromSources": "{count, plural, =1{合并自 1 个来源} other{合并自 {count} 个来源}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, =0{0 首歌曲匹配} =1{1 首歌曲匹配} other{{count} 首歌曲匹配}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, =0{0 个来源版本} =1{1 个来源版本} other{{count} 个来源版本}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "最佳可用匹配",
+  "providerDescriptionUnknown": "歌曲来源",
+  "providerDescDownloadChordProThenImport": "从来源下载 ChordPro 文件，然后导入。",
+  "providerDescFreeAccountDownloadThenImport": "使用免费账户下载文件，然后导入。",
+  "providerDescPublicChordSheets": "公开的和弦谱。",
+  "providerDescHistoricalTextPerWorkLicense": "历史歌词按作品获得许可。",
+  "providerDescLicensedCatalog": "获得许可的歌词目录。",
+  "providerDescOriginalSongsCcBy": "采用 Creative Commons BY 许可的原创歌曲。",
+  "providerDescPerSongLicense": "歌词按歌曲获得许可。",
+  "providerDescRecordingMetadataOnly": "仅提供录音和发行信息。",
+  "providerDescCompositionMetadataOnly": "仅提供作品信息。",
+  "providerDescExactFileArtworkOnly": "仅为录音完全匹配的歌曲提供封面图。",
+  "providerCapabilityLyrics": "歌词",
+  "providerCapabilityChords": "和弦",
+  "providerCapabilityTiming": "带时间同步的歌词",
+  "providerCapabilitySearch": "搜索",
+  "providerCapabilityMetadata": "歌曲详情",
+  "editorArtworkField": "封面链接",
+  "editorLyricsHint": "点按一行即可编辑歌词或和弦。",
+  "editorSave": "保存更改",
+  "editorSaved": "更改已保存。",
+  "editorSaveFailed": "无法保存更改。",
+  "editorSaveConflict": "歌曲已在其他位置更改。你的更改已另存为一个副本。",
+  "editorUnsavedTitle": "放弃更改？",
+  "editorUnsavedMessage": "你的更改尚未保存。",
+  "editorFieldRequired": "请输入歌曲名称。",
+  "settingsTitle": "设置",
+  "settingsAppearance": "外观",
+  "settingsTheme": "主题",
+  "settingsThemeSystem": "使用设备设置",
+  "settingsThemeLight": "浅色",
+  "settingsThemeDark": "深色",
+  "settingsColorPalette": "调色板",
+  "settingsFont": "字体",
+  "settingsTextSize": "文字大小",
+  "settingsLyricsPreview": "歌词预览",
+  "settingsPlayer": "歌词播放器",
+  "settingsDefaultShowChords": "默认显示和弦",
+  "settingsDefaultAutoscroll": "自动滚动歌词",
+  "settingsDefaultTiming": "默认滚动模式",
+  "settingsLanguage": "应用语言",
+  "settingsLanguageSystem": "使用设备语言",
+  "settingsLanguageEnglish": "英语",
+  "settingsLanguageBulgarian": "保加利亚语",
+  "settingsLanguageUkrainian": "乌克兰语",
+  "settingsSources": "歌词来源",
+  "settingsSourceEnabled": "启用来源 {source}",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "刷新来源列表",
+  "settingsSourcesUpdated": "来源已更新。",
+  "settingsSourcesUpdateFailed": "无法刷新来源。",
+  "settingsImport": "导入歌曲",
+  "settingsImportChordPro": "导入 ChordPro 文件",
+  "settingsImportSetlist": "导入歌单文件",
+  "settingsImportSuccess": "导入完成。",
+  "settingsImportFailed": "无法导入此文件。",
+  "settingsImportUnsupported": "不支持此文件类型。",
+  "settingsShareSong": "分享为 ChordPro",
+  "settingsSharePdf": "分享为 PDF",
+  "settingsCopySong": "复制到剪贴板",
+  "settingsPrintSong": "仅打印歌曲",
+  "settingsPrintSetlist": "打印包含歌词的歌单",
+  "settingsExportFailed": "无法准备文件。",
+  "settingsCopied": "已复制到剪贴板。",
+  "settingsAbout": "关于",
+  "settingsPrivacy": "隐私",
+  "settingsLegal": "法律信息",
+  "settingsClearHistory": "清除历史记录",
+  "settingsClearHistoryConfirm": "清除歌曲和歌单历史记录？",
+  "settingsHistoryCleared": "历史记录已清除。",
+  "accountTitle": "账户与同步",
+  "accountUnavailable": "同步需要配置了 Google 登录功能的 Singbook 版本。此版本只会将歌曲保存在此设备上。",
+  "accountSyncNow": "立即同步",
+  "accountConnected": "已连接。选择“立即同步”以更新备份。",
+  "accountSignIn": "连接账户",
+  "accountSignOut": "退出登录",
+  "accountChange": "更换账户",
+  "accountSignedOut": "未连接",
+  "accountSyncing": "正在同步曲库…",
+  "accountSynced": "曲库已同步。",
+  "accountSyncFailed": "无法同步曲库。",
+  "accessibilityFavorite": "收藏",
+  "accessibilityNotFavorite": "未收藏",
+  "accessibilitySearchField": "搜索歌曲",
+  "accessibilityClearSearch": "清除搜索文本",
+  "accessibilitySongMenu": "{song}的操作",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "{setlist}的操作",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "展开{setlist}中的歌曲",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "收起{setlist}中的歌曲",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "播放进度，{percent}%",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "历史时间线，{date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "正在加载…",
+  "loadingSongs": "正在加载歌曲…",
+  "loadingSetlists": "正在加载歌单…",
+  "errorGeneric": "发生了错误。",
+  "errorOffline": "你似乎处于离线状态。",
+  "errorPermission": "需要获得权限才能继续。",
+  "emptyFiltered": "没有项目符合这些筛选条件。",
+  "unknownValue": "未知",
+  "durationUnknown": "时长未知",
+  "metadataNotSet": "未设置",
+  "dateToday": "今天",
+  "dateYesterday": "昨天",
+  "daySongCount": "{count, plural, =0{没有歌曲} =1{1 首歌曲} other{{count} 首歌曲}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "海军蓝",
+  "settingsPaletteSage": "鼠尾草绿",
+  "settingsPaletteOcean": "海洋",
+  "settingsPaletteClay": "陶土色",
+  "settingsPalettePlum": "梅子色",
+  "settingsFontSystem": "系统",
+  "settingsFontSerif": "衬线体",
+  "settingsFontMonospace": "等宽字体",
+  "settingsLyricsPreviewExample": "清晨来临时，我们将再次歌唱。",
+  "searchDiscoveryProgress": "正在检查歌词来源：已完成 {checked}/{total}。",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "未找到可用的歌词。",
+  "searchDiscoveryNoLyricsDetails": "已在启用的来源中检查所选歌曲，但没有来源提供可用的歌词版本。",
+  "searchDiscoveryError": "无法检查歌词来源。",
+  "searchDiscoveryRetry": "重新搜索歌词",
+  "searchSourcesUnavailableCount": "{count, plural, =0{0 个来源不可用} =1{1 个来源不可用} other{{count} 个来源不可用}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "检查网络连接后重试。",
+  "searchProviderChecks": "来源检查",
+  "searchProviderPending": "正在检查",
+  "searchProviderFound": "找到匹配项",
+  "searchProviderRejected": "不匹配",
+  "searchProviderFailed": "检查失败",
+  "searchProviderUnavailable": "没有可用的歌词",
+  "searchCatalogFilterHint": "选择一首歌曲，按和弦、时间同步或语言筛选歌词版本。",
+  "startupErrorTitle": "无法打开你的曲库。",
+  "setlistCopyName": "{name} 的副本",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "歌曲缺失",
+  "settingsImportTooLarge": "此文件过大，无法导入。",
+  "songsJumpToLetter": "跳转到 {letter}",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "放弃",
+  "editorKeepEditing": "继续编辑",
+  "settingsDefaultShowChordsHint": "歌曲包含和弦时，在歌词上方显示和弦。",
+  "settingsDefaultAutoscrollHint": "歌词会跟随歌曲滚动。手动滚动模式下不会使用此功能。",
+  "accountUnavailableTitle": "尚未设置同步",
+  "accountSignedOutBenefits": "使用 Google 登录，将歌曲和歌单备份到 Google Drive，并让所有设备保持同步。无论如何，你的歌曲都会保留在此设备上。",
+  "accountSignInWithGoogle": "使用 Google 登录",
+  "accountWorking": "正在处理…",
+  "accountNeverSynced": "从未同步",
+  "accountSyncedJustNow": "刚刚同步",
+  "accountSyncedMinutesAgo": "{count, plural, one{1 分钟前同步} other{{count} 分钟前同步}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{1 小时前同步} other{{count} 小时前同步}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{1 天前同步} other{{count} 天前同步}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{1 项冲突更改已另存为副本} other{{count} 项冲突更改已另存为副本}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "同一首歌曲或同一个歌单在两个位置都进行了编辑。没有内容丢失：另一个版本已另存为独立副本。",
+  "accountReviewConflicts": "查看副本",
+  "songsConflictFilterActive": "仅显示冲突副本",
+  "songsConflictFilterClear": "显示所有歌曲",
+  "songsConflictBadge": "冲突副本",
+  "songsConflictEmpty": "没有冲突副本。",
+  "accountAutoSync": "自动同步",
+  "accountAutoSyncHint": "打开应用和进行更改后，保持曲库为最新状态。",
+  "accountSignOutTitle": "退出此账户？",
+  "accountSignOutBody": "你的歌曲和歌单会保留在此设备上。重新登录之前，它们不会备份或同步。",
+  "accountUseDifferent": "使用其他账户",
+  "accountSignInAgain": "重新登录",
+  "accountChooseAction": "选择如何继续",
+  "accountChangedTitle": "其他 Google 账户",
+  "accountChangedBody": "此设备上次使用另一个 Google 账户进行同步。请选择如何处理此设备上的歌曲和歌单。",
+  "accountChangedMerge": "合并到新账户",
+  "accountChangedMergeHint": "保留此设备上的所有内容，并将其添加到新账户。",
+  "accountChangedReplace": "替换为新账户的曲库",
+  "accountChangedReplaceHint": "此设备上不在新账户中的歌曲将被移除。",
+  "accountChangedSignOut": "取消并退出登录",
+  "accountStatusSignedOut": "账户与同步：未登录",
+  "accountStatusSignedIn": "账户与同步：已登录",
+  "accountStatusSyncing": "账户与同步：正在同步",
+  "accountStatusSynced": "账户与同步：曲库已是最新",
+  "accountStatusError": "账户与同步：出现问题，点按查看",
+  "accountNoticeConflicts": "部分歌曲在两个位置都进行了编辑。已保留副本。",
+  "accountNoticeSignedIn": "已登录。",
+  "accountNoticeSignedOut": "已退出登录。你的歌曲会保留在此设备上。",
+  "syncErrorNotConfigured": "此版本尚未设置同步。",
+  "syncErrorNotConfiguredHint": "请使用配置了 Google 登录功能的 Singbook 版本。",
+  "syncErrorNotSignedIn": "你尚未登录。",
+  "syncErrorNotSignedInHint": "登录以同步曲库。",
+  "syncErrorAuthorizationRequired": "Google 要求你重新登录。",
+  "syncErrorAuthorizationRequiredHint": "重新登录以继续同步。你的歌曲安全地保存在此设备上。",
+  "syncErrorAccessDenied": "Singbook 无权使用 Google Drive。",
+  "syncErrorAccessDeniedHint": "请重新登录，并在出现提示时允许访问 Drive。",
+  "syncErrorRateLimited": "Google 暂时限制了请求。",
+  "syncErrorRateLimitedHint": "等待几分钟后重试。",
+  "syncErrorStorageFull": "Google Drive 已满。",
+  "syncErrorStorageFullHint": "请清理 Drive 空间后重试。",
+  "syncErrorNetwork": "无法连接到 Google。",
+  "syncErrorNetworkHint": "检查网络连接后重试。",
+  "syncErrorAccountChanged": "使用了另一个 Google 账户。",
+  "syncErrorAccountChangedHint": "选择将此设备的曲库与该账户合并，或替换此设备的曲库。",
+  "syncErrorRemoteLibraryTooLarge": "同步曲库的内容超出 Singbook 的处理能力。",
+  "syncErrorRemoteLibraryTooLargeHint": "从同步曲库中移除一些歌曲或歌单，然后重试。",
+  "syncErrorSignInFailed": "登录未完成。",
+  "syncErrorSignInFailedHint": "请尝试重新登录。",
+  "syncErrorGeneric": "无法同步曲库。",
+  "syncErrorGenericHint": "请稍后重试。你的歌曲仍安全地保存在此设备上。"
+}

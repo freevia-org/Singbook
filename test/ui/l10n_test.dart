@@ -2,17 +2,25 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:singbook/l10n/generated/app_localizations.dart';
+import 'package:singbook/l10n/generated/app_localizations_ar.dart';
 import 'package:singbook/l10n/generated/app_localizations_bg.dart';
+import 'package:singbook/l10n/generated/app_localizations_cs.dart';
 import 'package:singbook/l10n/generated/app_localizations_en.dart';
+import 'package:singbook/l10n/generated/app_localizations_hr.dart';
+import 'package:singbook/l10n/generated/app_localizations_lt.dart';
+import 'package:singbook/l10n/generated/app_localizations_pl.dart';
+import 'package:singbook/l10n/generated/app_localizations_ro.dart';
+import 'package:singbook/l10n/generated/app_localizations_ru.dart';
+import 'package:singbook/l10n/generated/app_localizations_sk.dart';
+import 'package:singbook/l10n/generated/app_localizations_sl.dart';
+import 'package:singbook/l10n/generated/app_localizations_lv.dart';
 import 'package:singbook/l10n/generated/app_localizations_uk.dart';
 import 'package:singbook/ui/app_version.dart';
 
 Map<String, dynamic> _arb(String locale) =>
     jsonDecode(File('lib/l10n/app_$locale.arb').readAsStringSync())
         as Map<String, dynamic>;
-
-Set<String> _keys(Map<String, dynamic> arb) =>
-    arb.keys.where((key) => !key.startsWith('@')).toSet();
 
 void main() {
   group('Ukrainian plurals use the count in every form', () {
@@ -55,17 +63,18 @@ void main() {
       expect(uk.searchSourcesUnavailableCount(25), 'Недоступних джерел: 25');
     });
 
-    test('no plural hardcodes the digit 1 in its "one" branch', () {
-      final arb = _arb('uk');
+    test('no locale hardcodes 1 in its generic "one" plural branch', () {
       final hardcoded = <String>[];
-      for (final entry in arb.entries) {
-        final value = entry.value;
-        if (entry.key.startsWith('@') || value is! String) continue;
-        for (final branch in RegExp(
-          r'one\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}',
-        ).allMatches(value)) {
-          if (RegExp(r'(?<![\w{])1(?![\w}])').hasMatch(branch.group(1)!)) {
-            hardcoded.add(entry.key);
+      for (final locale in ['hr', 'lv', 'ru', 'sl']) {
+        for (final entry in _arb(locale).entries) {
+          final value = entry.value;
+          if (entry.key.startsWith('@') || value is! String) continue;
+          for (final branch in RegExp(
+            r'one\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}',
+          ).allMatches(value)) {
+            if (RegExp(r'(?<![\w{])1(?![\w}])').hasMatch(branch.group(1)!)) {
+              hardcoded.add('$locale:${entry.key}');
+            }
           }
         }
       }
@@ -80,12 +89,64 @@ void main() {
     expect(AppLocalizationsBg().setlistSongsCount(21), '21 песни');
   });
 
-  test('all locales define the same messages', () {
-    final en = _keys(_arb('en'));
-    expect(_keys(_arb('bg')).difference(en), isEmpty, reason: 'bg extras');
-    expect(_keys(_arb('uk')).difference(en), isEmpty, reason: 'uk extras');
-    expect(en.difference(_keys(_arb('bg'))), isEmpty, reason: 'bg missing');
-    expect(en.difference(_keys(_arb('uk'))), isEmpty, reason: 'uk missing');
+  test('added locales use their count-specific plural forms', () {
+    expect(AppLocalizationsAr().setlistSongsCount(2), 'أغنيتان');
+    expect(AppLocalizationsCs().setlistSongsCount(2), '2 písně');
+    expect(AppLocalizationsHr().setlistSongsCount(2), '2 pjesme');
+    expect(AppLocalizationsLt().setlistSongsCount(2), '2 dainos');
+    expect(AppLocalizationsLt().setlistSongsCount(10), '10 dainų');
+    expect(AppLocalizationsPl().searchResultCount(2), '2 wyniki');
+    expect(AppLocalizationsPl().searchResultCount(5), '5 wyników');
+    expect(AppLocalizationsRo().setlistSongsCount(2), '2 melodii');
+    expect(AppLocalizationsSk().setlistSongsCount(2), '2 piesne');
+    expect(AppLocalizationsSl().searchResultCount(2), '2 rezultata');
+    expect(AppLocalizationsHr().songsUsageCount(21), 'Otvoreno 21 put');
+    expect(AppLocalizationsLv().setlistSongsCount(21), '21 dziesma');
+    expect(
+      AppLocalizationsLv().readerTransposeSemitones(10),
+      'Transponēt par 10 pustoņiem',
+    );
+    expect(AppLocalizationsRu().setlistSongsCount(21), '21 песня');
+    expect(
+      AppLocalizationsSl().accountSyncedMinutesAgo(101),
+      'Sinhronizirano pred 101 minuto',
+    );
+  });
+
+  test('every locale matches the template and is selectable', () {
+    final template = _arb('en');
+    final directory = Directory('lib/l10n');
+    final localeFiles = directory
+        .listSync()
+        .whereType<File>()
+        .map((file) => file.uri.pathSegments.last)
+        .where((name) => RegExp(r'^app_[a-z]{2}\.arb$').hasMatch(name))
+        .map((name) => name.substring(4, 6))
+        .toSet();
+    final supportedLocales = AppLocalizations.supportedLocales
+        .map((locale) => locale.languageCode)
+        .toSet();
+
+    expect(supportedLocales, localeFiles);
+    for (final locale in localeFiles) {
+      final arb = _arb(locale);
+      expect(arb.keys.toSet(), template.keys.toSet(), reason: '$locale keys');
+      expect(arb['@@locale'], locale, reason: '$locale root locale');
+      for (final key in template.keys.where((key) => key.startsWith('@'))) {
+        if (key == '@@locale') continue;
+        expect(arb[key], template[key], reason: '$locale metadata $key');
+      }
+      for (final key in template.keys.where((key) => !key.startsWith('@'))) {
+        final placeholders = template['@$key']?['placeholders'];
+        if (placeholders != null) {
+          expect(
+            arb['@$key']?['placeholders'],
+            placeholders,
+            reason: '$locale placeholders $key',
+          );
+        }
+      }
+    }
   });
 
   test('Bulgarian uses one word for setlists and names key and capo', () {
@@ -103,29 +164,32 @@ void main() {
     expect(bg['setlistEntryOverride'], isNot(contains('Акорд')));
   });
 
-  test('screens do not hardcode user-facing English strings or the version', () {
-    final forbidden = [
-      "'Missing song'",
-      "'New setlist'",
-      "' copy'",
-      "'Try again'",
-      "'Your library could not be opened.'",
-      "'0.2.0'",
-    ];
-    final offenders = <String>[];
-    for (final file in Directory('lib/ui').listSync(recursive: true)) {
-      if (file is! File ||
-          !file.path.endsWith('.dart') ||
-          file.path.endsWith('app_version.dart')) {
-        continue;
+  test(
+    'screens do not hardcode user-facing English strings or the version',
+    () {
+      final forbidden = [
+        "'Missing song'",
+        "'New setlist'",
+        "' copy'",
+        "'Try again'",
+        "'Your library could not be opened.'",
+        "'0.2.0'",
+      ];
+      final offenders = <String>[];
+      for (final file in Directory('lib/ui').listSync(recursive: true)) {
+        if (file is! File ||
+            !file.path.endsWith('.dart') ||
+            file.path.endsWith('app_version.dart')) {
+          continue;
+        }
+        final source = file.readAsStringSync();
+        for (final text in forbidden) {
+          if (source.contains(text)) offenders.add('${file.path}: $text');
+        }
       }
-      final source = file.readAsStringSync();
-      for (final text in forbidden) {
-        if (source.contains(text)) offenders.add('${file.path}: $text');
-      }
-    }
-    expect(offenders, isEmpty);
-  });
+      expect(offenders, isEmpty);
+    },
+  );
 
   test('the displayed version matches pubspec.yaml', () {
     final pubspec = File('pubspec.yaml').readAsStringSync();

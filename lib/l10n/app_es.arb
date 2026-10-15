@@ -1,0 +1,670 @@
+{
+  "@@locale": "es",
+  "appTitle": "Singbook",
+  "aboutDescription": "Un lugar tranquilo para encontrar, organizar y cantar con tu biblioteca de canciones.",
+  "aboutMadeForSinging": "Creada para cantar juntos",
+  "appVersion": "Versión {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "Inicio",
+  "navSongs": "Canciones",
+  "navSetlists": "Listas de canciones",
+  "navSettings": "Ajustes",
+  "navSettingsCompact": "Ajustes",
+  "navSearch": "Buscar",
+  "navBack": "Atrás",
+  "navClose": "Cerrar",
+  "navMore": "Más acciones",
+  "actionCancel": "Cancelar",
+  "actionSave": "Guardar",
+  "actionDone": "Listo",
+  "actionEdit": "Editar",
+  "actionDelete": "Eliminar",
+  "actionShare": "Compartir",
+  "actionPrint": "Imprimir",
+  "actionCopy": "Copiar",
+  "actionClear": "Borrar",
+  "actionRetry": "Reintentar",
+  "actionRefresh": "Actualizar",
+  "actionImport": "Importar",
+  "actionExport": "Exportar",
+  "actionExpand": "Expandir",
+  "actionCollapse": "Contraer",
+  "actionAdd": "Añadir",
+  "actionCreate": "Crear",
+  "actionRemove": "Quitar",
+  "actionDuplicate": "Duplicar",
+  "actionMoveUp": "Subir",
+  "actionMoveDown": "Bajar",
+  "actionPrevious": "Anterior",
+  "actionNext": "Siguiente",
+  "searchHint": "Busca canciones, artistas o letras",
+  "searchCatalogHint": "Busca una canción o un artista",
+  "searchSubmit": "Buscar",
+  "searchFilters": "Opciones de búsqueda",
+  "searchFiltersShow": "Mostrar opciones de búsqueda",
+  "searchFiltersHide": "Ocultar opciones de búsqueda",
+  "searchFilterArtist": "Artista",
+  "searchFilterTitle": "Título de la canción",
+  "searchFilterLyrics": "Letras",
+  "searchFilterChords": "Con acordes",
+  "searchFilterTimed": "Letras sincronizadas",
+  "searchFilterLanguage": "Idioma",
+  "searchFilterAll": "Cualquiera",
+  "searchAutocompleteLabel": "Sugerencias",
+  "searchResultCount": "{count, plural, =0{No hay resultados} =1{1 resultado} other{{count} resultados}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "Introduce una canción, un artista o una letra para buscar.",
+  "searchCatalogEmptyQuery": "Introduce una canción o un artista para buscar.",
+  "searchNoResults": "No se han encontrado canciones. Prueba otra búsqueda.",
+  "searchLoading": "Buscando canciones…",
+  "searchError": "No se ha podido completar la búsqueda.",
+  "searchOnlineTab": "En línea",
+  "searchRecentTab": "Recientes",
+  "searchFavoritesTab": "Favoritos",
+  "searchSuggested": "Coincidencia sugerida",
+  "searchAlternatives": "Otras coincidencias",
+  "searchCompare": "Comparar versiones",
+  "searchChooseVersion": "Elegir esta versión",
+  "searchSongMatch": "Coincidencia de canción",
+  "searchRecordingMatch": "Coincidencia de grabación",
+  "searchMatchUnverified": "Grabación sin verificar",
+  "searchMatchExact": "Coincidencia exacta de grabación",
+  "searchMatchPossible": "Posible coincidencia",
+  "searchAvailability": "Disponibilidad",
+  "searchLyricsAvailable": "Letra disponible",
+  "searchLyricsUnavailable": "Letra no disponible",
+  "searchChordsAvailable": "Acordes disponibles",
+  "searchChordsUnavailable": "Sin acordes",
+  "searchTimingAvailable": "Sincronización disponible",
+  "searchTimingUnavailable": "Sin sincronización",
+  "searchDurationUnknown": "Duración desconocida",
+  "searchRating": "Valoración {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "Fuente",
+  "searchMetadata": "Detalles de la canción",
+  "searchAlbum": "Álbum",
+  "searchArtist": "Artista",
+  "searchYear": "Año",
+  "searchLanguage": "Idioma",
+  "searchSaved": "Canción guardada en tu biblioteca.",
+  "searchSaveFailed": "No se ha podido guardar la canción.",
+  "homeRecentSongs": "Canciones recientes",
+  "homeRecentlyPlayed": "Reproducidas recientemente",
+  "homeFavorites": "Favoritos",
+  "homeHistory": "Historial",
+  "homeHistoryClear": "Borrar historial",
+  "homeHistoryCleared": "Historial borrado.",
+  "homeHistoryEmpty": "Aquí aparecerán las canciones que abras.",
+  "homeFavoritesEmpty": "Aquí aparecerán tus canciones y listas favoritas.",
+  "homeItemsShownCount": "{count, plural, =0{0 elementos mostrados} =1{1 elemento mostrado} other{{count} elementos mostrados}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "Aquí aparecerán tus canciones y listas recientes.",
+  "homeTimelineLabel": "Cronología del historial",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "Todo el historial",
+  "homeShowFavorites": "Mostrar favoritos",
+  "homeShowRecent": "Mostrar recientes",
+  "songsTitle": "Canciones",
+  "songsEmpty": "Aquí aparecerán tus canciones.",
+  "songsEmptySearch": "Ninguna canción coincide con tu búsqueda.",
+  "songsAdd": "Añadir canción",
+  "songsSortAlphabetical": "Ordenar alfabéticamente",
+  "songsAlphabetNavigation": "Índice de canciones",
+  "songsUsageCount": "Abierta {count, plural, =0{nunca} =1{una vez} other{{count} veces}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "Añadir a favoritos",
+  "songFavoriteRemove": "Quitar de favoritos",
+  "songMenuLabel": "Acciones de la canción",
+  "songInfo": "Detalles de la canción",
+  "setlistMenuLabel": "Acciones de la lista",
+  "songAddToSetlist": "Añadir a la lista",
+  "songCopyChordPro": "Copiar ChordPro",
+  "songDeleteConfirmTitle": "¿Eliminar canción?",
+  "songDeleteConfirmMessage": "Esta canción se quitará de tu biblioteca.",
+  "songDeleted": "Canción eliminada.",
+  "setlistsTitle": "Listas de canciones",
+  "setlistsEmpty": "Crea una lista para tu próximo ensayo o actuación.",
+  "setlistsEmptySearch": "Ninguna lista coincide con tu búsqueda.",
+  "setlistCreate": "Nueva lista de canciones",
+  "setlistNameHint": "Nombre de la lista",
+  "setlistNotes": "Notas",
+  "setlistEntryOverride": "Tonalidad y cejilla específicas de la canción",
+  "setlistSongsCount": "{count, plural, =0{No hay canciones} =1{1 canción} other{{count} canciones}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "Al menos {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "Duración desconocida",
+  "setlistActivity": "Última actividad: {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "Creada el {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "Editada el {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "Reproducida por última vez el {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "Esta lista aún no tiene canciones.",
+  "setlistAddSongs": "Añadir canciones",
+  "setlistReorder": "Reordenar canciones",
+  "setlistMoveSongUp": "Subir {song}",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "Bajar {song}",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "Quitar {song} de la lista",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "Duplicar lista",
+  "setlistFavoriteAdd": "Añadir lista a favoritos",
+  "setlistFavoriteRemove": "Quitar lista de favoritos",
+  "setlistShare": "Compartir como archivo de lista",
+  "setlistSharePdf": "Compartir como PDF",
+  "setlistPrint": "Imprimir",
+  "setlistDeleteConfirmTitle": "¿Eliminar lista?",
+  "setlistDeleteConfirmMessage": "Se quitará la lista. Las canciones de tu biblioteca se conservarán.",
+  "setlistDeleted": "Lista eliminada.",
+  "readerTitle": "Letras",
+  "readerNoLyrics": "Todavía no se han añadido letras.",
+  "readerShowChords": "Mostrar acordes",
+  "readerHideChords": "Ocultar acordes",
+  "readerTranspose": "Transportar acordes",
+  "readerTransposeSemitones": "Transportar {count, plural, =0{0 semitonos} =1{1 semitono} other{{count} semitonos}}",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "Editar letras y detalles",
+  "playerPlay": "Iniciar desplazamiento de letras",
+  "playerPause": "Pausar desplazamiento de letras",
+  "playerResume": "Reanudar desplazamiento de letras",
+  "playerSeek": "Posición de reproducción",
+  "playerElapsed": "Tiempo transcurrido: {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "Tiempo restante: {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "Modo de desplazamiento",
+  "playerTimedLyrics": "Letras sincronizadas",
+  "playerEstimatedPace": "Ritmo estimado",
+  "playerManualScroll": "Desplazamiento manual",
+  "playerTimingStatusReady": "Las letras seguirán la sincronización disponible.",
+  "playerTimingStatusEstimated": "La velocidad de desplazamiento se estima según la duración de la canción.",
+  "playerTimingStatusManual": "Desplaza las letras manualmente.",
+  "playerTimingStatusUnavailable": "El desplazamiento sincronizado no está disponible para esta canción.",
+  "playerDurationUnknown": "Añade la duración de la canción para usar el desplazamiento estimado.",
+  "playerProgressLabel": "Progreso de la canción",
+  "playerCurrentSection": "Sección actual",
+  "playerPreviousSection": "Sección anterior",
+  "playerNextSection": "Sección siguiente",
+  "playerPreviousSectionSong": "Sección anterior · mantén pulsado para ir a la canción anterior de la lista",
+  "playerNextSectionSong": "Sección siguiente · mantén pulsado para ir a la canción siguiente de la lista",
+  "playerPreviousSong": "Canción anterior",
+  "playerNextSong": "Canción siguiente",
+  "editorTitle": "Editar canción",
+  "editorTitleField": "Título de la canción",
+  "editorArtistField": "Artista",
+  "editorAlbumField": "Álbum",
+  "editorLyricsField": "Letra",
+  "editorChordsField": "Acordes",
+  "editorKeyField": "Tonalidad",
+  "editorCapoField": "Cejilla",
+  "editorTuningField": "Afinación",
+  "editorTempoField": "Tempo",
+  "editorDurationField": "Duración",
+  "editorTimeSignatureField": "Compás",
+  "editorLanguageField": "Idioma",
+  "editorYearField": "Año",
+  "editorComposerField": "Compositor",
+  "editorLyricistField": "Autor de la letra",
+  "editorCopyrightField": "Derechos de autor",
+  "editorLicenseField": "Licencia",
+  "songInfoSources": "Fuentes y créditos",
+  "searchMatchSameSong": "La misma canción; grabación sin confirmar",
+  "searchMatchNeedsAgreement": "La letra de la hoja de acordes debe confirmarse",
+  "searchMatchDifferentLyrics": "La letra no coincide con la canción seleccionada",
+  "searchMatchCombinedSources": "Detalles combinados de varias fuentes",
+  "searchCombinedFromSources": "{count, plural, =1{Combinado de 1 fuente} other{Combinado de {count} fuentes}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, =0{0 coincidencias de canciones} =1{1 coincidencia de canción} other{{count} coincidencias de canciones}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, =0{0 versiones de fuentes} =1{1 versión de fuente} other{{count} versiones de fuentes}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "Mejor coincidencia disponible",
+  "providerDescriptionUnknown": "Fuente de canciones",
+  "providerDescDownloadChordProThenImport": "Descarga un archivo ChordPro de la fuente y luego impórtalo.",
+  "providerDescFreeAccountDownloadThenImport": "Descarga el archivo con una cuenta gratuita y luego impórtalo.",
+  "providerDescPublicChordSheets": "Hojas de acordes públicas.",
+  "providerDescHistoricalTextPerWorkLicense": "Letras históricas con licencia por obra.",
+  "providerDescLicensedCatalog": "Catálogo de letras con licencia.",
+  "providerDescOriginalSongsCcBy": "Canciones originales con licencia Creative Commons BY.",
+  "providerDescPerSongLicense": "Letras con licencia por canción.",
+  "providerDescRecordingMetadataOnly": "Solo detalles de grabaciones y lanzamientos.",
+  "providerDescCompositionMetadataOnly": "Solo detalles de composiciones.",
+  "providerDescExactFileArtworkOnly": "Portadas solo para coincidencias exactas de grabación.",
+  "providerCapabilityLyrics": "Letras",
+  "providerCapabilityChords": "Acordes",
+  "providerCapabilityTiming": "Letras sincronizadas",
+  "providerCapabilitySearch": "Búsqueda",
+  "providerCapabilityMetadata": "Detalles de la canción",
+  "editorArtworkField": "Enlace a la portada",
+  "editorLyricsHint": "Toca una línea para editar la letra o los acordes.",
+  "editorSave": "Guardar cambios",
+  "editorSaved": "Cambios guardados.",
+  "editorSaveFailed": "No se han podido guardar los cambios.",
+  "editorSaveConflict": "La canción se modificó en otro lugar. Tus cambios se guardaron como una copia independiente.",
+  "editorUnsavedTitle": "¿Descartar cambios?",
+  "editorUnsavedMessage": "No se han guardado tus cambios.",
+  "editorFieldRequired": "Introduce el título de la canción.",
+  "settingsTitle": "Ajustes",
+  "settingsAppearance": "Apariencia",
+  "settingsTheme": "Tema",
+  "settingsThemeSystem": "Usar ajuste del dispositivo",
+  "settingsThemeLight": "Claro",
+  "settingsThemeDark": "Oscuro",
+  "settingsColorPalette": "Paleta de colores",
+  "settingsFont": "Fuente",
+  "settingsTextSize": "Tamaño del texto",
+  "settingsLyricsPreview": "Vista previa de la letra",
+  "settingsPlayer": "Reproductor de letras",
+  "settingsDefaultShowChords": "Mostrar acordes de forma predeterminada",
+  "settingsDefaultAutoscroll": "Desplazar las letras automáticamente",
+  "settingsDefaultTiming": "Modo de desplazamiento predeterminado",
+  "settingsLanguage": "Idioma de la aplicación",
+  "settingsLanguageSystem": "Usar idioma del dispositivo",
+  "settingsLanguageEnglish": "Inglés",
+  "settingsLanguageBulgarian": "Búlgaro",
+  "settingsLanguageUkrainian": "Ucraniano",
+  "settingsSources": "Fuentes de letras",
+  "settingsSourceEnabled": "Activar fuente {source}",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "Actualizar lista de fuentes",
+  "settingsSourcesUpdated": "Fuentes actualizadas.",
+  "settingsSourcesUpdateFailed": "No se han podido actualizar las fuentes.",
+  "settingsImport": "Importar canciones",
+  "settingsImportChordPro": "Importar archivo ChordPro",
+  "settingsImportSetlist": "Importar archivo de lista",
+  "settingsImportSuccess": "Importación completada.",
+  "settingsImportFailed": "No se ha podido importar este archivo.",
+  "settingsImportUnsupported": "Este tipo de archivo no es compatible.",
+  "settingsShareSong": "Compartir como ChordPro",
+  "settingsSharePdf": "Compartir como PDF",
+  "settingsCopySong": "Copiar al portapapeles",
+  "settingsPrintSong": "Imprimir solo la canción",
+  "settingsPrintSetlist": "Imprimir lista con letras",
+  "settingsExportFailed": "No se ha podido preparar el archivo.",
+  "settingsCopied": "Copiado al portapapeles.",
+  "settingsAbout": "Acerca de",
+  "settingsPrivacy": "Privacidad",
+  "settingsLegal": "Legal",
+  "settingsClearHistory": "Borrar historial",
+  "settingsClearHistoryConfirm": "¿Borrar el historial de canciones y listas?",
+  "settingsHistoryCleared": "Historial borrado.",
+  "accountTitle": "Cuenta y sincronización",
+  "accountUnavailable": "La sincronización requiere una versión de Singbook configurada para iniciar sesión con Google. Esta versión solo guarda tus canciones en este dispositivo.",
+  "accountSyncNow": "Sincronizar ahora",
+  "accountConnected": "Conectado. Elige «Sincronizar ahora» para actualizar la copia de seguridad.",
+  "accountSignIn": "Conectar cuenta",
+  "accountSignOut": "Cerrar sesión",
+  "accountChange": "Cambiar cuenta",
+  "accountSignedOut": "Desconectado",
+  "accountSyncing": "Sincronizando tu biblioteca…",
+  "accountSynced": "Biblioteca sincronizada.",
+  "accountSyncFailed": "No se ha podido sincronizar tu biblioteca.",
+  "accessibilityFavorite": "Favorito",
+  "accessibilityNotFavorite": "No es favorito",
+  "accessibilitySearchField": "Buscar canciones",
+  "accessibilityClearSearch": "Borrar texto de búsqueda",
+  "accessibilitySongMenu": "Acciones para {song}",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "Acciones para {setlist}",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "Expandir canciones de {setlist}",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "Contraer canciones de {setlist}",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "Progreso de reproducción, {percent} por ciento",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "Cronología del historial, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "Cargando…",
+  "loadingSongs": "Cargando canciones…",
+  "loadingSetlists": "Cargando listas…",
+  "errorGeneric": "Se ha producido un error.",
+  "errorOffline": "Parece que no tienes conexión.",
+  "errorPermission": "Se necesita permiso para continuar.",
+  "emptyFiltered": "Ningún elemento coincide con estos filtros.",
+  "unknownValue": "Desconocido",
+  "durationUnknown": "Duración desconocida",
+  "metadataNotSet": "Sin establecer",
+  "dateToday": "Hoy",
+  "dateYesterday": "Ayer",
+  "daySongCount": "{count, plural, =0{No hay canciones} =1{1 canción} other{{count} canciones}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "Azul marino",
+  "settingsPaletteSage": "Verde salvia",
+  "settingsPaletteOcean": "Océano",
+  "settingsPaletteClay": "Arcilla",
+  "settingsPalettePlum": "Ciruela",
+  "settingsFontSystem": "Sistema",
+  "settingsFontSerif": "Con remates",
+  "settingsFontMonospace": "Monoespaciada",
+  "settingsLyricsPreviewExample": "Cuando llegue la mañana, volveremos a cantar.",
+  "searchDiscoveryProgress": "Comprobando fuentes de letras: {checked} de {total} completadas.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "No se han encontrado letras utilizables.",
+  "searchDiscoveryNoLyricsDetails": "Se ha comprobado la canción seleccionada en las fuentes activadas, pero ninguna proporcionó una versión de la letra utilizable.",
+  "searchDiscoveryError": "No se han podido comprobar las fuentes de letras.",
+  "searchDiscoveryRetry": "Volver a buscar letras",
+  "searchSourcesUnavailableCount": "{count, plural, =0{0 fuentes no disponibles} =1{1 fuente no disponible} other{{count} fuentes no disponibles}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "Comprueba la conexión e inténtalo de nuevo.",
+  "searchProviderChecks": "Comprobaciones de fuentes",
+  "searchProviderPending": "Comprobando",
+  "searchProviderFound": "Coincidencia encontrada",
+  "searchProviderRejected": "No coincide",
+  "searchProviderFailed": "Error en la comprobación",
+  "searchProviderUnavailable": "No hay letras utilizables",
+  "searchCatalogFilterHint": "Selecciona una canción para filtrar las versiones de letras por acordes, sincronización o idioma.",
+  "startupErrorTitle": "No se ha podido abrir tu biblioteca.",
+  "setlistCopyName": "Copia de {name}",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "Canción no encontrada",
+  "settingsImportTooLarge": "Este archivo es demasiado grande para importarlo.",
+  "songsJumpToLetter": "Ir a {letter}",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "Descartar",
+  "editorKeepEditing": "Seguir editando",
+  "settingsDefaultShowChordsHint": "Mostrar los acordes encima de la letra cuando una canción los tenga.",
+  "settingsDefaultAutoscrollHint": "Las letras se desplazan con la canción. No se usa en el modo de desplazamiento manual.",
+  "accountUnavailableTitle": "Sincronización no configurada",
+  "accountSignedOutBenefits": "Inicia sesión con Google para guardar una copia de seguridad de tus canciones y listas en Google Drive y mantener sincronizados todos tus dispositivos. En cualquier caso, tus canciones permanecen en este dispositivo.",
+  "accountSignInWithGoogle": "Iniciar sesión con Google",
+  "accountWorking": "Procesando…",
+  "accountNeverSynced": "Nunca sincronizada",
+  "accountSyncedJustNow": "Sincronizada ahora mismo",
+  "accountSyncedMinutesAgo": "{count, plural, one{Sincronizada hace 1 minuto} other{Sincronizada hace {count} minutos}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{Sincronizada hace 1 hora} other{Sincronizada hace {count} horas}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{Sincronizada hace 1 día} other{Sincronizada hace {count} días}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{1 cambio en conflicto guardado como copia} other{{count} cambios en conflicto guardados como copias}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "La misma canción o lista se modificó en dos lugares. No se perdió nada: la otra versión se guardó como una copia independiente.",
+  "accountReviewConflicts": "Revisar copias",
+  "songsConflictFilterActive": "Mostrando solo copias en conflicto",
+  "songsConflictFilterClear": "Mostrar todas las canciones",
+  "songsConflictBadge": "Copia en conflicto",
+  "songsConflictEmpty": "No hay copias en conflicto.",
+  "accountAutoSync": "Sincronizar automáticamente",
+  "accountAutoSyncHint": "Mantén tu biblioteca actualizada al abrir la aplicación y después de hacer cambios.",
+  "accountSignOutTitle": "¿Cerrar sesión en esta cuenta?",
+  "accountSignOutBody": "Tus canciones y listas permanecen en este dispositivo. No se guardarán ni sincronizarán hasta que vuelvas a iniciar sesión.",
+  "accountUseDifferent": "Usar otra cuenta",
+  "accountSignInAgain": "Volver a iniciar sesión",
+  "accountChooseAction": "Elige cómo continuar",
+  "accountChangedTitle": "Otra cuenta de Google",
+  "accountChangedBody": "La última sincronización de este dispositivo se hizo con otra cuenta de Google. Elige qué hacer con las canciones y listas de este dispositivo.",
+  "accountChangedMerge": "Combinar con la cuenta nueva",
+  "accountChangedMergeHint": "Conserva todo en este dispositivo y añádelo a la cuenta nueva.",
+  "accountChangedReplace": "Sustituir por la biblioteca de la cuenta nueva",
+  "accountChangedReplaceHint": "Se quitarán las canciones de este dispositivo que no estén en la cuenta nueva.",
+  "accountChangedSignOut": "Cancelar y cerrar sesión",
+  "accountStatusSignedOut": "Cuenta y sincronización: sesión cerrada",
+  "accountStatusSignedIn": "Cuenta y sincronización: sesión iniciada",
+  "accountStatusSyncing": "Cuenta y sincronización: sincronizando",
+  "accountStatusSynced": "Cuenta y sincronización: biblioteca actualizada",
+  "accountStatusError": "Cuenta y sincronización: problema, toca para revisar",
+  "accountNoticeConflicts": "Algunas canciones se modificaron en dos lugares. Se conservaron copias.",
+  "accountNoticeSignedIn": "Sesión iniciada.",
+  "accountNoticeSignedOut": "Sesión cerrada. Tus canciones permanecen en este dispositivo.",
+  "syncErrorNotConfigured": "La sincronización no está configurada en esta versión.",
+  "syncErrorNotConfiguredHint": "Usa una versión de Singbook configurada para iniciar sesión con Google.",
+  "syncErrorNotSignedIn": "No has iniciado sesión.",
+  "syncErrorNotSignedInHint": "Inicia sesión para sincronizar tu biblioteca.",
+  "syncErrorAuthorizationRequired": "Google necesita que vuelvas a iniciar sesión.",
+  "syncErrorAuthorizationRequiredHint": "Vuelve a iniciar sesión para continuar la sincronización. Tus canciones están a salvo en este dispositivo.",
+  "syncErrorAccessDenied": "Singbook no tiene permiso para usar Google Drive.",
+  "syncErrorAccessDeniedHint": "Vuelve a iniciar sesión y permite el acceso a Drive cuando se te solicite.",
+  "syncErrorRateLimited": "Google está limitando las solicitudes por ahora.",
+  "syncErrorRateLimitedHint": "Espera unos minutos e inténtalo de nuevo.",
+  "syncErrorStorageFull": "Tu Google Drive está lleno.",
+  "syncErrorStorageFullHint": "Libera espacio en Drive e inténtalo de nuevo.",
+  "syncErrorNetwork": "No se ha podido conectar con Google.",
+  "syncErrorNetworkHint": "Comprueba tu conexión a Internet e inténtalo de nuevo.",
+  "syncErrorAccountChanged": "Se ha usado otra cuenta de Google.",
+  "syncErrorAccountChangedHint": "Elige si quieres combinar con ella la biblioteca de este dispositivo o sustituirla.",
+  "syncErrorRemoteLibraryTooLarge": "Tu biblioteca sincronizada es demasiado grande para Singbook.",
+  "syncErrorRemoteLibraryTooLargeHint": "Quita algunas canciones o listas de la biblioteca sincronizada e inténtalo de nuevo.",
+  "syncErrorSignInFailed": "No se ha completado el inicio de sesión.",
+  "syncErrorSignInFailedHint": "Intenta iniciar sesión de nuevo.",
+  "syncErrorGeneric": "No se ha podido sincronizar tu biblioteca.",
+  "syncErrorGenericHint": "Vuelve a intentarlo dentro de un momento. Tus canciones siguen a salvo en este dispositivo."
+}

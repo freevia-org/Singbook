@@ -1,0 +1,670 @@
+{
+  "@@locale": "sv",
+  "appTitle": "Singbook",
+  "aboutDescription": "En lugn plats där du kan hitta och organisera låtarna i ditt bibliotek och sjunga tillsammans.",
+  "aboutMadeForSinging": "Skapad för att sjunga tillsammans",
+  "appVersion": "Version {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "Hem",
+  "navSongs": "Låtar",
+  "navSetlists": "Setlistor",
+  "navSettings": "Inställningar",
+  "navSettingsCompact": "Inställningar",
+  "navSearch": "Sök",
+  "navBack": "Tillbaka",
+  "navClose": "Stäng",
+  "navMore": "Fler åtgärder",
+  "actionCancel": "Avbryt",
+  "actionSave": "Spara",
+  "actionDone": "Klart",
+  "actionEdit": "Redigera",
+  "actionDelete": "Ta bort",
+  "actionShare": "Dela",
+  "actionPrint": "Skriv ut",
+  "actionCopy": "Kopiera",
+  "actionClear": "Rensa",
+  "actionRetry": "Försök igen",
+  "actionRefresh": "Uppdatera",
+  "actionImport": "Importera",
+  "actionExport": "Exportera",
+  "actionExpand": "Expandera",
+  "actionCollapse": "Fäll ihop",
+  "actionAdd": "Lägg till",
+  "actionCreate": "Skapa",
+  "actionRemove": "Ta bort",
+  "actionDuplicate": "Duplicera",
+  "actionMoveUp": "Flytta upp",
+  "actionMoveDown": "Flytta ned",
+  "actionPrevious": "Föregående",
+  "actionNext": "Nästa",
+  "searchHint": "Sök efter låtar, artister eller låttexter",
+  "searchCatalogHint": "Sök efter en låt eller artist",
+  "searchSubmit": "Sök",
+  "searchFilters": "Sökalternativ",
+  "searchFiltersShow": "Visa sökalternativ",
+  "searchFiltersHide": "Dölj sökalternativ",
+  "searchFilterArtist": "Artist",
+  "searchFilterTitle": "Låttitel",
+  "searchFilterLyrics": "Låttexter",
+  "searchFilterChords": "Har ackord",
+  "searchFilterTimed": "Tidsinställda låttexter",
+  "searchFilterLanguage": "Språk",
+  "searchFilterAll": "Alla",
+  "searchAutocompleteLabel": "Förslag",
+  "searchResultCount": "{count, plural, =0{Inga resultat} =1{1 resultat} other{{count} resultat}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "Skriv in en låt, artist eller textrad att söka efter.",
+  "searchCatalogEmptyQuery": "Skriv in en låt eller artist att söka efter.",
+  "searchNoResults": "Inga låtar hittades. Prova en annan sökning.",
+  "searchLoading": "Söker efter låtar…",
+  "searchError": "Det gick inte att slutföra sökningen.",
+  "searchOnlineTab": "Online",
+  "searchRecentTab": "Senaste",
+  "searchFavoritesTab": "Favoriter",
+  "searchSuggested": "Föreslagen träff",
+  "searchAlternatives": "Andra träffar",
+  "searchCompare": "Jämför versioner",
+  "searchChooseVersion": "Välj den här versionen",
+  "searchSongMatch": "Låtträff",
+  "searchRecordingMatch": "Inspelningsträff",
+  "searchMatchUnverified": "Inspelningen är inte verifierad",
+  "searchMatchExact": "Exakt inspelningsträff",
+  "searchMatchPossible": "Möjlig träff",
+  "searchAvailability": "Tillgänglighet",
+  "searchLyricsAvailable": "Låttext finns",
+  "searchLyricsUnavailable": "Låttext saknas",
+  "searchChordsAvailable": "Ackord finns",
+  "searchChordsUnavailable": "Inga ackord",
+  "searchTimingAvailable": "Tidsinställning finns",
+  "searchTimingUnavailable": "Ingen tidsinställning",
+  "searchDurationUnknown": "Okänd längd",
+  "searchRating": "Betyg {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "Källa",
+  "searchMetadata": "Låtinformation",
+  "searchAlbum": "Album",
+  "searchArtist": "Artist",
+  "searchYear": "År",
+  "searchLanguage": "Språk",
+  "searchSaved": "Låten har sparats i ditt bibliotek.",
+  "searchSaveFailed": "Det gick inte att spara låten.",
+  "homeRecentSongs": "Senaste låtar",
+  "homeRecentlyPlayed": "Nyligen spelade",
+  "homeFavorites": "Favoriter",
+  "homeHistory": "Historik",
+  "homeHistoryClear": "Rensa historik",
+  "homeHistoryCleared": "Historiken har rensats.",
+  "homeHistoryEmpty": "Låtar som du öppnar visas här.",
+  "homeFavoritesEmpty": "Dina favoritlåtar och setlistor visas här.",
+  "homeItemsShownCount": "{count, plural, =0{0 objekt visas} =1{1 objekt visas} other{{count} objekt visas}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "Dina senaste låtar och setlistor visas här.",
+  "homeTimelineLabel": "Historikens tidslinje",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "Fullständig historik",
+  "homeShowFavorites": "Visa favoriter",
+  "homeShowRecent": "Visa senaste",
+  "songsTitle": "Låtar",
+  "songsEmpty": "Dina låtar visas här.",
+  "songsEmptySearch": "Inga låtar matchar sökningen.",
+  "songsAdd": "Lägg till låt",
+  "songsSortAlphabetical": "Sortera alfabetiskt",
+  "songsAlphabetNavigation": "Låtregister",
+  "songsUsageCount": "{count, plural, =0{Aldrig öppnad} =1{Öppnad 1 gång} other{Öppnad {count} gånger}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "Lägg till i favoriter",
+  "songFavoriteRemove": "Ta bort från favoriter",
+  "songMenuLabel": "Låtåtgärder",
+  "songInfo": "Låtinformation",
+  "setlistMenuLabel": "Setliståtgärder",
+  "songAddToSetlist": "Lägg till i setlista",
+  "songCopyChordPro": "Kopiera ChordPro",
+  "songDeleteConfirmTitle": "Ta bort låten?",
+  "songDeleteConfirmMessage": "Låten tas bort från ditt bibliotek.",
+  "songDeleted": "Låten har tagits bort.",
+  "setlistsTitle": "Setlistor",
+  "setlistsEmpty": "Skapa en setlista inför nästa repetition eller spelning.",
+  "setlistsEmptySearch": "Inga setlistor matchar sökningen.",
+  "setlistCreate": "Ny setlista",
+  "setlistNameHint": "Setlistans namn",
+  "setlistNotes": "Anteckningar",
+  "setlistEntryOverride": "Separat tonart och capo för låten",
+  "setlistSongsCount": "{count, plural, =0{Inga låtar} =1{1 låt} other{{count} låtar}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "Minst {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "Okänd längd",
+  "setlistActivity": "Senaste aktivitet {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "Skapad {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "Redigerad {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "Senast spelad {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "Setlistan innehåller inga låtar ännu.",
+  "setlistAddSongs": "Lägg till låtar",
+  "setlistReorder": "Ändra låtordning",
+  "setlistMoveSongUp": "Flytta ”{song}” uppåt",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "Flytta ”{song}” nedåt",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "Ta bort ”{song}” från setlistan",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "Duplicera setlista",
+  "setlistFavoriteAdd": "Lägg till setlista i favoriter",
+  "setlistFavoriteRemove": "Ta bort setlista från favoriter",
+  "setlistShare": "Dela som setlistfil",
+  "setlistSharePdf": "Dela som PDF",
+  "setlistPrint": "Skriv ut",
+  "setlistDeleteConfirmTitle": "Ta bort setlistan?",
+  "setlistDeleteConfirmMessage": "Setlistan tas bort. Låtarna i ditt bibliotek finns kvar.",
+  "setlistDeleted": "Setlistan har tagits bort.",
+  "readerTitle": "Låttexter",
+  "readerNoLyrics": "Låttexten har inte lagts till ännu.",
+  "readerShowChords": "Visa ackord",
+  "readerHideChords": "Dölj ackord",
+  "readerTranspose": "Transponera ackord",
+  "readerTransposeSemitones": "Transponera {count, plural, =0{0 halvtoner} =1{1 halvton} other{{count} halvtoner}}",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "Redigera låttext och information",
+  "playerPlay": "Starta rullning av låttexten",
+  "playerPause": "Pausa rullningen av låttexten",
+  "playerResume": "Återuppta rullningen av låttexten",
+  "playerSeek": "Uppspelningsposition",
+  "playerElapsed": "Förfluten tid {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "Återstående tid {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "Rullningsläge",
+  "playerTimedLyrics": "Tidsinställd låttext",
+  "playerEstimatedPace": "Uppskattat tempo",
+  "playerManualScroll": "Manuell rullning",
+  "playerTimingStatusReady": "Låttexten rullar i takt med de tillgängliga tidsmarkeringarna.",
+  "playerTimingStatusEstimated": "Rullningstempot uppskattas utifrån låtens längd.",
+  "playerTimingStatusManual": "Rulla låttexten själv.",
+  "playerTimingStatusUnavailable": "Tidsinställd rullning är inte tillgänglig för den här låten.",
+  "playerDurationUnknown": "Lägg till låtens längd för att använda uppskattad rullning.",
+  "playerProgressLabel": "Låtens förlopp",
+  "playerCurrentSection": "Aktuell del",
+  "playerPreviousSection": "Föregående del",
+  "playerNextSection": "Nästa del",
+  "playerPreviousSectionSong": "Föregående del · håll för att gå till föregående låt i setlistan",
+  "playerNextSectionSong": "Nästa del · håll för att gå till nästa låt i setlistan",
+  "playerPreviousSong": "Föregående låt",
+  "playerNextSong": "Nästa låt",
+  "editorTitle": "Redigera låt",
+  "editorTitleField": "Låttitel",
+  "editorArtistField": "Artist",
+  "editorAlbumField": "Album",
+  "editorLyricsField": "Låttext",
+  "editorChordsField": "Ackord",
+  "editorKeyField": "Tonart",
+  "editorCapoField": "Capo",
+  "editorTuningField": "Stämning",
+  "editorTempoField": "Tempo",
+  "editorDurationField": "Längd",
+  "editorTimeSignatureField": "Taktart",
+  "editorLanguageField": "Språk",
+  "editorYearField": "År",
+  "editorComposerField": "Kompositör",
+  "editorLyricistField": "Textförfattare",
+  "editorCopyrightField": "Upphovsrätt",
+  "editorLicenseField": "Licens",
+  "songInfoSources": "Källor och medverkande",
+  "searchMatchSameSong": "Samma låt, inspelningen är inte bekräftad",
+  "searchMatchNeedsAgreement": "Ackordbladet behöver bekräftas mot låttexten",
+  "searchMatchDifferentLyrics": "Låttexten skiljer sig från den valda låten",
+  "searchMatchCombinedSources": "Informationen har sammanställts från flera källor",
+  "searchCombinedFromSources": "{count, plural, =1{Sammanställd från 1 källa} other{Sammanställd från {count} källor}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, =0{0 låtträffar} =1{1 låtträff} other{{count} låtträffar}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, =0{0 källversioner} =1{1 källversion} other{{count} källversioner}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "Bästa tillgängliga träff",
+  "providerDescriptionUnknown": "Låtkälla",
+  "providerDescDownloadChordProThenImport": "Ladda ned en ChordPro-fil från källan och importera den sedan.",
+  "providerDescFreeAccountDownloadThenImport": "Ladda ned filen med ett kostnadsfritt konto och importera den sedan.",
+  "providerDescPublicChordSheets": "Offentliga ackordblad.",
+  "providerDescHistoricalTextPerWorkLicense": "Historiska låttexter licensieras per verk.",
+  "providerDescLicensedCatalog": "Licensierad katalog med låttexter.",
+  "providerDescOriginalSongsCcBy": "Originallåtar under licensen Creative Commons BY.",
+  "providerDescPerSongLicense": "Låttexter licensieras per låt.",
+  "providerDescRecordingMetadataOnly": "Endast information om inspelning och utgivning.",
+  "providerDescCompositionMetadataOnly": "Endast information om kompositionen.",
+  "providerDescExactFileArtworkOnly": "Omslagsbild finns endast för exakta inspelningsträffar.",
+  "providerCapabilityLyrics": "Låttexter",
+  "providerCapabilityChords": "Ackord",
+  "providerCapabilityTiming": "Tidsinställda låttexter",
+  "providerCapabilitySearch": "Sökning",
+  "providerCapabilityMetadata": "Låtinformation",
+  "editorArtworkField": "Omslagslänk",
+  "editorLyricsHint": "Tryck på en rad för att redigera låttext eller ackord.",
+  "editorSave": "Spara ändringar",
+  "editorSaved": "Ändringarna har sparats.",
+  "editorSaveFailed": "Det gick inte att spara ändringarna.",
+  "editorSaveConflict": "Låten ändrades på ett annat ställe. Dina ändringar sparades som en separat kopia.",
+  "editorUnsavedTitle": "Förkasta ändringarna?",
+  "editorUnsavedMessage": "Dina ändringar har inte sparats.",
+  "editorFieldRequired": "Ange en låttitel.",
+  "settingsTitle": "Inställningar",
+  "settingsAppearance": "Utseende",
+  "settingsTheme": "Tema",
+  "settingsThemeSystem": "Använd enhetens inställning",
+  "settingsThemeLight": "Ljust",
+  "settingsThemeDark": "Mörkt",
+  "settingsColorPalette": "Färgpalett",
+  "settingsFont": "Typsnitt",
+  "settingsTextSize": "Textstorlek",
+  "settingsLyricsPreview": "Förhandsvisning av låttext",
+  "settingsPlayer": "Låttextspelare",
+  "settingsDefaultShowChords": "Visa ackord som standard",
+  "settingsDefaultAutoscroll": "Starta rullning av låttext automatiskt",
+  "settingsDefaultTiming": "Standardläge för rullning",
+  "settingsLanguage": "Appspråk",
+  "settingsLanguageSystem": "Använd enhetens språk",
+  "settingsLanguageEnglish": "Engelska",
+  "settingsLanguageBulgarian": "Bulgariska",
+  "settingsLanguageUkrainian": "Ukrainska",
+  "settingsSources": "Källor för låttexter",
+  "settingsSourceEnabled": "Aktivera källan {source}",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "Uppdatera listan över källor",
+  "settingsSourcesUpdated": "Källorna har uppdaterats.",
+  "settingsSourcesUpdateFailed": "Det gick inte att uppdatera källorna.",
+  "settingsImport": "Importera låtar",
+  "settingsImportChordPro": "Importera ChordPro-fil",
+  "settingsImportSetlist": "Importera setlistfil",
+  "settingsImportSuccess": "Importen är klar.",
+  "settingsImportFailed": "Det gick inte att importera filen.",
+  "settingsImportUnsupported": "Den här filtypen stöds inte.",
+  "settingsShareSong": "Dela som ChordPro",
+  "settingsSharePdf": "Dela som PDF",
+  "settingsCopySong": "Kopiera till urklipp",
+  "settingsPrintSong": "Skriv bara ut låten",
+  "settingsPrintSetlist": "Skriv ut setlista med låttexter",
+  "settingsExportFailed": "Det gick inte att förbereda filen.",
+  "settingsCopied": "Kopierat till urklipp.",
+  "settingsAbout": "Om",
+  "settingsPrivacy": "Integritet",
+  "settingsLegal": "Juridiskt",
+  "settingsClearHistory": "Rensa historik",
+  "settingsClearHistoryConfirm": "Rensa historiken för låtar och setlistor?",
+  "settingsHistoryCleared": "Historiken har rensats.",
+  "accountTitle": "Konto och synkronisering",
+  "accountUnavailable": "Synkronisering kräver en version av Singbook där inloggning med Google har konfigurerats. I den här versionen sparas låtarna endast på den här enheten.",
+  "accountSyncNow": "Synkronisera nu",
+  "accountConnected": "Ansluten. Välj Synkronisera nu för att uppdatera säkerhetskopian.",
+  "accountSignIn": "Anslut konto",
+  "accountSignOut": "Logga ut",
+  "accountChange": "Byt konto",
+  "accountSignedOut": "Inte ansluten",
+  "accountSyncing": "Synkroniserar ditt bibliotek…",
+  "accountSynced": "Biblioteket har synkroniserats.",
+  "accountSyncFailed": "Det gick inte att synkronisera biblioteket.",
+  "accessibilityFavorite": "Favorit",
+  "accessibilityNotFavorite": "Inte en favorit",
+  "accessibilitySearchField": "Sök låtar",
+  "accessibilityClearSearch": "Rensa söktexten",
+  "accessibilitySongMenu": "Åtgärder för {song}",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "Åtgärder för {setlist}",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "Visa låtar i {setlist}",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "Dölj låtar i {setlist}",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "Uppspelningsförlopp, {percent} procent",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "Historikens tidslinje, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "Läser in…",
+  "loadingSongs": "Läser in låtar…",
+  "loadingSetlists": "Läser in setlistor…",
+  "errorGeneric": "Något gick fel.",
+  "errorOffline": "Det verkar som att du är offline.",
+  "errorPermission": "Du måste ge behörighet för att fortsätta.",
+  "emptyFiltered": "Inga objekt matchar de här filtren.",
+  "unknownValue": "Okänt",
+  "durationUnknown": "Okänd längd",
+  "metadataNotSet": "Inte angivet",
+  "dateToday": "I dag",
+  "dateYesterday": "I går",
+  "daySongCount": "{count, plural, =0{Inga låtar} =1{1 låt} other{{count} låtar}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "Marinblå",
+  "settingsPaletteSage": "Salviagrön",
+  "settingsPaletteOcean": "Havsblå",
+  "settingsPaletteClay": "Lerfärgad",
+  "settingsPalettePlum": "Plommonlila",
+  "settingsFontSystem": "System",
+  "settingsFontSerif": "Serif",
+  "settingsFontMonospace": "Fast bredd",
+  "settingsLyricsPreviewExample": "När morgonen kommer sjunger vi igen.",
+  "searchDiscoveryProgress": "Kontrollerar källor för låttexter: {checked} av {total} klara.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "Inga användbara låttexter hittades.",
+  "searchDiscoveryNoLyricsDetails": "Den valda låten kontrollerades mot de aktiverade källorna, men ingen av dem hittade en användbar version av låttexten.",
+  "searchDiscoveryError": "Det gick inte att kontrollera källorna för låttexter.",
+  "searchDiscoveryRetry": "Sök efter låttexter igen",
+  "searchSourcesUnavailableCount": "{count, plural, =0{0 källor otillgängliga} =1{1 källa otillgänglig} other{{count} källor otillgängliga}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "Kontrollera anslutningen och försök igen.",
+  "searchProviderChecks": "Källkontroller",
+  "searchProviderPending": "Kontrollerar",
+  "searchProviderFound": "Träff hittad",
+  "searchProviderRejected": "Matchar inte",
+  "searchProviderFailed": "Kontrollen misslyckades",
+  "searchProviderUnavailable": "Inga användbara låttexter",
+  "searchCatalogFilterHint": "Välj en låt för att filtrera textversioner efter ackord, tidsinställning eller språk.",
+  "startupErrorTitle": "Det gick inte att öppna biblioteket.",
+  "setlistCopyName": "Kopia av {name}",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "Låten saknas",
+  "settingsImportTooLarge": "Filen är för stor för att importera.",
+  "songsJumpToLetter": "Hoppa till {letter}",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "Förkasta",
+  "editorKeepEditing": "Fortsätt redigera",
+  "settingsDefaultShowChordsHint": "Visa ackord ovanför låttexten när det finns ackord.",
+  "settingsDefaultAutoscrollHint": "Låttexten rullas med låten. Används inte i manuellt rullningsläge.",
+  "accountUnavailableTitle": "Synkronisering är inte konfigurerad",
+  "accountSignedOutBenefits": "Logga in med Google för att säkerhetskopiera dina låtar och setlistor till Google Drive och hålla alla dina enheter synkroniserade. Dina låtar finns kvar på den här enheten oavsett.",
+  "accountSignInWithGoogle": "Logga in med Google",
+  "accountWorking": "Arbetar…",
+  "accountNeverSynced": "Aldrig synkroniserat",
+  "accountSyncedJustNow": "Synkroniserat nyss",
+  "accountSyncedMinutesAgo": "{count, plural, one{Synkroniserat för 1 minut sedan} other{Synkroniserat för {count} minuter sedan}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{Synkroniserat för 1 timme sedan} other{Synkroniserat för {count} timmar sedan}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{Synkroniserat för 1 dag sedan} other{Synkroniserat för {count} dagar sedan}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{1 ändring i konflikt sparades som en kopia} other{{count} ändringar i konflikt sparades som kopior}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "Samma låt eller setlista redigerades på två ställen. Inget gick förlorat: den andra versionen sparades som en separat kopia.",
+  "accountReviewConflicts": "Granska kopior",
+  "songsConflictFilterActive": "Visar endast konfliktkopior",
+  "songsConflictFilterClear": "Visa alla låtar",
+  "songsConflictBadge": "Konfliktkopia",
+  "songsConflictEmpty": "Inga konfliktkopior.",
+  "accountAutoSync": "Synkronisera automatiskt",
+  "accountAutoSyncHint": "Håll biblioteket uppdaterat när du öppnar appen och efter ändringar.",
+  "accountSignOutTitle": "Logga ut från det här kontot?",
+  "accountSignOutBody": "Dina låtar och setlistor finns kvar på den här enheten. De säkerhetskopieras eller synkroniseras inte förrän du loggar in igen.",
+  "accountUseDifferent": "Använd ett annat konto",
+  "accountSignInAgain": "Logga in igen",
+  "accountChooseAction": "Välj hur du vill fortsätta",
+  "accountChangedTitle": "Ett annat Google-konto",
+  "accountChangedBody": "Den här enheten synkroniserades senast med ett annat Google-konto. Välj vad som ska hända med låtarna och setlistorna på den här enheten.",
+  "accountChangedMerge": "Slå ihop med det nya kontot",
+  "accountChangedMergeHint": "Behåll allt på den här enheten och lägg till det i det nya kontot.",
+  "accountChangedReplace": "Ersätt med det nya kontots bibliotek",
+  "accountChangedReplaceHint": "Låtar på den här enheten som inte finns i det nya kontot tas bort.",
+  "accountChangedSignOut": "Avbryt och logga ut",
+  "accountStatusSignedOut": "Konto och synkronisering: inte inloggad",
+  "accountStatusSignedIn": "Konto och synkronisering: inloggad",
+  "accountStatusSyncing": "Konto och synkronisering: synkroniserar",
+  "accountStatusSynced": "Konto och synkronisering: biblioteket är uppdaterat",
+  "accountStatusError": "Konto och synkronisering: problem, tryck för att granska",
+  "accountNoticeConflicts": "Vissa låtar redigerades på två ställen. Kopior sparades.",
+  "accountNoticeSignedIn": "Inloggad.",
+  "accountNoticeSignedOut": "Utloggad. Dina låtar finns kvar på den här enheten.",
+  "syncErrorNotConfigured": "Synkronisering är inte konfigurerad i den här versionen.",
+  "syncErrorNotConfiguredHint": "Använd en version av Singbook med inloggning via Google konfigurerad.",
+  "syncErrorNotSignedIn": "Du är inte inloggad.",
+  "syncErrorNotSignedInHint": "Logga in för att synkronisera biblioteket.",
+  "syncErrorAuthorizationRequired": "Google kräver att du loggar in igen.",
+  "syncErrorAuthorizationRequiredHint": "Logga in igen för att fortsätta synkronisera. Dina låtar är säkra på den här enheten.",
+  "syncErrorAccessDenied": "Singbook har inte behörighet att använda Google Drive.",
+  "syncErrorAccessDeniedHint": "Logga in igen och tillåt åtkomst till Drive när du blir tillfrågad.",
+  "syncErrorRateLimited": "Google begränsar antalet förfrågningar just nu.",
+  "syncErrorRateLimitedHint": "Vänta några minuter och försök igen.",
+  "syncErrorStorageFull": "Ditt Google Drive är fullt.",
+  "syncErrorStorageFullHint": "Frigör utrymme på Drive och försök igen.",
+  "syncErrorNetwork": "Det gick inte att nå Google.",
+  "syncErrorNetworkHint": "Kontrollera internetanslutningen och försök igen.",
+  "syncErrorAccountChanged": "Ett annat Google-konto användes.",
+  "syncErrorAccountChangedHint": "Välj om du vill slå ihop biblioteket på den här enheten med det eller ersätta det.",
+  "syncErrorRemoteLibraryTooLarge": "Det synkroniserade biblioteket är för stort för att Singbook ska kunna hantera det.",
+  "syncErrorRemoteLibraryTooLargeHint": "Ta bort några låtar eller setlistor från det synkroniserade biblioteket och försök igen.",
+  "syncErrorSignInFailed": "Inloggningen slutfördes inte.",
+  "syncErrorSignInFailedHint": "Försök logga in igen.",
+  "syncErrorGeneric": "Det gick inte att synkronisera biblioteket.",
+  "syncErrorGenericHint": "Försök igen om en stund. Dina låtar är fortfarande säkra på den här enheten."
+}

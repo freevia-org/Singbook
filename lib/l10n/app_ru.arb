@@ -1,0 +1,670 @@
+{
+  "@@locale": "ru",
+  "appTitle": "Singbook",
+  "aboutDescription": "Спокойное место, где можно находить, упорядочивать и петь песни из своей библиотеки.",
+  "aboutMadeForSinging": "Создано для совместного пения",
+  "appVersion": "Версия {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "navHome": "Главная",
+  "navSongs": "Песни",
+  "navSetlists": "Сет-листы",
+  "navSettings": "Настройки",
+  "navSettingsCompact": "Настройки",
+  "navSearch": "Поиск",
+  "navBack": "Назад",
+  "navClose": "Закрыть",
+  "navMore": "Другие действия",
+  "actionCancel": "Отмена",
+  "actionSave": "Сохранить",
+  "actionDone": "Готово",
+  "actionEdit": "Изменить",
+  "actionDelete": "Удалить",
+  "actionShare": "Поделиться",
+  "actionPrint": "Печать",
+  "actionCopy": "Копировать",
+  "actionClear": "Очистить",
+  "actionRetry": "Повторить",
+  "actionRefresh": "Обновить",
+  "actionImport": "Импортировать",
+  "actionExport": "Экспортировать",
+  "actionExpand": "Развернуть",
+  "actionCollapse": "Свернуть",
+  "actionAdd": "Добавить",
+  "actionCreate": "Создать",
+  "actionRemove": "Убрать",
+  "actionDuplicate": "Создать копию",
+  "actionMoveUp": "Переместить вверх",
+  "actionMoveDown": "Переместить вниз",
+  "actionPrevious": "Предыдущая",
+  "actionNext": "Следующая",
+  "searchHint": "Поиск песен, исполнителей или текстов",
+  "searchCatalogHint": "Поиск песни или исполнителя",
+  "searchSubmit": "Найти",
+  "searchFilters": "Параметры поиска",
+  "searchFiltersShow": "Показать параметры поиска",
+  "searchFiltersHide": "Скрыть параметры поиска",
+  "searchFilterArtist": "Исполнитель",
+  "searchFilterTitle": "Название песни",
+  "searchFilterLyrics": "Текст песни",
+  "searchFilterChords": "Есть аккорды",
+  "searchFilterTimed": "Синхронизированный текст",
+  "searchFilterLanguage": "Язык",
+  "searchFilterAll": "Любой",
+  "searchAutocompleteLabel": "Подсказки",
+  "searchResultCount": "{count, plural, one{{count} результат} few{{count} результата} many{{count} результатов} other{{count} результата}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchEmptyQuery": "Введите название песни, исполнителя или текст для поиска.",
+  "searchCatalogEmptyQuery": "Введите название песни или исполнителя для поиска.",
+  "searchNoResults": "Песни не найдены. Попробуйте изменить запрос.",
+  "searchLoading": "Поиск песен…",
+  "searchError": "Не удалось выполнить поиск.",
+  "searchOnlineTab": "Онлайн",
+  "searchRecentTab": "Недавние",
+  "searchFavoritesTab": "Избранное",
+  "searchSuggested": "Предлагаемое совпадение",
+  "searchAlternatives": "Другие совпадения",
+  "searchCompare": "Сравнить версии",
+  "searchChooseVersion": "Выбрать эту версию",
+  "searchSongMatch": "Совпадение песни",
+  "searchRecordingMatch": "Совпадение записи",
+  "searchMatchUnverified": "Запись не проверена",
+  "searchMatchExact": "Точное совпадение записи",
+  "searchMatchPossible": "Возможное совпадение",
+  "searchAvailability": "Доступность",
+  "searchLyricsAvailable": "Текст доступен",
+  "searchLyricsUnavailable": "Текст недоступен",
+  "searchChordsAvailable": "Аккорды доступны",
+  "searchChordsUnavailable": "Аккордов нет",
+  "searchTimingAvailable": "Доступна синхронизация",
+  "searchTimingUnavailable": "Синхронизация недоступна",
+  "searchDurationUnknown": "Длительность неизвестна",
+  "searchRating": "Оценка: {rating}",
+  "@searchRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "searchSourceLabel": "Источник",
+  "searchMetadata": "Сведения о песне",
+  "searchAlbum": "Альбом",
+  "searchArtist": "Исполнитель",
+  "searchYear": "Год",
+  "searchLanguage": "Язык",
+  "searchSaved": "Песня сохранена в библиотеке.",
+  "searchSaveFailed": "Не удалось сохранить песню.",
+  "homeRecentSongs": "Недавние песни",
+  "homeRecentlyPlayed": "Недавно проигранные",
+  "homeFavorites": "Избранное",
+  "homeHistory": "История",
+  "homeHistoryClear": "Очистить историю",
+  "homeHistoryCleared": "История очищена.",
+  "homeHistoryEmpty": "Здесь появятся песни, которые ты откроешь.",
+  "homeFavoritesEmpty": "Здесь появятся избранные песни и сет-листы.",
+  "homeItemsShownCount": "{count, plural, one{Показан: {count} элемент} few{Показано: {count} элемента} many{Показано: {count} элементов} other{Показано: {count} элемента}}",
+  "@homeItemsShownCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeRecentEmpty": "Здесь появятся недавние песни и сет-листы.",
+  "homeTimelineLabel": "Временная шкала истории",
+  "homeTimelineDate": "{date}",
+  "@homeTimelineDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAllHistory": "Вся история",
+  "homeShowFavorites": "Показать избранное",
+  "homeShowRecent": "Показать недавние",
+  "songsTitle": "Песни",
+  "songsEmpty": "Здесь появятся твои песни.",
+  "songsEmptySearch": "Нет песен, соответствующих запросу.",
+  "songsAdd": "Добавить песню",
+  "songsSortAlphabetical": "Сортировать по алфавиту",
+  "songsAlphabetNavigation": "Указатель песен",
+  "songsUsageCount": "Открыта {count, plural, one{{count} раз} few{{count} раза} many{{count} раз} other{{count} раза}}",
+  "@songsUsageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "songFavoriteAdd": "Добавить в избранное",
+  "songFavoriteRemove": "Убрать из избранного",
+  "songMenuLabel": "Действия с песней",
+  "songInfo": "Сведения о песне",
+  "setlistMenuLabel": "Действия с сет-листом",
+  "songAddToSetlist": "Добавить в сет-лист",
+  "songCopyChordPro": "Копировать ChordPro",
+  "songDeleteConfirmTitle": "Удалить песню?",
+  "songDeleteConfirmMessage": "Песня будет удалена из библиотеки.",
+  "songDeleted": "Песня удалена.",
+  "setlistsTitle": "Сет-листы",
+  "setlistsEmpty": "Создай сет-лист для следующей репетиции или выступления.",
+  "setlistsEmptySearch": "Нет сет-листов, соответствующих запросу.",
+  "setlistCreate": "Новый сет-лист",
+  "setlistNameHint": "Название сет-листа",
+  "setlistNotes": "Заметки",
+  "setlistEntryOverride": "Тональность и каподастр для этой песни",
+  "setlistSongsCount": "{count, plural, one{{count} песня} few{{count} песни} many{{count} песен} other{{count} песни}}",
+  "@setlistSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setlistDuration": "{duration}",
+  "@setlistDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationPartial": "Не менее {duration}",
+  "@setlistDurationPartial": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDurationUnknown": "Длительность неизвестна",
+  "setlistActivity": "Последнее действие: {date}",
+  "@setlistActivity": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityCreated": "Создан {date}",
+  "@setlistActivityCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityEdited": "Изменён {date}",
+  "@setlistActivityEdited": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistActivityUsed": "Последний раз исполнялся {date}",
+  "@setlistActivityUsed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongsEmpty": "В этом сет-листе пока нет песен.",
+  "setlistAddSongs": "Добавить песни",
+  "setlistReorder": "Изменить порядок песен",
+  "setlistMoveSongUp": "Переместить {song} вверх",
+  "@setlistMoveSongUp": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistMoveSongDown": "Переместить {song} вниз",
+  "@setlistMoveSongDown": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistRemoveSong": "Убрать {song} из сет-листа",
+  "@setlistRemoveSong": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistDuplicate": "Создать копию сет-листа",
+  "setlistFavoriteAdd": "Добавить сет-лист в избранное",
+  "setlistFavoriteRemove": "Убрать сет-лист из избранного",
+  "setlistShare": "Поделиться файлом сет-листа",
+  "setlistSharePdf": "Поделиться как PDF",
+  "setlistPrint": "Печать",
+  "setlistDeleteConfirmTitle": "Удалить сет-лист?",
+  "setlistDeleteConfirmMessage": "Сет-лист будет удалён. Песни в библиотеке останутся.",
+  "setlistDeleted": "Сет-лист удалён.",
+  "readerTitle": "Тексты песен",
+  "readerNoLyrics": "Текст песни ещё не добавлен.",
+  "readerShowChords": "Показать аккорды",
+  "readerHideChords": "Скрыть аккорды",
+  "readerTranspose": "Транспонировать аккорды",
+  "readerTransposeSemitones": "Транспонировать на {count, plural, one{{count} полутон} few{{count} полутона} many{{count} полутонов} other{{count} полутона}}",
+  "@readerTransposeSemitones": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readerEdit": "Изменить текст и сведения",
+  "playerPlay": "Начать прокрутку текста",
+  "playerPause": "Приостановить прокрутку текста",
+  "playerResume": "Продолжить прокрутку текста",
+  "playerSeek": "Позиция воспроизведения",
+  "playerElapsed": "Прошло времени: {time}",
+  "@playerElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemaining": "Осталось времени: {time}",
+  "@playerRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimingMode": "Режим прокрутки",
+  "playerTimedLyrics": "Синхронизированный текст",
+  "playerEstimatedPace": "Примерная скорость",
+  "playerManualScroll": "Ручная прокрутка",
+  "playerTimingStatusReady": "Текст будет прокручиваться по доступным временным меткам.",
+  "playerTimingStatusEstimated": "Скорость прокрутки рассчитана по длительности песни.",
+  "playerTimingStatusManual": "Прокручивай текст вручную.",
+  "playerTimingStatusUnavailable": "Для этой песни синхронизированная прокрутка недоступна.",
+  "playerDurationUnknown": "Укажи длительность песни, чтобы использовать примерную прокрутку.",
+  "playerProgressLabel": "Ход песни",
+  "playerCurrentSection": "Текущий раздел",
+  "playerPreviousSection": "Предыдущий раздел",
+  "playerNextSection": "Следующий раздел",
+  "playerPreviousSectionSong": "Предыдущий раздел · удерживай, чтобы перейти к предыдущей песне в сет-листе",
+  "playerNextSectionSong": "Следующий раздел · удерживай, чтобы перейти к следующей песне в сет-листе",
+  "playerPreviousSong": "Предыдущая песня",
+  "playerNextSong": "Следующая песня",
+  "editorTitle": "Изменить песню",
+  "editorTitleField": "Название песни",
+  "editorArtistField": "Исполнитель",
+  "editorAlbumField": "Альбом",
+  "editorLyricsField": "Текст песни",
+  "editorChordsField": "Аккорды",
+  "editorKeyField": "Тональность",
+  "editorCapoField": "Каподастр",
+  "editorTuningField": "Строй",
+  "editorTempoField": "Темп",
+  "editorDurationField": "Длительность",
+  "editorTimeSignatureField": "Размер",
+  "editorLanguageField": "Язык",
+  "editorYearField": "Год",
+  "editorComposerField": "Композитор",
+  "editorLyricistField": "Автор текста",
+  "editorCopyrightField": "Авторские права",
+  "editorLicenseField": "Лицензия",
+  "songInfoSources": "Источники и авторство",
+  "searchMatchSameSong": "Та же песня; запись не подтверждена",
+  "searchMatchNeedsAgreement": "Аккорды нужно сверить с текстом песни",
+  "searchMatchDifferentLyrics": "Текст отличается от выбранной песни",
+  "searchMatchCombinedSources": "Сведения объединены из нескольких источников",
+  "searchCombinedFromSources": "{count, plural, one{Объединено из {count} источника} few{Объединено из {count} источников} many{Объединено из {count} источников} other{Объединено из {count} источника}}",
+  "@searchCombinedFromSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSongMatchCount": "{count, plural, one{{count} совпадение песни} few{{count} совпадения песен} many{{count} совпадений песен} other{{count} совпадения песни}}",
+  "@searchSongMatchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSourceVersionsCount": "{count, plural, one{{count} версия источника} few{{count} версии источника} many{{count} версий источника} other{{count} версии источника}}",
+  "@searchSourceVersionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchMatchBestAvailable": "Лучшее доступное совпадение",
+  "providerDescriptionUnknown": "Источник песни",
+  "providerDescDownloadChordProThenImport": "Скачай файл ChordPro из источника, затем импортируй его.",
+  "providerDescFreeAccountDownloadThenImport": "Скачай файл, войдя в бесплатный аккаунт, затем импортируй его.",
+  "providerDescPublicChordSheets": "Общедоступные листы с аккордами.",
+  "providerDescHistoricalTextPerWorkLicense": "Исторические тексты с лицензией на каждое произведение.",
+  "providerDescLicensedCatalog": "Каталог текстов по лицензии.",
+  "providerDescOriginalSongsCcBy": "Оригинальные песни по лицензии Creative Commons BY.",
+  "providerDescPerSongLicense": "Лицензия на текст оформляется для каждой песни.",
+  "providerDescRecordingMetadataOnly": "Только сведения о записи и выпуске.",
+  "providerDescCompositionMetadataOnly": "Только сведения о композиции.",
+  "providerDescExactFileArtworkOnly": "Обложки только для точных совпадений записей.",
+  "providerCapabilityLyrics": "Тексты песен",
+  "providerCapabilityChords": "Аккорды",
+  "providerCapabilityTiming": "Синхронизированный текст",
+  "providerCapabilitySearch": "Поиск",
+  "providerCapabilityMetadata": "Сведения о песне",
+  "editorArtworkField": "Ссылка на обложку",
+  "editorLyricsHint": "Нажми на строку, чтобы изменить текст или аккорды.",
+  "editorSave": "Сохранить изменения",
+  "editorSaved": "Изменения сохранены.",
+  "editorSaveFailed": "Не удалось сохранить изменения.",
+  "editorSaveConflict": "Песня была изменена в другом месте. Твои изменения сохранены отдельной копией.",
+  "editorUnsavedTitle": "Отменить изменения?",
+  "editorUnsavedMessage": "Изменения не сохранены.",
+  "editorFieldRequired": "Введи название песни.",
+  "settingsTitle": "Настройки",
+  "settingsAppearance": "Внешний вид",
+  "settingsTheme": "Тема",
+  "settingsThemeSystem": "Как на устройстве",
+  "settingsThemeLight": "Светлая",
+  "settingsThemeDark": "Тёмная",
+  "settingsColorPalette": "Цветовая палитра",
+  "settingsFont": "Шрифт",
+  "settingsTextSize": "Размер текста",
+  "settingsLyricsPreview": "Предпросмотр текста",
+  "settingsPlayer": "Прокрутка текста",
+  "settingsDefaultShowChords": "Показывать аккорды по умолчанию",
+  "settingsDefaultAutoscroll": "Автоматически прокручивать текст",
+  "settingsDefaultTiming": "Режим прокрутки по умолчанию",
+  "settingsLanguage": "Язык приложения",
+  "settingsLanguageSystem": "Использовать язык устройства",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageBulgarian": "Български",
+  "settingsLanguageUkrainian": "Українська",
+  "settingsSources": "Источники текстов",
+  "settingsSourceEnabled": "Включить источник {source}",
+  "@settingsSourceEnabled": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSourceRefresh": "Обновить список источников",
+  "settingsSourcesUpdated": "Источники обновлены.",
+  "settingsSourcesUpdateFailed": "Не удалось обновить источники.",
+  "settingsImport": "Импортировать песни",
+  "settingsImportChordPro": "Импортировать файл ChordPro",
+  "settingsImportSetlist": "Импортировать файл сет-листа",
+  "settingsImportSuccess": "Импорт завершён.",
+  "settingsImportFailed": "Не удалось импортировать этот файл.",
+  "settingsImportUnsupported": "Этот тип файла не поддерживается.",
+  "settingsShareSong": "Поделиться как ChordPro",
+  "settingsSharePdf": "Поделиться как PDF",
+  "settingsCopySong": "Копировать в буфер обмена",
+  "settingsPrintSong": "Печатать только песню",
+  "settingsPrintSetlist": "Печатать сет-лист с текстами песен",
+  "settingsExportFailed": "Не удалось подготовить файл.",
+  "settingsCopied": "Скопировано в буфер обмена.",
+  "settingsAbout": "О приложении",
+  "settingsPrivacy": "Конфиденциальность",
+  "settingsLegal": "Правовая информация",
+  "settingsClearHistory": "Очистить историю",
+  "settingsClearHistoryConfirm": "Очистить историю песен и сет-листов?",
+  "settingsHistoryCleared": "История очищена.",
+  "accountTitle": "Аккаунт и синхронизация",
+  "accountUnavailable": "Для синхронизации нужна версия Singbook с настроенным входом через Google. В этой версии песни хранятся только на этом устройстве.",
+  "accountSyncNow": "Синхронизировать",
+  "accountConnected": "Подключено. Нажми «Синхронизировать», чтобы обновить резервную копию.",
+  "accountSignIn": "Подключить аккаунт",
+  "accountSignOut": "Выйти",
+  "accountChange": "Сменить аккаунт",
+  "accountSignedOut": "Не подключено",
+  "accountSyncing": "Синхронизация библиотеки…",
+  "accountSynced": "Библиотека синхронизирована.",
+  "accountSyncFailed": "Не удалось синхронизировать библиотеку.",
+  "accessibilityFavorite": "Избранное",
+  "accessibilityNotFavorite": "Не в избранном",
+  "accessibilitySearchField": "Поиск песен",
+  "accessibilityClearSearch": "Очистить поисковый запрос",
+  "accessibilitySongMenu": "Действия для песни «{song}»",
+  "@accessibilitySongMenu": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilitySetlistMenu": "Действия для сет-листа «{setlist}»",
+  "@accessibilitySetlistMenu": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityExpandSetlist": "Развернуть песни в сет-листе «{setlist}»",
+  "@accessibilityExpandSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityCollapseSetlist": "Свернуть песни в сет-листе «{setlist}»",
+  "@accessibilityCollapseSetlist": {
+    "placeholders": {
+      "setlist": {
+        "type": "String"
+      }
+    }
+  },
+  "accessibilityPlaybackProgress": "Ход воспроизведения: {percent, plural, one{{percent} процент} few{{percent} процента} many{{percent} процентов} other{{percent} процента}}",
+  "@accessibilityPlaybackProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "accessibilityTimeline": "Временная шкала истории, {date}",
+  "@accessibilityTimeline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loading": "Загрузка…",
+  "loadingSongs": "Загрузка песен…",
+  "loadingSetlists": "Загрузка сет-листов…",
+  "errorGeneric": "Что-то пошло не так.",
+  "errorOffline": "Похоже, ты не в сети.",
+  "errorPermission": "Для продолжения требуется разрешение.",
+  "emptyFiltered": "Нет элементов, соответствующих этим фильтрам.",
+  "unknownValue": "Неизвестно",
+  "durationUnknown": "Длительность неизвестна",
+  "metadataNotSet": "Не задано",
+  "dateToday": "Сегодня",
+  "dateYesterday": "Вчера",
+  "daySongCount": "{count, plural, one{{count} песня} few{{count} песни} many{{count} песен} other{{count} песни}}",
+  "@daySongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsPaletteNavy": "Тёмно-синий",
+  "settingsPaletteSage": "Шалфейный",
+  "settingsPaletteOcean": "Океан",
+  "settingsPaletteClay": "Глиняный",
+  "settingsPalettePlum": "Сливовый",
+  "settingsFontSystem": "Системный",
+  "settingsFontSerif": "С засечками",
+  "settingsFontMonospace": "Моноширинный",
+  "settingsLyricsPreviewExample": "Когда наступит утро, мы снова запоём.",
+  "searchDiscoveryProgress": "Проверка источников текстов: готово {checked} из {total}.",
+  "@searchDiscoveryProgress": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDiscoveryNoLyrics": "Не найдено подходящих текстов.",
+  "searchDiscoveryNoLyricsDetails": "Выбранная песня проверена в подключённых источниках, но ни один из них не предоставил подходящую версию текста.",
+  "searchDiscoveryError": "Не удалось проверить источники текстов.",
+  "searchDiscoveryRetry": "Повторить поиск текста",
+  "searchSourcesUnavailableCount": "{count, plural, one{{count} источник недоступен} few{{count} источника недоступно} many{{count} источников недоступно} other{{count} источника недоступно}}",
+  "@searchSourcesUnavailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchErrorDetails": "Проверь подключение и попробуй ещё раз.",
+  "searchProviderChecks": "Проверки источников",
+  "searchProviderPending": "Проверка",
+  "searchProviderFound": "Совпадение найдено",
+  "searchProviderRejected": "Не совпадает",
+  "searchProviderFailed": "Ошибка проверки",
+  "searchProviderUnavailable": "Нет подходящих текстов",
+  "searchCatalogFilterHint": "Выбери песню, чтобы фильтровать версии текста по аккордам, синхронизации или языку.",
+  "startupErrorTitle": "Не удалось открыть библиотеку.",
+  "setlistCopyName": "Копия: {name}",
+  "@setlistCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setlistSongMissing": "Песня отсутствует",
+  "settingsImportTooLarge": "Этот файл слишком велик для импорта.",
+  "songsJumpToLetter": "Перейти к букве {letter}",
+  "@songsJumpToLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDiscard": "Не сохранять",
+  "editorKeepEditing": "Продолжить редактирование",
+  "settingsDefaultShowChordsHint": "Показывать аккорды над текстом, если они есть у песни.",
+  "settingsDefaultAutoscrollHint": "Текст прокручивается вместе с песней. Не используется в ручном режиме прокрутки.",
+  "accountUnavailableTitle": "Синхронизация не настроена",
+  "accountSignedOutBenefits": "Войди через Google, чтобы сохранить резервную копию песен и сет-листов на Google Drive и синхронизировать все устройства. Песни в любом случае останутся на этом устройстве.",
+  "accountSignInWithGoogle": "Войти через Google",
+  "accountWorking": "Выполняется…",
+  "accountNeverSynced": "Ещё не синхронизировалось",
+  "accountSyncedJustNow": "Синхронизировано только что",
+  "accountSyncedMinutesAgo": "{count, plural, one{Синхронизировано {count} минуту назад} few{Синхронизировано {count} минуты назад} many{Синхронизировано {count} минут назад} other{Синхронизировано {count} минуты назад}}",
+  "@accountSyncedMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedHoursAgo": "{count, plural, one{Синхронизировано {count} час назад} few{Синхронизировано {count} часа назад} many{Синхронизировано {count} часов назад} other{Синхронизировано {count} часа назад}}",
+  "@accountSyncedHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountSyncedDaysAgo": "{count, plural, one{Синхронизировано {count} день назад} few{Синхронизировано {count} дня назад} many{Синхронизировано {count} дней назад} other{Синхронизировано {count} дня назад}}",
+  "@accountSyncedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsTitle": "{count, plural, one{{count} конфликтное изменение сохранено копией} few{{count} конфликтных изменения сохранены копиями} many{{count} конфликтных изменений сохранено копиями} other{{count} конфликтного изменения сохранено копиями}}",
+  "@accountConflictsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountConflictsBody": "Одна и та же песня или сет-лист были изменены в двух местах. Ничего не потеряно: другая версия сохранена отдельной копией.",
+  "accountReviewConflicts": "Проверить копии",
+  "songsConflictFilterActive": "Показаны только конфликтующие копии",
+  "songsConflictFilterClear": "Показать все песни",
+  "songsConflictBadge": "Конфликтующая копия",
+  "songsConflictEmpty": "Конфликтующих копий нет.",
+  "accountAutoSync": "Автоматическая синхронизация",
+  "accountAutoSyncHint": "Обновлять библиотеку при открытии приложения и после изменений.",
+  "accountSignOutTitle": "Выйти из этого аккаунта?",
+  "accountSignOutBody": "Песни и сет-листы останутся на этом устройстве. Они не будут сохраняться в резервную копию или синхронизироваться, пока ты не войдёшь снова.",
+  "accountUseDifferent": "Использовать другой аккаунт",
+  "accountSignInAgain": "Войти снова",
+  "accountChooseAction": "Выбери, как продолжить",
+  "accountChangedTitle": "Другой аккаунт Google",
+  "accountChangedBody": "В последний раз это устройство синхронизировалось с другим аккаунтом Google. Выбери, что делать с песнями и сет-листами на этом устройстве.",
+  "accountChangedMerge": "Объединить с новым аккаунтом",
+  "accountChangedMergeHint": "Сохрани всё на этом устройстве и добавь данные в новый аккаунт.",
+  "accountChangedReplace": "Заменить библиотекой нового аккаунта",
+  "accountChangedReplaceHint": "Песни с этого устройства, которых нет в новом аккаунте, будут удалены.",
+  "accountChangedSignOut": "Отмена и выход",
+  "accountStatusSignedOut": "Аккаунт и синхронизация: вход не выполнен",
+  "accountStatusSignedIn": "Аккаунт и синхронизация: выполнен вход",
+  "accountStatusSyncing": "Аккаунт и синхронизация: выполняется синхронизация",
+  "accountStatusSynced": "Аккаунт и синхронизация: библиотека обновлена",
+  "accountStatusError": "Аккаунт и синхронизация: проблема, нажми для проверки",
+  "accountNoticeConflicts": "Некоторые песни изменялись в двух местах. Копии сохранены.",
+  "accountNoticeSignedIn": "Вход выполнен.",
+  "accountNoticeSignedOut": "Выполнен выход. Песни останутся на этом устройстве.",
+  "syncErrorNotConfigured": "В этой версии синхронизация не настроена.",
+  "syncErrorNotConfiguredHint": "Используй версию Singbook с настроенным входом через Google.",
+  "syncErrorNotSignedIn": "Вход в аккаунт не выполнен.",
+  "syncErrorNotSignedInHint": "Войди, чтобы синхронизировать библиотеку.",
+  "syncErrorAuthorizationRequired": "Google просит войти снова.",
+  "syncErrorAuthorizationRequiredHint": "Войди снова, чтобы продолжить синхронизацию. Песни в безопасности на этом устройстве.",
+  "syncErrorAccessDenied": "У Singbook нет разрешения на использование Google Drive.",
+  "syncErrorAccessDeniedHint": "Войди снова и разреши доступ к Drive, когда появится запрос.",
+  "syncErrorRateLimited": "Google временно ограничивает запросы.",
+  "syncErrorRateLimitedHint": "Подожди несколько минут и повтори попытку.",
+  "syncErrorStorageFull": "В Google Drive закончилось место.",
+  "syncErrorStorageFullHint": "Освободи место на Drive и повтори попытку.",
+  "syncErrorNetwork": "Не удалось связаться с Google.",
+  "syncErrorNetworkHint": "Проверь подключение к интернету и повтори попытку.",
+  "syncErrorAccountChanged": "Использовался другой аккаунт Google.",
+  "syncErrorAccountChangedHint": "Выбери, объединить библиотеку этого устройства с аккаунтом или заменить её.",
+  "syncErrorRemoteLibraryTooLarge": "Синхронизированная библиотека слишком велика для Singbook.",
+  "syncErrorRemoteLibraryTooLargeHint": "Удали несколько песен или сет-листов из синхронизированной библиотеки и повтори попытку.",
+  "syncErrorSignInFailed": "Не удалось завершить вход.",
+  "syncErrorSignInFailedHint": "Попробуй войти ещё раз.",
+  "syncErrorGeneric": "Не удалось синхронизировать библиотеку.",
+  "syncErrorGenericHint": "Попробуй ещё раз чуть позже. Песни по-прежнему в безопасности на этом устройстве."
+}
