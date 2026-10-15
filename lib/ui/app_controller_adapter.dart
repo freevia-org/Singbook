@@ -65,6 +65,9 @@ class AppControllerAdapter extends VerseUiController {
   String _query = '';
   String? _songId, _setlistId, _setlistEntryId, _selectedVersionId;
   String? _selectedQuery;
+  String? _versionOrderReferenceId;
+  final Map<String, int> _versionArrivalOrder = {};
+  int _nextVersionArrivalOrder = 0;
   List<SongCandidate> _cachedAutocomplete = const [];
   SongDocument? _draftSong;
   SongEditorData? _editorData;
@@ -566,15 +569,15 @@ class AppControllerAdapter extends VerseUiController {
   SearchComparisonData? _comparison() {
     final candidate = app.selection;
     if (candidate == null || _selectedQuery != _query.trim()) return null;
-    final alternatives =
-        app.results.map(_version).where(_versionMatchesFilters).toList()
-          ..sort((a, b) {
-            int score(SourceVersionData value) =>
-                (value.sameRecording ? 4 : 0) +
-                (value.hasChords ? 2 : 0) +
-                (value.hasTiming ? 1 : 0);
-            return score(b).compareTo(score(a));
-          });
+    _rememberVersionArrivalOrder(candidate.identity, app.results);
+    final knownResults = app.results.map(_version).toList()
+      ..sort(
+        (a, b) =>
+            _versionArrivalOrder[a.id]!.compareTo(_versionArrivalOrder[b.id]!),
+      );
+    final alternatives = knownResults
+        .where(_versionMatchesFilters)
+        .toList(growable: true);
     final combined = app.combined;
     final combinedMatchesFilters = _combinedMatchesFilters(combined);
     final chosenSourceId = combined?.extra['selectedSourceId'];
@@ -584,7 +587,9 @@ class AppControllerAdapter extends VerseUiController {
     final chosenSource = app.results
         .where((item) => item.id == chosenSourceId)
         .firstOrNull;
-    final suggested = combined == null || !combinedMatchesFilters
+    final suggested =
+        combined == null ||
+            (!combinedMatchesFilters && _selectedVersionId != 'combined')
         ? null
         : SourceVersionData(
             id: 'combined',
@@ -611,18 +616,44 @@ class AppControllerAdapter extends VerseUiController {
             ),
             artworkUrl: _metaString(combined.metadata['artworkUrl']),
             hasLyrics: arrangement.plainLyrics(combined.body).trim().isNotEmpty,
+            isUsableVersion: arrangement
+                .plainLyrics(combined.body)
+                .trim()
+                .isNotEmpty,
             hasChords: combined.hasChords,
             hasTiming: _hasUsableTiming(combined.timingTracks),
             sameRecording: chosenSource?.matchKind == MatchKind.sameRecording,
             matchSummary: contributorCount > 1
                 ? 'combined_sources'
                 : 'best_available',
-            bodyPreview: _lines(combined.body).take(3).toList(),
+            bodyPreview: _previewLines(_lines(combined.body)),
+            bodyLines: _lines(combined.body),
+            contributions: _combinedContributions(combined),
             canSave:
-                combined.body.trim().isNotEmpty && app.savedResultId() == null,
+                combinedMatchesFilters &&
+                combined.body.trim().isNotEmpty &&
+                app.savedResultId() == null,
             savedSongId: app.savedResultId(),
             underlyingSourceId: contributorCount == 1 ? chosenSource?.id : null,
           );
+    // Keep the explicit card in the list even when a final check rejected it
+    // or a filter would otherwise hide it. The UI can then show why it cannot
+    // be saved without silently changing the person's choice.
+    final explicitlySelected = _selectedVersionId;
+    if (explicitlySelected != null && explicitlySelected != 'combined') {
+      final selected = knownResults
+          .where((item) => item.id == explicitlySelected)
+          .firstOrNull;
+      if (selected != null &&
+          !alternatives.any((item) => item.id == selected.id)) {
+        alternatives.add(selected);
+        alternatives.sort(
+          (a, b) => _versionArrivalOrder[a.id]!.compareTo(
+            _versionArrivalOrder[b.id]!,
+          ),
+        );
+      }
+    }
     final chosenId = _effectiveSelectionId(suggested?.id, alternatives);
     final checks = app.checks.values
         .map(
@@ -654,17 +685,94 @@ class AppControllerAdapter extends VerseUiController {
     );
   }
 
+  List<SourceContributionData> _combinedContributions(SongDocument song) {
+    final sourceById = {for (final source in song.sources) source.id: source};
+    final rolesByProvider = <String, Set<String>>{};
+    final providerNames = <String, String>{};
+
+    void add(String? sourceId, String role) {
+      if (sourceId == null) return;
+      final source = sourceById[sourceId];
+      final recording = song.selectedRecording;
+      final providerId =
+          source?.candidate.providerId ??
+          (recording?.identity == sourceId ? recording!.providerId : null);
+      if (providerId == null || source?.matchKind == MatchKind.rejected) return;
+      final name =
+          app.providers
+              .where((provider) => provider.id == providerId)
+              .firstOrNull
+              ?.name ??
+          providerId;
+      providerNames[providerId] = name;
+      rolesByProvider.putIfAbsent(providerId, () => <String>{}).add(role);
+    }
+
+    final selectedSourceId = song.extra['selectedSourceId'];
+    if (selectedSourceId is String) {
+      add(selectedSourceId, 'lyrics');
+      if (song.hasChords) add(selectedSourceId, 'chords');
+    }
+    final origins = jsonMap(song.extra['fieldOrigins']);
+    for (final entry in origins.entries) {
+      final value = song.metadata[entry.key];
+      if (value != null && value != '' && entry.value is String) {
+        add(entry.value as String, 'metadata');
+      }
+    }
+    for (final track in song.timingTracks) {
+      if (track.status != TimingStatus.usable || track.cues.isEmpty) continue;
+      final sourceId = jsonMap(track.extra['binding'])['sourceId'];
+      if (sourceId is String) add(sourceId, 'timing');
+    }
+    final recording = song.selectedRecording;
+    if (recording != null &&
+        song.title == recording.title &&
+        song.artist == recording.artist) {
+      add(recording.identity, 'metadata');
+    }
+    const roleOrder = ['lyrics', 'chords', 'timing', 'metadata'];
+    return [
+      for (final entry in rolesByProvider.entries)
+        SourceContributionData(
+          providerName: providerNames[entry.key] ?? entry.key,
+          roles: [
+            for (final role in roleOrder)
+              if (entry.value.contains(role)) role,
+          ],
+        ),
+    ];
+  }
+
+  void _rememberVersionArrivalOrder(
+    String referenceId,
+    List<SourceResult> results,
+  ) {
+    if (_versionOrderReferenceId != referenceId) {
+      _versionOrderReferenceId = referenceId;
+      _versionArrivalOrder.clear();
+      _nextVersionArrivalOrder = 0;
+    }
+    for (final result in results) {
+      _versionArrivalOrder.putIfAbsent(
+        result.id,
+        () => _nextVersionArrivalOrder++,
+      );
+    }
+  }
+
   String? _effectiveSelectionId(
     String? suggestedId,
     List<SourceVersionData> alternatives,
   ) {
     final selectedAlternative = alternatives
-        .where((item) => item.id == _selectedVersionId && item.isUsableVersion)
+        .where((item) => item.id == _selectedVersionId)
         .firstOrNull;
-    if (_selectedVersionId == 'combined' && suggestedId != null) {
+    if (_selectedVersionId == 'combined') {
       return 'combined';
     }
-    return selectedAlternative?.id ??
+    return _selectedVersionId ??
+        selectedAlternative?.id ??
         suggestedId ??
         alternatives
             .where(
@@ -718,6 +826,8 @@ class AppControllerAdapter extends VerseUiController {
     final candidate = result.candidate;
     final check = app.checks[candidate.providerId];
     final savedId = app.savedResultId(source: result);
+    final lines = _lines(result.body);
+    final isChecking = app.discovering && !app.isSourceReady(result);
     return SourceVersionData(
       id: result.id,
       providerId: candidate.providerId,
@@ -739,15 +849,22 @@ class AppControllerAdapter extends VerseUiController {
       rating: _metaDouble(result.metadata['rating']),
       ratingCount: _metaInt(result.metadata['ratingCount']),
       hasLyrics: arrangement.plainLyrics(result.body).trim().isNotEmpty,
-      isUsableVersion: _isUsableLyricResult(result),
+      isUsableVersion:
+          _isUsableLyricResult(result) &&
+          result.matchKind != MatchKind.rejected,
       hasChords: result.hasChords,
       hasTiming: _hasUsableTiming(result.timingTracks),
       sameRecording: result.matchKind == MatchKind.sameRecording,
       matchSummary: result.matchReason ?? '',
-      status: check?.state == 'failed' || check?.state == 'unavailable'
+      status: isChecking
+          ? LoadState.loading
+          : check?.state == 'failed' || check?.state == 'unavailable'
           ? LoadState.failed
           : LoadState.loaded,
-      bodyPreview: _lines(result.body).take(3).toList(),
+      bodyPreview: _previewLines(lines),
+      bodyLines: lines,
+      contributions: _sourceContributions(result),
+      isChecking: isChecking,
       canSave:
           app.isSourceReady(result) &&
           result.matchKind != MatchKind.rejected &&
@@ -757,6 +874,65 @@ class AppControllerAdapter extends VerseUiController {
       savedSongId: savedId,
     );
   }
+
+  List<SourceContributionData> _sourceContributions(SourceResult result) {
+    final roles = <String>[
+      if (arrangement.plainLyrics(result.body).trim().isNotEmpty) 'lyrics',
+      if (result.hasChords) 'chords',
+      if (result.timingTracks.any(
+        (track) => track.status == TimingStatus.usable && track.cues.isNotEmpty,
+      ))
+        'timing',
+      if (result.candidate.album?.isNotEmpty == true ||
+          result.candidate.metadata.values.any(
+            (value) => value != null && value != '',
+          ) ||
+          result.metadata.values.any((value) => value != null && value != ''))
+        'metadata',
+    ];
+    return [
+      SourceContributionData(
+        providerName: _providerName(result.candidate.providerId),
+        roles: roles,
+      ),
+    ];
+  }
+
+  String _providerName(String providerId) =>
+      app.providers
+          .where((provider) => provider.id == providerId)
+          .firstOrNull
+          ?.name ??
+      providerId;
+
+  static final _guitarFingeringPattern = RegExp(
+    r'^\s*[eEBGDA]\s*[|:]\s*(?:[-0-9xX|:/\\\s]+)\s*$',
+  );
+  static final _chordShapeRowPattern = RegExp(
+    r'^\s*[A-G](?:#|b)?(?:maj|min|m|M|dim|aug|sus|add|omit|no|\d{1,2})*(?:/[A-G](?:#|b)?)?\s+[xX0-9-]{5,}(?:\s+or\s+[xX0-9-]{5,})?\s*$',
+    caseSensitive: false,
+  );
+  static final _fingeringOnlyPattern = RegExp(r'^\s*[xX0-9-]{5,}\s*$');
+  static final _setupRowPattern = RegExp(
+    r'^\s*(?:capo(?:\s+position)?|tuning|key|tempo|time\s+signature)\s*[:=-]',
+    caseSensitive: false,
+  );
+
+  static bool _isArrangementNote(String text) =>
+      _guitarFingeringPattern.hasMatch(text) ||
+      _chordShapeRowPattern.hasMatch(text) ||
+      _fingeringOnlyPattern.hasMatch(text) ||
+      _setupRowPattern.hasMatch(text);
+
+  static List<LyricLineData> _previewLines(List<LyricLineData> lines) => lines
+      .where(
+        (line) =>
+            line.text.trim().isNotEmpty &&
+            line.section == null &&
+            !line.isArrangementNote,
+      )
+      .take(3)
+      .toList();
 
   static final _sectionPattern = RegExp(
     r'^\s*\[((?:pre[- ]?chorus|post[- ]?chorus|verse|chorus|bridge|intro|outro|instrumental|interlude|solo|refrain|hook|breakdown|coda|tag|ending)[^\]]*)\]\s*$',
@@ -791,6 +967,7 @@ class AppControllerAdapter extends VerseUiController {
         text: section != null || line.directive ? '' : line.text,
         section: section,
         chords: chords,
+        isArrangementNote: _isArrangementNote(line.text),
         isBlank:
             section != null || line.directive || (!hasLyrics && chords.isEmpty),
       );
@@ -947,7 +1124,12 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   void setQuery(String value) {
-    if (_query.trim() != value.trim()) _cachedAutocomplete = const [];
+    if (_query.trim() != value.trim()) {
+      _cachedAutocomplete = const [];
+      _versionOrderReferenceId = null;
+      _versionArrivalOrder.clear();
+      _nextVersionArrivalOrder = 0;
+    }
     _query = value;
     app.errorCode = null;
     if (_selectedQuery != value.trim()) {
@@ -1005,6 +1187,19 @@ class AppControllerAdapter extends VerseUiController {
           ? value as String
           : _filters.durationBucket,
     );
+    // A deliberate filter change can choose a matching fallback. Background
+    // provider updates cannot clear the explicit choice in this way.
+    final selectedId = _selectedVersionId;
+    if (selectedId == 'combined' && !_combinedMatchesFilters(app.combined)) {
+      _selectedVersionId = null;
+    } else if (selectedId != null && selectedId != 'combined') {
+      final source = app.results
+          .where((item) => item.id == selectedId)
+          .firstOrNull;
+      if (source != null && !_versionMatchesFilters(_version(source))) {
+        _selectedVersionId = null;
+      }
+    }
     final effectiveSelection = _comparison()?.selectedVersionId;
     if (effectiveSelection != null || _selectedVersionId != null) {
       _selectedVersionId = effectiveSelection;
@@ -1071,20 +1266,12 @@ class AppControllerAdapter extends VerseUiController {
 
   void _chooseFallbackVersion() {
     if (_disposed) return;
+    // Discovery completion must never replace an explicit choice, including a
+    // version whose final validation failed. Keep it selected and explain why
+    // it cannot be saved, until the person chooses another version.
+    if (_selectedVersionId != null) return;
     final combined = app.combined;
     final combinedMatchesFilters = _combinedMatchesFilters(combined);
-    if (_selectedVersionId == 'combined' && combinedMatchesFilters) return;
-    if (_selectedVersionId != null) {
-      final selectedResult = app.results
-          .where((item) => item.id == _selectedVersionId)
-          .firstOrNull;
-      if (selectedResult != null &&
-          selectedResult.matchKind != MatchKind.rejected &&
-          _isUsableLyricResult(selectedResult) &&
-          _versionMatchesFilters(_version(selectedResult))) {
-        return;
-      }
-    }
     _selectedVersionId = combinedMatchesFilters
         ? null
         : app.results
@@ -1120,8 +1307,17 @@ class AppControllerAdapter extends VerseUiController {
     final version = selectedId == 'combined'
         ? null
         : app.results.where((item) => item.id == selectedId).firstOrNull;
+    if (selectedId == 'combined' &&
+        (!_combinedMatchesFilters(app.combined) ||
+            app.combined == null ||
+            arrangement.plainLyrics(app.combined!.body).trim().isEmpty)) {
+      postNotice(UiNotice.songSaveFailed);
+      return;
+    }
     if (selectedId != 'combined' &&
-        (version == null || !_isUsableLyricResult(version))) {
+        (version == null ||
+            version.matchKind == MatchKind.rejected ||
+            !_isUsableLyricResult(version))) {
       postNotice(UiNotice.songSaveFailed);
       return;
     }

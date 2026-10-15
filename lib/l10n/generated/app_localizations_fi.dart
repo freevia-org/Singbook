@@ -217,6 +217,29 @@ class AppLocalizationsFi extends AppLocalizations {
   String get searchChooseVersion => 'Valitse tämä versio';
 
   @override
+  String get searchFullPreview => 'Koko esikatselu';
+
+  @override
+  String get searchArrangementNotes => 'Sovitusmuistiinpanot';
+
+  @override
+  String get searchOpenLyrics => 'Avaa sanat';
+
+  @override
+  String get searchContributions => 'Käytetyt lähteet';
+
+  @override
+  String get searchVersionChecking => 'Tarkistetaan tätä versiota…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Tätä versiota ei voi käyttää. Valitse toinen versio.';
+
+  @override
+  String get searchPreviewUnavailable =>
+      'Sanojen esikatselua ei ole saatavilla.';
+
+  @override
   String get searchSongMatch => 'Kappaleosuma';
 
   @override

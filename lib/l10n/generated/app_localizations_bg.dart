@@ -219,6 +219,28 @@ class AppLocalizationsBg extends AppLocalizations {
   String get searchChooseVersion => 'Избор на тази версия';
 
   @override
+  String get searchFullPreview => 'Пълен преглед';
+
+  @override
+  String get searchArrangementNotes => 'Бележки за аранжимента';
+
+  @override
+  String get searchOpenLyrics => 'Отвори текста';
+
+  @override
+  String get searchContributions => 'Използвани източници';
+
+  @override
+  String get searchVersionChecking => 'Проверка на тази версия…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Тази версия не може да се използва. Изберете друга версия.';
+
+  @override
+  String get searchPreviewUnavailable => 'Няма наличен преглед на текста.';
+
+  @override
   String get searchSongMatch => 'Съвпадение на песента';
 
   @override

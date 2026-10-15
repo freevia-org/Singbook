@@ -220,6 +220,29 @@ class AppLocalizationsRo extends AppLocalizations {
   String get searchChooseVersion => 'Alege această versiune';
 
   @override
+  String get searchFullPreview => 'Previzualizare completă';
+
+  @override
+  String get searchArrangementNotes => 'Note despre aranjament';
+
+  @override
+  String get searchOpenLyrics => 'Deschide versurile';
+
+  @override
+  String get searchContributions => 'Surse folosite';
+
+  @override
+  String get searchVersionChecking => 'Se verifică această versiune…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Această versiune nu poate fi folosită. Alege altă versiune.';
+
+  @override
+  String get searchPreviewUnavailable =>
+      'Previzualizarea versurilor nu este disponibilă.';
+
+  @override
   String get searchSongMatch => 'Potrivire pentru melodie';
 
   @override

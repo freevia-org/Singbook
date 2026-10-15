@@ -219,6 +219,28 @@ class AppLocalizationsVi extends AppLocalizations {
   String get searchChooseVersion => 'Chọn phiên bản này';
 
   @override
+  String get searchFullPreview => 'Xem trước đầy đủ';
+
+  @override
+  String get searchArrangementNotes => 'Ghi chú hòa âm phối khí';
+
+  @override
+  String get searchOpenLyrics => 'Mở lời bài hát';
+
+  @override
+  String get searchContributions => 'Nguồn đã dùng';
+
+  @override
+  String get searchVersionChecking => 'Đang kiểm tra phiên bản này…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Không thể dùng phiên bản này. Hãy chọn phiên bản khác.';
+
+  @override
+  String get searchPreviewUnavailable => 'Không có bản xem trước lời bài hát.';
+
+  @override
   String get searchSongMatch => 'Bài hát phù hợp';
 
   @override

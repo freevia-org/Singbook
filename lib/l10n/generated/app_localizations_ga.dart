@@ -219,6 +219,28 @@ class AppLocalizationsGa extends AppLocalizations {
   String get searchChooseVersion => 'Roghnaigh an leagan seo';
 
   @override
+  String get searchFullPreview => 'Réamhamharc iomlán';
+
+  @override
+  String get searchArrangementNotes => 'Nótaí faoin socrú ceoil';
+
+  @override
+  String get searchOpenLyrics => 'Oscail na liricí';
+
+  @override
+  String get searchContributions => 'Foinsí a úsáideadh';
+
+  @override
+  String get searchVersionChecking => 'An leagan seo á sheiceáil…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Ní féidir an leagan seo a úsáid. Roghnaigh leagan eile.';
+
+  @override
+  String get searchPreviewUnavailable => 'Níl réamhamharc liricí ar fáil.';
+
+  @override
   String get searchSongMatch => 'Meaitseáil amhráin';
 
   @override

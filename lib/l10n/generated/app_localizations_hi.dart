@@ -216,6 +216,29 @@ class AppLocalizationsHi extends AppLocalizations {
   String get searchChooseVersion => 'यह संस्करण चुनें';
 
   @override
+  String get searchFullPreview => 'पूरा पूर्वावलोकन';
+
+  @override
+  String get searchArrangementNotes => 'संगीत संयोजन के नोट';
+
+  @override
+  String get searchOpenLyrics => 'बोल खोलें';
+
+  @override
+  String get searchContributions => 'इस्तेमाल किए गए स्रोत';
+
+  @override
+  String get searchVersionChecking => 'इस संस्करण की जाँच हो रही है…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'यह संस्करण इस्तेमाल नहीं किया जा सकता। कोई दूसरा संस्करण चुनें।';
+
+  @override
+  String get searchPreviewUnavailable =>
+      'गीत के बोल का पूर्वावलोकन उपलब्ध नहीं है।';
+
+  @override
   String get searchSongMatch => 'गीत का मेल';
 
   @override

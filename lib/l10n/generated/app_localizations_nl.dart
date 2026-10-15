@@ -219,6 +219,29 @@ class AppLocalizationsNl extends AppLocalizations {
   String get searchChooseVersion => 'Deze versie kiezen';
 
   @override
+  String get searchFullPreview => 'Volledige preview';
+
+  @override
+  String get searchArrangementNotes => 'Opmerkingen over het arrangement';
+
+  @override
+  String get searchOpenLyrics => 'Songtekst openen';
+
+  @override
+  String get searchContributions => 'Gebruikte bronnen';
+
+  @override
+  String get searchVersionChecking => 'Deze versie controleren…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Deze versie kan niet worden gebruikt. Kies een andere versie.';
+
+  @override
+  String get searchPreviewUnavailable =>
+      'Geen preview van de songtekst beschikbaar.';
+
+  @override
   String get searchSongMatch => 'Nummerovereenkomst';
 
   @override

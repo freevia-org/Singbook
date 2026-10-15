@@ -218,6 +218,28 @@ class AppLocalizationsEt extends AppLocalizations {
   String get searchChooseVersion => 'Vali see versioon';
 
   @override
+  String get searchFullPreview => 'Täielik eelvaade';
+
+  @override
+  String get searchArrangementNotes => 'Seade märkused';
+
+  @override
+  String get searchOpenLyrics => 'Ava laulusõnad';
+
+  @override
+  String get searchContributions => 'Kasutatud allikad';
+
+  @override
+  String get searchVersionChecking => 'Selle versiooni kontrollimine…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Seda versiooni ei saa kasutada. Vali mõni teine versioon.';
+
+  @override
+  String get searchPreviewUnavailable => 'Laulusõnade eelvaade pole saadaval.';
+
+  @override
   String get searchSongMatch => 'Laulu vaste';
 
   @override

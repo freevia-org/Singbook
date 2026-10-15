@@ -218,6 +218,28 @@ class AppLocalizationsId extends AppLocalizations {
   String get searchChooseVersion => 'Pilih versi ini';
 
   @override
+  String get searchFullPreview => 'Pratinjau lengkap';
+
+  @override
+  String get searchArrangementNotes => 'Catatan aransemen';
+
+  @override
+  String get searchOpenLyrics => 'Buka lirik';
+
+  @override
+  String get searchContributions => 'Sumber yang digunakan';
+
+  @override
+  String get searchVersionChecking => 'Memeriksa versi ini…';
+
+  @override
+  String get searchVersionUnavailable =>
+      'Versi ini tidak dapat digunakan. Pilih versi lain.';
+
+  @override
+  String get searchPreviewUnavailable => 'Pratinjau lirik tidak tersedia.';
+
+  @override
   String get searchSongMatch => 'Kecocokan lagu';
 
   @override

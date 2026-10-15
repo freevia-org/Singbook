@@ -7,6 +7,7 @@ import '../library_actions.dart';
 import '../verse_ui_state.dart';
 import '../localized_labels.dart';
 import '../widgets/verse_components.dart';
+import 'source_preview_screen.dart';
 
 class VerseHomeScreen extends StatefulWidget {
   const VerseHomeScreen({
@@ -630,7 +631,9 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
   ) {
     return Row(
       key: ValueKey(
-        item.isSetlist ? 'recent-setlist-row-${item.id}' : 'recent-row-${item.id}',
+        item.isSetlist
+            ? 'recent-setlist-row-${item.id}'
+            : 'recent-row-${item.id}',
       ),
       children: [
         Expanded(
@@ -903,11 +906,23 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
   }
 
   String _sourceName(AppLocalizations l10n, SourceVersionData version) =>
-      version.sourceCount != null && version.sourceCount! > 1
-      ? l10n.searchCombinedFromSources(version.sourceCount!)
-      : version.providerName.isNotEmpty
-      ? version.providerName
-      : l10n.searchSuggested;
+      versionName(l10n, version);
+
+  void _openFullPreview() {
+    final selected = widget.controller.state.comparison?.selected;
+    if (selected != null) {
+      widget.controller.selectVersion(
+        selected.sourceCount == 1 && selected.underlyingSourceId != null
+            ? selected.underlyingSourceId!
+            : selected.id,
+      );
+    }
+    Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => SourcePreviewScreen(controller: widget.controller),
+      ),
+    );
+  }
 
   Widget _comparison(
     BuildContext context,
@@ -915,26 +930,11 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     SearchComparisonData comparison,
   ) {
     final chosen = comparison.selected;
-    // Selection changes the outline and preview, never the order of the rows.
-    final allVersions = <SourceVersionData>[
-      if (comparison.suggested != null) comparison.suggested!,
-      ...comparison.alternatives.where(
-        (item) => item.id != comparison.suggested?.id,
-      ),
-    ];
-    final suggested = comparison.suggested;
-    bool duplicatesSuggestion(SourceVersionData item) =>
-        suggested?.sourceCount == 1 &&
-        item.id == suggested?.underlyingSourceId &&
-        item.durationSeconds == suggested?.durationSeconds &&
-        item.hasChords == suggested?.hasChords &&
-        item.hasTiming == suggested?.hasTiming;
-    final versions = allVersions
-        .where((item) => !duplicatesSuggestion(item))
-        .toList();
-    final selectedRowId = chosen != null && duplicatesSuggestion(chosen)
-        ? suggested?.id
-        : chosen?.id;
+    // Keep unavailable and checking versions in place, so finishing a check
+    // cannot move a different row under the user's finger.
+    final allVersions = comparisonVersions(comparison);
+    final versions = allVersions;
+    final selectedRowId = chosen?.id;
     final usable = versions
         .where(
           (item) =>
@@ -942,7 +942,6 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
               (item.id == comparison.suggested?.id && item.hasLyrics),
         )
         .toList();
-    final other = versions.where((item) => !usable.contains(item)).toList();
     final colors = Theme.of(context).colorScheme;
     final count = allVersions
         .where((item) => item.providerId != 'combined' && item.isUsableVersion)
@@ -979,7 +978,7 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
               widget.controller.setSearchFilter('durationBucket', '');
             },
           ),
-        for (final version in usable)
+        for (final version in versions)
           _sourceVersionCard(
             context,
             l10n,
@@ -987,25 +986,6 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
             suggested: version.id == comparison.suggested?.id,
             selected: version.id == selectedRowId,
             onSelect: () => widget.controller.selectVersion(version.id),
-          ),
-        if (other.isNotEmpty)
-          ExpansionTile(
-            key: const PageStorageKey('other-version-results'),
-            tilePadding: const EdgeInsets.symmetric(horizontal: 8),
-            title: Text('${l10n.searchOtherResults} (${other.length})'),
-            children: [
-              for (final version in other)
-                _sourceVersionCard(
-                  context,
-                  l10n,
-                  version,
-                  suggested: false,
-                  selected: version.id == chosen?.id,
-                  onSelect: version.isUsableVersion
-                      ? () => widget.controller.selectVersion(version.id)
-                      : null,
-                ),
-            ],
           ),
         _discoveryStatus(context, l10n, comparison),
       ],
@@ -1136,13 +1116,24 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              '${l10n.searchSelectedPreview} · ${_sourceName(l10n, version)}',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(
-                context,
-              ).textTheme.labelSmall?.copyWith(color: colors.primary),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '${l10n.searchSelectedPreview} · ${_sourceName(l10n, version)}',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.labelSmall?.copyWith(color: colors.primary),
+                  ),
+                ),
+                TextButton(
+                  key: const ValueKey('open-full-preview'),
+                  onPressed: _openFullPreview,
+                  child: Text(l10n.searchFullPreview),
+                ),
+              ],
             ),
             const SizedBox(height: 4),
             for (final line in preview)
@@ -1165,6 +1156,12 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
+            if (preview.isEmpty) Text(l10n.searchPreviewUnavailable),
+            if (version.isChecking) Text(l10n.searchVersionChecking),
+            if (!version.isChecking &&
+                !version.isUsableVersion &&
+                version.id != 'combined')
+              Text(l10n.searchVersionUnavailable),
             const SizedBox(height: 10),
             FilledButton.icon(
               key: const ValueKey('save-open-lyrics'),
@@ -1172,7 +1169,11 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
                   ? widget.controller.saveSelectedVersion
                   : null,
               icon: const Icon(Icons.menu_book_rounded),
-              label: Text(l10n.searchSaveOpenLyrics),
+              label: Text(
+                version.savedSongId != null
+                    ? l10n.searchOpenLyrics
+                    : l10n.searchSaveOpenLyrics,
+              ),
             ),
           ],
         ),
@@ -1339,7 +1340,10 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
                             ),
                         ],
                       ),
-                      if (!version.sameRecording &&
+                      if ((version.sourceCount ?? 0) > 1) ...[
+                        const SizedBox(height: 4),
+                        SourceContributions(version: version),
+                      ] else if (!version.sameRecording &&
                           version.matchSummary.isNotEmpty)
                         Text(
                           localizedMatchReason(l10n, version.matchSummary),
@@ -1347,6 +1351,18 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(color: colors.onSurfaceVariant),
+                        ),
+                      if (version.isChecking)
+                        Text(
+                          l10n.searchVersionChecking,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      if (!version.isChecking &&
+                          !version.isUsableVersion &&
+                          version.id != 'combined')
+                        Text(
+                          l10n.searchVersionUnavailable,
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
                     ],
                   ),
