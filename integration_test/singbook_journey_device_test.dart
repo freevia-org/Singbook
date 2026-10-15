@@ -17,6 +17,7 @@ import 'package:verse_mobile/providers/core/service.dart';
 import 'package:verse_mobile/providers/provider.dart';
 import 'package:verse_mobile/ui/verse_app.dart';
 import 'package:verse_mobile/ui/home/home_screen.dart';
+import 'package:verse_mobile/ui/settings/settings_screen.dart';
 
 const _catalogId = 'journey_catalog';
 const _skipScreenshots = bool.fromEnvironment('SINGBOOK_SKIP_SCREENSHOTS');
@@ -607,7 +608,7 @@ void main() {
       await _selectDropdown(tester, 'App language', 'Українська');
       await tester.pumpAndSettle();
       expect(
-        Theme.of(tester.element(find.text('Налаштування'))).brightness,
+        Theme.of(tester.element(find.byType(SettingsScreen))).brightness,
         Brightness.dark,
       );
       await _capture(binding, '25_settings_dark_ukrainian');
