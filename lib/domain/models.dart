@@ -478,12 +478,14 @@ class SetlistDocument {
 class ActivityEntry {
   final String id, objectId, objectKind, action;
   final DateTime occurredAt;
+  final int openCount;
   const ActivityEntry({
     required this.id,
     required this.objectId,
     required this.objectKind,
     required this.action,
     required this.occurredAt,
+    this.openCount = 1,
   });
 }
 

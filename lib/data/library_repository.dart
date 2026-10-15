@@ -1116,6 +1116,69 @@ class LibraryRepository {
         .toList();
   }
 
+  /// Returns the latest activity row for each existing song or setlist,
+  /// ordered by its timestamp and then ID. [openCount] on each result counts
+  /// all historical `opened` events for that object.
+  Future<List<ActivityEntry>> listRecentActivity({
+    int limit = 50,
+    int offset = 0,
+  }) async {
+    final rows = await database.rawQuery(
+      '''
+      WITH activity_summary AS (
+        SELECT
+          object_kind,
+          object_id,
+          MAX(occurred_at) AS latest_at,
+          SUM(CASE WHEN action = 'opened' THEN 1 ELSE 0 END) AS open_count
+        FROM activity
+        GROUP BY object_kind, object_id
+      ), latest_ids AS (
+        SELECT a.object_kind, a.object_id, MAX(a.id) AS latest_id
+        FROM activity AS a
+        JOIN activity_summary AS summary
+          ON summary.object_kind = a.object_kind
+          AND summary.object_id = a.object_id
+          AND summary.latest_at = a.occurred_at
+        GROUP BY a.object_kind, a.object_id
+      )
+      SELECT
+        latest.id,
+        latest.object_id,
+        latest.object_kind,
+        latest.action,
+        latest.occurred_at,
+        summary.open_count
+      FROM latest_ids
+      JOIN activity AS latest
+        ON latest.id = latest_ids.latest_id
+      JOIN activity_summary AS summary
+        ON summary.object_kind = latest.object_kind
+        AND summary.object_id = latest.object_id
+      WHERE (latest.object_kind = 'song' AND EXISTS (
+        SELECT 1 FROM songs AS s WHERE s.id = latest.object_id
+      )) OR (latest.object_kind = 'setlist' AND EXISTS (
+        SELECT 1 FROM setlists AS l WHERE l.id = latest.object_id
+      ))
+      ORDER BY latest.occurred_at DESC, latest.id DESC
+      LIMIT ? OFFSET ?
+      ''',
+      [limit.clamp(1, 0x7fffffff), offset.clamp(0, 0x7fffffff)],
+    );
+    return rows
+        .map(
+          (r) => ActivityEntry(
+            id: r['id'] as String,
+            objectId: r['object_id'] as String,
+            objectKind: r['object_kind'] as String,
+            action: r['action'] as String,
+            occurredAt: DateTime.parse(r['occurred_at'] as String),
+            openCount: r['open_count'] as int,
+          ),
+        )
+        .toList();
+  }
+
   Future<void> addActivity(ActivityEntry entry) => database
       .insert('activity', {
         'id': entry.id,
