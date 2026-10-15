@@ -1440,108 +1440,102 @@ class AppLocalizationsKo extends AppLocalizations {
   String get accountReplaceConfirmAction => '삭제 후 교체';
 
   @override
-  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+  String get accountSuspiciousTitle => 'Google Drive에서 항목을 찾을 수 없음';
 
   @override
   String accountSuspiciousBody(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          '$count items that this device synced earlier are missing from Google Drive.',
-      one:
-          '$count item that this device synced earlier is missing from Google Drive.',
+      other: '$count개 항목이 Google Drive에서 사라졌습니다. 이 기기에서 이전에 동기화한 항목입니다.',
+      one: '$count개 항목이 Google Drive에서 사라졌습니다. 이 기기에서 이전에 동기화한 항목입니다.',
     );
-    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+    return '$_temp0 Google 설정에서 앱 데이터를 삭제하면 이런 일이 발생할 수 있습니다. 아직 삭제된 항목은 없습니다.';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Delete them here too';
+  String get accountSuspiciousDelete => '여기서도 삭제';
 
   @override
-  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+  String get accountSuspiciousKeep => '노래를 유지하고 다시 업로드';
 
   @override
   String accountSuspiciousDeleteConfirmTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete $count items from this device?',
-      one: 'Delete $count item from this device?',
+      other: '이 기기에서 항목 $count개를 삭제할까요?',
+      one: '이 기기에서 항목 $count개를 삭제할까요?',
     );
     return '$_temp0';
   }
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+      '이 노래와 세트리스트는 이 기기에서 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다.';
 
   @override
-  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+  String get accountSuspiciousDeleteConfirmAction => '이 기기에서 삭제';
 
   @override
   String get syncErrorRemoteListingSuspicious =>
-      'Items are missing from Google Drive.';
+      'Google Drive에서 항목을 찾을 수 없습니다.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+      '삭제된 항목은 없습니다. 여기서도 삭제할지 다시 업로드할지 선택하세요.';
 
   @override
-  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+  String get syncErrorRemoteChanged => '동기화 중 Google Drive가 변경되었습니다.';
 
   @override
   String get syncErrorRemoteChangedHint =>
-      'Nothing was lost. Sync again to pick up the latest changes.';
+      '손실된 항목은 없습니다. 최신 변경사항을 가져오려면 다시 동기화하세요.';
 
   @override
-  String get syncErrorInvalidLocalData =>
-      'Some data on this device couldn\'t be synced.';
+  String get syncErrorInvalidLocalData => '이 기기의 일부 데이터를 동기화할 수 없습니다.';
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'A song or setlist could not be read. Import or recreate it, then sync again.';
+      '노래나 세트리스트를 읽을 수 없습니다. 가져오거나 다시 만든 다음 동기화하세요.';
 
   @override
-  String get syncErrorNoAccountChange =>
-      'There is no account change to resolve.';
+  String get syncErrorNoAccountChange => '해결할 계정 변경이 없습니다.';
 
   @override
-  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+  String get syncErrorNoAccountChangeHint => '계속하려면 다시 동기화하세요.';
 
   @override
-  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+  String get accountSyncWarningTitle => '동기화 완료, 일부 파일 건너뜀';
 
   @override
   String get accountSyncWarningBody =>
-      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+      '일부 파일을 사용할 수 없어 그대로 두었습니다. 나머지는 최신 상태입니다.';
 
   @override
   String get accountSyncWarningTooLarge =>
-      'A file was too large to sync and was skipped. Everything else is up to date.';
+      '파일이 너무 커서 동기화하지 않고 건너뛰었습니다. 나머지는 최신 상태입니다.';
 
   @override
-  String get accountSyncWarningInvalid =>
-      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+  String get accountSyncWarningInvalid => '파일을 읽을 수 없어 건너뛰었습니다. 나머지는 최신 상태입니다.';
 
   @override
-  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+  String get accountNoticeSyncSkipped => '동기화 완료. 일부 파일을 건너뛰었습니다.';
 
   @override
   String get settingsExportPdfTooLarge =>
-      'This PDF would be too large. Try fewer songs, or share it as text.';
+      '이 PDF는 너무 커집니다. 노래 수를 줄이거나 텍스트로 공유하세요.';
 
   @override
-  String get settingsTimingTooLarge =>
-      'The timing data is too large (over 3 MB).';
+  String get settingsTimingTooLarge => '타이밍 데이터가 너무 큽니다(3MB 초과).';
 
   @override
   String get settingsImportDuplicateSongId =>
-      'This backup lists the same song twice, so nothing was imported.';
+      '백업에 같은 노래가 두 번 있어 아무것도 가져오지 않았습니다.';
 
   @override
   String get setlistSaveConflict =>
-      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+      '세트리스트가 다른 곳에서 변경되었습니다. 수정사항은 별도 사본으로 저장되었습니다.';
 
   @override
   String get sectionVerse => '벌스';

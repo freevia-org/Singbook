@@ -1486,7 +1486,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Hapus dan ganti';
 
   @override
-  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+  String get accountSuspiciousTitle => 'Item tidak ditemukan di Google Drive';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1494,100 +1494,103 @@ class AppLocalizationsId extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count items that this device synced earlier are missing from Google Drive.',
+          '$count item yang pernah disinkronkan perangkat ini tidak ditemukan di Google Drive.',
       one:
-          '$count item that this device synced earlier is missing from Google Drive.',
+          '$count item yang pernah disinkronkan perangkat ini tidak ditemukan di Google Drive.',
     );
-    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+    return '$_temp0 Ini bisa terjadi jika data aplikasi dihapus melalui setelan Google. Belum ada yang dihapus.';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Delete them here too';
+  String get accountSuspiciousDelete => 'Hapus juga di sini';
 
   @override
-  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+  String get accountSuspiciousKeep => 'Simpan lagu saya dan unggah lagi';
 
   @override
   String accountSuspiciousDeleteConfirmTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete $count items from this device?',
-      one: 'Delete $count item from this device?',
+      other: 'Hapus $count item dari perangkat ini?',
+      one: 'Hapus $count item dari perangkat ini?',
     );
     return '$_temp0';
   }
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+      'Lagu dan daftar lagu ini akan dihapus permanen dari perangkat ini. Tindakan ini tidak dapat dibatalkan.';
 
   @override
-  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+  String get accountSuspiciousDeleteConfirmAction => 'Hapus dari perangkat ini';
 
   @override
   String get syncErrorRemoteListingSuspicious =>
-      'Items are missing from Google Drive.';
+      'Item tidak ditemukan di Google Drive.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+      'Tidak ada yang dihapus. Pilih untuk menghapusnya juga di sini atau mengunggahnya lagi.';
 
   @override
-  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+  String get syncErrorRemoteChanged =>
+      'Google Drive berubah saat sinkronisasi berlangsung.';
 
   @override
   String get syncErrorRemoteChangedHint =>
-      'Nothing was lost. Sync again to pick up the latest changes.';
+      'Tidak ada yang hilang. Sinkronkan lagi untuk mengambil perubahan terbaru.';
 
   @override
   String get syncErrorInvalidLocalData =>
-      'Some data on this device couldn\'t be synced.';
+      'Sebagian data di perangkat ini tidak dapat disinkronkan.';
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'A song or setlist could not be read. Import or recreate it, then sync again.';
+      'Lagu atau daftar lagu tidak dapat dibaca. Impor atau buat ulang, lalu sinkronkan lagi.';
 
   @override
   String get syncErrorNoAccountChange =>
-      'There is no account change to resolve.';
+      'Tidak ada perubahan akun yang perlu diselesaikan.';
 
   @override
-  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+  String get syncErrorNoAccountChangeHint =>
+      'Sinkronkan lagi untuk melanjutkan.';
 
   @override
-  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+  String get accountSyncWarningTitle =>
+      'Tersinkron, tetapi beberapa file dilewati';
 
   @override
   String get accountSyncWarningBody =>
-      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+      'Beberapa file tidak dapat digunakan dan dibiarkan apa adanya. Sisanya sudah diperbarui.';
 
   @override
   String get accountSyncWarningTooLarge =>
-      'A file was too large to sync and was skipped. Everything else is up to date.';
+      'Sebuah file terlalu besar untuk disinkronkan dan dilewati. Sisanya sudah diperbarui.';
 
   @override
   String get accountSyncWarningInvalid =>
-      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+      'Sebuah file tidak dapat dibaca dan dilewati. Sisanya sudah diperbarui.';
 
   @override
-  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+  String get accountNoticeSyncSkipped => 'Tersinkron. Beberapa file dilewati.';
 
   @override
   String get settingsExportPdfTooLarge =>
-      'This PDF would be too large. Try fewer songs, or share it as text.';
+      'PDF ini akan terlalu besar. Coba pilih lebih sedikit lagu atau bagikan sebagai teks.';
 
   @override
   String get settingsTimingTooLarge =>
-      'The timing data is too large (over 3 MB).';
+      'Data timing terlalu besar (lebih dari 3 MB).';
 
   @override
   String get settingsImportDuplicateSongId =>
-      'This backup lists the same song twice, so nothing was imported.';
+      'Cadangan ini mencantumkan lagu yang sama dua kali, jadi tidak ada yang diimpor.';
 
   @override
   String get setlistSaveConflict =>
-      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+      'Daftar lagu berubah di tempat lain. Perubahan Anda disimpan sebagai salinan terpisah.';
 
   @override
   String get sectionVerse => 'Bait';
@@ -1611,7 +1614,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get sectionPostChorus => 'Pasca-reff';
 
   @override
-  String get sectionInstrumental => 'Instrumental';
+  String get sectionInstrumental => 'Bagian instrumental';
 
   @override
   String get sectionInterlude => 'Interlude';

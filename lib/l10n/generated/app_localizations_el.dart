@@ -1503,7 +1503,7 @@ class AppLocalizationsEl extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Διαγραφή και αντικατάσταση';
 
   @override
-  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+  String get accountSuspiciousTitle => 'Λείπουν στοιχεία από το Google Drive';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1511,100 +1511,106 @@ class AppLocalizationsEl extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count items that this device synced earlier are missing from Google Drive.',
+          'Λείπουν από το Google Drive $count στοιχεία που είχε συγχρονίσει παλαιότερα αυτή η συσκευή.',
       one:
-          '$count item that this device synced earlier is missing from Google Drive.',
+          'Λείπει από το Google Drive $count στοιχείο που είχε συγχρονίσει παλαιότερα αυτή η συσκευή.',
     );
-    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+    return '$_temp0 Αυτό μπορεί να συμβεί αν διαγράφηκαν δεδομένα της εφαρμογής από τις ρυθμίσεις Google. Δεν έχει διαγραφεί τίποτα ακόμη.';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Delete them here too';
+  String get accountSuspiciousDelete => 'Να διαγραφούν και από εδώ';
 
   @override
-  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+  String get accountSuspiciousKeep =>
+      'Κράτησε τα τραγούδια μου και ανέβασέ τα ξανά';
 
   @override
   String accountSuspiciousDeleteConfirmTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete $count items from this device?',
-      one: 'Delete $count item from this device?',
+      other: 'Να διαγραφούν $count στοιχεία από αυτήν τη συσκευή;',
+      one: 'Να διαγραφεί $count στοιχείο από αυτήν τη συσκευή;',
     );
     return '$_temp0';
   }
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+      'Αυτά τα τραγούδια και οι λίστες τραγουδιών θα διαγραφούν οριστικά από αυτήν τη συσκευή. Δεν είναι δυνατή η αναίρεση.';
 
   @override
-  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+  String get accountSuspiciousDeleteConfirmAction =>
+      'Διαγραφή από αυτήν τη συσκευή';
 
   @override
   String get syncErrorRemoteListingSuspicious =>
-      'Items are missing from Google Drive.';
+      'Λείπουν στοιχεία από το Google Drive.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+      'Δεν διαγράφηκε τίποτα. Επίλεξε αν θέλεις να διαγραφούν και από εδώ ή να μεταφορτωθούν ξανά.';
 
   @override
-  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+  String get syncErrorRemoteChanged =>
+      'Το Google Drive άλλαξε κατά τον συγχρονισμό.';
 
   @override
   String get syncErrorRemoteChangedHint =>
-      'Nothing was lost. Sync again to pick up the latest changes.';
+      'Δεν χάθηκε τίποτα. Συγχρόνισε ξανά για να ληφθούν οι πιο πρόσφατες αλλαγές.';
 
   @override
   String get syncErrorInvalidLocalData =>
-      'Some data on this device couldn\'t be synced.';
+      'Δεν ήταν δυνατός ο συγχρονισμός ορισμένων δεδομένων σε αυτήν τη συσκευή.';
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'A song or setlist could not be read. Import or recreate it, then sync again.';
+      'Δεν ήταν δυνατή η ανάγνωση ενός τραγουδιού ή μιας λίστας τραγουδιών. Κάνε εισαγωγή ή δημιούργησέ τα ξανά και μετά συγχρόνισε ξανά.';
 
   @override
   String get syncErrorNoAccountChange =>
-      'There is no account change to resolve.';
+      'Δεν υπάρχει αλλαγή λογαριασμού προς επίλυση.';
 
   @override
-  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+  String get syncErrorNoAccountChangeHint =>
+      'Συγχρόνισε ξανά για να συνεχίσεις.';
 
   @override
-  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+  String get accountSyncWarningTitle =>
+      'Ο συγχρονισμός έγινε, αλλά παραλείφθηκαν ορισμένα αρχεία';
 
   @override
   String get accountSyncWarningBody =>
-      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+      'Δεν ήταν δυνατή η χρήση ορισμένων αρχείων και παρέμειναν ως είχαν. Όλα τα υπόλοιπα είναι ενημερωμένα.';
 
   @override
   String get accountSyncWarningTooLarge =>
-      'A file was too large to sync and was skipped. Everything else is up to date.';
+      'Ένα αρχείο ήταν πολύ μεγάλο για συγχρονισμό και παραλείφθηκε. Όλα τα υπόλοιπα είναι ενημερωμένα.';
 
   @override
   String get accountSyncWarningInvalid =>
-      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+      'Δεν ήταν δυνατή η ανάγνωση ενός αρχείου και παραλείφθηκε. Όλα τα υπόλοιπα είναι ενημερωμένα.';
 
   @override
-  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+  String get accountNoticeSyncSkipped =>
+      'Ο συγχρονισμός έγινε. Παραλείφθηκαν ορισμένα αρχεία.';
 
   @override
   String get settingsExportPdfTooLarge =>
-      'This PDF would be too large. Try fewer songs, or share it as text.';
+      'Αυτό το PDF θα ήταν πολύ μεγάλο. Δοκίμασε λιγότερα τραγούδια ή κοινοποίησέ το ως κείμενο.';
 
   @override
   String get settingsTimingTooLarge =>
-      'The timing data is too large (over 3 MB).';
+      'Τα δεδομένα χρονισμού είναι πολύ μεγάλα (πάνω από 3 MB).';
 
   @override
   String get settingsImportDuplicateSongId =>
-      'This backup lists the same song twice, so nothing was imported.';
+      'Αυτό το αντίγραφο ασφαλείας περιέχει το ίδιο τραγούδι δύο φορές, οπότε δεν έγινε εισαγωγή.';
 
   @override
   String get setlistSaveConflict =>
-      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+      'Η λίστα τραγουδιών άλλαξε αλλού. Οι αλλαγές σου αποθηκεύτηκαν ως ξεχωριστό αντίγραφο.';
 
   @override
   String get sectionVerse => 'Στροφή';

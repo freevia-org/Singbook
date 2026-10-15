@@ -1481,7 +1481,7 @@ class AppLocalizationsEt extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Kustuta ja asenda';
 
   @override
-  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+  String get accountSuspiciousTitle => 'Google Drive’ist puuduvad üksused';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1489,100 +1489,104 @@ class AppLocalizationsEt extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count items that this device synced earlier are missing from Google Drive.',
+          'Google Drive’ist puudub $count üksust, mille see seade oli varem sünkrooninud.',
       one:
-          '$count item that this device synced earlier is missing from Google Drive.',
+          'Google Drive’ist puudub üksus, mille see seade oli varem sünkrooninud.',
     );
-    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+    return '$_temp0 See võib juhtuda, kui rakenduse andmed kustutati Google’i seadetes. Midagi pole veel kustutatud.';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Delete them here too';
+  String get accountSuspiciousDelete => 'Kustuta need ka siit';
 
   @override
-  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+  String get accountSuspiciousKeep =>
+      'Säilita mu laulud ja laadi need uuesti üles';
 
   @override
   String accountSuspiciousDeleteConfirmTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete $count items from this device?',
-      one: 'Delete $count item from this device?',
+      other: 'Kas kustutada sellest seadmest $count üksust?',
+      one: 'Kas kustutada sellest seadmest $count üksus?',
     );
     return '$_temp0';
   }
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+      'Need laulud ja laulunimekirjad kustutatakse sellest seadmest jäädavalt. Seda ei saa tagasi võtta.';
 
   @override
-  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+  String get accountSuspiciousDeleteConfirmAction => 'Kustuta sellest seadmest';
 
   @override
   String get syncErrorRemoteListingSuspicious =>
-      'Items are missing from Google Drive.';
+      'Google Drive’ist puuduvad üksused.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+      'Midagi ei kustutatud. Vali, kas kustutada need ka siit või laadida uuesti üles.';
 
   @override
-  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+  String get syncErrorRemoteChanged =>
+      'Google Drive muutus sünkroonimise ajal.';
 
   @override
   String get syncErrorRemoteChangedHint =>
-      'Nothing was lost. Sync again to pick up the latest changes.';
+      'Midagi ei läinud kaotsi. Viimaste muudatuste saamiseks sünkrooni uuesti.';
 
   @override
   String get syncErrorInvalidLocalData =>
-      'Some data on this device couldn\'t be synced.';
+      'Mõningaid selle seadme andmeid ei saanud sünkroonida.';
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'A song or setlist could not be read. Import or recreate it, then sync again.';
+      'Laulu või laulunimekirja ei saanud lugeda. Impordi või loo see uuesti ja sünkrooni seejärel uuesti.';
 
   @override
   String get syncErrorNoAccountChange =>
-      'There is no account change to resolve.';
+      'Lahendamist vajavat kontomuutust pole.';
 
   @override
-  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+  String get syncErrorNoAccountChangeHint => 'Jätkamiseks sünkrooni uuesti.';
 
   @override
-  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+  String get accountSyncWarningTitle =>
+      'Sünkroonitud, kuid mõned failid jäeti vahele';
 
   @override
   String get accountSyncWarningBody =>
-      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+      'Mõnda faili ei saanud kasutada ja need jäeti muutmata. Kõik muu on ajakohane.';
 
   @override
   String get accountSyncWarningTooLarge =>
-      'A file was too large to sync and was skipped. Everything else is up to date.';
+      'Fail oli sünkroonimiseks liiga suur ja jäeti vahele. Kõik muu on ajakohane.';
 
   @override
   String get accountSyncWarningInvalid =>
-      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+      'Faili ei saanud lugeda ja see jäeti vahele. Kõik muu on ajakohane.';
 
   @override
-  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+  String get accountNoticeSyncSkipped =>
+      'Sünkroonitud. Mõned failid jäeti vahele.';
 
   @override
   String get settingsExportPdfTooLarge =>
-      'This PDF would be too large. Try fewer songs, or share it as text.';
+      'See PDF oleks liiga suur. Proovi vähemate lauludega või jaga seda tekstina.';
 
   @override
   String get settingsTimingTooLarge =>
-      'The timing data is too large (over 3 MB).';
+      'Ajastuse andmed on liiga suured (üle 3 MB).';
 
   @override
   String get settingsImportDuplicateSongId =>
-      'This backup lists the same song twice, so nothing was imported.';
+      'See varukoopia sisaldab sama laulu kaks korda, seega ei imporditud midagi.';
 
   @override
   String get setlistSaveConflict =>
-      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+      'Laulunimekirja muudeti mujal. Sinu muudatused salvestati eraldi koopiana.';
 
   @override
   String get sectionVerse => 'Salm';

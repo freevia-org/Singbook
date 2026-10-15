@@ -1489,111 +1489,114 @@ class AppLocalizationsHu extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Törlés és csere';
 
   @override
-  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+  String get accountSuspiciousTitle => 'Hiányzó elemek a Google Drive-ban';
 
   @override
   String accountSuspiciousBody(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          '$count items that this device synced earlier are missing from Google Drive.',
-      one:
-          '$count item that this device synced earlier is missing from Google Drive.',
+      other: '$count korábban szinkronizált elem hiányzik a Google Drive-ból.',
+      one: '$count korábban szinkronizált elem hiányzik a Google Drive-ból.',
     );
-    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+    return '$_temp0 Ez akkor fordulhat elő, ha a Google beállításaiban törölték az alkalmazás adatait. Még semmi sem lett törölve.';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Delete them here too';
+  String get accountSuspiciousDelete => 'Töröld őket itt is';
 
   @override
-  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+  String get accountSuspiciousKeep =>
+      'Tartsd meg a dalaimat, és töltsd fel őket újra';
 
   @override
   String accountSuspiciousDeleteConfirmTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete $count items from this device?',
-      one: 'Delete $count item from this device?',
+      other: 'Törlöd ezt a $count elemet erről az eszközről?',
+      one: 'Törlöd ezt az $count elemet erről az eszközről?',
     );
     return '$_temp0';
   }
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+      'Ezek a dalok és setlisták véglegesen törlődnek erről az eszközről. Ez nem vonható vissza.';
 
   @override
-  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+  String get accountSuspiciousDeleteConfirmAction =>
+      'Törlés erről az eszközről';
 
   @override
   String get syncErrorRemoteListingSuspicious =>
-      'Items are missing from Google Drive.';
+      'Hiányzó elemek a Google Drive-ban.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+      'Semmi sem lett törölve. Válaszd ki, hogy itt is törlöd őket, vagy újra feltöltöd.';
 
   @override
-  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+  String get syncErrorRemoteChanged =>
+      'Szinkronizálás közben megváltozott a Google Drive.';
 
   @override
   String get syncErrorRemoteChangedHint =>
-      'Nothing was lost. Sync again to pick up the latest changes.';
+      'Semmi sem veszett el. Szinkronizálj újra a legújabb változásokért.';
 
   @override
   String get syncErrorInvalidLocalData =>
-      'Some data on this device couldn\'t be synced.';
+      'Az eszközön lévő adatok egy része nem szinkronizálható.';
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'A song or setlist could not be read. Import or recreate it, then sync again.';
+      'Egy dal vagy setlista nem olvasható. Importáld vagy hozd létre újra, majd szinkronizálj.';
 
   @override
-  String get syncErrorNoAccountChange =>
-      'There is no account change to resolve.';
+  String get syncErrorNoAccountChange => 'Nincs megoldandó fiókváltás.';
 
   @override
-  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+  String get syncErrorNoAccountChangeHint =>
+      'A folytatáshoz szinkronizálj újra.';
 
   @override
-  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+  String get accountSyncWarningTitle =>
+      'Szinkronizálva, de néhány fájl kimaradt';
 
   @override
   String get accountSyncWarningBody =>
-      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+      'Néhány fájlt nem lehetett használni, ezért változatlanul maradtak. Minden más naprakész.';
 
   @override
   String get accountSyncWarningTooLarge =>
-      'A file was too large to sync and was skipped. Everything else is up to date.';
+      'Egy fájl túl nagy volt a szinkronizáláshoz, ezért kimaradt. Minden más naprakész.';
 
   @override
   String get accountSyncWarningInvalid =>
-      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+      'Egy fájlt nem lehetett beolvasni, ezért kimaradt. Minden más naprakész.';
 
   @override
-  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+  String get accountNoticeSyncSkipped =>
+      'Szinkronizálva. Néhány fájl kimaradt.';
 
   @override
   String get settingsExportPdfTooLarge =>
-      'This PDF would be too large. Try fewer songs, or share it as text.';
+      'Ez a PDF túl nagy lenne. Próbálj kevesebb dalt választani, vagy oszd meg szövegként.';
 
   @override
   String get settingsTimingTooLarge =>
-      'The timing data is too large (over 3 MB).';
+      'Az időzítési adatok túl nagyok (több mint 3 MB).';
 
   @override
   String get settingsImportDuplicateSongId =>
-      'This backup lists the same song twice, so nothing was imported.';
+      'A biztonsági mentés kétszer tartalmazza ugyanazt a dalt, ezért nem történt importálás.';
 
   @override
   String get setlistSaveConflict =>
-      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+      'A setlista máshol megváltozott. A módosításaid külön másolatként lettek mentve.';
 
   @override
-  String get sectionVerse => 'Versszak';
+  String get sectionVerse => 'Verszak';
 
   @override
   String get sectionChorus => 'Refrén';
@@ -1623,7 +1626,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get sectionSolo => 'Szóló';
 
   @override
-  String get sectionRefrain => 'Ismétlődő';
+  String get sectionRefrain => 'Refrén';
 
   @override
   String get sectionHook => 'Hook';

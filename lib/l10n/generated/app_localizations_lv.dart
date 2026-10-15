@@ -1505,7 +1505,7 @@ class AppLocalizationsLv extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Dzēst un aizstāt';
 
   @override
-  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+  String get accountSuspiciousTitle => 'Google diskā trūkst vienumu';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1513,100 +1513,104 @@ class AppLocalizationsLv extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count items that this device synced earlier are missing from Google Drive.',
+          '$count vienumi, ko šī ierīce iepriekš sinhronizēja, nav atrodami Google diskā.',
       one:
-          '$count item that this device synced earlier is missing from Google Drive.',
+          '$count vienums, ko šī ierīce iepriekš sinhronizēja, nav atrodams Google diskā.',
     );
-    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+    return '$_temp0 Tā var notikt, ja Google iestatījumos tika dzēsti lietotnes dati. Pagaidām nekas nav dzēsts.';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Delete them here too';
+  String get accountSuspiciousDelete => 'Dzēst arī šeit';
 
   @override
-  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+  String get accountSuspiciousKeep =>
+      'Saglabāt dziesmas un augšupielādēt vēlreiz';
 
   @override
   String accountSuspiciousDeleteConfirmTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete $count items from this device?',
-      one: 'Delete $count item from this device?',
+      other: 'Dzēst $count vienumus no šīs ierīces?',
+      one: 'Dzēst $count vienumu no šīs ierīces?',
     );
     return '$_temp0';
   }
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+      'Šīs dziesmas un koncertprogrammas tiks neatgriezeniski izdzēstas no šīs ierīces. To nevar atsaukt.';
 
   @override
-  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+  String get accountSuspiciousDeleteConfirmAction => 'Dzēst no šīs ierīces';
 
   @override
-  String get syncErrorRemoteListingSuspicious =>
-      'Items are missing from Google Drive.';
+  String get syncErrorRemoteListingSuspicious => 'Google diskā trūkst vienumu.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+      'Nekas nav dzēsts. Izvēlieties, vai dzēst tos arī šeit vai augšupielādēt vēlreiz.';
 
   @override
-  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+  String get syncErrorRemoteChanged =>
+      'Sinhronizācijas laikā Google disks tika mainīts.';
 
   @override
   String get syncErrorRemoteChangedHint =>
-      'Nothing was lost. Sync again to pick up the latest changes.';
+      'Nekas nav zudis. Sinhronizējiet vēlreiz, lai saņemtu jaunākās izmaiņas.';
 
   @override
   String get syncErrorInvalidLocalData =>
-      'Some data on this device couldn\'t be synced.';
+      'Daļu šīs ierīces datu neizdevās sinhronizēt.';
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'A song or setlist could not be read. Import or recreate it, then sync again.';
+      'Neizdevās nolasīt dziesmu vai koncertprogrammu. Importējiet vai izveidojiet to no jauna un sinhronizējiet vēlreiz.';
 
   @override
   String get syncErrorNoAccountChange =>
-      'There is no account change to resolve.';
+      'Nav konta izmaiņu, kas būtu jāatrisina.';
 
   @override
-  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+  String get syncErrorNoAccountChangeHint =>
+      'Lai turpinātu, sinhronizējiet vēlreiz.';
 
   @override
-  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+  String get accountSyncWarningTitle =>
+      'Sinhronizēts, bet daži faili tika izlaisti';
 
   @override
   String get accountSyncWarningBody =>
-      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+      'Dažus failus nevarēja izmantot, un tie palika nemainīti. Pārējais ir atjaunināts.';
 
   @override
   String get accountSyncWarningTooLarge =>
-      'A file was too large to sync and was skipped. Everything else is up to date.';
+      'Fails bija pārāk liels sinhronizācijai, tāpēc tika izlaists. Pārējais ir atjaunināts.';
 
   @override
   String get accountSyncWarningInvalid =>
-      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+      'Failu nevarēja nolasīt, tāpēc tas tika izlaists. Pārējais ir atjaunināts.';
 
   @override
-  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+  String get accountNoticeSyncSkipped =>
+      'Sinhronizēts. Daži faili tika izlaisti.';
 
   @override
   String get settingsExportPdfTooLarge =>
-      'This PDF would be too large. Try fewer songs, or share it as text.';
+      'Šis PDF būtu pārāk liels. Izvēlieties mazāk dziesmu vai kopīgojiet to kā tekstu.';
 
   @override
   String get settingsTimingTooLarge =>
-      'The timing data is too large (over 3 MB).';
+      'Laika dati ir pārāk lieli (vairāk nekā 3 MB).';
 
   @override
   String get settingsImportDuplicateSongId =>
-      'This backup lists the same song twice, so nothing was imported.';
+      'Dublējumkopijā viena dziesma ir norādīta divreiz, tāpēc nekas netika importēts.';
 
   @override
   String get setlistSaveConflict =>
-      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+      'Koncertprogramma tika mainīta citur. Jūsu labojumi saglabāti atsevišķā kopijā.';
 
   @override
   String get sectionVerse => 'Pants';
@@ -1642,16 +1646,16 @@ class AppLocalizationsLv extends AppLocalizations {
   String get sectionRefrain => 'Refrēns';
 
   @override
-  String get sectionHook => 'Hook';
+  String get sectionHook => 'Āķis';
 
   @override
-  String get sectionBreakdown => 'Breakdown';
+  String get sectionBreakdown => 'Instrumentālais pārtraukums';
 
   @override
   String get sectionCoda => 'Koda';
 
   @override
-  String get sectionTag => 'Tag';
+  String get sectionTag => 'Atzīme';
 
   @override
   String get sectionEnding => 'Nobeigums';

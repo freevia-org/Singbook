@@ -1505,7 +1505,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Șterge și înlocuiește';
 
   @override
-  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+  String get accountSuspiciousTitle => 'Lipsesc elemente din Google Drive.';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1513,100 +1513,106 @@ class AppLocalizationsRo extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count items that this device synced earlier are missing from Google Drive.',
+          '$count elemente sincronizate anterior de acest dispozitiv lipsesc din Google Drive.',
       one:
-          '$count item that this device synced earlier is missing from Google Drive.',
+          '$count element sincronizat anterior de acest dispozitiv lipsește din Google Drive.',
     );
-    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+    return '$_temp0 Se poate întâmpla dacă datele aplicației au fost șterse din setările Google. Nu s-a șters nimic încă.';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Delete them here too';
+  String get accountSuspiciousDelete => 'Șterge-le și de aici';
 
   @override
-  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+  String get accountSuspiciousKeep =>
+      'Păstrează melodiile și încarcă-le din nou';
 
   @override
   String accountSuspiciousDeleteConfirmTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete $count items from this device?',
-      one: 'Delete $count item from this device?',
+      other: 'Ștergi $count elemente de pe acest dispozitiv?',
+      one: 'Ștergi $count element de pe acest dispozitiv?',
     );
     return '$_temp0';
   }
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+      'Aceste melodii și liste vor fi șterse definitiv de pe dispozitiv. Acțiunea nu poate fi anulată.';
 
   @override
-  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+  String get accountSuspiciousDeleteConfirmAction =>
+      'Șterge de pe acest dispozitiv';
 
   @override
   String get syncErrorRemoteListingSuspicious =>
-      'Items are missing from Google Drive.';
+      'Lipsesc elemente din Google Drive.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+      'Nu s-a șters nimic. Alege dacă le ștergi și de aici sau le încarci din nou.';
 
   @override
-  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+  String get syncErrorRemoteChanged =>
+      'Google Drive s-a modificat în timpul sincronizării.';
 
   @override
   String get syncErrorRemoteChangedHint =>
-      'Nothing was lost. Sync again to pick up the latest changes.';
+      'Nu s-a pierdut nimic. Sincronizează din nou pentru a prelua cele mai recente modificări.';
 
   @override
   String get syncErrorInvalidLocalData =>
-      'Some data on this device couldn\'t be synced.';
+      'Unele date de pe acest dispozitiv nu au putut fi sincronizate.';
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'A song or setlist could not be read. Import or recreate it, then sync again.';
+      'O melodie sau o listă nu a putut fi citită. Import-o sau creeaz-o din nou, apoi sincronizează.';
 
   @override
   String get syncErrorNoAccountChange =>
-      'There is no account change to resolve.';
+      'Nu există nicio schimbare de cont de rezolvat.';
 
   @override
-  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+  String get syncErrorNoAccountChangeHint =>
+      'Sincronizează din nou pentru a continua.';
 
   @override
-  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+  String get accountSyncWarningTitle =>
+      'Sincronizare reușită, dar unele fișiere au fost omise';
 
   @override
   String get accountSyncWarningBody =>
-      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+      'Unele fișiere nu au putut fi folosite și au rămas neschimbate. Restul este actualizat.';
 
   @override
   String get accountSyncWarningTooLarge =>
-      'A file was too large to sync and was skipped. Everything else is up to date.';
+      'Un fișier era prea mare pentru sincronizare și a fost omis. Restul este actualizat.';
 
   @override
   String get accountSyncWarningInvalid =>
-      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+      'Un fișier nu a putut fi citit și a fost omis. Restul este actualizat.';
 
   @override
-  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+  String get accountNoticeSyncSkipped =>
+      'Sincronizat. Unele fișiere au fost omise.';
 
   @override
   String get settingsExportPdfTooLarge =>
-      'This PDF would be too large. Try fewer songs, or share it as text.';
+      'Acest PDF ar fi prea mare. Încearcă mai puține melodii sau distribuie-l ca text.';
 
   @override
   String get settingsTimingTooLarge =>
-      'The timing data is too large (over 3 MB).';
+      'Datele de temporizare sunt prea mari (peste 3 MB).';
 
   @override
   String get settingsImportDuplicateSongId =>
-      'This backup lists the same song twice, so nothing was imported.';
+      'Această copie de rezervă conține aceeași melodie de două ori, așa că nu s-a importat nimic.';
 
   @override
   String get setlistSaveConflict =>
-      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+      'Lista de piese s-a modificat în altă parte. Modificările tale au fost salvate într-o copie separată.';
 
   @override
   String get sectionVerse => 'Strofă';

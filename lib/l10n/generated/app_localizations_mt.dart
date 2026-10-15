@@ -1485,23 +1485,23 @@ class AppLocalizationsMt extends AppLocalizations {
 
   @override
   String get editorDurationInvalid =>
-      'Enter seconds or minutes and seconds, such as 3:45.';
+      'Daħħal is-sekondi jew il-minuti u s-sekondi, pereżempju 3:45.';
 
   @override
-  String get editorNumberInvalid => 'Enter a number.';
+  String get editorNumberInvalid => 'Daħħal numru.';
 
   @override
-  String get accountReplaceConfirmTitle => 'Delete local songs?';
+  String get accountReplaceConfirmTitle => 'Tħassar il-kanzunetti lokali?';
 
   @override
   String get accountReplaceConfirmBody =>
-      'Songs and setlists on this device that are not in the new account will be permanently deleted. This can\'t be undone.';
+      'Il-kanzunetti u l-listi fuq dan it-tagħmir li mhumiex fil-kont il-ġdid se jitħassru għal dejjem. Ma tistax treġġa’ lura din l-azzjoni.';
 
   @override
-  String get accountReplaceConfirmAction => 'Delete and replace';
+  String get accountReplaceConfirmAction => 'Ħassar u ibdel';
 
   @override
-  String get accountSuspiciousTitle => 'Items missing from Google Drive';
+  String get accountSuspiciousTitle => 'Oġġetti neqsin minn Google Drive';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1509,103 +1509,106 @@ class AppLocalizationsMt extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count items that this device synced earlier are missing from Google Drive.',
+          '$count oġġetti li dan it-tagħmir issinkronizza qabel huma neqsin minn Google Drive.',
       one:
-          '$count item that this device synced earlier is missing from Google Drive.',
+          '$count oġġett li dan it-tagħmir issinkronizza qabel huwa nieqes minn Google Drive.',
     );
-    return '$_temp0 This can happen if app data was cleared in Google settings. Nothing has been deleted yet.';
+    return '$_temp0 Dan jista’ jiġri jekk id-data tal-app tħassret fis-settings ta’ Google. Għadu ma tħassar xejn.';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Delete them here too';
+  String get accountSuspiciousDelete => 'Ħassarhom hawn ukoll';
 
   @override
-  String get accountSuspiciousKeep => 'Keep my songs and upload them again';
+  String get accountSuspiciousKeep =>
+      'Żomm il-kanzunetti tiegħi u tella’hom mill-ġdid';
 
   @override
   String accountSuspiciousDeleteConfirmTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete $count items from this device?',
-      one: 'Delete $count item from this device?',
+      other: 'Tħassar $count oġġetti minn dan it-tagħmir?',
+      one: 'Tħassar $count oġġett minn dan it-tagħmir?',
     );
     return '$_temp0';
   }
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'These songs and setlists will be permanently deleted from this device. This can\'t be undone.';
+      'Dawn il-kanzunetti u l-listi se jitħassru għal dejjem minn dan it-tagħmir. Ma tistax treġġa’ lura din l-azzjoni.';
 
   @override
-  String get accountSuspiciousDeleteConfirmAction => 'Delete from this device';
+  String get accountSuspiciousDeleteConfirmAction =>
+      'Ħassar minn dan it-tagħmir';
 
   @override
   String get syncErrorRemoteListingSuspicious =>
-      'Items are missing from Google Drive.';
+      'Oġġetti neqsin minn Google Drive.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Nothing was deleted. Choose whether to delete them here too or upload them again.';
+      'Ma tħassar xejn. Agħżel jekk tridx tħassarhom hawn ukoll jew ittellagħhom mill-ġdid.';
 
   @override
-  String get syncErrorRemoteChanged => 'Google Drive changed while syncing.';
+  String get syncErrorRemoteChanged =>
+      'Google Drive nbidel waqt is-sinkronizzazzjoni.';
 
   @override
   String get syncErrorRemoteChangedHint =>
-      'Nothing was lost. Sync again to pick up the latest changes.';
+      'Ma ntilef xejn. Issinkronizza mill-ġdid biex tikseb l-aħħar bidliet.';
 
   @override
   String get syncErrorInvalidLocalData =>
-      'Some data on this device couldn\'t be synced.';
+      'Xi data fuq dan it-tagħmir ma setgħetx tiġi ssinkronizzata.';
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'A song or setlist could not be read. Import or recreate it, then sync again.';
+      'Kanzunetta jew lista ma setgħetx tinqara. Importaha jew oħloqha mill-ġdid, imbagħad issinkronizza.';
 
   @override
-  String get syncErrorNoAccountChange =>
-      'There is no account change to resolve.';
+  String get syncErrorNoAccountChange => 'M’hemmx bidla fil-kont x’issolvi.';
 
   @override
-  String get syncErrorNoAccountChangeHint => 'Sync again to continue.';
+  String get syncErrorNoAccountChangeHint =>
+      'Issinkronizza mill-ġdid biex tkompli.';
 
   @override
-  String get accountSyncWarningTitle => 'Synced, but some files were skipped';
+  String get accountSyncWarningTitle => 'Issinkronizzat, iżda nqabeż xi fajls';
 
   @override
   String get accountSyncWarningBody =>
-      'Some files couldn\'t be used and were left as they are. Everything else is up to date.';
+      'Xi fajls ma setgħux jintużaw u tħallew kif kienu. Kull ħaġa oħra hija aġġornata.';
 
   @override
   String get accountSyncWarningTooLarge =>
-      'A file was too large to sync and was skipped. Everything else is up to date.';
+      'Fajl kien kbir wisq biex jiġi ssinkronizzat u nqabeż. Kull ħaġa oħra hija aġġornata.';
 
   @override
   String get accountSyncWarningInvalid =>
-      'A file couldn\'t be read and was skipped. Everything else is up to date.';
+      'Fajl ma setax jinqara u nqabeż. Kull ħaġa oħra hija aġġornata.';
 
   @override
-  String get accountNoticeSyncSkipped => 'Synced. Some files were skipped.';
+  String get accountNoticeSyncSkipped => 'Issinkronizzat. Inqabżu xi fajls.';
 
   @override
   String get settingsExportPdfTooLarge =>
-      'This PDF would be too large. Try fewer songs, or share it as text.';
+      'Dan il-PDF ikun kbir wisq. Agħżel inqas kanzunetti jew aqsam bħala test.';
 
   @override
   String get settingsTimingTooLarge =>
-      'The timing data is too large (over 3 MB).';
+      'Id-data tat-timing hija kbira wisq (aktar minn 3 MB).';
 
   @override
   String get settingsImportDuplicateSongId =>
-      'This backup lists the same song twice, so nothing was imported.';
+      'Din il-backup telenka l-istess kanzunetta darbtejn, għalhekk ma ġie importat xejn.';
 
   @override
   String get setlistSaveConflict =>
-      'The setlist changed elsewhere. Your edits were saved as a separate copy.';
+      'Il-lista nbidlet x’imkien ieħor. Il-bidliet tiegħek ġew salvati bħala kopja separata.';
 
   @override
-  String get sectionVerse => 'Strofa';
+  String get sectionVerse => 'Vers';
 
   @override
   String get sectionChorus => 'Ritornell';
@@ -1626,7 +1629,7 @@ class AppLocalizationsMt extends AppLocalizations {
   String get sectionPostChorus => 'Wara r-ritornell';
 
   @override
-  String get sectionInstrumental => 'Strumentali';
+  String get sectionInstrumental => 'Parti strumentali';
 
   @override
   String get sectionInterlude => 'Interludju';
@@ -1635,7 +1638,7 @@ class AppLocalizationsMt extends AppLocalizations {
   String get sectionSolo => 'Solo';
 
   @override
-  String get sectionRefrain => 'Refrain';
+  String get sectionRefrain => 'Ritornell';
 
   @override
   String get sectionHook => 'Hook';
