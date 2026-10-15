@@ -133,6 +133,9 @@ String _geniusToken() {
 /// Desktop-only smoke transport. Secret headers travel in a private temp file,
 /// never in curl's process arguments. TLS verification remains enabled.
 class DesktopMaintenanceClient extends http.BaseClient {
+  DesktopMaintenanceClient({this.curlExecutable = 'curl.exe'});
+
+  final String curlExecutable;
   static const _secretHeaders = {
     'authorization',
     'cookie',
@@ -147,17 +150,18 @@ class DesktopMaintenanceClient extends http.BaseClient {
         if (_secretHeaders.contains(header.key.toLowerCase()))
           '${header.key}: ${header.value}',
     ];
-    Directory? directory;
+    final directory = Directory.systemTemp.createTempSync('singbook-maint-');
+    final responseHeaders =
+        '${directory.path}${Platform.pathSeparator}response.txt';
     String? secretFile;
-    if (secret.isNotEmpty) {
-      directory = Directory.systemTemp.createTempSync('singbook-maint-');
-      secretFile = '${directory.path}${Platform.pathSeparator}headers.txt';
-      File(secretFile).writeAsStringSync('${secret.join('\n')}\n');
-    }
     try {
-      return await _send(request, bytes, secretFile);
+      if (secret.isNotEmpty) {
+        secretFile = '${directory.path}${Platform.pathSeparator}headers.txt';
+        File(secretFile).writeAsStringSync('${secret.join('\n')}\n');
+      }
+      return await _send(request, bytes, secretFile, responseHeaders);
     } finally {
-      directory?.deleteSync(recursive: true);
+      directory.deleteSync(recursive: true);
     }
   }
 
@@ -165,14 +169,17 @@ class DesktopMaintenanceClient extends http.BaseClient {
     http.BaseRequest request,
     List<int> bytes,
     String? secretFile,
+    String responseHeaders,
   ) async {
-    final process = await Process.start('curl.exe', [
+    final process = await Process.start(curlExecutable, [
       '--silent',
       '--show-error',
       '--max-time',
       '15',
       '--request',
       request.method,
+      '--dump-header',
+      responseHeaders,
       '--write-out',
       '\n%{http_code}',
       request.url.toString(),
@@ -204,10 +211,42 @@ class DesktopMaintenanceClient extends http.BaseClient {
     await errors;
     final split = output.lastIndexOf(10);
     final status = int.parse(utf8.decode(output.sublist(split + 1)));
+    final headers = parseDesktopResponseHeaders(
+      File(responseHeaders).readAsStringSync(encoding: latin1),
+      status,
+    );
     return http.StreamedResponse(
       Stream.value(output.sublist(0, split)),
       status,
       request: request,
+      headers: headers,
     );
   }
+}
+
+/// Curl may write proxy CONNECT and interim 1xx blocks before the real reply.
+/// Retain only the final matching response; never expose stale interim headers.
+Map<String, String> parseDesktopResponseHeaders(String text, int status) {
+  Map<String, String> headers = {};
+  for (final block in text.split(RegExp(r'\r?\n\r?\n'))) {
+    final lines = block.split(RegExp(r'\r?\n'));
+    final match = RegExp(
+      r'^HTTP/\S+\s+(\d{3})(?:\s|$)',
+    ).firstMatch(lines.first);
+    if (match == null) continue;
+    headers = {};
+    if (int.parse(match[1]!) != status) continue;
+    for (final line in lines.skip(1)) {
+      final colon = line.indexOf(':');
+      if (colon <= 0) continue;
+      final name = line.substring(0, colon).trim().toLowerCase();
+      final value = line.substring(colon + 1).trim();
+      headers.update(
+        name,
+        (previous) => '$previous, $value',
+        ifAbsent: () => value,
+      );
+    }
+  }
+  return headers;
 }

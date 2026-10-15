@@ -502,7 +502,13 @@ class SourceMaintenanceHarness {
         return {'status': 'import_only', 'reason': code};
       }
       if (code == 'blocked' || code == 'access_denied' || code == 'forbidden') {
-        return {'status': 'blocked', 'reason': code};
+        return {
+          'status': 'blocked',
+          // Preserve only this known reason, never arbitrary upstream messages.
+          'reason': code == 'blocked' && error.message == 'consent_required'
+              ? 'consent_required'
+              : code,
+        };
       }
       if (code == 'unavailable' || code == 'not_found' || code == 'gone') {
         return {'status': 'unavailable', 'reason': code};
