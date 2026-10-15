@@ -1089,14 +1089,11 @@ class AppControllerAdapter extends VerseUiController {
     final duration =
         _validDuration(song.metadata['durationSeconds']) ??
         _estimatedDuration(lines.length);
-    if (duration <= 0) return null;
-    final visibleLines = lines.where((line) => !line.isBlank).toList();
-    if (visibleLines.isEmpty) return null;
-    final index = ((_progress / duration) * visibleLines.length).floor().clamp(
-      0,
-      visibleLines.length - 1,
+    return estimatedLineIdAtPosition(
+      lines,
+      progressSeconds: _progress,
+      durationSeconds: duration,
     );
-    return visibleLines[index].id;
   }
 
   static double _estimatedDuration(int lineCount) =>
