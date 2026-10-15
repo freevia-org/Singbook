@@ -253,7 +253,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('${l10n.searchFavoritesTab} (2)'), findsOneWidget);
     expect(find.text(l10n.homeItemsShownCount(2)), findsNothing);
-    expect(find.text(l10n.homeFavorites), findsOneWidget);
+    expect(find.text(l10n.homeFavorites), findsNothing);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
   });

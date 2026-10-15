@@ -58,7 +58,7 @@ void main() {
 
       // Empty library/search states communicate counts and next actions without
       // repeating a section heading above the empty-state copy.
-      expect(find.text('0 items shown'), findsOneWidget);
+      _expectHomeModeCount('recent', 0);
       expect(find.text('Recent songs'), findsNothing);
       await _capture(binding, '00_home_recent_empty');
       await tester.tap(_homeMode('online'));
@@ -81,7 +81,7 @@ void main() {
       await tester.pumpAndSettle();
 
       await _search(tester, _title);
-      expect(find.text('1 result'), findsOneWidget);
+      _expectHomeModeCount('online', 1);
       expect(find.text('Suggestions'), findsNothing);
       await _capture(binding, '02_search_one_result');
 
@@ -96,7 +96,7 @@ void main() {
             .field,
         'all',
       );
-      expect(find.text('2 results'), findsOneWidget);
+      _expectHomeModeCount('online', 2);
       await _capture(binding, '03_search_two_results');
 
       await _search(tester, 'signal');
@@ -110,11 +110,11 @@ void main() {
             .field,
         'all',
       );
-      expect(find.text('5 results'), findsOneWidget);
+      _expectHomeModeCount('online', 5);
       expect(find.text('Signal Song 5'), findsOneWidget);
       await _capture(binding, '04_search_five_results');
       await _search(tester, 'fixtures');
-      expect(find.text('5 results'), findsOneWidget);
+      _expectHomeModeCount('online', 5);
       await tester.tap(find.byTooltip('Search options'));
       await tester.pumpAndSettle();
       expect(
@@ -133,13 +133,13 @@ void main() {
       await _capture(binding, '05_search_title_filter_zero_results');
       await _selectDropdown(tester, 'Song details', 'Artist');
       await tester.pumpAndSettle();
-      expect(find.text('5 results'), findsOneWidget);
+      _expectHomeModeCount('online', 5);
       expect(find.text('Signal Song 1'), findsOneWidget);
       expect(find.text('Signal Song 5'), findsOneWidget);
       await _capture(binding, '06_search_artist_filter_five_results');
       await _selectDropdown(tester, 'Song details', 'Any');
       await tester.pumpAndSettle();
-      expect(find.text('5 results'), findsOneWidget);
+      _expectHomeModeCount('online', 5);
       await tester.tap(find.byTooltip('Search options'));
       await tester.pumpAndSettle();
 
@@ -158,7 +158,7 @@ void main() {
       await _capture(binding, '08_search_retry_error');
       await tester.tap(find.text('Try again'));
       await tester.pumpAndSettle();
-      expect(find.text('1 result'), findsOneWidget);
+      _expectHomeModeCount('online', 1);
       await _capture(binding, '09_search_retry_success');
 
       await _focusSearchInput(tester);
@@ -192,7 +192,7 @@ void main() {
       // comparison explains that state, shows provider failures, and retries
       // discovery without returning to catalog search.
       await _search(tester, 'quiet harbor');
-      expect(find.text('1 result'), findsOneWidget);
+      _expectHomeModeCount('online', 1);
       await tester.tap(find.text('Quiet Harbor').last);
       await tester.pump();
       expect(find.byKey(const ValueKey('discovery-progress')), findsOneWidget);
@@ -424,7 +424,7 @@ void main() {
       }
       // The import and the later library open each record a visit.
       expect(app.recent, hasLength(2));
-      expect(find.text('2 items shown'), findsOneWidget);
+      _expectHomeModeCount('recent', 2);
       await _capture(binding, '21_home_recent_populated');
       await tester.tap(_homeMode('favorites'));
       await tester.pumpAndSettle();
@@ -437,8 +437,8 @@ void main() {
         'favorites',
       );
       expect(find.text(_title), findsWidgets);
-      expect(find.text('1 item shown'), findsOneWidget);
-      // Mode keys remain stable if the UI adds counts to tab labels.
+      _expectHomeModeCount('favorites', 1);
+      // Counted tab labels retain stable mode keys.
       expect(_homeMode('favorites'), findsOneWidget);
       await _capture(binding, '22_home_favorites_populated');
       await tester.tap(find.text('Setlists'));
@@ -692,6 +692,16 @@ Finder _iconButtonWithTooltip(String tooltip) => find.byWidgetPredicate(
 );
 
 Finder _homeMode(String mode) => find.byKey(ValueKey('home-mode-$mode'));
+
+void _expectHomeModeCount(String mode, int count) {
+  expect(
+    find.descendant(
+      of: _homeMode(mode),
+      matching: find.textContaining('($count)'),
+    ),
+    findsOneWidget,
+  );
+}
 
 Finder _popupMenuWithTooltip(String tooltip) => find.byWidgetPredicate(
   (widget) => widget is PopupMenuButton<String> && widget.tooltip == tooltip,
