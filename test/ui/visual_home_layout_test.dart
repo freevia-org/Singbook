@@ -266,8 +266,8 @@ void main() {
         artist: 'The Signals',
       );
       const suggested = SourceVersionData(
-        id: 'source-1',
-        providerId: 'catalog',
+        id: 'combined',
+        providerId: 'combined',
         providerName: 'Catalog',
         title: 'Signal Song',
         artist: 'The Signals',
@@ -276,6 +276,18 @@ void main() {
         isUsableVersion: true,
         bodyPreview: [
           LyricLineData(id: 'suggested-line', text: 'Signal again'),
+        ],
+      );
+      const chosenSource = SourceVersionData(
+        id: 'source-1',
+        providerId: 'catalog',
+        providerName: 'Catalog',
+        title: 'Signal Song',
+        artist: 'The Signals',
+        hasLyrics: true,
+        isUsableVersion: true,
+        bodyPreview: [
+          LyricLineData(id: 'catalog-line', text: 'Signal again'),
         ],
       );
       const alternative1 = SourceVersionData(
@@ -310,7 +322,7 @@ void main() {
           comparison: SearchComparisonData(
             reference: reference,
             suggested: suggested,
-            alternatives: [alternative1, alternative2],
+            alternatives: [chosenSource, alternative1, alternative2],
           ),
         ),
       );
