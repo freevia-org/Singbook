@@ -233,7 +233,7 @@ SongDocument combineSources(
     final facts = {
       ...source.candidate.metadata,
       if (source.candidate.album != null) 'album': source.candidate.album,
-      if (candidateDuration != null) 'durationSeconds': candidateDuration,
+      'durationSeconds': candidateDuration,
       ...source.metadata,
     };
     final sourceDuration =
