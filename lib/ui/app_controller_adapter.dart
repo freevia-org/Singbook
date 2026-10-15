@@ -1862,6 +1862,9 @@ class AppControllerAdapter extends VerseUiController {
   @override
   Future<void> setProviderEnabled(String id, bool enabled) =>
       app.setProviderEnabled(id, enabled);
+
+  @override
+  Future<bool> refreshSources() => app.refreshSources();
   // ---- Sync engine state used by the account UI --------------------------
   DateTime? get _lastSyncAt => app.lastSyncAt;
   int get _lastSyncConflicts => app.lastSyncConflicts;

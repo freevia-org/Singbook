@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "candidates": [
+    {
+      "id": "unison",
+      "name": "Unison",
+      "firstSeen": "2026-10-15",
+      "lastChecked": "2026-10-15",
+      "status": "accepted",
+      "documentation": [
+        "https://docs.betterlyrics.org/unison",
+        "https://github.com/better-lyrics/unison"
+      ],
+      "endpoint": "https://unison.betterlyrics.org",
+      "reason": "Three deterministic canaries passed on 2026-10-15: exact search for Give It Up / Don Toliver, direct ID 31, and direct ID 1494 Love Never Felt So Good / Michael Jackson. Direct reads retained raw TTML; parsed tracks have 341/441 cues including explicit line and positioned word cues. Source attribution is https://unison.boidu.dev; individual lyric-text rights remain unverified and no ODbL claim is made."
+    },
+    {
+      "id": "startjamming",
+      "name": "Start Jamming",
+      "firstSeen": "2026-10-15",
+      "lastChecked": "2026-10-15",
+      "status": "deferred",
+      "documentation": [
+        "https://www.startjamming.com/api"
+      ],
+      "endpoint": "https://www.startjamming.com",
+      "reason": "Documented public read API; search has object/array response variants, index is keyed by ID, and artist can be absent. Chords use normalized measure arrays; cannot claim lyric-aligned chords. Requires a supported adapter and real canaries before activation."
+    },
+    {
+      "id": "lyrica",
+      "name": "Lyrica",
+      "firstSeen": "2026-10-15",
+      "lastChecked": "2026-10-15",
+      "status": "deferred",
+      "documentation": [
+        "https://github.com/thinkely/Lyrica"
+      ],
+      "reason": "Open-source self-hostable aggregator; repository documentation alone does not establish a supported public upstream service or independent data coverage. Investigate deployment/access requirements before proposing activation."
+    }
+  ]
+}

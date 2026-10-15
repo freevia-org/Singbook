@@ -1,0 +1,667 @@
+{
+  "schemaVersion": 1,
+  "extractionSchemaVersion": 1,
+  "revision": 2,
+  "publishedAt": "2026-10-15T19:59:49Z",
+  "sources": [
+    {
+      "id": "genius",
+      "name": "Genius",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "app_token",
+      "website": "https://genius.com",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "wonderwall-oasis",
+          "query": "Wonderwall Oasis",
+          "expectedTitle": "Wonderwall",
+          "expectedArtist": "Oasis",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "songsterr",
+      "name": "Songsterr",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "chords",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public_page",
+      "website": "https://www.songsterr.com",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "wonderwall",
+          "query": "Wonderwall Oasis",
+          "expectedTitle": "Wonderwall",
+          "expectedArtist": "Oasis",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "chords"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ultimateguitar",
+      "name": "Ultimate Guitar",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "chords",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public_page",
+      "website": "https://www.ultimate-guitar.com",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "wonderwall-oasis-chords",
+          "candidate": {
+            "providerId": "ultimateguitar",
+            "id": "/tab/oasis/wonderwall-chords-6125",
+            "title": "Wonderwall",
+            "artist": "Oasis"
+          },
+          "expectedTitle": "Wonderwall",
+          "expectedArtist": "Oasis",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "chords"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lrclib",
+      "name": "LRCLIB",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 2,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "lineTiming",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public",
+      "website": "https://lrclib.net",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "sound-of-silence-studio-recording",
+          "query": "The Sound of Silence Simon & Garfunkel",
+          "expectedTitle": "The Sound Of Silence",
+          "expectedArtist": "Simon & Garfunkel",
+          "expectedAlbum": "Simon and Garfunkel Sounds Of Silence",
+          "expectedDurationSeconds": 186.0766,
+          "requiredFields": [
+            "body",
+            "metadata",
+            "timing",
+            "lineTiming"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "youtubemusic",
+      "name": "YouTube Music",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public_web",
+      "website": "https://music.youtube.com",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "never-gonna-give-you-up",
+          "query": "Never Gonna Give You Up Rick Astley",
+          "expectedTitle": "Never Gonna Give You Up",
+          "expectedArtist": "Rick Astley",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lyricsovh",
+      "name": "Lyrics.ovh",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public",
+      "website": "https://lyrics.ovh",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "wonderwall-oasis-studio",
+          "query": "Wonderwall Oasis",
+          "expectedTitle": "Wonderwall",
+          "expectedArtist": "Oasis",
+          "expectedAlbum": "(What's The Story) Morning Glory?",
+          "expectedDurationSeconds": 258,
+          "requiredFields": [
+            "body",
+            "metadata"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "synclrc",
+      "name": "SyncLRC",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 2,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "lineTiming",
+        "metadata",
+        "wordTiming"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public",
+      "website": "https://synclrc.dev",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "never-gonna-give-you-up-studio",
+          "query": "Never Gonna Give You Up Rick Astley",
+          "expectedTitle": "Never Gonna Give You Up",
+          "expectedArtist": "Rick Astley",
+          "expectedAlbum": "Rick Astley - Never Gonna Give You Up",
+          "expectedDurationSeconds": 214,
+          "requiredFields": [
+            "body",
+            "metadata",
+            "timing",
+            "lineTiming"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "betterlyrics",
+      "name": "Better Lyrics",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "lineTiming",
+        "metadata",
+        "wordTiming"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public",
+      "website": "https://better-lyrics.boidu.dev",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "never-gonna-give-you-up-studio-recording",
+          "query": "Never Gonna Give You Up Rick Astley",
+          "expectedTitle": "Never Gonna Give You Up",
+          "expectedArtist": "Rick Astley",
+          "expectedAlbum": "Rick Astley - Never Gonna Give You Up",
+          "expectedDurationSeconds": 214,
+          "requiredFields": [
+            "body",
+            "metadata",
+            "timing"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unison",
+      "name": "Unison",
+      "adapter": "json",
+      "status": "active",
+      "revision": 2,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "lineTiming",
+        "wordTiming"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "publicApi",
+      "website": "https://docs.betterlyrics.org/unison",
+      "attribution": "Lyrics from Unison (https://unison.boidu.dev)",
+      "hosts": [
+        "unison.betterlyrics.org"
+      ],
+      "changeReason": "Verified 2026-10-15 against documented public API; IDs 31/1494 pass with raw TTML and explicit line+word cues (341/441 cues). Attribution: https://unison.boidu.dev; individual lyric-text rights remain unverified; no ODbL claim.",
+      "extraction": {
+        "search": {
+          "url": "https://unison.betterlyrics.org/lyrics/search?q={query}",
+          "response": "json",
+          "itemsPath": "data",
+          "fields": {
+            "id": "id",
+            "title": "song",
+            "artist": "artist",
+            "durationSeconds": "duration"
+          }
+        },
+        "resolve": {
+          "url": "https://unison.betterlyrics.org/lyrics/{id}",
+          "response": "json",
+          "rootPath": "data",
+          "fields": {
+            "body": "lyrics",
+            "title": "song",
+            "artist": "artist",
+            "format": "format"
+          }
+        },
+        "bodyFormat": "auto"
+      },
+      "probes": [
+        {
+          "id": "search-give-it-up-don-toliver",
+          "query": "Give It Up Don Toliver",
+          "expectedTitle": "Give It Up",
+          "expectedArtist": "Don Toliver",
+          "requiredFields": [
+            "body",
+            "timing",
+            "lineTiming",
+            "wordTiming"
+          ]
+        },
+        {
+          "id": "give-it-up-don-toliver",
+          "candidate": {
+            "providerId": "unison",
+            "id": "31",
+            "title": "Give It Up",
+            "artist": "Don Toliver"
+          },
+          "expectedTitle": "Give It Up",
+          "expectedArtist": "Don Toliver",
+          "requiredFields": [
+            "body",
+            "timing",
+            "lineTiming",
+            "wordTiming"
+          ]
+        },
+        {
+          "id": "love-never-felt-so-good-michael-jackson",
+          "candidate": {
+            "providerId": "unison",
+            "id": "1494",
+            "title": "Love Never Felt So Good",
+            "artist": "Michael Jackson"
+          },
+          "expectedTitle": "Love Never Felt So Good",
+          "expectedArtist": "Michael Jackson",
+          "requiredFields": [
+            "body",
+            "timing",
+            "lineTiming",
+            "wordTiming"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ozbcoz",
+      "name": "Ozbcoz",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "chords",
+        "fileImport",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": false,
+      "accessMode": "fileImport",
+      "website": "https://ozbcoz.com/Songs/cp/",
+      "description": "downloadChordProThenImport",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "import-only"
+        }
+      ]
+    },
+    {
+      "id": "chordie",
+      "name": "Chordie",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "chords",
+        "fileImport",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "publicPage",
+      "website": "https://www.chordie.com/",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "seventh-stranger-duran-duran",
+          "query": "The Seventh Stranger",
+          "expectedTitle": "The Seventh Stranger",
+          "expectedArtist": "Duran Duran",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "chords"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "worshipcommons",
+      "name": "WorshipCommons",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "chords",
+        "lyrics",
+        "metadata",
+        "timing"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public",
+      "website": "https://github.com/ChurchApps/WorshipCommonsContent",
+      "description": "licensedCatalog",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "amazing-grace",
+          "query": "Amazing Grace",
+          "expectedTitle": "Amazing Grace",
+          "expectedArtist": "John Newton",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "chords",
+            "timing"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "openfilksongbook",
+      "name": "Open Filk Songbook",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "chords",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public",
+      "website": "https://filksongbook.com/",
+      "description": "perSongLicense",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "everything-lastalda",
+          "query": "Everything",
+          "expectedTitle": "Everything",
+          "expectedArtist": "Lastalda",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "chords"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "seanmcgrathmusic",
+      "name": "Sean McGrath Music",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "chords",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public",
+      "website": "https://seanmcgrathmusic.com/",
+      "description": "originalSongsCcBy",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "be-here-soon",
+          "query": "Be Here Soon",
+          "expectedTitle": "Be Here Soon",
+          "expectedArtist": "Sean McGrath",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "chords"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "worshiptogether",
+      "name": "Worship Together",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "chords",
+        "fileImport",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": false,
+      "accessMode": "freeAccountImport",
+      "website": "https://www.worshiptogether.com/songs/",
+      "description": "freeAccountDownloadThenImport",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "import-only"
+        }
+      ]
+    },
+    {
+      "id": "musicbrainz",
+      "name": "MusicBrainz",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "noncommercialApi",
+      "website": "https://musicbrainz.org/",
+      "hosts": [],
+      "description": "recordingMetadataOnly",
+      "probes": [
+        {
+          "id": "wonderwall-oasis-recording",
+          "candidate": {
+            "providerId": "musicbrainz",
+            "id": "9de3f212-2121-4c48-9240-96a52b512733",
+            "title": "Wonderwall",
+            "artist": "Oasis",
+            "durationSeconds": 269.293
+          },
+          "expectedTitle": "Wonderwall",
+          "expectedArtist": "Oasis",
+          "expectedDurationSeconds": 269.293,
+          "requiredFields": [
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "musicbrainzRecordingId"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wikidata",
+      "name": "Wikidata",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 2,
+      "capabilities": [
+        "catalog",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public",
+      "website": "https://www.wikidata.org/",
+      "hosts": [],
+      "description": "compositionMetadataOnly",
+      "changeReason": "Pinned Q333266 after live search for Imagine John Lennon returned an unrelated film; exact composition metadata remains validated, while catalog search coverage is explicitly unverified.",
+      "probes": [
+        {
+          "id": "imagine-composition",
+          "candidate": {
+            "providerId": "wikidata",
+            "id": "Q333266",
+            "title": "Imagine",
+            "artist": "John Lennon",
+            "url": "https://www.wikidata.org/wiki/Q333266"
+          },
+          "expectedTitle": "Imagine",
+          "expectedArtist": "John Lennon",
+          "requiredFields": [
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "wikidataId"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wikimediacommons",
+      "name": "Wikimedia Commons",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "artwork",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "exactEntity",
+      "website": "https://commons.wikimedia.org/",
+      "hosts": [],
+      "description": "exactFileArtworkOnly",
+      "probes": [
+        {
+          "id": "bach-portrait",
+          "candidate": {
+            "providerId": "wikimediacommons",
+            "id": "File:Johann Sebastian Bach.jpg",
+            "title": "Johann Sebastian Bach",
+            "artist": "",
+            "url": "https://commons.wikimedia.org/wiki/File:Johann_Sebastian_Bach.jpg",
+            "metadata": {
+              "wikimediaCommonsFile": "File:Johann Sebastian Bach.jpg",
+              "identityScope": "image"
+            }
+          },
+          "expectedTitle": "Johann Sebastian Bach",
+          "requiredFields": [
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "licensedImages.0.license"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wikisource",
+      "name": "Wikisource",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "fileImport",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": false,
+      "accessMode": "publicDomainText",
+      "website": "https://en.wikisource.org/",
+      "hosts": [],
+      "description": "historicalTextPerWorkLicense",
+      "probes": [
+        {
+          "id": "auld-lang-syne-burns-text",
+          "query": "Auld Lang Syne Burns",
+          "expectedTitle": "Auld Lang Syne (Burns)",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ]
+        }
+      ]
+    }
+  ]
+}

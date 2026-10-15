@@ -614,6 +614,7 @@ abstract class VerseUiController extends ChangeNotifier {
   Future<void> setAutoscroll(bool enabled);
   Future<void> setTimingMode(String mode);
   Future<void> setProviderEnabled(String id, bool enabled);
+  Future<bool> refreshSources() async => false;
   Future<void> signInForSync();
   Future<void> signOutFromSync();
 
