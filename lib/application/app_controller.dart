@@ -109,6 +109,7 @@ class AppController extends ChangeNotifier {
   List<SetlistDocument> setlists = [];
   JsonMap settings = {};
   List<ActivityEntry> recent = [];
+  Future<void> _recentQueue = Future.value();
   bool hasMoreRecent = true;
   List<ProviderDefinition> get providers => discovery.definitions;
   bool sourcesRefreshing = false;
@@ -317,7 +318,7 @@ class AppController extends ChangeNotifier {
     if (_disposed) return;
     await _reload();
     if (_disposed) return;
-    recent = await repository.listActivity(limit: 40);
+    recent = await repository.listRecentActivity(limit: 40);
     if (_disposed) return;
     hasMoreRecent = recent.length == 40;
     _indexSaved();
@@ -576,9 +577,23 @@ class AppController extends ChangeNotifier {
     results = [];
     combined = null;
     checks.clear();
+    _cachedDiscoverySourceIds = const {};
   }
 
-  Future<void> selectCandidate(SongCandidate candidate) async {
+  Set<String> _cachedDiscoverySourceIds = const {};
+
+  /// Chord arrangements receive a final lyric-agreement check after providers
+  /// finish. Plain lyrics and previously saved sources can be opened sooner.
+  bool isSourceReady(SourceResult source) =>
+      !discovering ||
+      !source.hasChords ||
+      _cachedDiscoverySourceIds.contains(source.id);
+
+  Future<void> selectCandidate(
+    SongCandidate candidate, {
+    String? searchQuery,
+    List<SourceResult> cachedResults = const [],
+  }) async {
     ++_searchEpoch;
     _searchCancel?.cancel();
     searching = false;
@@ -587,7 +602,16 @@ class AppController extends ChangeNotifier {
     final epoch = _discoveryEpoch;
     final cancellation = _discoveryCancel = CancellationToken();
     selection = candidate;
+    if (searchQuery != null) query = searchQuery;
+    // Saved provenance remains available during refresh, including offline.
+    // Fresh results replace only the matching cached source by identity.
+    final cached = {
+      for (final source in cachedResults) source.id: _snapshotSource(source),
+    }.values.toList();
+    _cachedDiscoverySourceIds = cached.map((source) => source.id).toSet();
+    results = cached;
     discovering = true;
+    _combine(candidate);
     errorCode = null;
     _emit();
     try {
@@ -602,7 +626,8 @@ class AppController extends ChangeNotifier {
           if (epoch != _discoveryEpoch || _disposed) return;
           checks[check.providerId] = check;
           final result = check.result;
-          if (result != null) {
+          if (result != null &&
+              !(result.hasChords && _cachedDiscoverySourceIds.contains(result.id))) {
             results = [
               ...results.where((item) => item.id != result.id),
               result,
@@ -613,7 +638,10 @@ class AppController extends ChangeNotifier {
         },
       );
       if (epoch != _discoveryEpoch || _disposed) return;
-      results = found;
+      results = {
+        for (final source in cached) source.id: source,
+        for (final source in found) source.id: source,
+      }.values.toList();
       _combine(candidate);
     } catch (error) {
       if (epoch != _discoveryEpoch || _disposed) return;
@@ -621,6 +649,7 @@ class AppController extends ChangeNotifier {
     } finally {
       if (epoch == _discoveryEpoch) {
         discovering = false;
+        _combine(candidate);
         _emit();
       }
     }
@@ -628,10 +657,15 @@ class AppController extends ChangeNotifier {
 
   void _combine(SongCandidate candidate) {
     final usable = results.where(
-      (r) => r.matchKind != MatchKind.rejected && r.body.trim().isNotEmpty,
+      (r) =>
+          r.matchKind != MatchKind.rejected &&
+          r.body.trim().isNotEmpty &&
+          isSourceReady(r),
     );
     try {
-      combined = usable.isEmpty ? null : combineSources(candidate, results);
+      combined = usable.isEmpty
+          ? null
+          : combineSources(candidate, results.where(isSourceReady).toList());
     } on FormatException {
       combined = null;
     }
@@ -642,29 +676,52 @@ class AppController extends ChangeNotifier {
       : selection == null
       ? null
       : _savedCombined[selection!.identity];
-  Future<SongDocument> saveResult({SourceResult? source}) => _tracked(
-    'save',
-    () async {
-      // Saving waits for the bounded lookup, so no received timing alternative is lost.
-      if (discovering) throw StateError('discovery_in_progress');
-      if (selection == null || combined == null) throw StateError('no_result');
-      if (source != null &&
-          (source.matchKind == MatchKind.rejected ||
-              source.body.trim().isEmpty ||
-              !results.any((result) => result.id == source.id))) {
-        throw StateError('invalid_source');
+  Future<SongDocument> saveResult({SourceResult? source}) {
+    // Capture the complete decision synchronously. Discovery may publish more
+    // sources, or the user may select another candidate, while the tracked
+    // save is waiting to write to the library.
+    final selectedSnapshot = selection == null
+        ? null
+        : _snapshotCandidate(selection!);
+    final resultSnapshots = results
+        .where(isSourceReady)
+        .map(_snapshotSource)
+        .toList(growable: false);
+    final requestedSourceId = source?.id;
+
+    return _tracked('save', () async {
+      final selected = selectedSnapshot;
+      if (selected == null) throw StateError('no_result');
+      SourceResult? selectedSource;
+      if (requestedSourceId != null) {
+        for (final result in resultSnapshots) {
+          if (result.id == requestedSourceId) {
+            selectedSource = result;
+            break;
+          }
+        }
+        if (selectedSource == null ||
+            selectedSource.matchKind == MatchKind.rejected ||
+            selectedSource.body.trim().isEmpty) {
+          throw StateError('invalid_source');
+        }
       }
-      final existingId = savedResultId(source: source);
+      final existingId = selectedSource == null
+          ? _savedCombined[selected.identity]
+          : _savedSources[selectedSource.id];
+      // combineSources also checks song identity and arrangement usability.
+      // For a source save this allows a ready result even while other provider
+      // checks are still running.
       final document = combineSources(
-        selection!,
-        results,
-        preferredSourceId: source?.id,
+        selected,
+        resultSnapshots,
+        preferredSourceId: selectedSource?.id,
       );
       final song = document.copyWith(
         extra: {
           ...document.extra,
-          if (source != null) 'savedSourceId': source.id,
-          if (source == null) 'combinedSelection': selection!.identity,
+          if (selectedSource != null) 'savedSourceId': selectedSource.id,
+          if (selectedSource == null) 'combinedSelection': selected.identity,
         },
         revision: 1,
       );
@@ -674,8 +731,35 @@ class AppController extends ChangeNotifier {
       );
       await _afterWrite();
       return saved;
-    },
-  );
+    });
+  }
+
+  SongCandidate _snapshotCandidate(SongCandidate candidate) =>
+      SongCandidate.fromJson(
+        _snapshotJsonMap(candidate.toJson()),
+      );
+
+  SourceResult _snapshotSource(SourceResult source) =>
+      SourceResult.fromJson(_snapshotJsonMap(source.toJson()));
+
+  JsonMap _snapshotJsonMap(Map<String, dynamic> value) => {
+    for (final entry in value.entries)
+      entry.key: _snapshotJsonValue(entry.value),
+  };
+
+  Object? _snapshotJsonValue(Object? value) {
+    if (value is Map<String, dynamic>) return _snapshotJsonMap(value);
+    if (value is Map) {
+      return {
+        for (final entry in value.entries)
+          entry.key as String: _snapshotJsonValue(entry.value),
+      };
+    }
+    if (value is List) {
+      return [for (final item in value) _snapshotJsonValue(item)];
+    }
+    return value;
+  }
 
   Future<void> _afterWrite({bool songsChanged = true}) async {
     await _reload();
@@ -883,7 +967,17 @@ class AppController extends ChangeNotifier {
         return false;
       });
 
-  Future<void> recordUse(String kind, String id) async {
+  // A visit can move a group across a page boundary. Keep paging, refreshes
+  // and clearing in call order so an old page cannot skip or restore groups.
+  Future<void> _updateRecent(Future<void> Function() action) {
+    final result = _recentQueue.then((_) async {
+      if (!_disposed) await action();
+    });
+    _recentQueue = result.then<void>((_) {}, onError: (Object _) {});
+    return result;
+  }
+
+  Future<void> recordUse(String kind, String id) => _updateRecent(() async {
     final entry = ActivityEntry(
       id: newId(),
       objectId: id,
@@ -892,27 +986,32 @@ class AppController extends ChangeNotifier {
       occurredAt: DateTime.now().toUtc(),
     );
     await repository.addActivity(entry);
-    recent = [entry, ...recent];
+    final visibleLimit = recent.length < 40 ? 40 : recent.length;
+    recent = await repository.listRecentActivity(limit: visibleLimit);
+    hasMoreRecent = recent.length == visibleLimit;
     _emit();
-  }
+  });
 
-  Future<void> loadMoreRecent() async {
+  Future<void> loadMoreRecent() => _updateRecent(() async {
     if (!hasMoreRecent) return;
-    final next = await repository.listActivity(
+    final next = await repository.listRecentActivity(
       offset: recent.length,
       limit: 40,
     );
-    recent = [...recent, ...next];
+    recent = {
+      for (final entry in [...recent, ...next])
+        (entry.objectKind, entry.objectId): entry,
+    }.values.toList();
     hasMoreRecent = next.length == 40;
     _emit();
-  }
+  });
 
-  Future<void> clearHistory() async {
+  Future<void> clearHistory() => _updateRecent(() async {
     await repository.clearActivity();
     recent = [];
     hasMoreRecent = false;
     _emit();
-  }
+  });
 
   // ---- Google Drive sync ------------------------------------------------
 

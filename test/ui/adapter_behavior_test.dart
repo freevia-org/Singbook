@@ -233,10 +233,11 @@ void main() {
   group('history paging', () {
     test('overlapping loads fetch one page', () async {
       for (var i = 0; i < 100; i++) {
+        await app.saveSong(_song('song-$i', 'Song $i'));
         await repository.addActivity(
           ActivityEntry(
             id: 'activity-$i',
-            objectId: 'a',
+            objectId: 'song-$i',
             objectKind: 'song',
             action: 'opened',
             occurredAt: DateTime.utc(2025, 1, 1).add(Duration(minutes: i)),
