@@ -836,7 +836,7 @@ Future<Uint8List> createSongPdf(
           pw.Text(
             setlist.name,
             style: pw.TextStyle(
-              fontSize: 18,
+              fontSize: 28,
               fontWeight: pw.FontWeight.bold,
               color: navy,
             ),
@@ -846,15 +846,15 @@ Future<Uint8List> createSongPdf(
               padding: const pw.EdgeInsets.only(top: 2, bottom: 4),
               child: pw.Text(
                 setlist.notes,
-                style: const pw.TextStyle(fontSize: 9, color: muted),
+                style: const pw.TextStyle(fontSize: 12, color: muted),
               ),
             ),
           for (var i = 0; i < songs.length; i++)
             pw.Padding(
-              padding: const pw.EdgeInsets.symmetric(vertical: 3),
+              padding: const pw.EdgeInsets.symmetric(vertical: 8),
               child: pw.Text(
                 '${i + 1}. ${songs[i].title}${songs[i].artist.trim().isEmpty ? '' : ' — ${songs[i].artist.trim()}'}',
-                style: const pw.TextStyle(fontSize: 10),
+                style: const pw.TextStyle(fontSize: 22),
                 overflow: pw.TextOverflow.span,
               ),
             ),

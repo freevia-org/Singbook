@@ -70,6 +70,31 @@ void main() {
     await emptyOutput.writeAsBytes(emptyBytes);
     expect(emptyBytes.length, greaterThan(1000));
 
+    final longListSongs = List.generate(
+      12,
+      (index) => songs[index % songs.length].copyWith(
+        id: 'long-list-${index + 1}',
+        title:
+            'Song ${index + 1}: A Longer Song Title That Wraps Comfortably on the Setlist Page',
+      ),
+    );
+    final longList = SetlistDocument(
+      id: 'long-list',
+      name: 'Long Evening Set',
+      entries: [
+        for (var i = 0; i < longListSongs.length; i++)
+          SetlistEntry(
+            id: 'long-list-entry-${i + 1}',
+            songId: longListSongs[i].id,
+          ),
+      ],
+    );
+    final longListOutput = File('output/pdf/Long-setlist-cover-review.pdf');
+    await longListOutput.parent.create(recursive: true);
+    await longListOutput.writeAsBytes(
+      await createSongPdf(longListSongs, setlist: longList),
+    );
+
     final longText = List.filled(450, 'melody').join(' ');
     final longSong = SongDocument(
       id: 'long-song',
@@ -98,9 +123,9 @@ void main() {
       'a5': PdfPageFormat.a5,
       'letter': PdfPageFormat.letter,
     }.entries) {
-      await File('output/pdf/Long-song-${entry.key}-review.pdf').writeAsBytes(
-        await createSongPdf([longSong], format: entry.value),
-      );
+      await File(
+        'output/pdf/Long-song-${entry.key}-review.pdf',
+      ).writeAsBytes(await createSongPdf([longSong], format: entry.value));
     }
   });
 }
