@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data' show BytesBuilder;
 import 'package:archive/archive.dart';
+import 'package:characters/characters.dart';
 import 'package:crypto/crypto.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
@@ -755,7 +756,7 @@ Future<Uint8List> createSongPdf(
   const navy = PdfColor.fromInt(0xff173454);
   const muted = PdfColor.fromInt(0xff5f6b78);
   const paleBlue = PdfColor.fromInt(0xfff1f5f9);
-  String metadataText(SongDocument song) {
+  List<String> metadataLines(SongDocument song) {
     final values = <String>[];
     void add(String label, Object? raw) {
       final value = raw?.toString().trim();
@@ -782,7 +783,7 @@ Future<Uint8List> createSongPdf(
     }
     add('Composer', song.metadata['composer']);
     add('Lyricist', song.metadata['lyricist']);
-    return values.join('  ·  ');
+    return values;
   }
 
   String songKeywords(SongDocument song) => [
@@ -830,28 +831,39 @@ Future<Uint8List> createSongPdf(
     document.addPage(
       pw.MultiPage(
         pageFormat: format,
+        maxPages: 1000,
         build: (context) => [
           pw.Text(
             setlist.name,
-            style: pw.TextStyle(fontSize: 26, fontWeight: pw.FontWeight.bold),
+            style: pw.TextStyle(
+              fontSize: 18,
+              fontWeight: pw.FontWeight.bold,
+              color: navy,
+            ),
           ),
           if (setlist.notes.isNotEmpty)
             pw.Padding(
-              padding: const pw.EdgeInsets.symmetric(vertical: 12),
-              child: pw.Text(setlist.notes),
+              padding: const pw.EdgeInsets.only(top: 2, bottom: 4),
+              child: pw.Text(
+                setlist.notes,
+                style: const pw.TextStyle(fontSize: 9, color: muted),
+              ),
             ),
           for (var i = 0; i < songs.length; i++)
             pw.Padding(
-              padding: const pw.EdgeInsets.symmetric(vertical: 5),
+              padding: const pw.EdgeInsets.symmetric(vertical: 3),
               child: pw.Text(
                 '${i + 1}. ${songs[i].title}${songs[i].artist.trim().isEmpty ? '' : ' — ${songs[i].artist.trim()}'}',
+                style: const pw.TextStyle(fontSize: 10),
+                overflow: pw.TextOverflow.span,
               ),
             ),
         ],
       ),
     );
   }
-  for (final song in songs) {
+  for (var songIndex = 0; songIndex < songs.length; songIndex++) {
+    final song = songs[songIndex];
     final lines = parseArrangement(song.body);
     document.addPage(
       pw.MultiPage(
@@ -862,78 +874,241 @@ Future<Uint8List> createSongPdf(
             song.title,
             style: pw.TextStyle(fontSize: 22, fontWeight: pw.FontWeight.bold),
           ),
-          if (song.artist.trim().isNotEmpty)
-            pw.Padding(
-              padding: const pw.EdgeInsets.only(top: 2),
-              child: pw.Text(
+          pw.SizedBox(height: 8),
+          ..._pdfSongBody(
+            lines,
+            context: context,
+            format: format,
+            metadata: [
+              if (song.artist.trim().isNotEmpty)
                 'Artist: ${song.artist.trim()}',
-                style: const pw.TextStyle(fontSize: 12, color: muted),
-              ),
-            ),
-          if (metadataText(song).isNotEmpty)
-            pw.Container(
-              width: double.infinity,
-              margin: const pw.EdgeInsets.only(top: 10, bottom: 12),
-              padding: const pw.EdgeInsets.symmetric(
-                horizontal: 9,
-                vertical: 7,
-              ),
-              decoration: pw.BoxDecoration(
-                color: paleBlue,
-                borderRadius: pw.BorderRadius.circular(4),
-              ),
-              child: pw.Text(
-                metadataText(song),
-                style: const pw.TextStyle(fontSize: 8.5, color: navy),
-              ),
-            )
-          else
-            pw.SizedBox(height: 12),
-          for (final line in lines)
-            if (line.directive && _pdfSectionHeading(line.text) != null)
-              pw.Padding(
-                padding: const pw.EdgeInsets.only(top: 5, bottom: 2),
-                child: pw.Text(
-                  _pdfSectionHeading(line.text)!,
-                  style: pw.TextStyle(
-                    fontSize: 8,
-                    fontWeight: pw.FontWeight.bold,
-                    color: muted,
-                  ),
-                ),
-              )
-            else if (!line.directive &&
-                line.text.trim().isEmpty &&
-                line.chords.isEmpty)
-              pw.SizedBox(height: 5)
-            else if (!line.directive)
-              pw.Padding(
-                padding: const pw.EdgeInsets.only(bottom: 2.5),
-                child: pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    if (line.chords.isNotEmpty)
-                      pw.Text(
-                        _chordRow(line),
-                        style: pw.TextStyle(
-                          font: mono,
-                          fontSize: 9,
-                          fontWeight: pw.FontWeight.bold,
-                          color: navy,
-                        ),
-                      ),
-                    pw.Text(
-                      line.text.isEmpty ? ' ' : line.text,
-                      style: pw.TextStyle(font: mono, fontSize: 10.5),
-                    ),
-                  ],
-                ),
-              ),
+              ...metadataLines(song),
+            ],
+            mono: mono,
+            navy: navy,
+            muted: muted,
+            paleBlue: paleBlue,
+          ),
         ],
       ),
     );
   }
   return document.save();
+}
+
+List<pw.Widget> _pdfSongBody(
+  List<ArrangementLine> lines, {
+  required pw.Context context,
+  required PdfPageFormat format,
+  required List<String> metadata,
+  required pw.Font mono,
+  required PdfColor navy,
+  required PdfColor muted,
+  required PdfColor paleBlue,
+}) {
+  final lyricRows = <pw.Widget>[];
+  for (final line in lines) {
+    if (line.directive && _pdfSectionHeading(line.text) != null) {
+      lyricRows.add(
+        pw.Padding(
+          padding: const pw.EdgeInsets.only(top: 5, bottom: 2),
+          child: pw.Text(
+            _pdfSectionHeading(line.text)!,
+            style: pw.TextStyle(
+              fontSize: 8,
+              fontWeight: pw.FontWeight.bold,
+              color: muted,
+            ),
+          ),
+        ),
+      );
+    } else if (!line.directive &&
+        line.text.trim().isEmpty &&
+        line.chords.isEmpty) {
+      lyricRows.add(pw.SizedBox(height: 5));
+    } else if (!line.directive) {
+      for (final chunk in _pdfLineChunks(line)) {
+        lyricRows.add(
+          pw.Padding(
+            padding: const pw.EdgeInsets.only(bottom: 0.8),
+            child: pw.Inseparable(
+              child: pw.Column(
+                mainAxisSize: pw.MainAxisSize.min,
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  if (chunk.chords.isNotEmpty)
+                    pw.Text(
+                      _chordRow(chunk),
+                      style: pw.TextStyle(
+                        font: mono,
+                        fontSize: 8.5,
+                        fontWeight: pw.FontWeight.bold,
+                        color: navy,
+                      ),
+                    ),
+                  pw.Text(
+                    chunk.text.isEmpty ? ' ' : chunk.text,
+                    style: pw.TextStyle(font: mono, fontSize: 10),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  final metadataWidgets = <pw.Widget>[];
+  for (final value in metadata) {
+    final chunks = _pdfTextChunks(value);
+    for (var index = 0; index < chunks.length; index++) {
+      metadataWidgets.add(
+        pw.Container(
+          margin: const pw.EdgeInsets.only(bottom: 0.8),
+          padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+          decoration: pw.BoxDecoration(
+            color: paleBlue,
+            borderRadius: pw.BorderRadius.circular(3),
+          ),
+          child: pw.Text(
+            index == 0 ? chunks[index] : '(continued) ${chunks[index]}',
+            style: pw.TextStyle(fontSize: 8, color: navy),
+          ),
+        ),
+      );
+    }
+  }
+
+  if (metadataWidgets.isEmpty) return lyricRows;
+
+  final margin = pw.PageTheme(
+    pageFormat: format,
+  ).margin!.resolve(pw.TextDirection.ltr);
+  final contentWidth = format.width - margin.horizontal;
+  final columnWidth = contentWidth - 10;
+  final lyricWidth = columnWidth * .7;
+  final metadataWidth = columnWidth * .3;
+  // Measure actual font wrapping at the printed width. Keep each block well
+  // below a fresh page so MultiPage can paginate it as one unit. The sidebar
+  // flows independently; lyrics fill its height instead of leaving a fixed
+  // opening gap or imposing their own row heights on metadata fields.
+  final maxBlockHeight = (format.height - margin.vertical) * .65;
+  double measuredHeight(pw.Widget widget, double width) {
+    widget.layout(context, pw.BoxConstraints(minWidth: width, maxWidth: width));
+    return widget.box!.height;
+  }
+
+  final lyricHeights = [
+    for (final row in lyricRows) measuredHeight(row, lyricWidth),
+  ];
+  final metadataHeights = [
+    for (final widget in metadataWidgets) measuredHeight(widget, metadataWidth),
+  ];
+  var lyricIndex = 0;
+  var metadataIndex = 0;
+  final blocks = <pw.Widget>[];
+  while (metadataIndex < metadataWidgets.length) {
+    final metadataStart = metadataIndex;
+    var metadataHeight = 0.0;
+    do {
+      metadataHeight += metadataHeights[metadataIndex++];
+    } while (metadataIndex < metadataWidgets.length &&
+        metadataHeight + metadataHeights[metadataIndex] <= maxBlockHeight);
+
+    final lyricStart = lyricIndex;
+    var lyricHeight = 0.0;
+    while (lyricIndex < lyricRows.length &&
+        lyricHeight + lyricHeights[lyricIndex] <= maxBlockHeight &&
+        (lyricIndex == lyricStart ||
+            lyricHeight + lyricHeights[lyricIndex] <= metadataHeight)) {
+      lyricHeight += lyricHeights[lyricIndex++];
+    }
+    blocks.add(
+      pw.Row(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Expanded(
+            flex: 7,
+            child: pw.Column(
+              mainAxisSize: pw.MainAxisSize.min,
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: lyricRows.sublist(lyricStart, lyricIndex),
+            ),
+          ),
+          pw.SizedBox(width: 10),
+          pw.Expanded(
+            flex: 3,
+            child: pw.Column(
+              mainAxisSize: pw.MainAxisSize.min,
+              crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+              children: metadataWidgets.sublist(metadataStart, metadataIndex),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  blocks.addAll(lyricRows.skip(lyricIndex));
+  return blocks;
+}
+
+/// Break exceptional single ChordPro rows into bounded continuations so each
+/// chord/lyric pair can stay together and still fit on a page. The limit is a
+/// conservative text-size bound, not a page-height estimate; ordinary lines
+/// remain unchanged. Chunk boundaries prefer whitespace and never split a
+/// grapheme cluster when a long unbroken token needs splitting.
+const _pdfTextChunkLength = 320;
+
+List<ArrangementLine> _pdfLineChunks(ArrangementLine line) {
+  final chunks = _pdfTextChunks(line.text);
+  if (chunks.length == 1) return [line];
+
+  final result = <ArrangementLine>[];
+  var start = 0;
+  for (var index = 0; index < chunks.length; index++) {
+    final text = chunks[index];
+    final end = start + text.length;
+    final anchors = line.chords
+        .where(
+          (anchor) =>
+              anchor.offset >= start &&
+              (anchor.offset < end ||
+                  (index == chunks.length - 1 && anchor.offset == end)),
+        )
+        .map((anchor) => ChordAnchor(anchor.offset - start, anchor.chord))
+        .toList(growable: false);
+    result.add(ArrangementLine(text, anchors));
+    start = end;
+  }
+  return result;
+}
+
+List<String> _pdfTextChunks(String value) {
+  if (value.length <= _pdfTextChunkLength) return [value];
+
+  final chunks = <String>[];
+  var start = 0;
+  while (value.length - start > _pdfTextChunkLength) {
+    final limit = start + _pdfTextChunkLength;
+    final whitespace = RegExp(r'\s').allMatches(value.substring(start, limit));
+    final lastWhitespace = whitespace.isEmpty ? null : whitespace.last;
+    var end = lastWhitespace == null ? start : start + lastWhitespace.end;
+    if (end <= start) {
+      end = start;
+      for (final grapheme in value.substring(start).characters) {
+        if (end + grapheme.length - start > _pdfTextChunkLength) break;
+        end += grapheme.length;
+      }
+    }
+    if (end <= start) {
+      end = start + value.substring(start).characters.first.length;
+    }
+    chunks.add(value.substring(start, end));
+    start = end;
+  }
+  chunks.add(value.substring(start));
+  return chunks;
 }
 
 String _chordRow(ArrangementLine line) {
