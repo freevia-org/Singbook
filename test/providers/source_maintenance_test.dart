@@ -249,6 +249,29 @@ void main() {
       },
     );
 
+    test(
+      'reports consent requirements without exposing other error messages',
+      () async {
+        final consent = await _runWith(
+          _Provider(
+            error: const ProviderException('blocked', 'consent_required'),
+          ),
+        );
+        expect(_probe(consent)['status'], 'blocked');
+        expect(_probe(consent)['reason'], 'consent_required');
+        final other = await _runWith(
+          _Provider(
+            error: const ProviderException(
+              'blocked',
+              'sensitive upstream text',
+            ),
+          ),
+        );
+        expect(_probe(other)['reason'], 'blocked');
+        expect(other.toString(), isNot(contains('sensitive upstream text')));
+      },
+    );
+
     test('disabled sources are reported as disabled without probing', () async {
       final catalog = _catalog(status: 'disabled');
       final report = await SourceMaintenanceHarness(

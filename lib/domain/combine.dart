@@ -312,7 +312,7 @@ SongDocument combineSources(
     id: newId(),
     title: selected.title,
     artist: selected.artist,
-    body: best.body,
+    body: inferSectionDirectives(best.body),
     metadata: metadata,
     sources: results,
     timingTracks: tracks.values.toList(),
