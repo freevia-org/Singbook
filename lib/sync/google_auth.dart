@@ -50,7 +50,7 @@ class InitializationGate {
 ///
 /// Identifiers (all in one Google Cloud project, see
 /// docs/google-oauth-setup.md and lib/sync/SETUP.md):
-///  * Android: an *Android* OAuth client (package `org.freevia.verse` + the
+///  * Android: an *Android* OAuth client (package `org.freevia.singbook` + the
 ///    SHA-1 of each signing certificate) must exist, but its id is never passed
 ///    to the app. What the app needs is the id of a *Web application* OAuth
 ///    client in the same project: `--dart-define=VERSE_GOOGLE_SERVER_CLIENT_ID`

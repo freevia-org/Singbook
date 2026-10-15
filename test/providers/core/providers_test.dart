@@ -3,13 +3,13 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:verse_mobile/domain/models.dart';
-import 'package:verse_mobile/providers/provider.dart';
-import 'package:verse_mobile/providers/core/catalogs.dart';
-import 'package:verse_mobile/providers/core/charts.dart';
-import 'package:verse_mobile/providers/core/common.dart';
-import 'package:verse_mobile/providers/core/core_providers.dart';
-import 'package:verse_mobile/providers/core/youtube_music.dart';
+import 'package:singbook/domain/models.dart';
+import 'package:singbook/providers/provider.dart';
+import 'package:singbook/providers/core/catalogs.dart';
+import 'package:singbook/providers/core/charts.dart';
+import 'package:singbook/providers/core/common.dart';
+import 'package:singbook/providers/core/core_providers.dart';
+import 'package:singbook/providers/core/youtube_music.dart';
 
 const words =
     'A paper satellite sails above the desk tonight\nOur quiet room remembers all the stories from the rain';

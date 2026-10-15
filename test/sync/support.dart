@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:verse_mobile/data/library_repository.dart';
-import 'package:verse_mobile/domain/models.dart';
-import 'package:verse_mobile/sync/google_drive_sync.dart';
+import 'package:singbook/data/library_repository.dart';
+import 'package:singbook/domain/models.dart';
+import 'package:singbook/sync/google_drive_sync.dart';
 
 class FakeAuth implements DriveAuthorization {
   bool connected = false;

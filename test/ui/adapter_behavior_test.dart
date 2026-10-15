@@ -1,11 +1,11 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:verse_mobile/application/app_controller.dart';
-import 'package:verse_mobile/data/library_repository.dart';
-import 'package:verse_mobile/domain/models.dart';
-import 'package:verse_mobile/ui/app_controller_adapter.dart';
-import 'package:verse_mobile/ui/verse_ui_state.dart';
+import 'package:singbook/application/app_controller.dart';
+import 'package:singbook/data/library_repository.dart';
+import 'package:singbook/domain/models.dart';
+import 'package:singbook/ui/app_controller_adapter.dart';
+import 'package:singbook/ui/verse_ui_state.dart';
 
 void main() {
   sqfliteFfiInit();

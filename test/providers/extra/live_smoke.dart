@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print
 // Opt-in smoke probe. Emits metadata/counts only, never song text or tokens.
-import 'package:verse_mobile/providers/extra/extra_providers.dart';
-import 'package:verse_mobile/providers/provider.dart';
+import 'package:singbook/providers/extra/extra_providers.dart';
+import 'package:singbook/providers/provider.dart';
 
 Future<void> main() async {
   final transport = ProviderTransport();

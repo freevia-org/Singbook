@@ -3,12 +3,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as paths;
 import 'package:sqflite/sqflite.dart' show getDatabasesPath;
-import 'package:verse_mobile/application/app_controller.dart';
-import 'package:verse_mobile/data/library_repository.dart';
-import 'package:verse_mobile/domain/models.dart';
-import 'package:verse_mobile/domain/timing.dart';
-import 'package:verse_mobile/providers/core/service.dart';
-import 'package:verse_mobile/ui/verse_app.dart';
+import 'package:singbook/application/app_controller.dart';
+import 'package:singbook/data/library_repository.dart';
+import 'package:singbook/domain/models.dart';
+import 'package:singbook/domain/timing.dart';
+import 'package:singbook/providers/core/service.dart';
+import 'package:singbook/ui/verse_app.dart';
 
 const _skipScreenshots = bool.fromEnvironment('SINGBOOK_SKIP_SCREENSHOTS');
 

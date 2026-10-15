@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:verse_mobile/domain/models.dart';
-import 'package:verse_mobile/domain/arrangement.dart';
-import 'package:verse_mobile/domain/chordpro.dart';
-import 'package:verse_mobile/domain/timing.dart';
-import 'package:verse_mobile/domain/combine.dart';
+import 'package:singbook/domain/models.dart';
+import 'package:singbook/domain/arrangement.dart';
+import 'package:singbook/domain/chordpro.dart';
+import 'package:singbook/domain/timing.dart';
+import 'package:singbook/domain/combine.dart';
 
 void main() {
   final codec = ChordProCodec();

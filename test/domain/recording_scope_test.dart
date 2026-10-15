@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:verse_mobile/domain/combine.dart';
-import 'package:verse_mobile/domain/models.dart';
-import 'package:verse_mobile/domain/timing.dart';
+import 'package:singbook/domain/combine.dart';
+import 'package:singbook/domain/models.dart';
+import 'package:singbook/domain/timing.dart';
 
 void main() {
   const catalogCandidate = SongCandidate(

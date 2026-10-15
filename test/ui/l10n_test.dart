@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:verse_mobile/l10n/generated/app_localizations_bg.dart';
-import 'package:verse_mobile/l10n/generated/app_localizations_en.dart';
-import 'package:verse_mobile/l10n/generated/app_localizations_uk.dart';
-import 'package:verse_mobile/ui/app_version.dart';
+import 'package:singbook/l10n/generated/app_localizations_bg.dart';
+import 'package:singbook/l10n/generated/app_localizations_en.dart';
+import 'package:singbook/l10n/generated/app_localizations_uk.dart';
+import 'package:singbook/ui/app_version.dart';
 
 Map<String, dynamic> _arb(String locale) =>
     jsonDecode(File('lib/l10n/app_$locale.arb').readAsStringSync())

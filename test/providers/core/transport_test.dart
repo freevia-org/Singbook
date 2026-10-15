@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:verse_mobile/providers/transport.dart';
+import 'package:singbook/providers/transport.dart';
 
 Matcher errorCode(String code) =>
     isA<ProviderException>().having((e) => e.code, 'code', code);

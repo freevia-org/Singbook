@@ -5,8 +5,8 @@ import 'package:archive/archive.dart';
 import 'package:flutter/painting.dart' show Rect;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:verse_mobile/application/file_actions.dart';
-import 'package:verse_mobile/domain/models.dart';
+import 'package:singbook/application/file_actions.dart';
+import 'package:singbook/domain/models.dart';
 
 Matcher formatError(String message) =>
     isA<FormatException>().having((e) => e.message, 'message', message);

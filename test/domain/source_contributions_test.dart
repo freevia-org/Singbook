@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:verse_mobile/domain/models.dart';
-import 'package:verse_mobile/domain/source_contributions.dart';
+import 'package:singbook/domain/models.dart';
+import 'package:singbook/domain/source_contributions.dart';
 
 void main() {
   SourceResult source(String provider, String id, {bool rejected = false}) =>

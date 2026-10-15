@@ -133,7 +133,7 @@ class _NativeScreenshotWatcher {
           !RegExp(
             r'mCurrentFocus=.*org\.freevia\.verse',
           ).hasMatch(window.stdout as String)) {
-        throw StateError('org.freevia.verse is not the focused window');
+        throw StateError('org.freevia.singbook is not the focused window');
       }
 
       final remotePath = '/sdcard/singbook-e2e-$name.png';

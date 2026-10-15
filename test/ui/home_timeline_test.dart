@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:verse_mobile/l10n/generated/app_localizations.dart';
-import 'package:verse_mobile/ui/home/home_screen.dart';
-import 'package:verse_mobile/ui/verse_ui_state.dart';
+import 'package:singbook/l10n/generated/app_localizations.dart';
+import 'package:singbook/ui/home/home_screen.dart';
+import 'package:singbook/ui/verse_ui_state.dart';
 
 void main() {
   testWidgets('recent timeline only overlays the list while scrolling', (

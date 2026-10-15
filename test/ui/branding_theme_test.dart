@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:verse_mobile/ui/theme/verse_theme.dart';
-import 'package:verse_mobile/ui/verse_ui_state.dart';
+import 'package:singbook/ui/theme/verse_theme.dart';
+import 'package:singbook/ui/verse_ui_state.dart';
 
 void main() {
   test('Singbook defaults to the navy palette', () {

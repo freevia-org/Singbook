@@ -1,4 +1,4 @@
-package org.freevia.verse
+package org.freevia.singbook
 
 import io.flutter.embedding.android.FlutterActivity
 

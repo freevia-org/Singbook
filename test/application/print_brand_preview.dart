@@ -2,8 +2,8 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:verse_mobile/application/file_actions.dart';
-import 'package:verse_mobile/domain/models.dart';
+import 'package:singbook/application/file_actions.dart';
+import 'package:singbook/domain/models.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

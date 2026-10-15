@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:verse_mobile/l10n/generated/app_localizations.dart';
-import 'package:verse_mobile/l10n/generated/app_localizations_bg.dart';
-import 'package:verse_mobile/l10n/generated/app_localizations_en.dart';
-import 'package:verse_mobile/l10n/generated/app_localizations_uk.dart';
-import 'package:verse_mobile/ui/localized_labels.dart';
-import 'package:verse_mobile/ui/theme/verse_theme.dart';
-import 'package:verse_mobile/ui/verse_ui_state.dart';
+import 'package:singbook/l10n/generated/app_localizations.dart';
+import 'package:singbook/l10n/generated/app_localizations_bg.dart';
+import 'package:singbook/l10n/generated/app_localizations_en.dart';
+import 'package:singbook/l10n/generated/app_localizations_uk.dart';
+import 'package:singbook/ui/localized_labels.dart';
+import 'package:singbook/ui/theme/verse_theme.dart';
+import 'package:singbook/ui/verse_ui_state.dart';
 
 import 'support/fake_controller.dart';
 import 'theme_contrast_test.dart' show contrastRatio;

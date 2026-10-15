@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:verse_mobile/ui/theme/verse_theme.dart';
+import 'package:singbook/ui/theme/verse_theme.dart';
 
 double _luminance(Color color) {
   double channel(double value) => value <= 0.03928

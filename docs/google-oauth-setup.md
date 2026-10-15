@@ -12,7 +12,7 @@ What the app needs (from `lib/sync/google_auth.dart`):
   (required by Google Sign-In on Android).
 - Dart define `VERSE_GOOGLE_IOS_CLIENT_ID`: only for an iOS build (optional;
   iOS is not validated by the Android build).
-- Android package name `org.freevia.verse`.
+- Android package name `org.freevia.singbook`.
 
 For how the sync itself works (in-place files, three-way compare, conflict
 copies) see [`lib/sync/SETUP.md`](../lib/sync/SETUP.md).
@@ -130,11 +130,11 @@ application type, fill it in and click **CREATE**.
 Create these:
 
 1. **Android, debug.** Application type: Android. Name: `Singbook Android debug`.
-   Package name: `org.freevia.verse`. SHA-1: the debug keystore SHA-1.
+   Package name: `org.freevia.singbook`. SHA-1: the debug keystore SHA-1.
 2. **Android, upload key.** Name: `Singbook Android upload`. Package name
-   `org.freevia.verse`. SHA-1 `A9:90:B6:7B:D5:ED:29:C1:CF:28:AC:8E:2C:B8:21:03:1A:53:BD:BB`.
+   `org.freevia.singbook`. SHA-1 `A9:90:B6:7B:D5:ED:29:C1:CF:28:AC:8E:2C:B8:21:03:1A:53:BD:BB`.
 3. **Android, Play app signing.** Name: `Singbook Android Play`. Package name
-   `org.freevia.verse`. SHA-1: from Play Console (section 3).
+   `org.freevia.singbook`. SHA-1: from Play Console (section 3).
 4. **Web application.** Name: `Singbook web (server client ID)`. No redirect URIs
    or JavaScript origins are needed. Copy its **Client ID**
    (`<number>-<hash>.apps.googleusercontent.com`) - this becomes
@@ -185,7 +185,7 @@ define ships with sync disabled.
 - [ ] Audience: External, status **In production** (or your accounts are listed
       as test users while developing).
 - [ ] Android clients exist for debug, upload and Play app-signing SHA-1s, all with
-      package `org.freevia.verse`.
+      package `org.freevia.singbook`.
 - [ ] The web client ID is in `config/local.defines.json` and the app was rebuilt.
 - [ ] Emulator test: use an AVD **with the Google Play system image** (not
       "Google APIs" only or AOSP), signed into a Google account in Settings.

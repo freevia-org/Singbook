@@ -5,14 +5,14 @@ import 'package:archive/archive.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:verse_mobile/application/app_controller.dart';
-import 'package:verse_mobile/application/error_reporting.dart';
-import 'package:verse_mobile/application/file_actions.dart';
-import 'package:verse_mobile/data/library_repository.dart';
-import 'package:verse_mobile/domain/models.dart';
-import 'package:verse_mobile/providers/core/service.dart';
-import 'package:verse_mobile/providers/provider.dart';
-import 'package:verse_mobile/sync/google_drive_sync.dart';
+import 'package:singbook/application/app_controller.dart';
+import 'package:singbook/application/error_reporting.dart';
+import 'package:singbook/application/file_actions.dart';
+import 'package:singbook/data/library_repository.dart';
+import 'package:singbook/domain/models.dart';
+import 'package:singbook/providers/core/service.dart';
+import 'package:singbook/providers/provider.dart';
+import 'package:singbook/sync/google_drive_sync.dart';
 import '../sync/support.dart';
 
 class QuietCatalog implements LyricsProvider {

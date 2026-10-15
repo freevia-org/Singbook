@@ -10,7 +10,7 @@ Prepared Play graphics and the suggested alt text are in
 | Field | Value |
 | --- | --- |
 | App name | Singbook |
-| Package | org.freevia.verse |
+| Package | org.freevia.singbook |
 | Default language | English (United States) `en-US`; add `bg` and `uk` translations |
 | App or game | App |
 | Category | Music & Audio |

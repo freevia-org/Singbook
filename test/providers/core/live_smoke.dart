@@ -3,8 +3,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:verse_mobile/providers/core/core_providers.dart';
-import 'package:verse_mobile/providers/provider.dart';
+import 'package:singbook/providers/core/core_providers.dart';
+import 'package:singbook/providers/provider.dart';
 
 Future<void> main(List<String> args) async {
   // Prefer the environment (or --dart-define); the token is never put on a

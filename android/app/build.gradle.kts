@@ -32,7 +32,7 @@ val releaseRequested =
     gradle.startParameter.taskNames.any { it.contains("release", ignoreCase = true) }
 
 android {
-    namespace = "org.freevia.verse"
+    namespace = "org.freevia.singbook"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -42,7 +42,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "org.freevia.verse"
+        applicationId = "org.freevia.singbook"
         minSdk = flutter.minSdkVersion
         // Play requires new apps/updates to target API 36 (Android 16) from
         // 2026-08-31. flutter.targetSdkVersion is 36 in Flutter 3.44; the

@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:verse_mobile/application/app_controller.dart';
-import 'package:verse_mobile/application/file_actions.dart';
-import 'package:verse_mobile/data/library_repository.dart';
-import 'package:verse_mobile/domain/models.dart';
-import 'package:verse_mobile/providers/provider.dart';
-import 'package:verse_mobile/providers/core/service.dart';
+import 'package:singbook/application/app_controller.dart';
+import 'package:singbook/application/file_actions.dart';
+import 'package:singbook/data/library_repository.dart';
+import 'package:singbook/domain/models.dart';
+import 'package:singbook/providers/provider.dart';
+import 'package:singbook/providers/core/service.dart';
 
 class Catalog implements LyricsProvider {
   final pending = <String, Completer<List<SongCandidate>>>{};

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:verse_mobile/sync/google_drive_sync.dart';
+import 'package:singbook/sync/google_drive_sync.dart';
 import 'support.dart';
 
 void main() {

@@ -8,7 +8,7 @@ A local-first Flutter songbook for Android and iOS. Search Genius, compare lyric
 
 ## Develop and test
 
-Use Flutter 3.44.8 / Dart 3.12, JDK 21 and Android SDK 36. The app ID is `org.freevia.verse`. Android 24+ is supported. iOS builds require macOS/Xcode; they have not been validated on this Windows workspace.
+Use Flutter 3.44.8 / Dart 3.12, JDK 21 and Android SDK 36. The app ID is `org.freevia.singbook`. Android 24+ is supported. iOS builds require macOS/Xcode; they have not been validated on this Windows workspace.
 
 Singbook uses its open-book and floating-note artwork, navy/parchment
 light theme and navy/amber dark theme. The existing application ID, local

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:verse_mobile/application/file_actions.dart';
-import 'package:verse_mobile/l10n/generated/app_localizations.dart';
-import 'package:verse_mobile/ui/theme/verse_theme.dart';
-import 'package:verse_mobile/ui/verse_app.dart';
-import 'package:verse_mobile/ui/verse_ui_state.dart';
+import 'package:singbook/application/file_actions.dart';
+import 'package:singbook/l10n/generated/app_localizations.dart';
+import 'package:singbook/ui/theme/verse_theme.dart';
+import 'package:singbook/ui/verse_app.dart';
+import 'package:singbook/ui/verse_ui_state.dart';
 
 import 'support/fake_controller.dart';
 

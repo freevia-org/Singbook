@@ -6,16 +6,16 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:verse_mobile/application/app_controller.dart';
-import 'package:verse_mobile/application/file_actions.dart';
-import 'package:verse_mobile/data/library_repository.dart';
-import 'package:verse_mobile/domain/models.dart';
-import 'package:verse_mobile/l10n/generated/app_localizations.dart';
-import 'package:verse_mobile/providers/core/service.dart';
-import 'package:verse_mobile/ui/app_controller_adapter.dart';
-import 'package:verse_mobile/ui/theme/verse_theme.dart';
-import 'package:verse_mobile/ui/verse_app.dart';
-import 'package:verse_mobile/ui/verse_ui_state.dart';
+import 'package:singbook/application/app_controller.dart';
+import 'package:singbook/application/file_actions.dart';
+import 'package:singbook/data/library_repository.dart';
+import 'package:singbook/domain/models.dart';
+import 'package:singbook/l10n/generated/app_localizations.dart';
+import 'package:singbook/providers/core/service.dart';
+import 'package:singbook/ui/app_controller_adapter.dart';
+import 'package:singbook/ui/theme/verse_theme.dart';
+import 'package:singbook/ui/verse_app.dart';
+import 'package:singbook/ui/verse_ui_state.dart';
 
 const _screens = [
   'library',

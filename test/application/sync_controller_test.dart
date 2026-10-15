@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:verse_mobile/application/app_controller.dart';
-import 'package:verse_mobile/providers/core/service.dart';
-import 'package:verse_mobile/providers/provider.dart';
-import 'package:verse_mobile/domain/models.dart';
-import 'package:verse_mobile/sync/google_drive_sync.dart';
+import 'package:singbook/application/app_controller.dart';
+import 'package:singbook/providers/core/service.dart';
+import 'package:singbook/providers/provider.dart';
+import 'package:singbook/domain/models.dart';
+import 'package:singbook/sync/google_drive_sync.dart';
 import '../sync/support.dart';
 
 class _QuietCatalog implements LyricsProvider {

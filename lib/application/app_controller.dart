@@ -1155,7 +1155,7 @@ class AppController extends ChangeNotifier {
               FlutterErrorDetails(
                 exception: error,
                 stack: stack,
-                library: 'verse_mobile',
+                library: 'singbook',
                 context: ErrorDescription(
                   'while closing the app controller provider transport',
                 ),

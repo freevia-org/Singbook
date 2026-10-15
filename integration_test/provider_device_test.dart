@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:verse_mobile/providers/provider.dart';
-import 'package:verse_mobile/providers/core/core_providers.dart';
-import 'package:verse_mobile/providers/extra/extra_providers.dart';
-import 'package:verse_mobile/domain/combine.dart';
-import 'package:verse_mobile/domain/chordpro.dart';
-import 'package:verse_mobile/domain/arrangement.dart';
+import 'package:singbook/providers/provider.dart';
+import 'package:singbook/providers/core/core_providers.dart';
+import 'package:singbook/providers/extra/extra_providers.dart';
+import 'package:singbook/domain/combine.dart';
+import 'package:singbook/domain/chordpro.dart';
+import 'package:singbook/domain/arrangement.dart';
 
 String _normCanaryIdentity(String value) => value
     .toLowerCase()

@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:archive/archive.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:verse_mobile/application/file_actions.dart';
-import 'package:verse_mobile/domain/chordpro.dart';
-import 'package:verse_mobile/domain/models.dart';
+import 'package:singbook/application/file_actions.dart';
+import 'package:singbook/domain/chordpro.dart';
+import 'package:singbook/domain/models.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

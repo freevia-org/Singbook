@@ -19,7 +19,7 @@ needs, precisely (`google_sign_in` 7.x, Credential Manager on Android):
 
 | Platform | Client you must create | What the app is given |
 |---|---|---|
-| Android | An **Android** OAuth client: package `org.freevia.verse` + the SHA-1 of every signing certificate (debug, upload, and the Play App Signing certificate). | Nothing: Google matches package + SHA-1 itself. It must exist in the same project or sign-in is cancelled without explanation. |
+| Android | An **Android** OAuth client: package `org.freevia.singbook` + the SHA-1 of every signing certificate (debug, upload, and the Play App Signing certificate). | Nothing: Google matches package + SHA-1 itself. It must exist in the same project or sign-in is cancelled without explanation. |
 | Android | A **Web application** OAuth client in the same project. | Its id as `--dart-define=VERSE_GOOGLE_SERVER_CLIENT_ID=<id>.apps.googleusercontent.com` (becomes `serverClientId`). Required: the plugin throws without it. No backend uses it. |
 | iOS | An **iOS** OAuth client for the bundle id. | `--dart-define=VERSE_GOOGLE_IOS_CLIENT_ID=<id>.apps.googleusercontent.com` (`clientId`) plus the reversed client id as URL scheme in `ios/Runner/Info.plist`. Not validated on this Windows workspace. |
 

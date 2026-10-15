@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:verse_mobile/ui/library/songs_screen.dart';
-import 'package:verse_mobile/ui/verse_ui_state.dart';
+import 'package:singbook/ui/library/songs_screen.dart';
+import 'package:singbook/ui/verse_ui_state.dart';
 
 import 'support/fake_controller.dart';
 

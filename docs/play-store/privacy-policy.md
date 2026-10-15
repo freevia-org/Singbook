@@ -1,7 +1,7 @@
 # Singbook Privacy Policy
 
 **Effective date:** 15 October 2026
-**App:** Singbook (Android package `org.freevia.verse`), version 0.2.0
+**App:** Singbook (Android package `org.freevia.singbook`), version 0.2.0
 **Publisher:** Freevia EOOD, contact privacy@freevia.org
 **Policy URL:** https://freevia.org/singbook/privacy/
 

@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:verse_mobile/domain/arrangement.dart';
-import 'package:verse_mobile/domain/chordpro.dart';
-import 'package:verse_mobile/domain/models.dart';
+import 'package:singbook/domain/arrangement.dart';
+import 'package:singbook/domain/chordpro.dart';
+import 'package:singbook/domain/models.dart';
 
 void main() {
   final codec = ChordProCodec();

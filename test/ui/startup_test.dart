@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:verse_mobile/application/app_controller.dart';
-import 'package:verse_mobile/data/library_repository.dart';
-import 'package:verse_mobile/providers/core/service.dart';
-import 'package:verse_mobile/ui/verse_app.dart';
+import 'package:singbook/application/app_controller.dart';
+import 'package:singbook/data/library_repository.dart';
+import 'package:singbook/providers/core/service.dart';
+import 'package:singbook/ui/verse_app.dart';
 
 void main() {
   testWidgets('a library that cannot be opened shows a localized message', (

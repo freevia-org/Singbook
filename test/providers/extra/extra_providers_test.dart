@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:verse_mobile/domain/models.dart';
-import 'package:verse_mobile/providers/extra/extra_providers.dart';
-import 'package:verse_mobile/providers/transport.dart';
+import 'package:singbook/domain/models.dart';
+import 'package:singbook/providers/extra/extra_providers.dart';
+import 'package:singbook/providers/transport.dart';
 
 ProviderTransport mockTransport(
   Future<http.Response> Function(http.Request) handle,
