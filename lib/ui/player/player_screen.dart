@@ -593,9 +593,13 @@ class _PlayerScreenState extends State<PlayerScreen> {
         IconButton(
           tooltip: state.activeSetlist == null
               ? l10n.playerPreviousSection
+              : state.playerSections.isEmpty
+              ? l10n.playerPreviousSong
               : l10n.playerPreviousSectionSong,
           onPressed: state.playerSections.isEmpty
-              ? null
+              ? state.activeSetlist == null
+                    ? null
+                    : controller.previousSong
               : () => _skipSection(-1),
           onLongPress: state.activeSetlist == null
               ? null
@@ -613,8 +617,14 @@ class _PlayerScreenState extends State<PlayerScreen> {
         IconButton(
           tooltip: state.activeSetlist == null
               ? l10n.playerNextSection
+              : state.playerSections.isEmpty
+              ? l10n.playerNextSong
               : l10n.playerNextSectionSong,
-          onPressed: state.playerSections.isEmpty ? null : () => _skipSection(1),
+          onPressed: state.playerSections.isEmpty
+              ? state.activeSetlist == null
+                    ? null
+                    : controller.nextSong
+              : () => _skipSection(1),
           onLongPress: state.activeSetlist == null ? null : controller.nextSong,
           icon: const Icon(Icons.skip_next_rounded),
         ),

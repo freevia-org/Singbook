@@ -73,6 +73,48 @@ class ArrangementLine {
   const ArrangementLine(this.text, this.chords, {this.directive = false});
 }
 
+final _sectionNamePattern = RegExp(
+  r'^\s*((?:pre[- ]?chorus|post[- ]?chorus|verse|chorus|bridge|intro|outro|instrumental|interlude|solo|refrain|hook|breakdown|coda|tag|ending)(?:\s+(?:\d+|[A-D]))?(?:\s+\([^\r\n]*\))?)\s*$',
+  caseSensitive: false,
+);
+final _commentDirectivePattern = RegExp(
+  r'^\s*\{comment\s*:\s*(.*?)\}\s*$',
+  caseSensitive: false,
+);
+final _sectionDirectivePattern = RegExp(
+  r'^\s*\{start_of_(pre_chorus|post_chorus|verse|chorus|bridge|intro|outro|instrumental|interlude|solo|refrain|hook|breakdown|coda|tag|ending)(?:\s*:\s*(\d+))?\}\s*$',
+  caseSensitive: false,
+);
+
+String? _sectionName(String value) =>
+    _sectionNamePattern.firstMatch(value)?.group(1)?.trim();
+
+/// Returns a human-readable label for recognized section lines.
+///
+/// ChordPro comments that are not section headings remain directives but do
+/// not become section labels in the reader or player.
+String? sectionLabelForLine(ArrangementLine line) {
+  if (line.directive) {
+    final comment = _commentDirectivePattern.firstMatch(line.text);
+    if (comment != null) return _sectionName(comment.group(1)!);
+
+    final section = _sectionDirectivePattern.firstMatch(line.text);
+    if (section == null) return null;
+    final kind = section
+        .group(1)!
+        .split('_')
+        .map((part) {
+          return '${part[0].toUpperCase()}${part.substring(1)}';
+        })
+        .join('-');
+    final suffix = section.group(2);
+    return suffix == null ? kind : '$kind $suffix';
+  }
+
+  final bracketed = RegExp(r'^\s*\[([^\]]+)\]\s*$').firstMatch(line.text);
+  return bracketed == null ? null : _sectionName(bracketed.group(1)!);
+}
+
 List<ArrangementLine> parseArrangement(String body) =>
     body.split('\n').map((line) {
       if (line.trimLeft().startsWith('{')) {

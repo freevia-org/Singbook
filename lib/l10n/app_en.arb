@@ -188,7 +188,7 @@
   "playerTimingStatusManual": "Scroll the lyrics yourself.",
   "playerTimingStatusUnavailable": "Timed scrolling is unavailable for this song.",
   "playerDurationUnknown": "Add a song duration to use estimated scrolling.",
-  "playerProgressLabel": "Song progress", "playerCurrentSection": "Current section", "playerPreviousSection": "Previous section", "playerNextSection": "Next section", "playerPreviousSectionSong": "Previous section · hold for previous setlist song", "playerNextSectionSong": "Next section · hold for next setlist song",
+  "playerProgressLabel": "Song progress", "playerCurrentSection": "Current section", "playerPreviousSection": "Previous section", "playerNextSection": "Next section", "playerPreviousSectionSong": "Previous section · hold for previous setlist song", "playerNextSectionSong": "Next section · hold for next setlist song", "playerPreviousSong": "Previous song", "playerNextSong": "Next song",
   "editorTitle": "Edit song",
   "editorTitleField": "Song title",
   "editorArtistField": "Artist",

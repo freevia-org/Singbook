@@ -234,6 +234,7 @@ class _SongPickerSheetState extends State<_SongPickerSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final mediaQuery = MediaQuery.of(context);
     final needle = _query.text.trim().toLowerCase();
     final songs = widget.songs
         .where(
@@ -242,85 +243,98 @@ class _SongPickerSheetState extends State<_SongPickerSheet> {
               .contains(needle),
         )
         .toList();
-    final height = MediaQuery.sizeOf(context).height * .9;
-    return SafeArea(
-      child: SizedBox(
-        height: height,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
-              child: Row(
-                children: [
-                  IconButton(
-                    tooltip: l10n.navClose,
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close_rounded),
-                  ),
-                  Expanded(
-                    child: Text(
-                      widget.title,
-                      style: Theme.of(context).textTheme.titleLarge,
+    final availableHeight =
+        (mediaQuery.size.height - mediaQuery.viewInsets.bottom).clamp(
+          0.0,
+          mediaQuery.size.height,
+        );
+    final height = availableHeight * .9;
+    return AnimatedPadding(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeOut,
+      padding: EdgeInsets.only(bottom: mediaQuery.viewInsets.bottom),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: height,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+                child: Row(
+                  children: [
+                    IconButton(
+                      tooltip: l10n.navClose,
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close_rounded),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-              child: TextField(
-                controller: _query,
-                autofocus: true,
-                decoration: InputDecoration(
-                  hintText: l10n.searchHint,
-                  prefixIcon: const Icon(Icons.search_rounded),
-                  border: const OutlineInputBorder(),
-                ),
-                onChanged: (_) => setState(() {}),
-              ),
-            ),
-            Expanded(
-              child: songs.isEmpty
-                  ? Center(child: Text(l10n.songsEmptySearch))
-                  : ListView.builder(
-                      itemCount: songs.length,
-                      itemBuilder: (context, index) {
-                        final song = songs[index];
-                        return CheckboxListTile(
-                          value: _selected.contains(song.id),
-                          title: Text(song.title),
-                          subtitle: song.artist.isEmpty
-                              ? null
-                              : Text(song.artist),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          onChanged: (checked) => setState(() {
-                            if (checked == true) {
-                              _selected.add(song.id);
-                            } else {
-                              _selected.remove(song.id);
-                            }
-                          }),
-                        );
-                      },
+                    Expanded(
+                      child: Text(
+                        widget.title,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
                     ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: SizedBox(
-                width: double.infinity,
-                child: FilledButton.icon(
-                  onPressed: _selected.isEmpty
-                      ? null
-                      : () => Navigator.pop(
-                          context,
-                          _selected.toList(growable: false),
-                        ),
-                  icon: const Icon(Icons.add_rounded),
-                  label: Text('${l10n.setlistAddSongs} (${_selected.length})'),
+                  ],
                 ),
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+                child: TextField(
+                  controller: _query,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: l10n.searchHint,
+                    prefixIcon: const Icon(Icons.search_rounded),
+                    border: const OutlineInputBorder(),
+                  ),
+                  onChanged: (_) => setState(() {}),
+                ),
+              ),
+              Expanded(
+                child: songs.isEmpty
+                    ? Center(child: Text(l10n.songsEmptySearch))
+                    : ListView.builder(
+                        itemCount: songs.length,
+                        itemBuilder: (context, index) {
+                          final song = songs[index];
+                          return CheckboxListTile(
+                            value: _selected.contains(song.id),
+                            title: Text(song.title),
+                            subtitle: song.artist.isEmpty
+                                ? null
+                                : Text(song.artist),
+                            controlAffinity: ListTileControlAffinity.leading,
+                            onChanged: (checked) => setState(() {
+                              if (checked == true) {
+                                _selected.add(song.id);
+                              } else {
+                                _selected.remove(song.id);
+                              }
+                            }),
+                          );
+                        },
+                      ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    onPressed: _selected.isEmpty
+                        ? null
+                        : () => Navigator.pop(
+                            context,
+                            _selected.toList(growable: false),
+                          ),
+                    icon: const Icon(Icons.add_rounded),
+                    label: Text(
+                      '${l10n.setlistAddSongs} (${_selected.length})',
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

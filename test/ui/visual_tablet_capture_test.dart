@@ -208,7 +208,14 @@ void main() {
           );
 
           await tester.pump();
-          await tester.pump(const Duration(milliseconds: 250));
+          // Theme interpolation can finish before the descendant buttons'
+          // own foreground animations. Wait for both before capturing glyphs.
+          // Fields are focused below, after this bounded settle completes.
+          await tester.pumpAndSettle(
+            const Duration(milliseconds: 100),
+            EnginePhase.sendSemanticsUpdate,
+            const Duration(seconds: 3),
+          );
           expect(
             Theme.of(boundaryKey.currentContext!).brightness,
             themeBrightness,

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ import 'package:verse_mobile/ui/verse_app.dart';
 import 'package:verse_mobile/ui/home/home_screen.dart';
 
 const _catalogId = 'journey_catalog';
+const _skipScreenshots = bool.fromEnvironment('SINGBOOK_SKIP_SCREENSHOTS');
 const _chordSourceId = 'journey_chords';
 const _lyricSourceId = 'journey_lyrics';
 const _timingOnlySourceId = 'journey_timing_only';
@@ -28,6 +30,7 @@ const _body =
     '[C]Lanterns guard the quiet road\n[G]We carry sparks into the dawn';
 const _plainBody =
     'Lanterns guard the quiet road\nWe carry sparks into the dawn';
+const _savedLine = 'The paper moon remembers every song';
 
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -57,7 +60,7 @@ void main() {
       expect(find.text('0 items shown'), findsOneWidget);
       expect(find.text('Recent songs'), findsNothing);
       await _capture(binding, '00_home_recent_empty');
-      await tester.tap(find.text('Online'));
+      await tester.tap(_homeMode('online'));
       await tester.pumpAndSettle();
       expect(find.text('Enter a song or artist to search.'), findsOneWidget);
       expect(find.text('No results'), findsNothing);
@@ -165,12 +168,20 @@ void main() {
       );
       await tester.pump();
       _expectVisibleQuery(tester, 'cancel this query');
-      await tester.pump(const Duration(milliseconds: 400));
+      for (
+        var attempt = 0;
+        attempt < 50 && !fixture.cancelSearchStarted.isCompleted;
+        attempt++
+      ) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      expect(fixture.cancelSearchStarted.isCompleted, isTrue);
       expect(find.text('Searching songs…'), findsOneWidget);
       await tester.tap(find.byTooltip('Clear search text'));
       await tester.pumpAndSettle();
       expect(find.text('Enter a song or artist to search.'), findsOneWidget);
-      await tester.pump(const Duration(milliseconds: 650));
+      fixture.cancelSearchRelease.complete();
+      await tester.pump(const Duration(milliseconds: 200));
       await tester.pumpAndSettle();
       expect(find.text('Enter a song or artist to search.'), findsOneWidget);
       expect(find.text('No results'), findsNothing);
@@ -298,22 +309,29 @@ void main() {
       );
       expect(find.byTooltip('Transpose by 1 semitone'), findsOneWidget);
       await _capture(binding, '18_reader_chords');
-      await tester.tap(find.byTooltip('Transpose by 1 semitone'));
+      await _waitForSnackBarToDismiss(tester);
+      await tester.tap(_iconButtonWithTooltip('Transpose by 1 semitone'));
       await tester.pumpAndSettle();
       expect(find.textContaining('Key: C#'), findsOneWidget);
-      await tester.tap(find.byTooltip('Hide chords'));
+      expect(find.text('C#'), findsOneWidget);
+      expect(find.text('G#'), findsOneWidget);
+      await tester.tap(_iconButtonWithTooltip('Hide chords'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byTooltip('Show chords'));
+      expect(find.text('C#'), findsNothing);
+      expect(find.text('G#'), findsNothing);
+      await tester.tap(_iconButtonWithTooltip('Show chords'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byTooltip('Play lyric scrolling'));
+      expect(find.text('C#'), findsOneWidget);
+      expect(find.text('G#'), findsOneWidget);
+      await tester.tap(_iconButtonWithTooltip('Play lyric scrolling'));
       await tester.pump();
       expect(find.byTooltip('Pause lyric scrolling'), findsOneWidget);
-      await tester.tap(find.byTooltip('Pause lyric scrolling'));
+      await tester.tap(_iconButtonWithTooltip('Pause lyric scrolling'));
       await tester.pump();
       await tester.drag(find.byType(Slider), const Offset(75, 0));
       await tester.pumpAndSettle();
       expect(tester.widget<Slider>(find.byType(Slider)).value, greaterThan(0));
-      await tester.tap(find.byTooltip('Edit'));
+      await tester.tap(_iconButtonWithTooltip('Edit'));
       await tester.pumpAndSettle();
       final editorBody = find.byType(TextField).last;
       await tester.tap(editorBody);
@@ -321,44 +339,75 @@ void main() {
       await _capture(binding, '19_editor_keyboard');
       await tester.enterText(
         editorBody,
-        '[C]Lanterns light the winding road\n[G]We carry sparks into the dawn',
+        '[C]Lanterns light the winding road\n[G]We carry sparks into the dawn\n$_savedLine',
       );
-      await tester.tap(find.byTooltip('Save'));
+      await tester.tap(_iconButtonWithTooltip('Save'));
       await tester.pumpAndSettle();
       expect(
         app.songs.single.body,
         contains('Lanterns light the winding road'),
       );
+      expect(app.songs.single.body, contains(_savedLine));
       expect(
         find.textContaining(RegExp(r'Lanterns\s+light the winding road')),
         findsOneWidget,
       );
-      await tester.tap(find.byTooltip('Edit'));
+      expect(find.textContaining(_savedLine), findsOneWidget);
+      await tester.tap(_iconButtonWithTooltip('Edit'));
       await tester.pumpAndSettle();
       await tester.enterText(
         find.byType(TextField).last,
         '[C]This change is cancelled',
       );
-      await tester.tap(find.byTooltip('Back'));
+      await tester.tap(_iconButtonWithTooltip('Back'));
+      await tester.pumpAndSettle();
+      expect(find.text('Discard changes?'), findsOneWidget);
+      await tester.tap(find.text('Keep editing'));
+      await tester.pumpAndSettle();
+      expect(find.text('Discard changes?'), findsNothing);
+      expect(
+        tester.widget<TextField>(find.byType(TextField).last).controller!.text,
+        '[C]This change is cancelled',
+      );
+      await tester.tap(_iconButtonWithTooltip('Back'));
+      await tester.pumpAndSettle();
+      expect(find.text('Discard changes?'), findsOneWidget);
+      await tester.tap(find.text('Discard'));
       await tester.pumpAndSettle();
       expect(
         app.songs.single.body,
         contains('Lanterns light the winding road'),
       );
+      expect(app.songs.single.body, contains(_savedLine));
       expect(
         find.textContaining(RegExp(r'Lanterns\s+light the winding road')),
         findsOneWidget,
       );
       expect(find.text('This change is cancelled'), findsNothing);
-      await tester.tap(find.byTooltip('Add to favorites'));
+      await tester.tap(_iconButtonWithTooltip('Back'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Songs'));
+      await tester.pumpAndSettle();
+      expect(app.songs, hasLength(1));
+      await tester.tap(_iconButtonWithTooltip('Add song'));
+      await tester.pumpAndSettle();
+      expect(find.byType(TextField), findsWidgets);
+      await tester.tap(_iconButtonWithTooltip('Back'));
+      await tester.pumpAndSettle();
+      expect(find.text('Discard changes?'), findsNothing);
+      expect(app.songs, hasLength(1));
+      await tester.tap(find.text(_title).first);
+      await tester.pumpAndSettle();
+      expect(find.textContaining(_savedLine), findsOneWidget);
+      await tester.tap(_iconButtonWithTooltip('Add to favorites'));
       await tester.pumpAndSettle();
 
-      // Return to populated Home, then create and populate a setlist.
-      await tester.tap(find.byTooltip('Back'));
+      // Return to the library after opening its reader, then check Home.
+      await tester.tap(_iconButtonWithTooltip('Back'));
       await tester.pumpAndSettle();
       expect(find.text(_title), findsWidgets);
       expect(app.recent, isNotEmpty);
-      expect(find.text('1 item shown'), findsOneWidget);
+      expect(find.byTooltip('Add song'), findsOneWidget);
       expect(find.text('Recent songs'), findsNothing);
       await tester.tap(find.text('Songs'));
       await tester.pumpAndSettle();
@@ -366,37 +415,75 @@ void main() {
       await _capture(binding, '20_library_populated');
       await tester.tap(find.text('Home'));
       await tester.pumpAndSettle();
-      expect(app.recent, isNotEmpty);
-      expect(find.text('1 item shown'), findsOneWidget);
-      await _capture(binding, '21_home_recent_populated');
-      await tester.tap(find.text('Favorites'));
+      await tester.tap(_homeMode('recent'));
       await tester.pumpAndSettle();
+      if (find.byTooltip('Clear search text').evaluate().isNotEmpty) {
+        await tester.tap(_iconButtonWithTooltip('Clear search text'));
+        await tester.pumpAndSettle();
+      }
+      // The import and the later library open each record a visit.
+      expect(app.recent, hasLength(2));
+      expect(find.text('2 items shown'), findsOneWidget);
+      await _capture(binding, '21_home_recent_populated');
+      await tester.tap(_homeMode('favorites'));
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<VerseHomeScreen>(find.byType(VerseHomeScreen))
+            .state
+            .homeListMode
+            .name,
+        'favorites',
+      );
       expect(find.text(_title), findsWidgets);
       expect(find.text('1 item shown'), findsOneWidget);
-      // The bottom navigation label remains visible; the count replaces the
-      // redundant section heading in the content area.
-      expect(find.text('Favorites'), findsOneWidget);
+      // Mode keys remain stable if the UI adds counts to tab labels.
+      expect(_homeMode('favorites'), findsOneWidget);
       await _capture(binding, '22_home_favorites_populated');
       await tester.tap(find.text('Setlists'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byTooltip('New setlist'));
+      await tester.tap(_iconButtonWithTooltip('New setlist'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byTooltip('Edit'));
+      await tester.tap(_iconButtonWithTooltip('Edit'));
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField).first, 'Dawn Set');
-      await tester.tap(find.byTooltip('Save'));
+      await tester.tap(_iconButtonWithTooltip('Save'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Add songs'));
       await tester.pumpAndSettle();
       await tester.tap(find.text(_title).last);
       await tester.pumpAndSettle();
+      final addSelectedSongs = find.ancestor(
+        of: find.text('Add songs (1)'),
+        matching: find.byWidgetPredicate((widget) => widget is FilledButton),
+      );
+      expect(addSelectedSongs, findsOneWidget);
+      expect(
+        tester.getRect(addSelectedSongs).bottom,
+        lessThanOrEqualTo(
+          (tester.view.physicalSize.height - tester.view.viewInsets.bottom) /
+              tester.view.devicePixelRatio,
+        ),
+        reason: 'The picker confirmation must stay above the Android keyboard.',
+      );
+      await _capture(binding, '22a_setlist_song_picker_keyboard');
+      await tester.tap(addSelectedSongs);
+      await tester.pumpAndSettle();
+      expect(app.setlists.single.entries, hasLength(1));
       await tester.tap(find.text('Add songs'));
       await tester.pumpAndSettle();
       await tester.tap(find.text(_title).last);
+      await tester.pumpAndSettle();
+      await tester.tap(addSelectedSongs);
       await tester.pumpAndSettle();
       expect(find.text(_title), findsNWidgets(2));
       expect(app.setlists.single.entries, hasLength(2));
-      await tester.tap(find.byType(PopupMenuButton<String>).first);
+      final firstEntryMenu = find.descendant(
+        of: find.byKey(ValueKey(app.setlists.single.entries.first.id)),
+        matching: find.byType(PopupMenuButton<String>),
+      );
+      expect(firstEntryMenu, findsOneWidget);
+      await tester.tap(firstEntryMenu);
       await tester.pumpAndSettle();
       await tester.tap(find.text('Song-specific key and capo'));
       await tester.pumpAndSettle();
@@ -408,13 +495,13 @@ void main() {
       await tester.tap(find.text(_title).first);
       await tester.pumpAndSettle();
       expect(find.textContaining('Key: D'), findsOneWidget);
-      await tester.tap(find.byTooltip('Next'));
+      await tester.tap(_iconButtonWithTooltip('Next song'));
       await tester.pumpAndSettle();
       expect(find.textContaining('Key: C'), findsOneWidget);
-      await tester.tap(find.byTooltip('Previous'));
+      await tester.longPress(_iconButtonWithTooltip('Previous song'));
       await tester.pumpAndSettle();
       expect(find.textContaining('Key: D'), findsOneWidget);
-      await tester.tap(find.byTooltip('Back'));
+      await tester.tap(_iconButtonWithTooltip('Back'));
       await tester.pumpAndSettle();
       final overrideEntryId = app.setlists.single.entries.first.id;
       final regularEntryId = app.setlists.single.entries.last.id;
@@ -461,9 +548,49 @@ void main() {
       expect(app.setlists.single.entries.last.id, overrideEntryId);
       expect(app.setlists.single.entries.last.overrides['key'], 'D');
 
-      // Theme changes are visible and survive app persistence in the same DB.
-      await tester.tap(find.byTooltip('Back'));
+      // Exercise the setlist delete confirmation through the card menu. A
+      // duplicate gives us a disposable target while preserving the setlist
+      // whose order and overrides are verified after remount below.
+      await tester.tap(_iconButtonWithTooltip('Back'));
       await tester.pumpAndSettle();
+      await tester.tap(find.byType(PopupMenuButton<String>).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Duplicate'));
+      await tester.pumpAndSettle();
+      expect(app.setlists, hasLength(2));
+      final originalSetlistId = app.setlists
+          .singleWhere((setlist) => setlist.name == 'Dawn Set')
+          .id;
+      final disposableSetlist = app.setlists.singleWhere(
+        (setlist) => setlist.id != originalSetlistId,
+      );
+      final disposableMenu = _popupMenuWithTooltip(
+        'Actions for ${disposableSetlist.name}',
+      );
+      await tester.tap(disposableMenu);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Delete').last);
+      await tester.pumpAndSettle();
+      expect(find.text('Delete setlist?'), findsOneWidget);
+      await _capture(binding, '23b_setlist_delete_confirmation');
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+      expect(app.setlists, hasLength(2));
+      expect(
+        app.setlists.any((setlist) => setlist.id == disposableSetlist.id),
+        isTrue,
+      );
+      await tester.tap(disposableMenu);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Delete').last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Delete').last);
+      await tester.pumpAndSettle();
+      expect(app.setlists, hasLength(1));
+      expect(app.setlists.single.id, originalSetlistId);
+      await _capture(binding, '23c_setlist_delete_confirmed');
+
+      // Theme changes are visible and survive app persistence in the same DB.
       await tester.tap(find.text('Settings'));
       await tester.pumpAndSettle();
       await _capture(binding, '24_settings_light');
@@ -502,6 +629,7 @@ void main() {
         restored.songs.single.body,
         contains('Lanterns light the winding road'),
       );
+      expect(restored.songs.single.body, contains(_savedLine));
       expect(restored.songs.single.favorite, isTrue);
       expect(restored.setlists.single.entries, hasLength(2));
       expect(restored.setlists.single.entries.last.overrides['key'], 'D');
@@ -550,10 +678,30 @@ Future<void> _capture(
   IntegrationTestWidgetsFlutterBinding binding,
   String name,
 ) async {
+  if (_skipScreenshots) return;
   debugPrint('SINGBOOK_E2E_CAPTURE:$name');
   // The host driver watches logcat for this marker to capture the full device
   // frame (including Android status and navigation bars) before the next tap.
   await Future<void>.delayed(const Duration(seconds: 2));
+}
+
+Finder _iconButtonWithTooltip(String tooltip) => find.byWidgetPredicate(
+  (widget) => widget is IconButton && widget.tooltip == tooltip,
+  description: 'IconButton with tooltip "$tooltip"',
+);
+
+Finder _homeMode(String mode) => find.byKey(ValueKey('home-mode-$mode'));
+
+Finder _popupMenuWithTooltip(String tooltip) => find.byWidgetPredicate(
+  (widget) => widget is PopupMenuButton<String> && widget.tooltip == tooltip,
+  description: 'PopupMenuButton with tooltip "$tooltip"',
+);
+
+Future<void> _waitForSnackBarToDismiss(WidgetTester tester) async {
+  if (find.byType(SnackBar).evaluate().isEmpty) return;
+  await tester.pump(const Duration(seconds: 5));
+  await tester.pumpAndSettle();
+  expect(find.byType(SnackBar), findsNothing);
 }
 
 Future<void> _awaitDiscovery(
@@ -794,6 +942,8 @@ Future<Map<String, Object>> runSingbookFixturePreflight() async {
 const _failedSourceId = 'journey_failed';
 
 class _JourneyFixture {
+  final cancelSearchStarted = Completer<void>();
+  final cancelSearchRelease = Completer<void>();
   final Map<String, int> quietHarborAttempts = {};
 
   bool returnLyricsFor(String providerId, String candidateId) {
@@ -843,7 +993,8 @@ class _JourneyCatalog implements LyricsProvider {
   }) async {
     final normalized = query.toLowerCase().trim();
     if (normalized == 'cancel this query') {
-      await Future<void>.delayed(const Duration(milliseconds: 650));
+      fixture.cancelSearchStarted.complete();
+      await fixture.cancelSearchRelease.future;
       cancel?.throwIfCancelled();
       return [candidate];
     }

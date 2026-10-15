@@ -629,6 +629,12 @@ class AppLocalizationsUk extends AppLocalizations {
       'Наступний розділ · утримуйте для наступної пісні сетлисту';
 
   @override
+  String get playerPreviousSong => 'Попередня пісня';
+
+  @override
+  String get playerNextSong => 'Наступна пісня';
+
+  @override
   String get editorTitle => 'Редагувати пісню';
 
   @override
