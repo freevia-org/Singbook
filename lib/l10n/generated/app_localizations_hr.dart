@@ -1496,7 +1496,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Izbriši i zamijeni';
 
   @override
-  String get accountSuspiciousTitle => 'Nedostaju stavke na Google disku';
+  String get accountSuspiciousTitle => 'Nedostaju stavke na Google Driveu';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1504,9 +1504,11 @@ class AppLocalizationsHr extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count stavki koje je ovaj uređaj ranije sinkronizirao nedostaje na Google disku.',
+          '$count stavki koje je ovaj uređaj ranije sinkronizirao nedostaje na Google Driveu.',
+      few:
+          '$count stavke koje je ovaj uređaj ranije sinkronizirao nedostaju na Google Driveu.',
       one:
-          '$count stavka koju je ovaj uređaj ranije sinkronizirao nedostaje na Google disku.',
+          '$count stavka koju je ovaj uređaj ranije sinkronizirao nedostaje na Google Driveu.',
     );
     return '$_temp0 To se može dogoditi ako su podaci aplikacije izbrisani u Googleovim postavkama. Još ništa nije izbrisano.';
   }
@@ -1523,6 +1525,7 @@ class AppLocalizationsHr extends AppLocalizations {
       count,
       locale: localeName,
       other: 'Izbrisati $count stavki s ovog uređaja?',
+      few: 'Izbrisati $count stavke s ovog uređaja?',
       one: 'Izbrisati $count stavku s ovog uređaja?',
     );
     return '$_temp0';
@@ -1537,7 +1540,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get syncErrorRemoteListingSuspicious =>
-      'Nedostaju stavke na Google disku.';
+      'Nedostaju stavke na Google Driveu.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
@@ -1545,7 +1548,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get syncErrorRemoteChanged =>
-      'Google disk promijenio se tijekom sinkronizacije.';
+      'Google Drive promijenio se tijekom sinkronizacije.';
 
   @override
   String get syncErrorRemoteChangedHint =>
@@ -1593,7 +1596,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get settingsTimingTooLarge =>
-      'Podaci o vremenu preveliki su (više od 3 MB).';
+      'Podaci za vremensko usklađivanje preveliki su (više od 3 MB).';
 
   @override
   String get settingsImportDuplicateSongId =>

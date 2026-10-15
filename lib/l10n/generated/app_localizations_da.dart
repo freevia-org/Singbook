@@ -1514,7 +1514,7 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'Disse sange og sætlister slettes permanent fra denne enhed. Det kan ikke fortrydes.';
+      'Disse sange og sanglister slettes permanent fra denne enhed. Det kan ikke fortrydes.';
 
   @override
   String get accountSuspiciousDeleteConfirmAction => 'Slet fra denne enhed';
@@ -1541,7 +1541,7 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'En sang eller sætliste kunne ikke læses. Importér eller genskab den, og synkroniser derefter igen.';
+      'En sang eller sangliste kunne ikke læses. Importér eller genskab den, og synkroniser derefter igen.';
 
   @override
   String get syncErrorNoAccountChange => 'Der er ingen kontoændring at løse.';
@@ -1583,7 +1583,7 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get setlistSaveConflict =>
-      'Sætlisten blev ændret et andet sted. Dine ændringer blev gemt som en separat kopi.';
+      'Sanglisten blev ændret et andet sted. Dine ændringer blev gemt som en separat kopi.';
 
   @override
   String get sectionVerse => 'Vers';

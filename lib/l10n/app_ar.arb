@@ -684,7 +684,7 @@
   "accountReplaceConfirmBody": "ستُحذف نهائيًا الأغاني وقوائم الأغاني الموجودة على هذا الجهاز وغير الموجودة في الحساب الجديد. لا يمكن التراجع عن ذلك.",
   "accountReplaceConfirmAction": "حذف واستبدال",
   "accountSuspiciousTitle": "عناصر مفقودة من Google Drive",
-  "accountSuspiciousBody": "{count, plural, zero{لا توجد عناصر سبق لهذا الجهاز مزامنتها مفقودة من Google Drive.} one{عنصر واحد سبق لهذا الجهاز مزامنته مفقود من Google Drive.} two{عنصران سبق لهذا الجهاز مزامنتهما مفقودان من Google Drive.} few{{count} عناصر سبق لهذا الجهاز مزامنتها مفقودة من Google Drive.} many{{count} عنصرًا سبق لهذا الجهاز مزامنتها مفقود من Google Drive.} other{{count} عنصر سبق لهذا الجهاز مزامنته مفقود من Google Drive.}} قد يحدث هذا إذا مُسحت بيانات التطبيق من إعدادات Google. لم يُحذف أي شيء بعد.",
+  "accountSuspiciousBody": "{count, plural, zero{لا توجد عناصر سبق لهذا الجهاز مزامنتها مفقودة من Google Drive.} one{عنصر واحد سبق لهذا الجهاز مزامنته مفقود من Google Drive.} two{عنصران سبق لهذا الجهاز مزامنتهما مفقودان من Google Drive.} few{{count} عناصر سبق لهذا الجهاز مزامنتها مفقودة من Google Drive.} many{{count} عنصرًا سبق لهذا الجهاز مزامنته مفقود من Google Drive.} other{{count} عنصر سبق لهذا الجهاز مزامنته مفقود من Google Drive.}} قد يحدث هذا إذا مُسحت بيانات التطبيق من إعدادات Google. لم يُحذف أي شيء بعد.",
   "@accountSuspiciousBody": {"placeholders": {"count": {"type": "int"}}},
   "accountSuspiciousDelete": "احذفها هنا أيضًا",
   "accountSuspiciousKeep": "احتفظ بأغنياتي وارفعها مرة أخرى",

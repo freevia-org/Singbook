@@ -701,7 +701,7 @@
   "syncErrorNoAccountChangeHint": "Vuelve a sincronizar para continuar.",
   "accountSyncWarningTitle": "Sincronizado, pero se omitieron algunos archivos",
   "accountSyncWarningBody": "No se pudieron usar algunos archivos y se dejaron tal como estaban. Todo lo demás está actualizado.",
-  "accountSyncWarningTooLarge": "El archivo era demasiado grande para sincronizarlo y se omitió. Todo lo demás está actualizado.",
+  "accountSyncWarningTooLarge": "Un archivo era demasiado grande para sincronizarlo y se omitió. Todo lo demás está actualizado.",
   "accountSyncWarningInvalid": "No se pudo leer un archivo y se omitió. Todo lo demás está actualizado.",
   "accountNoticeSyncSkipped": "Sincronizado. Se omitieron algunos archivos.",
   "settingsExportPdfTooLarge": "Este PDF sería demasiado grande. Prueba con menos canciones o compártelo como texto.",

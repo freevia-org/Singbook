@@ -1502,7 +1502,7 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get accountSuspiciousDelete => 'Hapus juga di sini';
+  String get accountSuspiciousDelete => 'Hapus juga dari perangkat ini';
 
   @override
   String get accountSuspiciousKeep => 'Simpan lagu saya dan unggah lagi';
@@ -1531,7 +1531,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Tidak ada yang dihapus. Pilih untuk menghapusnya juga di sini atau mengunggahnya lagi.';
+      'Tidak ada yang dihapus. Pilih untuk menghapusnya juga dari perangkat ini atau mengunggahnya lagi.';
 
   @override
   String get syncErrorRemoteChanged =>

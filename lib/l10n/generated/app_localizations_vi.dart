@@ -1481,7 +1481,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Xóa và thay thế';
 
   @override
-  String get accountSuspiciousTitle => 'Google Drive đang thiếu một số mục.';
+  String get accountSuspiciousTitle => 'Google Drive đang thiếu một số mục';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1489,15 +1489,15 @@ class AppLocalizationsVi extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          'Các mục $count mà thiết bị này đã đồng bộ trước đây hiện không có trên Google Drive.',
+          '$count mục mà thiết bị này đã đồng bộ trước đây hiện không có trên Google Drive.',
       one:
-          'Mục $count mà thiết bị này đã đồng bộ trước đây hiện không có trên Google Drive.',
+          '$count mục mà thiết bị này đã đồng bộ trước đây hiện không có trên Google Drive.',
     );
     return '$_temp0 Điều này có thể xảy ra nếu dữ liệu ứng dụng bị xóa trong phần cài đặt Google. Chưa có gì bị xóa.';
   }
 
   @override
-  String get accountSuspiciousDelete => 'Xóa chúng ở đây luôn';
+  String get accountSuspiciousDelete => 'Xóa chúng khỏi thiết bị này luôn';
 
   @override
   String get accountSuspiciousKeep => 'Giữ bài hát và tải lên lại';
@@ -1526,7 +1526,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
-      'Chưa có gì bị xóa. Hãy chọn xóa chúng ở đây hoặc tải lên lại.';
+      'Chưa có gì bị xóa. Hãy chọn xóa chúng khỏi thiết bị này hoặc tải lên lại.';
 
   @override
   String get syncErrorRemoteChanged =>

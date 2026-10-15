@@ -1505,7 +1505,7 @@ class AppLocalizationsLv extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Dzēst un aizstāt';
 
   @override
-  String get accountSuspiciousTitle => 'Google diskā trūkst vienumu';
+  String get accountSuspiciousTitle => 'Google Drive trūkst vienumu';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1513,9 +1513,11 @@ class AppLocalizationsLv extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count vienumi, ko šī ierīce iepriekš sinhronizēja, nav atrodami Google diskā.',
+          '$count vienumi, ko šī ierīce iepriekš sinhronizēja, nav atrodami Google Drive.',
       one:
-          '$count vienums, ko šī ierīce iepriekš sinhronizēja, nav atrodams Google diskā.',
+          '$count vienums, ko šī ierīce iepriekš sinhronizēja, nav atrodams Google Drive.',
+      zero:
+          '$count vienumu, ko šī ierīce iepriekš sinhronizēja, nav atrodami Google Drive.',
     );
     return '$_temp0 Tā var notikt, ja Google iestatījumos tika dzēsti lietotnes dati. Pagaidām nekas nav dzēsts.';
   }
@@ -1534,6 +1536,7 @@ class AppLocalizationsLv extends AppLocalizations {
       locale: localeName,
       other: 'Dzēst $count vienumus no šīs ierīces?',
       one: 'Dzēst $count vienumu no šīs ierīces?',
+      zero: 'Dzēst $count vienumu no šīs ierīces?',
     );
     return '$_temp0';
   }
@@ -1546,7 +1549,7 @@ class AppLocalizationsLv extends AppLocalizations {
   String get accountSuspiciousDeleteConfirmAction => 'Dzēst no šīs ierīces';
 
   @override
-  String get syncErrorRemoteListingSuspicious => 'Google diskā trūkst vienumu.';
+  String get syncErrorRemoteListingSuspicious => 'Google Drive trūkst vienumu.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
@@ -1554,7 +1557,7 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String get syncErrorRemoteChanged =>
-      'Sinhronizācijas laikā Google disks tika mainīts.';
+      'Sinhronizācijas laikā Google Drive tika mainīts.';
 
   @override
   String get syncErrorRemoteChangedHint =>

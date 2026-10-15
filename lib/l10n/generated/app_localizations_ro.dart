@@ -1505,7 +1505,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Șterge și înlocuiește';
 
   @override
-  String get accountSuspiciousTitle => 'Lipsesc elemente din Google Drive.';
+  String get accountSuspiciousTitle => 'Lipsesc elemente din Google Drive';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1513,6 +1513,8 @@ class AppLocalizationsRo extends AppLocalizations {
       count,
       locale: localeName,
       other:
+          '$count de elemente sincronizate anterior de acest dispozitiv lipsesc din Google Drive.',
+      few:
           '$count elemente sincronizate anterior de acest dispozitiv lipsesc din Google Drive.',
       one:
           '$count element sincronizat anterior de acest dispozitiv lipsește din Google Drive.',
@@ -1532,7 +1534,8 @@ class AppLocalizationsRo extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Ștergi $count elemente de pe acest dispozitiv?',
+      other: 'Ștergi $count de elemente de pe acest dispozitiv?',
+      few: 'Ștergi $count elemente de pe acest dispozitiv?',
       one: 'Ștergi $count element de pe acest dispozitiv?',
     );
     return '$_temp0';
@@ -1540,7 +1543,7 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get accountSuspiciousDeleteConfirmBody =>
-      'Aceste melodii și liste vor fi șterse definitiv de pe dispozitiv. Acțiunea nu poate fi anulată.';
+      'Aceste melodii și liste de piese vor fi șterse definitiv de pe acest dispozitiv. Acțiunea nu poate fi anulată.';
 
   @override
   String get accountSuspiciousDeleteConfirmAction =>
@@ -1568,7 +1571,7 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'O melodie sau o listă nu a putut fi citită. Import-o sau creeaz-o din nou, apoi sincronizează.';
+      'O melodie sau o listă de piese nu a putut fi citită. Importă-o sau creeaz-o din nou, apoi sincronizează.';
 
   @override
   String get syncErrorNoAccountChange =>

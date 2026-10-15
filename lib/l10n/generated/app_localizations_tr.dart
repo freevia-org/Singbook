@@ -1483,7 +1483,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Sil ve değiştir';
 
   @override
-  String get accountSuspiciousTitle => 'Google Drive\'da bazı öğeler eksik.';
+  String get accountSuspiciousTitle => 'Google Drive\'da bazı öğeler eksik';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1491,9 +1491,9 @@ class AppLocalizationsTr extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count öğe, bu cihaz tarafından daha önce eşitlendi ancak Google Drive\'da bulunamıyor.',
+          'Bu cihaz tarafından daha önce senkronize edilen $count öğe Google Drive\'da bulunamıyor.',
       one:
-          '$count öğe, bu cihaz tarafından daha önce eşitlendi ancak Google Drive\'da bulunamıyor.',
+          'Bu cihaz tarafından daha önce senkronize edilen $count öğe Google Drive\'da bulunamıyor.',
     );
     return '$_temp0 Bu durum, uygulama verileri Google ayarlarından temizlendiğinde oluşabilir. Henüz hiçbir şey silinmedi.';
   }
@@ -1532,30 +1532,30 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get syncErrorRemoteChanged =>
-      'Eşitleme sırasında Google Drive değişti.';
+      'Senkronizasyon sırasında Google Drive değişti.';
 
   @override
   String get syncErrorRemoteChangedHint =>
-      'Hiçbir şey kaybolmadı. En son değişiklikleri almak için yeniden eşitleyin.';
+      'Hiçbir şey kaybolmadı. En son değişiklikleri almak için yeniden senkronize edin.';
 
   @override
   String get syncErrorInvalidLocalData =>
-      'Bu cihazdaki bazı veriler eşitlenemedi.';
+      'Bu cihazdaki bazı veriler senkronize edilemedi.';
 
   @override
   String get syncErrorInvalidLocalDataHint =>
-      'Bir şarkı veya şarkı listesi okunamadı. İçe aktarın ya da yeniden oluşturun, ardından tekrar eşitleyin.';
+      'Bir şarkı veya şarkı listesi okunamadı. İçe aktarın ya da yeniden oluşturun, ardından tekrar senkronize edin.';
 
   @override
   String get syncErrorNoAccountChange => 'Çözülecek bir hesap değişikliği yok.';
 
   @override
   String get syncErrorNoAccountChangeHint =>
-      'Devam etmek için yeniden eşitleyin.';
+      'Devam etmek için yeniden senkronize edin.';
 
   @override
   String get accountSyncWarningTitle =>
-      'Eşitlendi, ancak bazı dosyalar atlandı';
+      'Senkronize edildi, ancak bazı dosyalar atlandı';
 
   @override
   String get accountSyncWarningBody =>
@@ -1563,14 +1563,15 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get accountSyncWarningTooLarge =>
-      'Bir dosya eşitlenemeyecek kadar büyüktü ve atlandı. Diğer her şey güncel.';
+      'Bir dosya senkronize edilemeyecek kadar büyüktü ve atlandı. Diğer her şey güncel.';
 
   @override
   String get accountSyncWarningInvalid =>
       'Bir dosya okunamadı ve atlandı. Diğer her şey güncel.';
 
   @override
-  String get accountNoticeSyncSkipped => 'Eşitlendi. Bazı dosyalar atlandı.';
+  String get accountNoticeSyncSkipped =>
+      'Senkronize edildi. Bazı dosyalar atlandı.';
 
   @override
   String get settingsExportPdfTooLarge =>

@@ -1495,7 +1495,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get accountReplaceConfirmAction => 'Odstrániť a nahradiť';
 
   @override
-  String get accountSuspiciousTitle => 'Na Disku Google chýbajú položky.';
+  String get accountSuspiciousTitle => 'Na Google Drive chýbajú položky';
 
   @override
   String accountSuspiciousBody(int count) {
@@ -1503,9 +1503,11 @@ class AppLocalizationsSk extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count položky, ktoré toto zariadenie predtým synchronizovalo, chýbajú na Disku Google.',
+          '$count položiek, ktoré toto zariadenie predtým synchronizovalo, chýba na Google Drive.',
+      few:
+          '$count položky, ktoré toto zariadenie predtým synchronizovalo, chýbajú na Google Drive.',
       one:
-          '$count položka, ktorú toto zariadenie predtým synchronizovalo, chýba na Disku Google.',
+          '$count položka, ktorú toto zariadenie predtým synchronizovalo, chýba na Google Drive.',
     );
     return '$_temp0 Môže sa to stať, ak boli údaje aplikácie vymazané v nastaveniach Google. Zatiaľ sa nič neodstránilo.';
   }
@@ -1521,7 +1523,8 @@ class AppLocalizationsSk extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Odstrániť $count položky z tohto zariadenia?',
+      other: 'Odstrániť $count položiek z tohto zariadenia?',
+      few: 'Odstrániť $count položky z tohto zariadenia?',
       one: 'Odstrániť $count položku z tohto zariadenia?',
     );
     return '$_temp0';
@@ -1537,7 +1540,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get syncErrorRemoteListingSuspicious =>
-      'Na Disku Google chýbajú položky.';
+      'Na Google Drive chýbajú položky.';
 
   @override
   String get syncErrorRemoteListingSuspiciousHint =>
@@ -1545,7 +1548,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get syncErrorRemoteChanged =>
-      'Počas synchronizácie sa Disk Google zmenil.';
+      'Počas synchronizácie sa Google Drive zmenil.';
 
   @override
   String get syncErrorRemoteChangedHint =>
