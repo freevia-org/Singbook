@@ -231,7 +231,8 @@ class VerseFileActions {
     Future<ShareResult> Function(ShareParams)? shareFiles,
     this.shareRetention = const Duration(hours: 1),
   }) : _temporaryDirectory = temporaryDirectory ?? getTemporaryDirectory,
-       _shareFiles = shareFiles ?? ((params) => SharePlus.instance.share(params));
+       _shareFiles =
+           shareFiles ?? ((params) => SharePlus.instance.share(params));
   final Future<Directory> Function() _temporaryDirectory;
   final Future<ShareResult> Function(ShareParams) _shareFiles;
 
@@ -751,47 +752,77 @@ Future<Uint8List> createSongPdf(
   final mono = pw.Font.ttf(
     await rootBundle.load('assets/fonts/NotoSansMono-Regular.ttf'),
   );
-  final brandFont = pw.Font.ttf(
-    await rootBundle.load('assets/fonts/SingbookBrand-Bold.ttf'),
-  );
-  final brandIcon = pw.MemoryImage(
-    (await rootBundle.load(
-      'assets/branding/singbook-icon.png',
-    )).buffer.asUint8List(),
-  );
   const navy = PdfColor.fromInt(0xff173454);
-  const amber = PdfColor.fromInt(0xffefb746);
-  pw.Widget brandHeader({bool cover = false}) => pw.Container(
-    padding: const pw.EdgeInsets.only(bottom: 12),
-    margin: const pw.EdgeInsets.only(bottom: 16),
-    decoration: const pw.BoxDecoration(
-      border: pw.Border(bottom: pw.BorderSide(color: amber, width: .7)),
-    ),
-    child: pw.Row(
-      children: [
-        pw.Image(brandIcon, width: cover ? 38 : 24, height: cover ? 38 : 24),
-        pw.SizedBox(width: 10),
-        pw.Text(
-          'Singbook',
-          style: pw.TextStyle(
-            font: brandFont,
-            fontSize: cover ? 24 : 15,
-            color: navy,
-          ),
-        ),
-      ],
-    ),
-  );
+  const muted = PdfColor.fromInt(0xff5f6b78);
+  const paleBlue = PdfColor.fromInt(0xfff1f5f9);
+  String metadataText(SongDocument song) {
+    final values = <String>[];
+    void add(String label, Object? raw) {
+      final value = raw?.toString().trim();
+      if (value != null && value.isNotEmpty) values.add('$label: $value');
+    }
+
+    add('Album', song.metadata['album']);
+    add('Year', song.metadata['year']);
+    add('Key', song.metadata['key']);
+    add('Capo', song.metadata['capo']);
+    add('Tuning', song.metadata['tuning']);
+    final tempo = song.metadata['tempo'];
+    if (tempo != null) add('Tempo', '$tempo BPM');
+    add('Time', song.metadata['timeSignature']);
+    final duration = song.metadata['durationSeconds'];
+    if (duration is num && duration > 0) {
+      final seconds = duration.round();
+      add(
+        'Duration',
+        '${(seconds ~/ 60).toString().padLeft(2, '0')}:${(seconds % 60).toString().padLeft(2, '0')}',
+      );
+    }
+    add('Composer', song.metadata['composer']);
+    add('Lyricist', song.metadata['lyricist']);
+    return values.join('  ·  ');
+  }
+
+  String songKeywords(SongDocument song) => [
+    song.title,
+    if (song.artist.isNotEmpty) song.artist,
+    'lyrics',
+    if (song.hasChords) 'chords',
+    for (final key in const [
+      'album',
+      'year',
+      'key',
+      'capo',
+      'tuning',
+      'tempo',
+      'composer',
+      'lyricist',
+    ])
+      if (song.metadata[key] != null) song.metadata[key].toString(),
+  ].join(', ');
+  final songCredits = songs.length == 1
+      ? {
+          for (final key in const ['composer', 'lyricist'])
+            if (songs.single.metadata[key] is String &&
+                (songs.single.metadata[key] as String).trim().isNotEmpty)
+              (songs.single.metadata[key] as String).trim(),
+        }.join('; ')
+      : '';
   final document = pw.Document(
-    creator: 'Singbook',
     title: setlist?.name ?? songs.map((song) => song.title).join(', '),
+    author: songCredits.isEmpty ? null : songCredits,
+    subject: setlist == null
+        ? 'Song lyrics and chords'
+        : 'Setlist with song lyrics and chords',
+    keywords: songs.length == 1
+        ? songKeywords(songs.single)
+        : 'setlist, lyrics, chords',
     theme: pw.ThemeData.withFont(base: regular, bold: bold),
   );
   if (setlist != null) {
     document.addPage(
       pw.MultiPage(
         pageFormat: format,
-        header: (_) => brandHeader(cover: true),
         build: (context) => [
           pw.Text(
             setlist.name,
@@ -819,19 +850,58 @@ Future<Uint8List> createSongPdf(
       pw.MultiPage(
         pageFormat: format,
         maxPages: 1000,
-        header: (_) => brandHeader(),
         build: (context) => [
           pw.Text(
             song.title,
             style: pw.TextStyle(fontSize: 22, fontWeight: pw.FontWeight.bold),
           ),
           if (song.artist.isNotEmpty)
-            pw.Text(song.artist, style: const pw.TextStyle(fontSize: 13)),
-          pw.SizedBox(height: 16),
+            pw.Padding(
+              padding: const pw.EdgeInsets.only(top: 2),
+              child: pw.Text(
+                'Artist: ${song.artist}',
+                style: const pw.TextStyle(fontSize: 12, color: muted),
+              ),
+            ),
+          if (metadataText(song).isNotEmpty)
+            pw.Container(
+              width: double.infinity,
+              margin: const pw.EdgeInsets.only(top: 10, bottom: 12),
+              padding: const pw.EdgeInsets.symmetric(
+                horizontal: 9,
+                vertical: 7,
+              ),
+              decoration: pw.BoxDecoration(
+                color: paleBlue,
+                borderRadius: pw.BorderRadius.circular(4),
+              ),
+              child: pw.Text(
+                metadataText(song),
+                style: const pw.TextStyle(fontSize: 8.5, color: navy),
+              ),
+            )
+          else
+            pw.SizedBox(height: 12),
           for (final line in lines)
-            if (!line.directive)
+            if (line.directive && _pdfSectionHeading(line.text) != null)
               pw.Padding(
-                padding: const pw.EdgeInsets.only(bottom: 4),
+                padding: const pw.EdgeInsets.only(top: 5, bottom: 2),
+                child: pw.Text(
+                  _pdfSectionHeading(line.text)!,
+                  style: pw.TextStyle(
+                    fontSize: 8,
+                    fontWeight: pw.FontWeight.bold,
+                    color: muted,
+                  ),
+                ),
+              )
+            else if (!line.directive &&
+                line.text.trim().isEmpty &&
+                line.chords.isEmpty)
+              pw.SizedBox(height: 5)
+            else if (!line.directive)
+              pw.Padding(
+                padding: const pw.EdgeInsets.only(bottom: 2.5),
                 child: pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
@@ -840,13 +910,14 @@ Future<Uint8List> createSongPdf(
                         _chordRow(line),
                         style: pw.TextStyle(
                           font: mono,
-                          fontSize: 10,
+                          fontSize: 9,
+                          fontWeight: pw.FontWeight.bold,
                           color: navy,
                         ),
                       ),
                     pw.Text(
                       line.text.isEmpty ? ' ' : line.text,
-                      style: pw.TextStyle(font: mono, fontSize: 10),
+                      style: pw.TextStyle(font: mono, fontSize: 10.5),
                     ),
                   ],
                 ),
@@ -878,4 +949,32 @@ String _chordRow(ArrangementLine line) {
     row.write(anchor.chord);
   }
   return row.toString();
+}
+
+String? _pdfSectionHeading(String directive) {
+  final match = RegExp(
+    r'^\{(?:start_of_)?([a-z_]+)(?::\s*([^}]+))?\}$',
+    caseSensitive: false,
+  ).firstMatch(directive.trim());
+  if (match == null) return null;
+  final name = match.group(1)!.replaceAll('_', ' ').toLowerCase();
+  final detail = match.group(2)?.trim();
+  const labels = {
+    'verse': 'Verse',
+    'chorus': 'Chorus',
+    'bridge': 'Bridge',
+    'pre chorus': 'Pre-Chorus',
+    'intro': 'Intro',
+    'outro': 'Outro',
+    'interlude': 'Interlude',
+    'tag': 'Tag',
+    'ending': 'Ending',
+  };
+  if (name == 'comment' && detail != null && detail.isNotEmpty) {
+    final kind = detail.split(RegExp(r'\s+')).first.toLowerCase();
+    if (labels.containsKey(kind)) return detail;
+  }
+  final label = labels[name];
+  if (label == null) return null;
+  return detail == null || detail.isEmpty ? label : '$label · $detail';
 }
