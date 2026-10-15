@@ -20,7 +20,7 @@ Singbook stores the following only on your device, in the app's private storage:
 - Setlists, favourites, and app settings (theme, palette, language, reader text size, enabled sources).
 - Temporary files and caches (for example cached source responses, PDF export files). These are excluded from Android backup.
 
-Android Auto Backup / device transfer may copy the app's library and preferences to your Google account backup or to a new device if you have Android backup turned on in system settings. That backup is handled by Google and Android under your device settings, not by the publisher.
+Android Auto Backup / device transfer may copy the app's library and preferences (including, if you used Google Drive sync, the e-mail address and a hash of the Google account the library is linked to, plus the sync bookkeeping that records which items were synced) to your Google account backup or to a new device if you have Android backup turned on in system settings. That backup is handled by Google and Android under your device settings, not by the publisher.
 
 Files you import, export, print or share leave the app only when you choose to (for example through the Android share sheet or a PDF you save). Singbook does not read other files or your contacts, location, camera, microphone or photos. The only declared Android permission of consequence is `INTERNET` (to reach the sources in section 3); the app also uses the normal network-state permission added by its networking library.
 

@@ -8,7 +8,7 @@ A local-first Flutter songbook for Android and iOS. Search Genius, compare lyric
 
 ## Develop and test
 
-Use Flutter 3.44.8 / Dart 3.12, JDK 21 and Android SDK 36. The app ID is `org.freevia.singbook`. Android 24+ is supported. iOS builds require macOS/Xcode; they have not been validated on this Windows workspace.
+Use Flutter 3.44.8 / Dart 3.12, JDK 21 and Android SDK 36. The app ID is `org.freevia.singbook`. Android 24+ is supported. iOS builds require macOS/Xcode; they have not been validated on this Windows workspace, so treat iOS sync and localization as unsupported until tested on a Mac. The iOS project is prepared for Google sign-in (URL scheme and `GIDClientID` from `ios/Flutter/Secrets.xcconfig`, see [Google Cloud / OAuth setup](docs/google-oauth-setup.md)) and lists the 34 languages in `CFBundleLocalizations`; it still lacks a privacy manifest (`PrivacyInfo.xcprivacy`) and a signing team.
 
 Singbook uses its open-book and floating-note artwork, navy/parchment
 light theme and navy/amber dark theme. The database name and `x_verse` file
@@ -18,8 +18,9 @@ The release application ID is `org.freevia.singbook`. Earlier test builds used
 `org.freevia.verse`, so the release installs as a separate app and cannot read
 that app's private library automatically. Share songs from the old app as
 ChordPro files, or use its setlist sharing action, then import those files in
-the new app through Settings > Import songs. The complete-library backup API
-is not yet exposed in the UI. Keep the old app and its data until the imported
+the new app through Settings > Import songs. A complete-library backup ZIP
+action exists in code (`FileActions.shareBackup`) but has no UI entry point yet,
+so neither the app nor the store listing offers it. Keep the old app and its data until the imported
 songs, timing, provenance, and setlists have been verified.
 
 Copy `config/defines.example.json` to `config/local.defines.json` and supply a Genius **client access token**. Do not supply a client secret. The local file is ignored by Git. A token bundled in a mobile binary is public configuration and can be extracted.
@@ -56,11 +57,13 @@ keyAlias=...
 keyPassword=...
 ```
 
-With that file the release build is signed with your key. Without it the build
-falls back to the **debug** key and prints a warning; that APK is for local
-preview only. For anything you distribute run
-`.\scripts\build-android.ps1 -Production` (or pass `-PrequireReleaseSigning=true`
-to Gradle), which fails instead of using the debug key. Release builds enable
+With that file the release build is signed with your key. Without it a release
+build **fails**: Gradle never falls back to the debug key on its own. The only
+way to get a debug-signed release APK (local preview, never distribute) is
+`.\scripts\build-android.ps1` without `-Production` (it warns and passes
+`-PallowDebugSigning=true`; bundles always need the key). For anything you
+distribute run `.\scripts\build-android.ps1 -Production` (also sets
+`-PrequireReleaseSigning=true`, which overrides `allowDebugSigning`). Release builds enable
 R8 code and resource shrinking (`android/app/proguard-rules.pro`); if shrinking
 breaks a plugin, build with `-PminifyRelease=false` and report the missing keep
 rule. The rules were written without a device-verified release build, so check
@@ -70,12 +73,23 @@ networking (Cronet) and Google sign-in on a release APK before publishing.
 
 Version `0.2.0+5` (the number after `+` is the Play versionCode and must rise on
 every upload). The target API is 36, `minSdk` 24, with native debug symbols and
-`en`/`bg`/`uk` locale config.
+a locale config for all 34 app languages (one per `lib/l10n/app_*.arb`; keep
+`localeFilters` in `android/app/build.gradle.kts` and
+`res/xml/locales_config.xml` in sync when adding a catalog).
 
 ```powershell
 .\scripts\build-android.ps1 -Bundle -Production   # signed .aab + symbols + SHA-256 in artifacts\
 .\scripts\verify-release.ps1 -Path artifacts\singbook-0.2.0+5-release.aab
 ```
+
+The build script refuses to overwrite an existing artifact of the same version
+(pass `-Force` deliberately). `verify-release.ps1` checks the signer is not the
+debug key, `targetSdkVersion >= 36`, the debuggable flag, and the 16 KB ELF
+segment alignment of the 64-bit native libraries; for an `.aab` it needs
+`bundletool` (on `PATH` or a `bundletool*.jar` in your home folder) and reports
+`UNVERIFIED` and fails without it. Continuous integration
+(`.github/workflows/ci.yml`) runs analyze and tests only; it never builds or
+signs a release.
 
 Store listing text and the public privacy policy (Markdown and hostable HTML)
 are in [docs/play-store](docs/play-store). The published
@@ -90,8 +104,18 @@ preferences) is the user's data and should survive a reinstall or device change,
 so it is included in Android Auto Backup and device-to-device transfer. Caches
 and temporary files are excluded (`android/app/src/main/res/xml/backup_rules.xml`
 for Android 11 and older, `data_extraction_rules.xml` for Android 12+). Singbook
-has no credential or secure-storage dependency; keep it that way, or add
+has no credential or secure-storage dependency (Google sign-in tokens
+are held by the platform, not by Singbook); keep it that way, or add
 exclusions for anything sensitive that is later stored.
+
+No tokens or secrets are stored, but the optional Google Drive sync binding
+(hash and e-mail of the linked account, key `sync.account`) and the per-item sync
+baselines (`sync_items`) live in the same library database, so they are part of
+the backup and cannot be excluded by file path without excluding the songs. After
+a restore on another device they can claim items are already synced for an
+account that is not signed in there; the app is expected to reset them on the
+first launch after a restore (a marker in `noBackupFilesDir` detects it).
+The privacy policy states that the account e-mail may be included in backups.
 
 `cronetHttpNoPlay=true` embeds Cronet so Android networking works without Google Play Services. iOS uses URLSession. Native networking handles the HTTP early responses returned by some sources. Test fixtures do not replace production network requests.
 
@@ -100,7 +124,7 @@ flutter test integration_test/app_device_test.dart -d emulator-5554 --dart-defin
 flutter test integration_test/provider_device_test.dart -d emulator-5554 --dart-define-from-file=config/local.defines.json --dart-define=cronetHttpNoPlay=true
 ```
 
-Provider integration tests depend on third-party availability and log status/counts only, never lyrics or credentials. See [source capabilities and limits](docs/sources.md).
+`integration_test/provider_device_test.dart` is a manual live smoke test, not a CI gate: it hits the real third-party sites, tolerates individual providers being down (it asserts a minimum number of working providers, not exact counts) and skips Genius checks when `GENIUS_ACCESS_TOKEN` is absent. It logs status/counts only, never lyrics or credentials. See [source capabilities and limits](docs/sources.md).
 
 ## Song storage and exchange
 

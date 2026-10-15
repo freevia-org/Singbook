@@ -48,11 +48,10 @@ WHAT YOU CAN DO
 - Edit chords and lyrics, transpose, and follow lyrics that carry timing information (where a source supplies it).
 - Build setlists, reorder songs, override key per song, and share a setlist as an OpenSong file.
 - Import ChordPro, plain text, LRC, enhanced LRC and TTML files. Export every song as a single portable ChordPro (.cho) file that keeps your edits and where the text came from.
-- Make a collection backup: one ZIP with all songs, verified when imported.
 - Optional sync between your own devices with Google Drive: sign in with Google only if you want it. Your songs and setlists go to a private, hidden app folder in your own Drive that only Singbook can use (no access to your other Drive files). Changes sync automatically, and if the same song was edited on two devices, both versions are kept as copies.
 - Print or save a clean PDF of a song.
 - Keep the screen on while you perform, with reader text size, themes (light, dark, system) and palettes that suit a dim stage.
-- Works on phones and tablets, in English, Bulgarian and Ukrainian.
+- Works on phones and tablets, with the app available in 34 languages.
 
 PRIVATE BY DESIGN
 - No Singbook account, no ads, no analytics and no tracking.
@@ -70,7 +69,6 @@ Questions or content removal requests: privacy@freevia.org
 ```
 - Smoother song search and source comparison
 - Setlists: per-song key override and OpenSong sharing
-- Collection backup and restore as a single verified ZIP
 - Optional Google Drive sync between your devices (private app folder, conflicts kept as copies)
 - Improved tablet and large-text layouts
 - Bulgarian and Ukrainian translations refined
@@ -98,11 +96,10 @@ Singbook е песнопойка, която пази всичко на ваше
 - Редактирайте акорди и текст, транспонирайте и следвайте текстове с времеви данни (когато източникът ги предоставя).
 - Създавайте сетлисти, подреждайте песните и задавайте тоналност за всяка песен; споделяйте сетлист като OpenSong файл.
 - Импортирайте ChordPro, обикновен текст, LRC, разширен LRC и TTML. Експортирайте всяка песен като един преносим ChordPro (.cho) файл, който пази вашите промени и откъде е текстът.
-- Резервно копие на колекцията: един ZIP файл с всички песни, който се проверява при импортиране.
 - По избор: синхронизиране между вашите устройства с Google Drive - влизате с Google само ако искате. Песните и сетлистите се записват в скрита папка на приложението във вашия Drive, достъпна само за Singbook (без достъп до другите ви файлове). Промените се синхронизират автоматично, а ако една песен е редактирана на две устройства, и двете версии се запазват като копия.
 - Отпечатайте или запишете PDF на песен.
 - Екранът остава включен по време на изпълнение; размер на текста, светла, тъмна и системна тема.
-- Работи на телефони и таблети, на английски, български и украински.
+- Работи на телефони и таблети, а приложението е достъпно на 34 езика.
 
 ЛИЧНИ ДАННИ
 - Без профил в Singbook, без реклами, без анализи и проследяване.
@@ -120,7 +117,6 @@ Singbook не съхранява и не продава текстове или 
 ```
 - По-плавно търсене и сравнение на източници
 - Сетлисти: тоналност за всяка песен и споделяне в OpenSong
-- Резервно копие и възстановяване на колекцията в един проверен ZIP
 - По избор синхронизиране с Google Drive между устройствата (скрита папка на приложението, конфликтите се пазят като копия)
 - По-добри оформления за таблети и едър текст
 - Подобрени български и украински преводи
@@ -148,11 +144,10 @@ Singbook - це співаник, що зберігає все на вашому
 - Редагуйте акорди й текст, транспонуйте та стежте за текстами з часовими мітками (якщо джерело їх надає).
 - Створюйте сетлисти, змінюйте порядок пісень, задавайте тональність для кожної пісні; діліться сетлистом у форматі OpenSong.
 - Імпортуйте ChordPro, простий текст, LRC, розширений LRC і TTML. Експортуйте кожну пісню одним портативним файлом ChordPro (.cho), який зберігає ваші правки та походження тексту.
-- Резервна копія колекції: один ZIP з усіма піснями, який перевіряється під час імпорту.
 - За бажанням: синхронізація між вашими пристроями через Google Drive - входьте через Google, лише якщо хочете. Пісні та сетлисти зберігаються в прихованій папці застосунку у вашому Drive, доступній лише Singbook (без доступу до інших ваших файлів). Зміни синхронізуються автоматично, а якщо пісню відредагували на двох пристроях, обидві версії зберігаються як копії.
 - Друкуйте або зберігайте PDF пісні.
 - Екран лишається ввімкненим під час виступу; розмір тексту, світла, темна та системна теми.
-- Працює на телефонах і планшетах, англійською, болгарською та українською.
+- Працює на телефонах і планшетах; застосунок доступний 34 мовами.
 
 ПРИВАТНІСТЬ
 - Без облікового запису Singbook, без реклами, аналітики та стеження.
@@ -170,7 +165,6 @@ Singbook не розміщує і не продає тексти чи акорд
 ```
 - Плавніший пошук і порівняння джерел
 - Сетлисти: тональність для кожної пісні та обмін у форматі OpenSong
-- Резервна копія й відновлення колекції одним перевіреним ZIP
 - Необов'язкова синхронізація через Google Drive між пристроями (прихована папка застосунку, конфлікти зберігаються як копії)
 - Кращі макети для планшетів і великого тексту
 - Покращені переклади болгарською та українською
@@ -178,6 +172,17 @@ Singbook не розміщує і не продає тексти чи акорд
 ```
 
 ---
+
+## Claims that must stay true
+
+- "Keep the screen on" requires the player's wakelock (`wakelock_plus`) to be
+  active while a song is open; re-check before each release.
+- The complete-library backup/restore ZIP (`FileActions.shareBackup`) is
+  deliberately **not** advertised: it has no UI entry point. Re-add the bullet
+  (and a "what's new" line) only once Settings exposes it.
+- "34 languages" matches the `lib/l10n/app_*.arb` catalogs and the Android
+  `localeFilters` / `locales_config.xml`; the store listing itself is only
+  translated into en/bg/uk. Irish and Maltese plurals still need native review.
 
 ## Release-notes caveat
 

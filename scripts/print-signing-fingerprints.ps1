@@ -10,8 +10,8 @@ param(
 # variables (-storepass:env), and are never printed. The Play app-signing SHA-1
 # is not available locally: copy it from Play Console > App integrity.
 $ErrorActionPreference = 'Stop'
-$jdk = 'C:\Program Files\Microsoft\jdk-21.0.12.101-hotspot'
-$keytool = if (Test-Path "$jdk\bin\keytool.exe") { "$jdk\bin\keytool.exe" } else { (Get-Command keytool -ErrorAction Stop).Source }
+# keytool: JAVA_HOME first, then PATH (no machine-specific JDK path).
+$keytool = if ($env:JAVA_HOME -and (Test-Path (Join-Path $env:JAVA_HOME 'bin\keytool.exe'))) { Join-Path $env:JAVA_HOME 'bin\keytool.exe' } else { (Get-Command keytool -ErrorAction Stop).Source }
 
 function Show-Fingerprints([string]$Label, [string]$Store, [string]$Alias, [string]$EnvVar) {
     Write-Host "== $Label =="
@@ -42,7 +42,7 @@ if (Test-Path -LiteralPath $DebugKeystore) {
 if (Test-Path -LiteralPath $KeyProperties) {
     $props = @{}
     Get-Content -LiteralPath $KeyProperties | ForEach-Object {
-        if ($_ -match '^\s*([^#=\s][^=]*?)\s*=\s*(.*)$') { $props[$Matches[1]] = $Matches[2].Trim() }
+        if ($_ -match '^\s*([^#=\s][^=]*?)\s*=\s*(.*)$') { $props[$Matches[1]] = $Matches[2].TrimEnd("`r") }  # like java.util.Properties: leading blanks dropped, trailing kept
     }
     $missing = 'storeFile', 'storePassword', 'keyAlias' | Where-Object { -not $props[$_] }
     if ($missing) {

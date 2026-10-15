@@ -3,6 +3,13 @@
   Android 11 and older (android:fullBackupContent). The song library (SQLite
   database, preferences) is the user's data and is backed up; caches and
   temporary files are not.
+
+  NOTE: the sync account binding (settings key "sync.account": account hash
+  and e-mail) and the sync baselines (table sync_items) live INSIDE the song
+  library database databases/verse_library.db, which must stay in the backup.
+  They cannot be excluded by path. The app must clear them itself after a
+  restore (detected with a marker file in noBackupFilesDir, which Android never
+  backs up); see README "Android backup".
 -->
 <full-backup-content>
     <exclude domain="file" path="cache/" />

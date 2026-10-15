@@ -71,10 +71,7 @@ class _NativeScreenshotWatcher {
   var _closed = false;
 
   static Future<_NativeScreenshotWatcher> start() async {
-    final serial =
-        Platform.environment['SINGBOOK_ADB_SERIAL'] ??
-        Platform.environment['ANDROID_SERIAL'] ??
-        'emulator-5554';
+    final serial = await _resolveSerial();
     final clearLog = await Process.run(_adbExecutable(), [
       '-s',
       serial,
@@ -188,11 +185,43 @@ class _NativeScreenshotWatcher {
   Future<void> close() async {
     if (_closed) return;
     _closed = true;
+    // Let logcat deliver markers that are still buffered in the pipe.
+    await Future<void>.delayed(const Duration(milliseconds: 750));
     _process.kill();
     await _subscription.cancel();
     await Future.wait(_pending);
     if (_failure != null) throw StateError(_failure!);
   }
+}
+
+/// The device whose logcat is cleared and captured. An explicit
+/// SINGBOOK_ADB_SERIAL / ANDROID_SERIAL always wins; otherwise the single
+/// attached device is used, and several attached devices are refused instead of
+/// clearing the logs of the wrong one.
+Future<String> _resolveSerial() async {
+  final configured =
+      Platform.environment['SINGBOOK_ADB_SERIAL'] ??
+      Platform.environment['ANDROID_SERIAL'];
+  if (configured != null && configured.trim().isNotEmpty) {
+    return configured.trim();
+  }
+  final listing = await Process.run(_adbExecutable(), ['devices']);
+  final devices = listing.exitCode != 0
+      ? <String>[]
+      : [
+          for (final line in const LineSplitter().convert(
+            listing.stdout as String,
+          ))
+            if (RegExp(r'^(\S+)\s+device').firstMatch(line) case final m?)
+              m.group(1)!,
+        ];
+  if (devices.length > 1) {
+    throw StateError(
+      'Several adb devices are attached (${devices.join(', ')}); set '
+      'SINGBOOK_ADB_SERIAL so the right device is used.',
+    );
+  }
+  return devices.isEmpty ? 'emulator-5554' : devices.single;
 }
 
 String _adbExecutable() {

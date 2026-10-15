@@ -21,10 +21,11 @@ configurations.configureEach {
 //   storePassword=...
 //   keyAlias=...
 //   keyPassword=...
-// Without it, a release build falls back to the DEBUG key for local preview
-// builds only (with a warning). Pass -PrequireReleaseSigning=true (or set
-// ORG_GRADLE_PROJECT_requireReleaseSigning=true, which `scripts/build-android.ps1
-// -Production` does) to make a release build FAIL instead of using the debug key.
+// Without it, a release build FAILS: it never silently uses the DEBUG key.
+// For a local preview APK only, pass -PallowDebugSigning=true (or set
+// ORG_GRADLE_PROJECT_allowDebugSigning=true, which the non-production
+// `scripts/build-android.ps1` does after a warning). -PrequireReleaseSigning=true
+// (set by `-Production`) overrides allowDebugSigning and always demands the key.
 val keystoreProperties = Properties()
 val keystorePropertiesFile = rootProject.file("key.properties")
 if (keystorePropertiesFile.exists()) {
@@ -36,6 +37,8 @@ val hasReleaseKey =
     }
 val requireReleaseSigning =
     (findProperty("requireReleaseSigning") as String?)?.toBoolean() == true
+val allowDebugSigning =
+    (findProperty("allowDebugSigning") as String?)?.toBoolean() == true
 // Safety valve for R8 (-PminifyRelease=false) if shrinking ever breaks a plugin.
 val minifyRelease = (findProperty("minifyRelease") as String?)?.toBoolean() != false
 val releaseRequested =
@@ -73,10 +76,15 @@ android {
         }
     }
 
-    // Only the app's own languages are packaged, so the Play listing shows
-    // exactly en/bg/uk (see res/xml/locales_config.xml).
+    // Only the app's own languages (one per lib/l10n/app_*.arb catalog) are
+    // packaged. Keep this list and res/xml/locales_config.xml in sync with the
+    // ARB files; test/ui/l10n_test.dart-style checks or a review should catch drift.
     androidResources {
-        localeFilters += listOf("en", "bg", "uk")
+        localeFilters += listOf(
+            "ar", "bg", "cs", "da", "de", "el", "en", "es", "et", "fi", "fr",
+            "ga", "hi", "hr", "hu", "id", "it", "ja", "ko", "lt", "lv", "mt",
+            "nl", "pl", "pt", "ro", "ru", "sk", "sl", "sv", "tr", "uk", "vi", "zh",
+        )
     }
 
     // Android App Bundle: keep language, density and ABI splits enabled so
@@ -106,11 +114,12 @@ android {
             if (hasReleaseKey) {
                 signingConfig = signingConfigs.getByName("release")
             } else {
-                if (requireReleaseSigning && releaseRequested) {
+                if (releaseRequested && (requireReleaseSigning || !allowDebugSigning)) {
                     throw GradleException(
-                        "Release signing is required (-PrequireReleaseSigning=true) but " +
-                            "android/key.properties is missing or incomplete. Refusing to " +
-                            "sign a release with the debug key."
+                        "android/key.properties is missing or incomplete, so the release " +
+                            "build cannot be signed. Refusing to sign a release with the " +
+                            "debug key. Create the file (see README, Release signing); for a " +
+                            "local preview APK only, pass -PallowDebugSigning=true."
                     )
                 }
                 if (releaseRequested) {

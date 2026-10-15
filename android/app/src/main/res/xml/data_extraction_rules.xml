@@ -2,6 +2,13 @@
 <!--
   Android 12+ (android:dataExtractionRules). Cloud backup and device-to-device
   transfer both include the song library; caches and temporary files are excluded.
+
+  NOTE: the sync account binding (settings key "sync.account": account hash
+  and e-mail) and the sync baselines (table sync_items) live INSIDE the song
+  library database databases/verse_library.db, which must stay in the backup.
+  They cannot be excluded by path. The app must clear them itself after a
+  restore (detected with a marker file in noBackupFilesDir, which Android never
+  backs up); see README "Android backup".
 -->
 <data-extraction-rules>
     <cloud-backup>

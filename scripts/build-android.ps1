@@ -10,7 +10,10 @@ param(
     #   flutter build appbundle --release
     # Copies the .aab and native-debug-symbols zip to artifacts/ and prints the
     # SHA-256 of the bundle. Use with -Production for anything uploaded to Play.
-    [switch]$Bundle
+    [switch]$Bundle,
+    # Allow replacing an existing artifacts/ file of the same version. Without
+    # it the script refuses, so a verified .aab is never silently overwritten.
+    [switch]$Force
 )
 $ErrorActionPreference = 'Stop'
 $workspace = Split-Path -Parent $PSScriptRoot
@@ -24,6 +27,8 @@ Push-Location $workspace
 try {
     if ($Production -and $Debug) { throw '-Production cannot be combined with -Debug.' }
     if ($Bundle -and $Debug) { throw '-Bundle builds a release bundle and cannot be combined with -Debug.' }
+    if ($Production -and $AllowMissingDefines) { throw '-Production cannot be combined with -AllowMissingDefines (the build would ship without the Genius token / Google sign-in IDs).' }
+    if ($Bundle -and -not $Production) { Write-Warning 'Bundle built without -Production: it is only suitable for upload to Play if android/key.properties exists (the build fails otherwise).' }
     $mode = if ($Debug) { '--debug' } else { '--release' }
     $target = if ($Bundle) { 'appbundle' } else { 'apk' }
     $arguments = @('build', $target, $mode, '--dart-define=cronetHttpNoPlay=true')
@@ -45,7 +50,11 @@ try {
         # Read by android/app/build.gradle.kts as -PrequireReleaseSigning=true.
         $env:ORG_GRADLE_PROJECT_requireReleaseSigning = 'true'
     } elseif (-not $Debug -and -not (Test-Path -LiteralPath $keyProps)) {
-        Write-Warning 'android/key.properties is missing: the release build is signed with the DEBUG key (local preview only, never distribute or upload to Play).'
+        if ($Bundle) { throw 'A release bundle requires android/key.properties; the debug-key preview fallback is only for APKs.' }
+        Write-Warning 'android/key.properties is missing: the release APK is signed with the DEBUG key (local preview only, never distribute or upload to Play).'
+        # Gradle refuses to use the debug key unless explicitly allowed
+        # (android/app/build.gradle.kts, -PallowDebugSigning=true).
+        $env:ORG_GRADLE_PROJECT_allowDebugSigning = 'true'
     }
     & flutter @arguments
     if ($LASTEXITCODE -ne 0) { throw "Flutter build failed ($LASTEXITCODE)" }
@@ -63,14 +72,24 @@ try {
         if (-not (Test-Path -LiteralPath $aabSource)) { throw "Expected bundle not found: $aabSource" }
         $aabName = "singbook-$suffix-release.aab"
         $aabTarget = Join-Path $artifacts $aabName
+        $symName = "singbook-$suffix-native-debug-symbols.zip"
+        foreach ($existing in @($aabTarget, (Join-Path $artifacts $symName))) {
+            if ((Test-Path -LiteralPath $existing) -and -not $Force) {
+                throw "$existing already exists. Raise the versionCode in pubspec.yaml, or pass -Force to replace it (a verified artifact must not be overwritten silently)."
+            }
+        }
+        $aabBuilt = Get-Item -LiteralPath $aabSource
         Copy-Item -LiteralPath $aabSource -Destination $aabTarget -Force
         Write-Host "Bundle:  $aabTarget"
 
-        $symbols = Get-ChildItem -Path (Join-Path $workspace 'build') -Recurse -Filter '*.zip' -ErrorAction SilentlyContinue |
-            Where-Object { $_.FullName -match 'native-debug-symbols' -and $_.FullName -match 'release' } |
-            Sort-Object LastWriteTime -Descending | Select-Object -First 1
+        # Exact AGP output path; it must also be at least as new as the bundle
+        # so a zip left by an earlier versionCode is never copied under this name.
+        $symbols = Get-Item -LiteralPath (Join-Path $workspace 'build/app/outputs/native-debug-symbols/release/native-debug-symbols.zip') -ErrorAction SilentlyContinue
+        if ($symbols -and $symbols.LastWriteTime -lt $aabBuilt.LastWriteTime.AddMinutes(-5)) {
+            Write-Warning "Ignoring stale native-debug-symbols.zip ($($symbols.LastWriteTime)); it predates this bundle."
+            $symbols = $null
+        }
         if ($symbols) {
-            $symName = "singbook-$suffix-native-debug-symbols.zip"
             Copy-Item -LiteralPath $symbols.FullName -Destination (Join-Path $artifacts $symName) -Force
             Write-Host "Symbols: $(Join-Path $artifacts $symName)"
         } else {
@@ -84,5 +103,6 @@ try {
     }
 } finally {
     Remove-Item Env:ORG_GRADLE_PROJECT_requireReleaseSigning -ErrorAction SilentlyContinue
+    Remove-Item Env:ORG_GRADLE_PROJECT_allowDebugSigning -ErrorAction SilentlyContinue
     Pop-Location
 }

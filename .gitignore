@@ -55,3 +55,9 @@ app.*.map.json
 /.env.*
 !/.env.example
 /android/key.properties
+
+# iOS Google sign-in identifiers (public, but per build owner)
+/ios/Flutter/Secrets.xcconfig
+
+# Local PDF/print preview output
+/output/

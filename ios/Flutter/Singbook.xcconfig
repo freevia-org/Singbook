@@ -1,0 +1,16 @@
+// Public Google sign-in identifiers for the iOS build. Defaults are empty /
+// placeholder so the project builds without any configuration (sync then shows
+// "not configured"). Do NOT put values here; override them in the git-ignored
+// ios/Flutter/Secrets.xcconfig (included below), for example:
+//
+//   GID_CLIENT_ID = 1234-abcd.apps.googleusercontent.com
+//   GID_REVERSED_CLIENT_ID = com.googleusercontent.apps.1234-abcd
+//
+// The reversed id is the iOS client id with its two halves swapped. Both are
+// public client identifiers, not secrets, but they live outside Git so each
+// build owner uses their own OAuth client. Keep GID_CLIENT_ID equal to the
+// VERSE_GOOGLE_IOS_CLIENT_ID dart-define. See docs/google-oauth-setup.md.
+GID_CLIENT_ID =
+GID_REVERSED_CLIENT_ID = com.googleusercontent.apps.not-configured
+
+#include? "Secrets.xcconfig"

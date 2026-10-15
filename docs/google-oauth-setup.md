@@ -142,6 +142,9 @@ Create these:
    does not use it, so do not store it in the repository or the app.
 5. **iOS (optional, only for a future iOS build).** Application type: iOS, Bundle
    ID of the iOS app. Its client ID becomes `VERSE_GOOGLE_IOS_CLIENT_ID`.
+   The iOS build also needs the client ID and its **reversed** form (the two
+   halves swapped: `com.googleusercontent.apps.<number>-<hash>`) in
+   `ios/Flutter/Secrets.xcconfig` (git-ignored; see the next section).
 
 The Android clients themselves never appear in the app's configuration: Google
 matches the running APK to them by package name and certificate. Leave the
@@ -163,6 +166,20 @@ into chats). Start from `config/defines.example.json`:
   "SINGBOOK_CONTACT_URL": ""
 }
 ```
+
+For an iOS build also create `ios/Flutter/Secrets.xcconfig` (git-ignored,
+included by `ios/Flutter/Singbook.xcconfig`, which carries empty defaults so
+builds work without it):
+
+```
+GID_CLIENT_ID = <ios client id>.apps.googleusercontent.com
+GID_REVERSED_CLIENT_ID = com.googleusercontent.apps.<ios client id prefix>
+```
+
+`Info.plist` reads them as `GIDClientID` and as the URL scheme that lets the
+Google sign-in redirect return to the app. `GID_CLIENT_ID` must equal
+`VERSE_GOOGLE_IOS_CLIENT_ID`. iOS sign-in and sync are not validated on this
+Windows workspace; test on macOS before shipping an iOS build.
 
 Leave `VERSE_GOOGLE_IOS_CLIENT_ID` empty for Android-only builds. Both IDs must
 end in `.apps.googleusercontent.com` or the app treats Google sign-in as not

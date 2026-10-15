@@ -41,6 +41,11 @@ List<String> _bigramsCanary(List<String> words) => [
     '${words[index]} ${words[index + 1]}',
 ];
 
+/// MANUAL LIVE SMOKE TEST. It talks to the real third-party providers over the
+/// internet, so it is NOT part of CI and a red run can simply mean an outage or
+/// a blocked provider. It therefore adapts to the provider registry (no
+/// hard-coded counts), skips when the Genius token is missing or Genius cannot
+/// find the reference song, and tolerates individual providers being down.
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -49,26 +54,40 @@ void main() {
     (tester) async {
       await tester.runAsync(() async {
         const token = String.fromEnvironment('GENIUS_ACCESS_TOKEN');
-        expect(
-          token.isNotEmpty,
-          true,
-          reason: 'Use --dart-define-from-file=config/local.defines.json',
-        );
+        if (token.isEmpty) {
+          markTestSkipped(
+            'GENIUS_ACCESS_TOKEN missing: use --dart-define-from-file=config/local.defines.json',
+          );
+          return;
+        }
         final transport = ProviderTransport();
         final providers = [
           ...createCoreProviders(transport: transport, geniusToken: token),
           ...createExtraProviders(transport: transport),
         ];
-        expect(providers.length, 18);
+        expect(providers, isNotEmpty);
+        expect(
+          providers.map((p) => p.definition.id).toSet().length,
+          providers.length,
+          reason: 'Provider ids must be unique.',
+        );
         final service = SourceDiscoveryService(providers),
             checks = <ProviderCheck>[];
         try {
           final found = await service.search('Lonely Stranger Eric Clapton');
-          final selection = found.firstWhere(
-            (s) =>
-                s.artist.toLowerCase() == 'eric clapton' &&
-                s.title.toLowerCase().startsWith('lonely stranger'),
-          );
+          final selection = found
+              .where(
+                (s) =>
+                    s.artist.toLowerCase() == 'eric clapton' &&
+                    s.title.toLowerCase().startsWith('lonely stranger'),
+              )
+              .firstOrNull;
+          if (selection == null) {
+            markTestSkipped(
+              'Genius did not return the reference song (outage, token or catalog change).',
+            );
+            return;
+          }
           final results = await service.discover(
             selection,
             enabledIds: providers.map((p) => p.definition.id).toSet(),
@@ -81,22 +100,36 @@ void main() {
               }
             },
           );
+          final usable = results.any(
+            (r) => r.matchKind != MatchKind.rejected && r.body.trim().isNotEmpty,
+          );
+          if (!usable) {
+            final settled = checks.where((c) => c.state != 'pending');
+            // Every provider failed with an error code: treat it as an outage
+            // of the test environment rather than a regression.
+            if (settled.isNotEmpty && settled.every((c) => c.code != null)) {
+              markTestSkipped(
+                'Every provider reported a failure code; assuming an outage.',
+              );
+              return;
+            }
+          }
           expect(
-            results.any(
-              (r) =>
-                  r.matchKind != MatchKind.rejected && r.body.trim().isNotEmpty,
-            ),
+            usable,
             true,
             reason: 'At least one real provider must return usable lyrics.',
           );
           // A denial/outage may legitimately produce a terminal failure; an
-          // uncaught HTTP103 parser crash is never acceptable.
-          expect(
-            checks.any(
-              (c) => c.providerId == 'songsterr' && c.state != 'pending',
-            ),
-            true,
-          );
+          // uncaught HTTP103 parser crash is never acceptable. Only require
+          // that a registered songsterr provider reaches a terminal state.
+          if (providers.any((p) => p.definition.id == 'songsterr')) {
+            expect(
+              checks.any(
+                (c) => c.providerId == 'songsterr' && c.state != 'pending',
+              ),
+              true,
+            );
+          }
           for (final source in results) {
             for (final track in source.timingTracks) {
               expect(
@@ -113,7 +146,8 @@ void main() {
                 .map((c) => c.providerId)
                 .toSet()
                 .length,
-            18,
+            providers.length,
+            reason: 'Every registered provider must reach a terminal state.',
           );
           final combined = combineSources(selection, results);
           final reopened = ChordProCodec().decode(
@@ -211,9 +245,15 @@ void main() {
         try {
           final provider = SeanMcGrathProvider(transport);
           final candidates = await provider.search('Be Here Soon');
-          final song = candidates.firstWhere(
-            (c) => c.title.toLowerCase() == 'be here soon',
-          );
+          final song = candidates
+              .where((c) => c.title.toLowerCase() == 'be here soon')
+              .firstOrNull;
+          if (song == null) {
+            markTestSkipped(
+              'The open catalog did not return the reference song (outage or catalog change).',
+            );
+            return;
+          }
           final result = await provider.resolve(song);
           expect(result.body.trim().isNotEmpty, true);
           expect(result.hasChords, true);

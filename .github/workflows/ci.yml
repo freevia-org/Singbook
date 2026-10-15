@@ -1,0 +1,54 @@
+name: CI
+
+# Analyze and test only. This workflow uses no secrets, builds no release and
+# never signs anything. config/local.defines.json is intentionally absent, so
+# tests run with the same empty defines as a fresh clone.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Keep in sync with README.md ("Develop and test").
+  FLUTTER_VERSION: "3.44.8"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Flutter version
+        run: flutter --version
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Generated localizations are up to date
+        run: |
+          flutter gen-l10n
+          git diff --exit-code -- lib/l10n/generated
+          if [ -n "$(git ls-files --others --exclude-standard -- lib/l10n/generated)" ]; then
+            echo "Untracked generated localization files; run flutter gen-l10n and commit them."
+            exit 1
+          fi
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test
