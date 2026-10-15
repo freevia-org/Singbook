@@ -40,6 +40,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
   List<(int, double)>? _sectionPoints;
   List<PlayerSectionMarker>? _pointsSections;
   List<LyricLineData>? _pointsLines;
+  Size? _lastViewportSize;
+  double? _lastTextScale;
   VerseUiController get controller => widget.controller;
 
   double _durationOf(VerseUiState state) =>
@@ -76,6 +78,21 @@ class _PlayerScreenState extends State<PlayerScreen> {
     _lastProgress = _position.value.seconds;
     _currentLineId = _position.value.currentLineId;
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToCurrentLine());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final viewport = MediaQuery.sizeOf(context);
+    final textScale = MediaQuery.textScalerOf(context).scale(1);
+    if (_lastViewportSize != null &&
+        (_lastViewportSize != viewport || _lastTextScale != textScale)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToCurrentLine(immediate: true);
+      });
+    }
+    _lastViewportSize = viewport;
+    _lastTextScale = textScale;
   }
 
   @override
@@ -363,31 +380,38 @@ class _PlayerScreenState extends State<PlayerScreen> {
         ),
       ),
     );
-    Widget controls({required bool compact}) => SafeArea(
-      top: false,
-      child: Column(
+    Widget controls({required bool compact}) {
+      final noAudio = Padding(
+        padding: EdgeInsets.fromLTRB(16, 0, 16, compact ? 4 : 8),
+        child: Text(
+          l10n.playerLyricsOnly,
+          style: Theme.of(
+            context,
+          ).textTheme.labelSmall?.copyWith(color: colors.onSurfaceVariant),
+          textAlign: TextAlign.center,
+        ),
+      );
+      final content = Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          if (compact) noAudio,
+          if (compact) _transport(context, l10n, state),
           ValueListenableBuilder<PlayerPosition>(
             valueListenable: _position,
             builder: (context, position, _) =>
                 _seekBar(context, l10n, state, position, duration),
           ),
-          _transport(context, l10n, state),
+          if (!compact) _transport(context, l10n, state),
           if (song.hasChords) _chordControls(l10n, state, compact: compact),
-          Padding(
-            padding: EdgeInsets.fromLTRB(16, 0, 16, compact ? 4 : 8),
-            child: Text(
-              l10n.playerLyricsOnly,
-              style: Theme.of(
-                context,
-              ).textTheme.labelSmall?.copyWith(color: colors.onSurfaceVariant),
-              textAlign: TextAlign.center,
-            ),
-          ),
+          if (!compact) noAudio,
         ],
-      ),
-    );
+      );
+      return SafeArea(
+        top: false,
+        child: compact ? SingleChildScrollView(child: content) : content,
+      );
+    }
+
     final metadata = [
       song.artist,
       song.album,
@@ -482,12 +506,13 @@ class _PlayerScreenState extends State<PlayerScreen> {
                   const Icon(Icons.check_circle_outline, size: 14),
                   const SizedBox(width: 6),
                   Expanded(
+                    flex: 2,
                     child: Text(
                       [
                         l10n.readerSaved,
                         state.readerSource,
                       ].whereType<String>().join(' · '),
-                      maxLines: 1,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         color: colors.onSurfaceVariant,
@@ -495,9 +520,19 @@ class _PlayerScreenState extends State<PlayerScreen> {
                     ),
                   ),
                   if (state.readerCanCompareVersions)
-                    TextButton(
-                      onPressed: controller.compareCurrentSongVersions,
-                      child: Text(l10n.searchCompare),
+                    Expanded(
+                      flex: 3,
+                      child: Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: TextButton(
+                          onPressed: controller.compareCurrentSongVersions,
+                          child: Text(
+                            l10n.searchCompare,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
                     ),
                 ],
               ),
@@ -710,8 +745,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
     child: LayoutBuilder(
       builder: (context, constraints) {
         final separateControls =
-            constraints.maxWidth < 340 ||
-            MediaQuery.textScalerOf(context).scale(1) > 1.3;
+            (state.playerSections.isNotEmpty || state.activeSetlist != null) &&
+            (constraints.maxWidth < 340 ||
+                MediaQuery.textScalerOf(context).scale(1) > 1.3);
         final start = FilledButton.icon(
           key: const ValueKey('start-lyric-scroll'),
           style: FilledButton.styleFrom(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -386,7 +387,198 @@ void main() {
     );
     await tester.pumpWidget(const SizedBox.shrink());
   });
+
+  testWidgets('landscape reader fits metadata and compare row at large text', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(872, 393);
+    tester.view.viewPadding = const FakeViewPadding(top: 24, bottom: 24);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetViewPadding);
+    final controller = _LiveFlowController(
+      const VerseUiState(
+        route: VerseRoute.reader,
+        song: SongCardData(
+          id: 'song',
+          title: 'Signal Song',
+          artist: 'Artist Name',
+          album: 'Album Name',
+          durationSeconds: 247,
+        ),
+        songLines: [
+          LyricLineData(id: 'line-1', text: 'The first lyric line'),
+          LyricLineData(id: 'line-2', text: 'The second lyric line'),
+          LyricLineData(id: 'line-3', text: 'The third lyric line'),
+        ],
+        readerSource: 'LRCLIB',
+        readerCanCompareVersions: true,
+        readerHasTiming: false,
+        readerDurationEstimated: false,
+        playbackSpeed: 1,
+      ),
+    );
+    addTearDown(controller.dispose);
+
+    await _pumpPlayer(tester, controller);
+    final l10n = AppLocalizations.of(tester.element(find.byType(PlayerScreen)));
+    expect(find.text('Artist Name · Album Name'), findsOneWidget);
+    expect(find.textContaining('LRCLIB'), findsOneWidget);
+    expect(find.text(l10n.searchCompare), findsOneWidget);
+    expect(find.text(l10n.playerLyricsOnly), findsOneWidget);
+    final start = find.byKey(const ValueKey('start-lyric-scroll'));
+    final speed = find.byKey(const ValueKey('scroll-speed'));
+    expect(start, findsOneWidget);
+    expect(speed, findsOneWidget);
+    for (final control in [start, speed]) {
+      final rect = tester.getRect(control);
+      expect(rect.left, greaterThanOrEqualTo(0));
+      expect(rect.right, lessThanOrEqualTo(872));
+      expect(rect.top, greaterThanOrEqualTo(0));
+      expect(rect.bottom, lessThanOrEqualTo(393));
+    }
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('landscape reader keeps primary controls reachable with chords', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(872, 393);
+    tester.view.viewPadding = const FakeViewPadding(top: 24, bottom: 24);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetViewPadding);
+    final controller = _LiveFlowController(
+      const VerseUiState(
+        route: VerseRoute.reader,
+        song: SongCardData(
+          id: 'song',
+          title: 'Signal Song',
+          artist: 'Artist Name',
+          album: 'Album Name',
+          durationSeconds: 247,
+          hasChords: true,
+        ),
+        songLines: [
+          LyricLineData(
+            id: 'line-1',
+            text: 'The first lyric line',
+            chords: [LyricChord(graphemeOffset: 0, symbol: 'C')],
+          ),
+          LyricLineData(
+            id: 'line-2',
+            text: 'The second lyric line',
+            chords: [LyricChord(graphemeOffset: 0, symbol: 'G')],
+          ),
+        ],
+        playerSections: [
+          PlayerSectionMarker(name: 'Verse', startSeconds: 0, lineId: 'line-1'),
+          PlayerSectionMarker(
+            name: 'Chorus',
+            startSeconds: 60,
+            lineId: 'line-2',
+          ),
+        ],
+        readerSource: 'LRCLIB',
+        readerCanCompareVersions: true,
+        readerHasTiming: false,
+        readerDurationEstimated: false,
+        playbackSpeed: 1,
+      ),
+    );
+    addTearDown(controller.dispose);
+
+    await _pumpPlayer(tester, controller, scale: 1.5);
+    final l10n = AppLocalizations.of(tester.element(find.byType(PlayerScreen)));
+    final start = find.byKey(const ValueKey('start-lyric-scroll'));
+    final speed = find.byKey(const ValueKey('scroll-speed'));
+    final nextSection = find.byTooltip(l10n.playerNextSection);
+    final chords = find.byTooltip(l10n.readerHideChords);
+    expect(find.text('Artist Name · Album Name'), findsOneWidget);
+    expect(find.text(l10n.searchCompare), findsOneWidget);
+    expect(start, findsOneWidget);
+    expect(speed, findsOneWidget);
+    expect(nextSection, findsOneWidget);
+    expect(chords, findsOneWidget);
+    final startRect = tester.getRect(start);
+    expect(startRect.top, greaterThanOrEqualTo(0));
+    expect(startRect.bottom, lessThanOrEqualTo(393));
+    expect(tester.takeException(), isNull);
+
+    await tester.ensureVisible(chords);
+    await tester.pumpAndSettle();
+    final chordsRect = tester.getRect(chords);
+    expect(chordsRect.top, greaterThanOrEqualTo(0));
+    expect(chordsRect.bottom, lessThanOrEqualTo(393));
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('current lyric stays visible after rotating in landscape', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(393, 872);
+    tester.view.viewPadding = const FakeViewPadding(top: 24, bottom: 24);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetViewPadding);
+    final lines = [
+      for (var index = 0; index < 24; index++)
+        LyricLineData(id: 'line-$index', text: 'Rotation lyric $index'),
+    ];
+    final controller = _LiveFlowController(
+      VerseUiState(
+        route: VerseRoute.reader,
+        song: const SongCardData(
+          id: 'song',
+          title: 'Rotation Song',
+          artist: 'Artist Name',
+          album: 'Album Name',
+          durationSeconds: 247,
+          hasChords: true,
+        ),
+        songLines: lines,
+        readerSource: 'LRCLIB',
+        readerCanCompareVersions: true,
+        readerHasTiming: false,
+        currentLineId: 'line-18',
+        progressSeconds: 183,
+      ),
+    );
+    addTearDown(controller.dispose);
+    controller._position.value = const PlayerPosition(183, 'line-18');
+
+    await _pumpPlayer(tester, controller, scale: 1.5);
+    await tester.pumpAndSettle();
+    final l10n = AppLocalizations.of(tester.element(find.byType(PlayerScreen)));
+    expect(find.text('Artist Name · Album Name'), findsOneWidget);
+    expect(find.textContaining('LRCLIB'), findsOneWidget);
+    expect(find.text(l10n.searchCompare), findsOneWidget);
+    final targetLine = find.text('Rotation lyric 18');
+    final lyricsList = find.byType(ListView).last;
+    expect(
+      _isVisibleWithin(tester.getRect(targetLine), tester.getRect(lyricsList)),
+      isTrue,
+    );
+
+    tester.view.physicalSize = const Size(872, 393);
+    tester.view.viewPadding = const FakeViewPadding(top: 24, bottom: 24);
+    await tester.pumpAndSettle();
+    expect(
+      _isVisibleWithin(tester.getRect(targetLine), tester.getRect(lyricsList)),
+      isTrue,
+    );
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
 }
+
+bool _isVisibleWithin(Rect child, Rect viewport) =>
+    child.top >= viewport.top && child.bottom <= viewport.bottom;
 
 List<String> _rowOrder(WidgetTester tester) {
   final rows = ['suggested', 'second', 'third'];
@@ -521,13 +713,24 @@ Future<void> _pumpPlayer(
 }
 
 class _LiveFlowController extends VerseUiController {
-  _LiveFlowController(this._state);
+  _LiveFlowController(this._state)
+    : _position = ValueNotifier(PlayerPosition.zero);
   VerseUiState _state;
+  final ValueNotifier<PlayerPosition> _position;
   bool autoscrollEnabled = false;
   bool estimatedTimingRequested = false;
   bool playbackStarted = false;
   double? selectedSpeed;
   final searchFilterChanges = <(String, Object?)>[];
+
+  @override
+  ValueListenable<PlayerPosition> get playerPosition => _position;
+
+  @override
+  void dispose() {
+    _position.dispose();
+    super.dispose();
+  }
 
   @override
   VerseUiState get state => _state;
