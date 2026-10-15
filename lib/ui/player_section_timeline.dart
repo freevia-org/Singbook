@@ -1,5 +1,69 @@
 import 'verse_ui_state.dart';
 
+const _estimatedBoundaryToleranceSeconds = 0.000001;
+
+/// Returns lyric lines that participate in estimated playback positions.
+///
+/// Section headings, blank rows, and chord-only rows are visual structure,
+/// not lyric positions. Sharing this filter keeps section seeks aligned with
+/// the reader's estimated current-line highlight.
+List<LyricLineData> estimatedTimelineLines(List<LyricLineData> lines) =>
+    List.unmodifiable(
+      lines.where(
+        (line) =>
+            line.section == null &&
+            !line.isBlank &&
+            line.text.trim().isNotEmpty,
+      ),
+    );
+
+Map<String, double> _estimatedLineStartTimes(
+  List<LyricLineData> lines,
+  double durationSeconds,
+) {
+  if (!durationSeconds.isFinite || durationSeconds <= 0) return const {};
+  final visibleLines = estimatedTimelineLines(lines);
+  if (visibleLines.isEmpty) return const {};
+  return Map.unmodifiable({
+    for (var index = 0; index < visibleLines.length; index++)
+      visibleLines[index].id: durationSeconds * index / visibleLines.length,
+  });
+}
+
+/// Returns the estimated start time used for [lineId], or null when the line
+/// is not a lyric line in this timeline or the duration is invalid.
+double? estimatedLineStartSeconds(
+  List<LyricLineData> lines,
+  String lineId,
+  double durationSeconds,
+) => _estimatedLineStartTimes(lines, durationSeconds)[lineId];
+
+/// Resolves the lyric line at [progressSeconds] using the same boundaries as
+/// section markers. The small tolerance makes an exact seek to a marker select
+/// the line at that marker even if the fraction calculation rounds down.
+String? estimatedLineIdAtPosition(
+  List<LyricLineData> lines, {
+  required double progressSeconds,
+  required double durationSeconds,
+}) {
+  if (!progressSeconds.isFinite ||
+      !durationSeconds.isFinite ||
+      durationSeconds <= 0) {
+    return null;
+  }
+  final visibleLines = estimatedTimelineLines(lines);
+  if (visibleLines.isEmpty) return null;
+  final starts = _estimatedLineStartTimes(visibleLines, durationSeconds);
+  final progress = progressSeconds.clamp(0.0, durationSeconds).toDouble();
+  var current = visibleLines.first.id;
+  for (final line in visibleLines.skip(1)) {
+    final start = starts[line.id]!;
+    if (start > progress + _estimatedBoundaryToleranceSeconds) break;
+    current = line.id;
+  }
+  return current;
+}
+
 /// Builds timeline markers at the first lyric line in each named section.
 ///
 /// Saved recording cue starts take precedence when supplied. Unmapped sections
@@ -14,19 +78,13 @@ List<PlayerSectionMarker> buildPlayerSectionMarkers({
     return const [];
   }
 
-  final visibleLines = <LyricLineData>[];
-  for (final line in lines) {
-    if (line.section == null && !line.isBlank && line.text.trim().isNotEmpty) {
-      visibleLines.add(line);
-    }
-  }
+  final visibleLines = estimatedTimelineLines(lines);
   if (visibleLines.isEmpty) return const [];
 
-  final estimatedPositions = <String, double>{};
-  for (var index = 0; index < visibleLines.length; index++) {
-    estimatedPositions[visibleLines[index].id] =
-        durationSeconds * index / visibleLines.length;
-  }
+  final estimatedPositions = _estimatedLineStartTimes(
+    visibleLines,
+    durationSeconds,
+  );
 
   final markers = <PlayerSectionMarker>[];
   for (var index = 0; index < lines.length; index++) {
