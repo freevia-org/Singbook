@@ -224,7 +224,8 @@ void main() {
 
     await _pumpHome(tester, controller: controller);
     final l10n = AppLocalizations.of(tester.element(find.byType(TextField)));
-    expect(find.text(l10n.homeItemsShownCount(2)), findsOneWidget);
+    expect(find.text('${l10n.searchRecentTab} (2)'), findsOneWidget);
+    expect(find.text(l10n.homeItemsShownCount(2)), findsNothing);
     expect(find.byKey(const ValueKey('recent-row-other')), findsNothing);
     expect(find.text(l10n.homeRecentSongs), findsNothing);
     expect(tester.takeException(), isNull);
@@ -250,7 +251,8 @@ void main() {
     );
     controller.notifyListeners();
     await tester.pumpAndSettle();
-    expect(find.text(l10n.homeItemsShownCount(2)), findsOneWidget);
+    expect(find.text('${l10n.searchFavoritesTab} (2)'), findsOneWidget);
+    expect(find.text(l10n.homeItemsShownCount(2)), findsNothing);
     expect(find.text(l10n.homeFavorites), findsOneWidget);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
@@ -320,6 +322,7 @@ void main() {
       addTearDown(controller.dispose);
       await _pumpHome(tester, controller: controller);
       final l10n = AppLocalizations.of(tester.element(find.byType(TextField)));
+      expect(find.text('${l10n.searchOnlineTab} (1)'), findsOneWidget);
       expect(
         find.byKey(const ValueKey('home-search-comparison-counts')),
         findsOneWidget,
@@ -390,7 +393,8 @@ void main() {
       );
       await tester.pumpAndSettle();
       final l10n = AppLocalizations.of(tester.element(find.byType(TextField)));
-      expect(find.text(l10n.searchResultCount(count)), findsOneWidget);
+      expect(find.text('${l10n.searchOnlineTab} ($count)'), findsOneWidget);
+      expect(find.text(l10n.searchResultCount(count)), findsNothing);
       expect(find.text(l10n.searchAutocompleteLabel), findsNothing);
       expect(tester.takeException(), isNull);
     }

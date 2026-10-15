@@ -143,6 +143,63 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     });
   }
 
+  List<RecentItemData> _historyItemsForMode(
+    HomeListMode mode,
+    AppLocalizations l10n,
+  ) {
+    if (mode == HomeListMode.recent) return widget.state.recent;
+    if (mode != HomeListMode.favorites) return const [];
+    return <RecentItemData>[
+      ...widget.state.songs
+          .where((item) => item.favorite)
+          .map(
+            (song) => RecentItemData(
+              id: song.id,
+              title: song.title,
+              artist: song.artist,
+              subtitle: [
+                if (song.album?.isNotEmpty == true) song.album!,
+                if (song.durationSeconds != null)
+                  formatDuration(song.durationSeconds!),
+              ].join(' · '),
+              artworkUrl: song.artworkUrl,
+              occurredAt: song.modifiedAt ?? DateTime.now(),
+              isSetlist: false,
+              favorite: true,
+              playCount: song.playCount,
+            ),
+          ),
+      ...widget.state.setlists
+          .where((item) => item.favorite)
+          .map(
+            (set) => RecentItemData(
+              id: set.id,
+              title: set.title,
+              subtitle: l10n.setlistSongsCount(set.songTitles.length),
+              occurredAt: set.modifiedAt ?? DateTime.now(),
+              isSetlist: true,
+              favorite: true,
+            ),
+          ),
+    ]..sort((a, b) => b.occurredAt.compareTo(a.occurredAt));
+  }
+
+  List<RecentItemData> _filteredHistoryItems(
+    HomeListMode mode,
+    AppLocalizations l10n,
+  ) {
+    final query = widget.state.query.trim().toLowerCase();
+    final items = _historyItemsForMode(mode, l10n);
+    if (query.isEmpty) return items;
+    return items
+        .where(
+          (item) => '${item.title} ${item.artist} ${item.subtitle}'
+              .toLowerCase()
+              .contains(query),
+        )
+        .toList();
+  }
+
   List<_HistoryGroup> _groups(AppLocalizations l10n) {
     final state = widget.state;
     final today = DateUtils.dateOnly(DateTime.now());
@@ -168,51 +225,7 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
   }
 
   List<_HistoryGroup> _computeGroups(AppLocalizations l10n) {
-    final isFavorites = widget.state.homeListMode == HomeListMode.favorites;
-    final items = isFavorites
-        ? (<RecentItemData>[
-            ...widget.state.songs
-                .where((item) => item.favorite)
-                .map(
-                  (song) => RecentItemData(
-                    id: song.id,
-                    title: song.title,
-                    artist: song.artist,
-                    subtitle: [
-                      if (song.album?.isNotEmpty == true) song.album!,
-                      if (song.durationSeconds != null)
-                        formatDuration(song.durationSeconds!),
-                    ].join(' · '),
-                    artworkUrl: song.artworkUrl,
-                    occurredAt: song.modifiedAt ?? DateTime.now(),
-                    isSetlist: false,
-                    favorite: true,
-                    playCount: song.playCount,
-                  ),
-                ),
-            ...widget.state.setlists
-                .where((item) => item.favorite)
-                .map(
-                  (set) => RecentItemData(
-                    id: set.id,
-                    title: set.title,
-                    subtitle: l10n.setlistSongsCount(set.songTitles.length),
-                    occurredAt: set.modifiedAt ?? DateTime.now(),
-                    isSetlist: true,
-                    favorite: true,
-                  ),
-                ),
-          ]..sort((a, b) => b.occurredAt.compareTo(a.occurredAt)))
-        : widget.state.recent;
-    final filtered = widget.state.query.trim().isEmpty
-        ? items
-        : items
-              .where(
-                (item) => '${item.title} ${item.artist} ${item.subtitle}'
-                    .toLowerCase()
-                    .contains(widget.state.query.trim().toLowerCase()),
-              )
-              .toList();
+    final filtered = _filteredHistoryItems(widget.state.homeListMode, l10n);
     final groups = <String, _HistoryGroup>{};
     for (final item in filtered) {
       final day = DateUtils.dateOnly(item.occurredAt.toLocal());
@@ -412,9 +425,9 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
         selected: state.homeListMode,
         onChanged: widget.controller.setHomeListMode,
         labels: [
-          l10n.searchRecentTab,
-          l10n.searchFavoritesTab,
-          l10n.searchOnlineTab,
+          '${l10n.searchRecentTab} (${_filteredHistoryItems(HomeListMode.recent, l10n).length})',
+          '${l10n.searchFavoritesTab} (${_filteredHistoryItems(HomeListMode.favorites, l10n).length})',
+          '${l10n.searchOnlineTab} (${state.comparison == null ? state.autocomplete.length : 1})',
         ],
       ),
     ],
@@ -513,38 +526,25 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
   ) {
     final favorites = state.homeListMode == HomeListMode.favorites;
     final hasItems = groups.isNotEmpty;
-    final visibleCount = groups.fold<int>(
-      0,
-      (total, group) => total + group.items.length,
-    );
     final out = <Widget>[];
-    out.add(
-      SliverPadding(
-        padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
-        sliver: SliverToBoxAdapter(
-          child: Wrap(
-            alignment: WrapAlignment.spaceBetween,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            runSpacing: 0,
-            children: [
-              Text(
-                l10n.homeItemsShownCount(visibleCount),
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+    if (!favorites && state.recent.isNotEmpty) {
+      out.add(
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+          sliver: SliverToBoxAdapter(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () =>
+                    confirmClearHistory(context, widget.controller),
+                style: TextButton.styleFrom(minimumSize: const Size(44, 44)),
+                child: Text(l10n.homeHistoryClear),
               ),
-              if (!favorites && state.recent.isNotEmpty)
-                TextButton(
-                  onPressed: () =>
-                      confirmClearHistory(context, widget.controller),
-                  style: TextButton.styleFrom(minimumSize: const Size(44, 44)),
-                  child: Text(l10n.homeHistoryClear),
-                ),
-            ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    }
     if (!hasItems) {
       out.add(
         SliverFillRemaining(
@@ -828,17 +828,6 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
       );
       return out;
     }
-    out.add(
-      SliverPadding(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 6),
-        sliver: SliverToBoxAdapter(
-          child: Text(
-            l10n.searchResultCount(state.autocomplete.length),
-            style: Theme.of(context).textTheme.labelLarge,
-          ),
-        ),
-      ),
-    );
     out.add(
       SliverPadding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
