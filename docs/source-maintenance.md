@@ -147,16 +147,50 @@ deployment as a data-preserving upgrade path.
 
 ## Daily repair and discovery procedure
 
-The daily Codex automation attached to the Datasources chat runs at 09:00
-Europe/Kyiv. It uses this procedure, rather than treating an HTTP 200 as proof
-that extraction still works. Like other local Codex scheduled work, it needs the
-computer and Codex app running (see [scheduled tasks documentation](https://learn.chatgpt.com/docs/automations?surface=app)).
+The owner's daily task runs at 09:00 Europe/Kyiv in a private Codex Cloud
+environment using the ChatGPT/Codex subscription. It does not require the owner's
+computer, local files, or desktop app. The former local heartbeat is retained
+paused after the hosted task is verified. Environment publication, GitHub access,
+and the hosted schedule are account configuration, separate from this repository's
+catalog. See [cloud environments](https://learn.chatgpt.com/docs/environments/cloud-environments)
+and [scheduled tasks](https://learn.chatgpt.com/docs/automations).
+
+The [scheduled smoke report](https://github.com/freevia-org/Singbook/blob/e67c5305b5d2134be8b27e0d7d0e8faf60677589/reports/source-maintenance/latest.json)
+records actual managed-cloud execution of the validator. It is explicitly
+`offline_unverified`: it proves the timer/runtime path, not source health. The
+first normal daily run establishes the durable live baseline.
+
+The prepared Linux environment includes the Flutter version pinned by CI and its
+locked dependencies. No Android SDK, device, emulator, app build, signing material,
+or OpenAI API key is needed. Activate the writable cache locations in each shell:
+
+```bash
+export PATH=/workspace/toolchains/flutter/bin:$PATH
+export PUB_CACHE=/workspace/.pub-cache
+export XDG_CONFIG_HOME=/workspace/.config
+export ANALYZER_STATE_LOCATION_OVERRIDE=/workspace/.dart-state
+export CI=true
+cd /workspace/Singbook
+flutter pub get --enforce-lockfile
+```
+
+Use the Singbook-only GitHub connection for reports and review PRs. Keep secrets
+in the cloud environment's secure configuration; never copy or create
+`config/local.defines.json`. Missing `GENIUS_ACCESS_TOKEN` remains
+`not_configured`. A cloud proxy CONNECT denial is an environment access problem,
+even when the saved policy permits the host, and is not evidence of an upstream
+schema change. Do not bypass the proxy or disable TLS verification.
 
 1. Inspect Git state, current public history, this guide, catalog and previous
-   local reports. Use the clean-public-history datasource worktree and preserve
-   unfinished changes. Coordinate shared files and device/build ownership.
+   durable reports. Use the cloud task's isolated checkout, fetch public `main`,
+   and preserve unfinished changes. Never depend on a Windows checkout, local
+   integration chat, or a connected computer.
 2. Run all live probes against the current catalog, writing a dated report under
-   ignored `artifacts/source-maintenance/`. Compare with prior reports so an
+   ignored `artifacts/source-maintenance/`. Persist the sanitized report and its
+   latest summary on the dedicated `codex/datasource-health` GitHub branch;
+   compare that branch's prior report, rather than assuming an old cloud VM or
+   ignored file survives. Keep report history separate from source-change PRs
+   and do not open report-only PRs. Compare with prior reports so an
    unchanged failure is not repeatedly announced. A missing credential is a
    coverage limitation, never a schema repair or a healthy source.
 3. Diagnose changed extraction and missing fields against the actual source and
@@ -185,10 +219,13 @@ computer and Codex app running (see [scheduled tasks documentation](https://lear
    publication time, and run static validation, provider/controller regressions
    and analysis. Re-probe changed/new sources using the final candidate config.
    Validate the whole catalog and keep unchanged external outages explicit.
-8. Commit only owned, validated changes on clean public history and hand the
-   exact base/head, file list and evidence to Singbook's integration chat. Its
-   existing integration process reviews/pushes public `main`; verify the served
-   catalog matches the integrated revision before calling an update published.
+8. Commit only owned, validated source changes on a task branch based on current
+   public history and open or update a GitHub review PR. Include exact base/head,
+   file list, dated redacted report and test/canary evidence. Keep merges, public
+   `main` publication, and app releases with the integration/release owner;
+   a prepared PR is not a published catalog update. After an accepted merge,
+   verify the served catalog matches the integrated revision before calling an
+   update published.
    Never push old canonical history, publish app-store builds, overwrite secrets,
    clear user data or force-push as part of maintenance.
 
