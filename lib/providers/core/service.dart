@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 import '../../domain/models.dart';
 import '../provider.dart';
+import '../source_catalog_client.dart';
 
 class ProviderCheck {
   const ProviderCheck({
@@ -312,8 +313,11 @@ Future<SourceResult> findMatchingSource(
 
 /// Shared by the UI and headless device tests; no result is fabricated on failure.
 class SourceDiscoveryService {
-  SourceDiscoveryService(this.providers);
-  final List<LyricsProvider> providers;
+  SourceDiscoveryService(this._providers, {this.catalogClient});
+  final List<LyricsProvider> _providers;
+  SourceCatalogClient? catalogClient;
+  List<LyricsProvider> get providers =>
+      catalogClient?.runtime.providers ?? _providers;
   List<ProviderDefinition> get definitions =>
       providers.map((p) => p.definition).toList();
   Future<List<SongCandidate>> search(

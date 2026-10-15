@@ -92,7 +92,9 @@ class ProviderTransport {
     Map<String, String> headers = const {},
     CancellationToken? cancel,
     int? maxBytes,
-  }) => requestText(url, headers: headers, cancel: cancel, maxBytes: maxBytes);
+    Set<String>? allowedHosts,
+  }) => requestText(url, headers: headers, cancel: cancel, maxBytes: maxBytes,
+      allowedHosts: allowedHosts);
 
   Future<dynamic> requestJson(
     Uri url, {
@@ -132,14 +134,19 @@ class ProviderTransport {
     Object? body,
     CancellationToken? cancel,
     int? maxBytes,
+    Set<String>? allowedHosts,
   }) async {
     if (_closed) throw const ProviderException('transport_closed');
     if (!_validUrl(url)) throw const ProviderException('invalid_url');
+    final hostPolicy = allowedHosts == null ? null : Set<String>.unmodifiable(allowedHosts);
+    if (hostPolicy != null && !hostPolicy.contains(url.host)) {
+      throw const ProviderException('invalid_url');
+    }
     cancel?.throwIfCancelled();
     final limit = (maxBytes ?? this.maxBytes).clamp(1, _hardMaxBytes);
     final previous = _queues[url.host] ?? Future<void>.value();
     final result = previous.then(
-      (_) => _run(url, method, headers, body, cancel, limit),
+      (_) => _run(url, method, headers, body, cancel, limit, hostPolicy),
     );
     _queues[url.host] = result.then<void>((_) {}, onError: (Object _) {});
     return _cancellable(result, cancel);
@@ -170,6 +177,7 @@ class ProviderTransport {
     Object? body,
     CancellationToken? cancel,
     int limit,
+    Set<String>? allowedHosts,
   ) async {
     if (_closed) throw const ProviderException('transport_closed');
     cancel?.throwIfCancelled();
@@ -188,7 +196,9 @@ class ProviderTransport {
             : Uri.tryParse(location.trim());
         if (parsed == null) throw ProviderException('redirect', 'HTTP $code');
         final target = url.resolveUri(parsed);
-        if (!_redirectAllowed(start, target) || ++hops > 3) {
+        if (!_redirectAllowed(start, target) ||
+            allowedHosts != null && !allowedHosts.contains(target.host) ||
+            ++hops > 3) {
           throw ProviderException(
             'redirect',
             'HTTP $code -> ${target.host.isEmpty ? '?' : target.host}',

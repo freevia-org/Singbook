@@ -4,6 +4,7 @@ import 'dart:io' show FileSystemException;
 import 'package:archive/archive.dart' show ArchiveException;
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:xml/xml.dart' show XmlException;
 import '../data/library_repository.dart';
 import '../domain/models.dart';
@@ -12,6 +13,9 @@ import '../domain/combine.dart';
 import '../providers/provider.dart';
 import '../providers/core/core_providers.dart';
 import '../providers/extra/extra_providers.dart';
+import '../providers/source_catalog.dart';
+import '../providers/source_catalog_client.dart';
+import '../providers/configurable_provider.dart';
 import 'file_actions.dart';
 import '../sync/google_drive_sync.dart';
 
@@ -107,6 +111,9 @@ class AppController extends ChangeNotifier {
   List<ActivityEntry> recent = [];
   bool hasMoreRecent = true;
   List<ProviderDefinition> get providers => discovery.definitions;
+  bool sourcesRefreshing = false;
+  String? sourceRefreshError;
+  Future<bool>? _sourceRefreshFuture;
   String query = '';
   List<SongCandidate> suggestions = [];
   SongCandidate? selection;
@@ -281,6 +288,8 @@ class AppController extends ChangeNotifier {
     _sync ??= GoogleDriveSyncService(repository: repository);
     settings = jsonMap(await repository.getSetting('app'));
     if (_disposed) return;
+    await _initializeSourceCatalog();
+    if (_disposed) return;
     await _reload();
     if (_disposed) return;
     recent = await repository.listActivity(limit: 40);
@@ -290,6 +299,9 @@ class AppController extends ChangeNotifier {
     unawaited(compactOutbox().then<void>((_) {}, onError: (Object _) {}));
     initialized = true;
     _emit();
+    if (discovery.catalogClient != null) {
+      unawaited(refreshSources(silent: true));
+    }
     if (syncConfigured) {
       await restoreSync();
     }
@@ -378,11 +390,67 @@ class AppController extends ChangeNotifier {
   /// Authoritative lookup straight from the database.
   Future<SongDocument?> loadSong(String id) => repository.getSong(id);
 
-  bool providerEnabled(String id) =>
-      (settings['providers'] is Map &&
-          (settings['providers'] as Map)[id] is bool)
+  bool providerEnabled(String id) => !providers.any((p) => p.id == id)
+      ? false
+      : (settings['providers'] is Map &&
+            (settings['providers'] as Map)[id] is bool)
       ? (settings['providers'] as Map)[id] as bool
       : providers.firstWhere((p) => p.id == id).enabledByDefault;
+
+  Future<void> _initializeSourceCatalog() async {
+    final transport = _ownedTransport;
+    if (discovery.catalogClient == null && transport != null) {
+      final runtime = SourceCatalogRuntime(
+        builtins: discovery.providers,
+        createProvider: (entry) {
+          ConfigurableProvider.validateExtraction(entry);
+          return ConfigurableProvider(entry, transport);
+        },
+      );
+      discovery.catalogClient = SourceCatalogClient(
+        runtime: runtime,
+        transport: transport,
+        loadBundled: () => rootBundle.loadString('config/source-catalog.json'),
+        readCache: () async {
+          final value = await repository.getSetting('sourceCatalog');
+          return value is String ? value : null;
+        },
+        writeCache: (value) => repository.setSetting('sourceCatalog', value),
+      );
+    }
+    await discovery.catalogClient?.initialize();
+  }
+
+  /// Preferences and saved song provenance survive provider retirement.
+  /// Existing searches use their original snapshot; their results are cancelled
+  /// before a newly downloaded catalog is exposed to the UI.
+  Future<bool> refreshSources({bool silent = false}) =>
+      _sourceRefreshFuture ??= _refreshSources(
+        silent: silent,
+      ).whenComplete(() => _sourceRefreshFuture = null);
+
+  Future<bool> _refreshSources({required bool silent}) async {
+    if (_disposed) return false;
+    final client = discovery.catalogClient;
+    if (client == null) return false;
+    sourcesRefreshing = true;
+    sourceRefreshError = null;
+    _emit();
+    final previous = client.runtime.catalog?.revision;
+    final success = await client.refresh();
+    if (_disposed) return false;
+    if (success && previous != client.runtime.catalog?.revision) {
+      cancelSearch();
+    }
+    sourcesRefreshing = false;
+    sourceRefreshError = client.lastErrorCode;
+    if (!silent && !success) {
+      messages.value = const AppMessage('refresh_failed', operation: 'sources');
+    }
+    _emit();
+    return success;
+  }
+
   Future<void> setProviderEnabled(String id, bool enabled) async {
     await setSetting('providers', {
       ...jsonMap(settings['providers']),
@@ -418,7 +486,17 @@ class AppController extends ChangeNotifier {
     errorCode = null;
     _emit();
     try {
-      final catalog = settings['catalog'] as String? ?? 'genius';
+      final requested = settings['catalog'] as String? ?? 'genius';
+      final available = providers.where(
+        (p) => p.capabilities.contains('catalog'),
+      );
+      final catalog = providers.any((p) => p.id == requested)
+          ? requested
+          : available.isNotEmpty
+          ? available.first.id
+          : providers.isNotEmpty
+          ? providers.first.id
+          : requested;
       final found = await discovery.search(
         value.trim(),
         providerId: catalog,

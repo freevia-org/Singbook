@@ -46,6 +46,7 @@ flutter:
   generate: true
   uses-material-design: true
   assets:
+    - config/source-catalog.json
     - assets/fonts/
     - assets/fonts/brand-candidates/Lora-OFL.txt
     - assets/branding/singbook-icon.png

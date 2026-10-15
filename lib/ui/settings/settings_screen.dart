@@ -73,6 +73,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   /// Text size while the slider is being dragged; saved when the drag ends.
   double? _draggingFontSize;
+  bool _refreshingSources = false;
+  bool? _sourceRefreshSucceeded;
+
+  Future<void> _refreshSources() async {
+    setState(() {
+      _refreshingSources = true;
+      _sourceRefreshSucceeded = null;
+    });
+    var success = false;
+    try {
+      success = await widget.controller.refreshSources();
+    } catch (_) {
+      // Keep the current source list and offer a retry.
+    }
+    if (!mounted) return;
+    setState(() {
+      _refreshingSources = false;
+      _sourceRefreshSucceeded = success;
+    });
+  }
 
   @override
   void initState() {
@@ -251,6 +271,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
         VerseSectionLabel(l10n.settingsSources),
         _SettingCard(
           children: [
+            ListTile(
+              key: const ValueKey('refresh-source-list'),
+              leading: const Icon(Icons.refresh_rounded),
+              title: Text(l10n.settingsSourceRefresh),
+              subtitle: _refreshingSources
+                  ? Text(l10n.loading)
+                  : _sourceRefreshSucceeded == null
+                  ? null
+                  : Semantics(
+                      liveRegion: true,
+                      child: Text(
+                        _sourceRefreshSucceeded!
+                            ? l10n.actionDone
+                            : l10n.actionRetry,
+                      ),
+                    ),
+              trailing: _refreshingSources
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : null,
+              onTap: _refreshingSources ? null : _refreshSources,
+            ),
             for (final provider in state.providers)
               SwitchListTile(
                 title: Text(provider.name),
