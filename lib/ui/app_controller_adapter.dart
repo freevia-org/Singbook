@@ -593,6 +593,19 @@ class AppControllerAdapter extends VerseUiController {
       if (combined?.extra['chordSourceIds'] is List)
         ...(combined!.extra['chordSourceIds'] as List).whereType<String>(),
     };
+    final pendingChordSourceIds = {
+      if (combined?.extra['pendingChordSourceIds'] is List)
+        ...(combined!.extra['pendingChordSourceIds'] as List)
+            .whereType<String>(),
+    };
+    final pendingContributor = combined?.sources
+        .where(
+          (source) =>
+              contributingSourceIds.contains(source.id) &&
+              (pendingChordSourceIds.contains(source.id) ||
+                  (app.discovering && !app.isSourceReady(source))),
+        )
+        .firstOrNull;
     final unverifiedContributor = combined?.sources
         .where(
           (source) =>
@@ -635,8 +648,13 @@ class AppControllerAdapter extends VerseUiController {
                 .isNotEmpty,
             hasChords: combined.hasChords,
             hasTiming: _hasUsableTiming(combined.timingTracks),
-            sameRecording: chosenSource?.matchKind == MatchKind.sameRecording,
-            matchSummary: unverifiedContributor != null
+            sameRecording:
+                chosenSource?.matchKind == MatchKind.sameRecording &&
+                pendingContributor == null &&
+                unverifiedContributor == null,
+            matchSummary: pendingContributor != null
+                ? 'pending'
+                : unverifiedContributor != null
                 ? unverifiedContributor.matchKind == MatchKind.sameSong
                       ? 'same_song'
                       : 'identity_mismatch'

@@ -146,6 +146,9 @@ bool _completeChart(String chart, String reference) {
 
 String _lineKey(ArrangementLine line) => _norm(line.text);
 
+String _escapeLiteralChordTokens(String text) =>
+    text.replaceAllMapped(chordPattern, (match) => '\\${match[0]}');
+
 ({String text, List<int> offsets}) _normalizedLine(String text) {
   final normalized = StringBuffer();
   final offsets = <int>[];
@@ -331,15 +334,20 @@ bool _compatibleArrangementSetup(
     chords.sort((a, b) => a.offset.compareTo(b.offset));
     final characters = line.text.characters.toList();
     final buffer = StringBuffer();
-    var chordIndex = 0;
-    for (var offset = 0; offset <= characters.length; offset++) {
-      while (chordIndex < chords.length &&
-          chords[chordIndex].offset <= offset) {
-        buffer.write('[${chords[chordIndex].chord}]');
-        chordIndex++;
+    var cursor = 0;
+    for (final chord in chords) {
+      final offset = chord.offset.clamp(cursor, characters.length);
+      if (offset > cursor) {
+        buffer.write(
+          _escapeLiteralChordTokens(
+            characters.skip(cursor).take(offset - cursor).join(),
+          ),
+        );
+        cursor = offset;
       }
-      if (offset < characters.length) buffer.write(characters[offset]);
+      buffer.write('[${chord.chord}]');
     }
+    buffer.write(_escapeLiteralChordTokens(characters.skip(cursor).join()));
     output.add(buffer.toString());
   }
   return (
@@ -456,7 +464,9 @@ SongDocument combineSources(
   final arrangementSourceIds = <String>{best.id};
   for (final sourceId in chordSourceIds) {
     final source = sourcesById[sourceId];
-    if (source != null && recordingCompatible(selected, source)) {
+    if (source != null &&
+        (recordingCompatible(selected, source) ||
+            merged.sourceIds.contains(sourceId))) {
       arrangementSourceIds.add(sourceId);
     }
   }
@@ -576,6 +586,15 @@ SongDocument combineSources(
       'recommendation':
           'Combined lyrics, chords, timing, and metadata from matching sources.',
       if (chordSourceIds.isNotEmpty) 'chordSourceIds': chordSourceIds,
+      if (chordSourceIds.any(
+        (sourceId) => sourcesById[sourceId]?.extra['pendingMatchCheck'] == true,
+      ))
+        'pendingChordSourceIds': chordSourceIds
+            .where(
+              (sourceId) =>
+                  sourcesById[sourceId]?.extra['pendingMatchCheck'] == true,
+            )
+            .toList(),
       'excludedIncompleteSourceIds': accepted
           .where((s) => !eligible.contains(s))
           .map((s) => s.id)

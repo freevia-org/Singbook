@@ -1143,6 +1143,88 @@ void main() {
     },
   );
 
+  test('saving a combined preview preserves pending chord checks', () async {
+    const candidate = SongCandidate(
+      providerId: 'catalog',
+      id: 'pending-chart-song',
+      title: 'Pending Chart Song',
+      artist: 'Test Artist',
+    );
+    const chart = SourceResult(
+      candidate: candidate,
+      body: '[C]A lyric line with pending chord verification',
+      matchKind: MatchKind.sameRecording,
+    );
+    app.selection = candidate;
+    app.results = [chart];
+    app.discovering = true;
+    app.combined = combineSources(candidate, [
+      chart.copyWith(extra: {'pendingMatchCheck': true}),
+    ]);
+
+    final saved = await app.saveResult();
+
+    expect(saved.extra['pendingChordSourceIds'], [chart.id]);
+    expect(saved.sources.single.extra['pendingMatchCheck'], isTrue);
+  });
+
+  test('pending combined chord preview shows its status before save', () async {
+    ui.dispose();
+    app.dispose();
+    const candidate = SongCandidate(
+      providerId: 'catalog',
+      id: 'pending-preview-song',
+      title: 'Pending Preview Song',
+      artist: 'Test Artist',
+      album: 'Test Album',
+      durationSeconds: 120,
+    );
+    const lyrics = SourceResult(
+      candidate: candidate,
+      body:
+          'First lyric line\nSecond lyric line\nThird lyric line\nFourth lyric line',
+      matchKind: MatchKind.sameRecording,
+    );
+    const chart = SourceResult(
+      candidate: SongCandidate(
+        providerId: 'chart-provider',
+        id: 'pending-preview-song',
+        title: 'Pending Preview Song',
+        artist: 'Test Artist',
+        album: 'Test Album',
+        durationSeconds: 120,
+      ),
+      body: '[C]First lyric line\n[F]Second lyric line',
+      matchKind: MatchKind.sameRecording,
+    );
+    final discovery = _StreamingDiscovery(
+      candidate,
+      lyrics,
+      additionalSources: [chart],
+    );
+    app = AppController(repository: repository, discovery: discovery);
+    await app.initialize();
+    ui = AppControllerAdapter(app);
+    ui.setQuery('pending preview song');
+    await ui.submitSearch();
+    final selecting = ui.selectReference(
+      const SearchReferenceData(
+        id: 'catalog:pending-preview-song',
+        title: 'Pending Preview Song',
+        artist: 'Test Artist',
+      ),
+    );
+    await discovery.started.future;
+
+    expect(ui.state.comparison?.suggested?.matchSummary, 'pending');
+    expect(ui.state.comparison?.suggested?.sameRecording, isFalse);
+    await ui.saveSelectedVersion();
+    expect(app.songs.single.extra['pendingChordSourceIds'], [chart.id]);
+
+    discovery.finished.complete([lyrics, chart]);
+    await selecting;
+  });
+
   test(
     'repeated setlist occurrences advance from the selected entry',
     () async {
@@ -1263,9 +1345,14 @@ TimingTrack _track({JsonMap extra = const {}}) => TimingTrack(
 );
 
 class _StreamingDiscovery extends SourceDiscoveryService {
-  _StreamingDiscovery(this.candidate, this.source) : super([]);
+  _StreamingDiscovery(
+    this.candidate,
+    this.source, {
+    this.additionalSources = const [],
+  }) : super([]);
   final SongCandidate candidate;
   final SourceResult source;
+  final List<SourceResult> additionalSources;
   final started = Completer<void>();
   final finished = Completer<List<SourceResult>>();
   @override
@@ -1282,13 +1369,15 @@ class _StreamingDiscovery extends SourceDiscoveryService {
     CancellationToken? cancel,
     Duration alternativeTimeout = const Duration(seconds: 30),
   }) async {
-    onProgress?.call(
-      ProviderCheck(
-        providerId: candidate.providerId,
-        state: 'found',
-        result: source,
-      ),
-    );
+    for (final result in [source, ...additionalSources]) {
+      onProgress?.call(
+        ProviderCheck(
+          providerId: result.candidate.providerId,
+          state: 'found',
+          result: result,
+        ),
+      );
+    }
     started.complete();
     return finished.future;
   }

@@ -10,6 +10,7 @@ String localizedMatchReason(AppLocalizations l10n, String? code) {
     'uncorroborated_arrangement' => l10n.searchMatchNeedsAgreement,
     'incomplete_or_different_lyrics' => l10n.searchMatchDifferentLyrics,
     'identity_mismatch' => l10n.searchMatchUnverified,
+    'pending' => l10n.searchProviderPending,
     'combined_sources' => l10n.searchMatchCombinedSources,
     'best_available' => l10n.searchMatchBestAvailable,
     _ =>

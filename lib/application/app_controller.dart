@@ -651,7 +651,10 @@ class AppController extends ChangeNotifier {
         .map(
           (source) => isSourceReady(source)
               ? source
-              : source.copyWith(timingTracks: const []),
+              : source.copyWith(
+                  timingTracks: const [],
+                  extra: {...source.extra, 'pendingMatchCheck': true},
+                ),
         )
         .toList();
     final usable = available.where(
@@ -710,7 +713,10 @@ class AppController extends ChangeNotifier {
         .map((item) {
           final snapshot = _snapshotSource(item);
           if (source == null && !isSourceReady(item)) {
-            return snapshot.copyWith(timingTracks: const []);
+            return snapshot.copyWith(
+              timingTracks: const [],
+              extra: {...snapshot.extra, 'pendingMatchCheck': true},
+            );
           }
           return snapshot;
         })

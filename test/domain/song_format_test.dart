@@ -375,6 +375,7 @@ void main() {
     MatchKind kind = MatchKind.sameRecording,
     List<TimingTrack> tracks = const [],
     JsonMap metadata = const {},
+    JsonMap extra = const {},
   }) => SourceResult(
     candidate: SongCandidate(
       providerId: id,
@@ -388,6 +389,7 @@ void main() {
     matchKind: kind,
     timingTracks: tracks,
     metadata: metadata,
+    extra: extra,
   );
   test(
     'combine keeps chart text, safe metadata, conflicts and applicable timing',
@@ -720,6 +722,73 @@ void main() {
     expect(result.body, isNot(contains('[C]')));
     expect(result.body, isNot(contains('[G]')));
     expect(result.extra['chordSourceIds'], isNull);
+  });
+  test('overlays keep literal chord-shaped lyric text escaped', () {
+    final base =
+        r'A \[C\] note'
+        '\n'
+        'Another plain lyric line'
+        '\n'
+        'A third plain lyric line';
+    final result = combineSources(selected, [
+      source('lyrics', base),
+      source('chart', '[G]A C note'),
+    ]);
+
+    final first = parseArrangement(result.body).first;
+    expect(first.text, 'A [C] note');
+    expect(first.chords.map((chord) => chord.chord), ['G']);
+    expect(result.body, contains(r'[G]A \[C] note'));
+  });
+  test('automatic chord overlays require matching recording setup', () {
+    const full = 'First lyric line\nSecond lyric line\nThird lyric line';
+    final base = source('base', full, metadata: {'key': 'D', 'capo': 1});
+    final otherRecording = source(
+      'other-recording',
+      '[C]First lyric line\n[F]Second lyric line',
+      kind: MatchKind.sameSong,
+      metadata: {'key': 'C', 'capo': 2},
+    );
+
+    final automatic = combineSources(selected, [base, otherRecording]);
+    expect(automatic.hasChords, isFalse);
+    expect(automatic.metadata['key'], 'D');
+    expect(automatic.metadata['capo'], 1);
+
+    final explicitlySelected = combineSources(selected, [
+      base,
+      otherRecording,
+    ], preferredSourceId: otherRecording.id);
+    expect(explicitlySelected.body, contains('[C]'));
+    expect(explicitlySelected.metadata['key'], 'C');
+    expect(explicitlySelected.metadata['capo'], 2);
+  });
+  test('cross-recording chart overlays carry their own setup provenance', () {
+    const full =
+        'First lyric line\nSecond lyric line\nThird lyric line\nFourth lyric line';
+    final chart = source(
+      'other-recording',
+      '[C]First lyric line\n[F]Second lyric line',
+      kind: MatchKind.sameSong,
+      metadata: {'key': 'C', 'capo': 2},
+    );
+    final result = combineSources(selected, [source('lyrics', full), chart]);
+
+    expect(result.body, contains('[C]First lyric line'));
+    expect(result.metadata['key'], 'C');
+    expect(result.metadata['capo'], 2);
+    expect(jsonMap(result.extra['fieldOrigins'])['key'], chart.id);
+    expect(result.extra['chordSourceIds'], [chart.id]);
+  });
+  test('pending chord contributor state is included in combined snapshot', () {
+    final pending = source(
+      'pending-chart',
+      '[C]A lyric with a chord',
+      extra: {'pendingMatchCheck': true},
+    );
+    final result = combineSources(selected, [pending]);
+
+    expect(result.extra['pendingChordSourceIds'], [pending.id]);
   });
   test('unverified fallback ranking does not depend on arrival order', () {
     final later = source(
