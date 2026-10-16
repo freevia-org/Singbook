@@ -1711,4 +1711,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'संस्करण की अवधि';
+
+  @override
+  String get searchSourceOptions => 'स्रोत विकल्प';
 }

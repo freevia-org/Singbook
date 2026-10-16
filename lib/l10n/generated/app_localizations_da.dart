@@ -1716,4 +1716,7 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Versionens varighed';
+
+  @override
+  String get searchSourceOptions => 'Kildeindstillinger';
 }

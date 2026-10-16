@@ -1746,4 +1746,7 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Versijas ilgums';
+
+  @override
+  String get searchSourceOptions => 'Avota opcijas';
 }

@@ -210,5 +210,6 @@
   "searchJumpSection": "Към раздел",
   "searchVersionDetails": "Подробности за версията",
   "searchSelectedRecording": "Избран запис",
-  "searchVersionDuration": "Продължителност на версията"
+  "searchVersionDuration": "Продължителност на версията",
+  "searchSourceOptions": "Опции за източника"
 }

@@ -757,5 +757,6 @@
   "searchJumpSection": "섹션으로 이동",
   "searchVersionDetails": "버전 세부정보",
   "searchSelectedRecording": "선택한 녹음",
-  "searchVersionDuration": "버전 길이"
+  "searchVersionDuration": "버전 길이",
+  "searchSourceOptions": "소스 옵션"
 }

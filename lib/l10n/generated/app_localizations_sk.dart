@@ -1738,4 +1738,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Dĺžka verzie';
+
+  @override
+  String get searchSourceOptions => 'Možnosti zdroja';
 }

@@ -757,5 +757,6 @@
   "searchJumpSection": "セクションへ移動",
   "searchVersionDetails": "バージョンの詳細",
   "searchSelectedRecording": "選択した録音",
-  "searchVersionDuration": "バージョンの長さ"
+  "searchVersionDuration": "バージョンの長さ",
+  "searchSourceOptions": "ソースのオプション"
 }

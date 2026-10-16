@@ -1750,4 +1750,7 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Durata versiunii';
+
+  @override
+  String get searchSourceOptions => 'Opțiuni sursă';
 }

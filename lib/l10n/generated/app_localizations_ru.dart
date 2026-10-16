@@ -1756,4 +1756,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Длительность версии';
+
+  @override
+  String get searchSourceOptions => 'Параметры источника';
 }

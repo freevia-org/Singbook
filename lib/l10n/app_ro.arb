@@ -757,5 +757,6 @@
   "searchJumpSection": "Salt la secțiune",
   "searchVersionDetails": "Detalii despre versiune",
   "searchSelectedRecording": "Înregistrarea selectată",
-  "searchVersionDuration": "Durata versiunii"
+  "searchVersionDuration": "Durata versiunii",
+  "searchSourceOptions": "Opțiuni sursă"
 }

@@ -758,5 +758,6 @@
   "searchJumpSection": "الانتقال إلى القسم",
   "searchVersionDetails": "تفاصيل الإصدار",
   "searchSelectedRecording": "التسجيل المحدد",
-  "searchVersionDuration": "مدة الإصدار"
+  "searchVersionDuration": "مدة الإصدار",
+  "searchSourceOptions": "خيارات المصدر"
 }

@@ -1737,4 +1737,7 @@ class AppLocalizationsGa extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Fad an leagain';
+
+  @override
+  String get searchSourceOptions => 'Roghanna foinse';
 }

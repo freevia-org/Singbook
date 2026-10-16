@@ -757,5 +757,6 @@
   "searchJumpSection": "Pāriet uz sadaļu",
   "searchVersionDetails": "Versijas informācija",
   "searchSelectedRecording": "Atlasītais ieraksts",
-  "searchVersionDuration": "Versijas ilgums"
+  "searchVersionDuration": "Versijas ilgums",
+  "searchSourceOptions": "Avota opcijas"
 }

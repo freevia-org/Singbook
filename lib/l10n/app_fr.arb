@@ -757,5 +757,6 @@
   "searchJumpSection": "Aller à la section",
   "searchVersionDetails": "Détails de la version",
   "searchSelectedRecording": "Enregistrement sélectionné",
-  "searchVersionDuration": "Durée de la version"
+  "searchVersionDuration": "Durée de la version",
+  "searchSourceOptions": "Options de la source"
 }

@@ -1727,4 +1727,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Verzió hossza';
+
+  @override
+  String get searchSourceOptions => 'Forrásbeállítások';
 }

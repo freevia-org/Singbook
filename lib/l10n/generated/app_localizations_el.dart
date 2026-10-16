@@ -1743,4 +1743,7 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Διάρκεια έκδοσης';
+
+  @override
+  String get searchSourceOptions => 'Επιλογές πηγής';
 }

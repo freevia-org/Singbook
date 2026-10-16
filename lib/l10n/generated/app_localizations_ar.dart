@@ -1752,4 +1752,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'مدة الإصدار';
+
+  @override
+  String get searchSourceOptions => 'خيارات المصدر';
 }

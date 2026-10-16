@@ -42,6 +42,7 @@ class _Controller extends VerseUiController {
   SourceVersionData? suggested;
   String selected = 'a';
   int saves = 0;
+  String? savedVersionId;
   bool opened = false;
   @override
   VerseUiState get state => VerseUiState(
@@ -69,6 +70,7 @@ class _Controller extends VerseUiController {
   @override
   Future<void> saveSelectedVersion() async {
     saves++;
+    savedVersionId = selected;
     opened = true;
     notifyListeners();
   }
@@ -166,27 +168,98 @@ void main() {
     ];
     addTearDown(controller.dispose);
     await tester.pumpWidget(_app(controller));
-    final scrollable = find
-        .descendant(
-          of: find.byKey(const ValueKey('full-preview-body')),
-          matching: find.byType(Scrollable),
-        )
+    final initialPage = find.byKey(const ValueKey('a'));
+    final initialBody = find.descendant(
+      of: initialPage,
+      matching: find.byKey(const ValueKey('full-preview-body')),
+    );
+    final initialScrollable = find
+        .descendant(of: initialBody, matching: find.byType(Scrollable))
         .first;
     final later = find.byKey(const ValueKey('preview-line-chorus-2'));
-    await tester.scrollUntilVisible(later, 200, scrollable: scrollable);
-    await Scrollable.ensureVisible(tester.element(later), alignment: 0);
+    final initialLater = find.descendant(of: initialPage, matching: later);
+    await tester.scrollUntilVisible(
+      initialLater,
+      200,
+      scrollable: initialScrollable,
+    );
+    await Scrollable.ensureVisible(tester.element(initialLater), alignment: 0);
     await tester.pump();
-    final position = tester.state<ScrollableState>(scrollable).position;
-    final before = position.pixels;
-    expect(before, greaterThan(1000));
+    final initialPosition = tester
+        .state<ScrollableState>(initialScrollable)
+        .position;
+    expect(initialPosition.pixels, greaterThan(1000));
     await tester.tap(find.byKey(const ValueKey('version-row-b')));
     await tester.pumpAndSettle();
     await tester.pump();
     expect(controller.selected, 'b');
-    expect(position.pixels, closeTo(before, 100));
-    expect(later, findsOneWidget);
+    final activePage = find.byKey(const ValueKey('b'));
+    final activeBody = find.descendant(
+      of: activePage,
+      matching: find.byKey(const ValueKey('full-preview-body')),
+    );
+    final activeScrollable = find
+        .descendant(of: activeBody, matching: find.byType(Scrollable))
+        .first;
+    final activeLater = find.descendant(of: activePage, matching: later);
+    expect(
+      tester.state<ScrollableState>(activeScrollable).position.pixels,
+      greaterThan(1000),
+    );
+    expect(activeLater.hitTestable(), findsOneWidget);
     expect(controller.saves, 0);
   });
+
+  testWidgets(
+    'single-source alias preview matches the version that will save',
+    (tester) async {
+      final controller = _Controller()
+        ..selected = 'combined'
+        ..versions = [
+          SourceVersionData(
+            id: 'a',
+            providerId: 'raw',
+            providerName: 'Raw source',
+            title: 'Raw recording',
+            artist: 'The Testers',
+            durationSeconds: 180,
+            hasLyrics: true,
+            isUsableVersion: true,
+            canSave: true,
+            bodyLines: const [
+              LyricLineData(id: 'raw-body', text: 'Raw arrangement'),
+            ],
+          ),
+          _version('b'),
+        ]
+        ..suggested = const SourceVersionData(
+          id: 'combined',
+          providerId: 'combined',
+          providerName: 'Combined source',
+          title: 'Combined recording',
+          artist: 'The Testers',
+          durationSeconds: 247,
+          sourceCount: 1,
+          underlyingSourceId: 'a',
+          hasLyrics: true,
+          isUsableVersion: true,
+          canSave: true,
+          bodyLines: [
+            LyricLineData(id: 'combined-body', text: 'Combined arrangement'),
+          ],
+        );
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(_app(controller));
+      expect(controller.selected, 'combined');
+      expect(find.text('Combined arrangement').hitTestable(), findsOneWidget);
+      expect(find.text('Raw arrangement').hitTestable(), findsNothing);
+      await tester.tap(find.byKey(const ValueKey('preview-save-open')));
+      await tester.pumpAndSettle();
+      expect(controller.savedVersionId, 'combined');
+      expect(controller.saves, 1);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('swiping changes selected identity without saving', (
     tester,

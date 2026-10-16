@@ -1744,4 +1744,7 @@ class AppLocalizationsMt extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Tul tal-verżjoni';
+
+  @override
+  String get searchSourceOptions => 'Għażliet tas-sors';
 }

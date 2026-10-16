@@ -757,5 +757,6 @@
   "searchJumpSection": "Pojdi na razdelek",
   "searchVersionDetails": "Podrobnosti različice",
   "searchSelectedRecording": "Izbrani posnetek",
-  "searchVersionDuration": "Trajanje različice"
+  "searchVersionDuration": "Trajanje različice",
+  "searchSourceOptions": "Možnosti vira"
 }

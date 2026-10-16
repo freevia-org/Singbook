@@ -757,5 +757,6 @@
   "searchJumpSection": "Siirry osiooniiin",
   "searchVersionDetails": "Version tiedot",
   "searchSelectedRecording": "Valittu äänite",
-  "searchVersionDuration": "Version kesto"
+  "searchVersionDuration": "Version kesto",
+  "searchSourceOptions": "Lähdeasetukset"
 }

@@ -543,6 +543,10 @@ void main() {
       findsNothing,
     );
     await tester.tap(find.byKey(const ValueKey('version-source-menu')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.tap(find.byKey(const ValueKey('discovery-provider-checks')));
+    await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
     expect(
       find.byKey(const ValueKey('discovery-provider-catalog')),

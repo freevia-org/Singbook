@@ -757,5 +757,6 @@
   "searchJumpSection": "Bölüme git",
   "searchVersionDetails": "Sürüm ayrıntıları",
   "searchSelectedRecording": "Seçilen kayıt",
-  "searchVersionDuration": "Sürüm süresi"
+  "searchVersionDuration": "Sürüm süresi",
+  "searchSourceOptions": "Kaynak seçenekleri"
 }

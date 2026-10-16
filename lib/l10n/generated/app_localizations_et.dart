@@ -1718,4 +1718,7 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Versiooni kestus';
+
+  @override
+  String get searchSourceOptions => 'Allika valikud';
 }

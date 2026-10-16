@@ -1735,4 +1735,7 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Délka verze';
+
+  @override
+  String get searchSourceOptions => 'Možnosti zdroje';
 }

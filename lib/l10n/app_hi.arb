@@ -757,5 +757,6 @@
   "searchJumpSection": "अनुभाग पर जाएँ",
   "searchVersionDetails": "संस्करण का विवरण",
   "searchSelectedRecording": "चयनित रिकॉर्डिंग",
-  "searchVersionDuration": "संस्करण की अवधि"
+  "searchVersionDuration": "संस्करण की अवधि",
+  "searchSourceOptions": "स्रोत विकल्प"
 }

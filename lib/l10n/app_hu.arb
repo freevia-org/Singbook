@@ -757,5 +757,6 @@
   "searchJumpSection": "Ugrás a szakaszhoz",
   "searchVersionDetails": "Verzió részletei",
   "searchSelectedRecording": "Kiválasztott felvétel",
-  "searchVersionDuration": "Verzió hossza"
+  "searchVersionDuration": "Verzió hossza",
+  "searchSourceOptions": "Forrásbeállítások"
 }

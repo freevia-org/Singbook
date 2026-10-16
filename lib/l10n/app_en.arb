@@ -485,5 +485,6 @@
   "searchJumpSection": "Jump to section",
   "searchVersionDetails": "Version details",
   "searchSelectedRecording": "Selected recording",
-  "searchVersionDuration": "Version duration"
+  "searchVersionDuration": "Version duration",
+  "searchSourceOptions": "Source options"
 }

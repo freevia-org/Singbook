@@ -1722,4 +1722,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Durasi versi';
+
+  @override
+  String get searchSourceOptions => 'Opsi sumber';
 }

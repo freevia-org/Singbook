@@ -1740,4 +1740,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Versieduur';
+
+  @override
+  String get searchSourceOptions => 'Bronopties';
 }

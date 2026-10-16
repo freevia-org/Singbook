@@ -463,6 +463,228 @@ void main() {
     },
   );
 
+  testWidgets(
+    'filter changes during tab animation preserve selection and Clear restores pages',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(360, 640);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      const versions = [
+        SourceVersionData(
+          id: 'a',
+          providerId: 'one',
+          providerName: 'Source A',
+          title: 'Signal Song',
+          artist: 'The Signals',
+          hasLyrics: true,
+          hasChords: true,
+          isUsableVersion: true,
+          canSave: true,
+          bodyPreview: [
+            LyricLineData(id: 'a-preview', text: 'Source A preview'),
+          ],
+        ),
+        SourceVersionData(
+          id: 'b',
+          providerId: 'two',
+          providerName: 'Source B',
+          title: 'Signal Song',
+          artist: 'The Signals',
+          hasLyrics: true,
+          hasChords: true,
+          isUsableVersion: true,
+          canSave: true,
+          bodyPreview: [
+            LyricLineData(id: 'b-preview', text: 'Source B preview'),
+          ],
+        ),
+        SourceVersionData(
+          id: 'c',
+          providerId: 'three',
+          providerName: 'Source C',
+          title: 'Signal Song',
+          artist: 'The Signals',
+          hasLyrics: true,
+          hasChords: false,
+          isUsableVersion: true,
+          canSave: true,
+          bodyPreview: [
+            LyricLineData(id: 'c-preview', text: 'Source C preview'),
+          ],
+        ),
+      ];
+      const initial = VerseUiState(
+        homeListMode: HomeListMode.online,
+        query: 'signal',
+        comparison: SearchComparisonData(
+          reference: SearchReferenceData(
+            id: 'signal',
+            title: 'Signal Song',
+            artist: 'The Signals',
+          ),
+          suggested: null,
+          alternatives: versions,
+          selectedVersionId: 'b',
+        ),
+      );
+      final controller = _FilteringFlowController(initial, versions);
+      addTearDown(controller.dispose);
+      await _pumpHome(tester, controller);
+      _assertActivePreview(tester, 'b', 'Source B preview');
+
+      await tester.tap(find.byKey(const ValueKey('version-row-a')));
+      await tester.pump(const Duration(milliseconds: 40));
+      controller.setSearchFilter('chordsOnly', true);
+      await tester.pumpAndSettle();
+      expect(controller.state.comparison!.selectedVersionId, 'a');
+      _assertActivePreview(tester, 'a', 'Source A preview');
+      expect(find.byKey(const ValueKey('version-row-c')), findsNothing);
+
+      controller.setSearchFilter('chordsOnly', false);
+      await tester.pumpAndSettle();
+      expect(controller.state.comparison!.selectedVersionId, 'a');
+      _assertActivePreview(tester, 'a', 'Source A preview');
+      expect(find.byKey(const ValueKey('version-row-c')), findsOneWidget);
+      controller.setSearchFilter('chordsOnly', true);
+      await tester.pumpAndSettle();
+      expect(controller.state.comparison!.selectedVersionId, 'a');
+      _assertActivePreview(tester, 'a', 'Source A preview');
+
+      controller.setSearchFilter('timedOnly', true);
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('version-filters-empty')),
+        findsOneWidget,
+      );
+      expect(controller.state.comparison!.selected, isNull);
+      expect(controller.state.comparison!.selectedVersionId, isNull);
+      expect(find.byKey(const ValueKey('save-open-lyrics')), findsNothing);
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(VerseHomeScreen)),
+      );
+      await tester.tap(find.text(l10n.actionClear));
+      await tester.pumpAndSettle();
+      expect(controller.state.searchFilters.chordsOnly, isFalse);
+      expect(controller.state.searchFilters.timedOnly, isFalse);
+      expect(controller.state.comparison!.selected?.id, 'a');
+      _assertActivePreview(tester, 'a', 'Source A preview');
+      expect(find.byKey(const ValueKey('version-row-c')), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+  );
+
+  for (final configuration in [
+    (const Size(360, 640), 1.0, 'en'),
+    (const Size(640, 360), 2.0, 'ar'),
+  ]) {
+    testWidgets(
+      'comparison filter sheet preserves preview space $configuration',
+      (tester) async {
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = configuration.$1;
+        addTearDown(tester.view.resetDevicePixelRatio);
+        addTearDown(tester.view.resetPhysicalSize);
+        const versions = [
+          SourceVersionData(
+            id: 'a',
+            providerId: 'a',
+            providerName: 'Source A',
+            title: 'Signal Song',
+            artist: 'The Signals',
+            hasLyrics: true,
+            hasChords: true,
+            canSave: true,
+            isUsableVersion: true,
+            bodyPreview: [
+              LyricLineData(id: 'a-line', text: 'Source A preview'),
+            ],
+          ),
+          SourceVersionData(
+            id: 'b',
+            providerId: 'b',
+            providerName: 'Source B',
+            title: 'Signal Song',
+            artist: 'The Signals',
+            hasLyrics: true,
+            canSave: true,
+            isUsableVersion: true,
+            bodyPreview: [
+              LyricLineData(id: 'b-line', text: 'Source B preview'),
+            ],
+          ),
+        ];
+        final controller = _FilteringFlowController(
+          const VerseUiState(
+            homeListMode: HomeListMode.online,
+            comparison: SearchComparisonData(
+              reference: SearchReferenceData(
+                id: 'signal',
+                title: 'Signal Song',
+                artist: 'The Signals',
+              ),
+              suggested: null,
+              alternatives: versions,
+              selectedVersionId: 'b',
+            ),
+          ),
+          versions,
+        );
+        addTearDown(controller.dispose);
+        await _pumpHome(
+          tester,
+          controller,
+          scale: configuration.$2,
+          language: configuration.$3,
+        );
+        final before = tester
+            .getSize(find.byKey(const ValueKey('version-preview-pages')))
+            .height;
+        final l10n = AppLocalizations.of(
+          tester.element(find.byType(VerseHomeScreen)),
+        );
+        await tester.tap(find.byKey(const ValueKey('version-source-menu')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(l10n.searchFilters));
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('version-filters-sheet')),
+          findsOneWidget,
+        );
+        final chords = find.widgetWithText(FilterChip, l10n.searchFilterChords);
+        await tester.ensureVisible(chords);
+        await tester.tap(chords);
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('version-filters-done')));
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('version-filters-sheet')),
+          findsNothing,
+        );
+        expect(find.byKey(const ValueKey('version-row-b')), findsNothing);
+        if (configuration.$2 > 1) {
+          await tester.ensureVisible(
+            find.descendant(
+              of: find.byKey(const ValueKey('a')),
+              matching: find.text('Source A preview'),
+            ),
+          );
+          await tester.pumpAndSettle();
+        }
+        _assertActivePreview(tester, 'a', 'Source A preview');
+        expect(
+          tester
+              .getSize(find.byKey(const ValueKey('version-preview-pages')))
+              .height,
+          closeTo(before, 1),
+        );
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox.shrink());
+      },
+    );
+  }
+
   testWidgets('large text comparison remains usable in landscape', (
     tester,
   ) async {
@@ -811,6 +1033,17 @@ void main() {
 bool _isVisibleWithin(Rect child, Rect viewport) =>
     child.top >= viewport.top && child.bottom <= viewport.bottom;
 
+void _assertActivePreview(WidgetTester tester, String id, String previewText) {
+  final chip = find.byKey(ValueKey('version-row-$id'));
+  expect(tester.widget<ChoiceChip>(chip).selected, isTrue);
+  final page = find.byKey(ValueKey(id));
+  expect(page, findsOneWidget);
+  expect(
+    find.descendant(of: page, matching: find.text(previewText)).hitTestable(),
+    findsOneWidget,
+  );
+}
+
 List<String> _rowOrder(WidgetTester tester) {
   final tabs = find.byKey(const ValueKey('version-tabs'));
   return tester
@@ -879,9 +1112,11 @@ Future<void> _pumpHome(
   WidgetTester tester,
   _LiveFlowController controller, {
   double scale = 1,
+  String language = 'en',
 }) async {
   await tester.pumpWidget(
     MaterialApp(
+      locale: Locale(language),
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -1013,4 +1248,86 @@ class _LiveFlowController extends VerseUiController {
 
   @override
   dynamic noSuchMethod(Invocation invocation) => null;
+}
+
+/// A small adapter-like fixture: filtering changes both the filter state and
+/// the returned candidate list, while preserving the controller's canonical
+/// selected source identity when that source temporarily disappears.
+class _FilteringFlowController extends _LiveFlowController {
+  _FilteringFlowController(super.initial, this._allVersions)
+    : _filters = initial.searchFilters;
+
+  final List<SourceVersionData> _allVersions;
+  SearchFilterData _filters;
+
+  @override
+  void selectVersion(String versionId) {
+    selectionHistory.add(versionId);
+    final comparison = _state.comparison!;
+    _state = VerseUiState(
+      homeListMode: _state.homeListMode,
+      query: _state.query,
+      searchState: _state.searchState,
+      searchFilters: _filters,
+      comparison: SearchComparisonData(
+        reference: comparison.reference,
+        suggested: comparison.suggested,
+        alternatives: comparison.alternatives,
+        selectedVersionId: versionId,
+        discovering: comparison.discovering,
+        providerChecks: comparison.providerChecks,
+      ),
+    );
+    notifyListeners();
+  }
+
+  @override
+  void setSearchFilter(String key, Object? value) {
+    final field = key == 'field' ? value as String : _filters.field;
+    final language = key == 'language' ? value as String : _filters.language;
+    final chordsOnly = key == 'chordsOnly'
+        ? value as bool
+        : _filters.chordsOnly;
+    final timedOnly = key == 'timedOnly' ? value as bool : _filters.timedOnly;
+    final durationBucket = key == 'durationBucket'
+        ? value as String
+        : _filters.durationBucket;
+    _filters = SearchFilterData(
+      field: field,
+      language: language,
+      chordsOnly: chordsOnly,
+      timedOnly: timedOnly,
+      durationBucket: durationBucket,
+    );
+    final comparison = _state.comparison!;
+    final filtered = _allVersions.where((version) {
+      if (_filters.chordsOnly && !version.hasChords) return false;
+      if (_filters.timedOnly && !version.hasTiming) return false;
+      if (_filters.durationBucket == 'short' &&
+          (version.durationSeconds == null || version.durationSeconds! > 180)) {
+        return false;
+      }
+      return true;
+    }).toList();
+    _state = VerseUiState(
+      homeListMode: _state.homeListMode,
+      query: _state.query,
+      searchState: _state.searchState,
+      searchFilters: _filters,
+      comparison: SearchComparisonData(
+        reference: comparison.reference,
+        suggested: filtered.isEmpty ? null : filtered.first,
+        alternatives: filtered,
+        selectedVersionId:
+            filtered.any(
+              (version) => version.id == comparison.selectedVersionId,
+            )
+            ? comparison.selectedVersionId
+            : null,
+        discovering: comparison.discovering,
+        providerChecks: comparison.providerChecks,
+      ),
+    );
+    notifyListeners();
+  }
 }

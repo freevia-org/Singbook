@@ -757,5 +757,6 @@
   "searchJumpSection": "Pereiti į skyrių",
   "searchVersionDetails": "Versijos informacija",
   "searchSelectedRecording": "Pasirinktas įrašas",
-  "searchVersionDuration": "Versijos trukmė"
+  "searchVersionDuration": "Versijos trukmė",
+  "searchSourceOptions": "Šaltinio parinktys"
 }

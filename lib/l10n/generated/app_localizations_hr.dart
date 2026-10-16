@@ -1738,4 +1738,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Trajanje verzije';
+
+  @override
+  String get searchSourceOptions => 'Opcije izvora';
 }

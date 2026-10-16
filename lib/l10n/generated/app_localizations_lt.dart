@@ -1754,4 +1754,7 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Versijos trukmė';
+
+  @override
+  String get searchSourceOptions => 'Šaltinio parinktys';
 }

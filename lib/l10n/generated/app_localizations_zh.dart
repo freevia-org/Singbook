@@ -1640,4 +1640,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get searchVersionDuration => '版本时长';
+
+  @override
+  String get searchSourceOptions => '来源选项';
 }

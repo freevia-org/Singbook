@@ -1753,4 +1753,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Czas trwania wersji';
+
+  @override
+  String get searchSourceOptions => 'Opcje źródła';
 }

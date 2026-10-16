@@ -757,5 +757,6 @@
   "searchJumpSection": "Prejsť na sekciu",
   "searchVersionDetails": "Podrobnosti o verzii",
   "searchSelectedRecording": "Vybratá nahrávka",
-  "searchVersionDuration": "Dĺžka verzie"
+  "searchVersionDuration": "Dĺžka verzie",
+  "searchSourceOptions": "Možnosti zdroja"
 }

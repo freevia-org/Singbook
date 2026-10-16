@@ -1659,4 +1659,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'バージョンの長さ';
+
+  @override
+  String get searchSourceOptions => 'ソースのオプション';
 }

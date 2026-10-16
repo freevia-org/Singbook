@@ -757,5 +757,6 @@
   "searchJumpSection": "Idi na odjeljak",
   "searchVersionDetails": "Pojedinosti o verziji",
   "searchSelectedRecording": "Odabrana snimka",
-  "searchVersionDuration": "Trajanje verzije"
+  "searchVersionDuration": "Trajanje verzije",
+  "searchSourceOptions": "Opcije izvora"
 }

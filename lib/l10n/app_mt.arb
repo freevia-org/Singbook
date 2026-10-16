@@ -757,5 +757,6 @@
   "searchJumpSection": "Mur fit-taqsima",
   "searchVersionDetails": "Dettalji tal-verżjoni",
   "searchSelectedRecording": "Reġistrazzjoni magħżula",
-  "searchVersionDuration": "Tul tal-verżjoni"
+  "searchVersionDuration": "Tul tal-verżjoni",
+  "searchSourceOptions": "Għażliet tas-sors"
 }

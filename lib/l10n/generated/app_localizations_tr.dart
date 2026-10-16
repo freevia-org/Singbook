@@ -1720,4 +1720,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Sürüm süresi';
+
+  @override
+  String get searchSourceOptions => 'Kaynak seçenekleri';
 }

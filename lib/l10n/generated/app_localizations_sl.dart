@@ -1760,4 +1760,7 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Trajanje različice';
+
+  @override
+  String get searchSourceOptions => 'Možnosti vira';
 }

@@ -1665,4 +1665,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get searchVersionDuration => '버전 길이';
+
+  @override
+  String get searchSourceOptions => '소스 옵션';
 }

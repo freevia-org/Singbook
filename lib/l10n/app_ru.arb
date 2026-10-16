@@ -757,5 +757,6 @@
   "searchJumpSection": "Перейти к разделу",
   "searchVersionDetails": "Сведения о версии",
   "searchSelectedRecording": "Выбранная запись",
-  "searchVersionDuration": "Длительность версии"
+  "searchVersionDuration": "Длительность версии",
+  "searchSourceOptions": "Параметры источника"
 }

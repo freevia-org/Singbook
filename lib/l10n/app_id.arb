@@ -757,5 +757,6 @@
   "searchJumpSection": "Lompat ke bagian",
   "searchVersionDetails": "Detail versi",
   "searchSelectedRecording": "Rekaman yang dipilih",
-  "searchVersionDuration": "Durasi versi"
+  "searchVersionDuration": "Durasi versi",
+  "searchSourceOptions": "Opsi sumber"
 }

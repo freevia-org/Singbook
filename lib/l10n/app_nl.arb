@@ -757,5 +757,6 @@
   "searchJumpSection": "Ga naar sectie",
   "searchVersionDetails": "Versiedetails",
   "searchSelectedRecording": "Geselecteerde opname",
-  "searchVersionDuration": "Versieduur"
+  "searchVersionDuration": "Versieduur",
+  "searchSourceOptions": "Bronopties"
 }

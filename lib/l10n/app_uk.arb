@@ -210,5 +210,6 @@
   "searchJumpSection": "Перейти до розділу",
   "searchVersionDetails": "Відомості про версію",
   "searchSelectedRecording": "Вибраний запис",
-  "searchVersionDuration": "Тривалість версії"
+  "searchVersionDuration": "Тривалість версії",
+  "searchSourceOptions": "Параметри джерела"
 }

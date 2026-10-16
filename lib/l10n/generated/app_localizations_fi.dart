@@ -1720,4 +1720,7 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Version kesto';
+
+  @override
+  String get searchSourceOptions => 'Lähdeasetukset';
 }

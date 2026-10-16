@@ -917,6 +917,94 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     );
   }
 
+  void _showVersionFilters() {
+    final l10n = AppLocalizations.of(context);
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (sheetContext) => SafeArea(
+        child: DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: .55,
+          maxChildSize: .9,
+          builder: (context, scroll) => AnimatedBuilder(
+            animation: widget.controller,
+            builder: (context, _) {
+              final state = widget.controller.state;
+              final comparison = state.comparison;
+              final ready = comparison == null
+                  ? 0
+                  : comparisonVersions(comparison)
+                        .where(
+                          (version) =>
+                              version.canSave || version.savedSongId != null,
+                        )
+                        .map(versionSelectionId)
+                        .toSet()
+                        .length;
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsetsDirectional.only(
+                      start: 20,
+                      end: 12,
+                      top: 8,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            l10n.searchFilters,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
+                        TextButton(
+                          key: const ValueKey('version-filters-done'),
+                          onPressed: () => Navigator.pop(sheetContext),
+                          child: Text(l10n.actionDone),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView(
+                      controller: scroll,
+                      key: const ValueKey('version-filters-sheet'),
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                      children: [
+                        Text(l10n.searchReadyVersions(ready)),
+                        _searchFilters(context, l10n, state),
+                        TextButton(
+                          key: const ValueKey('version-filters-clear'),
+                          onPressed: () {
+                            widget.controller.setSearchFilter(
+                              'chordsOnly',
+                              false,
+                            );
+                            widget.controller.setSearchFilter(
+                              'timedOnly',
+                              false,
+                            );
+                            widget.controller.setSearchFilter('language', '');
+                            widget.controller.setSearchFilter(
+                              'durationBucket',
+                              '',
+                            );
+                          },
+                          child: Text(l10n.actionClear),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _comparison(
     BuildContext context,
     AppLocalizations l10n,
@@ -925,13 +1013,7 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     key: ValueKey(comparison.reference.id),
     controller: widget.controller,
     onOpenFullScreen: _openFullPreview,
-    onFilters: widget.controller.toggleSearchFilters,
-    filters: widget.state.searchFiltersExpanded
-        ? Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: _searchFilters(context, l10n, widget.state),
-          )
-        : null,
+    onFilters: _showVersionFilters,
   );
 
   Widget _timeline(

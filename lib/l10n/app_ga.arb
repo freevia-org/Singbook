@@ -757,5 +757,6 @@
   "searchJumpSection": "Léim chuig rannán",
   "searchVersionDetails": "Sonraí an leagain",
   "searchSelectedRecording": "Taifeadadh roghnaithe",
-  "searchVersionDuration": "Fad an leagain"
+  "searchVersionDuration": "Fad an leagain",
+  "searchSourceOptions": "Roghanna foinse"
 }

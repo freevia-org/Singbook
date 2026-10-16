@@ -757,5 +757,6 @@
   "searchJumpSection": "Μετάβαση στην ενότητα",
   "searchVersionDetails": "Λεπτομέρειες έκδοσης",
   "searchSelectedRecording": "Επιλεγμένη ηχογράφηση",
-  "searchVersionDuration": "Διάρκεια έκδοσης"
+  "searchVersionDuration": "Διάρκεια έκδοσης",
+  "searchSourceOptions": "Επιλογές πηγής"
 }

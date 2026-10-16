@@ -1719,4 +1719,7 @@ class AppLocalizationsBg extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Продължителност на версията';
+
+  @override
+  String get searchSourceOptions => 'Опции за източника';
 }

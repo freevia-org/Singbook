@@ -757,5 +757,6 @@
   "searchJumpSection": "Chuyển đến mục",
   "searchVersionDetails": "Chi tiết phiên bản",
   "searchSelectedRecording": "Bản ghi đã chọn",
-  "searchVersionDuration": "Thời lượng phiên bản"
+  "searchVersionDuration": "Thời lượng phiên bản",
+  "searchSourceOptions": "Tùy chọn nguồn"
 }

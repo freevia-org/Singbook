@@ -1714,4 +1714,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Thời lượng phiên bản';
+
+  @override
+  String get searchSourceOptions => 'Tùy chọn nguồn';
 }

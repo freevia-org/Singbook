@@ -2999,6 +2999,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Version duration'**
   String get searchVersionDuration;
+
+  /// No description provided for @searchSourceOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Source options'**
+  String get searchSourceOptions;
 }
 
 class _AppLocalizationsDelegate

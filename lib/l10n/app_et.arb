@@ -757,5 +757,6 @@
   "searchJumpSection": "Hüppa jaotisse",
   "searchVersionDetails": "Versiooni üksikasjad",
   "searchSelectedRecording": "Valitud salvestis",
-  "searchVersionDuration": "Versiooni kestus"
+  "searchVersionDuration": "Versiooni kestus",
+  "searchSourceOptions": "Allika valikud"
 }

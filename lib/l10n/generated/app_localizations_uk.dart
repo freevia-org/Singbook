@@ -1758,4 +1758,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Тривалість версії';
+
+  @override
+  String get searchSourceOptions => 'Параметри джерела';
 }

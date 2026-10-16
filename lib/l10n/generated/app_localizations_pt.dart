@@ -1729,4 +1729,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Duração da versão';
+
+  @override
+  String get searchSourceOptions => 'Opções da fonte';
 }

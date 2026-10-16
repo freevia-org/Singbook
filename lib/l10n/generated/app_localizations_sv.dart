@@ -1721,4 +1721,7 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get searchVersionDuration => 'Versionens längd';
+
+  @override
+  String get searchSourceOptions => 'Källalternativ';
 }

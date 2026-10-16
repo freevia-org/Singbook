@@ -757,5 +757,6 @@
   "searchJumpSection": "Gå til afsnit",
   "searchVersionDetails": "Versionsoplysninger",
   "searchSelectedRecording": "Valgt indspilning",
-  "searchVersionDuration": "Versionens varighed"
+  "searchVersionDuration": "Versionens varighed",
+  "searchSourceOptions": "Kildeindstillinger"
 }

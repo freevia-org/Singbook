@@ -757,5 +757,6 @@
   "searchJumpSection": "Hoppa till avsnitt",
   "searchVersionDetails": "Versionsinformation",
   "searchSelectedRecording": "Vald inspelning",
-  "searchVersionDuration": "Versionens längd"
+  "searchVersionDuration": "Versionens längd",
+  "searchSourceOptions": "Källalternativ"
 }
