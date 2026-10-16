@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Pokojné miesto, kde nájdete a usporiadate piesne zo svojej knižnice a budete ich spievať spolu.",
   "aboutMadeForSinging": "Stvorené na spoločné spievanie",
-  "appVersion": "Verzia {version}",
+  "menuTypeNewSong": "Zadať novú pieseň", "aboutDetails": "Vyhľadávajte v povolených zdrojoch, porovnávajte verzie, uchovávajte texty a akordy spolu a zoraďujte skladby do zoznamov. Vaša knižnica je uložená v tomto zariadení; voliteľná synchronizácia cez Google Drive používa váš účet Google. Vyhľadávania sa odosielajú priamo povoleným zdrojom.", "aboutSupport": "Podpora a spätná väzba", "appVersion": "Verzia {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

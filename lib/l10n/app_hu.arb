@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Nyugodt hely, ahol megtalálhatod, rendszerezheted és énekelheted a dalaidat.",
   "aboutMadeForSinging": "Közös énekléshez készült",
-  "appVersion": "Verzió: {version}",
+  "menuTypeNewSong": "Új dal beírása", "aboutDetails": "Keress az engedélyezett forrásokban, hasonlítsd össze a változatokat, tartsd együtt a dalszöveget és az akkordokat, és rendezd a dalokat listákba. A könyvtár ezen az eszközön tárolódik; a választható Google Drive-szinkronizálás a Google-fiókodat használja. A keresések közvetlenül az engedélyezett forrásokhoz kerülnek.", "aboutSupport": "Támogatás és visszajelzés", "appVersion": "Verzió: {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

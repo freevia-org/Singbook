@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Un espace paisible pour trouver, organiser et chanter à partir de votre bibliothèque de chansons.",
   "aboutMadeForSinging": "Conçu pour chanter ensemble",
-  "appVersion": "Version {version}",
+  "menuTypeNewSong": "Saisir une nouvelle chanson", "aboutDetails": "Recherchez dans les sources activées, comparez les versions, regroupez paroles et accords et organisez les chansons en listes. Votre bibliothèque est enregistrée sur cet appareil ; la synchronisation Google Drive facultative utilise votre compte Google. Les recherches sont envoyées directement aux sources activées.", "aboutSupport": "Aide et commentaires", "appVersion": "Version {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

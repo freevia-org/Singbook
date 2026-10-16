@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "En lugn plats där du kan hitta och organisera låtarna i ditt bibliotek och sjunga tillsammans.",
   "aboutMadeForSinging": "Skapad för att sjunga tillsammans",
-  "appVersion": "Version {version}",
+  "menuTypeNewSong": "Skriv in en ny låt", "aboutDetails": "Sök i aktiverade källor, jämför versioner, samla låttexter och ackord och ordna låtar i setlistor. Ditt bibliotek sparas på den här enheten; valfri synkronisering med Google Drive använder ditt Google-konto. Sökningar skickas direkt till aktiverade källor.", "aboutSupport": "Support och feedback", "appVersion": "Version {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

@@ -19,6 +19,16 @@ class AppLocalizationsSv extends AppLocalizations {
   String get aboutMadeForSinging => 'Skapad för att sjunga tillsammans';
 
   @override
+  String get aboutDetails =>
+      'Sök i aktiverade källor, jämför versioner, samla låttexter och ackord och ordna låtar i setlistor. Ditt bibliotek sparas på den här enheten; valfri synkronisering med Google Drive använder ditt Google-konto. Sökningar skickas direkt till aktiverade källor.';
+
+  @override
+  String get aboutSupport => 'Support och feedback';
+
+  @override
+  String get menuTypeNewSong => 'Skriv in en ny låt';
+
+  @override
   String appVersion(String version) {
     return 'Version $version';
   }

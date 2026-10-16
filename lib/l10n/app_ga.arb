@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Áit shuaimhneach chun do leabharlann amhrán a aimsiú, a eagrú agus amhráin a chanadh léi.",
   "aboutMadeForSinging": "Déanta chun amhráin a chanadh le chéile",
-  "appVersion": "Leagan {version}",
+  "menuTypeNewSong": "Clóscríobh amhrán nua", "aboutDetails": "Cuardaigh foinsí cumasaithe, cuir leaganacha i gcomparáid, coinnigh liricí agus cordaí le chéile, agus eagraigh amhráin i liostaí. Stóráiltear do leabharlann ar an ngléas seo; úsáideann sioncronú roghnach Google Drive do chuntas Google. Seoltar cuardaigh díreach chuig na foinsí cumasaithe.", "aboutSupport": "Tacaíocht agus aiseolas", "appVersion": "Leagan {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

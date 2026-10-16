@@ -19,6 +19,16 @@ class AppLocalizationsLv extends AppLocalizations {
   String get aboutMadeForSinging => 'Radīta kopīgai dziedāšanai';
 
   @override
+  String get aboutDetails =>
+      'Meklējiet iespējotajos avotos, salīdziniet versijas, glabājiet vārdus un akordus kopā un kārtojiet dziesmas sarakstos. Jūsu bibliotēka tiek saglabāta šajā ierīcē; izvēles sinhronizācijā ar Google Drive tiek izmantots jūsu Google konts. Meklējumi tiek nosūtīti tieši iespējotajiem avotiem.';
+
+  @override
+  String get aboutSupport => 'Atbalsts un atsauksmes';
+
+  @override
+  String get menuTypeNewSong => 'Ievadīt jaunu dziesmu';
+
+  @override
   String appVersion(String version) {
     return 'Versija $version';
   }

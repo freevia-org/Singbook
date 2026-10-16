@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show ScrollCacheExtent;
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../app_version.dart';
@@ -365,6 +366,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             const SizedBox(height: 14),
             Text(l10n.aboutDescription, textAlign: TextAlign.center),
+            const SizedBox(height: 12),
+            Text(l10n.aboutDetails, textAlign: TextAlign.center),
+            const SizedBox(height: 10),
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 8,
+              children: [
+                TextButton.icon(
+                  onPressed: () => launchUrl(
+                    Uri.parse('https://freevia.org/singbook/privacy/'),
+                    mode: LaunchMode.externalApplication,
+                  ),
+                  icon: const Icon(Icons.privacy_tip_outlined),
+                  label: Text(l10n.settingsPrivacy),
+                ),
+                TextButton.icon(
+                  onPressed: () => launchUrl(
+                    Uri.parse('https://freevia.org/singbook/support/'),
+                    mode: LaunchMode.externalApplication,
+                  ),
+                  icon: const Icon(Icons.support_agent_outlined),
+                  label: Text(l10n.aboutSupport),
+                ),
+              ],
+            ),
             const SizedBox(height: 12),
             Text(
               l10n.appVersion(singbookVersion),

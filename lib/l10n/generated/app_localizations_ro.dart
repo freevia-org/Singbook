@@ -19,6 +19,16 @@ class AppLocalizationsRo extends AppLocalizations {
   String get aboutMadeForSinging => 'Creat pentru a cânta împreună';
 
   @override
+  String get aboutDetails =>
+      'Caută în sursele activate, compară versiunile, păstrează versurile și acordurile împreună și organizează melodiile în setlisturi. Biblioteca ta este stocată pe acest dispozitiv; sincronizarea opțională cu Google Drive folosește contul tău Google. Căutările sunt trimise direct către sursele activate.';
+
+  @override
+  String get aboutSupport => 'Asistență și feedback';
+
+  @override
+  String get menuTypeNewSong => 'Introdu o melodie nouă';
+
+  @override
   String appVersion(String version) {
     return 'Versiunea $version';
   }

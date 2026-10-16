@@ -19,6 +19,16 @@ class AppLocalizationsDa extends AppLocalizations {
   String get aboutMadeForSinging => 'Skabt til at synge sammen';
 
   @override
+  String get aboutDetails =>
+      'Søg i aktiverede kilder, sammenlign versioner, hold sangtekster og akkorder samlet, og organiser sange i sætlister. Dit bibliotek gemmes på denne enhed; valgfri synkronisering via Google Drive bruger din Google-konto. Søgninger sendes direkte til de aktiverede kilder.';
+
+  @override
+  String get aboutSupport => 'Support og feedback';
+
+  @override
+  String get menuTypeNewSong => 'Skriv en ny sang';
+
+  @override
   String appVersion(String version) {
     return 'Version $version';
   }

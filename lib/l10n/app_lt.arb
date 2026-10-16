@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Rami vieta, kurioje galite rasti dainas, tvarkyti jų rinkinį ir dainuoti kartu.",
   "aboutMadeForSinging": "Sukurta dainuoti kartu",
-  "appVersion": "Versija {version}",
+  "menuTypeNewSong": "Įvesti naują dainą", "aboutDetails": "Ieškokite įjungtuose šaltiniuose, lyginkite versijas, laikykite žodžius ir akordus kartu, o dainas tvarkykite grojaraščiuose. Jūsų biblioteka saugoma šiame įrenginyje; pasirenkamas sinchronizavimas su Google Drive naudoja jūsų Google paskyrą. Paieškos siunčiamos tiesiai į įjungtus šaltinius.", "aboutSupport": "Pagalba ir atsiliepimai", "appVersion": "Versija {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

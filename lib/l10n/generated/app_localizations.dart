@@ -180,6 +180,24 @@ abstract class AppLocalizations {
   /// **'Made for singing together'**
   String get aboutMadeForSinging;
 
+  /// No description provided for @aboutDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Search enabled providers, compare song versions, keep lyrics and chords together, and organize songs into setlists. Your library stays on your device; optional Google Drive sync uses your Google account. Searches go directly to enabled providers.'**
+  String get aboutDetails;
+
+  /// No description provided for @aboutSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Support and feedback'**
+  String get aboutSupport;
+
+  /// No description provided for @menuTypeNewSong.
+  ///
+  /// In en, this message translates to:
+  /// **'Type in a new song'**
+  String get menuTypeNewSong;
+
   /// No description provided for @appVersion.
   ///
   /// In en, this message translates to:

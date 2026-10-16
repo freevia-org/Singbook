@@ -19,6 +19,16 @@ class AppLocalizationsHu extends AppLocalizations {
   String get aboutMadeForSinging => 'Közös énekléshez készült';
 
   @override
+  String get aboutDetails =>
+      'Keress az engedélyezett forrásokban, hasonlítsd össze a változatokat, tartsd együtt a dalszöveget és az akkordokat, és rendezd a dalokat listákba. A könyvtár ezen az eszközön tárolódik; a választható Google Drive-szinkronizálás a Google-fiókodat használja. A keresések közvetlenül az engedélyezett forrásokhoz kerülnek.';
+
+  @override
+  String get aboutSupport => 'Támogatás és visszajelzés';
+
+  @override
+  String get menuTypeNewSong => 'Új dal beírása';
+
+  @override
   String appVersion(String version) {
     return 'Verzió: $version';
   }

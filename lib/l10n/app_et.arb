@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Rahulik koht oma laulude leidmiseks, korrastamiseks ja laulmiseks.",
   "aboutMadeForSinging": "Loodud koos laulmiseks",
-  "appVersion": "Versioon {version}",
+  "menuTypeNewSong": "Sisesta uus laul", "aboutDetails": "Otsi lubatud allikatest, võrdle versioone, hoia sõnad ja akordid koos ning korralda laulud esitusloenditesse. Sinu kogu salvestatakse sellesse seadmesse; valikuline Google Drive’i sünkroonimine kasutab sinu Google’i kontot. Otsingud saadetakse otse lubatud allikatele.", "aboutSupport": "Tugi ja tagasiside", "appVersion": "Versioon {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

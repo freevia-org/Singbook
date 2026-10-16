@@ -19,6 +19,16 @@ class AppLocalizationsSk extends AppLocalizations {
   String get aboutMadeForSinging => 'Stvorené na spoločné spievanie';
 
   @override
+  String get aboutDetails =>
+      'Vyhľadávajte v povolených zdrojoch, porovnávajte verzie, uchovávajte texty a akordy spolu a zoraďujte skladby do zoznamov. Vaša knižnica je uložená v tomto zariadení; voliteľná synchronizácia cez Google Drive používa váš účet Google. Vyhľadávania sa odosielajú priamo povoleným zdrojom.';
+
+  @override
+  String get aboutSupport => 'Podpora a spätná väzba';
+
+  @override
+  String get menuTypeNewSong => 'Zadať novú pieseň';
+
+  @override
   String appVersion(String version) {
     return 'Verzia $version';
   }

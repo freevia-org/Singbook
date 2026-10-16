@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import '../../l10n/generated/app_localizations.dart';
 import '../format.dart';
-import '../library_actions.dart';
 import '../verse_ui_state.dart';
 import '../widgets/verse_components.dart';
 import 'source_preview_screen.dart';
@@ -393,11 +392,6 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
                         },
                         icon: const Icon(Icons.close_rounded),
                       ),
-                    IconButton.filledTonal(
-                      tooltip: l10n.songsAdd,
-                      onPressed: widget.controller.createSong,
-                      icon: const Icon(Icons.add_rounded),
-                    ),
                     IconButton(
                       tooltip: l10n.searchSubmit,
                       onPressed: _submitSearch,
@@ -517,24 +511,6 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     final favorites = state.homeListMode == HomeListMode.favorites;
     final hasItems = groups.isNotEmpty;
     final out = <Widget>[];
-    if (!favorites && state.recent.isNotEmpty) {
-      out.add(
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-          sliver: SliverToBoxAdapter(
-            child: Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: TextButton(
-                onPressed: () =>
-                    confirmClearHistory(context, widget.controller),
-                style: TextButton.styleFrom(minimumSize: const Size(44, 44)),
-                child: Text(l10n.homeHistoryClear),
-              ),
-            ),
-          ),
-        ),
-      );
-    }
     if (!hasItems) {
       out.add(
         SliverFillRemaining(

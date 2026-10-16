@@ -19,6 +19,16 @@ class AppLocalizationsGa extends AppLocalizations {
   String get aboutMadeForSinging => 'Déanta chun amhráin a chanadh le chéile';
 
   @override
+  String get aboutDetails =>
+      'Cuardaigh foinsí cumasaithe, cuir leaganacha i gcomparáid, coinnigh liricí agus cordaí le chéile, agus eagraigh amhráin i liostaí. Stóráiltear do leabharlann ar an ngléas seo; úsáideann sioncronú roghnach Google Drive do chuntas Google. Seoltar cuardaigh díreach chuig na foinsí cumasaithe.';
+
+  @override
+  String get aboutSupport => 'Tacaíocht agus aiseolas';
+
+  @override
+  String get menuTypeNewSong => 'Clóscríobh amhrán nua';
+
+  @override
   String appVersion(String version) {
     return 'Leagan $version';
   }

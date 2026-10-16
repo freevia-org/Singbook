@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Un loc liniștit în care îți găsești, organizezi și cânți melodiile din bibliotecă.",
   "aboutMadeForSinging": "Creat pentru a cânta împreună",
-  "appVersion": "Versiunea {version}",
+  "menuTypeNewSong": "Introdu o melodie nouă", "aboutDetails": "Caută în sursele activate, compară versiunile, păstrează versurile și acordurile împreună și organizează melodiile în setlisturi. Biblioteca ta este stocată pe acest dispozitiv; sincronizarea opțională cu Google Drive folosește contul tău Google. Căutările sunt trimise direct către sursele activate.", "aboutSupport": "Asistență și feedback", "appVersion": "Versiunea {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

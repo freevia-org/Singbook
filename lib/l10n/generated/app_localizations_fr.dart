@@ -19,6 +19,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get aboutMadeForSinging => 'Conçu pour chanter ensemble';
 
   @override
+  String get aboutDetails =>
+      'Recherchez dans les sources activées, comparez les versions, regroupez paroles et accords et organisez les chansons en listes. Votre bibliothèque est enregistrée sur cet appareil ; la synchronisation Google Drive facultative utilise votre compte Google. Les recherches sont envoyées directement aux sources activées.';
+
+  @override
+  String get aboutSupport => 'Aide et commentaires';
+
+  @override
+  String get menuTypeNewSong => 'Saisir une nouvelle chanson';
+
+  @override
   String appVersion(String version) {
     return 'Version $version';
   }

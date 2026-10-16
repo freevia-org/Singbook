@@ -19,6 +19,16 @@ class AppLocalizationsHi extends AppLocalizations {
   String get aboutMadeForSinging => 'साथ मिलकर गाने के लिए बनाया गया';
 
   @override
+  String get aboutDetails =>
+      'चालू स्रोतों में खोजें, गीतों के संस्करणों की तुलना करें, बोल और कॉर्ड साथ रखें, और गीतों को सेटलिस्ट में व्यवस्थित करें। आपकी लाइब्रेरी इस डिवाइस पर सहेजी जाती है; वैकल्पिक Google Drive सिंक आपके Google खाते का उपयोग करता है। खोज सीधे चालू स्रोतों को भेजी जाती है।';
+
+  @override
+  String get aboutSupport => 'सहायता और प्रतिक्रिया';
+
+  @override
+  String get menuTypeNewSong => 'नया गीत लिखें';
+
+  @override
   String appVersion(String version) {
     return 'संस्करण $version';
   }

@@ -1,6 +1,6 @@
 {
   "@@locale": "bg",
-  "appTitle": "Singbook", "aboutDescription": "Спокойно място за намиране, подреждане и пеене от вашата песенна библиотека.", "aboutMadeForSinging": "Създадено за пеене заедно", "appVersion": "Версия {version}", "@appVersion": {"placeholders": {"version": {"type": "String"}}},
+  "appTitle": "Singbook", "aboutDescription": "Спокойно място за намиране, подреждане и пеене от вашата песенна библиотека.", "aboutMadeForSinging": "Създадено за пеене заедно", "menuTypeNewSong": "Въведете нова песен", "aboutDetails": "Търсете в активираните източници, сравнявайте версии, съхранявайте текстове и акорди заедно и подреждайте песни в сетлисти. Библиотеката ви се пази на това устройство; незадължителната синхронизация с Google Drive използва профила ви в Google. Търсенията се изпращат директно към включените източници.", "aboutSupport": "Поддръжка и обратна връзка", "appVersion": "Версия {version}", "@appVersion": {"placeholders": {"version": {"type": "String"}}},
   "navHome": "Начало", "navSongs": "Песни", "navSetlists": "Списъци с песни", "navSettings": "Настройки", "navSettingsCompact": "Настройки", "navSearch": "Търсене", "navBack": "Назад",
   "appExitBackAgain": "Натиснете Назад отново за изход",
   "navClose": "Затваряне", "navMore": "Още действия",

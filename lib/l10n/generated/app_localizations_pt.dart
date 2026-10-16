@@ -19,6 +19,16 @@ class AppLocalizationsPt extends AppLocalizations {
   String get aboutMadeForSinging => 'Feito para cantar em conjunto';
 
   @override
+  String get aboutDetails =>
+      'Pesquise nas fontes ativadas, compare versões, mantenha letras e acordes juntos e organize músicas em listas. A sua biblioteca fica guardada neste dispositivo; a sincronização opcional com o Google Drive usa a sua conta Google. As pesquisas são enviadas diretamente para as fontes ativadas.';
+
+  @override
+  String get aboutSupport => 'Suporte e comentários';
+
+  @override
+  String get menuTypeNewSong => 'Escrever uma nova canção';
+
+  @override
   String appVersion(String version) {
     return 'Versão $version';
   }

@@ -19,6 +19,16 @@ class AppLocalizationsFi extends AppLocalizations {
   String get aboutMadeForSinging => 'Tehty yhdessä laulamiseen';
 
   @override
+  String get aboutDetails =>
+      'Hae käytössä olevista lähteistä, vertaile versioita, pidä sanat ja soinnut yhdessä ja järjestä kappaleet listoiksi. Kirjastosi tallennetaan tälle laitteelle; valinnainen Google Drive -synkronointi käyttää Google-tiliäsi. Haut lähetetään suoraan käytössä oleville lähteille.';
+
+  @override
+  String get aboutSupport => 'Tuki ja palaute';
+
+  @override
+  String get menuTypeNewSong => 'Kirjoita uusi kappale';
+
+  @override
   String appVersion(String version) {
     return 'Versio $version';
   }

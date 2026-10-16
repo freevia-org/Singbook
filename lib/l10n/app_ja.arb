@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "曲を見つけて整理し、ライブラリの曲をみんなで歌うための落ち着いた場所です。",
   "aboutMadeForSinging": "みんなで歌うために",
-  "appVersion": "バージョン {version}",
+  "menuTypeNewSong": "新しい曲を入力", "aboutDetails": "有効にしたソースを検索し、曲のバージョンを比較して、歌詞とコードをまとめ、曲をセットリストに整理できます。ライブラリはこの端末に保存されます。任意の Google Drive 同期では Google アカウントを使用します。検索は有効なソースへ直接送信されます。", "aboutSupport": "サポートとフィードバック", "appVersion": "バージョン {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

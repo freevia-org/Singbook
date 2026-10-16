@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Şarkı kitaplığınızdaki parçaları bulup düzenleyebileceğiniz ve söyleyebileceğiniz sakin bir alan.",
   "aboutMadeForSinging": "Birlikte şarkı söylemek için tasarlandı",
-  "appVersion": "Sürüm {version}",
+  "menuTypeNewSong": "Yeni bir şarkı yazın", "aboutDetails": "Etkin kaynaklarda arama yapın, sürümleri karşılaştırın, şarkı sözlerini ve akorları birlikte tutun, şarkıları setlistelerde düzenleyin. Kitaplığınız bu cihazda saklanır; isteğe bağlı Google Drive eşitlemesi Google hesabınızı kullanır. Aramalar doğrudan etkin kaynaklara gönderilir.", "aboutSupport": "Destek ve geri bildirim", "appVersion": "Sürüm {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

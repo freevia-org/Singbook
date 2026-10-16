@@ -19,6 +19,16 @@ class AppLocalizationsVi extends AppLocalizations {
   String get aboutMadeForSinging => 'Được tạo để cùng nhau ca hát';
 
   @override
+  String get aboutDetails =>
+      'Tìm kiếm trong các nguồn đã bật, so sánh phiên bản, lưu lời và hợp âm cùng nhau, rồi sắp xếp bài hát thành danh sách. Thư viện được lưu trên thiết bị này; tính năng đồng bộ Google Drive tùy chọn sử dụng tài khoản Google của bạn. Tìm kiếm được gửi trực tiếp đến các nguồn đã bật.';
+
+  @override
+  String get aboutSupport => 'Hỗ trợ và góp ý';
+
+  @override
+  String get menuTypeNewSong => 'Nhập bài hát mới';
+
+  @override
   String appVersion(String version) {
     return 'Phiên bản $version';
   }

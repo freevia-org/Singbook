@@ -19,6 +19,16 @@ class AppLocalizationsBg extends AppLocalizations {
   String get aboutMadeForSinging => 'Създадено за пеене заедно';
 
   @override
+  String get aboutDetails =>
+      'Търсете в активираните източници, сравнявайте версии, съхранявайте текстове и акорди заедно и подреждайте песни в сетлисти. Библиотеката ви се пази на това устройство; незадължителната синхронизация с Google Drive използва профила ви в Google. Търсенията се изпращат директно към включените източници.';
+
+  @override
+  String get aboutSupport => 'Поддръжка и обратна връзка';
+
+  @override
+  String get menuTypeNewSong => 'Въведете нова песен';
+
+  @override
   String appVersion(String version) {
     return 'Версия $version';
   }

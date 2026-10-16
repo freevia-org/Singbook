@@ -18,6 +18,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get aboutMadeForSinging => '为一起歌唱而打造';
 
   @override
+  String get aboutDetails =>
+      '搜索已启用的来源、比较歌曲版本、将歌词和和弦放在一起，并把歌曲整理到歌单中。资料库保存在此设备上；可选的 Google Drive 同步会使用你的 Google 帐号。搜索会直接发送到已启用的来源。';
+
+  @override
+  String get aboutSupport => '支持与反馈';
+
+  @override
+  String get menuTypeNewSong => '输入新歌曲';
+
+  @override
   String appVersion(String version) {
     return '版本 $version';
   }

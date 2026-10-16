@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Ein ruhiger Ort, um deine Songbibliothek zu durchsuchen, zu ordnen und daraus zu singen.",
   "aboutMadeForSinging": "Zum gemeinsamen Singen gemacht",
-  "appVersion": "Version {version}",
+  "menuTypeNewSong": "Neues Lied eingeben", "aboutDetails": "Durchsuche aktivierte Quellen, vergleiche Versionen, halte Texte und Akkorde zusammen und ordne Songs in Setlists. Deine Bibliothek wird auf diesem Gerät gespeichert; die optionale Synchronisierung über Google Drive nutzt dein Google-Konto. Suchanfragen gehen direkt an aktivierte Quellen.", "aboutSupport": "Hilfe und Feedback", "appVersion": "Version {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
