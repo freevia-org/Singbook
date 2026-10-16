@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/ui/settings/youtube_music_consent_section.dart';
@@ -116,5 +118,37 @@ void main() {
           .onPressed,
       isNotNull,
     );
+  });
+
+  testWidgets('renderer loss keeps consent recoverable and cannot complete', (
+    tester,
+  ) async {
+    final rendererEvents = StreamController<void>.broadcast();
+    addTearDown(rendererEvents.close);
+    var completeCalls = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: YoutubeMusicConsentScreen(
+          labels: labels,
+          onComplete: () async {
+            completeCalls++;
+            return true;
+          },
+          rendererProcessGone: rendererEvents.stream,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    rendererEvents.add(null);
+    await tester.pump();
+    expect(find.text(labels.loadFailed), findsOneWidget);
+    final done = tester.widget<TextButton>(
+      find.widgetWithText(TextButton, labels.done),
+    );
+    expect(done.onPressed, isNull);
+    expect(find.byTooltip(labels.retry), findsOneWidget);
+    expect(completeCalls, 0);
+    expect(tester.takeException(), isNull);
   });
 }
