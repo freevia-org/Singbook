@@ -1261,11 +1261,11 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Połącz Dysk Google, aby opcjonalnie tworzyć kopie zapasowe utworów i list. Nic nie zostanie przesłane, dopóki nie dotkniesz Synchronizuj teraz.';
+      'Połączenie Dysku Google synchronizuje bibliotekę. Późniejsze zmiany utworów są synchronizowane automatycznie.';
 
   @override
   String get accountManualSyncHint =>
-      'Synchronizacja odbywa się tylko po dotknięciu Synchronizuj teraz.';
+      'Możesz też dotknąć Synchronizuj teraz, aby zsynchronizować bibliotekę.';
 
   @override
   String get accountSignInWithGoogle => 'Zaloguj się przez Google';
@@ -1356,7 +1356,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Aktualizuj bibliotekę po otwarciu aplikacji i po wprowadzeniu zmian.';
+      'Synchronizacja odbywa się po połączeniu oraz po dodaniu, edycji lub usunięciu utworu.';
 
   @override
   String get accountSignOutTitle => 'Wylogować się z tego konta?';

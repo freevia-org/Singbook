@@ -1250,11 +1250,11 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Şarkılarınızın ve listelerinizin isteğe bağlı yedeği için Google Drive’ı bağlayın. Şimdi senkronize et düğmesine dokunana kadar hiçbir şey yüklenmez.';
+      'Google Drive’ı bağlamak kitaplığınızı eşitler. Şarkı değişiklikleri bundan sonra otomatik olarak eşitlenir.';
 
   @override
   String get accountManualSyncHint =>
-      'Senkronizasyon yalnızca Şimdi senkronize et düğmesine dokunduğunuzda yapılır.';
+      'Kitaplığınızı eşitlemek için Şimdi senkronize et düğmesine de dokunabilirsiniz.';
 
   @override
   String get accountSignInWithGoogle => 'Google ile oturum aç';
@@ -1337,7 +1337,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Uygulamayı açtığınızda ve değişikliklerden sonra kitaplığınızı güncel tutun.';
+      'Bağlandıktan ve bir şarkı eklendikten, düzenlendikten veya kaldırıldıktan sonra eşitlenir.';
 
   @override
   String get accountSignOutTitle => 'Bu hesaptan çıkış yapılsın mı?';

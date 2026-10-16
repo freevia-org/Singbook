@@ -1261,11 +1261,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'اربط Google Drive للاحتفاظ بنسخة احتياطية اختيارية من أغانيك وقوائمك. لن يُرفع أي شيء حتى تضغط على مزامنة الآن.';
+      'يؤدي ربط Google Drive إلى مزامنة مكتبتك. وستتم مزامنة تغييرات الأغاني تلقائيًا بعد ذلك.';
 
   @override
   String get accountManualSyncHint =>
-      'لا تتم المزامنة إلا عند الضغط على مزامنة الآن.';
+      'يمكنك أيضًا الضغط على «مزامنة الآن» لمزامنة مكتبتك.';
 
   @override
   String get accountSignInWithGoogle => 'تسجيل الدخول باستخدام Google';
@@ -1363,7 +1363,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'حافظ على تحديث مكتبتك عند فتح التطبيق وبعد إجراء تغييرات.';
+      'تتم المزامنة بعد الاتصال وبعد إضافة أغنية أو تعديلها أو حذفها.';
 
   @override
   String get accountSignOutTitle => 'تسجيل الخروج من هذا الحساب؟';

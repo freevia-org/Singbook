@@ -1265,11 +1265,11 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Prijunkite Google Drive, kad galėtumėte pasirinktinai kurti dainų ir koncertinių programų atsargines kopijas. Nieko neįkeliama, kol nepaliečiate Sinchronizuoti dabar.';
+      'Prijungus Google Drive sinchronizuojama jūsų biblioteka. Vėliau dainų pakeitimai sinchronizuojami automatiškai.';
 
   @override
   String get accountManualSyncHint =>
-      'Sinchronizuojama tik palietus Sinchronizuoti dabar.';
+      'Biblioteką taip pat galite sinchronizuoti palietę Sinchronizuoti dabar.';
 
   @override
   String get accountSignInWithGoogle => 'Prisijungti per Google';
@@ -1359,7 +1359,7 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Biblioteka atnaujinama, kai atveriate programą ir atliekate pakeitimų.';
+      'Sinchronizuojama prisijungus ir pridėjus, redagavus arba pašalinus dainą.';
 
   @override
   String get accountSignOutTitle => 'Atsijungti nuo šios paskyros?';

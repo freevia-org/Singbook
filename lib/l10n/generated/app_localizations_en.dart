@@ -1242,10 +1242,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Connect Google Drive for an optional backup of your songs and setlists. Nothing is uploaded until you tap Sync now.';
+      'Connecting Google Drive syncs your library. Song changes then sync automatically.';
 
   @override
-  String get accountManualSyncHint => 'Sync runs only when you tap Sync now.';
+  String get accountManualSyncHint =>
+      'You can also tap Sync now to sync your library.';
 
   @override
   String get accountSignInWithGoogle => 'Sign in with Google';
@@ -1327,7 +1328,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Keep your library up to date when you open the app and after changes.';
+      'Sync after connecting and after adding, editing or removing a song.';
 
   @override
   String get accountSignOutTitle => 'Sign out of this account?';

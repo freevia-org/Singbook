@@ -1249,11 +1249,11 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Kết nối Google Drive để tùy chọn sao lưu bài hát và danh sách. Chưa có nội dung nào được tải lên cho đến khi bạn nhấn Đồng bộ hóa ngay.';
+      'Kết nối Google Drive sẽ đồng bộ thư viện của bạn. Sau đó, các thay đổi bài hát sẽ tự động được đồng bộ.';
 
   @override
   String get accountManualSyncHint =>
-      'Chỉ đồng bộ hóa khi bạn nhấn vào Đồng bộ hóa ngay.';
+      'Bạn cũng có thể nhấn Đồng bộ hóa ngay để đồng bộ thư viện.';
 
   @override
   String get accountSignInWithGoogle => 'Đăng nhập bằng Google';
@@ -1335,7 +1335,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Luôn cập nhật thư viện khi bạn mở ứng dụng và sau khi có thay đổi.';
+      'Đồng bộ sau khi kết nối và sau khi thêm, chỉnh sửa hoặc xóa bài hát.';
 
   @override
   String get accountSignOutTitle => 'Đăng xuất khỏi tài khoản này?';

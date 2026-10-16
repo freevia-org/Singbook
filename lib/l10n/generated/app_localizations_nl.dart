@@ -1261,11 +1261,11 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Koppel Google Drive voor een optionele back-up van je nummers en setlijsten. Er wordt niets geüpload totdat je op Nu synchroniseren tikt.';
+      'Als je Google Drive koppelt, wordt je bibliotheek gesynchroniseerd. Wijzigingen in nummers worden daarna automatisch gesynchroniseerd.';
 
   @override
   String get accountManualSyncHint =>
-      'Synchroniseren gebeurt alleen wanneer je op Nu synchroniseren tikt.';
+      'Je kunt ook op Nu synchroniseren tikken om je bibliotheek te synchroniseren.';
 
   @override
   String get accountSignInWithGoogle => 'Aanmelden met Google';
@@ -1348,7 +1348,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Houd je bibliotheek actueel wanneer je de app opent en na wijzigingen.';
+      'Synchroniseer na het koppelen en na het toevoegen, bewerken of verwijderen van een nummer.';
 
   @override
   String get accountSignOutTitle => 'Afmelden bij dit account?';

@@ -1263,11 +1263,11 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Σύνδεσε το Google Drive για προαιρετικό αντίγραφο ασφαλείας των τραγουδιών και των λιστών σου. Δεν ανεβαίνει τίποτα μέχρι να πατήσεις Συγχρονισμός τώρα.';
+      'Με τη σύνδεση του Google Drive συγχρονίζεται η συλλογή σας. Οι αλλαγές στα τραγούδια συγχρονίζονται αυτόματα στη συνέχεια.';
 
   @override
   String get accountManualSyncHint =>
-      'Ο συγχρονισμός γίνεται μόνο όταν πατήσεις Συγχρονισμός τώρα.';
+      'Μπορείτε επίσης να πατήσετε Συγχρονισμός τώρα για να συγχρονίσετε τη συλλογή σας.';
 
   @override
   String get accountSignInWithGoogle => 'Σύνδεση με Google';
@@ -1350,7 +1350,7 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Διατήρησε τη συλλογή ενημερωμένη όταν ανοίγεις την εφαρμογή και μετά από αλλαγές.';
+      'Ο συγχρονισμός γίνεται μετά τη σύνδεση και μετά την προσθήκη, επεξεργασία ή αφαίρεση ενός τραγουδιού.';
 
   @override
   String get accountSignOutTitle => 'Αποσύνδεση από αυτόν τον λογαριασμό;';

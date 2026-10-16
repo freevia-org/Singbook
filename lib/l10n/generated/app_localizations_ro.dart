@@ -1267,11 +1267,11 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Conectează Google Drive pentru o copie de siguranță opțională a melodiilor și listelor tale. Nimic nu se încarcă până când nu atingi Sincronizează acum.';
+      'Conectarea Google Drive sincronizează biblioteca. Ulterior, modificările melodiilor se sincronizează automat.';
 
   @override
   String get accountManualSyncHint =>
-      'Sincronizarea are loc doar când atingi Sincronizează acum.';
+      'Poți atinge și Sincronizează acum pentru a sincroniza biblioteca.';
 
   @override
   String get accountSignInWithGoogle => 'Conectează-te cu Google';
@@ -1358,7 +1358,7 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Păstrează biblioteca actualizată când deschizi aplicația și după modificări.';
+      'Sincronizarea are loc după conectare și după adăugarea, editarea sau eliminarea unei melodii.';
 
   @override
   String get accountSignOutTitle => 'Te deconectezi de la acest cont?';

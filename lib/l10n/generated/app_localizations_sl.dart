@@ -1268,11 +1268,11 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Povežite Google Drive za neobvezno varnostno kopiranje pesmi in koncertnih seznamov. Nič se ne naloži, dokler ne tapnete Sinhroniziraj zdaj.';
+      'Ob povezavi z Google Drive se knjižnica sinhronizira. Spremembe pesmi se nato sinhronizirajo samodejno.';
 
   @override
   String get accountManualSyncHint =>
-      'Sinhronizacija se izvede samo, ko tapnete Sinhroniziraj zdaj.';
+      'Knjižnico lahko sinhronizirate tudi tako, da tapnete Sinhroniziraj zdaj.';
 
   @override
   String get accountSignInWithGoogle => 'Prijava prek storitve Google';
@@ -1362,7 +1362,7 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Knjižnica se posodobi ob odprtju aplikacije in po spremembah.';
+      'Sinhronizacija se izvede po povezavi ter po dodajanju, urejanju ali odstranitvi pesmi.';
 
   @override
   String get accountSignOutTitle => 'Se želite odjaviti iz tega računa?';

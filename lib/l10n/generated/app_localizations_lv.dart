@@ -1266,11 +1266,11 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Pievienojiet Google Drive, lai pēc izvēles dublētu dziesmas un koncertprogrammas. Nekas netiks augšupielādēts, kamēr nepieskarsieties Sinhronizēt tūlīt.';
+      'Pievienojot Google Drive, tiek sinhronizēta bibliotēka. Pēc tam dziesmu izmaiņas tiek sinhronizētas automātiski.';
 
   @override
   String get accountManualSyncHint =>
-      'Sinhronizācija notiek tikai tad, kad pieskaraties Sinhronizēt tūlīt.';
+      'Varat arī pieskarties Sinhronizēt tūlīt, lai sinhronizētu bibliotēku.';
 
   @override
   String get accountSignInWithGoogle => 'Pierakstīties Google kontā';
@@ -1356,7 +1356,7 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Atjaunināt bibliotēku, kad atverat lietotni un pēc izmaiņām.';
+      'Bibliotēka tiek sinhronizēta pēc savienojuma izveides un pēc dziesmas pievienošanas, rediģēšanas vai noņemšanas.';
 
   @override
   String get accountSignOutTitle => 'Izrakstīties no šī konta?';

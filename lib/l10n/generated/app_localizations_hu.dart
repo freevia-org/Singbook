@@ -1253,11 +1253,11 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Csatlakoztasd a Google Drive-ot a dalaid és setlistáid opcionális biztonsági mentéséhez. Semmi sem töltődik fel, amíg rá nem koppintasz a Szinkronizálás most gombra.';
+      'A Google Drive csatlakoztatásakor szinkronizálódik a könyvtárad. Ezután a dalok módosításai automatikusan szinkronizálódnak.';
 
   @override
   String get accountManualSyncHint =>
-      'A szinkronizálás csak akkor történik meg, ha a Szinkronizálás most gombra koppintasz.';
+      'A könyvtár szinkronizálásához a Szinkronizálás most gombra is koppinthatsz.';
 
   @override
   String get accountSignInWithGoogle => 'Bejelentkezés Google-fiókkal';
@@ -1339,7 +1339,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Tartsd naprakészen a könyvtáradat az alkalmazás megnyitásakor és módosítások után.';
+      'A szinkronizálás csatlakozás után, valamint dal hozzáadása, szerkesztése vagy törlése után történik.';
 
   @override
   String get accountSignOutTitle => 'Kijelentkezel ebből a fiókból?';

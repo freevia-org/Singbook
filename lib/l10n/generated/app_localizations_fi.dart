@@ -1248,11 +1248,11 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Yhdistä Google Drive, jos haluat varmuuskopioida kappaleet ja settilistat. Mitään ei ladata ennen kuin napautat Synkronoi nyt.';
+      'Google Driveen yhdistäminen synkronoi kirjastosi. Sen jälkeen kappaleiden muutokset synkronoidaan automaattisesti.';
 
   @override
   String get accountManualSyncHint =>
-      'Synkronointi käynnistyy vain, kun napautat Synkronoi nyt.';
+      'Voit myös synkronoida kirjastosi napauttamalla Synkronoi nyt.';
 
   @override
   String get accountSignInWithGoogle => 'Kirjaudu Google-tilillä';
@@ -1335,7 +1335,7 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Pidä kirjasto ajan tasalla, kun avaat sovelluksen ja muutosten jälkeen.';
+      'Synkronointi tapahtuu yhdistämisen jälkeen sekä kappaleen lisäämisen, muokkaamisen tai poistamisen jälkeen.';
 
   @override
   String get accountSignOutTitle => 'Kirjaudutaanko tältä tililtä ulos?';

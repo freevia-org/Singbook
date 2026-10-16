@@ -1265,11 +1265,11 @@ class AppLocalizationsMt extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Qabbad Google Drive biex tagħmel backup mhux obbligatorju tal-kanzunetti u l-listi tiegħek. Xejn ma jittella’ qabel ma tmiss Issinkronizza issa.';
+      'Meta tikkonnettja Google Drive, il-librerija tiegħek tiġi ssinkronizzata. Wara, il-bidliet fil-kanzunetti jiġu ssinkronizzati awtomatikament.';
 
   @override
   String get accountManualSyncHint =>
-      'Is-sinkronizzazzjoni ssir biss meta tmiss Issinkronizza issa.';
+      'Tista’ wkoll tmiss Issinkronizza issa biex tissinkronizza l-librerija tiegħek.';
 
   @override
   String get accountSignInWithGoogle => 'Idħol b’Google';
@@ -1352,7 +1352,7 @@ class AppLocalizationsMt extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Żomm il-librerija tiegħek aġġornata meta tiftaħ l-app u wara l-bidliet.';
+      'Is-sinkronizzazzjoni ssir wara li tikkonnettja u wara li żżid, teditja jew tneħħi kanzunetta.';
 
   @override
   String get accountSignOutTitle => 'Toħroġ minn dan il-kont?';

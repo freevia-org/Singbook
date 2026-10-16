@@ -1248,11 +1248,11 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Tilslut Google Drev for at få valgfri sikkerhedskopiering af dine sange og sanglister. Intet uploades, før du trykker på Synkronisér nu.';
+      'Når du tilslutter Google Drev, synkroniseres dit bibliotek. Ændringer af sange synkroniseres derefter automatisk.';
 
   @override
   String get accountManualSyncHint =>
-      'Synkronisering sker kun, når du trykker på Synkronisér nu.';
+      'Du kan også trykke på Synkronisér nu for at synkronisere dit bibliotek.';
 
   @override
   String get accountSignInWithGoogle => 'Log ind med Google';
@@ -1334,7 +1334,7 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Hold dit bibliotek opdateret, når du åbner appen og efter ændringer.';
+      'Synkronisering sker efter tilslutning og efter tilføjelse, redigering eller fjernelse af en sang.';
 
   @override
   String get accountSignOutTitle => 'Log ud af denne konto?';

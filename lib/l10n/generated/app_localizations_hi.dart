@@ -1242,11 +1242,11 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'अपने गीतों और गीत-सूचियों का वैकल्पिक बैकअप लेने के लिए Google Drive कनेक्ट करें। जब तक आप अभी सिंक करें पर टैप नहीं करेंगे, कुछ भी अपलोड नहीं होगा।';
+      'Google Drive कनेक्ट करने पर आपकी लाइब्रेरी सिंक होती है। इसके बाद गानों में बदलाव अपने-आप सिंक होते हैं।';
 
   @override
   String get accountManualSyncHint =>
-      'सिंक तभी होता है, जब आप अभी सिंक करें पर टैप करते हैं।';
+      'अपनी लाइब्रेरी सिंक करने के लिए आप अभी सिंक करें पर भी टैप कर सकते हैं।';
 
   @override
   String get accountSignInWithGoogle => 'Google से साइन इन करें';
@@ -1329,7 +1329,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'ऐप खोलने और बदलावों के बाद अपनी लाइब्रेरी अपडेट रखें।';
+      'कनेक्ट करने के बाद और कोई गीत जोड़ने, संपादित करने या हटाने के बाद सिंक करें।';
 
   @override
   String get accountSignOutTitle => 'इस खाते से साइन आउट करें?';

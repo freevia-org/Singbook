@@ -1251,11 +1251,11 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Hubungkan Google Drive untuk mencadangkan lagu dan daftar lagu secara opsional. Tidak ada yang diunggah sampai Anda mengetuk Sinkronkan sekarang.';
+      'Menghubungkan Google Drive akan menyinkronkan pustaka Anda. Setelah itu, perubahan lagu akan disinkronkan secara otomatis.';
 
   @override
   String get accountManualSyncHint =>
-      'Sinkronisasi hanya berjalan saat Anda mengetuk Sinkronkan sekarang.';
+      'Anda juga dapat mengetuk Sinkronkan sekarang untuk menyinkronkan pustaka.';
 
   @override
   String get accountSignInWithGoogle => 'Login dengan Google';
@@ -1338,7 +1338,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Jaga agar pustaka tetap terbaru saat Anda membuka aplikasi dan setelah perubahan.';
+      'Sinkronkan setelah terhubung dan setelah menambahkan, mengedit, atau menghapus lagu.';
 
   @override
   String get accountSignOutTitle => 'Keluar dari akun ini?';
