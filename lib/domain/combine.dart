@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:characters/characters.dart';
 import 'models.dart';
 import 'arrangement.dart';
 import 'timing.dart' show timingOccurrenceMap;
@@ -128,6 +129,57 @@ bool _completeChart(String chart, String reference) {
       coverage(bigrams(b), bigrams(a)) >= .65;
 }
 
+String _lineKey(ArrangementLine line) => _norm(line.text);
+
+({String body, List<String> sourceIds}) _overlayChords(
+  String body,
+  List<SourceResult> sources,
+) {
+  final lines = parseArrangement(body);
+  final charts = <String, List<(List<ChordAnchor>, String)>>{};
+  for (final source in sources) {
+    if (!source.hasChords) continue;
+    for (final line in parseArrangement(source.body)) {
+      final key = _lineKey(line);
+      if (key.isEmpty || line.chords.isEmpty) continue;
+      charts.putIfAbsent(key, () => []).add((line.chords, source.id));
+    }
+  }
+  if (charts.isEmpty) return (body: body, sourceIds: const []);
+  final occurrences = <String, int>{};
+  final output = <String>[];
+  final sourceIds = <String>{};
+  for (final line in lines) {
+    final key = _lineKey(line);
+    final matches = charts[key];
+    if (line.directive || line.chords.isNotEmpty || matches == null) {
+      output.add(line.text);
+      continue;
+    }
+    final index = occurrences.update(
+      key,
+      (count) => count + 1,
+      ifAbsent: () => 0,
+    );
+    final matched = matches[index % matches.length];
+    final chords = matched.$1..sort((a, b) => a.offset.compareTo(b.offset));
+    sourceIds.add(matched.$2);
+    final characters = line.text.characters.toList();
+    final buffer = StringBuffer();
+    var chordIndex = 0;
+    for (var offset = 0; offset <= characters.length; offset++) {
+      while (chordIndex < chords.length &&
+          chords[chordIndex].offset <= offset) {
+        buffer.write('[${chords[chordIndex].chord}]');
+        chordIndex++;
+      }
+      if (offset < characters.length) buffer.write(characters[offset]);
+    }
+    output.add(buffer.toString());
+  }
+  return (body: output.join('\n'), sourceIds: sourceIds.toList());
+}
+
 SongDocument combineSources(
   SongCandidate selected,
   List<SourceResult> results, {
@@ -170,14 +222,14 @@ SongDocument combineSources(
     throw const FormatException('No complete matching lyrics are available.');
   }
   int rank(SourceResult s) =>
-      (s.hasChords ? 1000 : 0) +
+      lyricLines(s.body).length.clamp(0, 100) * 1000 +
+      plainLyrics(s.body).length.clamp(0, 100000) +
       (recordingCompatible(selected, s)
-          ? 200
+          ? 300
           : s.matchKind == MatchKind.sameSong
-          ? 100
+          ? 200
           : 0) +
-      (s.timingTracks.isNotEmpty ? 30 : 0) +
-      (lyricLines(s.body).length.clamp(0, 100));
+      (s.hasChords ? 500 : 0);
   eligible.sort((a, b) => rank(b).compareTo(rank(a)));
   final preferred = eligible.where((s) => s.id == preferredSourceId);
   if (preferredSourceId != null && preferred.isEmpty) {
@@ -186,6 +238,12 @@ SongDocument combineSources(
     );
   }
   final best = preferred.isEmpty ? eligible.first : preferred.first;
+  final merged = preferredSourceId == null
+      ? _overlayChords(
+          best.body,
+          accepted.where((source) => source.id != best.id).toList(),
+        )
+      : (body: best.body, sourceIds: const <String>[]);
   const arrangementFields = {
     'key',
     'capo',
@@ -211,6 +269,19 @@ SongDocument combineSources(
   final origins = <String, dynamic>{
     for (final k in metadata.keys) k: selected.identity,
   };
+  final chordSourceIds = <String>{
+    if (best.hasChords) best.id,
+    ...merged.sourceIds,
+  }.toList();
+  if (chordSourceIds.isNotEmpty) origins['chords'] = chordSourceIds.first;
+  final sourcesById = {for (final source in matching) source.id: source};
+  final arrangementSourceIds = <String>{best.id};
+  for (final sourceId in chordSourceIds) {
+    final source = sourcesById[sourceId];
+    if (source != null && recordingCompatible(selected, source)) {
+      arrangementSourceIds.add(sourceId);
+    }
+  }
   final conflicts = <String, dynamic>{};
   // An explicit version choice should carry the duration shown on that
   // version card. Automatic combination keeps the selected catalog record's
@@ -259,7 +330,7 @@ SongDocument combineSources(
     for (final entry in facts.entries) {
       if (entry.value == null || entry.value == '') continue;
       final isArrangement = arrangementFields.contains(entry.key);
-      if (isArrangement && source.id != best.id) continue;
+      if (isArrangement && !arrangementSourceIds.contains(source.id)) continue;
       if (!isArrangement && !songFields.contains(entry.key) && !sameRecording) {
         continue;
       }
@@ -316,7 +387,7 @@ SongDocument combineSources(
     id: newId(),
     title: selected.title,
     artist: selected.artist,
-    body: inferSectionDirectives(best.body),
+    body: inferSectionDirectives(merged.body),
     metadata: metadata,
     sources: results,
     timingTracks: tracks.values.toList(),
@@ -326,9 +397,9 @@ SongDocument combineSources(
       'selectedSourceId': best.id,
       'fieldOrigins': origins,
       if (conflicts.isNotEmpty) 'conflicts': conflicts,
-      'recommendation': best.hasChords
-          ? 'Matching lyrics with a complete chord arrangement.'
-          : 'Best matching available lyrics.',
+      'recommendation':
+          'Combined lyrics, chords, timing, and metadata from matching sources.',
+      if (chordSourceIds.isNotEmpty) 'chordSourceIds': chordSourceIds,
       'excludedIncompleteSourceIds': accepted
           .where((s) => !eligible.contains(s))
           .map((s) => s.id)

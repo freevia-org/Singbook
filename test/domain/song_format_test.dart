@@ -631,30 +631,34 @@ void main() {
     expect(result.activeTimingTrackId, isNull);
     expect(result.timingTracks.single.status, isNot(TimingStatus.usable));
   });
-  test('partial chord chart does not outrank a fuller matched lyric', () {
+  test('combined version keeps full lyrics and overlays matching chords', () {
     const full =
         'one two three four five six seven eight nine ten eleven twelve\nthirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty twentyone twentytwo twentythree twentyfour';
+    const partialChart =
+        '[C]one two three four five six seven eight nine ten eleven twelve';
     final result = combineSources(selected, [
-      source(
-        'ug',
-        '[C]one two three four five six seven eight nine ten eleven twelve',
-        kind: MatchKind.sameSong,
-      ),
+      source('ug', partialChart, kind: MatchKind.sameSong),
       source('lrclib', full),
     ]);
-    expect(result.body, full);
-    expect(result.extra['excludedIncompleteSourceIds'], contains('ug:1'));
+    expect(plainLyrics(result.body), full);
     expect(
-      () => combineSources(selected, [
-        source(
-          'ug',
-          '[C]one two three four five six seven eight nine ten eleven twelve',
-          kind: MatchKind.sameSong,
-        ),
-        source('lrclib', full),
-      ], preferredSourceId: 'ug:1'),
-      throwsFormatException,
+      result.body,
+      contains(
+        '[C]one two three four five six seven eight nine ten eleven twelve',
+      ),
     );
+    expect(result.extra['excludedIncompleteSourceIds'], contains('ug:1'));
+    final explicit = combineSources(
+      selected,
+      [
+        source('ug', partialChart, kind: MatchKind.sameSong),
+        source('lrclib', full),
+      ],
+      preferredSourceId: 'ug:1',
+      allowRejectedPreferredSource: true,
+    );
+    expect(explicit.body, partialChart);
+    expect(plainLyrics(explicit.body), isNotEmpty);
   });
   test(
     'choosing source never falls back silently when the requested source is absent',

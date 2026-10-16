@@ -326,7 +326,7 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           slivers: [
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+              padding: const EdgeInsets.fromLTRB(20, 8, 12, 0),
               sliver: SliverToBoxAdapter(
                 child: _searchHeader(context, l10n, state),
               ),

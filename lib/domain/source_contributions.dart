@@ -8,6 +8,10 @@ Set<String> contributingProviderIds(SongDocument song) {
     if (song.extra['selectedSourceId'] is String)
       song.extra['selectedSourceId'] as String,
   };
+  final chordSources = song.extra['chordSourceIds'];
+  if (chordSources is List) {
+    sourceIds.addAll(chordSources.whereType<String>());
+  }
   for (final origin in jsonMap(song.extra['fieldOrigins']).entries) {
     final value = song.metadata[origin.key];
     if (value != null && value != '' && origin.value is String) {
@@ -21,7 +25,8 @@ Set<String> contributingProviderIds(SongDocument song) {
   }
   return {
     for (final source in song.sources)
-      if (source.matchKind != MatchKind.rejected &&
+      if ((source.matchKind != MatchKind.rejected ||
+              source.id == song.extra['selectedSourceId']) &&
           sourceIds.contains(source.id))
         source.candidate.providerId,
     if (song.selectedRecording case final recording?)

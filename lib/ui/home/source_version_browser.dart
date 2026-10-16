@@ -231,7 +231,7 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
     if (version == null ||
         selected == null ||
         versionSelectionId(selected) != _visibleId ||
-        (!version.canSave && version.savedSongId == null)) {
+        (!version.hasLyrics && version.savedSongId == null)) {
       return;
     }
     setState(() => _saving = true);
@@ -445,9 +445,9 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
     final available =
         version != null &&
         externalId == _visibleId &&
-        (version.canSave || version.savedSongId != null);
+        (version.hasLyrics || version.savedSongId != null);
     final ready = _current.values
-        .where((version) => version.canSave || version.savedSongId != null)
+        .where((version) => version.hasLyrics || version.savedSongId != null)
         .map(versionSelectionId)
         .toSet()
         .length;
@@ -873,6 +873,16 @@ class _VersionDocumentState extends State<_VersionDocument>
               spacing: 12,
               runSpacing: 4,
               children: [
+                _Capability(
+                  version.sameRecording
+                      ? Icons.verified_outlined
+                      : Icons.help_outline_rounded,
+                  version.sameRecording
+                      ? l10n.searchMatchExact
+                      : version.matchSummary.isNotEmpty
+                      ? localizedMatchReason(l10n, version.matchSummary)
+                      : l10n.searchMatchUnverified,
+                ),
                 if (version.hasLyrics)
                   _Capability(
                     Icons.lyrics_outlined,

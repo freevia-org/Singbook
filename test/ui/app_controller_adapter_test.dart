@@ -1093,6 +1093,53 @@ void main() {
   );
 
   test(
+    'combined remains the default when every lyric match is unverified',
+    () async {
+      ui.dispose();
+      app.dispose();
+      const candidate = SongCandidate(
+        providerId: 'catalog',
+        id: 'stream',
+        title: 'Stream Song',
+        artist: 'Test Artist',
+      );
+      const rejected = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'songsterr',
+          id: 'stream',
+          title: 'Stream Song',
+          artist: 'Test Artist',
+        ),
+        body: '[C]A result that failed the automatic match check',
+        matchKind: MatchKind.rejected,
+      );
+      final discovery = _StreamingDiscovery(candidate, rejected);
+      app = AppController(repository: repository, discovery: discovery);
+      await app.initialize();
+      ui = AppControllerAdapter(app);
+      ui.setQuery('stream song');
+      await ui.submitSearch();
+      final selecting = ui.selectReference(
+        const SearchReferenceData(
+          id: 'catalog:stream',
+          title: 'Stream Song',
+          artist: 'Test Artist',
+        ),
+      );
+      await discovery.started.future;
+      discovery.finished.complete([rejected]);
+      await selecting;
+
+      expect(ui.state.comparison?.suggested?.id, 'combined');
+      expect(ui.state.comparison?.selectedVersionId, 'combined');
+      expect(ui.state.comparison?.alternatives.single.canSave, isTrue);
+      await ui.saveSelectedVersion();
+      expect(app.songs, hasLength(1));
+      expect(app.songs.single.body, rejected.body);
+    },
+  );
+
+  test(
     'repeated setlist occurrences advance from the selected entry',
     () async {
       await app.saveSong(_song(metadata: {'key': 'C', 'capo': 1}));

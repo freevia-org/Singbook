@@ -163,6 +163,29 @@ void main() {
     expect(find.text(l10n.searchSubmit), findsNothing);
   });
 
+  testWidgets('Home, Songs, and Setlists search fields share the same width', (
+    tester,
+  ) async {
+    var activeTab = VerseTab.home;
+    final c = FakeUiController((_) => VerseUiState(activeTab: activeTab));
+    addTearDown(c.dispose);
+    await pumpShell(tester, c);
+    final homeWidth = tester.getSize(find.byType(TextField).first).width;
+
+    activeTab = VerseTab.songs;
+    c.refresh();
+    await tester.pumpAndSettle();
+    final songsWidth = tester.getSize(find.byType(TextField).first).width;
+
+    activeTab = VerseTab.setlists;
+    c.refresh();
+    await tester.pumpAndSettle();
+    final setlistsWidth = tester.getSize(find.byType(TextField).first).width;
+
+    expect(songsWidth, homeWidth);
+    expect(setlistsWidth, homeWidth);
+  });
+
   testWidgets('setlist import is on the Setlists screen', (tester) async {
     final c = FakeUiController(
       (_) => const VerseUiState(activeTab: VerseTab.setlists),

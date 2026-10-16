@@ -801,7 +801,7 @@ void main() {
       expect(queryScroll.offset, greaterThan(0));
 
       final l10n = AppLocalizations.of(tester.element(find.byType(TextField)));
-      await tester.tap(find.text(l10n.searchSubmit));
+      await tester.tap(find.byTooltip(l10n.searchSubmit));
       await tester.pumpAndSettle();
       editable = tester.widget<EditableText>(find.byType(EditableText));
       expect(editable.controller.text, query);

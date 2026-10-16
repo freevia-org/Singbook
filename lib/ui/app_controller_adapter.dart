@@ -447,12 +447,8 @@ class AppControllerAdapter extends VerseUiController {
   }
 
   bool _isUsableLyricResult(SourceResult result, {bool allowRejected = false}) {
-    final incompleteSourceIds =
-        app.combined?.extra['excludedIncompleteSourceIds'];
     return (allowRejected || result.matchKind != MatchKind.rejected) &&
-        _hasLyrics(result) &&
-        (incompleteSourceIds is! List ||
-            !incompleteSourceIds.contains(result.id));
+        _hasLyrics(result);
   }
 
   bool _hasLyrics(SourceResult result) =>
@@ -701,7 +697,11 @@ class AppControllerAdapter extends VerseUiController {
       final providerId =
           source?.candidate.providerId ??
           (recording?.identity == sourceId ? recording!.providerId : null);
-      if (providerId == null || source?.matchKind == MatchKind.rejected) return;
+      if (providerId == null ||
+          (source?.matchKind == MatchKind.rejected &&
+              sourceId != song.extra['selectedSourceId'])) {
+        return;
+      }
       final name =
           app.providers
               .where((provider) => provider.id == providerId)
@@ -713,12 +713,22 @@ class AppControllerAdapter extends VerseUiController {
     }
 
     final selectedSourceId = song.extra['selectedSourceId'];
+    final origins = jsonMap(song.extra['fieldOrigins']);
     if (selectedSourceId is String) {
       add(selectedSourceId, 'lyrics');
-      if (song.hasChords) add(selectedSourceId, 'chords');
+      if (song.hasChords) {
+        final chordSources = song.extra['chordSourceIds'];
+        if (chordSources is List) {
+          for (final sourceId in chordSources.whereType<String>()) {
+            add(sourceId, 'chords');
+          }
+        } else {
+          add(origins['chords'] as String? ?? selectedSourceId, 'chords');
+        }
+      }
     }
-    final origins = jsonMap(song.extra['fieldOrigins']);
     for (final entry in origins.entries) {
+      if (entry.key == 'lyrics' || entry.key == 'chords') continue;
       final value = song.metadata[entry.key];
       if (value != null && value != '' && entry.value is String) {
         add(entry.value as String, 'metadata');
@@ -830,7 +840,6 @@ class AppControllerAdapter extends VerseUiController {
     final candidate = result.candidate;
     final check = app.checks[candidate.providerId];
     final savedId = app.savedResultId(source: result);
-    final explicitlySelected = _selectedVersionId == result.id;
     final lines = _lines(result.body);
     final isChecking = app.discovering && !app.isSourceReady(result);
     return SourceVersionData(
@@ -869,8 +878,7 @@ class AppControllerAdapter extends VerseUiController {
       contributions: _sourceContributions(result),
       isChecking: isChecking,
       canSave:
-          app.isSourceReady(result) &&
-          _isUsableLyricResult(result, allowRejected: explicitlySelected) &&
+          _hasLyrics(result) &&
           savedId == null,
       savedSongId: savedId,
     );
@@ -1349,30 +1357,16 @@ class AppControllerAdapter extends VerseUiController {
         (version == null ||
             !_isUsableLyricResult(
               version,
-              allowRejected: _selectedVersionId == version.id,
+              allowRejected: true,
             ))) {
       postNotice(UiNotice.songSaveFailed);
-      return;
-    }
-    if (version != null && !app.isSourceReady(version)) {
-      final savedId = app.savedResultId(source: version);
-      if (savedId == null) {
-        postNotice(UiNotice.songSaveFailed);
-        return;
-      }
-      _setlistId = null;
-      _setlistEntryId = null;
-      _homeMode = HomeListMode.recent;
-      await _openSong(savedId);
       return;
     }
     final SongDocument song;
     try {
       song = await app.saveResult(
         source: version,
-        allowRejectedSource:
-            version?.matchKind == MatchKind.rejected &&
-            _selectedVersionId == version?.id,
+        allowRejectedSource: version != null,
       );
     } catch (_) {
       postNotice(UiNotice.songSaveFailed);
