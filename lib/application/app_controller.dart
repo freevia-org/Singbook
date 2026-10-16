@@ -26,7 +26,11 @@ import 'youtube_music_consent.dart';
 /// string. [operation] names what was attempted: `import`, `share`, `save`,
 /// `delete`, `sync`, `setlist`.
 class AppMessage {
-  const AppMessage(this.code, {this.operation = 'operation', this.isError = true});
+  const AppMessage(
+    this.code, {
+    this.operation = 'operation',
+    this.isError = true,
+  });
   final String code, operation;
 
   /// False for warnings that did not lose data (for example `save_conflict`).
@@ -245,6 +249,7 @@ class AppController extends ChangeNotifier {
     'missing_song_references',
     'invalid_xml',
     'backup_too_large',
+    'stale_backup_preview',
     'invalid_encoding',
     'discovery_in_progress',
     'no_result',
@@ -259,10 +264,14 @@ class AppController extends ChangeNotifier {
     if (error is XmlException) return 'invalid_xml';
     if (error is ArchiveException) return 'invalid_archive';
     if (error is FormatException) {
-      return _knownCodes.contains(error.message) ? error.message : 'invalid_file';
+      return _knownCodes.contains(error.message)
+          ? error.message
+          : 'invalid_file';
     }
     if (error is StateError) {
-      return _knownCodes.contains(error.message) ? error.message : 'invalid_state';
+      return _knownCodes.contains(error.message)
+          ? error.message
+          : 'invalid_state';
     }
     if (error is FileSystemException) return 'file_error';
     if (error.runtimeType.toString().contains('DatabaseException')) {
@@ -317,7 +326,10 @@ class AppController extends ChangeNotifier {
       // Older releases persisted source-off without deleting the native jar.
       final cleared = await youtubeMusicConsent.clear();
       if (!cleared && youtubeMusicConsent.supported && !_disposed) {
-        messages.value = const AppMessage('operation_failed', operation: 'sources');
+        messages.value = const AppMessage(
+          'operation_failed',
+          operation: 'sources',
+        );
       }
     }
     if (_disposed) return;
@@ -398,7 +410,8 @@ class AppController extends ChangeNotifier {
     songs = loadedSongs;
     setlists = loadedSetlists;
     _songHashes = {
-      for (final row in hashRows) row['id'] as String: row['content_hash'] as String,
+      for (final row in hashRows)
+        row['id'] as String: row['content_hash'] as String,
     };
     _setlistHashes = {
       for (final set in loadedSetlists) set.id: _setlistHash(set),
@@ -510,9 +523,13 @@ class AppController extends ChangeNotifier {
       }
       checks.remove(id);
       // Saved-source snapshots remain available; discard only live lookups.
-      results = results.where((source) =>
-        source.candidate.providerId != id ||
-        _cachedDiscoverySourceIds.contains(source.id)).toList();
+      results = results
+          .where(
+            (source) =>
+                source.candidate.providerId != id ||
+                _cachedDiscoverySourceIds.contains(source.id),
+          )
+          .toList();
       if (selection != null) _combine(selection!);
     }
     // Disabling is also the single control for discarding this optional
@@ -528,7 +545,10 @@ class AppController extends ChangeNotifier {
         !await clearing &&
         youtubeMusicConsent.supported &&
         !_disposed) {
-      messages.value = const AppMessage('operation_failed', operation: 'sources');
+      messages.value = const AppMessage(
+        'operation_failed',
+        operation: 'sources',
+      );
     }
   }
 
@@ -678,6 +698,10 @@ class AppController extends ChangeNotifier {
         onProgress: (check) {
           if (epoch != _discoveryEpoch || _disposed) return;
           if (check.providerId == 'youtubemusic' &&
+              _youtubeDiscoveryCancel != youtubeCancellation) {
+            return;
+          }
+          if (check.providerId == 'youtubemusic' &&
               (youtubeCancellation.isCancelled ||
                   !providerEnabled('youtubemusic'))) {
             return;
@@ -685,7 +709,8 @@ class AppController extends ChangeNotifier {
           checks[check.providerId] = check;
           final result = check.result;
           if (result != null &&
-              !(result.hasChords && _cachedDiscoverySourceIds.contains(result.id))) {
+              !(result.hasChords &&
+                  _cachedDiscoverySourceIds.contains(result.id))) {
             results = [
               ...results.where((item) => item.id != result.id),
               result,
@@ -696,13 +721,22 @@ class AppController extends ChangeNotifier {
         },
       );
       if (epoch != _discoveryEpoch || _disposed) return;
-      results = {
+      final latestById = <String, SourceResult>{
         for (final source in cached) source.id: source,
         for (final source in found)
           if (source.candidate.providerId != 'youtubemusic' ||
               (!youtubeCancellation.isCancelled &&
-                  providerEnabled('youtubemusic'))) source.id: source,
-      }.values.toList();
+                  providerEnabled('youtubemusic')))
+            source.id: source,
+      };
+      if (_youtubeDiscoveryCancel != youtubeCancellation) {
+        for (final source in results.where(
+          (source) => source.candidate.providerId == 'youtubemusic',
+        )) {
+          latestById[source.id] = source;
+        }
+      }
+      results = latestById.values.toList();
       _combine(candidate);
     } catch (error) {
       if (epoch != _discoveryEpoch || _disposed) return;
@@ -713,6 +747,82 @@ class AppController extends ChangeNotifier {
         _combine(candidate);
         _emit();
       }
+    }
+  }
+
+  /// Retries the anonymous YouTube Music lookup for the current reference
+  /// without restarting the other providers or dropping their ready results.
+  Future<void> retrySelectedProviderForCurrentSelection(
+    String providerId, {
+    required String expectedIdentity,
+  }) async {
+    if (providerId != 'youtubemusic') return;
+    final candidate = selection;
+    if (_disposed ||
+        candidate == null ||
+        candidate.identity != expectedIdentity ||
+        !providerEnabled(providerId) ||
+        !providers.any((provider) => provider.id == providerId)) {
+      return;
+    }
+
+    _youtubeDiscoveryCancel?.cancel();
+    final cancellation = _youtubeDiscoveryCancel = CancellationToken();
+    checks[providerId] = ProviderCheck(
+      providerId: providerId,
+      state: 'pending',
+    );
+    _emit();
+
+    bool isCurrent() =>
+        !_disposed &&
+        !cancellation.isCancelled &&
+        identical(_youtubeDiscoveryCancel, cancellation) &&
+        selection?.identity == expectedIdentity;
+
+    try {
+      final found = await discovery.discover(
+        candidate,
+        enabledIds: {providerId},
+        providerCancellation: {providerId: cancellation},
+        onProgress: (check) {
+          if (!isCurrent() || check.providerId != providerId) return;
+          checks[providerId] = check;
+          final result = check.result;
+          if (result != null) {
+            results = [
+              ...results.where(
+                (source) => source.candidate.providerId != providerId,
+              ),
+              result,
+            ];
+            _combine(candidate);
+          }
+          _emit();
+        },
+      );
+      if (!isCurrent()) return;
+      final fresh = found
+          .where((source) => source.candidate.providerId == providerId)
+          .toList();
+      if (fresh.isNotEmpty) {
+        results = [
+          ...results.where(
+            (source) => source.candidate.providerId != providerId,
+          ),
+          ...fresh,
+        ];
+      }
+      _combine(candidate);
+      _emit();
+    } catch (_) {
+      if (!isCurrent()) return;
+      checks[providerId] = ProviderCheck(
+        providerId: providerId,
+        state: 'failed',
+        code: 'retry_failed',
+      );
+      _emit();
     }
   }
 
@@ -747,10 +857,7 @@ class AppController extends ChangeNotifier {
             allowRejectedPreferredSource: true,
           );
           combined = fallbackDocument.copyWith(
-            extra: {
-              ...fallbackDocument.extra,
-              'combinedFallbackSource': true,
-            },
+            extra: {...fallbackDocument.extra, 'combinedFallbackSource': true},
           );
         }
       }
@@ -774,8 +881,8 @@ class AppController extends ChangeNotifier {
     final selectedSnapshot = selection == null
         ? null
         : _snapshotCandidate(selection!);
-    final fallbackCombinedSourceId = source == null &&
-            combined?.extra['combinedFallbackSource'] == true
+    final fallbackCombinedSourceId =
+        source == null && combined?.extra['combinedFallbackSource'] == true
         ? combined?.extra['selectedSourceId'] as String?
         : null;
     final requestedSourceId = source?.id ?? fallbackCombinedSourceId;
@@ -842,9 +949,7 @@ class AppController extends ChangeNotifier {
   }
 
   SongCandidate _snapshotCandidate(SongCandidate candidate) =>
-      SongCandidate.fromJson(
-        _snapshotJsonMap(candidate.toJson()),
-      );
+      SongCandidate.fromJson(_snapshotJsonMap(candidate.toJson()));
 
   SourceResult _snapshotSource(SourceResult source) =>
       SourceResult.fromJson(_snapshotJsonMap(source.toJson()));
@@ -917,10 +1022,7 @@ class AppController extends ChangeNotifier {
               id: copyId,
               extra: {
                 ...song.extra,
-                'syncConflict': {
-                  'originalId': song.id,
-                  'reason': 'stale_save',
-                },
+                'syncConflict': {'originalId': song.id, 'reason': 'stale_save'},
               },
               revision: song.revision,
               updatedAt: song.updatedAt,
@@ -972,10 +1074,7 @@ class AppController extends ChangeNotifier {
           expected,
           mustNotExist: expected == null,
         )) {
-          final copyId = conflictDocumentId(
-            setlist.id,
-            _setlistHash(setlist),
-          );
+          final copyId = conflictDocumentId(setlist.id, _setlistHash(setlist));
           await repository.saveSetlist(
             SetlistDocument(
               id: copyId,
@@ -1227,12 +1326,10 @@ class AppController extends ChangeNotifier {
   }
 
   /// Kept for lifecycle compatibility. Resuming never starts cloud work.
-  void onAppResumed() {
-  }
+  void onAppResumed() {}
 
   /// Kept for compatibility with older callers. Automatic sync stays enabled.
-  Future<void> setAutoSync(bool enabled) async {
-  }
+  Future<void> setAutoSync(bool enabled) async {}
 
   /// Completes when any in-flight sync action has finished (for tests and
   /// orderly shutdown).
@@ -1292,56 +1389,189 @@ class AppController extends ChangeNotifier {
   }
 
   String exportSong(SongDocument song) => ChordProCodec().encode(song);
-  Future<List<SongDocument>> importText(String text) => _tracked(
-    'import',
-    () async {
-      final collection = await importCollection(
-        ImportedCollection(decodeSongText(text), []),
+
+  bool _sameImportedSong(SongDocument a, SongDocument b) {
+    if (exportSong(a) != exportSong(b)) return false;
+    // An opaque x_verse block deliberately stays byte-for-byte intact when
+    // ChordPro cannot decode it. Compare its complete model too, or metadata
+    // held only in the local backup sidecar would be silently discarded.
+    return (a.extensionError == null && b.extensionError == null) ||
+        jsonEncode(a.toJson()) == jsonEncode(b.toJson());
+  }
+
+  String _songConflictIdentity(SongDocument song) =>
+      song.extensionError == null
+      ? exportSong(song)
+      : jsonEncode(song.toJson());
+
+  Future<Uint8List> exportBackup({bool includePreferences = true}) async {
+    final snapshot = await repository.backupSnapshot();
+    return encodeLibraryPackageAsync(
+      snapshot.songs,
+      snapshot.setlists,
+      preferences: includePreferences
+          ? selectBackupPreferences(snapshot.appSettings)
+          : null,
+    );
+  }
+
+  Future<BackupPreview> inspectBackup(PickedDocument file) async {
+    final collection = await decodeLibraryPackageAsync(file.bytes);
+    final snapshot = await repository.backupSnapshot();
+    final existingSongs = {for (final song in snapshot.songs) song.id: song};
+    var identicalSongs = 0, conflictingSongs = 0;
+    for (final song in collection.songs) {
+      final existing = existingSongs[song.id];
+      if (existing == null) continue;
+      if (_sameImportedSong(existing, song)) {
+        identicalSongs++;
+      } else {
+        conflictingSongs++;
+      }
+    }
+    final existingSetlists = {
+      for (final setlist in snapshot.setlists) setlist.id: setlist,
+    };
+    var identicalSetlists = 0, conflictingSetlists = 0;
+    for (final setlist in collection.setlists) {
+      final existing = existingSetlists[setlist.id];
+      if (existing == null) continue;
+      if (_sameBackupSetlistContent(existing, setlist)) {
+        identicalSetlists++;
+      } else {
+        conflictingSetlists++;
+      }
+    }
+    final packageHash = sha256.convert(file.bytes).toString();
+    final token = sha256
+        .convert(utf8.encode('$packageHash:${snapshot.libraryFingerprint}'))
+        .toString();
+    return BackupPreview(
+      schemaVersion: collection.schemaVersion,
+      songCount: collection.songs.length,
+      setlistCount: collection.setlists.length,
+      includedPreferenceKeys: (collection.preferences?.keys.toList() ?? [])
+        ..sort(),
+      identicalSongCount: identicalSongs,
+      conflictingSongCount: conflictingSongs,
+      identicalSetlistCount: identicalSetlists,
+      conflictingSetlistCount: conflictingSetlists,
+      token: token,
+    );
+  }
+
+  Future<BackupRestoreResult> restoreBackup(
+    PickedDocument file, {
+    required BackupRestoreMode mode,
+    required String expectedPreviewToken,
+    bool restorePreferences = false,
+  }) async {
+    final collection = await decodeLibraryPackageAsync(file.bytes);
+    final snapshot = await repository.backupSnapshot();
+    final packageHash = sha256.convert(file.bytes).toString();
+    final currentToken = sha256
+        .convert(utf8.encode('$packageHash:${snapshot.libraryFingerprint}'))
+        .toString();
+    if (currentToken != expectedPreviewToken) {
+      throw const FormatException('stale_backup_preview');
+    }
+    final restoredPreferences = restorePreferences
+        ? collection.preferences
+        : null;
+    final appSettingsSnapshot = restoredPreferences == null
+        ? null
+        : <String, dynamic>{...snapshot.appSettings, ...restoredPreferences};
+    if (mode == BackupRestoreMode.merge) {
+      final imported = await importCollection(
+        collection,
+        appSettingsSnapshot: appSettingsSnapshot,
+        expectedLibraryFingerprint: snapshot.libraryFingerprint,
       );
-      return collection.songs;
-    },
-  );
+      return BackupRestoreResult(
+        mode: mode,
+        importedSongCount: imported.songs.length,
+        importedSetlistCount: imported.setlists.length,
+        preferencesRestored:
+            restoredPreferences != null && restoredPreferences.isNotEmpty,
+      );
+    }
+    await _tracked('import', () async {
+      await repository.replaceLibrary(
+        collection.songs,
+        collection.setlists,
+        appSettings: appSettingsSnapshot,
+        expectedLibraryFingerprint: snapshot.libraryFingerprint,
+      );
+      if (appSettingsSnapshot != null) settings = appSettingsSnapshot;
+      await _afterWrite(songsChanged: true);
+    });
+    return BackupRestoreResult(
+      mode: mode,
+      importedSongCount: collection.songs.length,
+      importedSetlistCount: collection.setlists.length,
+      preferencesRestored:
+          restoredPreferences != null && restoredPreferences.isNotEmpty,
+    );
+  }
+
+  static bool _sameBackupSetlistContent(SetlistDocument a, SetlistDocument b) =>
+      a.name == b.name &&
+      a.notes == b.notes &&
+      a.favorite == b.favorite &&
+      jsonEncode([
+            for (final entry in a.entries) [entry.songId, entry.overrides],
+          ]) ==
+          jsonEncode([
+            for (final entry in b.entries) [entry.songId, entry.overrides],
+          ]);
+
+  Future<List<SongDocument>> importText(String text) =>
+      _tracked('import', () async {
+        final collection = await importCollection(
+          ImportedCollection(decodeSongText(text), []),
+        );
+        return collection.songs;
+      });
 
   Future<ImportedCollection> importDocument(
     PickedDocument file, {
     ImportIntent intent = ImportIntent.any,
-  }) =>
-      _tracked('import', () async {
-        final bytes = file.bytes;
-        final ImportedCollection decoded;
-        if (looksLikeZip(bytes)) {
-          decoded = await decodeLibraryPackageAsync(bytes);
+  }) => _tracked('import', () async {
+    final bytes = file.bytes;
+    final ImportedCollection decoded;
+    if (looksLikeZip(bytes) || isLibraryPackageFileName(file.name)) {
+      decoded = await decodeLibraryPackageAsync(bytes);
+    } else {
+      if (bytes.length > maxImportBytes) {
+        throw const FormatException('file_too_large');
+      }
+      final name = file.name.toLowerCase();
+      if (name.endsWith('.lrc') || name.endsWith('.ttml')) {
+        decoded = ImportedCollection(decodePickedSongs(file), []);
+      } else {
+        final text = file.lenientText;
+        if (looksLikeSetlistXml(text)) {
+          decoded = ImportedCollection([], [
+            decodeSetlistReferences(
+              text,
+              await repository.listSongs(),
+              fileName: file.name,
+            ),
+          ]);
         } else {
-          if (bytes.length > maxImportBytes) {
-            throw const FormatException('file_too_large');
-          }
-          final name = file.name.toLowerCase();
-          if (name.endsWith('.lrc') || name.endsWith('.ttml')) {
-            decoded = ImportedCollection(decodePickedSongs(file), []);
-          } else {
-            final text = file.lenientText;
-            if (looksLikeSetlistXml(text)) {
-              decoded = ImportedCollection([], [
-                decodeSetlistReferences(
-                  text,
-                  await repository.listSongs(),
-                  fileName: file.name,
-                ),
-              ]);
-            } else {
-              decoded = ImportedCollection(
-                decodeSongText(text, fileName: file.name),
-                [],
-              );
-            }
-          }
+          decoded = ImportedCollection(
+            decodeSongText(text, fileName: file.name),
+            [],
+          );
         }
-        if ((intent == ImportIntent.songs && decoded.songs.isEmpty) ||
-            (intent == ImportIntent.setlists && decoded.setlists.isEmpty)) {
-          throw const FormatException('unsupported_file');
-        }
-        return importCollection(decoded);
-      });
+      }
+    }
+    if ((intent == ImportIntent.songs && decoded.songs.isEmpty) ||
+        (intent == ImportIntent.setlists && decoded.setlists.isEmpty)) {
+      throw const FormatException('unsupported_file');
+    }
+    return importCollection(decoded);
+  });
 
   static String _stableId(String seed) =>
       'imp-${sha256.convert(utf8.encode(seed)).toString().substring(0, 32)}';
@@ -1351,93 +1581,110 @@ class AppController extends ChangeNotifier {
   /// A song whose id exists with different content is stored under a stable
   /// derived id; a setlist's id is derived from its identity and content, and
   /// one that already exists is left untouched (the user may have edited it).
-  Future<ImportedCollection> importCollection(ImportedCollection input) =>
-      _tracked('import', () async {
-        final mapping = <String, String>{};
-        final incoming = <SongDocument>[];
-        final toWrite = <SongDocument>[];
-        for (final song in input.songs) {
-          final existing = await repository.getSong(song.id);
-          if (existing == null) {
-            mapping[song.id] = song.id;
-            incoming.add(song);
-            toWrite.add(song);
-          } else if (exportSong(existing) == exportSong(song)) {
-            mapping[song.id] = song.id;
-            incoming.add(song);
-          } else {
-            // An externally edited file gets its own identity; importing never
-            // overwrites local work. The identity is derived from the content so
-            // a repeated import finds its earlier copy instead of adding another.
-            final id = _stableId('song:${song.id}:${exportSong(song)}');
-            mapping[song.id] = id;
-            final copy = SongDocument(
-              id: id,
-              title: song.title,
-              artist: song.artist,
-              body: song.body,
-              metadata: song.metadata,
-              sources: song.sources,
-              timingTracks: song.timingTracks,
-              selectedRecording: song.selectedRecording,
-              activeTimingTrackId: song.activeTimingTrackId,
-              favorite: song.favorite,
-              createdAt: song.createdAt,
-              updatedAt: song.updatedAt,
-              revision: song.revision,
-              extra: {...song.extra, 'importedFromId': song.id},
-              preservedExtensions: song.preservedExtensions,
-              extensionError: song.extensionError,
-            );
-            incoming.add(copy);
-            if (await repository.getSong(id) == null) toWrite.add(copy);
-          }
-        }
-        final importedSets = <SetlistDocument>[];
-        final newSets = <SetlistDocument>[];
-        for (final set in input.setlists) {
-          final mapped = [
-            for (final entry in set.entries)
-              (
-                songId: mapping[entry.songId] ?? entry.songId,
-                overrides: entry.overrides,
-              ),
-          ];
-          final id = _stableId(
-            'setlist:${jsonEncode({
-              'id': set.id,
-              'name': set.name,
-              'notes': set.notes,
-              'favorite': set.favorite,
-              'entries': [
-                for (final e in mapped) [e.songId, e.overrides],
-              ],
-            })}',
-          );
-          final document = SetlistDocument(
-            id: id,
-            name: set.name,
-            notes: set.notes,
-            favorite: set.favorite,
-            createdAt: set.createdAt,
-            entries: [
-              for (var i = 0; i < mapped.length; i++)
-                SetlistEntry(
-                  id: _stableId('entry:$id:$i'),
-                  songId: mapped[i].songId,
-                  overrides: mapped[i].overrides,
-                ),
-            ],
-          );
-          importedSets.add(document);
-          if (await repository.getSetlist(id) == null) newSets.add(document);
-        }
-        if (toWrite.isNotEmpty || newSets.isNotEmpty) {
-          await repository.importCollection(toWrite, newSets);
-          await _afterWrite(songsChanged: toWrite.isNotEmpty);
-        }
-        return ImportedCollection(incoming, importedSets);
-      });
+  Future<ImportedCollection> importCollection(
+    ImportedCollection input, {
+    JsonMap? appSettingsSnapshot,
+    String? expectedLibraryFingerprint,
+  }) => _tracked('import', () async {
+    final mapping = <String, String>{};
+    final incoming = <SongDocument>[];
+    final toWrite = <SongDocument>[];
+    for (final song in input.songs) {
+      final existing = await repository.getSong(song.id);
+      if (existing == null) {
+        mapping[song.id] = song.id;
+        incoming.add(song);
+        toWrite.add(song);
+      } else if (_sameImportedSong(existing, song)) {
+        mapping[song.id] = song.id;
+        incoming.add(song);
+      } else {
+        // An externally edited file gets its own identity; importing never
+        // overwrites local work. The identity is derived from the content so
+        // a repeated import finds its earlier copy instead of adding another.
+        final id = _stableId(
+          'song:${song.id}:${_songConflictIdentity(song)}',
+        );
+        mapping[song.id] = id;
+        final copy = SongDocument(
+          id: id,
+          title: song.title,
+          artist: song.artist,
+          body: song.body,
+          metadata: song.metadata,
+          sources: song.sources,
+          timingTracks: song.timingTracks,
+          selectedRecording: song.selectedRecording,
+          activeTimingTrackId: song.activeTimingTrackId,
+          favorite: song.favorite,
+          createdAt: song.createdAt,
+          updatedAt: song.updatedAt,
+          revision: song.revision,
+          extra: {...song.extra, 'importedFromId': song.id},
+          preservedExtensions: song.preservedExtensions,
+          extensionError: song.extensionError,
+        );
+        incoming.add(copy);
+        if (await repository.getSong(id) == null) toWrite.add(copy);
+      }
+    }
+    final importedSets = <SetlistDocument>[];
+    final newSets = <SetlistDocument>[];
+    for (final set in input.setlists) {
+      final mapped = [
+        for (final entry in set.entries)
+          (
+            songId: mapping[entry.songId] ?? entry.songId,
+            overrides: entry.overrides,
+          ),
+      ];
+      final id = _stableId(
+        'setlist:${jsonEncode({
+          'id': set.id,
+          'name': set.name,
+          'notes': set.notes,
+          'favorite': set.favorite,
+          'entries': [
+            for (final e in mapped) [e.songId, e.overrides],
+          ],
+        })}',
+      );
+      final document = SetlistDocument(
+        id: id,
+        name: set.name,
+        notes: set.notes,
+        favorite: set.favorite,
+        createdAt: set.createdAt,
+        entries: [
+          for (var i = 0; i < mapped.length; i++)
+            SetlistEntry(
+              id: _stableId('entry:$id:$i'),
+              songId: mapped[i].songId,
+              overrides: mapped[i].overrides,
+            ),
+        ],
+      );
+      importedSets.add(document);
+      if (await repository.getSetlist(id) == null) newSets.add(document);
+    }
+    if (toWrite.isNotEmpty ||
+        newSets.isNotEmpty ||
+        appSettingsSnapshot != null) {
+      await repository.importCollection(
+        toWrite,
+        newSets,
+        appSettings: appSettingsSnapshot,
+        expectedLibraryFingerprint: expectedLibraryFingerprint,
+      );
+      if (appSettingsSnapshot != null) settings = appSettingsSnapshot;
+      if (toWrite.isNotEmpty || newSets.isNotEmpty) {
+        await _afterWrite(songsChanged: toWrite.isNotEmpty);
+      } else {
+        _emit();
+      }
+    }
+    return ImportedCollection(incoming, importedSets);
+  });
 
   @override
   void dispose() {

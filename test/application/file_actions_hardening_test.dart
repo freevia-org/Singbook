@@ -2,11 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:archive/archive.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/painting.dart' show Rect;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:singbook/application/file_actions.dart';
 import 'package:singbook/domain/models.dart';
+import 'package:singbook/domain/chordpro.dart';
+import 'package:singbook/domain/timing.dart';
 
 Matcher formatError(String message) =>
     isA<FormatException>().having((e) => e.message, 'message', message);
@@ -37,6 +40,26 @@ Uint8List replaceBytes(Uint8List source, String from, String to) {
   return out;
 }
 
+Uint8List markCentralEntryAsSymlink(Uint8List source, String name) {
+  final out = Uint8List.fromList(source);
+  final data = ByteData.sublistView(out);
+  final encodedName = utf8.encode(name);
+  for (var i = 0; i + 46 + encodedName.length <= out.length; i++) {
+    if (data.getUint32(i, Endian.little) != 0x02014b50) continue;
+    final nameLength = data.getUint16(i + 28, Endian.little);
+    if (nameLength != encodedName.length) continue;
+    var matches = true;
+    for (var j = 0; j < nameLength; j++) {
+      if (out[i + 46 + j] != encodedName[j]) matches = false;
+    }
+    if (!matches) continue;
+    data.setUint16(i + 4, (3 << 8) | 20, Endian.little);
+    data.setUint32(i + 38, 0xa1ff0000, Endian.little);
+    return out;
+  }
+  throw StateError('central entry not found');
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -60,20 +83,25 @@ void main() {
       expect(restored.songs.last.body, 'w1199');
     });
 
-    test('an export that could not be restored fails early with a clear code',
-        () {
-      final songs = [
-        for (var i = 0; i <= maxBackupSongs; i++)
-          SongDocument(id: '$i', title: 't', artist: '', body: 'b'),
-      ];
-      expect(() => encodeLibraryPackage(songs, []), throwsA(formatError('backup_too_large')));
-      expect(
-        () => encodeLibraryPackage([], [
-          SetlistDocument(id: 'x', name: 'n' * (maxBackupManifestBytes + 1)),
-        ]),
-        throwsA(formatError('backup_too_large')),
-      );
-    });
+    test(
+      'an export that could not be restored fails early with a clear code',
+      () {
+        final songs = [
+          for (var i = 0; i <= maxBackupSongs; i++)
+            SongDocument(id: '$i', title: 't', artist: '', body: 'b'),
+        ];
+        expect(
+          () => encodeLibraryPackage(songs, []),
+          throwsA(formatError('backup_too_large')),
+        );
+        expect(
+          () => encodeLibraryPackage([], [
+            SetlistDocument(id: 'x', name: 'n' * (maxBackupManifestBytes + 1)),
+          ]),
+          throwsA(formatError('backup_too_large')),
+        );
+      },
+    );
 
     test('a package larger than the package limit is refused up front', () {
       expect(
@@ -92,7 +120,11 @@ void main() {
 
     test('a header that understates the size cannot make us inflate more', () {
       final zip = bomb(30 * 1024 * 1024);
-      expect(zip.length, lessThan(200 * 1024), reason: 'precondition: tiny zip');
+      expect(
+        zip.length,
+        lessThan(200 * 1024),
+        reason: 'precondition: tiny zip',
+      );
       expect(
         () => decodeLibraryPackage(patchDeclaredSize(zip, 100)),
         throwsA(formatError('invalid_archive')),
@@ -113,6 +145,24 @@ void main() {
         throwsA(formatError('invalid_archive')),
       );
     });
+
+    test(
+      'a symlink with an oversized central size is rejected pre-inflate',
+      () {
+        final zip = ZipEncoder().encodeBytes(
+          Archive()..add(ArchiveFile.bytes('manifest.json', Uint8List(512))),
+        );
+        final symlink = markCentralEntryAsSymlink(
+          Uint8List.fromList(zip),
+          'manifest.json',
+        );
+        final oversized = patchDeclaredSize(symlink, 0x7fffffff);
+        expect(
+          () => decodeLibraryPackage(oversized),
+          throwsA(formatError('invalid_archive')),
+        );
+      },
+    );
 
     test('directory entries are accepted', () {
       final song = SongDocument(id: 'a', title: 'A', artist: '', body: 'words');
@@ -136,7 +186,9 @@ void main() {
       ];
       final zip = Uint8List.fromList(encodeLibraryPackage(songs, []));
       expect(
-        () => decodeLibraryPackage(replaceBytes(zip, 'songs/1.cho', 'songs/0.cho')),
+        () => decodeLibraryPackage(
+          replaceBytes(zip, 'songs/1.json', 'songs/0.json'),
+        ),
         throwsA(formatError('invalid_archive')),
       );
     });
@@ -145,9 +197,168 @@ void main() {
       expect(looksLikeZip(ascii.encode('PK song title')), isFalse);
       expect(looksLikeZip([0x50, 0x4b]), isFalse);
       expect(looksLikeZip([0x50, 0x4b, 3, 4, 0]), isTrue);
+      expect(isLibraryPackageFileName('backup.ZIP'), isTrue);
+      expect(isLibraryPackageFileName('Backup.lyrics-setlist'), isTrue);
+      expect(isLibraryPackageFileName('song.cho'), isFalse);
       expect(
         () => decodeLibraryPackage(Uint8List.fromList(ascii.encode('PK text'))),
         throwsA(formatError('invalid_archive')),
+      );
+    });
+  });
+
+  group('portable backup preferences', () {
+    test(
+      'v1/v2 archives remain readable and v3 carries only validated keys',
+      () {
+        final song = SongDocument(
+          id: 'one',
+          title: 'One',
+          artist: '',
+          body: '[C]Words',
+        );
+        final legacyText = ChordProCodec().encode(song);
+        final legacyBytes = utf8.encode(legacyText);
+        final legacyPath = 'songs/0.cho';
+        for (final version in [1, 2]) {
+          final manifest = {
+            'schemaVersion': version,
+            'songs': {'one': legacyPath},
+            'hashes': {legacyPath: sha256.convert(legacyBytes).toString()},
+            'setlists': <Object>[],
+            if (version == 2) 'preferences': <String, Object?>{},
+          };
+          final archive = Archive()
+            ..add(ArchiveFile.bytes(legacyPath, legacyBytes))
+            ..add(
+              ArchiveFile.bytes(
+                'manifest.json',
+                utf8.encode(jsonEncode(manifest)),
+              ),
+            );
+          final legacy = decodeLibraryPackage(
+            Uint8List.fromList(ZipEncoder().encodeBytes(archive)),
+          );
+          expect(legacy.schemaVersion, version);
+          expect(legacy.preferences, version == 1 ? isNull : isEmpty);
+          expect(legacy.songs.single.id, 'one');
+        }
+
+        final portable = decodeLibraryPackage(
+          encodeLibraryPackage(
+            [song],
+            [],
+            preferences: {
+              'themeMode': 'dark',
+              'locale': 'uk',
+              'providers': {'genius': false, 'youtubemusic': true},
+              'oauthToken': 'must not be exported',
+              'consent': {'accepted': true},
+              'readerFontSize': 999,
+            },
+          ),
+        );
+        expect(portable.preferences, {
+          'themeMode': 'dark',
+          'locale': 'uk',
+          'providers': {'genius': false, 'youtubemusic': true},
+        });
+        expect(portable.preferences, isNot(contains('oauthToken')));
+        expect(portable.preferences, isNot(contains('consent')));
+        expect(portable.schemaVersion, 3);
+      },
+    );
+
+    test('v2 rejects unknown or malformed preference values', () {
+      final manifest = utf8.encode(
+        jsonEncode({
+          'schemaVersion': 2,
+          'songs': <String, String>{},
+          'hashes': <String, String>{},
+          'setlists': <Object>[],
+          'preferences': {'oauthToken': 'secret'},
+        }),
+      );
+      final archive = Archive()
+        ..add(ArchiveFile.bytes('manifest.json', manifest));
+      final bytes = Uint8List.fromList(ZipEncoder().encodeBytes(archive));
+      expect(
+        () => decodeLibraryPackage(bytes),
+        throwsA(formatError('invalid_archive')),
+      );
+    });
+  });
+
+  group('opaque song backup sidecars', () {
+    final opaque = SongDocument(
+      id: 'opaque',
+      title: 'Future song',
+      artist: 'Band',
+      body: 'A timed lyric',
+      metadata: {'album': 'Album', 'tempo': 94},
+      timingTracks: [
+        parseLrc('[00:01]A timed lyric', sourceDocumentId: 'source'),
+      ],
+      extra: {
+        'custom': {'kept': true},
+      },
+      preservedExtensions: ['{x_verse: unsupported opaque data}'],
+      extensionError: 'Unsupported x_verse extension',
+    );
+
+    test('v3 round trip preserves every model field', () {
+      final restored = decodeLibraryPackage(encodeLibraryPackage([opaque], []));
+      expect(restored.schemaVersion, 3);
+      expect(restored.songs.single.toJson(), opaque.toJson());
+    });
+
+    test('sidecar ID must match the manifest identity', () {
+      final zip = encodeLibraryPackage([opaque], []);
+      final archive = ZipDecoder().decodeBytes(zip);
+      final manifest = jsonMap(
+        jsonDecode(utf8.decode(archive.find('manifest.json')!.content)),
+      );
+      final json = jsonMap(
+        jsonDecode(utf8.decode(archive.find('songs/0.json')!.content)),
+      );
+      json['id'] = 'forged';
+      final forgedBytes = utf8.encode(jsonEncode(json));
+      final hashes = stringMap(manifest['hashes']);
+      hashes['songs/0.json'] = sha256.convert(forgedBytes).toString();
+      manifest['hashes'] = hashes;
+      final forged = Archive()
+        ..add(ArchiveFile.bytes('songs/0.json', forgedBytes))
+        ..add(
+          ArchiveFile.bytes('manifest.json', utf8.encode(jsonEncode(manifest))),
+        );
+      expect(
+        () => decodeLibraryPackage(
+          Uint8List.fromList(ZipEncoder().encodeBytes(forged)),
+        ),
+        throwsA(formatError('invalid_archive_identity')),
+      );
+    });
+
+    test('sidecar hash mismatch is rejected', () {
+      final archive = ZipDecoder().decodeBytes(
+        encodeLibraryPackage([opaque], []),
+      );
+      final manifest = jsonMap(
+        jsonDecode(utf8.decode(archive.find('manifest.json')!.content)),
+      );
+      final sidecar = utf8
+          .decode(archive.find('songs/0.json')!.content)
+          .replaceFirst('Future song', 'Other song');
+      final changed = Archive()
+        ..add(ArchiveFile.bytes('songs/0.json', utf8.encode(sidecar)))
+        ..add(
+          ArchiveFile.bytes('manifest.json', utf8.encode(jsonEncode(manifest))),
+        );
+      expect(
+        () => decodeLibraryPackage(
+          Uint8List.fromList(ZipEncoder().encodeBytes(changed)),
+        ),
+        throwsA(formatError('invalid_archive_hash')),
       );
     });
   });
@@ -157,7 +368,16 @@ void main() {
       // "Світло" is not representable in cp1251's Bulgarian subset, so use
       // Bulgarian "Светлина": bytes from the cp1251 table.
       final bytes = Uint8List.fromList([
-        0xd1, 0xe2, 0xe5, 0xf2, 0xeb, 0xe8, 0xed, 0xe0, 0x20, 0xb3, // С в е т л и н а _ і
+        0xd1,
+        0xe2,
+        0xe5,
+        0xf2,
+        0xeb,
+        0xe8,
+        0xed,
+        0xe0,
+        0x20,
+        0xb3, // С в е т л и н а _ і
       ]);
       expect(decodeImportedText(bytes), 'Светлина і');
       final picked = PickedDocument('x.txt', bytes);
@@ -170,14 +390,23 @@ void main() {
       expect(decodeImportedText([0xff, 0xfe, 0x41, 0x00, 0x42, 0x00]), 'AB');
       expect(decodeImportedText([0xfe, 0xff, 0x00, 0x41]), 'A');
       expect(decodeImportedText([0x63, 0x61, 0x66, 0xe9]), 'café');
-      expect(() => decodeImportedText([0xff, 0xfe, 0x41]), throwsA(formatError('invalid_encoding')));
+      expect(
+        () => decodeImportedText([0xff, 0xfe, 0x41]),
+        throwsA(formatError('invalid_encoding')),
+      );
     });
 
     test('only a document whose root is <set> is a setlist', () {
-      expect(looksLikeSetlistXml('<?xml version="1.0"?>\n<set name="x"/>'), isTrue);
+      expect(
+        looksLikeSetlistXml('<?xml version="1.0"?>\n<set name="x"/>'),
+        isTrue,
+      );
       expect(looksLikeSetlistXml('﻿  <set>\n</set>'), isTrue);
       expect(looksLikeSetlistXml('<!-- c --><set name="a">'), isTrue);
-      expect(looksLikeSetlistXml('I will <set > the table\nand <set>'), isFalse);
+      expect(
+        looksLikeSetlistXml('I will <set > the table\nand <set>'),
+        isFalse,
+      );
       expect(looksLikeSetlistXml('[C]Some <set a> lyric'), isFalse);
       expect(looksLikeSetlistXml('<settings/>'), isFalse);
     });
@@ -185,7 +414,15 @@ void main() {
 
   group('safeName', () {
     test('avoids Windows device names with or without extension', () {
-      for (final name in ['CON', 'prn', 'Aux', 'NUL', 'COM1', 'lpt9', 'con.txt']) {
+      for (final name in [
+        'CON',
+        'prn',
+        'Aux',
+        'NUL',
+        'COM1',
+        'lpt9',
+        'con.txt',
+      ]) {
         expect(safeName(name), startsWith('_'), reason: name);
       }
       expect(safeName('Console'), 'Console');
@@ -204,7 +441,12 @@ void main() {
 
   group('sharing leaves no temporary copies behind', () {
     late Directory temp;
-    final song = SongDocument(id: 'a', title: 'Shared', artist: '', body: 'words');
+    final song = SongDocument(
+      id: 'a',
+      title: 'Shared',
+      artist: '',
+      body: 'words',
+    );
     setUp(() async {
       temp = await Directory.systemTemp.createTemp('verse-share-test-');
     });
@@ -238,19 +480,25 @@ void main() {
       expect(copies(), 0);
     });
 
-    test('when the outcome is unknown the copy lives until the next share sweeps it',
-        () async {
-      final actions = VerseFileActions(
-        temporaryDirectory: () async => temp,
-        shareRetention: Duration.zero,
-        shareFiles: (_) async =>
-            const ShareResult('launched', ShareResultStatus.unavailable),
-      );
-      await actions.shareSong(song);
-      expect(copies(), 1);
-      await Future<void>.delayed(const Duration(milliseconds: 20));
-      await actions.shareSong(song);
-      expect(copies(), 1, reason: 'the first copy was swept, the new one kept');
-    });
+    test(
+      'when the outcome is unknown the copy lives until the next share sweeps it',
+      () async {
+        final actions = VerseFileActions(
+          temporaryDirectory: () async => temp,
+          shareRetention: Duration.zero,
+          shareFiles: (_) async =>
+              const ShareResult('launched', ShareResultStatus.unavailable),
+        );
+        await actions.shareSong(song);
+        expect(copies(), 1);
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        await actions.shareSong(song);
+        expect(
+          copies(),
+          1,
+          reason: 'the first copy was swept, the new one kept',
+        );
+      },
+    );
   });
 }

@@ -20,11 +20,44 @@ void main() {
 
     final text = songPlainText(song);
 
-    expect(text, startsWith('Evening Song\nSample Artist'));
+    expect(text, startsWith('Evening Song\nArtist: Sample Artist'));
     expect(text, contains('Verse 1\nC\nThe room is warm tonight'));
     expect(text, contains('Chorus\nF\nCarry the light through the dark'));
     expect(text, isNot(contains('UNVERIFIED_COPYRIGHT_MUST_NOT_APPEAR')));
     expect(text, isNot(contains('{')));
+    expect(songRichHtml(song), contains('<h2>Chorus</h2>'));
+    expect(songRichHtml(song), contains('Carry the light through the dark'));
+    expect(songRichHtml(song), isNot(contains('UNVERIFIED_COPYRIGHT_MUST_NOT_APPEAR')));
+  });
+
+  test('setlist copy includes every repeated song body and applied overrides', () {
+    final song = SongDocument(
+      id: 'copy-song',
+      title: 'Evening Song',
+      artist: 'Sample Artist',
+      body: '{comment: Verse 1}\n[C]The room is warm tonight',
+    );
+    final setlist = SetlistDocument(
+      id: 'copy-set',
+      name: 'Two rounds',
+      notes: 'Repeat the chorus',
+      entries: const [
+        SetlistEntry(id: 'one', songId: 'copy-song'),
+        SetlistEntry(id: 'two', songId: 'copy-song', overrides: {'key': 'D'}),
+      ],
+    );
+
+    final text = setlistPlainText(setlist, [song]);
+    final html = setlistRichHtml(setlist, [song]);
+    expect(text, contains('Repeat the chorus'));
+    expect('The room is warm tonight'.allMatches(text).length, 2);
+    expect(text, contains('2. Evening Song'));
+    expect(text, contains('D'));
+    expect(text.indexOf('2. Evening Song'), lessThan(text.indexOf('Verse 1')));
+    expect('The room is warm tonight'.allMatches(html).length, 2);
+    expect(html, contains('<section>'));
+    expect(html, contains('Verse 1'));
+    expect(html.indexOf('class="setlist-entry"'), lessThan(html.indexOf('<section>')));
   });
 
   test('timing import shares as exactly one self-contained ChordPro', () {
@@ -73,7 +106,7 @@ void main() {
     final changed = Archive();
     for (final file in original) {
       changed.add(
-        file.name.endsWith('.cho')
+        file.name.endsWith('.json')
             ? ArchiveFile.string(file.name, 'changed')
             : file,
       );

@@ -22,7 +22,6 @@ const _skippable = {
   'remote_file_too_large',
   'invalid_remote_data',
   'local_file_too_large',
-  'invalid_local_data',
 };
 
 enum _Act { none, adopt, forget, pull, push, resolve, deleteLocal, deleteCloud }
@@ -311,6 +310,10 @@ class GoogleDriveSyncService {
     _busy = true;
     _cancelled = false;
     try {
+      // Refuse unrepresentable or damaged local records before writing even
+      // account-binding or replace-pending state. `_round` revalidates after
+      // the network listing to close the gap before planning mutations.
+      await _localSnapshot();
       final account = _accountHash(id);
       final bound = await _binding();
       if (bound['id'] == null) {
@@ -358,6 +361,9 @@ class GoogleDriveSyncService {
           if (failed == null) rethrow;
         }
       }
+      // Do not acknowledge outbox entries if a song became damaged or
+      // unrepresentable while network work was in flight.
+      await _localSnapshot();
       if (replace) await repository.setSetting(_replaceKey, null);
       await repository.clearOutboxThrough(outboxMark);
       await repository.setSetting(
@@ -402,15 +408,34 @@ class GoogleDriveSyncService {
   }
 
   Future<Map<String, String>> _localSnapshot() async {
+    // Validate every song before treating database rows as sync state. A
+    // damaged record or opaque extension cannot safely participate in the
+    // strict ChordPro sync contract.
+    try {
+      await repository.validateSyncSongData();
+    } on Object {
+      throw const SyncException('invalid_local_data');
+    }
     final result = <String, String>{};
     final rows = await repository.database.query(
       'songs',
       columns: ['id', 'content_hash'],
     );
     for (final row in rows) {
-      result['song:${row['id']}'] = row['content_hash'] as String;
+      final id = row['id'] as String;
+      try {
+        syncFileName('song', id);
+      } on SyncException {
+        throw const SyncException('invalid_local_data');
+      }
+      result['song:$id'] = row['content_hash'] as String;
     }
     for (final setlist in await repository.listSetlists()) {
+      try {
+        syncFileName('setlist', setlist.id);
+      } on SyncException {
+        throw const SyncException('invalid_local_data');
+      }
       result['setlist:${setlist.id}'] = syncHash(jsonEncode(setlist.toJson()));
     }
     return result;
@@ -418,7 +443,12 @@ class GoogleDriveSyncService {
 
   Future<_Local?> _readLocal(String kind, String id) async {
     if (kind == 'song') {
-      final raw = await repository.getSongRaw(id);
+      final ({String document, String hash})? raw;
+      try {
+        raw = await repository.getSyncSongRaw(id);
+      } on Object {
+        throw const SyncException('invalid_local_data');
+      }
       return raw == null ? null : _Local(raw.document, raw.hash);
     }
     final setlist = await repository.getSetlist(id);
@@ -712,6 +742,7 @@ class GoogleDriveSyncService {
   Future<void> _push(_Run run, _Item it) async {
     final local = await _readLocal(it.kind, it.id);
     if (local == null) return; // deleted meanwhile; the next sync decides
+    if (local.hash != it.local) throw const _Stale();
     if (utf8.encode(local.content).length > maxSyncFileBytes - 8192) {
       throw const SyncException('local_file_too_large');
     }
@@ -719,6 +750,8 @@ class GoogleDriveSyncService {
     final properties = {'kind': it.kind, 'hash': hash};
     final cloud = it.cloud;
     if (cloud == null) {
+      final latest = await _readLocal(it.kind, it.id);
+      if (latest == null || latest.hash != local.hash) throw const _Stale();
       await _store.createFile(
         syncFileName(it.kind, it.id),
         local.content,
@@ -731,6 +764,8 @@ class GoogleDriveSyncService {
       if (meta == null || meta.version != cloud.version || meta.hash != cloud.hash) {
         throw const _Stale();
       }
+      final latest = await _readLocal(it.kind, it.id);
+      if (latest == null || latest.hash != local.hash) throw const _Stale();
       try {
         await _store.updateFile(cloud.id, local.content, properties);
       } on SyncException catch (e) {
@@ -795,7 +830,7 @@ class GoogleDriveSyncService {
     required Map<String, String?> expected,
     bool delete = false,
     String? cloudHash,
-  }) {
+  }) async {
     final songs = [for (final d in documents) if (d is SongDocument) d];
     final sets = [for (final d in documents) if (d is SetlistDocument) d];
     final songExpected = {
@@ -806,16 +841,20 @@ class GoogleDriveSyncService {
       for (final e in expected.entries)
         if (e.key.startsWith('setlist:')) e.key.substring(8): e.value,
     };
-    return repository.applySyncChanges(
-      songs,
-      sets,
-      expectedSongHashes: songExpected,
-      expectedSetlistHashes: setExpected,
-      deletedSongIds: delete && it.kind == 'song' ? [it.id] : const [],
-      deletedSetlistIds: delete && it.kind == 'setlist' ? [it.id] : const [],
-      syncAccount: run.account,
-      baselineCloudHashes: {it.key: cloudHash},
-    );
+    try {
+      return await repository.applySyncChanges(
+        songs,
+        sets,
+        expectedSongHashes: songExpected,
+        expectedSetlistHashes: setExpected,
+        deletedSongIds: delete && it.kind == 'song' ? [it.id] : const [],
+        deletedSetlistIds: delete && it.kind == 'setlist' ? [it.id] : const [],
+        syncAccount: run.account,
+        baselineCloudHashes: {it.key: cloudHash},
+      );
+    } on FormatException {
+      throw const SyncException('invalid_local_data');
+    }
   }
 
   bool _saved(JsonMap result, String kind, String id) =>
@@ -837,26 +876,31 @@ class GoogleDriveSyncService {
     if (run.pulls.isEmpty) return;
     final batch = run.pulls;
     run.pulls = [];
-    final result = await repository.applySyncChanges(
-      [
-        for (final p in batch)
-          if (p.document is SongDocument) p.document as SongDocument,
-      ],
-      [
-        for (final p in batch)
-          if (p.document is SetlistDocument) p.document as SetlistDocument,
-      ],
-      expectedSongHashes: {
-        for (final p in batch)
-          if (p.item.kind == 'song') p.item.id: p.item.local,
-      },
-      expectedSetlistHashes: {
-        for (final p in batch)
-          if (p.item.kind == 'setlist') p.item.id: p.item.local,
-      },
-      syncAccount: run.account,
-      baselineCloudHashes: {for (final p in batch) p.item.key: p.cloudHash},
-    );
+    final JsonMap result;
+    try {
+      result = await repository.applySyncChanges(
+        [
+          for (final p in batch)
+            if (p.document is SongDocument) p.document as SongDocument,
+        ],
+        [
+          for (final p in batch)
+            if (p.document is SetlistDocument) p.document as SetlistDocument,
+        ],
+        expectedSongHashes: {
+          for (final p in batch)
+            if (p.item.kind == 'song') p.item.id: p.item.local,
+        },
+        expectedSetlistHashes: {
+          for (final p in batch)
+            if (p.item.kind == 'setlist') p.item.id: p.item.local,
+        },
+        syncAccount: run.account,
+        baselineCloudHashes: {for (final p in batch) p.item.key: p.cloudHash},
+      );
+    } on FormatException {
+      throw const SyncException('invalid_local_data');
+    }
     for (final p in batch) {
       if (_saved(result, p.item.kind, p.item.id)) {
         run.downloaded++;
@@ -889,6 +933,10 @@ class GoogleDriveSyncService {
     if (meta != null) {
       if (meta.version != cloud.version || meta.hash != cloud.hash) {
         throw const _Stale();
+      }
+      if (it.kind == 'song') {
+        final current = await _readLocal(it.kind, it.id);
+        if (current != null) throw const _Stale();
       }
       await _store.deleteFile(cloud.id);
     }

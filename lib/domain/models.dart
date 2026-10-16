@@ -378,6 +378,7 @@ class SongDocument {
     List<SourceResult>? sources,
     List<TimingTrack>? timingTracks,
     bool? favorite,
+    DateTime? createdAt,
     DateTime? updatedAt,
     int? revision,
     JsonMap? extra,
@@ -392,7 +393,7 @@ class SongDocument {
     sources: sources ?? this.sources,
     timingTracks: timingTracks ?? this.timingTracks,
     favorite: favorite ?? this.favorite,
-    createdAt: createdAt,
+    createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? DateTime.now().toUtc(),
     selectedRecording: selectedRecording,
     activeTimingTrackId: clearActiveTiming
@@ -402,6 +403,52 @@ class SongDocument {
     extra: extra ?? this.extra,
     preservedExtensions: preservedExtensions,
     extensionError: extensionError,
+  );
+
+  JsonMap toJson() => {
+    'id': id,
+    'title': title,
+    'artist': artist,
+    'body': body,
+    'metadata': metadata,
+    'sources': sources.map((source) => source.toJson()).toList(),
+    'timingTracks': timingTracks.map((track) => track.toJson()).toList(),
+    'favorite': favorite,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'updatedAt': updatedAt.toUtc().toIso8601String(),
+    'selectedRecording': selectedRecording?.toJson(),
+    'activeTimingTrackId': activeTimingTrackId,
+    'revision': revision,
+    'extra': extra,
+    'preservedExtensions': preservedExtensions,
+    'extensionError': extensionError,
+  };
+
+  factory SongDocument.fromJson(JsonMap json) => SongDocument(
+    id: json['id'] as String,
+    title: json['title'] as String,
+    artist: json['artist'] as String,
+    body: json['body'] as String,
+    metadata: jsonMap(json['metadata']),
+    sources: (json['sources'] as List? ?? [])
+        .map((source) => SourceResult.fromJson(jsonMap(source)))
+        .toList(),
+    timingTracks: (json['timingTracks'] as List? ?? [])
+        .map((track) => TimingTrack.fromJson(jsonMap(track)))
+        .toList(),
+    favorite: json['favorite'] as bool? ?? false,
+    createdAt: DateTime.tryParse(json['createdAt'] as String? ?? ''),
+    updatedAt: DateTime.tryParse(json['updatedAt'] as String? ?? ''),
+    selectedRecording: json['selectedRecording'] == null
+        ? null
+        : SongCandidate.fromJson(jsonMap(json['selectedRecording'])),
+    activeTimingTrackId: json['activeTimingTrackId'] as String?,
+    revision: json['revision'] as int? ?? 1,
+    extra: jsonMap(json['extra']),
+    preservedExtensions: (json['preservedExtensions'] as List? ?? [])
+        .map((line) => line as String)
+        .toList(),
+    extensionError: json['extensionError'] as String?,
   );
 }
 

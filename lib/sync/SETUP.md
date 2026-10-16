@@ -53,8 +53,14 @@ One file per item, updated in place, in `appDataFolder`:
 
 `<id>` is the item id when it matches `[A-Za-z0-9_-]{1,160}`, otherwise `~` +
 base64url of its UTF-8 bytes. Names are parsed strictly (canonical spelling
-only); anything else in the folder is ignored and never modified. An id that
-cannot be represented is skipped (`invalid_local_data`).
+only); anything else in the folder is ignored and never modified. Before sync
+plans changes, it validates local song hashes, identities and complete backup
+sidecars, and checks that local ids can be represented. Unsupported opaque
+ChordPro extensions and damaged or unrepresentable local records fail the sync
+with `invalid_local_data`; they are never treated as absent or silently
+skipped. The local library and pending outbox entries remain available for
+recovery. If a record changes while sync is running, transactional checks stop
+the affected operation before it overwrites or deletes that record.
 
 Every file has `appProperties`: `verseSchema=2`, `kind` (`song`|`setlist`) and
 `hash` (sha-256 of the body). One paginated `files.list` with a `fields`
@@ -151,6 +157,10 @@ requests run in parallel inside one phase.
   valid hash property) is skipped and reported (`SyncReport.skipCodes`,
   `remote_file_too_large` / `invalid_remote_data`); it is never applied and never
   treated as a deletion, and the other items still sync.
+* Invalid local song data or a local song that cannot be represented by the
+  sync format fails the sync with `invalid_local_data`; it is not skipped as
+  though it were a missing item. Sync validates the library before planning
+  changes and checks affected records again inside write transactions.
 * More than 20,000 items stops before any change (`remote_library_too_large`
   for the cloud, `library_too_large` for the device).
 * Cancelling (`cancel()`, used when the app controller is disposed) stops at an
@@ -160,8 +170,8 @@ Error codes (stable, mapped to text by the UI): `not_configured`,
 `not_signed_in`, `authorization_required`, `access_denied`, `rate_limited`,
 `storage_full`, `network`, `account_changed`, `remote_library_too_large`,
 `library_too_large`, `remote_file_too_large`, `invalid_remote_data`,
-`local_file_too_large`, `sign_in_failed`, `sync_failed`, `cancelled`,
-`sync_in_progress`, `not_initialized`.
+`local_file_too_large`, `invalid_local_data`, `sign_in_failed`, `sync_failed`,
+`cancelled`, `sync_in_progress`, `not_initialized`.
 
 ## Accounts
 

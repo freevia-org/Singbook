@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:singbook/application/file_actions.dart';
 import 'package:singbook/application/pdf_font_face.dart';
 import 'package:singbook/domain/arrangement.dart';
+import 'package:singbook/domain/chordpro.dart';
 import 'package:singbook/domain/models.dart';
 
 Matcher formatError(String message) =>
@@ -136,6 +137,45 @@ void main() {
         ),
         throwsA(formatError('file_too_large')),
       );
+    });
+
+    test('LRC metadata is retained in picked and text imports', () {
+      const text =
+          '[ti:QA Timed Import]\n[ar:QA E2E Band]\n[al:QA Fixture]\n'
+          '[au:QA Lyricist]\n[length:03:45]\n[00:00]First line\n[00:04]Second line';
+      final picked = decodePickedSongs(
+        PickedDocument('incomingqa-timed.lrc', Uint8List.fromList(utf8.encode(text))),
+      ).single;
+      final decoded = decodeSongText(text, fileName: 'incomingqa-timed.lrc').single;
+
+      for (final song in [picked, decoded]) {
+        expect(song.title, 'QA Timed Import');
+        expect(song.artist, 'QA E2E Band');
+        expect(song.metadata['album'], 'QA Fixture');
+        expect(song.metadata['lyricist'], 'QA Lyricist');
+        expect(song.metadata['durationSeconds'], 225.0);
+        expect(song.timingTracks.single.status, TimingStatus.usable);
+      }
+
+      final restored = ChordProCodec().decode(ChordProCodec().encode(picked));
+      expect(restored.metadata['album'], 'QA Fixture');
+      expect(restored.metadata['lyricist'], 'QA Lyricist');
+      expect(restored.metadata['durationSeconds'], 225.0);
+      expect(restored.timingTracks.single.raw, contains('[00:04]'));
+    });
+
+    test('empty or malformed LRC metadata does not create blank values', () {
+      final song = decodePickedSongs(
+        PickedDocument(
+          'blank-tags.lrc',
+          Uint8List.fromList(
+            utf8.encode('[ti:]\n[ar:]\n[al:   ]\n[au:]\n[length:not-a-time]\n[00:01]A line'),
+          ),
+        ),
+      ).single;
+      expect(song.title, 'blank-tags');
+      expect(song.artist, '');
+      expect(song.metadata, isEmpty);
     });
   });
 
@@ -322,6 +362,24 @@ void main() {
       expect(isRightToLeftText('مرحبا'), isTrue);
       expect(isRightToLeftText('hello مرحبا'), isFalse);
       expect(isRightToLeftText('12 ...'), isFalse);
+    });
+
+    test('terminal instrumental and section notes remain in the PDF', () async {
+      final base = SongDocument(
+        id: 'terminal-heading',
+        title: 'Terminal heading',
+        artist: '',
+        body: '[C]Opening line',
+      );
+      final withTerminalHeadings = base.copyWith(
+        body: '[C]Opening line\n{start_of_instrumental}\n{comment: Final section}',
+      );
+
+      final without = await createSongPdf([base]);
+      final withHeadings = await createSongPdf([withTerminalHeadings]);
+
+      expect(withHeadings, isNot(equals(without)));
+      expect(withHeadings.length, greaterThan(without.length));
     });
 
     test(
