@@ -1,1 +1,10 @@
 include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    # Local QA outputs are not application sources.
+    - artifacts/**
+    # The pinned upstream plugin includes its own example and test packages.
+    # Application analysis resolves its APIs through the dependency; our
+    # platform patch is Java and is compiled by the Android builds.
+    - third_party/webview_flutter_android/**
