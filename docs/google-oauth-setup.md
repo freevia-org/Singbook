@@ -167,6 +167,11 @@ into chats). Start from `config/defines.example.json`:
 }
 ```
 
+Use the app's Genius client access token in this build file. Local datasource
+maintenance has a separate ignored `config/maintenance.defines.json`; its token
+must not be substituted into the app build configuration. See
+[source maintenance](source-maintenance.md) for the checker and hosted secret setup.
+
 For an iOS build also create `ios/Flutter/Secrets.xcconfig` (git-ignored,
 included by `ios/Flutter/Singbook.xcconfig`, which carries empty defaults so
 builds work without it):

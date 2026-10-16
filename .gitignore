@@ -46,6 +46,7 @@ app.*.map.json
 
 # Local build credentials and validation artifacts
 /config/local.defines.json
+/config/maintenance.defines.json
 /artifacts/
 *.keystore
 *.jks

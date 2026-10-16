@@ -131,7 +131,11 @@ invalid configuration/arguments or file errors return exit 2. Exit 0 in offline
 mode means only that static validation succeeded.
 
 Genius uses `GENIUS_ACCESS_TOKEN` from the environment or ignored
-`config/local.defines.json`; missing credentials produce `not_configured`.
+`config/maintenance.defines.json`; missing credentials produce `not_configured`.
+Create that file from `config/maintenance.defines.example.json` and supply the
+maintenance client access token. The checker never falls back to the app's
+`config/local.defines.json`: app and maintenance credentials can be rotated
+independently. Existing local setups must provision the maintenance file once.
 Local credentials are not uploaded to the hosted environment. Cloud maintenance
 needs its own `GENIUS_ACCESS_TOKEN` secret binding, supplied through the managed
 environment's secure configuration rather than a repository or chat message.
@@ -238,7 +242,8 @@ flutter pub get --enforce-lockfile
 
 Use the Singbook-only GitHub connection for reports and review PRs. Keep secrets
 in the cloud environment's secure configuration; never copy or create
-`config/local.defines.json`. Missing `GENIUS_ACCESS_TOKEN` remains
+`config/local.defines.json` or `config/maintenance.defines.json` there.
+Missing `GENIUS_ACCESS_TOKEN` remains
 `not_configured`. A cloud proxy CONNECT denial is an environment access problem,
 even when the saved policy permits the host, and is not evidence of an upstream
 schema change. Do not bypass the proxy or disable TLS verification.
