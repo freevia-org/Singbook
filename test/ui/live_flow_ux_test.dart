@@ -575,6 +575,179 @@ void main() {
     },
   );
 
+  testWidgets(
+    'filter rebuilds and zero matches preserve the active reading position',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(360, 640);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      final versions = [
+        for (final id in ['a', 'b'])
+          SourceVersionData(
+            id: id,
+            providerId: id,
+            providerName: 'Source $id',
+            title: 'Long song',
+            artist: 'The Signals',
+            hasLyrics: true,
+            hasChords: id == 'a',
+            isUsableVersion: true,
+            canSave: true,
+            bodyLines: [
+              for (var i = 0; i < 60; i++)
+                LyricLineData(id: '$id-$i', text: 'Source $id lyric line $i'),
+            ],
+          ),
+      ];
+      final controller = _FilteringFlowController(
+        VerseUiState(
+          homeListMode: HomeListMode.online,
+          comparison: SearchComparisonData(
+            reference: const SearchReferenceData(
+              id: 'long-song',
+              title: 'Long song',
+              artist: 'The Signals',
+            ),
+            suggested: versions.first,
+            alternatives: versions,
+            selectedVersionId: 'a',
+          ),
+        ),
+        versions,
+      );
+      addTearDown(controller.dispose);
+      await _pumpHome(tester, controller);
+
+      Finder activeScrollable() => find
+          .descendant(
+            of: find.descendant(
+              of: find.byKey(const ValueKey('a')),
+              matching: find.byKey(const ValueKey('full-preview-body')),
+            ),
+            matching: find.byType(Scrollable),
+          )
+          .first;
+      final passage = find.descendant(
+        of: find.byKey(const ValueKey('a')),
+        matching: find.byKey(const ValueKey('preview-line-a-30')),
+      );
+      await tester.scrollUntilVisible(
+        passage,
+        250,
+        scrollable: activeScrollable(),
+      );
+      await Scrollable.ensureVisible(tester.element(passage), alignment: .2);
+      await tester.pumpAndSettle();
+      final originalState = tester.state<ScrollableState>(activeScrollable());
+      final offset = originalState.position.pixels;
+      final passageTop = tester.getTopLeft(passage).dy;
+      expect(offset, greaterThan(1000));
+
+      void expectRestored() {
+        final active = tester.state<ScrollableState>(activeScrollable());
+        // Assert the rebuilt page, not a retained reference to the old page.
+        expect(active, isNot(same(originalState)));
+        expect(active.position.pixels, closeTo(offset, .01));
+        expect(tester.getTopLeft(passage).dy, closeTo(passageTop, .01));
+        expect(passage.hitTestable(), findsOneWidget);
+      }
+
+      controller.setSearchFilter('chordsOnly', true);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('version-row-b')), findsNothing);
+      expectRestored();
+      controller.setSearchFilter('chordsOnly', false);
+      await tester.pumpAndSettle();
+      expectRestored();
+
+      controller.setSearchFilter('timedOnly', true);
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('version-filters-empty')),
+        findsOneWidget,
+      );
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(VerseHomeScreen)),
+      );
+      await tester.tap(find.text(l10n.actionClear));
+      await tester.pumpAndSettle();
+      expectRestored();
+
+      await tester.tap(find.byKey(const ValueKey('version-row-b')));
+      await tester.pumpAndSettle();
+      Finder sourceBScrollable() => find
+          .descendant(
+            of: find.descendant(
+              of: find.byKey(const ValueKey('b')),
+              matching: find.byKey(const ValueKey('full-preview-body')),
+            ),
+            matching: find.byType(Scrollable),
+          )
+          .first;
+      final sourceBPassage = find.descendant(
+        of: find.byKey(const ValueKey('b')),
+        matching: find.byKey(const ValueKey('preview-line-b-45')),
+      );
+      await tester.scrollUntilVisible(
+        sourceBPassage,
+        250,
+        scrollable: sourceBScrollable(),
+      );
+      await Scrollable.ensureVisible(
+        tester.element(sourceBPassage),
+        alignment: .2,
+      );
+      await tester.pumpAndSettle();
+      final sourceBOffset = tester
+          .state<ScrollableState>(sourceBScrollable())
+          .position
+          .pixels;
+      expect(sourceBOffset, greaterThan(offset + 500));
+      controller.setSearchFilter('chordsOnly', true);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('version-row-b')), findsNothing);
+      expectRestored();
+      controller.setSearchFilter('chordsOnly', false);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('version-row-b')));
+      await tester.pumpAndSettle();
+      expect(
+        tester.state<ScrollableState>(sourceBScrollable()).position.pixels,
+        closeTo(sourceBOffset, .01),
+      );
+      expect(sourceBPassage.hitTestable(), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('version-row-a')));
+      await tester.pump(const Duration(milliseconds: 40));
+      controller.setSearchFilter('chordsOnly', true);
+      await tester.pumpAndSettle();
+      expectRestored();
+
+      controller._state = VerseUiState(
+        homeListMode: HomeListMode.online,
+        comparison: SearchComparisonData(
+          reference: const SearchReferenceData(
+            id: 'different-song',
+            title: 'Different song',
+            artist: 'The Signals',
+          ),
+          suggested: versions.first,
+          alternatives: versions,
+          selectedVersionId: 'b',
+        ),
+      );
+      controller.notifyListeners();
+      await tester.pumpAndSettle();
+      expect(
+        tester.state<ScrollableState>(sourceBScrollable()).position.pixels,
+        0,
+      );
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+  );
+
   for (final configuration in [
     (const Size(360, 640), 1.0, 'en'),
     (const Size(640, 360), 2.0, 'ar'),

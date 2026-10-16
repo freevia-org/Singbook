@@ -13,7 +13,7 @@ import 'source_version_widgets.dart';
 
 /// A version is a whole page. New arrivals append; the identity of an existing
 /// tab never changes when a recommendation gains another contributing source.
-class SourceVersionBrowser extends StatelessWidget {
+class SourceVersionBrowser extends StatefulWidget {
   const SourceVersionBrowser({
     super.key,
     required this.controller,
@@ -25,13 +25,28 @@ class SourceVersionBrowser extends StatelessWidget {
   final VoidCallback? onOpenFullScreen, onFilters, onOpened;
 
   @override
+  State<SourceVersionBrowser> createState() => _SourceVersionBrowserSession();
+}
+
+class _SourceVersionBrowserSession extends State<SourceVersionBrowser> {
+  String? _referenceId;
+  Map<String, double> _readingOffsets = {};
+
+  @override
   Widget build(BuildContext context) => AnimatedBuilder(
-    animation: controller,
+    animation: widget.controller,
     builder: (context, _) {
-      final state = controller.state;
+      final state = widget.controller.state;
+      final referenceId = state.comparison?.reference.id;
+      if (referenceId != _referenceId) {
+        _referenceId = referenceId;
+        _readingOffsets = {};
+      }
       final filters = state.searchFilters;
       // A deliberate filter edit starts a new set of choices. Provider arrivals
       // keep this key, preserving tab order and an explicitly pinned source.
+      // Reading offsets belong to the song session, so rebuilding these pages
+      // does not discard a retained or temporarily filtered-out version's place.
       return _SourceVersionPages(
         key: ValueKey((
           state.comparison?.reference.id,
@@ -41,10 +56,11 @@ class SourceVersionBrowser extends StatelessWidget {
           filters.language,
           filters.durationBucket,
         )),
-        controller: controller,
-        onOpenFullScreen: onOpenFullScreen,
-        onFilters: onFilters,
-        onOpened: onOpened,
+        controller: widget.controller,
+        readingOffsets: _readingOffsets,
+        onOpenFullScreen: widget.onOpenFullScreen,
+        onFilters: widget.onFilters,
+        onOpened: widget.onOpened,
       );
     },
   );
@@ -54,12 +70,14 @@ class _SourceVersionPages extends StatefulWidget {
   const _SourceVersionPages({
     super.key,
     required this.controller,
+    required this.readingOffsets,
     this.onOpenFullScreen,
     this.onFilters,
     this.onOpened,
   });
 
   final VerseUiController controller;
+  final Map<String, double> readingOffsets;
   final VoidCallback? onOpenFullScreen, onFilters, onOpened;
 
   @override
@@ -144,7 +162,11 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
       return;
     }
     final anchor = _documents[_visibleId]?.currentState?.captureAnchor();
-    if (anchor != null) _anchors[id] = anchor;
+    // A previously read version keeps its own place, including after filters
+    // temporarily remove it. Match passages only when opening a new version.
+    if (anchor != null && !widget.readingOffsets.containsKey(id)) {
+      _anchors[id] = anchor;
+    }
     setState(() => _visibleId = id);
     final version = _current[id];
     if (version != null) {
@@ -634,6 +656,7 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
                               GlobalKey<_VersionDocumentState>.new,
                             ),
                             version: _current[id] ?? _known[id]!,
+                            readingOffsets: widget.readingOffsets,
                             reference: comparison.reference,
                             available: _current.containsKey(id),
                             showChords: state.showChords,
@@ -692,12 +715,14 @@ class _VersionDocument extends StatefulWidget {
   const _VersionDocument({
     super.key,
     required this.version,
+    required this.readingOffsets,
     required this.reference,
     required this.available,
     required this.showChords,
     required this.fontSize,
   });
   final SourceVersionData version;
+  final Map<String, double> readingOffsets;
   final SearchReferenceData reference;
   final bool available, showChords;
   final double fontSize;
@@ -707,11 +732,26 @@ class _VersionDocument extends StatefulWidget {
 
 class _VersionDocumentState extends State<_VersionDocument>
     with AutomaticKeepAliveClientMixin {
-  final _scroll = ScrollController();
+  late final ScrollController _scroll;
   final _viewport = GlobalKey();
   final _lineKeys = <String, GlobalKey>{};
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    final id = versionSelectionId(widget.version);
+    _scroll =
+        ScrollController(
+          initialScrollOffset: widget.readingOffsets[id] ?? 0,
+          keepScrollOffset: false,
+        )..addListener(() {
+          // Remember even an in-progress scroll before a filter rebuilds the page.
+          widget.readingOffsets[id] = _scroll.offset;
+        });
+  }
+
   List<LyricLineData> get _lines => widget.version.bodyLines.isNotEmpty
       ? widget.version.bodyLines
       : widget.version.bodyPreview;
