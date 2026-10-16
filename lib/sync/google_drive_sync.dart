@@ -125,22 +125,26 @@ class GoogleDriveSyncService {
     this.maxItems = maxSyncItems,
     this.concurrency = 4,
     DateTime Function()? clock,
-  }) : auth = auth ?? GoogleDriveAuth(
-         loadSavedIdentity: () async {
-           final raw = await repository.getSetting(_googleSessionKey);
-           if (raw is Map && raw['id'] is String && raw['email'] is String) {
-             return {
-               'id': raw['id'] as String,
-               'email': raw['email'] as String,
-               if (raw['photoUrl'] is String)
-                 'photoUrl': raw['photoUrl'] as String,
-             };
-           }
-           return null;
-         },
-         saveSavedIdentity: (identity) =>
-             repository.setSetting(_googleSessionKey, identity),
-       ),
+  }) : auth =
+           auth ??
+           GoogleDriveAuth(
+             loadSavedIdentity: () async {
+               final raw = await repository.getSetting(_googleSessionKey);
+               if (raw is Map &&
+                   raw['id'] is String &&
+                   raw['email'] is String) {
+                 return {
+                   'id': raw['id'] as String,
+                   'email': raw['email'] as String,
+                   if (raw['photoUrl'] is String)
+                     'photoUrl': raw['photoUrl'] as String,
+                 };
+               }
+               return null;
+             },
+             saveSavedIdentity: (identity) =>
+                 repository.setSetting(_googleSessionKey, identity),
+           ),
        _providedStore = store,
        _clock = clock; // ignore: prefer_initializing_formals
 
@@ -209,7 +213,8 @@ class GoogleDriveSyncService {
 
   String _accountHash(String id) => syncHash(id);
 
-  Future<JsonMap> _binding() async => jsonMap(await repository.getSetting(_bindingKey));
+  Future<JsonMap> _binding() async =>
+      jsonMap(await repository.getSetting(_bindingKey));
 
   /// True when this library is bound to a different Google account than the
   /// one currently signed in. Sync refuses with `account_changed` until
@@ -390,7 +395,8 @@ class GoogleDriveSyncService {
   void _check(_Run run) {
     if (_cancelled) throw const SyncException('cancelled');
     // The authenticated identity must stay fixed for the whole operation.
-    if (auth.accountId == null || _accountHash(auth.accountId!) != run.account) {
+    if (auth.accountId == null ||
+        _accountHash(auth.accountId!) != run.account) {
       throw const SyncException('account_changed');
     }
   }
@@ -634,7 +640,8 @@ class GoogleDriveSyncService {
       if (c.hash == l) {
         return b.cloudHash == l && b.localHash == l ? _Act.none : _Act.adopt;
       }
-      final localChanged = l != b.localHash, cloudChanged = c.hash != b.cloudHash;
+      final localChanged = l != b.localHash,
+          cloudChanged = c.hash != b.cloudHash;
       if (!localChanged && !cloudChanged) return _Act.none;
       if (localChanged && !cloudChanged) return _Act.push;
       if (!localChanged && cloudChanged) return _Act.pull;
@@ -761,7 +768,9 @@ class GoogleDriveSyncService {
       // Drive has no If-Match: re-read the metadata right before the write
       // and start over if another device got there first.
       final meta = await _store.getFile(cloud.id);
-      if (meta == null || meta.version != cloud.version || meta.hash != cloud.hash) {
+      if (meta == null ||
+          meta.version != cloud.version ||
+          meta.hash != cloud.hash) {
         throw const _Stale();
       }
       final latest = await _readLocal(it.kind, it.id);
@@ -797,7 +806,9 @@ class GoogleDriveSyncService {
     }
     if (syncHash(text) != file.hash) {
       final fresh = await _store.getFile(file.id);
-      if (fresh == null || fresh.version != file.version || fresh.hash != file.hash) {
+      if (fresh == null ||
+          fresh.version != file.version ||
+          fresh.hash != file.hash) {
         throw const _Stale(); // replaced between listing and download
       }
       throw const SyncException('invalid_remote_data');
@@ -831,8 +842,14 @@ class GoogleDriveSyncService {
     bool delete = false,
     String? cloudHash,
   }) async {
-    final songs = [for (final d in documents) if (d is SongDocument) d];
-    final sets = [for (final d in documents) if (d is SetlistDocument) d];
+    final songs = [
+      for (final d in documents)
+        if (d is SongDocument) d,
+    ];
+    final sets = [
+      for (final d in documents)
+        if (d is SetlistDocument) d,
+    ];
     final songExpected = {
       for (final e in expected.entries)
         if (e.key.startsWith('song:')) e.key.substring(5): e.value,
@@ -934,10 +951,16 @@ class GoogleDriveSyncService {
       if (meta.version != cloud.version || meta.hash != cloud.hash) {
         throw const _Stale();
       }
-      if (it.kind == 'song') {
-        final current = await _readLocal(it.kind, it.id);
-        if (current != null) throw const _Stale();
-      }
+    }
+    // A local item may have been recreated while Drive metadata was being
+    // checked. Recheck both songs and setlists immediately before deleting so
+    // a stale local snapshot can never remove their cloud copy.
+    final current = await _readLocal(it.kind, it.id);
+    if (current != null) {
+      run.pending++;
+      return;
+    }
+    if (meta != null) {
       await _store.deleteFile(cloud.id);
     }
     run.deletedRemote++;

@@ -60,6 +60,58 @@ Uint8List markCentralEntryAsSymlink(Uint8List source, String name) {
   throw StateError('central entry not found');
 }
 
+Uint8List backupWithTimestamp({
+  required bool targetSong,
+  required String field,
+  required String value,
+}) {
+  final song = SongDocument(
+    id: 'date-song',
+    title: 'Date song',
+    artist: 'Band',
+    body: 'Words',
+  );
+  final setlist = SetlistDocument(
+    id: 'date-setlist',
+    name: 'Date setlist',
+    entries: [SetlistEntry(id: 'date-entry', songId: song.id)],
+  );
+  final archive = ZipDecoder().decodeBytes(
+    encodeLibraryPackage([song], [setlist]),
+  );
+  final manifestFile = archive.find('manifest.json')!;
+  final manifest = jsonMap(jsonDecode(utf8.decode(manifestFile.content)));
+  final replacementContent = <String, List<int>>{};
+  if (targetSong) {
+    const path = 'songs/0.json';
+    final songFile = archive.find(path)!;
+    final json = jsonMap(jsonDecode(utf8.decode(songFile.content)))
+      ..[field] = value;
+    final bytes = utf8.encode(jsonEncode(json));
+    replacementContent[path] = bytes;
+    final hashes = stringMap(manifest['hashes'])
+      ..[path] = sha256.convert(bytes).toString();
+    manifest['hashes'] = hashes;
+  } else {
+    final setlists = (manifest['setlists'] as List)
+        .map((item) => jsonMap(item))
+        .toList();
+    setlists.single[field] = value;
+    manifest['setlists'] = setlists;
+  }
+  replacementContent['manifest.json'] = utf8.encode(jsonEncode(manifest));
+  final changed = Archive();
+  for (final file in archive.files) {
+    changed.add(
+      ArchiveFile.bytes(
+        file.name,
+        replacementContent[file.name] ?? file.content,
+      ),
+    );
+  }
+  return Uint8List.fromList(ZipEncoder().encodeBytes(changed));
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -360,6 +412,133 @@ void main() {
         ),
         throwsA(formatError('invalid_archive_hash')),
       );
+    });
+  });
+
+  group('backup timestamps', () {
+    for (final field in ['createdAt', 'updatedAt']) {
+      test('rejects an invalid song $field', () {
+        expect(
+          () => decodeLibraryPackage(
+            backupWithTimestamp(
+              targetSong: true,
+              field: field,
+              value: 'not-a-date',
+            ),
+          ),
+          throwsA(formatError('invalid_archive')),
+        );
+      });
+
+      test('rejects an invalid setlist $field', () {
+        expect(
+          () => decodeLibraryPackage(
+            backupWithTimestamp(
+              targetSong: false,
+              field: field,
+              value: 'not-a-date',
+            ),
+          ),
+          throwsA(formatError('invalid_archive')),
+        );
+      });
+    }
+
+    test('preserves valid ISO timestamp forms for songs and setlists', () {
+      final archive = ZipDecoder().decodeBytes(
+        encodeLibraryPackage(
+          [
+            SongDocument(
+              id: 'valid-dates',
+              title: 'Valid dates',
+              artist: '',
+              body: 'Words',
+              createdAt: DateTime.utc(2024, 1, 2, 3, 4, 5),
+              updatedAt: DateTime.utc(2024, 1, 3, 3, 4, 5),
+            ),
+          ],
+          [
+            SetlistDocument(
+              id: 'valid-setlist-dates',
+              name: 'Valid dates',
+              entries: [SetlistEntry(id: 'valid-entry', songId: 'valid-dates')],
+              createdAt: DateTime.utc(2024, 1, 2, 3, 4, 5),
+              updatedAt: DateTime.utc(2024, 1, 3, 3, 4, 5),
+            ),
+          ],
+        ),
+      );
+      final manifest = jsonMap(
+        jsonDecode(utf8.decode(archive.find('manifest.json')!.content)),
+      );
+      final song = jsonMap(
+        jsonDecode(utf8.decode(archive.find('songs/0.json')!.content)),
+      );
+      song['createdAt'] = '2024-01-02 03:04:05Z';
+      song['updatedAt'] = '2024-01-03T05:04:05+02:00';
+      final songBytes = utf8.encode(jsonEncode(song));
+      final hashes = stringMap(manifest['hashes'])
+        ..['songs/0.json'] = sha256.convert(songBytes).toString();
+      manifest['hashes'] = hashes;
+      final setlists = (manifest['setlists'] as List)
+          .map((item) => jsonMap(item))
+          .toList();
+      setlists.single['createdAt'] = '2024-01-02T03:04:05+00:00';
+      setlists.single['updatedAt'] = '2024-01-03 03:04:05Z';
+      manifest['setlists'] = setlists;
+      final replacements = {
+        'songs/0.json': songBytes,
+        'manifest.json': utf8.encode(jsonEncode(manifest)),
+      };
+      final rewritten = Archive();
+      for (final file in archive.files) {
+        rewritten.add(
+          ArchiveFile.bytes(file.name, replacements[file.name] ?? file.content),
+        );
+      }
+
+      final restored = decodeLibraryPackage(
+        Uint8List.fromList(ZipEncoder().encodeBytes(rewritten)),
+      );
+      expect(
+        restored.songs.single.createdAt,
+        DateTime.utc(2024, 1, 2, 3, 4, 5),
+      );
+      expect(
+        restored.songs.single.updatedAt,
+        DateTime.utc(2024, 1, 3, 3, 4, 5),
+      );
+      expect(
+        restored.setlists.single.createdAt,
+        DateTime.utc(2024, 1, 2, 3, 4, 5),
+      );
+      expect(
+        restored.setlists.single.updatedAt,
+        DateTime.utc(2024, 1, 3, 3, 4, 5),
+      );
+    });
+
+    test('legacy setlist archives may omit their timestamps', () {
+      final manifest = {
+        'schemaVersion': 2,
+        'songs': <String, String>{},
+        'hashes': <String, String>{},
+        'setlists': [
+          {'id': 'legacy-setlist', 'name': 'Legacy', 'entries': <Object>[]},
+        ],
+        'preferences': <String, Object?>{},
+      };
+      final bytes = Uint8List.fromList(
+        ZipEncoder().encodeBytes(
+          Archive()..add(
+            ArchiveFile.bytes(
+              'manifest.json',
+              utf8.encode(jsonEncode(manifest)),
+            ),
+          ),
+        ),
+      );
+      expect(decodeLibraryPackage(bytes).setlists.single.id, 'legacy-setlist');
     });
   });
 

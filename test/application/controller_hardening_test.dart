@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:archive/archive.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -39,6 +40,31 @@ SourceDiscoveryService discovery() => SourceDiscoveryService([QuietCatalog()]);
 
 PickedDocument doc(String name, List<int> bytes) =>
     PickedDocument(name, Uint8List.fromList(bytes));
+
+Uint8List backupWithInvalidSongTimestamp(SongDocument song) {
+  final archive = ZipDecoder().decodeBytes(encodeLibraryPackage([song], []));
+  final songPath = 'songs/0.json';
+  final songJson = jsonMap(
+    jsonDecode(utf8.decode(archive.find(songPath)!.content)),
+  )..['createdAt'] = 'not-a-date';
+  final songBytes = utf8.encode(jsonEncode(songJson));
+  final manifest = jsonMap(
+    jsonDecode(utf8.decode(archive.find('manifest.json')!.content)),
+  );
+  manifest['hashes'] = stringMap(manifest['hashes'])
+    ..[songPath] = sha256.convert(songBytes).toString();
+  final replacements = {
+    songPath: songBytes,
+    'manifest.json': utf8.encode(jsonEncode(manifest)),
+  };
+  final rewritten = Archive();
+  for (final file in archive.files) {
+    rewritten.add(
+      ArchiveFile.bytes(file.name, replacements[file.name] ?? file.content),
+    );
+  }
+  return Uint8List.fromList(ZipEncoder().encodeBytes(rewritten));
+}
 
 class _PendingRestoreAuth extends FakeAuth {
   final completion = Completer<bool>();
@@ -838,6 +864,48 @@ void main() {
       },
     );
 
+    test('invalid backup timestamps fail before any restore writes', () async {
+      await app.saveSong(original);
+      await app.saveSetlist(originalSetlist);
+      await app.setSetting('themeMode', 'dark');
+      final beforeSongs = [for (final song in app.songs) song.toJson()];
+      final beforeSetlists = [
+        for (final setlist in app.setlists) setlist.toJson(),
+      ];
+      final file = doc(
+        'invalid-date.lyrics-setlist',
+        backupWithInvalidSongTimestamp(
+          SongDocument(
+            id: 'bad-date',
+            title: 'Bad date',
+            artist: '',
+            body: 'Words',
+          ),
+        ),
+      );
+
+      await expectLater(
+        app.restoreBackup(
+          file,
+          mode: BackupRestoreMode.replace,
+          expectedPreviewToken: 'not-used-after-decode-failure',
+        ),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'invalid_archive',
+          ),
+        ),
+      );
+
+      expect([for (final song in app.songs) song.toJson()], beforeSongs);
+      expect([
+        for (final setlist in app.setlists) setlist.toJson(),
+      ], beforeSetlists);
+      expect(app.settings['themeMode'], 'dark');
+    });
+
     test(
       'replace restores opaque x_verse metadata and timing from the sidecar',
       () async {
@@ -914,10 +982,7 @@ void main() {
           body: local.body,
           metadata: {'album': 'Album', 'localOnly': 'backup'},
           timingTracks: [
-            parseLrc(
-              '[00:02]Timed lyric',
-              sourceDocumentId: 'backup-source',
-            ),
+            parseLrc('[00:02]Timed lyric', sourceDocumentId: 'backup-source'),
           ],
           extra: {'variant': 'backup'},
           preservedExtensions: [opaqueExtension],
@@ -929,9 +994,7 @@ void main() {
         final incomingSetlist = SetlistDocument(
           id: 'opaque-backup-setlist',
           name: 'Future song set',
-          entries: [
-            SetlistEntry(id: 'opaque-entry', songId: incoming.id),
-          ],
+          entries: [SetlistEntry(id: 'opaque-entry', songId: incoming.id)],
         );
         final file = doc(
           'opaque-merge.lyrics-setlist',
@@ -954,7 +1017,10 @@ void main() {
         );
         expect(imported.id, isNot(incoming.id));
         expect(imported.metadata, incoming.metadata);
-        expect(imported.timingTracks.single.raw, incoming.timingTracks.single.raw);
+        expect(
+          imported.timingTracks.single.raw,
+          incoming.timingTracks.single.raw,
+        );
         expect(imported.preservedExtensions, incoming.preservedExtensions);
         expect(imported.extra['importedFromId'], incoming.id);
         expect(app.setlists, hasLength(1));

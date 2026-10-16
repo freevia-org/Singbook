@@ -989,12 +989,34 @@ SongDocument _songFromBackupJson(Object? value) {
       (raw['selectedRecording'] != null && raw['selectedRecording'] is! Map)) {
     throw const FormatException('invalid_archive');
   }
+  if (!_validBackupTimestamp(raw['createdAt']) ||
+      !_validBackupTimestamp(raw['updatedAt'])) {
+    throw const FormatException('invalid_archive');
+  }
   try {
     return SongDocument.fromJson(raw);
   } on FormatException {
     rethrow;
   } on Object {
     throw const FormatException('invalid_archive');
+  }
+}
+
+bool _validBackupTimestamp(Object? value) =>
+    value is String && DateTime.tryParse(value) != null;
+
+void _validateSetlistBackupTimestamps(
+  JsonMap value, {
+  required bool requireFields,
+}) {
+  for (final key in const ['createdAt', 'updatedAt']) {
+    final timestamp = value[key];
+    if ((requireFields && !_validBackupTimestamp(timestamp)) ||
+        (!requireFields &&
+            timestamp != null &&
+            !_validBackupTimestamp(timestamp))) {
+      throw const FormatException('invalid_archive');
+    }
   }
 }
 
@@ -1380,9 +1402,11 @@ ImportedCollection decodeLibraryPackage(Uint8List bytes) {
       files != songs.length + 1) {
     throw const FormatException('invalid_archive');
   }
-  final setlists = (manifest['setlists'] as List)
-      .map((s) => SetlistDocument.fromJson(jsonMap(s)))
-      .toList();
+  final setlists = (manifest['setlists'] as List).map((value) {
+    final json = jsonMap(value);
+    _validateSetlistBackupTimestamps(json, requireFields: schemaVersion == 3);
+    return SetlistDocument.fromJson(json);
+  }).toList();
   final entryIds = <String>{};
   if (setlists.map((s) => s.id).toSet().length != setlists.length ||
       setlists.any(
