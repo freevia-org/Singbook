@@ -12,6 +12,7 @@ import 'package:singbook/providers/source_maintenance.dart';
 import 'package:singbook/providers/youtube_music_session.dart';
 
 import 'src/local_youtube_session.dart';
+import 'src/maintenance_credentials.dart';
 
 Future<void> main(List<String> args) async {
   String catalogPath = 'config/source-catalog.json';
@@ -105,7 +106,7 @@ Future<void> main(List<String> args) async {
     }
     final text = await File(catalogPath).readAsString();
     final catalog = SourceCatalog.parse(text);
-    final token = _geniusToken();
+    final token = maintenanceGeniusToken();
     final transport = ProviderTransport(
       client: Platform.isWindows ? DesktopMaintenanceClient() : null,
     );
@@ -197,24 +198,6 @@ String _value(List<String> args, int index, String flag) {
     throw FormatException('$flag requires a value');
   }
   return args[index];
-}
-
-String _geniusToken() {
-  var token =
-      Platform.environment['GENIUS_ACCESS_TOKEN'] ??
-      const String.fromEnvironment('GENIUS_ACCESS_TOKEN');
-  final local = File('config/local.defines.json');
-  if (token.isEmpty && local.existsSync()) {
-    try {
-      final decoded = jsonDecode(local.readAsStringSync());
-      if (decoded is Map && decoded['GENIUS_ACCESS_TOKEN'] is String) {
-        token = decoded['GENIUS_ACCESS_TOKEN'] as String;
-      }
-    } catch (_) {
-      // A missing/invalid ignored local file is the same as absent credentials.
-    }
-  }
-  return token;
 }
 
 /// Desktop-only smoke transport. Secret headers travel in a private temp file,
