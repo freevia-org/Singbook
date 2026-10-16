@@ -1393,6 +1393,16 @@ class AppControllerAdapter extends VerseUiController {
     final version = selectedId == 'combined'
         ? null
         : app.results.where((item) => item.id == selectedId).firstOrNull;
+    if (version != null && !app.isSourceReady(version)) {
+      final savedSongId = app.savedResultId(source: version);
+      if (savedSongId != null) {
+        _setlistId = null;
+        _setlistEntryId = null;
+        _homeMode = HomeListMode.recent;
+        await _openSong(savedSongId);
+        return;
+      }
+    }
     if (selectedId == 'combined' &&
         (!_combinedMatchesFilters(app.combined) ||
             app.combined == null ||

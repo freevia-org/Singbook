@@ -98,19 +98,40 @@ void main() {
   });
 
   test(
-    'early opening cannot bypass final chord arrangement validation',
+    'a pending chart remains selectable and saves with pending provenance',
     () async {
       const pendingChart = SourceResult(
         candidate: _reference,
         body: '[C]A provisional chart',
-        matchKind: MatchKind.sameSong,
+        matchKind: MatchKind.sameRecording,
+        matchReason: 'same_recording',
+      );
+      ui.setQuery('Signal Song The Signals');
+      await ui.submitSearch();
+      app.suggestions = [_reference];
+      await ui.selectReference(
+        const SearchReferenceData(
+          id: 'genius:original',
+          title: 'Signal Song',
+          artist: 'The Signals',
+        ),
       );
       app.selection = _reference;
       app.results = [pendingChart];
+      app.combined = combineSources(_reference, app.results);
       app.discovering = true;
+      app.notifyListeners();
       expect(app.isSourceReady(pendingChart), isFalse);
-      await expectLater(app.saveResult(source: pendingChart), throwsStateError);
-      expect(app.songs, isEmpty);
+      final pending = ui.state.comparison!.alternatives.single;
+      expect(pending.matchSummary, 'pending');
+      expect(pending.canSave, isTrue);
+      ui.selectVersion(pendingChart.id);
+      expect(ui.state.comparison?.selected?.matchSummary, 'pending');
+      await ui.saveSelectedVersion();
+      expect(ui.state.route, VerseRoute.reader);
+      expect(app.songs.single.body, pendingChart.body);
+      expect(app.songs.single.extra['savedSourceId'], pendingChart.id);
+      expect(app.songs.single.sources.single.body, pendingChart.body);
     },
   );
 
@@ -125,17 +146,33 @@ void main() {
       app.selection = _reference;
       app.results = [savedChart];
       final saved = await app.saveResult(source: savedChart);
+      expect(app.savedResultId(source: savedChart), saved.id);
+      ui.setQuery('Signal Song The Signals');
+      await ui.submitSearch();
+      app.suggestions = [_reference];
+      await ui.selectReference(
+        const SearchReferenceData(
+          id: 'genius:original',
+          title: 'Signal Song',
+          artist: 'The Signals',
+        ),
+      );
       app.discovering = true;
       app.results = [
         const SourceResult(
           candidate: _reference,
           body: '[C]An unvalidated refresh',
-          matchKind: MatchKind.sameSong,
+          matchKind: MatchKind.sameRecording,
+          matchReason: 'same_recording',
         ),
       ];
+      app.combined = combineSources(_reference, app.results);
+      app.notifyListeners();
       ui.selectVersion(savedChart.id);
+      expect(ui.state.comparison?.selected?.savedSongId, saved.id);
       await ui.saveSelectedVersion();
       expect(ui.state.song?.id, saved.id);
+      expect(app.songs, hasLength(1));
       expect(app.songs.single.body, savedChart.body);
       expect(app.songs.single.sources.single.body, savedChart.body);
     },
