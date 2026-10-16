@@ -39,6 +39,40 @@ SourceDiscoveryService discovery() => SourceDiscoveryService([QuietCatalog()]);
 PickedDocument doc(String name, List<int> bytes) =>
     PickedDocument(name, Uint8List.fromList(bytes));
 
+class _PendingRestoreAuth extends FakeAuth {
+  final completion = Completer<bool>();
+  bool restoring = false;
+
+  @override
+  Future<bool> restore() async {
+    restoring = true;
+    return connected = await completion.future;
+  }
+}
+
+class _GatedRestoreSync extends GoogleDriveSyncService {
+  _GatedRestoreSync({
+    required super.repository,
+    required DriveAuthorization auth,
+  }) : super(auth: auth, store: MemoryCloud());
+
+  final lastSuccess = Completer<DateTime?>();
+  int lastSuccessCalls = 0;
+  int mismatchChecks = 0;
+
+  @override
+  Future<DateTime?> lastSuccessfulSync() {
+    lastSuccessCalls++;
+    return lastSuccess.future;
+  }
+
+  @override
+  Future<bool> hasAccountMismatch() async {
+    mismatchChecks++;
+    return false;
+  }
+}
+
 void main() {
   sqfliteFfiInit();
   late LibraryRepository repo;
@@ -84,11 +118,91 @@ void main() {
         ),
       );
       await guarded.initialize();
+      await Future<void>.delayed(Duration.zero);
       expect(guarded.initialized, isTrue);
       expect(guarded.syncError, 'sync_failed');
       guarded.dispose();
       await other.close();
     });
+
+    test(
+      'local startup does not wait for optional account restoration',
+      () async {
+        final auth = _PendingRestoreAuth();
+        final guarded = AppController(
+          repository: repo,
+          discovery: discovery(),
+          sync: GoogleDriveSyncService(
+            repository: repo,
+            auth: auth,
+            store: MemoryCloud(),
+          ),
+        );
+        addTearDown(guarded.dispose);
+        await guarded.initialize().timeout(const Duration(seconds: 1));
+        expect(guarded.initialized, isTrue);
+        expect(auth.restoring, isTrue);
+        expect(auth.completion.isCompleted, isFalse);
+        expect(guarded.syncConnected, isFalse);
+        auth.completion.complete(false);
+        await Future<void>.delayed(Duration.zero);
+        expect(guarded.syncError, isNull);
+      },
+    );
+
+    test('late account restoration cannot access a disposed library', () async {
+      final auth = _PendingRestoreAuth();
+      final other = await LibraryRepository.open(
+        path: inMemoryDatabasePath,
+        factory: databaseFactoryFfi,
+      );
+      final guarded = AppController(
+        repository: other,
+        discovery: discovery(),
+        sync: GoogleDriveSyncService(
+          repository: other,
+          auth: auth,
+          store: MemoryCloud(),
+        ),
+      );
+      await guarded.initialize().timeout(const Duration(seconds: 1));
+      guarded.dispose();
+      await other.close();
+      auth.completion.complete(true);
+      await Future<void>.delayed(Duration.zero);
+      expect(guarded.syncError, isNull);
+    });
+
+    test(
+      'disposal during restored account metadata stops later repository reads',
+      () async {
+        final dir = await Directory.systemTemp.createTemp('verse-restore-');
+        addTearDown(() => dir.delete(recursive: true));
+        final other = await LibraryRepository.open(
+          path: '${dir.path}/library.sqlite',
+          factory: databaseFactoryFfi,
+        );
+        final auth = FakeAuth()..connected = true;
+        final sync = _GatedRestoreSync(repository: other, auth: auth);
+        final guarded = AppController(
+          repository: other,
+          discovery: discovery(),
+          sync: sync,
+        );
+        await guarded.initialize();
+        for (var i = 0; i < 1000 && sync.lastSuccessCalls == 0; i++) {
+          await Future<void>.delayed(const Duration(milliseconds: 1));
+        }
+        expect(sync.lastSuccessCalls, 1);
+        guarded.dispose();
+        await other.close();
+        sync.lastSuccess.complete(DateTime.now().toUtc());
+        await Future<void>.delayed(Duration.zero);
+        expect(sync.mismatchChecks, 0);
+        expect(guarded.lastSyncAt, isNull);
+        expect(guarded.syncError, isNull);
+      },
+    );
 
     test('dispose during an in-flight sync neither throws nor touches the controller',
         () async {

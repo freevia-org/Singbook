@@ -126,7 +126,17 @@ class GoogleDriveSyncService {
     this.maxItems = maxSyncItems,
     this.concurrency = 4,
     DateTime Function()? clock,
-  }) : auth = auth ?? GoogleDriveAuth(),
+  }) : auth = auth ?? GoogleDriveAuth(
+         loadSavedIdentity: () async {
+           final raw = await repository.getSetting(_googleSessionKey);
+           if (raw is Map && raw['id'] is String && raw['email'] is String) {
+             return {'id': raw['id'] as String, 'email': raw['email'] as String};
+           }
+           return null;
+         },
+         saveSavedIdentity: (identity) =>
+             repository.setSetting(_googleSessionKey, identity),
+       ),
        _providedStore = store,
        _clock = clock; // ignore: prefer_initializing_formals
 
@@ -187,6 +197,7 @@ class GoogleDriveSyncService {
   // ---- account binding -------------------------------------------------
 
   static const _bindingKey = 'sync.account';
+  static const _googleSessionKey = 'sync.googleSession';
   static const _replaceKey = 'sync.replacePending';
 
   String _accountHash(String id) => syncHash(id);

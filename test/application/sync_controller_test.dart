@@ -97,6 +97,7 @@ void main() {
     expect(app.lastSyncConflicts, 0);
     // Persisted per account: a fresh controller sees it without syncing.
     final again = await start(startDelay: const Duration(minutes: 1));
+    await until(() => again.lastSyncAt != null);
     expect(again.lastSyncAt, app.lastSyncAt);
   });
 

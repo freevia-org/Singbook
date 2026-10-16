@@ -344,7 +344,9 @@ class AppController extends ChangeNotifier {
       unawaited(refreshSources(silent: true));
     }
     if (syncConfigured) {
-      await restoreSync();
+      // Optional account services must never hold the local songbook behind
+      // their network or platform initialization.
+      unawaited(restoreSync());
     }
   }
 
@@ -354,8 +356,11 @@ class AppController extends ChangeNotifier {
     final sync = _sync;
     if (sync == null || _disposed) return;
     try {
-      if (await sync.restore()) await _afterSignIn(startup: true);
+      final restored = await sync.restore();
+      if (_disposed) return;
+      if (restored) await _afterSignIn(startup: true);
     } catch (error) {
+      if (_disposed) return;
       syncError = error is SyncException ? error.code : 'sync_failed';
     }
     _emit();
@@ -364,9 +369,15 @@ class AppController extends ChangeNotifier {
   /// Common state after a sign-in or a restored session.
   Future<void> _afterSignIn({bool startup = false}) async {
     final sync = _sync!;
-    lastSyncAt = await sync.lastSuccessfulSync();
-    if (await sync.hasAccountMismatch()) {
-      syncPreviousAccountEmail = await sync.previousAccountEmail();
+    final lastSuccess = await sync.lastSuccessfulSync();
+    if (_disposed) return;
+    lastSyncAt = lastSuccess;
+    final accountMismatch = await sync.hasAccountMismatch();
+    if (_disposed) return;
+    if (accountMismatch) {
+      final previousEmail = await sync.previousAccountEmail();
+      if (_disposed) return;
+      syncPreviousAccountEmail = previousEmail;
       syncError = 'account_changed';
       return;
     }
@@ -374,7 +385,12 @@ class AppController extends ChangeNotifier {
     if (syncError == 'account_changed') syncError = null;
     // Edits are recorded in the outbox until a sync acknowledges them, so a
     // change made just before the app was killed still triggers a sync.
-    if (!startup || _isStale() || await repository.outboxMark() > 0) {
+    var shouldSync = !startup || _isStale();
+    if (!shouldSync) {
+      shouldSync = await repository.outboxMark() > 0;
+      if (_disposed) return;
+    }
+    if (shouldSync) {
       _scheduleAutoSync(after: _timing.startDelay);
     }
   }

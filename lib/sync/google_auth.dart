@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
 import 'sync_protocol.dart';
 
 abstract interface class DriveAuthorization {
@@ -69,13 +70,24 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
     this.iosClientId = const String.fromEnvironment(
       'VERSE_GOOGLE_IOS_CLIENT_ID',
     ),
+    this.loadSavedIdentity,
+    this.saveSavedIdentity,
+    @visibleForTesting this.isAndroidOverride,
     @visibleForTesting this.configuredOverride,
   });
   final String serverClientId, iosClientId;
+  final Future<Map<String, String>?> Function()? loadSavedIdentity;
+  final Future<void> Function(Map<String, String>?)? saveSavedIdentity;
+  final bool? isAndroidOverride;
   final bool? configuredOverride;
   static const scopes = ['https://www.googleapis.com/auth/drive.appdata'];
+  bool get _isAndroid => isAndroidOverride ?? Platform.isAndroid;
   static final InitializationGate _gate = InitializationGate();
   GoogleSignInAccount? _account;
+  String? _restoredId, _restoredEmail;
+  int _epoch = 0;
+  int _restoreGeneration = 0;
+  Future<void> _identityWrites = Future<void>.value();
   @override
   bool get configured =>
       configuredOverride ??
@@ -84,11 +96,11 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
           : Platform.isIOS &&
                 iosClientId.endsWith('.apps.googleusercontent.com'));
   @override
-  bool get isConnected => _account != null;
+  bool get isConnected => _account != null || _restoredId != null;
   @override
-  String? get accountId => _account?.id;
+  String? get accountId => _account?.id ?? _restoredId;
   @override
-  String? get accountEmail => _account?.email;
+  String? get accountEmail => _account?.email ?? _restoredEmail;
   Future<void> _initialize() async {
     if (!configured) throw const SyncException('not_configured');
     try {
@@ -105,6 +117,8 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
 
   @override
   Future<void> connect() async {
+    final epoch = ++_epoch;
+    ++_restoreGeneration;
     await _initialize();
     final existing = _account;
     if (existing != null) {
@@ -112,6 +126,7 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
       // account without asking the user to pick it again.
       try {
         await existing.authorizationClient.authorizeScopes(scopes);
+        if (epoch == _epoch) await _remember(existing.id, existing.email);
         return;
       } on GoogleSignInException catch (e) {
         if (e.code == GoogleSignInExceptionCode.canceled) {
@@ -126,7 +141,10 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
       // This method is called from a user gesture, so any consent prompt is
       // attached to the explicit Connect action rather than a background sync.
       await account.authorizationClient.authorizeScopes(scopes);
+      if (epoch != _epoch) return;
       _account = account;
+      _restoredId = _restoredEmail = null;
+      await _remember(account.id, account.email);
     } on GoogleSignInException catch (e) {
       throw SyncException(
         e.code == GoogleSignInExceptionCode.canceled
@@ -144,12 +162,33 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
   /// startup and must not be able to break application initialisation.
   @override
   Future<bool> restore() async {
+    final epoch = _epoch;
+    final generation = ++_restoreGeneration;
     try {
+      if (_account != null) return true;
       if (!configured) return false;
+      if (_isAndroid) {
+        final identity = await loadSavedIdentity?.call();
+        if (!_restoreIsCurrent(epoch, generation)) return false;
+        final id = identity?['id'], email = identity?['email'];
+        if (id == null || id.isEmpty || email == null || email.isEmpty) {
+          return false;
+        }
+        await _initialize();
+        final tokens = await _androidTokens(id: id, email: email);
+        if (tokens == null ||
+            !_restoreIsCurrent(epoch, generation) ||
+            _account != null) {
+          return false;
+        }
+        _restoredId = id;
+        _restoredEmail = email;
+        return true;
+      }
       await _initialize();
       final account = await GoogleSignIn.instance
           .attemptLightweightAuthentication();
-      if (account == null) return false;
+      if (account == null || !_restoreIsCurrent(epoch, generation)) return false;
       // Signed in even if the access token needs user interaction to renew:
       // the first request then reports `authorization_required` and the UI
       // offers to sign in again, instead of silently losing the account.
@@ -186,6 +225,15 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
   @override
   Future<String> accessToken() async {
     final account = _account;
+    if (account == null && _restoredId != null && _isAndroid) {
+      try {
+        final tokens = await _androidTokens();
+        if (tokens == null) throw const SyncException('authorization_required');
+        return tokens.accessToken;
+      } catch (error) {
+        throw mapAuthorizationFailure(error);
+      }
+    }
     if (account == null) throw const SyncException('not_signed_in');
     final GoogleSignInClientAuthorization? authorization;
     try {
@@ -205,6 +253,17 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
   @override
   Future<String> refreshAccessToken() async {
     final account = _account;
+    if (account == null && _restoredId != null && _isAndroid) {
+      try {
+        final stale = await _androidTokens();
+        if (stale != null) {
+          await GoogleSignInPlatform.instance.clearAuthorizationToken(
+            ClearAuthorizationTokenParams(accessToken: stale.accessToken),
+          );
+        }
+      } catch (_) {}
+      return accessToken();
+    }
     if (account == null) throw const SyncException('not_signed_in');
     try {
       final stale = await account.authorizationClient.authorizationForScopes(
@@ -228,7 +287,12 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
     // sign-in asks for consent again; a failure (offline) falls back to a
     // plain sign-out.
     final account = _account;
+    final restoredId = _restoredId, restoredEmail = _restoredEmail;
+    ++_epoch;
+    ++_restoreGeneration;
     _account = null;
+    _restoredId = _restoredEmail = null;
+    await _remember(null, null);
     if (!_gate.started) return;
     try {
       final authorization = await account?.authorizationClient
@@ -237,6 +301,18 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
         await account!.authorizationClient.clearAuthorizationToken(
           accessToken: authorization.accessToken,
         );
+      } else if (restoredId != null && restoredEmail != null && _isAndroid) {
+        final authorization = await _androidTokens(
+          id: restoredId,
+          email: restoredEmail,
+        );
+        if (authorization != null) {
+          await GoogleSignInPlatform.instance.clearAuthorizationToken(
+            ClearAuthorizationTokenParams(
+              accessToken: authorization.accessToken,
+            ),
+          );
+        }
       }
     } catch (_) {}
     try {
@@ -249,4 +325,34 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
       }
     }
   }
+
+  Future<void> _remember(String? id, String? email) async {
+    final save = saveSavedIdentity;
+    if (save == null) return;
+    final identity = id == null || email == null
+        ? null
+        : {'id': id, 'email': email};
+    final write = _identityWrites
+        .catchError((Object _) {})
+        .then<void>((_) => save(identity));
+    _identityWrites = write;
+    await write;
+  }
+
+  bool _restoreIsCurrent(int epoch, int generation) =>
+      epoch == _epoch && generation == _restoreGeneration;
+
+  Future<ClientAuthorizationTokenData?> _androidTokens({
+    String? id,
+    String? email,
+  }) => GoogleSignInPlatform.instance.clientAuthorizationTokensForScopes(
+    ClientAuthorizationTokensForScopesParameters(
+      request: AuthorizationRequestDetails(
+        scopes: scopes,
+        userId: id ?? _restoredId,
+        email: email ?? _restoredEmail,
+        promptIfUnauthorized: false,
+      ),
+    ),
+  );
 }
