@@ -1222,10 +1222,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      '노래와 세트리스트를 선택적으로 백업하려면 Google Drive를 연결하세요. 지금 동기화를 탭하기 전까지는 아무것도 업로드되지 않습니다.';
+      'Google Drive를 연결하면 라이브러리가 동기화됩니다. 이후 노래 변경 사항은 자동으로 동기화됩니다.';
 
   @override
-  String get accountManualSyncHint => '지금 동기화를 탭할 때만 동기화됩니다.';
+  String get accountManualSyncHint => '라이브러리를 동기화하려면 지금 동기화를 탭할 수도 있습니다.';
 
   @override
   String get accountSignInWithGoogle => 'Google로 로그인';
@@ -1306,7 +1306,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get accountAutoSync => '자동 동기화';
 
   @override
-  String get accountAutoSyncHint => '앱을 열 때와 변경 후에 라이브러리를 최신 상태로 유지합니다.';
+  String get accountAutoSyncHint => '연결한 후와 노래를 추가, 수정 또는 삭제한 후에 동기화합니다.';
 
   @override
   String get accountSignOutTitle => '이 계정에서 로그아웃할까요?';

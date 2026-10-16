@@ -1258,11 +1258,11 @@ class AppLocalizationsGa extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Ceangail Google Drive chun cúltaca roghnach a dhéanamh de d’amhráin agus do liostaí. Ní uaslódálfar aon rud go dtí go dtapálfaidh tú Sioncrónaigh anois.';
+      'Nuair a cheanglaíonn tú Google Drive, sioncrónaítear do leabharlann. Sioncrónaítear athruithe ar amhráin go huathoibríoch ina dhiaidh sin.';
 
   @override
   String get accountManualSyncHint =>
-      'Ní dhéantar sioncrónú ach nuair a thapálann tú Sioncrónaigh anois.';
+      'Is féidir leat Sioncrónaigh anois a thapáil chun do leabharlann a shioncronú.';
 
   @override
   String get accountSignInWithGoogle => 'Sínigh isteach le Google';
@@ -1345,7 +1345,7 @@ class AppLocalizationsGa extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Coinnigh do leabharlann cothrom le dáta nuair a osclaíonn tú an aip agus tar éis athruithe.';
+      'Déantar sioncrónú tar éis nascadh agus tar éis amhrán a chur leis, a chur in eagar nó a bhaint.';
 
   @override
   String get accountSignOutTitle => 'Sínigh amach as an gcuntas seo?';

@@ -1248,11 +1248,11 @@ class AppLocalizationsBg extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Свържете Google Drive за незадължително архивиране на песните и списъците си. Нищо няма да се качи, докато не докоснете Синхронизирай сега.';
+      'Свързването с Google Drive синхронизира библиотеката ви. След това промените по песните се синхронизират автоматично.';
 
   @override
   String get accountManualSyncHint =>
-      'Синхронизирането става само когато докоснете бутона Синхронизирай сега.';
+      'Можете също да докоснете „Синхронизирай сега“, за да синхронизирате библиотеката си.';
 
   @override
   String get accountSignInWithGoogle => 'Вход с Google';
@@ -1335,7 +1335,7 @@ class AppLocalizationsBg extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Поддържай библиотеката актуална при отваряне на приложението и след промени.';
+      'Синхронизацията се извършва след свързване и след добавяне, редактиране или премахване на песен.';
 
   @override
   String get accountSignOutTitle => 'Изход от профила?';

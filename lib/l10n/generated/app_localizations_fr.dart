@@ -1266,11 +1266,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Connectez Google Drive pour sauvegarder vos chansons et listes en option. Rien ne sera envoyé avant que vous ne touchiez Synchroniser maintenant.';
+      'La connexion à Google Drive synchronise votre bibliothèque. Les modifications des chansons sont ensuite synchronisées automatiquement.';
 
   @override
   String get accountManualSyncHint =>
-      'La synchronisation a lieu uniquement lorsque vous touchez Synchroniser maintenant.';
+      'Vous pouvez aussi toucher Synchroniser maintenant pour synchroniser votre bibliothèque.';
 
   @override
   String get accountSignInWithGoogle => 'Se connecter avec Google';
@@ -1353,7 +1353,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Gardez votre bibliothèque à jour à l’ouverture de l’application et après les modifications.';
+      'La synchronisation a lieu après la connexion, puis après l’ajout, la modification ou la suppression d’une chanson.';
 
   @override
   String get accountSignOutTitle => 'Se déconnecter de ce compte ?';

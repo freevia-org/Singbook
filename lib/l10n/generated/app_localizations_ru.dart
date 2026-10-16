@@ -1264,11 +1264,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Подключите Google Drive для резервного копирования песен и сет-листов по желанию. Ничего не загрузится, пока вы не нажмёте Синхронизировать.';
+      'При подключении Google Drive библиотека синхронизируется. После этого изменения песен синхронизируются автоматически.';
 
   @override
   String get accountManualSyncHint =>
-      'Синхронизация выполняется только после нажатия Синхронизировать.';
+      'Также можно нажать «Синхронизировать», чтобы синхронизировать библиотеку.';
 
   @override
   String get accountSignInWithGoogle => 'Войти через Google';
@@ -1358,7 +1358,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Обновлять библиотеку при открытии приложения и после изменений.';
+      'Синхронизация выполняется после подключения, а также после добавления, изменения или удаления песни.';
 
   @override
   String get accountSignOutTitle => 'Выйти из этого аккаунта?';

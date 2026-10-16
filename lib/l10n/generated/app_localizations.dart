@@ -2307,13 +2307,13 @@ abstract class AppLocalizations {
   /// No description provided for @accountSignedOutBenefits.
   ///
   /// In en, this message translates to:
-  /// **'Connect Google Drive for an optional backup of your songs and setlists. Nothing is uploaded until you tap Sync now.'**
+  /// **'Connecting Google Drive syncs your library. Song changes then sync automatically.'**
   String get accountSignedOutBenefits;
 
   /// No description provided for @accountManualSyncHint.
   ///
   /// In en, this message translates to:
-  /// **'Sync runs only when you tap Sync now.'**
+  /// **'You can also tap Sync now to sync your library.'**
   String get accountManualSyncHint;
 
   /// No description provided for @accountSignInWithGoogle.
@@ -2409,7 +2409,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountAutoSyncHint.
   ///
   /// In en, this message translates to:
-  /// **'Keep your library up to date when you open the app and after changes.'**
+  /// **'Sync after connecting and after adding, editing or removing a song.'**
   String get accountAutoSyncHint;
 
   /// No description provided for @accountSignOutTitle.

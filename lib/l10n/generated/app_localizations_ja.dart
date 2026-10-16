@@ -1219,10 +1219,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      '曲やセットリストを任意でバックアップするには、Google Driveを接続してください。今すぐ同期をタップするまで、何もアップロードされません。';
+      'Google Driveに接続すると、ライブラリが同期されます。その後、曲の変更は自動的に同期されます。';
 
   @override
-  String get accountManualSyncHint => '今すぐ同期をタップしたときだけ同期します。';
+  String get accountManualSyncHint => '今すぐ同期をタップしてライブラリを同期することもできます。';
 
   @override
   String get accountSignInWithGoogle => 'Googleでログイン';
@@ -1303,7 +1303,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get accountAutoSync => '自動同期';
 
   @override
-  String get accountAutoSyncHint => 'アプリを開いたときや変更後にライブラリを最新の状態に保ちます。';
+  String get accountAutoSyncHint => '接続後、および曲の追加、編集、削除後に同期します。';
 
   @override
   String get accountSignOutTitle => 'このアカウントからログアウトしますか？';

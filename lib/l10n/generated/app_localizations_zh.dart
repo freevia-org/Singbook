@@ -1214,10 +1214,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      '连接 Google Drive，可选择备份歌曲和歌单。点按立即同步之前，不会上传任何内容。';
+      '连接 Google Drive 后，曲库会同步。之后，歌曲更改会自动同步。';
 
   @override
-  String get accountManualSyncHint => '只有点按立即同步时才会进行同步。';
+  String get accountManualSyncHint => '你也可以点按立即同步来同步曲库。';
 
   @override
   String get accountSignInWithGoogle => '使用 Google 登录';
@@ -1298,7 +1298,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get accountAutoSync => '自动同步';
 
   @override
-  String get accountAutoSyncHint => '打开应用和进行更改后，保持曲库为最新状态。';
+  String get accountAutoSyncHint => '连接后，以及添加、编辑或删除歌曲后进行同步。';
 
   @override
   String get accountSignOutTitle => '退出此账户？';

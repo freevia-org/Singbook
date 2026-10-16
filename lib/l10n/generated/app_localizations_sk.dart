@@ -1256,11 +1256,11 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Pripojte Google Drive na voliteľné zálohovanie piesní a koncertných programov. Nič sa nenahrá, kým neťuknete na Synchronizovať teraz.';
+      'Pripojením Google Drive sa synchronizuje vaša knižnica. Zmeny piesní sa potom synchronizujú automaticky.';
 
   @override
   String get accountManualSyncHint =>
-      'Synchronizácia prebehne iba po ťuknutí na Synchronizovať teraz.';
+      'Knižnicu môžete synchronizovať aj ťuknutím na Synchronizovať teraz.';
 
   @override
   String get accountSignInWithGoogle => 'Prihlásiť sa cez Google';
@@ -1346,7 +1346,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Udržiavať knižnicu aktuálnu pri otvorení aplikácie a po vykonaní zmien.';
+      'Synchronizácia prebehne po pripojení a po pridaní, úprave alebo odstránení piesne.';
 
   @override
   String get accountSignOutTitle => 'Odhlásiť sa z tohto účtu?';

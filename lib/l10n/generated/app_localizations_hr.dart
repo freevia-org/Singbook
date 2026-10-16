@@ -1254,11 +1254,11 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Povežite Google Drive za neobaveznu sigurnosnu kopiju pjesama i setlista. Ništa se neće prenijeti dok ne dodirnete Sinkroniziraj sada.';
+      'Povezivanjem s Google Driveom sinkronizira se vaša zbirka. Promjene pjesama nakon toga sinkroniziraju se automatski.';
 
   @override
   String get accountManualSyncHint =>
-      'Sinkronizacija se odvija samo kada dodirnete Sinkroniziraj sada.';
+      'Zbirku možete sinkronizirati i tako da dodirnete Sinkroniziraj sada.';
 
   @override
   String get accountSignInWithGoogle => 'Prijavite se putem Googlea';
@@ -1345,7 +1345,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Ažurirajte zbirku pri otvaranju aplikacije i nakon promjena.';
+      'Sinkronizacija se odvija nakon povezivanja te nakon dodavanja, uređivanja ili uklanjanja pjesme.';
 
   @override
   String get accountSignOutTitle => 'Odjaviti se s ovog računa?';

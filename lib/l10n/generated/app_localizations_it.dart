@@ -1256,11 +1256,11 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Collega Google Drive per un backup facoltativo dei tuoi brani e delle tue scalette. Non verrà caricato nulla finché non tocchi Sincronizza ora.';
+      'Collegando Google Drive, la tua raccolta viene sincronizzata. In seguito, le modifiche ai brani si sincronizzano automaticamente.';
 
   @override
   String get accountManualSyncHint =>
-      'La sincronizzazione avviene solo quando tocchi Sincronizza ora.';
+      'Puoi anche toccare Sincronizza ora per sincronizzare la tua raccolta.';
 
   @override
   String get accountSignInWithGoogle => 'Accedi con Google';
@@ -1343,7 +1343,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint =>
-      'Mantieni aggiornata la raccolta quando apri l\'app e dopo le modifiche.';
+      'La sincronizzazione avviene dopo la connessione e dopo aver aggiunto, modificato o rimosso un brano.';
 
   @override
   String get accountSignOutTitle => 'Uscire da questo account?';
