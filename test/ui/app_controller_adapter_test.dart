@@ -1218,6 +1218,11 @@ void main() {
 
     expect(ui.state.comparison?.suggested?.matchSummary, 'pending');
     expect(ui.state.comparison?.suggested?.sameRecording, isFalse);
+    ui.selectVersion(chart.id);
+    expect(ui.state.comparison?.selected?.sameRecording, isFalse);
+    expect(ui.state.comparison?.selected?.matchSummary, 'pending');
+    expect(ui.state.comparison?.selected?.canSave, isTrue);
+    ui.selectVersion('combined');
     await ui.saveSelectedVersion();
     expect(app.songs.single.extra['pendingChordSourceIds'], [chart.id]);
 

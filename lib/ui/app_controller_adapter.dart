@@ -876,6 +876,8 @@ class AppControllerAdapter extends VerseUiController {
     final savedId = app.savedResultId(source: result);
     final lines = _lines(result.body);
     final isChecking = app.discovering && !app.isSourceReady(result);
+    final pendingVerification =
+        isChecking && result.matchKind == MatchKind.sameRecording;
     return SourceVersionData(
       id: result.id,
       providerId: candidate.providerId,
@@ -900,8 +902,9 @@ class AppControllerAdapter extends VerseUiController {
       isUsableVersion: _hasLyrics(result),
       hasChords: result.hasChords,
       hasTiming: _hasUsableTiming(result.timingTracks),
-      sameRecording: result.matchKind == MatchKind.sameRecording,
-      matchSummary: result.matchReason ?? '',
+      sameRecording:
+          result.matchKind == MatchKind.sameRecording && !isChecking,
+      matchSummary: pendingVerification ? 'pending' : result.matchReason ?? '',
       status: isChecking
           ? LoadState.loading
           : check?.state == 'failed' || check?.state == 'unavailable'
