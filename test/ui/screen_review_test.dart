@@ -412,7 +412,7 @@ void main() {
       addTearDown(c.dispose);
       await pumpShell(tester, c);
 
-      final slider = find.byType(Slider);
+      final slider = find.byKey(const ValueKey('player-seek-slider'));
       final gesture = await tester.startGesture(tester.getCenter(slider));
       await gesture.moveBy(const Offset(40, 0));
       await tester.pump();

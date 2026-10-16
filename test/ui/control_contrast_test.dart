@@ -71,11 +71,11 @@ void main() {
         }
         expect(
           _contrast(
-            _paintedIconColor(tester, Icons.add_rounded),
-            theme.colorScheme.secondaryContainer,
+            _paintedIconColor(tester, Icons.more_vert_rounded),
+            surface,
           ),
           greaterThanOrEqualTo(3),
-          reason: '${palette.name}/${brightness.name}: tonal add button',
+          reason: '${palette.name}/${brightness.name}: header actions menu',
         );
         expect(tester.takeException(), isNull);
       }

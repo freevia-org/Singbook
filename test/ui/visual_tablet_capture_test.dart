@@ -107,7 +107,7 @@ void main() {
       );
       expect(finalLyric, findsOneWidget);
       final lyricRect = tester.getRect(finalLyric);
-      final slider = find.byType(Slider);
+      final slider = find.byKey(const ValueKey('player-seek-slider'));
       expect(slider, findsOneWidget);
       final sliderRect = tester.getRect(slider);
       expect(lyricRect.height, greaterThan(0));

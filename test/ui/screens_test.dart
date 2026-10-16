@@ -500,7 +500,7 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('start-lyric-scroll')));
       expect(c.calls, contains('playPause'));
 
-      await tester.drag(find.byType(Slider), const Offset(120, 0));
+      await tester.drag(find.byKey(const ValueKey('player-seek-slider')), const Offset(120, 0));
       await tester.pump();
       expect(c.calls.where((call) => call.startsWith('seek(')), isNotEmpty);
       expect(c.positionNotifier.value.seconds, greaterThan(0));

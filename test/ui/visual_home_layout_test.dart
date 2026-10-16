@@ -448,7 +448,7 @@ void main() {
       );
       expect(find.text(l10n.searchCatalogFilterHint), findsNothing);
       expect(find.byTooltip(l10n.searchFilters), findsNothing);
-      expect(find.byTooltip(l10n.songsAdd), findsOneWidget);
+      expect(find.byTooltip(l10n.songsAdd), findsNothing);
       expect(find.byTooltip(l10n.searchSubmit), findsOneWidget);
       expect(find.text(l10n.searchFilterLyrics), findsNothing);
       expect(find.text(l10n.searchFilterChords), findsNothing);
