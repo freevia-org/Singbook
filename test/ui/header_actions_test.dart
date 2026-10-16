@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:singbook/l10n/generated/app_localizations.dart';
 import 'support/fake_controller.dart';
-import 'package:singbook/ui/verse_app.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
 
 void main() {
