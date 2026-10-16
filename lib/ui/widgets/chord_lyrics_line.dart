@@ -270,7 +270,9 @@ class _ChordLineLayout {
     final lyricMetrics = lyrics.computeLineMetrics();
     TextPainter? emptyLineMetrics;
     var lines = lyricMetrics;
-    if (lines.isEmpty && chords.isNotEmpty) {
+    if ((text.trim().isEmpty || lines.isEmpty) && chords.isNotEmpty) {
+      // A chord-only row has one lyric-line spacer regardless of how many
+      // whitespace wraps its invisible payload would otherwise produce.
       emptyLineMetrics = TextPainter(
         text: TextSpan(text: ' ', style: lyricStyle),
         textDirection: direction,
@@ -297,75 +299,100 @@ class _ChordLineLayout {
     final width = text.trim().isEmpty && constraints.maxWidth.isFinite
         ? constraints.maxWidth
         : constraints.constrainWidth(lyrics.width);
-    var previousOffset = -1;
-    var runWidth = 0.0;
-    for (final (_, chord) in ordered) {
-      final graphemeOffset = chord.graphemeOffset.clamp(
-        0,
-        codeUnitOffsets.length - 1,
-      );
-      final anchor = text.isEmpty && direction == TextDirection.rtl
-          ? _ChordAnchorGeometry(Offset(width, 0), direction)
-          : _anchorGeometry(lyrics, codeUnitOffsets, graphemeOffset, direction);
-      final lineIndex = _lineForTop(lines, anchor.caret.dy);
-      final label = TextPainter(
-        text: TextSpan(text: chord.symbol, style: chordStyle),
-        textDirection: direction,
-        textScaler: textScaler,
-        locale: locale,
-        textAlign: TextAlign.start,
-        textWidthBasis: TextWidthBasis.longestLine,
-      )..layout();
-      if (graphemeOffset != previousOffset) runWidth = 0;
-      final chordOnlyRow = text.trim().isEmpty;
-      final labelWidth = label.width;
-      var x = anchor.direction == TextDirection.rtl
-          ? anchor.caret.dx - runWidth - labelWidth
-          : anchor.caret.dx + runWidth;
-      if (x + labelWidth > width && x >= 0) x = anchor.caret.dx - labelWidth;
-      if (x < 0 && x + labelWidth <= width) x = anchor.caret.dx;
-      x = x.clamp(0.0, math.max(0.0, width - labelWidth));
-      grouped[lineIndex].add(
-        _ChordPaintData(graphemeOffset: graphemeOffset, label: label, x: x),
-      );
-      if (chordOnlyRow) runWidth += labelWidth + _chordGap;
-      previousOffset = graphemeOffset;
+    final chordOnlyRow = text.trim().isEmpty;
+    final chordOnlyPacking = chordOnlyRow
+        ? _packChordOnly(
+            ordered: ordered,
+            lyrics: lyrics,
+            codeUnitOffsets: codeUnitOffsets,
+            direction: direction,
+            textScaler: textScaler,
+            locale: locale,
+            chordStyle: chordStyle,
+            width: width,
+          )
+        : null;
+    if (chordOnlyPacking != null) {
+      grouped[0].addAll(chordOnlyPacking.items);
+    } else {
+      for (final (_, chord) in ordered) {
+        final graphemeOffset = chord.graphemeOffset.clamp(
+          0,
+          codeUnitOffsets.length - 1,
+        );
+        final anchor = _anchorGeometry(
+          lyrics,
+          codeUnitOffsets,
+          graphemeOffset,
+          direction,
+        );
+        final lineIndex = _lineForTop(lines, anchor.caret.dy);
+        final label = TextPainter(
+          text: TextSpan(text: chord.symbol, style: chordStyle),
+          textDirection: direction,
+          textScaler: textScaler,
+          locale: locale,
+          textAlign: TextAlign.start,
+          textWidthBasis: TextWidthBasis.longestLine,
+        )..layout();
+        final labelWidth = label.width;
+        var x = anchor.direction == TextDirection.rtl
+            ? anchor.caret.dx - labelWidth
+            : anchor.caret.dx;
+        if (x + labelWidth > width && x >= 0) x = anchor.caret.dx - labelWidth;
+        if (x < 0 && x + labelWidth <= width) x = anchor.caret.dx;
+        x = x.clamp(0.0, math.max(0.0, width - labelWidth));
+        grouped[lineIndex].add(
+          _ChordPaintData(graphemeOffset: graphemeOffset, label: label, x: x),
+        );
+      }
     }
 
     var extraHeight = 0.0;
     final rowHeights = <List<double>>[];
-    for (var lineIndex = 0; lineIndex < grouped.length; lineIndex++) {
-      final orderedChords = [...grouped[lineIndex]]
-        ..sort((a, b) => a.x.compareTo(b.x));
-      final slots = <List<_ChordPaintData>>[];
-      final assigned = <_ChordPaintData>[];
-      for (final chord in orderedChords) {
-        var slotIndex = slots.indexWhere(
-          (slot) => slot.every((other) => !_overlapsHorizontally(chord, other)),
-        );
-        if (slotIndex < 0) {
-          slotIndex = slots.length;
-          slots.add(<_ChordPaintData>[]);
-        }
-        final placed = chord.copyWith(slot: slotIndex);
-        slots[slotIndex].add(placed);
-        assigned.add(placed);
-      }
-      assigned.sort((a, b) => a.graphemeOffset.compareTo(b.graphemeOffset));
-      grouped[lineIndex] = assigned;
-      final heights = List<double>.filled(slots.length, 0);
-      for (final slot in slots) {
-        for (final chord in slot) {
-          heights[chord.slot] = math.max(
-            heights[chord.slot],
-            chord.label.height + _chordGap,
+    if (chordOnlyPacking != null) {
+      rowHeights.add(chordOnlyPacking.slotHeights);
+      extraHeight += chordOnlyPacking.slotHeights.fold<double>(
+        0,
+        (sum, value) => sum + value,
+      );
+    } else {
+      for (var lineIndex = 0; lineIndex < grouped.length; lineIndex++) {
+        final orderedChords = [...grouped[lineIndex]]
+          ..sort((a, b) => a.x.compareTo(b.x));
+        final slots = <List<_ChordPaintData>>[];
+        final assigned = <_ChordPaintData>[];
+        for (final chord in orderedChords) {
+          var slotIndex = slots.indexWhere(
+            (slot) =>
+                slot.every((other) => !_overlapsHorizontally(chord, other)),
           );
+          if (slotIndex < 0) {
+            slotIndex = slots.length;
+            slots.add(<_ChordPaintData>[]);
+          }
+          final placed = chord.copyWith(slot: slotIndex);
+          slots[slotIndex].add(placed);
+          assigned.add(placed);
         }
+        assigned.sort((a, b) => a.graphemeOffset.compareTo(b.graphemeOffset));
+        grouped[lineIndex] = assigned;
+        final heights = List<double>.filled(slots.length, 0);
+        for (final slot in slots) {
+          for (final chord in slot) {
+            heights[chord.slot] = math.max(
+              heights[chord.slot],
+              chord.label.height + _chordGap,
+            );
+          }
+        }
+        rowHeights.add(heights);
+        extraHeight += heights.fold<double>(0, (sum, value) => sum + value);
       }
-      rowHeights.add(heights);
-      extraHeight += heights.fold<double>(0, (sum, value) => sum + value);
     }
-    final lyricHeight = lyrics.height > 0
+    final lyricHeight = chordOnlyRow
+        ? (emptyLineMetrics?.height ?? 0)
+        : lyrics.height > 0
         ? lyrics.height
         : (emptyLineMetrics?.height ?? 0);
     final layout = _ChordLineLayout(
@@ -377,6 +404,114 @@ class _ChordLineLayout {
     );
     emptyLineMetrics?.dispose();
     return layout;
+  }
+
+  static _ChordOnlyPacking _packChordOnly({
+    required List<(int, LyricChord)> ordered,
+    required TextPainter lyrics,
+    required List<int> codeUnitOffsets,
+    required TextDirection direction,
+    required TextScaler textScaler,
+    required Locale? locale,
+    required TextStyle chordStyle,
+    required double width,
+  }) {
+    final rows = <List<_ChordPaintData>>[<_ChordPaintData>[]];
+    var rowIndex = 0;
+    double? previousStart;
+    double? previousEnd;
+
+    for (final (_, chord) in ordered) {
+      final graphemeOffset = chord.graphemeOffset.clamp(
+        0,
+        codeUnitOffsets.length - 1,
+      );
+      final anchor = lyrics.plainText.isEmpty
+          ? _ChordAnchorGeometry(
+              Offset(direction == TextDirection.rtl ? width : 0, 0),
+              direction,
+            )
+          : _anchorGeometry(lyrics, codeUnitOffsets, graphemeOffset, direction);
+      final label = _chordOnlyLabel(
+        chord.symbol,
+        chordStyle,
+        direction,
+        textScaler,
+        locale,
+        width,
+      );
+      final labelWidth = label.width.clamp(0.0, width).toDouble();
+      final requestedStart = anchor.direction == TextDirection.rtl
+          ? anchor.caret.dx - labelWidth
+          : anchor.caret.dx;
+      var start = previousStart == null
+          ? requestedStart
+          : direction == TextDirection.rtl
+          ? math.min(requestedStart, previousStart - _chordGap - labelWidth)
+          : math.max(requestedStart, previousEnd! + _chordGap);
+
+      if (start < 0 || start + labelWidth > width) {
+        rows.add(<_ChordPaintData>[]);
+        rowIndex++;
+        previousStart = null;
+        previousEnd = null;
+        start = direction == TextDirection.rtl ? width - labelWidth : 0;
+      }
+      start = start.clamp(0.0, math.max(0.0, width - labelWidth));
+      rows[rowIndex].add(
+        _ChordPaintData(
+          graphemeOffset: graphemeOffset,
+          label: label,
+          x: start,
+          slot: 0,
+        ),
+      );
+      previousStart = start;
+      previousEnd = start + labelWidth;
+    }
+
+    final visualRowHeights = [
+      for (final row in rows)
+        row.fold<double>(
+          0,
+          (height, item) => math.max(height, item.label.height + _chordGap),
+        ),
+    ];
+    final slotHeights = visualRowHeights.reversed.toList();
+    final items = <_ChordPaintData>[
+      for (var index = 0; index < rows.length; index++)
+        for (final item in rows[index])
+          item.copyWith(slot: rows.length - 1 - index),
+    ];
+    return _ChordOnlyPacking(items: items, slotHeights: slotHeights);
+  }
+
+  static TextPainter _chordOnlyLabel(
+    String symbol,
+    TextStyle style,
+    TextDirection direction,
+    TextScaler textScaler,
+    Locale? locale,
+    double maxWidth,
+  ) {
+    TextPainter painterFor(TextScaler scaler) => TextPainter(
+      text: TextSpan(text: symbol, style: style),
+      textDirection: direction,
+      textScaler: scaler,
+      locale: locale,
+      textAlign: TextAlign.start,
+      textWidthBasis: TextWidthBasis.longestLine,
+    );
+
+    final natural = painterFor(textScaler)..layout();
+    if (natural.width <= maxWidth) return natural;
+    final fontSize = style.fontSize ?? 14;
+    final fittedScale =
+        textScaler.scale(fontSize) / fontSize * maxWidth / natural.width;
+    natural.dispose();
+    // Keep each chord symbol intact. Only an individually oversized symbol
+    // is fitted; the progression itself wraps between complete labels.
+    return painterFor(TextScaler.linear(fittedScale))..layout();
   }
 
   static int _lineForTop(List<ui.LineMetrics> lines, double top) {
@@ -450,6 +585,13 @@ class _ChordLineLayout {
       }
     }
   }
+}
+
+class _ChordOnlyPacking {
+  const _ChordOnlyPacking({required this.items, required this.slotHeights});
+
+  final List<_ChordPaintData> items;
+  final List<double> slotHeights;
 }
 
 class _ChordAnchorGeometry {

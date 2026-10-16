@@ -1,4 +1,4 @@
-import 'dart:io' show Platform;
+import 'dart:io' show Directory, File, Platform;
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -164,6 +164,30 @@ Future<Rect> _chordPixelBounds(WidgetTester tester, Finder finder) async {
     components.map((rect) => rect.right).reduce((a, b) => a > b ? a : b),
     components.map((rect) => rect.bottom).reduce((a, b) => a > b ? a : b),
   );
+}
+
+Future<void> _saveChordCapture(
+  WidgetTester tester,
+  Finder finder,
+  String name,
+) async {
+  final boundary = tester.renderObject<RenderRepaintBoundary>(finder);
+  final saved = await tester.runAsync(() async {
+    final image = await boundary.toImage(pixelRatio: 1);
+    try {
+      final data = await image.toByteData(format: ui.ImageByteFormat.png);
+      if (data == null) return false;
+      final directory = Directory('artifacts/chord-only-captures');
+      await directory.create(recursive: true);
+      await File(
+        '${directory.path}/$name.png',
+      ).writeAsBytes(data.buffer.asUint8List());
+      return true;
+    } finally {
+      image.dispose();
+    }
+  });
+  expect(saved, isTrue, reason: 'capture $name is saved for visual review');
 }
 
 List<Rect> _glyphBoxes(RenderParagraph paragraph, int start, int end) =>
@@ -688,6 +712,219 @@ void main() {
       matchesGoldenFile(_goldenPath('chord_only')),
     );
   });
+
+  testWidgets(
+    'dense chord-only intro keeps its four-chord progression in one row',
+    (tester) async {
+      final semantics = tester.ensureSemantics();
+      try {
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = const Size(420, 180);
+        await tester.pumpWidget(
+          _host(
+            RepaintBoundary(
+              key: const ValueKey('dense-intro-capture'),
+              child: DecoratedBox(
+                decoration: const BoxDecoration(color: Colors.white),
+                child: _line('               ', const [
+                  LyricChord(graphemeOffset: 0, symbol: 'F#m7'),
+                  LyricChord(graphemeOffset: 5, symbol: 'A'),
+                  LyricChord(graphemeOffset: 8, symbol: 'Esus4'),
+                  LyricChord(graphemeOffset: 15, symbol: 'B7sus4'),
+                ], key: const ValueKey('dense-intro-line')),
+              ),
+            ),
+            width: 420,
+            height: 180,
+          ),
+        );
+
+        final bounds = await _chordPixelBounds(
+          tester,
+          find.byKey(const ValueKey('dense-intro-capture')),
+        );
+        await _saveChordCapture(
+          tester,
+          find.byKey(const ValueKey('dense-intro-capture')),
+          'dense-ltr',
+        );
+        expect(
+          bounds.height,
+          lessThan(20),
+          reason: 'all four chord labels fit on the same intro row',
+        );
+        expect(find.bySemanticsLabel('F#m7, A, Esus4, B7sus4'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      } finally {
+        semantics.dispose();
+      }
+    },
+  );
+
+  testWidgets(
+    'narrow large-text chord-only rows wrap labels without clipping',
+    (tester) async {
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(180, 420);
+      final semantics = tester.ensureSemantics();
+      try {
+        await tester.pumpWidget(
+          _host(
+            RepaintBoundary(
+              key: const ValueKey('narrow-intro-capture'),
+              child: DecoratedBox(
+                decoration: const BoxDecoration(color: Colors.white),
+                child: _line('               ', const [
+                  LyricChord(graphemeOffset: 0, symbol: 'F#add13(b9)/G'),
+                  LyricChord(graphemeOffset: 5, symbol: 'A'),
+                  LyricChord(graphemeOffset: 8, symbol: 'Esus4'),
+                  LyricChord(graphemeOffset: 15, symbol: 'B7sus4'),
+                ], key: const ValueKey('narrow-intro-line')),
+              ),
+            ),
+            width: 180,
+            height: 420,
+            scale: 2,
+          ),
+        );
+
+        final bounds = await _chordPixelBounds(
+          tester,
+          find.byKey(const ValueKey('narrow-intro-capture')),
+        );
+        await _saveChordCapture(
+          tester,
+          find.byKey(const ValueKey('narrow-intro-capture')),
+          'narrow-large-text',
+        );
+        final lineSize = tester.getSize(
+          find.byKey(const ValueKey('narrow-intro-line')),
+        );
+        expect(bounds.height, greaterThan(40));
+        expect(bounds.left, greaterThanOrEqualTo(0));
+        expect(bounds.right, lessThanOrEqualTo(lineSize.width));
+        expect(
+          find.bySemanticsLabel('F#add13(b9)/G, A, Esus4, B7sus4'),
+          findsOneWidget,
+          reason: 'wrapping keeps every complete chord symbol accessible',
+        );
+        expect(tester.takeException(), isNull);
+      } finally {
+        semantics.dispose();
+      }
+    },
+  );
+
+  testWidgets(
+    'RTL dense chord-only intro starts at the right and wraps inward',
+    (tester) async {
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(420, 420);
+      await tester.pumpWidget(
+        _host(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RepaintBoundary(
+                key: const ValueKey('rtl-dense-wide-capture'),
+                child: SizedBox(
+                  width: 420,
+                  child: DecoratedBox(
+                    decoration: const BoxDecoration(color: Colors.white),
+                    child: Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: _line(
+                        '               ',
+                        const [
+                          LyricChord(graphemeOffset: 0, symbol: 'F#m7'),
+                          LyricChord(graphemeOffset: 5, symbol: 'A'),
+                          LyricChord(graphemeOffset: 8, symbol: 'Esus4'),
+                          LyricChord(graphemeOffset: 15, symbol: 'B7sus4'),
+                        ],
+                        key: const ValueKey('rtl-dense-wide-line'),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              RepaintBoundary(
+                key: const ValueKey('rtl-dense-narrow-capture'),
+                child: SizedBox(
+                  width: 140,
+                  child: DecoratedBox(
+                    decoration: const BoxDecoration(color: Colors.white),
+                    child: Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: _line(
+                        '               ',
+                        const [
+                          LyricChord(
+                            graphemeOffset: 0,
+                            symbol: 'F#add13(b9)/G',
+                          ),
+                          LyricChord(graphemeOffset: 5, symbol: 'A'),
+                          LyricChord(graphemeOffset: 8, symbol: 'Esus4'),
+                          LyricChord(graphemeOffset: 15, symbol: 'B7sus4'),
+                        ],
+                        key: const ValueKey('rtl-dense-narrow-line'),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          width: 420,
+          height: 420,
+          scale: 2,
+        ),
+      );
+
+      final wideBounds = await _chordPixelBounds(
+        tester,
+        find.byKey(const ValueKey('rtl-dense-wide-capture')),
+      );
+      await _saveChordCapture(
+        tester,
+        find.byKey(const ValueKey('rtl-dense-wide-capture')),
+        'dense-rtl',
+      );
+      final wideLineSize = tester.getSize(
+        find.byKey(const ValueKey('rtl-dense-wide-line')),
+      );
+      expect(wideBounds.height, lessThan(25));
+      expect(wideBounds.right, closeTo(wideLineSize.width, 3));
+
+      final narrowBounds = await _chordPixelBounds(
+        tester,
+        find.byKey(const ValueKey('rtl-dense-narrow-capture')),
+      );
+      await _saveChordCapture(
+        tester,
+        find.byKey(const ValueKey('rtl-dense-narrow-capture')),
+        'narrow-rtl',
+      );
+      final narrowLineSize = tester.getSize(
+        find.byKey(const ValueKey('rtl-dense-narrow-line')),
+      );
+      expect(narrowBounds.height, greaterThan(wideBounds.height));
+      expect(narrowBounds.left, greaterThanOrEqualTo(0));
+      expect(narrowBounds.right, lessThanOrEqualTo(narrowLineSize.width));
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('semantics include visible chords in lyric anchor order', (
     tester,
