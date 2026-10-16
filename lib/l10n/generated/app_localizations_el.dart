@@ -608,10 +608,10 @@ class AppLocalizationsEl extends AppLocalizations {
   String get readerEdit => 'Επεξεργασία στίχων και στοιχείων';
 
   @override
-  String get playerPlay => 'Έναρξη κύλισης στίχων';
+  String get playerPlay => 'Αναπαραγωγή';
 
   @override
-  String get playerPause => 'Παύση κύλισης στίχων';
+  String get playerPause => 'Παύση';
 
   @override
   String get playerResume => 'Συνέχιση κύλισης στίχων';

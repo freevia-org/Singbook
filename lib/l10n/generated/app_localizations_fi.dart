@@ -601,10 +601,10 @@ class AppLocalizationsFi extends AppLocalizations {
   String get readerEdit => 'Muokkaa sanoituksia ja tietoja';
 
   @override
-  String get playerPlay => 'Aloita sanoitusten vieritys';
+  String get playerPlay => 'Toista';
 
   @override
-  String get playerPause => 'Keskeytä sanoitusten vieritys';
+  String get playerPause => 'Tauko';
 
   @override
   String get playerResume => 'Jatka sanoitusten vieritystä';

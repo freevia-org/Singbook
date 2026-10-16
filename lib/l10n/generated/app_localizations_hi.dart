@@ -600,10 +600,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get readerEdit => 'बोल और विवरण संपादित करें';
 
   @override
-  String get playerPlay => 'बोलों की स्क्रॉलिंग चलाएँ';
+  String get playerPlay => 'चलाएँ';
 
   @override
-  String get playerPause => 'बोलों की स्क्रॉलिंग रोकें';
+  String get playerPause => 'रोकें';
 
   @override
   String get playerResume => 'बोलों की स्क्रॉलिंग फिर शुरू करें';

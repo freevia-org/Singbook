@@ -603,10 +603,10 @@ class AppLocalizationsIt extends AppLocalizations {
   String get readerEdit => 'Modifica testo e dettagli';
 
   @override
-  String get playerPlay => 'Avvia lo scorrimento del testo';
+  String get playerPlay => 'Avvia';
 
   @override
-  String get playerPause => 'Metti in pausa lo scorrimento del testo';
+  String get playerPause => 'Pausa';
 
   @override
   String get playerResume => 'Riprendi lo scorrimento del testo';

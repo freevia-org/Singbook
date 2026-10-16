@@ -604,10 +604,10 @@ class AppLocalizationsId extends AppLocalizations {
   String get readerEdit => 'Edit lirik dan detail';
 
   @override
-  String get playerPlay => 'Mulai gulir lirik';
+  String get playerPlay => 'Putar';
 
   @override
-  String get playerPause => 'Jeda gulir lirik';
+  String get playerPause => 'Jeda';
 
   @override
   String get playerResume => 'Lanjutkan gulir lirik';

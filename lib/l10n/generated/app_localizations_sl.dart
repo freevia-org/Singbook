@@ -610,10 +610,10 @@ class AppLocalizationsSl extends AppLocalizations {
   String get readerEdit => 'Uredi besedilo pesmi in podatke';
 
   @override
-  String get playerPlay => 'Začni drsenje besedila pesmi';
+  String get playerPlay => 'Predvajaj';
 
   @override
-  String get playerPause => 'Začasno ustavi drsenje besedila pesmi';
+  String get playerPause => 'Ustavi';
 
   @override
   String get playerResume => 'Nadaljuj drsenje besedila pesmi';

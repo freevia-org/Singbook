@@ -605,10 +605,10 @@ class AppLocalizationsLv extends AppLocalizations {
   String get readerEdit => 'Rediģēt dziesmas vārdus un informāciju';
 
   @override
-  String get playerPlay => 'Sākt dziesmas vārdu ritināšanu';
+  String get playerPlay => 'Atskaņot';
 
   @override
-  String get playerPause => 'Pauzēt dziesmas vārdu ritināšanu';
+  String get playerPause => 'Pauze';
 
   @override
   String get playerResume => 'Atsākt dziesmas vārdu ritināšanu';

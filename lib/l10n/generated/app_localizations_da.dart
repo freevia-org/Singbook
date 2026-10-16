@@ -600,10 +600,10 @@ class AppLocalizationsDa extends AppLocalizations {
   String get readerEdit => 'Rediger sangtekst og detaljer';
 
   @override
-  String get playerPlay => 'Start rulning af sangteksten';
+  String get playerPlay => 'Afspil';
 
   @override
-  String get playerPause => 'Sæt rulning af sangteksten på pause';
+  String get playerPause => 'Pause';
 
   @override
   String get playerResume => 'Fortsæt rulning af sangteksten';

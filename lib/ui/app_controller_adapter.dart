@@ -127,6 +127,11 @@ class AppControllerAdapter extends VerseUiController {
 
   void _onAppChanged() => notifyListeners();
 
+  String _keyWithCanonicalRoot(String key) => key.replaceFirstMapped(
+    RegExp(r'^(\s*)([a-g])'),
+    (match) => '${match.group(1)}${match.group(2)!.toUpperCase()}',
+  );
+
   SongDocument? get currentSong => _songId == null
       ? null
       : app.findSong(_songId!) ??
@@ -136,7 +141,10 @@ class AppControllerAdapter extends VerseUiController {
     final override = activeSetlistEntry?.overrides['key']?.toString();
     final base = override?.isNotEmpty == true ? override : key;
     if (base == null || base.isEmpty) return null;
-    return arrangement.transposeChord(base, _transpose.toInt());
+    return arrangement.transposeChord(
+      _keyWithCanonicalRoot(base),
+      _transpose.toInt(),
+    );
   }
 
   Object? get displayedCapo =>
@@ -168,12 +176,15 @@ class AppControllerAdapter extends VerseUiController {
     return (overridePitch - originalPitch + 12) % 12 + _transpose.toInt();
   }
 
-  static final _keyPattern = RegExp(r'^\s*([A-G])([#b♯♭]?)');
+  static final _keyPattern = RegExp(
+    r'^\s*([A-G])([#b♯♭]?)',
+    caseSensitive: false,
+  );
   static int? _keyPitch(String key) {
     final match = _keyPattern.firstMatch(key);
     if (match == null) return null;
     const pitches = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11};
-    final pitch = pitches[match.group(1)];
+    final pitch = pitches[match.group(1)!.toUpperCase()];
     if (pitch == null) return null;
     final accidental = match.group(2);
     return (pitch +
@@ -1798,7 +1809,9 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> setPlaybackSpeed(double speed) async {
-    if (![.5, 1, 1.5, 2].contains(speed) || speed == _playbackSpeed) return;
+    if (!speed.isFinite || speed < .5 || speed > 2 || speed == _playbackSpeed) {
+      return;
+    }
     if (_playing) {
       _advancePlayer(
         _playBase + _playWatch.elapsedMilliseconds / 1000 * _playbackSpeed,

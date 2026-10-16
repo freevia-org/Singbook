@@ -602,10 +602,10 @@ class AppLocalizationsHu extends AppLocalizations {
   String get readerEdit => 'Dalszöveg és adatok szerkesztése';
 
   @override
-  String get playerPlay => 'Dalszöveg görgetésének indítása';
+  String get playerPlay => 'Lejátszás';
 
   @override
-  String get playerPause => 'Dalszöveg görgetésének szüneteltetése';
+  String get playerPause => 'Szünet';
 
   @override
   String get playerResume => 'Dalszöveg görgetésének folytatása';

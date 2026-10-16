@@ -602,10 +602,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get readerEdit => 'Liedtexte und Details bearbeiten';
 
   @override
-  String get playerPlay => 'Liedtext-Scrollen starten';
+  String get playerPlay => 'Abspielen';
 
   @override
-  String get playerPause => 'Liedtext-Scrollen pausieren';
+  String get playerPause => 'Pause';
 
   @override
   String get playerResume => 'Liedtext-Scrollen fortsetzen';

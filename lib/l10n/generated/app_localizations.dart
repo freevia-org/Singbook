@@ -1191,13 +1191,13 @@ abstract class AppLocalizations {
   /// No description provided for @playerPlay.
   ///
   /// In en, this message translates to:
-  /// **'Play lyric scrolling'**
+  /// **'Play'**
   String get playerPlay;
 
   /// No description provided for @playerPause.
   ///
   /// In en, this message translates to:
-  /// **'Pause lyric scrolling'**
+  /// **'Pause'**
   String get playerPause;
 
   /// No description provided for @playerResume.

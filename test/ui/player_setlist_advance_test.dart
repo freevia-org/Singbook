@@ -75,6 +75,154 @@ void main() {
     expect(presses, 1);
   });
 
+  testWidgets('player has a fine speed slider and displays adjusted duration', (
+    tester,
+  ) async {
+    await pumpShell(tester, controller);
+
+    expect(find.text('Play'), findsOneWidget);
+    final speedSlider = tester.widget<Slider>(
+      find.byKey(const ValueKey('scroll-speed-slider')),
+    );
+    expect(speedSlider.divisions, 30);
+    expect(speedSlider.min, .5);
+    expect(speedSlider.max, 2);
+    expect(find.text('4:00'), findsOneWidget);
+
+    speedSlider.onChanged!(.55);
+    await tester.pump();
+    expect(controller.state.playbackSpeed, .55);
+    expect(find.text('7:16'), findsOneWidget);
+
+    await controller.setPlaybackSpeed(1.5);
+    await tester.pump();
+    expect(controller.state.playbackSpeed, 1.5);
+    expect(find.text('2:40'), findsOneWidget);
+  });
+
+  testWidgets('pitch menu highlights the song key and can restore it', (
+    tester,
+  ) async {
+    await pumpShell(tester, controller);
+    expect(controller.state.readerKey, 'D');
+    expect(find.byTooltip(l10nOf(tester).readerTranspose), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('pitch-key-dropdown')));
+    await tester.pumpAndSettle();
+    final originalKey = find.text('C  ★');
+    expect(originalKey, findsOneWidget);
+    final originalItem = tester.widget<Text>(originalKey);
+    expect(originalItem.style?.fontWeight, FontWeight.w700);
+
+    await tester.tap(originalKey);
+    await tester.pumpAndSettle();
+    expect(controller.state.readerKey, 'C');
+  });
+
+  testWidgets('unknown key keeps semitone transpose controls available', (
+    tester,
+  ) async {
+    await tester.runAsync(
+      () => app.saveSong(
+        SongDocument(
+          id: 'song',
+          title: 'Lanterns at Dawn',
+          artist: 'Mira Vale',
+          body: '[C]First line\n[G]Second line',
+          metadata: const {'key': 'H', 'durationSeconds': 240},
+        ),
+      ),
+    );
+    await tester.runAsync(() => controller.openSong('song'));
+    await pumpShell(tester, controller);
+
+    expect(find.byKey(const ValueKey('pitch-key-dropdown')), findsNothing);
+    final l10n = l10nOf(tester);
+    final down = find.byTooltip(l10n.readerTransposeSemitones(-1));
+    expect(down, findsOneWidget);
+    await tester.tap(down);
+    await tester.pump();
+    expect(controller.state.songLines.first.chords.single.symbol, 'B');
+  });
+
+  testWidgets('pitch dropdown handles lowercase minor and major key names', (
+    tester,
+  ) async {
+    Future<void> setKey(String key) async {
+      await tester.runAsync(
+        () => app.saveSong(
+          SongDocument(
+            id: 'song',
+            title: 'Lanterns at Dawn',
+            artist: 'Mira Vale',
+            body: '[C]First line\n[G]Second line',
+            metadata: {'key': key, 'durationSeconds': 240},
+          ),
+        ),
+      );
+      await tester.runAsync(() => controller.openSong('song'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 450));
+    }
+
+    await setKey('cmin');
+    await pumpShell(tester, controller);
+    await tester.tap(find.byKey(const ValueKey('pitch-key-dropdown')));
+    await tester.pumpAndSettle();
+    expect(find.text('cmin  ★'), findsOneWidget);
+    expect(find.text('D♯m'), findsOneWidget);
+    await tester.tap(find.text('D♯m'));
+    await tester.pumpAndSettle();
+    expect(controller.state.readerKey, 'D#min');
+
+    await setKey('cmin');
+    await tester.tap(find.byKey(const ValueKey('pitch-key-dropdown')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('cmin  ★'));
+    await tester.pumpAndSettle();
+
+    await setKey('Cmaj');
+    await tester.tap(find.byKey(const ValueKey('pitch-key-dropdown')));
+    await tester.pumpAndSettle();
+    expect(find.text('Cmaj  ★'), findsOneWidget);
+    expect(find.text('D♯'), findsOneWidget);
+    expect(find.text('D♯m'), findsNothing);
+    await tester.tap(find.text('Cmaj  ★'));
+    await tester.pumpAndSettle();
+
+    await setKey('Cdim');
+    await tester.tap(find.byKey(const ValueKey('pitch-key-dropdown')));
+    await tester.pumpAndSettle();
+    expect(find.text('Cdim  ★'), findsOneWidget);
+    expect(find.text('D♯'), findsOneWidget);
+    expect(find.text('D♯m'), findsNothing);
+    await tester.tap(find.text('Cdim  ★'));
+    await tester.pumpAndSettle();
+
+    await setKey('CM');
+    await tester.tap(find.byKey(const ValueKey('pitch-key-dropdown')));
+    await tester.pumpAndSettle();
+    expect(find.text('CM  ★'), findsOneWidget);
+    expect(find.text('D♯'), findsOneWidget);
+    expect(find.text('D♯m'), findsNothing);
+  });
+
+  testWidgets('compact scaled player keeps side controls in one row', (
+    tester,
+  ) async {
+    await pumpShell(
+      tester,
+      controller,
+      size: const Size(320, 700),
+      textScale: 1.5,
+    );
+
+    expect(find.byKey(const ValueKey('start-lyric-scroll')), findsOneWidget);
+    expect(find.byTooltip(l10nOf(tester).playerPreviousSong), findsOneWidget);
+    expect(find.byTooltip(l10nOf(tester).playerNextSong), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('tap navigates songs when the setlist song has no sections', (
     tester,
   ) async {

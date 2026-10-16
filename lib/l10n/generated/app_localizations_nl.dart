@@ -605,10 +605,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get readerEdit => 'Songteksten en gegevens bewerken';
 
   @override
-  String get playerPlay => 'Songteksten automatisch laten scrollen';
+  String get playerPlay => 'Afspelen';
 
   @override
-  String get playerPause => 'Automatisch scrollen pauzeren';
+  String get playerPause => 'Pauzeren';
 
   @override
   String get playerResume => 'Automatisch scrollen hervatten';

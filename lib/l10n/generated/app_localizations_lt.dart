@@ -610,10 +610,10 @@ class AppLocalizationsLt extends AppLocalizations {
   String get readerEdit => 'Redaguoti dainos tekstą ir informaciją';
 
   @override
-  String get playerPlay => 'Pradėti slinkti dainos tekstą';
+  String get playerPlay => 'Leisti';
 
   @override
-  String get playerPause => 'Pristabdyti dainos teksto slinkimą';
+  String get playerPause => 'Pristabdyti';
 
   @override
   String get playerResume => 'Tęsti dainos teksto slinkimą';

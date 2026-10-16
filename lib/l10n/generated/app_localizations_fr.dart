@@ -608,10 +608,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get readerEdit => 'Modifier les paroles et les détails';
 
   @override
-  String get playerPlay => 'Lancer le défilement des paroles';
+  String get playerPlay => 'Lire';
 
   @override
-  String get playerPause => 'Mettre le défilement des paroles en pause';
+  String get playerPause => 'Pause';
 
   @override
   String get playerResume => 'Reprendre le défilement des paroles';

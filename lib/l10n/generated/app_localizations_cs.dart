@@ -605,10 +605,10 @@ class AppLocalizationsCs extends AppLocalizations {
   String get readerEdit => 'Upravit text písně a informace';
 
   @override
-  String get playerPlay => 'Spustit posouvání textu písně';
+  String get playerPlay => 'Přehrát';
 
   @override
-  String get playerPause => 'Pozastavit posouvání textu písně';
+  String get playerPause => 'Pozastavit';
 
   @override
   String get playerResume => 'Pokračovat v posouvání textu písně';

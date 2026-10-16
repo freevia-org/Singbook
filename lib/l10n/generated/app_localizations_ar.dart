@@ -610,10 +610,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get readerEdit => 'تعديل الكلمات والتفاصيل';
 
   @override
-  String get playerPlay => 'بدء تمرير الكلمات';
+  String get playerPlay => 'تشغيل';
 
   @override
-  String get playerPause => 'إيقاف تمرير الكلمات مؤقتًا';
+  String get playerPause => 'إيقاف مؤقت';
 
   @override
   String get playerResume => 'استئناف تمرير الكلمات';

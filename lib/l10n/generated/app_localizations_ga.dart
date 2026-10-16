@@ -604,10 +604,10 @@ class AppLocalizationsGa extends AppLocalizations {
   String get readerEdit => 'Cuir liricí agus sonraí in eagar';
 
   @override
-  String get playerPlay => 'Tosaigh ag scrollú na liricí';
+  String get playerPlay => 'Seinn';
 
   @override
-  String get playerPause => 'Cuir scrollú na liricí ar sos';
+  String get playerPause => 'Sos';
 
   @override
   String get playerResume => 'Lean ar aghaidh ag scrollú na liricí';

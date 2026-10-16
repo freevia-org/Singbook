@@ -592,10 +592,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get readerEdit => '编辑歌词和详情';
 
   @override
-  String get playerPlay => '开始滚动歌词';
+  String get playerPlay => '播放';
 
   @override
-  String get playerPause => '暂停滚动歌词';
+  String get playerPause => '暂停';
 
   @override
   String get playerResume => '继续滚动歌词';

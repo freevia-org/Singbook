@@ -609,10 +609,10 @@ class AppLocalizationsRo extends AppLocalizations {
   String get readerEdit => 'Editează versurile și detaliile';
 
   @override
-  String get playerPlay => 'Pornește derularea versurilor';
+  String get playerPlay => 'Redă';
 
   @override
-  String get playerPause => 'Întrerupe derularea versurilor';
+  String get playerPause => 'Pauză';
 
   @override
   String get playerResume => 'Reia derularea versurilor';

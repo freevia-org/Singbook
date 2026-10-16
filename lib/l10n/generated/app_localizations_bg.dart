@@ -602,10 +602,10 @@ class AppLocalizationsBg extends AppLocalizations {
   String get readerEdit => 'Редактиране на текста и данните';
 
   @override
-  String get playerPlay => 'Пускане на превъртането';
+  String get playerPlay => 'Пускане';
 
   @override
-  String get playerPause => 'Пауза на превъртането';
+  String get playerPause => 'Пауза';
 
   @override
   String get playerResume => 'Продължаване на превъртането';

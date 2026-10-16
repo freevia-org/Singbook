@@ -599,10 +599,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get readerEdit => 'Edit lyrics and details';
 
   @override
-  String get playerPlay => 'Play lyric scrolling';
+  String get playerPlay => 'Play';
 
   @override
-  String get playerPause => 'Pause lyric scrolling';
+  String get playerPause => 'Pause';
 
   @override
   String get playerResume => 'Resume lyric scrolling';

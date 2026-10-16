@@ -604,10 +604,10 @@ class AppLocalizationsPl extends AppLocalizations {
   String get readerEdit => 'Edytuj tekst i szczegóły';
 
   @override
-  String get playerPlay => 'Włącz przewijanie tekstu';
+  String get playerPlay => 'Odtwórz';
 
   @override
-  String get playerPause => 'Wstrzymaj przewijanie tekstu';
+  String get playerPause => 'Wstrzymaj';
 
   @override
   String get playerResume => 'Wznów przewijanie tekstu';

@@ -610,10 +610,10 @@ class AppLocalizationsUk extends AppLocalizations {
   String get readerEdit => 'Редагувати текст і відомості';
 
   @override
-  String get playerPlay => 'Почати прокручування тексту';
+  String get playerPlay => 'Відтворити';
 
   @override
-  String get playerPause => 'Призупинити прокручування';
+  String get playerPause => 'Пауза';
 
   @override
   String get playerResume => 'Продовжити прокручування';

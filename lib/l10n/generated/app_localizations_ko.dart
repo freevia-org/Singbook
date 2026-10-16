@@ -593,10 +593,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get readerEdit => '가사 및 세부정보 수정';
 
   @override
-  String get playerPlay => '가사 스크롤 시작';
+  String get playerPlay => '재생';
 
   @override
-  String get playerPause => '가사 스크롤 일시정지';
+  String get playerPause => '일시정지';
 
   @override
   String get playerResume => '가사 스크롤 재개';

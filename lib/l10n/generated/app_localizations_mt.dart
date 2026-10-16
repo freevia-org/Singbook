@@ -607,10 +607,10 @@ class AppLocalizationsMt extends AppLocalizations {
   String get readerEdit => 'Editja l-lirika u d-dettalji';
 
   @override
-  String get playerPlay => 'Ibda l-iskrolljar tal-lirika';
+  String get playerPlay => 'Daqq';
 
   @override
-  String get playerPause => 'Waqqaf l-iskrolljar tal-lirika';
+  String get playerPause => 'Waqqaf';
 
   @override
   String get playerResume => 'Kompli l-iskrolljar tal-lirika';

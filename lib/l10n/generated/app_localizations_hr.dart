@@ -602,10 +602,10 @@ class AppLocalizationsHr extends AppLocalizations {
   String get readerEdit => 'Uredi tekst i pojedinosti';
 
   @override
-  String get playerPlay => 'Pokreni pomicanje teksta';
+  String get playerPlay => 'Pokreni';
 
   @override
-  String get playerPause => 'Pauziraj pomicanje teksta';
+  String get playerPause => 'Pauza';
 
   @override
   String get playerResume => 'Nastavi pomicanje teksta';

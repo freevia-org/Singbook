@@ -602,10 +602,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get readerEdit => 'Şarkı sözlerini ve ayrıntıları düzenle';
 
   @override
-  String get playerPlay => 'Şarkı sözü kaydırmayı başlat';
+  String get playerPlay => 'Oynat';
 
   @override
-  String get playerPause => 'Şarkı sözü kaydırmayı duraklat';
+  String get playerPause => 'Duraklat';
 
   @override
   String get playerResume => 'Şarkı sözü kaydırmayı sürdür';

@@ -602,10 +602,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String get readerEdit => 'Chỉnh sửa lời bài hát và thông tin';
 
   @override
-  String get playerPlay => 'Bắt đầu cuộn lời bài hát';
+  String get playerPlay => 'Phát';
 
   @override
-  String get playerPause => 'Tạm dừng cuộn lời bài hát';
+  String get playerPause => 'Tạm dừng';
 
   @override
   String get playerResume => 'Tiếp tục cuộn lời bài hát';

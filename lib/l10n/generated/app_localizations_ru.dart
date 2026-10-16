@@ -604,10 +604,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get readerEdit => 'Изменить текст и сведения';
 
   @override
-  String get playerPlay => 'Начать прокрутку текста';
+  String get playerPlay => 'Воспроизвести';
 
   @override
-  String get playerPause => 'Приостановить прокрутку текста';
+  String get playerPause => 'Пауза';
 
   @override
   String get playerResume => 'Продолжить прокрутку текста';

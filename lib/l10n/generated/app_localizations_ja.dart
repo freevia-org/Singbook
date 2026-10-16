@@ -592,10 +592,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get readerEdit => '歌詞と詳細を編集';
 
   @override
-  String get playerPlay => '歌詞のスクロールを開始';
+  String get playerPlay => '再生';
 
   @override
-  String get playerPause => '歌詞のスクロールを一時停止';
+  String get playerPause => '一時停止';
 
   @override
   String get playerResume => '歌詞のスクロールを再開';

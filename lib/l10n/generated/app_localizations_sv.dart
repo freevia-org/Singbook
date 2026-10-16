@@ -599,10 +599,10 @@ class AppLocalizationsSv extends AppLocalizations {
   String get readerEdit => 'Redigera låttext och information';
 
   @override
-  String get playerPlay => 'Starta rullning av låttexten';
+  String get playerPlay => 'Spela';
 
   @override
-  String get playerPause => 'Pausa rullningen av låttexten';
+  String get playerPause => 'Pausa';
 
   @override
   String get playerResume => 'Återuppta rullningen av låttexten';

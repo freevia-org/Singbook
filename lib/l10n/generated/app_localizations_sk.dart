@@ -605,10 +605,10 @@ class AppLocalizationsSk extends AppLocalizations {
   String get readerEdit => 'Upraviť text piesne a informácie';
 
   @override
-  String get playerPlay => 'Spustiť posúvanie textu piesne';
+  String get playerPlay => 'Prehrať';
 
   @override
-  String get playerPause => 'Pozastaviť posúvanie textu piesne';
+  String get playerPause => 'Pozastaviť';
 
   @override
   String get playerResume => 'Pokračovať v posúvaní textu piesne';

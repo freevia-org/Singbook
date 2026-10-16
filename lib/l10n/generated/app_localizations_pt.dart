@@ -603,10 +603,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get readerEdit => 'Editar letras e detalhes';
 
   @override
-  String get playerPlay => 'Iniciar rolagem das letras';
+  String get playerPlay => 'Reproduzir';
 
   @override
-  String get playerPause => 'Pausar rolagem das letras';
+  String get playerPause => 'Pausar';
 
   @override
   String get playerResume => 'Retomar rolagem das letras';

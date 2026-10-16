@@ -926,8 +926,15 @@ void main() {
       expect(find.text(l10n.playerLyricsOnly), findsOneWidget);
       expect(find.text(l10n.playerEstimatedDuration('1:30')), findsOneWidget);
       expect(find.text(l10n.playerEstimatedPace), findsOneWidget);
-      expect(find.text(l10n.playerStartScroll), findsOneWidget);
-      expect(find.byKey(const ValueKey('scroll-speed')), findsOneWidget);
+      expect(find.text(l10n.playerPlay), findsOneWidget);
+      final speedSlider = tester.widget<Slider>(
+        find.byKey(const ValueKey('scroll-speed-slider')),
+      );
+      expect(speedSlider.divisions, 30);
+      expect(
+        speedSlider.semanticFormatterCallback!(1.5),
+        contains(l10n.playerScrollSpeed),
+      );
 
       await tester.tap(find.byKey(const ValueKey('start-lyric-scroll')));
       await tester.pump();
@@ -935,15 +942,68 @@ void main() {
       expect(controller.estimatedTimingRequested, isTrue);
       expect(controller.playbackStarted, isTrue);
 
-      await tester.tap(find.byKey(const ValueKey('scroll-speed')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('1.5×').last, warnIfMissed: false);
-      await tester.pumpAndSettle();
+      speedSlider.onChanged!(1.5);
+      await tester.pump();
       expect(controller.selectedSpeed, 1.5);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
     },
   );
+
+  testWidgets('speed-scaled timeline seeks to the matching song position', (
+    tester,
+  ) async {
+    final controller = _LiveFlowController(
+      const VerseUiState(
+        route: VerseRoute.reader,
+        song: SongCardData(id: 'song', title: 'Song', durationSeconds: 90),
+        songLines: [LyricLineData(id: 'line', text: 'Lyric')],
+        readerHasTiming: false,
+        readerDurationEstimated: false,
+        playbackSpeed: 1.5,
+      ),
+    );
+    addTearDown(controller.dispose);
+    await _pumpPlayer(tester, controller);
+
+    expect(find.text('1:00'), findsOneWidget);
+    final seek = tester.widget<Slider>(
+      find.byKey(const ValueKey('player-seek-slider')),
+    );
+    seek.onChanged!(30);
+    expect(controller.lastSeekSeconds, 45);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('timed lyrics still expose the active playback speed', (
+    tester,
+  ) async {
+    final controller = _LiveFlowController(
+      const VerseUiState(
+        route: VerseRoute.reader,
+        song: SongCardData(
+          id: 'timed-song',
+          title: 'Timed Song',
+          durationSeconds: 90,
+        ),
+        songLines: [LyricLineData(id: 'line', text: 'Timed lyric')],
+        readerHasTiming: true,
+        readerDurationEstimated: false,
+        playbackSpeed: .5,
+      ),
+    );
+    addTearDown(controller.dispose);
+    await _pumpPlayer(tester, controller);
+
+    final speedSlider = tester.widget<Slider>(
+      find.byKey(const ValueKey('scroll-speed-slider')),
+    );
+    expect(speedSlider.value, .5);
+    expect(find.text('3:00'), findsOneWidget);
+    speedSlider.onChanged!(1.25);
+    expect(controller.selectedSpeed, 1.25);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
 
   testWidgets('large text keeps landscape section transport controls usable', (
     tester,
@@ -982,7 +1042,7 @@ void main() {
     final start = find.byKey(const ValueKey('start-lyric-scroll'));
     final previous = find.byTooltip(l10n.playerPreviousSection);
     final next = find.byTooltip(l10n.playerNextSection);
-    final speed = find.byKey(const ValueKey('scroll-speed'));
+    final speed = find.byKey(const ValueKey('scroll-speed-slider'));
     expect(previous, findsOneWidget);
     expect(next, findsOneWidget);
     expect(speed, findsOneWidget);
@@ -1054,7 +1114,7 @@ void main() {
     expect(find.text(l10n.searchCompare), findsOneWidget);
     expect(find.text(l10n.playerLyricsOnly), findsOneWidget);
     final start = find.byKey(const ValueKey('start-lyric-scroll'));
-    final speed = find.byKey(const ValueKey('scroll-speed'));
+    final speed = find.byKey(const ValueKey('scroll-speed-slider'));
     expect(start, findsOneWidget);
     expect(speed, findsOneWidget);
     for (final control in [start, speed]) {
@@ -1120,9 +1180,9 @@ void main() {
     await _pumpPlayer(tester, controller, scale: 1.5);
     final l10n = AppLocalizations.of(tester.element(find.byType(PlayerScreen)));
     final start = find.byKey(const ValueKey('start-lyric-scroll'));
-    final speed = find.byKey(const ValueKey('scroll-speed'));
+    final speed = find.byKey(const ValueKey('scroll-speed-slider'));
     final nextSection = find.byTooltip(l10n.playerNextSection);
-    final chords = find.byTooltip(l10n.readerHideChords);
+    final chords = find.byType(Checkbox);
     expect(find.text('Artist Name · Album Name'), findsOneWidget);
     expect(find.text(l10n.searchCompare), findsOneWidget);
     expect(start, findsOneWidget);
@@ -1361,6 +1421,7 @@ class _LiveFlowController extends VerseUiController {
   bool estimatedTimingRequested = false;
   bool playbackStarted = false;
   double? selectedSpeed;
+  double? lastSeekSeconds;
   final searchFilterChanges = <(String, Object?)>[];
   final selectionHistory = <String>[];
 
@@ -1412,6 +1473,11 @@ class _LiveFlowController extends VerseUiController {
   @override
   Future<void> setPlaybackSpeed(double speed) async {
     selectedSpeed = speed;
+  }
+
+  @override
+  Future<void> seek(double seconds) async {
+    lastSeekSeconds = seconds;
   }
 
   @override

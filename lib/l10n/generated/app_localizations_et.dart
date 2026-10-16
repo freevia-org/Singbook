@@ -600,10 +600,10 @@ class AppLocalizationsEt extends AppLocalizations {
   String get readerEdit => 'Muuda sõnu ja andmeid';
 
   @override
-  String get playerPlay => 'Alusta laulusõnade kerimist';
+  String get playerPlay => 'Esita';
 
   @override
-  String get playerPause => 'Peata laulusõnade kerimine';
+  String get playerPause => 'Peata';
 
   @override
   String get playerResume => 'Jätka laulusõnade kerimist';
