@@ -1377,8 +1377,8 @@ class AppController extends ChangeNotifier {
         }
         if (toWrite.isNotEmpty || newSets.isNotEmpty) {
           await repository.importCollection(toWrite, newSets);
+          await _afterWrite(songsChanged: toWrite.isNotEmpty);
         }
-        await _afterWrite();
         return ImportedCollection(incoming, importedSets);
       });
 

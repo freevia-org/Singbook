@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/application/app_controller.dart';
+import 'package:singbook/application/file_actions.dart';
 import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/providers/provider.dart';
 import 'package:singbook/domain/models.dart';
@@ -134,6 +135,31 @@ void main() {
     await app.setAutoSync(true);
     expect(app.autoSyncEnabled, isTrue);
   });
+
+  test(
+    'setlist-only and no-op imports do not sync; song imports do',
+    () async {
+      final app = await start();
+      cloud.resetCounters();
+      final set = SetlistDocument(id: 'set', name: 'Set');
+      await app.importCollection(ImportedCollection([], [set]));
+      await app.importCollection(ImportedCollection([], [set]));
+      await settle(100);
+      expect(cloud.requests, 0);
+
+      await app.importCollection(
+        ImportedCollection([
+          SongDocument(
+            id: 'imported',
+            title: 'Imported',
+            artist: 'A',
+            body: 'words',
+          ),
+        ], []),
+      );
+      await until(() => cloud.has('song-imported.cho'));
+    },
+  );
 
   test('a song change during sync queues one follow-up run',
       () async {
