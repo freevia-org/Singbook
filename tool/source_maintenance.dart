@@ -58,7 +58,7 @@ Future<void> main(List<String> args) async {
     ].where((v) => v).length;
     if (actions > 1 ||
         (offline && actions > 0) ||
-        (youtubeConsent &&
+        (actions > 0 &&
             onlySource != null &&
             onlySource != 'youtubemusic')) {
       throw const FormatException(
