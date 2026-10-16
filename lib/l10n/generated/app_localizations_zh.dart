@@ -44,6 +44,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get navBack => '返回';
 
   @override
+  String get appExitBackAgain => '再次按返回键退出';
+
+  @override
   String get navClose => '关闭';
 
   @override

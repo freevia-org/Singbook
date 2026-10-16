@@ -45,6 +45,9 @@ class AppLocalizationsGa extends AppLocalizations {
   String get navBack => 'Ar ais';
 
   @override
+  String get appExitBackAgain => 'Brúigh Ar ais arís chun imeacht';
+
+  @override
   String get navClose => 'Dún';
 
   @override

@@ -45,6 +45,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get navBack => 'वापस';
 
   @override
+  String get appExitBackAgain => 'बाहर निकलने के लिए फिर से वापस दबाएँ';
+
+  @override
   String get navClose => 'बंद करें';
 
   @override

@@ -45,6 +45,10 @@ class AppLocalizationsCs extends AppLocalizations {
   String get navBack => 'Zpět';
 
   @override
+  String get appExitBackAgain =>
+      'Dalším stisknutím tlačítka Zpět aplikaci ukončíte';
+
+  @override
   String get navClose => 'Zavřít';
 
   @override

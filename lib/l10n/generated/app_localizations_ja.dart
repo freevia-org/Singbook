@@ -44,6 +44,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get navBack => '戻る';
 
   @override
+  String get appExitBackAgain => '終了するには、もう一度戻るを押してください';
+
+  @override
   String get navClose => '閉じる';
 
   @override

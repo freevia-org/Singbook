@@ -45,6 +45,9 @@ class AppLocalizationsSv extends AppLocalizations {
   String get navBack => 'Tillbaka';
 
   @override
+  String get appExitBackAgain => 'Tryck på Tillbaka igen för att avsluta';
+
+  @override
   String get navClose => 'Stäng';
 
   @override

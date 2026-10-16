@@ -181,6 +181,45 @@ void main() {
   });
 
   group('back navigation', () {
+    testWidgets('Back from a root tab navigates to Home without exiting', (
+      tester,
+    ) async {
+      final c = FakeUiController(
+        (_) => const VerseUiState(activeTab: VerseTab.settings),
+      );
+      addTearDown(c.dispose);
+      await pumpShell(tester, c);
+
+      unawaited(tester.binding.handlePopRoute());
+      await tester.pumpAndSettle();
+
+      expect(c.calls, contains('setTab'));
+      expect(c.calls, isNot(contains('back')));
+      expect(find.byType(VerseAppShell), findsOneWidget);
+    });
+
+    testWidgets('Home requires a second Back press to exit', (tester) async {
+      final c = FakeUiController((_) => _homeState());
+      addTearDown(c.dispose);
+      await pumpShell(tester, c);
+      final l10n = l10nOf(tester);
+
+      unawaited(tester.binding.handlePopRoute());
+      await tester.pump(const Duration(milliseconds: 250));
+      expect(find.text(l10n.appExitBackAgain), findsOneWidget);
+      expect(find.byType(VerseAppShell), findsOneWidget);
+      final popScope = find.byWidgetPredicate(
+        (widget) => widget is PopScope<Object?>,
+      );
+      expect(tester.widget<PopScope<Object?>>(popScope).canPop, isTrue);
+
+      unawaited(tester.binding.handlePopRoute());
+      await tester.pumpAndSettle();
+      // The app's root route remains mounted in a widget test; allowing the
+      // platform pop is what exits the native app in production.
+      expect(find.byType(VerseAppShell), findsOneWidget);
+    });
+
     testWidgets('repeated back gestures show a single discard prompt', (
       tester,
     ) async {

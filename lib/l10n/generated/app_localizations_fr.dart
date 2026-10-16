@@ -45,6 +45,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get navBack => 'Retour';
 
   @override
+  String get appExitBackAgain => 'Appuyez de nouveau sur Retour pour quitter';
+
+  @override
   String get navClose => 'Fermer';
 
   @override

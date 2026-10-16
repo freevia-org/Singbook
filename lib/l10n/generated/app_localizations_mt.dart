@@ -45,6 +45,9 @@ class AppLocalizationsMt extends AppLocalizations {
   String get navBack => 'Lura';
 
   @override
+  String get appExitBackAgain => 'Agħfas Lura għal darb’oħra biex toħroġ';
+
+  @override
   String get navClose => 'Agħlaq';
 
   @override

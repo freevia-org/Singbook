@@ -45,6 +45,9 @@ class AppLocalizationsEt extends AppLocalizations {
   String get navBack => 'Tagasi';
 
   @override
+  String get appExitBackAgain => 'Väljumiseks vajuta uuesti Tagasi';
+
+  @override
   String get navClose => 'Sulge';
 
   @override

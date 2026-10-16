@@ -45,6 +45,9 @@ class AppLocalizationsBg extends AppLocalizations {
   String get navBack => 'Назад';
 
   @override
+  String get appExitBackAgain => 'Натиснете Назад отново за изход';
+
+  @override
   String get navClose => 'Затваряне';
 
   @override

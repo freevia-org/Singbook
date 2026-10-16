@@ -353,6 +353,8 @@ void _ignoreSyncSettingsRequest() {}
 class _VerseAppShellState extends State<VerseAppShell>
     with WidgetsBindingObserver {
   StreamSubscription<UiNotice>? _notices;
+  Timer? _exitBackTimer;
+  bool _exitBackArmed = false;
 
   /// The account-change dialog was shown for the current `account_changed`
   /// stop; cleared when the stop is resolved so it can appear again.
@@ -385,6 +387,7 @@ class _VerseAppShellState extends State<VerseAppShell>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _notices?.cancel();
+    _exitBackTimer?.cancel();
     super.dispose();
   }
 
@@ -407,6 +410,13 @@ class _VerseAppShellState extends State<VerseAppShell>
 
   bool _backInFlight = false;
 
+  void _disarmExitBack() {
+    _exitBackTimer?.cancel();
+    _exitBackTimer = null;
+    if (!_exitBackArmed || !mounted) return;
+    setState(() => _exitBackArmed = false);
+  }
+
   /// Goes back, first asking whether unsaved editor changes may be discarded.
   Future<void> _requestBack() async {
     if (_backInFlight) return;
@@ -425,6 +435,30 @@ class _VerseAppShellState extends State<VerseAppShell>
         state.homeListMode == HomeListMode.online &&
         state.comparison != null) {
       widget.controller.changeSearchSong();
+      return;
+    }
+    if (state.route == VerseRoute.main && state.activeTab != VerseTab.home) {
+      _disarmExitBack();
+      widget.controller.setTab(VerseTab.home);
+      return;
+    }
+    if (state.route == VerseRoute.main && state.activeTab == VerseTab.home) {
+      final l10n = AppLocalizations.of(context);
+      if (_exitBackArmed) {
+        // PopScope now allows the platform back action to exit the root route.
+        return;
+      }
+      setState(() => _exitBackArmed = true);
+      _exitBackTimer?.cancel();
+      _exitBackTimer = Timer(const Duration(seconds: 2), _disarmExitBack);
+      ScaffoldMessenger.maybeOf(context)
+        ?..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(l10n.appExitBackAgain),
+            duration: const Duration(seconds: 2),
+          ),
+        );
       return;
     }
     if (state.route == VerseRoute.editor && state.editorDirty) {
@@ -572,6 +606,13 @@ class _VerseAppShellState extends State<VerseAppShell>
         state.activeTab == VerseTab.home &&
         state.homeListMode == HomeListMode.online &&
         state.comparison != null;
+    final homeRoot =
+        state.route == VerseRoute.main && state.activeTab == VerseTab.home;
+    if (!homeRoot && _exitBackArmed) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _exitBackArmed) _disarmExitBack();
+      });
+    }
     // Navigation follows available width so portrait tablets keep the rail.
     // A compact landscape phone gets it too, but only when the four rail
     // destinations (which do not scroll) fit under the app bar.
@@ -580,7 +621,7 @@ class _VerseAppShellState extends State<VerseAppShell>
         (size.width >= 600 || (size.width >= 500 && size.height <= 600)) &&
         size.height >= railHeight;
     return PopScope(
-      canPop: state.route == VerseRoute.main && !comparisonMode,
+      canPop: homeRoot && !comparisonMode && _exitBackArmed,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _requestBack();
       },

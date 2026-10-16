@@ -45,6 +45,9 @@ class AppLocalizationsSk extends AppLocalizations {
   String get navBack => 'Späť';
 
   @override
+  String get appExitBackAgain => 'Opätovným stlačením Späť aplikáciu ukončíte';
+
+  @override
   String get navClose => 'Zavrieť';
 
   @override

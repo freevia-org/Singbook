@@ -228,6 +228,12 @@ abstract class AppLocalizations {
   /// **'Back'**
   String get navBack;
 
+  /// No description provided for @appExitBackAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Press back again to exit'**
+  String get appExitBackAgain;
+
   /// No description provided for @navClose.
   ///
   /// In en, this message translates to:
