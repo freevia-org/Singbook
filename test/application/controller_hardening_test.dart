@@ -52,9 +52,9 @@ class _PendingRestoreAuth extends FakeAuth {
 
 class _GatedRestoreSync extends GoogleDriveSyncService {
   _GatedRestoreSync({
-    required LibraryRepository repository,
+    required super.repository,
     required DriveAuthorization auth,
-  }) : super(repository: repository, auth: auth, store: MemoryCloud());
+  }) : super(auth: auth, store: MemoryCloud());
 
   final lastSuccess = Completer<DateTime?>();
   int lastSuccessCalls = 0;
