@@ -8,12 +8,14 @@ import 'support/fake_controller.dart';
 SongCardData _song(String id, String title, {bool favorite = false}) =>
     SongCardData(id: id, title: title, artist: 'Artist', favorite: favorite);
 
-VerseUiState _songsTab(List<SongCardData> songs, {List<SetlistCardData>? sets}) =>
-    VerseUiState(
-      activeTab: VerseTab.songs,
-      songs: songs,
-      setlists: sets ?? const [],
-    );
+VerseUiState _songsTab(
+  List<SongCardData> songs, {
+  List<SetlistCardData>? sets,
+}) => VerseUiState(
+  activeTab: VerseTab.songs,
+  songs: songs,
+  setlists: sets ?? const [],
+);
 
 void main() {
   group('Songs', () {
@@ -23,8 +25,10 @@ void main() {
       await pumpShell(tester, c);
       final l10n = l10nOf(tester);
 
-      await tester.tap(find.byTooltip(l10n.settingsImportChordPro));
-      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('header-overflow-menu')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(l10n.settingsImportChordPro));
+      await tester.pumpAndSettle();
 
       expect(c.calls, contains('importChordPro'));
     });
@@ -65,8 +69,13 @@ void main() {
       await pumpShell(tester, c);
       final l10n = l10nOf(tester);
 
-      expect(find.bySemanticsLabel(l10n.songsJumpToLetter('H')), findsOneWidget);
-      final rail = tester.getRect(find.byKey(const ValueKey('songs-letter-rail')));
+      expect(
+        find.bySemanticsLabel(l10n.songsJumpToLetter('H')),
+        findsOneWidget,
+      );
+      final rail = tester.getRect(
+        find.byKey(const ValueKey('songs-letter-rail')),
+      );
       expect(rail.width, greaterThanOrEqualTo(44));
 
       final list = find.descendant(
@@ -81,7 +90,10 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(tester.state<ScrollableState>(list).position.pixels, greaterThan(0));
+      expect(
+        tester.state<ScrollableState>(list).position.pixels,
+        greaterThan(0),
+      );
       expect(find.text('H song 0'), findsOneWidget);
       expect(tester.takeException(), isNull);
       semantics.dispose();
@@ -146,11 +158,16 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(c.calls, contains('addSongToSetlist(s1, set1)'));
-      expect(c.calls.where((call) => call.startsWith('createSetlist')), isEmpty);
+      expect(
+        c.calls.where((call) => call.startsWith('createSetlist')),
+        isEmpty,
+      );
     });
   });
 
-  testWidgets('search submit is an icon inside the search field', (tester) async {
+  testWidgets('search submit stays in the field and Home has no add button', (
+    tester,
+  ) async {
     final c = FakeUiController(
       (_) => const VerseUiState(activeTab: VerseTab.home),
     );
@@ -160,9 +177,7 @@ void main() {
 
     expect(find.byTooltip(l10n.searchSubmit), findsOneWidget);
     expect(find.byTooltip(l10n.searchFilters), findsNothing);
-    await tester.tap(find.byTooltip(l10n.songsAdd));
-    await tester.pump();
-    expect(c.calls, contains('createSong'));
+    expect(find.byTooltip(l10n.songsAdd), findsNothing);
     expect(find.text(l10n.searchSubmit), findsNothing);
   });
 
@@ -197,8 +212,10 @@ void main() {
     await pumpShell(tester, c);
     final l10n = l10nOf(tester);
 
-    await tester.tap(find.byTooltip(l10n.settingsImportSetlist));
-    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('header-overflow-menu')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('${l10n.settingsImportSetlist} (.osts)'));
+    await tester.pumpAndSettle();
 
     expect(c.calls, contains('importSetlist'));
   });
@@ -287,7 +304,10 @@ void main() {
       await tester.tap(find.byTooltip(l10n.actionSave));
       await tester.pump();
       expect(find.text(l10n.editorFieldRequired), findsOneWidget);
-      expect(c.calls.where((call) => call.startsWith('saveLyricsEdit')), isEmpty);
+      expect(
+        c.calls.where((call) => call.startsWith('saveLyricsEdit')),
+        isEmpty,
+      );
 
       await tester.enterText(find.byType(TextField).first, 'My song');
       await tester.pump();
@@ -405,7 +425,9 @@ void main() {
 
       await tester.drag(find.byType(Slider), const Offset(90, 0));
       await tester.pumpAndSettle();
-      final saves = c.calls.where((call) => call.startsWith('setLyricsFontSize'));
+      final saves = c.calls.where(
+        (call) => call.startsWith('setLyricsFontSize'),
+      );
       expect(saves, hasLength(1));
       expect(saves.single, isNot('setLyricsFontSize(24.0)'));
     });
@@ -458,18 +480,19 @@ void main() {
       FakeUiController c, {
       bool favorite = false,
       List<PlayerSectionMarker>? sections,
-    }) =>
-        VerseUiState(
-          route: VerseRoute.reader,
-          song: SongCardData(
-            id: 's',
-            title: 'Test song',
-            artist: 'Artist',
-            durationSeconds: 200,
-            favorite: favorite,
-          ),
-          songLines: lines,
-          playerSections: sections ?? const [
+    }) => VerseUiState(
+      route: VerseRoute.reader,
+      song: SongCardData(
+        id: 's',
+        title: 'Test song',
+        artist: 'Artist',
+        durationSeconds: 200,
+        favorite: favorite,
+      ),
+      songLines: lines,
+      playerSections:
+          sections ??
+          const [
             PlayerSectionMarker(
               name: 'Verse 1',
               startSeconds: 0,
@@ -481,9 +504,9 @@ void main() {
               lineId: 'line-30',
             ),
           ],
-          readerKey: 'D',
-          readerCapo: '2',
-        );
+      readerKey: 'D',
+      readerCapo: '2',
+    );
 
     testWidgets('transport, seek bar and subtitle', (tester) async {
       final c = FakeUiController(reader);
@@ -548,12 +571,7 @@ void main() {
       );
       addTearDown(c.dispose);
 
-      await pumpShell(
-        tester,
-        c,
-        size: const Size(360, 640),
-        textScale: 2,
-      );
+      await pumpShell(tester, c, size: const Size(360, 640), textScale: 2);
       expect(find.text('ПІ'), findsOneWidget);
       expect(
         find.byWidgetPredicate(
@@ -563,12 +581,7 @@ void main() {
       );
       expect(tester.takeException(), isNull);
 
-      await pumpShell(
-        tester,
-        c,
-        size: const Size(800, 640),
-        textScale: 2,
-      );
+      await pumpShell(tester, c, size: const Size(800, 640), textScale: 2);
       expect(find.text(longSection), findsWidgets);
       expect(find.text('Chorus'), findsNothing);
       expect(
@@ -605,13 +618,16 @@ void main() {
       c.positionNotifier.value = const PlayerPosition(150, 'line-40');
       await tester.pumpAndSettle();
 
-      expect(tester.state<ScrollableState>(list).position.pixels, greaterThan(0));
+      expect(
+        tester.state<ScrollableState>(list).position.pixels,
+        greaterThan(0),
+      );
       expect(find.text('2:30'), findsOneWidget);
-      FontWeight? weightOf(String text) => (tester
-              .widget<RichText>(find.text(text, findRichText: true))
-              .text as TextSpan)
-          .style
-          ?.fontWeight;
+      FontWeight? weightOf(String text) =>
+          (tester.widget<RichText>(find.text(text, findRichText: true)).text
+                  as TextSpan)
+              .style
+              ?.fontWeight;
       expect(weightOf('Lyric number 40'), FontWeight.w600);
       expect(weightOf('Lyric number 39'), FontWeight.w400);
       expect(tester.takeException(), isNull);
@@ -672,29 +688,34 @@ void main() {
       });
     }
 
-    testWidgets('a landscape phone too short for the rail uses the bottom bar', (
-      tester,
-    ) async {
-      final c = FakeUiController((_) => const VerseUiState());
-      addTearDown(c.dispose);
-      for (final size in const [Size(640, 360), Size(560, 340)]) {
-        await pumpShell(tester, c, size: size);
-        expect(find.byType(NavigationBar), findsOneWidget, reason: '$size');
-        expect(
-          find.byKey(const ValueKey('tablet-navigation-rail')),
-          findsNothing,
-          reason: '$size',
-        );
-        expect(tester.takeException(), isNull, reason: '$size');
-      }
-    });
+    testWidgets(
+      'a landscape phone too short for the rail uses the bottom bar',
+      (tester) async {
+        final c = FakeUiController((_) => const VerseUiState());
+        addTearDown(c.dispose);
+        for (final size in const [Size(640, 360), Size(560, 340)]) {
+          await pumpShell(tester, c, size: size);
+          expect(find.byType(NavigationBar), findsOneWidget, reason: '$size');
+          expect(
+            find.byKey(const ValueKey('tablet-navigation-rail')),
+            findsNothing,
+            reason: '$size',
+          );
+          expect(tester.takeException(), isNull, reason: '$size');
+        }
+      },
+    );
 
     testWidgets('a landscape tablet or tall-enough phone gets the rail', (
       tester,
     ) async {
       final c = FakeUiController((_) => const VerseUiState());
       addTearDown(c.dispose);
-      for (final size in const [Size(700, 480), Size(560, 400), Size(844, 600)]) {
+      for (final size in const [
+        Size(700, 480),
+        Size(560, 400),
+        Size(844, 600),
+      ]) {
         await pumpShell(tester, c, size: size);
         expect(
           find.byKey(const ValueKey('tablet-navigation-rail')),

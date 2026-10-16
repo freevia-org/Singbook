@@ -32,21 +32,30 @@ void main() {
   group('locale resolution', () {
     final supported = AppLocalizations.supportedLocales;
 
-    test('unsupported languages fall back to English, not the first locale', () {
-      expect(supported.first.languageCode, 'ar');
-      for (final code in ['sw', 'he', 'th', 'fa', 'bn']) {
-        expect(resolveAppLocale(Locale(code), supported), const Locale('en'));
-      }
-      expect(resolveAppLocale(null, supported), const Locale('en'));
-    });
+    test(
+      'unsupported languages fall back to English, not the first locale',
+      () {
+        expect(supported.first.languageCode, 'ar');
+        for (final code in ['sw', 'he', 'th', 'fa', 'bn']) {
+          expect(resolveAppLocale(Locale(code), supported), const Locale('en'));
+        }
+        expect(resolveAppLocale(null, supported), const Locale('en'));
+      },
+    );
 
     test('exact and language matches win', () {
-      expect(resolveAppLocale(const Locale('mt'), supported).languageCode, 'mt');
+      expect(
+        resolveAppLocale(const Locale('mt'), supported).languageCode,
+        'mt',
+      );
       expect(
         resolveAppLocale(const Locale('de', 'CH'), supported).languageCode,
         'de',
       );
-      expect(resolveAppLocale(const Locale('ar'), supported).languageCode, 'ar');
+      expect(
+        resolveAppLocale(const Locale('ar'), supported).languageCode,
+        'ar',
+      );
       expect(
         resolveAppLocale(const Locale('zh', 'TW'), supported).languageCode,
         'zh',
@@ -126,29 +135,28 @@ void main() {
   });
 
   group('right-to-left layout', () {
-    testWidgets('the day timeline and clear link follow the reading direction', (
-      tester,
-    ) async {
-      Future<(double, double)> measure(Locale locale) async {
-        final c = FakeUiController((_) => _homeState());
-        addTearDown(c.dispose);
-        await pumpShell(tester, c, locale: locale);
-        final l10n = l10nOf(tester);
-        final timeline = tester
-            .getCenter(find.byKey(const ValueKey('recent-history-timeline')))
-            .dx;
-        final clear = tester.getCenter(find.text(l10n.homeHistoryClear)).dx;
-        await tester.pumpWidget(const SizedBox.shrink());
-        return (timeline, clear);
-      }
+    testWidgets(
+      'the day timeline follows the reading direction and Home has no clear link',
+      (tester) async {
+        Future<double> measure(Locale locale) async {
+          final c = FakeUiController((_) => _homeState());
+          addTearDown(c.dispose);
+          await pumpShell(tester, c, locale: locale);
+          final l10n = l10nOf(tester);
+          expect(find.text(l10n.homeHistoryClear), findsNothing);
+          final timeline = tester
+              .getCenter(find.byKey(const ValueKey('recent-history-timeline')))
+              .dx;
+          await tester.pumpWidget(const SizedBox.shrink());
+          return timeline;
+        }
 
-      final (enTimeline, enClear) = await measure(const Locale('en'));
-      expect(enTimeline, greaterThan(180));
-      expect(enClear, greaterThan(180));
-      final (arTimeline, arClear) = await measure(const Locale('ar'));
-      expect(arTimeline, lessThan(180));
-      expect(arClear, lessThan(180));
-    });
+        final enTimeline = await measure(const Locale('en'));
+        expect(enTimeline, greaterThan(180));
+        final arTimeline = await measure(const Locale('ar'));
+        expect(arTimeline, lessThan(180));
+      },
+    );
 
     testWidgets('the app bar mark and wordmark start on the right in Arabic', (
       tester,
