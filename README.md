@@ -35,6 +35,12 @@ flutter analyze
 flutter run -d emulator-5554 --dart-define-from-file=config/local.defines.json --dart-define=cronetHttpNoPlay=true
 ```
 
+`scripts/build-android.ps1` runs Flutter in an owned process tree and configures
+Gradle and Kotlin to exit with the build. It temporarily overrides conflicting
+daemon settings in `GRADLE_OPTS`, preserves other caller options, and restores
+the original environment after success or failure. Interrupting the script
+cleans up its worker and descendants.
+
 Deterministic fixture-E2E builds can opt into the temporary AGP 9 Cronet
 workaround by setting `ORG_GRADLE_PROJECT_singbookFixtureE2e=true` for that build
 only. Unset it afterward. It excludes a Cronet runtime dependency in debug

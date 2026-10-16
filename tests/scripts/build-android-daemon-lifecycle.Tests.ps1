@@ -55,7 +55,7 @@ function Assert-ProcessStopped([int]$ProcessId, [string]$Message, [int]$WaitMill
 }
 
 $saved = @{}
-foreach ($key in @('JAVA_HOME', 'PATH', 'ORG_GRADLE_PROJECT_requireReleaseSigning', 'ORG_GRADLE_PROJECT_allowDebugSigning', 'SINGBOOK_BUILD_JOB_FIXTURE_MODE', 'SINGBOOK_BUILD_JOB_FIXTURE_EXIT', 'SINGBOOK_FLUTTER_LOG')) {
+foreach ($key in @('JAVA_HOME', 'PATH', 'GRADLE_OPTS', 'ORG_GRADLE_PROJECT_requireReleaseSigning', 'ORG_GRADLE_PROJECT_allowDebugSigning', 'SINGBOOK_BUILD_JOB_FIXTURE_MODE', 'SINGBOOK_BUILD_JOB_FIXTURE_EXIT', 'SINGBOOK_FLUTTER_LOG')) {
     $saved[$key] = @{
         Exists = Test-Path -LiteralPath "Env:$key"
         Value = [Environment]::GetEnvironmentVariable($key, 'Process')
@@ -75,10 +75,12 @@ try {
     $env:JAVA_HOME = 'fixture-jdk'
     $env:ORG_GRADLE_PROJECT_requireReleaseSigning = 'caller-require-value'
     $env:ORG_GRADLE_PROJECT_allowDebugSigning = 'caller-debug-value'
+    $env:GRADLE_OPTS = '-Xmx1g -Dorg.gradle.daemon=true -Dorg.gradle.project.kotlin.compiler.execution.strategy=daemon -Dfixture.keep=yes'
     function global:flutter {
         $global:SingbookFlutterArguments = @($args)
         $global:SingbookFlutterRequireSigning = [Environment]::GetEnvironmentVariable('ORG_GRADLE_PROJECT_requireReleaseSigning', 'Process')
         $global:SingbookFlutterAllowDebugSigning = [Environment]::GetEnvironmentVariable('ORG_GRADLE_PROJECT_allowDebugSigning', 'Process')
+        $global:SingbookFlutterGradleOptions = [Environment]::GetEnvironmentVariable('GRADLE_OPTS', 'Process')
         switch ($env:SINGBOOK_BUILD_JOB_FIXTURE_MODE) {
             'failure' { $global:LASTEXITCODE = 17 }
             'interrupt' { throw [OperationCanceledException]::new('fixture interruption') }
@@ -90,20 +92,27 @@ try {
     & $buildScript -AllowMissingDefines -BuildWorker
     Assert-True ($SingbookFlutterArguments -contains 'build' -and $SingbookFlutterArguments -contains 'apk' -and $SingbookFlutterArguments -contains '--release') 'Build arguments were not forwarded to fake Flutter.'
     Assert-True ($SingbookFlutterAllowDebugSigning -eq 'true') 'The release preview did not scope its debug-signing override to Flutter.'
+    Assert-True ($SingbookFlutterGradleOptions -match '-Xmx1g' -and $SingbookFlutterGradleOptions -match '-Dfixture.keep=yes') 'Unrelated caller GRADLE_OPTS were not preserved.'
+    Assert-True ($SingbookFlutterGradleOptions -match '-Dorg\.gradle\.daemon=false' -and $SingbookFlutterGradleOptions -match '-Dorg\.gradle\.project\.kotlin\.compiler\.execution\.strategy=in-process') 'Managed Gradle daemon options were not applied.'
+    Assert-True ($SingbookFlutterGradleOptions -notmatch '-Dorg\.gradle\.daemon=true' -and $SingbookFlutterGradleOptions -notmatch '-Dorg\.gradle\.project\.kotlin\.compiler\.execution\.strategy=daemon') 'Conflicting caller daemon options were not replaced.'
     Assert-True ($env:ORG_GRADLE_PROJECT_requireReleaseSigning -eq 'caller-require-value') 'The caller require-signing value changed after success.'
     Assert-True ($env:ORG_GRADLE_PROJECT_allowDebugSigning -eq 'caller-debug-value') 'The caller debug-signing value changed after success.'
+    Assert-True ($env:GRADLE_OPTS -eq '-Xmx1g -Dorg.gradle.daemon=true -Dorg.gradle.project.kotlin.compiler.execution.strategy=daemon -Dfixture.keep=yes') 'Caller GRADLE_OPTS changed after success.'
 
     $env:SINGBOOK_BUILD_JOB_FIXTURE_MODE = 'failure'
     $failed = $false
     try { & $buildScript -AllowMissingDefines -BuildWorker } catch { $failed = $true }
     Assert-True $failed 'A fake Flutter nonzero exit was not surfaced as a build failure.'
+    Assert-True ($SingbookFlutterGradleOptions -match '-Dorg\.gradle\.daemon=false' -and $SingbookFlutterGradleOptions -match 'strategy=in-process' -and $SingbookFlutterGradleOptions -notmatch 'daemon=true|strategy=daemon') 'Managed daemon options were not enforced during a failing Flutter invocation.'
     Assert-True ($env:ORG_GRADLE_PROJECT_requireReleaseSigning -eq 'caller-require-value' -and $env:ORG_GRADLE_PROJECT_allowDebugSigning -eq 'caller-debug-value') 'Caller signing values were not restored after failure.'
+    Assert-True ($env:GRADLE_OPTS -eq '-Xmx1g -Dorg.gradle.daemon=true -Dorg.gradle.project.kotlin.compiler.execution.strategy=daemon -Dfixture.keep=yes') 'Caller GRADLE_OPTS changed after failure.'
 
     $env:SINGBOOK_BUILD_JOB_FIXTURE_MODE = 'interrupt'
     $interrupted = $false
     try { & $buildScript -AllowMissingDefines -BuildWorker } catch { $interrupted = $true }
     Assert-True $interrupted 'A fake cancellation was not propagated.'
     Assert-True ($env:ORG_GRADLE_PROJECT_requireReleaseSigning -eq 'caller-require-value' -and $env:ORG_GRADLE_PROJECT_allowDebugSigning -eq 'caller-debug-value') 'Caller signing values were not restored after interruption.'
+    Assert-True ($env:GRADLE_OPTS -eq '-Xmx1g -Dorg.gradle.daemon=true -Dorg.gradle.project.kotlin.compiler.execution.strategy=daemon -Dfixture.keep=yes') 'Caller GRADLE_OPTS changed after interruption.'
 
     # Variables absent before the call stay absent after a failing build.
     Remove-Item Env:ORG_GRADLE_PROJECT_requireReleaseSigning, Env:ORG_GRADLE_PROJECT_allowDebugSigning -ErrorAction SilentlyContinue

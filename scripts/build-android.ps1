@@ -21,7 +21,8 @@ $ErrorActionPreference = 'Stop'
 $workspace = Split-Path -Parent $PSScriptRoot
 $environmentKeysToRestore = @(
     'ORG_GRADLE_PROJECT_requireReleaseSigning',
-    'ORG_GRADLE_PROJECT_allowDebugSigning'
+    'ORG_GRADLE_PROJECT_allowDebugSigning',
+    'GRADLE_OPTS'
 )
 $originalEnvironment = @{}
 foreach ($key in $environmentKeysToRestore) {
@@ -94,6 +95,14 @@ try {
         # (android/app/build.gradle.kts, -PallowDebugSigning=true).
         $env:ORG_GRADLE_PROJECT_allowDebugSigning = 'true'
     }
+    $managedGradleProperties = @(
+        '-Dorg.gradle.daemon=false',
+        '-Dorg.gradle.project.kotlin.compiler.execution.strategy=in-process'
+    ) -join ' '
+    $gradleOptions = [Environment]::GetEnvironmentVariable('GRADLE_OPTS', 'Process')
+    $managedPropertyPattern = '(?<!\S)"?-Dorg\.gradle\.daemon(?:=[^"\s]*)?"?(?=\s|$)|(?<!\S)"?-Dorg\.gradle\.project\.kotlin\.compiler\.execution\.strategy(?:=[^"\s]*)?"?(?=\s|$)'
+    $gradleOptions = [regex]::Replace($gradleOptions, $managedPropertyPattern, '').Trim()
+    $env:GRADLE_OPTS = if ($gradleOptions) { "$gradleOptions $managedGradleProperties" } else { $managedGradleProperties }
     & flutter @arguments
     if ($LASTEXITCODE -ne 0) { throw "Flutter build failed ($LASTEXITCODE)" }
 
