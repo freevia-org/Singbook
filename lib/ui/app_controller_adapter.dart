@@ -588,6 +588,18 @@ class AppControllerAdapter extends VerseUiController {
     final chosenSource = app.results
         .where((item) => item.id == chosenSourceId)
         .firstOrNull;
+    final contributingSourceIds = <String>{
+      if (chosenSourceId is String) chosenSourceId,
+      if (combined?.extra['chordSourceIds'] is List)
+        ...(combined!.extra['chordSourceIds'] as List).whereType<String>(),
+    };
+    final unverifiedContributor = combined?.sources
+        .where(
+          (source) =>
+              contributingSourceIds.contains(source.id) &&
+              source.matchKind != MatchKind.sameRecording,
+        )
+        .firstOrNull;
     final suggested =
         combined == null ||
             (!combinedMatchesFilters && _selectedVersionId != 'combined')
@@ -624,7 +636,11 @@ class AppControllerAdapter extends VerseUiController {
             hasChords: combined.hasChords,
             hasTiming: _hasUsableTiming(combined.timingTracks),
             sameRecording: chosenSource?.matchKind == MatchKind.sameRecording,
-            matchSummary: contributorCount > 1
+            matchSummary: unverifiedContributor != null
+                ? unverifiedContributor.matchKind == MatchKind.sameSong
+                      ? 'same_song'
+                      : 'identity_mismatch'
+                : contributorCount > 1
                 ? 'combined_sources'
                 : 'best_available',
             bodyPreview: _previewLines(_lines(combined.body)),

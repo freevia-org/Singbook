@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "Kappaleen sanat on vahvistettava nuottien perusteella",
   "searchMatchDifferentLyrics": "Sanoitukset eroavat valitusta kappaleesta",
   "searchMatchCombinedSources": "Tiedot koottu useista lähteistä",
-  "searchCombinedFromSources": "{count, plural, =1{Koottu yhdestä lähteestä} other{Koottu {count} lähteestä}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Kaikki",
   "searchSongMatchCount": "{count, plural, =0{0 kappaleosumaa} =1{1 kappaleosuma} other{{count} kappaleosumaa}}",
   "@searchSongMatchCount": {
     "placeholders": {

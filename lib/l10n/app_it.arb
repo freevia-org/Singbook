@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "Il testo deve essere confermato rispetto allo spartito",
   "searchMatchDifferentLyrics": "Il testo differisce da quello del brano selezionato",
   "searchMatchCombinedSources": "Dettagli combinati da più fonti",
-  "searchCombinedFromSources": "{count, plural, =1{Combinato da 1 fonte} other{Combinato da {count} fonti}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Tutte",
   "searchSongMatchCount": "{count, plural, =0{0 corrispondenze di brani} =1{1 corrispondenza di brano} other{{count} corrispondenze di brani}}",
   "@searchSongMatchCount": {
     "placeholders": {

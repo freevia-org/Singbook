@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "Akordu ieraksts jāsalīdzina ar dziesmas vārdiem",
   "searchMatchDifferentLyrics": "Dziesmas vārdi atšķiras no atlasītās dziesmas",
   "searchMatchCombinedSources": "Informācija apkopota no vairākiem avotiem",
-  "searchCombinedFromSources": "{count, plural, zero{Apkopots no {count} avotiem} one{Apkopots no {count} avota} other{Apkopots no {count} avotiem}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Visi",
   "searchSongMatchCount": "{count, plural, zero{{count} dziesmu atbilstību} one{{count} dziesmas atbilstība} other{{count} dziesmu atbilstības}}",
   "@searchSongMatchCount": {
     "placeholders": {

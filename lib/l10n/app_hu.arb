@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "A dalszöveget össze kell vetni a kottával",
   "searchMatchDifferentLyrics": "A dalszöveg eltér a kiválasztott dalétól",
   "searchMatchCombinedSources": "Több forrásból összeállított adatok",
-  "searchCombinedFromSources": "{count, plural, =1{1 forrásból összeállítva} other{{count} forrásból összeállítva}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Összes",
   "searchSongMatchCount": "{count, plural, =0{0 dalegyezés} =1{1 dalegyezés} other{{count} dalegyezés}}",
   "@searchSongMatchCount": {
     "placeholders": {

@@ -752,15 +752,7 @@ class AppLocalizationsEt extends AppLocalizations {
       'Andmed on ühendatud mitmest allikast';
 
   @override
-  String searchCombinedFromSources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Ühendatud $count allikast',
-      one: 'Ühendatud 1 allikast',
-    );
-    return '$_temp0';
-  }
+  String get searchCombinedLabel => 'Kõik';
 
   @override
   String searchSongMatchCount(int count) {

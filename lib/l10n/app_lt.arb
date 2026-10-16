@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "Akordų įrašą reikia patvirtinti pagal dainos tekstą",
   "searchMatchDifferentLyrics": "Dainos tekstas skiriasi nuo pasirinktos dainos",
   "searchMatchCombinedSources": "Informacija sujungta iš kelių šaltinių",
-  "searchCombinedFromSources": "{count, plural, one{Sujungta iš {count} šaltinio} few{Sujungta iš {count} šaltinių} many{Sujungta iš {count} šaltinių} other{Sujungta iš {count} šaltinių}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Visi",
   "searchSongMatchCount": "{count, plural, one{{count} dainos atitikmuo} few{{count} dainų atitikmenys} many{{count} dainų atitikmenų} other{{count} dainų atitikmenų}}",
   "@searchSongMatchCount": {
     "placeholders": {

@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "Şarkı sözleri onaylanmalı",
   "searchMatchDifferentLyrics": "Şarkı sözleri seçilen şarkıdan farklı",
   "searchMatchCombinedSources": "Ayrıntılar birden çok kaynaktan birleştirildi",
-  "searchCombinedFromSources": "{count, plural, =1{1 kaynaktan birleştirildi} other{{count} kaynaktan birleştirildi}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Tümü",
   "searchSongMatchCount": "{count, plural, =0{0 şarkı eşleşmesi} =1{1 şarkı eşleşmesi} other{{count} şarkı eşleşmesi}}",
   "@searchSongMatchCount": {
     "placeholders": {

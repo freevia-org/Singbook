@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "Cần xác nhận lời trong bản nhạc",
   "searchMatchDifferentLyrics": "Lời bài hát khác với bài đã chọn",
   "searchMatchCombinedSources": "Thông tin được tổng hợp từ nhiều nguồn",
-  "searchCombinedFromSources": "{count, plural, =1{Tổng hợp từ 1 nguồn} other{Tổng hợp từ {count} nguồn}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Tất cả",
   "searchSongMatchCount": "{count, plural, =0{0 bài hát phù hợp} =1{1 bài hát phù hợp} other{{count} bài hát phù hợp}}",
   "@searchSongMatchCount": {
     "placeholders": {

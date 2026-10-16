@@ -756,16 +756,7 @@ class AppLocalizationsSk extends AppLocalizations {
       'Informácie spojené z viacerých zdrojov';
 
   @override
-  String searchCombinedFromSources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Skombinované z $count zdrojov',
-      few: 'Skombinované z $count zdrojov',
-      one: 'Skombinované z $count zdroja',
-    );
-    return '$_temp0';
-  }
+  String get searchCombinedLabel => 'Všetky';
 
   @override
   String searchSongMatchCount(int count) {

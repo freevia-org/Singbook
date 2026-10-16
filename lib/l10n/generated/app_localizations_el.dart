@@ -761,15 +761,7 @@ class AppLocalizationsEl extends AppLocalizations {
       'Στοιχεία από πολλές πηγές συνδυάστηκαν';
 
   @override
-  String searchCombinedFromSources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Συνδυάστηκε από $count πηγές',
-      one: 'Συνδυάστηκε από 1 πηγή',
-    );
-    return '$_temp0';
-  }
+  String get searchCombinedLabel => 'Όλα';
 
   @override
   String searchSongMatchCount(int count) {

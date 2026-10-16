@@ -755,15 +755,7 @@ class AppLocalizationsHu extends AppLocalizations {
       'Több forrásból összeállított adatok';
 
   @override
-  String searchCombinedFromSources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count forrásból összeállítva',
-      one: '1 forrásból összeállítva',
-    );
-    return '$_temp0';
-  }
+  String get searchCombinedLabel => 'Összes';
 
   @override
   String searchSongMatchCount(int count) {

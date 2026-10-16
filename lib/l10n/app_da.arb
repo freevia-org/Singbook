@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "Akkordarket skal bekræftes mod sangteksten",
   "searchMatchDifferentLyrics": "Sangteksten adskiller sig fra den valgte sang",
   "searchMatchCombinedSources": "Detaljer samlet fra flere kilder",
-  "searchCombinedFromSources": "{count, plural, =1{Samlet fra 1 kilde} other{Samlet fra {count} kilder}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Alle",
   "searchSongMatchCount": "{count, plural, =0{0 sangmatch} =1{1 sangmatch} other{{count} sangmatch}}",
   "@searchSongMatchCount": {
     "placeholders": {

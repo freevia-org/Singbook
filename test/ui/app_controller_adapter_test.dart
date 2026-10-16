@@ -1132,6 +1132,10 @@ void main() {
 
       expect(ui.state.comparison?.suggested?.id, 'combined');
       expect(ui.state.comparison?.selectedVersionId, 'combined');
+      expect(
+        ui.state.comparison?.suggested?.matchSummary,
+        'identity_mismatch',
+      );
       expect(ui.state.comparison?.alternatives.single.canSave, isTrue);
       await ui.saveSelectedVersion();
       expect(app.songs, hasLength(1));

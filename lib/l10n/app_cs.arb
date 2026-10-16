@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "Zápis akordů je třeba ověřit podle textu písně",
   "searchMatchDifferentLyrics": "Text se liší od vybrané písně",
   "searchMatchCombinedSources": "Informace sloučené z více zdrojů",
-  "searchCombinedFromSources": "{count, plural, one{Sloučeno z {count} zdroje} few{Sloučeno z {count} zdrojů} other{Sloučeno z {count} zdrojů}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Vše",
   "searchSongMatchCount": "{count, plural, one{1 shoda písně} few{{count} shody písní} other{{count} shod písní}}",
   "@searchSongMatchCount": {
     "placeholders": {

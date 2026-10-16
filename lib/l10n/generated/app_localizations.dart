@@ -1464,11 +1464,11 @@ abstract class AppLocalizations {
   /// **'Details combined from multiple sources'**
   String get searchMatchCombinedSources;
 
-  /// No description provided for @searchCombinedFromSources.
+  /// No description provided for @searchCombinedLabel.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{Combined from 1 source} other{Combined from {count} sources}}'**
-  String searchCombinedFromSources(int count);
+  /// **'All'**
+  String get searchCombinedLabel;
 
   /// No description provided for @searchSongMatchCount.
   ///

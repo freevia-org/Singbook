@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "Laulu noodistus vajab sõnade kinnitust",
   "searchMatchDifferentLyrics": "Laulusõnad erinevad valitud laulust",
   "searchMatchCombinedSources": "Andmed on ühendatud mitmest allikast",
-  "searchCombinedFromSources": "{count, plural, =1{Ühendatud 1 allikast} other{Ühendatud {count} allikast}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Kõik",
   "searchSongMatchCount": "{count, plural, =0{0 laulu vastet} =1{1 laulu vaste} other{{count} laulu vastet}}",
   "@searchSongMatchCount": {
     "placeholders": {

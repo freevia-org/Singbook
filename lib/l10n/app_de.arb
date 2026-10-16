@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "Liedtext muss anhand des Akkordblatts überprüft werden",
   "searchMatchDifferentLyrics": "Der Liedtext unterscheidet sich vom ausgewählten Song",
   "searchMatchCombinedSources": "Details aus mehreren Quellen zusammengeführt",
-  "searchCombinedFromSources": "{count, plural, =1{Aus 1 Quelle zusammengeführt} other{Aus {count} Quellen zusammengeführt}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Alle",
   "searchSongMatchCount": "{count, plural, =0{0 passende Songs} =1{1 passender Song} other{{count} passende Songs}}",
   "@searchSongMatchCount": {
     "placeholders": {

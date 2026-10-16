@@ -752,15 +752,7 @@ class AppLocalizationsVi extends AppLocalizations {
       'Thông tin được tổng hợp từ nhiều nguồn';
 
   @override
-  String searchCombinedFromSources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Tổng hợp từ $count nguồn',
-      one: 'Tổng hợp từ 1 nguồn',
-    );
-    return '$_temp0';
-  }
+  String get searchCombinedLabel => 'Tất cả';
 
   @override
   String searchSongMatchCount(int count) {

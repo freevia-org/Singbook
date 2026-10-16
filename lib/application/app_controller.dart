@@ -663,9 +663,7 @@ class AppController extends ChangeNotifier {
       if (usable.isNotEmpty) {
         combined = combineSources(candidate, available);
       } else {
-        final fallback = available
-            .where((source) => plainLyrics(source.body).trim().isNotEmpty)
-            .firstOrNull;
+        final fallback = bestLyricsFallback(available);
         if (fallback == null) {
           combined = null;
         } else {

@@ -14,7 +14,7 @@ List<SourceVersionData> comparisonVersions(SearchComparisonData comparison) {
 
 String versionName(AppLocalizations l10n, SourceVersionData version) =>
     version.id == 'combined'
-    ? l10n.searchCombinedFromSources(version.sourceCount ?? 1)
+    ? l10n.searchCombinedLabel
     : version.providerName.isNotEmpty
     ? version.providerName
     : l10n.searchSuggested;

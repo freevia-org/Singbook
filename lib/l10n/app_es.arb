@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "La letra de la hoja de acordes debe confirmarse",
   "searchMatchDifferentLyrics": "La letra no coincide con la canción seleccionada",
   "searchMatchCombinedSources": "Detalles combinados de varias fuentes",
-  "searchCombinedFromSources": "{count, plural, =1{Combinado de 1 fuente} other{Combinado de {count} fuentes}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Todo",
   "searchSongMatchCount": "{count, plural, =0{0 coincidencias de canciones} =1{1 coincidencia de canción} other{{count} coincidencias de canciones}}",
   "@searchSongMatchCount": {
     "placeholders": {

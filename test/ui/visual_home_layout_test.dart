@@ -53,29 +53,7 @@ void main() {
         'Показано 21 елемент',
       ],
     };
-    const expectedCombined = {
-      'en': [
-        'Combined from 0 sources',
-        'Combined from 1 source',
-        'Combined from 2 sources',
-        'Combined from 5 sources',
-        'Combined from 21 sources',
-      ],
-      'bg': [
-        'Обединено от 0 източника',
-        'Обединено от 1 източник',
-        'Обединено от 2 източника',
-        'Обединено от 5 източника',
-        'Обединено от 21 източника',
-      ],
-      'uk': [
-        'Об’єднано з 0 джерел',
-        'Об’єднано з 1 джерела',
-        'Об’єднано з 2 джерел',
-        'Об’єднано з 5 джерел',
-        'Об’єднано з 21 джерела',
-      ],
-    };
+    const expectedCombined = {'en': 'All', 'bg': 'Всички', 'uk': 'Усі'};
     const expectedSongMatches = {
       'en': [
         '0 song matches',
@@ -140,6 +118,7 @@ void main() {
               final key = locale.languageCode;
               expect(l10n.searchProviderFound, expectedProviderFound[key]);
               expect(l10n.searchProviderFound, isNot(contains('Lyrics')));
+              expect(l10n.searchCombinedLabel, expectedCombined[key]);
               for (var index = 0; index < counts.length; index++) {
                 final count = counts[index];
                 expect(
@@ -149,10 +128,6 @@ void main() {
                 expect(
                   l10n.homeItemsShownCount(count),
                   expectedItems[key]![index],
-                );
-                expect(
-                  l10n.searchCombinedFromSources(count),
-                  expectedCombined[key]![index],
                 );
                 expect(
                   l10n.searchSongMatchCount(count),
@@ -165,7 +140,6 @@ void main() {
                 for (final label in [
                   l10n.searchResultCount(count),
                   l10n.homeItemsShownCount(count),
-                  l10n.searchCombinedFromSources(count),
                   l10n.searchSongMatchCount(count),
                   l10n.searchSourceVersionsCount(count),
                   l10n.searchReadyVersions(count),
@@ -347,7 +321,7 @@ void main() {
       );
       expect(find.byKey(const ValueKey('save-open-lyrics')), findsOneWidget);
       expect(find.text(l10n.searchReadyVersions(4)), findsOneWidget);
-      final combinedSourcesLabel = l10n.searchCombinedFromSources(5);
+      final combinedSourcesLabel = l10n.searchCombinedLabel;
       expect(
         find.byWidgetPredicate(
           (widget) =>

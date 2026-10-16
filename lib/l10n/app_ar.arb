@@ -351,14 +351,7 @@
   "searchMatchNeedsAgreement": "يجب تأكيد كلمات ورقة الأكوردات",
   "searchMatchDifferentLyrics": "تختلف الكلمات عن الأغنية المحددة",
   "searchMatchCombinedSources": "تم جمع التفاصيل من مصادر متعددة",
-  "searchCombinedFromSources": "{count, plural, zero{لم يتم الجمع من أي مصدر} one{تم الجمع من مصدر واحد} two{تم الجمع من مصدرين} few{تم الجمع من {count} مصادر} many{تم الجمع من {count} مصدرًا} other{تم الجمع من {count} مصدر}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "الكل",
   "searchSongMatchCount": "{count, plural, zero{0 تطابقات للأغاني} one{تطابق واحد للأغنية} two{تطابقان للأغنية} few{{count} تطابقات للأغاني} many{{count} تطابقًا للأغاني} other{{count} تطابق للأغاني}}",
   "@searchSongMatchCount": {
     "placeholders": {

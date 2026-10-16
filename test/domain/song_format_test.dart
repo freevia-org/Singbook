@@ -660,6 +660,82 @@ void main() {
     expect(explicit.body, partialChart);
     expect(plainLyrics(explicit.body), isNotEmpty);
   });
+  test('chord overlays preserve base chords and chord-only rows exactly', () {
+    const base =
+        '{start_of_verse}\n[C]First line\n[G]\nSecond line\n{end_of_verse}';
+    final result = combineSources(selected, [
+      source('base', base),
+      source('donor', '[F]First line\n[Am]Second line'),
+    ]);
+
+    expect(result.body, base);
+  });
+  test(
+    'combined chords and setup metadata come from one donor arrangement',
+    () {
+      const full =
+          'First matching lyric\nSecond matching lyric\nThird matching lyric';
+      final result = combineSources(selected, [
+        source('lyrics', full),
+        source(
+          'chart-a',
+          '[C]First matching lyric\n[F]Second matching lyric',
+          metadata: {'key': 'C', 'capo': 2},
+        ),
+        source(
+          'chart-b',
+          '[G]First matching lyric',
+          metadata: {'key': 'G', 'capo': 5},
+        ),
+      ]);
+
+      expect(plainLyrics(result.body), full);
+      expect(result.body, contains('[C]First matching lyric'));
+      expect(result.body, contains('[F]Second matching lyric'));
+      expect(result.body, isNot(contains('[G]')));
+      expect(result.metadata['key'], 'C');
+      expect(result.metadata['capo'], 2);
+      expect(result.extra['chordSourceIds'], ['chart-a:1']);
+    },
+  );
+  test('chord anchors remap across punctuation differences', () {
+    final result = combineSources(selected, [
+      source(
+        'lyrics',
+        'Hello world\nA second plain lyric\nA third plain lyric',
+      ),
+      source('chart', 'Hello!!![C]world'),
+    ]);
+
+    expect(result.body, contains('Hello [C]world'));
+    expect(result.extra['chordSourceIds'], ['chart:1']);
+  });
+  test('ambiguous repeated-line chords are skipped rather than mixed', () {
+    final lyrics = 'Repeat this line\nRepeat this line\nAnother lyric line';
+    final result = combineSources(selected, [
+      source('lyrics', lyrics),
+      source('chart', '[C]Repeat this line\n[G]Repeat this line'),
+    ]);
+
+    expect(result.body, isNot(contains('[C]')));
+    expect(result.body, isNot(contains('[G]')));
+    expect(result.extra['chordSourceIds'], isNull);
+  });
+  test('unverified fallback ranking does not depend on arrival order', () {
+    final later = source(
+      'provider-z',
+      'The same sufficiently complete unverified lyric result',
+      kind: MatchKind.unverified,
+    );
+    final earlier = source(
+      'provider-a',
+      'The same sufficiently complete unverified lyric result',
+      kind: MatchKind.unverified,
+    );
+
+    expect(bestLyricsFallback([later, earlier])?.id, earlier.id);
+    expect(bestLyricsFallback([earlier, later])?.id, earlier.id);
+  });
   test(
     'choosing source never falls back silently when the requested source is absent',
     () {

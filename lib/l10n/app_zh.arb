@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "需要确认谱面中的歌词",
   "searchMatchDifferentLyrics": "歌词与所选歌曲不同",
   "searchMatchCombinedSources": "详情由多个来源合并而成",
-  "searchCombinedFromSources": "{count, plural, =1{合并自 1 个来源} other{合并自 {count} 个来源}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "全部",
   "searchSongMatchCount": "{count, plural, =0{0 首歌曲匹配} =1{1 首歌曲匹配} other{{count} 首歌曲匹配}}",
   "@searchSongMatchCount": {
     "placeholders": {

@@ -762,16 +762,7 @@ class AppLocalizationsRo extends AppLocalizations {
       'Detalii combinate din mai multe surse';
 
   @override
-  String searchCombinedFromSources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Combinat din $count de surse',
-      few: 'Combinat din $count surse',
-      one: 'Combinat dintr-o sursă',
-    );
-    return '$_temp0';
-  }
+  String get searchCombinedLabel => 'Toate';
 
   @override
   String searchSongMatchCount(int count) {

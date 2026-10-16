@@ -760,17 +760,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get searchMatchCombinedSources => 'Дані зведено з кількох джерел';
 
   @override
-  String searchCombinedFromSources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Об’єднано з $count джерела',
-      many: 'Об’єднано з $count джерел',
-      few: 'Об’єднано з $count джерел',
-      one: 'Об’єднано з $count джерела',
-    );
-    return '$_temp0';
-  }
+  String get searchCombinedLabel => 'Усі';
 
   @override
   String searchSongMatchCount(int count) {

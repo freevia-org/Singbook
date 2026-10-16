@@ -762,17 +762,7 @@ class AppLocalizationsLt extends AppLocalizations {
       'Informacija sujungta iš kelių šaltinių';
 
   @override
-  String searchCombinedFromSources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Sujungta iš $count šaltinių',
-      many: 'Sujungta iš $count šaltinių',
-      few: 'Sujungta iš $count šaltinių',
-      one: 'Sujungta iš $count šaltinio',
-    );
-    return '$_temp0';
-  }
+  String get searchCombinedLabel => 'Visi';
 
   @override
   String searchSongMatchCount(int count) {

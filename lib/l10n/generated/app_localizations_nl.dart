@@ -757,15 +757,7 @@ class AppLocalizationsNl extends AppLocalizations {
       'Gegevens gecombineerd uit meerdere bronnen';
 
   @override
-  String searchCombinedFromSources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Gecombineerd uit $count bronnen',
-      one: 'Gecombineerd uit 1 bron',
-    );
-    return '$_temp0';
-  }
+  String get searchCombinedLabel => 'Alles';
 
   @override
   String searchSongMatchCount(int count) {

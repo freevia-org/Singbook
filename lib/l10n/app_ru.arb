@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "Аккорды нужно сверить с текстом песни",
   "searchMatchDifferentLyrics": "Текст отличается от выбранной песни",
   "searchMatchCombinedSources": "Сведения объединены из нескольких источников",
-  "searchCombinedFromSources": "{count, plural, one{Объединено из {count} источника} few{Объединено из {count} источников} many{Объединено из {count} источников} other{Объединено из {count} источника}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Все",
   "searchSongMatchCount": "{count, plural, one{{count} совпадение песни} few{{count} совпадения песен} many{{count} совпадений песен} other{{count} совпадения песни}}",
   "@searchSongMatchCount": {
     "placeholders": {

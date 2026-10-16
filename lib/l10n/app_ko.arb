@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "코드 차트를 가사와 대조해 확인해야 합니다",
   "searchMatchDifferentLyrics": "선택한 노래와 가사가 다릅니다",
   "searchMatchCombinedSources": "여러 출처의 세부정보를 결합했습니다",
-  "searchCombinedFromSources": "{count, plural, =1{출처 1곳에서 결합} other{출처 {count}곳에서 결합}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "전체",
   "searchSongMatchCount": "{count, plural, =0{노래 일치 0개} =1{노래 일치 1개} other{노래 일치 {count}개}}",
   "@searchSongMatchCount": {
     "placeholders": {

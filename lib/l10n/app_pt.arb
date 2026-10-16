@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "A letra da cifra precisa ser confirmada",
   "searchMatchDifferentLyrics": "A letra é diferente da música selecionada",
   "searchMatchCombinedSources": "Detalhes combinados de várias fontes",
-  "searchCombinedFromSources": "{count, plural, =1{Combinado de 1 fonte} other{Combinado de {count} fontes}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Tudo",
   "searchSongMatchCount": "{count, plural, =0{0 correspondências de músicas} =1{1 correspondência de música} other{{count} correspondências de músicas}}",
   "@searchSongMatchCount": {
     "placeholders": {
