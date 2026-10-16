@@ -25,6 +25,8 @@ import 'pdf_font_face.dart';
 /// Largest single text/timing file accepted by an import.
 const maxImportBytes = 24 * 1024 * 1024;
 
+enum ImportIntent { any, songs, setlists }
+
 /// Backup package limits. Export and import share these constants, so a backup
 /// this app can write is always one it can restore (and vice versa).
 const maxBackupBytes = 64 * 1024 * 1024;

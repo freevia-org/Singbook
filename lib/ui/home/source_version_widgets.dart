@@ -6,35 +6,29 @@ import '../verse_ui_state.dart';
 /// The same choices are used by the comparison list and the full preview.
 List<SourceVersionData> comparisonVersions(SearchComparisonData comparison) {
   final suggested = comparison.suggested;
-  final explicitUnderlying =
-      suggested?.sourceCount == 1 &&
-      suggested?.underlyingSourceId == comparison.selectedVersionId;
   return [
-    if (suggested != null && !explicitUnderlying) suggested,
-    ...comparison.alternatives.where(
-      (version) =>
-          version.id != suggested?.id &&
-          !(suggested?.sourceCount == 1 &&
-              version.id == suggested?.underlyingSourceId &&
-              version.id != comparison.selectedVersionId &&
-              version.durationSeconds == suggested?.durationSeconds &&
-              version.hasChords == suggested?.hasChords &&
-              version.hasTiming == suggested?.hasTiming),
-    ),
+    ?suggested,
+    ...comparison.alternatives.where((version) => version.id != suggested?.id),
   ];
 }
 
 String versionName(AppLocalizations l10n, SourceVersionData version) =>
-    version.sourceCount != null && version.sourceCount! > 1
+    version.id == 'combined' &&
+        version.sourceCount != null &&
+        version.sourceCount! > 1
     ? l10n.searchCombinedFromSources(version.sourceCount!)
+    : version.id == 'combined'
+    ? l10n.searchMatchBestAvailable
     : version.providerName.isNotEmpty
     ? version.providerName
     : l10n.searchSuggested;
 
-/// A single-source recommendation is displayed under that source's name.
-/// Choosing it must pin that source rather than a future combined recipe.
+/// The combined recommendation is a distinct choice even when only one source
+/// currently contributes; choosing a provider tab pins that source directly.
 String versionSelectionId(SourceVersionData version) =>
-    version.sourceCount == 1 && version.underlyingSourceId != null
+    version.id != 'combined' &&
+        version.sourceCount == 1 &&
+        version.underlyingSourceId != null
     ? version.underlyingSourceId!
     : version.id;
 

@@ -131,6 +131,12 @@ class _SongsScreenState extends State<SongsScreen> {
                 onPressed: controller.createSong,
                 icon: const Icon(Icons.add_rounded),
               ),
+              const SizedBox(width: 4),
+              IconButton(
+                tooltip: l10n.settingsImportChordPro,
+                onPressed: controller.importChordPro,
+                icon: const Icon(Icons.file_open_rounded),
+              ),
             ],
           ),
         ),

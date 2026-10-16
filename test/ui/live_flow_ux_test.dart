@@ -298,7 +298,7 @@ void main() {
       addTearDown(controller.dispose);
       await _pumpHome(tester, controller);
       await tester.tap(find.byKey(const ValueKey('version-row-one')));
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(controller.state.comparison?.selectedVersionId, 'one');
       expect(find.text('Explicit raw source lyrics'), findsOneWidget);
       final raw = find.byKey(const ValueKey('version-row-one'));

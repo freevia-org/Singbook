@@ -960,13 +960,13 @@ void main() {
       ]);
       expect(ui.state.comparison!.selectedVersionId, second.id);
       expect(ui.state.comparison!.selected!.id, second.id);
-      expect(ui.state.comparison!.selected!.isUsableVersion, isFalse);
-      expect(ui.state.comparison!.selected!.canSave, isFalse);
+      expect(ui.state.comparison!.selected!.isUsableVersion, isTrue);
+      expect(ui.state.comparison!.selected!.canSave, isTrue);
       await ui.saveSelectedVersion();
+      expect(app.songs, hasLength(1));
       expect(
-        app.songs,
-        isEmpty,
-        reason: 'an invalid explicit choice cannot fall back',
+        app.songs.single.body,
+        '[G]Rejected provider lyrics that are long enough',
       );
     },
   );
@@ -1085,9 +1085,10 @@ void main() {
       ]);
       await selecting;
       expect(ui.state.comparison?.selectedVersionId, source.id);
-      expect(ui.state.comparison?.selected?.canSave, isFalse);
+      expect(ui.state.comparison?.selected?.canSave, isTrue);
       await ui.saveSelectedVersion();
-      expect(app.songs, isEmpty);
+      expect(app.songs, hasLength(1));
+      expect(app.songs.single.body, source.body);
     },
   );
 

@@ -501,6 +501,18 @@ void main() {
       expect(app.setlists, hasLength(1));
     });
 
+    test('screen-specific imports reject files for the other screen', () async {
+      await app.saveSong(one);
+      final text = encodeSetlistReferences(
+        SetlistDocument(id: 'x', name: 'File set', entries: [SetlistEntry(id: 'q', songId: 'one')]),
+        [one],
+      );
+      await expectLater(app.importDocument(doc('a.osts', utf8.encode(text)), intent: ImportIntent.songs), throwsFormatException);
+      await expectLater(app.importDocument(doc('a.cho', utf8.encode('Song title\n[C]Words')), intent: ImportIntent.setlists), throwsFormatException);
+      expect(app.songs, hasLength(1));
+      expect(app.setlists, isEmpty);
+    });
+
     test('a text song whose title starts with PK is a song, not a zip', () async {
       final result = await app.importDocument(
         doc('pk.txt', utf8.encode('PK Anthem\n[C]Hello world')),

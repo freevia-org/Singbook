@@ -71,6 +71,12 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                     widget.controller.createSetlist(name: l10n.setlistCreate),
                 icon: const Icon(Icons.add_rounded),
               ),
+              const SizedBox(width: 4),
+              IconButton(
+                tooltip: l10n.settingsImportSetlist,
+                onPressed: widget.controller.importSetlist,
+                icon: const Icon(Icons.file_open_rounded),
+              ),
             ],
           ),
         ),

@@ -337,17 +337,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ],
         ),
-        VerseSectionLabel(l10n.settingsImport),
-        _SettingCard(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.file_open_rounded),
-              title: Text(l10n.settingsImportChordPro),
-              trailing: const Icon(Icons.chevron_right_rounded),
-              onTap: controller.importChordPro,
-            ),
-          ],
-        ),
         VerseSectionLabel(l10n.accountTitle, key: _syncSectionKey),
         AccountSection(controller: controller),
         VerseSectionLabel(l10n.settingsAbout),

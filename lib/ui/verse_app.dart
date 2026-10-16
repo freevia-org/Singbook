@@ -67,7 +67,8 @@ class _VerseAppState extends State<VerseApp> {
           _files.shareSetlistPdf(setlist, _app.songs),
       onCopySetlist: (setlist) => _files.copySetlist(setlist, _app.songs),
       onPrintSetlist: (setlist) => _files.printSetlist(setlist, _app.songs),
-      onImport: _import,
+      onImport: _importSongs,
+      onImportSetlist: _importSetlist,
     );
     _appearance = _AppAppearance.of(_controller.state);
     _updateThemes();
@@ -122,10 +123,14 @@ class _VerseAppState extends State<VerseApp> {
     setState(() => _syncSettingsRequest = 0);
   }
 
-  Future<void> _import() async {
+  Future<void> _importSongs() => _import(ImportIntent.songs);
+
+  Future<void> _importSetlist() => _import(ImportIntent.setlists);
+
+  Future<void> _import(ImportIntent intent) async {
     final picked = await _files.pickDocument();
     if (picked == null) return;
-    await _app.importDocument(picked);
+    await _app.importDocument(picked, intent: intent);
     _controller.postNotice(UiNotice.importSuccess);
   }
 

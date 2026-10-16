@@ -70,6 +70,12 @@ class FakeUiController extends VerseUiController {
       _record('createSetlist(name: $name, songId: $songId)');
 
   @override
+  Future<void> importChordPro() => _record('importChordPro');
+
+  @override
+  Future<void> importSetlist() => _record('importSetlist');
+
+  @override
   Future<void> removeSetlistEntry(
     String setlistId,
     String entryId, {

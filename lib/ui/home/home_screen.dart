@@ -394,37 +394,28 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
                         },
                         icon: const Icon(Icons.close_rounded),
                       ),
-                    if (MediaQuery.textScalerOf(context).scale(1) <= 1.3)
-                      TextButton(
-                        onPressed: _submitSearch,
-                        child: Text(l10n.searchSubmit),
+                    IconButton(
+                      tooltip: l10n.searchFilters,
+                      onPressed: widget.controller.toggleSearchFilters,
+                      icon: Icon(
+                        Icons.tune_rounded,
+                        color: state.searchFiltersExpanded
+                            ? Theme.of(context).colorScheme.primary
+                            : null,
                       ),
+                    ),
+                    IconButton(
+                      tooltip: l10n.searchSubmit,
+                      onPressed: _submitSearch,
+                      icon: const Icon(Icons.arrow_forward_rounded),
+                    ),
                   ],
                 ),
               ),
             ),
           ),
-          IconButton(
-            tooltip: l10n.searchFilters,
-            onPressed: widget.controller.toggleSearchFilters,
-            icon: Icon(
-              Icons.tune_rounded,
-              color: state.searchFiltersExpanded
-                  ? Theme.of(context).colorScheme.primary
-                  : null,
-            ),
-          ),
         ],
       ),
-      if (MediaQuery.textScalerOf(context).scale(1) > 1.3)
-        Align(
-          alignment: AlignmentDirectional.centerEnd,
-          child: TextButton.icon(
-            onPressed: _submitSearch,
-            icon: const Icon(Icons.search_rounded),
-            label: Text(l10n.searchSubmit),
-          ),
-        ),
       AnimatedCrossFade(
         duration: const Duration(milliseconds: 180),
         crossFadeState: state.searchFiltersExpanded

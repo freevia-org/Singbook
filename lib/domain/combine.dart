@@ -132,12 +132,15 @@ SongDocument combineSources(
   SongCandidate selected,
   List<SourceResult> results, {
   String? preferredSourceId,
+  bool allowRejectedPreferredSource = false,
 }) {
   final matching = results
       .where(
         (s) =>
-            s.matchKind != MatchKind.rejected &&
-            _sameSong(s.candidate, selected),
+            (s.matchKind != MatchKind.rejected ||
+                (allowRejectedPreferredSource && s.id == preferredSourceId)) &&
+            (_sameSong(s.candidate, selected) ||
+                (allowRejectedPreferredSource && s.id == preferredSourceId)),
       )
       .toList();
   final accepted = matching
@@ -157,6 +160,7 @@ SongDocument combineSources(
   final eligible = accepted
       .where(
         (source) =>
+            (allowRejectedPreferredSource && source.id == preferredSourceId) ||
             !source.hasChords ||
             references.isEmpty ||
             _completeChart(source.body, references.first.body),

@@ -666,7 +666,10 @@ class AppController extends ChangeNotifier {
       : selection == null
       ? null
       : _savedCombined[selection!.identity];
-  Future<SongDocument> saveResult({SourceResult? source}) {
+  Future<SongDocument> saveResult({
+    SourceResult? source,
+    bool allowRejectedSource = false,
+  }) {
     // Capture the complete decision synchronously. Discovery may publish more
     // sources, or the user may select another candidate, while the tracked
     // save is waiting to write to the library.
@@ -691,7 +694,8 @@ class AppController extends ChangeNotifier {
           }
         }
         if (selectedSource == null ||
-            selectedSource.matchKind == MatchKind.rejected ||
+            (selectedSource.matchKind == MatchKind.rejected &&
+                !allowRejectedSource) ||
             selectedSource.body.trim().isEmpty) {
           throw StateError('invalid_source');
         }
@@ -706,6 +710,7 @@ class AppController extends ChangeNotifier {
         selected,
         resultSnapshots,
         preferredSourceId: selectedSource?.id,
+        allowRejectedPreferredSource: allowRejectedSource,
       );
       final song = document.copyWith(
         extra: {
@@ -1165,36 +1170,45 @@ class AppController extends ChangeNotifier {
     },
   );
 
-  Future<ImportedCollection> importDocument(PickedDocument file) =>
+  Future<ImportedCollection> importDocument(
+    PickedDocument file, {
+    ImportIntent intent = ImportIntent.any,
+  }) =>
       _tracked('import', () async {
         final bytes = file.bytes;
+        final ImportedCollection decoded;
         if (looksLikeZip(bytes)) {
-          return importCollection(await decodeLibraryPackageAsync(bytes));
+          decoded = await decodeLibraryPackageAsync(bytes);
+        } else {
+          if (bytes.length > maxImportBytes) {
+            throw const FormatException('file_too_large');
+          }
+          final name = file.name.toLowerCase();
+          if (name.endsWith('.lrc') || name.endsWith('.ttml')) {
+            decoded = ImportedCollection(decodePickedSongs(file), []);
+          } else {
+            final text = file.lenientText;
+            if (looksLikeSetlistXml(text)) {
+              decoded = ImportedCollection([], [
+                decodeSetlistReferences(
+                  text,
+                  await repository.listSongs(),
+                  fileName: file.name,
+                ),
+              ]);
+            } else {
+              decoded = ImportedCollection(
+                decodeSongText(text, fileName: file.name),
+                [],
+              );
+            }
+          }
         }
-        if (bytes.length > maxImportBytes) {
-          throw const FormatException('file_too_large');
+        if ((intent == ImportIntent.songs && decoded.songs.isEmpty) ||
+            (intent == ImportIntent.setlists && decoded.setlists.isEmpty)) {
+          throw const FormatException('unsupported_file');
         }
-        final name = file.name.toLowerCase();
-        if (name.endsWith('.lrc') || name.endsWith('.ttml')) {
-          return importCollection(
-            ImportedCollection(decodePickedSongs(file), []),
-          );
-        }
-        final text = file.lenientText;
-        if (looksLikeSetlistXml(text)) {
-          return importCollection(
-            ImportedCollection([], [
-              decodeSetlistReferences(
-                text,
-                await repository.listSongs(),
-                fileName: file.name,
-              ),
-            ]),
-          );
-        }
-        return importCollection(
-          ImportedCollection(decodeSongText(text, fileName: file.name), []),
-        );
+        return importCollection(decoded);
       });
 
   static String _stableId(String seed) =>

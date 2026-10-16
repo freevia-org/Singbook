@@ -671,6 +671,7 @@ abstract class VerseUiController extends ChangeNotifier {
   /// Leaves the conflict-copy filter of the Songs list.
   void clearConflictFilter() {}
   Future<void> importChordPro();
+  Future<void> importSetlist() async => importChordPro();
   Future<void> back();
 
   // Library editing used by the screens. Defaults keep lightweight test
