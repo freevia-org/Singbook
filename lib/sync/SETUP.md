@@ -33,10 +33,10 @@ scope, so no Google verification review is needed for it.
 Android needs nothing else natively: `INTERNET` is declared, the plugin adds its
 own wiring. R8/minify rules for the plugin are the Android owner's concern.
 
-`GoogleDriveAuth` (`google_auth.dart`): after an explicit Connect action, try
-`attemptLightweightAuthentication` for a saved session, then fall back to
-interactive `authenticate` + `authorizeScopes` if needed. Startup makes no
-Google authorization request. Every manual sync request takes a
+`GoogleDriveAuth` (`google_auth.dart`): only an explicit Connect action restores
+a saved identity (local metadata on Android; lightweight authentication on
+other platforms), then falls back to interactive sign-in if needed. Startup
+makes no Google authorization request. Every manual sync request takes a
 token from `authorizationForScopes`; a 401 clears the rejected token and asks
 the platform for a new one once; sign-out clears the token and revokes the grant
 (best effort, falls back to a plain sign-out).
@@ -190,7 +190,7 @@ Drive files. Local edits and `onAppResumed()` never start a sync.
 There are no sync timers, background retries or follow-up runs. A failed or
 partial sync shows its result and waits for another explicit action. Only one
 sync action runs at a time. Legacy `autoSync` settings and timing arguments
-cannot enable automatic sync; `setAutoSync` persists false for compatibility.
+cannot enable automatic sync; `setAutoSync` is a compatibility no-op.
 
 Regression coverage lives in `sync_controller_test.dart`,
 `controller_hardening_test.dart` and `account_sync_test.dart`: startup skips
