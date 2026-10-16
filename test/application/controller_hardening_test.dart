@@ -50,6 +50,29 @@ class _PendingRestoreAuth extends FakeAuth {
   }
 }
 
+class _GatedRestoreSync extends GoogleDriveSyncService {
+  _GatedRestoreSync({
+    required LibraryRepository repository,
+    required DriveAuthorization auth,
+  }) : super(repository: repository, auth: auth, store: MemoryCloud());
+
+  final lastSuccess = Completer<DateTime?>();
+  int lastSuccessCalls = 0;
+  int mismatchChecks = 0;
+
+  @override
+  Future<DateTime?> lastSuccessfulSync() {
+    lastSuccessCalls++;
+    return lastSuccess.future;
+  }
+
+  @override
+  Future<bool> hasAccountMismatch() async {
+    mismatchChecks++;
+    return false;
+  }
+}
+
 void main() {
   sqfliteFfiInit();
   late LibraryRepository repo;
@@ -149,6 +172,37 @@ void main() {
       await Future<void>.delayed(Duration.zero);
       expect(guarded.syncError, isNull);
     });
+
+    test(
+      'disposal during restored account metadata stops later repository reads',
+      () async {
+        final dir = await Directory.systemTemp.createTemp('verse-restore-');
+        addTearDown(() => dir.delete(recursive: true));
+        final other = await LibraryRepository.open(
+          path: '${dir.path}/library.sqlite',
+          factory: databaseFactoryFfi,
+        );
+        final auth = FakeAuth()..connected = true;
+        final sync = _GatedRestoreSync(repository: other, auth: auth);
+        final guarded = AppController(
+          repository: other,
+          discovery: discovery(),
+          sync: sync,
+        );
+        await guarded.initialize();
+        for (var i = 0; i < 1000 && sync.lastSuccessCalls == 0; i++) {
+          await Future<void>.delayed(const Duration(milliseconds: 1));
+        }
+        expect(sync.lastSuccessCalls, 1);
+        guarded.dispose();
+        await other.close();
+        sync.lastSuccess.complete(DateTime.now().toUtc());
+        await Future<void>.delayed(Duration.zero);
+        expect(sync.mismatchChecks, 0);
+        expect(guarded.lastSyncAt, isNull);
+        expect(guarded.syncError, isNull);
+      },
+    );
 
     test('dispose during an in-flight sync neither throws nor touches the controller',
         () async {

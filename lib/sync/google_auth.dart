@@ -70,8 +70,8 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
     this.iosClientId = const String.fromEnvironment(
       'VERSE_GOOGLE_IOS_CLIENT_ID',
     ),
-    @visibleForTesting this.loadSavedIdentity,
-    @visibleForTesting this.saveSavedIdentity,
+    this.loadSavedIdentity,
+    this.saveSavedIdentity,
     @visibleForTesting this.isAndroidOverride,
     @visibleForTesting this.configuredOverride,
   });
@@ -171,8 +171,9 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
         final identity = await loadSavedIdentity?.call();
         if (!_restoreIsCurrent(epoch, generation)) return false;
         final id = identity?['id'], email = identity?['email'];
-        if (id == null || id.isEmpty || email == null || email.isEmpty)
+        if (id == null || id.isEmpty || email == null || email.isEmpty) {
           return false;
+        }
         await _initialize();
         final tokens = await _androidTokens(id: id, email: email);
         if (tokens == null ||
