@@ -412,7 +412,7 @@ void main() {
   });
 
   testWidgets(
-    'online catalog filters only offer fields the catalog can check',
+    'online catalog starts without the removed search settings panel',
     (tester) async {
       tester.view.devicePixelRatio = 1;
       tester.view.physicalSize = const Size(360, 804);
@@ -443,26 +443,18 @@ void main() {
       expect(searchField.decoration!.hintText, l10n.searchCatalogHint);
       expect(
         find.byKey(const ValueKey('online-filter-limit-hint')),
-        findsOneWidget,
+        findsNothing,
       );
-      expect(find.text(l10n.searchCatalogFilterHint), findsOneWidget);
+      expect(find.text(l10n.searchCatalogFilterHint), findsNothing);
+      expect(find.byTooltip(l10n.searchFilters), findsNothing);
+      expect(find.byTooltip(l10n.songsAdd), findsOneWidget);
+      expect(find.byTooltip(l10n.searchSubmit), findsOneWidget);
       expect(find.text(l10n.searchFilterLyrics), findsNothing);
       expect(find.text(l10n.searchFilterChords), findsNothing);
       expect(find.text(l10n.searchFilterTimed), findsNothing);
       expect(find.text(l10n.searchFilterLanguage), findsNothing);
       expect(find.text(l10n.searchCatalogEmptyQuery), findsOneWidget);
-      final metadataDropdown = tester.widget<DropdownButton<String>>(
-        find.descendant(
-          of: find.byType(DropdownButtonFormField<String>),
-          matching: find.byType(DropdownButton<String>),
-        ),
-      );
-      expect(metadataDropdown.value, 'all');
-      expect(metadataDropdown.items!.map((item) => item.value), [
-        'all',
-        'title',
-        'artist',
-      ]);
+      expect(find.byType(DropdownButtonFormField<String>), findsNothing);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
     },

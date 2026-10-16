@@ -381,7 +381,6 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
                 hintText: state.homeListMode == HomeListMode.online
                     ? l10n.searchCatalogHint
                     : l10n.searchHint,
-                prefixIcon: const Icon(Icons.search_rounded),
                 suffixIcon: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -394,15 +393,10 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
                         },
                         icon: const Icon(Icons.close_rounded),
                       ),
-                    IconButton(
-                      tooltip: l10n.searchFilters,
-                      onPressed: widget.controller.toggleSearchFilters,
-                      icon: Icon(
-                        Icons.tune_rounded,
-                        color: state.searchFiltersExpanded
-                            ? Theme.of(context).colorScheme.primary
-                            : null,
-                      ),
+                    IconButton.filledTonal(
+                      tooltip: l10n.songsAdd,
+                      onPressed: widget.controller.createSong,
+                      icon: const Icon(Icons.add_rounded),
                     ),
                     IconButton(
                       tooltip: l10n.searchSubmit,
@@ -415,14 +409,6 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
             ),
           ),
         ],
-      ),
-      AnimatedCrossFade(
-        duration: const Duration(milliseconds: 180),
-        crossFadeState: state.searchFiltersExpanded
-            ? CrossFadeState.showSecond
-            : CrossFadeState.showFirst,
-        firstChild: const SizedBox(width: double.infinity),
-        secondChild: _searchFilters(context, l10n, state),
       ),
       const SizedBox(height: 14),
       _HomeModeSelector(

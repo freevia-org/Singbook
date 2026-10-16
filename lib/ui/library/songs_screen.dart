@@ -111,10 +111,11 @@ class _SongsScreenState extends State<SongsScreen> {
               Expanded(
                 child: TextField(
                   controller: _search,
+                  textInputAction: TextInputAction.search,
                   onChanged: (value) => setState(() => _query = value),
+                  onSubmitted: (_) => FocusScope.of(context).unfocus(),
                   decoration: InputDecoration(
                     hintText: l10n.searchHint,
-                    prefixIcon: const Icon(Icons.search_rounded),
                     suffixIcon: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -124,15 +125,10 @@ class _SongsScreenState extends State<SongsScreen> {
                             onPressed: _clearSearch,
                             icon: const Icon(Icons.close_rounded),
                           ),
-                        IconButton.filledTonal(
-                          tooltip: l10n.songsAdd,
-                          onPressed: controller.createSong,
-                          icon: const Icon(Icons.add_rounded),
-                        ),
                         IconButton(
-                          tooltip: l10n.settingsImportChordPro,
-                          onPressed: controller.importChordPro,
-                          icon: const Icon(Icons.file_open_rounded),
+                          tooltip: l10n.searchSubmit,
+                          onPressed: () => FocusScope.of(context).unfocus(),
+                          icon: const Icon(Icons.arrow_forward_rounded),
                         ),
                       ],
                     ),

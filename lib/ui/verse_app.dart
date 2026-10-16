@@ -515,6 +515,48 @@ class _VerseAppShellState extends State<VerseAppShell>
       ? Badge(smallSize: 10, backgroundColor: scheme.error, child: icon)
       : icon;
 
+  List<Widget> _mainHeaderActions(AppLocalizations l10n, VerseUiState state) {
+    final actions = <Widget>[_cloudButton(l10n, state)];
+    switch (state.activeTab) {
+      case VerseTab.songs:
+        actions.addAll([
+          IconButton(
+            key: const ValueKey('import-header-button'),
+            tooltip: l10n.settingsImportChordPro,
+            onPressed: widget.controller.importChordPro,
+            icon: const Icon(Icons.file_upload_outlined),
+          ),
+          IconButton.filledTonal(
+            key: const ValueKey('add-header-button'),
+            tooltip: l10n.songsAdd,
+            onPressed: widget.controller.createSong,
+            icon: const Icon(Icons.add_rounded),
+          ),
+        ]);
+      case VerseTab.setlists:
+        actions.addAll([
+          IconButton(
+            key: const ValueKey('import-header-button'),
+            tooltip: l10n.settingsImportSetlist,
+            onPressed: widget.controller.importSetlist,
+            icon: const Icon(Icons.file_upload_outlined),
+          ),
+          IconButton.filledTonal(
+            key: const ValueKey('add-header-button'),
+            tooltip: l10n.setlistCreate,
+            onPressed: () =>
+                widget.controller.createSetlist(name: l10n.setlistCreate),
+            icon: const Icon(Icons.add_rounded),
+          ),
+        ]);
+      case VerseTab.home:
+      case VerseTab.settings:
+        break;
+    }
+    actions.add(const SizedBox(width: 8));
+    return actions;
+  }
+
   Widget _buildShell(BuildContext context, Widget? _) {
     final controller = widget.controller;
     final state = controller.state;
@@ -585,7 +627,7 @@ class _VerseAppShellState extends State<VerseAppShell>
                       ),
                 actions: comparisonMode
                     ? null
-                    : [_cloudButton(l10n, state), const SizedBox(width: 8)],
+                    : _mainHeaderActions(l10n, state),
               )
             : null,
         body: SafeArea(
@@ -593,9 +635,7 @@ class _VerseAppShellState extends State<VerseAppShell>
           bottom: false,
           child: Row(
             children: [
-              if (state.route == VerseRoute.main &&
-                  useRail &&
-                  !comparisonMode)
+              if (state.route == VerseRoute.main && useRail && !comparisonMode)
                 NavigationRail(
                   key: const ValueKey('tablet-navigation-rail'),
                   selectedIndex: state.activeTab.index,
