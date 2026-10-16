@@ -114,7 +114,11 @@ class _SongsScreenState extends State<SongsScreen> {
                   onChanged: (value) => setState(() => _query = value),
                   decoration: InputDecoration(
                     hintText: l10n.searchHint,
-                    prefixIcon: const Icon(Icons.search_rounded),
+                    prefixIcon: IconButton(
+                      tooltip: l10n.navBack,
+                      onPressed: () => controller.setTab(VerseTab.home),
+                      icon: const Icon(Icons.arrow_back_rounded),
+                    ),
                     suffixIcon: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -124,16 +128,6 @@ class _SongsScreenState extends State<SongsScreen> {
                             onPressed: _clearSearch,
                             icon: const Icon(Icons.close_rounded),
                           ),
-                        IconButton.filledTonal(
-                          tooltip: l10n.songsAdd,
-                          onPressed: controller.createSong,
-                          icon: const Icon(Icons.add_rounded),
-                        ),
-                        IconButton(
-                          tooltip: l10n.settingsImportChordPro,
-                          onPressed: controller.importChordPro,
-                          icon: const Icon(Icons.file_open_rounded),
-                        ),
                       ],
                     ),
                   ),

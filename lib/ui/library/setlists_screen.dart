@@ -53,7 +53,11 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                   onChanged: (value) => setState(() => _query = value),
                   decoration: InputDecoration(
                     hintText: l10n.searchHint,
-                    prefixIcon: const Icon(Icons.search_rounded),
+                    prefixIcon: IconButton(
+                      tooltip: l10n.navBack,
+                      onPressed: () => widget.controller.setTab(VerseTab.home),
+                      icon: const Icon(Icons.arrow_back_rounded),
+                    ),
                     suffixIcon: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -63,18 +67,6 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                             onPressed: _clearSearch,
                             icon: const Icon(Icons.close_rounded),
                           ),
-                        IconButton.filledTonal(
-                          tooltip: l10n.setlistCreate,
-                          onPressed: () => widget.controller.createSetlist(
-                            name: l10n.setlistCreate,
-                          ),
-                          icon: const Icon(Icons.add_rounded),
-                        ),
-                        IconButton(
-                          tooltip: l10n.settingsImportSetlist,
-                          onPressed: widget.controller.importSetlist,
-                          icon: const Icon(Icons.file_open_rounded),
-                        ),
                       ],
                     ),
                   ),
