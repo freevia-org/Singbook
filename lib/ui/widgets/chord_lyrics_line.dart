@@ -416,6 +416,17 @@ class _ChordLineLayout {
     required TextStyle chordStyle,
     required double width,
   }) {
+    final spacing = TextPainter(
+      text: TextSpan(text: '  ', style: chordStyle),
+      textDirection: direction,
+      textScaler: textScaler,
+      locale: locale,
+      textAlign: TextAlign.start,
+      textWidthBasis: TextWidthBasis.longestLine,
+    )..layout();
+    final minimumGap = math.max(_chordGap, spacing.width);
+    spacing.dispose();
+
     final rows = <List<_ChordPaintData>>[<_ChordPaintData>[]];
     var rowIndex = 0;
     double? previousStart;
@@ -447,8 +458,8 @@ class _ChordLineLayout {
       var start = previousStart == null
           ? requestedStart
           : direction == TextDirection.rtl
-          ? math.min(requestedStart, previousStart - _chordGap - labelWidth)
-          : math.max(requestedStart, previousEnd! + _chordGap);
+          ? math.min(requestedStart, previousStart - minimumGap - labelWidth)
+          : math.max(requestedStart, previousEnd! + minimumGap);
 
       if (start < 0 || start + labelWidth > width) {
         rows.add(<_ChordPaintData>[]);

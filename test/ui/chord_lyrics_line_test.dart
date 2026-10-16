@@ -598,9 +598,9 @@ void main() {
                   key: const ValueKey('space-only-pixels'),
                   child: DecoratedBox(
                     decoration: const BoxDecoration(color: Colors.white),
-                    child: _line('    ', const [
+                    child: _line('          ', const [
                       LyricChord(graphemeOffset: 1, symbol: 'F'),
-                      LyricChord(graphemeOffset: 3, symbol: 'Am'),
+                      LyricChord(graphemeOffset: 6, symbol: 'G'),
                     ], key: const ValueKey('space-only')),
                   ),
                 ),
@@ -660,7 +660,7 @@ void main() {
     expect(
       spacedBounds.width,
       greaterThan(coincidentBounds.width + 5),
-      reason: 'F and Am use their distinct prefix-space anchors',
+      reason: 'F and G retain wider source gaps between their anchors',
     );
     expect(
       spacedBounds.height,
@@ -675,7 +675,7 @@ void main() {
       ),
     );
     final firstSpace = _glyphBoxes(spaceText, 1, 2).single;
-    final thirdSpace = _glyphBoxes(spaceText, 3, 4).single;
+    final sixthSpace = _glyphBoxes(spaceText, 6, 7).single;
     final captureOrigin = tester.getTopLeft(
       find.byKey(const ValueKey('space-only-pixels')),
     );
@@ -693,8 +693,8 @@ void main() {
     );
     expect(
       spacedComponents[1].left,
-      closeTo(textOffset + thirdSpace.left, 3),
-      reason: 'Am begins at the third selected prefix space',
+      closeTo(textOffset + sixthSpace.left, 3),
+      reason: 'G begins at the sixth selected prefix space',
     );
     final rtlSpaceBounds = await _chordPixelBounds(
       tester,
@@ -764,6 +764,111 @@ void main() {
       }
     },
   );
+
+  testWidgets(
+    'chord-only minimum gap follows chord font at 100 and 200 percent in LTR and RTL',
+    (tester) async {
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(360, 160);
+
+      for (final scale in [1.0, 2.0]) {
+        for (final direction in [TextDirection.ltr, TextDirection.rtl]) {
+          await tester.pumpWidget(
+            _host(
+              RepaintBoundary(
+                key: const ValueKey('font-relative-gap-capture'),
+                child: DecoratedBox(
+                  decoration: const BoxDecoration(color: Colors.white),
+                  child: Directionality(
+                    textDirection: direction,
+                    child: _line('', const [
+                      LyricChord(graphemeOffset: 0, symbol: 'C'),
+                      LyricChord(graphemeOffset: 0, symbol: 'G'),
+                    ]),
+                  ),
+                ),
+              ),
+              width: 320,
+              height: 120,
+              scale: scale,
+            ),
+          );
+
+          final components = await _chordPixelComponents(
+            tester,
+            find.byKey(const ValueKey('font-relative-gap-capture')),
+          );
+          expect(components, hasLength(2));
+          final visibleGap = components[1].left - components[0].right;
+          final spacing = TextPainter(
+            text: const TextSpan(text: '  ', style: _chordStyle),
+            textDirection: direction,
+            textScaler: TextScaler.linear(scale),
+          )..layout();
+          final twoSpaceWidth = spacing.width;
+          spacing.dispose();
+          expect(
+            visibleGap,
+            greaterThanOrEqualTo(twoSpaceWidth - 1),
+            reason:
+                'two chord-font spaces remain visible at ${scale}x in $direction',
+          );
+          expect(tester.takeException(), isNull);
+        }
+      }
+    },
+  );
+
+  testWidgets('dense four-chord intro stays ordered at 200 percent', (
+    tester,
+  ) async {
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(420, 220);
+    final semantics = tester.ensureSemantics();
+    try {
+      await tester.pumpWidget(
+        _host(
+          RepaintBoundary(
+            key: const ValueKey('dense-intro-200-capture'),
+            child: DecoratedBox(
+              decoration: const BoxDecoration(color: Colors.white),
+              child: _line('               ', const [
+                LyricChord(graphemeOffset: 0, symbol: 'F#m7'),
+                LyricChord(graphemeOffset: 5, symbol: 'A'),
+                LyricChord(graphemeOffset: 8, symbol: 'Esus4'),
+                LyricChord(graphemeOffset: 15, symbol: 'B7sus4'),
+              ], key: const ValueKey('dense-intro-200-line')),
+            ),
+          ),
+          width: 420,
+          height: 220,
+          scale: 2,
+        ),
+      );
+      final bounds = await _chordPixelBounds(
+        tester,
+        find.byKey(const ValueKey('dense-intro-200-capture')),
+      );
+      await _saveChordCapture(
+        tester,
+        find.byKey(const ValueKey('dense-intro-200-capture')),
+        'dense-ltr-200',
+      );
+      expect(bounds.height, lessThan(25));
+      expect(find.bySemanticsLabel('F#m7, A, Esus4, B7sus4'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    } finally {
+      semantics.dispose();
+    }
+  });
 
   testWidgets(
     'narrow large-text chord-only rows wrap labels without clipping',
