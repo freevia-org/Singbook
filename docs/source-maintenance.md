@@ -132,6 +132,9 @@ mode means only that static validation succeeded.
 
 Genius uses `GENIUS_ACCESS_TOKEN` from the environment or ignored
 `config/local.defines.json`; missing credentials produce `not_configured`.
+Local credentials are not uploaded to the hosted environment. Cloud maintenance
+needs its own `GENIUS_ACCESS_TOKEN` secret binding, supplied through the managed
+environment's secure configuration rather than a repository or chat message.
 Windows probes use the test-only curl transport to handle HTTP Early Hints;
 mobile lookup continues to use Cronet/NSURLSession. Every probe has a bounded
 deadline and cancellation, and transport retries/pacing still apply.
@@ -146,6 +149,65 @@ approved build script and replacement installation; never use integration-test
 deployment as a data-preserving upgrade path.
 
 ## Daily repair and discovery procedure
+
+### Local YouTube Music consent
+
+The desktop checker has its own optional anonymous browser session. It does not
+use the Android/iOS WebView session or your normal Chrome/Edge profile. Start a
+review on this machine with an installed Chrome or Edge browser:
+
+```powershell
+dart run tool/source_maintenance.dart --source youtubemusic --youtube-consent --report artifacts/source-maintenance/youtube-local.json
+```
+
+If Google presents a cookie choice in the dedicated browser window, make it
+there; do not sign in. Google may return straight to the Music homepage without
+requesting a choice. After the return, the checker reads only applicable
+`SOCS`/`CONSENT` cookies, closes the window, and runs the real provider probe.
+An anonymous return is not recorded as a person making a consent decision.
+Cookie presence alone is not a passing extraction result. Cancelled, timed-out
+or incomplete sessions cannot be restored. Running `--youtube-consent` again
+starts a fresh review.
+
+The isolated browser profile lives outside the checkout: on Windows under
+`%LOCALAPPDATA%/Freevia/SingbookMaintenance/YouTubeMusic`, on macOS under
+`~/Library/Application Support/Freevia/SingbookMaintenance/YouTubeMusic`, and on
+Linux under `$XDG_DATA_HOME/freevia/singbook-maintenance/youtube-music` (or
+`~/.local/share` when unset). Chrome manages its native cookie storage. The
+checker writes a session-presence marker and whether the chooser was presented,
+not a portable cookie jar.
+Treat that dedicated profile as private browser data; never copy it to the
+repository, report branch, cloud worker or another computer.
+
+Later local runs restore this profile without opening a visible window or
+making a browser origin request. Status and clearing are explicit operations:
+
+```powershell
+dart run tool/source_maintenance.dart --youtube-session-status
+dart run tool/source_maintenance.dart --source youtubemusic --report artifacts/source-maintenance/youtube-local-recheck.json
+dart run tool/source_maintenance.dart --youtube-clear-consent
+```
+
+Clear removes only the two consent-cookie names applicable to the Music and
+consent hosts, and disables restoration before reporting success. Other sources,
+the mobile app, Drive sign-in and the normal desktop browser are independent.
+Reports contain presence/error codes and extraction shape metadata, never cookie
+values or lyric bodies. The Windows curl transport puts sensitive request
+headers in a temporary local file instead of process arguments, then removes
+the temporary directory after each request. An interrupted process can leave
+that temporary file behind; it is private session data too. If Chrome/Edge cannot
+be found, `--youtube-browser` can specify the installed browser executable.
+Concurrent access to the profile is refused. Browser use keeps TLS verification
+and configured proxy access intact;
+proxy URLs containing credentials are refused rather than exposed in arguments.
+
+This is an experimental unofficial web session. Google can expire the decision,
+deny access or change its page; renew the review when requested. A platform
+CONNECT denial happens before this flow and cannot be repaired with cookies.
+The cloud job does not acquire or upload this local session. This command also
+does not enable the paused local daily timer.
+
+### Hosted daily job
 
 The owner's daily task runs at 09:00 Europe/Kyiv in a private Codex Cloud
 environment using the ChatGPT/Codex subscription. It does not require the owner's
