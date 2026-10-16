@@ -640,6 +640,10 @@ abstract class VerseUiController extends ChangeNotifier {
   Future<void> setTimingMode(String mode);
   Future<void> setProviderEnabled(String id, bool enabled);
   Future<bool> refreshSources() async => false;
+  bool get youtubeMusicConsentSupported => false;
+  bool get youtubeMusicConsentSaved => false;
+  Future<bool> completeYoutubeMusicConsent() async => false;
+  Future<bool> clearYoutubeMusicConsent() async => false;
   Future<void> signInForSync();
   Future<void> signOutFromSync();
 

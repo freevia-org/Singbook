@@ -730,5 +730,12 @@
   "sectionBreakdown": "Breakdown",
   "sectionCoda": "Koda",
   "sectionTag": "Tag",
-  "sectionEnding": "Zakończenie"
+  "sectionEnding": "Zakończenie",
+  "youtubeConsentHint": "Funkcja eksperymentalna. Wybierz ustawienia plików cookie na stronie Google, aby wypróbować wyszukiwanie tekstów. Nie musisz logować się na konto Google. Wybór pozostanie na tym urządzeniu.",
+  "youtubeConsentOpen": "Sprawdź zgodę Google",
+  "youtubeConsentSaved": "Zgoda zapisana",
+  "youtubeConsentClear": "Wyczyść zgodę",
+  "youtubeConsentInstructions": "Dokończ wybór plików cookie i poczekaj na powrót YouTube Music. Następnie zapisz tę sesję i ponownie wyszukaj utwór.",
+  "youtubeConsentError": "Nie udało się zaktualizować wyboru zgody Google. Spróbuj ponownie.",
+  "youtubeConsentBlocked": "Można tu otworzyć tylko YouTube Music i stronę zgody Google. Logowanie na konto jest niedostępne."
 }

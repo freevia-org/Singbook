@@ -2921,6 +2921,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ending'**
   String get sectionEnding;
+
+  /// No description provided for @youtubeConsentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Experimental. Make your cookie choice on Google\'s page to try lyrics lookup. No Google account sign-in. Your choice stays on this device.'**
+  String get youtubeConsentHint;
+
+  /// No description provided for @youtubeConsentOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Google consent'**
+  String get youtubeConsentOpen;
+
+  /// No description provided for @youtubeConsentSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Consent saved'**
+  String get youtubeConsentSaved;
+
+  /// No description provided for @youtubeConsentClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear consent'**
+  String get youtubeConsentClear;
+
+  /// No description provided for @youtubeConsentInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Google\'s cookie choice and wait for YouTube Music to return. Then save this session and retry the song.'**
+  String get youtubeConsentInstructions;
+
+  /// No description provided for @youtubeConsentError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t update Google\'s consent choice. Try again.'**
+  String get youtubeConsentError;
+
+  /// No description provided for @youtubeConsentBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Only YouTube Music and Google\'s consent page can open here. Account sign-in is unavailable.'**
+  String get youtubeConsentBlocked;
 }
 
 class _AppLocalizationsDelegate

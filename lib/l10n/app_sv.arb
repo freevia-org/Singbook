@@ -730,5 +730,12 @@
   "sectionBreakdown": "Breakdown",
   "sectionCoda": "Coda",
   "sectionTag": "Tag",
-  "sectionEnding": "Avslutning"
+  "sectionEnding": "Avslutning",
+  "youtubeConsentHint": "Experimentell. Välj dina cookies på Googles sida för att prova att söka efter låttexter. Du behöver inte logga in på ett Google-konto. Ditt val stannar på den här enheten.",
+  "youtubeConsentOpen": "Granska Googles samtycke",
+  "youtubeConsentSaved": "Samtycke sparat",
+  "youtubeConsentClear": "Rensa samtycke",
+  "youtubeConsentInstructions": "Slutför ditt cookieval och vänta tills YouTube Music kommer tillbaka. Spara sedan den här sessionen och sök efter låten igen.",
+  "youtubeConsentError": "Det gick inte att uppdatera ditt samtyckesval hos Google. Försök igen.",
+  "youtubeConsentBlocked": "Här kan endast YouTube Music och Googles samtyckessida öppnas. Det går inte att logga in på ett konto."
 }

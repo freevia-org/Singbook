@@ -730,5 +730,12 @@
   "sectionBreakdown": "Breakdown",
   "sectionCoda": "Coda",
   "sectionTag": "Tag",
-  "sectionEnding": "Lopetus"
+  "sectionEnding": "Lopetus",
+  "youtubeConsentHint": "Kokeellinen. Kokeile sanoitushakua valitsemalla evästeasetukset Googlen sivulla. Google-tilille ei tarvitse kirjautua. Valintasi säilyy tällä laitteella.",
+  "youtubeConsentOpen": "Tarkista Googlen suostumus",
+  "youtubeConsentSaved": "Suostumus tallennettu",
+  "youtubeConsentClear": "Tyhjennä suostumus",
+  "youtubeConsentInstructions": "Tee evästevalintasi loppuun ja odota, että YouTube Music palaa. Tallenna sitten tämä istunto ja yritä hakea kappaletta uudelleen.",
+  "youtubeConsentError": "Googlen suostumusvalintaa ei voitu päivittää. Yritä uudelleen.",
+  "youtubeConsentBlocked": "Täällä voi avata vain YouTube Musicin ja Googlen suostumussivun. Tilille kirjautuminen ei ole käytettävissä."
 }

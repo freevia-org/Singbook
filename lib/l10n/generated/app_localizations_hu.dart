@@ -1666,4 +1666,29 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get sectionEnding => 'Befejezés';
+
+  @override
+  String get youtubeConsentHint =>
+      'Kísérleti funkció. A dalszövegkeresés kipróbálásához válaszd ki a cookie-beállításokat a Google oldalán. Nem kell bejelentkezned Google-fiókba. A választásod ezen az eszközön marad.';
+
+  @override
+  String get youtubeConsentOpen => 'Google-hozzájárulás áttekintése';
+
+  @override
+  String get youtubeConsentSaved => 'Hozzájárulás mentve';
+
+  @override
+  String get youtubeConsentClear => 'Hozzájárulás törlése';
+
+  @override
+  String get youtubeConsentInstructions =>
+      'Fejezd be a cookie-választást, és várd meg, amíg visszatér a YouTube Music. Ezután mentsd ezt a munkamenetet, és keresd meg újra a dalt.';
+
+  @override
+  String get youtubeConsentError =>
+      'Nem sikerült frissíteni a Google-hozzájárulási választást. Próbáld újra.';
+
+  @override
+  String get youtubeConsentBlocked =>
+      'Itt csak a YouTube Music és a Google hozzájárulási oldala nyitható meg. A fiókba való bejelentkezés nem érhető el.';
 }
