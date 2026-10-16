@@ -44,11 +44,11 @@ Singbook is a local-first songbook for musicians, singers and worship teams. Kee
 
 WHAT YOU CAN DO
 - Search for a song and view its lyrics and chord arrangements gathered from the third-party sources you have enabled.
-- Compare arrangements side by side and choose the one you want to play from.
+- Preview full arrangements and swipe between versions and choose the one you want to play from.
 - Edit chords and lyrics, transpose, and follow lyrics that carry timing information (where a source supplies it).
 - Build setlists, reorder songs, override key per song, and share a setlist as an OpenSong file.
 - Import ChordPro, plain text, LRC, enhanced LRC and TTML files. Export every song as a single portable ChordPro (.cho) file that keeps your edits and where the text came from.
-- Optional sync between your own devices with Google Drive: sign in with Google only if you want it. Your songs and setlists go to a private, hidden app folder in your own Drive that only Singbook can use (no access to your other Drive files). Changes sync automatically, and if the same song was edited on two devices, both versions are kept as copies.
+- Optional sync between your own devices with Google Drive: sign in with Google only if you want it. Your songs and setlists go to a private, hidden app folder in your own Drive that only Singbook can use (no access to your other Drive files). Sync runs only when you tap Sync now. If the same song was edited on two devices, both versions are kept as copies.
 - Print or save a clean PDF of a song.
 - Keep the screen on while you perform, with reader text size, themes (light, dark, system) and palettes that suit a dim stage.
 - Works on phones and tablets, with the app available in 34 languages.
@@ -96,7 +96,7 @@ Singbook е песнопойка, която пази всичко на ваше
 - Редактирайте акорди и текст, транспонирайте и следвайте текстове с времеви данни (когато източникът ги предоставя).
 - Създавайте сетлисти, подреждайте песните и задавайте тоналност за всяка песен; споделяйте сетлист като OpenSong файл.
 - Импортирайте ChordPro, обикновен текст, LRC, разширен LRC и TTML. Експортирайте всяка песен като един преносим ChordPro (.cho) файл, който пази вашите промени и откъде е текстът.
-- По избор: синхронизиране между вашите устройства с Google Drive - влизате с Google само ако искате. Песните и сетлистите се записват в скрита папка на приложението във вашия Drive, достъпна само за Singbook (без достъп до другите ви файлове). Промените се синхронизират автоматично, а ако една песен е редактирана на две устройства, и двете версии се запазват като копия.
+- По избор: синхронизиране между вашите устройства с Google Drive - влизате с Google само ако искате. Песните и сетлистите се записват в скрита папка на приложението във вашия Drive, достъпна само за Singbook (без достъп до другите ви файлове). Синхронизирането започва само при натискане на „Синхронизирай сега“, а ако една песен е редактирана на две устройства, и двете версии се запазват като копия.
 - Отпечатайте или запишете PDF на песен.
 - Екранът остава включен по време на изпълнение; размер на текста, светла, тъмна и системна тема.
 - Работи на телефони и таблети, а приложението е достъпно на 34 езика.
@@ -144,7 +144,7 @@ Singbook - це співаник, що зберігає все на вашому
 - Редагуйте акорди й текст, транспонуйте та стежте за текстами з часовими мітками (якщо джерело їх надає).
 - Створюйте сетлисти, змінюйте порядок пісень, задавайте тональність для кожної пісні; діліться сетлистом у форматі OpenSong.
 - Імпортуйте ChordPro, простий текст, LRC, розширений LRC і TTML. Експортуйте кожну пісню одним портативним файлом ChordPro (.cho), який зберігає ваші правки та походження тексту.
-- За бажанням: синхронізація між вашими пристроями через Google Drive - входьте через Google, лише якщо хочете. Пісні та сетлисти зберігаються в прихованій папці застосунку у вашому Drive, доступній лише Singbook (без доступу до інших ваших файлів). Зміни синхронізуються автоматично, а якщо пісню відредагували на двох пристроях, обидві версії зберігаються як копії.
+- За бажанням: синхронізація між вашими пристроями через Google Drive - входьте через Google, лише якщо хочете. Пісні та сетлисти зберігаються в прихованій папці застосунку у вашому Drive, доступній лише Singbook (без доступу до інших ваших файлів). Синхронізація починається лише після натискання «Синхронізувати зараз», а якщо пісню відредагували на двох пристроях, обидві версії зберігаються як копії.
 - Друкуйте або зберігайте PDF пісні.
 - Екран лишається ввімкненим під час виступу; розмір тексту, світла, темна та системна теми.
 - Працює на телефонах і планшетах; застосунок доступний 34 мовами.

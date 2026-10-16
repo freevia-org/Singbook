@@ -2301,8 +2301,14 @@ abstract class AppLocalizations {
   /// No description provided for @accountSignedOutBenefits.
   ///
   /// In en, this message translates to:
-  /// **'Sign in with Google to back up your songs and setlists to your Google Drive and keep all your devices in step. Your songs stay on this device either way.'**
+  /// **'Connect Google Drive for an optional backup of your songs and setlists. Nothing is uploaded until you tap Sync now.'**
   String get accountSignedOutBenefits;
+
+  /// No description provided for @accountManualSyncHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync runs only when you tap Sync now.'**
+  String get accountManualSyncHint;
 
   /// No description provided for @accountSignInWithGoogle.
   ///

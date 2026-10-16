@@ -1253,7 +1253,11 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Log ind med Google for at sikkerhedskopiere dine sange og sanglister til dit Google Drev og holde alle dine enheder synkroniserede. Dine sange forbliver på denne enhed uanset hvad.';
+      'Tilslut Google Drev for at få valgfri sikkerhedskopiering af dine sange og sanglister. Intet uploades, før du trykker på Synkronisér nu.';
+
+  @override
+  String get accountManualSyncHint =>
+      'Synkronisering sker kun, når du trykker på Synkronisér nu.';
 
   @override
   String get accountSignInWithGoogle => 'Log ind med Google';

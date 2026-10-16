@@ -1253,7 +1253,11 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Kirjaudu Google-tilillä varmuuskopioidaksesi kappaleet ja settilistat Google Driveen ja pitääksesi kaikki laitteesi ajan tasalla. Kappaleet säilyvät joka tapauksessa tällä laitteella.';
+      'Yhdistä Google Drive, jos haluat varmuuskopioida kappaleet ja settilistat. Mitään ei ladata ennen kuin napautat Synkronoi nyt.';
+
+  @override
+  String get accountManualSyncHint =>
+      'Synkronointi käynnistyy vain, kun napautat Synkronoi nyt.';
 
   @override
   String get accountSignInWithGoogle => 'Kirjaudu Google-tilillä';

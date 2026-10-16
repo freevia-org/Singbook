@@ -1259,7 +1259,11 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Přihlaste se přes Google a zálohujte své písně a koncertní programy na Google Drive, abyste je měli synchronizované na všech zařízeních. Písně v každém případě zůstanou v tomto zařízení.';
+      'Propojte Google Drive a vytvořte si volitelnou zálohu svých písní a seznamů. Nic se nenahraje, dokud neklepnete na Synchronizovat nyní.';
+
+  @override
+  String get accountManualSyncHint =>
+      'Synchronizace proběhne pouze po klepnutí na Synchronizovat nyní.';
 
   @override
   String get accountSignInWithGoogle => 'Přihlásit se přes Google';

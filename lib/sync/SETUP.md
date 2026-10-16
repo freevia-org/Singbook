@@ -6,8 +6,11 @@ application-data folder (`appDataFolder`), with the single scope
 shared storage account or client secret. The app cannot see any other Drive
 file, and the user can remove the data from Google account settings.
 
-Songs work without signing in; sync is optional. The local SQLite library is
-always the working copy: signing out never deletes songs.
+Songs work without signing in; sync is optional and only runs after an explicit
+Sync now or confirmed sync action. App startup does not restore authorization,
+and sign-in, local edits and app resume never start a cloud sync. There are no
+background sync or retry timers. The local SQLite library is always the working
+copy: signing out never deletes songs.
 
 ## OAuth client setup
 

@@ -1219,7 +1219,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      '使用 Google 登录，将歌曲和歌单备份到 Google Drive，并让所有设备保持同步。无论如何，你的歌曲都会保留在此设备上。';
+      '连接 Google Drive，可选择备份歌曲和歌单。点按立即同步之前，不会上传任何内容。';
+
+  @override
+  String get accountManualSyncHint => '只有点按立即同步时才会进行同步。';
 
   @override
   String get accountSignInWithGoogle => '使用 Google 登录';

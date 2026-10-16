@@ -35,27 +35,10 @@ class AppMessage {
   String toString() => 'AppMessage($operation:$code)';
 }
 
-class _AutoSyncTiming {
-  const _AutoSyncTiming(
-    this.delay,
-    this.startDelay,
-    this.staleAfter,
-    this.backoff,
-    this.maxBackoff,
-  );
-  final Duration delay, startDelay, staleAfter, backoff, maxBackoff;
-}
-
 /// Owns durable application state; navigation and player clock stay in the UI.
 class AppController extends ChangeNotifier {
-  /// Automatic sync timing (all adjustable for tests):
-  ///  * [autoSyncDelay]: quiet period after the last local change;
-  ///  * [autoSyncStartDelay]: wait after start / sign-in / resume before the
-  ///    first run, so it never competes with the first frame;
-  ///  * [autoSyncStaleAfter]: start and resume only sync when the last
-  ///    successful sync is older than this;
-  ///  * [autoSyncBackoff] / [autoSyncMaxBackoff]: after a retryable failure
-  ///    the next attempt waits backoff * 2^(failures - 1), capped.
+  /// The timing arguments remain accepted for source compatibility. Drive sync
+  /// is on demand, so their values do not affect the controller.
   factory AppController({
     LibraryRepository? repository,
     SourceDiscoveryService? discovery,
@@ -67,16 +50,9 @@ class AppController extends ChangeNotifier {
     Duration autoSyncBackoff = const Duration(seconds: 30),
     Duration autoSyncMaxBackoff = const Duration(minutes: 15),
   }) {
-    final timing = _AutoSyncTiming(
-      autoSyncDelay,
-      autoSyncStartDelay,
-      autoSyncStaleAfter,
-      autoSyncBackoff,
-      autoSyncMaxBackoff,
-    );
     final consent = youtubeMusicConsent ?? YoutubeMusicConsent();
     if (discovery != null) {
-      return AppController._(repository, discovery, null, sync, timing, consent);
+      return AppController._(repository, discovery, null, sync, consent);
     }
     final transport = ProviderTransport();
     return AppController._(
@@ -84,7 +60,6 @@ class AppController extends ChangeNotifier {
       _createDiscovery(transport, consent.session),
       transport,
       sync,
-      timing,
       consent,
     );
   }
@@ -94,10 +69,8 @@ class AppController extends ChangeNotifier {
     this.discovery,
     this._ownedTransport,
     this._sync,
-    this._timing,
     this.youtubeMusicConsent,
   );
-  final _AutoSyncTiming _timing;
   final YoutubeMusicConsent youtubeMusicConsent;
 
   static SourceDiscoveryService _createDiscovery(
@@ -184,12 +157,8 @@ class AppController extends ChangeNotifier {
   /// with and the user has not chosen yet ([adoptAccount]).
   bool get syncAccountChangePending => syncError == 'account_changed';
 
-  /// Automatic sync is on unless the user switched it off (default on).
-  bool get autoSyncEnabled => settings['autoSync'] != false;
-  Timer? _autoTimer;
-  int _autoFailures = 0, _pendingRetries = 0;
-  DateTime? _backoffUntil;
-  bool _changedDuringSync = false;
+  /// Kept for compatibility with older callers. Cloud sync is always manual.
+  bool get autoSyncEnabled => false;
   int _searchEpoch = 0, _discoveryEpoch = 0;
   CancellationToken? _searchCancel, _discoveryCancel;
   bool _disposed = false;
@@ -343,22 +312,17 @@ class AppController extends ChangeNotifier {
     if (discovery.catalogClient != null) {
       unawaited(refreshSources(silent: true));
     }
-    if (syncConfigured) {
-      // Optional account services must never hold the local songbook behind
-      // their network or platform initialization.
-      unawaited(restoreSync());
-    }
   }
 
-  /// Silently restores a previous sign-in (no UI). Never throws. When it
-  /// succeeds and the last sync is old, an automatic sync is scheduled.
+  /// Restores a previous sign-in when explicitly requested by an account
+  /// action. Initialization never calls this method.
   Future<void> restoreSync() async {
     final sync = _sync;
     if (sync == null || _disposed) return;
     try {
       final restored = await sync.restore();
       if (_disposed) return;
-      if (restored) await _afterSignIn(startup: true);
+      if (restored) await _afterSignIn();
     } catch (error) {
       if (_disposed) return;
       syncError = error is SyncException ? error.code : 'sync_failed';
@@ -366,8 +330,9 @@ class AppController extends ChangeNotifier {
     _emit();
   }
 
-  /// Common state after a sign-in or a restored session.
-  Future<void> _afterSignIn({bool startup = false}) async {
+  /// Updates local account metadata after an explicit account action. This
+  /// does not list, fetch, or upload Drive files.
+  Future<void> _afterSignIn() async {
     final sync = _sync!;
     final lastSuccess = await sync.lastSuccessfulSync();
     if (_disposed) return;
@@ -383,24 +348,6 @@ class AppController extends ChangeNotifier {
     }
     syncPreviousAccountEmail = null;
     if (syncError == 'account_changed') syncError = null;
-    // Edits are recorded in the outbox until a sync acknowledges them, so a
-    // change made just before the app was killed still triggers a sync.
-    var shouldSync = !startup || _isStale();
-    if (!shouldSync) {
-      shouldSync = await repository.outboxMark() > 0;
-      if (_disposed) return;
-    }
-    if (shouldSync) {
-      _scheduleAutoSync(after: _timing.startDelay);
-    }
-  }
-
-  bool _isStale() {
-    final last = lastSyncAt;
-    if (last == null) return true;
-    final age = DateTime.now().toUtc().difference(last);
-    // A last sync "in the future" means the clock moved back: sync again.
-    return age.isNegative || age > _timing.staleAfter;
   }
 
   int _reloadEpoch = 0;
@@ -808,7 +755,6 @@ class AppController extends ChangeNotifier {
     await _reload();
     if (songsChanged) _indexSaved();
     _emit();
-    _noteLocalChange();
     if (++_writesSinceCompaction >= 50) {
       _writesSinceCompaction = 0;
       unawaited(compactOutbox().then<void>((_) {}, onError: (Object _) {}));
@@ -878,7 +824,6 @@ class AppController extends ChangeNotifier {
       (event) => event.objectKind == 'song' && event.objectId == id,
     );
     _emit();
-    _noteLocalChange();
   });
 
   /// Toggles relative to the stored song, so a concurrent background change is
@@ -948,7 +893,6 @@ class AppController extends ChangeNotifier {
       (event) => event.objectKind == 'setlist' && event.objectId == id,
     );
     _emit();
-    _noteLocalChange();
   });
 
   Future<void> toggleSetlistFavorite(SetlistDocument value) =>
@@ -1058,20 +1002,28 @@ class AppController extends ChangeNotifier {
 
   // ---- Google Drive sync ------------------------------------------------
 
-  /// Interactive sign-in (call from a button). Sign-in alone uploads nothing:
-  /// with automatic sync on, the first sync starts a moment later; with it off,
-  /// the user taps Sync now. Cancelling the account picker is not an error.
+  /// Connects after an explicit user action. A saved session is tried first;
+  /// when it cannot be restored, the account picker is shown. Connecting only
+  /// updates local account metadata and never starts a Drive sync.
   /// If the account differs from the one this library syncs with, the state
   /// becomes `account_changed` until [adoptAccount] is called.
   Future<void> connectSync() => _runSyncAction(() async {
+    var restored = false;
     try {
-      await _sync!.connect();
-    } on SyncException catch (error) {
-      if (error.code == 'cancelled') return;
-      rethrow;
+      restored = await _sync!.restore();
+    } catch (_) {
+      // An unavailable saved session should still allow interactive sign-in.
     }
-    _autoFailures = 0;
-    _backoffUntil = null;
+    if (_disposed) return;
+    if (!restored) {
+      try {
+        await _sync!.connect();
+      } on SyncException catch (error) {
+        if (error.code == 'cancelled') return;
+        rethrow;
+      }
+    }
+    if (_disposed) return;
     await _afterSignIn();
   });
 
@@ -1081,13 +1033,10 @@ class AppController extends ChangeNotifier {
   /// Signs out on this device. The local library and the cloud files are kept;
   /// signing in again with the same account continues where it stopped.
   Future<void> disconnectSync() => _runSyncAction(() async {
-    _cancelAutoSync();
     await _sync!.disconnect();
     lastSyncAt = null;
     lastSyncConflicts = 0;
     syncPreviousAccountEmail = null;
-    _autoFailures = 0;
-    _backoffUntil = null;
   });
 
   /// Alias of [disconnectSync] under the name the account UI uses.
@@ -1134,8 +1083,6 @@ class AppController extends ChangeNotifier {
     syncReport = report;
     lastSyncConflicts = report.conflicts;
     lastSyncAt = await _sync!.lastSuccessfulSync();
-    _autoFailures = 0;
-    _backoffUntil = null;
     // Some remote files could not be used: the rest is synced, and the problem
     // stays visible with its code.
     syncWarning = report.skipCodes.isEmpty ? null : report.skipCodes.first;
@@ -1143,122 +1090,21 @@ class AppController extends ChangeNotifier {
     await _reload();
     if (_disposed) return;
     _indexSaved();
-    if (report.pending > 0 && _pendingRetries++ < 3) {
-      _scheduleAutoSync(after: _timing.delay);
-    } else if (report.pending == 0) {
-      _pendingRetries = 0;
-    }
   }
 
-  /// Call when the app returns to the foreground. Starts an automatic sync
-  /// when signed in, enabled and the last successful sync is old.
+  /// Kept for lifecycle compatibility. Resuming never starts cloud work.
   void onAppResumed() {
-    if (_disposed || !initialized || !syncConnected || syncBusy) return;
-    if (_isStale() || _changedDuringSync) {
-      _scheduleAutoSync(after: _timing.startDelay);
-    }
   }
 
-  /// Switches automatic syncing (a persisted app setting, default on).
+  /// Kept for compatibility with older callers. Sync is always on demand.
   Future<void> setAutoSync(bool enabled) async {
-    await setSetting('autoSync', enabled);
-    if (enabled) {
-      if (syncConnected && _isStale()) {
-        _scheduleAutoSync(after: _timing.startDelay);
-      }
-    } else {
-      _cancelAutoSync();
-    }
-  }
-
-  static const _noAutoRetry = {
-    'not_configured',
-    'not_signed_in',
-    'authorization_required',
-    'access_denied',
-    'storage_full',
-    'account_changed',
-    'remote_library_too_large',
-    'library_too_large',
-    'sign_in_failed',
-    'not_initialized',
-    'cancelled',
-    // Permanent for the data at hand: retrying changes nothing.
-    'remote_listing_suspicious',
-    'invalid_remote_data',
-    'invalid_local_data',
-    'remote_file_too_large',
-    'local_file_too_large',
-    'no_account_change',
-  };
-
-  /// After this many consecutive automatic failures the background retries stop
-  /// until the user acts (a manual sync) or a sync succeeds.
-  static const _maxAutoFailures = 8;
-
-  bool get _autoEligible =>
-      !_disposed &&
-      _autoFailures < _maxAutoFailures &&
-      initialized &&
-      _sync != null &&
-      syncConnected &&
-      autoSyncEnabled &&
-      !_noAutoRetry.contains(syncError);
-
-  void _cancelAutoSync() {
-    _autoTimer?.cancel();
-    _autoTimer = null;
-    _changedDuringSync = false;
-  }
-
-  void _noteLocalChange() {
-    if (syncBusy) {
-      _changedDuringSync = true;
-      return;
-    }
-    _scheduleAutoSync(after: _timing.delay);
-  }
-
-  /// (Re)starts the single automatic-sync timer, never earlier than the
-  /// current failure back-off.
-  void _scheduleAutoSync({required Duration after}) {
-    if (!_autoEligible) return;
-    var wait = after;
-    final until = _backoffUntil;
-    if (until != null) {
-      var left = until.difference(DateTime.now());
-      // A clock moved back must not postpone the retry beyond the cap.
-      if (left > _timing.maxBackoff) left = _timing.maxBackoff;
-      if (left > wait) wait = left;
-    }
-    _autoTimer?.cancel();
-    _autoTimer = Timer(wait, () {
-      _autoTimer = null;
-      if (!_autoEligible) return;
-      if (syncBusy) {
-        _changedDuringSync = true;
-        return;
-      }
-      unawaited(_runSyncAction(_syncBody, automatic: true));
-    });
-  }
-
-  void _noteAutoFailure() {
-    _autoFailures++;
-    var wait = _timing.backoff * (1 << (_autoFailures - 1).clamp(0, 20));
-    if (wait > _timing.maxBackoff) wait = _timing.maxBackoff;
-    _backoffUntil = DateTime.now().add(wait);
-    _scheduleAutoSync(after: wait);
   }
 
   /// Completes when any in-flight sync action has finished (for tests and
   /// orderly shutdown).
   Future<void> get syncIdle => _activeSyncAction ?? Future.value();
 
-  Future<void> _runSyncAction(
-    Future<void> Function() action, {
-    bool automatic = false,
-  }) {
+  Future<void> _runSyncAction(Future<void> Function() action) {
     if (syncBusy) return Future.value();
     if (_disposed) return Future.value();
     if (_sync == null) {
@@ -1269,31 +1115,24 @@ class AppController extends ChangeNotifier {
       _emit();
       return Future.value();
     }
-    return _activeSyncAction = _execute(action, automatic: automatic);
+    return _activeSyncAction = _execute(action);
   }
 
-  Future<void> _execute(
-    Future<void> Function() action, {
-    required bool automatic,
-  }) async {
+  Future<void> _execute(Future<void> Function() action) async {
     syncBusy = true;
     syncError = null;
     _emit();
     try {
       await action();
     } on SyncException catch (error) {
-      _failSync(error.code, automatic);
+      _failSync(error.code);
       await _reloadAfterFailure();
     } catch (_) {
-      _failSync('sync_failed', automatic);
+      _failSync('sync_failed');
       await _reloadAfterFailure();
     } finally {
       syncBusy = false;
       _emit();
-      if (_changedDuringSync && !_disposed) {
-        _changedDuringSync = false;
-        _scheduleAutoSync(after: _timing.delay);
-      }
     }
   }
 
@@ -1307,15 +1146,12 @@ class AppController extends ChangeNotifier {
     } catch (_) {}
   }
 
-  void _failSync(String code, bool automatic) {
+  void _failSync(String code) {
     if (_disposed) return;
     syncError = code;
-    // A background run fails silently (the account screen shows the code); a
-    // user action also tells the user.
-    if (!automatic && code != 'cancelled') {
+    if (code != 'cancelled') {
       postMessage(code, operation: 'sync');
     }
-    if (!_noAutoRetry.contains(code)) _noteAutoFailure();
   }
 
   String exportSong(SongDocument song) => ChordProCodec().encode(song);
@@ -1460,7 +1296,6 @@ class AppController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
-    _cancelAutoSync();
     _sync?.cancel();
     _searchCancel?.cancel();
     _discoveryCancel?.cancel();

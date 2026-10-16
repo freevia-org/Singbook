@@ -1255,7 +1255,11 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Logi Google\'iga sisse, et varundada laulud ja laulunimekirjad Google Drive\'i ning hoida kõik seadmed sünkroonis. Laulud jäävad igal juhul sellesse seadmesse.';
+      'Ühenda Google Drive, et teha lauludest ja laulunimekirjadest soovi korral varukoopia. Midagi ei laadita üles enne, kui puudutad nuppu Sünkrooni kohe.';
+
+  @override
+  String get accountManualSyncHint =>
+      'Sünkroonimine toimub ainult siis, kui puudutad nuppu Sünkrooni kohe.';
 
   @override
   String get accountSignInWithGoogle => 'Logi sisse Google\'iga';

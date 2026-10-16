@@ -1270,7 +1270,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'سجّل الدخول باستخدام Google للاحتفاظ بنسخة احتياطية من أغانيك وقوائمك على Google Drive ومزامنة أجهزتك. ستبقى أغانيك على هذا الجهاز في كل الأحوال.';
+      'اربط Google Drive للاحتفاظ بنسخة احتياطية اختيارية من أغانيك وقوائمك. لن يُرفع أي شيء حتى تضغط على مزامنة الآن.';
+
+  @override
+  String get accountManualSyncHint =>
+      'لا تتم المزامنة إلا عند الضغط على مزامنة الآن.';
 
   @override
   String get accountSignInWithGoogle => 'تسجيل الدخول باستخدام Google';

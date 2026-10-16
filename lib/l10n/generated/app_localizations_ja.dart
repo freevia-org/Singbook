@@ -1224,7 +1224,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Googleでログインすると、曲とセットリストをGoogle Driveにバックアップし、すべての端末を同期できます。曲はどちらの場合もこの端末に残ります。';
+      '曲やセットリストを任意でバックアップするには、Google Driveを接続してください。今すぐ同期をタップするまで、何もアップロードされません。';
+
+  @override
+  String get accountManualSyncHint => '今すぐ同期をタップしたときだけ同期します。';
 
   @override
   String get accountSignInWithGoogle => 'Googleでログイン';

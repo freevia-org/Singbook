@@ -77,7 +77,7 @@ networking (Cronet) and Google sign-in on a release APK before publishing.
 
 ### Google Play release
 
-Version `0.2.0+9` (the number after `+` is the Play versionCode and must rise on
+Version `0.2.0+10` (the number after `+` is the Play versionCode and must rise on
 every upload). The target API is 36, `minSdk` 24, with native debug symbols and
 a locale config for all 34 app languages (one per `lib/l10n/app_*.arb`; keep
 `localeFilters` in `android/app/build.gradle.kts` and
@@ -85,7 +85,7 @@ a locale config for all 34 app languages (one per `lib/l10n/app_*.arb`; keep
 
 ```powershell
 .\scripts\build-android.ps1 -Bundle -Production   # signed .aab + symbols + SHA-256 in artifacts\
-.\scripts\verify-release.ps1 -Path artifacts\singbook-0.2.0+9-release.aab
+.\scripts\verify-release.ps1 -Path artifacts\singbook-0.2.0+10-release.aab
 ```
 
 The build script refuses to overwrite an existing artifact of the same version
@@ -140,7 +140,7 @@ Import accepts ChordPro, plain text, LRC, enhanced LRC and TTML. Sharing and cop
 
 ## Accounts
 
-Songs work without signing in. Google Drive sync is optional and is available when the build is configured with the public OAuth client IDs (`VERSE_GOOGLE_SERVER_CLIENT_ID`, and `VERSE_GOOGLE_IOS_CLIENT_ID` for iOS) in `config/local.defines.json`; without them the app shows sync as not configured. Sync uses each person's own private Drive app-data folder (scope `drive.appdata` only), not a shared Singbook account; no client secret or application backend is involved. Songs and setlists are stored as individual files that sync automatically, and concurrent edits are kept as separate conflict copies. See [Google Cloud / OAuth setup](docs/google-oauth-setup.md) for the owner's configuration steps and [sync design](lib/sync/SETUP.md). `scripts/print-signing-fingerprints.ps1` prints the signing SHA-1s that Android OAuth clients need. iCloud integration also requires an Apple developer team, container, entitlements and a signed Apple build, and remains unavailable.
+Songs work without signing in. Google Drive sync is optional and is available when the build is configured with the public OAuth client IDs (`VERSE_GOOGLE_SERVER_CLIENT_ID`, and `VERSE_GOOGLE_IOS_CLIENT_ID` for iOS) in `config/local.defines.json`; without them the app shows sync as not configured. Sync uses each person's own private Drive app-data folder (scope `drive.appdata` only), not a shared Singbook account; no client secret or application backend is involved. Songs and setlists are stored as individual files and sync only when you tap Sync now. Starting the app, signing in, editing songs and returning to the app never start cloud sync. Concurrent edits are kept as separate conflict copies. See [Google Cloud / OAuth setup](docs/google-oauth-setup.md) for the owner's configuration steps and [sync design](lib/sync/SETUP.md). `scripts/print-signing-fingerprints.ps1` prints the signing SHA-1s that Android OAuth clients need. iCloud integration also requires an Apple developer team, container, entitlements and a signed Apple build, and remains unavailable.
 
 ## Languages and themes
 

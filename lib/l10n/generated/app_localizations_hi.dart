@@ -1247,7 +1247,11 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'अपने गीतों और गीत-सूचियों का Google Drive पर बैकअप लेने और सभी डिवाइस सिंक रखने के लिए Google से साइन इन करें। आपके गीत किसी भी स्थिति में इस डिवाइस पर रहेंगे।';
+      'अपने गीतों और गीत-सूचियों का वैकल्पिक बैकअप लेने के लिए Google Drive कनेक्ट करें। जब तक आप अभी सिंक करें पर टैप नहीं करेंगे, कुछ भी अपलोड नहीं होगा।';
+
+  @override
+  String get accountManualSyncHint =>
+      'सिंक तभी होता है, जब आप अभी सिंक करें पर टैप करते हैं।';
 
   @override
   String get accountSignInWithGoogle => 'Google से साइन इन करें';

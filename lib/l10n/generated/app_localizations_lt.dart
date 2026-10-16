@@ -1272,7 +1272,11 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Prisijunkite per Google, kad sukurtumėte dainų ir koncertinių programų atsarginę kopiją Google Drive ir sinchronizuotumėte visus įrenginius. Dainos bet kuriuo atveju liks šiame įrenginyje.';
+      'Prijunkite Google Drive, kad galėtumėte pasirinktinai kurti dainų ir koncertinių programų atsargines kopijas. Nieko neįkeliama, kol nepaliečiate Sinchronizuoti dabar.';
+
+  @override
+  String get accountManualSyncHint =>
+      'Sinchronizuojama tik palietus Sinchronizuoti dabar.';
 
   @override
   String get accountSignInWithGoogle => 'Prisijungti per Google';

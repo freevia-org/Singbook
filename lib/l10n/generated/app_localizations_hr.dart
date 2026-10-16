@@ -1260,7 +1260,11 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Prijavite se putem Googlea da biste spremili sigurnosnu kopiju pjesama i setlista na svoj Google Drive i uskladili sve uređaje. Pjesme će u svakom slučaju ostati na ovom uređaju.';
+      'Povežite Google Drive za neobaveznu sigurnosnu kopiju pjesama i setlista. Ništa se neće prenijeti dok ne dodirnete Sinkroniziraj sada.';
+
+  @override
+  String get accountManualSyncHint =>
+      'Sinkronizacija se odvija samo kada dodirnete Sinkroniziraj sada.';
 
   @override
   String get accountSignInWithGoogle => 'Prijavite se putem Googlea';

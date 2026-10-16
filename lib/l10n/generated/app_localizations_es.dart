@@ -1262,7 +1262,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Inicia sesión con Google para guardar una copia de seguridad de tus canciones y listas en Google Drive y mantener sincronizados todos tus dispositivos. En cualquier caso, tus canciones permanecen en este dispositivo.';
+      'Conecta Google Drive para guardar una copia de seguridad opcional de tus canciones y listas. No se subirá nada hasta que toques Sincronizar ahora.';
+
+  @override
+  String get accountManualSyncHint =>
+      'La sincronización solo se realiza cuando tocas Sincronizar ahora.';
 
   @override
   String get accountSignInWithGoogle => 'Iniciar sesión con Google';

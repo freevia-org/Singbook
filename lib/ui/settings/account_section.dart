@@ -21,7 +21,7 @@ const _suspiciousCode = 'remote_listing_suspicious';
 const _noRetryCodes = {'not_configured'};
 
 /// The Settings "Account and sync" card: sign-in state, last sync, conflicts,
-/// errors with a next step, auto-sync and sign-out.
+/// errors with a next step, on-demand sync and sign-out.
 class AccountSection extends StatelessWidget {
   const AccountSection({super.key, required this.controller, this.now});
   final VerseUiController controller;
@@ -132,12 +132,10 @@ class AccountSection extends StatelessWidget {
           ),
         ),
       ),
-      SwitchListTile(
-        key: const ValueKey('account-auto-sync'),
-        title: Text(l10n.accountAutoSync),
-        subtitle: Text(l10n.accountAutoSyncHint),
-        value: state.autoSyncEnabled,
-        onChanged: controller.setAutoSync,
+      Padding(
+        key: const ValueKey('account-manual-sync-hint'),
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+        child: Text(l10n.accountManualSyncHint),
       ),
       ListTile(
         key: const ValueKey('account-use-different'),

@@ -1261,7 +1261,11 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Accedi con Google per eseguire il backup dei brani e delle scalette su Google Drive e mantenere sincronizzati tutti i tuoi dispositivi. In ogni caso, i brani restano su questo dispositivo.';
+      'Collega Google Drive per un backup facoltativo dei tuoi brani e delle tue scalette. Non verrà caricato nulla finché non tocchi Sincronizza ora.';
+
+  @override
+  String get accountManualSyncHint =>
+      'La sincronizzazione avviene solo quando tocchi Sincronizza ora.';
 
   @override
   String get accountSignInWithGoogle => 'Accedi con Google';

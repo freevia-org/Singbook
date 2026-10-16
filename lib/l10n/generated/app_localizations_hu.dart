@@ -1258,7 +1258,11 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Jelentkezz be Google-fiókkal, hogy biztonsági másolatot készíts a dalaidról és setlistáidról a Google Drive-ra, és szinkronban tartsd az eszközeidet. A dalaid ettől függetlenül ezen az eszközön maradnak.';
+      'Csatlakoztasd a Google Drive-ot a dalaid és setlistáid opcionális biztonsági mentéséhez. Semmi sem töltődik fel, amíg rá nem koppintasz a Szinkronizálás most gombra.';
+
+  @override
+  String get accountManualSyncHint =>
+      'A szinkronizálás csak akkor történik meg, ha a Szinkronizálás most gombra koppintasz.';
 
   @override
   String get accountSignInWithGoogle => 'Bejelentkezés Google-fiókkal';

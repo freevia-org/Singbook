@@ -42,6 +42,13 @@ PickedDocument doc(String name, List<int> bytes) =>
 class _PendingRestoreAuth extends FakeAuth {
   final completion = Completer<bool>();
   bool restoring = false;
+  bool connecting = false;
+
+  @override
+  Future<void> connect() async {
+    connecting = true;
+    await super.connect();
+  }
 
   @override
   Future<bool> restore() async {
@@ -102,7 +109,7 @@ void main() {
       fresh.dispose();
     });
 
-    test('a failing session restore cannot break initialize', () async {
+    test('a failing explicit session restore cannot break the controller', () async {
       final auth = FakeAuth()..restoreError = StateError('keystore unavailable');
       final other = await LibraryRepository.open(
         path: inMemoryDatabasePath,
@@ -118,7 +125,7 @@ void main() {
         ),
       );
       await guarded.initialize();
-      await Future<void>.delayed(Duration.zero);
+      await guarded.restoreSync();
       expect(guarded.initialized, isTrue);
       expect(guarded.syncError, 'sync_failed');
       guarded.dispose();
@@ -126,7 +133,7 @@ void main() {
     });
 
     test(
-      'local startup does not wait for optional account restoration',
+      'startup skips account restoration until explicitly requested',
       () async {
         final auth = _PendingRestoreAuth();
         final guarded = AppController(
@@ -141,14 +148,47 @@ void main() {
         addTearDown(guarded.dispose);
         await guarded.initialize().timeout(const Duration(seconds: 1));
         expect(guarded.initialized, isTrue);
-        expect(auth.restoring, isTrue);
+        expect(auth.restoring, isFalse);
         expect(auth.completion.isCompleted, isFalse);
         expect(guarded.syncConnected, isFalse);
+        final restoring = guarded.restoreSync();
+        for (var i = 0; i < 1000 && !auth.restoring; i++) {
+          await Future<void>.delayed(const Duration(milliseconds: 1));
+        }
+        expect(auth.restoring, isTrue);
         auth.completion.complete(false);
-        await Future<void>.delayed(Duration.zero);
+        await restoring;
         expect(guarded.syncError, isNull);
       },
     );
+
+    test('explicit connect restores first, then falls back without syncing',
+        () async {
+      final auth = _PendingRestoreAuth();
+      final cloud = MemoryCloud();
+      final guarded = AppController(
+        repository: repo,
+        discovery: discovery(),
+        sync: GoogleDriveSyncService(
+          repository: repo,
+          auth: auth,
+          store: cloud,
+        ),
+      );
+      addTearDown(guarded.dispose);
+      await guarded.initialize();
+      final connecting = guarded.connectSync();
+      for (var i = 0; i < 1000 && !auth.restoring; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 1));
+      }
+      expect(auth.restoring, isTrue);
+      expect(auth.connecting, isFalse);
+      auth.completion.complete(false);
+      await connecting;
+      expect(auth.connecting, isTrue);
+      expect(guarded.syncConnected, isTrue);
+      expect(cloud.requests, 0);
+    });
 
     test('late account restoration cannot access a disposed library', () async {
       final auth = _PendingRestoreAuth();
@@ -166,10 +206,15 @@ void main() {
         ),
       );
       await guarded.initialize().timeout(const Duration(seconds: 1));
+      final restoring = guarded.restoreSync();
+      for (var i = 0; i < 1000 && !auth.restoring; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 1));
+      }
+      expect(auth.restoring, isTrue);
       guarded.dispose();
       await other.close();
       auth.completion.complete(true);
-      await Future<void>.delayed(Duration.zero);
+      await restoring;
       expect(guarded.syncError, isNull);
     });
 
@@ -190,6 +235,7 @@ void main() {
           sync: sync,
         );
         await guarded.initialize();
+        final restoring = guarded.restoreSync();
         for (var i = 0; i < 1000 && sync.lastSuccessCalls == 0; i++) {
           await Future<void>.delayed(const Duration(milliseconds: 1));
         }
@@ -197,7 +243,7 @@ void main() {
         guarded.dispose();
         await other.close();
         sync.lastSuccess.complete(DateTime.now().toUtc());
-        await Future<void>.delayed(Duration.zero);
+        await restoring;
         expect(sync.mismatchChecks, 0);
         expect(guarded.lastSyncAt, isNull);
         expect(guarded.syncError, isNull);

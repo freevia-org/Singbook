@@ -1266,7 +1266,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Melde dich mit Google an, um deine Songs und Setlists in Google Drive zu sichern und alle deine Geräte synchron zu halten. Deine Songs bleiben unabhängig davon auf diesem Gerät.';
+      'Verbinde Google Drive für ein optionales Backup deiner Songs und Setlists. Es wird nichts hochgeladen, bis du auf Jetzt synchronisieren tippst.';
+
+  @override
+  String get accountManualSyncHint =>
+      'Synchronisiert wird nur, wenn du auf Jetzt synchronisieren tippst.';
 
   @override
   String get accountSignInWithGoogle => 'Mit Google anmelden';
