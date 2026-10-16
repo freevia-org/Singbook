@@ -19,9 +19,11 @@ signer or Google Play instead. Legacy org.freevia.verse libraries stay intact.
 
 ## Validation
 
-The source owner reports 1,182 automated tests passing, clean whole-project
-analysis and no localization generation drift. Final native journey and signed
-release artifact results must be recorded before distribution.
+All 1,182 automated tests pass, whole-project analysis is clean, and localization
+generation has no drift. Full populated journeys pass on the physical tablet
+and Android 16 emulator. Forced WebView renderer recovery and physical-tablet
+rich clipboard tests pass. Signed artifact verification remains required before
+distribution.
 
 ## Play release notes
 
