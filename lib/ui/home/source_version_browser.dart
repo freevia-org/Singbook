@@ -446,16 +446,11 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
         version != null &&
         externalId == _visibleId &&
         (version.canSave || version.savedSongId != null);
-    final ready = {
-      for (final version in _current.values.where(
-        (v) => v.canSave || v.savedSongId != null,
-      ))
-        version.id == 'combined' &&
-                version.sourceCount == 1 &&
-                version.underlyingSourceId != null
-            ? version.underlyingSourceId!
-            : version.id,
-    }.length;
+    final ready = _current.values
+        .where((version) => version.canSave || version.savedSongId != null)
+        .map(versionSelectionId)
+        .toSet()
+        .length;
     final checked = comparison.providerChecks
         .where((c) => c.state != 'pending')
         .length;
