@@ -212,6 +212,42 @@ class AppLocalizationsSv extends AppLocalizations {
   String get searchAlternatives => 'Andra träffar';
 
   @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Tillgängliga versioner',
+      one: '1 tillgänglig version',
+      zero: '0 Tillgängliga versioner',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Otillgängliga versioner',
+      one: '1 otillgänglig version',
+      zero: '0 Otillgängliga versioner',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Hoppa till avsnitt';
+
+  @override
+  String get searchVersionDetails => 'Versionsinformation';
+
+  @override
+  String get searchSelectedRecording => 'Vald inspelning';
+
+  @override
+  String get searchVersionDuration => 'Versionens längd';
+
+  @override
   String get searchCompare => 'Jämför versioner';
 
   @override

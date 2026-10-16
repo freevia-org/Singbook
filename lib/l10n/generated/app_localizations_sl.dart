@@ -214,6 +214,44 @@ class AppLocalizationsSl extends AppLocalizations {
   String get searchAlternatives => 'Druga ujemanja';
 
   @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count dostupnih verzija',
+      few: '$count dostupne verzije',
+      one: '$count različica je na voljo',
+      zero: 'Nema dostupnih verzija',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count nedostupnih verzija',
+      few: '$count nedostupne verzije',
+      one: '$count različica ni na voljo',
+      zero: 'Nema nedostupnih verzija',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Pojdi na razdelek';
+
+  @override
+  String get searchVersionDetails => 'Podrobnosti različice';
+
+  @override
+  String get searchSelectedRecording => 'Izbrani posnetek';
+
+  @override
+  String get searchVersionDuration => 'Trajanje različice';
+
+  @override
   String get searchCompare => 'Primerjaj različice';
 
   @override

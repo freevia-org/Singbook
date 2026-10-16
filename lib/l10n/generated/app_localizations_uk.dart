@@ -214,6 +214,46 @@ class AppLocalizationsUk extends AppLocalizations {
   String get searchAlternatives => 'Інші збіги';
 
   @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count доступної версії',
+      many: '$count доступних версій',
+      few: '$count доступні версії',
+      one: '$count доступна версія',
+      zero: 'Немає доступних версій',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count недоступної версії',
+      many: '$count недоступних версій',
+      few: '$count недоступні версії',
+      one: '$count недоступна версія',
+      zero: 'Немає недоступних версій',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Перейти до розділу';
+
+  @override
+  String get searchVersionDetails => 'Відомості про версію';
+
+  @override
+  String get searchSelectedRecording => 'Вибраний запис';
+
+  @override
+  String get searchVersionDuration => 'Тривалість версії';
+
+  @override
   String get searchCompare => 'Порівняти версії';
 
   @override

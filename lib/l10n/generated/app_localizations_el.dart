@@ -213,6 +213,42 @@ class AppLocalizationsEl extends AppLocalizations {
   String get searchAlternatives => 'Άλλες αντιστοιχίες';
 
   @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Διαθέσιμες εκδόσεις',
+      one: '1 διαθέσιμη έκδοση',
+      zero: '0 Διαθέσιμες εκδόσεις',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Μη διαθέσιμες εκδόσεις',
+      one: '1 μη διαθέσιμη έκδοση',
+      zero: '0 Μη διαθέσιμες εκδόσεις',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Μετάβαση στην ενότητα';
+
+  @override
+  String get searchVersionDetails => 'Λεπτομέρειες έκδοσης';
+
+  @override
+  String get searchSelectedRecording => 'Επιλεγμένη ηχογράφηση';
+
+  @override
+  String get searchVersionDuration => 'Διάρκεια έκδοσης';
+
+  @override
   String get searchCompare => 'Σύγκριση εκδόσεων';
 
   @override

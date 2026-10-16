@@ -213,6 +213,42 @@ class AppLocalizationsLv extends AppLocalizations {
   String get searchAlternatives => 'Citas atbilstības';
 
   @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pieejamas versijas',
+      one: '$count pieejama versija',
+      zero: 'Nav pieejamu versiju',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count nepieejamas versijas',
+      one: '$count nepieejama versija',
+      zero: 'Nav nepieejamu versiju',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Pāriet uz sadaļu';
+
+  @override
+  String get searchVersionDetails => 'Versijas informācija';
+
+  @override
+  String get searchSelectedRecording => 'Atlasītais ieraksts';
+
+  @override
+  String get searchVersionDuration => 'Versijas ilgums';
+
+  @override
   String get searchCompare => 'Salīdzināt versijas';
 
   @override

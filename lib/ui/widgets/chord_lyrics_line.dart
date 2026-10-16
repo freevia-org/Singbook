@@ -22,6 +22,7 @@ class ChordLyricsLine extends StatefulWidget {
     this.textScaler,
     this.maxLines,
     this.semanticsLabel,
+    this.compactChordOnly = false,
   });
 
   final String text;
@@ -36,6 +37,10 @@ class ChordLyricsLine extends StatefulWidget {
   final TextScaler? textScaler;
   final int? maxLines;
   final String? semanticsLabel;
+
+  /// Omit the invisible lyric spacer below a purely instrumental row.
+  /// Chord fonts, wrapping and source whitespace geometry remain unchanged.
+  final bool compactChordOnly;
 
   @override
   State<ChordLyricsLine> createState() => _ChordLyricsLineState();
@@ -91,6 +96,7 @@ class _ChordLyricsLineState extends State<ChordLyricsLine> {
           textHeightBehavior: heightBehavior,
           maxLines: widget.maxLines,
           constraints: constraints,
+          compactChordOnly: widget.compactChordOnly,
         );
         _replaceLayout(nextLayout);
         return Semantics(
@@ -179,6 +185,11 @@ class _ChordLyricsLineState extends State<ChordLyricsLine> {
     TextWidthBasis widthBasis,
     TextHeightBehavior? heightBehavior,
   ) {
+    if (widget.compactChordOnly &&
+        widget.text.trim().isEmpty &&
+        widget.chords.isNotEmpty) {
+      return const SizedBox.shrink();
+    }
     if (widget.text.isEmpty) {
       // Keep a chord-only arrangement row's ordinary lyric-line spacing when
       // chord display is disabled.
@@ -251,6 +262,7 @@ class _ChordLineLayout {
     required TextHeightBehavior? textHeightBehavior,
     required int? maxLines,
     required BoxConstraints constraints,
+    required bool compactChordOnly,
   }) {
     final lyrics = TextPainter(
       text: TextSpan(text: text, style: lyricStyle),
@@ -391,7 +403,7 @@ class _ChordLineLayout {
       }
     }
     final lyricHeight = chordOnlyRow
-        ? (emptyLineMetrics?.height ?? 0)
+        ? (compactChordOnly ? 0.0 : (emptyLineMetrics?.height ?? 0))
         : lyrics.height > 0
         ? lyrics.height
         : (emptyLineMetrics?.height ?? 0);

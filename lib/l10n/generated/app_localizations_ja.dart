@@ -209,6 +209,42 @@ class AppLocalizationsJa extends AppLocalizations {
   String get searchAlternatives => 'その他の一致';
 
   @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 利用可能なバージョン',
+      one: '1 利用可能なバージョン',
+      zero: '0 利用可能なバージョン',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 利用できないバージョン',
+      one: '1 利用できないバージョン',
+      zero: '0 利用できないバージョン',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'セクションへ移動';
+
+  @override
+  String get searchVersionDetails => 'バージョンの詳細';
+
+  @override
+  String get searchSelectedRecording => '選択した録音';
+
+  @override
+  String get searchVersionDuration => 'バージョンの長さ';
+
+  @override
   String get searchCompare => 'バージョンを比較';
 
   @override

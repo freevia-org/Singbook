@@ -24,8 +24,7 @@ void main() {
 
       expect(find.byType(TextField), findsNothing);
       expect(find.byKey(const ValueKey('home-mode-scroll')), findsNothing);
-      expect(find.byIcon(Icons.radio_button_checked), findsOneWidget);
-      expect(find.byIcon(Icons.radio_button_off), findsNWidgets(2));
+      expect(find.byKey(const ValueKey('version-tabs')), findsOneWidget);
 
       final footer = find.byKey(const ValueKey('version-selection-footer'));
       final button = find.byKey(const ValueKey('save-open-lyrics'));
@@ -46,7 +45,7 @@ void main() {
 
       expect(controller.state.comparison!.selectedVersionId, 'second');
       expect(find.text('Second source preview'), findsOneWidget);
-      expect(find.text('First source preview'), findsNothing);
+      expect(find.text('First source preview').hitTestable(), findsNothing);
       expect(_rowOrder(tester), orderBefore);
       expect(
         tester.getRect(button).bottom,
@@ -139,29 +138,17 @@ void main() {
     expect(suggestedRow, findsNothing);
     expect(alternativeRow, findsOneWidget);
     expect(rawRow, findsOneWidget);
-    expect(find.text(l10n.searchSourceVersionsCount(2)), findsOneWidget);
-    expect(
-      find.descendant(
-        of: rawRow,
-        matching: find.byIcon(Icons.radio_button_checked),
-      ),
-      findsOneWidget,
-    );
+    expect(find.text(l10n.searchReadyVersions(2)), findsOneWidget);
+    expect(tester.widget<ChoiceChip>(rawRow).selected, isTrue);
     expect(find.text('Raw selected preview'), findsOneWidget);
-    final orderBefore = [
-      tester.getTopLeft(rawRow).dy,
-      tester.getTopLeft(alternativeRow).dy,
-    ];
+    final orderBefore = _rowOrder(tester);
 
     await tester.tap(alternativeRow);
     await tester.pumpAndSettle();
     expect(controller.state.comparison!.selectedVersionId, 'alternative');
     expect(find.text('Archive preview'), findsOneWidget);
-    expect(find.text(l10n.searchSourceVersionsCount(2)), findsOneWidget);
-    expect([
-      tester.getTopLeft(suggestedRow).dy,
-      tester.getTopLeft(alternativeRow).dy,
-    ], orderBefore);
+    expect(find.text(l10n.searchReadyVersions(2)), findsOneWidget);
+    expect(_rowOrder(tester), orderBefore);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
   });
@@ -222,8 +209,8 @@ void main() {
     final l10n = AppLocalizations.of(
       tester.element(find.byType(VerseHomeScreen)),
     );
-    expect(find.text(l10n.searchSourceVersionsCount(1)), findsOneWidget);
-    expect(find.byKey(const ValueKey('version-row-one')), findsNothing);
+    expect(find.text(l10n.searchReadyVersions(1)), findsOneWidget);
+    expect(find.byKey(const ValueKey('version-row-one')), findsOneWidget);
     controller._state = const VerseUiState(
       homeListMode: HomeListMode.online,
       query: 'signal',
@@ -240,12 +227,12 @@ void main() {
     );
     controller.notifyListeners();
     await tester.pump();
-    expect(find.text(l10n.searchSourceVersionsCount(2)), findsOneWidget);
+    expect(find.text(l10n.searchReadyVersions(2)), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('version-row-two')));
     await tester.pump();
     expect(controller.state.comparison?.selectedVersionId, 'two');
-    expect(find.text(l10n.searchSourceVersionsCount(2)), findsOneWidget);
-    expect(find.byKey(const ValueKey('version-row-one')), findsNothing);
+    expect(find.text(l10n.searchReadyVersions(2)), findsOneWidget);
+    expect(find.byKey(const ValueKey('version-row-one')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -310,43 +297,104 @@ void main() {
       final controller = _LiveFlowController(state(1, 'combined'));
       addTearDown(controller.dispose);
       await _pumpHome(tester, controller);
-      await tester.tap(find.byKey(const ValueKey('version-row-combined')));
+      await tester.tap(find.byKey(const ValueKey('version-row-one')));
       await tester.pump();
       expect(controller.state.comparison?.selectedVersionId, 'one');
       expect(find.text('Explicit raw source lyrics'), findsOneWidget);
       final raw = find.byKey(const ValueKey('version-row-one'));
-      final alternate = find.byKey(const ValueKey('version-row-two'));
       expect(
-        tester.getTopLeft(raw).dy,
-        lessThan(tester.getTopLeft(alternate).dy),
+        _rowOrder(tester).indexOf('version-row-one'),
+        lessThan(_rowOrder(tester).indexOf('version-row-two')),
       );
       controller._state = state(2);
       controller.notifyListeners();
       await tester.pump();
       expect(controller.state.comparison?.selectedVersionId, 'one');
       expect(find.text('Explicit raw source lyrics'), findsOneWidget);
+      expect(tester.widget<ChoiceChip>(raw).selected, isTrue);
       expect(
-        find.descendant(
-          of: raw,
-          matching: find.byIcon(Icons.radio_button_checked),
-        ),
-        findsOneWidget,
-      );
-      expect(
-        tester.getTopLeft(raw).dy,
-        lessThan(tester.getTopLeft(alternate).dy),
+        _rowOrder(tester).indexOf('version-row-one'),
+        lessThan(_rowOrder(tester).indexOf('version-row-two')),
       );
       expect(
         find.byKey(const ValueKey('version-row-combined')),
         findsOneWidget,
       );
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('version-row-combined')),
+      );
       await tester.tap(find.byKey(const ValueKey('version-row-combined')));
-      await tester.pump();
-      expect(controller.state.comparison?.selectedVersionId, 'combined');
+      await tester.pumpAndSettle();
+      expect(
+        controller.state.comparison?.selectedVersionId,
+        'combined',
+        reason:
+            'selection history=${controller.selectionHistory}; page=${tester.widget<PageView>(find.byKey(const ValueKey("version-preview-pages"))).controller?.page}',
+      );
       expect(find.text('Future combined recipe lyrics'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets('unavailable sources are grouped and cannot be saved', (
+    tester,
+  ) async {
+    const usable = SourceVersionData(
+      id: 'usable',
+      providerId: 'catalog',
+      providerName: 'Catalog',
+      title: 'Signal Song',
+      artist: 'The Signals',
+      hasLyrics: true,
+      isUsableVersion: true,
+      canSave: true,
+      bodyPreview: [LyricLineData(id: 'usable-line', text: 'Available lyrics')],
+    );
+    const missing = SourceVersionData(
+      id: 'missing',
+      providerId: 'archive',
+      providerName: 'Archive',
+      title: 'Signal Song',
+      artist: 'The Signals',
+      hasLyrics: false,
+    );
+    final controller = _LiveFlowController(
+      const VerseUiState(
+        homeListMode: HomeListMode.online,
+        comparison: SearchComparisonData(
+          reference: SearchReferenceData(
+            id: 'signal',
+            title: 'Signal Song',
+            artist: 'The Signals',
+          ),
+          suggested: usable,
+          alternatives: [missing],
+        ),
+      ),
+    );
+    addTearDown(controller.dispose);
+    await _pumpHome(tester, controller);
+    final l10n = AppLocalizations.of(
+      tester.element(find.byType(VerseHomeScreen)),
+    );
+    await tester.tap(find.byKey(const ValueKey('version-source-menu')));
+    await tester.pumpAndSettle();
+    final unavailable = find.byKey(const ValueKey('unavailable-versions'));
+    expect(unavailable, findsOneWidget);
+    await tester.tap(unavailable);
+    await tester.pumpAndSettle();
+    expect(find.text(l10n.searchVersionUnavailable), findsOneWidget);
+    await tester.tap(find.text('Archive'));
+    await tester.pumpAndSettle();
+    expect(controller.state.comparison?.selectedVersionId, 'missing');
+    expect(
+      tester
+          .widget<FilledButton>(find.byKey(const ValueKey('save-open-lyrics')))
+          .onPressed,
+      isNull,
+    );
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets(
     'filtered empty state clears all version filters and cannot save',
@@ -764,12 +812,13 @@ bool _isVisibleWithin(Rect child, Rect viewport) =>
     child.top >= viewport.top && child.bottom <= viewport.bottom;
 
 List<String> _rowOrder(WidgetTester tester) {
-  final rows = ['suggested', 'second', 'third'];
-  final tops = {
-    for (final id in rows)
-      id: tester.getTopLeft(find.byKey(ValueKey('version-row-$id'))).dy,
-  };
-  return rows..sort((left, right) => tops[left]!.compareTo(tops[right]!));
+  final tabs = find.byKey(const ValueKey('version-tabs'));
+  return tester
+      .widgetList<ChoiceChip>(
+        find.descendant(of: tabs, matching: find.byType(ChoiceChip)),
+      )
+      .map((chip) => (chip.key as ValueKey).value as String)
+      .toList();
 }
 
 VerseUiState _comparisonState() => const VerseUiState(
@@ -905,6 +954,7 @@ class _LiveFlowController extends VerseUiController {
   bool playbackStarted = false;
   double? selectedSpeed;
   final searchFilterChanges = <(String, Object?)>[];
+  final selectionHistory = <String>[];
 
   @override
   ValueListenable<PlayerPosition> get playerPosition => _position;
@@ -920,6 +970,7 @@ class _LiveFlowController extends VerseUiController {
 
   @override
   void selectVersion(String versionId) {
+    selectionHistory.add(versionId);
     final comparison = _state.comparison!;
     _state = VerseUiState(
       homeListMode: _state.homeListMode,

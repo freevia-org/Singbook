@@ -209,6 +209,42 @@ class AppLocalizationsZh extends AppLocalizations {
   String get searchAlternatives => '其他匹配';
 
   @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 可用版本',
+      one: '1 可用版本',
+      zero: '0 可用版本',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 不可用版本',
+      one: '1 不可用版本',
+      zero: '0 不可用版本',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => '跳转到章节';
+
+  @override
+  String get searchVersionDetails => '版本详情';
+
+  @override
+  String get searchSelectedRecording => '已选录音';
+
+  @override
+  String get searchVersionDuration => '版本时长';
+
+  @override
   String get searchCompare => '比较版本';
 
   @override

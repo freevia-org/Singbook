@@ -209,6 +209,42 @@ class AppLocalizationsKo extends AppLocalizations {
   String get searchAlternatives => '다른 일치 항목';
 
   @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 사용 가능한 버전',
+      one: '1 사용 가능한 버전',
+      zero: '0 사용 가능한 버전',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 사용할 수 없는 버전',
+      one: '1 사용할 수 없는 버전',
+      zero: '0 사용할 수 없는 버전',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => '섹션으로 이동';
+
+  @override
+  String get searchVersionDetails => '버전 세부정보';
+
+  @override
+  String get searchSelectedRecording => '선택한 녹음';
+
+  @override
+  String get searchVersionDuration => '버전 길이';
+
+  @override
   String get searchCompare => '버전 비교';
 
   @override

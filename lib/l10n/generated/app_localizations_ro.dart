@@ -214,6 +214,44 @@ class AppLocalizationsRo extends AppLocalizations {
   String get searchAlternatives => 'Alte potriviri';
 
   @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count de versiuni disponibile',
+      few: '$count de versiuni disponibile',
+      one: '$count versiune disponibilă',
+      zero: 'Nu există versiuni disponibile',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count de versiuni indisponibile',
+      few: '$count de versiuni indisponibile',
+      one: '$count versiune indisponibilă',
+      zero: 'Nu există versiuni indisponibile',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Salt la secțiune';
+
+  @override
+  String get searchVersionDetails => 'Detalii despre versiune';
+
+  @override
+  String get searchSelectedRecording => 'Înregistrarea selectată';
+
+  @override
+  String get searchVersionDuration => 'Durata versiunii';
+
+  @override
   String get searchCompare => 'Compară versiunile';
 
   @override

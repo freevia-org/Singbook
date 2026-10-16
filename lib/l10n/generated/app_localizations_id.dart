@@ -212,6 +212,42 @@ class AppLocalizationsId extends AppLocalizations {
   String get searchAlternatives => 'Kecocokan lainnya';
 
   @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Versi siap',
+      one: '1 versi siap',
+      zero: '0 Versi siap',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Versi tidak tersedia',
+      one: '1 versi tidak tersedia',
+      zero: '0 Versi tidak tersedia',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Lompat ke bagian';
+
+  @override
+  String get searchVersionDetails => 'Detail versi';
+
+  @override
+  String get searchSelectedRecording => 'Rekaman yang dipilih';
+
+  @override
+  String get searchVersionDuration => 'Durasi versi';
+
+  @override
   String get searchCompare => 'Bandingkan versi';
 
   @override

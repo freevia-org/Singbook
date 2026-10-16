@@ -213,6 +213,42 @@ class AppLocalizationsBg extends AppLocalizations {
   String get searchAlternatives => 'Други съвпадения';
 
   @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count готови версии',
+      one: '$count готова версия',
+      zero: 'Няма налични версии',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count недостъпни версии',
+      one: '$count недостъпна версия',
+      zero: 'Няма недостъпни версии',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Към раздел';
+
+  @override
+  String get searchVersionDetails => 'Подробности за версията';
+
+  @override
+  String get searchSelectedRecording => 'Избран запис';
+
+  @override
+  String get searchVersionDuration => 'Продължителност на версията';
+
+  @override
   String get searchCompare => 'Сравняване на версии';
 
   @override

@@ -212,6 +212,42 @@ class AppLocalizationsHu extends AppLocalizations {
   String get searchAlternatives => 'További egyezések';
 
   @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Elérhető verziók',
+      one: '1 elérhető verzió',
+      zero: '0 Elérhető verziók',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Nem elérhető verziók',
+      one: '1 nem elérhető verzió',
+      zero: '0 Nem elérhető verziók',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Ugrás a szakaszhoz';
+
+  @override
+  String get searchVersionDetails => 'Verzió részletei';
+
+  @override
+  String get searchSelectedRecording => 'Kiválasztott felvétel';
+
+  @override
+  String get searchVersionDuration => 'Verzió hossza';
+
+  @override
   String get searchCompare => 'Verziók összehasonlítása';
 
   @override

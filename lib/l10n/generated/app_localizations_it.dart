@@ -213,6 +213,42 @@ class AppLocalizationsIt extends AppLocalizations {
   String get searchAlternatives => 'Altre corrispondenze';
 
   @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Versioni disponibili',
+      one: '1 versione disponibile',
+      zero: '0 Versioni disponibili',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Versioni non disponibili',
+      one: '1 versione non disponibile',
+      zero: '0 Versioni non disponibili',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Vai alla sezione';
+
+  @override
+  String get searchVersionDetails => 'Dettagli versione';
+
+  @override
+  String get searchSelectedRecording => 'Registrazione selezionata';
+
+  @override
+  String get searchVersionDuration => 'Durata della versione';
+
+  @override
   String get searchCompare => 'Confronta versioni';
 
   @override

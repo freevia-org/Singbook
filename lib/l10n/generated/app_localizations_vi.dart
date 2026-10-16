@@ -213,6 +213,42 @@ class AppLocalizationsVi extends AppLocalizations {
   String get searchAlternatives => 'Kết quả phù hợp khác';
 
   @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Phiên bản có sẵn',
+      one: '1 phiên bản có sẵn',
+      zero: '0 Phiên bản có sẵn',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Phiên bản không khả dụng',
+      one: '1 phiên bản không khả dụng',
+      zero: '0 Phiên bản không khả dụng',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Chuyển đến mục';
+
+  @override
+  String get searchVersionDetails => 'Chi tiết phiên bản';
+
+  @override
+  String get searchSelectedRecording => 'Bản ghi đã chọn';
+
+  @override
+  String get searchVersionDuration => 'Thời lượng phiên bản';
+
+  @override
   String get searchCompare => 'So sánh các phiên bản';
 
   @override
