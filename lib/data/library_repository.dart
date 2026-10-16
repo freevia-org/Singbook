@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:path/path.dart' as paths;
 import 'package:sqflite/sqflite.dart';
@@ -20,6 +21,14 @@ JsonMap _withoutInvalidDuration(JsonMap metadata) {
   }
   return clean;
 }
+
+// Android's CursorWindow cannot return an oversized document as one row.
+// Ordinary songs stay on the inline path; large documents cross the platform
+// boundary as bounded blobs, without changing their stored ChordPro payload.
+const _documentReadChunkSize = 128 * 1024;
+const _boundedDocumentColumn =
+    'CASE WHEN length(CAST(document AS BLOB)) <= $_documentReadChunkSize '
+    'THEN document ELSE NULL END AS document';
 
 SongCandidate _sanitizeCandidateDuration(SongCandidate candidate) =>
     SongCandidate(
@@ -173,12 +182,13 @@ class LibraryRepository {
     final codec = ChordProCodec();
     final rows = await db.query(
       'songs',
-      columns: ['id', 'title', 'artist', 'album', 'document'],
+      columns: ['id', 'title', 'artist', 'album'],
     );
     for (final row in rows) {
       String? lyrics;
       try {
-        lyrics = plainLyrics(codec.decode(row['document'] as String).body);
+        final document = await _readDocument(db, row['id'] as String);
+        lyrics = plainLyrics(codec.decode(document).body);
       } on Object {
         lyrics = null;
       }
@@ -227,20 +237,67 @@ class LibraryRepository {
       clauses.add('search_text LIKE ? ESCAPE \'\\\'');
       args.add(_likePattern(query));
     }
-    final rows = await database.query(
-      'songs',
-      where: clauses.isEmpty ? null : clauses.join(' AND '),
-      whereArgs: args,
-      orderBy: 'updated_at DESC, id',
-      // An offset without a limit still has to skip rows (-1 = no limit).
-      limit: limit ?? (offset > 0 ? -1 : null),
-      offset: limit == null && offset <= 0 ? null : offset,
-    );
-    return rows.map(_readSong).toList();
+    return database.transaction((txn) async {
+      final rows = await txn.query(
+        'songs',
+        columns: const [
+          'id',
+          'favorite',
+          'revision',
+          'updated_at',
+          _boundedDocumentColumn,
+        ],
+        where: clauses.isEmpty ? null : clauses.join(' AND '),
+        whereArgs: args,
+        orderBy: 'updated_at DESC, id',
+        // An offset without a limit still has to skip rows (-1 = no limit).
+        limit: limit ?? (offset > 0 ? -1 : null),
+        offset: limit == null && offset <= 0 ? null : offset,
+      );
+      final songs = <SongDocument>[];
+      for (final row in rows) {
+        songs.add(await _readSong(txn, row));
+      }
+      return songs;
+    });
   }
 
-  SongDocument _readSong(Map<String, Object?> row) {
-    final song = _codec.decode(row['document'] as String);
+  static Future<String> _readDocument(
+    DatabaseExecutor executor,
+    String id,
+  ) async {
+    final lengthRows = await executor.rawQuery(
+      'SELECT length(CAST(document AS BLOB)) AS byte_length '
+      'FROM songs WHERE id = ?',
+      [id],
+    );
+    if (lengthRows.isEmpty) throw StateError('Song document disappeared');
+    final byteLength = lengthRows.single['byte_length'] as int;
+    final bytes = BytesBuilder(copy: false);
+    for (var start = 1; start <= byteLength; start += _documentReadChunkSize) {
+      final rows = await executor.rawQuery(
+        'SELECT substr(CAST(document AS BLOB), ?, ?) AS chunk '
+        'FROM songs WHERE id = ?',
+        [start, _documentReadChunkSize, id],
+      );
+      if (rows.isEmpty || rows.single['chunk'] is! Uint8List) {
+        throw StateError('Could not read song document chunk');
+      }
+      bytes.add(rows.single['chunk'] as Uint8List);
+    }
+    // A chunk may end inside a multibyte character; decode only after joining.
+    return utf8.decode(bytes.takeBytes());
+  }
+
+  Future<SongDocument> _readSong(
+    DatabaseExecutor executor,
+    Map<String, Object?> row,
+  ) async {
+    final storedDocument = row['document'];
+    final document = storedDocument is String
+        ? storedDocument
+        : await _readDocument(executor, row['id'] as String);
+    final song = _codec.decode(document);
     return song.copyWith(
       id: row['id'] as String,
       favorite: row['favorite'] == 1,
@@ -250,13 +307,22 @@ class LibraryRepository {
   }
 
   Future<SongDocument?> getSong(String id) async {
-    final rows = await database.query(
-      'songs',
-      where: 'id = ?',
-      whereArgs: [id],
-      limit: 1,
-    );
-    return rows.isEmpty ? null : _readSong(rows.single);
+    return database.transaction((txn) async {
+      final rows = await txn.query(
+        'songs',
+        columns: const [
+          'id',
+          'favorite',
+          'revision',
+          'updated_at',
+          _boundedDocumentColumn,
+        ],
+        where: 'id = ?',
+        whereArgs: [id],
+        limit: 1,
+      );
+      return rows.isEmpty ? null : _readSong(txn, rows.single);
+    });
   }
 
   Future<void> saveSong(SongDocument song) async {
@@ -347,11 +413,18 @@ class LibraryRepository {
       if (source is String || existingId != null) {
         final rows = await txn.query(
           'songs',
+          columns: const [
+            'id',
+            'favorite',
+            'revision',
+            'updated_at',
+            _boundedDocumentColumn,
+          ],
           where: existingId == null ? 'source_identity = ?' : 'id = ?',
           whereArgs: [existingId ?? source],
         );
         for (final row in rows) {
-          final existing = _readSong(row);
+          final existing = await _readSong(txn, row);
           // An opaque (unreadable) extension block is written back verbatim, so
           // merged sources/timing would be reported as saved but never stored.
           if (existing.extensionError != null) continue;
@@ -1042,18 +1115,22 @@ class LibraryRepository {
 
   /// The stored document of a song with its content hash, or null.
   Future<({String document, String hash})?> getSongRaw(String id) async {
-    final rows = await database.query(
-      'songs',
-      columns: ['document', 'content_hash'],
-      where: 'id = ?',
-      whereArgs: [id],
-      limit: 1,
-    );
-    if (rows.isEmpty) return null;
-    return (
-      document: rows.single['document'] as String,
-      hash: rows.single['content_hash'] as String,
-    );
+    return database.transaction((txn) async {
+      final rows = await txn.query(
+        'songs',
+        columns: const ['id', 'content_hash', _boundedDocumentColumn],
+        where: 'id = ?',
+        whereArgs: [id],
+        limit: 1,
+      );
+      if (rows.isEmpty) return null;
+      return (
+        document: rows.single['document'] is String
+            ? rows.single['document'] as String
+            : await _readDocument(txn, id),
+        hash: rows.single['content_hash'] as String,
+      );
+    });
   }
 
   /// Id of the newest outbox row (0 when empty). Together with
