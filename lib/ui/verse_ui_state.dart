@@ -406,6 +406,7 @@ class VerseUiState {
     this.syncSignedIn = false,
     this.syncBusy = false,
     this.accountName,
+    this.accountPhotoUrl,
     this.accountError,
     this.lastSyncAt,
     this.lastSyncConflicts = 0,
@@ -471,6 +472,7 @@ class VerseUiState {
       syncSignedIn = o.syncSignedIn,
       syncBusy = o.syncBusy,
       accountName = o.accountName,
+      accountPhotoUrl = o.accountPhotoUrl,
       accountError = o.accountError,
       lastSyncAt = o.lastSyncAt,
       lastSyncConflicts = o.lastSyncConflicts,
@@ -522,7 +524,7 @@ class VerseUiState {
   final List<ProviderSettingData> providers;
   final SearchFilterData searchFilters;
   final bool searchFiltersExpanded, syncReady, syncSignedIn, syncBusy;
-  final String? accountName, accountError;
+  final String? accountName, accountPhotoUrl, accountError;
 
   /// When the last sync finished successfully, if ever.
   final DateTime? lastSyncAt;

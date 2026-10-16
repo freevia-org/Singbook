@@ -48,7 +48,7 @@ WHAT YOU CAN DO
 - Edit chords and lyrics, transpose, and follow lyrics that carry timing information (where a source supplies it).
 - Build setlists, reorder songs, override key per song, and share a setlist as an OpenSong file.
 - Import ChordPro, plain text, LRC, enhanced LRC and TTML files. Export every song as a single portable ChordPro (.cho) file that keeps your edits and where the text came from.
-- Optional sync between your own devices with Google Drive: sign in with Google only if you want it. Your songs and setlists go to a private, hidden app folder in your own Drive that only Singbook can use (no access to your other Drive files). Sync runs only when you tap Sync now. If the same song was edited on two devices, both versions are kept as copies.
+- Optional sync between your own devices with Google Drive: sign in with Google only if you want it. Your songs and setlists go to a private, hidden app folder in your own Drive that only Singbook can use (no access to your other Drive files). After you connect, Singbook syncs automatically when you add, edit or remove songs; Sync now is also available. If the same song was edited on two devices, both versions are kept as copies.
 - Print or save a clean PDF of a song.
 - Keep the screen on while you perform, with reader text size, themes (light, dark, system) and palettes that suit a dim stage.
 - Works on phones and tablets, with the app available in 34 languages.

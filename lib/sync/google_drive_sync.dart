@@ -130,7 +130,12 @@ class GoogleDriveSyncService {
          loadSavedIdentity: () async {
            final raw = await repository.getSetting(_googleSessionKey);
            if (raw is Map && raw['id'] is String && raw['email'] is String) {
-             return {'id': raw['id'] as String, 'email': raw['email'] as String};
+             return {
+               'id': raw['id'] as String,
+               'email': raw['email'] as String,
+               if (raw['photoUrl'] is String)
+                 'photoUrl': raw['photoUrl'] as String,
+             };
            }
            return null;
          },
@@ -172,6 +177,9 @@ class GoogleDriveSyncService {
   bool get configured => auth.configured;
   bool get isConnected => auth.isConnected;
   String? get accountEmail => auth.accountEmail;
+  String? get accountPhotoUrl => auth is ProfilePhotoAuthorization
+      ? (auth as ProfilePhotoAuthorization).accountPhotoUrl
+      : null;
   bool get isBusy => _busy;
   DateTime _now() => (_clock?.call() ?? DateTime.now()).toUtc();
 

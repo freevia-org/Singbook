@@ -8,6 +8,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import '../application/app_controller.dart';
 import '../application/file_actions.dart';
 import '../l10n/generated/app_localizations.dart';
+import 'account_avatar.dart';
 import 'app_controller_adapter.dart';
 import 'home/home_screen.dart';
 import 'library/editor_screen.dart';
@@ -520,22 +521,48 @@ class _VerseAppShellState extends State<VerseAppShell>
     } else if (!state.syncSignedIn) {
       tooltip = failed ? l10n.accountStatusError : l10n.accountStatusSignedOut;
       icon = _badged(const Icon(Icons.cloud_outlined), failed, scheme);
-    } else if (state.syncBusy) {
-      tooltip = l10n.accountStatusSyncing;
-      icon = const SizedBox(
-        width: 22,
-        height: 22,
-        child: CircularProgressIndicator(strokeWidth: 2.4),
-      );
-    } else if (failed) {
-      tooltip = l10n.accountStatusError;
-      icon = _badged(const Icon(Icons.cloud_rounded), true, scheme);
-    } else if (state.lastSyncAt != null) {
-      tooltip = l10n.accountStatusSynced;
-      icon = const Icon(Icons.cloud_done_rounded);
     } else {
-      tooltip = l10n.accountStatusSignedIn;
-      icon = const Icon(Icons.cloud_queue_rounded);
+      tooltip = state.syncBusy
+          ? l10n.accountStatusSyncing
+          : failed
+          ? l10n.accountStatusError
+          : state.lastSyncAt != null
+          ? l10n.accountStatusSynced
+          : l10n.accountStatusSignedIn;
+      icon = Stack(
+        clipBehavior: Clip.none,
+        children: [
+          AccountAvatar(photoUrl: state.accountPhotoUrl, size: 32),
+          if (state.syncBusy)
+            Positioned(
+              right: -2,
+              bottom: -2,
+              child: SizedBox(
+                width: 14,
+                height: 14,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: scheme.primary,
+                  backgroundColor: scheme.surface,
+                ),
+              ),
+            )
+          else if (failed)
+            Positioned(
+              right: -1,
+              top: -1,
+              child: DecoratedBox(
+                key: const ValueKey('cloud-status-error'),
+                decoration: BoxDecoration(
+                  color: scheme.error,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: scheme.surface, width: 1.5),
+                ),
+                child: const SizedBox(width: 10, height: 10),
+              ),
+            ),
+        ],
+      );
     }
     return IconButton(
       key: const ValueKey('cloud-button'),
