@@ -31,6 +31,7 @@ using System.IO;
 public static class SingbookBuildJob
 {
     private const uint CreateSuspended = 0x00000004;
+    private const uint CreateNoWindow = 0x08000000;
     private const uint ExtendedStartupInfoPresent = 0x00080000;
     private const uint StartfUseStdHandles = 0x00000100;
     private const uint JobObjectExtendedLimitInformation = 9;
@@ -252,7 +253,7 @@ public static class SingbookBuildJob
             }
 
             Check(CreateProcess(filePath, commandLine, IntPtr.Zero, IntPtr.Zero,
-                inheritStandardHandles, CreateSuspended | ExtendedStartupInfoPresent, IntPtr.Zero, workingDirectory,
+                inheritStandardHandles, CreateSuspended | ExtendedStartupInfoPresent | CreateNoWindow, IntPtr.Zero, workingDirectory,
                 ref startup, out process), "CreateProcess");
             processCreated = true;
 

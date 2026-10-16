@@ -172,7 +172,7 @@ exit /b %SINGBOOK_BUILD_JOB_FIXTURE_EXIT%
 
     # Kill a supervisor without running its finally block; closing its native
     # job handle must still reap both owned processes and leave a sibling alone.
-    $sibling = Start-Process -FilePath $powerShell -ArgumentList @('-NoProfile', '-File', $holdScript) -PassThru
+    $sibling = Start-Process -FilePath $powerShell -ArgumentList @('-NoProfile', '-File', $holdScript) -PassThru -WindowStyle Hidden
     $record = Join-Path $testRoot 'hard-kill.pids'
     $supervisorArguments = @('-NoProfile', '-File', $PSCommandPath, '-RunAsSupervisor', '-RecordPath', $record, '-Fixture', $fixture, '-HoldScript', $holdScript, '-RepoRoot', $repoRoot)
     $supervisor = Start-Process -FilePath $powerShell -ArgumentList $supervisorArguments -PassThru -WindowStyle Hidden
