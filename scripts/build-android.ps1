@@ -13,15 +13,53 @@ param(
     [switch]$Bundle,
     # Allow replacing an existing artifacts/ file of the same version. Without
     # it the script refuses, so a verified .aab is never silently overwritten.
-    [switch]$Force
+    [switch]$Force,
+    # Internal worker mode, launched under the native kill-on-close job below.
+    [switch]$BuildWorker
 )
 $ErrorActionPreference = 'Stop'
 $workspace = Split-Path -Parent $PSScriptRoot
+$environmentKeysToRestore = @(
+    'ORG_GRADLE_PROJECT_requireReleaseSigning',
+    'ORG_GRADLE_PROJECT_allowDebugSigning'
+)
+$originalEnvironment = @{}
+foreach ($key in $environmentKeysToRestore) {
+    $originalEnvironment[$key] = @{
+        Exists = Test-Path -LiteralPath "Env:$key"
+        Value = [Environment]::GetEnvironmentVariable($key, 'Process')
+    }
+}
 if (-not (Get-Command flutter -ErrorAction SilentlyContinue)) {
     throw 'Flutter is not on PATH. Install Flutter and add its bin directory to PATH before building.'
 }
 if (-not $env:JAVA_HOME -and -not (Get-Command java -ErrorAction SilentlyContinue)) {
     throw 'Java is not available. Set JAVA_HOME to a JDK 21 installation or add Java to PATH.'
+}
+if (-not $BuildWorker) {
+    $workerArguments = @(
+        '-NoLogo',
+        '-NoProfile',
+        '-NonInteractive',
+        '-File',
+        $PSCommandPath,
+        '-BuildWorker'
+    )
+    $switchesToForward = @{
+        Debug = $Debug
+        AllowMissingDefines = $AllowMissingDefines
+        Production = $Production
+        Bundle = $Bundle
+        Force = $Force
+    }
+    foreach ($switchName in $switchesToForward.Keys) {
+        if ($switchesToForward[$switchName]) { $workerArguments += "-$switchName" }
+    }
+    $powerShellExecutable = [Diagnostics.Process]::GetCurrentProcess().MainModule.FileName
+    $jobRunner = Join-Path $PSScriptRoot 'invoke-build-in-job.ps1'
+    $workerExitCode = & $jobRunner -FilePath $powerShellExecutable -ArgumentList $workerArguments -WorkingDirectory $workspace
+    if ($workerExitCode -ne 0) { throw "Android build worker failed ($workerExitCode)" }
+    return
 }
 Push-Location $workspace
 try {
@@ -102,7 +140,13 @@ try {
         Write-Host "Next:    .\scripts\verify-release.ps1 -Path '$aabTarget'"
     }
 } finally {
-    Remove-Item Env:ORG_GRADLE_PROJECT_requireReleaseSigning -ErrorAction SilentlyContinue
-    Remove-Item Env:ORG_GRADLE_PROJECT_allowDebugSigning -ErrorAction SilentlyContinue
+    foreach ($key in $environmentKeysToRestore) {
+        $original = $originalEnvironment[$key]
+        if ($original.Exists) {
+            [Environment]::SetEnvironmentVariable($key, $original.Value, 'Process')
+        } else {
+            Remove-Item -LiteralPath "Env:$key" -ErrorAction SilentlyContinue
+        }
+    }
     Pop-Location
 }
