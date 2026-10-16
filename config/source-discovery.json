@@ -18,13 +18,14 @@
       "id": "startjamming",
       "name": "Start Jamming",
       "firstSeen": "2026-10-15",
-      "lastChecked": "2026-10-15",
+      "lastChecked": "2026-10-16",
       "status": "deferred",
       "documentation": [
-        "https://www.startjamming.com/api"
+        "https://www.startjamming.com/api",
+        "https://www.startjamming.com/llms-full.txt"
       ],
       "endpoint": "https://www.startjamming.com",
-      "reason": "Documented public read API; search has object/array response variants, index is keyed by ID, and artist can be absent. Chords use normalized measure arrays; cannot claim lyric-aligned chords. Requires a supported adapter and real canaries before activation."
+      "reason": "Documented public read API; search has object/array response variants, index is keyed by ID, and artist can be absent. Chords use normalized measure arrays; cannot claim lyric-aligned chords. Requires a supported adapter and real canaries before activation. Primary API docs returned HTTP 200 on 2026-10-16 at 06:03:15 UTC. Agent requests to /api/songs/* must include for=agent, honor ETags and preserve canonical IDs/URLs. Agent responses omit license; licensing must not be inferred. Permitted reuse/attribution evidence and two independent live extraction canaries remain pending."
     },
     {
       "id": "lyrica",
@@ -36,6 +37,20 @@
         "https://github.com/thinkely/Lyrica"
       ],
       "reason": "Open-source self-hostable aggregator; repository documentation alone does not establish a supported public upstream service or independent data coverage. Investigate deployment/access requirements before proposing activation."
+    },
+    {
+      "id": "ukrainian-wikisource",
+      "name": "Ukrainian Wikisource",
+      "firstSeen": "2026-10-16",
+      "lastChecked": "2026-10-16",
+      "status": "deferred",
+      "documentation": [
+        "https://uk.wikisource.org/w/api.php?action=query&meta=siteinfo&siprop=rightsinfo%7Cgeneral&format=json",
+        "https://uk.wikisource.org/w/api.php?action=query&list=categorymembers&cmtitle=%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D1%96%D1%8F%3A%D0%A3%D0%BA%D1%80%D0%B0%D1%97%D0%BD%D1%81%D1%8C%D0%BA%D1%96%20%D0%BD%D0%B0%D1%80%D0%BE%D0%B4%D0%BD%D1%96%20%D0%BF%D1%96%D1%81%D0%BD%D1%96&cmlimit=5&format=json",
+        "https://creativecommons.org/licenses/by-sa/4.0/deed.uk"
+      ],
+      "endpoint": "https://uk.wikisource.org/w/api.php",
+      "reason": "On 2026-10-16 at 06:04:01 UTC, public MediaWiki siteinfo returned Ukrainian Wikisource (uk) and site CC BY-SA 4.0 rights metadata. At 06:04:12 UTC, the Ukrainian folk songs category returned five title metadata entries and continuation. This proves regional catalog metadata access only; no lyric extraction canaries were run. Overlap with existing sources is unmeasured. Defer pending per-work copyright/provenance review, attribution/share-alike handling, compatible identity/search adapter, two independent live extraction canaries and claimed capability coverage. Site rights metadata alone does not clear every work."
     }
   ]
 }
