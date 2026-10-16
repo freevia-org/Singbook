@@ -9,12 +9,17 @@ import 'package:singbook/providers/extra/extra_providers.dart';
 import 'package:singbook/providers/provider.dart';
 import 'package:singbook/providers/source_catalog.dart';
 import 'package:singbook/providers/source_maintenance.dart';
+import 'package:singbook/providers/youtube_music_session.dart';
+
+import 'src/local_youtube_session.dart';
 
 Future<void> main(List<String> args) async {
   String catalogPath = 'config/source-catalog.json';
   String? reportPath;
   var offline = false;
   String? onlySource;
+  var youtubeConsent = false, youtubeClear = false, youtubeStatus = false;
+  String? youtubeBrowser;
   try {
     for (var i = 0; i < args.length; i++) {
       switch (args[i]) {
@@ -30,9 +35,73 @@ Future<void> main(List<String> args) async {
         case '--offline':
           offline = true;
           break;
+        case '--youtube-consent':
+          youtubeConsent = true;
+          break;
+        case '--youtube-clear-consent':
+          youtubeClear = true;
+          break;
+        case '--youtube-session-status':
+          youtubeStatus = true;
+          break;
+        case '--youtube-browser':
+          youtubeBrowser = _value(args, ++i, '--youtube-browser');
+          break;
         default:
           throw FormatException('Unknown argument ${args[i]}');
       }
+    }
+    final actions = [
+      youtubeConsent,
+      youtubeClear,
+      youtubeStatus,
+    ].where((v) => v).length;
+    if (actions > 1 ||
+        (offline && actions > 0) ||
+        (actions > 0 &&
+            onlySource != null &&
+            onlySource != 'youtubemusic')) {
+      throw const FormatException(
+        'Use one YouTube session action, without --offline or another source.',
+      );
+    }
+    final localSession = LocalYoutubeSession(browserExecutable: youtubeBrowser);
+    if (youtubeClear) {
+      await localSession.clear();
+      stdout.writeln(
+        'YouTube Music consent cleared for the local maintenance checker.',
+      );
+      return;
+    }
+    var youtubeSession = YoutubeMusicSession();
+    String? youtubeSessionError;
+    if (youtubeConsent) {
+      youtubeSession = await localSession.consent(
+        entryClient: DesktopMaintenanceClient(
+          curlExecutable: Platform.isWindows ? 'curl.exe' : 'curl',
+        ),
+        onStatus: stderr.writeln,
+      );
+    } else if (!offline &&
+        (onlySource == null || onlySource == 'youtubemusic' || youtubeStatus)) {
+      try {
+        youtubeSession = await localSession.restore();
+      } on LocalYoutubeSessionException catch (error) {
+        youtubeSessionError = error.code;
+        stderr.writeln(
+          'Local YouTube Music session unavailable: ${error.code}. Other probes continue.',
+        );
+      }
+    }
+    if (youtubeStatus) {
+      stdout.writeln(
+        jsonEncode({
+          'hasConsent': youtubeSession.hasConsent,
+          'error': ?youtubeSessionError,
+        }),
+      );
+      if (youtubeSessionError != null) exitCode = 2;
+      return;
     }
     final text = await File(catalogPath).readAsString();
     final catalog = SourceCatalog.parse(text);
@@ -42,7 +111,11 @@ Future<void> main(List<String> args) async {
     );
     try {
       final providers = [
-        ...createCoreProviders(transport: transport, geniusToken: token),
+        ...createCoreProviders(
+          transport: transport,
+          geniusToken: token,
+          youtubeMusicSession: youtubeSession,
+        ),
         ...createExtraProviders(transport: transport),
       ];
       for (final entry in catalog.sources) {
@@ -66,6 +139,17 @@ Future<void> main(List<String> args) async {
             offline: offline,
             sourceIds: onlySource == null ? null : {onlySource},
           );
+      if (!offline && (onlySource == null || onlySource == 'youtubemusic')) {
+        report['localYoutubeSession'] = {
+          'hasConsent': youtubeSession.hasConsent,
+          'error': ?youtubeSessionError,
+        };
+        if (!youtubeSession.hasConsent) {
+          stderr.writeln(
+            'For YouTube Music consent, run with --source youtubemusic --youtube-consent.',
+          );
+        }
+      }
       final json = const JsonEncoder.withIndent('  ').convert(report);
       if (reportPath == null) {
         stdout.writeln(json);
@@ -89,6 +173,9 @@ Future<void> main(List<String> args) async {
     } finally {
       await transport.close();
     }
+  } on LocalYoutubeSessionException catch (error) {
+    stderr.writeln('Local YouTube Music session failed: ${error.code}.');
+    exitCode = 2;
   } on FormatException catch (error) {
     stderr.writeln(
       'Invalid source maintenance configuration: ${error.message}',
