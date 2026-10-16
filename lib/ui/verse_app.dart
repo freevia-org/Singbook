@@ -8,6 +8,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import '../application/app_controller.dart';
 import '../application/file_actions.dart';
 import '../l10n/generated/app_localizations.dart';
+import 'account_avatar.dart';
 import 'app_controller_adapter.dart';
 import 'home/home_screen.dart';
 import 'library/editor_screen.dart';
@@ -584,12 +585,7 @@ class _VerseAppShellState extends State<VerseAppShell>
       icon = Stack(
         clipBehavior: Clip.none,
         children: [
-          CircleAvatar(
-            radius: 16,
-            backgroundColor: scheme.surfaceContainerHighest,
-            foregroundColor: scheme.onSurfaceVariant,
-            child: const Icon(Icons.person_outline_rounded, size: 22),
-          ),
+          AccountAvatar(photoUrl: state.accountPhotoUrl, size: 32),
           if (state.syncBusy)
             Positioned(
               right: -2,

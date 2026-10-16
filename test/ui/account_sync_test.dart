@@ -540,7 +540,7 @@ void main() {
       expect(
         find.descendant(
           of: find.byKey(const ValueKey('cloud-button')),
-          matching: find.byIcon(Icons.person_outline_rounded),
+          matching: find.byIcon(Icons.account_circle_outlined),
         ),
         findsOneWidget,
       );

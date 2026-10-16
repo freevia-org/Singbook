@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:singbook/ui/account_avatar.dart';
 import 'support/fake_controller.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
 
@@ -73,7 +74,7 @@ void main() {
     });
 
     testWidgets(
-      'signed-in account button uses a person icon in the same spot',
+      'signed-in account button uses the account photo in the same spot',
       (tester) async {
         var state = const VerseUiState(
           syncReady: true,
@@ -85,17 +86,16 @@ void main() {
         await pumpShell(tester, controller);
 
         final button = find.byKey(const ValueKey('cloud-button'));
-        expect(
-          find.descendant(
-            of: button,
-            matching: find.byIcon(Icons.person_outline_rounded),
-          ),
-          findsOneWidget,
+        final avatar = find.descendant(
+          of: button,
+          matching: find.byType(AccountAvatar),
         );
+        expect(avatar, findsOneWidget);
         expect(
-          find.descendant(of: button, matching: find.byType(Image)),
-          findsNothing,
+          tester.widget<AccountAvatar>(avatar).photoUrl,
+          state.accountPhotoUrl,
         );
+        expect(tester.widget<AccountAvatar>(avatar).size, 32);
         final homeRight = tester.getRect(button).right;
 
         for (final tab in [VerseTab.songs, VerseTab.setlists]) {
