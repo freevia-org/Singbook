@@ -50,14 +50,11 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
               Expanded(
                 child: TextField(
                   controller: _search,
+                  textInputAction: TextInputAction.search,
                   onChanged: (value) => setState(() => _query = value),
+                  onSubmitted: (_) => FocusScope.of(context).unfocus(),
                   decoration: InputDecoration(
                     hintText: l10n.searchHint,
-                    prefixIcon: IconButton(
-                      tooltip: l10n.navBack,
-                      onPressed: () => widget.controller.setTab(VerseTab.home),
-                      icon: const Icon(Icons.arrow_back_rounded),
-                    ),
                     suffixIcon: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -67,6 +64,11 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                             onPressed: _clearSearch,
                             icon: const Icon(Icons.close_rounded),
                           ),
+                        IconButton(
+                          tooltip: l10n.searchSubmit,
+                          onPressed: () => FocusScope.of(context).unfocus(),
+                          icon: const Icon(Icons.arrow_forward_rounded),
+                        ),
                       ],
                     ),
                   ),

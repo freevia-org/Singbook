@@ -393,6 +393,11 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
                         },
                         icon: const Icon(Icons.close_rounded),
                       ),
+                    IconButton.filledTonal(
+                      tooltip: l10n.songsAdd,
+                      onPressed: widget.controller.createSong,
+                      icon: const Icon(Icons.add_rounded),
+                    ),
                     IconButton(
                       tooltip: l10n.searchSubmit,
                       onPressed: _submitSearch,
