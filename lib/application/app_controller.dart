@@ -344,7 +344,9 @@ class AppController extends ChangeNotifier {
       unawaited(refreshSources(silent: true));
     }
     if (syncConfigured) {
-      await restoreSync();
+      // Optional account services must never hold the local songbook behind
+      // their network or platform initialization.
+      unawaited(restoreSync());
     }
   }
 
@@ -354,8 +356,11 @@ class AppController extends ChangeNotifier {
     final sync = _sync;
     if (sync == null || _disposed) return;
     try {
-      if (await sync.restore()) await _afterSignIn(startup: true);
+      final restored = await sync.restore();
+      if (_disposed) return;
+      if (restored) await _afterSignIn(startup: true);
     } catch (error) {
+      if (_disposed) return;
       syncError = error is SyncException ? error.code : 'sync_failed';
     }
     _emit();

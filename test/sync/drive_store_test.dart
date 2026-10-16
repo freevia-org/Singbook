@@ -1,9 +1,54 @@
 import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:singbook/sync/google_drive_sync.dart';
 import 'support.dart';
+
+class _SilentGooglePlatform extends GoogleSignInPlatform {
+  int initCalls = 0, lightweightCalls = 0, tokenCalls = 0;
+  int authenticateCalls = 0;
+  int clearTokenCalls = 0;
+  ClientAuthorizationTokensForScopesParameters? lastRequest;
+  AuthenticationResults? authenticationResult;
+  Completer<AuthenticationResults>? pendingAuthentication;
+  Future<ClientAuthorizationTokenData?> Function(
+    ClientAuthorizationTokensForScopesParameters,
+  )? tokenHandler;
+  @override
+  Future<void> init(InitParameters params) async { initCalls++; }
+  @override
+  Future<AuthenticationResults?> attemptLightweightAuthentication(AttemptLightweightAuthenticationParameters params) async {
+    lightweightCalls++;
+    return null;
+  }
+  @override
+  bool supportsAuthenticate() => true;
+  @override
+  Future<AuthenticationResults> authenticate(AuthenticateParameters params) {
+    authenticateCalls++;
+    if (pendingAuthentication != null) return pendingAuthentication!.future;
+    return Future.value(authenticationResult ?? (throw UnimplementedError()));
+  }
+  @override
+  bool authorizationRequiresUserInteraction() => true;
+  @override
+  Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(ClientAuthorizationTokensForScopesParameters params) async {
+    tokenCalls++;
+    lastRequest = params;
+    if (tokenHandler != null) return tokenHandler!(params);
+    return const ClientAuthorizationTokenData(accessToken: 'token');
+  }
+  @override
+  Future<ServerAuthorizationTokenData?> serverAuthorizationTokensForScopes(ServerAuthorizationTokensForScopesParameters params) => throw UnimplementedError();
+  @override
+  Future<void> clearAuthorizationToken(ClearAuthorizationTokenParams params) async { clearTokenCalls++; }
+  @override
+  Future<void> signOut(SignOutParams params) async {}
+  @override
+  Future<void> disconnect(DisconnectParams params) async {}
+}
 
 void main() {
   group('DriveAppDataStore transport', () {
@@ -366,6 +411,274 @@ void main() {
   });
 
   group('GoogleDriveAuth', () {
+    test('explicit connect remembers the authorized account for next launch', () async {
+      final previous = GoogleSignInPlatform.instance;
+      final platform = _SilentGooglePlatform()
+        ..authenticationResult = const AuthenticationResults(
+          user: GoogleSignInUserData(id: 'new-id', email: 'new@example.com'),
+          authenticationTokens: AuthenticationTokenData(idToken: null),
+        );
+      GoogleSignInPlatform.instance = platform;
+      Map<String, String>? saved;
+      try {
+        final auth = GoogleDriveAuth(
+          serverClientId: 'x.apps.googleusercontent.com',
+          configuredOverride: true,
+          isAndroidOverride: true,
+          saveSavedIdentity: (value) async => saved = value,
+        );
+        await auth.connect();
+        expect(saved, {'id': 'new-id', 'email': 'new@example.com'});
+        expect(auth.accountId, 'new-id');
+        expect(platform.lastRequest!.request.promptIfUnauthorized, isTrue);
+      } finally {
+        GoogleSignInPlatform.instance = previous;
+      }
+    });
+
+    test('Android fresh install skips every startup Google SDK call', () async {
+      final previous = GoogleSignInPlatform.instance;
+      final platform = _SilentGooglePlatform();
+      GoogleSignInPlatform.instance = platform;
+      try {
+        final auth = GoogleDriveAuth(
+          serverClientId: 'x.apps.googleusercontent.com',
+          configuredOverride: true,
+          isAndroidOverride: true,
+          loadSavedIdentity: () async => null,
+        );
+        expect(await auth.restore(), isFalse);
+        expect(platform.initCalls, 0);
+        expect(platform.lightweightCalls, 0);
+        expect(platform.tokenCalls, 0);
+      } finally {
+        GoogleSignInPlatform.instance = previous;
+      }
+    });
+
+    test('Android restore is tied to the saved account and never prompts', () async {
+      final previous = GoogleSignInPlatform.instance;
+      final platform = _SilentGooglePlatform();
+      GoogleSignInPlatform.instance = platform;
+      Map<String, String>? saved = {'id': 'google-id', 'email': 'a@example.com'};
+      try {
+        final auth = GoogleDriveAuth(
+          serverClientId: 'x.apps.googleusercontent.com',
+          configuredOverride: true,
+          isAndroidOverride: true,
+          loadSavedIdentity: () async => saved,
+          saveSavedIdentity: (value) async => saved = value,
+        );
+        expect(await auth.restore(), isTrue);
+        expect(auth.isConnected, isTrue);
+        expect(auth.accountId, 'google-id');
+        expect(auth.accountEmail, 'a@example.com');
+        expect(await auth.accessToken(), 'token');
+        expect(platform.lightweightCalls, 0);
+        expect(platform.lastRequest!.request.userId, 'google-id');
+        expect(platform.lastRequest!.request.email, 'a@example.com');
+        expect(platform.lastRequest!.request.promptIfUnauthorized, isFalse);
+        await auth.disconnect();
+        expect(saved, isNull);
+        expect(auth.isConnected, isFalse);
+        expect(platform.clearTokenCalls, 1);
+      } finally {
+        GoogleSignInPlatform.instance = previous;
+      }
+    });
+
+    test('a late Android restore cannot reconnect after disconnect', () async {
+      final previous = GoogleSignInPlatform.instance;
+      final platform = _SilentGooglePlatform();
+      final pendingToken = Completer<ClientAuthorizationTokenData?>();
+      platform.tokenHandler = (params) => pendingToken.future;
+      GoogleSignInPlatform.instance = platform;
+      Map<String, String>? saved = {'id': 'google-id', 'email': 'a@example.com'};
+      try {
+        final auth = GoogleDriveAuth(
+          serverClientId: 'x.apps.googleusercontent.com',
+          configuredOverride: true,
+          isAndroidOverride: true,
+          loadSavedIdentity: () async => saved,
+          saveSavedIdentity: (value) async => saved = value,
+        );
+        final restoring = auth.restore();
+        while (platform.tokenCalls == 0) {
+          await Future<void>.delayed(Duration.zero);
+        }
+        await auth.disconnect();
+        pendingToken.complete(
+          const ClientAuthorizationTokenData(accessToken: 'late-token'),
+        );
+        expect(await restoring, isFalse);
+        expect(saved, isNull);
+        expect(auth.isConnected, isFalse);
+        expect(auth.accountId, isNull);
+      } finally {
+        GoogleSignInPlatform.instance = previous;
+      }
+    });
+
+    test('a late Android restore cannot replace an explicit connection', () async {
+      final previous = GoogleSignInPlatform.instance;
+      final platform = _SilentGooglePlatform()
+        ..authenticationResult = const AuthenticationResults(
+          user: GoogleSignInUserData(id: 'new-id', email: 'new@example.com'),
+          authenticationTokens: AuthenticationTokenData(idToken: null),
+        );
+      final pendingToken = Completer<ClientAuthorizationTokenData?>();
+      platform.tokenHandler = (params) => params.request.promptIfUnauthorized
+          ? Future.value(const ClientAuthorizationTokenData(accessToken: 'explicit-token'))
+          : pendingToken.future;
+      GoogleSignInPlatform.instance = platform;
+      Map<String, String>? saved = {'id': 'old-id', 'email': 'old@example.com'};
+      try {
+        final auth = GoogleDriveAuth(
+          serverClientId: 'x.apps.googleusercontent.com',
+          configuredOverride: true,
+          isAndroidOverride: true,
+          loadSavedIdentity: () async => saved,
+          saveSavedIdentity: (value) async => saved = value,
+        );
+        final restoring = auth.restore();
+        while (platform.tokenCalls == 0) {
+          await Future<void>.delayed(Duration.zero);
+        }
+        await auth.connect();
+        pendingToken.complete(
+          const ClientAuthorizationTokenData(accessToken: 'late-token'),
+        );
+        expect(await restoring, isFalse);
+        expect(auth.accountId, 'new-id');
+        expect(auth.accountEmail, 'new@example.com');
+        expect(saved, {'id': 'new-id', 'email': 'new@example.com'});
+      } finally {
+        GoogleSignInPlatform.instance = previous;
+      }
+    });
+
+    test('a restore started during explicit connect cannot supersede it', () async {
+      final previous = GoogleSignInPlatform.instance;
+      final pendingToken = Completer<ClientAuthorizationTokenData?>();
+      final platform = _SilentGooglePlatform()
+        ..pendingAuthentication = Completer<AuthenticationResults>()
+        ..tokenHandler = (params) => params.request.promptIfUnauthorized
+            ? Future.value(const ClientAuthorizationTokenData(accessToken: 'explicit-token'))
+            : pendingToken.future;
+      GoogleSignInPlatform.instance = platform;
+      Map<String, String>? saved = {'id': 'old-id', 'email': 'old@example.com'};
+      try {
+        final auth = GoogleDriveAuth(
+          serverClientId: 'x.apps.googleusercontent.com',
+          configuredOverride: true,
+          isAndroidOverride: true,
+          loadSavedIdentity: () async => saved,
+          saveSavedIdentity: (value) async => saved = value,
+        );
+        final connecting = auth.connect();
+        while (platform.authenticateCalls == 0) {
+          await Future<void>.delayed(Duration.zero);
+        }
+        final restoring = auth.restore();
+        while (platform.tokenCalls == 0) {
+          await Future<void>.delayed(Duration.zero);
+        }
+        platform.pendingAuthentication!.complete(
+          const AuthenticationResults(
+            user: GoogleSignInUserData(id: 'new-id', email: 'new@example.com'),
+            authenticationTokens: AuthenticationTokenData(idToken: null),
+          ),
+        );
+        await connecting;
+        pendingToken.complete(
+          const ClientAuthorizationTokenData(accessToken: 'restored-token'),
+        );
+        expect(await restoring, isFalse);
+        expect(auth.accountId, 'new-id');
+        expect(auth.accountEmail, 'new@example.com');
+        expect(saved, {'id': 'new-id', 'email': 'new@example.com'});
+      } finally {
+        GoogleSignInPlatform.instance = previous;
+      }
+    });
+
+    test('a pre-session sync binding survives Android restore without saved identity', () async {
+      final device = await Device.create(MemoryCloud());
+      final previous = GoogleSignInPlatform.instance;
+      final platform = _SilentGooglePlatform();
+      GoogleSignInPlatform.instance = platform;
+      final oldBinding = {
+        'id': syncHash('person-a'),
+        'email': 'person-a@example.test',
+      };
+      try {
+        await device.repo.setSetting('sync.account', oldBinding);
+        final auth = GoogleDriveAuth(
+          serverClientId: 'x.apps.googleusercontent.com',
+          configuredOverride: true,
+          isAndroidOverride: true,
+          loadSavedIdentity: () async {
+            final raw = await device.repo.getSetting('sync.googleSession');
+            return raw is Map && raw['id'] is String && raw['email'] is String
+                ? {'id': raw['id'] as String, 'email': raw['email'] as String}
+                : null;
+          },
+          saveSavedIdentity: (value) =>
+              device.repo.setSetting('sync.googleSession', value),
+        );
+        final service = GoogleDriveSyncService(
+          repository: device.repo,
+          auth: auth,
+          store: MemoryCloud(),
+        );
+        expect(await service.restore(), isFalse);
+        expect(auth.isConnected, isFalse);
+        expect(await device.repo.getSetting('sync.account'), oldBinding);
+        expect(await device.repo.getSetting('sync.googleSession'), isNull);
+        expect(platform.initCalls, 0);
+        expect(platform.tokenCalls, 0);
+      } finally {
+        GoogleSignInPlatform.instance = previous;
+        await device.close();
+      }
+    });
+
+    test('disconnect identity clear is ordered after a pending connect save', () async {
+      final previous = GoogleSignInPlatform.instance;
+      final platform = _SilentGooglePlatform()
+        ..authenticationResult = const AuthenticationResults(
+          user: GoogleSignInUserData(id: 'new-id', email: 'new@example.com'),
+          authenticationTokens: AuthenticationTokenData(idToken: null),
+        );
+      GoogleSignInPlatform.instance = platform;
+      final saveStarted = Completer<void>();
+      final finishSave = Completer<void>();
+      Map<String, String>? saved;
+      try {
+        final auth = GoogleDriveAuth(
+          serverClientId: 'x.apps.googleusercontent.com',
+          configuredOverride: true,
+          isAndroidOverride: true,
+          saveSavedIdentity: (value) async {
+            if (value != null) {
+              saveStarted.complete();
+              await finishSave.future;
+            }
+            saved = value;
+          },
+        );
+        final connecting = auth.connect();
+        await saveStarted.future;
+        final disconnecting = auth.disconnect();
+        finishSave.complete();
+        await Future.wait([connecting, disconnecting]);
+        expect(saved, isNull);
+        expect(auth.isConnected, isFalse);
+      } finally {
+        GoogleSignInPlatform.instance = previous;
+      }
+    });
+
     test('a failed initialization is retried instead of cached forever',
         () async {
       final gate = InitializationGate();
