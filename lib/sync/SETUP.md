@@ -33,9 +33,10 @@ scope, so no Google verification review is needed for it.
 Android needs nothing else natively: `INTERNET` is declared, the plugin adds its
 own wiring. R8/minify rules for the plugin are the Android owner's concern.
 
-`GoogleDriveAuth` (`google_auth.dart`): silent restore on start
-(`attemptLightweightAuthentication`, never throws); interactive
-`authenticate` + `authorizeScopes` only from a user tap; every request takes a
+`GoogleDriveAuth` (`google_auth.dart`): after an explicit Connect action, try
+`attemptLightweightAuthentication` for a saved session, then fall back to
+interactive `authenticate` + `authorizeScopes` if needed. Startup makes no
+Google authorization request. Every manual sync request takes a
 token from `authorizationForScopes`; a 401 clears the rejected token and asks
 the platform for a new one once; sign-out clears the token and revokes the grant
 (best effort, falls back to a plain sign-out).
