@@ -27,6 +27,7 @@ using System.Text;
 using System.Threading;
 using System.Diagnostics;
 using System.IO;
+using System.Collections.Generic;
 
 public static class SingbookBuildJob
 {
@@ -40,6 +41,7 @@ public static class SingbookBuildJob
     private const uint WaitObject0 = 0x00000000;
     private const uint Infinite = 0xFFFFFFFF;
     private const uint ProcThreadAttributeJobList = 0x0002000D;
+    private const uint ProcThreadAttributeHandleList = 0x00020002;
     private const int JobObjectBasicAccountingInformation = 1;
     private const int CleanupTimeoutMilliseconds = 5000;
 
@@ -165,6 +167,13 @@ public static class SingbookBuildJob
     [DllImport("kernel32.dll", SetLastError = true)]
     private static extern IntPtr GetStdHandle(int standardHandle);
 
+    [DllImport("kernel32.dll")]
+    private static extern IntPtr GetCurrentProcess();
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern bool DuplicateHandle(IntPtr sourceProcess, IntPtr sourceHandle,
+        IntPtr targetProcess, out IntPtr targetHandle, uint access, bool inherit, uint options);
+
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern bool CreateProcess(string applicationName, StringBuilder commandLine,
         IntPtr processAttributes, IntPtr threadAttributes, bool inheritHandles,
@@ -195,7 +204,10 @@ public static class SingbookBuildJob
         ProcessInformation process = new ProcessInformation();
         bool processCreated = false;
         IntPtr attributeList = IntPtr.Zero;
+        bool attributeListInitialized = false;
         IntPtr jobHandleArray = IntPtr.Zero;
+        IntPtr standardHandleArray = IntPtr.Zero;
+        List<IntPtr> standardHandles = new List<IntPtr>();
         ConsoleCancelEventHandler cancelHandler = null;
         EventWaitHandle testCreatedEvent = null;
         EventWaitHandle testResumeEvent = null;
@@ -217,12 +229,22 @@ public static class SingbookBuildJob
             if (!String.IsNullOrEmpty(testResumeEventName))
                 testResumeEvent = EventWaitHandle.OpenExisting(testResumeEventName);
 
+            StartupInfoEx startup = new StartupInfoEx();
+            startup.StartupInfo.cb = (uint)Marshal.SizeOf(typeof(StartupInfoEx));
+            startup.StartupInfo.hStdInput = DuplicateStandardHandle(-10, standardHandles);
+            startup.StartupInfo.hStdOutput = DuplicateStandardHandle(-11, standardHandles);
+            startup.StartupInfo.hStdError = DuplicateStandardHandle(-12, standardHandles);
+            bool inheritStandardHandles = standardHandles.Count != 0;
+            startup.StartupInfo.dwFlags = inheritStandardHandles ? StartfUseStdHandles : 0;
+
+            int attributeCount = inheritStandardHandles ? 2 : 1;
             IntPtr attributeListSize = IntPtr.Zero;
-            InitializeProcThreadAttributeList(IntPtr.Zero, 1, 0, ref attributeListSize);
+            InitializeProcThreadAttributeList(IntPtr.Zero, attributeCount, 0, ref attributeListSize);
             Check(attributeListSize != IntPtr.Zero, "InitializeProcThreadAttributeList(size)");
             attributeList = Marshal.AllocHGlobal(attributeListSize);
-            Check(InitializeProcThreadAttributeList(attributeList, 1, 0, ref attributeListSize),
+            Check(InitializeProcThreadAttributeList(attributeList, attributeCount, 0, ref attributeListSize),
                 "InitializeProcThreadAttributeList");
+            attributeListInitialized = true;
             jobHandleArray = Marshal.AllocHGlobal(IntPtr.Size);
             Marshal.WriteIntPtr(jobHandleArray, job.Handle);
             Check(UpdateProcThreadAttribute(attributeList, 0,
@@ -230,20 +252,17 @@ public static class SingbookBuildJob
                 new IntPtr(IntPtr.Size), IntPtr.Zero, IntPtr.Zero),
                 "UpdateProcThreadAttribute(job list)");
 
-            StartupInfoEx startup = new StartupInfoEx();
-            startup.StartupInfo.cb = (uint)Marshal.SizeOf(typeof(StartupInfoEx));
-            startup.AttributeList = attributeList;
-            startup.StartupInfo.hStdInput = GetStdHandle(-10);
-            startup.StartupInfo.hStdOutput = GetStdHandle(-11);
-            startup.StartupInfo.hStdError = GetStdHandle(-12);
-            IntPtr invalidHandle = new IntPtr(-1);
-            bool inheritStandardHandles = startup.StartupInfo.hStdInput != IntPtr.Zero && startup.StartupInfo.hStdInput != invalidHandle &&
-                startup.StartupInfo.hStdOutput != IntPtr.Zero && startup.StartupInfo.hStdOutput != invalidHandle &&
-                startup.StartupInfo.hStdError != IntPtr.Zero && startup.StartupInfo.hStdError != invalidHandle;
             if (inheritStandardHandles)
-                startup.StartupInfo.dwFlags = StartfUseStdHandles;
-            else
-                startup.StartupInfo.dwFlags = 0;
+            {
+                standardHandleArray = Marshal.AllocHGlobal(IntPtr.Size * standardHandles.Count);
+                for (int index = 0; index < standardHandles.Count; index++)
+                    Marshal.WriteIntPtr(standardHandleArray, IntPtr.Size * index, standardHandles[index]);
+                Check(UpdateProcThreadAttribute(attributeList, 0,
+                    new IntPtr(ProcThreadAttributeHandleList), standardHandleArray,
+                    new IntPtr(IntPtr.Size * standardHandles.Count), IntPtr.Zero, IntPtr.Zero),
+                    "UpdateProcThreadAttribute(standard handle list)");
+            }
+            startup.AttributeList = attributeList;
 
             StringBuilder commandLine = new StringBuilder(Quote(filePath));
             foreach (string argument in arguments)
@@ -330,16 +349,37 @@ public static class SingbookBuildJob
 
                 if (attributeList != IntPtr.Zero)
                 {
-                    DeleteProcThreadAttributeList(attributeList);
+                    if (attributeListInitialized)
+                        DeleteProcThreadAttributeList(attributeList);
                     Marshal.FreeHGlobal(attributeList);
                 }
                 if (jobHandleArray != IntPtr.Zero)
                     Marshal.FreeHGlobal(jobHandleArray);
+                if (standardHandleArray != IntPtr.Zero)
+                    Marshal.FreeHGlobal(standardHandleArray);
+                foreach (IntPtr handle in standardHandles)
+                    if (!CloseHandle(handle) && cleanupFailure == null)
+                        cleanupFailure = new Win32Exception(Marshal.GetLastWin32Error(), "CloseHandle(standard duplicate) failed");
                 if (testCreatedEvent != null) testCreatedEvent.Dispose();
                 if (testResumeEvent != null) testResumeEvent.Dispose();
             }
             if (cleanupFailure != null) throw cleanupFailure;
         }
+    }
+
+    private static IntPtr DuplicateStandardHandle(int kind, List<IntPtr> ownedHandles)
+    {
+        IntPtr original = GetStdHandle(kind);
+        if (original == IntPtr.Zero || original == new IntPtr(-1))
+            return IntPtr.Zero;
+        IntPtr duplicate;
+        IntPtr current = GetCurrentProcess();
+        // Do not mutate the caller's inheritance flags. Only these owned,
+        // inheritable duplicates appear in PROC_THREAD_ATTRIBUTE_HANDLE_LIST.
+        Check(DuplicateHandle(current, original, current, out duplicate, 0, true, 2),
+            "DuplicateHandle(standard stream)");
+        ownedHandles.Add(duplicate);
+        return duplicate;
     }
 
     private static void RequestJobTermination(JobState job, uint exitCode)
