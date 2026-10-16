@@ -912,10 +912,9 @@ class AppControllerAdapter extends VerseUiController {
       sameRecording: sameRecording,
       matchSummary: pendingVerification
           ? 'pending'
-          : result.matchReason ??
-                (result.matchKind == MatchKind.sameRecording && !sameRecording
-                    ? 'identity_mismatch'
-                    : ''),
+          : result.matchKind == MatchKind.sameRecording && !sameRecording
+          ? 'identity_mismatch'
+          : result.matchReason ?? '',
       status: isChecking
           ? LoadState.loading
           : check?.state == 'failed' || check?.state == 'unavailable'

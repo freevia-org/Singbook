@@ -1255,6 +1255,7 @@ void main() {
       ),
       body: '[C]First lyric line\n[F]Second lyric line',
       matchKind: MatchKind.sameRecording,
+      matchReason: 'same_recording',
     );
     final discovery = _StreamingDiscovery(
       candidate,
