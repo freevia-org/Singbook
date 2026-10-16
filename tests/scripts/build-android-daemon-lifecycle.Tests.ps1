@@ -172,10 +172,10 @@ exit /b %SINGBOOK_BUILD_JOB_FIXTURE_EXIT%
 
     # Kill a supervisor without running its finally block; closing its native
     # job handle must still reap both owned processes and leave a sibling alone.
-    $sibling = Start-Process -FilePath $powerShell -ArgumentList @('-NoProfile', '-File', $holdScript) -PassThru -WindowStyle Hidden
+    $sibling = & (Join-Path $PSScriptRoot 'start-hidden-process.ps1') -FilePath $powerShell -ArgumentList @('-NoProfile', '-File', $holdScript)
     $record = Join-Path $testRoot 'hard-kill.pids'
     $supervisorArguments = @('-NoProfile', '-File', $PSCommandPath, '-RunAsSupervisor', '-RecordPath', $record, '-Fixture', $fixture, '-HoldScript', $holdScript, '-RepoRoot', $repoRoot)
-    $supervisor = Start-Process -FilePath $powerShell -ArgumentList $supervisorArguments -PassThru -WindowStyle Hidden
+    $supervisor = & (Join-Path $PSScriptRoot 'start-hidden-process.ps1') -FilePath $powerShell -ArgumentList $supervisorArguments
     $deadline = [DateTime]::UtcNow.AddSeconds(15)
     while (-not (Test-Path -LiteralPath $record) -and [DateTime]::UtcNow -lt $deadline) { Start-Sleep -Milliseconds 100 }
     Assert-True (Test-Path -LiteralPath $record) 'Hard-kill supervisor did not start the worker fixture.'
@@ -195,7 +195,7 @@ exit /b %SINGBOOK_BUILD_JOB_FIXTURE_EXIT%
     $resumeSignal = [Threading.EventWaitHandle]::new($false, [Threading.EventResetMode]::ManualReset, $resumeEventName)
     $record = Join-Path $testRoot 'atomic-admission.pids'
     $gateArguments = @('-NoProfile', '-File', $PSCommandPath, '-RunAsSupervisor', '-RunAtomicGate', '-RecordPath', $record, '-Fixture', $fixture, '-HoldScript', $holdScript, '-RepoRoot', $repoRoot, '-CreatedEventName', $createdEventName, '-ResumeEventName', $resumeEventName)
-    $supervisor = Start-Process -FilePath $powerShell -ArgumentList $gateArguments -PassThru -WindowStyle Hidden
+    $supervisor = & (Join-Path $PSScriptRoot 'start-hidden-process.ps1') -FilePath $powerShell -ArgumentList $gateArguments
     try {
         Assert-True ($createdSignal.WaitOne(15000)) 'Atomic-admission owner did not report successful process creation.'
         Assert-True (Test-Path -LiteralPath $record) 'Atomic-admission worker PID was not recorded.'

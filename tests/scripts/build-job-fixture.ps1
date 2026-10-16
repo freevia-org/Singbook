@@ -10,7 +10,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $powerShell = [Diagnostics.Process]::GetCurrentProcess().MainModule.FileName
-$grandchild = Start-Process -FilePath $powerShell -ArgumentList @('-NoProfile', '-File', $HoldScript) -PassThru -WindowStyle Hidden
+$grandchild = & (Join-Path $PSScriptRoot 'start-hidden-process.ps1') -FilePath $powerShell -ArgumentList @('-NoProfile', '-File', $HoldScript)
 [IO.File]::WriteAllText($RecordPath, "$PID`n$($grandchild.Id)")
 
 switch ($Mode) {
