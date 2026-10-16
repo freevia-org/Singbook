@@ -415,7 +415,11 @@ void main() {
       final previous = GoogleSignInPlatform.instance;
       final platform = _SilentGooglePlatform()
         ..authenticationResult = const AuthenticationResults(
-          user: GoogleSignInUserData(id: 'new-id', email: 'new@example.com'),
+          user: GoogleSignInUserData(
+            id: 'new-id',
+            email: 'new@example.com',
+            photoUrl: 'https://example.test/avatar.jpg',
+          ),
           authenticationTokens: AuthenticationTokenData(idToken: null),
         );
       GoogleSignInPlatform.instance = platform;
@@ -428,8 +432,13 @@ void main() {
           saveSavedIdentity: (value) async => saved = value,
         );
         await auth.connect();
-        expect(saved, {'id': 'new-id', 'email': 'new@example.com'});
+        expect(saved, {
+          'id': 'new-id',
+          'email': 'new@example.com',
+          'photoUrl': 'https://example.test/avatar.jpg',
+        });
         expect(auth.accountId, 'new-id');
+        expect(auth.accountPhotoUrl, 'https://example.test/avatar.jpg');
         expect(platform.lastRequest!.request.promptIfUnauthorized, isTrue);
       } finally {
         GoogleSignInPlatform.instance = previous;
@@ -460,7 +469,11 @@ void main() {
       final previous = GoogleSignInPlatform.instance;
       final platform = _SilentGooglePlatform();
       GoogleSignInPlatform.instance = platform;
-      Map<String, String>? saved = {'id': 'google-id', 'email': 'a@example.com'};
+      Map<String, String>? saved = {
+        'id': 'google-id',
+        'email': 'a@example.com',
+        'photoUrl': 'https://example.test/avatar.jpg',
+      };
       try {
         final auth = GoogleDriveAuth(
           serverClientId: 'x.apps.googleusercontent.com',
@@ -473,6 +486,7 @@ void main() {
         expect(auth.isConnected, isTrue);
         expect(auth.accountId, 'google-id');
         expect(auth.accountEmail, 'a@example.com');
+        expect(auth.accountPhotoUrl, 'https://example.test/avatar.jpg');
         expect(await auth.accessToken(), 'token');
         expect(platform.lightweightCalls, 0);
         expect(platform.lastRequest!.request.userId, 'google-id');

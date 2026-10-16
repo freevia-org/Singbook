@@ -44,6 +44,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get navBack => '뒤로';
 
   @override
+  String get appExitBackAgain => '종료하려면 뒤로를 한 번 더 누르세요';
+
+  @override
   String get navClose => '닫기';
 
   @override

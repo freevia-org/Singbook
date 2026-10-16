@@ -45,6 +45,9 @@ class AppLocalizationsEl extends AppLocalizations {
   String get navBack => 'Πίσω';
 
   @override
+  String get appExitBackAgain => 'Πατήστε ξανά Πίσω για έξοδο';
+
+  @override
   String get navClose => 'Κλείσιμο';
 
   @override

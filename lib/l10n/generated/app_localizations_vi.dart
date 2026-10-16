@@ -45,6 +45,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get navBack => 'Quay lại';
 
   @override
+  String get appExitBackAgain => 'Nhấn Quay lại lần nữa để thoát';
+
+  @override
   String get navClose => 'Đóng';
 
   @override

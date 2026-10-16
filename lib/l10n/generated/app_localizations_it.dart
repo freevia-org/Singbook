@@ -45,6 +45,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get navBack => 'Indietro';
 
   @override
+  String get appExitBackAgain => 'Premi di nuovo Indietro per uscire';
+
+  @override
   String get navClose => 'Chiudi';
 
   @override

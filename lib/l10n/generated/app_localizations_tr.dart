@@ -45,6 +45,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get navBack => 'Geri';
 
   @override
+  String get appExitBackAgain => 'Çıkmak için Geri düğmesine tekrar basın';
+
+  @override
   String get navClose => 'Kapat';
 
   @override

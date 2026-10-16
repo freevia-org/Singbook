@@ -22,6 +22,11 @@ abstract interface class RefreshableAuthorization {
   Future<String> refreshAccessToken();
 }
 
+/// Optional identity detail used to show the connected Google account.
+abstract interface class ProfilePhotoAuthorization {
+  String? get accountPhotoUrl;
+}
+
 /// Runs an initializer at most once *successfully*: a failure is not cached,
 /// so a transient error (no network, Play services busy) can be retried.
 class InitializationGate {
@@ -62,7 +67,8 @@ class InitializationGate {
 ///    the reversed client id URL scheme in `Info.plist`.
 ///  * Android needs nothing else natively: `INTERNET` is already declared and
 ///    the plugin brings its own activity/Play services wiring.
-class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
+class GoogleDriveAuth
+    implements DriveAuthorization, RefreshableAuthorization, ProfilePhotoAuthorization {
   GoogleDriveAuth({
     this.serverClientId = const String.fromEnvironment(
       'VERSE_GOOGLE_SERVER_CLIENT_ID',
@@ -84,7 +90,7 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
   bool get _isAndroid => isAndroidOverride ?? Platform.isAndroid;
   static final InitializationGate _gate = InitializationGate();
   GoogleSignInAccount? _account;
-  String? _restoredId, _restoredEmail;
+  String? _restoredId, _restoredEmail, _restoredPhotoUrl;
   int _epoch = 0;
   int _restoreGeneration = 0;
   Future<void> _identityWrites = Future<void>.value();
@@ -101,6 +107,8 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
   String? get accountId => _account?.id ?? _restoredId;
   @override
   String? get accountEmail => _account?.email ?? _restoredEmail;
+  @override
+  String? get accountPhotoUrl => _account?.photoUrl ?? _restoredPhotoUrl;
   Future<void> _initialize() async {
     if (!configured) throw const SyncException('not_configured');
     try {
@@ -126,7 +134,9 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
       // account without asking the user to pick it again.
       try {
         await existing.authorizationClient.authorizeScopes(scopes);
-        if (epoch == _epoch) await _remember(existing.id, existing.email);
+        if (epoch == _epoch) {
+          await _remember(existing.id, existing.email, existing.photoUrl);
+        }
         return;
       } on GoogleSignInException catch (e) {
         if (e.code == GoogleSignInExceptionCode.canceled) {
@@ -143,8 +153,8 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
       await account.authorizationClient.authorizeScopes(scopes);
       if (epoch != _epoch) return;
       _account = account;
-      _restoredId = _restoredEmail = null;
-      await _remember(account.id, account.email);
+      _restoredId = _restoredEmail = _restoredPhotoUrl = null;
+      await _remember(account.id, account.email, account.photoUrl);
     } on GoogleSignInException catch (e) {
       throw SyncException(
         e.code == GoogleSignInExceptionCode.canceled
@@ -183,6 +193,7 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
         }
         _restoredId = id;
         _restoredEmail = email;
+        _restoredPhotoUrl = identity?['photoUrl'];
         return true;
       }
       await _initialize();
@@ -291,8 +302,8 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
     ++_epoch;
     ++_restoreGeneration;
     _account = null;
-    _restoredId = _restoredEmail = null;
-    await _remember(null, null);
+    _restoredId = _restoredEmail = _restoredPhotoUrl = null;
+    await _remember(null, null, null);
     if (!_gate.started) return;
     try {
       final authorization = await account?.authorizationClient
@@ -326,12 +337,16 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
     }
   }
 
-  Future<void> _remember(String? id, String? email) async {
+  Future<void> _remember(String? id, String? email, String? photoUrl) async {
     final save = saveSavedIdentity;
     if (save == null) return;
     final identity = id == null || email == null
         ? null
-        : {'id': id, 'email': email};
+        : {
+            'id': id,
+            'email': email,
+            'photoUrl': ?photoUrl,
+          };
     final write = _identityWrites
         .catchError((Object _) {})
         .then<void>((_) => save(identity));

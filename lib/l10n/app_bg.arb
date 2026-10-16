@@ -1,7 +1,9 @@
 {
   "@@locale": "bg",
   "appTitle": "Singbook", "aboutDescription": "Спокойно място за намиране, подреждане и пеене от вашата песенна библиотека.", "aboutMadeForSinging": "Създадено за пеене заедно", "appVersion": "Версия {version}", "@appVersion": {"placeholders": {"version": {"type": "String"}}},
-  "navHome": "Начало", "navSongs": "Песни", "navSetlists": "Списъци с песни", "navSettings": "Настройки", "navSettingsCompact": "Настройки", "navSearch": "Търсене", "navBack": "Назад", "navClose": "Затваряне", "navMore": "Още действия",
+  "navHome": "Начало", "navSongs": "Песни", "navSetlists": "Списъци с песни", "navSettings": "Настройки", "navSettingsCompact": "Настройки", "navSearch": "Търсене", "navBack": "Назад",
+  "appExitBackAgain": "Натиснете Назад отново за изход",
+  "navClose": "Затваряне", "navMore": "Още действия",
   "actionCancel": "Отказ", "actionSave": "Запазване", "actionDone": "Готово", "actionEdit": "Редактиране", "actionDelete": "Изтриване", "actionShare": "Споделяне", "actionPrint": "Печат", "actionCopy": "Копиране", "actionClear": "Изчистване", "actionRetry": "Опитай отново", "actionRefresh": "Опресняване", "actionImport": "Импортиране", "actionExport": "Експортиране", "actionExpand": "Разгъване", "actionCollapse": "Свиване", "actionAdd": "Добавяне", "actionCreate": "Създаване", "actionRemove": "Премахване", "actionDuplicate": "Дублиране", "actionMoveUp": "Преместване нагоре", "actionMoveDown": "Преместване надолу", "actionPrevious": "Предишен", "actionNext": "Следващ",
   "searchHint": "Търсене на песни, изпълнители или текст", "searchCatalogHint": "Търсене на песен или изпълнител", "searchChangeSong": "Смени песента",
   "searchSelectedPreview": "Избран преглед",

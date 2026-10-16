@@ -45,6 +45,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navBack => 'رجوع';
 
   @override
+  String get appExitBackAgain => 'اضغط رجوع مرة أخرى للخروج';
+
+  @override
   String get navClose => 'إغلاق';
 
   @override

@@ -45,6 +45,9 @@ class AppLocalizationsLt extends AppLocalizations {
   String get navBack => 'Atgal';
 
   @override
+  String get appExitBackAgain => 'Norėdami išeiti, dar kartą paspauskite Atgal';
+
+  @override
   String get navClose => 'Uždaryti';
 
   @override

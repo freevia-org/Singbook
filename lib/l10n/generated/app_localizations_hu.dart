@@ -45,6 +45,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get navBack => 'Vissza';
 
   @override
+  String get appExitBackAgain => 'A kilépéshez nyomja meg újra a Vissza gombot';
+
+  @override
   String get navClose => 'Bezárás';
 
   @override

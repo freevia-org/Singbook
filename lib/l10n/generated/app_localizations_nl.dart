@@ -45,6 +45,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get navBack => 'Terug';
 
   @override
+  String get appExitBackAgain => 'Druk nogmaals op Terug om af te sluiten';
+
+  @override
   String get navClose => 'Sluiten';
 
   @override

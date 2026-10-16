@@ -1,7 +1,9 @@
 {
   "@@locale": "uk",
   "appTitle": "Singbook", "aboutDescription": "Затишне місце, щоб знаходити, упорядковувати й співати зі своєї бібліотеки пісень.", "aboutMadeForSinging": "Створено для спільного співу", "appVersion": "Версія {version}", "@appVersion": {"placeholders": {"version": {"type": "String"}}},
-  "navHome": "Головна", "navSongs": "Пісні", "navSetlists": "Сетлисти", "navSettings": "Налаштування", "navSettingsCompact": "Параметри", "navSearch": "Пошук", "navBack": "Назад", "navClose": "Закрити", "navMore": "Інші дії",
+  "navHome": "Головна", "navSongs": "Пісні", "navSetlists": "Сетлисти", "navSettings": "Налаштування", "navSettingsCompact": "Параметри", "navSearch": "Пошук", "navBack": "Назад",
+  "appExitBackAgain": "Натисніть «Назад» ще раз, щоб вийти",
+  "navClose": "Закрити", "navMore": "Інші дії",
   "actionCancel": "Скасувати", "actionSave": "Зберегти", "actionDone": "Готово", "actionEdit": "Редагувати", "actionDelete": "Видалити", "actionShare": "Поділитися", "actionPrint": "Друк", "actionCopy": "Копіювати", "actionClear": "Очистити", "actionRetry": "Повторити", "actionRefresh": "Оновити", "actionImport": "Імпортувати", "actionExport": "Експортувати", "actionExpand": "Розгорнути", "actionCollapse": "Згорнути", "actionAdd": "Додати", "actionCreate": "Створити", "actionRemove": "Прибрати", "actionDuplicate": "Дублювати", "actionMoveUp": "Перемістити вгору", "actionMoveDown": "Перемістити вниз", "actionPrevious": "Попередній", "actionNext": "Наступний",
   "searchHint": "Шукайте пісні, виконавців або слова", "searchCatalogHint": "Шукайте пісню або виконавця", "searchChangeSong": "Змінити пісню",
   "searchSelectedPreview": "Вибраний перегляд",

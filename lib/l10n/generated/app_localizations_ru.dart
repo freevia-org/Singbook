@@ -45,6 +45,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get navBack => 'Назад';
 
   @override
+  String get appExitBackAgain => 'Нажмите «Назад» ещё раз, чтобы выйти';
+
+  @override
   String get navClose => 'Закрыть';
 
   @override

@@ -5,6 +5,7 @@ import 'package:singbook/l10n/generated/app_localizations_bg.dart';
 import 'package:singbook/l10n/generated/app_localizations_en.dart';
 import 'package:singbook/l10n/generated/app_localizations_uk.dart';
 import 'package:singbook/ui/localized_labels.dart';
+import 'package:singbook/ui/account_avatar.dart';
 import 'package:singbook/ui/theme/verse_theme.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
 
@@ -191,10 +192,10 @@ void main() {
       expect(c.calls.where((call) => call == 'syncNow'), hasLength(1));
     });
 
-    testWidgets('sync is explicit even with a legacy automatic setting', (tester) async {
+    testWidgets('automatic sync is enabled and explained', (tester) async {
       final c = await _pump(tester, () => _account(autoSync: true));
       expect(find.byKey(const ValueKey('account-auto-sync')), findsNothing);
-      expect(find.text(l10nOf(tester).accountManualSyncHint), findsOneWidget);
+      expect(find.text(l10nOf(tester).accountAutoSync), findsOneWidget);
       expect(c.calls, isEmpty);
       await _tapKey(tester, 'account-sync-now');
       expect(c.calls, contains('syncNow'));
@@ -537,7 +538,13 @@ void main() {
         _account(syncedAt: DateTime.now()),
         (l) => l.accountStatusSynced,
       );
-      expect(find.byIcon(Icons.cloud_done_rounded), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('cloud-button')),
+          matching: find.byType(AccountAvatar),
+        ),
+        findsOneWidget,
+      );
       await expectTooltip(tester, _account(), (l) => l.accountStatusSignedIn);
       await expectTooltip(
         tester,
@@ -556,7 +563,7 @@ void main() {
         _account(error: 'network'),
         (l) => l.accountStatusError,
       );
-      expect(find.byType(Badge), findsOneWidget);
+      expect(find.byKey(const ValueKey('cloud-status-error')), findsOneWidget);
     });
 
     testWidgets('is a 48dp target that opens the account section', (

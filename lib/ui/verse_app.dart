@@ -8,6 +8,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import '../application/app_controller.dart';
 import '../application/file_actions.dart';
 import '../l10n/generated/app_localizations.dart';
+import 'account_avatar.dart';
 import 'app_controller_adapter.dart';
 import 'home/home_screen.dart';
 import 'library/editor_screen.dart';
@@ -406,6 +407,8 @@ void _ignoreSyncSettingsRequest() {}
 class _VerseAppShellState extends State<VerseAppShell>
     with WidgetsBindingObserver {
   StreamSubscription<UiNotice>? _notices;
+  Timer? _exitBackTimer;
+  bool _exitBackArmed = false;
 
   /// The account-change dialog was shown for the current `account_changed`
   /// stop; cleared when the stop is resolved so it can appear again.
@@ -438,6 +441,7 @@ class _VerseAppShellState extends State<VerseAppShell>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _notices?.cancel();
+    _exitBackTimer?.cancel();
     super.dispose();
   }
 
@@ -460,6 +464,13 @@ class _VerseAppShellState extends State<VerseAppShell>
 
   bool _backInFlight = false;
 
+  void _disarmExitBack() {
+    _exitBackTimer?.cancel();
+    _exitBackTimer = null;
+    if (!_exitBackArmed || !mounted) return;
+    setState(() => _exitBackArmed = false);
+  }
+
   /// Goes back, first asking whether unsaved editor changes may be discarded.
   Future<void> _requestBack() async {
     if (_backInFlight) return;
@@ -478,6 +489,30 @@ class _VerseAppShellState extends State<VerseAppShell>
         state.homeListMode == HomeListMode.online &&
         state.comparison != null) {
       widget.controller.changeSearchSong();
+      return;
+    }
+    if (state.route == VerseRoute.main && state.activeTab != VerseTab.home) {
+      _disarmExitBack();
+      widget.controller.setTab(VerseTab.home);
+      return;
+    }
+    if (state.route == VerseRoute.main && state.activeTab == VerseTab.home) {
+      final l10n = AppLocalizations.of(context);
+      if (_exitBackArmed) {
+        // PopScope now allows the platform back action to exit the root route.
+        return;
+      }
+      setState(() => _exitBackArmed = true);
+      _exitBackTimer?.cancel();
+      _exitBackTimer = Timer(const Duration(seconds: 2), _disarmExitBack);
+      ScaffoldMessenger.maybeOf(context)
+        ?..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(l10n.appExitBackAgain),
+            duration: const Duration(seconds: 2),
+          ),
+        );
       return;
     }
     if (state.route == VerseRoute.editor && state.editorDirty) {
@@ -539,22 +574,48 @@ class _VerseAppShellState extends State<VerseAppShell>
     } else if (!state.syncSignedIn) {
       tooltip = failed ? l10n.accountStatusError : l10n.accountStatusSignedOut;
       icon = _badged(const Icon(Icons.cloud_outlined), failed, scheme);
-    } else if (state.syncBusy) {
-      tooltip = l10n.accountStatusSyncing;
-      icon = const SizedBox(
-        width: 22,
-        height: 22,
-        child: CircularProgressIndicator(strokeWidth: 2.4),
-      );
-    } else if (failed) {
-      tooltip = l10n.accountStatusError;
-      icon = _badged(const Icon(Icons.cloud_rounded), true, scheme);
-    } else if (state.lastSyncAt != null) {
-      tooltip = l10n.accountStatusSynced;
-      icon = const Icon(Icons.cloud_done_rounded);
     } else {
-      tooltip = l10n.accountStatusSignedIn;
-      icon = const Icon(Icons.cloud_queue_rounded);
+      tooltip = state.syncBusy
+          ? l10n.accountStatusSyncing
+          : failed
+          ? l10n.accountStatusError
+          : state.lastSyncAt != null
+          ? l10n.accountStatusSynced
+          : l10n.accountStatusSignedIn;
+      icon = Stack(
+        clipBehavior: Clip.none,
+        children: [
+          AccountAvatar(photoUrl: state.accountPhotoUrl, size: 32),
+          if (state.syncBusy)
+            Positioned(
+              right: -2,
+              bottom: -2,
+              child: SizedBox(
+                width: 14,
+                height: 14,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: scheme.primary,
+                  backgroundColor: scheme.surface,
+                ),
+              ),
+            )
+          else if (failed)
+            Positioned(
+              right: -1,
+              top: -1,
+              child: DecoratedBox(
+                key: const ValueKey('cloud-status-error'),
+                decoration: BoxDecoration(
+                  color: scheme.error,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: scheme.surface, width: 1.5),
+                ),
+                child: const SizedBox(width: 10, height: 10),
+              ),
+            ),
+        ],
+      );
     }
     return IconButton(
       key: const ValueKey('cloud-button'),
@@ -625,6 +686,13 @@ class _VerseAppShellState extends State<VerseAppShell>
         state.activeTab == VerseTab.home &&
         state.homeListMode == HomeListMode.online &&
         state.comparison != null;
+    final homeRoot =
+        state.route == VerseRoute.main && state.activeTab == VerseTab.home;
+    if (!homeRoot && _exitBackArmed) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _exitBackArmed) _disarmExitBack();
+      });
+    }
     // Navigation follows available width so portrait tablets keep the rail.
     // A compact landscape phone gets it too, but only when the four rail
     // destinations (which do not scroll) fit under the app bar.
@@ -633,7 +701,7 @@ class _VerseAppShellState extends State<VerseAppShell>
         (size.width >= 600 || (size.width >= 500 && size.height <= 600)) &&
         size.height >= railHeight;
     return PopScope(
-      canPop: state.route == VerseRoute.main && !comparisonMode,
+      canPop: homeRoot && !comparisonMode && _exitBackArmed,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _requestBack();
       },

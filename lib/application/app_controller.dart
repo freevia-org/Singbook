@@ -37,14 +37,13 @@ class AppMessage {
 
 /// Owns durable application state; navigation and player clock stay in the UI.
 class AppController extends ChangeNotifier {
-  /// The timing arguments remain accepted for source compatibility. Drive sync
-  /// is on demand, so their values do not affect the controller.
+  /// The remaining timing arguments stay accepted for source compatibility.
   factory AppController({
     LibraryRepository? repository,
     SourceDiscoveryService? discovery,
     GoogleDriveSyncService? sync,
     YoutubeMusicConsent? youtubeMusicConsent,
-    Duration autoSyncDelay = const Duration(seconds: 25),
+    Duration autoSyncDelay = const Duration(seconds: 2),
     Duration autoSyncStartDelay = const Duration(seconds: 3),
     Duration autoSyncStaleAfter = const Duration(minutes: 5),
     Duration autoSyncBackoff = const Duration(seconds: 30),
@@ -52,7 +51,14 @@ class AppController extends ChangeNotifier {
   }) {
     final consent = youtubeMusicConsent ?? YoutubeMusicConsent();
     if (discovery != null) {
-      return AppController._(repository, discovery, null, sync, consent);
+      return AppController._(
+        repository,
+        discovery,
+        null,
+        sync,
+        consent,
+        autoSyncDelay,
+      );
     }
     final transport = ProviderTransport();
     return AppController._(
@@ -61,6 +67,7 @@ class AppController extends ChangeNotifier {
       transport,
       sync,
       consent,
+      autoSyncDelay,
     );
   }
 
@@ -70,6 +77,7 @@ class AppController extends ChangeNotifier {
     this._ownedTransport,
     this._sync,
     this.youtubeMusicConsent,
+    this._autoSyncDelay,
   );
   final YoutubeMusicConsent youtubeMusicConsent;
 
@@ -114,6 +122,7 @@ class AppController extends ChangeNotifier {
   bool get syncConfigured => _sync?.configured ?? false;
   bool get syncConnected => _sync?.isConnected ?? false;
   String? get syncAccountEmail => _sync?.accountEmail;
+  String? get syncAccountPhotoUrl => _sync?.accountPhotoUrl;
   bool syncBusy = false;
 
   /// Code of the first unusable remote/local file the last (otherwise
@@ -158,14 +167,17 @@ class AppController extends ChangeNotifier {
   /// with and the user has not chosen yet ([adoptAccount]).
   bool get syncAccountChangePending => syncError == 'account_changed';
 
-  /// Kept for compatibility with older callers. Cloud sync is always manual.
-  bool get autoSyncEnabled => false;
+  /// Automatic sync is enabled for signed-in accounts.
+  bool get autoSyncEnabled => true;
   int _searchEpoch = 0, _discoveryEpoch = 0;
   CancellationToken? _searchCancel, _discoveryCancel;
   CancellationToken? _youtubeDiscoveryCancel;
   String? _searchProviderId;
   bool _disposed = false;
   Future<void>? _activeSyncAction;
+  final Duration _autoSyncDelay;
+  Timer? _autoSyncTimer;
+  bool _autoSyncPending = false;
   final Map<String, String> _savedSources = {};
   final Map<String, String> _savedCombined = {};
   Map<String, String> _songHashes = {};
@@ -341,8 +353,8 @@ class AppController extends ChangeNotifier {
     _emit();
   }
 
-  /// Updates local account metadata after an explicit account action. This
-  /// does not list, fetch, or upload Drive files.
+  /// Updates local account metadata after an explicit account action, then
+  /// schedules a debounced sync for the signed-in account.
   Future<void> _afterSignIn() async {
     final sync = _sync!;
     final lastSuccess = await sync.lastSuccessfulSync();
@@ -359,6 +371,7 @@ class AppController extends ChangeNotifier {
     }
     syncPreviousAccountEmail = null;
     if (syncError == 'account_changed') syncError = null;
+    _scheduleAutoSync();
   }
 
   int _reloadEpoch = 0;
@@ -863,6 +876,7 @@ class AppController extends ChangeNotifier {
       _writesSinceCompaction = 0;
       unawaited(compactOutbox().then<void>((_) {}, onError: (Object _) {}));
     }
+    if (songsChanged) _scheduleAutoSync();
   }
 
   /// Collapses the change queue to the newest row per object. Without an
@@ -922,12 +936,10 @@ class AppController extends ChangeNotifier {
 
   Future<void> deleteSong(String id) => _tracked('delete', () async {
     await repository.deleteSong(id);
-    await _reload();
-    _indexSaved();
     recent.removeWhere(
       (event) => event.objectKind == 'song' && event.objectId == id,
     );
-    _emit();
+    await _afterWrite();
   });
 
   /// Toggles relative to the stored song, so a concurrent background change is
@@ -1107,8 +1119,8 @@ class AppController extends ChangeNotifier {
   // ---- Google Drive sync ------------------------------------------------
 
   /// Connects after an explicit user action. A saved session is tried first;
-  /// when it cannot be restored, the account picker is shown. Connecting only
-  /// updates local account metadata and never starts a Drive sync.
+  /// when it cannot be restored, the account picker is shown. A successful
+  /// connection schedules a debounced sync unless account adoption is needed.
   /// If the account differs from the one this library syncs with, the state
   /// becomes `account_changed` until [adoptAccount] is called.
   Future<void> connectSync() => _runSyncAction(() async {
@@ -1196,11 +1208,29 @@ class AppController extends ChangeNotifier {
     _indexSaved();
   }
 
+  void _scheduleAutoSync() {
+    if (_disposed || _sync?.isConnected != true) return;
+    _autoSyncPending = true;
+    _autoSyncTimer?.cancel();
+    _autoSyncTimer = Timer(_autoSyncDelay, _runScheduledAutoSync);
+  }
+
+  void _runScheduledAutoSync() {
+    _autoSyncTimer = null;
+    if (_disposed || !_autoSyncPending || _sync?.isConnected != true) return;
+    if (syncBusy) {
+      _autoSyncTimer = Timer(_autoSyncDelay, _runScheduledAutoSync);
+      return;
+    }
+    _autoSyncPending = false;
+    unawaited(_runSyncAction(_syncBody));
+  }
+
   /// Kept for lifecycle compatibility. Resuming never starts cloud work.
   void onAppResumed() {
   }
 
-  /// Kept for compatibility with older callers. Sync is always on demand.
+  /// Kept for compatibility with older callers. Automatic sync stays enabled.
   Future<void> setAutoSync(bool enabled) async {
   }
 
@@ -1211,6 +1241,9 @@ class AppController extends ChangeNotifier {
   Future<void> _runSyncAction(Future<void> Function() action) {
     if (syncBusy) return Future.value();
     if (_disposed) return Future.value();
+    _autoSyncTimer?.cancel();
+    _autoSyncTimer = null;
+    _autoSyncPending = false;
     if (_sync == null) {
       // Before initialize() there is nothing to sync with: a handled state, not
       // a crash.
@@ -1401,14 +1434,15 @@ class AppController extends ChangeNotifier {
         }
         if (toWrite.isNotEmpty || newSets.isNotEmpty) {
           await repository.importCollection(toWrite, newSets);
+          await _afterWrite(songsChanged: toWrite.isNotEmpty);
         }
-        await _afterWrite();
         return ImportedCollection(incoming, importedSets);
       });
 
   @override
   void dispose() {
     _disposed = true;
+    _autoSyncTimer?.cancel();
     _sync?.cancel();
     _searchCancel?.cancel();
     _discoveryCancel?.cancel();

@@ -45,6 +45,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get navBack => 'Назад';
 
   @override
+  String get appExitBackAgain => 'Натисніть «Назад» ще раз, щоб вийти';
+
+  @override
   String get navClose => 'Закрити';
 
   @override

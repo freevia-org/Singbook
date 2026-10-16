@@ -45,6 +45,9 @@ class AppLocalizationsFi extends AppLocalizations {
   String get navBack => 'Takaisin';
 
   @override
+  String get appExitBackAgain => 'Poistu painamalla Takaisin uudelleen';
+
+  @override
   String get navClose => 'Sulje';
 
   @override

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../localized_labels.dart';
 import '../verse_ui_state.dart';
+import '../account_avatar.dart';
 
 /// Error codes that are fixed by signing in (again).
 const _signInAgainCodes = {
@@ -96,7 +97,7 @@ class AccountSection extends StatelessWidget {
     return [
       ListTile(
         key: const ValueKey('account-signed-in'),
-        leading: const Icon(Icons.account_circle_outlined),
+        leading: AccountAvatar(photoUrl: state.accountPhotoUrl),
         title: Text(state.accountName ?? l10n.accountTitle),
         subtitle: _SyncStatus(
           busy: state.syncBusy,
@@ -133,9 +134,9 @@ class AccountSection extends StatelessWidget {
         ),
       ),
       Padding(
-        key: const ValueKey('account-manual-sync-hint'),
+        key: const ValueKey('account-auto-sync-hint'),
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-        child: Text(l10n.accountManualSyncHint),
+        child: Text(l10n.accountAutoSync),
       ),
       ListTile(
         key: const ValueKey('account-use-different'),

@@ -45,6 +45,9 @@ class AppLocalizationsDa extends AppLocalizations {
   String get navBack => 'Tilbage';
 
   @override
+  String get appExitBackAgain => 'Tryk på Tilbage igen for at afslutte';
+
+  @override
   String get navClose => 'Luk';
 
   @override

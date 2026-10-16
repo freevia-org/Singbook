@@ -45,6 +45,9 @@ class AppLocalizationsSl extends AppLocalizations {
   String get navBack => 'Nazaj';
 
   @override
+  String get appExitBackAgain => 'Za izhod znova pritisnite Nazaj';
+
+  @override
   String get navClose => 'Zapri';
 
   @override

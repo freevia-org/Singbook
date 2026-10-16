@@ -45,6 +45,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get navBack => 'Atrás';
 
   @override
+  String get appExitBackAgain => 'Pulsa Atrás de nuevo para salir';
+
+  @override
   String get navClose => 'Cerrar';
 
   @override

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/application/app_controller.dart';
+import 'package:singbook/application/file_actions.dart';
 import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/providers/provider.dart';
 import 'package:singbook/domain/models.dart';
@@ -90,7 +91,7 @@ void main() {
     expect(app.syncConnected, isTrue);
     expect(app.lastSyncAt, isNull);
     expect(cloud.requests, 0);
-    expect(app.autoSyncEnabled, isFalse);
+    expect(app.autoSyncEnabled, isTrue);
     await app.syncNow();
     expect(cloud.names, ['song-s.cho']);
     expect(app.lastSyncErrorCode, isNull);
@@ -106,7 +107,7 @@ void main() {
     expect(cloud.lists, 1, reason: 'the explicit action performs a fresh sync');
   });
 
-  test('local edits never start cloud work; explicit sync uploads them', () async {
+  test('local song changes are debounced into an automatic sync', () async {
     final app = await start(delay: const Duration(milliseconds: 300));
     cloud.resetCounters();
     for (var i = 0; i < 5; i++) {
@@ -114,34 +115,53 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 10));
     }
     await settle(350);
-    expect(cloud.requests, 0);
-    await app.syncNow();
+    await until(() => cloud.creates == 5);
     expect(cloud.creates, 5);
     expect(cloud.lists, 1);
   });
 
-  test('legacy auto-sync setting cannot activate cloud work',
+  test('add, update, and remove each synchronize the song library',
       () async {
-    await device.repo.setSetting('app', {'autoSync': true});
     final app = await start();
-    expect(app.autoSyncEnabled, isFalse);
     cloud.resetCounters();
-    await addSong(app, 'x', 'y');
-    await settle(200);
-    expect(cloud.requests, 0);
-    final other = await start(startDelay: const Duration(milliseconds: 10));
-    expect(other.autoSyncEnabled, isFalse);
-    await settle(100);
-    expect(cloud.requests, 0);
+    await addSong(app, 'x', 'first');
+    await until(() => cloud.has('song-x.cho'));
+    expect(cloud.body('song-x.cho'), contains('first'));
+    await addSong(app, 'x', 'updated');
+    await until(() => cloud.body('song-x.cho')?.contains('updated') == true);
+    await app.deleteSong('x');
+    await until(() => !cloud.has('song-x.cho'));
+    expect(app.autoSyncEnabled, isTrue);
     await app.setAutoSync(true);
-    expect(app.autoSyncEnabled, isFalse);
-    await settle(100);
-    expect(cloud.requests, 0);
-    await app.syncNow();
-    expect(cloud.creates, 1);
+    expect(app.autoSyncEnabled, isTrue);
   });
 
-  test('a change during a manual run does not schedule a follow-up run',
+  test(
+    'setlist-only and no-op imports do not sync; song imports do',
+    () async {
+      final app = await start();
+      cloud.resetCounters();
+      final set = SetlistDocument(id: 'set', name: 'Set');
+      await app.importCollection(ImportedCollection([], [set]));
+      await app.importCollection(ImportedCollection([], [set]));
+      await settle(100);
+      expect(cloud.requests, 0);
+
+      await app.importCollection(
+        ImportedCollection([
+          SongDocument(
+            id: 'imported',
+            title: 'Imported',
+            artist: 'A',
+            body: 'words',
+          ),
+        ], []),
+      );
+      await until(() => cloud.has('song-imported.cho'));
+    },
+  );
+
+  test('a song change during sync queues one follow-up run',
       () async {
     final app = await start();
     final gate = Completer<void>();
@@ -157,19 +177,18 @@ void main() {
     await addSong(app, 'a', '1');
     final running = app.syncNow();
     await until(() => app.syncBusy);
-    await addSong(app, 'b', '2'); // remains queued for the next manual run
+    await addSong(app, 'b', '2');
     gate.complete();
     await running;
     expect(cloud.creates, 2, reason: 'the manual run sees both local edits');
-    expect(cloud.lists, 1);
+    await until(() => cloud.lists == 2);
+    expect(cloud.lists, 2);
     expect(maxConcurrent, 1);
     cloud.hook = null;
-    await app.syncNow();
     expect(cloud.creates, 2);
-    expect(cloud.lists, 2, reason: 'only the second explicit action retries');
   });
 
-  test('failed sync waits for an explicit manual retry', () async {
+  test('failed automatic sync waits for the next change or manual retry', () async {
     final app = await start();
     final times = <DateTime>[];
     cloud.hook = (op, target) {
@@ -179,7 +198,7 @@ void main() {
       }
     };
     await addSong(app, 'a', '1');
-    await app.syncNow();
+    await until(() => times.isNotEmpty);
     expect(times, hasLength(1));
     expect(app.lastSyncErrorCode, 'network');
     await settle(250);
@@ -190,7 +209,7 @@ void main() {
     expect(app.lastSyncErrorCode, isNull);
   });
 
-  test('errors that need the user are not retried in the background', () async {
+  test('authorization errors are surfaced without automatic retry', () async {
     final app = await start();
     cloud.hook = (op, target) {
       if (op == 'list') throw const SyncException('authorization_required');
@@ -198,14 +217,14 @@ void main() {
     cloud.resetCounters();
     await addSong(app, 'a', '1');
     await settle(300);
-    expect(cloud.lists, 0);
-    expect(app.lastMessage, isNull);
+    expect(cloud.lists, 1);
+    expect(app.lastMessage!.code, 'authorization_required');
     await app.syncNow();
     expect(app.lastMessage!.code, 'authorization_required');
-    expect(cloud.lists, 1);
+    expect(cloud.lists, 2);
   });
 
-  test('resuming never syncs; only the explicit action reaches Drive', () async {
+  test('resuming never syncs; explicit actions and edits do', () async {
     final app = await start(stale: const Duration(days: 1));
     cloud.resetCounters();
     app.onAppResumed();
@@ -215,11 +234,11 @@ void main() {
     expect(cloud.lists, 1);
   });
 
-  test('sign-in and local edits do not sync until Sync now', () async {
+  test('sign-in and local edits sync automatically', () async {
     final app = await start();
     await addSong(app, 'keep', 'mine');
-    expect(cloud.requests, 0);
-    await app.syncNow();
+    await until(() => cloud.has('song-keep.cho'));
+    await app.syncIdle;
     expect(cloud.names, contains('song-keep.cho'));
     await app.signOutFromSync();
     expect(app.syncConnected, isFalse);
@@ -231,8 +250,6 @@ void main() {
     expect(cloud.requests, 0);
     await app.signInForSync();
     expect(app.syncConnected, isTrue);
-    expect(cloud.requests, 0);
-    await app.syncNow();
     await until(() => cloud.names.contains('song-later.cho'));
     expect(app.lastSyncAt, isNotNull);
   });
@@ -266,7 +283,7 @@ void main() {
     addTearDown(other.close);
     await other.saveSong('s', 'base');
     await other.sync.sync();
-    final app = await start();
+    final app = await start(delay: const Duration(seconds: 1));
     await app.syncNow();
     await app.saveSong((await app.loadSong('s'))!.copyWith(body: 'mine'));
     await other.editSong('s', 'theirs');
@@ -299,7 +316,7 @@ void main() {
     );
     await fresh.signInForSync();
     expect(fresh.lastSyncErrorCode, 'not_initialized');
-    expect(fresh.autoSyncEnabled, isFalse);
+    expect(fresh.autoSyncEnabled, isTrue);
     controllers.add(fresh);
     fresh.onAppResumed(); // harmless
     controllers.remove(fresh);

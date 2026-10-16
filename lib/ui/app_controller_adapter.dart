@@ -394,6 +394,7 @@ class AppControllerAdapter extends VerseUiController {
       syncSignedIn: app.syncConnected,
       syncBusy: app.syncBusy,
       accountName: app.syncAccountEmail,
+      accountPhotoUrl: app.syncAccountPhotoUrl,
       accountError: _syncWarningOnly ? null : app.syncError,
       lastSyncAt: _lastSyncAt,
       lastSyncConflicts: _lastSyncConflicts,

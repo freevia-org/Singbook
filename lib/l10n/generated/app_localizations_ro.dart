@@ -45,6 +45,9 @@ class AppLocalizationsRo extends AppLocalizations {
   String get navBack => 'Înapoi';
 
   @override
+  String get appExitBackAgain => 'Apăsați din nou Înapoi pentru a ieși';
+
+  @override
   String get navClose => 'Închide';
 
   @override

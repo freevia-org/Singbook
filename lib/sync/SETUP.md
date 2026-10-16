@@ -6,11 +6,13 @@ application-data folder (`appDataFolder`), with the single scope
 shared storage account or client secret. The app cannot see any other Drive
 file, and the user can remove the data from Google account settings.
 
-Songs work without signing in; sync is optional and only runs after an explicit
-Sync now or confirmed sync action. App startup does not restore authorization,
-and sign-in, local edits and app resume never start a cloud sync. There are no
-background sync or retry timers. The local SQLite library is always the working
-copy: signing out never deletes songs.
+Songs work without signing in; sync is optional. After a successful explicit
+connection, the app syncs the library. Later song additions, edits and removals
+schedule a sync after a two-second debounce; rapid edits coalesce into one run.
+Sync now and confirmed account or cloud-deletion actions remain available. App
+startup does not restore authorization, and app resume never starts a sync. The
+local SQLite library is always the working copy: signing out never deletes
+songs.
 
 ## OAuth client setup
 
@@ -180,22 +182,22 @@ Baselines of other accounts are discarded. Signing out keeps the library, the
 binding and the baseline, so signing back in with the same account continues
 normally.
 
-## On-demand sync (AppController)
+## Automatic and on-demand sync (AppController)
 
-Google Drive sync runs only after Sync now or an explicitly confirmed account
-or cloud-deletion decision. Startup does not restore Google authorization.
-Sign-in updates local account metadata without listing, downloading or uploading
-Drive files. Local edits and `onAppResumed()` never start a sync.
+Google Drive sync runs after successful sign-in and after a local song change,
+with a two-second debounce. Startup does not restore Google authorization.
+`onAppResumed()` never starts a sync. Setlist-only changes do not start a sync.
 
-There are no sync timers, background retries or follow-up runs. A failed or
-partial sync shows its result and waits for another explicit action. Only one
-sync action runs at a time. Legacy `autoSync` settings and timing arguments
-cannot enable automatic sync; `setAutoSync` is a compatibility no-op.
+Changes made during an active sync queue one follow-up run. A failed sync shows
+its result and waits for another song change or a manual retry. Only one sync
+action runs at a time. `autoSyncDelay` controls the debounce in tests and
+defaults to two seconds. The legacy `setAutoSync` method remains a compatibility
+no-op; automatic sync is enabled whenever the account is connected.
 
 Regression coverage lives in `sync_controller_test.dart`,
 `controller_hardening_test.dart` and `account_sync_test.dart`: startup skips
-authorization, edits and resume leave Drive untouched, connecting uploads
-nothing, and only explicit actions perform or retry a sync.
+authorization, edits are debounced, deletes and updates reach Drive, resume
+leaves Drive untouched, and changes during a sync queue a follow-up run.
 
 ## Limits
 
