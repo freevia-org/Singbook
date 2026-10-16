@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:singbook/data/library_repository.dart';
 import 'package:singbook/application/youtube_music_consent.dart';
 import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/providers/core/youtube_music.dart';
@@ -14,6 +16,7 @@ void main() {
     navigation.started('https://music.youtube.com/?cbrd=1');
     navigation.finished('https://music.youtube.com/?cbrd=1');
     expect(navigation.canFinish, isFalse);
+    expect(navigation.canRestoreSession, isTrue);
   });
 
   test('initial Music load cannot finish a consent flow', () {
@@ -21,21 +24,95 @@ void main() {
     navigation.started('https://music.youtube.com/');
     navigation.finished('https://music.youtube.com/');
     expect(navigation.canFinish, isFalse);
+    expect(navigation.canRestoreSession, isTrue);
     navigation.started('https://consent.youtube.com/m?continue=synthetic');
     navigation.finished('https://consent.youtube.com/m?continue=synthetic');
     expect(navigation.canFinish, isFalse);
+    expect(navigation.canRestoreSession, isFalse);
     navigation.started('https://music.youtube.com/?cbrd=1');
     navigation.finished('https://music.youtube.com/?cbrd=1');
     expect(navigation.canFinish, isTrue);
     navigation.started('https://accounts.google.com/');
     navigation.finished('https://accounts.google.com/');
     expect(navigation.canFinish, isFalse);
+    expect(navigation.canRestoreSession, isFalse);
   });
   TestWidgetsFlutterBinding.ensureInitialized();
   const channel = MethodChannel('org.freevia.singbook/youtube_music_session');
   final messenger =
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
   tearDown(() => messenger.setMockMethodCallHandler(channel, null));
+
+  for (final nativeFailure in [false, true]) {
+    test('capture waits for pending native clear: $nativeFailure', () async {
+      final deletion = Completer<void>();
+      var reads = 0;
+      messenger.setMockMethodCallHandler(channel, (call) async {
+        if (call.method == 'clearConsentCookies') {
+          await deletion.future;
+          if (nativeFailure) throw PlatformException(code: 'synthetic_failure');
+          return null;
+        }
+        reads++;
+        return <String, String>{};
+      });
+      final consent = YoutubeMusicConsent(supported: true);
+      consent.session.setConsentCookies({'SOCS': 'synthetic-choice'});
+      final clearing = consent.clear();
+      final capturing = consent.capture();
+      await Future<void>.delayed(Duration.zero);
+      expect(reads, 0);
+      expect(consent.session.hasConsent, isFalse);
+      deletion.complete();
+      expect(await clearing, !nativeFailure);
+      expect(await capturing, isFalse);
+      expect(reads, nativeFailure ? 0 : 1);
+      expect(consent.session.hasConsent, isFalse);
+    });
+  }
+
+  for (final nativeFailure in [false, true]) {
+    test(
+      'disabling YouTube Music drops its session and keeps source off: $nativeFailure',
+      () async {
+        sqfliteFfiInit();
+        final repo = await LibraryRepository.open(
+          path: inMemoryDatabasePath,
+          factory: databaseFactoryFfi,
+        );
+        addTearDown(repo.close);
+        var clears = 0;
+        messenger.setMockMethodCallHandler(channel, (call) async {
+          expect(call.method, 'clearConsentCookies');
+          clears++;
+          if (nativeFailure) throw PlatformException(code: 'synthetic_failure');
+          return null;
+        });
+        final consent = YoutubeMusicConsent(supported: true);
+        consent.session.setConsentCookies({'SOCS': 'synthetic-choice'});
+        final app = AppController(
+          repository: repo,
+          youtubeMusicConsent: consent,
+        );
+        addTearDown(app.dispose);
+        await app.setProviderEnabled('genius', false);
+        expect(clears, 0);
+        expect(consent.session.hasConsent, isTrue);
+        await app.setProviderEnabled('youtubemusic', false);
+        expect(clears, 1);
+        expect(consent.session.hasConsent, isFalse);
+        expect(app.providerEnabled('youtubemusic'), isFalse);
+        expect(
+          (await repo.getSetting('app'))['providers']['youtubemusic'],
+          isFalse,
+        );
+        expect(
+          app.messages.value?.code,
+          nativeFailure ? 'operation_failed' : null,
+        );
+      },
+    );
+  }
 
   test(
     'app factory and UI actions share the same session without synced settings',

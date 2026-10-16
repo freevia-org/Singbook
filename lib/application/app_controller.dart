@@ -20,7 +20,6 @@ import '../providers/configurable_provider.dart';
 import 'file_actions.dart';
 import '../sync/google_drive_sync.dart';
 import 'youtube_music_consent.dart';
-import '../providers/youtube_music_session.dart';
 
 /// A user-visible outcome of an operation, identified by a stable [code] (never
 /// free text, never containing credentials) that the UI maps to a localized
@@ -58,7 +57,7 @@ class AppController extends ChangeNotifier {
     final transport = ProviderTransport();
     return AppController._(
       repository,
-      _createDiscovery(transport, consent.session),
+      _createDiscovery(transport, consent),
       transport,
       sync,
       consent,
@@ -76,12 +75,13 @@ class AppController extends ChangeNotifier {
 
   static SourceDiscoveryService _createDiscovery(
     ProviderTransport transport,
-    YoutubeMusicSession youtubeMusicSession,
+    YoutubeMusicConsent consent,
   ) {
     return SourceDiscoveryService([
       ...createCoreProviders(
         transport: transport,
-        youtubeMusicSession: youtubeMusicSession,
+        youtubeMusicSession: consent.session,
+        onYoutubeMusicConsentRequired: consent.requestConsent,
       ),
       ...createExtraProviders(transport: transport),
     ]);
@@ -297,7 +297,7 @@ class AppController extends ChangeNotifier {
     _sync ??= GoogleDriveSyncService(repository: repository);
     settings = jsonMap(await repository.getSetting('app'));
     if (_disposed) return;
-    await youtubeMusicConsent.restore();
+    if (providerEnabled('youtubemusic')) await youtubeMusicConsent.restore();
     if (_disposed) return;
     await _initializeSourceCatalog();
     if (_disposed) return;
@@ -476,13 +476,25 @@ class AppController extends ChangeNotifier {
   }
 
   Future<void> setProviderEnabled(String id, bool enabled) async {
+    // Disabling is also the single control for discarding this optional
+    // anonymous session. Clear memory immediately, before a setting write.
+    final clearing = id == 'youtubemusic' && !enabled
+        ? youtubeMusicConsent.clear()
+        : null;
     await setSetting('providers', {
       ...jsonMap(settings['providers']),
       id: enabled,
     });
+    if (clearing != null &&
+        !await clearing &&
+        youtubeMusicConsent.supported &&
+        !_disposed) {
+      messages.value = const AppMessage('operation_failed', operation: 'sources');
+    }
   }
 
   Future<bool> completeYoutubeMusicConsent() async {
+    if (!providerEnabled('youtubemusic')) return false;
     final captured = await youtubeMusicConsent.capture();
     if (!_disposed) _emit();
     return captured;

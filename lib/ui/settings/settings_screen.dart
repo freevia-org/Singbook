@@ -9,7 +9,6 @@ import '../verse_ui_state.dart';
 import '../widgets/singbook_wordmark.dart';
 import '../widgets/verse_components.dart';
 import 'account_section.dart';
-import 'youtube_music_consent_section.dart';
 
 /// Native names keep the language picker understandable regardless of the
 /// currently selected app language.
@@ -313,27 +312,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onChanged: (value) =>
                     controller.setProviderEnabled(provider.id, value),
               ),
-              if (provider.id == 'youtubemusic' &&
-                  controller.youtubeMusicConsentSupported)
-                YoutubeMusicConsentSection(
-                  labels: YoutubeConsentLabels(
-                    title: provider.name,
-                    explanation: l10n.youtubeConsentHint,
-                    connect: l10n.youtubeConsentOpen,
-                    saved: l10n.youtubeConsentSaved,
-                    clear: l10n.youtubeConsentClear,
-                    instructions: l10n.youtubeConsentInstructions,
-                    notReady: l10n.youtubeConsentInstructions,
-                    navigationBlocked: l10n.youtubeConsentBlocked,
-                    loadFailed: l10n.youtubeConsentError,
-                    clearFailed: l10n.youtubeConsentError,
-                    done: l10n.actionDone,
-                    retry: l10n.actionRetry,
-                  ),
-                  hasConsent: controller.youtubeMusicConsentSaved,
-                  onComplete: controller.completeYoutubeMusicConsent,
-                  onClear: controller.clearYoutubeMusicConsent,
-                ),
             ],
           ],
         ),

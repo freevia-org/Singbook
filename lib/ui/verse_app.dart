@@ -18,6 +18,7 @@ import 'localized_labels.dart';
 import 'player/player_screen.dart';
 import 'settings/account_section.dart';
 import 'settings/settings_screen.dart';
+import 'settings/youtube_music_consent_section.dart';
 import 'theme/verse_theme.dart';
 import 'verse_ui_state.dart';
 import 'widgets/singbook_wordmark.dart';
@@ -42,6 +43,7 @@ class _VerseAppState extends State<VerseApp> {
   int _syncSettingsRequest = 0;
   bool _initialized = false;
   bool _startupFailed = false;
+  final _navigatorKey = GlobalKey<NavigatorState>();
 
   // Themes depend only on palette and font; cache them so notifications that
   // change neither do not rebuild three ThemeData objects.
@@ -54,6 +56,7 @@ class _VerseAppState extends State<VerseApp> {
     super.initState();
     _ownsApp = widget.controller == null;
     _app = widget.controller ?? AppController();
+    _app.youtubeMusicConsent.onConsentRequired = _requestYoutubeMusicConsent;
     _files = VerseFileActions();
     unawaited(_files.cleanUpShareCache());
     _controller = AppControllerAdapter(
@@ -113,6 +116,54 @@ class _VerseAppState extends State<VerseApp> {
     }
   }
 
+  Future<bool> _requestYoutubeMusicConsent() async {
+    final navigator = _navigatorKey.currentState;
+    if (!mounted ||
+        !_initialized ||
+        navigator == null ||
+        !_app.providerEnabled('youtubemusic')) {
+      return false;
+    }
+    final selection = _app.selection;
+    final query = _app.query;
+    final l10n = AppLocalizations.of(navigator.context);
+    final saved = await navigator.push<bool>(
+      MaterialPageRoute(
+        builder: (_) => YoutubeMusicConsentScreen(
+          labels: YoutubeConsentLabels(
+            title: 'YouTube Music',
+            explanation: '',
+            connect: '',
+            saved: '',
+            clear: '',
+            instructions: '',
+            notReady: l10n.youtubeConsentError,
+            navigationBlocked: l10n.youtubeConsentBlocked,
+            loadFailed: l10n.youtubeConsentError,
+            clearFailed: l10n.youtubeConsentError,
+            done: l10n.actionDone,
+            retry: l10n.actionRetry,
+          ),
+          onComplete: _app.completeYoutubeMusicConsent,
+          autoComplete: true,
+        ),
+      ),
+    );
+    if (!mounted || saved != true || !_app.providerEnabled('youtubemusic')) {
+      return false;
+    }
+    // The provider's ordinary network deadline may expire while the person
+    // reads Google's page. Retry the same current task after saving, even then.
+    // Selecting it again cancels the previous lookup before starting this one.
+    if (selection != null &&
+        _app.query == query &&
+        _app.selection?.identity == selection.identity &&
+        _app.checks['youtubemusic']?.code == 'timeout') {
+      unawaited(_app.selectCandidate(selection, cachedResults: _app.results));
+    }
+    return true;
+  }
+
   void _openSyncSettings() {
     setState(() => _syncSettingsRequest++);
     _controller.setTab(VerseTab.settings);
@@ -136,6 +187,7 @@ class _VerseAppState extends State<VerseApp> {
 
   @override
   void dispose() {
+    _app.youtubeMusicConsent.onConsentRequired = null;
     _controller.removeListener(_onControllerChanged);
     _controller.dispose();
     if (_ownsApp) _app.dispose();
@@ -151,6 +203,7 @@ class _VerseAppState extends State<VerseApp> {
     };
     final languageCode = _appearance.languageCode;
     return MaterialApp(
+      navigatorKey: _navigatorKey,
       title: 'Singbook',
       debugShowCheckedModeBanner: false,
       theme: _light,

@@ -25,15 +25,27 @@ class YoutubeMusicConsent {
   final YoutubeMusicSession session;
   final MethodChannel _channel;
   final bool supported;
+
+  /// Supplied by the app shell; headless maintenance never opens a UI.
+  Future<bool> Function()? onConsentRequired;
+  Future<bool> requestConsent() async {
+    if (!supported) return false;
+    return await onConsentRequired?.call() ?? false;
+  }
+
   int _epoch = 0;
+  Future<bool>? _clearing;
 
   Future<bool> restore() => capture();
 
-  /// Called only after the user returns from Google's page and presses Done,
-  /// or on launch to restore an existing decision from the app's browser jar.
+  /// Reads an existing decision from the native jar on launch or after Google's
+  /// page returns to Music. A return without eligible cookies cannot succeed.
   Future<bool> capture() async {
     if (!supported) return false;
     final epoch = _epoch;
+    final clearing = _clearing;
+    if (clearing != null && !await clearing) return false;
+    if (epoch != _epoch) return false;
     try {
       final values = await _channel
           .invokeMapMethod<String, String>('getConsentCookies')
@@ -47,9 +59,13 @@ class YoutubeMusicConsent {
     }
   }
 
-  Future<bool> clear() async {
+  Future<bool> clear() {
     _epoch++;
     session.clear();
+    return _clearing ??= _clearNative().whenComplete(() => _clearing = null);
+  }
+
+  Future<bool> _clearNative() async {
     if (!supported) return false;
     try {
       await _channel
@@ -81,14 +97,19 @@ bool isYoutubeMusicReturnUrl(String raw) =>
 class YoutubeMusicConsentNavigation {
   bool _sawConsent = false;
   bool canFinish = false;
+  // A Music return can restore existing cookies without implying that a new
+  // consent choice was presented. Native capture still requires real cookies.
+  bool canRestoreSession = false;
 
   void reset() {
     _sawConsent = false;
     canFinish = false;
+    canRestoreSession = false;
   }
 
   void started(String url) {
     canFinish = false;
+    canRestoreSession = false;
   }
 
   void finished(String url) {
@@ -98,6 +119,7 @@ class YoutubeMusicConsentNavigation {
         Uri.parse(url).host == 'consent.youtube.com') {
       _sawConsent = true;
     }
-    canFinish = _sawConsent && isYoutubeMusicReturnUrl(url);
+    canRestoreSession = isYoutubeMusicReturnUrl(url);
+    canFinish = _sawConsent && canRestoreSession;
   }
 }

@@ -13,18 +13,26 @@ import 'support/fake_controller.dart';
 class _ConsentController extends FakeUiController {
   _ConsentController()
     : super(
-        (_) => const VerseUiState(
+        (controller) => VerseUiState(
           activeTab: VerseTab.settings,
           providers: [
             ProviderSettingData(
               id: 'youtubemusic',
               name: 'YouTube Music',
-              enabled: true,
+              enabled: (controller as _ConsentController).enabled,
             ),
           ],
         ),
       );
   bool saved = false;
+  bool enabled = true;
+  @override
+  Future<void> setProviderEnabled(String id, bool value) async {
+    expect(id, 'youtubemusic');
+    enabled = value;
+    refresh();
+  }
+
   int captures = 0, clears = 0;
   @override
   bool get youtubeMusicConsentSupported => true;
@@ -55,7 +63,7 @@ void main() {
     (const Size(1024, 768), const Locale('uk'), 1.3),
     (const Size(390, 844), const Locale('ar'), 1.6),
   ]) {
-    testWidgets('settings session wiring and layout ${scenario.$2}', (
+    testWidgets('YouTube Music has only a source switch ${scenario.$2}', (
       tester,
     ) async {
       if (capture) {
@@ -72,7 +80,7 @@ void main() {
         locale: scenario.$2,
         textScale: scenario.$3,
       );
-      final panel = find.byKey(const ValueKey('youtube-music-consent'));
+      final panel = find.widgetWithText(SwitchListTile, 'YouTube Music');
       await tester.scrollUntilVisible(
         panel,
         250,
@@ -80,42 +88,28 @@ void main() {
         maxScrolls: 30,
       );
       await tester.pumpAndSettle();
-      final section = tester.widget<YoutubeMusicConsentSection>(
-        find.byType(YoutubeMusicConsentSection),
-      );
-      expect(section.labels.connect, l10nOf(tester).youtubeConsentOpen);
-      expect(section.labels.explanation, l10nOf(tester).youtubeConsentHint);
-      expect(await section.onComplete(), isTrue);
-      await tester.pumpAndSettle();
-      expect(controller.captures, 1);
-      expect(find.text(l10nOf(tester).youtubeConsentSaved), findsOneWidget);
+      expect(find.byType(YoutubeMusicConsentSection), findsNothing);
+      expect(find.text(l10nOf(tester).youtubeConsentOpen), findsNothing);
+      expect(find.text(l10nOf(tester).youtubeConsentHint), findsNothing);
+      expect(find.text(l10nOf(tester).youtubeConsentClear), findsNothing);
+      expect(controller.captures, 0);
+      expect(controller.clears, 0);
       expect(tester.takeException(), isNull);
       if (capture) {
         await Scrollable.ensureVisible(tester.element(panel), alignment: .1);
         await tester.pumpAndSettle();
-        await _capture(
-          tester,
-          'youtube-consent-${scenario.$2.languageCode}-intro',
-        );
-        if (scenario.$3 > 1.4) {
-          await Scrollable.ensureVisible(
-            tester.element(find.byKey(const ValueKey('youtube-consent-clear'))),
-            alignment: .75,
-          );
-          await tester.pumpAndSettle();
-          await _capture(
-            tester,
-            'youtube-consent-${scenario.$2.languageCode}-controls',
-          );
-        }
+        await _capture(tester, 'youtube-simple-${scenario.$2.languageCode}');
       }
-      final clear = find.byKey(const ValueKey('youtube-consent-clear'));
-      await Scrollable.ensureVisible(tester.element(clear), alignment: .5);
+      await Scrollable.ensureVisible(tester.element(panel), alignment: .5);
       await tester.pumpAndSettle();
-      expect(clear.hitTestable(), findsOneWidget);
-      await tester.tap(clear);
+      await tester.tap(panel);
       await tester.pumpAndSettle();
-      expect(controller.clears, 1);
+      expect(controller.enabled, isFalse);
+      expect(controller.clears, 0);
+      await tester.tap(panel);
+      await tester.pumpAndSettle();
+      expect(controller.enabled, isTrue);
+      expect(controller.captures, 0);
       expect(find.text(l10nOf(tester).youtubeConsentSaved), findsNothing);
       expect(tester.takeException(), isNull);
     });
