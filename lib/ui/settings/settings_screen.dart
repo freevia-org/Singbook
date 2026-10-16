@@ -55,10 +55,12 @@ class SettingsScreen extends StatefulWidget {
   const SettingsScreen({
     super.key,
     required this.controller,
+    this.backupSection,
     this.syncFocusRequest = 0,
     this.onSyncFocusConsumed,
   });
   final VerseUiController controller;
+  final Widget? backupSection;
 
   /// Incremented when the shell's cloud button is tapped; the account section
   /// is scrolled into view and [onSyncFocusConsumed] is called.
@@ -316,6 +318,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ],
         ),
+        if (widget.backupSection != null) widget.backupSection!,
         VerseSectionLabel(l10n.accountTitle, key: _syncSectionKey),
         AccountSection(controller: controller),
         VerseSectionLabel(l10n.settingsAbout),

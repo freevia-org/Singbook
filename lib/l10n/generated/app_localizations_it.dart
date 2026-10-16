@@ -768,7 +768,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get searchMatchCombinedSources => 'Dettagli combinati da più fonti';
 
   @override
-  String get searchCombinedLabel => 'Tutte';
+  String get searchCombinedLabel => 'Combinato';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1744,4 +1744,65 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Opzioni della fonte';
+
+  @override
+  String get actionUndo => 'Annulla';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return '$song è stata rimossa dalla scaletta';
+  }
+
+  @override
+  String get backupTitle => 'Backup e ripristino';
+
+  @override
+  String get backupExport => 'Esporta backup';
+
+  @override
+  String get backupRestore => 'Ripristina backup';
+
+  @override
+  String get backupIncludePreferences => 'Includi le preferenze dell’app';
+
+  @override
+  String get backupRestorePreferences => 'Ripristina le preferenze dell’app';
+
+  @override
+  String get backupMerge => 'Aggiungi a questa raccolta';
+
+  @override
+  String get backupMergeHint =>
+      'Mantieni le modifiche locali e aggiungi brani e scalette da questo backup.';
+
+  @override
+  String get backupReplace => 'Sostituisci questa raccolta';
+
+  @override
+  String get backupReplaceHint =>
+      'Sostituisci tutti i brani e le scalette su questo dispositivo con questo backup.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Brani: $songs · Scaletta: $setlists · Conflitti: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Impossibile completare questa operazione. Riprova.';
+
+  @override
+  String get backupRestored => 'Backup ripristinato.';
+
+  @override
+  String get backupLocalHint =>
+      'Salva una copia della raccolta. Le credenziali dell’account e i cookie di consenso non vengono mai inclusi.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Sostituire la raccolta attuale? L’operazione non può essere annullata.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Questa pagina ha smesso di funzionare. Riprova o torna indietro.';
 }

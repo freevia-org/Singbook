@@ -774,7 +774,7 @@ class AppLocalizationsEl extends AppLocalizations {
       'Στοιχεία από πολλές πηγές συνδυάστηκαν';
 
   @override
-  String get searchCombinedLabel => 'Όλα';
+  String get searchCombinedLabel => 'Συνδυασμένα';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1755,4 +1755,65 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Επιλογές πηγής';
+
+  @override
+  String get actionUndo => 'Αναίρεση';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return 'Το τραγούδι «$song» αφαιρέθηκε από τη λίστα';
+  }
+
+  @override
+  String get backupTitle => 'Δημιουργία αντιγράφου και επαναφορά';
+
+  @override
+  String get backupExport => 'Εξαγωγή αντιγράφου ασφαλείας';
+
+  @override
+  String get backupRestore => 'Επαναφορά αντιγράφου ασφαλείας';
+
+  @override
+  String get backupIncludePreferences => 'Συμπερίληψη προτιμήσεων εφαρμογής';
+
+  @override
+  String get backupRestorePreferences => 'Επαναφορά προτιμήσεων εφαρμογής';
+
+  @override
+  String get backupMerge => 'Προσθήκη σε αυτήν τη βιβλιοθήκη';
+
+  @override
+  String get backupMergeHint =>
+      'Διατηρήστε τις τοπικές αλλαγές και προσθέστε τραγούδια και λίστες από αυτό το αντίγραφο.';
+
+  @override
+  String get backupReplace => 'Αντικατάσταση αυτής της βιβλιοθήκης';
+
+  @override
+  String get backupReplaceHint =>
+      'Αντικαταστήστε όλα τα τραγούδια και τις λίστες σε αυτήν τη συσκευή με αυτό το αντίγραφο.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Τραγούδια: $songs · Λίστες: $setlists · Διενέξεις: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Δεν ήταν δυνατή η ολοκλήρωση της ενέργειας. Δοκιμάστε ξανά.';
+
+  @override
+  String get backupRestored => 'Το αντίγραφο ασφαλείας επαναφέρθηκε.';
+
+  @override
+  String get backupLocalHint =>
+      'Αποθηκεύστε ένα αντίγραφο της βιβλιοθήκης σας. Δεν περιλαμβάνονται στοιχεία λογαριασμού ή cookies συγκατάθεσης.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Να αντικατασταθεί η τρέχουσα βιβλιοθήκη; Αυτή η ενέργεια δεν αναιρείται.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Αυτή η σελίδα σταμάτησε να λειτουργεί. Δοκιμάστε ξανά ή επιστρέψτε.';
 }

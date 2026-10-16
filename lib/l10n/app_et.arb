@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "Laulu noodistus vajab sõnade kinnitust",
   "searchMatchDifferentLyrics": "Laulusõnad erinevad valitud laulust",
   "searchMatchCombinedSources": "Andmed on ühendatud mitmest allikast",
-  "searchCombinedLabel": "Kõik",
+  "searchCombinedLabel": "Kombineeritud",
   "searchSongMatchCount": "{count, plural, =0{0 laulu vastet} =1{1 laulu vaste} other{{count} laulu vastet}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Versiooni üksikasjad",
   "searchSelectedRecording": "Valitud salvestis",
   "searchVersionDuration": "Versiooni kestus",
-  "searchSourceOptions": "Allika valikud"
+  "searchSourceOptions": "Allika valikud",
+  "actionUndo": "Võta tagasi",
+  "setlistEntryRemoved": "Lugu „{song}“ eemaldati esituskavast",
+  "backupTitle": "Varundamine ja taastamine",
+  "backupExport": "Ekspordi varukoopia",
+  "backupRestore": "Taasta varukoopia",
+  "backupIncludePreferences": "Kaasa rakenduse eelistused",
+  "backupRestorePreferences": "Taasta rakenduse eelistused",
+  "backupMerge": "Lisa sellesse teeki",
+  "backupMergeHint": "Säilita kohalikud muudatused ja lisa sellest varukoopiast lood ning esituskavad.",
+  "backupReplace": "Asenda see teek",
+  "backupReplaceHint": "Asenda selle seadme kõik lood ja esituskavad selle varukoopia sisuga.",
+  "backupSummary": "Laulud: {songs} · Esituskavad: {setlists} · Konfliktid: {conflicts}",
+  "backupFailed": "Varundamistoimingut ei saanud lõpetada. Proovi uuesti.",
+  "backupRestored": "Varukoopia taastati.",
+  "backupLocalHint": "Salvesta oma teegi koopia. Kontoandmeid ega nõusolekuküpsiseid ei lisata.",
+  "backupReplaceConfirm": "Kas asendada praegune teek? Seda ei saa tagasi võtta.",
+  "youtubeConsentPageError": "See leht lakkas töötamast. Proovi uuesti või mine tagasi.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

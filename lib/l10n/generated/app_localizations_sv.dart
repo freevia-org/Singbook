@@ -764,7 +764,7 @@ class AppLocalizationsSv extends AppLocalizations {
       'Informationen har sammanställts från flera källor';
 
   @override
-  String get searchCombinedLabel => 'Alla';
+  String get searchCombinedLabel => 'Kombinerat';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1733,4 +1733,65 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Källalternativ';
+
+  @override
+  String get actionUndo => 'Ångra';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return '$song har tagits bort från spellistan';
+  }
+
+  @override
+  String get backupTitle => 'Säkerhetskopiering och återställning';
+
+  @override
+  String get backupExport => 'Exportera säkerhetskopia';
+
+  @override
+  String get backupRestore => 'Återställ säkerhetskopia';
+
+  @override
+  String get backupIncludePreferences => 'Inkludera appinställningar';
+
+  @override
+  String get backupRestorePreferences => 'Återställ appinställningar';
+
+  @override
+  String get backupMerge => 'Lägg till i det här biblioteket';
+
+  @override
+  String get backupMergeHint =>
+      'Behåll lokala ändringar och lägg till låtar och spellistor från säkerhetskopian.';
+
+  @override
+  String get backupReplace => 'Ersätt det här biblioteket';
+
+  @override
+  String get backupReplaceHint =>
+      'Ersätt alla låtar och spellistor på den här enheten med innehållet i säkerhetskopian.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Låtar: $songs · Spellistor: $setlists · Konflikter: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Det gick inte att slutföra åtgärden. Försök igen.';
+
+  @override
+  String get backupRestored => 'Säkerhetskopian har återställts.';
+
+  @override
+  String get backupLocalHint =>
+      'Spara en kopia av biblioteket. Kontouppgifter och samtyckescookies tas aldrig med.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Ersätta det nuvarande biblioteket? Det här kan inte ångras.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Den här sidan slutade fungera. Försök igen eller gå tillbaka.';
 }

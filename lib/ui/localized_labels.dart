@@ -46,13 +46,20 @@ String localizedProviderDescription(AppLocalizations l10n, String value) {
     'timing': (l10n) => l10n.providerCapabilityTiming,
     'search': (l10n) => l10n.providerCapabilitySearch,
     'metadata': (l10n) => l10n.providerCapabilityMetadata,
+    'catalog': (l10n) => l10n.providerCapabilitySearch,
+    'lineTiming': (l10n) => l10n.providerCapabilityTiming,
+    'wordTiming': (l10n) => l10n.providerCapabilityTiming,
+    'fileImport': (l10n) => l10n.actionImport,
   };
   final parts = value.split(' · ');
   if (parts.length > 1 || capabilities.containsKey(value)) {
-    final translated = parts.map((part) => capabilities[part]?.call(l10n));
-    if (translated.every((part) => part != null)) {
-      return translated.whereType<String>().join(' · ');
-    }
+    final translated = parts
+        .map((part) => capabilities[part.trim()]?.call(l10n))
+        .whereType<String>()
+        .toSet();
+    return translated.isEmpty
+        ? l10n.providerDescriptionUnknown
+        : translated.join(' · ');
   }
   return RegExp(r'^[a-z][A-Za-z0-9_]+$').hasMatch(value)
       ? l10n.providerDescriptionUnknown

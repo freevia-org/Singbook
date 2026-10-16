@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "Zápis akordů je třeba ověřit podle textu písně",
   "searchMatchDifferentLyrics": "Text se liší od vybrané písně",
   "searchMatchCombinedSources": "Informace sloučené z více zdrojů",
-  "searchCombinedLabel": "Vše",
+  "searchCombinedLabel": "Kombinované",
   "searchSongMatchCount": "{count, plural, one{1 shoda písně} few{{count} shody písní} other{{count} shod písní}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Podrobnosti o verzi",
   "searchSelectedRecording": "Vybraná nahrávka",
   "searchVersionDuration": "Délka verze",
-  "searchSourceOptions": "Možnosti zdroje"
+  "searchSourceOptions": "Možnosti zdroje",
+  "actionUndo": "Zpět",
+  "setlistEntryRemoved": "Skladba „{song}“ byla odebrána ze seznamu",
+  "backupTitle": "Zálohování a obnovení",
+  "backupExport": "Exportovat zálohu",
+  "backupRestore": "Obnovit zálohu",
+  "backupIncludePreferences": "Zahrnout předvolby aplikace",
+  "backupRestorePreferences": "Obnovit předvolby aplikace",
+  "backupMerge": "Přidat do této knihovny",
+  "backupMergeHint": "Zachovat místní úpravy a přidat skladby a seznamy z této zálohy.",
+  "backupReplace": "Nahradit tuto knihovnu",
+  "backupReplaceHint": "Nahradit všechny skladby a seznamy v tomto zařízení obsahem této zálohy.",
+  "backupSummary": "Skladby: {songs} · Seznamy: {setlists} · Konflikty: {conflicts}",
+  "backupFailed": "Tuto operaci zálohy se nepodařilo dokončit. Zkuste to znovu.",
+  "backupRestored": "Záloha byla obnovena.",
+  "backupLocalHint": "Uložte si kopii knihovny. Přihlašovací údaje ani soubory cookie souhlasu se nezahrnují.",
+  "backupReplaceConfirm": "Nahradit současnou knihovnu? Tuto akci nelze vrátit.",
+  "youtubeConsentPageError": "Tato stránka přestala fungovat. Zkuste to znovu nebo se vraťte.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -32,10 +32,15 @@ void main() {
       state = VerseUiState(activeTab: VerseTab.settings);
       controller.refresh();
       await tester.pumpAndSettle();
+      final settingsList = find.byType(ListView);
+      expect(settingsList, findsOneWidget);
       await tester.scrollUntilVisible(
         find.text(l10n.settingsClearHistory),
         200,
-        scrollable: find.byType(Scrollable).first,
+        scrollable: find.descendant(
+          of: find.byType(Scaffold),
+          matching: find.byType(Scrollable),
+        ).first,
       );
       expect(find.text(l10n.settingsClearHistory), findsOneWidget);
     });
@@ -124,11 +129,21 @@ void main() {
       final l10n = l10nOf(tester);
 
       final aboutTile = find.widgetWithText(ListTile, l10n.settingsAbout);
+      final settingsList = find.byType(ListView);
+      expect(settingsList, findsOneWidget);
       await tester.scrollUntilVisible(
-        aboutTile,
+        find.descendant(
+          of: aboutTile,
+          matching: find.text(l10n.settingsAbout),
+        ),
         200,
-        scrollable: find.byType(Scrollable).first,
+        scrollable: find.descendant(
+          of: find.byType(Scaffold),
+          matching: find.byType(Scrollable),
+        ).first,
       );
+      await tester.ensureVisible(aboutTile);
+      await tester.pumpAndSettle();
       await tester.tap(aboutTile);
       await tester.pumpAndSettle();
 

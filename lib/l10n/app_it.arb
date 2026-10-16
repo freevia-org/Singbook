@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "Il testo deve essere confermato rispetto allo spartito",
   "searchMatchDifferentLyrics": "Il testo differisce da quello del brano selezionato",
   "searchMatchCombinedSources": "Dettagli combinati da più fonti",
-  "searchCombinedLabel": "Tutte",
+  "searchCombinedLabel": "Combinato",
   "searchSongMatchCount": "{count, plural, =0{0 corrispondenze di brani} =1{1 corrispondenza di brano} other{{count} corrispondenze di brani}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Dettagli versione",
   "searchSelectedRecording": "Registrazione selezionata",
   "searchVersionDuration": "Durata della versione",
-  "searchSourceOptions": "Opzioni della fonte"
+  "searchSourceOptions": "Opzioni della fonte",
+  "actionUndo": "Annulla",
+  "setlistEntryRemoved": "{song} è stata rimossa dalla scaletta",
+  "backupTitle": "Backup e ripristino",
+  "backupExport": "Esporta backup",
+  "backupRestore": "Ripristina backup",
+  "backupIncludePreferences": "Includi le preferenze dell’app",
+  "backupRestorePreferences": "Ripristina le preferenze dell’app",
+  "backupMerge": "Aggiungi a questa raccolta",
+  "backupMergeHint": "Mantieni le modifiche locali e aggiungi brani e scalette da questo backup.",
+  "backupReplace": "Sostituisci questa raccolta",
+  "backupReplaceHint": "Sostituisci tutti i brani e le scalette su questo dispositivo con questo backup.",
+  "backupSummary": "Brani: {songs} · Scaletta: {setlists} · Conflitti: {conflicts}",
+  "backupFailed": "Impossibile completare questa operazione. Riprova.",
+  "backupRestored": "Backup ripristinato.",
+  "backupLocalHint": "Salva una copia della raccolta. Le credenziali dell’account e i cookie di consenso non vengono mai inclusi.",
+  "backupReplaceConfirm": "Sostituire la raccolta attuale? L’operazione non può essere annullata.",
+  "youtubeConsentPageError": "Questa pagina ha smesso di funzionare. Riprova o torna indietro.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -767,7 +767,7 @@ class AppLocalizationsDe extends AppLocalizations {
       'Details aus mehreren Quellen zusammengeführt';
 
   @override
-  String get searchCombinedLabel => 'Alle';
+  String get searchCombinedLabel => 'Kombiniert';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1750,4 +1750,65 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Quelloptionen';
+
+  @override
+  String get actionUndo => 'Rückgängig';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return '$song wurde aus der Setlist entfernt';
+  }
+
+  @override
+  String get backupTitle => 'Sicherung und Wiederherstellung';
+
+  @override
+  String get backupExport => 'Sicherung exportieren';
+
+  @override
+  String get backupRestore => 'Sicherung wiederherstellen';
+
+  @override
+  String get backupIncludePreferences => 'App-Einstellungen einschließen';
+
+  @override
+  String get backupRestorePreferences => 'App-Einstellungen wiederherstellen';
+
+  @override
+  String get backupMerge => 'Zu dieser Bibliothek hinzufügen';
+
+  @override
+  String get backupMergeHint =>
+      'Lokale Änderungen behalten und Songs sowie Setlists aus dieser Sicherung hinzufügen.';
+
+  @override
+  String get backupReplace => 'Diese Bibliothek ersetzen';
+
+  @override
+  String get backupReplaceHint =>
+      'Alle Songs und Setlists auf diesem Gerät durch diese Sicherung ersetzen.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Songs: $songs · Setlists: $setlists · Konflikte: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Die Sicherung konnte nicht abgeschlossen werden. Bitte erneut versuchen.';
+
+  @override
+  String get backupRestored => 'Sicherung wiederhergestellt.';
+
+  @override
+  String get backupLocalHint =>
+      'Speichere eine Kopie deiner Bibliothek. Kontodaten und Zustimmungs-Cookies werden nie eingeschlossen.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Aktuelle Bibliothek ersetzen? Das kann nicht rückgängig gemacht werden.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Diese Seite funktioniert nicht mehr. Versuche es erneut oder gehe zurück.';
 }

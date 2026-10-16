@@ -766,7 +766,7 @@ class AppLocalizationsTr extends AppLocalizations {
       'Ayrıntılar birden çok kaynaktan birleştirildi';
 
   @override
-  String get searchCombinedLabel => 'Tümü';
+  String get searchCombinedLabel => 'Birleşik';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1732,4 +1732,64 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Kaynak seçenekleri';
+
+  @override
+  String get actionUndo => 'Geri al';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return '$song şarkısı set listesinden kaldırıldı';
+  }
+
+  @override
+  String get backupTitle => 'Yedekleme ve geri yükleme';
+
+  @override
+  String get backupExport => 'Yedeği dışa aktar';
+
+  @override
+  String get backupRestore => 'Yedeği geri yükle';
+
+  @override
+  String get backupIncludePreferences => 'Uygulama tercihlerini dahil et';
+
+  @override
+  String get backupRestorePreferences => 'Uygulama tercihlerini geri yükle';
+
+  @override
+  String get backupMerge => 'Bu kitaplığa ekle';
+
+  @override
+  String get backupMergeHint =>
+      'Yerel düzenlemeleri koruyun ve bu yedekteki şarkıları ve listeleri ekleyin.';
+
+  @override
+  String get backupReplace => 'Bu kitaplığı değiştir';
+
+  @override
+  String get backupReplaceHint =>
+      'Bu cihazdaki tüm şarkıları ve listeleri bu yedekle değiştirin.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Şarkılar: $songs · Listeler: $setlists · Çakışmalar: $conflicts';
+  }
+
+  @override
+  String get backupFailed => 'Yedekleme işlemi tamamlanamadı. Yeniden deneyin.';
+
+  @override
+  String get backupRestored => 'Yedek geri yüklendi.';
+
+  @override
+  String get backupLocalHint =>
+      'Kitaplığınızın bir kopyasını kaydedin. Hesap kimlik bilgileri ve izin çerezleri hiçbir zaman dahil edilmez.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Mevcut kitaplık değiştirilsin mi? Bu işlem geri alınamaz.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Bu sayfa çalışmayı durdurdu. Yeniden deneyin veya geri dönün.';
 }

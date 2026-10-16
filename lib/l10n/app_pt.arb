@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "A letra da cifra precisa ser confirmada",
   "searchMatchDifferentLyrics": "A letra é diferente da música selecionada",
   "searchMatchCombinedSources": "Detalhes combinados de várias fontes",
-  "searchCombinedLabel": "Tudo",
+  "searchCombinedLabel": "Combinado",
   "searchSongMatchCount": "{count, plural, =0{0 correspondências de músicas} =1{1 correspondência de música} other{{count} correspondências de músicas}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Detalhes da versão",
   "searchSelectedRecording": "Gravação selecionada",
   "searchVersionDuration": "Duração da versão",
-  "searchSourceOptions": "Opções da fonte"
+  "searchSourceOptions": "Opções da fonte",
+  "actionUndo": "Desfazer",
+  "setlistEntryRemoved": "{song} foi removida da lista de músicas",
+  "backupTitle": "Cópia de segurança e restauro",
+  "backupExport": "Exportar cópia de segurança",
+  "backupRestore": "Restaurar cópia de segurança",
+  "backupIncludePreferences": "Incluir preferências da aplicação",
+  "backupRestorePreferences": "Restaurar preferências da aplicação",
+  "backupMerge": "Adicionar a esta biblioteca",
+  "backupMergeHint": "Manter as alterações locais e adicionar músicas e listas desta cópia de segurança.",
+  "backupReplace": "Substituir esta biblioteca",
+  "backupReplaceHint": "Substituir todas as músicas e listas deste dispositivo pelo conteúdo desta cópia de segurança.",
+  "backupSummary": "Músicas: {songs} · Listas: {setlists} · Conflitos: {conflicts}",
+  "backupFailed": "Não foi possível concluir esta operação. Tente novamente.",
+  "backupRestored": "Cópia de segurança restaurada.",
+  "backupLocalHint": "Guarde uma cópia da sua biblioteca. As credenciais da conta e os cookies de consentimento nunca são incluídos.",
+  "backupReplaceConfirm": "Substituir a biblioteca atual? Esta ação não pode ser desfeita.",
+  "youtubeConsentPageError": "Esta página deixou de funcionar. Tente novamente ou volte.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

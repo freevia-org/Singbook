@@ -773,7 +773,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get searchMatchCombinedSources => 'Дані зведено з кількох джерел';
 
   @override
-  String get searchCombinedLabel => 'Усі';
+  String get searchCombinedLabel => 'Об’єднані';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1768,4 +1768,64 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Параметри джерела';
+
+  @override
+  String get actionUndo => 'Скасувати';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return 'Пісню «$song» вилучено зі списку';
+  }
+
+  @override
+  String get backupTitle => 'Резервна копія та відновлення';
+
+  @override
+  String get backupExport => 'Експортувати резервну копію';
+
+  @override
+  String get backupRestore => 'Відновити резервну копію';
+
+  @override
+  String get backupIncludePreferences => 'Додати налаштування застосунку';
+
+  @override
+  String get backupRestorePreferences => 'Відновити налаштування застосунку';
+
+  @override
+  String get backupMerge => 'Додати до цієї бібліотеки';
+
+  @override
+  String get backupMergeHint =>
+      'Зберегти локальні зміни й додати пісні та списки з цієї резервної копії.';
+
+  @override
+  String get backupReplace => 'Замінити цю бібліотеку';
+
+  @override
+  String get backupReplaceHint =>
+      'Замінити всі пісні та списки на цьому пристрої вмістом цієї резервної копії.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Пісні: $songs · Списки: $setlists · Конфлікти: $conflicts';
+  }
+
+  @override
+  String get backupFailed => 'Не вдалося завершити операцію. Спробуйте ще раз.';
+
+  @override
+  String get backupRestored => 'Резервну копію відновлено.';
+
+  @override
+  String get backupLocalHint =>
+      'Збережіть копію бібліотеки. Дані облікового запису та файли cookie згоди не додаються.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Замінити поточну бібліотеку? Цю дію неможливо скасувати.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Ця сторінка перестала працювати. Спробуйте ще раз або поверніться.';
 }

@@ -770,7 +770,7 @@ class AppLocalizationsNl extends AppLocalizations {
       'Gegevens gecombineerd uit meerdere bronnen';
 
   @override
-  String get searchCombinedLabel => 'Alles';
+  String get searchCombinedLabel => 'Gecombineerd';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1752,4 +1752,65 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Bronopties';
+
+  @override
+  String get actionUndo => 'Ongedaan maken';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return '$song is uit de setlist verwijderd';
+  }
+
+  @override
+  String get backupTitle => 'Back-up en herstel';
+
+  @override
+  String get backupExport => 'Back-up exporteren';
+
+  @override
+  String get backupRestore => 'Back-up herstellen';
+
+  @override
+  String get backupIncludePreferences => 'App-voorkeuren opnemen';
+
+  @override
+  String get backupRestorePreferences => 'App-voorkeuren herstellen';
+
+  @override
+  String get backupMerge => 'Toevoegen aan deze bibliotheek';
+
+  @override
+  String get backupMergeHint =>
+      'Behoud lokale wijzigingen en voeg nummers en setlists uit deze back-up toe.';
+
+  @override
+  String get backupReplace => 'Deze bibliotheek vervangen';
+
+  @override
+  String get backupReplaceHint =>
+      'Vervang alle nummers en setlists op dit apparaat door deze back-up.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Nummers: $songs · Setlists: $setlists · Conflicten: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Deze back-upbewerking is niet voltooid. Probeer het opnieuw.';
+
+  @override
+  String get backupRestored => 'Back-up hersteld.';
+
+  @override
+  String get backupLocalHint =>
+      'Sla een kopie van je bibliotheek op. Accountgegevens en toestemmingscookies worden nooit opgenomen.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'De huidige bibliotheek vervangen? Dit kan niet ongedaan worden gemaakt.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Deze pagina werkt niet meer. Probeer het opnieuw of ga terug.';
 }

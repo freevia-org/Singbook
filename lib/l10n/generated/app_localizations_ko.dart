@@ -749,7 +749,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get searchMatchCombinedSources => '여러 출처의 세부정보를 결합했습니다';
 
   @override
-  String get searchCombinedLabel => '전체';
+  String get searchCombinedLabel => '통합';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1676,4 +1676,60 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get searchSourceOptions => '소스 옵션';
+
+  @override
+  String get actionUndo => '실행 취소';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return '세트리스트에서 $song을(를) 삭제했습니다';
+  }
+
+  @override
+  String get backupTitle => '백업 및 복원';
+
+  @override
+  String get backupExport => '백업 내보내기';
+
+  @override
+  String get backupRestore => '백업 복원';
+
+  @override
+  String get backupIncludePreferences => '앱 환경설정 포함';
+
+  @override
+  String get backupRestorePreferences => '앱 환경설정 복원';
+
+  @override
+  String get backupMerge => '이 라이브러리에 추가';
+
+  @override
+  String get backupMergeHint => '로컬 편집 내용을 유지하고 이 백업의 노래와 세트리스트를 추가합니다.';
+
+  @override
+  String get backupReplace => '이 라이브러리 교체';
+
+  @override
+  String get backupReplaceHint => '이 기기의 모든 노래와 세트리스트를 이 백업 내용으로 교체합니다.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return '노래: $songs · 세트리스트: $setlists · 충돌: $conflicts';
+  }
+
+  @override
+  String get backupFailed => '백업 작업을 완료하지 못했습니다. 다시 시도하세요.';
+
+  @override
+  String get backupRestored => '백업을 복원했습니다.';
+
+  @override
+  String get backupLocalHint => '라이브러리 사본을 저장합니다. 계정 자격 증명과 동의 쿠키는 포함되지 않습니다.';
+
+  @override
+  String get backupReplaceConfirm => '현재 라이브러리를 교체할까요? 이 작업은 되돌릴 수 없습니다.';
+
+  @override
+  String get youtubeConsentPageError =>
+      '이 페이지의 작동이 중지되었습니다. 다시 시도하거나 뒤로 이동하세요.';
 }

@@ -775,7 +775,7 @@ class AppLocalizationsRo extends AppLocalizations {
       'Detalii combinate din mai multe surse';
 
   @override
-  String get searchCombinedLabel => 'Toate';
+  String get searchCombinedLabel => 'Combinate';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1761,4 +1761,65 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Opțiuni sursă';
+
+  @override
+  String get actionUndo => 'Anulează';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return 'Piesa „$song” a fost eliminată din listă';
+  }
+
+  @override
+  String get backupTitle => 'Copie de rezervă și restaurare';
+
+  @override
+  String get backupExport => 'Exportă copia de rezervă';
+
+  @override
+  String get backupRestore => 'Restaurează copia de rezervă';
+
+  @override
+  String get backupIncludePreferences => 'Include preferințele aplicației';
+
+  @override
+  String get backupRestorePreferences => 'Restaurează preferințele aplicației';
+
+  @override
+  String get backupMerge => 'Adaugă în această bibliotecă';
+
+  @override
+  String get backupMergeHint =>
+      'Păstrează modificările locale și adaugă piesele și listele din această copie.';
+
+  @override
+  String get backupReplace => 'Înlocuiește această bibliotecă';
+
+  @override
+  String get backupReplaceHint =>
+      'Înlocuiește toate piesele și listele de pe acest dispozitiv cu conținutul copiei.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Piese: $songs · Liste: $setlists · Conflicte: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Operația nu a putut fi finalizată. Încearcă din nou.';
+
+  @override
+  String get backupRestored => 'Copia de rezervă a fost restaurată.';
+
+  @override
+  String get backupLocalHint =>
+      'Salvează o copie a bibliotecii. Datele contului și cookie-urile de consimțământ nu sunt incluse.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Înlocuiești biblioteca actuală? Acțiunea nu poate fi anulată.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Această pagină nu mai funcționează. Încearcă din nou sau revino.';
 }

@@ -766,7 +766,7 @@ class AppLocalizationsBg extends AppLocalizations {
       'Подробностите са събрани от няколко източника';
 
   @override
-  String get searchCombinedLabel => 'Всички';
+  String get searchCombinedLabel => 'Комбинирани';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1731,4 +1731,66 @@ class AppLocalizationsBg extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Опции за източника';
+
+  @override
+  String get actionUndo => 'Отмяна';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return 'Песента „$song“ е премахната от списъка';
+  }
+
+  @override
+  String get backupTitle => 'Архивиране и възстановяване';
+
+  @override
+  String get backupExport => 'Експортиране на архив';
+
+  @override
+  String get backupRestore => 'Възстановяване на архив';
+
+  @override
+  String get backupIncludePreferences =>
+      'Включване на настройките на приложението';
+
+  @override
+  String get backupRestorePreferences =>
+      'Възстановяване на настройките на приложението';
+
+  @override
+  String get backupMerge => 'Добавяне към тази библиотека';
+
+  @override
+  String get backupMergeHint =>
+      'Запазете местните редакции и добавете песни и списъци от този архив.';
+
+  @override
+  String get backupReplace => 'Замяна на тази библиотека';
+
+  @override
+  String get backupReplaceHint =>
+      'Заменете всички песни и списъци на това устройство с данните от този архив.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Песни: $songs · Списъци: $setlists · Конфликти: $conflicts';
+  }
+
+  @override
+  String get backupFailed => 'Архивирането не бе завършено. Опитайте отново.';
+
+  @override
+  String get backupRestored => 'Архивът е възстановен.';
+
+  @override
+  String get backupLocalHint =>
+      'Запазете копие на библиотеката си. Данните за профила и бисквитките за съгласие не се включват.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Да заменя ли текущата библиотека? Това действие не може да се отмени.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Тази страница спря да работи. Опитайте отново или се върнете.';
 }

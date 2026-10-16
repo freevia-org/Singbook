@@ -765,7 +765,7 @@ class AppLocalizationsVi extends AppLocalizations {
       'Thông tin được tổng hợp từ nhiều nguồn';
 
   @override
-  String get searchCombinedLabel => 'Tất cả';
+  String get searchCombinedLabel => 'Kết hợp';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1726,4 +1726,65 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Tùy chọn nguồn';
+
+  @override
+  String get actionUndo => 'Hoàn tác';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return 'Đã xóa $song khỏi danh sách bài hát';
+  }
+
+  @override
+  String get backupTitle => 'Sao lưu và khôi phục';
+
+  @override
+  String get backupExport => 'Xuất bản sao lưu';
+
+  @override
+  String get backupRestore => 'Khôi phục bản sao lưu';
+
+  @override
+  String get backupIncludePreferences => 'Bao gồm tùy chọn ứng dụng';
+
+  @override
+  String get backupRestorePreferences => 'Khôi phục tùy chọn ứng dụng';
+
+  @override
+  String get backupMerge => 'Thêm vào thư viện này';
+
+  @override
+  String get backupMergeHint =>
+      'Giữ các chỉnh sửa cục bộ và thêm bài hát, danh sách từ bản sao lưu này.';
+
+  @override
+  String get backupReplace => 'Thay thế thư viện này';
+
+  @override
+  String get backupReplaceHint =>
+      'Thay thế tất cả bài hát và danh sách trên thiết bị bằng nội dung của bản sao lưu này.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Bài hát: $songs · Danh sách: $setlists · Xung đột: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Không thể hoàn tất thao tác sao lưu này. Hãy thử lại.';
+
+  @override
+  String get backupRestored => 'Đã khôi phục bản sao lưu.';
+
+  @override
+  String get backupLocalHint =>
+      'Lưu bản sao thư viện của bạn. Thông tin đăng nhập và cookie đồng ý không bao giờ được đưa vào.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Thay thế thư viện hiện tại? Bạn không thể hoàn tác thao tác này.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Trang này đã ngừng hoạt động. Hãy thử lại hoặc quay lại.';
 }

@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "Ackordbladet behöver bekräftas mot låttexten",
   "searchMatchDifferentLyrics": "Låttexten skiljer sig från den valda låten",
   "searchMatchCombinedSources": "Informationen har sammanställts från flera källor",
-  "searchCombinedLabel": "Alla",
+  "searchCombinedLabel": "Kombinerat",
   "searchSongMatchCount": "{count, plural, =0{0 låtträffar} =1{1 låtträff} other{{count} låtträffar}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Versionsinformation",
   "searchSelectedRecording": "Vald inspelning",
   "searchVersionDuration": "Versionens längd",
-  "searchSourceOptions": "Källalternativ"
+  "searchSourceOptions": "Källalternativ",
+  "actionUndo": "Ångra",
+  "setlistEntryRemoved": "{song} har tagits bort från spellistan",
+  "backupTitle": "Säkerhetskopiering och återställning",
+  "backupExport": "Exportera säkerhetskopia",
+  "backupRestore": "Återställ säkerhetskopia",
+  "backupIncludePreferences": "Inkludera appinställningar",
+  "backupRestorePreferences": "Återställ appinställningar",
+  "backupMerge": "Lägg till i det här biblioteket",
+  "backupMergeHint": "Behåll lokala ändringar och lägg till låtar och spellistor från säkerhetskopian.",
+  "backupReplace": "Ersätt det här biblioteket",
+  "backupReplaceHint": "Ersätt alla låtar och spellistor på den här enheten med innehållet i säkerhetskopian.",
+  "backupSummary": "Låtar: {songs} · Spellistor: {setlists} · Konflikter: {conflicts}",
+  "backupFailed": "Det gick inte att slutföra åtgärden. Försök igen.",
+  "backupRestored": "Säkerhetskopian har återställts.",
+  "backupLocalHint": "Spara en kopia av biblioteket. Kontouppgifter och samtyckescookies tas aldrig med.",
+  "backupReplaceConfirm": "Ersätta det nuvarande biblioteket? Det här kan inte ångras.",
+  "youtubeConsentPageError": "Den här sidan slutade fungera. Försök igen eller gå tillbaka.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -748,7 +748,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get searchMatchCombinedSources => '详情由多个来源合并而成';
 
   @override
-  String get searchCombinedLabel => '全部';
+  String get searchCombinedLabel => '合并结果';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1651,4 +1651,59 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get searchSourceOptions => '来源选项';
+
+  @override
+  String get actionUndo => '撤销';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return '已从演出列表中移除 $song';
+  }
+
+  @override
+  String get backupTitle => '备份与恢复';
+
+  @override
+  String get backupExport => '导出备份';
+
+  @override
+  String get backupRestore => '恢复备份';
+
+  @override
+  String get backupIncludePreferences => '包含应用偏好设置';
+
+  @override
+  String get backupRestorePreferences => '恢复应用偏好设置';
+
+  @override
+  String get backupMerge => '添加到此曲库';
+
+  @override
+  String get backupMergeHint => '保留本地编辑，并从此备份添加歌曲和演出列表。';
+
+  @override
+  String get backupReplace => '替换此曲库';
+
+  @override
+  String get backupReplaceHint => '用此备份替换此设备上的所有歌曲和演出列表。';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return '歌曲：$songs · 演出列表：$setlists · 冲突：$conflicts';
+  }
+
+  @override
+  String get backupFailed => '无法完成此备份操作，请重试。';
+
+  @override
+  String get backupRestored => '备份已恢复。';
+
+  @override
+  String get backupLocalHint => '保存曲库副本。不会包含账户凭据或同意 Cookie。';
+
+  @override
+  String get backupReplaceConfirm => '要替换当前曲库吗？此操作无法撤销。';
+
+  @override
+  String get youtubeConsentPageError => '此页面已停止工作。请重试或返回。';
 }

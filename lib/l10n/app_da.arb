@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "Akkordarket skal bekræftes mod sangteksten",
   "searchMatchDifferentLyrics": "Sangteksten adskiller sig fra den valgte sang",
   "searchMatchCombinedSources": "Detaljer samlet fra flere kilder",
-  "searchCombinedLabel": "Alle",
+  "searchCombinedLabel": "Kombineret",
   "searchSongMatchCount": "{count, plural, =0{0 sangmatch} =1{1 sangmatch} other{{count} sangmatch}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Versionsoplysninger",
   "searchSelectedRecording": "Valgt indspilning",
   "searchVersionDuration": "Versionens varighed",
-  "searchSourceOptions": "Kildeindstillinger"
+  "searchSourceOptions": "Kildeindstillinger",
+  "actionUndo": "Fortryd",
+  "setlistEntryRemoved": "{song} er fjernet fra sætliste",
+  "backupTitle": "Sikkerhedskopiering og gendannelse",
+  "backupExport": "Eksportér sikkerhedskopi",
+  "backupRestore": "Gendan sikkerhedskopi",
+  "backupIncludePreferences": "Medtag appindstillinger",
+  "backupRestorePreferences": "Gendan appindstillinger",
+  "backupMerge": "Føj til dette bibliotek",
+  "backupMergeHint": "Behold lokale ændringer, og føj sange og sætlister fra denne sikkerhedskopi til.",
+  "backupReplace": "Erstat dette bibliotek",
+  "backupReplaceHint": "Erstat alle sange og sætlister på denne enhed med indholdet fra sikkerhedskopien.",
+  "backupSummary": "Sange: {songs} · Sætlister: {setlists} · Konflikter: {conflicts}",
+  "backupFailed": "Handlingen kunne ikke fuldføres. Prøv igen.",
+  "backupRestored": "Sikkerhedskopien er gendannet.",
+  "backupLocalHint": "Gem en kopi af dit bibliotek. Kontooplysninger og samtykkecookies medtages aldrig.",
+  "backupReplaceConfirm": "Vil du erstatte det aktuelle bibliotek? Dette kan ikke fortrydes.",
+  "youtubeConsentPageError": "Denne side holdt op med at fungere. Prøv igen, eller gå tilbage.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

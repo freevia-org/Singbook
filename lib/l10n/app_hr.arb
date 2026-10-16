@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "Za potvrdu akorda potreban je tekst pjesme",
   "searchMatchDifferentLyrics": "Tekst se razlikuje od odabrane pjesme",
   "searchMatchCombinedSources": "Pojedinosti su objedinjene iz više izvora",
-  "searchCombinedLabel": "Sve",
+  "searchCombinedLabel": "Kombinirano",
   "searchSongMatchCount": "{count, plural, one{{count} podudaranje pjesme} few{{count} podudaranja pjesama} other{{count} podudaranja pjesama}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Pojedinosti o verziji",
   "searchSelectedRecording": "Odabrana snimka",
   "searchVersionDuration": "Trajanje verzije",
-  "searchSourceOptions": "Opcije izvora"
+  "searchSourceOptions": "Opcije izvora",
+  "actionUndo": "Poništi",
+  "setlistEntryRemoved": "Pjesma „{song}” uklonjena je s popisa",
+  "backupTitle": "Sigurnosna kopija i vraćanje",
+  "backupExport": "Izvezi sigurnosnu kopiju",
+  "backupRestore": "Vrati sigurnosnu kopiju",
+  "backupIncludePreferences": "Uključi postavke aplikacije",
+  "backupRestorePreferences": "Vrati postavke aplikacije",
+  "backupMerge": "Dodaj u ovu biblioteku",
+  "backupMergeHint": "Zadrži lokalne izmjene i dodaj pjesme i popise iz ove sigurnosne kopije.",
+  "backupReplace": "Zamijeni ovu biblioteku",
+  "backupReplaceHint": "Zamijeni sve pjesme i popise na ovom uređaju sadržajem ove sigurnosne kopije.",
+  "backupSummary": "Pjesme: {songs} · Popisi: {setlists} · Sukobi: {conflicts}",
+  "backupFailed": "Nije moguće dovršiti ovu radnju. Pokušajte ponovno.",
+  "backupRestored": "Sigurnosna kopija vraćena je.",
+  "backupLocalHint": "Spremite kopiju svoje biblioteke. Podaci računa i kolačići privole nikad se ne uključuju.",
+  "backupReplaceConfirm": "Želite li zamijeniti trenutačnu biblioteku? To se ne može poništiti.",
+  "youtubeConsentPageError": "Ova je stranica prestala raditi. Pokušajte ponovno ili se vratite.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

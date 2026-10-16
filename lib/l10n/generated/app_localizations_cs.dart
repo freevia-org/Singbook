@@ -768,7 +768,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get searchMatchCombinedSources => 'Informace sloučené z více zdrojů';
 
   @override
-  String get searchCombinedLabel => 'Vše';
+  String get searchCombinedLabel => 'Kombinované';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1747,4 +1747,65 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Možnosti zdroje';
+
+  @override
+  String get actionUndo => 'Zpět';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return 'Skladba „$song“ byla odebrána ze seznamu';
+  }
+
+  @override
+  String get backupTitle => 'Zálohování a obnovení';
+
+  @override
+  String get backupExport => 'Exportovat zálohu';
+
+  @override
+  String get backupRestore => 'Obnovit zálohu';
+
+  @override
+  String get backupIncludePreferences => 'Zahrnout předvolby aplikace';
+
+  @override
+  String get backupRestorePreferences => 'Obnovit předvolby aplikace';
+
+  @override
+  String get backupMerge => 'Přidat do této knihovny';
+
+  @override
+  String get backupMergeHint =>
+      'Zachovat místní úpravy a přidat skladby a seznamy z této zálohy.';
+
+  @override
+  String get backupReplace => 'Nahradit tuto knihovnu';
+
+  @override
+  String get backupReplaceHint =>
+      'Nahradit všechny skladby a seznamy v tomto zařízení obsahem této zálohy.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Skladby: $songs · Seznamy: $setlists · Konflikty: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Tuto operaci zálohy se nepodařilo dokončit. Zkuste to znovu.';
+
+  @override
+  String get backupRestored => 'Záloha byla obnovena.';
+
+  @override
+  String get backupLocalHint =>
+      'Uložte si kopii knihovny. Přihlašovací údaje ani soubory cookie souhlasu se nezahrnují.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Nahradit současnou knihovnu? Tuto akci nelze vrátit.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Tato stránka přestala fungovat. Zkuste to znovu nebo se vraťte.';
 }

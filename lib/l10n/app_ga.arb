@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "Ní mór liricí an chairte a dheimhniú",
   "searchMatchDifferentLyrics": "Tá na liricí difriúil ón amhrán roghnaithe",
   "searchMatchCombinedSources": "Cuireadh sonraí ó fhoinsí éagsúla le chéile",
-  "searchCombinedLabel": "Uile",
+  "searchCombinedLabel": "Comhcheangailte",
   "searchSongMatchCount": "{count, plural, =0{0 meaitseáil amhráin} =1{1 mheaitseáil amhráin} other{{count} meaitseáil amhráin}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Sonraí an leagain",
   "searchSelectedRecording": "Taifeadadh roghnaithe",
   "searchVersionDuration": "Fad an leagain",
-  "searchSourceOptions": "Roghanna foinse"
+  "searchSourceOptions": "Roghanna foinse",
+  "actionUndo": "Cealaigh",
+  "setlistEntryRemoved": "Baineadh {song} den liosta seinm",
+  "backupTitle": "Cúltaca agus athchóiriú",
+  "backupExport": "Easpórtáil cúltaca",
+  "backupRestore": "Athchóirigh cúltaca",
+  "backupIncludePreferences": "Cuir sainroghanna na haipe san áireamh",
+  "backupRestorePreferences": "Athchóirigh sainroghanna na haipe",
+  "backupMerge": "Cuir leis an leabharlann seo",
+  "backupMergeHint": "Coinnigh na hathruithe áitiúla agus cuir amhráin agus liostaí ón gcúltaca seo leis.",
+  "backupReplace": "Ionadaigh an leabharlann seo",
+  "backupReplaceHint": "Ionadaigh gach amhrán agus liosta ar an ngléas seo le hábhar an chúltaca seo.",
+  "backupSummary": "Amhráin: {songs} · Liostaí: {setlists} · Coinbhleachtaí: {conflicts}",
+  "backupFailed": "Níorbh fhéidir an cúltaca a chríochnú. Bain triail eile as.",
+  "backupRestored": "Athchóiríodh an cúltaca.",
+  "backupLocalHint": "Sábháil cóip de do leabharlann. Ní chuirtear dintiúir chuntais ná fianáin toilithe san áireamh riamh.",
+  "backupReplaceConfirm": "Ionadaigh an leabharlann reatha? Ní féidir é seo a chealú.",
+  "youtubeConsentPageError": "Stop an leathanach seo ag obair. Bain triail eile as nó téigh ar ais.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

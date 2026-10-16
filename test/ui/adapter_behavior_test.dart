@@ -1,4 +1,3 @@
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:singbook/application/app_controller.dart';
@@ -71,7 +70,9 @@ void main() {
       var notifications = 0;
       ui.addListener(() => notifications++);
       final positions = <PlayerPosition>[];
-      ui.playerPosition.addListener(() => positions.add(ui.playerPosition.value));
+      ui.playerPosition.addListener(
+        () => positions.add(ui.playerPosition.value),
+      );
 
       await ui.seek(10);
       await ui.seek(40);
@@ -112,14 +113,17 @@ void main() {
   });
 
   group('setlists', () {
-    test('creating a setlist with a song adds it under the given name', () async {
-      await saveTwoSongs();
-      await ui.createSetlist(name: 'Nouveau', songId: 'a');
-      final setlist = app.setlists.single;
-      expect(setlist.name, 'Nouveau');
-      expect(setlist.entries.map((e) => e.songId), ['a']);
-      expect(ui.state.route, VerseRoute.main, reason: 'stays where it was');
-    });
+    test(
+      'creating a setlist with a song adds it under the given name',
+      () async {
+        await saveTwoSongs();
+        await ui.createSetlist(name: 'Nouveau', songId: 'a');
+        final setlist = app.setlists.single;
+        expect(setlist.name, 'Nouveau');
+        expect(setlist.entries.map((e) => e.songId), ['a']);
+        expect(ui.state.route, VerseRoute.main, reason: 'stays where it was');
+      },
+    );
 
     test('creating without a song opens the new setlist', () async {
       await ui.createSetlist(name: 'Fresh');
@@ -130,72 +134,151 @@ void main() {
     test('duplicates use the supplied localized name', () async {
       await saveTwoSongs();
       await ui.createSetlist(name: 'Set', songId: 'a');
-      await ui.duplicateSetlist(app.setlists.single.id, copyName: 'Set (копие)');
-      expect(app.setlists.map((s) => s.name), containsAll(['Set', 'Set (копие)']));
+      await ui.duplicateSetlist(
+        app.setlists.single.id,
+        copyName: 'Set (копие)',
+      );
+      expect(
+        app.setlists.map((s) => s.name),
+        containsAll(['Set', 'Set (копие)']),
+      );
     });
 
-    test('saving details while editing keeps edit mode and typed text', () async {
-      await saveTwoSongs();
-      await app.addToSetlist('a', await _newSetlist(ui, app));
-      await app.addToSetlist('b', app.setlists.single.id);
-      final setlist = app.setlists.single;
-      await ui.editSetlist(setlist.id);
-      expect(ui.state.editingSetlist, isTrue);
+    test(
+      'saving details while editing keeps edit mode and typed text',
+      () async {
+        await saveTwoSongs();
+        await app.addToSetlist('a', await _newSetlist(ui, app));
+        await app.addToSetlist('b', app.setlists.single.id);
+        final setlist = app.setlists.single;
+        await ui.editSetlist(setlist.id);
+        expect(ui.state.editingSetlist, isTrue);
 
-      final order = setlist.entries.map((e) => e.id).toList().reversed.toList();
-      await ui.saveSetlistDetails(
-        name: 'Typed name',
-        notes: 'Typed notes',
-        entryOrder: order,
-      );
-      expect(ui.state.editingSetlist, isTrue, reason: 'reorder keeps editing');
-      expect(app.setlists.single.name, 'Typed name');
-      expect(app.setlists.single.notes, 'Typed notes');
-      expect(app.setlists.single.entries.map((e) => e.id), order);
+        final order = setlist.entries
+            .map((e) => e.id)
+            .toList()
+            .reversed
+            .toList();
+        await ui.saveSetlistDetails(
+          name: 'Typed name',
+          notes: 'Typed notes',
+          entryOrder: order,
+        );
+        expect(
+          ui.state.editingSetlist,
+          isTrue,
+          reason: 'reorder keeps editing',
+        );
+        expect(app.setlists.single.name, 'Typed name');
+        expect(app.setlists.single.notes, 'Typed notes');
+        expect(app.setlists.single.entries.map((e) => e.id), order);
 
-      await ui.removeSetlistEntry(
-        setlist.id,
-        order.first,
-        name: 'Typed again',
-        notes: 'More notes',
-      );
-      expect(ui.state.editingSetlist, isTrue);
-      expect(app.setlists.single.name, 'Typed again');
-      expect(app.setlists.single.notes, 'More notes');
-      expect(app.setlists.single.entries, hasLength(1));
+        await ui.removeSetlistEntry(
+          setlist.id,
+          order.first,
+          name: 'Typed again',
+          notes: 'More notes',
+        );
+        expect(ui.state.editingSetlist, isTrue);
+        expect(app.setlists.single.name, 'Typed again');
+        expect(app.setlists.single.notes, 'More notes');
+        expect(app.setlists.single.entries, hasLength(1));
 
-      await ui.saveSetlistDetails(
-        name: ' ',
-        notes: 'x',
-        finishEditing: true,
-      );
-      expect(ui.state.editingSetlist, isFalse);
-      expect(app.setlists.single.name, 'Typed again', reason: 'blank keeps name');
-    });
+        await ui.saveSetlistDetails(name: ' ', notes: 'x', finishEditing: true);
+        expect(ui.state.editingSetlist, isFalse);
+        expect(
+          app.setlists.single.name,
+          'Typed again',
+          reason: 'blank keeps name',
+        );
+      },
+    );
 
-    test('entry overrides keep other overrides and clear emptied ones', () async {
-      await app.saveSong(_song('a', 'Alpha'));
-      await app.saveSetlist(
-        SetlistDocument(
-          id: 's',
-          name: 'S',
-          entries: const [
-            SetlistEntry(
-              id: 'e',
-              songId: 'a',
-              overrides: {'key': 'D', 'capo': 2, 'note': 'keep'},
-            ),
-          ],
-        ),
-      );
-      await ui.openSetlist('s');
-      await ui.saveSetlistEntryOverrides('s', 'e', key: '', capo: '3');
-      final overrides = app.setlists.single.entries.single.overrides;
-      expect(overrides, {'capo': 3, 'note': 'keep'});
-      final entry = ui.state.activeSetlist!.entries.single;
-      expect(entry.keyOverride, isNull);
-      expect(entry.capoOverride, '3');
-    });
+    test(
+      'undo restores a removed entry with its id, position, and overrides',
+      () async {
+        await saveTwoSongs();
+        await app.saveSong(_song('c', 'Gamma'));
+        await app.saveSong(_song('d', 'Delta'));
+        await app.saveSetlist(
+          SetlistDocument(
+            id: 'undo-list',
+            name: 'Undo list',
+            entries: const [
+              SetlistEntry(id: 'first', songId: 'a'),
+              SetlistEntry(
+                id: 'removed',
+                songId: 'b',
+                overrides: {
+                  'key': 'D',
+                  'capo': 2,
+                  'repeat': 3,
+                  'note': 'intro',
+                },
+              ),
+              SetlistEntry(id: 'last', songId: 'c'),
+            ],
+          ),
+        );
+
+        final removed = await ui.removeSetlistEntryWithUndo(
+          'undo-list',
+          'removed',
+        );
+        expect(removed, isNotNull);
+        expect(app.setlists.single.entries.map((entry) => entry.id), [
+          'first',
+          'last',
+        ]);
+
+        // A change made while the Undo action is visible must be kept.
+        await app.addToSetlist('d', 'undo-list');
+        final addedEntryId = app.setlists.single.entries.last.id;
+
+        await ui.restoreSetlistEntry(removed!);
+        final entries = app.setlists.single.entries;
+        expect(entries.map((entry) => entry.id), [
+          'first',
+          'removed',
+          'last',
+          addedEntryId,
+        ]);
+        expect(entries[1].songId, 'b');
+        expect(entries[1].overrides, {
+          'key': 'D',
+          'capo': 2,
+          'repeat': 3,
+          'note': 'intro',
+        });
+      },
+    );
+
+    test(
+      'entry overrides keep other overrides and clear emptied ones',
+      () async {
+        await app.saveSong(_song('a', 'Alpha'));
+        await app.saveSetlist(
+          SetlistDocument(
+            id: 's',
+            name: 'S',
+            entries: const [
+              SetlistEntry(
+                id: 'e',
+                songId: 'a',
+                overrides: {'key': 'D', 'capo': 2, 'note': 'keep'},
+              ),
+            ],
+          ),
+        );
+        await ui.openSetlist('s');
+        await ui.saveSetlistEntryOverrides('s', 'e', key: '', capo: '3');
+        final overrides = app.setlists.single.entries.single.overrides;
+        expect(overrides, {'capo': 3, 'note': 'keep'});
+        final entry = ui.state.activeSetlist!.entries.single;
+        expect(entry.keyOverride, isNull);
+        expect(entry.capoOverride, '3');
+      },
+    );
 
     test('entries whose song is gone are reported as missing', () async {
       await app.saveSong(_song('a', 'Alpha'));
@@ -324,28 +407,31 @@ void main() {
       expect(app.findSong('b'), isNull);
     });
 
-    test('saving the editor reports success and keeps validation to the UI', () async {
-      await app.saveSong(_song('a', 'Alpha'));
-      await ui.editSong('a');
-      expect(ui.state.editor?.title, 'Alpha');
-      expect(ui.state.editor?.isNew, isFalse);
-      ui.setEditorDirty(true);
-      expect(ui.state.editorDirty, isTrue);
-      final notices = <UiNotice>[];
-      final sub = ui.notices.listen(notices.add);
+    test(
+      'saving the editor reports success and keeps validation to the UI',
+      () async {
+        await app.saveSong(_song('a', 'Alpha'));
+        await ui.editSong('a');
+        expect(ui.state.editor?.title, 'Alpha');
+        expect(ui.state.editor?.isNew, isFalse);
+        ui.setEditorDirty(true);
+        expect(ui.state.editorDirty, isTrue);
+        final notices = <UiNotice>[];
+        final sub = ui.notices.listen(notices.add);
 
-      await ui.saveLyricsEdit('{title: Alpha 2}\n{artist: A}\n\n[C]Words');
-      await Future<void>.delayed(Duration.zero);
-      await sub.cancel();
+        await ui.saveLyricsEdit('{title: Alpha 2}\n{artist: A}\n\n[C]Words');
+        await Future<void>.delayed(Duration.zero);
+        await sub.cancel();
 
-      expect(notices, [UiNotice.editorSaved]);
-      // Edited from the list, so saving returns to the list, not a reader.
-      expect(ui.state.route, VerseRoute.main);
-      expect(ui.state.song, isNull);
-      expect(ui.state.editorDirty, isFalse);
-      expect(ui.state.editor, isNull);
-      expect(app.findSong('a')?.title, 'Alpha 2');
-    });
+        expect(notices, [UiNotice.editorSaved]);
+        // Edited from the list, so saving returns to the list, not a reader.
+        expect(ui.state.route, VerseRoute.main);
+        expect(ui.state.song, isNull);
+        expect(ui.state.editorDirty, isFalse);
+        expect(ui.state.editor, isNull);
+        expect(app.findSong('a')?.title, 'Alpha 2');
+      },
+    );
 
     test('back from a dirty new-song editor discards the draft', () async {
       await ui.createSong();

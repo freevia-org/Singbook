@@ -67,9 +67,6 @@ void main() {
       expect(find.text('Enter a song or artist to search.'), findsOneWidget);
       expect(find.text('No results'), findsNothing);
       await _capture(binding, '01_online_search_idle');
-      await tester.tap(find.byTooltip('Search options'));
-      await tester.pumpAndSettle();
-      await _selectDropdown(tester, 'Song details', 'Any');
       expect(
         tester
             .widget<VerseHomeScreen>(find.byType(VerseHomeScreen))
@@ -78,8 +75,6 @@ void main() {
             .field,
         'all',
       );
-      await tester.tap(find.byTooltip('Search options'));
-      await tester.pumpAndSettle();
 
       await _search(tester, _title);
       _expectHomeModeCount('online', 1);
@@ -118,50 +113,15 @@ void main() {
       await _capture(binding, '04_search_five_results');
       await _search(tester, 'fixtures');
       _expectHomeModeCount('online', 5);
-      await tester.tap(find.byTooltip('Search options'));
-      await tester.pumpAndSettle();
       expect(
-        find.text(
-          'Select a song to filter lyric versions by chords, timing, or language.',
-        ),
-        findsOneWidget,
+        tester
+            .widget<VerseHomeScreen>(find.byType(VerseHomeScreen))
+            .state
+            .searchFilters
+            .field,
+        'all',
       );
-      expect(
-        find.byKey(const ValueKey('online-filter-limit-hint')),
-        findsOneWidget,
-      );
-      expect(find.text('Timed lyrics'), findsNothing);
-      await _selectDropdown(tester, 'Song details', 'Song title');
-      final titleFilteredState = tester
-          .widget<VerseHomeScreen>(find.byType(VerseHomeScreen))
-          .state;
-      expect(titleFilteredState.searchFilters.field, 'title');
-      expect(
-        titleFilteredState.autocomplete,
-        isEmpty,
-        reason: 'Title filtering should remove artist-only catalog matches.',
-      );
-      final emptySearchMessage = find.text(
-        'No songs found. Try a different search.',
-      );
-      await _scrollIntoView(tester, emptySearchMessage);
-      expect(emptySearchMessage, findsOneWidget);
-      await _capture(binding, '05_search_title_filter_zero_results');
-      await _selectDropdown(tester, 'Song details', 'Artist');
-      await tester.pumpAndSettle();
-      _expectHomeModeCount('online', 5);
-      final firstArtistResult = find.text('Signal Song 1');
-      final lastArtistResult = find.text('Signal Song 5');
-      await _scrollIntoView(tester, firstArtistResult);
-      expect(firstArtistResult, findsOneWidget);
-      await _scrollIntoView(tester, lastArtistResult);
-      expect(lastArtistResult, findsOneWidget);
-      await _capture(binding, '06_search_artist_filter_five_results');
-      await _selectDropdown(tester, 'Song details', 'Any');
-      await tester.pumpAndSettle();
-      _expectHomeModeCount('online', 5);
-      await tester.tap(find.byTooltip('Search options'));
-      await tester.pumpAndSettle();
+      await _capture(binding, '05_search_catalog_results');
 
       await _search(tester, 'synthetic missing title');
       final missingTitleMessage = find.text(

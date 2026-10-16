@@ -28,7 +28,7 @@
   "accountTitle": "Обліковий запис і синхронізація", "accountUnavailable": "Для синхронізації потрібна збірка Singbook із налаштованим входом через Google. Ця збірка зберігає пісні лише на цьому пристрої.", "accountSyncNow": "Синхронізувати зараз", "accountConnected": "Підключено. Натисніть «Синхронізувати зараз», щоб оновити резервну копію.", "accountSignIn": "Підключити обліковий запис", "accountSignOut": "Вийти", "accountChange": "Змінити обліковий запис", "accountSignedOut": "Не підключено", "accountSyncing": "Синхронізація бібліотеки…", "accountSynced": "Бібліотеку синхронізовано.", "accountSyncFailed": "Не вдалося синхронізувати бібліотеку.",
   "accessibilityFavorite": "В обраному", "accessibilityNotFavorite": "Не в обраному", "accessibilitySearchField": "Пошук пісень", "accessibilityClearSearch": "Очистити пошуковий текст", "accessibilitySongMenu": "Дії для пісні {song}", "@accessibilitySongMenu": {"placeholders": {"song": {"type": "String"}}}, "accessibilitySetlistMenu": "Дії для сетлисту {setlist}", "@accessibilitySetlistMenu": {"placeholders": {"setlist": {"type": "String"}}}, "accessibilityExpandSetlist": "Розгорнути пісні в сетлисті {setlist}", "@accessibilityExpandSetlist": {"placeholders": {"setlist": {"type": "String"}}}, "accessibilityCollapseSetlist": "Згорнути пісні в сетлисті {setlist}", "@accessibilityCollapseSetlist": {"placeholders": {"setlist": {"type": "String"}}}, "accessibilityPlaybackProgress": "Перебіг відтворення: {percent}%", "@accessibilityPlaybackProgress": {"placeholders": {"percent": {"type": "int"}}}, "accessibilityTimeline": "Шкала історії, {date}", "@accessibilityTimeline": {"placeholders": {"date": {"type": "String"}}},
   "loading": "Завантаження…", "loadingSongs": "Завантаження пісень…", "loadingSetlists": "Завантаження сетлистів…", "errorGeneric": "Сталася помилка.", "errorOffline": "Схоже, немає підключення до мережі.", "errorPermission": "Для продовження потрібен дозвіл.", "emptyFiltered": "Немає елементів, що відповідають фільтрам.", "unknownValue": "Невідомо", "durationUnknown": "Тривалість невідома", "metadataNotSet": "Не вказано", "dateToday": "Сьогодні", "dateYesterday": "Учора", "daySongCount": "{count, plural, =0{Немає пісень} one{{count} пісня} few{{count} пісні} many{{count} пісень} other{{count} пісні}}", "@daySongCount": {"placeholders": {"count": {"type": "int"}}},
-  "searchCombinedLabel": "Усі",
+  "searchCombinedLabel": "Об’єднані",
   "settingsLanguageEnglish": "English",
   "settingsLanguageBulgarian": "Български",
   "settingsLanguageUkrainian": "Українська",
@@ -213,5 +213,42 @@
   "searchVersionDetails": "Відомості про версію",
   "searchSelectedRecording": "Вибраний запис",
   "searchVersionDuration": "Тривалість версії",
-  "searchSourceOptions": "Параметри джерела"
+  "searchSourceOptions": "Параметри джерела",
+  "actionUndo": "Скасувати",
+  "setlistEntryRemoved": "Пісню «{song}» вилучено зі списку",
+  "backupTitle": "Резервна копія та відновлення",
+  "backupExport": "Експортувати резервну копію",
+  "backupRestore": "Відновити резервну копію",
+  "backupIncludePreferences": "Додати налаштування застосунку",
+  "backupRestorePreferences": "Відновити налаштування застосунку",
+  "backupMerge": "Додати до цієї бібліотеки",
+  "backupMergeHint": "Зберегти локальні зміни й додати пісні та списки з цієї резервної копії.",
+  "backupReplace": "Замінити цю бібліотеку",
+  "backupReplaceHint": "Замінити всі пісні та списки на цьому пристрої вмістом цієї резервної копії.",
+  "backupSummary": "Пісні: {songs} · Списки: {setlists} · Конфлікти: {conflicts}",
+  "backupFailed": "Не вдалося завершити операцію. Спробуйте ще раз.",
+  "backupRestored": "Резервну копію відновлено.",
+  "backupLocalHint": "Збережіть копію бібліотеки. Дані облікового запису та файли cookie згоди не додаються.",
+  "backupReplaceConfirm": "Замінити поточну бібліотеку? Цю дію неможливо скасувати.",
+  "youtubeConsentPageError": "Ця сторінка перестала працювати. Спробуйте ще раз або поверніться.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

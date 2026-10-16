@@ -769,7 +769,7 @@ class AppLocalizationsRu extends AppLocalizations {
       'Сведения объединены из нескольких источников';
 
   @override
-  String get searchCombinedLabel => 'Все';
+  String get searchCombinedLabel => 'Объединённые';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1766,4 +1766,65 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Параметры источника';
+
+  @override
+  String get actionUndo => 'Отменить';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return 'Композиция «$song» удалена из сет-листа';
+  }
+
+  @override
+  String get backupTitle => 'Резервное копирование и восстановление';
+
+  @override
+  String get backupExport => 'Экспортировать резервную копию';
+
+  @override
+  String get backupRestore => 'Восстановить резервную копию';
+
+  @override
+  String get backupIncludePreferences => 'Включить настройки приложения';
+
+  @override
+  String get backupRestorePreferences => 'Восстановить настройки приложения';
+
+  @override
+  String get backupMerge => 'Добавить в эту библиотеку';
+
+  @override
+  String get backupMergeHint =>
+      'Сохранить локальные изменения и добавить песни и списки из этой резервной копии.';
+
+  @override
+  String get backupReplace => 'Заменить эту библиотеку';
+
+  @override
+  String get backupReplaceHint =>
+      'Заменить все песни и сет-листы на этом устройстве содержимым этой резервной копии.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Песни: $songs · Сет-листы: $setlists · Конфликты: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Не удалось завершить операцию. Попробуйте ещё раз.';
+
+  @override
+  String get backupRestored => 'Резервная копия восстановлена.';
+
+  @override
+  String get backupLocalHint =>
+      'Сохраните копию библиотеки. Данные учётной записи и файлы cookie согласия не включаются.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Заменить текущую библиотеку? Это действие нельзя отменить.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Эта страница перестала работать. Попробуйте ещё раз или вернитесь назад.';
 }

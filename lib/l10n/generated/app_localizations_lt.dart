@@ -775,7 +775,7 @@ class AppLocalizationsLt extends AppLocalizations {
       'Informacija sujungta iš kelių šaltinių';
 
   @override
-  String get searchCombinedLabel => 'Visi';
+  String get searchCombinedLabel => 'Sujungta';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1764,4 +1764,65 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Šaltinio parinktys';
+
+  @override
+  String get actionUndo => 'Anuliuoti';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return 'Daina „$song“ pašalinta iš grojaraščio';
+  }
+
+  @override
+  String get backupTitle => 'Atsarginė kopija ir atkūrimas';
+
+  @override
+  String get backupExport => 'Eksportuoti atsarginę kopiją';
+
+  @override
+  String get backupRestore => 'Atkurti atsarginę kopiją';
+
+  @override
+  String get backupIncludePreferences => 'Įtraukti programos nuostatas';
+
+  @override
+  String get backupRestorePreferences => 'Atkurti programos nuostatas';
+
+  @override
+  String get backupMerge => 'Pridėti prie šios bibliotekos';
+
+  @override
+  String get backupMergeHint =>
+      'Išsaugokite vietinius pakeitimus ir pridėkite dainas bei grojaraščius iš šios kopijos.';
+
+  @override
+  String get backupReplace => 'Pakeisti šią biblioteką';
+
+  @override
+  String get backupReplaceHint =>
+      'Pakeiskite visas šio įrenginio dainas ir grojaraščius šios kopijos turiniu.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Dainos: $songs · Grojaraščiai: $setlists · Konfliktai: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Nepavyko užbaigti atsarginės kopijos operacijos. Bandykite dar kartą.';
+
+  @override
+  String get backupRestored => 'Atsarginė kopija atkurta.';
+
+  @override
+  String get backupLocalHint =>
+      'Išsaugokite savo bibliotekos kopiją. Paskyros prisijungimo duomenys ir sutikimo slapukai neįtraukiami.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Pakeisti dabartinę biblioteką? Šio veiksmo atšaukti negalima.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Šis puslapis nustojo veikti. Bandykite dar kartą arba grįžkite atgal.';
 }

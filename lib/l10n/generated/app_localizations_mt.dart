@@ -773,7 +773,7 @@ class AppLocalizationsMt extends AppLocalizations {
       'Dettalji magħquda minn diversi sorsi';
 
   @override
-  String get searchCombinedLabel => 'Kollha';
+  String get searchCombinedLabel => 'Magħquda';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1756,4 +1756,65 @@ class AppLocalizationsMt extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Għażliet tas-sors';
+
+  @override
+  String get actionUndo => 'Ħoll';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return '$song tneħħiet mil-lista tal-kanzunetti';
+  }
+
+  @override
+  String get backupTitle => 'Backup u restawr';
+
+  @override
+  String get backupExport => 'Esporta backup';
+
+  @override
+  String get backupRestore => 'Irrestawra backup';
+
+  @override
+  String get backupIncludePreferences => 'Inkludi l-preferenzi tal-app';
+
+  @override
+  String get backupRestorePreferences => 'Irrestawra l-preferenzi tal-app';
+
+  @override
+  String get backupMerge => 'Żid ma’ din il-librerija';
+
+  @override
+  String get backupMergeHint =>
+      'Żomm l-editjar lokali u żid kanzunetti u listi minn dan il-backup.';
+
+  @override
+  String get backupReplace => 'Ibdel din il-librerija';
+
+  @override
+  String get backupReplaceHint =>
+      'Ibdel il-kanzunetti u l-listi kollha fuq dan it-tagħmir bil-kontenut ta’ dan il-backup.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Kanzunetti: $songs · Listi: $setlists · Kunflitti: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Ma setgħetx titlesta din l-operazzjoni. Erġa’ pprova.';
+
+  @override
+  String get backupRestored => 'Il-backup ġie rrestawrat.';
+
+  @override
+  String get backupLocalHint =>
+      'Issejvja kopja tal-librerija tiegħek. Id-dettalji tal-kont u l-cookies tal-kunsens qatt ma jiġu inklużi.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Tibdel il-librerija attwali? Din l-azzjoni ma tistax titneħħa.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Din il-paġna waqfet taħdem. Erġa’ pprova jew mur lura.';
 }

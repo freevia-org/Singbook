@@ -18,11 +18,12 @@ import 'library_actions.dart';
 import 'localized_labels.dart';
 import 'player/player_screen.dart';
 import 'settings/account_section.dart';
+import 'settings/backup_section.dart';
 import 'settings/settings_screen.dart';
-import 'settings/youtube_music_consent_section.dart';
 import 'theme/verse_theme.dart';
 import 'verse_ui_state.dart';
 import 'widgets/singbook_wordmark.dart';
+import 'widgets/adaptive_bottom_navigation.dart';
 import 'widgets/verse_components.dart';
 
 class VerseApp extends StatefulWidget {
@@ -57,7 +58,6 @@ class _VerseAppState extends State<VerseApp> {
     super.initState();
     _ownsApp = widget.controller == null;
     _app = widget.controller ?? AppController();
-    _app.youtubeMusicConsent.onConsentRequired = _requestYoutubeMusicConsent;
     _files = VerseFileActions();
     unawaited(_files.cleanUpShareCache());
     _controller = AppControllerAdapter(
@@ -117,54 +117,6 @@ class _VerseAppState extends State<VerseApp> {
     }
   }
 
-  Future<bool> _requestYoutubeMusicConsent() async {
-    final navigator = _navigatorKey.currentState;
-    if (!mounted ||
-        !_initialized ||
-        navigator == null ||
-        !_app.providerEnabled('youtubemusic')) {
-      return false;
-    }
-    final selection = _app.selection;
-    final query = _app.query;
-    final l10n = AppLocalizations.of(navigator.context);
-    final saved = await navigator.push<bool>(
-      MaterialPageRoute(
-        builder: (_) => YoutubeMusicConsentScreen(
-          labels: YoutubeConsentLabels(
-            title: 'YouTube Music',
-            explanation: '',
-            connect: '',
-            saved: '',
-            clear: '',
-            instructions: '',
-            notReady: l10n.youtubeConsentError,
-            navigationBlocked: l10n.youtubeConsentBlocked,
-            loadFailed: l10n.youtubeConsentError,
-            clearFailed: l10n.youtubeConsentError,
-            done: l10n.actionDone,
-            retry: l10n.actionRetry,
-          ),
-          onComplete: _app.completeYoutubeMusicConsent,
-          autoComplete: true,
-        ),
-      ),
-    );
-    if (!mounted || saved != true || !_app.providerEnabled('youtubemusic')) {
-      return false;
-    }
-    // The provider's ordinary network deadline may expire while the person
-    // reads Google's page. Retry the same current task after saving, even then.
-    // Selecting it again cancels the previous lookup before starting this one.
-    if (selection != null &&
-        _app.query == query &&
-        _app.selection?.identity == selection.identity &&
-        _app.checks['youtubemusic']?.code == 'timeout') {
-      unawaited(_app.selectCandidate(selection, cachedResults: _app.results));
-    }
-    return true;
-  }
-
   void _openSyncSettings() {
     setState(() => _syncSettingsRequest++);
     _controller.setTab(VerseTab.settings);
@@ -188,7 +140,6 @@ class _VerseAppState extends State<VerseApp> {
 
   @override
   void dispose() {
-    _app.youtubeMusicConsent.onConsentRequired = null;
     _controller.removeListener(_onControllerChanged);
     _controller.dispose();
     if (_ownsApp) _app.dispose();
@@ -258,6 +209,7 @@ class _VerseAppState extends State<VerseApp> {
                     ),
                   )
           : VerseAppShell(
+              backupController: _app,
               controller: _controller,
               files: _files,
               syncFocusRequest: _syncSettingsRequest,
@@ -388,12 +340,14 @@ class VerseAppShell extends StatefulWidget {
     super.key,
     required this.controller,
     required this.files,
+    this.backupController,
     this.syncFocusRequest = 0,
     this.onOpenSyncSettings = _ignoreSyncSettingsRequest,
     this.onSyncFocusConsumed = _ignoreSyncSettingsRequest,
   });
   final VerseUiController controller;
   final VerseFileActions files;
+  final AppController? backupController;
   final int syncFocusRequest;
   final VoidCallback onOpenSyncSettings;
   final VoidCallback onSyncFocusConsumed;
@@ -700,8 +654,6 @@ class _VerseAppShellState extends State<VerseAppShell>
     _promptRemoteDeletions(state);
     final size = MediaQuery.sizeOf(context);
     final navigationTextScale = MediaQuery.textScalerOf(context).scale(14) / 14;
-    final navigationBarHeight =
-        80 + ((navigationTextScale - 1).clamp(0, 2) * 48).toDouble();
     final comparisonMode =
         state.route == VerseRoute.main &&
         state.activeTab == VerseTab.home &&
@@ -817,29 +769,21 @@ class _VerseAppShellState extends State<VerseAppShell>
         ),
         bottomNavigationBar:
             state.route == VerseRoute.main && !useRail && !comparisonMode
-            ? NavigationBar(
-                height: navigationBarHeight,
+            ? AdaptiveBottomNavigation(
                 selectedIndex: state.activeTab.index,
-                onDestinationSelected: (index) =>
+                onSelected: (index) =>
                     controller.setTab(VerseTab.values[index]),
-                destinations: [
-                  NavigationDestination(
-                    icon: const Icon(Icons.search_rounded),
-                    label: l10n.navHome,
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.music_note_rounded),
-                    label: l10n.navSongs,
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.queue_music_rounded),
-                    label: l10n.navSetlists,
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.tune_rounded),
-                    label: l10n.navSettingsCompact,
-                    tooltip: l10n.navSettings,
-                  ),
+                labels: [
+                  l10n.navHome,
+                  l10n.navSongs,
+                  l10n.navSetlists,
+                  l10n.navSettings,
+                ],
+                icons: const [
+                  Icons.search_rounded,
+                  Icons.music_note_rounded,
+                  Icons.queue_music_rounded,
+                  Icons.tune_rounded,
                 ],
               )
             : null,
@@ -868,6 +812,13 @@ class _VerseAppShellState extends State<VerseAppShell>
       VerseTab.songs => SongsScreen(controller: controller),
       VerseTab.setlists => SetlistsScreen(controller: controller),
       VerseTab.settings => SettingsScreen(
+        backupSection: widget.backupController == null
+            ? null
+            : BackupSection(
+                controller: widget.backupController!,
+                files: widget.files,
+                syncConnected: state.syncSignedIn,
+              ),
         controller: controller,
         syncFocusRequest: widget.syncFocusRequest,
         onSyncFocusConsumed: widget.onSyncFocusConsumed,

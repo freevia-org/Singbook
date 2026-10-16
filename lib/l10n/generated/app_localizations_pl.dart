@@ -769,7 +769,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get searchMatchCombinedSources => 'Szczegóły połączono z wielu źródeł';
 
   @override
-  String get searchCombinedLabel => 'Wszystkie';
+  String get searchCombinedLabel => 'Połączone';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1763,4 +1763,65 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Opcje źródła';
+
+  @override
+  String get actionUndo => 'Cofnij';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return 'Utwór „$song” usunięto z setlisty';
+  }
+
+  @override
+  String get backupTitle => 'Kopia zapasowa i przywracanie';
+
+  @override
+  String get backupExport => 'Eksportuj kopię zapasową';
+
+  @override
+  String get backupRestore => 'Przywróć kopię zapasową';
+
+  @override
+  String get backupIncludePreferences => 'Uwzględnij ustawienia aplikacji';
+
+  @override
+  String get backupRestorePreferences => 'Przywróć ustawienia aplikacji';
+
+  @override
+  String get backupMerge => 'Dodaj do tej biblioteki';
+
+  @override
+  String get backupMergeHint =>
+      'Zachowaj lokalne zmiany i dodaj utwory oraz setlisty z tej kopii.';
+
+  @override
+  String get backupReplace => 'Zastąp tę bibliotekę';
+
+  @override
+  String get backupReplaceHint =>
+      'Zastąp wszystkie utwory i setlisty na tym urządzeniu zawartością tej kopii.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Utwory: $songs · Setlisty: $setlists · Konflikty: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Nie udało się ukończyć tej operacji. Spróbuj ponownie.';
+
+  @override
+  String get backupRestored => 'Przywrócono kopię zapasową.';
+
+  @override
+  String get backupLocalHint =>
+      'Zapisz kopię swojej biblioteki. Dane logowania i pliki cookie zgody nigdy nie są dołączane.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Zastąpić bieżącą bibliotekę? Tej operacji nie można cofnąć.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Ta strona przestała działać. Spróbuj ponownie lub wróć.';
 }

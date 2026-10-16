@@ -771,7 +771,7 @@ class AppLocalizationsLv extends AppLocalizations {
       'Informācija apkopota no vairākiem avotiem';
 
   @override
-  String get searchCombinedLabel => 'Visi';
+  String get searchCombinedLabel => 'Apvienots';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1757,4 +1757,65 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Avota opcijas';
+
+  @override
+  String get actionUndo => 'Atsaukt';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return 'Dziesma „$song” noņemta no dziesmu saraksta';
+  }
+
+  @override
+  String get backupTitle => 'Dublēšana un atjaunošana';
+
+  @override
+  String get backupExport => 'Eksportēt dublējumu';
+
+  @override
+  String get backupRestore => 'Atjaunot dublējumu';
+
+  @override
+  String get backupIncludePreferences => 'Iekļaut lietotnes preferences';
+
+  @override
+  String get backupRestorePreferences => 'Atjaunot lietotnes preferences';
+
+  @override
+  String get backupMerge => 'Pievienot šai bibliotēkai';
+
+  @override
+  String get backupMergeHint =>
+      'Saglabājiet vietējos labojumus un pievienojiet dziesmas un sarakstus no šī dublējuma.';
+
+  @override
+  String get backupReplace => 'Aizstāt šo bibliotēku';
+
+  @override
+  String get backupReplaceHint =>
+      'Aizstājiet visas šīs ierīces dziesmas un sarakstus ar šī dublējuma saturu.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Dziesmas: $songs · Saraksti: $setlists · Konflikti: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Dublēšanas darbību neizdevās pabeigt. Mēģiniet vēlreiz.';
+
+  @override
+  String get backupRestored => 'Dublējums atjaunots.';
+
+  @override
+  String get backupLocalHint =>
+      'Saglabājiet savas bibliotēkas kopiju. Konta dati un piekrišanas sīkfaili netiek iekļauti.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Aizstāt pašreizējo bibliotēku? Šo darbību nevar atsaukt.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Šī lapa pārstāja darboties. Mēģiniet vēlreiz vai dodieties atpakaļ.';
 }

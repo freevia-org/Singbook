@@ -771,7 +771,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get searchMatchCombinedSources => 'تم جمع التفاصيل من مصادر متعددة';
 
   @override
-  String get searchCombinedLabel => 'الكل';
+  String get searchCombinedLabel => 'المجموعة الكاملة';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1760,4 +1760,65 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'خيارات المصدر';
+
+  @override
+  String get actionUndo => 'تراجع';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return 'تمت إزالة $song من قائمة الأغاني';
+  }
+
+  @override
+  String get backupTitle => 'النسخ الاحتياطي والاستعادة';
+
+  @override
+  String get backupExport => 'تصدير نسخة احتياطية';
+
+  @override
+  String get backupRestore => 'استعادة نسخة احتياطية';
+
+  @override
+  String get backupIncludePreferences => 'تضمين تفضيلات التطبيق';
+
+  @override
+  String get backupRestorePreferences => 'استعادة تفضيلات التطبيق';
+
+  @override
+  String get backupMerge => 'إضافة إلى هذه المكتبة';
+
+  @override
+  String get backupMergeHint =>
+      'احتفظ بالتعديلات المحلية وأضف الأغاني والقوائم من هذه النسخة الاحتياطية.';
+
+  @override
+  String get backupReplace => 'استبدال هذه المكتبة';
+
+  @override
+  String get backupReplaceHint =>
+      'استبدل جميع الأغاني والقوائم على هذا الجهاز بمحتوى هذه النسخة الاحتياطية.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'الأغاني: $songs · القوائم: $setlists · التعارضات: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'تعذّر إكمال عملية النسخ الاحتياطي. حاول مرة أخرى.';
+
+  @override
+  String get backupRestored => 'تمت استعادة النسخة الاحتياطية.';
+
+  @override
+  String get backupLocalHint =>
+      'احفظ نسخة من مكتبتك. لا تُضمّن بيانات الحساب أو ملفات تعريف الارتباط للموافقة.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'هل تريد استبدال المكتبة الحالية؟ لا يمكن التراجع عن ذلك.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'توقفت هذه الصفحة عن العمل. حاول مرة أخرى أو ارجع.';
 }

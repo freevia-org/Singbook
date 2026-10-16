@@ -763,7 +763,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Details combined from multiple sources';
 
   @override
-  String get searchCombinedLabel => 'All';
+  String get searchCombinedLabel => 'Combined';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1714,4 +1714,65 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Source options';
+
+  @override
+  String get actionUndo => 'Undo';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return 'Removed $song from setlist';
+  }
+
+  @override
+  String get backupTitle => 'Backup and restore';
+
+  @override
+  String get backupExport => 'Export backup';
+
+  @override
+  String get backupRestore => 'Restore backup';
+
+  @override
+  String get backupIncludePreferences => 'Include app preferences';
+
+  @override
+  String get backupRestorePreferences => 'Restore app preferences';
+
+  @override
+  String get backupMerge => 'Add to this library';
+
+  @override
+  String get backupMergeHint =>
+      'Keep local edits and add songs and setlists from this backup.';
+
+  @override
+  String get backupReplace => 'Replace this library';
+
+  @override
+  String get backupReplaceHint =>
+      'Replace all songs and setlists on this device with this backup.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Songs: $songs · Setlists: $setlists · Conflicts: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Could not complete this backup operation. Try again.';
+
+  @override
+  String get backupRestored => 'Backup restored.';
+
+  @override
+  String get backupLocalHint =>
+      'Save a copy of your library. Account credentials and consent cookies are never included.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Replace the current library? This cannot be undone.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'This page stopped working. Try again or go back.';
 }

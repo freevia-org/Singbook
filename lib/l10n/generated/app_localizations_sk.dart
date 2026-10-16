@@ -769,7 +769,7 @@ class AppLocalizationsSk extends AppLocalizations {
       'Informácie spojené z viacerých zdrojov';
 
   @override
-  String get searchCombinedLabel => 'Všetky';
+  String get searchCombinedLabel => 'Kombinované';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1749,4 +1749,65 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Možnosti zdroja';
+
+  @override
+  String get actionUndo => 'Vrátiť späť';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return 'Skladba „$song“ bola odstránená zo setlistu';
+  }
+
+  @override
+  String get backupTitle => 'Zálohovanie a obnovenie';
+
+  @override
+  String get backupExport => 'Exportovať zálohu';
+
+  @override
+  String get backupRestore => 'Obnoviť zálohu';
+
+  @override
+  String get backupIncludePreferences => 'Zahrnúť nastavenia aplikácie';
+
+  @override
+  String get backupRestorePreferences => 'Obnoviť nastavenia aplikácie';
+
+  @override
+  String get backupMerge => 'Pridať do tejto knižnice';
+
+  @override
+  String get backupMergeHint =>
+      'Zachovať miestne úpravy a pridať skladby a setlisty z tejto zálohy.';
+
+  @override
+  String get backupReplace => 'Nahradiť túto knižnicu';
+
+  @override
+  String get backupReplaceHint =>
+      'Nahradiť všetky skladby a setlisty v tomto zariadení obsahom tejto zálohy.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Skladby: $songs · Setlisty: $setlists · Konflikty: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Operáciu sa nepodarilo dokončiť. Skúste to znova.';
+
+  @override
+  String get backupRestored => 'Záloha bola obnovená.';
+
+  @override
+  String get backupLocalHint =>
+      'Uložte si kópiu knižnice. Údaje účtu ani súbory cookie súhlasu sa nezahŕňajú.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Nahradiť aktuálnu knižnicu? Túto akciu nemožno vrátiť späť.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Táto stránka prestala fungovať. Skúste to znova alebo sa vráťte.';
 }

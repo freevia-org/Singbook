@@ -522,12 +522,28 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
             ),
           IconButton(
             tooltip: l10n.setlistRemoveSong(title),
-            onPressed: () => controller.removeSetlistEntry(
-              value.id,
-              entry.id,
-              name: _typedName(editing),
-              notes: _typedNotes(editing),
-            ),
+            onPressed: () async {
+              final removed = await controller.removeSetlistEntryWithUndo(
+                value.id,
+                entry.id,
+                name: _typedName(editing),
+                notes: _typedNotes(editing),
+              );
+              if (removed == null || !context.mounted) return;
+              final messenger = ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar();
+              messenger.showSnackBar(
+                SnackBar(
+                  content: Text(l10n.setlistEntryRemoved(title)),
+                  action: SnackBarAction(
+                    label: l10n.actionUndo,
+                    onPressed: () {
+                      controller.restoreSetlistEntry(removed);
+                    },
+                  ),
+                ),
+              );
+            },
             icon: const Icon(Icons.remove_circle_outline_rounded),
           ),
           ReorderableDragStartListener(

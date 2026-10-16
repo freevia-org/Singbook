@@ -357,10 +357,9 @@ class AppControllerAdapter extends VerseUiController {
                   .firstOrNull
                   ?.name ??
               sourceProviderId;
-    final readerHasTiming =
-        timingMode == 'timed' &&
-        song != null &&
-        _timedLineStarts(data, song, timingMode).isNotEmpty;
+    final readerTimingAvailable =
+        song != null && _timedLineStarts(data, song, 'timed').isNotEmpty;
+    final readerHasTiming = timingMode == 'timed' && readerTimingAvailable;
     final readerCanCompareVersions =
         song != null && _comparisonReference(song) != null;
     return VerseUiState(
@@ -445,6 +444,7 @@ class AppControllerAdapter extends VerseUiController {
           song != null &&
           _validDuration(song.metadata['durationSeconds']) == null,
       readerSource: readerSource,
+      readerTimingAvailable: readerTimingAvailable,
       readerCanCompareVersions: readerCanCompareVersions,
     );
   }
@@ -611,12 +611,18 @@ class AppControllerAdapter extends VerseUiController {
         ...(combined!.extra['pendingChordSourceIds'] as List)
             .whereType<String>(),
     };
+    final activePendingProviderIds = app.checks.values
+        .where((check) => check.state == 'pending')
+        .map((check) => check.providerId)
+        .toSet();
     final pendingContributor = combined?.sources
         .where(
           (source) =>
               contributingSourceIds.contains(source.id) &&
-              (pendingChordSourceIds.contains(source.id) ||
-                  (app.discovering && !app.isSourceReady(source))),
+              (activePendingProviderIds.contains(source.candidate.providerId) ||
+                  app.discovering &&
+                      (pendingChordSourceIds.contains(source.id) ||
+                          !app.isSourceReady(source))),
         )
         .firstOrNull;
     final unverifiedContributor = combined?.sources
@@ -889,7 +895,9 @@ class AppControllerAdapter extends VerseUiController {
     final check = app.checks[candidate.providerId];
     final savedId = app.savedResultId(source: result);
     final lines = _lines(result.body);
-    final isChecking = app.discovering && !app.isSourceReady(result);
+    final isChecking =
+        check?.state == 'pending' ||
+        app.discovering && !app.isSourceReady(result);
     final pendingVerification =
         isChecking && result.matchKind == MatchKind.sameRecording;
     final sameRecording =
@@ -936,9 +944,7 @@ class AppControllerAdapter extends VerseUiController {
       bodyLines: lines,
       contributions: _sourceContributions(result),
       isChecking: isChecking,
-      canSave:
-          _hasLyrics(result) &&
-          savedId == null,
+      canSave: _hasLyrics(result) && savedId == null,
       savedSongId: savedId,
     );
   }
@@ -1362,6 +1368,21 @@ class AppControllerAdapter extends VerseUiController {
     notifyListeners();
   }
 
+  @override
+  Future<void> retryYoutubeMusicForSelectedSong({
+    String? expectedIdentity,
+  }) async {
+    final identity = app.selection?.identity;
+    if (identity == null ||
+        (expectedIdentity != null && expectedIdentity != identity)) {
+      return;
+    }
+    await app.retrySelectedProviderForCurrentSelection(
+      'youtubemusic',
+      expectedIdentity: identity,
+    );
+  }
+
   void _chooseFallbackVersion() {
     if (_disposed) return;
     // Discovery completion must never replace an explicit choice, including a
@@ -1424,10 +1445,7 @@ class AppControllerAdapter extends VerseUiController {
     }
     if (selectedId != 'combined' &&
         (version == null ||
-            !_isUsableLyricResult(
-              version,
-              allowRejected: true,
-            ))) {
+            !_isUsableLyricResult(version, allowRejected: true))) {
       postNotice(UiNotice.songSaveFailed);
       return;
     }
@@ -2048,17 +2066,78 @@ class AppControllerAdapter extends VerseUiController {
     String? name,
     String? notes,
   }) async {
+    await _removeSetlistEntry(setlistId, entryId, name: name, notes: notes);
+  }
+
+  @override
+  Future<SetlistEntryRemovalData?> removeSetlistEntryWithUndo(
+    String setlistId,
+    String entryId, {
+    String? name,
+    String? notes,
+  }) async {
     final current = _setlistById(setlistId);
-    if (current == null) return;
-    await _saveSetlistWith(
+    if (current == null) return null;
+    final index = current.entries.indexWhere((entry) => entry.id == entryId);
+    if (index < 0) return null;
+    final removed = current.entries[index];
+    final saved = await _saveSetlistWith(
       current,
-      entries: current.entries.where((entry) => entry.id != entryId).toList(),
+      entries: [...current.entries]..removeAt(index),
+      name: name,
+      notes: notes,
+    );
+    if (!saved) return null;
+    return SetlistEntryRemovalData(
+      setlistId: setlistId,
+      entryId: removed.id,
+      songId: removed.songId,
+      overrides: Map<String, Object?>.unmodifiable(removed.overrides),
+      index: index,
+    );
+  }
+
+  Future<bool> _removeSetlistEntry(
+    String setlistId,
+    String entryId, {
+    String? name,
+    String? notes,
+  }) async {
+    final current = _setlistById(setlistId);
+    if (current == null) return false;
+    final entries = current.entries
+        .where((entry) => entry.id != entryId)
+        .toList();
+    if (entries.length == current.entries.length) return false;
+    return _saveSetlistWith(
+      current,
+      entries: entries,
       name: name,
       notes: notes,
     );
   }
 
-  Future<void> _saveSetlistWith(
+  @override
+  Future<void> restoreSetlistEntry(SetlistEntryRemovalData removed) async {
+    final current = _setlistById(removed.setlistId);
+    if (current == null ||
+        current.entries.any((entry) => entry.id == removed.entryId)) {
+      return;
+    }
+    final entries = [...current.entries];
+    final index = removed.index.clamp(0, entries.length).toInt();
+    entries.insert(
+      index,
+      SetlistEntry(
+        id: removed.entryId,
+        songId: removed.songId,
+        overrides: Map<String, Object?>.from(removed.overrides),
+      ),
+    );
+    await _saveSetlistWith(current, entries: entries);
+  }
+
+  Future<bool> _saveSetlistWith(
     SetlistDocument current, {
     required List<SetlistEntry> entries,
     String? name,
@@ -2209,9 +2288,11 @@ class AppControllerAdapter extends VerseUiController {
   @override
   bool get youtubeMusicConsentSupported => app.youtubeMusicConsent.supported;
   @override
-  bool get youtubeMusicConsentSaved => app.youtubeMusicConsent.session.hasConsent;
+  bool get youtubeMusicConsentSaved =>
+      app.youtubeMusicConsent.session.hasConsent;
   @override
-  Future<bool> completeYoutubeMusicConsent() => app.completeYoutubeMusicConsent();
+  Future<bool> completeYoutubeMusicConsent() =>
+      app.completeYoutubeMusicConsent();
   @override
   Future<bool> clearYoutubeMusicConsent() => app.clearYoutubeMusicConsent();
   // ---- Sync engine state used by the account UI --------------------------

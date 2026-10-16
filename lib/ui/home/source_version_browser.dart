@@ -6,6 +6,7 @@ import '../../l10n/generated/app_localizations.dart';
 import '../format.dart';
 import '../localized_labels.dart';
 import '../player/section_labels.dart';
+import '../settings/youtube_music_consent_section.dart';
 import '../verse_ui_state.dart';
 import '../widgets/chord_lyrics_line.dart';
 import '../widgets/verse_components.dart';
@@ -281,15 +282,80 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
     );
   }
 
+  Future<void> _reviewYoutubeMusicConsent() async {
+    final referenceId = widget.controller.state.comparison?.reference.id;
+    final l10n = AppLocalizations.of(context);
+    final saved = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => YoutubeMusicConsentScreen(
+          labels: YoutubeConsentLabels(
+            title: 'YouTube Music',
+            explanation: l10n.youtubeConsentHint,
+            connect: l10n.youtubeConsentOpen,
+            saved: l10n.youtubeConsentSaved,
+            clear: l10n.youtubeConsentClear,
+            instructions: l10n.youtubeConsentInstructions,
+            notReady: l10n.youtubeConsentError,
+            navigationBlocked: l10n.youtubeConsentBlocked,
+            loadFailed: l10n.youtubeConsentPageError,
+            clearFailed: l10n.youtubeConsentError,
+            done: l10n.actionDone,
+            retry: l10n.actionRetry,
+          ),
+          onComplete: widget.controller.completeYoutubeMusicConsent,
+          autoComplete: true,
+        ),
+      ),
+    );
+    if (!mounted || saved != true) return;
+    if (widget.controller.state.comparison?.reference.id == referenceId) {
+      await widget.controller.retryYoutubeMusicForSelectedSong(
+        expectedIdentity: referenceId,
+      );
+    }
+  }
+
   void _showSources() {
     final l10n = AppLocalizations.of(context);
+    final initialComparison = widget.controller.state.comparison;
+    final showConsentAction =
+        widget.controller.youtubeMusicConsentSupported &&
+        !widget.controller.youtubeMusicConsentSaved &&
+        (initialComparison?.providerChecks.any(
+              (check) => check.id == 'youtubemusic',
+            ) ??
+            false);
+    final initialRows =
+        1 +
+        ((initialComparison?.discoveryError != null ||
+                initialComparison?.noUsableLyrics == true)
+            ? 1
+            : 0) +
+        (showConsentAction ? 1 : 0) +
+        (widget.onFilters == null ? 0 : 1) +
+        (widget.onOpenFullScreen == null ? 0 : 1) +
+        ((initialComparison?.alternatives.any(
+                  (version) =>
+                      !version.isChecking &&
+                      !version.canSave &&
+                      !version.isUsableVersion &&
+                      version.savedSongId == null,
+                ) ??
+                false)
+            ? 1
+            : 0) +
+        ((initialComparison?.providerChecks.isNotEmpty ?? false) ? 1 : 0);
+    final availableHeight = MediaQuery.sizeOf(context).height;
+    final initialExtent = ((initialRows * 56.0 + 24) / availableHeight)
+        .clamp(.24, .9)
+        .toDouble();
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       builder: (sheetContext) => SafeArea(
         child: DraggableScrollableSheet(
           expand: false,
-          initialChildSize: .6,
+          initialChildSize: initialExtent,
           maxChildSize: .9,
           builder: (context, scroll) => AnimatedBuilder(
             animation: widget.controller,
@@ -316,6 +382,21 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
                 controller: scroll,
                 children: [
                   ListTile(title: Text(l10n.searchSourceOptions)),
+                  if (showConsentAction)
+                    ListTile(
+                      key: const ValueKey('review-youtube-music-consent'),
+                      leading: const Icon(Icons.privacy_tip_outlined),
+                      title: Text(l10n.youtubeConsentOpen),
+                      subtitle: Text(l10n.youtubeConsentHint),
+                      onTap: () {
+                        Navigator.pop(sheetContext);
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (mounted) {
+                            unawaited(_reviewYoutubeMusicConsent());
+                          }
+                        });
+                      },
+                    ),
                   if (comparison.discoveryError != null ||
                       comparison.noUsableLyrics)
                     ListTile(
@@ -933,20 +1014,12 @@ class _VersionDocumentState extends State<_VersionDocument>
               minTileHeight: 36,
               dense: true,
               title: Text(
-                version.sameRecording
-                    ? l10n.searchMatchExact
-                    : version.matchSummary.isNotEmpty
-                    ? localizedMatchReason(l10n, version.matchSummary)
-                    : l10n.searchMatchUnverified,
+                l10n.searchVersionDetails,
                 style: theme.textTheme.bodySmall,
               ),
               childrenPadding: const EdgeInsets.only(bottom: 10),
               expandedCrossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  l10n.searchVersionDetails,
-                  style: theme.textTheme.labelSmall,
-                ),
                 Text(
                   [
                     version.title,

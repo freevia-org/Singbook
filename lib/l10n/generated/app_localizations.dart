@@ -1491,7 +1491,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchCombinedLabel.
   ///
   /// In en, this message translates to:
-  /// **'All'**
+  /// **'Combined'**
   String get searchCombinedLabel;
 
   /// No description provided for @searchSongMatchCount.
@@ -3035,6 +3035,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Source options'**
   String get searchSourceOptions;
+
+  /// No description provided for @actionUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get actionUndo;
+
+  /// No description provided for @setlistEntryRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed {song} from setlist'**
+  String setlistEntryRemoved(String song);
+
+  /// No description provided for @backupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup and restore'**
+  String get backupTitle;
+
+  /// No description provided for @backupExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Export backup'**
+  String get backupExport;
+
+  /// No description provided for @backupRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore backup'**
+  String get backupRestore;
+
+  /// No description provided for @backupIncludePreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Include app preferences'**
+  String get backupIncludePreferences;
+
+  /// No description provided for @backupRestorePreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore app preferences'**
+  String get backupRestorePreferences;
+
+  /// No description provided for @backupMerge.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to this library'**
+  String get backupMerge;
+
+  /// No description provided for @backupMergeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep local edits and add songs and setlists from this backup.'**
+  String get backupMergeHint;
+
+  /// No description provided for @backupReplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace this library'**
+  String get backupReplace;
+
+  /// No description provided for @backupReplaceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace all songs and setlists on this device with this backup.'**
+  String get backupReplaceHint;
+
+  /// No description provided for @backupSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Songs: {songs} · Setlists: {setlists} · Conflicts: {conflicts}'**
+  String backupSummary(int songs, int setlists, int conflicts);
+
+  /// No description provided for @backupFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not complete this backup operation. Try again.'**
+  String get backupFailed;
+
+  /// No description provided for @backupRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup restored.'**
+  String get backupRestored;
+
+  /// No description provided for @backupLocalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Save a copy of your library. Account credentials and consent cookies are never included.'**
+  String get backupLocalHint;
+
+  /// No description provided for @backupReplaceConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace the current library? This cannot be undone.'**
+  String get backupReplaceConfirm;
+
+  /// No description provided for @youtubeConsentPageError.
+  ///
+  /// In en, this message translates to:
+  /// **'This page stopped working. Try again or go back.'**
+  String get youtubeConsentPageError;
 }
 
 class _AppLocalizationsDelegate

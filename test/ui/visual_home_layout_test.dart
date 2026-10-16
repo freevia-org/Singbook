@@ -54,7 +54,7 @@ void main() {
         'Показано 21 елемент',
       ],
     };
-    const expectedCombined = {'en': 'All', 'bg': 'Всички', 'uk': 'Усі'};
+    const expectedCombined = {"en": "Combined", "bg": "Комбинирани", "uk": "Об’єднані"};
     const expectedSongMatches = {
       'en': [
         '0 song matches',
@@ -737,24 +737,26 @@ void main() {
         MaterialApp(
           localizationsDelegates: singbookLocalizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          theme: verseTheme(
-            brightness: Brightness.light,
-            palette: 'navy',
-            fontFamily: 'NotoSansFixture',
-          ).copyWith(
-            textTheme: verseTheme(
-              brightness: Brightness.light,
-              palette: 'navy',
-              fontFamily: 'NotoSansFixture',
-            ).textTheme.apply(
-              fontFamily: 'NotoSansFixture',
-              fontFamilyFallback: const ['NotoSansFixture'],
-            ),
-          ),
+          theme:
+              verseTheme(
+                brightness: Brightness.light,
+                palette: 'navy',
+                fontFamily: 'NotoSansFixture',
+              ).copyWith(
+                textTheme:
+                    verseTheme(
+                      brightness: Brightness.light,
+                      palette: 'navy',
+                      fontFamily: 'NotoSansFixture',
+                    ).textTheme.apply(
+                      fontFamily: 'NotoSansFixture',
+                      fontFamilyFallback: const ['NotoSansFixture'],
+                    ),
+              ),
           builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(context).copyWith(
-              textScaler: const TextScaler.linear(2),
-            ),
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(2)),
             child: child!,
           ),
           home: VerseAppShell(
@@ -766,10 +768,12 @@ void main() {
       await tester.pumpAndSettle();
 
       final outerScrollable = tester.state<ScrollableState>(
-        find.descendant(
-          of: find.byType(CustomScrollView),
-          matching: find.byType(Scrollable),
-        ).first,
+        find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       final appBar = tester.getRect(find.byType(AppBar));
       final search = tester.getRect(find.byType(TextField));

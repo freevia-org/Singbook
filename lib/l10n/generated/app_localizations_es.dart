@@ -768,7 +768,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Detalles combinados de varias fuentes';
 
   @override
-  String get searchCombinedLabel => 'Todo';
+  String get searchCombinedLabel => 'Combinado';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1746,4 +1746,67 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Opciones de la fuente';
+
+  @override
+  String get actionUndo => 'Deshacer';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return 'Se ha quitado $song de la lista';
+  }
+
+  @override
+  String get backupTitle => 'Copia de seguridad y restauración';
+
+  @override
+  String get backupExport => 'Exportar copia de seguridad';
+
+  @override
+  String get backupRestore => 'Restaurar copia de seguridad';
+
+  @override
+  String get backupIncludePreferences =>
+      'Incluir preferencias de la aplicación';
+
+  @override
+  String get backupRestorePreferences =>
+      'Restaurar preferencias de la aplicación';
+
+  @override
+  String get backupMerge => 'Añadir a esta biblioteca';
+
+  @override
+  String get backupMergeHint =>
+      'Conserva los cambios locales y añade canciones y listas de esta copia de seguridad.';
+
+  @override
+  String get backupReplace => 'Reemplazar esta biblioteca';
+
+  @override
+  String get backupReplaceHint =>
+      'Reemplaza todas las canciones y listas de este dispositivo con las de esta copia.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Canciones: $songs · Listas: $setlists · Conflictos: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'No se pudo completar la operación. Inténtalo de nuevo.';
+
+  @override
+  String get backupRestored => 'Copia de seguridad restaurada.';
+
+  @override
+  String get backupLocalHint =>
+      'Guarda una copia de tu biblioteca. Nunca se incluyen las credenciales de la cuenta ni las cookies de consentimiento.';
+
+  @override
+  String get backupReplaceConfirm =>
+      '¿Reemplazar la biblioteca actual? Esta acción no se puede deshacer.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Esta página dejó de funcionar. Inténtalo de nuevo o vuelve atrás.';
 }

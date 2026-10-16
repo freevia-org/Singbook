@@ -767,7 +767,7 @@ class AppLocalizationsHr extends AppLocalizations {
       'Pojedinosti su objedinjene iz više izvora';
 
   @override
-  String get searchCombinedLabel => 'Sve';
+  String get searchCombinedLabel => 'Kombinirano';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1749,4 +1749,65 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Opcije izvora';
+
+  @override
+  String get actionUndo => 'Poništi';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return 'Pjesma „$song” uklonjena je s popisa';
+  }
+
+  @override
+  String get backupTitle => 'Sigurnosna kopija i vraćanje';
+
+  @override
+  String get backupExport => 'Izvezi sigurnosnu kopiju';
+
+  @override
+  String get backupRestore => 'Vrati sigurnosnu kopiju';
+
+  @override
+  String get backupIncludePreferences => 'Uključi postavke aplikacije';
+
+  @override
+  String get backupRestorePreferences => 'Vrati postavke aplikacije';
+
+  @override
+  String get backupMerge => 'Dodaj u ovu biblioteku';
+
+  @override
+  String get backupMergeHint =>
+      'Zadrži lokalne izmjene i dodaj pjesme i popise iz ove sigurnosne kopije.';
+
+  @override
+  String get backupReplace => 'Zamijeni ovu biblioteku';
+
+  @override
+  String get backupReplaceHint =>
+      'Zamijeni sve pjesme i popise na ovom uređaju sadržajem ove sigurnosne kopije.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Pjesme: $songs · Popisi: $setlists · Sukobi: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Nije moguće dovršiti ovu radnju. Pokušajte ponovno.';
+
+  @override
+  String get backupRestored => 'Sigurnosna kopija vraćena je.';
+
+  @override
+  String get backupLocalHint =>
+      'Spremite kopiju svoje biblioteke. Podaci računa i kolačići privole nikad se ne uključuju.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Želite li zamijeniti trenutačnu biblioteku? To se ne može poništiti.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Ova je stranica prestala raditi. Pokušajte ponovno ili se vratite.';
 }

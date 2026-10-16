@@ -774,7 +774,7 @@ class AppLocalizationsSl extends AppLocalizations {
   String get searchMatchCombinedSources => 'Podatki so združeni iz več virov';
 
   @override
-  String get searchCombinedLabel => 'Vse';
+  String get searchCombinedLabel => 'Združeno';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1770,4 +1770,65 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Možnosti vira';
+
+  @override
+  String get actionUndo => 'Razveljavi';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return 'Pesem »$song« je odstranjena s seznama';
+  }
+
+  @override
+  String get backupTitle => 'Varnostno kopiranje in obnovitev';
+
+  @override
+  String get backupExport => 'Izvozi varnostno kopijo';
+
+  @override
+  String get backupRestore => 'Obnovi varnostno kopijo';
+
+  @override
+  String get backupIncludePreferences => 'Vključi nastavitve aplikacije';
+
+  @override
+  String get backupRestorePreferences => 'Obnovi nastavitve aplikacije';
+
+  @override
+  String get backupMerge => 'Dodaj v to knjižnico';
+
+  @override
+  String get backupMergeHint =>
+      'Ohrani lokalne spremembe in dodaj pesmi ter sezname iz te varnostne kopije.';
+
+  @override
+  String get backupReplace => 'Zamenjaj to knjižnico';
+
+  @override
+  String get backupReplaceHint =>
+      'Zamenjaj vse pesmi in sezname v tej napravi z vsebino varnostne kopije.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Pesmi: $songs · Seznami: $setlists · Spori: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Operacije ni bilo mogoče dokončati. Poskusi znova.';
+
+  @override
+  String get backupRestored => 'Varnostna kopija je obnovljena.';
+
+  @override
+  String get backupLocalHint =>
+      'Shrani kopijo knjižnice. Podatki računa in piškotki soglasja niso nikoli vključeni.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Zamenjam trenutno knjižnico? Tega ni mogoče razveljaviti.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Ta stran je prenehala delovati. Poskusi znova ali se vrni.';
 }

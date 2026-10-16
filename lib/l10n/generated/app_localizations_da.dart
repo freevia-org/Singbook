@@ -764,7 +764,7 @@ class AppLocalizationsDa extends AppLocalizations {
   String get searchMatchCombinedSources => 'Detaljer samlet fra flere kilder';
 
   @override
-  String get searchCombinedLabel => 'Alle';
+  String get searchCombinedLabel => 'Kombineret';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1728,4 +1728,64 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Kildeindstillinger';
+
+  @override
+  String get actionUndo => 'Fortryd';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return '$song er fjernet fra sætliste';
+  }
+
+  @override
+  String get backupTitle => 'Sikkerhedskopiering og gendannelse';
+
+  @override
+  String get backupExport => 'Eksportér sikkerhedskopi';
+
+  @override
+  String get backupRestore => 'Gendan sikkerhedskopi';
+
+  @override
+  String get backupIncludePreferences => 'Medtag appindstillinger';
+
+  @override
+  String get backupRestorePreferences => 'Gendan appindstillinger';
+
+  @override
+  String get backupMerge => 'Føj til dette bibliotek';
+
+  @override
+  String get backupMergeHint =>
+      'Behold lokale ændringer, og føj sange og sætlister fra denne sikkerhedskopi til.';
+
+  @override
+  String get backupReplace => 'Erstat dette bibliotek';
+
+  @override
+  String get backupReplaceHint =>
+      'Erstat alle sange og sætlister på denne enhed med indholdet fra sikkerhedskopien.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Sange: $songs · Sætlister: $setlists · Konflikter: $conflicts';
+  }
+
+  @override
+  String get backupFailed => 'Handlingen kunne ikke fuldføres. Prøv igen.';
+
+  @override
+  String get backupRestored => 'Sikkerhedskopien er gendannet.';
+
+  @override
+  String get backupLocalHint =>
+      'Gem en kopi af dit bibliotek. Kontooplysninger og samtykkecookies medtages aldrig.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Vil du erstatte det aktuelle bibliotek? Dette kan ikke fortrydes.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Denne side holdt op med at fungere. Prøv igen, eller gå tilbage.';
 }

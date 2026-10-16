@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "La letra de la hoja de acordes debe confirmarse",
   "searchMatchDifferentLyrics": "La letra no coincide con la canción seleccionada",
   "searchMatchCombinedSources": "Detalles combinados de varias fuentes",
-  "searchCombinedLabel": "Todo",
+  "searchCombinedLabel": "Combinado",
   "searchSongMatchCount": "{count, plural, =0{0 coincidencias de canciones} =1{1 coincidencia de canción} other{{count} coincidencias de canciones}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Detalles de la versión",
   "searchSelectedRecording": "Grabación seleccionada",
   "searchVersionDuration": "Duración de la versión",
-  "searchSourceOptions": "Opciones de la fuente"
+  "searchSourceOptions": "Opciones de la fuente",
+  "actionUndo": "Deshacer",
+  "setlistEntryRemoved": "Se ha quitado {song} de la lista",
+  "backupTitle": "Copia de seguridad y restauración",
+  "backupExport": "Exportar copia de seguridad",
+  "backupRestore": "Restaurar copia de seguridad",
+  "backupIncludePreferences": "Incluir preferencias de la aplicación",
+  "backupRestorePreferences": "Restaurar preferencias de la aplicación",
+  "backupMerge": "Añadir a esta biblioteca",
+  "backupMergeHint": "Conserva los cambios locales y añade canciones y listas de esta copia de seguridad.",
+  "backupReplace": "Reemplazar esta biblioteca",
+  "backupReplaceHint": "Reemplaza todas las canciones y listas de este dispositivo con las de esta copia.",
+  "backupSummary": "Canciones: {songs} · Listas: {setlists} · Conflictos: {conflicts}",
+  "backupFailed": "No se pudo completar la operación. Inténtalo de nuevo.",
+  "backupRestored": "Copia de seguridad restaurada.",
+  "backupLocalHint": "Guarda una copia de tu biblioteca. Nunca se incluyen las credenciales de la cuenta ni las cookies de consentimiento.",
+  "backupReplaceConfirm": "¿Reemplazar la biblioteca actual? Esta acción no se puede deshacer.",
+  "youtubeConsentPageError": "Esta página dejó de funcionar. Inténtalo de nuevo o vuelve atrás.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

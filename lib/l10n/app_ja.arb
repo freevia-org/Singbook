@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "コード譜を歌詞と照合する必要があります",
   "searchMatchDifferentLyrics": "選択した曲と歌詞が異なります",
   "searchMatchCombinedSources": "複数のソースから詳細を統合しました",
-  "searchCombinedLabel": "すべて",
+  "searchCombinedLabel": "統合",
   "searchSongMatchCount": "{count, plural, =0{0曲の一致} =1{1曲の一致} other{{count}曲の一致}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "バージョンの詳細",
   "searchSelectedRecording": "選択した録音",
   "searchVersionDuration": "バージョンの長さ",
-  "searchSourceOptions": "ソースのオプション"
+  "searchSourceOptions": "ソースのオプション",
+  "actionUndo": "元に戻す",
+  "setlistEntryRemoved": "「{song}」をセットリストから削除しました",
+  "backupTitle": "バックアップと復元",
+  "backupExport": "バックアップをエクスポート",
+  "backupRestore": "バックアップを復元",
+  "backupIncludePreferences": "アプリの設定を含める",
+  "backupRestorePreferences": "アプリの設定を復元",
+  "backupMerge": "このライブラリに追加",
+  "backupMergeHint": "ローカルの編集内容を保ったまま、このバックアップの曲とセットリストを追加します。",
+  "backupReplace": "このライブラリを置き換える",
+  "backupReplaceHint": "この端末のすべての曲とセットリストを、このバックアップの内容に置き換えます。",
+  "backupSummary": "曲: {songs} · セットリスト: {setlists} · 競合: {conflicts}",
+  "backupFailed": "バックアップ操作を完了できませんでした。もう一度お試しください。",
+  "backupRestored": "バックアップを復元しました。",
+  "backupLocalHint": "ライブラリのコピーを保存します。アカウント認証情報や同意 Cookie は含まれません。",
+  "backupReplaceConfirm": "現在のライブラリを置き換えますか？この操作は元に戻せません。",
+  "youtubeConsentPageError": "このページは動作を停止しました。もう一度お試しいただくか、戻ってください。",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

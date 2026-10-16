@@ -765,7 +765,7 @@ class AppLocalizationsEt extends AppLocalizations {
       'Andmed on ühendatud mitmest allikast';
 
   @override
-  String get searchCombinedLabel => 'Kõik';
+  String get searchCombinedLabel => 'Kombineeritud';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1730,4 +1730,65 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Allika valikud';
+
+  @override
+  String get actionUndo => 'Võta tagasi';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return 'Lugu „$song“ eemaldati esituskavast';
+  }
+
+  @override
+  String get backupTitle => 'Varundamine ja taastamine';
+
+  @override
+  String get backupExport => 'Ekspordi varukoopia';
+
+  @override
+  String get backupRestore => 'Taasta varukoopia';
+
+  @override
+  String get backupIncludePreferences => 'Kaasa rakenduse eelistused';
+
+  @override
+  String get backupRestorePreferences => 'Taasta rakenduse eelistused';
+
+  @override
+  String get backupMerge => 'Lisa sellesse teeki';
+
+  @override
+  String get backupMergeHint =>
+      'Säilita kohalikud muudatused ja lisa sellest varukoopiast lood ning esituskavad.';
+
+  @override
+  String get backupReplace => 'Asenda see teek';
+
+  @override
+  String get backupReplaceHint =>
+      'Asenda selle seadme kõik lood ja esituskavad selle varukoopia sisuga.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Laulud: $songs · Esituskavad: $setlists · Konfliktid: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Varundamistoimingut ei saanud lõpetada. Proovi uuesti.';
+
+  @override
+  String get backupRestored => 'Varukoopia taastati.';
+
+  @override
+  String get backupLocalHint =>
+      'Salvesta oma teegi koopia. Kontoandmeid ega nõusolekuküpsiseid ei lisata.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Kas asendada praegune teek? Seda ei saa tagasi võtta.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'See leht lakkas töötamast. Proovi uuesti või mine tagasi.';
 }

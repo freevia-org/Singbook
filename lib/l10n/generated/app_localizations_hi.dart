@@ -761,7 +761,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get searchMatchCombinedSources => 'कई स्रोतों से विवरण जोड़ा गया';
 
   @override
-  String get searchCombinedLabel => 'सभी';
+  String get searchCombinedLabel => 'संयुक्त';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1723,4 +1723,64 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'स्रोत विकल्प';
+
+  @override
+  String get actionUndo => 'पूर्ववत करें';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return '$song को सूची से हटाया गया';
+  }
+
+  @override
+  String get backupTitle => 'बैकअप और पुनर्स्थापना';
+
+  @override
+  String get backupExport => 'बैकअप निर्यात करें';
+
+  @override
+  String get backupRestore => 'बैकअप पुनर्स्थापित करें';
+
+  @override
+  String get backupIncludePreferences => 'ऐप की प्राथमिकताएँ शामिल करें';
+
+  @override
+  String get backupRestorePreferences => 'ऐप की प्राथमिकताएँ पुनर्स्थापित करें';
+
+  @override
+  String get backupMerge => 'इस लाइब्रेरी में जोड़ें';
+
+  @override
+  String get backupMergeHint =>
+      'स्थानीय बदलाव रखें और इस बैकअप से गीत और सूचियाँ जोड़ें।';
+
+  @override
+  String get backupReplace => 'इस लाइब्रेरी को बदलें';
+
+  @override
+  String get backupReplaceHint =>
+      'इस डिवाइस के सभी गीतों और सूचियों को इस बैकअप से बदलें।';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'गीत: $songs · सूचियाँ: $setlists · विरोध: $conflicts';
+  }
+
+  @override
+  String get backupFailed => 'बैकअप कार्रवाई पूरी नहीं हो सकी। फिर कोशिश करें।';
+
+  @override
+  String get backupRestored => 'बैकअप पुनर्स्थापित किया गया।';
+
+  @override
+  String get backupLocalHint =>
+      'अपनी लाइब्रेरी की प्रति सहेजें। खाते की जानकारी और सहमति कुकीज़ कभी शामिल नहीं होतीं।';
+
+  @override
+  String get backupReplaceConfirm =>
+      'मौजूदा लाइब्रेरी बदलें? इसे पूर्ववत नहीं किया जा सकता।';
+
+  @override
+  String get youtubeConsentPageError =>
+      'यह पेज काम करना बंद कर चुका है। फिर कोशिश करें या वापस जाएँ।';
 }

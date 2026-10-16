@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "चार्ट के बोलों की पुष्टि ज़रूरी है",
   "searchMatchDifferentLyrics": "बोल चुने गए गीत से अलग हैं",
   "searchMatchCombinedSources": "कई स्रोतों से विवरण जोड़ा गया",
-  "searchCombinedLabel": "सभी",
+  "searchCombinedLabel": "संयुक्त",
   "searchSongMatchCount": "{count, plural, =0{0 गीत मेल खाते हैं} =1{1 गीत मेल खाता है} other{{count} गीत मेल खाते हैं}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "संस्करण का विवरण",
   "searchSelectedRecording": "चयनित रिकॉर्डिंग",
   "searchVersionDuration": "संस्करण की अवधि",
-  "searchSourceOptions": "स्रोत विकल्प"
+  "searchSourceOptions": "स्रोत विकल्प",
+  "actionUndo": "पूर्ववत करें",
+  "setlistEntryRemoved": "{song} को सूची से हटाया गया",
+  "backupTitle": "बैकअप और पुनर्स्थापना",
+  "backupExport": "बैकअप निर्यात करें",
+  "backupRestore": "बैकअप पुनर्स्थापित करें",
+  "backupIncludePreferences": "ऐप की प्राथमिकताएँ शामिल करें",
+  "backupRestorePreferences": "ऐप की प्राथमिकताएँ पुनर्स्थापित करें",
+  "backupMerge": "इस लाइब्रेरी में जोड़ें",
+  "backupMergeHint": "स्थानीय बदलाव रखें और इस बैकअप से गीत और सूचियाँ जोड़ें।",
+  "backupReplace": "इस लाइब्रेरी को बदलें",
+  "backupReplaceHint": "इस डिवाइस के सभी गीतों और सूचियों को इस बैकअप से बदलें।",
+  "backupSummary": "गीत: {songs} · सूचियाँ: {setlists} · विरोध: {conflicts}",
+  "backupFailed": "बैकअप कार्रवाई पूरी नहीं हो सकी। फिर कोशिश करें।",
+  "backupRestored": "बैकअप पुनर्स्थापित किया गया।",
+  "backupLocalHint": "अपनी लाइब्रेरी की प्रति सहेजें। खाते की जानकारी और सहमति कुकीज़ कभी शामिल नहीं होतीं।",
+  "backupReplaceConfirm": "मौजूदा लाइब्रेरी बदलें? इसे पूर्ववत नहीं किया जा सकता।",
+  "youtubeConsentPageError": "यह पेज काम करना बंद कर चुका है। फिर कोशिश करें या वापस जाएँ।",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }
