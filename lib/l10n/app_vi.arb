@@ -730,5 +730,12 @@
   "sectionBreakdown": "Breakdown",
   "sectionCoda": "Coda",
   "sectionTag": "Tag",
-  "sectionEnding": "Kết thúc"
+  "sectionEnding": "Kết thúc",
+  "youtubeConsentHint": "Tính năng thử nghiệm. Hãy chọn cookie trên trang Google để thử tìm lời bài hát. Bạn không cần đăng nhập Tài khoản Google. Lựa chọn của bạn sẽ lưu trên thiết bị này.",
+  "youtubeConsentOpen": "Xem lại lựa chọn đồng ý của Google",
+  "youtubeConsentSaved": "Đã lưu lựa chọn đồng ý",
+  "youtubeConsentClear": "Xóa lựa chọn đồng ý",
+  "youtubeConsentInstructions": "Hoàn tất lựa chọn cookie và đợi YouTube Music quay lại. Sau đó, lưu phiên này và thử tìm bài hát lại.",
+  "youtubeConsentError": "Không thể cập nhật lựa chọn đồng ý của Google. Hãy thử lại.",
+  "youtubeConsentBlocked": "Tại đây chỉ có thể mở YouTube Music và trang đồng ý của Google. Không hỗ trợ đăng nhập tài khoản."
 }

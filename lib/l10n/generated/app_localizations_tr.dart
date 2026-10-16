@@ -1659,4 +1659,29 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get sectionEnding => 'Bitiş';
+
+  @override
+  String get youtubeConsentHint =>
+      'Deneysel. Şarkı sözü aramayı denemek için Google sayfasında çerez seçiminizi yapın. Google hesabınızda oturum açmanız gerekmez. Seçiminiz bu cihazda kalır.';
+
+  @override
+  String get youtubeConsentOpen => 'Google izin tercihini incele';
+
+  @override
+  String get youtubeConsentSaved => 'İzin tercihi kaydedildi';
+
+  @override
+  String get youtubeConsentClear => 'İzin tercihini temizle';
+
+  @override
+  String get youtubeConsentInstructions =>
+      'Çerez seçiminizi tamamlayın ve YouTube Music\'in geri dönmesini bekleyin. Ardından bu oturumu kaydedip şarkıyı yeniden arayın.';
+
+  @override
+  String get youtubeConsentError =>
+      'Google izin tercihi güncellenemedi. Yeniden deneyin.';
+
+  @override
+  String get youtubeConsentBlocked =>
+      'Burada yalnızca YouTube Music ve Google izin sayfası açılabilir. Hesapta oturum açma kullanılamaz.';
 }

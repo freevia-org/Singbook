@@ -2132,6 +2132,15 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<bool> refreshSources() => app.refreshSources();
+
+  @override
+  bool get youtubeMusicConsentSupported => app.youtubeMusicConsent.supported;
+  @override
+  bool get youtubeMusicConsentSaved => app.youtubeMusicConsent.session.hasConsent;
+  @override
+  Future<bool> completeYoutubeMusicConsent() => app.completeYoutubeMusicConsent();
+  @override
+  Future<bool> clearYoutubeMusicConsent() => app.clearYoutubeMusicConsent();
   // ---- Sync engine state used by the account UI --------------------------
   DateTime? get _lastSyncAt => app.lastSyncAt;
   int get _lastSyncConflicts => app.lastSyncConflicts;

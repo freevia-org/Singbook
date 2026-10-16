@@ -1655,4 +1655,29 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get sectionEnding => 'Afslutning';
+
+  @override
+  String get youtubeConsentHint =>
+      'Eksperimentel. Vælg dine cookieindstillinger på Googles side for at prøve at søge efter sangtekster. Du behøver ikke logge ind på en Google-konto. Dit valg bliver på denne enhed.';
+
+  @override
+  String get youtubeConsentOpen => 'Gennemgå Googles samtykke';
+
+  @override
+  String get youtubeConsentSaved => 'Samtykke gemt';
+
+  @override
+  String get youtubeConsentClear => 'Ryd samtykke';
+
+  @override
+  String get youtubeConsentInstructions =>
+      'Vælg dine cookieindstillinger, og vent på, at YouTube Music vender tilbage. Gem derefter denne session, og prøv at søge efter sangen igen.';
+
+  @override
+  String get youtubeConsentError =>
+      'Googles samtykkevalg kunne ikke opdateres. Prøv igen.';
+
+  @override
+  String get youtubeConsentBlocked =>
+      'Kun YouTube Music og Googles samtykkeside kan åbnes her. Kontologin er ikke tilgængeligt.';
 }

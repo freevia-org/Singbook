@@ -300,6 +300,9 @@ class ProviderTransport {
     }
     try {
       final Future<_Reply> operation = () async {
+        // The await after pacing may resume after a session was invalidated.
+        // Check immediately before send, with no intervening async boundary.
+        cancel?.throwIfCancelled();
         final response = await _client.send(request);
         final code = response.statusCode;
         if (code < 200 || code >= 300) {

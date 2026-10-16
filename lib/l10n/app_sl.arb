@@ -730,5 +730,12 @@
   "sectionBreakdown": "Breakdown",
   "sectionCoda": "Koda",
   "sectionTag": "Tag",
-  "sectionEnding": "Zaključek"
+  "sectionEnding": "Zaključek",
+  "youtubeConsentHint": "Poskusno. Na Googlovi strani izberite piškotke in preizkusite iskanje besedil. Prijava v Google Račun ni potrebna. Vaša izbira ostane v tej napravi.",
+  "youtubeConsentOpen": "Pregled soglasja Googla",
+  "youtubeConsentSaved": "Soglasje je shranjeno",
+  "youtubeConsentClear": "Počisti soglasje",
+  "youtubeConsentInstructions": "Dokončajte izbiro piškotkov in počakajte, da se vrne YouTube Music. Nato shranite to sejo in znova poiščite skladbo.",
+  "youtubeConsentError": "Izbire soglasja Googla ni bilo mogoče posodobiti. Poskusite znova.",
+  "youtubeConsentBlocked": "Tukaj lahko odprete samo YouTube Music in Googlovo stran za soglasje. Prijava v račun ni na voljo."
 }
