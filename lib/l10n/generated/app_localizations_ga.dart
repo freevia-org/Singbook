@@ -213,48 +213,6 @@ class AppLocalizationsGa extends AppLocalizations {
   String get searchAlternatives => 'Meaitseálacha eile';
 
   @override
-  String searchReadyVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count leagan réidh',
-      many: '$count leagan réidh',
-      few: '$count leaganacha réidh',
-      two: '$count leagan réidh',
-      one: '$count leagan réidh',
-      zero: 'Níl leaganacha réidh ar fáil',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String searchUnavailableVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count leagan nach bhfuil ar fáil',
-      many: '$count leagan nach bhfuil ar fáil',
-      few: '$count leaganacha nach bhfuil ar fáil',
-      two: '$count leagan nach bhfuil ar fáil',
-      one: '$count leagan nach bhfuil ar fáil',
-      zero: 'Níl leaganacha ar fáil',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get searchJumpSection => 'Léim chuig rannán';
-
-  @override
-  String get searchVersionDetails => 'Sonraí an leagain';
-
-  @override
-  String get searchSelectedRecording => 'Taifeadadh roghnaithe';
-
-  @override
-  String get searchVersionDuration => 'Fad an leagain';
-
-  @override
   String get searchCompare => 'Cuir leaganacha i gcomparáid';
 
   @override
@@ -1737,4 +1695,46 @@ class AppLocalizationsGa extends AppLocalizations {
   @override
   String get youtubeConsentBlocked =>
       'Ní féidir ach YouTube Music agus leathanach toilithe Google a oscailt anseo. Níl síniú isteach i gcuntas ar fáil.';
+
+  @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count leagan réidh',
+      many: '$count leagan réidh',
+      few: '$count leaganacha réidh',
+      two: '$count leagan réidh',
+      one: '$count leagan réidh',
+      zero: 'Níl leaganacha réidh ar fáil',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count leagan nach bhfuil ar fáil',
+      many: '$count leagan nach bhfuil ar fáil',
+      few: '$count leaganacha nach bhfuil ar fáil',
+      two: '$count leagan nach bhfuil ar fáil',
+      one: '$count leagan nach bhfuil ar fáil',
+      zero: 'Níl leaganacha ar fáil',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Léim chuig rannán';
+
+  @override
+  String get searchVersionDetails => 'Sonraí an leagain';
+
+  @override
+  String get searchSelectedRecording => 'Taifeadadh roghnaithe';
+
+  @override
+  String get searchVersionDuration => 'Fad an leagain';
 }

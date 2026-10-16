@@ -120,8 +120,9 @@ class _SourceVersionBrowserState extends State<SourceVersionBrowser> {
       // A tab can arrive in this frame before the viewport's scroll extent has
       // incorporated the new page. Move after layout, then verify the target.
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted || !_pages.hasClients || _programmaticPage != index)
+        if (!mounted || !_pages.hasClients || _programmaticPage != index) {
           return;
+        }
         unawaited(
           _pages
               .animateToPage(
@@ -149,6 +150,7 @@ class _SourceVersionBrowserState extends State<SourceVersionBrowser> {
   }
 
   void _restoreAnchor(String id) {
+    if (id != _visibleId) return;
     final document = _documents[id]?.currentState;
     final anchor = _anchors[id];
     if (document != null && anchor != null) {
@@ -725,7 +727,10 @@ class _VersionDocumentState extends State<_VersionDocument>
         : _lineKeys[matches[anchor.occurrence.clamp(0, matches.length - 1)].id]
               ?.currentContext;
     if (target != null) {
-      Scrollable.ensureVisible(target, alignment: .08);
+      _scroll.position.ensureVisible(
+        target.findRenderObject()!,
+        alignment: .08,
+      );
     } else {
       _scroll.jumpTo(
         (anchor.fraction * _scroll.position.maxScrollExtent).clamp(
@@ -738,7 +743,12 @@ class _VersionDocumentState extends State<_VersionDocument>
 
   void jumpTo(String id) {
     final target = _lineKeys[id]?.currentContext;
-    if (target != null) Scrollable.ensureVisible(target, alignment: .02);
+    if (target != null && _scroll.hasClients) {
+      _scroll.position.ensureVisible(
+        target.findRenderObject()!,
+        alignment: .02,
+      );
+    }
   }
 
   @override

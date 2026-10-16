@@ -213,44 +213,6 @@ class AppLocalizationsHr extends AppLocalizations {
   String get searchAlternatives => 'Ostala podudaranja';
 
   @override
-  String searchReadyVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count dostupnih verzija',
-      few: '$count dostupne verzije',
-      one: '$count dostupna verzija',
-      zero: 'Nema dostupnih verzija',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String searchUnavailableVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count nedostupnih verzija',
-      few: '$count nedostupne verzije',
-      one: '$count nedostupna verzija',
-      zero: 'Nema nedostupnih verzija',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get searchJumpSection => 'Idi na odjeljak';
-
-  @override
-  String get searchVersionDetails => 'Pojedinosti o verziji';
-
-  @override
-  String get searchSelectedRecording => 'Odabrana snimka';
-
-  @override
-  String get searchVersionDuration => 'Trajanje verzije';
-
-  @override
   String get searchCompare => 'Usporedi verzije';
 
   @override
@@ -1738,4 +1700,42 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get youtubeConsentBlocked =>
       'Ovdje se mogu otvoriti samo YouTube Music i Googleova stranica za suglasnost. Prijava na račun nije dostupna.';
+
+  @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count dostupnih verzija',
+      few: '$count dostupne verzije',
+      one: '$count dostupna verzija',
+      zero: 'Nema dostupnih verzija',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count nedostupnih verzija',
+      few: '$count nedostupne verzije',
+      one: '$count nedostupna verzija',
+      zero: 'Nema nedostupnih verzija',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Idi na odjeljak';
+
+  @override
+  String get searchVersionDetails => 'Pojedinosti o verziji';
+
+  @override
+  String get searchSelectedRecording => 'Odabrana snimka';
+
+  @override
+  String get searchVersionDuration => 'Trajanje verzije';
 }

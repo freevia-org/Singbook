@@ -77,14 +77,6 @@
   "searchFavoritesTab": "Favorit",
   "searchSuggested": "Kecocokan yang disarankan",
   "searchAlternatives": "Kecocokan lainnya",
-    "searchReadyVersions": "{count, plural, =0{0 Versi siap} =1{1 versi siap} other{{count} Versi siap}}",
-  "@searchReadyVersions": {"placeholders": {"count": {"type": "int"}}},
-  "searchUnavailableVersions": "{count, plural, =0{0 Versi tidak tersedia} =1{1 versi tidak tersedia} other{{count} Versi tidak tersedia}}",
-  "@searchUnavailableVersions": {"placeholders": {"count": {"type": "int"}}},
-  "searchJumpSection": "Lompat ke bagian",
-  "searchVersionDetails": "Detail versi",
-  "searchSelectedRecording": "Rekaman yang dipilih",
-  "searchVersionDuration": "Durasi versi",
   "searchCompare": "Bandingkan versi",
   "searchChooseVersion": "Pilih versi ini",
   "searchFullPreview": "Pratinjau lengkap",
@@ -745,5 +737,25 @@
   "youtubeConsentClear": "Hapus persetujuan",
   "youtubeConsentInstructions": "Selesaikan pilihan cookie dan tunggu hingga YouTube Music kembali. Setelah itu, simpan sesi ini dan coba cari lagu lagi.",
   "youtubeConsentError": "Pilihan persetujuan Google tidak dapat diperbarui. Coba lagi.",
-  "youtubeConsentBlocked": "Di sini hanya YouTube Music dan halaman persetujuan Google yang dapat dibuka. Masuk ke akun tidak tersedia."
+  "youtubeConsentBlocked": "Di sini hanya YouTube Music dan halaman persetujuan Google yang dapat dibuka. Masuk ke akun tidak tersedia.",
+  "searchReadyVersions": "{count, plural, =0{0 Versi siap} =1{1 versi siap} other{{count} Versi siap}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{0 Versi tidak tersedia} =1{1 versi tidak tersedia} other{{count} Versi tidak tersedia}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "Lompat ke bagian",
+  "searchVersionDetails": "Detail versi",
+  "searchSelectedRecording": "Rekaman yang dipilih",
+  "searchVersionDuration": "Durasi versi"
 }

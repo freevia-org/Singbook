@@ -213,42 +213,6 @@ class AppLocalizationsNl extends AppLocalizations {
   String get searchAlternatives => 'Andere overeenkomsten';
 
   @override
-  String searchReadyVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count Beschikbare versies',
-      one: '1 beschikbare versie',
-      zero: '0 Beschikbare versies',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String searchUnavailableVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count Niet-beschikbare versies',
-      one: '1 niet-beschikbare versie',
-      zero: '0 Niet-beschikbare versies',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get searchJumpSection => 'Ga naar sectie';
-
-  @override
-  String get searchVersionDetails => 'Versiedetails';
-
-  @override
-  String get searchSelectedRecording => 'Geselecteerde opname';
-
-  @override
-  String get searchVersionDuration => 'Versieduur';
-
-  @override
   String get searchCompare => 'Versies vergelijken';
 
   @override
@@ -1740,4 +1704,40 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get youtubeConsentBlocked =>
       'Hier kunnen alleen YouTube Music en de toestemmingspagina van Google worden geopend. Inloggen op een account is niet beschikbaar.';
+
+  @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Beschikbare versies',
+      one: '1 beschikbare versie',
+      zero: '0 Beschikbare versies',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Niet-beschikbare versies',
+      one: '1 niet-beschikbare versie',
+      zero: '0 Niet-beschikbare versies',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Ga naar sectie';
+
+  @override
+  String get searchVersionDetails => 'Versiedetails';
+
+  @override
+  String get searchSelectedRecording => 'Geselecteerde opname';
+
+  @override
+  String get searchVersionDuration => 'Versieduur';
 }

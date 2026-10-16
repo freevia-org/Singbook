@@ -213,48 +213,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get searchAlternatives => 'تطابقات أخرى';
 
   @override
-  String searchReadyVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count إصدار جاهز',
-      many: '$count إصدارًا جاهزًا',
-      few: '$count إصدارات جاهزة',
-      two: 'إصداران جاهزان',
-      one: 'إصدار جاهز واحد',
-      zero: 'لا توجد إصدارات جاهزة',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String searchUnavailableVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count إصدار غير متاح',
-      many: '$count إصدارًا غير متاح',
-      few: '$count إصدارات غير متاحة',
-      two: 'إصداران غير متاحين',
-      one: 'إصدار واحد غير متاح',
-      zero: 'لا توجد إصدارات غير متاحة',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get searchJumpSection => 'الانتقال إلى القسم';
-
-  @override
-  String get searchVersionDetails => 'تفاصيل الإصدار';
-
-  @override
-  String get searchSelectedRecording => 'التسجيل المحدد';
-
-  @override
-  String get searchVersionDuration => 'مدة الإصدار';
-
-  @override
   String get searchCompare => 'مقارنة الإصدارات';
 
   @override
@@ -1752,4 +1710,46 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get youtubeConsentBlocked =>
       'يمكن فتح YouTube Music وصفحة موافقة Google فقط هنا. تسجيل الدخول إلى الحساب غير متاح.';
+
+  @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count إصدار جاهز',
+      many: '$count إصدارًا جاهزًا',
+      few: '$count إصدارات جاهزة',
+      two: 'إصداران جاهزان',
+      one: 'إصدار جاهز واحد',
+      zero: 'لا توجد إصدارات جاهزة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count إصدار غير متاح',
+      many: '$count إصدارًا غير متاح',
+      few: '$count إصدارات غير متاحة',
+      two: 'إصداران غير متاحين',
+      one: 'إصدار واحد غير متاح',
+      zero: 'لا توجد إصدارات غير متاحة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'الانتقال إلى القسم';
+
+  @override
+  String get searchVersionDetails => 'تفاصيل الإصدار';
+
+  @override
+  String get searchSelectedRecording => 'التسجيل المحدد';
+
+  @override
+  String get searchVersionDuration => 'مدة الإصدار';
 }

@@ -77,14 +77,6 @@
   "searchFavoritesTab": "पसंदीदा",
   "searchSuggested": "सुझाया गया मेल",
   "searchAlternatives": "अन्य मेल",
-    "searchReadyVersions": "{count, plural, =0{0 तैयार संस्करण} =1{1 तैयार संस्करण} other{{count} तैयार संस्करण}}",
-  "@searchReadyVersions": {"placeholders": {"count": {"type": "int"}}},
-  "searchUnavailableVersions": "{count, plural, =0{0 अनुपलब्ध संस्करण} =1{1 अनुपलब्ध संस्करण} other{{count} अनुपलब्ध संस्करण}}",
-  "@searchUnavailableVersions": {"placeholders": {"count": {"type": "int"}}},
-  "searchJumpSection": "अनुभाग पर जाएँ",
-  "searchVersionDetails": "संस्करण का विवरण",
-  "searchSelectedRecording": "चयनित रिकॉर्डिंग",
-  "searchVersionDuration": "संस्करण की अवधि",
   "searchCompare": "संस्करणों की तुलना करें",
   "searchChooseVersion": "यह संस्करण चुनें",
   "searchFullPreview": "पूरा पूर्वावलोकन",
@@ -745,5 +737,25 @@
   "youtubeConsentClear": "सहमति मिटाएँ",
   "youtubeConsentInstructions": "कुकी विकल्प पूरा करें और YouTube Music के लौटने तक प्रतीक्षा करें। फिर यह सत्र सहेजें और गाना दोबारा खोजें।",
   "youtubeConsentError": "Google की सहमति का विकल्प अपडेट नहीं हो सका। फिर से कोशिश करें।",
-  "youtubeConsentBlocked": "यहाँ केवल YouTube Music और Google का सहमति पेज खुल सकता है। खाते में साइन इन करना उपलब्ध नहीं है।"
+  "youtubeConsentBlocked": "यहाँ केवल YouTube Music और Google का सहमति पेज खुल सकता है। खाते में साइन इन करना उपलब्ध नहीं है।",
+  "searchReadyVersions": "{count, plural, =0{0 तैयार संस्करण} =1{1 तैयार संस्करण} other{{count} तैयार संस्करण}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{0 अनुपलब्ध संस्करण} =1{1 अनुपलब्ध संस्करण} other{{count} अनुपलब्ध संस्करण}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "अनुभाग पर जाएँ",
+  "searchVersionDetails": "संस्करण का विवरण",
+  "searchSelectedRecording": "चयनित रिकॉर्डिंग",
+  "searchVersionDuration": "संस्करण की अवधि"
 }

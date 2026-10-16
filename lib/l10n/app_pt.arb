@@ -77,14 +77,6 @@
   "searchFavoritesTab": "Favoritas",
   "searchSuggested": "Correspondência sugerida",
   "searchAlternatives": "Outras correspondências",
-    "searchReadyVersions": "{count, plural, =0{0 Versões disponíveis} =1{1 versão disponível} other{{count} Versões disponíveis}}",
-  "@searchReadyVersions": {"placeholders": {"count": {"type": "int"}}},
-  "searchUnavailableVersions": "{count, plural, =0{0 Versões indisponíveis} =1{1 versão indisponível} other{{count} Versões indisponíveis}}",
-  "@searchUnavailableVersions": {"placeholders": {"count": {"type": "int"}}},
-  "searchJumpSection": "Ir para a seção",
-  "searchVersionDetails": "Detalhes da versão",
-  "searchSelectedRecording": "Gravação selecionada",
-  "searchVersionDuration": "Duração da versão",
   "searchCompare": "Comparar versões",
   "searchChooseVersion": "Escolher esta versão",
   "searchFullPreview": "Pré-visualização completa",
@@ -745,5 +737,25 @@
   "youtubeConsentClear": "Limpar consentimento",
   "youtubeConsentInstructions": "Conclua a escolha dos cookies e aguarde o regresso do YouTube Music. Depois, guarde esta sessão e volte a pesquisar a música.",
   "youtubeConsentError": "Não foi possível atualizar a escolha de consentimento da Google. Tente novamente.",
-  "youtubeConsentBlocked": "Aqui só é possível abrir o YouTube Music e a página de consentimento da Google. Não é possível iniciar sessão numa conta."
+  "youtubeConsentBlocked": "Aqui só é possível abrir o YouTube Music e a página de consentimento da Google. Não é possível iniciar sessão numa conta.",
+  "searchReadyVersions": "{count, plural, =0{0 Versões disponíveis} =1{1 versão disponível} other{{count} Versões disponíveis}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{0 Versões indisponíveis} =1{1 versão indisponível} other{{count} Versões indisponíveis}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "Ir para a seção",
+  "searchVersionDetails": "Detalhes da versão",
+  "searchSelectedRecording": "Gravação selecionada",
+  "searchVersionDuration": "Duração da versão"
 }

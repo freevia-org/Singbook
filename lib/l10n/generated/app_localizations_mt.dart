@@ -213,48 +213,6 @@ class AppLocalizationsMt extends AppLocalizations {
   String get searchAlternatives => 'Riżultati oħra';
 
   @override
-  String searchReadyVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count verżjoni lesta',
-      many: '$count verżjoni lesta',
-      few: '$count verżjonijiet lesti',
-      two: '$count verżjonijiet lesti',
-      one: '$count verżjoni lesta',
-      zero: 'Mhemmx verżjonijiet lesti',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String searchUnavailableVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count verżjoni mhux disponibbli',
-      many: '$count verżjoni mhux disponibbli',
-      few: '$count verżjonijiet mhux disponibbli',
-      two: '$count verżjonijiet mhux disponibbli',
-      one: '$count verżjoni mhux disponibbli',
-      zero: 'Mhemmx verżjonijiet mhux disponibbli',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get searchJumpSection => 'Mur fit-taqsima';
-
-  @override
-  String get searchVersionDetails => 'Dettalji tal-verżjoni';
-
-  @override
-  String get searchSelectedRecording => 'Reġistrazzjoni magħżula';
-
-  @override
-  String get searchVersionDuration => 'Tul tal-verżjoni';
-
-  @override
   String get searchCompare => 'Qabbel il-verżjonijiet';
 
   @override
@@ -1744,4 +1702,46 @@ class AppLocalizationsMt extends AppLocalizations {
   @override
   String get youtubeConsentBlocked =>
       'Hawnhekk jistgħu jinfetħu biss YouTube Music u l-paġna tal-kunsens ta\' Google. Id-dħul f\'kont mhuwiex disponibbli.';
+
+  @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count verżjoni lesta',
+      many: '$count verżjoni lesta',
+      few: '$count verżjonijiet lesti',
+      two: '$count verżjonijiet lesti',
+      one: '$count verżjoni lesta',
+      zero: 'Mhemmx verżjonijiet lesti',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count verżjoni mhux disponibbli',
+      many: '$count verżjoni mhux disponibbli',
+      few: '$count verżjonijiet mhux disponibbli',
+      two: '$count verżjonijiet mhux disponibbli',
+      one: '$count verżjoni mhux disponibbli',
+      zero: 'Mhemmx verżjonijiet mhux disponibbli',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Mur fit-taqsima';
+
+  @override
+  String get searchVersionDetails => 'Dettalji tal-verżjoni';
+
+  @override
+  String get searchSelectedRecording => 'Reġistrazzjoni magħżula';
+
+  @override
+  String get searchVersionDuration => 'Tul tal-verżjoni';
 }

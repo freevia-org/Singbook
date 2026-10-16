@@ -213,46 +213,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get searchAlternatives => 'Другие совпадения';
 
   @override
-  String searchReadyVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count доступной версии',
-      many: '$count доступных версий',
-      few: '$count доступные версии',
-      one: '$count доступная версия',
-      zero: 'Нет доступных версий',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String searchUnavailableVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count недоступной версии',
-      many: '$count недоступных версий',
-      few: '$count недоступные версии',
-      one: '$count недоступная версия',
-      zero: 'Нет недоступных версий',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get searchJumpSection => 'Перейти к разделу';
-
-  @override
-  String get searchVersionDetails => 'Сведения о версии';
-
-  @override
-  String get searchSelectedRecording => 'Выбранная запись';
-
-  @override
-  String get searchVersionDuration => 'Длительность версии';
-
-  @override
   String get searchCompare => 'Сравнить версии';
 
   @override
@@ -1756,4 +1716,44 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get youtubeConsentBlocked =>
       'Здесь можно открыть только YouTube Music и страницу согласия Google. Вход в аккаунт недоступен.';
+
+  @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count доступной версии',
+      many: '$count доступных версий',
+      few: '$count доступные версии',
+      one: '$count доступная версия',
+      zero: 'Нет доступных версий',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count недоступной версии',
+      many: '$count недоступных версий',
+      few: '$count недоступные версии',
+      one: '$count недоступная версия',
+      zero: 'Нет недоступных версий',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Перейти к разделу';
+
+  @override
+  String get searchVersionDetails => 'Сведения о версии';
+
+  @override
+  String get searchSelectedRecording => 'Выбранная запись';
+
+  @override
+  String get searchVersionDuration => 'Длительность версии';
 }

@@ -212,42 +212,6 @@ class AppLocalizationsDa extends AppLocalizations {
   String get searchAlternatives => 'Andre match';
 
   @override
-  String searchReadyVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count Tilgængelige versioner',
-      one: '1 klar version',
-      zero: '0 Tilgængelige versioner',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String searchUnavailableVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count Utilgængelige versioner',
-      one: '1 utilgængelig version',
-      zero: '0 Utilgængelige versioner',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get searchJumpSection => 'Gå til afsnit';
-
-  @override
-  String get searchVersionDetails => 'Versionsoplysninger';
-
-  @override
-  String get searchSelectedRecording => 'Valgt indspilning';
-
-  @override
-  String get searchVersionDuration => 'Versionens varighed';
-
-  @override
   String get searchCompare => 'Sammenlign versioner';
 
   @override
@@ -1716,4 +1680,40 @@ class AppLocalizationsDa extends AppLocalizations {
   @override
   String get youtubeConsentBlocked =>
       'Kun YouTube Music og Googles samtykkeside kan åbnes her. Kontologin er ikke tilgængeligt.';
+
+  @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Tilgængelige versioner',
+      one: '1 klar version',
+      zero: '0 Tilgængelige versioner',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Utilgængelige versioner',
+      one: '1 utilgængelig version',
+      zero: '0 Utilgængelige versioner',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Gå til afsnit';
+
+  @override
+  String get searchVersionDetails => 'Versionsoplysninger';
+
+  @override
+  String get searchSelectedRecording => 'Valgt indspilning';
+
+  @override
+  String get searchVersionDuration => 'Versionens varighed';
 }

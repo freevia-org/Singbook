@@ -214,42 +214,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get searchAlternatives => 'Autres correspondances';
 
   @override
-  String searchReadyVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count Versions disponibles',
-      one: '1 version disponible',
-      zero: '0 Versions disponibles',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String searchUnavailableVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count Versions indisponibles',
-      one: '1 version indisponible',
-      zero: '0 Versions indisponibles',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get searchJumpSection => 'Aller à la section';
-
-  @override
-  String get searchVersionDetails => 'Détails de la version';
-
-  @override
-  String get searchSelectedRecording => 'Enregistrement sélectionné';
-
-  @override
-  String get searchVersionDuration => 'Durée de la version';
-
-  @override
   String get searchCompare => 'Comparer les versions';
 
   @override
@@ -1743,4 +1707,40 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get youtubeConsentBlocked =>
       'Seuls YouTube Music et la page de consentement de Google peuvent s\'ouvrir ici. La connexion à un compte n\'est pas disponible.';
+
+  @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Versions disponibles',
+      one: '1 version disponible',
+      zero: '0 Versions disponibles',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Versions indisponibles',
+      one: '1 version indisponible',
+      zero: '0 Versions indisponibles',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Aller à la section';
+
+  @override
+  String get searchVersionDetails => 'Détails de la version';
+
+  @override
+  String get searchSelectedRecording => 'Enregistrement sélectionné';
+
+  @override
+  String get searchVersionDuration => 'Durée de la version';
 }

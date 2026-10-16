@@ -212,42 +212,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get searchAlternatives => 'Diğer eşleşmeler';
 
   @override
-  String searchReadyVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count Hazır sürümler',
-      one: '1 hazır sürüm',
-      zero: '0 Hazır sürümler',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String searchUnavailableVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count Kullanılamayan sürümler',
-      one: '1 kullanılamayan sürüm',
-      zero: '0 Kullanılamayan sürümler',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get searchJumpSection => 'Bölüme git';
-
-  @override
-  String get searchVersionDetails => 'Sürüm ayrıntıları';
-
-  @override
-  String get searchSelectedRecording => 'Seçilen kayıt';
-
-  @override
-  String get searchVersionDuration => 'Sürüm süresi';
-
-  @override
   String get searchCompare => 'Sürümleri karşılaştır';
 
   @override
@@ -1720,4 +1684,40 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get youtubeConsentBlocked =>
       'Burada yalnızca YouTube Music ve Google izin sayfası açılabilir. Hesapta oturum açma kullanılamaz.';
+
+  @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Hazır sürümler',
+      one: '1 hazır sürüm',
+      zero: '0 Hazır sürümler',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Kullanılamayan sürümler',
+      one: '1 kullanılamayan sürüm',
+      zero: '0 Kullanılamayan sürümler',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Bölüme git';
+
+  @override
+  String get searchVersionDetails => 'Sürüm ayrıntıları';
+
+  @override
+  String get searchSelectedRecording => 'Seçilen kayıt';
+
+  @override
+  String get searchVersionDuration => 'Sürüm süresi';
 }

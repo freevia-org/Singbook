@@ -77,14 +77,6 @@
   "searchFavoritesTab": "お気に入り",
   "searchSuggested": "おすすめの一致",
   "searchAlternatives": "その他の一致",
-    "searchReadyVersions": "{count, plural, =0{0 利用可能なバージョン} =1{1 利用可能なバージョン} other{{count} 利用可能なバージョン}}",
-  "@searchReadyVersions": {"placeholders": {"count": {"type": "int"}}},
-  "searchUnavailableVersions": "{count, plural, =0{0 利用できないバージョン} =1{1 利用できないバージョン} other{{count} 利用できないバージョン}}",
-  "@searchUnavailableVersions": {"placeholders": {"count": {"type": "int"}}},
-  "searchJumpSection": "セクションへ移動",
-  "searchVersionDetails": "バージョンの詳細",
-  "searchSelectedRecording": "選択した録音",
-  "searchVersionDuration": "バージョンの長さ",
   "searchCompare": "バージョンを比較",
   "searchChooseVersion": "このバージョンを選択",
   "searchFullPreview": "全体をプレビュー",
@@ -745,5 +737,25 @@
   "youtubeConsentClear": "同意設定を消去",
   "youtubeConsentInstructions": "Cookie の選択を完了し、YouTube Music に戻るまでお待ちください。その後、このセッションを保存して曲を再検索してください。",
   "youtubeConsentError": "Google の同意設定を更新できませんでした。もう一度お試しください。",
-  "youtubeConsentBlocked": "ここで開けるのは YouTube Music と Google の同意ページのみです。アカウントへのログインは利用できません。"
+  "youtubeConsentBlocked": "ここで開けるのは YouTube Music と Google の同意ページのみです。アカウントへのログインは利用できません。",
+  "searchReadyVersions": "{count, plural, =0{0 利用可能なバージョン} =1{1 利用可能なバージョン} other{{count} 利用可能なバージョン}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{0 利用できないバージョン} =1{1 利用できないバージョン} other{{count} 利用できないバージョン}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "セクションへ移動",
+  "searchVersionDetails": "バージョンの詳細",
+  "searchSelectedRecording": "選択した録音",
+  "searchVersionDuration": "バージョンの長さ"
 }

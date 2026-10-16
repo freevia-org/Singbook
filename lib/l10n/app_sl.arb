@@ -77,14 +77,6 @@
   "searchFavoritesTab": "Priljubljeno",
   "searchSuggested": "Predlagano ujemanje",
   "searchAlternatives": "Druga ujemanja",
-    "searchReadyVersions": "{count, plural, =0{Nema dostupnih verzija} one{{count} različica je na voljo} few{{count} dostupne verzije} other{{count} dostupnih verzija}}",
-  "@searchReadyVersions": {"placeholders": {"count": {"type": "int"}}},
-  "searchUnavailableVersions": "{count, plural, =0{Nema nedostupnih verzija} one{{count} različica ni na voljo} few{{count} nedostupne verzije} other{{count} nedostupnih verzija}}",
-  "@searchUnavailableVersions": {"placeholders": {"count": {"type": "int"}}},
-  "searchJumpSection": "Pojdi na razdelek",
-  "searchVersionDetails": "Podrobnosti različice",
-  "searchSelectedRecording": "Izbrani posnetek",
-  "searchVersionDuration": "Trajanje različice",
   "searchCompare": "Primerjaj različice",
   "searchChooseVersion": "Izberi to različico",
   "searchFullPreview": "Celoten predogled",
@@ -745,5 +737,25 @@
   "youtubeConsentClear": "Počisti soglasje",
   "youtubeConsentInstructions": "Dokončajte izbiro piškotkov in počakajte, da se vrne YouTube Music. Nato shranite to sejo in znova poiščite skladbo.",
   "youtubeConsentError": "Izbire soglasja Googla ni bilo mogoče posodobiti. Poskusite znova.",
-  "youtubeConsentBlocked": "Tukaj lahko odprete samo YouTube Music in Googlovo stran za soglasje. Prijava v račun ni na voljo."
+  "youtubeConsentBlocked": "Tukaj lahko odprete samo YouTube Music in Googlovo stran za soglasje. Prijava v račun ni na voljo.",
+  "searchReadyVersions": "{count, plural, =0{Nema dostupnih verzija} one{{count} različica je na voljo} few{{count} dostupne verzije} other{{count} dostupnih verzija}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{Nema nedostupnih verzija} one{{count} različica ni na voljo} few{{count} nedostupne verzije} other{{count} nedostupnih verzija}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "Pojdi na razdelek",
+  "searchVersionDetails": "Podrobnosti različice",
+  "searchSelectedRecording": "Izbrani posnetek",
+  "searchVersionDuration": "Trajanje različice"
 }

@@ -77,14 +77,6 @@
   "searchFavoritesTab": "즐겨찾기",
   "searchSuggested": "추천 일치 항목",
   "searchAlternatives": "다른 일치 항목",
-    "searchReadyVersions": "{count, plural, =0{0 사용 가능한 버전} =1{1 사용 가능한 버전} other{{count} 사용 가능한 버전}}",
-  "@searchReadyVersions": {"placeholders": {"count": {"type": "int"}}},
-  "searchUnavailableVersions": "{count, plural, =0{0 사용할 수 없는 버전} =1{1 사용할 수 없는 버전} other{{count} 사용할 수 없는 버전}}",
-  "@searchUnavailableVersions": {"placeholders": {"count": {"type": "int"}}},
-  "searchJumpSection": "섹션으로 이동",
-  "searchVersionDetails": "버전 세부정보",
-  "searchSelectedRecording": "선택한 녹음",
-  "searchVersionDuration": "버전 길이",
   "searchCompare": "버전 비교",
   "searchChooseVersion": "이 버전 선택",
   "searchFullPreview": "전체 미리보기",
@@ -745,5 +737,25 @@
   "youtubeConsentClear": "동의 지우기",
   "youtubeConsentInstructions": "쿠키 선택을 완료하고 YouTube Music으로 돌아올 때까지 기다리세요. 그런 다음 이 세션을 저장하고 노래를 다시 검색하세요.",
   "youtubeConsentError": "Google 동의 선택을 업데이트하지 못했습니다. 다시 시도하세요.",
-  "youtubeConsentBlocked": "여기서는 YouTube Music과 Google 동의 페이지만 열 수 있습니다. 계정 로그인은 사용할 수 없습니다."
+  "youtubeConsentBlocked": "여기서는 YouTube Music과 Google 동의 페이지만 열 수 있습니다. 계정 로그인은 사용할 수 없습니다.",
+  "searchReadyVersions": "{count, plural, =0{0 사용 가능한 버전} =1{1 사용 가능한 버전} other{{count} 사용 가능한 버전}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{0 사용할 수 없는 버전} =1{1 사용할 수 없는 버전} other{{count} 사용할 수 없는 버전}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "섹션으로 이동",
+  "searchVersionDetails": "버전 세부정보",
+  "searchSelectedRecording": "선택한 녹음",
+  "searchVersionDuration": "버전 길이"
 }

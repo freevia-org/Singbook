@@ -212,42 +212,6 @@ class AppLocalizationsEt extends AppLocalizations {
   String get searchAlternatives => 'Muud vasted';
 
   @override
-  String searchReadyVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count Valmis versioonid',
-      one: '1 valmis versioon',
-      zero: '0 Valmis versioonid',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String searchUnavailableVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count Kättesaamatud versioonid',
-      one: '1 kättesaamatu versioon',
-      zero: '0 Kättesaamatud versioonid',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get searchJumpSection => 'Hüppa jaotisse';
-
-  @override
-  String get searchVersionDetails => 'Versiooni üksikasjad';
-
-  @override
-  String get searchSelectedRecording => 'Valitud salvestis';
-
-  @override
-  String get searchVersionDuration => 'Versiooni kestus';
-
-  @override
   String get searchCompare => 'Võrdle versioone';
 
   @override
@@ -1718,4 +1682,40 @@ class AppLocalizationsEt extends AppLocalizations {
   @override
   String get youtubeConsentBlocked =>
       'Siin saab avada ainult YouTube Musicu ja Google\'i nõusolekulehe. Kontole sisselogimine pole saadaval.';
+
+  @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Valmis versioonid',
+      one: '1 valmis versioon',
+      zero: '0 Valmis versioonid',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Kättesaamatud versioonid',
+      one: '1 kättesaamatu versioon',
+      zero: '0 Kättesaamatud versioonid',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Hüppa jaotisse';
+
+  @override
+  String get searchVersionDetails => 'Versiooni üksikasjad';
+
+  @override
+  String get searchSelectedRecording => 'Valitud salvestis';
+
+  @override
+  String get searchVersionDuration => 'Versiooni kestus';
 }

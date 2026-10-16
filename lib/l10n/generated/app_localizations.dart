@@ -540,42 +540,6 @@ abstract class AppLocalizations {
   /// **'Other matches'**
   String get searchAlternatives;
 
-  /// No description provided for @searchReadyVersions.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =0{No ready versions} =1{1 ready version} other{{count} ready versions}}'**
-  String searchReadyVersions(int count);
-
-  /// No description provided for @searchUnavailableVersions.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{1 unavailable version} other{{count} unavailable versions}}'**
-  String searchUnavailableVersions(int count);
-
-  /// No description provided for @searchJumpSection.
-  ///
-  /// In en, this message translates to:
-  /// **'Jump to section'**
-  String get searchJumpSection;
-
-  /// No description provided for @searchVersionDetails.
-  ///
-  /// In en, this message translates to:
-  /// **'Version details'**
-  String get searchVersionDetails;
-
-  /// No description provided for @searchSelectedRecording.
-  ///
-  /// In en, this message translates to:
-  /// **'Selected recording'**
-  String get searchSelectedRecording;
-
-  /// No description provided for @searchVersionDuration.
-  ///
-  /// In en, this message translates to:
-  /// **'Version duration'**
-  String get searchVersionDuration;
-
   /// No description provided for @searchCompare.
   ///
   /// In en, this message translates to:
@@ -2999,6 +2963,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Only YouTube Music and Google\'s consent page can open here. Account sign-in is unavailable.'**
   String get youtubeConsentBlocked;
+
+  /// No description provided for @searchReadyVersions.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No ready versions} =1{1 ready version} other{{count} ready versions}}'**
+  String searchReadyVersions(int count);
+
+  /// No description provided for @searchUnavailableVersions.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 unavailable version} other{{count} unavailable versions}}'**
+  String searchUnavailableVersions(int count);
+
+  /// No description provided for @searchJumpSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump to section'**
+  String get searchJumpSection;
+
+  /// No description provided for @searchVersionDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Version details'**
+  String get searchVersionDetails;
+
+  /// No description provided for @searchSelectedRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected recording'**
+  String get searchSelectedRecording;
+
+  /// No description provided for @searchVersionDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Version duration'**
+  String get searchVersionDuration;
 }
 
 class _AppLocalizationsDelegate

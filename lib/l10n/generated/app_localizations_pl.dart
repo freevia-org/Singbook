@@ -214,46 +214,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get searchAlternatives => 'Inne dopasowania';
 
   @override
-  String searchReadyVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count gotowej wersji',
-      many: '$count gotowych wersji',
-      few: '$count gotowe wersje',
-      one: '$count gotowa wersja',
-      zero: 'Brak gotowych wersji',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String searchUnavailableVersions(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count niedostępnej wersji',
-      many: '$count niedostępnych wersji',
-      few: '$count niedostępne wersje',
-      one: '$count niedostępna wersja',
-      zero: 'Brak niedostępnych wersji',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get searchJumpSection => 'Przejdź do sekcji';
-
-  @override
-  String get searchVersionDetails => 'Szczegóły wersji';
-
-  @override
-  String get searchSelectedRecording => 'Wybrane nagranie';
-
-  @override
-  String get searchVersionDuration => 'Czas trwania wersji';
-
-  @override
   String get searchCompare => 'Porównaj wersje';
 
   @override
@@ -1753,4 +1713,44 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get youtubeConsentBlocked =>
       'Można tu otworzyć tylko YouTube Music i stronę zgody Google. Logowanie na konto jest niedostępne.';
+
+  @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count gotowej wersji',
+      many: '$count gotowych wersji',
+      few: '$count gotowe wersje',
+      one: '$count gotowa wersja',
+      zero: 'Brak gotowych wersji',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count niedostępnej wersji',
+      many: '$count niedostępnych wersji',
+      few: '$count niedostępne wersje',
+      one: '$count niedostępna wersja',
+      zero: 'Brak niedostępnych wersji',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Przejdź do sekcji';
+
+  @override
+  String get searchVersionDetails => 'Szczegóły wersji';
+
+  @override
+  String get searchSelectedRecording => 'Wybrane nagranie';
+
+  @override
+  String get searchVersionDuration => 'Czas trwania wersji';
 }
