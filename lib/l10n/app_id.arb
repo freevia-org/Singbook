@@ -738,5 +738,12 @@
   "sectionBreakdown": "Breakdown",
   "sectionCoda": "Koda",
   "sectionTag": "Tag",
-  "sectionEnding": "Penutup"
+  "sectionEnding": "Penutup",
+  "youtubeConsentHint": "Eksperimental. Pilih cookie di halaman Google untuk mencoba pencarian lirik. Anda tidak perlu masuk ke akun Google. Pilihan Anda tersimpan di perangkat ini.",
+  "youtubeConsentOpen": "Tinjau persetujuan Google",
+  "youtubeConsentSaved": "Persetujuan tersimpan",
+  "youtubeConsentClear": "Hapus persetujuan",
+  "youtubeConsentInstructions": "Selesaikan pilihan cookie dan tunggu hingga YouTube Music kembali. Setelah itu, simpan sesi ini dan coba cari lagu lagi.",
+  "youtubeConsentError": "Pilihan persetujuan Google tidak dapat diperbarui. Coba lagi.",
+  "youtubeConsentBlocked": "Di sini hanya YouTube Music dan halaman persetujuan Google yang dapat dibuka. Masuk ke akun tidak tersedia."
 }

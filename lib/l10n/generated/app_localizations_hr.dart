@@ -1713,4 +1713,29 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get sectionEnding => 'Završetak';
+
+  @override
+  String get youtubeConsentHint =>
+      'Eksperimentalno. Odaberite kolačiće na Googleovoj stranici da biste isprobali pretraživanje stihova. Ne morate se prijaviti na Google račun. Vaš odabir ostaje na ovom uređaju.';
+
+  @override
+  String get youtubeConsentOpen => 'Pregled Googleove suglasnosti';
+
+  @override
+  String get youtubeConsentSaved => 'Suglasnost je spremljena';
+
+  @override
+  String get youtubeConsentClear => 'Izbriši suglasnost';
+
+  @override
+  String get youtubeConsentInstructions =>
+      'Dovršite odabir kolačića i pričekajte da se YouTube Music vrati. Zatim spremite ovu sesiju i ponovno potražite pjesmu.';
+
+  @override
+  String get youtubeConsentError =>
+      'Googleov odabir suglasnosti nije se mogao ažurirati. Pokušajte ponovno.';
+
+  @override
+  String get youtubeConsentBlocked =>
+      'Ovdje se mogu otvoriti samo YouTube Music i Googleova stranica za suglasnost. Prijava na račun nije dostupna.';
 }

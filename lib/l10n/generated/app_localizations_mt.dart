@@ -1719,4 +1719,29 @@ class AppLocalizationsMt extends AppLocalizations {
 
   @override
   String get sectionEnding => 'Tmiem';
+
+  @override
+  String get youtubeConsentHint =>
+      'Sperimentali. Agħżel il-cookies fil-paġna ta\' Google biex tipprova tfittex il-lirika. M\'hemmx għalfejn tidħol f\'kont ta\' Google. L-għażla tiegħek tibqa\' fuq dan it-tagħmir.';
+
+  @override
+  String get youtubeConsentOpen => 'Irrevedi l-kunsens ta\' Google';
+
+  @override
+  String get youtubeConsentSaved => 'Il-kunsens ġie ssejvjat';
+
+  @override
+  String get youtubeConsentClear => 'Neħħi l-kunsens';
+
+  @override
+  String get youtubeConsentInstructions =>
+      'Temm l-għażla tal-cookies u stenna sakemm jerġa\' jidher YouTube Music. Imbagħad issejvja din is-sessjoni u erġa\' fittex il-kanzunetta.';
+
+  @override
+  String get youtubeConsentError =>
+      'Ma setgħetx tiġi aġġornata l-għażla tal-kunsens ta\' Google. Erġa\' pprova.';
+
+  @override
+  String get youtubeConsentBlocked =>
+      'Hawnhekk jistgħu jinfetħu biss YouTube Music u l-paġna tal-kunsens ta\' Google. Id-dħul f\'kont mhuwiex disponibbli.';
 }

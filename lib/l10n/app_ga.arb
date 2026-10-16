@@ -738,5 +738,12 @@
   "sectionBreakdown": "Breakdown",
   "sectionCoda": "Coda",
   "sectionTag": "Tag",
-  "sectionEnding": "Deireadh"
+  "sectionEnding": "Deireadh",
+  "youtubeConsentHint": "Gné thurgnamhach. Roghnaigh fianáin ar leathanach Google chun triail a bhaint as cuardach liricí. Ní gá síniú isteach i gcuntas Google. Fanfaidh do rogha ar an ngléas seo.",
+  "youtubeConsentOpen": "Athbhreithniú ar thoiliú Google",
+  "youtubeConsentSaved": "Sábháladh an toiliú",
+  "youtubeConsentClear": "Glan an toiliú",
+  "youtubeConsentInstructions": "Críochnaigh do rogha fianán agus fan go bhfillfidh YouTube Music. Ansin sábháil an seisiún seo agus bain triail eile as an amhrán a chuardach.",
+  "youtubeConsentError": "Níorbh fhéidir rogha toilithe Google a nuashonrú. Bain triail eile as.",
+  "youtubeConsentBlocked": "Ní féidir ach YouTube Music agus leathanach toilithe Google a oscailt anseo. Níl síniú isteach i gcuntas ar fáil."
 }

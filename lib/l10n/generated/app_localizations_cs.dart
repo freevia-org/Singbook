@@ -1710,4 +1710,29 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get sectionEnding => 'Závěr';
+
+  @override
+  String get youtubeConsentHint =>
+      'Experimentální funkce. Na stránce Googlu zvolte nastavení cookies a vyzkoušejte vyhledávání textů. Přihlášení k účtu Google není potřeba. Vaše volba zůstane v tomto zařízení.';
+
+  @override
+  String get youtubeConsentOpen => 'Zkontrolovat souhlas Googlu';
+
+  @override
+  String get youtubeConsentSaved => 'Souhlas uložen';
+
+  @override
+  String get youtubeConsentClear => 'Vymazat souhlas';
+
+  @override
+  String get youtubeConsentInstructions =>
+      'Dokončete výběr cookies a počkejte, až se vrátí YouTube Music. Potom tuto relaci uložte a zkuste skladbu vyhledat znovu.';
+
+  @override
+  String get youtubeConsentError =>
+      'Volbu souhlasu Googlu se nepodařilo aktualizovat. Zkuste to znovu.';
+
+  @override
+  String get youtubeConsentBlocked =>
+      'Zde lze otevřít pouze YouTube Music a stránku souhlasu Googlu. Přihlášení k účtu není dostupné.';
 }

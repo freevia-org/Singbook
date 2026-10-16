@@ -738,5 +738,12 @@
   "sectionBreakdown": "Breakdown",
   "sectionCoda": "Kóda",
   "sectionTag": "Tag",
-  "sectionEnding": "Befejezés"
+  "sectionEnding": "Befejezés",
+  "youtubeConsentHint": "Kísérleti funkció. A dalszövegkeresés kipróbálásához válaszd ki a cookie-beállításokat a Google oldalán. Nem kell bejelentkezned Google-fiókba. A választásod ezen az eszközön marad.",
+  "youtubeConsentOpen": "Google-hozzájárulás áttekintése",
+  "youtubeConsentSaved": "Hozzájárulás mentve",
+  "youtubeConsentClear": "Hozzájárulás törlése",
+  "youtubeConsentInstructions": "Fejezd be a cookie-választást, és várd meg, amíg visszatér a YouTube Music. Ezután mentsd ezt a munkamenetet, és keresd meg újra a dalt.",
+  "youtubeConsentError": "Nem sikerült frissíteni a Google-hozzájárulási választást. Próbáld újra.",
+  "youtubeConsentBlocked": "Itt csak a YouTube Music és a Google hozzájárulási oldala nyitható meg. A fiókba való bejelentkezés nem érhető el."
 }

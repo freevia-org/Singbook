@@ -739,5 +739,12 @@
   "sectionBreakdown": "بريك داون",
   "sectionCoda": "كودا",
   "sectionTag": "تاغ",
-  "sectionEnding": "النهاية"
+  "sectionEnding": "النهاية",
+  "youtubeConsentHint": "تجريبي. اختر ملفات تعريف الارتباط على صفحة Google لتجربة البحث عن كلمات الأغاني. لا يلزم تسجيل الدخول إلى حساب Google. يبقى اختيارك على هذا الجهاز.",
+  "youtubeConsentOpen": "مراجعة موافقة Google",
+  "youtubeConsentSaved": "تم حفظ الموافقة",
+  "youtubeConsentClear": "مسح الموافقة",
+  "youtubeConsentInstructions": "أكمل اختيار ملفات تعريف الارتباط وانتظر عودة YouTube Music. ثم احفظ هذه الجلسة وأعد محاولة البحث عن الأغنية.",
+  "youtubeConsentError": "تعذّر تحديث اختيار موافقة Google. حاول مرة أخرى.",
+  "youtubeConsentBlocked": "يمكن فتح YouTube Music وصفحة موافقة Google فقط هنا. تسجيل الدخول إلى الحساب غير متاح."
 }

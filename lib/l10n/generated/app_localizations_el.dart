@@ -1718,4 +1718,29 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get sectionEnding => 'Τέλος';
+
+  @override
+  String get youtubeConsentHint =>
+      'Πειραματική λειτουργία. Επιλέξτε τις ρυθμίσεις cookie στη σελίδα της Google για να δοκιμάσετε την αναζήτηση στίχων. Δεν χρειάζεται σύνδεση σε λογαριασμό Google. Η επιλογή σας παραμένει σε αυτήν τη συσκευή.';
+
+  @override
+  String get youtubeConsentOpen => 'Έλεγχος συγκατάθεσης Google';
+
+  @override
+  String get youtubeConsentSaved => 'Η συγκατάθεση αποθηκεύτηκε';
+
+  @override
+  String get youtubeConsentClear => 'Εκκαθάριση συγκατάθεσης';
+
+  @override
+  String get youtubeConsentInstructions =>
+      'Ολοκληρώστε την επιλογή cookie και περιμένετε να επιστρέψει το YouTube Music. Έπειτα αποθηκεύστε αυτήν τη συνεδρία και δοκιμάστε ξανά την αναζήτηση τραγουδιού.';
+
+  @override
+  String get youtubeConsentError =>
+      'Δεν ήταν δυνατή η ενημέρωση της επιλογής συγκατάθεσης Google. Δοκιμάστε ξανά.';
+
+  @override
+  String get youtubeConsentBlocked =>
+      'Εδώ μπορούν να ανοίξουν μόνο το YouTube Music και η σελίδα συγκατάθεσης της Google. Η σύνδεση σε λογαριασμό δεν είναι διαθέσιμη.';
 }

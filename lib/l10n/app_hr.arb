@@ -738,5 +738,12 @@
   "sectionBreakdown": "Breakdown",
   "sectionCoda": "Koda",
   "sectionTag": "Tag",
-  "sectionEnding": "Završetak"
+  "sectionEnding": "Završetak",
+  "youtubeConsentHint": "Eksperimentalno. Odaberite kolačiće na Googleovoj stranici da biste isprobali pretraživanje stihova. Ne morate se prijaviti na Google račun. Vaš odabir ostaje na ovom uređaju.",
+  "youtubeConsentOpen": "Pregled Googleove suglasnosti",
+  "youtubeConsentSaved": "Suglasnost je spremljena",
+  "youtubeConsentClear": "Izbriši suglasnost",
+  "youtubeConsentInstructions": "Dovršite odabir kolačića i pričekajte da se YouTube Music vrati. Zatim spremite ovu sesiju i ponovno potražite pjesmu.",
+  "youtubeConsentError": "Googleov odabir suglasnosti nije se mogao ažurirati. Pokušajte ponovno.",
+  "youtubeConsentBlocked": "Ovdje se mogu otvoriti samo YouTube Music i Googleova stranica za suglasnost. Prijava na račun nije dostupna."
 }

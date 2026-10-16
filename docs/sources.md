@@ -8,7 +8,7 @@ The initial remote catalog registers 19 sources: the 18 compiled integrations pl
 | Songsterr | Structured data from public search and chord pages | Chart's own lyrics | Positioned on the chart's own words | None | Explicit key, capo, tuning, tempo, time signature, album and song-level videos; tab instrument settings are not applied to the chord sheet |
 | Ultimate Guitar | Public user **Chords** sheets only; excludes Official/Pro/private results | Chart's own lyrics | Positioned on the chart's own words | None | Explicit key, capo, tuning, difficulty, genre, recording descriptors, artwork, transcriber, videos; explicit contributor preamble tempo/time signature |
 | LRCLIB | Public JSON API | Plain text and LRC | No | Original LRC, line cues, enhanced-LRC word cues if supplied | Album, duration, instrumental flag |
-| YouTube Music | Public web-client JSON endpoints | Actual recording's lyrics shelf; video descriptions/URLs do not count | No | None from the implemented shelf | Album, duration, artwork, playback link, supplier attribution |
+| YouTube Music | Unofficial public web-client JSON endpoints; optional on-device anonymous Google consent session | Actual recording's lyrics shelf; video descriptions/URLs do not count | No | None from the implemented shelf | Album, duration, artwork, playback link, supplier attribution |
 | Lyrics.ovh | Public suggestions and artist/title lyric API | Plain text | No | None | Deezer suggestions supply album, duration, recording label, artwork, playback/preview links. Artist/title-only lyric retrieval does not establish the recording. |
 | SyncLRC | Public search response (no get-by-id endpoint is known; the chosen record travels inside the selection id when it fits, otherwise resolve searches again) | Plain, synced and karaoke variants | No | Both original synced/karaoke documents, line and enhanced word cues | Album, duration, instrumental flag |
 | Better Lyrics | Cached TTML API; LRCLIB recording catalog | TTML text | No | Original TTML, line/word cues, boundaries, source time expressions and unsupported payloads | Album/duration are required for retrieval. Cache misses, access denial and service outages do not produce fabricated lyrics. |
@@ -44,17 +44,54 @@ Genius needs only a client access token supplied through `config/local.defines.j
 
 ## Legal and terms-of-service posture
 
+### Optional YouTube Music consent session
+
+Settings → Sources offers an experimental YouTube Music consent screen on
+Android and iOS. The person using the app makes their own choice on Google's
+actual page, waits for YouTube Music to return, and taps Done. The app never
+chooses consent, logs in to a Google account, or copies a logged-in browser
+session. Account sign-in and navigation outside the exact YouTube Music and
+YouTube consent hosts are blocked in that browser screen.
+
+An anonymous request to the fixed Music homepage resolves Google's regional
+chooser URL before opening it. A fresh Dart HTTP client has no shared native
+cookie store; response cookies are never imported. Only the validated Google
+region/language and fixed Music return enter the chooser URL. An automatic
+redirect through the consent host does not count as presenting a decision page.
+
+Only `SOCS` and legacy `CONSENT` cookies applicable to the YouTube Music root
+cross the native bridge. They stay in the app's browser cookie store and an
+in-memory adapter session, never library settings, ChordPro, Drive sync, reports,
+or cloud maintenance. Android excludes the WebView store from cloud backup and
+device transfer. iOS cookie storage/backup behavior has not been device-verified
+on this Windows checkout. Clear consent removes these scoped cookies and the
+in-memory copy without disconnecting Drive. A failed native clear is reported
+and can be retried. Cached web configuration is invalidated after a session
+change; old in-flight results cannot reactivate a cleared session.
+
+Consent saved means a cookie decision was captured, not that every song has
+lyrics or that live extraction passed. Renew the decision if Google asks again.
+CAPTCHA, account requirements, denials and regional restrictions remain explicit
+failures. This is still an unofficial web integration, not a Google-supported
+lyrics API or a redistribution license. The Google OAuth flow used for Drive
+does not authorize these web requests. Cloud maintenance cannot use a person's
+on-device session and still reports its own proxy/consent limits honestly.
+
+References: [YouTube API resource list](https://developers.google.com/youtube/data/reference/rest),
+[Google native OAuth guidance](https://developers.google.com/identity/protocols/oauth2/native-app),
+and [YouTube developer policies](https://developers.google.com/youtube/terms/developer-policies).
+
 Singbook is a client that runs on the user's device; it is not a lyrics publisher and has no backend, so every request is made by (and on behalf of) the person using the app.
 
 - **Official or open sources**: Genius (token-authenticated API for the catalog), LRCLIB, MusicBrainz, Wikidata, Wikimedia Commons and Wikisource publish public APIs or open data. WorshipCommons, Sean McGrath Music and Open Filk Songbook publish content under declared licenses (PD, CC-BY, CC-BY-SA, per-file licenses); that declaration, the license URL and the attribution are recorded as `rights` evidence. Even here, the license is the source's statement and has not been independently verified.
-- **Unofficial or scraped sources**: Genius song pages (lyrics text), Songsterr, Ultimate Guitar, Chordie, YouTube Music web endpoints, Lyrics.ovh, SyncLRC and Better Lyrics are not offered to apps under a license that allows redistribution of their text, and several have terms of service that restrict automated access. They may be blocked, rate limited or removed at any time. Singbook does not log in, does not bypass consent pages, CAPTCHAs, bot walls or paywalls (a consent or challenge page is reported as `blocked`, never worked around) and does not send consent-bypass cookies.
+- **Unofficial or scraped sources**: Genius song pages (lyrics text), Songsterr, Ultimate Guitar, Chordie, YouTube Music web endpoints, Lyrics.ovh, SyncLRC and Better Lyrics are not offered to apps under a license that allows redistribution of their text, and several have terms of service that restrict automated access. They may be blocked, rate limited or removed at any time. Singbook does not log in or bypass CAPTCHAs, bot walls or paywalls. An optional YouTube Music session carries the person's actual Google consent decision as described above; it never fabricates a decision. Unresolved consent and challenge pages remain `blocked`.
 - **Rights status**: text from these sources is stored with `rights.status = unknown`, the source URL, attribution and a note that no redistribution license is established. Singbook never upgrades that status.
 - **Sharing and exporting**: saving a song locally is a personal-use convenience. Sharing, printing, publishing or exporting fetched text (a single `.cho`, collection packages, PDF) is the user's responsibility; check the source's terms and the work's copyright before distributing it. User-imported files keep whatever metadata the user supplied.
 - **Remote content is untrusted**: ChordPro from a remote source has any `{x_verse...}` / `{x_verse_data...}` extension directive removed before it enters a song, so a source cannot inject provenance, rights or timing payloads. Artwork, media and original-source links must be `https`, without credentials or non-standard ports, and point at a public host (artwork is further limited to the provider's known image hosts); anything else is dropped.
 - **Identification**: requests send `Singbook/<version> (+<contact URL>)`. Set `SINGBOOK_CONTACT_URL` in `config/local.defines.json` so operators such as MusicBrainz and Wikimedia can reach the publisher; no placeholder address is invented when it is unset.
 - **Transport etiquette**: per-host pacing, at most two retries for GET requests answered with HTTP 429/503 (honouring `Retry-After` up to 8 seconds; MusicBrainz uses 503 for rate limiting and is reported as `rate_limited`), HTTPS only, and redirects only to the same site (the host or its www/apex twin) with at most three hops. Credentials are never forwarded to another host.
 - **Failure codes**: every provider failure reaches the app as a `ProviderException` with a stable `code` (and, for some, a short `message`). Codes the UI can show:
-  - `blocked`: a challenge, bot wall or consent page was served instead of the content. The message gives the reason: `cloudflare` (Cloudflare challenge, including `cf-mitigated` responses), `bot_wall` (CAPTCHA or "verify you are human" page) or `consent_required` (cookie/consent interstitial or redirect). Never retried and never worked around.
+  - `blocked`: a challenge, bot wall or consent page was served instead of the content. The message gives the reason: `cloudflare` (Cloudflare challenge, including `cf-mitigated` responses), `bot_wall` (CAPTCHA or "verify you are human" page) or `consent_required` (cookie/consent interstitial or redirect). No automatic workaround or retry. A user may explicitly complete the separate YouTube Music consent flow, then retry lookup.
   - `rate_limited`: the host answered HTTP 429 or 503 after the transport's bounded retries (MusicBrainz uses 503 for rate limiting).
   - `access_denied`: HTTP 401/403 without a challenge marker (missing/invalid token or the host refuses the request).
   - `redirect`: a redirect that is malformed, leaves the site (host or its www/apex twin) or exceeds three hops.

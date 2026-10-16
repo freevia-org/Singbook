@@ -1713,4 +1713,29 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get sectionEnding => 'Schluss';
+
+  @override
+  String get youtubeConsentHint =>
+      'Experimentell. Wähle auf der Google-Seite deine Cookie-Einstellungen, um die Lyricsuche auszuprobieren. Eine Anmeldung bei einem Google-Konto ist nicht nötig. Deine Auswahl bleibt auf diesem Gerät.';
+
+  @override
+  String get youtubeConsentOpen => 'Google-Einwilligung prüfen';
+
+  @override
+  String get youtubeConsentSaved => 'Einwilligung gespeichert';
+
+  @override
+  String get youtubeConsentClear => 'Einwilligung löschen';
+
+  @override
+  String get youtubeConsentInstructions =>
+      'Schließe deine Cookie-Auswahl ab und warte, bis YouTube Music zurückkehrt. Speichere dann diese Sitzung und suche noch einmal nach dem Song.';
+
+  @override
+  String get youtubeConsentError =>
+      'Die Google-Einwilligung konnte nicht aktualisiert werden. Versuche es noch einmal.';
+
+  @override
+  String get youtubeConsentBlocked =>
+      'Hier können nur YouTube Music und die Google-Seite zur Einwilligung geöffnet werden. Eine Kontoanmeldung ist nicht verfügbar.';
 }

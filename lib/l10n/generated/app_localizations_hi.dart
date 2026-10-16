@@ -1686,4 +1686,29 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get sectionEnding => 'समापन';
+
+  @override
+  String get youtubeConsentHint =>
+      'प्रयोगात्मक। गीत के बोल खोजने के लिए Google के पेज पर कुकी विकल्प चुनें। Google खाते में साइन इन करने की ज़रूरत नहीं है। आपकी पसंद इसी डिवाइस पर रहेगी।';
+
+  @override
+  String get youtubeConsentOpen => 'Google की सहमति देखें';
+
+  @override
+  String get youtubeConsentSaved => 'सहमति सहेजी गई';
+
+  @override
+  String get youtubeConsentClear => 'सहमति मिटाएँ';
+
+  @override
+  String get youtubeConsentInstructions =>
+      'कुकी विकल्प पूरा करें और YouTube Music के लौटने तक प्रतीक्षा करें। फिर यह सत्र सहेजें और गाना दोबारा खोजें।';
+
+  @override
+  String get youtubeConsentError =>
+      'Google की सहमति का विकल्प अपडेट नहीं हो सका। फिर से कोशिश करें।';
+
+  @override
+  String get youtubeConsentBlocked =>
+      'यहाँ केवल YouTube Music और Google का सहमति पेज खुल सकता है। खाते में साइन इन करना उपलब्ध नहीं है।';
 }

@@ -738,5 +738,12 @@
   "sectionBreakdown": "Breakdown",
   "sectionCoda": "Coda",
   "sectionTag": "Tag",
-  "sectionEnding": "Afslutning"
+  "sectionEnding": "Afslutning",
+  "youtubeConsentHint": "Eksperimentel. Vælg dine cookieindstillinger på Googles side for at prøve at søge efter sangtekster. Du behøver ikke logge ind på en Google-konto. Dit valg bliver på denne enhed.",
+  "youtubeConsentOpen": "Gennemgå Googles samtykke",
+  "youtubeConsentSaved": "Samtykke gemt",
+  "youtubeConsentClear": "Ryd samtykke",
+  "youtubeConsentInstructions": "Vælg dine cookieindstillinger, og vent på, at YouTube Music vender tilbage. Gem derefter denne session, og prøv at søge efter sangen igen.",
+  "youtubeConsentError": "Googles samtykkevalg kunne ikke opdateres. Prøv igen.",
+  "youtubeConsentBlocked": "Kun YouTube Music og Googles samtykkeside kan åbnes her. Kontologin er ikke tilgængeligt."
 }

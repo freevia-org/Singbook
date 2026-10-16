@@ -1713,4 +1713,29 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get sectionEnding => 'Záver';
+
+  @override
+  String get youtubeConsentHint =>
+      'Experimentálna funkcia. Na stránke Googlu vyberte nastavenia súborov cookie a vyskúšajte vyhľadávanie textov. Prihlásenie do účtu Google nie je potrebné. Vaša voľba zostane v tomto zariadení.';
+
+  @override
+  String get youtubeConsentOpen => 'Skontrolovať súhlas Googlu';
+
+  @override
+  String get youtubeConsentSaved => 'Súhlas uložený';
+
+  @override
+  String get youtubeConsentClear => 'Vymazať súhlas';
+
+  @override
+  String get youtubeConsentInstructions =>
+      'Dokončite výber súborov cookie a počkajte, kým sa vráti YouTube Music. Potom túto reláciu uložte a skúste skladbu vyhľadať znova.';
+
+  @override
+  String get youtubeConsentError =>
+      'Voľbu súhlasu Googlu sa nepodarilo aktualizovať. Skúste to znova.';
+
+  @override
+  String get youtubeConsentBlocked =>
+      'Tu možno otvoriť iba YouTube Music a stránku súhlasu Googlu. Prihlásenie do účtu nie je dostupné.';
 }

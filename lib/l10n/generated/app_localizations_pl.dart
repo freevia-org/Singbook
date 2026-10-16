@@ -1728,4 +1728,29 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get sectionEnding => 'Zakończenie';
+
+  @override
+  String get youtubeConsentHint =>
+      'Funkcja eksperymentalna. Wybierz ustawienia plików cookie na stronie Google, aby wypróbować wyszukiwanie tekstów. Nie musisz logować się na konto Google. Wybór pozostanie na tym urządzeniu.';
+
+  @override
+  String get youtubeConsentOpen => 'Sprawdź zgodę Google';
+
+  @override
+  String get youtubeConsentSaved => 'Zgoda zapisana';
+
+  @override
+  String get youtubeConsentClear => 'Wyczyść zgodę';
+
+  @override
+  String get youtubeConsentInstructions =>
+      'Dokończ wybór plików cookie i poczekaj na powrót YouTube Music. Następnie zapisz tę sesję i ponownie wyszukaj utwór.';
+
+  @override
+  String get youtubeConsentError =>
+      'Nie udało się zaktualizować wyboru zgody Google. Spróbuj ponownie.';
+
+  @override
+  String get youtubeConsentBlocked =>
+      'Można tu otworzyć tylko YouTube Music i stronę zgody Google. Logowanie na konto jest niedostępne.';
 }

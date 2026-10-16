@@ -1727,4 +1727,29 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get sectionEnding => 'النهاية';
+
+  @override
+  String get youtubeConsentHint =>
+      'تجريبي. اختر ملفات تعريف الارتباط على صفحة Google لتجربة البحث عن كلمات الأغاني. لا يلزم تسجيل الدخول إلى حساب Google. يبقى اختيارك على هذا الجهاز.';
+
+  @override
+  String get youtubeConsentOpen => 'مراجعة موافقة Google';
+
+  @override
+  String get youtubeConsentSaved => 'تم حفظ الموافقة';
+
+  @override
+  String get youtubeConsentClear => 'مسح الموافقة';
+
+  @override
+  String get youtubeConsentInstructions =>
+      'أكمل اختيار ملفات تعريف الارتباط وانتظر عودة YouTube Music. ثم احفظ هذه الجلسة وأعد محاولة البحث عن الأغنية.';
+
+  @override
+  String get youtubeConsentError =>
+      'تعذّر تحديث اختيار موافقة Google. حاول مرة أخرى.';
+
+  @override
+  String get youtubeConsentBlocked =>
+      'يمكن فتح YouTube Music وصفحة موافقة Google فقط هنا. تسجيل الدخول إلى الحساب غير متاح.';
 }

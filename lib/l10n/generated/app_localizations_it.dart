@@ -1707,4 +1707,29 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get sectionEnding => 'Finale';
+
+  @override
+  String get youtubeConsentHint =>
+      'Funzione sperimentale. Scegli i cookie nella pagina di Google per provare la ricerca dei testi. Non serve accedere a un account Google. La scelta resta su questo dispositivo.';
+
+  @override
+  String get youtubeConsentOpen => 'Rivedi il consenso Google';
+
+  @override
+  String get youtubeConsentSaved => 'Consenso salvato';
+
+  @override
+  String get youtubeConsentClear => 'Cancella il consenso';
+
+  @override
+  String get youtubeConsentInstructions =>
+      'Completa la scelta dei cookie e attendi il ritorno di YouTube Music. Poi salva questa sessione e prova di nuovo a cercare il brano.';
+
+  @override
+  String get youtubeConsentError =>
+      'Impossibile aggiornare la scelta del consenso Google. Riprova.';
+
+  @override
+  String get youtubeConsentBlocked =>
+      'Qui si possono aprire solo YouTube Music e la pagina di consenso di Google. L\'accesso a un account non è disponibile.';
 }

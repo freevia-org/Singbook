@@ -738,5 +738,12 @@
   "sectionBreakdown": "Breakdown",
   "sectionCoda": "Kóda",
   "sectionTag": "Tag",
-  "sectionEnding": "Záver"
+  "sectionEnding": "Záver",
+  "youtubeConsentHint": "Experimentálna funkcia. Na stránke Googlu vyberte nastavenia súborov cookie a vyskúšajte vyhľadávanie textov. Prihlásenie do účtu Google nie je potrebné. Vaša voľba zostane v tomto zariadení.",
+  "youtubeConsentOpen": "Skontrolovať súhlas Googlu",
+  "youtubeConsentSaved": "Súhlas uložený",
+  "youtubeConsentClear": "Vymazať súhlas",
+  "youtubeConsentInstructions": "Dokončite výber súborov cookie a počkajte, kým sa vráti YouTube Music. Potom túto reláciu uložte a skúste skladbu vyhľadať znova.",
+  "youtubeConsentError": "Voľbu súhlasu Googlu sa nepodarilo aktualizovať. Skúste to znova.",
+  "youtubeConsentBlocked": "Tu možno otvoriť iba YouTube Music a stránku súhlasu Googlu. Prihlásenie do účtu nie je dostupné."
 }

@@ -738,5 +738,12 @@
   "sectionBreakdown": "Breakdown",
   "sectionCoda": "尾声",
   "sectionTag": "Tag",
-  "sectionEnding": "结尾"
+  "sectionEnding": "结尾",
+  "youtubeConsentHint": "实验功能。请在 Google 页面选择 Cookie 设置，以试用歌词搜索。无需登录 Google 账号。你的选择会保留在此设备上。",
+  "youtubeConsentOpen": "查看 Google 同意设置",
+  "youtubeConsentSaved": "已保存同意设置",
+  "youtubeConsentClear": "清除同意设置",
+  "youtubeConsentInstructions": "完成 Cookie 选择并等待 YouTube Music 返回。然后保存此会话并重新搜索歌曲。",
+  "youtubeConsentError": "无法更新 Google 同意设置。请重试。",
+  "youtubeConsentBlocked": "此处只能打开 YouTube Music 和 Google 同意页面。无法登录账号。"
 }

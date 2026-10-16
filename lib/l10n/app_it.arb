@@ -738,5 +738,12 @@
   "sectionBreakdown": "Breakdown",
   "sectionCoda": "Coda",
   "sectionTag": "Tag",
-  "sectionEnding": "Finale"
+  "sectionEnding": "Finale",
+  "youtubeConsentHint": "Funzione sperimentale. Scegli i cookie nella pagina di Google per provare la ricerca dei testi. Non serve accedere a un account Google. La scelta resta su questo dispositivo.",
+  "youtubeConsentOpen": "Rivedi il consenso Google",
+  "youtubeConsentSaved": "Consenso salvato",
+  "youtubeConsentClear": "Cancella il consenso",
+  "youtubeConsentInstructions": "Completa la scelta dei cookie e attendi il ritorno di YouTube Music. Poi salva questa sessione e prova di nuovo a cercare il brano.",
+  "youtubeConsentError": "Impossibile aggiornare la scelta del consenso Google. Riprova.",
+  "youtubeConsentBlocked": "Qui si possono aprire solo YouTube Music e la pagina di consenso di Google. L'accesso a un account non è disponibile."
 }

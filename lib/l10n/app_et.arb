@@ -738,5 +738,12 @@
   "sectionBreakdown": "Breakdown",
   "sectionCoda": "Coda",
   "sectionTag": "Tag",
-  "sectionEnding": "Lõpp"
+  "sectionEnding": "Lõpp",
+  "youtubeConsentHint": "Eksperimentaalne. Proovi laulusõnade otsingut, valides Google'i lehel küpsiste eelistused. Google'i kontole pole vaja sisse logida. Sinu valik jääb sellesse seadmesse.",
+  "youtubeConsentOpen": "Vaata Google'i nõusolekut",
+  "youtubeConsentSaved": "Nõusolek salvestatud",
+  "youtubeConsentClear": "Kustuta nõusolek",
+  "youtubeConsentInstructions": "Lõpeta küpsiste valimine ja oota, kuni YouTube Music naaseb. Seejärel salvesta see seanss ja otsi lugu uuesti.",
+  "youtubeConsentError": "Google'i nõusolekuvalikut ei saanud uuendada. Proovi uuesti.",
+  "youtubeConsentBlocked": "Siin saab avada ainult YouTube Musicu ja Google'i nõusolekulehe. Kontole sisselogimine pole saadaval."
 }

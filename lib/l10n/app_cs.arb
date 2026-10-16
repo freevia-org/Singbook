@@ -738,5 +738,12 @@
   "sectionBreakdown": "Breakdown",
   "sectionCoda": "Kóda",
   "sectionTag": "Tag",
-  "sectionEnding": "Závěr"
+  "sectionEnding": "Závěr",
+  "youtubeConsentHint": "Experimentální funkce. Na stránce Googlu zvolte nastavení cookies a vyzkoušejte vyhledávání textů. Přihlášení k účtu Google není potřeba. Vaše volba zůstane v tomto zařízení.",
+  "youtubeConsentOpen": "Zkontrolovat souhlas Googlu",
+  "youtubeConsentSaved": "Souhlas uložen",
+  "youtubeConsentClear": "Vymazat souhlas",
+  "youtubeConsentInstructions": "Dokončete výběr cookies a počkejte, až se vrátí YouTube Music. Potom tuto relaci uložte a zkuste skladbu vyhledat znovu.",
+  "youtubeConsentError": "Volbu souhlasu Googlu se nepodařilo aktualizovat. Zkuste to znovu.",
+  "youtubeConsentBlocked": "Zde lze otevřít pouze YouTube Music a stránku souhlasu Googlu. Přihlášení k účtu není dostupné."
 }

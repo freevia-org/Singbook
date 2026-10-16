@@ -1641,4 +1641,28 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get sectionEnding => '엔딩';
+
+  @override
+  String get youtubeConsentHint =>
+      '실험 기능입니다. 가사 검색을 사용해 보려면 Google 페이지에서 쿠키를 선택하세요. Google 계정에 로그인할 필요는 없습니다. 선택 내용은 이 기기에 저장됩니다.';
+
+  @override
+  String get youtubeConsentOpen => 'Google 동의 확인';
+
+  @override
+  String get youtubeConsentSaved => '동의 저장됨';
+
+  @override
+  String get youtubeConsentClear => '동의 지우기';
+
+  @override
+  String get youtubeConsentInstructions =>
+      '쿠키 선택을 완료하고 YouTube Music으로 돌아올 때까지 기다리세요. 그런 다음 이 세션을 저장하고 노래를 다시 검색하세요.';
+
+  @override
+  String get youtubeConsentError => 'Google 동의 선택을 업데이트하지 못했습니다. 다시 시도하세요.';
+
+  @override
+  String get youtubeConsentBlocked =>
+      '여기서는 YouTube Music과 Google 동의 페이지만 열 수 있습니다. 계정 로그인은 사용할 수 없습니다.';
 }
