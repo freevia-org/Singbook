@@ -757,15 +757,7 @@ class AppLocalizationsGa extends AppLocalizations {
       'Cuireadh sonraí ó fhoinsí éagsúla le chéile';
 
   @override
-  String searchCombinedFromSources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Cuireadh le chéile ó $count fhoinse',
-      one: 'Cuireadh le chéile ó 1 fhoinse',
-    );
-    return '$_temp0';
-  }
+  String get searchCombinedLabel => 'Uile';
 
   @override
   String searchSongMatchCount(int count) {

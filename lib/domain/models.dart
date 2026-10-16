@@ -281,17 +281,18 @@ class SourceResult {
   });
   String get id => candidate.identity;
   bool get hasChords => containsChords(body);
-  SourceResult copyWith({List<TimingTrack>? timingTracks}) => SourceResult(
-    candidate: candidate,
-    body: body,
-    metadata: metadata,
-    timingTracks: timingTracks ?? this.timingTracks,
-    matchKind: matchKind,
-    attribution: attribution,
-    matchReason: matchReason,
-    retrievedAt: retrievedAt,
-    extra: extra,
-  );
+  SourceResult copyWith({List<TimingTrack>? timingTracks, JsonMap? extra}) =>
+      SourceResult(
+        candidate: candidate,
+        body: body,
+        metadata: metadata,
+        timingTracks: timingTracks ?? this.timingTracks,
+        matchKind: matchKind,
+        attribution: attribution,
+        matchReason: matchReason,
+        retrievedAt: retrievedAt,
+        extra: extra ?? this.extra,
+      );
   JsonMap toJson() => {
     ...extra,
     'candidate': candidate.toJson(),

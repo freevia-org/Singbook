@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "Ackordbladet behöver bekräftas mot låttexten",
   "searchMatchDifferentLyrics": "Låttexten skiljer sig från den valda låten",
   "searchMatchCombinedSources": "Informationen har sammanställts från flera källor",
-  "searchCombinedFromSources": "{count, plural, =1{Sammanställd från 1 källa} other{Sammanställd från {count} källor}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Alla",
   "searchSongMatchCount": "{count, plural, =0{0 låtträffar} =1{1 låtträff} other{{count} låtträffar}}",
   "@searchSongMatchCount": {
     "placeholders": {

@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "Partitura necesită confirmarea versurilor",
   "searchMatchDifferentLyrics": "Versurile diferă de cele ale melodiei selectate",
   "searchMatchCombinedSources": "Detalii combinate din mai multe surse",
-  "searchCombinedFromSources": "{count, plural, =1{Combinat dintr-o sursă} few{Combinat din {count} surse} other{Combinat din {count} de surse}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Toate",
   "searchSongMatchCount": "{count, plural, =0{0 potriviri pentru melodii} =1{1 potrivire pentru melodie} few{{count} potriviri pentru melodii} other{{count} de potriviri pentru melodii}}",
   "@searchSongMatchCount": {
     "placeholders": {

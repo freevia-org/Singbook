@@ -761,17 +761,7 @@ class AppLocalizationsSl extends AppLocalizations {
   String get searchMatchCombinedSources => 'Podatki so združeni iz več virov';
 
   @override
-  String searchCombinedFromSources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Združeno iz $count virov',
-      few: 'Združeno iz $count virov',
-      two: 'Združeno iz $count virov',
-      one: 'Združeno iz $count vira',
-    );
-    return '$_temp0';
-  }
+  String get searchCombinedLabel => 'Vse';
 
   @override
   String searchSongMatchCount(int count) {

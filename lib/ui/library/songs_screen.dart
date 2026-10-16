@@ -115,21 +115,29 @@ class _SongsScreenState extends State<SongsScreen> {
                   decoration: InputDecoration(
                     hintText: l10n.searchHint,
                     prefixIcon: const Icon(Icons.search_rounded),
-                    suffixIcon: _query.isEmpty
-                        ? null
-                        : IconButton(
+                    suffixIcon: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (_query.isNotEmpty)
+                          IconButton(
                             tooltip: l10n.accessibilityClearSearch,
                             onPressed: _clearSearch,
                             icon: const Icon(Icons.close_rounded),
                           ),
+                        IconButton.filledTonal(
+                          tooltip: l10n.songsAdd,
+                          onPressed: controller.createSong,
+                          icon: const Icon(Icons.add_rounded),
+                        ),
+                        IconButton(
+                          tooltip: l10n.settingsImportChordPro,
+                          onPressed: controller.importChordPro,
+                          icon: const Icon(Icons.file_open_rounded),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              IconButton.filledTonal(
-                tooltip: l10n.songsAdd,
-                onPressed: controller.createSong,
-                icon: const Icon(Icons.add_rounded),
               ),
             ],
           ),

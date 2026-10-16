@@ -754,16 +754,7 @@ class AppLocalizationsHr extends AppLocalizations {
       'Pojedinosti su objedinjene iz više izvora';
 
   @override
-  String searchCombinedFromSources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Objedinjeno iz $count izvora',
-      few: 'Objedinjeno iz $count izvora',
-      one: 'Objedinjeno iz $count izvora',
-    );
-    return '$_temp0';
-  }
+  String get searchCombinedLabel => 'Sve';
 
   @override
   String searchSongMatchCount(int count) {

@@ -753,15 +753,7 @@ class AppLocalizationsTr extends AppLocalizations {
       'Ayrıntılar birden çok kaynaktan birleştirildi';
 
   @override
-  String searchCombinedFromSources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count kaynaktan birleştirildi',
-      one: '1 kaynaktan birleştirildi',
-    );
-    return '$_temp0';
-  }
+  String get searchCombinedLabel => 'Tümü';
 
   @override
   String searchSongMatchCount(int count) {

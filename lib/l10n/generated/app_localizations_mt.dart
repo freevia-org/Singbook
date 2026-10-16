@@ -760,15 +760,7 @@ class AppLocalizationsMt extends AppLocalizations {
       'Dettalji magħquda minn diversi sorsi';
 
   @override
-  String searchCombinedFromSources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Magħquda minn $count sorsi',
-      one: 'Magħquda minn sors wieħed',
-    );
-    return '$_temp0';
-  }
+  String get searchCombinedLabel => 'Kollha';
 
   @override
   String searchSongMatchCount(int count) {

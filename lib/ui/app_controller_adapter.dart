@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import '../application/app_controller.dart';
 import '../domain/arrangement.dart' as arrangement;
 import '../domain/chordpro.dart';
+import '../domain/combine.dart' show recordingCompatible;
 import '../domain/models.dart';
 import '../domain/timing.dart' show timingOccurrenceMap;
 import '../domain/source_contributions.dart';
@@ -38,6 +39,7 @@ class AppControllerAdapter extends VerseUiController {
     this.onCopySetlist,
     this.onPrintSetlist,
     this.onImport,
+    this.onImportSetlist,
     this.onSignIn,
     this.onSignOut,
   }) {
@@ -54,6 +56,7 @@ class AppControllerAdapter extends VerseUiController {
   final Future<void> Function(SetlistDocument setlist)? onCopySetlist;
   final Future<void> Function(SetlistDocument setlist)? onPrintSetlist;
   final Future<void> Function()? onImport;
+  final Future<void> Function()? onImportSetlist;
   final Future<void> Function()? onSignIn;
   final Future<void> Function()? onSignOut;
 
@@ -444,14 +447,13 @@ class AppControllerAdapter extends VerseUiController {
     return [for (final entry in keyed) entry.card];
   }
 
-  bool _isUsableLyricResult(SourceResult result) {
-    final incompleteSourceIds =
-        app.combined?.extra['excludedIncompleteSourceIds'];
-    return result.matchKind != MatchKind.rejected &&
-        arrangement.plainLyrics(result.body).trim().isNotEmpty &&
-        (incompleteSourceIds is! List ||
-            !incompleteSourceIds.contains(result.id));
+  bool _isUsableLyricResult(SourceResult result, {bool allowRejected = false}) {
+    return (allowRejected || result.matchKind != MatchKind.rejected) &&
+        _hasLyrics(result);
   }
+
+  bool _hasLyrics(SourceResult result) =>
+      arrangement.plainLyrics(result.body).trim().isNotEmpty;
 
   bool _hasUsableTiming(Iterable<TimingTrack> tracks) => tracks.any(
     (track) => track.status == TimingStatus.usable && track.cues.isNotEmpty,
@@ -587,6 +589,32 @@ class AppControllerAdapter extends VerseUiController {
     final chosenSource = app.results
         .where((item) => item.id == chosenSourceId)
         .firstOrNull;
+    final contributingSourceIds = <String>{
+      if (chosenSourceId is String) chosenSourceId,
+      if (combined?.extra['chordSourceIds'] is List)
+        ...(combined!.extra['chordSourceIds'] as List).whereType<String>(),
+    };
+    final pendingChordSourceIds = {
+      if (combined?.extra['pendingChordSourceIds'] is List)
+        ...(combined!.extra['pendingChordSourceIds'] as List)
+            .whereType<String>(),
+    };
+    final pendingContributor = combined?.sources
+        .where(
+          (source) =>
+              contributingSourceIds.contains(source.id) &&
+              (pendingChordSourceIds.contains(source.id) ||
+                  (app.discovering && !app.isSourceReady(source))),
+        )
+        .firstOrNull;
+    final unverifiedContributor = combined?.sources
+        .where(
+          (source) =>
+              contributingSourceIds.contains(source.id) &&
+              (source.matchKind != MatchKind.sameRecording ||
+                  !recordingCompatible(candidate, source)),
+        )
+        .firstOrNull;
     final suggested =
         combined == null ||
             (!combinedMatchesFilters && _selectedVersionId != 'combined')
@@ -622,8 +650,17 @@ class AppControllerAdapter extends VerseUiController {
                 .isNotEmpty,
             hasChords: combined.hasChords,
             hasTiming: _hasUsableTiming(combined.timingTracks),
-            sameRecording: chosenSource?.matchKind == MatchKind.sameRecording,
-            matchSummary: contributorCount > 1
+            sameRecording:
+                chosenSource?.matchKind == MatchKind.sameRecording &&
+                pendingContributor == null &&
+                unverifiedContributor == null,
+            matchSummary: pendingContributor != null
+                ? 'pending'
+                : unverifiedContributor != null
+                ? unverifiedContributor.matchKind == MatchKind.sameSong
+                      ? 'same_song'
+                      : 'identity_mismatch'
+                : contributorCount > 1
                 ? 'combined_sources'
                 : 'best_available',
             bodyPreview: _previewLines(_lines(combined.body)),
@@ -679,8 +716,7 @@ class AppControllerAdapter extends VerseUiController {
       error: app.errorCode,
       discoveryError: app.errorCode,
       discovering: app.discovering,
-      noUsableLyrics:
-          !app.discovering && !app.results.any(_isUsableLyricResult),
+      noUsableLyrics: !app.discovering && !app.results.any(_hasLyrics),
       providerChecks: checks,
     );
   }
@@ -697,7 +733,11 @@ class AppControllerAdapter extends VerseUiController {
       final providerId =
           source?.candidate.providerId ??
           (recording?.identity == sourceId ? recording!.providerId : null);
-      if (providerId == null || source?.matchKind == MatchKind.rejected) return;
+      if (providerId == null ||
+          (source?.matchKind == MatchKind.rejected &&
+              sourceId != song.extra['selectedSourceId'])) {
+        return;
+      }
       final name =
           app.providers
               .where((provider) => provider.id == providerId)
@@ -709,12 +749,22 @@ class AppControllerAdapter extends VerseUiController {
     }
 
     final selectedSourceId = song.extra['selectedSourceId'];
+    final origins = jsonMap(song.extra['fieldOrigins']);
     if (selectedSourceId is String) {
       add(selectedSourceId, 'lyrics');
-      if (song.hasChords) add(selectedSourceId, 'chords');
+      if (song.hasChords) {
+        final chordSources = song.extra['chordSourceIds'];
+        if (chordSources is List) {
+          for (final sourceId in chordSources.whereType<String>()) {
+            add(sourceId, 'chords');
+          }
+        } else {
+          add(origins['chords'] as String? ?? selectedSourceId, 'chords');
+        }
+      }
     }
-    final origins = jsonMap(song.extra['fieldOrigins']);
     for (final entry in origins.entries) {
+      if (entry.key == 'lyrics' || entry.key == 'chords') continue;
       final value = song.metadata[entry.key];
       if (value != null && value != '' && entry.value is String) {
         add(entry.value as String, 'metadata');
@@ -828,6 +878,13 @@ class AppControllerAdapter extends VerseUiController {
     final savedId = app.savedResultId(source: result);
     final lines = _lines(result.body);
     final isChecking = app.discovering && !app.isSourceReady(result);
+    final pendingVerification =
+        isChecking && result.matchKind == MatchKind.sameRecording;
+    final sameRecording =
+        !isChecking &&
+        result.matchKind == MatchKind.sameRecording &&
+        app.selection != null &&
+        recordingCompatible(app.selection!, result);
     return SourceVersionData(
       id: result.id,
       providerId: candidate.providerId,
@@ -849,13 +906,15 @@ class AppControllerAdapter extends VerseUiController {
       rating: _metaDouble(result.metadata['rating']),
       ratingCount: _metaInt(result.metadata['ratingCount']),
       hasLyrics: arrangement.plainLyrics(result.body).trim().isNotEmpty,
-      isUsableVersion:
-          _isUsableLyricResult(result) &&
-          result.matchKind != MatchKind.rejected,
+      isUsableVersion: _hasLyrics(result),
       hasChords: result.hasChords,
       hasTiming: _hasUsableTiming(result.timingTracks),
-      sameRecording: result.matchKind == MatchKind.sameRecording,
-      matchSummary: result.matchReason ?? '',
+      sameRecording: sameRecording,
+      matchSummary: pendingVerification
+          ? 'pending'
+          : result.matchKind == MatchKind.sameRecording && !sameRecording
+          ? 'identity_mismatch'
+          : result.matchReason ?? '',
       status: isChecking
           ? LoadState.loading
           : check?.state == 'failed' || check?.state == 'unavailable'
@@ -866,10 +925,7 @@ class AppControllerAdapter extends VerseUiController {
       contributions: _sourceContributions(result),
       isChecking: isChecking,
       canSave:
-          app.isSourceReady(result) &&
-          result.matchKind != MatchKind.rejected &&
-          _isUsableLyricResult(result) &&
-          app.combined != null &&
+          _hasLyrics(result) &&
           savedId == null,
       savedSongId: savedId,
     );
@@ -1337,6 +1393,16 @@ class AppControllerAdapter extends VerseUiController {
     final version = selectedId == 'combined'
         ? null
         : app.results.where((item) => item.id == selectedId).firstOrNull;
+    if (version != null && !app.isSourceReady(version)) {
+      final savedSongId = app.savedResultId(source: version);
+      if (savedSongId != null) {
+        _setlistId = null;
+        _setlistEntryId = null;
+        _homeMode = HomeListMode.recent;
+        await _openSong(savedSongId);
+        return;
+      }
+    }
     if (selectedId == 'combined' &&
         (!_combinedMatchesFilters(app.combined) ||
             app.combined == null ||
@@ -1346,26 +1412,19 @@ class AppControllerAdapter extends VerseUiController {
     }
     if (selectedId != 'combined' &&
         (version == null ||
-            version.matchKind == MatchKind.rejected ||
-            !_isUsableLyricResult(version))) {
+            !_isUsableLyricResult(
+              version,
+              allowRejected: true,
+            ))) {
       postNotice(UiNotice.songSaveFailed);
-      return;
-    }
-    if (version != null && !app.isSourceReady(version)) {
-      final savedId = app.savedResultId(source: version);
-      if (savedId == null) {
-        postNotice(UiNotice.songSaveFailed);
-        return;
-      }
-      _setlistId = null;
-      _setlistEntryId = null;
-      _homeMode = HomeListMode.recent;
-      await _openSong(savedId);
       return;
     }
     final SongDocument song;
     try {
-      song = await app.saveResult(source: version);
+      song = await app.saveResult(
+        source: version,
+        allowRejectedSource: version != null,
+      );
     } catch (_) {
       postNotice(UiNotice.songSaveFailed);
       return;
@@ -2242,6 +2301,18 @@ class AppControllerAdapter extends VerseUiController {
     if (onImport == null) return;
     try {
       await onImport!();
+    } on FormatException catch (error) {
+      postNotice(_failureNotice(error, UiNotice.importFailed));
+    } catch (_) {
+      postNotice(UiNotice.importFailed);
+    }
+  }
+
+  @override
+  Future<void> importSetlist() async {
+    if (onImportSetlist == null) return;
+    try {
+      await onImportSetlist!();
     } on FormatException catch (error) {
       postNotice(_failureNotice(error, UiNotice.importFailed));
     } catch (_) {

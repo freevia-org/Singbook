@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "Το φύλλο συγχορδιών χρειάζεται επιβεβαίωση στίχων",
   "searchMatchDifferentLyrics": "Οι στίχοι διαφέρουν από το επιλεγμένο τραγούδι",
   "searchMatchCombinedSources": "Στοιχεία από πολλές πηγές συνδυάστηκαν",
-  "searchCombinedFromSources": "{count, plural, =1{Συνδυάστηκε από 1 πηγή} other{Συνδυάστηκε από {count} πηγές}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Όλα",
   "searchSongMatchCount": "{count, plural, =0{0 αντιστοιχίες τραγουδιών} =1{1 αντιστοιχία τραγουδιού} other{{count} αντιστοιχίες τραγουδιών}}",
   "@searchSongMatchCount": {
     "placeholders": {

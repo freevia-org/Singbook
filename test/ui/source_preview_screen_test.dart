@@ -508,7 +508,7 @@ void main() {
               find.byKey(const ValueKey('preview-save-open')),
             )
             .onPressed,
-        isNull,
+        isNotNull,
       );
       expect(controller.saves, 0);
       await tester.tap(find.byKey(const ValueKey('version-row-a')));

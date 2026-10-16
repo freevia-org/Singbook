@@ -758,19 +758,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get searchMatchCombinedSources => 'تم جمع التفاصيل من مصادر متعددة';
 
   @override
-  String searchCombinedFromSources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'تم الجمع من $count مصدر',
-      many: 'تم الجمع من $count مصدرًا',
-      few: 'تم الجمع من $count مصادر',
-      two: 'تم الجمع من مصدرين',
-      one: 'تم الجمع من مصدر واحد',
-      zero: 'لم يتم الجمع من أي مصدر',
-    );
-    return '$_temp0';
-  }
+  String get searchCombinedLabel => 'الكل';
 
   @override
   String searchSongMatchCount(int count) {

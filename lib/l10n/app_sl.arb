@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "Zapis akordov je treba potrditi z besedilom pesmi",
   "searchMatchDifferentLyrics": "Besedilo se razlikuje od izbrane pesmi",
   "searchMatchCombinedSources": "Podatki so združeni iz več virov",
-  "searchCombinedFromSources": "{count, plural, one{Združeno iz {count} vira} two{Združeno iz {count} virov} few{Združeno iz {count} virov} other{Združeno iz {count} virov}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Vse",
   "searchSongMatchCount": "{count, plural, one{{count} ujemanje pesmi} two{{count} ujemanji pesmi} few{{count} ujemanja pesmi} other{{count} ujemanj pesmi}}",
   "@searchSongMatchCount": {
     "placeholders": {

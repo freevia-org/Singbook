@@ -735,15 +735,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get searchMatchCombinedSources => '详情由多个来源合并而成';
 
   @override
-  String searchCombinedFromSources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '合并自 $count 个来源',
-      one: '合并自 1 个来源',
-    );
-    return '$_temp0';
-  }
+  String get searchCombinedLabel => '全部';
 
   @override
   String searchSongMatchCount(int count) {

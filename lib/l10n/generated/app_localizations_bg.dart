@@ -753,15 +753,7 @@ class AppLocalizationsBg extends AppLocalizations {
       'Подробностите са събрани от няколко източника';
 
   @override
-  String searchCombinedFromSources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Обединено от $count източника',
-      one: 'Обединено от 1 източник',
-    );
-    return '$_temp0';
-  }
+  String get searchCombinedLabel => 'Всички';
 
   @override
   String searchSongMatchCount(int count) {

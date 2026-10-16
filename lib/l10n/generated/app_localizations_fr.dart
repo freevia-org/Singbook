@@ -762,15 +762,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Détails réunis à partir de plusieurs sources';
 
   @override
-  String searchCombinedFromSources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Réuni à partir de $count sources',
-      one: 'Réuni à partir d’une source',
-    );
-    return '$_temp0';
-  }
+  String get searchCombinedLabel => 'Tout';
 
   @override
   String searchSongMatchCount(int count) {

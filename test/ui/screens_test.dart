@@ -17,6 +17,18 @@ VerseUiState _songsTab(List<SongCardData> songs, {List<SetlistCardData>? sets}) 
 
 void main() {
   group('Songs', () {
+    testWidgets('song import is on the Songs screen', (tester) async {
+      final c = FakeUiController((_) => _songsTab([_song('1', 'Alpha')]));
+      addTearDown(c.dispose);
+      await pumpShell(tester, c);
+      final l10n = l10nOf(tester);
+
+      await tester.tap(find.byTooltip(l10n.settingsImportChordPro));
+      await tester.pump();
+
+      expect(c.calls, contains('importChordPro'));
+    });
+
     testWidgets('the clear button empties the search field', (tester) async {
       final c = FakeUiController(
         (_) => _songsTab([_song('1', 'Alpha'), _song('2', 'Beta')]),
@@ -136,6 +148,56 @@ void main() {
       expect(c.calls, contains('addSongToSetlist(s1, set1)'));
       expect(c.calls.where((call) => call.startsWith('createSetlist')), isEmpty);
     });
+  });
+
+  testWidgets('search submit is an icon inside the search field', (tester) async {
+    final c = FakeUiController(
+      (_) => const VerseUiState(activeTab: VerseTab.home),
+    );
+    addTearDown(c.dispose);
+    await pumpShell(tester, c);
+    final l10n = l10nOf(tester);
+
+    expect(find.byTooltip(l10n.searchSubmit), findsOneWidget);
+    expect(find.byTooltip(l10n.searchFilters), findsOneWidget);
+    expect(find.text(l10n.searchSubmit), findsNothing);
+  });
+
+  testWidgets('Home, Songs, and Setlists search fields share the same width', (
+    tester,
+  ) async {
+    var activeTab = VerseTab.home;
+    final c = FakeUiController((_) => VerseUiState(activeTab: activeTab));
+    addTearDown(c.dispose);
+    await pumpShell(tester, c);
+    final homeWidth = tester.getSize(find.byType(TextField).first).width;
+
+    activeTab = VerseTab.songs;
+    c.refresh();
+    await tester.pumpAndSettle();
+    final songsWidth = tester.getSize(find.byType(TextField).first).width;
+
+    activeTab = VerseTab.setlists;
+    c.refresh();
+    await tester.pumpAndSettle();
+    final setlistsWidth = tester.getSize(find.byType(TextField).first).width;
+
+    expect(songsWidth, homeWidth);
+    expect(setlistsWidth, homeWidth);
+  });
+
+  testWidgets('setlist import is on the Setlists screen', (tester) async {
+    final c = FakeUiController(
+      (_) => const VerseUiState(activeTab: VerseTab.setlists),
+    );
+    addTearDown(c.dispose);
+    await pumpShell(tester, c);
+    final l10n = l10nOf(tester);
+
+    await tester.tap(find.byTooltip(l10n.settingsImportSetlist));
+    await tester.pump();
+
+    expect(c.calls, contains('importSetlist'));
   });
 
   group('Editor', () {

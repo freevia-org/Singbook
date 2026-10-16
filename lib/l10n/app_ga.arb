@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "Ní mór liricí an chairte a dheimhniú",
   "searchMatchDifferentLyrics": "Tá na liricí difriúil ón amhrán roghnaithe",
   "searchMatchCombinedSources": "Cuireadh sonraí ó fhoinsí éagsúla le chéile",
-  "searchCombinedFromSources": "{count, plural, =1{Cuireadh le chéile ó 1 fhoinse} other{Cuireadh le chéile ó {count} fhoinse}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Uile",
   "searchSongMatchCount": "{count, plural, =0{0 meaitseáil amhráin} =1{1 mheaitseáil amhráin} other{{count} meaitseáil amhráin}}",
   "@searchSongMatchCount": {
     "placeholders": {

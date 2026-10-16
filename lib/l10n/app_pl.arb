@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "Akordy wymagają potwierdzenia tekstu",
   "searchMatchDifferentLyrics": "Tekst różni się od tekstu wybranego utworu",
   "searchMatchCombinedSources": "Szczegóły połączono z wielu źródeł",
-  "searchCombinedFromSources": "{count, plural, one{Połączono z {count} źródła} few{Połączono z {count} źródeł} many{Połączono z {count} źródeł} other{Połączono z {count} źródła}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Wszystkie",
   "searchSongMatchCount": "{count, plural, one{{count} dopasowanie utworu} few{{count} dopasowania utworu} many{{count} dopasowań utworu} other{{count} dopasowania utworu}}",
   "@searchSongMatchCount": {
     "placeholders": {

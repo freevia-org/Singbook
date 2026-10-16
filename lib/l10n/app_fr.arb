@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "Les paroles doivent être confirmées pour cette partition",
   "searchMatchDifferentLyrics": "Les paroles diffèrent de celles de la chanson sélectionnée",
   "searchMatchCombinedSources": "Détails réunis à partir de plusieurs sources",
-  "searchCombinedFromSources": "{count, plural, =1{Réuni à partir d’une source} other{Réuni à partir de {count} sources}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Tout",
   "searchSongMatchCount": "{count, plural, =0{0 correspondance de chanson} =1{1 correspondance de chanson} other{{count} correspondances de chansons}}",
   "@searchSongMatchCount": {
     "placeholders": {

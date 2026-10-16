@@ -375,6 +375,7 @@ void main() {
     MatchKind kind = MatchKind.sameRecording,
     List<TimingTrack> tracks = const [],
     JsonMap metadata = const {},
+    JsonMap extra = const {},
   }) => SourceResult(
     candidate: SongCandidate(
       providerId: id,
@@ -388,6 +389,7 @@ void main() {
     matchKind: kind,
     timingTracks: tracks,
     metadata: metadata,
+    extra: extra,
   );
   test(
     'combine keeps chart text, safe metadata, conflicts and applicable timing',
@@ -631,30 +633,182 @@ void main() {
     expect(result.activeTimingTrackId, isNull);
     expect(result.timingTracks.single.status, isNot(TimingStatus.usable));
   });
-  test('partial chord chart does not outrank a fuller matched lyric', () {
+  test('combined version keeps full lyrics and overlays matching chords', () {
     const full =
         'one two three four five six seven eight nine ten eleven twelve\nthirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty twentyone twentytwo twentythree twentyfour';
+    const partialChart =
+        '[C]one two three four five six seven eight nine ten eleven twelve';
     final result = combineSources(selected, [
-      source(
-        'ug',
-        '[C]one two three four five six seven eight nine ten eleven twelve',
-        kind: MatchKind.sameSong,
-      ),
+      source('ug', partialChart, kind: MatchKind.sameSong),
       source('lrclib', full),
     ]);
-    expect(result.body, full);
-    expect(result.extra['excludedIncompleteSourceIds'], contains('ug:1'));
+    expect(plainLyrics(result.body), full);
     expect(
-      () => combineSources(selected, [
-        source(
-          'ug',
-          '[C]one two three four five six seven eight nine ten eleven twelve',
-          kind: MatchKind.sameSong,
-        ),
-        source('lrclib', full),
-      ], preferredSourceId: 'ug:1'),
-      throwsFormatException,
+      result.body,
+      contains(
+        '[C]one two three four five six seven eight nine ten eleven twelve',
+      ),
     );
+    expect(result.extra['excludedIncompleteSourceIds'], contains('ug:1'));
+    final explicit = combineSources(
+      selected,
+      [
+        source('ug', partialChart, kind: MatchKind.sameSong),
+        source('lrclib', full),
+      ],
+      preferredSourceId: 'ug:1',
+      allowRejectedPreferredSource: true,
+    );
+    expect(explicit.body, partialChart);
+    expect(plainLyrics(explicit.body), isNotEmpty);
+  });
+  test('chord overlays preserve base chords and chord-only rows exactly', () {
+    const base =
+        '{start_of_verse}\n[C]First line\n[G]\nSecond line\n{end_of_verse}';
+    final result = combineSources(selected, [
+      source('base', base),
+      source('donor', '[F]First line\n[Am]Second line'),
+    ]);
+
+    expect(result.body, base);
+  });
+  test(
+    'combined chords and setup metadata come from one donor arrangement',
+    () {
+      const full =
+          'First matching lyric\nSecond matching lyric\nThird matching lyric';
+      final result = combineSources(selected, [
+        source('lyrics', full),
+        source(
+          'chart-a',
+          '[C]First matching lyric\n[F]Second matching lyric',
+          metadata: {'key': 'C', 'capo': 2},
+        ),
+        source(
+          'chart-b',
+          '[G]First matching lyric',
+          metadata: {'key': 'G', 'capo': 5},
+        ),
+      ]);
+
+      expect(plainLyrics(result.body), full);
+      expect(result.body, contains('[C]First matching lyric'));
+      expect(result.body, contains('[F]Second matching lyric'));
+      expect(result.body, isNot(contains('[G]')));
+      expect(result.metadata['key'], 'C');
+      expect(result.metadata['capo'], 2);
+      expect(result.extra['chordSourceIds'], ['chart-a:1']);
+    },
+  );
+  test('chord anchors remap across punctuation differences', () {
+    final result = combineSources(selected, [
+      source(
+        'lyrics',
+        'Hello world\nA second plain lyric\nA third plain lyric',
+      ),
+      source('chart', 'Hello!!![C]world'),
+    ]);
+
+    expect(result.body, contains('Hello [C]world'));
+    expect(result.extra['chordSourceIds'], ['chart:1']);
+  });
+  test('ambiguous repeated-line chords are skipped rather than mixed', () {
+    final lyrics = 'Repeat this line\nRepeat this line\nAnother lyric line';
+    final result = combineSources(selected, [
+      source('lyrics', lyrics),
+      source('chart', '[C]Repeat this line\n[G]Repeat this line'),
+    ]);
+
+    expect(result.body, isNot(contains('[C]')));
+    expect(result.body, isNot(contains('[G]')));
+    expect(result.extra['chordSourceIds'], isNull);
+  });
+  test('overlays preserve literal slashes and skip unsafe chord anchors', () {
+    final base =
+        r'A\\\[C] note'
+        '\n'
+        r'A\\world'
+        '\n'
+        'Another plain lyric line';
+    final parsedBase = parseArrangement(base);
+    expect(parsedBase[0].text, r'A\[C] note');
+    expect(parsedBase[1].text, r'A\world');
+    final result = combineSources(selected, [
+      source('lyrics', base),
+      source('chart', '[G]A C note\nA [F]world'),
+    ]);
+
+    final lines = parseArrangement(result.body);
+    expect(lines[0].text, r'A\[C] note');
+    expect(lines[0].chords.map((chord) => chord.chord), ['G']);
+    expect(lines[1].text, r'A\world');
+    expect(lines[1].chords, isEmpty);
+    expect(result.extra['chordSourceIds'], [result.sources.last.id]);
+  });
+  test('automatic chord overlays require matching recording setup', () {
+    const full = 'First lyric line\nSecond lyric line\nThird lyric line';
+    final base = source('base', full, metadata: {'key': 'D', 'capo': 1});
+    final otherRecording = source(
+      'other-recording',
+      '[C]First lyric line\n[F]Second lyric line',
+      kind: MatchKind.sameSong,
+      metadata: {'key': 'C', 'capo': 2},
+    );
+
+    final automatic = combineSources(selected, [base, otherRecording]);
+    expect(automatic.hasChords, isFalse);
+    expect(automatic.metadata['key'], 'D');
+    expect(automatic.metadata['capo'], 1);
+
+    final explicitlySelected = combineSources(selected, [
+      base,
+      otherRecording,
+    ], preferredSourceId: otherRecording.id);
+    expect(explicitlySelected.body, contains('[C]'));
+    expect(explicitlySelected.metadata['key'], 'C');
+    expect(explicitlySelected.metadata['capo'], 2);
+  });
+  test('cross-recording chart overlays carry their own setup provenance', () {
+    const full =
+        'First lyric line\nSecond lyric line\nThird lyric line\nFourth lyric line';
+    final chart = source(
+      'other-recording',
+      '[C]First lyric line\n[F]Second lyric line',
+      kind: MatchKind.sameSong,
+      metadata: {'key': 'C', 'capo': 2},
+    );
+    final result = combineSources(selected, [source('lyrics', full), chart]);
+
+    expect(result.body, contains('[C]First lyric line'));
+    expect(result.metadata['key'], 'C');
+    expect(result.metadata['capo'], 2);
+    expect(jsonMap(result.extra['fieldOrigins'])['key'], chart.id);
+    expect(result.extra['chordSourceIds'], [chart.id]);
+  });
+  test('pending chord contributor state is included in combined snapshot', () {
+    final pending = source(
+      'pending-chart',
+      '[C]A lyric with a chord',
+      extra: {'pendingMatchCheck': true},
+    );
+    final result = combineSources(selected, [pending]);
+
+    expect(result.extra['pendingChordSourceIds'], [pending.id]);
+  });
+  test('unverified fallback ranking does not depend on arrival order', () {
+    final later = source(
+      'provider-z',
+      'The same sufficiently complete unverified lyric result',
+      kind: MatchKind.unverified,
+    );
+    final earlier = source(
+      'provider-a',
+      'The same sufficiently complete unverified lyric result',
+      kind: MatchKind.unverified,
+    );
+
+    expect(bestLyricsFallback([later, earlier])?.id, earlier.id);
+    expect(bestLyricsFallback([earlier, later])?.id, earlier.id);
   });
   test(
     'choosing source never falls back silently when the requested source is absent',

@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:xml/xml.dart' show XmlException;
 import '../data/library_repository.dart';
+import '../domain/arrangement.dart' show plainLyrics;
 import '../domain/models.dart';
 import '../domain/chordpro.dart';
 import '../domain/combine.dart';
@@ -646,16 +647,43 @@ class AppController extends ChangeNotifier {
   }
 
   void _combine(SongCandidate candidate) {
-    final usable = results.where(
+    final available = results
+        .map(
+          (source) => isSourceReady(source)
+              ? source
+              : source.copyWith(
+                  timingTracks: const [],
+                  extra: {...source.extra, 'pendingMatchCheck': true},
+                ),
+        )
+        .toList();
+    final usable = available.where(
       (r) =>
           r.matchKind != MatchKind.rejected &&
-          r.body.trim().isNotEmpty &&
-          isSourceReady(r),
+          plainLyrics(r.body).trim().isNotEmpty,
     );
     try {
-      combined = usable.isEmpty
-          ? null
-          : combineSources(candidate, results.where(isSourceReady).toList());
+      if (usable.isNotEmpty) {
+        combined = combineSources(candidate, available);
+      } else {
+        final fallback = bestLyricsFallback(available);
+        if (fallback == null) {
+          combined = null;
+        } else {
+          final fallbackDocument = combineSources(
+            candidate,
+            available,
+            preferredSourceId: fallback.id,
+            allowRejectedPreferredSource: true,
+          );
+          combined = fallbackDocument.copyWith(
+            extra: {
+              ...fallbackDocument.extra,
+              'combinedFallbackSource': true,
+            },
+          );
+        }
+      }
     } on FormatException {
       combined = null;
     }
@@ -666,18 +694,33 @@ class AppController extends ChangeNotifier {
       : selection == null
       ? null
       : _savedCombined[selection!.identity];
-  Future<SongDocument> saveResult({SourceResult? source}) {
+  Future<SongDocument> saveResult({
+    SourceResult? source,
+    bool allowRejectedSource = false,
+  }) {
     // Capture the complete decision synchronously. Discovery may publish more
     // sources, or the user may select another candidate, while the tracked
     // save is waiting to write to the library.
     final selectedSnapshot = selection == null
         ? null
         : _snapshotCandidate(selection!);
+    final fallbackCombinedSourceId = source == null &&
+            combined?.extra['combinedFallbackSource'] == true
+        ? combined?.extra['selectedSourceId'] as String?
+        : null;
+    final requestedSourceId = source?.id ?? fallbackCombinedSourceId;
     final resultSnapshots = results
-        .where(isSourceReady)
-        .map(_snapshotSource)
+        .map((item) {
+          final snapshot = _snapshotSource(item);
+          if (source == null && !isSourceReady(item)) {
+            return snapshot.copyWith(
+              timingTracks: const [],
+              extra: {...snapshot.extra, 'pendingMatchCheck': true},
+            );
+          }
+          return snapshot;
+        })
         .toList(growable: false);
-    final requestedSourceId = source?.id;
 
     return _tracked('save', () async {
       final selected = selectedSnapshot;
@@ -691,27 +734,31 @@ class AppController extends ChangeNotifier {
           }
         }
         if (selectedSource == null ||
-            selectedSource.matchKind == MatchKind.rejected ||
+            (selectedSource.matchKind == MatchKind.rejected &&
+                !allowRejectedSource &&
+                fallbackCombinedSourceId == null) ||
             selectedSource.body.trim().isEmpty) {
           throw StateError('invalid_source');
         }
       }
-      final existingId = selectedSource == null
+      final existingId = source == null
           ? _savedCombined[selected.identity]
-          : _savedSources[selectedSource.id];
+          : _savedSources[source.id];
       // combineSources also checks song identity and arrangement usability.
       // For a source save this allows a ready result even while other provider
       // checks are still running.
       final document = combineSources(
         selected,
         resultSnapshots,
-        preferredSourceId: selectedSource?.id,
+        preferredSourceId: selectedSource?.id ?? fallbackCombinedSourceId,
+        allowRejectedPreferredSource:
+            allowRejectedSource || fallbackCombinedSourceId != null,
       );
       final song = document.copyWith(
         extra: {
           ...document.extra,
-          if (selectedSource != null) 'savedSourceId': selectedSource.id,
-          if (selectedSource == null) 'combinedSelection': selected.identity,
+          if (source != null) 'savedSourceId': source.id,
+          if (source == null) 'combinedSelection': selected.identity,
         },
         revision: 1,
       );
@@ -1165,36 +1212,45 @@ class AppController extends ChangeNotifier {
     },
   );
 
-  Future<ImportedCollection> importDocument(PickedDocument file) =>
+  Future<ImportedCollection> importDocument(
+    PickedDocument file, {
+    ImportIntent intent = ImportIntent.any,
+  }) =>
       _tracked('import', () async {
         final bytes = file.bytes;
+        final ImportedCollection decoded;
         if (looksLikeZip(bytes)) {
-          return importCollection(await decodeLibraryPackageAsync(bytes));
+          decoded = await decodeLibraryPackageAsync(bytes);
+        } else {
+          if (bytes.length > maxImportBytes) {
+            throw const FormatException('file_too_large');
+          }
+          final name = file.name.toLowerCase();
+          if (name.endsWith('.lrc') || name.endsWith('.ttml')) {
+            decoded = ImportedCollection(decodePickedSongs(file), []);
+          } else {
+            final text = file.lenientText;
+            if (looksLikeSetlistXml(text)) {
+              decoded = ImportedCollection([], [
+                decodeSetlistReferences(
+                  text,
+                  await repository.listSongs(),
+                  fileName: file.name,
+                ),
+              ]);
+            } else {
+              decoded = ImportedCollection(
+                decodeSongText(text, fileName: file.name),
+                [],
+              );
+            }
+          }
         }
-        if (bytes.length > maxImportBytes) {
-          throw const FormatException('file_too_large');
+        if ((intent == ImportIntent.songs && decoded.songs.isEmpty) ||
+            (intent == ImportIntent.setlists && decoded.setlists.isEmpty)) {
+          throw const FormatException('unsupported_file');
         }
-        final name = file.name.toLowerCase();
-        if (name.endsWith('.lrc') || name.endsWith('.ttml')) {
-          return importCollection(
-            ImportedCollection(decodePickedSongs(file), []),
-          );
-        }
-        final text = file.lenientText;
-        if (looksLikeSetlistXml(text)) {
-          return importCollection(
-            ImportedCollection([], [
-              decodeSetlistReferences(
-                text,
-                await repository.listSongs(),
-                fileName: file.name,
-              ),
-            ]),
-          );
-        }
-        return importCollection(
-          ImportedCollection(decodeSongText(text, fileName: file.name), []),
-        );
+        return importCollection(decoded);
       });
 
   static String _stableId(String seed) =>

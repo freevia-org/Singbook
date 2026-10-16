@@ -153,7 +153,7 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets('a combined-provider alias counts its underlying source once', (
+  testWidgets('single-source combined and provider tabs count separately', (
     tester,
   ) async {
     const source = SourceVersionData(
@@ -209,7 +209,7 @@ void main() {
     final l10n = AppLocalizations.of(
       tester.element(find.byType(VerseHomeScreen)),
     );
-    expect(find.text(l10n.searchReadyVersions(1)), findsOneWidget);
+    expect(find.text(l10n.searchReadyVersions(2)), findsOneWidget);
     expect(find.byKey(const ValueKey('version-row-one')), findsOneWidget);
     controller._state = const VerseUiState(
       homeListMode: HomeListMode.online,
@@ -227,11 +227,11 @@ void main() {
     );
     controller.notifyListeners();
     await tester.pump();
-    expect(find.text(l10n.searchReadyVersions(2)), findsOneWidget);
+    expect(find.text(l10n.searchReadyVersions(3)), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('version-row-two')));
     await tester.pump();
     expect(controller.state.comparison?.selectedVersionId, 'two');
-    expect(find.text(l10n.searchReadyVersions(2)), findsOneWidget);
+    expect(find.text(l10n.searchReadyVersions(3)), findsOneWidget);
     expect(find.byKey(const ValueKey('version-row-one')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -298,7 +298,7 @@ void main() {
       addTearDown(controller.dispose);
       await _pumpHome(tester, controller);
       await tester.tap(find.byKey(const ValueKey('version-row-one')));
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(controller.state.comparison?.selectedVersionId, 'one');
       expect(find.text('Explicit raw source lyrics'), findsOneWidget);
       final raw = find.byKey(const ValueKey('version-row-one'));

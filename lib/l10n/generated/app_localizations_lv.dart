@@ -758,16 +758,7 @@ class AppLocalizationsLv extends AppLocalizations {
       'Informācija apkopota no vairākiem avotiem';
 
   @override
-  String searchCombinedFromSources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Apkopots no $count avotiem',
-      one: 'Apkopots no $count avota',
-      zero: 'Apkopots no $count avotiem',
-    );
-    return '$_temp0';
-  }
+  String get searchCombinedLabel => 'Visi';
 
   @override
   String searchSongMatchCount(int count) {

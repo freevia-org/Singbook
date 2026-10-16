@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "Lirik pada lembar akor perlu dikonfirmasi",
   "searchMatchDifferentLyrics": "Lirik berbeda dari lagu yang dipilih",
   "searchMatchCombinedSources": "Detail digabungkan dari beberapa sumber",
-  "searchCombinedFromSources": "{count, plural, =1{Digabungkan dari 1 sumber} other{Digabungkan dari {count} sumber}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Semua",
   "searchSongMatchCount": "{count, plural, =0{0 kecocokan lagu} =1{1 kecocokan lagu} other{{count} kecocokan lagu}}",
   "@searchSongMatchCount": {
     "placeholders": {

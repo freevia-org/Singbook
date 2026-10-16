@@ -753,15 +753,7 @@ class AppLocalizationsFi extends AppLocalizations {
   String get searchMatchCombinedSources => 'Tiedot koottu useista lähteistä';
 
   @override
-  String searchCombinedFromSources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Koottu $count lähteestä',
-      one: 'Koottu yhdestä lähteestä',
-    );
-    return '$_temp0';
-  }
+  String get searchCombinedLabel => 'Kaikki';
 
   @override
   String searchSongMatchCount(int count) {

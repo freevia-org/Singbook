@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "De songtekst moet met het akkoordenschema worden bevestigd",
   "searchMatchDifferentLyrics": "De songtekst verschilt van die van het geselecteerde nummer",
   "searchMatchCombinedSources": "Gegevens gecombineerd uit meerdere bronnen",
-  "searchCombinedFromSources": "{count, plural, =1{Gecombineerd uit 1 bron} other{Gecombineerd uit {count} bronnen}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "Alles",
   "searchSongMatchCount": "{count, plural, =0{0 nummerovereenkomsten} =1{1 nummerovereenkomst} other{{count} nummerovereenkomsten}}",
   "@searchSongMatchCount": {
     "placeholders": {

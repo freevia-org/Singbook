@@ -350,14 +350,7 @@
   "searchMatchNeedsAgreement": "चार्ट के बोलों की पुष्टि ज़रूरी है",
   "searchMatchDifferentLyrics": "बोल चुने गए गीत से अलग हैं",
   "searchMatchCombinedSources": "कई स्रोतों से विवरण जोड़ा गया",
-  "searchCombinedFromSources": "{count, plural, =1{1 स्रोत से जोड़ा गया} other{{count} स्रोतों से जोड़ा गया}}",
-  "@searchCombinedFromSources": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "searchCombinedLabel": "सभी",
   "searchSongMatchCount": "{count, plural, =0{0 गीत मेल खाते हैं} =1{1 गीत मेल खाता है} other{{count} गीत मेल खाते हैं}}",
   "@searchSongMatchCount": {
     "placeholders": {

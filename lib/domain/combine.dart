@@ -1,7 +1,23 @@
 import 'dart:convert';
+import 'package:characters/characters.dart';
 import 'models.dart';
 import 'arrangement.dart';
 import 'timing.dart' show timingOccurrenceMap;
+
+SourceResult? bestLyricsFallback(Iterable<SourceResult> sources) {
+  final candidates = sources
+      .where((source) => plainLyrics(source.body).trim().isNotEmpty)
+      .toList()
+    ..sort((a, b) {
+      int rank(SourceResult source) =>
+          lyricLines(source.body).length.clamp(0, 100) * 1000 +
+          plainLyrics(source.body).length.clamp(0, 100000) +
+          (source.hasChords ? 500 : 0);
+      final quality = rank(b).compareTo(rank(a));
+      return quality != 0 ? quality : a.id.compareTo(b.id);
+    });
+  return candidates.isEmpty ? null : candidates.first;
+}
 
 String _norm(String text) => text
     .toLowerCase()
@@ -128,16 +144,258 @@ bool _completeChart(String chart, String reference) {
       coverage(bigrams(b), bigrams(a)) >= .65;
 }
 
+String _lineKey(ArrangementLine line) => _norm(line.text);
+
+final _literalChordTokenPattern = RegExp(
+  chordPattern.pattern.replaceFirst(r'(?<!\\)', ''),
+);
+
+String _escapeLiteralChordTokens(String text) {
+  final output = StringBuffer();
+  var cursor = 0;
+  for (final match in _literalChordTokenPattern.allMatches(text)) {
+    output.write(_escapeBackslashes(text.substring(cursor, match.start)));
+    output.write('\\');
+    output.write(match[0]);
+    cursor = match.end;
+  }
+  output.write(_escapeBackslashes(text.substring(cursor)));
+  return output.toString();
+}
+
+String _escapeBackslashes(String text) => text.replaceAll('\\', '\\\\');
+
+({String text, List<int> offsets}) _normalizedLine(String text) {
+  final normalized = StringBuffer();
+  final offsets = <int>[];
+  var pendingSeparator = false;
+  final graphemes = text.characters.toList();
+  final letterOrNumber = RegExp(r'[\p{L}\p{N}]', unicode: true);
+  for (var index = 0; index < graphemes.length; index++) {
+    final lowered = graphemes[index].toLowerCase().characters;
+    final kept = lowered.where(letterOrNumber.hasMatch).toList();
+    if (kept.isEmpty) {
+      if (normalized.isNotEmpty) pendingSeparator = true;
+      continue;
+    }
+    if (pendingSeparator && normalized.isNotEmpty) {
+      normalized.write(' ');
+      offsets.add(index);
+    }
+    for (final character in kept) {
+      normalized.write(character);
+      offsets.add(index);
+    }
+    pendingSeparator = false;
+  }
+  return (text: normalized.toString(), offsets: offsets);
+}
+
+List<ChordAnchor>? _remapChordAnchors(
+  ArrangementLine donor,
+  ArrangementLine target,
+) {
+  final source = _normalizedLine(donor.text);
+  final destination = _normalizedLine(target.text);
+  if (source.text.isEmpty || source.text != destination.text) return null;
+  final sourceGraphemes = donor.text.characters.toList();
+  final targetGraphemes = target.text.characters.toList();
+  return [
+    for (final chord in donor.chords)
+      _remapChordAnchor(
+        chord,
+        source,
+        sourceGraphemes.length,
+        destination,
+        targetGraphemes.length,
+      ),
+  ];
+}
+
+ChordAnchor _remapChordAnchor(
+  ChordAnchor chord,
+  ({String text, List<int> offsets}) source,
+  int sourceLength,
+  ({String text, List<int> offsets}) destination,
+  int targetLength,
+) {
+  final sourceAnchor = chord.offset.clamp(0, sourceLength);
+  var normalizedOffset = source.offsets
+      .where((offset) => offset < sourceAnchor)
+      .length;
+  while (normalizedOffset < destination.text.length &&
+      destination.text[normalizedOffset] == ' ') {
+    normalizedOffset++;
+  }
+  final targetOffset = normalizedOffset >= destination.offsets.length
+      ? targetLength
+      : destination.offsets[normalizedOffset];
+  return ChordAnchor(targetOffset, chord.chord);
+}
+
+String _chordSignature(ArrangementLine line) {
+  final graphemes = line.text.characters.toList();
+  return line.chords
+      .map((chord) {
+        final prefix = _normalizedLine(
+          graphemes.take(chord.offset.clamp(0, graphemes.length)).join(),
+        );
+        return '${prefix.text.length}:${chord.chord}';
+      })
+      .join('|');
+}
+
+Object? _setupValue(SourceResult source, SongCandidate selected, String key) =>
+    source.metadata[key] ??
+    source.candidate.metadata[key] ??
+    selected.metadata[key];
+
+bool _compatibleArrangementSetup(
+  SourceResult base,
+  SourceResult donor,
+  SongCandidate selected,
+) {
+  for (final key in const ['key', 'capo', 'tuning', 'timeSignature']) {
+    final baseValue = _setupValue(base, selected, key);
+    final donorValue = _setupValue(donor, selected, key);
+    if (baseValue == null || donorValue == null) continue;
+    final normalizedBase = baseValue is String
+        ? baseValue.trim().toLowerCase()
+        : jsonEncode(baseValue);
+    final normalizedDonor = donorValue is String
+        ? donorValue.trim().toLowerCase()
+        : jsonEncode(donorValue);
+    if (normalizedBase != normalizedDonor) return false;
+  }
+  return true;
+}
+
+({String body, List<String> sourceIds}) _overlayChords(
+  String body,
+  List<SourceResult> sources,
+  SongCandidate selected,
+  SourceResult base,
+) {
+  final lines = parseArrangement(body);
+  final lyricsByLine = <String, int>{};
+  for (final line in lines) {
+    final key = _lineKey(line);
+    if (key.isNotEmpty) {
+      lyricsByLine.update(key, (count) => count + 1, ifAbsent: () => 1);
+    }
+  }
+  SourceResult? chartSource;
+  var bestScore = -1;
+  for (final source in sources) {
+    if (!source.hasChords ||
+        !_compatibleArrangementSetup(base, source, selected)) {
+      continue;
+    }
+    final chartLines = parseArrangement(source.body);
+    final keys = chartLines
+        .where((line) => line.chords.isNotEmpty)
+        .map(_lineKey)
+        .where((key) => key.isNotEmpty)
+        .toSet();
+    final coverage = keys.fold<int>(
+      0,
+      (score, key) => score + (lyricsByLine[key] ?? 0),
+    );
+    if (coverage == 0) continue;
+    final confidence = recordingCompatible(selected, source)
+        ? 2
+        : source.matchKind == MatchKind.sameSong
+        ? 1
+        : 0;
+    final score = coverage * 100 + confidence;
+    if (score > bestScore ||
+        (score == bestScore &&
+            (chartSource == null || source.id.compareTo(chartSource.id) < 0))) {
+      bestScore = score;
+      chartSource = source;
+    }
+  }
+  if (chartSource == null) return (body: body, sourceIds: const []);
+
+  final charts = <String, List<ArrangementLine>>{};
+  for (final line in parseArrangement(chartSource.body)) {
+    final key = _lineKey(line);
+    if (key.isEmpty || line.chords.isEmpty) continue;
+    charts.putIfAbsent(key, () => []).add(line);
+  }
+  if (charts.isEmpty) return (body: body, sourceIds: const []);
+
+  final rawLines = body.split('\n');
+  final output = <String>[];
+  var applied = false;
+  for (var lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+    final line = lines[lineIndex];
+    final rawLine = rawLines[lineIndex];
+    final key = _lineKey(line);
+    final matches = charts[key];
+    if (line.directive || line.chords.isNotEmpty || matches == null) {
+      output.add(rawLine);
+      continue;
+    }
+    if (matches.map(_chordSignature).toSet().length > 1) {
+      output.add(rawLine);
+      continue;
+    }
+    final chords = _remapChordAnchors(matches.first, line);
+    if (chords == null || chords.isEmpty) {
+      output.add(rawLine);
+      continue;
+    }
+    final characters = line.text.characters.toList();
+    final safeChords =
+        chords
+            .where(
+              (chord) =>
+                  chord.offset == 0 || characters[chord.offset - 1] != '\\',
+            )
+            .toList()
+          ..sort((a, b) => a.offset.compareTo(b.offset));
+    if (safeChords.isEmpty) {
+      output.add(rawLine);
+      continue;
+    }
+    applied = true;
+    final buffer = StringBuffer();
+    var cursor = 0;
+    for (final chord in safeChords) {
+      final offset = chord.offset.clamp(cursor, characters.length);
+      if (offset > cursor) {
+        buffer.write(
+          _escapeLiteralChordTokens(
+            characters.skip(cursor).take(offset - cursor).join(),
+          ),
+        );
+        cursor = offset;
+      }
+      buffer.write('[${chord.chord}]');
+    }
+    buffer.write(_escapeLiteralChordTokens(characters.skip(cursor).join()));
+    output.add(buffer.toString());
+  }
+  return (
+    body: output.join('\n'),
+    sourceIds: applied ? [chartSource.id] : const [],
+  );
+}
+
 SongDocument combineSources(
   SongCandidate selected,
   List<SourceResult> results, {
   String? preferredSourceId,
+  bool allowRejectedPreferredSource = false,
 }) {
   final matching = results
       .where(
         (s) =>
-            s.matchKind != MatchKind.rejected &&
-            _sameSong(s.candidate, selected),
+            (s.matchKind != MatchKind.rejected ||
+                (allowRejectedPreferredSource && s.id == preferredSourceId)) &&
+            (_sameSong(s.candidate, selected) ||
+                (allowRejectedPreferredSource && s.id == preferredSourceId)),
       )
       .toList();
   final accepted = matching
@@ -152,11 +410,17 @@ SongDocument combineSources(
           .toList()
         ..sort(
           (a, b) =>
-              plainLyrics(b.body).length.compareTo(plainLyrics(a.body).length),
+              plainLyrics(
+                    b.body,
+                  ).length.compareTo(plainLyrics(a.body).length) !=
+                  0
+              ? plainLyrics(b.body).length.compareTo(plainLyrics(a.body).length)
+              : a.id.compareTo(b.id),
         );
   final eligible = accepted
       .where(
         (source) =>
+            (allowRejectedPreferredSource && source.id == preferredSourceId) ||
             !source.hasChords ||
             references.isEmpty ||
             _completeChart(source.body, references.first.body),
@@ -166,15 +430,18 @@ SongDocument combineSources(
     throw const FormatException('No complete matching lyrics are available.');
   }
   int rank(SourceResult s) =>
-      (s.hasChords ? 1000 : 0) +
+      lyricLines(s.body).length.clamp(0, 100) * 1000 +
+      plainLyrics(s.body).length.clamp(0, 100000) +
       (recordingCompatible(selected, s)
-          ? 200
+          ? 300
           : s.matchKind == MatchKind.sameSong
-          ? 100
+          ? 200
           : 0) +
-      (s.timingTracks.isNotEmpty ? 30 : 0) +
-      (lyricLines(s.body).length.clamp(0, 100));
-  eligible.sort((a, b) => rank(b).compareTo(rank(a)));
+      (s.hasChords ? 500 : 0);
+  eligible.sort((a, b) {
+    final score = rank(b).compareTo(rank(a));
+    return score != 0 ? score : a.id.compareTo(b.id);
+  });
   final preferred = eligible.where((s) => s.id == preferredSourceId);
   if (preferredSourceId != null && preferred.isEmpty) {
     throw const FormatException(
@@ -182,6 +449,14 @@ SongDocument combineSources(
     );
   }
   final best = preferred.isEmpty ? eligible.first : preferred.first;
+  final merged = preferredSourceId == null && !best.hasChords
+      ? _overlayChords(
+          best.body,
+          accepted.where((source) => source.id != best.id).toList(),
+          selected,
+          best,
+        )
+      : (body: best.body, sourceIds: const <String>[]);
   const arrangementFields = {
     'key',
     'capo',
@@ -207,6 +482,21 @@ SongDocument combineSources(
   final origins = <String, dynamic>{
     for (final k in metadata.keys) k: selected.identity,
   };
+  final chordSourceIds = <String>{
+    if (best.hasChords) best.id,
+    ...merged.sourceIds,
+  }.toList();
+  if (chordSourceIds.isNotEmpty) origins['chords'] = chordSourceIds.first;
+  final sourcesById = {for (final source in matching) source.id: source};
+  final arrangementSourceIds = <String>{best.id};
+  for (final sourceId in chordSourceIds) {
+    final source = sourcesById[sourceId];
+    if (source != null &&
+        (recordingCompatible(selected, source) ||
+            merged.sourceIds.contains(sourceId))) {
+      arrangementSourceIds.add(sourceId);
+    }
+  }
   final conflicts = <String, dynamic>{};
   // An explicit version choice should carry the duration shown on that
   // version card. Automatic combination keeps the selected catalog record's
@@ -255,13 +545,11 @@ SongDocument combineSources(
     for (final entry in facts.entries) {
       if (entry.value == null || entry.value == '') continue;
       final isArrangement = arrangementFields.contains(entry.key);
-      if (isArrangement && source.id != best.id) continue;
+      if (isArrangement && !arrangementSourceIds.contains(source.id)) continue;
       if (!isArrangement && !songFields.contains(entry.key) && !sameRecording) {
         continue;
       }
-      if (isArrangement ||
-          !metadata.containsKey(entry.key) ||
-          metadata[entry.key] == null) {
+      if (!metadata.containsKey(entry.key) || metadata[entry.key] == null) {
         metadata[entry.key] = entry.value;
         origins[entry.key] = source.id;
       } else if (jsonEncode(metadata[entry.key]) != jsonEncode(entry.value)) {
@@ -312,7 +600,7 @@ SongDocument combineSources(
     id: newId(),
     title: selected.title,
     artist: selected.artist,
-    body: inferSectionDirectives(best.body),
+    body: inferSectionDirectives(merged.body),
     metadata: metadata,
     sources: results,
     timingTracks: tracks.values.toList(),
@@ -322,9 +610,18 @@ SongDocument combineSources(
       'selectedSourceId': best.id,
       'fieldOrigins': origins,
       if (conflicts.isNotEmpty) 'conflicts': conflicts,
-      'recommendation': best.hasChords
-          ? 'Matching lyrics with a complete chord arrangement.'
-          : 'Best matching available lyrics.',
+      'recommendation':
+          'Combined lyrics, chords, timing, and metadata from matching sources.',
+      if (chordSourceIds.isNotEmpty) 'chordSourceIds': chordSourceIds,
+      if (chordSourceIds.any(
+        (sourceId) => sourcesById[sourceId]?.extra['pendingMatchCheck'] == true,
+      ))
+        'pendingChordSourceIds': chordSourceIds
+            .where(
+              (sourceId) =>
+                  sourcesById[sourceId]?.extra['pendingMatchCheck'] == true,
+            )
+            .toList(),
       'excludedIncompleteSourceIds': accepted
           .where((s) => !eligible.contains(s))
           .map((s) => s.id)

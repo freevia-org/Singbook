@@ -748,15 +748,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get searchMatchCombinedSources => 'कई स्रोतों से विवरण जोड़ा गया';
 
   @override
-  String searchCombinedFromSources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count स्रोतों से जोड़ा गया',
-      one: '1 स्रोत से जोड़ा गया',
-    );
-    return '$_temp0';
-  }
+  String get searchCombinedLabel => 'सभी';
 
   @override
   String searchSongMatchCount(int count) {
