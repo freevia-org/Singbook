@@ -370,7 +370,7 @@ void main() {
       await _waitForSnackBarToDismiss(tester);
       await tester.tap(pitchSelector);
       await tester.pumpAndSettle();
-      final higherKey = find.widgetWithText(DropdownMenuItem<int>, 'C#');
+      final higherKey = find.widgetWithText(DropdownMenuItem<int>, 'C♯');
       await tester.ensureVisible(higherKey);
       await tester.tap(higherKey);
       await tester.pumpAndSettle();
@@ -486,7 +486,9 @@ void main() {
       await tester.tap(find.text('Songs'));
       await tester.pumpAndSettle();
       expect(app.songs, hasLength(1));
-      await tester.tap(_iconButtonWithTooltip('Add song'));
+      await tester.tap(find.byKey(const ValueKey('header-overflow-menu')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Type in a new song'));
       await tester.pumpAndSettle();
       expect(find.byType(TextField), findsWidgets);
       await tester.tap(_iconButtonWithTooltip('Back'));
@@ -504,7 +506,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text(_title), findsWidgets);
       expect(app.recent, isNotEmpty);
-      expect(find.byTooltip('Add song'), findsOneWidget);
+      expect(find.byKey(const ValueKey('header-overflow-menu')), findsOneWidget);
       expect(find.text('Recent songs'), findsNothing);
       await tester.tap(find.text('Songs'));
       await tester.pumpAndSettle();
@@ -518,9 +520,10 @@ void main() {
         await tester.tap(_iconButtonWithTooltip('Clear search text'));
         await tester.pumpAndSettle();
       }
-      // The import and the later library open each record a visit.
-      expect(app.recent, hasLength(2));
-      _expectHomeModeCount('recent', 2);
+      // Repeated visits are grouped into one Recent row with an open count.
+      expect(app.recent, hasLength(1));
+      expect(app.recent.single.openCount, 2);
+      _expectHomeModeCount('recent', 1);
       await _capture(binding, '21_home_recent_populated');
       await tester.tap(_homeMode('favorites'));
       await tester.pumpAndSettle();
@@ -656,7 +659,9 @@ void main() {
       // whose order and overrides are verified after remount below.
       await tester.tap(_iconButtonWithTooltip('Back'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byType(PopupMenuButton<String>).first);
+      await tester.tap(
+        _popupMenuWithTooltip(l10n.accessibilitySetlistMenu('Dawn Set')),
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.text('Duplicate'));
       await tester.pumpAndSettle();
