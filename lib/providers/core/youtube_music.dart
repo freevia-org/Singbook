@@ -27,10 +27,15 @@ class _SessionRequestCancellation extends CancellationToken {
 
 /// Public YouTube Music web responses. No logged-in cookies or player scraping.
 class YoutubeMusicProvider implements LyricsProvider {
-  YoutubeMusicProvider(this.http, {YoutubeMusicSession? session})
-    : session = session ?? YoutubeMusicSession();
+  YoutubeMusicProvider(
+    this.http, {
+    YoutubeMusicSession? session,
+    this.onConsentRequired,
+  }) : session = session ?? YoutubeMusicSession();
   final ProviderTransport http;
   final YoutubeMusicSession session;
+  final Future<bool> Function()? onConsentRequired;
+  Future<bool>? _consentReview;
   JsonMap? _configuration;
   DateTime? _expires;
   int? _configurationRevision;
@@ -80,6 +85,30 @@ class YoutubeMusicProvider implements LyricsProvider {
       }
       return config;
     } on ProviderException catch (e) {
+      if (e.code == 'blocked' &&
+          e.message == 'consent_required' &&
+          onConsentRequired != null &&
+          revisionRetries < 1 &&
+          cancel?.isCancelled != true) {
+        // Overlapping searches share Google's one real choice page. A later
+        // caller can reuse the decision already captured by the first caller.
+        if (revision != session.revision) {
+          return _config(cancel, revisionRetries + 1);
+        }
+        final review = _consentReview ??= onConsentRequired!();
+        bool accepted;
+        try {
+          accepted = await review;
+        } finally {
+          if (identical(_consentReview, review)) _consentReview = null;
+        }
+        if (cancel?.isCancelled == true) {
+          throw const ProviderException('cancelled');
+        }
+        if (accepted && revision != session.revision) {
+          return _config(cancel, revisionRetries + 1);
+        }
+      }
       // The download belonged to another caller that was cancelled.
       if (e.code == 'cancelled' && cancel?.isCancelled != true) {
         if (revisionRetries >= 2) rethrow;

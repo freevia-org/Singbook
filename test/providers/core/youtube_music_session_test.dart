@@ -21,6 +21,135 @@ http.Response homepage() => http.Response(
 );
 
 void main() {
+  test(
+    'consent recovery shares one review and retries with saved cookies',
+    () async {
+      final session = YoutubeMusicSession();
+      final choice = Completer<bool>();
+      var reviews = 0, homepages = 0;
+      final t = transport((request) {
+        if (request.url.path == '/') {
+          homepages++;
+          if (request.headers['cookie'] == null) {
+            return http.Response(
+              '',
+              302,
+              headers: {'location': 'https://consent.youtube.com/m'},
+            );
+          }
+          return homepage();
+        }
+        expect(request.headers['cookie'], 'SOCS=fixture-choice');
+        return http.Response(
+          '{"contents":{"sectionListRenderer":{"contents":[]}}}',
+          200,
+        );
+      });
+      final provider = YoutubeMusicProvider(
+        t,
+        session: session,
+        onConsentRequired: () {
+          reviews++;
+          return choice.future;
+        },
+      );
+      try {
+        final a = provider.search('fixture');
+        final b = provider.search('another fixture');
+        while (reviews == 0) {
+          await Future<void>.delayed(Duration.zero);
+        }
+        session.setConsentCookies({'SOCS': 'fixture-choice'});
+        choice.complete(true);
+        expect(await a, isEmpty);
+        expect(await b, isEmpty);
+        expect(reviews, 1);
+        expect(homepages, 2);
+      } finally {
+        await t.close();
+      }
+    },
+  );
+
+  for (final cancelled in [false, true]) {
+    test('dismissed/cancelled consent never retries: $cancelled', () async {
+      final session = YoutubeMusicSession();
+      final choice = Completer<bool>();
+      final cancel = CancellationToken();
+      var requests = 0, reviews = 0;
+      final t = transport((request) {
+        requests++;
+        return http.Response(
+          '',
+          302,
+          headers: {'location': 'https://consent.youtube.com/m'},
+        );
+      });
+      final provider = YoutubeMusicProvider(
+        t,
+        session: session,
+        onConsentRequired: () {
+          reviews++;
+          return choice.future;
+        },
+      );
+      try {
+        final result = expectLater(
+          provider.search('fixture', cancel: cancel),
+          throwsA(
+            isA<ProviderException>().having(
+              (e) => e.code,
+              'code',
+              cancelled ? 'cancelled' : 'blocked',
+            ),
+          ),
+        );
+        while (reviews == 0) {
+          await Future<void>.delayed(Duration.zero);
+        }
+        if (cancelled) {
+          cancel.cancel();
+          session.setConsentCookies({'SOCS': 'fixture-choice'});
+        }
+        choice.complete(cancelled);
+        await result;
+        expect(requests, 1);
+        expect(reviews, 1);
+      } finally {
+        await t.close();
+      }
+    });
+  }
+
+  test('an unresolved consent redirect opens at most one review', () async {
+    final session = YoutubeMusicSession();
+    var reviews = 0;
+    final t = transport(
+      (request) => http.Response(
+        '',
+        302,
+        headers: {'location': 'https://consent.youtube.com/m'},
+      ),
+    );
+    try {
+      await expectLater(
+        YoutubeMusicProvider(
+          t,
+          session: session,
+          onConsentRequired: () async {
+            reviews++;
+            session.setConsentCookies({'SOCS': 'fixture-choice'});
+            return true;
+          },
+        ).search('fixture'),
+        throwsA(isA<ProviderException>()),
+      );
+      expect(reviews, 1);
+    } finally {
+      await t.close();
+    }
+  });
+
   test('session filters to bounded anonymous consent cookies', () {
     final session = YoutubeMusicSession();
     expect(session.hasConsent, isFalse);

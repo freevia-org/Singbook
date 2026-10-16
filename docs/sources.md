@@ -46,9 +46,10 @@ Genius needs only a client access token supplied through `config/local.defines.j
 
 ### Optional YouTube Music consent session
 
-Settings → Sources offers an experimental YouTube Music consent screen on
-Android and iOS. The person using the app makes their own choice on Google's
-actual page, waits for YouTube Music to return, and taps Done. The app never
+Settings → Sources has one YouTube Music enable/disable switch. On Android and
+iOS, a lookup that needs Google's cookie choice opens its actual page. The
+person using the app makes their own choice; when Music returns, the app saves
+the session and retries the current lookup automatically. The app never
 chooses consent, logs in to a Google account, or copies a logged-in browser
 session. Account sign-in and navigation outside the exact YouTube Music and
 YouTube consent hosts are blocked in that browser screen.
@@ -64,9 +65,10 @@ cross the native bridge. They stay in the app's browser cookie store and an
 in-memory adapter session, never library settings, ChordPro, Drive sync, reports,
 or cloud maintenance. Android excludes the WebView store from cloud backup and
 device transfer. iOS cookie storage/backup behavior has not been device-verified
-on this Windows checkout. Clear consent removes these scoped cookies and the
-in-memory copy without disconnecting Drive. A failed native clear is reported
-and can be retried. Cached web configuration is invalidated after a session
+on this Windows checkout. Turning off YouTube Music clears the in-memory copy
+and requests removal of these scoped cookies without disconnecting Drive.
+A failed native clear is reported; the source remains off. Cached web
+configuration is invalidated after a session
 change; old in-flight results cannot reactivate a cleared session.
 
 Consent saved means a cookie decision was captured, not that every song has
