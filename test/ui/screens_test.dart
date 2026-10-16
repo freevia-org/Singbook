@@ -159,7 +159,10 @@ void main() {
     final l10n = l10nOf(tester);
 
     expect(find.byTooltip(l10n.searchSubmit), findsOneWidget);
-    expect(find.byTooltip(l10n.searchFilters), findsOneWidget);
+    expect(find.byTooltip(l10n.searchFilters), findsNothing);
+    await tester.tap(find.byTooltip(l10n.songsAdd));
+    await tester.pump();
+    expect(c.calls, contains('createSong'));
     expect(find.text(l10n.searchSubmit), findsNothing);
   });
 
