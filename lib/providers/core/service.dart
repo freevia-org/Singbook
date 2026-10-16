@@ -347,6 +347,7 @@ class SourceDiscoveryService {
     Set<String>? enabledIds,
     void Function(ProviderCheck)? onProgress,
     CancellationToken? cancel,
+    Map<String, CancellationToken> providerCancellation = const {},
     Duration alternativeTimeout = const Duration(seconds: 30),
   }) async {
     final active = providers
@@ -366,7 +367,9 @@ class SourceDiscoveryService {
     Future<void> worker() async {
       while (index < active.length) {
         cancel?.throwIfCancelled();
-        final provider = active[index++], local = CancellationToken();
+        final provider = active[index++];
+        final local = providerCancellation[provider.definition.id] ??
+            CancellationToken();
         cancel?.cancelled.then((_) => local.cancel());
         try {
           final result =
@@ -381,6 +384,7 @@ class SourceDiscoveryService {
                   throw const ProviderException('timeout');
                 },
               );
+          local.throwIfCancelled();
           cancel?.throwIfCancelled();
           results.add(result);
           onProgress?.call(

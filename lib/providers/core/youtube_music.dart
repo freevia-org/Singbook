@@ -63,6 +63,7 @@ class YoutubeMusicProvider implements LyricsProvider {
     CancellationToken? cancel, [
     int revisionRetries = 0,
   ]) async {
+    cancel?.throwIfCancelled();
     if (_hasFreshConfig) return _configuration!;
     final revision = session.revision;
     if (_pendingRevision != revision) {

@@ -22,6 +22,58 @@ http.Response homepage() => http.Response(
 
 void main() {
   test(
+    'disable cancellation prevents a cleared pending homepage from retrying',
+    () async {
+      final began = Completer<void>();
+      final release = Completer<void>();
+      final cancel = CancellationToken();
+      final session = YoutubeMusicSession()
+        ..setConsentCookies({'SOCS': 'fixture-choice'});
+      var requests = 0;
+      final t = transport((request) async {
+        requests++;
+        if (requests == 1) {
+          began.complete();
+          await release.future;
+        }
+        return request.url.path == '/'
+            ? homepage()
+            : http.Response(
+                '{"contents":{"sectionListRenderer":{"contents":[]}}}',
+                200,
+              );
+      });
+      try {
+        final provider = YoutubeMusicProvider(t, session: session);
+        final stopped = expectLater(
+          provider.search('fixture', cancel: cancel),
+          throwsA(
+            isA<ProviderException>().having((e) => e.code, 'code', 'cancelled'),
+          ),
+        );
+        await began.future;
+        cancel.cancel();
+        session.clear();
+        await stopped.timeout(const Duration(seconds: 1));
+        expect(requests, 1);
+        release.complete();
+        await Future<void>.delayed(Duration.zero);
+        expect(requests, 1, reason: 'No unauthenticated retry after disabling');
+        expect(await provider.search('new enabled lookup'), isEmpty);
+        expect(
+          requests,
+          3,
+          reason:
+              'A fresh enabled lookup gets its own homepage and API request',
+        );
+      } finally {
+        if (!release.isCompleted) release.complete();
+        await t.close();
+      }
+    },
+  );
+
+  test(
     'consent recovery shares one review and retries with saved cookies',
     () async {
       final session = YoutubeMusicSession();
