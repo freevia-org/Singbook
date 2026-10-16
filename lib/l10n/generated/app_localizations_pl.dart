@@ -1268,7 +1268,11 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Zaloguj się przez Google, aby tworzyć kopie zapasowe utworów i list na Dysku Google oraz synchronizować wszystkie urządzenia. Utwory pozostaną na tym urządzeniu niezależnie od tego.';
+      'Połącz Dysk Google, aby opcjonalnie tworzyć kopie zapasowe utworów i list. Nic nie zostanie przesłane, dopóki nie dotkniesz Synchronizuj teraz.';
+
+  @override
+  String get accountManualSyncHint =>
+      'Synchronizacja odbywa się tylko po dotknięciu Synchronizuj teraz.';
 
   @override
   String get accountSignInWithGoogle => 'Zaloguj się przez Google';

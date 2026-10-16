@@ -1256,7 +1256,11 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Login dengan Google untuk mencadangkan lagu dan daftar lagu ke Google Drive serta menyinkronkan semua perangkat Anda. Lagu tetap tersimpan di perangkat ini.';
+      'Hubungkan Google Drive untuk mencadangkan lagu dan daftar lagu secara opsional. Tidak ada yang diunggah sampai Anda mengetuk Sinkronkan sekarang.';
+
+  @override
+  String get accountManualSyncHint =>
+      'Sinkronisasi hanya berjalan saat Anda mengetuk Sinkronkan sekarang.';
 
   @override
   String get accountSignInWithGoogle => 'Login dengan Google';

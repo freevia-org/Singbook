@@ -1273,7 +1273,11 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Conectează-te cu Google pentru a face o copie de siguranță a melodiilor și listelor în Google Drive și pentru a le sincroniza pe toate dispozitivele. Melodiile rămân oricum pe acest dispozitiv.';
+      'Conectează Google Drive pentru o copie de siguranță opțională a melodiilor și listelor tale. Nimic nu se încarcă până când nu atingi Sincronizează acum.';
+
+  @override
+  String get accountManualSyncHint =>
+      'Sincronizarea are loc doar când atingi Sincronizează acum.';
 
   @override
   String get accountSignInWithGoogle => 'Conectează-te cu Google';

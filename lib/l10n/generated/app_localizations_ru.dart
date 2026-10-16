@@ -1271,7 +1271,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Войди через Google, чтобы сохранить резервную копию песен и сет-листов на Google Drive и синхронизировать все устройства. Песни в любом случае останутся на этом устройстве.';
+      'Подключите Google Drive для резервного копирования песен и сет-листов по желанию. Ничего не загрузится, пока вы не нажмёте Синхронизировать.';
+
+  @override
+  String get accountManualSyncHint =>
+      'Синхронизация выполняется только после нажатия Синхронизировать.';
 
   @override
   String get accountSignInWithGoogle => 'Войти через Google';

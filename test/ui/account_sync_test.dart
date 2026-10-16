@@ -191,24 +191,13 @@ void main() {
       expect(c.calls.where((call) => call == 'syncNow'), hasLength(1));
     });
 
-    testWidgets('the auto-sync switch reports the new value', (tester) async {
-      var auto = true;
-      final c = await _pump(tester, () => _account(autoSync: auto));
-      expect(
-        tester
-            .widget<SwitchListTile>(
-              find.byKey(const ValueKey('account-auto-sync')),
-            )
-            .value,
-        isTrue,
-      );
-      await _tapKey(tester, 'account-auto-sync');
-      expect(c.calls, contains('setAutoSync(false)'));
-      auto = false;
-      c.refresh();
-      await tester.pump();
-      await _tapKey(tester, 'account-auto-sync');
-      expect(c.calls, contains('setAutoSync(true)'));
+    testWidgets('sync is explicit even with a legacy automatic setting', (tester) async {
+      final c = await _pump(tester, () => _account(autoSync: true));
+      expect(find.byKey(const ValueKey('account-auto-sync')), findsNothing);
+      expect(find.text(l10nOf(tester).accountManualSyncHint), findsOneWidget);
+      expect(c.calls, isEmpty);
+      await _tapKey(tester, 'account-sync-now');
+      expect(c.calls, contains('syncNow'));
     });
 
     testWidgets('signing out asks first and keeps songs on the device', (
@@ -714,7 +703,6 @@ void main() {
           if (card.evaluate().isNotEmpty) {
             for (final key in const [
               'account-sync-now',
-              'account-auto-sync',
               'account-use-different',
               'account-sign-out',
             ]) {

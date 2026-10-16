@@ -1254,7 +1254,11 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Logga in med Google för att säkerhetskopiera dina låtar och setlistor till Google Drive och hålla alla dina enheter synkroniserade. Dina låtar finns kvar på den här enheten oavsett.';
+      'Anslut Google Drive för valfri säkerhetskopiering av dina låtar och setlistor. Inget laddas upp förrän du trycker på Synkronisera nu.';
+
+  @override
+  String get accountManualSyncHint =>
+      'Synkronisering sker bara när du trycker på Synkronisera nu.';
 
   @override
   String get accountSignInWithGoogle => 'Logga in med Google';

@@ -1268,7 +1268,11 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Συνδέσου με Google για να δημιουργήσεις αντίγραφα ασφαλείας των τραγουδιών και των λιστών σου στο Google Drive και να συγχρονίσεις τις συσκευές σου. Τα τραγούδια σου παραμένουν σε αυτήν τη συσκευή ούτως ή άλλως.';
+      'Σύνδεσε το Google Drive για προαιρετικό αντίγραφο ασφαλείας των τραγουδιών και των λιστών σου. Δεν ανεβαίνει τίποτα μέχρι να πατήσεις Συγχρονισμός τώρα.';
+
+  @override
+  String get accountManualSyncHint =>
+      'Ο συγχρονισμός γίνεται μόνο όταν πατήσεις Συγχρονισμός τώρα.';
 
   @override
   String get accountSignInWithGoogle => 'Σύνδεση με Google';

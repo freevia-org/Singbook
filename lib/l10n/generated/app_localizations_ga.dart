@@ -1263,7 +1263,11 @@ class AppLocalizationsGa extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Sínigh isteach le Google chun cúltaca a dhéanamh de d’amhráin agus do liostaí amhrán in Google Drive agus do ghléasanna uile a choinneáil sioncronaithe. Fanann d’amhráin ar an ngléas seo ar aon nós.';
+      'Ceangail Google Drive chun cúltaca roghnach a dhéanamh de d’amhráin agus do liostaí. Ní uaslódálfar aon rud go dtí go dtapálfaidh tú Sioncrónaigh anois.';
+
+  @override
+  String get accountManualSyncHint =>
+      'Ní dhéantar sioncrónú ach nuair a thapálann tú Sioncrónaigh anois.';
 
   @override
   String get accountSignInWithGoogle => 'Sínigh isteach le Google';

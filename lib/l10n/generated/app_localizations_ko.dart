@@ -1227,7 +1227,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Google로 로그인하면 노래와 세트리스트를 Google Drive에 백업하고 모든 기기를 동기화할 수 있습니다. 노래는 어느 경우든 이 기기에 남습니다.';
+      '노래와 세트리스트를 선택적으로 백업하려면 Google Drive를 연결하세요. 지금 동기화를 탭하기 전까지는 아무것도 업로드되지 않습니다.';
+
+  @override
+  String get accountManualSyncHint => '지금 동기화를 탭할 때만 동기화됩니다.';
 
   @override
   String get accountSignInWithGoogle => 'Google로 로그인';

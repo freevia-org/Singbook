@@ -1254,7 +1254,11 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Đăng nhập bằng Google để sao lưu bài hát và danh sách lên Google Drive, đồng thời đồng bộ hóa tất cả thiết bị. Dù thế nào, bài hát vẫn được lưu trên thiết bị này.';
+      'Kết nối Google Drive để tùy chọn sao lưu bài hát và danh sách. Chưa có nội dung nào được tải lên cho đến khi bạn nhấn Đồng bộ hóa ngay.';
+
+  @override
+  String get accountManualSyncHint =>
+      'Chỉ đồng bộ hóa khi bạn nhấn vào Đồng bộ hóa ngay.';
 
   @override
   String get accountSignInWithGoogle => 'Đăng nhập bằng Google';

@@ -1253,7 +1253,11 @@ class AppLocalizationsBg extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Влезте с Google, за да архивирате песните и списъците си в Google Drive и да държите всичките си устройства синхронизирани. Песните остават на това устройство и без вход.';
+      'Свържете Google Drive за незадължително архивиране на песните и списъците си. Нищо няма да се качи, докато не докоснете Синхронизирай сега.';
+
+  @override
+  String get accountManualSyncHint =>
+      'Синхронизирането става само когато докоснете бутона Синхронизирай сега.';
 
   @override
   String get accountSignInWithGoogle => 'Вход с Google';

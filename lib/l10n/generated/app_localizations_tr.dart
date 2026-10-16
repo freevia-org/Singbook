@@ -1255,7 +1255,11 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Şarkılarınızı ve listelerinizi Google Drive\'a yedeklemek ve tüm cihazlarınızı senkronize tutmak için Google ile oturum açın. Şarkılarınız her durumda bu cihazda kalır.';
+      'Şarkılarınızın ve listelerinizin isteğe bağlı yedeği için Google Drive’ı bağlayın. Şimdi senkronize et düğmesine dokunana kadar hiçbir şey yüklenmez.';
+
+  @override
+  String get accountManualSyncHint =>
+      'Senkronizasyon yalnızca Şimdi senkronize et düğmesine dokunduğunuzda yapılır.';
 
   @override
   String get accountSignInWithGoogle => 'Google ile oturum aç';

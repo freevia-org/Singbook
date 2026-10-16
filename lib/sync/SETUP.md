@@ -6,8 +6,11 @@ application-data folder (`appDataFolder`), with the single scope
 shared storage account or client secret. The app cannot see any other Drive
 file, and the user can remove the data from Google account settings.
 
-Songs work without signing in; sync is optional. The local SQLite library is
-always the working copy: signing out never deletes songs.
+Songs work without signing in; sync is optional and only runs after an explicit
+Sync now or confirmed sync action. App startup does not restore authorization,
+and sign-in, local edits and app resume never start a cloud sync. There are no
+background sync or retry timers. The local SQLite library is always the working
+copy: signing out never deletes songs.
 
 ## OAuth client setup
 
@@ -30,9 +33,10 @@ scope, so no Google verification review is needed for it.
 Android needs nothing else natively: `INTERNET` is declared, the plugin adds its
 own wiring. R8/minify rules for the plugin are the Android owner's concern.
 
-`GoogleDriveAuth` (`google_auth.dart`): silent restore on start
-(`attemptLightweightAuthentication`, never throws); interactive
-`authenticate` + `authorizeScopes` only from a user tap; every request takes a
+`GoogleDriveAuth` (`google_auth.dart`): only an explicit Connect action restores
+a saved identity (local metadata on Android; lightweight authentication on
+other platforms), then falls back to interactive sign-in if needed. Startup
+makes no Google authorization request. Every manual sync request takes a
 token from `authorizationForScopes`; a 401 clears the rejected token and asks
 the platform for a new one once; sign-out clears the token and revokes the grant
 (best effort, falls back to a plain sign-out).
@@ -176,18 +180,22 @@ Baselines of other accounts are discarded. Signing out keeps the library, the
 binding and the baseline, so signing back in with the same account continues
 normally.
 
-## Automatic sync (AppController)
+## On-demand sync (AppController)
 
-Signed in and enabled (`setAutoSync`, persisted, default on): a sync runs about
-25 s after the last local change (debounced), shortly after app start / sign-in
-/ `onAppResumed()` when the last success is older than 5 minutes, and once more
-if the library changed while a sync was running. Never two at once. After a
-retryable failure (`network`, `rate_limited`, `sync_failed`, ...) the next
-attempt waits 30 s * 2^(n-1), capped at 15 minutes. Errors that need the user
-(`authorization_required`, `access_denied`, `storage_full`, `account_changed`,
-size limits, ...) are not retried in the background. Background failures set
-`lastSyncErrorCode` without a message; a manual Sync also posts one. There is no
-connectivity plugin: being offline simply shows as `network` with back-off.
+Google Drive sync runs only after Sync now or an explicitly confirmed account
+or cloud-deletion decision. Startup does not restore Google authorization.
+Sign-in updates local account metadata without listing, downloading or uploading
+Drive files. Local edits and `onAppResumed()` never start a sync.
+
+There are no sync timers, background retries or follow-up runs. A failed or
+partial sync shows its result and waits for another explicit action. Only one
+sync action runs at a time. Legacy `autoSync` settings and timing arguments
+cannot enable automatic sync; `setAutoSync` is a compatibility no-op.
+
+Regression coverage lives in `sync_controller_test.dart`,
+`controller_hardening_test.dart` and `account_sync_test.dart`: startup skips
+authorization, edits and resume leave Drive untouched, connecting uploads
+nothing, and only explicit actions perform or retry a sync.
 
 ## Limits
 

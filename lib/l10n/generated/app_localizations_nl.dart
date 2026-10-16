@@ -1266,7 +1266,11 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get accountSignedOutBenefits =>
-      'Meld je aan met Google om een back-up van je nummers en setlijsten op Google Drive te maken en al je apparaten gelijk te houden. Je nummers blijven hoe dan ook op dit apparaat staan.';
+      'Koppel Google Drive voor een optionele back-up van je nummers en setlijsten. Er wordt niets geüpload totdat je op Nu synchroniseren tikt.';
+
+  @override
+  String get accountManualSyncHint =>
+      'Synchroniseren gebeurt alleen wanneer je op Nu synchroniseren tikt.';
 
   @override
   String get accountSignInWithGoogle => 'Aanmelden met Google';

@@ -158,8 +158,8 @@ class GoogleDriveAuth implements DriveAuthorization, RefreshableAuthorization {
     }
   }
 
-  /// Never throws: restoring a previous session is a best-effort convenience at
-  /// startup and must not be able to break application initialisation.
+  /// Never throws: restoring a previous session is a best-effort convenience
+  /// used only after an explicit account action.
   @override
   Future<bool> restore() async {
     final epoch = _epoch;
