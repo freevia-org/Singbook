@@ -224,15 +224,20 @@ void main() {
             matching: find.bySemanticsLabel(labels[index]),
           );
           expect(semanticDestination, findsOneWidget);
-          final semanticData = tester.getSemantics(semanticDestination);
-          expect(semanticData.hasFlag(SemanticsFlag.isButton), isTrue);
+          final semanticData = tester
+              .getSemantics(semanticDestination)
+              .getSemanticsData();
+          expect(semanticData.flagsCollection.isButton, isTrue);
           await tester.tap(destination);
           await tester.pumpAndSettle();
           expect(controller.state.activeTab.index, index);
           expect(
             tester
                 .getSemantics(semanticDestination)
-                .hasFlag(SemanticsFlag.isSelected),
+                .getSemanticsData()
+                .flagsCollection
+                .isSelected
+                .toBoolOrNull(),
             isTrue,
           );
           expect(
