@@ -179,18 +179,22 @@ Baselines of other accounts are discarded. Signing out keeps the library, the
 binding and the baseline, so signing back in with the same account continues
 normally.
 
-## Automatic sync (AppController)
+## On-demand sync (AppController)
 
-Signed in and enabled (`setAutoSync`, persisted, default on): a sync runs about
-25 s after the last local change (debounced), shortly after app start / sign-in
-/ `onAppResumed()` when the last success is older than 5 minutes, and once more
-if the library changed while a sync was running. Never two at once. After a
-retryable failure (`network`, `rate_limited`, `sync_failed`, ...) the next
-attempt waits 30 s * 2^(n-1), capped at 15 minutes. Errors that need the user
-(`authorization_required`, `access_denied`, `storage_full`, `account_changed`,
-size limits, ...) are not retried in the background. Background failures set
-`lastSyncErrorCode` without a message; a manual Sync also posts one. There is no
-connectivity plugin: being offline simply shows as `network` with back-off.
+Google Drive sync runs only after Sync now or an explicitly confirmed account
+or cloud-deletion decision. Startup does not restore Google authorization.
+Sign-in updates local account metadata without listing, downloading or uploading
+Drive files. Local edits and `onAppResumed()` never start a sync.
+
+There are no sync timers, background retries or follow-up runs. A failed or
+partial sync shows its result and waits for another explicit action. Only one
+sync action runs at a time. Legacy `autoSync` settings and timing arguments
+cannot enable automatic sync; `setAutoSync` persists false for compatibility.
+
+Regression coverage lives in `sync_controller_test.dart`,
+`controller_hardening_test.dart` and `account_sync_test.dart`: startup skips
+authorization, edits and resume leave Drive untouched, connecting uploads
+nothing, and only explicit actions perform or retry a sync.
 
 ## Limits
 
