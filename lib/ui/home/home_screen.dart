@@ -1095,9 +1095,14 @@ class _HomeModeSelectorState extends State<_HomeModeSelector> {
   void _revealSelected() {
     if (!mounted || !_scroll.hasClients) return;
     final context = _segmentKeys[widget.selected.index].currentContext;
-    if (context == null) return;
-    Scrollable.ensureVisible(
-      context,
+    if (context == null || !context.mounted) return;
+    final target = context.findRenderObject();
+    if (target == null || !target.attached) return;
+    // Reveal only within the selector's horizontal viewport. The global helper
+    // also scrolls ancestor vertical views, which can hide the search field in
+    // compact landscape layouts when large text makes this selector taller.
+    _scroll.position.ensureVisible(
+      target,
       duration: const Duration(milliseconds: 160),
       alignment: .5,
       curve: Curves.easeOut,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:singbook/application/file_actions.dart';
 import 'package:singbook/l10n/generated/app_localizations.dart';
 import 'package:singbook/ui/home/home_screen.dart';
 import 'package:singbook/ui/theme/verse_theme.dart';
@@ -704,6 +705,93 @@ void main() {
 
     await tester.pumpWidget(const SizedBox.shrink());
   });
+
+  testWidgets(
+    'mode reveal stays inside selector at compact landscape and 2x text',
+    (tester) async {
+      final font = FontLoader('NotoSansFixture')
+        ..addFont(rootBundle.load('assets/fonts/NotoSans-Regular.ttf'));
+      await font.load();
+
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(640, 360);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      final controller = _VisualHomeController(
+        VerseUiState(
+          query: 'Lantern',
+          recent: [
+            RecentItemData(
+              id: 'compact-song',
+              title: 'Lanterns at Dawn',
+              artist: 'The Paper Moons',
+              occurredAt: DateTime(2026, 1, 1),
+              isSetlist: false,
+            ),
+          ],
+        ),
+      );
+      addTearDown(controller.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: singbookLocalizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: verseTheme(
+            brightness: Brightness.light,
+            palette: 'navy',
+            fontFamily: 'NotoSansFixture',
+          ).copyWith(
+            textTheme: verseTheme(
+              brightness: Brightness.light,
+              palette: 'navy',
+              fontFamily: 'NotoSansFixture',
+            ).textTheme.apply(
+              fontFamily: 'NotoSansFixture',
+              fontFamilyFallback: const ['NotoSansFixture'],
+            ),
+          ),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              textScaler: const TextScaler.linear(2),
+            ),
+            child: child!,
+          ),
+          home: VerseAppShell(
+            controller: controller,
+            files: VerseFileActions(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final outerScrollable = tester.state<ScrollableState>(
+        find.descendant(
+          of: find.byType(CustomScrollView),
+          matching: find.byType(Scrollable),
+        ).first,
+      );
+      final appBar = tester.getRect(find.byType(AppBar));
+      final search = tester.getRect(find.byType(TextField));
+      expect(outerScrollable.position.pixels, 0);
+      expect(search.top, greaterThanOrEqualTo(appBar.bottom));
+
+      final selector = find.byKey(const ValueKey('home-mode-scroll'));
+      final online = find.byKey(const ValueKey('home-mode-online'));
+      controller.setHomeListMode(HomeListMode.online);
+      await tester.pumpAndSettle();
+      expect(controller.state.homeListMode, HomeListMode.online);
+      expect(outerScrollable.position.pixels, 0);
+      final selectorRect = tester.getRect(selector);
+      final onlineRect = tester.getRect(online);
+      expect(onlineRect.top, greaterThanOrEqualTo(selectorRect.top));
+      expect(onlineRect.bottom, lessThanOrEqualTo(selectorRect.bottom));
+      expect(onlineRect.left, greaterThanOrEqualTo(selectorRect.left));
+      expect(onlineRect.right, lessThanOrEqualTo(selectorRect.right));
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+  );
 
   testWidgets(
     'home search and selector remain laid out with keyboard and landscape',
