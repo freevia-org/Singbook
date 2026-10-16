@@ -190,5 +190,26 @@
   "youtubeConsentClear": "Изчистване на съгласието",
   "youtubeConsentInstructions": "Завършете избора си за бисквитките и изчакайте YouTube Music да се отвори отново. След това запазете тази сесия и опитайте отново да потърсите песента.",
   "youtubeConsentError": "Изборът ви за съгласие в Google не можа да се актуализира. Опитайте отново.",
-  "youtubeConsentBlocked": "Тук могат да се отварят само YouTube Music и страницата за съгласие на Google. Влизането в профил не е достъпно."
+  "youtubeConsentBlocked": "Тук могат да се отварят само YouTube Music и страницата за съгласие на Google. Влизането в профил не е достъпно.",
+  "searchReadyVersions": "{count, plural, =0{Няма налични версии} one{{count} готова версия} other{{count} готови версии}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{Няма недостъпни версии} one{{count} недостъпна версия} other{{count} недостъпни версии}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "Към раздел",
+  "searchVersionDetails": "Подробности за версията",
+  "searchSelectedRecording": "Избран запис",
+  "searchVersionDuration": "Продължителност на версията",
+  "searchSourceOptions": "Опции за източника"
 }

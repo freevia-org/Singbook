@@ -737,5 +737,26 @@
   "youtubeConsentClear": "Effacer le consentement",
   "youtubeConsentInstructions": "Terminez votre choix de cookies et attendez le retour de YouTube Music. Enregistrez ensuite cette session et relancez la recherche du morceau.",
   "youtubeConsentError": "Impossible de mettre à jour votre choix de consentement Google. Réessayez.",
-  "youtubeConsentBlocked": "Seuls YouTube Music et la page de consentement de Google peuvent s'ouvrir ici. La connexion à un compte n'est pas disponible."
+  "youtubeConsentBlocked": "Seuls YouTube Music et la page de consentement de Google peuvent s'ouvrir ici. La connexion à un compte n'est pas disponible.",
+  "searchReadyVersions": "{count, plural, =0{0 Versions disponibles} =1{1 version disponible} other{{count} Versions disponibles}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{0 Versions indisponibles} =1{1 version indisponible} other{{count} Versions indisponibles}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "Aller à la section",
+  "searchVersionDetails": "Détails de la version",
+  "searchSelectedRecording": "Enregistrement sélectionné",
+  "searchVersionDuration": "Durée de la version",
+  "searchSourceOptions": "Options de la source"
 }

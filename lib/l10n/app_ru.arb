@@ -737,5 +737,26 @@
   "youtubeConsentClear": "Очистить согласие",
   "youtubeConsentInstructions": "Завершите выбор файлов cookie и дождитесь возвращения YouTube Music. Затем сохраните этот сеанс и повторите поиск песни.",
   "youtubeConsentError": "Не удалось обновить выбор согласия Google. Повторите попытку.",
-  "youtubeConsentBlocked": "Здесь можно открыть только YouTube Music и страницу согласия Google. Вход в аккаунт недоступен."
+  "youtubeConsentBlocked": "Здесь можно открыть только YouTube Music и страницу согласия Google. Вход в аккаунт недоступен.",
+  "searchReadyVersions": "{count, plural, =0{Нет доступных версий} one{{count} доступная версия} few{{count} доступные версии} many{{count} доступных версий} other{{count} доступной версии}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{Нет недоступных версий} one{{count} недоступная версия} few{{count} недоступные версии} many{{count} недоступных версий} other{{count} недоступной версии}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "Перейти к разделу",
+  "searchVersionDetails": "Сведения о версии",
+  "searchSelectedRecording": "Выбранная запись",
+  "searchVersionDuration": "Длительность версии",
+  "searchSourceOptions": "Параметры источника"
 }

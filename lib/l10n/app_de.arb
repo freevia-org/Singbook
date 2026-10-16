@@ -737,5 +737,26 @@
   "youtubeConsentClear": "Einwilligung löschen",
   "youtubeConsentInstructions": "Schließe deine Cookie-Auswahl ab und warte, bis YouTube Music zurückkehrt. Speichere dann diese Sitzung und suche noch einmal nach dem Song.",
   "youtubeConsentError": "Die Google-Einwilligung konnte nicht aktualisiert werden. Versuche es noch einmal.",
-  "youtubeConsentBlocked": "Hier können nur YouTube Music und die Google-Seite zur Einwilligung geöffnet werden. Eine Kontoanmeldung ist nicht verfügbar."
+  "youtubeConsentBlocked": "Hier können nur YouTube Music und die Google-Seite zur Einwilligung geöffnet werden. Eine Kontoanmeldung ist nicht verfügbar.",
+  "searchReadyVersions": "{count, plural, =0{0 Verfügbare Versionen} =1{1 verfügbare Version} other{{count} Verfügbare Versionen}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{0 Nicht verfügbare Versionen} =1{1 nicht verfügbare Version} other{{count} Nicht verfügbare Versionen}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "Zum Abschnitt springen",
+  "searchVersionDetails": "Versionsdetails",
+  "searchSelectedRecording": "Ausgewählte Aufnahme",
+  "searchVersionDuration": "Dauer der Version",
+  "searchSourceOptions": "Quelloptionen"
 }

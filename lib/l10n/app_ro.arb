@@ -737,5 +737,26 @@
   "youtubeConsentClear": "Ștergeți consimțământul",
   "youtubeConsentInstructions": "Finalizați alegerea cookie-urilor și așteptați să revină YouTube Music. Apoi salvați această sesiune și căutați din nou melodia.",
   "youtubeConsentError": "Alegerea de consimțământ Google nu a putut fi actualizată. Încercați din nou.",
-  "youtubeConsentBlocked": "Aici se pot deschide doar YouTube Music și pagina de consimțământ Google. Conectarea la un cont nu este disponibilă."
+  "youtubeConsentBlocked": "Aici se pot deschide doar YouTube Music și pagina de consimțământ Google. Conectarea la un cont nu este disponibilă.",
+  "searchReadyVersions": "{count, plural, =0{Nu există versiuni disponibile} one{{count} versiune disponibilă} few{{count} de versiuni disponibile} other{{count} de versiuni disponibile}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{Nu există versiuni indisponibile} one{{count} versiune indisponibilă} few{{count} de versiuni indisponibile} other{{count} de versiuni indisponibile}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "Salt la secțiune",
+  "searchVersionDetails": "Detalii despre versiune",
+  "searchSelectedRecording": "Înregistrarea selectată",
+  "searchVersionDuration": "Durata versiunii",
+  "searchSourceOptions": "Opțiuni sursă"
 }

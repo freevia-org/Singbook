@@ -737,5 +737,26 @@
   "youtubeConsentClear": "Išvalyti sutikimą",
   "youtubeConsentInstructions": "Užbaikite slapukų pasirinkimą ir palaukite, kol grįš „YouTube Music“. Tada išsaugokite šią sesiją ir dar kartą ieškokite dainos.",
   "youtubeConsentError": "Nepavyko atnaujinti „Google“ sutikimo pasirinkimo. Bandykite dar kartą.",
-  "youtubeConsentBlocked": "Čia galima atidaryti tik „YouTube Music“ ir „Google“ sutikimo puslapį. Prisijungti prie paskyros negalima."
+  "youtubeConsentBlocked": "Čia galima atidaryti tik „YouTube Music“ ir „Google“ sutikimo puslapį. Prisijungti prie paskyros negalima.",
+  "searchReadyVersions": "{count, plural, =0{Nėra paruoštų versijų} one{{count} paruošta versija} few{{count} paruoštos versijos} other{{count} paruoštų versijų}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{Nėra nepasiekiamų versijų} one{{count} nepasiekiama versija} few{{count} nepasiekiamos versijos} other{{count} nepasiekiamų versijų}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "Pereiti į skyrių",
+  "searchVersionDetails": "Versijos informacija",
+  "searchSelectedRecording": "Pasirinktas įrašas",
+  "searchVersionDuration": "Versijos trukmė",
+  "searchSourceOptions": "Šaltinio parinktys"
 }

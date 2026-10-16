@@ -737,5 +737,26 @@
   "youtubeConsentClear": "Kustuta nõusolek",
   "youtubeConsentInstructions": "Lõpeta küpsiste valimine ja oota, kuni YouTube Music naaseb. Seejärel salvesta see seanss ja otsi lugu uuesti.",
   "youtubeConsentError": "Google'i nõusolekuvalikut ei saanud uuendada. Proovi uuesti.",
-  "youtubeConsentBlocked": "Siin saab avada ainult YouTube Musicu ja Google'i nõusolekulehe. Kontole sisselogimine pole saadaval."
+  "youtubeConsentBlocked": "Siin saab avada ainult YouTube Musicu ja Google'i nõusolekulehe. Kontole sisselogimine pole saadaval.",
+  "searchReadyVersions": "{count, plural, =0{0 Valmis versioonid} =1{1 valmis versioon} other{{count} Valmis versioonid}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{0 Kättesaamatud versioonid} =1{1 kättesaamatu versioon} other{{count} Kättesaamatud versioonid}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "Hüppa jaotisse",
+  "searchVersionDetails": "Versiooni üksikasjad",
+  "searchSelectedRecording": "Valitud salvestis",
+  "searchVersionDuration": "Versiooni kestus",
+  "searchSourceOptions": "Allika valikud"
 }

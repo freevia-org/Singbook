@@ -5,9 +5,9 @@ import '../../l10n/generated/app_localizations.dart';
 import '../format.dart';
 import '../library_actions.dart';
 import '../verse_ui_state.dart';
-import '../localized_labels.dart';
 import '../widgets/verse_components.dart';
 import 'source_preview_screen.dart';
+import 'source_version_browser.dart';
 
 class VerseHomeScreen extends StatefulWidget {
   const VerseHomeScreen({
@@ -905,9 +905,6 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     return out;
   }
 
-  String _sourceName(AppLocalizations l10n, SourceVersionData version) =>
-      versionName(l10n, version);
-
   void _openFullPreview() {
     final selected = widget.controller.state.comparison?.selected;
     if (selected != null) {
@@ -920,459 +917,104 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     );
   }
 
-  Widget _comparison(
-    BuildContext context,
-    AppLocalizations l10n,
-    SearchComparisonData comparison,
-  ) {
-    final chosen = comparison.selected;
-    // Keep checking/unavailable versions visible and raw sources in arrival
-    // order. A newly available combined option can appear above those rows.
-    final allVersions = comparisonVersions(comparison);
-    final versions = allVersions;
-    final selectedRowId = chosen?.id;
-    final usable = versions
-        .where(
-          (item) =>
-              item.isUsableVersion ||
-              (item.id == comparison.suggested?.id && item.hasLyrics),
-        )
-        .toList();
-    final colors = Theme.of(context).colorScheme;
-    final count = comparison.alternatives
-        .where((item) => item.providerId != 'combined' && item.isUsableVersion)
-        .map((item) => item.id)
-        .toSet()
-        .length;
-    final checked = comparison.providerChecks
-        .where((item) => item.state != 'pending')
-        .length;
-    final reference = comparison.reference;
-    final list = ListView(
-      key: const PageStorageKey('version-list'),
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-      children: [
-        Padding(
-          key: const ValueKey('home-search-comparison-counts'),
-          padding: const EdgeInsets.symmetric(vertical: 6),
-          child: Text(
-            l10n.searchSourceVersionsCount(count),
-            style: Theme.of(context).textTheme.labelMedium,
-          ),
-        ),
-        if (usable.isEmpty &&
-            !comparison.discovering &&
-            !comparison.noUsableLyrics &&
-            comparison.discoveryError == null)
-          VerseEmptyState(
-            key: const ValueKey('version-filters-empty'),
-            icon: Icons.filter_alt_off_outlined,
-            title: l10n.emptyFiltered,
-            actionLabel: l10n.actionClear,
-            onAction: () {
-              widget.controller.setSearchFilter('chordsOnly', false);
-              widget.controller.setSearchFilter('timedOnly', false);
-              widget.controller.setSearchFilter('language', '');
-              widget.controller.setSearchFilter('durationBucket', '');
-            },
-          ),
-        for (final version in versions)
-          _sourceVersionCard(
-            context,
-            l10n,
-            version,
-            suggested: version.id == comparison.suggested?.id,
-            selected: version.id == selectedRowId,
-            onSelect: () =>
-                widget.controller.selectVersion(versionSelectionId(version)),
-          ),
-        _discoveryStatus(context, l10n, comparison),
-      ],
-    );
-    final footer = chosen == null
-        ? const SizedBox.shrink()
-        : _versionFooter(context, l10n, chosen);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 8, 16, 8),
-          child: Row(
-            children: [
-              VerseArtwork(url: reference.artworkUrl, size: 40),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      reference.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    Text(
-                      [
-                        reference.artist,
-                        if (reference.album?.isNotEmpty == true)
-                          reference.album!,
-                      ].join(' · '),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: colors.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              IconButton(
-                tooltip: l10n.searchFilters,
-                onPressed: widget.controller.toggleSearchFilters,
-                icon: const Icon(Icons.tune_rounded),
-              ),
-            ],
-          ),
-        ),
-        if (widget.state.searchFiltersExpanded)
-          Flexible(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: _searchFilters(context, l10n, widget.state),
-              ),
-            ),
-          ),
-        if (comparison.discovering) ...[
-          const LinearProgressIndicator(
-            key: ValueKey('discovery-progress'),
-            minHeight: 2,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-            child: Text(
-              l10n.searchDiscoveryProgress(
-                checked,
-                comparison.providerChecks.length,
-              ),
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ),
-        ],
-        Expanded(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              if (constraints.maxWidth >= 700 || constraints.maxHeight < 340) {
-                return Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(flex: 6, child: list),
-                    Expanded(
-                      flex: 5,
-                      child: SingleChildScrollView(child: footer),
-                    ),
-                  ],
-                );
-              }
+  void _showVersionFilters() {
+    final l10n = AppLocalizations.of(context);
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (sheetContext) => SafeArea(
+        child: DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: .55,
+          maxChildSize: .9,
+          builder: (context, scroll) => AnimatedBuilder(
+            animation: widget.controller,
+            builder: (context, _) {
+              final state = widget.controller.state;
+              final comparison = state.comparison;
+              final ready = comparison == null
+                  ? 0
+                  : comparisonVersions(comparison)
+                        .where(
+                          (version) =>
+                              version.canSave || version.savedSongId != null,
+                        )
+                        .map(versionSelectionId)
+                        .toSet()
+                        .length;
               return Column(
                 children: [
-                  Expanded(child: list),
-                  footer,
+                  Padding(
+                    padding: const EdgeInsetsDirectional.only(
+                      start: 20,
+                      end: 12,
+                      top: 8,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            l10n.searchFilters,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
+                        TextButton(
+                          key: const ValueKey('version-filters-done'),
+                          onPressed: () => Navigator.pop(sheetContext),
+                          child: Text(l10n.actionDone),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView(
+                      controller: scroll,
+                      key: const ValueKey('version-filters-sheet'),
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                      children: [
+                        Text(l10n.searchReadyVersions(ready)),
+                        _searchFilters(context, l10n, state),
+                        TextButton(
+                          key: const ValueKey('version-filters-clear'),
+                          onPressed: () {
+                            widget.controller.setSearchFilter(
+                              'chordsOnly',
+                              false,
+                            );
+                            widget.controller.setSearchFilter(
+                              'timedOnly',
+                              false,
+                            );
+                            widget.controller.setSearchFilter('language', '');
+                            widget.controller.setSearchFilter(
+                              'durationBucket',
+                              '',
+                            );
+                          },
+                          child: Text(l10n.actionClear),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               );
             },
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _versionFooter(
-    BuildContext context,
-    AppLocalizations l10n,
-    SourceVersionData version,
-  ) {
-    final colors = Theme.of(context).colorScheme;
-    final compact =
-        MediaQuery.sizeOf(context).height < 600 ||
-        MediaQuery.textScalerOf(context).scale(1) > 1.3;
-    final preview = version.bodyPreview
-        .where((line) => line.text.trim().isNotEmpty)
-        .take(compact ? 1 : 3);
-    return SafeArea(
-      top: false,
-      child: Container(
-        key: const ValueKey('version-selection-footer'),
-        width: double.infinity,
-        padding: const EdgeInsets.fromLTRB(20, 10, 20, 12),
-        decoration: BoxDecoration(
-          color: colors.surface,
-          border: Border(top: BorderSide(color: colors.outlineVariant)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    '${l10n.searchSelectedPreview} · ${_sourceName(l10n, version)}',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.labelSmall?.copyWith(color: colors.primary),
-                  ),
-                ),
-                TextButton(
-                  key: const ValueKey('open-full-preview'),
-                  onPressed: _openFullPreview,
-                  child: Text(l10n.searchFullPreview),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            for (final line in preview)
-              Text.rich(
-                TextSpan(
-                  children: [
-                    if (line.chords.isNotEmpty)
-                      TextSpan(
-                        text:
-                            '${line.chords.map((chord) => chord.symbol).join('  ')}  ',
-                        style: TextStyle(
-                          color: colors.primary,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    TextSpan(text: line.text),
-                  ],
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            if (preview.isEmpty) Text(l10n.searchPreviewUnavailable),
-            if (version.isChecking) Text(l10n.searchVersionChecking),
-            if (!version.isChecking &&
-                !version.isUsableVersion &&
-                version.id != 'combined')
-              Text(l10n.searchVersionUnavailable),
-            const SizedBox(height: 10),
-            FilledButton.icon(
-              key: const ValueKey('save-open-lyrics'),
-              onPressed: version.canSave || version.savedSongId != null
-                  ? widget.controller.saveSelectedVersion
-                  : null,
-              icon: const Icon(Icons.menu_book_rounded),
-              label: Text(
-                version.savedSongId != null
-                    ? l10n.searchOpenLyrics
-                    : l10n.searchSaveOpenLyrics,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
 
-  Widget _discoveryStatus(
+  Widget _comparison(
     BuildContext context,
     AppLocalizations l10n,
     SearchComparisonData comparison,
-  ) {
-    final unavailable = comparison.providerChecks
-        .where(
-          (check) => check.state == 'failed' || check.state == 'unavailable',
-        )
-        .length;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        if (comparison.discoveryError != null ||
-            (!comparison.discovering && comparison.noUsableLyrics))
-          VerseEmptyState(
-            key: ValueKey(
-              comparison.discoveryError != null
-                  ? 'discovery-error'
-                  : 'discovery-no-lyrics',
-            ),
-            icon: Icons.lyrics_outlined,
-            title: comparison.discoveryError != null
-                ? l10n.searchDiscoveryError
-                : l10n.searchDiscoveryNoLyrics,
-            message: comparison.discoveryError != null
-                ? l10n.searchErrorDetails
-                : l10n.searchDiscoveryNoLyricsDetails,
-            actionLabel: l10n.searchDiscoveryRetry,
-            onAction: () =>
-                unawaited(widget.controller.retrySelectedSongDiscovery()),
-          ),
-        if (comparison.providerChecks.isNotEmpty)
-          ExpansionTile(
-            key: const PageStorageKey('discovery-provider-checks'),
-            tilePadding: const EdgeInsets.symmetric(horizontal: 8),
-            title: Text(
-              l10n.searchProviderChecks,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            children: [
-              if (unavailable > 0)
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Text(l10n.searchSourcesUnavailableCount(unavailable)),
-                ),
-              for (final check in comparison.providerChecks)
-                ListTile(
-                  key: ValueKey('discovery-provider-${check.id}'),
-                  dense: true,
-                  title: Text(check.name),
-                  subtitle: Text(_providerCheckLabel(l10n, check.state)),
-                ),
-            ],
-          ),
-      ],
-    );
-  }
-
-  String _providerCheckLabel(AppLocalizations l10n, String state) =>
-      switch (state) {
-        'pending' => l10n.searchProviderPending,
-        'found' => l10n.searchProviderFound,
-        'rejected' => l10n.searchProviderRejected,
-        'failed' => l10n.searchProviderFailed,
-        'unavailable' => l10n.searchProviderUnavailable,
-        _ => l10n.searchProviderUnavailable,
-      };
-
-  Widget _sourceVersionCard(
-    BuildContext context,
-    AppLocalizations l10n,
-    SourceVersionData version, {
-    required bool suggested,
-    bool selected = false,
-    VoidCallback? onSelect,
-  }) {
-    final colors = Theme.of(context).colorScheme;
-    final detail = [
-      if (version.album?.trim().isNotEmpty == true &&
-          version.album!.toLowerCase() != 'unknown')
-        version.album!,
-      if (version.durationSeconds != null)
-        formatDuration(version.durationSeconds!),
-    ].join(' · ');
-    return Semantics(
-      selected: selected,
-      button: onSelect != null,
-      child: Card(
-        key: ValueKey('version-row-${version.id}'),
-        margin: const EdgeInsets.only(bottom: 6),
-        color: selected ? colors.primaryContainer.withValues(alpha: .3) : null,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(
-            color: selected ? colors.primary : colors.outlineVariant,
-            width: selected ? 1.5 : .5,
-          ),
-        ),
-        child: InkWell(
-          onTap: onSelect,
-          borderRadius: BorderRadius.circular(12),
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Row(
-              children: [
-                Icon(
-                  selected
-                      ? Icons.radio_button_checked
-                      : Icons.radio_button_off,
-                  color: onSelect == null ? colors.outline : colors.primary,
-                  size: 22,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _sourceName(l10n, version),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      if (detail.isNotEmpty)
-                        Text(
-                          detail,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      const SizedBox(height: 3),
-                      Wrap(
-                        spacing: 10,
-                        runSpacing: 2,
-                        children: [
-                          if (version.hasChords)
-                            _FactPill(
-                              icon: Icons.music_note_rounded,
-                              label: l10n.providerCapabilityChords,
-                            ),
-                          _FactPill(
-                            icon: version.hasTiming
-                                ? Icons.schedule_rounded
-                                : Icons.lyrics_outlined,
-                            label: version.hasTiming
-                                ? l10n.playerTimedLyrics
-                                : l10n.providerCapabilityLyrics,
-                          ),
-                          if (suggested)
-                            Text(
-                              l10n.searchSuggested,
-                              style: Theme.of(context).textTheme.labelSmall
-                                  ?.copyWith(color: colors.primary),
-                            ),
-                        ],
-                      ),
-                      if ((version.sourceCount ?? 0) > 1) ...[
-                        const SizedBox(height: 4),
-                        SourceContributions(version: version),
-                      ] else if (!version.sameRecording &&
-                          version.matchSummary.isNotEmpty)
-                        Text(
-                          localizedMatchReason(l10n, version.matchSummary),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(color: colors.onSurfaceVariant),
-                        ),
-                      if (version.isChecking)
-                        Text(
-                          l10n.searchVersionChecking,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      if (!version.isChecking &&
-                          !version.isUsableVersion &&
-                          version.id != 'combined')
-                        Text(
-                          l10n.searchVersionUnavailable,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  ) => SourceVersionBrowser(
+    key: ValueKey(comparison.reference.id),
+    controller: widget.controller,
+    onOpenFullScreen: _openFullPreview,
+    onFilters: _showVersionFilters,
+  );
 
   Widget _timeline(
     BuildContext context,
@@ -1626,19 +1268,4 @@ class _HistoryGroup {
   final DateTime date;
   final String label;
   final List<RecentItemData> items = [];
-}
-
-class _FactPill extends StatelessWidget {
-  const _FactPill({required this.icon, required this.label});
-  final IconData icon;
-  final String label;
-  @override
-  Widget build(BuildContext context) => Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Icon(icon, size: 13),
-      const SizedBox(width: 3),
-      Text(label, style: Theme.of(context).textTheme.labelSmall),
-    ],
-  );
 }

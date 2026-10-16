@@ -1697,4 +1697,45 @@ class AppLocalizationsCs extends AppLocalizations {
   @override
   String get youtubeConsentBlocked =>
       'Zde lze otevřít pouze YouTube Music a stránku souhlasu Googlu. Přihlášení k účtu není dostupné.';
+
+  @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count dostupných verzí',
+      few: '$count dostupné verze',
+      one: '$count připravená verze',
+      zero: 'Žádné dostupné verze',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count nedostupných verzí',
+      few: '$count nedostupné verze',
+      one: '$count nedostupná verze',
+      zero: 'Žádné nedostupné verze',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Přejít na sekci';
+
+  @override
+  String get searchVersionDetails => 'Podrobnosti o verzi';
+
+  @override
+  String get searchSelectedRecording => 'Vybraná nahrávka';
+
+  @override
+  String get searchVersionDuration => 'Délka verze';
+
+  @override
+  String get searchSourceOptions => 'Možnosti zdroje';
 }

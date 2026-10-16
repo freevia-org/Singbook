@@ -1684,4 +1684,43 @@ class AppLocalizationsFi extends AppLocalizations {
   @override
   String get youtubeConsentBlocked =>
       'Täällä voi avata vain YouTube Musicin ja Googlen suostumussivun. Tilille kirjautuminen ei ole käytettävissä.';
+
+  @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Valmiit versiot',
+      one: '1 valmis versio',
+      zero: '0 Valmiit versiot',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Ei saatavilla olevat versiota',
+      one: '1 ei saatavilla oleva versio',
+      zero: '0 Ei saatavilla olevat versiota',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Siirry osiooniiin';
+
+  @override
+  String get searchVersionDetails => 'Version tiedot';
+
+  @override
+  String get searchSelectedRecording => 'Valittu äänite';
+
+  @override
+  String get searchVersionDuration => 'Version kesto';
+
+  @override
+  String get searchSourceOptions => 'Lähdeasetukset';
 }

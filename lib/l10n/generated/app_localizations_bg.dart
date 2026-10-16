@@ -1683,4 +1683,43 @@ class AppLocalizationsBg extends AppLocalizations {
   @override
   String get youtubeConsentBlocked =>
       'Тук могат да се отварят само YouTube Music и страницата за съгласие на Google. Влизането в профил не е достъпно.';
+
+  @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count готови версии',
+      one: '$count готова версия',
+      zero: 'Няма налични версии',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count недостъпни версии',
+      one: '$count недостъпна версия',
+      zero: 'Няма недостъпни версии',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Към раздел';
+
+  @override
+  String get searchVersionDetails => 'Подробности за версията';
+
+  @override
+  String get searchSelectedRecording => 'Избран запис';
+
+  @override
+  String get searchVersionDuration => 'Продължителност на версията';
+
+  @override
+  String get searchSourceOptions => 'Опции за източника';
 }

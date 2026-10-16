@@ -737,5 +737,26 @@
   "youtubeConsentClear": "Rensa samtycke",
   "youtubeConsentInstructions": "Slutför ditt cookieval och vänta tills YouTube Music kommer tillbaka. Spara sedan den här sessionen och sök efter låten igen.",
   "youtubeConsentError": "Det gick inte att uppdatera ditt samtyckesval hos Google. Försök igen.",
-  "youtubeConsentBlocked": "Här kan endast YouTube Music och Googles samtyckessida öppnas. Det går inte att logga in på ett konto."
+  "youtubeConsentBlocked": "Här kan endast YouTube Music och Googles samtyckessida öppnas. Det går inte att logga in på ett konto.",
+  "searchReadyVersions": "{count, plural, =0{0 Tillgängliga versioner} =1{1 tillgänglig version} other{{count} Tillgängliga versioner}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{0 Otillgängliga versioner} =1{1 otillgänglig version} other{{count} Otillgängliga versioner}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "Hoppa till avsnitt",
+  "searchVersionDetails": "Versionsinformation",
+  "searchSelectedRecording": "Vald inspelning",
+  "searchVersionDuration": "Versionens längd",
+  "searchSourceOptions": "Källalternativ"
 }

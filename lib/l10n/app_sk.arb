@@ -737,5 +737,26 @@
   "youtubeConsentClear": "Vymazať súhlas",
   "youtubeConsentInstructions": "Dokončite výber súborov cookie a počkajte, kým sa vráti YouTube Music. Potom túto reláciu uložte a skúste skladbu vyhľadať znova.",
   "youtubeConsentError": "Voľbu súhlasu Googlu sa nepodarilo aktualizovať. Skúste to znova.",
-  "youtubeConsentBlocked": "Tu možno otvoriť iba YouTube Music a stránku súhlasu Googlu. Prihlásenie do účtu nie je dostupné."
+  "youtubeConsentBlocked": "Tu možno otvoriť iba YouTube Music a stránku súhlasu Googlu. Prihlásenie do účtu nie je dostupné.",
+  "searchReadyVersions": "{count, plural, =0{Žádné dostupné verze} one{{count} pripravená verzia} few{{count} dostupné verze} other{{count} dostupných verzí}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{Žádné nedostupné verze} one{{count} nedostupná verzia} few{{count} nedostupné verze} other{{count} nedostupných verzí}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "Prejsť na sekciu",
+  "searchVersionDetails": "Podrobnosti o verzii",
+  "searchSelectedRecording": "Vybratá nahrávka",
+  "searchVersionDuration": "Dĺžka verzie",
+  "searchSourceOptions": "Možnosti zdroja"
 }

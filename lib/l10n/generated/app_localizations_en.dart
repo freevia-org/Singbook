@@ -1667,4 +1667,42 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get youtubeConsentBlocked =>
       'Only YouTube Music and Google\'s consent page can open here. Account sign-in is unavailable.';
+
+  @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ready versions',
+      one: '1 ready version',
+      zero: 'No ready versions',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count unavailable versions',
+      one: '1 unavailable version',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Jump to section';
+
+  @override
+  String get searchVersionDetails => 'Version details';
+
+  @override
+  String get searchSelectedRecording => 'Selected recording';
+
+  @override
+  String get searchVersionDuration => 'Version duration';
+
+  @override
+  String get searchSourceOptions => 'Source options';
 }

@@ -737,5 +737,26 @@
   "youtubeConsentClear": "Notīrīt piekrišanu",
   "youtubeConsentInstructions": "Pabeidziet sīkfailu izvēli un gaidiet, līdz atgriežas YouTube Music. Pēc tam saglabājiet šo sesiju un mēģiniet vēlreiz meklēt dziesmu.",
   "youtubeConsentError": "Neizdevās atjaunināt Google piekrišanas izvēli. Mēģiniet vēlreiz.",
-  "youtubeConsentBlocked": "Šeit var atvērt tikai YouTube Music un Google piekrišanas lapu. Pierakstīšanās kontā nav pieejama."
+  "youtubeConsentBlocked": "Šeit var atvērt tikai YouTube Music un Google piekrišanas lapu. Pierakstīšanās kontā nav pieejama.",
+  "searchReadyVersions": "{count, plural, =0{Nav pieejamu versiju} one{{count} pieejama versija} other{{count} pieejamas versijas}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{Nav nepieejamu versiju} one{{count} nepieejama versija} other{{count} nepieejamas versijas}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "Pāriet uz sadaļu",
+  "searchVersionDetails": "Versijas informācija",
+  "searchSelectedRecording": "Atlasītais ieraksts",
+  "searchVersionDuration": "Versijas ilgums",
+  "searchSourceOptions": "Avota opcijas"
 }

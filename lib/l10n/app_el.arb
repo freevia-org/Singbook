@@ -737,5 +737,26 @@
   "youtubeConsentClear": "Εκκαθάριση συγκατάθεσης",
   "youtubeConsentInstructions": "Ολοκληρώστε την επιλογή cookie και περιμένετε να επιστρέψει το YouTube Music. Έπειτα αποθηκεύστε αυτήν τη συνεδρία και δοκιμάστε ξανά την αναζήτηση τραγουδιού.",
   "youtubeConsentError": "Δεν ήταν δυνατή η ενημέρωση της επιλογής συγκατάθεσης Google. Δοκιμάστε ξανά.",
-  "youtubeConsentBlocked": "Εδώ μπορούν να ανοίξουν μόνο το YouTube Music και η σελίδα συγκατάθεσης της Google. Η σύνδεση σε λογαριασμό δεν είναι διαθέσιμη."
+  "youtubeConsentBlocked": "Εδώ μπορούν να ανοίξουν μόνο το YouTube Music και η σελίδα συγκατάθεσης της Google. Η σύνδεση σε λογαριασμό δεν είναι διαθέσιμη.",
+  "searchReadyVersions": "{count, plural, =0{0 Διαθέσιμες εκδόσεις} =1{1 διαθέσιμη έκδοση} other{{count} Διαθέσιμες εκδόσεις}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{0 Μη διαθέσιμες εκδόσεις} =1{1 μη διαθέσιμη έκδοση} other{{count} Μη διαθέσιμες εκδόσεις}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "Μετάβαση στην ενότητα",
+  "searchVersionDetails": "Λεπτομέρειες έκδοσης",
+  "searchSelectedRecording": "Επιλεγμένη ηχογράφηση",
+  "searchVersionDuration": "Διάρκεια έκδοσης",
+  "searchSourceOptions": "Επιλογές πηγής"
 }

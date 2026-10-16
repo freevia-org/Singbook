@@ -738,5 +738,26 @@
   "youtubeConsentClear": "مسح الموافقة",
   "youtubeConsentInstructions": "أكمل اختيار ملفات تعريف الارتباط وانتظر عودة YouTube Music. ثم احفظ هذه الجلسة وأعد محاولة البحث عن الأغنية.",
   "youtubeConsentError": "تعذّر تحديث اختيار موافقة Google. حاول مرة أخرى.",
-  "youtubeConsentBlocked": "يمكن فتح YouTube Music وصفحة موافقة Google فقط هنا. تسجيل الدخول إلى الحساب غير متاح."
+  "youtubeConsentBlocked": "يمكن فتح YouTube Music وصفحة موافقة Google فقط هنا. تسجيل الدخول إلى الحساب غير متاح.",
+  "searchReadyVersions": "{count, plural, =0{لا توجد إصدارات جاهزة} =1{إصدار جاهز واحد} =2{إصداران جاهزان} few{{count} إصدارات جاهزة} many{{count} إصدارًا جاهزًا} other{{count} إصدار جاهز}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{لا توجد إصدارات غير متاحة} =1{إصدار واحد غير متاح} =2{إصداران غير متاحين} few{{count} إصدارات غير متاحة} many{{count} إصدارًا غير متاح} other{{count} إصدار غير متاح}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "الانتقال إلى القسم",
+  "searchVersionDetails": "تفاصيل الإصدار",
+  "searchSelectedRecording": "التسجيل المحدد",
+  "searchVersionDuration": "مدة الإصدار",
+  "searchSourceOptions": "خيارات المصدر"
 }

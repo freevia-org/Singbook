@@ -190,5 +190,26 @@
   "youtubeConsentClear": "Очистити згоду",
   "youtubeConsentInstructions": "Завершіть вибір файлів cookie й дочекайтеся повернення YouTube Music. Потім збережіть цей сеанс і повторіть пошук пісні.",
   "youtubeConsentError": "Не вдалося оновити вибір згоди Google. Спробуйте ще раз.",
-  "youtubeConsentBlocked": "Тут можна відкрити лише YouTube Music і сторінку згоди Google. Вхід в обліковий запис недоступний."
+  "youtubeConsentBlocked": "Тут можна відкрити лише YouTube Music і сторінку згоди Google. Вхід в обліковий запис недоступний.",
+  "searchReadyVersions": "{count, plural, =0{Немає доступних версій} one{{count} доступна версія} few{{count} доступні версії} many{{count} доступних версій} other{{count} доступної версії}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{Немає недоступних версій} one{{count} недоступна версія} few{{count} недоступні версії} many{{count} недоступних версій} other{{count} недоступної версії}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "Перейти до розділу",
+  "searchVersionDetails": "Відомості про версію",
+  "searchSelectedRecording": "Вибраний запис",
+  "searchVersionDuration": "Тривалість версії",
+  "searchSourceOptions": "Параметри джерела"
 }

@@ -168,6 +168,8 @@ void main() {
                   l10n.searchCombinedFromSources(count),
                   l10n.searchSongMatchCount(count),
                   l10n.searchSourceVersionsCount(count),
+                  l10n.searchReadyVersions(count),
+                  l10n.searchUnavailableVersions(count),
                 ]) {
                   expect(label, isNot(contains('#')));
                   if (count > 0) expect(label, contains('$count'));
@@ -274,6 +276,7 @@ void main() {
         sourceCount: 5,
         hasLyrics: true,
         isUsableVersion: true,
+        canSave: true,
         bodyPreview: [
           LyricLineData(id: 'suggested-line', text: 'Signal again'),
         ],
@@ -286,9 +289,8 @@ void main() {
         artist: 'The Signals',
         hasLyrics: true,
         isUsableVersion: true,
-        bodyPreview: [
-          LyricLineData(id: 'catalog-line', text: 'Signal again'),
-        ],
+        canSave: true,
+        bodyPreview: [LyricLineData(id: 'catalog-line', text: 'Signal again')],
       );
       const alternative1 = SourceVersionData(
         id: 'source-2',
@@ -298,6 +300,7 @@ void main() {
         artist: 'The Signals',
         hasLyrics: true,
         isUsableVersion: true,
+        canSave: true,
         bodyPreview: [
           LyricLineData(id: 'archive-a-line', text: 'Signal again'),
         ],
@@ -310,6 +313,7 @@ void main() {
         artist: 'The Signals',
         hasLyrics: true,
         isUsableVersion: true,
+        canSave: true,
         bodyPreview: [
           LyricLineData(id: 'archive-b-line', text: 'Signal again'),
         ],
@@ -342,7 +346,7 @@ void main() {
         findsOneWidget,
       );
       expect(find.byKey(const ValueKey('save-open-lyrics')), findsOneWidget);
-      expect(find.text(l10n.searchSourceVersionsCount(3)), findsOneWidget);
+      expect(find.text(l10n.searchReadyVersions(4)), findsOneWidget);
       final combinedSourcesLabel = l10n.searchCombinedFromSources(5);
       expect(
         find.byWidgetPredicate(
@@ -350,7 +354,7 @@ void main() {
               widget is Text &&
               widget.data?.contains(combinedSourcesLabel) == true,
         ),
-        findsNWidgets(2),
+        findsOneWidget,
       );
       expect(find.text(l10n.searchAutocompleteLabel), findsNothing);
       expect(tester.takeException(), isNull);
@@ -532,23 +536,26 @@ void main() {
       tester.element(find.byType(VerseHomeScreen)),
     );
     expect(find.byKey(const ValueKey('discovery-progress')), findsOneWidget);
-    expect(find.text(l10n.searchDiscoveryProgress(1, 2)), findsOneWidget);
-    expect(
-      find.byKey(const PageStorageKey('discovery-provider-checks')),
-      findsOneWidget,
-    );
+    expect(find.byTooltip(l10n.searchDiscoveryProgress(1, 2)), findsOneWidget);
+    expect(find.byKey(const ValueKey('version-source-menu')), findsOneWidget);
     expect(
       find.byKey(const ValueKey('discovery-provider-catalog')),
       findsNothing,
     );
-    await tester.tap(
-      find.byKey(const PageStorageKey('discovery-provider-checks')),
-    );
+    await tester.tap(find.byKey(const ValueKey('version-source-menu')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.tap(find.byKey(const ValueKey('discovery-provider-checks')));
+    await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
     expect(
       find.byKey(const ValueKey('discovery-provider-catalog')),
       findsOneWidget,
     );
+    Navigator.of(
+      tester.element(find.byKey(const ValueKey('discovery-provider-catalog'))),
+    ).pop();
+    await tester.pump(const Duration(milliseconds: 300));
     controller._state = const VerseUiState(
       homeListMode: HomeListMode.online,
       query: 'signal',
@@ -571,7 +578,6 @@ void main() {
     l10n = AppLocalizations.of(tester.element(find.byType(VerseHomeScreen)));
     expect(find.byKey(const ValueKey('discovery-no-lyrics')), findsOneWidget);
     expect(find.text(l10n.searchDiscoveryNoLyricsDetails), findsOneWidget);
-    expect(find.text(l10n.searchSourcesUnavailableCount(1)), findsOneWidget);
     await tester.tap(find.text(l10n.searchDiscoveryRetry));
     await tester.pump();
     expect(controller.retryRequested, isTrue);

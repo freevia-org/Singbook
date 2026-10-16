@@ -7,7 +7,7 @@ import 'package:singbook/ui/verse_app.dart';
 
 void main() {
   testWidgets(
-    'source comparison uses two panes on tablets and stacks on phones',
+    'source browser keeps tabs, preview and save action visible across sizes',
     (tester) async {
       const state = VerseUiState(
         homeListMode: HomeListMode.online,
@@ -75,24 +75,22 @@ void main() {
         );
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull, reason: 'Comparison at $size');
-        final list = tester.getRect(
-          find.byKey(const PageStorageKey('version-list')),
+        final tabs = tester.getRect(find.byKey(const ValueKey('version-tabs')));
+        final pages = tester.getRect(
+          find.byKey(const ValueKey('version-preview-pages')),
         );
-        final preview = tester.getRect(
+        final footer = tester.getRect(
           find.byKey(const ValueKey('version-selection-footer')),
         );
         final saveButton = tester.getRect(
           find.byKey(const ValueKey('save-open-lyrics')),
         );
         expect(find.text('A quiet room, a song to share'), findsOneWidget);
+        expect(tabs.top, lessThan(pages.top));
+        expect(pages.bottom, lessThanOrEqualTo(footer.top));
         expect(saveButton.bottom, lessThanOrEqualTo(size.height));
-        if (size.width >= 800) {
-          expect(list.right, lessThanOrEqualTo(preview.left));
-          expect(list.top, lessThan(preview.bottom));
-          expect(preview.top, lessThan(list.bottom));
-        } else {
-          expect(preview.top, greaterThan(list.top));
-        }
+        expect(tabs.left, greaterThanOrEqualTo(0));
+        expect(tabs.right, lessThanOrEqualTo(size.width));
       }
       await tester.pumpWidget(const SizedBox.shrink());
     },
