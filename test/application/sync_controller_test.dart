@@ -207,15 +207,18 @@ void main() {
   });
 
   test('resuming syncs only when the last sync is old', () async {
-    final app = await start(stale: const Duration(milliseconds: 150));
+    final app = await start(stale: const Duration(days: 1));
     await until(() => app.lastSyncAt != null && !app.syncBusy);
     cloud.resetCounters();
     app.onAppResumed();
     await settle(100);
     expect(cloud.lists, 0, reason: 'synced a moment ago');
-    await settle(150);
+    // Set the age explicitly: a short wall-clock freshness window can expire
+    // during the final startup reload on a busy CI runner.
+    app.lastSyncAt = DateTime.now().toUtc().subtract(const Duration(days: 2));
     app.onAppResumed();
     await until(() => cloud.lists == 1);
+    await until(() => !app.syncBusy);
   });
 
   test('signing out keeps the library and stops automatic syncing', () async {
