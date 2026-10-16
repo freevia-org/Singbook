@@ -723,22 +723,27 @@ void main() {
     expect(result.body, isNot(contains('[G]')));
     expect(result.extra['chordSourceIds'], isNull);
   });
-  test('overlays keep literal chord-shaped lyric text escaped', () {
+  test('overlays preserve literal slashes and skip unsafe chord anchors', () {
     final base =
-        r'A \[C\] note'
+        r'A\\\[C] note'
         '\n'
-        'Another plain lyric line'
+        r'A\\world'
         '\n'
-        'A third plain lyric line';
+        'Another plain lyric line';
+    final parsedBase = parseArrangement(base);
+    expect(parsedBase[0].text, r'A\[C] note');
+    expect(parsedBase[1].text, r'A\world');
     final result = combineSources(selected, [
       source('lyrics', base),
-      source('chart', '[G]A C note'),
+      source('chart', '[G]A C note\nA [F]world'),
     ]);
 
-    final first = parseArrangement(result.body).first;
-    expect(first.text, 'A [C] note');
-    expect(first.chords.map((chord) => chord.chord), ['G']);
-    expect(result.body, contains(r'[G]A \[C] note'));
+    final lines = parseArrangement(result.body);
+    expect(lines[0].text, r'A\[C] note');
+    expect(lines[0].chords.map((chord) => chord.chord), ['G']);
+    expect(lines[1].text, r'A\world');
+    expect(lines[1].chords, isEmpty);
+    expect(result.extra['chordSourceIds'], [result.sources.last.id]);
   });
   test('automatic chord overlays require matching recording setup', () {
     const full = 'First lyric line\nSecond lyric line\nThird lyric line';

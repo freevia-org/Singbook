@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import '../application/app_controller.dart';
 import '../domain/arrangement.dart' as arrangement;
 import '../domain/chordpro.dart';
+import '../domain/combine.dart' show recordingCompatible;
 import '../domain/models.dart';
 import '../domain/timing.dart' show timingOccurrenceMap;
 import '../domain/source_contributions.dart';
@@ -610,7 +611,8 @@ class AppControllerAdapter extends VerseUiController {
         .where(
           (source) =>
               contributingSourceIds.contains(source.id) &&
-              source.matchKind != MatchKind.sameRecording,
+              (source.matchKind != MatchKind.sameRecording ||
+                  !recordingCompatible(candidate, source)),
         )
         .firstOrNull;
     final suggested =
@@ -878,6 +880,11 @@ class AppControllerAdapter extends VerseUiController {
     final isChecking = app.discovering && !app.isSourceReady(result);
     final pendingVerification =
         isChecking && result.matchKind == MatchKind.sameRecording;
+    final sameRecording =
+        !isChecking &&
+        result.matchKind == MatchKind.sameRecording &&
+        app.selection != null &&
+        recordingCompatible(app.selection!, result);
     return SourceVersionData(
       id: result.id,
       providerId: candidate.providerId,
@@ -902,9 +909,13 @@ class AppControllerAdapter extends VerseUiController {
       isUsableVersion: _hasLyrics(result),
       hasChords: result.hasChords,
       hasTiming: _hasUsableTiming(result.timingTracks),
-      sameRecording:
-          result.matchKind == MatchKind.sameRecording && !isChecking,
-      matchSummary: pendingVerification ? 'pending' : result.matchReason ?? '',
+      sameRecording: sameRecording,
+      matchSummary: pendingVerification
+          ? 'pending'
+          : result.matchReason ??
+                (result.matchKind == MatchKind.sameRecording && !sameRecording
+                    ? 'identity_mismatch'
+                    : ''),
       status: isChecking
           ? LoadState.loading
           : check?.state == 'failed' || check?.state == 'unavailable'

@@ -1132,10 +1132,7 @@ void main() {
 
       expect(ui.state.comparison?.suggested?.id, 'combined');
       expect(ui.state.comparison?.selectedVersionId, 'combined');
-      expect(
-        ui.state.comparison?.suggested?.matchSummary,
-        'identity_mismatch',
-      );
+      expect(ui.state.comparison?.suggested?.matchSummary, 'identity_mismatch');
       expect(ui.state.comparison?.alternatives.single.canSave, isTrue);
       await ui.saveSelectedVersion();
       expect(app.songs, hasLength(1));
@@ -1228,6 +1225,65 @@ void main() {
 
     discovery.finished.complete([lyrics, chart]);
     await selecting;
+  });
+
+  test('sameRecording labels reflect conflicting recording metadata', () async {
+    ui.dispose();
+    app.dispose();
+    const candidate = SongCandidate(
+      providerId: 'catalog',
+      id: 'duration-conflict-song',
+      title: 'Duration Conflict Song',
+      artist: 'Test Artist',
+      album: 'Test Album',
+      durationSeconds: 120,
+    );
+    const lyrics = SourceResult(
+      candidate: candidate,
+      body:
+          'First lyric line\nSecond lyric line\nThird lyric line\nFourth lyric line',
+      matchKind: MatchKind.sameRecording,
+    );
+    const chart = SourceResult(
+      candidate: SongCandidate(
+        providerId: 'chart-provider',
+        id: 'duration-conflict-song',
+        title: 'Duration Conflict Song',
+        artist: 'Test Artist',
+        album: 'Test Album',
+        durationSeconds: 150,
+      ),
+      body: '[C]First lyric line\n[F]Second lyric line',
+      matchKind: MatchKind.sameRecording,
+    );
+    final discovery = _StreamingDiscovery(
+      candidate,
+      lyrics,
+      additionalSources: [chart],
+    );
+    app = AppController(repository: repository, discovery: discovery);
+    await app.initialize();
+    ui = AppControllerAdapter(app);
+    ui.setQuery('duration conflict song');
+    await ui.submitSearch();
+    final selecting = ui.selectReference(
+      const SearchReferenceData(
+        id: 'catalog:duration-conflict-song',
+        title: 'Duration Conflict Song',
+        artist: 'Test Artist',
+      ),
+    );
+    await discovery.started.future;
+    discovery.finished.complete([lyrics, chart]);
+    await selecting;
+
+    final comparison = ui.state.comparison!;
+    expect(comparison.suggested?.sameRecording, isFalse);
+    expect(comparison.suggested?.matchSummary, 'identity_mismatch');
+    ui.selectVersion(chart.id);
+    expect(ui.state.comparison?.selected?.sameRecording, isFalse);
+    expect(ui.state.comparison?.selected?.matchSummary, 'identity_mismatch');
+    expect(ui.state.comparison?.selected?.canSave, isTrue);
   });
 
   test(

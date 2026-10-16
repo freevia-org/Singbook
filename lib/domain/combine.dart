@@ -146,8 +146,24 @@ bool _completeChart(String chart, String reference) {
 
 String _lineKey(ArrangementLine line) => _norm(line.text);
 
-String _escapeLiteralChordTokens(String text) =>
-    text.replaceAllMapped(chordPattern, (match) => '\\${match[0]}');
+final _literalChordTokenPattern = RegExp(
+  chordPattern.pattern.replaceFirst(r'(?<!\\)', ''),
+);
+
+String _escapeLiteralChordTokens(String text) {
+  final output = StringBuffer();
+  var cursor = 0;
+  for (final match in _literalChordTokenPattern.allMatches(text)) {
+    output.write(_escapeBackslashes(text.substring(cursor, match.start)));
+    output.write('\\');
+    output.write(match[0]);
+    cursor = match.end;
+  }
+  output.write(_escapeBackslashes(text.substring(cursor)));
+  return output.toString();
+}
+
+String _escapeBackslashes(String text) => text.replaceAll('\\', '\\\\');
 
 ({String text, List<int> offsets}) _normalizedLine(String text) {
   final normalized = StringBuffer();
@@ -330,12 +346,23 @@ bool _compatibleArrangementSetup(
       output.add(rawLine);
       continue;
     }
-    applied = true;
-    chords.sort((a, b) => a.offset.compareTo(b.offset));
     final characters = line.text.characters.toList();
+    final safeChords =
+        chords
+            .where(
+              (chord) =>
+                  chord.offset == 0 || characters[chord.offset - 1] != '\\',
+            )
+            .toList()
+          ..sort((a, b) => a.offset.compareTo(b.offset));
+    if (safeChords.isEmpty) {
+      output.add(rawLine);
+      continue;
+    }
+    applied = true;
     final buffer = StringBuffer();
     var cursor = 0;
-    for (final chord in chords) {
+    for (final chord in safeChords) {
       final offset = chord.offset.clamp(cursor, characters.length);
       if (offset > cursor) {
         buffer.write(
