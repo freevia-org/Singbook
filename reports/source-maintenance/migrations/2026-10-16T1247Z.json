@@ -1,0 +1,355 @@
+{
+  "recordedAt": "2026-10-16 12:47:59 UTC",
+  "publishedEnvironment": true,
+  "specRevisionAtProbe": 8,
+  "specRevisionAtCutover": 10,
+  "geniusBindingReady": true,
+  "networkPolicy": {
+    "mode": "unrestricted",
+    "state": "enforced"
+  },
+  "baseSha": "3d87eb4703e433e9c410d3e258f4538d23eb4357",
+  "command": "dart run tool/source_maintenance.dart --report /workspace/work/singbook-verification/full-current-live.json",
+  "exitCode": 1,
+  "oldAutomationId": "6ad140b85cb88191bb06302d306d2dac",
+  "oldEnabled": false,
+  "newAutomationId": "6ad21cd17c54819189484516cdff9f6b",
+  "newEnabled": true,
+  "sameChatAssociationVerified": true,
+  "savedFullPromptVerified": true,
+  "schedule": "BEGIN:VEVENT\nDTSTART;TZID=Europe/Kyiv:20261017T090000\nRRULE:FREQ=DAILY;BYHOUR=9;BYMINUTE=0;BYSECOND=0\nEND:VEVENT",
+  "timezone": "Europe/Kyiv",
+  "nextOccurrenceFromSchedule": "2026-10-17T09:00:00+03:00",
+  "nextRunTimeReported": null,
+  "smokeJobRemainsDisabled": true,
+  "localJobUntouched": true,
+  "permissions": {
+    "supportedCommandMode": "require_escalated",
+    "interactiveNetworkChecksApproved": true,
+    "automationPermissionSettingExposed": false,
+    "unattendedApprovalBehavior": "unverified",
+    "protectionsChanged": false
+  },
+  "proxy": {
+    "measuredAt": "2026-10-16T12:45:33.102930+00:00",
+    "probes": [
+      {
+        "probe": "github",
+        "curl_exit": 0,
+        "connect_origin_tls_codes": [
+          "200",
+          "200",
+          "0"
+        ],
+        "proxy_denial_code": null,
+        "category": "success"
+      },
+      {
+        "probe": "genius_api_anonymous",
+        "curl_exit": 56,
+        "connect_origin_tls_codes": [
+          "403",
+          "000",
+          "0"
+        ],
+        "proxy_denial_code": null,
+        "category": "proxy_connect_denied"
+      },
+      {
+        "probe": "genius_api_authenticated",
+        "curl_exit": 56,
+        "connect_origin_tls_codes": [
+          "403",
+          "000",
+          "0"
+        ],
+        "proxy_denial_code": null,
+        "category": "proxy_connect_denied"
+      },
+      {
+        "probe": "genius_lyrics",
+        "curl_exit": 56,
+        "connect_origin_tls_codes": [
+          "403",
+          "000",
+          "0"
+        ],
+        "proxy_denial_code": null,
+        "category": "proxy_connect_denied"
+      }
+    ]
+  },
+  "summary": {
+    "transient_error": 6,
+    "healthy": 7,
+    "unavailable": 2,
+    "blocked": 1,
+    "import_only": 2,
+    "partial_coverage": 1
+  },
+  "sourceOutcomes": [
+    {
+      "id": "genius",
+      "status": "transient_error",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "lyrics",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "songsterr",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      }
+    },
+    {
+      "id": "ultimateguitar",
+      "status": "transient_error",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "lrclib",
+      "status": "transient_error",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "youtubemusic",
+      "status": "transient_error",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "lyrics",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "lyricsovh",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      }
+    },
+    {
+      "id": "synclrc",
+      "status": "unavailable",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "metadata",
+          "wordTiming"
+        ]
+      }
+    },
+    {
+      "id": "betterlyrics",
+      "status": "blocked",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "metadata",
+          "wordTiming"
+        ]
+      }
+    },
+    {
+      "id": "unison",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "wordTiming"
+        ],
+        "unverifiedCapabilities": []
+      }
+    },
+    {
+      "id": "ozbcoz",
+      "status": "import_only",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "chords",
+          "fileImport",
+          "lyrics",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "chordie",
+      "status": "transient_error",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "chords",
+          "fileImport",
+          "lyrics",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "worshipcommons",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata",
+          "timing"
+        ],
+        "unverifiedCapabilities": []
+      }
+    },
+    {
+      "id": "openfilksongbook",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      }
+    },
+    {
+      "id": "seanmcgrathmusic",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      }
+    },
+    {
+      "id": "worshiptogether",
+      "status": "import_only",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "chords",
+          "fileImport",
+          "lyrics",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "musicbrainz",
+      "status": "partial_coverage",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [
+          "metadata"
+        ],
+        "unverifiedCapabilities": [
+          "catalog"
+        ]
+      }
+    },
+    {
+      "id": "wikidata",
+      "status": "transient_error",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "wikimediacommons",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "artwork",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      }
+    },
+    {
+      "id": "wikisource",
+      "status": "unavailable",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "fileImport",
+          "lyrics",
+          "metadata"
+        ]
+      }
+    }
+  ],
+  "blocker": "Genius API anonymous/authenticated and lyrics CONNECT403, origin000; no recognized denial code; platform proxy access review required. No bypass."
+}
