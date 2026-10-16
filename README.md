@@ -77,7 +77,7 @@ networking (Cronet) and Google sign-in on a release APK before publishing.
 
 ### Google Play release
 
-Version `0.2.0+11` (the number after `+` is the Play versionCode and must rise on
+Version `0.2.0+12` (the number after `+` is the Play versionCode and must rise on
 every upload). The target API is 36, `minSdk` 24, with native debug symbols and
 a locale config for all 34 app languages (one per `lib/l10n/app_*.arb`; keep
 `localeFilters` in `android/app/build.gradle.kts` and
@@ -85,7 +85,7 @@ a locale config for all 34 app languages (one per `lib/l10n/app_*.arb`; keep
 
 ```powershell
 .\scripts\build-android.ps1 -Bundle -Production   # signed .aab + symbols + SHA-256 in artifacts\
-.\scripts\verify-release.ps1 -Path artifacts\singbook-0.2.0+11-release.aab
+.\scripts\verify-release.ps1 -Path artifacts\singbook-0.2.0+12-release.aab
 ```
 
 The build script refuses to overwrite an existing artifact of the same version
