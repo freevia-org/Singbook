@@ -19,6 +19,16 @@ class AppLocalizationsId extends AppLocalizations {
   String get aboutMadeForSinging => 'Dibuat untuk bernyanyi bersama';
 
   @override
+  String get aboutDetails =>
+      'Cari di sumber yang diaktifkan, bandingkan versi lagu, simpan lirik dan akor bersama, lalu susun lagu ke dalam setlist. Pustaka tersimpan di perangkat ini; sinkronisasi Google Drive opsional menggunakan akun Google Anda. Pencarian dikirim langsung ke sumber yang diaktifkan.';
+
+  @override
+  String get aboutSupport => 'Dukungan dan masukan';
+
+  @override
+  String get menuTypeNewSong => 'Ketik lagu baru';
+
+  @override
   String appVersion(String version) {
     return 'Versi $version';
   }
@@ -594,10 +604,10 @@ class AppLocalizationsId extends AppLocalizations {
   String get readerEdit => 'Edit lirik dan detail';
 
   @override
-  String get playerPlay => 'Mulai gulir lirik';
+  String get playerPlay => 'Putar';
 
   @override
-  String get playerPause => 'Jeda gulir lirik';
+  String get playerPause => 'Jeda';
 
   @override
   String get playerResume => 'Lanjutkan gulir lirik';

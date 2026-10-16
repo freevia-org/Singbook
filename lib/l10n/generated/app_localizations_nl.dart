@@ -19,6 +19,16 @@ class AppLocalizationsNl extends AppLocalizations {
   String get aboutMadeForSinging => 'Gemaakt om samen te zingen';
 
   @override
+  String get aboutDetails =>
+      'Zoek in ingeschakelde bronnen, vergelijk versies, bewaar songteksten en akkoorden samen en orden nummers in setlijsten. Je bibliotheek wordt op dit apparaat opgeslagen; optionele synchronisatie met Google Drive gebruikt je Google-account. Zoekopdrachten gaan rechtstreeks naar ingeschakelde bronnen.';
+
+  @override
+  String get aboutSupport => 'Ondersteuning en feedback';
+
+  @override
+  String get menuTypeNewSong => 'Nieuw lied invoeren';
+
+  @override
   String appVersion(String version) {
     return 'Versie $version';
   }
@@ -595,10 +605,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get readerEdit => 'Songteksten en gegevens bewerken';
 
   @override
-  String get playerPlay => 'Songteksten automatisch laten scrollen';
+  String get playerPlay => 'Afspelen';
 
   @override
-  String get playerPause => 'Automatisch scrollen pauzeren';
+  String get playerPause => 'Pauzeren';
 
   @override
   String get playerResume => 'Automatisch scrollen hervatten';

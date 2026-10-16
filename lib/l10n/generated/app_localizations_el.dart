@@ -19,6 +19,16 @@ class AppLocalizationsEl extends AppLocalizations {
   String get aboutMadeForSinging => 'Φτιαγμένο για να τραγουδάμε μαζί';
 
   @override
+  String get aboutDetails =>
+      'Αναζητήστε σε ενεργοποιημένες πηγές, συγκρίνετε εκδόσεις, κρατήστε μαζί στίχους και συγχορδίες και οργανώστε τραγούδια σε λίστες. Η βιβλιοθήκη σας αποθηκεύεται σε αυτήν τη συσκευή· ο προαιρετικός συγχρονισμός μέσω Google Drive χρησιμοποιεί τον λογαριασμό σας Google. Οι αναζητήσεις αποστέλλονται απευθείας στις ενεργοποιημένες πηγές.';
+
+  @override
+  String get aboutSupport => 'Υποστήριξη και σχόλια';
+
+  @override
+  String get menuTypeNewSong => 'Πληκτρολογήστε ένα νέο τραγούδι';
+
+  @override
   String appVersion(String version) {
     return 'Έκδοση $version';
   }
@@ -598,10 +608,10 @@ class AppLocalizationsEl extends AppLocalizations {
   String get readerEdit => 'Επεξεργασία στίχων και στοιχείων';
 
   @override
-  String get playerPlay => 'Έναρξη κύλισης στίχων';
+  String get playerPlay => 'Αναπαραγωγή';
 
   @override
-  String get playerPause => 'Παύση κύλισης στίχων';
+  String get playerPause => 'Παύση';
 
   @override
   String get playerResume => 'Συνέχιση κύλισης στίχων';

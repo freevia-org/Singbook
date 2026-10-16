@@ -19,6 +19,16 @@ class AppLocalizationsEt extends AppLocalizations {
   String get aboutMadeForSinging => 'Loodud koos laulmiseks';
 
   @override
+  String get aboutDetails =>
+      'Otsi lubatud allikatest, võrdle versioone, hoia sõnad ja akordid koos ning korralda laulud esitusloenditesse. Sinu kogu salvestatakse sellesse seadmesse; valikuline Google Drive’i sünkroonimine kasutab sinu Google’i kontot. Otsingud saadetakse otse lubatud allikatele.';
+
+  @override
+  String get aboutSupport => 'Tugi ja tagasiside';
+
+  @override
+  String get menuTypeNewSong => 'Sisesta uus laul';
+
+  @override
   String appVersion(String version) {
     return 'Versioon $version';
   }
@@ -590,10 +600,10 @@ class AppLocalizationsEt extends AppLocalizations {
   String get readerEdit => 'Muuda sõnu ja andmeid';
 
   @override
-  String get playerPlay => 'Alusta laulusõnade kerimist';
+  String get playerPlay => 'Esita';
 
   @override
-  String get playerPause => 'Peata laulusõnade kerimine';
+  String get playerPause => 'Peata';
 
   @override
   String get playerResume => 'Jätka laulusõnade kerimist';

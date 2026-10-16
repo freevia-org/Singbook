@@ -19,6 +19,16 @@ class AppLocalizationsCs extends AppLocalizations {
   String get aboutMadeForSinging => 'Vytvořeno pro společné zpívání';
 
   @override
+  String get aboutDetails =>
+      'Hledejte v povolených zdrojích, porovnávejte verze, uchovávejte texty a akordy spolu a organizujte skladby do playlistů. Vaše knihovna je uložena v tomto zařízení; volitelná synchronizace přes Google Drive používá váš účet Google. Vyhledávání se odesílá přímo povoleným zdrojům.';
+
+  @override
+  String get aboutSupport => 'Podpora a zpětná vazba';
+
+  @override
+  String get menuTypeNewSong => 'Zadat novou píseň';
+
+  @override
   String appVersion(String version) {
     return 'Verze $version';
   }
@@ -595,10 +605,10 @@ class AppLocalizationsCs extends AppLocalizations {
   String get readerEdit => 'Upravit text písně a informace';
 
   @override
-  String get playerPlay => 'Spustit posouvání textu písně';
+  String get playerPlay => 'Přehrát';
 
   @override
-  String get playerPause => 'Pozastavit posouvání textu písně';
+  String get playerPause => 'Pozastavit';
 
   @override
   String get playerResume => 'Pokračovat v posouvání textu písně';

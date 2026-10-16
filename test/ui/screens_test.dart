@@ -23,8 +23,10 @@ void main() {
       await pumpShell(tester, c);
       final l10n = l10nOf(tester);
 
-      await tester.tap(find.byTooltip(l10n.settingsImportChordPro));
-      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('header-overflow-menu')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(l10n.settingsImportChordPro));
+      await tester.pumpAndSettle();
 
       expect(c.calls, contains('importChordPro'));
     });
@@ -150,7 +152,9 @@ void main() {
     });
   });
 
-  testWidgets('search submit is an icon inside the search field', (tester) async {
+  testWidgets('search submit stays in the field and Home has no add button', (
+    tester,
+  ) async {
     final c = FakeUiController(
       (_) => const VerseUiState(activeTab: VerseTab.home),
     );
@@ -160,9 +164,7 @@ void main() {
 
     expect(find.byTooltip(l10n.searchSubmit), findsOneWidget);
     expect(find.byTooltip(l10n.searchFilters), findsNothing);
-    await tester.tap(find.byTooltip(l10n.songsAdd));
-    await tester.pump();
-    expect(c.calls, contains('createSong'));
+    expect(find.byTooltip(l10n.songsAdd), findsNothing);
     expect(find.text(l10n.searchSubmit), findsNothing);
   });
 
@@ -197,8 +199,10 @@ void main() {
     await pumpShell(tester, c);
     final l10n = l10nOf(tester);
 
-    await tester.tap(find.byTooltip(l10n.settingsImportSetlist));
-    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('header-overflow-menu')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('${l10n.settingsImportSetlist} (.osts)'));
+    await tester.pumpAndSettle();
 
     expect(c.calls, contains('importSetlist'));
   });
@@ -496,7 +500,7 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('start-lyric-scroll')));
       expect(c.calls, contains('playPause'));
 
-      await tester.drag(find.byType(Slider), const Offset(120, 0));
+      await tester.drag(find.byKey(const ValueKey('player-seek-slider')), const Offset(120, 0));
       await tester.pump();
       expect(c.calls.where((call) => call.startsWith('seek(')), isNotEmpty);
       expect(c.positionNotifier.value.seconds, greaterThan(0));

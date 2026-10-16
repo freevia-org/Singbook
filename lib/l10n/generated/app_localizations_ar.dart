@@ -19,6 +19,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get aboutMadeForSinging => 'صُمم للغناء معًا';
 
   @override
+  String get aboutDetails =>
+      'ابحث في المصادر المفعّلة، وقارن الإصدارات، واجمع الكلمات والأكوردات، ونظّم الأغاني في قوائم. تُحفظ مكتبتك على هذا الجهاز؛ والمزامنة الاختيارية عبر Google Drive تستخدم حسابك على Google. تُرسل عمليات البحث مباشرة إلى المصادر المفعّلة.';
+
+  @override
+  String get aboutSupport => 'الدعم والملاحظات';
+
+  @override
+  String get menuTypeNewSong => 'اكتب أغنية جديدة';
+
+  @override
   String appVersion(String version) {
     return 'الإصدار $version';
   }
@@ -600,10 +610,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get readerEdit => 'تعديل الكلمات والتفاصيل';
 
   @override
-  String get playerPlay => 'بدء تمرير الكلمات';
+  String get playerPlay => 'تشغيل';
 
   @override
-  String get playerPause => 'إيقاف تمرير الكلمات مؤقتًا';
+  String get playerPause => 'إيقاف مؤقت';
 
   @override
   String get playerResume => 'استئناف تمرير الكلمات';

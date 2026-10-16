@@ -19,6 +19,16 @@ class AppLocalizationsMt extends AppLocalizations {
   String get aboutMadeForSinging => 'Magħmul biex inkantaw flimkien';
 
   @override
+  String get aboutDetails =>
+      'Fittex fis-sorsi attivati, qabbel verżjonijiet, żomm il-lirika u l-kordi flimkien, u organizza l-kanzunetti f’listi. Il-librerija tiegħek tinżamm fuq dan it-tagħmir; is-sinkronizzazzjoni fakultattiva ma’ Google Drive tuża l-kont Google tiegħek. It-tfittxijiet jintbagħtu direttament lis-sorsi attivati.';
+
+  @override
+  String get aboutSupport => 'Għajnuna u feedback';
+
+  @override
+  String get menuTypeNewSong => 'Ikteb kanzunetta ġdida';
+
+  @override
   String appVersion(String version) {
     return 'Verżjoni $version';
   }
@@ -597,10 +607,10 @@ class AppLocalizationsMt extends AppLocalizations {
   String get readerEdit => 'Editja l-lirika u d-dettalji';
 
   @override
-  String get playerPlay => 'Ibda l-iskrolljar tal-lirika';
+  String get playerPlay => 'Daqq';
 
   @override
-  String get playerPause => 'Waqqaf l-iskrolljar tal-lirika';
+  String get playerPause => 'Waqqaf';
 
   @override
   String get playerResume => 'Kompli l-iskrolljar tal-lirika';

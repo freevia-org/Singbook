@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Tempat yang nyaman untuk menemukan, mengatur, dan bernyanyi bersama koleksi lagu Anda.",
   "aboutMadeForSinging": "Dibuat untuk bernyanyi bersama",
-  "appVersion": "Versi {version}",
+  "menuTypeNewSong": "Ketik lagu baru", "aboutDetails": "Cari di sumber yang diaktifkan, bandingkan versi lagu, simpan lirik dan akor bersama, lalu susun lagu ke dalam setlist. Pustaka tersimpan di perangkat ini; sinkronisasi Google Drive opsional menggunakan akun Google Anda. Pencarian dikirim langsung ke sumber yang diaktifkan.", "aboutSupport": "Dukungan dan masukan", "appVersion": "Versi {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -287,8 +287,8 @@
   },
   "readerSaved": "Tersimpan",
   "readerEdit": "Edit lirik dan detail",
-  "playerPlay": "Mulai gulir lirik",
-  "playerPause": "Jeda gulir lirik",
+  "playerPlay": "Putar",
+  "playerPause": "Jeda",
   "playerResume": "Lanjutkan gulir lirik",
   "playerSeek": "Posisi pemutaran",
   "playerElapsed": "Waktu berlalu {time}",

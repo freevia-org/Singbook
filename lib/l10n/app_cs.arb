@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Klidné místo, kde najdete a uspořádáte svou knihovnu písní a budete si společně zpívat.",
   "aboutMadeForSinging": "Vytvořeno pro společné zpívání",
-  "appVersion": "Verze {version}",
+  "menuTypeNewSong": "Zadat novou píseň", "aboutDetails": "Hledejte v povolených zdrojích, porovnávejte verze, uchovávejte texty a akordy spolu a organizujte skladby do playlistů. Vaše knihovna je uložena v tomto zařízení; volitelná synchronizace přes Google Drive používá váš účet Google. Vyhledávání se odesílá přímo povoleným zdrojům.", "aboutSupport": "Podpora a zpětná vazba", "appVersion": "Verze {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -287,8 +287,8 @@
   },
   "readerSaved": "Uloženo",
   "readerEdit": "Upravit text písně a informace",
-  "playerPlay": "Spustit posouvání textu písně",
-  "playerPause": "Pozastavit posouvání textu písně",
+  "playerPlay": "Přehrát",
+  "playerPause": "Pozastavit",
   "playerResume": "Pokračovat v posouvání textu písně",
   "playerSeek": "Pozice přehrávání",
   "playerElapsed": "Uplynulý čas {time}",

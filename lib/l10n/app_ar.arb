@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "مساحة هادئة للعثور على مكتبة أغانيك وتنظيمها والغناء منها.",
   "aboutMadeForSinging": "صُمم للغناء معًا",
-  "appVersion": "الإصدار {version}",
+  "menuTypeNewSong": "اكتب أغنية جديدة", "aboutDetails": "ابحث في المصادر المفعّلة، وقارن الإصدارات، واجمع الكلمات والأكوردات، ونظّم الأغاني في قوائم. تُحفظ مكتبتك على هذا الجهاز؛ والمزامنة الاختيارية عبر Google Drive تستخدم حسابك على Google. تُرسل عمليات البحث مباشرة إلى المصادر المفعّلة.", "aboutSupport": "الدعم والملاحظات", "appVersion": "الإصدار {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -287,8 +287,8 @@
   },
   "readerEdit": "تعديل الكلمات والتفاصيل",
   "readerSaved": "تم الحفظ",
-  "playerPlay": "بدء تمرير الكلمات",
-  "playerPause": "إيقاف تمرير الكلمات مؤقتًا",
+  "playerPlay": "تشغيل",
+  "playerPause": "إيقاف مؤقت",
   "playerResume": "استئناف تمرير الكلمات",
   "playerSeek": "موضع التشغيل",
   "playerElapsed": "الوقت المنقضي {time}",

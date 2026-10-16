@@ -19,6 +19,16 @@ class AppLocalizationsSl extends AppLocalizations {
   String get aboutMadeForSinging => 'Ustvarjeno za skupno petje';
 
   @override
+  String get aboutDetails =>
+      'Išči po omogočenih virih, primerjaj različice, hrani besedila in akorde skupaj ter razvrščaj pesmi v sezname. Knjižnica je shranjena v tej napravi; izbirna sinhronizacija z Google Drive uporablja tvoj Google račun. Iskanja se pošljejo neposredno omogočenim virom.';
+
+  @override
+  String get aboutSupport => 'Podpora in povratne informacije';
+
+  @override
+  String get menuTypeNewSong => 'Vnesi novo pesem';
+
+  @override
   String appVersion(String version) {
     return 'Različica $version';
   }
@@ -600,10 +610,10 @@ class AppLocalizationsSl extends AppLocalizations {
   String get readerEdit => 'Uredi besedilo pesmi in podatke';
 
   @override
-  String get playerPlay => 'Začni drsenje besedila pesmi';
+  String get playerPlay => 'Predvajaj';
 
   @override
-  String get playerPause => 'Začasno ustavi drsenje besedila pesmi';
+  String get playerPause => 'Ustavi';
 
   @override
   String get playerResume => 'Nadaljuj drsenje besedila pesmi';

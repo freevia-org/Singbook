@@ -19,6 +19,16 @@ class AppLocalizationsRo extends AppLocalizations {
   String get aboutMadeForSinging => 'Creat pentru a cânta împreună';
 
   @override
+  String get aboutDetails =>
+      'Caută în sursele activate, compară versiunile, păstrează versurile și acordurile împreună și organizează melodiile în setlisturi. Biblioteca ta este stocată pe acest dispozitiv; sincronizarea opțională cu Google Drive folosește contul tău Google. Căutările sunt trimise direct către sursele activate.';
+
+  @override
+  String get aboutSupport => 'Asistență și feedback';
+
+  @override
+  String get menuTypeNewSong => 'Introdu o melodie nouă';
+
+  @override
   String appVersion(String version) {
     return 'Versiunea $version';
   }
@@ -599,10 +609,10 @@ class AppLocalizationsRo extends AppLocalizations {
   String get readerEdit => 'Editează versurile și detaliile';
 
   @override
-  String get playerPlay => 'Pornește derularea versurilor';
+  String get playerPlay => 'Redă';
 
   @override
-  String get playerPause => 'Întrerupe derularea versurilor';
+  String get playerPause => 'Pauză';
 
   @override
   String get playerResume => 'Reia derularea versurilor';

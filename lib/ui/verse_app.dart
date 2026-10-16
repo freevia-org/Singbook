@@ -8,7 +8,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import '../application/app_controller.dart';
 import '../application/file_actions.dart';
 import '../l10n/generated/app_localizations.dart';
-import 'account_avatar.dart';
 import 'app_controller_adapter.dart';
 import 'home/home_screen.dart';
 import 'library/editor_screen.dart';
@@ -585,7 +584,12 @@ class _VerseAppShellState extends State<VerseAppShell>
       icon = Stack(
         clipBehavior: Clip.none,
         children: [
-          AccountAvatar(photoUrl: state.accountPhotoUrl, size: 32),
+          CircleAvatar(
+            radius: 16,
+            backgroundColor: scheme.surfaceContainerHighest,
+            foregroundColor: scheme.onSurfaceVariant,
+            child: const Icon(Icons.person_outline_rounded, size: 22),
+          ),
           if (state.syncBusy)
             Positioned(
               right: -2,
@@ -630,31 +634,35 @@ class _VerseAppShellState extends State<VerseAppShell>
       : icon;
 
   List<Widget> _mainHeaderActions(AppLocalizations l10n, VerseUiState state) {
-    final actions = <Widget>[_cloudButton(l10n, state)];
+    final actions = <Widget>[];
     switch (state.activeTab) {
       case VerseTab.songs:
         actions.addAll([
-          IconButton(
-            key: const ValueKey('import-header-button'),
-            tooltip: l10n.settingsImportChordPro,
-            onPressed: widget.controller.importChordPro,
-            icon: const Icon(Icons.file_upload_outlined),
-          ),
-          IconButton.filledTonal(
-            key: const ValueKey('add-header-button'),
-            tooltip: l10n.songsAdd,
-            onPressed: widget.controller.createSong,
-            icon: const Icon(Icons.add_rounded),
+          PopupMenuButton<String>(
+            key: const ValueKey('header-overflow-menu'),
+            tooltip: l10n.navMore,
+            icon: const Icon(Icons.more_vert_rounded),
+            onSelected: (value) {
+              if (value == 'new-song') {
+                unawaited(widget.controller.createSong());
+              } else if (value == 'import-chordpro') {
+                unawaited(widget.controller.importChordPro());
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'new-song',
+                child: Text(l10n.menuTypeNewSong),
+              ),
+              PopupMenuItem(
+                value: 'import-chordpro',
+                child: Text(l10n.settingsImportChordPro),
+              ),
+            ],
           ),
         ]);
       case VerseTab.setlists:
         actions.addAll([
-          IconButton(
-            key: const ValueKey('import-header-button'),
-            tooltip: l10n.settingsImportSetlist,
-            onPressed: widget.controller.importSetlist,
-            icon: const Icon(Icons.file_upload_outlined),
-          ),
           IconButton.filledTonal(
             key: const ValueKey('add-header-button'),
             tooltip: l10n.setlistCreate,
@@ -662,11 +670,28 @@ class _VerseAppShellState extends State<VerseAppShell>
                 widget.controller.createSetlist(name: l10n.setlistCreate),
             icon: const Icon(Icons.add_rounded),
           ),
+          PopupMenuButton<String>(
+            key: const ValueKey('header-overflow-menu'),
+            tooltip: l10n.navMore,
+            icon: const Icon(Icons.more_vert_rounded),
+            onSelected: (value) {
+              if (value == 'import-setlist') {
+                unawaited(widget.controller.importSetlist());
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'import-setlist',
+                child: Text('${l10n.settingsImportSetlist} (.osts)'),
+              ),
+            ],
+          ),
         ]);
       case VerseTab.home:
       case VerseTab.settings:
         break;
     }
+    actions.add(_cloudButton(l10n, state));
     actions.add(const SizedBox(width: 8));
     return actions;
   }

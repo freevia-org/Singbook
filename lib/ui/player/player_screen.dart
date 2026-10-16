@@ -16,6 +16,25 @@ import '../widgets/subpage_header.dart';
 import 'screen_awake.dart';
 import 'section_labels.dart';
 
+int? _keyPitchClass(String? key) {
+  if (key == null) return null;
+  final match = RegExp(
+    r'^\s*([A-G])([#b♯♭]?)',
+    caseSensitive: false,
+  ).firstMatch(key);
+  if (match == null) return null;
+  const pitches = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11};
+  final accidental = match.group(2);
+  return (pitches[match.group(1)!.toUpperCase()]! +
+          (accidental == '#' || accidental == '♯'
+              ? 1
+              : accidental == 'b' || accidental == '♭'
+              ? -1
+              : 0) +
+          12) %
+      12;
+}
+
 /// The lyric reader and player: scrolling lyrics, a seek bar with section
 /// markers and transport controls.
 ///
@@ -482,13 +501,8 @@ class _PlayerScreenState extends State<PlayerScreen>
           if (compact) _transport(context, l10n, state),
           ValueListenableBuilder<PlayerPosition>(
             valueListenable: _position,
-            builder: (context, position, _) => _seekBar(
-              context,
-              l10n,
-              state,
-              position,
-              duration,
-            ),
+            builder: (context, position, _) =>
+                _seekBar(context, l10n, state, position, duration),
           ),
           if (!compact) _transport(context, l10n, state),
           if (song.hasChords) _chordControls(l10n, state, compact: compact),
@@ -717,7 +731,18 @@ class _PlayerScreenState extends State<PlayerScreen>
     double duration,
   ) {
     final currentSection = _sectionAt(state.playerSections, position.seconds);
-    final maxValue = duration > 0 ? duration : 1.0;
+    final speed = state.playbackSpeed;
+    final displayDuration = duration / speed;
+    final displayPosition = position.seconds / speed;
+    final displaySections = [
+      for (final marker in state.playerSections)
+        PlayerSectionMarker(
+          name: marker.name,
+          lineId: marker.lineId,
+          startSeconds: marker.startSeconds / speed,
+        ),
+    ];
+    final maxValue = displayDuration > 0 ? displayDuration : 1.0;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -731,8 +756,8 @@ class _PlayerScreenState extends State<PlayerScreen>
               final section = Text(
                 currentSection == null
                     ? (state.readerHasTiming
-                        ? l10n.playerTimedLyrics
-                        : l10n.playerEstimatedPace)
+                          ? l10n.playerTimedLyrics
+                          : l10n.playerEstimatedPace)
                     : localizedSectionName(l10n, currentSection.name),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -743,7 +768,7 @@ class _PlayerScreenState extends State<PlayerScreen>
               );
               final times = Row(
                 children: [
-                  Text(formatDuration(position.seconds)),
+                  Text(formatDuration(displayPosition)),
                   if (narrow)
                     const Spacer()
                   else ...[
@@ -753,8 +778,10 @@ class _PlayerScreenState extends State<PlayerScreen>
                   ],
                   Text(
                     !narrow && state.readerDurationEstimated
-                        ? l10n.playerEstimatedDuration(formatDuration(duration))
-                        : formatDuration(duration),
+                        ? l10n.playerEstimatedDuration(
+                            formatDuration(displayDuration),
+                          )
+                        : formatDuration(displayDuration),
                   ),
                 ],
               );
@@ -765,8 +792,8 @@ class _PlayerScreenState extends State<PlayerScreen>
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             trackShape: _SectionMarkerSliderTrackShape(
-              markers: state.playerSections,
-              durationSeconds: duration,
+              markers: displaySections,
+              durationSeconds: displayDuration,
             ),
           ),
           child: SizedBox(
@@ -778,33 +805,34 @@ class _PlayerScreenState extends State<PlayerScreen>
                   children: [
                     Positioned.fill(
                       child: Slider(
+                        key: const ValueKey('player-seek-slider'),
                         min: 0,
                         max: maxValue,
                         // While the thumb is held, clock ticks must not move it.
-                        value: (_dragValue ?? position.seconds)
+                        value: (_dragValue ?? displayPosition)
                             .clamp(0, maxValue)
                             .toDouble(),
                         semanticFormatterCallback: (value) {
-                          final section = _sectionAt(
+                          final sourceSection = _sectionAt(
                             state.playerSections,
-                            value,
+                            value * speed,
                           );
-                          return '${section == null ? l10n.playerCurrentSection : localizedSectionName(l10n, section.name)}, '
+                          return '${sourceSection == null ? l10n.playerCurrentSection : localizedSectionName(l10n, sourceSection.name)}, '
                               '${formatDuration(value)}';
                         },
                         onChangeStart: (value) => _dragValue = value,
                         onChanged: (value) {
                           _dragValue = value;
                           _instantSeek = true;
-                          controller.seek(value);
+                          controller.seek(value * speed);
                         },
                         onChangeEnd: (_) => _dragValue = null,
                       ),
                     ),
                     ..._sectionMarkerLabelWidgets(
-                      markers: state.playerSections,
-                      durationSeconds: duration,
-                      progressSeconds: position.seconds,
+                      markers: displaySections,
+                      durationSeconds: displayDuration,
+                      progressSeconds: displayPosition,
                       width: constraints.maxWidth,
                       textDirection: Directionality.of(context),
                       labelColor: Theme.of(
@@ -820,6 +848,35 @@ class _PlayerScreenState extends State<PlayerScreen>
             ),
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+          child: Row(
+            children: [
+              Text('0.5×', style: Theme.of(context).textTheme.labelSmall),
+              Expanded(
+                child: Slider(
+                  key: const ValueKey('scroll-speed-slider'),
+                  min: .5,
+                  max: 2,
+                  divisions: 30,
+                  value: state.playbackSpeed,
+                  label: '${state.playbackSpeed.toStringAsFixed(2)}×',
+                  semanticFormatterCallback: (value) =>
+                      '${l10n.playerScrollSpeed}, ${value.toStringAsFixed(2)}×',
+                  onChanged: controller.setPlaybackSpeed,
+                ),
+              ),
+              SizedBox(
+                width: 44,
+                child: Text(
+                  '${state.playbackSpeed.toStringAsFixed(2)}×',
+                  textAlign: TextAlign.end,
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -832,14 +889,11 @@ class _PlayerScreenState extends State<PlayerScreen>
     padding: const EdgeInsets.fromLTRB(16, 0, 16, 2),
     child: LayoutBuilder(
       builder: (context, constraints) {
-        final separateControls =
-            (state.playerSections.isNotEmpty || state.activeSetlist != null) &&
-            (constraints.maxWidth < 340 ||
-                MediaQuery.textScalerOf(context).scale(1) > 1.3);
         final start = FilledButton.icon(
           key: const ValueKey('start-lyric-scroll'),
           style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+            minimumSize: const Size(104, 42),
           ),
           onPressed: () async {
             if (!state.isPlaying) {
@@ -855,8 +909,8 @@ class _PlayerScreenState extends State<PlayerScreen>
             state.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
           ),
           label: Text(
-            state.isPlaying ? l10n.playerPause : l10n.playerStartScroll,
-            maxLines: 3,
+            state.isPlaying ? l10n.playerPause : l10n.playerPlay,
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
           ),
@@ -879,30 +933,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                   : controller.previousSong,
               icon: const Icon(Icons.skip_previous_rounded),
             ),
-          if (!separateControls) Flexible(child: start),
-          if (!state.readerHasTiming)
-            PopupMenuButton<double>(
-              key: const ValueKey('scroll-speed'),
-              tooltip: l10n.playerScrollSpeed,
-              initialValue: state.playbackSpeed,
-              onSelected: controller.setPlaybackSpeed,
-              itemBuilder: (_) => [
-                for (final speed in [.5, 1.0, 1.5, 2.0])
-                  CheckedPopupMenuItem(
-                    value: speed,
-                    checked: state.playbackSpeed == speed,
-                    child: Text(
-                      '${speed == speed.roundToDouble() ? speed.toInt() : speed}×',
-                    ),
-                  ),
-              ],
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Text(
-                  '${state.playbackSpeed == state.playbackSpeed.roundToDouble() ? state.playbackSpeed.toInt() : state.playbackSpeed}× ▾',
-                ),
-              ),
-            ),
+          Flexible(child: start),
           if (state.playerSections.isNotEmpty || state.activeSetlist != null)
             IconButton(
               tooltip: state.activeSetlist == null
@@ -921,23 +952,9 @@ class _PlayerScreenState extends State<PlayerScreen>
               icon: const Icon(Icons.skip_next_rounded),
             ),
         ];
-        if (!separateControls) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: controls,
-          );
-        }
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            start,
-            if (controls.isNotEmpty)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: controls,
-              ),
-          ],
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: controls,
         );
       },
     ),
@@ -947,37 +964,153 @@ class _PlayerScreenState extends State<PlayerScreen>
     AppLocalizations l10n,
     VerseUiState state, {
     bool compact = false,
-  }) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          tooltip: l10n.readerTransposeSemitones(-1),
-          onPressed: () => controller.transpose(-1),
-          icon: const Icon(Icons.remove_circle_outline),
-        ),
-        SizedBox(width: compact ? 8 : 24),
-        IconButton(
-          tooltip: state.showChords
-              ? l10n.readerHideChords
-              : l10n.readerShowChords,
-          onPressed: () => controller.setShowChords(!state.showChords),
-          icon: Icon(
-            state.showChords
-                ? Icons.music_note_rounded
-                : Icons.music_off_rounded,
+  }) {
+    const sharpNames = [
+      'C',
+      'C♯',
+      'D',
+      'D♯',
+      'E',
+      'F',
+      'F♯',
+      'G',
+      'G♯',
+      'A',
+      'A♯',
+      'B',
+    ];
+    const flatNames = [
+      'C',
+      'D♭',
+      'D',
+      'E♭',
+      'E',
+      'F',
+      'G♭',
+      'G',
+      'A♭',
+      'A',
+      'B♭',
+      'B',
+    ];
+    final originalKey = state.song?.key;
+    final originalPitch = _keyPitchClass(originalKey);
+    final int currentPitch =
+        _keyPitchClass(state.readerKey) ?? originalPitch ?? 0;
+    final minorKey =
+        originalKey != null &&
+        RegExp(
+          r'^[A-Ga-g][#b♯♭]?\s*(?:m|min|minor)$',
+        ).hasMatch(originalKey.trim());
+    final keyNames =
+        originalKey?.contains('b') == true || originalKey?.contains('♭') == true
+        ? flatNames
+        : sharpNames;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      child: Row(
+        children: [
+          Flexible(
+            flex: 3,
+            child: InkWell(
+              onTap: () => controller.setShowChords(!state.showChords),
+              borderRadius: BorderRadius.circular(8),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Checkbox(
+                    value: state.showChords,
+                    onChanged: (value) =>
+                        controller.setShowChords(value ?? false),
+                  ),
+                  Flexible(
+                    child: Text(
+                      l10n.readerShowChords,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-        SizedBox(width: compact ? 8 : 24),
-        IconButton(
-          tooltip: l10n.readerTransposeSemitones(1),
-          onPressed: () => controller.transpose(1),
-          icon: const Icon(Icons.add_circle_outline),
-        ),
-      ],
-    ),
-  );
+          const SizedBox(width: 8),
+          if (state.song?.hasChords == true && originalPitch != null)
+            Expanded(
+              flex: compact ? 4 : 3,
+              child: Semantics(
+                label: l10n.readerTranspose,
+                child: Tooltip(
+                  message: l10n.readerTranspose,
+                  child: DropdownButton<int>(
+                    key: const ValueKey('pitch-key-dropdown'),
+                    value: currentPitch,
+                    isExpanded: true,
+                    underline: const SizedBox.shrink(),
+                    icon: const Icon(Icons.arrow_drop_down),
+                    selectedItemBuilder: (context) => [
+                      for (var pitch = 0; pitch < 12; pitch++)
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            state.readerKey ?? keyNames[pitch],
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                    ],
+                    items: [
+                      for (var pitch = 0; pitch < 12; pitch++)
+                        DropdownMenuItem(
+                          value: pitch,
+                          child: Text(
+                            pitch == originalPitch
+                                ? '${originalKey!}  ★'
+                                : '${keyNames[pitch]}${minorKey ? 'm' : ''}',
+                            style: pitch == originalPitch
+                                ? TextStyle(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
+                                    fontWeight: FontWeight.w700,
+                                  )
+                                : null,
+                          ),
+                        ),
+                    ],
+                    onChanged: (pitch) {
+                      if (pitch == null) return;
+                      var delta = (pitch - currentPitch + 12) % 12;
+                      if (delta > 6) delta -= 12;
+                      if (delta != 0) controller.transpose(delta);
+                    },
+                  ),
+                ),
+              ),
+            )
+          else if (state.song?.hasChords == true)
+            Expanded(
+              flex: compact ? 4 : 3,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    tooltip: l10n.readerTransposeSemitones(-1),
+                    onPressed: () => controller.transpose(-1),
+                    icon: const Icon(Icons.remove_circle_outline),
+                  ),
+                  IconButton(
+                    tooltip: l10n.readerTransposeSemitones(1),
+                    onPressed: () => controller.transpose(1),
+                    icon: const Icon(Icons.add_circle_outline),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
 }
 
 class _SectionMarkerSliderTrackShape extends RoundedRectSliderTrackShape {

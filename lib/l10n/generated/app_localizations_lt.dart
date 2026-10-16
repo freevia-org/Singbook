@@ -19,6 +19,16 @@ class AppLocalizationsLt extends AppLocalizations {
   String get aboutMadeForSinging => 'Sukurta dainuoti kartu';
 
   @override
+  String get aboutDetails =>
+      'Ieškokite įjungtuose šaltiniuose, lyginkite versijas, laikykite žodžius ir akordus kartu, o dainas tvarkykite grojaraščiuose. Jūsų biblioteka saugoma šiame įrenginyje; pasirenkamas sinchronizavimas su Google Drive naudoja jūsų Google paskyrą. Paieškos siunčiamos tiesiai į įjungtus šaltinius.';
+
+  @override
+  String get aboutSupport => 'Pagalba ir atsiliepimai';
+
+  @override
+  String get menuTypeNewSong => 'Įvesti naują dainą';
+
+  @override
   String appVersion(String version) {
     return 'Versija $version';
   }
@@ -600,10 +610,10 @@ class AppLocalizationsLt extends AppLocalizations {
   String get readerEdit => 'Redaguoti dainos tekstą ir informaciją';
 
   @override
-  String get playerPlay => 'Pradėti slinkti dainos tekstą';
+  String get playerPlay => 'Leisti';
 
   @override
-  String get playerPause => 'Pristabdyti dainos teksto slinkimą';
+  String get playerPause => 'Pristabdyti';
 
   @override
   String get playerResume => 'Tęsti dainos teksto slinkimą';

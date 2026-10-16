@@ -19,6 +19,16 @@ class AppLocalizationsTr extends AppLocalizations {
   String get aboutMadeForSinging => 'Birlikte şarkı söylemek için tasarlandı';
 
   @override
+  String get aboutDetails =>
+      'Etkin kaynaklarda arama yapın, sürümleri karşılaştırın, şarkı sözlerini ve akorları birlikte tutun, şarkıları setlistelerde düzenleyin. Kitaplığınız bu cihazda saklanır; isteğe bağlı Google Drive eşitlemesi Google hesabınızı kullanır. Aramalar doğrudan etkin kaynaklara gönderilir.';
+
+  @override
+  String get aboutSupport => 'Destek ve geri bildirim';
+
+  @override
+  String get menuTypeNewSong => 'Yeni bir şarkı yazın';
+
+  @override
   String appVersion(String version) {
     return 'Sürüm $version';
   }
@@ -592,10 +602,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get readerEdit => 'Şarkı sözlerini ve ayrıntıları düzenle';
 
   @override
-  String get playerPlay => 'Şarkı sözü kaydırmayı başlat';
+  String get playerPlay => 'Oynat';
 
   @override
-  String get playerPause => 'Şarkı sözü kaydırmayı duraklat';
+  String get playerPause => 'Duraklat';
 
   @override
   String get playerResume => 'Şarkı sözü kaydırmayı sürdür';

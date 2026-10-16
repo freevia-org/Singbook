@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Et roligt sted at finde, organisere og synge fra dit sangbibliotek.",
   "aboutMadeForSinging": "Skabt til at synge sammen",
-  "appVersion": "Version {version}",
+  "menuTypeNewSong": "Skriv en ny sang", "aboutDetails": "Søg i aktiverede kilder, sammenlign versioner, hold sangtekster og akkorder samlet, og organiser sange i sætlister. Dit bibliotek gemmes på denne enhed; valgfri synkronisering via Google Drive bruger din Google-konto. Søgninger sendes direkte til de aktiverede kilder.", "aboutSupport": "Support og feedback", "appVersion": "Version {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -287,8 +287,8 @@
   },
   "readerSaved": "Gemt",
   "readerEdit": "Rediger sangtekst og detaljer",
-  "playerPlay": "Start rulning af sangteksten",
-  "playerPause": "Sæt rulning af sangteksten på pause",
+  "playerPlay": "Afspil",
+  "playerPause": "Pause",
   "playerResume": "Fortsæt rulning af sangteksten",
   "playerSeek": "Afspilningsposition",
   "playerElapsed": "Forløbet tid {time}",

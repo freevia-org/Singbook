@@ -19,6 +19,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutMadeForSinging => 'Made for singing together';
 
   @override
+  String get aboutDetails =>
+      'Search enabled providers, compare song versions, keep lyrics and chords together, and organize songs into setlists. Your library stays on your device; optional Google Drive sync uses your Google account. Searches go directly to enabled providers.';
+
+  @override
+  String get aboutSupport => 'Support and feedback';
+
+  @override
+  String get menuTypeNewSong => 'Type in a new song';
+
+  @override
   String appVersion(String version) {
     return 'Version $version';
   }
@@ -589,10 +599,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get readerEdit => 'Edit lyrics and details';
 
   @override
-  String get playerPlay => 'Play lyric scrolling';
+  String get playerPlay => 'Play';
 
   @override
-  String get playerPause => 'Pause lyric scrolling';
+  String get playerPause => 'Pause';
 
   @override
   String get playerResume => 'Resume lyric scrolling';

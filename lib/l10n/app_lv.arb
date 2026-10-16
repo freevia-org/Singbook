@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Mierīga vieta, kur atrast un sakārtot dziesmas un kopīgi dziedāt no savas dziesmu bibliotēkas.",
   "aboutMadeForSinging": "Radīta kopīgai dziedāšanai",
-  "appVersion": "Versija {version}",
+  "menuTypeNewSong": "Ievadīt jaunu dziesmu", "aboutDetails": "Meklējiet iespējotajos avotos, salīdziniet versijas, glabājiet vārdus un akordus kopā un kārtojiet dziesmas sarakstos. Jūsu bibliotēka tiek saglabāta šajā ierīcē; izvēles sinhronizācijā ar Google Drive tiek izmantots jūsu Google konts. Meklējumi tiek nosūtīti tieši iespējotajiem avotiem.", "aboutSupport": "Atbalsts un atsauksmes", "appVersion": "Versija {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -287,8 +287,8 @@
   },
   "readerSaved": "Saglabāts",
   "readerEdit": "Rediģēt dziesmas vārdus un informāciju",
-  "playerPlay": "Sākt dziesmas vārdu ritināšanu",
-  "playerPause": "Pauzēt dziesmas vārdu ritināšanu",
+  "playerPlay": "Atskaņot",
+  "playerPause": "Pauze",
   "playerResume": "Atsākt dziesmas vārdu ritināšanu",
   "playerSeek": "Atskaņošanas pozīcija",
   "playerElapsed": "Pagājušais laiks {time}",

@@ -5,7 +5,6 @@ import 'package:singbook/l10n/generated/app_localizations_bg.dart';
 import 'package:singbook/l10n/generated/app_localizations_en.dart';
 import 'package:singbook/l10n/generated/app_localizations_uk.dart';
 import 'package:singbook/ui/localized_labels.dart';
-import 'package:singbook/ui/account_avatar.dart';
 import 'package:singbook/ui/theme/verse_theme.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
 
@@ -541,7 +540,7 @@ void main() {
       expect(
         find.descendant(
           of: find.byKey(const ValueKey('cloud-button')),
-          matching: find.byType(AccountAvatar),
+          matching: find.byIcon(Icons.person_outline_rounded),
         ),
         findsOneWidget,
       );

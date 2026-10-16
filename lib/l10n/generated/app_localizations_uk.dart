@@ -19,6 +19,16 @@ class AppLocalizationsUk extends AppLocalizations {
   String get aboutMadeForSinging => 'Створено для спільного співу';
 
   @override
+  String get aboutDetails =>
+      'Шукайте у ввімкнених джерелах, порівнюйте версії, зберігайте тексти й акорди разом та впорядковуйте пісні у сетлисти. Бібліотека зберігається на цьому пристрої; необов’язкова синхронізація з Google Drive використовує ваш обліковий запис Google. Пошук надсилається безпосередньо до ввімкнених джерел.';
+
+  @override
+  String get aboutSupport => 'Підтримка та відгуки';
+
+  @override
+  String get menuTypeNewSong => 'Ввести нову пісню';
+
+  @override
   String appVersion(String version) {
     return 'Версія $version';
   }
@@ -600,10 +610,10 @@ class AppLocalizationsUk extends AppLocalizations {
   String get readerEdit => 'Редагувати текст і відомості';
 
   @override
-  String get playerPlay => 'Почати прокручування тексту';
+  String get playerPlay => 'Відтворити';
 
   @override
-  String get playerPause => 'Призупинити прокручування';
+  String get playerPause => 'Пауза';
 
   @override
   String get playerResume => 'Продовжити прокручування';

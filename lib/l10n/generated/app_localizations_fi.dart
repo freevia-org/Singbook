@@ -19,6 +19,16 @@ class AppLocalizationsFi extends AppLocalizations {
   String get aboutMadeForSinging => 'Tehty yhdessä laulamiseen';
 
   @override
+  String get aboutDetails =>
+      'Hae käytössä olevista lähteistä, vertaile versioita, pidä sanat ja soinnut yhdessä ja järjestä kappaleet listoiksi. Kirjastosi tallennetaan tälle laitteelle; valinnainen Google Drive -synkronointi käyttää Google-tiliäsi. Haut lähetetään suoraan käytössä oleville lähteille.';
+
+  @override
+  String get aboutSupport => 'Tuki ja palaute';
+
+  @override
+  String get menuTypeNewSong => 'Kirjoita uusi kappale';
+
+  @override
   String appVersion(String version) {
     return 'Versio $version';
   }
@@ -591,10 +601,10 @@ class AppLocalizationsFi extends AppLocalizations {
   String get readerEdit => 'Muokkaa sanoituksia ja tietoja';
 
   @override
-  String get playerPlay => 'Aloita sanoitusten vieritys';
+  String get playerPlay => 'Toista';
 
   @override
-  String get playerPause => 'Keskeytä sanoitusten vieritys';
+  String get playerPause => 'Tauko';
 
   @override
   String get playerResume => 'Jatka sanoitusten vieritystä';

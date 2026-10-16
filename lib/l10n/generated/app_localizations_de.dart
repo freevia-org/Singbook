@@ -19,6 +19,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get aboutMadeForSinging => 'Zum gemeinsamen Singen gemacht';
 
   @override
+  String get aboutDetails =>
+      'Durchsuche aktivierte Quellen, vergleiche Versionen, halte Texte und Akkorde zusammen und ordne Songs in Setlists. Deine Bibliothek wird auf diesem Gerät gespeichert; die optionale Synchronisierung über Google Drive nutzt dein Google-Konto. Suchanfragen gehen direkt an aktivierte Quellen.';
+
+  @override
+  String get aboutSupport => 'Hilfe und Feedback';
+
+  @override
+  String get menuTypeNewSong => 'Neues Lied eingeben';
+
+  @override
   String appVersion(String version) {
     return 'Version $version';
   }
@@ -592,10 +602,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get readerEdit => 'Liedtexte und Details bearbeiten';
 
   @override
-  String get playerPlay => 'Liedtext-Scrollen starten';
+  String get playerPlay => 'Abspielen';
 
   @override
-  String get playerPause => 'Liedtext-Scrollen pausieren';
+  String get playerPause => 'Pause';
 
   @override
   String get playerResume => 'Liedtext-Scrollen fortsetzen';

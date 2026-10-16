@@ -18,6 +18,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get aboutMadeForSinging => 'みんなで歌うために';
 
   @override
+  String get aboutDetails =>
+      '有効にしたソースを検索し、曲のバージョンを比較して、歌詞とコードをまとめ、曲をセットリストに整理できます。ライブラリはこの端末に保存されます。任意の Google Drive 同期では Google アカウントを使用します。検索は有効なソースへ直接送信されます。';
+
+  @override
+  String get aboutSupport => 'サポートとフィードバック';
+
+  @override
+  String get menuTypeNewSong => '新しい曲を入力';
+
+  @override
   String appVersion(String version) {
     return 'バージョン $version';
   }
@@ -582,10 +592,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get readerEdit => '歌詞と詳細を編集';
 
   @override
-  String get playerPlay => '歌詞のスクロールを開始';
+  String get playerPlay => '再生';
 
   @override
-  String get playerPause => '歌詞のスクロールを一時停止';
+  String get playerPause => '一時停止';
 
   @override
   String get playerResume => '歌詞のスクロールを再開';

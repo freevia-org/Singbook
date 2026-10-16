@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Mirno mesto, kjer lahko najdete in uredite svojo knjižnico pesmi ter skupaj pojete.",
   "aboutMadeForSinging": "Ustvarjeno za skupno petje",
-  "appVersion": "Različica {version}",
+  "menuTypeNewSong": "Vnesi novo pesem", "aboutDetails": "Išči po omogočenih virih, primerjaj različice, hrani besedila in akorde skupaj ter razvrščaj pesmi v sezname. Knjižnica je shranjena v tej napravi; izbirna sinhronizacija z Google Drive uporablja tvoj Google račun. Iskanja se pošljejo neposredno omogočenim virom.", "aboutSupport": "Podpora in povratne informacije", "appVersion": "Različica {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -287,8 +287,8 @@
   },
   "readerSaved": "Shranjeno",
   "readerEdit": "Uredi besedilo pesmi in podatke",
-  "playerPlay": "Začni drsenje besedila pesmi",
-  "playerPause": "Začasno ustavi drsenje besedila pesmi",
+  "playerPlay": "Predvajaj",
+  "playerPause": "Ustavi",
   "playerResume": "Nadaljuj drsenje besedila pesmi",
   "playerSeek": "Položaj predvajanja",
   "playerElapsed": "Pretečeni čas {time}",

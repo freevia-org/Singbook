@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Rauhallinen paikka, jossa löydät ja järjestät kappaleesi ja laulat niiden mukana.",
   "aboutMadeForSinging": "Tehty yhdessä laulamiseen",
-  "appVersion": "Versio {version}",
+  "menuTypeNewSong": "Kirjoita uusi kappale", "aboutDetails": "Hae käytössä olevista lähteistä, vertaile versioita, pidä sanat ja soinnut yhdessä ja järjestä kappaleet listoiksi. Kirjastosi tallennetaan tälle laitteelle; valinnainen Google Drive -synkronointi käyttää Google-tiliäsi. Haut lähetetään suoraan käytössä oleville lähteille.", "aboutSupport": "Tuki ja palaute", "appVersion": "Versio {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -287,8 +287,8 @@
   },
   "readerSaved": "Tallennettu",
   "readerEdit": "Muokkaa sanoituksia ja tietoja",
-  "playerPlay": "Aloita sanoitusten vieritys",
-  "playerPause": "Keskeytä sanoitusten vieritys",
+  "playerPlay": "Toista",
+  "playerPause": "Tauko",
   "playerResume": "Jatka sanoitusten vieritystä",
   "playerSeek": "Toistokohta",
   "playerElapsed": "Kulunut aika {time}",

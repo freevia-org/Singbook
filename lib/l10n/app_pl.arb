@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Spokojne miejsce do wyszukiwania, porządkowania i śpiewania utworów z Twojej biblioteki.",
   "aboutMadeForSinging": "Stworzone do wspólnego śpiewania",
-  "appVersion": "Wersja {version}",
+  "menuTypeNewSong": "Wpisz nową piosenkę", "aboutDetails": "Szukaj w włączonych źródłach, porównuj wersje, przechowuj teksty i akordy razem oraz organizuj utwory w setlisty. Twoja biblioteka jest zapisana na tym urządzeniu; opcjonalna synchronizacja z Google Drive korzysta z Twojego konta Google. Wyszukiwania trafiają bezpośrednio do włączonych źródeł.", "aboutSupport": "Pomoc i opinie", "appVersion": "Wersja {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -287,8 +287,8 @@
   },
   "readerSaved": "Zapisano",
   "readerEdit": "Edytuj tekst i szczegóły",
-  "playerPlay": "Włącz przewijanie tekstu",
-  "playerPause": "Wstrzymaj przewijanie tekstu",
+  "playerPlay": "Odtwórz",
+  "playerPause": "Wstrzymaj",
   "playerResume": "Wznów przewijanie tekstu",
   "playerSeek": "Pozycja odtwarzania",
   "playerElapsed": "Czas, który upłynął: {time}",

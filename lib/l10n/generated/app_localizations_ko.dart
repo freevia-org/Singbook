@@ -18,6 +18,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get aboutMadeForSinging => '함께 노래하기 위해 만들었습니다';
 
   @override
+  String get aboutDetails =>
+      '사용 설정한 소스를 검색하고, 곡 버전을 비교하고, 가사와 코드를 함께 보관하며, 곡을 세트리스트로 정리할 수 있습니다. 보관함은 이 기기에 저장됩니다. 선택적 Google Drive 동기화에는 Google 계정이 사용됩니다. 검색은 사용 설정한 소스로 직접 전송됩니다.';
+
+  @override
+  String get aboutSupport => '지원 및 의견 보내기';
+
+  @override
+  String get menuTypeNewSong => '새 노래 입력';
+
+  @override
   String appVersion(String version) {
     return '버전 $version';
   }
@@ -583,10 +593,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get readerEdit => '가사 및 세부정보 수정';
 
   @override
-  String get playerPlay => '가사 스크롤 시작';
+  String get playerPlay => '재생';
 
   @override
-  String get playerPause => '가사 스크롤 일시정지';
+  String get playerPause => '일시정지';
 
   @override
   String get playerResume => '가사 스크롤 재개';
