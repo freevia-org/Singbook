@@ -4,7 +4,16 @@ param(
     [Parameter()]
     [string[]]$ArgumentList = @(),
     [Parameter()]
-    [string]$WorkingDirectory = (Get-Location).Path
+    [string]$WorkingDirectory = (Get-Location).Path,
+    # Test-only gates used to prove job membership precedes the first resume.
+    [Parameter()]
+    [string]$TestCreatedEventName,
+    [Parameter()]
+    [string]$TestResumeEventName,
+    [Parameter()]
+    [string]$TestCreatedProcessIdPath,
+    [Parameter()]
+    [switch]$TestFailBeforeResume
 )
 
 $ErrorActionPreference = 'Stop'
@@ -15,16 +24,23 @@ using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
+using System.Diagnostics;
+using System.IO;
 
 public static class SingbookBuildJob
 {
     private const uint CreateSuspended = 0x00000004;
+    private const uint ExtendedStartupInfoPresent = 0x00080000;
     private const uint StartfUseStdHandles = 0x00000100;
     private const uint JobObjectExtendedLimitInformation = 9;
     private const uint JobObjectLimitKillOnJobClose = 0x00002000;
     private const uint HandleFlagInherit = 0x00000001;
     private const uint WaitObject0 = 0x00000000;
     private const uint Infinite = 0xFFFFFFFF;
+    private const uint ProcThreadAttributeJobList = 0x0002000D;
+    private const int JobObjectBasicAccountingInformation = 1;
+    private const int CleanupTimeoutMilliseconds = 5000;
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     private struct StartupInfo
@@ -56,6 +72,33 @@ public static class SingbookBuildJob
         public IntPtr hThread;
         public uint dwProcessId;
         public uint dwThreadId;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct StartupInfoEx
+    {
+        public StartupInfo StartupInfo;
+        public IntPtr AttributeList;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct BasicAccountingInformation
+    {
+        public long TotalUserTime;
+        public long TotalKernelTime;
+        public long ThisPeriodTotalUserTime;
+        public long ThisPeriodTotalKernelTime;
+        public uint TotalPageFaultCount;
+        public uint TotalProcesses;
+        public uint ActiveProcesses;
+        public uint TotalTerminatedProcesses;
+    }
+
+    private sealed class JobState
+    {
+        public IntPtr Handle;
+        public readonly object Sync = new object();
+        public int RetirementError;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -108,22 +151,27 @@ public static class SingbookBuildJob
     private static extern bool CloseHandle(IntPtr handle);
 
     [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern bool InitializeProcThreadAttributeList(IntPtr attributeList,
+        int attributeCount, uint flags, ref IntPtr size);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern bool UpdateProcThreadAttribute(IntPtr attributeList, uint flags,
+        IntPtr attribute, IntPtr value, IntPtr size, IntPtr previousValue, IntPtr returnSize);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern void DeleteProcThreadAttributeList(IntPtr attributeList);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
     private static extern IntPtr GetStdHandle(int standardHandle);
 
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern bool CreateProcess(string applicationName, StringBuilder commandLine,
         IntPtr processAttributes, IntPtr threadAttributes, bool inheritHandles,
         uint creationFlags, IntPtr environment, string currentDirectory,
-        ref StartupInfo startupInfo, out ProcessInformation processInformation);
+        ref StartupInfoEx startupInfo, out ProcessInformation processInformation);
 
     [DllImport("kernel32.dll", SetLastError = true)]
     private static extern uint ResumeThread(IntPtr thread);
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool AssignProcessToJobObject(IntPtr job, IntPtr process);
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool TerminateProcess(IntPtr process, uint exitCode);
 
     [DllImport("kernel32.dll", SetLastError = true)]
     private static extern bool TerminateJobObject(IntPtr job, uint exitCode);
@@ -134,37 +182,67 @@ public static class SingbookBuildJob
     [DllImport("kernel32.dll", SetLastError = true)]
     private static extern bool GetExitCodeProcess(IntPtr process, out uint exitCode);
 
-    public static int Run(string filePath, string[] arguments, string workingDirectory)
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern bool QueryInformationJobObject(IntPtr job, int infoClass,
+        out BasicAccountingInformation info, uint infoLength, IntPtr returnLength);
+
+    public static int Run(string filePath, string[] arguments, string workingDirectory,
+        string testCreatedEventName, string testResumeEventName, string testCreatedProcessIdPath,
+        bool testFailBeforeResume)
     {
-        IntPtr job = IntPtr.Zero;
+        JobState job = new JobState();
         ProcessInformation process = new ProcessInformation();
         bool processCreated = false;
+        IntPtr attributeList = IntPtr.Zero;
+        IntPtr jobHandleArray = IntPtr.Zero;
         ConsoleCancelEventHandler cancelHandler = null;
+        EventWaitHandle testCreatedEvent = null;
+        EventWaitHandle testResumeEvent = null;
+        int exitCode = 1;
         try
         {
-            job = CreateJobObject(IntPtr.Zero, null);
-            Check(job != IntPtr.Zero, "CreateJobObject");
-            Check(SetHandleInformation(job, HandleFlagInherit, 0), "SetHandleInformation(job)");
+            job.Handle = CreateJobObject(IntPtr.Zero, null);
+            Check(job.Handle != IntPtr.Zero, "CreateJobObject");
+            Check(SetHandleInformation(job.Handle, HandleFlagInherit, 0), "SetHandleInformation(job)");
 
             ExtendedLimitInformation limits = new ExtendedLimitInformation();
             limits.BasicLimitInformation.LimitFlags = JobObjectLimitKillOnJobClose;
-            Check(SetInformationJobObject(job, JobObjectExtendedLimitInformation,
+            Check(SetInformationJobObject(job.Handle, JobObjectExtendedLimitInformation,
                 ref limits, (uint)Marshal.SizeOf(typeof(ExtendedLimitInformation))),
                 "SetInformationJobObject");
 
-            StartupInfo startup = new StartupInfo();
-            startup.cb = (uint)Marshal.SizeOf(typeof(StartupInfo));
-            startup.hStdInput = GetStdHandle(-10);
-            startup.hStdOutput = GetStdHandle(-11);
-            startup.hStdError = GetStdHandle(-12);
+            if (!String.IsNullOrEmpty(testCreatedEventName))
+                testCreatedEvent = EventWaitHandle.OpenExisting(testCreatedEventName);
+            if (!String.IsNullOrEmpty(testResumeEventName))
+                testResumeEvent = EventWaitHandle.OpenExisting(testResumeEventName);
+
+            IntPtr attributeListSize = IntPtr.Zero;
+            InitializeProcThreadAttributeList(IntPtr.Zero, 1, 0, ref attributeListSize);
+            Check(attributeListSize != IntPtr.Zero, "InitializeProcThreadAttributeList(size)");
+            attributeList = Marshal.AllocHGlobal(attributeListSize);
+            Check(InitializeProcThreadAttributeList(attributeList, 1, 0, ref attributeListSize),
+                "InitializeProcThreadAttributeList");
+            jobHandleArray = Marshal.AllocHGlobal(IntPtr.Size);
+            Marshal.WriteIntPtr(jobHandleArray, job.Handle);
+            Check(UpdateProcThreadAttribute(attributeList, 0,
+                new IntPtr(ProcThreadAttributeJobList), jobHandleArray,
+                new IntPtr(IntPtr.Size), IntPtr.Zero, IntPtr.Zero),
+                "UpdateProcThreadAttribute(job list)");
+
+            StartupInfoEx startup = new StartupInfoEx();
+            startup.StartupInfo.cb = (uint)Marshal.SizeOf(typeof(StartupInfoEx));
+            startup.AttributeList = attributeList;
+            startup.StartupInfo.hStdInput = GetStdHandle(-10);
+            startup.StartupInfo.hStdOutput = GetStdHandle(-11);
+            startup.StartupInfo.hStdError = GetStdHandle(-12);
             IntPtr invalidHandle = new IntPtr(-1);
-            bool inheritStandardHandles = startup.hStdInput != IntPtr.Zero && startup.hStdInput != invalidHandle &&
-                startup.hStdOutput != IntPtr.Zero && startup.hStdOutput != invalidHandle &&
-                startup.hStdError != IntPtr.Zero && startup.hStdError != invalidHandle;
+            bool inheritStandardHandles = startup.StartupInfo.hStdInput != IntPtr.Zero && startup.StartupInfo.hStdInput != invalidHandle &&
+                startup.StartupInfo.hStdOutput != IntPtr.Zero && startup.StartupInfo.hStdOutput != invalidHandle &&
+                startup.StartupInfo.hStdError != IntPtr.Zero && startup.StartupInfo.hStdError != invalidHandle;
             if (inheritStandardHandles)
-                startup.dwFlags = StartfUseStdHandles;
+                startup.StartupInfo.dwFlags = StartfUseStdHandles;
             else
-                startup.dwFlags = 0;
+                startup.StartupInfo.dwFlags = 0;
 
             StringBuilder commandLine = new StringBuilder(Quote(filePath));
             foreach (string argument in arguments)
@@ -174,52 +252,167 @@ public static class SingbookBuildJob
             }
 
             Check(CreateProcess(filePath, commandLine, IntPtr.Zero, IntPtr.Zero,
-                inheritStandardHandles, CreateSuspended, IntPtr.Zero, workingDirectory,
+                inheritStandardHandles, CreateSuspended | ExtendedStartupInfoPresent, IntPtr.Zero, workingDirectory,
                 ref startup, out process), "CreateProcess");
             processCreated = true;
-
-            if (!AssignProcessToJobObject(job, process.hProcess))
-            {
-                int error = Marshal.GetLastWin32Error();
-                TerminateProcess(process.hProcess, 1);
-                WaitForSingleObject(process.hProcess, Infinite);
-                throw new Win32Exception(error, "AssignProcessToJobObject failed");
-            }
 
             cancelHandler = delegate(object sender, ConsoleCancelEventArgs eventArgs)
             {
                 eventArgs.Cancel = true;
-                if (!TerminateJobObject(job, 130))
-                    CloseHandle(job);
+                lock (job.Sync)
+                {
+                    if (job.Handle != IntPtr.Zero && !TerminateJobObject(job.Handle, 130))
+                    {
+                        job.RetirementError = Marshal.GetLastWin32Error();
+                        CloseJobLocked(job);
+                    }
+                }
             };
             Console.CancelKeyPress += cancelHandler;
+
+            if (!String.IsNullOrEmpty(testCreatedProcessIdPath))
+                File.WriteAllText(testCreatedProcessIdPath, process.dwProcessId.ToString());
+            if (testCreatedEvent != null)
+                testCreatedEvent.Set();
+            if (testResumeEvent != null)
+                testResumeEvent.WaitOne();
+            if (testFailBeforeResume)
+                throw new InvalidOperationException("Test failure before resuming the suspended worker.");
 
             if (ResumeThread(process.hThread) == 0xFFFFFFFF)
             {
                 int error = Marshal.GetLastWin32Error();
-                TerminateProcess(process.hProcess, 1);
-                WaitForSingleObject(process.hProcess, Infinite);
                 throw new Win32Exception(error, "ResumeThread failed");
             }
 
             uint waitResult = WaitForSingleObject(process.hProcess, Infinite);
             Check(waitResult == WaitObject0, "WaitForSingleObject");
-            uint exitCode;
-            Check(GetExitCodeProcess(process.hProcess, out exitCode), "GetExitCodeProcess");
-            return unchecked((int)exitCode);
+            uint processExitCode;
+            Check(GetExitCodeProcess(process.hProcess, out processExitCode), "GetExitCodeProcess");
+            exitCode = unchecked((int)processExitCode);
+            return exitCode;
         }
         finally
         {
             if (cancelHandler != null)
                 Console.CancelKeyPress -= cancelHandler;
-            if (processCreated)
+            Exception cleanupFailure = null;
+            try
             {
-                CloseHandle(process.hThread);
-                CloseHandle(process.hProcess);
+                RequestJobTermination(job, unchecked((uint)exitCode));
             }
-            if (job != IntPtr.Zero)
-                CloseHandle(job);
+            catch (Exception exception)
+            {
+                cleanupFailure = exception;
+            }
+            try
+            {
+                if (processCreated)
+                {
+                    IntPtr threadHandle = process.hThread;
+                    process.hThread = IntPtr.Zero;
+                    if (!CloseHandle(threadHandle) && cleanupFailure == null)
+                        cleanupFailure = new Win32Exception(Marshal.GetLastWin32Error(), "CloseHandle(thread) failed");
+                    IntPtr processHandle = process.hProcess;
+                    process.hProcess = IntPtr.Zero;
+                    if (!CloseHandle(processHandle) && cleanupFailure == null)
+                        cleanupFailure = new Win32Exception(Marshal.GetLastWin32Error(), "CloseHandle(process) failed");
+                }
+            }
+            finally
+            {
+                try
+                {
+                    WaitAndRetireJob(job, CleanupTimeoutMilliseconds);
+                }
+                catch (Exception exception) { if (cleanupFailure == null) cleanupFailure = exception; }
+
+                if (attributeList != IntPtr.Zero)
+                {
+                    DeleteProcThreadAttributeList(attributeList);
+                    Marshal.FreeHGlobal(attributeList);
+                }
+                if (jobHandleArray != IntPtr.Zero)
+                    Marshal.FreeHGlobal(jobHandleArray);
+                if (testCreatedEvent != null) testCreatedEvent.Dispose();
+                if (testResumeEvent != null) testResumeEvent.Dispose();
+            }
+            if (cleanupFailure != null) throw cleanupFailure;
         }
+    }
+
+    private static void RequestJobTermination(JobState job, uint exitCode)
+    {
+        lock (job.Sync)
+        {
+            if (job.Handle == IntPtr.Zero)
+            {
+                if (job.RetirementError != 0)
+                    throw new Win32Exception(job.RetirementError, "Cancel-time job termination failed");
+                return;
+            }
+            if (!TerminateJobObject(job.Handle, exitCode))
+            {
+                int error = Marshal.GetLastWin32Error();
+                job.RetirementError = error;
+                CloseJobLocked(job);
+                throw new Win32Exception(error, "TerminateJobObject failed");
+            }
+        }
+    }
+
+    private static void WaitAndRetireJob(JobState job, int timeoutMilliseconds)
+    {
+        IntPtr handle;
+        lock (job.Sync)
+        {
+            handle = job.Handle;
+            if (handle == IntPtr.Zero)
+            {
+                if (job.RetirementError != 0)
+                    throw new Win32Exception(job.RetirementError, "Build job handle retirement failed");
+                return;
+            }
+        }
+        try
+        {
+            Stopwatch timer = Stopwatch.StartNew();
+            while (timer.ElapsedMilliseconds < timeoutMilliseconds)
+            {
+                BasicAccountingInformation accounting;
+                Check(QueryInformationJobObject(handle, JobObjectBasicAccountingInformation,
+                    out accounting, (uint)Marshal.SizeOf(typeof(BasicAccountingInformation)), IntPtr.Zero),
+                    "QueryInformationJobObject");
+                if (accounting.ActiveProcesses == 0)
+                {
+                    lock (job.Sync)
+                    {
+                        CloseJobLocked(job);
+                        if (job.RetirementError != 0)
+                            throw new Win32Exception(job.RetirementError, "Closing the build job failed");
+                    }
+                    return;
+                }
+                Thread.Sleep(20);
+            }
+            throw new TimeoutException("Owned build processes did not exit within the cleanup timeout.");
+        }
+        catch
+        {
+            lock (job.Sync)
+                CloseJobLocked(job);
+            throw;
+        }
+    }
+
+    private static void CloseJobLocked(JobState job)
+    {
+        if (job.Handle == IntPtr.Zero)
+            return;
+        IntPtr handle = job.Handle;
+        job.Handle = IntPtr.Zero;
+        if (!CloseHandle(handle) && job.RetirementError == 0)
+            job.RetirementError = Marshal.GetLastWin32Error();
     }
 
     private static string Quote(string value)
@@ -263,5 +456,7 @@ public static class SingbookBuildJob
 '@
 }
 
-$exitCode = [SingbookBuildJob]::Run($FilePath, $ArgumentList, $WorkingDirectory)
+$exitCode = [SingbookBuildJob]::Run($FilePath, $ArgumentList, $WorkingDirectory,
+    $TestCreatedEventName, $TestResumeEventName, $TestCreatedProcessIdPath,
+    [bool]$TestFailBeforeResume)
 $exitCode

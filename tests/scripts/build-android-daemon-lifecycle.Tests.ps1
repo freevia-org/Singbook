@@ -2,20 +2,32 @@ param(
     [Parameter()]
     [switch]$RunAsSupervisor,
     [Parameter()]
+    [switch]$RunAtomicGate,
+    [Parameter()]
     [string]$RecordPath,
     [Parameter()]
     [string]$Fixture,
     [Parameter()]
     [string]$HoldScript,
     [Parameter()]
-    [string]$RepoRoot
+    [string]$RepoRoot,
+    [Parameter()]
+    [string]$CreatedEventName,
+    [Parameter()]
+    [string]$ResumeEventName
 )
 
 if ($RunAsSupervisor) {
     $powerShell = [Diagnostics.Process]::GetCurrentProcess().MainModule.FileName
     $jobRunner = Join-Path $RepoRoot 'scripts\invoke-build-in-job.ps1'
     $fixtureArguments = @('-NoProfile', '-File', $Fixture, '-Mode', 'Sleep', '-RecordPath', $RecordPath, '-HoldScript', $HoldScript)
-    & $jobRunner -FilePath $powerShell -ArgumentList $fixtureArguments -WorkingDirectory $RepoRoot | Out-Null
+    if ($RunAtomicGate) {
+        & $jobRunner -FilePath $powerShell -ArgumentList $fixtureArguments -WorkingDirectory $RepoRoot `
+            -TestCreatedEventName $CreatedEventName -TestResumeEventName $ResumeEventName `
+            -TestCreatedProcessIdPath $RecordPath | Out-Null
+    } else {
+        & $jobRunner -FilePath $powerShell -ArgumentList $fixtureArguments -WorkingDirectory $RepoRoot | Out-Null
+    }
     return
 }
 
@@ -36,8 +48,8 @@ function Assert-True([bool]$Condition, [string]$Message) {
     if (-not $Condition) { throw $Message }
 }
 
-function Assert-ProcessStopped([int]$ProcessId, [string]$Message) {
-    Start-Sleep -Milliseconds 350
+function Assert-ProcessStopped([int]$ProcessId, [string]$Message, [int]$WaitMilliseconds = 350) {
+    if ($WaitMilliseconds -gt 0) { Start-Sleep -Milliseconds $WaitMilliseconds }
     $process = Get-Process -Id $ProcessId -ErrorAction SilentlyContinue
     if ($process) { throw $Message }
 }
@@ -105,6 +117,7 @@ try {
     $fakeFlutter = Join-Path $testRoot 'flutter.cmd'
     @'
 @echo off
+echo wrapper-output-marker
 echo %*>> "%SINGBOOK_FLUTTER_LOG%"
 echo allow=%ORG_GRADLE_PROJECT_allowDebugSigning%>> "%SINGBOOK_FLUTTER_LOG%"
 exit /b %SINGBOOK_BUILD_JOB_FIXTURE_EXIT%
@@ -113,8 +126,9 @@ exit /b %SINGBOOK_BUILD_JOB_FIXTURE_EXIT%
     $env:PATH = "$testRoot;$($env:PATH)"
     $env:SINGBOOK_FLUTTER_LOG = Join-Path $testRoot 'flutter-invocations.txt'
     $env:SINGBOOK_BUILD_JOB_FIXTURE_EXIT = '0'
-    & $powerShell -NoLogo -NoProfile -NonInteractive -File $buildScript -Debug
+    $wrapperOutput = & $powerShell -NoLogo -NoProfile -NonInteractive -File $buildScript -Debug
     Assert-True ($LASTEXITCODE -eq 0) "The isolated build wrapper returned $LASTEXITCODE on fake Flutter success."
+    Assert-True ($wrapperOutput -contains 'wrapper-output-marker') 'The wrapper did not preserve child stdout.'
     $wrapperLog = Get-Content -LiteralPath $env:SINGBOOK_FLUTTER_LOG -Raw
     Assert-True ($wrapperLog -match 'build apk --debug --dart-define=cronetHttpNoPlay=true') 'The wrapper did not preserve Flutter build arguments.'
     $env:SINGBOOK_BUILD_JOB_FIXTURE_EXIT = '17'
@@ -128,9 +142,24 @@ exit /b %SINGBOOK_BUILD_JOB_FIXTURE_EXIT%
         $expected = if ($mode -eq 'ExitSuccess') { 0 } else { 17 }
         Assert-True ([int]$code -eq $expected) "Job runner returned $code for $mode; expected $expected."
         $ids = Get-Content -LiteralPath $record | ForEach-Object { [int]$_ }
-        Assert-ProcessStopped $ids[0] "$mode fixture process survived job close."
-        Assert-ProcessStopped $ids[1] "$mode fixture grandchild survived job close."
+        Assert-ProcessStopped $ids[0] "$mode fixture process was still active when the runner returned." 0
+        Assert-ProcessStopped $ids[1] "$mode fixture grandchild was still active when the runner returned." 0
     }
+
+    # A failure while the primary thread is still suspended must terminate the
+    # assigned job and finish cleanup without an unbounded process wait.
+    $suspendedFailureRecord = Join-Path $testRoot 'suspended-failure.pid'
+    $suspendedFailureTimer = [Diagnostics.Stopwatch]::StartNew()
+    $suspendedFailureObserved = $false
+    try {
+        & $jobRunner -FilePath $powerShell -ArgumentList @('-NoProfile', '-File', $fixture, '-Mode', 'Sleep', '-RecordPath', (Join-Path $testRoot 'unused-pids'), '-HoldScript', $holdScript) -WorkingDirectory $repoRoot -TestCreatedProcessIdPath $suspendedFailureRecord -TestFailBeforeResume
+    } catch {
+        $suspendedFailureObserved = $true
+    }
+    $suspendedFailureTimer.Stop()
+    Assert-True $suspendedFailureObserved 'Injected suspended-worker failure was not surfaced.'
+    Assert-True ($suspendedFailureTimer.Elapsed.TotalSeconds -lt 5) 'Suspended-worker failure cleanup exceeded its bound.'
+    Assert-ProcessStopped ([int](Get-Content -LiteralPath $suspendedFailureRecord -Raw)) 'Suspended worker survived failure cleanup.' 0
 
     # Kill a supervisor without running its finally block; closing its native
     # job handle must still reap both owned processes and leave a sibling alone.
@@ -147,6 +176,29 @@ exit /b %SINGBOOK_BUILD_JOB_FIXTURE_EXIT%
     Assert-ProcessStopped $ownedIds[0] 'Worker survived hard termination of its job owner.'
     Assert-ProcessStopped $ownedIds[1] 'Grandchild survived hard termination of its job owner.'
     Assert-True ($null -ne (Get-Process -Id $sibling.Id -ErrorAction SilentlyContinue)) 'The unrelated sibling process was terminated.'
+
+    # Hold the worker after CreateProcess returns, while its primary thread is
+    # still suspended. Killing the owner here verifies atomic job admission.
+    $gateId = [Guid]::NewGuid().ToString('N')
+    $createdEventName = "Local\SingbookBuildCreated-$gateId"
+    $resumeEventName = "Local\SingbookBuildResume-$gateId"
+    $createdSignal = [Threading.EventWaitHandle]::new($false, [Threading.EventResetMode]::ManualReset, $createdEventName)
+    $resumeSignal = [Threading.EventWaitHandle]::new($false, [Threading.EventResetMode]::ManualReset, $resumeEventName)
+    $record = Join-Path $testRoot 'atomic-admission.pids'
+    $gateArguments = @('-NoProfile', '-File', $PSCommandPath, '-RunAsSupervisor', '-RunAtomicGate', '-RecordPath', $record, '-Fixture', $fixture, '-HoldScript', $holdScript, '-RepoRoot', $repoRoot, '-CreatedEventName', $createdEventName, '-ResumeEventName', $resumeEventName)
+    $supervisor = Start-Process -FilePath $powerShell -ArgumentList $gateArguments -PassThru -WindowStyle Hidden
+    try {
+        Assert-True ($createdSignal.WaitOne(15000)) 'Atomic-admission owner did not report successful process creation.'
+        Assert-True (Test-Path -LiteralPath $record) 'Atomic-admission worker PID was not recorded.'
+        $suspendedWorkerId = [int](Get-Content -LiteralPath $record -Raw)
+        Stop-Process -Id $supervisor.Id -Force
+        $supervisor = $null
+        Assert-ProcessStopped $suspendedWorkerId 'Suspended worker survived hard termination of its owner.'
+        Assert-True ($null -ne (Get-Process -Id $sibling.Id -ErrorAction SilentlyContinue)) 'Atomic-admission cleanup terminated the unrelated sibling.'
+    } finally {
+        $createdSignal.Dispose()
+        $resumeSignal.Dispose()
+    }
 
     Write-Output 'Build daemon lifecycle regression checks passed.'
 } finally {
