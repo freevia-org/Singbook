@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "Kappaleen sanat on vahvistettava nuottien perusteella",
   "searchMatchDifferentLyrics": "Sanoitukset eroavat valitusta kappaleesta",
   "searchMatchCombinedSources": "Tiedot koottu useista lähteistä",
-  "searchCombinedLabel": "Kaikki",
+  "searchCombinedLabel": "Yhdistetty",
   "searchSongMatchCount": "{count, plural, =0{0 kappaleosumaa} =1{1 kappaleosuma} other{{count} kappaleosumaa}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Version tiedot",
   "searchSelectedRecording": "Valittu äänite",
   "searchVersionDuration": "Version kesto",
-  "searchSourceOptions": "Lähdeasetukset"
+  "searchSourceOptions": "Lähdeasetukset",
+  "actionUndo": "Kumoa",
+  "setlistEntryRemoved": "{song} poistettiin kappalelistasta",
+  "backupTitle": "Varmuuskopiointi ja palautus",
+  "backupExport": "Vie varmuuskopio",
+  "backupRestore": "Palauta varmuuskopio",
+  "backupIncludePreferences": "Sisällytä sovelluksen asetukset",
+  "backupRestorePreferences": "Palauta sovelluksen asetukset",
+  "backupMerge": "Lisää tähän kirjastoon",
+  "backupMergeHint": "Säilytä paikalliset muutokset ja lisää kappaleet ja listat tästä varmuuskopiosta.",
+  "backupReplace": "Korvaa tämä kirjasto",
+  "backupReplaceHint": "Korvaa tämän laitteen kaikki kappaleet ja listat tällä varmuuskopiolla.",
+  "backupSummary": "Kappaleet: {songs} · Listat: {setlists} · Ristiriidat: {conflicts}",
+  "backupFailed": "Varmuuskopiointia ei voitu suorittaa loppuun. Yritä uudelleen.",
+  "backupRestored": "Varmuuskopio palautettu.",
+  "backupLocalHint": "Tallenna kopio kirjastostasi. Tilin tunnistetietoja ja suostumusevästeitä ei koskaan sisällytetä.",
+  "backupReplaceConfirm": "Korvataanko nykyinen kirjasto? Tätä ei voi kumota.",
+  "youtubeConsentPageError": "Tämä sivu lakkasi toimimasta. Yritä uudelleen tai palaa takaisin.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

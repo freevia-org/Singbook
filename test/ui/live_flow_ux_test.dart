@@ -1005,6 +1005,74 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('reader offers available timing without leaving the song', (
+    tester,
+  ) async {
+    final controller = _LiveFlowController(
+      const VerseUiState(
+        route: VerseRoute.reader,
+        song: SongCardData(id: 'timed', title: 'Original timed fixture'),
+        songLines: [LyricLineData(id: 'one', text: 'An original timed line')],
+        readerTimingAvailable: true,
+        timingMode: 'estimated',
+      ),
+    );
+    await _pumpPlayer(tester, controller);
+    final l10n = AppLocalizations.of(tester.element(find.byType(PlayerScreen)));
+    expect(find.text(l10n.playerEstimatedPace), findsOneWidget);
+    await tester.tap(find.byTooltip(l10n.songMenuLabel));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(l10n.playerTimedLyrics));
+    await tester.pumpAndSettle();
+    expect(controller.selectedTimingMode, 'timed');
+    await tester.pumpWidget(const SizedBox.shrink());
+    controller.dispose();
+  });
+
+  testWidgets('speed value stays on one line at 2x in portrait and landscape', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    for (final size in const [Size(360, 804), Size(872, 393)]) {
+      tester.view.physicalSize = size;
+      final controller = _LiveFlowController(
+        const VerseUiState(
+          route: VerseRoute.reader,
+          song: SongCardData(
+            id: 'speed-song',
+            title: 'Original test song',
+            durationSeconds: 210,
+          ),
+          songLines: [
+            LyricLineData(id: 'verse', text: 'An original test line'),
+          ],
+          playerSections: [
+            PlayerSectionMarker(
+              name: 'Verse',
+              startSeconds: 0,
+              lineId: 'verse',
+            ),
+          ],
+          playbackSpeed: 1.05,
+        ),
+      );
+      await _pumpPlayer(tester, controller, scale: 2);
+      final value = find.byKey(const ValueKey('scroll-speed-value'));
+      expect(find.text('1.05×'), findsOneWidget);
+      final text = tester.widget<Text>(value);
+      expect(text.maxLines, 1);
+      expect(text.softWrap, false);
+      final rect = tester.getRect(value);
+      expect(rect.left, greaterThanOrEqualTo(0));
+      expect(rect.right, lessThanOrEqualTo(size.width));
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      controller.dispose();
+    }
+  });
+
   testWidgets('large text keeps landscape section transport controls usable', (
     tester,
   ) async {
@@ -1419,6 +1487,7 @@ class _LiveFlowController extends VerseUiController {
   final ValueNotifier<PlayerPosition> _position;
   bool autoscrollEnabled = false;
   bool estimatedTimingRequested = false;
+  String? selectedTimingMode;
   bool playbackStarted = false;
   double? selectedSpeed;
   double? lastSeekSeconds;
@@ -1463,6 +1532,7 @@ class _LiveFlowController extends VerseUiController {
   @override
   Future<void> setTimingMode(String mode) async {
     estimatedTimingRequested = mode == 'estimated';
+    selectedTimingMode = mode;
   }
 
   @override

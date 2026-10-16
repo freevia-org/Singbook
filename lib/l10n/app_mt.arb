@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "Il-lirika tal-partitura trid tiġi kkonfermata",
   "searchMatchDifferentLyrics": "Il-lirika hija differenti minn dik tal-kanzunetta magħżula",
   "searchMatchCombinedSources": "Dettalji magħquda minn diversi sorsi",
-  "searchCombinedLabel": "Kollha",
+  "searchCombinedLabel": "Magħquda",
   "searchSongMatchCount": "{count, plural, =0{Ebda taqbil ta’ kanzunetta} =1{Taqbil wieħed ta’ kanzunetta} other{{count} taqbiliet ta’ kanzunetti}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Dettalji tal-verżjoni",
   "searchSelectedRecording": "Reġistrazzjoni magħżula",
   "searchVersionDuration": "Tul tal-verżjoni",
-  "searchSourceOptions": "Għażliet tas-sors"
+  "searchSourceOptions": "Għażliet tas-sors",
+  "actionUndo": "Ħoll",
+  "setlistEntryRemoved": "{song} tneħħiet mil-lista tal-kanzunetti",
+  "backupTitle": "Backup u restawr",
+  "backupExport": "Esporta backup",
+  "backupRestore": "Irrestawra backup",
+  "backupIncludePreferences": "Inkludi l-preferenzi tal-app",
+  "backupRestorePreferences": "Irrestawra l-preferenzi tal-app",
+  "backupMerge": "Żid ma’ din il-librerija",
+  "backupMergeHint": "Żomm l-editjar lokali u żid kanzunetti u listi minn dan il-backup.",
+  "backupReplace": "Ibdel din il-librerija",
+  "backupReplaceHint": "Ibdel il-kanzunetti u l-listi kollha fuq dan it-tagħmir bil-kontenut ta’ dan il-backup.",
+  "backupSummary": "Kanzunetti: {songs} · Listi: {setlists} · Kunflitti: {conflicts}",
+  "backupFailed": "Ma setgħetx titlesta din l-operazzjoni. Erġa’ pprova.",
+  "backupRestored": "Il-backup ġie rrestawrat.",
+  "backupLocalHint": "Issejvja kopja tal-librerija tiegħek. Id-dettalji tal-kont u l-cookies tal-kunsens qatt ma jiġu inklużi.",
+  "backupReplaceConfirm": "Tibdel il-librerija attwali? Din l-azzjoni ma tistax titneħħa.",
+  "youtubeConsentPageError": "Din il-paġna waqfet taħdem. Erġa’ pprova jew mur lura.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

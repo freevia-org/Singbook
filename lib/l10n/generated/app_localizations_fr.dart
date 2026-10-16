@@ -775,7 +775,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Détails réunis à partir de plusieurs sources';
 
   @override
-  String get searchCombinedLabel => 'Tout';
+  String get searchCombinedLabel => 'Combiné';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1755,4 +1755,67 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Options de la source';
+
+  @override
+  String get actionUndo => 'Annuler';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return '$song a été retirée de la setlist';
+  }
+
+  @override
+  String get backupTitle => 'Sauvegarde et restauration';
+
+  @override
+  String get backupExport => 'Exporter la sauvegarde';
+
+  @override
+  String get backupRestore => 'Restaurer la sauvegarde';
+
+  @override
+  String get backupIncludePreferences =>
+      'Inclure les préférences de l’application';
+
+  @override
+  String get backupRestorePreferences =>
+      'Restaurer les préférences de l’application';
+
+  @override
+  String get backupMerge => 'Ajouter à cette bibliothèque';
+
+  @override
+  String get backupMergeHint =>
+      'Conserver les modifications locales et ajouter les chansons et setlists de cette sauvegarde.';
+
+  @override
+  String get backupReplace => 'Remplacer cette bibliothèque';
+
+  @override
+  String get backupReplaceHint =>
+      'Remplacer toutes les chansons et setlists de cet appareil par le contenu de cette sauvegarde.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Chansons : $songs · Setlists : $setlists · Conflits : $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Impossible de terminer cette opération. Réessayez.';
+
+  @override
+  String get backupRestored => 'Sauvegarde restaurée.';
+
+  @override
+  String get backupLocalHint =>
+      'Enregistrez une copie de votre bibliothèque. Les identifiants du compte et les cookies de consentement ne sont jamais inclus.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Remplacer la bibliothèque actuelle ? Cette action est irréversible.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Cette page a cessé de fonctionner. Réessayez ou revenez en arrière.';
 }

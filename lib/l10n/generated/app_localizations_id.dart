@@ -770,7 +770,7 @@ class AppLocalizationsId extends AppLocalizations {
       'Detail digabungkan dari beberapa sumber';
 
   @override
-  String get searchCombinedLabel => 'Semua';
+  String get searchCombinedLabel => 'Gabungan';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1734,4 +1734,65 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Opsi sumber';
+
+  @override
+  String get actionUndo => 'Urungkan';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return '$song dihapus dari daftar lagu';
+  }
+
+  @override
+  String get backupTitle => 'Cadangkan dan pulihkan';
+
+  @override
+  String get backupExport => 'Ekspor cadangan';
+
+  @override
+  String get backupRestore => 'Pulihkan cadangan';
+
+  @override
+  String get backupIncludePreferences => 'Sertakan preferensi aplikasi';
+
+  @override
+  String get backupRestorePreferences => 'Pulihkan preferensi aplikasi';
+
+  @override
+  String get backupMerge => 'Tambahkan ke pustaka ini';
+
+  @override
+  String get backupMergeHint =>
+      'Pertahankan perubahan lokal dan tambahkan lagu serta daftar dari cadangan ini.';
+
+  @override
+  String get backupReplace => 'Ganti pustaka ini';
+
+  @override
+  String get backupReplaceHint =>
+      'Ganti semua lagu dan daftar di perangkat ini dengan isi cadangan ini.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Lagu: $songs · Daftar: $setlists · Konflik: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Operasi cadangan tidak dapat diselesaikan. Coba lagi.';
+
+  @override
+  String get backupRestored => 'Cadangan dipulihkan.';
+
+  @override
+  String get backupLocalHint =>
+      'Simpan salinan pustaka Anda. Kredensial akun dan cookie persetujuan tidak pernah disertakan.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Ganti pustaka saat ini? Tindakan ini tidak dapat dibatalkan.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Halaman ini berhenti berfungsi. Coba lagi atau kembali.';
 }

@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "Zápis akordov treba potvrdiť podľa textu piesne",
   "searchMatchDifferentLyrics": "Text sa líši od vybranej piesne",
   "searchMatchCombinedSources": "Informácie spojené z viacerých zdrojov",
-  "searchCombinedLabel": "Všetky",
+  "searchCombinedLabel": "Kombinované",
   "searchSongMatchCount": "{count, plural, one{1 zhoda piesne} few{{count} zhody piesní} other{{count} zhôd piesní}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Podrobnosti o verzii",
   "searchSelectedRecording": "Vybratá nahrávka",
   "searchVersionDuration": "Dĺžka verzie",
-  "searchSourceOptions": "Možnosti zdroja"
+  "searchSourceOptions": "Možnosti zdroja",
+  "actionUndo": "Vrátiť späť",
+  "setlistEntryRemoved": "Skladba „{song}“ bola odstránená zo setlistu",
+  "backupTitle": "Zálohovanie a obnovenie",
+  "backupExport": "Exportovať zálohu",
+  "backupRestore": "Obnoviť zálohu",
+  "backupIncludePreferences": "Zahrnúť nastavenia aplikácie",
+  "backupRestorePreferences": "Obnoviť nastavenia aplikácie",
+  "backupMerge": "Pridať do tejto knižnice",
+  "backupMergeHint": "Zachovať miestne úpravy a pridať skladby a setlisty z tejto zálohy.",
+  "backupReplace": "Nahradiť túto knižnicu",
+  "backupReplaceHint": "Nahradiť všetky skladby a setlisty v tomto zariadení obsahom tejto zálohy.",
+  "backupSummary": "Skladby: {songs} · Setlisty: {setlists} · Konflikty: {conflicts}",
+  "backupFailed": "Operáciu sa nepodarilo dokončiť. Skúste to znova.",
+  "backupRestored": "Záloha bola obnovená.",
+  "backupLocalHint": "Uložte si kópiu knižnice. Údaje účtu ani súbory cookie súhlasu sa nezahŕňajú.",
+  "backupReplaceConfirm": "Nahradiť aktuálnu knižnicu? Túto akciu nemožno vrátiť späť.",
+  "youtubeConsentPageError": "Táto stránka prestala fungovať. Skúste to znova alebo sa vráťte.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

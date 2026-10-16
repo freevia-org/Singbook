@@ -352,7 +352,7 @@
   "searchMatchNeedsAgreement": "يجب تأكيد كلمات ورقة الأكوردات",
   "searchMatchDifferentLyrics": "تختلف الكلمات عن الأغنية المحددة",
   "searchMatchCombinedSources": "تم جمع التفاصيل من مصادر متعددة",
-  "searchCombinedLabel": "الكل",
+  "searchCombinedLabel": "المجموعة الكاملة",
   "searchSongMatchCount": "{count, plural, zero{0 تطابقات للأغاني} one{تطابق واحد للأغنية} two{تطابقان للأغنية} few{{count} تطابقات للأغاني} many{{count} تطابقًا للأغاني} other{{count} تطابق للأغاني}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -754,5 +754,42 @@
   "searchVersionDetails": "تفاصيل الإصدار",
   "searchSelectedRecording": "التسجيل المحدد",
   "searchVersionDuration": "مدة الإصدار",
-  "searchSourceOptions": "خيارات المصدر"
+  "searchSourceOptions": "خيارات المصدر",
+  "actionUndo": "تراجع",
+  "setlistEntryRemoved": "تمت إزالة {song} من قائمة الأغاني",
+  "backupTitle": "النسخ الاحتياطي والاستعادة",
+  "backupExport": "تصدير نسخة احتياطية",
+  "backupRestore": "استعادة نسخة احتياطية",
+  "backupIncludePreferences": "تضمين تفضيلات التطبيق",
+  "backupRestorePreferences": "استعادة تفضيلات التطبيق",
+  "backupMerge": "إضافة إلى هذه المكتبة",
+  "backupMergeHint": "احتفظ بالتعديلات المحلية وأضف الأغاني والقوائم من هذه النسخة الاحتياطية.",
+  "backupReplace": "استبدال هذه المكتبة",
+  "backupReplaceHint": "استبدل جميع الأغاني والقوائم على هذا الجهاز بمحتوى هذه النسخة الاحتياطية.",
+  "backupSummary": "الأغاني: {songs} · القوائم: {setlists} · التعارضات: {conflicts}",
+  "backupFailed": "تعذّر إكمال عملية النسخ الاحتياطي. حاول مرة أخرى.",
+  "backupRestored": "تمت استعادة النسخة الاحتياطية.",
+  "backupLocalHint": "احفظ نسخة من مكتبتك. لا تُضمّن بيانات الحساب أو ملفات تعريف الارتباط للموافقة.",
+  "backupReplaceConfirm": "هل تريد استبدال المكتبة الحالية؟ لا يمكن التراجع عن ذلك.",
+  "youtubeConsentPageError": "توقفت هذه الصفحة عن العمل. حاول مرة أخرى أو ارجع.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

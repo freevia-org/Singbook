@@ -168,6 +168,24 @@ class SetlistEntryData {
   final bool missing;
 }
 
+/// Complete data needed to put a removed entry back in its original position.
+/// Overrides are kept opaque to the UI so keys, capo, repeats, and future
+/// entry metadata survive an Undo action unchanged.
+@immutable
+class SetlistEntryRemovalData {
+  const SetlistEntryRemovalData({
+    required this.setlistId,
+    required this.entryId,
+    required this.songId,
+    required this.overrides,
+    required this.index,
+  });
+
+  final String setlistId, entryId, songId;
+  final Map<String, Object?> overrides;
+  final int index;
+}
+
 @immutable
 class SetlistCardData {
   const SetlistCardData({
@@ -424,6 +442,7 @@ class VerseUiState {
     bool? autoscrollPreference,
     this.timingMode = 'estimated',
     this.readerHasTiming = false,
+    this.readerTimingAvailable = false,
     this.readerDurationEstimated = false,
     this.readerSource,
     this.readerCanCompareVersions = false,
@@ -490,6 +509,7 @@ class VerseUiState {
       autoscrollPreference = o.autoscrollPreference,
       timingMode = o.timingMode,
       readerHasTiming = o.readerHasTiming,
+      readerTimingAvailable = o.readerTimingAvailable,
       readerDurationEstimated = o.readerDurationEstimated,
       readerSource = o.readerSource,
       readerCanCompareVersions = o.readerCanCompareVersions,
@@ -560,6 +580,7 @@ class VerseUiState {
   final bool autoscrollPreference;
   final String timingMode;
   final bool readerHasTiming, readerDurationEstimated;
+  final bool readerTimingAvailable;
   final String? readerSource;
   final bool readerCanCompareVersions;
   final double playbackSpeed;
@@ -602,6 +623,9 @@ abstract class VerseUiController extends ChangeNotifier {
   void clearHistory();
   Future<void> selectReference(SearchReferenceData reference);
   Future<void> retrySelectedSongDiscovery() async {}
+  Future<void> retryYoutubeMusicForSelectedSong({
+    String? expectedIdentity,
+  }) async {}
   void selectVersion(String versionId);
   Future<void> saveSelectedVersion();
   Future<void> compareCurrentSongVersions() async {}
@@ -701,6 +725,17 @@ abstract class VerseUiController extends ChangeNotifier {
     String? name,
     String? notes,
   }) async {}
+  Future<SetlistEntryRemovalData?> removeSetlistEntryWithUndo(
+    String setlistId,
+    String entryId, {
+    String? name,
+    String? notes,
+  }) async {
+    await removeSetlistEntry(setlistId, entryId, name: name, notes: notes);
+    return null;
+  }
+
+  Future<void> restoreSetlistEntry(SetlistEntryRemovalData removed) async {}
   Future<void> saveSetlistEntryOverrides(
     String setlistId,
     String entryId, {

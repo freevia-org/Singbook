@@ -1,11 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/l10n/generated/app_localizations.dart';
-import 'package:singbook/ui/home/home_screen.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
+import 'package:singbook/ui/home/home_screen.dart';
 import 'package:singbook/ui/verse_app.dart';
 
 void main() {
+  testWidgets('a Recent song can be added to an existing setlist', (
+    tester,
+  ) async {
+    final controller = _HomeController(
+      VerseUiState(
+        recent: [
+          RecentItemData(
+            id: 'recent-song',
+            title: 'Recent song',
+            artist: 'Artist',
+            occurredAt: DateTime(2026),
+            isSetlist: false,
+          ),
+        ],
+        setlists: const [SetlistCardData(id: 'set', title: 'Sunday')],
+      ),
+    );
+    addTearDown(controller.dispose);
+    await _pumpHome(tester, controller);
+    final l10n = AppLocalizations.of(
+      tester.element(find.byType(VerseHomeScreen)),
+    );
+
+    await tester.tap(find.byType(PopupMenuButton<String>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(l10n.songAddToSetlist));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Sunday'));
+    await tester.pumpAndSettle();
+
+    expect(controller.addedSongs, [('recent-song', 'set')]);
+  });
+
   testWidgets('recent timeline only overlays the list while scrolling', (
     tester,
   ) async {
@@ -150,7 +183,6 @@ void main() {
     );
     expect(text.style!.fontSize, greaterThanOrEqualTo(12));
   });
-
 }
 
 Future<void> _pumpHome(WidgetTester tester, _HomeController controller) async {
@@ -191,8 +223,14 @@ List<int> _activeChips(WidgetTester tester) => [
 class _HomeController extends VerseUiController {
   _HomeController(this._state);
   final VerseUiState _state;
+  final addedSongs = <(String, String)>[];
   @override
   VerseUiState get state => _state;
+
+  @override
+  Future<void> addSongToSetlist(String songId, String setlistId) async {
+    addedSongs.add((songId, setlistId));
+  }
 
   @override
   dynamic noSuchMethod(Invocation invocation) {

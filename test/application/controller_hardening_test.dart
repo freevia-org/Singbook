@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:archive/archive.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -10,6 +11,7 @@ import 'package:singbook/application/error_reporting.dart';
 import 'package:singbook/application/file_actions.dart';
 import 'package:singbook/data/library_repository.dart';
 import 'package:singbook/domain/models.dart';
+import 'package:singbook/domain/timing.dart';
 import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/providers/provider.dart';
 import 'package:singbook/sync/google_drive_sync.dart';
@@ -38,6 +40,31 @@ SourceDiscoveryService discovery() => SourceDiscoveryService([QuietCatalog()]);
 
 PickedDocument doc(String name, List<int> bytes) =>
     PickedDocument(name, Uint8List.fromList(bytes));
+
+Uint8List backupWithInvalidSongTimestamp(SongDocument song) {
+  final archive = ZipDecoder().decodeBytes(encodeLibraryPackage([song], []));
+  final songPath = 'songs/0.json';
+  final songJson = jsonMap(
+    jsonDecode(utf8.decode(archive.find(songPath)!.content)),
+  )..['createdAt'] = 'not-a-date';
+  final songBytes = utf8.encode(jsonEncode(songJson));
+  final manifest = jsonMap(
+    jsonDecode(utf8.decode(archive.find('manifest.json')!.content)),
+  );
+  manifest['hashes'] = stringMap(manifest['hashes'])
+    ..[songPath] = sha256.convert(songBytes).toString();
+  final replacements = {
+    songPath: songBytes,
+    'manifest.json': utf8.encode(jsonEncode(manifest)),
+  };
+  final rewritten = Archive();
+  for (final file in archive.files) {
+    rewritten.add(
+      ArchiveFile.bytes(file.name, replacements[file.name] ?? file.content),
+    );
+  }
+  return Uint8List.fromList(ZipEncoder().encodeBytes(rewritten));
+}
 
 class _PendingRestoreAuth extends FakeAuth {
   final completion = Completer<bool>();
@@ -109,28 +136,32 @@ void main() {
       fresh.dispose();
     });
 
-    test('a failing explicit session restore cannot break the controller', () async {
-      final auth = FakeAuth()..restoreError = StateError('keystore unavailable');
-      final other = await LibraryRepository.open(
-        path: inMemoryDatabasePath,
-        factory: databaseFactoryFfi,
-      );
-      final guarded = AppController(
-        repository: other,
-        discovery: discovery(),
-        sync: GoogleDriveSyncService(
+    test(
+      'a failing explicit session restore cannot break the controller',
+      () async {
+        final auth = FakeAuth()
+          ..restoreError = StateError('keystore unavailable');
+        final other = await LibraryRepository.open(
+          path: inMemoryDatabasePath,
+          factory: databaseFactoryFfi,
+        );
+        final guarded = AppController(
           repository: other,
-          auth: auth,
-          store: MemoryCloud(),
-        ),
-      );
-      await guarded.initialize();
-      await guarded.restoreSync();
-      expect(guarded.initialized, isTrue);
-      expect(guarded.syncError, 'sync_failed');
-      guarded.dispose();
-      await other.close();
-    });
+          discovery: discovery(),
+          sync: GoogleDriveSyncService(
+            repository: other,
+            auth: auth,
+            store: MemoryCloud(),
+          ),
+        );
+        await guarded.initialize();
+        await guarded.restoreSync();
+        expect(guarded.initialized, isTrue);
+        expect(guarded.syncError, 'sync_failed');
+        guarded.dispose();
+        await other.close();
+      },
+    );
 
     test(
       'startup skips account restoration until explicitly requested',
@@ -162,33 +193,35 @@ void main() {
       },
     );
 
-    test('explicit connect restores first, then falls back without syncing',
-        () async {
-      final auth = _PendingRestoreAuth();
-      final cloud = MemoryCloud();
-      final guarded = AppController(
-        repository: repo,
-        discovery: discovery(),
-        sync: GoogleDriveSyncService(
+    test(
+      'explicit connect restores first, then falls back without syncing',
+      () async {
+        final auth = _PendingRestoreAuth();
+        final cloud = MemoryCloud();
+        final guarded = AppController(
           repository: repo,
-          auth: auth,
-          store: cloud,
-        ),
-      );
-      addTearDown(guarded.dispose);
-      await guarded.initialize();
-      final connecting = guarded.connectSync();
-      for (var i = 0; i < 1000 && !auth.restoring; i++) {
-        await Future<void>.delayed(const Duration(milliseconds: 1));
-      }
-      expect(auth.restoring, isTrue);
-      expect(auth.connecting, isFalse);
-      auth.completion.complete(false);
-      await connecting;
-      expect(auth.connecting, isTrue);
-      expect(guarded.syncConnected, isTrue);
-      expect(cloud.requests, 0);
-    });
+          discovery: discovery(),
+          sync: GoogleDriveSyncService(
+            repository: repo,
+            auth: auth,
+            store: cloud,
+          ),
+        );
+        addTearDown(guarded.dispose);
+        await guarded.initialize();
+        final connecting = guarded.connectSync();
+        for (var i = 0; i < 1000 && !auth.restoring; i++) {
+          await Future<void>.delayed(const Duration(milliseconds: 1));
+        }
+        expect(auth.restoring, isTrue);
+        expect(auth.connecting, isFalse);
+        auth.completion.complete(false);
+        await connecting;
+        expect(auth.connecting, isTrue);
+        expect(guarded.syncConnected, isTrue);
+        expect(cloud.requests, 0);
+      },
+    );
 
     test('late account restoration cannot access a disposed library', () async {
       final auth = _PendingRestoreAuth();
@@ -250,78 +283,109 @@ void main() {
       },
     );
 
-    test('dispose during an in-flight sync neither throws nor touches the controller',
-        () async {
-      // Seed the cloud from a second device so the sync has something to read.
-      final cloud = MemoryCloud();
-      final remote = await LibraryRepository.open(
-        path: inMemoryDatabasePath,
-        factory: databaseFactoryFfi,
-      );
-      await remote.saveSong(
-        SongDocument(id: 'remote', title: 'R', artist: '', body: 'words'),
-      );
-      final remoteAuth = FakeAuth();
-      await remoteAuth.connect();
-      await GoogleDriveSyncService(
-        repository: remote,
-        auth: remoteAuth,
-        store: cloud,
-      ).sync();
-      final auth = FakeAuth();
-      await auth.connect();
-      final gate = Completer<void>();
-      cloud.hook = (op, _) => op == 'read' ? gate.future : null;
-      // An in-memory path is shared by every open, so use a real file.
-      final dir = await Directory.systemTemp.createTemp('verse-ctl-');
-      addTearDown(() => dir.delete(recursive: true));
-      final local = await LibraryRepository.open(
-        path: '${dir.path}/local.sqlite',
-        factory: databaseFactoryFfi,
-      );
-      final controller = AppController(
-        repository: local,
-        discovery: discovery(),
-        sync: GoogleDriveSyncService(
-          repository: local,
-          auth: auth,
+    test(
+      'dispose during an in-flight sync neither throws nor touches the controller',
+      () async {
+        // Seed the cloud from a second device so the sync has something to read.
+        final cloud = MemoryCloud();
+        final remote = await LibraryRepository.open(
+          path: inMemoryDatabasePath,
+          factory: databaseFactoryFfi,
+        );
+        await remote.saveSong(
+          SongDocument(id: 'remote', title: 'R', artist: '', body: 'words'),
+        );
+        final remoteAuth = FakeAuth();
+        await remoteAuth.connect();
+        await GoogleDriveSyncService(
+          repository: remote,
+          auth: remoteAuth,
           store: cloud,
-        ),
-      );
-      await controller.initialize();
-      var notifications = 0;
-      controller.addListener(() => notifications++);
-      final running = controller.syncNow();
-      await Future<void>.delayed(const Duration(milliseconds: 20));
-      expect(controller.syncBusy, isTrue);
-      final seen = notifications;
-      controller.dispose();
-      gate.complete();
-      await running;
-      await controller.syncIdle;
-      expect(notifications, seen, reason: 'no notifications after dispose');
-      await remote.close();
-      await local.close();
-    });
+        ).sync();
+        final auth = FakeAuth();
+        await auth.connect();
+        final gate = Completer<void>();
+        cloud.hook = (op, _) => op == 'read' ? gate.future : null;
+        // An in-memory path is shared by every open, so use a real file.
+        final dir = await Directory.systemTemp.createTemp('verse-ctl-');
+        addTearDown(() => dir.delete(recursive: true));
+        final local = await LibraryRepository.open(
+          path: '${dir.path}/local.sqlite',
+          factory: databaseFactoryFfi,
+        );
+        final controller = AppController(
+          repository: local,
+          discovery: discovery(),
+          sync: GoogleDriveSyncService(
+            repository: local,
+            auth: auth,
+            store: cloud,
+          ),
+        );
+        await controller.initialize();
+        var notifications = 0;
+        controller.addListener(() => notifications++);
+        final running = controller.syncNow();
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        expect(controller.syncBusy, isTrue);
+        final seen = notifications;
+        controller.dispose();
+        gate.complete();
+        await running;
+        await controller.syncIdle;
+        expect(notifications, seen, reason: 'no notifications after dispose');
+        await remote.close();
+        await local.close();
+      },
+    );
   });
 
   group('failures are reported with stable codes', () {
-    test('import failures set lastMessage and still throw to the caller',
-        () async {
-      await expectLater(
-        app.importDocument(doc('bad.zip', [0x50, 0x4b, 3, 4, 1, 2, 3])),
-        throwsFormatException,
-      );
-      expect(app.lastErrorCode, 'invalid_archive');
-      expect(app.lastMessage!.operation, 'import');
-      app.clearMessage();
-      expect(app.lastMessage, isNull);
-      await expectLater(
-        app.importDocument(doc('empty.txt', utf8.encode('  \n'))),
-        throwsFormatException,
-      );
-      expect(app.lastErrorCode, 'empty_file');
-    });
+    test(
+      'import failures set lastMessage and still throw to the caller',
+      () async {
+        await expectLater(
+          app.importDocument(doc('bad.zip', [0x50, 0x4b, 3, 4, 1, 2, 3])),
+          throwsFormatException,
+        );
+        expect(app.lastErrorCode, 'invalid_archive');
+        expect(app.lastMessage!.operation, 'import');
+        app.clearMessage();
+        expect(app.lastMessage, isNull);
+        await expectLater(
+          app.importDocument(doc('empty.txt', utf8.encode('  \n'))),
+          throwsFormatException,
+        );
+        expect(app.lastErrorCode, 'empty_file');
+      },
+    );
+
+    test(
+      'archive filename without ZIP signature is rejected before writes',
+      () async {
+        final beforeSongIds = (await repo.listSongs())
+            .map((song) => song.id)
+            .toSet();
+        final beforeSetlistIds = (await repo.listSetlists())
+            .map((setlist) => setlist.id)
+            .toSet();
+        for (final name in ['qa-corrupt.zip', 'qa-corrupt.lyrics-setlist']) {
+          await expectLater(
+            app.importDocument(doc(name, utf8.encode('not a zip'))),
+            throwsFormatException,
+          );
+          expect(app.lastErrorCode, 'invalid_archive');
+        }
+        expect(
+          (await repo.listSongs()).map((song) => song.id).toSet(),
+          beforeSongIds,
+        );
+        expect(
+          (await repo.listSetlists()).map((setlist) => setlist.id).toSet(),
+          beforeSetlistIds,
+        );
+      },
+    );
 
     test('every new message notifies even when the code repeats', () async {
       var count = 0;
@@ -332,7 +396,10 @@ void main() {
     });
 
     test('guarded turns an exception into a message', () async {
-      final value = await app.guarded<int>('share', () async => throw StateError('no_result'));
+      final value = await app.guarded<int>(
+        'share',
+        () async => throw StateError('no_result'),
+      );
       expect(value, isNull);
       expect(app.lastMessage!.code, 'no_result');
       expect(app.lastMessage!.operation, 'share');
@@ -340,10 +407,24 @@ void main() {
     });
 
     test('errorCodeFor never exposes raw exception text', () {
-      expect(AppController.errorCodeFor(const SyncException('rate_limited')), 'rate_limited');
-      expect(AppController.errorCodeFor(const FormatException('Unexpected character at secret=abc')), 'invalid_file');
-      expect(AppController.errorCodeFor(ArchiveException('boom')), 'invalid_archive');
-      expect(AppController.errorCodeFor(Exception('token=abc')), 'unknown_error');
+      expect(
+        AppController.errorCodeFor(const SyncException('rate_limited')),
+        'rate_limited',
+      );
+      expect(
+        AppController.errorCodeFor(
+          const FormatException('Unexpected character at secret=abc'),
+        ),
+        'invalid_file',
+      );
+      expect(
+        AppController.errorCodeFor(ArchiveException('boom')),
+        'invalid_archive',
+      );
+      expect(
+        AppController.errorCodeFor(Exception('token=abc')),
+        'unknown_error',
+      );
     });
 
     test('addToSetlist with a vanished setlist is a handled failure', () async {
@@ -362,36 +443,48 @@ void main() {
   });
 
   group('writes do not clobber background changes', () {
-    final base = SongDocument(id: 'song', title: 'T', artist: '', body: 'first');
-    test('a stale save is kept as a conflict copy and the newer version survives',
-        () async {
-      await app.saveSong(base);
-      final snapshot = app.findSong('song')!;
-      // A background sync replaces the song; the controller has not reloaded.
-      await repo.saveSong(snapshot.copyWith(body: 'from sync'));
-      final saved = await app.saveSong(snapshot.copyWith(body: 'my edit'));
-      expect(saved, isFalse);
-      expect(app.lastMessage!.code, 'save_conflict');
-      expect(app.lastMessage!.isError, isFalse);
-      expect((await repo.getSong('song'))!.body, 'from sync');
-      final bodies = (await repo.listSongs()).map((s) => s.body).toSet();
-      expect(bodies, {'from sync', 'my edit'});
-    });
+    final base = SongDocument(
+      id: 'song',
+      title: 'T',
+      artist: '',
+      body: 'first',
+    );
+    test(
+      'a stale save is kept as a conflict copy and the newer version survives',
+      () async {
+        await app.saveSong(base);
+        final snapshot = app.findSong('song')!;
+        // A background sync replaces the song; the controller has not reloaded.
+        await repo.saveSong(snapshot.copyWith(body: 'from sync'));
+        final saved = await app.saveSong(snapshot.copyWith(body: 'my edit'));
+        expect(saved, isFalse);
+        expect(app.lastMessage!.code, 'save_conflict');
+        expect(app.lastMessage!.isError, isFalse);
+        expect((await repo.getSong('song'))!.body, 'from sync');
+        final bodies = (await repo.listSongs()).map((s) => s.body).toSet();
+        expect(bodies, {'from sync', 'my edit'});
+      },
+    );
 
-    test('an explicit baseHash detects a change the cache already absorbed',
-        () async {
-      await app.saveSong(base);
-      final started = app.songHash('song')!;
-      final snapshot = app.findSong('song')!;
-      await repo.saveSong(snapshot.copyWith(body: 'from sync'));
-      await app.initialize(); // refresh the cache to the newer stored version
-      expect(app.findSong('song')!.body, 'from sync');
-      expect(
-        await app.saveSong(snapshot.copyWith(body: 'late'), baseHash: started),
-        isFalse,
-      );
-      expect((await repo.getSong('song'))!.body, 'from sync');
-    });
+    test(
+      'an explicit baseHash detects a change the cache already absorbed',
+      () async {
+        await app.saveSong(base);
+        final started = app.songHash('song')!;
+        final snapshot = app.findSong('song')!;
+        await repo.saveSong(snapshot.copyWith(body: 'from sync'));
+        await app.initialize(); // refresh the cache to the newer stored version
+        expect(app.findSong('song')!.body, 'from sync');
+        expect(
+          await app.saveSong(
+            snapshot.copyWith(body: 'late'),
+            baseHash: started,
+          ),
+          isFalse,
+        );
+        expect((await repo.getSong('song'))!.body, 'from sync');
+      },
+    );
 
     test('an unchanged song saves in place', () async {
       await app.saveSong(base);
@@ -403,32 +496,44 @@ void main() {
       expect(app.lastMessage, isNull);
     });
 
-    test('toggleFavorite applies to the stored song, not the stale snapshot',
-        () async {
-      await app.saveSong(base);
-      final snapshot = app.findSong('song')!;
-      await repo.saveSong(snapshot.copyWith(body: 'from sync'));
-      await app.toggleFavorite(snapshot);
-      final stored = (await repo.getSong('song'))!;
-      expect(stored.favorite, isTrue);
-      expect(stored.body, 'from sync');
-    });
+    test(
+      'toggleFavorite applies to the stored song, not the stale snapshot',
+      () async {
+        await app.saveSong(base);
+        final snapshot = app.findSong('song')!;
+        await repo.saveSong(snapshot.copyWith(body: 'from sync'));
+        await app.toggleFavorite(snapshot);
+        final stored = (await repo.getSong('song'))!;
+        expect(stored.favorite, isTrue);
+        expect(stored.body, 'from sync');
+      },
+    );
 
-    test('a stale setlist save is kept beside the newer stored setlist',
-        () async {
-      await app.saveSetlist(SetlistDocument(id: 'set', name: 'Original'));
-      final snapshot = app.setlists.single;
-      await repo.saveSetlist(
-        SetlistDocument(id: 'set', name: 'From sync', createdAt: snapshot.createdAt),
-      );
-      final saved = await app.saveSetlist(
-        SetlistDocument(id: 'set', name: 'My edit', createdAt: snapshot.createdAt),
-      );
-      expect(saved, isFalse);
-      final names = (await repo.listSetlists()).map((s) => s.name).toList();
-      expect(names, contains('From sync'));
-      expect(names.where((n) => n.startsWith('My edit')), hasLength(1));
-    });
+    test(
+      'a stale setlist save is kept beside the newer stored setlist',
+      () async {
+        await app.saveSetlist(SetlistDocument(id: 'set', name: 'Original'));
+        final snapshot = app.setlists.single;
+        await repo.saveSetlist(
+          SetlistDocument(
+            id: 'set',
+            name: 'From sync',
+            createdAt: snapshot.createdAt,
+          ),
+        );
+        final saved = await app.saveSetlist(
+          SetlistDocument(
+            id: 'set',
+            name: 'My edit',
+            createdAt: snapshot.createdAt,
+          ),
+        );
+        expect(saved, isFalse);
+        final names = (await repo.listSetlists()).map((s) => s.name).toList();
+        expect(names, contains('From sync'));
+        expect(names.where((n) => n.startsWith('My edit')), hasLength(1));
+      },
+    );
 
     test('findSong is the cache; loadSong is the database', () async {
       await repo.saveSong(base);
@@ -438,8 +543,18 @@ void main() {
   });
 
   group('imports', () {
-    final one = SongDocument(id: 'one', title: 'One', artist: 'A', body: 'First words');
-    final two = SongDocument(id: 'two', title: 'Two', artist: 'A', body: 'Second words');
+    final one = SongDocument(
+      id: 'one',
+      title: 'One',
+      artist: 'A',
+      body: 'First words',
+    );
+    final two = SongDocument(
+      id: 'two',
+      title: 'Two',
+      artist: 'A',
+      body: 'Second words',
+    );
     final set = SetlistDocument(
       id: 'set',
       name: 'Evening',
@@ -449,51 +564,63 @@ void main() {
       ],
     );
 
-    test('importing the same backup twice creates nothing the second time',
-        () async {
-      final bytes = encodeLibraryPackage([one, two], [set]);
-      await app.importDocument(doc('backup.lyrics-setlist', bytes));
-      expect(app.songs, hasLength(2));
-      expect(app.setlists, hasLength(1));
-      final outbox = (await repo.database.query('outbox')).length;
-      await app.importDocument(doc('backup.lyrics-setlist', bytes));
-      expect(app.songs, hasLength(2));
-      expect(app.setlists, hasLength(1));
-      expect((await repo.database.query('outbox')).length, outbox);
-    });
+    test(
+      'importing the same backup twice creates nothing the second time',
+      () async {
+        final bytes = encodeLibraryPackage([one, two], [set]);
+        await app.importDocument(doc('backup.lyrics-setlist', bytes));
+        expect(app.songs, hasLength(2));
+        expect(app.setlists, hasLength(1));
+        final outbox = (await repo.database.query('outbox')).length;
+        await app.importDocument(doc('backup.lyrics-setlist', bytes));
+        expect(app.songs, hasLength(2));
+        expect(app.setlists, hasLength(1));
+        expect((await repo.database.query('outbox')).length, outbox);
+      },
+    );
 
-    test('a user-edited imported setlist is not overwritten by a re-import',
-        () async {
-      final bytes = encodeLibraryPackage([one, two], [set]);
-      await app.importDocument(doc('b.lyrics-setlist', bytes));
-      final imported = app.setlists.single;
-      await app.saveSetlist(
-        SetlistDocument(
-          id: imported.id,
-          name: 'Renamed by user',
-          entries: imported.entries,
-          createdAt: imported.createdAt,
-        ),
-      );
-      await app.importDocument(doc('b.lyrics-setlist', bytes));
-      expect(app.setlists.single.name, 'Renamed by user');
-    });
+    test(
+      'a user-edited imported setlist is not overwritten by a re-import',
+      () async {
+        final bytes = encodeLibraryPackage([one, two], [set]);
+        await app.importDocument(doc('b.lyrics-setlist', bytes));
+        final imported = app.setlists.single;
+        await app.saveSetlist(
+          SetlistDocument(
+            id: imported.id,
+            name: 'Renamed by user',
+            entries: imported.entries,
+            createdAt: imported.createdAt,
+          ),
+        );
+        await app.importDocument(doc('b.lyrics-setlist', bytes));
+        expect(app.setlists.single.name, 'Renamed by user');
+      },
+    );
 
-    test('a conflicting song is imported as one stable copy, however often',
-        () async {
-      await app.saveSong(one);
-      final different = one.copyWith(body: 'Edited elsewhere');
-      for (var i = 0; i < 3; i++) {
-        await app.importCollection(ImportedCollection([different], [set.copyOnly('one')]));
-      }
-      expect(app.songs, hasLength(2));
-      expect(app.setlists, hasLength(1));
-    });
+    test(
+      'a conflicting song is imported as one stable copy, however often',
+      () async {
+        await app.saveSong(one);
+        final different = one.copyWith(body: 'Edited elsewhere');
+        for (var i = 0; i < 3; i++) {
+          await app.importCollection(
+            ImportedCollection([different], [set.copyOnly('one')]),
+          );
+        }
+        expect(app.songs, hasLength(2));
+        expect(app.setlists, hasLength(1));
+      },
+    );
 
     test('the same OpenSong setlist file imports once', () async {
       await app.saveSong(one);
       final text = encodeSetlistReferences(
-        SetlistDocument(id: 'x', name: 'File set', entries: [SetlistEntry(id: 'q', songId: 'one')]),
+        SetlistDocument(
+          id: 'x',
+          name: 'File set',
+          entries: [SetlistEntry(id: 'q', songId: 'one')],
+        ),
         [one],
       );
       await app.importDocument(doc('a.osts', utf8.encode(text)));
@@ -504,22 +631,41 @@ void main() {
     test('screen-specific imports reject files for the other screen', () async {
       await app.saveSong(one);
       final text = encodeSetlistReferences(
-        SetlistDocument(id: 'x', name: 'File set', entries: [SetlistEntry(id: 'q', songId: 'one')]),
+        SetlistDocument(
+          id: 'x',
+          name: 'File set',
+          entries: [SetlistEntry(id: 'q', songId: 'one')],
+        ),
         [one],
       );
-      await expectLater(app.importDocument(doc('a.osts', utf8.encode(text)), intent: ImportIntent.songs), throwsFormatException);
-      await expectLater(app.importDocument(doc('a.cho', utf8.encode('Song title\n[C]Words')), intent: ImportIntent.setlists), throwsFormatException);
+      await expectLater(
+        app.importDocument(
+          doc('a.osts', utf8.encode(text)),
+          intent: ImportIntent.songs,
+        ),
+        throwsFormatException,
+      );
+      await expectLater(
+        app.importDocument(
+          doc('a.cho', utf8.encode('Song title\n[C]Words')),
+          intent: ImportIntent.setlists,
+        ),
+        throwsFormatException,
+      );
       expect(app.songs, hasLength(1));
       expect(app.setlists, isEmpty);
     });
 
-    test('a text song whose title starts with PK is a song, not a zip', () async {
-      final result = await app.importDocument(
-        doc('pk.txt', utf8.encode('PK Anthem\n[C]Hello world')),
-      );
-      expect(result.songs.single.title, isNotEmpty);
-      expect(app.songs, hasLength(1));
-    });
+    test(
+      'a text song whose title starts with PK is a song, not a zip',
+      () async {
+        final result = await app.importDocument(
+          doc('pk.txt', utf8.encode('PK Anthem\n[C]Hello world')),
+        );
+        expect(result.songs.single.title, isNotEmpty);
+        expect(app.songs, hasLength(1));
+      },
+    );
 
     test('lyrics that mention <set> are a song, not a setlist', () async {
       await app.importDocument(
@@ -531,31 +677,367 @@ void main() {
 
     test('Windows-1251 and UTF-16 text files import', () async {
       await app.importDocument(
-        doc('cp1251.txt', [0xd1, 0xe2, 0xe5, 0xf2, 0xeb, 0xe8, 0xed, 0xe0, 0x0a, 0xd1, 0xe2, 0xe5, 0xf2]),
+        doc('cp1251.txt', [
+          0xd1,
+          0xe2,
+          0xe5,
+          0xf2,
+          0xeb,
+          0xe8,
+          0xed,
+          0xe0,
+          0x0a,
+          0xd1,
+          0xe2,
+          0xe5,
+          0xf2,
+        ]),
       );
       expect(app.songs.single.body, contains('Светлина'));
       final units = '[C]Hello UTF16'.codeUnits;
       await app.importDocument(
-        doc('u16.txt', [0xff, 0xfe, for (final u in units) ...[u & 0xff, u >> 8]]),
+        doc('u16.txt', [
+          0xff,
+          0xfe,
+          for (final u in units) ...[u & 0xff, u >> 8],
+        ]),
       );
       expect(app.songs.map((s) => s.body), contains(contains('Hello UTF16')));
     });
 
-    test('a backup with directory entries and more than 1000 songs restores', () async {
-      final songs = [
-        for (var i = 0; i < 1100; i++)
-          SongDocument(id: 's$i', title: 'T$i', artist: '', body: 'b$i'),
+    test(
+      'a backup with directory entries and more than 1000 songs restores',
+      () async {
+        final songs = [
+          for (var i = 0; i < 1100; i++)
+            SongDocument(id: 's$i', title: 'T$i', artist: '', body: 'b$i'),
+        ];
+        final archive = ZipDecoder().decodeBytes(
+          encodeLibraryPackage(songs, []),
+        );
+        final withDir = Archive()..add(ArchiveFile.directory('songs/'));
+        for (final f in archive) {
+          withDir.add(f);
+        }
+        await app.importDocument(
+          doc('big.zip', Uint8List.fromList(ZipEncoder().encodeBytes(withDir))),
+        );
+        expect(app.songs, hasLength(1100));
+      },
+    );
+  });
+
+  group('complete local backup and restore', () {
+    final original = SongDocument(
+      id: 'backup-song',
+      title: 'Backup song',
+      artist: 'Band',
+      body: '[C]Line',
+    );
+    final originalSetlist = SetlistDocument(
+      id: 'backup-set',
+      name: 'Practice',
+      notes: 'Friday',
+      entries: [
+        const SetlistEntry(id: 'one', songId: 'backup-song'),
+        const SetlistEntry(
+          id: 'again',
+          songId: 'backup-song',
+          overrides: {'capo': 2},
+        ),
+      ],
+    );
+
+    test(
+      'export preview and replace round-trip full library and portable settings',
+      () async {
+        await app.saveSong(original);
+        await app.saveSetlist(originalSetlist);
+        await app.setSetting('themeMode', 'dark');
+        await app.setSetting('providers', {'genius': false});
+        await app.setSetting('syncCredential', 'preserved-local-state');
+        final bytes = await app.exportBackup();
+        final file = doc('complete.lyrics-setlist', bytes);
+        final preview = await app.inspectBackup(file);
+        expect(preview.schemaVersion, 3);
+        expect(preview.songCount, 1);
+        expect(preview.setlistCount, 1);
+        expect(
+          preview.includedPreferenceKeys,
+          containsAll(['themeMode', 'providers']),
+        );
+        expect(
+          preview.includedPreferenceKeys,
+          isNot(contains('syncCredential')),
+        );
+
+        await app.saveSong(
+          SongDocument(
+            id: 'temporary',
+            title: 'Temporary',
+            artist: '',
+            body: 'local',
+          ),
+        );
+        await app.setSetting('themeMode', 'light');
+        await app.restoreBackup(
+          file,
+          mode: BackupRestoreMode.replace,
+          expectedPreviewToken: (await app.inspectBackup(file)).token,
+          restorePreferences: true,
+        );
+        expect(app.songs.map((value) => value.id), ['backup-song']);
+        expect(app.setlists.single.entries.map((entry) => entry.id), [
+          'one',
+          'again',
+        ]);
+        expect(app.setlists.single.entries.last.overrides['capo'], 2);
+        expect(app.settings['themeMode'], 'dark');
+        expect(app.settings['syncCredential'], 'preserved-local-state');
+      },
+    );
+
+    test(
+      'merge keeps local preferences by default and stale previews are rejected',
+      () async {
+        final file = doc(
+          'merge.lyrics-setlist',
+          encodeLibraryPackage(
+            [original],
+            [],
+            preferences: {'themeMode': 'dark'},
+          ),
+        );
+
+        await app.setSetting('themeMode', 'light');
+        final preview = await app.inspectBackup(file);
+        await app.setSetting('locale', 'uk');
+        await expectLater(
+          app.restoreBackup(
+            file,
+            mode: BackupRestoreMode.merge,
+            expectedPreviewToken: preview.token,
+          ),
+          throwsA(
+            isA<FormatException>().having(
+              (error) => error.message,
+              'message',
+              'stale_backup_preview',
+            ),
+          ),
+        );
+        final latestPreview = await app.inspectBackup(file);
+        await app.saveSong(
+          SongDocument(
+            id: 'local-change',
+            title: 'Local',
+            artist: '',
+            body: 'changed',
+          ),
+        );
+        await expectLater(
+          app.restoreBackup(
+            file,
+            mode: BackupRestoreMode.merge,
+            expectedPreviewToken: latestPreview.token,
+          ),
+          throwsA(
+            isA<FormatException>().having(
+              (error) => error.message,
+              'message',
+              'stale_backup_preview',
+            ),
+          ),
+        );
+        final freshPreview = await app.inspectBackup(file);
+        final result = await app.restoreBackup(
+          file,
+          mode: BackupRestoreMode.merge,
+          expectedPreviewToken: freshPreview.token,
+        );
+        expect(result.preferencesRestored, isFalse);
+        expect(app.settings['themeMode'], 'light');
+        expect(
+          app.songs.map((value) => value.id),
+          containsAll(['backup-song', 'local-change']),
+        );
+      },
+    );
+
+    test('invalid backup timestamps fail before any restore writes', () async {
+      await app.saveSong(original);
+      await app.saveSetlist(originalSetlist);
+      await app.setSetting('themeMode', 'dark');
+      final beforeSongs = [for (final song in app.songs) song.toJson()];
+      final beforeSetlists = [
+        for (final setlist in app.setlists) setlist.toJson(),
       ];
-      final archive = ZipDecoder().decodeBytes(encodeLibraryPackage(songs, []));
-      final withDir = Archive()..add(ArchiveFile.directory('songs/'));
-      for (final f in archive) {
-        withDir.add(f);
-      }
-      await app.importDocument(
-        doc('big.zip', Uint8List.fromList(ZipEncoder().encodeBytes(withDir))),
+      final file = doc(
+        'invalid-date.lyrics-setlist',
+        backupWithInvalidSongTimestamp(
+          SongDocument(
+            id: 'bad-date',
+            title: 'Bad date',
+            artist: '',
+            body: 'Words',
+          ),
+        ),
       );
-      expect(app.songs, hasLength(1100));
+
+      await expectLater(
+        app.restoreBackup(
+          file,
+          mode: BackupRestoreMode.replace,
+          expectedPreviewToken: 'not-used-after-decode-failure',
+        ),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'invalid_archive',
+          ),
+        ),
+      );
+
+      expect([for (final song in app.songs) song.toJson()], beforeSongs);
+      expect([
+        for (final setlist in app.setlists) setlist.toJson(),
+      ], beforeSetlists);
+      expect(app.settings['themeMode'], 'dark');
     });
+
+    test(
+      'replace restores opaque x_verse metadata and timing from the sidecar',
+      () async {
+        final opaque = SongDocument(
+          id: 'opaque-backup',
+          title: 'Future song',
+          artist: 'Band',
+          body: 'Timed lyric',
+          metadata: {'album': 'Album', 'tempo': 94},
+          timingTracks: [
+            parseLrc('[00:01]Timed lyric', sourceDocumentId: 'lrc-source'),
+          ],
+          extra: {
+            'custom': {'kept': true},
+          },
+          preservedExtensions: ['{x_verse: future unsupported data}'],
+          extensionError: 'Unsupported x_verse extension',
+        );
+        await app.saveSong(opaque);
+        final rawBefore = (await repo.getSongRaw(opaque.id))!;
+        final backup = doc('opaque.lyrics-setlist', await app.exportBackup());
+        await app.saveSong(
+          SongDocument(
+            id: 'temporary',
+            title: 'Temporary',
+            artist: '',
+            body: 'local',
+          ),
+        );
+        final preview = await app.inspectBackup(backup);
+        await app.restoreBackup(
+          backup,
+          mode: BackupRestoreMode.replace,
+          expectedPreviewToken: preview.token,
+        );
+
+        final restored = app.songs.single;
+        expect(restored.id, opaque.id);
+        expect(restored.metadata, opaque.metadata);
+        expect(
+          restored.timingTracks.single.raw,
+          opaque.timingTracks.single.raw,
+        );
+        expect(restored.preservedExtensions, opaque.preservedExtensions);
+        expect(restored.extensionError, opaque.extensionError);
+        expect(
+          (await repo.getSongRaw(opaque.id))!.document,
+          rawBefore.document,
+        );
+      },
+    );
+
+    test(
+      'merge forks opaque songs that differ only in full-document fields',
+      () async {
+        const opaqueExtension = '{x_verse: future unsupported data}';
+        final local = SongDocument(
+          id: 'opaque-shared-id',
+          title: 'Future song',
+          artist: 'Band',
+          body: 'Timed lyric',
+          metadata: {'album': 'Album', 'localOnly': 'local'},
+          timingTracks: [
+            parseLrc('[00:01]Timed lyric', sourceDocumentId: 'local-source'),
+          ],
+          extra: {'variant': 'local'},
+          preservedExtensions: [opaqueExtension],
+          extensionError: 'Unsupported x_verse extension',
+        );
+        final incoming = SongDocument(
+          id: local.id,
+          title: local.title,
+          artist: local.artist,
+          body: local.body,
+          metadata: {'album': 'Album', 'localOnly': 'backup'},
+          timingTracks: [
+            parseLrc('[00:02]Timed lyric', sourceDocumentId: 'backup-source'),
+          ],
+          extra: {'variant': 'backup'},
+          preservedExtensions: [opaqueExtension],
+          extensionError: local.extensionError,
+        );
+        expect(app.exportSong(local), app.exportSong(incoming));
+        await app.saveSong(local);
+
+        final incomingSetlist = SetlistDocument(
+          id: 'opaque-backup-setlist',
+          name: 'Future song set',
+          entries: [SetlistEntry(id: 'opaque-entry', songId: incoming.id)],
+        );
+        final file = doc(
+          'opaque-merge.lyrics-setlist',
+          encodeLibraryPackage([incoming], [incomingSetlist]),
+        );
+
+        final preview = await app.inspectBackup(file);
+        expect(preview.identicalSongCount, 0);
+        expect(preview.conflictingSongCount, 1);
+
+        await app.restoreBackup(
+          file,
+          mode: BackupRestoreMode.merge,
+          expectedPreviewToken: preview.token,
+        );
+
+        expect(app.songs, hasLength(2));
+        final imported = app.songs.singleWhere(
+          (song) => song.extra['variant'] == 'backup',
+        );
+        expect(imported.id, isNot(incoming.id));
+        expect(imported.metadata, incoming.metadata);
+        expect(
+          imported.timingTracks.single.raw,
+          incoming.timingTracks.single.raw,
+        );
+        expect(imported.preservedExtensions, incoming.preservedExtensions);
+        expect(imported.extra['importedFromId'], incoming.id);
+        expect(app.setlists, hasLength(1));
+        expect(app.setlists.single.entries.single.songId, imported.id);
+
+        final repeatPreview = await app.inspectBackup(file);
+        expect(repeatPreview.conflictingSongCount, 1);
+        await app.restoreBackup(
+          file,
+          mode: BackupRestoreMode.merge,
+          expectedPreviewToken: repeatPreview.token,
+        );
+        expect(app.songs, hasLength(2));
+        expect(app.setlists, hasLength(1));
+        expect(app.setlists.single.entries.single.songId, imported.id);
+      },
+    );
   });
 
   group('outbox', () {
@@ -565,7 +1047,9 @@ void main() {
         song = song.copyWith(body: '$i');
         await repo.saveSong(song);
       }
-      await repo.saveSong(SongDocument(id: 'other', title: 'O', artist: '', body: 'x'));
+      await repo.saveSong(
+        SongDocument(id: 'other', title: 'O', artist: '', body: 'x'),
+      );
       expect((await repo.database.query('outbox')).length, greaterThan(100));
       expect(await app.compactOutbox(), greaterThan(100));
       final rows = await repo.database.query('outbox');

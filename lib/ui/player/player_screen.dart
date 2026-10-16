@@ -53,6 +53,7 @@ class PlayerScreen extends StatefulWidget {
 class _PlayerScreenState extends State<PlayerScreen>
     with WidgetsBindingObserver {
   final _lyricsScroll = ScrollController();
+  final _controlsScroll = ScrollController();
   final _lineKeys = <String, GlobalKey>{};
   late ValueListenable<PlayerPosition> _position;
   String? _lastLineId;
@@ -446,6 +447,7 @@ class _PlayerScreenState extends State<PlayerScreen>
     _position.removeListener(_onPosition);
     _manualScrollIdle?.cancel();
     _lyricsScroll.dispose();
+    _controlsScroll.dispose();
     super.dispose();
   }
 
@@ -514,12 +516,26 @@ class _PlayerScreenState extends State<PlayerScreen>
       return SafeArea(
         top: false,
         child: compact
-            ? SingleChildScrollView(child: content)
+            ? Scrollbar(
+                controller: _controlsScroll,
+                thumbVisibility: true,
+                child: SingleChildScrollView(
+                  controller: _controlsScroll,
+                  child: content,
+                ),
+              )
             : maxHeight == null
             ? content
             : ConstrainedBox(
                 constraints: BoxConstraints(maxHeight: maxHeight),
-                child: SingleChildScrollView(child: content),
+                child: Scrollbar(
+                  controller: _controlsScroll,
+                  thumbVisibility: true,
+                  child: SingleChildScrollView(
+                    controller: _controlsScroll,
+                    child: content,
+                  ),
+                ),
               ),
       );
     }
@@ -566,6 +582,12 @@ class _PlayerScreenState extends State<PlayerScreen>
                   tooltip: l10n.songMenuLabel,
                   itemBuilder: (_) => [
                     PopupMenuItem(value: 'info', child: Text(l10n.songInfo)),
+                    if (state.readerTimingAvailable || state.readerHasTiming)
+                      CheckedPopupMenuItem(
+                        value: 'timed-lyrics',
+                        checked: state.timingMode == 'timed',
+                        child: Text(l10n.playerTimedLyrics),
+                      ),
                     PopupMenuItem(
                       value: 'add',
                       child: Text(l10n.songAddToSetlist),
@@ -587,12 +609,20 @@ class _PlayerScreenState extends State<PlayerScreen>
                       child: Text(l10n.settingsPrintSong),
                     ),
                   ],
-                  onSelected: (action) => handleSongMenuAction(
-                    context,
-                    controller,
-                    song.id,
-                    action,
-                  ),
+                  onSelected: (action) {
+                    if (action == 'timed-lyrics') {
+                      controller.setTimingMode(
+                        state.timingMode == 'timed' ? 'estimated' : 'timed',
+                      );
+                    } else {
+                      handleSongMenuAction(
+                        context,
+                        controller,
+                        song.id,
+                        action,
+                      );
+                    }
+                  },
                 ),
               ],
             ),
@@ -755,8 +785,10 @@ class _PlayerScreenState extends State<PlayerScreen>
                   MediaQuery.textScalerOf(context).scale(1) > 1.3;
               final section = Text(
                 currentSection == null
-                    ? (state.readerHasTiming
+                    ? (state.readerHasTiming && state.timingMode == 'timed'
                           ? l10n.playerTimedLyrics
+                          : state.timingMode == 'manual'
+                          ? l10n.playerManualScroll
                           : l10n.playerEstimatedPace)
                     : localizedSectionName(l10n, currentSection.name),
                 maxLines: 1,
@@ -866,10 +898,13 @@ class _PlayerScreenState extends State<PlayerScreen>
                   onChanged: controller.setPlaybackSpeed,
                 ),
               ),
-              SizedBox(
-                width: 44,
+              ConstrainedBox(
+                constraints: const BoxConstraints(minWidth: 44),
                 child: Text(
                   '${state.playbackSpeed.toStringAsFixed(2)}×',
+                  key: const ValueKey('scroll-speed-value'),
+                  maxLines: 1,
+                  softWrap: false,
                   textAlign: TextAlign.end,
                   style: Theme.of(context).textTheme.labelMedium,
                 ),
@@ -1231,7 +1266,7 @@ List<Widget> _sectionMarkerLabelWidgets({
         ? right - trackWidth * fraction
         : left + trackWidth * fraction;
     final sectionName = localizedSectionName(l10n, marker.name);
-    final label = width >= 560
+    var label = width >= 560
         ? sectionName
         : sectionAbbreviation(l10n, marker.name, compact: width < 400);
     final measure = TextPainter(
@@ -1240,7 +1275,15 @@ List<Widget> _sectionMarkerLabelWidgets({
       textScaler: textScaler,
       maxLines: 1,
       ellipsis: '…',
-    )..layout(maxWidth: maxLabelWidth);
+    )..layout();
+    if (measure.width > maxLabelWidth) {
+      label = sectionAbbreviation(l10n, marker.name, compact: width < 400);
+      measure.text = TextSpan(text: label, style: style);
+      measure.layout();
+    }
+    // A partial cue is not useful. Keep only complete labels that fit; the
+    // active section's full heading and timeline semantics remain available.
+    if (measure.width > maxLabelWidth) continue;
     final labelWidth = math.min(measure.width, maxLabelWidth);
     final center = x
         .clamp(left + labelWidth / 2, right - labelWidth / 2)

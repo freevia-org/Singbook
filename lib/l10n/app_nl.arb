@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "De songtekst moet met het akkoordenschema worden bevestigd",
   "searchMatchDifferentLyrics": "De songtekst verschilt van die van het geselecteerde nummer",
   "searchMatchCombinedSources": "Gegevens gecombineerd uit meerdere bronnen",
-  "searchCombinedLabel": "Alles",
+  "searchCombinedLabel": "Gecombineerd",
   "searchSongMatchCount": "{count, plural, =0{0 nummerovereenkomsten} =1{1 nummerovereenkomst} other{{count} nummerovereenkomsten}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Versiedetails",
   "searchSelectedRecording": "Geselecteerde opname",
   "searchVersionDuration": "Versieduur",
-  "searchSourceOptions": "Bronopties"
+  "searchSourceOptions": "Bronopties",
+  "actionUndo": "Ongedaan maken",
+  "setlistEntryRemoved": "{song} is uit de setlist verwijderd",
+  "backupTitle": "Back-up en herstel",
+  "backupExport": "Back-up exporteren",
+  "backupRestore": "Back-up herstellen",
+  "backupIncludePreferences": "App-voorkeuren opnemen",
+  "backupRestorePreferences": "App-voorkeuren herstellen",
+  "backupMerge": "Toevoegen aan deze bibliotheek",
+  "backupMergeHint": "Behoud lokale wijzigingen en voeg nummers en setlists uit deze back-up toe.",
+  "backupReplace": "Deze bibliotheek vervangen",
+  "backupReplaceHint": "Vervang alle nummers en setlists op dit apparaat door deze back-up.",
+  "backupSummary": "Nummers: {songs} · Setlists: {setlists} · Conflicten: {conflicts}",
+  "backupFailed": "Deze back-upbewerking is niet voltooid. Probeer het opnieuw.",
+  "backupRestored": "Back-up hersteld.",
+  "backupLocalHint": "Sla een kopie van je bibliotheek op. Accountgegevens en toestemmingscookies worden nooit opgenomen.",
+  "backupReplaceConfirm": "De huidige bibliotheek vervangen? Dit kan niet ongedaan worden gemaakt.",
+  "youtubeConsentPageError": "Deze pagina werkt niet meer. Probeer het opnieuw of ga terug.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

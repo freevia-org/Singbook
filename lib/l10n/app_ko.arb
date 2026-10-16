@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "코드 차트를 가사와 대조해 확인해야 합니다",
   "searchMatchDifferentLyrics": "선택한 노래와 가사가 다릅니다",
   "searchMatchCombinedSources": "여러 출처의 세부정보를 결합했습니다",
-  "searchCombinedLabel": "전체",
+  "searchCombinedLabel": "통합",
   "searchSongMatchCount": "{count, plural, =0{노래 일치 0개} =1{노래 일치 1개} other{노래 일치 {count}개}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "버전 세부정보",
   "searchSelectedRecording": "선택한 녹음",
   "searchVersionDuration": "버전 길이",
-  "searchSourceOptions": "소스 옵션"
+  "searchSourceOptions": "소스 옵션",
+  "actionUndo": "실행 취소",
+  "setlistEntryRemoved": "세트리스트에서 {song}을(를) 삭제했습니다",
+  "backupTitle": "백업 및 복원",
+  "backupExport": "백업 내보내기",
+  "backupRestore": "백업 복원",
+  "backupIncludePreferences": "앱 환경설정 포함",
+  "backupRestorePreferences": "앱 환경설정 복원",
+  "backupMerge": "이 라이브러리에 추가",
+  "backupMergeHint": "로컬 편집 내용을 유지하고 이 백업의 노래와 세트리스트를 추가합니다.",
+  "backupReplace": "이 라이브러리 교체",
+  "backupReplaceHint": "이 기기의 모든 노래와 세트리스트를 이 백업 내용으로 교체합니다.",
+  "backupSummary": "노래: {songs} · 세트리스트: {setlists} · 충돌: {conflicts}",
+  "backupFailed": "백업 작업을 완료하지 못했습니다. 다시 시도하세요.",
+  "backupRestored": "백업을 복원했습니다.",
+  "backupLocalHint": "라이브러리 사본을 저장합니다. 계정 자격 증명과 동의 쿠키는 포함되지 않습니다.",
+  "backupReplaceConfirm": "현재 라이브러리를 교체할까요? 이 작업은 되돌릴 수 없습니다.",
+  "youtubeConsentPageError": "이 페이지의 작동이 중지되었습니다. 다시 시도하거나 뒤로 이동하세요.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

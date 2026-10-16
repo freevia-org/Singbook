@@ -766,7 +766,7 @@ class AppLocalizationsFi extends AppLocalizations {
   String get searchMatchCombinedSources => 'Tiedot koottu useista lähteistä';
 
   @override
-  String get searchCombinedLabel => 'Kaikki';
+  String get searchCombinedLabel => 'Yhdistetty';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1732,4 +1732,65 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Lähdeasetukset';
+
+  @override
+  String get actionUndo => 'Kumoa';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return '$song poistettiin kappalelistasta';
+  }
+
+  @override
+  String get backupTitle => 'Varmuuskopiointi ja palautus';
+
+  @override
+  String get backupExport => 'Vie varmuuskopio';
+
+  @override
+  String get backupRestore => 'Palauta varmuuskopio';
+
+  @override
+  String get backupIncludePreferences => 'Sisällytä sovelluksen asetukset';
+
+  @override
+  String get backupRestorePreferences => 'Palauta sovelluksen asetukset';
+
+  @override
+  String get backupMerge => 'Lisää tähän kirjastoon';
+
+  @override
+  String get backupMergeHint =>
+      'Säilytä paikalliset muutokset ja lisää kappaleet ja listat tästä varmuuskopiosta.';
+
+  @override
+  String get backupReplace => 'Korvaa tämä kirjasto';
+
+  @override
+  String get backupReplaceHint =>
+      'Korvaa tämän laitteen kaikki kappaleet ja listat tällä varmuuskopiolla.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Kappaleet: $songs · Listat: $setlists · Ristiriidat: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Varmuuskopiointia ei voitu suorittaa loppuun. Yritä uudelleen.';
+
+  @override
+  String get backupRestored => 'Varmuuskopio palautettu.';
+
+  @override
+  String get backupLocalHint =>
+      'Tallenna kopio kirjastostasi. Tilin tunnistetietoja ja suostumusevästeitä ei koskaan sisällytetä.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Korvataanko nykyinen kirjasto? Tätä ei voi kumota.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Tämä sivu lakkasi toimimasta. Yritä uudelleen tai palaa takaisin.';
 }

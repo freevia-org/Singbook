@@ -1,8 +1,17 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 import '../../application/youtube_music_consent.dart';
 import '../../application/youtube_music_consent_entry.dart';
+
+const _rendererGoneChannel = EventChannel(
+  'org.freevia.singbook/webview_renderer_events',
+);
 
 /// Labels are supplied by the settings screen's localization boundary.
 class YoutubeConsentLabels {
@@ -168,10 +177,19 @@ class YoutubeMusicConsentScreen extends StatefulWidget {
     required this.labels,
     required this.onComplete,
     this.autoComplete = false,
+    this.rendererProcessGone,
+    this.onWebViewControllerCreated,
+    this.onPageStartedForTesting,
   });
   final YoutubeConsentLabels labels;
   final Future<bool> Function() onComplete;
   final bool autoComplete;
+  @visibleForTesting
+  final Stream<void>? rendererProcessGone;
+  @visibleForTesting
+  final ValueChanged<WebViewController>? onWebViewControllerCreated;
+  @visibleForTesting
+  final ValueChanged<String>? onPageStartedForTesting;
 
   @override
   State<YoutubeMusicConsentScreen> createState() =>
@@ -187,11 +205,53 @@ class _YoutubeMusicConsentScreenState extends State<YoutubeMusicConsentScreen> {
   int _webEpoch = 0;
   int _progress = 0;
   String? _error;
+  StreamSubscription<void>? _rendererSubscription;
+  StreamSubscription<Object?>? _platformRendererSubscription;
+  bool _rendererFailureHandled = false;
 
   @override
   void initState() {
     super.initState();
+    if (widget.rendererProcessGone != null) {
+      _rendererSubscription = widget.rendererProcessGone!.listen(
+        (_) => _handleRendererProcessGone(),
+        onError: (Object _) {},
+      );
+    } else if (defaultTargetPlatform == TargetPlatform.android) {
+      _platformRendererSubscription = _rendererGoneChannel
+          .receiveBroadcastStream()
+          .listen(_handleNativeRendererProcessGone, onError: (Object _) {});
+    }
     _initialize();
+  }
+
+  void _handleNativeRendererProcessGone(Object? event) {
+    final web = _web;
+    if (event is! int || web == null) return;
+    final platformController = web.platform;
+    if (platformController is! AndroidWebViewController ||
+        platformController.webViewIdentifier != event) {
+      return;
+    }
+    _handleRendererProcessGone();
+  }
+
+  void _handleRendererProcessGone() {
+    if (!mounted || _rendererFailureHandled) return;
+    _rendererFailureHandled = true;
+    // Invalidate every pending load/navigation callback before detaching the
+    // platform view. The native plugin reports no URL or page contents.
+    _webEpoch++;
+    _navigation.reset();
+    setState(() {
+      _web = null;
+      _initializing = false;
+      _atMusic = false;
+      _busy = false;
+      _blockedLoad = false;
+      _progress = 0;
+      _error = widget.labels.loadFailed;
+    });
   }
 
   Future<void> _initialize() async {
@@ -229,6 +289,7 @@ class _YoutubeMusicConsentScreenState extends State<YoutubeMusicConsentScreen> {
               _stopBlockedLoad();
               return;
             }
+            widget.onPageStartedForTesting?.call(url);
             if (mounted) {
               setState(() {
                 _atMusic = false;
@@ -271,6 +332,7 @@ class _YoutubeMusicConsentScreenState extends State<YoutubeMusicConsentScreen> {
       );
       if (!mounted || epoch != _webEpoch) return;
       setState(() => _web = web);
+      widget.onWebViewControllerCreated?.call(web);
       final entry = await resolveYoutubeMusicConsentEntry();
       if (!mounted || epoch != _webEpoch) return;
       await web.loadRequest(entry);
@@ -287,17 +349,19 @@ class _YoutubeMusicConsentScreenState extends State<YoutubeMusicConsentScreen> {
 
   Future<void> _finish() async {
     if (!_atMusic || _busy) return;
+    final epoch = _webEpoch;
     setState(() => _busy = true);
     var saved = false;
     try {
       final currentUrl = await _web?.currentUrl();
+      if (epoch != _webEpoch || !_atMusic) return;
       if (currentUrl != null && isYoutubeMusicReturnUrl(currentUrl)) {
         saved = await widget.onComplete();
       }
     } catch (_) {
       /* No platform text. */
     }
-    if (!mounted) return;
+    if (!mounted || epoch != _webEpoch) return;
     if (saved) {
       Navigator.of(context).pop(true);
     } else {
@@ -328,6 +392,7 @@ class _YoutubeMusicConsentScreenState extends State<YoutubeMusicConsentScreen> {
 
   Future<void> _retry() async {
     _navigation.reset();
+    _rendererFailureHandled = false;
     setState(() {
       _web = null;
       _blockedLoad = false;
@@ -339,6 +404,14 @@ class _YoutubeMusicConsentScreenState extends State<YoutubeMusicConsentScreen> {
     // A new controller also isolates any late blank-document callbacks from
     // the blocked view. The native consent jar remains shared with this app.
     await _initialize();
+  }
+
+  @override
+  void dispose() {
+    _webEpoch++;
+    unawaited(_rendererSubscription?.cancel());
+    unawaited(_platformRendererSubscription?.cancel());
+    super.dispose();
   }
 
   @override

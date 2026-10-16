@@ -770,7 +770,7 @@ class AppLocalizationsGa extends AppLocalizations {
       'Cuireadh sonraí ó fhoinsí éagsúla le chéile';
 
   @override
-  String get searchCombinedLabel => 'Uile';
+  String get searchCombinedLabel => 'Comhcheangailte';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1749,4 +1749,66 @@ class AppLocalizationsGa extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Roghanna foinse';
+
+  @override
+  String get actionUndo => 'Cealaigh';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return 'Baineadh $song den liosta seinm';
+  }
+
+  @override
+  String get backupTitle => 'Cúltaca agus athchóiriú';
+
+  @override
+  String get backupExport => 'Easpórtáil cúltaca';
+
+  @override
+  String get backupRestore => 'Athchóirigh cúltaca';
+
+  @override
+  String get backupIncludePreferences =>
+      'Cuir sainroghanna na haipe san áireamh';
+
+  @override
+  String get backupRestorePreferences => 'Athchóirigh sainroghanna na haipe';
+
+  @override
+  String get backupMerge => 'Cuir leis an leabharlann seo';
+
+  @override
+  String get backupMergeHint =>
+      'Coinnigh na hathruithe áitiúla agus cuir amhráin agus liostaí ón gcúltaca seo leis.';
+
+  @override
+  String get backupReplace => 'Ionadaigh an leabharlann seo';
+
+  @override
+  String get backupReplaceHint =>
+      'Ionadaigh gach amhrán agus liosta ar an ngléas seo le hábhar an chúltaca seo.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Amhráin: $songs · Liostaí: $setlists · Coinbhleachtaí: $conflicts';
+  }
+
+  @override
+  String get backupFailed =>
+      'Níorbh fhéidir an cúltaca a chríochnú. Bain triail eile as.';
+
+  @override
+  String get backupRestored => 'Athchóiríodh an cúltaca.';
+
+  @override
+  String get backupLocalHint =>
+      'Sábháil cóip de do leabharlann. Ní chuirtear dintiúir chuntais ná fianáin toilithe san áireamh riamh.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Ionadaigh an leabharlann reatha? Ní féidir é seo a chealú.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Stop an leathanach seo ag obair. Bain triail eile as nó téigh ar ais.';
 }

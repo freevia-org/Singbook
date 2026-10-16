@@ -768,7 +768,7 @@ class AppLocalizationsHu extends AppLocalizations {
       'Több forrásból összeállított adatok';
 
   @override
-  String get searchCombinedLabel => 'Összes';
+  String get searchCombinedLabel => 'Összesített';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1739,4 +1739,64 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'Forrásbeállítások';
+
+  @override
+  String get actionUndo => 'Visszavonás';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return 'A(z) $song kikerült a dallistából';
+  }
+
+  @override
+  String get backupTitle => 'Biztonsági mentés és visszaállítás';
+
+  @override
+  String get backupExport => 'Biztonsági mentés exportálása';
+
+  @override
+  String get backupRestore => 'Biztonsági mentés visszaállítása';
+
+  @override
+  String get backupIncludePreferences => 'Alkalmazásbeállítások belefoglalása';
+
+  @override
+  String get backupRestorePreferences => 'Alkalmazásbeállítások visszaállítása';
+
+  @override
+  String get backupMerge => 'Hozzáadás ehhez a könyvtárhoz';
+
+  @override
+  String get backupMergeHint =>
+      'A helyi módosítások megtartása mellett add hozzá a dalokat és dallistákat ebből a mentésből.';
+
+  @override
+  String get backupReplace => 'Könyvtár cseréje';
+
+  @override
+  String get backupReplaceHint =>
+      'Az eszköz összes dalának és dallistájának cseréje a mentés tartalmára.';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return 'Dalok: $songs · Dallisták: $setlists · Ütközések: $conflicts';
+  }
+
+  @override
+  String get backupFailed => 'A művelet nem fejeződött be. Próbáld újra.';
+
+  @override
+  String get backupRestored => 'A biztonsági mentés visszaállítva.';
+
+  @override
+  String get backupLocalHint =>
+      'Ments másolatot a könyvtárról. Fiókadatok és hozzájárulási sütik soha nem kerülnek bele.';
+
+  @override
+  String get backupReplaceConfirm =>
+      'Lecseréled a jelenlegi könyvtárat? Ez nem vonható vissza.';
+
+  @override
+  String get youtubeConsentPageError =>
+      'Ez az oldal leállt. Próbáld újra, vagy lépj vissza.';
 }

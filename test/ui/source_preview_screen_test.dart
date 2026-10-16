@@ -44,6 +44,10 @@ class _Controller extends VerseUiController {
   int saves = 0;
   String? savedVersionId;
   bool opened = false;
+  bool consentSupported = false;
+  bool consentSaved = false;
+  List<SearchProviderCheckData> providerChecks = const [];
+  int discoveryRetries = 0;
   @override
   VerseUiState get state => VerseUiState(
     route: opened ? VerseRoute.reader : VerseRoute.main,
@@ -59,8 +63,24 @@ class _Controller extends VerseUiController {
       alternatives: versions,
       selectedVersionId: selected,
       discovering: false,
+      providerChecks: providerChecks,
     ),
   );
+  @override
+  bool get youtubeMusicConsentSupported => consentSupported;
+  @override
+  bool get youtubeMusicConsentSaved => consentSaved;
+  @override
+  Future<bool> completeYoutubeMusicConsent() async {
+    consentSaved = true;
+    return true;
+  }
+  @override
+  Future<void> retryYoutubeMusicForSelectedSong({
+    String? expectedIdentity,
+  }) async {
+    discoveryRetries++;
+  }
   @override
   void selectVersion(String versionId) {
     selected = versionId;
@@ -101,6 +121,70 @@ Widget _app(
 );
 
 void main() {
+  testWidgets('consent review is an explicit action in source options', (
+    tester,
+  ) async {
+    final controller = _Controller()
+      ..consentSupported = true
+      ..providerChecks = const [
+        SearchProviderCheckData(
+          id: 'youtubemusic',
+          name: 'YouTube Music',
+          state: 'failed',
+        ),
+      ];
+    addTearDown(controller.dispose);
+    await tester.pumpWidget(_app(controller));
+    expect(find.byType(SourcePreviewScreen), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('version-source-menu')));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('review-youtube-music-consent')),
+      findsOneWidget,
+    );
+    expect(find.byType(SourcePreviewScreen), findsOneWidget);
+    expect(
+      tester
+          .widget<DraggableScrollableSheet>(find.byType(DraggableScrollableSheet))
+          .initialChildSize,
+      lessThan(.5),
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('match details do not repeat the match label', (tester) async {
+    final controller = _Controller()
+      ..versions = [
+        const SourceVersionData(
+          id: 'same-song',
+          providerId: 'catalog',
+          providerName: 'Catalog',
+          title: 'Test song',
+          artist: 'The Testers',
+          matchSummary: 'same_song',
+          hasLyrics: true,
+          isUsableVersion: true,
+          canSave: true,
+          bodyLines: [LyricLineData(id: 'line', text: 'Line')],
+        ),
+      ]
+      ..selected = 'same-song';
+    addTearDown(controller.dispose);
+    await tester.pumpWidget(_app(controller));
+    final l10n = AppLocalizations.of(
+      tester.element(find.byType(SourcePreviewScreen)),
+    );
+    expect(find.text(l10n.searchMatchSameSong), findsOneWidget);
+    expect(find.text(l10n.searchVersionDetails), findsOneWidget);
+
+    await tester.tap(find.text(l10n.searchVersionDetails));
+    await tester.pumpAndSettle();
+    expect(find.text(l10n.searchMatchSameSong), findsOneWidget);
+    expect(find.text(l10n.searchVersionDetails), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('tabs switch the selected source without saving', (tester) async {
     final controller = _Controller();
     controller.selected = 'b';

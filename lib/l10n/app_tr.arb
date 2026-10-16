@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "Şarkı sözleri onaylanmalı",
   "searchMatchDifferentLyrics": "Şarkı sözleri seçilen şarkıdan farklı",
   "searchMatchCombinedSources": "Ayrıntılar birden çok kaynaktan birleştirildi",
-  "searchCombinedLabel": "Tümü",
+  "searchCombinedLabel": "Birleşik",
   "searchSongMatchCount": "{count, plural, =0{0 şarkı eşleşmesi} =1{1 şarkı eşleşmesi} other{{count} şarkı eşleşmesi}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Sürüm ayrıntıları",
   "searchSelectedRecording": "Seçilen kayıt",
   "searchVersionDuration": "Sürüm süresi",
-  "searchSourceOptions": "Kaynak seçenekleri"
+  "searchSourceOptions": "Kaynak seçenekleri",
+  "actionUndo": "Geri al",
+  "setlistEntryRemoved": "{song} şarkısı set listesinden kaldırıldı",
+  "backupTitle": "Yedekleme ve geri yükleme",
+  "backupExport": "Yedeği dışa aktar",
+  "backupRestore": "Yedeği geri yükle",
+  "backupIncludePreferences": "Uygulama tercihlerini dahil et",
+  "backupRestorePreferences": "Uygulama tercihlerini geri yükle",
+  "backupMerge": "Bu kitaplığa ekle",
+  "backupMergeHint": "Yerel düzenlemeleri koruyun ve bu yedekteki şarkıları ve listeleri ekleyin.",
+  "backupReplace": "Bu kitaplığı değiştir",
+  "backupReplaceHint": "Bu cihazdaki tüm şarkıları ve listeleri bu yedekle değiştirin.",
+  "backupSummary": "Şarkılar: {songs} · Listeler: {setlists} · Çakışmalar: {conflicts}",
+  "backupFailed": "Yedekleme işlemi tamamlanamadı. Yeniden deneyin.",
+  "backupRestored": "Yedek geri yüklendi.",
+  "backupLocalHint": "Kitaplığınızın bir kopyasını kaydedin. Hesap kimlik bilgileri ve izin çerezleri hiçbir zaman dahil edilmez.",
+  "backupReplaceConfirm": "Mevcut kitaplık değiştirilsin mi? Bu işlem geri alınamaz.",
+  "youtubeConsentPageError": "Bu sayfa çalışmayı durdurdu. Yeniden deneyin veya geri dönün.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

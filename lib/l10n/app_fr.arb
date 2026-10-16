@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "Les paroles doivent être confirmées pour cette partition",
   "searchMatchDifferentLyrics": "Les paroles diffèrent de celles de la chanson sélectionnée",
   "searchMatchCombinedSources": "Détails réunis à partir de plusieurs sources",
-  "searchCombinedLabel": "Tout",
+  "searchCombinedLabel": "Combiné",
   "searchSongMatchCount": "{count, plural, =0{0 correspondance de chanson} =1{1 correspondance de chanson} other{{count} correspondances de chansons}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Détails de la version",
   "searchSelectedRecording": "Enregistrement sélectionné",
   "searchVersionDuration": "Durée de la version",
-  "searchSourceOptions": "Options de la source"
+  "searchSourceOptions": "Options de la source",
+  "actionUndo": "Annuler",
+  "setlistEntryRemoved": "{song} a été retirée de la setlist",
+  "backupTitle": "Sauvegarde et restauration",
+  "backupExport": "Exporter la sauvegarde",
+  "backupRestore": "Restaurer la sauvegarde",
+  "backupIncludePreferences": "Inclure les préférences de l’application",
+  "backupRestorePreferences": "Restaurer les préférences de l’application",
+  "backupMerge": "Ajouter à cette bibliothèque",
+  "backupMergeHint": "Conserver les modifications locales et ajouter les chansons et setlists de cette sauvegarde.",
+  "backupReplace": "Remplacer cette bibliothèque",
+  "backupReplaceHint": "Remplacer toutes les chansons et setlists de cet appareil par le contenu de cette sauvegarde.",
+  "backupSummary": "Chansons : {songs} · Setlists : {setlists} · Conflits : {conflicts}",
+  "backupFailed": "Impossible de terminer cette opération. Réessayez.",
+  "backupRestored": "Sauvegarde restaurée.",
+  "backupLocalHint": "Enregistrez une copie de votre bibliothèque. Les identifiants du compte et les cookies de consentement ne sont jamais inclus.",
+  "backupReplaceConfirm": "Remplacer la bibliothèque actuelle ? Cette action est irréversible.",
+  "youtubeConsentPageError": "Cette page a cessé de fonctionner. Réessayez ou revenez en arrière.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

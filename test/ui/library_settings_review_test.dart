@@ -55,7 +55,7 @@ void main() {
         tester,
         c,
         locale: const Locale('uk'),
-        size: const Size(360, 1000),
+        size: const Size(360, 1600),
       );
 
       double top(String title) => tester.getTopLeft(find.text(title)).dy;
@@ -289,10 +289,15 @@ void main() {
         SwitchListTile,
         l10n.settingsDefaultAutoscroll,
       );
+      final settingsList = find.byType(ListView);
+      expect(settingsList, findsOneWidget);
       await tester.scrollUntilVisible(
         tile,
         200,
-        scrollable: find.byType(Scrollable).first,
+        scrollable: find.descendant(
+          of: settingsList,
+          matching: find.byType(Scrollable),
+        ).first,
       );
       expect(tester.widget<SwitchListTile>(tile).onChanged, isNull);
 
@@ -334,14 +339,23 @@ void main() {
           final l10n = l10nOf(tester);
 
           final about = find.widgetWithText(ListTile, l10n.settingsAbout);
-          await tester.scrollUntilVisible(
-            about,
-            200,
-            scrollable: find.byType(Scrollable).first,
+          final settingsList = find.byType(ListView);
+          expect(settingsList, findsOneWidget);
+          final aboutTitle = find.descendant(
+            of: about,
+            matching: find.text(l10n.settingsAbout),
           );
-          await tester.ensureVisible(about);
+          await tester.scrollUntilVisible(
+            aboutTitle,
+            200,
+            scrollable: find.descendant(
+              of: find.byType(Scaffold),
+              matching: find.byType(Scrollable),
+            ).first,
+          );
+          await tester.ensureVisible(aboutTitle);
           await tester.pumpAndSettle();
-          await tester.tap(about);
+          await tester.tap(aboutTitle);
           await tester.pumpAndSettle();
           expect(find.byType(AlertDialog), findsOneWidget);
           expect(tester.takeException(), isNull);

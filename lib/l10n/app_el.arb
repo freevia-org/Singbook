@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "Το φύλλο συγχορδιών χρειάζεται επιβεβαίωση στίχων",
   "searchMatchDifferentLyrics": "Οι στίχοι διαφέρουν από το επιλεγμένο τραγούδι",
   "searchMatchCombinedSources": "Στοιχεία από πολλές πηγές συνδυάστηκαν",
-  "searchCombinedLabel": "Όλα",
+  "searchCombinedLabel": "Συνδυασμένα",
   "searchSongMatchCount": "{count, plural, =0{0 αντιστοιχίες τραγουδιών} =1{1 αντιστοιχία τραγουδιού} other{{count} αντιστοιχίες τραγουδιών}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Λεπτομέρειες έκδοσης",
   "searchSelectedRecording": "Επιλεγμένη ηχογράφηση",
   "searchVersionDuration": "Διάρκεια έκδοσης",
-  "searchSourceOptions": "Επιλογές πηγής"
+  "searchSourceOptions": "Επιλογές πηγής",
+  "actionUndo": "Αναίρεση",
+  "setlistEntryRemoved": "Το τραγούδι «{song}» αφαιρέθηκε από τη λίστα",
+  "backupTitle": "Δημιουργία αντιγράφου και επαναφορά",
+  "backupExport": "Εξαγωγή αντιγράφου ασφαλείας",
+  "backupRestore": "Επαναφορά αντιγράφου ασφαλείας",
+  "backupIncludePreferences": "Συμπερίληψη προτιμήσεων εφαρμογής",
+  "backupRestorePreferences": "Επαναφορά προτιμήσεων εφαρμογής",
+  "backupMerge": "Προσθήκη σε αυτήν τη βιβλιοθήκη",
+  "backupMergeHint": "Διατηρήστε τις τοπικές αλλαγές και προσθέστε τραγούδια και λίστες από αυτό το αντίγραφο.",
+  "backupReplace": "Αντικατάσταση αυτής της βιβλιοθήκης",
+  "backupReplaceHint": "Αντικαταστήστε όλα τα τραγούδια και τις λίστες σε αυτήν τη συσκευή με αυτό το αντίγραφο.",
+  "backupSummary": "Τραγούδια: {songs} · Λίστες: {setlists} · Διενέξεις: {conflicts}",
+  "backupFailed": "Δεν ήταν δυνατή η ολοκλήρωση της ενέργειας. Δοκιμάστε ξανά.",
+  "backupRestored": "Το αντίγραφο ασφαλείας επαναφέρθηκε.",
+  "backupLocalHint": "Αποθηκεύστε ένα αντίγραφο της βιβλιοθήκης σας. Δεν περιλαμβάνονται στοιχεία λογαριασμού ή cookies συγκατάθεσης.",
+  "backupReplaceConfirm": "Να αντικατασταθεί η τρέχουσα βιβλιοθήκη; Αυτή η ενέργεια δεν αναιρείται.",
+  "youtubeConsentPageError": "Αυτή η σελίδα σταμάτησε να λειτουργεί. Δοκιμάστε ξανά ή επιστρέψτε.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

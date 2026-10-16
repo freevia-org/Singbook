@@ -748,7 +748,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get searchMatchCombinedSources => '複数のソースから詳細を統合しました';
 
   @override
-  String get searchCombinedLabel => 'すべて';
+  String get searchCombinedLabel => '統合';
 
   @override
   String searchSongMatchCount(int count) {
@@ -1670,4 +1670,59 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get searchSourceOptions => 'ソースのオプション';
+
+  @override
+  String get actionUndo => '元に戻す';
+
+  @override
+  String setlistEntryRemoved(String song) {
+    return '「$song」をセットリストから削除しました';
+  }
+
+  @override
+  String get backupTitle => 'バックアップと復元';
+
+  @override
+  String get backupExport => 'バックアップをエクスポート';
+
+  @override
+  String get backupRestore => 'バックアップを復元';
+
+  @override
+  String get backupIncludePreferences => 'アプリの設定を含める';
+
+  @override
+  String get backupRestorePreferences => 'アプリの設定を復元';
+
+  @override
+  String get backupMerge => 'このライブラリに追加';
+
+  @override
+  String get backupMergeHint => 'ローカルの編集内容を保ったまま、このバックアップの曲とセットリストを追加します。';
+
+  @override
+  String get backupReplace => 'このライブラリを置き換える';
+
+  @override
+  String get backupReplaceHint => 'この端末のすべての曲とセットリストを、このバックアップの内容に置き換えます。';
+
+  @override
+  String backupSummary(int songs, int setlists, int conflicts) {
+    return '曲: $songs · セットリスト: $setlists · 競合: $conflicts';
+  }
+
+  @override
+  String get backupFailed => 'バックアップ操作を完了できませんでした。もう一度お試しください。';
+
+  @override
+  String get backupRestored => 'バックアップを復元しました。';
+
+  @override
+  String get backupLocalHint => 'ライブラリのコピーを保存します。アカウント認証情報や同意 Cookie は含まれません。';
+
+  @override
+  String get backupReplaceConfirm => '現在のライブラリを置き換えますか？この操作は元に戻せません。';
+
+  @override
+  String get youtubeConsentPageError => 'このページは動作を停止しました。もう一度お試しいただくか、戻ってください。';
 }

@@ -1225,6 +1225,169 @@ void main() {
 
     discovery.finished.complete([lyrics, chart]);
     await selecting;
+
+    // Persisted pending markers can survive the discovery attempt. Once no
+    // check is active, they must not be rendered as a live Checking state.
+    app.combined = app.combined!.copyWith(
+      extra: {
+        ...app.combined!.extra,
+        'pendingChordSourceIds': [chart.id],
+      },
+    );
+    ui.setSearchFilter('timedOnly', false);
+    expect(ui.state.comparison?.suggested?.matchSummary, isNot('pending'));
+  });
+
+  test(
+    'YouTube retry preserves ready results, pending jobs, and selection',
+    () async {
+      ui.dispose();
+      app.dispose();
+      const candidate = SongCandidate(
+        providerId: 'catalog',
+        id: 'retry-song',
+        title: 'Retry Song',
+        artist: 'Test Artist',
+      );
+      const readyLyrics = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'lrclib',
+          id: 'retry-song',
+          title: 'Retry Song',
+          artist: 'Test Artist',
+        ),
+        body:
+            'First lyric line\nSecond lyric line\nThird lyric line\nFourth lyric line',
+        matchKind: MatchKind.sameRecording,
+      );
+      const readyTiming = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'lyricsovh',
+          id: 'retry-song',
+          title: 'Retry Song',
+          artist: 'Test Artist',
+        ),
+        body:
+            'First lyric line\nSecond lyric line\nThird lyric line\nFourth lyric line',
+        matchKind: MatchKind.sameSong,
+      );
+      const youtubeResult = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'youtubemusic',
+          id: 'retry-song',
+          title: 'Retry Song',
+          artist: 'Test Artist',
+        ),
+        body:
+            'First lyric line\nSecond lyric line\nThird lyric line\nFourth lyric line',
+        matchKind: MatchKind.sameSong,
+      );
+      final discovery = _RetryingDiscovery(
+        candidate: candidate,
+        initialResults: [readyLyrics, readyTiming],
+      );
+      app = AppController(repository: repository, discovery: discovery);
+      await app.initialize();
+      await app.setSetting('catalog', 'catalog');
+      ui = AppControllerAdapter(app);
+      ui.setQuery('retry song');
+      await ui.submitSearch();
+      final selecting = ui.selectReference(
+        const SearchReferenceData(
+          id: 'catalog:retry-song',
+          title: 'Retry Song',
+          artist: 'Test Artist',
+        ),
+      );
+      await discovery.initialStarted.future;
+      ui.selectVersion(readyLyrics.id);
+
+      await ui.retryYoutubeMusicForSelectedSong(
+        expectedIdentity: 'catalog:another-song',
+      );
+      expect(discovery.retryStarted.isCompleted, isFalse);
+      final retrying = ui.retryYoutubeMusicForSelectedSong(
+        expectedIdentity: candidate.identity,
+      );
+      await discovery.retryStarted.future;
+      expect(app.results.map((source) => source.id), [
+        readyLyrics.id,
+        readyTiming.id,
+      ]);
+      expect(app.checks['musicbrainz']?.state, 'pending');
+      expect(app.checks['youtubemusic']?.state, 'pending');
+      expect(ui.state.comparison?.selectedVersionId, readyLyrics.id);
+
+      discovery.retryFinished.complete([youtubeResult]);
+      await retrying;
+      expect(app.results.map((source) => source.id), [
+        readyLyrics.id,
+        readyTiming.id,
+        youtubeResult.id,
+      ]);
+      expect(ui.state.comparison?.selectedVersionId, readyLyrics.id);
+
+      discovery.initialFinished.complete([readyLyrics, readyTiming]);
+      await selecting;
+      expect(app.results.map((source) => source.id), [
+        readyLyrics.id,
+        readyTiming.id,
+        youtubeResult.id,
+      ]);
+      expect(ui.state.comparison?.selectedVersionId, readyLyrics.id);
+    },
+  );
+
+  test('YouTube retry ignores results after discovery is cancelled', () async {
+    ui.dispose();
+    app.dispose();
+    const candidate = SongCandidate(
+      providerId: 'catalog',
+      id: 'cancel-retry-song',
+      title: 'Cancel Retry Song',
+      artist: 'Test Artist',
+    );
+    const ready = SourceResult(
+      candidate: SongCandidate(
+        providerId: 'lrclib',
+        id: 'cancel-retry-song',
+        title: 'Cancel Retry Song',
+        artist: 'Test Artist',
+      ),
+      body: '[C]A ready chord chart',
+      matchKind: MatchKind.sameSong,
+    );
+    const lateYoutube = SourceResult(
+      candidate: SongCandidate(
+        providerId: 'youtubemusic',
+        id: 'cancel-retry-song',
+        title: 'Cancel Retry Song',
+        artist: 'Test Artist',
+      ),
+      body: 'A late result',
+      matchKind: MatchKind.sameSong,
+    );
+    final discovery = _RetryingDiscovery(
+      candidate: candidate,
+      initialResults: [ready],
+    );
+    app = AppController(repository: repository, discovery: discovery);
+    await app.initialize();
+    ui = AppControllerAdapter(app);
+    app.selection = candidate;
+    app.results = [ready];
+
+    final retry = app.retrySelectedProviderForCurrentSelection(
+      'youtubemusic',
+      expectedIdentity: candidate.identity,
+    );
+    await discovery.retryStarted.future;
+    app.cancelDiscovery();
+    discovery.retryFinished.complete([lateYoutube]);
+    await retry;
+
+    expect(app.results, isEmpty);
+    expect(app.selection, candidate);
   });
 
   test('sameRecording labels reflect conflicting recording metadata', () async {
@@ -1405,6 +1568,75 @@ TimingTrack _track({JsonMap extra = const {}}) => TimingTrack(
   ],
   extra: extra,
 );
+
+class _RetryingDiscovery extends SourceDiscoveryService {
+  _RetryingDiscovery({required this.candidate, required this.initialResults})
+    : super([
+        _StatusProvider(
+          id: 'catalog',
+          capabilities: const {'catalog'},
+          selected: candidate,
+        ),
+        _StatusProvider(
+          id: 'youtubemusic',
+          capabilities: const {'lyrics'},
+          selected: candidate,
+        ),
+      ]);
+
+  final SongCandidate candidate;
+  final List<SourceResult> initialResults;
+  final initialStarted = Completer<void>();
+  final initialFinished = Completer<List<SourceResult>>();
+  final retryStarted = Completer<void>();
+  final retryFinished = Completer<List<SourceResult>>();
+
+  @override
+  Future<List<SourceResult>> discover(
+    SongCandidate selection, {
+    Set<String>? enabledIds,
+    void Function(ProviderCheck)? onProgress,
+    CancellationToken? cancel,
+    Map<String, CancellationToken> providerCancellation = const {},
+    Duration alternativeTimeout = const Duration(seconds: 30),
+  }) {
+    final youtubeOnly =
+        enabledIds?.length == 1 && enabledIds!.contains('youtubemusic');
+    if (youtubeOnly) {
+      retryStarted.complete();
+      return retryFinished.future.then((results) {
+        for (final result in results) {
+          onProgress?.call(
+            ProviderCheck(
+              providerId: result.candidate.providerId,
+              state: 'found',
+              result: result,
+            ),
+          );
+        }
+        return results;
+      });
+    }
+
+    onProgress?.call(
+      const ProviderCheck(providerId: 'musicbrainz', state: 'pending'),
+    );
+    for (final result in initialResults) {
+      onProgress?.call(
+        ProviderCheck(
+          providerId: result.candidate.providerId,
+          state: 'found',
+          result: result,
+        ),
+      );
+    }
+    onProgress?.call(
+      const ProviderCheck(providerId: 'youtubemusic', state: 'pending'),
+    );
+    initialStarted.complete();
+    return initialFinished.future;
+  }
+}
 
 class _StreamingDiscovery extends SourceDiscoveryService {
   _StreamingDiscovery(

@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "Partitura necesită confirmarea versurilor",
   "searchMatchDifferentLyrics": "Versurile diferă de cele ale melodiei selectate",
   "searchMatchCombinedSources": "Detalii combinate din mai multe surse",
-  "searchCombinedLabel": "Toate",
+  "searchCombinedLabel": "Combinate",
   "searchSongMatchCount": "{count, plural, =0{0 potriviri pentru melodii} =1{1 potrivire pentru melodie} few{{count} potriviri pentru melodii} other{{count} de potriviri pentru melodii}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Detalii despre versiune",
   "searchSelectedRecording": "Înregistrarea selectată",
   "searchVersionDuration": "Durata versiunii",
-  "searchSourceOptions": "Opțiuni sursă"
+  "searchSourceOptions": "Opțiuni sursă",
+  "actionUndo": "Anulează",
+  "setlistEntryRemoved": "Piesa „{song}” a fost eliminată din listă",
+  "backupTitle": "Copie de rezervă și restaurare",
+  "backupExport": "Exportă copia de rezervă",
+  "backupRestore": "Restaurează copia de rezervă",
+  "backupIncludePreferences": "Include preferințele aplicației",
+  "backupRestorePreferences": "Restaurează preferințele aplicației",
+  "backupMerge": "Adaugă în această bibliotecă",
+  "backupMergeHint": "Păstrează modificările locale și adaugă piesele și listele din această copie.",
+  "backupReplace": "Înlocuiește această bibliotecă",
+  "backupReplaceHint": "Înlocuiește toate piesele și listele de pe acest dispozitiv cu conținutul copiei.",
+  "backupSummary": "Piese: {songs} · Liste: {setlists} · Conflicte: {conflicts}",
+  "backupFailed": "Operația nu a putut fi finalizată. Încearcă din nou.",
+  "backupRestored": "Copia de rezervă a fost restaurată.",
+  "backupLocalHint": "Salvează o copie a bibliotecii. Datele contului și cookie-urile de consimțământ nu sunt incluse.",
+  "backupReplaceConfirm": "Înlocuiești biblioteca actuală? Acțiunea nu poate fi anulată.",
+  "youtubeConsentPageError": "Această pagină nu mai funcționează. Încearcă din nou sau revino.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

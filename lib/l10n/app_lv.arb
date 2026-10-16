@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "Akordu ieraksts jāsalīdzina ar dziesmas vārdiem",
   "searchMatchDifferentLyrics": "Dziesmas vārdi atšķiras no atlasītās dziesmas",
   "searchMatchCombinedSources": "Informācija apkopota no vairākiem avotiem",
-  "searchCombinedLabel": "Visi",
+  "searchCombinedLabel": "Apvienots",
   "searchSongMatchCount": "{count, plural, zero{{count} dziesmu atbilstību} one{{count} dziesmas atbilstība} other{{count} dziesmu atbilstības}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Versijas informācija",
   "searchSelectedRecording": "Atlasītais ieraksts",
   "searchVersionDuration": "Versijas ilgums",
-  "searchSourceOptions": "Avota opcijas"
+  "searchSourceOptions": "Avota opcijas",
+  "actionUndo": "Atsaukt",
+  "setlistEntryRemoved": "Dziesma „{song}” noņemta no dziesmu saraksta",
+  "backupTitle": "Dublēšana un atjaunošana",
+  "backupExport": "Eksportēt dublējumu",
+  "backupRestore": "Atjaunot dublējumu",
+  "backupIncludePreferences": "Iekļaut lietotnes preferences",
+  "backupRestorePreferences": "Atjaunot lietotnes preferences",
+  "backupMerge": "Pievienot šai bibliotēkai",
+  "backupMergeHint": "Saglabājiet vietējos labojumus un pievienojiet dziesmas un sarakstus no šī dublējuma.",
+  "backupReplace": "Aizstāt šo bibliotēku",
+  "backupReplaceHint": "Aizstājiet visas šīs ierīces dziesmas un sarakstus ar šī dublējuma saturu.",
+  "backupSummary": "Dziesmas: {songs} · Saraksti: {setlists} · Konflikti: {conflicts}",
+  "backupFailed": "Dublēšanas darbību neizdevās pabeigt. Mēģiniet vēlreiz.",
+  "backupRestored": "Dublējums atjaunots.",
+  "backupLocalHint": "Saglabājiet savas bibliotēkas kopiju. Konta dati un piekrišanas sīkfaili netiek iekļauti.",
+  "backupReplaceConfirm": "Aizstāt pašreizējo bibliotēku? Šo darbību nevar atsaukt.",
+  "youtubeConsentPageError": "Šī lapa pārstāja darboties. Mēģiniet vēlreiz vai dodieties atpakaļ.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

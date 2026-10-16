@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "Zapis akordov je treba potrditi z besedilom pesmi",
   "searchMatchDifferentLyrics": "Besedilo se razlikuje od izbrane pesmi",
   "searchMatchCombinedSources": "Podatki so združeni iz več virov",
-  "searchCombinedLabel": "Vse",
+  "searchCombinedLabel": "Združeno",
   "searchSongMatchCount": "{count, plural, one{{count} ujemanje pesmi} two{{count} ujemanji pesmi} few{{count} ujemanja pesmi} other{{count} ujemanj pesmi}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Podrobnosti različice",
   "searchSelectedRecording": "Izbrani posnetek",
   "searchVersionDuration": "Trajanje različice",
-  "searchSourceOptions": "Možnosti vira"
+  "searchSourceOptions": "Možnosti vira",
+  "actionUndo": "Razveljavi",
+  "setlistEntryRemoved": "Pesem »{song}« je odstranjena s seznama",
+  "backupTitle": "Varnostno kopiranje in obnovitev",
+  "backupExport": "Izvozi varnostno kopijo",
+  "backupRestore": "Obnovi varnostno kopijo",
+  "backupIncludePreferences": "Vključi nastavitve aplikacije",
+  "backupRestorePreferences": "Obnovi nastavitve aplikacije",
+  "backupMerge": "Dodaj v to knjižnico",
+  "backupMergeHint": "Ohrani lokalne spremembe in dodaj pesmi ter sezname iz te varnostne kopije.",
+  "backupReplace": "Zamenjaj to knjižnico",
+  "backupReplaceHint": "Zamenjaj vse pesmi in sezname v tej napravi z vsebino varnostne kopije.",
+  "backupSummary": "Pesmi: {songs} · Seznami: {setlists} · Spori: {conflicts}",
+  "backupFailed": "Operacije ni bilo mogoče dokončati. Poskusi znova.",
+  "backupRestored": "Varnostna kopija je obnovljena.",
+  "backupLocalHint": "Shrani kopijo knjižnice. Podatki računa in piškotki soglasja niso nikoli vključeni.",
+  "backupReplaceConfirm": "Zamenjam trenutno knjižnico? Tega ni mogoče razveljaviti.",
+  "youtubeConsentPageError": "Ta stran je prenehala delovati. Poskusi znova ali se vrni.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

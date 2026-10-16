@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import '../../l10n/generated/app_localizations.dart';
 import '../format.dart';
+import '../library_actions.dart';
 import '../verse_ui_state.dart';
 import '../widgets/verse_components.dart';
 import 'source_preview_screen.dart';
@@ -696,17 +697,23 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
               ),
             ),
             if (!item.isSetlist)
+              PopupMenuItem(value: 'add', child: Text(l10n.songAddToSetlist)),
+            if (!item.isSetlist)
               PopupMenuItem(value: 'copy', child: Text(l10n.settingsCopySong)),
             if (item.isSetlist)
               PopupMenuItem(value: 'copy', child: Text(l10n.settingsCopySong)),
           ],
-          onSelected: (action) => _recentAction(item, action),
+          onSelected: (action) => _recentAction(context, item, action),
         ),
       ],
     );
   }
 
-  void _recentAction(RecentItemData item, String action) {
+  Future<void> _recentAction(
+    BuildContext context,
+    RecentItemData item,
+    String action,
+  ) async {
     if (item.isSetlist) {
       if (action == 'share') widget.controller.shareSetlist(item.id);
       if (action == 'share_pdf') {
@@ -715,6 +722,9 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
       if (action == 'print') widget.controller.printSetlist(item.id);
       if (action == 'copy') widget.controller.copySetlist(item.id);
     } else {
+      if (action == 'add') {
+        await showAddSongToSetlist(context, widget.controller, item.id);
+      }
       if (action == 'share') widget.controller.shareSong(item.id);
       if (action == 'share_pdf') widget.controller.shareSongPdf(item.id);
       if (action == 'print') widget.controller.printSong(item.id);

@@ -35,6 +35,22 @@ const maxBackupUncompressedBytes = 256 * 1024 * 1024;
 const maxBackupManifestBytes = 16 * 1024 * 1024;
 const _maxBackupDirectoryEntries = 64;
 
+/// Only portable display and reader preferences are copied by local backup.
+/// Account, provider-consent, session, and sync state are intentionally absent.
+const backupPreferenceKeys = <String>{
+  'themeMode',
+  'palette',
+  'fontFamily',
+  'readerFontSize',
+  'locale',
+  'showChords',
+  'autoscroll',
+  'timingMode',
+  'defaultView',
+  'catalog',
+  'providers',
+};
+
 /// True only for the full local-file-header signature `PK\x03\x04`; a text file
 /// whose title merely starts with "PK" is not an archive.
 bool looksLikeZip(List<int> bytes) =>
@@ -43,6 +59,14 @@ bool looksLikeZip(List<int> bytes) =>
     bytes[1] == 0x4b &&
     bytes[2] == 0x03 &&
     bytes[3] == 0x04;
+
+/// Backup suffixes carry archive intent even when the file has a damaged or
+/// missing ZIP signature. Callers should reject them as invalid archives
+/// instead of passing their bytes to the permissive lyric text decoder.
+bool isLibraryPackageFileName(String name) {
+  final basename = paths.basename(name).toLowerCase();
+  return basename.endsWith('.zip') || basename.endsWith('.lyrics-setlist');
+}
 
 // Windows-1251 0x80..0xBF; 0xC0..0xFF map linearly to U+0410..U+044F.
 const _cp1251Upper = <int>[
@@ -220,22 +244,16 @@ List<SongDocument> decodeSongText(String input, {String? fileName}) {
     if (track.status == TimingStatus.invalid) {
       throw const FormatException('invalid_timing');
     }
-    final lrcTitle = RegExp(
-      r'\[ti:([^\]]+)\]',
-      caseSensitive: false,
-    ).firstMatch(text)?.group(1);
-    final artist =
-        RegExp(
-          r'\[ar:([^\]]+)\]',
-          caseSensitive: false,
-        ).firstMatch(text)?.group(1) ??
-        '';
+    final metadata = _lrcMetadata(text);
+    final lrcTitle = metadata.remove('_title')?.toString();
+    final artist = metadata.remove('_artist')?.toString() ?? '';
     return [
       SongDocument(
         id: id,
         title: lrcTitle ?? title,
         artist: artist,
         body: track.sourceLyrics,
+        metadata: metadata,
         timingTracks: [track],
         activeTimingTrackId: track.status == TimingStatus.usable
             ? track.id
@@ -308,24 +326,18 @@ List<SongDocument> decodePickedSongs(PickedDocument file) {
   if (track.sourceLyrics.trim().isEmpty) {
     throw const FormatException('empty_file');
   }
+  final metadata = _lrcMetadata(track.raw ?? '');
   final title =
-      RegExp(
-        r'\[ti:([^\]]+)\]',
-        caseSensitive: false,
-      ).firstMatch(track.raw ?? '')?.group(1) ??
+      metadata.remove('_title')?.toString() ??
       paths.basenameWithoutExtension(file.name);
-  final artist =
-      RegExp(
-        r'\[ar:([^\]]+)\]',
-        caseSensitive: false,
-      ).firstMatch(track.raw ?? '')?.group(1) ??
-      '';
+  final artist = metadata.remove('_artist')?.toString() ?? '';
   return [
     SongDocument(
       id: id,
       title: title,
       artist: artist,
       body: track.sourceLyrics,
+      metadata: metadata,
       timingTracks: [track],
       activeTimingTrackId: track.status == TimingStatus.usable
           ? track.id
@@ -333,6 +345,59 @@ List<SongDocument> decodePickedSongs(PickedDocument file) {
       extra: {'importedFile': file.name},
     ),
   ];
+}
+
+Map<String, Object?> _lrcMetadata(String text) {
+  String? tag(String name) {
+    for (final match in RegExp(
+      r'^\s*\[' + name + r':([^\]]*)\]\s*$',
+      caseSensitive: false,
+      multiLine: true,
+    ).allMatches(text)) {
+      final value = match.group(1)!.trim();
+      if (value.isNotEmpty) return value;
+    }
+    return null;
+  }
+
+  final metadata = <String, Object?>{};
+  final title = tag('ti');
+  final artist = tag('ar');
+  final album = tag('al');
+  final lyricist = tag('au');
+  final length = tag('length');
+  if (title != null) metadata['_title'] = title;
+  if (artist != null) metadata['_artist'] = artist;
+  if (album != null) metadata['album'] = album;
+  if (lyricist != null) metadata['lyricist'] = lyricist;
+  if (length != null) {
+    final duration = _parseLrcLength(length);
+    if (duration != null) metadata['durationSeconds'] = duration;
+  }
+  return metadata;
+}
+
+double? _parseLrcLength(String value) {
+  final match = RegExp(
+    r'^(?:(\d+):)?(\d{1,2}):(\d{2})(?:\.(\d+))?$',
+  ).firstMatch(value.trim());
+  if (match == null) return null;
+  final hours = int.tryParse(match.group(1) ?? '0');
+  final minutes = int.tryParse(match.group(2)!);
+  final seconds = int.tryParse(match.group(3)!);
+  final fraction = match.group(4);
+  if (hours == null ||
+      minutes == null ||
+      seconds == null ||
+      minutes > 59 && match.group(1) != null ||
+      seconds > 59) {
+    return null;
+  }
+  final fractionalSeconds = fraction == null
+      ? 0.0
+      : double.tryParse('0.$fraction') ?? 0.0;
+  final total = hours * 3600 + minutes * 60 + seconds + fractionalSeconds;
+  return total > 0 && total <= 86400 ? total : null;
 }
 
 /// Native file and print integrations; all songs use the same complete .cho.
@@ -346,6 +411,10 @@ class VerseFileActions {
            shareFiles ?? ((params) => SharePlus.instance.share(params));
   final Future<Directory> Function() _temporaryDirectory;
   final Future<ShareResult> Function(ShareParams) _shareFiles;
+
+  static const MethodChannel _richClipboardChannel = MethodChannel(
+    'org.freevia.singbook/rich_clipboard',
+  );
 
   /// Temporary share copies older than this are removed before the next share.
   final Duration shareRetention;
@@ -366,12 +435,36 @@ class VerseFileActions {
     return PickedDocument(file.name, bytes.takeBytes());
   }
 
-  /// Copy the same readable lyric and chord layout used by the print document.
-  Future<void> copySong(SongDocument song) =>
-      Clipboard.setData(ClipboardData(text: songPlainText(song)));
+  /// Copy full song contents as HTML with a plain-text fallback.
+  Future<void> copySong(SongDocument song) => _copyRichText(
+    label: song.title,
+    text: songPlainText(song),
+    html: songRichHtml(song),
+  );
 
+  /// Copy the setlist cover and every song's complete contents, in entry order.
   Future<void> copySetlist(SetlistDocument setlist, List<SongDocument> songs) =>
-      Clipboard.setData(ClipboardData(text: setlistPlainText(setlist, songs)));
+      _copyRichText(
+        label: setlist.name,
+        text: setlistPlainText(setlist, songs),
+        html: setlistRichHtml(setlist, songs),
+      );
+
+  Future<void> _copyRichText({
+    required String label,
+    required String text,
+    required String html,
+  }) async {
+    try {
+      await _richClipboardChannel.invokeMethod<void>('setHtmlText', {
+        'label': label,
+        'text': text,
+        'html': html,
+      });
+    } on MissingPluginException {
+      await Clipboard.setData(ClipboardData(text: text));
+    }
+  }
 
   Future<ShareResult> shareSong(SongDocument song, {Rect? origin}) => _share(
     '${safeName(song.title)}.cho',
@@ -418,9 +511,17 @@ class VerseFileActions {
     List<SongDocument> songs,
     List<SetlistDocument> setlists, {
     Rect? origin,
-  }) async => _share(
-    'Singbook-${DateTime.now().toIso8601String().substring(0, 10)}.lyrics-setlist',
+  }) async => shareBackupBytes(
     await encodeLibraryPackageAsync(songs, setlists),
+    origin: origin,
+  );
+
+  Future<ShareResult> shareBackupBytes(
+    Uint8List bytes, {
+    Rect? origin,
+  }) => _share(
+    'Singbook-${DateTime.now().toIso8601String().substring(0, 10)}.lyrics-setlist',
+    bytes,
     'application/zip',
     'Singbook',
     origin,
@@ -563,16 +664,71 @@ SongDocument _applyEntryOverrides(SongDocument song, SetlistEntry entry) {
   return song.copyWith(body: body, metadata: metadata);
 }
 
-/// Plain text counterpart to the song PDF: title, artist, chord rows, lyrics.
+List<String> _songMetadataLines(SongDocument song) {
+  final values = <String>[];
+  void add(String label, Object? raw) {
+    final value = raw?.toString().trim();
+    if (value != null && value.isNotEmpty) values.add('$label: $value');
+  }
+
+  add('Album', song.metadata['album']);
+  add('Year', song.metadata['year']);
+  add('Key', song.metadata['key']);
+  add('Capo', song.metadata['capo']);
+  add('Tuning', song.metadata['tuning']);
+  final tempo = song.metadata['tempo'];
+  if (tempo != null && tempo.toString().trim().isNotEmpty) {
+    add('Tempo', '${tempo.toString().trim()} BPM');
+  }
+  add('Time', song.metadata['timeSignature']);
+  final duration = song.metadata['durationSeconds'];
+  if (duration is num && duration > 0) {
+    final seconds = duration.round();
+    add(
+      'Duration',
+      '${(seconds ~/ 60).toString().padLeft(2, '0')}:${(seconds % 60).toString().padLeft(2, '0')}',
+    );
+  }
+  add('Composer', song.metadata['composer']);
+  add('Lyricist', song.metadata['lyricist']);
+  return values;
+}
+
+/// Plain text counterpart to the song PDF: title, metadata, chord rows, lyrics.
 String songPlainText(SongDocument song) {
   final out = StringBuffer(song.title);
-  if (song.artist.isNotEmpty) out.write('\n${song.artist}');
-  out.writeln('\n');
+  if (song.artist.trim().isNotEmpty) {
+    out.write('\nArtist: ${song.artist.trim()}');
+  }
+  for (final value in _songMetadataLines(song)) {
+    out.write('\n$value');
+  }
+  out.write('\n\n${_songBodyPlainText(song)}');
+  return out.toString().trimRight();
+}
+
+String setlistPlainText(SetlistDocument setlist, List<SongDocument> songs) {
+  final out = StringBuffer(setlist.name);
+  if (setlist.notes.trim().isNotEmpty) out.write('\n${setlist.notes.trim()}');
+  final ordered = _songsInSetlist(setlist, songs);
+  for (var index = 0; index < ordered.length; index++) {
+    final song = ordered[index];
+    out.write('\n\n${index + 1}. ${song.title}');
+    if (song.artist.trim().isNotEmpty) out.write(' — ${song.artist.trim()}');
+  }
+  for (final song in ordered) {
+    out.write('\n\n${songPlainText(song)}');
+  }
+  return out.toString().trimRight();
+}
+
+String _songBodyPlainText(SongDocument song) {
+  final out = StringBuffer();
   for (final line in parseArrangement(song.body)) {
     if (line.directive) {
       final heading = _pdfSectionHeading(line.text);
       if (heading != null) {
-        out.write('\n');
+        if (out.isNotEmpty) out.write('\n');
         out.writeln(heading);
       }
       continue;
@@ -583,15 +739,70 @@ String songPlainText(SongDocument song) {
   return out.toString().trimRight();
 }
 
-String setlistPlainText(SetlistDocument setlist, List<SongDocument> songs) {
-  final out = StringBuffer(setlist.name);
-  if (setlist.notes.isNotEmpty) out.write('\n${setlist.notes}');
+String _htmlEscape(String value) => const HtmlEscape().convert(value);
+
+String _songBodyRichHtml(SongDocument song) {
+  final out = StringBuffer();
+  for (final line in parseArrangement(song.body)) {
+    if (line.directive) {
+      final heading = _pdfSectionHeading(line.text);
+      if (heading != null) out.write('<h2>${_htmlEscape(heading)}</h2>');
+      continue;
+    }
+    if (line.text.trim().isEmpty && line.chords.isEmpty) {
+      out.write('<br>');
+      continue;
+    }
+    if (line.chords.isNotEmpty) {
+      out.write(
+        '<div class="chords"><code>${_htmlEscape(_chordRow(line))}</code></div>',
+      );
+    }
+    out.write('<p>${_htmlEscape(line.text.isEmpty ? ' ' : line.text)}</p>');
+  }
+  return out.toString();
+}
+
+String songRichHtml(SongDocument song) =>
+    '<!doctype html><html><body><article>'
+    '<h1>${_htmlEscape(song.title)}</h1>'
+    '${song.artist.trim().isEmpty ? '' : '<p><strong>Artist:</strong> ${_htmlEscape(song.artist.trim())}</p>'}'
+    '${_songMetadataLines(song).map((line) => '<p class="metadata">${_htmlEscape(line)}</p>').join()}'
+    '${_songBodyRichHtml(song)}'
+    '</article></body></html>';
+
+String setlistRichHtml(SetlistDocument setlist, List<SongDocument> songs) {
   final ordered = _songsInSetlist(setlist, songs);
+  final out = StringBuffer(
+    '<!doctype html><html><body><article><h1>${_htmlEscape(setlist.name)}</h1>',
+  );
+  if (setlist.notes.trim().isNotEmpty) {
+    out.write('<p class="notes">${_htmlEscape(setlist.notes.trim())}</p>');
+  }
   for (var index = 0; index < ordered.length; index++) {
     final song = ordered[index];
-    out.write('\n\n${index + 1}. ${song.title}');
-    if (song.artist.isNotEmpty) out.write(' — ${song.artist}');
+    out.write(
+      '<p class="setlist-entry">${index + 1}. ${_htmlEscape(song.title)}',
+    );
+    if (song.artist.trim().isNotEmpty) {
+      out.write(' — ${_htmlEscape(song.artist.trim())}');
+    }
+    out.write('</p>');
   }
+  for (final song in ordered) {
+    out.write('<section><h1>${_htmlEscape(song.title)}</h1>');
+    if (song.artist.trim().isNotEmpty) {
+      out.write(
+        '<p><strong>Artist:</strong> ${_htmlEscape(song.artist.trim())}</p>',
+      );
+    }
+    for (final value in _songMetadataLines(song)) {
+      out.write('<p class="metadata">${_htmlEscape(value)}</p>');
+    }
+    out.write(_songBodyRichHtml(song));
+    out.write('</section>');
+  }
+  out.write('</article></body></html>');
   return out.toString();
 }
 
@@ -661,8 +872,9 @@ String encodeSetlistReferences(
 
 Uint8List encodeLibraryPackage(
   List<SongDocument> songs,
-  List<SetlistDocument> setlists,
-) {
+  List<SetlistDocument> setlists, {
+  Map<String, Object?>? preferences,
+}) {
   // Fail before doing any work when the result could not be restored.
   if (songs.length > maxBackupSongs) {
     throw const FormatException('backup_too_large');
@@ -677,10 +889,9 @@ Uint8List encodeLibraryPackage(
     if (names.containsKey(song.id)) {
       throw const FormatException('duplicate_song_id');
     }
-    final name = 'songs/${names.length}.cho';
+    final name = 'songs/${names.length}.json';
     names[song.id] = name;
-    final text = ChordProCodec().encode(song);
-    final encoded = utf8.encode(text);
+    final encoded = utf8.encode(jsonEncode(_songBackupJson(song)));
     if (encoded.length > maxImportBytes) {
       throw const FormatException('backup_too_large');
     }
@@ -688,12 +899,16 @@ Uint8List encodeLibraryPackage(
     hashes[name] = sha256.convert(encoded).toString();
     archive.add(ArchiveFile.bytes(name, encoded));
   }
+  final safePreferences = preferences == null
+      ? null
+      : selectBackupPreferences(preferences);
   final manifest = utf8.encode(
     jsonEncode({
-      'schemaVersion': 1,
+      'schemaVersion': 3,
       'songs': names,
       'hashes': hashes,
       'setlists': setlists.map((s) => s.toJson()).toList(),
+      'preferences': ?safePreferences,
     }),
   );
   uncompressed += manifest.length;
@@ -710,9 +925,192 @@ Uint8List encodeLibraryPackage(
 }
 
 class ImportedCollection {
-  const ImportedCollection(this.songs, this.setlists);
+  const ImportedCollection(
+    this.songs,
+    this.setlists, {
+    this.preferences,
+    this.schemaVersion = 1,
+  });
   final List<SongDocument> songs;
   final List<SetlistDocument> setlists;
+
+  /// Null when the package did not include portable preferences.
+  final Map<String, Object?>? preferences;
+  final int schemaVersion;
+}
+
+JsonMap _songBackupJson(SongDocument song) => song.toJson();
+
+SongDocument _songFromBackupJson(Object? value) {
+  if (value is! Map) throw const FormatException('invalid_archive');
+  final raw = <String, dynamic>{};
+  for (final entry in value.entries) {
+    if (entry.key is! String) throw const FormatException('invalid_archive');
+    raw[entry.key as String] = entry.value;
+  }
+  const requiredStringKeys = {
+    'id',
+    'title',
+    'artist',
+    'body',
+    'createdAt',
+    'updatedAt',
+  };
+  const allowedKeys = {
+    'id',
+    'title',
+    'artist',
+    'body',
+    'metadata',
+    'sources',
+    'timingTracks',
+    'favorite',
+    'createdAt',
+    'updatedAt',
+    'selectedRecording',
+    'activeTimingTrackId',
+    'revision',
+    'extra',
+    'preservedExtensions',
+    'extensionError',
+  };
+  if (requiredStringKeys.any((key) => raw[key] is! String) ||
+      raw.keys.any((key) => !allowedKeys.contains(key)) ||
+      raw['metadata'] is! Map ||
+      raw['sources'] is! List ||
+      raw['timingTracks'] is! List ||
+      raw['favorite'] is! bool ||
+      raw['revision'] is! int ||
+      raw['extra'] is! Map ||
+      raw['preservedExtensions'] is! List ||
+      (raw['activeTimingTrackId'] != null &&
+          raw['activeTimingTrackId'] is! String) ||
+      (raw['extensionError'] != null && raw['extensionError'] is! String) ||
+      (raw['selectedRecording'] != null && raw['selectedRecording'] is! Map)) {
+    throw const FormatException('invalid_archive');
+  }
+  if (!_validBackupTimestamp(raw['createdAt']) ||
+      !_validBackupTimestamp(raw['updatedAt'])) {
+    throw const FormatException('invalid_archive');
+  }
+  try {
+    return SongDocument.fromJson(raw);
+  } on FormatException {
+    rethrow;
+  } on Object {
+    throw const FormatException('invalid_archive');
+  }
+}
+
+bool _validBackupTimestamp(Object? value) =>
+    value is String && DateTime.tryParse(value) != null;
+
+void _validateSetlistBackupTimestamps(
+  JsonMap value, {
+  required bool requireFields,
+}) {
+  for (final key in const ['createdAt', 'updatedAt']) {
+    final timestamp = value[key];
+    if ((requireFields && !_validBackupTimestamp(timestamp)) ||
+        (!requireFields &&
+            timestamp != null &&
+            !_validBackupTimestamp(timestamp))) {
+      throw const FormatException('invalid_archive');
+    }
+  }
+}
+
+enum BackupRestoreMode { merge, replace }
+
+class BackupPreview {
+  const BackupPreview({
+    required this.schemaVersion,
+    required this.songCount,
+    required this.setlistCount,
+    required this.includedPreferenceKeys,
+    required this.identicalSongCount,
+    required this.conflictingSongCount,
+    required this.identicalSetlistCount,
+    required this.conflictingSetlistCount,
+    required this.token,
+  });
+  final int schemaVersion;
+  final int songCount, setlistCount;
+  final List<String> includedPreferenceKeys;
+  final int identicalSongCount, conflictingSongCount;
+  final int identicalSetlistCount, conflictingSetlistCount;
+  final String token;
+  bool get hasPreferences => includedPreferenceKeys.isNotEmpty;
+  int get conflictCount => conflictingSongCount + conflictingSetlistCount;
+}
+
+class BackupRestoreResult {
+  const BackupRestoreResult({
+    required this.mode,
+    required this.importedSongCount,
+    required this.importedSetlistCount,
+    required this.preferencesRestored,
+  });
+  final BackupRestoreMode mode;
+  final int importedSongCount, importedSetlistCount;
+  final bool preferencesRestored;
+}
+
+Map<String, Object?> selectBackupPreferences(Map<String, Object?> settings) {
+  final result = <String, Object?>{};
+  for (final key in backupPreferenceKeys) {
+    if (!settings.containsKey(key)) continue;
+    final value = settings[key];
+    if (_validBackupPreference(key, value)) result[key] = value;
+  }
+  return result;
+}
+
+bool _validBackupPreference(String key, Object? value) => switch (key) {
+  'themeMode' => const {'system', 'light', 'dark'}.contains(value),
+  'palette' => const {'navy', 'sage', 'ocean', 'clay', 'plum'}.contains(value),
+  'fontFamily' => const {'system', 'serif', 'mono'}.contains(value),
+  'readerFontSize' =>
+    value is num && value.isFinite && value >= 18 && value <= 36,
+  'locale' =>
+    value == null || value is String && RegExp(r'^[a-z]{2,3}$').hasMatch(value),
+  'showChords' || 'autoscroll' => value is bool,
+  'timingMode' => const {'estimated', 'timed', 'manual'}.contains(value),
+  'defaultView' => const {
+    'home',
+    'songs',
+    'setlists',
+    'settings',
+  }.contains(value),
+  'catalog' =>
+    value is String && RegExp(r'^[a-z][a-z0-9_-]{0,63}$').hasMatch(value),
+  'providers' =>
+    value is Map &&
+        value.entries.every(
+          (entry) =>
+              entry.key is String &&
+              RegExp(
+                r'^[a-z][a-z0-9_-]{0,63}$',
+              ).hasMatch(entry.key as String) &&
+              entry.value is bool,
+        ),
+  _ => false,
+};
+
+Map<String, Object?> _decodeBackupPreferences(Object? value) {
+  if (value is! Map) throw const FormatException('invalid_archive');
+  final raw = <String, Object?>{};
+  for (final entry in value.entries) {
+    if (entry.key is! String) throw const FormatException('invalid_archive');
+    raw[entry.key as String] = entry.value;
+  }
+  if (raw.keys.any((key) => !backupPreferenceKeys.contains(key)) ||
+      raw.entries.any(
+        (entry) => !_validBackupPreference(entry.key, entry.value),
+      )) {
+    throw const FormatException('invalid_archive');
+  }
+  return raw;
 }
 
 bool _safeEntryName(String name) =>
@@ -753,8 +1151,11 @@ Uint8List _readEntry(ArchiveFile file, int limit, List<int> budget) {
 /// [encodeLibraryPackage] on a background isolate, for large libraries.
 Future<Uint8List> encodeLibraryPackageAsync(
   List<SongDocument> songs,
-  List<SetlistDocument> setlists,
-) => _runInBackground(() => encodeLibraryPackage(songs, setlists));
+  List<SetlistDocument> setlists, {
+  Map<String, Object?>? preferences,
+}) => _runInBackground(
+  () => encodeLibraryPackage(songs, setlists, preferences: preferences),
+);
 
 /// [decodeLibraryPackage] on a background isolate, for large backups.
 Future<ImportedCollection> decodeLibraryPackageAsync(Uint8List bytes) =>
@@ -773,20 +1174,123 @@ Future<T> _runInBackground<T>(FutureOr<T> Function() work) async {
   }
 }
 
-/// Number of entries the zip's End Of Central Directory record declares, or
-/// null when it cannot be located (or the archive uses ZIP64 counts). Reading
-/// it first lets a hostile archive with a million tiny entries be rejected
-/// before the decoder allocates an object for each one.
-int? _declaredZipEntries(Uint8List bytes) {
+/// Validates central-directory sizes and file kinds before ZipDecoder can
+/// allocate entry content. This app never emits ZIP64 archives, so rejecting
+/// ZIP64 records also keeps their unbounded size fields out of the decoder.
+void _preflightZipDirectory(Uint8List bytes) {
+  Never invalid() => throw const FormatException('invalid_archive');
+  if (bytes.length < 22) invalid();
+  final data = ByteData.sublistView(bytes);
   final earliest = bytes.length > 22 + 0xffff ? bytes.length - 22 - 0xffff : 0;
-  final view = ByteData.sublistView(bytes);
+  var endOffset = -1;
   for (var i = bytes.length - 22; i >= earliest; i--) {
-    if (view.getUint32(i, Endian.little) == 0x06054b50) {
-      final total = view.getUint16(i + 10, Endian.little);
-      return total == 0xffff ? null : total;
+    if (data.getUint32(i, Endian.little) != 0x06054b50) continue;
+    final commentLength = data.getUint16(i + 20, Endian.little);
+    if (i + 22 + commentLength == bytes.length) {
+      endOffset = i;
+      break;
     }
   }
-  return null;
+  if (endOffset < 0) invalid();
+  if (endOffset >= 20 &&
+      data.getUint32(endOffset - 20, Endian.little) == 0x07064b50) {
+    invalid(); // ZIP64 end-of-central-directory locator.
+  }
+  final diskNumber = data.getUint16(endOffset + 4, Endian.little);
+  final centralDisk = data.getUint16(endOffset + 6, Endian.little);
+  final entriesOnDisk = data.getUint16(endOffset + 8, Endian.little);
+  final entryCount = data.getUint16(endOffset + 10, Endian.little);
+  final centralSize = data.getUint32(endOffset + 12, Endian.little);
+  final centralOffset = data.getUint32(endOffset + 16, Endian.little);
+  if (diskNumber != 0 ||
+      centralDisk != 0 ||
+      entriesOnDisk != entryCount ||
+      entryCount == 0xffff ||
+      centralSize == 0xffffffff ||
+      centralOffset == 0xffffffff ||
+      entryCount > maxBackupSongs + 1 + _maxBackupDirectoryEntries ||
+      centralOffset + centralSize != endOffset) {
+    invalid();
+  }
+
+  var cursor = centralOffset;
+  var fileCount = 0, directoryCount = 0;
+  var compressedTotal = 0, uncompressedTotal = 0;
+  for (var i = 0; i < entryCount; i++) {
+    if (cursor < 0 ||
+        cursor + 46 > endOffset ||
+        data.getUint32(cursor, Endian.little) != 0x02014b50) {
+      invalid();
+    }
+    final madeBy = data.getUint16(cursor + 4, Endian.little);
+    final flags = data.getUint16(cursor + 8, Endian.little);
+    final method = data.getUint16(cursor + 10, Endian.little);
+    final compressedSize = data.getUint32(cursor + 20, Endian.little);
+    final uncompressedSize = data.getUint32(cursor + 24, Endian.little);
+    final nameLength = data.getUint16(cursor + 28, Endian.little);
+    final extraLength = data.getUint16(cursor + 30, Endian.little);
+    final commentLength = data.getUint16(cursor + 32, Endian.little);
+    final startDisk = data.getUint16(cursor + 34, Endian.little);
+    final externalAttributes = data.getUint32(cursor + 38, Endian.little);
+    final localOffset = data.getUint32(cursor + 42, Endian.little);
+    final recordEnd = cursor + 46 + nameLength + extraLength + commentLength;
+    if (recordEnd > endOffset ||
+        nameLength == 0 ||
+        compressedSize == 0xffffffff ||
+        uncompressedSize == 0xffffffff ||
+        startDisk != 0 ||
+        localOffset == 0xffffffff ||
+        localOffset >= centralOffset ||
+        (flags & 0x41) != 0 || // encrypted / strong encryption
+        (method != 0 && method != 8)) {
+      invalid();
+    }
+    final hostSystem = madeBy >> 8;
+    final unixMode = externalAttributes >> 16;
+    if (hostSystem == 3 && (unixMode & 0xf000) == 0xa000) {
+      invalid(); // Symlink entries are never needed in a library package.
+    }
+
+    final nameBytes = bytes.sublist(cursor + 46, cursor + 46 + nameLength);
+    String name;
+    try {
+      name = utf8.decode(nameBytes);
+    } on FormatException {
+      invalid();
+    }
+    if (!_safeEntryName(name)) invalid();
+    var extraCursor = cursor + 46 + nameLength;
+    final extraEnd = extraCursor + extraLength;
+    while (extraCursor < extraEnd) {
+      if (extraCursor + 4 > extraEnd) invalid();
+      final extraId = data.getUint16(extraCursor, Endian.little);
+      final fieldLength = data.getUint16(extraCursor + 2, Endian.little);
+      extraCursor += 4;
+      if (extraCursor + fieldLength > extraEnd || extraId == 0x0001) {
+        invalid(); // ZIP64 size/offset extension.
+      }
+      extraCursor += fieldLength;
+    }
+
+    final isDirectory = name.endsWith('/');
+    if (isDirectory) {
+      directoryCount++;
+      if (uncompressedSize != 0) invalid();
+    } else {
+      fileCount++;
+      if (uncompressedSize > maxImportBytes) invalid();
+    }
+    compressedTotal += compressedSize;
+    uncompressedTotal += uncompressedSize;
+    if (directoryCount > _maxBackupDirectoryEntries ||
+        fileCount > maxBackupSongs + 1 ||
+        compressedTotal > maxBackupBytes ||
+        uncompressedTotal > maxBackupUncompressedBytes) {
+      invalid();
+    }
+    cursor = recordEnd;
+  }
+  if (cursor != endOffset) invalid();
 }
 
 /// Complete validation precedes any database writes. No archive paths are extracted.
@@ -795,11 +1299,7 @@ ImportedCollection decodeLibraryPackage(Uint8List bytes) {
     throw const FormatException('file_too_large');
   }
   if (!looksLikeZip(bytes)) throw const FormatException('invalid_archive');
-  final declaredEntries = _declaredZipEntries(bytes);
-  if (declaredEntries != null &&
-      declaredEntries > maxBackupSongs + 1 + _maxBackupDirectoryEntries) {
-    throw const FormatException('invalid_archive');
-  }
+  _preflightZipDirectory(bytes);
   final decoder = ZipDecoder();
   final Archive archive;
   try {
@@ -849,11 +1349,17 @@ ImportedCollection decodeLibraryPackage(Uint8List bytes) {
       utf8.decode(_readEntry(manifestFile, maxBackupManifestBytes, budget)),
     ),
   );
-  if (manifest['schemaVersion'] != 1 ||
+  final schemaVersion = manifest['schemaVersion'];
+  if ((schemaVersion != 1 && schemaVersion != 2 && schemaVersion != 3) ||
       manifest['songs'] is! Map ||
       manifest['setlists'] is! List) {
     throw const FormatException('unsupported_archive');
   }
+  final preferences =
+      schemaVersion == 2 ||
+          (schemaVersion == 3 && manifest.containsKey('preferences'))
+      ? _decodeBackupPreferences(manifest['preferences'])
+      : null;
   final songs = <SongDocument>[];
   final expected = stringMap(manifest['songs']);
   final hashes = stringMap(manifest['hashes']);
@@ -861,11 +1367,12 @@ ImportedCollection decodeLibraryPackage(Uint8List bytes) {
     throw const FormatException('invalid_archive');
   }
   for (final entry in expected.entries) {
+    final extension = schemaVersion == 3 ? '.json' : '.cho';
     final file = archive.find(entry.value);
     if (file == null ||
         !file.isFile ||
         !_safeEntryName(entry.value) ||
-        !entry.value.endsWith('.cho')) {
+        !entry.value.endsWith(extension)) {
       throw const FormatException('invalid_archive');
     }
     final data = _readEntry(file, maxImportBytes, budget);
@@ -873,7 +1380,19 @@ ImportedCollection decodeLibraryPackage(Uint8List bytes) {
       throw const FormatException('invalid_archive_hash');
     }
     file.closeSync();
-    final song = ChordProCodec().decode(decodeImportedText(data));
+    final SongDocument song;
+    if (schemaVersion == 3) {
+      try {
+        song = _songFromBackupJson(jsonDecode(utf8.decode(data)));
+      } on FormatException catch (error) {
+        if (error.message == 'invalid_archive') rethrow;
+        throw const FormatException('invalid_archive');
+      } on Object {
+        throw const FormatException('invalid_archive');
+      }
+    } else {
+      song = ChordProCodec().decode(decodeImportedText(data));
+    }
     if (song.id != entry.key) {
       throw const FormatException('invalid_archive_identity');
     }
@@ -883,16 +1402,26 @@ ImportedCollection decodeLibraryPackage(Uint8List bytes) {
       files != songs.length + 1) {
     throw const FormatException('invalid_archive');
   }
-  final setlists = (manifest['setlists'] as List)
-      .map((s) => SetlistDocument.fromJson(jsonMap(s)))
-      .toList();
+  final setlists = (manifest['setlists'] as List).map((value) {
+    final json = jsonMap(value);
+    _validateSetlistBackupTimestamps(json, requireFields: schemaVersion == 3);
+    return SetlistDocument.fromJson(json);
+  }).toList();
+  final entryIds = <String>{};
   if (setlists.map((s) => s.id).toSet().length != setlists.length ||
       setlists.any(
-        (s) => s.entries.any((e) => !expected.containsKey(e.songId)),
+        (s) => s.entries.any(
+          (e) => !expected.containsKey(e.songId) || !entryIds.add(e.id),
+        ),
       )) {
     throw const FormatException('missing_song_references');
   }
-  return ImportedCollection(songs, setlists);
+  return ImportedCollection(
+    songs,
+    setlists,
+    preferences: preferences,
+    schemaVersion: schemaVersion as int,
+  );
 }
 
 SetlistDocument decodeSetlistReferences(
@@ -1316,36 +1845,6 @@ Future<Uint8List> _buildSongPdf(_PdfJob job) async {
   const navy = PdfColor.fromInt(0xff173454);
   const muted = PdfColor.fromInt(0xff5f6b78);
   const paleBlue = PdfColor.fromInt(0xfff1f5f9);
-  List<String> metadataLines(SongDocument song) {
-    final values = <String>[];
-    void add(String label, Object? raw) {
-      final value = raw?.toString().trim();
-      if (value != null && value.isNotEmpty) values.add('$label: $value');
-    }
-
-    add('Album', song.metadata['album']);
-    add('Year', song.metadata['year']);
-    add('Key', song.metadata['key']);
-    add('Capo', song.metadata['capo']);
-    add('Tuning', song.metadata['tuning']);
-    final tempo = song.metadata['tempo'];
-    if (tempo != null && tempo.toString().trim().isNotEmpty) {
-      add('Tempo', '${tempo.toString().trim()} BPM');
-    }
-    add('Time', song.metadata['timeSignature']);
-    final duration = song.metadata['durationSeconds'];
-    if (duration is num && duration > 0) {
-      final seconds = duration.round();
-      add(
-        'Duration',
-        '${(seconds ~/ 60).toString().padLeft(2, '0')}:${(seconds % 60).toString().padLeft(2, '0')}',
-      );
-    }
-    add('Composer', song.metadata['composer']);
-    add('Lyricist', song.metadata['lyricist']);
-    return values;
-  }
-
   String songKeywords(SongDocument song) => [
     song.title,
     if (song.artist.trim().isNotEmpty) song.artist.trim(),
@@ -1467,7 +1966,7 @@ Future<Uint8List> _buildSongPdf(_PdfJob job) async {
             metadata: [
               if (song.artist.trim().isNotEmpty)
                 'Artist: ${song.artist.trim()}',
-              ...metadataLines(song),
+              ..._songMetadataLines(song),
             ],
             fonts: fonts,
             sanitizer: sanitizer,
@@ -1571,10 +2070,31 @@ List<pw.Widget> _pdfSongBody(
   }
 
   final lyricRows = <pw.Widget>[];
+  final pendingHeadings = <pw.Widget>[];
+  final pendingSpacing = <pw.Widget>[];
+  void appendBodyRows(List<pw.Widget> rows) {
+    if (pendingHeadings.isEmpty || rows.isEmpty) {
+      lyricRows.addAll(rows);
+      return;
+    }
+    lyricRows.add(
+      pw.Inseparable(
+        child: pw.Column(
+          mainAxisSize: pw.MainAxisSize.min,
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [...pendingHeadings, ...pendingSpacing, rows.first],
+        ),
+      ),
+    );
+    lyricRows.addAll(rows.skip(1));
+    pendingHeadings.clear();
+    pendingSpacing.clear();
+  }
+
   for (final line in lines) {
     final heading = line.directive ? _pdfSectionHeading(line.text) : null;
     if (heading != null) {
-      lyricRows.add(
+      pendingHeadings.add(
         pw.Padding(
           padding: const pw.EdgeInsets.only(top: 5, bottom: 2),
           child: pw.Text(
@@ -1587,10 +2107,16 @@ List<pw.Widget> _pdfSongBody(
           ),
         ),
       );
+      continue;
     } else if (!line.directive &&
         line.text.trim().isEmpty &&
         line.chords.isEmpty) {
-      lyricRows.add(pw.SizedBox(height: 5));
+      final spacing = pw.SizedBox(height: 5);
+      if (pendingHeadings.isEmpty) {
+        lyricRows.add(spacing);
+      } else {
+        pendingSpacing.add(spacing);
+      }
     } else if (!line.directive) {
       final chunks = line.chords.isEmpty
           ? [
@@ -1600,9 +2126,14 @@ List<pw.Widget> _pdfSongBody(
                 _LineChunk(text, const [], rtl: isRightToLeftText(text)),
             ]
           : _layoutChordedLine(line, sanitizer, fonts.monoFaces, lyricWidth);
-      lyricRows.addAll(chunks.map(lyricRow));
+      appendBodyRows(chunks.map(lyricRow).toList());
     }
   }
+  // Preserve meaningful terminal headings and notes even when no body row
+  // follows them; the PDF should match the arrangement the user authored.
+  lyricRows
+    ..addAll(pendingHeadings)
+    ..addAll(pendingSpacing);
 
   final metadataWidgets = <pw.Widget>[];
   for (final value in metadata) {

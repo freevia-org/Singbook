@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "Аккорды нужно сверить с текстом песни",
   "searchMatchDifferentLyrics": "Текст отличается от выбранной песни",
   "searchMatchCombinedSources": "Сведения объединены из нескольких источников",
-  "searchCombinedLabel": "Все",
+  "searchCombinedLabel": "Объединённые",
   "searchSongMatchCount": "{count, plural, one{{count} совпадение песни} few{{count} совпадения песен} many{{count} совпадений песен} other{{count} совпадения песни}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Сведения о версии",
   "searchSelectedRecording": "Выбранная запись",
   "searchVersionDuration": "Длительность версии",
-  "searchSourceOptions": "Параметры источника"
+  "searchSourceOptions": "Параметры источника",
+  "actionUndo": "Отменить",
+  "setlistEntryRemoved": "Композиция «{song}» удалена из сет-листа",
+  "backupTitle": "Резервное копирование и восстановление",
+  "backupExport": "Экспортировать резервную копию",
+  "backupRestore": "Восстановить резервную копию",
+  "backupIncludePreferences": "Включить настройки приложения",
+  "backupRestorePreferences": "Восстановить настройки приложения",
+  "backupMerge": "Добавить в эту библиотеку",
+  "backupMergeHint": "Сохранить локальные изменения и добавить песни и списки из этой резервной копии.",
+  "backupReplace": "Заменить эту библиотеку",
+  "backupReplaceHint": "Заменить все песни и сет-листы на этом устройстве содержимым этой резервной копии.",
+  "backupSummary": "Песни: {songs} · Сет-листы: {setlists} · Конфликты: {conflicts}",
+  "backupFailed": "Не удалось завершить операцию. Попробуйте ещё раз.",
+  "backupRestored": "Резервная копия восстановлена.",
+  "backupLocalHint": "Сохраните копию библиотеки. Данные учётной записи и файлы cookie согласия не включаются.",
+  "backupReplaceConfirm": "Заменить текущую библиотеку? Это действие нельзя отменить.",
+  "youtubeConsentPageError": "Эта страница перестала работать. Попробуйте ещё раз или вернитесь назад.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

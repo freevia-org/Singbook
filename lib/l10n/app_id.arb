@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "Lirik pada lembar akor perlu dikonfirmasi",
   "searchMatchDifferentLyrics": "Lirik berbeda dari lagu yang dipilih",
   "searchMatchCombinedSources": "Detail digabungkan dari beberapa sumber",
-  "searchCombinedLabel": "Semua",
+  "searchCombinedLabel": "Gabungan",
   "searchSongMatchCount": "{count, plural, =0{0 kecocokan lagu} =1{1 kecocokan lagu} other{{count} kecocokan lagu}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Detail versi",
   "searchSelectedRecording": "Rekaman yang dipilih",
   "searchVersionDuration": "Durasi versi",
-  "searchSourceOptions": "Opsi sumber"
+  "searchSourceOptions": "Opsi sumber",
+  "actionUndo": "Urungkan",
+  "setlistEntryRemoved": "{song} dihapus dari daftar lagu",
+  "backupTitle": "Cadangkan dan pulihkan",
+  "backupExport": "Ekspor cadangan",
+  "backupRestore": "Pulihkan cadangan",
+  "backupIncludePreferences": "Sertakan preferensi aplikasi",
+  "backupRestorePreferences": "Pulihkan preferensi aplikasi",
+  "backupMerge": "Tambahkan ke pustaka ini",
+  "backupMergeHint": "Pertahankan perubahan lokal dan tambahkan lagu serta daftar dari cadangan ini.",
+  "backupReplace": "Ganti pustaka ini",
+  "backupReplaceHint": "Ganti semua lagu dan daftar di perangkat ini dengan isi cadangan ini.",
+  "backupSummary": "Lagu: {songs} · Daftar: {setlists} · Konflik: {conflicts}",
+  "backupFailed": "Operasi cadangan tidak dapat diselesaikan. Coba lagi.",
+  "backupRestored": "Cadangan dipulihkan.",
+  "backupLocalHint": "Simpan salinan pustaka Anda. Kredensial akun dan cookie persetujuan tidak pernah disertakan.",
+  "backupReplaceConfirm": "Ganti pustaka saat ini? Tindakan ini tidak dapat dibatalkan.",
+  "youtubeConsentPageError": "Halaman ini berhenti berfungsi. Coba lagi atau kembali.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }

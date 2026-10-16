@@ -224,7 +224,7 @@
   "editorTimeSignatureField": "Time signature",
   "editorLanguageField": "Language",
   "editorYearField": "Year", "editorComposerField": "Composer", "editorLyricistField": "Lyricist", "editorCopyrightField": "Copyright", "editorLicenseField": "License", "songInfoSources": "Sources and credits",
-  "searchMatchSameSong": "Same song; recording not confirmed", "searchMatchNeedsAgreement": "Chart needs lyric confirmation", "searchMatchDifferentLyrics": "Lyrics differ from the selected song", "searchMatchCombinedSources": "Details combined from multiple sources", "searchCombinedLabel": "All", "searchSongMatchCount": "{count, plural, =0{0 song matches} =1{1 song match} other{{count} song matches}}", "@searchSongMatchCount": {"placeholders": {"count": {"type": "int"}}}, "searchSourceVersionsCount": "{count, plural, =0{0 source versions} =1{1 source version} other{{count} source versions}}", "@searchSourceVersionsCount": {"placeholders": {"count": {"type": "int"}}}, "searchMatchBestAvailable": "Best available match", "providerDescriptionUnknown": "Song source", "providerDescDownloadChordProThenImport": "Download a ChordPro file from the source, then import it.", "providerDescFreeAccountDownloadThenImport": "Download with a free account, then import the file.", "providerDescPublicChordSheets": "Public chord sheets.", "providerDescHistoricalTextPerWorkLicense": "Historical lyrics licensed by work.", "providerDescLicensedCatalog": "Licensed lyric catalog.", "providerDescOriginalSongsCcBy": "Original songs under Creative Commons BY.", "providerDescPerSongLicense": "Lyrics licensed per song.", "providerDescRecordingMetadataOnly": "Recording and release details only.", "providerDescCompositionMetadataOnly": "Composition details only.", "providerDescExactFileArtworkOnly": "Artwork for exact recording matches only.", "providerCapabilityLyrics": "Lyrics", "providerCapabilityChords": "Chords", "providerCapabilityTiming": "Timed lyrics", "providerCapabilitySearch": "Search", "providerCapabilityMetadata": "Song details",
+  "searchMatchSameSong": "Same song; recording not confirmed", "searchMatchNeedsAgreement": "Chart needs lyric confirmation", "searchMatchDifferentLyrics": "Lyrics differ from the selected song", "searchMatchCombinedSources": "Details combined from multiple sources", "searchCombinedLabel": "Combined", "searchSongMatchCount": "{count, plural, =0{0 song matches} =1{1 song match} other{{count} song matches}}", "@searchSongMatchCount": {"placeholders": {"count": {"type": "int"}}}, "searchSourceVersionsCount": "{count, plural, =0{0 source versions} =1{1 source version} other{{count} source versions}}", "@searchSourceVersionsCount": {"placeholders": {"count": {"type": "int"}}}, "searchMatchBestAvailable": "Best available match", "providerDescriptionUnknown": "Song source", "providerDescDownloadChordProThenImport": "Download a ChordPro file from the source, then import it.", "providerDescFreeAccountDownloadThenImport": "Download with a free account, then import the file.", "providerDescPublicChordSheets": "Public chord sheets.", "providerDescHistoricalTextPerWorkLicense": "Historical lyrics licensed by work.", "providerDescLicensedCatalog": "Licensed lyric catalog.", "providerDescOriginalSongsCcBy": "Original songs under Creative Commons BY.", "providerDescPerSongLicense": "Lyrics licensed per song.", "providerDescRecordingMetadataOnly": "Recording and release details only.", "providerDescCompositionMetadataOnly": "Composition details only.", "providerDescExactFileArtworkOnly": "Artwork for exact recording matches only.", "providerCapabilityLyrics": "Lyrics", "providerCapabilityChords": "Chords", "providerCapabilityTiming": "Timed lyrics", "providerCapabilitySearch": "Search", "providerCapabilityMetadata": "Song details",
   "editorArtworkField": "Artwork link",
   "editorLyricsHint": "Tap a line to edit lyrics or chords.",
   "editorSave": "Save changes",
@@ -491,5 +491,42 @@
   "searchVersionDetails": "Version details",
   "searchSelectedRecording": "Selected recording",
   "searchVersionDuration": "Version duration",
-  "searchSourceOptions": "Source options"
+  "searchSourceOptions": "Source options",
+  "actionUndo": "Undo",
+  "setlistEntryRemoved": "Removed {song} from setlist",
+  "backupTitle": "Backup and restore",
+  "backupExport": "Export backup",
+  "backupRestore": "Restore backup",
+  "backupIncludePreferences": "Include app preferences",
+  "backupRestorePreferences": "Restore app preferences",
+  "backupMerge": "Add to this library",
+  "backupMergeHint": "Keep local edits and add songs and setlists from this backup.",
+  "backupReplace": "Replace this library",
+  "backupReplaceHint": "Replace all songs and setlists on this device with this backup.",
+  "backupSummary": "Songs: {songs} · Setlists: {setlists} · Conflicts: {conflicts}",
+  "backupFailed": "Could not complete this backup operation. Try again.",
+  "backupRestored": "Backup restored.",
+  "backupLocalHint": "Save a copy of your library. Account credentials and consent cookies are never included.",
+  "backupReplaceConfirm": "Replace the current library? This cannot be undone.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  },
+  "youtubeConsentPageError": "This page stopped working. Try again or go back."
 }

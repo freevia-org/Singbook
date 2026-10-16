@@ -351,7 +351,7 @@
   "searchMatchNeedsAgreement": "Akordų įrašą reikia patvirtinti pagal dainos tekstą",
   "searchMatchDifferentLyrics": "Dainos tekstas skiriasi nuo pasirinktos dainos",
   "searchMatchCombinedSources": "Informacija sujungta iš kelių šaltinių",
-  "searchCombinedLabel": "Visi",
+  "searchCombinedLabel": "Sujungta",
   "searchSongMatchCount": "{count, plural, one{{count} dainos atitikmuo} few{{count} dainų atitikmenys} many{{count} dainų atitikmenų} other{{count} dainų atitikmenų}}",
   "@searchSongMatchCount": {
     "placeholders": {
@@ -753,5 +753,42 @@
   "searchVersionDetails": "Versijos informacija",
   "searchSelectedRecording": "Pasirinktas įrašas",
   "searchVersionDuration": "Versijos trukmė",
-  "searchSourceOptions": "Šaltinio parinktys"
+  "searchSourceOptions": "Šaltinio parinktys",
+  "actionUndo": "Anuliuoti",
+  "setlistEntryRemoved": "Daina „{song}“ pašalinta iš grojaraščio",
+  "backupTitle": "Atsarginė kopija ir atkūrimas",
+  "backupExport": "Eksportuoti atsarginę kopiją",
+  "backupRestore": "Atkurti atsarginę kopiją",
+  "backupIncludePreferences": "Įtraukti programos nuostatas",
+  "backupRestorePreferences": "Atkurti programos nuostatas",
+  "backupMerge": "Pridėti prie šios bibliotekos",
+  "backupMergeHint": "Išsaugokite vietinius pakeitimus ir pridėkite dainas bei grojaraščius iš šios kopijos.",
+  "backupReplace": "Pakeisti šią biblioteką",
+  "backupReplaceHint": "Pakeiskite visas šio įrenginio dainas ir grojaraščius šios kopijos turiniu.",
+  "backupSummary": "Dainos: {songs} · Grojaraščiai: {setlists} · Konfliktai: {conflicts}",
+  "backupFailed": "Nepavyko užbaigti atsarginės kopijos operacijos. Bandykite dar kartą.",
+  "backupRestored": "Atsarginė kopija atkurta.",
+  "backupLocalHint": "Išsaugokite savo bibliotekos kopiją. Paskyros prisijungimo duomenys ir sutikimo slapukai neįtraukiami.",
+  "backupReplaceConfirm": "Pakeisti dabartinę biblioteką? Šio veiksmo atšaukti negalima.",
+  "youtubeConsentPageError": "Šis puslapis nustojo veikti. Bandykite dar kartą arba grįžkite atgal.",
+  "@setlistEntryRemoved": {
+    "placeholders": {
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "@backupSummary": {
+    "placeholders": {
+      "songs": {
+        "type": "int"
+      },
+      "setlists": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  }
 }
