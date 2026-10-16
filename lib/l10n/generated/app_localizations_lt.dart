@@ -1716,4 +1716,42 @@ class AppLocalizationsLt extends AppLocalizations {
   @override
   String get youtubeConsentBlocked =>
       'Čia galima atidaryti tik „YouTube Music“ ir „Google“ sutikimo puslapį. Prisijungti prie paskyros negalima.';
+
+  @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count paruoštų versijų',
+      few: '$count paruoštos versijos',
+      one: '$count paruošta versija',
+      zero: 'Nėra paruoštų versijų',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count nepasiekiamų versijų',
+      few: '$count nepasiekiamos versijos',
+      one: '$count nepasiekiama versija',
+      zero: 'Nėra nepasiekiamų versijų',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'Pereiti į skyrių';
+
+  @override
+  String get searchVersionDetails => 'Versijos informacija';
+
+  @override
+  String get searchSelectedRecording => 'Pasirinktas įrašas';
+
+  @override
+  String get searchVersionDuration => 'Versijos trukmė';
 }

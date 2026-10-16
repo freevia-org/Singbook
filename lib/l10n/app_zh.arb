@@ -737,5 +737,25 @@
   "youtubeConsentClear": "清除同意设置",
   "youtubeConsentInstructions": "完成 Cookie 选择并等待 YouTube Music 返回。然后保存此会话并重新搜索歌曲。",
   "youtubeConsentError": "无法更新 Google 同意设置。请重试。",
-  "youtubeConsentBlocked": "此处只能打开 YouTube Music 和 Google 同意页面。无法登录账号。"
+  "youtubeConsentBlocked": "此处只能打开 YouTube Music 和 Google 同意页面。无法登录账号。",
+  "searchReadyVersions": "{count, plural, =0{0 可用版本} =1{1 可用版本} other{{count} 可用版本}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{0 不可用版本} =1{1 不可用版本} other{{count} 不可用版本}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "跳转到章节",
+  "searchVersionDetails": "版本详情",
+  "searchSelectedRecording": "已选录音",
+  "searchVersionDuration": "版本时长"
 }

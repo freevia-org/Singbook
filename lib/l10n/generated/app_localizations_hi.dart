@@ -1675,4 +1675,40 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get youtubeConsentBlocked =>
       'यहाँ केवल YouTube Music और Google का सहमति पेज खुल सकता है। खाते में साइन इन करना उपलब्ध नहीं है।';
+
+  @override
+  String searchReadyVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count तैयार संस्करण',
+      one: '1 तैयार संस्करण',
+      zero: '0 तैयार संस्करण',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchUnavailableVersions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count अनुपलब्ध संस्करण',
+      one: '1 अनुपलब्ध संस्करण',
+      zero: '0 अनुपलब्ध संस्करण',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchJumpSection => 'अनुभाग पर जाएँ';
+
+  @override
+  String get searchVersionDetails => 'संस्करण का विवरण';
+
+  @override
+  String get searchSelectedRecording => 'चयनित रिकॉर्डिंग';
+
+  @override
+  String get searchVersionDuration => 'संस्करण की अवधि';
 }

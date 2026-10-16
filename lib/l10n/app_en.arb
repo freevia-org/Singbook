@@ -465,5 +465,25 @@
   "youtubeConsentClear": "Clear consent",
   "youtubeConsentInstructions": "Complete Google's cookie choice and wait for YouTube Music to return. Then save this session and retry the song.",
   "youtubeConsentError": "Couldn't update Google's consent choice. Try again.",
-  "youtubeConsentBlocked": "Only YouTube Music and Google's consent page can open here. Account sign-in is unavailable."
+  "youtubeConsentBlocked": "Only YouTube Music and Google's consent page can open here. Account sign-in is unavailable.",
+  "searchReadyVersions": "{count, plural, =0{No ready versions} =1{1 ready version} other{{count} ready versions}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =1{1 unavailable version} other{{count} unavailable versions}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "Jump to section",
+  "searchVersionDetails": "Version details",
+  "searchSelectedRecording": "Selected recording",
+  "searchVersionDuration": "Version duration"
 }

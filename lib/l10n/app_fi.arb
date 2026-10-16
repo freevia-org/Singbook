@@ -737,5 +737,25 @@
   "youtubeConsentClear": "Tyhjennä suostumus",
   "youtubeConsentInstructions": "Tee evästevalintasi loppuun ja odota, että YouTube Music palaa. Tallenna sitten tämä istunto ja yritä hakea kappaletta uudelleen.",
   "youtubeConsentError": "Googlen suostumusvalintaa ei voitu päivittää. Yritä uudelleen.",
-  "youtubeConsentBlocked": "Täällä voi avata vain YouTube Musicin ja Googlen suostumussivun. Tilille kirjautuminen ei ole käytettävissä."
+  "youtubeConsentBlocked": "Täällä voi avata vain YouTube Musicin ja Googlen suostumussivun. Tilille kirjautuminen ei ole käytettävissä.",
+  "searchReadyVersions": "{count, plural, =0{0 Valmiit versiot} =1{1 valmis versio} other{{count} Valmiit versiot}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{0 Ei saatavilla olevat versiota} =1{1 ei saatavilla oleva versio} other{{count} Ei saatavilla olevat versiota}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "Siirry osiooniiin",
+  "searchVersionDetails": "Version tiedot",
+  "searchSelectedRecording": "Valittu äänite",
+  "searchVersionDuration": "Version kesto"
 }

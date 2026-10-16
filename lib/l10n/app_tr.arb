@@ -737,5 +737,25 @@
   "youtubeConsentClear": "İzin tercihini temizle",
   "youtubeConsentInstructions": "Çerez seçiminizi tamamlayın ve YouTube Music'in geri dönmesini bekleyin. Ardından bu oturumu kaydedip şarkıyı yeniden arayın.",
   "youtubeConsentError": "Google izin tercihi güncellenemedi. Yeniden deneyin.",
-  "youtubeConsentBlocked": "Burada yalnızca YouTube Music ve Google izin sayfası açılabilir. Hesapta oturum açma kullanılamaz."
+  "youtubeConsentBlocked": "Burada yalnızca YouTube Music ve Google izin sayfası açılabilir. Hesapta oturum açma kullanılamaz.",
+  "searchReadyVersions": "{count, plural, =0{0 Hazır sürümler} =1{1 hazır sürüm} other{{count} Hazır sürümler}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{0 Kullanılamayan sürümler} =1{1 kullanılamayan sürüm} other{{count} Kullanılamayan sürümler}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "Bölüme git",
+  "searchVersionDetails": "Sürüm ayrıntıları",
+  "searchSelectedRecording": "Seçilen kayıt",
+  "searchVersionDuration": "Sürüm süresi"
 }

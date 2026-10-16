@@ -737,5 +737,25 @@
   "youtubeConsentClear": "Hozzájárulás törlése",
   "youtubeConsentInstructions": "Fejezd be a cookie-választást, és várd meg, amíg visszatér a YouTube Music. Ezután mentsd ezt a munkamenetet, és keresd meg újra a dalt.",
   "youtubeConsentError": "Nem sikerült frissíteni a Google-hozzájárulási választást. Próbáld újra.",
-  "youtubeConsentBlocked": "Itt csak a YouTube Music és a Google hozzájárulási oldala nyitható meg. A fiókba való bejelentkezés nem érhető el."
+  "youtubeConsentBlocked": "Itt csak a YouTube Music és a Google hozzájárulási oldala nyitható meg. A fiókba való bejelentkezés nem érhető el.",
+  "searchReadyVersions": "{count, plural, =0{0 Elérhető verziók} =1{1 elérhető verzió} other{{count} Elérhető verziók}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{0 Nem elérhető verziók} =1{1 nem elérhető verzió} other{{count} Nem elérhető verziók}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "Ugrás a szakaszhoz",
+  "searchVersionDetails": "Verzió részletei",
+  "searchSelectedRecording": "Kiválasztott felvétel",
+  "searchVersionDuration": "Verzió hossza"
 }

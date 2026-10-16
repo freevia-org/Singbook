@@ -737,5 +737,25 @@
   "youtubeConsentClear": "Xóa lựa chọn đồng ý",
   "youtubeConsentInstructions": "Hoàn tất lựa chọn cookie và đợi YouTube Music quay lại. Sau đó, lưu phiên này và thử tìm bài hát lại.",
   "youtubeConsentError": "Không thể cập nhật lựa chọn đồng ý của Google. Hãy thử lại.",
-  "youtubeConsentBlocked": "Tại đây chỉ có thể mở YouTube Music và trang đồng ý của Google. Không hỗ trợ đăng nhập tài khoản."
+  "youtubeConsentBlocked": "Tại đây chỉ có thể mở YouTube Music và trang đồng ý của Google. Không hỗ trợ đăng nhập tài khoản.",
+  "searchReadyVersions": "{count, plural, =0{0 Phiên bản có sẵn} =1{1 phiên bản có sẵn} other{{count} Phiên bản có sẵn}}",
+  "@searchReadyVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUnavailableVersions": "{count, plural, =0{0 Phiên bản không khả dụng} =1{1 phiên bản không khả dụng} other{{count} Phiên bản không khả dụng}}",
+  "@searchUnavailableVersions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchJumpSection": "Chuyển đến mục",
+  "searchVersionDetails": "Chi tiết phiên bản",
+  "searchSelectedRecording": "Bản ghi đã chọn",
+  "searchVersionDuration": "Thời lượng phiên bản"
 }
