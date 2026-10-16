@@ -20,7 +20,6 @@ import '../providers/configurable_provider.dart';
 import 'file_actions.dart';
 import '../sync/google_drive_sync.dart';
 import 'youtube_music_consent.dart';
-import '../providers/youtube_music_session.dart';
 
 /// A user-visible outcome of an operation, identified by a stable [code] (never
 /// free text, never containing credentials) that the UI maps to a localized
@@ -58,7 +57,7 @@ class AppController extends ChangeNotifier {
     final transport = ProviderTransport();
     return AppController._(
       repository,
-      _createDiscovery(transport, consent.session),
+      _createDiscovery(transport, consent),
       transport,
       sync,
       consent,
@@ -76,12 +75,13 @@ class AppController extends ChangeNotifier {
 
   static SourceDiscoveryService _createDiscovery(
     ProviderTransport transport,
-    YoutubeMusicSession youtubeMusicSession,
+    YoutubeMusicConsent consent,
   ) {
     return SourceDiscoveryService([
       ...createCoreProviders(
         transport: transport,
-        youtubeMusicSession: youtubeMusicSession,
+        youtubeMusicSession: consent.session,
+        onYoutubeMusicConsentRequired: consent.requestConsent,
       ),
       ...createExtraProviders(transport: transport),
     ]);
@@ -162,6 +162,8 @@ class AppController extends ChangeNotifier {
   bool get autoSyncEnabled => false;
   int _searchEpoch = 0, _discoveryEpoch = 0;
   CancellationToken? _searchCancel, _discoveryCancel;
+  CancellationToken? _youtubeDiscoveryCancel;
+  String? _searchProviderId;
   bool _disposed = false;
   Future<void>? _activeSyncAction;
   final Map<String, String> _savedSources = {};
@@ -297,7 +299,15 @@ class AppController extends ChangeNotifier {
     _sync ??= GoogleDriveSyncService(repository: repository);
     settings = jsonMap(await repository.getSetting('app'));
     if (_disposed) return;
-    await youtubeMusicConsent.restore();
+    if (providerEnabled('youtubemusic')) {
+      await youtubeMusicConsent.restore();
+    } else if (jsonMap(settings['providers'])['youtubemusic'] == false) {
+      // Older releases persisted source-off without deleting the native jar.
+      final cleared = await youtubeMusicConsent.clear();
+      if (!cleared && youtubeMusicConsent.supported && !_disposed) {
+        messages.value = const AppMessage('operation_failed', operation: 'sources');
+      }
+    }
     if (_disposed) return;
     await _initializeSourceCatalog();
     if (_disposed) return;
@@ -476,13 +486,41 @@ class AppController extends ChangeNotifier {
   }
 
   Future<void> setProviderEnabled(String id, bool enabled) async {
+    if (id == 'youtubemusic' && !enabled) {
+      _youtubeDiscoveryCancel?.cancel();
+      if (_searchProviderId == id) {
+        ++_searchEpoch;
+        _searchCancel?.cancel();
+        _searchProviderId = null;
+        searching = false;
+        suggestions = [];
+      }
+      checks.remove(id);
+      // Saved-source snapshots remain available; discard only live lookups.
+      results = results.where((source) =>
+        source.candidate.providerId != id ||
+        _cachedDiscoverySourceIds.contains(source.id)).toList();
+      if (selection != null) _combine(selection!);
+    }
+    // Disabling is also the single control for discarding this optional
+    // anonymous session. Clear memory immediately, before a setting write.
+    final clearing = id == 'youtubemusic' && !enabled
+        ? youtubeMusicConsent.clear()
+        : null;
     await setSetting('providers', {
       ...jsonMap(settings['providers']),
       id: enabled,
     });
+    if (clearing != null &&
+        !await clearing &&
+        youtubeMusicConsent.supported &&
+        !_disposed) {
+      messages.value = const AppMessage('operation_failed', operation: 'sources');
+    }
   }
 
   Future<bool> completeYoutubeMusicConsent() async {
+    if (!providerEnabled('youtubemusic')) return false;
     final captured = await youtubeMusicConsent.capture();
     if (!_disposed) _emit();
     return captured;
@@ -503,6 +541,7 @@ class AppController extends ChangeNotifier {
   Future<void> search(String value) async {
     final epoch = ++_searchEpoch;
     _searchCancel?.cancel();
+    _searchProviderId = null;
     if (value != query) {
       selection = null;
       cancelDiscovery();
@@ -533,6 +572,10 @@ class AppController extends ChangeNotifier {
           : providers.isNotEmpty
           ? providers.first.id
           : requested;
+      if (catalog == 'youtubemusic' && !providerEnabled(catalog)) {
+        throw const ProviderException('not_configured');
+      }
+      _searchProviderId = catalog;
       final found = await discovery.search(
         value.trim(),
         providerId: catalog,
@@ -546,6 +589,7 @@ class AppController extends ChangeNotifier {
     } finally {
       if (epoch == _searchEpoch) {
         searching = false;
+        _searchProviderId = null;
         _emit();
       }
     }
@@ -554,6 +598,7 @@ class AppController extends ChangeNotifier {
   void cancelSearch() {
     ++_searchEpoch;
     _searchCancel?.cancel();
+    _searchProviderId = null;
     searching = false;
     suggestions = [];
     selection = null;
@@ -564,6 +609,7 @@ class AppController extends ChangeNotifier {
   void cancelDiscovery() {
     ++_discoveryEpoch;
     _discoveryCancel?.cancel();
+    _youtubeDiscoveryCancel?.cancel();
     discovering = false;
     results = [];
     combined = null;
@@ -587,11 +633,13 @@ class AppController extends ChangeNotifier {
   }) async {
     ++_searchEpoch;
     _searchCancel?.cancel();
+    _searchProviderId = null;
     searching = false;
     suggestions = [];
     cancelDiscovery();
     final epoch = _discoveryEpoch;
     final cancellation = _discoveryCancel = CancellationToken();
+    final youtubeCancellation = _youtubeDiscoveryCancel = CancellationToken();
     selection = candidate;
     if (searchQuery != null) query = searchQuery;
     // Saved provenance remains available during refresh, including offline.
@@ -613,8 +661,14 @@ class AppController extends ChangeNotifier {
             .map((p) => p.id)
             .toSet(),
         cancel: cancellation,
+        providerCancellation: {'youtubemusic': youtubeCancellation},
         onProgress: (check) {
           if (epoch != _discoveryEpoch || _disposed) return;
+          if (check.providerId == 'youtubemusic' &&
+              (youtubeCancellation.isCancelled ||
+                  !providerEnabled('youtubemusic'))) {
+            return;
+          }
           checks[check.providerId] = check;
           final result = check.result;
           if (result != null &&
@@ -631,7 +685,10 @@ class AppController extends ChangeNotifier {
       if (epoch != _discoveryEpoch || _disposed) return;
       results = {
         for (final source in cached) source.id: source,
-        for (final source in found) source.id: source,
+        for (final source in found)
+          if (source.candidate.providerId != 'youtubemusic' ||
+              (!youtubeCancellation.isCancelled &&
+                  providerEnabled('youtubemusic'))) source.id: source,
       }.values.toList();
       _combine(candidate);
     } catch (error) {

@@ -1429,6 +1429,7 @@ class _StreamingDiscovery extends SourceDiscoveryService {
     Set<String>? enabledIds,
     void Function(ProviderCheck)? onProgress,
     CancellationToken? cancel,
+    Map<String, CancellationToken> providerCancellation = const {},
     Duration alternativeTimeout = const Duration(seconds: 30),
   }) async {
     for (final result in [source, ...additionalSources]) {

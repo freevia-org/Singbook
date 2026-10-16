@@ -167,9 +167,11 @@ class YoutubeMusicConsentScreen extends StatefulWidget {
     super.key,
     required this.labels,
     required this.onComplete,
+    this.autoComplete = false,
   });
   final YoutubeConsentLabels labels;
   final Future<bool> Function() onComplete;
+  final bool autoComplete;
 
   @override
   State<YoutubeMusicConsentScreen> createState() =>
@@ -245,8 +247,12 @@ class _YoutubeMusicConsentScreenState extends State<YoutubeMusicConsentScreen> {
             _navigation.finished(url);
             if (mounted) {
               setState(
-                () => _atMusic = _error == null && _navigation.canFinish,
+                () => _atMusic =
+                    _error == null &&
+                    (_navigation.canFinish ||
+                        (widget.autoComplete && _navigation.canRestoreSession)),
               );
+              if (widget.autoComplete && _atMusic && !_busy) _finish();
             }
           },
           onWebResourceError: (error) {
@@ -347,19 +353,21 @@ class _YoutubeMusicConsentScreenState extends State<YoutubeMusicConsentScreen> {
             onPressed: _initializing || _busy ? null : _retry,
             icon: const Icon(Icons.refresh_rounded),
           ),
-          TextButton(
-            onPressed: _atMusic && !_busy && !_initializing ? _finish : null,
-            child: Text(labels.done),
-          ),
+          if (!widget.autoComplete)
+            TextButton(
+              onPressed: _atMusic && !_busy && !_initializing ? _finish : null,
+              child: Text(labels.done),
+            ),
         ],
       ),
       body: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Text(labels.instructions),
-            ),
+            if (labels.instructions.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Text(labels.instructions),
+              ),
             if (_error != null)
               Padding(
                 padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
