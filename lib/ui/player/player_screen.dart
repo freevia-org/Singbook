@@ -74,6 +74,7 @@ class _PlayerScreenState extends State<PlayerScreen>
 
   bool _userScrolling = false;
   double? _dragValue;
+  bool _speedExpanded = false;
   bool _awakeHeld = false;
   bool _inForeground = true;
   bool _leaving = false;
@@ -83,6 +84,15 @@ class _PlayerScreenState extends State<PlayerScreen>
   double _durationOf(VerseUiState state) =>
       state.song?.durationSeconds ??
       (state.songLines.length * 3.4).clamp(90, 600).toDouble();
+
+  bool _isStandardTuning(String? tuning) {
+    if (tuning == null) return false;
+    final notes = RegExp(r'[A-Ga-g][#b♯♭]?')
+        .allMatches(tuning)
+        .map((match) => match.group(0)!.toUpperCase())
+        .join(',');
+    return notes == 'E,A,D,G,B,E';
+  }
 
   ScreenAwake get _screenAwake => widget.screenAwake ?? defaultScreenAwake;
 
@@ -486,29 +496,17 @@ class _PlayerScreenState extends State<PlayerScreen>
       ),
     );
     Widget controls({required bool compact, double? maxHeight}) {
-      final noAudio = Padding(
-        padding: EdgeInsets.fromLTRB(16, 0, 16, compact ? 4 : 8),
-        child: Text(
-          l10n.playerLyricsOnly,
-          style: Theme.of(
-            context,
-          ).textTheme.labelSmall?.copyWith(color: colors.onSurfaceVariant),
-          textAlign: TextAlign.center,
-        ),
-      );
       final content = Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (compact) noAudio,
-          if (compact) _transport(context, l10n, state),
           ValueListenableBuilder<PlayerPosition>(
             valueListenable: _position,
             builder: (context, position, _) =>
                 _seekBar(context, l10n, state, position, duration),
           ),
-          if (!compact) _transport(context, l10n, state),
-          if (song.hasChords) _chordControls(l10n, state, compact: compact),
-          if (!compact) noAudio,
+          _transport(context, l10n, state),
+          _expandedSpeedControl(context, l10n, state),
+          if (song.hasChords) _chordControls(l10n, state),
         ],
       );
       // Large text or a short screen can make the controls taller than the
@@ -543,10 +541,9 @@ class _PlayerScreenState extends State<PlayerScreen>
     final metadata = [
       song.artist,
       song.album,
-      if (state.readerKey != null) '${l10n.editorKeyField}: ${state.readerKey}',
       if (state.readerCapo != null)
         '${l10n.editorCapoField}: ${state.readerCapo}',
-      if (state.readerTuning != null)
+      if (state.readerTuning != null && !_isStandardTuning(state.readerTuning))
         '${l10n.editorTuningField}: ${state.readerTuning}',
       if (state.readerTempo != null)
         '${l10n.editorTempoField}: ${state.readerTempo}',
@@ -588,6 +585,11 @@ class _PlayerScreenState extends State<PlayerScreen>
                         checked: state.timingMode == 'timed',
                         child: Text(l10n.playerTimedLyrics),
                       ),
+                    if (state.readerCanCompareVersions)
+                      PopupMenuItem(
+                        value: 'compare',
+                        child: Text(l10n.searchCompare),
+                      ),
                     PopupMenuItem(
                       value: 'add',
                       child: Text(l10n.songAddToSetlist),
@@ -610,7 +612,9 @@ class _PlayerScreenState extends State<PlayerScreen>
                     ),
                   ],
                   onSelected: (action) {
-                    if (action == 'timed-lyrics') {
+                    if (action == 'compare') {
+                      controller.compareCurrentSongVersions();
+                    } else if (action == 'timed-lyrics') {
                       controller.setTimingMode(
                         state.timingMode == 'timed' ? 'estimated' : 'timed',
                       );
@@ -628,13 +632,13 @@ class _PlayerScreenState extends State<PlayerScreen>
             ),
             if (metadata.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 2, 24, 0),
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                 child: Align(
                   alignment: AlignmentDirectional.centerStart,
                   child: Text(
                     metadata,
-                    maxLines: compactLandscape ? 1 : null,
-                    overflow: compactLandscape ? TextOverflow.ellipsis : null,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: colors.onSurfaceVariant,
                     ),
@@ -642,7 +646,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                 ),
               ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: [
                   const Icon(Icons.check_circle_outline, size: 14),
@@ -654,28 +658,13 @@ class _PlayerScreenState extends State<PlayerScreen>
                         l10n.readerSaved,
                         state.readerSource,
                       ].whereType<String>().join(' · '),
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         color: colors.onSurfaceVariant,
                       ),
                     ),
                   ),
-                  if (state.readerCanCompareVersions)
-                    Expanded(
-                      flex: 3,
-                      child: Align(
-                        alignment: AlignmentDirectional.centerEnd,
-                        child: TextButton(
-                          onPressed: controller.compareCurrentSongVersions,
-                          child: Text(
-                            l10n.searchCompare,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ),
-                    ),
                 ],
               ),
             ),
@@ -880,41 +869,44 @@ class _PlayerScreenState extends State<PlayerScreen>
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-          child: Row(
-            children: [
-              Text('0.5×', style: Theme.of(context).textTheme.labelSmall),
-              Expanded(
-                child: Slider(
-                  key: const ValueKey('scroll-speed-slider'),
-                  min: .5,
-                  max: 2,
-                  divisions: 30,
-                  value: state.playbackSpeed,
-                  label: '${state.playbackSpeed.toStringAsFixed(2)}×',
-                  semanticFormatterCallback: (value) =>
-                      '${l10n.playerScrollSpeed}, ${value.toStringAsFixed(2)}×',
-                  onChanged: controller.setPlaybackSpeed,
-                ),
-              ),
-              ConstrainedBox(
-                constraints: const BoxConstraints(minWidth: 44),
-                child: Text(
-                  '${state.playbackSpeed.toStringAsFixed(2)}×',
-                  key: const ValueKey('scroll-speed-value'),
-                  maxLines: 1,
-                  softWrap: false,
-                  textAlign: TextAlign.end,
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }
+
+  Widget _expandedSpeedControl(
+    BuildContext context,
+    AppLocalizations l10n,
+    VerseUiState state,
+  ) => AnimatedSize(
+    duration: const Duration(milliseconds: 180),
+    curve: Curves.easeOut,
+    alignment: Alignment.topCenter,
+    child: !_speedExpanded
+        ? const SizedBox(width: double.infinity, height: 0)
+        : Padding(
+            key: const ValueKey('scroll-speed-panel'),
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 2),
+            child: Row(
+              children: [
+                Text('0.5×', style: Theme.of(context).textTheme.labelSmall),
+                Expanded(
+                  child: Slider(
+                    key: const ValueKey('scroll-speed-slider'),
+                    min: .5,
+                    max: 2,
+                    divisions: 30,
+                    value: state.playbackSpeed,
+                    label: '${state.playbackSpeed.toStringAsFixed(2)}×',
+                    semanticFormatterCallback: (value) =>
+                        '${l10n.playerScrollSpeed}, ${value.toStringAsFixed(2)}×',
+                    onChanged: controller.setPlaybackSpeed,
+                  ),
+                ),
+                Text('2×', style: Theme.of(context).textTheme.labelSmall),
+              ],
+            ),
+          ),
+  );
 
   Widget _transport(
     BuildContext context,
@@ -922,8 +914,8 @@ class _PlayerScreenState extends State<PlayerScreen>
     VerseUiState state,
   ) => Padding(
     padding: const EdgeInsets.fromLTRB(16, 0, 16, 2),
-    child: LayoutBuilder(
-      builder: (context, constraints) {
+    child: Builder(
+      builder: (context) {
         final start = FilledButton.icon(
           key: const ValueKey('start-lyric-scroll'),
           style: FilledButton.styleFrom(
@@ -953,6 +945,7 @@ class _PlayerScreenState extends State<PlayerScreen>
         final controls = <Widget>[
           if (state.playerSections.isNotEmpty || state.activeSetlist != null)
             IconButton(
+              visualDensity: VisualDensity.compact,
               tooltip: state.activeSetlist == null
                   ? l10n.playerPreviousSection
                   : state.playerSections.isEmpty
@@ -971,6 +964,7 @@ class _PlayerScreenState extends State<PlayerScreen>
           Flexible(child: start),
           if (state.playerSections.isNotEmpty || state.activeSetlist != null)
             IconButton(
+              visualDensity: VisualDensity.compact,
               tooltip: state.activeSetlist == null
                   ? l10n.playerNextSection
                   : state.playerSections.isEmpty
@@ -988,18 +982,50 @@ class _PlayerScreenState extends State<PlayerScreen>
             ),
         ];
         return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: controls,
+          children: [
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: controls,
+              ),
+            ),
+            Tooltip(
+              message: l10n.playerScrollSpeed,
+              child: TextButton(
+                key: const ValueKey('scroll-speed-toggle'),
+                style: TextButton.styleFrom(
+                  minimumSize: const Size(48, 44),
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  visualDensity: VisualDensity.compact,
+                ),
+                onPressed: () =>
+                    setState(() => _speedExpanded = !_speedExpanded),
+                child: Semantics(
+                  label:
+                      '${l10n.playerScrollSpeed}, ${state.playbackSpeed.toStringAsFixed(2)}×',
+                  button: true,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('${state.playbackSpeed.toStringAsFixed(2)}×'),
+                      Icon(
+                        _speedExpanded
+                            ? Icons.arrow_drop_up_rounded
+                            : Icons.arrow_drop_down_rounded,
+                        size: 20,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         );
       },
     ),
   );
 
-  Widget _chordControls(
-    AppLocalizations l10n,
-    VerseUiState state, {
-    bool compact = false,
-  }) {
+  Widget _chordControls(AppLocalizations l10n, VerseUiState state) {
     const sharpNames = [
       'C',
       'C♯',
@@ -1042,106 +1068,76 @@ class _PlayerScreenState extends State<PlayerScreen>
         ? flatNames
         : sharpNames;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 2),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Flexible(
-            flex: 3,
-            child: InkWell(
-              onTap: () => controller.setShowChords(!state.showChords),
-              borderRadius: BorderRadius.circular(8),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Checkbox(
-                    value: state.showChords,
-                    onChanged: (value) =>
-                        controller.setShowChords(value ?? false),
-                  ),
-                  Flexible(
+          if (originalPitch == null) ...[
+            IconButton(
+              tooltip: l10n.readerTransposeSemitones(-1),
+              visualDensity: VisualDensity.compact,
+              onPressed: () => controller.transpose(-1),
+              icon: const Icon(Icons.remove_circle_outline),
+            ),
+            IconButton(
+              tooltip: l10n.readerTransposeSemitones(1),
+              visualDensity: VisualDensity.compact,
+              onPressed: () => controller.transpose(1),
+              icon: const Icon(Icons.add_circle_outline),
+            ),
+          ],
+          PopupMenuButton<String>(
+            key: const ValueKey('pitch-key-dropdown'),
+            tooltip: l10n.readerTranspose,
+            onSelected: (action) {
+              if (action == 'no-chords') {
+                controller.setShowChords(!state.showChords);
+                return;
+              }
+              final targetPitch = int.parse(action.substring('pitch-'.length));
+              var delta = (targetPitch - currentPitch + 12) % 12;
+              if (delta > 6) delta -= 12;
+              if (delta != 0) controller.transpose(delta);
+            },
+            itemBuilder: (context) => [
+              if (originalPitch != null)
+                for (var pitch = 0; pitch < 12; pitch++)
+                  PopupMenuItem(
+                    value: 'pitch-$pitch',
                     child: Text(
-                      l10n.readerShowChords,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                      pitch == originalPitch
+                          ? '${originalKey!}  ★'
+                          : '${keyNames[pitch]}${minorKey ? 'm' : ''}',
+                      style: pitch == originalPitch
+                          ? TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.w700,
+                            )
+                          : null,
                     ),
                   ),
-                ],
+              CheckedPopupMenuItem(
+                value: 'no-chords',
+                checked: !state.showChords,
+                child: Text(l10n.searchChordsUnavailable),
+              ),
+            ],
+            child: Semantics(
+              label:
+                  '${l10n.readerTranspose}, ${state.readerKey ?? keyNames[currentPitch]}',
+              button: true,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(state.readerKey ?? keyNames[currentPitch]),
+                    const Icon(Icons.arrow_drop_down),
+                  ],
+                ),
               ),
             ),
           ),
-          const SizedBox(width: 8),
-          if (state.song?.hasChords == true && originalPitch != null)
-            Expanded(
-              flex: compact ? 4 : 3,
-              child: Semantics(
-                label: l10n.readerTranspose,
-                child: Tooltip(
-                  message: l10n.readerTranspose,
-                  child: DropdownButton<int>(
-                    key: const ValueKey('pitch-key-dropdown'),
-                    value: currentPitch,
-                    isExpanded: true,
-                    underline: const SizedBox.shrink(),
-                    icon: const Icon(Icons.arrow_drop_down),
-                    selectedItemBuilder: (context) => [
-                      for (var pitch = 0; pitch < 12; pitch++)
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            state.readerKey ?? keyNames[pitch],
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                    ],
-                    items: [
-                      for (var pitch = 0; pitch < 12; pitch++)
-                        DropdownMenuItem(
-                          value: pitch,
-                          child: Text(
-                            pitch == originalPitch
-                                ? '${originalKey!}  ★'
-                                : '${keyNames[pitch]}${minorKey ? 'm' : ''}',
-                            style: pitch == originalPitch
-                                ? TextStyle(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
-                                    fontWeight: FontWeight.w700,
-                                  )
-                                : null,
-                          ),
-                        ),
-                    ],
-                    onChanged: (pitch) {
-                      if (pitch == null) return;
-                      var delta = (pitch - currentPitch + 12) % 12;
-                      if (delta > 6) delta -= 12;
-                      if (delta != 0) controller.transpose(delta);
-                    },
-                  ),
-                ),
-              ),
-            )
-          else if (state.song?.hasChords == true)
-            Expanded(
-              flex: compact ? 4 : 3,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconButton(
-                    tooltip: l10n.readerTransposeSemitones(-1),
-                    onPressed: () => controller.transpose(-1),
-                    icon: const Icon(Icons.remove_circle_outline),
-                  ),
-                  IconButton(
-                    tooltip: l10n.readerTransposeSemitones(1),
-                    onPressed: () => controller.transpose(1),
-                    icon: const Icon(Icons.add_circle_outline),
-                  ),
-                ],
-              ),
-            ),
         ],
       ),
     );
