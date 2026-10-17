@@ -201,8 +201,9 @@ void main() {
     final requests = <http.Request>[];
     final t = transport((request) {
       requests.add(request);
-      if (request.url.host == 'genius.com')
+      if (request.url.host == 'genius.com') {
         return http.Response('fixture', 200);
+      }
       return request.url.path == '/' ? homepage() : json(emptySearch());
     });
     try {
