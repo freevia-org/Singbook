@@ -364,11 +364,23 @@ Future<void> _openPopup(
   Finder dropdown,
   String visibleItemKey,
 ) async {
+  final anchor = tester.getRect(dropdown);
   await tester.tap(dropdown);
   await tester.pumpAndSettle();
   final item = find.byKey(ValueKey(visibleItemKey));
   await tester.ensureVisible(item);
   expect(item, findsOneWidget);
+  final popup = tester.getRect(item);
+  expect(
+    popup.left,
+    lessThan(anchor.right),
+    reason: 'Popup follows its trigger',
+  );
+  expect(
+    popup.right,
+    greaterThan(anchor.left),
+    reason: 'Popup follows its trigger',
+  );
 }
 
 Future<void> _selectPopupItem(WidgetTester tester, String itemKey) async {

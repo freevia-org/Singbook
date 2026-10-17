@@ -88,12 +88,10 @@ class _PlayerScreenState extends State<PlayerScreen>
   final _lyricsScroll = ScrollController();
   final _controlsScroll = ScrollController();
   final _speedPopupAnchorKey = GlobalKey();
-  final _chordsPopupAnchorKey = GlobalKey();
   final _lineKeys = <String, GlobalKey>{};
   late ValueListenable<PlayerPosition> _position;
   String? _lastLineId;
   double _speedPopupOffsetX = 0;
-  double _chordsPopupOffsetX = 0;
   String? _lastSongId;
   String? _currentLineId;
   double _lastProgress = 0;
@@ -526,7 +524,6 @@ class _PlayerScreenState extends State<PlayerScreen>
     if (song == null) return const SizedBox.shrink();
     final isRtl = Directionality.of(context) == TextDirection.rtl;
     _schedulePopupOffset(_speedPopupAnchorKey, alignRight: !isRtl);
-    _schedulePopupOffset(_chordsPopupAnchorKey, alignRight: isRtl);
     unawaited(_applyWakeLock());
     _pruneLineKeys(state.songLines);
     final duration = _durationOf(state);
@@ -788,16 +785,10 @@ class _PlayerScreenState extends State<PlayerScreen>
       final offset = alignRight
           ? screenWidth - inset - rect.right
           : inset - rect.left;
-      final current = identical(anchorKey, _speedPopupAnchorKey)
-          ? _speedPopupOffsetX
-          : _chordsPopupOffsetX;
+      final current = _speedPopupOffsetX;
       if ((offset - current).abs() < .5) return;
       setState(() {
-        if (identical(anchorKey, _speedPopupAnchorKey)) {
-          _speedPopupOffsetX = offset;
-        } else {
-          _chordsPopupOffsetX = offset;
-        }
+        _speedPopupOffsetX = offset;
       });
     });
   }
@@ -1239,110 +1230,106 @@ class _PlayerScreenState extends State<PlayerScreen>
         ? flatNames
         : sharpNames;
     final displayedKey = _transposeLabel(state);
-    return KeyedSubtree(
-      key: _chordsPopupAnchorKey,
-      child: PopupMenuButton<String>(
-        key: const ValueKey('pitch-key-dropdown'),
-        tooltip: l10n.readerTranspose,
-        position: PopupMenuPosition.over,
-        offset: Offset(_chordsPopupOffsetX, 0),
-        constraints: _playerPopupConstraints(context),
-        menuPadding: EdgeInsets.zero,
-        initialValue: !state.showChords
-            ? 'no-chords'
-            : originalPitch == null
-            ? 'offset-${state.readerTranspose}'
-            : 'pitch-$currentPitch',
-        onSelected: (action) async {
-          if (action == 'no-chords') {
-            await controller.setShowChords(!state.showChords);
-            return;
-          }
-          if (!state.showChords) await controller.setShowChords(true);
-          if (action.startsWith('offset-')) {
-            final target = int.parse(action.substring('offset-'.length));
-            final delta = target - state.readerTranspose;
-            if (delta != 0) await controller.transpose(delta);
-            return;
-          }
-          final targetPitch = int.parse(action.substring('pitch-'.length));
-          var delta = (targetPitch - currentPitch + 12) % 12;
-          if (delta > 6) delta -= 12;
+    return PopupMenuButton<String>(
+      key: const ValueKey('pitch-key-dropdown'),
+      tooltip: l10n.readerTranspose,
+      position: PopupMenuPosition.over,
+      constraints: _playerPopupConstraints(context),
+      menuPadding: EdgeInsets.zero,
+      initialValue: !state.showChords
+          ? 'no-chords'
+          : originalPitch == null
+          ? 'offset-${state.readerTranspose}'
+          : 'pitch-$currentPitch',
+      onSelected: (action) async {
+        if (action == 'no-chords') {
+          await controller.setShowChords(!state.showChords);
+          return;
+        }
+        if (!state.showChords) await controller.setShowChords(true);
+        if (action.startsWith('offset-')) {
+          final target = int.parse(action.substring('offset-'.length));
+          final delta = target - state.readerTranspose;
           if (delta != 0) await controller.transpose(delta);
-        },
-        itemBuilder: (context) => [
-          if (originalPitch != null)
-            for (var pitch = 0; pitch < 12; pitch++)
-              PopupMenuItem(
-                key: ValueKey('transpose-pitch-$pitch'),
-                value: 'pitch-$pitch',
-                height: 34,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
-                  pitch == originalPitch
-                      ? '${originalKey!}  ★'
-                      : '${keyNames[pitch]}${minorKey ? 'm' : ''}',
-                  style: pitch == originalPitch
-                      ? TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.w700,
-                        )
-                      : null,
-                ),
+          return;
+        }
+        final targetPitch = int.parse(action.substring('pitch-'.length));
+        var delta = (targetPitch - currentPitch + 12) % 12;
+        if (delta > 6) delta -= 12;
+        if (delta != 0) await controller.transpose(delta);
+      },
+      itemBuilder: (context) => [
+        if (originalPitch != null)
+          for (var pitch = 0; pitch < 12; pitch++)
+            PopupMenuItem(
+              key: ValueKey('transpose-pitch-$pitch'),
+              value: 'pitch-$pitch',
+              height: 34,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Text(
+                pitch == originalPitch
+                    ? '${originalKey!}  ★'
+                    : '${keyNames[pitch]}${minorKey ? 'm' : ''}',
+                style: pitch == originalPitch
+                    ? TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.w700,
+                      )
+                    : null,
               ),
-          if (originalPitch == null)
-            for (final offset in ({
-              for (var value = -12; value <= 12; value++) value,
-              state.readerTranspose,
-            }.toList()..sort()))
-              PopupMenuItem(
-                key: ValueKey('transpose-offset-$offset'),
-                value: 'offset-$offset',
-                height: 34,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Semantics(
-                  label: l10n.readerTransposeSemitones(offset),
-                  selected: state.showChords && offset == state.readerTranspose,
-                  excludeSemantics: true,
-                  child: Text(
-                    '${offset > 0 ? '+' : ''}$offset${offset == 0 ? '  ★' : ''}',
-                  ),
-                ),
-              ),
-          PopupMenuItem(
-            value: 'no-chords',
-            height: 34,
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Semantics(
-              selected: !state.showChords,
-              child: Text(l10n.playerChordsNone),
             ),
-          ),
-        ],
-        child: Semantics(
-          key: const ValueKey('pitch-key-dropdown-label'),
-          label: originalPitch == null
-              ? l10n.readerTransposeSemitones(state.readerTranspose)
-              : '${l10n.readerTranspose}, $displayedKey',
-          button: true,
-          excludeSemantics: true,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    child: Text(
-                      displayedKey,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const Icon(Icons.arrow_drop_down),
-                ],
+        if (originalPitch == null)
+          for (final offset in ({
+            for (var value = -12; value <= 12; value++) value,
+            state.readerTranspose,
+          }.toList()..sort()))
+            PopupMenuItem(
+              key: ValueKey('transpose-offset-$offset'),
+              value: 'offset-$offset',
+              height: 34,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Semantics(
+                label: l10n.readerTransposeSemitones(offset),
+                selected: state.showChords && offset == state.readerTranspose,
+                excludeSemantics: true,
+                child: Text(
+                  '${offset > 0 ? '+' : ''}$offset${offset == 0 ? '  ★' : ''}',
+                ),
               ),
+            ),
+        PopupMenuItem(
+          value: 'no-chords',
+          height: 34,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Semantics(
+            selected: !state.showChords,
+            child: Text(l10n.playerChordsNone),
+          ),
+        ),
+      ],
+      child: Semantics(
+        key: const ValueKey('pitch-key-dropdown-label'),
+        label: originalPitch == null
+            ? l10n.readerTransposeSemitones(state.readerTranspose)
+            : '${l10n.readerTranspose}, $displayedKey',
+        button: true,
+        excludeSemantics: true,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(
+                    displayedKey,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const Icon(Icons.arrow_drop_down),
+              ],
             ),
           ),
         ),

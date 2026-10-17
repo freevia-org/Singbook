@@ -163,6 +163,9 @@ void main() {
           final shift = find.byKey(const ValueKey('transpose-offset-2'));
           expect(shift, findsOneWidget);
           await tester.ensureVisible(shift);
+          final popup = tester.getRect(shift);
+          expect(popup.left, lessThan(key.right));
+          expect(popup.right, greaterThan(key.left));
           expect(tester.getRect(shift).top, greaterThanOrEqualTo(0));
           expect(
             tester.getRect(shift).bottom,
@@ -485,6 +488,7 @@ void main() {
         await tester.pumpAndSettle();
         final keyMenu = find.byKey(const ValueKey('pitch-key-dropdown'));
         await tester.ensureVisible(keyMenu);
+        final keyAnchor = tester.getRect(keyMenu);
         await tester.tap(keyMenu);
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
@@ -495,11 +499,8 @@ void main() {
           find.byType(PopupMenuItem<String>).first,
         );
         expect(keyPopupWidth, speedPopupWidth);
-        if (isRtl) {
-          expect(keyPopupRect.right, closeTo(scenario.$2.width - 8, 1));
-        } else {
-          expect(keyPopupRect.left, closeTo(8, 1));
-        }
+        expect(keyPopupRect.left, lessThan(keyAnchor.right));
+        expect(keyPopupRect.right, greaterThan(keyAnchor.left));
         final noneOption = find.text(
           AppLocalizations.of(tester.element(keyMenu)).playerChordsNone,
         );
