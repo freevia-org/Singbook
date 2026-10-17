@@ -102,4 +102,27 @@ void main() {
     );
     expect(contributingProviderIds(song), {'lyrics', 'timing'});
   });
+
+  test('additional values in one metadata collection count their provider', () {
+    final primary = source('primary', 'one');
+    final additional = source('additional', 'two');
+    final song = SongDocument(
+      id: 'song',
+      title: 'Demo',
+      artist: 'Us',
+      body: primary.body,
+      sources: [primary, additional],
+      metadata: {
+        'composers': ['Alex', 'Sam'],
+      },
+      extra: {
+        'selectedSourceId': primary.id,
+        'fieldOrigins': {'composers': primary.id},
+        'fieldContributors': {
+          'composers': [primary.id, additional.id],
+        },
+      },
+    );
+    expect(contributingProviderIds(song), {'primary', 'additional'});
+  });
 }

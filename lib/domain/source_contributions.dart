@@ -18,6 +18,10 @@ Set<String> contributingProviderIds(SongDocument song) {
       sourceIds.add(origin.value as String);
     }
   }
+  for (final entry in jsonMap(song.extra['fieldContributors']).entries) {
+    if (song.metadata[entry.key] == null || entry.value is! List) continue;
+    sourceIds.addAll((entry.value as List).whereType<String>());
+  }
   for (final track in song.timingTracks) {
     if (track.status != TimingStatus.usable || track.cues.isEmpty) continue;
     final sourceId = jsonMap(track.extra['binding'])['sourceId'];

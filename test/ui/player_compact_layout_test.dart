@@ -8,6 +8,7 @@ import 'package:singbook/ui/player/player_screen.dart';
 import 'package:singbook/ui/theme/verse_theme.dart';
 import 'package:singbook/ui/verse_app.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
+import 'package:singbook/ui/widgets/chord_lyrics_line.dart';
 
 import 'support/fake_controller.dart';
 
@@ -113,6 +114,33 @@ void main() {
     await tester.tap(keyMenu);
     await tester.pumpAndSettle();
     expect(find.byType(CheckedPopupMenuItem<String>), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('active lyric highlight does not change line geometry', (
+    tester,
+  ) async {
+    final controller = _Controller();
+    addTearDown(controller.dispose);
+    await _pump(tester, controller, size: const Size(320, 640));
+
+    final line = find.byType(ChordLyricsLine).first;
+    final inactiveSize = tester.getSize(line);
+    final inactiveStyle = tester.widget<ChordLyricsLine>(line).style!;
+
+    controller.positionNotifier.value = const PlayerPosition(0, 'a');
+    await tester.pump();
+
+    final active = tester.widget<ChordLyricsLine>(line);
+    expect(tester.getSize(line), inactiveSize);
+    expect(active.style!.fontWeight, inactiveStyle.fontWeight);
+    expect(
+      active.style!.color,
+      verseTheme(
+        brightness: Brightness.light,
+        palette: 'navy',
+      ).colorScheme.primary,
+    );
     expect(tester.takeException(), isNull);
   });
 
