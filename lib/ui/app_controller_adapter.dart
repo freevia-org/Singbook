@@ -6,7 +6,8 @@ import 'package:flutter/foundation.dart';
 import '../application/app_controller.dart';
 import '../domain/arrangement.dart' as arrangement;
 import '../domain/chordpro.dart';
-import '../domain/combine.dart' show recordingCompatible;
+import '../domain/combine.dart'
+    show recordingCompatible, corroboratedArrangementKey;
 import '../domain/models.dart';
 import '../domain/timing.dart' show timingOccurrenceMap;
 import '../domain/source_contributions.dart';
@@ -148,7 +149,7 @@ class AppControllerAdapter extends VerseUiController {
       : app.findSong(_songId!) ??
             (_draftSong?.id == _songId ? _draftSong : null);
   String? get displayedKey {
-    final key = currentSong?.metadata['key']?.toString();
+    final key = currentSong == null ? null : _songKey(currentSong!);
     final override = activeSetlistEntry?.overrides['key']?.toString();
     final base = override?.isNotEmpty == true ? override : key;
     if (base == null || base.isEmpty) return null;
@@ -171,7 +172,7 @@ class AppControllerAdapter extends VerseUiController {
 
   int _effectiveTranspose(SongDocument? song) {
     if (song == null) return _transpose.toInt();
-    final originalKey = song.metadata['key']?.toString();
+    final originalKey = _songKey(song);
     final overrideKey = activeSetlistEntry?.overrides['key']?.toString();
     if (originalKey == null ||
         originalKey.isEmpty ||
@@ -483,6 +484,16 @@ class AppControllerAdapter extends VerseUiController {
     (track) => track.status == TimingStatus.usable && track.cues.isNotEmpty,
   );
 
+  final _songKeys = Expando<({String? key})>();
+  String? _songKey(SongDocument song) {
+    final cached = _songKeys[song];
+    if (cached != null) return cached.key;
+    final explicit = _metaString(song.metadata['key']);
+    final key = explicit ?? corroboratedArrangementKey(song)?.key;
+    _songKeys[song] = (key: key);
+    return key;
+  }
+
   SongCardData _songCard(SongDocument song) => SongCardData(
     id: song.id,
     title: song.title,
@@ -490,7 +501,7 @@ class AppControllerAdapter extends VerseUiController {
     album: _metaString(song.metadata['album']),
     artworkUrl: _metaString(song.metadata['artworkUrl']),
     durationSeconds: _validDuration(song.metadata['durationSeconds']),
-    key: _metaString(song.metadata['key']),
+    key: _songKey(song),
     favorite: song.favorite,
     modifiedAt: song.updatedAt,
     authored: song.sources.isEmpty,
@@ -784,7 +795,11 @@ class AppControllerAdapter extends VerseUiController {
           (recording?.identity == sourceId ? recording!.providerId : null);
       if (providerId == null ||
           (source?.matchKind == MatchKind.rejected &&
-              sourceId != song.extra['selectedSourceId'])) {
+              sourceId != song.extra['selectedSourceId'] &&
+              !(role == 'metadata' &&
+                  source?.matchReason == 'incomplete_or_different_lyrics' &&
+                  (song.extra['corroboratedKeySourceIds'] as List? ?? const [])
+                      .contains(sourceId)))) {
         return;
       }
       final name =

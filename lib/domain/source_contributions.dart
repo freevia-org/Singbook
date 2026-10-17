@@ -30,7 +30,11 @@ Set<String> contributingProviderIds(SongDocument song) {
   return {
     for (final source in song.sources)
       if ((source.matchKind != MatchKind.rejected ||
-              source.id == song.extra['selectedSourceId']) &&
+              source.id == song.extra['selectedSourceId'] ||
+              (source.matchReason == 'incomplete_or_different_lyrics' &&
+                  song.metadata['key'] != null &&
+                  (song.extra['corroboratedKeySourceIds'] as List? ?? const [])
+                      .contains(source.id))) &&
           sourceIds.contains(source.id))
         source.candidate.providerId,
     if (song.selectedRecording case final recording?)

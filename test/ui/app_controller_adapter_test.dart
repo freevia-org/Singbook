@@ -34,6 +34,80 @@ void main() {
   });
 
   test(
+    'saved keyless chart recovers source key for reader and setlist without a rewrite',
+    () async {
+      const body =
+          '[F#m]Amber lanterns glow\n[Bm]Silver rain returns\n'
+          '[D]Across the sleepy water\n[C#]Morning brings a melody';
+      const candidate = SongCandidate(
+        providerId: 'chart',
+        id: 'saved',
+        title: 'Song',
+        artist: 'Artist',
+      );
+      final song = SongDocument(
+        id: 'song',
+        title: 'Song',
+        artist: 'Artist',
+        body: body,
+        sources: [
+          SourceResult(
+            candidate: candidate,
+            body: body.replaceAll('[C#]', '[C#7]'),
+            metadata: {'key': 'F#m'},
+            matchKind: MatchKind.rejected,
+            matchReason: 'incomplete_or_different_lyrics',
+          ),
+        ],
+      );
+      await app.saveSong(song);
+      final before = (await repository.getSong('song'))!.toJson();
+      await ui.openSong('song');
+      expect(ui.displayedKey, 'F#m');
+      expect(ui.state.song?.key, 'F#m');
+      expect(ui.state.songLines.first.chords.single.symbol, 'F#m');
+      await ui.back();
+      final after = (await repository.getSong('song'))!.toJson();
+      expect(after, before);
+
+      await app.saveSetlist(
+        SetlistDocument(
+          id: 'set',
+          name: 'Set',
+          entries: const [
+            SetlistEntry(
+              id: 'entry',
+              songId: 'song',
+              overrides: {'key': 'G#m'},
+            ),
+          ],
+        ),
+      );
+      await ui.openSetlistEntry('set', 'entry');
+      expect(ui.displayedKey, 'G#m');
+      expect(ui.state.songLines.first.chords.single.symbol, 'G#m');
+      await ui.transpose(-1);
+      await ui.settlePlayerPreferences();
+      expect(ui.displayedKey, 'Gm');
+      expect(ui.state.songLines.first.chords.single.symbol, 'Gm');
+      await ui.back();
+      final persisted = (await repository.getSong('song'))!;
+      expect(persisted.metadata.containsKey('key'), isFalse);
+      expect(persisted.metadata['x_verse_player_transpose'], -1);
+      expect(persisted.body, body);
+      await ui.openSong('song');
+      expect(ui.displayedKey, 'Fm');
+      expect(ui.state.songLines.first.chords.single.symbol, 'Fm');
+
+      await app.saveSong(
+        persisted.copyWith(body: body.replaceAll('[Bm]', '[C]')),
+      );
+      expect(ui.state.song?.key, isNull);
+      expect(ui.displayedKey, isNull);
+    },
+  );
+
+  test(
     'saving an online version records the opened song in recent history',
     () async {
       const candidate = SongCandidate(
