@@ -324,6 +324,164 @@ String _chordSignature(ArrangementLine line) {
       .join('|');
 }
 
+int _notePitch(String note) {
+  const naturals = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11};
+  return (naturals[note[0].toUpperCase()]! +
+          note
+              .substring(1)
+              .split('')
+              .fold<int>(
+                0,
+                (value, accidental) =>
+                    value + (accidental == '#' || accidental == '♯' ? 1 : -1),
+              )) %
+      12;
+}
+
+final _explicitKey = RegExp(
+  r'^([A-G][#b♯♭]{0,2})\s*(m|min|minor|maj|major)?$',
+  caseSensitive: false,
+);
+String? _keyIdentity(Object? value) {
+  if (value is! String) return null;
+  final match = _explicitKey.firstMatch(value.trim());
+  if (match == null) return null;
+  final mode = match[2]?.toLowerCase();
+  return '${_notePitch(match[1]!)}:${const {'m', 'min', 'minor'}.contains(mode) ? 'minor' : 'major'}';
+}
+
+// This compares transposition and triad identity, not interchangeable voicings.
+// Plain/dominant/major-seventh extensions can agree on the source key without
+// replacing any chords. Alterations, suspensions and slash basses stay distinct.
+String? _harmonyIdentity(String chord) {
+  final match = RegExp(
+    r'^([A-G][#b♯♭]{0,2})(.*?)(?:/([A-G][#b♯♭]{0,2}))?$',
+  ).firstMatch(chord);
+  if (match == null) return null;
+  final suffix = match[2]!;
+  final String quality;
+  if (RegExp(r'^(?:(?:maj|M)?(?:6|7|9|11|13))?$').hasMatch(suffix)) {
+    quality = 'major';
+  } else if (RegExp(r'^(?:m|min)(?:6|7|9|11|13)?$').hasMatch(suffix)) {
+    quality = 'minor';
+  } else {
+    quality = suffix.replaceAll('♯', '#').replaceAll('♭', 'b');
+  }
+  final root = _notePitch(match[1]!);
+  return '$root:$quality:${match[3] == null ? root : _notePitch(match[3]!)}';
+}
+
+/// Recovers a supplied key only from charts corroborated against the actual
+/// saved chords. Catalog keys and the first chord are not key evidence. This is
+/// also usable for old saved imports, without rewriting their library records.
+({String key, List<String> sourceIds})? corroboratedArrangementKey(
+  SongDocument song,
+) {
+  if (_hasMetadata(song.metadata['key']) ||
+      jsonMap(song.extra['fieldOrigins'])['key'] == 'user' ||
+      !song.hasChords) {
+    return null;
+  }
+  final selected =
+      song.selectedRecording ??
+      SongCandidate(
+        providerId: 'library',
+        id: song.id,
+        title: song.title,
+        artist: song.artist,
+      );
+  final lines = parseArrangement(song.body);
+  final plain = [
+    for (final line in lines)
+      ArrangementLine(line.text, const [], directive: line.directive),
+  ];
+  final claims = <String, ({String key, List<String> sourceIds})>{};
+  for (final source in song.sources) {
+    if (!source.hasChords ||
+        !(const {
+              MatchKind.sameSong,
+              MatchKind.sameRecording,
+            }.contains(source.matchKind) ||
+            // A shortened chart can be rejected as a full lyric replacement,
+            // while still supplying a key corroborated against chosen chords.
+            (source.matchKind == MatchKind.rejected &&
+                source.matchReason == 'incomplete_or_different_lyrics')) ||
+        source.extra['pendingMatchCheck'] == true ||
+        !_sameSong(source.candidate, selected) ||
+        _version(source.candidate.title) != _version(selected.title)) {
+      continue;
+    }
+    final key = _keyIdentity(source.metadata['key']) != null
+        ? source.metadata['key'] as String
+        : source.candidate.metadata['key'];
+    final identity = _keyIdentity(key);
+    if (identity == null) continue;
+    var compatible = true;
+    for (final field in const ['capo', 'tuning', 'timeSignature']) {
+      final baseValue = song.metadata[field];
+      final donorValue =
+          source.metadata[field] ?? source.candidate.metadata[field];
+      String normalize(Object? value) {
+        // ChordPro headers serialize list tuning as "[E, A, ...]". Compare
+        // those saved headers with the provider's equivalent string array.
+        if (field == 'tuning') {
+          final text = value is List ? value.join(' ') : value.toString();
+          return text
+              .toLowerCase()
+              .split(RegExp(r'[\s,\[\]]+'))
+              .where((note) => note.isNotEmpty)
+              .join(' ');
+        }
+        return value.toString().trim().toLowerCase();
+      }
+
+      // Unknown capo/tuning cannot prove that displayed shapes sound alike.
+      if ((_hasMetadata(baseValue) != _hasMetadata(donorValue)) ||
+          (_hasMetadata(baseValue) &&
+              normalize(baseValue) != normalize(donorValue))) {
+        compatible = false;
+        break;
+      }
+    }
+    if (!compatible) continue;
+    final aligned = _phraseChords(plain, source.body);
+    var agreements = 0, contradicts = false;
+    final roots = <String>{}, matchedLines = <int>{};
+    for (final entry in aligned.entries) {
+      for (final anchor in entry.value) {
+        final donor = _harmonyIdentity(anchor.chord);
+        if (donor == null) continue;
+        final previous = lines[entry.key].chords.where(
+          (a) => a.offset == anchor.offset,
+        );
+        if (previous.isEmpty) continue;
+        if (previous.any((a) => _harmonyIdentity(a.chord) != donor)) {
+          contradicts = true;
+          break;
+        }
+        agreements++;
+        roots.add(donor.split(':').first);
+        matchedLines.add(entry.key);
+      }
+      if (contradicts) break;
+    }
+    if (contradicts ||
+        agreements < 3 ||
+        roots.length < 3 ||
+        matchedLines.length < 2 ||
+        !roots.contains(identity.split(':').first)) {
+      continue;
+    }
+    final claim = claims.putIfAbsent(
+      identity,
+      () => (key: (key as String).trim(), sourceIds: []),
+    );
+    claim.sourceIds.add(source.id);
+  }
+  // A relative-major/minor disagreement cannot be resolved by matching roots.
+  return claims.length == 1 ? claims.values.single : null;
+}
+
 Object? _setupValue(SourceResult source, SongCandidate selected, String key) =>
     source.metadata[key] ??
     source.candidate.metadata[key] ??
@@ -796,7 +954,7 @@ SongDocument combineSources(
     }
   }
   final usable = tracks.values.where((t) => t.status == TimingStatus.usable);
-  return SongDocument(
+  final song = SongDocument(
     id: newId(),
     title: selected.title,
     artist: selected.artist,
@@ -832,6 +990,15 @@ SongDocument combineSources(
           .toList(),
     },
   );
+  final recoveredKey = corroboratedArrangementKey(song);
+  if (recoveredKey != null) {
+    metadata['key'] = recoveredKey.key;
+    origins['key'] = recoveredKey.sourceIds.first;
+    (song.extra['fieldContributors'] as Map<String, dynamic>)['key'] =
+        recoveredKey.sourceIds;
+    song.extra['corroboratedKeySourceIds'] = recoveredKey.sourceIds;
+  }
+  return song;
 }
 
 bool _hasMetadata(Object? value) =>
