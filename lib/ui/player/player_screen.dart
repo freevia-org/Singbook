@@ -570,7 +570,6 @@ class _PlayerScreenState extends State<PlayerScreen>
           speedWidth > (controlWidth - 16) / 4;
       final inlineChords =
           song.hasChords &&
-          !compact &&
           !separateSpeed &&
           keyWidth <= (controlWidth - 16) / 4 &&
           _keyPitchClass(song.key) != null &&
