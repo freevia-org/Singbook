@@ -124,6 +124,38 @@ Future<void> _pump(
 }
 
 void main() {
+  testWidgets('compact sidebar keeps key play and speed on one ordered row', (
+    tester,
+  ) async {
+    // Match native font metrics used by the player's measured fit guards.
+    await tester.runAsync(() async {
+      for (final family in ['Roboto', 'sans-serif']) {
+        await (FontLoader(family)
+              ..addFont(rootBundle.load('assets/fonts/NotoSans-Regular.ttf')))
+            .load();
+      }
+    });
+    final controller = _Controller()
+      ..songKey = 'D#'
+      ..speed = 1.25;
+    addTearDown(controller.dispose);
+    await _pump(tester, controller, size: const Size(900, 400));
+    final key = tester.getRect(
+      find.byKey(const ValueKey('pitch-key-dropdown')),
+    );
+    final play = tester.getRect(
+      find.byKey(const ValueKey('start-lyric-scroll')),
+    );
+    final speed = tester.getRect(
+      find.byKey(const ValueKey('scroll-speed-toggle')),
+    );
+    expect(key.right, lessThanOrEqualTo(play.left));
+    expect(play.right, lessThanOrEqualTo(speed.left));
+    expect(key.center.dy, closeTo(play.center.dy, 1));
+    expect(speed.center.dy, closeTo(play.center.dy, 1));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('missing key stays neutral with large text controls reachable', (
     tester,
   ) async {
