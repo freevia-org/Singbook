@@ -198,9 +198,11 @@ Map<int, List<ChordAnchor>> _phraseChords(
 ) {
   final text = StringBuffer();
   final locations = <({int line, int offset})>[];
+  final normalizedLines = <int, String>{};
   for (var line = 0; line < target.length; line++) {
     if (target[line].directive) continue;
     final normalized = _normalizedLine(target[line].text);
+    normalizedLines[line] = normalized.text;
     if (normalized.text.isEmpty) continue;
     if (text.isNotEmpty) {
       text.write(' ');
@@ -247,6 +249,7 @@ Map<int, List<ChordAnchor>> _phraseChords(
     if (entry.value.map(_chordSignature).toSet().length != 1) continue;
     final donor = entry.value.first;
     final normalized = _normalizedLine(donor.text);
+    final matches = <({int start, int end, bool wholeLine})>[];
     for (final start in startsFor(entry.key)) {
       comparisonBudget -= entry.key.length;
       if (comparisonBudget < 0) break phrasesLoop;
@@ -258,13 +261,23 @@ Map<int, List<ChordAnchor>> _phraseChords(
       }
       final first = locations[start];
       final last = locations[end - 1];
+      final wholeLine =
+          first.line == last.line && normalizedLines[first.line] == entry.key;
       // Short phrases require a whole-line match; common one-word fragments
       // are insufficient evidence for a chord placement inside another line.
-      if (entry.key.split(' ').length < 3 &&
-          (first.line != last.line ||
-              _normalizedLine(target[first.line].text).text != entry.key)) {
+      if (entry.key.split(' ').length < 3 && !wholeLine) {
         continue;
       }
+      matches.add((start: start, end: end, wholeLine: wholeLine));
+    }
+    // A single partial phrase does not identify which of several different
+    // passages shares its harmony. Require enough agreeing donor occurrences
+    // for those placements. Complete repeated lyric lines retain the existing
+    // whole-line overlay behavior.
+    final ambiguous = matches.length > entry.value.length;
+    for (final match in matches) {
+      if (ambiguous && !match.wholeLine) continue;
+      final start = match.start, end = match.end;
       for (final chord in donor.chords) {
         var index = normalized.offsets
             .where((offset) => offset < chord.offset)

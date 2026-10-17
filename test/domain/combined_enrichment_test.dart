@@ -73,6 +73,77 @@ void main() {
   });
 
   test(
+    'one partial phrase does not spread across different lyric contexts',
+    () {
+      const lyrics =
+          'Amber lanterns glow above the river\n'
+          'Amber lanterns glow beyond the station';
+      final song = combineSources(selected, [
+        source('lyrics', lyrics),
+        source('chart', '[C]Amber lanterns glow'),
+      ]);
+      expect(plainLyrics(song.body), lyrics);
+      expect(song.hasChords, false);
+      expect(song.extra['chordSourceIds'], isNull);
+      expect(song.sources.last.body, '[C]Amber lanterns glow');
+    },
+  );
+
+  test('repeated partial placements need agreeing donor occurrences', () {
+    const lyrics =
+        'Amber lanterns glow above the river\n'
+        'Amber lanterns glow beyond the station';
+    final song = combineSources(selected, [
+      source('lyrics', lyrics),
+      source('chart', '[C]Amber lanterns glow\n[C]Amber lanterns glow'),
+    ]);
+    expect(plainLyrics(song.body), lyrics);
+    expect(song.body, contains('[C]Amber lanterns glow above'));
+    expect(song.body, contains('[C]Amber lanterns glow beyond'));
+  });
+
+  test('one cross-line phrase does not spread across repeated passages', () {
+    const lyrics =
+        'Amber lanterns glow\nAbove the quiet river\n'
+        'Another verse returns tonight\n'
+        'Amber lanterns glow\nAbove the quiet river\n'
+        'The morning brings a final melody';
+    final song = combineSources(selected, [
+      source('lyrics', lyrics),
+      source('chart', '[C]Amber lanterns glow above the quiet river'),
+    ]);
+    expect(plainLyrics(song.body), lyrics);
+    expect(song.hasChords, false);
+  });
+
+  test('complete repeated lyric lines retain their existing chord overlay', () {
+    const lyrics =
+        'Amber lanterns glow\nAnother verse returns tonight\n'
+        'Amber lanterns glow\nThe morning brings a final melody';
+    final song = combineSources(selected, [
+      source('lyrics', lyrics),
+      source('chart', '[C]Amber lanterns glow'),
+    ]);
+    expect(plainLyrics(song.body), lyrics);
+    expect(song.body.split('[C]').length - 1, 2);
+  });
+
+  test('repeated substring ambiguity stays bounded in a long lyric line', () {
+    final lyrics = List.filled(
+      4000,
+      'Amber lanterns glow beside the river',
+    ).join(' ');
+    final watch = Stopwatch()..start();
+    final song = combineSources(selected, [
+      source('lyrics', lyrics),
+      source('chart', '[C]Amber lanterns glow'),
+    ]);
+    expect(watch.elapsed, lessThan(const Duration(seconds: 3)));
+    expect(plainLyrics(song.body), lyrics);
+    expect(song.hasChords, false);
+  });
+
+  test(
     'compatible charts fill different missing passages with both origins',
     () {
       const lyrics =
