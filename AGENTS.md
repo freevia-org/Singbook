@@ -16,6 +16,18 @@ database names and `x_verse` ChordPro payloads, timing, and provenance compatibl
   credentials, signing files, generated outputs, and caches out of commits
   and messages.
 
+## Release numbering
+
+- Increment the visible patch version and the monotonic build number for each
+  new release. After `0.2.0+14`, use `0.2.1+15`, then `0.2.2+16`, and so on.
+  Deliberate minor/major version changes still keep increasing the build number.
+- Update `pubspec.yaml`, `lib/ui/app_version.dart`,
+  `lib/providers/transport.dart`, and the current README release example
+  together. Run the existing displayed-version and User-Agent drift checks.
+- One release uses the same number for its APK, AAB, internal testing and
+  production promotion. Retrying its build does not create a new release.
+  Preserve published history and verified artifacts; never reset a build number.
+
 ## Subagents and shared work
 
 - Use subagents for substantial independent tasks when parallel work helps.

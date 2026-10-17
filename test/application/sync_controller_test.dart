@@ -345,7 +345,9 @@ void main() {
   });
 
   test('a wiped cloud asks before deleting; the user can keep or confirm', () async {
-    final app = await start();
+    // This scenario controls sync explicitly; background uploads must not race
+    // the setup writes or the simulated remote deletion.
+    final app = await start(delay: const Duration(days: 1));
     await app.syncNow();
     for (var i = 0; i < 6; i++) {
       await addSong(app, 'w$i', 'body $i');
