@@ -33,7 +33,7 @@ class CancellationToken {
 
 /// Application version sent in the User-Agent. Keep in sync with the
 /// `version:` line in pubspec.yaml (a unit test enforces this).
-const singbookVersion = '0.2.2';
+const singbookVersion = '0.2.3';
 
 /// Optional contact URL for API operators (MusicBrainz and Wikimedia policies
 /// ask for one). Supply `SINGBOOK_CONTACT_URL` in config/local.defines.json; no
