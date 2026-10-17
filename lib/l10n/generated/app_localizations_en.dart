@@ -278,7 +278,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchChordsAvailable => 'Chords available';
 
   @override
-  String get searchChordsUnavailable => 'None';
+  String get searchChordsUnavailable => 'No chords';
 
   @override
   String get searchTimingAvailable => 'Timing available';

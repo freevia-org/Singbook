@@ -71,7 +71,7 @@ void main() {
     );
 
     await tester.longPress(find.byType(IconButton));
-    await tester.pumpAndSettle();
+    await _settle(tester, controller);
     expect(presses, 1);
   });
 
@@ -84,7 +84,7 @@ void main() {
       expect(find.byKey(const ValueKey('scroll-speed-slider')), findsNothing);
       expect(find.text(l10nOf(tester).playerLyricsOnly), findsNothing);
       await tester.tap(find.byKey(const ValueKey('scroll-speed-toggle')));
-      await tester.pumpAndSettle();
+      await _settle(tester, controller);
       final speedSlider = tester.widget<Slider>(
         find.byKey(const ValueKey('scroll-speed-slider')),
       );
@@ -103,7 +103,7 @@ void main() {
       expect(controller.state.playbackSpeed, 1.5);
       expect(find.text('2:40'), findsOneWidget);
       await tester.binding.handlePopRoute();
-      await tester.pumpAndSettle();
+      await _settle(tester, controller);
       expect(find.byKey(const ValueKey('scroll-speed-slider')), findsNothing);
     },
   );
@@ -116,14 +116,14 @@ void main() {
     expect(find.byTooltip(l10nOf(tester).readerTranspose), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('pitch-key-dropdown')));
-    await tester.pumpAndSettle();
+    await _settle(tester, controller);
     final originalKey = find.text('C  ★');
     expect(originalKey, findsOneWidget);
     final originalItem = tester.widget<Text>(originalKey);
     expect(originalItem.style?.fontWeight, FontWeight.w700);
 
     await tester.tap(originalKey);
-    await tester.pumpAndSettle();
+    await _settle(tester, controller);
     expect(controller.state.readerKey, 'C');
   });
 
@@ -132,33 +132,37 @@ void main() {
   ) async {
     await pumpShell(tester, controller);
     final keyMenu = find.byKey(const ValueKey('pitch-key-dropdown'));
-    final none = l10nOf(tester).searchChordsUnavailable;
+    final none = l10nOf(tester).playerChordsNone;
     expect(find.byType(Checkbox), findsNothing);
     expect(controller.state.showChords, isTrue);
     await tester.tap(keyMenu);
-    await tester.pumpAndSettle();
+    await _settle(tester, controller);
     expect(find.byType(CheckedPopupMenuItem<String>), findsNothing);
     final noneOption = find.text(none);
     expect(
-      tester.getSemantics(noneOption).hasFlag(SemanticsFlag.isSelected),
+      tester.getSemantics(noneOption).flagsCollection.isSelected.toBoolOrNull(),
       isFalse,
     );
     await tester.tap(noneOption);
     await tester.runAsync(() => repository.getSetting('app'));
-    await tester.pumpAndSettle();
+    await _settle(tester, controller);
     expect(controller.state.showChords, isFalse);
     expect(controller.state.readerKey, 'D');
     await tester.tap(keyMenu);
-    await tester.pumpAndSettle();
+    await _settle(tester, controller);
     expect(find.byType(CheckedPopupMenuItem<String>), findsNothing);
     final selectedNone = find.text(none);
     expect(
-      tester.getSemantics(selectedNone).hasFlag(SemanticsFlag.isSelected),
+      tester
+          .getSemantics(selectedNone)
+          .flagsCollection
+          .isSelected
+          .toBoolOrNull(),
       isTrue,
     );
     await tester.tap(selectedNone);
     await tester.runAsync(() => repository.getSetting('app'));
-    await tester.pumpAndSettle();
+    await _settle(tester, controller);
     expect(controller.state.showChords, isTrue);
   });
 
@@ -184,6 +188,7 @@ void main() {
     final down = find.byTooltip(l10n.readerTransposeSemitones(-1));
     expect(down, findsOneWidget);
     await tester.tap(down);
+    await tester.runAsync(controller.settlePlayerPreferences);
     await tester.pump();
     expect(controller.state.songLines.first.chords.single.symbol, 'B');
   });
@@ -211,40 +216,40 @@ void main() {
     await setKey('cmin');
     await pumpShell(tester, controller);
     await tester.tap(find.byKey(const ValueKey('pitch-key-dropdown')));
-    await tester.pumpAndSettle();
+    await _settle(tester, controller);
     expect(find.text('cmin  ★'), findsOneWidget);
     expect(find.text('D♯m'), findsOneWidget);
     await tester.tap(find.text('D♯m'));
-    await tester.pumpAndSettle();
+    await _settle(tester, controller);
     expect(controller.state.readerKey, 'D#min');
 
     await setKey('cmin');
     await tester.tap(find.byKey(const ValueKey('pitch-key-dropdown')));
-    await tester.pumpAndSettle();
+    await _settle(tester, controller);
     await tester.tap(find.text('cmin  ★'));
-    await tester.pumpAndSettle();
+    await _settle(tester, controller);
 
     await setKey('Cmaj');
     await tester.tap(find.byKey(const ValueKey('pitch-key-dropdown')));
-    await tester.pumpAndSettle();
+    await _settle(tester, controller);
     expect(find.text('Cmaj  ★'), findsOneWidget);
     expect(find.text('D♯'), findsOneWidget);
     expect(find.text('D♯m'), findsNothing);
     await tester.tap(find.text('Cmaj  ★'));
-    await tester.pumpAndSettle();
+    await _settle(tester, controller);
 
     await setKey('Cdim');
     await tester.tap(find.byKey(const ValueKey('pitch-key-dropdown')));
-    await tester.pumpAndSettle();
+    await _settle(tester, controller);
     expect(find.text('Cdim  ★'), findsOneWidget);
     expect(find.text('D♯'), findsOneWidget);
     expect(find.text('D♯m'), findsNothing);
     await tester.tap(find.text('Cdim  ★'));
-    await tester.pumpAndSettle();
+    await _settle(tester, controller);
 
     await setKey('CM');
     await tester.tap(find.byKey(const ValueKey('pitch-key-dropdown')));
-    await tester.pumpAndSettle();
+    await _settle(tester, controller);
     expect(find.text('CM  ★'), findsOneWidget);
     expect(find.text('D♯'), findsOneWidget);
     expect(find.text('D♯m'), findsNothing);
@@ -517,4 +522,14 @@ Future<void> _advance(
     await tester.tap(button);
   }
   await tester.runAsync(controller.settleRecentRecords);
+}
+
+// SQLite work needs the real async zone; flush the new debounce before stepping
+// the widget clock so a simulated timer cannot strand an in-flight DB future.
+Future<void> _settle(
+  WidgetTester tester,
+  AppControllerAdapter controller,
+) async {
+  await tester.runAsync(controller.settlePlayerPreferences);
+  await tester.pumpAndSettle();
 }

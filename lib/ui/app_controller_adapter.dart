@@ -43,6 +43,7 @@ class AppControllerAdapter extends VerseUiController {
     this.onImportSetlist,
     this.onSignIn,
     this.onSignOut,
+    this.onSavePlayerPreferences,
   }) {
     app.addListener(_onAppChanged);
   }
@@ -61,6 +62,10 @@ class AppControllerAdapter extends VerseUiController {
   final Future<void> Function()? onSignIn;
   final Future<void> Function()? onSignOut;
 
+  /// Optional persistence boundary for hosts and deterministic failure tests.
+  final Future<void> Function(String id, int transpose, double playbackSpeed)?
+  onSavePlayerPreferences;
+
   VerseTab _tab = VerseTab.home;
   VerseRoute _route = VerseRoute.main;
   HomeListMode _homeMode = HomeListMode.recent;
@@ -76,7 +81,10 @@ class AppControllerAdapter extends VerseUiController {
   SongDocument? _draftSong;
   SongEditorData? _editorData;
   bool _editing = false, _playing = false, _editingSetlist = false;
-  bool _playerPreferencesDirty = false;
+  int _playerPreferenceRevision = 0;
+  final _pendingPlayerPreferences =
+      <String, ({int revision, int transpose, double speed})>{};
+  Future<void>? _playerPreferenceSave;
   bool _editorDirty = false, _loadingMoreRecent = false, _disposed = false;
   bool _conflictFilter = false;
   String? _editorBaseHash;
@@ -1591,6 +1599,8 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> editSong(String id) async {
+    _playerPreferenceDebounce?.cancel();
+    await _savePlayerPreferences();
     final song = app.findSong(id);
     if (song == null) return;
     // Editing from the song's own reader keeps its transpose and position;
@@ -1599,7 +1609,8 @@ class AppControllerAdapter extends VerseUiController {
     if (_songId != id) {
       _stopPlayer();
       _progress = 0;
-      _transpose = 0;
+      _transpose = _storedTranspose(song);
+      _playbackSpeed = _storedPlaybackSpeed(song);
       _setlistEntryId = null;
     }
     _songId = id;
@@ -1669,6 +1680,7 @@ class AppControllerAdapter extends VerseUiController {
     _stopPlayer();
     _progress = 0;
     _transpose = 0;
+    _playbackSpeed = 1;
     _setlistId = null;
     _setlistEntryId = null;
     _songId = song.id;
@@ -1962,20 +1974,28 @@ class AppControllerAdapter extends VerseUiController {
   static const _playerTransposeMetadataKey = 'x_verse_player_transpose';
   static const _playerSpeedMetadataKey = 'x_verse_player_speed';
 
-  int _storedTranspose(SongDocument? song) {
+  double _storedTranspose(SongDocument? song) {
     final value = song?.metadata[_playerTransposeMetadataKey];
-    return value is num && value.isFinite ? value.round() : 0;
+    return value is num && value.isFinite ? value.roundToDouble() : 0;
   }
 
   double _storedPlaybackSpeed(SongDocument? song) {
     final value = song?.metadata[_playerSpeedMetadataKey];
     return value is num && value.isFinite && value >= .5 && value <= 2
-        ? (.5 + ((value.toDouble() - .5) / .1).round() * .1)
+        ? value.toDouble()
         : 1;
   }
 
   void _schedulePlayerPreferenceSave() {
-    _playerPreferencesDirty = true;
+    final id = _songId;
+    if (id == null || app.findSong(id) == null) return;
+    // Capture both the song and values now; navigation can change the reader
+    // before the debounce or an in-flight write finishes.
+    _pendingPlayerPreferences[id] = (
+      revision: ++_playerPreferenceRevision,
+      transpose: _transpose.round(),
+      speed: _playbackSpeed,
+    );
     _playerPreferenceDebounce?.cancel();
     _playerPreferenceDebounce = Timer(const Duration(milliseconds: 400), () {
       _playerPreferenceDebounce = null;
@@ -1983,22 +2003,52 @@ class AppControllerAdapter extends VerseUiController {
     });
   }
 
-  Future<void> _savePlayerPreferences() async {
-    if (!_playerPreferencesDirty) return;
-    final id = _songId;
-    if (id == null) return;
-    final song = app.findSong(id);
-    if (song == null) return;
-    final metadata = {
-      ...song.metadata,
-      _playerTransposeMetadataKey: _transpose.round(),
-      _playerSpeedMetadataKey: _playbackSpeed,
-    };
-    var savedInPlace = false;
-    final saved = await _guard(() async {
-      savedInPlace = await app.saveSong(song.copyWith(metadata: metadata));
+  Future<void> _savePlayerPreferences() {
+    final running = _playerPreferenceSave;
+    if (running != null) return running;
+    final completion = _drainPlayerPreferences().whenComplete(() {
+      _playerPreferenceSave = null;
     });
-    if (saved && savedInPlace) _playerPreferencesDirty = false;
+    _playerPreferenceSave = completion;
+    return completion;
+  }
+
+  Future<void> _drainPlayerPreferences() async {
+    final failed = <String, int>{};
+    while (true) {
+      final id = _pendingPlayerPreferences.keys
+          .where((id) => _pendingPlayerPreferences[id]!.revision != failed[id])
+          .firstOrNull;
+      if (id == null) return;
+      final pending = _pendingPlayerPreferences[id]!;
+      final saved = await _guard(() async {
+        final writer = onSavePlayerPreferences;
+        if (writer != null) {
+          await writer(id, pending.transpose, pending.speed);
+        } else {
+          await app.savePlayerPreferences(
+            id,
+            transpose: pending.transpose,
+            playbackSpeed: pending.speed,
+          );
+        }
+      });
+      if (!saved) {
+        // Keep this song's values for a later attempt without starving other
+        // songs or retrying a persistent error in a tight loop.
+        failed[id] = pending.revision;
+      } else if (_pendingPlayerPreferences[id]?.revision == pending.revision) {
+        _pendingPlayerPreferences.remove(id);
+      }
+      // A newer revision stays queued and is written after the current save.
+    }
+  }
+
+  @visibleForTesting
+  Future<void> settlePlayerPreferences() {
+    _playerPreferenceDebounce?.cancel();
+    _playerPreferenceDebounce = null;
+    return _savePlayerPreferences();
   }
 
   // -- Editing -------------------------------------------------------------

@@ -579,8 +579,9 @@ class LibraryRepository {
         );
         if (mustExist && rows.isEmpty) return false;
         if (rows.isNotEmpty &&
-            (expectedHash == null ||
-                rows.single['content_hash'] != expectedHash)) {
+            (expectedHash == null
+                ? mustNotExist
+                : rows.single['content_hash'] != expectedHash)) {
           return false;
         }
       }

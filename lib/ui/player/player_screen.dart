@@ -540,15 +540,42 @@ class _PlayerScreenState extends State<PlayerScreen>
       ),
     );
     Widget controls({required bool compact, double? maxHeight}) {
+      final screenWidth = MediaQuery.sizeOf(context).width;
+      final controlWidth = compact
+          ? (screenWidth * .4).clamp(300.0, 360.0)
+          : screenWidth;
+      final speedLabel = TextPainter(
+        text: TextSpan(
+          text: _formatPlaybackSpeed(state.playbackSpeed),
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        textDirection: Directionality.of(context),
+        textScaler: MediaQuery.textScalerOf(context),
+      )..layout();
+      final speedWidth = speedLabel.width + 28;
+      speedLabel.dispose();
+      final keyLabel = TextPainter(
+        text: TextSpan(
+          text: state.readerKey ?? song.key ?? '—',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        textDirection: Directionality.of(context),
+        textScaler: MediaQuery.textScalerOf(context),
+      )..layout();
+      final keyWidth = keyLabel.width + 40;
+      keyLabel.dispose();
+      final separateSpeed =
+          screenWidth < 360 ||
+          MediaQuery.textScalerOf(context).scale(1) > 1.25 ||
+          speedWidth > (controlWidth - 16) / 4;
       final inlineChords =
           song.hasChords &&
           !compact &&
+          !separateSpeed &&
+          keyWidth <= (controlWidth - 16) / 4 &&
           _keyPitchClass(song.key) != null &&
-          MediaQuery.sizeOf(context).width >= 360 &&
+          screenWidth >= 360 &&
           MediaQuery.textScalerOf(context).scale(1) <= 1.25;
-      final separateSpeed =
-          MediaQuery.sizeOf(context).width < 360 ||
-          MediaQuery.textScalerOf(context).scale(1) > 1.25;
       final content = Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -1303,7 +1330,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Semantics(
                     selected: !state.showChords,
-                    child: Text(l10n.searchChordsUnavailable),
+                    child: Text(l10n.playerChordsNone),
                   ),
                 ),
               ],

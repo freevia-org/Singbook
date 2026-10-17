@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -144,11 +143,11 @@ void main() {
     await tester.tap(keyMenu);
     await tester.pumpAndSettle();
     final l10n = AppLocalizations.of(tester.element(keyMenu));
-    final noneOption = find.text(l10n.searchChordsUnavailable);
+    final noneOption = find.text(l10n.playerChordsNone);
     expect(find.byType(CheckedPopupMenuItem<String>), findsNothing);
     expect(find.byType(Checkbox), findsNothing);
     expect(
-      tester.getSemantics(noneOption).hasFlag(SemanticsFlag.isSelected),
+      tester.getSemantics(noneOption).flagsCollection.isSelected.toBoolOrNull(),
       isFalse,
     );
     await tester.tap(noneOption);
@@ -157,7 +156,7 @@ void main() {
     await tester.tap(keyMenu);
     await tester.pumpAndSettle();
     expect(
-      tester.getSemantics(noneOption).hasFlag(SemanticsFlag.isSelected),
+      tester.getSemantics(noneOption).flagsCollection.isSelected.toBoolOrNull(),
       isTrue,
     );
     expect(tester.takeException(), isNull);
@@ -305,6 +304,27 @@ void main() {
       Brightness.dark,
     ),
     ('tablet', const Size(1024, 768), const Locale('uk'), 1.0, Brightness.dark),
+    (
+      'phone_fractional',
+      const Size(360, 780),
+      const Locale('en'),
+      1.0,
+      Brightness.light,
+    ),
+    (
+      'phone_large_fractional',
+      const Size(320, 640),
+      const Locale('en'),
+      2.0,
+      Brightness.light,
+    ),
+    (
+      'phone_quarter',
+      const Size(360, 780),
+      const Locale('en'),
+      1.0,
+      Brightness.light,
+    ),
   ]) {
     testWidgets('compact player fits ${scenario.$1}', (tester) async {
       if (capture) {
@@ -325,6 +345,11 @@ void main() {
         });
       }
       final controller = _Controller();
+      if (scenario.$1.contains('fractional') ||
+          scenario.$1.contains('quarter')) {
+        controller.speed = scenario.$1.contains('quarter') ? 1.25 : .55;
+        controller.songKey = 'D#min';
+      }
       addTearDown(controller.dispose);
       await _pump(
         tester,
@@ -393,7 +418,7 @@ void main() {
           expect(keyPopupRect.left, closeTo(8, 1));
         }
         final noneOption = find.text(
-          AppLocalizations.of(tester.element(keyMenu)).searchChordsUnavailable,
+          AppLocalizations.of(tester.element(keyMenu)).playerChordsNone,
         );
         await tester.ensureVisible(noneOption);
         await tester.pumpAndSettle();

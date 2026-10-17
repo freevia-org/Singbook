@@ -7,6 +7,7 @@ import '../source_catalog_client.dart';
 
 const _diagnosticCodes = <String>{
   'blocked',
+  'access_denied',
   'ambiguous_match',
   'cancelled',
   'extraction_failed',
