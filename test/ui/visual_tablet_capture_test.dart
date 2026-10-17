@@ -63,8 +63,12 @@ void main() {
       final output = Directory('artifacts/singbook-tablet-captures')
         ..createSync(recursive: true);
       final boundaryKey = GlobalKey();
-      final fixture = _Fixture();
-      final controller = AppControllerAdapter(fixture.app);
+      // Keep the controller's queued futures in the same real async zone as
+      // openSong; a queue created in FakeAsync cannot complete inside runAsync.
+      final (fixture, controller) = (await tester.runAsync(() async {
+        final fixture = _Fixture();
+        return (fixture, AppControllerAdapter(fixture.app));
+      }))!;
       final brightness = ValueNotifier(Brightness.light);
       final locale = ValueNotifier(const Locale('en'));
       addTearDown(brightness.dispose);
@@ -142,8 +146,11 @@ void main() {
     final output = Directory('artifacts/singbook-tablet-captures')
       ..createSync(recursive: true);
     final boundaryKey = GlobalKey();
-    final fixture = _Fixture();
-    final controller = AppControllerAdapter(fixture.app);
+    // Match the real async zone used by the controller operations below.
+    final (fixture, controller) = (await tester.runAsync(() async {
+      final fixture = _Fixture();
+      return (fixture, AppControllerAdapter(fixture.app));
+    }))!;
     final brightness = ValueNotifier(Brightness.light);
     final locale = ValueNotifier(const Locale('en'));
     addTearDown(brightness.dispose);

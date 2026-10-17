@@ -211,9 +211,40 @@ void main() {
       expect(find.text(l10n.searchProviderFailed), findsOneWidget);
       expect(find.text('Unavailable archive'), findsOneWidget);
       expect(find.text(l10n.searchProviderUnavailable), findsNWidgets(5));
+      final failedProvider = find.byKey(
+        const ValueKey('discovery-provider-journey_failed'),
+      );
+      await tester.ensureVisible(failedProvider);
+      await tester.tap(failedProvider);
+      await tester.pumpAndSettle();
+      final failedProviderDetails = find.byKey(
+        const ValueKey('source-check-details-journey_failed'),
+      );
+      expect(failedProviderDetails, findsOneWidget);
+      expect(
+        find.descendant(
+          of: failedProviderDetails,
+          matching: find.text(l10n.searchCheckNetwork),
+        ),
+        findsWidgets,
+      );
+      expect(
+        find.descendant(
+          of: failedProviderDetails,
+          matching: find.text('network'),
+        ),
+        findsWidgets,
+      );
+      await tester.tap(
+        find.descendant(
+          of: failedProviderDetails,
+          matching: find.byTooltip(l10n.navClose),
+        ),
+      );
+      await tester.pumpAndSettle();
       await _capture(binding, '11b_discovery_no_usable_lyrics');
       final retryLyrics = find.widgetWithText(
-        ListTile,
+        TextButton,
         l10n.searchDiscoveryRetry,
       );
       expect(retryLyrics, findsOneWidget);
@@ -272,12 +303,16 @@ void main() {
           .descendant(of: infoSheet, matching: find.byType(Scrollable))
           .first;
       for (final contribution in combinedVersion.contributions) {
+        final providerName = find.descendant(
+          of: infoSheet,
+          matching: find.text(contribution.providerName),
+        );
         await tester.scrollUntilVisible(
-          find.text(contribution.providerName),
+          providerName,
           120,
           scrollable: infoScrollable,
         );
-        expect(find.text(contribution.providerName), findsOneWidget);
+        expect(providerName, findsOneWidget);
         final roles = contribution.roles
             .map(
               (role) => switch (role) {
@@ -288,14 +323,27 @@ void main() {
               },
             )
             .join(' · ');
+        final contributionRoles = find.descendant(
+          of: infoSheet,
+          matching: find.textContaining(roles),
+        );
         await tester.scrollUntilVisible(
-          find.textContaining(roles),
+          contributionRoles,
           120,
           scrollable: infoScrollable,
         );
-        expect(find.textContaining(roles), findsOneWidget);
+        expect(contributionRoles, findsOneWidget);
       }
-      await tester.tap(find.byTooltip(l10n.navClose));
+      final infoClose = find.descendant(
+        of: infoSheet,
+        matching: find.byTooltip(l10n.navClose),
+      );
+      await tester.scrollUntilVisible(
+        infoClose,
+        -120,
+        scrollable: infoScrollable,
+      );
+      await tester.tap(infoClose);
       await tester.pumpAndSettle();
       expect(
         tester.view.viewInsets.bottom,
@@ -350,11 +398,14 @@ void main() {
       await _waitForSnackBarToDismiss(tester);
       await tester.tap(pitchSelector);
       await tester.pumpAndSettle();
-      final higherKey = find.widgetWithText(DropdownMenuItem<int>, 'C♯');
+      final higherKey = find.widgetWithText(PopupMenuItem<String>, 'C♯');
       await tester.ensureVisible(higherKey);
       await tester.tap(higherKey);
       await tester.pumpAndSettle();
-      expect(find.textContaining('Key: C#'), findsOneWidget);
+      final playerController = tester
+          .widget<PlayerScreen>(find.byType(PlayerScreen))
+          .controller;
+      expect(playerController.state.readerKey, 'C#');
       final chordLines = find.byType(ChordLyricsLine);
       expect(
         tester
@@ -362,7 +413,9 @@ void main() {
             .expand((line) => line.chords.map((chord) => chord.symbol)),
         containsAll(['C#', 'G#']),
       );
-      await tester.tap(find.text(l10n.readerShowChords));
+      await tester.tap(pitchSelector);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(l10n.playerChordsNone));
       await tester.pumpAndSettle();
       expect(
         tester
@@ -370,7 +423,9 @@ void main() {
             .every((line) => !line.showChords),
         isTrue,
       );
-      await tester.tap(find.text(l10n.readerShowChords));
+      await tester.tap(pitchSelector);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(l10n.playerChordsNone));
       await tester.pumpAndSettle();
       expect(
         tester
@@ -583,13 +638,16 @@ void main() {
       await _capture(binding, '23_setlist_populated');
       await tester.tap(find.text(_title).first);
       await tester.pumpAndSettle();
-      expect(find.textContaining('Key: D'), findsOneWidget);
+      final setlistPlayer = tester
+          .widget<PlayerScreen>(find.byType(PlayerScreen))
+          .controller;
+      expect(setlistPlayer.state.readerKey, 'D#');
       await tester.tap(_iconButtonWithTooltip('Next song'));
       await tester.pumpAndSettle();
-      expect(find.textContaining('Key: C'), findsOneWidget);
+      expect(setlistPlayer.state.readerKey, 'C#');
       await tester.longPress(_iconButtonWithTooltip('Previous song'));
       await tester.pumpAndSettle();
-      expect(find.textContaining('Key: D'), findsOneWidget);
+      expect(setlistPlayer.state.readerKey, 'D#');
       await tester.tap(_iconButtonWithTooltip('Back'));
       await tester.pumpAndSettle();
       final overrideEntryId = app.setlists.single.entries.first.id;
@@ -1248,7 +1306,7 @@ class _JourneySource implements LyricsProvider {
     SongCandidate candidate, {
     CancellationToken? cancel,
   }) async {
-    if (failure) throw const ProviderException('network_error');
+    if (failure) throw const ProviderException('network');
     if (unavailable) throw const ProviderException('unavailable');
     if (delay > Duration.zero) {
       await Future<void>.delayed(delay);
