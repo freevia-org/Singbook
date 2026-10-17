@@ -1773,4 +1773,89 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Substituir a biblioteca atual? Esta ação não pode ser desfeita.';
+
+  @override
+  String get searchCheckOperations => 'Operações';
+
+  @override
+  String get searchCheckCode => 'Código do resultado';
+
+  @override
+  String get searchCheckQueued => 'Aguardando a verificação desta fonte.';
+
+  @override
+  String get searchCheckFetch => 'Carregar letra';
+
+  @override
+  String get searchCheckValidate => 'Verificar correspondência da música';
+
+  @override
+  String get searchCheckCorroborate => 'Verificar concordância da letra';
+
+  @override
+  String get searchCheckCompleted => 'Concluído';
+
+  @override
+  String get searchCheckTimeout => 'A fonte não respondeu a tempo.';
+
+  @override
+  String get searchCheckBlocked => 'A fonte bloqueou a solicitação.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'A fonte está limitando as solicitações. Tente novamente mais tarde.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Não foi possível acessar a fonte. Verifique sua conexão.';
+
+  @override
+  String get searchCheckInvalid => 'A fonte retornou uma resposta ilegível.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Esta fonte não está configurada nesta versão.';
+
+  @override
+  String get searchCheckNoLyrics =>
+      'Nenhuma letra correspondente foi encontrada.';
+
+  @override
+  String get searchCheckFailed => 'Não foi possível concluir esta operação.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Nenhuma verificação de fonte foi realizada para esta comparação.';
+
+  @override
+  String get searchVersionCredits => 'Créditos';
+
+  @override
+  String get searchVersionMediaLinks => 'Links relacionados';
+
+  @override
+  String get searchCheckCancelled => 'Cancelado';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Foram encontradas várias correspondências. Esta fonte precisa de uma gravação mais específica.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Esta fonte precisa de um identificador da gravação ou da obra.';
+
+  @override
+  String get searchCheckExtraction =>
+      'A fonte respondeu, mas não foi possível extrair a letra.';
+
+  @override
+  String get searchCheckBusy =>
+      'Esta fonte está ocupada. Tente novamente mais tarde.';
+
+  @override
+  String get searchCheckSelection =>
+      'Escolha um resultado específico desta fonte.';
+
+  @override
+  String get playerChordsNone => 'Nenhum';
 }

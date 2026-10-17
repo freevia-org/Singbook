@@ -1792,4 +1792,82 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'هل تريد استبدال المكتبة الحالية؟ لا يمكن التراجع عن ذلك.';
+
+  @override
+  String get searchCheckOperations => 'العمليات';
+
+  @override
+  String get searchCheckCode => 'رمز النتيجة';
+
+  @override
+  String get searchCheckQueued => 'بانتظار التحقق من هذا المصدر.';
+
+  @override
+  String get searchCheckFetch => 'تحميل كلمات الأغنية';
+
+  @override
+  String get searchCheckValidate => 'التحقق من تطابق الأغنية';
+
+  @override
+  String get searchCheckCorroborate => 'التحقق من تطابق الكلمات';
+
+  @override
+  String get searchCheckCompleted => 'اكتمل';
+
+  @override
+  String get searchCheckTimeout => 'لم يستجب المصدر في الوقت المحدد.';
+
+  @override
+  String get searchCheckBlocked => 'حظر المصدر الطلب.';
+
+  @override
+  String get searchCheckRateLimited => 'يحدّ المصدر من الطلبات. حاول لاحقًا.';
+
+  @override
+  String get searchCheckNetwork => 'تعذر الوصول إلى المصدر. تحقق من اتصالك.';
+
+  @override
+  String get searchCheckInvalid => 'أعاد المصدر استجابة غير قابلة للقراءة.';
+
+  @override
+  String get searchCheckNotConfigured => 'هذا المصدر غير مُعدّ في هذا الإصدار.';
+
+  @override
+  String get searchCheckNoLyrics => 'لم تُعثر على كلمات مطابقة.';
+
+  @override
+  String get searchCheckFailed => 'تعذر إكمال هذه العملية.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'لم تُجرَ أي عمليات تحقق من المصادر لهذه المقارنة.';
+
+  @override
+  String get searchVersionCredits => 'الاعتمادات';
+
+  @override
+  String get searchVersionMediaLinks => 'روابط ذات صلة';
+
+  @override
+  String get searchCheckCancelled => 'أُلغيت';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'عُثر على عدة نتائج. يحتاج هذا المصدر إلى تسجيل أكثر تحديدًا.';
+
+  @override
+  String get searchCheckIdentity => 'يحتاج هذا المصدر إلى معرّف تسجيل أو عمل.';
+
+  @override
+  String get searchCheckExtraction =>
+      'استجاب المصدر، لكن تعذّر استخراج الكلمات.';
+
+  @override
+  String get searchCheckBusy => 'المصدر مشغول. حاول لاحقًا.';
+
+  @override
+  String get searchCheckSelection => 'اختر نتيجة محددة من هذا المصدر.';
+
+  @override
+  String get playerChordsNone => 'لا شيء';
 }

@@ -1793,4 +1793,88 @@ class AppLocalizationsRo extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Înlocuiești biblioteca actuală? Acțiunea nu poate fi anulată.';
+
+  @override
+  String get searchCheckOperations => 'Operațiuni';
+
+  @override
+  String get searchCheckCode => 'Codul rezultatului';
+
+  @override
+  String get searchCheckQueued => 'Se așteaptă verificarea acestei surse.';
+
+  @override
+  String get searchCheckFetch => 'Încarcă versurile';
+
+  @override
+  String get searchCheckValidate => 'Verifică potrivirea melodiei';
+
+  @override
+  String get searchCheckCorroborate => 'Verifică potrivirea versurilor';
+
+  @override
+  String get searchCheckCompleted => 'Finalizat';
+
+  @override
+  String get searchCheckTimeout => 'Sursa nu a răspuns la timp.';
+
+  @override
+  String get searchCheckBlocked => 'Sursa a blocat solicitarea.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Sursa limitează solicitările. Încearcă din nou mai târziu.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Sursa nu poate fi accesată. Verifică conexiunea.';
+
+  @override
+  String get searchCheckInvalid => 'Sursa a returnat un răspuns ilizibil.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Această sursă nu este configurată în această versiune.';
+
+  @override
+  String get searchCheckNoLyrics => 'Nu au fost găsite versuri potrivite.';
+
+  @override
+  String get searchCheckFailed => 'Operațiunea nu a putut fi finalizată.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Nu s-au efectuat verificări ale surselor pentru această comparație.';
+
+  @override
+  String get searchVersionCredits => 'Credite';
+
+  @override
+  String get searchVersionMediaLinks => 'Linkuri asociate';
+
+  @override
+  String get searchCheckCancelled => 'Anulat';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Au fost găsite mai multe potriviri. Această sursă are nevoie de o înregistrare mai exactă.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Această sursă are nevoie de identificatorul unei înregistrări sau al unei opere.';
+
+  @override
+  String get searchCheckExtraction =>
+      'Sursa a răspuns, dar versurile nu au putut fi extrase.';
+
+  @override
+  String get searchCheckBusy =>
+      'Sursa este ocupată. Încearcă din nou mai târziu.';
+
+  @override
+  String get searchCheckSelection =>
+      'Alege un rezultat specific din această sursă.';
+
+  @override
+  String get playerChordsNone => 'Niciunul';
 }

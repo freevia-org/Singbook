@@ -1759,4 +1759,88 @@ class AppLocalizationsDa extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Vil du erstatte det aktuelle bibliotek? Dette kan ikke fortrydes.';
+
+  @override
+  String get searchCheckOperations => 'Handlinger';
+
+  @override
+  String get searchCheckCode => 'Resultatkode';
+
+  @override
+  String get searchCheckQueued => 'Venter på at kontrollere denne kilde.';
+
+  @override
+  String get searchCheckFetch => 'Hent sangtekst';
+
+  @override
+  String get searchCheckValidate => 'Kontrollér sangmatch';
+
+  @override
+  String get searchCheckCorroborate => 'Kontrollér tekstmatch';
+
+  @override
+  String get searchCheckCompleted => 'Fuldført';
+
+  @override
+  String get searchCheckTimeout => 'Kilden svarede ikke i tide.';
+
+  @override
+  String get searchCheckBlocked => 'Kilden blokerede forespørgslen.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Kilden begrænser forespørgsler. Prøv igen senere.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Kunne ikke nå kilden. Kontrollér din forbindelse.';
+
+  @override
+  String get searchCheckInvalid => 'Kilden returnerede et ulæseligt svar.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Denne kilde er ikke konfigureret i denne build.';
+
+  @override
+  String get searchCheckNoLyrics =>
+      'Der blev ikke fundet matchende sangtekster.';
+
+  @override
+  String get searchCheckFailed => 'Handlingen kunne ikke fuldføres.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Der er ikke kørt kildekontroller for denne sammenligning.';
+
+  @override
+  String get searchVersionCredits => 'Kreditering';
+
+  @override
+  String get searchVersionMediaLinks => 'Relaterede links';
+
+  @override
+  String get searchCheckCancelled => 'Annulleret';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Der blev fundet flere match. Denne kilde kræver en mere specifik indspilning.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Denne kilde kræver et id for en indspilning eller et værk.';
+
+  @override
+  String get searchCheckExtraction =>
+      'Kilden svarede, men sangteksten kunne ikke hentes.';
+
+  @override
+  String get searchCheckBusy => 'Kilden er optaget. Prøv igen senere.';
+
+  @override
+  String get searchCheckSelection =>
+      'Vælg et bestemt resultat fra denne kilde.';
+
+  @override
+  String get playerChordsNone => 'Ingen';
 }

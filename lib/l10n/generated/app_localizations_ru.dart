@@ -1798,4 +1798,87 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Заменить текущую библиотеку? Это действие нельзя отменить.';
+
+  @override
+  String get searchCheckOperations => 'Операции';
+
+  @override
+  String get searchCheckCode => 'Код результата';
+
+  @override
+  String get searchCheckQueued => 'Ожидание проверки этого источника.';
+
+  @override
+  String get searchCheckFetch => 'Загрузить текст песни';
+
+  @override
+  String get searchCheckValidate => 'Проверить совпадение песни';
+
+  @override
+  String get searchCheckCorroborate => 'Проверить совпадение текста';
+
+  @override
+  String get searchCheckCompleted => 'Завершено';
+
+  @override
+  String get searchCheckTimeout => 'Источник не ответил вовремя.';
+
+  @override
+  String get searchCheckBlocked => 'Источник заблокировал запрос.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Источник ограничивает запросы. Повторите попытку позже.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Не удалось связаться с источником. Проверьте подключение.';
+
+  @override
+  String get searchCheckInvalid => 'Источник вернул нечитаемый ответ.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Этот источник не настроен в данной сборке.';
+
+  @override
+  String get searchCheckNoLyrics => 'Подходящие тексты песен не найдены.';
+
+  @override
+  String get searchCheckFailed => 'Не удалось выполнить эту операцию.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Для этого сравнения проверки источников не запускались.';
+
+  @override
+  String get searchVersionCredits => 'Авторы и источники';
+
+  @override
+  String get searchVersionMediaLinks => 'Связанные ссылки';
+
+  @override
+  String get searchCheckCancelled => 'Отменено';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Найдено несколько совпадений. Для этого источника нужна более точная запись.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Для этого источника нужен идентификатор записи или произведения.';
+
+  @override
+  String get searchCheckExtraction =>
+      'Источник ответил, но не удалось извлечь текст песни.';
+
+  @override
+  String get searchCheckBusy => 'Источник занят. Повторите попытку позже.';
+
+  @override
+  String get searchCheckSelection =>
+      'Выберите конкретный результат из этого источника.';
+
+  @override
+  String get playerChordsNone => 'Нет';
 }

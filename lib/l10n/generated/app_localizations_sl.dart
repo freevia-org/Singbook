@@ -1802,4 +1802,85 @@ class AppLocalizationsSl extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Zamenjam trenutno knjižnico? Tega ni mogoče razveljaviti.';
+
+  @override
+  String get searchCheckOperations => 'Operacije';
+
+  @override
+  String get searchCheckCode => 'Koda rezultata';
+
+  @override
+  String get searchCheckQueued => 'Čakanje na preverjanje tega vira.';
+
+  @override
+  String get searchCheckFetch => 'Naloži besedilo pesmi';
+
+  @override
+  String get searchCheckValidate => 'Preveri ujemanje pesmi';
+
+  @override
+  String get searchCheckCorroborate => 'Preveri ujemanje besedila';
+
+  @override
+  String get searchCheckCompleted => 'Dokončano';
+
+  @override
+  String get searchCheckTimeout => 'Vir se ni odzval pravočasno.';
+
+  @override
+  String get searchCheckBlocked => 'Vir je blokiral zahtevo.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Vir omejuje zahteve. Poskusite znova pozneje.';
+
+  @override
+  String get searchCheckNetwork => 'Vira ni mogoče doseči. Preverite povezavo.';
+
+  @override
+  String get searchCheckInvalid => 'Vir je vrnil neberljiv odgovor.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Ta vir v tej različici ni konfiguriran.';
+
+  @override
+  String get searchCheckNoLyrics => 'Ustrezno besedilo pesmi ni bilo najdeno.';
+
+  @override
+  String get searchCheckFailed => 'Tega postopka ni bilo mogoče dokončati.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Za to primerjavo niso bila izvedena preverjanja virov.';
+
+  @override
+  String get searchVersionCredits => 'Zasluge';
+
+  @override
+  String get searchVersionMediaLinks => 'Sorodne povezave';
+
+  @override
+  String get searchCheckCancelled => 'Preklicano';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Najdenih je bilo več ujemanj. Ta vir potrebuje natančnejši posnetek.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Ta vir potrebuje identifikator posnetka ali dela.';
+
+  @override
+  String get searchCheckExtraction =>
+      'Vir se je odzval, vendar besedila pesmi ni bilo mogoče pridobiti.';
+
+  @override
+  String get searchCheckBusy => 'Vir je zaseden. Poskusite znova pozneje.';
+
+  @override
+  String get searchCheckSelection => 'Izberite določen rezultat iz tega vira.';
+
+  @override
+  String get playerChordsNone => 'Brez';
 }

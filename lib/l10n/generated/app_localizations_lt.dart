@@ -1796,4 +1796,87 @@ class AppLocalizationsLt extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Pakeisti dabartinę biblioteką? Šio veiksmo atšaukti negalima.';
+
+  @override
+  String get searchCheckOperations => 'Operacijos';
+
+  @override
+  String get searchCheckCode => 'Rezultato kodas';
+
+  @override
+  String get searchCheckQueued => 'Laukiama šio šaltinio patikros.';
+
+  @override
+  String get searchCheckFetch => 'Įkelti dainos žodžius';
+
+  @override
+  String get searchCheckValidate => 'Tikrinti dainos atitiktį';
+
+  @override
+  String get searchCheckCorroborate => 'Tikrinti žodžių atitiktį';
+
+  @override
+  String get searchCheckCompleted => 'Atlikta';
+
+  @override
+  String get searchCheckTimeout => 'Šaltinis neatsakė laiku.';
+
+  @override
+  String get searchCheckBlocked => 'Šaltinis užblokavo užklausą.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Šaltinis riboja užklausas. Bandykite vėliau.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Nepavyko pasiekti šaltinio. Patikrinkite ryšį.';
+
+  @override
+  String get searchCheckInvalid => 'Šaltinis pateikė neperskaitomą atsakymą.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Šis šaltinis šioje versijoje nesukonfigūruotas.';
+
+  @override
+  String get searchCheckNoLyrics => 'Atitinkančių dainos žodžių nerasta.';
+
+  @override
+  String get searchCheckFailed => 'Šios operacijos nepavyko užbaigti.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Šiam palyginimui šaltinių patikros nebuvo vykdomos.';
+
+  @override
+  String get searchVersionCredits => 'Autoriai';
+
+  @override
+  String get searchVersionMediaLinks => 'Susijusios nuorodos';
+
+  @override
+  String get searchCheckCancelled => 'Atšaukta';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Rasta keli atitikmenys. Šiam šaltiniui reikia konkretesnio įrašo.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Šiam šaltiniui reikia įrašo arba kūrinio identifikatoriaus.';
+
+  @override
+  String get searchCheckExtraction =>
+      'Šaltinis atsakė, bet nepavyko išgauti dainos žodžių.';
+
+  @override
+  String get searchCheckBusy => 'Šaltinis užimtas. Bandykite vėliau.';
+
+  @override
+  String get searchCheckSelection =>
+      'Pasirinkite konkretų šio šaltinio rezultatą.';
+
+  @override
+  String get playerChordsNone => 'Nėra';
 }

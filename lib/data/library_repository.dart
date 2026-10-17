@@ -560,14 +560,16 @@ class LibraryRepository {
   ///
   /// A null [expectedHash] normally means "write unconditionally". With
   /// [mustNotExist] it means the song must still be absent.
+  /// [mustExist] refuses insertion if a song was deleted before this transaction.
   Future<bool> saveSongIfUnchanged(
     SongDocument song,
     String? expectedHash, {
     bool mustNotExist = false,
+    bool mustExist = false,
   }) async {
     final document = _codec.encode(song);
     return database.transaction((txn) async {
-      if (expectedHash != null || mustNotExist) {
+      if (expectedHash != null || mustNotExist || mustExist) {
         final rows = await txn.query(
           'songs',
           columns: ['content_hash'],
@@ -575,9 +577,11 @@ class LibraryRepository {
           whereArgs: [song.id],
           limit: 1,
         );
+        if (mustExist && rows.isEmpty) return false;
         if (rows.isNotEmpty &&
-            (expectedHash == null ||
-                rows.single['content_hash'] != expectedHash)) {
+            (expectedHash == null
+                ? mustNotExist
+                : rows.single['content_hash'] != expectedHash)) {
           return false;
         }
       }

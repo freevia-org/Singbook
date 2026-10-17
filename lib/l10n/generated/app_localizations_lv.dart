@@ -1789,4 +1789,85 @@ class AppLocalizationsLv extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Aizstāt pašreizējo bibliotēku? Šo darbību nevar atsaukt.';
+
+  @override
+  String get searchCheckOperations => 'Darbības';
+
+  @override
+  String get searchCheckCode => 'Rezultāta kods';
+
+  @override
+  String get searchCheckQueued => 'Gaida šī avota pārbaudi.';
+
+  @override
+  String get searchCheckFetch => 'Ielādēt dziesmas vārdus';
+
+  @override
+  String get searchCheckValidate => 'Pārbaudīt dziesmas atbilstību';
+
+  @override
+  String get searchCheckCorroborate => 'Pārbaudīt vārdu atbilstību';
+
+  @override
+  String get searchCheckCompleted => 'Pabeigts';
+
+  @override
+  String get searchCheckTimeout => 'Avots neatbildēja laikus.';
+
+  @override
+  String get searchCheckBlocked => 'Avots bloķēja pieprasījumu.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Avots ierobežo pieprasījumus. Mēģiniet vēlāk vēlreiz.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Neizdevās sasniegt avotu. Pārbaudiet savienojumu.';
+
+  @override
+  String get searchCheckInvalid => 'Avots atgrieza nelasāmu atbildi.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Šis avots šajā versijā nav konfigurēts.';
+
+  @override
+  String get searchCheckNoLyrics => 'Atbilstoši dziesmas vārdi netika atrasti.';
+
+  @override
+  String get searchCheckFailed => 'Šo darbību neizdevās pabeigt.';
+
+  @override
+  String get searchCheckNoHistory => 'Šim salīdzinājumam avoti nav pārbaudīti.';
+
+  @override
+  String get searchVersionCredits => 'Autori un avoti';
+
+  @override
+  String get searchVersionMediaLinks => 'Saistītās saites';
+
+  @override
+  String get searchCheckCancelled => 'Atcelts';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Atrastas vairāk nekā viens atbilstības rezultāts. Šim avotam vajadzīgs konkrētāks ieraksts.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Šim avotam vajadzīgs ieraksta vai darba identifikators.';
+
+  @override
+  String get searchCheckExtraction =>
+      'Avots atbildēja, taču dziesmas vārdus neizdevās iegūt.';
+
+  @override
+  String get searchCheckBusy => 'Avots ir aizņemts. Mēģiniet vēlāk vēlreiz.';
+
+  @override
+  String get searchCheckSelection => 'Izvēlieties konkrētu šī avota rezultātu.';
+
+  @override
+  String get playerChordsNone => 'Nav';
 }

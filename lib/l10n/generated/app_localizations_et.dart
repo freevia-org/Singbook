@@ -1762,4 +1762,87 @@ class AppLocalizationsEt extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Kas asendada praegune teek? Seda ei saa tagasi võtta.';
+
+  @override
+  String get searchCheckOperations => 'Toimingud';
+
+  @override
+  String get searchCheckCode => 'Tulemuse kood';
+
+  @override
+  String get searchCheckQueued => 'Selle allika kontrollimine on ootel.';
+
+  @override
+  String get searchCheckFetch => 'Laadi laulusõnad';
+
+  @override
+  String get searchCheckValidate => 'Kontrolli laulu vastet';
+
+  @override
+  String get searchCheckCorroborate => 'Kontrolli sõnade vastavust';
+
+  @override
+  String get searchCheckCompleted => 'Valmis';
+
+  @override
+  String get searchCheckTimeout => 'Allikas ei vastanud õigel ajal.';
+
+  @override
+  String get searchCheckBlocked => 'Allikas blokeeris päringu.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Allikas piirab päringuid. Proovi hiljem uuesti.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Allikaga ei saanud ühendust. Kontrolli ühendust.';
+
+  @override
+  String get searchCheckInvalid => 'Allikas tagastas loetamatu vastuse.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'See allikas pole selles järgus seadistatud.';
+
+  @override
+  String get searchCheckNoLyrics => 'Sobivaid laulusõnu ei leitud.';
+
+  @override
+  String get searchCheckFailed => 'Toimingut ei saanud lõpule viia.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Selle võrdluse jaoks pole allikaid kontrollitud.';
+
+  @override
+  String get searchVersionCredits => 'Autorid ja allikad';
+
+  @override
+  String get searchVersionMediaLinks => 'Seotud lingid';
+
+  @override
+  String get searchCheckCancelled => 'Tühistatud';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Leiti mitu vastet. See allikas vajab täpsemat salvestist.';
+
+  @override
+  String get searchCheckIdentity =>
+      'See allikas vajab salvestise või teose tunnust.';
+
+  @override
+  String get searchCheckExtraction =>
+      'Allikas vastas, kuid laulusõnu ei saanud eraldada.';
+
+  @override
+  String get searchCheckBusy => 'Allikas on hõivatud. Proovi hiljem uuesti.';
+
+  @override
+  String get searchCheckSelection =>
+      'Vali sellest allikast konkreetne tulemus.';
+
+  @override
+  String get playerChordsNone => 'Puudub';
 }

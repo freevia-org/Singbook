@@ -1781,4 +1781,87 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Želite li zamijeniti trenutačnu biblioteku? To se ne može poništiti.';
+
+  @override
+  String get searchCheckOperations => 'Operacije';
+
+  @override
+  String get searchCheckCode => 'Šifra rezultata';
+
+  @override
+  String get searchCheckQueued => 'Čeka se provjera ovog izvora.';
+
+  @override
+  String get searchCheckFetch => 'Učitaj tekst pjesme';
+
+  @override
+  String get searchCheckValidate => 'Provjeri podudaranje pjesme';
+
+  @override
+  String get searchCheckCorroborate => 'Provjeri podudaranje teksta';
+
+  @override
+  String get searchCheckCompleted => 'Dovršeno';
+
+  @override
+  String get searchCheckTimeout => 'Izvor nije odgovorio na vrijeme.';
+
+  @override
+  String get searchCheckBlocked => 'Izvor je blokirao zahtjev.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Izvor ograničava zahtjeve. Pokušajte ponovno poslije.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Nije moguće pristupiti izvoru. Provjerite vezu.';
+
+  @override
+  String get searchCheckInvalid => 'Izvor je vratio nečitljiv odgovor.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Ovaj izvor nije konfiguriran u ovoj verziji.';
+
+  @override
+  String get searchCheckNoLyrics => 'Nije pronađen odgovarajući tekst pjesme.';
+
+  @override
+  String get searchCheckFailed => 'Ovu radnju nije moguće dovršiti.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Za ovu usporedbu nisu provedene provjere izvora.';
+
+  @override
+  String get searchVersionCredits => 'Zasluge';
+
+  @override
+  String get searchVersionMediaLinks => 'Povezane poveznice';
+
+  @override
+  String get searchCheckCancelled => 'Otkazano';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Pronađeno je više podudaranja. Ovom je izvoru potrebna određenija snimka.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Ovom je izvoru potreban identifikator snimke ili djela.';
+
+  @override
+  String get searchCheckExtraction =>
+      'Izvor je odgovorio, ali tekst pjesme nije moguće izdvojiti.';
+
+  @override
+  String get searchCheckBusy => 'Izvor je zauzet. Pokušajte ponovno poslije.';
+
+  @override
+  String get searchCheckSelection =>
+      'Odaberite određeni rezultat iz ovog izvora.';
+
+  @override
+  String get playerChordsNone => 'Ništa';
 }

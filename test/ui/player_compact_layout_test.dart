@@ -1,23 +1,25 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/l10n/generated/app_localizations.dart';
 import 'package:singbook/ui/player/player_screen.dart';
 import 'package:singbook/ui/theme/verse_theme.dart';
-import 'package:singbook/ui/verse_app.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
 import 'package:singbook/ui/widgets/chord_lyrics_line.dart';
 
-import 'support/fake_controller.dart';
-
-class _Controller extends FakeUiController {
-  _Controller() : super((c) => (c as _Controller)._state);
+class _Controller extends VerseUiController {
+  final calls = <String>[];
+  final positionNotifier = ValueNotifier<PlayerPosition>(PlayerPosition.zero);
   String tuning = '[E, A, D, G, B, E]';
   String? songKey = 'Em';
   double speed = 1;
-  VerseUiState get _state => VerseUiState(
+  bool showChords = true;
+  @override
+  VerseUiState get state => VerseUiState(
     route: VerseRoute.reader,
     song: SongCardData(
       id: 'song',
@@ -33,6 +35,7 @@ class _Controller extends FakeUiController {
     readerSource: 'Original fixture source',
     readerCanCompareVersions: true,
     playbackSpeed: speed,
+    showChords: showChords,
     songLines: const [
       LyricLineData(id: 'v', section: 'Verse 1', isBlank: true),
       LyricLineData(
@@ -47,16 +50,37 @@ class _Controller extends FakeUiController {
       PlayerSectionMarker(name: 'Verse 1', startSeconds: 0, lineId: 'a'),
     ],
   );
+
+  @override
+  ValueListenable<PlayerPosition> get playerPosition => positionNotifier;
+
+  void refresh() => notifyListeners();
+
   @override
   Future<void> setPlaybackSpeed(double value) async {
     speed = value;
-    refresh();
+    notifyListeners();
   }
 
   @override
   Future<void> compareCurrentSongVersions() async {
     calls.add('compare');
   }
+
+  @override
+  Future<void> setShowChords(bool value) async {
+    showChords = value;
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    positionNotifier.dispose();
+    super.dispose();
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 Future<void> _pump(
@@ -75,7 +99,12 @@ Future<void> _pump(
     MaterialApp(
       locale: locale,
       supportedLocales: AppLocalizations.supportedLocales,
-      localizationsDelegates: singbookLocalizationsDelegates,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
       theme: verseTheme(brightness: brightness, palette: 'navy'),
       builder: (context, child) => MediaQuery(
         data: MediaQuery.of(
@@ -113,7 +142,23 @@ void main() {
     expect(tester.takeException(), isNull);
     await tester.tap(keyMenu);
     await tester.pumpAndSettle();
-    expect(find.byType(CheckedPopupMenuItem<String>), findsOneWidget);
+    final l10n = AppLocalizations.of(tester.element(keyMenu));
+    final noneOption = find.text(l10n.playerChordsNone);
+    expect(find.byType(CheckedPopupMenuItem<String>), findsNothing);
+    expect(find.byType(Checkbox), findsNothing);
+    expect(
+      tester.getSemantics(noneOption).flagsCollection.isSelected.toBoolOrNull(),
+      isFalse,
+    );
+    await tester.tap(noneOption);
+    await tester.pumpAndSettle();
+    expect(controller.showChords, isFalse);
+    await tester.tap(keyMenu);
+    await tester.pumpAndSettle();
+    expect(
+      tester.getSemantics(noneOption).flagsCollection.isSelected.toBoolOrNull(),
+      isTrue,
+    );
     expect(tester.takeException(), isNull);
   });
 
@@ -209,6 +254,9 @@ void main() {
         find.byKey(const ValueKey('scroll-speed-panel')),
       );
       expect(panel.height, greaterThan(panel.width));
+      final speedMenuWidth = tester
+          .getSize(find.byType(PopupMenuItem<double>).first)
+          .width;
       expect(
         tester.getRect(find.byKey(const ValueKey('start-lyric-scroll'))),
         playBefore,
@@ -219,6 +267,14 @@ void main() {
       );
       await tester.pump();
       expect(controller.speed, isNot(1));
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('pitch-key-dropdown')));
+      await tester.pumpAndSettle();
+      final keyMenuWidth = tester
+          .getSize(find.byType(PopupMenuItem<String>).first)
+          .width;
+      expect(keyMenuWidth, speedMenuWidth);
       expect(tester.takeException(), isNull);
     },
   );
@@ -248,6 +304,27 @@ void main() {
       Brightness.dark,
     ),
     ('tablet', const Size(1024, 768), const Locale('uk'), 1.0, Brightness.dark),
+    (
+      'phone_fractional',
+      const Size(360, 780),
+      const Locale('en'),
+      1.0,
+      Brightness.light,
+    ),
+    (
+      'phone_large_fractional',
+      const Size(320, 640),
+      const Locale('en'),
+      2.0,
+      Brightness.light,
+    ),
+    (
+      'phone_quarter',
+      const Size(360, 780),
+      const Locale('en'),
+      1.0,
+      Brightness.light,
+    ),
   ]) {
     testWidgets('compact player fits ${scenario.$1}', (tester) async {
       if (capture) {
@@ -268,6 +345,11 @@ void main() {
         });
       }
       final controller = _Controller();
+      if (scenario.$1.contains('fractional') ||
+          scenario.$1.contains('quarter')) {
+        controller.speed = scenario.$1.contains('quarter') ? 1.25 : .55;
+        controller.songKey = 'D#min';
+      }
       addTearDown(controller.dispose);
       await _pump(
         tester,
@@ -298,10 +380,56 @@ void main() {
         await tester.tap(find.byKey(const ValueKey('scroll-speed-toggle')));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
+        final speedPopupWidth = tester
+            .getSize(find.byType(PopupMenuItem<double>).first)
+            .width;
+        final speedPopupRect = tester.getRect(
+          find.byType(PopupMenuItem<double>).first,
+        );
+        final isRtl = scenario.$3.languageCode == 'ar';
+        if (isRtl) {
+          expect(speedPopupRect.left, closeTo(8, 1));
+        } else {
+          expect(speedPopupRect.right, closeTo(scenario.$2.width - 8, 1));
+        }
         await expectLater(
           find.byType(Overlay).first,
           matchesGoldenFile(
             '../../artifacts/compact-player-${scenario.$1}-speed.png',
+          ),
+        );
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        final keyMenu = find.byKey(const ValueKey('pitch-key-dropdown'));
+        await tester.ensureVisible(keyMenu);
+        await tester.tap(keyMenu);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        final keyPopupWidth = tester
+            .getSize(find.byType(PopupMenuItem<String>).first)
+            .width;
+        final keyPopupRect = tester.getRect(
+          find.byType(PopupMenuItem<String>).first,
+        );
+        expect(keyPopupWidth, speedPopupWidth);
+        if (isRtl) {
+          expect(keyPopupRect.right, closeTo(scenario.$2.width - 8, 1));
+        } else {
+          expect(keyPopupRect.left, closeTo(8, 1));
+        }
+        final noneOption = find.text(
+          AppLocalizations.of(tester.element(keyMenu)).playerChordsNone,
+        );
+        await tester.ensureVisible(noneOption);
+        await tester.pumpAndSettle();
+        expect(
+          tester.getRect(noneOption).bottom,
+          lessThanOrEqualTo(scenario.$2.height),
+        );
+        await expectLater(
+          find.byType(Overlay).first,
+          matchesGoldenFile(
+            '../../artifacts/compact-player-${scenario.$1}-chords.png',
           ),
         );
       }

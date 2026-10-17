@@ -54,7 +54,11 @@ void main() {
         'Показано 21 елемент',
       ],
     };
-    const expectedCombined = {"en": "Combined", "bg": "Комбинирани", "uk": "Об’єднані"};
+    const expectedCombined = {
+      "en": "Combined",
+      "bg": "Комбинирани",
+      "uk": "Об’єднані",
+    };
     const expectedSongMatches = {
       'en': [
         '0 song matches',
@@ -504,25 +508,41 @@ void main() {
     );
     expect(find.byKey(const ValueKey('discovery-progress')), findsOneWidget);
     expect(find.byTooltip(l10n.searchDiscoveryProgress(1, 2)), findsOneWidget);
-    expect(find.byKey(const ValueKey('version-source-menu')), findsOneWidget);
+    expect(find.byKey(const ValueKey('source-checks-button')), findsOneWidget);
     expect(
       find.byKey(const ValueKey('discovery-provider-catalog')),
       findsNothing,
     );
-    await tester.tap(find.byKey(const ValueKey('version-source-menu')));
+    await tester.tap(find.byKey(const ValueKey('source-checks-button')));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
-    await tester.tap(find.byKey(const ValueKey('discovery-provider-checks')));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
     expect(
       find.byKey(const ValueKey('discovery-provider-catalog')),
       findsOneWidget,
     );
-    Navigator.of(
-      tester.element(find.byKey(const ValueKey('discovery-provider-catalog'))),
-    ).pop();
-    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.byKey(const ValueKey('discovery-provider-catalog')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(
+      find.byKey(const ValueKey('source-check-details-catalog')),
+      findsOneWidget,
+    );
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('source-check-details-catalog')),
+        matching: find.byTooltip(l10n.navClose),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('source-checks-sheet')),
+        matching: find.byTooltip(l10n.navClose),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
     controller._state = const VerseUiState(
       homeListMode: HomeListMode.online,
       query: 'signal',

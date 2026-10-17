@@ -1763,4 +1763,86 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Mevcut kitaplık değiştirilsin mi? Bu işlem geri alınamaz.';
+
+  @override
+  String get searchCheckOperations => 'İşlemler';
+
+  @override
+  String get searchCheckCode => 'Sonuç kodu';
+
+  @override
+  String get searchCheckQueued => 'Bu kaynağın kontrol edilmesi bekleniyor.';
+
+  @override
+  String get searchCheckFetch => 'Şarkı sözlerini yükle';
+
+  @override
+  String get searchCheckValidate => 'Şarkı eşleşmesini kontrol et';
+
+  @override
+  String get searchCheckCorroborate => 'Şarkı sözü uyumunu kontrol et';
+
+  @override
+  String get searchCheckCompleted => 'Tamamlandı';
+
+  @override
+  String get searchCheckTimeout => 'Kaynak zamanında yanıt vermedi.';
+
+  @override
+  String get searchCheckBlocked => 'Kaynak isteği engelledi.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Kaynak istekleri sınırlandırıyor. Daha sonra tekrar deneyin.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Kaynağa ulaşılamadı. Bağlantınızı kontrol edin.';
+
+  @override
+  String get searchCheckInvalid => 'Kaynak okunamayan bir yanıt döndürdü.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Bu derlemede bu kaynak yapılandırılmamış.';
+
+  @override
+  String get searchCheckNoLyrics => 'Eşleşen şarkı sözü bulunamadı.';
+
+  @override
+  String get searchCheckFailed => 'Bu işlem tamamlanamadı.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Bu karşılaştırma için kaynak kontrolü yapılmadı.';
+
+  @override
+  String get searchVersionCredits => 'Katkıda bulunanlar';
+
+  @override
+  String get searchVersionMediaLinks => 'İlgili bağlantılar';
+
+  @override
+  String get searchCheckCancelled => 'İptal edildi';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Birden fazla eşleşme bulundu. Bu kaynak için daha belirgin bir kayıt gerekiyor.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Bu kaynak için bir kayıt veya eser tanımlayıcısı gerekiyor.';
+
+  @override
+  String get searchCheckExtraction =>
+      'Kaynak yanıt verdi ancak şarkı sözleri çıkarılamadı.';
+
+  @override
+  String get searchCheckBusy => 'Bu kaynak meşgul. Daha sonra tekrar deneyin.';
+
+  @override
+  String get searchCheckSelection => 'Bu kaynaktan belirli bir sonuç seçin.';
+
+  @override
+  String get playerChordsNone => 'Yok';
 }

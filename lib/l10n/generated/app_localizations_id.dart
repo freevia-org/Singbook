@@ -1766,4 +1766,87 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Ganti pustaka saat ini? Tindakan ini tidak dapat dibatalkan.';
+
+  @override
+  String get searchCheckOperations => 'Operasi';
+
+  @override
+  String get searchCheckCode => 'Kode hasil';
+
+  @override
+  String get searchCheckQueued => 'Menunggu pemeriksaan sumber ini.';
+
+  @override
+  String get searchCheckFetch => 'Muat lirik';
+
+  @override
+  String get searchCheckValidate => 'Periksa kecocokan lagu';
+
+  @override
+  String get searchCheckCorroborate => 'Periksa kesesuaian lirik';
+
+  @override
+  String get searchCheckCompleted => 'Selesai';
+
+  @override
+  String get searchCheckTimeout => 'Sumber tidak merespons tepat waktu.';
+
+  @override
+  String get searchCheckBlocked => 'Sumber memblokir permintaan.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Sumber membatasi permintaan. Coba lagi nanti.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Tidak dapat menghubungi sumber. Periksa koneksi Anda.';
+
+  @override
+  String get searchCheckInvalid =>
+      'Sumber memberikan respons yang tidak dapat dibaca.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Sumber ini belum dikonfigurasi dalam versi ini.';
+
+  @override
+  String get searchCheckNoLyrics => 'Tidak ada lirik yang cocok.';
+
+  @override
+  String get searchCheckFailed => 'Operasi ini tidak dapat diselesaikan.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Belum ada pemeriksaan sumber untuk perbandingan ini.';
+
+  @override
+  String get searchVersionCredits => 'Kredit';
+
+  @override
+  String get searchVersionMediaLinks => 'Tautan terkait';
+
+  @override
+  String get searchCheckCancelled => 'Dibatalkan';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Beberapa kecocokan ditemukan. Sumber ini memerlukan rekaman yang lebih spesifik.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Sumber ini memerlukan pengenal rekaman atau karya.';
+
+  @override
+  String get searchCheckExtraction =>
+      'Sumber merespons, tetapi lirik tidak dapat diekstrak.';
+
+  @override
+  String get searchCheckBusy => 'Sumber ini sedang sibuk. Coba lagi nanti.';
+
+  @override
+  String get searchCheckSelection => 'Pilih hasil tertentu dari sumber ini.';
+
+  @override
+  String get playerChordsNone => 'Tidak ada';
 }

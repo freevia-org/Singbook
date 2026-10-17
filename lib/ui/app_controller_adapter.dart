@@ -1,4 +1,5 @@
 import 'dart:async';
+import '../providers/core/diagnostics.dart';
 
 import 'package:flutter/foundation.dart';
 
@@ -42,6 +43,7 @@ class AppControllerAdapter extends VerseUiController {
     this.onImportSetlist,
     this.onSignIn,
     this.onSignOut,
+    this.onSavePlayerPreferences,
   }) {
     app.addListener(_onAppChanged);
   }
@@ -60,6 +62,10 @@ class AppControllerAdapter extends VerseUiController {
   final Future<void> Function()? onSignIn;
   final Future<void> Function()? onSignOut;
 
+  /// Optional persistence boundary for hosts and deterministic failure tests.
+  final Future<void> Function(String id, int transpose, double playbackSpeed)?
+  onSavePlayerPreferences;
+
   VerseTab _tab = VerseTab.home;
   VerseRoute _route = VerseRoute.main;
   HomeListMode _homeMode = HomeListMode.recent;
@@ -75,6 +81,10 @@ class AppControllerAdapter extends VerseUiController {
   SongDocument? _draftSong;
   SongEditorData? _editorData;
   bool _editing = false, _playing = false, _editingSetlist = false;
+  int _playerPreferenceRevision = 0;
+  final _pendingPlayerPreferences =
+      <String, ({int revision, int transpose, double speed})>{};
+  Future<void>? _playerPreferenceSave;
   bool _editorDirty = false, _loadingMoreRecent = false, _disposed = false;
   bool _conflictFilter = false;
   String? _editorBaseHash;
@@ -84,6 +94,7 @@ class AppControllerAdapter extends VerseUiController {
   String? _setlistBaseHash;
   double _progress = 0, _transpose = 0, _playbackSpeed = 1;
   Timer? _searchDebounce, _playerTimer;
+  Timer? _playerPreferenceDebounce;
   final _codec = ChordProCodec();
 
   // Playback clock: progress is derived from a stopwatch so a delayed timer
@@ -657,6 +668,8 @@ class AppControllerAdapter extends VerseUiController {
             title: combined.title,
             artist: combined.artist,
             album: _metaString(combined.metadata['album']),
+            sourceUrl: safeDiagnosticUrl(chosenSource?.candidate.url),
+            metadata: _diagnosticMetadata(combined.metadata),
             durationSeconds: _validDuration(
               combined.metadata['durationSeconds'],
             ),
@@ -720,9 +733,25 @@ class AppControllerAdapter extends VerseUiController {
                     .firstOrNull
                     ?.name ??
                 check.providerId,
+            code: check.code,
             state: check.result?.matchKind == MatchKind.rejected
                 ? 'rejected'
                 : check.state,
+            operations: List.unmodifiable([
+              for (final operation in check.operations)
+                SearchProviderOperationData(
+                  id: operation.id,
+                  phase: operation.phase,
+                  state: operation.state,
+                  code: operation.code,
+                  query: operation.query,
+                  title: operation.title,
+                  artist: operation.artist,
+                  sourceUrl: safeDiagnosticUrl(operation.sourceUrl),
+                  resultCount: operation.resultCount,
+                  elapsedMilliseconds: operation.elapsedMilliseconds,
+                ),
+            ]),
           ),
         )
         .toList();
@@ -743,6 +772,7 @@ class AppControllerAdapter extends VerseUiController {
     final sourceById = {for (final source in song.sources) source.id: source};
     final rolesByProvider = <String, Set<String>>{};
     final providerNames = <String, String>{};
+    final sourceUrls = <String, String?>{};
 
     void add(String? sourceId, String role) {
       if (sourceId == null) return;
@@ -763,6 +793,10 @@ class AppControllerAdapter extends VerseUiController {
               ?.name ??
           providerId;
       providerNames[providerId] = name;
+      sourceUrls.putIfAbsent(
+        providerId,
+        () => safeDiagnosticUrl(source?.candidate.url),
+      );
       rolesByProvider.putIfAbsent(providerId, () => <String>{}).add(role);
     }
 
@@ -788,6 +822,17 @@ class AppControllerAdapter extends VerseUiController {
         add(entry.value as String, 'metadata');
       }
     }
+    final fieldContributors = jsonMap(song.extra['fieldContributors']);
+    for (final entry in fieldContributors.entries) {
+      if (entry.key == 'lyrics' || entry.key == 'chords') continue;
+      final value = song.metadata[entry.key];
+      final sourceIds = entry.value;
+      if (value != null && value != '' && sourceIds is List) {
+        for (final sourceId in sourceIds.whereType<String>()) {
+          add(sourceId, 'metadata');
+        }
+      }
+    }
     for (final track in song.timingTracks) {
       if (track.status != TimingStatus.usable || track.cues.isEmpty) continue;
       final sourceId = jsonMap(track.extra['binding'])['sourceId'];
@@ -808,6 +853,7 @@ class AppControllerAdapter extends VerseUiController {
             for (final role in roleOrder)
               if (entry.value.contains(role)) role,
           ],
+          sourceUrl: sourceUrls[entry.key],
         ),
     ];
   }
@@ -916,6 +962,11 @@ class AppControllerAdapter extends VerseUiController {
           candidate.providerId,
       title: candidate.title,
       artist: candidate.artist,
+      sourceUrl: safeDiagnosticUrl(candidate.url),
+      metadata: _diagnosticMetadata({
+        ...candidate.metadata,
+        ...result.metadata,
+      }),
       album: candidate.album ?? _metaString(result.metadata['album']),
       durationSeconds:
           _validDuration(candidate.durationSeconds) ??
@@ -968,6 +1019,7 @@ class AppControllerAdapter extends VerseUiController {
       SourceContributionData(
         providerName: _providerName(result.candidate.providerId),
         roles: roles,
+        sourceUrl: safeDiagnosticUrl(result.candidate.url),
       ),
     ];
   }
@@ -1521,11 +1573,15 @@ class AppControllerAdapter extends VerseUiController {
   }
 
   Future<void> _openSong(String id) async {
+    _playerPreferenceDebounce?.cancel();
+    await _savePlayerPreferences();
     _songId = id;
     _route = VerseRoute.reader;
     _stopPlayer();
     _progress = 0;
-    _transpose = 0;
+    final song = app.findSong(id);
+    _transpose = _storedTranspose(song);
+    _playbackSpeed = _storedPlaybackSpeed(song);
     await _guard(() => app.recordUse('song', id));
     notifyListeners();
   }
@@ -1543,6 +1599,8 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> editSong(String id) async {
+    _playerPreferenceDebounce?.cancel();
+    await _savePlayerPreferences();
     final song = app.findSong(id);
     if (song == null) return;
     // Editing from the song's own reader keeps its transpose and position;
@@ -1551,7 +1609,8 @@ class AppControllerAdapter extends VerseUiController {
     if (_songId != id) {
       _stopPlayer();
       _progress = 0;
-      _transpose = 0;
+      _transpose = _storedTranspose(song);
+      _playbackSpeed = _storedPlaybackSpeed(song);
       _setlistEntryId = null;
     }
     _songId = id;
@@ -1621,6 +1680,7 @@ class AppControllerAdapter extends VerseUiController {
     _stopPlayer();
     _progress = 0;
     _transpose = 0;
+    _playbackSpeed = 1;
     _setlistId = null;
     _setlistEntryId = null;
     _songId = song.id;
@@ -1821,6 +1881,7 @@ class AppControllerAdapter extends VerseUiController {
       );
     }
     _playbackSpeed = speed;
+    _schedulePlayerPreferenceSave();
     if (_playing) _resetPlayClock();
     notifyListeners();
   }
@@ -1870,10 +1931,14 @@ class AppControllerAdapter extends VerseUiController {
       next += direction;
     }
     if (next < 0 || next >= list.entries.length) return;
+    _playerPreferenceDebounce?.cancel();
+    await _savePlayerPreferences();
     _songId = list.entries[next].songId;
     _setlistEntryId = list.entries[next].id;
     _progress = 0;
-    _transpose = 0;
+    final song = app.findSong(_songId!);
+    _transpose = _storedTranspose(song);
+    _playbackSpeed = _storedPlaybackSpeed(song);
     if (_playing) _resetPlayClock();
     notifyListeners();
     // The song was opened from the setlist: it belongs in Recent too. Recorded
@@ -1902,7 +1967,88 @@ class AppControllerAdapter extends VerseUiController {
   @override
   Future<void> transpose(int semitones) async {
     _transpose += semitones;
+    _schedulePlayerPreferenceSave();
     notifyListeners();
+  }
+
+  static const _playerTransposeMetadataKey = 'x_verse_player_transpose';
+  static const _playerSpeedMetadataKey = 'x_verse_player_speed';
+
+  double _storedTranspose(SongDocument? song) {
+    final value = song?.metadata[_playerTransposeMetadataKey];
+    return value is num && value.isFinite ? value.roundToDouble() : 0;
+  }
+
+  double _storedPlaybackSpeed(SongDocument? song) {
+    final value = song?.metadata[_playerSpeedMetadataKey];
+    return value is num && value.isFinite && value >= .5 && value <= 2
+        ? value.toDouble()
+        : 1;
+  }
+
+  void _schedulePlayerPreferenceSave() {
+    final id = _songId;
+    if (id == null || app.findSong(id) == null) return;
+    // Capture both the song and values now; navigation can change the reader
+    // before the debounce or an in-flight write finishes.
+    _pendingPlayerPreferences[id] = (
+      revision: ++_playerPreferenceRevision,
+      transpose: _transpose.round(),
+      speed: _playbackSpeed,
+    );
+    _playerPreferenceDebounce?.cancel();
+    _playerPreferenceDebounce = Timer(const Duration(milliseconds: 400), () {
+      _playerPreferenceDebounce = null;
+      unawaited(_savePlayerPreferences());
+    });
+  }
+
+  Future<void> _savePlayerPreferences() {
+    final running = _playerPreferenceSave;
+    if (running != null) return running;
+    final completion = _drainPlayerPreferences().whenComplete(() {
+      _playerPreferenceSave = null;
+    });
+    _playerPreferenceSave = completion;
+    return completion;
+  }
+
+  Future<void> _drainPlayerPreferences() async {
+    final failed = <String, int>{};
+    while (true) {
+      final id = _pendingPlayerPreferences.keys
+          .where((id) => _pendingPlayerPreferences[id]!.revision != failed[id])
+          .firstOrNull;
+      if (id == null) return;
+      final pending = _pendingPlayerPreferences[id]!;
+      final saved = await _guard(() async {
+        final writer = onSavePlayerPreferences;
+        if (writer != null) {
+          await writer(id, pending.transpose, pending.speed);
+        } else {
+          await app.savePlayerPreferences(
+            id,
+            transpose: pending.transpose,
+            playbackSpeed: pending.speed,
+          );
+        }
+      });
+      if (!saved) {
+        // Keep this song's values for a later attempt without starving other
+        // songs or retrying a persistent error in a tight loop.
+        failed[id] = pending.revision;
+      } else if (_pendingPlayerPreferences[id]?.revision == pending.revision) {
+        _pendingPlayerPreferences.remove(id);
+      }
+      // A newer revision stays queued and is written after the current save.
+    }
+  }
+
+  @visibleForTesting
+  Future<void> settlePlayerPreferences() {
+    _playerPreferenceDebounce?.cancel();
+    _playerPreferenceDebounce = null;
+    return _savePlayerPreferences();
   }
 
   // -- Editing -------------------------------------------------------------
@@ -2436,6 +2582,8 @@ class AppControllerAdapter extends VerseUiController {
     _disposed = true;
     _searchDebounce?.cancel();
     _playerTimer?.cancel();
+    _playerPreferenceDebounce?.cancel();
+    unawaited(_savePlayerPreferences());
     app.removeListener(_onAppChanged);
     _notices.close();
     _position.dispose();
@@ -2470,3 +2618,82 @@ String? _metaString(Object? value) => switch (value) {
   num() || bool() => value.toString(),
   _ => null,
 };
+
+Map<String, Object?> _diagnosticMetadata(Map<String, Object?> values) {
+  const aliases = <String, List<String>>{
+    'timeSignature': ['timeSignature', 'time_signature', 'time'],
+    'tuning': ['tuning', 'tuningStrings', 'tuning_strings'],
+  };
+  const allowed = {
+    'key',
+    'capo',
+    'tuning',
+    'tempo',
+    'timeSignature',
+    'year',
+    'album',
+    'language',
+    'composer',
+    'composers',
+    'lyricist',
+    'lyricists',
+    'author',
+    'writers',
+    'genre',
+    'credits',
+    'mediaLinks',
+  };
+  final output = <String, Object?>{};
+  for (final key in allowed) {
+    Object? value = values[key];
+    if (value == null) {
+      for (final alias in aliases[key] ?? const <String>[]) {
+        if (values.containsKey(alias)) {
+          value = values[alias];
+          break;
+        }
+      }
+    }
+    if (key == 'mediaLinks' && value is List) {
+      final links = <String>[];
+      for (final entry in value.take(30)) {
+        final rawUrl = entry is String
+            ? entry
+            : entry is Map
+            ? _metaString(entry['url'])
+            : null;
+        final url = safeDiagnosticUrl(rawUrl);
+        if (url == null) continue;
+        final rawTitle = entry is Map ? _metaString(entry['title']) : null;
+        final title = rawTitle?.trim().replaceAll(RegExp(r'\s+'), ' ');
+        final label = title == null || title.isEmpty || title == rawUrl
+            ? url
+            : '${title.length > 256 ? title.substring(0, 256) : title}\n$url';
+        if (!links.contains(label)) links.add(label);
+      }
+      if (links.isNotEmpty) output[key] = List<String>.unmodifiable(links);
+    } else if (value is List) {
+      final entries = value
+          .map((item) => _diagnosticCredit(item))
+          .whereType<String>()
+          .toList(growable: false);
+      if (entries.isNotEmpty) output[key] = List<String>.unmodifiable(entries);
+    } else if (_metaString(value) case final text?
+        when text.trim().isNotEmpty) {
+      output[key] = text.trim();
+    }
+  }
+  return Map<String, Object?>.unmodifiable(output);
+}
+
+String? _diagnosticCredit(Object? value) {
+  if (value is String) return value.trim().isEmpty ? null : value.trim();
+  if (value is! Map) return null;
+  final name = _metaString(value['name'] ?? value['artist'] ?? value['value']);
+  final role = _metaString(value['role'] ?? value['type']);
+  final parts = [
+    if (name?.trim().isNotEmpty == true) name!.trim(),
+    if (role?.trim().isNotEmpty == true) role!.trim(),
+  ];
+  return parts.isEmpty ? null : parts.join(' · ');
+}

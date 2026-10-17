@@ -1746,4 +1746,88 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Replace the current library? This cannot be undone.';
+
+  @override
+  String get searchCheckOperations => 'Operations';
+
+  @override
+  String get searchCheckCode => 'Result code';
+
+  @override
+  String get searchCheckQueued => 'Waiting to check this source.';
+
+  @override
+  String get searchCheckFetch => 'Load lyrics';
+
+  @override
+  String get searchCheckValidate => 'Check song match';
+
+  @override
+  String get searchCheckCorroborate => 'Check lyric agreement';
+
+  @override
+  String get searchCheckCompleted => 'Completed';
+
+  @override
+  String get searchCheckTimeout => 'The source did not respond in time.';
+
+  @override
+  String get searchCheckBlocked => 'The source blocked the request.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'The source is limiting requests. Try again later.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Could not reach the source. Check your connection.';
+
+  @override
+  String get searchCheckInvalid =>
+      'The source returned an unreadable response.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'This source is not configured in this build.';
+
+  @override
+  String get searchCheckNoLyrics => 'No matching lyrics were returned.';
+
+  @override
+  String get searchCheckFailed => 'This operation could not be completed.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'No source checks have run for this comparison.';
+
+  @override
+  String get searchVersionCredits => 'Credits';
+
+  @override
+  String get searchVersionMediaLinks => 'Related links';
+
+  @override
+  String get searchCheckCancelled => 'Cancelled';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Several matches were found. This source needs a more specific recording.';
+
+  @override
+  String get searchCheckIdentity =>
+      'This source needs a recording or work identifier.';
+
+  @override
+  String get searchCheckExtraction =>
+      'The source responded, but lyrics could not be extracted.';
+
+  @override
+  String get searchCheckBusy => 'This source is busy. Try again later.';
+
+  @override
+  String get searchCheckSelection =>
+      'Choose a specific result from this source.';
+
+  @override
+  String get playerChordsNone => 'None';
 }

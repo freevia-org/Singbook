@@ -1698,4 +1698,79 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get backupReplaceConfirm => '現在のライブラリを置き換えますか？この操作は元に戻せません。';
+
+  @override
+  String get searchCheckOperations => '操作';
+
+  @override
+  String get searchCheckCode => '結果コード';
+
+  @override
+  String get searchCheckQueued => 'このソースの確認を待っています。';
+
+  @override
+  String get searchCheckFetch => '歌詞を読み込む';
+
+  @override
+  String get searchCheckValidate => '曲の一致を確認';
+
+  @override
+  String get searchCheckCorroborate => '歌詞の一致を確認';
+
+  @override
+  String get searchCheckCompleted => '完了';
+
+  @override
+  String get searchCheckTimeout => 'ソースが時間内に応答しませんでした。';
+
+  @override
+  String get searchCheckBlocked => 'ソースがリクエストをブロックしました。';
+
+  @override
+  String get searchCheckRateLimited => 'ソースがリクエストを制限しています。後でもう一度お試しください。';
+
+  @override
+  String get searchCheckNetwork => 'ソースに接続できません。接続を確認してください。';
+
+  @override
+  String get searchCheckInvalid => 'ソースから読み取れない応答が返されました。';
+
+  @override
+  String get searchCheckNotConfigured => 'このビルドではこのソースが設定されていません。';
+
+  @override
+  String get searchCheckNoLyrics => '一致する歌詞が見つかりませんでした。';
+
+  @override
+  String get searchCheckFailed => 'この操作を完了できませんでした。';
+
+  @override
+  String get searchCheckNoHistory => 'この比較ではソース確認がまだ実行されていません。';
+
+  @override
+  String get searchVersionCredits => 'クレジット';
+
+  @override
+  String get searchVersionMediaLinks => '関連リンク';
+
+  @override
+  String get searchCheckCancelled => 'キャンセル済み';
+
+  @override
+  String get searchCheckAmbiguous => '複数の一致が見つかりました。このソースには、より具体的な録音情報が必要です。';
+
+  @override
+  String get searchCheckIdentity => 'このソースには録音または作品の識別子が必要です。';
+
+  @override
+  String get searchCheckExtraction => 'ソースから応答がありましたが、歌詞を抽出できませんでした。';
+
+  @override
+  String get searchCheckBusy => 'このソースは混み合っています。後でもう一度お試しください。';
+
+  @override
+  String get searchCheckSelection => 'このソースから特定の結果を選択してください。';
+
+  @override
+  String get playerChordsNone => 'なし';
 }

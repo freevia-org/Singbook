@@ -1764,4 +1764,86 @@ class AppLocalizationsFi extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Korvataanko nykyinen kirjasto? Tätä ei voi kumota.';
+
+  @override
+  String get searchCheckOperations => 'Toiminnot';
+
+  @override
+  String get searchCheckCode => 'Tuloskoodi';
+
+  @override
+  String get searchCheckQueued => 'Odotetaan tämän lähteen tarkistusta.';
+
+  @override
+  String get searchCheckFetch => 'Lataa sanoitus';
+
+  @override
+  String get searchCheckValidate => 'Tarkista kappaleen vastaavuus';
+
+  @override
+  String get searchCheckCorroborate => 'Tarkista sanoituksen yhtenevyys';
+
+  @override
+  String get searchCheckCompleted => 'Valmis';
+
+  @override
+  String get searchCheckTimeout => 'Lähde ei vastannut ajoissa.';
+
+  @override
+  String get searchCheckBlocked => 'Lähde esti pyynnön.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Lähde rajoittaa pyyntöjä. Yritä myöhemmin uudelleen.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Lähteeseen ei saatu yhteyttä. Tarkista yhteytesi.';
+
+  @override
+  String get searchCheckInvalid => 'Lähde palautti lukukelvottoman vastauksen.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Tätä lähdettä ei ole määritetty tässä koontiversiossa.';
+
+  @override
+  String get searchCheckNoLyrics => 'Vastaavia sanoituksia ei löytynyt.';
+
+  @override
+  String get searchCheckFailed => 'Toimintoa ei voitu suorittaa loppuun.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Tämän vertailun lähteitä ei ole tarkistettu.';
+
+  @override
+  String get searchVersionCredits => 'Tekijätiedot';
+
+  @override
+  String get searchVersionMediaLinks => 'Aiheeseen liittyvät linkit';
+
+  @override
+  String get searchCheckCancelled => 'Peruutettu';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Löytyi useita osumia. Tämä lähde tarvitsee tarkemman äänitteen.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Tämä lähde tarvitsee äänitteen tai teoksen tunnisteen.';
+
+  @override
+  String get searchCheckExtraction =>
+      'Lähde vastasi, mutta sanoitusta ei voitu poimia.';
+
+  @override
+  String get searchCheckBusy => 'Lähde on varattu. Yritä myöhemmin uudelleen.';
+
+  @override
+  String get searchCheckSelection => 'Valitse tietty tulos tästä lähteestä.';
+
+  @override
+  String get playerChordsNone => 'Ei mitään';
 }

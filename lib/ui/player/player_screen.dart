@@ -16,6 +16,31 @@ import '../widgets/subpage_header.dart';
 import 'screen_awake.dart';
 import 'section_labels.dart';
 
+const _playerPopupBaseWidth = 96.0;
+
+double _playerPopupWidth(BuildContext context) {
+  final textScale = MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 1.6);
+  final availableWidth = MediaQuery.sizeOf(context).width - 16;
+  return (_playerPopupBaseWidth * textScale)
+      .clamp(_playerPopupBaseWidth, availableWidth)
+      .toDouble();
+}
+
+BoxConstraints _playerPopupConstraints(BuildContext context) =>
+    BoxConstraints.tightFor(width: _playerPopupWidth(context));
+
+double _speedPopupPanelHeight(BuildContext context) =>
+    (MediaQuery.sizeOf(context).height - 64).clamp(220.0, 292.0).toDouble();
+
+String _formatPlaybackSpeed(double speed) {
+  final tenths = speed * 10;
+  final isTenth = (tenths - tenths.round()).abs() < 0.000001;
+  final value = isTenth
+      ? speed.toStringAsFixed(1).replaceFirst(RegExp(r'\.0$'), '')
+      : speed.toStringAsFixed(2);
+  return '$value×';
+}
+
 int? _keyPitchClass(String? key) {
   if (key == null) return null;
   final match = RegExp(
@@ -54,9 +79,13 @@ class _PlayerScreenState extends State<PlayerScreen>
     with WidgetsBindingObserver {
   final _lyricsScroll = ScrollController();
   final _controlsScroll = ScrollController();
+  final _speedPopupAnchorKey = GlobalKey();
+  final _chordsPopupAnchorKey = GlobalKey();
   final _lineKeys = <String, GlobalKey>{};
   late ValueListenable<PlayerPosition> _position;
   String? _lastLineId;
+  double _speedPopupOffsetX = 0;
+  double _chordsPopupOffsetX = 0;
   String? _lastSongId;
   String? _currentLineId;
   double _lastProgress = 0;
@@ -487,6 +516,9 @@ class _PlayerScreenState extends State<PlayerScreen>
     final l10n = AppLocalizations.of(context);
     final song = state.song;
     if (song == null) return const SizedBox.shrink();
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+    _schedulePopupOffset(_speedPopupAnchorKey, alignRight: !isRtl);
+    _schedulePopupOffset(_chordsPopupAnchorKey, alignRight: isRtl);
     unawaited(_applyWakeLock());
     _pruneLineKeys(state.songLines);
     final duration = _durationOf(state);
@@ -508,15 +540,42 @@ class _PlayerScreenState extends State<PlayerScreen>
       ),
     );
     Widget controls({required bool compact, double? maxHeight}) {
+      final screenWidth = MediaQuery.sizeOf(context).width;
+      final controlWidth = compact
+          ? (screenWidth * .4).clamp(300.0, 360.0)
+          : screenWidth;
+      final speedLabel = TextPainter(
+        text: TextSpan(
+          text: _formatPlaybackSpeed(state.playbackSpeed),
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        textDirection: Directionality.of(context),
+        textScaler: MediaQuery.textScalerOf(context),
+      )..layout();
+      final speedWidth = speedLabel.width + 28;
+      speedLabel.dispose();
+      final keyLabel = TextPainter(
+        text: TextSpan(
+          text: state.readerKey ?? song.key ?? '—',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        textDirection: Directionality.of(context),
+        textScaler: MediaQuery.textScalerOf(context),
+      )..layout();
+      final keyWidth = keyLabel.width + 40;
+      keyLabel.dispose();
+      final separateSpeed =
+          screenWidth < 360 ||
+          MediaQuery.textScalerOf(context).scale(1) > 1.25 ||
+          speedWidth > (controlWidth - 16) / 4;
       final inlineChords =
           song.hasChords &&
           !compact &&
+          !separateSpeed &&
+          keyWidth <= (controlWidth - 16) / 4 &&
           _keyPitchClass(song.key) != null &&
-          MediaQuery.sizeOf(context).width >= 360 &&
+          screenWidth >= 360 &&
           MediaQuery.textScalerOf(context).scale(1) <= 1.25;
-      final separateSpeed =
-          MediaQuery.sizeOf(context).width < 360 ||
-          MediaQuery.textScalerOf(context).scale(1) > 1.25;
       final content = Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -548,33 +607,24 @@ class _PlayerScreenState extends State<PlayerScreen>
             _chordControls(l10n, state),
         ],
       );
-      // Large text or a short screen can make the controls taller than the
-      // screen; they scroll inside their share so the lyrics stay visible.
-      return SafeArea(
-        top: false,
-        child: compact
-            ? Scrollbar(
+      final canScroll = compact || maxHeight != null;
+      final body = canScroll
+          ? ConstrainedBox(
+              constraints: maxHeight == null
+                  ? const BoxConstraints()
+                  : BoxConstraints(maxHeight: maxHeight),
+              child: Scrollbar(
                 controller: _controlsScroll,
                 thumbVisibility: true,
                 child: SingleChildScrollView(
                   controller: _controlsScroll,
+                  reverse: true,
                   child: content,
                 ),
-              )
-            : maxHeight == null
-            ? content
-            : ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: maxHeight),
-                child: Scrollbar(
-                  controller: _controlsScroll,
-                  thumbVisibility: true,
-                  child: SingleChildScrollView(
-                    controller: _controlsScroll,
-                    child: content,
-                  ),
-                ),
               ),
-      );
+            )
+          : content;
+      return SafeArea(top: false, child: body);
     }
 
     final metadata = [
@@ -592,6 +642,10 @@ class _PlayerScreenState extends State<PlayerScreen>
         final compactLandscape =
             constraints.maxWidth > constraints.maxHeight &&
             constraints.maxHeight < 430;
+        final largeText = MediaQuery.textScalerOf(context).scale(1) > 1.5;
+        final shortPortrait =
+            constraints.maxHeight < 600 &&
+            constraints.maxWidth <= constraints.maxHeight;
         return Column(
           children: [
             SubpageHeader(
@@ -724,12 +778,44 @@ class _PlayerScreenState extends State<PlayerScreen>
               )
             else ...[
               Expanded(child: lyrics),
-              controls(compact: false, maxHeight: constraints.maxHeight * .4),
+              controls(
+                compact: false,
+                maxHeight: largeText || shortPortrait
+                    ? (constraints.maxHeight * .4)
+                          .clamp(180.0, 320.0)
+                          .toDouble()
+                    : null,
+              ),
             ],
           ],
         );
       },
     );
+  }
+
+  void _schedulePopupOffset(GlobalKey anchorKey, {required bool alignRight}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final renderObject = anchorKey.currentContext?.findRenderObject();
+      if (renderObject is! RenderBox || !renderObject.hasSize) return;
+      final rect = renderObject.localToGlobal(Offset.zero) & renderObject.size;
+      final screenWidth = MediaQuery.sizeOf(context).width;
+      const inset = 8.0;
+      final offset = alignRight
+          ? screenWidth - inset - rect.right
+          : inset - rect.left;
+      final current = identical(anchorKey, _speedPopupAnchorKey)
+          ? _speedPopupOffsetX
+          : _chordsPopupOffsetX;
+      if ((offset - current).abs() < .5) return;
+      setState(() {
+        if (identical(anchorKey, _speedPopupAnchorKey)) {
+          _speedPopupOffsetX = offset;
+        } else {
+          _chordsPopupOffsetX = offset;
+        }
+      });
+    });
   }
 
   Widget _lyricLine(
@@ -911,76 +997,107 @@ class _PlayerScreenState extends State<PlayerScreen>
     );
   }
 
-  Widget _speedControl(
-    AppLocalizations l10n,
-    VerseUiState state,
-  ) => PopupMenuButton<double>(
-    key: const ValueKey('scroll-speed-toggle'),
-    tooltip: l10n.playerScrollSpeed,
-    position: PopupMenuPosition.over,
-    offset: const Offset(0, -236),
-    itemBuilder: (_) => [
-      PopupMenuItem<double>(
-        enabled: false,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: SizedBox(
-          key: const ValueKey('scroll-speed-panel'),
-          width: 64,
-          height: 210,
-          child: AnimatedBuilder(
-            animation: controller,
-            builder: (context, _) => Column(
-              children: [
-                const Text('2×'),
-                Expanded(
-                  child: RotatedBox(
-                    quarterTurns: 3,
-                    child: Slider(
-                      key: const ValueKey('scroll-speed-slider'),
-                      min: .5,
-                      max: 2,
-                      divisions: 30,
-                      value: controller.state.playbackSpeed,
-                      label:
-                          '${controller.state.playbackSpeed.toStringAsFixed(2)}×',
-                      semanticFormatterCallback: (value) =>
-                          '${l10n.playerScrollSpeed}, ${value.toStringAsFixed(2)}×',
-                      onChanged: controller.setPlaybackSpeed,
+  Widget _speedControl(AppLocalizations l10n, VerseUiState state) {
+    final popupWidth = _playerPopupWidth(context);
+    final panelHeight = _speedPopupPanelHeight(context);
+    final labelWidth = (popupWidth * .43).clamp(34.0, 68.0).toDouble();
+    return KeyedSubtree(
+      key: _speedPopupAnchorKey,
+      child: PopupMenuButton<double>(
+        key: const ValueKey('scroll-speed-toggle'),
+        tooltip: l10n.playerScrollSpeed,
+        position: PopupMenuPosition.over,
+        offset: Offset(_speedPopupOffsetX, -(panelHeight + 14)),
+        constraints: _playerPopupConstraints(context),
+        menuPadding: EdgeInsets.zero,
+        itemBuilder: (_) => [
+          PopupMenuItem<double>(
+            enabled: false,
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+            child: SizedBox(
+              key: const ValueKey('scroll-speed-panel'),
+              width: popupWidth - 8,
+              height: panelHeight,
+              child: AnimatedBuilder(
+                animation: controller,
+                builder: (context, _) => Row(
+                  children: [
+                    SizedBox(
+                      width: labelWidth,
+                      height: panelHeight - 20,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('2×'),
+                          Text('1.5×'),
+                          Text('1×'),
+                          Text('0.5×'),
+                        ],
+                      ),
                     ),
-                  ),
+                    Expanded(
+                      child: RotatedBox(
+                        quarterTurns: 3,
+                        child: SliderTheme(
+                          data: SliderTheme.of(context).copyWith(
+                            overlayShape: SliderComponentShape.noOverlay,
+                            inactiveTickMarkColor: Theme.of(
+                              context,
+                            ).colorScheme.primary.withValues(alpha: .55),
+                            activeTickMarkColor: Theme.of(
+                              context,
+                            ).colorScheme.onPrimary,
+                          ),
+                          child: Slider(
+                            key: const ValueKey('scroll-speed-slider'),
+                            min: .5,
+                            max: 2,
+                            divisions: 15,
+                            value: controller.state.playbackSpeed,
+                            label: _formatPlaybackSpeed(
+                              controller.state.playbackSpeed,
+                            ),
+                            semanticFormatterCallback: (value) =>
+                                '${l10n.playerScrollSpeed}, ${_formatPlaybackSpeed(value)}',
+                            onChanged: controller.setPlaybackSpeed,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const Text('0.5×'),
-              ],
+              ),
+            ),
+          ),
+        ],
+        child: Semantics(
+          key: const ValueKey('scroll-speed-toggle-label'),
+          label:
+              '${l10n.playerScrollSpeed}, ${_formatPlaybackSpeed(state.playbackSpeed)}',
+          button: true,
+          excludeSemantics: true,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    _formatPlaybackSpeed(state.playbackSpeed),
+                    key: const ValueKey('scroll-speed-value'),
+                    maxLines: 1,
+                    softWrap: false,
+                  ),
+                  const Icon(Icons.arrow_drop_up_rounded, size: 20),
+                ],
+              ),
             ),
           ),
         ),
       ),
-    ],
-    child: Semantics(
-      label:
-          '${l10n.playerScrollSpeed}, ${state.playbackSpeed.toStringAsFixed(2)}×',
-      button: true,
-      excludeSemantics: true,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '${state.playbackSpeed.toStringAsFixed(2)}×',
-                key: const ValueKey('scroll-speed-value'),
-                maxLines: 1,
-                softWrap: false,
-              ),
-              const Icon(Icons.arrow_drop_up_rounded, size: 20),
-            ],
-          ),
-        ),
-      ),
-    ),
-  );
+    );
+  }
 
   Widget _transport(
     BuildContext context,
@@ -989,14 +1106,14 @@ class _PlayerScreenState extends State<PlayerScreen>
     required bool inlineChords,
     required bool showSpeed,
   }) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 0, 16, 2),
+    padding: const EdgeInsets.fromLTRB(8, 0, 8, 2),
     child: Builder(
       builder: (context) {
         final start = FilledButton.icon(
           key: const ValueKey('start-lyric-scroll'),
           style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-            minimumSize: const Size(104, 42),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+            minimumSize: const Size(88, 38),
           ),
           onPressed: () async {
             if (!state.isPlaying) {
@@ -1059,14 +1176,37 @@ class _PlayerScreenState extends State<PlayerScreen>
         ];
         return Row(
           children: [
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: controls,
+            if (inlineChords || showSpeed) ...[
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: inlineChords
+                      ? _chordControls(l10n, state, inline: true)
+                      : const SizedBox.shrink(),
+                ),
               ),
-            ),
-            if (inlineChords) _chordControls(l10n, state, inline: true),
-            if (showSpeed) _speedControl(l10n, state),
+              Expanded(
+                flex: 2,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: controls,
+                ),
+              ),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: showSpeed
+                      ? _speedControl(l10n, state)
+                      : const SizedBox.shrink(),
+                ),
+              ),
+            ] else
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: controls,
+                ),
+              ),
           ],
         );
       },
@@ -1144,58 +1284,77 @@ class _PlayerScreenState extends State<PlayerScreen>
               icon: const Icon(Icons.add_circle_outline),
             ),
           ],
-          PopupMenuButton<String>(
-            key: const ValueKey('pitch-key-dropdown'),
-            tooltip: l10n.readerTranspose,
-            onSelected: (action) {
-              if (action == 'no-chords') {
-                controller.setShowChords(!state.showChords);
-                return;
-              }
-              final targetPitch = int.parse(action.substring('pitch-'.length));
-              var delta = (targetPitch - currentPitch + 12) % 12;
-              if (delta > 6) delta -= 12;
-              if (delta != 0) controller.transpose(delta);
-            },
-            itemBuilder: (context) => [
-              if (originalPitch != null)
-                for (var pitch = 0; pitch < 12; pitch++)
-                  PopupMenuItem(
-                    value: 'pitch-$pitch',
-                    child: Text(
-                      pitch == originalPitch
-                          ? '${originalKey!}  ★'
-                          : '${keyNames[pitch]}${minorKey ? 'm' : ''}',
-                      style: pitch == originalPitch
-                          ? TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontWeight: FontWeight.w700,
-                            )
-                          : null,
+          KeyedSubtree(
+            key: _chordsPopupAnchorKey,
+            child: PopupMenuButton<String>(
+              key: const ValueKey('pitch-key-dropdown'),
+              tooltip: l10n.readerTranspose,
+              position: PopupMenuPosition.over,
+              offset: Offset(_chordsPopupOffsetX, 0),
+              constraints: _playerPopupConstraints(context),
+              menuPadding: EdgeInsets.zero,
+              onSelected: (action) {
+                if (action == 'no-chords') {
+                  controller.setShowChords(!state.showChords);
+                  return;
+                }
+                final targetPitch = int.parse(
+                  action.substring('pitch-'.length),
+                );
+                var delta = (targetPitch - currentPitch + 12) % 12;
+                if (delta > 6) delta -= 12;
+                if (delta != 0) controller.transpose(delta);
+              },
+              itemBuilder: (context) => [
+                if (originalPitch != null)
+                  for (var pitch = 0; pitch < 12; pitch++)
+                    PopupMenuItem(
+                      value: 'pitch-$pitch',
+                      height: 34,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        pitch == originalPitch
+                            ? '${originalKey!}  ★'
+                            : '${keyNames[pitch]}${minorKey ? 'm' : ''}',
+                        style: pitch == originalPitch
+                            ? TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontWeight: FontWeight.w700,
+                              )
+                            : null,
+                      ),
                     ),
+                PopupMenuItem(
+                  value: 'no-chords',
+                  height: 34,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Semantics(
+                    selected: !state.showChords,
+                    child: Text(l10n.playerChordsNone),
                   ),
-              CheckedPopupMenuItem(
-                value: 'no-chords',
-                checked: !state.showChords,
-                child: Text(l10n.searchChordsUnavailable),
-              ),
-            ],
-            child: Semantics(
-              label: displayedKey == null
-                  ? l10n.readerTranspose
-                  : '${l10n.readerTranspose}, $displayedKey',
-              button: true,
-              excludeSemantics: true,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(displayedKey ?? '—'),
-                      const Icon(Icons.arrow_drop_down),
-                    ],
+                ),
+              ],
+              child: Semantics(
+                key: const ValueKey('pitch-key-dropdown-label'),
+                label: displayedKey == null
+                    ? l10n.readerTranspose
+                    : '${l10n.readerTranspose}, $displayedKey',
+                button: true,
+                excludeSemantics: true,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    minHeight: 48,
+                    minWidth: 48,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(displayedKey ?? '—'),
+                        const Icon(Icons.arrow_drop_down),
+                      ],
+                    ),
                   ),
                 ),
               ),

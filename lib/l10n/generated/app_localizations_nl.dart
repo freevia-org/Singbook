@@ -1784,4 +1784,89 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'De huidige bibliotheek vervangen? Dit kan niet ongedaan worden gemaakt.';
+
+  @override
+  String get searchCheckOperations => 'Bewerkingen';
+
+  @override
+  String get searchCheckCode => 'Resultaatcode';
+
+  @override
+  String get searchCheckQueued => 'Wachten op controle van deze bron.';
+
+  @override
+  String get searchCheckFetch => 'Songtekst laden';
+
+  @override
+  String get searchCheckValidate => 'Nummerovereenkomst controleren';
+
+  @override
+  String get searchCheckCorroborate => 'Tekstovereenkomst controleren';
+
+  @override
+  String get searchCheckCompleted => 'Voltooid';
+
+  @override
+  String get searchCheckTimeout => 'De bron reageerde niet op tijd.';
+
+  @override
+  String get searchCheckBlocked => 'De bron heeft het verzoek geblokkeerd.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'De bron beperkt verzoeken. Probeer het later opnieuw.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Kan de bron niet bereiken. Controleer je verbinding.';
+
+  @override
+  String get searchCheckInvalid => 'De bron gaf een onleesbaar antwoord terug.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Deze bron is niet ingesteld in deze build.';
+
+  @override
+  String get searchCheckNoLyrics =>
+      'Er is geen overeenkomende songtekst gevonden.';
+
+  @override
+  String get searchCheckFailed => 'Deze bewerking kon niet worden voltooid.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Er zijn geen broncontroles uitgevoerd voor deze vergelijking.';
+
+  @override
+  String get searchVersionCredits => 'Credits';
+
+  @override
+  String get searchVersionMediaLinks => 'Gerelateerde links';
+
+  @override
+  String get searchCheckCancelled => 'Geannuleerd';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Er zijn meerdere overeenkomsten gevonden. Deze bron heeft een specifiekere opname nodig.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Deze bron heeft een opname- of werkidentificatie nodig.';
+
+  @override
+  String get searchCheckExtraction =>
+      'De bron reageerde, maar de songtekst kon niet worden opgehaald.';
+
+  @override
+  String get searchCheckBusy =>
+      'Deze bron is bezig. Probeer het later opnieuw.';
+
+  @override
+  String get searchCheckSelection =>
+      'Kies een specifiek resultaat van deze bron.';
+
+  @override
+  String get playerChordsNone => 'Geen';
 }

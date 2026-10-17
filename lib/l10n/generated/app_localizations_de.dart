@@ -1782,4 +1782,92 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Aktuelle Bibliothek ersetzen? Das kann nicht rückgängig gemacht werden.';
+
+  @override
+  String get searchCheckOperations => 'Vorgänge';
+
+  @override
+  String get searchCheckCode => 'Ergebniscode';
+
+  @override
+  String get searchCheckQueued => 'Warte auf die Prüfung dieser Quelle.';
+
+  @override
+  String get searchCheckFetch => 'Liedtext laden';
+
+  @override
+  String get searchCheckValidate => 'Songzuordnung prüfen';
+
+  @override
+  String get searchCheckCorroborate => 'Textübereinstimmung prüfen';
+
+  @override
+  String get searchCheckCompleted => 'Abgeschlossen';
+
+  @override
+  String get searchCheckTimeout =>
+      'Die Quelle hat nicht rechtzeitig geantwortet.';
+
+  @override
+  String get searchCheckBlocked => 'Die Quelle hat die Anfrage blockiert.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Die Quelle begrenzt Anfragen. Versuche es später erneut.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Die Quelle ist nicht erreichbar. Prüfe deine Verbindung.';
+
+  @override
+  String get searchCheckInvalid =>
+      'Die Quelle hat eine unlesbare Antwort zurückgegeben.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Diese Quelle ist in diesem Build nicht konfiguriert.';
+
+  @override
+  String get searchCheckNoLyrics =>
+      'Es wurden keine passenden Liedtexte gefunden.';
+
+  @override
+  String get searchCheckFailed =>
+      'Dieser Vorgang konnte nicht abgeschlossen werden.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Für diesen Vergleich wurden keine Quellenprüfungen ausgeführt.';
+
+  @override
+  String get searchVersionCredits => 'Quellenangaben';
+
+  @override
+  String get searchVersionMediaLinks => 'Verwandte Links';
+
+  @override
+  String get searchCheckCancelled => 'Abgebrochen';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Es wurden mehrere Treffer gefunden. Diese Quelle benötigt eine genauere Aufnahme.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Diese Quelle benötigt eine Kennung der Aufnahme oder des Werks.';
+
+  @override
+  String get searchCheckExtraction =>
+      'Die Quelle hat geantwortet, aber der Liedtext konnte nicht extrahiert werden.';
+
+  @override
+  String get searchCheckBusy =>
+      'Diese Quelle ist ausgelastet. Versuche es später erneut.';
+
+  @override
+  String get searchCheckSelection =>
+      'Wähle ein bestimmtes Ergebnis aus dieser Quelle aus.';
+
+  @override
+  String get playerChordsNone => 'Keine';
 }

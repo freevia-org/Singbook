@@ -1754,4 +1754,86 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'मौजूदा लाइब्रेरी बदलें? इसे पूर्ववत नहीं किया जा सकता।';
+
+  @override
+  String get searchCheckOperations => 'कार्रवाइयाँ';
+
+  @override
+  String get searchCheckCode => 'परिणाम कोड';
+
+  @override
+  String get searchCheckQueued => 'इस स्रोत की जाँच का इंतज़ार है।';
+
+  @override
+  String get searchCheckFetch => 'गीत के बोल लोड करें';
+
+  @override
+  String get searchCheckValidate => 'गीत का मिलान जाँचें';
+
+  @override
+  String get searchCheckCorroborate => 'बोलों का मिलान जाँचें';
+
+  @override
+  String get searchCheckCompleted => 'पूरा हुआ';
+
+  @override
+  String get searchCheckTimeout => 'स्रोत ने समय पर जवाब नहीं दिया।';
+
+  @override
+  String get searchCheckBlocked => 'स्रोत ने अनुरोध को ब्लॉक कर दिया।';
+
+  @override
+  String get searchCheckRateLimited =>
+      'स्रोत अनुरोधों को सीमित कर रहा है। बाद में फिर कोशिश करें।';
+
+  @override
+  String get searchCheckNetwork =>
+      'स्रोत तक नहीं पहुँचा जा सका। अपना कनेक्शन जाँचें।';
+
+  @override
+  String get searchCheckInvalid => 'स्रोत ने अपठनीय जवाब दिया।';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'इस बिल्ड में यह स्रोत कॉन्फ़िगर नहीं है।';
+
+  @override
+  String get searchCheckNoLyrics => 'मिलते-जुलते बोल नहीं मिले।';
+
+  @override
+  String get searchCheckFailed => 'यह कार्रवाई पूरी नहीं हो सकी।';
+
+  @override
+  String get searchCheckNoHistory =>
+      'इस तुलना के लिए किसी स्रोत की जाँच नहीं की गई है।';
+
+  @override
+  String get searchVersionCredits => 'श्रेय';
+
+  @override
+  String get searchVersionMediaLinks => 'संबंधित लिंक';
+
+  @override
+  String get searchCheckCancelled => 'रद्द किया गया';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'कई मिलान मिले। इस स्रोत को अधिक विशिष्ट रिकॉर्डिंग चाहिए।';
+
+  @override
+  String get searchCheckIdentity =>
+      'इस स्रोत को रिकॉर्डिंग या रचना का पहचानकर्ता चाहिए।';
+
+  @override
+  String get searchCheckExtraction =>
+      'स्रोत ने जवाब दिया, लेकिन बोल निकाले नहीं जा सके।';
+
+  @override
+  String get searchCheckBusy => 'यह स्रोत व्यस्त है। बाद में फिर कोशिश करें।';
+
+  @override
+  String get searchCheckSelection => 'इस स्रोत से कोई विशिष्ट परिणाम चुनें।';
+
+  @override
+  String get playerChordsNone => 'कोई नहीं';
 }

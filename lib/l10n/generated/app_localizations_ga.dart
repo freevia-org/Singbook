@@ -1782,4 +1782,91 @@ class AppLocalizationsGa extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Ionadaigh an leabharlann reatha? Ní féidir é seo a chealú.';
+
+  @override
+  String get searchCheckOperations => 'Oibríochtaí';
+
+  @override
+  String get searchCheckCode => 'Cód toraidh';
+
+  @override
+  String get searchCheckQueued =>
+      'Ag fanacht leis an bhfoinse seo a sheiceáil.';
+
+  @override
+  String get searchCheckFetch => 'Luchtaigh liricí';
+
+  @override
+  String get searchCheckValidate => 'Seiceáil meaitseáil an amhráin';
+
+  @override
+  String get searchCheckCorroborate => 'Seiceáil comhaontú na liricí';
+
+  @override
+  String get searchCheckCompleted => 'Críochnaithe';
+
+  @override
+  String get searchCheckTimeout => 'Níor fhreagair an fhoinse in am.';
+
+  @override
+  String get searchCheckBlocked => 'Chuir an fhoinse bac ar an iarratas.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Tá an fhoinse ag teorannú iarratas. Bain triail eile as ar ball.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Níorbh fhéidir an fhoinse a bhaint amach. Seiceáil do cheangal.';
+
+  @override
+  String get searchCheckInvalid =>
+      'D’fhill an fhoinse freagra nach féidir a léamh.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Níl an fhoinse seo cumraithe sa leagan seo.';
+
+  @override
+  String get searchCheckNoLyrics => 'Níor aimsíodh liricí meaitseála.';
+
+  @override
+  String get searchCheckFailed =>
+      'Níorbh fhéidir an oibríocht seo a chríochnú.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Níor reáchtáladh seiceálacha foinse don chomparáid seo.';
+
+  @override
+  String get searchVersionCredits => 'Buíochas';
+
+  @override
+  String get searchVersionMediaLinks => 'Naisc ghaolmhara';
+
+  @override
+  String get searchCheckCancelled => 'Cealaithe';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Fuarthas roinnt meaitseálacha. Tá taifeadadh níos sainiúla ag teastáil ón bhfoinse seo.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Tá aitheantóir taifeadta nó saothair ag teastáil ón bhfoinse seo.';
+
+  @override
+  String get searchCheckExtraction =>
+      'D’fhreagair an fhoinse, ach níorbh fhéidir na liricí a bhaint amach.';
+
+  @override
+  String get searchCheckBusy =>
+      'Tá an fhoinse seo gnóthach. Bain triail eile as ar ball.';
+
+  @override
+  String get searchCheckSelection =>
+      'Roghnaigh toradh sonrach ón bhfoinse seo.';
+
+  @override
+  String get playerChordsNone => 'Dada';
 }

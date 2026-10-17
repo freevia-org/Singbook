@@ -1787,4 +1787,89 @@ class AppLocalizationsEl extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Να αντικατασταθεί η τρέχουσα βιβλιοθήκη; Αυτή η ενέργεια δεν αναιρείται.';
+
+  @override
+  String get searchCheckOperations => 'Λειτουργίες';
+
+  @override
+  String get searchCheckCode => 'Κωδικός αποτελέσματος';
+
+  @override
+  String get searchCheckQueued => 'Αναμονή για έλεγχο αυτής της πηγής.';
+
+  @override
+  String get searchCheckFetch => 'Φόρτωση στίχων';
+
+  @override
+  String get searchCheckValidate => 'Έλεγχος αντιστοιχίας τραγουδιού';
+
+  @override
+  String get searchCheckCorroborate => 'Έλεγχος συμφωνίας στίχων';
+
+  @override
+  String get searchCheckCompleted => 'Ολοκληρώθηκε';
+
+  @override
+  String get searchCheckTimeout => 'Η πηγή δεν αποκρίθηκε εγκαίρως.';
+
+  @override
+  String get searchCheckBlocked => 'Η πηγή απέκλεισε το αίτημα.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Η πηγή περιορίζει τα αιτήματα. Δοκιμάστε ξανά αργότερα.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Δεν ήταν δυνατή η πρόσβαση στην πηγή. Ελέγξτε τη σύνδεσή σας.';
+
+  @override
+  String get searchCheckInvalid => 'Η πηγή επέστρεψε μη αναγνώσιμη απάντηση.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Αυτή η πηγή δεν έχει ρυθμιστεί σε αυτήν την έκδοση.';
+
+  @override
+  String get searchCheckNoLyrics => 'Δεν βρέθηκαν αντίστοιχοι στίχοι.';
+
+  @override
+  String get searchCheckFailed =>
+      'Δεν ήταν δυνατή η ολοκλήρωση αυτής της λειτουργίας.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Δεν έχουν εκτελεστεί έλεγχοι πηγών για αυτήν τη σύγκριση.';
+
+  @override
+  String get searchVersionCredits => 'Συντελεστές';
+
+  @override
+  String get searchVersionMediaLinks => 'Σχετικοί σύνδεσμοι';
+
+  @override
+  String get searchCheckCancelled => 'Ακυρώθηκε';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Βρέθηκαν πολλά αποτελέσματα. Αυτή η πηγή χρειάζεται πιο συγκεκριμένη ηχογράφηση.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Αυτή η πηγή χρειάζεται αναγνωριστικό ηχογράφησης ή έργου.';
+
+  @override
+  String get searchCheckExtraction =>
+      'Η πηγή αποκρίθηκε, αλλά δεν ήταν δυνατή η εξαγωγή των στίχων.';
+
+  @override
+  String get searchCheckBusy =>
+      'Η πηγή είναι απασχολημένη. Δοκιμάστε ξανά αργότερα.';
+
+  @override
+  String get searchCheckSelection =>
+      'Επιλέξτε ένα συγκεκριμένο αποτέλεσμα από αυτήν την πηγή.';
+
+  @override
+  String get playerChordsNone => 'Κανένα';
 }
