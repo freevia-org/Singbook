@@ -90,7 +90,7 @@ Map<String, dynamic> selectedTrack() => {
 };
 
 void main() {
-  test('search uses anonymous HTTP requests without cookies', () async {
+  test('search carries only the fixed anonymous consent marker', () async {
     final requests = <http.Request>[];
     final t = transport((request) {
       requests.add(request);
@@ -105,6 +105,10 @@ void main() {
       );
       expect(
         requests.map((request) => request.headers['cookie']),
+        everyElement('SOCS=CAI'),
+      );
+      expect(
+        requests.map((request) => request.headers['authorization']),
         everyElement(isNull),
       );
     } finally {
@@ -112,61 +116,66 @@ void main() {
     }
   });
 
-  test('resolve uses anonymous HTTP requests without cookies', () async {
-    final requests = <http.Request>[];
-    final t = transport((request) {
-      requests.add(request);
-      if (request.url.path == '/') return homepage();
-      if (request.url.path.endsWith('/next')) return json(selectedTrack());
-      return json({
-        'contents': {
-          'sectionListRenderer': {
-            'contents': [
-              {
-                'musicDescriptionShelfRenderer': {
-                  'description': {
-                    'simpleText': 'First invented line\nSecond invented line',
+  test(
+    'resolve carries the same marker through next and lyrics browse',
+    () async {
+      final requests = <http.Request>[];
+      final t = transport((request) {
+        requests.add(request);
+        if (request.url.path == '/') return homepage();
+        if (request.url.path.endsWith('/next')) return json(selectedTrack());
+        return json({
+          'contents': {
+            'sectionListRenderer': {
+              'contents': [
+                {
+                  'musicDescriptionShelfRenderer': {
+                    'description': {
+                      'simpleText': 'First invented line\nSecond invented line',
+                    },
+                    'footer': {'simpleText': 'YouTube Music'},
                   },
-                  'footer': {'simpleText': 'YouTube Music'},
                 },
-              },
-            ],
+              ],
+            },
           },
-        },
+        });
       });
-    });
-    try {
-      final result = await YoutubeMusicProvider(t).resolve(
-        const SongCandidate(
-          providerId: 'youtubemusic',
-          id: 'abcdefghijk',
-          title: 'Paper Satellites',
-          artist: 'Fixture Ensemble',
-        ),
-      );
-      expect(result.body, contains('First invented line'));
-      expect(
-        requests.map((request) => request.url.host),
-        everyElement('music.youtube.com'),
-      );
-      expect(
-        requests.map((request) => request.headers['cookie']),
-        everyElement(isNull),
-      );
-      expect(requests.map((request) => request.url.path), [
-        '/',
-        '/youtubei/v1/next',
-        '/youtubei/v1/browse',
-      ]);
-    } finally {
-      await t.close();
-    }
-  });
+      try {
+        final result = await YoutubeMusicProvider(t).resolve(
+          const SongCandidate(
+            providerId: 'youtubemusic',
+            id: 'abcdefghijk',
+            title: 'Paper Satellites',
+            artist: 'Fixture Ensemble',
+          ),
+        );
+        expect(result.body, contains('First invented line'));
+        expect(
+          requests.map((request) => request.url.host),
+          everyElement('music.youtube.com'),
+        );
+        expect(
+          requests.map((request) => request.headers['cookie']),
+          everyElement('SOCS=CAI'),
+        );
+        expect(requests.map((request) => request.url.path), [
+          '/',
+          '/youtubei/v1/next',
+          '/youtubei/v1/browse',
+        ]);
+      } finally {
+        await t.close();
+      }
+    },
+  );
 
   test('consent redirect stays blocked and does not open a web flow', () async {
     var requests = 0;
     final t = transport((request) {
       requests++;
+      expect(request.url.host, 'music.youtube.com');
+      expect(request.headers['cookie'], 'SOCS=CAI');
       return http.Response(
         '',
         302,
@@ -183,6 +192,26 @@ void main() {
         ),
       );
       expect(requests, 1);
+    } finally {
+      await t.close();
+    }
+  });
+
+  test('another source does not inherit the YouTube request marker', () async {
+    final requests = <http.Request>[];
+    final t = transport((request) {
+      requests.add(request);
+      if (request.url.host == 'genius.com') {
+        return http.Response('fixture', 200);
+      }
+      return request.url.path == '/' ? homepage() : json(emptySearch());
+    });
+    try {
+      await YoutubeMusicProvider(t).search('fixture');
+      await t.getText(Uri.parse('https://genius.com/fixture'));
+      expect(requests.last.url.host, 'genius.com');
+      expect(requests.last.headers['cookie'], isNull);
+      expect(requests.last.headers['authorization'], isNull);
     } finally {
       await t.close();
     }

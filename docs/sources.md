@@ -47,10 +47,15 @@ Genius needs only a client access token supplied through `config/local.defines.j
 ### YouTube Music access
 
 YouTube Music uses anonymous HTTP requests to unofficial public web-client JSON
-endpoints. Singbook does not open a consent page, read or send browser cookies,
-sign in, or retry with a saved session. Google may return a consent interstitial,
-regional restriction, challenge, or unavailable response; these are reported as
-ordinary source failures and no workaround is attempted. This is not a Google-
+endpoints. The exact `https://music.youtube.com` homepage and JSON requests carry
+the fixed `Cookie: SOCS=CAI` accept-all consent marker used by
+[yt-dlp](https://github.com/yt-dlp/yt-dlp/blob/master/yt_dlp/extractor/youtube/_base.py).
+This is an accept-all choice, not a neutral or rejection marker. It
+contains no account or device identifier and is not read from, or written to,
+a browser or persistent cookie store. It is not sent to artwork hosts or other
+providers. Singbook does not open a consent page, sign in, or restore a saved
+session. A remaining consent redirect, regional restriction, challenge or
+unavailable response remains an ordinary source failure. This is not a Google-
 supported lyrics API or a redistribution license. Google OAuth for Drive does
 not authorize these requests.
 

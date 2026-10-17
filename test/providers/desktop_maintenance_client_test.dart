@@ -90,7 +90,7 @@ void main() {
       var calls = 0;
       server.listen((request) async {
         calls++;
-        expect(request.headers.value('cookie'), isNull);
+        expect(request.headers.value('cookie'), 'SOCS=CAI');
         request.response
           ..statusCode = 302
           ..headers.set(
