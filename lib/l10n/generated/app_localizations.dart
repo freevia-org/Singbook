@@ -675,7 +675,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchChordsUnavailable.
   ///
   /// In en, this message translates to:
-  /// **'No chords'**
+  /// **'None'**
   String get searchChordsUnavailable;
 
   /// No description provided for @searchTimingAvailable.
