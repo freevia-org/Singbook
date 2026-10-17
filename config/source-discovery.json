@@ -18,14 +18,14 @@
       "id": "startjamming",
       "name": "Start Jamming",
       "firstSeen": "2026-10-15",
-      "lastChecked": "2026-10-16",
+      "lastChecked": "2026-10-17",
       "status": "deferred",
       "documentation": [
         "https://www.startjamming.com/api",
         "https://www.startjamming.com/llms-full.txt"
       ],
       "endpoint": "https://www.startjamming.com",
-      "reason": "Documented public read API; search has object/array response variants, index is keyed by ID, and artist can be absent. Chords use normalized measure arrays; cannot claim lyric-aligned chords. Requires a supported adapter and real canaries before activation. Primary API docs returned HTTP 200 on 2026-10-16 at 06:03:15 UTC. Agent requests to /api/songs/* must include for=agent, honor ETags and preserve canonical IDs/URLs. Agent responses omit license; licensing must not be inferred. Permitted reuse/attribution evidence and two independent live extraction canaries remain pending."
+      "reason": "Documented public read API; search has object/array response variants, index is keyed by ID, and artist can be absent. Chords use normalized measure arrays; cannot claim lyric-aligned chords. Requires a supported adapter and real canaries before activation. Primary API docs returned HTTP 200 on 2026-10-16 at 06:03:15 UTC. Agent requests to /api/songs/* must include for=agent, honor ETags and preserve canonical IDs/URLs. Agent responses omit license; licensing must not be inferred. Permitted reuse/attribution evidence and two independent live extraction canaries remain pending. Rechecked publisher API documentation on 2026-10-17 at 05:59:04 UTC: origin HTTP 200. This reachability check does not satisfy outstanding permitted reuse, adapter or two-canary requirements; remains deferred."
     },
     {
       "id": "lyrica",
@@ -51,6 +51,17 @@
       ],
       "endpoint": "https://uk.wikisource.org/w/api.php",
       "reason": "On 2026-10-16 at 06:04:01 UTC, public MediaWiki siteinfo returned Ukrainian Wikisource (uk) and site CC BY-SA 4.0 rights metadata. At 06:04:12 UTC, the Ukrainian folk songs category returned five title metadata entries and continuation. This proves regional catalog metadata access only; no lyric extraction canaries were run. Overlap with existing sources is unmeasured. Defer pending per-work copyright/provenance review, attribution/share-alike handling, compatible identity/search adapter, two independent live extraction canaries and claimed capability coverage. Site rights metadata alone does not clear every work."
+    },
+    {
+      "id": "open-hymnal",
+      "name": "Open Hymnal",
+      "firstSeen": "2026-10-17",
+      "lastChecked": "2026-10-17",
+      "status": "deferred",
+      "documentation": [
+        "https://openhymnal.org/"
+      ],
+      "reason": "Publisher candidate endpoint returned HTTP 200 on 2026-10-17 at 05:59:04 UTC. This is reachability evidence only, not verified catalog identity or permission. No documented supported API, per-work rights/attribution evidence, overlap assessment or two independent live extraction canaries were established. Defer until those requirements and a compatible adapter are verified; no source activation proposed."
     }
   ]
 }
