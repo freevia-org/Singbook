@@ -74,7 +74,6 @@ class _PlayerScreenState extends State<PlayerScreen>
 
   bool _userScrolling = false;
   double? _dragValue;
-  bool _speedExpanded = false;
   bool _awakeHeld = false;
   bool _inForeground = true;
   bool _leaving = false;
@@ -87,8 +86,21 @@ class _PlayerScreenState extends State<PlayerScreen>
 
   bool _isStandardTuning(String? tuning) {
     if (tuning == null) return false;
+    final normalized = tuning.trim().toLowerCase();
+    if (const {
+      'standard',
+      'standard tuning',
+      'e standard',
+      'e standard tuning',
+    }.contains(normalized)) {
+      return true;
+    }
+    final noteList = normalized.replaceFirst(
+      RegExp(r'^(?:standard(?:\s+tuning)?|e\s+standard(?:\s+tuning)?)\s*:?\s*'),
+      '',
+    );
     final notes = RegExp(r'[A-Ga-g][#b♯♭]?')
-        .allMatches(tuning)
+        .allMatches(noteList)
         .map((match) => match.group(0)!.toUpperCase())
         .join(',');
     return notes == 'E,A,D,G,B,E';
@@ -496,6 +508,15 @@ class _PlayerScreenState extends State<PlayerScreen>
       ),
     );
     Widget controls({required bool compact, double? maxHeight}) {
+      final inlineChords =
+          song.hasChords &&
+          !compact &&
+          _keyPitchClass(song.key) != null &&
+          MediaQuery.sizeOf(context).width >= 360 &&
+          MediaQuery.textScalerOf(context).scale(1) <= 1.25;
+      final separateSpeed =
+          MediaQuery.sizeOf(context).width < 360 ||
+          MediaQuery.textScalerOf(context).scale(1) > 1.25;
       final content = Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -504,9 +525,27 @@ class _PlayerScreenState extends State<PlayerScreen>
             builder: (context, position, _) =>
                 _seekBar(context, l10n, state, position, duration),
           ),
-          _transport(context, l10n, state),
-          _expandedSpeedControl(context, l10n, state),
-          if (song.hasChords) _chordControls(l10n, state),
+          _transport(
+            context,
+            l10n,
+            state,
+            inlineChords: inlineChords,
+            showSpeed: !separateSpeed,
+          ),
+          if (separateSpeed)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Wrap(
+                alignment: WrapAlignment.end,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  if (song.hasChords) _chordControls(l10n, state, inline: true),
+                  _speedControl(l10n, state),
+                ],
+              ),
+            )
+          else if (song.hasChords && !inlineChords)
+            _chordControls(l10n, state),
         ],
       );
       // Large text or a short screen can make the controls taller than the
@@ -873,46 +912,84 @@ class _PlayerScreenState extends State<PlayerScreen>
     );
   }
 
-  Widget _expandedSpeedControl(
-    BuildContext context,
+  Widget _speedControl(
     AppLocalizations l10n,
     VerseUiState state,
-  ) => AnimatedSize(
-    duration: const Duration(milliseconds: 180),
-    curve: Curves.easeOut,
-    alignment: Alignment.topCenter,
-    child: !_speedExpanded
-        ? const SizedBox(width: double.infinity, height: 0)
-        : Padding(
-            key: const ValueKey('scroll-speed-panel'),
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 2),
-            child: Row(
+  ) => PopupMenuButton<double>(
+    key: const ValueKey('scroll-speed-toggle'),
+    tooltip: l10n.playerScrollSpeed,
+    position: PopupMenuPosition.over,
+    offset: const Offset(0, -236),
+    itemBuilder: (_) => [
+      PopupMenuItem<double>(
+        enabled: false,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: SizedBox(
+          key: const ValueKey('scroll-speed-panel'),
+          width: 64,
+          height: 210,
+          child: AnimatedBuilder(
+            animation: controller,
+            builder: (context, _) => Column(
               children: [
-                Text('0.5×', style: Theme.of(context).textTheme.labelSmall),
+                const Text('2×'),
                 Expanded(
-                  child: Slider(
-                    key: const ValueKey('scroll-speed-slider'),
-                    min: .5,
-                    max: 2,
-                    divisions: 30,
-                    value: state.playbackSpeed,
-                    label: '${state.playbackSpeed.toStringAsFixed(2)}×',
-                    semanticFormatterCallback: (value) =>
-                        '${l10n.playerScrollSpeed}, ${value.toStringAsFixed(2)}×',
-                    onChanged: controller.setPlaybackSpeed,
+                  child: RotatedBox(
+                    quarterTurns: 3,
+                    child: Slider(
+                      key: const ValueKey('scroll-speed-slider'),
+                      min: .5,
+                      max: 2,
+                      divisions: 30,
+                      value: controller.state.playbackSpeed,
+                      label:
+                          '${controller.state.playbackSpeed.toStringAsFixed(2)}×',
+                      semanticFormatterCallback: (value) =>
+                          '${l10n.playerScrollSpeed}, ${value.toStringAsFixed(2)}×',
+                      onChanged: controller.setPlaybackSpeed,
+                    ),
                   ),
                 ),
-                Text('2×', style: Theme.of(context).textTheme.labelSmall),
+                const Text('0.5×'),
               ],
             ),
           ),
+        ),
+      ),
+    ],
+    child: Semantics(
+      label:
+          '${l10n.playerScrollSpeed}, ${state.playbackSpeed.toStringAsFixed(2)}×',
+      button: true,
+      excludeSemantics: true,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '${state.playbackSpeed.toStringAsFixed(2)}×',
+                key: const ValueKey('scroll-speed-value'),
+                maxLines: 1,
+                softWrap: false,
+              ),
+              const Icon(Icons.arrow_drop_up_rounded, size: 20),
+            ],
+          ),
+        ),
+      ),
+    ),
   );
 
   Widget _transport(
     BuildContext context,
     AppLocalizations l10n,
-    VerseUiState state,
-  ) => Padding(
+    VerseUiState state, {
+    required bool inlineChords,
+    required bool showSpeed,
+  }) => Padding(
     padding: const EdgeInsets.fromLTRB(16, 0, 16, 2),
     child: Builder(
       builder: (context) {
@@ -989,43 +1066,19 @@ class _PlayerScreenState extends State<PlayerScreen>
                 children: controls,
               ),
             ),
-            Tooltip(
-              message: l10n.playerScrollSpeed,
-              child: TextButton(
-                key: const ValueKey('scroll-speed-toggle'),
-                style: TextButton.styleFrom(
-                  minimumSize: const Size(48, 44),
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  visualDensity: VisualDensity.compact,
-                ),
-                onPressed: () =>
-                    setState(() => _speedExpanded = !_speedExpanded),
-                child: Semantics(
-                  label:
-                      '${l10n.playerScrollSpeed}, ${state.playbackSpeed.toStringAsFixed(2)}×',
-                  button: true,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('${state.playbackSpeed.toStringAsFixed(2)}×'),
-                      Icon(
-                        _speedExpanded
-                            ? Icons.arrow_drop_up_rounded
-                            : Icons.arrow_drop_down_rounded,
-                        size: 20,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            if (inlineChords) _chordControls(l10n, state, inline: true),
+            if (showSpeed) _speedControl(l10n, state),
           ],
         );
       },
     ),
   );
 
-  Widget _chordControls(AppLocalizations l10n, VerseUiState state) {
+  Widget _chordControls(
+    AppLocalizations l10n,
+    VerseUiState state, {
+    bool inline = false,
+  }) {
     const sharpNames = [
       'C',
       'C♯',
@@ -1067,9 +1120,15 @@ class _PlayerScreenState extends State<PlayerScreen>
         originalKey?.contains('b') == true || originalKey?.contains('♭') == true
         ? flatNames
         : sharpNames;
+    final displayedKey =
+        state.readerKey ??
+        (originalPitch == null ? null : keyNames[currentPitch]);
     return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 2),
+      padding: inline
+          ? EdgeInsets.zero
+          : const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 2),
       child: Row(
+        mainAxisSize: inline ? MainAxisSize.min : MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           if (originalPitch == null) ...[
@@ -1123,17 +1182,22 @@ class _PlayerScreenState extends State<PlayerScreen>
               ),
             ],
             child: Semantics(
-              label:
-                  '${l10n.readerTranspose}, ${state.readerKey ?? keyNames[currentPitch]}',
+              label: displayedKey == null
+                  ? l10n.readerTranspose
+                  : '${l10n.readerTranspose}, $displayedKey',
               button: true,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(state.readerKey ?? keyNames[currentPitch]),
-                    const Icon(Icons.arrow_drop_down),
-                  ],
+              excludeSemantics: true,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(displayedKey ?? '—'),
+                      const Icon(Icons.arrow_drop_down),
+                    ],
+                  ),
                 ),
               ),
             ),

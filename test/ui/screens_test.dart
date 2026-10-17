@@ -530,7 +530,8 @@ void main() {
       await pumpShell(tester, c);
       final l10n = l10nOf(tester);
 
-      expect(find.textContaining('${l10n.editorKeyField}: D'), findsOneWidget);
+      expect(find.textContaining('${l10n.editorKeyField}:'), findsNothing);
+      expect(find.textContaining('${l10n.editorCapoField}: 2'), findsOneWidget);
       expect(find.byTooltip(l10n.songFavoriteAdd), findsOneWidget);
       await tester.tap(find.byKey(const ValueKey('start-lyric-scroll')));
       expect(c.calls, contains('playPause'));

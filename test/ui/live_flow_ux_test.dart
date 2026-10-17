@@ -923,10 +923,13 @@ void main() {
       final l10n = AppLocalizations.of(
         tester.element(find.byType(PlayerScreen)),
       );
-      expect(find.text(l10n.playerLyricsOnly), findsOneWidget);
+      expect(find.text(l10n.playerLyricsOnly), findsNothing);
       expect(find.text(l10n.playerEstimatedDuration('1:30')), findsOneWidget);
       expect(find.text(l10n.playerEstimatedPace), findsOneWidget);
       expect(find.text(l10n.playerPlay), findsOneWidget);
+      expect(find.byKey(const ValueKey('scroll-speed-slider')), findsNothing);
+      await tester.tap(find.byKey(const ValueKey('scroll-speed-toggle')));
+      await tester.pumpAndSettle();
       final speedSlider = tester.widget<Slider>(
         find.byKey(const ValueKey('scroll-speed-slider')),
       );
@@ -935,6 +938,8 @@ void main() {
         speedSlider.semanticFormatterCallback!(1.5),
         contains(l10n.playerScrollSpeed),
       );
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
 
       await tester.tap(find.byKey(const ValueKey('start-lyric-scroll')));
       await tester.pump();
@@ -995,6 +1000,8 @@ void main() {
     addTearDown(controller.dispose);
     await _pumpPlayer(tester, controller);
 
+    await tester.tap(find.byKey(const ValueKey('scroll-speed-toggle')));
+    await tester.pumpAndSettle();
     final speedSlider = tester.widget<Slider>(
       find.byKey(const ValueKey('scroll-speed-slider')),
     );
@@ -1110,7 +1117,7 @@ void main() {
     final start = find.byKey(const ValueKey('start-lyric-scroll'));
     final previous = find.byTooltip(l10n.playerPreviousSection);
     final next = find.byTooltip(l10n.playerNextSection);
-    final speed = find.byKey(const ValueKey('scroll-speed-slider'));
+    final speed = find.byKey(const ValueKey('scroll-speed-toggle'));
     expect(previous, findsOneWidget);
     expect(next, findsOneWidget);
     expect(speed, findsOneWidget);
@@ -1142,7 +1149,7 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets('landscape reader fits metadata and compare row at large text', (
+  testWidgets('landscape reader fits metadata with comparison in overflow', (
     tester,
   ) async {
     tester.view.devicePixelRatio = 1;
@@ -1179,10 +1186,10 @@ void main() {
     final l10n = AppLocalizations.of(tester.element(find.byType(PlayerScreen)));
     expect(find.text('Artist Name · Album Name'), findsOneWidget);
     expect(find.textContaining('LRCLIB'), findsOneWidget);
-    expect(find.text(l10n.searchCompare), findsOneWidget);
-    expect(find.text(l10n.playerLyricsOnly), findsOneWidget);
+    expect(find.text(l10n.searchCompare), findsNothing);
+    expect(find.text(l10n.playerLyricsOnly), findsNothing);
     final start = find.byKey(const ValueKey('start-lyric-scroll'));
-    final speed = find.byKey(const ValueKey('scroll-speed-slider'));
+    final speed = find.byKey(const ValueKey('scroll-speed-toggle'));
     expect(start, findsOneWidget);
     expect(speed, findsOneWidget);
     for (final control in [start, speed]) {
@@ -1248,11 +1255,11 @@ void main() {
     await _pumpPlayer(tester, controller, scale: 1.5);
     final l10n = AppLocalizations.of(tester.element(find.byType(PlayerScreen)));
     final start = find.byKey(const ValueKey('start-lyric-scroll'));
-    final speed = find.byKey(const ValueKey('scroll-speed-slider'));
+    final speed = find.byKey(const ValueKey('scroll-speed-toggle'));
     final nextSection = find.byTooltip(l10n.playerNextSection);
-    final chords = find.byType(Checkbox);
+    final chords = find.byKey(const ValueKey('pitch-key-dropdown'));
     expect(find.text('Artist Name · Album Name'), findsOneWidget);
-    expect(find.text(l10n.searchCompare), findsOneWidget);
+    expect(find.text(l10n.searchCompare), findsNothing);
     expect(start, findsOneWidget);
     expect(speed, findsOneWidget);
     expect(nextSection, findsOneWidget);
@@ -1311,7 +1318,7 @@ void main() {
     final l10n = AppLocalizations.of(tester.element(find.byType(PlayerScreen)));
     expect(find.text('Artist Name · Album Name'), findsOneWidget);
     expect(find.textContaining('LRCLIB'), findsOneWidget);
-    expect(find.text(l10n.searchCompare), findsOneWidget);
+    expect(find.text(l10n.searchCompare), findsNothing);
     final targetLine = find.text('Rotation lyric 18');
     final lyricsList = find.byType(ListView).last;
     expect(
