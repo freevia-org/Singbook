@@ -88,7 +88,7 @@ void main() {
       final speedSlider = tester.widget<Slider>(
         find.byKey(const ValueKey('scroll-speed-slider')),
       );
-      expect(speedSlider.divisions, 30);
+      expect(speedSlider.divisions, 15);
       expect(speedSlider.min, .5);
       expect(speedSlider.max, 2);
       expect(find.text('4:00'), findsOneWidget);
@@ -127,56 +127,36 @@ void main() {
     expect(controller.state.readerKey, 'C');
   });
 
-  testWidgets('No chords is a reversible option inside the key menu', (
+  testWidgets('None is reversible and has no checkbox in the key menu', (
     tester,
   ) async {
     await pumpShell(tester, controller);
     final keyMenu = find.byKey(const ValueKey('pitch-key-dropdown'));
-    final noChords = l10nOf(tester).searchChordsUnavailable;
+    final none = l10nOf(tester).searchChordsUnavailable;
     expect(find.byType(Checkbox), findsNothing);
     expect(controller.state.showChords, isTrue);
     await tester.tap(keyMenu);
     await tester.pumpAndSettle();
+    expect(find.byType(CheckedPopupMenuItem<String>), findsNothing);
+    final noneOption = find.text(none);
     expect(
-      tester
-          .widget<CheckedPopupMenuItem<String>>(
-            find.ancestor(
-              of: find.text(noChords),
-              matching: find.byType(CheckedPopupMenuItem<String>),
-            ),
-          )
-          .checked,
+      tester.getSemantics(noneOption).hasFlag(SemanticsFlag.isSelected),
       isFalse,
     );
-    await tester.tap(
-      find.ancestor(
-        of: find.text(noChords),
-        matching: find.byType(CheckedPopupMenuItem<String>),
-      ),
-    );
+    await tester.tap(noneOption);
     await tester.runAsync(() => repository.getSetting('app'));
     await tester.pumpAndSettle();
     expect(controller.state.showChords, isFalse);
     expect(controller.state.readerKey, 'D');
     await tester.tap(keyMenu);
     await tester.pumpAndSettle();
+    expect(find.byType(CheckedPopupMenuItem<String>), findsNothing);
+    final selectedNone = find.text(none);
     expect(
-      tester
-          .widget<CheckedPopupMenuItem<String>>(
-            find.ancestor(
-              of: find.text(noChords),
-              matching: find.byType(CheckedPopupMenuItem<String>),
-            ),
-          )
-          .checked,
+      tester.getSemantics(selectedNone).hasFlag(SemanticsFlag.isSelected),
       isTrue,
     );
-    await tester.tap(
-      find.ancestor(
-        of: find.text(noChords),
-        matching: find.byType(CheckedPopupMenuItem<String>),
-      ),
-    );
+    await tester.tap(selectedNone);
     await tester.runAsync(() => repository.getSetting('app'));
     await tester.pumpAndSettle();
     expect(controller.state.showChords, isTrue);

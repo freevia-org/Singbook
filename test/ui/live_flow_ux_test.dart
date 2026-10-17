@@ -933,7 +933,7 @@ void main() {
       final speedSlider = tester.widget<Slider>(
         find.byKey(const ValueKey('scroll-speed-slider')),
       );
-      expect(speedSlider.divisions, 30);
+      expect(speedSlider.divisions, 15);
       expect(
         speedSlider.semanticFormatterCallback!(1.5),
         contains(l10n.playerScrollSpeed),
