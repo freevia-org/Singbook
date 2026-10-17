@@ -91,7 +91,12 @@ void main() {
         final play = find.byKey(const ValueKey('start-lyric-scroll'));
         expect(dropdown, findsOneWidget, reason: fixture.name);
         expect(play, findsOneWidget, reason: fixture.name);
-        _expectChordValues(tester, fixture.original, reason: fixture.name);
+        await _expectChordValues(
+          tester,
+          controller,
+          fixture.original,
+          reason: fixture.name,
+        );
 
         if (index == 0) {
           _expectDropdownBeforePlay(tester, dropdown, play);
@@ -100,13 +105,23 @@ void main() {
           await _capture(binding, 'transpose_keyless_popup_360x800');
           await _selectPopupItem(tester, 'transpose-offset-2');
           await _settleNative(tester, controller, repository);
-          _expectChordValues(tester, fixture.shifted, reason: fixture.name);
+          await _expectChordValues(
+            tester,
+            controller,
+            fixture.shifted,
+            reason: fixture.name,
+          );
           expect(controller.state.readerKey, fixture.shiftedKey);
           await _capture(binding, 'transpose_keyless_plus2_360x800');
         } else {
           await _selectTranspose(tester, dropdown, fixture, 2);
           await _settleNative(tester, controller, repository);
-          _expectChordValues(tester, fixture.shifted, reason: fixture.name);
+          await _expectChordValues(
+            tester,
+            controller,
+            fixture.shifted,
+            reason: fixture.name,
+          );
           expect(controller.state.readerKey, fixture.shiftedKey);
           if (fixture.pitch != null && index == 2) {
             await _capture(binding, 'transpose_known_plus2_360x800');
@@ -155,16 +170,31 @@ void main() {
           reason: fixture.name,
         );
         expect(reopened.metadata['key'], fixture.key, reason: fixture.name);
-        _expectChordValues(tester, fixture.shifted, reason: fixture.name);
+        await _expectChordValues(
+          tester,
+          controller,
+          fixture.shifted,
+          reason: fixture.name,
+        );
         expect(controller.state.readerTranspose, 2, reason: fixture.name);
         expect(controller.state.readerKey, fixture.shiftedKey);
 
         await _selectTranspose(tester, dropdown, fixture, -1);
         await _settleNative(tester, controller, repository);
-        _expectChordValues(tester, fixture.down, reason: fixture.name);
+        await _expectChordValues(
+          tester,
+          controller,
+          fixture.down,
+          reason: fixture.name,
+        );
         await _selectTranspose(tester, dropdown, fixture, 0);
         await _settleNative(tester, controller, repository);
-        _expectChordValues(tester, fixture.original, reason: fixture.name);
+        await _expectChordValues(
+          tester,
+          controller,
+          fixture.original,
+          reason: fixture.name,
+        );
         expect(controller.state.readerTranspose, 0, reason: fixture.name);
 
         await tester.tap(dropdown);
@@ -180,7 +210,12 @@ void main() {
         await _selectTranspose(tester, dropdown, fixture, 0);
         await _settleNative(tester, controller, repository);
         expect(controller.state.showChords, isTrue, reason: fixture.name);
-        _expectChordValues(tester, fixture.original, reason: fixture.name);
+        await _expectChordValues(
+          tester,
+          controller,
+          fixture.original,
+          reason: fixture.name,
+        );
         expect(tester.takeException(), isNull, reason: fixture.name);
       }
 
@@ -209,7 +244,12 @@ void main() {
       await _capture(binding, 'transpose_rtl_large_landscape_popup_900x400');
       await tester.tap(plusTwo);
       await _settleNative(tester, controller, repository);
-      _expectChordValues(tester, keyless.shifted, reason: keyless.name);
+      await _expectChordValues(
+        tester,
+        controller,
+        keyless.shifted,
+        reason: keyless.name,
+      );
       await _capture(binding, 'transpose_rtl_large_landscape_plus2_900x400');
       expect(tester.takeException(), isNull);
 
@@ -259,10 +299,20 @@ void main() {
         );
         await _selectPopupItem(tester, 'transpose-offset-0');
         await _settleNative(tester, controller, repository);
-        _expectChordValues(tester, keyless.original, reason: keyless.name);
+        await _expectChordValues(
+          tester,
+          controller,
+          keyless.original,
+          reason: keyless.name,
+        );
         await _selectTranspose(tester, dropdown, keyless, 2);
         await _settleNative(tester, controller, repository);
-        _expectChordValues(tester, keyless.shifted, reason: keyless.name);
+        await _expectChordValues(
+          tester,
+          controller,
+          keyless.shifted,
+          reason: keyless.name,
+        );
         expect(tester.takeException(), isNull);
       }
 
@@ -340,17 +390,66 @@ Future<void> _settleNative(
   await tester.pumpAndSettle();
 }
 
-void _expectChordValues(
+Future<void> _expectChordValues(
   WidgetTester tester,
+  AppControllerAdapter controller,
   List<String> expected, {
   required String reason,
-}) {
-  final actual = tester
-      .widgetList<ChordLyricsLine>(find.byType(ChordLyricsLine))
-      .expand((line) => line.chords)
-      .map((chord) => chord.symbol)
+}) async {
+  final lines = controller.state.songLines
+      .where((line) => line.chords.isNotEmpty)
       .toList();
-  expect(actual, expected, reason: reason);
+  expect(
+    lines.expand((line) => line.chords).map((chord) => chord.symbol).toList(),
+    expected,
+    reason: reason,
+  );
+  final lyricList = find.byType(ListView);
+  expect(lyricList, findsOneWidget);
+  final scrollable = tester.state<ScrollableState>(
+    find.descendant(of: lyricList, matching: find.byType(Scrollable)).first,
+  );
+  final originalOffset = scrollable.position.pixels;
+  final seen = <String>{};
+  try {
+    scrollable.position.jumpTo(0);
+    await tester.pumpAndSettle();
+    // ListView builds only nearby lines. Check every line after bringing it
+    // into view rather than mistaking virtualization for missing chords.
+    for (var attempt = 0; attempt < 40; attempt++) {
+      for (final widget in tester.widgetList<ChordLyricsLine>(
+        find.byType(ChordLyricsLine),
+      )) {
+        if (widget.chords.isEmpty) continue;
+        final line = lines.singleWhere((line) => line.text == widget.text);
+        expect(
+          widget.chords.map((chord) => chord.symbol).toList(),
+          line.chords.map((chord) => chord.symbol).toList(),
+          reason: '$reason: ${line.id}',
+        );
+        expect(
+          widget.chords.map((chord) => chord.graphemeOffset).toList(),
+          line.chords.map((chord) => chord.graphemeOffset).toList(),
+          reason: reason,
+        );
+        seen.add(line.id);
+      }
+      if (seen.length == lines.length) break;
+      await tester.drag(lyricList, const Offset(0, -120));
+      await tester.pumpAndSettle();
+    }
+    expect(
+      seen,
+      containsAll(lines.map((line) => line.id)),
+      reason:
+          '$reason: every chord-bearing lyric line must be rendered and checked',
+    );
+  } finally {
+    scrollable.position.jumpTo(
+      originalOffset.clamp(0, scrollable.position.maxScrollExtent),
+    );
+    await tester.pumpAndSettle();
+  }
 }
 
 void _expectDropdownBeforePlay(
