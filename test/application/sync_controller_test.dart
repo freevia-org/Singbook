@@ -216,6 +216,8 @@ void main() {
     };
     cloud.resetCounters();
     await addSong(app, 'a', '1');
+    await until(() => app.lastSyncErrorCode == 'authorization_required');
+    await app.syncIdle;
     await settle(300);
     expect(cloud.lists, 1);
     expect(app.lastMessage!.code, 'authorization_required');
