@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
-  "catalogRevision": 2,
-  "measuredAt": "2026-10-16T13:02:10.53461Z",
+  "catalogRevision": 3,
+  "measuredAt": "2026-10-17T06:01:49.863023Z",
   "offline": false,
   "summary": {
-    "healthy": 9,
+    "healthy": 10,
     "partial_coverage": 4,
     "transient_error": 1,
-    "unavailable": 2,
     "blocked": 1,
-    "import_only": 2
+    "import_only": 2,
+    "unavailable": 1
   },
   "sources": [
     {
@@ -211,7 +211,7 @@
         {
           "id": "wonderwall-oasis-studio",
           "status": "healthy",
-          "candidateId": "sha256:50d9c92cb1bfe552",
+          "candidateId": "sha256:4459d5de7f949e4b",
           "providerId": "lyricsovh",
           "bodyCharacters": 1307,
           "metadataFields": [
@@ -235,23 +235,72 @@
     {
       "id": "synclrc",
       "name": "SyncLRC",
-      "status": "unavailable",
+      "status": "healthy",
       "coverage": {
-        "status": "partial",
-        "verifiedCapabilities": [],
-        "unverifiedCapabilities": [
+        "status": "complete",
+        "verifiedCapabilities": [
           "catalog",
           "lineTiming",
           "lyrics",
           "metadata",
           "wordTiming"
-        ]
+        ],
+        "unverifiedCapabilities": []
       },
       "probes": [
         {
           "id": "never-gonna-give-you-up-studio",
-          "status": "unavailable",
-          "reason": "empty_search_results"
+          "status": "healthy",
+          "candidateId": "sha256:a4c3e86e75ab5457",
+          "providerId": "synclrc",
+          "bodyCharacters": 1927,
+          "metadataFields": [
+            "album",
+            "duration",
+            "hasLyrics",
+            "instrumental",
+            "query"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "line"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false
+        },
+        {
+          "id": "wonderwall-oasis-timed-version",
+          "status": "healthy",
+          "candidateId": "sha256:b5fe0e890aab6767",
+          "providerId": "synclrc",
+          "bodyCharacters": 1401,
+          "metadataFields": [
+            "album",
+            "duration",
+            "hasLyrics",
+            "instrumental",
+            "query"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata",
+            "wordTiming"
+          ],
+          "timingTrackCount": 2,
+          "timingGranularities": [
+            "line",
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false
         }
       ]
     },
@@ -708,9 +757,248 @@
     "hasConsent": true
   },
   "execution": {
+    "youtubeSession": "dedicated-profile-auto-restore-no-new-consent-flow",
+    "candidateSha": "6694b3e5cc41973b0356922614ebdb790dc23b1c",
     "runtime": "local-windows",
-    "baseSha": "3d87eb4703e433e9c410d3e258f4538d23eb4357",
+    "timestampScope": "measuredAt records validator completion; per-probe timestamps are not recorded",
+    "adapterBlobSha": "3d3f56df72220e1b65c24a3a923233f93b1cb32b",
+    "exitCode": 1,
+    "codeState": "review-candidate-not-integrated-or-installed",
     "command": "dart run tool/source_maintenance.dart --report <local-report>",
-    "exitCode": 1
+    "baseSha": "51d46a3e7c0871b14389c326009019dbf9862870",
+    "catalogBlobSha": "942b26b461270422d4b1c4ac75a289576748f379",
+    "maintenanceCredential": "dedicated-maintenance-configuration",
+    "reviewBaseSha": "cba5424b5444d5a326f278718baf4e10d5faba96"
+  },
+  "comparison": {
+    "sources": [
+      {
+        "priorLocalStatus": "healthy",
+        "id": "genius",
+        "cloudStatus": "transient_error",
+        "localStatus": "healthy",
+        "initialLocalStatus": "identity_mismatch"
+      },
+      {
+        "priorLocalStatus": "healthy",
+        "id": "songsterr",
+        "cloudStatus": "healthy",
+        "localStatus": "healthy",
+        "initialLocalStatus": "healthy"
+      },
+      {
+        "priorLocalStatus": "partial_coverage",
+        "id": "ultimateguitar",
+        "cloudStatus": "transient_error",
+        "localStatus": "partial_coverage",
+        "initialLocalStatus": "partial_coverage"
+      },
+      {
+        "priorLocalStatus": "transient_error",
+        "id": "lrclib",
+        "cloudStatus": "healthy",
+        "localStatus": "transient_error",
+        "initialLocalStatus": "healthy"
+      },
+      {
+        "priorLocalStatus": "healthy",
+        "id": "youtubemusic",
+        "cloudStatus": "transient_error",
+        "localStatus": "healthy",
+        "initialLocalStatus": "healthy"
+      },
+      {
+        "priorLocalStatus": "healthy",
+        "id": "lyricsovh",
+        "cloudStatus": "healthy",
+        "localStatus": "healthy",
+        "initialLocalStatus": "healthy"
+      },
+      {
+        "priorLocalStatus": "unavailable",
+        "id": "synclrc",
+        "cloudStatus": "partial_coverage",
+        "localStatus": "healthy",
+        "initialLocalStatus": "unavailable"
+      },
+      {
+        "priorLocalStatus": "blocked",
+        "id": "betterlyrics",
+        "cloudStatus": "blocked",
+        "localStatus": "blocked",
+        "initialLocalStatus": "blocked"
+      },
+      {
+        "priorLocalStatus": "healthy",
+        "id": "unison",
+        "cloudStatus": "healthy",
+        "localStatus": "healthy",
+        "initialLocalStatus": "healthy"
+      },
+      {
+        "priorLocalStatus": "import_only",
+        "id": "ozbcoz",
+        "cloudStatus": "import_only",
+        "localStatus": "import_only",
+        "initialLocalStatus": "import_only"
+      },
+      {
+        "priorLocalStatus": "partial_coverage",
+        "id": "chordie",
+        "cloudStatus": "transient_error",
+        "localStatus": "partial_coverage",
+        "initialLocalStatus": "partial_coverage"
+      },
+      {
+        "priorLocalStatus": "healthy",
+        "id": "worshipcommons",
+        "cloudStatus": "healthy",
+        "localStatus": "healthy",
+        "initialLocalStatus": "healthy"
+      },
+      {
+        "priorLocalStatus": "healthy",
+        "id": "openfilksongbook",
+        "cloudStatus": "healthy",
+        "localStatus": "healthy",
+        "initialLocalStatus": "healthy"
+      },
+      {
+        "priorLocalStatus": "healthy",
+        "id": "seanmcgrathmusic",
+        "cloudStatus": "healthy",
+        "localStatus": "healthy",
+        "initialLocalStatus": "healthy"
+      },
+      {
+        "priorLocalStatus": "import_only",
+        "id": "worshiptogether",
+        "cloudStatus": "import_only",
+        "localStatus": "import_only",
+        "initialLocalStatus": "import_only"
+      },
+      {
+        "priorLocalStatus": "partial_coverage",
+        "id": "musicbrainz",
+        "cloudStatus": "partial_coverage",
+        "localStatus": "partial_coverage",
+        "initialLocalStatus": "partial_coverage"
+      },
+      {
+        "priorLocalStatus": "partial_coverage",
+        "id": "wikidata",
+        "cloudStatus": "transient_error",
+        "localStatus": "partial_coverage",
+        "initialLocalStatus": "partial_coverage"
+      },
+      {
+        "priorLocalStatus": "healthy",
+        "id": "wikimediacommons",
+        "cloudStatus": "healthy",
+        "localStatus": "healthy",
+        "initialLocalStatus": "healthy"
+      },
+      {
+        "priorLocalStatus": "unavailable",
+        "id": "wikisource",
+        "cloudStatus": "unavailable",
+        "localStatus": "unavailable",
+        "initialLocalStatus": "unavailable"
+      }
+    ],
+    "priorLocalMeasuredAt": "2026-10-16T13:02:10.53461Z",
+    "cloudHealthCommit": "54adcdba1a5064b13999afb29a55f1b69a88ad1d",
+    "initialLocalMeasuredAt": "2026-10-17T05:57:08.780756Z",
+    "cloudMeasuredAt": "2026-10-17T05:58:32.901896Z"
+  },
+  "maintenance": {
+    "roadblocks": [
+      {
+        "userAction": "none",
+        "source": "genius",
+        "tried": "same canary recheck plus metadata-only comparison of two query encodings",
+        "resolution": "resolved on unchanged adapter and maintenance credential; historical search response unavailable, cause unconfirmed",
+        "reason": "initial expected_candidate_not_found"
+      },
+      {
+        "userAction": "none during routine maintenance; integration/release owner reviews",
+        "source": "synclrc",
+        "tried": "compared plus/percent20 requests; scoped adapter fix; two independent live canaries including line/word timing",
+        "resolution": "repaired in candidate only; compiled adapter requires future compatible app build",
+        "reason": "form-style plus spaces produce empty search results"
+      },
+      {
+        "userAction": "none; retry on later scheduled run",
+        "source": "lrclib",
+        "tried": "standard bounded provider retry/pacing during two full runs; no further immediate retry",
+        "resolution": "unresolved intermittent limit; source preserved",
+        "reason": "rate_limited in final full run after initial healthy result"
+      },
+      {
+        "userAction": "none available from this run",
+        "source": "betterlyrics",
+        "tried": "normal live canary in initial and final full runs",
+        "resolution": "unresolved; restrictions preserved, no bypass or retirement",
+        "reason": "access_denied"
+      },
+      {
+        "userAction": "none; maintainers need two suitable work canaries",
+        "source": "wikisource",
+        "tried": "normal canary twice; primary API metadata shows selected page is a versions index without matching work license templates",
+        "resolution": "unresolved; needs explicit eligible work and per-work provenance, not relaxed rights checks",
+        "reason": "rights_review_required"
+      },
+      {
+        "userAction": "none",
+        "source": "ultimateguitar",
+        "tried": "existing direct chart canary passes lyrics/chords/metadata",
+        "resolution": "search canary still needed",
+        "reason": "catalog capability unverified"
+      },
+      {
+        "userAction": "none required for routine job",
+        "source": "chordie",
+        "tried": "existing live search/chart canary passes",
+        "resolution": "manual file-import coverage remains unverified",
+        "reason": "fileImport capability unverified"
+      },
+      {
+        "userAction": "none",
+        "source": "musicbrainz",
+        "tried": "exact recording metadata canary passes",
+        "resolution": "independent deterministic search canary still needed",
+        "reason": "catalog capability unverified"
+      },
+      {
+        "userAction": "none",
+        "source": "wikidata",
+        "tried": "exact composition metadata canary passes",
+        "resolution": "search canary still needed; do not choose unrelated ranked entity",
+        "reason": "catalog capability unverified"
+      },
+      {
+        "userAction": "only when voluntarily validating manual import flow",
+        "source": "ozbcoz,worshiptogether",
+        "tried": "catalog/static validation identifies import-only mode",
+        "resolution": "manual imports remain unverified; not treated as live healthy",
+        "reason": "import-only sources intentionally lack automated live extraction"
+      },
+      {
+        "reason": "concurrent accepted discovery update required conflict resolution",
+        "userAction": "none",
+        "source": "maintenance-git",
+        "resolution": "resolved; accepted StartJamming/OpenHymnal evidence retained exactly; non-forced source push succeeded",
+        "tried": "rebased never-pushed source commit onto PR36 merge and combined discovery candidates by stable ID"
+      }
+    ],
+    "publication": "prepared only; not public main or installed",
+    "checks": {
+      "analysis": "flutter analyze lib test tool --no-pub: no issues",
+      "independentReview": "read-only diff review: no actionable findings",
+      "focusedTests": 81,
+      "offlineCatalogExit": 0,
+      "providerApplicationTests": 372,
+      "rebaseValidation": "Code, test, catalog and guide blobs unchanged after rebase; all five accepted discovery entries preserved exactly"
+    }
   }
 }
