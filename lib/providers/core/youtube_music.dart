@@ -7,6 +7,9 @@ import 'common.dart';
 class YoutubeMusicProvider implements LyricsProvider {
   YoutubeMusicProvider(this.http);
   final ProviderTransport http;
+  // Fixed anonymous accept marker used by yt-dlp. It carries no
+  // account/session data and is sent only to the exact Music endpoints below.
+  static const _requestHeaders = {'Cookie': 'SOCS=CAI'};
   JsonMap? _configuration;
   DateTime? _expires;
   @override
@@ -55,6 +58,7 @@ class YoutubeMusicProvider implements LyricsProvider {
     try {
       source = await http.getText(
         Uri.parse('https://music.youtube.com/'),
+        headers: _requestHeaders,
         cancel: cancel,
       );
     } on ProviderException catch (e) {
@@ -149,6 +153,7 @@ class YoutubeMusicProvider implements LyricsProvider {
         Uri.parse('https://music.youtube.com/youtubei/v1/$endpoint?alt=json'),
         method: 'POST',
         headers: {
+          ..._requestHeaders,
           'Origin': 'https://music.youtube.com',
           if (config['visitor'] != null)
             'X-Goog-Visitor-Id': config['visitor'] as String,

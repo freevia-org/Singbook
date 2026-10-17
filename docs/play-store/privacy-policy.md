@@ -1,7 +1,7 @@
 # Singbook Privacy Policy
 
-**Effective date:** 16 October 2026
-**App:** Singbook (Android package `org.freevia.singbook`), version 0.2.0
+**Effective date:** 17 October 2026
+**App:** Singbook (Android package `org.freevia.singbook`), version 0.2.1
 **Publisher:** Freevia EOOD, contact privacy@freevia.org
 **Policy URL:** https://freevia.org/singbook/privacy/
 
@@ -11,7 +11,7 @@
 - Singbook has **no server, no Singbook accounts, no advertising and no analytics**. The publisher does not receive, collect or store your data.
 - When you search for songs or open one, the app contacts third-party song sources **directly from your device**. Those services receive your search terms and your IP address (section 3).
 - Signing in with Google for Drive sync is optional (section 5). It uses only a private app-data folder in your own Google Drive, and the publisher never receives that data.
-- YouTube Music lookup uses anonymous requests. Singbook does not open Google's consent page or read or send browser cookies (section 3).
+- YouTube Music requests include a fixed anonymous accept-all consent marker. Singbook does not open Google's consent page, use an account or read saved browser cookies (section 3).
 
 ## 2. Data stored on your device
 
@@ -37,7 +37,7 @@ What each service can receive: the **search text or the song title/artist/album/
 | `www.songsterr.com` | Chord sheet and song data lookup. |
 | `www.ultimate-guitar.com`, `tabs.ultimate-guitar.com` | Public chord sheet lookup. |
 | `lrclib.net` | Plain and time-synchronised lyrics. |
-| `music.youtube.com` (and Google image hosts such as `i.ytimg.com`, `*.googleusercontent.com` for artwork) | Song matching, lyrics shelf, artwork. Requests are anonymous and do not include browser cookies. |
+| `music.youtube.com` (and Google image hosts such as `i.ytimg.com`, `*.googleusercontent.com` for artwork) | Song matching, lyrics shelf, artwork. Exact Music homepage/JSON requests include the fixed anonymous `SOCS=CAI` accept-all consent marker; artwork requests do not. No saved browser or account cookies are used. |
 | `lyrics.ovh`, `api.deezer.com` (and Deezer image hosts) | Lyrics and song suggestions with album, duration and artwork. |
 | `synclrc.dev` | Synchronised lyric search. |
 | `better-lyrics.boidu.dev` | Cached word-timed lyrics (TTML). |
@@ -49,7 +49,7 @@ What each service can receive: the **search text or the song title/artist/album/
 
 Ozbcoz and Worship Together are import-only: Singbook does not contact them automatically; you download a file yourself and import it.
 
-YouTube Music is an unofficial web integration. Requests are anonymous and Singbook does not open Google's consent page, sign in, or read or send browser cookies. Google may return a consent interstitial, challenge, regional restriction, or unavailable response; Singbook reports that result without a workaround. Availability can change at any time.
+YouTube Music is an unofficial web integration. The fixed `SOCS=CAI` request marker represents an accept-all cookie choice, not a neutral or rejection choice. It is identical for every request, contains no account or device identifier, is not saved to a browser cookie store, and is sent only to `https://music.youtube.com` homepage/JSON endpoints. Singbook does not open Google's consent page, sign in, or read saved browser cookies. Google may still return a consent interstitial, challenge, regional restriction or unavailable response; Singbook reports that source failure. Availability can change at any time.
 
 These services are independent of the publisher and have their own privacy policies and terms; they may log requests, and your IP address reveals an approximate location. Singbook does not control what they do. You can reduce exposure by turning off sources you do not want (where the app offers that setting) and by not searching.
 

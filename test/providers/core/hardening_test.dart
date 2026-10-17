@@ -394,7 +394,7 @@ void main() {
         'First invented line\nSecond line',
       );
     });
-    test('YouTube Music reports the consent page and never sends a consent cookie', () async {
+    test('YouTube Music reports a consent page even with the fixed marker', () async {
       final cookies = <String?>[];
       final t = wire((request) {
         cookies.add(request.headers['Cookie']);
@@ -411,7 +411,7 @@ void main() {
               .having((e) => e.message, 'message', 'consent_required'),
         ),
       );
-      expect(cookies, [null]);
+      expect(cookies, ['SOCS=CAI']);
       await t.close();
     });
     test('YouTube Music consent redirect is also blocked/consent_required', () async {

@@ -156,10 +156,13 @@ deployment as a data-preserving upgrade path.
 
 ### YouTube Music availability
 
-The YouTube Music probe uses anonymous HTTP requests, with no browser profile,
-cookie transfer, consent flow, or sign-in. Google may serve a consent interstitial,
-regional restriction, challenge, or unavailable response; the probe reports that
-ordinary outcome and does not attempt to work around it. Other source probes
+The YouTube Music probe uses the same anonymous requests as the app, including
+the fixed `SOCS=CAI` accept-all marker on exact Music homepage/JSON endpoints.
+It does not read a private browser profile, transfer stored cookies, open a
+consent flow or sign in. Do not interpret this fixed marker as neutral/reject,
+or reuse historical private-session results as proof of current extraction.
+Google may still serve a consent interstitial, regional restriction, challenge
+or unavailable response; the probe reports that ordinary outcome. Other source probes
 continue independently. Run the normal live check or select YouTube Music with
 `--source youtubemusic` to record the current result.
 
