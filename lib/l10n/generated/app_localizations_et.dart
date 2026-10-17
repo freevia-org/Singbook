@@ -1842,4 +1842,7 @@ class AppLocalizationsEt extends AppLocalizations {
   @override
   String get searchCheckSelection =>
       'Vali sellest allikast konkreetne tulemus.';
+
+  @override
+  String get playerChordsNone => 'Puudub';
 }

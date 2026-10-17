@@ -787,6 +787,7 @@
   "searchCheckExtraction": "Avots atbildēja, taču dziesmas vārdus neizdevās iegūt.",
   "searchCheckBusy": "Avots ir aizņemts. Mēģiniet vēlāk vēlreiz.",
   "searchCheckSelection": "Izvēlieties konkrētu šī avota rezultātu.",
+  "playerChordsNone": "Nav",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

@@ -1867,4 +1867,7 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String get searchCheckSelection => 'Izvēlieties konkrētu šī avota rezultātu.';
+
+  @override
+  String get playerChordsNone => 'Nav';
 }

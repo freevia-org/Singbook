@@ -787,6 +787,7 @@
   "searchCheckExtraction": "Is-sors wieġeb, iżda ma setgħux jinġabru l-lirika.",
   "searchCheckBusy": "Dan is-sors huwa okkupat. Erġa’ pprova aktar tard.",
   "searchCheckSelection": "Agħżel riżultat speċifiku minn dan is-sors.",
+  "playerChordsNone": "Xejn",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

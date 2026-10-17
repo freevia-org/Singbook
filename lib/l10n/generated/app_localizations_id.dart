@@ -1846,4 +1846,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get searchCheckSelection => 'Pilih hasil tertentu dari sumber ini.';
+
+  @override
+  String get playerChordsNone => 'Tidak ada';
 }

@@ -1867,4 +1867,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get searchCheckSelection => 'اختر نتيجة محددة من هذا المصدر.';
+
+  @override
+  String get playerChordsNone => 'لا شيء';
 }

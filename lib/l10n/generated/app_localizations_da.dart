@@ -1840,4 +1840,7 @@ class AppLocalizationsDa extends AppLocalizations {
   @override
   String get searchCheckSelection =>
       'Vælg et bestemt resultat fra denne kilde.';
+
+  @override
+  String get playerChordsNone => 'Ingen';
 }

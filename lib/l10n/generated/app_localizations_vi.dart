@@ -1838,4 +1838,7 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get searchCheckSelection =>
       'Hãy chọn một kết quả cụ thể từ nguồn này.';
+
+  @override
+  String get playerChordsNone => 'Không';
 }

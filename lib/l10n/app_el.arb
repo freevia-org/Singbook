@@ -787,6 +787,7 @@
   "searchCheckExtraction": "Η πηγή αποκρίθηκε, αλλά δεν ήταν δυνατή η εξαγωγή των στίχων.",
   "searchCheckBusy": "Η πηγή είναι απασχολημένη. Δοκιμάστε ξανά αργότερα.",
   "searchCheckSelection": "Επιλέξτε ένα συγκεκριμένο αποτέλεσμα από αυτήν την πηγή.",
+  "playerChordsNone": "Κανένα",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

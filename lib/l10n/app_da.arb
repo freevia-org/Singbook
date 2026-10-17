@@ -787,6 +787,7 @@
   "searchCheckExtraction": "Kilden svarede, men sangteksten kunne ikke hentes.",
   "searchCheckBusy": "Kilden er optaget. Prøv igen senere.",
   "searchCheckSelection": "Vælg et bestemt resultat fra denne kilde.",
+  "playerChordsNone": "Ingen",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

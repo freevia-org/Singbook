@@ -1869,4 +1869,7 @@ class AppLocalizationsEl extends AppLocalizations {
   @override
   String get searchCheckSelection =>
       'Επιλέξτε ένα συγκεκριμένο αποτέλεσμα από αυτήν την πηγή.';
+
+  @override
+  String get playerChordsNone => 'Κανένα';
 }

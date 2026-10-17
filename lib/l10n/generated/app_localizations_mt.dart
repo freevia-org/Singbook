@@ -1870,4 +1870,7 @@ class AppLocalizationsMt extends AppLocalizations {
   @override
   String get searchCheckSelection =>
       'Agħżel riżultat speċifiku minn dan is-sors.';
+
+  @override
+  String get playerChordsNone => 'Xejn';
 }

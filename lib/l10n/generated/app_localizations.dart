@@ -3233,6 +3233,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Choose a specific result from this source.'**
   String get searchCheckSelection;
+
+  /// No description provided for @playerChordsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get playerChordsNone;
 }
 
 class _AppLocalizationsDelegate

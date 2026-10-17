@@ -787,6 +787,7 @@
   "searchCheckExtraction": "Die Quelle hat geantwortet, aber der Liedtext konnte nicht extrahiert werden.",
   "searchCheckBusy": "Diese Quelle ist ausgelastet. Versuche es später erneut.",
   "searchCheckSelection": "Wähle ein bestimmtes Ergebnis aus dieser Quelle aus.",
+  "playerChordsNone": "Keine",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

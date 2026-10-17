@@ -787,6 +787,7 @@
   "searchCheckExtraction": "Źródło odpowiedziało, ale nie udało się wyodrębnić tekstu piosenki.",
   "searchCheckBusy": "To źródło jest zajęte. Spróbuj ponownie później.",
   "searchCheckSelection": "Wybierz konkretny wynik z tego źródła.",
+  "playerChordsNone": "Brak",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

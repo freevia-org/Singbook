@@ -787,6 +787,7 @@
   "searchCheckExtraction": "Källan svarade, men låttexten kunde inte hämtas.",
   "searchCheckBusy": "Den här källan är upptagen. Försök igen senare.",
   "searchCheckSelection": "Välj ett specifikt resultat från den här källan.",
+  "playerChordsNone": "Ingen",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

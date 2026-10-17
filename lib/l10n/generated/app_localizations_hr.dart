@@ -1861,4 +1861,7 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get searchCheckSelection =>
       'Odaberite određeni rezultat iz ovog izvora.';
+
+  @override
+  String get playerChordsNone => 'Ništa';
 }

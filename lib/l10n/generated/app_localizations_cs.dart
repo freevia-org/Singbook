@@ -1859,4 +1859,7 @@ class AppLocalizationsCs extends AppLocalizations {
   @override
   String get searchCheckSelection =>
       'Vyberte konkrétní výsledek z tohoto zdroje.';
+
+  @override
+  String get playerChordsNone => 'Žádné';
 }

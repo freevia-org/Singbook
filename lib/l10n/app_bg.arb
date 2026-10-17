@@ -247,6 +247,7 @@
   "searchCheckExtraction": "Източникът отговори, но текстът не можа да бъде извлечен.",
   "searchCheckBusy": "Източникът е зает. Опитайте отново по-късно.",
   "searchCheckSelection": "Изберете конкретен резултат от този източник.",
+  "playerChordsNone": "Няма",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

@@ -1862,4 +1862,7 @@ class AppLocalizationsSk extends AppLocalizations {
   @override
   String get searchCheckSelection =>
       'Vyberte konkrétny výsledok z tohto zdroja.';
+
+  @override
+  String get playerChordsNone => 'Žiadne';
 }

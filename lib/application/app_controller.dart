@@ -905,6 +905,38 @@ class AppController extends ChangeNotifier {
     await _afterWrite();
   });
 
+  /// Patches playback preferences on the latest stored document. A competing
+  /// edit is retried; a deleted song is never recreated or copied as a conflict.
+  Future<bool> savePlayerPreferences(
+    String id, {
+    required int transpose,
+    required double playbackSpeed,
+  }) => _tracked('save', () async {
+    for (var attempt = 0; attempt < 4; attempt++) {
+      final hash = await repository.getSongHash(id);
+      final current = await repository.getSong(id);
+      if (hash == null || current == null) return false;
+      final saved = await repository.saveSongIfUnchanged(
+        current.copyWith(
+          metadata: {
+            ...current.metadata,
+            'x_verse_player_transpose': transpose,
+            'x_verse_player_speed': playbackSpeed,
+          },
+        ),
+        hash,
+        mustExist: true,
+      );
+      if (saved) {
+        // Playback preferences do not change searchable song content and do
+        // not start cloud work. The local outbox retains the change for sync.
+        await _afterWrite(songsChanged: false);
+        return true;
+      }
+    }
+    throw StateError('save_conflict');
+  });
+
   /// Toggles relative to the stored song, so a concurrent background change is
   /// not overwritten with a stale snapshot.
   Future<void> toggleFavorite(SongDocument song) => _tracked('save', () async {

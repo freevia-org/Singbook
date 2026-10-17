@@ -787,6 +787,7 @@
   "searchCheckExtraction": "Nguồn đã phản hồi nhưng không thể trích xuất lời bài hát.",
   "searchCheckBusy": "Nguồn này đang bận. Hãy thử lại sau.",
   "searchCheckSelection": "Hãy chọn một kết quả cụ thể từ nguồn này.",
+  "playerChordsNone": "Không",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

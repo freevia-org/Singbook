@@ -787,6 +787,7 @@
   "searchCheckExtraction": "ソースから応答がありましたが、歌詞を抽出できませんでした。",
   "searchCheckBusy": "このソースは混み合っています。後でもう一度お試しください。",
   "searchCheckSelection": "このソースから特定の結果を選択してください。",
+  "playerChordsNone": "なし",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

@@ -1833,4 +1833,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get searchCheckSelection => 'इस स्रोत से कोई विशिष्ट परिणाम चुनें।';
+
+  @override
+  String get playerChordsNone => 'कोई नहीं';
 }

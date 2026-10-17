@@ -1880,4 +1880,7 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get searchCheckSelection => 'Izberite določen rezultat iz tega vira.';
+
+  @override
+  String get playerChordsNone => 'Brez';
 }

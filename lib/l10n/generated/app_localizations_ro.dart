@@ -1874,4 +1874,7 @@ class AppLocalizationsRo extends AppLocalizations {
   @override
   String get searchCheckSelection =>
       'Alege un rezultat specific din această sursă.';
+
+  @override
+  String get playerChordsNone => 'Niciunul';
 }

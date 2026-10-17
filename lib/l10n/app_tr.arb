@@ -787,6 +787,7 @@
   "searchCheckExtraction": "Kaynak yanıt verdi ancak şarkı sözleri çıkarılamadı.",
   "searchCheckBusy": "Bu kaynak meşgul. Daha sonra tekrar deneyin.",
   "searchCheckSelection": "Bu kaynaktan belirli bir sonuç seçin.",
+  "playerChordsNone": "Yok",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

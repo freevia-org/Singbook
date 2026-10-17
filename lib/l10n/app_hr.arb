@@ -787,6 +787,7 @@
   "searchCheckExtraction": "Izvor je odgovorio, ali tekst pjesme nije moguće izdvojiti.",
   "searchCheckBusy": "Izvor je zauzet. Pokušajte ponovno poslije.",
   "searchCheckSelection": "Odaberite određeni rezultat iz ovog izvora.",
+  "playerChordsNone": "Ništa",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

@@ -1844,4 +1844,7 @@ class AppLocalizationsBg extends AppLocalizations {
   @override
   String get searchCheckSelection =>
       'Изберете конкретен резултат от този източник.';
+
+  @override
+  String get playerChordsNone => 'Няма';
 }

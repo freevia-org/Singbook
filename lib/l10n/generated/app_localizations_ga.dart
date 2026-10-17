@@ -1866,4 +1866,7 @@ class AppLocalizationsGa extends AppLocalizations {
   @override
   String get searchCheckSelection =>
       'Roghnaigh toradh sonrach ón bhfoinse seo.';
+
+  @override
+  String get playerChordsNone => 'Dada';
 }

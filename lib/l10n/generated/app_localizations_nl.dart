@@ -1866,4 +1866,7 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get searchCheckSelection =>
       'Kies een specifiek resultaat van deze bron.';
+
+  @override
+  String get playerChordsNone => 'Geen';
 }

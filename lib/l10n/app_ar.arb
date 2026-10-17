@@ -788,6 +788,7 @@
   "searchCheckExtraction": "استجاب المصدر، لكن تعذّر استخراج الكلمات.",
   "searchCheckBusy": "المصدر مشغول. حاول لاحقًا.",
   "searchCheckSelection": "اختر نتيجة محددة من هذا المصدر.",
+  "playerChordsNone": "لا شيء",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

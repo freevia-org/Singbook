@@ -787,6 +787,7 @@
   "searchCheckExtraction": "A fonte respondeu, mas não foi possível extrair a letra.",
   "searchCheckBusy": "Esta fonte está ocupada. Tente novamente mais tarde.",
   "searchCheckSelection": "Escolha um resultado específico desta fonte.",
+  "playerChordsNone": "Nenhum",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

@@ -1850,4 +1850,7 @@ class AppLocalizationsHu extends AppLocalizations {
   @override
   String get searchCheckSelection =>
       'Válassz egy konkrét találatot ebből a forrásból.';
+
+  @override
+  String get playerChordsNone => 'Nincs';
 }

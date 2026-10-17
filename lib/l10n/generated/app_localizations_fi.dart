@@ -1843,4 +1843,7 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get searchCheckSelection => 'Valitse tietty tulos tästä lähteestä.';
+
+  @override
+  String get playerChordsNone => 'Ei mitään';
 }

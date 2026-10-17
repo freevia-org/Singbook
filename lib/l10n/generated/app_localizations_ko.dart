@@ -1777,4 +1777,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get searchCheckSelection => '이 소스에서 특정 결과를 선택하세요.';
+
+  @override
+  String get playerChordsNone => '없음';
 }

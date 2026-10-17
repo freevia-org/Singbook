@@ -1751,4 +1751,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get searchCheckSelection => '请从此来源选择一个具体结果。';
+
+  @override
+  String get playerChordsNone => '无';
 }

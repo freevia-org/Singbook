@@ -1842,4 +1842,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get searchCheckSelection => 'Bu kaynaktan belirli bir sonuç seçin.';
+
+  @override
+  String get playerChordsNone => 'Yok';
 }

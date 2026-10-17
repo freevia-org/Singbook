@@ -1876,4 +1876,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get searchCheckSelection => 'Wybierz konkretny wynik z tego źródła.';
+
+  @override
+  String get playerChordsNone => 'Brak';
 }

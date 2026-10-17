@@ -1879,4 +1879,7 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get searchCheckSelection =>
       'Виберіть конкретний результат із цього джерела.';
+
+  @override
+  String get playerChordsNone => 'Немає';
 }

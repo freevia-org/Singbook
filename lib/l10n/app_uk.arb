@@ -247,6 +247,7 @@
   "searchCheckExtraction": "Джерело відповіло, але не вдалося отримати текст пісні.",
   "searchCheckBusy": "Джерело зайняте. Спробуйте пізніше.",
   "searchCheckSelection": "Виберіть конкретний результат із цього джерела.",
+  "playerChordsNone": "Немає",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

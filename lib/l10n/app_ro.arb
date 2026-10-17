@@ -787,6 +787,7 @@
   "searchCheckExtraction": "Sursa a răspuns, dar versurile nu au putut fi extrase.",
   "searchCheckBusy": "Sursa este ocupată. Încearcă din nou mai târziu.",
   "searchCheckSelection": "Alege un rezultat specific din această sursă.",
+  "playerChordsNone": "Niciunul",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

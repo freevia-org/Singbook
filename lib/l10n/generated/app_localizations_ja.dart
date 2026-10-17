@@ -1770,4 +1770,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get searchCheckSelection => 'このソースから特定の結果を選択してください。';
+
+  @override
+  String get playerChordsNone => 'なし';
 }

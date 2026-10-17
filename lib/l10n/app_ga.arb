@@ -787,6 +787,7 @@
   "searchCheckExtraction": "D’fhreagair an fhoinse, ach níorbh fhéidir na liricí a bhaint amach.",
   "searchCheckBusy": "Tá an fhoinse seo gnóthach. Bain triail eile as ar ball.",
   "searchCheckSelection": "Roghnaigh toradh sonrach ón bhfoinse seo.",
+  "playerChordsNone": "Dada",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

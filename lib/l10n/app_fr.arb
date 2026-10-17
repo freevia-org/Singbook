@@ -787,6 +787,7 @@
   "searchCheckExtraction": "La source a répondu, mais les paroles n’ont pas pu être extraites.",
   "searchCheckBusy": "Cette source est occupée. Réessayez plus tard.",
   "searchCheckSelection": "Choisissez un résultat précis dans cette source.",
+  "playerChordsNone": "Aucun",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

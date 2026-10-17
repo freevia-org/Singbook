@@ -787,6 +787,7 @@
   "searchCheckExtraction": "De bron reageerde, maar de songtekst kon niet worden opgehaald.",
   "searchCheckBusy": "Deze bron is bezig. Probeer het later opnieuw.",
   "searchCheckSelection": "Kies een specifiek resultaat van deze bron.",
+  "playerChordsNone": "Geen",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

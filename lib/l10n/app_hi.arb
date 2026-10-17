@@ -787,6 +787,7 @@
   "searchCheckExtraction": "स्रोत ने जवाब दिया, लेकिन बोल निकाले नहीं जा सके।",
   "searchCheckBusy": "यह स्रोत व्यस्त है। बाद में फिर कोशिश करें।",
   "searchCheckSelection": "इस स्रोत से कोई विशिष्ट परिणाम चुनें।",
+  "playerChordsNone": "कोई नहीं",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

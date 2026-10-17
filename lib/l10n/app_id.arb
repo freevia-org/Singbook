@@ -787,6 +787,7 @@
   "searchCheckExtraction": "Sumber merespons, tetapi lirik tidak dapat diekstrak.",
   "searchCheckBusy": "Sumber ini sedang sibuk. Coba lagi nanti.",
   "searchCheckSelection": "Pilih hasil tertentu dari sumber ini.",
+  "playerChordsNone": "Tidak ada",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

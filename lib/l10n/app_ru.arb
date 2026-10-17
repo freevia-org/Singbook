@@ -787,6 +787,7 @@
   "searchCheckExtraction": "Источник ответил, но не удалось извлечь текст песни.",
   "searchCheckBusy": "Источник занят. Повторите попытку позже.",
   "searchCheckSelection": "Выберите конкретный результат из этого источника.",
+  "playerChordsNone": "Нет",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

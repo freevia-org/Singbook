@@ -787,6 +787,7 @@
   "searchCheckExtraction": "Zdroj odpověděl, ale text se nepodařilo získat.",
   "searchCheckBusy": "Zdroj je zaneprázdněn. Zkuste to později.",
   "searchCheckSelection": "Vyberte konkrétní výsledek z tohoto zdroje.",
+  "playerChordsNone": "Žádné",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

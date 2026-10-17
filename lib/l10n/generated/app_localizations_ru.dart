@@ -1878,4 +1878,7 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get searchCheckSelection =>
       'Выберите конкретный результат из этого источника.';
+
+  @override
+  String get playerChordsNone => 'Нет';
 }

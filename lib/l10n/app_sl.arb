@@ -787,6 +787,7 @@
   "searchCheckExtraction": "Vir se je odzval, vendar besedila pesmi ni bilo mogoče pridobiti.",
   "searchCheckBusy": "Vir je zaseden. Poskusite znova pozneje.",
   "searchCheckSelection": "Izberite določen rezultat iz tega vira.",
+  "playerChordsNone": "Brez",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

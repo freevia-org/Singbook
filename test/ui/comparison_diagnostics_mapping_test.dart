@@ -57,7 +57,7 @@ class _MetadataProvider implements LyricsProvider {
         },
         {
           'url':
-              'https://www.youtube.com/watch?v=Abc_123-xY&list=private#private',
+              'https://www.youtube.com/watch?v=Abc_123-xY0&list=private#private',
           'title': 'Studio recording',
           'type': 'video',
         },
@@ -141,7 +141,7 @@ void main() {
         expect(version.metadata['composer'], ['Ada Lovelace · composer']);
         expect(version.metadata['mediaLinks'], [
           'Genius lyrics\nhttps://genius.com/ada-lovelace-paper-satellites-lyrics',
-          'Studio recording\nhttps://www.youtube.com/watch?v=Abc_123-xY',
+          'Studio recording\nhttps://www.youtube.com/watch?v=Abc_123-xY0',
           'Studio score\nhttps://scores.example',
         ]);
         expect(version.metadata.containsKey('privateToken'), isFalse);

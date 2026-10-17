@@ -787,6 +787,7 @@
   "searchCheckExtraction": "Lähde vastasi, mutta sanoitusta ei voitu poimia.",
   "searchCheckBusy": "Lähde on varattu. Yritä myöhemmin uudelleen.",
   "searchCheckSelection": "Valitse tietty tulos tästä lähteestä.",
+  "playerChordsNone": "Ei mitään",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

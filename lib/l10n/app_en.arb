@@ -525,6 +525,7 @@
   "searchCheckExtraction": "The source responded, but lyrics could not be extracted.",
   "searchCheckBusy": "This source is busy. Try again later.",
   "searchCheckSelection": "Choose a specific result from this source.",
+  "playerChordsNone": "None",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

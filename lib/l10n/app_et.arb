@@ -787,6 +787,7 @@
   "searchCheckExtraction": "Allikas vastas, kuid laulusõnu ei saanud eraldada.",
   "searchCheckBusy": "Allikas on hõivatud. Proovi hiljem uuesti.",
   "searchCheckSelection": "Vali sellest allikast konkreetne tulemus.",
+  "playerChordsNone": "Puudub",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

@@ -787,6 +787,7 @@
   "searchCheckExtraction": "Šaltinis atsakė, bet nepavyko išgauti dainos žodžių.",
   "searchCheckBusy": "Šaltinis užimtas. Bandykite vėliau.",
   "searchCheckSelection": "Pasirinkite konkretų šio šaltinio rezultatą.",
+  "playerChordsNone": "Nėra",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

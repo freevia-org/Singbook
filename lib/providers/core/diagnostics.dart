@@ -23,7 +23,7 @@ String? safeDiagnosticUrl(String? value) {
       final video = uri.queryParameters['v'];
       if (uri.path == '/watch' &&
           video != null &&
-          RegExp(r'^[A-Za-z0-9_-]{6,20}$').hasMatch(video)) {
+          RegExp(r'^[A-Za-z0-9_-]{11}$').hasMatch(video)) {
         publicPath = '/watch';
         publicQuery = {'v': video};
       }

@@ -787,6 +787,7 @@
   "searchCheckExtraction": "Zdroj odpovedal, ale text sa nepodarilo extrahovať.",
   "searchCheckBusy": "Zdroj je zaneprázdnený. Skúste to znova neskôr.",
   "searchCheckSelection": "Vyberte konkrétny výsledok z tohto zdroja.",
+  "playerChordsNone": "Žiadne",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

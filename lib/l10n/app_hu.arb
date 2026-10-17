@@ -787,6 +787,7 @@
   "searchCheckExtraction": "A forrás válaszolt, de a dalszöveget nem sikerült kinyerni.",
   "searchCheckBusy": "A forrás foglalt. Próbáld újra később.",
   "searchCheckSelection": "Válassz egy konkrét találatot ebből a forrásból.",
+  "playerChordsNone": "Nincs",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

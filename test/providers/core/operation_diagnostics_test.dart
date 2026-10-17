@@ -159,7 +159,7 @@ void main() {
       title: 'Paper Satellites',
       artist: 'Fixture Ensemble',
       url:
-          'https://www.youtube.com/watch?v=Abc_123-xY&list=private#private-fragment',
+          'https://www.youtube.com/watch?v=Abc_123-xY0&list=private#private-fragment',
     );
     final updates = <ProviderCheck>[];
     await SourceDiscoveryService([
@@ -169,7 +169,7 @@ void main() {
     final fetch = updates.last.operations.singleWhere(
       (operation) => operation.phase == 'fetch',
     );
-    expect(fetch.sourceUrl, 'https://www.youtube.com/watch?v=Abc_123-xY');
+    expect(fetch.sourceUrl, 'https://www.youtube.com/watch?v=Abc_123-xY0');
   });
 
   test('diagnostic URLs preserve paths only for supported public origins', () {
