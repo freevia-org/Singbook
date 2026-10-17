@@ -8,12 +8,17 @@ import 'package:singbook/providers/core/charts.dart';
 import 'package:singbook/providers/core/common.dart';
 import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/providers/provider.dart';
+import 'package:singbook/domain/combine.dart';
+import 'package:singbook/domain/arrangement.dart';
 
 Matcher errorCode(String code) =>
     isA<ProviderException>().having((e) => e.code, 'code', code);
 
 /// Runs [body] and fails when it takes longer than [limit].
-T bounded<T>(T Function() body, {Duration limit = const Duration(milliseconds: 500)}) {
+T bounded<T>(
+  T Function() body, {
+  Duration limit = const Duration(milliseconds: 500),
+}) {
   final watch = Stopwatch()..start();
   final result = body();
   expect(
@@ -178,10 +183,7 @@ const _lyrics =
     'The morning light returns again slowly\n'
     'We sing along until the end';
 
-String _chart(String text) => text
-    .split('\n')
-    .map((l) => '[C]$l')
-    .join('\n');
+String _chart(String text) => text.split('\n').map((l) => '[C]$l').join('\n');
 
 void main() {
   group('Ultimate Guitar hostile input', () {
@@ -194,7 +196,11 @@ void main() {
         );
       });
       // Near-miss variants of the original catastrophic shape.
-      for (final shape in ['A${'1' * 40}!', 'C${'#1' * 25}x', 'D${'b1' * 25}']) {
+      for (final shape in [
+        'A${'1' * 40}!',
+        'C${'#1' * 25}x',
+        'D${'b1' * 25}',
+      ]) {
         bounded(() {
           try {
             UltimateGuitarProvider.parseText(chordSong(shape));
@@ -332,46 +338,54 @@ void main() {
       artist: 'Fixture Ensemble',
     );
 
-    test('a truncated first chart falls through to the next candidate', () async {
-      final chart = _Chart({
-        'short': '[C]A paper satellite',
-        'full': _chart(_lyrics),
-      });
-      final results = await SourceDiscoveryService([
-        chart,
-        _Reference(),
-      ]).discover(selection());
-      final found = results.firstWhere((r) => r.candidate.providerId == 'chart');
-      expect(found.matchKind, isNot(MatchKind.rejected));
-      expect(found.candidate.id, 'full');
-      expect(chart.resolved, ['short', 'full']);
-    });
+    test(
+      'a truncated first chart falls through to the next candidate',
+      () async {
+        final chart = _Chart({
+          'short': '[C]A paper satellite',
+          'full': _chart(_lyrics),
+        });
+        final results = await SourceDiscoveryService([
+          chart,
+          _Reference(),
+        ]).discover(selection());
+        final found = results.firstWhere(
+          (r) => r.candidate.providerId == 'chart',
+        );
+        expect(found.matchKind, isNot(MatchKind.rejected));
+        expect(found.candidate.id, 'full');
+        expect(chart.resolved, ['short', 'full']);
+      },
+    );
 
-    test('a timed-out alternative lookup is cancelled, not abandoned', () async {
-      final chart = _HangingAlternatives();
-      final results = await SourceDiscoveryService([
-        chart,
-        _Reference(),
-      ]).discover(
-        selection(),
-        alternativeTimeout: const Duration(milliseconds: 60),
-      );
-      // The source is reported rejected (no usable alternative) ...
-      expect(
-        results.firstWhere((r) => r.candidate.providerId == 'chart').matchKind,
-        MatchKind.rejected,
-      );
-      // ... the blocked lookup was released by cancellation ...
-      expect(
-        await chart.released.future.timeout(const Duration(seconds: 2)),
-        isTrue,
-      );
-      // ... and no further candidate was requested after the timeout.
-      final before = List<String>.of(chart.resolved);
-      await Future<void>.delayed(const Duration(milliseconds: 150));
-      expect(chart.resolved, before);
-      expect(chart.resolved, ['short', 'slow-1']);
-    });
+    test(
+      'a timed-out alternative lookup is cancelled, not abandoned',
+      () async {
+        final chart = _HangingAlternatives();
+        final results = await SourceDiscoveryService([chart, _Reference()])
+            .discover(
+              selection(),
+              alternativeTimeout: const Duration(milliseconds: 60),
+            );
+        // The source is reported rejected (no usable alternative) ...
+        expect(
+          results
+              .firstWhere((r) => r.candidate.providerId == 'chart')
+              .matchKind,
+          MatchKind.rejected,
+        );
+        // ... the blocked lookup was released by cancellation ...
+        expect(
+          await chart.released.future.timeout(const Duration(seconds: 2)),
+          isTrue,
+        );
+        // ... and no further candidate was requested after the timeout.
+        final before = List<String>.of(chart.resolved);
+        await Future<void>.delayed(const Duration(milliseconds: 150));
+        expect(chart.resolved, before);
+        expect(chart.resolved, ['short', 'slow-1']);
+      },
+    );
 
     test('when no chart agrees the source is still rejected', () async {
       final chart = _Chart({
@@ -388,6 +402,48 @@ void main() {
       );
     });
 
+    test('a corroborated partial chart enriches the complete lyrics', () async {
+      final chart = _Chart({
+        'partial': _chart(_lyrics.split('\n').take(2).join('\n')),
+      });
+      final results = await SourceDiscoveryService([
+        chart,
+        _Reference(),
+      ]).discover(selection());
+      final found = results.firstWhere(
+        (r) => r.candidate.providerId == 'chart',
+      );
+      expect(found.matchKind, MatchKind.sameSong);
+      expect(found.extra['partialLyrics'], true);
+      final combined = combineSources(selection(), results);
+      expect(plainLyrics(combined.body), _lyrics);
+      expect(combined.hasChords, true);
+      expect(combined.extra['selectedSourceId'], 'reference:1');
+      expect(combined.extra['chordSourceIds'], ['chart:partial']);
+    });
+
+    test(
+      'a same-title chart with mostly unrelated words remains rejected',
+      () async {
+        final chart = _Chart({
+          'different':
+              '[C]A paper satellite sails above the desk tonight\n'
+              '[G]Oceans mountains forests rivers summer winter distant planets\n'
+              '[D]Copper violet thunder marble hidden garden never returns',
+        });
+        final results = await SourceDiscoveryService([
+          chart,
+          _Reference(),
+        ]).discover(selection());
+        expect(
+          results
+              .firstWhere((r) => r.candidate.providerId == 'chart')
+              .matchKind,
+          MatchKind.rejected,
+        );
+      },
+    );
+
     test('an identity mismatch does not stop the search', () async {
       final chart = _Chart(
         {'bad': _chart(_lyrics), 'good': _chart(_lyrics)},
@@ -398,15 +454,18 @@ void main() {
       expect(found.candidate.id, 'good');
     });
 
-    test('the identity rejection is returned once every candidate failed', () async {
-      final chart = _Chart(
-        {'bad': _chart(_lyrics)},
-        titles: {'bad': 'Paper Satellites'},
-      );
-      final found = await findMatchingSource(chart, selection());
-      expect(found.matchKind, MatchKind.rejected);
-      expect(found.matchReason, 'identity_mismatch');
-    });
+    test(
+      'the identity rejection is returned once every candidate failed',
+      () async {
+        final chart = _Chart(
+          {'bad': _chart(_lyrics)},
+          titles: {'bad': 'Paper Satellites'},
+        );
+        final found = await findMatchingSource(chart, selection());
+        expect(found.matchKind, MatchKind.rejected);
+        expect(found.matchReason, 'identity_mismatch');
+      },
+    );
   });
 
   group('transport timeout override', () {

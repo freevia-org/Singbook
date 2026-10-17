@@ -81,10 +81,17 @@ Set<String> _versions(String value, {bool album = false}) {
         result.add(version);
       } else {
         found.add(version);
-        remaining = remaining.replaceAll(RegExp('\\b$marker\\b'),' ');
+        remaining = remaining.replaceAll(RegExp('\\b$marker\\b'), ' ');
       }
     }
-    if (!album && remaining.replaceAll(RegExp(r'\b(?:version|recording|performance|session)\b'),' ').trim().isEmpty) {
+    if (!album &&
+        remaining
+            .replaceAll(
+              RegExp(r'\b(?:version|recording|performance|session)\b'),
+              ' ',
+            )
+            .trim()
+            .isEmpty) {
       result.addAll(found);
     }
   }
@@ -93,7 +100,8 @@ Set<String> _versions(String value, {bool album = false}) {
 
 bool sameSong(SongCandidate selected, SongCandidate result) {
   for (final id in selected.recordingIds.entries) {
-    if (result.recordingIds.containsKey(id.key) && result.recordingIds[id.key] != id.value) {
+    if (result.recordingIds.containsKey(id.key) &&
+        result.recordingIds[id.key] != id.value) {
       return false;
     }
   }
@@ -252,12 +260,14 @@ Future<SourceResult> findMatchingSource(
       rejected ??= _matched(result, MatchKind.rejected, 'identity_mismatch');
       return null;
     }
-    if (result.body.trim().isEmpty && !result.timingTracks.any((track)=>track.raw?.isNotEmpty == true)) {
+    if (result.body.trim().isEmpty &&
+        !result.timingTracks.any((track) => track.raw?.isNotEmpty == true)) {
       return null;
     }
     final scope = song.metadata['identityScope'];
-    final exact = selection.identity == song.identity &&
-        !{'composition','arrangement','image','work'}.contains(scope) &&
+    final exact =
+        selection.identity == song.identity &&
+        !{'composition', 'arrangement', 'image', 'work'}.contains(scope) &&
         !provider.definition.capabilities.contains('chords');
     final verifiedRecording =
         _sameAlbum(selection, song) &&
@@ -266,8 +276,9 @@ Future<SourceResult> findMatchingSource(
         (selection.durationSeconds! - song.durationSeconds!).abs() <= 3 &&
         normalizedIdentity(selection.title) == normalizedIdentity(song.title);
     // Artist/title-only APIs cannot establish which recording supplied lyrics.
-    final recording = provider.definition.id != 'lyricsovh' &&
-        !{'composition','arrangement','image','work'}.contains(scope) &&
+    final recording =
+        provider.definition.id != 'lyricsovh' &&
+        !{'composition', 'arrangement', 'image', 'work'}.contains(scope) &&
         (exact || verifiedRecording);
     final matched = _matched(
       result,
@@ -368,8 +379,8 @@ class SourceDiscoveryService {
       while (index < active.length) {
         cancel?.throwIfCancelled();
         final provider = active[index++];
-        final local = providerCancellation[provider.definition.id] ??
-            CancellationToken();
+        final local =
+            providerCancellation[provider.definition.id] ?? CancellationToken();
         cancel?.cancelled.then((_) => local.cancel());
         try {
           final result =
@@ -432,11 +443,14 @@ class SourceDiscoveryService {
               (r) =>
                   r.matchKind != MatchKind.rejected &&
                   !r.hasChords &&
-                  r.body.trim().isNotEmpty && _words(r.body).toSet().length >= 12,
+                  r.body.trim().isNotEmpty &&
+                  _words(r.body).toSet().length >= 12,
             )
             .toList()
           ..sort(
-            (a, b) => _words(b.body).toSet().length.compareTo(_words(a.body).toSet().length),
+            (a, b) => _words(
+              b.body,
+            ).toSet().length.compareTo(_words(a.body).toSet().length),
           );
     for (var i = 0; i < results.length; i++) {
       final result = results[i];
@@ -504,6 +518,22 @@ class SourceDiscoveryService {
               result: alternative,
             ),
           );
+        } else if (_partialAgreement(result.body, references.first.body)) {
+          // A chart can omit repeated choruses or ad-libs yet supply accurate
+          // chords. Keep it as a donor; combineSources retains the full lyrics.
+          results[i] = _matched(
+            result,
+            result.matchKind,
+            'same_song',
+            extra: {'partialLyrics': true},
+          );
+          onProgress?.call(
+            ProviderCheck(
+              providerId: result.candidate.providerId,
+              state: 'found',
+              result: results[i],
+            ),
+          );
         } else {
           results[i] = _matched(
             result,
@@ -553,4 +583,17 @@ bool _agreement(String chart, String reference) {
       ba.isNotEmpty &&
       both.length / ab.length >= .65 &&
       both.length / ba.length >= .65;
+}
+
+bool _partialAgreement(String chart, String reference) {
+  final words = _words(chart), referenceWords = _words(reference);
+  final unique = words.toSet(), referenceUnique = referenceWords.toSet();
+  final common = unique.intersection(referenceUnique);
+  if (common.length < 12 || common.length / unique.length < .90) return false;
+  Set<String> bigrams(List<String> values) => {
+    for (var i = 1; i < values.length; i++) '${values[i - 1]} ${values[i]}',
+  };
+  final pairs = bigrams(words);
+  return pairs.isNotEmpty &&
+      pairs.intersection(bigrams(referenceWords)).length / pairs.length >= .75;
 }
