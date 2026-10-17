@@ -769,7 +769,6 @@ class _PlayerScreenState extends State<PlayerScreen>
           style: theme.textTheme.bodyLarge?.copyWith(
             fontSize: state.lyricsFontSize,
             height: 1.35,
-            fontWeight: current ? FontWeight.w600 : FontWeight.w400,
             color: current ? theme.colorScheme.primary : null,
           ),
           chordStyle: theme.textTheme.labelMedium?.copyWith(
