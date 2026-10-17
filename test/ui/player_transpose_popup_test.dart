@@ -56,6 +56,20 @@ void main() {
       expect(originalChords, fixture.original);
       final originalAnchors = _anchors(controller.state);
       final dropdown = find.byKey(const ValueKey('pitch-key-dropdown'));
+      final menu = tester.widget<PopupMenuButton<String>>(dropdown);
+      expect(
+        menu
+            .itemBuilder(tester.element(dropdown))
+            .whereType<PopupMenuItem<String>>()
+            .map((item) => item.value),
+        [
+          if (fixture.pitch == null)
+            for (var offset = -6; offset <= 6; offset++) 'offset-$offset'
+          else
+            for (var pitch = 0; pitch < 12; pitch++) 'pitch-$pitch',
+          'no-chords',
+        ],
+      );
       final play = find.byKey(const ValueKey('start-lyric-scroll'));
       expect(
         tester.getRect(dropdown).right,
@@ -136,6 +150,126 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+
+  for (final (savedOffset, displayedOffset) in [
+    (-25, -1),
+    (-18, -6),
+    (-12, 0),
+    (-7, 5),
+    (-6, -6),
+    (6, 6),
+    (7, -5),
+    (12, 0),
+    (18, 6),
+    (25, 1),
+  ]) {
+    testWidgets(
+      'saved offset $savedOffset fits menu without rewriting transpose',
+      (tester) async {
+        const body = '[C]Morning [G/B]road\n[Am7]Homeward [Fmaj7]again';
+        await tester.runAsync(() async {
+          await app.saveSong(
+            SongDocument(
+              id: 'legacy',
+              title: 'Saved transposition',
+              artist: 'Original regression fixture',
+              body: body,
+              metadata: {'x_verse_player_transpose': savedOffset},
+            ),
+          );
+          await controller.openSong('legacy');
+        });
+        await pumpShell(tester, controller);
+        final originalChords = _chords(controller.state);
+        final dropdown = find.byKey(const ValueKey('pitch-key-dropdown'));
+        final menu = tester.widget<PopupMenuButton<String>>(dropdown);
+        expect(menu.initialValue, 'offset-$displayedOffset');
+        expect(
+          menu
+              .itemBuilder(tester.element(dropdown))
+              .whereType<PopupMenuItem<String>>()
+              .map((item) => item.value),
+          [
+            for (var offset = -6; offset <= 6; offset++) 'offset-$offset',
+            'no-chords',
+          ],
+        );
+        expect(
+          find.descendant(
+            of: dropdown,
+            matching: find.text(
+              displayedOffset > 0 ? '+$displayedOffset' : '$displayedOffset',
+            ),
+          ),
+          findsOneWidget,
+        );
+        await tester.tap(dropdown);
+        await tester.pumpAndSettle();
+        expect(
+          find.descendant(
+            of: find.byKey(ValueKey('transpose-offset-$displayedOffset')),
+            matching: find.byWidgetPredicate(
+              (widget) =>
+                  widget is Semantics && widget.properties.selected == true,
+            ),
+          ),
+          findsOneWidget,
+        );
+        final unchanged = await tester.runAsync(
+          () => repository.getSong('legacy'),
+        );
+        expect(unchanged!.metadata['x_verse_player_transpose'], savedOffset);
+        expect(unchanged.metadata.containsKey('key'), isFalse);
+        expect(unchanged.body, body);
+        expect(controller.state.readerTranspose, savedOffset);
+        expect(_chords(controller.state), originalChords);
+
+        await tester.tap(find.byKey(const ValueKey('transpose-offset-2')));
+        await _settle(tester, controller);
+        expect(controller.state.readerTranspose, 2);
+        expect(_chords(controller.state), ['D', 'A/C#', 'Bm7', 'Gmaj7']);
+        final changed = await tester.runAsync(
+          () => repository.getSong('legacy'),
+        );
+        expect(changed!.metadata['x_verse_player_transpose'], 2);
+        expect(changed.body, body);
+        await _choose(tester, controller, 'transpose-offset-0');
+        expect(controller.state.readerTranspose, 0);
+        expect(_chords(controller.state), ['C', 'G/B', 'Am7', 'Fmaj7']);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
+  testWidgets('both six-semitone endpoints transpose and persist', (
+    tester,
+  ) async {
+    await tester.runAsync(() async {
+      await app.saveSong(
+        SongDocument(
+          id: 'endpoints',
+          title: 'Transpose endpoints',
+          artist: 'Original regression fixture',
+          body: '[C]Morning [G/B]road\n[Am7]Homeward [Fmaj7]again',
+        ),
+      );
+      await controller.openSong('endpoints');
+    });
+    await pumpShell(tester, controller);
+    for (final offset in [-6, 6]) {
+      await _choose(tester, controller, 'transpose-offset-$offset');
+      expect(controller.state.readerTranspose, offset);
+      expect(_chords(controller.state), ['F#', 'C#/F', 'D#m7', 'Bmaj7']);
+      final saved = await tester.runAsync(
+        () => repository.getSong('endpoints'),
+      );
+      expect(saved!.metadata['x_verse_player_transpose'], offset);
+    }
+    await _choose(tester, controller, 'transpose-offset-0');
+    expect(controller.state.readerTranspose, 0);
+    expect(_chords(controller.state), ['C', 'G/B', 'Am7', 'Fmaj7']);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('lyrics without chords have no transpose control', (
     tester,

@@ -60,11 +60,19 @@ int? _keyPitchClass(String? key) {
       12;
 }
 
+int _transposeMenuOffset(int offset) {
+  final pitch = offset % 12;
+  // Keep either tritone direction when already selected, including legacy
+  // saved offsets. Other octave-equivalent offsets use the nearest choice.
+  if (pitch == 6 && offset < 0) return -6;
+  return pitch > 6 ? pitch - 12 : pitch;
+}
+
 String _transposeLabel(VerseUiState state) {
   if (_keyPitchClass(state.song?.key) != null) {
     return state.readerKey ?? state.song!.key!;
   }
-  final offset = state.readerTranspose;
+  final offset = _transposeMenuOffset(state.readerTranspose);
   return offset > 0 ? '+$offset' : '$offset';
 }
 
@@ -1230,6 +1238,7 @@ class _PlayerScreenState extends State<PlayerScreen>
         ? flatNames
         : sharpNames;
     final displayedKey = _transposeLabel(state);
+    final currentOffset = _transposeMenuOffset(state.readerTranspose);
     return PopupMenuButton<String>(
       key: const ValueKey('pitch-key-dropdown'),
       tooltip: l10n.readerTranspose,
@@ -1239,7 +1248,7 @@ class _PlayerScreenState extends State<PlayerScreen>
       initialValue: !state.showChords
           ? 'no-chords'
           : originalPitch == null
-          ? 'offset-${state.readerTranspose}'
+          ? 'offset-$currentOffset'
           : 'pitch-$currentPitch',
       onSelected: (action) async {
         if (action == 'no-chords') {
@@ -1279,10 +1288,7 @@ class _PlayerScreenState extends State<PlayerScreen>
               ),
             ),
         if (originalPitch == null)
-          for (final offset in ({
-            for (var value = -12; value <= 12; value++) value,
-            state.readerTranspose,
-          }.toList()..sort()))
+          for (var offset = -6; offset <= 6; offset++)
             PopupMenuItem(
               key: ValueKey('transpose-offset-$offset'),
               value: 'offset-$offset',
@@ -1290,7 +1296,7 @@ class _PlayerScreenState extends State<PlayerScreen>
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Semantics(
                 label: l10n.readerTransposeSemitones(offset),
-                selected: state.showChords && offset == state.readerTranspose,
+                selected: state.showChords && offset == currentOffset,
                 excludeSemantics: true,
                 child: Text(
                   '${offset > 0 ? '+' : ''}$offset${offset == 0 ? '  ★' : ''}',
@@ -1310,7 +1316,7 @@ class _PlayerScreenState extends State<PlayerScreen>
       child: Semantics(
         key: const ValueKey('pitch-key-dropdown-label'),
         label: originalPitch == null
-            ? l10n.readerTransposeSemitones(state.readerTranspose)
+            ? l10n.readerTransposeSemitones(currentOffset)
             : '${l10n.readerTranspose}, $displayedKey',
         button: true,
         excludeSemantics: true,
