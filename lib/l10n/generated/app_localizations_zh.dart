@@ -1590,30 +1590,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sectionEnding => '结尾';
 
   @override
-  String get youtubeConsentHint =>
-      '实验功能。请在 Google 页面选择 Cookie 设置，以试用歌词搜索。无需登录 Google 账号。你的选择会保留在此设备上。';
-
-  @override
-  String get youtubeConsentOpen => '查看 Google 同意设置';
-
-  @override
-  String get youtubeConsentSaved => '已保存同意设置';
-
-  @override
-  String get youtubeConsentClear => '清除同意设置';
-
-  @override
-  String get youtubeConsentInstructions =>
-      '完成 Cookie 选择并等待 YouTube Music 返回。然后保存此会话并重新搜索歌曲。';
-
-  @override
-  String get youtubeConsentError => '无法更新 Google 同意设置。请重试。';
-
-  @override
-  String get youtubeConsentBlocked =>
-      '此处只能打开 YouTube Music 和 Google 同意页面。无法登录账号。';
-
-  @override
   String searchReadyVersions(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1703,7 +1679,4 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get backupReplaceConfirm => '要替换当前曲库吗？此操作无法撤销。';
-
-  @override
-  String get youtubeConsentPageError => '此页面已停止工作。请重试或返回。';
 }

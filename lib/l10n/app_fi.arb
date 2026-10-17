@@ -726,13 +726,6 @@
   "sectionCoda": "Coda",
   "sectionTag": "Tag",
   "sectionEnding": "Lopetus",
-  "youtubeConsentHint": "Kokeellinen. Kokeile sanoitushakua valitsemalla evästeasetukset Googlen sivulla. Google-tilille ei tarvitse kirjautua. Valintasi säilyy tällä laitteella.",
-  "youtubeConsentOpen": "Tarkista Googlen suostumus",
-  "youtubeConsentSaved": "Suostumus tallennettu",
-  "youtubeConsentClear": "Tyhjennä suostumus",
-  "youtubeConsentInstructions": "Tee evästevalintasi loppuun ja odota, että YouTube Music palaa. Tallenna sitten tämä istunto ja yritä hakea kappaletta uudelleen.",
-  "youtubeConsentError": "Googlen suostumusvalintaa ei voitu päivittää. Yritä uudelleen.",
-  "youtubeConsentBlocked": "Täällä voi avata vain YouTube Musicin ja Googlen suostumussivun. Tilille kirjautuminen ei ole käytettävissä.",
   "searchReadyVersions": "{count, plural, =0{0 Valmiit versiot} =1{1 valmis versio} other{{count} Valmiit versiot}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -770,7 +763,6 @@
   "backupRestored": "Varmuuskopio palautettu.",
   "backupLocalHint": "Tallenna kopio kirjastostasi. Tilin tunnistetietoja ja suostumusevästeitä ei koskaan sisällytetä.",
   "backupReplaceConfirm": "Korvataanko nykyinen kirjasto? Tätä ei voi kumota.",
-  "youtubeConsentPageError": "Tämä sivu lakkasi toimimasta. Yritä uudelleen tai palaa takaisin.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

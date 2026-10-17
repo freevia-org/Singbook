@@ -726,13 +726,6 @@
   "sectionCoda": "Koda",
   "sectionTag": "Atzīme",
   "sectionEnding": "Nobeigums",
-  "youtubeConsentHint": "Eksperimentāla funkcija. Izvēlieties sīkfailus Google lapā, lai izmēģinātu dziesmu vārdu meklēšanu. Nav jāpierakstās Google kontā. Jūsu izvēle paliks šajā ierīcē.",
-  "youtubeConsentOpen": "Pārskatīt Google piekrišanu",
-  "youtubeConsentSaved": "Piekrišana saglabāta",
-  "youtubeConsentClear": "Notīrīt piekrišanu",
-  "youtubeConsentInstructions": "Pabeidziet sīkfailu izvēli un gaidiet, līdz atgriežas YouTube Music. Pēc tam saglabājiet šo sesiju un mēģiniet vēlreiz meklēt dziesmu.",
-  "youtubeConsentError": "Neizdevās atjaunināt Google piekrišanas izvēli. Mēģiniet vēlreiz.",
-  "youtubeConsentBlocked": "Šeit var atvērt tikai YouTube Music un Google piekrišanas lapu. Pierakstīšanās kontā nav pieejama.",
   "searchReadyVersions": "{count, plural, =0{Nav pieejamu versiju} one{{count} pieejama versija} other{{count} pieejamas versijas}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -770,7 +763,6 @@
   "backupRestored": "Dublējums atjaunots.",
   "backupLocalHint": "Saglabājiet savas bibliotēkas kopiju. Konta dati un piekrišanas sīkfaili netiek iekļauti.",
   "backupReplaceConfirm": "Aizstāt pašreizējo bibliotēku? Šo darbību nevar atsaukt.",
-  "youtubeConsentPageError": "Šī lapa pārstāja darboties. Mēģiniet vēlreiz vai dodieties atpakaļ.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

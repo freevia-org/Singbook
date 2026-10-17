@@ -726,13 +726,6 @@
   "sectionCoda": "Coda",
   "sectionTag": "Coletilla",
   "sectionEnding": "Final",
-  "youtubeConsentHint": "Experimental. Elige tus cookies en la página de Google para probar la búsqueda de letras. No necesitas iniciar sesión en una cuenta de Google. Tu elección se guarda en este dispositivo.",
-  "youtubeConsentOpen": "Revisar el consentimiento de Google",
-  "youtubeConsentSaved": "Consentimiento guardado",
-  "youtubeConsentClear": "Borrar consentimiento",
-  "youtubeConsentInstructions": "Completa tu elección de cookies y espera a que vuelva YouTube Music. Después, guarda esta sesión y vuelve a buscar la canción.",
-  "youtubeConsentError": "No se pudo actualizar tu elección de consentimiento de Google. Inténtalo de nuevo.",
-  "youtubeConsentBlocked": "Aquí solo se pueden abrir YouTube Music y la página de consentimiento de Google. No se puede iniciar sesión en una cuenta.",
   "searchReadyVersions": "{count, plural, =0{0 Versiones disponibles} =1{1 versión disponible} other{{count} Versiones disponibles}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -770,7 +763,6 @@
   "backupRestored": "Copia de seguridad restaurada.",
   "backupLocalHint": "Guarda una copia de tu biblioteca. Nunca se incluyen las credenciales de la cuenta ni las cookies de consentimiento.",
   "backupReplaceConfirm": "¿Reemplazar la biblioteca actual? Esta acción no se puede deshacer.",
-  "youtubeConsentPageError": "Esta página dejó de funcionar. Inténtalo de nuevo o vuelve atrás.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

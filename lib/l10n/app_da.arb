@@ -726,13 +726,6 @@
   "sectionCoda": "Coda",
   "sectionTag": "Tag",
   "sectionEnding": "Afslutning",
-  "youtubeConsentHint": "Eksperimentel. Vælg dine cookieindstillinger på Googles side for at prøve at søge efter sangtekster. Du behøver ikke logge ind på en Google-konto. Dit valg bliver på denne enhed.",
-  "youtubeConsentOpen": "Gennemgå Googles samtykke",
-  "youtubeConsentSaved": "Samtykke gemt",
-  "youtubeConsentClear": "Ryd samtykke",
-  "youtubeConsentInstructions": "Vælg dine cookieindstillinger, og vent på, at YouTube Music vender tilbage. Gem derefter denne session, og prøv at søge efter sangen igen.",
-  "youtubeConsentError": "Googles samtykkevalg kunne ikke opdateres. Prøv igen.",
-  "youtubeConsentBlocked": "Kun YouTube Music og Googles samtykkeside kan åbnes her. Kontologin er ikke tilgængeligt.",
   "searchReadyVersions": "{count, plural, =0{0 Tilgængelige versioner} =1{1 klar version} other{{count} Tilgængelige versioner}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -770,7 +763,6 @@
   "backupRestored": "Sikkerhedskopien er gendannet.",
   "backupLocalHint": "Gem en kopi af dit bibliotek. Kontooplysninger og samtykkecookies medtages aldrig.",
   "backupReplaceConfirm": "Vil du erstatte det aktuelle bibliotek? Dette kan ikke fortrydes.",
-  "youtubeConsentPageError": "Denne side holdt op med at fungere. Prøv igen, eller gå tilbage.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

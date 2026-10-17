@@ -1609,30 +1609,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get sectionEnding => 'エンディング';
 
   @override
-  String get youtubeConsentHint =>
-      '試験的な機能です。歌詞検索を試すには、Google のページで Cookie の設定を選択してください。Google アカウントへのログインは不要です。選択内容はこの端末に保存されます。';
-
-  @override
-  String get youtubeConsentOpen => 'Google の同意設定を確認';
-
-  @override
-  String get youtubeConsentSaved => '同意設定を保存しました';
-
-  @override
-  String get youtubeConsentClear => '同意設定を消去';
-
-  @override
-  String get youtubeConsentInstructions =>
-      'Cookie の選択を完了し、YouTube Music に戻るまでお待ちください。その後、このセッションを保存して曲を再検索してください。';
-
-  @override
-  String get youtubeConsentError => 'Google の同意設定を更新できませんでした。もう一度お試しください。';
-
-  @override
-  String get youtubeConsentBlocked =>
-      'ここで開けるのは YouTube Music と Google の同意ページのみです。アカウントへのログインは利用できません。';
-
-  @override
   String searchReadyVersions(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1722,7 +1698,4 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get backupReplaceConfirm => '現在のライブラリを置き換えますか？この操作は元に戻せません。';
-
-  @override
-  String get youtubeConsentPageError => 'このページは動作を停止しました。もう一度お試しいただくか、戻ってください。';
 }

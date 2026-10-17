@@ -1700,31 +1700,6 @@ class AppLocalizationsLt extends AppLocalizations {
   String get sectionEnding => 'Pabaiga';
 
   @override
-  String get youtubeConsentHint =>
-      'Eksperimentinė funkcija. Pasirinkite slapukus „Google“ puslapyje ir išbandykite dainų žodžių paiešką. Prisijungti prie „Google“ paskyros nereikia. Jūsų pasirinkimas liks šiame įrenginyje.';
-
-  @override
-  String get youtubeConsentOpen => 'Peržiūrėti „Google“ sutikimą';
-
-  @override
-  String get youtubeConsentSaved => 'Sutikimas išsaugotas';
-
-  @override
-  String get youtubeConsentClear => 'Išvalyti sutikimą';
-
-  @override
-  String get youtubeConsentInstructions =>
-      'Užbaikite slapukų pasirinkimą ir palaukite, kol grįš „YouTube Music“. Tada išsaugokite šią sesiją ir dar kartą ieškokite dainos.';
-
-  @override
-  String get youtubeConsentError =>
-      'Nepavyko atnaujinti „Google“ sutikimo pasirinkimo. Bandykite dar kartą.';
-
-  @override
-  String get youtubeConsentBlocked =>
-      'Čia galima atidaryti tik „YouTube Music“ ir „Google“ sutikimo puslapį. Prisijungti prie paskyros negalima.';
-
-  @override
   String searchReadyVersions(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1821,8 +1796,4 @@ class AppLocalizationsLt extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Pakeisti dabartinę biblioteką? Šio veiksmo atšaukti negalima.';
-
-  @override
-  String get youtubeConsentPageError =>
-      'Šis puslapis nustojo veikti. Bandykite dar kartą arba grįžkite atgal.';
 }

@@ -1684,31 +1684,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get sectionEnding => 'Final';
 
   @override
-  String get youtubeConsentHint =>
-      'Experimental. Elige tus cookies en la página de Google para probar la búsqueda de letras. No necesitas iniciar sesión en una cuenta de Google. Tu elección se guarda en este dispositivo.';
-
-  @override
-  String get youtubeConsentOpen => 'Revisar el consentimiento de Google';
-
-  @override
-  String get youtubeConsentSaved => 'Consentimiento guardado';
-
-  @override
-  String get youtubeConsentClear => 'Borrar consentimiento';
-
-  @override
-  String get youtubeConsentInstructions =>
-      'Completa tu elección de cookies y espera a que vuelva YouTube Music. Después, guarda esta sesión y vuelve a buscar la canción.';
-
-  @override
-  String get youtubeConsentError =>
-      'No se pudo actualizar tu elección de consentimiento de Google. Inténtalo de nuevo.';
-
-  @override
-  String get youtubeConsentBlocked =>
-      'Aquí solo se pueden abrir YouTube Music y la página de consentimiento de Google. No se puede iniciar sesión en una cuenta.';
-
-  @override
   String searchReadyVersions(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1805,8 +1780,4 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       '¿Reemplazar la biblioteca actual? Esta acción no se puede deshacer.';
-
-  @override
-  String get youtubeConsentPageError =>
-      'Esta página dejó de funcionar. Inténtalo de nuevo o vuelve atrás.';
 }

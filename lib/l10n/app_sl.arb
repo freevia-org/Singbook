@@ -726,13 +726,6 @@
   "sectionCoda": "Koda",
   "sectionTag": "Tag",
   "sectionEnding": "Zaključek",
-  "youtubeConsentHint": "Poskusno. Na Googlovi strani izberite piškotke in preizkusite iskanje besedil. Prijava v Google Račun ni potrebna. Vaša izbira ostane v tej napravi.",
-  "youtubeConsentOpen": "Pregled soglasja Googla",
-  "youtubeConsentSaved": "Soglasje je shranjeno",
-  "youtubeConsentClear": "Počisti soglasje",
-  "youtubeConsentInstructions": "Dokončajte izbiro piškotkov in počakajte, da se vrne YouTube Music. Nato shranite to sejo in znova poiščite skladbo.",
-  "youtubeConsentError": "Izbire soglasja Googla ni bilo mogoče posodobiti. Poskusite znova.",
-  "youtubeConsentBlocked": "Tukaj lahko odprete samo YouTube Music in Googlovo stran za soglasje. Prijava v račun ni na voljo.",
   "searchReadyVersions": "{count, plural, =0{Nema dostupnih verzija} one{{count} različica je na voljo} few{{count} dostupne verzije} other{{count} dostupnih verzija}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -770,7 +763,6 @@
   "backupRestored": "Varnostna kopija je obnovljena.",
   "backupLocalHint": "Shrani kopijo knjižnice. Podatki računa in piškotki soglasja niso nikoli vključeni.",
   "backupReplaceConfirm": "Zamenjam trenutno knjižnico? Tega ni mogoče razveljaviti.",
-  "youtubeConsentPageError": "Ta stran je prenehala delovati. Poskusi znova ali se vrni.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

@@ -623,9 +623,6 @@ abstract class VerseUiController extends ChangeNotifier {
   void clearHistory();
   Future<void> selectReference(SearchReferenceData reference);
   Future<void> retrySelectedSongDiscovery() async {}
-  Future<void> retryYoutubeMusicForSelectedSong({
-    String? expectedIdentity,
-  }) async {}
   void selectVersion(String versionId);
   Future<void> saveSelectedVersion();
   Future<void> compareCurrentSongVersions() async {}
@@ -666,10 +663,6 @@ abstract class VerseUiController extends ChangeNotifier {
   Future<void> setTimingMode(String mode);
   Future<void> setProviderEnabled(String id, bool enabled);
   Future<bool> refreshSources() async => false;
-  bool get youtubeMusicConsentSupported => false;
-  bool get youtubeMusicConsentSaved => false;
-  Future<bool> completeYoutubeMusicConsent() async => false;
-  Future<bool> clearYoutubeMusicConsent() async => false;
   Future<void> signInForSync();
   Future<void> signOutFromSync();
 

@@ -1692,31 +1692,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sectionEnding => 'النهاية';
 
   @override
-  String get youtubeConsentHint =>
-      'تجريبي. اختر ملفات تعريف الارتباط على صفحة Google لتجربة البحث عن كلمات الأغاني. لا يلزم تسجيل الدخول إلى حساب Google. يبقى اختيارك على هذا الجهاز.';
-
-  @override
-  String get youtubeConsentOpen => 'مراجعة موافقة Google';
-
-  @override
-  String get youtubeConsentSaved => 'تم حفظ الموافقة';
-
-  @override
-  String get youtubeConsentClear => 'مسح الموافقة';
-
-  @override
-  String get youtubeConsentInstructions =>
-      'أكمل اختيار ملفات تعريف الارتباط وانتظر عودة YouTube Music. ثم احفظ هذه الجلسة وأعد محاولة البحث عن الأغنية.';
-
-  @override
-  String get youtubeConsentError =>
-      'تعذّر تحديث اختيار موافقة Google. حاول مرة أخرى.';
-
-  @override
-  String get youtubeConsentBlocked =>
-      'يمكن فتح YouTube Music وصفحة موافقة Google فقط هنا. تسجيل الدخول إلى الحساب غير متاح.';
-
-  @override
   String searchReadyVersions(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1817,8 +1792,4 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'هل تريد استبدال المكتبة الحالية؟ لا يمكن التراجع عن ذلك.';
-
-  @override
-  String get youtubeConsentPageError =>
-      'توقفت هذه الصفحة عن العمل. حاول مرة أخرى أو ارجع.';
 }

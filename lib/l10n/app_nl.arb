@@ -726,13 +726,6 @@
   "sectionCoda": "Coda",
   "sectionTag": "Tag",
   "sectionEnding": "Slot",
-  "youtubeConsentHint": "Experimenteel. Kies je cookies op de Google-pagina om het zoeken naar songteksten uit te proberen. Je hoeft niet in te loggen op een Google-account. Je keuze blijft op dit apparaat.",
-  "youtubeConsentOpen": "Google-toestemming bekijken",
-  "youtubeConsentSaved": "Toestemming opgeslagen",
-  "youtubeConsentClear": "Toestemming wissen",
-  "youtubeConsentInstructions": "Rond je cookiekeuze af en wacht tot YouTube Music terugkeert. Sla daarna deze sessie op en zoek het nummer opnieuw.",
-  "youtubeConsentError": "Je Google-toestemmingskeuze kon niet worden bijgewerkt. Probeer het opnieuw.",
-  "youtubeConsentBlocked": "Hier kunnen alleen YouTube Music en de toestemmingspagina van Google worden geopend. Inloggen op een account is niet beschikbaar.",
   "searchReadyVersions": "{count, plural, =0{0 Beschikbare versies} =1{1 beschikbare versie} other{{count} Beschikbare versies}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -770,7 +763,6 @@
   "backupRestored": "Back-up hersteld.",
   "backupLocalHint": "Sla een kopie van je bibliotheek op. Accountgegevens en toestemmingscookies worden nooit opgenomen.",
   "backupReplaceConfirm": "De huidige bibliotheek vervangen? Dit kan niet ongedaan worden gemaakt.",
-  "youtubeConsentPageError": "Deze pagina werkt niet meer. Probeer het opnieuw of ga terug.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

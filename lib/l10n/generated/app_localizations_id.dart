@@ -1672,31 +1672,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get sectionEnding => 'Penutup';
 
   @override
-  String get youtubeConsentHint =>
-      'Eksperimental. Pilih cookie di halaman Google untuk mencoba pencarian lirik. Anda tidak perlu masuk ke akun Google. Pilihan Anda tersimpan di perangkat ini.';
-
-  @override
-  String get youtubeConsentOpen => 'Tinjau persetujuan Google';
-
-  @override
-  String get youtubeConsentSaved => 'Persetujuan tersimpan';
-
-  @override
-  String get youtubeConsentClear => 'Hapus persetujuan';
-
-  @override
-  String get youtubeConsentInstructions =>
-      'Selesaikan pilihan cookie dan tunggu hingga YouTube Music kembali. Setelah itu, simpan sesi ini dan coba cari lagu lagi.';
-
-  @override
-  String get youtubeConsentError =>
-      'Pilihan persetujuan Google tidak dapat diperbarui. Coba lagi.';
-
-  @override
-  String get youtubeConsentBlocked =>
-      'Di sini hanya YouTube Music dan halaman persetujuan Google yang dapat dibuka. Masuk ke akun tidak tersedia.';
-
-  @override
   String searchReadyVersions(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1791,8 +1766,4 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Ganti pustaka saat ini? Tindakan ini tidak dapat dibatalkan.';
-
-  @override
-  String get youtubeConsentPageError =>
-      'Halaman ini berhenti berfungsi. Coba lagi atau kembali.';
 }

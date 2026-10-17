@@ -726,13 +726,6 @@
   "sectionCoda": "Koda",
   "sectionTag": "Tagas",
   "sectionEnding": "Pabaiga",
-  "youtubeConsentHint": "Eksperimentinė funkcija. Pasirinkite slapukus „Google“ puslapyje ir išbandykite dainų žodžių paiešką. Prisijungti prie „Google“ paskyros nereikia. Jūsų pasirinkimas liks šiame įrenginyje.",
-  "youtubeConsentOpen": "Peržiūrėti „Google“ sutikimą",
-  "youtubeConsentSaved": "Sutikimas išsaugotas",
-  "youtubeConsentClear": "Išvalyti sutikimą",
-  "youtubeConsentInstructions": "Užbaikite slapukų pasirinkimą ir palaukite, kol grįš „YouTube Music“. Tada išsaugokite šią sesiją ir dar kartą ieškokite dainos.",
-  "youtubeConsentError": "Nepavyko atnaujinti „Google“ sutikimo pasirinkimo. Bandykite dar kartą.",
-  "youtubeConsentBlocked": "Čia galima atidaryti tik „YouTube Music“ ir „Google“ sutikimo puslapį. Prisijungti prie paskyros negalima.",
   "searchReadyVersions": "{count, plural, =0{Nėra paruoštų versijų} one{{count} paruošta versija} few{{count} paruoštos versijos} other{{count} paruoštų versijų}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -770,7 +763,6 @@
   "backupRestored": "Atsarginė kopija atkurta.",
   "backupLocalHint": "Išsaugokite savo bibliotekos kopiją. Paskyros prisijungimo duomenys ir sutikimo slapukai neįtraukiami.",
   "backupReplaceConfirm": "Pakeisti dabartinę biblioteką? Šio veiksmo atšaukti negalima.",
-  "youtubeConsentPageError": "Šis puslapis nustojo veikti. Bandykite dar kartą arba grįžkite atgal.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

@@ -1700,31 +1700,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sectionEnding => 'Окончание';
 
   @override
-  String get youtubeConsentHint =>
-      'Экспериментальная функция. Выберите настройки файлов cookie на странице Google, чтобы попробовать поиск текстов песен. Вход в аккаунт Google не нужен. Выбор останется на этом устройстве.';
-
-  @override
-  String get youtubeConsentOpen => 'Проверить согласие Google';
-
-  @override
-  String get youtubeConsentSaved => 'Согласие сохранено';
-
-  @override
-  String get youtubeConsentClear => 'Очистить согласие';
-
-  @override
-  String get youtubeConsentInstructions =>
-      'Завершите выбор файлов cookie и дождитесь возвращения YouTube Music. Затем сохраните этот сеанс и повторите поиск песни.';
-
-  @override
-  String get youtubeConsentError =>
-      'Не удалось обновить выбор согласия Google. Повторите попытку.';
-
-  @override
-  String get youtubeConsentBlocked =>
-      'Здесь можно открыть только YouTube Music и страницу согласия Google. Вход в аккаунт недоступен.';
-
-  @override
   String searchReadyVersions(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1823,8 +1798,4 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Заменить текущую библиотеку? Это действие нельзя отменить.';
-
-  @override
-  String get youtubeConsentPageError =>
-      'Эта страница перестала работать. Попробуйте ещё раз или вернитесь назад.';
 }

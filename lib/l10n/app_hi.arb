@@ -726,13 +726,6 @@
   "sectionCoda": "कोडा",
   "sectionTag": "टैग",
   "sectionEnding": "समापन",
-  "youtubeConsentHint": "प्रयोगात्मक। गीत के बोल खोजने के लिए Google के पेज पर कुकी विकल्प चुनें। Google खाते में साइन इन करने की ज़रूरत नहीं है। आपकी पसंद इसी डिवाइस पर रहेगी।",
-  "youtubeConsentOpen": "Google की सहमति देखें",
-  "youtubeConsentSaved": "सहमति सहेजी गई",
-  "youtubeConsentClear": "सहमति मिटाएँ",
-  "youtubeConsentInstructions": "कुकी विकल्प पूरा करें और YouTube Music के लौटने तक प्रतीक्षा करें। फिर यह सत्र सहेजें और गाना दोबारा खोजें।",
-  "youtubeConsentError": "Google की सहमति का विकल्प अपडेट नहीं हो सका। फिर से कोशिश करें।",
-  "youtubeConsentBlocked": "यहाँ केवल YouTube Music और Google का सहमति पेज खुल सकता है। खाते में साइन इन करना उपलब्ध नहीं है।",
   "searchReadyVersions": "{count, plural, =0{0 तैयार संस्करण} =1{1 तैयार संस्करण} other{{count} तैयार संस्करण}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -770,7 +763,6 @@
   "backupRestored": "बैकअप पुनर्स्थापित किया गया।",
   "backupLocalHint": "अपनी लाइब्रेरी की प्रति सहेजें। खाते की जानकारी और सहमति कुकीज़ कभी शामिल नहीं होतीं।",
   "backupReplaceConfirm": "मौजूदा लाइब्रेरी बदलें? इसे पूर्ववत नहीं किया जा सकता।",
-  "youtubeConsentPageError": "यह पेज काम करना बंद कर चुका है। फिर कोशिश करें या वापस जाएँ।",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

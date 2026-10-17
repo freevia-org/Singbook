@@ -186,13 +186,6 @@
   "sectionCoda": "Кода",
   "sectionTag": "Таг",
   "sectionEnding": "Край",
-  "youtubeConsentHint": "Експериментална функция. Изберете предпочитанията си за бисквитки на страницата на Google, за да изпробвате търсенето на текстове. Не е нужно да влизате в Google профил. Изборът ви остава на това устройство.",
-  "youtubeConsentOpen": "Преглед на съгласието в Google",
-  "youtubeConsentSaved": "Съгласието е запазено",
-  "youtubeConsentClear": "Изчистване на съгласието",
-  "youtubeConsentInstructions": "Завършете избора си за бисквитките и изчакайте YouTube Music да се отвори отново. След това запазете тази сесия и опитайте отново да потърсите песента.",
-  "youtubeConsentError": "Изборът ви за съгласие в Google не можа да се актуализира. Опитайте отново.",
-  "youtubeConsentBlocked": "Тук могат да се отварят само YouTube Music и страницата за съгласие на Google. Влизането в профил не е достъпно.",
   "searchReadyVersions": "{count, plural, =0{Няма налични версии} one{{count} готова версия} other{{count} готови версии}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -230,7 +223,6 @@
   "backupRestored": "Архивът е възстановен.",
   "backupLocalHint": "Запазете копие на библиотеката си. Данните за профила и бисквитките за съгласие не се включват.",
   "backupReplaceConfirm": "Да заменя ли текущата библиотека? Това действие не може да се отмени.",
-  "youtubeConsentPageError": "Тази страница спря да работи. Опитайте отново или се върнете.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

@@ -726,13 +726,6 @@
   "sectionCoda": "Kóda",
   "sectionTag": "Tag",
   "sectionEnding": "Befejezés",
-  "youtubeConsentHint": "Kísérleti funkció. A dalszövegkeresés kipróbálásához válaszd ki a cookie-beállításokat a Google oldalán. Nem kell bejelentkezned Google-fiókba. A választásod ezen az eszközön marad.",
-  "youtubeConsentOpen": "Google-hozzájárulás áttekintése",
-  "youtubeConsentSaved": "Hozzájárulás mentve",
-  "youtubeConsentClear": "Hozzájárulás törlése",
-  "youtubeConsentInstructions": "Fejezd be a cookie-választást, és várd meg, amíg visszatér a YouTube Music. Ezután mentsd ezt a munkamenetet, és keresd meg újra a dalt.",
-  "youtubeConsentError": "Nem sikerült frissíteni a Google-hozzájárulási választást. Próbáld újra.",
-  "youtubeConsentBlocked": "Itt csak a YouTube Music és a Google hozzájárulási oldala nyitható meg. A fiókba való bejelentkezés nem érhető el.",
   "searchReadyVersions": "{count, plural, =0{0 Elérhető verziók} =1{1 elérhető verzió} other{{count} Elérhető verziók}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -770,7 +763,6 @@
   "backupRestored": "A biztonsági mentés visszaállítva.",
   "backupLocalHint": "Ments másolatot a könyvtárról. Fiókadatok és hozzájárulási sütik soha nem kerülnek bele.",
   "backupReplaceConfirm": "Lecseréled a jelenlegi könyvtárat? Ez nem vonható vissza.",
-  "youtubeConsentPageError": "Ez az oldal leállt. Próbáld újra, vagy lépj vissza.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

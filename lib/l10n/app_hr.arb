@@ -726,13 +726,6 @@
   "sectionCoda": "Koda",
   "sectionTag": "Tag",
   "sectionEnding": "Završetak",
-  "youtubeConsentHint": "Eksperimentalno. Odaberite kolačiće na Googleovoj stranici da biste isprobali pretraživanje stihova. Ne morate se prijaviti na Google račun. Vaš odabir ostaje na ovom uređaju.",
-  "youtubeConsentOpen": "Pregled Googleove suglasnosti",
-  "youtubeConsentSaved": "Suglasnost je spremljena",
-  "youtubeConsentClear": "Izbriši suglasnost",
-  "youtubeConsentInstructions": "Dovršite odabir kolačića i pričekajte da se YouTube Music vrati. Zatim spremite ovu sesiju i ponovno potražite pjesmu.",
-  "youtubeConsentError": "Googleov odabir suglasnosti nije se mogao ažurirati. Pokušajte ponovno.",
-  "youtubeConsentBlocked": "Ovdje se mogu otvoriti samo YouTube Music i Googleova stranica za suglasnost. Prijava na račun nije dostupna.",
   "searchReadyVersions": "{count, plural, =0{Nema dostupnih verzija} one{{count} dostupna verzija} few{{count} dostupne verzije} other{{count} dostupnih verzija}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -770,7 +763,6 @@
   "backupRestored": "Sigurnosna kopija vraćena je.",
   "backupLocalHint": "Spremite kopiju svoje biblioteke. Podaci računa i kolačići privole nikad se ne uključuju.",
   "backupReplaceConfirm": "Želite li zamijeniti trenutačnu biblioteku? To se ne može poništiti.",
-  "youtubeConsentPageError": "Ova je stranica prestala raditi. Pokušajte ponovno ili se vratite.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

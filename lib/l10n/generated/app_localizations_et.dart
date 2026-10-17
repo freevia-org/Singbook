@@ -1668,31 +1668,6 @@ class AppLocalizationsEt extends AppLocalizations {
   String get sectionEnding => 'Lõpp';
 
   @override
-  String get youtubeConsentHint =>
-      'Eksperimentaalne. Proovi laulusõnade otsingut, valides Google\'i lehel küpsiste eelistused. Google\'i kontole pole vaja sisse logida. Sinu valik jääb sellesse seadmesse.';
-
-  @override
-  String get youtubeConsentOpen => 'Vaata Google\'i nõusolekut';
-
-  @override
-  String get youtubeConsentSaved => 'Nõusolek salvestatud';
-
-  @override
-  String get youtubeConsentClear => 'Kustuta nõusolek';
-
-  @override
-  String get youtubeConsentInstructions =>
-      'Lõpeta küpsiste valimine ja oota, kuni YouTube Music naaseb. Seejärel salvesta see seanss ja otsi lugu uuesti.';
-
-  @override
-  String get youtubeConsentError =>
-      'Google\'i nõusolekuvalikut ei saanud uuendada. Proovi uuesti.';
-
-  @override
-  String get youtubeConsentBlocked =>
-      'Siin saab avada ainult YouTube Musicu ja Google\'i nõusolekulehe. Kontole sisselogimine pole saadaval.';
-
-  @override
   String searchReadyVersions(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1787,8 +1762,4 @@ class AppLocalizationsEt extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Kas asendada praegune teek? Seda ei saa tagasi võtta.';
-
-  @override
-  String get youtubeConsentPageError =>
-      'See leht lakkas töötamast. Proovi uuesti või mine tagasi.';
 }

@@ -1706,31 +1706,6 @@ class AppLocalizationsSl extends AppLocalizations {
   String get sectionEnding => 'Zaključek';
 
   @override
-  String get youtubeConsentHint =>
-      'Poskusno. Na Googlovi strani izberite piškotke in preizkusite iskanje besedil. Prijava v Google Račun ni potrebna. Vaša izbira ostane v tej napravi.';
-
-  @override
-  String get youtubeConsentOpen => 'Pregled soglasja Googla';
-
-  @override
-  String get youtubeConsentSaved => 'Soglasje je shranjeno';
-
-  @override
-  String get youtubeConsentClear => 'Počisti soglasje';
-
-  @override
-  String get youtubeConsentInstructions =>
-      'Dokončajte izbiro piškotkov in počakajte, da se vrne YouTube Music. Nato shranite to sejo in znova poiščite skladbo.';
-
-  @override
-  String get youtubeConsentError =>
-      'Izbire soglasja Googla ni bilo mogoče posodobiti. Poskusite znova.';
-
-  @override
-  String get youtubeConsentBlocked =>
-      'Tukaj lahko odprete samo YouTube Music in Googlovo stran za soglasje. Prijava v račun ni na voljo.';
-
-  @override
   String searchReadyVersions(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1827,8 +1802,4 @@ class AppLocalizationsSl extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Zamenjam trenutno knjižnico? Tega ni mogoče razveljaviti.';
-
-  @override
-  String get youtubeConsentPageError =>
-      'Ta stran je prenehala delovati. Poskusi znova ali se vrni.';
 }

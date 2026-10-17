@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/l10n/generated/app_localizations.dart';
@@ -44,10 +45,7 @@ class _Controller extends VerseUiController {
   int saves = 0;
   String? savedVersionId;
   bool opened = false;
-  bool consentSupported = false;
-  bool consentSaved = false;
   List<SearchProviderCheckData> providerChecks = const [];
-  int discoveryRetries = 0;
   @override
   VerseUiState get state => VerseUiState(
     route: opened ? VerseRoute.reader : VerseRoute.main,
@@ -66,21 +64,6 @@ class _Controller extends VerseUiController {
       providerChecks: providerChecks,
     ),
   );
-  @override
-  bool get youtubeMusicConsentSupported => consentSupported;
-  @override
-  bool get youtubeMusicConsentSaved => consentSaved;
-  @override
-  Future<bool> completeYoutubeMusicConsent() async {
-    consentSaved = true;
-    return true;
-  }
-  @override
-  Future<void> retryYoutubeMusicForSelectedSong({
-    String? expectedIdentity,
-  }) async {
-    discoveryRetries++;
-  }
   @override
   void selectVersion(String versionId) {
     selected = versionId;
@@ -121,11 +104,21 @@ Widget _app(
 );
 
 void main() {
-  testWidgets('consent review is an explicit action in source options', (
+  testWidgets('a blocked YouTube source has no consent or browser action', (
     tester,
   ) async {
+    const capture = bool.fromEnvironment('CAPTURE_YOUTUBE_REMOVAL');
+    if (capture) {
+      for (final family in ['Roboto', 'sans-serif']) {
+        await (FontLoader(family)
+              ..addFont(rootBundle.load('assets/fonts/NotoSans-Regular.ttf')))
+            .load();
+      }
+      await (FontLoader(
+        'MaterialIcons',
+      )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
+    }
     final controller = _Controller()
-      ..consentSupported = true
       ..providerChecks = const [
         SearchProviderCheckData(
           id: 'youtubemusic',
@@ -141,12 +134,24 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       find.byKey(const ValueKey('review-youtube-music-consent')),
-      findsOneWidget,
+      findsNothing,
     );
+    expect(find.text('Review Google consent'), findsNothing);
+    expect(find.textContaining('cookie choice'), findsNothing);
+    expect(controller.selected, 'a');
+    expect(controller.saves, 0);
     expect(find.byType(SourcePreviewScreen), findsOneWidget);
+    if (capture) {
+      await expectLater(
+        find.byType(Overlay).first,
+        matchesGoldenFile('../../artifacts/youtube-source-options.png'),
+      );
+    }
     expect(
       tester
-          .widget<DraggableScrollableSheet>(find.byType(DraggableScrollableSheet))
+          .widget<DraggableScrollableSheet>(
+            find.byType(DraggableScrollableSheet),
+          )
           .initialChildSize,
       lessThan(.5),
     );

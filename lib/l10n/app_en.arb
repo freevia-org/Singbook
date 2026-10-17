@@ -464,13 +464,6 @@
   "sectionCoda": "Coda",
   "sectionTag": "Tag",
   "sectionEnding": "Ending",
-  "youtubeConsentHint": "Experimental. Make your cookie choice on Google's page to try lyrics lookup. No Google account sign-in. Your choice stays on this device.",
-  "youtubeConsentOpen": "Review Google consent",
-  "youtubeConsentSaved": "Consent saved",
-  "youtubeConsentClear": "Clear consent",
-  "youtubeConsentInstructions": "Complete Google's cookie choice and wait for YouTube Music to return. Then save this session and retry the song.",
-  "youtubeConsentError": "Couldn't update Google's consent choice. Try again.",
-  "youtubeConsentBlocked": "Only YouTube Music and Google's consent page can open here. Account sign-in is unavailable.",
   "searchReadyVersions": "{count, plural, =0{No ready versions} =1{1 ready version} other{{count} ready versions}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -527,6 +520,5 @@
         "type": "int"
       }
     }
-  },
-  "youtubeConsentPageError": "This page stopped working. Try again or go back."
+  }
 }

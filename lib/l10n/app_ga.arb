@@ -726,13 +726,6 @@
   "sectionCoda": "Coda",
   "sectionTag": "Tag",
   "sectionEnding": "Deireadh",
-  "youtubeConsentHint": "Gné thurgnamhach. Roghnaigh fianáin ar leathanach Google chun triail a bhaint as cuardach liricí. Ní gá síniú isteach i gcuntas Google. Fanfaidh do rogha ar an ngléas seo.",
-  "youtubeConsentOpen": "Athbhreithniú ar thoiliú Google",
-  "youtubeConsentSaved": "Sábháladh an toiliú",
-  "youtubeConsentClear": "Glan an toiliú",
-  "youtubeConsentInstructions": "Críochnaigh do rogha fianán agus fan go bhfillfidh YouTube Music. Ansin sábháil an seisiún seo agus bain triail eile as an amhrán a chuardach.",
-  "youtubeConsentError": "Níorbh fhéidir rogha toilithe Google a nuashonrú. Bain triail eile as.",
-  "youtubeConsentBlocked": "Ní féidir ach YouTube Music agus leathanach toilithe Google a oscailt anseo. Níl síniú isteach i gcuntas ar fáil.",
   "searchReadyVersions": "{count, plural, =0{Níl leaganacha réidh ar fáil} one{{count} leagan réidh} two{{count} leagan réidh} few{{count} leaganacha réidh} many{{count} leagan réidh} other{{count} leagan réidh}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -770,7 +763,6 @@
   "backupRestored": "Athchóiríodh an cúltaca.",
   "backupLocalHint": "Sábháil cóip de do leabharlann. Ní chuirtear dintiúir chuntais ná fianáin toilithe san áireamh riamh.",
   "backupReplaceConfirm": "Ionadaigh an leabharlann reatha? Ní féidir é seo a chealú.",
-  "youtubeConsentPageError": "Stop an leathanach seo ag obair. Bain triail eile as nó téigh ar ais.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

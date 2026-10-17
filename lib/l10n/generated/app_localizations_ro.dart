@@ -1697,31 +1697,6 @@ class AppLocalizationsRo extends AppLocalizations {
   String get sectionEnding => 'Final';
 
   @override
-  String get youtubeConsentHint =>
-      'Experimental. Alegeți cookie-urile pe pagina Google pentru a încerca să căutați versuri. Nu este nevoie să vă conectați la un cont Google. Alegerea rămâne pe acest dispozitiv.';
-
-  @override
-  String get youtubeConsentOpen => 'Verificați consimțământul Google';
-
-  @override
-  String get youtubeConsentSaved => 'Consimțământ salvat';
-
-  @override
-  String get youtubeConsentClear => 'Ștergeți consimțământul';
-
-  @override
-  String get youtubeConsentInstructions =>
-      'Finalizați alegerea cookie-urilor și așteptați să revină YouTube Music. Apoi salvați această sesiune și căutați din nou melodia.';
-
-  @override
-  String get youtubeConsentError =>
-      'Alegerea de consimțământ Google nu a putut fi actualizată. Încercați din nou.';
-
-  @override
-  String get youtubeConsentBlocked =>
-      'Aici se pot deschide doar YouTube Music și pagina de consimțământ Google. Conectarea la un cont nu este disponibilă.';
-
-  @override
   String searchReadyVersions(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1818,8 +1793,4 @@ class AppLocalizationsRo extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Înlocuiești biblioteca actuală? Acțiunea nu poate fi anulată.';
-
-  @override
-  String get youtubeConsentPageError =>
-      'Această pagină nu mai funcționează. Încearcă din nou sau revino.';
 }

@@ -1690,31 +1690,6 @@ class AppLocalizationsNl extends AppLocalizations {
   String get sectionEnding => 'Slot';
 
   @override
-  String get youtubeConsentHint =>
-      'Experimenteel. Kies je cookies op de Google-pagina om het zoeken naar songteksten uit te proberen. Je hoeft niet in te loggen op een Google-account. Je keuze blijft op dit apparaat.';
-
-  @override
-  String get youtubeConsentOpen => 'Google-toestemming bekijken';
-
-  @override
-  String get youtubeConsentSaved => 'Toestemming opgeslagen';
-
-  @override
-  String get youtubeConsentClear => 'Toestemming wissen';
-
-  @override
-  String get youtubeConsentInstructions =>
-      'Rond je cookiekeuze af en wacht tot YouTube Music terugkeert. Sla daarna deze sessie op en zoek het nummer opnieuw.';
-
-  @override
-  String get youtubeConsentError =>
-      'Je Google-toestemmingskeuze kon niet worden bijgewerkt. Probeer het opnieuw.';
-
-  @override
-  String get youtubeConsentBlocked =>
-      'Hier kunnen alleen YouTube Music en de toestemmingspagina van Google worden geopend. Inloggen op een account is niet beschikbaar.';
-
-  @override
   String searchReadyVersions(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1809,8 +1784,4 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'De huidige bibliotheek vervangen? Dit kan niet ongedaan worden gemaakt.';
-
-  @override
-  String get youtubeConsentPageError =>
-      'Deze pagina werkt niet meer. Probeer het opnieuw of ga terug.';
 }

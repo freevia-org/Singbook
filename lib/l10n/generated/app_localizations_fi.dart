@@ -1670,31 +1670,6 @@ class AppLocalizationsFi extends AppLocalizations {
   String get sectionEnding => 'Lopetus';
 
   @override
-  String get youtubeConsentHint =>
-      'Kokeellinen. Kokeile sanoitushakua valitsemalla evästeasetukset Googlen sivulla. Google-tilille ei tarvitse kirjautua. Valintasi säilyy tällä laitteella.';
-
-  @override
-  String get youtubeConsentOpen => 'Tarkista Googlen suostumus';
-
-  @override
-  String get youtubeConsentSaved => 'Suostumus tallennettu';
-
-  @override
-  String get youtubeConsentClear => 'Tyhjennä suostumus';
-
-  @override
-  String get youtubeConsentInstructions =>
-      'Tee evästevalintasi loppuun ja odota, että YouTube Music palaa. Tallenna sitten tämä istunto ja yritä hakea kappaletta uudelleen.';
-
-  @override
-  String get youtubeConsentError =>
-      'Googlen suostumusvalintaa ei voitu päivittää. Yritä uudelleen.';
-
-  @override
-  String get youtubeConsentBlocked =>
-      'Täällä voi avata vain YouTube Musicin ja Googlen suostumussivun. Tilille kirjautuminen ei ole käytettävissä.';
-
-  @override
   String searchReadyVersions(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1789,8 +1764,4 @@ class AppLocalizationsFi extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Korvataanko nykyinen kirjasto? Tätä ei voi kumota.';
-
-  @override
-  String get youtubeConsentPageError =>
-      'Tämä sivu lakkasi toimimasta. Yritä uudelleen tai palaa takaisin.';
 }
