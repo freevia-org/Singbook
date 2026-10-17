@@ -447,6 +447,7 @@ class AppControllerAdapter extends VerseUiController {
       editor: _editorData,
       editorDirty: _editorDirty,
       readerKey: displayedKey,
+      readerTranspose: _transpose.round(),
       readerCapo: displayedCapo?.toString(),
       readerTuning: tuning?.toString(),
       readerTempo: tempo?.toString(),

@@ -166,7 +166,7 @@ void main() {
     expect(controller.state.showChords, isTrue);
   });
 
-  testWidgets('unknown key keeps semitone transpose controls available', (
+  testWidgets('unknown key transposes from the same popup beside Play', (
     tester,
   ) async {
     await tester.runAsync(
@@ -184,9 +184,11 @@ void main() {
     await pumpShell(tester, controller);
 
     expect(find.byKey(const ValueKey('pitch-key-dropdown')), findsOneWidget);
-    final l10n = l10nOf(tester);
-    final down = find.byTooltip(l10n.readerTransposeSemitones(-1));
+    await tester.tap(find.byKey(const ValueKey('pitch-key-dropdown')));
+    await _settle(tester, controller);
+    final down = find.byKey(const ValueKey('transpose-offset--1'));
     expect(down, findsOneWidget);
+    await tester.ensureVisible(down);
     await tester.tap(down);
     await tester.runAsync(controller.settlePlayerPreferences);
     await tester.pump();

@@ -124,6 +124,59 @@ Future<void> _pump(
 }
 
 void main() {
+  for (final missingKey in <String?>[null, 'H']) {
+    for (final scenario in [
+      ('phone', const Size(360, 800), 1.0, const Locale('en')),
+      ('small_large_text', const Size(320, 640), 2.0, const Locale('en')),
+      ('landscape', const Size(900, 400), 1.0, const Locale('en')),
+      ('landscape_large', const Size(700, 360), 1.5, const Locale('bg')),
+      ('rtl', const Size(360, 780), 1.6, const Locale('ar')),
+      ('tablet', const Size(800, 1280), 1.0, const Locale('en')),
+    ]) {
+      testWidgets(
+        'keyless chord dropdown beside Play ($missingKey ${scenario.$1})',
+        (tester) async {
+          final controller = _Controller()..songKey = missingKey;
+          addTearDown(controller.dispose);
+          await _pump(
+            tester,
+            controller,
+            size: scenario.$2,
+            scale: scenario.$3,
+            locale: scenario.$4,
+          );
+          final dropdown = find.byKey(const ValueKey('pitch-key-dropdown'));
+          final key = tester.getRect(dropdown);
+          final play = tester.getRect(
+            find.byKey(const ValueKey('start-lyric-scroll')),
+          );
+          if (scenario.$4.languageCode == 'ar') {
+            expect(key.left, greaterThanOrEqualTo(play.right));
+          } else {
+            expect(key.right, lessThanOrEqualTo(play.left));
+          }
+          expect(key.center.dy, closeTo(play.center.dy, 1));
+          expect(find.byIcon(Icons.remove_circle_outline), findsNothing);
+          expect(find.byIcon(Icons.add_circle_outline), findsNothing);
+          await tester.tap(dropdown);
+          await tester.pumpAndSettle();
+          final shift = find.byKey(const ValueKey('transpose-offset-2'));
+          expect(shift, findsOneWidget);
+          await tester.ensureVisible(shift);
+          final popup = tester.getRect(shift);
+          expect(popup.left, lessThan(key.right));
+          expect(popup.right, greaterThan(key.left));
+          expect(tester.getRect(shift).top, greaterThanOrEqualTo(0));
+          expect(
+            tester.getRect(shift).bottom,
+            lessThanOrEqualTo(scenario.$2.height),
+          );
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
+  }
+
   testWidgets('compact sidebar keeps key play and speed on one ordered row', (
     tester,
   ) async {
@@ -168,7 +221,7 @@ void main() {
       findsNothing,
     );
     expect(
-      find.descendant(of: keyMenu, matching: find.text('—')),
+      find.descendant(of: keyMenu, matching: find.text('0')),
       findsOneWidget,
     );
     expect(tester.takeException(), isNull);
@@ -182,6 +235,7 @@ void main() {
       tester.getSemantics(noneOption).flagsCollection.isSelected.toBoolOrNull(),
       isFalse,
     );
+    await tester.ensureVisible(noneOption);
     await tester.tap(noneOption);
     await tester.pumpAndSettle();
     expect(controller.showChords, isFalse);
@@ -434,6 +488,7 @@ void main() {
         await tester.pumpAndSettle();
         final keyMenu = find.byKey(const ValueKey('pitch-key-dropdown'));
         await tester.ensureVisible(keyMenu);
+        final keyAnchor = tester.getRect(keyMenu);
         await tester.tap(keyMenu);
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
@@ -444,11 +499,8 @@ void main() {
           find.byType(PopupMenuItem<String>).first,
         );
         expect(keyPopupWidth, speedPopupWidth);
-        if (isRtl) {
-          expect(keyPopupRect.right, closeTo(scenario.$2.width - 8, 1));
-        } else {
-          expect(keyPopupRect.left, closeTo(8, 1));
-        }
+        expect(keyPopupRect.left, lessThan(keyAnchor.right));
+        expect(keyPopupRect.right, greaterThan(keyAnchor.left));
         final noneOption = find.text(
           AppLocalizations.of(tester.element(keyMenu)).playerChordsNone,
         );

@@ -495,6 +495,7 @@ class VerseUiState {
     this.editor,
     this.editorDirty = false,
     this.readerKey,
+    this.readerTranspose = 0,
     this.readerCapo,
     this.readerTuning,
     this.readerTempo,
@@ -560,6 +561,7 @@ class VerseUiState {
       editor = o.editor,
       editorDirty = o.editorDirty,
       readerKey = o.readerKey,
+      readerTranspose = o.readerTranspose,
       readerCapo = o.readerCapo,
       readerTuning = o.readerTuning,
       readerTempo = o.readerTempo;
@@ -632,6 +634,10 @@ class VerseUiState {
   /// Key (after any setlist override and transposition), capo, tuning and tempo
   /// of the open song, for the reader subtitle.
   final String? readerKey, readerCapo, readerTuning, readerTempo;
+
+  /// Semitone adjustment from the saved arrangement, also available without
+  /// key metadata. A chord root alone does not establish the song's key.
+  final int readerTranspose;
 }
 
 /// UI boundary deliberately keeps widgets independent of SQLite and provider types.
