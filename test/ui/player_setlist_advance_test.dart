@@ -75,30 +75,38 @@ void main() {
     expect(presses, 1);
   });
 
-  testWidgets('player has a fine speed slider and displays adjusted duration', (
-    tester,
-  ) async {
-    await pumpShell(tester, controller);
+  testWidgets(
+    'player expands fine speed controls and displays adjusted duration',
+    (tester) async {
+      await pumpShell(tester, controller);
 
-    expect(find.text('Play'), findsOneWidget);
-    final speedSlider = tester.widget<Slider>(
-      find.byKey(const ValueKey('scroll-speed-slider')),
-    );
-    expect(speedSlider.divisions, 30);
-    expect(speedSlider.min, .5);
-    expect(speedSlider.max, 2);
-    expect(find.text('4:00'), findsOneWidget);
+      expect(find.text('Play'), findsOneWidget);
+      expect(find.byKey(const ValueKey('scroll-speed-slider')), findsNothing);
+      expect(find.text(l10nOf(tester).playerLyricsOnly), findsNothing);
+      await tester.tap(find.byKey(const ValueKey('scroll-speed-toggle')));
+      await tester.pumpAndSettle();
+      final speedSlider = tester.widget<Slider>(
+        find.byKey(const ValueKey('scroll-speed-slider')),
+      );
+      expect(speedSlider.divisions, 30);
+      expect(speedSlider.min, .5);
+      expect(speedSlider.max, 2);
+      expect(find.text('4:00'), findsOneWidget);
 
-    speedSlider.onChanged!(.55);
-    await tester.pump();
-    expect(controller.state.playbackSpeed, .55);
-    expect(find.text('7:16'), findsOneWidget);
+      speedSlider.onChanged!(.55);
+      await tester.pump();
+      expect(controller.state.playbackSpeed, .55);
+      expect(find.text('7:16'), findsOneWidget);
 
-    await controller.setPlaybackSpeed(1.5);
-    await tester.pump();
-    expect(controller.state.playbackSpeed, 1.5);
-    expect(find.text('2:40'), findsOneWidget);
-  });
+      await controller.setPlaybackSpeed(1.5);
+      await tester.pump();
+      expect(controller.state.playbackSpeed, 1.5);
+      expect(find.text('2:40'), findsOneWidget);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('scroll-speed-slider')), findsNothing);
+    },
+  );
 
   testWidgets('pitch menu highlights the song key and can restore it', (
     tester,
@@ -119,6 +127,61 @@ void main() {
     expect(controller.state.readerKey, 'C');
   });
 
+  testWidgets('No chords is a reversible option inside the key menu', (
+    tester,
+  ) async {
+    await pumpShell(tester, controller);
+    final keyMenu = find.byKey(const ValueKey('pitch-key-dropdown'));
+    final noChords = l10nOf(tester).searchChordsUnavailable;
+    expect(find.byType(Checkbox), findsNothing);
+    expect(controller.state.showChords, isTrue);
+    await tester.tap(keyMenu);
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<CheckedPopupMenuItem<String>>(
+            find.ancestor(
+              of: find.text(noChords),
+              matching: find.byType(CheckedPopupMenuItem<String>),
+            ),
+          )
+          .checked,
+      isFalse,
+    );
+    await tester.tap(
+      find.ancestor(
+        of: find.text(noChords),
+        matching: find.byType(CheckedPopupMenuItem<String>),
+      ),
+    );
+    await tester.runAsync(() => repository.getSetting('app'));
+    await tester.pumpAndSettle();
+    expect(controller.state.showChords, isFalse);
+    expect(controller.state.readerKey, 'D');
+    await tester.tap(keyMenu);
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<CheckedPopupMenuItem<String>>(
+            find.ancestor(
+              of: find.text(noChords),
+              matching: find.byType(CheckedPopupMenuItem<String>),
+            ),
+          )
+          .checked,
+      isTrue,
+    );
+    await tester.tap(
+      find.ancestor(
+        of: find.text(noChords),
+        matching: find.byType(CheckedPopupMenuItem<String>),
+      ),
+    );
+    await tester.runAsync(() => repository.getSetting('app'));
+    await tester.pumpAndSettle();
+    expect(controller.state.showChords, isTrue);
+  });
+
   testWidgets('unknown key keeps semitone transpose controls available', (
     tester,
   ) async {
@@ -136,7 +199,7 @@ void main() {
     await tester.runAsync(() => controller.openSong('song'));
     await pumpShell(tester, controller);
 
-    expect(find.byKey(const ValueKey('pitch-key-dropdown')), findsNothing);
+    expect(find.byKey(const ValueKey('pitch-key-dropdown')), findsOneWidget);
     final l10n = l10nOf(tester);
     final down = find.byTooltip(l10n.readerTransposeSemitones(-1));
     expect(down, findsOneWidget);
@@ -239,7 +302,13 @@ void main() {
     expect(controller.activeSetlistEntry?.id, 'd-entry');
     expect(controller.state.readerKey, 'D');
     expect(controller.state.playerSections, isEmpty);
-    expect(find.textContaining('${l10n.editorKeyField}: D'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('pitch-key-dropdown')),
+        matching: find.text('D'),
+      ),
+      findsOneWidget,
+    );
     expect(nextButton, findsOneWidget);
     expect(previousButton, findsOneWidget);
     expect(tester.widget<IconButton>(nextButton).onPressed, isNotNull);
@@ -249,7 +318,13 @@ void main() {
     await _pumpPlayer(tester);
     expect(controller.activeSetlistEntry?.id, 'base-entry');
     expect(controller.state.readerKey, 'C');
-    expect(find.textContaining('${l10n.editorKeyField}: C'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('pitch-key-dropdown')),
+        matching: find.text('C'),
+      ),
+      findsOneWidget,
+    );
 
     await _advance(tester, controller, previousButton);
     await _pumpPlayer(tester);
@@ -276,7 +351,13 @@ void main() {
         reason: 'The long-press action must advance by entry identity.',
       );
       expect(controller.state.readerKey, 'C');
-      expect(find.textContaining('${l10n.editorKeyField}: C'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('pitch-key-dropdown')),
+          matching: find.text('C'),
+        ),
+        findsOneWidget,
+      );
     },
   );
 
@@ -341,7 +422,6 @@ void main() {
     tester,
   ) async {
     await pumpShell(tester, controller);
-    final l10n = l10nOf(tester);
 
     expect(controller.activeSetlistEntry?.id, 'd-entry');
     expect(controller.state.readerKey, 'D');
@@ -353,7 +433,13 @@ void main() {
 
     expect(controller.activeSetlistEntry?.id, 'base-entry');
     expect(controller.state.readerKey, 'C');
-    expect(find.textContaining('${l10n.editorKeyField}: C'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('pitch-key-dropdown')),
+        matching: find.text('C'),
+      ),
+      findsOneWidget,
+    );
   });
 
   test(
