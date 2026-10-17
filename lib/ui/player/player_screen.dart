@@ -60,6 +60,14 @@ int? _keyPitchClass(String? key) {
       12;
 }
 
+String _transposeLabel(VerseUiState state) {
+  if (_keyPitchClass(state.song?.key) != null) {
+    return state.readerKey ?? state.song!.key!;
+  }
+  final offset = state.readerTranspose;
+  return offset > 0 ? '+$offset' : '$offset';
+}
+
 /// The lyric reader and player: scrolling lyrics, a seek bar with section
 /// markers and transport controls.
 ///
@@ -554,27 +562,10 @@ class _PlayerScreenState extends State<PlayerScreen>
       )..layout();
       final speedWidth = speedLabel.width + 28;
       speedLabel.dispose();
-      final keyLabel = TextPainter(
-        text: TextSpan(
-          text: state.readerKey ?? song.key ?? '—',
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        textDirection: Directionality.of(context),
-        textScaler: MediaQuery.textScalerOf(context),
-      )..layout();
-      final keyWidth = keyLabel.width + 40;
-      keyLabel.dispose();
       final separateSpeed =
           screenWidth < 360 ||
           MediaQuery.textScalerOf(context).scale(1) > 1.25 ||
           speedWidth > (controlWidth - 16) / 4;
-      final inlineChords =
-          song.hasChords &&
-          !separateSpeed &&
-          keyWidth <= (controlWidth - 16) / 4 &&
-          _keyPitchClass(song.key) != null &&
-          screenWidth >= 360 &&
-          MediaQuery.textScalerOf(context).scale(1) <= 1.25;
       final content = Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -587,23 +578,17 @@ class _PlayerScreenState extends State<PlayerScreen>
             context,
             l10n,
             state,
-            inlineChords: inlineChords,
+            inlineChords: song.hasChords,
             showSpeed: !separateSpeed,
           ),
           if (separateSpeed)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Wrap(
-                alignment: WrapAlignment.end,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  if (song.hasChords) _chordControls(l10n, state, inline: true),
-                  _speedControl(l10n, state),
-                ],
+              child: Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: _speedControl(l10n, state),
               ),
-            )
-          else if (song.hasChords && !inlineChords)
-            _chordControls(l10n, state),
+            ),
         ],
       );
       final canScroll = compact || maxHeight != null;
@@ -1180,7 +1165,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: inlineChords
-                      ? _chordControls(l10n, state, inline: true)
+                      ? _chordControls(l10n, state)
                       : const SizedBox.shrink(),
                 ),
               ),
@@ -1191,14 +1176,13 @@ class _PlayerScreenState extends State<PlayerScreen>
                   children: controls,
                 ),
               ),
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: showSpeed
-                      ? _speedControl(l10n, state)
-                      : const SizedBox.shrink(),
+              if (showSpeed)
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: _speedControl(l10n, state),
+                  ),
                 ),
-              ),
             ] else
               Expanded(
                 child: Row(
@@ -1212,11 +1196,7 @@ class _PlayerScreenState extends State<PlayerScreen>
     ),
   );
 
-  Widget _chordControls(
-    AppLocalizations l10n,
-    VerseUiState state, {
-    bool inline = false,
-  }) {
+  Widget _chordControls(AppLocalizations l10n, VerseUiState state) {
     const sharpNames = [
       'C',
       'C♯',
@@ -1258,108 +1238,114 @@ class _PlayerScreenState extends State<PlayerScreen>
         originalKey?.contains('b') == true || originalKey?.contains('♭') == true
         ? flatNames
         : sharpNames;
-    final displayedKey =
-        state.readerKey ??
-        (originalPitch == null ? null : keyNames[currentPitch]);
-    return Padding(
-      padding: inline
-          ? EdgeInsets.zero
-          : const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 2),
-      child: Row(
-        mainAxisSize: inline ? MainAxisSize.min : MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          if (originalPitch == null) ...[
-            IconButton(
-              tooltip: l10n.readerTransposeSemitones(-1),
-              visualDensity: VisualDensity.compact,
-              onPressed: () => controller.transpose(-1),
-              icon: const Icon(Icons.remove_circle_outline),
-            ),
-            IconButton(
-              tooltip: l10n.readerTransposeSemitones(1),
-              visualDensity: VisualDensity.compact,
-              onPressed: () => controller.transpose(1),
-              icon: const Icon(Icons.add_circle_outline),
-            ),
-          ],
-          KeyedSubtree(
-            key: _chordsPopupAnchorKey,
-            child: PopupMenuButton<String>(
-              key: const ValueKey('pitch-key-dropdown'),
-              tooltip: l10n.readerTranspose,
-              position: PopupMenuPosition.over,
-              offset: Offset(_chordsPopupOffsetX, 0),
-              constraints: _playerPopupConstraints(context),
-              menuPadding: EdgeInsets.zero,
-              onSelected: (action) {
-                if (action == 'no-chords') {
-                  controller.setShowChords(!state.showChords);
-                  return;
-                }
-                final targetPitch = int.parse(
-                  action.substring('pitch-'.length),
-                );
-                var delta = (targetPitch - currentPitch + 12) % 12;
-                if (delta > 6) delta -= 12;
-                if (delta != 0) controller.transpose(delta);
-              },
-              itemBuilder: (context) => [
-                if (originalPitch != null)
-                  for (var pitch = 0; pitch < 12; pitch++)
-                    PopupMenuItem(
-                      value: 'pitch-$pitch',
-                      height: 34,
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        pitch == originalPitch
-                            ? '${originalKey!}  ★'
-                            : '${keyNames[pitch]}${minorKey ? 'm' : ''}',
-                        style: pitch == originalPitch
-                            ? TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.w700,
-                              )
-                            : null,
-                      ),
-                    ),
-                PopupMenuItem(
-                  value: 'no-chords',
-                  height: 34,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Semantics(
-                    selected: !state.showChords,
-                    child: Text(l10n.playerChordsNone),
-                  ),
+    final displayedKey = _transposeLabel(state);
+    return KeyedSubtree(
+      key: _chordsPopupAnchorKey,
+      child: PopupMenuButton<String>(
+        key: const ValueKey('pitch-key-dropdown'),
+        tooltip: l10n.readerTranspose,
+        position: PopupMenuPosition.over,
+        offset: Offset(_chordsPopupOffsetX, 0),
+        constraints: _playerPopupConstraints(context),
+        menuPadding: EdgeInsets.zero,
+        initialValue: !state.showChords
+            ? 'no-chords'
+            : originalPitch == null
+            ? 'offset-${state.readerTranspose}'
+            : 'pitch-$currentPitch',
+        onSelected: (action) async {
+          if (action == 'no-chords') {
+            await controller.setShowChords(!state.showChords);
+            return;
+          }
+          if (!state.showChords) await controller.setShowChords(true);
+          if (action.startsWith('offset-')) {
+            final target = int.parse(action.substring('offset-'.length));
+            final delta = target - state.readerTranspose;
+            if (delta != 0) await controller.transpose(delta);
+            return;
+          }
+          final targetPitch = int.parse(action.substring('pitch-'.length));
+          var delta = (targetPitch - currentPitch + 12) % 12;
+          if (delta > 6) delta -= 12;
+          if (delta != 0) await controller.transpose(delta);
+        },
+        itemBuilder: (context) => [
+          if (originalPitch != null)
+            for (var pitch = 0; pitch < 12; pitch++)
+              PopupMenuItem(
+                key: ValueKey('transpose-pitch-$pitch'),
+                value: 'pitch-$pitch',
+                height: 34,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                  pitch == originalPitch
+                      ? '${originalKey!}  ★'
+                      : '${keyNames[pitch]}${minorKey ? 'm' : ''}',
+                  style: pitch == originalPitch
+                      ? TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.w700,
+                        )
+                      : null,
                 ),
-              ],
-              child: Semantics(
-                key: const ValueKey('pitch-key-dropdown-label'),
-                label: displayedKey == null
-                    ? l10n.readerTranspose
-                    : '${l10n.readerTranspose}, $displayedKey',
-                button: true,
-                excludeSemantics: true,
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    minHeight: 48,
-                    minWidth: 48,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(displayedKey ?? '—'),
-                        const Icon(Icons.arrow_drop_down),
-                      ],
-                    ),
+              ),
+          if (originalPitch == null)
+            for (final offset in ({
+              for (var value = -12; value <= 12; value++) value,
+              state.readerTranspose,
+            }.toList()..sort()))
+              PopupMenuItem(
+                key: ValueKey('transpose-offset-$offset'),
+                value: 'offset-$offset',
+                height: 34,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Semantics(
+                  label: l10n.readerTransposeSemitones(offset),
+                  selected: state.showChords && offset == state.readerTranspose,
+                  excludeSemantics: true,
+                  child: Text(
+                    '${offset > 0 ? '+' : ''}$offset${offset == 0 ? '  ★' : ''}',
                   ),
                 ),
               ),
+          PopupMenuItem(
+            value: 'no-chords',
+            height: 34,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Semantics(
+              selected: !state.showChords,
+              child: Text(l10n.playerChordsNone),
             ),
           ),
         ],
+        child: Semantics(
+          key: const ValueKey('pitch-key-dropdown-label'),
+          label: originalPitch == null
+              ? l10n.readerTransposeSemitones(state.readerTranspose)
+              : '${l10n.readerTranspose}, $displayedKey',
+          button: true,
+          excludeSemantics: true,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      displayedKey,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const Icon(Icons.arrow_drop_down),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
