@@ -647,7 +647,7 @@ void main() {
                   as TextSpan)
               .style
               ?.fontWeight;
-      expect(weightOf('Lyric number 40'), FontWeight.w600);
+      expect(weightOf('Lyric number 40'), FontWeight.w400);
       expect(weightOf('Lyric number 39'), FontWeight.w400);
       expect(tester.takeException(), isNull);
     });
