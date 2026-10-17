@@ -391,7 +391,7 @@ void main() {
       tester
           .widget<FilledButton>(find.byKey(const ValueKey('save-open-lyrics')))
           .onPressed,
-      isNull,
+      isNotNull,
     );
     expect(tester.takeException(), isNull);
   });

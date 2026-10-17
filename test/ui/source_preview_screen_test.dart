@@ -424,8 +424,9 @@ void main() {
       tester
           .widget<FilledButton>(find.byKey(const ValueKey('preview-save-open')))
           .onPressed,
-      isNull,
+      isNotNull,
     );
+    await tester.tap(find.byKey(const ValueKey('preview-save-open')));
     expect(controller.saves, 0);
     expect(tester.takeException(), isNull);
   });
