@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:singbook/providers/core/diagnostics.dart';
 import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/providers/provider.dart';
 
@@ -55,7 +56,8 @@ void main() {
       id: '1',
       title: 'Paper Satellites',
       artist: 'Fixture Ensemble',
-      url: 'https://lyrics.example/song/1?token=private&campaign=test#fragment',
+      url:
+          'https://lyrics.example/private/token/path?token=private&campaign=test#fragment',
     );
     final updates = <ProviderCheck>[];
     await SourceDiscoveryService([
@@ -83,7 +85,7 @@ void main() {
       ),
       isEmpty,
     );
-    expect(snapshots.last.sourceUrl, 'https://lyrics.example/song/1');
+    expect(snapshots.last.sourceUrl, 'https://lyrics.example');
   });
 
   test(
@@ -168,5 +170,20 @@ void main() {
       (operation) => operation.phase == 'fetch',
     );
     expect(fetch.sourceUrl, 'https://www.youtube.com/watch?v=Abc_123-xY');
+  });
+
+  test('diagnostic URLs preserve paths only for supported public origins', () {
+    expect(
+      safeDiagnosticUrl(
+        'https://genius.com/ada-lovelace-paper-satellites-lyrics?utm_source=private#private',
+      ),
+      'https://genius.com/ada-lovelace-paper-satellites-lyrics',
+    );
+    expect(
+      safeDiagnosticUrl(
+        'https://unknown.example/private/token/path?token=private#private',
+      ),
+      'https://unknown.example',
+    );
   });
 }

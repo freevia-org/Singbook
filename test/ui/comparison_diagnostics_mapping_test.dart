@@ -16,7 +16,7 @@ const _candidate = SongCandidate(
   id: 'paper-satellites',
   title: 'Paper Satellites',
   artist: 'Fixture Ensemble',
-  url: 'https://fixture.example/song/1?token=private#fragment',
+  url: 'https://fixture.example/private/path?token=private#fragment',
 );
 
 class _MetadataProvider implements LyricsProvider {
@@ -48,7 +48,25 @@ class _MetadataProvider implements LyricsProvider {
       'composer': [
         {'name': 'Ada Lovelace', 'role': 'composer'},
       ],
-      'mediaLinks': ['https://scores.example/song/1?secret=private#fragment'],
+      'mediaLinks': [
+        {
+          'url':
+              'https://genius.com/ada-lovelace-paper-satellites-lyrics?utm_source=private#private',
+          'title': 'Genius lyrics',
+          'type': 'lyrics',
+        },
+        {
+          'url':
+              'https://www.youtube.com/watch?v=Abc_123-xY&list=private#private',
+          'title': 'Studio recording',
+          'type': 'video',
+        },
+        {
+          'url': 'https://scores.example/private/path?secret=private#private',
+          'title': 'Studio score',
+          'type': 'score',
+        },
+      ],
       'privateToken': 'do not expose',
     },
   );
@@ -122,10 +140,12 @@ void main() {
         expect(version.metadata['timeSignature'], '3/4');
         expect(version.metadata['composer'], ['Ada Lovelace · composer']);
         expect(version.metadata['mediaLinks'], [
-          'https://scores.example/song/1',
+          'Genius lyrics\nhttps://genius.com/ada-lovelace-paper-satellites-lyrics',
+          'Studio recording\nhttps://www.youtube.com/watch?v=Abc_123-xY',
+          'Studio score\nhttps://scores.example',
         ]);
         expect(version.metadata.containsKey('privateToken'), isFalse);
-        expect(version.sourceUrl, 'https://fixture.example/song/1');
+        expect(version.sourceUrl, 'https://fixture.example');
         expect(() => version.metadata['key'] = 'D', throwsUnsupportedError);
         expect(
           () => (version.metadata['composer'] as List).add('changed'),
@@ -140,7 +160,7 @@ void main() {
           (operation) => operation.phase == 'fetch',
         );
         expect(fetch.id, 'fixture:lookup:fetch:0');
-        expect(fetch.sourceUrl, 'https://fixture.example/song/1');
+        expect(fetch.sourceUrl, 'https://fixture.example');
         expect(
           () => comparison.providerChecks.single.operations.clear(),
           throwsUnsupportedError,

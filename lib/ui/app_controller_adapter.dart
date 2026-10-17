@@ -1,4 +1,5 @@
 import 'dart:async';
+import '../providers/core/diagnostics.dart';
 
 import 'package:flutter/foundation.dart';
 
@@ -657,7 +658,7 @@ class AppControllerAdapter extends VerseUiController {
             title: combined.title,
             artist: combined.artist,
             album: _metaString(combined.metadata['album']),
-            sourceUrl: _safeDiagnosticUrl(chosenSource?.candidate.url),
+            sourceUrl: safeDiagnosticUrl(chosenSource?.candidate.url),
             metadata: _diagnosticMetadata(combined.metadata),
             durationSeconds: _validDuration(
               combined.metadata['durationSeconds'],
@@ -736,7 +737,7 @@ class AppControllerAdapter extends VerseUiController {
                   query: operation.query,
                   title: operation.title,
                   artist: operation.artist,
-                  sourceUrl: _safeDiagnosticUrl(operation.sourceUrl),
+                  sourceUrl: safeDiagnosticUrl(operation.sourceUrl),
                   resultCount: operation.resultCount,
                   elapsedMilliseconds: operation.elapsedMilliseconds,
                 ),
@@ -784,7 +785,7 @@ class AppControllerAdapter extends VerseUiController {
       providerNames[providerId] = name;
       sourceUrls.putIfAbsent(
         providerId,
-        () => _safeDiagnosticUrl(source?.candidate.url),
+        () => safeDiagnosticUrl(source?.candidate.url),
       );
       rolesByProvider.putIfAbsent(providerId, () => <String>{}).add(role);
     }
@@ -951,7 +952,7 @@ class AppControllerAdapter extends VerseUiController {
           candidate.providerId,
       title: candidate.title,
       artist: candidate.artist,
-      sourceUrl: _safeDiagnosticUrl(candidate.url),
+      sourceUrl: safeDiagnosticUrl(candidate.url),
       metadata: _diagnosticMetadata({
         ...candidate.metadata,
         ...result.metadata,
@@ -1008,7 +1009,7 @@ class AppControllerAdapter extends VerseUiController {
       SourceContributionData(
         providerName: _providerName(result.candidate.providerId),
         roles: roles,
-        sourceUrl: _safeDiagnosticUrl(result.candidate.url),
+        sourceUrl: safeDiagnosticUrl(result.candidate.url),
       ),
     ];
   }
@@ -2548,11 +2549,22 @@ Map<String, Object?> _diagnosticMetadata(Map<String, Object?> values) {
       }
     }
     if (key == 'mediaLinks' && value is List) {
-      final links = value
-          .whereType<String>()
-          .map(_safeDiagnosticUrl)
-          .whereType<String>()
-          .toList(growable: false);
+      final links = <String>[];
+      for (final entry in value.take(30)) {
+        final rawUrl = entry is String
+            ? entry
+            : entry is Map
+            ? _metaString(entry['url'])
+            : null;
+        final url = safeDiagnosticUrl(rawUrl);
+        if (url == null) continue;
+        final rawTitle = entry is Map ? _metaString(entry['title']) : null;
+        final title = rawTitle?.trim().replaceAll(RegExp(r'\s+'), ' ');
+        final label = title == null || title.isEmpty || title == rawUrl
+            ? url
+            : '${title.length > 256 ? title.substring(0, 256) : title}\n$url';
+        if (!links.contains(label)) links.add(label);
+      }
       if (links.isNotEmpty) output[key] = List<String>.unmodifiable(links);
     } else if (value is List) {
       final entries = value
@@ -2578,37 +2590,4 @@ String? _diagnosticCredit(Object? value) {
     if (role?.trim().isNotEmpty == true) role!.trim(),
   ];
   return parts.isEmpty ? null : parts.join(' · ');
-}
-
-String? _safeDiagnosticUrl(String? value) {
-  if (value == null || value.isEmpty) return null;
-  final uri = Uri.tryParse(value);
-  if (uri == null ||
-      (uri.scheme != 'http' && uri.scheme != 'https') ||
-      !uri.hasAuthority ||
-      uri.userInfo.isNotEmpty ||
-      uri.host.isEmpty) {
-    return null;
-  }
-  final host = uri.host.toLowerCase();
-  if (uri.hasQuery && (host == 'youtube.com' || host == 'www.youtube.com')) {
-    final videoId = uri.queryParameters['v'];
-    if (uri.path == '/watch' &&
-        videoId != null &&
-        RegExp(r'^[A-Za-z0-9_-]{6,20}$').hasMatch(videoId)) {
-      return Uri(
-        scheme: uri.scheme,
-        host: uri.host,
-        port: uri.hasPort ? uri.port : null,
-        path: uri.path,
-        queryParameters: {'v': videoId},
-      ).toString();
-    }
-  }
-  return Uri(
-    scheme: uri.scheme,
-    host: uri.host,
-    port: uri.hasPort ? uri.port : null,
-    path: uri.path,
-  ).toString();
 }

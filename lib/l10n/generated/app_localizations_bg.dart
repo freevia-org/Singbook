@@ -1818,7 +1818,7 @@ class AppLocalizationsBg extends AppLocalizations {
       'Няма проверки на източници за това сравнение.';
 
   @override
-  String get searchVersionCredits => 'Авторски права';
+  String get searchVersionCredits => 'Автори и участници';
 
   @override
   String get searchVersionMediaLinks => 'Свързани връзки';

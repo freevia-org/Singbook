@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'diagnostics.dart';
 import 'dart:math' as math;
 import '../../domain/models.dart';
 import '../provider.dart';
@@ -36,39 +37,6 @@ const _diagnosticCodes = <String>{
 
 String? _safeDiagnosticCode(String? code) =>
     code != null && _diagnosticCodes.contains(code) ? code : 'provider_error';
-
-String? _safeDiagnosticUrl(String? value) {
-  if (value == null || value.isEmpty) return null;
-  final uri = Uri.tryParse(value);
-  if (uri == null ||
-      (uri.scheme != 'http' && uri.scheme != 'https') ||
-      !uri.hasAuthority ||
-      uri.userInfo.isNotEmpty ||
-      uri.host.isEmpty) {
-    return null;
-  }
-  final host = uri.host.toLowerCase();
-  if (uri.hasQuery && (host == 'youtube.com' || host == 'www.youtube.com')) {
-    final videoId = uri.queryParameters['v'];
-    if (uri.path == '/watch' &&
-        videoId != null &&
-        RegExp(r'^[A-Za-z0-9_-]{6,20}$').hasMatch(videoId)) {
-      return Uri(
-        scheme: uri.scheme,
-        host: uri.host,
-        port: uri.hasPort ? uri.port : null,
-        path: uri.path,
-        queryParameters: {'v': videoId},
-      ).toString();
-    }
-  }
-  return Uri(
-    scheme: uri.scheme,
-    host: uri.host,
-    port: uri.hasPort ? uri.port : null,
-    path: uri.path,
-  ).toString();
-}
 
 class ProviderOperation {
   const ProviderOperation({
@@ -301,7 +269,7 @@ Future<SourceResult> findMatchingSource(
         title: candidate?.title,
         artist: candidate?.artist,
         sourceUrl: candidate?.providerId == provider.definition.id
-            ? _safeDiagnosticUrl(candidate?.url)
+            ? safeDiagnosticUrl(candidate?.url)
             : null,
         resultCount: resultCount,
         elapsedMilliseconds: elapsedMilliseconds,

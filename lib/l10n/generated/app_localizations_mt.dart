@@ -1799,7 +1799,7 @@ class AppLocalizationsMt extends AppLocalizations {
   String get searchCheckQueued => 'Qed nistennew biex niċċekkjaw dan is-sors.';
 
   @override
-  String get searchCheckFetch => 'Tella’ l-lirika';
+  String get searchCheckFetch => 'Niżżel il-lirika';
 
   @override
   String get searchCheckValidate => 'Iċċekkja jekk il-kanzunetta taqbilx';

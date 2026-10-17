@@ -239,7 +239,7 @@
   "searchCheckNoLyrics": "Не бяха намерени съвпадащи текстове.",
   "searchCheckFailed": "Операцията не можа да бъде завършена.",
   "searchCheckNoHistory": "Няма проверки на източници за това сравнение.",
-  "searchVersionCredits": "Авторски права",
+  "searchVersionCredits": "Автори и участници",
   "searchVersionMediaLinks": "Свързани връзки",
   "searchCheckCancelled": "Отменено",
   "searchCheckAmbiguous": "Открити са няколко съвпадения. За този източник е необходим по-конкретен запис.",
