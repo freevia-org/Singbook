@@ -173,7 +173,7 @@ void main() {
         "' copy'",
         "'Try again'",
         "'Your library could not be opened.'",
-        "'0.2.0'",
+        "'$singbookVersion'",
       ];
       final offenders = <String>[];
       for (final file in Directory('lib/ui').listSync(recursive: true)) {
