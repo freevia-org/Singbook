@@ -352,7 +352,7 @@ void main() {
       await tester.tap(chordArchiveVersion);
       await tester.pumpAndSettle();
       expect(tester.widget<ChoiceChip>(chordArchiveVersion).selected, isTrue);
-      expect(find.text(l10n.searchSaveOpenLyrics), findsOneWidget);
+      expect(find.text(l10n.actionSave), findsOneWidget);
       await _capture(binding, '16_source_alternatives');
       final openLyrics = find.byKey(const ValueKey('save-open-lyrics'));
       await tester.ensureVisible(openLyrics);

@@ -95,7 +95,6 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
   int? _programmaticPage;
   final _anchors = <String, _PreviewAnchor>{};
   bool _saving = false;
-  bool _paging = false;
 
   @override
   void initState() {
@@ -226,13 +225,19 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
   }
 
   Future<void> _open() async {
-    final selected = widget.controller.state.comparison?.selected;
+    if (_saving) return;
     final version = _current[_visibleId];
     if (version == null ||
-        selected == null ||
-        versionSelectionId(selected) != _visibleId ||
         (!version.hasLyrics && version.savedSongId == null)) {
       return;
+    }
+    // Save stays available while previews slide. Align a pending selection
+    // with the highlighted provider, retaining an already selected combination.
+    final selected = widget.controller.state.comparison?.selected;
+    if (selected == null || versionSelectionId(selected) != _visibleId) {
+      _pinVisible();
+      final pinned = widget.controller.state.comparison?.selected;
+      if (pinned == null || versionSelectionId(pinned) != _visibleId) return;
     }
     setState(() => _saving = true);
     try {
@@ -467,10 +472,6 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
       });
     }
     final version = _current[_visibleId];
-    final available =
-        version != null &&
-        externalId == _visibleId &&
-        (version.hasLyrics || version.savedSongId != null);
     final ready = _current.values
         .where((version) => version.hasLyrics || version.savedSongId != null)
         .map(versionSelectionId)
@@ -636,16 +637,12 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
                       if (notification.dragDetails != null) {
                         _programmaticPage = null;
                       }
-                      if (!_paging) {
-                        setState(() => _paging = true);
-                      }
                     } else if (notification is ScrollEndNotification) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         if (!mounted || !_pages.hasClients) return;
                         if (_programmaticPage == null) {
                           _choose(_pages.page!.round(), animate: false);
                         }
-                        if (_paging) setState(() => _paging = false);
                       });
                     }
                     return false;
@@ -707,7 +704,7 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
                       ? 'save-open-lyrics'
                       : 'preview-save-open',
                 ),
-                onPressed: available && !_saving && !_paging ? _open : null,
+                onPressed: _open,
                 icon: _saving
                     ? const SizedBox(
                         width: 18,
@@ -718,11 +715,7 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
                         ),
                       )
                     : const Icon(Icons.menu_book_rounded),
-                label: Text(
-                  version?.savedSongId != null
-                      ? l10n.searchOpenLyrics
-                      : l10n.searchSaveOpenLyrics,
-                ),
+                label: Text(l10n.actionSave),
               ),
             ),
           ),
