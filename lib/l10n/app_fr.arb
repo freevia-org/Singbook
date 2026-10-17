@@ -726,13 +726,6 @@
   "sectionCoda": "Coda",
   "sectionTag": "Tag",
   "sectionEnding": "Fin",
-  "youtubeConsentHint": "Fonction expérimentale. Choisissez vos cookies sur la page de Google pour essayer la recherche de paroles. Vous n'avez pas besoin de vous connecter à un compte Google. Votre choix reste sur cet appareil.",
-  "youtubeConsentOpen": "Examiner le consentement Google",
-  "youtubeConsentSaved": "Consentement enregistré",
-  "youtubeConsentClear": "Effacer le consentement",
-  "youtubeConsentInstructions": "Terminez votre choix de cookies et attendez le retour de YouTube Music. Enregistrez ensuite cette session et relancez la recherche du morceau.",
-  "youtubeConsentError": "Impossible de mettre à jour votre choix de consentement Google. Réessayez.",
-  "youtubeConsentBlocked": "Seuls YouTube Music et la page de consentement de Google peuvent s'ouvrir ici. La connexion à un compte n'est pas disponible.",
   "searchReadyVersions": "{count, plural, =0{0 Versions disponibles} =1{1 version disponible} other{{count} Versions disponibles}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -770,7 +763,6 @@
   "backupRestored": "Sauvegarde restaurée.",
   "backupLocalHint": "Enregistrez une copie de votre bibliothèque. Les identifiants du compte et les cookies de consentement ne sont jamais inclus.",
   "backupReplaceConfirm": "Remplacer la bibliothèque actuelle ? Cette action est irréversible.",
-  "youtubeConsentPageError": "Cette page a cessé de fonctionner. Réessayez ou revenez en arrière.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

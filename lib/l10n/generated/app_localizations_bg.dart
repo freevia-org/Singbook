@@ -1669,31 +1669,6 @@ class AppLocalizationsBg extends AppLocalizations {
   String get sectionEnding => 'Край';
 
   @override
-  String get youtubeConsentHint =>
-      'Експериментална функция. Изберете предпочитанията си за бисквитки на страницата на Google, за да изпробвате търсенето на текстове. Не е нужно да влизате в Google профил. Изборът ви остава на това устройство.';
-
-  @override
-  String get youtubeConsentOpen => 'Преглед на съгласието в Google';
-
-  @override
-  String get youtubeConsentSaved => 'Съгласието е запазено';
-
-  @override
-  String get youtubeConsentClear => 'Изчистване на съгласието';
-
-  @override
-  String get youtubeConsentInstructions =>
-      'Завършете избора си за бисквитките и изчакайте YouTube Music да се отвори отново. След това запазете тази сесия и опитайте отново да потърсите песента.';
-
-  @override
-  String get youtubeConsentError =>
-      'Изборът ви за съгласие в Google не можа да се актуализира. Опитайте отново.';
-
-  @override
-  String get youtubeConsentBlocked =>
-      'Тук могат да се отварят само YouTube Music и страницата за съгласие на Google. Влизането в профил не е достъпно.';
-
-  @override
   String searchReadyVersions(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1789,8 +1764,4 @@ class AppLocalizationsBg extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Да заменя ли текущата библиотека? Това действие не може да се отмени.';
-
-  @override
-  String get youtubeConsentPageError =>
-      'Тази страница спря да работи. Опитайте отново или се върнете.';
 }

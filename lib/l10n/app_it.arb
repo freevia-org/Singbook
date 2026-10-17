@@ -726,13 +726,6 @@
   "sectionCoda": "Coda",
   "sectionTag": "Tag",
   "sectionEnding": "Finale",
-  "youtubeConsentHint": "Funzione sperimentale. Scegli i cookie nella pagina di Google per provare la ricerca dei testi. Non serve accedere a un account Google. La scelta resta su questo dispositivo.",
-  "youtubeConsentOpen": "Rivedi il consenso Google",
-  "youtubeConsentSaved": "Consenso salvato",
-  "youtubeConsentClear": "Cancella il consenso",
-  "youtubeConsentInstructions": "Completa la scelta dei cookie e attendi il ritorno di YouTube Music. Poi salva questa sessione e prova di nuovo a cercare il brano.",
-  "youtubeConsentError": "Impossibile aggiornare la scelta del consenso Google. Riprova.",
-  "youtubeConsentBlocked": "Qui si possono aprire solo YouTube Music e la pagina di consenso di Google. L'accesso a un account non è disponibile.",
   "searchReadyVersions": "{count, plural, =0{0 Versioni disponibili} =1{1 versione disponibile} other{{count} Versioni disponibili}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -770,7 +763,6 @@
   "backupRestored": "Backup ripristinato.",
   "backupLocalHint": "Salva una copia della raccolta. Le credenziali dell’account e i cookie di consenso non vengono mai inclusi.",
   "backupReplaceConfirm": "Sostituire la raccolta attuale? L’operazione non può essere annullata.",
-  "youtubeConsentPageError": "Questa pagina ha smesso di funzionare. Riprova o torna indietro.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

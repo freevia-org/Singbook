@@ -162,7 +162,9 @@ Singbook fetches lyrics and chord sheets on the user's device from third-party
 APIs and public web pages. Some of those integrations are unofficial (page
 extraction, undocumented web endpoints) and may conflict with a provider's terms
 of service; they can be denied or change at any time and are reported as
-`blocked`, `access_denied` or `extraction_failed`. Fetched text is recorded with
+`blocked`, `access_denied` or `extraction_failed`. YouTube Music requests are
+anonymous; consent interstitials and challenges are reported as provider
+failures without a browser flow or cookie transfer. Fetched text is recorded with
 rights status `unknown` unless the source declares an open license. Singbook does
 not grant any license to it: saving it, printing it, and above all sharing or
 exporting it (`.cho`, collection packages, PDF) is the user's responsibility. See

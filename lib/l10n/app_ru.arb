@@ -726,13 +726,6 @@
   "sectionCoda": "Кода",
   "sectionTag": "Тег",
   "sectionEnding": "Окончание",
-  "youtubeConsentHint": "Экспериментальная функция. Выберите настройки файлов cookie на странице Google, чтобы попробовать поиск текстов песен. Вход в аккаунт Google не нужен. Выбор останется на этом устройстве.",
-  "youtubeConsentOpen": "Проверить согласие Google",
-  "youtubeConsentSaved": "Согласие сохранено",
-  "youtubeConsentClear": "Очистить согласие",
-  "youtubeConsentInstructions": "Завершите выбор файлов cookie и дождитесь возвращения YouTube Music. Затем сохраните этот сеанс и повторите поиск песни.",
-  "youtubeConsentError": "Не удалось обновить выбор согласия Google. Повторите попытку.",
-  "youtubeConsentBlocked": "Здесь можно открыть только YouTube Music и страницу согласия Google. Вход в аккаунт недоступен.",
   "searchReadyVersions": "{count, plural, =0{Нет доступных версий} one{{count} доступная версия} few{{count} доступные версии} many{{count} доступных версий} other{{count} доступной версии}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -770,7 +763,6 @@
   "backupRestored": "Резервная копия восстановлена.",
   "backupLocalHint": "Сохраните копию библиотеки. Данные учётной записи и файлы cookie согласия не включаются.",
   "backupReplaceConfirm": "Заменить текущую библиотеку? Это действие нельзя отменить.",
-  "youtubeConsentPageError": "Эта страница перестала работать. Попробуйте ещё раз или вернитесь назад.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

@@ -726,13 +726,6 @@
   "sectionCoda": "Coda",
   "sectionTag": "Tag",
   "sectionEnding": "Schluss",
-  "youtubeConsentHint": "Experimentell. Wähle auf der Google-Seite deine Cookie-Einstellungen, um die Lyricsuche auszuprobieren. Eine Anmeldung bei einem Google-Konto ist nicht nötig. Deine Auswahl bleibt auf diesem Gerät.",
-  "youtubeConsentOpen": "Google-Einwilligung prüfen",
-  "youtubeConsentSaved": "Einwilligung gespeichert",
-  "youtubeConsentClear": "Einwilligung löschen",
-  "youtubeConsentInstructions": "Schließe deine Cookie-Auswahl ab und warte, bis YouTube Music zurückkehrt. Speichere dann diese Sitzung und suche noch einmal nach dem Song.",
-  "youtubeConsentError": "Die Google-Einwilligung konnte nicht aktualisiert werden. Versuche es noch einmal.",
-  "youtubeConsentBlocked": "Hier können nur YouTube Music und die Google-Seite zur Einwilligung geöffnet werden. Eine Kontoanmeldung ist nicht verfügbar.",
   "searchReadyVersions": "{count, plural, =0{0 Verfügbare Versionen} =1{1 verfügbare Version} other{{count} Verfügbare Versionen}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -770,7 +763,6 @@
   "backupRestored": "Sicherung wiederhergestellt.",
   "backupLocalHint": "Speichere eine Kopie deiner Bibliothek. Kontodaten und Zustimmungs-Cookies werden nie eingeschlossen.",
   "backupReplaceConfirm": "Aktuelle Bibliothek ersetzen? Das kann nicht rückgängig gemacht werden.",
-  "youtubeConsentPageError": "Diese Seite funktioniert nicht mehr. Versuche es erneut oder gehe zurück.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

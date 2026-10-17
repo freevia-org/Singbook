@@ -154,62 +154,14 @@ deployment as a data-preserving upgrade path.
 
 ## Daily repair and discovery procedure
 
-### Local YouTube Music consent
+### YouTube Music availability
 
-The desktop checker has its own optional anonymous browser session. It does not
-use the Android/iOS WebView session or your normal Chrome/Edge profile. Start a
-review on this machine with an installed Chrome or Edge browser:
-
-```powershell
-dart run tool/source_maintenance.dart --source youtubemusic --youtube-consent --report artifacts/source-maintenance/youtube-local.json
-```
-
-If Google presents a cookie choice in the dedicated browser window, make it
-there; do not sign in. Google may return straight to the Music homepage without
-requesting a choice. After the return, the checker reads only applicable
-`SOCS`/`CONSENT` cookies, closes the window, and runs the real provider probe.
-An anonymous return is not recorded as a person making a consent decision.
-Cookie presence alone is not a passing extraction result. Cancelled, timed-out
-or incomplete sessions cannot be restored. Running `--youtube-consent` again
-starts a fresh review.
-
-The isolated browser profile lives outside the checkout: on Windows under
-`%LOCALAPPDATA%/Freevia/SingbookMaintenance/YouTubeMusic`, on macOS under
-`~/Library/Application Support/Freevia/SingbookMaintenance/YouTubeMusic`, and on
-Linux under `$XDG_DATA_HOME/freevia/singbook-maintenance/youtube-music` (or
-`~/.local/share` when unset). Chrome manages its native cookie storage. The
-checker writes a session-presence marker and whether the chooser was presented,
-not a portable cookie jar.
-Treat that dedicated profile as private browser data; never copy it to the
-repository, report branch, cloud worker or another computer.
-
-Later local runs restore this profile without opening a visible window or
-making a browser origin request. Status and clearing are explicit operations:
-
-```powershell
-dart run tool/source_maintenance.dart --youtube-session-status
-dart run tool/source_maintenance.dart --source youtubemusic --report artifacts/source-maintenance/youtube-local-recheck.json
-dart run tool/source_maintenance.dart --youtube-clear-consent
-```
-
-Clear removes only the two consent-cookie names applicable to the Music and
-consent hosts, and disables restoration before reporting success. Other sources,
-the mobile app, Drive sign-in and the normal desktop browser are independent.
-Reports contain presence/error codes and extraction shape metadata, never cookie
-values or lyric bodies. The Windows curl transport puts sensitive request
-headers in a temporary local file instead of process arguments, then removes
-the temporary directory after each request. An interrupted process can leave
-that temporary file behind; it is private session data too. If Chrome/Edge cannot
-be found, `--youtube-browser` can specify the installed browser executable.
-Concurrent access to the profile is refused. Browser use keeps TLS verification
-and configured proxy access intact;
-proxy URLs containing credentials are refused rather than exposed in arguments.
-
-This is an experimental unofficial web session. Google can expire the decision,
-deny access or change its page; renew the review when requested. A platform
-CONNECT denial happens before this flow and cannot be repaired with cookies.
-The cloud job does not acquire or upload this local session. This command does
-not change the local daily timer or start an unattended consent/sign-in flow.
+The YouTube Music probe uses anonymous HTTP requests, with no browser profile,
+cookie transfer, consent flow, or sign-in. Google may serve a consent interstitial,
+regional restriction, challenge, or unavailable response; the probe reports that
+ordinary outcome and does not attempt to work around it. Other source probes
+continue independently. Run the normal live check or select YouTube Music with
+`--source youtubemusic` to record the current result.
 
 ### Hosted daily job
 

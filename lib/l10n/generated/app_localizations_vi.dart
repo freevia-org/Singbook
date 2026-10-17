@@ -1664,31 +1664,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get sectionEnding => 'Kết thúc';
 
   @override
-  String get youtubeConsentHint =>
-      'Tính năng thử nghiệm. Hãy chọn cookie trên trang Google để thử tìm lời bài hát. Bạn không cần đăng nhập Tài khoản Google. Lựa chọn của bạn sẽ lưu trên thiết bị này.';
-
-  @override
-  String get youtubeConsentOpen => 'Xem lại lựa chọn đồng ý của Google';
-
-  @override
-  String get youtubeConsentSaved => 'Đã lưu lựa chọn đồng ý';
-
-  @override
-  String get youtubeConsentClear => 'Xóa lựa chọn đồng ý';
-
-  @override
-  String get youtubeConsentInstructions =>
-      'Hoàn tất lựa chọn cookie và đợi YouTube Music quay lại. Sau đó, lưu phiên này và thử tìm bài hát lại.';
-
-  @override
-  String get youtubeConsentError =>
-      'Không thể cập nhật lựa chọn đồng ý của Google. Hãy thử lại.';
-
-  @override
-  String get youtubeConsentBlocked =>
-      'Tại đây chỉ có thể mở YouTube Music và trang đồng ý của Google. Không hỗ trợ đăng nhập tài khoản.';
-
-  @override
   String searchReadyVersions(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1783,8 +1758,4 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Thay thế thư viện hiện tại? Bạn không thể hoàn tác thao tác này.';
-
-  @override
-  String get youtubeConsentPageError =>
-      'Trang này đã ngừng hoạt động. Hãy thử lại hoặc quay lại.';
 }

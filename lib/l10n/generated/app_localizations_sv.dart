@@ -1671,31 +1671,6 @@ class AppLocalizationsSv extends AppLocalizations {
   String get sectionEnding => 'Avslutning';
 
   @override
-  String get youtubeConsentHint =>
-      'Experimentell. Välj dina cookies på Googles sida för att prova att söka efter låttexter. Du behöver inte logga in på ett Google-konto. Ditt val stannar på den här enheten.';
-
-  @override
-  String get youtubeConsentOpen => 'Granska Googles samtycke';
-
-  @override
-  String get youtubeConsentSaved => 'Samtycke sparat';
-
-  @override
-  String get youtubeConsentClear => 'Rensa samtycke';
-
-  @override
-  String get youtubeConsentInstructions =>
-      'Slutför ditt cookieval och vänta tills YouTube Music kommer tillbaka. Spara sedan den här sessionen och sök efter låten igen.';
-
-  @override
-  String get youtubeConsentError =>
-      'Det gick inte att uppdatera ditt samtyckesval hos Google. Försök igen.';
-
-  @override
-  String get youtubeConsentBlocked =>
-      'Här kan endast YouTube Music och Googles samtyckessida öppnas. Det går inte att logga in på ett konto.';
-
-  @override
   String searchReadyVersions(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1790,8 +1765,4 @@ class AppLocalizationsSv extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Ersätta det nuvarande biblioteket? Det här kan inte ångras.';
-
-  @override
-  String get youtubeConsentPageError =>
-      'Den här sidan slutade fungera. Försök igen eller gå tillbaka.';
 }

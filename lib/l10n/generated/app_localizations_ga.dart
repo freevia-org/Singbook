@@ -1681,31 +1681,6 @@ class AppLocalizationsGa extends AppLocalizations {
   String get sectionEnding => 'Deireadh';
 
   @override
-  String get youtubeConsentHint =>
-      'Gné thurgnamhach. Roghnaigh fianáin ar leathanach Google chun triail a bhaint as cuardach liricí. Ní gá síniú isteach i gcuntas Google. Fanfaidh do rogha ar an ngléas seo.';
-
-  @override
-  String get youtubeConsentOpen => 'Athbhreithniú ar thoiliú Google';
-
-  @override
-  String get youtubeConsentSaved => 'Sábháladh an toiliú';
-
-  @override
-  String get youtubeConsentClear => 'Glan an toiliú';
-
-  @override
-  String get youtubeConsentInstructions =>
-      'Críochnaigh do rogha fianán agus fan go bhfillfidh YouTube Music. Ansin sábháil an seisiún seo agus bain triail eile as an amhrán a chuardach.';
-
-  @override
-  String get youtubeConsentError =>
-      'Níorbh fhéidir rogha toilithe Google a nuashonrú. Bain triail eile as.';
-
-  @override
-  String get youtubeConsentBlocked =>
-      'Ní féidir ach YouTube Music agus leathanach toilithe Google a oscailt anseo. Níl síniú isteach i gcuntas ar fáil.';
-
-  @override
   String searchReadyVersions(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1807,8 +1782,4 @@ class AppLocalizationsGa extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Ionadaigh an leabharlann reatha? Ní féidir é seo a chealú.';
-
-  @override
-  String get youtubeConsentPageError =>
-      'Stop an leathanach seo ag obair. Bain triail eile as nó téigh ar ais.';
 }

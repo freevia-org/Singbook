@@ -726,13 +726,6 @@
   "sectionCoda": "코다",
   "sectionTag": "태그",
   "sectionEnding": "엔딩",
-  "youtubeConsentHint": "실험 기능입니다. 가사 검색을 사용해 보려면 Google 페이지에서 쿠키를 선택하세요. Google 계정에 로그인할 필요는 없습니다. 선택 내용은 이 기기에 저장됩니다.",
-  "youtubeConsentOpen": "Google 동의 확인",
-  "youtubeConsentSaved": "동의 저장됨",
-  "youtubeConsentClear": "동의 지우기",
-  "youtubeConsentInstructions": "쿠키 선택을 완료하고 YouTube Music으로 돌아올 때까지 기다리세요. 그런 다음 이 세션을 저장하고 노래를 다시 검색하세요.",
-  "youtubeConsentError": "Google 동의 선택을 업데이트하지 못했습니다. 다시 시도하세요.",
-  "youtubeConsentBlocked": "여기서는 YouTube Music과 Google 동의 페이지만 열 수 있습니다. 계정 로그인은 사용할 수 없습니다.",
   "searchReadyVersions": "{count, plural, =0{0 사용 가능한 버전} =1{1 사용 가능한 버전} other{{count} 사용 가능한 버전}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -770,7 +763,6 @@
   "backupRestored": "백업을 복원했습니다.",
   "backupLocalHint": "라이브러리 사본을 저장합니다. 계정 자격 증명과 동의 쿠키는 포함되지 않습니다.",
   "backupReplaceConfirm": "현재 라이브러리를 교체할까요? 이 작업은 되돌릴 수 없습니다.",
-  "youtubeConsentPageError": "이 페이지의 작동이 중지되었습니다. 다시 시도하거나 뒤로 이동하세요.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

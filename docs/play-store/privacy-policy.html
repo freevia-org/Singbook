@@ -25,7 +25,7 @@ code { font-size: .9em; word-break: break-word; }
 <li>Singbook has <strong>no server, no Singbook accounts, no advertising and no analytics</strong>. The publisher does not receive, collect or store your data.</li>
 <li>When you search for songs or open one, the app contacts third-party song sources <strong>directly from your device</strong>. Those services receive your search terms and your IP address (section 3).</li>
 <li>Signing in with Google for Drive sync is optional (section 5). It uses only a private app-data folder in your own Google Drive, and the publisher never receives that data.</li>
-<li>An optional YouTube Music consent browser lets you make Google's cookie choice on your device. This is separate from Google account sign-in and Drive sync (section 3).</li>
+<li>YouTube Music lookup uses anonymous requests. Singbook does not open Google's consent page or read or send browser cookies (section 3).</li>
 </ul>
 <h2>2. Data stored on your device</h2>
 <p>Singbook stores the following only on your device, in the app's private storage:</p>
@@ -33,7 +33,6 @@ code { font-size: .9em; word-break: break-word; }
 <li>Your song library: lyrics, chords, notes, timing data, source links, attribution and rights notes, kept in a local SQLite database and as ChordPro content.</li>
 <li>Setlists, favourites, and app settings (theme, palette, language, reader text size, enabled sources).</li>
 <li>Temporary files and caches (for example cached source responses, PDF export files). These are excluded from Android backup.</li>
-<li>If you use the YouTube Music consent screen, Google's page stores browser cookies in this app's private WebView store. Only the <code>SOCS</code> and <code>CONSENT</code> consent cookies are passed to the lyrics adapter, in memory. They are not stored in your library, exported, included in Drive sync, or sent to the publisher. Android excludes the WebView store from cloud backup and device transfer.</li>
 </ul>
 <p>Android Auto Backup / device transfer may copy the app's library and preferences (including, if you used Google Drive sync, the Google account identifier, e-mail address, profile photo URL and hashed library binding, plus the sync bookkeeping that records which items were synced) to your Google account backup or to a new device if you have Android backup turned on in system settings. That backup is handled by Google and Android under your device settings, not by the publisher.</p>
 <p>Files you import, export, print or share leave the app only when you choose to (for example through the Android share sheet or a PDF you save). Singbook does not read other files or your contacts, location, camera, microphone or device photo library. The only declared Android permission of consequence is <code>INTERNET</code> (to reach the sources in section 3); the app also uses the normal network-state permission added by its networking library.</p>
@@ -45,8 +44,7 @@ code { font-size: .9em; word-break: break-word; }
 <tr><td><code>www.songsterr.com</code></td><td>Chord sheet and song data lookup.</td></tr>
 <tr><td><code>www.ultimate-guitar.com</code>, <code>tabs.ultimate-guitar.com</code></td><td>Public chord sheet lookup.</td></tr>
 <tr><td><code>lrclib.net</code></td><td>Plain and time-synchronised lyrics.</td></tr>
-<tr><td><code>music.youtube.com</code> (and Google image hosts such as <code>i.ytimg.com</code>, <code>*.googleusercontent.com</code> for artwork)</td><td>Song matching, lyrics shelf, artwork. If you completed consent, requests include only your anonymous consent cookies.</td></tr>
-<tr><td><code>consent.youtube.com</code> and resources loaded by Google's consent page</td><td>Only when you explicitly open the optional consent screen. Google receives normal browser requests and may set browser cookies under its own policy.</td></tr>
+<tr><td><code>music.youtube.com</code> (and Google image hosts such as <code>i.ytimg.com</code>, <code>*.googleusercontent.com</code> for artwork)</td><td>Song matching, lyrics shelf, artwork. Requests are anonymous and do not include browser cookies.</td></tr>
 <tr><td><code>lyrics.ovh</code>, <code>api.deezer.com</code> (and Deezer image hosts)</td><td>Lyrics and song suggestions with album, duration and artwork.</td></tr>
 <tr><td><code>synclrc.dev</code></td><td>Synchronised lyric search.</td></tr>
 <tr><td><code>better-lyrics.boidu.dev</code></td><td>Cached word-timed lyrics (TTML).</td></tr>
@@ -57,7 +55,7 @@ code { font-size: .9em; word-break: break-word; }
 <tr><td>Artwork and media link hosts</td><td>Cover art may be downloaded from the provider's own image host and shown in the app. Playback links open in your browser or another app only when you tap them.</td></tr>
 </tbody></table>
 <p>Ozbcoz and Worship Together are import-only: Singbook does not contact them automatically; you download a file yourself and import it.</p>
-<p>The YouTube Music consent screen is an experimental, unofficial integration. You make the choice on Google's actual page; Singbook does not accept or reject it for you. Google account sign-in is blocked in this screen. The native bridge returns only the consent cookies applicable to YouTube Music, never Google account authentication cookies. Those consent cookies are sent only to <code>music.youtube.com</code>, not to other sources or the cloud maintenance service. Settings → Sources has one YouTube Music switch. If a lookup needs your cookie choice, the Google page opens and Singbook saves the session when Music returns. Turning this source off clears the in-memory session and requests deletion of these scoped cookies; a native deletion failure is reported. This does not disconnect Drive. Expiry, regional restrictions, challenges, and unavailable lyrics can still prevent access.</p>
+<p>YouTube Music is an unofficial web integration. Requests are anonymous and Singbook does not open Google's consent page, sign in, or read or send browser cookies. Google may return a consent interstitial, challenge, regional restriction, or unavailable response; Singbook reports that result without a workaround. Availability can change at any time.</p>
 <p>These services are independent of the publisher and have their own privacy policies and terms; they may log requests, and your IP address reveals an approximate location. Singbook does not control what they do. You can reduce exposure by turning off sources you do not want (where the app offers that setting) and by not searching.</p>
 <p>Singbook sends no data to any other server. Tapping a link in the app opens it in your browser, governed by that site's policy.</p>
 <h2>4. No tracking, ads or analytics</h2>
@@ -79,7 +77,6 @@ code { font-size: .9em; word-break: break-word; }
 <ul>
 <li><strong>Local data:</strong> delete a song or setlist in the app, clear the app's storage in Android Settings, Apps, Singbook, Storage, <strong>Clear data</strong>, or uninstall Singbook.</li>
 <li><strong>Android backup:</strong> manage or delete backups in Android Settings, Google, Backup.</li>
-<li><strong>YouTube Music consent:</strong> Turning off YouTube Music in Settings → Sources clears the in-memory session and requests removal of its scoped consent cookies. If native deletion fails, the app reports it and the source remains off. This does not change Drive sign-in or delete your songs.</li>
 <li><strong>Google Drive app data (only if you used sync):</strong> disconnect (sign out) in the app, then remove the app's access and data through your Google account. Remove access: Google Account, Security, Your connections to third-party apps and services (<a href="https://myaccount.google.com/linkedapps">https://myaccount.google.com/linkedapps</a>), select Singbook, then Remove access. Delete the stored data: on a computer open Google Drive, Settings (gear), Manage apps, find Singbook, Options, then Delete hidden app data (or Disconnect from Drive) where offered. Uninstalling the app from your Google Drive removes its folder as well. Your local songs are not affected and stay on your device.</li>
 <li><strong>Exported files and shares:</strong> files you have exported or sent to others are outside the app's control and must be removed by you.</li>
 </ul>

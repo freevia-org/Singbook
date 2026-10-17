@@ -1695,31 +1695,6 @@ class AppLocalizationsLv extends AppLocalizations {
   String get sectionEnding => 'Nobeigums';
 
   @override
-  String get youtubeConsentHint =>
-      'Eksperimentāla funkcija. Izvēlieties sīkfailus Google lapā, lai izmēģinātu dziesmu vārdu meklēšanu. Nav jāpierakstās Google kontā. Jūsu izvēle paliks šajā ierīcē.';
-
-  @override
-  String get youtubeConsentOpen => 'Pārskatīt Google piekrišanu';
-
-  @override
-  String get youtubeConsentSaved => 'Piekrišana saglabāta';
-
-  @override
-  String get youtubeConsentClear => 'Notīrīt piekrišanu';
-
-  @override
-  String get youtubeConsentInstructions =>
-      'Pabeidziet sīkfailu izvēli un gaidiet, līdz atgriežas YouTube Music. Pēc tam saglabājiet šo sesiju un mēģiniet vēlreiz meklēt dziesmu.';
-
-  @override
-  String get youtubeConsentError =>
-      'Neizdevās atjaunināt Google piekrišanas izvēli. Mēģiniet vēlreiz.';
-
-  @override
-  String get youtubeConsentBlocked =>
-      'Šeit var atvērt tikai YouTube Music un Google piekrišanas lapu. Pierakstīšanās kontā nav pieejama.';
-
-  @override
   String searchReadyVersions(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1814,8 +1789,4 @@ class AppLocalizationsLv extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Aizstāt pašreizējo bibliotēku? Šo darbību nevar atsaukt.';
-
-  @override
-  String get youtubeConsentPageError =>
-      'Šī lapa pārstāja darboties. Mēģiniet vēlreiz vai dodieties atpakaļ.';
 }

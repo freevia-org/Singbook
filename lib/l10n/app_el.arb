@@ -726,13 +726,6 @@
   "sectionCoda": "Κόδα",
   "sectionTag": "Tag",
   "sectionEnding": "Τέλος",
-  "youtubeConsentHint": "Πειραματική λειτουργία. Επιλέξτε τις ρυθμίσεις cookie στη σελίδα της Google για να δοκιμάσετε την αναζήτηση στίχων. Δεν χρειάζεται σύνδεση σε λογαριασμό Google. Η επιλογή σας παραμένει σε αυτήν τη συσκευή.",
-  "youtubeConsentOpen": "Έλεγχος συγκατάθεσης Google",
-  "youtubeConsentSaved": "Η συγκατάθεση αποθηκεύτηκε",
-  "youtubeConsentClear": "Εκκαθάριση συγκατάθεσης",
-  "youtubeConsentInstructions": "Ολοκληρώστε την επιλογή cookie και περιμένετε να επιστρέψει το YouTube Music. Έπειτα αποθηκεύστε αυτήν τη συνεδρία και δοκιμάστε ξανά την αναζήτηση τραγουδιού.",
-  "youtubeConsentError": "Δεν ήταν δυνατή η ενημέρωση της επιλογής συγκατάθεσης Google. Δοκιμάστε ξανά.",
-  "youtubeConsentBlocked": "Εδώ μπορούν να ανοίξουν μόνο το YouTube Music και η σελίδα συγκατάθεσης της Google. Η σύνδεση σε λογαριασμό δεν είναι διαθέσιμη.",
   "searchReadyVersions": "{count, plural, =0{0 Διαθέσιμες εκδόσεις} =1{1 διαθέσιμη έκδοση} other{{count} Διαθέσιμες εκδόσεις}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -770,7 +763,6 @@
   "backupRestored": "Το αντίγραφο ασφαλείας επαναφέρθηκε.",
   "backupLocalHint": "Αποθηκεύστε ένα αντίγραφο της βιβλιοθήκης σας. Δεν περιλαμβάνονται στοιχεία λογαριασμού ή cookies συγκατάθεσης.",
   "backupReplaceConfirm": "Να αντικατασταθεί η τρέχουσα βιβλιοθήκη; Αυτή η ενέργεια δεν αναιρείται.",
-  "youtubeConsentPageError": "Αυτή η σελίδα σταμάτησε να λειτουργεί. Δοκιμάστε ξανά ή επιστρέψτε.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

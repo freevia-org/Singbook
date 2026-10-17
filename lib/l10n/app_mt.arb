@@ -726,13 +726,6 @@
   "sectionCoda": "Koda",
   "sectionTag": "Tag",
   "sectionEnding": "Tmiem",
-  "youtubeConsentHint": "Sperimentali. Agħżel il-cookies fil-paġna ta' Google biex tipprova tfittex il-lirika. M'hemmx għalfejn tidħol f'kont ta' Google. L-għażla tiegħek tibqa' fuq dan it-tagħmir.",
-  "youtubeConsentOpen": "Irrevedi l-kunsens ta' Google",
-  "youtubeConsentSaved": "Il-kunsens ġie ssejvjat",
-  "youtubeConsentClear": "Neħħi l-kunsens",
-  "youtubeConsentInstructions": "Temm l-għażla tal-cookies u stenna sakemm jerġa' jidher YouTube Music. Imbagħad issejvja din is-sessjoni u erġa' fittex il-kanzunetta.",
-  "youtubeConsentError": "Ma setgħetx tiġi aġġornata l-għażla tal-kunsens ta' Google. Erġa' pprova.",
-  "youtubeConsentBlocked": "Hawnhekk jistgħu jinfetħu biss YouTube Music u l-paġna tal-kunsens ta' Google. Id-dħul f'kont mhuwiex disponibbli.",
   "searchReadyVersions": "{count, plural, =0{Mhemmx verżjonijiet lesti} one{{count} verżjoni lesta} two{{count} verżjonijiet lesti} few{{count} verżjonijiet lesti} many{{count} verżjoni lesta} other{{count} verżjoni lesta}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -770,7 +763,6 @@
   "backupRestored": "Il-backup ġie rrestawrat.",
   "backupLocalHint": "Issejvja kopja tal-librerija tiegħek. Id-dettalji tal-kont u l-cookies tal-kunsens qatt ma jiġu inklużi.",
   "backupReplaceConfirm": "Tibdel il-librerija attwali? Din l-azzjoni ma tistax titneħħa.",
-  "youtubeConsentPageError": "Din il-paġna waqfet taħdem. Erġa’ pprova jew mur lura.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

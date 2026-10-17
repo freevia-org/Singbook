@@ -19,7 +19,6 @@ import '../providers/source_catalog_client.dart';
 import '../providers/configurable_provider.dart';
 import 'file_actions.dart';
 import '../sync/google_drive_sync.dart';
-import 'youtube_music_consent.dart';
 
 /// A user-visible outcome of an operation, identified by a stable [code] (never
 /// free text, never containing credentials) that the UI maps to a localized
@@ -46,31 +45,21 @@ class AppController extends ChangeNotifier {
     LibraryRepository? repository,
     SourceDiscoveryService? discovery,
     GoogleDriveSyncService? sync,
-    YoutubeMusicConsent? youtubeMusicConsent,
     Duration autoSyncDelay = const Duration(seconds: 2),
     Duration autoSyncStartDelay = const Duration(seconds: 3),
     Duration autoSyncStaleAfter = const Duration(minutes: 5),
     Duration autoSyncBackoff = const Duration(seconds: 30),
     Duration autoSyncMaxBackoff = const Duration(minutes: 15),
   }) {
-    final consent = youtubeMusicConsent ?? YoutubeMusicConsent();
     if (discovery != null) {
-      return AppController._(
-        repository,
-        discovery,
-        null,
-        sync,
-        consent,
-        autoSyncDelay,
-      );
+      return AppController._(repository, discovery, null, sync, autoSyncDelay);
     }
     final transport = ProviderTransport();
     return AppController._(
       repository,
-      _createDiscovery(transport, consent),
+      _createDiscovery(transport),
       transport,
       sync,
-      consent,
       autoSyncDelay,
     );
   }
@@ -80,21 +69,12 @@ class AppController extends ChangeNotifier {
     this.discovery,
     this._ownedTransport,
     this._sync,
-    this.youtubeMusicConsent,
     this._autoSyncDelay,
   );
-  final YoutubeMusicConsent youtubeMusicConsent;
 
-  static SourceDiscoveryService _createDiscovery(
-    ProviderTransport transport,
-    YoutubeMusicConsent consent,
-  ) {
+  static SourceDiscoveryService _createDiscovery(ProviderTransport transport) {
     return SourceDiscoveryService([
-      ...createCoreProviders(
-        transport: transport,
-        youtubeMusicSession: consent.session,
-        onYoutubeMusicConsentRequired: consent.requestConsent,
-      ),
+      ...createCoreProviders(transport: transport),
       ...createExtraProviders(transport: transport),
     ]);
   }
@@ -320,19 +300,6 @@ class AppController extends ChangeNotifier {
     _sync ??= GoogleDriveSyncService(repository: repository);
     settings = jsonMap(await repository.getSetting('app'));
     if (_disposed) return;
-    if (providerEnabled('youtubemusic')) {
-      await youtubeMusicConsent.restore();
-    } else if (jsonMap(settings['providers'])['youtubemusic'] == false) {
-      // Older releases persisted source-off without deleting the native jar.
-      final cleared = await youtubeMusicConsent.clear();
-      if (!cleared && youtubeMusicConsent.supported && !_disposed) {
-        messages.value = const AppMessage(
-          'operation_failed',
-          operation: 'sources',
-        );
-      }
-    }
-    if (_disposed) return;
     await _initializeSourceCatalog();
     if (_disposed) return;
     await _reload();
@@ -532,37 +499,10 @@ class AppController extends ChangeNotifier {
           .toList();
       if (selection != null) _combine(selection!);
     }
-    // Disabling is also the single control for discarding this optional
-    // anonymous session. Clear memory immediately, before a setting write.
-    final clearing = id == 'youtubemusic' && !enabled
-        ? youtubeMusicConsent.clear()
-        : null;
     await setSetting('providers', {
       ...jsonMap(settings['providers']),
       id: enabled,
     });
-    if (clearing != null &&
-        !await clearing &&
-        youtubeMusicConsent.supported &&
-        !_disposed) {
-      messages.value = const AppMessage(
-        'operation_failed',
-        operation: 'sources',
-      );
-    }
-  }
-
-  Future<bool> completeYoutubeMusicConsent() async {
-    if (!providerEnabled('youtubemusic')) return false;
-    final captured = await youtubeMusicConsent.capture();
-    if (!_disposed) _emit();
-    return captured;
-  }
-
-  Future<bool> clearYoutubeMusicConsent() async {
-    final cleared = await youtubeMusicConsent.clear();
-    if (!_disposed) _emit();
-    return cleared;
   }
 
   Future<void> setSetting(String key, dynamic value) async {
@@ -729,13 +669,6 @@ class AppController extends ChangeNotifier {
                   providerEnabled('youtubemusic')))
             source.id: source,
       };
-      if (_youtubeDiscoveryCancel != youtubeCancellation) {
-        for (final source in results.where(
-          (source) => source.candidate.providerId == 'youtubemusic',
-        )) {
-          latestById[source.id] = source;
-        }
-      }
       results = latestById.values.toList();
       _combine(candidate);
     } catch (error) {
@@ -747,82 +680,6 @@ class AppController extends ChangeNotifier {
         _combine(candidate);
         _emit();
       }
-    }
-  }
-
-  /// Retries the anonymous YouTube Music lookup for the current reference
-  /// without restarting the other providers or dropping their ready results.
-  Future<void> retrySelectedProviderForCurrentSelection(
-    String providerId, {
-    required String expectedIdentity,
-  }) async {
-    if (providerId != 'youtubemusic') return;
-    final candidate = selection;
-    if (_disposed ||
-        candidate == null ||
-        candidate.identity != expectedIdentity ||
-        !providerEnabled(providerId) ||
-        !providers.any((provider) => provider.id == providerId)) {
-      return;
-    }
-
-    _youtubeDiscoveryCancel?.cancel();
-    final cancellation = _youtubeDiscoveryCancel = CancellationToken();
-    checks[providerId] = ProviderCheck(
-      providerId: providerId,
-      state: 'pending',
-    );
-    _emit();
-
-    bool isCurrent() =>
-        !_disposed &&
-        !cancellation.isCancelled &&
-        identical(_youtubeDiscoveryCancel, cancellation) &&
-        selection?.identity == expectedIdentity;
-
-    try {
-      final found = await discovery.discover(
-        candidate,
-        enabledIds: {providerId},
-        providerCancellation: {providerId: cancellation},
-        onProgress: (check) {
-          if (!isCurrent() || check.providerId != providerId) return;
-          checks[providerId] = check;
-          final result = check.result;
-          if (result != null) {
-            results = [
-              ...results.where(
-                (source) => source.candidate.providerId != providerId,
-              ),
-              result,
-            ];
-            _combine(candidate);
-          }
-          _emit();
-        },
-      );
-      if (!isCurrent()) return;
-      final fresh = found
-          .where((source) => source.candidate.providerId == providerId)
-          .toList();
-      if (fresh.isNotEmpty) {
-        results = [
-          ...results.where(
-            (source) => source.candidate.providerId != providerId,
-          ),
-          ...fresh,
-        ];
-      }
-      _combine(candidate);
-      _emit();
-    } catch (_) {
-      if (!isCurrent()) return;
-      checks[providerId] = ProviderCheck(
-        providerId: providerId,
-        state: 'failed',
-        code: 'retry_failed',
-      );
-      _emit();
     }
   }
 
@@ -1399,8 +1256,7 @@ class AppController extends ChangeNotifier {
         jsonEncode(a.toJson()) == jsonEncode(b.toJson());
   }
 
-  String _songConflictIdentity(SongDocument song) =>
-      song.extensionError == null
+  String _songConflictIdentity(SongDocument song) => song.extensionError == null
       ? exportSong(song)
       : jsonEncode(song.toJson());
 
@@ -1602,9 +1458,7 @@ class AppController extends ChangeNotifier {
         // An externally edited file gets its own identity; importing never
         // overwrites local work. The identity is derived from the content so
         // a repeated import finds its earlier copy instead of adding another.
-        final id = _stableId(
-          'song:${song.id}:${_songConflictIdentity(song)}',
-        );
+        final id = _stableId('song:${song.id}:${_songConflictIdentity(song)}');
         mapping[song.id] = id;
         final copy = SongDocument(
           id: id,

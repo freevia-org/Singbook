@@ -727,13 +727,6 @@
   "sectionCoda": "كودا",
   "sectionTag": "تاغ",
   "sectionEnding": "النهاية",
-  "youtubeConsentHint": "تجريبي. اختر ملفات تعريف الارتباط على صفحة Google لتجربة البحث عن كلمات الأغاني. لا يلزم تسجيل الدخول إلى حساب Google. يبقى اختيارك على هذا الجهاز.",
-  "youtubeConsentOpen": "مراجعة موافقة Google",
-  "youtubeConsentSaved": "تم حفظ الموافقة",
-  "youtubeConsentClear": "مسح الموافقة",
-  "youtubeConsentInstructions": "أكمل اختيار ملفات تعريف الارتباط وانتظر عودة YouTube Music. ثم احفظ هذه الجلسة وأعد محاولة البحث عن الأغنية.",
-  "youtubeConsentError": "تعذّر تحديث اختيار موافقة Google. حاول مرة أخرى.",
-  "youtubeConsentBlocked": "يمكن فتح YouTube Music وصفحة موافقة Google فقط هنا. تسجيل الدخول إلى الحساب غير متاح.",
   "searchReadyVersions": "{count, plural, =0{لا توجد إصدارات جاهزة} =1{إصدار جاهز واحد} =2{إصداران جاهزان} few{{count} إصدارات جاهزة} many{{count} إصدارًا جاهزًا} other{{count} إصدار جاهز}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -771,7 +764,6 @@
   "backupRestored": "تمت استعادة النسخة الاحتياطية.",
   "backupLocalHint": "احفظ نسخة من مكتبتك. لا تُضمّن بيانات الحساب أو ملفات تعريف الارتباط للموافقة.",
   "backupReplaceConfirm": "هل تريد استبدال المكتبة الحالية؟ لا يمكن التراجع عن ذلك.",
-  "youtubeConsentPageError": "توقفت هذه الصفحة عن العمل. حاول مرة أخرى أو ارجع.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

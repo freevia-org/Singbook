@@ -726,13 +726,6 @@
   "sectionCoda": "Koda",
   "sectionTag": "Tag",
   "sectionEnding": "Zakończenie",
-  "youtubeConsentHint": "Funkcja eksperymentalna. Wybierz ustawienia plików cookie na stronie Google, aby wypróbować wyszukiwanie tekstów. Nie musisz logować się na konto Google. Wybór pozostanie na tym urządzeniu.",
-  "youtubeConsentOpen": "Sprawdź zgodę Google",
-  "youtubeConsentSaved": "Zgoda zapisana",
-  "youtubeConsentClear": "Wyczyść zgodę",
-  "youtubeConsentInstructions": "Dokończ wybór plików cookie i poczekaj na powrót YouTube Music. Następnie zapisz tę sesję i ponownie wyszukaj utwór.",
-  "youtubeConsentError": "Nie udało się zaktualizować wyboru zgody Google. Spróbuj ponownie.",
-  "youtubeConsentBlocked": "Można tu otworzyć tylko YouTube Music i stronę zgody Google. Logowanie na konto jest niedostępne.",
   "searchReadyVersions": "{count, plural, =0{Brak gotowych wersji} one{{count} gotowa wersja} few{{count} gotowe wersje} many{{count} gotowych wersji} other{{count} gotowej wersji}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -770,7 +763,6 @@
   "backupRestored": "Przywrócono kopię zapasową.",
   "backupLocalHint": "Zapisz kopię swojej biblioteki. Dane logowania i pliki cookie zgody nigdy nie są dołączane.",
   "backupReplaceConfirm": "Zastąpić bieżącą bibliotekę? Tej operacji nie można cofnąć.",
-  "youtubeConsentPageError": "Ta strona przestała działać. Spróbuj ponownie lub wróć.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

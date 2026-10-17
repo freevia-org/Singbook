@@ -1653,31 +1653,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sectionEnding => 'Ending';
 
   @override
-  String get youtubeConsentHint =>
-      'Experimental. Make your cookie choice on Google\'s page to try lyrics lookup. No Google account sign-in. Your choice stays on this device.';
-
-  @override
-  String get youtubeConsentOpen => 'Review Google consent';
-
-  @override
-  String get youtubeConsentSaved => 'Consent saved';
-
-  @override
-  String get youtubeConsentClear => 'Clear consent';
-
-  @override
-  String get youtubeConsentInstructions =>
-      'Complete Google\'s cookie choice and wait for YouTube Music to return. Then save this session and retry the song.';
-
-  @override
-  String get youtubeConsentError =>
-      'Couldn\'t update Google\'s consent choice. Try again.';
-
-  @override
-  String get youtubeConsentBlocked =>
-      'Only YouTube Music and Google\'s consent page can open here. Account sign-in is unavailable.';
-
-  @override
   String searchReadyVersions(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1771,8 +1746,4 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Replace the current library? This cannot be undone.';
-
-  @override
-  String get youtubeConsentPageError =>
-      'This page stopped working. Try again or go back.';
 }

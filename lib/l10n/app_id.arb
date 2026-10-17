@@ -726,13 +726,6 @@
   "sectionCoda": "Koda",
   "sectionTag": "Tag",
   "sectionEnding": "Penutup",
-  "youtubeConsentHint": "Eksperimental. Pilih cookie di halaman Google untuk mencoba pencarian lirik. Anda tidak perlu masuk ke akun Google. Pilihan Anda tersimpan di perangkat ini.",
-  "youtubeConsentOpen": "Tinjau persetujuan Google",
-  "youtubeConsentSaved": "Persetujuan tersimpan",
-  "youtubeConsentClear": "Hapus persetujuan",
-  "youtubeConsentInstructions": "Selesaikan pilihan cookie dan tunggu hingga YouTube Music kembali. Setelah itu, simpan sesi ini dan coba cari lagu lagi.",
-  "youtubeConsentError": "Pilihan persetujuan Google tidak dapat diperbarui. Coba lagi.",
-  "youtubeConsentBlocked": "Di sini hanya YouTube Music dan halaman persetujuan Google yang dapat dibuka. Masuk ke akun tidak tersedia.",
   "searchReadyVersions": "{count, plural, =0{0 Versi siap} =1{1 versi siap} other{{count} Versi siap}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -770,7 +763,6 @@
   "backupRestored": "Cadangan dipulihkan.",
   "backupLocalHint": "Simpan salinan pustaka Anda. Kredensial akun dan cookie persetujuan tidak pernah disertakan.",
   "backupReplaceConfirm": "Ganti pustaka saat ini? Tindakan ini tidak dapat dibatalkan.",
-  "youtubeConsentPageError": "Halaman ini berhenti berfungsi. Coba lagi atau kembali.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

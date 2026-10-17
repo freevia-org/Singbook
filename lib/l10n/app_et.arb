@@ -726,13 +726,6 @@
   "sectionCoda": "Coda",
   "sectionTag": "Tag",
   "sectionEnding": "Lõpp",
-  "youtubeConsentHint": "Eksperimentaalne. Proovi laulusõnade otsingut, valides Google'i lehel küpsiste eelistused. Google'i kontole pole vaja sisse logida. Sinu valik jääb sellesse seadmesse.",
-  "youtubeConsentOpen": "Vaata Google'i nõusolekut",
-  "youtubeConsentSaved": "Nõusolek salvestatud",
-  "youtubeConsentClear": "Kustuta nõusolek",
-  "youtubeConsentInstructions": "Lõpeta küpsiste valimine ja oota, kuni YouTube Music naaseb. Seejärel salvesta see seanss ja otsi lugu uuesti.",
-  "youtubeConsentError": "Google'i nõusolekuvalikut ei saanud uuendada. Proovi uuesti.",
-  "youtubeConsentBlocked": "Siin saab avada ainult YouTube Musicu ja Google'i nõusolekulehe. Kontole sisselogimine pole saadaval.",
   "searchReadyVersions": "{count, plural, =0{0 Valmis versioonid} =1{1 valmis versioon} other{{count} Valmis versioonid}}",
   "@searchReadyVersions": {
     "placeholders": {
@@ -770,7 +763,6 @@
   "backupRestored": "Varukoopia taastati.",
   "backupLocalHint": "Salvesta oma teegi koopia. Kontoandmeid ega nõusolekuküpsiseid ei lisata.",
   "backupReplaceConfirm": "Kas asendada praegune teek? Seda ei saa tagasi võtta.",
-  "youtubeConsentPageError": "See leht lakkas töötamast. Proovi uuesti või mine tagasi.",
   "@setlistEntryRemoved": {
     "placeholders": {
       "song": {

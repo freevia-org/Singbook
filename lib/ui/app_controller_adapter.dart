@@ -1368,21 +1368,6 @@ class AppControllerAdapter extends VerseUiController {
     notifyListeners();
   }
 
-  @override
-  Future<void> retryYoutubeMusicForSelectedSong({
-    String? expectedIdentity,
-  }) async {
-    final identity = app.selection?.identity;
-    if (identity == null ||
-        (expectedIdentity != null && expectedIdentity != identity)) {
-      return;
-    }
-    await app.retrySelectedProviderForCurrentSelection(
-      'youtubemusic',
-      expectedIdentity: identity,
-    );
-  }
-
   void _chooseFallbackVersion() {
     if (_disposed) return;
     // Discovery completion must never replace an explicit choice, including a
@@ -2285,16 +2270,6 @@ class AppControllerAdapter extends VerseUiController {
   @override
   Future<bool> refreshSources() => app.refreshSources();
 
-  @override
-  bool get youtubeMusicConsentSupported => app.youtubeMusicConsent.supported;
-  @override
-  bool get youtubeMusicConsentSaved =>
-      app.youtubeMusicConsent.session.hasConsent;
-  @override
-  Future<bool> completeYoutubeMusicConsent() =>
-      app.completeYoutubeMusicConsent();
-  @override
-  Future<bool> clearYoutubeMusicConsent() => app.clearYoutubeMusicConsent();
   // ---- Sync engine state used by the account UI --------------------------
   DateTime? get _lastSyncAt => app.lastSyncAt;
   int get _lastSyncConflicts => app.lastSyncConflicts;
