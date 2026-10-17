@@ -48,6 +48,7 @@ void main() {
   });
 
   tearDown(() async {
+    await ui.settlePlayerPreferences();
     ui.dispose();
     app.dispose();
     await repository.close();
@@ -81,10 +82,11 @@ void main() {
       expect(printed.last.metadata, {'key': 'Am', 'capo': 0});
 
       await ui.openSong('song');
+      expect(ui.state.readerKey, 'C#');
       await ui.transpose(1);
       await ui.printSong('song');
-      expect(printed.last.body, '[C#]First line\n[G#]Second line');
-      expect(printed.last.metadata['key'], 'C#');
+      expect(printed.last.body, '[D]First line\n[A]Second line');
+      expect(printed.last.metadata['key'], 'D');
       expect(printed.last.metadata['capo'], 1);
 
       ui.setTab(VerseTab.songs);
