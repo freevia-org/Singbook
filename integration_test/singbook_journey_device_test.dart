@@ -235,6 +235,7 @@ void main() {
         ),
         findsWidgets,
       );
+      await _capture(binding, '11b_source_network_error_details');
       await tester.tap(
         find.descendant(
           of: failedProviderDetails,
@@ -243,9 +244,9 @@ void main() {
       );
       await tester.pumpAndSettle();
       await _capture(binding, '11b_discovery_no_usable_lyrics');
-      final retryLyrics = find.widgetWithText(
-        TextButton,
-        l10n.searchDiscoveryRetry,
+      final retryLyrics = find.descendant(
+        of: find.byKey(const ValueKey('source-checks-sheet')),
+        matching: find.widgetWithText(TextButton, l10n.searchDiscoveryRetry),
       );
       expect(retryLyrics, findsOneWidget);
       await tester.ensureVisible(retryLyrics);
