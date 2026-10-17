@@ -75,6 +75,7 @@ class AppControllerAdapter extends VerseUiController {
   SongDocument? _draftSong;
   SongEditorData? _editorData;
   bool _editing = false, _playing = false, _editingSetlist = false;
+  bool _playerPreferencesDirty = false;
   bool _editorDirty = false, _loadingMoreRecent = false, _disposed = false;
   bool _conflictFilter = false;
   String? _editorBaseHash;
@@ -84,6 +85,7 @@ class AppControllerAdapter extends VerseUiController {
   String? _setlistBaseHash;
   double _progress = 0, _transpose = 0, _playbackSpeed = 1;
   Timer? _searchDebounce, _playerTimer;
+  Timer? _playerPreferenceDebounce;
   final _codec = ChordProCodec();
 
   // Playback clock: progress is derived from a stopwatch so a delayed timer
@@ -1521,11 +1523,15 @@ class AppControllerAdapter extends VerseUiController {
   }
 
   Future<void> _openSong(String id) async {
+    _playerPreferenceDebounce?.cancel();
+    await _savePlayerPreferences();
     _songId = id;
     _route = VerseRoute.reader;
     _stopPlayer();
     _progress = 0;
-    _transpose = 0;
+    final song = app.findSong(id);
+    _transpose = _storedTranspose(song);
+    _playbackSpeed = _storedPlaybackSpeed(song);
     await _guard(() => app.recordUse('song', id));
     notifyListeners();
   }
@@ -1821,6 +1827,7 @@ class AppControllerAdapter extends VerseUiController {
       );
     }
     _playbackSpeed = speed;
+    _schedulePlayerPreferenceSave();
     if (_playing) _resetPlayClock();
     notifyListeners();
   }
@@ -1870,10 +1877,14 @@ class AppControllerAdapter extends VerseUiController {
       next += direction;
     }
     if (next < 0 || next >= list.entries.length) return;
+    _playerPreferenceDebounce?.cancel();
+    await _savePlayerPreferences();
     _songId = list.entries[next].songId;
     _setlistEntryId = list.entries[next].id;
     _progress = 0;
-    _transpose = 0;
+    final song = app.findSong(_songId!);
+    _transpose = _storedTranspose(song);
+    _playbackSpeed = _storedPlaybackSpeed(song);
     if (_playing) _resetPlayClock();
     notifyListeners();
     // The song was opened from the setlist: it belongs in Recent too. Recorded
@@ -1902,7 +1913,50 @@ class AppControllerAdapter extends VerseUiController {
   @override
   Future<void> transpose(int semitones) async {
     _transpose += semitones;
+    _schedulePlayerPreferenceSave();
     notifyListeners();
+  }
+
+  static const _playerTransposeMetadataKey = 'x_verse_player_transpose';
+  static const _playerSpeedMetadataKey = 'x_verse_player_speed';
+
+  int _storedTranspose(SongDocument? song) {
+    final value = song?.metadata[_playerTransposeMetadataKey];
+    return value is num && value.isFinite ? value.round() : 0;
+  }
+
+  double _storedPlaybackSpeed(SongDocument? song) {
+    final value = song?.metadata[_playerSpeedMetadataKey];
+    return value is num && value.isFinite && value >= .5 && value <= 2
+        ? (.5 + ((value.toDouble() - .5) / .1).round() * .1)
+        : 1;
+  }
+
+  void _schedulePlayerPreferenceSave() {
+    _playerPreferencesDirty = true;
+    _playerPreferenceDebounce?.cancel();
+    _playerPreferenceDebounce = Timer(const Duration(milliseconds: 400), () {
+      _playerPreferenceDebounce = null;
+      unawaited(_savePlayerPreferences());
+    });
+  }
+
+  Future<void> _savePlayerPreferences() async {
+    if (!_playerPreferencesDirty) return;
+    final id = _songId;
+    if (id == null) return;
+    final song = app.findSong(id);
+    if (song == null) return;
+    final metadata = {
+      ...song.metadata,
+      _playerTransposeMetadataKey: _transpose.round(),
+      _playerSpeedMetadataKey: _playbackSpeed,
+    };
+    var savedInPlace = false;
+    final saved = await _guard(() async {
+      savedInPlace = await app.saveSong(song.copyWith(metadata: metadata));
+    });
+    if (saved && savedInPlace) _playerPreferencesDirty = false;
   }
 
   // -- Editing -------------------------------------------------------------
@@ -2436,6 +2490,8 @@ class AppControllerAdapter extends VerseUiController {
     _disposed = true;
     _searchDebounce?.cancel();
     _playerTimer?.cancel();
+    _playerPreferenceDebounce?.cancel();
+    unawaited(_savePlayerPreferences());
     app.removeListener(_onAppChanged);
     _notices.close();
     _position.dispose();

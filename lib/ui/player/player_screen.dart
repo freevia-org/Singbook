@@ -16,6 +16,8 @@ import '../widgets/subpage_header.dart';
 import 'screen_awake.dart';
 import 'section_labels.dart';
 
+const _playerPopupConstraints = BoxConstraints.tightFor(width: 96);
+
 int? _keyPitchClass(String? key) {
   if (key == null) return null;
   final match = RegExp(
@@ -53,7 +55,6 @@ class PlayerScreen extends StatefulWidget {
 class _PlayerScreenState extends State<PlayerScreen>
     with WidgetsBindingObserver {
   final _lyricsScroll = ScrollController();
-  final _controlsScroll = ScrollController();
   final _lineKeys = <String, GlobalKey>{};
   late ValueListenable<PlayerPosition> _position;
   String? _lastLineId;
@@ -469,7 +470,6 @@ class _PlayerScreenState extends State<PlayerScreen>
     _position.removeListener(_onPosition);
     _manualScrollIdle?.cancel();
     _lyricsScroll.dispose();
-    _controlsScroll.dispose();
     super.dispose();
   }
 
@@ -507,7 +507,7 @@ class _PlayerScreenState extends State<PlayerScreen>
         ),
       ),
     );
-    Widget controls({required bool compact, double? maxHeight}) {
+    Widget controls({required bool compact}) {
       final inlineChords =
           song.hasChords &&
           !compact &&
@@ -548,33 +548,7 @@ class _PlayerScreenState extends State<PlayerScreen>
             _chordControls(l10n, state),
         ],
       );
-      // Large text or a short screen can make the controls taller than the
-      // screen; they scroll inside their share so the lyrics stay visible.
-      return SafeArea(
-        top: false,
-        child: compact
-            ? Scrollbar(
-                controller: _controlsScroll,
-                thumbVisibility: true,
-                child: SingleChildScrollView(
-                  controller: _controlsScroll,
-                  child: content,
-                ),
-              )
-            : maxHeight == null
-            ? content
-            : ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: maxHeight),
-                child: Scrollbar(
-                  controller: _controlsScroll,
-                  thumbVisibility: true,
-                  child: SingleChildScrollView(
-                    controller: _controlsScroll,
-                    child: content,
-                  ),
-                ),
-              ),
-      );
+      return SafeArea(top: false, child: content);
     }
 
     final metadata = [
@@ -724,7 +698,7 @@ class _PlayerScreenState extends State<PlayerScreen>
               )
             else ...[
               Expanded(child: lyrics),
-              controls(compact: false, maxHeight: constraints.maxHeight * .4),
+              controls(compact: false),
             ],
           ],
         );
@@ -918,38 +892,60 @@ class _PlayerScreenState extends State<PlayerScreen>
     key: const ValueKey('scroll-speed-toggle'),
     tooltip: l10n.playerScrollSpeed,
     position: PopupMenuPosition.over,
-    offset: const Offset(0, -236),
+    offset: const Offset(0, -306),
+    constraints: _playerPopupConstraints,
+    menuPadding: EdgeInsets.zero,
     itemBuilder: (_) => [
       PopupMenuItem<double>(
         enabled: false,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
         child: SizedBox(
           key: const ValueKey('scroll-speed-panel'),
-          width: 64,
-          height: 210,
+          width: 88,
+          height: 292,
           child: AnimatedBuilder(
             animation: controller,
-            builder: (context, _) => Column(
+            builder: (context, _) => Row(
               children: [
-                const Text('2×'),
+                const SizedBox(
+                  width: 34,
+                  height: 272,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('2×'),
+                      Text('1.5×'),
+                      Text('1×'),
+                      Text('0.5×'),
+                    ],
+                  ),
+                ),
                 Expanded(
                   child: RotatedBox(
                     quarterTurns: 3,
-                    child: Slider(
-                      key: const ValueKey('scroll-speed-slider'),
-                      min: .5,
-                      max: 2,
-                      divisions: 30,
-                      value: controller.state.playbackSpeed,
-                      label:
-                          '${controller.state.playbackSpeed.toStringAsFixed(2)}×',
-                      semanticFormatterCallback: (value) =>
-                          '${l10n.playerScrollSpeed}, ${value.toStringAsFixed(2)}×',
-                      onChanged: controller.setPlaybackSpeed,
+                    child: SliderTheme(
+                      data: SliderTheme.of(context).copyWith(
+                        overlayShape: SliderComponentShape.noOverlay,
+                        tickMarkColor: Theme.of(context).colorScheme.primary,
+                        activeTickMarkColor: Theme.of(
+                          context,
+                        ).colorScheme.onPrimary,
+                      ),
+                      child: Slider(
+                        key: const ValueKey('scroll-speed-slider'),
+                        min: .5,
+                        max: 2,
+                        divisions: 15,
+                        value: controller.state.playbackSpeed,
+                        label:
+                            '${controller.state.playbackSpeed.toStringAsFixed(2)}×',
+                        semanticFormatterCallback: (value) =>
+                            '${l10n.playerScrollSpeed}, ${value.toStringAsFixed(2)}×',
+                        onChanged: controller.setPlaybackSpeed,
+                      ),
                     ),
                   ),
                 ),
-                const Text('0.5×'),
               ],
             ),
           ),
@@ -989,14 +985,14 @@ class _PlayerScreenState extends State<PlayerScreen>
     required bool inlineChords,
     required bool showSpeed,
   }) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 0, 16, 2),
+    padding: const EdgeInsets.fromLTRB(8, 0, 8, 2),
     child: Builder(
       builder: (context) {
         final start = FilledButton.icon(
           key: const ValueKey('start-lyric-scroll'),
           style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-            minimumSize: const Size(104, 42),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+            minimumSize: const Size(88, 38),
           ),
           onPressed: () async {
             if (!state.isPlaying) {
@@ -1059,14 +1055,37 @@ class _PlayerScreenState extends State<PlayerScreen>
         ];
         return Row(
           children: [
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: controls,
+            if (inlineChords || showSpeed) ...[
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: inlineChords
+                      ? _chordControls(l10n, state, inline: true)
+                      : const SizedBox.shrink(),
+                ),
               ),
-            ),
-            if (inlineChords) _chordControls(l10n, state, inline: true),
-            if (showSpeed) _speedControl(l10n, state),
+              Expanded(
+                flex: 2,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: controls,
+                ),
+              ),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: showSpeed
+                      ? _speedControl(l10n, state)
+                      : const SizedBox.shrink(),
+                ),
+              ),
+            ] else
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: controls,
+                ),
+              ),
           ],
         );
       },
@@ -1147,6 +1166,8 @@ class _PlayerScreenState extends State<PlayerScreen>
           PopupMenuButton<String>(
             key: const ValueKey('pitch-key-dropdown'),
             tooltip: l10n.readerTranspose,
+            constraints: _playerPopupConstraints,
+            menuPadding: EdgeInsets.zero,
             onSelected: (action) {
               if (action == 'no-chords') {
                 controller.setShowChords(!state.showChords);
@@ -1162,6 +1183,8 @@ class _PlayerScreenState extends State<PlayerScreen>
                 for (var pitch = 0; pitch < 12; pitch++)
                   PopupMenuItem(
                     value: 'pitch-$pitch',
+                    height: 34,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Text(
                       pitch == originalPitch
                           ? '${originalKey!}  ★'
@@ -1174,9 +1197,10 @@ class _PlayerScreenState extends State<PlayerScreen>
                           : null,
                     ),
                   ),
-              CheckedPopupMenuItem(
+              PopupMenuItem(
                 value: 'no-chords',
-                checked: !state.showChords,
+                height: 34,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Text(l10n.searchChordsUnavailable),
               ),
             ],
