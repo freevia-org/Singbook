@@ -18,7 +18,6 @@ import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/providers/provider.dart';
 import 'package:singbook/ui/verse_app.dart';
 import 'package:singbook/ui/home/home_screen.dart';
-import 'package:singbook/ui/home/source_preview_screen.dart';
 import 'package:singbook/ui/player/player_screen.dart';
 import 'package:singbook/ui/settings/settings_screen.dart';
 import 'package:singbook/ui/widgets/chord_lyrics_line.dart';
@@ -206,7 +205,7 @@ void main() {
       expect(find.byKey(const ValueKey('discovery-no-lyrics')), findsOneWidget);
       expect(find.text(l10n.searchDiscoveryNoLyrics), findsOneWidget);
       expect(find.text(l10n.searchDiscoveryRetry), findsOneWidget);
-      await _openSourceChecks(tester, l10n);
+      await _openSourceChecks(tester);
       expect(find.text(l10n.searchSourcesUnavailableCount(6)), findsOneWidget);
       expect(find.text('Failed archive'), findsOneWidget);
       expect(find.text(l10n.searchProviderFailed), findsOneWidget);
@@ -248,35 +247,55 @@ void main() {
       expect(expectedContributors, 2);
       expect(find.textContaining('#'), findsNothing);
       await _capture(binding, '14_source_comparison');
-      await _openComparisonFilters(tester, l10n);
-      final timedFilter = find.widgetWithText(
-        FilterChip,
-        l10n.searchFilterTimed,
-      );
-      expect(timedFilter, findsOneWidget);
-      await _ensureBelowPinnedHeader(tester, timedFilter);
-      await tester.tap(timedFilter);
-      await tester.pumpAndSettle();
       final comparisonCounts = find.byKey(
         const ValueKey('home-search-comparison-counts'),
       );
       await _scrollIntoView(tester, comparisonCounts);
       expect(
         tester.widget<Text>(comparisonCounts).data,
-        l10n.searchReadyVersions(2),
-      );
-      await _capture(binding, '15_source_timed_filter');
-      await _ensureBelowPinnedHeader(tester, timedFilter);
-      await tester.tap(timedFilter);
-      await tester.pumpAndSettle();
-      await _scrollIntoView(tester, comparisonCounts);
-      expect(
-        tester.widget<Text>(comparisonCounts).data,
         l10n.searchReadyVersions(4),
       );
-      final filtersDone = find.byKey(const ValueKey('version-filters-done'));
-      await tester.ensureVisible(filtersDone);
-      await tester.tap(filtersDone);
+      await tester.tap(find.byKey(const ValueKey('version-info-button')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('version-info-sheet')), findsOneWidget);
+      await _capture(binding, '15_source_version_info');
+      final combinedVersion = tester
+          .widget<VerseHomeScreen>(
+            find.byType(VerseHomeScreen, skipOffstage: false),
+          )
+          .state
+          .comparison!
+          .suggested!;
+      expect(combinedVersion.contributions, hasLength(2));
+      final infoSheet = find.byKey(const ValueKey('version-info-sheet'));
+      final infoScrollable = find
+          .descendant(of: infoSheet, matching: find.byType(Scrollable))
+          .first;
+      for (final contribution in combinedVersion.contributions) {
+        await tester.scrollUntilVisible(
+          find.text(contribution.providerName),
+          120,
+          scrollable: infoScrollable,
+        );
+        expect(find.text(contribution.providerName), findsOneWidget);
+        final roles = contribution.roles
+            .map(
+              (role) => switch (role) {
+                'lyrics' => l10n.providerCapabilityLyrics,
+                'chords' => l10n.providerCapabilityChords,
+                'timing' => l10n.playerTimedLyrics,
+                _ => l10n.searchMetadata,
+              },
+            )
+            .join(' · ');
+        await tester.scrollUntilVisible(
+          find.textContaining(roles),
+          120,
+          scrollable: infoScrollable,
+        );
+        expect(find.textContaining(roles), findsOneWidget);
+      }
+      await tester.tap(find.byTooltip(l10n.navClose));
       await tester.pumpAndSettle();
       expect(
         tester.view.viewInsets.bottom,
@@ -294,43 +313,7 @@ void main() {
       );
       final combinedChip = find.byKey(const ValueKey('version-row-combined'));
       expect(tester.widget<ChoiceChip>(combinedChip).selected, isTrue);
-      await tester.tap(find.byKey(const ValueKey('version-source-menu')));
-      await tester.pumpAndSettle();
-      final fullPreview = find.widgetWithText(ListTile, l10n.searchFullPreview);
-      await tester.ensureVisible(fullPreview);
-      await tester.tap(fullPreview);
-      await tester.pumpAndSettle();
-      expect(find.byType(SourcePreviewScreen), findsOneWidget);
-      expect(find.byKey(const ValueKey('full-preview-body')), findsWidgets);
-      final combinedVersion = tester
-          .widget<VerseHomeScreen>(
-            find.byType(VerseHomeScreen, skipOffstage: false),
-          )
-          .state
-          .comparison!
-          .suggested!;
-      expect(combinedVersion.contributions, hasLength(2));
-      for (final contribution in combinedVersion.contributions) {
-        final roles = contribution.roles
-            .map(
-              (role) => switch (role) {
-                'lyrics' => l10n.providerCapabilityLyrics,
-                'chords' => l10n.providerCapabilityChords,
-                'timing' => l10n.playerTimedLyrics,
-                _ => l10n.searchMetadata,
-              },
-            )
-            .join(', ');
-        expect(
-          find.text('${contribution.providerName} · $roles'),
-          findsOneWidget,
-        );
-      }
-      expect(
-        find.textContaining('Lanterns guard the quiet road'),
-        findsOneWidget,
-      );
-      await _capture(binding, '16a_combined_sources_full_preview');
+      await _capture(binding, '16a_combined_sources_inline_preview');
       final pages = find.byKey(const ValueKey('version-preview-pages'));
       final swipeDistance = tester.getSize(pages).width * .8;
       await tester.drag(pages, Offset(-swipeDistance, 0));
@@ -340,9 +323,6 @@ void main() {
       await tester.drag(pages, Offset(swipeDistance, 0));
       await tester.pumpAndSettle();
       expect(tester.widget<ChoiceChip>(combinedChip).selected, isTrue);
-      await tester.tap(find.byTooltip(l10n.navClose));
-      await tester.pumpAndSettle();
-      expect(find.byType(SourcePreviewScreen), findsNothing);
       final chordArchiveVersion = find.widgetWithText(
         ChoiceChip,
         'Chord archive',
@@ -506,7 +486,10 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text(_title), findsWidgets);
       expect(app.recent, isNotEmpty);
-      expect(find.byKey(const ValueKey('header-overflow-menu')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('header-overflow-menu')),
+        findsOneWidget,
+      );
       expect(find.text('Recent songs'), findsNothing);
       await tester.tap(find.text('Songs'));
       await tester.pumpAndSettle();
@@ -828,32 +811,12 @@ void _expectReadyCountDisplayed(WidgetTester tester, AppLocalizations l10n) {
   ], contains(count));
 }
 
-Future<void> _openSourceChecks(
-  WidgetTester tester,
-  AppLocalizations l10n,
-) async {
-  final sourceOptions = find.byTooltip(l10n.searchSourceOptions);
-  await _ensureBelowPinnedHeader(tester, sourceOptions);
-  await tester.tap(sourceOptions);
+Future<void> _openSourceChecks(WidgetTester tester) async {
+  final sourceChecks = find.byKey(const ValueKey('source-checks-button'));
+  await _ensureBelowPinnedHeader(tester, sourceChecks);
+  await tester.tap(sourceChecks);
   await tester.pumpAndSettle();
-  final checks = find.byKey(const ValueKey('discovery-provider-checks'));
-  await tester.ensureVisible(checks);
-  await tester.tap(checks);
-  await tester.pumpAndSettle();
-}
-
-Future<void> _openComparisonFilters(
-  WidgetTester tester,
-  AppLocalizations l10n,
-) async {
-  final sourceOptions = find.byTooltip(l10n.searchSourceOptions);
-  await _ensureBelowPinnedHeader(tester, sourceOptions);
-  await tester.tap(sourceOptions);
-  await tester.pumpAndSettle();
-  final filters = find.text(l10n.searchFilters);
-  await tester.ensureVisible(filters);
-  await tester.tap(filters);
-  await tester.pumpAndSettle();
+  expect(find.byKey(const ValueKey('source-checks-sheet')), findsOneWidget);
 }
 
 Finder _popupMenuWithTooltip(String tooltip) => find.byWidgetPredicate(

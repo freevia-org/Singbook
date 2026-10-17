@@ -1781,4 +1781,85 @@ class AppLocalizationsSk extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Nahradiť aktuálnu knižnicu? Túto akciu nemožno vrátiť späť.';
+
+  @override
+  String get searchCheckOperations => 'Operácie';
+
+  @override
+  String get searchCheckCode => 'Kód výsledku';
+
+  @override
+  String get searchCheckQueued => 'Čaká sa na kontrolu tohto zdroja.';
+
+  @override
+  String get searchCheckFetch => 'Načítať text piesne';
+
+  @override
+  String get searchCheckValidate => 'Overiť zhodu skladby';
+
+  @override
+  String get searchCheckCorroborate => 'Overiť zhodu textu';
+
+  @override
+  String get searchCheckCompleted => 'Dokončené';
+
+  @override
+  String get searchCheckTimeout => 'Zdroj neodpovedal včas.';
+
+  @override
+  String get searchCheckBlocked => 'Zdroj zablokoval požiadavku.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Zdroj obmedzuje požiadavky. Skúste to znova neskôr.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Zdroj sa nepodarilo kontaktovať. Skontrolujte pripojenie.';
+
+  @override
+  String get searchCheckInvalid => 'Zdroj vrátil nečitateľnú odpoveď.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Tento zdroj nie je v tejto zostave nakonfigurovaný.';
+
+  @override
+  String get searchCheckNoLyrics => 'Nenašli sa zodpovedajúce texty piesní.';
+
+  @override
+  String get searchCheckFailed => 'Túto operáciu sa nepodarilo dokončiť.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Pre toto porovnanie sa nespustili žiadne kontroly zdrojov.';
+
+  @override
+  String get searchVersionCredits => 'Autori a zdroje';
+
+  @override
+  String get searchVersionMediaLinks => 'Súvisiace odkazy';
+
+  @override
+  String get searchCheckCancelled => 'Zrušené';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Našlo sa niekoľko zhôd. Tento zdroj vyžaduje konkrétnejšiu nahrávku.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Tento zdroj vyžaduje identifikátor nahrávky alebo diela.';
+
+  @override
+  String get searchCheckExtraction =>
+      'Zdroj odpovedal, ale text sa nepodarilo extrahovať.';
+
+  @override
+  String get searchCheckBusy =>
+      'Zdroj je zaneprázdnený. Skúste to znova neskôr.';
+
+  @override
+  String get searchCheckSelection =>
+      'Vyberte konkrétny výsledok z tohto zdroja.';
 }

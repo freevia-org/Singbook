@@ -1779,4 +1779,84 @@ class AppLocalizationsCs extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Nahradit současnou knihovnu? Tuto akci nelze vrátit.';
+
+  @override
+  String get searchCheckOperations => 'Operace';
+
+  @override
+  String get searchCheckCode => 'Kód výsledku';
+
+  @override
+  String get searchCheckQueued => 'Čeká se na kontrolu tohoto zdroje.';
+
+  @override
+  String get searchCheckFetch => 'Načíst text písně';
+
+  @override
+  String get searchCheckValidate => 'Ověřit shodu skladby';
+
+  @override
+  String get searchCheckCorroborate => 'Ověřit shodu textu';
+
+  @override
+  String get searchCheckCompleted => 'Dokončeno';
+
+  @override
+  String get searchCheckTimeout => 'Zdroj neodpověděl včas.';
+
+  @override
+  String get searchCheckBlocked => 'Zdroj zablokoval požadavek.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Zdroj omezuje počet požadavků. Zkuste to později.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Zdroj se nepodařilo kontaktovat. Zkontrolujte připojení.';
+
+  @override
+  String get searchCheckInvalid => 'Zdroj vrátil nečitelnou odpověď.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Tento zdroj není v tomto sestavení nakonfigurován.';
+
+  @override
+  String get searchCheckNoLyrics => 'Nebyl nalezen odpovídající text.';
+
+  @override
+  String get searchCheckFailed => 'Tuto operaci se nepodařilo dokončit.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Pro toto porovnání neproběhla žádná kontrola zdroje.';
+
+  @override
+  String get searchVersionCredits => 'Autoři a licence';
+
+  @override
+  String get searchVersionMediaLinks => 'Související odkazy';
+
+  @override
+  String get searchCheckCancelled => 'Zrušeno';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Bylo nalezeno několik shod. Tento zdroj vyžaduje konkrétnější nahrávku.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Tento zdroj vyžaduje identifikátor nahrávky nebo díla.';
+
+  @override
+  String get searchCheckExtraction =>
+      'Zdroj odpověděl, ale text se nepodařilo získat.';
+
+  @override
+  String get searchCheckBusy => 'Zdroj je zaneprázdněn. Zkuste to později.';
+
+  @override
+  String get searchCheckSelection =>
+      'Vyberte konkrétní výsledek z tohoto zdroje.';
 }

@@ -1795,4 +1795,85 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Zastąpić bieżącą bibliotekę? Tej operacji nie można cofnąć.';
+
+  @override
+  String get searchCheckOperations => 'Operacje';
+
+  @override
+  String get searchCheckCode => 'Kod wyniku';
+
+  @override
+  String get searchCheckQueued => 'Oczekiwanie na sprawdzenie tego źródła.';
+
+  @override
+  String get searchCheckFetch => 'Wczytaj tekst piosenki';
+
+  @override
+  String get searchCheckValidate => 'Sprawdź zgodność utworu';
+
+  @override
+  String get searchCheckCorroborate => 'Sprawdź zgodność tekstu';
+
+  @override
+  String get searchCheckCompleted => 'Ukończono';
+
+  @override
+  String get searchCheckTimeout => 'Źródło nie odpowiedziało na czas.';
+
+  @override
+  String get searchCheckBlocked => 'Źródło zablokowało żądanie.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Źródło ogranicza liczbę żądań. Spróbuj ponownie później.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Nie można połączyć się ze źródłem. Sprawdź połączenie.';
+
+  @override
+  String get searchCheckInvalid => 'Źródło zwróciło nieczytelną odpowiedź.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'To źródło nie jest skonfigurowane w tej kompilacji.';
+
+  @override
+  String get searchCheckNoLyrics =>
+      'Nie znaleziono pasującego tekstu piosenki.';
+
+  @override
+  String get searchCheckFailed => 'Nie udało się ukończyć tej operacji.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Dla tego porównania nie uruchomiono żadnych kontroli źródeł.';
+
+  @override
+  String get searchVersionCredits => 'Autorzy i źródła';
+
+  @override
+  String get searchVersionMediaLinks => 'Powiązane linki';
+
+  @override
+  String get searchCheckCancelled => 'Anulowano';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Znaleziono kilka pasujących wyników. To źródło wymaga dokładniejszego nagrania.';
+
+  @override
+  String get searchCheckIdentity =>
+      'To źródło wymaga identyfikatora nagrania lub utworu.';
+
+  @override
+  String get searchCheckExtraction =>
+      'Źródło odpowiedziało, ale nie udało się wyodrębnić tekstu piosenki.';
+
+  @override
+  String get searchCheckBusy =>
+      'To źródło jest zajęte. Spróbuj ponownie później.';
+
+  @override
+  String get searchCheckSelection => 'Wybierz konkretny wynik z tego źródła.';
 }

@@ -130,7 +130,7 @@ void main() {
     await tester.pumpWidget(_app(controller));
     expect(find.byType(SourcePreviewScreen), findsOneWidget);
 
-    await tester.tap(find.byKey(const ValueKey('version-source-menu')));
+    await tester.tap(find.byKey(const ValueKey('source-checks-button')));
     await tester.pumpAndSettle();
     expect(
       find.byKey(const ValueKey('review-youtube-music-consent')),
@@ -147,14 +147,6 @@ void main() {
         matchesGoldenFile('../../artifacts/youtube-source-options.png'),
       );
     }
-    expect(
-      tester
-          .widget<DraggableScrollableSheet>(
-            find.byType(DraggableScrollableSheet),
-          )
-          .initialChildSize,
-      lessThan(.5),
-    );
     expect(tester.takeException(), isNull);
   });
 
@@ -176,16 +168,30 @@ void main() {
       ]
       ..selected = 'same-song';
     addTearDown(controller.dispose);
-    await tester.pumpWidget(_app(controller));
-    final l10n = AppLocalizations.of(
-      tester.element(find.byType(SourcePreviewScreen)),
+    await tester.pumpWidget(
+      _app(
+        controller,
+        home: Scaffold(
+          body: VerseHomeScreen(
+            controller: controller,
+            state: controller.state,
+          ),
+        ),
+      ),
     );
-    expect(find.text(l10n.searchMatchSameSong), findsOneWidget);
-    expect(find.text(l10n.searchVersionDetails), findsOneWidget);
-
-    await tester.tap(find.text(l10n.searchVersionDetails));
+    final l10n = AppLocalizations.of(
+      tester.element(find.byType(VerseHomeScreen)),
+    );
+    await tester.tap(find.byKey(const ValueKey('version-info-button')));
     await tester.pumpAndSettle();
-    expect(find.text(l10n.searchMatchSameSong), findsOneWidget);
+    expect(find.byKey(const ValueKey('version-info-sheet')), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('version-info-sheet')),
+        matching: find.text(l10n.searchMatchSameSong),
+      ),
+      findsOneWidget,
+    );
     expect(find.text(l10n.searchVersionDetails), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -431,9 +437,20 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('section menu jumps to a section in the full preview', (
+  testWidgets('version info shows metadata and the selected recording', (
     tester,
   ) async {
+    const capture = bool.fromEnvironment('CAPTURE_COMPARISON_INFO');
+    if (capture) {
+      for (final family in ['Roboto', 'sans-serif']) {
+        await (FontLoader(family)
+              ..addFont(rootBundle.load('assets/fonts/NotoSans-Regular.ttf')))
+            .load();
+      }
+      await (FontLoader(
+        'MaterialIcons',
+      )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
+    }
     final controller = _Controller();
     controller.versions = [
       SourceVersionData(
@@ -445,26 +462,52 @@ void main() {
         hasLyrics: true,
         isUsableVersion: true,
         canSave: true,
-        bodyLines: [
-          for (var i = 0; i < 14; i++)
-            LyricLineData(id: 'before-$i', text: 'Earlier lyric $i'),
-          const LyricLineData(
-            id: 'target-section',
-            section: 'Chorus',
-            isBlank: true,
-          ),
-          const LyricLineData(id: 'target-lyric', text: 'Jumped to chorus'),
-        ],
+        metadata: const {'key': 'D'},
       ),
     ];
     addTearDown(controller.dispose);
-    await tester.pumpWidget(_app(controller));
-    await tester.tap(find.byKey(const ValueKey('preview-sections')));
+    await tester.pumpWidget(
+      _app(
+        controller,
+        home: Scaffold(
+          body: VerseHomeScreen(
+            controller: controller,
+            state: controller.state,
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.byKey(const ValueKey('version-info-button')));
     await tester.pumpAndSettle();
-    expect(find.text('Chorus'), findsWidgets);
-    await tester.tap(find.text('Chorus').last);
-    await tester.pumpAndSettle();
-    expect(find.text('Jumped to chorus'), findsOneWidget);
+    expect(find.byKey(const ValueKey('version-info-sheet')), findsOneWidget);
+    if (capture) {
+      await expectLater(
+        find.byType(Overlay).first,
+        matchesGoldenFile('../../artifacts/comparison-version-info.png'),
+      );
+    }
+    final l10n = AppLocalizations.of(
+      tester.element(find.byType(VerseHomeScreen)),
+    );
+    final infoSheet = find.byKey(const ValueKey('version-info-sheet'));
+    final infoScrollable = find
+        .descendant(of: infoSheet, matching: find.byType(Scrollable))
+        .first;
+    await tester.scrollUntilVisible(
+      find.text(l10n.editorKeyField),
+      120,
+      scrollable: infoScrollable,
+    );
+    expect(find.text(l10n.editorKeyField), findsOneWidget);
+    expect(find.text('D'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text(l10n.searchSelectedRecording),
+      120,
+      scrollable: infoScrollable,
+    );
+    expect(find.text(l10n.searchSelectedRecording), findsOneWidget);
+    expect(find.text('Test song'), findsWidgets);
+    expect(find.text('The Testers'), findsWidgets);
     expect(controller.saves, 0);
     expect(tester.takeException(), isNull);
   });
@@ -644,10 +687,25 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('full preview opens from comparison and closes without a save', (
+  testWidgets('provider checks open directly from the comparison toolbar', (
     tester,
   ) async {
-    final controller = _Controller();
+    final controller = _Controller()
+      ..providerChecks = const [
+        SearchProviderCheckData(
+          id: 'lyrics-a',
+          name: 'Lyrics A',
+          state: 'failed',
+          operations: [
+            SearchProviderOperationData(
+              id: 'lyrics-a-search',
+              phase: 'search',
+              state: 'failed',
+              query: 'Test song by The Testers',
+            ),
+          ],
+        ),
+      ];
     addTearDown(controller.dispose);
     await tester.pumpWidget(
       _app(
@@ -660,23 +718,24 @@ void main() {
         ),
       ),
     );
-    await tester.tap(find.byKey(const ValueKey('version-source-menu')));
+    await tester.tap(find.byKey(const ValueKey('source-checks-button')));
     await tester.pumpAndSettle();
-    await tester.tap(
-      find.text(
-        AppLocalizations.of(
-          tester.element(find.byType(VerseHomeScreen)),
-        ).searchFullPreview,
-      ),
+    expect(find.byKey(const ValueKey('source-checks-sheet')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('discovery-provider-lyrics-a')),
+      findsOneWidget,
     );
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 400));
-    expect(find.byType(SourcePreviewScreen), findsOneWidget);
-    await tester.tap(find.byTooltip('Close'));
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-    await tester.pump();
-    expect(find.byType(SourcePreviewScreen), findsNothing);
+    await tester.tap(find.byKey(const ValueKey('discovery-provider-lyrics-a')));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('source-check-details-lyrics-a')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('source-operation-lyrics-a-search')),
+      findsOneWidget,
+    );
+    expect(find.text('Test song by The Testers'), findsOneWidget);
     expect(controller.saves, 0);
   });
 

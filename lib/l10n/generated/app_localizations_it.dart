@@ -1776,4 +1776,86 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Sostituire la raccolta attuale? L’operazione non può essere annullata.';
+
+  @override
+  String get searchCheckOperations => 'Operazioni';
+
+  @override
+  String get searchCheckCode => 'Codice del risultato';
+
+  @override
+  String get searchCheckQueued => 'In attesa di verificare questa fonte.';
+
+  @override
+  String get searchCheckFetch => 'Carica il testo';
+
+  @override
+  String get searchCheckValidate => 'Verifica la corrispondenza del brano';
+
+  @override
+  String get searchCheckCorroborate => 'Verifica la corrispondenza del testo';
+
+  @override
+  String get searchCheckCompleted => 'Completato';
+
+  @override
+  String get searchCheckTimeout => 'La fonte non ha risposto in tempo.';
+
+  @override
+  String get searchCheckBlocked => 'La fonte ha bloccato la richiesta.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'La fonte sta limitando le richieste. Riprova più tardi.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Impossibile raggiungere la fonte. Controlla la connessione.';
+
+  @override
+  String get searchCheckInvalid =>
+      'La fonte ha restituito una risposta illeggibile.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Questa fonte non è configurata in questa build.';
+
+  @override
+  String get searchCheckNoLyrics =>
+      'Non sono stati trovati testi corrispondenti.';
+
+  @override
+  String get searchCheckFailed => 'Impossibile completare questa operazione.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Non sono stati eseguiti controlli delle fonti per questo confronto.';
+
+  @override
+  String get searchVersionCredits => 'Crediti';
+
+  @override
+  String get searchVersionMediaLinks => 'Link correlati';
+
+  @override
+  String get searchCheckCancelled => 'Annullato';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Sono state trovate diverse corrispondenze. Questa fonte richiede una registrazione più specifica.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Questa fonte richiede un identificativo della registrazione o dell’opera.';
+
+  @override
+  String get searchCheckExtraction =>
+      'La fonte ha risposto, ma non è stato possibile estrarre il testo.';
+
+  @override
+  String get searchCheckBusy => 'Questa fonte è occupata. Riprova più tardi.';
+
+  @override
+  String get searchCheckSelection =>
+      'Scegli un risultato specifico da questa fonte.';
 }

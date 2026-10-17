@@ -1788,4 +1788,86 @@ class AppLocalizationsMt extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Tibdel il-librerija attwali? Din l-azzjoni ma tistax titneħħa.';
+
+  @override
+  String get searchCheckOperations => 'Operazzjonijiet';
+
+  @override
+  String get searchCheckCode => 'Kodiċi tar-riżultat';
+
+  @override
+  String get searchCheckQueued => 'Qed nistennew biex niċċekkjaw dan is-sors.';
+
+  @override
+  String get searchCheckFetch => 'Tella’ l-lirika';
+
+  @override
+  String get searchCheckValidate => 'Iċċekkja jekk il-kanzunetta taqbilx';
+
+  @override
+  String get searchCheckCorroborate => 'Iċċekkja jekk il-lirika taqbilx';
+
+  @override
+  String get searchCheckCompleted => 'Lest';
+
+  @override
+  String get searchCheckTimeout => 'Is-sors ma weġibx fil-ħin.';
+
+  @override
+  String get searchCheckBlocked => 'Is-sors imblokka t-talba.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Is-sors qed jillimita t-talbiet. Erġa’ pprova aktar tard.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Ma setax jintlaħaq is-sors. Iċċekkja l-konnessjoni tiegħek.';
+
+  @override
+  String get searchCheckInvalid =>
+      'Is-sors irritorna tweġiba li ma tistax tinqara.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Dan is-sors mhux ikkonfigurat f’din il-verżjoni.';
+
+  @override
+  String get searchCheckNoLyrics => 'Ma nstabitx lirika li taqbel.';
+
+  @override
+  String get searchCheckFailed => 'Din l-operazzjoni ma setgħetx titlesta.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Ma saru l-ebda verifiki tas-sors għal dan it-tqabbil.';
+
+  @override
+  String get searchVersionCredits => 'Krediti';
+
+  @override
+  String get searchVersionMediaLinks => 'Links relatati';
+
+  @override
+  String get searchCheckCancelled => 'Ikkanċellat';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Instabu diversi riżultati li jaqblu. Dan is-sors jeħtieġ reġistrazzjoni aktar speċifika.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Dan is-sors jeħtieġ identifikatur tar-reġistrazzjoni jew tax-xogħol.';
+
+  @override
+  String get searchCheckExtraction =>
+      'Is-sors wieġeb, iżda ma setgħux jinġabru l-lirika.';
+
+  @override
+  String get searchCheckBusy =>
+      'Dan is-sors huwa okkupat. Erġa’ pprova aktar tard.';
+
+  @override
+  String get searchCheckSelection =>
+      'Agħżel riżultat speċifiku minn dan is-sors.';
 }

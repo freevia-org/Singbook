@@ -302,6 +302,8 @@ class SourceVersionData {
     this.canSave = false,
     this.savedSongId,
     this.underlyingSourceId,
+    this.sourceUrl,
+    this.metadata = const <String, Object?>{},
   });
   final String id, providerId, providerName, title, artist;
   final String? album, artworkUrl;
@@ -322,6 +324,12 @@ class SourceVersionData {
   final bool isChecking;
   final String? savedSongId;
   final String? underlyingSourceId;
+
+  /// Sanitized public URL for the source, when available.
+  final String? sourceUrl;
+
+  /// Useful, display-safe metadata values from this version.
+  final Map<String, Object?> metadata;
 }
 
 @immutable
@@ -329,10 +337,12 @@ class SourceContributionData {
   const SourceContributionData({
     required this.providerName,
     required this.roles,
+    this.sourceUrl,
   });
 
   final String providerName;
   final List<String> roles;
+  final String? sourceUrl;
 }
 
 @immutable
@@ -370,8 +380,33 @@ class SearchProviderCheckData {
     required this.id,
     required this.name,
     required this.state,
+    this.code,
+    this.operations = const [],
   });
   final String id, name, state;
+  final String? code;
+  final List<SearchProviderOperationData> operations;
+}
+
+/// A bounded, safe-to-display step in a provider's discovery/check flow.
+@immutable
+class SearchProviderOperationData {
+  const SearchProviderOperationData({
+    required this.id,
+    required this.phase,
+    required this.state,
+    this.code,
+    this.query,
+    this.title,
+    this.artist,
+    this.sourceUrl,
+    this.resultCount,
+    this.elapsedMilliseconds,
+  });
+
+  final String id, phase, state;
+  final String? code, query, title, artist, sourceUrl;
+  final int? resultCount, elapsedMilliseconds;
 }
 
 @immutable

@@ -1764,4 +1764,84 @@ class AppLocalizationsBg extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Да заменя ли текущата библиотека? Това действие не може да се отмени.';
+
+  @override
+  String get searchCheckOperations => 'Операции';
+
+  @override
+  String get searchCheckCode => 'Код на резултата';
+
+  @override
+  String get searchCheckQueued => 'Изчакване за проверка на този източник.';
+
+  @override
+  String get searchCheckFetch => 'Зареждане на текста';
+
+  @override
+  String get searchCheckValidate => 'Проверка на съвпадението на песента';
+
+  @override
+  String get searchCheckCorroborate => 'Проверка на съвпадението на текста';
+
+  @override
+  String get searchCheckCompleted => 'Завършено';
+
+  @override
+  String get searchCheckTimeout => 'Източникът не отговори навреме.';
+
+  @override
+  String get searchCheckBlocked => 'Източникът блокира заявката.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Източникът ограничава заявките. Опитайте отново по-късно.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Няма връзка с източника. Проверете връзката си.';
+
+  @override
+  String get searchCheckInvalid => 'Източникът върна нечетим отговор.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Този източник не е конфигуриран в тази версия.';
+
+  @override
+  String get searchCheckNoLyrics => 'Не бяха намерени съвпадащи текстове.';
+
+  @override
+  String get searchCheckFailed => 'Операцията не можа да бъде завършена.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Няма проверки на източници за това сравнение.';
+
+  @override
+  String get searchVersionCredits => 'Авторски права';
+
+  @override
+  String get searchVersionMediaLinks => 'Свързани връзки';
+
+  @override
+  String get searchCheckCancelled => 'Отменено';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Открити са няколко съвпадения. За този източник е необходим по-конкретен запис.';
+
+  @override
+  String get searchCheckIdentity =>
+      'За този източник е необходим идентификатор на запис или произведение.';
+
+  @override
+  String get searchCheckExtraction =>
+      'Източникът отговори, но текстът не можа да бъде извлечен.';
+
+  @override
+  String get searchCheckBusy => 'Източникът е зает. Опитайте отново по-късно.';
+
+  @override
+  String get searchCheckSelection =>
+      'Изберете конкретен резултат от този източник.';
 }

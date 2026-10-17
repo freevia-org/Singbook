@@ -1704,4 +1704,77 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get backupReplaceConfirm => '현재 라이브러리를 교체할까요? 이 작업은 되돌릴 수 없습니다.';
+
+  @override
+  String get searchCheckOperations => '작업';
+
+  @override
+  String get searchCheckCode => '결과 코드';
+
+  @override
+  String get searchCheckQueued => '이 소스를 확인하는 중입니다.';
+
+  @override
+  String get searchCheckFetch => '가사 불러오기';
+
+  @override
+  String get searchCheckValidate => '곡 일치 확인';
+
+  @override
+  String get searchCheckCorroborate => '가사 일치 확인';
+
+  @override
+  String get searchCheckCompleted => '완료';
+
+  @override
+  String get searchCheckTimeout => '소스가 제시간에 응답하지 않았습니다.';
+
+  @override
+  String get searchCheckBlocked => '소스가 요청을 차단했습니다.';
+
+  @override
+  String get searchCheckRateLimited => '소스에서 요청을 제한하고 있습니다. 나중에 다시 시도하세요.';
+
+  @override
+  String get searchCheckNetwork => '소스에 연결할 수 없습니다. 연결을 확인하세요.';
+
+  @override
+  String get searchCheckInvalid => '소스에서 읽을 수 없는 응답을 반환했습니다.';
+
+  @override
+  String get searchCheckNotConfigured => '이 빌드에서는 이 소스가 설정되어 있지 않습니다.';
+
+  @override
+  String get searchCheckNoLyrics => '일치하는 가사가 없습니다.';
+
+  @override
+  String get searchCheckFailed => '이 작업을 완료할 수 없습니다.';
+
+  @override
+  String get searchCheckNoHistory => '이 비교에서는 소스 확인이 실행되지 않았습니다.';
+
+  @override
+  String get searchVersionCredits => '크레딧';
+
+  @override
+  String get searchVersionMediaLinks => '관련 링크';
+
+  @override
+  String get searchCheckCancelled => '취소됨';
+
+  @override
+  String get searchCheckAmbiguous =>
+      '일치하는 항목이 여러 개 있습니다. 이 소스에는 더 구체적인 녹음 정보가 필요합니다.';
+
+  @override
+  String get searchCheckIdentity => '이 소스에는 녹음 또는 작품 식별자가 필요합니다.';
+
+  @override
+  String get searchCheckExtraction => '소스가 응답했지만 가사를 추출할 수 없습니다.';
+
+  @override
+  String get searchCheckBusy => '이 소스가 사용 중입니다. 나중에 다시 시도하세요.';
+
+  @override
+  String get searchCheckSelection => '이 소스에서 특정 결과를 선택하세요.';
 }

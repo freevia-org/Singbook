@@ -1770,4 +1770,84 @@ class AppLocalizationsHu extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Lecseréled a jelenlegi könyvtárat? Ez nem vonható vissza.';
+
+  @override
+  String get searchCheckOperations => 'Műveletek';
+
+  @override
+  String get searchCheckCode => 'Eredménykód';
+
+  @override
+  String get searchCheckQueued => 'Várakozás a forrás ellenőrzésére.';
+
+  @override
+  String get searchCheckFetch => 'Dalszöveg betöltése';
+
+  @override
+  String get searchCheckValidate => 'Dalegyezés ellenőrzése';
+
+  @override
+  String get searchCheckCorroborate => 'Dalszöveg-egyezés ellenőrzése';
+
+  @override
+  String get searchCheckCompleted => 'Kész';
+
+  @override
+  String get searchCheckTimeout => 'A forrás nem válaszolt időben.';
+
+  @override
+  String get searchCheckBlocked => 'A forrás letiltotta a kérést.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'A forrás korlátozza a kéréseket. Próbáld újra később.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Nem érhető el a forrás. Ellenőrizd a kapcsolatot.';
+
+  @override
+  String get searchCheckInvalid => 'A forrás olvashatatlan választ adott.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Ez a forrás nincs beállítva ebben a verzióban.';
+
+  @override
+  String get searchCheckNoLyrics => 'Nem érkezett egyező dalszöveg.';
+
+  @override
+  String get searchCheckFailed => 'A műveletet nem sikerült befejezni.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Ehhez az összehasonlításhoz nem futott forrásellenőrzés.';
+
+  @override
+  String get searchVersionCredits => 'Közreműködők';
+
+  @override
+  String get searchVersionMediaLinks => 'Kapcsolódó hivatkozások';
+
+  @override
+  String get searchCheckCancelled => 'Megszakítva';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Több találat is van. Ehhez a forráshoz pontosabb felvétel szükséges.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Ehhez a forráshoz a felvétel vagy a mű azonosítója szükséges.';
+
+  @override
+  String get searchCheckExtraction =>
+      'A forrás válaszolt, de a dalszöveget nem sikerült kinyerni.';
+
+  @override
+  String get searchCheckBusy => 'A forrás foglalt. Próbáld újra később.';
+
+  @override
+  String get searchCheckSelection =>
+      'Válassz egy konkrét találatot ebből a forrásból.';
 }

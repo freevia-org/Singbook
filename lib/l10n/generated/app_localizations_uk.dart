@@ -1799,4 +1799,84 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Замінити поточну бібліотеку? Цю дію неможливо скасувати.';
+
+  @override
+  String get searchCheckOperations => 'Операції';
+
+  @override
+  String get searchCheckCode => 'Код результату';
+
+  @override
+  String get searchCheckQueued => 'Очікування перевірки цього джерела.';
+
+  @override
+  String get searchCheckFetch => 'Завантажити текст пісні';
+
+  @override
+  String get searchCheckValidate => 'Перевірити збіг пісні';
+
+  @override
+  String get searchCheckCorroborate => 'Перевірити збіг тексту';
+
+  @override
+  String get searchCheckCompleted => 'Завершено';
+
+  @override
+  String get searchCheckTimeout => 'Джерело не відповіло вчасно.';
+
+  @override
+  String get searchCheckBlocked => 'Джерело заблокувало запит.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Джерело обмежує запити. Спробуйте пізніше.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Не вдалося зв’язатися з джерелом. Перевірте підключення.';
+
+  @override
+  String get searchCheckInvalid => 'Джерело повернуло нечитабельну відповідь.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Це джерело не налаштоване в цій збірці.';
+
+  @override
+  String get searchCheckNoLyrics => 'Відповідних текстів пісень не знайдено.';
+
+  @override
+  String get searchCheckFailed => 'Не вдалося завершити цю операцію.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Для цього порівняння перевірки джерел не запускалися.';
+
+  @override
+  String get searchVersionCredits => 'Автори та джерела';
+
+  @override
+  String get searchVersionMediaLinks => 'Пов’язані посилання';
+
+  @override
+  String get searchCheckCancelled => 'Скасовано';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Знайдено кілька збігів. Для цього джерела потрібен точніший запис.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Для цього джерела потрібен ідентифікатор запису або твору.';
+
+  @override
+  String get searchCheckExtraction =>
+      'Джерело відповіло, але не вдалося отримати текст пісні.';
+
+  @override
+  String get searchCheckBusy => 'Джерело зайняте. Спробуйте пізніше.';
+
+  @override
+  String get searchCheckSelection =>
+      'Виберіть конкретний результат із цього джерела.';
 }

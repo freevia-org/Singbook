@@ -1758,4 +1758,84 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Thay thế thư viện hiện tại? Bạn không thể hoàn tác thao tác này.';
+
+  @override
+  String get searchCheckOperations => 'Thao tác';
+
+  @override
+  String get searchCheckCode => 'Mã kết quả';
+
+  @override
+  String get searchCheckQueued => 'Đang chờ kiểm tra nguồn này.';
+
+  @override
+  String get searchCheckFetch => 'Tải lời bài hát';
+
+  @override
+  String get searchCheckValidate => 'Kiểm tra bài hát có khớp không';
+
+  @override
+  String get searchCheckCorroborate => 'Kiểm tra lời bài hát có khớp không';
+
+  @override
+  String get searchCheckCompleted => 'Đã hoàn tất';
+
+  @override
+  String get searchCheckTimeout => 'Nguồn không phản hồi kịp thời.';
+
+  @override
+  String get searchCheckBlocked => 'Nguồn đã chặn yêu cầu.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Nguồn đang giới hạn yêu cầu. Hãy thử lại sau.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Không thể kết nối với nguồn. Hãy kiểm tra kết nối.';
+
+  @override
+  String get searchCheckInvalid => 'Nguồn trả về phản hồi không đọc được.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Nguồn này chưa được cấu hình trong bản dựng này.';
+
+  @override
+  String get searchCheckNoLyrics => 'Không tìm thấy lời bài hát phù hợp.';
+
+  @override
+  String get searchCheckFailed => 'Không thể hoàn tất thao tác này.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Chưa chạy kiểm tra nguồn nào cho phần so sánh này.';
+
+  @override
+  String get searchVersionCredits => 'Ghi công';
+
+  @override
+  String get searchVersionMediaLinks => 'Liên kết liên quan';
+
+  @override
+  String get searchCheckCancelled => 'Đã hủy';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Tìm thấy nhiều kết quả khớp. Nguồn này cần bản ghi cụ thể hơn.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Nguồn này cần mã định danh bản ghi hoặc tác phẩm.';
+
+  @override
+  String get searchCheckExtraction =>
+      'Nguồn đã phản hồi nhưng không thể trích xuất lời bài hát.';
+
+  @override
+  String get searchCheckBusy => 'Nguồn này đang bận. Hãy thử lại sau.';
+
+  @override
+  String get searchCheckSelection =>
+      'Hãy chọn một kết quả cụ thể từ nguồn này.';
 }

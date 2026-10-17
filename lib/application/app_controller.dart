@@ -649,6 +649,10 @@ class AppController extends ChangeNotifier {
           checks[check.providerId] = check;
           final result = check.result;
           if (result != null &&
+              !identical(
+                results.where((item) => item.id == result.id).firstOrNull,
+                result,
+              ) &&
               !(result.hasChords &&
                   _cachedDiscoverySourceIds.contains(result.id))) {
             results = [

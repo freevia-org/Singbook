@@ -369,6 +369,13 @@ void main() {
           ),
           suggested: usable,
           alternatives: [missing],
+          providerChecks: [
+            SearchProviderCheckData(
+              id: 'archive',
+              name: 'Archive',
+              state: 'unavailable',
+            ),
+          ],
         ),
       ),
     );
@@ -377,16 +384,23 @@ void main() {
     final l10n = AppLocalizations.of(
       tester.element(find.byType(VerseHomeScreen)),
     );
-    await tester.tap(find.byKey(const ValueKey('version-source-menu')));
+    await tester.tap(find.byKey(const ValueKey('source-checks-button')));
     await tester.pumpAndSettle();
-    final unavailable = find.byKey(const ValueKey('unavailable-versions'));
-    expect(unavailable, findsOneWidget);
-    await tester.tap(unavailable);
+    final archive = find.byKey(const ValueKey('discovery-provider-archive'));
+    expect(archive, findsOneWidget);
+    await tester.tap(archive);
     await tester.pumpAndSettle();
-    expect(find.text(l10n.searchVersionUnavailable), findsOneWidget);
-    await tester.tap(find.text('Archive'));
-    await tester.pumpAndSettle();
-    expect(controller.state.comparison?.selectedVersionId, 'missing');
+    expect(
+      find.byKey(const ValueKey('source-check-details-archive')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('source-check-details-archive')),
+        matching: find.text(l10n.searchProviderUnavailable),
+      ),
+      findsOneWidget,
+    );
     expect(
       tester
           .widget<FilledButton>(find.byKey(const ValueKey('save-open-lyrics')))
@@ -752,110 +766,93 @@ void main() {
     (const Size(360, 640), 1.0, 'en'),
     (const Size(640, 360), 2.0, 'ar'),
   ]) {
-    testWidgets(
-      'comparison filter sheet preserves preview space $configuration',
-      (tester) async {
-        tester.view.devicePixelRatio = 1;
-        tester.view.physicalSize = configuration.$1;
-        addTearDown(tester.view.resetDevicePixelRatio);
-        addTearDown(tester.view.resetPhysicalSize);
-        const versions = [
-          SourceVersionData(
-            id: 'a',
-            providerId: 'a',
-            providerName: 'Source A',
-            title: 'Signal Song',
-            artist: 'The Signals',
-            hasLyrics: true,
-            hasChords: true,
-            canSave: true,
-            isUsableVersion: true,
-            bodyPreview: [
-              LyricLineData(id: 'a-line', text: 'Source A preview'),
-            ],
-          ),
-          SourceVersionData(
-            id: 'b',
-            providerId: 'b',
-            providerName: 'Source B',
-            title: 'Signal Song',
-            artist: 'The Signals',
-            hasLyrics: true,
-            canSave: true,
-            isUsableVersion: true,
-            bodyPreview: [
-              LyricLineData(id: 'b-line', text: 'Source B preview'),
-            ],
-          ),
-        ];
-        final controller = _FilteringFlowController(
-          const VerseUiState(
-            homeListMode: HomeListMode.online,
-            comparison: SearchComparisonData(
-              reference: SearchReferenceData(
-                id: 'signal',
-                title: 'Signal Song',
-                artist: 'The Signals',
-              ),
-              suggested: null,
-              alternatives: versions,
-              selectedVersionId: 'b',
+    testWidgets('version info sheet preserves preview space $configuration', (
+      tester,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = configuration.$1;
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      const versions = [
+        SourceVersionData(
+          id: 'a',
+          providerId: 'a',
+          providerName: 'Source A',
+          title: 'Signal Song',
+          artist: 'The Signals',
+          hasLyrics: true,
+          hasChords: true,
+          canSave: true,
+          isUsableVersion: true,
+          bodyPreview: [LyricLineData(id: 'a-line', text: 'Source A preview')],
+        ),
+        SourceVersionData(
+          id: 'b',
+          providerId: 'b',
+          providerName: 'Source B',
+          title: 'Signal Song',
+          artist: 'The Signals',
+          hasLyrics: true,
+          canSave: true,
+          isUsableVersion: true,
+          bodyPreview: [LyricLineData(id: 'b-line', text: 'Source B preview')],
+        ),
+      ];
+      final controller = _FilteringFlowController(
+        const VerseUiState(
+          homeListMode: HomeListMode.online,
+          comparison: SearchComparisonData(
+            reference: SearchReferenceData(
+              id: 'signal',
+              title: 'Signal Song',
+              artist: 'The Signals',
             ),
+            suggested: null,
+            alternatives: versions,
+            selectedVersionId: 'b',
           ),
-          versions,
+        ),
+        versions,
+      );
+      addTearDown(controller.dispose);
+      await _pumpHome(
+        tester,
+        controller,
+        scale: configuration.$2,
+        language: configuration.$3,
+      );
+      final before = tester
+          .getSize(find.byKey(const ValueKey('version-preview-pages')))
+          .height;
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(VerseHomeScreen)),
+      );
+      await tester.tap(find.byKey(const ValueKey('version-info-button')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('version-info-sheet')), findsOneWidget);
+      await tester.tap(find.byTooltip(l10n.navClose));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('version-info-sheet')), findsNothing);
+      expect(find.byKey(const ValueKey('version-row-b')), findsOneWidget);
+      if (configuration.$2 > 1) {
+        await tester.ensureVisible(
+          find.descendant(
+            of: find.byKey(const ValueKey('b')),
+            matching: find.text('Source B preview'),
+          ),
         );
-        addTearDown(controller.dispose);
-        await _pumpHome(
-          tester,
-          controller,
-          scale: configuration.$2,
-          language: configuration.$3,
-        );
-        final before = tester
+        await tester.pumpAndSettle();
+      }
+      _assertActivePreview(tester, 'b', 'Source B preview');
+      expect(
+        tester
             .getSize(find.byKey(const ValueKey('version-preview-pages')))
-            .height;
-        final l10n = AppLocalizations.of(
-          tester.element(find.byType(VerseHomeScreen)),
-        );
-        await tester.tap(find.byKey(const ValueKey('version-source-menu')));
-        await tester.pumpAndSettle();
-        await tester.tap(find.text(l10n.searchFilters));
-        await tester.pumpAndSettle();
-        expect(
-          find.byKey(const ValueKey('version-filters-sheet')),
-          findsOneWidget,
-        );
-        final chords = find.widgetWithText(FilterChip, l10n.searchFilterChords);
-        await tester.ensureVisible(chords);
-        await tester.tap(chords);
-        await tester.pumpAndSettle();
-        await tester.tap(find.byKey(const ValueKey('version-filters-done')));
-        await tester.pumpAndSettle();
-        expect(
-          find.byKey(const ValueKey('version-filters-sheet')),
-          findsNothing,
-        );
-        expect(find.byKey(const ValueKey('version-row-b')), findsNothing);
-        if (configuration.$2 > 1) {
-          await tester.ensureVisible(
-            find.descendant(
-              of: find.byKey(const ValueKey('a')),
-              matching: find.text('Source A preview'),
-            ),
-          );
-          await tester.pumpAndSettle();
-        }
-        _assertActivePreview(tester, 'a', 'Source A preview');
-        expect(
-          tester
-              .getSize(find.byKey(const ValueKey('version-preview-pages')))
-              .height,
-          closeTo(before, 1),
-        );
-        expect(tester.takeException(), isNull);
-        await tester.pumpWidget(const SizedBox.shrink());
-      },
-    );
+            .height,
+        closeTo(before, 1),
+      );
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
   }
 
   testWidgets('large text comparison remains usable in landscape', (

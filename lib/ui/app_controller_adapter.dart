@@ -657,6 +657,8 @@ class AppControllerAdapter extends VerseUiController {
             title: combined.title,
             artist: combined.artist,
             album: _metaString(combined.metadata['album']),
+            sourceUrl: _safeDiagnosticUrl(chosenSource?.candidate.url),
+            metadata: _diagnosticMetadata(combined.metadata),
             durationSeconds: _validDuration(
               combined.metadata['durationSeconds'],
             ),
@@ -720,9 +722,25 @@ class AppControllerAdapter extends VerseUiController {
                     .firstOrNull
                     ?.name ??
                 check.providerId,
+            code: check.code,
             state: check.result?.matchKind == MatchKind.rejected
                 ? 'rejected'
                 : check.state,
+            operations: List.unmodifiable([
+              for (final operation in check.operations)
+                SearchProviderOperationData(
+                  id: operation.id,
+                  phase: operation.phase,
+                  state: operation.state,
+                  code: operation.code,
+                  query: operation.query,
+                  title: operation.title,
+                  artist: operation.artist,
+                  sourceUrl: _safeDiagnosticUrl(operation.sourceUrl),
+                  resultCount: operation.resultCount,
+                  elapsedMilliseconds: operation.elapsedMilliseconds,
+                ),
+            ]),
           ),
         )
         .toList();
@@ -743,6 +761,7 @@ class AppControllerAdapter extends VerseUiController {
     final sourceById = {for (final source in song.sources) source.id: source};
     final rolesByProvider = <String, Set<String>>{};
     final providerNames = <String, String>{};
+    final sourceUrls = <String, String?>{};
 
     void add(String? sourceId, String role) {
       if (sourceId == null) return;
@@ -763,6 +782,10 @@ class AppControllerAdapter extends VerseUiController {
               ?.name ??
           providerId;
       providerNames[providerId] = name;
+      sourceUrls.putIfAbsent(
+        providerId,
+        () => _safeDiagnosticUrl(source?.candidate.url),
+      );
       rolesByProvider.putIfAbsent(providerId, () => <String>{}).add(role);
     }
 
@@ -788,6 +811,17 @@ class AppControllerAdapter extends VerseUiController {
         add(entry.value as String, 'metadata');
       }
     }
+    final fieldContributors = jsonMap(song.extra['fieldContributors']);
+    for (final entry in fieldContributors.entries) {
+      if (entry.key == 'lyrics' || entry.key == 'chords') continue;
+      final value = song.metadata[entry.key];
+      final sourceIds = entry.value;
+      if (value != null && value != '' && sourceIds is List) {
+        for (final sourceId in sourceIds.whereType<String>()) {
+          add(sourceId, 'metadata');
+        }
+      }
+    }
     for (final track in song.timingTracks) {
       if (track.status != TimingStatus.usable || track.cues.isEmpty) continue;
       final sourceId = jsonMap(track.extra['binding'])['sourceId'];
@@ -808,6 +842,7 @@ class AppControllerAdapter extends VerseUiController {
             for (final role in roleOrder)
               if (entry.value.contains(role)) role,
           ],
+          sourceUrl: sourceUrls[entry.key],
         ),
     ];
   }
@@ -916,6 +951,11 @@ class AppControllerAdapter extends VerseUiController {
           candidate.providerId,
       title: candidate.title,
       artist: candidate.artist,
+      sourceUrl: _safeDiagnosticUrl(candidate.url),
+      metadata: _diagnosticMetadata({
+        ...candidate.metadata,
+        ...result.metadata,
+      }),
       album: candidate.album ?? _metaString(result.metadata['album']),
       durationSeconds:
           _validDuration(candidate.durationSeconds) ??
@@ -968,6 +1008,7 @@ class AppControllerAdapter extends VerseUiController {
       SourceContributionData(
         providerName: _providerName(result.candidate.providerId),
         roles: roles,
+        sourceUrl: _safeDiagnosticUrl(result.candidate.url),
       ),
     ];
   }
@@ -2470,3 +2511,104 @@ String? _metaString(Object? value) => switch (value) {
   num() || bool() => value.toString(),
   _ => null,
 };
+
+Map<String, Object?> _diagnosticMetadata(Map<String, Object?> values) {
+  const aliases = <String, List<String>>{
+    'timeSignature': ['timeSignature', 'time_signature', 'time'],
+    'tuning': ['tuning', 'tuningStrings', 'tuning_strings'],
+  };
+  const allowed = {
+    'key',
+    'capo',
+    'tuning',
+    'tempo',
+    'timeSignature',
+    'year',
+    'album',
+    'language',
+    'composer',
+    'composers',
+    'lyricist',
+    'lyricists',
+    'author',
+    'writers',
+    'genre',
+    'credits',
+    'mediaLinks',
+  };
+  final output = <String, Object?>{};
+  for (final key in allowed) {
+    Object? value = values[key];
+    if (value == null) {
+      for (final alias in aliases[key] ?? const <String>[]) {
+        if (values.containsKey(alias)) {
+          value = values[alias];
+          break;
+        }
+      }
+    }
+    if (key == 'mediaLinks' && value is List) {
+      final links = value
+          .whereType<String>()
+          .map(_safeDiagnosticUrl)
+          .whereType<String>()
+          .toList(growable: false);
+      if (links.isNotEmpty) output[key] = List<String>.unmodifiable(links);
+    } else if (value is List) {
+      final entries = value
+          .map((item) => _diagnosticCredit(item))
+          .whereType<String>()
+          .toList(growable: false);
+      if (entries.isNotEmpty) output[key] = List<String>.unmodifiable(entries);
+    } else if (_metaString(value) case final text?
+        when text.trim().isNotEmpty) {
+      output[key] = text.trim();
+    }
+  }
+  return Map<String, Object?>.unmodifiable(output);
+}
+
+String? _diagnosticCredit(Object? value) {
+  if (value is String) return value.trim().isEmpty ? null : value.trim();
+  if (value is! Map) return null;
+  final name = _metaString(value['name'] ?? value['artist'] ?? value['value']);
+  final role = _metaString(value['role'] ?? value['type']);
+  final parts = [
+    if (name?.trim().isNotEmpty == true) name!.trim(),
+    if (role?.trim().isNotEmpty == true) role!.trim(),
+  ];
+  return parts.isEmpty ? null : parts.join(' · ');
+}
+
+String? _safeDiagnosticUrl(String? value) {
+  if (value == null || value.isEmpty) return null;
+  final uri = Uri.tryParse(value);
+  if (uri == null ||
+      (uri.scheme != 'http' && uri.scheme != 'https') ||
+      !uri.hasAuthority ||
+      uri.userInfo.isNotEmpty ||
+      uri.host.isEmpty) {
+    return null;
+  }
+  final host = uri.host.toLowerCase();
+  if (uri.hasQuery && (host == 'youtube.com' || host == 'www.youtube.com')) {
+    final videoId = uri.queryParameters['v'];
+    if (uri.path == '/watch' &&
+        videoId != null &&
+        RegExp(r'^[A-Za-z0-9_-]{6,20}$').hasMatch(videoId)) {
+      return Uri(
+        scheme: uri.scheme,
+        host: uri.host,
+        port: uri.hasPort ? uri.port : null,
+        path: uri.path,
+        queryParameters: {'v': videoId},
+      ).toString();
+    }
+  }
+  return Uri(
+    scheme: uri.scheme,
+    host: uri.host,
+    port: uri.hasPort ? uri.port : null,
+    path: uri.path,
+  ).toString();
+}

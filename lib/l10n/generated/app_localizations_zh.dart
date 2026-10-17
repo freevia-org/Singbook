@@ -1679,4 +1679,76 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get backupReplaceConfirm => '要替换当前曲库吗？此操作无法撤销。';
+
+  @override
+  String get searchCheckOperations => '操作';
+
+  @override
+  String get searchCheckCode => '结果代码';
+
+  @override
+  String get searchCheckQueued => '正在等待检查此来源。';
+
+  @override
+  String get searchCheckFetch => '加载歌词';
+
+  @override
+  String get searchCheckValidate => '检查歌曲匹配情况';
+
+  @override
+  String get searchCheckCorroborate => '检查歌词一致性';
+
+  @override
+  String get searchCheckCompleted => '已完成';
+
+  @override
+  String get searchCheckTimeout => '来源未能及时响应。';
+
+  @override
+  String get searchCheckBlocked => '来源屏蔽了此请求。';
+
+  @override
+  String get searchCheckRateLimited => '来源正在限制请求。请稍后重试。';
+
+  @override
+  String get searchCheckNetwork => '无法连接到来源。请检查网络连接。';
+
+  @override
+  String get searchCheckInvalid => '来源返回了无法读取的响应。';
+
+  @override
+  String get searchCheckNotConfigured => '此构建版本未配置此来源。';
+
+  @override
+  String get searchCheckNoLyrics => '未找到匹配的歌词。';
+
+  @override
+  String get searchCheckFailed => '无法完成此操作。';
+
+  @override
+  String get searchCheckNoHistory => '此比较尚未运行任何来源检查。';
+
+  @override
+  String get searchVersionCredits => '鸣谢';
+
+  @override
+  String get searchVersionMediaLinks => '相关链接';
+
+  @override
+  String get searchCheckCancelled => '已取消';
+
+  @override
+  String get searchCheckAmbiguous => '找到多个匹配项。此来源需要更具体的录音信息。';
+
+  @override
+  String get searchCheckIdentity => '此来源需要录音或作品标识符。';
+
+  @override
+  String get searchCheckExtraction => '来源已响应，但无法提取歌词。';
+
+  @override
+  String get searchCheckBusy => '此来源正忙，请稍后重试。';
+
+  @override
+  String get searchCheckSelection => '请从此来源选择一个具体结果。';
 }

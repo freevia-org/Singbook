@@ -3089,6 +3089,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Replace the current library? This cannot be undone.'**
   String get backupReplaceConfirm;
+
+  /// No description provided for @searchCheckOperations.
+  ///
+  /// In en, this message translates to:
+  /// **'Operations'**
+  String get searchCheckOperations;
+
+  /// No description provided for @searchCheckCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Result code'**
+  String get searchCheckCode;
+
+  /// No description provided for @searchCheckQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting to check this source.'**
+  String get searchCheckQueued;
+
+  /// No description provided for @searchCheckFetch.
+  ///
+  /// In en, this message translates to:
+  /// **'Load lyrics'**
+  String get searchCheckFetch;
+
+  /// No description provided for @searchCheckValidate.
+  ///
+  /// In en, this message translates to:
+  /// **'Check song match'**
+  String get searchCheckValidate;
+
+  /// No description provided for @searchCheckCorroborate.
+  ///
+  /// In en, this message translates to:
+  /// **'Check lyric agreement'**
+  String get searchCheckCorroborate;
+
+  /// No description provided for @searchCheckCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get searchCheckCompleted;
+
+  /// No description provided for @searchCheckTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'The source did not respond in time.'**
+  String get searchCheckTimeout;
+
+  /// No description provided for @searchCheckBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'The source blocked the request.'**
+  String get searchCheckBlocked;
+
+  /// No description provided for @searchCheckRateLimited.
+  ///
+  /// In en, this message translates to:
+  /// **'The source is limiting requests. Try again later.'**
+  String get searchCheckRateLimited;
+
+  /// No description provided for @searchCheckNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not reach the source. Check your connection.'**
+  String get searchCheckNetwork;
+
+  /// No description provided for @searchCheckInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'The source returned an unreadable response.'**
+  String get searchCheckInvalid;
+
+  /// No description provided for @searchCheckNotConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'This source is not configured in this build.'**
+  String get searchCheckNotConfigured;
+
+  /// No description provided for @searchCheckNoLyrics.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching lyrics were returned.'**
+  String get searchCheckNoLyrics;
+
+  /// No description provided for @searchCheckFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'This operation could not be completed.'**
+  String get searchCheckFailed;
+
+  /// No description provided for @searchCheckNoHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No source checks have run for this comparison.'**
+  String get searchCheckNoHistory;
+
+  /// No description provided for @searchVersionCredits.
+  ///
+  /// In en, this message translates to:
+  /// **'Credits'**
+  String get searchVersionCredits;
+
+  /// No description provided for @searchVersionMediaLinks.
+  ///
+  /// In en, this message translates to:
+  /// **'Related links'**
+  String get searchVersionMediaLinks;
+
+  /// No description provided for @searchCheckCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get searchCheckCancelled;
+
+  /// No description provided for @searchCheckAmbiguous.
+  ///
+  /// In en, this message translates to:
+  /// **'Several matches were found. This source needs a more specific recording.'**
+  String get searchCheckAmbiguous;
+
+  /// No description provided for @searchCheckIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'This source needs a recording or work identifier.'**
+  String get searchCheckIdentity;
+
+  /// No description provided for @searchCheckExtraction.
+  ///
+  /// In en, this message translates to:
+  /// **'The source responded, but lyrics could not be extracted.'**
+  String get searchCheckExtraction;
+
+  /// No description provided for @searchCheckBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'This source is busy. Try again later.'**
+  String get searchCheckBusy;
+
+  /// No description provided for @searchCheckSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a specific result from this source.'**
+  String get searchCheckSelection;
 }
 
 class _AppLocalizationsDelegate

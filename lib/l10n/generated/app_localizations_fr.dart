@@ -1789,4 +1789,87 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Remplacer la bibliothèque actuelle ? Cette action est irréversible.';
+
+  @override
+  String get searchCheckOperations => 'Opérations';
+
+  @override
+  String get searchCheckCode => 'Code de résultat';
+
+  @override
+  String get searchCheckQueued =>
+      'En attente de la vérification de cette source.';
+
+  @override
+  String get searchCheckFetch => 'Charger les paroles';
+
+  @override
+  String get searchCheckValidate => 'Vérifier la correspondance du morceau';
+
+  @override
+  String get searchCheckCorroborate => 'Vérifier la concordance des paroles';
+
+  @override
+  String get searchCheckCompleted => 'Terminé';
+
+  @override
+  String get searchCheckTimeout => 'La source n’a pas répondu à temps.';
+
+  @override
+  String get searchCheckBlocked => 'La source a bloqué la requête.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'La source limite les requêtes. Réessayez plus tard.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Impossible de joindre la source. Vérifiez votre connexion.';
+
+  @override
+  String get searchCheckInvalid => 'La source a renvoyé une réponse illisible.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Cette source n’est pas configurée dans cette version.';
+
+  @override
+  String get searchCheckNoLyrics =>
+      'Aucune parole correspondante n’a été trouvée.';
+
+  @override
+  String get searchCheckFailed => 'Impossible de terminer cette opération.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Aucune vérification de source n’a été effectuée pour cette comparaison.';
+
+  @override
+  String get searchVersionCredits => 'Crédits';
+
+  @override
+  String get searchVersionMediaLinks => 'Liens associés';
+
+  @override
+  String get searchCheckCancelled => 'Annulé';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Plusieurs correspondances ont été trouvées. Cette source nécessite un enregistrement plus précis.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Cette source nécessite un identifiant d’enregistrement ou d’œuvre.';
+
+  @override
+  String get searchCheckExtraction =>
+      'La source a répondu, mais les paroles n’ont pas pu être extraites.';
+
+  @override
+  String get searchCheckBusy =>
+      'Cette source est occupée. Réessayez plus tard.';
+
+  @override
+  String get searchCheckSelection =>
+      'Choisissez un résultat précis dans cette source.';
 }

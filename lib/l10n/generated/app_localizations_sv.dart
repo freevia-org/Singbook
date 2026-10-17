@@ -1765,4 +1765,85 @@ class AppLocalizationsSv extends AppLocalizations {
   @override
   String get backupReplaceConfirm =>
       'Ersätta det nuvarande biblioteket? Det här kan inte ångras.';
+
+  @override
+  String get searchCheckOperations => 'Åtgärder';
+
+  @override
+  String get searchCheckCode => 'Resultatkod';
+
+  @override
+  String get searchCheckQueued => 'Väntar på att kontrollera den här källan.';
+
+  @override
+  String get searchCheckFetch => 'Läs in låttext';
+
+  @override
+  String get searchCheckValidate => 'Kontrollera låtmatchning';
+
+  @override
+  String get searchCheckCorroborate => 'Kontrollera textöverensstämmelse';
+
+  @override
+  String get searchCheckCompleted => 'Slutfört';
+
+  @override
+  String get searchCheckTimeout => 'Källan svarade inte i tid.';
+
+  @override
+  String get searchCheckBlocked => 'Källan blockerade begäran.';
+
+  @override
+  String get searchCheckRateLimited =>
+      'Källan begränsar förfrågningar. Försök igen senare.';
+
+  @override
+  String get searchCheckNetwork =>
+      'Det gick inte att nå källan. Kontrollera anslutningen.';
+
+  @override
+  String get searchCheckInvalid => 'Källan returnerade ett oläsbart svar.';
+
+  @override
+  String get searchCheckNotConfigured =>
+      'Den här källan är inte konfigurerad i den här versionen.';
+
+  @override
+  String get searchCheckNoLyrics => 'Ingen matchande låttext hittades.';
+
+  @override
+  String get searchCheckFailed => 'Åtgärden kunde inte slutföras.';
+
+  @override
+  String get searchCheckNoHistory =>
+      'Inga källkontroller har körts för den här jämförelsen.';
+
+  @override
+  String get searchVersionCredits => 'Medverkande';
+
+  @override
+  String get searchVersionMediaLinks => 'Relaterade länkar';
+
+  @override
+  String get searchCheckCancelled => 'Avbruten';
+
+  @override
+  String get searchCheckAmbiguous =>
+      'Flera matchningar hittades. Den här källan behöver en mer specifik inspelning.';
+
+  @override
+  String get searchCheckIdentity =>
+      'Den här källan behöver en identifierare för en inspelning eller ett verk.';
+
+  @override
+  String get searchCheckExtraction =>
+      'Källan svarade, men låttexten kunde inte hämtas.';
+
+  @override
+  String get searchCheckBusy =>
+      'Den här källan är upptagen. Försök igen senare.';
+
+  @override
+  String get searchCheckSelection =>
+      'Välj ett specifikt resultat från den här källan.';
 }
