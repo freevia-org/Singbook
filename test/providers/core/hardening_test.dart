@@ -236,6 +236,22 @@ void main() {
   });
 
   group('SyncLRC resolve', () {
+    test(
+      'search encodes spaces without changing literal query punctuation',
+      () async {
+        const query = 'Paper Satellites + Ніч & Rain';
+        final t = wire((request) {
+          // The live API returns no matches when spaces are encoded as '+'.
+          expect(request.url.query, contains('Paper%20Satellites%20%2B%20'));
+          expect(request.url.query, isNot(contains('+')));
+          expect(request.url.queryParameters, {'q': query, 'limit': '10'});
+          return json({'results': <Object>[]});
+        });
+        addTearDown(t.close);
+        expect(await SyncLrcProvider(t).search(query), isEmpty);
+      },
+    );
+
     // Incompressible text so the record cannot be carried in the selection id.
     final bulky = List.generate(
       900,

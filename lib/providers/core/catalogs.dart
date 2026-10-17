@@ -377,10 +377,10 @@ class SyncLrcProvider implements LyricsProvider {
   }) async {
     final data = object(
       await http.requestJson(
-        Uri.https('api.synclrc.dev', '/search', {
-          'q': queryText(query),
-          'limit': '10',
-        }),
+        // This API treats form-style '+' as a literal plus in search terms.
+        Uri.https('api.synclrc.dev', '/search').replace(
+          query: 'q=${Uri.encodeComponent(queryText(query))}&limit=10',
+        ),
         cancel: cancel,
       ),
     );

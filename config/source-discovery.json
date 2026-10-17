@@ -62,6 +62,34 @@
         "https://openhymnal.org/"
       ],
       "reason": "Publisher candidate endpoint returned HTTP 200 on 2026-10-17 at 05:59:04 UTC. This is reachability evidence only, not verified catalog identity or permission. No documented supported API, per-work rights/attribution evidence, overlap assessment or two independent live extraction canaries were established. Defer until those requirements and a compatible adapter are verified; no source activation proposed."
+    },
+    {
+      "id": "amll-ttml-database",
+      "name": "AMLL TTML Database",
+      "firstSeen": "2026-10-17",
+      "lastChecked": "2026-10-17",
+      "status": "deferred",
+      "documentation": [
+        "https://amll.dev/reference/http-api/overview",
+        "https://amll.dev/reference/http-api/native.html",
+        "https://amll.dev/guides/overview/eco.html"
+      ],
+      "endpoint": "https://api.amll.dev",
+      "reason": "Documented unauthenticated JSON search/get API. On 2026-10-17 at 05:57:03Z and 05:57:22Z, independent direct IDs 269710089745311 (ME!) and 638303942317135 (Shape of You) returned HTTP 200 and raw TTML with timed paragraphs/spans. Publisher describes the contributed database as CC0-1.0; retain project attribution and contributor usernames/IDs without extending that claim to every underlying work. Titles, artists and contributors are arrays; artist ordering varies and search can return multiple versions. Scalar/index-only extraction would lose contributors or misidentify collaborations. Defer until a compatible adapter supports complete identities/provenance and repository canaries verify parsed cues and raw retention. Exact ID lookups are documented immutable. Overlap with existing timed sources remains unmeasured; two Chinese title/artist queries returned no hits, so regional coverage is unproven."
+    },
+    {
+      "id": "musixmatch",
+      "name": "Musixmatch",
+      "firstSeen": "2026-10-17",
+      "lastChecked": "2026-10-17",
+      "status": "deferred",
+      "documentation": [
+        "https://developer.musixmatch.com/",
+        "https://github.com/musixmatch/musixmatch-sdk",
+        "https://www.postman.com/musixmatch-dev"
+      ],
+      "endpoint": "https://api.musixmatch.com/ws/1.1",
+      "reason": "Publisher documents track search and lyric retrieval with an API key and account/plan. No credential was requested, borrowed or provisioned by this unattended run. Defer pending eligible app access, current API/display/attribution terms, two independent live extraction canaries and claimed capability coverage. Expected overlap with existing broad catalogs is substantial but unmeasured; publisher API availability alone does not establish app redistribution permission."
     }
   ]
 }

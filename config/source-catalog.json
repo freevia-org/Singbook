@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "extractionSchemaVersion": 1,
-  "revision": 2,
-  "publishedAt": "2026-10-15T19:59:49Z",
+  "revision": 3,
+  "publishedAt": "2026-10-17T05:59:13Z",
   "sources": [
     {
       "id": "genius",
@@ -193,7 +193,7 @@
       "name": "SyncLRC",
       "adapter": "builtin",
       "status": "active",
-      "revision": 2,
+      "revision": 3,
       "capabilities": [
         "catalog",
         "lyrics",
@@ -205,6 +205,7 @@
       "accessMode": "public",
       "website": "https://synclrc.dev",
       "hosts": [],
+      "changeReason": "2026-10-17 local live requests proved form-encoded '+' spaces return no matches while '%20' returns the expected records. Compiled adapter repair needs a compatible app release; retain existing IDs and add independent Wonderwall line/word timing coverage.",
       "probes": [
         {
           "id": "never-gonna-give-you-up-studio",
@@ -218,6 +219,21 @@
             "metadata",
             "timing",
             "lineTiming"
+          ]
+        },
+        {
+          "id": "wonderwall-oasis-timed-version",
+          "query": "Wonderwall Oasis",
+          "expectedTitle": "Wonderwall",
+          "expectedArtist": "Oasis",
+          "expectedAlbum": "Oasis - Wonderwall",
+          "expectedDurationSeconds": 279,
+          "requiredFields": [
+            "body",
+            "metadata",
+            "timing",
+            "lineTiming",
+            "wordTiming"
           ]
         }
       ]

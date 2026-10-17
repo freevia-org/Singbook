@@ -208,16 +208,21 @@ proxy URLs containing credentials are refused rather than exposed in arguments.
 This is an experimental unofficial web session. Google can expire the decision,
 deny access or change its page; renew the review when requested. A platform
 CONNECT denial happens before this flow and cannot be repaired with cookies.
-The cloud job does not acquire or upload this local session. This command also
-does not enable the paused local daily timer.
+The cloud job does not acquire or upload this local session. This command does
+not change the local daily timer or start an unattended consent/sign-in flow.
 
 ### Hosted daily job
 
 The owner's daily task runs at 09:00 Europe/Kyiv in a private Codex Cloud
 environment using the ChatGPT/Codex subscription. It does not require the owner's
-computer, local files, or desktop app. The former local heartbeat is retained
-paused after the hosted task is verified. Environment publication, GitHub access,
-and the hosted schedule are account configuration, separate from this repository's
+computer, local files, or desktop app. The owner also enabled a complementary
+local daily heartbeat for sources reachable from this machine. Keep both enabled:
+local success does not establish cloud reachability, or vice versa. Local reports
+use `reports/source-maintenance/local/latest.json` plus UTC-dated history on
+`codex/datasource-health`; `reports/source-maintenance/latest.json` remains
+cloud-owned. Preserve the other runtime's reports through non-forced updates.
+Environment publication, GitHub access, and the hosted schedule are account
+configuration, separate from this repository's
 catalog. See [cloud environments](https://learn.chatgpt.com/docs/environments/cloud-environments)
 and [scheduled tasks](https://learn.chatgpt.com/docs/automations).
 
@@ -249,17 +254,19 @@ even when the saved policy permits the host, and is not evidence of an upstream
 schema change. Do not bypass the proxy or disable TLS verification.
 
 1. Inspect Git state, current public history, this guide, catalog and previous
-   durable reports. Use the cloud task's isolated checkout, fetch public `main`,
-   and preserve unfinished changes. Never depend on a Windows checkout, local
-   integration chat, or a connected computer.
+   durable reports. Use the current runtime's isolated checkout, fetch public
+   `main`, and preserve unfinished changes. Cloud execution must not depend on a
+   Windows checkout, local integration chat, or a connected computer. Local runs
+   use only their dedicated maintenance credentials/profile and coordinate source
+   handoffs with the integration owner.
 2. Run all live probes against the current catalog, writing a dated report under
    ignored `artifacts/source-maintenance/`. Persist the sanitized report and its
    latest summary on the dedicated `codex/datasource-health` GitHub branch;
    compare that branch's prior report, rather than assuming an old cloud VM or
    ignored file survives. Keep report history separate from source-change PRs
-   and do not open report-only PRs. Compare with prior reports so an
-   unchanged failure is not repeatedly announced. A missing credential is a
-   coverage limitation, never a schema repair or a healthy source.
+   and do not open report-only PRs. Local runs compare both local and cloud
+   evidence, preserving runtime/source/probe/timestamp provenance. A missing
+   credential is a coverage limitation, never a schema repair or a healthy source.
 3. Diagnose changed extraction and missing fields against the actual source and
    primary documentation. Repair compatible rules, or a compiled adapter when
    necessary; add synthetic regression fixtures from the smallest required
@@ -296,7 +303,11 @@ schema change. Do not bypass the proxy or disable TLS verification.
    Never push old canonical history, publish app-store builds, overwrite secrets,
    clear user data or force-push as part of maintenance.
 
-Stay quiet while source state is unchanged or no actionable candidate exists.
-Notify for a validated repair/addition/retirement, publication, newly actionable
-failure or required input. Record unresolved issues honestly; automation is a
+The local heartbeat stays quiet only when there are no roadblocks or meaningful
+changes. Report every local roadblock, including recurring ones: affected source
+or step, safe reason, what was tried, whether it resolved, and any user action
+needed. Include incomplete capability validation, access denials, expired consent,
+credential failures, outages and failed checks/report publication. Record
+validated repairs/additions and distinguish prepared changes from publication.
+Record unresolved issues honestly; automation is a
 maintenance loop, not a promise that every inaccessible upstream can be repaired.
