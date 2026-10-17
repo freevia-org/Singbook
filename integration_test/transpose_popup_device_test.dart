@@ -8,7 +8,6 @@ import 'package:path/path.dart' as paths;
 import 'package:path_provider/path_provider.dart';
 import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/data/library_repository.dart';
-import 'package:singbook/domain/arrangement.dart' as arrangement;
 import 'package:singbook/domain/models.dart';
 import 'package:singbook/l10n/generated/app_localizations.dart';
 import 'package:singbook/ui/app_controller_adapter.dart';
@@ -25,6 +24,7 @@ typedef _TransposePopupFixture = ({
   String? key,
   int? pitch,
   String body,
+  List<String> original,
   List<String> shifted,
   String? shiftedKey,
   List<String> down,
@@ -32,6 +32,7 @@ typedef _TransposePopupFixture = ({
 
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  binding.framePolicy = LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
 
   testWidgets(
     'native transpose popup changes and restores original chord charts',
@@ -58,17 +59,15 @@ void main() {
         }
       });
 
-      tester.view.devicePixelRatio = 1;
-      tester.view.physicalSize = const Size(360, 800);
-      tester.view.padding = const FakeViewPadding(top: 24, bottom: 24);
-      tester.view.viewPadding = const FakeViewPadding(top: 24, bottom: 24);
-      tester.view.viewInsets = FakeViewPadding.zero;
+      await binding.setSurfaceSize(const Size(360, 800));
       addTearDown(() async {
-        _restoreNativeView(tester);
+        await binding.setSurfaceSize(null);
         await SystemChrome.setPreferredOrientations([]);
       });
 
-      await tester.pumpWidget(_playerApp(controller));
+      await tester.pumpWidget(
+        _playerApp(controller, logicalSize: const Size(360, 800)),
+      );
       await tester.pumpAndSettle();
 
       for (var index = 0; index < transposePopupFixtures.length; index++) {
@@ -92,11 +91,7 @@ void main() {
         final play = find.byKey(const ValueKey('start-lyric-scroll'));
         expect(dropdown, findsOneWidget, reason: fixture.name);
         expect(play, findsOneWidget, reason: fixture.name);
-        _expectChordValues(
-          tester,
-          _chordsFromBody(fixture.body),
-          reason: fixture.name,
-        );
+        _expectChordValues(tester, fixture.original, reason: fixture.name);
 
         if (index == 0) {
           _expectDropdownBeforePlay(tester, dropdown, play);
@@ -142,7 +137,9 @@ void main() {
             controller = AppControllerAdapter(app);
             await controller.openSong(songId);
           });
-          await tester.pumpWidget(_playerApp(controller));
+          await tester.pumpWidget(
+            _playerApp(controller, logicalSize: const Size(360, 800)),
+          );
           await tester.pumpAndSettle();
         } else {
           await tester.runAsync(() => controller.openSong(songId));
@@ -167,11 +164,7 @@ void main() {
         _expectChordValues(tester, fixture.down, reason: fixture.name);
         await _selectTranspose(tester, dropdown, fixture, 0);
         await _settleNative(tester, controller, repository);
-        _expectChordValues(
-          tester,
-          _chordsFromBody(fixture.body),
-          reason: fixture.name,
-        );
+        _expectChordValues(tester, fixture.original, reason: fixture.name);
         expect(controller.state.readerTranspose, 0, reason: fixture.name);
 
         await tester.tap(dropdown);
@@ -187,11 +180,7 @@ void main() {
         await _selectTranspose(tester, dropdown, fixture, 0);
         await _settleNative(tester, controller, repository);
         expect(controller.state.showChords, isTrue, reason: fixture.name);
-        _expectChordValues(
-          tester,
-          _chordsFromBody(fixture.body),
-          reason: fixture.name,
-        );
+        _expectChordValues(tester, fixture.original, reason: fixture.name);
         expect(tester.takeException(), isNull, reason: fixture.name);
       }
 
@@ -199,10 +188,15 @@ void main() {
       // text scale. This exercises RTL popup positioning and scroll reachability.
       final keyless = transposePopupFixtures.first;
       await tester.runAsync(() => controller.openSong('transpose-popup-0'));
+      await binding.setSurfaceSize(const Size(900, 400));
       await tester.pumpWidget(
-        _playerApp(controller, locale: const Locale('ar'), textScale: 2),
+        _playerApp(
+          controller,
+          locale: const Locale('ar'),
+          textScale: 2,
+          logicalSize: const Size(900, 400),
+        ),
       );
-      tester.view.physicalSize = const Size(900, 400);
       await tester.pumpAndSettle();
       final rtlDropdown = find.byKey(const ValueKey('pitch-key-dropdown'));
       final rtlPlay = find.byKey(const ValueKey('start-lyric-scroll'));
@@ -221,7 +215,7 @@ void main() {
 
       // Logical viewport fixtures above do not prove physical rotation. Clear
       // all overrides before checking the real Android view in each orientation.
-      _restoreNativeView(tester);
+      await binding.setSurfaceSize(null);
       await tester.pumpWidget(_playerApp(controller));
       for (final landscape in [false, true]) {
         await SystemChrome.setPreferredOrientations([
@@ -265,11 +259,7 @@ void main() {
         );
         await _selectPopupItem(tester, 'transpose-offset-0');
         await _settleNative(tester, controller, repository);
-        _expectChordValues(
-          tester,
-          _chordsFromBody(keyless.body),
-          reason: keyless.name,
-        );
+        _expectChordValues(tester, keyless.original, reason: keyless.name);
         await _selectTranspose(tester, dropdown, keyless, 2);
         await _settleNative(tester, controller, repository);
         _expectChordValues(tester, keyless.shifted, reason: keyless.name);
@@ -283,18 +273,11 @@ void main() {
   );
 }
 
-void _restoreNativeView(WidgetTester tester) {
-  tester.view.resetPhysicalSize();
-  tester.view.resetDevicePixelRatio();
-  tester.view.resetPadding();
-  tester.view.resetViewPadding();
-  tester.view.resetViewInsets();
-}
-
 Widget _playerApp(
   AppControllerAdapter controller, {
   Locale locale = const Locale('en'),
   double textScale = 1,
+  Size? logicalSize,
 }) => MaterialApp(
   locale: locale,
   localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -303,7 +286,7 @@ Widget _playerApp(
   builder: (context, child) => MediaQuery(
     data: MediaQuery.of(
       context,
-    ).copyWith(textScaler: TextScaler.linear(textScale)),
+    ).copyWith(size: logicalSize, textScaler: TextScaler.linear(textScale)),
     child: child!,
   ),
   home: AnimatedBuilder(
@@ -370,12 +353,6 @@ void _expectChordValues(
   expect(actual, expected, reason: reason);
 }
 
-List<String> _chordsFromBody(String body) => arrangement
-    .parseArrangement(body)
-    .expand((line) => line.chords)
-    .map((chord) => chord.chord)
-    .toList();
-
 void _expectDropdownBeforePlay(
   WidgetTester tester,
   Finder dropdown,
@@ -395,6 +372,8 @@ Future<void> _capture(
   String name,
 ) async {
   if (_skipScreenshots) return;
+  binding.scheduleFrame();
+  await binding.endOfFrame;
   debugPrint('SINGBOOK_E2E_CAPTURE:$name');
   await Future<void>.delayed(const Duration(seconds: 2));
 }

@@ -53,6 +53,7 @@ void main() {
       });
       await pumpShell(tester, controller);
       final originalChords = _chords(controller.state);
+      expect(originalChords, fixture.original);
       final originalAnchors = _anchors(controller.state);
       final dropdown = find.byKey(const ValueKey('pitch-key-dropdown'));
       final play = find.byKey(const ValueKey('start-lyric-scroll'));
