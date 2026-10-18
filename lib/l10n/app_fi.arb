@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Haku",
   "providerCapabilityMetadata": "Kappaleen tiedot",
   "editorArtworkField": "Kansikuvan linkki",
-  "editorLyricsHint": "Muokkaa sanoituksia tai sointuja napauttamalla riviä.",
+  "editorLyricsHint": "Soinnut hakasulkeisiin [C]; osamerkinnät omille riveilleen.",
   "editorSave": "Tallenna muutokset",
   "editorSaved": "Muutokset tallennettu.",
   "editorSaveFailed": "Muutoksia ei voitu tallentaa.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Muu…",
+  "editorStandardTuning": "Vakiovire",
+  "editorExampleVerse": "[C]Uusi päivä [G]kutsuu,\n[Am]seuraamme valoa takaisin [F]kotiin.",
+  "editorExampleChorus": "[F]Lauletaan tämä laulu [C]yhdessä,\n[G]melodia vie meitä [C]eteenpäin.",
+  "editorExampleBridge": "[Am]Vielä yksi rivi, hieman [F]lähempänä."
 }

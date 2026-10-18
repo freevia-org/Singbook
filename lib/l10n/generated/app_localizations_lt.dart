@@ -867,7 +867,7 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Palieskite eilutę, kad redaguotumėte tekstą arba akordus.';
+      'Akordus rašykite laužtiniuose skliaustuose [C]; dalių žymas – atskirose eilutėse.';
 
   @override
   String get editorSave => 'Išsaugoti pakeitimus';
@@ -1879,4 +1879,21 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Nėra';
+
+  @override
+  String get editorCustomValue => 'Kita…';
+
+  @override
+  String get editorStandardTuning => 'Standartinis derinimas';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Nauja diena mus [G]šaukia,\n[Am]sekame šviesą atgal į [F]namus.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Dainuokime šią dainą [C]kartu,\n[G]tegu melodija mus neša [C]toliau.';
+
+  @override
+  String get editorExampleBridge => '[Am]Dar viena eilutė, truputį [F]arčiau.';
 }

@@ -830,7 +830,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get editorArtworkField => '封面链接';
 
   @override
-  String get editorLyricsHint => '点按一行即可编辑歌词或和弦。';
+  String get editorLyricsHint => '和弦写在 [C] 方括号中；段落标记单独占一行。';
 
   @override
   String get editorSave => '保存更改';
@@ -1754,4 +1754,19 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get playerChordsNone => '无';
+
+  @override
+  String get editorCustomValue => '其他…';
+
+  @override
+  String get editorStandardTuning => '标准调弦';
+
+  @override
+  String get editorExampleVerse => '[C]新的一天在 [G]召唤，\n[Am]我们追随光芒回到 [F]家。';
+
+  @override
+  String get editorExampleChorus => '[F]一起唱这首 [C]歌，\n[G]让旋律带我们 [C]向前。';
+
+  @override
+  String get editorExampleBridge => '[Am]再写一行，靠近 [F]一点。';
 }

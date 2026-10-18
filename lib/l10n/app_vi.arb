@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Tìm kiếm",
   "providerCapabilityMetadata": "Thông tin bài hát",
   "editorArtworkField": "Liên kết ảnh bìa",
-  "editorLyricsHint": "Chạm vào một dòng để chỉnh sửa lời bài hát hoặc hợp âm.",
+  "editorLyricsHint": "Đặt hợp âm trong ngoặc [C]; tiêu đề phần ở các dòng riêng.",
   "editorSave": "Lưu thay đổi",
   "editorSaved": "Đã lưu thay đổi.",
   "editorSaveFailed": "Không thể lưu thay đổi.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Khác…",
+  "editorStandardTuning": "Lên dây tiêu chuẩn",
+  "editorExampleVerse": "[C]Một ngày mới đang [G]gọi,\n[Am]ta theo ánh sáng trở về [F]nhà.",
+  "editorExampleChorus": "[F]Cùng hát bài ca này [C]nhé,\n[G]để giai điệu đưa ta [C]đi xa.",
+  "editorExampleBridge": "[Am]Thêm một dòng nữa, gần [F]hơn chút."
 }

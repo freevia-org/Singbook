@@ -53,6 +53,9 @@ class _EditorScreenState extends State<EditorScreen> {
   late final TextEditingController _duration;
   late final TextEditingController _body;
   late final List<TextEditingController> _all;
+  late String _initialBody;
+  bool _templateInitialized = false;
+  final _metadataScroll = ScrollController();
   bool _titleMissing = false;
   bool _showFieldErrors = false;
   bool _saving = false;
@@ -73,6 +76,7 @@ class _EditorScreenState extends State<EditorScreen> {
     _tempo = TextEditingController(text: _initial.tempo);
     _duration = TextEditingController(text: _initial.duration);
     _body = TextEditingController(text: _initial.body);
+    _initialBody = _initial.body;
     _all = [
       _title,
       _artist,
@@ -90,7 +94,37 @@ class _EditorScreenState extends State<EditorScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_templateInitialized) return;
+    _templateInitialized = true;
+    if (!_initial.isNew || _initial.body.isNotEmpty) return;
+    final l10n = AppLocalizations.of(context);
+    _initialBody = [
+      '{start_of_intro}',
+      '[C] [G/B] [Am] [F]',
+      '{end_of_intro}',
+      '',
+      '{start_of_verse: 1}',
+      l10n.editorExampleVerse,
+      '{end_of_verse}',
+      '',
+      '{start_of_chorus}',
+      l10n.editorExampleChorus,
+      '{end_of_chorus}',
+      '',
+      '{start_of_bridge}',
+      l10n.editorExampleBridge,
+      '{end_of_bridge}',
+    ].join('\n');
+    // Treat the initial example as a clean draft; opening or changing the
+    // locale must never overwrite edits or cause a discard prompt on its own.
+    _body.text = _initialBody;
+  }
+
+  @override
   void dispose() {
+    _metadataScroll.dispose();
     for (final controller in _all) {
       controller
         ..removeListener(_onChanged)
@@ -108,7 +142,7 @@ class _EditorScreenState extends State<EditorScreen> {
       _tuning.text != _initial.tuning ||
       _tempo.text != _initial.tempo ||
       _duration.text != _initial.duration ||
-      _body.text != _initial.body;
+      _body.text != _initialBody;
 
   void _onChanged() {
     final dirty = _dirty;
@@ -181,39 +215,255 @@ class _EditorScreenState extends State<EditorScreen> {
     }
   }
 
+  InputDecoration _decoration(
+    String label, {
+    String? errorText,
+    String? hintText,
+  }) => InputDecoration(
+    labelText: label,
+    errorText: errorText,
+    hintText: hintText,
+    isDense: true,
+    contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+    border: const OutlineInputBorder(),
+  );
+
   Widget _field(
     TextEditingController controller,
-    String label,
-    double width, {
+    String label, {
     String? errorText,
+    String? hintText,
     TextInputType? keyboardType,
     bool numeric = false,
-  }) => SizedBox(
-    width: width,
-    child: TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      textCapitalization: numeric
-          ? TextCapitalization.none
-          : TextCapitalization.sentences,
-      decoration: InputDecoration(labelText: label, errorText: errorText),
-    ),
+  }) => TextField(
+    controller: controller,
+    keyboardType: keyboardType,
+    textInputAction: TextInputAction.next,
+    textCapitalization: numeric
+        ? TextCapitalization.none
+        : TextCapitalization.sentences,
+    decoration: _decoration(label, errorText: errorText, hintText: hintText),
   );
+
+  static const _customChoice = '__singbook_editor_custom__';
+  static const _keys = [
+    'C',
+    'Db',
+    'D',
+    'Eb',
+    'E',
+    'F',
+    'F#',
+    'G',
+    'Ab',
+    'A',
+    'Bb',
+    'B',
+    'Cm',
+    'C#m',
+    'Dm',
+    'D#m',
+    'Em',
+    'Fm',
+    'F#m',
+    'Gm',
+    'G#m',
+    'Am',
+    'Bbm',
+    'Bm',
+  ];
+  static const _tunings = [
+    'E A D G B E',
+    'D A D G B E',
+    'D G C F A D',
+    'C G C F A D',
+    'D A D G A D',
+    'D G D G B D',
+    'D A D F# A D',
+    'C G C G C E',
+  ];
+
+  Widget _choice(
+    TextEditingController controller,
+    String label,
+    List<String> options, {
+    bool tuning = false,
+  }) {
+    final l10n = AppLocalizations.of(context);
+    final values = ['', ...options];
+    if (!values.contains(controller.text)) values.add(controller.text);
+    String display(String value) {
+      if (value.isEmpty) return l10n.playerChordsNone;
+      if (tuning && value == _tunings.first) return l10n.editorStandardTuning;
+      return !tuning && options.contains(value)
+          ? value.replaceAll('#', '♯').replaceAll('b', '♭')
+          : value;
+    }
+
+    return InputDecorator(
+      decoration: _decoration(label),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          key: ValueKey('editor-${tuning ? 'tuning' : 'key'}-input'),
+          value: controller.text,
+          isDense: true,
+          isExpanded: true,
+          menuMaxHeight: 320,
+          items: [
+            for (final value in values)
+              DropdownMenuItem(
+                value: value,
+                child: Text(
+                  display(value),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            DropdownMenuItem(
+              value: _customChoice,
+              child: Text(l10n.editorCustomValue),
+            ),
+          ],
+          onChanged: (value) async {
+            if (value == null) return;
+            if (value == _customChoice) {
+              final entered = await showDialog<String>(
+                context: context,
+                builder: (_) => _MetadataValueDialog(
+                  label: label,
+                  initialValue: controller.text,
+                ),
+              );
+              if (!mounted || entered == null) return;
+              setState(() => controller.text = entered);
+            } else {
+              setState(() => controller.text = value);
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _row(List<({Widget child, int flex})> fields) => Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      for (var index = 0; index < fields.length; index++) ...[
+        if (index > 0) const SizedBox(width: 8),
+        Expanded(flex: fields[index].flex, child: fields[index].child),
+      ],
+    ],
+  );
+
+  Widget _metadata(BuildContext context, double width) {
+    final l10n = AppLocalizations.of(context);
+    final title = _field(
+      _title,
+      l10n.editorTitleField,
+      errorText: _titleMissing ? l10n.editorFieldRequired : null,
+    );
+    final artist = _field(_artist, l10n.editorArtistField);
+    final album = _field(_album, l10n.editorAlbumField);
+    final key = _choice(_key, l10n.editorKeyField, _keys);
+    final tuning = _choice(
+      _tuning,
+      l10n.editorTuningField,
+      _tunings,
+      tuning: true,
+    );
+    final capo = _field(
+      _capo,
+      l10n.editorCapoField,
+      numeric: true,
+      keyboardType: TextInputType.number,
+      errorText: _showFieldErrors && _numberInvalid(_capo, _initial.capo)
+          ? l10n.editorNumberInvalid
+          : null,
+    );
+    final tempo = _field(
+      _tempo,
+      l10n.editorTempoField,
+      numeric: true,
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      errorText: _showFieldErrors && _numberInvalid(_tempo, _initial.tempo)
+          ? l10n.editorNumberInvalid
+          : null,
+    );
+    final duration = _field(
+      _duration,
+      l10n.editorDurationField,
+      numeric: true,
+      keyboardType: TextInputType.datetime,
+      hintText: '3:45',
+      errorText: _showFieldErrors && _durationInvalid()
+          ? l10n.editorDurationInvalid
+          : null,
+    );
+    final scale = MediaQuery.textScalerOf(context).scale(14) / 14;
+    final comfortableWidth = width / scale.clamp(1.0, 3.0);
+    final rows = <Widget>[];
+    if (comfortableWidth >= 700) {
+      rows.addAll([
+        _row([
+          (child: title, flex: 3),
+          (child: artist, flex: 2),
+          (child: album, flex: 2),
+        ]),
+        _row([
+          (child: key, flex: 2),
+          (child: tuning, flex: 4),
+          (child: capo, flex: 1),
+          (child: tempo, flex: 2),
+          (child: duration, flex: 2),
+        ]),
+      ]);
+    } else if (comfortableWidth >= 300) {
+      rows.addAll([
+        _row([(child: title, flex: 3), (child: artist, flex: 2)]),
+        _row([(child: album, flex: 3), (child: tuning, flex: 2)]),
+        _row([
+          (child: key, flex: 4),
+          (child: capo, flex: 3),
+          (child: tempo, flex: 4),
+          (child: duration, flex: 5),
+        ]),
+      ]);
+    } else if (comfortableWidth >= 220) {
+      // Give longer labels and large text room instead of shrinking the type.
+      rows.addAll([
+        title,
+        _row([(child: artist, flex: 1), (child: album, flex: 1)]),
+        _row([(child: key, flex: 2), (child: tuning, flex: 3)]),
+        _row([
+          (child: capo, flex: 1),
+          (child: tempo, flex: 1),
+          (child: duration, flex: 2),
+        ]),
+      ]);
+    } else {
+      rows.addAll([
+        title,
+        artist,
+        album,
+        key,
+        tuning,
+        _row([(child: capo, flex: 1), (child: tempo, flex: 1)]),
+        duration,
+      ]);
+    }
+    return Column(
+      children: [
+        for (var index = 0; index < rows.length; index++) ...[
+          if (index > 0) const SizedBox(height: 8),
+          rows[index],
+        ],
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final titleError = _titleMissing ? l10n.editorFieldRequired : null;
-    final durationError = _showFieldErrors && _durationInvalid()
-        ? l10n.editorDurationInvalid
-        : null;
-    final capoError = _showFieldErrors && _numberInvalid(_capo, _initial.capo)
-        ? l10n.editorNumberInvalid
-        : null;
-    final tempoError =
-        _showFieldErrors && _numberInvalid(_tempo, _initial.tempo)
-        ? l10n.editorNumberInvalid
-        : null;
     return Column(
       children: [
         SubpageHeader(
@@ -228,199 +478,90 @@ class _EditorScreenState extends State<EditorScreen> {
           ],
         ),
         Expanded(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              if (constraints.maxWidth >= 700 && constraints.maxHeight >= 420) {
-                final metadataWidth = (constraints.maxWidth * .42)
-                    .clamp(300.0, 380.0)
-                    .toDouble();
-                final fieldWidth = metadataWidth - 56;
-                return Row(
-                  key: const ValueKey('tablet-editor-split'),
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SizedBox(
-                      width: metadataWidth,
-                      child: ListView(
-                        padding: const EdgeInsetsDirectional.fromSTEB(
-                          20,
-                          4,
-                          16,
-                          28,
-                        ),
-                        children: [
-                          Column(
-                            children: [
-                              _field(
-                                _title,
-                                l10n.editorTitleField,
-                                fieldWidth,
-                                errorText: titleError,
-                              ),
-                              _field(
-                                _artist,
-                                l10n.editorArtistField,
-                                fieldWidth,
-                              ),
-                              _field(_album, l10n.editorAlbumField, fieldWidth),
-                              _field(_key, l10n.editorKeyField, fieldWidth),
-                              _field(
-                                _capo,
-                                l10n.editorCapoField,
-                                fieldWidth,
-                                errorText: capoError,
-                                numeric: true,
-                                keyboardType: TextInputType.number,
-                              ),
-                              _field(
-                                _tuning,
-                                l10n.editorTuningField,
-                                fieldWidth,
-                              ),
-                              _field(
-                                _tempo,
-                                l10n.editorTempoField,
-                                fieldWidth,
-                                errorText: tempoError,
-                                numeric: true,
-                                keyboardType: TextInputType.number,
-                              ),
-                              _field(
-                                _duration,
-                                l10n.editorDurationField,
-                                fieldWidth,
-                                errorText: durationError,
-                                numeric: true,
-                                keyboardType: TextInputType.datetime,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const VerticalDivider(width: 1),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 8),
-                              child: Text(
-                                l10n.editorLyricsHint,
-                                style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurfaceVariant,
-                                    ),
-                              ),
-                            ),
-                            Expanded(
-                              child: TextField(
-                                key: const ValueKey('editor-lyrics-input'),
-                                controller: _body,
-                                expands: true,
-                                minLines: null,
-                                maxLines: null,
-                                textAlignVertical: TextAlignVertical.top,
-                                autocorrect: false,
-                                keyboardType: TextInputType.multiline,
-                                style: Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(
-                                      fontFamily: 'monospace',
-                                      height: 1.55,
-                                    ),
-                                decoration: InputDecoration(
-                                  hintText: l10n.editorLyricsHint,
-                                  alignLabelWithHint: true,
-                                  border: const OutlineInputBorder(),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              }
-              final fieldWidth = (constraints.maxWidth - 52) / 2;
-              return ListView(
-                padding: const EdgeInsets.fromLTRB(20, 4, 20, 28),
+          child: Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 16),
+            child: LayoutBuilder(
+              builder: (context, constraints) => Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 4,
-                    children: [
-                      _field(
-                        _title,
-                        l10n.editorTitleField,
-                        fieldWidth,
-                        errorText: titleError,
-                      ),
-                      _field(_artist, l10n.editorArtistField, fieldWidth),
-                      _field(_album, l10n.editorAlbumField, fieldWidth),
-                      _field(_key, l10n.editorKeyField, fieldWidth),
-                      _field(
-                        _capo,
-                        l10n.editorCapoField,
-                        fieldWidth,
-                        errorText: capoError,
-                        numeric: true,
-                        keyboardType: TextInputType.number,
-                      ),
-                      _field(_tuning, l10n.editorTuningField, fieldWidth),
-                      _field(
-                        _tempo,
-                        l10n.editorTempoField,
-                        fieldWidth,
-                        errorText: tempoError,
-                        numeric: true,
-                        keyboardType: TextInputType.number,
-                      ),
-                      _field(
-                        _duration,
-                        l10n.editorDurationField,
-                        fieldWidth,
-                        errorText: durationError,
-                        numeric: true,
-                        keyboardType: TextInputType.datetime,
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12, bottom: 6),
-                    child: Text(
-                      l10n.editorLyricsHint,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: constraints.maxHeight * .46,
+                    ),
+                    child: Scrollbar(
+                      controller: _metadataScroll,
+                      child: SingleChildScrollView(
+                        controller: _metadataScroll,
+                        padding: const EdgeInsets.only(top: 4, bottom: 2),
+                        child: _metadata(context, constraints.maxWidth),
                       ),
                     ),
                   ),
-                  TextField(
-                    key: const ValueKey('editor-lyrics-input'),
-                    controller: _body,
-                    minLines: 12,
-                    maxLines: 24,
-                    textAlignVertical: TextAlignVertical.top,
-                    autocorrect: false,
-                    keyboardType: TextInputType.multiline,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontFamily: 'monospace',
-                      height: 1.55,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: l10n.editorLyricsHint,
-                      alignLabelWithHint: true,
-                      border: const OutlineInputBorder(),
+                  const SizedBox(height: 12),
+                  Expanded(
+                    child: TextField(
+                      key: const ValueKey('editor-lyrics-input'),
+                      controller: _body,
+                      expands: true,
+                      minLines: null,
+                      maxLines: null,
+                      textAlignVertical: TextAlignVertical.top,
+                      autocorrect: false,
+                      keyboardType: TextInputType.multiline,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontFamily: 'monospace',
+                        height: 1.5,
+                      ),
+                      decoration: _decoration(
+                        l10n.editorLyricsField,
+                        hintText: l10n.editorLyricsHint,
+                      ).copyWith(alignLabelWithHint: true),
                     ),
                   ),
                 ],
-              );
-            },
+              ),
+            ),
           ),
+        ),
+      ],
+    );
+  }
+}
+
+class _MetadataValueDialog extends StatefulWidget {
+  const _MetadataValueDialog({required this.label, required this.initialValue});
+  final String label, initialValue;
+  @override
+  State<_MetadataValueDialog> createState() => _MetadataValueDialogState();
+}
+
+class _MetadataValueDialogState extends State<_MetadataValueDialog> {
+  late final _controller = TextEditingController(text: widget.initialValue);
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return AlertDialog(
+      title: Text(widget.label),
+      content: TextField(
+        controller: _controller,
+        autofocus: true,
+        decoration: InputDecoration(labelText: widget.label),
+        onSubmitted: (value) => Navigator.of(context).pop(value.trim()),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(l10n.actionCancel),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.of(context).pop(_controller.text.trim()),
+          child: Text(l10n.actionDone),
         ),
       ],
     );

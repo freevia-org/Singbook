@@ -861,7 +861,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Tik op een regel om songteksten of akkoorden te bewerken.';
+      'Akkoorden tussen [C]-haken; sectiemarkeringen op aparte regels.';
 
   @override
   String get editorSave => 'Wijzigingen opslaan';
@@ -1869,4 +1869,22 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Geen';
+
+  @override
+  String get editorCustomValue => 'Anders…';
+
+  @override
+  String get editorStandardTuning => 'Standaardstemming';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Een nieuwe dag [G]roept,\n[Am]we volgen het licht terug naar [F]huis.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Zing dit lied [C]samen,\n[G]laat de melodie ons [C]verder dragen.';
+
+  @override
+  String get editorExampleBridge =>
+      '[Am]Nog een regel, een beetje [F]dichterbij.';
 }

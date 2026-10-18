@@ -867,7 +867,7 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Atinge un vers pentru a edita versurile sau acordurile.';
+      'Acordurile se scriu între paranteze [C]; marcajele secțiunilor pe rânduri separate.';
 
   @override
   String get editorSave => 'Salvează modificările';
@@ -1877,4 +1877,21 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Niciunul';
+
+  @override
+  String get editorCustomValue => 'Altul…';
+
+  @override
+  String get editorStandardTuning => 'Acordaj standard';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]O nouă zi ne [G]cheamă,\n[Am]urmăm lumina înapoi spre [F]casă.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Să cântăm acest cântec [C]împreună,\n[G]să ne poarte melodia [C]mai departe.';
+
+  @override
+  String get editorExampleBridge => '[Am]Încă un vers, puțin mai [F]aproape.';
 }

@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Arama",
   "providerCapabilityMetadata": "Şarkı ayrıntıları",
   "editorArtworkField": "Kapak görseli bağlantısı",
-  "editorLyricsHint": "Şarkı sözlerini veya akorları düzenlemek için bir satıra dokunun.",
+  "editorLyricsHint": "Akorları [C] köşeli parantez içinde yazın; bölüm işaretlerini ayrı satırlara koyun.",
   "editorSave": "Değişiklikleri kaydet",
   "editorSaved": "Değişiklikler kaydedildi.",
   "editorSaveFailed": "Değişiklikler kaydedilemedi.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Diğer…",
+  "editorStandardTuning": "Standart akort",
+  "editorExampleVerse": "[C]Yeni bir gün bizi [G]çağırıyor,\n[Am]ışığı izleyip [F]eve dönüyoruz.",
+  "editorExampleChorus": "[F]Bu şarkıyı [C]birlikte söyleyelim,\n[G]melodi bizi [C]ileriye taşısın.",
+  "editorExampleBridge": "[Am]Bir satır daha, biraz daha [F]yakın."
 }

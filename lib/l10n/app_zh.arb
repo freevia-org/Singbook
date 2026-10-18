@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "搜索",
   "providerCapabilityMetadata": "歌曲详情",
   "editorArtworkField": "封面链接",
-  "editorLyricsHint": "点按一行即可编辑歌词或和弦。",
+  "editorLyricsHint": "和弦写在 [C] 方括号中；段落标记单独占一行。",
   "editorSave": "保存更改",
   "editorSaved": "更改已保存。",
   "editorSaveFailed": "无法保存更改。",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "其他…",
+  "editorStandardTuning": "标准调弦",
+  "editorExampleVerse": "[C]新的一天在 [G]召唤，\n[Am]我们追随光芒回到 [F]家。",
+  "editorExampleChorus": "[F]一起唱这首 [C]歌，\n[G]让旋律带我们 [C]向前。",
+  "editorExampleBridge": "[Am]再写一行，靠近 [F]一点。"
 }

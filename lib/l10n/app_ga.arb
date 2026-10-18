@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Cuardach",
   "providerCapabilityMetadata": "Sonraí amhráin",
   "editorArtworkField": "Nasc chuig saothar ealaíne",
-  "editorLyricsHint": "Tapáil líne chun liricí nó cordaí a chur in eagar.",
+  "editorLyricsHint": "Corda i lúibíní [C]; marcóirí rannóige ar línte ar leith.",
   "editorSave": "Sábháil athruithe",
   "editorSaved": "Sábháladh na hathruithe.",
   "editorSaveFailed": "Níorbh fhéidir na hathruithe a shábháil.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Eile…",
+  "editorStandardTuning": "Tiúnadh caighdeánach",
+  "editorExampleVerse": "[C]Tá lá nua ag [G]glaoch,\n[Am]leanaimid an solas ar ais [F]abhaile.",
+  "editorExampleChorus": "[F]Can an t-amhrán seo [C]le chéile,\n[G]go n-iompraíonn an tséis sinn [C]ar aghaidh.",
+  "editorExampleBridge": "[Am]Líne amháin eile, beagán níos [F]gaire."
 }

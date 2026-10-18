@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Meklēšana",
   "providerCapabilityMetadata": "Dziesmas informācija",
   "editorArtworkField": "Vāka saite",
-  "editorLyricsHint": "Pieskarieties rindai, lai rediģētu dziesmas vārdus vai akordus.",
+  "editorLyricsHint": "Akordus rakstiet kvadrātiekavās [C]; sadaļu marķierus ievietojiet atsevišķās rindās.",
   "editorSave": "Saglabāt izmaiņas",
   "editorSaved": "Izmaiņas saglabātas.",
   "editorSaveFailed": "Neizdevās saglabāt izmaiņas.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Cits…",
+  "editorStandardTuning": "Standarta skaņojums",
+  "editorExampleVerse": "[C]Jauna diena mūs [G]sauc,\n[Am]mēs sekojam gaismai atpakaļ [F]mājās.",
+  "editorExampleChorus": "[F]Dziedāsim šo dziesmu [C]kopā,\n[G]lai melodija mūs nes [C]tālāk.",
+  "editorExampleBridge": "[Am]Vēl viena rinda, mazliet [F]tuvāk."
 }

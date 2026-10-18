@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Pretraživanje",
   "providerCapabilityMetadata": "Pojedinosti o pjesmi",
   "editorArtworkField": "Poveznica na omot",
-  "editorLyricsHint": "Dodirnite stih da biste uredili tekst ili akorde.",
+  "editorLyricsHint": "Akorde pišite u uglate zagrade [C]; oznake dijelova u zasebne retke.",
   "editorSave": "Spremi promjene",
   "editorSaved": "Promjene su spremljene.",
   "editorSaveFailed": "Promjene nije bilo moguće spremiti.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Drugo…",
+  "editorStandardTuning": "Standardno ugađanje",
+  "editorExampleVerse": "[C]Novi dan nas [G]zove,\n[Am]pratimo svjetlo natrag [F]kući.",
+  "editorExampleChorus": "[F]Pjevajmo ovu pjesmu [C]zajedno,\n[G]neka nas melodija ponese [C]dalje.",
+  "editorExampleBridge": "[Am]Još jedan redak, malo [F]bliže."
 }

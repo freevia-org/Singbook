@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Tiftix",
   "providerCapabilityMetadata": "Dettalji tal-kanzunetta",
   "editorArtworkField": "Link tal-kopertina",
-  "editorLyricsHint": "Tektek linja biex teditja l-lirika jew l-akkordi.",
+  "editorLyricsHint": "L-akkordi fil-parentesi kwadri [C]; il-marki tat-taqsimiet f’linji separati.",
   "editorSave": "Issejvja l-bidliet",
   "editorSaved": "Il-bidliet ġew issejvjati.",
   "editorSaveFailed": "Ma setgħux jiġu ssejvjati l-bidliet.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Oħra…",
+  "editorStandardTuning": "Irfinar standard",
+  "editorExampleVerse": "[C]Jum ġdid qed [G]isejjaħ,\n[Am]insegwu d-dawl lura [F]d-dar.",
+  "editorExampleChorus": "[F]Inkantu din il-kanzunetta [C]flimkien,\n[G]ħalli l-melodija ġġorrna [C]’il quddiem.",
+  "editorExampleBridge": "[Am]Linja oħra, ftit aktar [F]qrib."
 }

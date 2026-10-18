@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Αναζήτηση",
   "providerCapabilityMetadata": "Στοιχεία τραγουδιού",
   "editorArtworkField": "Σύνδεσμος εξωφύλλου",
-  "editorLyricsHint": "Άγγιξε έναν στίχο για να επεξεργαστείς τους στίχους ή τις συγχορδίες.",
+  "editorLyricsHint": "Οι συγχορδίες μπαίνουν σε αγκύλες [C]· οι δείκτες ενοτήτων σε ξεχωριστές γραμμές.",
   "editorSave": "Αποθήκευση αλλαγών",
   "editorSaved": "Οι αλλαγές αποθηκεύτηκαν.",
   "editorSaveFailed": "Δεν ήταν δυνατή η αποθήκευση των αλλαγών.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Άλλο…",
+  "editorStandardTuning": "Τυπικό κούρδισμα",
+  "editorExampleVerse": "[C]Μια νέα μέρα μας [G]καλεί,\n[Am]ακολουθούμε το φως πίσω στο [F]σπίτι.",
+  "editorExampleChorus": "[F]Ας τραγουδήσουμε αυτό το τραγούδι [C]μαζί,\n[G]κι ας μας ταξιδέψει η μελωδία [C]παραπέρα.",
+  "editorExampleBridge": "[Am]Άλλος ένας στίχος, λίγο πιο [F]κοντά."
 }

@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Wyszukiwanie",
   "providerCapabilityMetadata": "Szczegóły utworu",
   "editorArtworkField": "Link do okładki",
-  "editorLyricsHint": "Dotknij wersu, aby edytować tekst lub akordy.",
+  "editorLyricsHint": "Akordy zapisuj w nawiasach [C], a oznaczenia części w osobnych wierszach.",
   "editorSave": "Zapisz zmiany",
   "editorSaved": "Zmiany zostały zapisane.",
   "editorSaveFailed": "Nie udało się zapisać zmian.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Inne…",
+  "editorStandardTuning": "Strój standardowy",
+  "editorExampleVerse": "[C]Nowy dzień nas [G]woła,\n[Am]wracamy za światłem do [F]domu.",
+  "editorExampleChorus": "[F]Zaśpiewajmy tę piosenkę [C]razem,\n[G]niech melodia poniesie nas [C]dalej.",
+  "editorExampleBridge": "[Am]Jeszcze jeden wers, trochę [F]bliżej."
 }

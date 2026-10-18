@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Suche",
   "providerCapabilityMetadata": "Songdetails",
   "editorArtworkField": "Cover-Link",
-  "editorLyricsHint": "Tippe auf eine Zeile, um Liedtext oder Akkorde zu bearbeiten.",
+  "editorLyricsHint": "Akkorde in [C]-Klammern; Abschnittsmarker stehen in eigenen Zeilen.",
   "editorSave": "Änderungen speichern",
   "editorSaved": "Änderungen gespeichert.",
   "editorSaveFailed": "Änderungen konnten nicht gespeichert werden.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Andere…",
+  "editorStandardTuning": "Standardstimmung",
+  "editorExampleVerse": "[C]Ein neuer Tag [G]ruft,\n[Am]wir folgen dem Licht zurück nach [F]Hause.",
+  "editorExampleChorus": "[F]Singt dieses Lied [C]zusammen,\n[G]die Melodie trägt uns [C]weiter.",
+  "editorExampleBridge": "[Am]Noch eine Zeile, ein Stück [F]näher."
 }

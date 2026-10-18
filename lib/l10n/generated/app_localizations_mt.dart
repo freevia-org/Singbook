@@ -863,7 +863,7 @@ class AppLocalizationsMt extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Tektek linja biex teditja l-lirika jew l-akkordi.';
+      'L-akkordi fil-parentesi kwadri [C]; il-marki tat-taqsimiet f’linji separati.';
 
   @override
   String get editorSave => 'Issejvja l-bidliet';
@@ -1873,4 +1873,21 @@ class AppLocalizationsMt extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Xejn';
+
+  @override
+  String get editorCustomValue => 'Oħra…';
+
+  @override
+  String get editorStandardTuning => 'Irfinar standard';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Jum ġdid qed [G]isejjaħ,\n[Am]insegwu d-dawl lura [F]d-dar.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Inkantu din il-kanzunetta [C]flimkien,\n[G]ħalli l-melodija ġġorrna [C]’il quddiem.';
+
+  @override
+  String get editorExampleBridge => '[Am]Linja oħra, ftit aktar [F]qrib.';
 }

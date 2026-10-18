@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Keresés",
   "providerCapabilityMetadata": "Dal adatai",
   "editorArtworkField": "Borító hivatkozása",
-  "editorLyricsHint": "Koppints egy sorra a dalszöveg vagy az akkordok szerkesztéséhez.",
+  "editorLyricsHint": "Az akkordok [C] szögletes zárójelben; a szakaszjelölők külön sorban legyenek.",
   "editorSave": "Módosítások mentése",
   "editorSaved": "Módosítások mentve.",
   "editorSaveFailed": "A módosításokat nem sikerült menteni.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Egyéb…",
+  "editorStandardTuning": "Normál hangolás",
+  "editorExampleVerse": "[C]Új nap [G]hív minket,\n[Am]a fényt követve térünk [F]haza.",
+  "editorExampleChorus": "[F]Énekeljük ezt a dalt [C]együtt,\n[G]vigyen tovább minket a dallam [C]is.",
+  "editorExampleBridge": "[Am]Még egy sor, egy kicsit [F]közelebb."
 }

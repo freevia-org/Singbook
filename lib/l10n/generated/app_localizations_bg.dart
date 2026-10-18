@@ -854,7 +854,7 @@ class AppLocalizationsBg extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Докоснете ред, за да редактирате текста или акордите.';
+      'Акордите са в скоби [C]; маркерите за части са на отделни редове.';
 
   @override
   String get editorSave => 'Запазване на промените';
@@ -1847,4 +1847,21 @@ class AppLocalizationsBg extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Няма';
+
+  @override
+  String get editorCustomValue => 'Друго…';
+
+  @override
+  String get editorStandardTuning => 'Стандартен';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Новият ден ни [G]зове,\n[Am]светлината ни води към [F]дома.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Да запеем тази песен [C]заедно,\n[G]мелодията да ни води [C]напред.';
+
+  @override
+  String get editorExampleBridge => '[Am]Още един ред, крачка [F]по-близо.';
 }

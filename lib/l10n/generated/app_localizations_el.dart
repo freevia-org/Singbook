@@ -862,7 +862,7 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Άγγιξε έναν στίχο για να επεξεργαστείς τους στίχους ή τις συγχορδίες.';
+      'Οι συγχορδίες μπαίνουν σε αγκύλες [C]· οι δείκτες ενοτήτων σε ξεχωριστές γραμμές.';
 
   @override
   String get editorSave => 'Αποθήκευση αλλαγών';
@@ -1872,4 +1872,21 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Κανένα';
+
+  @override
+  String get editorCustomValue => 'Άλλο…';
+
+  @override
+  String get editorStandardTuning => 'Τυπικό κούρδισμα';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Μια νέα μέρα μας [G]καλεί,\n[Am]ακολουθούμε το φως πίσω στο [F]σπίτι.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Ας τραγουδήσουμε αυτό το τραγούδι [C]μαζί,\n[G]κι ας μας ταξιδέψει η μελωδία [C]παραπέρα.';
+
+  @override
+  String get editorExampleBridge => '[Am]Άλλος ένας στίχος, λίγο πιο [F]κοντά.';
 }

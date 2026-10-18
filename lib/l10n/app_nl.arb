@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Zoeken",
   "providerCapabilityMetadata": "Nummergegevens",
   "editorArtworkField": "Link naar albumhoes",
-  "editorLyricsHint": "Tik op een regel om songteksten of akkoorden te bewerken.",
+  "editorLyricsHint": "Akkoorden tussen [C]-haken; sectiemarkeringen op aparte regels.",
   "editorSave": "Wijzigingen opslaan",
   "editorSaved": "Wijzigingen opgeslagen.",
   "editorSaveFailed": "Wijzigingen opslaan is niet gelukt.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Anders…",
+  "editorStandardTuning": "Standaardstemming",
+  "editorExampleVerse": "[C]Een nieuwe dag [G]roept,\n[Am]we volgen het licht terug naar [F]huis.",
+  "editorExampleChorus": "[F]Zing dit lied [C]samen,\n[G]laat de melodie ons [C]verder dragen.",
+  "editorExampleBridge": "[Am]Nog een regel, een beetje [F]dichterbij."
 }

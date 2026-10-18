@@ -858,7 +858,7 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Klepnutím na řádek upravíte text písně nebo akordy.';
+      'Akordy pište do závorek [C]; označení částí na samostatné řádky.';
 
   @override
   String get editorSave => 'Uložit změny';
@@ -1862,4 +1862,21 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Žádné';
+
+  @override
+  String get editorCustomValue => 'Jiné…';
+
+  @override
+  String get editorStandardTuning => 'Standardní ladění';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Nový den nás [G]volá,\n[Am]za světlem se vracíme [F]domů.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Zpívejme tuto píseň [C]společně,\n[G]ať nás melodie nese [C]dál.';
+
+  @override
+  String get editorExampleBridge => '[Am]Ještě jeden řádek, o něco [F]blíž.';
 }

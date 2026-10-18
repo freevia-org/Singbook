@@ -858,7 +858,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Dodirnite stih da biste uredili tekst ili akorde.';
+      'Akorde pišite u uglate zagrade [C]; oznake dijelova u zasebne retke.';
 
   @override
   String get editorSave => 'Spremi promjene';
@@ -1864,4 +1864,21 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Ništa';
+
+  @override
+  String get editorCustomValue => 'Drugo…';
+
+  @override
+  String get editorStandardTuning => 'Standardno ugađanje';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Novi dan nas [G]zove,\n[Am]pratimo svjetlo natrag [F]kući.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Pjevajmo ovu pjesmu [C]zajedno,\n[G]neka nas melodija ponese [C]dalje.';
+
+  @override
+  String get editorExampleBridge => '[Am]Još jedan redak, malo [F]bliže.';
 }

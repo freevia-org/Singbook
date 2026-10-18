@@ -856,7 +856,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Şarkı sözlerini veya akorları düzenlemek için bir satıra dokunun.';
+      'Akorları [C] köşeli parantez içinde yazın; bölüm işaretlerini ayrı satırlara koyun.';
 
   @override
   String get editorSave => 'Değişiklikleri kaydet';
@@ -1845,4 +1845,21 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Yok';
+
+  @override
+  String get editorCustomValue => 'Diğer…';
+
+  @override
+  String get editorStandardTuning => 'Standart akort';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Yeni bir gün bizi [G]çağırıyor,\n[Am]ışığı izleyip [F]eve dönüyoruz.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Bu şarkıyı [C]birlikte söyleyelim,\n[G]melodi bizi [C]ileriye taşısın.';
+
+  @override
+  String get editorExampleBridge => '[Am]Bir satır daha, biraz daha [F]yakın.';
 }

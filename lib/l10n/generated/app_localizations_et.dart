@@ -854,7 +854,8 @@ class AppLocalizationsEt extends AppLocalizations {
   String get editorArtworkField => 'Kaanepildi link';
 
   @override
-  String get editorLyricsHint => 'Puuduta rida, et muuta laulusõnu või akorde.';
+  String get editorLyricsHint =>
+      'Akordid kirjuta [C] sulgudesse; osamärgid eraldi ridadele.';
 
   @override
   String get editorSave => 'Salvesta muudatused';
@@ -1845,4 +1846,21 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Puudub';
+
+  @override
+  String get editorCustomValue => 'Muu…';
+
+  @override
+  String get editorStandardTuning => 'Standardhäälestus';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Uus päev meid [G]kutsub,\n[Am]järgime valgust tagasi [F]koju.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Laulame seda laulu [C]koos,\n[G]las meloodia kannab meid [C]edasi.';
+
+  @override
+  String get editorExampleBridge => '[Am]Veel üks rida, veidi [F]lähemal.';
 }

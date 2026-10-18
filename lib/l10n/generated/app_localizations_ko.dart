@@ -835,7 +835,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get editorArtworkField => '아트워크 링크';
 
   @override
-  String get editorLyricsHint => '가사나 코드를 수정하려면 행을 탭하세요.';
+  String get editorLyricsHint => '코드는 [C] 대괄호 안에, 섹션 표시는 별도 줄에 입력하세요.';
 
   @override
   String get editorSave => '변경사항 저장';
@@ -1780,4 +1780,20 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get playerChordsNone => '없음';
+
+  @override
+  String get editorCustomValue => '기타…';
+
+  @override
+  String get editorStandardTuning => '표준 튜닝';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]새로운 하루가 [G]우릴 부르고,\n[Am]빛을 따라 [F]집으로 돌아가요.';
+
+  @override
+  String get editorExampleChorus => '[F]이 노래를 [C]함께 불러요,\n[G]멜로디를 따라 [C]나아가요.';
+
+  @override
+  String get editorExampleBridge => '[Am]한 줄 더, 조금 더 [F]가까이.';
 }

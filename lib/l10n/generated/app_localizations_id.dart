@@ -857,7 +857,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get editorArtworkField => 'Tautan sampul';
 
   @override
-  String get editorLyricsHint => 'Ketuk baris untuk mengedit lirik atau akor.';
+  String get editorLyricsHint =>
+      'Akord ditulis dalam tanda kurung [C]; penanda bagian pada baris tersendiri.';
 
   @override
   String get editorSave => 'Simpan perubahan';
@@ -1849,4 +1850,22 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Tidak ada';
+
+  @override
+  String get editorCustomValue => 'Lainnya…';
+
+  @override
+  String get editorStandardTuning => 'Setelan standar';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Hari baru [G]memanggil,\n[Am]kita ikuti cahaya pulang ke [F]rumah.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Nyanyikan lagu ini [C]bersama,\n[G]biarkan melodi membawa kita [C]terus.';
+
+  @override
+  String get editorExampleBridge =>
+      '[Am]Satu baris lagi, sedikit lebih [F]dekat.';
 }

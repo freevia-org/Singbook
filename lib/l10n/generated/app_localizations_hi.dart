@@ -849,7 +849,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'बोल या कॉर्ड संपादित करने के लिए किसी पंक्ति पर टैप करें।';
+      'कॉर्ड [C] कोष्ठकों में लिखें; खंड संकेत अलग पंक्तियों पर रखें।';
 
   @override
   String get editorSave => 'बदलाव सहेजें';
@@ -1836,4 +1836,21 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'कोई नहीं';
+
+  @override
+  String get editorCustomValue => 'अन्य…';
+
+  @override
+  String get editorStandardTuning => 'मानक ट्यूनिंग';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]एक नया दिन हमें [G]बुलाता है,\n[Am]हम रोशनी के साथ [F]घर लौटते हैं।';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]यह गीत [C]मिलकर गाएँ,\n[G]धुन हमें [C]आगे ले जाए।';
+
+  @override
+  String get editorExampleBridge => '[Am]एक पंक्ति और, थोड़ा [F]करीब।';
 }

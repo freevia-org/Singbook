@@ -856,7 +856,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Koppints egy sorra a dalszöveg vagy az akkordok szerkesztéséhez.';
+      'Az akkordok [C] szögletes zárójelben; a szakaszjelölők külön sorban legyenek.';
 
   @override
   String get editorSave => 'Módosítások mentése';
@@ -1853,4 +1853,21 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Nincs';
+
+  @override
+  String get editorCustomValue => 'Egyéb…';
+
+  @override
+  String get editorStandardTuning => 'Normál hangolás';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Új nap [G]hív minket,\n[Am]a fényt követve térünk [F]haza.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Énekeljük ezt a dalt [C]együtt,\n[G]vigyen tovább minket a dallam [C]is.';
+
+  @override
+  String get editorExampleBridge => '[Am]Még egy sor, egy kicsit [F]közelebb.';
 }

@@ -856,7 +856,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Chạm vào một dòng để chỉnh sửa lời bài hát hoặc hợp âm.';
+      'Đặt hợp âm trong ngoặc [C]; tiêu đề phần ở các dòng riêng.';
 
   @override
   String get editorSave => 'Lưu thay đổi';
@@ -1841,4 +1841,21 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Không';
+
+  @override
+  String get editorCustomValue => 'Khác…';
+
+  @override
+  String get editorStandardTuning => 'Lên dây tiêu chuẩn';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Một ngày mới đang [G]gọi,\n[Am]ta theo ánh sáng trở về [F]nhà.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Cùng hát bài ca này [C]nhé,\n[G]để giai điệu đưa ta [C]đi xa.';
+
+  @override
+  String get editorExampleBridge => '[Am]Thêm một dòng nữa, gần [F]hơn chút.';
 }

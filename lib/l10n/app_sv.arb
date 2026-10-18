@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Sökning",
   "providerCapabilityMetadata": "Låtinformation",
   "editorArtworkField": "Omslagslänk",
-  "editorLyricsHint": "Tryck på en rad för att redigera låttext eller ackord.",
+  "editorLyricsHint": "Ackord inom [C]-hakparenteser; avsnittsmarkörer på egna rader.",
   "editorSave": "Spara ändringar",
   "editorSaved": "Ändringarna har sparats.",
   "editorSaveFailed": "Det gick inte att spara ändringarna.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Annat…",
+  "editorStandardTuning": "Standardstämning",
+  "editorExampleVerse": "[C]En ny dag [G]kallar,\n[Am]vi följer ljuset hem till [F]oss.",
+  "editorExampleChorus": "[F]Sjung den här sången [C]tillsammans,\n[G]låt melodin bära oss [C]vidare.",
+  "editorExampleBridge": "[Am]En rad till, lite [F]närmare."
 }

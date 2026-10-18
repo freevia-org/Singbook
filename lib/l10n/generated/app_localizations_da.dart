@@ -853,7 +853,7 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Tryk på en linje for at redigere sangtekst eller akkorder.';
+      'Akkorder skrives i [C]-klammer; afsnitsmarkører står på egne linjer.';
 
   @override
   String get editorSave => 'Gem ændringer';
@@ -1843,4 +1843,21 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Ingen';
+
+  @override
+  String get editorCustomValue => 'Andet…';
+
+  @override
+  String get editorStandardTuning => 'Standardstemning';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]En ny dag [G]kalder,\n[Am]vi følger lyset hjem til [F]os.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Syng denne sang [C]sammen,\n[G]lad melodien føre os [C]videre.';
+
+  @override
+  String get editorExampleBridge => '[Am]En linje mere, lidt [F]tættere på.';
 }
