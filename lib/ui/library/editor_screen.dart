@@ -490,47 +490,50 @@ class _EditorScreenState extends State<EditorScreen> {
           ],
         ),
         Expanded(
-          child: Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 16),
-            child: LayoutBuilder(
-              builder: (context, constraints) => Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxHeight: constraints.maxHeight * .46,
-                    ),
-                    child: Scrollbar(
-                      controller: _metadataScroll,
-                      child: SingleChildScrollView(
+          child: SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 16),
+              child: LayoutBuilder(
+                builder: (context, constraints) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: constraints.maxHeight * .46,
+                      ),
+                      child: Scrollbar(
                         controller: _metadataScroll,
-                        padding: const EdgeInsets.only(top: 4, bottom: 2),
-                        child: _metadata(context, constraints.maxWidth),
+                        child: SingleChildScrollView(
+                          controller: _metadataScroll,
+                          padding: const EdgeInsets.only(top: 4, bottom: 2),
+                          child: _metadata(context, constraints.maxWidth),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  Expanded(
-                    child: TextField(
-                      key: const ValueKey('editor-lyrics-input'),
-                      controller: _body,
-                      expands: true,
-                      minLines: null,
-                      maxLines: null,
-                      textAlignVertical: TextAlignVertical.top,
-                      autocorrect: false,
-                      keyboardType: TextInputType.multiline,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontFamily: 'monospace',
-                        height: 1.5,
+                    const SizedBox(height: 12),
+                    Expanded(
+                      child: TextField(
+                        key: const ValueKey('editor-lyrics-input'),
+                        controller: _body,
+                        expands: true,
+                        minLines: null,
+                        maxLines: null,
+                        textAlignVertical: TextAlignVertical.top,
+                        autocorrect: false,
+                        keyboardType: TextInputType.multiline,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontFamily: 'monospace',
+                          height: 1.5,
+                        ),
+                        decoration: _decoration(
+                          l10n.editorLyricsField,
+                          hintText: l10n.editorLyricsHint,
+                        ).copyWith(alignLabelWithHint: true),
                       ),
-                      decoration: _decoration(
-                        l10n.editorLyricsField,
-                        hintText: l10n.editorLyricsHint,
-                      ).copyWith(alignLabelWithHint: true),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
