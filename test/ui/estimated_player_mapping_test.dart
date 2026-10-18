@@ -52,6 +52,113 @@ void main() {
 
   group('estimated player mapping', () {
     test(
+      'timed markers exclude synthetic instrumental boundaries and sort cues',
+      () {
+        const lines = [
+          LyricLineData(id: 'intro', section: 'Intro', isBlank: true),
+          LyricLineData(id: 'verse', section: 'Verse', isBlank: true),
+          LyricLineData(id: 'a', text: 'Verse lyric'),
+          LyricLineData(id: 'bridge', section: 'Bridge', isBlank: true),
+          LyricLineData(id: 'chorus', section: 'Chorus', isBlank: true),
+          LyricLineData(id: 'b', text: 'Chorus lyric'),
+          LyricLineData(id: 'outro', section: 'Outro', isBlank: true),
+        ];
+        final markers = buildPlayerSectionMarkers(
+          lines: lines,
+          durationSeconds: 100,
+          timedLineStarts: const {'a': 90, 'b': 95},
+          useEstimatedFallback: false,
+        );
+        expect(markers.map((marker) => marker.name), ['Verse', 'Chorus']);
+        expect(markers.map((marker) => marker.startSeconds), [90, 95]);
+        final reordered = buildPlayerSectionMarkers(
+          lines: lines,
+          durationSeconds: 100,
+          timedLineStarts: const {'a': 95, 'b': 90},
+          useEstimatedFallback: false,
+        );
+        expect(reordered.map((marker) => marker.lineId), ['b', 'a']);
+        expect(
+          buildPlayerSectionMarkers(
+            lines: lines,
+            durationSeconds: 100,
+            useEstimatedFallback: false,
+          ),
+          isEmpty,
+        );
+      },
+    );
+
+    test(
+      'lyric-free intro, bridge and outro occupy seekable estimated slots',
+      () {
+        const lines = [
+          LyricLineData(id: 'intro', section: 'Intro', isBlank: true),
+          chordOnly,
+          LyricLineData(id: 'verse', section: 'Verse', isBlank: true),
+          LyricLineData(id: 'a', text: 'First lyric'),
+          LyricLineData(id: 'b', text: 'Second lyric'),
+          LyricLineData(id: 'bridge', section: 'Bridge', isBlank: true),
+          LyricLineData(id: 'blank', isBlank: true),
+          LyricLineData(id: 'chorus', section: 'Chorus', isBlank: true),
+          LyricLineData(id: 'c', text: 'Chorus lyric'),
+          LyricLineData(id: 'outro', section: 'Outro', isBlank: true),
+        ];
+        const events = ['intro', 'a', 'b', 'bridge', 'c', 'outro'];
+        for (var index = 0; index < events.length; index++) {
+          expect(
+            estimatedLineStartSeconds(lines, events[index], 120),
+            index * 20,
+          );
+          expect(
+            estimatedLineIdAtPosition(
+              lines,
+              progressSeconds: index * 20 + 19.9,
+              durationSeconds: 120,
+            ),
+            events[index],
+          );
+        }
+        final markers = buildPlayerSectionMarkers(
+          lines: lines,
+          durationSeconds: 120,
+        );
+        expect(markers.map((marker) => marker.startSeconds), [
+          0,
+          20,
+          60,
+          80,
+          100,
+        ]);
+        expect(markers.map((marker) => marker.lineId), [
+          'intro',
+          'a',
+          'bridge',
+          'c',
+          'outro',
+        ]);
+        expect(
+          playerSectionSkipTarget(
+            markers: markers,
+            progressSeconds: 85,
+            durationSeconds: 120,
+            direction: 1,
+          ),
+          100,
+        );
+        expect(
+          playerSectionSkipTarget(
+            markers: markers,
+            progressSeconds: 102,
+            durationSeconds: 120,
+            direction: -1,
+          ),
+          80,
+        );
+      },
+    );
+
+    test(
       'uses lyric rows only and agrees with section markers at boundaries',
       () {
         final timeline = estimatedTimelineLines(songLines);
@@ -188,6 +295,68 @@ void main() {
       app.dispose();
       await repository.close();
     });
+
+    test(
+      'active recording cues do not inherit estimated instrumental markers',
+      () async {
+        const body =
+            '[Intro]\n[C]\n[Verse]\nVerse lyric\n[Bridge]\n[G]\n[Chorus]\nChorus lyric\n[Outro]';
+        await app.saveSong(
+          SongDocument(
+            id: 'timed-sections',
+            title: 'Cue boundary',
+            artist: 'Test artist',
+            body: body,
+            metadata: const {'durationSeconds': 100},
+            activeTimingTrackId: 'track',
+            timingTracks: const [
+              TimingTrack(
+                id: 'track',
+                sourceDocumentId: 'fixture',
+                sourceLyrics: 'Verse lyric\nChorus lyric',
+                format: 'lrc',
+                status: TimingStatus.usable,
+                cues: [
+                  TimingCue(
+                    id: 'a',
+                    occurrenceId: 'line-0',
+                    text: 'Verse lyric',
+                    startUs: 90000000,
+                  ),
+                  TimingCue(
+                    id: 'b',
+                    occurrenceId: 'line-1',
+                    text: 'Chorus lyric',
+                    startUs: 95000000,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+        await ui.openSong('timed-sections');
+        await ui.setTimingMode('timed');
+        expect(ui.state.playerSections.map((marker) => marker.name), [
+          'Verse',
+          'Chorus',
+        ]);
+        expect(ui.state.playerSections.map((marker) => marker.startSeconds), [
+          90,
+          95,
+        ]);
+        await ui.seek(90);
+        expect(ui.state.currentLineId, ui.state.playerSections.first.lineId);
+        await ui.setTimingMode('estimated');
+        expect(ui.state.playerSections.map((marker) => marker.name), [
+          'Intro',
+          'Verse',
+          'Bridge',
+          'Chorus',
+          'Outro',
+        ]);
+        expect((await repository.getSong('timed-sections'))!.body, body);
+      },
+    );
 
     test('section seek boundary highlights the section opening lyric', () async {
       await app.saveSong(

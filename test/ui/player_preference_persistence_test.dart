@@ -30,6 +30,42 @@ void main() {
     await repository.close();
   });
 
+  test(
+    'lyric highlight defaults safely and persists explicit styles',
+    () async {
+      expect(ui.state.lyricHighlightStyle, 'contrast');
+      for (final invalid in [
+        null,
+        'unknown',
+        42,
+        {'bad': true},
+      ]) {
+        await app.setSetting('lyricHighlightStyle', invalid);
+        expect(ui.state.lyricHighlightStyle, 'contrast');
+      }
+      for (final style in [
+        'backgroundUnderline',
+        'background',
+        'underline',
+        'contrast',
+        'none',
+      ]) {
+        await ui.setLyricHighlightStyle(style);
+        expect(ui.state.lyricHighlightStyle, style);
+        expect(
+          (await repository.getSetting('app') as Map)['lyricHighlightStyle'],
+          style,
+        );
+      }
+      ui.dispose();
+      app.dispose();
+      app = AppController(repository: repository);
+      await app.initialize();
+      ui = AppControllerAdapter(app);
+      expect(ui.state.lyricHighlightStyle, 'none');
+    },
+  );
+
   test('an in-flight preference write flushes the latest pair once', () async {
     await _saveSong(app, 'a');
     await ui.openSong('a');
