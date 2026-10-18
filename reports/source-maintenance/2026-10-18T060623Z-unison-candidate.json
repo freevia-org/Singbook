@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "catalogRevision": 4,
+  "measuredAt": "2026-10-18T06:06:23.959954Z",
+  "offline": false,
+  "summary": {
+    "healthy": 1
+  },
+  "sources": [
+    {
+      "id": "unison",
+      "name": "Unison",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "wordTiming"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "search-give-it-up-don-toliver",
+          "status": "healthy",
+          "providerId": "unison",
+          "bodyCharacters": 1420,
+          "metadataFields": [],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "wordTiming"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false
+        },
+        {
+          "id": "give-it-up-don-toliver",
+          "status": "healthy",
+          "providerId": "unison",
+          "bodyCharacters": 1420,
+          "metadataFields": [],
+          "verifiedCapabilities": [
+            "lineTiming",
+            "lyrics",
+            "wordTiming"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false
+        },
+        {
+          "id": "love-never-felt-so-good-michael-jackson",
+          "status": "healthy",
+          "providerId": "unison",
+          "bodyCharacters": 1727,
+          "metadataFields": [],
+          "verifiedCapabilities": [
+            "lineTiming",
+            "lyrics",
+            "wordTiming"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false
+        }
+      ]
+    }
+  ],
+  "execution": {
+    "runtime": "managed-cloud",
+    "baseSha": "e55a2cb3c8c7c2140897eb51d7c4ebf9c5f4d116",
+    "candidateHead": "bdad8bf4cb9b952ed859f820015ea6cf18e80790",
+    "command": "dart run tool/source_maintenance.dart --source unison --report artifacts/source-maintenance/2026-10-18-unison-repair.json",
+    "exitCode": 0,
+    "mode": "approved_require_escalated"
+  },
+  "status": "independent cloud compatibility candidate; equivalent repair is PR #55, not integrated/published",
+  "reusedPR": "https://github.com/freevia-org/Singbook/pull/55",
+  "validation": {
+    "baselineFocusedTests": {
+      "command": "flutter test test/providers test/application/controller_test.dart test/application/controller_hardening_test.dart --reporter compact",
+      "exitCode": 0,
+      "passed": 243
+    },
+    "repairFocused": {
+      "command": "flutter test test/domain/unison_ttml_test.dart --reporter compact",
+      "exitCode": 0,
+      "passed": 3
+    },
+    "fullSuite": {
+      "command": "flutter test --no-pub --reporter compact",
+      "executionMode": "approved_require_escalated",
+      "exitCode": 0,
+      "passed": 1249,
+      "sourceHead": "bdad8bf4cb9b952ed859f820015ea6cf18e80790"
+    },
+    "analyzer": {
+      "command": "flutter analyze --no-pub",
+      "exitCode": 0
+    },
+    "offline": {
+      "command": "dart run tool/source_maintenance.dart --offline --report artifacts/source-maintenance/2026-10-18-final-offline.json",
+      "exitCode": 0,
+      "summary": {
+        "offline_unverified": 17,
+        "import_only": 2
+      }
+    },
+    "earlierAttempts": [
+      {
+        "command": "flutter test --reporter compact",
+        "exitCode": 69,
+        "stage": "dependency_advisory_request",
+        "reason": "default_sandbox_network_eperm; tests not started"
+      },
+      {
+        "command": "flutter test --no-pub --reporter compact",
+        "exitCode": 1,
+        "reason": "default_sandbox_loopback_socket_eperm; all 93 files failed to load; no test assertions executed"
+      }
+    ]
+  }
+}
