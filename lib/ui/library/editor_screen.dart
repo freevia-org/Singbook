@@ -417,13 +417,13 @@ class _EditorScreenState extends State<EditorScreen> {
     if (comfortableWidth >= 700) {
       rows.addAll([
         _row([
-          (child: title, flex: 3),
-          (child: artist, flex: 2),
-          (child: album, flex: 2),
+          (child: title, flex: 4),
+          (child: album, flex: 1),
+          (child: artist, flex: 4),
         ]),
         _row([
           (child: key, flex: 2),
-          (child: tuning, flex: 4),
+          (child: tuning, flex: 2),
           (child: capo, flex: 1),
           (child: tempo, flex: 2),
           (child: duration, flex: 2),
@@ -431,8 +431,8 @@ class _EditorScreenState extends State<EditorScreen> {
       ]);
     } else if (comfortableWidth >= 300) {
       rows.addAll([
-        _row([(child: title, flex: 3), (child: artist, flex: 2)]),
-        _row([(child: album, flex: 3), (child: tuning, flex: 2)]),
+        _row([(child: title, flex: 2), (child: album, flex: 1)]),
+        _row([(child: artist, flex: 2), (child: tuning, flex: 1)]),
         _row([
           (child: key, flex: 4),
           (child: capo, flex: 3),
@@ -444,8 +444,8 @@ class _EditorScreenState extends State<EditorScreen> {
       // Give longer labels and large text room instead of shrinking the type.
       rows.addAll([
         title,
-        _row([(child: artist, flex: 1), (child: album, flex: 1)]),
-        _row([(child: key, flex: 2), (child: tuning, flex: 3)]),
+        _row([(child: album, flex: 1), (child: artist, flex: 2)]),
+        _row([(child: key, flex: 2), (child: tuning, flex: 2)]),
         _row([
           (child: capo, flex: 1),
           (child: tempo, flex: 1),
@@ -455,8 +455,8 @@ class _EditorScreenState extends State<EditorScreen> {
     } else {
       rows.addAll([
         title,
-        artist,
         album,
+        artist,
         key,
         tuning,
         _row([(child: capo, flex: 1), (child: tempo, flex: 1)]),
