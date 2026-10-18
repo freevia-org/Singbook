@@ -245,7 +245,8 @@ class _EditorScreenState extends State<EditorScreen> {
     decoration: _decoration(label, errorText: errorText, hintText: hintText),
   );
 
-  static const _customChoice = '__singbook_editor_custom__';
+  // An identity-only value cannot collide with imported or entered text.
+  static final _customChoice = Object();
   static const _keys = [
     'C',
     'Db',
@@ -303,7 +304,7 @@ class _EditorScreenState extends State<EditorScreen> {
     return InputDecorator(
       decoration: _decoration(label),
       child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
+        child: DropdownButton<Object>(
           key: ValueKey('editor-${tuning ? 'tuning' : 'key'}-input'),
           value: controller.text,
           isDense: true,
@@ -311,7 +312,7 @@ class _EditorScreenState extends State<EditorScreen> {
           menuMaxHeight: 320,
           items: [
             for (final value in values)
-              DropdownMenuItem(
+              DropdownMenuItem<Object>(
                 value: value,
                 child: Text(
                   display(value),
@@ -319,14 +320,14 @@ class _EditorScreenState extends State<EditorScreen> {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-            DropdownMenuItem(
+            DropdownMenuItem<Object>(
               value: _customChoice,
               child: Text(l10n.editorCustomValue),
             ),
           ],
           onChanged: (value) async {
             if (value == null) return;
-            if (value == _customChoice) {
+            if (identical(value, _customChoice)) {
               final entered = await showDialog<String>(
                 context: context,
                 builder: (_) => _MetadataValueDialog(
@@ -336,7 +337,7 @@ class _EditorScreenState extends State<EditorScreen> {
               );
               if (!mounted || entered == null) return;
               setState(() => controller.text = entered);
-            } else {
+            } else if (value is String) {
               setState(() => controller.text = value);
             }
           },
