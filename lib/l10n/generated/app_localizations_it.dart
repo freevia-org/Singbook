@@ -915,22 +915,22 @@ class AppLocalizationsIt extends AppLocalizations {
   String get settingsPlayer => 'Lettore di testi';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Evidenziazione del verso corrente';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => 'Sfondo + sottolineatura';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Sfondo';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Sottolineatura';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Colore del testo a contrasto';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Nessuno';
 
   @override
   String get settingsDefaultShowChords =>

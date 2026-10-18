@@ -304,12 +304,26 @@ class AppControllerAdapter extends VerseUiController {
         ? 0.0
         : _validDuration(song.metadata['durationSeconds']) ??
               _estimatedDuration(data.length);
+    final timedLineStarts = song == null
+        ? const <String, double>{}
+        : _timedLineStarts(data, song, timingMode);
+    final activeTimingTrackId = song?.activeTimingTrackId;
+    final hasActiveTimedCues =
+        timingMode == 'timed' &&
+        song?.timingTracks.any(
+              (track) =>
+                  track.id == activeTimingTrackId &&
+                  track.status == TimingStatus.usable &&
+                  track.cues.isNotEmpty,
+            ) ==
+            true;
     final playerSections = song == null
         ? const <PlayerSectionMarker>[]
         : buildPlayerSectionMarkers(
             lines: data,
             durationSeconds: playerDuration,
-            timedLineStarts: _timedLineStarts(data, song, timingMode),
+            timedLineStarts: timedLineStarts,
+            useEstimatedFallback: !hasActiveTimedCues,
           );
     final recent = <RecentItemData>[];
     for (final event in app.recent) {

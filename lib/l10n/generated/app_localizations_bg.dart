@@ -912,22 +912,22 @@ class AppLocalizationsBg extends AppLocalizations {
   String get settingsPlayer => 'Плейър за текстове';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Открояване на текущия ред';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => 'Фон + подчертаване';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Фон';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Подчертаване';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Контрастен цвят на текста';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Без';
 
   @override
   String get settingsDefaultShowChords => 'Показване на акорди по подразбиране';

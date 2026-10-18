@@ -892,22 +892,22 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsPlayer => '가사 플레이어';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => '현재 가사 줄 강조';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => '배경 + 밑줄';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => '배경';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => '밑줄';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => '대비되는 글자 색';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => '없음';
 
   @override
   String get settingsDefaultShowChords => '기본으로 코드 표시';

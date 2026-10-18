@@ -914,22 +914,22 @@ class AppLocalizationsVi extends AppLocalizations {
   String get settingsPlayer => 'Trình phát lời bài hát';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Làm nổi bật dòng lời hiện tại';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => 'Nền + gạch chân';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Nền';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Gạch chân';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Màu chữ tương phản';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Không';
 
   @override
   String get settingsDefaultShowChords => 'Mặc định hiện hợp âm';

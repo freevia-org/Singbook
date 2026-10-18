@@ -404,7 +404,7 @@
   "settingsFont": "Typsnitt",
   "settingsTextSize": "Textstorlek",
   "settingsLyricsPreview": "Förhandsvisning av låttext",
-  "settingsPlayer": "Låttextspelare",
+  "settingsPlayer": "Låttextspelare", "settingsLyricHighlight": "Markering av aktuell textrad", "settingsHighlightBackgroundUnderline": "Bakgrund + understrykning", "settingsHighlightBackground": "Bakgrund", "settingsHighlightUnderline": "Understrykning", "settingsHighlightContrast": "Kontrasterande textfärg", "settingsHighlightNone": "Ingen",
   "settingsDefaultShowChords": "Visa ackord som standard",
   "settingsDefaultAutoscroll": "Starta rullning av låttext automatiskt",
   "settingsDefaultTiming": "Standardläge för rullning",

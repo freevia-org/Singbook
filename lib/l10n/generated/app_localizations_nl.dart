@@ -919,22 +919,23 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settingsPlayer => 'Songtekstspeler';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Huidige songregel markeren';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline =>
+      'Achtergrond + onderstreping';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Achtergrond';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Onderstreping';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Contrasterende tekstkleur';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Geen';
 
   @override
   String get settingsDefaultShowChords => 'Akkoorden standaard tonen';

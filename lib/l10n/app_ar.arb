@@ -410,7 +410,7 @@
   "settingsFont": "الخط",
   "settingsTextSize": "حجم النص",
   "settingsLyricsPreview": "معاينة الكلمات",
-  "settingsPlayer": "مشغل الكلمات",
+  "settingsPlayer": "مشغل الكلمات", "settingsLyricHighlight": "تمييز السطر الحالي", "settingsHighlightBackgroundUnderline": "خلفية + تسطير", "settingsHighlightBackground": "خلفية", "settingsHighlightUnderline": "تسطير", "settingsHighlightContrast": "لون نص متباين", "settingsHighlightNone": "بلا",
   "settingsDefaultShowChords": "إظهار الأكوردات افتراضيًا",
   "settingsDefaultAutoscroll": "بدء تمرير الكلمات تلقائيًا",
   "settingsDefaultTiming": "وضع التمرير الافتراضي",

@@ -404,7 +404,7 @@
   "settingsFont": "Шрифт",
   "settingsTextSize": "Размер текста",
   "settingsLyricsPreview": "Предпросмотр текста",
-  "settingsPlayer": "Прокрутка текста",
+  "settingsPlayer": "Прокрутка текста", "settingsLyricHighlight": "Подсветка текущей строки текста", "settingsHighlightBackgroundUnderline": "Фон + подчёркивание", "settingsHighlightBackground": "Фон", "settingsHighlightUnderline": "Подчёркивание", "settingsHighlightContrast": "Контрастный цвет текста", "settingsHighlightNone": "Нет",
   "settingsDefaultShowChords": "Показывать аккорды по умолчанию",
   "settingsDefaultAutoscroll": "Автоматически прокручивать текст",
   "settingsDefaultTiming": "Режим прокрутки по умолчанию",

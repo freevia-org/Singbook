@@ -404,7 +404,7 @@
   "settingsFont": "Γραμματοσειρά",
   "settingsTextSize": "Μέγεθος κειμένου",
   "settingsLyricsPreview": "Προεπισκόπηση στίχων",
-  "settingsPlayer": "Αναπαραγωγή στίχων",
+  "settingsPlayer": "Αναπαραγωγή στίχων", "settingsLyricHighlight": "Επισήμανση τρέχοντος στίχου", "settingsHighlightBackgroundUnderline": "Φόντο + υπογράμμιση", "settingsHighlightBackground": "Φόντο", "settingsHighlightUnderline": "Υπογράμμιση", "settingsHighlightContrast": "Χρώμα κειμένου με αντίθεση", "settingsHighlightNone": "Καμία",
   "settingsDefaultShowChords": "Εμφάνιση συγχορδιών από προεπιλογή",
   "settingsDefaultAutoscroll": "Αυτόματη κύλιση στίχων",
   "settingsDefaultTiming": "Προεπιλεγμένη λειτουργία κύλισης",

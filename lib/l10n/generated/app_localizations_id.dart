@@ -916,22 +916,22 @@ class AppLocalizationsId extends AppLocalizations {
   String get settingsPlayer => 'Pemutar lirik';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Sorot baris lirik saat ini';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => 'Latar + garis bawah';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Latar';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Garis bawah';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Warna teks kontras';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Tidak ada';
 
   @override
   String get settingsDefaultShowChords => 'Tampilkan akor secara default';

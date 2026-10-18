@@ -924,22 +924,22 @@ class AppLocalizationsUk extends AppLocalizations {
   String get settingsPlayer => 'Прокручування тексту';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Підсвічування поточного рядка';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => 'Тло + підкреслення';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Тло';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Підкреслення';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Контрастний колір тексту';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Немає';
 
   @override
   String get settingsDefaultShowChords => 'Показувати акорди за замовчуванням';

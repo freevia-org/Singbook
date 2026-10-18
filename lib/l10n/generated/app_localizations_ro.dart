@@ -925,22 +925,22 @@ class AppLocalizationsRo extends AppLocalizations {
   String get settingsPlayer => 'Player de versuri';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Evidențierea versului curent';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => 'Fundal + subliniere';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Fundal';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Subliniere';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Culoare de text contrastantă';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Niciuna';
 
   @override
   String get settingsDefaultShowChords => 'Afișează acordurile implicit';

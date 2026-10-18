@@ -404,7 +404,7 @@
   "settingsFont": "Fontti",
   "settingsTextSize": "Tekstin koko",
   "settingsLyricsPreview": "Sanoitusten esikatselu",
-  "settingsPlayer": "Sanoitusten soitin",
+  "settingsPlayer": "Sanoitusten soitin", "settingsLyricHighlight": "Nykyisen säerivin korostus", "settingsHighlightBackgroundUnderline": "Tausta + alleviivaus", "settingsHighlightBackground": "Tausta", "settingsHighlightUnderline": "Alleviivaus", "settingsHighlightContrast": "Kontrastiväri tekstille", "settingsHighlightNone": "Ei mitään",
   "settingsDefaultShowChords": "Näytä soinnut oletuksena",
   "settingsDefaultAutoscroll": "Vieritä sanoituksia automaattisesti",
   "settingsDefaultTiming": "Oletusvieritystila",

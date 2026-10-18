@@ -95,6 +95,7 @@ List<PlayerSectionMarker> buildPlayerSectionMarkers({
   required List<LyricLineData> lines,
   required double durationSeconds,
   Map<String, double> timedLineStarts = const {},
+  bool useEstimatedFallback = true,
 }) {
   if (lines.isEmpty || !durationSeconds.isFinite || durationSeconds <= 0) {
     return const [];
@@ -117,10 +118,11 @@ List<PlayerSectionMarker> buildPlayerSectionMarkers({
         lineIndex < lines.length &&
         lines[lineIndex].section == null &&
         _isEstimatedLyricLine(lines[lineIndex]);
+    if (!hasLyrics && !useEstimatedFallback) continue;
     final lineId = hasLyrics ? lines[lineIndex].id : heading.id;
-    final rawStart = hasLyrics
-        ? timedLineStarts[lineId] ?? estimatedPositions[lineId]
-        : estimatedPositions[heading.id];
+    final rawStart =
+        timedLineStarts[lineId] ??
+        (useEstimatedFallback ? estimatedPositions[lineId] : null);
     final start = rawStart?.clamp(0.0, durationSeconds).toDouble();
     if (start == null || !start.isFinite) continue;
 
@@ -130,6 +132,7 @@ List<PlayerSectionMarker> buildPlayerSectionMarkers({
       PlayerSectionMarker(name: name, startSeconds: start, lineId: lineId),
     );
   }
+  markers.sort((a, b) => a.startSeconds.compareTo(b.startSeconds));
   return List.unmodifiable(markers);
 }
 

@@ -914,22 +914,22 @@ class AppLocalizationsTr extends AppLocalizations {
   String get settingsPlayer => 'Şarkı sözü oynatıcı';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Geçerli söz satırını vurgula';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => 'Arka plan + alt çizgi';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Arka plan';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Alt çizgi';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Kontrastlı metin rengi';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Yok';
 
   @override
   String get settingsDefaultShowChords => 'Akorları varsayılan olarak göster';

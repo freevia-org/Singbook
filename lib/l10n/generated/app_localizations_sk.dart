@@ -917,22 +917,22 @@ class AppLocalizationsSk extends AppLocalizations {
   String get settingsPlayer => 'Prehrávač textov piesní';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Zvýraznenie aktuálneho riadka';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => 'Pozadie + podčiarknutie';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Pozadie';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Podčiarknutie';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Kontrastná farba textu';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Žiadne';
 
   @override
   String get settingsDefaultShowChords => 'Predvolene zobrazovať akordy';

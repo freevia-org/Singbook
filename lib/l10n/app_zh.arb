@@ -404,7 +404,7 @@
   "settingsFont": "字体",
   "settingsTextSize": "文字大小",
   "settingsLyricsPreview": "歌词预览",
-  "settingsPlayer": "歌词播放器",
+  "settingsPlayer": "歌词播放器", "settingsLyricHighlight": "高亮当前歌词行", "settingsHighlightBackgroundUnderline": "背景 + 下划线", "settingsHighlightBackground": "背景", "settingsHighlightUnderline": "下划线", "settingsHighlightContrast": "对比色文字", "settingsHighlightNone": "无",
   "settingsDefaultShowChords": "默认显示和弦",
   "settingsDefaultAutoscroll": "自动滚动歌词",
   "settingsDefaultTiming": "默认滚动模式",

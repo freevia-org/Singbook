@@ -916,22 +916,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsPlayer => 'Liedtext-Player';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Aktuelle Liedzeile hervorheben';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline =>
+      'Hintergrund + Unterstreichung';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Hintergrund';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Unterstreichung';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Kontrastierende Textfarbe';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Keine';
 
   @override
   String get settingsDefaultShowChords => 'Akkorde standardmäßig anzeigen';

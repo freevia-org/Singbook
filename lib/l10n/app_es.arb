@@ -404,7 +404,7 @@
   "settingsFont": "Fuente",
   "settingsTextSize": "Tamaño del texto",
   "settingsLyricsPreview": "Vista previa de la letra",
-  "settingsPlayer": "Reproductor de letras",
+  "settingsPlayer": "Reproductor de letras", "settingsLyricHighlight": "Resaltado de la línea actual", "settingsHighlightBackgroundUnderline": "Fondo + subrayado", "settingsHighlightBackground": "Fondo", "settingsHighlightUnderline": "Subrayado", "settingsHighlightContrast": "Color de texto con contraste", "settingsHighlightNone": "Ninguno",
   "settingsDefaultShowChords": "Mostrar acordes de forma predeterminada",
   "settingsDefaultAutoscroll": "Desplazar las letras automáticamente",
   "settingsDefaultTiming": "Modo de desplazamiento predeterminado",

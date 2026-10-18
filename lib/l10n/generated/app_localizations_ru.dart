@@ -920,22 +920,22 @@ class AppLocalizationsRu extends AppLocalizations {
   String get settingsPlayer => 'Прокрутка текста';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Подсветка текущей строки текста';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => 'Фон + подчёркивание';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Фон';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Подчёркивание';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Контрастный цвет текста';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Нет';
 
   @override
   String get settingsDefaultShowChords => 'Показывать аккорды по умолчанию';

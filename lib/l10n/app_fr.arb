@@ -404,7 +404,7 @@
   "settingsFont": "Police",
   "settingsTextSize": "Taille du texte",
   "settingsLyricsPreview": "Aperçu des paroles",
-  "settingsPlayer": "Lecteur de paroles",
+  "settingsPlayer": "Lecteur de paroles", "settingsLyricHighlight": "Mise en évidence de la ligne actuelle", "settingsHighlightBackgroundUnderline": "Fond + soulignement", "settingsHighlightBackground": "Fond", "settingsHighlightUnderline": "Soulignement", "settingsHighlightContrast": "Couleur de texte contrastée", "settingsHighlightNone": "Aucun",
   "settingsDefaultShowChords": "Afficher les accords par défaut",
   "settingsDefaultAutoscroll": "Faire défiler les paroles automatiquement",
   "settingsDefaultTiming": "Mode de défilement par défaut",

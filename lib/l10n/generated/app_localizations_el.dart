@@ -920,22 +920,22 @@ class AppLocalizationsEl extends AppLocalizations {
   String get settingsPlayer => 'Αναπαραγωγή στίχων';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Επισήμανση τρέχοντος στίχου';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => 'Φόντο + υπογράμμιση';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Φόντο';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Υπογράμμιση';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Χρώμα κειμένου με αντίθεση';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Καμία';
 
   @override
   String get settingsDefaultShowChords => 'Εμφάνιση συγχορδιών από προεπιλογή';

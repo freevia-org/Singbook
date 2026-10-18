@@ -404,7 +404,7 @@
   "settingsFont": "Carattere",
   "settingsTextSize": "Dimensione del testo",
   "settingsLyricsPreview": "Anteprima del testo",
-  "settingsPlayer": "Lettore di testi",
+  "settingsPlayer": "Lettore di testi", "settingsLyricHighlight": "Evidenziazione del verso corrente", "settingsHighlightBackgroundUnderline": "Sfondo + sottolineatura", "settingsHighlightBackground": "Sfondo", "settingsHighlightUnderline": "Sottolineatura", "settingsHighlightContrast": "Colore del testo a contrasto", "settingsHighlightNone": "Nessuno",
   "settingsDefaultShowChords": "Mostra accordi per impostazione predefinita",
   "settingsDefaultAutoscroll": "Avvia automaticamente lo scorrimento del testo",
   "settingsDefaultTiming": "Modalità di scorrimento predefinita",

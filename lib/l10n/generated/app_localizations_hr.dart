@@ -916,22 +916,22 @@ class AppLocalizationsHr extends AppLocalizations {
   String get settingsPlayer => 'Reprodukcija teksta';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Isticanje trenutačnog retka';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => 'Pozadina + podcrtavanje';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Pozadina';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Podcrtavanje';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Kontrastna boja teksta';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Bez';
 
   @override
   String get settingsDefaultShowChords =>

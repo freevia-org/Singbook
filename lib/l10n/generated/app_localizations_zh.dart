@@ -887,22 +887,22 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsPlayer => '歌词播放器';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => '高亮当前歌词行';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => '背景 + 下划线';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => '背景';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => '下划线';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => '对比色文字';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => '无';
 
   @override
   String get settingsDefaultShowChords => '默认显示和弦';

@@ -912,22 +912,23 @@ class AppLocalizationsSv extends AppLocalizations {
   String get settingsPlayer => 'Låttextspelare';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Markering av aktuell textrad';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline =>
+      'Bakgrund + understrykning';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Bakgrund';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Understrykning';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Kontrasterande textfärg';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Ingen';
 
   @override
   String get settingsDefaultShowChords => 'Visa ackord som standard';

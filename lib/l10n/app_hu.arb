@@ -404,7 +404,7 @@
   "settingsFont": "Betűtípus",
   "settingsTextSize": "Szövegméret",
   "settingsLyricsPreview": "Dalszöveg előnézete",
-  "settingsPlayer": "Dalszöveg-lejátszó",
+  "settingsPlayer": "Dalszöveg-lejátszó", "settingsLyricHighlight": "Aktuális dalsor kiemelése", "settingsHighlightBackgroundUnderline": "Háttér + aláhúzás", "settingsHighlightBackground": "Háttér", "settingsHighlightUnderline": "Aláhúzás", "settingsHighlightContrast": "Kontrasztos szövegszín", "settingsHighlightNone": "Nincs",
   "settingsDefaultShowChords": "Akkordok megjelenítése alapértelmezés szerint",
   "settingsDefaultAutoscroll": "Dalszöveg automatikus görgetése",
   "settingsDefaultTiming": "Alapértelmezett görgetési mód",

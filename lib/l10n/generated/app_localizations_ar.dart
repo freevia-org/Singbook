@@ -923,22 +923,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsPlayer => 'مشغل الكلمات';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'تمييز السطر الحالي';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => 'خلفية + تسطير';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'خلفية';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'تسطير';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'لون نص متباين';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'بلا';
 
   @override
   String get settingsDefaultShowChords => 'إظهار الأكوردات افتراضيًا';

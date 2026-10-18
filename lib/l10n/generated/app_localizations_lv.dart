@@ -919,22 +919,22 @@ class AppLocalizationsLv extends AppLocalizations {
   String get settingsPlayer => 'Dziesmu vārdu atskaņotājs';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Pašreizējās teksta rindas izcelšana';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => 'Fons + pasvītrojums';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Fons';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Pasvītrojums';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Kontrastējoša teksta krāsa';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Nav';
 
   @override
   String get settingsDefaultShowChords => 'Pēc noklusējuma rādīt akordus';

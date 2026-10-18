@@ -918,22 +918,22 @@ class AppLocalizationsGa extends AppLocalizations {
   String get settingsPlayer => 'Seinnteoir liricí';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Aibhsiú líne reatha na liricí';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => 'Cúlra + líne faoi';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Cúlra';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Líne faoi';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Dath téacs codarsnachta';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Dada';
 
   @override
   String get settingsDefaultShowChords =>

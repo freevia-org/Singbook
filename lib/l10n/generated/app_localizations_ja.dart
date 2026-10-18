@@ -890,22 +890,22 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingsPlayer => '歌詞プレーヤー';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => '現在の歌詞行の強調';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => '背景＋下線';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => '背景';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => '下線';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'コントラストのある文字色';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'なし';
 
   @override
   String get settingsDefaultShowChords => 'デフォルトでコードを表示';

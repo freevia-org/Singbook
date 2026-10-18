@@ -913,22 +913,22 @@ class AppLocalizationsEt extends AppLocalizations {
   String get settingsPlayer => 'Laulusõnade mängija';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Praeguse laulusõnarea esiletõst';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => 'Taust + allajoon';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Taust';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Allajoon';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Kontrastne tekstivärv';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Puudub';
 
   @override
   String get settingsDefaultShowChords => 'Näita vaikimisi akorde';

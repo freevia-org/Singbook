@@ -404,7 +404,7 @@
   "settingsFont": "Font",
   "settingsTextSize": "Dimensiunea textului",
   "settingsLyricsPreview": "Previzualizarea versurilor",
-  "settingsPlayer": "Player de versuri",
+  "settingsPlayer": "Player de versuri", "settingsLyricHighlight": "Evidențierea versului curent", "settingsHighlightBackgroundUnderline": "Fundal + subliniere", "settingsHighlightBackground": "Fundal", "settingsHighlightUnderline": "Subliniere", "settingsHighlightContrast": "Culoare de text contrastantă", "settingsHighlightNone": "Niciuna",
   "settingsDefaultShowChords": "Afișează acordurile implicit",
   "settingsDefaultAutoscroll": "Pornește automat derularea versurilor",
   "settingsDefaultTiming": "Mod implicit de derulare",

@@ -404,7 +404,7 @@
   "settingsFont": "Font",
   "settingsTextSize": "Veličina teksta",
   "settingsLyricsPreview": "Pretpregled teksta",
-  "settingsPlayer": "Reprodukcija teksta",
+  "settingsPlayer": "Reprodukcija teksta", "settingsLyricHighlight": "Isticanje trenutačnog retka", "settingsHighlightBackgroundUnderline": "Pozadina + podcrtavanje", "settingsHighlightBackground": "Pozadina", "settingsHighlightUnderline": "Podcrtavanje", "settingsHighlightContrast": "Kontrastna boja teksta", "settingsHighlightNone": "Bez",
   "settingsDefaultShowChords": "Prema zadanim postavkama prikaži akorde",
   "settingsDefaultAutoscroll": "Automatski pokreni pomicanje teksta",
   "settingsDefaultTiming": "Zadani način pomicanja",

@@ -925,22 +925,22 @@ class AppLocalizationsLt extends AppLocalizations {
   String get settingsPlayer => 'Dainų tekstų grotuvas';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Dabartinės eilutės paryškinimas';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => 'Fonas + pabraukimas';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Fonas';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Pabraukimas';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Kontrastinga teksto spalva';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Nėra';
 
   @override
   String get settingsDefaultShowChords =>

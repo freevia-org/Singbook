@@ -911,22 +911,23 @@ class AppLocalizationsDa extends AppLocalizations {
   String get settingsPlayer => 'Sangtekstafspiller';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Fremhævning af den aktuelle linje';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline =>
+      'Baggrund + understregning';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Baggrund';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Understregning';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Kontrastfarve på tekst';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Ingen';
 
   @override
   String get settingsDefaultShowChords => 'Vis akkorder som standard';

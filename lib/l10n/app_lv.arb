@@ -404,7 +404,7 @@
   "settingsFont": "Fonts",
   "settingsTextSize": "Teksta lielums",
   "settingsLyricsPreview": "Dziesmas vārdu priekšskatījums",
-  "settingsPlayer": "Dziesmu vārdu atskaņotājs",
+  "settingsPlayer": "Dziesmu vārdu atskaņotājs", "settingsLyricHighlight": "Pašreizējās teksta rindas izcelšana", "settingsHighlightBackgroundUnderline": "Fons + pasvītrojums", "settingsHighlightBackground": "Fons", "settingsHighlightUnderline": "Pasvītrojums", "settingsHighlightContrast": "Kontrastējoša teksta krāsa", "settingsHighlightNone": "Nav",
   "settingsDefaultShowChords": "Pēc noklusējuma rādīt akordus",
   "settingsDefaultAutoscroll": "Automātiski sākt dziesmas vārdu ritināšanu",
   "settingsDefaultTiming": "Noklusējuma ritināšanas režīms",

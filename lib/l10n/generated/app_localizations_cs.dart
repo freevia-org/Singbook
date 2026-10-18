@@ -916,22 +916,22 @@ class AppLocalizationsCs extends AppLocalizations {
   String get settingsPlayer => 'Přehrávač textů písní';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Zvýraznění aktuálního řádku';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => 'Pozadí + podtržení';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Pozadí';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Podtržení';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Kontrastní barva textu';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Žádné';
 
   @override
   String get settingsDefaultShowChords =>

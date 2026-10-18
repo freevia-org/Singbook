@@ -913,22 +913,22 @@ class AppLocalizationsFi extends AppLocalizations {
   String get settingsPlayer => 'Sanoitusten soitin';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Nykyisen säerivin korostus';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => 'Tausta + alleviivaus';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Tausta';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Alleviivaus';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Kontrastiväri tekstille';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Ei mitään';
 
   @override
   String get settingsDefaultShowChords => 'Näytä soinnut oletuksena';

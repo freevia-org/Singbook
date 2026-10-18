@@ -404,7 +404,7 @@
   "settingsFont": "Yazı tipi",
   "settingsTextSize": "Metin boyutu",
   "settingsLyricsPreview": "Şarkı sözü önizlemesi",
-  "settingsPlayer": "Şarkı sözü oynatıcı",
+  "settingsPlayer": "Şarkı sözü oynatıcı", "settingsLyricHighlight": "Geçerli söz satırını vurgula", "settingsHighlightBackgroundUnderline": "Arka plan + alt çizgi", "settingsHighlightBackground": "Arka plan", "settingsHighlightUnderline": "Alt çizgi", "settingsHighlightContrast": "Kontrastlı metin rengi", "settingsHighlightNone": "Yok",
   "settingsDefaultShowChords": "Akorları varsayılan olarak göster",
   "settingsDefaultAutoscroll": "Şarkı sözü kaydırmayı otomatik başlat",
   "settingsDefaultTiming": "Varsayılan kaydırma modu",

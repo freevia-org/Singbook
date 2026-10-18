@@ -914,22 +914,22 @@ class AppLocalizationsHu extends AppLocalizations {
   String get settingsPlayer => 'Dalszöveg-lejátszó';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Aktuális dalsor kiemelése';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => 'Háttér + aláhúzás';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Háttér';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Aláhúzás';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Kontrasztos szövegszín';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Nincs';
 
   @override
   String get settingsDefaultShowChords =>

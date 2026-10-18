@@ -919,22 +919,22 @@ class AppLocalizationsPl extends AppLocalizations {
   String get settingsPlayer => 'Odtwarzacz tekstu';
 
   @override
-  String get settingsLyricHighlight => 'Current lyric highlight';
+  String get settingsLyricHighlight => 'Podświetlenie bieżącego wersu';
 
   @override
-  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+  String get settingsHighlightBackgroundUnderline => 'Tło + podkreślenie';
 
   @override
-  String get settingsHighlightBackground => 'Background';
+  String get settingsHighlightBackground => 'Tło';
 
   @override
-  String get settingsHighlightUnderline => 'Underline';
+  String get settingsHighlightUnderline => 'Podkreślenie';
 
   @override
-  String get settingsHighlightContrast => 'Contrasting text color';
+  String get settingsHighlightContrast => 'Kontrastowy kolor tekstu';
 
   @override
-  String get settingsHighlightNone => 'None';
+  String get settingsHighlightNone => 'Brak';
 
   @override
   String get settingsDefaultShowChords => 'Domyślnie pokazuj akordy';
