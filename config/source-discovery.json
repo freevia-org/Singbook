@@ -18,14 +18,14 @@
       "id": "startjamming",
       "name": "Start Jamming",
       "firstSeen": "2026-10-15",
-      "lastChecked": "2026-10-17",
+      "lastChecked": "2026-10-18",
       "status": "deferred",
       "documentation": [
         "https://www.startjamming.com/api",
         "https://www.startjamming.com/llms-full.txt"
       ],
       "endpoint": "https://www.startjamming.com",
-      "reason": "Documented public read API; search has object/array response variants, index is keyed by ID, and artist can be absent. Chords use normalized measure arrays; cannot claim lyric-aligned chords. Requires a supported adapter and real canaries before activation. Primary API docs returned HTTP 200 on 2026-10-16 at 06:03:15 UTC. Agent requests to /api/songs/* must include for=agent, honor ETags and preserve canonical IDs/URLs. Agent responses omit license; licensing must not be inferred. Permitted reuse/attribution evidence and two independent live extraction canaries remain pending. Rechecked publisher API documentation on 2026-10-17 at 05:59:04 UTC: origin HTTP 200. This reachability check does not satisfy outstanding permitted reuse, adapter or two-canary requirements; remains deferred."
+      "reason": "Documented public read API; search has object/array response variants, index is keyed by ID, and artist can be absent. Chords use normalized measure arrays; cannot claim lyric-aligned chords. Requires a supported adapter and real canaries before activation. Primary API docs returned HTTP 200 on 2026-10-16 at 06:03:15 UTC. Agent requests to /api/songs/* must include for=agent, honor ETags and preserve canonical IDs/URLs. Agent responses omit license; licensing must not be inferred. Permitted reuse/attribution evidence and two independent live extraction canaries remain pending. Rechecked publisher API documentation on 2026-10-17 at 05:59:04 UTC: origin HTTP 200. On 2026-10-18 at 05:57 UTC, documented public search for Amazing Grace returned HTTP 200, exact canonical ID amazing-grace, canonical URL and API URL; agent response had no license field. Search success is one metadata identity check, not two independent extraction canaries or reuse permission. Still deferred pending rights/attribution, compatible adapter and complete canary coverage."
     },
     {
       "id": "lyrica",
@@ -67,7 +67,7 @@
       "id": "amll-ttml-database",
       "name": "AMLL TTML Database",
       "firstSeen": "2026-10-17",
-      "lastChecked": "2026-10-17",
+      "lastChecked": "2026-10-18",
       "status": "deferred",
       "documentation": [
         "https://amll.dev/reference/http-api/overview",
@@ -75,7 +75,24 @@
         "https://amll.dev/guides/overview/eco.html"
       ],
       "endpoint": "https://api.amll.dev",
-      "reason": "Documented unauthenticated JSON search/get API. On 2026-10-17 at 05:57:03Z and 05:57:22Z, independent direct IDs 269710089745311 (ME!) and 638303942317135 (Shape of You) returned HTTP 200 and raw TTML with timed paragraphs/spans. Publisher describes the contributed database as CC0-1.0; retain project attribution and contributor usernames/IDs without extending that claim to every underlying work. Titles, artists and contributors are arrays; artist ordering varies and search can return multiple versions. Scalar/index-only extraction would lose contributors or misidentify collaborations. Defer until a compatible adapter supports complete identities/provenance and repository canaries verify parsed cues and raw retention. Exact ID lookups are documented immutable. Overlap with existing timed sources remains unmeasured; two Chinese title/artist queries returned no hits, so regional coverage is unproven."
+      "reason": "Documented unauthenticated JSON search/get API. On 2026-10-17 at 05:57:03Z and 05:57:22Z, independent direct IDs 269710089745311 (ME!) and 638303942317135 (Shape of You) returned HTTP 200 and raw TTML with timed paragraphs/spans. Publisher describes the contributed database as CC0-1.0; retain project attribution and contributor usernames/IDs without extending that claim to every underlying work. Titles, artists and contributors are arrays; artist ordering varies and search can return multiple versions. Scalar/index-only extraction would lose contributors or misidentify collaborations. On 2026-10-18 at 05:56 UTC, documented direct ID 269710089745311 still returned HTTP 200 with TTML, arrays of titles/artists/contributors and raw document present. Same-time separate searches for Chinese 晴天 / 周杰伦 and Ukrainian Ой у вишневому саду / Софія Ротару returned zero matches each. Defer until a compatible adapter supports complete identities/provenance and repository canaries verify parsed cues and raw retention. Exact ID lookups are documented immutable. Overlap with existing timed sources remains unmeasured; this recheck does not establish Chinese or Ukrainian catalog coverage."
+    },
+    {
+      "id": "lrcshare",
+      "name": "LrcShare API",
+      "firstSeen": "2026-10-18",
+      "lastChecked": "2026-10-18",
+      "status": "deferred",
+      "documentation": [
+        "https://api.lrcshare.com/docs/",
+        "https://api.lrcshare.com/docs/guide/quickstart.html",
+        "https://api.lrcshare.com/docs/api/search.html",
+        "https://api.lrcshare.com/docs/api/lyric.html",
+        "https://api.lrcshare.com/docs/faq.html",
+        "https://api.lrcshare.com/docs/guide/requirements.html"
+      ],
+      "endpoint": "https://api.lrcshare.com",
+      "reason": "Publisher docs describe a niche manually curated catalog centered on Chinese rap, with original/translated/romanized lyrics in Chinese, Japanese, Korean and other languages, line/word timing formats, structured rows, metadata and per-version attribution. Quickstart says anonymous/no-key; lyric docs require X-API-Key and X-LrcShare-Session, and on 2026-10-18 at 05:57 UTC live GET requests to /v1/catalog and /v1/search returned HTTP 401 missing X-API-Key, so unauthenticated access was not verified and no credentials were requested. Publisher FAQ limits API use to noncommercial personal/local-library/player contexts; underlying lyric rights remain with rightsholders and the service disclaims ownership, so redistribution/display rights for Singbook remain uncleared. No live lyric extraction canaries or overlap assessment. Defer pending compatible identity/attribution and multilingual extraction support, eligible access, rights review, and two independent live canaries covering claimed capabilities."
     },
     {
       "id": "musixmatch",
