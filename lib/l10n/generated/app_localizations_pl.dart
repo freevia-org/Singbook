@@ -919,6 +919,24 @@ class AppLocalizationsPl extends AppLocalizations {
   String get settingsPlayer => 'Odtwarzacz tekstu';
 
   @override
+  String get settingsLyricHighlight => 'Podświetlenie bieżącego wersu';
+
+  @override
+  String get settingsHighlightBackgroundUnderline => 'Tło + podkreślenie';
+
+  @override
+  String get settingsHighlightBackground => 'Tło';
+
+  @override
+  String get settingsHighlightUnderline => 'Podkreślenie';
+
+  @override
+  String get settingsHighlightContrast => 'Kontrastowy kolor tekstu';
+
+  @override
+  String get settingsHighlightNone => 'Brak';
+
+  @override
   String get settingsDefaultShowChords => 'Domyślnie pokazuj akordy';
 
   @override

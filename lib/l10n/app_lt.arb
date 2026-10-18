@@ -404,7 +404,7 @@
   "settingsFont": "Šriftas",
   "settingsTextSize": "Teksto dydis",
   "settingsLyricsPreview": "Dainos teksto peržiūra",
-  "settingsPlayer": "Dainų tekstų grotuvas",
+  "settingsPlayer": "Dainų tekstų grotuvas", "settingsLyricHighlight": "Dabartinės eilutės paryškinimas", "settingsHighlightBackgroundUnderline": "Fonas + pabraukimas", "settingsHighlightBackground": "Fonas", "settingsHighlightUnderline": "Pabraukimas", "settingsHighlightContrast": "Kontrastinga teksto spalva", "settingsHighlightNone": "Nėra",
   "settingsDefaultShowChords": "Pagal numatytuosius nustatymus rodyti akordus",
   "settingsDefaultAutoscroll": "Automatiškai pradėti slinkti dainos tekstą",
   "settingsDefaultTiming": "Numatytasis slinkimo režimas",

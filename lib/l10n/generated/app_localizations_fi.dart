@@ -913,6 +913,24 @@ class AppLocalizationsFi extends AppLocalizations {
   String get settingsPlayer => 'Sanoitusten soitin';
 
   @override
+  String get settingsLyricHighlight => 'Nykyisen säerivin korostus';
+
+  @override
+  String get settingsHighlightBackgroundUnderline => 'Tausta + alleviivaus';
+
+  @override
+  String get settingsHighlightBackground => 'Tausta';
+
+  @override
+  String get settingsHighlightUnderline => 'Alleviivaus';
+
+  @override
+  String get settingsHighlightContrast => 'Kontrastiväri tekstille';
+
+  @override
+  String get settingsHighlightNone => 'Ei mitään';
+
+  @override
   String get settingsDefaultShowChords => 'Näytä soinnut oletuksena';
 
   @override

@@ -919,6 +919,24 @@ class AppLocalizationsLv extends AppLocalizations {
   String get settingsPlayer => 'Dziesmu vārdu atskaņotājs';
 
   @override
+  String get settingsLyricHighlight => 'Pašreizējās teksta rindas izcelšana';
+
+  @override
+  String get settingsHighlightBackgroundUnderline => 'Fons + pasvītrojums';
+
+  @override
+  String get settingsHighlightBackground => 'Fons';
+
+  @override
+  String get settingsHighlightUnderline => 'Pasvītrojums';
+
+  @override
+  String get settingsHighlightContrast => 'Kontrastējoša teksta krāsa';
+
+  @override
+  String get settingsHighlightNone => 'Nav';
+
+  @override
   String get settingsDefaultShowChords => 'Pēc noklusējuma rādīt akordus';
 
   @override

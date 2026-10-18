@@ -472,6 +472,7 @@ class VerseUiState {
     this.palette = 'navy',
     this.fontFamily = 'system',
     this.lyricsFontSize = 24,
+    this.lyricHighlightStyle = 'contrast',
     this.showChords = true,
     this.autoscroll = true,
     bool? autoscrollPreference,
@@ -540,6 +541,7 @@ class VerseUiState {
       palette = o.palette,
       fontFamily = o.fontFamily,
       lyricsFontSize = o.lyricsFontSize,
+      lyricHighlightStyle = o.lyricHighlightStyle,
       showChords = o.showChords,
       autoscroll = o.autoscroll,
       autoscrollPreference = o.autoscrollPreference,
@@ -610,6 +612,7 @@ class VerseUiState {
   final AppThemeMode darkTheme;
   final String palette, fontFamily;
   final double lyricsFontSize;
+  final String lyricHighlightStyle;
   final bool showChords, autoscroll;
 
   /// The stored "autoscroll by default" preference, which stays on while the
@@ -699,6 +702,7 @@ abstract class VerseUiController extends ChangeNotifier {
   Future<void> setPalette(String palette);
   Future<void> setFontFamily(String fontFamily);
   Future<void> setLyricsFontSize(double size);
+  Future<void> setLyricHighlightStyle(String style) async {}
   Future<void> setShowChords(bool show);
   Future<void> setAutoscroll(bool enabled);
   Future<void> setTimingMode(String mode);

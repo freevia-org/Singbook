@@ -404,7 +404,7 @@
   "settingsFont": "Písmo",
   "settingsTextSize": "Velikost textu",
   "settingsLyricsPreview": "Náhled textu písně",
-  "settingsPlayer": "Přehrávač textů písní",
+  "settingsPlayer": "Přehrávač textů písní", "settingsLyricHighlight": "Zvýraznění aktuálního řádku", "settingsHighlightBackgroundUnderline": "Pozadí + podtržení", "settingsHighlightBackground": "Pozadí", "settingsHighlightUnderline": "Podtržení", "settingsHighlightContrast": "Kontrastní barva textu", "settingsHighlightNone": "Žádné",
   "settingsDefaultShowChords": "Ve výchozím nastavení zobrazovat akordy",
   "settingsDefaultAutoscroll": "Automaticky spustit posouvání textu",
   "settingsDefaultTiming": "Výchozí režim posouvání",

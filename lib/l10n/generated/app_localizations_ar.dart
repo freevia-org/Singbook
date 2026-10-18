@@ -923,6 +923,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsPlayer => 'مشغل الكلمات';
 
   @override
+  String get settingsLyricHighlight => 'تمييز السطر الحالي';
+
+  @override
+  String get settingsHighlightBackgroundUnderline => 'خلفية + تسطير';
+
+  @override
+  String get settingsHighlightBackground => 'خلفية';
+
+  @override
+  String get settingsHighlightUnderline => 'تسطير';
+
+  @override
+  String get settingsHighlightContrast => 'لون نص متباين';
+
+  @override
+  String get settingsHighlightNone => 'بلا';
+
+  @override
   String get settingsDefaultShowChords => 'إظهار الأكوردات افتراضيًا';
 
   @override

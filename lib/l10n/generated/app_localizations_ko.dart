@@ -892,6 +892,24 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsPlayer => '가사 플레이어';
 
   @override
+  String get settingsLyricHighlight => '현재 가사 줄 강조';
+
+  @override
+  String get settingsHighlightBackgroundUnderline => '배경 + 밑줄';
+
+  @override
+  String get settingsHighlightBackground => '배경';
+
+  @override
+  String get settingsHighlightUnderline => '밑줄';
+
+  @override
+  String get settingsHighlightContrast => '대비되는 글자 색';
+
+  @override
+  String get settingsHighlightNone => '없음';
+
+  @override
   String get settingsDefaultShowChords => '기본으로 코드 표시';
 
   @override

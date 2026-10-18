@@ -925,6 +925,24 @@ class AppLocalizationsRo extends AppLocalizations {
   String get settingsPlayer => 'Player de versuri';
 
   @override
+  String get settingsLyricHighlight => 'Evidențierea versului curent';
+
+  @override
+  String get settingsHighlightBackgroundUnderline => 'Fundal + subliniere';
+
+  @override
+  String get settingsHighlightBackground => 'Fundal';
+
+  @override
+  String get settingsHighlightUnderline => 'Subliniere';
+
+  @override
+  String get settingsHighlightContrast => 'Culoare de text contrastantă';
+
+  @override
+  String get settingsHighlightNone => 'Niciuna';
+
+  @override
   String get settingsDefaultShowChords => 'Afișează acordurile implicit';
 
   @override

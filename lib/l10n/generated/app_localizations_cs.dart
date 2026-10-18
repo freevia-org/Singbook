@@ -916,6 +916,24 @@ class AppLocalizationsCs extends AppLocalizations {
   String get settingsPlayer => 'Přehrávač textů písní';
 
   @override
+  String get settingsLyricHighlight => 'Zvýraznění aktuálního řádku';
+
+  @override
+  String get settingsHighlightBackgroundUnderline => 'Pozadí + podtržení';
+
+  @override
+  String get settingsHighlightBackground => 'Pozadí';
+
+  @override
+  String get settingsHighlightUnderline => 'Podtržení';
+
+  @override
+  String get settingsHighlightContrast => 'Kontrastní barva textu';
+
+  @override
+  String get settingsHighlightNone => 'Žádné';
+
+  @override
   String get settingsDefaultShowChords =>
       'Ve výchozím nastavení zobrazovat akordy';
 

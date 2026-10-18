@@ -404,7 +404,7 @@
   "settingsFont": "फ़ॉन्ट",
   "settingsTextSize": "टेक्स्ट का आकार",
   "settingsLyricsPreview": "बोलों का पूर्वावलोकन",
-  "settingsPlayer": "बोल प्लेयर",
+  "settingsPlayer": "बोल प्लेयर", "settingsLyricHighlight": "वर्तमान गीत पंक्ति हाइलाइट करें", "settingsHighlightBackgroundUnderline": "पृष्ठभूमि + रेखांकन", "settingsHighlightBackground": "पृष्ठभूमि", "settingsHighlightUnderline": "रेखांकन", "settingsHighlightContrast": "विपरीत टेक्स्ट रंग", "settingsHighlightNone": "कोई नहीं",
   "settingsDefaultShowChords": "डिफ़ॉल्ट रूप से कॉर्ड दिखाएँ",
   "settingsDefaultAutoscroll": "बोलों की स्क्रॉलिंग अपने-आप शुरू करें",
   "settingsDefaultTiming": "डिफ़ॉल्ट स्क्रॉलिंग मोड",

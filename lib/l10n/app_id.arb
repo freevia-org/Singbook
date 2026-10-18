@@ -404,7 +404,7 @@
   "settingsFont": "Font",
   "settingsTextSize": "Ukuran teks",
   "settingsLyricsPreview": "Pratinjau lirik",
-  "settingsPlayer": "Pemutar lirik",
+  "settingsPlayer": "Pemutar lirik", "settingsLyricHighlight": "Sorot baris lirik saat ini", "settingsHighlightBackgroundUnderline": "Latar + garis bawah", "settingsHighlightBackground": "Latar", "settingsHighlightUnderline": "Garis bawah", "settingsHighlightContrast": "Warna teks kontras", "settingsHighlightNone": "Tidak ada",
   "settingsDefaultShowChords": "Tampilkan akor secara default",
   "settingsDefaultAutoscroll": "Mulai gulir lirik secara otomatis",
   "settingsDefaultTiming": "Mode gulir default",

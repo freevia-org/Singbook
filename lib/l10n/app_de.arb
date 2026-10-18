@@ -404,7 +404,7 @@
   "settingsFont": "Schriftart",
   "settingsTextSize": "Textgröße",
   "settingsLyricsPreview": "Liedtextvorschau",
-  "settingsPlayer": "Liedtext-Player",
+  "settingsPlayer": "Liedtext-Player", "settingsLyricHighlight": "Aktuelle Liedzeile hervorheben", "settingsHighlightBackgroundUnderline": "Hintergrund + Unterstreichung", "settingsHighlightBackground": "Hintergrund", "settingsHighlightUnderline": "Unterstreichung", "settingsHighlightContrast": "Kontrastierende Textfarbe", "settingsHighlightNone": "Keine",
   "settingsDefaultShowChords": "Akkorde standardmäßig anzeigen",
   "settingsDefaultAutoscroll": "Liedtext automatisch scrollen lassen",
   "settingsDefaultTiming": "Standard-Scrollmodus",

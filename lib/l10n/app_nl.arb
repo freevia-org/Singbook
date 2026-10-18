@@ -404,7 +404,7 @@
   "settingsFont": "Lettertype",
   "settingsTextSize": "Tekstgrootte",
   "settingsLyricsPreview": "Voorbeeld van songteksten",
-  "settingsPlayer": "Songtekstspeler",
+  "settingsPlayer": "Songtekstspeler", "settingsLyricHighlight": "Huidige songregel markeren", "settingsHighlightBackgroundUnderline": "Achtergrond + onderstreping", "settingsHighlightBackground": "Achtergrond", "settingsHighlightUnderline": "Onderstreping", "settingsHighlightContrast": "Contrasterende tekstkleur", "settingsHighlightNone": "Geen",
   "settingsDefaultShowChords": "Akkoorden standaard tonen",
   "settingsDefaultAutoscroll": "Songteksten automatisch laten scrollen",
   "settingsDefaultTiming": "Standaard scrollmodus",

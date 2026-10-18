@@ -911,6 +911,25 @@ class AppLocalizationsDa extends AppLocalizations {
   String get settingsPlayer => 'Sangtekstafspiller';
 
   @override
+  String get settingsLyricHighlight => 'Fremhævning af den aktuelle linje';
+
+  @override
+  String get settingsHighlightBackgroundUnderline =>
+      'Baggrund + understregning';
+
+  @override
+  String get settingsHighlightBackground => 'Baggrund';
+
+  @override
+  String get settingsHighlightUnderline => 'Understregning';
+
+  @override
+  String get settingsHighlightContrast => 'Kontrastfarve på tekst';
+
+  @override
+  String get settingsHighlightNone => 'Ingen';
+
+  @override
   String get settingsDefaultShowChords => 'Vis akkorder som standard';
 
   @override

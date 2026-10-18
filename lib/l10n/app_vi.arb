@@ -404,7 +404,7 @@
   "settingsFont": "Phông chữ",
   "settingsTextSize": "Cỡ chữ",
   "settingsLyricsPreview": "Xem trước lời bài hát",
-  "settingsPlayer": "Trình phát lời bài hát",
+  "settingsPlayer": "Trình phát lời bài hát", "settingsLyricHighlight": "Làm nổi bật dòng lời hiện tại", "settingsHighlightBackgroundUnderline": "Nền + gạch chân", "settingsHighlightBackground": "Nền", "settingsHighlightUnderline": "Gạch chân", "settingsHighlightContrast": "Màu chữ tương phản", "settingsHighlightNone": "Không",
   "settingsDefaultShowChords": "Mặc định hiện hợp âm",
   "settingsDefaultAutoscroll": "Tự động bắt đầu cuộn lời bài hát",
   "settingsDefaultTiming": "Chế độ cuộn mặc định",

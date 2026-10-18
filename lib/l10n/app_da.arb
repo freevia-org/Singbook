@@ -404,7 +404,7 @@
   "settingsFont": "Skrifttype",
   "settingsTextSize": "Tekststørrelse",
   "settingsLyricsPreview": "Forhåndsvisning af sangtekst",
-  "settingsPlayer": "Sangtekstafspiller",
+  "settingsPlayer": "Sangtekstafspiller", "settingsLyricHighlight": "Fremhævning af den aktuelle linje", "settingsHighlightBackgroundUnderline": "Baggrund + understregning", "settingsHighlightBackground": "Baggrund", "settingsHighlightUnderline": "Understregning", "settingsHighlightContrast": "Kontrastfarve på tekst", "settingsHighlightNone": "Ingen",
   "settingsDefaultShowChords": "Vis akkorder som standard",
   "settingsDefaultAutoscroll": "Start automatisk rulning af sangteksten",
   "settingsDefaultTiming": "Standardindstilling for rulning",

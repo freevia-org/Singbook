@@ -915,6 +915,24 @@ class AppLocalizationsIt extends AppLocalizations {
   String get settingsPlayer => 'Lettore di testi';
 
   @override
+  String get settingsLyricHighlight => 'Evidenziazione del verso corrente';
+
+  @override
+  String get settingsHighlightBackgroundUnderline => 'Sfondo + sottolineatura';
+
+  @override
+  String get settingsHighlightBackground => 'Sfondo';
+
+  @override
+  String get settingsHighlightUnderline => 'Sottolineatura';
+
+  @override
+  String get settingsHighlightContrast => 'Colore del testo a contrasto';
+
+  @override
+  String get settingsHighlightNone => 'Nessuno';
+
+  @override
   String get settingsDefaultShowChords =>
       'Mostra accordi per impostazione predefinita';
 

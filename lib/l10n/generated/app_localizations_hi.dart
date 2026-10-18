@@ -907,6 +907,24 @@ class AppLocalizationsHi extends AppLocalizations {
   String get settingsPlayer => 'बोल प्लेयर';
 
   @override
+  String get settingsLyricHighlight => 'वर्तमान गीत पंक्ति हाइलाइट करें';
+
+  @override
+  String get settingsHighlightBackgroundUnderline => 'पृष्ठभूमि + रेखांकन';
+
+  @override
+  String get settingsHighlightBackground => 'पृष्ठभूमि';
+
+  @override
+  String get settingsHighlightUnderline => 'रेखांकन';
+
+  @override
+  String get settingsHighlightContrast => 'विपरीत टेक्स्ट रंग';
+
+  @override
+  String get settingsHighlightNone => 'कोई नहीं';
+
+  @override
   String get settingsDefaultShowChords => 'डिफ़ॉल्ट रूप से कॉर्ड दिखाएँ';
 
   @override

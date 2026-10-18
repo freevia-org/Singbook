@@ -404,7 +404,7 @@
   "settingsFont": "Písmo",
   "settingsTextSize": "Veľkosť textu",
   "settingsLyricsPreview": "Ukážka textu piesne",
-  "settingsPlayer": "Prehrávač textov piesní",
+  "settingsPlayer": "Prehrávač textov piesní", "settingsLyricHighlight": "Zvýraznenie aktuálneho riadka", "settingsHighlightBackgroundUnderline": "Pozadie + podčiarknutie", "settingsHighlightBackground": "Pozadie", "settingsHighlightUnderline": "Podčiarknutie", "settingsHighlightContrast": "Kontrastná farba textu", "settingsHighlightNone": "Žiadne",
   "settingsDefaultShowChords": "Predvolene zobrazovať akordy",
   "settingsDefaultAutoscroll": "Automaticky spustiť posúvanie textu piesne",
   "settingsDefaultTiming": "Predvolený režim posúvania",

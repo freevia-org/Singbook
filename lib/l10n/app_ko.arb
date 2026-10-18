@@ -404,7 +404,7 @@
   "settingsFont": "글꼴",
   "settingsTextSize": "텍스트 크기",
   "settingsLyricsPreview": "가사 미리보기",
-  "settingsPlayer": "가사 플레이어",
+  "settingsPlayer": "가사 플레이어", "settingsLyricHighlight": "현재 가사 줄 강조", "settingsHighlightBackgroundUnderline": "배경 + 밑줄", "settingsHighlightBackground": "배경", "settingsHighlightUnderline": "밑줄", "settingsHighlightContrast": "대비되는 글자 색", "settingsHighlightNone": "없음",
   "settingsDefaultShowChords": "기본으로 코드 표시",
   "settingsDefaultAutoscroll": "가사 자동 스크롤 시작",
   "settingsDefaultTiming": "기본 스크롤 모드",

@@ -918,6 +918,24 @@ class AppLocalizationsGa extends AppLocalizations {
   String get settingsPlayer => 'Seinnteoir liricí';
 
   @override
+  String get settingsLyricHighlight => 'Aibhsiú líne reatha na liricí';
+
+  @override
+  String get settingsHighlightBackgroundUnderline => 'Cúlra + líne faoi';
+
+  @override
+  String get settingsHighlightBackground => 'Cúlra';
+
+  @override
+  String get settingsHighlightUnderline => 'Líne faoi';
+
+  @override
+  String get settingsHighlightContrast => 'Dath téacs codarsnachta';
+
+  @override
+  String get settingsHighlightNone => 'Dada';
+
+  @override
   String get settingsDefaultShowChords =>
       'Taispeáin cordaí de réir réamhshocraithe';
 

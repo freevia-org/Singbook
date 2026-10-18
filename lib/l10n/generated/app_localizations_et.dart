@@ -913,6 +913,24 @@ class AppLocalizationsEt extends AppLocalizations {
   String get settingsPlayer => 'Laulusõnade mängija';
 
   @override
+  String get settingsLyricHighlight => 'Praeguse laulusõnarea esiletõst';
+
+  @override
+  String get settingsHighlightBackgroundUnderline => 'Taust + allajoon';
+
+  @override
+  String get settingsHighlightBackground => 'Taust';
+
+  @override
+  String get settingsHighlightUnderline => 'Allajoon';
+
+  @override
+  String get settingsHighlightContrast => 'Kontrastne tekstivärv';
+
+  @override
+  String get settingsHighlightNone => 'Puudub';
+
+  @override
   String get settingsDefaultShowChords => 'Näita vaikimisi akorde';
 
   @override

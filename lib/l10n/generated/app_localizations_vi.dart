@@ -914,6 +914,24 @@ class AppLocalizationsVi extends AppLocalizations {
   String get settingsPlayer => 'Trình phát lời bài hát';
 
   @override
+  String get settingsLyricHighlight => 'Làm nổi bật dòng lời hiện tại';
+
+  @override
+  String get settingsHighlightBackgroundUnderline => 'Nền + gạch chân';
+
+  @override
+  String get settingsHighlightBackground => 'Nền';
+
+  @override
+  String get settingsHighlightUnderline => 'Gạch chân';
+
+  @override
+  String get settingsHighlightContrast => 'Màu chữ tương phản';
+
+  @override
+  String get settingsHighlightNone => 'Không';
+
+  @override
   String get settingsDefaultShowChords => 'Mặc định hiện hợp âm';
 
   @override

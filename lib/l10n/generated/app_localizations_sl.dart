@@ -923,6 +923,24 @@ class AppLocalizationsSl extends AppLocalizations {
   String get settingsPlayer => 'Predvajalnik besedil pesmi';
 
   @override
+  String get settingsLyricHighlight => 'Poudarek trenutne vrstice';
+
+  @override
+  String get settingsHighlightBackgroundUnderline => 'Ozadje + podčrtaj';
+
+  @override
+  String get settingsHighlightBackground => 'Ozadje';
+
+  @override
+  String get settingsHighlightUnderline => 'Podčrtaj';
+
+  @override
+  String get settingsHighlightContrast => 'Kontrastna barva besedila';
+
+  @override
+  String get settingsHighlightNone => 'Brez';
+
+  @override
   String get settingsDefaultShowChords => 'Privzeto pokaži akorde';
 
   @override

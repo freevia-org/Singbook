@@ -404,7 +404,7 @@
   "settingsFont": "フォント",
   "settingsTextSize": "文字サイズ",
   "settingsLyricsPreview": "歌詞のプレビュー",
-  "settingsPlayer": "歌詞プレーヤー",
+  "settingsPlayer": "歌詞プレーヤー", "settingsLyricHighlight": "現在の歌詞行の強調", "settingsHighlightBackgroundUnderline": "背景＋下線", "settingsHighlightBackground": "背景", "settingsHighlightUnderline": "下線", "settingsHighlightContrast": "コントラストのある文字色", "settingsHighlightNone": "なし",
   "settingsDefaultShowChords": "デフォルトでコードを表示",
   "settingsDefaultAutoscroll": "歌詞の自動スクロールを開始",
   "settingsDefaultTiming": "デフォルトのスクロールモード",

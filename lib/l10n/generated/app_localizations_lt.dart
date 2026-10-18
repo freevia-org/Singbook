@@ -925,6 +925,24 @@ class AppLocalizationsLt extends AppLocalizations {
   String get settingsPlayer => 'Dainų tekstų grotuvas';
 
   @override
+  String get settingsLyricHighlight => 'Dabartinės eilutės paryškinimas';
+
+  @override
+  String get settingsHighlightBackgroundUnderline => 'Fonas + pabraukimas';
+
+  @override
+  String get settingsHighlightBackground => 'Fonas';
+
+  @override
+  String get settingsHighlightUnderline => 'Pabraukimas';
+
+  @override
+  String get settingsHighlightContrast => 'Kontrastinga teksto spalva';
+
+  @override
+  String get settingsHighlightNone => 'Nėra';
+
+  @override
   String get settingsDefaultShowChords =>
       'Pagal numatytuosius nustatymus rodyti akordus';
 

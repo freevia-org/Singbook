@@ -404,7 +404,7 @@
   "settingsFont": "Font",
   "settingsTextSize": "Teksti suurus",
   "settingsLyricsPreview": "Laulusõnade eelvaade",
-  "settingsPlayer": "Laulusõnade mängija",
+  "settingsPlayer": "Laulusõnade mängija", "settingsLyricHighlight": "Praeguse laulusõnarea esiletõst", "settingsHighlightBackgroundUnderline": "Taust + allajoon", "settingsHighlightBackground": "Taust", "settingsHighlightUnderline": "Allajoon", "settingsHighlightContrast": "Kontrastne tekstivärv", "settingsHighlightNone": "Puudub",
   "settingsDefaultShowChords": "Näita vaikimisi akorde",
   "settingsDefaultAutoscroll": "Alusta laulusõnade automaatset kerimist",
   "settingsDefaultTiming": "Vaikimisi kerimisrežiim",

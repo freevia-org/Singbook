@@ -916,6 +916,24 @@ class AppLocalizationsHr extends AppLocalizations {
   String get settingsPlayer => 'Reprodukcija teksta';
 
   @override
+  String get settingsLyricHighlight => 'Isticanje trenutačnog retka';
+
+  @override
+  String get settingsHighlightBackgroundUnderline => 'Pozadina + podcrtavanje';
+
+  @override
+  String get settingsHighlightBackground => 'Pozadina';
+
+  @override
+  String get settingsHighlightUnderline => 'Podcrtavanje';
+
+  @override
+  String get settingsHighlightContrast => 'Kontrastna boja teksta';
+
+  @override
+  String get settingsHighlightNone => 'Bez';
+
+  @override
   String get settingsDefaultShowChords =>
       'Prema zadanim postavkama prikaži akorde';
 

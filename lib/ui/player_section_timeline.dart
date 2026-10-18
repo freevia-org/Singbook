@@ -2,45 +2,67 @@ import 'verse_ui_state.dart';
 
 const _estimatedBoundaryToleranceSeconds = 0.000001;
 
-/// Returns lyric lines that participate in estimated playback positions.
+/// Returns lyric rows that participate in estimated playback positions.
 ///
-/// Section headings, blank rows, and chord-only rows are visual structure,
-/// not lyric positions. Sharing this filter keeps section seeks aligned with
-/// the reader's estimated current-line highlight.
+/// Blank rows and chord-only rows are visual structure, not lyric positions.
+/// Named sections with no lyric rows get a separate slot in the estimated
+/// timeline below.
+bool _isEstimatedLyricLine(LyricLineData line) =>
+    line.section == null && !line.isBlank && line.text.trim().isNotEmpty;
+
 List<LyricLineData> estimatedTimelineLines(List<LyricLineData> lines) =>
-    List.unmodifiable(
-      lines.where(
-        (line) =>
-            line.section == null &&
-            !line.isBlank &&
-            line.text.trim().isNotEmpty,
-      ),
-    );
+    List.unmodifiable(lines.where(_isEstimatedLyricLine));
+
+/// Adds one estimated time slot for each named section that has no lyric rows.
+/// The heading ID represents that section while playback is in its slot.
+List<String> _estimatedTimelineEventIds(List<LyricLineData> lines) {
+  final events = <String>[];
+  for (var index = 0; index < lines.length; index++) {
+    final line = lines[index];
+    if (line.section != null) {
+      var hasLyrics = false;
+      for (
+        var next = index + 1;
+        next < lines.length && lines[next].section == null;
+        next++
+      ) {
+        if (_isEstimatedLyricLine(lines[next])) {
+          hasLyrics = true;
+          break;
+        }
+      }
+      if (!hasLyrics) events.add(line.id);
+    } else if (_isEstimatedLyricLine(line)) {
+      events.add(line.id);
+    }
+  }
+  return events;
+}
 
 Map<String, double> _estimatedLineStartTimes(
   List<LyricLineData> lines,
   double durationSeconds,
 ) {
   if (!durationSeconds.isFinite || durationSeconds <= 0) return const {};
-  final visibleLines = estimatedTimelineLines(lines);
-  if (visibleLines.isEmpty) return const {};
+  final events = _estimatedTimelineEventIds(lines);
+  if (events.isEmpty) return const {};
   return Map.unmodifiable({
-    for (var index = 0; index < visibleLines.length; index++)
-      visibleLines[index].id: durationSeconds * index / visibleLines.length,
+    for (var index = 0; index < events.length; index++)
+      events[index]: durationSeconds * index / events.length,
   });
 }
 
-/// Returns the estimated start time used for [lineId], or null when the line
-/// is not a lyric line in this timeline or the duration is invalid.
+/// Returns the estimated start time used for [lineId], including headings for
+/// lyric-free sections, or null when it is not in the timeline.
 double? estimatedLineStartSeconds(
   List<LyricLineData> lines,
   String lineId,
   double durationSeconds,
 ) => _estimatedLineStartTimes(lines, durationSeconds)[lineId];
 
-/// Resolves the lyric line at [progressSeconds] using the same boundaries as
-/// section markers. The small tolerance makes an exact seek to a marker select
-/// the line at that marker even if the fraction calculation rounds down.
+/// Resolves the active lyric or lyric-free section at [progressSeconds] using
+/// the same boundaries as section markers. The small tolerance makes an exact
+/// seek to a marker select its timeline event even if rounding falls short.
 String? estimatedLineIdAtPosition(
   List<LyricLineData> lines, {
   required double progressSeconds,
@@ -51,15 +73,15 @@ String? estimatedLineIdAtPosition(
       durationSeconds <= 0) {
     return null;
   }
-  final visibleLines = estimatedTimelineLines(lines);
-  if (visibleLines.isEmpty) return null;
-  final starts = _estimatedLineStartTimes(visibleLines, durationSeconds);
+  final events = _estimatedTimelineEventIds(lines);
+  if (events.isEmpty) return null;
+  final starts = _estimatedLineStartTimes(lines, durationSeconds);
   final progress = progressSeconds.clamp(0.0, durationSeconds).toDouble();
-  var current = visibleLines.first.id;
-  for (final line in visibleLines.skip(1)) {
-    final start = starts[line.id]!;
+  var current = events.first;
+  for (final lineId in events.skip(1)) {
+    final start = starts[lineId]!;
     if (start > progress + _estimatedBoundaryToleranceSeconds) break;
-    current = line.id;
+    current = lineId;
   }
   return current;
 }
@@ -73,18 +95,13 @@ List<PlayerSectionMarker> buildPlayerSectionMarkers({
   required List<LyricLineData> lines,
   required double durationSeconds,
   Map<String, double> timedLineStarts = const {},
+  bool useEstimatedFallback = true,
 }) {
   if (lines.isEmpty || !durationSeconds.isFinite || durationSeconds <= 0) {
     return const [];
   }
 
-  final visibleLines = estimatedTimelineLines(lines);
-  if (visibleLines.isEmpty) return const [];
-
-  final estimatedPositions = _estimatedLineStartTimes(
-    visibleLines,
-    durationSeconds,
-  );
+  final estimatedPositions = _estimatedLineStartTimes(lines, durationSeconds);
 
   final markers = <PlayerSectionMarker>[];
   for (var index = 0; index < lines.length; index++) {
@@ -94,24 +111,28 @@ List<PlayerSectionMarker> buildPlayerSectionMarkers({
 
     var lineIndex = index + 1;
     while (lineIndex < lines.length && lines[lineIndex].section == null) {
-      final candidate = lines[lineIndex];
-      if (!candidate.isBlank && candidate.text.trim().isNotEmpty) break;
+      if (_isEstimatedLyricLine(lines[lineIndex])) break;
       lineIndex++;
     }
-    if (lineIndex >= lines.length || lines[lineIndex].section != null) continue;
-
-    final line = lines[lineIndex];
-    if (line.isBlank || line.text.trim().isEmpty) continue;
-    final rawStart = timedLineStarts[line.id] ?? estimatedPositions[line.id];
+    final hasLyrics =
+        lineIndex < lines.length &&
+        lines[lineIndex].section == null &&
+        _isEstimatedLyricLine(lines[lineIndex]);
+    if (!hasLyrics && !useEstimatedFallback) continue;
+    final lineId = hasLyrics ? lines[lineIndex].id : heading.id;
+    final rawStart =
+        timedLineStarts[lineId] ??
+        (useEstimatedFallback ? estimatedPositions[lineId] : null);
     final start = rawStart?.clamp(0.0, durationSeconds).toDouble();
     if (start == null || !start.isFinite) continue;
 
     // Repeated headings can share a start when a chart has no intervening line.
     if (markers.any((marker) => marker.startSeconds == start)) continue;
     markers.add(
-      PlayerSectionMarker(name: name, startSeconds: start, lineId: line.id),
+      PlayerSectionMarker(name: name, startSeconds: start, lineId: lineId),
     );
   }
+  markers.sort((a, b) => a.startSeconds.compareTo(b.startSeconds));
   return List.unmodifiable(markers);
 }
 

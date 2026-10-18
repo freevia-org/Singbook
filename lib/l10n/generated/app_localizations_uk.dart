@@ -924,6 +924,24 @@ class AppLocalizationsUk extends AppLocalizations {
   String get settingsPlayer => 'Прокручування тексту';
 
   @override
+  String get settingsLyricHighlight => 'Підсвічування поточного рядка';
+
+  @override
+  String get settingsHighlightBackgroundUnderline => 'Тло + підкреслення';
+
+  @override
+  String get settingsHighlightBackground => 'Тло';
+
+  @override
+  String get settingsHighlightUnderline => 'Підкреслення';
+
+  @override
+  String get settingsHighlightContrast => 'Контрастний колір тексту';
+
+  @override
+  String get settingsHighlightNone => 'Немає';
+
+  @override
   String get settingsDefaultShowChords => 'Показувати акорди за замовчуванням';
 
   @override

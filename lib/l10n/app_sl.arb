@@ -404,7 +404,7 @@
   "settingsFont": "Pisava",
   "settingsTextSize": "Velikost besedila",
   "settingsLyricsPreview": "Predogled besedila pesmi",
-  "settingsPlayer": "Predvajalnik besedil pesmi",
+  "settingsPlayer": "Predvajalnik besedil pesmi", "settingsLyricHighlight": "Poudarek trenutne vrstice", "settingsHighlightBackgroundUnderline": "Ozadje + podčrtaj", "settingsHighlightBackground": "Ozadje", "settingsHighlightUnderline": "Podčrtaj", "settingsHighlightContrast": "Kontrastna barva besedila", "settingsHighlightNone": "Brez",
   "settingsDefaultShowChords": "Privzeto pokaži akorde",
   "settingsDefaultAutoscroll": "Samodejno začni drsenje besedila",
   "settingsDefaultTiming": "Privzeti način drsenja",

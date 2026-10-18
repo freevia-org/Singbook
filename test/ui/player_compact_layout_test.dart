@@ -18,6 +18,7 @@ class _Controller extends VerseUiController {
   String? songKey = 'Em';
   double speed = 1;
   bool showChords = true;
+  String highlightStyle = 'contrast';
   @override
   VerseUiState get state => VerseUiState(
     route: VerseRoute.reader,
@@ -36,6 +37,7 @@ class _Controller extends VerseUiController {
     readerCanCompareVersions: true,
     playbackSpeed: speed,
     showChords: showChords,
+    lyricHighlightStyle: highlightStyle,
     songLines: const [
       LyricLineData(id: 'v', section: 'Verse 1', isBlank: true),
       LyricLineData(
@@ -248,32 +250,48 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('active lyric highlight does not change line geometry', (
-    tester,
-  ) async {
-    final controller = _Controller();
-    addTearDown(controller.dispose);
-    await _pump(tester, controller, size: const Size(320, 640));
+  for (final style in [
+    'contrast',
+    'backgroundUnderline',
+    'background',
+    'underline',
+    'none',
+  ]) {
+    testWidgets('active lyric highlight $style does not change line geometry', (
+      tester,
+    ) async {
+      final controller = _Controller()..highlightStyle = style;
+      addTearDown(controller.dispose);
+      await _pump(tester, controller, size: const Size(320, 640));
 
-    final line = find.byType(ChordLyricsLine).first;
-    final inactiveSize = tester.getSize(line);
-    final inactiveStyle = tester.widget<ChordLyricsLine>(line).style!;
+      final line = find.byType(ChordLyricsLine).first;
+      final inactiveRect = tester.getRect(line);
+      final inactiveStyle = tester.widget<ChordLyricsLine>(line).style!;
 
-    controller.positionNotifier.value = const PlayerPosition(0, 'a');
-    await tester.pump();
+      controller.positionNotifier.value = const PlayerPosition(0, 'a');
+      await tester.pump();
 
-    final active = tester.widget<ChordLyricsLine>(line);
-    expect(tester.getSize(line), inactiveSize);
-    expect(active.style!.fontWeight, inactiveStyle.fontWeight);
-    expect(
-      active.style!.color,
-      verseTheme(
-        brightness: Brightness.light,
-        palette: 'navy',
-      ).colorScheme.primary,
-    );
-    expect(tester.takeException(), isNull);
-  });
+      final active = tester.widget<ChordLyricsLine>(line);
+      expect(tester.getRect(line), inactiveRect);
+      expect(active.style!.fontWeight, inactiveStyle.fontWeight);
+      expect(
+        active.style!.color,
+        style == 'contrast'
+            ? verseTheme(
+                brightness: Brightness.light,
+                palette: 'navy',
+              ).colorScheme.tertiary
+            : inactiveStyle.color,
+      );
+      expect(
+        active.style!.decoration,
+        style == 'underline' || style == 'backgroundUnderline'
+            ? TextDecoration.underline
+            : inactiveStyle.decoration,
+      );
+      expect(tester.takeException(), isNull);
+    });
+  }
 
   testWidgets(
     'standard tuning aliases disappear while alternate tuning remains',

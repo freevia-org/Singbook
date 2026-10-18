@@ -21,6 +21,17 @@ double? _validDuration(Object? value) {
   return seconds.isFinite && seconds > 0 && seconds <= 86400 ? seconds : null;
 }
 
+String _lyricHighlightStyle(Object? value) =>
+    const {
+      'backgroundUnderline',
+      'background',
+      'underline',
+      'contrast',
+      'none',
+    }.contains(value)
+    ? value! as String
+    : 'contrast';
+
 /// Adapts the durable domain controller to the deliberately small UI contract.
 /// Account and file actions are injected by the app shell when those integrations
 /// are configured; absent integrations remain visibly unavailable.
@@ -293,12 +304,26 @@ class AppControllerAdapter extends VerseUiController {
         ? 0.0
         : _validDuration(song.metadata['durationSeconds']) ??
               _estimatedDuration(data.length);
+    final timedLineStarts = song == null
+        ? const <String, double>{}
+        : _timedLineStarts(data, song, timingMode);
+    final activeTimingTrackId = song?.activeTimingTrackId;
+    final hasActiveTimedCues =
+        timingMode == 'timed' &&
+        song?.timingTracks.any(
+              (track) =>
+                  track.id == activeTimingTrackId &&
+                  track.status == TimingStatus.usable &&
+                  track.cues.isNotEmpty,
+            ) ==
+            true;
     final playerSections = song == null
         ? const <PlayerSectionMarker>[]
         : buildPlayerSectionMarkers(
             lines: data,
             durationSeconds: playerDuration,
-            timedLineStarts: _timedLineStarts(data, song, timingMode),
+            timedLineStarts: timedLineStarts,
+            useEstimatedFallback: !hasActiveTimedCues,
           );
     final recent = <RecentItemData>[];
     for (final event in app.recent) {
@@ -430,6 +455,9 @@ class AppControllerAdapter extends VerseUiController {
       fontFamily: app.settings['fontFamily'] as String? ?? 'system',
       lyricsFontSize:
           (app.settings['readerFontSize'] as num?)?.toDouble() ?? 24,
+      lyricHighlightStyle: _lyricHighlightStyle(
+        app.settings['lyricHighlightStyle'],
+      ),
       showChords: app.settings['showChords'] as bool? ?? true,
       autoscroll:
           (app.settings['autoscroll'] as bool? ?? true) &&
@@ -2417,6 +2445,9 @@ class AppControllerAdapter extends VerseUiController {
   @override
   Future<void> setLyricsFontSize(double size) =>
       app.setSetting('readerFontSize', size);
+  @override
+  Future<void> setLyricHighlightStyle(String style) =>
+      app.setSetting('lyricHighlightStyle', style);
   @override
   Future<void> setShowChords(bool show) => app.setSetting('showChords', show);
 

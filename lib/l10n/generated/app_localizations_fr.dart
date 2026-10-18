@@ -925,6 +925,24 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsPlayer => 'Lecteur de paroles';
 
   @override
+  String get settingsLyricHighlight => 'Mise en évidence de la ligne actuelle';
+
+  @override
+  String get settingsHighlightBackgroundUnderline => 'Fond + soulignement';
+
+  @override
+  String get settingsHighlightBackground => 'Fond';
+
+  @override
+  String get settingsHighlightUnderline => 'Soulignement';
+
+  @override
+  String get settingsHighlightContrast => 'Couleur de texte contrastée';
+
+  @override
+  String get settingsHighlightNone => 'Aucun';
+
+  @override
   String get settingsDefaultShowChords => 'Afficher les accords par défaut';
 
   @override

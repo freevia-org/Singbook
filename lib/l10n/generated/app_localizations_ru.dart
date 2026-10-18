@@ -920,6 +920,24 @@ class AppLocalizationsRu extends AppLocalizations {
   String get settingsPlayer => 'Прокрутка текста';
 
   @override
+  String get settingsLyricHighlight => 'Подсветка текущей строки текста';
+
+  @override
+  String get settingsHighlightBackgroundUnderline => 'Фон + подчёркивание';
+
+  @override
+  String get settingsHighlightBackground => 'Фон';
+
+  @override
+  String get settingsHighlightUnderline => 'Подчёркивание';
+
+  @override
+  String get settingsHighlightContrast => 'Контрастный цвет текста';
+
+  @override
+  String get settingsHighlightNone => 'Нет';
+
+  @override
   String get settingsDefaultShowChords => 'Показывать аккорды по умолчанию';
 
   @override

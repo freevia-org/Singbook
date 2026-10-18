@@ -404,7 +404,7 @@
   "settingsFont": "Czcionka",
   "settingsTextSize": "Rozmiar tekstu",
   "settingsLyricsPreview": "Podgląd tekstu",
-  "settingsPlayer": "Odtwarzacz tekstu",
+  "settingsPlayer": "Odtwarzacz tekstu", "settingsLyricHighlight": "Podświetlenie bieżącego wersu", "settingsHighlightBackgroundUnderline": "Tło + podkreślenie", "settingsHighlightBackground": "Tło", "settingsHighlightUnderline": "Podkreślenie", "settingsHighlightContrast": "Kontrastowy kolor tekstu", "settingsHighlightNone": "Brak",
   "settingsDefaultShowChords": "Domyślnie pokazuj akordy",
   "settingsDefaultAutoscroll": "Automatycznie rozpocznij przewijanie tekstu",
   "settingsDefaultTiming": "Domyślny tryb przewijania",

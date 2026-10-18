@@ -916,6 +916,25 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsPlayer => 'Liedtext-Player';
 
   @override
+  String get settingsLyricHighlight => 'Aktuelle Liedzeile hervorheben';
+
+  @override
+  String get settingsHighlightBackgroundUnderline =>
+      'Hintergrund + Unterstreichung';
+
+  @override
+  String get settingsHighlightBackground => 'Hintergrund';
+
+  @override
+  String get settingsHighlightUnderline => 'Unterstreichung';
+
+  @override
+  String get settingsHighlightContrast => 'Kontrastierende Textfarbe';
+
+  @override
+  String get settingsHighlightNone => 'Keine';
+
+  @override
   String get settingsDefaultShowChords => 'Akkorde standardmäßig anzeigen';
 
   @override

@@ -912,6 +912,25 @@ class AppLocalizationsSv extends AppLocalizations {
   String get settingsPlayer => 'Låttextspelare';
 
   @override
+  String get settingsLyricHighlight => 'Markering av aktuell textrad';
+
+  @override
+  String get settingsHighlightBackgroundUnderline =>
+      'Bakgrund + understrykning';
+
+  @override
+  String get settingsHighlightBackground => 'Bakgrund';
+
+  @override
+  String get settingsHighlightUnderline => 'Understrykning';
+
+  @override
+  String get settingsHighlightContrast => 'Kontrasterande textfärg';
+
+  @override
+  String get settingsHighlightNone => 'Ingen';
+
+  @override
   String get settingsDefaultShowChords => 'Visa ackord som standard';
 
   @override

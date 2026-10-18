@@ -919,6 +919,25 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settingsPlayer => 'Songtekstspeler';
 
   @override
+  String get settingsLyricHighlight => 'Huidige songregel markeren';
+
+  @override
+  String get settingsHighlightBackgroundUnderline =>
+      'Achtergrond + onderstreping';
+
+  @override
+  String get settingsHighlightBackground => 'Achtergrond';
+
+  @override
+  String get settingsHighlightUnderline => 'Onderstreping';
+
+  @override
+  String get settingsHighlightContrast => 'Contrasterende tekstkleur';
+
+  @override
+  String get settingsHighlightNone => 'Geen';
+
+  @override
   String get settingsDefaultShowChords => 'Akkoorden standaard tonen';
 
   @override

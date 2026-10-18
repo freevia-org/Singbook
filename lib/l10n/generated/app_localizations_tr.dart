@@ -914,6 +914,24 @@ class AppLocalizationsTr extends AppLocalizations {
   String get settingsPlayer => 'Şarkı sözü oynatıcı';
 
   @override
+  String get settingsLyricHighlight => 'Geçerli söz satırını vurgula';
+
+  @override
+  String get settingsHighlightBackgroundUnderline => 'Arka plan + alt çizgi';
+
+  @override
+  String get settingsHighlightBackground => 'Arka plan';
+
+  @override
+  String get settingsHighlightUnderline => 'Alt çizgi';
+
+  @override
+  String get settingsHighlightContrast => 'Kontrastlı metin rengi';
+
+  @override
+  String get settingsHighlightNone => 'Yok';
+
+  @override
   String get settingsDefaultShowChords => 'Akorları varsayılan olarak göster';
 
   @override

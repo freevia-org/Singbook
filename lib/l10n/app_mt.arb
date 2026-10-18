@@ -404,7 +404,7 @@
   "settingsFont": "Font",
   "settingsTextSize": "Daqs tat-test",
   "settingsLyricsPreview": "Previżjoni tal-lirika",
-  "settingsPlayer": "Plejer tal-lirika",
+  "settingsPlayer": "Plejer tal-lirika", "settingsLyricHighlight": "Enfasi fuq il-linja tal-lirika attwali", "settingsHighlightBackgroundUnderline": "Sfond + linja taħt", "settingsHighlightBackground": "Sfond", "settingsHighlightUnderline": "Linja taħt", "settingsHighlightContrast": "Kulur tat-test b'kuntrast", "settingsHighlightNone": "Xejn",
   "settingsDefaultShowChords": "Uri l-akkordi b’mod predefinit",
   "settingsDefaultAutoscroll": "Ibda l-iskrolljar tal-lirika awtomatikament",
   "settingsDefaultTiming": "Mod tal-iskrolljar predefinit",

@@ -922,6 +922,24 @@ class AppLocalizationsMt extends AppLocalizations {
   String get settingsPlayer => 'Plejer tal-lirika';
 
   @override
+  String get settingsLyricHighlight => 'Enfasi fuq il-linja tal-lirika attwali';
+
+  @override
+  String get settingsHighlightBackgroundUnderline => 'Sfond + linja taħt';
+
+  @override
+  String get settingsHighlightBackground => 'Sfond';
+
+  @override
+  String get settingsHighlightUnderline => 'Linja taħt';
+
+  @override
+  String get settingsHighlightContrast => 'Kulur tat-test b\'kuntrast';
+
+  @override
+  String get settingsHighlightNone => 'Xejn';
+
+  @override
   String get settingsDefaultShowChords => 'Uri l-akkordi b’mod predefinit';
 
   @override
