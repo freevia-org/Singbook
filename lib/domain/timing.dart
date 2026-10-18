@@ -415,7 +415,10 @@ TimingTrack parseTtml(
     );
     final unisonProfile =
         root.name.local == 'tt' &&
-        attr(root, 'composer') == 'https://composer.boidu.dev/ttml' &&
+        const {
+          'https://composer.boidu.dev/ttml',
+          'https://composer.betterlyrics.org/ttml',
+        }.contains(attr(root, 'composer')) &&
         attr(root, 'timeBase') == 'media';
     final appleProfile =
         profile == 'apple-lyrics' ||

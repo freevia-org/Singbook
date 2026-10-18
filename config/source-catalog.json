@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "extractionSchemaVersion": 1,
-  "revision": 3,
-  "publishedAt": "2026-10-17T05:59:13Z",
+  "revision": 4,
+  "publishedAt": "2026-10-18T06:06:15Z",
   "sources": [
     {
       "id": "genius",
@@ -276,7 +276,7 @@
       "name": "Unison",
       "adapter": "json",
       "status": "active",
-      "revision": 2,
+      "revision": 3,
       "capabilities": [
         "catalog",
         "lyrics",
@@ -290,7 +290,7 @@
       "hosts": [
         "unison.betterlyrics.org"
       ],
-      "changeReason": "Verified 2026-10-15 against documented public API; IDs 31/1494 pass with raw TTML and explicit line+word cues (341/441 cues). Attribution: https://unison.boidu.dev; individual lyric-text rights remain unverified; no ODbL claim.",
+      "changeReason": "2026-10-18 live TTML for Give It Up declares the current composer.betterlyrics.org namespace; accept that explicit media-clock profile alongside the legacy namespace. Compiled parser repair requires a compatible app release. Preserve identities, raw timing and attribution.",
       "extraction": {
         "search": {
           "url": "https://unison.betterlyrics.org/lyrics/search?q={query}",

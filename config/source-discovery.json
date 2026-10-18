@@ -5,14 +5,14 @@
       "id": "unison",
       "name": "Unison",
       "firstSeen": "2026-10-15",
-      "lastChecked": "2026-10-15",
+      "lastChecked": "2026-10-18",
       "status": "accepted",
       "documentation": [
         "https://docs.betterlyrics.org/unison",
         "https://github.com/better-lyrics/unison"
       ],
       "endpoint": "https://unison.betterlyrics.org",
-      "reason": "Three deterministic canaries passed on 2026-10-15: exact search for Give It Up / Don Toliver, direct ID 31, and direct ID 1494 Love Never Felt So Good / Michael Jackson. Direct reads retained raw TTML; parsed tracks have 341/441 cues including explicit line and positioned word cues. Source attribution is https://unison.boidu.dev; individual lyric-text rights remain unverified and no ODbL claim is made."
+      "reason": "Three deterministic canaries passed on 2026-10-15: exact search for Give It Up / Don Toliver, direct ID 31, and direct ID 1494 Love Never Felt So Good / Michael Jackson. Direct reads retained raw TTML; parsed tracks have 341/441 cues including explicit line and positioned word cues. Source attribution is https://unison.boidu.dev; individual lyric-text rights remain unverified and no ODbL claim is made. On 2026-10-18 live ID 31 retained TTML with 32 paragraphs, 332 spans and 354 timed elements but moved to the explicit composer.betterlyrics.org namespace. Legacy ID 1494 remained available. Prepare bounded parser compatibility repair; no rights expansion or new source."
     },
     {
       "id": "startjamming",
