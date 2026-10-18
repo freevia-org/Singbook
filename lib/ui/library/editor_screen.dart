@@ -219,12 +219,17 @@ class _EditorScreenState extends State<EditorScreen> {
     String label, {
     String? errorText,
     String? hintText,
+    bool compact = false,
   }) => InputDecoration(
     labelText: label,
     errorText: errorText,
     hintText: hintText,
     isDense: true,
-    contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+    floatingLabelBehavior: FloatingLabelBehavior.always,
+    contentPadding: EdgeInsets.symmetric(
+      horizontal: compact ? 6 : 10,
+      vertical: 12,
+    ),
     border: const OutlineInputBorder(),
   );
 
@@ -242,7 +247,12 @@ class _EditorScreenState extends State<EditorScreen> {
     textCapitalization: numeric
         ? TextCapitalization.none
         : TextCapitalization.sentences,
-    decoration: _decoration(label, errorText: errorText, hintText: hintText),
+    decoration: _decoration(
+      label,
+      errorText: errorText,
+      hintText: hintText,
+      compact: true,
+    ),
   );
 
   // An identity-only value cannot collide with imported or entered text.
@@ -302,12 +312,13 @@ class _EditorScreenState extends State<EditorScreen> {
     }
 
     return InputDecorator(
-      decoration: _decoration(label),
+      decoration: _decoration(label, compact: true),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<Object>(
           key: ValueKey('editor-${tuning ? 'tuning' : 'key'}-input'),
           value: controller.text,
           isDense: true,
+          iconSize: 18,
           isExpanded: true,
           menuMaxHeight: 320,
           items: [
