@@ -855,7 +855,7 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Muokkaa sanoituksia tai sointuja napauttamalla riviä.';
+      'Soinnut hakasulkeisiin [C]; osamerkinnät omille riveilleen.';
 
   @override
   String get editorSave => 'Tallenna muutokset';
@@ -1846,4 +1846,21 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Ei mitään';
+
+  @override
+  String get editorCustomValue => 'Muu…';
+
+  @override
+  String get editorStandardTuning => 'Vakiovire';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Uusi päivä [G]kutsuu,\n[Am]seuraamme valoa takaisin [F]kotiin.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Lauletaan tämä laulu [C]yhdessä,\n[G]melodia vie meitä [C]eteenpäin.';
+
+  @override
+  String get editorExampleBridge => '[Am]Vielä yksi rivi, hieman [F]lähempänä.';
 }

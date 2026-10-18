@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Recherche",
   "providerCapabilityMetadata": "Détails de la chanson",
   "editorArtworkField": "Lien vers la pochette",
-  "editorLyricsHint": "Touchez une ligne pour modifier les paroles ou les accords.",
+  "editorLyricsHint": "Accords entre crochets [C] ; marqueurs de section sur des lignes séparées.",
   "editorSave": "Enregistrer les modifications",
   "editorSaved": "Modifications enregistrées.",
   "editorSaveFailed": "Impossible d’enregistrer les modifications.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Autre…",
+  "editorStandardTuning": "Accordage standard",
+  "editorExampleVerse": "[C]Un nouveau jour nous [G]appelle,\n[Am]nous suivons la lumière jusqu’à [F]la maison.",
+  "editorExampleChorus": "[F]Chantons cette chanson [C]ensemble,\n[G]la mélodie nous emporte [C]plus loin.",
+  "editorExampleBridge": "[Am]Encore une ligne, un peu plus [F]près."
 }

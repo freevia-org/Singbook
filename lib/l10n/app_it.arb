@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Ricerca",
   "providerCapabilityMetadata": "Dettagli del brano",
   "editorArtworkField": "Link alla copertina",
-  "editorLyricsHint": "Tocca una riga per modificare il testo o gli accordi.",
+  "editorLyricsHint": "Accordi tra parentesi quadre [C]; indicatori di sezione su righe separate.",
   "editorSave": "Salva modifiche",
   "editorSaved": "Modifiche salvate.",
   "editorSaveFailed": "Impossibile salvare le modifiche.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Altro…",
+  "editorStandardTuning": "Accordatura standard",
+  "editorExampleVerse": "[C]Un nuovo giorno ci [G]chiama,\n[Am]seguiamo la luce fino a [F]casa.",
+  "editorExampleChorus": "[F]Cantiamo questa canzone [C]insieme,\n[G]lasciamo che la melodia ci porti [C]avanti.",
+  "editorExampleBridge": "[Am]Un’altra riga, un po’ più [F]vicini."
 }

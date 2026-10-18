@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Iskanje",
   "providerCapabilityMetadata": "Podatki o pesmi",
   "editorArtworkField": "Povezava do naslovnice",
-  "editorLyricsHint": "Tapnite vrstico, da uredite besedilo pesmi ali akorde.",
+  "editorLyricsHint": "Akorde zapišite v oglatih oklepajih [C]; oznake delov naj bodo v ločenih vrsticah.",
   "editorSave": "Shrani spremembe",
   "editorSaved": "Spremembe so shranjene.",
   "editorSaveFailed": "Sprememb ni bilo mogoče shraniti.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Drugo…",
+  "editorStandardTuning": "Standardna uglasitev",
+  "editorExampleVerse": "[C]Nov dan nas [G]kliče,\n[Am]sledimo svetlobi nazaj [F]domov.",
+  "editorExampleChorus": "[F]Zapojmo to pesem [C]skupaj,\n[G]naj nas melodija ponese [C]naprej.",
+  "editorExampleBridge": "[Am]Še ena vrstica, malo [F]bliže."
 }

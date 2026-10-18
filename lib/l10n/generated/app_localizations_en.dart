@@ -850,7 +850,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editorArtworkField => 'Artwork link';
 
   @override
-  String get editorLyricsHint => 'Tap a line to edit lyrics or chords.';
+  String get editorLyricsHint =>
+      'Chords in [C] brackets; section markers on separate lines.';
 
   @override
   String get editorSave => 'Save changes';
@@ -1830,4 +1831,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'None';
+
+  @override
+  String get editorCustomValue => 'Other…';
+
+  @override
+  String get editorStandardTuning => 'Standard';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]A new day is [G]calling,\n[Am]We follow the light back [F]home.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Sing this song [C]together,\n[G]Let the melody carry us [C]on.';
+
+  @override
+  String get editorExampleBridge => '[Am]One more line, a little [F]closer.';
 }

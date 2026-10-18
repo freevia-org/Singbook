@@ -866,7 +866,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Touchez une ligne pour modifier les paroles ou les accords.';
+      'Accords entre crochets [C] ; marqueurs de section sur des lignes séparées.';
 
   @override
   String get editorSave => 'Enregistrer les modifications';
@@ -1875,4 +1875,22 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Aucun';
+
+  @override
+  String get editorCustomValue => 'Autre…';
+
+  @override
+  String get editorStandardTuning => 'Accordage standard';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Un nouveau jour nous [G]appelle,\n[Am]nous suivons la lumière jusqu’à [F]la maison.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Chantons cette chanson [C]ensemble,\n[G]la mélodie nous emporte [C]plus loin.';
+
+  @override
+  String get editorExampleBridge =>
+      '[Am]Encore une ligne, un peu plus [F]près.';
 }

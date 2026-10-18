@@ -865,7 +865,7 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Tapnite vrstico, da uredite besedilo pesmi ali akorde.';
+      'Akorde zapišite v oglatih oklepajih [C]; oznake delov naj bodo v ločenih vrsticah.';
 
   @override
   String get editorSave => 'Shrani spremembe';
@@ -1883,4 +1883,21 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Brez';
+
+  @override
+  String get editorCustomValue => 'Drugo…';
+
+  @override
+  String get editorStandardTuning => 'Standardna uglasitev';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Nov dan nas [G]kliče,\n[Am]sledimo svetlobi nazaj [F]domov.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Zapojmo to pesem [C]skupaj,\n[G]naj nas melodija ponese [C]naprej.';
+
+  @override
+  String get editorExampleBridge => '[Am]Še ena vrstica, malo [F]bliže.';
 }

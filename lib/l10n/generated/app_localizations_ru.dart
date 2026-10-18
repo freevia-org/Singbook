@@ -862,7 +862,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Нажми на строку, чтобы изменить текст или аккорды.';
+      'Аккорды указывайте в скобках [C], а названия разделов — отдельными строками.';
 
   @override
   String get editorSave => 'Сохранить изменения';
@@ -1881,4 +1881,21 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Нет';
+
+  @override
+  String get editorCustomValue => 'Другое…';
+
+  @override
+  String get editorStandardTuning => 'Стандартный строй';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Новый день нас [G]зовёт,\n[Am]мы следуем за светом домой, к [F]порогу.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Споём эту песню [C]вместе,\n[G]пусть мелодия уносит нас [C]вперёд.';
+
+  @override
+  String get editorExampleBridge => '[Am]Ещё одна строка, немного [F]ближе.';
 }

@@ -861,7 +861,7 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Pieskarieties rindai, lai rediģētu dziesmas vārdus vai akordus.';
+      'Akordus rakstiet kvadrātiekavās [C]; sadaļu marķierus ievietojiet atsevišķās rindās.';
 
   @override
   String get editorSave => 'Saglabāt izmaiņas';
@@ -1870,4 +1870,21 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Nav';
+
+  @override
+  String get editorCustomValue => 'Cits…';
+
+  @override
+  String get editorStandardTuning => 'Standarta skaņojums';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Jauna diena mūs [G]sauc,\n[Am]mēs sekojam gaismai atpakaļ [F]mājās.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Dziedāsim šo dziesmu [C]kopā,\n[G]lai melodija mūs nes [C]tālāk.';
+
+  @override
+  String get editorExampleBridge => '[Am]Vēl viena rinda, mazliet [F]tuvāk.';
 }

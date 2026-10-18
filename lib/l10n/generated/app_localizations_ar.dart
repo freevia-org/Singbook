@@ -864,7 +864,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get editorArtworkField => 'رابط الغلاف';
 
   @override
-  String get editorLyricsHint => 'المس سطرًا لتعديل الكلمات أو الأكوردات.';
+  String get editorLyricsHint =>
+      'الأوتار بين أقواس [C]؛ وعلامات المقاطع في أسطر منفصلة.';
 
   @override
   String get editorSave => 'حفظ التغييرات';
@@ -1870,4 +1871,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'لا شيء';
+
+  @override
+  String get editorCustomValue => 'أخرى…';
+
+  @override
+  String get editorStandardTuning => 'قياسي';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]يوم جديد [G]ينادينا،\n[Am]والنور يقودنا إلى [F]البيت.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]لنغنِّ هذه الأغنية [C]معًا،\n[G]ولتأخذنا الألحان [C]بعيدًا.';
+
+  @override
+  String get editorExampleBridge => '[Am]سطر آخر، وخطوة [F]أقرب.';
 }

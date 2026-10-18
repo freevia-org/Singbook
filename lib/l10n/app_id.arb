@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Pencarian",
   "providerCapabilityMetadata": "Detail lagu",
   "editorArtworkField": "Tautan sampul",
-  "editorLyricsHint": "Ketuk baris untuk mengedit lirik atau akor.",
+  "editorLyricsHint": "Akord ditulis dalam tanda kurung [C]; penanda bagian pada baris tersendiri.",
   "editorSave": "Simpan perubahan",
   "editorSaved": "Perubahan disimpan.",
   "editorSaveFailed": "Perubahan tidak dapat disimpan.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Lainnya…",
+  "editorStandardTuning": "Setelan standar",
+  "editorExampleVerse": "[C]Hari baru [G]memanggil,\n[Am]kita ikuti cahaya pulang ke [F]rumah.",
+  "editorExampleChorus": "[F]Nyanyikan lagu ini [C]bersama,\n[G]biarkan melodi membawa kita [C]terus.",
+  "editorExampleBridge": "[Am]Satu baris lagi, sedikit lebih [F]dekat."
 }

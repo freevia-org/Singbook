@@ -859,7 +859,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Ťuknutím na riadok upravíte text piesne alebo akordy.';
+      'Akordy píšte do hranatých zátvoriek [C]; označenia častí na samostatné riadky.';
 
   @override
   String get editorSave => 'Uložiť zmeny';
@@ -1865,4 +1865,21 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Žiadne';
+
+  @override
+  String get editorCustomValue => 'Iné…';
+
+  @override
+  String get editorStandardTuning => 'Štandardné ladenie';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Nový deň nás [G]volá,\n[Am]za svetlom sa vraciame [F]domov.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Spievajme túto pieseň [C]spolu,\n[G]nech nás melódia nesie [C]ďalej.';
+
+  @override
+  String get editorExampleBridge => '[Am]Ešte jeden riadok, o čosi [F]bližšie.';
 }

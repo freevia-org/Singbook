@@ -866,7 +866,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Торкніться рядка, щоб редагувати текст або акорди.';
+      'Акорди в дужках [C]; маркери частин на окремих рядках.';
 
   @override
   String get editorSave => 'Зберегти зміни';
@@ -1882,4 +1882,21 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Немає';
+
+  @override
+  String get editorCustomValue => 'Інше…';
+
+  @override
+  String get editorStandardTuning => 'Стандартний';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Новий день нас [G]кличе,\n[Am]світло веде нас [F]додому.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Заспіваймо цю пісню [C]разом,\n[G]хай мелодія веде нас [C]далі.';
+
+  @override
+  String get editorExampleBridge => '[Am]Ще один рядок, на крок [F]ближче.';
 }

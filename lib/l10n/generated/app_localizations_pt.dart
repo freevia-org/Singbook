@@ -857,7 +857,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Toque em uma linha para editar a letra ou os acordes.';
+      'Acordes entre colchetes [C]; marcadores de seção em linhas separadas.';
 
   @override
   String get editorSave => 'Salvar alterações';
@@ -1858,4 +1858,22 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Nenhum';
+
+  @override
+  String get editorCustomValue => 'Outro…';
+
+  @override
+  String get editorStandardTuning => 'Afinação padrão';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Um novo dia nos [G]chama,\n[Am]seguimos a luz de volta para [F]casa.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Vamos cantar esta canção [C]juntos,\n[G]que a melodia nos leve [C]adiante.';
+
+  @override
+  String get editorExampleBridge =>
+      '[Am]Mais uma linha, um pouco [F]mais perto.';
 }

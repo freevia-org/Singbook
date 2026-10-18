@@ -833,7 +833,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get editorArtworkField => 'アートワークのリンク';
 
   @override
-  String get editorLyricsHint => '行をタップして歌詞やコードを編集します。';
+  String get editorLyricsHint => 'コードは [C] の角括弧に入れ、セクション名は別の行に入力します。';
 
   @override
   String get editorSave => '変更を保存';
@@ -1773,4 +1773,19 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'なし';
+
+  @override
+  String get editorCustomValue => 'その他…';
+
+  @override
+  String get editorStandardTuning => '標準チューニング';
+
+  @override
+  String get editorExampleVerse => '[C]新しい日が [G]呼んでいる、\n[Am]光をたどって [F]家へ帰ろう。';
+
+  @override
+  String get editorExampleChorus => '[F]この歌を[C]一緒に歌おう、\n[G]メロディーに乗って [C]進もう。';
+
+  @override
+  String get editorExampleBridge => '[Am]もう一行、少しだけ [F]近くへ。';
 }

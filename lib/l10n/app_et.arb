@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Otsing",
   "providerCapabilityMetadata": "Laulu andmed",
   "editorArtworkField": "Kaanepildi link",
-  "editorLyricsHint": "Puuduta rida, et muuta laulusõnu või akorde.",
+  "editorLyricsHint": "Akordid kirjuta [C] sulgudesse; osamärgid eraldi ridadele.",
   "editorSave": "Salvesta muudatused",
   "editorSaved": "Muudatused salvestati.",
   "editorSaveFailed": "Muudatuste salvestamine ebaõnnestus.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Muu…",
+  "editorStandardTuning": "Standardhäälestus",
+  "editorExampleVerse": "[C]Uus päev meid [G]kutsub,\n[Am]järgime valgust tagasi [F]koju.",
+  "editorExampleChorus": "[F]Laulame seda laulu [C]koos,\n[G]las meloodia kannab meid [C]edasi.",
+  "editorExampleBridge": "[Am]Veel üks rida, veidi [F]lähemal."
 }

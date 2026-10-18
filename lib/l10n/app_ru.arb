@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Поиск",
   "providerCapabilityMetadata": "Сведения о песне",
   "editorArtworkField": "Ссылка на обложку",
-  "editorLyricsHint": "Нажми на строку, чтобы изменить текст или аккорды.",
+  "editorLyricsHint": "Аккорды указывайте в скобках [C], а названия разделов — отдельными строками.",
   "editorSave": "Сохранить изменения",
   "editorSaved": "Изменения сохранены.",
   "editorSaveFailed": "Не удалось сохранить изменения.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Другое…",
+  "editorStandardTuning": "Стандартный строй",
+  "editorExampleVerse": "[C]Новый день нас [G]зовёт,\n[Am]мы следуем за светом домой, к [F]порогу.",
+  "editorExampleChorus": "[F]Споём эту песню [C]вместе,\n[G]пусть мелодия уносит нас [C]вперёд.",
+  "editorExampleBridge": "[Am]Ещё одна строка, немного [F]ближе."
 }

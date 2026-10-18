@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Pesquisa",
   "providerCapabilityMetadata": "Detalhes da música",
   "editorArtworkField": "Link da capa",
-  "editorLyricsHint": "Toque em uma linha para editar a letra ou os acordes.",
+  "editorLyricsHint": "Acordes entre colchetes [C]; marcadores de seção em linhas separadas.",
   "editorSave": "Salvar alterações",
   "editorSaved": "Alterações salvas.",
   "editorSaveFailed": "Não foi possível salvar as alterações.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Outro…",
+  "editorStandardTuning": "Afinação padrão",
+  "editorExampleVerse": "[C]Um novo dia nos [G]chama,\n[Am]seguimos a luz de volta para [F]casa.",
+  "editorExampleChorus": "[F]Vamos cantar esta canção [C]juntos,\n[G]que a melodia nos leve [C]adiante.",
+  "editorExampleBridge": "[Am]Mais uma linha, um pouco [F]mais perto."
 }

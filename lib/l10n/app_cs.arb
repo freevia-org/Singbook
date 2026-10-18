@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Vyhledávání",
   "providerCapabilityMetadata": "Informace o písni",
   "editorArtworkField": "Odkaz na obal",
-  "editorLyricsHint": "Klepnutím na řádek upravíte text písně nebo akordy.",
+  "editorLyricsHint": "Akordy pište do závorek [C]; označení částí na samostatné řádky.",
   "editorSave": "Uložit změny",
   "editorSaved": "Změny byly uloženy.",
   "editorSaveFailed": "Změny se nepodařilo uložit.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Jiné…",
+  "editorStandardTuning": "Standardní ladění",
+  "editorExampleVerse": "[C]Nový den nás [G]volá,\n[Am]za světlem se vracíme [F]domů.",
+  "editorExampleChorus": "[F]Zpívejme tuto píseň [C]společně,\n[G]ať nás melodie nese [C]dál.",
+  "editorExampleBridge": "[Am]Ještě jeden řádek, o něco [F]blíž."
 }

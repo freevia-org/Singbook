@@ -1617,7 +1617,7 @@ abstract class AppLocalizations {
   /// No description provided for @editorLyricsHint.
   ///
   /// In en, this message translates to:
-  /// **'Tap a line to edit lyrics or chords.'**
+  /// **'Chords in [C] brackets; section markers on separate lines.'**
   String get editorLyricsHint;
 
   /// No description provided for @editorSave.
@@ -3239,6 +3239,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'None'**
   String get playerChordsNone;
+
+  /// No description provided for @editorCustomValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Other…'**
+  String get editorCustomValue;
+
+  /// No description provided for @editorStandardTuning.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard'**
+  String get editorStandardTuning;
+
+  /// No description provided for @editorExampleVerse.
+  ///
+  /// In en, this message translates to:
+  /// **'[C]A new day is [G]calling,\n[Am]We follow the light back [F]home.'**
+  String get editorExampleVerse;
+
+  /// No description provided for @editorExampleChorus.
+  ///
+  /// In en, this message translates to:
+  /// **'[F]Sing this song [C]together,\n[G]Let the melody carry us [C]on.'**
+  String get editorExampleChorus;
+
+  /// No description provided for @editorExampleBridge.
+  ///
+  /// In en, this message translates to:
+  /// **'[Am]One more line, a little [F]closer.'**
+  String get editorExampleBridge;
 }
 
 class _AppLocalizationsDelegate

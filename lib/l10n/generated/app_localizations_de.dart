@@ -857,7 +857,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Tippe auf eine Zeile, um Liedtext oder Akkorde zu bearbeiten.';
+      'Akkorde in [C]-Klammern; Abschnittsmarker stehen in eigenen Zeilen.';
 
   @override
   String get editorSave => 'Änderungen speichern';
@@ -1870,4 +1870,21 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Keine';
+
+  @override
+  String get editorCustomValue => 'Andere…';
+
+  @override
+  String get editorStandardTuning => 'Standardstimmung';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Ein neuer Tag [G]ruft,\n[Am]wir folgen dem Licht zurück nach [F]Hause.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Singt dieses Lied [C]zusammen,\n[G]die Melodie trägt uns [C]weiter.';
+
+  @override
+  String get editorExampleBridge => '[Am]Noch eine Zeile, ein Stück [F]näher.';
 }

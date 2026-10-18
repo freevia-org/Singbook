@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Căutare",
   "providerCapabilityMetadata": "Detalii despre melodie",
   "editorArtworkField": "Link către copertă",
-  "editorLyricsHint": "Atinge un vers pentru a edita versurile sau acordurile.",
+  "editorLyricsHint": "Acordurile se scriu între paranteze [C]; marcajele secțiunilor pe rânduri separate.",
   "editorSave": "Salvează modificările",
   "editorSaved": "Modificările au fost salvate.",
   "editorSaveFailed": "Modificările nu au putut fi salvate.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Altul…",
+  "editorStandardTuning": "Acordaj standard",
+  "editorExampleVerse": "[C]O nouă zi ne [G]cheamă,\n[Am]urmăm lumina înapoi spre [F]casă.",
+  "editorExampleChorus": "[F]Să cântăm acest cântec [C]împreună,\n[G]să ne poarte melodia [C]mai departe.",
+  "editorExampleBridge": "[Am]Încă un vers, puțin mai [F]aproape."
 }

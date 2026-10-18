@@ -854,7 +854,7 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Tryck på en rad för att redigera låttext eller ackord.';
+      'Ackord inom [C]-hakparenteser; avsnittsmarkörer på egna rader.';
 
   @override
   String get editorSave => 'Spara ändringar';
@@ -1849,4 +1849,21 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Ingen';
+
+  @override
+  String get editorCustomValue => 'Annat…';
+
+  @override
+  String get editorStandardTuning => 'Standardstämning';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]En ny dag [G]kallar,\n[Am]vi följer ljuset hem till [F]oss.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Sjung den här sången [C]tillsammans,\n[G]låt melodin bära oss [C]vidare.';
+
+  @override
+  String get editorExampleBridge => '[Am]En rad till, lite [F]närmare.';
 }

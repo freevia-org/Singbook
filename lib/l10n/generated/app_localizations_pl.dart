@@ -861,7 +861,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Dotknij wersu, aby edytować tekst lub akordy.';
+      'Akordy zapisuj w nawiasach [C], a oznaczenia części w osobnych wierszach.';
 
   @override
   String get editorSave => 'Zapisz zmiany';
@@ -1879,4 +1879,21 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Brak';
+
+  @override
+  String get editorCustomValue => 'Inne…';
+
+  @override
+  String get editorStandardTuning => 'Strój standardowy';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Nowy dzień nas [G]woła,\n[Am]wracamy za światłem do [F]domu.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Zaśpiewajmy tę piosenkę [C]razem,\n[G]niech melodia poniesie nas [C]dalej.';
+
+  @override
+  String get editorExampleBridge => '[Am]Jeszcze jeden wers, trochę [F]bliżej.';
 }

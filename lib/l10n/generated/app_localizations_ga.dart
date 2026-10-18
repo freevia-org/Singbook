@@ -860,7 +860,7 @@ class AppLocalizationsGa extends AppLocalizations {
 
   @override
   String get editorLyricsHint =>
-      'Tapáil líne chun liricí nó cordaí a chur in eagar.';
+      'Corda i lúibíní [C]; marcóirí rannóige ar línte ar leith.';
 
   @override
   String get editorSave => 'Sábháil athruithe';
@@ -1869,4 +1869,22 @@ class AppLocalizationsGa extends AppLocalizations {
 
   @override
   String get playerChordsNone => 'Dada';
+
+  @override
+  String get editorCustomValue => 'Eile…';
+
+  @override
+  String get editorStandardTuning => 'Tiúnadh caighdeánach';
+
+  @override
+  String get editorExampleVerse =>
+      '[C]Tá lá nua ag [G]glaoch,\n[Am]leanaimid an solas ar ais [F]abhaile.';
+
+  @override
+  String get editorExampleChorus =>
+      '[F]Can an t-amhrán seo [C]le chéile,\n[G]go n-iompraíonn an tséis sinn [C]ar aghaidh.';
+
+  @override
+  String get editorExampleBridge =>
+      '[Am]Líne amháin eile, beagán níos [F]gaire.';
 }

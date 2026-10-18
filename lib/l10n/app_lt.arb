@@ -386,7 +386,7 @@
   "providerCapabilitySearch": "Paieška",
   "providerCapabilityMetadata": "Dainos informacija",
   "editorArtworkField": "Viršelio nuoroda",
-  "editorLyricsHint": "Palieskite eilutę, kad redaguotumėte tekstą arba akordus.",
+  "editorLyricsHint": "Akordus rašykite laužtiniuose skliaustuose [C]; dalių žymas – atskirose eilutėse.",
   "editorSave": "Išsaugoti pakeitimus",
   "editorSaved": "Pakeitimai išsaugoti.",
   "editorSaveFailed": "Nepavyko išsaugoti pakeitimų.",
@@ -807,5 +807,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "editorCustomValue": "Kita…",
+  "editorStandardTuning": "Standartinis derinimas",
+  "editorExampleVerse": "[C]Nauja diena mus [G]šaukia,\n[Am]sekame šviesą atgal į [F]namus.",
+  "editorExampleChorus": "[F]Dainuokime šią dainą [C]kartu,\n[G]tegu melodija mus neša [C]toliau.",
+  "editorExampleBridge": "[Am]Dar viena eilutė, truputį [F]arčiau."
 }
