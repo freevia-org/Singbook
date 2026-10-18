@@ -920,6 +920,24 @@ class AppLocalizationsEl extends AppLocalizations {
   String get settingsPlayer => 'Αναπαραγωγή στίχων';
 
   @override
+  String get settingsLyricHighlight => 'Current lyric highlight';
+
+  @override
+  String get settingsHighlightBackgroundUnderline => 'Background + underline';
+
+  @override
+  String get settingsHighlightBackground => 'Background';
+
+  @override
+  String get settingsHighlightUnderline => 'Underline';
+
+  @override
+  String get settingsHighlightContrast => 'Contrasting text color';
+
+  @override
+  String get settingsHighlightNone => 'None';
+
+  @override
   String get settingsDefaultShowChords => 'Εμφάνιση συγχορδιών από προεπιλογή';
 
   @override

@@ -826,23 +826,47 @@ class _PlayerScreenState extends State<PlayerScreen>
     }
     if (line.isBlank) return SizedBox(height: 15, key: key);
     final current = _currentLineId == line.id;
+    final highlightBackground =
+        current &&
+        (state.lyricHighlightStyle == 'background' ||
+            state.lyricHighlightStyle == 'backgroundUnderline');
+    final highlightUnderline =
+        current &&
+        (state.lyricHighlightStyle == 'underline' ||
+            state.lyricHighlightStyle == 'backgroundUnderline');
+    final highlightContrast =
+        current && state.lyricHighlightStyle == 'contrast';
     return Padding(
       key: key,
       padding: const EdgeInsets.only(bottom: 12),
       child: Semantics(
         selected: current,
-        child: ChordLyricsLine(
-          text: line.text,
-          chords: line.chords,
-          showChords: state.showChords,
-          style: theme.textTheme.bodyLarge?.copyWith(
-            fontSize: state.lyricsFontSize,
-            height: 1.35,
-            color: current ? theme.colorScheme.primary : null,
+        // Paint-only decoration keeps the lyric's position and line metrics fixed.
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: highlightBackground
+                ? theme.colorScheme.primaryContainer.withValues(alpha: .48)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
           ),
-          chordStyle: theme.textTheme.labelMedium?.copyWith(
-            color: theme.colorScheme.primary,
-            fontWeight: FontWeight.w700,
+          child: ChordLyricsLine(
+            text: line.text,
+            chords: line.chords,
+            showChords: state.showChords,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              fontSize: state.lyricsFontSize,
+              height: 1.35,
+              color: highlightContrast ? theme.colorScheme.tertiary : null,
+              decoration: highlightUnderline ? TextDecoration.underline : null,
+              decorationColor: highlightUnderline
+                  ? theme.colorScheme.tertiary
+                  : null,
+              decorationThickness: highlightUnderline ? 2.5 : null,
+            ),
+            chordStyle: theme.textTheme.labelMedium?.copyWith(
+              color: theme.colorScheme.primary,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
       ),

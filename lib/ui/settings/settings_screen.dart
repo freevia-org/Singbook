@@ -246,6 +246,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
         VerseSectionLabel(l10n.settingsPlayer),
         _SettingCard(
           children: [
+            _LabeledDropdown<String>(
+              label: l10n.settingsLyricHighlight,
+              value: state.lyricHighlightStyle,
+              entries: [
+                (
+                  'backgroundUnderline',
+                  l10n.settingsHighlightBackgroundUnderline,
+                ),
+                ('background', l10n.settingsHighlightBackground),
+                ('underline', l10n.settingsHighlightUnderline),
+                ('contrast', l10n.settingsHighlightContrast),
+                ('none', l10n.settingsHighlightNone),
+              ],
+              onChanged: (value) {
+                if (value != null) controller.setLyricHighlightStyle(value);
+              },
+            ),
             SwitchListTile(
               title: Text(l10n.settingsDefaultShowChords),
               subtitle: Text(l10n.settingsDefaultShowChordsHint),

@@ -1728,6 +1728,42 @@ abstract class AppLocalizations {
   /// **'Lyrics player'**
   String get settingsPlayer;
 
+  /// No description provided for @settingsLyricHighlight.
+  ///
+  /// In en, this message translates to:
+  /// **'Current lyric highlight'**
+  String get settingsLyricHighlight;
+
+  /// No description provided for @settingsHighlightBackgroundUnderline.
+  ///
+  /// In en, this message translates to:
+  /// **'Background + underline'**
+  String get settingsHighlightBackgroundUnderline;
+
+  /// No description provided for @settingsHighlightBackground.
+  ///
+  /// In en, this message translates to:
+  /// **'Background'**
+  String get settingsHighlightBackground;
+
+  /// No description provided for @settingsHighlightUnderline.
+  ///
+  /// In en, this message translates to:
+  /// **'Underline'**
+  String get settingsHighlightUnderline;
+
+  /// No description provided for @settingsHighlightContrast.
+  ///
+  /// In en, this message translates to:
+  /// **'Contrasting text color'**
+  String get settingsHighlightContrast;
+
+  /// No description provided for @settingsHighlightNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get settingsHighlightNone;
+
   /// No description provided for @settingsDefaultShowChords.
   ///
   /// In en, this message translates to:

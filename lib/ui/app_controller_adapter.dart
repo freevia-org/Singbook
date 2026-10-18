@@ -21,6 +21,17 @@ double? _validDuration(Object? value) {
   return seconds.isFinite && seconds > 0 && seconds <= 86400 ? seconds : null;
 }
 
+String _lyricHighlightStyle(Object? value) =>
+    const {
+      'backgroundUnderline',
+      'background',
+      'underline',
+      'contrast',
+      'none',
+    }.contains(value)
+    ? value! as String
+    : 'contrast';
+
 /// Adapts the durable domain controller to the deliberately small UI contract.
 /// Account and file actions are injected by the app shell when those integrations
 /// are configured; absent integrations remain visibly unavailable.
@@ -430,6 +441,9 @@ class AppControllerAdapter extends VerseUiController {
       fontFamily: app.settings['fontFamily'] as String? ?? 'system',
       lyricsFontSize:
           (app.settings['readerFontSize'] as num?)?.toDouble() ?? 24,
+      lyricHighlightStyle: _lyricHighlightStyle(
+        app.settings['lyricHighlightStyle'],
+      ),
       showChords: app.settings['showChords'] as bool? ?? true,
       autoscroll:
           (app.settings['autoscroll'] as bool? ?? true) &&
@@ -2417,6 +2431,9 @@ class AppControllerAdapter extends VerseUiController {
   @override
   Future<void> setLyricsFontSize(double size) =>
       app.setSetting('readerFontSize', size);
+  @override
+  Future<void> setLyricHighlightStyle(String style) =>
+      app.setSetting('lyricHighlightStyle', style);
   @override
   Future<void> setShowChords(bool show) => app.setSetting('showChords', show);
 
