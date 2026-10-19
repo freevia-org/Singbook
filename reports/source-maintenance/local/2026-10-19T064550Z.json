@@ -1,0 +1,1497 @@
+{
+  "schemaVersion": 1,
+  "catalogRevision": 4,
+  "measuredAt": "2026-10-19T06:45:50.161495Z",
+  "offline": false,
+  "summary": {
+    "healthy": 10,
+    "partial_coverage": 4,
+    "unavailable": 2,
+    "blocked": 1,
+    "import_only": 2
+  },
+  "sources": [
+    {
+      "id": "genius",
+      "name": "Genius",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "wonderwall-oasis",
+          "status": "healthy",
+          "candidateId": "76654",
+          "providerId": "genius",
+          "bodyCharacters": 1549,
+          "metadataFields": [
+            "album",
+            "artworkUrl",
+            "credits",
+            "language",
+            "mediaLinks",
+            "releaseDate",
+            "year"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false,
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 1,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "genius",
+            "probeId": "wonderwall-oasis"
+          }
+        }
+      ],
+      "provenance": {
+        "runtime": "local-windows",
+        "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+        "catalogRevision": 4,
+        "sourceRevision": 1,
+        "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+        "timestampScope": "batch completion, not individual request time"
+      }
+    },
+    {
+      "id": "songsterr",
+      "name": "Songsterr",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "wonderwall",
+          "status": "healthy",
+          "candidateId": "/a/wsa/oasis-wonderwall-chords-s2",
+          "providerId": "songsterr",
+          "bodyCharacters": 2210,
+          "metadataFields": [
+            "capo",
+            "mediaLinks",
+            "tuning"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "chords",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": true,
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 1,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "songsterr",
+            "probeId": "wonderwall"
+          }
+        }
+      ],
+      "provenance": {
+        "runtime": "local-windows",
+        "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+        "catalogRevision": 4,
+        "sourceRevision": 1,
+        "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+        "timestampScope": "batch completion, not individual request time"
+      }
+    },
+    {
+      "id": "ultimateguitar",
+      "name": "Ultimate Guitar",
+      "status": "partial_coverage",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [
+          "chords",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": [
+          "catalog"
+        ]
+      },
+      "probes": [
+        {
+          "id": "wonderwall-oasis-chords",
+          "status": "healthy",
+          "candidateId": "/tab/oasis/wonderwall-chords-6125",
+          "providerId": "ultimateguitar",
+          "bodyCharacters": 2834,
+          "metadataFields": [
+            "artworkUrl",
+            "credits",
+            "difficulty",
+            "key",
+            "mediaLinks",
+            "tuning"
+          ],
+          "verifiedCapabilities": [
+            "chords",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": true,
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 1,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "ultimateguitar",
+            "probeId": "wonderwall-oasis-chords"
+          }
+        }
+      ],
+      "provenance": {
+        "runtime": "local-windows",
+        "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+        "catalogRevision": 4,
+        "sourceRevision": 1,
+        "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+        "timestampScope": "batch completion, not individual request time"
+      }
+    },
+    {
+      "id": "lrclib",
+      "name": "LRCLIB",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "sound-of-silence-studio-recording",
+          "status": "healthy",
+          "candidateId": "14961166",
+          "providerId": "lrclib",
+          "bodyCharacters": 1157,
+          "metadataFields": [
+            "album",
+            "duration",
+            "hasLyrics",
+            "instrumental"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "line"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false,
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 2,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "lrclib",
+            "probeId": "sound-of-silence-studio-recording"
+          }
+        }
+      ],
+      "provenance": {
+        "runtime": "local-windows",
+        "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+        "catalogRevision": 4,
+        "sourceRevision": 2,
+        "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+        "timestampScope": "batch completion, not individual request time"
+      }
+    },
+    {
+      "id": "youtubemusic",
+      "name": "YouTube Music",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "never-gonna-give-you-up",
+          "status": "healthy",
+          "candidateId": "sha256:39ded7cae43f7238",
+          "providerId": "youtubemusic",
+          "bodyCharacters": 1877,
+          "metadataFields": [
+            "album",
+            "artworkUrl",
+            "duration",
+            "mediaLinks"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false,
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 1,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "youtubemusic",
+            "probeId": "never-gonna-give-you-up"
+          }
+        }
+      ],
+      "provenance": {
+        "runtime": "local-windows",
+        "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+        "catalogRevision": 4,
+        "sourceRevision": 1,
+        "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+        "timestampScope": "batch completion, not individual request time"
+      }
+    },
+    {
+      "id": "lyricsovh",
+      "name": "Lyrics.ovh",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "wonderwall-oasis-studio",
+          "status": "healthy",
+          "candidateId": "sha256:91de770d77f2b8fb",
+          "providerId": "lyricsovh",
+          "bodyCharacters": 1307,
+          "metadataFields": [
+            "album",
+            "artworkUrl",
+            "duration",
+            "mediaLinks"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false,
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 1,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "lyricsovh",
+            "probeId": "wonderwall-oasis-studio"
+          }
+        }
+      ],
+      "provenance": {
+        "runtime": "local-windows",
+        "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+        "catalogRevision": 4,
+        "sourceRevision": 1,
+        "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+        "timestampScope": "batch completion, not individual request time"
+      }
+    },
+    {
+      "id": "synclrc",
+      "name": "SyncLRC",
+      "status": "unavailable",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "metadata",
+          "wordTiming"
+        ]
+      },
+      "probes": [
+        {
+          "id": "never-gonna-give-you-up-studio",
+          "status": "unavailable",
+          "reason": "empty_search_results",
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 3,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "synclrc",
+            "probeId": "never-gonna-give-you-up-studio"
+          }
+        },
+        {
+          "id": "wonderwall-oasis-timed-version",
+          "status": "unavailable",
+          "reason": "empty_search_results",
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 3,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "synclrc",
+            "probeId": "wonderwall-oasis-timed-version"
+          }
+        }
+      ],
+      "provenance": {
+        "runtime": "local-windows",
+        "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+        "catalogRevision": 4,
+        "sourceRevision": 3,
+        "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+        "timestampScope": "batch completion, not individual request time"
+      }
+    },
+    {
+      "id": "betterlyrics",
+      "name": "Better Lyrics",
+      "status": "blocked",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "metadata",
+          "wordTiming"
+        ]
+      },
+      "probes": [
+        {
+          "id": "never-gonna-give-you-up-studio-recording",
+          "status": "blocked",
+          "reason": "access_denied",
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 1,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "betterlyrics",
+            "probeId": "never-gonna-give-you-up-studio-recording"
+          }
+        }
+      ],
+      "provenance": {
+        "runtime": "local-windows",
+        "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+        "catalogRevision": 4,
+        "sourceRevision": 1,
+        "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+        "timestampScope": "batch completion, not individual request time"
+      }
+    },
+    {
+      "id": "unison",
+      "name": "Unison",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "wordTiming"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "search-give-it-up-don-toliver",
+          "status": "healthy",
+          "candidateId": "31",
+          "providerId": "unison",
+          "bodyCharacters": 1420,
+          "metadataFields": [],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "wordTiming"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false,
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 3,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "unison",
+            "probeId": "search-give-it-up-don-toliver"
+          }
+        },
+        {
+          "id": "give-it-up-don-toliver",
+          "status": "healthy",
+          "candidateId": "31",
+          "providerId": "unison",
+          "bodyCharacters": 1420,
+          "metadataFields": [],
+          "verifiedCapabilities": [
+            "lineTiming",
+            "lyrics",
+            "wordTiming"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false,
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 3,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "unison",
+            "probeId": "give-it-up-don-toliver"
+          }
+        },
+        {
+          "id": "love-never-felt-so-good-michael-jackson",
+          "status": "healthy",
+          "candidateId": "1494",
+          "providerId": "unison",
+          "bodyCharacters": 1727,
+          "metadataFields": [],
+          "verifiedCapabilities": [
+            "lineTiming",
+            "lyrics",
+            "wordTiming"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false,
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 3,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "unison",
+            "probeId": "love-never-felt-so-good-michael-jackson"
+          }
+        }
+      ],
+      "provenance": {
+        "runtime": "local-windows",
+        "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+        "catalogRevision": 4,
+        "sourceRevision": 3,
+        "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+        "timestampScope": "batch completion, not individual request time"
+      }
+    },
+    {
+      "id": "ozbcoz",
+      "name": "Ozbcoz",
+      "status": "import_only",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "chords",
+          "fileImport",
+          "lyrics",
+          "metadata"
+        ]
+      },
+      "probes": [
+        {
+          "id": "import-only",
+          "status": "import_only",
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 1,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "ozbcoz",
+            "probeId": "import-only"
+          }
+        }
+      ],
+      "provenance": {
+        "runtime": "local-windows",
+        "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+        "catalogRevision": 4,
+        "sourceRevision": 1,
+        "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+        "timestampScope": "batch completion, not individual request time"
+      }
+    },
+    {
+      "id": "chordie",
+      "name": "Chordie",
+      "status": "partial_coverage",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": [
+          "fileImport"
+        ]
+      },
+      "probes": [
+        {
+          "id": "seventh-stranger-duran-duran",
+          "status": "healthy",
+          "candidateId": "/chord.pere/tabfu.thudspace.net/d/duran_duran/the_seventh_stranger.pro",
+          "providerId": "chordie",
+          "bodyCharacters": 2573,
+          "metadataFields": [
+            "identityScope"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "chords",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": true,
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 1,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "chordie",
+            "probeId": "seventh-stranger-duran-duran"
+          }
+        }
+      ],
+      "provenance": {
+        "runtime": "local-windows",
+        "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+        "catalogRevision": 4,
+        "sourceRevision": 1,
+        "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+        "timestampScope": "batch completion, not individual request time"
+      }
+    },
+    {
+      "id": "worshipcommons",
+      "name": "WorshipCommons",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata",
+          "timing"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "amazing-grace",
+          "status": "healthy",
+          "candidateId": "sha256:f5da43f37143d55d",
+          "providerId": "worshipcommons",
+          "bodyCharacters": 884,
+          "metadataFields": [
+            "ccli",
+            "compositionYear",
+            "identityScope",
+            "key",
+            "language",
+            "mediaLinks",
+            "meter",
+            "scripture",
+            "sourceIllustrationUrl",
+            "tempo",
+            "themes",
+            "timeSignature",
+            "writer"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "chords",
+            "lyrics",
+            "metadata",
+            "timing"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": true,
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 1,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "worshipcommons",
+            "probeId": "amazing-grace"
+          }
+        }
+      ],
+      "provenance": {
+        "runtime": "local-windows",
+        "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+        "catalogRevision": 4,
+        "sourceRevision": 1,
+        "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+        "timestampScope": "batch completion, not individual request time"
+      }
+    },
+    {
+      "id": "openfilksongbook",
+      "name": "Open Filk Songbook",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "everything-lastalda",
+          "status": "healthy",
+          "candidateId": "sha256:c35679db6e5fa143",
+          "providerId": "openfilksongbook",
+          "bodyCharacters": 3263,
+          "metadataFields": [
+            "identityScope",
+            "sourcePageUrl",
+            "timeSignature"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "chords",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": true,
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 1,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "openfilksongbook",
+            "probeId": "everything-lastalda"
+          }
+        }
+      ],
+      "provenance": {
+        "runtime": "local-windows",
+        "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+        "catalogRevision": 4,
+        "sourceRevision": 1,
+        "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+        "timestampScope": "batch completion, not individual request time"
+      }
+    },
+    {
+      "id": "seanmcgrathmusic",
+      "name": "Sean McGrath Music",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "be-here-soon",
+          "status": "healthy",
+          "candidateId": "/songs/be-here-soon/",
+          "providerId": "seanmcgrathmusic",
+          "bodyCharacters": 1288,
+          "metadataFields": [
+            "identityScope",
+            "key",
+            "mediaLinks"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "chords",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": true,
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 1,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "seanmcgrathmusic",
+            "probeId": "be-here-soon"
+          }
+        }
+      ],
+      "provenance": {
+        "runtime": "local-windows",
+        "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+        "catalogRevision": 4,
+        "sourceRevision": 1,
+        "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+        "timestampScope": "batch completion, not individual request time"
+      }
+    },
+    {
+      "id": "worshiptogether",
+      "name": "Worship Together",
+      "status": "import_only",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "chords",
+          "fileImport",
+          "lyrics",
+          "metadata"
+        ]
+      },
+      "probes": [
+        {
+          "id": "import-only",
+          "status": "import_only",
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 1,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "worshiptogether",
+            "probeId": "import-only"
+          }
+        }
+      ],
+      "provenance": {
+        "runtime": "local-windows",
+        "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+        "catalogRevision": 4,
+        "sourceRevision": 1,
+        "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+        "timestampScope": "batch completion, not individual request time"
+      }
+    },
+    {
+      "id": "musicbrainz",
+      "name": "MusicBrainz",
+      "status": "partial_coverage",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [
+          "metadata"
+        ],
+        "unverifiedCapabilities": [
+          "catalog"
+        ]
+      },
+      "probes": [
+        {
+          "id": "wonderwall-oasis-recording",
+          "status": "healthy",
+          "candidateId": "9de3f212-2121-4c48-9240-96a52b512733",
+          "providerId": "musicbrainz",
+          "bodyCharacters": 0,
+          "metadataFields": [
+            "artistCredits",
+            "durationSeconds",
+            "identityScope",
+            "isrcs",
+            "musicbrainzRecordingId",
+            "relationships",
+            "releases",
+            "version"
+          ],
+          "verifiedCapabilities": [
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false,
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 1,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "musicbrainz",
+            "probeId": "wonderwall-oasis-recording"
+          }
+        }
+      ],
+      "provenance": {
+        "runtime": "local-windows",
+        "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+        "catalogRevision": 4,
+        "sourceRevision": 1,
+        "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+        "timestampScope": "batch completion, not individual request time"
+      }
+    },
+    {
+      "id": "wikidata",
+      "name": "Wikidata",
+      "status": "partial_coverage",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [
+          "metadata"
+        ],
+        "unverifiedCapabilities": [
+          "catalog"
+        ]
+      },
+      "probes": [
+        {
+          "id": "imagine-composition",
+          "status": "healthy",
+          "candidateId": "Q333266",
+          "providerId": "wikidata",
+          "bodyCharacters": 0,
+          "metadataFields": [
+            "composers",
+            "description",
+            "durationClaims",
+            "externalIdentifiers",
+            "identityScope",
+            "lyricists",
+            "partOf",
+            "performerIds",
+            "publicationDates",
+            "types",
+            "wikidataId"
+          ],
+          "verifiedCapabilities": [
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false,
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 2,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "wikidata",
+            "probeId": "imagine-composition"
+          }
+        }
+      ],
+      "provenance": {
+        "runtime": "local-windows",
+        "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+        "catalogRevision": 4,
+        "sourceRevision": 2,
+        "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+        "timestampScope": "batch completion, not individual request time"
+      }
+    },
+    {
+      "id": "wikimediacommons",
+      "name": "Wikimedia Commons",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "artwork",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "bach-portrait",
+          "status": "healthy",
+          "candidateId": "File:Johann Sebastian Bach.jpg",
+          "providerId": "wikimediacommons",
+          "bodyCharacters": 0,
+          "metadataFields": [
+            "licensedImages"
+          ],
+          "verifiedCapabilities": [
+            "artwork",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false,
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 1,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "wikimediacommons",
+            "probeId": "bach-portrait"
+          }
+        }
+      ],
+      "provenance": {
+        "runtime": "local-windows",
+        "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+        "catalogRevision": 4,
+        "sourceRevision": 1,
+        "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+        "timestampScope": "batch completion, not individual request time"
+      }
+    },
+    {
+      "id": "wikisource",
+      "name": "Wikisource",
+      "status": "unavailable",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "fileImport",
+          "lyrics",
+          "metadata"
+        ]
+      },
+      "probes": [
+        {
+          "id": "auld-lang-syne-burns-text",
+          "status": "unavailable",
+          "reason": "rights_review_required",
+          "provenance": {
+            "runtime": "local-windows",
+            "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+            "catalogRevision": 4,
+            "sourceRevision": 1,
+            "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+            "timestampScope": "batch completion, not individual request time",
+            "sourceId": "wikisource",
+            "probeId": "auld-lang-syne-burns-text"
+          }
+        }
+      ],
+      "provenance": {
+        "runtime": "local-windows",
+        "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+        "catalogRevision": 4,
+        "sourceRevision": 1,
+        "batchMeasuredAt": "2026-10-19T06:45:50.161495Z",
+        "timestampScope": "batch completion, not individual request time"
+      }
+    }
+  ],
+  "execution": {
+    "runtime": "local-windows",
+    "sourceHead": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+    "baseSha": "3c5829bd04708768062528aee6c0d2c2ea1ee644",
+    "requestedAtUtc": "2026-10-19T06:44:23.259Z",
+    "command": "Flutter-bundled Dart run tool/source_maintenance.dart --report <dated-local-report>",
+    "exitCode": 1,
+    "codeState": "clean-public-main",
+    "youtubeMode": "current compiled anonymous HTTP only; no browser, consent flow, stored cookie reuse or private profile",
+    "geniusCredential": "separate maintenance configuration/environment only; app credential not read or substituted",
+    "timestampScope": "measuredAt is CLI batch completion; current CLI does not record per-probe timestamps"
+  },
+  "comparison": {
+    "priorLocalMeasuredAt": "2026-10-18T06:03:21.920080Z",
+    "cloudMeasuredAt": "2026-10-19T06:00:03.820713Z",
+    "cloudHealthCommit": "65b931e0e0e207e0c984ce104850babbec03c752",
+    "runtimeReachabilityIsIndependent": true,
+    "sources": [
+      {
+        "id": "genius",
+        "localStatus": "healthy",
+        "priorLocalStatus": "healthy",
+        "cloudStatus": "transient_error",
+        "cloudMeasuredAt": "2026-10-19T06:00:03.820713Z",
+        "cloudSourceHead": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
+        "probes": [
+          {
+            "id": "wonderwall-oasis",
+            "localStatus": "healthy",
+            "localReason": null,
+            "priorLocalStatus": "healthy",
+            "cloudStatus": "transient_error"
+          }
+        ]
+      },
+      {
+        "id": "songsterr",
+        "localStatus": "healthy",
+        "priorLocalStatus": "healthy",
+        "cloudStatus": "healthy",
+        "cloudMeasuredAt": "2026-10-19T06:00:03.820713Z",
+        "cloudSourceHead": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
+        "probes": [
+          {
+            "id": "wonderwall",
+            "localStatus": "healthy",
+            "localReason": null,
+            "priorLocalStatus": "healthy",
+            "cloudStatus": "healthy"
+          }
+        ]
+      },
+      {
+        "id": "ultimateguitar",
+        "localStatus": "partial_coverage",
+        "priorLocalStatus": "partial_coverage",
+        "cloudStatus": "transient_error",
+        "cloudMeasuredAt": "2026-10-19T06:00:03.820713Z",
+        "cloudSourceHead": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
+        "probes": [
+          {
+            "id": "wonderwall-oasis-chords",
+            "localStatus": "healthy",
+            "localReason": null,
+            "priorLocalStatus": "healthy",
+            "cloudStatus": "transient_error"
+          }
+        ]
+      },
+      {
+        "id": "lrclib",
+        "localStatus": "healthy",
+        "priorLocalStatus": "healthy",
+        "cloudStatus": "healthy",
+        "cloudMeasuredAt": "2026-10-19T06:00:03.820713Z",
+        "cloudSourceHead": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
+        "probes": [
+          {
+            "id": "sound-of-silence-studio-recording",
+            "localStatus": "healthy",
+            "localReason": null,
+            "priorLocalStatus": "healthy",
+            "cloudStatus": "healthy"
+          }
+        ]
+      },
+      {
+        "id": "youtubemusic",
+        "localStatus": "healthy",
+        "priorLocalStatus": "healthy",
+        "cloudStatus": "transient_error",
+        "cloudMeasuredAt": "2026-10-19T06:00:03.820713Z",
+        "cloudSourceHead": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
+        "probes": [
+          {
+            "id": "never-gonna-give-you-up",
+            "localStatus": "healthy",
+            "localReason": null,
+            "priorLocalStatus": "healthy",
+            "cloudStatus": "transient_error"
+          }
+        ]
+      },
+      {
+        "id": "lyricsovh",
+        "localStatus": "healthy",
+        "priorLocalStatus": "healthy",
+        "cloudStatus": "healthy",
+        "cloudMeasuredAt": "2026-10-19T06:00:03.820713Z",
+        "cloudSourceHead": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
+        "probes": [
+          {
+            "id": "wonderwall-oasis-studio",
+            "localStatus": "healthy",
+            "localReason": null,
+            "priorLocalStatus": "healthy",
+            "cloudStatus": "healthy"
+          }
+        ]
+      },
+      {
+        "id": "synclrc",
+        "localStatus": "unavailable",
+        "priorLocalStatus": "unavailable",
+        "cloudStatus": "healthy",
+        "cloudMeasuredAt": "2026-10-19T06:00:03.820713Z",
+        "cloudSourceHead": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
+        "probes": [
+          {
+            "id": "never-gonna-give-you-up-studio",
+            "localStatus": "unavailable",
+            "localReason": "empty_search_results",
+            "priorLocalStatus": "healthy",
+            "cloudStatus": "healthy"
+          },
+          {
+            "id": "wonderwall-oasis-timed-version",
+            "localStatus": "unavailable",
+            "localReason": "empty_search_results",
+            "priorLocalStatus": "unavailable",
+            "cloudStatus": "healthy"
+          }
+        ]
+      },
+      {
+        "id": "betterlyrics",
+        "localStatus": "blocked",
+        "priorLocalStatus": "blocked",
+        "cloudStatus": "blocked",
+        "cloudMeasuredAt": "2026-10-19T06:00:03.820713Z",
+        "cloudSourceHead": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
+        "probes": [
+          {
+            "id": "never-gonna-give-you-up-studio-recording",
+            "localStatus": "blocked",
+            "localReason": "access_denied",
+            "priorLocalStatus": "blocked",
+            "cloudStatus": "blocked"
+          }
+        ]
+      },
+      {
+        "id": "unison",
+        "localStatus": "healthy",
+        "priorLocalStatus": "healthy",
+        "cloudStatus": "healthy",
+        "cloudMeasuredAt": "2026-10-19T06:00:03.820713Z",
+        "cloudSourceHead": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
+        "probes": [
+          {
+            "id": "search-give-it-up-don-toliver",
+            "localStatus": "healthy",
+            "localReason": null,
+            "priorLocalStatus": "healthy",
+            "cloudStatus": "healthy"
+          },
+          {
+            "id": "give-it-up-don-toliver",
+            "localStatus": "healthy",
+            "localReason": null,
+            "priorLocalStatus": "healthy",
+            "cloudStatus": "healthy"
+          },
+          {
+            "id": "love-never-felt-so-good-michael-jackson",
+            "localStatus": "healthy",
+            "localReason": null,
+            "priorLocalStatus": "healthy",
+            "cloudStatus": "healthy"
+          }
+        ]
+      },
+      {
+        "id": "ozbcoz",
+        "localStatus": "import_only",
+        "priorLocalStatus": "import_only",
+        "cloudStatus": "import_only",
+        "cloudMeasuredAt": "2026-10-19T06:00:03.820713Z",
+        "cloudSourceHead": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
+        "probes": [
+          {
+            "id": "import-only",
+            "localStatus": "import_only",
+            "localReason": null,
+            "priorLocalStatus": "import_only",
+            "cloudStatus": "import_only"
+          }
+        ]
+      },
+      {
+        "id": "chordie",
+        "localStatus": "partial_coverage",
+        "priorLocalStatus": "partial_coverage",
+        "cloudStatus": "transient_error",
+        "cloudMeasuredAt": "2026-10-19T06:00:03.820713Z",
+        "cloudSourceHead": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
+        "probes": [
+          {
+            "id": "seventh-stranger-duran-duran",
+            "localStatus": "healthy",
+            "localReason": null,
+            "priorLocalStatus": "healthy",
+            "cloudStatus": "transient_error"
+          }
+        ]
+      },
+      {
+        "id": "worshipcommons",
+        "localStatus": "healthy",
+        "priorLocalStatus": "healthy",
+        "cloudStatus": "healthy",
+        "cloudMeasuredAt": "2026-10-19T06:00:03.820713Z",
+        "cloudSourceHead": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
+        "probes": [
+          {
+            "id": "amazing-grace",
+            "localStatus": "healthy",
+            "localReason": null,
+            "priorLocalStatus": "healthy",
+            "cloudStatus": "healthy"
+          }
+        ]
+      },
+      {
+        "id": "openfilksongbook",
+        "localStatus": "healthy",
+        "priorLocalStatus": "healthy",
+        "cloudStatus": "healthy",
+        "cloudMeasuredAt": "2026-10-19T06:00:03.820713Z",
+        "cloudSourceHead": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
+        "probes": [
+          {
+            "id": "everything-lastalda",
+            "localStatus": "healthy",
+            "localReason": null,
+            "priorLocalStatus": "healthy",
+            "cloudStatus": "healthy"
+          }
+        ]
+      },
+      {
+        "id": "seanmcgrathmusic",
+        "localStatus": "healthy",
+        "priorLocalStatus": "healthy",
+        "cloudStatus": "healthy",
+        "cloudMeasuredAt": "2026-10-19T06:00:03.820713Z",
+        "cloudSourceHead": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
+        "probes": [
+          {
+            "id": "be-here-soon",
+            "localStatus": "healthy",
+            "localReason": null,
+            "priorLocalStatus": "healthy",
+            "cloudStatus": "healthy"
+          }
+        ]
+      },
+      {
+        "id": "worshiptogether",
+        "localStatus": "import_only",
+        "priorLocalStatus": "import_only",
+        "cloudStatus": "import_only",
+        "cloudMeasuredAt": "2026-10-19T06:00:03.820713Z",
+        "cloudSourceHead": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
+        "probes": [
+          {
+            "id": "import-only",
+            "localStatus": "import_only",
+            "localReason": null,
+            "priorLocalStatus": "import_only",
+            "cloudStatus": "import_only"
+          }
+        ]
+      },
+      {
+        "id": "musicbrainz",
+        "localStatus": "partial_coverage",
+        "priorLocalStatus": "partial_coverage",
+        "cloudStatus": "partial_coverage",
+        "cloudMeasuredAt": "2026-10-19T06:00:03.820713Z",
+        "cloudSourceHead": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
+        "probes": [
+          {
+            "id": "wonderwall-oasis-recording",
+            "localStatus": "healthy",
+            "localReason": null,
+            "priorLocalStatus": "healthy",
+            "cloudStatus": "healthy"
+          }
+        ]
+      },
+      {
+        "id": "wikidata",
+        "localStatus": "partial_coverage",
+        "priorLocalStatus": "partial_coverage",
+        "cloudStatus": "partial_coverage",
+        "cloudMeasuredAt": "2026-10-19T06:00:03.820713Z",
+        "cloudSourceHead": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
+        "probes": [
+          {
+            "id": "imagine-composition",
+            "localStatus": "healthy",
+            "localReason": null,
+            "priorLocalStatus": "healthy",
+            "cloudStatus": "healthy"
+          }
+        ]
+      },
+      {
+        "id": "wikimediacommons",
+        "localStatus": "healthy",
+        "priorLocalStatus": "healthy",
+        "cloudStatus": "healthy",
+        "cloudMeasuredAt": "2026-10-19T06:00:03.820713Z",
+        "cloudSourceHead": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
+        "probes": [
+          {
+            "id": "bach-portrait",
+            "localStatus": "healthy",
+            "localReason": null,
+            "priorLocalStatus": "healthy",
+            "cloudStatus": "healthy"
+          }
+        ]
+      },
+      {
+        "id": "wikisource",
+        "localStatus": "unavailable",
+        "priorLocalStatus": "unavailable",
+        "cloudStatus": "unavailable",
+        "cloudMeasuredAt": "2026-10-19T06:00:03.820713Z",
+        "cloudSourceHead": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
+        "probes": [
+          {
+            "id": "auld-lang-syne-burns-text",
+            "localStatus": "unavailable",
+            "localReason": "rights_review_required",
+            "priorLocalStatus": "unavailable",
+            "cloudStatus": "unavailable"
+          }
+        ]
+      }
+    ]
+  },
+  "maintenance": {
+    "checks": {
+      "offlineInitialExit": 0
+    },
+    "roadblocks": [],
+    "publication": "sanitized health reports only; discovery candidate awaits review PR; no public-main catalog/app/site publication",
+    "discovery": {
+      "newDeferred": [
+        "spicy-lyrics"
+      ],
+      "recheckedDeferred": [
+        "startjamming",
+        "ukrainian-wikisource"
+      ],
+      "sourcesActivated": []
+    },
+    "catalogRevisionChanged": false,
+    "catalogRevision": 4,
+    "diagnostics": {
+      "synclrcSearch": "four documented valid empty-search shapes at06:47Z; source/search availability remains unverified",
+      "synclrcExactLyrics": "two valid endpoint shapes at06:49Z; not canonical canaries, no raw documents persisted",
+      "primaryDocumentation": [
+        "https://synclrc.dev/",
+        "https://www.startjamming.com/api",
+        "https://developers.spicylyrics.org/terms",
+        "https://developers.spicylyrics.org/docs/reference/get.lyrics",
+        "https://developers.spicylyrics.org/docs/attribution"
+      ]
+    }
+  }
+}
