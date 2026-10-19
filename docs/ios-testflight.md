@@ -312,3 +312,13 @@ remain unperformed. Signing and physical-device limitations remain unchanged.
 The privacy/support pages were refreshed in production deployment
 `a4f6548a-fcde-4b74-a622-e24dcad62f4a`, preserving the other 70 site assets.
 Both returned HTTP 200; the live iOS Picker/Keychain text was verified.
+
+The unsigned `0.2.8+22` release archive built successfully from source commit
+`a0df607`. Privacy inspection confirmed 18 manifests, bundle ID
+`org.freevia.singbook`, and minimum iOS 15.0. Evidence is in
+`artifacts/ios-parity-20261019/{archive-build.log,privacy-inventory.json,archive-record.json}`.
+The previous archive is preserved as `Runner-before-parity.xcarchive` there.
+Runner SHA-256: `86807db89d8ada30a7f2fd094d9bd3f5a55156bc9141dbfadaf358b4c98df46c`.
+The complete host suite passed 1,531 tests with 13 platform-specific skips;
+both native parity runs passed six tests. No signed IPA, physical-device test
+or live Google OAuth validation is claimed. All temporary reservations are released.
