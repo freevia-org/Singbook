@@ -1956,4 +1956,7 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Še ena vrstica, malo [F]bliže.';
+
+  @override
+  String get playerEstimatedKey => 'Ocenjena tonaliteta';
 }

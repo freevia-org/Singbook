@@ -1950,4 +1950,7 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Încă un vers, puțin mai [F]aproape.';
+
+  @override
+  String get playerEstimatedKey => 'Tonalitate estimată';
 }

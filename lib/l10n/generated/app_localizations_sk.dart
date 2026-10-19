@@ -1938,4 +1938,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Ešte jeden riadok, o čosi [F]bližšie.';
+
+  @override
+  String get playerEstimatedKey => 'Odhadovaná tónina';
 }

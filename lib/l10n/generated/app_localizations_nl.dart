@@ -1944,4 +1944,7 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get editorExampleBridge =>
       '[Am]Nog een regel, een beetje [F]dichterbij.';
+
+  @override
+  String get playerEstimatedKey => 'Geschatte toonsoort';
 }

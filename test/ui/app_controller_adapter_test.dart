@@ -108,6 +108,40 @@ void main() {
   );
 
   test(
+    'reader uses a matched lyrics-only source key before estimating',
+    () async {
+      const body = 'Amber lanterns glow\nSilver rain returns';
+      final candidate = SongCandidate(
+        providerId: 'key-provider',
+        id: 'song',
+        title: 'Song',
+        artist: 'Artist',
+      );
+      await app.saveSong(
+        SongDocument(
+          id: 'song',
+          title: 'Song',
+          artist: 'Artist',
+          body: body,
+          sources: [
+            SourceResult(
+              candidate: candidate,
+              body: body,
+              metadata: {'key': 'E'},
+              matchKind: MatchKind.sameSong,
+            ),
+          ],
+        ),
+      );
+      await ui.openSong('song');
+
+      expect(ui.state.readerKey, 'E');
+      expect(ui.state.readerKeyEstimated, isFalse);
+      expect(ui.displayedKey, 'E');
+    },
+  );
+
+  test(
     'saving an online version records the opened song in recent history',
     () async {
       const candidate = SongCandidate(

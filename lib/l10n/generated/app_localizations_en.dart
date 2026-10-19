@@ -1904,4 +1904,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]One more line, a little [F]closer.';
+
+  @override
+  String get playerEstimatedKey => 'Estimated key';
 }

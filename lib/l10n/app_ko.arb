@@ -831,5 +831,6 @@
         "type": "int"
       }
     }
-  }
+  },
+  "playerEstimatedKey": "추정 조성"
 }

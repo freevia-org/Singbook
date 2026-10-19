@@ -38,6 +38,259 @@ SourceResult source(
 );
 
 void main() {
+  test('chosen lyrics retain a compatible key from another source', () {
+    final selectedLyrics = source(
+      'lyrics-provider',
+      'Amber lanterns glow\nSilver rain returns\nAcross the sleepy water',
+    );
+    final metadataProvider = source(
+      'metadata-provider',
+      'Amber lanterns glow\nSilver rain returns\nAcross the sleepy water',
+      metadata: {'key': 'F#m'},
+    );
+
+    final song = combineSources(selected, [
+      selectedLyrics,
+      metadataProvider,
+    ], preferredSourceId: selectedLyrics.id);
+
+    expect(song.body, selectedLyrics.body);
+    expect(song.metadata['key'], 'F#m');
+    expect(song.extra['fieldOrigins']['key'], metadataProvider.id);
+    expect(song.extra['fieldContributors']['key'], [metadataProvider.id]);
+    expect(song.extra['keySourceIds'], [metadataProvider.id]);
+    expect(song.extra.containsKey('corroboratedKeySourceIds'), isFalse);
+  });
+
+  test('chosen lyrics are complemented by safe metadata from all sources', () {
+    const lyrics =
+        'Amber lanterns glow\nSilver rain returns\nAcross the sleepy water';
+    final song = combineSources(selected, [
+      source('lyrics-provider', lyrics),
+      source(
+        'catalog-a',
+        lyrics,
+        metadata: {
+          'moodTags': ['reflective'],
+          'externalIdentifiers': {
+            'catalog': ['work-1'],
+          },
+        },
+      ),
+      source(
+        'catalog-b',
+        lyrics,
+        metadata: {
+          'moodTags': ['wistful'],
+          'externalIdentifiers': {
+            'isrc': ['USAAA9100001'],
+          },
+          'query': 'private provider search query',
+        },
+      ),
+    ], preferredSourceId: 'lyrics-provider:song');
+
+    expect(song.body, lyrics);
+    expect(song.metadata['moodTags'], ['reflective', 'wistful']);
+    expect(song.metadata['externalIdentifiers'], {
+      'catalog': ['work-1'],
+      'isrc': ['USAAA9100001'],
+    });
+    expect(song.metadata, isNot(contains('query')));
+    expect(song.extra['fieldOrigins']['moodTags'], 'catalog-a:song');
+    expect(song.extra['fieldContributors']['moodTags'], [
+      'catalog-a:song',
+      'catalog-b:song',
+    ]);
+  });
+
+  test('recording-only metadata stays with its compatible recording', () {
+    const lyrics =
+        'Amber lanterns glow\nSilver rain returns\nAcross the sleepy water';
+    final recording = SongCandidate(
+      providerId: 'catalog',
+      id: 'recording',
+      title: 'Song',
+      artist: 'Artist',
+      album: 'Studio album',
+      durationSeconds: 180,
+      metadata: const {'identityScope': 'recording'},
+    );
+    final song = combineSources(recording, [
+      source('lyrics', lyrics),
+      source(
+        'live-provider',
+        lyrics,
+        kind: MatchKind.sameSong,
+        candidateMetadata: const {'identityScope': 'recording'},
+        metadata: const {'releaseDate': '2024-01-01', 'artworkUrl': 'live.jpg'},
+      ),
+    ]);
+
+    expect(song.metadata, isNot(contains('releaseDate')));
+    expect(song.metadata, isNot(contains('artworkUrl')));
+  });
+
+  test(
+    'conflicting provider metadata is preserved without arbitrary choice',
+    () {
+      const lyrics =
+          'Amber lanterns glow\nSilver rain returns\nAcross the sleepy water';
+      final song = combineSources(selected, [
+        source('lyrics', lyrics),
+        source('catalog-a', lyrics, metadata: const {'mood': 'reflective'}),
+        source('catalog-b', lyrics, metadata: const {'mood': 'wistful'}),
+      ]);
+
+      expect(song.metadata, isNot(contains('mood')));
+      expect(song.extra['conflicts']['mood'], [
+        {'sourceId': song.extra['selectedSourceId'], 'value': 'reflective'},
+        {'sourceId': 'catalog-b:song', 'value': 'wistful'},
+      ]);
+    },
+  );
+
+  test('nested map conflicts stay unresolved across every source ordering', () {
+    const lyrics =
+        'Amber lanterns glow\nSilver rain returns\nAcross the sleepy water';
+    final donors = [
+      source(
+        'catalog-a',
+        lyrics,
+        metadata: const {
+          'externalIdentifiers': {'catalog': 'value-a'},
+        },
+      ),
+      source(
+        'catalog-b',
+        lyrics,
+        metadata: const {
+          'externalIdentifiers': {'catalog': 'value-b'},
+        },
+      ),
+      source(
+        'catalog-c',
+        lyrics,
+        metadata: const {
+          'externalIdentifiers': {'catalog': 'value-c'},
+        },
+      ),
+    ];
+
+    for (final orderedDonors in [donors, donors.reversed.toList()]) {
+      final song = combineSources(selected, [
+        source('lyrics', lyrics),
+        ...orderedDonors,
+      ]);
+
+      expect(song.metadata, isNot(contains('externalIdentifiers')));
+      expect(
+        song.extra['fieldContributors'],
+        isNot(contains('externalIdentifiers')),
+      );
+      expect(song.extra['conflicts']['externalIdentifiers.catalog'], [
+        {'sourceId': 'catalog-a:song', 'value': 'value-a'},
+        {'sourceId': 'catalog-b:song', 'value': 'value-b'},
+        {'sourceId': 'catalog-c:song', 'value': 'value-c'},
+      ]);
+    }
+  });
+
+  test('explicit selected map values survive provider disagreements', () {
+    const lyrics =
+        'Amber lanterns glow\nSilver rain returns\nAcross the sleepy water';
+    const selectedWithIdentifiers = SongCandidate(
+      providerId: 'catalog',
+      id: 'song',
+      title: 'Song',
+      artist: 'Artist',
+      metadata: {
+        'externalIdentifiers': {'catalog': 'selected-value'},
+      },
+    );
+    final song = combineSources(selectedWithIdentifiers, [
+      source(
+        'lyrics',
+        lyrics,
+        metadata: const {
+          'externalIdentifiers': {'catalog': 'provider-value'},
+        },
+      ),
+    ]);
+
+    expect(song.metadata['externalIdentifiers'], {'catalog': 'selected-value'});
+    expect(song.extra['fieldContributors']['externalIdentifiers'], [
+      'catalog:song',
+    ]);
+    expect(song.extra['conflicts']['externalIdentifiers.catalog'], [
+      {'sourceId': 'catalog:song', 'value': 'selected-value'},
+      {'sourceId': 'lyrics:song', 'value': 'provider-value'},
+    ]);
+  });
+
+  test('selected map origin does not protect a disputed donor-only entry', () {
+    const lyrics =
+        'Amber lanterns glow\nSilver rain returns\nAcross the sleepy water';
+    const selectedWithIdentifiers = SongCandidate(
+      providerId: 'catalog',
+      id: 'song',
+      title: 'Song',
+      artist: 'Artist',
+      metadata: {
+        'externalIdentifiers': {'catalog': 'selected-value'},
+      },
+    );
+    final donors = [
+      source(
+        'catalog-a',
+        lyrics,
+        metadata: const {
+          'externalIdentifiers': {'isrc': 'donor-a'},
+        },
+      ),
+      source(
+        'catalog-b',
+        lyrics,
+        metadata: const {
+          'externalIdentifiers': {'isrc': 'donor-b'},
+        },
+      ),
+    ];
+
+    for (final orderedDonors in [donors, donors.reversed.toList()]) {
+      final song = combineSources(selectedWithIdentifiers, [
+        source('lyrics', lyrics),
+        ...orderedDonors,
+      ]);
+
+      expect(song.metadata['externalIdentifiers'], {
+        'catalog': 'selected-value',
+      });
+      expect(song.extra['fieldContributors']['externalIdentifiers'], [
+        'catalog:song',
+      ]);
+      expect(song.extra['conflicts']['externalIdentifiers.isrc'], [
+        {'sourceId': 'catalog-a:song', 'value': 'donor-a'},
+        {'sourceId': 'catalog-b:song', 'value': 'donor-b'},
+      ]);
+    }
+  });
+
+  test('conflicting keys from lyrics-only sources remain unresolved', () {
+    final lyrics = source(
+      'lyrics-provider',
+      'Amber lanterns glow\nSilver rain returns\nAcross the sleepy water',
+    );
+    final song = combineSources(selected, [
+      lyrics,
+      source('metadata-a', lyrics.body, metadata: {'key': 'F#m'}),
+      source('metadata-b', lyrics.body, metadata: {'key': 'A'}),
+    ], preferredSourceId: lyrics.id);
+
+    expect(song.body, lyrics.body);
+    expect(song.metadata.containsKey('key'), isFalse);
+  });
+
   test('full lyrics outrank a shorter text with more provider line breaks', () {
     const full =
         'Amber lanterns glow above the quiet harbor and silver rain '
@@ -308,6 +561,56 @@ void main() {
     );
     expect(song.metadata['album'], 'Album');
     expect(song.metadata['credits'], isNotEmpty);
+  });
+
+  test('empty nested catalog facts are filled without choosing conflicts', () {
+    const lyrics = 'Amber lanterns glow\nSilver rain returns';
+    for (final empty in [null, '', '  ', <dynamic>[], <String, dynamic>{}]) {
+      final catalog = SongCandidate(
+        providerId: 'catalog',
+        id: 'song',
+        title: 'Song',
+        artist: 'Artist',
+        metadata: {
+          'externalIdentifiers': {'catalog': 'kept', 'isrc': empty},
+        },
+      );
+      final a = source(
+        'a',
+        lyrics,
+        metadata: {
+          'externalIdentifiers': {'isrc': 'donor-a'},
+        },
+      );
+      final b = source(
+        'b',
+        lyrics,
+        metadata: {
+          'externalIdentifiers': {'isrc': 'donor-b'},
+        },
+      );
+      final filled = combineSources(catalog, [
+        source('lyrics', lyrics),
+        a,
+      ], preferredSourceId: 'lyrics:song');
+      expect(filled.metadata['externalIdentifiers'], {
+        'catalog': 'kept',
+        'isrc': 'donor-a',
+      });
+      for (final donors in [
+        [a, b],
+        [b, a],
+      ]) {
+        final disputed = combineSources(catalog, [
+          source('lyrics', lyrics),
+          ...donors,
+        ], preferredSourceId: 'lyrics:song');
+        expect(disputed.metadata['externalIdentifiers'], {'catalog': 'kept'});
+        expect(disputed.extra['fieldContributors']['externalIdentifiers'], [
+          'catalog:song',
+        ]);
+      }
+    }
   });
 
   test('display duration validates legacy duration aliases', () {

@@ -1919,4 +1919,7 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Veel üks rida, veidi [F]lähemal.';
+
+  @override
+  String get playerEstimatedKey => 'Hinnanguline helistik';
 }

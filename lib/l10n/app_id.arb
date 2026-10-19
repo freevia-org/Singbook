@@ -830,5 +830,6 @@
         "type": "int"
       }
     }
-  }
+  },
+  "playerEstimatedKey": "Nada dasar perkiraan"
 }

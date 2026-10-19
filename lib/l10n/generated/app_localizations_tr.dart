@@ -1918,4 +1918,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Bir satır daha, biraz daha [F]yakın.';
+
+  @override
+  String get playerEstimatedKey => 'Tahmini tonalite';
 }

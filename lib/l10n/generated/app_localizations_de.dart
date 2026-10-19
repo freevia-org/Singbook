@@ -1944,4 +1944,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Noch eine Zeile, ein Stück [F]näher.';
+
+  @override
+  String get playerEstimatedKey => 'Geschätzte Tonart';
 }

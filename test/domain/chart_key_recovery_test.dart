@@ -86,6 +86,86 @@ void main() {
     },
   );
 
+  test('lyrics-only source key is usable without selecting its lyrics', () {
+    const lyrics = 'Amber lanterns glow\nSilver rain returns';
+    final song = _saved(
+      body: lyrics,
+      sources: [
+        _source('lyrics', lyrics),
+        _source('key-provider', lyrics, metadata: {'key': 'E'}),
+      ],
+    );
+
+    expect(sourcedArrangementKey(song)?.key, 'E');
+    expect(sourcedArrangementKey(song)?.sourceIds, ['key-provider:song']);
+  });
+
+  test('lyrics-only source conflicts and unverified claims do not win', () {
+    const lyrics = 'Amber lanterns glow\nSilver rain returns';
+    expect(
+      sourcedArrangementKey(
+        _saved(
+          body: lyrics,
+          sources: [
+            _source('a', lyrics, metadata: {'key': 'E'}),
+            _source('b', lyrics, metadata: {'key': 'G'}),
+          ],
+        ),
+      ),
+      isNull,
+    );
+    expect(
+      sourcedArrangementKey(
+        _saved(
+          body: lyrics,
+          sources: [
+            _source(
+              'unverified',
+              lyrics,
+              metadata: {'key': 'E'},
+              kind: MatchKind.unverified,
+            ),
+          ],
+        ),
+      ),
+      isNull,
+    );
+  });
+
+  test('lyrics-only key source must match edition and arrangement setup', () {
+    const lyrics = 'Amber lanterns glow\nSilver rain returns';
+    final wrongEdition = _source(
+      'acoustic',
+      lyrics,
+      metadata: {'key': 'E'},
+    ).candidate;
+    final acoustic = SourceResult(
+      candidate: SongCandidate(
+        providerId: wrongEdition.providerId,
+        id: wrongEdition.id,
+        title: 'Song (Acoustic)',
+        artist: wrongEdition.artist,
+      ),
+      body: lyrics,
+      metadata: {'key': 'E'},
+      matchKind: MatchKind.sameSong,
+    );
+    final capoMismatch = _source(
+      'capo',
+      lyrics,
+      metadata: {'key': 'E', 'capo': 3},
+    );
+
+    expect(
+      sourcedArrangementKey(_saved(body: lyrics, sources: [acoustic])),
+      isNull,
+    );
+    expect(
+      sourcedArrangementKey(_saved(body: lyrics, sources: [capoMismatch])),
+      isNull,
+    );
+  });
+
   test(
     'shortened chart warning does not erase independently corroborated key',
     () {

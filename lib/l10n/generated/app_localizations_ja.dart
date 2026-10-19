@@ -1845,4 +1845,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]もう一行、少しだけ [F]近くへ。';
+
+  @override
+  String get playerEstimatedKey => '推定キー';
 }

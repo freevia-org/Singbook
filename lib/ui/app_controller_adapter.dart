@@ -6,8 +6,8 @@ import 'package:flutter/foundation.dart';
 import '../application/app_controller.dart';
 import '../domain/arrangement.dart' as arrangement;
 import '../domain/chordpro.dart';
-import '../domain/combine.dart'
-    show recordingCompatible, corroboratedArrangementKey;
+import '../domain/chord_key_estimate.dart' show estimateChordKey;
+import '../domain/combine.dart' show recordingCompatible, sourcedArrangementKey;
 import '../domain/models.dart';
 import '../domain/timing.dart' show timingOccurrenceMap;
 import '../domain/source_contributions.dart';
@@ -294,6 +294,18 @@ class AppControllerAdapter extends VerseUiController {
     _opens = opens;
     final song = currentSong;
     final setlist = currentSetlist;
+    final trustedReaderKey = displayedKey;
+    final estimatedReaderKey = trustedReaderKey == null && song != null
+        ? estimateChordKey(song.body)?.key
+        : null;
+    final readerKey =
+        trustedReaderKey ??
+        (estimatedReaderKey == null
+            ? null
+            : arrangement.transposeChord(
+                _keyWithCanonicalRoot(estimatedReaderKey),
+                _transpose.toInt(),
+              ));
     final timingMode = app.settings['timingMode'] as String? ?? 'estimated';
     final data = song == null
         ? const <LyricLineData>[]
@@ -475,7 +487,8 @@ class AppControllerAdapter extends VerseUiController {
       editingSetlist: _editingSetlist,
       editor: _editorData,
       editorDirty: _editorDirty,
-      readerKey: displayedKey,
+      readerKey: readerKey,
+      readerKeyEstimated: estimatedReaderKey != null,
       readerTranspose: _transpose.round(),
       readerCapo: displayedCapo?.toString(),
       readerTuning: tuning?.toString(),
@@ -517,7 +530,7 @@ class AppControllerAdapter extends VerseUiController {
     final cached = _songKeys[song];
     if (cached != null) return cached.key;
     final explicit = _metaString(song.metadata['key']);
-    final key = explicit ?? corroboratedArrangementKey(song)?.key;
+    final key = explicit ?? sourcedArrangementKey(song)?.key;
     _songKeys[song] = (key: key);
     return key;
   }

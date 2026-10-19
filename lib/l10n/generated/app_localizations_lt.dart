@@ -1952,4 +1952,7 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Dar viena eilutė, truputį [F]arčiau.';
+
+  @override
+  String get playerEstimatedKey => 'Numatoma tonacija';
 }

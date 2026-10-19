@@ -568,5 +568,6 @@
   "editorStandardTuning": "Standard",
   "editorExampleVerse": "[C]A new day is [G]calling,\n[Am]We follow the light back [F]home.",
   "editorExampleChorus": "[F]Sing this song [C]together,\n[G]Let the melody carry us [C]on.",
-  "editorExampleBridge": "[Am]One more line, a little [F]closer."
+  "editorExampleBridge": "[Am]One more line, a little [F]closer.",
+  "playerEstimatedKey": "Estimated key"
 }

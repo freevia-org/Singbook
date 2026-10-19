@@ -1920,4 +1920,7 @@ class AppLocalizationsBg extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Още един ред, крачка [F]по-близо.';
+
+  @override
+  String get playerEstimatedKey => 'Приблизителна тоналност';
 }

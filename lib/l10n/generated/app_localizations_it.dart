@@ -1934,4 +1934,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Un’altra riga, un po’ più [F]vicini.';
+
+  @override
+  String get playerEstimatedKey => 'Tonalità stimata';
 }

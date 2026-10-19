@@ -290,5 +290,6 @@
         "type": "int"
       }
     }
-  }
+  },
+  "playerEstimatedKey": "Приблизителна тоналност"
 }

@@ -1853,4 +1853,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]한 줄 더, 조금 더 [F]가까이.';
+
+  @override
+  String get playerEstimatedKey => '추정 조성';
 }

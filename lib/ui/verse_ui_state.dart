@@ -496,6 +496,7 @@ class VerseUiState {
     this.editor,
     this.editorDirty = false,
     this.readerKey,
+    this.readerKeyEstimated = false,
     this.readerTranspose = 0,
     this.readerCapo,
     this.readerTuning,
@@ -563,6 +564,7 @@ class VerseUiState {
       editor = o.editor,
       editorDirty = o.editorDirty,
       readerKey = o.readerKey,
+      readerKeyEstimated = o.readerKeyEstimated,
       readerTranspose = o.readerTranspose,
       readerCapo = o.readerCapo,
       readerTuning = o.readerTuning,
@@ -637,6 +639,7 @@ class VerseUiState {
   /// Key (after any setlist override and transposition), capo, tuning and tempo
   /// of the open song, for the reader subtitle.
   final String? readerKey, readerCapo, readerTuning, readerTempo;
+  final bool readerKeyEstimated;
 
   /// Semitone adjustment from the saved arrangement, also available without
   /// key metadata. A chord root alone does not establish the song's key.

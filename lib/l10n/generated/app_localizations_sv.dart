@@ -1923,4 +1923,7 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]En rad till, lite [F]närmare.';
+
+  @override
+  String get playerEstimatedKey => 'Uppskattad tonart';
 }
