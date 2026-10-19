@@ -29,7 +29,8 @@ runner. A suite that emits no screenshot markers is not screenshot-verified. Rev
 | Suite | Scope |
 | --- | --- |
 | `app_device_test.dart` | Native SQLite library/settings persistence, light/dark/localization state, enlarged text, logical phone/tablet/split-window sizes, keyboard and rotation layouts. Logical tablet sizes do not substitute for a native iPad run. |
-| `singbook_journey_device_test.dart` | Fixture-provider search, failure/retry, comparison and provenance, save/edit, favorite, player and timing, setlist operations, settings/reload, ChordPro and collection-package round trips, PDF generation. Import bytes enter the public controller API; this does not operate the OS document picker. |
+| `singbook_journey_device_test.dart` | Fixture-provider search, failure/retry, comparison, provenance and safe metadata enrichment, save/edit, favorite, player and timing, setlist operations, settings/reload, ChordPro and collection-package round trips, PDF generation. Import bytes enter the public controller API; this does not operate the OS document picker. |
+| `android_parity_features_device_test.dart` | Unified Recent/Library/Favorites/Online modes, persisted startup selection, Settings section routes and text size/chord controls, inferred key and estimated duration, collapsed player controls, speed/section seeking, inline setlist rename, accessibility reorder actions, and song deletion confirmation. |
 | `transpose_popup_device_test.dart` | Chord transposition, restored preferences, keyless/known-key songs, large RTL text, logical landscape and actual native portrait/landscape. |
 | `ios_native_layout_device_test.dart` | Actual native window sizes without surface overrides, portrait/landscape, English/light, Ukrainian/dark at 150%, Arabic/dark at 160%, reader scrolling and editor metadata reachability. |
 | `ios_platform_device_test.dart` | Real iOS plain-text clipboard path and native PDF rasterization through the printing plugin; native temporary file access. |
@@ -394,3 +395,87 @@ the store validator accepted all eight refreshed screenshots at `0.2.8+22`.
 Both dedicated simulators were restored to their initial shutdown state and
 Device Hub’s prior simulator selection was restored. Temporary device/build
 reservations are released after the final archive check.
+
+
+## Merged Android-feature coverage — 2026-10-19/20
+
+Application base: public main merge `e6a15c7b389af33e054417aa6f136ae0abc86075`,
+version `0.2.8+22`. This run changes only integration tests and this report;
+`lib/`, `ios/`, and `android/` remain identical to that merged application.
+Flutter 3.44.8, Xcode 27.1, iOS/iPadOS 27.0. Evidence is retained under the
+ignored directory `artifacts/ios-merged-e2e-20261019/`.
+
+Dedicated native devices: iPhone 17 Pro Max (1320×2868) and iPad Air 13
+(2048×2732); landscape reverses those dimensions. Temporary SQLite libraries
+and original fixtures were used throughout, with `--no-uninstall`. Legacy
+`org.freevia.verse` data and unrelated simulators were left alone.
+
+The new three-test parity suite covers all four Songs modes, startup preference
+restoration, Settings navigation and controls, About content, inferred key and
+estimated duration, collapsed player controls, speed adjustment, instrumental
+section seeking, inline setlist rename, accessibility reorder actions, and song
+delete cancellation/confirmation. The full journey additionally verifies safe
+metadata enrichment when combining sources, discovery failure/retry/cancel,
+comparison/provenance, playback, editing/discard, recent/favorites, setlists,
+settings persistence, file/package round trips, and PDF generation.
+
+Harness repairs were necessary for the merged UI: replace legacy startup/grid
+keys and the removed pitch-popup visibility choice; navigate Settings sections;
+distinguish the library title from identical search-field text; wait for real
+SQLite/navigation work; clear safe-area overrides instead of freezing portrait
+insets; and use short scrolling gestures within the enlarged-text lyric
+viewport. Failed runs and their screenshots are preserved, not counted as
+passes. No production regression or production-code repair was established.
+
+Native interactive coverage on both devices includes document/share/print
+cancellation, exact original-song Files export/import, app song/setlist share
+cancellation, backup export to local Files, merge-preview cancellation, merge
+restore with preferences while retaining a newer song, replacement cancellation,
+confirmed replacement, ChordPro import, setlist import, and repeat setlist import
+without duplicates. No message, cloud upload, or print job was submitted.
+
+The first iPad interactive run was interrupted after an operator coordinate tap
+during the picker sheet transition failed to select the intended repeat-import
+file. The UI returned to the existing library without the expected completion
+event; no duplicate/import completion is inferred from that screen alone. Its completed backup assertions remain in the log. The isolated import
+retry selected the settled picker, verified the import-success event and all
+IDs/content/override assertions, and passed. This interruption is retained as
+operator/test evidence, not an app failure or successful repeat-import result.
+
+Verified runs:
+
+| Device / scope | Evidence directory | Result |
+| --- | --- | --- |
+| iPad full combined suite | `ipad-full` | 14 passed, 1 Genius skip; 111 valid PNG checkpoints |
+| iPhone final full combined suite | `iphone-complete` | 14 passed, 1 Genius skip; 111 valid PNG checkpoints |
+| iPhone complete native layout matrix | `iphone-layout-v7` | Passed; 42 valid PNG checkpoints |
+| iPhone native dialogs and Files/import | `iphone-interactive` | 3 passed; backup harness navigation failed and was rerun separately |
+| iPhone app sharing and backup | `iphone-backup-v3` | Passed; 6 valid PNG checkpoints |
+| iPad native dialogs and backup | `ipad-interactive` | 3 tests completed; interrupted during repeat import |
+| iPad isolated native app imports | `ipad-import-retry` | Passed, including repeat import; final checkpoint recorded |
+
+Fresh phone/tablet screenshots were reviewed across light/dark, portrait/
+landscape, Ukrainian 150%, Arabic RTL 160%, reader/editor/settings/setlists,
+and the added feature screens. No clear overlap or clipped essential controls
+was found in the reviewed captures. At enlarged text, the phone Songs mode strip
+scrolls horizontally; all four choices fit in the native iPad portrait capture.
+A screenshot sample is not an exhaustive manual accessibility audit.
+
+Live Unison HTTP and attributed Sean McGrath catalogue checks passed on both
+devices. Genius was explicitly skipped because the build had no client access
+token. The Android script reads it from an ignored local defines file, which
+is absent on this Mac; GitHub variables and available build artifacts did not
+provide it. User authorized reusing that Android app token, but its value/file
+has not yet become accessible. Keep this an unverified live capability until a
+configured native run passes. Google sign-in/Drive Picker/sync require the iOS
+OAuth configuration and an authenticated account; only unavailable-state and
+existing boundary coverage are established here. Physical hardware, real
+VoiceOver interaction, cloud Files providers, and printer output remain outside
+these simulator results.
+
+Final analysis of all six modified test suites completed with no issues;
+`git diff --check` passed. The final combined runs each passed 14 tests and
+explicitly skipped the unconfigured Genius case. The four native workflow
+tests per device passed across the recorded interactive runs and bounded
+retries. Screenshots are native PNG checkpoints; `review-overview.jpg` is a
+derived visual-review contact sheet, not a test result.

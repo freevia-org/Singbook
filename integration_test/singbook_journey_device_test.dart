@@ -343,6 +343,14 @@ void main() {
         app.combined!,
       ).length;
       expect(expectedContributors, 4);
+      expect(
+        app.combined!.metadata['moodTags'],
+        containsAll(['reflective', 'wistful']),
+      );
+      expect(app.combined!.metadata['externalIdentifiers'], {
+        'catalog': ['original-work-1'],
+        'isrc': ['ORIGINAL-QA-1'],
+      });
       expect(contributingProviderIds(app.combined!), {
         _catalogId,
         _chordSourceId,
@@ -396,8 +404,11 @@ void main() {
               },
             )
             .join(' · ');
+        final contributionField = find
+            .ancestor(of: providerName, matching: find.byType(Column))
+            .first;
         final contributionRoles = find.descendant(
-          of: infoSheet,
+          of: contributionField,
           matching: find.textContaining(roles),
         );
         await tester.scrollUntilVisible(
@@ -515,9 +526,10 @@ void main() {
             .expand((line) => line.chords.map((chord) => chord.symbol)),
         containsAll(['C#', 'G#']),
       );
-      await tester.tap(pitchSelector);
-      await tester.pumpAndSettle();
-      await tester.tap(find.text(l10n.playerChordsNone));
+      // Visibility now belongs to Settings > Player, rather than the pitch
+      // popup. This journey verifies reader rendering/persistence; the parity
+      // feature suite exercises the actual Settings switch.
+      await tester.runAsync(() => playerController.setShowChords(false));
       await tester.pumpAndSettle();
       await _waitForState(tester, () {
         final lines = tester.widgetList<ChordLyricsLine>(chordLines);
@@ -529,9 +541,7 @@ void main() {
             .every((line) => !line.showChords),
         isTrue,
       );
-      await tester.tap(pitchSelector);
-      await tester.pumpAndSettle();
-      await tester.tap(find.text(l10n.playerChordsNone));
+      await tester.runAsync(() => playerController.setShowChords(true));
       await tester.pumpAndSettle();
       await _waitForState(tester, () {
         final lines = tester.widgetList<ChordLyricsLine>(chordLines);
@@ -617,6 +627,8 @@ void main() {
       expect(find.text('Discard changes?'), findsOneWidget);
       await tester.tap(find.text('Discard'));
       await tester.pumpAndSettle();
+      await _waitForSavedReader(tester, app);
+      await _capture(binding, '19b_reader_after_discard');
       expect(
         app.songs.single.body,
         contains('Lanterns light the winding road'),
@@ -631,6 +643,8 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Songs'));
       await tester.pumpAndSettle();
+      await tester.tap(_homeMode('library'));
+      await tester.pumpAndSettle();
       expect(app.songs, hasLength(1));
       await tester.tap(find.byKey(const ValueKey('header-overflow-menu')));
       await tester.pumpAndSettle();
@@ -641,15 +655,22 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Discard changes?'), findsNothing);
       expect(app.songs, hasLength(1));
-      await tester.tap(find.text(_title).first);
+      await _capture(binding, '19c_after_cancel_new_song');
+      final savedSongTitle = find
+          .byWidgetPredicate(
+            (widget) => widget is Text && widget.data == _title,
+          )
+          .first;
+      await tester.ensureVisible(savedSongTitle);
+      await tester.tap(savedSongTitle);
       await tester.pumpAndSettle();
+      await _capture(binding, '19d_reopened_saved_song');
       await _waitForState(
         tester,
-        () =>
-            find.byType(PlayerScreen).evaluate().isNotEmpty &&
-            find.textContaining(_savedLine).evaluate().isNotEmpty,
+        () => find.byType(PlayerScreen).evaluate().isNotEmpty,
         'saved song reader to open',
       );
+      await _scrollIntoView(tester, find.textContaining(_savedLine));
       expect(find.textContaining(_savedLine), findsOneWidget);
       await tester.tap(_iconButtonWithTooltip('Add to favorites'));
       await tester.pumpAndSettle();
@@ -676,10 +697,10 @@ void main() {
       expect(find.text('Recent songs'), findsNothing);
       await tester.tap(find.text('Songs'));
       await tester.pumpAndSettle();
+      await tester.tap(_homeMode('library'));
+      await tester.pumpAndSettle();
       expect(find.text(_title), findsWidgets);
       await _capture(binding, '20_library_populated');
-      await tester.tap(find.text('Home'));
-      await tester.pumpAndSettle();
       await tester.tap(_homeMode('recent'));
       await tester.pumpAndSettle();
       if (find.byTooltip('Clear search text').evaluate().isNotEmpty) {
@@ -944,28 +965,36 @@ void main() {
       await tester.tap(find.text('Settings'));
       await tester.pumpAndSettle();
       await _capture(binding, '24_settings_light');
+      final settingsUi = tester
+          .widget<SettingsScreen>(find.byType(SettingsScreen))
+          .controller;
+      await tester.tap(find.byKey(const ValueKey('settings-menu-appearance')));
+      await tester.pumpAndSettle();
       await _selectDropdown(tester, 'Theme', 'Dark');
       await _waitForState(
         tester,
         () =>
             app.settings['themeMode'] == 'dark' &&
-            Theme.of(tester.element(find.byType(SettingsScreen))).brightness ==
+            Theme.of(tester.element(find.byType(Scaffold).last)).brightness ==
                 Brightness.dark,
         'dark theme to save and apply',
       );
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('settings-menu-player')));
+      await tester.pumpAndSettle();
       await _selectDropdown(tester, 'Default scrolling mode', 'Timed lyrics');
       await _waitForState(
         tester,
         () =>
             app.settings['timingMode'] == 'timed' &&
-            tester
-                    .widget<SettingsScreen>(find.byType(SettingsScreen))
-                    .controller
-                    .state
-                    .timingMode ==
-                'timed',
+            settingsUi.state.timingMode == 'timed',
         'timed lyric scrolling mode to save and apply',
       );
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('settings-menu-sources')));
+      await tester.pumpAndSettle();
       final providerSwitch = find.widgetWithText(
         SwitchListTile,
         'Journey catalog',
@@ -978,33 +1007,28 @@ void main() {
         tester,
         () =>
             !app.providerEnabled(_catalogId) &&
-            tester
-                    .widget<SettingsScreen>(find.byType(SettingsScreen))
-                    .controller
-                    .state
-                    .providers
+            settingsUi.state.providers
                     .where((provider) => provider.id == _catalogId)
                     .firstOrNull
                     ?.enabled ==
                 false,
         'catalog provider toggle to save and apply',
       );
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('settings-menu-appearance')));
+      await tester.pumpAndSettle();
       await _selectDropdown(tester, 'App language', 'Українська');
       await tester.pumpAndSettle();
       await _waitForState(
         tester,
         () =>
             app.settings['locale'] == 'uk' &&
-            tester
-                    .widget<SettingsScreen>(find.byType(SettingsScreen))
-                    .controller
-                    .state
-                    .languageCode ==
-                'uk',
+            settingsUi.state.languageCode == 'uk',
         'Ukrainian locale to save and apply',
       );
       expect(
-        Theme.of(tester.element(find.byType(SettingsScreen))).brightness,
+        Theme.of(tester.element(find.byType(Scaffold).last)).brightness,
         Brightness.dark,
       );
       await _capture(binding, '25_settings_dark_ukrainian');
@@ -1135,10 +1159,7 @@ Finder _homeMode(String mode) => find.byKey(ValueKey('home-mode-$mode'));
 
 void _expectHomeModeCount(String mode, int count) {
   expect(
-    find.descendant(
-      of: _homeMode(mode),
-      matching: find.textContaining('($count)'),
-    ),
+    find.descendant(of: _homeMode(mode), matching: find.text('$count')),
     findsOneWidget,
   );
 }
@@ -1633,7 +1654,20 @@ class _JourneySource implements LyricsProvider {
     return SourceResult(
       candidate: candidate,
       body: hasLyrics ? body : '',
-      metadata: const {'key': 'C', 'capo': 2},
+      metadata: {
+        'key': 'C',
+        'capo': 2,
+        if (id == _chordSourceId) 'moodTags': ['reflective'],
+        if (id == _lyricSourceId) 'moodTags': ['wistful'],
+        if (id == _chordSourceId)
+          'externalIdentifiers': {
+            'catalog': ['original-work-1'],
+          },
+        if (id == _lyricSourceId)
+          'externalIdentifiers': {
+            'isrc': ['ORIGINAL-QA-1'],
+          },
+      },
       timingTracks: timingOnly && hasLyrics
           ? [
               parseLrc(

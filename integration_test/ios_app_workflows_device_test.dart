@@ -73,6 +73,7 @@ void main() {
       );
       controller = app;
       await app.initialize();
+      await app.setSetting('startupSongsView', 'library');
       await app.setSetting('themeMode', 'dark');
       await tester.pumpWidget(VerseApp(controller: app));
       await _pumpUi(tester);
@@ -91,8 +92,12 @@ void main() {
       );
       expect(find.byKey(const ValueKey('account-unavailable')), findsOneWidget);
       await _capture('app_account_unavailable');
+      await tester.pageBack();
+      await tester.pumpAndSettle();
 
       await tester.tap(find.text(l10n.navSongs).first);
+      await _pumpUi(tester);
+      await tester.tap(find.byKey(const ValueKey('home-mode-library')));
       await _pumpUi(tester);
       expect(find.text(song.title), findsOneWidget);
       final songMenu = find.byTooltip(l10n.songMenuLabel);
@@ -124,6 +129,8 @@ void main() {
       await setlistShareAck.wait(tester);
 
       await tester.tap(find.text(l10n.navSettings).first);
+      await _pumpUi(tester);
+      await tester.tap(find.byKey(const ValueKey('settings-menu-account')));
       await _pumpUi(tester);
       final export = find.byKey(const ValueKey('backup-export'));
       await _scrollTo(tester, export);
@@ -282,6 +289,7 @@ void importTests() {
       );
       controller = app;
       await app.initialize();
+      await app.setSetting('startupSongsView', 'library');
       await tester.pumpWidget(VerseApp(controller: app));
       await _pumpUi(tester);
       await _rotate(tester, false);
@@ -408,6 +416,10 @@ void importTests() {
       );
       await tester.tap(find.text('${l10n.settingsImportSetlist} (.osts)'));
       await repeatImportAck.wait(tester);
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 500)),
+      );
+      debugPrint('SINGBOOK_IMPORT_REPEAT:picker_returned');
       await _pumpUi(tester);
       await _waitForRealAsync(
         tester,
@@ -423,6 +435,7 @@ void importTests() {
       expect(repeated.entries, hasLength(1));
       expect(repeated.entries.single.songId, importedSong.id);
       expect(repeated.entries.single.overrides['key'], 'E');
+      await _capture('app_setlist_repeat_import_verified');
       expect(tester.takeException(), isNull);
     },
     skip: !Platform.isIOS || !_enabled,

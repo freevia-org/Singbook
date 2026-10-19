@@ -201,17 +201,14 @@ void main() {
         );
         expect(controller.state.readerTranspose, 0, reason: fixture.name);
 
-        await tester.tap(dropdown);
-        await tester.pumpAndSettle();
-        final none = find.text(
-          AppLocalizations.of(tester.element(dropdown)).playerChordsNone,
-        );
-        await tester.ensureVisible(none);
-        expect(none.hitTestable(), findsOneWidget, reason: fixture.name);
-        await tester.tap(none);
+        // The pitch popup preserves the separate Settings visibility choice.
+        await tester.runAsync(() => controller.setShowChords(false));
         await _settleNative(tester, controller, repository);
         expect(controller.state.showChords, isFalse, reason: fixture.name);
         await _selectTranspose(tester, dropdown, fixture, 0);
+        await _settleNative(tester, controller, repository);
+        expect(controller.state.showChords, isFalse, reason: fixture.name);
+        await tester.runAsync(() => controller.setShowChords(true));
         await _settleNative(tester, controller, repository);
         expect(controller.state.showChords, isTrue, reason: fixture.name);
         await _expectChordValues(

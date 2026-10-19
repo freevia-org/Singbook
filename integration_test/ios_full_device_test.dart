@@ -1,6 +1,7 @@
 // One iOS test target avoids rebuilding the native app for every suite.
 // Every suite uses temporary databases; run only on a dedicated test simulator.
 import 'app_device_test.dart' as app;
+import 'android_parity_features_device_test.dart' as parity;
 import 'ios_platform_device_test.dart' as platform;
 import 'ios_native_layout_device_test.dart' as layouts;
 import 'provider_device_test.dart' as providers;
@@ -11,6 +12,7 @@ import 'transpose_popup_device_test.dart' as transpose;
 void main() {
   app.main();
   journey.main();
+  parity.main();
   transpose.main();
   platform.main();
   catalog.main();
