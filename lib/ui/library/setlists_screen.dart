@@ -397,11 +397,12 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
                   value: 'duplicate',
                   child: Text(l10n.setlistDuplicate),
                 ),
-                PopupMenuItem(value: 'delete', child: Text(l10n.actionRemove)),
                 PopupMenuItem(
                   value: 'copy',
                   child: Text(l10n.settingsCopySong),
                 ),
+                const PopupMenuDivider(),
+                PopupMenuItem(value: 'delete', child: Text(l10n.actionDelete)),
               ],
               onSelected: (action) =>
                   handleSetlistAction(context, controller, value.id, action),

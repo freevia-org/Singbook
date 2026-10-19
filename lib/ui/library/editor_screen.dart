@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../l10n/generated/app_localizations.dart';
+import '../library_actions.dart';
 import '../verse_ui_state.dart';
 import '../widgets/subpage_header.dart';
 
@@ -171,6 +172,19 @@ class _EditorScreenState extends State<EditorScreen> {
 
   String _safeHeader(String value) =>
       value.replaceAll(RegExp(r'[\r\n{}]'), ' ').trim();
+
+  Future<void> _delete() async {
+    if (_saving || _initial.isNew || _initial.songId.isEmpty) return;
+    setState(() => _saving = true);
+    try {
+      FocusManager.instance.primaryFocus?.unfocus();
+      await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
+      if (!mounted) return;
+      await confirmDeleteSong(context, widget.controller, _initial.songId);
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
 
   Future<void> _save() async {
     if (_saving) return;
@@ -487,6 +501,18 @@ class _EditorScreenState extends State<EditorScreen> {
               onPressed: _saving ? null : _save,
               icon: const Icon(Icons.check_rounded),
             ),
+            if (!_initial.isNew && _initial.songId.isNotEmpty)
+              PopupMenuButton<String>(
+                tooltip: l10n.songMenuLabel,
+                enabled: !_saving,
+                itemBuilder: (_) => [
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: Text(l10n.actionDelete),
+                  ),
+                ],
+                onSelected: (_) => _delete(),
+              ),
           ],
         ),
         Expanded(

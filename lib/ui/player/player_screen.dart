@@ -692,6 +692,11 @@ class _PlayerScreenState extends State<PlayerScreen>
                       value: 'print',
                       child: Text(l10n.settingsPrintSong),
                     ),
+                    const PopupMenuDivider(),
+                    PopupMenuItem(
+                      value: 'delete',
+                      child: Text(l10n.actionDelete),
+                    ),
                   ],
                   onSelected: (action) {
                     if (action == 'compare') {

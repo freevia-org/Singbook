@@ -2173,8 +2173,17 @@ class AppControllerAdapter extends VerseUiController {
       return;
     }
     if (!await _guard(() => app.deleteSong(id))) return;
+    _pendingPlayerPreferences.remove(id);
     if (_songId == id) {
+      _stopPlayer();
+      _progress = 0;
       _songId = null;
+      _setlistEntryId = null;
+      _editorData = null;
+      _editorBaseHash = null;
+      _editorDirty = false;
+      _editorReturnsToReader = false;
+      _editing = false;
       _route = VerseRoute.main;
     }
     notifyListeners();
@@ -2186,6 +2195,9 @@ class AppControllerAdapter extends VerseUiController {
     if (!await _guard(() => app.deleteSetlist(id))) return;
     if (_setlistId == id) {
       _setlistId = null;
+      _setlistEntryId = null;
+      _setlistBaseHash = null;
+      _editingSetlist = false;
       _route = VerseRoute.main;
     }
     notifyListeners();
