@@ -23,19 +23,72 @@ To build a local debug bundle:
 flutter build windows --debug
 ```
 
+For a traceable portable bundle, commit the source and run
+`pwsh scripts/build-windows.ps1`. Supply the build configuration in the ignored
+`config/local.defines.json`; `-AllowMissingDefines` explicitly permits an
+offline preview. `-Debug` selects a debug bundle. Every run writes a unique
+directory under `artifacts/windows/` with the build log, ZIP, source commit/tree
+and SHA-256 manifest. Keep the entire extracted `Singbook` directory together.
+Packaging alone does not establish clean-machine runtime acceptance.
+
 The executable is under `build/windows/x64/runner/Debug/` with Flutter's
 runtime DLLs and `data/` directory beside it. The Windows CI job compiles this
 debug bundle on `windows-latest`.
 
 ## Current scope
 
-Local library, search, player, ChordPro import/export, printing and plain-text
-copy use the same app logic and formats as mobile. Windows Drive sync is not
-configured yet: the current Google Sign-In plugin has no Windows implementation
-and the app currently enables that auth only on Android and iOS. Do not treat a
-Windows build as cloud-sync parity. A follow-up desktop OAuth implementation
-needs the installed-app browser flow with PKCE, token refresh and secure token
-storage before Drive sync can be enabled.
+Windows exports use a native Save As dialog for ChordPro songs, OpenSong
+setlists, PDF and library backups. Other platforms retain native sharing.
+The Windows runner provides both Unicode plain text and Windows HTML Format
+for formatted copy, and current-user Credential Manager storage for OAuth.
+The editor participates in Flutter's cancelable window-exit request so closing
+a changed draft can be canceled.
 
-Rich HTML clipboard copy currently falls back to plain text on Windows. The
-Windows runner does not yet provide the app's Android rich-clipboard channel.
+These source additions need the focused checks and native acceptance below;
+they are not yet a claim of full parity.
+
+## Google Drive configuration
+
+Create an OAuth client of type **Desktop app** in the **same Google Cloud
+project** as the Android/iOS clients, with Drive API enabled. Do not use the
+Android or Web client ID for the desktop loopback flow. Copy its identifier to
+`VERSE_GOOGLE_DESKTOP_CLIENT_ID` in the ignored build configuration. If the
+downloaded desktop registration requires its generated client secret, put it in
+`VERSE_GOOGLE_DESKTOP_CLIENT_SECRET`. Do not put the downloaded JSON or tokens
+in Git or validation logs. Desktop registrations are public clients; PKCE is
+still required even when a registration has this field.
+
+The desktop module opens the system browser, validates a random state value at
+an ephemeral IPv4 loopback callback, exchanges an S256 PKCE code, obtains the
+account identity from Google's HTTPS user-info endpoint, and keeps refresh
+tokens in the Windows vault. Only an explicit account action starts this flow.
+The desktop client must be created before real sign-in/refresh/Drive acceptance
+can be completed. Runtime authorization selection is integrated separately with
+the current mobile Drive changes.
+
+Reference: [Google desktop OAuth](https://developers.google.com/identity/protocols/oauth2/native-app).
+
+## Acceptance evidence
+
+Use a disposable test library for native workflow checks. Preserve the logs,
+screenshots and source manifest together; never replace a user's library or
+clipboard for an unattended check.
+
+| Area | Required evidence |
+| --- | --- |
+| Storage | Default Windows factory/path, close/reopen songs and settings, complete app restart, existing non-Windows paths preserved. |
+| Files | Native import and Save As, Unicode paths, cancel/overwrite, round-trip songs, setlists, PDFs and full backups. |
+| Player | Section timing including instrumental sections; mouse seeking, skip, speed, transpose/None, highlighting and persisted preferences. |
+| Desktop input | Keyboard controls while typing and in menus; mouse whole-row setlist reorder/delete; changed-editor close/cancel/discard. |
+| Clipboard | UTF-8 CF_HTML offsets and UTF-16 conversion, real formatted paste and plain-text fallback. |
+| Credentials | Isolated synthetic vault entry lifecycle, real sign-in, restart, refresh, offline failure, revoked grant and sign-out. |
+| Network | Windows default client with HTTP 103/final responses, redirects and concurrent requests; representative provider workflows. |
+| Print/links | Windows print/save-to-PDF/cancel and external-browser launch. |
+| Layout | Native screenshots at compact/desktop sizes, large text, DPI changes, themes and RTL. |
+| Delivery | Release bundle extracted outside checkout, dependencies present and clean-machine launch. |
+
+`pwsh scripts/test-windows-native.ps1` compiles and runs pure native helper
+checks. `-CredentialStore` also creates one unique synthetic vault entry and
+verifies deletion; it never enumerates existing credentials. The script never
+writes to the clipboard. Native checks save exact command/output in a unique
+`artifacts/windows-parity/native-*/` directory.
