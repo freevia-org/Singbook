@@ -189,6 +189,21 @@ bool _compatibleClaim(
   return true;
 }
 
+double _cueEndLowerBound(SongDocument song) {
+  var seconds = 0.0;
+  for (final track in song.timingTracks) {
+    if (track.id != song.activeTimingTrackId ||
+        track.status != TimingStatus.usable) {
+      continue;
+    }
+    for (final cue in track.cues) {
+      final end = (cue.endUs ?? cue.startUs) / 1000000;
+      if (_seconds(end) != null && end > seconds) seconds = end;
+    }
+  }
+  return seconds;
+}
+
 /// A display/scrolling duration, never a recording identity or cue binding.
 /// Catalog consensus remains estimated: agreement cannot prove a performance.
 /// The callback is lazy so known durations do not parse the arrangement.
@@ -243,10 +258,10 @@ PlayerDuration resolvePlayerDuration(
         final independent = [
           for (final values in providers.values) _agreedDuration(values)!,
         ];
-        return PlayerDuration(
-          _agreedDuration(independent)!,
-          PlayerDurationKind.catalogEstimate,
-        );
+        final consensus = _agreedDuration(independent)!;
+        if (consensus >= _cueEndLowerBound(song)) {
+          return PlayerDuration(consensus, PlayerDurationKind.catalogEstimate);
+        }
       }
     }
   }
@@ -254,15 +269,7 @@ PlayerDuration resolvePlayerDuration(
   if (_seconds(seconds) == null) seconds = 90;
   // A usable cue can extend the estimated clock, but its last lyric does not
   // establish the recording's total duration or change any cue timestamp.
-  for (final track in song.timingTracks) {
-    if (track.id != song.activeTimingTrackId ||
-        track.status != TimingStatus.usable) {
-      continue;
-    }
-    for (final cue in track.cues) {
-      final end = (cue.endUs ?? cue.startUs) / 1000000;
-      if (_seconds(end) != null && end > seconds) seconds = end;
-    }
-  }
+  final cueFloor = _cueEndLowerBound(song);
+  if (cueFloor > seconds) seconds = cueFloor;
   return PlayerDuration(seconds, PlayerDurationKind.chartEstimate);
 }
