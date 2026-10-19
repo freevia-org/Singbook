@@ -143,7 +143,9 @@ void main() {
       await _snapshot(tester, boundaryKey, '$name-bottom');
       expect(find.byType(AlertDialog), findsNothing);
       expect(find.text(l10n.settingsAbout), findsOneWidget);
-      await tester.pageBack();
+      final back = find.byType(BackButton);
+      expect(back, findsOneWidget);
+      await tester.tap(back);
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('settings-menu-about')), findsOneWidget);
       expect(tester.takeException(), isNull);

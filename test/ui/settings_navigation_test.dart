@@ -47,7 +47,13 @@ void main() {
     expect(find.byType(ListTile), findsNWidgets(5));
     expect(find.byType(DropdownButton<String>), findsNothing);
     expect(find.text(l10n.settingsClearHistory), findsNothing);
-    for (final section in ['appearance', 'player', 'sources', 'account']) {
+    for (final section in [
+      'appearance',
+      'player',
+      'sources',
+      'account',
+      'about',
+    ]) {
       await open(tester, section);
       expect(find.byType(BackButton), findsOneWidget);
       expect(menu(section), findsNothing);
@@ -102,6 +108,25 @@ void main() {
       await tester.tap(find.text(l10n.actionClear));
       await tester.pumpAndSettle();
       expect(c.calls.where((call) => call == 'clearHistory'), hasLength(1));
+    },
+  );
+
+  testWidgets(
+    'About follows controller navigation without leaving a stale page',
+    (tester) async {
+      var state = const VerseUiState(activeTab: VerseTab.settings);
+      final c = FakeUiController((_) => state);
+      addTearDown(c.dispose);
+      await pumpShell(tester, c);
+      await open(tester, 'about');
+      expect(find.byType(BackButton), findsOneWidget);
+      expect(find.byType(AlertDialog), findsNothing);
+      state = const VerseUiState(activeTab: VerseTab.songs);
+      c.refresh();
+      await tester.pumpAndSettle();
+      expect(find.byType(BackButton), findsNothing);
+      expect(find.text(l10nOf(tester).aboutDescription), findsNothing);
+      expect(tester.takeException(), isNull);
     },
   );
 
