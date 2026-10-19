@@ -729,6 +729,32 @@ void main() {
       },
     );
 
+    testWidgets('iPhone landscape safe areas keep all navigation reachable', (
+      tester,
+    ) async {
+      final c = FakeUiController((_) => const VerseUiState());
+      addTearDown(c.dispose);
+      tester.view.padding = const FakeViewPadding(top: 62, bottom: 34);
+      tester.view.viewPadding = const FakeViewPadding(top: 62, bottom: 34);
+      addTearDown(tester.view.resetPadding);
+      addTearDown(tester.view.resetViewPadding);
+      await pumpShell(tester, c, size: const Size(874, 402));
+      expect(find.byType(AdaptiveBottomNavigation), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('tablet-navigation-rail')),
+        findsNothing,
+      );
+      final settings = find.descendant(
+        of: find.byType(AdaptiveBottomNavigation),
+        matching: find.text(l10nOf(tester).navSettings),
+      );
+      expect(settings.hitTestable(), findsOneWidget);
+      await tester.tap(settings);
+      await tester.pumpAndSettle();
+      expect(c.calls, contains('setTab'));
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('a landscape tablet or tall-enough phone gets the rail', (
       tester,
     ) async {

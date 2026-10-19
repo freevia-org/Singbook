@@ -670,9 +670,13 @@ class _VerseAppShellState extends State<VerseAppShell>
     // A compact landscape phone gets it too, but only when the four rail
     // destinations (which do not scroll) fit under the app bar.
     final railHeight = 54 + 8 + 4 * (56 + 20 * navigationTextScale);
+    final availableNavigationHeight =
+        size.height -
+        MediaQuery.paddingOf(context).vertical -
+        MediaQuery.viewInsetsOf(context).bottom;
     final useRail =
         (size.width >= 600 || (size.width >= 500 && size.height <= 600)) &&
-        size.height >= railHeight;
+        availableNavigationHeight >= railHeight;
     return PopScope(
       canPop: homeRoot && !comparisonMode && _exitBackArmed,
       onPopInvokedWithResult: (didPop, _) {

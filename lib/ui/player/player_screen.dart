@@ -579,12 +579,23 @@ class _PlayerScreenState extends State<PlayerScreen>
             builder: (context, position, _) =>
                 _seekBar(context, l10n, state, position, duration),
           ),
-          _transport(
-            context,
-            l10n,
-            state,
-            inlineChords: song.hasChords,
-            showSpeed: !separateSpeed,
+          SizedBox(
+            height: 40,
+            child: OverflowBox(
+              alignment: Alignment.topCenter,
+              minHeight: 48,
+              maxHeight: 48,
+              child: Transform.translate(
+                offset: const Offset(0, -8),
+                child: _transport(
+                  context,
+                  l10n,
+                  state,
+                  inlineChords: song.hasChords,
+                  showSpeed: !separateSpeed,
+                ),
+              ),
+            ),
           ),
           if (separateSpeed)
             Padding(
@@ -1101,8 +1112,8 @@ class _PlayerScreenState extends State<PlayerScreen>
         final start = FilledButton.icon(
           key: const ValueKey('start-lyric-scroll'),
           style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-            minimumSize: const Size(88, 38),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            minimumSize: const Size(104, 46),
           ),
           onPressed: () async {
             if (!state.isPlaying) {

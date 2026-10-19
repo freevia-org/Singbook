@@ -13,7 +13,7 @@ import 'package:singbook/providers/source_catalog_client.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  testWidgets('declarative TTML extraction uses the real Android HTTP client', (
+  testWidgets('declarative TTML extraction uses the native HTTP client', (
     tester,
   ) async {
     await tester.runAsync(() async {
@@ -67,7 +67,7 @@ void main() {
     });
   });
   testWidgets(
-    'bundled catalog refresh is atomic on Android and preserves offline cache',
+    'bundled catalog refresh is atomic and preserves offline cache',
     (tester) async {
       await tester.runAsync(() async {
         final bundled = await rootBundle.loadString(
