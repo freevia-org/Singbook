@@ -1159,7 +1159,10 @@ Finder _homeMode(String mode) => find.byKey(ValueKey('home-mode-$mode'));
 
 void _expectHomeModeCount(String mode, int count) {
   expect(
-    find.descendant(of: _homeMode(mode), matching: find.text('$count')),
+    find.descendant(
+      of: _homeMode(mode),
+      matching: find.textContaining('($count)'),
+    ),
     findsOneWidget,
   );
 }

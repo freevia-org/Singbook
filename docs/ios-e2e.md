@@ -504,3 +504,17 @@ merge a different chart into those lyrics. The assertion now requires recorded
 chord contributors to resolve to non-rejected, chord-bearing source results.
 The initial failure remains under `iphone-live-configured`; production code
 was unchanged. Focused Dart analysis and `git diff --check` passed.
+
+
+### Integration with current main — 2026-10-20
+
+Before pushing the test branch, current public main `6ffba4b` was merged. It
+advances the app to `0.2.9+23` and includes inline tab counts, setlist swipe
+navigation, and timeline label measurement. The journey count assertion was
+adapted to the inline labels. The native simulator results above remain tied
+to `e6a15c7` (`0.2.8+22`); they do not claim a fresh full simulator run of
+`0.2.9+23`. Focused merged-tree validation is recorded below.
+
+Merged-tree validation: 57 focused UI/player/layout tests passed; displayed
+version and User-Agent drift checks both passed; analysis of the parity,
+journey, and provider integration suites reported no issues.
