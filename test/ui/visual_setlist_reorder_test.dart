@@ -24,14 +24,11 @@ void main() {
 
       for (final id in ['entry-one', 'entry-two']) {
         final row = find.byKey(ValueKey(id));
+        expect(tester.widget(row), isA<ReorderableDelayedDragStartListener>());
         final rect = tester.getRect(row);
         expect(rect.left, greaterThanOrEqualTo(0));
         expect(rect.right, lessThanOrEqualTo(360));
-        final handle = find.descendant(
-          of: row,
-          matching: find.byType(ReorderableDelayedDragStartListener),
-        );
-        expect(tester.getRect(handle).width, greaterThan(0));
+        expect(tester.getRect(row).width, greaterThan(0));
       }
       expect(tester.takeException(), isNull);
       await _dispose(tester, controller, app);
@@ -47,11 +44,11 @@ void main() {
     await controller.openSetlist(fixture.setlist.id);
     await _pumpShell(tester, controller);
 
-    final firstHandle = find.descendant(
-      of: find.byKey(const ValueKey('entry-one')),
-      matching: find.byType(ReorderableDelayedDragStartListener),
+    final firstHandle = find.byKey(const ValueKey('entry-one'));
+    expect(
+      tester.widget(firstHandle),
+      isA<ReorderableDelayedDragStartListener>(),
     );
-    expect(firstHandle, findsOneWidget);
     final firstCenter = tester.getCenter(firstHandle);
     expect(tester.getRect(firstHandle).width, greaterThan(48));
     final lastCenter = tester.getCenter(

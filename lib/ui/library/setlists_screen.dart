@@ -424,8 +424,10 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
               : ReorderableListView.builder(
                   padding: const EdgeInsets.fromLTRB(12, 4, 12, 20),
                   buildDefaultDragHandles: false,
-                  itemCount:
-                      value.entries.length + (_draggingEntryId == null ? 0 : 1),
+                  // Keep a stable child count while dragging. Expanding a new
+                  // final child mid-drag can duplicate Flutter's internal
+                  // reorder keys on the accessibility test route.
+                  itemCount: value.entries.length + 1,
                   onReorderStart: (index) {
                     if (index >= value.entries.length) return;
                     setState(() => _draggingEntryId = value.entries[index].id);
@@ -460,7 +462,11 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
                   },
                   itemBuilder: (context, index) {
                     if (index == value.entries.length) {
-                      return _deleteBasket(context, l10n);
+                      return _draggingEntryId == null
+                          ? const SizedBox.shrink(
+                              key: ValueKey('setlist-delete-basket'),
+                            )
+                          : _deleteBasket(context, l10n);
                     }
                     final entry = value.entries[index];
                     return ReorderableDelayedDragStartListener(
@@ -588,32 +594,25 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
         children: [
           if (!entry.missing)
             PopupMenuButton<String>(
-              tooltip: l10n.navMore,
+              tooltip: l10n.songMenuLabel,
               itemBuilder: (_) => [
-                PopupMenuItem(value: 'edit', child: Text(l10n.actionEdit)),
-                PopupMenuItem(value: 'add', child: Text(l10n.songAddToSetlist)),
-                PopupMenuItem(value: 'info', child: Text(l10n.songInfo)),
-                PopupMenuItem(
-                  value: 'share',
-                  child: Text(l10n.settingsShareSong),
-                ),
-                PopupMenuItem(
-                  value: 'share_pdf',
-                  child: Text(l10n.settingsSharePdf),
-                ),
-                PopupMenuItem(
-                  value: 'copy',
-                  child: Text(l10n.settingsCopySong),
-                ),
-                PopupMenuItem(
-                  value: 'print',
-                  child: Text(l10n.settingsPrintSong),
+                ...buildLibraryActionMenu(
+                  l10n,
+                  actions: const {
+                    'edit',
+                    'add',
+                    'info',
+                    'share',
+                    'share_pdf',
+                    'copy',
+                    'print',
+                  },
                 ),
                 PopupMenuItem(
                   value: 'override',
                   child: Text(l10n.setlistEntryOverride),
                 ),
-                PopupMenuItem(value: 'delete', child: Text(l10n.actionDelete)),
+                ...buildLibraryActionMenu(l10n, actions: const {'delete'}),
               ],
               onSelected: (action) {
                 if (action == 'override') {
