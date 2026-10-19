@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show ScrollDirection;
+import 'package:flutter/services.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../format.dart';
@@ -186,6 +187,66 @@ class _PlayerScreenState extends State<PlayerScreen>
     }
     await controller.playPause();
   }
+
+  Future<void> _togglePlayback() async {
+    final state = controller.state;
+    if (!state.isPlaying) {
+      if (!state.autoscroll) await controller.setAutoscroll(true);
+      if (state.timingMode == 'manual' ||
+          (state.timingMode == 'timed' && !state.readerHasTiming)) {
+        await controller.setTimingMode('estimated');
+      }
+    }
+    await _playPause();
+  }
+
+  KeyEventResult _handleWindowsKey(FocusNode node, KeyEvent event) {
+    if (defaultTargetPlatform != TargetPlatform.windows ||
+        event is! KeyDownEvent ||
+        ModalRoute.of(context)?.isCurrent == false) {
+      return KeyEventResult.ignored;
+    }
+    final focused = FocusManager.instance.primaryFocus?.context;
+    // Text entry and focused sliders retain their own keyboard behavior.
+    if (focused?.findAncestorStateOfType<EditableTextState>() != null ||
+        focused?.findAncestorWidgetOfExactType<Slider>() != null) {
+      return KeyEventResult.ignored;
+    }
+    final keyboard = HardwareKeyboard.instance;
+    if (keyboard.isAltPressed ||
+        keyboard.isMetaPressed ||
+        keyboard.isShiftPressed) {
+      return KeyEventResult.ignored;
+    }
+    if (event.logicalKey == LogicalKeyboardKey.space &&
+        !keyboard.isControlPressed) {
+      // Button activation is resolved by an ancestor Shortcuts widget after
+      // this Focus callback. Let its existing action receive Space first.
+      if (focused != null &&
+          Actions.maybeFind<ActivateIntent>(focused) != null) {
+        return KeyEventResult.ignored;
+      }
+      unawaited(_togglePlayback());
+      return KeyEventResult.handled;
+    }
+    if (keyboard.isControlPressed &&
+        controller.state.playerSections.isNotEmpty) {
+      if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+        _skipSection(-1);
+        return KeyEventResult.handled;
+      }
+      if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+        _skipSection(1);
+        return KeyEventResult.handled;
+      }
+    }
+    return KeyEventResult.ignored;
+  }
+
+  String _shortcutHint(String label, String shortcut) =>
+      defaultTargetPlatform == TargetPlatform.windows && shortcut.isNotEmpty
+      ? '$label ($shortcut)'
+      : label;
 
   void _skipSection(int direction) {
     final state = controller.state;
@@ -652,7 +713,7 @@ class _PlayerScreenState extends State<PlayerScreen>
       if (state.readerTempo != null)
         '${l10n.editorTempoField}: ${state.readerTempo}',
     ].whereType<String>().where((v) => v.isNotEmpty).join(' · ');
-    return LayoutBuilder(
+    final content = LayoutBuilder(
       builder: (context, constraints) {
         final compactLandscape =
             constraints.maxWidth > constraints.maxHeight &&
@@ -787,6 +848,12 @@ class _PlayerScreenState extends State<PlayerScreen>
           ],
         );
       },
+    );
+    return Focus(
+      key: const ValueKey('player-keyboard-focus'),
+      autofocus: defaultTargetPlatform == TargetPlatform.windows,
+      onKeyEvent: _handleWindowsKey,
+      child: content,
     );
   }
 
@@ -1130,16 +1197,7 @@ class _PlayerScreenState extends State<PlayerScreen>
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             minimumSize: const Size(104, 46),
           ),
-          onPressed: () async {
-            if (!state.isPlaying) {
-              if (!state.autoscroll) await controller.setAutoscroll(true);
-              if (state.timingMode == 'manual' ||
-                  (state.timingMode == 'timed' && !state.readerHasTiming)) {
-                await controller.setTimingMode('estimated');
-              }
-            }
-            await _playPause();
-          },
+          onPressed: _togglePlayback,
           icon: Icon(
             state.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
           ),
@@ -1154,11 +1212,14 @@ class _PlayerScreenState extends State<PlayerScreen>
           if (state.playerSections.isNotEmpty || state.activeSetlist != null)
             IconButton(
               visualDensity: VisualDensity.compact,
-              tooltip: state.activeSetlist == null
-                  ? l10n.playerPreviousSection
-                  : state.playerSections.isEmpty
-                  ? l10n.playerPreviousSong
-                  : l10n.playerPreviousSectionSong,
+              tooltip: _shortcutHint(
+                state.activeSetlist == null
+                    ? l10n.playerPreviousSection
+                    : state.playerSections.isEmpty
+                    ? l10n.playerPreviousSong
+                    : l10n.playerPreviousSectionSong,
+                state.playerSections.isEmpty ? '' : 'Ctrl+←',
+              ),
               onPressed: state.playerSections.isEmpty
                   ? state.activeSetlist == null
                         ? null
@@ -1169,15 +1230,28 @@ class _PlayerScreenState extends State<PlayerScreen>
                   : controller.previousSong,
               icon: const Icon(Icons.skip_previous_rounded),
             ),
-          Flexible(child: start),
+          Flexible(
+            child: defaultTargetPlatform == TargetPlatform.windows
+                ? Tooltip(
+                    message: _shortcutHint(
+                      state.isPlaying ? l10n.playerPause : l10n.playerPlay,
+                      'Space',
+                    ),
+                    child: start,
+                  )
+                : start,
+          ),
           if (state.playerSections.isNotEmpty || state.activeSetlist != null)
             IconButton(
               visualDensity: VisualDensity.compact,
-              tooltip: state.activeSetlist == null
-                  ? l10n.playerNextSection
-                  : state.playerSections.isEmpty
-                  ? l10n.playerNextSong
-                  : l10n.playerNextSectionSong,
+              tooltip: _shortcutHint(
+                state.activeSetlist == null
+                    ? l10n.playerNextSection
+                    : state.playerSections.isEmpty
+                    ? l10n.playerNextSong
+                    : l10n.playerNextSectionSong,
+                state.playerSections.isEmpty ? '' : 'Ctrl+→',
+              ),
               onPressed: state.playerSections.isEmpty
                   ? state.activeSetlist == null
                         ? null
