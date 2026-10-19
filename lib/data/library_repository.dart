@@ -682,15 +682,40 @@ class LibraryRepository {
       final sources = <String, SourceResult>{};
       String sourceKey(SourceResult source) =>
           '${source.id}:${sha256.convert(utf8.encode(source.body))}';
+      final timingIds = {
+        for (final track in song.timingTracks) track.id,
+        for (final source in song.sources)
+          for (final track in source.timingTracks) track.id,
+      };
+      TimingTrack archiveTrack(SourceResult source, TimingTrack track) {
+        final originalId =
+            track.extra['archivedOriginalTrackId'] as String? ?? track.id;
+        final hash = sha256.convert(
+          utf8.encode('${sourceKey(source)}\u0000$originalId'),
+        );
+        var id = 'history:${existing!.id}:$hash';
+        while (!timingIds.add(id)) {
+          id = '$id:history';
+        }
+        // Source timingTrackIds and the global codec track table must refer to
+        // this historical payload, even if the provider reuses a track ID.
+        return TimingTrack.fromJson({
+          ...track.toJson(),
+          'id': id,
+          'archivedOriginalTrackId': originalId,
+          'status': track.status == TimingStatus.usable
+              ? TimingStatus.stale.name
+              : track.status.name,
+        });
+      }
+
       for (final source in existing.sources) {
         // Retain source history/raw timing for Compare versions, but never
         // promote an archived version's timing onto the newly selected body.
         sources[sourceKey(source)] = source.copyWith(
           timingTracks: [
             for (final track in source.timingTracks)
-              track.status == TimingStatus.usable
-                  ? track.copyWith(status: TimingStatus.stale)
-                  : track,
+              archiveTrack(source, track),
           ],
         );
       }
@@ -716,6 +741,24 @@ class LibraryRepository {
         timingTracks: song.timingTracks,
         activeTimingTrackId: song.activeTimingTrackId,
         extra: {
+          // Preserve supported unknown payload fields, but clear old active
+          // selection/provenance fields when the chosen version omits them.
+          for (final entry in existing.extra.entries)
+            if (!const {
+              'selectedSourceId',
+              'savedSourceId',
+              'combinedSelection',
+              'combinedFallbackSource',
+              'fieldOrigins',
+              'fieldContributors',
+              'conflicts',
+              'recommendation',
+              'chordSourceIds',
+              'pendingChordSourceIds',
+              'excludedIncompleteSourceIds',
+              'corroboratedKeySourceIds',
+            }.contains(entry.key))
+              entry.key: entry.value,
           ...song.extra,
           if (existing.extra['rawAssets'] is Map ||
               song.extra['rawAssets'] is Map)
