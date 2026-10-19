@@ -16,6 +16,25 @@ Future<void> open(WidgetTester tester, String section) async {
 }
 
 void main() {
+  testWidgets('detail controls stay inside landscape system insets', (
+    tester,
+  ) async {
+    tester.view.padding = const FakeViewPadding(left: 48, right: 64);
+    tester.view.viewPadding = const FakeViewPadding(left: 48, right: 64);
+    addTearDown(tester.view.resetPadding);
+    addTearDown(tester.view.resetViewPadding);
+    final c = FakeUiController(
+      (_) => const VerseUiState(activeTab: VerseTab.settings),
+    );
+    addTearDown(c.dispose);
+    await pumpShell(tester, c, size: const Size(740, 360));
+    await open(tester, 'appearance');
+    final field = tester.getRect(find.byType(DropdownButton<String>).first);
+    expect(field.left, greaterThanOrEqualTo(48));
+    expect(field.right, lessThanOrEqualTo(740 - 64));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Settings is a compact menu and native Back returns to it', (
     tester,
   ) async {

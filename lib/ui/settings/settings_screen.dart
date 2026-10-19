@@ -369,228 +369,231 @@ class _SettingsSectionScreenState extends State<_SettingsSectionScreen> {
       final backup = widget.backupSection();
       return Scaffold(
         appBar: AppBar(title: Text(_sectionTitle(l10n, widget.section))),
-        body: ListView(
-          key: PageStorageKey('settings-${widget.section.name}'),
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 28),
-          children: [
-            if (widget.section == _SettingsSection.appearance) ...[
-              _SettingCard(
-                children: [
-                  _LabeledDropdown<String>(
-                    label: l10n.settingsLanguage,
-                    value: state.languageCode ?? 'system',
-                    entries: [
-                      ('system', l10n.settingsLanguageSystem),
-                      ('en', _languageNames['en']!),
-                      ('bg', _languageNames['bg']!),
-                      ('uk', _languageNames['uk']!),
-                      ...AppLocalizations.supportedLocales
-                          .where(
-                            (locale) => !const {
-                              'en',
-                              'bg',
-                              'uk',
-                            }.contains(locale.languageCode),
-                          )
-                          .map(
-                            (locale) => (
-                              locale.languageCode,
-                              _languageNames[locale.languageCode] ??
-                                  locale.languageCode,
+        body: SafeArea(
+          top: false,
+          child: ListView(
+            key: PageStorageKey('settings-${widget.section.name}'),
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 28),
+            children: [
+              if (widget.section == _SettingsSection.appearance) ...[
+                _SettingCard(
+                  children: [
+                    _LabeledDropdown<String>(
+                      label: l10n.settingsLanguage,
+                      value: state.languageCode ?? 'system',
+                      entries: [
+                        ('system', l10n.settingsLanguageSystem),
+                        ('en', _languageNames['en']!),
+                        ('bg', _languageNames['bg']!),
+                        ('uk', _languageNames['uk']!),
+                        ...AppLocalizations.supportedLocales
+                            .where(
+                              (locale) => !const {
+                                'en',
+                                'bg',
+                                'uk',
+                              }.contains(locale.languageCode),
+                            )
+                            .map(
+                              (locale) => (
+                                locale.languageCode,
+                                _languageNames[locale.languageCode] ??
+                                    locale.languageCode,
+                              ),
                             ),
-                          ),
-                    ],
-                    onChanged: (value) {
-                      if (value != null) {
-                        controller.setLanguage(
-                          value == 'system' ? null : value,
-                        );
-                      }
-                    },
-                  ),
-                  _LabeledDropdown<AppThemeMode>(
-                    label: l10n.settingsTheme,
-                    value: state.darkTheme,
-                    entries: [
-                      (AppThemeMode.system, l10n.settingsThemeSystem),
-                      (AppThemeMode.light, l10n.settingsThemeLight),
-                      (AppThemeMode.dark, l10n.settingsThemeDark),
-                    ],
-                    onChanged: (value) {
-                      if (value != null) controller.setThemeMode(value);
-                    },
-                  ),
-                  _LabeledDropdown<String>(
-                    label: l10n.settingsColorPalette,
-                    value: state.palette,
-                    entries: [
-                      ('navy', l10n.settingsPaletteNavy),
-                      ('sage', l10n.settingsPaletteSage),
-                      ('ocean', l10n.settingsPaletteOcean),
-                      ('clay', l10n.settingsPaletteClay),
-                      ('plum', l10n.settingsPalettePlum),
-                    ],
-                    onChanged: (value) {
-                      if (value != null) controller.setPalette(value);
-                    },
-                  ),
-                  _LabeledDropdown<String>(
-                    label: l10n.settingsFont,
-                    value: state.fontFamily,
-                    entries: [
-                      ('system', l10n.settingsFontSystem),
-                      ('serif', l10n.settingsFontSerif),
-                      ('mono', l10n.settingsFontMonospace),
-                    ],
-                    onChanged: (value) {
-                      if (value != null) controller.setFontFamily(value);
-                    },
-                  ),
-                  ListTile(
-                    title: Text(l10n.settingsTextSize),
-                    subtitle: Slider(
-                      value: fontSize.clamp(18, 36),
-                      min: 18,
-                      max: 36,
-                      divisions: 9,
-                      label: fontSize.round().toString(),
-                      semanticFormatterCallback: (value) =>
-                          value.round().toString(),
-                      onChanged: (value) =>
-                          setState(() => _draggingFontSize = value),
-                      onChangeEnd: (value) {
-                        controller.setLyricsFontSize(value);
-                        setState(() => _draggingFontSize = null);
+                      ],
+                      onChanged: (value) {
+                        if (value != null) {
+                          controller.setLanguage(
+                            value == 'system' ? null : value,
+                          );
+                        }
                       },
                     ),
-                  ),
-                  Card(
-                    color: Theme.of(context).colorScheme.surfaceContainerLow,
-                    child: Padding(
-                      padding: const EdgeInsets.all(14),
-                      child: Text(
-                        l10n.settingsLyricsPreviewExample,
-                        style: TextStyle(fontSize: fontSize, height: 1.3),
+                    _LabeledDropdown<AppThemeMode>(
+                      label: l10n.settingsTheme,
+                      value: state.darkTheme,
+                      entries: [
+                        (AppThemeMode.system, l10n.settingsThemeSystem),
+                        (AppThemeMode.light, l10n.settingsThemeLight),
+                        (AppThemeMode.dark, l10n.settingsThemeDark),
+                      ],
+                      onChanged: (value) {
+                        if (value != null) controller.setThemeMode(value);
+                      },
+                    ),
+                    _LabeledDropdown<String>(
+                      label: l10n.settingsColorPalette,
+                      value: state.palette,
+                      entries: [
+                        ('navy', l10n.settingsPaletteNavy),
+                        ('sage', l10n.settingsPaletteSage),
+                        ('ocean', l10n.settingsPaletteOcean),
+                        ('clay', l10n.settingsPaletteClay),
+                        ('plum', l10n.settingsPalettePlum),
+                      ],
+                      onChanged: (value) {
+                        if (value != null) controller.setPalette(value);
+                      },
+                    ),
+                    _LabeledDropdown<String>(
+                      label: l10n.settingsFont,
+                      value: state.fontFamily,
+                      entries: [
+                        ('system', l10n.settingsFontSystem),
+                        ('serif', l10n.settingsFontSerif),
+                        ('mono', l10n.settingsFontMonospace),
+                      ],
+                      onChanged: (value) {
+                        if (value != null) controller.setFontFamily(value);
+                      },
+                    ),
+                    ListTile(
+                      title: Text(l10n.settingsTextSize),
+                      subtitle: Slider(
+                        value: fontSize.clamp(18, 36),
+                        min: 18,
+                        max: 36,
+                        divisions: 9,
+                        label: fontSize.round().toString(),
+                        semanticFormatterCallback: (value) =>
+                            value.round().toString(),
+                        onChanged: (value) =>
+                            setState(() => _draggingFontSize = value),
+                        onChangeEnd: (value) {
+                          controller.setLyricsFontSize(value);
+                          setState(() => _draggingFontSize = null);
+                        },
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
-            if (widget.section == _SettingsSection.player) ...[
-              _SettingCard(
-                children: [
-                  _LabeledDropdown<String>(
-                    label: l10n.settingsLyricHighlight,
-                    value: state.lyricHighlightStyle,
-                    entries: [
-                      (
-                        'backgroundUnderline',
-                        l10n.settingsHighlightBackgroundUnderline,
-                      ),
-                      ('background', l10n.settingsHighlightBackground),
-                      ('underline', l10n.settingsHighlightUnderline),
-                      ('contrast', l10n.settingsHighlightContrast),
-                      ('none', l10n.settingsHighlightNone),
-                    ],
-                    onChanged: (value) {
-                      if (value != null) {
-                        controller.setLyricHighlightStyle(value);
-                      }
-                    },
-                  ),
-                  SwitchListTile(
-                    title: Text(l10n.settingsDefaultShowChords),
-                    subtitle: Text(l10n.settingsDefaultShowChordsHint),
-                    value: state.showChords,
-                    onChanged: controller.setShowChords,
-                  ),
-                  SwitchListTile(
-                    title: Text(l10n.settingsDefaultAutoscroll),
-                    subtitle: Text(l10n.settingsDefaultAutoscrollHint),
-                    // In manual timing the effective value is always off, so the
-                    // switch is disabled instead of silently ignoring taps; the
-                    // hint below already explains that it is not used.
-                    value: state.autoscrollPreference,
-                    onChanged: state.timingMode == 'manual'
-                        ? null
-                        : controller.setAutoscroll,
-                  ),
-                  _LabeledDropdown<String>(
-                    label: l10n.settingsDefaultTiming,
-                    value: state.timingMode,
-                    entries: [
-                      ('estimated', l10n.playerEstimatedPace),
-                      ('timed', l10n.playerTimedLyrics),
-                      ('manual', l10n.playerManualScroll),
-                    ],
-                    onChanged: (value) {
-                      if (value != null) controller.setTimingMode(value);
-                    },
-                  ),
-                ],
-              ),
-            ],
-            if (widget.section == _SettingsSection.sources) ...[
-              _SettingCard(
-                children: [
-                  ListTile(
-                    key: const ValueKey('refresh-source-list'),
-                    leading: const Icon(Icons.refresh_rounded),
-                    title: Text(l10n.settingsSourceRefresh),
-                    subtitle: _refreshingSources
-                        ? Text(l10n.loading)
-                        : _sourceRefreshSucceeded == null
-                        ? null
-                        : Semantics(
-                            liveRegion: true,
-                            child: Text(
-                              _sourceRefreshSucceeded!
-                                  ? l10n.actionDone
-                                  : l10n.actionRetry,
-                            ),
-                          ),
-                    trailing: _refreshingSources
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : null,
-                    onTap: _refreshingSources ? null : _refreshSources,
-                  ),
-                  for (final provider in state.providers) ...[
-                    SwitchListTile(
-                      title: Text(provider.name),
-                      subtitle: Text(
-                        localizedProviderDescription(
-                          l10n,
-                          provider.description,
+                    Card(
+                      color: Theme.of(context).colorScheme.surfaceContainerLow,
+                      child: Padding(
+                        padding: const EdgeInsets.all(14),
+                        child: Text(
+                          l10n.settingsLyricsPreviewExample,
+                          style: TextStyle(fontSize: fontSize, height: 1.3),
                         ),
                       ),
-                      value: provider.enabled,
-                      onChanged: (value) =>
-                          controller.setProviderEnabled(provider.id, value),
                     ),
                   ],
-                ],
-              ),
+                ),
+              ],
+              if (widget.section == _SettingsSection.player) ...[
+                _SettingCard(
+                  children: [
+                    _LabeledDropdown<String>(
+                      label: l10n.settingsLyricHighlight,
+                      value: state.lyricHighlightStyle,
+                      entries: [
+                        (
+                          'backgroundUnderline',
+                          l10n.settingsHighlightBackgroundUnderline,
+                        ),
+                        ('background', l10n.settingsHighlightBackground),
+                        ('underline', l10n.settingsHighlightUnderline),
+                        ('contrast', l10n.settingsHighlightContrast),
+                        ('none', l10n.settingsHighlightNone),
+                      ],
+                      onChanged: (value) {
+                        if (value != null) {
+                          controller.setLyricHighlightStyle(value);
+                        }
+                      },
+                    ),
+                    SwitchListTile(
+                      title: Text(l10n.settingsDefaultShowChords),
+                      subtitle: Text(l10n.settingsDefaultShowChordsHint),
+                      value: state.showChords,
+                      onChanged: controller.setShowChords,
+                    ),
+                    SwitchListTile(
+                      title: Text(l10n.settingsDefaultAutoscroll),
+                      subtitle: Text(l10n.settingsDefaultAutoscrollHint),
+                      // In manual timing the effective value is always off, so the
+                      // switch is disabled instead of silently ignoring taps; the
+                      // hint below already explains that it is not used.
+                      value: state.autoscrollPreference,
+                      onChanged: state.timingMode == 'manual'
+                          ? null
+                          : controller.setAutoscroll,
+                    ),
+                    _LabeledDropdown<String>(
+                      label: l10n.settingsDefaultTiming,
+                      value: state.timingMode,
+                      entries: [
+                        ('estimated', l10n.playerEstimatedPace),
+                        ('timed', l10n.playerTimedLyrics),
+                        ('manual', l10n.playerManualScroll),
+                      ],
+                      onChanged: (value) {
+                        if (value != null) controller.setTimingMode(value);
+                      },
+                    ),
+                  ],
+                ),
+              ],
+              if (widget.section == _SettingsSection.sources) ...[
+                _SettingCard(
+                  children: [
+                    ListTile(
+                      key: const ValueKey('refresh-source-list'),
+                      leading: const Icon(Icons.refresh_rounded),
+                      title: Text(l10n.settingsSourceRefresh),
+                      subtitle: _refreshingSources
+                          ? Text(l10n.loading)
+                          : _sourceRefreshSucceeded == null
+                          ? null
+                          : Semantics(
+                              liveRegion: true,
+                              child: Text(
+                                _sourceRefreshSucceeded!
+                                    ? l10n.actionDone
+                                    : l10n.actionRetry,
+                              ),
+                            ),
+                      trailing: _refreshingSources
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : null,
+                      onTap: _refreshingSources ? null : _refreshSources,
+                    ),
+                    for (final provider in state.providers) ...[
+                      SwitchListTile(
+                        title: Text(provider.name),
+                        subtitle: Text(
+                          localizedProviderDescription(
+                            l10n,
+                            provider.description,
+                          ),
+                        ),
+                        value: provider.enabled,
+                        onChanged: (value) =>
+                            controller.setProviderEnabled(provider.id, value),
+                      ),
+                    ],
+                  ],
+                ),
+              ],
+              if (widget.section == _SettingsSection.account) ...[
+                AccountSection(controller: controller),
+                ?backup,
+                _SettingCard(
+                  children: [
+                    ListTile(
+                      key: const ValueKey('settings-clear-history'),
+                      leading: const Icon(Icons.history_rounded),
+                      title: Text(l10n.settingsClearHistory),
+                      onTap: () => confirmClearHistory(context, controller),
+                    ),
+                  ],
+                ),
+              ],
             ],
-            if (widget.section == _SettingsSection.account) ...[
-              AccountSection(controller: controller),
-              ?backup,
-              _SettingCard(
-                children: [
-                  ListTile(
-                    key: const ValueKey('settings-clear-history'),
-                    leading: const Icon(Icons.history_rounded),
-                    title: Text(l10n.settingsClearHistory),
-                    onTap: () => confirmClearHistory(context, controller),
-                  ),
-                ],
-              ),
-            ],
-          ],
+          ),
         ),
       );
     },
