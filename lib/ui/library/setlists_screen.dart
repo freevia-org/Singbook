@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../l10n/generated/app_localizations.dart';
@@ -446,24 +448,32 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
                       });
                     },
                     onReorderEnd: (newIndex) {
-                      _deleteBasketDropPending = _isPointerOverDeleteBasket();
-                      if (_draggingEntryIndex == newIndex && mounted) {
+                      final dragIndex = _draggingEntryIndex;
+                      final deleteDrop = _isPointerOverDeleteBasket();
+                      if (deleteDrop &&
+                          dragIndex != null &&
+                          dragIndex < value.entries.length) {
+                        final entry = value.entries[dragIndex];
+                        _deleteBasketDropPending = true;
+                        if (mounted) setState(_clearDragVisualState);
+                        unawaited(
+                          _removeEntryFromSetlist(
+                            context,
+                            value,
+                            entry,
+                            editing,
+                          ),
+                        );
+                      } else if (dragIndex == newIndex && mounted) {
                         setState(_clearDragState);
                       }
                     },
                     onReorderItem: (oldIndex, newIndex) async {
-                      final removeFromSetlist = _deleteBasketDropPending;
-                      setState(_clearDragState);
-                      if (removeFromSetlist &&
-                          oldIndex < value.entries.length) {
-                        await _removeEntryFromSetlist(
-                          context,
-                          value,
-                          value.entries[oldIndex],
-                          editing,
-                        );
+                      if (_deleteBasketDropPending) {
+                        _deleteBasketDropPending = false;
                         return;
                       }
+                      setState(_clearDragState);
                       if (newIndex >= value.entries.length) return;
                       final entries = [...value.entries];
                       final item = entries.removeAt(oldIndex);
@@ -560,10 +570,14 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
   }
 
   void _clearDragState() {
+    _clearDragVisualState();
+    _deleteBasketDropPending = false;
+  }
+
+  void _clearDragVisualState() {
     _draggingEntryId = null;
     _draggingEntryIndex = null;
     _dragPosition = null;
-    _deleteBasketDropPending = false;
   }
 
   Future<void> _removeEntryFromSetlist(
