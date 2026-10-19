@@ -13,7 +13,7 @@
   "feature_profile": {
     "google_oauth": false,
     "genius": false,
-    "third_party_sources": "current app configuration; authorization review pending"
+    "third_party_sources": "all existing sources retained by owner decision on 2026-10-19; permission evidence remains incomplete"
   },
   "owner_fields_pending": [
     "copyright owner",
@@ -21,8 +21,8 @@
     "feedback email",
     "pricing and territories",
     "trader status and required account declarations",
-    "content rights and final provider profile",
-    "privacy policy publication and final App Privacy answers",
+    "content-rights declaration and available permission evidence",
+    "final SDK-inclusive App Privacy answers",
     "age-rating questionnaire"
   ],
   "account_steps_pending": [
@@ -123,5 +123,10 @@
       "source_sha256": "6732339ab6079991dc0daef906a34dd3e5e57198fa2a11a2df3d1f95536fd276",
       "source": "native iPad Air 13 M3 iPadOS 27.0; opaque RGBA converted losslessly to RGB; no crop/resize"
     }
-  ]
+  ],
+  "privacy_policy_publication": {
+    "date": "2026-10-19",
+    "status": "published_verified_http_200",
+    "deployment": "51f629dd-4742-448b-9a98-a5c470451e9f"
+  }
 }

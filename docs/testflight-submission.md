@@ -8,7 +8,8 @@ unattended cases across runs, plus native import/backup workflows; Genius was
 skipped without a token. See [E2E evidence](ios-e2e.md). Physical hardware is
 unavailable and remains an explicitly unperformed check, not a prerequisite
 for preparing these materials. No signed IPA has been verified. Public policy
-corrections and provider authorization review remain publication gates.
+corrections were published on 2026-10-19. All sources are retained by owner
+decision; permission evidence remains incomplete, without a local publishing gate.
 
 Production App Store metadata and screenshot inventory are in
 `docs/app-store/`; the offline publishing handoff is below in

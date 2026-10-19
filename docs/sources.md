@@ -90,3 +90,23 @@ Singbook is a client that runs on the user's device; it is not a lyrics publishe
   - Selection and input errors: `invalid_query` (empty or over 200 characters), `invalid_selection` (malformed or foreign selection id), `invalid_url` (URL fails the https/host/path policy), `identity_required`, `title_required`, `select_specific_work` (Wikisource disambiguation page), `user_selection_required` (Wikisource needs an explicit work), `rights_review_required` (license not shown as public-domain/open, so text is withheld).
   - Configuration and lifecycle: `not_configured` (no Genius token, or provider not registered), `file_import_required` (Ozbcoz and Worship Together are import-only), `transport_closed`, `cancelled`.
 - **Pinning**: WorshipCommons reads its catalog, song files and license links from a fixed commit of `ChurchApps/WorshipCommonsContent`, set by the single constant `WorshipCommonsProvider.contentRef` (currently `d3362e1d7c7f4d3f98b9310bb07aa480453508c7`, the `main` commit of 2026-10-13, resolved 2026-10-15; its `catalog.json` is about 3.5 MB and parses with the adapter). Content and licenses therefore change only with an app update, and only entries declared PD / CC-BY / CC-BY-SA with `approved` status are offered. To bump: run `gh api repos/ChurchApps/WorshipCommonsContent/commits/main --jq .sha`, check that `catalog.json` at that SHA is fetchable and `flutter test test/providers/extra` passes, then update the constant, this paragraph and the date. The catalog may be up to 12 MB; a larger file fails with `invalid_response` rather than loading truncated.
+
+### App Store provider decision — 2026-10-19
+
+The owner chose to retain all existing sources and requested no local publication
+block. No provider restriction was implemented. This does not establish missing
+permissions or predict Apple's review outcome. Existing service/content-rights
+uncertainties remain documented above.
+
+Reviewed evidence: Sean McGrath's original songs use
+[CC BY 4.0](https://seanmcgrathmusic.com/about/); the pinned WorshipCommons
+revision `d3362e1d7c7f4d3f98b9310bb07aa480453508c7` has its own
+[licence](https://github.com/ChurchApps/WorshipCommonsContent/blob/d3362e1d7c7f4d3f98b9310bb07aa480453508c7/LICENSE.md).
+[Wikidata structured data](https://www.wikidata.org/wiki/Wikidata:Licensing)
+is CC0; [Commons reuse](https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia)
+depends on each file's licence. These permissions do not extend to unrelated
+lyrics or recordings. [Open Filk](https://filksongbook.com/info/en/licenses/)
+includes restrictive/custom licences; [MusicBrainz API use](https://musicbrainz.org/doc/MusicBrainz_API)
+has conditions distinct from its data licences. Preserve attribution and
+per-item licence evidence, including when exporting or printing. Working public
+endpoints and embedded provenance alone do not establish all reuse rights.
