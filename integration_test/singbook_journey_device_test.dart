@@ -836,14 +836,19 @@ void main() {
       await tester.pumpAndSettle();
       final overrideEntryId = app.setlists.single.entries.first.id;
       final regularEntryId = app.setlists.single.entries.last.id;
-      final dragHandles = find.byIcon(Icons.drag_handle_rounded);
-      final start = tester.getCenter(dragHandles.first);
-      final destination = tester.getCenter(dragHandles.last);
+      final firstRow = find.byKey(ValueKey(overrideEntryId));
+      final lastRow = find.byKey(ValueKey(regularEntryId));
+      expect(
+        tester.widget(firstRow),
+        isA<ReorderableDelayedDragStartListener>(),
+      );
+      final start = tester.getCenter(firstRow);
+      final destination = tester.getCenter(lastRow);
       final gesture = await tester.startGesture(start);
-      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 600));
       // Send a continuous path like a finger drag. A single large pointer
       // jump can be interpreted as only one reorder slot by the native view.
-      final target = destination + const Offset(0, 30);
+      final target = destination + const Offset(0, 12);
       final step = (target - start) / 20;
       for (var index = 0; index < 20; index++) {
         await gesture.moveBy(step);
@@ -851,9 +856,9 @@ void main() {
       }
       await tester.pump(const Duration(milliseconds: 150));
       final keyedRowsWhileHeld = find
-          .byType(ListTile)
+          .byType(ReorderableDelayedDragStartListener)
           .evaluate()
-          .map((element) => (element.widget as ListTile).key)
+          .map((element) => element.widget.key)
           .toList();
       debugPrint(
         'SINGBOOK_E2E_DRAG held start=$start destination=$destination '
