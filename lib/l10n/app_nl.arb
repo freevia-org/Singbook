@@ -1,8 +1,6 @@
 {
   "@@locale": "nl",
   "appTitle": "Singbook",
-  "aboutDescription": "Een rustige plek om de nummers in je bibliotheek te vinden, te ordenen en te zingen.",
-  "aboutMadeForSinging": "Gemaakt om samen te zingen",
   "menuTypeNewSong": "Nieuw lied invoeren", "aboutDetails": "Zoek in ingeschakelde bronnen, vergelijk versies, bewaar songteksten en akkoorden samen en orden nummers in setlijsten. Je bibliotheek wordt op dit apparaat opgeslagen; optionele synchronisatie met Google Drive gebruikt je Google-account. Zoekopdrachten gaan rechtstreeks naar ingeschakelde bronnen.", "aboutSupport": "Ondersteuning en feedback", "appVersion": "Versie {version}",
   "@appVersion": {
     "placeholders": {
@@ -812,5 +810,26 @@
   "editorStandardTuning": "Standaardstemming",
   "editorExampleVerse": "[C]Een nieuwe dag [G]roept,\n[Am]we volgen het licht terug naar [F]huis.",
   "editorExampleChorus": "[F]Zing dit lied [C]samen,\n[G]laat de melodie ons [C]verder dragen.",
-  "editorExampleBridge": "[Am]Nog een regel, een beetje [F]dichterbij."
+  "editorExampleBridge": "[Am]Nog een regel, een beetje [F]dichterbij.",
+  "aboutMadeForSinging": "Elk lied klaar om te zingen.",
+  "aboutDescription": "Je songteksten, akkoorden en setlists bij elkaar, klaar voor repetities, het podium en elke plek waar je speelt.",
+  "aboutDetails": "Doorzoek beschikbare bronnen en vergelijk songteksten, akkoorden, timing en opnamegegevens voordat je de versie opslaat die je wilt spelen. De beschikbaarheid verschilt per nummer en dienst.",
+  "aboutFindTitle": "Vind de juiste versie",
+  "aboutKeepTitle": "Bouw je eigen bibliotheek",
+  "aboutKeepDetails": "Bewerk en transposeer nummers, bewaar ze in je lokale bibliotheek om ze offline te gebruiken, en deel draagbare ChordPro-bestanden. Optionele Google Drive-synchronisatie gebruikt een privémap van de app in je Google-account. Je kunt ook op ‘Nu synchroniseren’ tikken om je apparaten bij te werken.",
+  "aboutPlayTitle": "Neem je setlist mee het podium op",
+  "aboutPlayDetails": "Zet nummers in setlists, kies voor elk nummer een toonsoort en deel OpenSong-setlists. Pas de tekstgrootte in de lezer aan, laat songteksten automatisch scrollen en druk song-PDF’s af. Singbook streamt of speelt geen audio af.",
+  "aboutPrivacyTitle": "Gratis en lokaal als uitgangspunt",
+  "aboutPrivacyDetails": "Singbook is gratis en bevat geen advertenties, analyses of in-app aankopen. Je opgeslagen bibliotheek blijft op je apparaat; optionele synchronisatie gebruikt je eigen Google Drive. Online resultaten komen rechtstreeks van onafhankelijke diensten van derden en zijn mogelijk niet beschikbaar of auteursrechtelijk beschermd. Singbook host hun inhoud niet.",
+  "aboutWebsite": "Singbook-website",
+  "aboutSourceCode": "Broncode op GitHub",
+  "aboutPublisher": "Van Freevia",
+  "aboutLanguages": "App-talen: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

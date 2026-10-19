@@ -13,14 +13,52 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Et roligt sted at finde, organisere og synge fra dit sangbibliotek.';
+      'Dine sangtekster, akkorder og sætlister samlet, klar til øvning, scenen og alle steder, du spiller.';
 
   @override
-  String get aboutMadeForSinging => 'Skabt til at synge sammen';
+  String get aboutMadeForSinging => 'Hver sang er klar.';
 
   @override
   String get aboutDetails =>
-      'Søg i aktiverede kilder, sammenlign versioner, hold sangtekster og akkorder samlet, og organiser sange i sætlister. Dit bibliotek gemmes på denne enhed; valgfri synkronisering via Google Drive bruger din Google-konto. Søgninger sendes direkte til de aktiverede kilder.';
+      'Søg i aktiverede kilder, og sammenlign sangtekster, akkorder, timing og optagelsesoplysninger, før du gemmer den version, du vil spille. Tilgængeligheden varierer efter sang og tjeneste.';
+
+  @override
+  String get aboutFindTitle => 'Find den rigtige version';
+
+  @override
+  String get aboutKeepTitle => 'Byg dit eget bibliotek';
+
+  @override
+  String get aboutKeepDetails =>
+      'Rediger og transponer sange, behold dem i dit lokale bibliotek til offlinebrug, og del bærbare ChordPro-filer. Valgfri synkronisering med Google Drive bruger en privat appmappe på din Google-konto. Du kan også trykke på Synkronisér nu for at opdatere dine enheder.';
+
+  @override
+  String get aboutPlayTitle => 'Tag din sætliste med på scenen';
+
+  @override
+  String get aboutPlayDetails =>
+      'Organiser sange i sætlister, vælg toneart for hver sang, og del OpenSong-sætlister. Tilpas læserens tekst, automatisk rulning af sangtekster, og udskriv sang-PDF’er. Singbook streamer eller afspiller ikke lyd.';
+
+  @override
+  String get aboutPrivacyTitle => 'Gratis, med biblioteket på din enhed';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook er gratis uden annoncer, analyse eller køb i appen. Dit gemte bibliotek bliver på din enhed; valgfri synkronisering bruger dit eget Google Drive. Onlineresultater kommer direkte fra uafhængige tredjepartstjenester og kan være utilgængelige eller ophavsretligt beskyttede. Singbook er ikke vært for deres indhold.';
+
+  @override
+  String get aboutWebsite => 'Singbooks website';
+
+  @override
+  String get aboutSourceCode => 'Kildekode på GitHub';
+
+  @override
+  String get aboutPublisher => 'Fra Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Appens sprog: $count';
+  }
 
   @override
   String get aboutSupport => 'Support og feedback';

@@ -1,8 +1,6 @@
 {
   "@@locale": "pl",
   "appTitle": "Singbook",
-  "aboutDescription": "Spokojne miejsce do wyszukiwania, porządkowania i śpiewania utworów z Twojej biblioteki.",
-  "aboutMadeForSinging": "Stworzone do wspólnego śpiewania",
   "menuTypeNewSong": "Wpisz nową piosenkę", "aboutDetails": "Szukaj w włączonych źródłach, porównuj wersje, przechowuj teksty i akordy razem oraz organizuj utwory w setlisty. Twoja biblioteka jest zapisana na tym urządzeniu; opcjonalna synchronizacja z Google Drive korzysta z Twojego konta Google. Wyszukiwania trafiają bezpośrednio do włączonych źródeł.", "aboutSupport": "Pomoc i opinie", "appVersion": "Wersja {version}",
   "@appVersion": {
     "placeholders": {
@@ -812,5 +810,26 @@
   "editorStandardTuning": "Strój standardowy",
   "editorExampleVerse": "[C]Nowy dzień nas [G]woła,\n[Am]wracamy za światłem do [F]domu.",
   "editorExampleChorus": "[F]Zaśpiewajmy tę piosenkę [C]razem,\n[G]niech melodia poniesie nas [C]dalej.",
-  "editorExampleBridge": "[Am]Jeszcze jeden wers, trochę [F]bliżej."
+  "editorExampleBridge": "[Am]Jeszcze jeden wers, trochę [F]bliżej.",
+  "aboutMadeForSinging": "Każda piosenka gotowa.",
+  "aboutDescription": "Teksty, akordy i setlisty w jednym miejscu — gotowe na próby, scenę i każde miejsce, w którym grasz.",
+  "aboutDetails": "Przeszukuj dostępne źródła i porównuj teksty, akordy, znaczniki czasowe oraz informacje o nagraniu, zanim zapiszesz wybraną wersję. Dostępność zależy od utworu i usługi.",
+  "aboutFindTitle": "Znajdź właściwą wersję",
+  "aboutKeepTitle": "Zbuduj własną bibliotekę",
+  "aboutKeepDetails": "Edytuj i transponuj utwory, przechowuj je w lokalnej bibliotece do użytku offline i udostępniaj przenośne pliki ChordPro. Opcjonalna synchronizacja z Google Drive używa prywatnego folderu aplikacji na Twoim koncie Google. Możesz też stuknąć „Synchronizuj teraz”, aby zaktualizować urządzenia.",
+  "aboutPlayTitle": "Zabierz setlistę na scenę",
+  "aboutPlayDetails": "Układaj utwory w setlisty, wybieraj tonację dla każdego i udostępniaj setlisty OpenSong. Dostosuj rozmiar tekstu w czytniku, włącz automatyczne przewijanie tekstu i drukuj PDF-y z utworami. Singbook nie przesyła strumieniowo ani nie odtwarza dźwięku.",
+  "aboutPrivacyTitle": "Bezpłatna aplikacja, biblioteka na urządzeniu",
+  "aboutPrivacyDetails": "Singbook jest bezpłatny i nie zawiera reklam, analityki ani zakupów w aplikacji. Zapisana biblioteka pozostaje na Twoim urządzeniu; opcjonalna synchronizacja korzysta z Twojego Google Drive. Wyniki online pochodzą bezpośrednio od niezależnych usług zewnętrznych i mogą być niedostępne lub chronione prawem autorskim. Singbook nie hostuje tych treści.",
+  "aboutWebsite": "Strona Singbook",
+  "aboutSourceCode": "Kod źródłowy w GitHub",
+  "aboutPublisher": "Od Freevia",
+  "aboutLanguages": "Języki aplikacji: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

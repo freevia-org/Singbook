@@ -1,9 +1,9 @@
 {
   "@@locale": "fi",
   "appTitle": "Singbook",
-  "aboutDescription": "Rauhallinen paikka, jossa löydät ja järjestät kappaleesi ja laulat niiden mukana.",
-  "aboutMadeForSinging": "Tehty yhdessä laulamiseen",
-  "menuTypeNewSong": "Kirjoita uusi kappale", "aboutDetails": "Hae käytössä olevista lähteistä, vertaile versioita, pidä sanat ja soinnut yhdessä ja järjestä kappaleet listoiksi. Kirjastosi tallennetaan tälle laitteelle; valinnainen Google Drive -synkronointi käyttää Google-tiliäsi. Haut lähetetään suoraan käytössä oleville lähteille.", "aboutSupport": "Tuki ja palaute", "appVersion": "Versio {version}",
+  "aboutDescription": "Sanoitukset, soinnut ja kappalelistat yhdessä, valmiina harjoituksiin, lavalle ja kaikkialle, missä soitat.",
+  "aboutMadeForSinging": "Jokainen kappale valmiina.",
+  "menuTypeNewSong": "Kirjoita uusi kappale", "aboutDetails": "Hae käytössä olevista lähteistä ja vertaile sanoituksia, sointuja, ajoitusta ja tallenteen tietoja ennen kuin tallennat haluamasi version. Saatavuus vaihtelee kappaleen ja palvelun mukaan.", "aboutSupport": "Tuki ja palaute", "appVersion": "Versio {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -812,5 +812,23 @@
   "editorStandardTuning": "Vakiovire",
   "editorExampleVerse": "[C]Uusi päivä [G]kutsuu,\n[Am]seuraamme valoa takaisin [F]kotiin.",
   "editorExampleChorus": "[F]Lauletaan tämä laulu [C]yhdessä,\n[G]melodia vie meitä [C]eteenpäin.",
-  "editorExampleBridge": "[Am]Vielä yksi rivi, hieman [F]lähempänä."
+  "editorExampleBridge": "[Am]Vielä yksi rivi, hieman [F]lähempänä.",
+  "aboutFindTitle": "Löydä oikea versio",
+  "aboutKeepTitle": "Rakenna oma kirjastosi",
+  "aboutKeepDetails": "Muokkaa ja transponoi kappaleita, pidä ne paikallisessa kirjastossasi offline-käyttöä varten ja jaa siirrettäviä ChordPro-tiedostoja. Valinnainen Google Drive -synkronointi käyttää Google-tilisi yksityistä sovelluskansiota. Voit myös päivittää laitteesi napauttamalla Synkronoi nyt.",
+  "aboutPlayTitle": "Vie kappalelista lavalle",
+  "aboutPlayDetails": "Järjestä kappaleet listoiksi, valitse kullekin kappaleelle sävellaji ja jaa OpenSong-listoja. Säädä lukijan tekstin kokoa ja sanoitusten automaattista vieritystä sekä tulosta kappaleiden PDF-tiedostoja. Singbook ei suoratoista eikä toista ääntä.",
+  "aboutPrivacyTitle": "Maksuton ja paikallinen",
+  "aboutPrivacyDetails": "Singbook on maksuton, eikä siinä ole mainoksia, analytiikkaa tai sovelluksen sisäisiä ostoksia. Tallennettu kirjastosi pysyy laitteellasi; valinnainen synkronointi käyttää omaa Google Driveäsi. Verkkotulokset tulevat suoraan riippumattomilta kolmannen osapuolen palveluilta, eivätkä ne välttämättä ole saatavilla tai ne voivat olla tekijänoikeudella suojattuja. Singbook ei ylläpidä niiden sisältöä.",
+  "aboutWebsite": "Singbookin verkkosivusto",
+  "aboutSourceCode": "Lähdekoodi GitHubissa",
+  "aboutPublisher": "Freevialta",
+  "aboutLanguages": "Sovelluksen kielet: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

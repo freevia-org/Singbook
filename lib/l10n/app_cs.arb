@@ -1,9 +1,9 @@
 {
   "@@locale": "cs",
   "appTitle": "Singbook",
-  "aboutDescription": "Klidné místo, kde najdete a uspořádáte svou knihovnu písní a budete si společně zpívat.",
-  "aboutMadeForSinging": "Vytvořeno pro společné zpívání",
-  "menuTypeNewSong": "Zadat novou píseň", "aboutDetails": "Hledejte v povolených zdrojích, porovnávejte verze, uchovávejte texty a akordy spolu a organizujte skladby do playlistů. Vaše knihovna je uložena v tomto zařízení; volitelná synchronizace přes Google Drive používá váš účet Google. Vyhledávání se odesílá přímo povoleným zdrojům.", "aboutSupport": "Podpora a zpětná vazba", "appVersion": "Verze {version}",
+  "aboutDescription": "Texty, akordy a seznamy písní pohromadě, připravené na zkoušku, na pódium i kamkoli, kde hrajete.",
+  "aboutMadeForSinging": "Každá píseň připravená.",
+  "menuTypeNewSong": "Zadat novou píseň", "aboutDetails": "Prohledávejte povolené zdroje a porovnávejte texty, akordy, časování a podrobnosti o nahrávkách, než uložíte verzi, kterou chcete hrát. Dostupnost se liší podle písně a služby.", "aboutSupport": "Podpora a zpětná vazba", "appVersion": "Verze {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -812,5 +812,23 @@
   "editorStandardTuning": "Standardní ladění",
   "editorExampleVerse": "[C]Nový den nás [G]volá,\n[Am]za světlem se vracíme [F]domů.",
   "editorExampleChorus": "[F]Zpívejme tuto píseň [C]společně,\n[G]ať nás melodie nese [C]dál.",
-  "editorExampleBridge": "[Am]Ještě jeden řádek, o něco [F]blíž."
+  "editorExampleBridge": "[Am]Ještě jeden řádek, o něco [F]blíž.",
+  "aboutFindTitle": "Najděte správnou verzi",
+  "aboutKeepTitle": "Vytvořte si vlastní knihovnu",
+  "aboutKeepDetails": "Upravujte a transponujte písně, uchovávejte je ve své místní knihovně pro offline použití a sdílejte přenosné soubory ChordPro. Volitelná synchronizace s Google Drive využívá soukromou složku aplikace ve vašem účtu Google. Klepnutím na „Synchronizovat nyní“ můžete také aktualizovat svá zařízení.",
+  "aboutPlayTitle": "Vezměte si svůj seznam na pódium",
+  "aboutPlayDetails": "Řaďte písně do seznamů, vyberte tóninu pro každou píseň a sdílejte seznamy OpenSong. Upravte velikost textu čtečky, automatické posouvání textu a tiskněte PDF s písněmi. Singbook nepřenáší ani nepřehrává zvuk.",
+  "aboutPrivacyTitle": "Zdarma, s knihovnou v zařízení",
+  "aboutPrivacyDetails": "Singbook je zdarma, bez reklam, analytiky a nákupů v aplikaci. Vaše uložená knihovna zůstává ve vašem zařízení; volitelná synchronizace používá váš Google Drive. Online výsledky pocházejí přímo od nezávislých služeb třetích stran a mohou být nedostupné nebo chráněné autorským právem. Singbook jejich obsah nehostuje.",
+  "aboutWebsite": "Web Singbook",
+  "aboutSourceCode": "Zdrojový kód na GitHubu",
+  "aboutPublisher": "Od Freevia",
+  "aboutLanguages": "Jazyky aplikace: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

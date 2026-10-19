@@ -1,9 +1,9 @@
 {
   "@@locale": "it",
   "appTitle": "Singbook",
-  "aboutDescription": "Uno spazio tranquillo per trovare, organizzare e cantare con la tua raccolta di brani.",
-  "aboutMadeForSinging": "Pensata per cantare insieme",
-  "menuTypeNewSong": "Inserisci una nuova canzone", "aboutDetails": "Cerca nelle fonti abilitate, confronta le versioni, tieni insieme testi e accordi e organizza i brani in scalette. La tua raccolta è salvata su questo dispositivo; la sincronizzazione facoltativa con Google Drive usa il tuo account Google. Le ricerche vengono inviate direttamente alle fonti abilitate.", "aboutSupport": "Assistenza e feedback", "appVersion": "Versione {version}",
+  "aboutDescription": "Testi, accordi e scalette insieme, pronti per le prove, il palco e ovunque tu suoni.",
+  "aboutMadeForSinging": "Ogni brano, pronto.",
+  "menuTypeNewSong": "Inserisci una nuova canzone", "aboutDetails": "Cerca nelle fonti abilitate e confronta testi, accordi, tempi e dettagli delle registrazioni prima di salvare la versione che vuoi suonare. La disponibilità varia in base al brano e al servizio.", "aboutSupport": "Assistenza e feedback", "appVersion": "Versione {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -812,5 +812,23 @@
   "editorStandardTuning": "Accordatura standard",
   "editorExampleVerse": "[C]Un nuovo giorno ci [G]chiama,\n[Am]seguiamo la luce fino a [F]casa.",
   "editorExampleChorus": "[F]Cantiamo questa canzone [C]insieme,\n[G]lasciamo che la melodia ci porti [C]avanti.",
-  "editorExampleBridge": "[Am]Un’altra riga, un po’ più [F]vicini."
+  "editorExampleBridge": "[Am]Un’altra riga, un po’ più [F]vicini.",
+  "aboutFindTitle": "Trova la versione giusta",
+  "aboutKeepTitle": "Crea la tua libreria",
+  "aboutKeepDetails": "Modifica e trasponi i brani, conservali nella tua libreria locale per usarli offline e condividi file ChordPro portatili. La sincronizzazione facoltativa con Google Drive usa una cartella privata dell’app nel tuo account Google. Puoi anche toccare Sincronizza ora per aggiornare i tuoi dispositivi.",
+  "aboutPlayTitle": "Porta la tua scaletta sul palco",
+  "aboutPlayDetails": "Organizza i brani in scalette, scegli una tonalità per ciascuno e condividi scalette OpenSong. Regola il testo del lettore e lo scorrimento automatico dei testi, poi stampa PDF dei brani. Singbook non trasmette né riproduce audio.",
+  "aboutPrivacyTitle": "Gratis e con priorità alla raccolta locale",
+  "aboutPrivacyDetails": "Singbook è gratuito, senza annunci, analisi o acquisti in-app. La tua libreria salvata resta sul dispositivo; la sincronizzazione facoltativa usa il tuo Google Drive. I risultati online provengono direttamente da servizi indipendenti di terze parti e potrebbero non essere disponibili o essere protetti da copyright. Singbook non ospita i loro contenuti.",
+  "aboutWebsite": "Sito web di Singbook",
+  "aboutSourceCode": "Codice sorgente su GitHub",
+  "aboutPublisher": "Di Freevia",
+  "aboutLanguages": "Lingue dell’app: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

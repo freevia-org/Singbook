@@ -1,9 +1,9 @@
 {
   "@@locale": "hu",
   "appTitle": "Singbook",
-  "aboutDescription": "Nyugodt hely, ahol megtalálhatod, rendszerezheted és énekelheted a dalaidat.",
-  "aboutMadeForSinging": "Közös énekléshez készült",
-  "menuTypeNewSong": "Új dal beírása", "aboutDetails": "Keress az engedélyezett forrásokban, hasonlítsd össze a változatokat, tartsd együtt a dalszöveget és az akkordokat, és rendezd a dalokat listákba. A könyvtár ezen az eszközön tárolódik; a választható Google Drive-szinkronizálás a Google-fiókodat használja. A keresések közvetlenül az engedélyezett forrásokhoz kerülnek.", "aboutSupport": "Támogatás és visszajelzés", "appVersion": "Verzió: {version}",
+  "aboutDescription": "Dalszövegek, akkordok és dallisták együtt, készen a próbára, a színpadra és bárhová, ahol zenélsz.",
+  "aboutMadeForSinging": "Minden dal készen áll.",
+  "menuTypeNewSong": "Új dal beírása", "aboutDetails": "Keress az engedélyezett forrásokban, és hasonlítsd össze a dalszövegeket, akkordokat, időzítést és felvételi adatokat, mielőtt elmented a lejátszani kívánt változatot. Az elérhetőség dalonként és szolgáltatásonként eltér.", "aboutSupport": "Támogatás és visszajelzés", "appVersion": "Verzió: {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -812,5 +812,23 @@
   "editorStandardTuning": "Normál hangolás",
   "editorExampleVerse": "[C]Új nap [G]hív minket,\n[Am]a fényt követve térünk [F]haza.",
   "editorExampleChorus": "[F]Énekeljük ezt a dalt [C]együtt,\n[G]vigyen tovább minket a dallam [C]is.",
-  "editorExampleBridge": "[Am]Még egy sor, egy kicsit [F]közelebb."
+  "editorExampleBridge": "[Am]Még egy sor, egy kicsit [F]közelebb.",
+  "aboutFindTitle": "Találd meg a megfelelő változatot",
+  "aboutKeepTitle": "Építsd fel saját könyvtáradat",
+  "aboutKeepDetails": "Szerkeszd és transzponáld a dalokat, tartsd őket a helyi könyvtáradban offline használatra, és ossz meg hordozható ChordPro-fájlokat. Az opcionális Google Drive-szinkronizálás a Google-fiókod privát alkalmazásmappáját használja. A készülékeid frissítéséhez a Szinkronizálás most lehetőségre is koppinthatsz.",
+  "aboutPlayTitle": "Vidd a dallistádat a színpadra",
+  "aboutPlayDetails": "Rendezd a dalokat dallistákba, válassz hangnemet minden dalhoz, és ossz meg OpenSong-dallistákat. Állítsd be az olvasó szövegét és a dalszövegek automatikus görgetését, és nyomtass dal-PDF-eket. A Singbook nem streamel és nem játszik le hangot.",
+  "aboutPrivacyTitle": "Ingyenes és helyi használatra épül",
+  "aboutPrivacyDetails": "A Singbook ingyenes, nincsenek benne hirdetések, elemzések vagy alkalmazáson belüli vásárlások. A mentett könyvtárad az eszközödön marad; az opcionális szinkronizálás a saját Google Drive-odat használja. Az online találatok közvetlenül független külső szolgáltatásoktól származnak, és lehet, hogy nem érhetők el, vagy szerzői jog védi őket. A Singbook nem szolgál tárhelyként a tartalmukhoz.",
+  "aboutWebsite": "Singbook-weboldal",
+  "aboutSourceCode": "Forráskód a GitHubon",
+  "aboutPublisher": "A Freeviától",
+  "aboutLanguages": "Az alkalmazás nyelvei: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

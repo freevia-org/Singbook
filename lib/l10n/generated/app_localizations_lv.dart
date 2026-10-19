@@ -13,14 +13,52 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Mierīga vieta, kur atrast un sakārtot dziesmas un kopīgi dziedāt no savas dziesmu bibliotēkas.';
+      'Dziesmu vārdi, akordi un dziesmu saraksti vienuviet — gatavi mēģinājumiem, skatuvei un jebkurai vietai, kur spēlējat.';
 
   @override
-  String get aboutMadeForSinging => 'Radīta kopīgai dziedāšanai';
+  String get aboutMadeForSinging => 'Katra dziesma gatava.';
 
   @override
   String get aboutDetails =>
-      'Meklējiet iespējotajos avotos, salīdziniet versijas, glabājiet vārdus un akordus kopā un kārtojiet dziesmas sarakstos. Jūsu bibliotēka tiek saglabāta šajā ierīcē; izvēles sinhronizācijā ar Google Drive tiek izmantots jūsu Google konts. Meklējumi tiek nosūtīti tieši iespējotajiem avotiem.';
+      'Meklējiet pieejamajos avotos un salīdziniet dziesmu vārdus, akordus, laika atzīmes un ieraksta informāciju, pirms saglabājat vēlamo versiju. Pieejamība ir atkarīga no dziesmas un pakalpojuma.';
+
+  @override
+  String get aboutFindTitle => 'Atrodiet īsto versiju';
+
+  @override
+  String get aboutKeepTitle => 'Veidojiet savu bibliotēku';
+
+  @override
+  String get aboutKeepDetails =>
+      'Rediģējiet un transponējiet dziesmas, glabājiet tās vietējā bibliotēkā lietošanai bezsaistē un kopīgojiet pārnēsājamus ChordPro failus. Izvēles sinhronizācija ar Google Drive izmanto privātu lietotnes mapi jūsu Google kontā. Varat arī pieskarties “Sinhronizēt tagad”, lai atjauninātu ierīces.';
+
+  @override
+  String get aboutPlayTitle => 'Ņemiet dziesmu sarakstu līdzi uz skatuvi';
+
+  @override
+  String get aboutPlayDetails =>
+      'Sakārtojiet dziesmas sarakstos, izvēlieties katrai dziesmai tonalitāti un kopīgojiet OpenSong sarakstus. Pielāgojiet lasītāja teksta lielumu, ieslēdziet dziesmu vārdu automātisko ritināšanu un drukājiet dziesmu PDF failus. Singbook netranslē un neatskaņo audio.';
+
+  @override
+  String get aboutPrivacyTitle => 'Bezmaksas un ar uzsvaru uz lokālu lietošanu';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook ir bezmaksas, bez reklāmām, analītikas un pirkumiem lietotnē. Saglabātā bibliotēka paliek jūsu ierīcē; izvēles sinhronizācijai tiek izmantots jūsu Google Drive. Tiešsaistes rezultātus nodrošina neatkarīgi trešo pušu pakalpojumi; tie var nebūt pieejami vai būt aizsargāti ar autortiesībām. Singbook šo saturu neizvieto.';
+
+  @override
+  String get aboutWebsite => 'Singbook vietne';
+
+  @override
+  String get aboutSourceCode => 'Avota kods vietnē GitHub';
+
+  @override
+  String get aboutPublisher => 'Freevia veidots';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Lietotnes valodas: $count';
+  }
 
   @override
   String get aboutSupport => 'Atbalsts un atsauksmes';

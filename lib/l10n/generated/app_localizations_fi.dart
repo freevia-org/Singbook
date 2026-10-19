@@ -13,14 +13,52 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Rauhallinen paikka, jossa löydät ja järjestät kappaleesi ja laulat niiden mukana.';
+      'Sanoitukset, soinnut ja kappalelistat yhdessä, valmiina harjoituksiin, lavalle ja kaikkialle, missä soitat.';
 
   @override
-  String get aboutMadeForSinging => 'Tehty yhdessä laulamiseen';
+  String get aboutMadeForSinging => 'Jokainen kappale valmiina.';
 
   @override
   String get aboutDetails =>
-      'Hae käytössä olevista lähteistä, vertaile versioita, pidä sanat ja soinnut yhdessä ja järjestä kappaleet listoiksi. Kirjastosi tallennetaan tälle laitteelle; valinnainen Google Drive -synkronointi käyttää Google-tiliäsi. Haut lähetetään suoraan käytössä oleville lähteille.';
+      'Hae käytössä olevista lähteistä ja vertaile sanoituksia, sointuja, ajoitusta ja tallenteen tietoja ennen kuin tallennat haluamasi version. Saatavuus vaihtelee kappaleen ja palvelun mukaan.';
+
+  @override
+  String get aboutFindTitle => 'Löydä oikea versio';
+
+  @override
+  String get aboutKeepTitle => 'Rakenna oma kirjastosi';
+
+  @override
+  String get aboutKeepDetails =>
+      'Muokkaa ja transponoi kappaleita, pidä ne paikallisessa kirjastossasi offline-käyttöä varten ja jaa siirrettäviä ChordPro-tiedostoja. Valinnainen Google Drive -synkronointi käyttää Google-tilisi yksityistä sovelluskansiota. Voit myös päivittää laitteesi napauttamalla Synkronoi nyt.';
+
+  @override
+  String get aboutPlayTitle => 'Vie kappalelista lavalle';
+
+  @override
+  String get aboutPlayDetails =>
+      'Järjestä kappaleet listoiksi, valitse kullekin kappaleelle sävellaji ja jaa OpenSong-listoja. Säädä lukijan tekstin kokoa ja sanoitusten automaattista vieritystä sekä tulosta kappaleiden PDF-tiedostoja. Singbook ei suoratoista eikä toista ääntä.';
+
+  @override
+  String get aboutPrivacyTitle => 'Maksuton ja paikallinen';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook on maksuton, eikä siinä ole mainoksia, analytiikkaa tai sovelluksen sisäisiä ostoksia. Tallennettu kirjastosi pysyy laitteellasi; valinnainen synkronointi käyttää omaa Google Driveäsi. Verkkotulokset tulevat suoraan riippumattomilta kolmannen osapuolen palveluilta, eivätkä ne välttämättä ole saatavilla tai ne voivat olla tekijänoikeudella suojattuja. Singbook ei ylläpidä niiden sisältöä.';
+
+  @override
+  String get aboutWebsite => 'Singbookin verkkosivusto';
+
+  @override
+  String get aboutSourceCode => 'Lähdekoodi GitHubissa';
+
+  @override
+  String get aboutPublisher => 'Freevialta';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Sovelluksen kielet: $count';
+  }
 
   @override
   String get aboutSupport => 'Tuki ja palaute';

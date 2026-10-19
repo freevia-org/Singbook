@@ -13,14 +13,52 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Rami vieta, kurioje galite rasti dainas, tvarkyti jų rinkinį ir dainuoti kartu.';
+      'Dainų tekstai, akordai ir grojaraščiai vienoje vietoje – paruošti repeticijoms, scenai ir visur, kur grojate.';
 
   @override
-  String get aboutMadeForSinging => 'Sukurta dainuoti kartu';
+  String get aboutMadeForSinging => 'Kiekviena daina – paruošta.';
 
   @override
   String get aboutDetails =>
-      'Ieškokite įjungtuose šaltiniuose, lyginkite versijas, laikykite žodžius ir akordus kartu, o dainas tvarkykite grojaraščiuose. Jūsų biblioteka saugoma šiame įrenginyje; pasirenkamas sinchronizavimas su Google Drive naudoja jūsų Google paskyrą. Paieškos siunčiamos tiesiai į įjungtus šaltinius.';
+      'Ieškokite prieinamuose šaltiniuose ir palyginkite tekstus, akordus, laiką bei įrašo informaciją prieš išsaugodami norimą versiją. Prieinamumas priklauso nuo dainos ir paslaugos.';
+
+  @override
+  String get aboutFindTitle => 'Raskite tinkamą versiją';
+
+  @override
+  String get aboutKeepTitle => 'Kurkite savo biblioteką';
+
+  @override
+  String get aboutKeepDetails =>
+      'Redaguokite ir transponuokite dainas, laikykite jas vietinėje bibliotekoje, kad galėtumėte naudoti neprisijungę, ir bendrinkite perkeliamus ChordPro failus. Pasirenkamas sinchronizavimas su Google Drive naudoja privačią programos aplanką jūsų Google paskyroje. Taip pat galite paliesti „Sinchronizuoti dabar“, kad atnaujintumėte įrenginius.';
+
+  @override
+  String get aboutPlayTitle => 'Pasiimkite grojaraštį į sceną';
+
+  @override
+  String get aboutPlayDetails =>
+      'Sudėliokite dainas į grojaraščius, pasirinkite kiekvienos dainos tonaciją ir bendrinkite OpenSong grojaraščius. Keiskite skaitytuvo teksto dydį, įjunkite automatinį slinkimą ir spausdinkite dainų PDF failus. Singbook netransliuoja ir neatkuria garso.';
+
+  @override
+  String get aboutPrivacyTitle => 'Nemokama ir pirmiausia vietinė';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook yra nemokama, be reklamų, analizės ir pirkinių programoje. Išsaugota biblioteka lieka jūsų įrenginyje; pasirenkamas sinchronizavimas vyksta per jūsų Google Drive. Internetinius rezultatus tiesiogiai pateikia nepriklausomos trečiųjų šalių paslaugos; jie gali būti nepasiekiami arba saugomi autorių teisių. Singbook šio turinio nesaugo.';
+
+  @override
+  String get aboutWebsite => 'Singbook svetainė';
+
+  @override
+  String get aboutSourceCode => 'Šaltinio kodas GitHub';
+
+  @override
+  String get aboutPublisher => 'Sukūrė Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Programos kalbos: $count';
+  }
 
   @override
   String get aboutSupport => 'Pagalba ir atsiliepimai';

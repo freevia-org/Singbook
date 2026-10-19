@@ -13,14 +13,52 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Nyugodt hely, ahol megtalálhatod, rendszerezheted és énekelheted a dalaidat.';
+      'Dalszövegek, akkordok és dallisták együtt, készen a próbára, a színpadra és bárhová, ahol zenélsz.';
 
   @override
-  String get aboutMadeForSinging => 'Közös énekléshez készült';
+  String get aboutMadeForSinging => 'Minden dal készen áll.';
 
   @override
   String get aboutDetails =>
-      'Keress az engedélyezett forrásokban, hasonlítsd össze a változatokat, tartsd együtt a dalszöveget és az akkordokat, és rendezd a dalokat listákba. A könyvtár ezen az eszközön tárolódik; a választható Google Drive-szinkronizálás a Google-fiókodat használja. A keresések közvetlenül az engedélyezett forrásokhoz kerülnek.';
+      'Keress az engedélyezett forrásokban, és hasonlítsd össze a dalszövegeket, akkordokat, időzítést és felvételi adatokat, mielőtt elmented a lejátszani kívánt változatot. Az elérhetőség dalonként és szolgáltatásonként eltér.';
+
+  @override
+  String get aboutFindTitle => 'Találd meg a megfelelő változatot';
+
+  @override
+  String get aboutKeepTitle => 'Építsd fel saját könyvtáradat';
+
+  @override
+  String get aboutKeepDetails =>
+      'Szerkeszd és transzponáld a dalokat, tartsd őket a helyi könyvtáradban offline használatra, és ossz meg hordozható ChordPro-fájlokat. Az opcionális Google Drive-szinkronizálás a Google-fiókod privát alkalmazásmappáját használja. A készülékeid frissítéséhez a Szinkronizálás most lehetőségre is koppinthatsz.';
+
+  @override
+  String get aboutPlayTitle => 'Vidd a dallistádat a színpadra';
+
+  @override
+  String get aboutPlayDetails =>
+      'Rendezd a dalokat dallistákba, válassz hangnemet minden dalhoz, és ossz meg OpenSong-dallistákat. Állítsd be az olvasó szövegét és a dalszövegek automatikus görgetését, és nyomtass dal-PDF-eket. A Singbook nem streamel és nem játszik le hangot.';
+
+  @override
+  String get aboutPrivacyTitle => 'Ingyenes és helyi használatra épül';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'A Singbook ingyenes, nincsenek benne hirdetések, elemzések vagy alkalmazáson belüli vásárlások. A mentett könyvtárad az eszközödön marad; az opcionális szinkronizálás a saját Google Drive-odat használja. Az online találatok közvetlenül független külső szolgáltatásoktól származnak, és lehet, hogy nem érhetők el, vagy szerzői jog védi őket. A Singbook nem szolgál tárhelyként a tartalmukhoz.';
+
+  @override
+  String get aboutWebsite => 'Singbook-weboldal';
+
+  @override
+  String get aboutSourceCode => 'Forráskód a GitHubon';
+
+  @override
+  String get aboutPublisher => 'A Freeviától';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Az alkalmazás nyelvei: $count';
+  }
 
   @override
   String get aboutSupport => 'Támogatás és visszajelzés';

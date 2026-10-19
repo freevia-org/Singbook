@@ -13,14 +13,52 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'A calm place to find, organize, and sing from your song library.';
+      'Your lyrics, chords and setlists together, ready for rehearsal, the stage and wherever you play.';
 
   @override
-  String get aboutMadeForSinging => 'Made for singing together';
+  String get aboutMadeForSinging => 'Every song, ready.';
 
   @override
   String get aboutDetails =>
-      'Search enabled providers, compare song versions, keep lyrics and chords together, and organize songs into setlists. Your library stays on your device; optional Google Drive sync uses your Google account. Searches go directly to enabled providers.';
+      'Search enabled sources and compare lyrics, chords, timing and recording details before saving the version you want to play. Availability varies by song and service.';
+
+  @override
+  String get aboutFindTitle => 'Find the right version';
+
+  @override
+  String get aboutKeepTitle => 'Build your own library';
+
+  @override
+  String get aboutKeepDetails =>
+      'Edit and transpose songs, keep them in your local library for offline use, and share portable ChordPro files. Optional Google Drive sync uses a private app folder in your Google account. You can also tap Sync now to update your devices.';
+
+  @override
+  String get aboutPlayTitle => 'Take your set on stage';
+
+  @override
+  String get aboutPlayDetails =>
+      'Order songs into setlists, choose a key for each song, and share OpenSong setlists. Adjust reader text, auto-scroll lyrics and print song PDFs. Singbook does not stream or play audio.';
+
+  @override
+  String get aboutPrivacyTitle => 'Free and local-first';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook is free, with no ads, analytics or in-app purchases. Your saved library stays on your device; optional sync uses your own Google Drive. Online results come directly from independent third-party services and may be unavailable or protected by copyright. Singbook does not host their content.';
+
+  @override
+  String get aboutWebsite => 'Singbook website';
+
+  @override
+  String get aboutSourceCode => 'Source code on GitHub';
+
+  @override
+  String get aboutPublisher => 'By Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'App languages: $count';
+  }
 
   @override
   String get aboutSupport => 'Support and feedback';

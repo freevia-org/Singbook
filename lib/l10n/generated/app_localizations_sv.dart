@@ -13,14 +13,52 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'En lugn plats där du kan hitta och organisera låtarna i ditt bibliotek och sjunga tillsammans.';
+      'Dina låttexter, ackord och setlistor samlade, redo för repetition, scenen och överallt där du spelar.';
 
   @override
-  String get aboutMadeForSinging => 'Skapad för att sjunga tillsammans';
+  String get aboutMadeForSinging => 'Varje låt, redo att sjungas.';
 
   @override
   String get aboutDetails =>
-      'Sök i aktiverade källor, jämför versioner, samla låttexter och ackord och ordna låtar i setlistor. Ditt bibliotek sparas på den här enheten; valfri synkronisering med Google Drive använder ditt Google-konto. Sökningar skickas direkt till aktiverade källor.';
+      'Sök bland tillgängliga källor och jämför låttexter, ackord, timing och inspelningsinformation innan du sparar den version du vill spela. Tillgängligheten varierar mellan låtar och tjänster.';
+
+  @override
+  String get aboutFindTitle => 'Hitta rätt version';
+
+  @override
+  String get aboutKeepTitle => 'Bygg ditt eget bibliotek';
+
+  @override
+  String get aboutKeepDetails =>
+      'Redigera och transponera låtar, behåll dem i det lokala biblioteket för offlineanvändning och dela portabla ChordPro-filer. Valfri synkronisering med Google Drive använder en privat appmapp i ditt Google-konto. Du kan också trycka på ”Synkronisera nu” för att uppdatera dina enheter.';
+
+  @override
+  String get aboutPlayTitle => 'Ta med setlistan upp på scenen';
+
+  @override
+  String get aboutPlayDetails =>
+      'Ordna låtar i setlistor, välj tonart för varje låt och dela OpenSong-setlistor. Anpassa textstorleken i läsaren, aktivera automatisk rullning av låttexten och skriv ut låt-PDF:er. Singbook strömmar eller spelar inte upp ljud.';
+
+  @override
+  String get aboutPrivacyTitle => 'Gratis med lokal lagring i första hand';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook är gratis och saknar annonser, analys och köp inuti appen. Ditt sparade bibliotek finns kvar på enheten; valfri synkronisering använder ditt eget Google Drive. Onlineresultat kommer direkt från oberoende tredjepartstjänster och kan vara otillgängliga eller skyddade av upphovsrätt. Singbook är inte värd för deras innehåll.';
+
+  @override
+  String get aboutWebsite => 'Singbooks webbplats';
+
+  @override
+  String get aboutSourceCode => 'Källkod på GitHub';
+
+  @override
+  String get aboutPublisher => 'Av Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Appens språk: $count';
+  }
 
   @override
   String get aboutSupport => 'Support och feedback';

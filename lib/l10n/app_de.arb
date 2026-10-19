@@ -1,9 +1,9 @@
 {
   "@@locale": "de",
   "appTitle": "Singbook",
-  "aboutDescription": "Ein ruhiger Ort, um deine Songbibliothek zu durchsuchen, zu ordnen und daraus zu singen.",
-  "aboutMadeForSinging": "Zum gemeinsamen Singen gemacht",
-  "menuTypeNewSong": "Neues Lied eingeben", "aboutDetails": "Durchsuche aktivierte Quellen, vergleiche Versionen, halte Texte und Akkorde zusammen und ordne Songs in Setlists. Deine Bibliothek wird auf diesem Gerät gespeichert; die optionale Synchronisierung über Google Drive nutzt dein Google-Konto. Suchanfragen gehen direkt an aktivierte Quellen.", "aboutSupport": "Hilfe und Feedback", "appVersion": "Version {version}",
+  "aboutDescription": "Texte, Akkorde und Setlists an einem Ort, bereit für die Probe, die Bühne und überall, wo du spielst.",
+  "aboutMadeForSinging": "Jeder Song ist bereit.",
+  "menuTypeNewSong": "Neues Lied eingeben", "aboutDetails": "Durchsuche aktivierte Quellen und vergleiche Texte, Akkorde, Timing und Aufnahmedetails, bevor du die Version speicherst, die du spielen möchtest. Die Verfügbarkeit hängt vom Song und Dienst ab.", "aboutSupport": "Hilfe und Feedback", "appVersion": "Version {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -812,5 +812,23 @@
   "editorStandardTuning": "Standardstimmung",
   "editorExampleVerse": "[C]Ein neuer Tag [G]ruft,\n[Am]wir folgen dem Licht zurück nach [F]Hause.",
   "editorExampleChorus": "[F]Singt dieses Lied [C]zusammen,\n[G]die Melodie trägt uns [C]weiter.",
-  "editorExampleBridge": "[Am]Noch eine Zeile, ein Stück [F]näher."
+  "editorExampleBridge": "[Am]Noch eine Zeile, ein Stück [F]näher.",
+  "aboutFindTitle": "Finde die passende Version",
+  "aboutKeepTitle": "Baue deine eigene Bibliothek auf",
+  "aboutKeepDetails": "Bearbeite und transponiere Songs, bewahre sie für die Offline-Nutzung in deiner lokalen Bibliothek auf und teile portable ChordPro-Dateien. Die optionale Synchronisierung mit Google Drive verwendet einen privaten App-Ordner in deinem Google-Konto. Du kannst auch auf „Jetzt synchronisieren“ tippen, um deine Geräte zu aktualisieren.",
+  "aboutPlayTitle": "Nimm deine Setlist mit auf die Bühne",
+  "aboutPlayDetails": "Ordne Songs in Setlists, wähle für jeden Song eine Tonart und teile OpenSong-Setlists. Passe den Lesetext und das automatische Scrollen der Songtexte an und drucke Song-PDFs. Singbook streamt oder spielt kein Audio ab.",
+  "aboutPrivacyTitle": "Kostenlos und lokal ausgerichtet",
+  "aboutPrivacyDetails": "Singbook ist kostenlos und enthält keine Werbung, Analysefunktionen oder In-App-Käufe. Deine gespeicherte Bibliothek bleibt auf deinem Gerät; für die optionale Synchronisierung nutzt du dein eigenes Google Drive. Online-Ergebnisse stammen direkt von unabhängigen Drittanbieterdiensten und sind möglicherweise nicht verfügbar oder urheberrechtlich geschützt. Singbook hostet deren Inhalte nicht.",
+  "aboutWebsite": "Singbook-Website",
+  "aboutSourceCode": "Quellcode auf GitHub",
+  "aboutPublisher": "Von Freevia",
+  "aboutLanguages": "App-Sprachen: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -13,14 +13,52 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Không gian yên bình để tìm, sắp xếp và hát các bài hát trong thư viện của bạn.';
+      'Lời bài hát, hợp âm và danh sách biểu diễn ở cùng một nơi, sẵn sàng cho buổi tập, sân khấu và mọi nơi bạn chơi nhạc.';
 
   @override
-  String get aboutMadeForSinging => 'Được tạo để cùng nhau ca hát';
+  String get aboutMadeForSinging => 'Mỗi bài hát, sẵn sàng để hát.';
 
   @override
   String get aboutDetails =>
-      'Tìm kiếm trong các nguồn đã bật, so sánh phiên bản, lưu lời và hợp âm cùng nhau, rồi sắp xếp bài hát thành danh sách. Thư viện được lưu trên thiết bị này; tính năng đồng bộ Google Drive tùy chọn sử dụng tài khoản Google của bạn. Tìm kiếm được gửi trực tiếp đến các nguồn đã bật.';
+      'Tìm kiếm trong các nguồn hiện có và so sánh lời, hợp âm, nhịp thời gian cùng thông tin bản thu trước khi lưu phiên bản bạn muốn chơi. Tính khả dụng tùy theo bài hát và dịch vụ.';
+
+  @override
+  String get aboutFindTitle => 'Tìm phiên bản phù hợp';
+
+  @override
+  String get aboutKeepTitle => 'Tạo thư viện của riêng bạn';
+
+  @override
+  String get aboutKeepDetails =>
+      'Chỉnh sửa và chuyển tông bài hát, lưu trong thư viện cục bộ để dùng ngoại tuyến và chia sẻ các tệp ChordPro dễ mang theo. Tùy chọn đồng bộ Google Drive sử dụng thư mục riêng của ứng dụng trong tài khoản Google của bạn. Bạn cũng có thể nhấn “Đồng bộ ngay” để cập nhật các thiết bị.';
+
+  @override
+  String get aboutPlayTitle => 'Mang danh sách biểu diễn lên sân khấu';
+
+  @override
+  String get aboutPlayDetails =>
+      'Sắp xếp bài hát thành danh sách biểu diễn, chọn tông cho từng bài và chia sẻ danh sách OpenSong. Điều chỉnh cỡ chữ trình đọc, tự động cuộn lời bài hát và in PDF bài hát. Singbook không phát trực tuyến hay phát âm thanh.';
+
+  @override
+  String get aboutPrivacyTitle => 'Miễn phí và ưu tiên lưu trữ cục bộ';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook miễn phí, không quảng cáo, không phân tích dữ liệu và không mua hàng trong ứng dụng. Thư viện đã lưu nằm trên thiết bị của bạn; tính năng đồng bộ tùy chọn sử dụng Google Drive của bạn. Kết quả trực tuyến đến trực tiếp từ các dịch vụ bên thứ ba độc lập và có thể không khả dụng hoặc được bảo vệ bản quyền. Singbook không lưu trữ nội dung đó.';
+
+  @override
+  String get aboutWebsite => 'Trang web Singbook';
+
+  @override
+  String get aboutSourceCode => 'Mã nguồn trên GitHub';
+
+  @override
+  String get aboutPublisher => 'Bởi Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Ngôn ngữ ứng dụng: $count';
+  }
 
   @override
   String get aboutSupport => 'Hỗ trợ và góp ý';

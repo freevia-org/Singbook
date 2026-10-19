@@ -1,8 +1,6 @@
 {
   "@@locale": "zh",
   "appTitle": "Singbook",
-  "aboutDescription": "一个宁静的空间，让你查找、整理并跟着自己的歌曲库一起歌唱。",
-  "aboutMadeForSinging": "为一起歌唱而打造",
   "menuTypeNewSong": "输入新歌曲", "aboutDetails": "搜索已启用的来源、比较歌曲版本、将歌词和和弦放在一起，并把歌曲整理到歌单中。资料库保存在此设备上；可选的 Google Drive 同步会使用你的 Google 帐号。搜索会直接发送到已启用的来源。", "aboutSupport": "支持与反馈", "appVersion": "版本 {version}",
   "@appVersion": {
     "placeholders": {
@@ -812,5 +810,26 @@
   "editorStandardTuning": "标准调弦",
   "editorExampleVerse": "[C]新的一天在 [G]召唤，\n[Am]我们追随光芒回到 [F]家。",
   "editorExampleChorus": "[F]一起唱这首 [C]歌，\n[G]让旋律带我们 [C]向前。",
-  "editorExampleBridge": "[Am]再写一行，靠近 [F]一点。"
+  "editorExampleBridge": "[Am]再写一行，靠近 [F]一点。",
+  "aboutMadeForSinging": "每首歌，都已准备就绪。",
+  "aboutDescription": "歌词、和弦与演出歌单汇集一处，为排练、舞台和每一次演奏做好准备。",
+  "aboutDetails": "搜索可用来源，比较歌词、和弦、时间信息和录音详情，再保存想演奏的版本。内容是否可用取决于歌曲和服务。",
+  "aboutFindTitle": "找到合适的版本",
+  "aboutKeepTitle": "建立自己的曲库",
+  "aboutKeepDetails": "编辑和移调歌曲，将其保存在本地曲库中以便离线使用，并分享便携的 ChordPro 文件。可选的 Google Drive 同步会使用你 Google 帐号中的应用专用私密文件夹。你也可以点按“立即同步”来更新设备。",
+  "aboutPlayTitle": "带着歌单登上舞台",
+  "aboutPlayDetails": "将歌曲编入演出歌单，为每首歌选择调性，并分享 OpenSong 歌单。调整阅读器文字大小、自动滚动歌词，也可打印歌曲 PDF。Singbook 不会串流或播放音频。",
+  "aboutPrivacyTitle": "免费使用，优先本地存储",
+  "aboutPrivacyDetails": "Singbook 免费使用，不含广告、分析或应用内购买。已保存的曲库保留在你的设备上；可选同步使用你自己的 Google Drive。在线结果直接来自独立的第三方服务，可能无法使用或受版权保护。Singbook 不托管这些内容。",
+  "aboutWebsite": "Singbook 网站",
+  "aboutSourceCode": "GitHub 上的源代码",
+  "aboutPublisher": "Freevia 出品",
+  "aboutLanguages": "应用语言：{count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -1,8 +1,6 @@
 {
   "@@locale": "ro",
   "appTitle": "Singbook",
-  "aboutDescription": "Un loc liniștit în care îți găsești, organizezi și cânți melodiile din bibliotecă.",
-  "aboutMadeForSinging": "Creat pentru a cânta împreună",
   "menuTypeNewSong": "Introdu o melodie nouă", "aboutDetails": "Caută în sursele activate, compară versiunile, păstrează versurile și acordurile împreună și organizează melodiile în setlisturi. Biblioteca ta este stocată pe acest dispozitiv; sincronizarea opțională cu Google Drive folosește contul tău Google. Căutările sunt trimise direct către sursele activate.", "aboutSupport": "Asistență și feedback", "appVersion": "Versiunea {version}",
   "@appVersion": {
     "placeholders": {
@@ -812,5 +810,26 @@
   "editorStandardTuning": "Acordaj standard",
   "editorExampleVerse": "[C]O nouă zi ne [G]cheamă,\n[Am]urmăm lumina înapoi spre [F]casă.",
   "editorExampleChorus": "[F]Să cântăm acest cântec [C]împreună,\n[G]să ne poarte melodia [C]mai departe.",
-  "editorExampleBridge": "[Am]Încă un vers, puțin mai [F]aproape."
+  "editorExampleBridge": "[Am]Încă un vers, puțin mai [F]aproape.",
+  "aboutMadeForSinging": "Fiecare cântec, gata de cântat.",
+  "aboutDescription": "Versuri, acorduri și liste de melodii împreună, pregătite pentru repetiții, scenă și oriunde cânți.",
+  "aboutDetails": "Caută în sursele disponibile și compară versurile, acordurile, marcajele temporale și detaliile înregistrării înainte să salvezi versiunea dorită. Disponibilitatea diferă în funcție de melodie și serviciu.",
+  "aboutFindTitle": "Găsește versiunea potrivită",
+  "aboutKeepTitle": "Construiește-ți propria bibliotecă",
+  "aboutKeepDetails": "Editează și transpune melodiile, păstrează-le în biblioteca locală pentru a le folosi offline și distribuie fișiere ChordPro portabile. Sincronizarea opțională cu Google Drive folosește un dosar privat al aplicației din contul tău Google. Poți atinge și „Sincronizează acum” pentru a actualiza dispozitivele.",
+  "aboutPlayTitle": "Ia lista de melodii pe scenă",
+  "aboutPlayDetails": "Grupează melodiile în setlisturi, alege tonalitatea fiecăreia și distribuie setlisturi OpenSong. Ajustează textul cititorului, derulează automat versurile și imprimă PDF-uri cu melodii. Singbook nu transmite și nu redă conținut audio.",
+  "aboutPrivacyTitle": "Gratuită și cu biblioteca păstrată local",
+  "aboutPrivacyDetails": "Singbook este gratuită, fără reclame, analiză sau achiziții în aplicație. Biblioteca salvată rămâne pe dispozitivul tău; sincronizarea opțională folosește propriul Google Drive. Rezultatele online vin direct de la servicii independente terțe și pot fi indisponibile sau protejate prin drepturi de autor. Singbook nu găzduiește conținutul acestora.",
+  "aboutWebsite": "Site-ul Singbook",
+  "aboutSourceCode": "Cod sursă pe GitHub",
+  "aboutPublisher": "De la Freevia",
+  "aboutLanguages": "Limbi ale aplicației: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

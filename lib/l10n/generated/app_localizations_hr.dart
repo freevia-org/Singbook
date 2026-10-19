@@ -13,14 +13,52 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Mirno mjesto za pronalaženje, organiziranje i zajedničko pjevanje uz vašu zbirku pjesama.';
+      'Tekstovi, akordi i popisi pjesama zajedno, spremni za probu, pozornicu i svako mjesto na kojem sviraš.';
 
   @override
-  String get aboutMadeForSinging => 'Stvoreno za zajedničko pjevanje';
+  String get aboutMadeForSinging => 'Svaka pjesma spremna.';
 
   @override
   String get aboutDetails =>
-      'Pretražujte omogućene izvore, uspoređujte verzije, čuvajte tekstove i akorde zajedno te organizirajte pjesme u setliste. Vaša se zbirka sprema na ovom uređaju; neobavezna sinkronizacija putem Google Drivea koristi vaš Google račun. Pretraživanja se šalju izravno omogućenim izvorima.';
+      'Pretraži omogućene izvore i usporedi tekstove, akorde, vremenske oznake i pojedinosti o snimci prije nego što spremiš verziju koju želiš svirati. Dostupnost ovisi o pjesmi i usluzi.';
+
+  @override
+  String get aboutFindTitle => 'Pronađi pravu verziju';
+
+  @override
+  String get aboutKeepTitle => 'Izgradi vlastitu zbirku';
+
+  @override
+  String get aboutKeepDetails =>
+      'Uređuj pjesme i transponiraj ih, čuvaj ih u svojoj lokalnoj zbirci za korištenje izvan mreže i dijeli prenosive datoteke ChordPro. Neobavezna sinkronizacija s Google Driveom koristi privatnu mapu aplikacije na tvom Google računu. Možeš dodirnuti i „Sinkroniziraj sada” da ažuriraš svoje uređaje.';
+
+  @override
+  String get aboutPlayTitle => 'Ponesi svoj popis na pozornicu';
+
+  @override
+  String get aboutPlayDetails =>
+      'Poredaj pjesme u popise, odaberi tonalitet za svaku pjesmu i dijeli popise OpenSong. Prilagodi tekst čitača i automatsko pomicanje stihova te ispisuj PDF-ove pjesama. Singbook ne prenosi ni reproducira zvuk.';
+
+  @override
+  String get aboutPrivacyTitle => 'Besplatno i usmjereno na lokalnu pohranu';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook je besplatan, bez oglasa, analitike i kupnji unutar aplikacije. Tvoja spremljena zbirka ostaje na uređaju; neobavezna sinkronizacija koristi tvoj Google Drive. Mrežni rezultati dolaze izravno od neovisnih usluga trećih strana i možda nisu dostupni ili su zaštićeni autorskim pravima. Singbook ne hostira njihov sadržaj.';
+
+  @override
+  String get aboutWebsite => 'Web-stranica Singbooka';
+
+  @override
+  String get aboutSourceCode => 'Izvorni kod na GitHubu';
+
+  @override
+  String get aboutPublisher => 'Od Freevije';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Jezici aplikacije: $count';
+  }
 
   @override
   String get aboutSupport => 'Podrška i povratne informacije';
