@@ -56,7 +56,7 @@ void main() {
     );
 
     final gesture = await tester.startGesture(firstCenter);
-    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
     await gesture.moveBy(const Offset(0, 30));
     await tester.pump(const Duration(milliseconds: 100));
     final start = firstCenter + const Offset(0, 30);
