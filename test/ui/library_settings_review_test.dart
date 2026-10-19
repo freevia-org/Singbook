@@ -285,6 +285,12 @@ void main() {
       await pumpShell(tester, c);
       final l10n = l10nOf(tester);
 
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('settings-menu-player')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('settings-menu-player')));
+      await tester.pumpAndSettle();
       final tile = find.widgetWithText(
         SwitchListTile,
         l10n.settingsDefaultAutoscroll,
@@ -294,10 +300,9 @@ void main() {
       await tester.scrollUntilVisible(
         tile,
         200,
-        scrollable: find.descendant(
-          of: settingsList,
-          matching: find.byType(Scrollable),
-        ).first,
+        scrollable: find
+            .descendant(of: settingsList, matching: find.byType(Scrollable))
+            .first,
       );
       expect(tester.widget<SwitchListTile>(tile).onChanged, isNull);
 
@@ -322,6 +327,12 @@ void main() {
       await pumpShell(tester, c);
       expect(tester.takeException(), isNull);
       final l10n = l10nOf(tester);
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('settings-menu-appearance')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('settings-menu-appearance')));
+      await tester.pumpAndSettle();
       expect(find.text(l10n.settingsLanguageSystem), findsWidgets);
     });
 
@@ -348,10 +359,12 @@ void main() {
           await tester.scrollUntilVisible(
             aboutTitle,
             200,
-            scrollable: find.descendant(
-              of: find.byType(Scaffold),
-              matching: find.byType(Scrollable),
-            ).first,
+            scrollable: find
+                .descendant(
+                  of: find.byType(Scaffold),
+                  matching: find.byType(Scrollable),
+                )
+                .first,
           );
           await tester.ensureVisible(aboutTitle);
           await tester.pumpAndSettle();

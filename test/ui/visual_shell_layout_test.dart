@@ -86,6 +86,11 @@ void main() {
         await tester.tap(settingsDestination);
         await tester.pumpAndSettle();
         expect(find.text(l10n.settingsAppearance), findsOneWidget);
+        expect(find.text(l10n.settingsLanguage), findsNothing);
+        await tester.tap(
+          find.byKey(const ValueKey('settings-menu-appearance')),
+        );
+        await tester.pumpAndSettle();
         expect(find.text(l10n.settingsLanguage), findsOneWidget);
         expect(
           tester.takeException(),
@@ -127,6 +132,9 @@ void main() {
         // Close the language popup route before scrolling Settings.
         await tester.binding.handlePopRoute();
         await tester.pumpAndSettle();
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        final menuList = find.byType(ListView);
         final currentL10n = AppLocalizations.of(
           tester.element(find.byType(AppBar)),
         );
@@ -138,8 +146,7 @@ void main() {
           of: aboutTile,
           matching: find.text(currentL10n.settingsAbout),
         );
-        // The source cards can make this list very long with enlarged text.
-        // Build its final children before checking About's actual visibility.
+        // The menu remains scrollable with enlarged text.
         final scrollable = find.byType(Scrollable);
         expect(scrollable, findsOneWidget);
         for (
@@ -154,7 +161,7 @@ void main() {
         expect(aboutTitle, findsOneWidget);
         await tester.ensureVisible(aboutTitle);
         await tester.pumpAndSettle();
-        final viewportRect = tester.getRect(settingsList);
+        final viewportRect = tester.getRect(menuList);
         final aboutRect = tester.getRect(aboutTitle);
         expect(aboutRect.top, greaterThanOrEqualTo(viewportRect.top));
         expect(aboutRect.bottom, lessThanOrEqualTo(viewportRect.bottom));

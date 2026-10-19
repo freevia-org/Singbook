@@ -34,6 +34,12 @@ void main() {
         size: const Size(320, 640),
       );
       final l10n = l10nOf(tester);
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('settings-menu-player')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('settings-menu-player')));
+      await tester.pumpAndSettle();
       await tester.scrollUntilVisible(
         find.text(l10n.settingsLyricHighlight),
         250,

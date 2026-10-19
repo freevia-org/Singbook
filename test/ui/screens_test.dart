@@ -439,6 +439,12 @@ void main() {
       addTearDown(c.dispose);
       await pumpShell(tester, c);
 
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('settings-menu-appearance')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('settings-menu-appearance')));
+      await tester.pumpAndSettle();
       await tester.drag(find.byType(Slider), const Offset(90, 0));
       await tester.pumpAndSettle();
       final saves = c.calls.where(
@@ -454,6 +460,12 @@ void main() {
       await pumpShell(tester, c);
       final l10n = l10nOf(tester);
 
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('settings-menu-player')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('settings-menu-player')));
+      await tester.pumpAndSettle();
       await tester.scrollUntilVisible(
         find.text(l10n.settingsDefaultAutoscrollHint),
         200,
@@ -472,6 +484,12 @@ void main() {
       await pumpShell(tester, c);
       final l10n = l10nOf(tester);
 
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('settings-menu-appearance')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('settings-menu-appearance')));
+      await tester.pumpAndSettle();
       final semanticsOfLanguage = tester.getSemantics(
         find.byType(DropdownButton<String>).first,
       );
