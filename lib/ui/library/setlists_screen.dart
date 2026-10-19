@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/generated/app_localizations.dart';
+import '../format.dart';
 import '../library_actions.dart';
 import '../verse_ui_state.dart';
 import '../widgets/subpage_header.dart';
@@ -136,14 +137,23 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
         title.isEmpty ? l10n.setlistSongMissing : title,
     ];
     final preview = expanded ? titles : titles.take(2).toList();
+    final formattedDuration = formatDuration(value.durationSeconds);
+    final duration = value.durationPartial
+        ? l10n.setlistDurationPartial(
+            value.durationEstimated ? '~$formattedDuration' : formattedDuration,
+          )
+        : value.durationEstimated
+        ? l10n.playerEstimatedDuration(formattedDuration)
+        : l10n.setlistDuration(formattedDuration);
     final summary =
-        '${l10n.setlistSongsCount(value.songTitles.length)}  ·  ${l10n.setlistDurationUnknown}';
+        '${l10n.setlistSongsCount(value.songTitles.length)}  ·  $duration';
     void toggleExpanded() => setState(
       () => expanded ? _expanded.remove(value.id) : _expanded.add(value.id),
     );
     return Card(
+      margin: EdgeInsets.zero,
       child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 8, 10),
+        padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 4, 4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -214,56 +224,64 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
               label: expanded
                   ? l10n.accessibilityCollapseSetlist(value.title)
                   : l10n.accessibilityExpandSetlist(value.title),
-              value: summary,
+              value: [summary, ...preview].join('\n'),
               excludeSemantics: true,
               onTap: toggleExpanded,
               child: InkWell(
                 onTap: toggleExpanded,
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(minHeight: 48),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          summary,
-                          style: Theme.of(context).textTheme.labelMedium
-                              ?.copyWith(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurfaceVariant,
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 4, 8, 4),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                summary,
+                                style: Theme.of(context).textTheme.labelMedium
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                    ),
                               ),
+                              if (preview.isNotEmpty) ...[
+                                const SizedBox(height: 2),
+                                Text(
+                                  expanded
+                                      ? preview.indexed
+                                            .map(
+                                              (entry) =>
+                                                  '${entry.$1 + 1}. ${entry.$2}',
+                                            )
+                                            .join('\n')
+                                      : preview.join(' · '),
+                                  maxLines: expanded ? null : 1,
+                                  overflow: expanded
+                                      ? TextOverflow.visible
+                                      : TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              ],
+                            ],
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsetsDirectional.only(end: 8),
-                        child: Icon(
+                        Icon(
                           expanded
                               ? Icons.expand_less_rounded
                               : Icons.expand_more_rounded,
                           size: 20,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-            if (preview.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 6),
-                child: AnimatedOpacity(
-                  opacity: expanded ? 1 : .72,
-                  duration: const Duration(milliseconds: 180),
-                  child: Text(
-                    preview.map((song) => '•  $song').join('\n'),
-                    maxLines: expanded ? null : 2,
-                    overflow: expanded
-                        ? TextOverflow.visible
-                        : TextOverflow.fade,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ),
-              ),
           ],
         ),
       ),

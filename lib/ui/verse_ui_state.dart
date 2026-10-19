@@ -197,6 +197,9 @@ class SetlistCardData {
     this.entries = const [],
     this.favorite = false,
     this.modifiedAt,
+    this.durationSeconds = 0,
+    this.durationEstimated = false,
+    this.durationPartial = false,
   });
   final String id, title, notes;
 
@@ -206,6 +209,11 @@ class SetlistCardData {
   final List<SetlistEntryData> entries;
   final bool favorite;
   final DateTime? modifiedAt;
+
+  /// Sum of the entry durations, including player estimates when needed.
+  /// Missing library references are omitted and marked by [durationPartial].
+  final double durationSeconds;
+  final bool durationEstimated, durationPartial;
 }
 
 /// Editable fields of the song being edited, captured when the editor opens.

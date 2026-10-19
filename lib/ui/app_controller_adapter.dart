@@ -539,8 +539,30 @@ class AppControllerAdapter extends VerseUiController {
         song.id.startsWith('conflict-') || song.extra['syncConflict'] != null,
   );
 
+  final _durationEstimates = Expando<double>();
+
+  // _lines/parseArrangement retain one row per newline-delimited body line.
+  // Count those rows without parsing every chord in every setlist song.
+  double _estimatedSongDuration(SongDocument song) =>
+      _durationEstimates[song] ??= _estimatedDuration(
+        '\n'.allMatches(song.body).length + 1,
+      );
+
   SetlistCardData _setlistCard(SetlistDocument value) {
     final entries = [for (final entry in value.entries) _entryData(entry)];
+    var durationSeconds = 0.0;
+    var durationEstimated = false;
+    var durationPartial = false;
+    for (final entry in value.entries) {
+      final song = _lookupSong(entry.songId);
+      if (song == null) {
+        durationPartial = true;
+        continue;
+      }
+      final recorded = _validDuration(song.metadata['durationSeconds']);
+      durationSeconds += recorded ?? _estimatedSongDuration(song);
+      durationEstimated |= recorded == null;
+    }
     return SetlistCardData(
       id: value.id,
       title: value.name,
@@ -550,6 +572,9 @@ class AppControllerAdapter extends VerseUiController {
       entries: entries,
       favorite: value.favorite,
       modifiedAt: value.updatedAt,
+      durationSeconds: durationSeconds,
+      durationEstimated: durationEstimated,
+      durationPartial: durationPartial,
     );
   }
 
