@@ -285,7 +285,9 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
   final GlobalKey _deleteBasketGeometryKey = GlobalKey();
   String? _loadedSetlistId;
   String? _draggingEntryId;
+  int? _draggingEntryIndex;
   Offset? _dragPosition;
+  bool _deleteBasketDropPending = false;
   bool _wasEditing = false;
   VerseUiController get controller => widget.controller;
 
@@ -438,19 +440,21 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
                       if (index >= value.entries.length) return;
                       setState(() {
                         _draggingEntryId = value.entries[index].id;
+                        _draggingEntryIndex = index;
                         _dragPosition = null;
+                        _deleteBasketDropPending = false;
                       });
                     },
-                    onReorderEnd: (_) {
-                      if (mounted) {
-                        setState(() {
-                          _draggingEntryId = null;
-                          _dragPosition = null;
-                        });
+                    onReorderEnd: (newIndex) {
+                      _deleteBasketDropPending = _isPointerOverDeleteBasket();
+                      if (_draggingEntryIndex == newIndex && mounted) {
+                        setState(_clearDragState);
                       }
                     },
                     onReorderItem: (oldIndex, newIndex) async {
-                      if (_isPointerOverDeleteBasket() &&
+                      final removeFromSetlist = _deleteBasketDropPending;
+                      setState(_clearDragState);
+                      if (removeFromSetlist &&
                           oldIndex < value.entries.length) {
                         await _removeEntryFromSetlist(
                           context,
@@ -553,6 +557,13 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
     }
     final rect = renderObject.localToGlobal(Offset.zero) & renderObject.size;
     return rect.contains(position);
+  }
+
+  void _clearDragState() {
+    _draggingEntryId = null;
+    _draggingEntryIndex = null;
+    _dragPosition = null;
+    _deleteBasketDropPending = false;
   }
 
   Future<void> _removeEntryFromSetlist(
