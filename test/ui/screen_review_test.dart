@@ -473,6 +473,66 @@ void main() {
       expect(find.text('Приспів із виходом'), findsOneWidget);
     });
 
+    testWidgets('desktop timeline section labels fit without ellipsizing', (
+      tester,
+    ) async {
+      const names = [
+        'Intro',
+        'Verse 1',
+        'Chorus',
+        'Verse 2',
+        'Chorus 2',
+        'Outro',
+      ];
+      const starts = [0.0, 8.0, 20.0, 36.0, 56.0, 75.0];
+      final sections = [
+        for (var i = 0; i < names.length; i++)
+          PlayerSectionMarker(
+            name: names[i],
+            startSeconds: starts[i],
+            lineId: 'line-$i',
+          ),
+      ];
+      final c = FakeUiController(
+        (_) => _reader(duration: 90, sections: sections),
+      );
+      addTearDown(c.dispose);
+      await pumpShell(tester, c, size: const Size(1280, 800));
+
+      final labels = tester.widgetList<Text>(
+        find.byWidgetPredicate(
+          (widget) => widget is Text && widget.semanticsLabel != null,
+        ),
+      );
+      final timelineLabels = labels
+          .where((label) => names.contains(label.semanticsLabel))
+          .toList();
+      expect(
+        timelineLabels.map((label) => label.semanticsLabel),
+        containsAll(names),
+      );
+      for (final label in timelineLabels) {
+        expect(label.data, label.semanticsLabel);
+        final finder = find.byWidget(label);
+        final element = tester.element(finder);
+        final style = DefaultTextStyle.of(element).style.merge(label.style);
+        final painter = TextPainter(
+          text: TextSpan(text: label.data, style: style),
+          textDirection: Directionality.of(element),
+          textScaler: MediaQuery.textScalerOf(element),
+          locale: Localizations.localeOf(element),
+          maxLines: 1,
+        )..layout();
+        expect(
+          painter.width,
+          lessThanOrEqualTo(tester.getSize(finder).width + 0.5),
+          reason: '${label.data} is painted wider than its timeline label box',
+        );
+        expect(label.overflow, isNot(TextOverflow.ellipsis));
+      }
+      expect(tester.takeException(), isNull);
+    });
+
     test('section parsing and abbreviations', () {
       expect(parseSectionName('Pre-Chorus 2')?.kind, 'pre-chorus');
       expect(parseSectionName('prechorus')?.kind, 'pre-chorus');

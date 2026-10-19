@@ -468,6 +468,68 @@ void main() {
     );
   });
 
+  testWidgets('horizontal lyric swipes navigate setlist entries', (
+    tester,
+  ) async {
+    await pumpShell(tester, controller);
+    final lyrics = find.byKey(const ValueKey('tablet-reader-content'));
+
+    await tester.drag(lyrics, const Offset(-120, 0));
+    await tester.runAsync(controller.settleRecentRecords);
+    await _pumpPlayer(tester);
+    expect(controller.activeSetlistEntry?.id, 'base-entry');
+    expect(controller.state.readerKey, 'C');
+
+    await tester.drag(lyrics, const Offset(120, 0));
+    await tester.runAsync(controller.settleRecentRecords);
+    await _pumpPlayer(tester);
+    expect(controller.activeSetlistEntry?.id, 'd-entry');
+    expect(controller.state.readerKey, 'D');
+  });
+
+  testWidgets('transport buttons cross song boundaries at end and start', (
+    tester,
+  ) async {
+    await tester.runAsync(
+      () => app.saveSong(
+        SongDocument(
+          id: 'song',
+          title: 'Lanterns at Dawn',
+          artist: 'Mira Vale',
+          body: '[Verse]\n[C]First line\n[Chorus]\n[G]Second line',
+          metadata: const {'key': 'C', 'durationSeconds': 120},
+        ),
+      ),
+    );
+    await tester.runAsync(
+      () => controller.openSetlistEntry('setlist', 'd-entry'),
+    );
+    await pumpShell(tester, controller);
+
+    final l10n = l10nOf(tester);
+    final nextButton = find.byWidgetPredicate(
+      (widget) =>
+          widget is IconButton && widget.tooltip == l10n.playerNextSectionSong,
+    );
+    final previousButton = find.byWidgetPredicate(
+      (widget) =>
+          widget is IconButton &&
+          widget.tooltip == l10n.playerPreviousSectionSong,
+    );
+
+    await tester.runAsync(() => controller.seek(120));
+    await _pumpPlayer(tester);
+    await _advance(tester, controller, nextButton);
+    await _pumpPlayer(tester);
+    expect(controller.activeSetlistEntry?.id, 'base-entry');
+
+    await tester.runAsync(() => controller.seek(0));
+    await _pumpPlayer(tester);
+    await _advance(tester, controller, previousButton);
+    await _pumpPlayer(tester);
+    expect(controller.activeSetlistEntry?.id, 'd-entry');
+  });
+
   test(
     'recognized section directives become reader and player section names',
     () async {

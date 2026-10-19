@@ -125,6 +125,7 @@ class _PlayerScreenState extends State<PlayerScreen>
   bool _inForeground = true;
   bool _leaving = false;
   double _panelDragDistance = 0;
+  double _lyricsHorizontalDragDistance = 0;
 
   void _setControlsExpanded(bool expanded) {
     if (controller.state.playerControlsExpanded == expanded) return;
@@ -320,6 +321,40 @@ class _PlayerScreenState extends State<PlayerScreen>
       direction: direction,
     );
     if (target != null) controller.seek(target);
+  }
+
+  void _previousTransportAction(VerseUiState state) {
+    if (state.activeSetlist != null &&
+        (state.playerSections.isEmpty || state.progressSeconds <= 2)) {
+      unawaited(controller.previousSong());
+      return;
+    }
+    _skipSection(-1);
+  }
+
+  void _nextTransportAction(VerseUiState state) {
+    if (state.activeSetlist != null &&
+        (state.playerSections.isEmpty ||
+            state.progressSeconds >= _durationOf(state) - .05)) {
+      unawaited(controller.nextSong());
+      return;
+    }
+    _skipSection(1);
+  }
+
+  void _handleLyricsHorizontalDragEnd(DragEndDetails details) {
+    final distance = _lyricsHorizontalDragDistance;
+    _lyricsHorizontalDragDistance = 0;
+    if (controller.state.activeSetlist == null) return;
+    final velocity = details.primaryVelocity ?? 0;
+    final longEnough = distance.abs() >= 72;
+    final quickEnough = distance.abs() >= 32 && velocity.abs() >= 450;
+    if (!longEnough && !quickEnough) return;
+    if (distance < 0) {
+      unawaited(controller.nextSong());
+    } else {
+      unawaited(controller.previousSong());
+    }
   }
 
   PlayerSectionMarker? _sectionAt(
@@ -673,18 +708,30 @@ class _PlayerScreenState extends State<PlayerScreen>
     _pruneLineKeys(state.songLines);
     final duration = _durationOf(state);
     final colors = Theme.of(context).colorScheme;
-    final lyrics = Center(
-      key: const ValueKey('tablet-reader-content'),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 960),
-        child: NotificationListener<ScrollNotification>(
-          onNotification: _handleLyricsScroll,
-          child: ListView.builder(
-            controller: _lyricsScroll,
-            padding: const EdgeInsets.fromLTRB(28, 18, 28, 32),
-            itemCount: state.songLines.length,
-            itemBuilder: (context, index) =>
-                _lyricLine(context, state, state.songLines[index]),
+    final lyrics = GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onHorizontalDragStart: state.activeSetlist == null
+          ? null
+          : (_) => _lyricsHorizontalDragDistance = 0,
+      onHorizontalDragUpdate: state.activeSetlist == null
+          ? null
+          : (details) => _lyricsHorizontalDragDistance += details.delta.dx,
+      onHorizontalDragEnd: state.activeSetlist == null
+          ? null
+          : _handleLyricsHorizontalDragEnd,
+      child: Center(
+        key: const ValueKey('tablet-reader-content'),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 960),
+          child: NotificationListener<ScrollNotification>(
+            onNotification: _handleLyricsScroll,
+            child: ListView.builder(
+              controller: _lyricsScroll,
+              padding: const EdgeInsets.fromLTRB(28, 18, 28, 32),
+              itemCount: state.songLines.length,
+              itemBuilder: (context, index) =>
+                  _lyricLine(context, state, state.songLines[index]),
+            ),
           ),
         ),
       ),
@@ -1136,6 +1183,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                       ),
                     ),
                     ..._sectionMarkerLabelWidgets(
+                      context: context,
                       markers: displaySections,
                       durationSeconds: displayDuration,
                       progressSeconds: displayPosition,
@@ -1299,11 +1347,9 @@ class _PlayerScreenState extends State<PlayerScreen>
                     : l10n.playerPreviousSectionSong,
                 state.playerSections.isEmpty ? '' : 'Ctrl+←',
               ),
-              onPressed: state.playerSections.isEmpty
-                  ? state.activeSetlist == null
-                        ? null
-                        : controller.previousSong
-                  : () => _skipSection(-1),
+              onPressed: state.activeSetlist == null
+                  ? () => _skipSection(-1)
+                  : () => _previousTransportAction(state),
               onLongPress: state.activeSetlist == null
                   ? null
                   : controller.previousSong,
@@ -1331,11 +1377,9 @@ class _PlayerScreenState extends State<PlayerScreen>
                     : l10n.playerNextSectionSong,
                 state.playerSections.isEmpty ? '' : 'Ctrl+→',
               ),
-              onPressed: state.playerSections.isEmpty
-                  ? state.activeSetlist == null
-                        ? null
-                        : controller.nextSong
-                  : () => _skipSection(1),
+              onPressed: state.activeSetlist == null
+                  ? () => _skipSection(1)
+                  : () => _nextTransportAction(state),
               onLongPress: state.activeSetlist == null
                   ? null
                   : controller.nextSong,
@@ -1579,6 +1623,7 @@ class _SectionMarkerSliderTrackShape extends RoundedRectSliderTrackShape {
 }
 
 List<Widget> _sectionMarkerLabelWidgets({
+  required BuildContext context,
   required List<PlayerSectionMarker> markers,
   required double durationSeconds,
   required double progressSeconds,
@@ -1614,11 +1659,16 @@ List<Widget> _sectionMarkerLabelWidgets({
       ? right - trackWidth * progressFraction
       : left + trackWidth * progressFraction;
   final fontSize = width >= 560 ? 10.0 : 9.0;
-  final style = TextStyle(
-    color: labelColor,
-    fontSize: fontSize,
-    fontWeight: FontWeight.w600,
-    height: 1,
+  // Match the inherited typeface when measuring. Measuring with the default
+  // font and then painting with the app's display font made the Positioned
+  // label narrower than its rendered text, so Flutter ellipsized headings.
+  final style = DefaultTextStyle.of(context).style.merge(
+    TextStyle(
+      color: labelColor,
+      fontSize: fontSize,
+      fontWeight: FontWeight.w600,
+      height: 1,
+    ),
   );
   final maxLabelWidth = trackWidth * .45;
   final candidates =
@@ -1638,6 +1688,7 @@ List<Widget> _sectionMarkerLabelWidgets({
       text: TextSpan(text: label, style: style),
       textDirection: textDirection,
       textScaler: textScaler,
+      locale: Localizations.localeOf(context),
       maxLines: 1,
       ellipsis: '…',
     )..layout();
@@ -1690,7 +1741,7 @@ List<Widget> _sectionMarkerLabelWidgets({
             semanticsLabel: candidate.sectionName,
             maxLines: 1,
             softWrap: false,
-            overflow: TextOverflow.ellipsis,
+            overflow: TextOverflow.visible,
             style: style,
           ),
         ),
