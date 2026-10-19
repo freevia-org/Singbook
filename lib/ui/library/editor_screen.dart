@@ -505,12 +505,8 @@ class _EditorScreenState extends State<EditorScreen> {
               PopupMenuButton<String>(
                 tooltip: l10n.songMenuLabel,
                 enabled: !_saving,
-                itemBuilder: (_) => [
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: Text(l10n.actionDelete),
-                  ),
-                ],
+                itemBuilder: (_) =>
+                    buildLibraryActionMenu(l10n, actions: const {'delete'}),
                 onSelected: (_) => _delete(),
               ),
           ],

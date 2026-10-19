@@ -659,45 +659,22 @@ class _PlayerScreenState extends State<PlayerScreen>
                 ),
                 PopupMenuButton<String>(
                   tooltip: l10n.songMenuLabel,
-                  itemBuilder: (_) => [
-                    PopupMenuItem(value: 'info', child: Text(l10n.songInfo)),
-                    if (state.readerTimingAvailable || state.readerHasTiming)
-                      CheckedPopupMenuItem(
-                        value: 'timed-lyrics',
-                        checked: state.timingMode == 'timed',
-                        child: Text(l10n.playerTimedLyrics),
-                      ),
-                    if (state.readerCanCompareVersions)
-                      PopupMenuItem(
-                        value: 'compare',
-                        child: Text(l10n.searchCompare),
-                      ),
-                    PopupMenuItem(
-                      value: 'add',
-                      child: Text(l10n.songAddToSetlist),
-                    ),
-                    PopupMenuItem(
-                      value: 'share',
-                      child: Text(l10n.settingsShareSong),
-                    ),
-                    PopupMenuItem(
-                      value: 'share_pdf',
-                      child: Text(l10n.settingsSharePdf),
-                    ),
-                    PopupMenuItem(
-                      value: 'copy',
-                      child: Text(l10n.settingsCopySong),
-                    ),
-                    PopupMenuItem(
-                      value: 'print',
-                      child: Text(l10n.settingsPrintSong),
-                    ),
-                    const PopupMenuDivider(),
-                    PopupMenuItem(
-                      value: 'delete',
-                      child: Text(l10n.actionDelete),
-                    ),
-                  ],
+                  itemBuilder: (_) => buildLibraryActionMenu(
+                    l10n,
+                    timedLyricsChecked: state.timingMode == 'timed',
+                    actions: {
+                      'info',
+                      if (state.readerCanCompareVersions) 'compare',
+                      if (state.readerTimingAvailable || state.readerHasTiming)
+                        'timed-lyrics',
+                      'add',
+                      'share',
+                      'share_pdf',
+                      'copy',
+                      'print',
+                      'delete',
+                    },
+                  ),
                   onSelected: (action) {
                     if (action == 'compare') {
                       controller.compareCurrentSongVersions();
