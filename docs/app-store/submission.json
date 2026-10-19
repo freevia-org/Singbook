@@ -18,7 +18,6 @@
   "owner_fields_pending": [
     "App Review contact name and phone",
     "distribution territories",
-    "confirm copyright ownership (publisher copied from Android)",
     "trader status and required account declarations",
     "content-rights declaration and available permission evidence",
     "final SDK-inclusive App Privacy answers",
@@ -129,8 +128,7 @@
     "deployment": "51f629dd-4742-448b-9a98-a5c470451e9f"
   },
   "owner_details": {
-    "publisher": "Freevia EOOD",
-    "copyright_proposed": "2026 Freevia EOOD",
+    "publisher": "Freevia",
     "review_contact_email": "support@freevia.org",
     "feedback_email": "support@freevia.org",
     "price": "FREE",
@@ -139,6 +137,9 @@
     "territories": null,
     "review_contact_name": null,
     "review_contact_phone": null,
-    "provenance": "Copied from docs/play-store/listing.md and docs/play-store/privacy-policy.md at owner request on 2026-10-19. Publisher is documented; copyright ownership is not independently established. Territories and private review contact name/phone were not present."
+    "provenance": "Android contact and free pricing reused at owner request on 2026-10-19. Owner confirmed public publisher Freevia and full legal entity Freevia EOOD, and accepted the remaining copied details. Distribution territories and private review contact name/phone were not supplied.",
+    "legal_entity": "Freevia EOOD",
+    "copyright": "2026 Freevia EOOD",
+    "apple_developer_display_name_requested": "Freevia"
   }
 }

@@ -165,9 +165,13 @@ a different field and should not be applied to those beta fields.
 At the owner's request, reuse `support@freevia.org` for feedback and App Review
 email, and the Android price of free with no in-app purchases or ads. Sources:
 `docs/play-store/listing.md` and `docs/play-store/privacy-policy.md`.
-Publisher: Freevia EOOD; proposed copyright field: `2026 Freevia EOOD`.
-The publisher identity does not independently establish software copyright
-ownership, so confirm that declaration in App Store Connect.
+Public publisher/brand: **Freevia**. Full legal entity: **Freevia EOOD**.
+Copyright field: `2026 Freevia EOOD`. The owner confirmed this naming and
+accepted the copied contact/pricing details on 2026-10-19.
+Request **Freevia** as the Apple developer display name if it qualifies as a
+registered trade name/DBA for the organization. Apple’s verified legal seller
+identity remains **Freevia EOOD**. See [Apple’s developer-name rules](https://developer.apple.com/help/app-store-connect/create-an-app-record/set-your-developer-name/).
+Keep the legal entity in the privacy policy and account declarations.
 
 The Android materials contain no private review contact name/phone or confirmed
 distribution territory list. Those fields remain empty rather than inferring
