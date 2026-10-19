@@ -1,16 +1,15 @@
 {
   "schemaVersion": 1,
-  "catalogRevision": 3,
-  "measuredAt": "2026-10-18T06:04:42.370901Z",
+  "catalogRevision": 4,
+  "measuredAt": "2026-10-19T06:00:03.820713Z",
   "offline": false,
   "summary": {
     "transient_error": 4,
-    "healthy": 7,
-    "unavailable": 2,
+    "healthy": 9,
     "blocked": 1,
-    "changed_schema": 1,
     "import_only": 2,
-    "partial_coverage": 2
+    "partial_coverage": 2,
+    "unavailable": 1
   },
   "sources": [
     {
@@ -196,28 +195,72 @@
     {
       "id": "synclrc",
       "name": "SyncLRC",
-      "status": "unavailable",
+      "status": "healthy",
       "coverage": {
-        "status": "partial",
-        "verifiedCapabilities": [],
-        "unverifiedCapabilities": [
+        "status": "complete",
+        "verifiedCapabilities": [
           "catalog",
           "lineTiming",
           "lyrics",
           "metadata",
           "wordTiming"
-        ]
+        ],
+        "unverifiedCapabilities": []
       },
       "probes": [
         {
           "id": "never-gonna-give-you-up-studio",
-          "status": "unavailable",
-          "reason": "empty_search_results"
+          "status": "healthy",
+          "providerId": "synclrc",
+          "bodyCharacters": 1927,
+          "metadataFields": [
+            "album",
+            "duration",
+            "hasLyrics",
+            "instrumental",
+            "query"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata",
+            "wordTiming"
+          ],
+          "timingTrackCount": 2,
+          "timingGranularities": [
+            "line",
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false
         },
         {
           "id": "wonderwall-oasis-timed-version",
-          "status": "unavailable",
-          "reason": "empty_search_results"
+          "status": "healthy",
+          "providerId": "synclrc",
+          "bodyCharacters": 1401,
+          "metadataFields": [
+            "album",
+            "duration",
+            "hasLyrics",
+            "instrumental",
+            "query"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata",
+            "wordTiming"
+          ],
+          "timingTrackCount": 2,
+          "timingGranularities": [
+            "line",
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false
         }
       ]
     },
@@ -247,38 +290,54 @@
     {
       "id": "unison",
       "name": "Unison",
-      "status": "changed_schema",
+      "status": "healthy",
       "coverage": {
-        "status": "partial",
+        "status": "complete",
         "verifiedCapabilities": [
+          "catalog",
           "lineTiming",
           "lyrics",
           "wordTiming"
         ],
-        "unverifiedCapabilities": [
-          "catalog"
-        ]
+        "unverifiedCapabilities": []
       },
       "probes": [
         {
           "id": "search-give-it-up-don-toliver",
-          "status": "changed_schema",
-          "reason": "required_fields_missing",
-          "missingFields": [
-            "timing",
+          "status": "healthy",
+          "providerId": "unison",
+          "bodyCharacters": 1420,
+          "metadataFields": [],
+          "verifiedCapabilities": [
+            "catalog",
             "lineTiming",
+            "lyrics",
             "wordTiming"
-          ]
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false
         },
         {
           "id": "give-it-up-don-toliver",
-          "status": "changed_schema",
-          "reason": "required_fields_missing",
-          "missingFields": [
-            "timing",
+          "status": "healthy",
+          "providerId": "unison",
+          "bodyCharacters": 1420,
+          "metadataFields": [],
+          "verifiedCapabilities": [
             "lineTiming",
+            "lyrics",
             "wordTiming"
-          ]
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false
         },
         {
           "id": "love-never-felt-so-good-michael-jackson",
@@ -631,13 +690,14 @@
   ],
   "execution": {
     "runtime": "managed-cloud",
-    "baseSha": "e55a2cb3c8c7c2140897eb51d7c4ebf9c5f4d116",
-    "command": "dart run tool/source_maintenance.dart --report artifacts/source-maintenance/2026-10-18-live.json",
+    "baseSha": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
+    "sourceState": "clean isolated public-main worktree; original four-file unfinished task checkout preserved",
+    "command": "dart run tool/source_maintenance.dart --report artifacts/source-maintenance/2026-10-19-live.json",
     "exitCode": 1,
-    "mode": "approved_require_escalated",
+    "networkMode": "approved_require_escalated",
     "environment": {
       "published": true,
-      "specRevision": 42,
+      "specRevision": "50",
       "observationsCurrent": true,
       "phase": "running",
       "connectivity": "connected",
@@ -649,18 +709,44 @@
       "geniusEnvironmentKeyPresent": true
     }
   },
+  "validation": {
+    "lockedDependencies": {
+      "command": "flutter pub get --enforce-lockfile",
+      "exitCode": 0
+    },
+    "offline": {
+      "command": "dart run tool/source_maintenance.dart --offline --report artifacts/source-maintenance/2026-10-19-offline.json",
+      "exitCode": 0,
+      "summary": {
+        "offline_unverified": 17,
+        "import_only": 2
+      }
+    },
+    "focusedTests": {
+      "command": "flutter test --no-pub test/providers test/application/controller_test.dart test/application/controller_hardening_test.dart --reporter compact",
+      "exitCode": 0,
+      "passed": 243
+    },
+    "analyzer": {
+      "command": "flutter analyze --no-pub",
+      "exitCode": 0
+    },
+    "sourceChanges": "none; no new core/model changes require full-suite rerun"
+  },
   "comparison": {
     "priorCloud": {
-      "measuredAt": "2026-10-17T05:58:32.901896Z",
-      "ageHours": 24.102630277777777,
-      "baseSha": "51d46a3e7c0871b14389c326009019dbf9862870",
-      "path": "reports/source-maintenance/2026-10-17T055832Z.json"
+      "measuredAt": "2026-10-18T06:04:42.370901Z",
+      "ageHours": 23.922625,
+      "baseSha": "e55a2cb3c8c7c2140897eb51d7c4ebf9c5f4d116",
+      "path": "reports/source-maintenance/2026-10-18T060442Z.json"
     },
     "priorLocal": {
-      "measuredAt": "2026-10-17T06:01:49.863023Z",
-      "ageHours": 24.04791861111111,
+      "measuredAt": "2026-10-18T06:03:21.920080Z",
+      "ageHours": 23.944972222222223,
+      "baseSha": "e55a2cb3c8c7c2140897eb51d7c4ebf9c5f4d116",
+      "sourceHead": "3460d22bac3631af3b24c237e9f9ade71ffa9f97",
       "runtime": "local-windows",
-      "baseSha": "51d46a3e7c0871b14389c326009019dbf9862870",
+      "codeState": "review-candidate-not-integrated-or-installed",
       "path": "reports/source-maintenance/local/latest.json"
     },
     "sources": [
@@ -960,22 +1046,32 @@
         },
         "priorLocal": {
           "id": "lrclib",
-          "status": "transient_error",
+          "status": "healthy",
           "coverage": {
-            "status": "partial",
-            "verifiedCapabilities": [],
-            "unverifiedCapabilities": [
+            "status": "complete",
+            "verifiedCapabilities": [
               "catalog",
               "lineTiming",
               "lyrics",
               "metadata"
-            ]
+            ],
+            "unverifiedCapabilities": []
           },
           "probes": [
             {
               "id": "sound-of-silence-studio-recording",
-              "status": "transient_error",
-              "reason": "rate_limited"
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "catalog",
+                "lineTiming",
+                "lyrics",
+                "metadata"
+              ],
+              "timingTrackCount": 1,
+              "timingGranularities": [
+                "line"
+              ],
+              "timingRawRetained": true
             }
           ]
         }
@@ -1134,6 +1230,57 @@
       },
       {
         "current": {
+          "id": "synclrc",
+          "status": "healthy",
+          "coverage": {
+            "status": "complete",
+            "verifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ],
+            "unverifiedCapabilities": []
+          },
+          "probes": [
+            {
+              "id": "never-gonna-give-you-up-studio",
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "catalog",
+                "lineTiming",
+                "lyrics",
+                "metadata",
+                "wordTiming"
+              ],
+              "timingTrackCount": 2,
+              "timingGranularities": [
+                "line",
+                "word"
+              ],
+              "timingRawRetained": true
+            },
+            {
+              "id": "wonderwall-oasis-timed-version",
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "catalog",
+                "lineTiming",
+                "lyrics",
+                "metadata",
+                "wordTiming"
+              ],
+              "timingTrackCount": 2,
+              "timingGranularities": [
+                "line",
+                "word"
+              ],
+              "timingRawRetained": true
+            }
+          ]
+        },
+        "priorCloud": {
           "id": "synclrc",
           "status": "unavailable",
           "coverage": {
@@ -1160,9 +1307,9 @@
             }
           ]
         },
-        "priorCloud": {
+        "priorLocal": {
           "id": "synclrc",
-          "status": "partial_coverage",
+          "status": "unavailable",
           "coverage": {
             "status": "partial",
             "verifiedCapabilities": [
@@ -1190,55 +1337,11 @@
                 "line"
               ],
               "timingRawRetained": true
-            }
-          ]
-        },
-        "priorLocal": {
-          "id": "synclrc",
-          "status": "healthy",
-          "coverage": {
-            "status": "complete",
-            "verifiedCapabilities": [
-              "catalog",
-              "lineTiming",
-              "lyrics",
-              "metadata",
-              "wordTiming"
-            ],
-            "unverifiedCapabilities": []
-          },
-          "probes": [
-            {
-              "id": "never-gonna-give-you-up-studio",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "lineTiming",
-                "lyrics",
-                "metadata"
-              ],
-              "timingTrackCount": 1,
-              "timingGranularities": [
-                "line"
-              ],
-              "timingRawRetained": true
             },
             {
               "id": "wonderwall-oasis-timed-version",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "lineTiming",
-                "lyrics",
-                "metadata",
-                "wordTiming"
-              ],
-              "timingTrackCount": 2,
-              "timingGranularities": [
-                "line",
-                "word"
-              ],
-              "timingRawRetained": true
+              "status": "unavailable",
+              "reason": "empty_search_results"
             }
           ]
         }
@@ -1313,6 +1416,65 @@
       },
       {
         "current": {
+          "id": "unison",
+          "status": "healthy",
+          "coverage": {
+            "status": "complete",
+            "verifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "wordTiming"
+            ],
+            "unverifiedCapabilities": []
+          },
+          "probes": [
+            {
+              "id": "search-give-it-up-don-toliver",
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "catalog",
+                "lineTiming",
+                "lyrics",
+                "wordTiming"
+              ],
+              "timingTrackCount": 1,
+              "timingGranularities": [
+                "word"
+              ],
+              "timingRawRetained": true
+            },
+            {
+              "id": "give-it-up-don-toliver",
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "lineTiming",
+                "lyrics",
+                "wordTiming"
+              ],
+              "timingTrackCount": 1,
+              "timingGranularities": [
+                "word"
+              ],
+              "timingRawRetained": true
+            },
+            {
+              "id": "love-never-felt-so-good-michael-jackson",
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "lineTiming",
+                "lyrics",
+                "wordTiming"
+              ],
+              "timingTrackCount": 1,
+              "timingGranularities": [
+                "word"
+              ],
+              "timingRawRetained": true
+            }
+          ]
+        },
+        "priorCloud": {
           "id": "unison",
           "status": "changed_schema",
           "coverage": {
@@ -1363,65 +1525,6 @@
             }
           ]
         },
-        "priorCloud": {
-          "id": "unison",
-          "status": "healthy",
-          "coverage": {
-            "status": "complete",
-            "verifiedCapabilities": [
-              "catalog",
-              "lineTiming",
-              "lyrics",
-              "wordTiming"
-            ],
-            "unverifiedCapabilities": []
-          },
-          "probes": [
-            {
-              "id": "search-give-it-up-don-toliver",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "lineTiming",
-                "lyrics",
-                "wordTiming"
-              ],
-              "timingTrackCount": 1,
-              "timingGranularities": [
-                "word"
-              ],
-              "timingRawRetained": true
-            },
-            {
-              "id": "give-it-up-don-toliver",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "lineTiming",
-                "lyrics",
-                "wordTiming"
-              ],
-              "timingTrackCount": 1,
-              "timingGranularities": [
-                "word"
-              ],
-              "timingRawRetained": true
-            },
-            {
-              "id": "love-never-felt-so-good-michael-jackson",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "lineTiming",
-                "lyrics",
-                "wordTiming"
-              ],
-              "timingTrackCount": 1,
-              "timingGranularities": [
-                "word"
-              ],
-              "timingRawRetained": true
-            }
-          ]
-        },
         "priorLocal": {
           "id": "unison",
           "status": "healthy",
@@ -2067,20 +2170,26 @@
         },
         "priorCloud": {
           "id": "wikidata",
-          "status": "transient_error",
+          "status": "partial_coverage",
           "coverage": {
             "status": "partial",
-            "verifiedCapabilities": [],
-            "unverifiedCapabilities": [
-              "catalog",
+            "verifiedCapabilities": [
               "metadata"
+            ],
+            "unverifiedCapabilities": [
+              "catalog"
             ]
           },
           "probes": [
             {
               "id": "imagine-composition",
-              "status": "transient_error",
-              "reason": "provider_busy"
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "metadata"
+              ],
+              "timingTrackCount": 0,
+              "timingGranularities": [],
+              "timingRawRetained": false
             }
           ]
         },
@@ -2253,679 +2362,500 @@
         }
       }
     ],
-    "interpretation": "Prior local successes do not establish current cloud health. Baseline catalog revision 3 has two SyncLRC canaries, compared with one in the prior cloud revision 2 report. Empty cloud search results remain unavailable, not proof that the accepted adapter fix is wrong. Current YouTube anonymous implementation does not use a historical local private browser session. Fresh local report at publication uses PR #55 candidate 3460d22bac3631af3b24c237e9f9ade71ffa9f97, not public main: its Unison success is repaired candidate evidence, not an unexplained baseline runtime difference. Both runtimes show SyncLRC unavailable; cloud's initial report has two empty-search probes, local batch may contain mixed probe outcomes. Preserve actual per-probe records.",
-    "additionalLocalAtPublication": {
-      "measuredAt": "2026-10-18T06:03:21.920080Z",
-      "ageHours": 0.022347222222222223,
-      "runtime": "local-windows",
-      "baseSha": "e55a2cb3c8c7c2140897eb51d7c4ebf9c5f4d116",
-      "sourceHead": "3460d22bac3631af3b24c237e9f9ade71ffa9f97",
-      "codeState": "review-candidate-not-integrated-or-installed",
-      "sourceOutcomes": [
+    "interpretation": "Unison now passes all canaries on integrated revision-4 catalog and parser repair; prior cloud latest retained public-main failure plus separate candidate success. SyncLRC now passes both independent probes with line/word cues and raw retention; recovery does not imply prior empty-result outage was a schema problem. Historical local passes do not override current cloud network failures. Historical local report is repaired review-candidate evidence, not equivalent public-main execution."
+  },
+  "catalogProbeCoverage": [
+    {
+      "id": "genius",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "metadata"
+      ],
+      "probes": [
         {
-          "id": "genius",
-          "status": "healthy",
-          "coverage": {
-            "status": "complete",
-            "verifiedCapabilities": [
-              "catalog",
-              "lyrics",
-              "metadata"
-            ],
-            "unverifiedCapabilities": []
-          },
-          "probes": [
-            {
-              "id": "wonderwall-oasis",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "lyrics",
-                "metadata"
-              ]
-            }
+          "id": "wonderwall-oasis",
+          "expectedTitle": "Wonderwall",
+          "expectedArtist": "Oasis",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "songsterr",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "chords",
+        "metadata"
+      ],
+      "probes": [
+        {
+          "id": "wonderwall",
+          "expectedTitle": "Wonderwall",
+          "expectedArtist": "Oasis",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "chords"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ultimateguitar",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "chords",
+        "metadata"
+      ],
+      "probes": [
+        {
+          "id": "wonderwall-oasis-chords",
+          "expectedTitle": "Wonderwall",
+          "expectedArtist": "Oasis",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "chords"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lrclib",
+      "revision": 2,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "lineTiming",
+        "metadata"
+      ],
+      "probes": [
+        {
+          "id": "sound-of-silence-studio-recording",
+          "expectedTitle": "The Sound Of Silence",
+          "expectedArtist": "Simon & Garfunkel",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "timing",
+            "lineTiming"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "youtubemusic",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "metadata"
+      ],
+      "probes": [
+        {
+          "id": "never-gonna-give-you-up",
+          "expectedTitle": "Never Gonna Give You Up",
+          "expectedArtist": "Rick Astley",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lyricsovh",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "metadata"
+      ],
+      "probes": [
+        {
+          "id": "wonderwall-oasis-studio",
+          "expectedTitle": "Wonderwall",
+          "expectedArtist": "Oasis",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "synclrc",
+      "revision": 3,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "lineTiming",
+        "metadata",
+        "wordTiming"
+      ],
+      "probes": [
+        {
+          "id": "never-gonna-give-you-up-studio",
+          "expectedTitle": "Never Gonna Give You Up",
+          "expectedArtist": "Rick Astley",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "timing",
+            "lineTiming"
           ]
         },
         {
-          "id": "songsterr",
-          "status": "healthy",
-          "coverage": {
-            "status": "complete",
-            "verifiedCapabilities": [
-              "catalog",
-              "chords",
-              "lyrics",
-              "metadata"
-            ],
-            "unverifiedCapabilities": []
-          },
-          "probes": [
-            {
-              "id": "wonderwall",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "chords",
-                "lyrics",
-                "metadata"
-              ]
-            }
+          "id": "wonderwall-oasis-timed-version",
+          "expectedTitle": "Wonderwall",
+          "expectedArtist": "Oasis",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "timing",
+            "lineTiming",
+            "wordTiming"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "betterlyrics",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "lineTiming",
+        "metadata",
+        "wordTiming"
+      ],
+      "probes": [
+        {
+          "id": "never-gonna-give-you-up-studio-recording",
+          "expectedTitle": "Never Gonna Give You Up",
+          "expectedArtist": "Rick Astley",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "timing"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unison",
+      "revision": 3,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "lineTiming",
+        "wordTiming"
+      ],
+      "probes": [
+        {
+          "id": "search-give-it-up-don-toliver",
+          "expectedTitle": "Give It Up",
+          "expectedArtist": "Don Toliver",
+          "requiredFields": [
+            "body",
+            "timing",
+            "lineTiming",
+            "wordTiming"
           ]
         },
         {
-          "id": "ultimateguitar",
-          "status": "partial_coverage",
-          "coverage": {
-            "status": "partial",
-            "verifiedCapabilities": [
-              "chords",
-              "lyrics",
-              "metadata"
-            ],
-            "unverifiedCapabilities": [
-              "catalog"
-            ]
-          },
-          "probes": [
-            {
-              "id": "wonderwall-oasis-chords",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "chords",
-                "lyrics",
-                "metadata"
-              ]
-            }
+          "id": "give-it-up-don-toliver",
+          "expectedTitle": "Give It Up",
+          "expectedArtist": "Don Toliver",
+          "requiredFields": [
+            "body",
+            "timing",
+            "lineTiming",
+            "wordTiming"
           ]
         },
         {
-          "id": "lrclib",
-          "status": "healthy",
-          "coverage": {
-            "status": "complete",
-            "verifiedCapabilities": [
-              "catalog",
-              "lineTiming",
-              "lyrics",
-              "metadata"
-            ],
-            "unverifiedCapabilities": []
-          },
-          "probes": [
-            {
-              "id": "sound-of-silence-studio-recording",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "lineTiming",
-                "lyrics",
-                "metadata"
-              ]
-            }
+          "id": "love-never-felt-so-good-michael-jackson",
+          "expectedTitle": "Love Never Felt So Good",
+          "expectedArtist": "Michael Jackson",
+          "requiredFields": [
+            "body",
+            "timing",
+            "lineTiming",
+            "wordTiming"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": "ozbcoz",
+      "revision": 1,
+      "capabilities": [
+        "chords",
+        "fileImport",
+        "lyrics",
+        "metadata"
+      ],
+      "probes": [
         {
-          "id": "youtubemusic",
-          "status": "healthy",
-          "coverage": {
-            "status": "complete",
-            "verifiedCapabilities": [
-              "catalog",
-              "lyrics",
-              "metadata"
-            ],
-            "unverifiedCapabilities": []
-          },
-          "probes": [
-            {
-              "id": "never-gonna-give-you-up",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "lyrics",
-                "metadata"
-              ]
-            }
+          "id": "import-only"
+        }
+      ]
+    },
+    {
+      "id": "chordie",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "chords",
+        "fileImport",
+        "lyrics",
+        "metadata"
+      ],
+      "probes": [
+        {
+          "id": "seventh-stranger-duran-duran",
+          "expectedTitle": "The Seventh Stranger",
+          "expectedArtist": "Duran Duran",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "chords"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": "worshipcommons",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "chords",
+        "lyrics",
+        "metadata",
+        "timing"
+      ],
+      "probes": [
         {
-          "id": "lyricsovh",
-          "status": "healthy",
-          "coverage": {
-            "status": "complete",
-            "verifiedCapabilities": [
-              "catalog",
-              "lyrics",
-              "metadata"
-            ],
-            "unverifiedCapabilities": []
-          },
-          "probes": [
-            {
-              "id": "wonderwall-oasis-studio",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "lyrics",
-                "metadata"
-              ]
-            }
+          "id": "amazing-grace",
+          "expectedTitle": "Amazing Grace",
+          "expectedArtist": "John Newton",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "chords",
+            "timing"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": "openfilksongbook",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "chords",
+        "lyrics",
+        "metadata"
+      ],
+      "probes": [
         {
-          "id": "synclrc",
-          "status": "unavailable",
-          "coverage": {
-            "status": "partial",
-            "verifiedCapabilities": [
-              "catalog",
-              "lineTiming",
-              "lyrics",
-              "metadata"
-            ],
-            "unverifiedCapabilities": [
-              "wordTiming"
-            ]
-          },
-          "probes": [
-            {
-              "id": "never-gonna-give-you-up-studio",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "lineTiming",
-                "lyrics",
-                "metadata"
-              ]
-            },
-            {
-              "id": "wonderwall-oasis-timed-version",
-              "status": "unavailable",
-              "reason": "empty_search_results"
-            }
+          "id": "everything-lastalda",
+          "expectedTitle": "Everything",
+          "expectedArtist": "Lastalda",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "chords"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": "seanmcgrathmusic",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "chords",
+        "lyrics",
+        "metadata"
+      ],
+      "probes": [
         {
-          "id": "betterlyrics",
-          "status": "blocked",
-          "coverage": {
-            "status": "partial",
-            "verifiedCapabilities": [],
-            "unverifiedCapabilities": [
-              "catalog",
-              "lineTiming",
-              "lyrics",
-              "metadata",
-              "wordTiming"
-            ]
-          },
-          "probes": [
-            {
-              "id": "never-gonna-give-you-up-studio-recording",
-              "status": "blocked",
-              "reason": "access_denied"
-            }
+          "id": "be-here-soon",
+          "expectedTitle": "Be Here Soon",
+          "expectedArtist": "Sean McGrath",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "chords"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": "worshiptogether",
+      "revision": 1,
+      "capabilities": [
+        "chords",
+        "fileImport",
+        "lyrics",
+        "metadata"
+      ],
+      "probes": [
         {
-          "id": "unison",
-          "status": "healthy",
-          "coverage": {
-            "status": "complete",
-            "verifiedCapabilities": [
-              "catalog",
-              "lineTiming",
-              "lyrics",
-              "wordTiming"
-            ],
-            "unverifiedCapabilities": []
-          },
-          "probes": [
-            {
-              "id": "search-give-it-up-don-toliver",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "lineTiming",
-                "lyrics",
-                "wordTiming"
-              ]
-            },
-            {
-              "id": "give-it-up-don-toliver",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "lineTiming",
-                "lyrics",
-                "wordTiming"
-              ]
-            },
-            {
-              "id": "love-never-felt-so-good-michael-jackson",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "lineTiming",
-                "lyrics",
-                "wordTiming"
-              ]
-            }
+          "id": "import-only"
+        }
+      ]
+    },
+    {
+      "id": "musicbrainz",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "metadata"
+      ],
+      "probes": [
+        {
+          "id": "wonderwall-oasis-recording",
+          "expectedTitle": "Wonderwall",
+          "expectedArtist": "Oasis",
+          "requiredFields": [
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "musicbrainzRecordingId"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": "wikidata",
+      "revision": 2,
+      "capabilities": [
+        "catalog",
+        "metadata"
+      ],
+      "probes": [
         {
-          "id": "ozbcoz",
-          "status": "import_only",
-          "coverage": {
-            "status": "unverified",
-            "verifiedCapabilities": [],
-            "unverifiedCapabilities": [
-              "chords",
-              "fileImport",
-              "lyrics",
-              "metadata"
-            ]
-          },
-          "probes": [
-            {
-              "id": "import-only",
-              "status": "import_only"
-            }
+          "id": "imagine-composition",
+          "expectedTitle": "Imagine",
+          "expectedArtist": "John Lennon",
+          "requiredFields": [
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "wikidataId"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": "wikimediacommons",
+      "revision": 1,
+      "capabilities": [
+        "artwork",
+        "metadata"
+      ],
+      "probes": [
         {
-          "id": "chordie",
-          "status": "partial_coverage",
-          "coverage": {
-            "status": "partial",
-            "verifiedCapabilities": [
-              "catalog",
-              "chords",
-              "lyrics",
-              "metadata"
-            ],
-            "unverifiedCapabilities": [
-              "fileImport"
-            ]
-          },
-          "probes": [
-            {
-              "id": "seventh-stranger-duran-duran",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "chords",
-                "lyrics",
-                "metadata"
-              ]
-            }
+          "id": "bach-portrait",
+          "expectedTitle": "Johann Sebastian Bach",
+          "requiredFields": [
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "licensedImages.0.license"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": "wikisource",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "fileImport",
+        "lyrics",
+        "metadata"
+      ],
+      "probes": [
         {
-          "id": "worshipcommons",
-          "status": "healthy",
-          "coverage": {
-            "status": "complete",
-            "verifiedCapabilities": [
-              "catalog",
-              "chords",
-              "lyrics",
-              "metadata",
-              "timing"
-            ],
-            "unverifiedCapabilities": []
-          },
-          "probes": [
-            {
-              "id": "amazing-grace",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "chords",
-                "lyrics",
-                "metadata",
-                "timing"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "openfilksongbook",
-          "status": "healthy",
-          "coverage": {
-            "status": "complete",
-            "verifiedCapabilities": [
-              "catalog",
-              "chords",
-              "lyrics",
-              "metadata"
-            ],
-            "unverifiedCapabilities": []
-          },
-          "probes": [
-            {
-              "id": "everything-lastalda",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "chords",
-                "lyrics",
-                "metadata"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "seanmcgrathmusic",
-          "status": "healthy",
-          "coverage": {
-            "status": "complete",
-            "verifiedCapabilities": [
-              "catalog",
-              "chords",
-              "lyrics",
-              "metadata"
-            ],
-            "unverifiedCapabilities": []
-          },
-          "probes": [
-            {
-              "id": "be-here-soon",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "chords",
-                "lyrics",
-                "metadata"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "worshiptogether",
-          "status": "import_only",
-          "coverage": {
-            "status": "unverified",
-            "verifiedCapabilities": [],
-            "unverifiedCapabilities": [
-              "chords",
-              "fileImport",
-              "lyrics",
-              "metadata"
-            ]
-          },
-          "probes": [
-            {
-              "id": "import-only",
-              "status": "import_only"
-            }
-          ]
-        },
-        {
-          "id": "musicbrainz",
-          "status": "partial_coverage",
-          "coverage": {
-            "status": "partial",
-            "verifiedCapabilities": [
-              "metadata"
-            ],
-            "unverifiedCapabilities": [
-              "catalog"
-            ]
-          },
-          "probes": [
-            {
-              "id": "wonderwall-oasis-recording",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "metadata"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "wikidata",
-          "status": "partial_coverage",
-          "coverage": {
-            "status": "partial",
-            "verifiedCapabilities": [
-              "metadata"
-            ],
-            "unverifiedCapabilities": [
-              "catalog"
-            ]
-          },
-          "probes": [
-            {
-              "id": "imagine-composition",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "metadata"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "wikimediacommons",
-          "status": "healthy",
-          "coverage": {
-            "status": "complete",
-            "verifiedCapabilities": [
-              "artwork",
-              "metadata"
-            ],
-            "unverifiedCapabilities": []
-          },
-          "probes": [
-            {
-              "id": "bach-portrait",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "artwork",
-                "metadata"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "wikisource",
-          "status": "unavailable",
-          "coverage": {
-            "status": "partial",
-            "verifiedCapabilities": [],
-            "unverifiedCapabilities": [
-              "catalog",
-              "fileImport",
-              "lyrics",
-              "metadata"
-            ]
-          },
-          "probes": [
-            {
-              "id": "auld-lang-syne-burns-text",
-              "status": "unavailable",
-              "reason": "rights_review_required"
-            }
+          "id": "auld-lang-syne-burns-text",
+          "expectedTitle": "Auld Lang Syne (Burns)",
+          "requiredFields": [
+            "body",
+            "metadata"
           ]
         }
       ]
     }
-  },
+  ],
   "environmentEvidence": [
     {
       "id": "genius",
       "publisherUrl": "https://api.genius.com/search?q=Wonderwall%20Oasis",
       "curlExit": 56,
       "connectOrigin": "403 000",
-      "measuredAt": "2026-10-18T06:04:36.574480+00:00"
+      "checkedAt": "2026-10-19T05:59:52.426460+00:00"
+    },
+    {
+      "id": "lrcshare-catalog",
+      "publisherUrl": "https://api.lrcshare.com/v1/catalog",
+      "curlExit": 0,
+      "connectOrigin": "200 401",
+      "checkedAt": "2026-10-19T05:59:52.700837+00:00"
     },
     {
       "id": "amll-docs",
       "publisherUrl": "https://amll.dev/reference/http-api/overview",
       "curlExit": 0,
       "connectOrigin": "200 200",
-      "measuredAt": "2026-10-18T06:04:39.068513+00:00"
-    },
-    {
-      "id": "startjamming-docs",
-      "publisherUrl": "https://www.startjamming.com/api",
-      "curlExit": 0,
-      "connectOrigin": "200 200",
-      "measuredAt": "2026-10-18T06:04:39.390070+00:00"
+      "checkedAt": "2026-10-19T05:59:53.215548+00:00"
     }
   ],
-  "diagnosis": {
-    "unison": [
-      {
-        "probe": "unison-direct-31",
-        "at": "2026-10-18T06:05:13.252384+00:00",
-        "curlExit": 0,
-        "keys": [
-          "artist",
-          "confidence",
-          "effectiveScore",
-          "format",
-          "hidden",
-          "id",
-          "language",
-          "lyrics",
-          "revision",
-          "score",
-          "song",
-          "submitter",
-          "syncType",
-          "userVote",
-          "videoId",
-          "voteCount"
-        ],
-        "format": "ttml",
-        "bodyCharacters": 20530,
-        "xmlParsed": true,
-        "paragraphCount": 32,
-        "spanCount": 332,
-        "timedElementCount": 354
-      },
-      {
-        "probe": "unison-direct-1494",
-        "at": "2026-10-18T06:05:13.581541+00:00",
-        "curlExit": 0,
-        "keys": [
-          "album",
-          "artist",
-          "confidence",
-          "effectiveScore",
-          "format",
-          "hidden",
-          "id",
-          "language",
-          "lyrics",
-          "revision",
-          "score",
-          "song",
-          "submitter",
-          "syncType",
-          "userVote",
-          "videoId",
-          "voteCount"
-        ],
-        "format": "ttml",
-        "bodyCharacters": 22720,
-        "xmlParsed": true,
-        "paragraphCount": 59,
-        "spanCount": 383,
-        "timedElementCount": 441
-      }
-    ],
-    "rootCause": "Give It Up TTML now declares xmlns:composer=https://composer.betterlyrics.org/ttml with media timebase and partial clocks. Existing parser recognized legacy composer.boidu.dev only. Bounded allowlist extension restores parsing; generic unrecognized partial clocks stay invalid.",
-    "synclrc": "Both repository canaries returned empty_search_results. Follow-up curl diagnostics were not JSON; no raw body was retained. No speculative rollback, source disablement or repeated rate-limit retries.",
-    "genius": "Proxy CONNECT403 origin000 observed. Key is present, binding readiness unknown, not classified as not_configured."
-  },
-  "repair": {
-    "candidateBase": "e55a2cb3c8c7c2140897eb51d7c4ebf9c5f4d116",
-    "candidateHead": "bdad8bf4cb9b952ed859f820015ea6cf18e80790",
-    "branch": "codex/task-unison-namespace-20261018",
-    "files": [
-      "config/source-catalog.json",
-      "config/source-discovery.json",
-      "lib/domain/timing.dart",
-      "test/domain/unison_ttml_test.dart"
-    ],
-    "catalogRevision": 4,
-    "unisonRevision": 3,
-    "requiresAppRelease": true,
-    "published": false,
-    "liveCanaryReport": "reports/source-maintenance/2026-10-18T060623Z-unison-candidate.json",
-    "outcome": {
-      "healthy": 1
-    },
-    "independentSongs": 2,
-    "allCanariesPassed": 3,
-    "reusedPR": "https://github.com/freevia-org/Singbook/pull/55",
-    "reusedPRHead": "3460d22bac3631af3b24c237e9f9ade71ffa9f97",
-    "independentCandidateHead": "bdad8bf4cb9b952ed859f820015ea6cf18e80790",
-    "status": "Independent cloud candidate superseded by equivalent existing local PR #55 discovered during run; no duplicate PR created. Namespace/timebase change reviewed identical; PR additionally advances parser provenance."
-  },
   "discovery": {
-    "equivalentOpenPRs": 0,
     "primaryDocumentationChecks": [
+      {
+        "id": "lrcshare-catalog",
+        "publisherUrl": "https://api.lrcshare.com/v1/catalog",
+        "curlExit": 0,
+        "connectOrigin": "200 401",
+        "checkedAt": "2026-10-19T05:59:52.700837+00:00"
+      },
       {
         "id": "amll-docs",
         "publisherUrl": "https://amll.dev/reference/http-api/overview",
         "curlExit": 0,
         "connectOrigin": "200 200",
-        "measuredAt": "2026-10-18T06:04:39.068513+00:00"
-      },
-      {
-        "id": "startjamming-docs",
-        "publisherUrl": "https://www.startjamming.com/api",
-        "curlExit": 0,
-        "connectOrigin": "200 200",
-        "measuredAt": "2026-10-18T06:04:39.390070+00:00"
+        "checkedAt": "2026-10-19T05:59:53.215548+00:00"
       }
     ],
-    "decisions": "AMLL and Start Jamming remain deferred under existing config/source-discovery.json reasons: adapter/provenance, rights and independent extraction coverage requirements remain unmet. No additional source activated. Updated Unison dated publisher format evidence in candidate discovery config.",
-    "equivalentOpenPRsAtFinalCheck": 1
-  },
-  "validation": {
-    "baselineFocusedTests": {
-      "command": "flutter test test/providers test/application/controller_test.dart test/application/controller_hardening_test.dart --reporter compact",
-      "exitCode": 0,
-      "passed": 243
-    },
-    "repairFocused": {
-      "command": "flutter test test/domain/unison_ttml_test.dart --reporter compact",
-      "exitCode": 0,
-      "passed": 3
-    },
-    "fullSuite": {
-      "command": "flutter test --no-pub --reporter compact",
-      "executionMode": "approved_require_escalated",
-      "exitCode": 0,
-      "passed": 1249,
-      "sourceHead": "bdad8bf4cb9b952ed859f820015ea6cf18e80790"
-    },
-    "analyzer": {
-      "command": "flutter analyze --no-pub",
-      "exitCode": 0
-    },
-    "offline": {
-      "command": "dart run tool/source_maintenance.dart --offline --report artifacts/source-maintenance/2026-10-18-final-offline.json",
-      "exitCode": 0,
-      "summary": {
-        "offline_unverified": 17,
-        "import_only": 2
-      }
-    },
-    "earlierAttempts": [
+    "decisions": "LrcShare remains deferred: current unauthenticated catalog request origin401 confirms configured discovery reason; no credential requested. AMLL publisher docs reachable, but complete array identities, contributor provenance, compatible adapter and independent parsed-cue canaries remain unresolved under existing config/source-discovery.json. Existing discovery decisions unchanged; no candidate activated or new catalog revision proposed.",
+    "openEquivalentRepairPRs": 0,
+    "otherOpenPRs": [
       {
-        "command": "flutter test --reporter compact",
-        "exitCode": 69,
-        "stage": "dependency_advisory_request",
-        "reason": "default_sandbox_network_eperm; tests not started"
+        "number": 66,
+        "title": "Organize Settings into section menus"
       },
       {
-        "command": "flutter test --no-pub --reporter compact",
-        "exitCode": 1,
-        "reason": "default_sandbox_loopback_socket_eperm; all 93 files failed to load; no test assertions executed"
+        "number": 65,
+        "title": "Show setlist duration totals and compact expandable cards"
+      },
+      {
+        "number": 64,
+        "title": "Polish setlist editing rows"
       }
-    ]
+    ],
+    "sourceChanges": "none; no duplicate Unison repair"
   }
 }
