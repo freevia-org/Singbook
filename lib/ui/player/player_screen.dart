@@ -1183,6 +1183,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                       ),
                     ),
                     ..._sectionMarkerLabelWidgets(
+                      context: context,
                       markers: displaySections,
                       durationSeconds: displayDuration,
                       progressSeconds: displayPosition,
@@ -1622,6 +1623,7 @@ class _SectionMarkerSliderTrackShape extends RoundedRectSliderTrackShape {
 }
 
 List<Widget> _sectionMarkerLabelWidgets({
+  required BuildContext context,
   required List<PlayerSectionMarker> markers,
   required double durationSeconds,
   required double progressSeconds,
@@ -1657,11 +1659,16 @@ List<Widget> _sectionMarkerLabelWidgets({
       ? right - trackWidth * progressFraction
       : left + trackWidth * progressFraction;
   final fontSize = width >= 560 ? 10.0 : 9.0;
-  final style = TextStyle(
-    color: labelColor,
-    fontSize: fontSize,
-    fontWeight: FontWeight.w600,
-    height: 1,
+  // Match the inherited typeface when measuring. Measuring with the default
+  // font and then painting with the app's display font made the Positioned
+  // label narrower than its rendered text, so Flutter ellipsized headings.
+  final style = DefaultTextStyle.of(context).style.merge(
+    TextStyle(
+      color: labelColor,
+      fontSize: fontSize,
+      fontWeight: FontWeight.w600,
+      height: 1,
+    ),
   );
   final maxLabelWidth = trackWidth * .45;
   final candidates =
@@ -1681,6 +1688,7 @@ List<Widget> _sectionMarkerLabelWidgets({
       text: TextSpan(text: label, style: style),
       textDirection: textDirection,
       textScaler: textScaler,
+      locale: Localizations.localeOf(context),
       maxLines: 1,
       ellipsis: '…',
     )..layout();
@@ -1733,7 +1741,7 @@ List<Widget> _sectionMarkerLabelWidgets({
             semanticsLabel: candidate.sectionName,
             maxLines: 1,
             softWrap: false,
-            overflow: TextOverflow.ellipsis,
+            overflow: TextOverflow.visible,
             style: style,
           ),
         ),
