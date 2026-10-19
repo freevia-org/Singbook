@@ -174,7 +174,7 @@ void main() {
   });
 
   test(
-    'resaving a source repairs stale duration without replacing user edits',
+    'explicit source save replaces edited content with the chosen version',
     () async {
       const selected = SongCandidate(
         providerId: 'genius',
@@ -215,8 +215,8 @@ void main() {
       final repaired = app.findSong('existing-song')!;
       expect(app.songs, hasLength(1));
       expect(repaired.metadata['durationSeconds'], 247);
-      expect(repaired.metadata['key'], 'D');
-      expect(repaired.body, '[D]My edited lyric stays here');
+      expect(repaired.metadata['key'], isNull);
+      expect(repaired.body, source.body);
       expect(repaired.extra['fieldOrigins']['durationSeconds'], source.id);
     },
   );
@@ -281,46 +281,49 @@ void main() {
     },
   );
 
-  test('resaving a source preserves a user-edited duration', () async {
-    const selected = SongCandidate(
-      providerId: 'genius',
-      id: 'amazing-grace',
-      title: 'Amazing Grace',
-      artist: 'Judy Collins',
-      durationSeconds: 90,
-    );
-    const source = SourceResult(
-      candidate: SongCandidate(
-        providerId: 'lrclib',
-        id: 'amazing-grace-recording',
+  test(
+    'explicit source save adopts the chosen duration after a local edit',
+    () async {
+      const selected = SongCandidate(
+        providerId: 'genius',
+        id: 'amazing-grace',
         title: 'Amazing Grace',
         artist: 'Judy Collins',
-      ),
-      body: 'Amazing grace, how sweet the sound',
-      metadata: {'durationSeconds': 247},
-      matchKind: MatchKind.sameSong,
-    );
-    final combined = combineSources(selected, [source]);
-    final edited = combined.copyWith(
-      id: 'edited-song',
-      metadata: {'durationSeconds': 111},
-      extra: {
-        ...combined.extra,
-        'savedSourceId': source.id,
-        'fieldOrigins': {'durationSeconds': 'user'},
-      },
-    );
-    await app.saveSong(edited);
-    app.selection = selected;
-    app.results = [source];
-    app.combined = combined;
-    ui.selectVersion(source.id);
+        durationSeconds: 90,
+      );
+      const source = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'lrclib',
+          id: 'amazing-grace-recording',
+          title: 'Amazing Grace',
+          artist: 'Judy Collins',
+        ),
+        body: 'Amazing grace, how sweet the sound',
+        metadata: {'durationSeconds': 247},
+        matchKind: MatchKind.sameSong,
+      );
+      final combined = combineSources(selected, [source]);
+      final edited = combined.copyWith(
+        id: 'edited-song',
+        metadata: {'durationSeconds': 111},
+        extra: {
+          ...combined.extra,
+          'savedSourceId': source.id,
+          'fieldOrigins': {'durationSeconds': 'user'},
+        },
+      );
+      await app.saveSong(edited);
+      app.selection = selected;
+      app.results = [source];
+      app.combined = combined;
+      ui.selectVersion(source.id);
 
-    await ui.saveSelectedVersion();
+      await ui.saveSelectedVersion();
 
-    expect(app.songs, hasLength(1));
-    expect(app.findSong('edited-song')!.metadata['durationSeconds'], 111);
-  });
+      expect(app.songs, hasLength(1));
+      expect(app.findSong('edited-song')!.metadata['durationSeconds'], 247);
+    },
+  );
 
   test(
     'repository ignores invalid imported durations on source re-save',
