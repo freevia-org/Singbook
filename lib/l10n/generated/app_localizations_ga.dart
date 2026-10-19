@@ -13,14 +13,52 @@ class AppLocalizationsGa extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Áit shuaimhneach chun do leabharlann amhrán a aimsiú, a eagrú agus amhráin a chanadh léi.';
+      'Do chuid liricí, cordaí agus liostaí amhrán le chéile, réidh don chleachtadh, don stáitse agus do cibé áit a seinneann tú.';
 
   @override
-  String get aboutMadeForSinging => 'Déanta chun amhráin a chanadh le chéile';
+  String get aboutMadeForSinging => 'Gach amhrán réidh.';
 
   @override
   String get aboutDetails =>
-      'Cuardaigh foinsí cumasaithe, cuir leaganacha i gcomparáid, coinnigh liricí agus cordaí le chéile, agus eagraigh amhráin i liostaí. Stóráiltear do leabharlann ar an ngléas seo; úsáideann sioncronú roghnach Google Drive do chuntas Google. Seoltar cuardaigh díreach chuig na foinsí cumasaithe.';
+      'Déan cuardach ar na foinsí atá cumasaithe agus cuir liricí, cordaí, amanna agus sonraí taifeadta i gcomparáid sula sábhálann tú an leagan is mian leat a sheinm. Braitheann infhaighteacht ar an amhrán agus ar an tseirbhís.';
+
+  @override
+  String get aboutFindTitle => 'Faigh an leagan ceart';
+
+  @override
+  String get aboutKeepTitle => 'Tóg do leabharlann féin';
+
+  @override
+  String get aboutKeepDetails =>
+      'Cuir amhráin in eagar agus athraigh a dtonúlacht, sábháil go háitiúil iad mar chomhaid iniompartha ChordPro, agus úsáid amhráin shábháilte as líne. Úsáideann sioncronú roghnach le Google Drive fillteán príobháideach na haipe i do chuntas Google. Is féidir leat Sioncronaigh anois a thapáil freisin chun do ghléasanna a nuashonrú.';
+
+  @override
+  String get aboutPlayTitle => 'Tabhair do liosta chuig an stáitse leat';
+
+  @override
+  String get aboutPlayDetails =>
+      'Cuir amhráin in ord i liostaí, roghnaigh eochair do gach amhrán, agus roinn liostaí OpenSong. Coigeartaigh téacs an léitheora agus scrollú uathoibríoch na liricí, agus priontáil PDFanna amhrán. Ní shruthaíonn ná ní sheinneann Singbook fuaim.';
+
+  @override
+  String get aboutPrivacyTitle => 'Saor in aisce agus dírithe ar an ngléas';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Tá Singbook saor in aisce, gan fógraí, anailísíocht ná ceannacháin in-aipe. Fanann do leabharlann shábháilte ar do ghléas; úsáideann sioncronú roghnach do Google Drive féin. Tagann torthaí ar líne go díreach ó sheirbhísí neamhspleácha tríú páirtí agus d’fhéadfadh nach mbeadh siad ar fáil nó d’fhéadfadh cóipcheart iad a chosaint. Ní óstálann Singbook a n-ábhar.';
+
+  @override
+  String get aboutWebsite => 'Láithreán gréasáin Singbook';
+
+  @override
+  String get aboutSourceCode => 'Cód foinse ar GitHub';
+
+  @override
+  String get aboutPublisher => 'Le Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Teangacha na haipe: $count';
+  }
 
   @override
   String get aboutSupport => 'Tacaíocht agus aiseolas';

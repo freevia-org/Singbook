@@ -13,14 +13,52 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Un espace paisible pour trouver, organiser et chanter à partir de votre bibliothèque de chansons.';
+      'Paroles, accords et listes de chansons réunis, prêts pour les répétitions, la scène et partout où vous jouez.';
 
   @override
-  String get aboutMadeForSinging => 'Conçu pour chanter ensemble';
+  String get aboutMadeForSinging => 'Chaque chanson, prête à chanter.';
 
   @override
   String get aboutDetails =>
-      'Recherchez dans les sources activées, comparez les versions, regroupez paroles et accords et organisez les chansons en listes. Votre bibliothèque est enregistrée sur cet appareil ; la synchronisation Google Drive facultative utilise votre compte Google. Les recherches sont envoyées directement aux sources activées.';
+      'Recherchez dans les sources activées et comparez les paroles, les accords, le minutage et les détails d’enregistrement avant d’enregistrer la version que vous souhaitez jouer. La disponibilité varie selon la chanson et le service.';
+
+  @override
+  String get aboutFindTitle => 'Trouvez la bonne version';
+
+  @override
+  String get aboutKeepTitle => 'Créez votre propre bibliothèque';
+
+  @override
+  String get aboutKeepDetails =>
+      'Modifiez et transposez les chansons, enregistrez-les localement sous forme de fichiers ChordPro portables et utilisez les chansons enregistrées hors ligne. La synchronisation facultative avec Google Drive utilise un dossier privé de l’application dans votre compte Google. Vous pouvez aussi appuyer sur Synchroniser maintenant pour mettre vos appareils à jour.';
+
+  @override
+  String get aboutPlayTitle => 'Emportez votre liste sur scène';
+
+  @override
+  String get aboutPlayDetails =>
+      'Organisez les chansons en listes, choisissez une tonalité pour chacune et partagez des listes OpenSong. Réglez le texte du lecteur et le défilement automatique des paroles, puis imprimez des PDF de chansons. Singbook ne diffuse ni ne lit de fichiers audio.';
+
+  @override
+  String get aboutPrivacyTitle => 'Gratuit et axé sur le stockage local';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook est gratuit, sans publicité, analyse ni achat intégré. Votre bibliothèque enregistrée reste sur votre appareil ; la synchronisation facultative utilise votre propre Google Drive. Les résultats en ligne proviennent directement de services tiers indépendants et peuvent être indisponibles ou protégés par le droit d’auteur. Singbook n’héberge pas leur contenu.';
+
+  @override
+  String get aboutWebsite => 'Site web de Singbook';
+
+  @override
+  String get aboutSourceCode => 'Code source sur GitHub';
+
+  @override
+  String get aboutPublisher => 'Par Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Langues de l’application : $count';
+  }
 
   @override
   String get aboutSupport => 'Aide et commentaires';

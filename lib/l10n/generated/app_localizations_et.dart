@@ -13,14 +13,52 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Rahulik koht oma laulude leidmiseks, korrastamiseks ja laulmiseks.';
+      'Sinu laulusõnad, akordid ja lugude nimekirjad koos, valmis prooviks, lavale ja kõikjale, kus mängid.';
 
   @override
-  String get aboutMadeForSinging => 'Loodud koos laulmiseks';
+  String get aboutMadeForSinging => 'Iga laul on valmis.';
 
   @override
   String get aboutDetails =>
-      'Otsi lubatud allikatest, võrdle versioone, hoia sõnad ja akordid koos ning korralda laulud esitusloenditesse. Sinu kogu salvestatakse sellesse seadmesse; valikuline Google Drive’i sünkroonimine kasutab sinu Google’i kontot. Otsingud saadetakse otse lubatud allikatele.';
+      'Otsi lubatud allikatest ning võrdle laulusõnu, akorde, ajastust ja salvestuse üksikasju enne, kui salvestad esitamiseks sobiva versiooni. Saadavus oleneb laulust ja teenusest.';
+
+  @override
+  String get aboutFindTitle => 'Leia sobiv versioon';
+
+  @override
+  String get aboutKeepTitle => 'Loo oma kogu';
+
+  @override
+  String get aboutKeepDetails =>
+      'Töötle ja transponeeri laule, salvesta need kohapeal kaasaskantavate ChordPro-failidena ning kasuta salvestatud laule võrguühenduseta. Valikuline Google Drive’i sünkroonimine kasutab sinu Google’i kontol rakenduse privaatkausta. Seadmete uuendamiseks võid puudutada ka nuppu „Sünkrooni kohe“.';
+
+  @override
+  String get aboutPlayTitle => 'Võta oma nimekiri lavale kaasa';
+
+  @override
+  String get aboutPlayDetails =>
+      'Järjesta laulud nimekirjadesse, vali igale laulule helistik ja jaga OpenSongi nimekirju. Muuda lugeja teksti, laulusõnade automaatset kerimist ja prindi laulude PDF-faile. Singbook ei voogedasta ega esita heli.';
+
+  @override
+  String get aboutPrivacyTitle => 'Tasuta ja seadmepõhine';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook on tasuta, ilma reklaamide, analüütika ja rakendusesiseste ostudeta. Salvestatud kogu jääb sinu seadmesse; valikuline sünkroonimine kasutab sinu enda Google Drive’i. Veebitulemused tulevad otse sõltumatutelt kolmanda poole teenustelt ning võivad olla kättesaamatud või autoriõigustega kaitstud. Singbook nende sisu ei majuta.';
+
+  @override
+  String get aboutWebsite => 'Singbooki veebisait';
+
+  @override
+  String get aboutSourceCode => 'Lähtekood GitHubis';
+
+  @override
+  String get aboutPublisher => 'Freevialt';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Rakenduse keeled: $count';
+  }
 
   @override
   String get aboutSupport => 'Tugi ja tagasiside';

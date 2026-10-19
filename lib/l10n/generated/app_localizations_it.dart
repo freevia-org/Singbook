@@ -13,14 +13,52 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Uno spazio tranquillo per trovare, organizzare e cantare con la tua raccolta di brani.';
+      'Testi, accordi e scalette insieme, pronti per le prove, il palco e ovunque tu suoni.';
 
   @override
-  String get aboutMadeForSinging => 'Pensata per cantare insieme';
+  String get aboutMadeForSinging => 'Ogni brano, pronto.';
 
   @override
   String get aboutDetails =>
-      'Cerca nelle fonti abilitate, confronta le versioni, tieni insieme testi e accordi e organizza i brani in scalette. La tua raccolta è salvata su questo dispositivo; la sincronizzazione facoltativa con Google Drive usa il tuo account Google. Le ricerche vengono inviate direttamente alle fonti abilitate.';
+      'Cerca nelle fonti abilitate e confronta testi, accordi, tempi e dettagli delle registrazioni prima di salvare la versione che vuoi suonare. La disponibilità varia in base al brano e al servizio.';
+
+  @override
+  String get aboutFindTitle => 'Trova la versione giusta';
+
+  @override
+  String get aboutKeepTitle => 'Crea la tua libreria';
+
+  @override
+  String get aboutKeepDetails =>
+      'Modifica e trasponi i brani, salvali localmente come file ChordPro portatili e usa i brani salvati offline. La sincronizzazione facoltativa con Google Drive usa una cartella privata dell’app nel tuo account Google. Puoi anche toccare Sincronizza ora per aggiornare i tuoi dispositivi.';
+
+  @override
+  String get aboutPlayTitle => 'Porta la tua scaletta sul palco';
+
+  @override
+  String get aboutPlayDetails =>
+      'Organizza i brani in scalette, scegli una tonalità per ciascuno e condividi scalette OpenSong. Regola il testo del lettore e lo scorrimento automatico dei testi, poi stampa PDF dei brani. Singbook non trasmette né riproduce audio.';
+
+  @override
+  String get aboutPrivacyTitle => 'Gratis e con priorità alla raccolta locale';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook è gratuito, senza annunci, analisi o acquisti in-app. La tua libreria salvata resta sul dispositivo; la sincronizzazione facoltativa usa il tuo Google Drive. I risultati online provengono direttamente da servizi indipendenti di terze parti e potrebbero non essere disponibili o essere protetti da copyright. Singbook non ospita i loro contenuti.';
+
+  @override
+  String get aboutWebsite => 'Sito web di Singbook';
+
+  @override
+  String get aboutSourceCode => 'Codice sorgente su GitHub';
+
+  @override
+  String get aboutPublisher => 'Di Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Lingue dell’app: $count';
+  }
 
   @override
   String get aboutSupport => 'Assistenza e feedback';

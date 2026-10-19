@@ -13,14 +13,52 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Mirno mesto, kjer lahko najdete in uredite svojo knjižnico pesmi ter skupaj pojete.';
+      'Besedila, akordi in seznami skladb na enem mestu, pripravljeni za vaje, oder in kjer koli igrate.';
 
   @override
-  String get aboutMadeForSinging => 'Ustvarjeno za skupno petje';
+  String get aboutMadeForSinging => 'Vsaka pesem, pripravljena.';
 
   @override
   String get aboutDetails =>
-      'Išči po omogočenih virih, primerjaj različice, hrani besedila in akorde skupaj ter razvrščaj pesmi v sezname. Knjižnica je shranjena v tej napravi; izbirna sinhronizacija z Google Drive uporablja tvoj Google račun. Iskanja se pošljejo neposredno omogočenim virom.';
+      'Iščite po dostopnih virih ter primerjajte besedila, akorde, časovne oznake in podatke o posnetkih, preden shranite želeno različico. Dostopnost je odvisna od pesmi in storitve.';
+
+  @override
+  String get aboutFindTitle => 'Poiščite pravo različico';
+
+  @override
+  String get aboutKeepTitle => 'Ustvarite svojo knjižnico';
+
+  @override
+  String get aboutKeepDetails =>
+      'Urejajte in transponirajte pesmi, jih lokalno shranite kot prenosne datoteke ChordPro ter jih uporabljajte brez povezave. Izbirna sinhronizacija z Google Drive uporablja zasebno mapo aplikacije v vašem Google računu. Naprave lahko posodobite tudi tako, da tapnete »Sinhroniziraj zdaj«.';
+
+  @override
+  String get aboutPlayTitle => 'Odnesite seznam skladb na oder';
+
+  @override
+  String get aboutPlayDetails =>
+      'Razvrstite pesmi v sezname, izberite tonaliteto za vsako in delite sezname OpenSong. Prilagodite velikost besedila v bralniku, vklopite samodejno pomikanje besedila in natisnite PDF-je pesmi. Singbook ne pretaka in ne predvaja zvoka.';
+
+  @override
+  String get aboutPrivacyTitle => 'Brezplačno in z lokalno knjižnico';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook je brezplačen, brez oglasov, analitike in nakupov v aplikaciji. Shranjena knjižnica ostane v vaši napravi; izbirna sinhronizacija uporablja vaš Google Drive. Spletni rezultati prihajajo neposredno od neodvisnih storitev tretjih oseb ter morda niso na voljo ali so zaščiteni z avtorskimi pravicami. Singbook njihove vsebine ne gosti.';
+
+  @override
+  String get aboutWebsite => 'Spletno mesto Singbook';
+
+  @override
+  String get aboutSourceCode => 'Izvorna koda na GitHubu';
+
+  @override
+  String get aboutPublisher => 'Avtor Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Jeziki aplikacije: $count';
+  }
 
   @override
   String get aboutSupport => 'Podpora in povratne informacije';

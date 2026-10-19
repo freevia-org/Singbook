@@ -13,14 +13,52 @@ class AppLocalizationsMt extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Post paċifiku fejn issib, torganizza u tkanta l-kanzunetti tiegħek.';
+      'Il-lirika, l-kordi u s-setlists tiegħek flimkien, lesti għall-provi, għall-palk u kull fejn iddoqq.';
 
   @override
-  String get aboutMadeForSinging => 'Magħmul biex inkantaw flimkien';
+  String get aboutMadeForSinging => 'Kull kanzunetta lesta.';
 
   @override
   String get aboutDetails =>
-      'Fittex fis-sorsi attivati, qabbel verżjonijiet, żomm il-lirika u l-kordi flimkien, u organizza l-kanzunetti f’listi. Il-librerija tiegħek tinżamm fuq dan it-tagħmir; is-sinkronizzazzjoni fakultattiva ma’ Google Drive tuża l-kont Google tiegħek. It-tfittxijiet jintbagħtu direttament lis-sorsi attivati.';
+      'Fittex fis-sorsi disponibbli u qabbel il-lirika, il-kordi, il-ħin u d-dettalji tar-reġistrazzjoni qabel issalva l-verżjoni li trid iddoqq. Id-disponibbiltà tvarja skont il-kanzunetta u s-servizz.';
+
+  @override
+  String get aboutFindTitle => 'Sib il-verżjoni t-tajba';
+
+  @override
+  String get aboutKeepTitle => 'Ibni l-librerija tiegħek';
+
+  @override
+  String get aboutKeepDetails =>
+      'Editja u ttrasponi l-kanzunetti, issejvjahom lokalment bħala fajls ChordPro li tista’ ġġorr magħkom, u uża l-kanzunetti ssejvjati offline. Is-sinkronizzazzjoni fakultattiva ma’ Google Drive tuża folder privat tal-app fil-kont Google tiegħek. Tista’ wkoll tagħfas “Issinkronizza issa” biex taġġorna t-tagħmir tiegħek.';
+
+  @override
+  String get aboutPlayTitle => 'Ħu s-setlist tiegħek fuq il-palk';
+
+  @override
+  String get aboutPlayDetails =>
+      'Irranġa l-kanzunetti f’setlists, agħżel tonalità għal kull kanzunetta u aqsam setlists OpenSong. Aġġusta t-test tal-qarrej, iskrollja l-lirika awtomatikament u pprintja PDFs tal-kanzunetti. Singbook ma jxandarx jew idoqq awdjo.';
+
+  @override
+  String get aboutPrivacyTitle => 'B’xejn u l-ewwelnett lokali';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook huwa b’xejn, mingħajr reklami, analitika jew xiri fl-app. Il-librerija ssejvjata tibqa’ fuq it-tagħmir tiegħek; is-sinkronizzazzjoni fakultattiva tuża l-Google Drive tiegħek. Ir-riżultati online jiġu direttament minn servizzi indipendenti ta’ partijiet terzi u jistgħu ma jkunux disponibbli jew ikunu protetti bid-drittijiet tal-awtur. Singbook ma jospitax il-kontenut tagħhom.';
+
+  @override
+  String get aboutWebsite => 'Il-websajt ta’ Singbook';
+
+  @override
+  String get aboutSourceCode => 'Il-kodiċi tas-sors fuq GitHub';
+
+  @override
+  String get aboutPublisher => 'Minn Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Lingwi tal-app: $count';
+  }
 
   @override
   String get aboutSupport => 'Għajnuna u feedback';

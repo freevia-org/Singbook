@@ -1,8 +1,6 @@
 {
   "@@locale": "sl",
   "appTitle": "Singbook",
-  "aboutDescription": "Mirno mesto, kjer lahko najdete in uredite svojo knjižnico pesmi ter skupaj pojete.",
-  "aboutMadeForSinging": "Ustvarjeno za skupno petje",
   "menuTypeNewSong": "Vnesi novo pesem", "aboutDetails": "Išči po omogočenih virih, primerjaj različice, hrani besedila in akorde skupaj ter razvrščaj pesmi v sezname. Knjižnica je shranjena v tej napravi; izbirna sinhronizacija z Google Drive uporablja tvoj Google račun. Iskanja se pošljejo neposredno omogočenim virom.", "aboutSupport": "Podpora in povratne informacije", "appVersion": "Različica {version}",
   "@appVersion": {
     "placeholders": {
@@ -812,5 +810,26 @@
   "editorStandardTuning": "Standardna uglasitev",
   "editorExampleVerse": "[C]Nov dan nas [G]kliče,\n[Am]sledimo svetlobi nazaj [F]domov.",
   "editorExampleChorus": "[F]Zapojmo to pesem [C]skupaj,\n[G]naj nas melodija ponese [C]naprej.",
-  "editorExampleBridge": "[Am]Še ena vrstica, malo [F]bliže."
+  "editorExampleBridge": "[Am]Še ena vrstica, malo [F]bliže.",
+  "aboutMadeForSinging": "Vsaka pesem, pripravljena.",
+  "aboutDescription": "Besedila, akordi in seznami skladb na enem mestu, pripravljeni za vaje, oder in kjer koli igrate.",
+  "aboutDetails": "Iščite po dostopnih virih ter primerjajte besedila, akorde, časovne oznake in podatke o posnetkih, preden shranite želeno različico. Dostopnost je odvisna od pesmi in storitve.",
+  "aboutFindTitle": "Poiščite pravo različico",
+  "aboutKeepTitle": "Ustvarite svojo knjižnico",
+  "aboutKeepDetails": "Urejajte in transponirajte pesmi, jih lokalno shranite kot prenosne datoteke ChordPro ter jih uporabljajte brez povezave. Izbirna sinhronizacija z Google Drive uporablja zasebno mapo aplikacije v vašem Google računu. Naprave lahko posodobite tudi tako, da tapnete »Sinhroniziraj zdaj«.",
+  "aboutPlayTitle": "Odnesite seznam skladb na oder",
+  "aboutPlayDetails": "Razvrstite pesmi v sezname, izberite tonaliteto za vsako in delite sezname OpenSong. Prilagodite velikost besedila v bralniku, vklopite samodejno pomikanje besedila in natisnite PDF-je pesmi. Singbook ne pretaka in ne predvaja zvoka.",
+  "aboutPrivacyTitle": "Brezplačno in z lokalno knjižnico",
+  "aboutPrivacyDetails": "Singbook je brezplačen, brez oglasov, analitike in nakupov v aplikaciji. Shranjena knjižnica ostane v vaši napravi; izbirna sinhronizacija uporablja vaš Google Drive. Spletni rezultati prihajajo neposredno od neodvisnih storitev tretjih oseb ter morda niso na voljo ali so zaščiteni z avtorskimi pravicami. Singbook njihove vsebine ne gosti.",
+  "aboutWebsite": "Spletno mesto Singbook",
+  "aboutSourceCode": "Izvorna koda na GitHubu",
+  "aboutPublisher": "Avtor Freevia",
+  "aboutLanguages": "Jeziki aplikacije: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

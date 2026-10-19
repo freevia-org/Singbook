@@ -1,9 +1,9 @@
 {
   "@@locale": "id",
   "appTitle": "Singbook",
-  "aboutDescription": "Tempat yang nyaman untuk menemukan, mengatur, dan bernyanyi bersama koleksi lagu Anda.",
-  "aboutMadeForSinging": "Dibuat untuk bernyanyi bersama",
-  "menuTypeNewSong": "Ketik lagu baru", "aboutDetails": "Cari di sumber yang diaktifkan, bandingkan versi lagu, simpan lirik dan akor bersama, lalu susun lagu ke dalam setlist. Pustaka tersimpan di perangkat ini; sinkronisasi Google Drive opsional menggunakan akun Google Anda. Pencarian dikirim langsung ke sumber yang diaktifkan.", "aboutSupport": "Dukungan dan masukan", "appVersion": "Versi {version}",
+  "aboutDescription": "Lirik, akor, dan daftar lagu Anda tersusun bersama, siap untuk latihan, panggung, dan di mana pun Anda bermain.",
+  "aboutMadeForSinging": "Setiap lagu, siap.",
+  "menuTypeNewSong": "Ketik lagu baru", "aboutDetails": "Cari di sumber yang diaktifkan dan bandingkan lirik, akor, penanda waktu, serta detail rekaman sebelum menyimpan versi yang ingin Anda mainkan. Ketersediaan bergantung pada lagu dan layanan.", "aboutSupport": "Dukungan dan masukan", "appVersion": "Versi {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -812,5 +812,23 @@
   "editorStandardTuning": "Setelan standar",
   "editorExampleVerse": "[C]Hari baru [G]memanggil,\n[Am]kita ikuti cahaya pulang ke [F]rumah.",
   "editorExampleChorus": "[F]Nyanyikan lagu ini [C]bersama,\n[G]biarkan melodi membawa kita [C]terus.",
-  "editorExampleBridge": "[Am]Satu baris lagi, sedikit lebih [F]dekat."
+  "editorExampleBridge": "[Am]Satu baris lagi, sedikit lebih [F]dekat.",
+  "aboutFindTitle": "Temukan versi yang tepat",
+  "aboutKeepTitle": "Bangun perpustakaan Anda sendiri",
+  "aboutKeepDetails": "Edit dan ubah nada lagu, simpan secara lokal sebagai file ChordPro portabel, dan gunakan lagu tersimpan secara offline. Sinkronisasi opsional dengan Google Drive menggunakan folder aplikasi pribadi di akun Google Anda. Anda juga dapat mengetuk Sinkronkan sekarang untuk memperbarui perangkat.",
+  "aboutPlayTitle": "Bawa daftar lagu ke panggung",
+  "aboutPlayDetails": "Urutkan lagu ke dalam daftar, pilih nada dasar untuk setiap lagu, dan bagikan daftar OpenSong. Sesuaikan teks pembaca dan gulir otomatis lirik, lalu cetak PDF lagu. Singbook tidak mengalirkan atau memutar audio.",
+  "aboutPrivacyTitle": "Gratis dan mengutamakan penyimpanan lokal",
+  "aboutPrivacyDetails": "Singbook gratis, tanpa iklan, analitik, atau pembelian dalam aplikasi. Perpustakaan tersimpan tetap ada di perangkat Anda; sinkronisasi opsional menggunakan Google Drive milik Anda. Hasil online berasal langsung dari layanan pihak ketiga independen dan mungkin tidak tersedia atau dilindungi hak cipta. Singbook tidak menghosting konten mereka.",
+  "aboutWebsite": "Situs web Singbook",
+  "aboutSourceCode": "Kode sumber di GitHub",
+  "aboutPublisher": "Dari Freevia",
+  "aboutLanguages": "Bahasa aplikasi: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

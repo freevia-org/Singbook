@@ -12,14 +12,52 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appTitle => 'Singbook';
 
   @override
-  String get aboutDescription => '一个宁静的空间，让你查找、整理并跟着自己的歌曲库一起歌唱。';
+  String get aboutDescription => '歌词、和弦与演出歌单汇集一处，为排练、舞台和每一次演奏做好准备。';
 
   @override
-  String get aboutMadeForSinging => '为一起歌唱而打造';
+  String get aboutMadeForSinging => '每首歌，都已准备就绪。';
 
   @override
   String get aboutDetails =>
-      '搜索已启用的来源、比较歌曲版本、将歌词和和弦放在一起，并把歌曲整理到歌单中。资料库保存在此设备上；可选的 Google Drive 同步会使用你的 Google 帐号。搜索会直接发送到已启用的来源。';
+      '搜索可用来源，比较歌词、和弦、时间信息和录音详情，再保存想演奏的版本。内容是否可用取决于歌曲和服务。';
+
+  @override
+  String get aboutFindTitle => '找到合适的版本';
+
+  @override
+  String get aboutKeepTitle => '建立自己的曲库';
+
+  @override
+  String get aboutKeepDetails =>
+      '编辑和移调歌曲，将其作为便携的 ChordPro 文件保存在本地，并离线使用。可选的 Google Drive 同步会使用你 Google 帐号中的应用专用私密文件夹。你也可以点按“立即同步”来更新设备。';
+
+  @override
+  String get aboutPlayTitle => '带着歌单登上舞台';
+
+  @override
+  String get aboutPlayDetails =>
+      '将歌曲编入演出歌单，为每首歌选择调性，并分享 OpenSong 歌单。调整阅读器文字大小、自动滚动歌词，也可打印歌曲 PDF。Singbook 不会串流或播放音频。';
+
+  @override
+  String get aboutPrivacyTitle => '免费使用，优先本地存储';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook 免费使用，不含广告、分析或应用内购买。已保存的曲库保留在你的设备上；可选同步使用你自己的 Google Drive。在线结果直接来自独立的第三方服务，可能无法使用或受版权保护。Singbook 不托管这些内容。';
+
+  @override
+  String get aboutWebsite => 'Singbook 网站';
+
+  @override
+  String get aboutSourceCode => 'GitHub 上的源代码';
+
+  @override
+  String get aboutPublisher => 'Freevia 出品';
+
+  @override
+  String aboutLanguages(int count) {
+    return '应用语言：$count';
+  }
 
   @override
   String get aboutSupport => '支持与反馈';

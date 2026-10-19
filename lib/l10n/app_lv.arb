@@ -1,8 +1,6 @@
 {
   "@@locale": "lv",
   "appTitle": "Singbook",
-  "aboutDescription": "Mierīga vieta, kur atrast un sakārtot dziesmas un kopīgi dziedāt no savas dziesmu bibliotēkas.",
-  "aboutMadeForSinging": "Radīta kopīgai dziedāšanai",
   "menuTypeNewSong": "Ievadīt jaunu dziesmu", "aboutDetails": "Meklējiet iespējotajos avotos, salīdziniet versijas, glabājiet vārdus un akordus kopā un kārtojiet dziesmas sarakstos. Jūsu bibliotēka tiek saglabāta šajā ierīcē; izvēles sinhronizācijā ar Google Drive tiek izmantots jūsu Google konts. Meklējumi tiek nosūtīti tieši iespējotajiem avotiem.", "aboutSupport": "Atbalsts un atsauksmes", "appVersion": "Versija {version}",
   "@appVersion": {
     "placeholders": {
@@ -812,5 +810,26 @@
   "editorStandardTuning": "Standarta skaņojums",
   "editorExampleVerse": "[C]Jauna diena mūs [G]sauc,\n[Am]mēs sekojam gaismai atpakaļ [F]mājās.",
   "editorExampleChorus": "[F]Dziedāsim šo dziesmu [C]kopā,\n[G]lai melodija mūs nes [C]tālāk.",
-  "editorExampleBridge": "[Am]Vēl viena rinda, mazliet [F]tuvāk."
+  "editorExampleBridge": "[Am]Vēl viena rinda, mazliet [F]tuvāk.",
+  "aboutMadeForSinging": "Katra dziesma gatava.",
+  "aboutDescription": "Dziesmu vārdi, akordi un dziesmu saraksti vienuviet — gatavi mēģinājumiem, skatuvei un jebkurai vietai, kur spēlējat.",
+  "aboutDetails": "Meklējiet pieejamajos avotos un salīdziniet dziesmu vārdus, akordus, laika atzīmes un ieraksta informāciju, pirms saglabājat vēlamo versiju. Pieejamība ir atkarīga no dziesmas un pakalpojuma.",
+  "aboutFindTitle": "Atrodiet īsto versiju",
+  "aboutKeepTitle": "Veidojiet savu bibliotēku",
+  "aboutKeepDetails": "Rediģējiet un transponējiet dziesmas, saglabājiet tās ierīcē kā pārnēsājamus ChordPro failus un lietojiet bezsaistē. Izvēles sinhronizācija ar Google Drive izmanto privātu lietotnes mapi jūsu Google kontā. Varat arī pieskarties “Sinhronizēt tagad”, lai atjauninātu ierīces.",
+  "aboutPlayTitle": "Ņemiet dziesmu sarakstu līdzi uz skatuvi",
+  "aboutPlayDetails": "Sakārtojiet dziesmas sarakstos, izvēlieties katrai dziesmai tonalitāti un kopīgojiet OpenSong sarakstus. Pielāgojiet lasītāja teksta lielumu, ieslēdziet dziesmu vārdu automātisko ritināšanu un drukājiet dziesmu PDF failus. Singbook netranslē un neatskaņo audio.",
+  "aboutPrivacyTitle": "Bezmaksas un ar uzsvaru uz lokālu lietošanu",
+  "aboutPrivacyDetails": "Singbook ir bezmaksas, bez reklāmām, analītikas un pirkumiem lietotnē. Saglabātā bibliotēka paliek jūsu ierīcē; izvēles sinhronizācijai tiek izmantots jūsu Google Drive. Tiešsaistes rezultātus nodrošina neatkarīgi trešo pušu pakalpojumi; tie var nebūt pieejami vai būt aizsargāti ar autortiesībām. Singbook šo saturu neizvieto.",
+  "aboutWebsite": "Singbook vietne",
+  "aboutSourceCode": "Avota kods vietnē GitHub",
+  "aboutPublisher": "Freevia veidots",
+  "aboutLanguages": "Lietotnes valodas: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -1,9 +1,9 @@
 {
   "@@locale": "et",
   "appTitle": "Singbook",
-  "aboutDescription": "Rahulik koht oma laulude leidmiseks, korrastamiseks ja laulmiseks.",
-  "aboutMadeForSinging": "Loodud koos laulmiseks",
-  "menuTypeNewSong": "Sisesta uus laul", "aboutDetails": "Otsi lubatud allikatest, võrdle versioone, hoia sõnad ja akordid koos ning korralda laulud esitusloenditesse. Sinu kogu salvestatakse sellesse seadmesse; valikuline Google Drive’i sünkroonimine kasutab sinu Google’i kontot. Otsingud saadetakse otse lubatud allikatele.", "aboutSupport": "Tugi ja tagasiside", "appVersion": "Versioon {version}",
+  "aboutDescription": "Sinu laulusõnad, akordid ja lugude nimekirjad koos, valmis prooviks, lavale ja kõikjale, kus mängid.",
+  "aboutMadeForSinging": "Iga laul on valmis.",
+  "menuTypeNewSong": "Sisesta uus laul", "aboutDetails": "Otsi lubatud allikatest ning võrdle laulusõnu, akorde, ajastust ja salvestuse üksikasju enne, kui salvestad esitamiseks sobiva versiooni. Saadavus oleneb laulust ja teenusest.", "aboutSupport": "Tugi ja tagasiside", "appVersion": "Versioon {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -812,5 +812,23 @@
   "editorStandardTuning": "Standardhäälestus",
   "editorExampleVerse": "[C]Uus päev meid [G]kutsub,\n[Am]järgime valgust tagasi [F]koju.",
   "editorExampleChorus": "[F]Laulame seda laulu [C]koos,\n[G]las meloodia kannab meid [C]edasi.",
-  "editorExampleBridge": "[Am]Veel üks rida, veidi [F]lähemal."
+  "editorExampleBridge": "[Am]Veel üks rida, veidi [F]lähemal.",
+  "aboutFindTitle": "Leia sobiv versioon",
+  "aboutKeepTitle": "Loo oma kogu",
+  "aboutKeepDetails": "Töötle ja transponeeri laule, salvesta need kohapeal kaasaskantavate ChordPro-failidena ning kasuta salvestatud laule võrguühenduseta. Valikuline Google Drive’i sünkroonimine kasutab sinu Google’i kontol rakenduse privaatkausta. Seadmete uuendamiseks võid puudutada ka nuppu „Sünkrooni kohe“.",
+  "aboutPlayTitle": "Võta oma nimekiri lavale kaasa",
+  "aboutPlayDetails": "Järjesta laulud nimekirjadesse, vali igale laulule helistik ja jaga OpenSongi nimekirju. Muuda lugeja teksti, laulusõnade automaatset kerimist ja prindi laulude PDF-faile. Singbook ei voogedasta ega esita heli.",
+  "aboutPrivacyTitle": "Tasuta ja seadmepõhine",
+  "aboutPrivacyDetails": "Singbook on tasuta, ilma reklaamide, analüütika ja rakendusesiseste ostudeta. Salvestatud kogu jääb sinu seadmesse; valikuline sünkroonimine kasutab sinu enda Google Drive’i. Veebitulemused tulevad otse sõltumatutelt kolmanda poole teenustelt ning võivad olla kättesaamatud või autoriõigustega kaitstud. Singbook nende sisu ei majuta.",
+  "aboutWebsite": "Singbooki veebisait",
+  "aboutSourceCode": "Lähtekood GitHubis",
+  "aboutPublisher": "Freevialt",
+  "aboutLanguages": "Rakenduse keeled: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

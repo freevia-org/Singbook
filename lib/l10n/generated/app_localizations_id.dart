@@ -13,14 +13,52 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Tempat yang nyaman untuk menemukan, mengatur, dan bernyanyi bersama koleksi lagu Anda.';
+      'Lirik, akor, dan daftar lagu Anda tersusun bersama, siap untuk latihan, panggung, dan di mana pun Anda bermain.';
 
   @override
-  String get aboutMadeForSinging => 'Dibuat untuk bernyanyi bersama';
+  String get aboutMadeForSinging => 'Setiap lagu, siap.';
 
   @override
   String get aboutDetails =>
-      'Cari di sumber yang diaktifkan, bandingkan versi lagu, simpan lirik dan akor bersama, lalu susun lagu ke dalam setlist. Pustaka tersimpan di perangkat ini; sinkronisasi Google Drive opsional menggunakan akun Google Anda. Pencarian dikirim langsung ke sumber yang diaktifkan.';
+      'Cari di sumber yang diaktifkan dan bandingkan lirik, akor, penanda waktu, serta detail rekaman sebelum menyimpan versi yang ingin Anda mainkan. Ketersediaan bergantung pada lagu dan layanan.';
+
+  @override
+  String get aboutFindTitle => 'Temukan versi yang tepat';
+
+  @override
+  String get aboutKeepTitle => 'Bangun perpustakaan Anda sendiri';
+
+  @override
+  String get aboutKeepDetails =>
+      'Edit dan ubah nada lagu, simpan secara lokal sebagai file ChordPro portabel, dan gunakan lagu tersimpan secara offline. Sinkronisasi opsional dengan Google Drive menggunakan folder aplikasi pribadi di akun Google Anda. Anda juga dapat mengetuk Sinkronkan sekarang untuk memperbarui perangkat.';
+
+  @override
+  String get aboutPlayTitle => 'Bawa daftar lagu ke panggung';
+
+  @override
+  String get aboutPlayDetails =>
+      'Urutkan lagu ke dalam daftar, pilih nada dasar untuk setiap lagu, dan bagikan daftar OpenSong. Sesuaikan teks pembaca dan gulir otomatis lirik, lalu cetak PDF lagu. Singbook tidak mengalirkan atau memutar audio.';
+
+  @override
+  String get aboutPrivacyTitle => 'Gratis dan mengutamakan penyimpanan lokal';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook gratis, tanpa iklan, analitik, atau pembelian dalam aplikasi. Perpustakaan tersimpan tetap ada di perangkat Anda; sinkronisasi opsional menggunakan Google Drive milik Anda. Hasil online berasal langsung dari layanan pihak ketiga independen dan mungkin tidak tersedia atau dilindungi hak cipta. Singbook tidak menghosting konten mereka.';
+
+  @override
+  String get aboutWebsite => 'Situs web Singbook';
+
+  @override
+  String get aboutSourceCode => 'Kode sumber di GitHub';
+
+  @override
+  String get aboutPublisher => 'Dari Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Bahasa aplikasi: $count';
+  }
 
   @override
   String get aboutSupport => 'Dukungan dan masukan';

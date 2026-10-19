@@ -12,14 +12,53 @@ class AppLocalizationsJa extends AppLocalizations {
   String get appTitle => 'Singbook';
 
   @override
-  String get aboutDescription => '曲を見つけて整理し、ライブラリの曲をみんなで歌うための落ち着いた場所です。';
+  String get aboutDescription =>
+      '歌詞、コード、セットリストをひとつにまとめ、リハーサルやステージ、いつもの演奏場所ですぐに使えます。';
 
   @override
-  String get aboutMadeForSinging => 'みんなで歌うために';
+  String get aboutMadeForSinging => 'すべての曲を、すぐに。';
 
   @override
   String get aboutDetails =>
-      '有効にしたソースを検索し、曲のバージョンを比較して、歌詞とコードをまとめ、曲をセットリストに整理できます。ライブラリはこの端末に保存されます。任意の Google Drive 同期では Google アカウントを使用します。検索は有効なソースへ直接送信されます。';
+      '利用可能なソースを検索し、歌詞、コード、タイミング、録音情報を比較して、演奏したいバージョンを保存できます。利用状況は曲やサービスによって異なります。';
+
+  @override
+  String get aboutFindTitle => 'ぴったりのバージョンを見つける';
+
+  @override
+  String get aboutKeepTitle => '自分のライブラリを作る';
+
+  @override
+  String get aboutKeepDetails =>
+      '曲を編集・移調し、持ち運びやすいChordProファイルとして端末に保存できます。保存した曲はオフラインでも使えます。Google Driveとの同期は任意で、Googleアカウント内のアプリ専用フォルダを使います。「今すぐ同期」をタップして、端末間で更新することもできます。';
+
+  @override
+  String get aboutPlayTitle => 'セットリストをステージへ';
+
+  @override
+  String get aboutPlayDetails =>
+      '曲をセットリストに並べ、曲ごとにキーを選び、OpenSongのセットリストを共有できます。リーダーの文字サイズを調整し、歌詞を自動スクロールしたり、曲のPDFを印刷したりできます。Singbookは音声のストリーミングや再生を行いません。';
+
+  @override
+  String get aboutPrivacyTitle => '無料で、端末を中心に使える';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbookは無料で、広告、分析機能、アプリ内購入はありません。保存したライブラリは端末に保管され、任意の同期にはご自身のGoogle Driveを使います。オンライン検索結果は独立した第三者サービスから直接提供され、利用できない場合や著作権で保護されている場合があります。Singbookはそれらのコンテンツをホストしません。';
+
+  @override
+  String get aboutWebsite => 'Singbookのウェブサイト';
+
+  @override
+  String get aboutSourceCode => 'GitHubのソースコード';
+
+  @override
+  String get aboutPublisher => 'Freeviaより';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'アプリの言語: $count';
+  }
 
   @override
   String get aboutSupport => 'サポートとフィードバック';

@@ -1,9 +1,9 @@
 {
   "@@locale": "fr",
   "appTitle": "Singbook",
-  "aboutDescription": "Un espace paisible pour trouver, organiser et chanter à partir de votre bibliothèque de chansons.",
-  "aboutMadeForSinging": "Conçu pour chanter ensemble",
-  "menuTypeNewSong": "Saisir une nouvelle chanson", "aboutDetails": "Recherchez dans les sources activées, comparez les versions, regroupez paroles et accords et organisez les chansons en listes. Votre bibliothèque est enregistrée sur cet appareil ; la synchronisation Google Drive facultative utilise votre compte Google. Les recherches sont envoyées directement aux sources activées.", "aboutSupport": "Aide et commentaires", "appVersion": "Version {version}",
+  "aboutDescription": "Paroles, accords et listes de chansons réunis, prêts pour les répétitions, la scène et partout où vous jouez.",
+  "aboutMadeForSinging": "Chaque chanson, prête à chanter.",
+  "menuTypeNewSong": "Saisir une nouvelle chanson", "aboutDetails": "Recherchez dans les sources activées et comparez les paroles, les accords, le minutage et les détails d’enregistrement avant d’enregistrer la version que vous souhaitez jouer. La disponibilité varie selon la chanson et le service.", "aboutSupport": "Aide et commentaires", "appVersion": "Version {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -812,5 +812,23 @@
   "editorStandardTuning": "Accordage standard",
   "editorExampleVerse": "[C]Un nouveau jour nous [G]appelle,\n[Am]nous suivons la lumière jusqu’à [F]la maison.",
   "editorExampleChorus": "[F]Chantons cette chanson [C]ensemble,\n[G]la mélodie nous emporte [C]plus loin.",
-  "editorExampleBridge": "[Am]Encore une ligne, un peu plus [F]près."
+  "editorExampleBridge": "[Am]Encore une ligne, un peu plus [F]près.",
+  "aboutFindTitle": "Trouvez la bonne version",
+  "aboutKeepTitle": "Créez votre propre bibliothèque",
+  "aboutKeepDetails": "Modifiez et transposez les chansons, enregistrez-les localement sous forme de fichiers ChordPro portables et utilisez les chansons enregistrées hors ligne. La synchronisation facultative avec Google Drive utilise un dossier privé de l’application dans votre compte Google. Vous pouvez aussi appuyer sur Synchroniser maintenant pour mettre vos appareils à jour.",
+  "aboutPlayTitle": "Emportez votre liste sur scène",
+  "aboutPlayDetails": "Organisez les chansons en listes, choisissez une tonalité pour chacune et partagez des listes OpenSong. Réglez le texte du lecteur et le défilement automatique des paroles, puis imprimez des PDF de chansons. Singbook ne diffuse ni ne lit de fichiers audio.",
+  "aboutPrivacyTitle": "Gratuit et axé sur le stockage local",
+  "aboutPrivacyDetails": "Singbook est gratuit, sans publicité, analyse ni achat intégré. Votre bibliothèque enregistrée reste sur votre appareil ; la synchronisation facultative utilise votre propre Google Drive. Les résultats en ligne proviennent directement de services tiers indépendants et peuvent être indisponibles ou protégés par le droit d’auteur. Singbook n’héberge pas leur contenu.",
+  "aboutWebsite": "Site web de Singbook",
+  "aboutSourceCode": "Code source sur GitHub",
+  "aboutPublisher": "Par Freevia",
+  "aboutLanguages": "Langues de l’application : {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

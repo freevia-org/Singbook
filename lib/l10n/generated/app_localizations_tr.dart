@@ -13,14 +13,52 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Şarkı kitaplığınızdaki parçaları bulup düzenleyebileceğiniz ve söyleyebileceğiniz sakin bir alan.';
+      'Şarkı sözleriniz, akorlarınız ve set listeleriniz bir arada; prova, sahne ve çaldığınız her yer için hazır.';
 
   @override
-  String get aboutMadeForSinging => 'Birlikte şarkı söylemek için tasarlandı';
+  String get aboutMadeForSinging => 'Her şarkı, söylemeye hazır.';
 
   @override
   String get aboutDetails =>
-      'Etkin kaynaklarda arama yapın, sürümleri karşılaştırın, şarkı sözlerini ve akorları birlikte tutun, şarkıları setlistelerde düzenleyin. Kitaplığınız bu cihazda saklanır; isteğe bağlı Google Drive eşitlemesi Google hesabınızı kullanır. Aramalar doğrudan etkin kaynaklara gönderilir.';
+      'Kullanılabilir kaynaklarda arama yapın; çalmak istediğiniz sürümü kaydetmeden önce şarkı sözlerini, akorları, zamanlamayı ve kayıt bilgilerini karşılaştırın. Kullanılabilirlik şarkıya ve hizmete göre değişir.';
+
+  @override
+  String get aboutFindTitle => 'Doğru sürümü bulun';
+
+  @override
+  String get aboutKeepTitle => 'Kendi kitaplığınızı oluşturun';
+
+  @override
+  String get aboutKeepDetails =>
+      'Şarkıları düzenleyip transpoze edin, taşınabilir ChordPro dosyaları olarak cihazınıza kaydedin ve çevrimdışı kullanın. İsteğe bağlı Google Drive eşitlemesi, Google hesabınızdaki özel bir uygulama klasörünü kullanır. Cihazlarınızı güncellemek için “Şimdi eşitle”ye de dokunabilirsiniz.';
+
+  @override
+  String get aboutPlayTitle => 'Set listenizi sahneye taşıyın';
+
+  @override
+  String get aboutPlayDetails =>
+      'Şarkıları set listelerinde sıralayın, her şarkı için bir ton seçin ve OpenSong set listelerini paylaşın. Okuyucu metninin boyutunu ayarlayın, şarkı sözlerini otomatik kaydırın ve şarkı PDF’lerini yazdırın. Singbook ses akışı sağlamaz veya ses çalmaz.';
+
+  @override
+  String get aboutPrivacyTitle => 'Ücretsiz ve öncelikle yerel';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook ücretsizdir; reklam, analiz veya uygulama içi satın alma içermez. Kaydedilen kitaplığınız cihazınızda kalır; isteğe bağlı eşitleme kendi Google Drive hesabınızı kullanır. Çevrimiçi sonuçlar bağımsız üçüncü taraf hizmetlerden doğrudan gelir ve kullanılamayabilir ya da telif hakkıyla korunuyor olabilir. Singbook bu içerikleri barındırmaz.';
+
+  @override
+  String get aboutWebsite => 'Singbook web sitesi';
+
+  @override
+  String get aboutSourceCode => 'GitHub’da kaynak kodu';
+
+  @override
+  String get aboutPublisher => 'Freevia tarafından';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Uygulama dilleri: $count';
+  }
 
   @override
   String get aboutSupport => 'Destek ve geri bildirim';

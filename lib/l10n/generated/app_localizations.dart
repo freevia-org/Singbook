@@ -171,20 +171,86 @@ abstract class AppLocalizations {
   /// No description provided for @aboutDescription.
   ///
   /// In en, this message translates to:
-  /// **'A calm place to find, organize, and sing from your song library.'**
+  /// **'Your lyrics, chords and setlists together, ready for rehearsal, the stage and wherever you play.'**
   String get aboutDescription;
 
   /// No description provided for @aboutMadeForSinging.
   ///
   /// In en, this message translates to:
-  /// **'Made for singing together'**
+  /// **'Every song, ready.'**
   String get aboutMadeForSinging;
 
   /// No description provided for @aboutDetails.
   ///
   /// In en, this message translates to:
-  /// **'Search enabled providers, compare song versions, keep lyrics and chords together, and organize songs into setlists. Your library stays on your device; optional Google Drive sync uses your Google account. Searches go directly to enabled providers.'**
+  /// **'Search enabled sources and compare lyrics, chords, timing and recording details before saving the version you want to play. Availability varies by song and service.'**
   String get aboutDetails;
+
+  /// No description provided for @aboutFindTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find the right version'**
+  String get aboutFindTitle;
+
+  /// No description provided for @aboutKeepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Build your own library'**
+  String get aboutKeepTitle;
+
+  /// No description provided for @aboutKeepDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit and transpose songs, save them locally as portable ChordPro files, and use saved songs offline. Optional Google Drive sync uses a private app folder in your Google account. You can also tap Sync now to update your devices.'**
+  String get aboutKeepDetails;
+
+  /// No description provided for @aboutPlayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Take your set on stage'**
+  String get aboutPlayTitle;
+
+  /// No description provided for @aboutPlayDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Order songs into setlists, choose a key for each song, and share OpenSong setlists. Adjust reader text, auto-scroll lyrics and print song PDFs. Singbook does not stream or play audio.'**
+  String get aboutPlayDetails;
+
+  /// No description provided for @aboutPrivacyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Free and local-first'**
+  String get aboutPrivacyTitle;
+
+  /// No description provided for @aboutPrivacyDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Singbook is free, with no ads, analytics or in-app purchases. Your saved library stays on your device; optional sync uses your own Google Drive. Online results come directly from independent third-party services and may be unavailable or protected by copyright. Singbook does not host their content.'**
+  String get aboutPrivacyDetails;
+
+  /// No description provided for @aboutWebsite.
+  ///
+  /// In en, this message translates to:
+  /// **'Singbook website'**
+  String get aboutWebsite;
+
+  /// No description provided for @aboutSourceCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Source code on GitHub'**
+  String get aboutSourceCode;
+
+  /// No description provided for @aboutPublisher.
+  ///
+  /// In en, this message translates to:
+  /// **'By Freevia'**
+  String get aboutPublisher;
+
+  /// No description provided for @aboutLanguages.
+  ///
+  /// In en, this message translates to:
+  /// **'App languages: {count}'**
+  String aboutLanguages(int count);
 
   /// No description provided for @aboutSupport.
   ///

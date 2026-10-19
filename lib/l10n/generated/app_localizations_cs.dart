@@ -13,14 +13,52 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Klidné místo, kde najdete a uspořádáte svou knihovnu písní a budete si společně zpívat.';
+      'Texty, akordy a seznamy písní pohromadě, připravené na zkoušku, na pódium i kamkoli, kde hrajete.';
 
   @override
-  String get aboutMadeForSinging => 'Vytvořeno pro společné zpívání';
+  String get aboutMadeForSinging => 'Každá píseň připravená.';
 
   @override
   String get aboutDetails =>
-      'Hledejte v povolených zdrojích, porovnávejte verze, uchovávejte texty a akordy spolu a organizujte skladby do playlistů. Vaše knihovna je uložena v tomto zařízení; volitelná synchronizace přes Google Drive používá váš účet Google. Vyhledávání se odesílá přímo povoleným zdrojům.';
+      'Prohledávejte povolené zdroje a porovnávejte texty, akordy, časování a podrobnosti o nahrávkách, než uložíte verzi, kterou chcete hrát. Dostupnost se liší podle písně a služby.';
+
+  @override
+  String get aboutFindTitle => 'Najděte správnou verzi';
+
+  @override
+  String get aboutKeepTitle => 'Vytvořte si vlastní knihovnu';
+
+  @override
+  String get aboutKeepDetails =>
+      'Upravujte a transponujte písně, ukládejte je místně jako přenosné soubory ChordPro a používejte uložené písně offline. Volitelná synchronizace s Google Drive využívá soukromou složku aplikace ve vašem účtu Google. Klepnutím na „Synchronizovat nyní“ můžete také aktualizovat svá zařízení.';
+
+  @override
+  String get aboutPlayTitle => 'Vezměte si svůj seznam na pódium';
+
+  @override
+  String get aboutPlayDetails =>
+      'Řaďte písně do seznamů, vyberte tóninu pro každou píseň a sdílejte seznamy OpenSong. Upravte velikost textu čtečky, automatické posouvání textu a tiskněte PDF s písněmi. Singbook nepřenáší ani nepřehrává zvuk.';
+
+  @override
+  String get aboutPrivacyTitle => 'Zdarma, s knihovnou v zařízení';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook je zdarma, bez reklam, analytiky a nákupů v aplikaci. Vaše uložená knihovna zůstává ve vašem zařízení; volitelná synchronizace používá váš Google Drive. Online výsledky pocházejí přímo od nezávislých služeb třetích stran a mohou být nedostupné nebo chráněné autorským právem. Singbook jejich obsah nehostuje.';
+
+  @override
+  String get aboutWebsite => 'Web Singbook';
+
+  @override
+  String get aboutSourceCode => 'Zdrojový kód na GitHubu';
+
+  @override
+  String get aboutPublisher => 'Od Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Jazyky aplikace: $count';
+  }
 
   @override
   String get aboutSupport => 'Podpora a zpětná vazba';

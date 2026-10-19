@@ -1,9 +1,9 @@
 {
   "@@locale": "hr",
   "appTitle": "Singbook",
-  "aboutDescription": "Mirno mjesto za pronalaženje, organiziranje i zajedničko pjevanje uz vašu zbirku pjesama.",
-  "aboutMadeForSinging": "Stvoreno za zajedničko pjevanje",
-  "menuTypeNewSong": "Unesi novu pjesmu", "aboutDetails": "Pretražujte omogućene izvore, uspoređujte verzije, čuvajte tekstove i akorde zajedno te organizirajte pjesme u setliste. Vaša se zbirka sprema na ovom uređaju; neobavezna sinkronizacija putem Google Drivea koristi vaš Google račun. Pretraživanja se šalju izravno omogućenim izvorima.", "aboutSupport": "Podrška i povratne informacije", "appVersion": "Verzija {version}",
+  "aboutDescription": "Tekstovi, akordi i popisi pjesama zajedno, spremni za probu, pozornicu i svako mjesto na kojem sviraš.",
+  "aboutMadeForSinging": "Svaka pjesma spremna.",
+  "menuTypeNewSong": "Unesi novu pjesmu", "aboutDetails": "Pretraži omogućene izvore i usporedi tekstove, akorde, vremenske oznake i pojedinosti o snimci prije nego što spremiš verziju koju želiš svirati. Dostupnost ovisi o pjesmi i usluzi.", "aboutSupport": "Podrška i povratne informacije", "appVersion": "Verzija {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -812,5 +812,23 @@
   "editorStandardTuning": "Standardno ugađanje",
   "editorExampleVerse": "[C]Novi dan nas [G]zove,\n[Am]pratimo svjetlo natrag [F]kući.",
   "editorExampleChorus": "[F]Pjevajmo ovu pjesmu [C]zajedno,\n[G]neka nas melodija ponese [C]dalje.",
-  "editorExampleBridge": "[Am]Još jedan redak, malo [F]bliže."
+  "editorExampleBridge": "[Am]Još jedan redak, malo [F]bliže.",
+  "aboutFindTitle": "Pronađi pravu verziju",
+  "aboutKeepTitle": "Izgradi vlastitu zbirku",
+  "aboutKeepDetails": "Uređuj pjesme i transponiraj ih, spremaj ih lokalno kao prenosive datoteke ChordPro i koristi spremljene pjesme izvan mreže. Neobavezna sinkronizacija s Google Driveom koristi privatnu mapu aplikacije na tvom Google računu. Možeš dodirnuti i „Sinkroniziraj sada” da ažuriraš svoje uređaje.",
+  "aboutPlayTitle": "Ponesi svoj popis na pozornicu",
+  "aboutPlayDetails": "Poredaj pjesme u popise, odaberi tonalitet za svaku pjesmu i dijeli popise OpenSong. Prilagodi tekst čitača i automatsko pomicanje stihova te ispisuj PDF-ove pjesama. Singbook ne prenosi ni reproducira zvuk.",
+  "aboutPrivacyTitle": "Besplatno i usmjereno na lokalnu pohranu",
+  "aboutPrivacyDetails": "Singbook je besplatan, bez oglasa, analitike i kupnji unutar aplikacije. Tvoja spremljena zbirka ostaje na uređaju; neobavezna sinkronizacija koristi tvoj Google Drive. Mrežni rezultati dolaze izravno od neovisnih usluga trećih strana i možda nisu dostupni ili su zaštićeni autorskim pravima. Singbook ne hostira njihov sadržaj.",
+  "aboutWebsite": "Web-stranica Singbooka",
+  "aboutSourceCode": "Izvorni kod na GitHubu",
+  "aboutPublisher": "Od Freevije",
+  "aboutLanguages": "Jezici aplikacije: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

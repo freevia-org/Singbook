@@ -126,43 +126,50 @@ void main() {
     );
   });
 
-  testWidgets(
-    'About exposes readable details and tappable privacy/support links',
-    (tester) async {
-      final controller = FakeUiController(
-        (_) => const VerseUiState(activeTab: VerseTab.settings),
-      );
-      addTearDown(controller.dispose);
-      await pumpShell(tester, controller);
-      final l10n = l10nOf(tester);
+  testWidgets('About exposes webpage details and accessible resource links', (
+    tester,
+  ) async {
+    final controller = FakeUiController(
+      (_) => const VerseUiState(activeTab: VerseTab.settings),
+    );
+    addTearDown(controller.dispose);
+    await pumpShell(tester, controller);
+    final l10n = l10nOf(tester);
 
-      final aboutTile = find.widgetWithText(ListTile, l10n.settingsAbout);
-      final settingsList = find.byType(ListView);
-      expect(settingsList, findsOneWidget);
-      await tester.scrollUntilVisible(
-        find.descendant(of: aboutTile, matching: find.text(l10n.settingsAbout)),
-        200,
-        scrollable: find
-            .descendant(
-              of: find.byType(Scaffold),
-              matching: find.byType(Scrollable),
-            )
-            .first,
-      );
-      await tester.ensureVisible(aboutTile);
-      await tester.pumpAndSettle();
-      await tester.tap(aboutTile);
-      await tester.pumpAndSettle();
+    final aboutTile = find.widgetWithText(ListTile, l10n.settingsAbout);
+    final settingsList = find.byType(ListView);
+    expect(settingsList, findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.descendant(of: aboutTile, matching: find.text(l10n.settingsAbout)),
+      200,
+      scrollable: find
+          .descendant(
+            of: find.byType(Scaffold),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    await tester.ensureVisible(aboutTile);
+    await tester.pumpAndSettle();
+    await tester.tap(aboutTile);
+    await tester.pumpAndSettle();
 
-      expect(find.text(l10n.aboutDetails), findsOneWidget);
-      for (final label in [l10n.settingsPrivacy, l10n.aboutSupport]) {
-        final link = find.widgetWithText(TextButton, label);
-        expect(link, findsOneWidget);
-        expect(tester.widget<TextButton>(link).onPressed, isNotNull);
-        final semantics = tester.getSemantics(link).getSemanticsData();
-        expect(semantics.label, label);
-        expect(semantics.hasAction(SemanticsAction.tap), isTrue);
-      }
-    },
-  );
+    expect(find.text(l10n.aboutDetails), findsOneWidget);
+    for (final label in [
+      l10n.aboutWebsite,
+      l10n.aboutSourceCode,
+      l10n.settingsPrivacy,
+      l10n.aboutSupport,
+      l10n.aboutPublisher,
+    ]) {
+      final link = find.widgetWithText(TextButton, label);
+      expect(link, findsOneWidget);
+      expect(tester.widget<TextButton>(link).onPressed, isNotNull);
+      await tester.ensureVisible(link);
+      await tester.pumpAndSettle();
+      final semantics = tester.getSemantics(link).getSemanticsData();
+      expect(semantics.label, label);
+      expect(semantics.hasAction(SemanticsAction.tap), isTrue);
+    }
+  });
 }

@@ -13,14 +13,52 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Un loc liniștit în care îți găsești, organizezi și cânți melodiile din bibliotecă.';
+      'Versuri, acorduri și liste de melodii împreună, pregătite pentru repetiții, scenă și oriunde cânți.';
 
   @override
-  String get aboutMadeForSinging => 'Creat pentru a cânta împreună';
+  String get aboutMadeForSinging => 'Fiecare cântec, gata de cântat.';
 
   @override
   String get aboutDetails =>
-      'Caută în sursele activate, compară versiunile, păstrează versurile și acordurile împreună și organizează melodiile în setlisturi. Biblioteca ta este stocată pe acest dispozitiv; sincronizarea opțională cu Google Drive folosește contul tău Google. Căutările sunt trimise direct către sursele activate.';
+      'Caută în sursele disponibile și compară versurile, acordurile, marcajele temporale și detaliile înregistrării înainte să salvezi versiunea dorită. Disponibilitatea diferă în funcție de melodie și serviciu.';
+
+  @override
+  String get aboutFindTitle => 'Găsește versiunea potrivită';
+
+  @override
+  String get aboutKeepTitle => 'Construiește-ți propria bibliotecă';
+
+  @override
+  String get aboutKeepDetails =>
+      'Editează și transpune melodiile, salvează-le local ca fișiere ChordPro portabile și folosește-le offline. Sincronizarea opțională cu Google Drive folosește un dosar privat al aplicației din contul tău Google. Poți atinge și „Sincronizează acum” pentru a actualiza dispozitivele.';
+
+  @override
+  String get aboutPlayTitle => 'Ia lista de melodii pe scenă';
+
+  @override
+  String get aboutPlayDetails =>
+      'Grupează melodiile în setlisturi, alege tonalitatea fiecăreia și distribuie setlisturi OpenSong. Ajustează textul cititorului, derulează automat versurile și imprimă PDF-uri cu melodii. Singbook nu transmite și nu redă conținut audio.';
+
+  @override
+  String get aboutPrivacyTitle => 'Gratuită și cu biblioteca păstrată local';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook este gratuită, fără reclame, analiză sau achiziții în aplicație. Biblioteca salvată rămâne pe dispozitivul tău; sincronizarea opțională folosește propriul Google Drive. Rezultatele online vin direct de la servicii independente terțe și pot fi indisponibile sau protejate prin drepturi de autor. Singbook nu găzduiește conținutul acestora.';
+
+  @override
+  String get aboutWebsite => 'Site-ul Singbook';
+
+  @override
+  String get aboutSourceCode => 'Cod sursă pe GitHub';
+
+  @override
+  String get aboutPublisher => 'De la Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Limbi ale aplicației: $count';
+  }
 
   @override
   String get aboutSupport => 'Asistență și feedback';

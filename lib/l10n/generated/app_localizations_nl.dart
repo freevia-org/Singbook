@@ -13,14 +13,52 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Een rustige plek om de nummers in je bibliotheek te vinden, te ordenen en te zingen.';
+      'Je songteksten, akkoorden en setlists bij elkaar, klaar voor repetities, het podium en elke plek waar je speelt.';
 
   @override
-  String get aboutMadeForSinging => 'Gemaakt om samen te zingen';
+  String get aboutMadeForSinging => 'Elk lied klaar om te zingen.';
 
   @override
   String get aboutDetails =>
-      'Zoek in ingeschakelde bronnen, vergelijk versies, bewaar songteksten en akkoorden samen en orden nummers in setlijsten. Je bibliotheek wordt op dit apparaat opgeslagen; optionele synchronisatie met Google Drive gebruikt je Google-account. Zoekopdrachten gaan rechtstreeks naar ingeschakelde bronnen.';
+      'Doorzoek beschikbare bronnen en vergelijk songteksten, akkoorden, timing en opnamegegevens voordat je de versie opslaat die je wilt spelen. De beschikbaarheid verschilt per nummer en dienst.';
+
+  @override
+  String get aboutFindTitle => 'Vind de juiste versie';
+
+  @override
+  String get aboutKeepTitle => 'Bouw je eigen bibliotheek';
+
+  @override
+  String get aboutKeepDetails =>
+      'Bewerk en transposeer nummers, sla ze lokaal op als draagbare ChordPro-bestanden en gebruik opgeslagen nummers offline. Optionele Google Drive-synchronisatie gebruikt een privémap van de app in je Google-account. Je kunt ook op ‘Nu synchroniseren’ tikken om je apparaten bij te werken.';
+
+  @override
+  String get aboutPlayTitle => 'Neem je setlist mee het podium op';
+
+  @override
+  String get aboutPlayDetails =>
+      'Zet nummers in setlists, kies voor elk nummer een toonsoort en deel OpenSong-setlists. Pas de tekstgrootte in de lezer aan, laat songteksten automatisch scrollen en druk song-PDF’s af. Singbook streamt of speelt geen audio af.';
+
+  @override
+  String get aboutPrivacyTitle => 'Gratis en lokaal als uitgangspunt';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook is gratis en bevat geen advertenties, analyses of in-app aankopen. Je opgeslagen bibliotheek blijft op je apparaat; optionele synchronisatie gebruikt je eigen Google Drive. Online resultaten komen rechtstreeks van onafhankelijke diensten van derden en zijn mogelijk niet beschikbaar of auteursrechtelijk beschermd. Singbook host hun inhoud niet.';
+
+  @override
+  String get aboutWebsite => 'Singbook-website';
+
+  @override
+  String get aboutSourceCode => 'Broncode op GitHub';
+
+  @override
+  String get aboutPublisher => 'Van Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'App-talen: $count';
+  }
 
   @override
   String get aboutSupport => 'Ondersteuning en feedback';

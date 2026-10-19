@@ -236,29 +236,67 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             const SizedBox(height: 14),
             Text(l10n.aboutDescription, textAlign: TextAlign.center),
+            const SizedBox(height: 24),
+            _AboutSection(
+              title: l10n.aboutFindTitle,
+              details: l10n.aboutDetails,
+            ),
+            _AboutSection(
+              title: l10n.aboutKeepTitle,
+              details: l10n.aboutKeepDetails,
+            ),
+            _AboutSection(
+              title: l10n.aboutPlayTitle,
+              details: l10n.aboutPlayDetails,
+            ),
+            _AboutSection(
+              title: l10n.aboutPrivacyTitle,
+              details: l10n.aboutPrivacyDetails,
+            ),
+            Text(
+              l10n.aboutLanguages(AppLocalizations.supportedLocales.length),
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: 12),
-            Text(l10n.aboutDetails, textAlign: TextAlign.center),
-            const SizedBox(height: 10),
             Wrap(
               alignment: WrapAlignment.center,
               spacing: 8,
               children: [
-                TextButton.icon(
-                  onPressed: () => launchUrl(
-                    Uri.parse('https://freevia.org/singbook/privacy/'),
-                    mode: LaunchMode.externalApplication,
+                for (final (label, icon, url) in [
+                  (
+                    l10n.aboutWebsite,
+                    Icons.language_outlined,
+                    'https://freevia.org/singbook/',
                   ),
-                  icon: const Icon(Icons.privacy_tip_outlined),
-                  label: Text(l10n.settingsPrivacy),
-                ),
-                TextButton.icon(
-                  onPressed: () => launchUrl(
-                    Uri.parse('https://freevia.org/singbook/support/'),
-                    mode: LaunchMode.externalApplication,
+                  (
+                    l10n.aboutSourceCode,
+                    Icons.code_rounded,
+                    'https://github.com/freevia-org/Singbook',
                   ),
-                  icon: const Icon(Icons.support_agent_outlined),
-                  label: Text(l10n.aboutSupport),
-                ),
+                  (
+                    l10n.settingsPrivacy,
+                    Icons.privacy_tip_outlined,
+                    'https://freevia.org/singbook/privacy/',
+                  ),
+                  (
+                    l10n.aboutSupport,
+                    Icons.support_agent_outlined,
+                    'https://freevia.org/singbook/support/',
+                  ),
+                  (
+                    l10n.aboutPublisher,
+                    Icons.open_in_new_rounded,
+                    'https://freevia.org/',
+                  ),
+                ])
+                  TextButton.icon(
+                    onPressed: () => launchUrl(
+                      Uri.parse(url),
+                      mode: LaunchMode.externalApplication,
+                    ),
+                    icon: Icon(icon),
+                    label: Text(label),
+                  ),
               ],
             ),
             const SizedBox(height: 12),
@@ -279,6 +317,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
   }
+}
+
+class _AboutSection extends StatelessWidget {
+  const _AboutSection({required this.title, required this.details});
+
+  final String title;
+  final String details;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: 20),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Semantics(
+          header: true,
+          child: Text(title, style: Theme.of(context).textTheme.titleMedium),
+        ),
+        const SizedBox(height: 6),
+        Text(details),
+      ],
+    ),
+  );
 }
 
 class _SettingsSectionScreen extends StatefulWidget {
