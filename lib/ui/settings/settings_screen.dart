@@ -185,7 +185,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 leading: const SingbookMark(size: 28),
                 title: Text(l10n.settingsAbout),
                 trailing: _menuArrow(context),
-                onTap: () => _showAbout(context, l10n),
+                onTap: () => Navigator.of(context).push<void>(
+                  MaterialPageRoute(
+                    builder: (_) => _AboutScreen(controller: widget.controller),
+                  ),
+                ),
               ),
             ],
           ),
@@ -206,114 +210,168 @@ class _SettingsScreenState extends State<SettingsScreen> {
   // This Material icon already mirrors automatically in RTL locales.
   Widget _menuArrow(BuildContext context) =>
       const Icon(Icons.chevron_right_rounded);
+}
 
-  void _showAbout(BuildContext context, AppLocalizations l10n) {
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        scrollable: true,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SingbookMark(size: 88),
-            const SizedBox(height: 16),
-            singbookWordmark(
-              context,
-              l10n,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontFamily: 'SingbookSerif',
-                fontWeight: FontWeight.w700,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 6),
-            Text(
-              l10n.aboutMadeForSinging,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 14),
-            Text(l10n.aboutDescription, textAlign: TextAlign.center),
-            const SizedBox(height: 24),
-            _AboutSection(
-              title: l10n.aboutFindTitle,
-              details: l10n.aboutDetails,
-            ),
-            _AboutSection(
-              title: l10n.aboutKeepTitle,
-              details: l10n.aboutKeepDetails,
-            ),
-            _AboutSection(
-              title: l10n.aboutPlayTitle,
-              details: l10n.aboutPlayDetails,
-            ),
-            _AboutSection(
-              title: l10n.aboutPrivacyTitle,
-              details: l10n.aboutPrivacyDetails,
-            ),
-            Text(
-              l10n.aboutLanguages(AppLocalizations.supportedLocales.length),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 12),
-            Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 8,
-              children: [
-                for (final (label, icon, url) in [
-                  (
-                    l10n.aboutWebsite,
-                    Icons.language_outlined,
-                    'https://freevia.org/singbook/',
-                  ),
-                  (
-                    l10n.aboutSourceCode,
-                    Icons.code_rounded,
-                    'https://github.com/freevia-org/Singbook',
-                  ),
-                  (
-                    l10n.settingsPrivacy,
-                    Icons.privacy_tip_outlined,
-                    'https://freevia.org/singbook/privacy/',
-                  ),
-                  (
-                    l10n.aboutSupport,
-                    Icons.support_agent_outlined,
-                    'https://freevia.org/singbook/support/',
-                  ),
-                  (
-                    l10n.aboutPublisher,
-                    Icons.open_in_new_rounded,
-                    'https://freevia.org/',
-                  ),
-                ])
-                  TextButton.icon(
-                    onPressed: () => launchUrl(
-                      Uri.parse(url),
-                      mode: LaunchMode.externalApplication,
+/// About is a regular settings destination, not a modal dialog.
+class _AboutScreen extends StatefulWidget {
+  const _AboutScreen({required this.controller});
+
+  final VerseUiController controller;
+
+  @override
+  State<_AboutScreen> createState() => _AboutScreenState();
+}
+
+class _AboutScreenState extends State<_AboutScreen> {
+  bool _leaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_followShellNavigation);
+  }
+
+  @override
+  void didUpdateWidget(covariant _AboutScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.controller != oldWidget.controller) {
+      oldWidget.controller.removeListener(_followShellNavigation);
+      widget.controller.addListener(_followShellNavigation);
+    }
+  }
+
+  void _followShellNavigation() {
+    final state = widget.controller.state;
+    if (_leaving ||
+        (state.route == VerseRoute.main &&
+            state.activeTab == VerseTab.settings)) {
+      return;
+    }
+    _leaving = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) Navigator.of(context).pop();
+    });
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_followShellNavigation);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Scaffold(
+      appBar: AppBar(title: Text(l10n.settingsAbout)),
+      body: SafeArea(
+        top: false,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 640),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SingbookMark(size: 88),
+                  const SizedBox(height: 16),
+                  singbookWordmark(
+                    context,
+                    l10n,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontFamily: 'SingbookSerif',
+                      fontWeight: FontWeight.w700,
                     ),
-                    icon: Icon(icon),
-                    label: Text(label),
+                    textAlign: TextAlign.center,
                   ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Text(
-              l10n.appVersion(singbookVersion),
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  const SizedBox(height: 6),
+                  Text(
+                    l10n.aboutMadeForSinging,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 14),
+                  Text(l10n.aboutDescription, textAlign: TextAlign.center),
+                  const SizedBox(height: 24),
+                  _AboutSection(
+                    title: l10n.aboutFindTitle,
+                    details: l10n.aboutDetails,
+                  ),
+                  _AboutSection(
+                    title: l10n.aboutKeepTitle,
+                    details: l10n.aboutKeepDetails,
+                  ),
+                  _AboutSection(
+                    title: l10n.aboutPlayTitle,
+                    details: l10n.aboutPlayDetails,
+                  ),
+                  _AboutSection(
+                    title: l10n.aboutPrivacyTitle,
+                    details: l10n.aboutPrivacyDetails,
+                  ),
+                  Text(
+                    l10n.aboutLanguages(
+                      AppLocalizations.supportedLocales.length,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
+                    children: [
+                      for (final (label, icon, url) in [
+                        (
+                          l10n.aboutWebsite,
+                          Icons.language_outlined,
+                          'https://freevia.org/singbook/',
+                        ),
+                        (
+                          l10n.aboutSourceCode,
+                          Icons.code_rounded,
+                          'https://github.com/freevia-org/Singbook',
+                        ),
+                        (
+                          l10n.settingsPrivacy,
+                          Icons.privacy_tip_outlined,
+                          'https://freevia.org/singbook/privacy/',
+                        ),
+                        (
+                          l10n.aboutSupport,
+                          Icons.support_agent_outlined,
+                          'https://freevia.org/singbook/support/',
+                        ),
+                        (
+                          l10n.aboutPublisher,
+                          Icons.open_in_new_rounded,
+                          'https://freevia.org/',
+                        ),
+                      ])
+                        TextButton.icon(
+                          onPressed: () => launchUrl(
+                            Uri.parse(url),
+                            mode: LaunchMode.externalApplication,
+                          ),
+                          icon: Icon(icon),
+                          label: Text(label),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    l10n.appVersion(singbookVersion),
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(AppLocalizations.of(context).actionDone),
           ),
-        ],
+        ),
       ),
     );
   }

@@ -342,7 +342,7 @@ void main() {
       (Size(360, 640), 2.0),
     ]) {
       testWidgets(
-        'the About dialog scrolls instead of overflowing ($size x$scale)',
+        'the About page scrolls instead of overflowing ($size x$scale)',
         (tester) async {
           final c = FakeUiController((_) => _settings());
           addTearDown(c.dispose);
@@ -370,16 +370,10 @@ void main() {
           await tester.pumpAndSettle();
           await tester.tap(aboutTitle);
           await tester.pumpAndSettle();
-          expect(find.byType(AlertDialog), findsOneWidget);
+          expect(find.byType(AlertDialog), findsNothing);
           expect(tester.takeException(), isNull);
-          expect(
-            find.descendant(
-              of: find.byType(AlertDialog),
-              matching: find.byType(SingleChildScrollView),
-            ),
-            findsOneWidget,
-          );
-          expect(find.text(l10n.actionDone), findsOneWidget);
+          expect(find.byType(SingleChildScrollView), findsOneWidget);
+          expect(find.text(l10n.settingsAbout), findsOneWidget);
         },
       );
     }

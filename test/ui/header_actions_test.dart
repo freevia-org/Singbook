@@ -154,6 +154,7 @@ void main() {
     await tester.tap(aboutTile);
     await tester.pumpAndSettle();
 
+    expect(find.byType(AlertDialog), findsNothing);
     expect(find.text(l10n.aboutDetails), findsOneWidget);
     for (final label in [
       l10n.aboutWebsite,
@@ -171,5 +172,8 @@ void main() {
       expect(semantics.label, label);
       expect(semantics.hasAction(SemanticsAction.tap), isTrue);
     }
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('settings-menu-about')), findsOneWidget);
   });
 }

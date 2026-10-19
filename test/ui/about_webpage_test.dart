@@ -141,11 +141,10 @@ void main() {
       await tester.ensureVisible(find.text(l10n.aboutPublisher));
       await tester.pumpAndSettle();
       await _snapshot(tester, boundaryKey, '$name-bottom');
-      final done = find.widgetWithText(TextButton, l10n.actionDone);
-      expect(tester.getRect(done).bottom, lessThanOrEqualTo(size.height));
-      await tester.tap(done);
-      await tester.pumpAndSettle();
       expect(find.byType(AlertDialog), findsNothing);
+      expect(find.text(l10n.settingsAbout), findsOneWidget);
+      await tester.pageBack();
+      await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('settings-menu-about')), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
