@@ -425,10 +425,10 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
         selected: state.homeListMode,
         onChanged: widget.controller.setHomeListMode,
         labels: [
-          '${l10n.searchRecentTab} (${_filteredHistoryItems(HomeListMode.recent, l10n).length})',
-          '${l10n.songsLibraryView} (${_libraryCount(state)})',
-          '${l10n.searchFavoritesTab} (${_filteredHistoryItems(HomeListMode.favorites, l10n).length})',
-          '${l10n.searchOnlineTab} (${state.comparison == null ? state.autocomplete.length : 1})',
+          '${l10n.searchRecentTab}(${_filteredHistoryItems(HomeListMode.recent, l10n).length})',
+          '${l10n.songsLibraryView}(${_libraryCount(state)})',
+          '${l10n.searchFavoritesTab}(${_filteredHistoryItems(HomeListMode.favorites, l10n).length})',
+          '${l10n.searchOnlineTab}(${state.comparison == null ? state.autocomplete.length : 1})',
         ],
       ),
     ],
@@ -1147,18 +1147,13 @@ class _HomeModeSelectorState extends State<_HomeModeSelector> {
     final colors = Theme.of(context).colorScheme;
     final textStyle = Theme.of(context).textTheme.labelLarge;
     final modes = HomeListMode.values;
-    final titles = [
-      for (final label in widget.labels)
-        label.replaceFirst(RegExp(r' \(\d+\)$'), ''),
-    ];
-    final counts = [
-      for (final label in widget.labels)
-        RegExp(r'\((\d+)\)$').firstMatch(label)?.group(1) ?? '',
-    ];
     var minimumWidth = 0.0;
-    for (final title in titles) {
+    for (final label in widget.labels) {
       final painter = TextPainter(
-        text: TextSpan(text: title, style: textStyle),
+        text: TextSpan(
+          text: label,
+          style: textStyle?.copyWith(fontWeight: FontWeight.w600),
+        ),
         textDirection: Directionality.of(context),
         textScaler: MediaQuery.textScalerOf(context),
       )..layout();
@@ -1194,27 +1189,16 @@ class _HomeModeSelectorState extends State<_HomeModeSelector> {
               child: Semantics(
                 label: widget.labels[index],
                 excludeSemantics: true,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      titles[index],
-                      maxLines: 1,
-                      softWrap: false,
-                      style: textStyle?.copyWith(
-                        color: selected
-                            ? colors.onPrimaryContainer
-                            : colors.onSurface,
-                        fontWeight: selected
-                            ? FontWeight.w600
-                            : FontWeight.w500,
-                      ),
-                    ),
-                    Text(
-                      counts[index],
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
-                  ],
+                child: Text(
+                  widget.labels[index],
+                  maxLines: 1,
+                  softWrap: false,
+                  style: textStyle?.copyWith(
+                    color: selected
+                        ? colors.onPrimaryContainer
+                        : colors.onSurface,
+                    fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                  ),
                 ),
               ),
             ),
