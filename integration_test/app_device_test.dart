@@ -2,18 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as paths;
-import 'package:sqflite/sqflite.dart' show getDatabasesPath;
+import 'package:sqflite/sqflite.dart' show deleteDatabase, getDatabasesPath;
 import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/data/library_repository.dart';
 import 'package:singbook/domain/models.dart';
 import 'package:singbook/domain/timing.dart';
 import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/ui/verse_app.dart';
+import 'support/ios_screenshots.dart';
 
 const _skipScreenshots = bool.fromEnvironment('SINGBOOK_SKIP_SCREENSHOTS');
 
 void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets(
     'app renders, rotates, and restores the saved library and settings',
@@ -23,6 +24,20 @@ void main() {
         'verse_device_${DateTime.now().microsecondsSinceEpoch}.db',
       );
       final repository = await LibraryRepository.open(path: databasePath);
+      final controllers = <AppController>[];
+      addTearDown(() async {
+        try {
+          await tester.pumpWidget(const SizedBox.shrink());
+        } finally {
+          for (final controller in controllers) {
+            controller.dispose();
+          }
+          await tester.runAsync(() async {
+            await repository.close();
+            await deleteDatabase(databasePath);
+          });
+        }
+      });
       final body = '[C]The room is warm tonight\n[G]We sing our own refrain';
       final track = bindImportedTiming(
         parseLrc(
@@ -64,28 +79,47 @@ void main() {
         repository: repository,
         discovery: SourceDiscoveryService(const []),
       );
+      controllers.add(controller);
       await controller.initialize();
       await controller.setSetting('themeMode', 'dark');
       await controller.setSetting('locale', 'uk');
       await controller.setSetting('defaultView', 'songs');
 
-      tester.view.devicePixelRatio = 1;
-      tester.view.physicalSize = const Size(400, 850);
+      await binding.setSurfaceSize(const Size(400, 850));
       final originalPadding = tester.view.padding;
       final originalViewPadding = tester.view.viewPadding;
       final originalViewInsets = tester.view.viewInsets;
-      tester.view.padding = const FakeViewPadding(top: 24, bottom: 24);
-      tester.view.viewPadding = const FakeViewPadding(top: 24, bottom: 24);
+      final padding = FakeViewPadding(
+        top: 24 * tester.view.devicePixelRatio,
+        bottom: 24 * tester.view.devicePixelRatio,
+      );
+      tester.view.padding = padding;
+      tester.view.viewPadding = padding;
       tester.view.viewInsets = FakeViewPadding.zero;
-      addTearDown(() {
-        tester.view.resetPhysicalSize();
-        tester.view.resetDevicePixelRatio();
+      addTearDown(() async {
+        await binding.setSurfaceSize(null);
         tester.view.padding = originalPadding;
         tester.view.viewPadding = originalViewPadding;
         tester.view.viewInsets = originalViewInsets;
       });
 
-      await tester.pumpWidget(VerseApp(controller: controller));
+      var viewport = const Size(400, 850);
+      var activeController = controller;
+      Future<void> pumpViewport({Size? size, AppController? app}) async {
+        if (size != null) {
+          viewport = size;
+          await binding.setSurfaceSize(size);
+        }
+        if (app != null) activeController = app;
+        await tester.pumpWidget(
+          MediaQuery(
+            data: MediaQueryData.fromView(tester.view).copyWith(size: viewport),
+            child: VerseApp(controller: activeController),
+          ),
+        );
+      }
+
+      await pumpViewport();
       await tester.pumpAndSettle(const Duration(seconds: 2));
       expect(find.text('Singbook'), findsOneWidget);
       expect(find.text('Small Hours'), findsWidgets);
@@ -103,7 +137,7 @@ void main() {
         Size(1280, 800),
         Size(600, 960),
       ]) {
-        tester.view.physicalSize = size;
+        await pumpViewport(size: size);
         await tester.pumpAndSettle();
         expect(find.byType(NavigationRail), findsOneWidget);
         expect(find.byType(NavigationBar), findsNothing);
@@ -141,23 +175,22 @@ void main() {
         await tester.tap(find.byIcon(Icons.edit_outlined));
         await tester.pumpAndSettle();
         if (size.width >= 700) {
-          expect(
-            find.byKey(const ValueKey('tablet-editor-split')),
-            findsOneWidget,
-          );
           final titleField = find.byWidgetPredicate(
             (widget) =>
                 widget is TextField && widget.controller?.text == song.title,
           );
-          final bodyField = find.byWidgetPredicate(
-            (widget) => widget is TextField && widget.controller?.text == body,
-          );
+          final bodyField = find.byKey(const ValueKey('editor-lyrics-input'));
+          expect(bodyField, findsOneWidget);
           expect(
-            tester.getRect(titleField).right,
-            lessThan(tester.getRect(bodyField).left),
+            tester.getRect(titleField).bottom,
+            lessThanOrEqualTo(tester.getRect(bodyField).top),
           );
+          expect(tester.getSize(bodyField).width, greaterThan(300));
         }
-        tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+        tester.view.viewInsets = FakeViewPadding(
+          bottom: 300 * tester.view.devicePixelRatio,
+        );
+        await pumpViewport();
         await tester.pumpAndSettle();
         expect(
           tester.takeException(),
@@ -166,6 +199,7 @@ void main() {
         );
         await _capture('populated_editor_keyboard_$viewport');
         tester.view.viewInsets = FakeViewPadding.zero;
+        await pumpViewport();
         await tester.pumpAndSettle();
         await tester.tap(find.byIcon(Icons.arrow_back_rounded));
         await tester.pumpAndSettle();
@@ -191,7 +225,7 @@ void main() {
       }
       tester.platformDispatcher.clearTextScaleFactorTestValue();
 
-      tester.view.physicalSize = const Size(850, 400);
+      await pumpViewport(size: const Size(850, 400));
       await tester.pumpAndSettle(const Duration(seconds: 2));
       final landscapeMetrics = MediaQuery.of(
         tester.element(find.byType(Scaffold).first),
@@ -207,10 +241,10 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 2));
       expect(find.textContaining('The room is warm tonight'), findsWidgets);
 
-      tester.view.physicalSize = const Size(400, 850);
+      await pumpViewport(size: const Size(400, 850));
       await tester.pumpAndSettle(const Duration(seconds: 2));
       expect(find.textContaining('We sing our own refrain'), findsWidgets);
-      tester.view.physicalSize = const Size(850, 400);
+      await pumpViewport(size: const Size(850, 400));
       await tester.pumpAndSettle(const Duration(seconds: 2));
       expect(find.textContaining('The room is warm tonight'), findsWidgets);
 
@@ -220,7 +254,8 @@ void main() {
         repository: repository,
         discovery: SourceDiscoveryService(const []),
       );
-      await tester.pumpWidget(VerseApp(controller: restored));
+      controllers.add(restored);
+      await pumpViewport(app: restored);
       await tester.pumpAndSettle(const Duration(seconds: 2));
       expect(restored.settings['themeMode'], 'dark');
       expect(restored.settings['locale'], 'uk');
@@ -234,7 +269,6 @@ void main() {
 
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pumpAndSettle();
-      await repository.close();
     },
     timeout: const Timeout(Duration(minutes: 8)),
   );
@@ -242,6 +276,7 @@ void main() {
 
 Future<void> _capture(String name) async {
   if (_skipScreenshots) return;
+  if (await captureIosCheckpoint(name)) return;
   debugPrint('SINGBOOK_E2E_CAPTURE:$name');
   await Future<void>.delayed(const Duration(seconds: 2));
 }

@@ -16,8 +16,12 @@ import 'package:singbook/ui/theme/verse_theme.dart';
 import 'package:singbook/ui/widgets/chord_lyrics_line.dart';
 
 import 'support/transpose_popup_fixtures.dart';
+import 'support/ios_screenshots.dart';
 
 const _skipScreenshots = bool.fromEnvironment('SINGBOOK_SKIP_SCREENSHOTS');
+// iPad multitasking ignores orientation locks. The host rotates the simulator
+// through Device Hub; the test still verifies real native dimensions.
+const _hostRotation = bool.fromEnvironment('SINGBOOK_HOST_ROTATION');
 
 typedef _TransposePopupFixture = ({
   String name,
@@ -258,13 +262,21 @@ void main() {
       await binding.setSurfaceSize(null);
       await tester.pumpWidget(_playerApp(controller));
       for (final landscape in [false, true]) {
-        await SystemChrome.setPreferredOrientations([
-          landscape
-              ? DeviceOrientation.landscapeLeft
-              : DeviceOrientation.portraitUp,
-        ]);
+        if (_hostRotation) {
+          await SystemChrome.setPreferredOrientations([]);
+          debugPrint(
+            'SINGBOOK_NATIVE_ROTATE:${landscape ? 'landscape' : 'portrait'}',
+          );
+        } else {
+          await SystemChrome.setPreferredOrientations([
+            landscape
+                ? DeviceOrientation.landscapeLeft
+                : DeviceOrientation.portraitUp,
+          ]);
+        }
         var rotated = false;
-        for (var attempt = 0; attempt < 40; attempt++) {
+        final rotationAttempts = _hostRotation ? 480 : 40;
+        for (var attempt = 0; attempt < rotationAttempts; attempt++) {
           await tester.runAsync(
             () => Future<void>.delayed(const Duration(milliseconds: 250)),
           );
@@ -279,7 +291,7 @@ void main() {
         expect(
           rotated,
           isTrue,
-          reason: 'Actual Android orientation must change',
+          reason: 'Actual native orientation must change',
         );
         final dropdown = find.byKey(const ValueKey('pitch-key-dropdown'));
         final play = find.byKey(const ValueKey('start-lyric-scroll'));
@@ -483,6 +495,7 @@ Future<void> _capture(
   String name,
 ) async {
   if (_skipScreenshots) return;
+  if (await captureIosCheckpoint(name)) return;
   binding.scheduleFrame();
   await binding.endOfFrame;
   debugPrint('SINGBOOK_E2E_CAPTURE:$name');

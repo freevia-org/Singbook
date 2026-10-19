@@ -1,0 +1,4 @@
+// Copy to Signing.xcconfig (ignored) and supply your Apple Developer Team ID.
+// A paid Apple Developer Program team is required for TestFlight.
+DEVELOPMENT_TEAM = YOURTEAMID
+CODE_SIGN_STYLE = Automatic
