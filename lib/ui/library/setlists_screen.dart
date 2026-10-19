@@ -425,11 +425,8 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
                 )
               : Listener(
                   behavior: HitTestBehavior.translucent,
-                  onPointerMove: (event) {
-                    if (_draggingEntryId != null) {
-                      _dragPosition = event.position;
-                    }
-                  },
+                  onPointerDown: (event) => _dragPosition = event.position,
+                  onPointerMove: (event) => _dragPosition = event.position,
                   child: ReorderableListView.builder(
                     padding: const EdgeInsets.fromLTRB(12, 4, 12, 20),
                     buildDefaultDragHandles: false,
