@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "win32_window.h"
+#include "window_close_guard.h"
 
 // A window that does nothing but host a Flutter view.
 class FlutterWindow : public Win32Window {
@@ -35,6 +36,9 @@ class FlutterWindow : public Win32Window {
       rich_clipboard_channel_;
   std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>>
       secure_credentials_channel_;
+  std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>>
+      window_close_channel_;
+  std::unique_ptr<singbook::WindowCloseGuard> window_close_guard_;
 };
 
 #endif  // RUNNER_FLUTTER_WINDOW_H_

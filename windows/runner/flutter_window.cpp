@@ -2,10 +2,15 @@
 
 #include <optional>
 #include <flutter/standard_method_codec.h>
+#include <flutter/method_result_functions.h>
 
 #include "flutter/generated_plugin_registrant.h"
 #include "rich_clipboard.h"
 #include "secure_credentials.h"
+
+namespace {
+constexpr UINT kApprovedWindowClose = WM_APP + 1;
+}
 
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
     : project_(project) {}
@@ -29,6 +34,27 @@ bool FlutterWindow::OnCreate() {
   }
   RegisterPlugins(flutter_controller_->engine());
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
+
+  window_close_channel_ =
+      std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
+          flutter_controller_->engine()->messenger(),
+          "org.freevia.singbook/window_close",
+          &flutter::StandardMethodCodec::GetInstance());
+  const HWND window = GetHandle();
+  window_close_guard_ = std::make_unique<singbook::WindowCloseGuard>(
+      [this](singbook::WindowCloseGuard::Completion complete) {
+        window_close_channel_->InvokeMethod(
+            "requestClose", nullptr,
+            std::make_unique<flutter::MethodResultFunctions<flutter::EncodableValue>>(
+                [complete](const flutter::EncodableValue* reply) {
+                  const auto* approved = reply ? std::get_if<bool>(reply) : nullptr;
+                  complete(approved && *approved);
+                },
+                [complete](const std::string&, const std::string&,
+                           const flutter::EncodableValue*) { complete(false); },
+                [complete]() { complete(false); }));
+      },
+      [window]() { return PostMessage(window, kApprovedWindowClose, 0, 0) != FALSE; });
 
   rich_clipboard_channel_ =
       std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
@@ -152,6 +178,8 @@ bool FlutterWindow::OnCreate() {
 }
 
 void FlutterWindow::OnDestroy() {
+  window_close_guard_ = nullptr;
+  window_close_channel_ = nullptr;
   rich_clipboard_channel_ = nullptr;
   secure_credentials_channel_ = nullptr;
   if (flutter_controller_) {
@@ -165,6 +193,18 @@ LRESULT
 FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
                               WPARAM const wparam,
                               LPARAM const lparam) noexcept {
+  // Flutter's default quit guard only asks Dart when this is the final
+  // parentless HWND in the process. Other parentless HWNDs can bypass it.
+  // Always consult the existing Dart exit observers for our library window.
+  if (message == WM_CLOSE && window_close_guard_) {
+    window_close_guard_->RequestClose();
+    return 0;
+  }
+  if (message == kApprovedWindowClose) {
+    // Approval already passed every Dart exit observer. Do not re-enter the
+    // engine's cancel-and-redispatch protocol for the same request.
+    return Win32Window::MessageHandler(hwnd, WM_CLOSE, 0, 0);
+  }
   // Give Flutter, including plugins, an opportunity to handle window messages.
   if (flutter_controller_) {
     std::optional<LRESULT> result =

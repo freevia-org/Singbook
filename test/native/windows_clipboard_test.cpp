@@ -6,6 +6,7 @@
 // --clipboard additionally replaces the current clipboard with test content.
 #include "../../windows/runner/rich_clipboard.h"
 #include "../../windows/runner/secure_credentials.h"
+#include "../../windows/runner/window_close_guard.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -17,6 +18,50 @@ void Check(bool condition, const char* description) {
     std::cerr << "FAIL: " << description << '\n';
     failures++;
   }
+}
+
+void CheckWindowClose() {
+  int requests = 0, closes = 0;
+  singbook::WindowCloseGuard::Completion reply;
+  auto guard = std::make_unique<singbook::WindowCloseGuard>(
+      [&](singbook::WindowCloseGuard::Completion complete) {
+        requests++;
+        reply = std::move(complete);
+      },
+      [&]() { closes++; return true; });
+  guard->RequestClose();
+  guard->RequestClose();
+  Check(requests == 1 && closes == 0, "pending close requests are coalesced");
+  const auto stale_reply = reply;
+  reply(false);
+  Check(closes == 0, "cancel keeps the window alive");
+  guard->RequestClose();
+  Check(requests == 2, "close can be retried after cancellation or channel error");
+  stale_reply(true);
+  Check(closes == 0, "an earlier response cannot approve a later request");
+  reply(true);
+  guard->RequestClose();
+  reply(true);
+  Check(closes == 1 && requests == 2, "approval closes exactly once");
+
+  guard = std::make_unique<singbook::WindowCloseGuard>(
+      [&](singbook::WindowCloseGuard::Completion complete) {
+        reply = std::move(complete);
+      },
+      [&]() { closes++; return true; });
+  guard->RequestClose();
+  guard.reset();
+  reply(true);
+  Check(closes == 1, "late replies cannot close a destroyed window");
+
+  int posts = 0;
+  guard = std::make_unique<singbook::WindowCloseGuard>(
+      [](singbook::WindowCloseGuard::Completion complete) { complete(true); },
+      [&]() { return ++posts > 1; });
+  guard->RequestClose();
+  guard->RequestClose();
+  guard->RequestClose();
+  Check(posts == 2, "failed close dispatch can be retried; success is one-shot");
 }
 
 size_t Offset(const std::string& data, const char* field) {
@@ -111,6 +156,7 @@ void CheckClipboard() {
 }  // namespace
 
 int main(int argc, char** argv) {
+  CheckWindowClose();
   const std::string unicode = "\xD0\x91\xD1\x8A\xD0\xBB\xD0\xB3\xD0\xB0\xD1\x80\xD0\xB8\xD1\x8F \xF0\x9F\x8E\xB5";
   CheckHtml("<p>" + unicode + "</p>", "<p>" + unicode + "</p>");
   CheckHtml("<!doctype html><html><head><style>p{color:blue}</style></head>"
@@ -147,6 +193,6 @@ int main(int argc, char** argv) {
     else if (std::string(argv[index]) == "--clipboard") CheckClipboard();
     else Check(false, "unknown native test option");
   }
-  if (failures == 0) std::cout << "All Windows clipboard and credential checks passed.\n";
+  if (failures == 0) std::cout << "All Windows close, clipboard and credential checks passed.\n";
   return failures == 0 ? 0 : 1;
 }

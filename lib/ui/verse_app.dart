@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui' show AppExitResponse;
 
 import 'package:flutter/cupertino.dart' show CupertinoLocalizations;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -367,6 +368,10 @@ class _VerseAppShellState extends State<VerseAppShell>
   Timer? _exitBackTimer;
   bool _exitBackArmed = false;
   Future<AppExitResponse>? _exitRequest;
+  static const _windowCloseChannel = MethodChannel(
+    'org.freevia.singbook/window_close',
+  );
+  bool _handlesWindowsClose = false;
 
   /// The account-change dialog was shown for the current `account_changed`
   /// stop; cleared when the stop is resolved so it can appear again.
@@ -376,6 +381,16 @@ class _VerseAppShellState extends State<VerseAppShell>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _handlesWindowsClose =
+        !kIsWeb && defaultTargetPlatform == TargetPlatform.windows;
+    if (_handlesWindowsClose) {
+      _windowCloseChannel.setMethodCallHandler((call) async {
+        if (call.method != 'requestClose') throw MissingPluginException();
+        if (!mounted) return false;
+        return await WidgetsBinding.instance.handleRequestAppExit() ==
+            AppExitResponse.exit;
+      });
+    }
     _subscribe();
   }
 
@@ -411,6 +426,7 @@ class _VerseAppShellState extends State<VerseAppShell>
 
   @override
   void dispose() {
+    if (_handlesWindowsClose) _windowCloseChannel.setMethodCallHandler(null);
     WidgetsBinding.instance.removeObserver(this);
     _notices?.cancel();
     _exitBackTimer?.cancel();
