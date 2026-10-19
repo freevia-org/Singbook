@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' show AppExitResponse;
 
 import 'package:flutter/cupertino.dart' show CupertinoLocalizations;
 import 'package:flutter/material.dart';
@@ -363,6 +364,7 @@ class _VerseAppShellState extends State<VerseAppShell>
   StreamSubscription<UiNotice>? _notices;
   Timer? _exitBackTimer;
   bool _exitBackArmed = false;
+  Future<AppExitResponse>? _exitRequest;
 
   /// The account-change dialog was shown for the current `account_changed`
   /// stop; cleared when the stop is resolved so it can appear again.
@@ -378,6 +380,20 @@ class _VerseAppShellState extends State<VerseAppShell>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) widget.controller.onAppResumed();
+  }
+
+  @override
+  Future<AppExitResponse> didRequestAppExit() => _exitRequest ??=
+      _confirmWindowExit().whenComplete(() => _exitRequest = null);
+
+  Future<AppExitResponse> _confirmWindowExit() async {
+    if (widget.controller.state.route != VerseRoute.editor ||
+        !widget.controller.state.editorDirty) {
+      return AppExitResponse.exit;
+    }
+    if (!mounted || _backInFlight) return AppExitResponse.cancel;
+    final discard = await confirmDiscardEdits(context);
+    return mounted && discard ? AppExitResponse.exit : AppExitResponse.cancel;
   }
 
   @override
@@ -427,7 +443,7 @@ class _VerseAppShellState extends State<VerseAppShell>
 
   /// Goes back, first asking whether unsaved editor changes may be discarded.
   Future<void> _requestBack() async {
-    if (_backInFlight) return;
+    if (_backInFlight || _exitRequest != null) return;
     _backInFlight = true;
     try {
       await _goBack();
