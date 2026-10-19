@@ -33,6 +33,63 @@ void main() {
     await repository.close();
   });
 
+  test('setlist entry durations preserve validated saved metadata', () async {
+    final sources = [
+      SongDocument(
+        id: 'valid',
+        title: 'Valid',
+        artist: 'Fixture',
+        body: '[C]Words',
+        metadata: {'durationSeconds': 183},
+      ),
+      SongDocument(
+        id: 'zero',
+        title: 'Unknown',
+        artist: 'Fixture',
+        body: 'Words',
+        metadata: {'durationSeconds': 0},
+      ),
+      SongDocument(
+        id: 'text',
+        title: 'Text metadata',
+        artist: 'Fixture',
+        body: 'Words',
+        metadata: {'durationSeconds': 'unknown'},
+      ),
+    ];
+    final persistedMetadata = <String, JsonMap>{};
+    for (final song in sources) {
+      await app.saveSong(song);
+      persistedMetadata[song.id] = (await repository.getSong(
+        song.id,
+      ))!.metadata;
+    }
+    await app.saveSetlist(
+      SetlistDocument(
+        id: 'durations',
+        name: 'Durations',
+        entries: const [
+          SetlistEntry(id: 'one', songId: 'valid'),
+          SetlistEntry(id: 'two', songId: 'valid', overrides: {'key': 'Dm'}),
+          SetlistEntry(id: 'three', songId: 'zero'),
+          SetlistEntry(id: 'four', songId: 'text'),
+        ],
+      ),
+    );
+    await ui.openSetlist('durations');
+    expect(
+      ui.state.activeSetlist!.entries.map((entry) => entry.durationSeconds),
+      [183, 183, null, null],
+    );
+    expect(ui.state.activeSetlist!.entries[1].keyOverride, 'Dm');
+    for (final song in sources) {
+      expect(
+        (await repository.getSong(song.id))!.metadata,
+        persistedMetadata[song.id],
+      );
+    }
+  });
+
   test(
     'saved keyless chart recovers source key for reader and setlist without a rewrite',
     () async {

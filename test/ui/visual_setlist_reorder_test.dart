@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/application/file_actions.dart';
 import 'package:singbook/data/library_repository.dart';
@@ -10,8 +11,105 @@ import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/ui/app_controller_adapter.dart';
 import 'package:singbook/ui/theme/verse_theme.dart';
 import 'package:singbook/ui/verse_app.dart';
+import 'package:singbook/ui/verse_ui_state.dart';
 
 void main() {
+  sqfliteFfiInit();
+  for (final failSave in [false, true]) {
+    testWidgets('song edit from setlist protects draft, failSave=$failSave', (
+      tester,
+    ) async {
+      late LibraryRepository repository;
+      late AppController app;
+      await tester.runAsync(() async {
+        repository = await LibraryRepository.open(
+          path: inMemoryDatabasePath,
+          factory: databaseFactoryFfi,
+        );
+        await repository.saveSong(
+          SongDocument(
+            id: 'song',
+            title: 'Shared song',
+            artist: 'Fixture',
+            body: '[C]Words',
+          ),
+        );
+        await repository.saveSetlist(
+          SetlistDocument(
+            id: 'set',
+            name: 'Reorder test',
+            entries: const [SetlistEntry(id: 'entry-one', songId: 'song')],
+          ),
+        );
+        app = AppController(repository: repository);
+        await app.initialize();
+      });
+      final controller = AppControllerAdapter(app);
+      await controller.editSetlist('set');
+      await _pumpShell(tester, controller);
+      await tester.enterText(find.byType(TextField).first, 'Typed title');
+      await tester.enterText(find.byType(TextField).last, 'Typed notes');
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pumpAndSettle();
+      if (failSave) {
+        await tester.runAsync(
+          () => repository.saveSetlist(
+            SetlistDocument(
+              id: 'set',
+              name: 'External update',
+              entries: const [SetlistEntry(id: 'entry-one', songId: 'song')],
+            ),
+          ),
+        );
+      }
+      final menu = find.descendant(
+        of: find.byKey(const ValueKey('entry-one')),
+        matching: find.byType(PopupMenuButton<String>),
+      );
+      await tester.tap(menu);
+      await tester.pumpAndSettle();
+      final editAction = find.byWidgetPredicate(
+        (widget) => widget is PopupMenuItem<String> && widget.value == 'edit',
+      );
+      expect(editAction, findsOneWidget);
+      Navigator.of(tester.element(editAction)).pop();
+      await tester.pumpAndSettle();
+      await tester.runAsync(() async {
+        // Invoke the exposed menu action in the real async zone so the FFI
+        // repository work is not held by the widget test's fake clock.
+        tester.widget<PopupMenuButton<String>>(menu).onSelected!('edit');
+        for (var attempt = 0; attempt < 100; attempt++) {
+          await Future<void>.delayed(const Duration(milliseconds: 10));
+          if (controller.state.route == VerseRoute.editor ||
+              app.setlists.length > 1) {
+            return;
+          }
+        }
+        throw StateError('Setlist draft save did not finish');
+      });
+      await tester.pumpAndSettle();
+      if (failSave) {
+        expect(controller.state.route, VerseRoute.setlistDetail);
+        expect(
+          app.setlists.singleWhere((set) => set.id == 'set').name,
+          'External update',
+        );
+        expect(
+          app.setlists.singleWhere((set) => set.id != 'set').notes,
+          'Typed notes',
+        );
+        expect(find.text('Typed title'), findsOneWidget);
+        expect(find.text('Typed notes'), findsOneWidget);
+      } else {
+        expect(controller.state.route, VerseRoute.editor);
+        expect(app.setlists.single.name, 'Typed title');
+        expect(app.setlists.single.notes, 'Typed notes');
+      }
+      await _dispose(tester, controller, app);
+      await tester.runAsync(repository.close);
+    });
+  }
+
   for (final scale in [1.3, 2.0]) {
     testWidgets('setlist row fits 360dp viewport at text scale $scale', (
       tester,
@@ -24,21 +122,18 @@ void main() {
 
       for (final id in ['entry-one', 'entry-two']) {
         final row = find.byKey(ValueKey(id));
+        expect(tester.widget(row), isA<ReorderableDelayedDragStartListener>());
         final rect = tester.getRect(row);
         expect(rect.left, greaterThanOrEqualTo(0));
         expect(rect.right, lessThanOrEqualTo(360));
-        final handle = find.descendant(
-          of: row,
-          matching: find.byType(ReorderableDragStartListener),
-        );
-        expect(tester.getRect(handle).width, greaterThanOrEqualTo(48));
+        expect(tester.getRect(row).width, greaterThan(0));
       }
       expect(tester.takeException(), isNull);
       await _dispose(tester, controller, app);
     });
   }
 
-  testWidgets('setlist drag handle reorders repeated song entries', (
+  testWidgets('setlist row drag reorders repeated song entries', (
     tester,
   ) async {
     final fixture = _SetlistFixture();
@@ -47,19 +142,19 @@ void main() {
     await controller.openSetlist(fixture.setlist.id);
     await _pumpShell(tester, controller);
 
-    final firstHandle = find.descendant(
-      of: find.byKey(const ValueKey('entry-one')),
-      matching: find.byType(ReorderableDragStartListener),
+    final firstHandle = find.byKey(const ValueKey('entry-one'));
+    expect(
+      tester.widget(firstHandle),
+      isA<ReorderableDelayedDragStartListener>(),
     );
-    expect(firstHandle, findsOneWidget);
     final firstCenter = tester.getCenter(firstHandle);
+    expect(tester.getRect(firstHandle).width, greaterThan(48));
     final lastCenter = tester.getCenter(
       find.byKey(const ValueKey('entry-two')),
     );
-    expect(tester.getRect(firstHandle).width, greaterThanOrEqualTo(48));
 
     final gesture = await tester.startGesture(firstCenter);
-    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
     await gesture.moveBy(const Offset(0, 30));
     await tester.pump(const Duration(milliseconds: 100));
     final start = firstCenter + const Offset(0, 30);
@@ -100,11 +195,11 @@ void main() {
     final downActionId = actionIds.singleWhere(
       (id) => CustomSemanticsAction.getAction(id)?.label == 'Move down',
     );
-    tester.renderObject(row).owner!.semanticsOwner!.performAction(
-      node.id,
-      SemanticsAction.customAction,
-      downActionId,
-    );
+    tester
+        .renderObject(row)
+        .owner!
+        .semanticsOwner!
+        .performAction(node.id, SemanticsAction.customAction, downActionId);
     await tester.pumpAndSettle();
 
     expect(fixture.repository.savedOrders, hasLength(1));
