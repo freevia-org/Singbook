@@ -8,6 +8,9 @@ A local-first Flutter songbook for Android and iOS. Search Genius, compare lyric
 
 ## Develop and test
 
+Windows desktop preview setup and current platform gaps are documented in the
+[Windows desktop guide](docs/windows-desktop.md).
+
 For macOS setup, simulator builds, and signing steps, see [iOS build preparation](docs/ios-build.md). Production listing copy, screenshot inventory, offline validation and the remaining publishing decisions are covered in the [App Store handoff](docs/ios-testflight.md#app-store-publishing-handoff--2026-10-19).
 
 Use Flutter 3.44.8 / Dart 3.12, JDK 21 and Android SDK 36. The app ID is `org.freevia.singbook`. Android 24+ is supported. iOS builds require macOS/Xcode and target iOS 15+. Simulator debug and unsigned device release builds have been compiled with Flutter 3.44.8 and Xcode 27.1; iOS sign-in, sync, and localization still need device validation. See the [iOS build guide](docs/ios-build.md) for setup and validation details. The iOS project is prepared for Google sign-in (URL scheme and `GIDClientID` from `ios/Flutter/Secrets.xcconfig`, see [Google Cloud / OAuth setup](docs/google-oauth-setup.md)) and lists the 34 languages in `CFBundleLocalizations`; Runner now bundles a required-reason privacy manifest; a signing team and owner confirmation of the final release privacy answers are still needed. See [TestFlight preparation](docs/ios-testflight.md), the [App Privacy assessment](docs/ios-app-privacy.md), [submission details](docs/testflight-submission.md), and [iOS E2E evidence](docs/ios-e2e.md).
