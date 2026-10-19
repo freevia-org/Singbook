@@ -77,8 +77,9 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Build Windows app
-        run: flutter build windows --debug
+      - name: Build and package Windows release
+        shell: pwsh
+        run: ./scripts/build-windows.ps1 -AllowMissingDefines
 
       - name: Check native clipboard and isolated credential storage
         shell: pwsh
@@ -101,6 +102,17 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-validation-evidence
-          path: artifacts/windows-parity/
+          path: |
+            artifacts/windows-parity/
+            artifacts/windows/**/build.log
+            artifacts/windows/**/manifest.json
           if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Preserve Windows release bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-release-bundle
+          path: artifacts/windows/
+          if-no-files-found: error
           retention-days: 7

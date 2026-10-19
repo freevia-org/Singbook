@@ -72,6 +72,38 @@ endif()
 set(INSTALL_BUNDLE_DATA_DIR "${CMAKE_INSTALL_PREFIX}/data")
 set(INSTALL_BUNDLE_LIB_DIR "${CMAKE_INSTALL_PREFIX}")
 
+# A portable release must not depend on Visual Studio or a machine-wide VC++
+# redistributable installation. Discover the toolchain's redistributable CRT,
+# then install it ourselves only for the distributable configurations.
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP TRUE)
+set(CMAKE_INSTALL_DEBUG_LIBRARIES FALSE)
+set(CMAKE_INSTALL_DEBUG_LIBRARIES_ONLY FALSE)
+include(InstallRequiredSystemLibraries)
+set(SINGBOOK_CRT_NAMES)
+foreach(runtime ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS})
+  get_filename_component(runtime_name "${runtime}" NAME)
+  string(TOLOWER "${runtime_name}" runtime_name)
+  list(APPEND SINGBOOK_CRT_NAMES "${runtime_name}")
+endforeach()
+foreach(required_crt msvcp140.dll vcruntime140.dll vcruntime140_1.dll)
+  if(NOT "${required_crt}" IN_LIST SINGBOOK_CRT_NAMES)
+    message(FATAL_ERROR
+      "Missing redistributable ${required_crt}. Install the Visual Studio C++ "
+      "Redistributable SDK component before building Singbook.")
+  endif()
+endforeach()
+install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+  DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
+  CONFIGURATIONS Release Profile
+  COMPONENT Runtime)
+
+# Packaging validates the actual selected plugin/native dependency list rather
+# than assuming every Dart plugin has a DLL. Generator expressions resolve the
+# target paths separately for each build configuration.
+file(GENERATE
+  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/singbook-bundled-libraries-$<CONFIG>.txt"
+  CONTENT "$<JOIN:${PLUGIN_BUNDLED_LIBRARIES},\n>\n$<$<OR:$<CONFIG:Release>,$<CONFIG:Profile>>:$<JOIN:${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS},\n>>\n")
+
 install(TARGETS ${BINARY_NAME} RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}"
   COMPONENT Runtime)
 

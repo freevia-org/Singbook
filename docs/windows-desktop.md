@@ -28,12 +28,18 @@ For a traceable portable bundle, commit the source and run
 `config/local.defines.json`; `-AllowMissingDefines` explicitly permits an
 offline preview. `-Debug` selects a debug bundle. Every run writes a unique
 directory under `artifacts/windows/` with the build log, ZIP, source commit/tree
-and SHA-256 manifest. Keep the entire extracted `Singbook` directory together.
+and SHA-256 manifest. Release builds include the compiler's redistributable
+Microsoft C++ runtime DLLs next to the executable. Packaging checks the copied
+engine, AOT, assets, native SQLite, PDFium, plugin DLLs and release runtimes before
+creating the ZIP. Debug bundles are for local development and require developer
+runtimes. Keep the entire extracted `Singbook` directory together.
 Packaging alone does not establish clean-machine runtime acceptance.
 
 The executable is under `build/windows/x64/runner/Debug/` with Flutter's
 runtime DLLs and `data/` directory beside it. The Windows CI job compiles this
-debug bundle on `windows-latest`.
+release bundle on `windows-latest`. Its required runtime/asset manifest and ZIP
+are preserved as a workflow artifact. Source-only packaging changes still need a
+successful release build and extracted-bundle acceptance.
 
 ## Current scope
 
@@ -44,8 +50,9 @@ for formatted copy, and current-user Credential Manager storage for OAuth.
 The editor participates in Flutter's cancelable window-exit request so closing
 a changed draft can be canceled.
 
-These source additions need the focused checks and native acceptance below;
-they are not yet a claim of full parity.
+Recorded automated checks and remaining native acceptance are listed below.
+These additions are not yet a claim of full parity. Use the repeatable workflow
+in [Windows acceptance](windows-acceptance.md) for the native run.
 
 ## Google Drive configuration
 
