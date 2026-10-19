@@ -29,16 +29,16 @@ void main() {
         expect(rect.right, lessThanOrEqualTo(360));
         final handle = find.descendant(
           of: row,
-          matching: find.byType(ReorderableDragStartListener),
+          matching: find.byType(ReorderableDelayedDragStartListener),
         );
-        expect(tester.getRect(handle).width, greaterThanOrEqualTo(48));
+        expect(tester.getRect(handle).width, greaterThan(0));
       }
       expect(tester.takeException(), isNull);
       await _dispose(tester, controller, app);
     });
   }
 
-  testWidgets('setlist drag handle reorders repeated song entries', (
+  testWidgets('setlist row drag reorders repeated song entries', (
     tester,
   ) async {
     final fixture = _SetlistFixture();
@@ -49,14 +49,14 @@ void main() {
 
     final firstHandle = find.descendant(
       of: find.byKey(const ValueKey('entry-one')),
-      matching: find.byType(ReorderableDragStartListener),
+      matching: find.byType(ReorderableDelayedDragStartListener),
     );
     expect(firstHandle, findsOneWidget);
     final firstCenter = tester.getCenter(firstHandle);
+    expect(tester.getRect(firstHandle).width, greaterThan(48));
     final lastCenter = tester.getCenter(
       find.byKey(const ValueKey('entry-two')),
     );
-    expect(tester.getRect(firstHandle).width, greaterThanOrEqualTo(48));
 
     final gesture = await tester.startGesture(firstCenter);
     await tester.pump();
@@ -100,11 +100,11 @@ void main() {
     final downActionId = actionIds.singleWhere(
       (id) => CustomSemanticsAction.getAction(id)?.label == 'Move down',
     );
-    tester.renderObject(row).owner!.semanticsOwner!.performAction(
-      node.id,
-      SemanticsAction.customAction,
-      downActionId,
-    );
+    tester
+        .renderObject(row)
+        .owner!
+        .semanticsOwner!
+        .performAction(node.id, SemanticsAction.customAction, downActionId);
     await tester.pumpAndSettle();
 
     expect(fixture.repository.savedOrders, hasLength(1));

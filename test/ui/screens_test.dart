@@ -362,10 +362,7 @@ void main() {
       final l10n = l10nOf(tester);
 
       expect(find.text(l10n.setlistSongMissing), findsOneWidget);
-      await tester.tap(
-        find.byTooltip(l10n.setlistRemoveSong(l10n.setlistSongMissing)),
-      );
-      await tester.pumpAndSettle();
+      await _dragSetlistRowToDeleteBasket(tester, 'e2');
       expect(c.calls, ['removeSetlistEntry(set, e2, null, null)']);
       final undoLabel = l10n.actionUndo;
       expect(find.text(undoLabel), findsOneWidget);
@@ -384,8 +381,9 @@ void main() {
 
       await tester.enterText(find.byType(TextField).first, 'Typed name');
       await tester.enterText(find.byType(TextField).last, 'Typed notes');
-      await tester.tap(find.byTooltip(l10n.setlistRemoveSong('Alpha')));
-      await tester.pump();
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pumpAndSettle();
+      await _dragSetlistRowToDeleteBasket(tester, 'e1');
       expect(c.calls, ['removeSetlistEntry(set, e1, Typed name, Typed notes)']);
 
       // The fields are still on screen: removal did not leave edit mode.
@@ -786,6 +784,28 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   });
+}
+
+Future<void> _dragSetlistRowToDeleteBasket(
+  WidgetTester tester,
+  String entryId,
+) async {
+  final row = find.byKey(ValueKey(entryId));
+  final gesture = await tester.startGesture(tester.getCenter(row));
+  await tester.pump(const Duration(milliseconds: 600));
+  await tester.pump();
+
+  final basket = find.byKey(const ValueKey('setlist-delete-basket'));
+  expect(basket, findsOneWidget);
+  final target = tester.getCenter(basket);
+  const steps = 8;
+  final start = tester.getCenter(row);
+  for (var step = 1; step <= steps; step++) {
+    await gesture.moveTo(start + (target - start) * (step / steps));
+    await tester.pump(const Duration(milliseconds: 16));
+  }
+  await gesture.up();
+  await tester.pumpAndSettle();
 }
 
 class _UndoSetlistController extends FakeUiController {
