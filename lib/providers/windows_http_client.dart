@@ -251,7 +251,7 @@ _NativeResponse _oneRequest(
         nullptr,
         nullptr,
         nullptr,
-        url.scheme == 'https' ? 0x80000000 : 0,
+        url.scheme == 'https' ? 0x00800000 : 0, // WINHTTP_FLAG_SECURE.
       );
       if (request == nullptr) check(0);
       // Explicitly disable native redirect/cookie/authentication automation.
@@ -479,7 +479,9 @@ class _WinHttp {
         Int32 Function(Pointer<Void>),
         int Function(Pointer<Void>)
       >('WinHttpCloseHandle');
-  late final lastError = DynamicLibrary.open(
+  // Resolve this before any WinHTTP call can fail. Looking up GetLastError
+  // lazily on the first failure can itself overwrite that thread's error code.
+  final lastError = DynamicLibrary.open(
     'kernel32.dll',
   ).lookupFunction<Uint32 Function(), int Function()>('GetLastError');
 }

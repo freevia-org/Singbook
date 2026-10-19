@@ -194,6 +194,52 @@ void main() {
       },
     );
 
+    test('HTTPS begins with TLS rather than a plaintext request', () async {
+      // A raw loopback socket needs no certificate or trust-store changes.
+      // Closing after ClientHello deliberately leaves TLS unestablished.
+      final listener = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
+      final hello = Completer<List<int>>();
+      Socket? connection;
+      final subscription = listener.listen((socket) {
+        connection = socket;
+        final prefix = <int>[];
+        socket.listen(
+          (bytes) {
+            prefix.addAll(bytes);
+            if (prefix.length >= 3) {
+              if (!hello.isCompleted) hello.complete(prefix.take(3).toList());
+              socket.destroy();
+            }
+          },
+          onError: (Object error) {
+            if (!hello.isCompleted) hello.completeError(error);
+          },
+          onDone: () {
+            if (!hello.isCompleted) {
+              hello.completeError(StateError('No TLS record received'));
+            }
+          },
+        );
+      });
+      try {
+        final failedHandshake = expectLater(
+          client.get(
+            Uri(scheme: 'https', host: '127.0.0.1', port: listener.port),
+          ),
+          throwsA(isA<http.ClientException>()),
+        );
+        final record = await hello.future.timeout(const Duration(seconds: 8));
+        // TLS handshake record and TLS major version, never an HTTP method.
+        expect(record.take(2), [0x16, 0x03]);
+        await failedHandshake.timeout(const Duration(seconds: 20));
+      } finally {
+        client.close();
+        connection?.destroy();
+        await subscription.cancel();
+        await listener.close();
+      }
+    });
+
     test(
       'connection failures become ClientException without leaking URL secrets',
       () async {
@@ -208,7 +254,10 @@ void main() {
             isA<http.ClientException>().having(
               (e) => e.message,
               'safe diagnostics',
-              isNot(contains('synthetic')),
+              allOf(
+                isNot(contains('synthetic')),
+                matches(RegExp(r'^Windows HTTP error [1-9][0-9]*$')),
+              ),
             ),
           ),
         );
