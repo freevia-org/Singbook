@@ -38,6 +38,7 @@ void main() {
           SetlistDocument(
             id: 'set',
             name: 'Reorder test',
+            notes: 'Stored private note',
             entries: const [SetlistEntry(id: 'entry-one', songId: 'song')],
           ),
         );
@@ -48,7 +49,7 @@ void main() {
       await controller.editSetlist('set');
       await _pumpShell(tester, controller);
       await tester.enterText(find.byType(TextField).first, 'Typed title');
-      await tester.enterText(find.byType(TextField).last, 'Typed notes');
+      expect(find.byType(TextField), findsOneWidget);
       FocusManager.instance.primaryFocus?.unfocus();
       await tester.pumpAndSettle();
       if (failSave) {
@@ -96,14 +97,14 @@ void main() {
         );
         expect(
           app.setlists.singleWhere((set) => set.id != 'set').notes,
-          'Typed notes',
+          'Stored private note',
         );
         expect(find.text('Typed title'), findsOneWidget);
-        expect(find.text('Typed notes'), findsOneWidget);
+        expect(find.text('Stored private note'), findsNothing);
       } else {
         expect(controller.state.route, VerseRoute.editor);
         expect(app.setlists.single.name, 'Typed title');
-        expect(app.setlists.single.notes, 'Typed notes');
+        expect(app.setlists.single.notes, 'Stored private note');
       }
       await _dispose(tester, controller, app);
       await tester.runAsync(repository.close);

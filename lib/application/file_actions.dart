@@ -709,7 +709,6 @@ String songPlainText(SongDocument song) {
 
 String setlistPlainText(SetlistDocument setlist, List<SongDocument> songs) {
   final out = StringBuffer(setlist.name);
-  if (setlist.notes.trim().isNotEmpty) out.write('\n${setlist.notes.trim()}');
   final ordered = _songsInSetlist(setlist, songs);
   for (var index = 0; index < ordered.length; index++) {
     final song = ordered[index];
@@ -776,9 +775,6 @@ String setlistRichHtml(SetlistDocument setlist, List<SongDocument> songs) {
   final out = StringBuffer(
     '<!doctype html><html><body><article><h1>${_htmlEscape(setlist.name)}</h1>',
   );
-  if (setlist.notes.trim().isNotEmpty) {
-    out.write('<p class="notes">${_htmlEscape(setlist.notes.trim())}</p>');
-  }
   for (var index = 0; index < ordered.length; index++) {
     final song = ordered[index];
     out.write(
@@ -1813,9 +1809,7 @@ Future<Uint8List> createSongPdf(
 }) async {
   final needsCjk =
       songs.any(_hasCjk) ||
-      (setlist != null &&
-          (_cjkPattern.hasMatch(setlist.name) ||
-              _cjkPattern.hasMatch(setlist.notes)));
+      (setlist != null && _cjkPattern.hasMatch(setlist.name));
   final fonts = _PdfFontBytes(
     await _fontAsset(_regularAsset),
     await _fontAsset(_boldAsset),
@@ -1907,14 +1901,6 @@ Future<Uint8List> _buildSongPdf(_PdfJob job) async {
                 color: navy,
               ),
             ),
-            if (setlist.notes.isNotEmpty)
-              pw.Padding(
-                padding: const pw.EdgeInsets.only(top: 2, bottom: 4),
-                child: pw.Text(
-                  clean(setlist.notes),
-                  style: fonts.sans(fontSize: 12, color: muted),
-                ),
-              ),
             for (var i = 0; i < songs.length; i++)
               pw.Padding(
                 padding: const pw.EdgeInsets.symmetric(vertical: 8),
