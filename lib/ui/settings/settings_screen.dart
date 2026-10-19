@@ -203,11 +203,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         onTap: () => _openSection(section),
       );
 
-  Widget _menuArrow(BuildContext context) => Icon(
-    Directionality.of(context) == TextDirection.rtl
-        ? Icons.chevron_left_rounded
-        : Icons.chevron_right_rounded,
-  );
+  // This Material icon already mirrors automatically in RTL locales.
+  Widget _menuArrow(BuildContext context) =>
+      const Icon(Icons.chevron_right_rounded);
 
   void _showAbout(BuildContext context, AppLocalizations l10n) {
     showDialog<void>(
