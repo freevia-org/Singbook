@@ -238,8 +238,8 @@ void main() {
       1,
     );
     expect(find.text(l10n.homeItemsShownCount(2)), findsNothing);
-    // The view title remains in the selector, with no duplicate list heading.
-    expect(find.text(l10n.homeFavorites), findsOneWidget);
+    // The selector includes the count, with no duplicate standalone heading.
+    expect(find.text(l10n.homeFavorites), findsNothing);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
   });
@@ -625,14 +625,15 @@ void main() {
             for (final mode in HomeListMode.values) {
               final segment = find.byKey(ValueKey('home-mode-${mode.name}'));
               expect(segment, findsOneWidget, reason: '$locale/$scale/$size');
+              final title = switch (mode) {
+                HomeListMode.recent => l10n.searchRecentTab,
+                HomeListMode.library => l10n.songsLibraryView,
+                HomeListMode.favorites => l10n.searchFavoritesTab,
+                HomeListMode.online => l10n.searchOnlineTab,
+              };
               final label = find.descendant(
                 of: segment,
-                matching: find.text(switch (mode) {
-                  HomeListMode.recent => l10n.searchRecentTab,
-                  HomeListMode.library => l10n.songsLibraryView,
-                  HomeListMode.favorites => l10n.searchFavoritesTab,
-                  HomeListMode.online => l10n.searchOnlineTab,
-                }),
+                matching: find.text('$title(0)'),
               );
               expect(label, findsOneWidget);
               final paragraph = tester.renderObject<RenderParagraph>(label);
@@ -736,7 +737,11 @@ void main() {
       await tester.pumpAndSettle();
       final rect = tester.getRect(segment);
       expect(rect.left, greaterThanOrEqualTo(selectorRect.left));
-      expect(rect.right, lessThanOrEqualTo(selectorRect.right));
+      expect(
+        rect.right,
+        lessThanOrEqualTo(selectorRect.right),
+        reason: '${mode.name}: $rect inside $selectorRect',
+      );
       final label = find
           .descendant(of: segment, matching: find.byType(Text))
           .first;
@@ -1006,11 +1011,7 @@ void _expectHomeModeCount(
   final segment = find.byKey(ValueKey('home-mode-${mode.name}'));
   expect(segment, findsOneWidget);
   expect(
-    find.descendant(of: segment, matching: find.text(title)),
-    findsOneWidget,
-  );
-  expect(
-    find.descendant(of: segment, matching: find.text('$count')),
+    find.descendant(of: segment, matching: find.text('$title($count)')),
     findsOneWidget,
   );
 }
@@ -1024,15 +1025,20 @@ Future<void> _pumpHome(
   bool settle = true,
 }) async {
   final homeController = controller ?? _VisualHomeController();
+  final theme = verseTheme(
+    brightness: Brightness.light,
+    palette: 'navy',
+    fontFamily: fontFamily,
+  );
   await tester.pumpWidget(
     MaterialApp(
       locale: locale,
       localizationsDelegates: singbookLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      theme: verseTheme(
-        brightness: Brightness.light,
-        palette: 'navy',
-        fontFamily: fontFamily,
+      // verseTheme supplies an explicit text theme; load the fixture family
+      // into that theme too so large-text geometry uses the real font.
+      theme: theme.copyWith(
+        textTheme: theme.textTheme.apply(fontFamily: fontFamily),
       ),
       builder: (context, child) => MediaQuery(
         data: MediaQuery.of(
