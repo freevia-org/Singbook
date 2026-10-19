@@ -127,8 +127,9 @@ class DesktopOAuthFlow {
         'prompt': 'consent select_account',
       });
       final launchAndResponse = () async {
-        if (!await _openBrowser(url))
+        if (!await _openBrowser(url)) {
           throw const SyncException('sign_in_failed');
+        }
         return await response;
       }();
       return await Future.any([response, launchAndResponse]);

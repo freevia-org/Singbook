@@ -190,6 +190,8 @@ void main() {
     late DateTime now;
     var refreshCount = 0;
     var invalidGrant = false;
+    var invalidClient = false;
+    var malformedRefresh = false;
     var deniedScope = false;
     Completer<void>? refreshWait;
     const clientId = 'desktop.apps.googleusercontent.com';
@@ -198,7 +200,7 @@ void main() {
       vault = _MemoryCredentials();
       now = DateTime.utc(2026, 1, 1);
       refreshCount = 0;
-      invalidGrant = deniedScope = false;
+      invalidGrant = invalidClient = malformedRefresh = deniedScope = false;
       refreshWait = null;
       client = MockClient((request) async {
         expect(request.url.scheme, 'https');
@@ -222,6 +224,10 @@ void main() {
           if (invalidGrant) {
             return http.Response('{"error":"invalid_grant"}', 400);
           }
+          if (invalidClient) {
+            return http.Response('{"error":"invalid_client"}', 401);
+          }
+          if (malformedRefresh) return http.Response('{}', 200);
           expect(params['refresh_token'], 'refresh-token');
           return http.Response(
             jsonEncode({
@@ -336,6 +342,48 @@ void main() {
           throwsA(code('authorization_required')),
         );
         expect(vault.values, isEmpty);
+      },
+    );
+
+    test(
+      'client configuration failure preserves the saved grant for recovery',
+      () async {
+        await auth.connect();
+        final saved = Map.of(vault.values);
+        now = now.add(const Duration(hours: 2));
+        invalidClient = true;
+        await expectLater(
+          auth.refreshAccessToken(),
+          throwsA(code('not_configured')),
+        );
+        expect(auth.isConnected, isTrue);
+        expect(vault.values, saved);
+        final restarted = WindowsGoogleDriveAuth(
+          clientId: clientId,
+          credentials: vault,
+          client: client,
+          clock: () => now,
+        );
+        expect(await restarted.restore(), isFalse);
+        expect(vault.values, saved);
+        invalidClient = false;
+        expect(await restarted.restore(), isTrue);
+        expect(await restarted.accessToken(), 'renewed-access');
+        expect(restarted.accountId, 'account-id');
+      },
+    );
+
+    test(
+      'malformed token responses preserve credentials and recover on retry',
+      () async {
+        await auth.connect();
+        final saved = Map.of(vault.values);
+        malformedRefresh = true;
+        await expectLater(auth.refreshAccessToken(), throwsA(code('network')));
+        expect(vault.values, saved);
+        expect(auth.isConnected, isTrue);
+        malformedRefresh = false;
+        expect(await auth.refreshAccessToken(), 'renewed-access');
       },
     );
 

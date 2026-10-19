@@ -5,9 +5,14 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
+import '../providers/native_client.dart';
 import 'desktop_oauth_flow.dart';
 import 'google_auth.dart';
 import 'sync_protocol.dart';
+
+class _InvalidOAuthGrant extends SyncException {
+  const _InvalidOAuthGrant() : super('authorization_required');
+}
 
 /// Tokens and identity are stored together in the current Windows user's
 /// Credential Manager, separately from the portable library and its backups.
@@ -50,7 +55,7 @@ class WindowsGoogleDriveAuth
     DateTime Function()? clock,
   }) : _credentials = credentials ?? WindowsCredentialStore(),
        _flow = flow ?? DesktopOAuthFlow(),
-       _client = client ?? http.Client(),
+       _client = client ?? createNativeHttpClient(),
        _clock = clock ?? DateTime.now;
 
   final String clientId, clientSecret;
@@ -254,7 +259,7 @@ class WindowsGoogleDriveAuth
       _session = updated;
       return token;
     } on SyncException catch (error) {
-      if (error.code == 'authorization_required' && epoch == _epoch) {
+      if (error is _InvalidOAuthGrant && epoch == _epoch) {
         _session = null;
         await _write(null);
       }
@@ -277,9 +282,11 @@ class WindowsGoogleDriveAuth
         .timeout(const Duration(seconds: 30));
     if (response.statusCode != 200) {
       final error = jsonDecode(response.body) as Map<String, dynamic>;
-      if (error['error'] == 'invalid_grant' ||
-          error['error'] == 'invalid_client') {
-        throw const SyncException('authorization_required');
+      if (error['error'] == 'invalid_grant') {
+        throw const _InvalidOAuthGrant();
+      }
+      if (error['error'] == 'invalid_client') {
+        throw const SyncException('not_configured');
       }
       throw const SyncException('network');
     }
@@ -289,7 +296,7 @@ class WindowsGoogleDriveAuth
   String _accessToken(Map<String, dynamic> tokens) {
     final token = tokens['access_token'];
     if (token is! String || token.isEmpty || tokens['token_type'] != 'Bearer') {
-      throw const SyncException('authorization_required');
+      throw const SyncException('network');
     }
     return token;
   }
@@ -297,7 +304,7 @@ class WindowsGoogleDriveAuth
   int _expiry(Map<String, dynamic> tokens) {
     final seconds = tokens['expires_in'];
     if (seconds is! int || seconds <= 0 || seconds > 86400) {
-      throw const SyncException('authorization_required');
+      throw const SyncException('network');
     }
     return _clock().add(Duration(seconds: seconds)).millisecondsSinceEpoch;
   }
