@@ -301,3 +301,47 @@ uninstalling either dedicated QA app. Both normal apps reached their empty home 
 screenshots were reviewed. Debug simulator
 launch verification uses Flutter to start the debug runtime; a bare simctl
 launch initially showed only the launch screen.
+
+### Resumed native verification — 2026-10-19
+
+After the Mac was unlocked, the remaining native import and backup checks
+completed under the existing shared system load. These results resolve the
+native-workflow pending items above; earlier failed/interrupted evidence is
+retained rather than reclassified.
+
+- iPad Air 11: `ipad-native-resumed/` completed both app-workflow cases with
+  `All tests passed!`, exit 0 and eight valid native PNG checkpoints.
+- iPhone 17 Pro: `iphone-native-resumed/` passed the independent import case,
+  including repeat import. Its backup case failed because the expected restore
+  dialog was absent after a picker/orientation transition (`No element` at the
+  replacement-mode selector). The whole two-case run remains failed.
+- iPhone focused backup rerun: `iphone-backup-verified/` completed the backup
+  case with `All tests passed!`, exit 0 and six valid native PNG checkpoints.
+  Host-controlled rotation occurred before opening the portrait picker, and
+  the operator wait pumped Flutter frames while native results returned.
+
+On both devices, native Files saved original ChordPro and setlist fixtures;
+the app menus imported the song with its ID/body intact and the setlist with
+its notes, song link and key override. Reimporting the same setlist retained
+its observed stable ID and exactly two setlists (baseline plus imported).
+Backup export, preview cancellation, merge with restored preferences,
+replacement-confirmation cancellation, and confirmed replacement all have
+passing assertions. Merge retained the extra temporary song and restored dark
+theme; replacement removed that extra song while preserving the original
+song body and setlist ID. All libraries used disposable test databases.
+
+The sixteen checkpoints comprising the successful iPad cases, successful
+phone backup rerun and phone import case were visually reviewed in contact
+sheets, with the phone replacement confirmation also inspected at full size.
+No additional product defect was found in these native workflows. Native
+Files required a distinct backup name because earlier QA exports used the
+same date-based default name. Keyboard capture was returned to off.
+
+The test runner now accepts `--test-name 'exact test name'` to run a focused
+case while retaining the normal completion-marker and screenshot checks.
+Dart analysis of the modified workflow test, Python compilation of the runner,
+and whitespace checks passed. This follow-up changes test infrastructure and
+this report only. All temporary file/build/device reservations are released.
+Authenticated provider flows, physical-device/VoiceOver checks, printer output,
+nonlocal Files destinations and the previously recorded golden differences
+remain outside these results.

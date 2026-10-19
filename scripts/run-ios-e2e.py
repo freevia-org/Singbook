@@ -14,6 +14,7 @@ parser.add_argument("--device", required=True, help="Dedicated iOS simulator UUI
 parser.add_argument("--output", required=True, type=Path, help="New evidence directory")
 parser.add_argument("--flutter", default=shutil.which("flutter"))
 parser.add_argument("--defines", type=Path, help="Optional local build defines JSON")
+parser.add_argument("--test-name", help="Run only the named Flutter test (plain-name filter)")
 parser.add_argument("tests", nargs="*", help="Test paths; defaults to all iOS-compatible suites")
 args = parser.parse_args()
 if not args.flutter:
@@ -35,6 +36,8 @@ for test in tests:
     name = Path(test).stem
     command = [args.flutter, "test", test, "-d", args.device,
                "--no-uninstall", "--reporter", "expanded"]
+    if args.test_name:
+        command.extend(["--plain-name", args.test_name])
     if args.defines:
         command.append(f"--dart-define-from-file={args.defines}")
     started = time.monotonic()

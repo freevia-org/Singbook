@@ -462,7 +462,27 @@ class _OperatorAcknowledgement {
   }
 
   Future<void> wait(WidgetTester tester) async {
-    final acknowledged = await tester.runAsync(waitReal);
+    // Keep Flutter frames advancing while native Files returns its result.
+    // One long runAsync wait can leave the restore modal unrendered on a
+    // phone after an orientation transition.
+    final deadline = DateTime.now().add(const Duration(seconds: 600));
+    var acknowledged = false;
+    while (DateTime.now().isBefore(deadline)) {
+      final ready = await tester.runAsync(() async {
+        if (!await _acknowledgement.exists()) {
+          await Future<void>.delayed(const Duration(milliseconds: 250));
+          return false;
+        }
+        await _acknowledgement.delete();
+        return true;
+      });
+      await tester.pump(const Duration(milliseconds: 100));
+      if (ready == true) {
+        debugPrint('SINGBOOK_APP_UI_ACK:$_qaSession:$_stage');
+        acknowledged = true;
+        break;
+      }
+    }
     expect(
       acknowledged,
       isTrue,
