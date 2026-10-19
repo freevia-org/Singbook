@@ -59,6 +59,7 @@ app.*.map.json
 
 # iOS Google sign-in identifiers (public, but per build owner)
 /ios/Flutter/Secrets.xcconfig
+/ios/Flutter/Signing.xcconfig
 
 # Local PDF/print preview output
 /output/

@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as paths;
 import 'package:pdf/pdf.dart';
-import 'package:sqflite/sqflite.dart' show getDatabasesPath;
+import 'package:sqflite/sqflite.dart' show deleteDatabase, getDatabasesPath;
 import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/application/file_actions.dart';
 import 'package:singbook/data/library_repository.dart';
@@ -21,6 +21,7 @@ import 'package:singbook/ui/home/home_screen.dart';
 import 'package:singbook/ui/player/player_screen.dart';
 import 'package:singbook/ui/settings/settings_screen.dart';
 import 'package:singbook/ui/widgets/chord_lyrics_line.dart';
+import 'support/ios_screenshots.dart';
 
 const _catalogId = 'journey_catalog';
 const _skipScreenshots = bool.fromEnvironment('SINGBOOK_SKIP_SCREENSHOTS');
@@ -47,12 +48,27 @@ void main() {
         'singbook_journey_${DateTime.now().microsecondsSinceEpoch}.db',
       );
       final repository = await LibraryRepository.open(path: dbPath);
+      final controllers = <AppController>[];
+      addTearDown(() async {
+        try {
+          await tester.pumpWidget(const SizedBox.shrink());
+        } finally {
+          for (final controller in controllers) {
+            controller.dispose();
+          }
+          await tester.runAsync(() async {
+            await repository.close();
+            await deleteDatabase(dbPath);
+          });
+        }
+      });
       final fixture = _JourneyFixture();
       final providers = _journeyProviders(fixture);
       final app = AppController(
         repository: repository,
         discovery: SourceDiscoveryService(providers),
       );
+      controllers.add(app);
       await app.initialize();
       await app.setSetting('catalog', _catalogId);
 
@@ -207,14 +223,64 @@ void main() {
       expect(find.text(l10n.searchDiscoveryRetry), findsOneWidget);
       await _openSourceChecks(tester);
       expect(find.text(l10n.searchSourcesUnavailableCount(6)), findsOneWidget);
-      expect(find.text('Failed archive'), findsOneWidget);
-      expect(find.text(l10n.searchProviderFailed), findsOneWidget);
-      expect(find.text('Unavailable archive'), findsOneWidget);
-      expect(find.text(l10n.searchProviderUnavailable), findsNWidgets(5));
+      expect(
+        app.checks.values.where((check) => check.state == 'failed'),
+        hasLength(1),
+      );
+      expect(
+        app.checks.values.where((check) => check.state == 'unavailable'),
+        hasLength(5),
+      );
+      final sourceChecksScrollable = find
+          .descendant(
+            of: find.byKey(const ValueKey('source-checks-sheet')),
+            matching: find.byType(Scrollable),
+          )
+          .first;
+      final unavailableProvider = find.byKey(
+        const ValueKey('discovery-provider-journey_unavailable'),
+      );
+      await tester.scrollUntilVisible(
+        unavailableProvider,
+        120,
+        scrollable: sourceChecksScrollable,
+      );
+      expect(
+        find.descendant(
+          of: unavailableProvider,
+          matching: find.text('Unavailable archive'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: unavailableProvider,
+          matching: find.text(l10n.searchProviderUnavailable),
+        ),
+        findsOneWidget,
+      );
       final failedProvider = find.byKey(
         const ValueKey('discovery-provider-journey_failed'),
       );
-      await tester.ensureVisible(failedProvider);
+      await tester.scrollUntilVisible(
+        failedProvider,
+        120,
+        scrollable: sourceChecksScrollable,
+      );
+      expect(
+        find.descendant(
+          of: failedProvider,
+          matching: find.text('Failed archive'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: failedProvider,
+          matching: find.text(l10n.searchProviderFailed),
+        ),
+        findsOneWidget,
+      );
       await tester.tap(failedProvider);
       await tester.pumpAndSettle();
       final failedProviderDetails = find.byKey(
@@ -344,8 +410,15 @@ void main() {
         -120,
         scrollable: infoScrollable,
       );
-      await tester.tap(infoClose);
+      // The close tooltip can be laid out partly beyond the sheet's clipped
+      // viewport on iOS. Tap the visible barrier strip above the sheet, then
+      // prove it no longer obscures the comparison.
+      final screenSize =
+          tester.view.physicalSize / tester.view.devicePixelRatio;
+      expect(find.byType(ModalBarrier), findsWidgets);
+      await tester.tapAt(Offset(screenSize.width / 2, 8));
       await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('version-info-sheet')), findsNothing);
       expect(
         tester.view.viewInsets.bottom,
         0,
@@ -364,12 +437,27 @@ void main() {
       expect(tester.widget<ChoiceChip>(combinedChip).selected, isTrue);
       await _capture(binding, '16a_combined_sources_inline_preview');
       final pages = find.byKey(const ValueKey('version-preview-pages'));
-      final swipeDistance = tester.getSize(pages).width * .8;
-      await tester.drag(pages, Offset(-swipeDistance, 0));
+      final pageRect = tester.getRect(pages);
+      final viewport = Offset.zero & screenSize;
+      final visiblePageRect = pageRect.intersect(viewport);
+      expect(visiblePageRect.width, greaterThan(1));
+      expect(visiblePageRect.height, greaterThan(1));
+      final swipeStart = Offset(
+        visiblePageRect.left + visiblePageRect.width * .85,
+        visiblePageRect.top + visiblePageRect.height * .55,
+      );
+      final swipeDistance = visiblePageRect.width * .65;
+      await tester.dragFrom(swipeStart, Offset(-swipeDistance, 0));
       await tester.pumpAndSettle();
       expect(tester.widget<ChoiceChip>(combinedChip).selected, isFalse);
       await _capture(binding, '16b_swiped_provider_preview');
-      await tester.drag(pages, Offset(swipeDistance, 0));
+      await tester.dragFrom(
+        Offset(
+          visiblePageRect.left + visiblePageRect.width * .15,
+          swipeStart.dy,
+        ),
+        Offset(swipeDistance, 0),
+      );
       await tester.pumpAndSettle();
       expect(tester.widget<ChoiceChip>(combinedChip).selected, isTrue);
       final chordArchiveVersion = find.widgetWithText(
@@ -387,6 +475,13 @@ void main() {
       await tester.ensureVisible(openLyrics);
       await tester.tap(openLyrics);
       await tester.pumpAndSettle();
+      await _waitForState(
+        tester,
+        () =>
+            app.songs.any((song) => song.body.contains('Lanterns guard')) &&
+            find.byType(PlayerScreen).evaluate().isNotEmpty,
+        'selected lyrics to persist and open in the reader',
+      );
 
       // Reader and editor show real persisted content and controls.
       expect(
@@ -418,6 +513,10 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text(l10n.playerChordsNone));
       await tester.pumpAndSettle();
+      await _waitForState(tester, () {
+        final lines = tester.widgetList<ChordLyricsLine>(chordLines);
+        return lines.isNotEmpty && lines.every((line) => !line.showChords);
+      }, 'chord visibility to turn off');
       expect(
         tester
             .widgetList<ChordLyricsLine>(chordLines)
@@ -428,6 +527,10 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text(l10n.playerChordsNone));
       await tester.pumpAndSettle();
+      await _waitForState(tester, () {
+        final lines = tester.widgetList<ChordLyricsLine>(chordLines);
+        return lines.isNotEmpty && lines.every((line) => line.showChords);
+      }, 'chord visibility to turn on');
       expect(
         tester
             .widgetList<ChordLyricsLine>(chordLines)
@@ -462,6 +565,7 @@ void main() {
       );
       await tester.tap(_iconButtonWithTooltip('Save'));
       await tester.pumpAndSettle();
+      await _waitForSavedReader(tester, app);
       expect(tester.view.viewInsets.bottom, 0);
       expect(
         app.songs.single.body,
@@ -533,13 +637,30 @@ void main() {
       expect(app.songs, hasLength(1));
       await tester.tap(find.text(_title).first);
       await tester.pumpAndSettle();
+      await _waitForState(
+        tester,
+        () =>
+            find.byType(PlayerScreen).evaluate().isNotEmpty &&
+            find.textContaining(_savedLine).evaluate().isNotEmpty,
+        'saved song reader to open',
+      );
       expect(find.textContaining(_savedLine), findsOneWidget);
       await tester.tap(_iconButtonWithTooltip('Add to favorites'));
       await tester.pumpAndSettle();
+      await _waitForState(
+        tester,
+        () => app.songs.length == 1 && app.songs.single.favorite,
+        'song favorite to persist',
+      );
 
       // Return to the library after opening its reader, then check Home.
       await tester.tap(_iconButtonWithTooltip('Back'));
       await tester.pumpAndSettle();
+      await _waitForState(
+        tester,
+        () => app.recent.any((item) => item.openCount >= 2),
+        'repeated song open to persist in Recent',
+      );
       expect(find.text(_title), findsWidgets);
       expect(app.recent, isNotEmpty);
       expect(
@@ -583,17 +704,32 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(_iconButtonWithTooltip('New setlist'));
       await tester.pumpAndSettle();
+      await _waitForState(
+        tester,
+        () =>
+            app.setlists.length == 1 &&
+            find.text('Add songs').evaluate().isNotEmpty,
+        'new setlist to persist and open',
+      );
       await tester.tap(_iconButtonWithTooltip('Edit'));
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField).first, 'Dawn Set');
       await tester.tap(_iconButtonWithTooltip('Save'));
       await tester.pumpAndSettle();
+      await _waitForState(
+        tester,
+        () =>
+            app.setlists.length == 1 &&
+            app.setlists.single.name == 'Dawn Set' &&
+            find.text('Add songs').evaluate().isNotEmpty,
+        'setlist name to persist',
+      );
       await tester.tap(find.text('Add songs'));
-      await tester.pumpAndSettle();
       final pickerSong = find.text(_title).last;
+      await _waitForStableTarget(tester, pickerSong);
       await _scrollIntoView(tester, pickerSong);
       await tester.tap(pickerSong);
-      await tester.pumpAndSettle();
+      await _waitForStableTarget(tester, pickerSong);
       final addSelectedSongs = find.ancestor(
         of: find.text('Add songs (1)'),
         matching: find.byWidgetPredicate((widget) => widget is FilledButton),
@@ -605,22 +741,33 @@ void main() {
           (tester.view.physicalSize.height - tester.view.viewInsets.bottom) /
               tester.view.devicePixelRatio,
         ),
-        reason: 'The picker confirmation must stay above the Android keyboard.',
+        reason:
+            'The picker confirmation must stay above the on-screen keyboard.',
       );
       await _capture(binding, '22a_setlist_song_picker_keyboard');
       await _scrollIntoView(tester, addSelectedSongs);
       await tester.tap(addSelectedSongs);
       await tester.pumpAndSettle();
+      await _waitForState(
+        tester,
+        () => app.setlists.single.entries.length == 1,
+        'first song to persist in the setlist',
+      );
       expect(app.setlists.single.entries, hasLength(1));
       await tester.tap(find.text('Add songs'));
-      await tester.pumpAndSettle();
       final secondPickerSong = find.text(_title).last;
+      await _waitForStableTarget(tester, secondPickerSong);
       await _scrollIntoView(tester, secondPickerSong);
       await tester.tap(secondPickerSong);
-      await tester.pumpAndSettle();
+      await _waitForStableTarget(tester, secondPickerSong);
       await _scrollIntoView(tester, addSelectedSongs);
       await tester.tap(addSelectedSongs);
       await tester.pumpAndSettle();
+      await _waitForState(
+        tester,
+        () => app.setlists.single.entries.length == 2,
+        'second song to persist in the setlist',
+      );
       expect(find.text(_title), findsNWidgets(2));
       expect(app.setlists.single.entries, hasLength(2));
       final firstEntryMenu = find.descendant(
@@ -636,18 +783,48 @@ void main() {
       await tester.enterText(find.byType(TextField).last, '2');
       await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();
+      await _waitForState(
+        tester,
+        () => app.setlists.single.entries.any(
+          (entry) =>
+              entry.overrides['key'] == 'D' && entry.overrides['capo'] == 2,
+        ),
+        'setlist song key and capo overrides to persist',
+      );
       await _capture(binding, '23_setlist_populated');
       await tester.tap(find.text(_title).first);
       await tester.pumpAndSettle();
+      await _waitForState(
+        tester,
+        () =>
+            find.byType(PlayerScreen).evaluate().isNotEmpty &&
+            tester
+                    .widget<PlayerScreen>(find.byType(PlayerScreen))
+                    .controller
+                    .state
+                    .readerKey ==
+                'D#',
+        'setlist entry reader to apply its key override',
+      );
       final setlistPlayer = tester
           .widget<PlayerScreen>(find.byType(PlayerScreen))
           .controller;
       expect(setlistPlayer.state.readerKey, 'D#');
       await tester.tap(_iconButtonWithTooltip('Next song'));
       await tester.pumpAndSettle();
+      await _waitForState(
+        tester,
+        () => setlistPlayer.state.readerKey == 'C#',
+        'next setlist entry to load',
+      );
       expect(setlistPlayer.state.readerKey, 'C#');
       await tester.longPress(_iconButtonWithTooltip('Previous song'));
       await tester.pumpAndSettle();
+      await _waitForState(
+        tester,
+        () => setlistPlayer.state.readerKey == 'D#',
+        'previous setlist entry to load',
+      );
       expect(setlistPlayer.state.readerKey, 'D#');
       await tester.tap(_iconButtonWithTooltip('Back'));
       await tester.pumpAndSettle();
@@ -680,17 +857,14 @@ void main() {
       await _capture(binding, '23a_setlist_drag_held');
       await gesture.up();
       await tester.pumpAndSettle();
-      // The reorder callback persists asynchronously through SQLite; frame
-      // settling alone does not guarantee that IO-backed controller state has
-      // reloaded yet.
-      await tester.runAsync(() async {
-        final deadline = DateTime.now().add(const Duration(seconds: 5));
-        while (app.setlists.single.entries.first.id != regularEntryId &&
-            DateTime.now().isBefore(deadline)) {
-          await Future<void>.delayed(const Duration(milliseconds: 50));
-        }
-      });
-      await tester.pump();
+      await _waitForState(
+        tester,
+        () =>
+            app.setlists.single.entries.length == 2 &&
+            app.setlists.single.entries.first.id == regularEntryId &&
+            app.setlists.single.entries.last.id == overrideEntryId,
+        'setlist reorder to persist',
+      );
       expect(app.setlists.single.entries, hasLength(2));
       expect(app.setlists.single.entries.first.id, regularEntryId);
       expect(app.setlists.single.entries.last.id, overrideEntryId);
@@ -707,6 +881,11 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Duplicate'));
       await tester.pumpAndSettle();
+      await _waitForState(
+        tester,
+        () => app.setlists.length == 2,
+        'duplicated setlist to persist',
+      );
       expect(app.setlists, hasLength(2));
       final originalSetlistId = app.setlists
           .singleWhere((setlist) => setlist.name == 'Dawn Set')
@@ -739,6 +918,13 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Delete').last);
       await tester.pumpAndSettle();
+      await _waitForState(
+        tester,
+        () =>
+            app.setlists.length == 1 &&
+            app.setlists.single.id == originalSetlistId,
+        'setlist deletion to persist',
+      );
       expect(app.setlists, hasLength(1));
       expect(app.setlists.single.id, originalSetlistId);
       await _capture(binding, '23c_setlist_delete_confirmed');
@@ -748,7 +934,27 @@ void main() {
       await tester.pumpAndSettle();
       await _capture(binding, '24_settings_light');
       await _selectDropdown(tester, 'Theme', 'Dark');
+      await _waitForState(
+        tester,
+        () =>
+            app.settings['themeMode'] == 'dark' &&
+            Theme.of(tester.element(find.byType(SettingsScreen))).brightness ==
+                Brightness.dark,
+        'dark theme to save and apply',
+      );
       await _selectDropdown(tester, 'Default scrolling mode', 'Timed lyrics');
+      await _waitForState(
+        tester,
+        () =>
+            app.settings['timingMode'] == 'timed' &&
+            tester
+                    .widget<SettingsScreen>(find.byType(SettingsScreen))
+                    .controller
+                    .state
+                    .timingMode ==
+                'timed',
+        'timed lyric scrolling mode to save and apply',
+      );
       final providerSwitch = find.widgetWithText(
         SwitchListTile,
         'Journey catalog',
@@ -757,8 +963,35 @@ void main() {
       expect(providerSwitch, findsOneWidget);
       await tester.tap(providerSwitch);
       await tester.pumpAndSettle();
+      await _waitForState(
+        tester,
+        () =>
+            !app.providerEnabled(_catalogId) &&
+            tester
+                    .widget<SettingsScreen>(find.byType(SettingsScreen))
+                    .controller
+                    .state
+                    .providers
+                    .where((provider) => provider.id == _catalogId)
+                    .firstOrNull
+                    ?.enabled ==
+                false,
+        'catalog provider toggle to save and apply',
+      );
       await _selectDropdown(tester, 'App language', 'Українська');
       await tester.pumpAndSettle();
+      await _waitForState(
+        tester,
+        () =>
+            app.settings['locale'] == 'uk' &&
+            tester
+                    .widget<SettingsScreen>(find.byType(SettingsScreen))
+                    .controller
+                    .state
+                    .languageCode ==
+                'uk',
+        'Ukrainian locale to save and apply',
+      );
       expect(
         Theme.of(tester.element(find.byType(SettingsScreen))).brightness,
         Brightness.dark,
@@ -772,11 +1005,25 @@ void main() {
         repository: repository,
         discovery: SourceDiscoveryService(_journeyProviders(fixture)),
       );
+      controllers.add(restored);
       await tester.pumpWidget(VerseApp(controller: restored));
       await tester.pumpAndSettle();
+      await _waitForState(
+        tester,
+        () =>
+            restored.songs.length == 1 &&
+            restored.setlists.length == 1 &&
+            restored.settings['themeMode'] == 'dark' &&
+            restored.settings['locale'] == 'uk' &&
+            restored.settings['timingMode'] == 'timed' &&
+            restored.settings['showChords'] == true &&
+            !restored.providerEnabled(_catalogId),
+        'saved settings and library to restore after app restart',
+      );
       expect(restored.settings['themeMode'], 'dark');
       expect(restored.settings['locale'], 'uk');
       expect(restored.settings['timingMode'], 'timed');
+      expect(restored.settings['showChords'], isTrue);
       expect(restored.providerEnabled(_catalogId), isFalse);
       expect(
         restored.songs.single.body,
@@ -821,7 +1068,6 @@ void main() {
 
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pumpAndSettle();
-      await repository.close();
     },
     timeout: const Timeout(Duration(minutes: 8)),
   );
@@ -832,10 +1078,41 @@ Future<void> _capture(
   String name,
 ) async {
   if (_skipScreenshots) return;
+  if (await captureIosCheckpoint(name)) return;
   debugPrint('SINGBOOK_E2E_CAPTURE:$name');
   // The host driver watches logcat for this marker to capture the full device
   // frame (including Android status and navigation bars) before the next tap.
   await Future<void>.delayed(const Duration(seconds: 2));
+}
+
+Future<void> _waitForSavedReader(WidgetTester tester, AppController app) async {
+  await _waitForState(
+    tester,
+    () {
+      final editor = find.byKey(const ValueKey('editor-lyrics-input'));
+      return app.songs.single.body.contains(_savedLine) &&
+          find.byType(PlayerScreen).evaluate().isNotEmpty &&
+          editor.evaluate().isEmpty;
+    },
+    'editor save to persist and return to the reader',
+    timeout: const Duration(seconds: 60),
+  );
+}
+
+Future<void> _waitForState(
+  WidgetTester tester,
+  bool Function() condition,
+  String description, {
+  Duration timeout = const Duration(seconds: 30),
+}) async {
+  final deadline = DateTime.now().add(timeout);
+  while (!condition() && DateTime.now().isBefore(deadline)) {
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 100)),
+    );
+    await tester.pump();
+  }
+  expect(condition(), isTrue, reason: 'Timed out waiting for $description');
 }
 
 Finder _iconButtonWithTooltip(String tooltip) => find.byWidgetPredicate(
@@ -1013,12 +1290,40 @@ Future<void> _ensureBelowPinnedHeader(
     alignment: 0.65,
     duration: Duration.zero,
   );
-  await tester.pumpAndSettle(
-    const Duration(milliseconds: 100),
-    EnginePhase.sendSemanticsUpdate,
-    const Duration(seconds: 2),
+  await _waitForStableTarget(tester, target);
+}
+
+/// Wait for layout and keyboard insets to stop moving without requiring every
+/// ticker to become idle. A focused iOS text field can keep scheduling caret
+/// frames after its keyboard and viewport have settled.
+Future<void> _waitForStableTarget(WidgetTester tester, Finder target) async {
+  Rect? previousRect;
+  double? previousInsets;
+  var stableFrames = 0;
+  for (var frame = 0; frame < 20 && stableFrames < 2; frame++) {
+    await tester.pump(const Duration(milliseconds: 100));
+    final rect = tester.getRect(target);
+    final insets = tester.view.viewInsets.bottom;
+    final stable =
+        previousRect != null &&
+        _near(rect.left, previousRect.left) &&
+        _near(rect.top, previousRect.top) &&
+        _near(rect.right, previousRect.right) &&
+        _near(rect.bottom, previousRect.bottom) &&
+        previousInsets != null &&
+        _near(insets, previousInsets);
+    stableFrames = stable ? stableFrames + 1 : 0;
+    previousRect = rect;
+    previousInsets = insets;
+  }
+  expect(
+    stableFrames,
+    greaterThanOrEqualTo(2),
+    reason: 'Target layout and keyboard insets should settle: $target',
   );
 }
+
+bool _near(double left, double right) => (left - right).abs() < 1;
 
 Future<void> _scrollIntoView(WidgetTester tester, Finder target) async {
   final scrollable = find.byType(Scrollable).first;

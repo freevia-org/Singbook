@@ -1,0 +1,20 @@
+Keep your songs close, from the first rehearsal to the last encore.
+
+Singbook is a songbook for singers and musicians. Keep lyrics, chords and setlists on your iPhone or iPad, edit arrangements, and read saved songs without an internet connection. Your local library works without a Singbook account.
+
+YOUR SONGS, YOUR ARRANGEMENTS
+Import ChordPro, plain-text lyrics, LRC and TTML files. Edit lyrics and chords, transpose a song, and keep source and attribution information alongside your arrangement. Export songs as portable ChordPro files.
+
+READY FOR REHEARSAL
+Build and reorder setlists, choose a key for each song, and follow timed lyrics when timing is available. Adjust text size and appearance for the way you perform. Print a song or save it as a PDF through the system print interface.
+
+A LIBRARY YOU CAN KEEP
+Save a backup through Files and restore it when needed. Saved songs and setlists stay on your device. Light and dark appearances, portrait and landscape layouts, and iPad navigation help you read comfortably.
+
+SEARCH AND COMPARE
+Search enabled third-party song sources and compare available results. An internet connection is required for searches. Source availability and content vary by service, region and song.
+
+ABOUT CONTENT AND PRIVACY
+Singbook does not provide a preloaded song catalogue. Lyrics and chord arrangements may be protected by copyright; import, print and share content only where you have the necessary rights. Source attribution and available licence information stay with saved content.
+
+Search requests are sent to the sources you use, which receive your query and network information. See the privacy policy for details about third-party services and bundled components.
