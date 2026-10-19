@@ -12,6 +12,7 @@ import '../format.dart';
 import '../library_actions.dart';
 import '../player_section_timeline.dart';
 import '../verse_ui_state.dart';
+import '../widgets/slider_overlay_boundary.dart';
 import '../widgets/chord_lyrics_line.dart';
 import '../widgets/subpage_header.dart';
 import 'screen_awake.dart';
@@ -1107,29 +1108,31 @@ class _PlayerScreenState extends State<PlayerScreen>
                 return Stack(
                   children: [
                     Positioned.fill(
-                      child: Slider(
-                        key: const ValueKey('player-seek-slider'),
-                        min: 0,
-                        max: maxValue,
-                        // While the thumb is held, clock ticks must not move it.
-                        value: (_dragValue ?? displayPosition)
-                            .clamp(0, maxValue)
-                            .toDouble(),
-                        semanticFormatterCallback: (value) {
-                          final sourceSection = _sectionAt(
-                            state.playerSections,
-                            value * speed,
-                          );
-                          return '${sourceSection == null ? l10n.playerCurrentSection : localizedSectionName(l10n, sourceSection.name)}, '
-                              '${formatDuration(value)}';
-                        },
-                        onChangeStart: (value) => _dragValue = value,
-                        onChanged: (value) {
-                          _dragValue = value;
-                          _instantSeek = true;
-                          controller.seek(value * speed);
-                        },
-                        onChangeEnd: (_) => _dragValue = null,
+                      child: SliderOverlayBoundary(
+                        child: Slider(
+                          key: const ValueKey('player-seek-slider'),
+                          min: 0,
+                          max: maxValue,
+                          // While the thumb is held, clock ticks must not move it.
+                          value: (_dragValue ?? displayPosition)
+                              .clamp(0, maxValue)
+                              .toDouble(),
+                          semanticFormatterCallback: (value) {
+                            final sourceSection = _sectionAt(
+                              state.playerSections,
+                              value * speed,
+                            );
+                            return '${sourceSection == null ? l10n.playerCurrentSection : localizedSectionName(l10n, sourceSection.name)}, '
+                                '${formatDuration(value)}';
+                          },
+                          onChangeStart: (value) => _dragValue = value,
+                          onChanged: (value) {
+                            _dragValue = value;
+                            _instantSeek = true;
+                            controller.seek(value * speed);
+                          },
+                          onChangeEnd: (_) => _dragValue = null,
+                        ),
                       ),
                     ),
                     ..._sectionMarkerLabelWidgets(
@@ -1169,7 +1172,7 @@ class _PlayerScreenState extends State<PlayerScreen>
         constraints: _playerPopupConstraints(context),
         menuPadding: EdgeInsets.zero,
         itemBuilder: (_) => [
-          PopupMenuItem<double>(
+          SliderPopupMenuItem<double>(
             enabled: false,
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
             child: SizedBox(

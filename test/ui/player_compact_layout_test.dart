@@ -374,7 +374,11 @@ void main() {
       );
       expect(panel.height, greaterThan(panel.width));
       final speedMenuWidth = tester
-          .getSize(find.byType(PopupMenuItem<double>).first)
+          .getSize(
+            find
+                .byWidgetPredicate((widget) => widget is PopupMenuItem<double>)
+                .first,
+          )
           .width;
       expect(
         tester.getRect(find.byKey(const ValueKey('start-lyric-scroll'))),
@@ -396,6 +400,10 @@ void main() {
       expect(keyMenuWidth, speedMenuWidth);
       expect(tester.takeException(), isNull);
     },
+    variant: TargetPlatformVariant({
+      TargetPlatform.android,
+      TargetPlatform.windows,
+    }),
   );
 
   const capture = bool.fromEnvironment('CAPTURE_COMPACT_PLAYER');
@@ -500,10 +508,18 @@ void main() {
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
         final speedPopupWidth = tester
-            .getSize(find.byType(PopupMenuItem<double>).first)
+            .getSize(
+              find
+                  .byWidgetPredicate(
+                    (widget) => widget is PopupMenuItem<double>,
+                  )
+                  .first,
+            )
             .width;
         final speedPopupRect = tester.getRect(
-          find.byType(PopupMenuItem<double>).first,
+          find
+              .byWidgetPredicate((widget) => widget is PopupMenuItem<double>)
+              .first,
         );
         final isRtl = scenario.$3.languageCode == 'ar';
         if (isRtl) {

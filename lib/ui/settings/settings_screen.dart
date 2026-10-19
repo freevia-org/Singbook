@@ -6,6 +6,7 @@ import '../app_version.dart';
 import '../library_actions.dart';
 import '../localized_labels.dart';
 import '../verse_ui_state.dart';
+import '../widgets/slider_overlay_boundary.dart';
 import '../widgets/singbook_wordmark.dart';
 import '../widgets/verse_components.dart' show SingbookMark;
 import 'account_section.dart';
@@ -599,20 +600,22 @@ class _SettingsSectionScreenState extends State<_SettingsSectionScreen> {
                     ),
                     ListTile(
                       title: Text(l10n.settingsTextSize),
-                      subtitle: Slider(
-                        value: fontSize.clamp(18, 36),
-                        min: 18,
-                        max: 36,
-                        divisions: 9,
-                        label: fontSize.round().toString(),
-                        semanticFormatterCallback: (value) =>
-                            value.round().toString(),
-                        onChanged: (value) =>
-                            setState(() => _draggingFontSize = value),
-                        onChangeEnd: (value) {
-                          controller.setLyricsFontSize(value);
-                          setState(() => _draggingFontSize = null);
-                        },
+                      subtitle: SliderOverlayBoundary(
+                        child: Slider(
+                          value: fontSize.clamp(18, 36),
+                          min: 18,
+                          max: 36,
+                          divisions: 9,
+                          label: fontSize.round().toString(),
+                          semanticFormatterCallback: (value) =>
+                              value.round().toString(),
+                          onChanged: (value) =>
+                              setState(() => _draggingFontSize = value),
+                          onChangeEnd: (value) {
+                            controller.setLyricsFontSize(value);
+                            setState(() => _draggingFontSize = null);
+                          },
+                        ),
                       ),
                     ),
                     Card(
