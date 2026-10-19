@@ -6,6 +6,12 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+dependencies {
+    // Used by the Google Drive mobile Picker authorization flow. The user
+    // explicitly grants one visible folder with the narrow drive.file scope.
+    implementation("com.google.android.gms:play-services-auth:21.6.0")
+}
+
 // Opt-in workaround for deterministic fixture E2E builds under AGP 9.
 // Ordinary debug builds use embedded Cronet for real providers and must keep
 // its cronet-shared runtime dependency.

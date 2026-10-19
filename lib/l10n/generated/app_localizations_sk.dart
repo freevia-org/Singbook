@@ -13,14 +13,52 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Pokojné miesto, kde nájdete a usporiadate piesne zo svojej knižnice a budete ich spievať spolu.';
+      'Texty piesní, akordy a zoznamy skladieb spolu, pripravené na skúšku, na pódium aj kamkoľvek, kde hráte.';
 
   @override
-  String get aboutMadeForSinging => 'Stvorené na spoločné spievanie';
+  String get aboutMadeForSinging => 'Každá pieseň pripravená.';
 
   @override
   String get aboutDetails =>
-      'Vyhľadávajte v povolených zdrojoch, porovnávajte verzie, uchovávajte texty a akordy spolu a zoraďujte skladby do zoznamov. Vaša knižnica je uložená v tomto zariadení; voliteľná synchronizácia cez Google Drive používa váš účet Google. Vyhľadávania sa odosielajú priamo povoleným zdrojom.';
+      'Vyhľadávajte v dostupných zdrojoch a porovnávajte texty, akordy, načasovanie a informácie o nahrávke, kým si neuložíte verziu, ktorú chcete hrať. Dostupnosť sa líši podľa piesne a služby.';
+
+  @override
+  String get aboutFindTitle => 'Nájdite správnu verziu';
+
+  @override
+  String get aboutKeepTitle => 'Vytvorte si vlastnú knižnicu';
+
+  @override
+  String get aboutKeepDetails =>
+      'Upravujte a transponujte piesne, uchovávajte ich v miestnej knižnici na používanie offline a zdieľajte prenosné súbory ChordPro. Voliteľná synchronizácia s Google Drive používa súkromný priečinok aplikácie vo vašom účte Google. Zariadenia môžete aktualizovať aj klepnutím na „Synchronizovať teraz“.';
+
+  @override
+  String get aboutPlayTitle => 'Vezmite si zoznam skladieb na pódium';
+
+  @override
+  String get aboutPlayDetails =>
+      'Zoraďte piesne do zoznamov, vyberte tóninu každej piesne a zdieľajte zoznamy OpenSong. Upravte veľkosť textu v čítačke, zapnite automatické posúvanie textu a tlačte PDF súbory piesní. Singbook neprenáša ani neprehráva zvuk.';
+
+  @override
+  String get aboutPrivacyTitle => 'Bezplatná a s knižnicou uloženou lokálne';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook je bezplatný, bez reklám, analytiky a nákupov v aplikácii. Uložená knižnica zostáva vo vašom zariadení; voliteľná synchronizácia využíva váš Google Drive. Online výsledky pochádzajú priamo od nezávislých služieb tretích strán a nemusia byť dostupné alebo môžu byť chránené autorskými právami. Singbook ich obsah nehostuje.';
+
+  @override
+  String get aboutWebsite => 'Webová stránka Singbook';
+
+  @override
+  String get aboutSourceCode => 'Zdrojový kód na GitHube';
+
+  @override
+  String get aboutPublisher => 'Od Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Jazyky aplikácie: $count';
+  }
 
   @override
   String get aboutSupport => 'Podpora a spätná väzba';
@@ -1377,6 +1415,69 @@ class AppLocalizationsSk extends AppLocalizations {
       'Synchronizácia prebehne po pripojení a po pridaní, úprave alebo odstránení piesne.';
 
   @override
+  String get accountDriveFolder => 'Priečinok knižnice Disku Google';
+
+  @override
+  String get accountPrivateDriveFolder => 'Súkromná zložka Singbook';
+
+  @override
+  String get accountChooseDriveFolder => 'Vyberte priečinok';
+
+  @override
+  String get accountDriveFolderMoveTitle => 'Presunúť knižnicu Singbooku?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Vyberte viditeľný priečinok na Disku Google. Singbook tam pred prepnutím skopíruje a overí vaše skladby a setlisty. Pôvodné súbory zostanú vo svojom predchádzajúcom umiestnení ako záloha. Ostatné súbory sú ponechané na pokoji. Súbory ChordPro, ktoré importujete do tohto priečinka, sa prijmú na synchronizáciu a príjem metadát Singbooku.';
+
+  @override
+  String get accountImportChordPro => 'Importujte ChordPro z Disku';
+
+  @override
+  String get accountImportChordProHint =>
+      'Vyberte súbory .cho, ktoré chcete pridať do tejto knižnice. Súbory, ktoré už sú v priečinku, sú prijaté; súbory inde sa skopírujú sem.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Výber priečinka na Disku nie je k dispozícii';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Na podporovanom zariadení vyberte viditeľný priečinok na Disku pomocou nástroja Disk Google.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'Priečinok Singbook Drive je nedostupný';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Znova vyberte priečinok alebo ho obnovte na Disku Google.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook potrebuje prístup k tomuto priečinku na Disku';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Znova vyberte priečinok, ktorému chcete udeliť prístup, a potom synchronizujte svoju knižnicu.';
+
+  @override
+  String get syncErrorFolderMigration =>
+      'Knižnicu sa zatiaľ nepodarilo presunúť';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Vaša predchádzajúca knižnica je stále v bezpečí. Skontrolujte pripojenie a znova vyberte priečinok a skúste to znova.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Najprv vyberte viditeľný priečinok na Disku';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Pred importovaním súborov z Disku je potrebný viditeľný priečinok knižnice.';
+
+  @override
   String get accountSignOutTitle => 'Odhlásiť sa z tohto účtu?';
 
   @override
@@ -1900,4 +2001,40 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Ešte jeden riadok, o čosi [F]bližšie.';
+
+  @override
+  String get playerEstimatedKey => 'Odhadovaná tónina';
+
+  @override
+  String get songsLibraryView => 'Knižnica';
+
+  @override
+  String get settingsStartupView => 'Otvoriť pri spustení';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Vyberte zobrazenie Piesne, ktoré sa ukáže po otvorení aplikácie.';
+
+  @override
+  String get settingsStartupLastView => 'Naposledy otvorené';
+
+  @override
+  String get playerExpandControls => 'Zobraziť ovládanie prehrávania';
+
+  @override
+  String get playerCollapseControls => 'Skryť ovládanie prehrávania';
+
+  @override
+  String get settingsShowSections => 'Zobrazovať nadpisy častí';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Zobrazovať v texte nadpisy sloh, refrénu a ďalších častí.';
+
+  @override
+  String get settingsShowPlayerControls => 'Zobraziť ovládanie prehrávania';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Panel prehrávača môžete zobraziť alebo skryť aj ťuknutím či potiahnutím.';
 }

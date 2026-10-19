@@ -13,14 +13,52 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Et roligt sted at finde, organisere og synge fra dit sangbibliotek.';
+      'Dine sangtekster, akkorder og sætlister samlet, klar til øvning, scenen og alle steder, du spiller.';
 
   @override
-  String get aboutMadeForSinging => 'Skabt til at synge sammen';
+  String get aboutMadeForSinging => 'Hver sang er klar.';
 
   @override
   String get aboutDetails =>
-      'Søg i aktiverede kilder, sammenlign versioner, hold sangtekster og akkorder samlet, og organiser sange i sætlister. Dit bibliotek gemmes på denne enhed; valgfri synkronisering via Google Drive bruger din Google-konto. Søgninger sendes direkte til de aktiverede kilder.';
+      'Søg i aktiverede kilder, og sammenlign sangtekster, akkorder, timing og optagelsesoplysninger, før du gemmer den version, du vil spille. Tilgængeligheden varierer efter sang og tjeneste.';
+
+  @override
+  String get aboutFindTitle => 'Find den rigtige version';
+
+  @override
+  String get aboutKeepTitle => 'Byg dit eget bibliotek';
+
+  @override
+  String get aboutKeepDetails =>
+      'Rediger og transponer sange, behold dem i dit lokale bibliotek til offlinebrug, og del bærbare ChordPro-filer. Valgfri synkronisering med Google Drive bruger en privat appmappe på din Google-konto. Du kan også trykke på Synkronisér nu for at opdatere dine enheder.';
+
+  @override
+  String get aboutPlayTitle => 'Tag din sætliste med på scenen';
+
+  @override
+  String get aboutPlayDetails =>
+      'Organiser sange i sætlister, vælg toneart for hver sang, og del OpenSong-sætlister. Tilpas læserens tekst, automatisk rulning af sangtekster, og udskriv sang-PDF’er. Singbook streamer eller afspiller ikke lyd.';
+
+  @override
+  String get aboutPrivacyTitle => 'Gratis, med biblioteket på din enhed';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook er gratis uden annoncer, analyse eller køb i appen. Dit gemte bibliotek bliver på din enhed; valgfri synkronisering bruger dit eget Google Drive. Onlineresultater kommer direkte fra uafhængige tredjepartstjenester og kan være utilgængelige eller ophavsretligt beskyttede. Singbook er ikke vært for deres indhold.';
+
+  @override
+  String get aboutWebsite => 'Singbooks website';
+
+  @override
+  String get aboutSourceCode => 'Kildekode på GitHub';
+
+  @override
+  String get aboutPublisher => 'Fra Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Appens sprog: $count';
+  }
 
   @override
   String get aboutSupport => 'Support og feedback';
@@ -1366,6 +1404,68 @@ class AppLocalizationsDa extends AppLocalizations {
       'Synkronisering sker efter tilslutning og efter tilføjelse, redigering eller fjernelse af en sang.';
 
   @override
+  String get accountDriveFolder => 'Google Drev biblioteksmappe';
+
+  @override
+  String get accountPrivateDriveFolder => 'Privat Singbook-mappe';
+
+  @override
+  String get accountChooseDriveFolder => 'Vælg mappe';
+
+  @override
+  String get accountDriveFolderMoveTitle => 'Flytte dit Singbook-bibliotek?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Vælg en synlig Google Drev-mappe. Singbook vil kopiere og bekræfte dine sange og sætlister der, før du skifter til den. Originalfiler forbliver på deres tidligere placering som en sikkerhedskopi. Andre filer efterlades alene. ChordPro-filer, du importerer til denne mappe, bruges til synkronisering og modtager Singbook-metadata.';
+
+  @override
+  String get accountImportChordPro => 'Importer ChordPro fra Drive';
+
+  @override
+  String get accountImportChordProHint =>
+      'Vælg .cho-filer, der skal føjes til dette bibliotek. Filer, der allerede er i mappen, overtages; filer andre steder kopieres her.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Valg af Drev-mappe er ikke tilgængeligt';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Vælg en synlig Drev-mappe med Google Drevs mappevælger på en understøttet enhed.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'Singbook Drive-mappen er ikke tilgængelig';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Vælg mappen igen, eller gendan den i Google Drev.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook skal have adgang til denne Drev-mappe';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Vælg mappen igen for at give adgang, og synkroniser derefter dit bibliotek.';
+
+  @override
+  String get syncErrorFolderMigration => 'Biblioteket kunne ikke flyttes endnu';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Dit tidligere bibliotek er stadig sikkert. Kontroller forbindelsen, og vælg mappen igen for at prøve igen.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Vælg først en synlig Drev-mappe';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Der kræves en synlig biblioteksmappe, før du importerer filer fra Drev.';
+
+  @override
   String get accountSignOutTitle => 'Log ud af denne konto?';
 
   @override
@@ -1879,4 +1979,40 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]En linje mere, lidt [F]tættere på.';
+
+  @override
+  String get playerEstimatedKey => 'Anslået toneart';
+
+  @override
+  String get songsLibraryView => 'Bibliotek';
+
+  @override
+  String get settingsStartupView => 'Start i';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Vælg den sangvisning, der vises, når appen åbnes.';
+
+  @override
+  String get settingsStartupLastView => 'Senest åbne';
+
+  @override
+  String get playerExpandControls => 'Vis afspilningsknapper';
+
+  @override
+  String get playerCollapseControls => 'Skjul afspilningsknapper';
+
+  @override
+  String get settingsShowSections => 'Vis sektionsoverskrifter';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Vis overskrifter for vers, omkvæd og andre afsnit i sangteksten.';
+
+  @override
+  String get settingsShowPlayerControls => 'Vis afspilningsknapper';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Du kan også trykke på eller stryge på afspillerpanelet for at vise eller skjule det.';
 }

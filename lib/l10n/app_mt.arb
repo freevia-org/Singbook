@@ -1,8 +1,6 @@
 {
   "@@locale": "mt",
   "appTitle": "Singbook",
-  "aboutDescription": "Post paċifiku fejn issib, torganizza u tkanta l-kanzunetti tiegħek.",
-  "aboutMadeForSinging": "Magħmul biex inkantaw flimkien",
   "menuTypeNewSong": "Ikteb kanzunetta ġdida", "aboutDetails": "Fittex fis-sorsi attivati, qabbel verżjonijiet, żomm il-lirika u l-kordi flimkien, u organizza l-kanzunetti f’listi. Il-librerija tiegħek tinżamm fuq dan it-tagħmir; is-sinkronizzazzjoni fakultattiva ma’ Google Drive tuża l-kont Google tiegħek. It-tfittxijiet jintbagħtu direttament lis-sorsi attivati.", "aboutSupport": "Għajnuna u feedback", "appVersion": "Verżjoni {version}",
   "@appVersion": {
     "placeholders": {
@@ -812,5 +810,66 @@
   "editorStandardTuning": "Irfinar standard",
   "editorExampleVerse": "[C]Jum ġdid qed [G]isejjaħ,\n[Am]insegwu d-dawl lura [F]d-dar.",
   "editorExampleChorus": "[F]Inkantu din il-kanzunetta [C]flimkien,\n[G]ħalli l-melodija ġġorrna [C]’il quddiem.",
-  "editorExampleBridge": "[Am]Linja oħra, ftit aktar [F]qrib."
+  "editorExampleBridge": "[Am]Linja oħra, ftit aktar [F]qrib.",
+  "aboutMadeForSinging": "Kull kanzunetta lesta.",
+  "aboutDescription": "Il-lirika, l-kordi u s-setlists tiegħek flimkien, lesti għall-provi, għall-palk u kull fejn iddoqq.",
+  "aboutDetails": "Fittex fis-sorsi disponibbli u qabbel il-lirika, il-kordi, il-ħin u d-dettalji tar-reġistrazzjoni qabel issalva l-verżjoni li trid iddoqq. Id-disponibbiltà tvarja skont il-kanzunetta u s-servizz.",
+  "aboutFindTitle": "Sib il-verżjoni t-tajba",
+  "aboutKeepTitle": "Ibni l-librerija tiegħek",
+  "aboutKeepDetails": "Editja u ttrasponi l-kanzunetti, żommhom fil-librerija lokali biex tużahom offline, u aqsam fajls ChordPro portabbli. Is-sinkronizzazzjoni fakultattiva ma’ Google Drive tuża folder privat tal-app fil-kont Google tiegħek. Tista’ wkoll tagħfas “Issinkronizza issa” biex taġġorna t-tagħmir tiegħek.",
+  "aboutPlayTitle": "Ħu s-setlist tiegħek fuq il-palk",
+  "aboutPlayDetails": "Irranġa l-kanzunetti f’setlists, agħżel tonalità għal kull kanzunetta u aqsam setlists OpenSong. Aġġusta t-test tal-qarrej, iskrollja l-lirika awtomatikament u pprintja PDFs tal-kanzunetti. Singbook ma jxandarx jew idoqq awdjo.",
+  "aboutPrivacyTitle": "B’xejn u l-ewwelnett lokali",
+  "aboutPrivacyDetails": "Singbook huwa b’xejn, mingħajr reklami, analitika jew xiri fl-app. Il-librerija ssejvjata tibqa’ fuq it-tagħmir tiegħek; is-sinkronizzazzjoni fakultattiva tuża l-Google Drive tiegħek. Ir-riżultati online jiġu direttament minn servizzi indipendenti ta’ partijiet terzi u jistgħu ma jkunux disponibbli jew ikunu protetti bid-drittijiet tal-awtur. Singbook ma jospitax il-kontenut tagħhom.",
+  "aboutWebsite": "Il-websajt ta’ Singbook",
+  "aboutSourceCode": "Il-kodiċi tas-sors fuq GitHub",
+  "aboutPublisher": "Minn Freevia",
+  "aboutLanguages": "Lingwi tal-app: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountDriveFolder": "Folder tal-librerija Google Drive",
+  "accountPrivateDriveFolder": "Folder privat Singbook",
+  "accountChooseDriveFolder": "Agħżel folder",
+  "accountDriveFolderMoveTitle": "Ċaqlaq il-librerija tas-Singbook tiegħek?",
+  "accountDriveFolderMoveBody": "Agħżel folder viżibbli ta' Google Drive. Singbook se tikkopja u tivverifika l-kanzunetti u s-setlists tiegħek hemmhekk qabel ma taqleb għaliha. Fajls oriġinali jibqgħu fil-post preċedenti tagħhom bħala backup. Fajls oħra jitħallew waħedhom. Fajls ChordPro li timporta f'dan il-folder huma adottati għas-sinkronizzazzjoni u jirċievu metadata Singbook.",
+  "accountImportChordPro": "Importa ChordPro minn Drive",
+  "accountImportChordProHint": "Agħżel fajls .cho biex iżżid ma' din il-librerija. Fajls diġà fil-folder huma adottati; fajls x'imkien ieħor huma kkupjati hawn.",
+  "syncErrorFolderPickerUnavailable": "L-għażla tal-folder tas-sewqan mhix disponibbli",
+  "syncErrorFolderPickerUnavailableHint": "Agħżel folder Drive viżibbli bil-picker ta' Google Drive fuq apparat appoġġjat.",
+  "syncErrorDriveFolderMissing": "Il-folder ta' Singbook Drive mhuwiex disponibbli",
+  "syncErrorDriveFolderMissingHint": "Agħżel il-folder mill-ġdid, jew irrestawrah fil-Google Drive.",
+  "syncErrorDriveFileAuthorization": "Singbook jeħtieġ aċċess għal dan il-folder Drive",
+  "syncErrorDriveFileAuthorizationHint": "Erġa' agħżel il-folder biex tagħti aċċess, imbagħad issinkronizza l-librerija tiegħek.",
+  "syncErrorFolderMigration": "Il-librerija għadha ma setgħetx tiġi mċaqalqa",
+  "syncErrorFolderMigrationHint": "Il-librerija preċedenti tiegħek għadha sigura. Iċċekkja l-konnessjoni u agħżel il-folder mill-ġdid biex terġa 'tipprova.",
+  "syncErrorVisibleFolderRequired": "Agħżel folder Drive viżibbli l-ewwel",
+  "syncErrorVisibleFolderRequiredHint": "Huwa meħtieġ folder tal-librerija viżibbli qabel ma jiġu importati fajls minn Drive.",
+  "playerEstimatedKey": "Tonalità stmata",
+  "songsLibraryView": "Librerija",
+  "settingsStartupView": "Ibda fil-veduta",
+  "settingsStartupViewHint": "Agħżel il-veduta tal-kanzunetti li tintwera meta tiftaħ l-app.",
+  "settingsStartupLastView": "L-aħħar veduta miftuħa",
+  "playerExpandControls": "Uri l-kontrolli tad-daqq",
+  "playerCollapseControls": "Aħbi l-kontrolli tad-daqq",
+  "settingsShowSections": "Uri l-intestaturi tat-taqsimiet",
+  "settingsShowSectionsHint": "Uri l-intestaturi tal-versi, tal-kor u taqsimiet oħra fil-lirika.",
+  "settingsShowPlayerControls": "Uri l-kontrolli tad-daqq",
+  "settingsShowPlayerControlsHint": "Tista’ wkoll tmiss jew tiskrollja l-pannell tal-plejer biex turih jew taħbih.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

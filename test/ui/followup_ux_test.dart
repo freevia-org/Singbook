@@ -106,6 +106,7 @@ void main() {
         matchKind: MatchKind.sameRecording,
         matchReason: 'same_recording',
       );
+      ui.setHomeListMode(HomeListMode.online);
       ui.setQuery('Signal Song The Signals');
       await ui.submitSearch();
       app.suggestions = [_reference];
@@ -147,6 +148,7 @@ void main() {
       app.results = [savedChart];
       final saved = await app.saveResult(source: savedChart);
       expect(app.savedResultId(source: savedChart), saved.id);
+      ui.setHomeListMode(HomeListMode.online);
       ui.setQuery('Signal Song The Signals');
       await ui.submitSearch();
       app.suggestions = [_reference];
@@ -359,6 +361,7 @@ void main() {
       await ui.openSong(saved.id);
       final refresh = ui.compareCurrentSongVersions();
       ui.changeSearchSong();
+      ui.setHomeListMode(HomeListMode.online);
       ui.setQuery('Different song');
       provider.ready.complete(
         const SourceResult(

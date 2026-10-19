@@ -25,61 +25,70 @@ double _contrast(Color foreground, Color background) {
 }
 
 void main() {
-  testWidgets('painted library actions have contrast in every palette and theme', (
-    tester,
-  ) async {
-    tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(1280, 800);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    addTearDown(tester.view.resetPhysicalSize);
-    final controller = FakeUiController(
-      (_) => const VerseUiState(
-        activeTab: VerseTab.songs,
-        songs: [
-          SongCardData(id: 'song', title: 'Lanterns at Dawn', artist: 'Mira Vale'),
-        ],
-      ),
-    );
-    addTearDown(controller.dispose);
-
-    for (final palette in versePalettes) {
-      for (final brightness in Brightness.values) {
-        final theme = verseTheme(brightness: brightness, palette: palette.name);
-        await tester.pumpWidget(
-          MaterialApp(
-            theme: theme,
-            localizationsDelegates: singbookLocalizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            locale: const Locale('en'),
-            home: VerseAppShell(
-              controller: controller,
-              files: VerseFileActions(),
+  testWidgets(
+    'painted library actions have contrast in every palette and theme',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(1280, 800);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      final controller = FakeUiController(
+        (_) => const VerseUiState(
+          activeTab: VerseTab.songs,
+          homeListMode: HomeListMode.library,
+          songs: [
+            SongCardData(
+              id: 'song',
+              title: 'Lanterns at Dawn',
+              artist: 'Mira Vale',
             ),
-          ),
-        );
-        await tester.pumpAndSettle();
-        final surface = theme.colorScheme.surface;
-        for (final icon in [
-          Icons.favorite_border_rounded,
-          Icons.more_horiz_rounded,
-        ]) {
-          expect(
-            _contrast(_paintedIconColor(tester, icon), surface),
-            greaterThanOrEqualTo(3),
-            reason: '${palette.name}/${brightness.name}: $icon',
+          ],
+        ),
+      );
+      addTearDown(controller.dispose);
+
+      for (final palette in versePalettes) {
+        for (final brightness in Brightness.values) {
+          final theme = verseTheme(
+            brightness: brightness,
+            palette: palette.name,
           );
+          await tester.pumpWidget(
+            MaterialApp(
+              theme: theme,
+              localizationsDelegates: singbookLocalizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              locale: const Locale('en'),
+              home: VerseAppShell(
+                controller: controller,
+                files: VerseFileActions(),
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+          final surface = theme.colorScheme.surface;
+          for (final icon in [
+            Icons.favorite_border_rounded,
+            Icons.more_horiz_rounded,
+          ]) {
+            expect(
+              _contrast(_paintedIconColor(tester, icon), surface),
+              greaterThanOrEqualTo(3),
+              reason: '${palette.name}/${brightness.name}: $icon',
+            );
+          }
+          expect(
+            _contrast(
+              _paintedIconColor(tester, Icons.more_vert_rounded),
+              surface,
+            ),
+            greaterThanOrEqualTo(3),
+            reason: '${palette.name}/${brightness.name}: header actions menu',
+          );
+          expect(tester.takeException(), isNull);
         }
-        expect(
-          _contrast(
-            _paintedIconColor(tester, Icons.more_vert_rounded),
-            surface,
-          ),
-          greaterThanOrEqualTo(3),
-          reason: '${palette.name}/${brightness.name}: header actions menu',
-        );
-        expect(tester.takeException(), isNull);
       }
-    }
-    await tester.pumpWidget(const SizedBox.shrink());
-  });
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+  );
 }

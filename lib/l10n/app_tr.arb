@@ -1,8 +1,6 @@
 {
   "@@locale": "tr",
   "appTitle": "Singbook",
-  "aboutDescription": "Şarkı kitaplığınızdaki parçaları bulup düzenleyebileceğiniz ve söyleyebileceğiniz sakin bir alan.",
-  "aboutMadeForSinging": "Birlikte şarkı söylemek için tasarlandı",
   "menuTypeNewSong": "Yeni bir şarkı yazın", "aboutDetails": "Etkin kaynaklarda arama yapın, sürümleri karşılaştırın, şarkı sözlerini ve akorları birlikte tutun, şarkıları setlistelerde düzenleyin. Kitaplığınız bu cihazda saklanır; isteğe bağlı Google Drive eşitlemesi Google hesabınızı kullanır. Aramalar doğrudan etkin kaynaklara gönderilir.", "aboutSupport": "Destek ve geri bildirim", "appVersion": "Sürüm {version}",
   "@appVersion": {
     "placeholders": {
@@ -812,5 +810,66 @@
   "editorStandardTuning": "Standart akort",
   "editorExampleVerse": "[C]Yeni bir gün bizi [G]çağırıyor,\n[Am]ışığı izleyip [F]eve dönüyoruz.",
   "editorExampleChorus": "[F]Bu şarkıyı [C]birlikte söyleyelim,\n[G]melodi bizi [C]ileriye taşısın.",
-  "editorExampleBridge": "[Am]Bir satır daha, biraz daha [F]yakın."
+  "editorExampleBridge": "[Am]Bir satır daha, biraz daha [F]yakın.",
+  "aboutMadeForSinging": "Her şarkı, söylemeye hazır.",
+  "aboutDescription": "Şarkı sözleriniz, akorlarınız ve set listeleriniz bir arada; prova, sahne ve çaldığınız her yer için hazır.",
+  "aboutDetails": "Kullanılabilir kaynaklarda arama yapın; çalmak istediğiniz sürümü kaydetmeden önce şarkı sözlerini, akorları, zamanlamayı ve kayıt bilgilerini karşılaştırın. Kullanılabilirlik şarkıya ve hizmete göre değişir.",
+  "aboutFindTitle": "Doğru sürümü bulun",
+  "aboutKeepTitle": "Kendi kitaplığınızı oluşturun",
+  "aboutKeepDetails": "Şarkıları düzenleyip transpoze edin, çevrimdışı kullanmak için yerel kitaplığınızda tutun ve taşınabilir ChordPro dosyalarını paylaşın. İsteğe bağlı Google Drive eşitlemesi, Google hesabınızdaki özel bir uygulama klasörünü kullanır. Cihazlarınızı güncellemek için “Şimdi eşitle”ye de dokunabilirsiniz.",
+  "aboutPlayTitle": "Set listenizi sahneye taşıyın",
+  "aboutPlayDetails": "Şarkıları set listelerinde sıralayın, her şarkı için bir ton seçin ve OpenSong set listelerini paylaşın. Okuyucu metninin boyutunu ayarlayın, şarkı sözlerini otomatik kaydırın ve şarkı PDF’lerini yazdırın. Singbook ses akışı sağlamaz veya ses çalmaz.",
+  "aboutPrivacyTitle": "Ücretsiz ve öncelikle yerel",
+  "aboutPrivacyDetails": "Singbook ücretsizdir; reklam, analiz veya uygulama içi satın alma içermez. Kaydedilen kitaplığınız cihazınızda kalır; isteğe bağlı eşitleme kendi Google Drive hesabınızı kullanır. Çevrimiçi sonuçlar bağımsız üçüncü taraf hizmetlerden doğrudan gelir ve kullanılamayabilir ya da telif hakkıyla korunuyor olabilir. Singbook bu içerikleri barındırmaz.",
+  "aboutWebsite": "Singbook web sitesi",
+  "aboutSourceCode": "GitHub’da kaynak kodu",
+  "aboutPublisher": "Freevia tarafından",
+  "aboutLanguages": "Uygulama dilleri: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountDriveFolder": "Google Drive kitaplık klasörü",
+  "accountPrivateDriveFolder": "Özel Singbook klasörü",
+  "accountChooseDriveFolder": "Klasör seç",
+  "accountDriveFolderMoveTitle": "Singbook kütüphaneniz taşınsın mı?",
+  "accountDriveFolderMoveBody": "Görünür bir Google Drive klasörü seçin. Singbook, geçiş yapmadan önce şarkılarınızı ve set listelerinizi oraya kopyalayacak ve doğrulayacaktır. Orijinal dosyalar yedek olarak önceki konumlarında kalır. Diğer dosyalar yalnız bırakılır. Bu klasöre aktardığınız ChordPro dosyaları senkronizasyon için benimsenir ve Singbook meta verilerini alır.",
+  "accountImportChordPro": "ChordPro'yu Drive'dan içe aktar",
+  "accountImportChordProHint": "Bu kitaplığa eklenecek .cho dosyalarını seçin. Zaten klasörde bulunan dosyalar benimsenir; başka yerlerdeki dosyalar buraya kopyalanır.",
+  "syncErrorFolderPickerUnavailable": "Drive klasörü seçimi kullanılamıyor",
+  "syncErrorFolderPickerUnavailableHint": "Desteklenen bir cihazda Google Drive seçiciyi kullanarak görünür bir Drive klasörü seçin.",
+  "syncErrorDriveFolderMissing": "Singbook Drive klasörü kullanılamıyor",
+  "syncErrorDriveFolderMissingHint": "Klasörü tekrar seçin veya Google Drive'a geri yükleyin.",
+  "syncErrorDriveFileAuthorization": "Singbook'un bu Drive klasörüne erişmesi gerekiyor",
+  "syncErrorDriveFileAuthorizationHint": "Erişim izni vermek için klasörü tekrar seçin ve ardından kitaplığınızı senkronize edin.",
+  "syncErrorFolderMigration": "Kütüphane henüz taşınamadı",
+  "syncErrorFolderMigrationHint": "Önceki kitaplığınız hâlâ güvende. Bağlantıyı kontrol edin ve yeniden denemek için klasörü tekrar seçin.",
+  "syncErrorVisibleFolderRequired": "Önce görünür bir Drive klasörü seçin",
+  "syncErrorVisibleFolderRequiredHint": "Dosyaları Drive'dan içe aktarmadan önce görünür bir kitaplık klasörüne ihtiyaç vardır.",
+  "playerEstimatedKey": "Tahmini tonalite",
+  "songsLibraryView": "Kitaplık",
+  "settingsStartupView": "Başlangıç görünümü",
+  "settingsStartupViewHint": "Uygulama açıldığında gösterilecek Şarkılar görünümünü seçin.",
+  "settingsStartupLastView": "Son açılan",
+  "playerExpandControls": "Oynatma kontrollerini göster",
+  "playerCollapseControls": "Oynatma kontrollerini gizle",
+  "settingsShowSections": "Bölüm başlıklarını göster",
+  "settingsShowSectionsHint": "Şarkı sözlerinde kıta, nakarat ve diğer bölümlerin başlıklarını göster.",
+  "settingsShowPlayerControls": "Oynatma kontrollerini göster",
+  "settingsShowPlayerControlsHint": "Oynatıcı panelini göstermek veya gizlemek için panele dokunabilir ya da kaydırabilirsiniz.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

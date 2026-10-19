@@ -35,6 +35,14 @@ void main() {
       );
       final l10n = l10nOf(tester);
       await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('settings-menu-player')),
+        250,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('settings-menu-player')));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
         find.text(l10n.settingsLyricHighlight),
         250,
         scrollable: find.byType(Scrollable).first,

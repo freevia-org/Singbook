@@ -12,14 +12,53 @@ class AppLocalizationsJa extends AppLocalizations {
   String get appTitle => 'Singbook';
 
   @override
-  String get aboutDescription => '曲を見つけて整理し、ライブラリの曲をみんなで歌うための落ち着いた場所です。';
+  String get aboutDescription =>
+      '歌詞、コード、セットリストをひとつにまとめ、リハーサルやステージ、いつもの演奏場所ですぐに使えます。';
 
   @override
-  String get aboutMadeForSinging => 'みんなで歌うために';
+  String get aboutMadeForSinging => 'すべての曲を、すぐに。';
 
   @override
   String get aboutDetails =>
-      '有効にしたソースを検索し、曲のバージョンを比較して、歌詞とコードをまとめ、曲をセットリストに整理できます。ライブラリはこの端末に保存されます。任意の Google Drive 同期では Google アカウントを使用します。検索は有効なソースへ直接送信されます。';
+      '利用可能なソースを検索し、歌詞、コード、タイミング、録音情報を比較して、演奏したいバージョンを保存できます。利用状況は曲やサービスによって異なります。';
+
+  @override
+  String get aboutFindTitle => 'ぴったりのバージョンを見つける';
+
+  @override
+  String get aboutKeepTitle => '自分のライブラリを作る';
+
+  @override
+  String get aboutKeepDetails =>
+      '曲を編集・移調し、オフラインでも使えるようローカルライブラリに保存して、持ち運べるChordProファイルを共有できます。Google Driveとの同期は任意で、Googleアカウント内のアプリ専用フォルダを使います。「今すぐ同期」をタップして、端末間で更新することもできます。';
+
+  @override
+  String get aboutPlayTitle => 'セットリストをステージへ';
+
+  @override
+  String get aboutPlayDetails =>
+      '曲をセットリストに並べ、曲ごとにキーを選び、OpenSongのセットリストを共有できます。リーダーの文字サイズを調整し、歌詞を自動スクロールしたり、曲のPDFを印刷したりできます。Singbookは音声のストリーミングや再生を行いません。';
+
+  @override
+  String get aboutPrivacyTitle => '無料で、端末を中心に使える';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbookは無料で、広告、分析機能、アプリ内購入はありません。保存したライブラリは端末に保管され、任意の同期にはご自身のGoogle Driveを使います。オンライン検索結果は独立した第三者サービスから直接提供され、利用できない場合や著作権で保護されている場合があります。Singbookはそれらのコンテンツをホストしません。';
+
+  @override
+  String get aboutWebsite => 'Singbookのウェブサイト';
+
+  @override
+  String get aboutSourceCode => 'GitHubのソースコード';
+
+  @override
+  String get aboutPublisher => 'Freeviaより';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'アプリの言語: $count';
+  }
 
   @override
   String get aboutSupport => 'サポートとフィードバック';
@@ -1334,6 +1373,65 @@ class AppLocalizationsJa extends AppLocalizations {
   String get accountAutoSyncHint => '接続後、および曲の追加、編集、削除後に同期します。';
 
   @override
+  String get accountDriveFolder => 'Googleドライブのライブラリフォルダ';
+
+  @override
+  String get accountPrivateDriveFolder => 'プライベート Singbook フォルダー';
+
+  @override
+  String get accountChooseDriveFolder => 'フォルダーを選択してください';
+
+  @override
+  String get accountDriveFolderMoveTitle => 'Singbook ライブラリを移動しますか?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      '表示されている Google ドライブ フォルダーを選択します。 Singbook は、そこに切り替える前に、そこに曲とセットリストをコピーして検証します。元のファイルはバックアップとして以前の場所に残ります。他のファイルはそのまま残されます。このフォルダーにインポートした ChordPro ファイルは、同期に採用され、Singbook メタデータを受信します。';
+
+  @override
+  String get accountImportChordPro => 'ChordPro をドライブからインポート';
+
+  @override
+  String get accountImportChordProHint =>
+      'このライブラリに追加する .cho ファイルを選択します。フォルダー内に既にあるファイルが採用されます。他の場所にあるファイルはここにコピーされます。';
+
+  @override
+  String get syncErrorFolderPickerUnavailable => 'ドライブフォルダーの選択は使用できません';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      '対応デバイスで Google ドライブ ピッカーを使い、表示されるドライブ フォルダを選択してください。';
+
+  @override
+  String get syncErrorDriveFolderMissing => 'Singbook Drive フォルダーが使用できません';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'フォルダーを再度選択するか、Google ドライブに復元します。';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook はこのドライブ フォルダーにアクセスする必要があります';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'フォルダーを再度選択してアクセスを許可し、ライブラリを同期します。';
+
+  @override
+  String get syncErrorFolderMigration => 'ライブラリはまだ移動できませんでした';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      '以前のライブラリはまだ安全です。接続を確認し、フォルダーを再度選択して再試行してください。';
+
+  @override
+  String get syncErrorVisibleFolderRequired => '最初に表示されるドライブ フォルダーを選択してください';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'ドライブからファイルをインポートする前に、表示可能なライブラリ フォルダーが必要です。';
+
+  @override
   String get accountSignOutTitle => 'このアカウントからログアウトしますか？';
 
   @override
@@ -1806,4 +1904,38 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]もう一行、少しだけ [F]近くへ。';
+
+  @override
+  String get playerEstimatedKey => '推定キー';
+
+  @override
+  String get songsLibraryView => 'ライブラリ';
+
+  @override
+  String get settingsStartupView => '起動時の画面';
+
+  @override
+  String get settingsStartupViewHint => 'アプリを開いたときに表示する曲の画面を選択します。';
+
+  @override
+  String get settingsStartupLastView => '前回開いた画面';
+
+  @override
+  String get playerExpandControls => '再生コントロールを表示';
+
+  @override
+  String get playerCollapseControls => '再生コントロールを非表示';
+
+  @override
+  String get settingsShowSections => 'セクション見出しを表示';
+
+  @override
+  String get settingsShowSectionsHint => '歌詞に、ヴァース、コーラスなど各セクションの見出しを表示します。';
+
+  @override
+  String get settingsShowPlayerControls => '再生コントロールを表示';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'プレーヤーパネルをタップまたはスワイプして表示・非表示を切り替えることもできます。';
 }

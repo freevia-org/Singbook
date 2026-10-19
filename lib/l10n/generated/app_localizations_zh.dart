@@ -12,14 +12,52 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appTitle => 'Singbook';
 
   @override
-  String get aboutDescription => '一个宁静的空间，让你查找、整理并跟着自己的歌曲库一起歌唱。';
+  String get aboutDescription => '歌词、和弦与演出歌单汇集一处，为排练、舞台和每一次演奏做好准备。';
 
   @override
-  String get aboutMadeForSinging => '为一起歌唱而打造';
+  String get aboutMadeForSinging => '每首歌，都已准备就绪。';
 
   @override
   String get aboutDetails =>
-      '搜索已启用的来源、比较歌曲版本、将歌词和和弦放在一起，并把歌曲整理到歌单中。资料库保存在此设备上；可选的 Google Drive 同步会使用你的 Google 帐号。搜索会直接发送到已启用的来源。';
+      '搜索可用来源，比较歌词、和弦、时间信息和录音详情，再保存想演奏的版本。内容是否可用取决于歌曲和服务。';
+
+  @override
+  String get aboutFindTitle => '找到合适的版本';
+
+  @override
+  String get aboutKeepTitle => '建立自己的曲库';
+
+  @override
+  String get aboutKeepDetails =>
+      '编辑和移调歌曲，将其保存在本地曲库中以便离线使用，并分享便携的 ChordPro 文件。可选的 Google Drive 同步会使用你 Google 帐号中的应用专用私密文件夹。你也可以点按“立即同步”来更新设备。';
+
+  @override
+  String get aboutPlayTitle => '带着歌单登上舞台';
+
+  @override
+  String get aboutPlayDetails =>
+      '将歌曲编入演出歌单，为每首歌选择调性，并分享 OpenSong 歌单。调整阅读器文字大小、自动滚动歌词，也可打印歌曲 PDF。Singbook 不会串流或播放音频。';
+
+  @override
+  String get aboutPrivacyTitle => '免费使用，优先本地存储';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook 免费使用，不含广告、分析或应用内购买。已保存的曲库保留在你的设备上；可选同步使用你自己的 Google Drive。在线结果直接来自独立的第三方服务，可能无法使用或受版权保护。Singbook 不托管这些内容。';
+
+  @override
+  String get aboutWebsite => 'Singbook 网站';
+
+  @override
+  String get aboutSourceCode => 'GitHub 上的源代码';
+
+  @override
+  String get aboutPublisher => 'Freevia 出品';
+
+  @override
+  String aboutLanguages(int count) {
+    return '应用语言：$count';
+  }
 
   @override
   String get aboutSupport => '支持与反馈';
@@ -1329,6 +1367,60 @@ class AppLocalizationsZh extends AppLocalizations {
   String get accountAutoSyncHint => '连接后，以及添加、编辑或删除歌曲后进行同步。';
 
   @override
+  String get accountDriveFolder => 'Google 云端硬盘库文件夹';
+
+  @override
+  String get accountPrivateDriveFolder => '私人Singbook文件夹';
+
+  @override
+  String get accountChooseDriveFolder => '选择文件夹';
+
+  @override
+  String get accountDriveFolderMoveTitle => '移动您的 Singbook 图书馆吗？';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      '请选择一个 Google Drive 中可见的文件夹。Singbook 会先将歌曲和歌单复制到所选文件夹并验证副本，然后再将其设为当前同步文件夹。原始文件会保留在原位置作为备份。其他文件不会受到影响。导入此文件夹的 ChordPro 文件会纳入同步并添加 Singbook 元数据。';
+
+  @override
+  String get accountImportChordPro => '从云端硬盘导入 ChordPro';
+
+  @override
+  String get accountImportChordProHint =>
+      '选择要添加到此库的 .cho 文件。采用文件夹中已有的文件；其他地方的文件复制到这里。';
+
+  @override
+  String get syncErrorFolderPickerUnavailable => '驱动器文件夹选择不可用';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      '请在受支持的设备上使用 Google 云端硬盘选择器选择一个可见的云端硬盘文件夹。';
+
+  @override
+  String get syncErrorDriveFolderMissing => 'Singbook Drive 文件夹不可用';
+
+  @override
+  String get syncErrorDriveFolderMissingHint => '再次选择该文件夹，或在 Google 云端硬盘中将其恢复。';
+
+  @override
+  String get syncErrorDriveFileAuthorization => 'Singbook 需要访问此云端硬盘文件夹';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint => '再次选择该文件夹以授予访问权限，然后同步您的库。';
+
+  @override
+  String get syncErrorFolderMigration => '图书馆还无法移动';
+
+  @override
+  String get syncErrorFolderMigrationHint => '您以前的图书馆仍然安全。检查连接并再次选择文件夹以重试。';
+
+  @override
+  String get syncErrorVisibleFolderRequired => '首先选择一个可见的云端硬盘文件夹';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint => '从云端硬盘导入文件之前，需要一个可见的库文件夹。';
+
+  @override
   String get accountSignOutTitle => '退出此账户？';
 
   @override
@@ -1787,4 +1879,37 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]再写一行，靠近 [F]一点。';
+
+  @override
+  String get playerEstimatedKey => '估计调性';
+
+  @override
+  String get songsLibraryView => '曲库';
+
+  @override
+  String get settingsStartupView => '启动时打开';
+
+  @override
+  String get settingsStartupViewHint => '选择应用打开时显示的歌曲视图。';
+
+  @override
+  String get settingsStartupLastView => '上次打开';
+
+  @override
+  String get playerExpandControls => '显示播放控件';
+
+  @override
+  String get playerCollapseControls => '隐藏播放控件';
+
+  @override
+  String get settingsShowSections => '显示段落标题';
+
+  @override
+  String get settingsShowSectionsHint => '在歌词中显示主歌、副歌和其他段落的标题。';
+
+  @override
+  String get settingsShowPlayerControls => '显示播放控件';
+
+  @override
+  String get settingsShowPlayerControlsHint => '也可以轻触或滑动播放器面板来显示或隐藏它。';
 }

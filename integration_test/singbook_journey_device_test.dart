@@ -342,7 +342,13 @@ void main() {
       final expectedContributors = contributingProviderIds(
         app.combined!,
       ).length;
-      expect(expectedContributors, 2);
+      expect(expectedContributors, 4);
+      expect(contributingProviderIds(app.combined!), {
+        _catalogId,
+        _chordSourceId,
+        _lyricSourceId,
+        _timingOnlySourceId,
+      });
       expect(find.textContaining('#'), findsNothing);
       await _capture(binding, '14_source_comparison');
       final comparisonCounts = find.byKey(
@@ -364,7 +370,7 @@ void main() {
           .state
           .comparison!
           .suggested!;
-      expect(combinedVersion.contributions, hasLength(2));
+      expect(combinedVersion.contributions, hasLength(4));
       final infoSheet = find.byKey(const ValueKey('version-info-sheet'));
       final infoScrollable = find
           .descendant(of: infoSheet, matching: find.byType(Scrollable))
@@ -830,14 +836,19 @@ void main() {
       await tester.pumpAndSettle();
       final overrideEntryId = app.setlists.single.entries.first.id;
       final regularEntryId = app.setlists.single.entries.last.id;
-      final dragHandles = find.byIcon(Icons.drag_handle_rounded);
-      final start = tester.getCenter(dragHandles.first);
-      final destination = tester.getCenter(dragHandles.last);
+      final firstRow = find.byKey(ValueKey(overrideEntryId));
+      final lastRow = find.byKey(ValueKey(regularEntryId));
+      expect(
+        tester.widget(firstRow),
+        isA<ReorderableDelayedDragStartListener>(),
+      );
+      final start = tester.getCenter(firstRow);
+      final destination = tester.getCenter(lastRow);
       final gesture = await tester.startGesture(start);
-      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 600));
       // Send a continuous path like a finger drag. A single large pointer
       // jump can be interpreted as only one reorder slot by the native view.
-      final target = destination + const Offset(0, 30);
+      final target = destination + const Offset(0, 12);
       final step = (target - start) / 20;
       for (var index = 0; index < 20; index++) {
         await gesture.moveBy(step);
@@ -845,9 +856,9 @@ void main() {
       }
       await tester.pump(const Duration(milliseconds: 150));
       final keyedRowsWhileHeld = find
-          .byType(ListTile)
+          .byType(ReorderableDelayedDragStartListener)
           .evaluate()
-          .map((element) => (element.widget as ListTile).key)
+          .map((element) => element.widget.key)
           .toList();
       debugPrint(
         'SINGBOOK_E2E_DRAG held start=$start destination=$destination '
@@ -1434,6 +1445,7 @@ Future<Map<String, Object>> runSingbookFixturePreflight() async {
     'mainUsable': usableCount(main.results),
     'mainUnavailableCount': unavailableCount(main.checks),
     'mainContributors': contributingProviderIds(combined).length,
+    'mainContributorIds': contributingProviderIds(combined).toList()..sort(),
     'mainTimingOnlyState': main.checks[_timingOnlySourceId]?.state ?? 'missing',
     'mainUnavailableState':
         main.checks[_unavailableSourceId]?.state ?? 'missing',

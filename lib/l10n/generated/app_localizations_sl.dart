@@ -13,14 +13,52 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Mirno mesto, kjer lahko najdete in uredite svojo knjižnico pesmi ter skupaj pojete.';
+      'Besedila, akordi in seznami skladb na enem mestu, pripravljeni za vaje, oder in kjer koli igrate.';
 
   @override
-  String get aboutMadeForSinging => 'Ustvarjeno za skupno petje';
+  String get aboutMadeForSinging => 'Vsaka pesem, pripravljena.';
 
   @override
   String get aboutDetails =>
-      'Išči po omogočenih virih, primerjaj različice, hrani besedila in akorde skupaj ter razvrščaj pesmi v sezname. Knjižnica je shranjena v tej napravi; izbirna sinhronizacija z Google Drive uporablja tvoj Google račun. Iskanja se pošljejo neposredno omogočenim virom.';
+      'Iščite po dostopnih virih ter primerjajte besedila, akorde, časovne oznake in podatke o posnetkih, preden shranite želeno različico. Dostopnost je odvisna od pesmi in storitve.';
+
+  @override
+  String get aboutFindTitle => 'Poiščite pravo različico';
+
+  @override
+  String get aboutKeepTitle => 'Ustvarite svojo knjižnico';
+
+  @override
+  String get aboutKeepDetails =>
+      'Urejajte in transponirajte pesmi, hranite jih v lokalni knjižnici za uporabo brez povezave ter delite prenosne datoteke ChordPro. Izbirna sinhronizacija z Google Drive uporablja zasebno mapo aplikacije v vašem Google računu. Naprave lahko posodobite tudi tako, da tapnete »Sinhroniziraj zdaj«.';
+
+  @override
+  String get aboutPlayTitle => 'Odnesite seznam skladb na oder';
+
+  @override
+  String get aboutPlayDetails =>
+      'Razvrstite pesmi v sezname, izberite tonaliteto za vsako in delite sezname OpenSong. Prilagodite velikost besedila v bralniku, vklopite samodejno pomikanje besedila in natisnite PDF-je pesmi. Singbook ne pretaka in ne predvaja zvoka.';
+
+  @override
+  String get aboutPrivacyTitle => 'Brezplačno in z lokalno knjižnico';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook je brezplačen, brez oglasov, analitike in nakupov v aplikaciji. Shranjena knjižnica ostane v vaši napravi; izbirna sinhronizacija uporablja vaš Google Drive. Spletni rezultati prihajajo neposredno od neodvisnih storitev tretjih oseb ter morda niso na voljo ali so zaščiteni z avtorskimi pravicami. Singbook njihove vsebine ne gosti.';
+
+  @override
+  String get aboutWebsite => 'Spletno mesto Singbook';
+
+  @override
+  String get aboutSourceCode => 'Izvorna koda na GitHubu';
+
+  @override
+  String get aboutPublisher => 'Avtor Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Jeziki aplikacije: $count';
+  }
 
   @override
   String get aboutSupport => 'Podpora in povratne informacije';
@@ -1393,6 +1431,69 @@ class AppLocalizationsSl extends AppLocalizations {
       'Sinhronizacija se izvede po povezavi ter po dodajanju, urejanju ali odstranitvi pesmi.';
 
   @override
+  String get accountDriveFolder => 'Mapa knjižnice Google Drive';
+
+  @override
+  String get accountPrivateDriveFolder => 'Zasebna mapa Singbook';
+
+  @override
+  String get accountChooseDriveFolder => 'Izberite mapo';
+
+  @override
+  String get accountDriveFolderMoveTitle =>
+      'Želite premakniti svojo knjižnico Singbook?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Izberite vidno mapo Google Drive. Singbook bo tam kopiral in preveril vaše pesmi in sezname, preden preklopite nanj. Izvirne datoteke ostanejo na prejšnjem mestu kot varnostna kopija. Druge datoteke ostanejo same. Datoteke ChordPro, ki jih uvozite v to mapo, so sprejete za sinhronizacijo in prejmejo metapodatke Singbook.';
+
+  @override
+  String get accountImportChordPro => 'Uvozi ChordPro iz Drive';
+
+  @override
+  String get accountImportChordProHint =>
+      'Izberite datoteke .cho, ki jih želite dodati v to knjižnico. Datoteke, ki so že v mapi, so sprejete; datoteke drugje se kopirajo sem.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Izbira mape Drive ni na voljo';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'V podprti napravi z izbirnikom Google Drive izberite vidno mapo Drive.';
+
+  @override
+  String get syncErrorDriveFolderMissing => 'Mapa Singbook Drive ni na voljo';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Ponovno izberite mapo ali jo obnovite v storitvi Google Drive.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook potrebuje dostop do te mape Drive';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Znova izberite mapo, da omogočite dostop, nato sinhronizirajte knjižnico.';
+
+  @override
+  String get syncErrorFolderMigration =>
+      'Knjižnice še ni bilo mogoče preseliti';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Vaša prejšnja knjižnica je še vedno varna. Preverite povezavo in znova izberite mapo za ponovni poskus.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Najprej izberite vidno mapo Drive';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Pred uvozom datotek iz storitve Drive je potrebna vidna mapa knjižnice.';
+
+  @override
   String get accountSignOutTitle => 'Se želite odjaviti iz tega računa?';
 
   @override
@@ -1918,4 +2019,40 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Še ena vrstica, malo [F]bliže.';
+
+  @override
+  String get playerEstimatedKey => 'Ocenjena tonaliteta';
+
+  @override
+  String get songsLibraryView => 'Knjižnica';
+
+  @override
+  String get settingsStartupView => 'Začni v';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Izberite pogled Pesmi, ki se prikaže ob odprtju aplikacije.';
+
+  @override
+  String get settingsStartupLastView => 'Nazadnje odprto';
+
+  @override
+  String get playerExpandControls => 'Prikaži kontrolnike predvajanja';
+
+  @override
+  String get playerCollapseControls => 'Skrij kontrolnike predvajanja';
+
+  @override
+  String get settingsShowSections => 'Prikaži naslove razdelkov';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'V besedilu prikaži naslove kitic, refrena in drugih razdelkov.';
+
+  @override
+  String get settingsShowPlayerControls => 'Prikaži kontrolnike predvajanja';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Ploščo predvajalnika lahko prikažete ali skrijete tudi z dotikom ali podrsanjem.';
 }

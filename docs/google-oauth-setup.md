@@ -4,10 +4,12 @@ Owner checklist for turning on Google Sign-In and Drive sync. Singbook has no
 backend and no client secret: the only things you create are a Google Cloud
 project, an OAuth consent screen and OAuth **client IDs** (public identifiers).
 
-What the app needs (from `lib/sync/google_auth.dart`):
+What the app needs (from `lib/sync/google_auth.dart` and the Android Drive Picker):
 
-- Scope: `https://www.googleapis.com/auth/drive.appdata` only (hidden per-app
-  Drive folder; the app cannot see any other Drive file).
+- Scopes: `https://www.googleapis.com/auth/drive.appdata` for the default
+  private app folder and `https://www.googleapis.com/auth/drive.file` for the
+  Android visible-folder and selected-file flows. The Picker request uses
+  `drive.file` alone; Singbook never requests broad `drive` access.
 - Dart define `VERSE_GOOGLE_SERVER_CLIENT_ID`: the **Web application** client ID
   (required by Google Sign-In on Android).
 - Dart define `VERSE_GOOGLE_IOS_CLIENT_ID`: only for an iOS build (optional;
@@ -48,6 +50,8 @@ verified domain, homepage and privacy policy on that domain.
    make sure it is selected.
 3. **APIs & Services > Library**, search `Google Drive API`, open it and click
    **Enable**. (Data Access lists scopes only for APIs that are already enabled.)
+4. In the same library, enable `Google Picker API` for Android's folder and
+   file-selection consent flow.
 
 ## 2. Google Auth Platform: branding, audience, scopes
 
@@ -84,13 +88,12 @@ and the same fields apply.
 ### Data Access
 
 1. **ADD OR REMOVE SCOPES**.
-2. Select `.../auth/drive.appdata` (or paste it under **Manually add scopes** if
-   it is not listed), click **UPDATE**.
-3. Confirm it appears under **Non-sensitive scopes** in the table. If it shows
-   up as Sensitive/Restricted, stop: you picked a different scope (for example
-   `drive` or `drive.file`), which would trigger verification.
+2. Select `.../auth/drive.appdata` and `.../auth/drive.file` (or paste them
+   under **Manually add scopes** if they are not listed), click **UPDATE**.
+3. Confirm both appear under **Non-sensitive scopes** in the table. If either
+   shows as Sensitive/Restricted, stop and verify the scope spelling.
 
-Do **not** add any other scope. The app does not need `email`/`profile` to be
+Do **not** add any other Drive scope. The app does not need `email`/`profile` to be
 listed; Google Sign-In identifies the account with basic profile information.
 
 ### Publish to Production
@@ -202,8 +205,8 @@ define ships with sync disabled.
 
 ## 6. Verification checklist
 
-- [ ] APIs & Services shows Google Drive API enabled.
-- [ ] Data Access lists exactly `drive.appdata`, under Non-sensitive.
+- [ ] APIs & Services shows Google Drive API and Google Picker API enabled.
+- [ ] Data Access lists exactly `drive.appdata` and `drive.file`, under Non-sensitive.
 - [ ] Audience: External, status **In production** (or your accounts are listed
       as test users while developing).
 - [ ] Android clients exist for debug, upload and Play app-signing SHA-1s, all with

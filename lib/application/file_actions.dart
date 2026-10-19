@@ -7,7 +7,8 @@ import 'package:archive/archive.dart';
 import 'package:characters/characters.dart';
 import 'package:crypto/crypto.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart' show visibleForTesting;
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, visibleForTesting;
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as paths;
 import 'package:path_provider/path_provider.dart';
@@ -44,9 +45,13 @@ const backupPreferenceKeys = <String>{
   'readerFontSize',
   'locale',
   'showChords',
+  'showSections',
+  'playerControlsExpanded',
   'autoscroll',
   'timingMode',
   'defaultView',
+  'startupSongsView',
+  'lastSongsView',
   'catalog',
   'providers',
 };
@@ -405,12 +410,28 @@ class VerseFileActions {
   VerseFileActions({
     Future<Directory> Function()? temporaryDirectory,
     Future<ShareResult> Function(ShareParams)? shareFiles,
+    Future<Uri?> Function({
+      required String fileName,
+      required Uint8List bytes,
+      required String mimeType,
+    })?
+    saveFile,
+    TargetPlatform? platform,
     this.shareRetention = const Duration(hours: 1),
   }) : _temporaryDirectory = temporaryDirectory ?? getTemporaryDirectory,
+       _platform = platform ?? defaultTargetPlatform,
+       _saveFile = saveFile ?? FilePicker.saveFile,
        _shareFiles =
            shareFiles ?? ((params) => SharePlus.instance.share(params));
   final Future<Directory> Function() _temporaryDirectory;
   final Future<ShareResult> Function(ShareParams) _shareFiles;
+  final TargetPlatform _platform;
+  final Future<Uri?> Function({
+    required String fileName,
+    required Uint8List bytes,
+    required String mimeType,
+  })
+  _saveFile;
 
   static const MethodChannel _richClipboardChannel = MethodChannel(
     'org.freevia.singbook/rich_clipboard',
@@ -541,6 +562,19 @@ class VerseFileActions {
     String title,
     Rect? origin,
   ) async {
+    // A desktop backup/export must work without an installed share target.
+    // file_picker writes these bytes after the native Save As confirmation,
+    // including overwrite confirmation and the suggested file's extension.
+    if (_platform == TargetPlatform.windows) {
+      final saved = await _saveFile(
+        fileName: name,
+        bytes: bytes is Uint8List ? bytes : Uint8List.fromList(bytes),
+        mimeType: mime,
+      );
+      return saved == null
+          ? const ShareResult('', ShareResultStatus.dismissed)
+          : ShareResult(saved.toString(), ShareResultStatus.success);
+    }
     final root = Directory(
       paths.join((await _temporaryDirectory()).path, 'verse-share'),
     );
@@ -709,7 +743,6 @@ String songPlainText(SongDocument song) {
 
 String setlistPlainText(SetlistDocument setlist, List<SongDocument> songs) {
   final out = StringBuffer(setlist.name);
-  if (setlist.notes.trim().isNotEmpty) out.write('\n${setlist.notes.trim()}');
   final ordered = _songsInSetlist(setlist, songs);
   for (var index = 0; index < ordered.length; index++) {
     final song = ordered[index];
@@ -776,9 +809,6 @@ String setlistRichHtml(SetlistDocument setlist, List<SongDocument> songs) {
   final out = StringBuffer(
     '<!doctype html><html><body><article><h1>${_htmlEscape(setlist.name)}</h1>',
   );
-  if (setlist.notes.trim().isNotEmpty) {
-    out.write('<p class="notes">${_htmlEscape(setlist.notes.trim())}</p>');
-  }
   for (var index = 0; index < ordered.length; index++) {
     final song = ordered[index];
     out.write(
@@ -1074,13 +1104,29 @@ bool _validBackupPreference(String key, Object? value) => switch (key) {
     value is num && value.isFinite && value >= 18 && value <= 36,
   'locale' =>
     value == null || value is String && RegExp(r'^[a-z]{2,3}$').hasMatch(value),
-  'showChords' || 'autoscroll' => value is bool,
+  'showChords' ||
+  'showSections' ||
+  'playerControlsExpanded' ||
+  'autoscroll' => value is bool,
   'timingMode' => const {'estimated', 'timed', 'manual'}.contains(value),
   'defaultView' => const {
     'home',
     'songs',
     'setlists',
     'settings',
+  }.contains(value),
+  'startupSongsView' => const {
+    'recent',
+    'library',
+    'favorites',
+    'online',
+    'last',
+  }.contains(value),
+  'lastSongsView' => const {
+    'recent',
+    'library',
+    'favorites',
+    'online',
   }.contains(value),
   'catalog' =>
     value is String && RegExp(r'^[a-z][a-z0-9_-]{0,63}$').hasMatch(value),
@@ -1813,9 +1859,7 @@ Future<Uint8List> createSongPdf(
 }) async {
   final needsCjk =
       songs.any(_hasCjk) ||
-      (setlist != null &&
-          (_cjkPattern.hasMatch(setlist.name) ||
-              _cjkPattern.hasMatch(setlist.notes)));
+      (setlist != null && _cjkPattern.hasMatch(setlist.name));
   final fonts = _PdfFontBytes(
     await _fontAsset(_regularAsset),
     await _fontAsset(_boldAsset),
@@ -1907,14 +1951,6 @@ Future<Uint8List> _buildSongPdf(_PdfJob job) async {
                 color: navy,
               ),
             ),
-            if (setlist.notes.isNotEmpty)
-              pw.Padding(
-                padding: const pw.EdgeInsets.only(top: 2, bottom: 4),
-                child: pw.Text(
-                  clean(setlist.notes),
-                  style: fonts.sans(fontSize: 12, color: muted),
-                ),
-              ),
             for (var i = 0; i < songs.length; i++)
               pw.Padding(
                 padding: const pw.EdgeInsets.symmetric(vertical: 8),

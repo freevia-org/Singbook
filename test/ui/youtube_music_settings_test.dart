@@ -57,6 +57,12 @@ void main() {
         locale: scenario.$2,
         textScale: scenario.$3,
       );
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('settings-menu-sources')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('settings-menu-sources')));
+      await tester.pumpAndSettle();
       final panel = find.widgetWithText(SwitchListTile, 'YouTube Music');
       await tester.scrollUntilVisible(
         panel,

@@ -1,8 +1,6 @@
 {
   "@@locale": "pt",
   "appTitle": "Singbook",
-  "aboutDescription": "Um espaço tranquilo para encontrar, organizar e cantar com sua biblioteca de músicas.",
-  "aboutMadeForSinging": "Feito para cantar em conjunto",
   "menuTypeNewSong": "Escrever uma nova canção", "aboutDetails": "Pesquise nas fontes ativadas, compare versões, mantenha letras e acordes juntos e organize músicas em listas. A sua biblioteca fica guardada neste dispositivo; a sincronização opcional com o Google Drive usa a sua conta Google. As pesquisas são enviadas diretamente para as fontes ativadas.", "aboutSupport": "Suporte e comentários", "appVersion": "Versão {version}",
   "@appVersion": {
     "placeholders": {
@@ -812,5 +810,66 @@
   "editorStandardTuning": "Afinação padrão",
   "editorExampleVerse": "[C]Um novo dia nos [G]chama,\n[Am]seguimos a luz de volta para [F]casa.",
   "editorExampleChorus": "[F]Vamos cantar esta canção [C]juntos,\n[G]que a melodia nos leve [C]adiante.",
-  "editorExampleBridge": "[Am]Mais uma linha, um pouco [F]mais perto."
+  "editorExampleBridge": "[Am]Mais uma linha, um pouco [F]mais perto.",
+  "aboutMadeForSinging": "Cada música, pronta.",
+  "aboutDescription": "Letras, acordes e listas de músicas num só lugar, prontas para os ensaios, o palco e qualquer lugar onde toque.",
+  "aboutDetails": "Pesquise nas fontes disponíveis e compare letras, acordes, marcadores de tempo e detalhes da gravação antes de guardar a versão que quer tocar. A disponibilidade varia conforme a música e o serviço.",
+  "aboutFindTitle": "Encontre a versão certa",
+  "aboutKeepTitle": "Crie a sua biblioteca",
+  "aboutKeepDetails": "Edite e transponha músicas, mantenha-as na biblioteca local para as usar offline e partilhe ficheiros ChordPro portáteis. A sincronização opcional com o Google Drive usa uma pasta privada da app na sua conta Google. Também pode tocar em «Sincronizar agora» para atualizar os seus dispositivos.",
+  "aboutPlayTitle": "Leve a sua lista de músicas para o palco",
+  "aboutPlayDetails": "Organize músicas em listas, escolha o tom de cada uma e partilhe listas OpenSong. Ajuste o tamanho do texto no leitor, ative a deslocação automática das letras e imprima PDFs das músicas. O Singbook não transmite nem reproduz áudio.",
+  "aboutPrivacyTitle": "Gratuito e com prioridade local",
+  "aboutPrivacyDetails": "O Singbook é gratuito, sem anúncios, análises ou compras na app. A biblioteca guardada fica no seu dispositivo; a sincronização opcional usa o seu Google Drive. Os resultados online vêm diretamente de serviços independentes de terceiros e podem estar indisponíveis ou protegidos por direitos de autor. O Singbook não aloja esses conteúdos.",
+  "aboutWebsite": "Site do Singbook",
+  "aboutSourceCode": "Código-fonte no GitHub",
+  "aboutPublisher": "Por Freevia",
+  "aboutLanguages": "Idiomas da app: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountDriveFolder": "Pasta da biblioteca do Google Drive",
+  "accountPrivateDriveFolder": "Pasta privada do Singbook",
+  "accountChooseDriveFolder": "Escolha a pasta",
+  "accountDriveFolderMoveTitle": "Mover sua biblioteca de Singbook?",
+  "accountDriveFolderMoveBody": "Escolha uma pasta visível do Google Drive. O Singbook irá copiar e verificar suas músicas e setlists antes de mudar para ele. Os arquivos originais permanecem no local anterior como backup. Outros arquivos são deixados sozinhos. Os arquivos ChordPro importados para esta pasta são adotados para sincronização e recebem metadados do Singbook.",
+  "accountImportChordPro": "Importar ChordPro do Drive",
+  "accountImportChordProHint": "Escolha arquivos .cho para adicionar a esta biblioteca. Os arquivos que já estão na pasta são adotados; arquivos em outros lugares são copiados aqui.",
+  "syncErrorFolderPickerUnavailable": "A seleção da pasta do Drive não está disponível",
+  "syncErrorFolderPickerUnavailableHint": "Escolha uma pasta visível do Drive com o seletor do Google Drive em um dispositivo compatível.",
+  "syncErrorDriveFolderMissing": "A pasta Singbook Drive não está disponível",
+  "syncErrorDriveFolderMissingHint": "Escolha a pasta novamente ou restaure-a no Google Drive.",
+  "syncErrorDriveFileAuthorization": "O Singbook precisa de acesso a esta pasta do Drive",
+  "syncErrorDriveFileAuthorizationHint": "Escolha a pasta novamente para conceder acesso e sincronize sua biblioteca.",
+  "syncErrorFolderMigration": "A biblioteca ainda não pôde ser movida",
+  "syncErrorFolderMigrationHint": "Sua biblioteca anterior ainda está segura. Verifique a conexão e escolha a pasta novamente para tentar novamente.",
+  "syncErrorVisibleFolderRequired": "Escolha primeiro uma pasta visível do Drive",
+  "syncErrorVisibleFolderRequiredHint": "É necessária uma pasta de biblioteca visível antes de importar arquivos do Drive.",
+  "playerEstimatedKey": "Tonalidade estimada",
+  "songsLibraryView": "Biblioteca",
+  "settingsStartupView": "Iniciar em",
+  "settingsStartupViewHint": "Escolha a vista de músicas apresentada quando a aplicação é aberta.",
+  "settingsStartupLastView": "Última vista aberta",
+  "playerExpandControls": "Mostrar controlos de reprodução",
+  "playerCollapseControls": "Ocultar controlos de reprodução",
+  "settingsShowSections": "Mostrar títulos das secções",
+  "settingsShowSectionsHint": "Mostrar na letra os títulos dos versos, do refrão e de outras secções.",
+  "settingsShowPlayerControls": "Mostrar controlos de reprodução",
+  "settingsShowPlayerControlsHint": "Também pode tocar ou deslizar no painel do leitor para o mostrar ou ocultar.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

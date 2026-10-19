@@ -29,6 +29,24 @@ VerseUiState _settings({
   languageCode: languageCode,
 );
 
+class _LibraryFilterController extends FakeUiController {
+  _LibraryFilterController()
+    : super(
+        (controller) => VerseUiState(
+          activeTab: VerseTab.home,
+          homeListMode: HomeListMode.library,
+          query: (controller as _LibraryFilterController).query,
+          songs: [_song('1', 'Éclair'), _song('2', 'Zebra')],
+        ),
+      );
+  String query = '';
+  @override
+  void setQuery(String value) {
+    query = value;
+    refresh();
+  }
+}
+
 void main() {
   group('Songs list', () {
     testWidgets('is ordered and indexed by the alphabet, not code units', (
@@ -47,6 +65,7 @@ void main() {
       final c = FakeUiController(
         (_) => VerseUiState(
           activeTab: VerseTab.songs,
+          homeListMode: HomeListMode.library,
           songs: [for (final (i, t) in titles.indexed) _song('$i', t)],
         ),
       );
@@ -87,6 +106,7 @@ void main() {
       final c = FakeUiController(
         (_) => VerseUiState(
           activeTab: VerseTab.songs,
+          homeListMode: HomeListMode.library,
           songs: [
             _song('1', 'Zebra'),
             _song('2', 'Éclair'),
@@ -113,12 +133,7 @@ void main() {
     testWidgets('search ignores accents, case and surrounding spaces', (
       tester,
     ) async {
-      final c = FakeUiController(
-        (_) => VerseUiState(
-          activeTab: VerseTab.songs,
-          songs: [_song('1', 'Éclair'), _song('2', 'Zebra')],
-        ),
-      );
+      final c = _LibraryFilterController();
       addTearDown(c.dispose);
       await pumpShell(tester, c);
 
@@ -231,7 +246,7 @@ void main() {
         .controller!
         .text;
 
-    testWidgets('editing starts from the latest synced name and notes', (
+    testWidgets('inline editing starts from the latest synced name', (
       tester,
     ) async {
       final c = make();
@@ -248,9 +263,10 @@ void main() {
       c.refresh();
       await tester.pumpAndSettle();
       expect(field(tester, 0), 'Sunday (synced)');
-      expect(field(tester, 1), 'Newer notes');
+      expect(find.byType(TextField), findsOneWidget);
 
       final l10n = l10nOf(tester);
+      expect(find.text(l10n.setlistNotes), findsNothing);
       await tester.tap(find.byTooltip(l10n.actionSave));
       await tester.pump();
       expect(
@@ -259,7 +275,7 @@ void main() {
       );
     });
 
-    testWidgets('a change arriving mid-edit does not replace typed text', (
+    testWidgets('sync does not replace the inline title or hidden notes', (
       tester,
     ) async {
       editing = true;
@@ -267,11 +283,19 @@ void main() {
       addTearDown(c.dispose);
       await pumpShell(tester, c);
 
-      await tester.enterText(find.byType(TextField).last, 'Typed notes');
+      await tester.enterText(find.byType(TextField).first, 'Typed title');
       notes = 'Remote notes';
       c.refresh();
       await tester.pumpAndSettle();
-      expect(field(tester, 1), 'Typed notes');
+      expect(field(tester, 0), 'Typed title');
+      expect(find.byType(TextField), findsOneWidget);
+
+      await tester.tap(find.byTooltip(l10nOf(tester).actionSave));
+      await tester.pump();
+      expect(
+        c.calls.last,
+        startsWith('saveSetlistDetails(Typed title, Remote notes'),
+      );
     });
   });
 
@@ -285,6 +309,12 @@ void main() {
       await pumpShell(tester, c);
       final l10n = l10nOf(tester);
 
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('settings-menu-player')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('settings-menu-player')));
+      await tester.pumpAndSettle();
       final tile = find.widgetWithText(
         SwitchListTile,
         l10n.settingsDefaultAutoscroll,
@@ -294,10 +324,9 @@ void main() {
       await tester.scrollUntilVisible(
         tile,
         200,
-        scrollable: find.descendant(
-          of: settingsList,
-          matching: find.byType(Scrollable),
-        ).first,
+        scrollable: find
+            .descendant(of: settingsList, matching: find.byType(Scrollable))
+            .first,
       );
       expect(tester.widget<SwitchListTile>(tile).onChanged, isNull);
 
@@ -322,6 +351,12 @@ void main() {
       await pumpShell(tester, c);
       expect(tester.takeException(), isNull);
       final l10n = l10nOf(tester);
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('settings-menu-appearance')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('settings-menu-appearance')));
+      await tester.pumpAndSettle();
       expect(find.text(l10n.settingsLanguageSystem), findsWidgets);
     });
 
@@ -331,7 +366,7 @@ void main() {
       (Size(360, 640), 2.0),
     ]) {
       testWidgets(
-        'the About dialog scrolls instead of overflowing ($size x$scale)',
+        'the About page scrolls instead of overflowing ($size x$scale)',
         (tester) async {
           final c = FakeUiController((_) => _settings());
           addTearDown(c.dispose);
@@ -348,25 +383,21 @@ void main() {
           await tester.scrollUntilVisible(
             aboutTitle,
             200,
-            scrollable: find.descendant(
-              of: find.byType(Scaffold),
-              matching: find.byType(Scrollable),
-            ).first,
+            scrollable: find
+                .descendant(
+                  of: find.byType(Scaffold),
+                  matching: find.byType(Scrollable),
+                )
+                .first,
           );
           await tester.ensureVisible(aboutTitle);
           await tester.pumpAndSettle();
           await tester.tap(aboutTitle);
           await tester.pumpAndSettle();
-          expect(find.byType(AlertDialog), findsOneWidget);
+          expect(find.byType(AlertDialog), findsNothing);
           expect(tester.takeException(), isNull);
-          expect(
-            find.descendant(
-              of: find.byType(AlertDialog),
-              matching: find.byType(SingleChildScrollView),
-            ),
-            findsOneWidget,
-          );
-          expect(find.text(l10n.actionDone), findsOneWidget);
+          expect(find.byType(SingleChildScrollView), findsOneWidget);
+          expect(find.text(l10n.settingsAbout), findsOneWidget);
         },
       );
     }

@@ -13,14 +13,52 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Rahulik koht oma laulude leidmiseks, korrastamiseks ja laulmiseks.';
+      'Sinu laulusõnad, akordid ja lugude nimekirjad koos, valmis prooviks, lavale ja kõikjale, kus mängid.';
 
   @override
-  String get aboutMadeForSinging => 'Loodud koos laulmiseks';
+  String get aboutMadeForSinging => 'Iga laul on valmis.';
 
   @override
   String get aboutDetails =>
-      'Otsi lubatud allikatest, võrdle versioone, hoia sõnad ja akordid koos ning korralda laulud esitusloenditesse. Sinu kogu salvestatakse sellesse seadmesse; valikuline Google Drive’i sünkroonimine kasutab sinu Google’i kontot. Otsingud saadetakse otse lubatud allikatele.';
+      'Otsi lubatud allikatest ning võrdle laulusõnu, akorde, ajastust ja salvestuse üksikasju enne, kui salvestad esitamiseks sobiva versiooni. Saadavus oleneb laulust ja teenusest.';
+
+  @override
+  String get aboutFindTitle => 'Leia sobiv versioon';
+
+  @override
+  String get aboutKeepTitle => 'Loo oma kogu';
+
+  @override
+  String get aboutKeepDetails =>
+      'Töötle ja transponeeri laule, hoia neid võrguühenduseta kasutamiseks oma kohalikus kogus ning jaga kaasaskantavaid ChordPro-faile. Valikuline Google Drive’i sünkroonimine kasutab sinu Google’i kontol rakenduse privaatkausta. Seadmete uuendamiseks võid puudutada ka nuppu „Sünkrooni kohe“.';
+
+  @override
+  String get aboutPlayTitle => 'Võta oma nimekiri lavale kaasa';
+
+  @override
+  String get aboutPlayDetails =>
+      'Järjesta laulud nimekirjadesse, vali igale laulule helistik ja jaga OpenSongi nimekirju. Muuda lugeja teksti, laulusõnade automaatset kerimist ja prindi laulude PDF-faile. Singbook ei voogedasta ega esita heli.';
+
+  @override
+  String get aboutPrivacyTitle => 'Tasuta ja seadmepõhine';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook on tasuta, ilma reklaamide, analüütika ja rakendusesiseste ostudeta. Salvestatud kogu jääb sinu seadmesse; valikuline sünkroonimine kasutab sinu enda Google Drive’i. Veebitulemused tulevad otse sõltumatutelt kolmanda poole teenustelt ning võivad olla kättesaamatud või autoriõigustega kaitstud. Singbook nende sisu ei majuta.';
+
+  @override
+  String get aboutWebsite => 'Singbooki veebisait';
+
+  @override
+  String get aboutSourceCode => 'Lähtekood GitHubis';
+
+  @override
+  String get aboutPublisher => 'Freevialt';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Rakenduse keeled: $count';
+  }
 
   @override
   String get aboutSupport => 'Tugi ja tagasiside';
@@ -1368,6 +1406,70 @@ class AppLocalizationsEt extends AppLocalizations {
       'Sünkroonimine toimub pärast ühendamist ning pärast laulu lisamist, muutmist või eemaldamist.';
 
   @override
+  String get accountDriveFolder => 'Google Drive\'i teegi kaust';
+
+  @override
+  String get accountPrivateDriveFolder => 'Privaatne lauluraamatu kaust';
+
+  @override
+  String get accountChooseDriveFolder => 'Valige kaust';
+
+  @override
+  String get accountDriveFolderMoveTitle =>
+      'Kas teisaldada oma lauluraamatuteek?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Valige nähtav Google Drive\'i kaust. Singbook kopeerib ja kinnitab teie laulud ja komplektiloendid seal enne sellele üleminekut. Originaalfailid jäävad varukoopiaks oma eelmisesse asukohta. Teised failid jäetakse rahule. Sellesse kausta imporditud ChordPro failid võetakse sünkroonimiseks ja Singbooki metaandmete vastuvõtmiseks vastu.';
+
+  @override
+  String get accountImportChordPro => 'Importige ChordPro Drive\'ist';
+
+  @override
+  String get accountImportChordProHint =>
+      'Valige sellesse teeki lisamiseks .cho-failid. Kaustas juba olevad failid võetakse vastu; mujal olevad failid kopeeritakse siia.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Drive\'i kausta valik pole saadaval';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Valige toetatud seadmes Google Drive\'i valija abil nähtav Drive\'i kaust.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'Singbook Drive\'i kaust pole saadaval';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Valige kaust uuesti või taastage see Google Drive\'is.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook vajab juurdepääsu sellele Drive\'i kaustale';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Juurdepääsu andmiseks valige kaust uuesti, seejärel sünkroonige oma teek.';
+
+  @override
+  String get syncErrorFolderMigration =>
+      'Raamatukogu ei saanud veel teisaldada';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Teie eelmine kogu on endiselt turvaline. Kontrollige ühendust ja valige uuesti proovimiseks uuesti kaust.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Valige esmalt nähtav Drive\'i kaust';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Enne failide importimist Drive\'ist on vaja nähtavat teegikausta.';
+
+  @override
   String get accountSignOutTitle => 'Kas logida sellelt kontolt välja?';
 
   @override
@@ -1881,4 +1983,40 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Veel üks rida, veidi [F]lähemal.';
+
+  @override
+  String get playerEstimatedKey => 'Hinnanguline helistik';
+
+  @override
+  String get songsLibraryView => 'Teek';
+
+  @override
+  String get settingsStartupView => 'Ava käivitamisel';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Vali laulude vaade, mida rakenduse avamisel näidatakse.';
+
+  @override
+  String get settingsStartupLastView => 'Viimati avatud';
+
+  @override
+  String get playerExpandControls => 'Kuva taasesituse juhtnuppe';
+
+  @override
+  String get playerCollapseControls => 'Peida taasesituse juhtnupud';
+
+  @override
+  String get settingsShowSections => 'Kuva osade pealkirjad';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Kuva laulusõnades salmide, refrääni ja muude osade pealkirju.';
+
+  @override
+  String get settingsShowPlayerControls => 'Kuva taasesituse juhtnuppe';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Saad pleieripaneeli kuvamiseks või peitmiseks seda ka puudutada või libistada.';
 }

@@ -123,6 +123,7 @@ void main() {
       app.settings['catalog'] = 'fixture';
       final ui = AppControllerAdapter(app);
       try {
+        ui.setHomeListMode(HomeListMode.online);
         ui.setQuery('Paper Satellites');
         await ui.submitSearch();
         await ui.selectReference(

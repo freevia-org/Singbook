@@ -6,14 +6,75 @@ import 'package:singbook/ui/widgets/adaptive_bottom_navigation.dart';
 
 import 'support/fake_controller.dart';
 
+class _InlineSetlistController extends FakeUiController {
+  _InlineSetlistController()
+    : super((controller) {
+        final c = controller as _InlineSetlistController;
+        return VerseUiState(
+          route: VerseRoute.setlistDetail,
+          editingSetlist: c.editing,
+          activeSetlist: SetlistCardData(
+            id: 'set',
+            title: c.title,
+            notes: c.notes,
+            entries: const [
+              SetlistEntryData(id: 'e1', songId: 's1', title: 'Alpha'),
+            ],
+          ),
+        );
+      });
+
+  bool editing = false;
+  String title = 'Sunday';
+  final String notes = 'Keep stored but hidden';
+
+  @override
+  Future<void> editSetlist(String id) async {
+    calls.add('editSetlist($id)');
+    editing = true;
+    refresh();
+  }
+
+  @override
+  Future<void> saveSetlistDetails({
+    required String name,
+    required String notes,
+    List<String>? entryOrder,
+    bool finishEditing = false,
+  }) async {
+    calls.add('saveSetlistDetails($name, $notes, $entryOrder, $finishEditing)');
+    if (name.trim().isNotEmpty) title = name;
+    if (finishEditing) {
+      editing = false;
+      refresh();
+    }
+  }
+}
+
+class _QueryController extends FakeUiController {
+  _QueryController(super.build);
+
+  String query = '';
+
+  @override
+  void setQuery(String value) {
+    query = value;
+    calls.add('setQuery($value)');
+    refresh();
+  }
+}
+
 SongCardData _song(String id, String title, {bool favorite = false}) =>
     SongCardData(id: id, title: title, artist: 'Artist', favorite: favorite);
 
 VerseUiState _songsTab(
   List<SongCardData> songs, {
   List<SetlistCardData>? sets,
+  String query = '',
 }) => VerseUiState(
   activeTab: VerseTab.songs,
+  homeListMode: HomeListMode.library,
+  query: query,
   songs: songs,
   setlists: sets ?? const [],
 );
@@ -35,8 +96,11 @@ void main() {
     });
 
     testWidgets('the clear button empties the search field', (tester) async {
-      final c = FakeUiController(
-        (_) => _songsTab([_song('1', 'Alpha'), _song('2', 'Beta')]),
+      final c = _QueryController(
+        (controller) => _songsTab([
+          _song('1', 'Alpha'),
+          _song('2', 'Beta'),
+        ], query: (controller as _QueryController).query),
       );
       addTearDown(c.dispose);
       await pumpShell(tester, c);
@@ -186,7 +250,15 @@ void main() {
     tester,
   ) async {
     var activeTab = VerseTab.home;
-    final c = FakeUiController((_) => VerseUiState(activeTab: activeTab));
+    final c = _QueryController(
+      (controller) => VerseUiState(
+        activeTab: activeTab,
+        homeListMode: activeTab == VerseTab.songs
+            ? HomeListMode.library
+            : HomeListMode.recent,
+        query: (controller as _QueryController).query,
+      ),
+    );
     addTearDown(c.dispose);
     await pumpShell(tester, c);
     final homeWidth = tester.getSize(find.byType(TextField).first).width;
@@ -325,6 +397,74 @@ void main() {
     });
   });
 
+  group('Setlists', () {
+    testWidgets(
+      'compact preview taps expand songs and label partial estimated totals',
+      (tester) async {
+        final c = FakeUiController(
+          (_) => const VerseUiState(
+            activeTab: VerseTab.setlists,
+            setlists: [
+              SetlistCardData(
+                id: 'set',
+                title: 'Sunday',
+                songTitles: ['Alpha', 'Beta', 'Gamma'],
+                durationSeconds: 360,
+                durationEstimated: true,
+                durationPartial: true,
+              ),
+            ],
+          ),
+        );
+        addTearDown(c.dispose);
+        await pumpShell(tester, c);
+        final l10n = l10nOf(tester);
+        expect(find.textContaining('Gamma'), findsNothing);
+        expect(
+          find.textContaining(l10n.setlistDurationPartial('~6:00')),
+          findsOneWidget,
+        );
+        await tester.tap(find.text('Alpha · Beta'));
+        await tester.pumpAndSettle();
+        expect(find.text('1. Alpha\n2. Beta\n3. Gamma'), findsOneWidget);
+        expect(c.calls, isEmpty);
+        await tester.tap(find.text('1. Alpha\n2. Beta\n3. Gamma'));
+        await tester.pumpAndSettle();
+        expect(find.text('Alpha · Beta'), findsOneWidget);
+      },
+    );
+
+    testWidgets('hidden notes do not affect setlist search', (tester) async {
+      final c = FakeUiController(
+        (_) => const VerseUiState(
+          activeTab: VerseTab.setlists,
+          setlists: [
+            SetlistCardData(
+              id: 'set',
+              title: 'Sunday',
+              notes: 'Hidden rehearsal note',
+            ),
+          ],
+        ),
+      );
+      addTearDown(c.dispose);
+      await pumpShell(tester, c);
+      final l10n = l10nOf(tester);
+      final search = find.byType(TextField);
+
+      await tester.enterText(search, 'rehearsal');
+      await tester.pump();
+      expect(find.text(l10n.setlistsEmptySearch), findsOneWidget);
+
+      await tester.enterText(search, 'Sunday');
+      await tester.pump();
+      expect(
+        find.descendant(of: find.byType(Card), matching: find.text('Sunday')),
+        findsOneWidget,
+      );
+    });
+  });
+
   group('Setlist detail', () {
     FakeUiController setlist({required bool editing}) => FakeUiController(
       (_) => VerseUiState(
@@ -362,10 +502,7 @@ void main() {
       final l10n = l10nOf(tester);
 
       expect(find.text(l10n.setlistSongMissing), findsOneWidget);
-      await tester.tap(
-        find.byTooltip(l10n.setlistRemoveSong(l10n.setlistSongMissing)),
-      );
-      await tester.pumpAndSettle();
+      await _dragSetlistRowToDeleteBasket(tester, 'e2');
       expect(c.calls, ['removeSetlistEntry(set, e2, null, null)']);
       final undoLabel = l10n.actionUndo;
       expect(find.text(undoLabel), findsOneWidget);
@@ -374,26 +511,149 @@ void main() {
       expect(c.calls.last, 'restore(e2)');
     });
 
-    testWidgets('typed name and notes travel with a removal while editing', (
+    testWidgets(
+      'editing the title preserves hidden notes when removing a song',
+      (tester) async {
+        final c = setlist(editing: true);
+        addTearDown(c.dispose);
+        await pumpShell(tester, c);
+        final l10n = l10nOf(tester);
+
+        await tester.enterText(find.byType(TextField).first, 'Typed name');
+        expect(find.text(l10n.setlistNotes), findsNothing);
+        expect(find.byType(TextField), findsOneWidget);
+        FocusManager.instance.primaryFocus?.unfocus();
+        await tester.pumpAndSettle();
+        await _dragSetlistRowToDeleteBasket(tester, 'e1');
+        expect(c.calls, ['removeSetlistEntry(set, e1, Typed name, Old notes)']);
+
+        // The inline title remains while removal did not leave edit mode.
+        expect(find.byType(TextField), findsOneWidget);
+        await tester.tap(find.byTooltip(l10n.actionSave));
+        await tester.pump();
+        expect(c.calls.last, contains('Typed name, Old notes'));
+        expect(c.calls.last, endsWith('true)'));
+      },
+    );
+
+    testWidgets('tapping the setlist title edits it in place and hides notes', (
       tester,
     ) async {
-      final c = setlist(editing: true);
+      final c = _InlineSetlistController();
       addTearDown(c.dispose);
       await pumpShell(tester, c);
       final l10n = l10nOf(tester);
 
-      await tester.enterText(find.byType(TextField).first, 'Typed name');
-      await tester.enterText(find.byType(TextField).last, 'Typed notes');
-      await tester.tap(find.byTooltip(l10n.setlistRemoveSong('Alpha')));
-      await tester.pump();
-      expect(c.calls, ['removeSetlistEntry(set, e1, Typed name, Typed notes)']);
+      await tester.tap(find.text('Sunday'));
+      await tester.pumpAndSettle();
 
-      // The fields are still on screen: removal did not leave edit mode.
-      expect(find.byType(TextField), findsNWidgets(2));
+      final nameField = find.byKey(const ValueKey('setlist-name-inline-field'));
+      expect(nameField, findsOneWidget);
+      expect(tester.widget<TextField>(nameField).controller!.text, 'Sunday');
+      expect(find.byType(TextField), findsOneWidget);
+      expect(find.text(l10n.setlistNotes), findsNothing);
+      expect(find.text('Keep stored but hidden'), findsNothing);
+      await tester.enterText(nameField, 'Sunday Set');
       await tester.tap(find.byTooltip(l10n.actionSave));
+      await tester.pumpAndSettle();
+
+      expect(
+        c.calls.last,
+        contains('saveSetlistDetails(Sunday Set, Keep stored but hidden'),
+      );
+      expect(c.editing, isFalse);
+      expect(find.text('Sunday Set'), findsOneWidget);
+    });
+
+    testWidgets('the setlist pencil opens the same inline title editor', (
+      tester,
+    ) async {
+      final c = _InlineSetlistController();
+      addTearDown(c.dispose);
+      await pumpShell(tester, c);
+      final l10n = l10nOf(tester);
+
+      await tester.tap(find.byTooltip(l10n.actionEdit));
+      await tester.pumpAndSettle();
+
+      expect(
+        tester
+            .widget<TextField>(
+              find.byKey(const ValueKey('setlist-name-inline-field')),
+            )
+            .controller!
+            .text,
+        'Sunday',
+      );
+      expect(find.text(l10n.setlistNotes), findsNothing);
+      expect(c.calls, contains('editSetlist(set)'));
+    });
+
+    for (final missing in [false, true]) {
+      testWidgets('entry menu removes without dragging, missing=$missing', (
+        tester,
+      ) async {
+        final c = _UndoSetlistController(
+          (_) => VerseUiState(
+            route: VerseRoute.setlistDetail,
+            activeSetlist: SetlistCardData(
+              id: 'set',
+              title: 'Sunday',
+              entries: [
+                SetlistEntryData(
+                  id: 'entry',
+                  songId: missing ? 'gone' : 'song',
+                  title: 'Alpha',
+                  missing: missing,
+                ),
+              ],
+            ),
+          ),
+        );
+        addTearDown(c.dispose);
+        await pumpShell(tester, c);
+        final l10n = l10nOf(tester);
+        final menu = find.byTooltip(l10n.songMenuLabel);
+        expect(menu, findsOneWidget);
+        await tester.tap(menu);
+        await tester.pumpAndSettle();
+        final label = l10n.setlistRemoveSong(
+          missing ? l10n.setlistSongMissing : 'Alpha',
+        );
+        await tester.tap(find.text(label));
+        await tester.pumpAndSettle();
+        expect(c.calls, ['removeSetlistEntry(set, entry, null, null)']);
+        await tester.tap(find.text(l10n.actionUndo));
+        await tester.pumpAndSettle();
+        expect(c.calls.last, 'restore(entry)');
+      });
+    }
+
+    testWidgets('releasing a row outside the basket keeps its entry', (
+      tester,
+    ) async {
+      final c = setlist(editing: false);
+      addTearDown(c.dispose);
+      await pumpShell(tester, c);
+      final row = find.byKey(const ValueKey('e1'));
+      final gesture = await tester.startGesture(tester.getCenter(row));
+      await tester.pump(const Duration(milliseconds: 600));
+      await gesture.moveBy(const Offset(0, 5));
       await tester.pump();
-      expect(c.calls.last, contains('Typed name, Typed notes'));
-      expect(c.calls.last, endsWith('true)'));
+      await gesture.up();
+      await tester.pumpAndSettle();
+      expect(c.calls, isEmpty);
+      expect(find.byKey(const ValueKey('e1')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('setlist-delete-basket')),
+        findsOneWidget,
+      );
+      expect(
+        tester
+            .getSize(find.byKey(const ValueKey('setlist-delete-basket')))
+            .height,
+        0,
+      );
     });
   });
 
@@ -439,6 +699,12 @@ void main() {
       addTearDown(c.dispose);
       await pumpShell(tester, c);
 
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('settings-menu-appearance')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('settings-menu-appearance')));
+      await tester.pumpAndSettle();
       await tester.drag(find.byType(Slider), const Offset(90, 0));
       await tester.pumpAndSettle();
       final saves = c.calls.where(
@@ -454,6 +720,12 @@ void main() {
       await pumpShell(tester, c);
       final l10n = l10nOf(tester);
 
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('settings-menu-player')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('settings-menu-player')));
+      await tester.pumpAndSettle();
       await tester.scrollUntilVisible(
         find.text(l10n.settingsDefaultAutoscrollHint),
         200,
@@ -472,6 +744,12 @@ void main() {
       await pumpShell(tester, c);
       final l10n = l10nOf(tester);
 
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('settings-menu-appearance')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('settings-menu-appearance')));
+      await tester.pumpAndSettle();
       final semanticsOfLanguage = tester.getSemantics(
         find.byType(DropdownButton<String>).first,
       );
@@ -530,7 +808,7 @@ void main() {
       await pumpShell(tester, c);
       final l10n = l10nOf(tester);
 
-      expect(find.textContaining('${l10n.editorKeyField}:'), findsNothing);
+      expect(find.textContaining('${l10n.editorKeyField}: D'), findsOneWidget);
       expect(find.textContaining('${l10n.editorCapoField}: 2'), findsOneWidget);
       expect(find.byTooltip(l10n.songFavoriteAdd), findsOneWidget);
       await tester.tap(find.byKey(const ValueKey('start-lyric-scroll')));
@@ -712,7 +990,7 @@ void main() {
       (tester) async {
         final c = FakeUiController((_) => const VerseUiState());
         addTearDown(c.dispose);
-        for (final size in const [Size(640, 360), Size(560, 340)]) {
+        for (final size in const [Size(640, 280), Size(560, 280)]) {
           await pumpShell(tester, c, size: size);
           expect(
             find.byType(AdaptiveBottomNavigation),
@@ -738,7 +1016,7 @@ void main() {
       tester.view.viewPadding = const FakeViewPadding(top: 62, bottom: 34);
       addTearDown(tester.view.resetPadding);
       addTearDown(tester.view.resetViewPadding);
-      await pumpShell(tester, c, size: const Size(874, 402));
+      await pumpShell(tester, c, size: const Size(874, 372));
       expect(find.byType(AdaptiveBottomNavigation), findsOneWidget);
       expect(
         find.byKey(const ValueKey('tablet-navigation-rail')),
@@ -761,6 +1039,7 @@ void main() {
       final c = FakeUiController((_) => const VerseUiState());
       addTearDown(c.dispose);
       for (final size in const [
+        Size(640, 360),
         Size(700, 480),
         Size(560, 400),
         Size(844, 600),
@@ -781,11 +1060,37 @@ void main() {
     ) async {
       final c = FakeUiController((_) => const VerseUiState());
       addTearDown(c.dispose);
-      await pumpShell(tester, c, size: const Size(700, 440), textScale: 2);
+      await pumpShell(tester, c, size: const Size(700, 340), textScale: 2);
       expect(find.byType(AdaptiveBottomNavigation), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('tablet-navigation-rail')),
+        findsNothing,
+      );
       expect(tester.takeException(), isNull);
     });
   });
+}
+
+Future<void> _dragSetlistRowToDeleteBasket(
+  WidgetTester tester,
+  String entryId,
+) async {
+  final row = find.byKey(ValueKey(entryId));
+  final gesture = await tester.startGesture(tester.getCenter(row));
+  await tester.pump(const Duration(milliseconds: 600));
+  await tester.pump();
+
+  final basket = find.byKey(const ValueKey('setlist-delete-basket'));
+  expect(basket, findsOneWidget);
+  final target = tester.getCenter(basket);
+  const steps = 8;
+  final start = tester.getCenter(row);
+  for (var step = 1; step <= steps; step++) {
+    await gesture.moveTo(start + (target - start) * (step / steps));
+    await tester.pump(const Duration(milliseconds: 16));
+  }
+  await gesture.up();
+  await tester.pumpAndSettle();
 }
 
 class _UndoSetlistController extends FakeUiController {

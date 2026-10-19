@@ -1,8 +1,6 @@
 {
   "@@locale": "lv",
   "appTitle": "Singbook",
-  "aboutDescription": "Mierīga vieta, kur atrast un sakārtot dziesmas un kopīgi dziedāt no savas dziesmu bibliotēkas.",
-  "aboutMadeForSinging": "Radīta kopīgai dziedāšanai",
   "menuTypeNewSong": "Ievadīt jaunu dziesmu", "aboutDetails": "Meklējiet iespējotajos avotos, salīdziniet versijas, glabājiet vārdus un akordus kopā un kārtojiet dziesmas sarakstos. Jūsu bibliotēka tiek saglabāta šajā ierīcē; izvēles sinhronizācijā ar Google Drive tiek izmantots jūsu Google konts. Meklējumi tiek nosūtīti tieši iespējotajiem avotiem.", "aboutSupport": "Atbalsts un atsauksmes", "appVersion": "Versija {version}",
   "@appVersion": {
     "placeholders": {
@@ -812,5 +810,66 @@
   "editorStandardTuning": "Standarta skaņojums",
   "editorExampleVerse": "[C]Jauna diena mūs [G]sauc,\n[Am]mēs sekojam gaismai atpakaļ [F]mājās.",
   "editorExampleChorus": "[F]Dziedāsim šo dziesmu [C]kopā,\n[G]lai melodija mūs nes [C]tālāk.",
-  "editorExampleBridge": "[Am]Vēl viena rinda, mazliet [F]tuvāk."
+  "editorExampleBridge": "[Am]Vēl viena rinda, mazliet [F]tuvāk.",
+  "aboutMadeForSinging": "Katra dziesma gatava.",
+  "aboutDescription": "Dziesmu vārdi, akordi un dziesmu saraksti vienuviet — gatavi mēģinājumiem, skatuvei un jebkurai vietai, kur spēlējat.",
+  "aboutDetails": "Meklējiet pieejamajos avotos un salīdziniet dziesmu vārdus, akordus, laika atzīmes un ieraksta informāciju, pirms saglabājat vēlamo versiju. Pieejamība ir atkarīga no dziesmas un pakalpojuma.",
+  "aboutFindTitle": "Atrodiet īsto versiju",
+  "aboutKeepTitle": "Veidojiet savu bibliotēku",
+  "aboutKeepDetails": "Rediģējiet un transponējiet dziesmas, glabājiet tās vietējā bibliotēkā lietošanai bezsaistē un kopīgojiet pārnēsājamus ChordPro failus. Izvēles sinhronizācija ar Google Drive izmanto privātu lietotnes mapi jūsu Google kontā. Varat arī pieskarties “Sinhronizēt tagad”, lai atjauninātu ierīces.",
+  "aboutPlayTitle": "Ņemiet dziesmu sarakstu līdzi uz skatuvi",
+  "aboutPlayDetails": "Sakārtojiet dziesmas sarakstos, izvēlieties katrai dziesmai tonalitāti un kopīgojiet OpenSong sarakstus. Pielāgojiet lasītāja teksta lielumu, ieslēdziet dziesmu vārdu automātisko ritināšanu un drukājiet dziesmu PDF failus. Singbook netranslē un neatskaņo audio.",
+  "aboutPrivacyTitle": "Bezmaksas un ar uzsvaru uz lokālu lietošanu",
+  "aboutPrivacyDetails": "Singbook ir bezmaksas, bez reklāmām, analītikas un pirkumiem lietotnē. Saglabātā bibliotēka paliek jūsu ierīcē; izvēles sinhronizācijai tiek izmantots jūsu Google Drive. Tiešsaistes rezultātus nodrošina neatkarīgi trešo pušu pakalpojumi; tie var nebūt pieejami vai būt aizsargāti ar autortiesībām. Singbook šo saturu neizvieto.",
+  "aboutWebsite": "Singbook vietne",
+  "aboutSourceCode": "Avota kods vietnē GitHub",
+  "aboutPublisher": "Freevia veidots",
+  "aboutLanguages": "Lietotnes valodas: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountDriveFolder": "Google diska bibliotēkas mape",
+  "accountPrivateDriveFolder": "Privātā Singbook mape",
+  "accountChooseDriveFolder": "Izvēlieties mapi",
+  "accountDriveFolderMoveTitle": "Vai pārvietot savu dziesmu grāmatu bibliotēku?",
+  "accountDriveFolderMoveBody": "Izvēlieties redzamu Google diska mapi. Singbook pirms pārslēgšanās uz to nokopēs un pārbaudīs jūsu dziesmas un setu sarakstus. Oriģinālie faili tiek saglabāti to iepriekšējā atrašanās vietā kā rezerves kopija. Citi faili tiek atstāti atsevišķi. ChordPro faili, ko importējat šajā mapē, tiek pieņemti sinhronizēšanai un saņem Singbook metadatus.",
+  "accountImportChordPro": "Importējiet ChordPro no diska",
+  "accountImportChordProHint": "Izvēlieties .cho failus, ko pievienot šai bibliotēkai. Mapē jau esošie faili tiek pieņemti; šeit tiek kopēti faili citur.",
+  "syncErrorFolderPickerUnavailable": "Diska mapes atlase nav pieejama",
+  "syncErrorFolderPickerUnavailableHint": "Atbalstītā ierīcē izvēlieties redzamu Diska mapi, izmantojot Google diska atlasītāju.",
+  "syncErrorDriveFolderMissing": "Singbook Drive mape nav pieejama",
+  "syncErrorDriveFolderMissingHint": "Vēlreiz izvēlieties mapi vai atjaunojiet to Google diskā.",
+  "syncErrorDriveFileAuthorization": "Singbook ir nepieciešama piekļuve šai Diska mapei",
+  "syncErrorDriveFileAuthorizationHint": "Vēlreiz izvēlieties mapi, lai piešķirtu piekļuvi, un pēc tam sinhronizējiet savu bibliotēku.",
+  "syncErrorFolderMigration": "Bibliotēku vēl nevarēja pārvietot",
+  "syncErrorFolderMigrationHint": "Jūsu iepriekšējā bibliotēka joprojām ir drošībā. Pārbaudiet savienojumu un vēlreiz izvēlieties mapi, lai mēģinātu vēlreiz.",
+  "syncErrorVisibleFolderRequired": "Vispirms izvēlieties redzamu Diska mapi",
+  "syncErrorVisibleFolderRequiredHint": "Pirms failu importēšanas no Diska ir nepieciešama redzama bibliotēkas mape.",
+  "playerEstimatedKey": "Aptuvenā tonalitāte",
+  "songsLibraryView": "Bibliotēka",
+  "settingsStartupView": "Sākuma skats",
+  "settingsStartupViewHint": "Izvēlieties dziesmu skatu, kas tiks rādīts, atverot lietotni.",
+  "settingsStartupLastView": "Pēdējoreiz atvērtais",
+  "playerExpandControls": "Rādīt atskaņošanas vadīklas",
+  "playerCollapseControls": "Paslēpt atskaņošanas vadīklas",
+  "settingsShowSections": "Rādīt sadaļu virsrakstus",
+  "settingsShowSectionsHint": "Dziesmas tekstā rādīt pantu, piedziedājuma un citu sadaļu virsrakstus.",
+  "settingsShowPlayerControls": "Rādīt atskaņošanas vadīklas",
+  "settingsShowPlayerControlsHint": "Atskaņotāja paneli var parādīt vai paslēpt arī, pieskaroties tam vai pārvelkot.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

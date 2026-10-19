@@ -1,9 +1,9 @@
 {
   "@@locale": "et",
   "appTitle": "Singbook",
-  "aboutDescription": "Rahulik koht oma laulude leidmiseks, korrastamiseks ja laulmiseks.",
-  "aboutMadeForSinging": "Loodud koos laulmiseks",
-  "menuTypeNewSong": "Sisesta uus laul", "aboutDetails": "Otsi lubatud allikatest, võrdle versioone, hoia sõnad ja akordid koos ning korralda laulud esitusloenditesse. Sinu kogu salvestatakse sellesse seadmesse; valikuline Google Drive’i sünkroonimine kasutab sinu Google’i kontot. Otsingud saadetakse otse lubatud allikatele.", "aboutSupport": "Tugi ja tagasiside", "appVersion": "Versioon {version}",
+  "aboutDescription": "Sinu laulusõnad, akordid ja lugude nimekirjad koos, valmis prooviks, lavale ja kõikjale, kus mängid.",
+  "aboutMadeForSinging": "Iga laul on valmis.",
+  "menuTypeNewSong": "Sisesta uus laul", "aboutDetails": "Otsi lubatud allikatest ning võrdle laulusõnu, akorde, ajastust ja salvestuse üksikasju enne, kui salvestad esitamiseks sobiva versiooni. Saadavus oleneb laulust ja teenusest.", "aboutSupport": "Tugi ja tagasiside", "appVersion": "Versioon {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -812,5 +812,63 @@
   "editorStandardTuning": "Standardhäälestus",
   "editorExampleVerse": "[C]Uus päev meid [G]kutsub,\n[Am]järgime valgust tagasi [F]koju.",
   "editorExampleChorus": "[F]Laulame seda laulu [C]koos,\n[G]las meloodia kannab meid [C]edasi.",
-  "editorExampleBridge": "[Am]Veel üks rida, veidi [F]lähemal."
+  "editorExampleBridge": "[Am]Veel üks rida, veidi [F]lähemal.",
+  "aboutFindTitle": "Leia sobiv versioon",
+  "aboutKeepTitle": "Loo oma kogu",
+  "aboutKeepDetails": "Töötle ja transponeeri laule, hoia neid võrguühenduseta kasutamiseks oma kohalikus kogus ning jaga kaasaskantavaid ChordPro-faile. Valikuline Google Drive’i sünkroonimine kasutab sinu Google’i kontol rakenduse privaatkausta. Seadmete uuendamiseks võid puudutada ka nuppu „Sünkrooni kohe“.",
+  "aboutPlayTitle": "Võta oma nimekiri lavale kaasa",
+  "aboutPlayDetails": "Järjesta laulud nimekirjadesse, vali igale laulule helistik ja jaga OpenSongi nimekirju. Muuda lugeja teksti, laulusõnade automaatset kerimist ja prindi laulude PDF-faile. Singbook ei voogedasta ega esita heli.",
+  "aboutPrivacyTitle": "Tasuta ja seadmepõhine",
+  "aboutPrivacyDetails": "Singbook on tasuta, ilma reklaamide, analüütika ja rakendusesiseste ostudeta. Salvestatud kogu jääb sinu seadmesse; valikuline sünkroonimine kasutab sinu enda Google Drive’i. Veebitulemused tulevad otse sõltumatutelt kolmanda poole teenustelt ning võivad olla kättesaamatud või autoriõigustega kaitstud. Singbook nende sisu ei majuta.",
+  "aboutWebsite": "Singbooki veebisait",
+  "aboutSourceCode": "Lähtekood GitHubis",
+  "aboutPublisher": "Freevialt",
+  "aboutLanguages": "Rakenduse keeled: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountDriveFolder": "Google Drive'i teegi kaust",
+  "accountPrivateDriveFolder": "Privaatne lauluraamatu kaust",
+  "accountChooseDriveFolder": "Valige kaust",
+  "accountDriveFolderMoveTitle": "Kas teisaldada oma lauluraamatuteek?",
+  "accountDriveFolderMoveBody": "Valige nähtav Google Drive'i kaust. Singbook kopeerib ja kinnitab teie laulud ja komplektiloendid seal enne sellele üleminekut. Originaalfailid jäävad varukoopiaks oma eelmisesse asukohta. Teised failid jäetakse rahule. Sellesse kausta imporditud ChordPro failid võetakse sünkroonimiseks ja Singbooki metaandmete vastuvõtmiseks vastu.",
+  "accountImportChordPro": "Importige ChordPro Drive'ist",
+  "accountImportChordProHint": "Valige sellesse teeki lisamiseks .cho-failid. Kaustas juba olevad failid võetakse vastu; mujal olevad failid kopeeritakse siia.",
+  "syncErrorFolderPickerUnavailable": "Drive'i kausta valik pole saadaval",
+  "syncErrorFolderPickerUnavailableHint": "Valige toetatud seadmes Google Drive'i valija abil nähtav Drive'i kaust.",
+  "syncErrorDriveFolderMissing": "Singbook Drive'i kaust pole saadaval",
+  "syncErrorDriveFolderMissingHint": "Valige kaust uuesti või taastage see Google Drive'is.",
+  "syncErrorDriveFileAuthorization": "Singbook vajab juurdepääsu sellele Drive'i kaustale",
+  "syncErrorDriveFileAuthorizationHint": "Juurdepääsu andmiseks valige kaust uuesti, seejärel sünkroonige oma teek.",
+  "syncErrorFolderMigration": "Raamatukogu ei saanud veel teisaldada",
+  "syncErrorFolderMigrationHint": "Teie eelmine kogu on endiselt turvaline. Kontrollige ühendust ja valige uuesti proovimiseks uuesti kaust.",
+  "syncErrorVisibleFolderRequired": "Valige esmalt nähtav Drive'i kaust",
+  "syncErrorVisibleFolderRequiredHint": "Enne failide importimist Drive'ist on vaja nähtavat teegikausta.",
+  "playerEstimatedKey": "Hinnanguline helistik",
+  "songsLibraryView": "Teek",
+  "settingsStartupView": "Ava käivitamisel",
+  "settingsStartupViewHint": "Vali laulude vaade, mida rakenduse avamisel näidatakse.",
+  "settingsStartupLastView": "Viimati avatud",
+  "playerExpandControls": "Kuva taasesituse juhtnuppe",
+  "playerCollapseControls": "Peida taasesituse juhtnupud",
+  "settingsShowSections": "Kuva osade pealkirjad",
+  "settingsShowSectionsHint": "Kuva laulusõnades salmide, refrääni ja muude osade pealkirju.",
+  "settingsShowPlayerControls": "Kuva taasesituse juhtnuppe",
+  "settingsShowPlayerControlsHint": "Saad pleieripaneeli kuvamiseks või peitmiseks seda ka puudutada või libistada.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

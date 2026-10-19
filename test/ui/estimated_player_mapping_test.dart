@@ -105,15 +105,16 @@ void main() {
           LyricLineData(id: 'outro', section: 'Outro', isBlank: true),
         ];
         const events = ['intro', 'a', 'b', 'bridge', 'c', 'outro'];
+        const starts = [0.0, 1.5, 2.5, 3.5, 4.5, 5.5];
         for (var index = 0; index < events.length; index++) {
           expect(
             estimatedLineStartSeconds(lines, events[index], 120),
-            index * 20,
+            closeTo(starts[index] * 120 / 6.5, .000001),
           );
           expect(
             estimatedLineIdAtPosition(
               lines,
-              progressSeconds: index * 20 + 19.9,
+              progressSeconds: starts[index] * 120 / 6.5 + 1,
               durationSeconds: 120,
             ),
             events[index],
@@ -125,10 +126,10 @@ void main() {
         );
         expect(markers.map((marker) => marker.startSeconds), [
           0,
-          20,
-          60,
-          80,
-          100,
+          1.5 * 120 / 6.5,
+          3.5 * 120 / 6.5,
+          4.5 * 120 / 6.5,
+          5.5 * 120 / 6.5,
         ]);
         expect(markers.map((marker) => marker.lineId), [
           'intro',
@@ -144,7 +145,7 @@ void main() {
             durationSeconds: 120,
             direction: 1,
           ),
-          100,
+          5.5 * 120 / 6.5,
         );
         expect(
           playerSectionSkipTarget(
@@ -153,16 +154,20 @@ void main() {
             durationSeconds: 120,
             direction: -1,
           ),
-          80,
+          4.5 * 120 / 6.5,
         );
       },
     );
 
     test(
-      'uses lyric rows only and agrees with section markers at boundaries',
+      'includes standalone progressions and agrees with section marker boundaries',
       () {
         final timeline = estimatedTimelineLines(songLines);
         expect(timeline.map((line) => line.id), [
+          'chord-only',
+          'intro-chord-two',
+          'intro-chord-three',
+          'intro-chord-four',
           'intro-lyric',
           'intro-lyric-two',
           'verse-one',
@@ -178,7 +183,7 @@ void main() {
           durationSeconds: duration,
         );
         expect(markers.map((marker) => marker.lineId), [
-          'intro-lyric',
+          'chord-only',
           'verse-one',
           'chorus-one',
           'bridge-one',
@@ -237,15 +242,15 @@ void main() {
       );
 
       const allChord = [chordOnly];
-      expect(estimatedTimelineLines(allChord), isEmpty);
-      expect(estimatedLineStartSeconds(allChord, 'chord-only', 120), isNull);
+      expect(estimatedTimelineLines(allChord), [chordOnly]);
+      expect(estimatedLineStartSeconds(allChord, 'chord-only', 120), 0);
       expect(
         estimatedLineIdAtPosition(
           allChord,
           progressSeconds: 0,
           durationSeconds: 120,
         ),
-        isNull,
+        'chord-only',
       );
       expect(estimatedTimelineLines(const []), isEmpty);
       expect(estimatedLineStartSeconds(const [], 'missing', 120), isNull);

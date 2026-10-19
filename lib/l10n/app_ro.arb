@@ -1,8 +1,6 @@
 {
   "@@locale": "ro",
   "appTitle": "Singbook",
-  "aboutDescription": "Un loc liniștit în care îți găsești, organizezi și cânți melodiile din bibliotecă.",
-  "aboutMadeForSinging": "Creat pentru a cânta împreună",
   "menuTypeNewSong": "Introdu o melodie nouă", "aboutDetails": "Caută în sursele activate, compară versiunile, păstrează versurile și acordurile împreună și organizează melodiile în setlisturi. Biblioteca ta este stocată pe acest dispozitiv; sincronizarea opțională cu Google Drive folosește contul tău Google. Căutările sunt trimise direct către sursele activate.", "aboutSupport": "Asistență și feedback", "appVersion": "Versiunea {version}",
   "@appVersion": {
     "placeholders": {
@@ -812,5 +810,66 @@
   "editorStandardTuning": "Acordaj standard",
   "editorExampleVerse": "[C]O nouă zi ne [G]cheamă,\n[Am]urmăm lumina înapoi spre [F]casă.",
   "editorExampleChorus": "[F]Să cântăm acest cântec [C]împreună,\n[G]să ne poarte melodia [C]mai departe.",
-  "editorExampleBridge": "[Am]Încă un vers, puțin mai [F]aproape."
+  "editorExampleBridge": "[Am]Încă un vers, puțin mai [F]aproape.",
+  "aboutMadeForSinging": "Fiecare cântec, gata de cântat.",
+  "aboutDescription": "Versuri, acorduri și liste de melodii împreună, pregătite pentru repetiții, scenă și oriunde cânți.",
+  "aboutDetails": "Caută în sursele disponibile și compară versurile, acordurile, marcajele temporale și detaliile înregistrării înainte să salvezi versiunea dorită. Disponibilitatea diferă în funcție de melodie și serviciu.",
+  "aboutFindTitle": "Găsește versiunea potrivită",
+  "aboutKeepTitle": "Construiește-ți propria bibliotecă",
+  "aboutKeepDetails": "Editează și transpune melodiile, păstrează-le în biblioteca locală pentru a le folosi offline și distribuie fișiere ChordPro portabile. Sincronizarea opțională cu Google Drive folosește un dosar privat al aplicației din contul tău Google. Poți atinge și „Sincronizează acum” pentru a actualiza dispozitivele.",
+  "aboutPlayTitle": "Ia lista de melodii pe scenă",
+  "aboutPlayDetails": "Grupează melodiile în setlisturi, alege tonalitatea fiecăreia și distribuie setlisturi OpenSong. Ajustează textul cititorului, derulează automat versurile și imprimă PDF-uri cu melodii. Singbook nu transmite și nu redă conținut audio.",
+  "aboutPrivacyTitle": "Gratuită și cu biblioteca păstrată local",
+  "aboutPrivacyDetails": "Singbook este gratuită, fără reclame, analiză sau achiziții în aplicație. Biblioteca salvată rămâne pe dispozitivul tău; sincronizarea opțională folosește propriul Google Drive. Rezultatele online vin direct de la servicii independente terțe și pot fi indisponibile sau protejate prin drepturi de autor. Singbook nu găzduiește conținutul acestora.",
+  "aboutWebsite": "Site-ul Singbook",
+  "aboutSourceCode": "Cod sursă pe GitHub",
+  "aboutPublisher": "De la Freevia",
+  "aboutLanguages": "Limbi ale aplicației: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountDriveFolder": "Dosarul bibliotecii Google Drive",
+  "accountPrivateDriveFolder": "Dosar privat Singbook",
+  "accountChooseDriveFolder": "Alegeți folderul",
+  "accountDriveFolderMoveTitle": "Mutați biblioteca dvs. Singbook?",
+  "accountDriveFolderMoveBody": "Alegeți un dosar Google Drive vizibil. Singbook va copia și verifica melodiile și setlist-urile dvs. acolo înainte de a trece la el. Fișierele originale rămân în locația lor anterioară ca rezervă. Alte fișiere sunt lăsate în pace. Fișierele ChordPro pe care le importați în acest folder sunt adoptate pentru sincronizare și pentru a primi metadatele Singbook.",
+  "accountImportChordPro": "Importă ChordPro din Drive",
+  "accountImportChordProHint": "Alegeți fișierele .cho pentru a le adăuga la această bibliotecă. Fișierele aflate deja în folder sunt adoptate; fișierele din altă parte sunt copiate aici.",
+  "syncErrorFolderPickerUnavailable": "Selectarea folderului Drive nu este disponibilă",
+  "syncErrorFolderPickerUnavailableHint": "Alegeți un dosar Drive vizibil cu selectorul Google Drive pe un dispozitiv acceptat.",
+  "syncErrorDriveFolderMissing": "Dosarul Singbook Drive nu este disponibil",
+  "syncErrorDriveFolderMissingHint": "Alegeți din nou dosarul sau restaurați-l în Google Drive.",
+  "syncErrorDriveFileAuthorization": "Singbook are nevoie de acces la acest dosar Drive",
+  "syncErrorDriveFileAuthorizationHint": "Alegeți din nou folderul pentru a acorda acces, apoi sincronizați biblioteca.",
+  "syncErrorFolderMigration": "Biblioteca nu a putut fi mutată încă",
+  "syncErrorFolderMigrationHint": "Biblioteca anterioară este încă în siguranță. Verificați conexiunea și alegeți din nou folderul pentru a reîncerca.",
+  "syncErrorVisibleFolderRequired": "Alegeți mai întâi un dosar Drive vizibil",
+  "syncErrorVisibleFolderRequiredHint": "Este necesar un dosar de bibliotecă vizibil înainte de a importa fișiere din Drive.",
+  "playerEstimatedKey": "Tonalitate estimată",
+  "songsLibraryView": "Bibliotecă",
+  "settingsStartupView": "Pornește în",
+  "settingsStartupViewHint": "Alege vizualizarea melodiilor afișată la deschiderea aplicației.",
+  "settingsStartupLastView": "Ultima vizualizare",
+  "playerExpandControls": "Afișează comenzile de redare",
+  "playerCollapseControls": "Ascunde comenzile de redare",
+  "settingsShowSections": "Afișează titlurile secțiunilor",
+  "settingsShowSectionsHint": "Afișează în versuri titlurile strofelor, refrenului și ale altor secțiuni.",
+  "settingsShowPlayerControls": "Afișează comenzile de redare",
+  "settingsShowPlayerControlsHint": "Poți atinge sau glisa și panoul playerului pentru a-l afișa sau ascunde.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

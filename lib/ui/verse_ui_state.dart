@@ -4,7 +4,7 @@ enum VerseTab { home, songs, setlists, settings }
 
 enum VerseRoute { main, reader, editor, setlistDetail }
 
-enum HomeListMode { recent, favorites, online }
+enum HomeListMode { recent, library, favorites, online }
 
 enum LoadState { idle, loading, loaded, failed }
 
@@ -156,11 +156,13 @@ class SetlistEntryData {
     required this.songId,
     this.title = '',
     this.artist = '',
+    this.durationSeconds,
     this.keyOverride,
     this.capoOverride,
     this.missing = false,
   });
   final String id, songId, title, artist;
+  final double? durationSeconds;
   final String? keyOverride, capoOverride;
 
   /// The referenced song is no longer in the library. [title] is empty and the
@@ -197,6 +199,9 @@ class SetlistCardData {
     this.entries = const [],
     this.favorite = false,
     this.modifiedAt,
+    this.durationSeconds = 0,
+    this.durationEstimated = false,
+    this.durationPartial = false,
   });
   final String id, title, notes;
 
@@ -206,6 +211,11 @@ class SetlistCardData {
   final List<SetlistEntryData> entries;
   final bool favorite;
   final DateTime? modifiedAt;
+
+  /// Sum of the entry durations, including player estimates when needed.
+  /// Missing library references are omitted and marked by [durationPartial].
+  final double durationSeconds;
+  final bool durationEstimated, durationPartial;
 }
 
 /// Editable fields of the song being edited, captured when the editor opens.
@@ -442,6 +452,7 @@ class VerseUiState {
     this.route = VerseRoute.main,
     this.activeTab = VerseTab.home,
     this.homeListMode = HomeListMode.recent,
+    this.startupSongsView = 'recent',
     this.query = '',
     this.autocomplete = const [],
     this.searchState = LoadState.idle,
@@ -459,6 +470,7 @@ class VerseUiState {
     this.syncSignedIn = false,
     this.syncBusy = false,
     this.accountName,
+    this.syncDriveFolderName,
     this.accountPhotoUrl,
     this.accountError,
     this.lastSyncAt,
@@ -474,6 +486,8 @@ class VerseUiState {
     this.lyricsFontSize = 24,
     this.lyricHighlightStyle = 'contrast',
     this.showChords = true,
+    this.showSections = true,
+    this.playerControlsExpanded = true,
     this.autoscroll = true,
     bool? autoscrollPreference,
     this.timingMode = 'estimated',
@@ -496,6 +510,7 @@ class VerseUiState {
     this.editor,
     this.editorDirty = false,
     this.readerKey,
+    this.readerKeyEstimated = false,
     this.readerTranspose = 0,
     this.readerCapo,
     this.readerTuning,
@@ -511,6 +526,7 @@ class VerseUiState {
   ) : route = o.route,
       activeTab = o.activeTab,
       homeListMode = o.homeListMode,
+      startupSongsView = o.startupSongsView,
       query = o.query,
       autocomplete = o.autocomplete,
       searchState = o.searchState,
@@ -528,6 +544,7 @@ class VerseUiState {
       syncSignedIn = o.syncSignedIn,
       syncBusy = o.syncBusy,
       accountName = o.accountName,
+      syncDriveFolderName = o.syncDriveFolderName,
       accountPhotoUrl = o.accountPhotoUrl,
       accountError = o.accountError,
       lastSyncAt = o.lastSyncAt,
@@ -543,6 +560,8 @@ class VerseUiState {
       lyricsFontSize = o.lyricsFontSize,
       lyricHighlightStyle = o.lyricHighlightStyle,
       showChords = o.showChords,
+      showSections = o.showSections,
+      playerControlsExpanded = o.playerControlsExpanded,
       autoscroll = o.autoscroll,
       autoscrollPreference = o.autoscrollPreference,
       timingMode = o.timingMode,
@@ -563,6 +582,7 @@ class VerseUiState {
       editor = o.editor,
       editorDirty = o.editorDirty,
       readerKey = o.readerKey,
+      readerKeyEstimated = o.readerKeyEstimated,
       readerTranspose = o.readerTranspose,
       readerCapo = o.readerCapo,
       readerTuning = o.readerTuning,
@@ -571,6 +591,7 @@ class VerseUiState {
   final VerseRoute route;
   final VerseTab activeTab;
   final HomeListMode homeListMode;
+  final String startupSongsView;
   final String query;
   final List<SearchReferenceData> autocomplete;
   final LoadState searchState;
@@ -584,6 +605,7 @@ class VerseUiState {
   final SearchFilterData searchFilters;
   final bool searchFiltersExpanded, syncReady, syncSignedIn, syncBusy;
   final String? accountName, accountPhotoUrl, accountError;
+  final String? syncDriveFolderName;
 
   /// When the last sync finished successfully, if ever.
   final DateTime? lastSyncAt;
@@ -614,6 +636,7 @@ class VerseUiState {
   final double lyricsFontSize;
   final String lyricHighlightStyle;
   final bool showChords, autoscroll;
+  final bool showSections, playerControlsExpanded;
 
   /// The stored "autoscroll by default" preference, which stays on while the
   /// effective [autoscroll] is off (manual timing).
@@ -637,6 +660,7 @@ class VerseUiState {
   /// Key (after any setlist override and transposition), capo, tuning and tempo
   /// of the open song, for the reader subtitle.
   final String? readerKey, readerCapo, readerTuning, readerTempo;
+  final bool readerKeyEstimated;
 
   /// Semitone adjustment from the saved arrangement, also available without
   /// key metadata. A chord root alone does not establish the song's key.
@@ -658,6 +682,9 @@ abstract class VerseUiController extends ChangeNotifier {
   Future<void> initialize();
   void setTab(VerseTab tab);
   void setHomeListMode(HomeListMode mode);
+  Future<void> setStartupSongsView(String view) async {}
+  Future<void> setShowSections(bool show) async {}
+  Future<void> setPlayerControlsExpanded(bool expanded) async {}
   void setQuery(String value);
   void changeSearchSong() => setQuery('');
   Future<void> submitSearch();
@@ -709,6 +736,8 @@ abstract class VerseUiController extends ChangeNotifier {
   Future<void> setProviderEnabled(String id, bool enabled);
   Future<bool> refreshSources() async => false;
   Future<void> signInForSync();
+  Future<void> chooseSyncDriveFolder() async {}
+  Future<void> importChordProFromDrive() async {}
   Future<void> signOutFromSync();
 
   /// Turns background sync on or off.

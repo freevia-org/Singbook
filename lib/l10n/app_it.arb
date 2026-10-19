@@ -1,9 +1,9 @@
 {
   "@@locale": "it",
   "appTitle": "Singbook",
-  "aboutDescription": "Uno spazio tranquillo per trovare, organizzare e cantare con la tua raccolta di brani.",
-  "aboutMadeForSinging": "Pensata per cantare insieme",
-  "menuTypeNewSong": "Inserisci una nuova canzone", "aboutDetails": "Cerca nelle fonti abilitate, confronta le versioni, tieni insieme testi e accordi e organizza i brani in scalette. La tua raccolta è salvata su questo dispositivo; la sincronizzazione facoltativa con Google Drive usa il tuo account Google. Le ricerche vengono inviate direttamente alle fonti abilitate.", "aboutSupport": "Assistenza e feedback", "appVersion": "Versione {version}",
+  "aboutDescription": "Testi, accordi e scalette insieme, pronti per le prove, il palco e ovunque tu suoni.",
+  "aboutMadeForSinging": "Ogni brano, pronto.",
+  "menuTypeNewSong": "Inserisci una nuova canzone", "aboutDetails": "Cerca nelle fonti abilitate e confronta testi, accordi, tempi e dettagli delle registrazioni prima di salvare la versione che vuoi suonare. La disponibilità varia in base al brano e al servizio.", "aboutSupport": "Assistenza e feedback", "appVersion": "Versione {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -812,5 +812,63 @@
   "editorStandardTuning": "Accordatura standard",
   "editorExampleVerse": "[C]Un nuovo giorno ci [G]chiama,\n[Am]seguiamo la luce fino a [F]casa.",
   "editorExampleChorus": "[F]Cantiamo questa canzone [C]insieme,\n[G]lasciamo che la melodia ci porti [C]avanti.",
-  "editorExampleBridge": "[Am]Un’altra riga, un po’ più [F]vicini."
+  "editorExampleBridge": "[Am]Un’altra riga, un po’ più [F]vicini.",
+  "aboutFindTitle": "Trova la versione giusta",
+  "aboutKeepTitle": "Crea la tua libreria",
+  "aboutKeepDetails": "Modifica e trasponi i brani, conservali nella tua libreria locale per usarli offline e condividi file ChordPro portatili. La sincronizzazione facoltativa con Google Drive usa una cartella privata dell’app nel tuo account Google. Puoi anche toccare Sincronizza ora per aggiornare i tuoi dispositivi.",
+  "aboutPlayTitle": "Porta la tua scaletta sul palco",
+  "aboutPlayDetails": "Organizza i brani in scalette, scegli una tonalità per ciascuno e condividi scalette OpenSong. Regola il testo del lettore e lo scorrimento automatico dei testi, poi stampa PDF dei brani. Singbook non trasmette né riproduce audio.",
+  "aboutPrivacyTitle": "Gratis e con priorità alla raccolta locale",
+  "aboutPrivacyDetails": "Singbook è gratuito, senza annunci, analisi o acquisti in-app. La tua libreria salvata resta sul dispositivo; la sincronizzazione facoltativa usa il tuo Google Drive. I risultati online provengono direttamente da servizi indipendenti di terze parti e potrebbero non essere disponibili o essere protetti da copyright. Singbook non ospita i loro contenuti.",
+  "aboutWebsite": "Sito web di Singbook",
+  "aboutSourceCode": "Codice sorgente su GitHub",
+  "aboutPublisher": "Di Freevia",
+  "aboutLanguages": "Lingue dell’app: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountDriveFolder": "Cartella della libreria di Google Drive",
+  "accountPrivateDriveFolder": "Cartella privata del libro dei canti",
+  "accountChooseDriveFolder": "Scegli la cartella",
+  "accountDriveFolderMoveTitle": "Vuoi spostare la tua libreria Singbook?",
+  "accountDriveFolderMoveBody": "Scegli una cartella Google Drive visibile. Singbook copierà e verificherà lì le tue canzoni e le tue scalette prima di passare ad esso. I file originali rimangono nella posizione precedente come backup. Gli altri file vengono lasciati soli. I file ChordPro importati in questa cartella vengono adottati per la sincronizzazione e ricevono i metadati di Singbook.",
+  "accountImportChordPro": "Importa ChordPro da Drive",
+  "accountImportChordProHint": "Scegli i file .cho da aggiungere a questa libreria. I file già presenti nella cartella vengono adottati; i file altrove vengono copiati qui.",
+  "syncErrorFolderPickerUnavailable": "La selezione della cartella dell'unità non è disponibile",
+  "syncErrorFolderPickerUnavailableHint": "Scegli una cartella Drive visibile con il selettore di Google Drive su un dispositivo supportato.",
+  "syncErrorDriveFolderMissing": "La cartella Singbook Drive non è disponibile",
+  "syncErrorDriveFolderMissingHint": "Scegli di nuovo la cartella o ripristinala in Google Drive.",
+  "syncErrorDriveFileAuthorization": "Singbook deve accedere a questa cartella Drive",
+  "syncErrorDriveFileAuthorizationHint": "Scegli di nuovo la cartella per concedere l'accesso, quindi sincronizza la tua libreria.",
+  "syncErrorFolderMigration": "Non è stato ancora possibile spostare la libreria",
+  "syncErrorFolderMigrationHint": "La tua libreria precedente è ancora al sicuro. Controlla la connessione e scegli di nuovo la cartella per riprovare.",
+  "syncErrorVisibleFolderRequired": "Scegli prima una cartella Drive visibile",
+  "syncErrorVisibleFolderRequiredHint": "È necessaria una cartella di libreria visibile prima di importare file da Drive.",
+  "playerEstimatedKey": "Tonalità stimata",
+  "songsLibraryView": "Libreria",
+  "settingsStartupView": "Apri in",
+  "settingsStartupViewHint": "Scegli la vista dei brani da mostrare all’apertura dell’app.",
+  "settingsStartupLastView": "Ultima visualizzazione",
+  "playerExpandControls": "Mostra i controlli di riproduzione",
+  "playerCollapseControls": "Nascondi i controlli di riproduzione",
+  "settingsShowSections": "Mostra i titoli delle sezioni",
+  "settingsShowSectionsHint": "Mostra nel testo i titoli di strofe, ritornello e altre sezioni.",
+  "settingsShowPlayerControls": "Mostra i controlli di riproduzione",
+  "settingsShowPlayerControlsHint": "Puoi anche toccare o scorrere il pannello del lettore per mostrarlo o nasconderlo.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

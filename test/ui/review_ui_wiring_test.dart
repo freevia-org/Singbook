@@ -251,6 +251,12 @@ void main() {
       addTearDown(c.dispose);
       await pumpShell(tester, c);
       final l10n = l10nOf(tester);
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('settings-menu-player')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('settings-menu-player')));
+      await tester.pumpAndSettle();
       final tile = find.widgetWithText(
         SwitchListTile,
         l10n.settingsDefaultAutoscroll,
@@ -285,6 +291,12 @@ void main() {
       addTearDown(c.dispose);
       await pumpShell(tester, c);
       final l10n = l10nOf(tester);
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('settings-menu-player')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('settings-menu-player')));
+      await tester.pumpAndSettle();
       final tile = find.widgetWithText(
         SwitchListTile,
         l10n.settingsDefaultAutoscroll,

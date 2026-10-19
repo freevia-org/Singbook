@@ -13,14 +13,52 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Rami vieta, kurioje galite rasti dainas, tvarkyti jų rinkinį ir dainuoti kartu.';
+      'Dainų tekstai, akordai ir grojaraščiai vienoje vietoje – paruošti repeticijoms, scenai ir visur, kur grojate.';
 
   @override
-  String get aboutMadeForSinging => 'Sukurta dainuoti kartu';
+  String get aboutMadeForSinging => 'Kiekviena daina – paruošta.';
 
   @override
   String get aboutDetails =>
-      'Ieškokite įjungtuose šaltiniuose, lyginkite versijas, laikykite žodžius ir akordus kartu, o dainas tvarkykite grojaraščiuose. Jūsų biblioteka saugoma šiame įrenginyje; pasirenkamas sinchronizavimas su Google Drive naudoja jūsų Google paskyrą. Paieškos siunčiamos tiesiai į įjungtus šaltinius.';
+      'Ieškokite prieinamuose šaltiniuose ir palyginkite tekstus, akordus, laiką bei įrašo informaciją prieš išsaugodami norimą versiją. Prieinamumas priklauso nuo dainos ir paslaugos.';
+
+  @override
+  String get aboutFindTitle => 'Raskite tinkamą versiją';
+
+  @override
+  String get aboutKeepTitle => 'Kurkite savo biblioteką';
+
+  @override
+  String get aboutKeepDetails =>
+      'Redaguokite ir transponuokite dainas, laikykite jas vietinėje bibliotekoje, kad galėtumėte naudoti neprisijungę, ir bendrinkite perkeliamus ChordPro failus. Pasirenkamas sinchronizavimas su Google Drive naudoja privačią programos aplanką jūsų Google paskyroje. Taip pat galite paliesti „Sinchronizuoti dabar“, kad atnaujintumėte įrenginius.';
+
+  @override
+  String get aboutPlayTitle => 'Pasiimkite grojaraštį į sceną';
+
+  @override
+  String get aboutPlayDetails =>
+      'Sudėliokite dainas į grojaraščius, pasirinkite kiekvienos dainos tonaciją ir bendrinkite OpenSong grojaraščius. Keiskite skaitytuvo teksto dydį, įjunkite automatinį slinkimą ir spausdinkite dainų PDF failus. Singbook netransliuoja ir neatkuria garso.';
+
+  @override
+  String get aboutPrivacyTitle => 'Nemokama ir pirmiausia vietinė';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook yra nemokama, be reklamų, analizės ir pirkinių programoje. Išsaugota biblioteka lieka jūsų įrenginyje; pasirenkamas sinchronizavimas vyksta per jūsų Google Drive. Internetinius rezultatus tiesiogiai pateikia nepriklausomos trečiųjų šalių paslaugos; jie gali būti nepasiekiami arba saugomi autorių teisių. Singbook šio turinio nesaugo.';
+
+  @override
+  String get aboutWebsite => 'Singbook svetainė';
+
+  @override
+  String get aboutSourceCode => 'Šaltinio kodas GitHub';
+
+  @override
+  String get aboutPublisher => 'Sukūrė Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Programos kalbos: $count';
+  }
 
   @override
   String get aboutSupport => 'Pagalba ir atsiliepimai';
@@ -1390,6 +1428,69 @@ class AppLocalizationsLt extends AppLocalizations {
       'Sinchronizuojama prisijungus ir pridėjus, redagavus arba pašalinus dainą.';
 
   @override
+  String get accountDriveFolder => '„Google“ disko bibliotekos aplankas';
+
+  @override
+  String get accountPrivateDriveFolder => 'Privatus dainų knygos aplankas';
+
+  @override
+  String get accountChooseDriveFolder => 'Pasirinkite aplanką';
+
+  @override
+  String get accountDriveFolderMoveTitle => 'Perkelti dainų knygų biblioteką?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Pasirinkite matomą „Google“ disko aplanką. „Singbook“ nukopijuos ir patikrins jūsų dainas ir rinkinių sąrašus prieš perjungdamas į jį. Originalūs failai lieka ankstesnėje vietoje kaip atsarginė kopija. Kiti failai paliekami ramybėje. „ChordPro“ failai, kuriuos importuojate į šį aplanką, yra pritaikyti sinchronizuoti ir gauti „Singbook“ metaduomenis.';
+
+  @override
+  String get accountImportChordPro => 'Importuokite „ChordPro“ iš Disko';
+
+  @override
+  String get accountImportChordProHint =>
+      'Pasirinkite .cho failus, kuriuos norite pridėti prie šios bibliotekos. Aplanke jau esantys failai priimami; čia kopijuojami failai kitur.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Disko aplanko pasirinkimas negalimas';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Palaikomame įrenginyje pasirinkite matomą Disko aplanką naudodami „Google“ disko parinkiklį.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'Singbook Drive aplankas nepasiekiamas';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Dar kartą pasirinkite aplanką arba atkurkite jį „Google“ diske.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook reikia prieigos prie šio Disko aplanko';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Dar kartą pasirinkite aplanką, kad suteiktumėte prieigą, tada sinchronizuokite biblioteką.';
+
+  @override
+  String get syncErrorFolderMigration =>
+      'Bibliotekos kol kas nepavyko perkelti';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Jūsų ankstesnė biblioteka vis dar saugi. Patikrinkite ryšį ir dar kartą pasirinkite aplanką, kad bandykite dar kartą.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Pirmiausia pasirinkite matomą Disko aplanką';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Prieš importuojant failus iš Disko, būtinas matomas bibliotekos aplankas.';
+
+  @override
   String get accountSignOutTitle => 'Atsijungti nuo šios paskyros?';
 
   @override
@@ -1914,4 +2015,40 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Dar viena eilutė, truputį [F]arčiau.';
+
+  @override
+  String get playerEstimatedKey => 'Numatoma tonacija';
+
+  @override
+  String get songsLibraryView => 'Biblioteka';
+
+  @override
+  String get settingsStartupView => 'Paleisti rodant';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Pasirinkite dainų rodinį, kuris bus rodomas atidarius programą.';
+
+  @override
+  String get settingsStartupLastView => 'Paskutinį kartą atidarytas';
+
+  @override
+  String get playerExpandControls => 'Rodyti atkūrimo valdiklius';
+
+  @override
+  String get playerCollapseControls => 'Slėpti atkūrimo valdiklius';
+
+  @override
+  String get settingsShowSections => 'Rodyti dalių antraštes';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Dainos žodžiuose rodyti posmų, priedainio ir kitų dalių antraštes.';
+
+  @override
+  String get settingsShowPlayerControls => 'Rodyti atkūrimo valdiklius';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Grotuvo skydelį taip pat galite parodyti arba paslėpti jį palietę ar perbraukę.';
 }

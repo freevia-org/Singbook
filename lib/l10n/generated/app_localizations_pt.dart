@@ -13,14 +13,52 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Um espaço tranquilo para encontrar, organizar e cantar com sua biblioteca de músicas.';
+      'Letras, acordes e listas de músicas num só lugar, prontas para os ensaios, o palco e qualquer lugar onde toque.';
 
   @override
-  String get aboutMadeForSinging => 'Feito para cantar em conjunto';
+  String get aboutMadeForSinging => 'Cada música, pronta.';
 
   @override
   String get aboutDetails =>
-      'Pesquise nas fontes ativadas, compare versões, mantenha letras e acordes juntos e organize músicas em listas. A sua biblioteca fica guardada neste dispositivo; a sincronização opcional com o Google Drive usa a sua conta Google. As pesquisas são enviadas diretamente para as fontes ativadas.';
+      'Pesquise nas fontes disponíveis e compare letras, acordes, marcadores de tempo e detalhes da gravação antes de guardar a versão que quer tocar. A disponibilidade varia conforme a música e o serviço.';
+
+  @override
+  String get aboutFindTitle => 'Encontre a versão certa';
+
+  @override
+  String get aboutKeepTitle => 'Crie a sua biblioteca';
+
+  @override
+  String get aboutKeepDetails =>
+      'Edite e transponha músicas, mantenha-as na biblioteca local para as usar offline e partilhe ficheiros ChordPro portáteis. A sincronização opcional com o Google Drive usa uma pasta privada da app na sua conta Google. Também pode tocar em «Sincronizar agora» para atualizar os seus dispositivos.';
+
+  @override
+  String get aboutPlayTitle => 'Leve a sua lista de músicas para o palco';
+
+  @override
+  String get aboutPlayDetails =>
+      'Organize músicas em listas, escolha o tom de cada uma e partilhe listas OpenSong. Ajuste o tamanho do texto no leitor, ative a deslocação automática das letras e imprima PDFs das músicas. O Singbook não transmite nem reproduz áudio.';
+
+  @override
+  String get aboutPrivacyTitle => 'Gratuito e com prioridade local';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'O Singbook é gratuito, sem anúncios, análises ou compras na app. A biblioteca guardada fica no seu dispositivo; a sincronização opcional usa o seu Google Drive. Os resultados online vêm diretamente de serviços independentes de terceiros e podem estar indisponíveis ou protegidos por direitos de autor. O Singbook não aloja esses conteúdos.';
+
+  @override
+  String get aboutWebsite => 'Site do Singbook';
+
+  @override
+  String get aboutSourceCode => 'Código-fonte no GitHub';
+
+  @override
+  String get aboutPublisher => 'Por Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Idiomas da app: $count';
+  }
 
   @override
   String get aboutSupport => 'Suporte e comentários';
@@ -1372,6 +1410,69 @@ class AppLocalizationsPt extends AppLocalizations {
       'A sincronização ocorre após conectar e após adicionar, editar ou remover uma música.';
 
   @override
+  String get accountDriveFolder => 'Pasta da biblioteca do Google Drive';
+
+  @override
+  String get accountPrivateDriveFolder => 'Pasta privada do Singbook';
+
+  @override
+  String get accountChooseDriveFolder => 'Escolha a pasta';
+
+  @override
+  String get accountDriveFolderMoveTitle => 'Mover sua biblioteca de Singbook?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Escolha uma pasta visível do Google Drive. O Singbook irá copiar e verificar suas músicas e setlists antes de mudar para ele. Os arquivos originais permanecem no local anterior como backup. Outros arquivos são deixados sozinhos. Os arquivos ChordPro importados para esta pasta são adotados para sincronização e recebem metadados do Singbook.';
+
+  @override
+  String get accountImportChordPro => 'Importar ChordPro do Drive';
+
+  @override
+  String get accountImportChordProHint =>
+      'Escolha arquivos .cho para adicionar a esta biblioteca. Os arquivos que já estão na pasta são adotados; arquivos em outros lugares são copiados aqui.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'A seleção da pasta do Drive não está disponível';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Escolha uma pasta visível do Drive com o seletor do Google Drive em um dispositivo compatível.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'A pasta Singbook Drive não está disponível';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Escolha a pasta novamente ou restaure-a no Google Drive.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'O Singbook precisa de acesso a esta pasta do Drive';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Escolha a pasta novamente para conceder acesso e sincronize sua biblioteca.';
+
+  @override
+  String get syncErrorFolderMigration =>
+      'A biblioteca ainda não pôde ser movida';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Sua biblioteca anterior ainda está segura. Verifique a conexão e escolha a pasta novamente para tentar novamente.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Escolha primeiro uma pasta visível do Drive';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'É necessária uma pasta de biblioteca visível antes de importar arquivos do Drive.';
+
+  @override
   String get accountSignOutTitle => 'Sair desta conta?';
 
   @override
@@ -1894,4 +1995,40 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get editorExampleBridge =>
       '[Am]Mais uma linha, um pouco [F]mais perto.';
+
+  @override
+  String get playerEstimatedKey => 'Tonalidade estimada';
+
+  @override
+  String get songsLibraryView => 'Biblioteca';
+
+  @override
+  String get settingsStartupView => 'Iniciar em';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Escolha a vista de músicas apresentada quando a aplicação é aberta.';
+
+  @override
+  String get settingsStartupLastView => 'Última vista aberta';
+
+  @override
+  String get playerExpandControls => 'Mostrar controlos de reprodução';
+
+  @override
+  String get playerCollapseControls => 'Ocultar controlos de reprodução';
+
+  @override
+  String get settingsShowSections => 'Mostrar títulos das secções';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Mostrar na letra os títulos dos versos, do refrão e de outras secções.';
+
+  @override
+  String get settingsShowPlayerControls => 'Mostrar controlos de reprodução';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Também pode tocar ou deslizar no painel do leitor para o mostrar ou ocultar.';
 }

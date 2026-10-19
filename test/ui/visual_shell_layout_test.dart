@@ -10,6 +10,7 @@ import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/ui/app_controller_adapter.dart';
 import 'package:singbook/ui/theme/verse_theme.dart';
 import 'package:singbook/ui/verse_app.dart';
+import 'package:singbook/ui/verse_ui_state.dart';
 import 'package:singbook/ui/widgets/adaptive_bottom_navigation.dart';
 
 void main() {
@@ -58,7 +59,7 @@ void main() {
         );
         expect(brandRect.left, greaterThanOrEqualTo(appBarRect.left));
         expect(brandRect.right, lessThanOrEqualTo(appBarRect.right));
-        final railHeight = 54 + 8 + 4 * (56 + 20 * 2);
+        final railHeight = 54 + 8 + 3 * (56 + 20 * 2);
         final usesRail = size.width >= 600 && size.height >= railHeight;
         if (usesRail) {
           expect(
@@ -85,7 +86,18 @@ void main() {
         expect(settingsDestination, findsOneWidget);
         await tester.tap(settingsDestination);
         await tester.pumpAndSettle();
+        await tester.scrollUntilVisible(
+          find.byKey(const ValueKey('settings-menu-appearance')),
+          200,
+          scrollable: find.byType(Scrollable).first,
+        );
+        await tester.pumpAndSettle();
         expect(find.text(l10n.settingsAppearance), findsOneWidget);
+        expect(find.text(l10n.settingsLanguage), findsNothing);
+        await tester.tap(
+          find.byKey(const ValueKey('settings-menu-appearance')),
+        );
+        await tester.pumpAndSettle();
         expect(find.text(l10n.settingsLanguage), findsOneWidget);
         expect(
           tester.takeException(),
@@ -127,6 +139,9 @@ void main() {
         // Close the language popup route before scrolling Settings.
         await tester.binding.handlePopRoute();
         await tester.pumpAndSettle();
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        final menuList = find.byType(ListView);
         final currentL10n = AppLocalizations.of(
           tester.element(find.byType(AppBar)),
         );
@@ -138,8 +153,7 @@ void main() {
           of: aboutTile,
           matching: find.text(currentL10n.settingsAbout),
         );
-        // The source cards can make this list very long with enlarged text.
-        // Build its final children before checking About's actual visibility.
+        // The menu remains scrollable with enlarged text.
         final scrollable = find.byType(Scrollable);
         expect(scrollable, findsOneWidget);
         for (
@@ -154,7 +168,7 @@ void main() {
         expect(aboutTitle, findsOneWidget);
         await tester.ensureVisible(aboutTitle);
         await tester.pumpAndSettle();
-        final viewportRect = tester.getRect(settingsList);
+        final viewportRect = tester.getRect(menuList);
         final aboutRect = tester.getRect(aboutTitle);
         expect(aboutRect.top, greaterThanOrEqualTo(viewportRect.top));
         expect(aboutRect.bottom, lessThanOrEqualTo(viewportRect.bottom));
@@ -190,14 +204,26 @@ void main() {
         await _pumpShell(tester, locale, controller);
 
         final l10n = AppLocalizations.of(tester.element(find.byType(AppBar)));
-        final navigation = find.byType(AdaptiveBottomNavigation);
+        final railHeight = 54 + 8 + 3 * (56 + 20 * 2);
+        final usesRail = 360 >= railHeight;
+        final navigation = usesRail
+            ? find.byKey(const ValueKey('tablet-navigation-rail'))
+            : find.byType(AdaptiveBottomNavigation);
         expect(navigation, findsOneWidget);
+        if (usesRail) {
+          expect(find.byType(AdaptiveBottomNavigation), findsNothing);
+        } else {
+          expect(
+            find.byKey(const ValueKey('tablet-navigation-rail')),
+            findsNothing,
+          );
+        }
         final navigationRect = tester.getRect(navigation);
-        final labels = [
-          l10n.navHome,
-          l10n.navSongs,
-          l10n.navSetlists,
-          l10n.navSettings,
+        final labels = [l10n.navSongs, l10n.navSetlists, l10n.navSettings];
+        const destinationTabs = [
+          VerseTab.home,
+          VerseTab.setlists,
+          VerseTab.settings,
         ];
         for (var index = 0; index < labels.length; index++) {
           final destination = find.descendant(
@@ -221,16 +247,18 @@ void main() {
 
           final semanticDestination = find.descendant(
             of: navigation,
-            matching: find.bySemanticsLabel(labels[index]),
+            matching: find.bySemanticsLabel(
+              RegExp('^${RegExp.escape(labels[index])}(\\n|\$)'),
+            ),
           );
           expect(semanticDestination, findsOneWidget);
           final semanticData = tester
               .getSemantics(semanticDestination)
               .getSemanticsData();
-          expect(semanticData.flagsCollection.isButton, isTrue);
+          expect(semanticData.hasAction(SemanticsAction.tap), isTrue);
           await tester.tap(destination);
           await tester.pumpAndSettle();
-          expect(controller.state.activeTab.index, index);
+          expect(controller.state.activeTab, destinationTabs[index]);
           expect(
             tester
                 .getSemantics(semanticDestination)

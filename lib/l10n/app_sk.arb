@@ -1,8 +1,6 @@
 {
   "@@locale": "sk",
   "appTitle": "Singbook",
-  "aboutDescription": "Pokojné miesto, kde nájdete a usporiadate piesne zo svojej knižnice a budete ich spievať spolu.",
-  "aboutMadeForSinging": "Stvorené na spoločné spievanie",
   "menuTypeNewSong": "Zadať novú pieseň", "aboutDetails": "Vyhľadávajte v povolených zdrojoch, porovnávajte verzie, uchovávajte texty a akordy spolu a zoraďujte skladby do zoznamov. Vaša knižnica je uložená v tomto zariadení; voliteľná synchronizácia cez Google Drive používa váš účet Google. Vyhľadávania sa odosielajú priamo povoleným zdrojom.", "aboutSupport": "Podpora a spätná väzba", "appVersion": "Verzia {version}",
   "@appVersion": {
     "placeholders": {
@@ -812,5 +810,66 @@
   "editorStandardTuning": "Štandardné ladenie",
   "editorExampleVerse": "[C]Nový deň nás [G]volá,\n[Am]za svetlom sa vraciame [F]domov.",
   "editorExampleChorus": "[F]Spievajme túto pieseň [C]spolu,\n[G]nech nás melódia nesie [C]ďalej.",
-  "editorExampleBridge": "[Am]Ešte jeden riadok, o čosi [F]bližšie."
+  "editorExampleBridge": "[Am]Ešte jeden riadok, o čosi [F]bližšie.",
+  "aboutMadeForSinging": "Každá pieseň pripravená.",
+  "aboutDescription": "Texty piesní, akordy a zoznamy skladieb spolu, pripravené na skúšku, na pódium aj kamkoľvek, kde hráte.",
+  "aboutDetails": "Vyhľadávajte v dostupných zdrojoch a porovnávajte texty, akordy, načasovanie a informácie o nahrávke, kým si neuložíte verziu, ktorú chcete hrať. Dostupnosť sa líši podľa piesne a služby.",
+  "aboutFindTitle": "Nájdite správnu verziu",
+  "aboutKeepTitle": "Vytvorte si vlastnú knižnicu",
+  "aboutKeepDetails": "Upravujte a transponujte piesne, uchovávajte ich v miestnej knižnici na používanie offline a zdieľajte prenosné súbory ChordPro. Voliteľná synchronizácia s Google Drive používa súkromný priečinok aplikácie vo vašom účte Google. Zariadenia môžete aktualizovať aj klepnutím na „Synchronizovať teraz“.",
+  "aboutPlayTitle": "Vezmite si zoznam skladieb na pódium",
+  "aboutPlayDetails": "Zoraďte piesne do zoznamov, vyberte tóninu každej piesne a zdieľajte zoznamy OpenSong. Upravte veľkosť textu v čítačke, zapnite automatické posúvanie textu a tlačte PDF súbory piesní. Singbook neprenáša ani neprehráva zvuk.",
+  "aboutPrivacyTitle": "Bezplatná a s knižnicou uloženou lokálne",
+  "aboutPrivacyDetails": "Singbook je bezplatný, bez reklám, analytiky a nákupov v aplikácii. Uložená knižnica zostáva vo vašom zariadení; voliteľná synchronizácia využíva váš Google Drive. Online výsledky pochádzajú priamo od nezávislých služieb tretích strán a nemusia byť dostupné alebo môžu byť chránené autorskými právami. Singbook ich obsah nehostuje.",
+  "aboutWebsite": "Webová stránka Singbook",
+  "aboutSourceCode": "Zdrojový kód na GitHube",
+  "aboutPublisher": "Od Freevia",
+  "aboutLanguages": "Jazyky aplikácie: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountDriveFolder": "Priečinok knižnice Disku Google",
+  "accountPrivateDriveFolder": "Súkromná zložka Singbook",
+  "accountChooseDriveFolder": "Vyberte priečinok",
+  "accountDriveFolderMoveTitle": "Presunúť knižnicu Singbooku?",
+  "accountDriveFolderMoveBody": "Vyberte viditeľný priečinok na Disku Google. Singbook tam pred prepnutím skopíruje a overí vaše skladby a setlisty. Pôvodné súbory zostanú vo svojom predchádzajúcom umiestnení ako záloha. Ostatné súbory sú ponechané na pokoji. Súbory ChordPro, ktoré importujete do tohto priečinka, sa prijmú na synchronizáciu a príjem metadát Singbooku.",
+  "accountImportChordPro": "Importujte ChordPro z Disku",
+  "accountImportChordProHint": "Vyberte súbory .cho, ktoré chcete pridať do tejto knižnice. Súbory, ktoré už sú v priečinku, sú prijaté; súbory inde sa skopírujú sem.",
+  "syncErrorFolderPickerUnavailable": "Výber priečinka na Disku nie je k dispozícii",
+  "syncErrorFolderPickerUnavailableHint": "Na podporovanom zariadení vyberte viditeľný priečinok na Disku pomocou nástroja Disk Google.",
+  "syncErrorDriveFolderMissing": "Priečinok Singbook Drive je nedostupný",
+  "syncErrorDriveFolderMissingHint": "Znova vyberte priečinok alebo ho obnovte na Disku Google.",
+  "syncErrorDriveFileAuthorization": "Singbook potrebuje prístup k tomuto priečinku na Disku",
+  "syncErrorDriveFileAuthorizationHint": "Znova vyberte priečinok, ktorému chcete udeliť prístup, a potom synchronizujte svoju knižnicu.",
+  "syncErrorFolderMigration": "Knižnicu sa zatiaľ nepodarilo presunúť",
+  "syncErrorFolderMigrationHint": "Vaša predchádzajúca knižnica je stále v bezpečí. Skontrolujte pripojenie a znova vyberte priečinok a skúste to znova.",
+  "syncErrorVisibleFolderRequired": "Najprv vyberte viditeľný priečinok na Disku",
+  "syncErrorVisibleFolderRequiredHint": "Pred importovaním súborov z Disku je potrebný viditeľný priečinok knižnice.",
+  "playerEstimatedKey": "Odhadovaná tónina",
+  "songsLibraryView": "Knižnica",
+  "settingsStartupView": "Otvoriť pri spustení",
+  "settingsStartupViewHint": "Vyberte zobrazenie Piesne, ktoré sa ukáže po otvorení aplikácie.",
+  "settingsStartupLastView": "Naposledy otvorené",
+  "playerExpandControls": "Zobraziť ovládanie prehrávania",
+  "playerCollapseControls": "Skryť ovládanie prehrávania",
+  "settingsShowSections": "Zobrazovať nadpisy častí",
+  "settingsShowSectionsHint": "Zobrazovať v texte nadpisy sloh, refrénu a ďalších častí.",
+  "settingsShowPlayerControls": "Zobraziť ovládanie prehrávania",
+  "settingsShowPlayerControlsHint": "Panel prehrávača môžete zobraziť alebo skryť aj ťuknutím či potiahnutím.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

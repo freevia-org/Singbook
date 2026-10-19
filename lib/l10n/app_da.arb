@@ -1,9 +1,9 @@
 {
   "@@locale": "da",
   "appTitle": "Singbook",
-  "aboutDescription": "Et roligt sted at finde, organisere og synge fra dit sangbibliotek.",
-  "aboutMadeForSinging": "Skabt til at synge sammen",
-  "menuTypeNewSong": "Skriv en ny sang", "aboutDetails": "Søg i aktiverede kilder, sammenlign versioner, hold sangtekster og akkorder samlet, og organiser sange i sætlister. Dit bibliotek gemmes på denne enhed; valgfri synkronisering via Google Drive bruger din Google-konto. Søgninger sendes direkte til de aktiverede kilder.", "aboutSupport": "Support og feedback", "appVersion": "Version {version}",
+  "aboutDescription": "Dine sangtekster, akkorder og sætlister samlet, klar til øvning, scenen og alle steder, du spiller.",
+  "aboutMadeForSinging": "Hver sang er klar.",
+  "menuTypeNewSong": "Skriv en ny sang", "aboutDetails": "Søg i aktiverede kilder, og sammenlign sangtekster, akkorder, timing og optagelsesoplysninger, før du gemmer den version, du vil spille. Tilgængeligheden varierer efter sang og tjeneste.", "aboutSupport": "Support og feedback", "appVersion": "Version {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -812,5 +812,63 @@
   "editorStandardTuning": "Standardstemning",
   "editorExampleVerse": "[C]En ny dag [G]kalder,\n[Am]vi følger lyset hjem til [F]os.",
   "editorExampleChorus": "[F]Syng denne sang [C]sammen,\n[G]lad melodien føre os [C]videre.",
-  "editorExampleBridge": "[Am]En linje mere, lidt [F]tættere på."
+  "editorExampleBridge": "[Am]En linje mere, lidt [F]tættere på.",
+  "aboutFindTitle": "Find den rigtige version",
+  "aboutKeepTitle": "Byg dit eget bibliotek",
+  "aboutKeepDetails": "Rediger og transponer sange, behold dem i dit lokale bibliotek til offlinebrug, og del bærbare ChordPro-filer. Valgfri synkronisering med Google Drive bruger en privat appmappe på din Google-konto. Du kan også trykke på Synkronisér nu for at opdatere dine enheder.",
+  "aboutPlayTitle": "Tag din sætliste med på scenen",
+  "aboutPlayDetails": "Organiser sange i sætlister, vælg toneart for hver sang, og del OpenSong-sætlister. Tilpas læserens tekst, automatisk rulning af sangtekster, og udskriv sang-PDF’er. Singbook streamer eller afspiller ikke lyd.",
+  "aboutPrivacyTitle": "Gratis, med biblioteket på din enhed",
+  "aboutPrivacyDetails": "Singbook er gratis uden annoncer, analyse eller køb i appen. Dit gemte bibliotek bliver på din enhed; valgfri synkronisering bruger dit eget Google Drive. Onlineresultater kommer direkte fra uafhængige tredjepartstjenester og kan være utilgængelige eller ophavsretligt beskyttede. Singbook er ikke vært for deres indhold.",
+  "aboutWebsite": "Singbooks website",
+  "aboutSourceCode": "Kildekode på GitHub",
+  "aboutPublisher": "Fra Freevia",
+  "aboutLanguages": "Appens sprog: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountDriveFolder": "Google Drev biblioteksmappe",
+  "accountPrivateDriveFolder": "Privat Singbook-mappe",
+  "accountChooseDriveFolder": "Vælg mappe",
+  "accountDriveFolderMoveTitle": "Flytte dit Singbook-bibliotek?",
+  "accountDriveFolderMoveBody": "Vælg en synlig Google Drev-mappe. Singbook vil kopiere og bekræfte dine sange og sætlister der, før du skifter til den. Originalfiler forbliver på deres tidligere placering som en sikkerhedskopi. Andre filer efterlades alene. ChordPro-filer, du importerer til denne mappe, bruges til synkronisering og modtager Singbook-metadata.",
+  "accountImportChordPro": "Importer ChordPro fra Drive",
+  "accountImportChordProHint": "Vælg .cho-filer, der skal føjes til dette bibliotek. Filer, der allerede er i mappen, overtages; filer andre steder kopieres her.",
+  "syncErrorFolderPickerUnavailable": "Valg af Drev-mappe er ikke tilgængeligt",
+  "syncErrorFolderPickerUnavailableHint": "Vælg en synlig Drev-mappe med Google Drevs mappevælger på en understøttet enhed.",
+  "syncErrorDriveFolderMissing": "Singbook Drive-mappen er ikke tilgængelig",
+  "syncErrorDriveFolderMissingHint": "Vælg mappen igen, eller gendan den i Google Drev.",
+  "syncErrorDriveFileAuthorization": "Singbook skal have adgang til denne Drev-mappe",
+  "syncErrorDriveFileAuthorizationHint": "Vælg mappen igen for at give adgang, og synkroniser derefter dit bibliotek.",
+  "syncErrorFolderMigration": "Biblioteket kunne ikke flyttes endnu",
+  "syncErrorFolderMigrationHint": "Dit tidligere bibliotek er stadig sikkert. Kontroller forbindelsen, og vælg mappen igen for at prøve igen.",
+  "syncErrorVisibleFolderRequired": "Vælg først en synlig Drev-mappe",
+  "syncErrorVisibleFolderRequiredHint": "Der kræves en synlig biblioteksmappe, før du importerer filer fra Drev.",
+  "playerEstimatedKey": "Anslået toneart",
+  "songsLibraryView": "Bibliotek",
+  "settingsStartupView": "Start i",
+  "settingsStartupViewHint": "Vælg den sangvisning, der vises, når appen åbnes.",
+  "settingsStartupLastView": "Senest åbne",
+  "playerExpandControls": "Vis afspilningsknapper",
+  "playerCollapseControls": "Skjul afspilningsknapper",
+  "settingsShowSections": "Vis sektionsoverskrifter",
+  "settingsShowSectionsHint": "Vis overskrifter for vers, omkvæd og andre afsnit i sangteksten.",
+  "settingsShowPlayerControls": "Vis afspilningsknapper",
+  "settingsShowPlayerControlsHint": "Du kan også trykke på eller stryge på afspillerpanelet for at vise eller skjule det.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

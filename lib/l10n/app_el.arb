@@ -1,9 +1,9 @@
 {
   "@@locale": "el",
   "appTitle": "Singbook",
-  "aboutDescription": "Ένας ήρεμος χώρος για να βρίσκεις, να οργανώνεις και να τραγουδάς από τη συλλογή τραγουδιών σου.",
-  "aboutMadeForSinging": "Φτιαγμένο για να τραγουδάμε μαζί",
-  "menuTypeNewSong": "Πληκτρολογήστε ένα νέο τραγούδι", "aboutDetails": "Αναζητήστε σε ενεργοποιημένες πηγές, συγκρίνετε εκδόσεις, κρατήστε μαζί στίχους και συγχορδίες και οργανώστε τραγούδια σε λίστες. Η βιβλιοθήκη σας αποθηκεύεται σε αυτήν τη συσκευή· ο προαιρετικός συγχρονισμός μέσω Google Drive χρησιμοποιεί τον λογαριασμό σας Google. Οι αναζητήσεις αποστέλλονται απευθείας στις ενεργοποιημένες πηγές.", "aboutSupport": "Υποστήριξη και σχόλια", "appVersion": "Έκδοση {version}",
+  "aboutDescription": "Οι στίχοι, οι συγχορδίες και οι λίστες τραγουδιών σας σε ένα μέρος, έτοιμα για πρόβα, για τη σκηνή και όπου κι αν παίζετε.",
+  "aboutMadeForSinging": "Κάθε τραγούδι, έτοιμο.",
+  "menuTypeNewSong": "Πληκτρολογήστε ένα νέο τραγούδι", "aboutDetails": "Αναζητήστε στις ενεργοποιημένες πηγές και συγκρίνετε στίχους, συγχορδίες, χρονισμό και λεπτομέρειες ηχογράφησης πριν αποθηκεύσετε την εκδοχή που θέλετε να παίξετε. Η διαθεσιμότητα διαφέρει ανά τραγούδι και υπηρεσία.", "aboutSupport": "Υποστήριξη και σχόλια", "appVersion": "Έκδοση {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -812,5 +812,63 @@
   "editorStandardTuning": "Τυπικό κούρδισμα",
   "editorExampleVerse": "[C]Μια νέα μέρα μας [G]καλεί,\n[Am]ακολουθούμε το φως πίσω στο [F]σπίτι.",
   "editorExampleChorus": "[F]Ας τραγουδήσουμε αυτό το τραγούδι [C]μαζί,\n[G]κι ας μας ταξιδέψει η μελωδία [C]παραπέρα.",
-  "editorExampleBridge": "[Am]Άλλος ένας στίχος, λίγο πιο [F]κοντά."
+  "editorExampleBridge": "[Am]Άλλος ένας στίχος, λίγο πιο [F]κοντά.",
+  "aboutFindTitle": "Βρείτε την κατάλληλη εκδοχή",
+  "aboutKeepTitle": "Δημιουργήστε τη δική σας βιβλιοθήκη",
+  "aboutKeepDetails": "Επεξεργαστείτε και μεταφέρετε τραγούδια σε άλλη τονικότητα, διατηρήστε τα στην τοπική βιβλιοθήκη σας για χρήση εκτός σύνδεσης και μοιραστείτε φορητά αρχεία ChordPro. Ο προαιρετικός συγχρονισμός με το Google Drive χρησιμοποιεί έναν ιδιωτικό φάκελο της εφαρμογής στον λογαριασμό σας Google. Μπορείτε επίσης να πατήσετε «Συγχρονισμός τώρα» για να ενημερώσετε τις συσκευές σας.",
+  "aboutPlayTitle": "Πάρτε τη λίστα σας στη σκηνή",
+  "aboutPlayDetails": "Οργανώστε τραγούδια σε λίστες, επιλέξτε τονικότητα για κάθε τραγούδι και μοιραστείτε λίστες OpenSong. Προσαρμόστε το κείμενο ανάγνωσης και την αυτόματη κύλιση των στίχων και εκτυπώστε PDF τραγουδιών. Το Singbook δεν μεταδίδει ούτε αναπαράγει ήχο.",
+  "aboutPrivacyTitle": "Δωρεάν και με προτεραιότητα την τοπική χρήση",
+  "aboutPrivacyDetails": "Το Singbook είναι δωρεάν, χωρίς διαφημίσεις, αναλυτικά στοιχεία ή αγορές εντός εφαρμογής. Η αποθηκευμένη βιβλιοθήκη σας παραμένει στη συσκευή σας· ο προαιρετικός συγχρονισμός χρησιμοποιεί το δικό σας Google Drive. Τα διαδικτυακά αποτελέσματα προέρχονται απευθείας από ανεξάρτητες υπηρεσίες τρίτων και ενδέχεται να μην είναι διαθέσιμα ή να προστατεύονται από πνευματικά δικαιώματα. Το Singbook δεν φιλοξενεί το περιεχόμενό τους.",
+  "aboutWebsite": "Ιστότοπος Singbook",
+  "aboutSourceCode": "Πηγαίος κώδικας στο GitHub",
+  "aboutPublisher": "Από τη Freevia",
+  "aboutLanguages": "Γλώσσες εφαρμογής: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountDriveFolder": "Φάκελος βιβλιοθήκης Google Drive",
+  "accountPrivateDriveFolder": "Ιδιωτικός φάκελος Singbook",
+  "accountChooseDriveFolder": "Επιλέξτε φάκελο",
+  "accountDriveFolderMoveTitle": "Μετακίνηση της βιβλιοθήκης Singbook;",
+  "accountDriveFolderMoveBody": "Επιλέξτε έναν ορατό φάκελο του Google Drive. Το Singbook θα αντιγράψει και θα επαληθεύσει εκεί τα τραγούδια και τις λίστες σας πριν από τη μετάβαση σε αυτό. Τα πρωτότυπα αρχεία παραμένουν στην προηγούμενη θέση τους ως αντίγραφο ασφαλείας. Άλλα αρχεία μένουν μόνα τους. Τα αρχεία ChordPro που εισάγετε σε αυτόν τον φάκελο υιοθετούνται για συγχρονισμό και λήψη μεταδεδομένων Singbook.",
+  "accountImportChordPro": "Εισαγωγή ChordPro από το Drive",
+  "accountImportChordProHint": "Επιλέξτε αρχεία .cho για προσθήκη σε αυτήν τη βιβλιοθήκη. Τα αρχεία που βρίσκονται ήδη στον φάκελο έχουν εγκριθεί. αρχεία αλλού αντιγράφονται εδώ.",
+  "syncErrorFolderPickerUnavailable": "Η επιλογή φακέλου μονάδας δίσκου δεν είναι διαθέσιμη",
+  "syncErrorFolderPickerUnavailableHint": "Επιλέξτε έναν ορατό φάκελο Drive με τον επιλογέα του Google Drive σε υποστηριζόμενη συσκευή.",
+  "syncErrorDriveFolderMissing": "Ο φάκελος Singbook Drive δεν είναι διαθέσιμος",
+  "syncErrorDriveFolderMissingHint": "Επιλέξτε ξανά το φάκελο ή επαναφέρετέ τον στο Google Drive.",
+  "syncErrorDriveFileAuthorization": "Το Singbook χρειάζεται πρόσβαση σε αυτόν τον φάκελο Drive",
+  "syncErrorDriveFileAuthorizationHint": "Επιλέξτε ξανά το φάκελο για να παραχωρήσετε πρόσβαση και, στη συνέχεια, συγχρονίστε τη βιβλιοθήκη σας.",
+  "syncErrorFolderMigration": "Δεν ήταν δυνατή η μετακίνηση της βιβλιοθήκης ακόμα",
+  "syncErrorFolderMigrationHint": "Η προηγούμενη βιβλιοθήκη σας είναι ακόμα ασφαλής. Ελέγξτε τη σύνδεση και επιλέξτε ξανά το φάκελο για να προσπαθήσετε ξανά.",
+  "syncErrorVisibleFolderRequired": "Επιλέξτε πρώτα έναν ορατό φάκελο Drive",
+  "syncErrorVisibleFolderRequiredHint": "Απαιτείται ένας ορατός φάκελος βιβλιοθήκης πριν από την εισαγωγή αρχείων από το Drive.",
+  "playerEstimatedKey": "Εκτιμώμενη τονικότητα",
+  "songsLibraryView": "Βιβλιοθήκη",
+  "settingsStartupView": "Έναρξη σε",
+  "settingsStartupViewHint": "Επιλέξτε την προβολή Τραγούδια που θα εμφανίζεται όταν ανοίγει η εφαρμογή.",
+  "settingsStartupLastView": "Τελευταία προβολή",
+  "playerExpandControls": "Εμφάνιση στοιχείων ελέγχου αναπαραγωγής",
+  "playerCollapseControls": "Απόκρυψη στοιχείων ελέγχου αναπαραγωγής",
+  "settingsShowSections": "Εμφάνιση επικεφαλίδων ενοτήτων",
+  "settingsShowSectionsHint": "Εμφάνιση των επικεφαλίδων για κουπλέ, ρεφρέν και άλλες ενότητες στους στίχους.",
+  "settingsShowPlayerControls": "Εμφάνιση στοιχείων ελέγχου αναπαραγωγής",
+  "settingsShowPlayerControlsHint": "Μπορείτε επίσης να πατήσετε ή να σύρετε το πλαίσιο αναπαραγωγής για να το εμφανίσετε ή να το αποκρύψετε.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

@@ -13,14 +13,52 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Không gian yên bình để tìm, sắp xếp và hát các bài hát trong thư viện của bạn.';
+      'Lời bài hát, hợp âm và danh sách biểu diễn ở cùng một nơi, sẵn sàng cho buổi tập, sân khấu và mọi nơi bạn chơi nhạc.';
 
   @override
-  String get aboutMadeForSinging => 'Được tạo để cùng nhau ca hát';
+  String get aboutMadeForSinging => 'Mỗi bài hát, sẵn sàng để hát.';
 
   @override
   String get aboutDetails =>
-      'Tìm kiếm trong các nguồn đã bật, so sánh phiên bản, lưu lời và hợp âm cùng nhau, rồi sắp xếp bài hát thành danh sách. Thư viện được lưu trên thiết bị này; tính năng đồng bộ Google Drive tùy chọn sử dụng tài khoản Google của bạn. Tìm kiếm được gửi trực tiếp đến các nguồn đã bật.';
+      'Tìm kiếm trong các nguồn hiện có và so sánh lời, hợp âm, nhịp thời gian cùng thông tin bản thu trước khi lưu phiên bản bạn muốn chơi. Tính khả dụng tùy theo bài hát và dịch vụ.';
+
+  @override
+  String get aboutFindTitle => 'Tìm phiên bản phù hợp';
+
+  @override
+  String get aboutKeepTitle => 'Tạo thư viện của riêng bạn';
+
+  @override
+  String get aboutKeepDetails =>
+      'Chỉnh sửa và chuyển tông bài hát, lưu trong thư viện cục bộ để dùng ngoại tuyến và chia sẻ các tệp ChordPro dễ mang theo. Tùy chọn đồng bộ Google Drive sử dụng thư mục riêng của ứng dụng trong tài khoản Google của bạn. Bạn cũng có thể nhấn “Đồng bộ ngay” để cập nhật các thiết bị.';
+
+  @override
+  String get aboutPlayTitle => 'Mang danh sách biểu diễn lên sân khấu';
+
+  @override
+  String get aboutPlayDetails =>
+      'Sắp xếp bài hát thành danh sách biểu diễn, chọn tông cho từng bài và chia sẻ danh sách OpenSong. Điều chỉnh cỡ chữ trình đọc, tự động cuộn lời bài hát và in PDF bài hát. Singbook không phát trực tuyến hay phát âm thanh.';
+
+  @override
+  String get aboutPrivacyTitle => 'Miễn phí và ưu tiên lưu trữ cục bộ';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook miễn phí, không quảng cáo, không phân tích dữ liệu và không mua hàng trong ứng dụng. Thư viện đã lưu nằm trên thiết bị của bạn; tính năng đồng bộ tùy chọn sử dụng Google Drive của bạn. Kết quả trực tuyến đến trực tiếp từ các dịch vụ bên thứ ba độc lập và có thể không khả dụng hoặc được bảo vệ bản quyền. Singbook không lưu trữ nội dung đó.';
+
+  @override
+  String get aboutWebsite => 'Trang web Singbook';
+
+  @override
+  String get aboutSourceCode => 'Mã nguồn trên GitHub';
+
+  @override
+  String get aboutPublisher => 'Bởi Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Ngôn ngữ ứng dụng: $count';
+  }
 
   @override
   String get aboutSupport => 'Hỗ trợ và góp ý';
@@ -1366,6 +1404,69 @@ class AppLocalizationsVi extends AppLocalizations {
       'Đồng bộ sau khi kết nối và sau khi thêm, chỉnh sửa hoặc xóa bài hát.';
 
   @override
+  String get accountDriveFolder => 'Thư mục thư viện Google Drive';
+
+  @override
+  String get accountPrivateDriveFolder => 'Thư mục Singbook riêng';
+
+  @override
+  String get accountChooseDriveFolder => 'Chọn thư mục';
+
+  @override
+  String get accountDriveFolderMoveTitle =>
+      'Di chuyển thư viện Singbook của bạn?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Chọn một thư mục Google Drive hiển thị. Singbook sẽ sao chép và xác minh các bài hát cũng như danh sách tập hợp của bạn ở đó trước khi chuyển sang nó. Các tập tin gốc vẫn ở vị trí trước đó như một bản sao lưu. Các tập tin khác được để lại một mình. Các tệp ChordPro bạn nhập vào thư mục này sẽ được sử dụng để đồng bộ hóa và nhận siêu dữ liệu Singbook.';
+
+  @override
+  String get accountImportChordPro => 'Nhập ChordPro từ Drive';
+
+  @override
+  String get accountImportChordProHint =>
+      'Chọn tệp .cho để thêm vào thư viện này. Các tập tin đã có trong thư mục sẽ được chấp nhận; các tập tin ở nơi khác được sao chép ở đây.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Lựa chọn thư mục Drive không khả dụng';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Chọn thư mục Drive hiển thị bằng bộ chọn Google Drive trên thiết bị được hỗ trợ.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'Thư mục Singbook Drive không khả dụng';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Chọn lại thư mục hoặc khôi phục thư mục đó trong Google Drive.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook cần quyền truy cập vào thư mục Drive này';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Chọn lại thư mục để cấp quyền truy cập, sau đó đồng bộ hóa thư viện của bạn.';
+
+  @override
+  String get syncErrorFolderMigration => 'Thư viện chưa thể di chuyển được';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Thư viện trước đây của bạn vẫn an toàn. Kiểm tra kết nối và chọn lại thư mục để thử lại.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Trước tiên, hãy chọn thư mục Drive hiển thị';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Cần có thư mục thư viện hiển thị trước khi nhập tệp từ Drive.';
+
+  @override
   String get accountSignOutTitle => 'Đăng xuất khỏi tài khoản này?';
 
   @override
@@ -1876,4 +1977,40 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Thêm một dòng nữa, gần [F]hơn chút.';
+
+  @override
+  String get playerEstimatedKey => 'Tông ước tính';
+
+  @override
+  String get songsLibraryView => 'Thư viện';
+
+  @override
+  String get settingsStartupView => 'Mở vào';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Chọn chế độ xem Bài hát sẽ hiển thị khi mở ứng dụng.';
+
+  @override
+  String get settingsStartupLastView => 'Mở gần đây nhất';
+
+  @override
+  String get playerExpandControls => 'Hiện điều khiển phát';
+
+  @override
+  String get playerCollapseControls => 'Ẩn điều khiển phát';
+
+  @override
+  String get settingsShowSections => 'Hiện tiêu đề các phần';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Hiện tiêu đề đoạn, điệp khúc và các phần khác trong lời bài hát.';
+
+  @override
+  String get settingsShowPlayerControls => 'Hiện điều khiển phát';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Bạn cũng có thể chạm hoặc vuốt bảng trình phát để hiện hoặc ẩn bảng.';
 }

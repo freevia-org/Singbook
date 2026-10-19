@@ -12,8 +12,15 @@ import 'collation.dart';
 String songIndexLetter(String title) => titleIndexLetter(title);
 
 class SongsScreen extends StatefulWidget {
-  const SongsScreen({super.key, required this.controller});
+  const SongsScreen({
+    super.key,
+    required this.controller,
+    this.query,
+    this.showSearch = true,
+  });
   final VerseUiController controller;
+  final String? query;
+  final bool showSearch;
   @override
   State<SongsScreen> createState() => _SongsScreenState();
 }
@@ -80,7 +87,8 @@ class _SongsScreenState extends State<SongsScreen> {
     final controller = widget.controller;
     final state = controller.state;
     final l10n = AppLocalizations.of(context);
-    final needle = foldForSearch(_query);
+    final query = widget.query ?? _query;
+    final needle = foldForSearch(query);
     final conflictsOnly = state.songsConflictFilter;
     final songs = sortedByTitle(
       state.songs
@@ -104,40 +112,41 @@ class _SongsScreenState extends State<SongsScreen> {
     _letterKeys.removeWhere((letter, _) => !letters.contains(letter));
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 12, 8),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _search,
-                  textInputAction: TextInputAction.search,
-                  onChanged: (value) => setState(() => _query = value),
-                  onSubmitted: (_) => FocusScope.of(context).unfocus(),
-                  decoration: InputDecoration(
-                    hintText: l10n.searchHint,
-                    suffixIcon: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (_query.isNotEmpty)
+        if (widget.showSearch)
+          Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 12, 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _search,
+                    textInputAction: TextInputAction.search,
+                    onChanged: (value) => setState(() => _query = value),
+                    onSubmitted: (_) => FocusScope.of(context).unfocus(),
+                    decoration: InputDecoration(
+                      hintText: l10n.searchHint,
+                      suffixIcon: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (_query.isNotEmpty)
+                            IconButton(
+                              tooltip: l10n.accessibilityClearSearch,
+                              onPressed: _clearSearch,
+                              icon: const Icon(Icons.close_rounded),
+                            ),
                           IconButton(
-                            tooltip: l10n.accessibilityClearSearch,
-                            onPressed: _clearSearch,
-                            icon: const Icon(Icons.close_rounded),
+                            tooltip: l10n.searchSubmit,
+                            onPressed: () => FocusScope.of(context).unfocus(),
+                            icon: const Icon(Icons.arrow_forward_rounded),
                           ),
-                        IconButton(
-                          tooltip: l10n.searchSubmit,
-                          onPressed: () => FocusScope.of(context).unfocus(),
-                          icon: const Icon(Icons.arrow_forward_rounded),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
         if (conflictsOnly)
           Padding(
             padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 12, 4),
@@ -159,9 +168,9 @@ class _SongsScreenState extends State<SongsScreen> {
           child: songs.isEmpty
               ? VerseEmptyState(
                   icon: Icons.library_music_outlined,
-                  title: conflictsOnly && _query.isEmpty
+                  title: conflictsOnly && query.isEmpty
                       ? l10n.songsConflictEmpty
-                      : _query.isEmpty
+                      : query.isEmpty
                       ? l10n.songsEmpty
                       : l10n.songsEmptySearch,
                 )
@@ -171,7 +180,7 @@ class _SongsScreenState extends State<SongsScreen> {
                       Expanded(
                         child: constraints.maxWidth >= 640
                             ? GridView.builder(
-                                key: const ValueKey('tablet-songs-grid'),
+                                key: const PageStorageKey('songs-library-grid'),
                                 controller: _scroll,
                                 gridDelegate:
                                     SliverGridDelegateWithMaxCrossAxisExtent(
@@ -191,6 +200,7 @@ class _SongsScreenState extends State<SongsScreen> {
                                     _songListItem(context, l10n, songs, index),
                               )
                             : ListView.builder(
+                                key: const PageStorageKey('songs-library-list'),
                                 controller: _scroll,
                                 itemCount: songs.length,
                                 itemBuilder: (context, index) =>
@@ -245,27 +255,18 @@ class _SongsScreenState extends State<SongsScreen> {
             menuWidget: PopupMenuButton<String>(
               tooltip: l10n.songMenuLabel,
               icon: const Icon(Icons.more_horiz_rounded),
-              itemBuilder: (_) => [
-                PopupMenuItem(value: 'edit', child: Text(l10n.actionEdit)),
-                PopupMenuItem(value: 'add', child: Text(l10n.songAddToSetlist)),
-                PopupMenuItem(
-                  value: 'share',
-                  child: Text(l10n.settingsShareSong),
-                ),
-                PopupMenuItem(
-                  value: 'share_pdf',
-                  child: Text(l10n.settingsSharePdf),
-                ),
-                PopupMenuItem(
-                  value: 'copy',
-                  child: Text(l10n.settingsCopySong),
-                ),
-                PopupMenuItem(
-                  value: 'print',
-                  child: Text(l10n.settingsPrintSong),
-                ),
-                PopupMenuItem(value: 'delete', child: Text(l10n.actionDelete)),
-              ],
+              itemBuilder: (_) => buildLibraryActionMenu(
+                l10n,
+                actions: const {
+                  'edit',
+                  'add',
+                  'share',
+                  'share_pdf',
+                  'copy',
+                  'print',
+                  'delete',
+                },
+              ),
               onSelected: (action) =>
                   handleSongMenuAction(context, controller, song.id, action),
             ),

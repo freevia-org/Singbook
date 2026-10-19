@@ -5,12 +5,14 @@ import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show ScrollDirection;
+import 'package:flutter/services.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../format.dart';
 import '../library_actions.dart';
 import '../player_section_timeline.dart';
 import '../verse_ui_state.dart';
+import '../widgets/slider_overlay_boundary.dart';
 import '../widgets/chord_lyrics_line.dart';
 import '../widgets/subpage_header.dart';
 import 'screen_awake.dart';
@@ -111,6 +113,8 @@ class _PlayerScreenState extends State<PlayerScreen>
   List<(int, double)>? _sectionPoints;
   List<PlayerSectionMarker>? _pointsSections;
   List<LyricLineData>? _pointsLines;
+  String? _pointsTimingMode;
+  double? _pointsDuration;
   Size? _lastViewportSize;
   double? _lastTextScale;
   VerseUiController get controller => widget.controller;
@@ -120,12 +124,72 @@ class _PlayerScreenState extends State<PlayerScreen>
   bool _awakeHeld = false;
   bool _inForeground = true;
   bool _leaving = false;
+  double _panelDragDistance = 0;
 
-  /// The song's real length, or an estimate from the line count that drives
-  /// scrolling and the slider when the song has none.
+  void _setControlsExpanded(bool expanded) {
+    if (controller.state.playerControlsExpanded == expanded) return;
+    unawaited(controller.setPlayerControlsExpanded(expanded));
+  }
+
+  Widget _controlsHandle(AppLocalizations l10n) {
+    final expanded = controller.state.playerControlsExpanded;
+    final label = expanded
+        ? l10n.playerCollapseControls
+        : l10n.playerExpandControls;
+    return Semantics(
+      button: true,
+      label: label,
+      expanded: expanded,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onVerticalDragStart: (_) => _panelDragDistance = 0,
+        onVerticalDragUpdate: (details) =>
+            _panelDragDistance += details.delta.dy,
+        onVerticalDragEnd: (_) {
+          if (_panelDragDistance > 24) _setControlsExpanded(false);
+          if (_panelDragDistance < -24) _setControlsExpanded(true);
+          _panelDragDistance = 0;
+        },
+        child: Tooltip(
+          message: label,
+          child: InkWell(
+            onTap: () => _setControlsExpanded(!expanded),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+              child: Center(
+                child: ExcludeSemantics(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 36,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.outline,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Icon(
+                        expanded
+                            ? Icons.keyboard_arrow_down_rounded
+                            : Icons.keyboard_arrow_up_rounded,
+                        size: 18,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// The adapter's resolved duration is shared with its clock and highlighting.
   double _durationOf(VerseUiState state) =>
-      state.song?.durationSeconds ??
-      (state.songLines.length * 3.4).clamp(90, 600).toDouble();
+      state.song?.durationSeconds ?? estimateChartDuration(state.songLines);
 
   bool _isStandardTuning(String? tuning) {
     if (tuning == null) return false;
@@ -186,6 +250,66 @@ class _PlayerScreenState extends State<PlayerScreen>
     }
     await controller.playPause();
   }
+
+  Future<void> _togglePlayback() async {
+    final state = controller.state;
+    if (!state.isPlaying) {
+      if (!state.autoscroll) await controller.setAutoscroll(true);
+      if (state.timingMode == 'manual' ||
+          (state.timingMode == 'timed' && !state.readerHasTiming)) {
+        await controller.setTimingMode('estimated');
+      }
+    }
+    await _playPause();
+  }
+
+  KeyEventResult _handleWindowsKey(FocusNode node, KeyEvent event) {
+    if (defaultTargetPlatform != TargetPlatform.windows ||
+        event is! KeyDownEvent ||
+        ModalRoute.of(context)?.isCurrent == false) {
+      return KeyEventResult.ignored;
+    }
+    final focused = FocusManager.instance.primaryFocus?.context;
+    // Text entry and focused sliders retain their own keyboard behavior.
+    if (focused?.findAncestorStateOfType<EditableTextState>() != null ||
+        focused?.findAncestorWidgetOfExactType<Slider>() != null) {
+      return KeyEventResult.ignored;
+    }
+    final keyboard = HardwareKeyboard.instance;
+    if (keyboard.isAltPressed ||
+        keyboard.isMetaPressed ||
+        keyboard.isShiftPressed) {
+      return KeyEventResult.ignored;
+    }
+    if (event.logicalKey == LogicalKeyboardKey.space &&
+        !keyboard.isControlPressed) {
+      // Button activation is resolved by an ancestor Shortcuts widget after
+      // this Focus callback. Let its existing action receive Space first.
+      if (focused != null &&
+          Actions.maybeFind<ActivateIntent>(focused) != null) {
+        return KeyEventResult.ignored;
+      }
+      unawaited(_togglePlayback());
+      return KeyEventResult.handled;
+    }
+    if (keyboard.isControlPressed &&
+        controller.state.playerSections.isNotEmpty) {
+      if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+        _skipSection(-1);
+        return KeyEventResult.handled;
+      }
+      if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+        _skipSection(1);
+        return KeyEventResult.handled;
+      }
+    }
+    return KeyEventResult.ignored;
+  }
+
+  String _shortcutHint(String label, String shortcut) =>
+      defaultTargetPlatform == TargetPlatform.windows && shortcut.isNotEmpty
+      ? '$label ($shortcut)'
+      : label;
 
   void _skipSection(int direction) {
     final state = controller.state;
@@ -383,19 +507,32 @@ class _PlayerScreenState extends State<PlayerScreen>
     if (lines.length < 2) return 0;
     final duration = _durationOf(state);
     if (!identical(_pointsSections, state.playerSections) ||
-        !identical(_pointsLines, lines)) {
+        !identical(_pointsLines, lines) ||
+        _pointsTimingMode != state.timingMode ||
+        _pointsDuration != duration) {
       _pointsSections = state.playerSections;
       _pointsLines = lines;
+      _pointsTimingMode = state.timingMode;
+      _pointsDuration = duration;
+      final estimated = state.timingMode == 'estimated'
+          ? estimatedLineStartTimes(lines, duration)
+          : const <String, double>{};
       _sectionPoints =
-          state.playerSections
-              .map(
-                (marker) => (
-                  lines.indexWhere((line) => line.id == marker.lineId),
-                  marker.startSeconds,
-                ),
-              )
-              .where((point) => point.$1 >= 0)
-              .toList()
+          state.timingMode == 'estimated'
+                ? [
+                    for (var index = 0; index < lines.length; index++)
+                      if (estimated[lines[index].id] case final seconds?)
+                        (index, seconds),
+                  ]
+                : state.playerSections
+                      .map(
+                        (marker) => (
+                          lines.indexWhere((line) => line.id == marker.lineId),
+                          marker.startSeconds,
+                        ),
+                      )
+                      .where((point) => point.$1 >= 0)
+                      .toList()
             ..sort((a, b) => a.$1.compareTo(b.$1));
     }
     var beforeIndex = 0;
@@ -579,12 +716,23 @@ class _PlayerScreenState extends State<PlayerScreen>
             builder: (context, position, _) =>
                 _seekBar(context, l10n, state, position, duration),
           ),
-          _transport(
-            context,
-            l10n,
-            state,
-            inlineChords: song.hasChords,
-            showSpeed: !separateSpeed,
+          SizedBox(
+            height: 40,
+            child: OverflowBox(
+              alignment: Alignment.topCenter,
+              minHeight: 48,
+              maxHeight: 48,
+              child: Transform.translate(
+                offset: const Offset(0, -8),
+                child: _transport(
+                  context,
+                  l10n,
+                  state,
+                  inlineChords: song.hasChords,
+                  showSpeed: !separateSpeed,
+                ),
+              ),
+            ),
           ),
           if (separateSpeed)
             Padding(
@@ -613,10 +761,21 @@ class _PlayerScreenState extends State<PlayerScreen>
               ),
             )
           : content;
-      return SafeArea(top: false, child: body);
+      return SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _controlsHandle(l10n),
+            if (compact) Flexible(child: body) else body,
+          ],
+        ),
+      );
     }
 
     final metadata = [
+      if (state.readerKey != null)
+        '${state.readerKeyEstimated ? l10n.playerEstimatedKey : l10n.editorKeyField}: ${state.readerKey}',
       song.artist,
       song.album,
       if (state.readerCapo != null)
@@ -626,12 +785,13 @@ class _PlayerScreenState extends State<PlayerScreen>
       if (state.readerTempo != null)
         '${l10n.editorTempoField}: ${state.readerTempo}',
     ].whereType<String>().where((v) => v.isNotEmpty).join(' · ');
-    return LayoutBuilder(
+    final content = LayoutBuilder(
       builder: (context, constraints) {
         final compactLandscape =
             constraints.maxWidth > constraints.maxHeight &&
             constraints.maxHeight < 430;
         final largeText = MediaQuery.textScalerOf(context).scale(1) > 1.5;
+        final expanded = state.playerControlsExpanded;
         final shortPortrait =
             constraints.maxHeight < 600 &&
             constraints.maxWidth <= constraints.maxHeight;
@@ -659,40 +819,22 @@ class _PlayerScreenState extends State<PlayerScreen>
                 ),
                 PopupMenuButton<String>(
                   tooltip: l10n.songMenuLabel,
-                  itemBuilder: (_) => [
-                    PopupMenuItem(value: 'info', child: Text(l10n.songInfo)),
-                    if (state.readerTimingAvailable || state.readerHasTiming)
-                      CheckedPopupMenuItem(
-                        value: 'timed-lyrics',
-                        checked: state.timingMode == 'timed',
-                        child: Text(l10n.playerTimedLyrics),
-                      ),
-                    if (state.readerCanCompareVersions)
-                      PopupMenuItem(
-                        value: 'compare',
-                        child: Text(l10n.searchCompare),
-                      ),
-                    PopupMenuItem(
-                      value: 'add',
-                      child: Text(l10n.songAddToSetlist),
-                    ),
-                    PopupMenuItem(
-                      value: 'share',
-                      child: Text(l10n.settingsShareSong),
-                    ),
-                    PopupMenuItem(
-                      value: 'share_pdf',
-                      child: Text(l10n.settingsSharePdf),
-                    ),
-                    PopupMenuItem(
-                      value: 'copy',
-                      child: Text(l10n.settingsCopySong),
-                    ),
-                    PopupMenuItem(
-                      value: 'print',
-                      child: Text(l10n.settingsPrintSong),
-                    ),
-                  ],
+                  itemBuilder: (_) => buildLibraryActionMenu(
+                    l10n,
+                    timedLyricsChecked: state.timingMode == 'timed',
+                    actions: {
+                      'info',
+                      if (state.readerCanCompareVersions) 'compare',
+                      if (state.readerTimingAvailable || state.readerHasTiming)
+                        'timed-lyrics',
+                      'add',
+                      'share',
+                      'share_pdf',
+                      'copy',
+                      'print',
+                      'delete',
+                    },
+                  ),
                   onSelected: (action) {
                     if (action == 'compare') {
                       controller.compareCurrentSongVersions();
@@ -719,7 +861,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                   alignment: AlignmentDirectional.centerStart,
                   child: Text(
                     metadata,
-                    maxLines: 1,
+                    maxLines: state.readerKeyEstimated ? 2 : 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: colors.onSurfaceVariant,
@@ -750,7 +892,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                 ],
               ),
             ),
-            if (compactLandscape)
+            if (compactLandscape && expanded)
               Expanded(
                 child: Row(
                   children: [
@@ -767,18 +909,27 @@ class _PlayerScreenState extends State<PlayerScreen>
               )
             else ...[
               Expanded(child: lyrics),
-              controls(
-                compact: false,
-                maxHeight: largeText || shortPortrait
-                    ? (constraints.maxHeight * .4)
-                          .clamp(180.0, 320.0)
-                          .toDouble()
-                    : null,
-              ),
+              if (expanded)
+                controls(
+                  compact: false,
+                  maxHeight: largeText || shortPortrait
+                      ? (constraints.maxHeight * .4)
+                            .clamp(180.0, 320.0)
+                            .toDouble()
+                      : null,
+                )
+              else
+                SafeArea(top: false, child: _controlsHandle(l10n)),
             ],
           ],
         );
       },
+    );
+    return Focus(
+      key: const ValueKey('player-keyboard-focus'),
+      autofocus: defaultTargetPlatform == TargetPlatform.windows,
+      onKeyEvent: _handleWindowsKey,
+      child: content,
     );
   }
 
@@ -809,6 +960,7 @@ class _PlayerScreenState extends State<PlayerScreen>
     final theme = Theme.of(context);
     final key = _lineKeys.putIfAbsent(line.id, GlobalKey.new);
     if (line.section != null && line.text.trim().isEmpty) {
+      if (!state.showSections) return SizedBox.shrink(key: key);
       return Padding(
         key: key,
         padding: const EdgeInsets.only(top: 18, bottom: 8),
@@ -956,29 +1108,31 @@ class _PlayerScreenState extends State<PlayerScreen>
                 return Stack(
                   children: [
                     Positioned.fill(
-                      child: Slider(
-                        key: const ValueKey('player-seek-slider'),
-                        min: 0,
-                        max: maxValue,
-                        // While the thumb is held, clock ticks must not move it.
-                        value: (_dragValue ?? displayPosition)
-                            .clamp(0, maxValue)
-                            .toDouble(),
-                        semanticFormatterCallback: (value) {
-                          final sourceSection = _sectionAt(
-                            state.playerSections,
-                            value * speed,
-                          );
-                          return '${sourceSection == null ? l10n.playerCurrentSection : localizedSectionName(l10n, sourceSection.name)}, '
-                              '${formatDuration(value)}';
-                        },
-                        onChangeStart: (value) => _dragValue = value,
-                        onChanged: (value) {
-                          _dragValue = value;
-                          _instantSeek = true;
-                          controller.seek(value * speed);
-                        },
-                        onChangeEnd: (_) => _dragValue = null,
+                      child: SliderOverlayBoundary(
+                        child: Slider(
+                          key: const ValueKey('player-seek-slider'),
+                          min: 0,
+                          max: maxValue,
+                          // While the thumb is held, clock ticks must not move it.
+                          value: (_dragValue ?? displayPosition)
+                              .clamp(0, maxValue)
+                              .toDouble(),
+                          semanticFormatterCallback: (value) {
+                            final sourceSection = _sectionAt(
+                              state.playerSections,
+                              value * speed,
+                            );
+                            return '${sourceSection == null ? l10n.playerCurrentSection : localizedSectionName(l10n, sourceSection.name)}, '
+                                '${formatDuration(value)}';
+                          },
+                          onChangeStart: (value) => _dragValue = value,
+                          onChanged: (value) {
+                            _dragValue = value;
+                            _instantSeek = true;
+                            controller.seek(value * speed);
+                          },
+                          onChangeEnd: (_) => _dragValue = null,
+                        ),
                       ),
                     ),
                     ..._sectionMarkerLabelWidgets(
@@ -1018,7 +1172,7 @@ class _PlayerScreenState extends State<PlayerScreen>
         constraints: _playerPopupConstraints(context),
         menuPadding: EdgeInsets.zero,
         itemBuilder: (_) => [
-          PopupMenuItem<double>(
+          SliderPopupMenuItem<double>(
             enabled: false,
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
             child: SizedBox(
@@ -1119,19 +1273,10 @@ class _PlayerScreenState extends State<PlayerScreen>
         final start = FilledButton.icon(
           key: const ValueKey('start-lyric-scroll'),
           style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-            minimumSize: const Size(88, 38),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            minimumSize: const Size(104, 46),
           ),
-          onPressed: () async {
-            if (!state.isPlaying) {
-              if (!state.autoscroll) await controller.setAutoscroll(true);
-              if (state.timingMode == 'manual' ||
-                  (state.timingMode == 'timed' && !state.readerHasTiming)) {
-                await controller.setTimingMode('estimated');
-              }
-            }
-            await _playPause();
-          },
+          onPressed: _togglePlayback,
           icon: Icon(
             state.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
           ),
@@ -1146,11 +1291,14 @@ class _PlayerScreenState extends State<PlayerScreen>
           if (state.playerSections.isNotEmpty || state.activeSetlist != null)
             IconButton(
               visualDensity: VisualDensity.compact,
-              tooltip: state.activeSetlist == null
-                  ? l10n.playerPreviousSection
-                  : state.playerSections.isEmpty
-                  ? l10n.playerPreviousSong
-                  : l10n.playerPreviousSectionSong,
+              tooltip: _shortcutHint(
+                state.activeSetlist == null
+                    ? l10n.playerPreviousSection
+                    : state.playerSections.isEmpty
+                    ? l10n.playerPreviousSong
+                    : l10n.playerPreviousSectionSong,
+                state.playerSections.isEmpty ? '' : 'Ctrl+←',
+              ),
               onPressed: state.playerSections.isEmpty
                   ? state.activeSetlist == null
                         ? null
@@ -1161,15 +1309,28 @@ class _PlayerScreenState extends State<PlayerScreen>
                   : controller.previousSong,
               icon: const Icon(Icons.skip_previous_rounded),
             ),
-          Flexible(child: start),
+          Flexible(
+            child: defaultTargetPlatform == TargetPlatform.windows
+                ? Tooltip(
+                    message: _shortcutHint(
+                      state.isPlaying ? l10n.playerPause : l10n.playerPlay,
+                      'Space',
+                    ),
+                    child: start,
+                  )
+                : start,
+          ),
           if (state.playerSections.isNotEmpty || state.activeSetlist != null)
             IconButton(
               visualDensity: VisualDensity.compact,
-              tooltip: state.activeSetlist == null
-                  ? l10n.playerNextSection
-                  : state.playerSections.isEmpty
-                  ? l10n.playerNextSong
-                  : l10n.playerNextSectionSong,
+              tooltip: _shortcutHint(
+                state.activeSetlist == null
+                    ? l10n.playerNextSection
+                    : state.playerSections.isEmpty
+                    ? l10n.playerNextSong
+                    : l10n.playerNextSectionSong,
+                state.playerSections.isEmpty ? '' : 'Ctrl+→',
+              ),
               onPressed: state.playerSections.isEmpty
                   ? state.activeSetlist == null
                         ? null
@@ -1269,17 +1430,10 @@ class _PlayerScreenState extends State<PlayerScreen>
       position: PopupMenuPosition.over,
       constraints: _playerPopupConstraints(context),
       menuPadding: EdgeInsets.zero,
-      initialValue: !state.showChords
-          ? 'no-chords'
-          : originalPitch == null
+      initialValue: originalPitch == null
           ? 'offset-$currentOffset'
           : 'pitch-$currentPitch',
       onSelected: (action) async {
-        if (action == 'no-chords') {
-          await controller.setShowChords(!state.showChords);
-          return;
-        }
-        if (!state.showChords) await controller.setShowChords(true);
         if (action.startsWith('offset-')) {
           final target = int.parse(action.substring('offset-'.length));
           final delta = target - state.readerTranspose;
@@ -1327,15 +1481,6 @@ class _PlayerScreenState extends State<PlayerScreen>
                 ),
               ),
             ),
-        PopupMenuItem(
-          value: 'no-chords',
-          height: 34,
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Semantics(
-            selected: !state.showChords,
-            child: Text(l10n.playerChordsNone),
-          ),
-        ),
       ],
       child: Semantics(
         key: const ValueKey('pitch-key-dropdown-label'),

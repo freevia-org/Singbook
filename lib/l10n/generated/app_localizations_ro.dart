@@ -13,14 +13,52 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Un loc liniștit în care îți găsești, organizezi și cânți melodiile din bibliotecă.';
+      'Versuri, acorduri și liste de melodii împreună, pregătite pentru repetiții, scenă și oriunde cânți.';
 
   @override
-  String get aboutMadeForSinging => 'Creat pentru a cânta împreună';
+  String get aboutMadeForSinging => 'Fiecare cântec, gata de cântat.';
 
   @override
   String get aboutDetails =>
-      'Caută în sursele activate, compară versiunile, păstrează versurile și acordurile împreună și organizează melodiile în setlisturi. Biblioteca ta este stocată pe acest dispozitiv; sincronizarea opțională cu Google Drive folosește contul tău Google. Căutările sunt trimise direct către sursele activate.';
+      'Caută în sursele disponibile și compară versurile, acordurile, marcajele temporale și detaliile înregistrării înainte să salvezi versiunea dorită. Disponibilitatea diferă în funcție de melodie și serviciu.';
+
+  @override
+  String get aboutFindTitle => 'Găsește versiunea potrivită';
+
+  @override
+  String get aboutKeepTitle => 'Construiește-ți propria bibliotecă';
+
+  @override
+  String get aboutKeepDetails =>
+      'Editează și transpune melodiile, păstrează-le în biblioteca locală pentru a le folosi offline și distribuie fișiere ChordPro portabile. Sincronizarea opțională cu Google Drive folosește un dosar privat al aplicației din contul tău Google. Poți atinge și „Sincronizează acum” pentru a actualiza dispozitivele.';
+
+  @override
+  String get aboutPlayTitle => 'Ia lista de melodii pe scenă';
+
+  @override
+  String get aboutPlayDetails =>
+      'Grupează melodiile în setlisturi, alege tonalitatea fiecăreia și distribuie setlisturi OpenSong. Ajustează textul cititorului, derulează automat versurile și imprimă PDF-uri cu melodii. Singbook nu transmite și nu redă conținut audio.';
+
+  @override
+  String get aboutPrivacyTitle => 'Gratuită și cu biblioteca păstrată local';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook este gratuită, fără reclame, analiză sau achiziții în aplicație. Biblioteca salvată rămâne pe dispozitivul tău; sincronizarea opțională folosește propriul Google Drive. Rezultatele online vin direct de la servicii independente terțe și pot fi indisponibile sau protejate prin drepturi de autor. Singbook nu găzduiește conținutul acestora.';
+
+  @override
+  String get aboutWebsite => 'Site-ul Singbook';
+
+  @override
+  String get aboutSourceCode => 'Cod sursă pe GitHub';
+
+  @override
+  String get aboutPublisher => 'De la Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Limbi ale aplicației: $count';
+  }
 
   @override
   String get aboutSupport => 'Asistență și feedback';
@@ -1389,6 +1427,68 @@ class AppLocalizationsRo extends AppLocalizations {
       'Sincronizarea are loc după conectare și după adăugarea, editarea sau eliminarea unei melodii.';
 
   @override
+  String get accountDriveFolder => 'Dosarul bibliotecii Google Drive';
+
+  @override
+  String get accountPrivateDriveFolder => 'Dosar privat Singbook';
+
+  @override
+  String get accountChooseDriveFolder => 'Alegeți folderul';
+
+  @override
+  String get accountDriveFolderMoveTitle => 'Mutați biblioteca dvs. Singbook?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Alegeți un dosar Google Drive vizibil. Singbook va copia și verifica melodiile și setlist-urile dvs. acolo înainte de a trece la el. Fișierele originale rămân în locația lor anterioară ca rezervă. Alte fișiere sunt lăsate în pace. Fișierele ChordPro pe care le importați în acest folder sunt adoptate pentru sincronizare și pentru a primi metadatele Singbook.';
+
+  @override
+  String get accountImportChordPro => 'Importă ChordPro din Drive';
+
+  @override
+  String get accountImportChordProHint =>
+      'Alegeți fișierele .cho pentru a le adăuga la această bibliotecă. Fișierele aflate deja în folder sunt adoptate; fișierele din altă parte sunt copiate aici.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Selectarea folderului Drive nu este disponibilă';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Alegeți un dosar Drive vizibil cu selectorul Google Drive pe un dispozitiv acceptat.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'Dosarul Singbook Drive nu este disponibil';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Alegeți din nou dosarul sau restaurați-l în Google Drive.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook are nevoie de acces la acest dosar Drive';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Alegeți din nou folderul pentru a acorda acces, apoi sincronizați biblioteca.';
+
+  @override
+  String get syncErrorFolderMigration => 'Biblioteca nu a putut fi mutată încă';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Biblioteca anterioară este încă în siguranță. Verificați conexiunea și alegeți din nou folderul pentru a reîncerca.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Alegeți mai întâi un dosar Drive vizibil';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Este necesar un dosar de bibliotecă vizibil înainte de a importa fișiere din Drive.';
+
+  @override
   String get accountSignOutTitle => 'Te deconectezi de la acest cont?';
 
   @override
@@ -1912,4 +2012,40 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Încă un vers, puțin mai [F]aproape.';
+
+  @override
+  String get playerEstimatedKey => 'Tonalitate estimată';
+
+  @override
+  String get songsLibraryView => 'Bibliotecă';
+
+  @override
+  String get settingsStartupView => 'Pornește în';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Alege vizualizarea melodiilor afișată la deschiderea aplicației.';
+
+  @override
+  String get settingsStartupLastView => 'Ultima vizualizare';
+
+  @override
+  String get playerExpandControls => 'Afișează comenzile de redare';
+
+  @override
+  String get playerCollapseControls => 'Ascunde comenzile de redare';
+
+  @override
+  String get settingsShowSections => 'Afișează titlurile secțiunilor';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Afișează în versuri titlurile strofelor, refrenului și ale altor secțiuni.';
+
+  @override
+  String get settingsShowPlayerControls => 'Afișează comenzile de redare';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Poți atinge sau glisa și panoul playerului pentru a-l afișa sau ascunde.';
 }

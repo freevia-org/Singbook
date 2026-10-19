@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -10,6 +12,64 @@ import 'verse_ui_state.dart';
 /// Menu, dialog and sheet flows shared by the song, setlist and reader
 /// screens. They talk to the UI controller only; outcomes are reported through
 /// [VerseUiController.notices].
+
+/// One action order for library rows, Recent, readers and editors. Screens
+/// supply only their available actions; filtering never changes the order.
+List<PopupMenuEntry<String>> buildLibraryActionMenu(
+  AppLocalizations l10n, {
+  required Set<String> actions,
+  bool isSetlist = false,
+  bool timedLyricsChecked = false,
+}) {
+  final desktopExport = defaultTargetPlatform == TargetPlatform.windows;
+  final labels = {
+    'edit': l10n.actionEdit,
+    'info': l10n.songInfo,
+    'compare': l10n.searchCompare,
+    'timed-lyrics': l10n.playerTimedLyrics,
+    'add': l10n.songAddToSetlist,
+    'duplicate': l10n.actionDuplicate,
+    'share': desktopExport
+        ? '${l10n.actionExport} · ${isSetlist ? '.osts' : 'ChordPro'}'
+        : isSetlist
+        ? l10n.setlistShare
+        : l10n.settingsShareSong,
+    'share_pdf': desktopExport
+        ? '${l10n.actionExport} · PDF'
+        : isSetlist
+        ? l10n.setlistSharePdf
+        : l10n.settingsSharePdf,
+    'copy': l10n.settingsCopySong,
+    'print': isSetlist ? l10n.setlistPrint : l10n.settingsPrintSong,
+    'delete': l10n.actionDelete,
+  };
+  const groups = [
+    ['edit', 'info', 'compare', 'timed-lyrics', 'add', 'duplicate'],
+    ['share', 'share_pdf', 'copy', 'print'],
+    ['delete'],
+  ];
+  final entries = <PopupMenuEntry<String>>[];
+  for (final group in groups) {
+    final visible = group.where(actions.contains).toList();
+    if (visible.isEmpty) continue;
+    if (entries.isNotEmpty) entries.add(const PopupMenuDivider());
+    for (final action in visible) {
+      entries.add(
+        action == 'timed-lyrics'
+            ? CheckedPopupMenuItem<String>(
+                value: action,
+                checked: timedLyricsChecked,
+                child: Text(labels[action]!),
+              )
+            : PopupMenuItem<String>(
+                value: action,
+                child: Text(labels[action]!),
+              ),
+      );
+    }
+  }
+  return entries;
+}
 
 Future<void> handleSongMenuAction(
   BuildContext context,

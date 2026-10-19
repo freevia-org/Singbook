@@ -13,14 +13,52 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'अपनी गीत लाइब्रेरी में गीत खोजने, व्यवस्थित करने और गाने के लिए एक शांत जगह।';
+      'आपके गीत के बोल, कॉर्ड और गीत सूचियाँ एक साथ, रिहर्सल, मंच और जहाँ भी आप बजाएँ वहाँ के लिए तैयार।';
 
   @override
-  String get aboutMadeForSinging => 'साथ मिलकर गाने के लिए बनाया गया';
+  String get aboutMadeForSinging => 'हर गीत, तैयार।';
 
   @override
   String get aboutDetails =>
-      'चालू स्रोतों में खोजें, गीतों के संस्करणों की तुलना करें, बोल और कॉर्ड साथ रखें, और गीतों को सेटलिस्ट में व्यवस्थित करें। आपकी लाइब्रेरी इस डिवाइस पर सहेजी जाती है; वैकल्पिक Google Drive सिंक आपके Google खाते का उपयोग करता है। खोज सीधे चालू स्रोतों को भेजी जाती है।';
+      'सहेजने के लिए मनचाहा संस्करण चुनने से पहले सक्षम स्रोतों में खोजें और बोल, कॉर्ड, समय तथा रिकॉर्डिंग का विवरण देखें। उपलब्धता गीत और सेवा के अनुसार अलग हो सकती है।';
+
+  @override
+  String get aboutFindTitle => 'सही संस्करण खोजें';
+
+  @override
+  String get aboutKeepTitle => 'अपनी लाइब्रेरी बनाएँ';
+
+  @override
+  String get aboutKeepDetails =>
+      'गीत संपादित करें और उनका सुर बदलें, उन्हें ऑफ़लाइन उपयोग के लिए अपनी स्थानीय लाइब्रेरी में रखें, और पोर्टेबल ChordPro फ़ाइलें साझा करें। वैकल्पिक Google Drive सिंक आपके Google खाते में ऐप के निजी फ़ोल्डर का उपयोग करता है। आप अपने डिवाइस अपडेट करने के लिए “अभी सिंक करें” भी टैप कर सकते हैं।';
+
+  @override
+  String get aboutPlayTitle => 'अपनी सूची मंच पर ले जाएँ';
+
+  @override
+  String get aboutPlayDetails =>
+      'गीतों को सूचियों में क्रम दें, हर गीत के लिए सुर चुनें और OpenSong सूचियाँ साझा करें। रीडर का टेक्स्ट और बोलों की ऑटो-स्क्रॉल सेटिंग बदलें, और गीतों के PDF प्रिंट करें। Singbook ऑडियो स्ट्रीम या प्ले नहीं करता।';
+
+  @override
+  String get aboutPrivacyTitle => 'मुफ़्त और डिवाइस पर केंद्रित';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook मुफ़्त है और इसमें विज्ञापन, एनालिटिक्स या इन-ऐप खरीदारी नहीं हैं। आपकी सहेजी हुई लाइब्रेरी आपके डिवाइस पर रहती है; वैकल्पिक सिंक आपके अपने Google Drive का उपयोग करता है। ऑनलाइन नतीजे सीधे स्वतंत्र तृतीय-पक्ष सेवाओं से आते हैं और अनुपलब्ध या कॉपीराइट से सुरक्षित हो सकते हैं। Singbook उनकी सामग्री होस्ट नहीं करता।';
+
+  @override
+  String get aboutWebsite => 'Singbook वेबसाइट';
+
+  @override
+  String get aboutSourceCode => 'GitHub पर स्रोत कोड';
+
+  @override
+  String get aboutPublisher => 'Freevia की ओर से';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'ऐप की भाषाएँ: $count';
+  }
 
   @override
   String get aboutSupport => 'सहायता और प्रतिक्रिया';
@@ -1360,6 +1398,70 @@ class AppLocalizationsHi extends AppLocalizations {
       'कनेक्ट करने के बाद और कोई गीत जोड़ने, संपादित करने या हटाने के बाद सिंक करें।';
 
   @override
+  String get accountDriveFolder => 'Google Drive लाइब्रेरी फ़ोल्डर';
+
+  @override
+  String get accountPrivateDriveFolder => 'निजी सिंगबुक फ़ोल्डर';
+
+  @override
+  String get accountChooseDriveFolder => 'फ़ोल्डर चुनें';
+
+  @override
+  String get accountDriveFolderMoveTitle =>
+      'क्या आप अपनी सिंगबुक लाइब्रेरी को स्थानांतरित करना चाहते हैं?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'एक दृश्यमान Google ड्राइव फ़ोल्डर चुनें. सिंगबुक इस पर स्विच करने से पहले आपके गाने और सेटलिस्ट को कॉपी और सत्यापित करेगा। मूल फ़ाइलें बैकअप के रूप में अपने पिछले स्थान पर रहती हैं। अन्य फ़ाइलें अकेली छोड़ दी गई हैं। इस फ़ोल्डर में आपके द्वारा आयात की जाने वाली कॉर्डप्रो फ़ाइलें सिंक के लिए अपनाई जाती हैं और सिंगबुक मेटाडेटा प्राप्त करती हैं।';
+
+  @override
+  String get accountImportChordPro => 'ड्राइव से कॉर्डप्रो आयात करें';
+
+  @override
+  String get accountImportChordProHint =>
+      'इस लाइब्रेरी में जोड़ने के लिए .cho फ़ाइलें चुनें। फ़ोल्डर में पहले से मौजूद फ़ाइलें अपनाई जाती हैं; अन्यत्र फ़ाइलें यहां कॉपी की गई हैं।';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'ड्राइव फ़ोल्डर चयन अनुपलब्ध है';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'समर्थित डिवाइस पर Google Drive पिकर से दिखाई देने वाला Drive फ़ोल्डर चुनें।';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'सिंगबुक ड्राइव फ़ोल्डर अनुपलब्ध है';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'फ़ोल्डर को फिर से चुनें, या इसे Google ड्राइव में पुनर्स्थापित करें।';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'सिंगबुक को इस ड्राइव फ़ोल्डर तक पहुंच की आवश्यकता है';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'पहुंच प्रदान करने के लिए फिर से फ़ोल्डर चुनें, फिर अपनी लाइब्रेरी को सिंक करें।';
+
+  @override
+  String get syncErrorFolderMigration =>
+      'लाइब्रेरी को अभी तक स्थानांतरित नहीं किया जा सका';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'आपकी पिछली लाइब्रेरी अभी भी सुरक्षित है. कनेक्शन की जाँच करें और पुनः प्रयास करने के लिए फिर से फ़ोल्डर चुनें।';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'पहले एक दृश्यमान ड्राइव फ़ोल्डर चुनें';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'ड्राइव से फ़ाइलें आयात करने से पहले एक दृश्यमान लाइब्रेरी फ़ोल्डर की आवश्यकता होती है।';
+
+  @override
   String get accountSignOutTitle => 'इस खाते से साइन आउट करें?';
 
   @override
@@ -1871,4 +1973,40 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]एक पंक्ति और, थोड़ा [F]करीब।';
+
+  @override
+  String get playerEstimatedKey => 'अनुमानित स्वर';
+
+  @override
+  String get songsLibraryView => 'लाइब्रेरी';
+
+  @override
+  String get settingsStartupView => 'इसमें शुरू करें';
+
+  @override
+  String get settingsStartupViewHint =>
+      'ऐप खुलने पर दिखने वाला गानों का दृश्य चुनें।';
+
+  @override
+  String get settingsStartupLastView => 'पिछली बार खोला गया';
+
+  @override
+  String get playerExpandControls => 'प्लेबैक नियंत्रण दिखाएँ';
+
+  @override
+  String get playerCollapseControls => 'प्लेबैक नियंत्रण छिपाएँ';
+
+  @override
+  String get settingsShowSections => 'खंड शीर्षक दिखाएँ';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'गीत के बोलों में अंतरा, मुखड़ा और अन्य खंडों के शीर्षक दिखाएँ।';
+
+  @override
+  String get settingsShowPlayerControls => 'प्लेबैक नियंत्रण दिखाएँ';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'प्लेयर पैनल दिखाने या छिपाने के लिए उसे टैप या स्वाइप भी कर सकते हैं।';
 }

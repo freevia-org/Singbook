@@ -1,6 +1,11 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../../l10n/generated/app_localizations.dart';
+import '../format.dart';
 import '../library_actions.dart';
 import '../verse_ui_state.dart';
 import '../widgets/subpage_header.dart';
@@ -36,10 +41,7 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
     final state = widget.controller.state;
     final needle = foldForSearch(_query);
     final lists = state.setlists
-        .where(
-          (value) =>
-              foldForSearch('${value.title} ${value.notes}').contains(needle),
-        )
+        .where((value) => foldForSearch(value.title).contains(needle))
         .toList();
     return Column(
       children: [
@@ -136,14 +138,23 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
         title.isEmpty ? l10n.setlistSongMissing : title,
     ];
     final preview = expanded ? titles : titles.take(2).toList();
+    final formattedDuration = formatDuration(value.durationSeconds);
+    final duration = value.durationPartial
+        ? l10n.setlistDurationPartial(
+            value.durationEstimated ? '~$formattedDuration' : formattedDuration,
+          )
+        : value.durationEstimated
+        ? l10n.playerEstimatedDuration(formattedDuration)
+        : l10n.setlistDuration(formattedDuration);
     final summary =
-        '${l10n.setlistSongsCount(value.songTitles.length)}  ·  ${l10n.setlistDurationUnknown}';
+        '${l10n.setlistSongsCount(value.songTitles.length)}  ·  $duration';
     void toggleExpanded() => setState(
       () => expanded ? _expanded.remove(value.id) : _expanded.add(value.id),
     );
     return Card(
+      margin: EdgeInsets.zero,
       child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 8, 10),
+        padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 4, 4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -186,33 +197,19 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                   constraints: BoxConstraints(
                     maxHeight: MediaQuery.sizeOf(context).height * .72,
                   ),
-                  itemBuilder: (_) => [
-                    PopupMenuItem(
-                      value: 'share',
-                      child: Text(l10n.setlistShare),
-                    ),
-                    PopupMenuItem(
-                      value: 'share_pdf',
-                      child: Text(l10n.setlistSharePdf),
-                    ),
-                    PopupMenuItem(
-                      value: 'print',
-                      child: Text(l10n.setlistPrint),
-                    ),
-                    PopupMenuItem(
-                      value: 'copy',
-                      child: Text(l10n.settingsCopySong),
-                    ),
-                    PopupMenuItem(
-                      value: 'duplicate',
-                      child: Text(l10n.actionDuplicate),
-                    ),
-                    PopupMenuItem(value: 'edit', child: Text(l10n.actionEdit)),
-                    PopupMenuItem(
-                      value: 'delete',
-                      child: Text(l10n.actionDelete),
-                    ),
-                  ],
+                  itemBuilder: (_) => buildLibraryActionMenu(
+                    l10n,
+                    isSetlist: true,
+                    actions: const {
+                      'edit',
+                      'duplicate',
+                      'share',
+                      'share_pdf',
+                      'copy',
+                      'print',
+                      'delete',
+                    },
+                  ),
                   onSelected: (action) => handleSetlistAction(
                     context,
                     controller,
@@ -228,56 +225,64 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
               label: expanded
                   ? l10n.accessibilityCollapseSetlist(value.title)
                   : l10n.accessibilityExpandSetlist(value.title),
-              value: summary,
+              value: [summary, ...preview].join('\n'),
               excludeSemantics: true,
               onTap: toggleExpanded,
               child: InkWell(
                 onTap: toggleExpanded,
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(minHeight: 48),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          summary,
-                          style: Theme.of(context).textTheme.labelMedium
-                              ?.copyWith(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurfaceVariant,
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 4, 8, 4),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                summary,
+                                style: Theme.of(context).textTheme.labelMedium
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                    ),
                               ),
+                              if (preview.isNotEmpty) ...[
+                                const SizedBox(height: 2),
+                                Text(
+                                  expanded
+                                      ? preview.indexed
+                                            .map(
+                                              (entry) =>
+                                                  '${entry.$1 + 1}. ${entry.$2}',
+                                            )
+                                            .join('\n')
+                                      : preview.join(' · '),
+                                  maxLines: expanded ? null : 1,
+                                  overflow: expanded
+                                      ? TextOverflow.visible
+                                      : TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              ],
+                            ],
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsetsDirectional.only(end: 8),
-                        child: Icon(
+                        Icon(
                           expanded
                               ? Icons.expand_less_rounded
                               : Icons.expand_more_rounded,
                           size: 20,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-            if (preview.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 6),
-                child: AnimatedOpacity(
-                  opacity: expanded ? 1 : .72,
-                  duration: const Duration(milliseconds: 180),
-                  child: Text(
-                    preview.map((song) => '•  $song').join('\n'),
-                    maxLines: expanded ? null : 2,
-                    overflow: expanded
-                        ? TextOverflow.visible
-                        : TextOverflow.fade,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ),
-              ),
           ],
         ),
       ),
@@ -294,8 +299,12 @@ class SetlistDetailScreen extends StatefulWidget {
 
 class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
   late final TextEditingController _name;
-  late final TextEditingController _notes;
+  final GlobalKey _deleteBasketGeometryKey = GlobalKey();
   String? _loadedSetlistId;
+  String? _draggingEntryId;
+  int? _draggingEntryIndex;
+  Offset? _dragPosition;
+  bool _deleteBasketDropPending = false;
   bool _wasEditing = false;
   VerseUiController get controller => widget.controller;
 
@@ -306,7 +315,6 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
     _loadedSetlistId = value?.id;
     _wasEditing = controller.state.editingSetlist;
     _name = TextEditingController(text: value?.title ?? '');
-    _notes = TextEditingController(text: value?.notes ?? '');
   }
 
   @override
@@ -316,16 +324,14 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
     final value = state.activeSetlist;
     final editing = state.editingSetlist;
     if (value != null) {
-      // Reload the fields when another setlist opens, when editing starts and
-      // while not editing (a sync may have changed the stored text), but never
-      // under text being typed, so Save cannot overwrite newer stored data
-      // with a stale copy.
+      // Reload the title when another setlist opens, when editing starts and
+      // while not editing (a sync may have changed it), but never under text
+      // being typed, so Save cannot overwrite newer stored data.
       final reload =
           value.id != _loadedSetlistId || (editing && !_wasEditing) || !editing;
       if (reload) {
         _loadedSetlistId = value.id;
         if (_name.text != value.title) _name.text = value.title;
-        if (_notes.text != value.notes) _notes.text = value.notes;
       }
     }
     _wasEditing = editing;
@@ -334,14 +340,13 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
   @override
   void dispose() {
     _name.dispose();
-    _notes.dispose();
     super.dispose();
   }
 
-  /// Text typed into the open editing form, or null when not editing, so
-  /// reordering or removing songs saves it together with the change.
+  /// Text typed into the inline title, or null when not editing.
   String? _typedName(bool editing) => editing ? _name.text : null;
-  String? _typedNotes(bool editing) => editing ? _notes.text : null;
+  String? _typedNotes(bool editing) =>
+      editing ? controller.state.activeSetlist?.notes : null;
 
   @override
   Widget build(BuildContext context) {
@@ -354,6 +359,31 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
       children: [
         SubpageHeader(
           title: value.title,
+          onTitleTap: editing ? null : () => controller.editSetlist(value.id),
+          titleWidget: editing
+              ? TextField(
+                  key: const ValueKey('setlist-name-inline-field'),
+                  controller: _name,
+                  autofocus: true,
+                  maxLines: 1,
+                  textInputAction: TextInputAction.done,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    hintText: l10n.setlistNameHint,
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  onSubmitted: (_) => controller.saveSetlistDetails(
+                    name: _name.text,
+                    notes: value.notes,
+                    entryOrder: [for (final entry in value.entries) entry.id],
+                    finishEditing: true,
+                  ),
+                )
+              : null,
           onBack: controller.back,
           actions: [
             if (editing)
@@ -361,7 +391,7 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
                 tooltip: l10n.actionSave,
                 onPressed: () => controller.saveSetlistDetails(
                   name: _name.text,
-                  notes: _notes.text,
+                  notes: value.notes,
                   entryOrder: [for (final entry in value.entries) entry.id],
                   finishEditing: true,
                 ),
@@ -386,78 +416,119 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
             ),
             PopupMenuButton<String>(
               tooltip: l10n.setlistMenuLabel,
-              itemBuilder: (_) => [
-                PopupMenuItem(value: 'share', child: Text(l10n.setlistShare)),
-                PopupMenuItem(
-                  value: 'share_pdf',
-                  child: Text(l10n.setlistSharePdf),
-                ),
-                PopupMenuItem(value: 'print', child: Text(l10n.setlistPrint)),
-                PopupMenuItem(
-                  value: 'duplicate',
-                  child: Text(l10n.setlistDuplicate),
-                ),
-                PopupMenuItem(value: 'delete', child: Text(l10n.actionRemove)),
-                PopupMenuItem(
-                  value: 'copy',
-                  child: Text(l10n.settingsCopySong),
-                ),
-              ],
+              itemBuilder: (_) => buildLibraryActionMenu(
+                l10n,
+                isSetlist: true,
+                actions: const {
+                  'duplicate',
+                  'share',
+                  'share_pdf',
+                  'copy',
+                  'print',
+                  'delete',
+                },
+              ),
               onSelected: (action) =>
                   handleSetlistAction(context, controller, value.id, action),
             ),
           ],
         ),
-        if (editing)
-          Flexible(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: _name,
-                    decoration: InputDecoration(
-                      labelText: l10n.setlistNameHint,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: _notes,
-                    minLines: 2,
-                    maxLines: 4,
-                    decoration: InputDecoration(labelText: l10n.setlistNotes),
-                  ),
-                ],
-              ),
-            ),
-          ),
         Expanded(
           child: value.entries.isEmpty
               ? VerseEmptyState(
                   icon: Icons.queue_music_rounded,
                   title: l10n.setlistSongsEmpty,
                 )
-              : ReorderableListView.builder(
-                  padding: const EdgeInsets.fromLTRB(12, 4, 12, 20),
-                  itemCount: value.entries.length,
-                  onReorderItem: (oldIndex, newIndex) async {
-                    final entries = [...value.entries];
-                    final item = entries.removeAt(oldIndex);
-                    entries.insert(newIndex, item);
-                    await controller.saveSetlistDetails(
-                      name: editing ? _name.text : value.title,
-                      notes: editing ? _notes.text : value.notes,
-                      entryOrder: [for (final entry in entries) entry.id],
-                    );
-                  },
-                  itemBuilder: (context, index) => _entryTile(
-                    context,
-                    l10n,
-                    value,
-                    value.entries[index],
-                    index,
-                    editing,
+              : Listener(
+                  behavior: HitTestBehavior.translucent,
+                  onPointerDown: (event) => _dragPosition = event.position,
+                  onPointerMove: (event) => _dragPosition = event.position,
+                  child: ReorderableListView.builder(
+                    padding: const EdgeInsets.fromLTRB(12, 4, 12, 20),
+                    buildDefaultDragHandles: false,
+                    // Keep a stable child count while dragging. Expanding a new
+                    // final child mid-drag can duplicate Flutter's internal
+                    // reorder keys on the accessibility test route.
+                    itemCount: value.entries.length + 1,
+                    onReorderStart: (index) {
+                      if (index >= value.entries.length) return;
+                      setState(() {
+                        _draggingEntryId = value.entries[index].id;
+                        _draggingEntryIndex = index;
+                        _dragPosition = null;
+                        _deleteBasketDropPending = false;
+                      });
+                    },
+                    onReorderEnd: (_) {
+                      final dragIndex = _draggingEntryIndex;
+                      final deleteDrop = _isPointerOverDeleteBasket();
+                      if (deleteDrop &&
+                          dragIndex != null &&
+                          dragIndex < value.entries.length) {
+                        final entry = value.entries[dragIndex];
+                        _deleteBasketDropPending = true;
+                        if (mounted) setState(_clearDragVisualState);
+                        unawaited(
+                          _removeEntryFromSetlist(
+                            context,
+                            value,
+                            entry,
+                            editing,
+                          ),
+                        );
+                      } else if (mounted) {
+                        // This receives a raw insertion slot. Flutter omits
+                        // onReorderItem for normalized no-op drops (old+1), so
+                        // every non-delete end must clear the drag visuals.
+                        setState(_clearDragState);
+                      }
+                    },
+                    onReorderItem: (oldIndex, newIndex) async {
+                      if (_deleteBasketDropPending) {
+                        _deleteBasketDropPending = false;
+                        return;
+                      }
+                      setState(_clearDragState);
+                      if (newIndex >= value.entries.length) return;
+                      final entries = [...value.entries];
+                      final item = entries.removeAt(oldIndex);
+                      entries.insert(newIndex, item);
+                      await controller.saveSetlistDetails(
+                        name: editing ? _name.text : value.title,
+                        notes: value.notes,
+                        entryOrder: [for (final entry in entries) entry.id],
+                      );
+                    },
+                    itemBuilder: (context, index) {
+                      if (index == value.entries.length) {
+                        return _draggingEntryId == null
+                            ? const SizedBox.shrink(
+                                key: ValueKey('setlist-delete-basket'),
+                              )
+                            : _deleteBasket(context, l10n);
+                      }
+                      final entry = value.entries[index];
+                      final tile = _entryTile(
+                        context,
+                        l10n,
+                        value,
+                        entry,
+                        index,
+                        editing,
+                      );
+                      if (defaultTargetPlatform == TargetPlatform.windows) {
+                        return _WindowsRowDragStartListener(
+                          key: ValueKey(entry.id),
+                          index: index,
+                          child: tile,
+                        );
+                      }
+                      return ReorderableDelayedDragStartListener(
+                        key: ValueKey(entry.id),
+                        index: index,
+                        child: tile,
+                      );
+                    },
                   ),
                 ),
         ),
@@ -477,6 +548,117 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
     );
   }
 
+  Widget _deleteBasket(BuildContext context, AppLocalizations l10n) {
+    final scheme = Theme.of(context).colorScheme;
+    return KeyedSubtree(
+      key: const ValueKey('setlist-delete-basket'),
+      child: Container(
+        key: _deleteBasketGeometryKey,
+        height: 64,
+        margin: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+        decoration: BoxDecoration(
+          color: scheme.errorContainer,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: scheme.error.withValues(alpha: .35)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.delete_outline_rounded, color: scheme.onErrorContainer),
+            const SizedBox(width: 8),
+            Text(
+              l10n.actionRemove,
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: scheme.onErrorContainer,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  bool _isPointerOverDeleteBasket() {
+    final position = _dragPosition;
+    final renderObject = _deleteBasketGeometryKey.currentContext
+        ?.findRenderObject();
+    if (position == null ||
+        renderObject is! RenderBox ||
+        !renderObject.hasSize) {
+      return false;
+    }
+    final rect = renderObject.localToGlobal(Offset.zero) & renderObject.size;
+    return rect.contains(position);
+  }
+
+  void _clearDragState() {
+    _clearDragVisualState();
+    _deleteBasketDropPending = false;
+  }
+
+  void _clearDragVisualState() {
+    _draggingEntryId = null;
+    _draggingEntryIndex = null;
+    _dragPosition = null;
+  }
+
+  Future<void> _removeEntryFromSetlist(
+    BuildContext context,
+    SetlistCardData setlist,
+    SetlistEntryData entry,
+    bool editing,
+  ) async {
+    final title = entry.missing
+        ? AppLocalizations.of(context).setlistSongMissing
+        : entry.title;
+    final removed = await controller.removeSetlistEntryWithUndo(
+      setlist.id,
+      entry.id,
+      name: _typedName(editing),
+      notes: _typedNotes(editing),
+    );
+    if (removed == null || !context.mounted) return;
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context)..hideCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(l10n.setlistEntryRemoved(title)),
+        action: SnackBarAction(
+          label: l10n.actionUndo,
+          onPressed: () => controller.restoreSetlistEntry(removed),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleEntrySongAction(
+    BuildContext context,
+    SetlistCardData setlist,
+    SetlistEntryData entry,
+    bool editing,
+    String action,
+  ) async {
+    if (editing && action == 'edit') {
+      final typedName = _name.text.trim();
+      final name = typedName.isEmpty ? setlist.title : typedName;
+      final notes = setlist.notes;
+      if (name != setlist.title || notes != setlist.notes) {
+        await controller.saveSetlistDetails(name: name, notes: notes);
+        if (!context.mounted) return;
+        final saved = controller.state.activeSetlist;
+        // A conflict or failed save must leave the typed draft on screen.
+        if (saved?.id != setlist.id ||
+            saved?.title != name ||
+            saved?.notes != notes) {
+          return;
+        }
+      }
+    }
+    if (!context.mounted) return;
+    await handleSongMenuAction(context, controller, entry.songId, action);
+  }
+
   Widget _entryTile(
     BuildContext context,
     AppLocalizations l10n,
@@ -486,77 +668,127 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
     bool editing,
   ) {
     final title = entry.missing ? l10n.setlistSongMissing : entry.title;
+    final details = <String>[
+      if (!entry.missing && entry.artist.isNotEmpty) entry.artist,
+      if (!entry.missing && entry.durationSeconds != null)
+        formatDuration(entry.durationSeconds!),
+      if (entry.keyOverride != null)
+        '${l10n.editorKeyField}: ${entry.keyOverride}',
+      if (entry.capoOverride != null)
+        '${l10n.editorCapoField}: ${entry.capoOverride}',
+    ];
     return ListTile(
-      key: ValueKey(entry.id),
+      dense: true,
+      visualDensity: VisualDensity.compact,
+      contentPadding: const EdgeInsetsDirectional.only(start: 16, end: 8),
+      minLeadingWidth: 24,
       leading: Text(
         '${index + 1}',
         style: Theme.of(context).textTheme.labelLarge,
       ),
       title: Text(title),
-      subtitle: entry.missing || entry.artist.isEmpty
-          ? null
-          : Text(entry.artist),
+      subtitle: details.isEmpty ? null : Text(details.join(' · ')),
       onTap: entry.missing
           ? null
           : () => controller.openSetlistEntry(value.id, entry.id),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (!entry.missing)
-            PopupMenuButton<String>(
-              tooltip: l10n.navMore,
-              itemBuilder: (_) => [
+          PopupMenuButton<String>(
+            tooltip: l10n.songMenuLabel,
+            itemBuilder: (_) => [
+              if (!entry.missing) ...[
+                ...buildLibraryActionMenu(
+                  l10n,
+                  actions: const {
+                    'edit',
+                    'add',
+                    'info',
+                    'share',
+                    'share_pdf',
+                    'copy',
+                    'print',
+                  },
+                ),
                 PopupMenuItem(
                   value: 'override',
                   child: Text(l10n.setlistEntryOverride),
                 ),
+                ...buildLibraryActionMenu(l10n, actions: const {'delete'}),
               ],
-              onSelected: (_) => editEntryOverrides(
-                context,
-                controller,
-                value.id,
-                entry,
-                name: _typedName(editing),
-                notes: _typedNotes(editing),
+              PopupMenuItem(
+                value: 'remove_entry',
+                child: Text(l10n.setlistRemoveSong(title)),
               ),
-            ),
-          IconButton(
-            tooltip: l10n.setlistRemoveSong(title),
-            onPressed: () async {
-              final removed = await controller.removeSetlistEntryWithUndo(
-                value.id,
-                entry.id,
-                name: _typedName(editing),
-                notes: _typedNotes(editing),
-              );
-              if (removed == null || !context.mounted) return;
-              final messenger = ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar();
-              messenger.showSnackBar(
-                SnackBar(
-                  content: Text(l10n.setlistEntryRemoved(title)),
-                  action: SnackBarAction(
-                    label: l10n.actionUndo,
-                    onPressed: () {
-                      controller.restoreSetlistEntry(removed);
-                    },
+            ],
+            onSelected: (action) {
+              if (action == 'remove_entry') {
+                unawaited(
+                  _removeEntryFromSetlist(context, value, entry, editing),
+                );
+              } else if (action == 'override') {
+                editEntryOverrides(
+                  context,
+                  controller,
+                  value.id,
+                  entry,
+                  name: _typedName(editing),
+                  notes: _typedNotes(editing),
+                );
+              } else {
+                unawaited(
+                  _handleEntrySongAction(
+                    context,
+                    value,
+                    entry,
+                    editing,
+                    action,
                   ),
-                ),
-              );
+                );
+              }
             },
-            icon: const Icon(Icons.remove_circle_outline_rounded),
-          ),
-          ReorderableDragStartListener(
-            key: ValueKey('setlist-entry-drag-${entry.id}'),
-            index: index,
-            child: const SizedBox(
-              width: 48,
-              height: 48,
-              child: Center(child: Icon(Icons.drag_handle_rounded)),
-            ),
           ),
         ],
       ),
     );
   }
+}
+
+/// Mouse drags begin after movement; touch still requires a long press so a
+/// swipe can scroll. The gesture arena leaves normal row/menu clicks intact.
+class _WindowsRowDragStartListener extends ReorderableDragStartListener {
+  const _WindowsRowDragStartListener({
+    super.key,
+    required super.index,
+    required super.child,
+  });
+
+  @override
+  Widget build(BuildContext context) => Listener(
+    onPointerDown: (event) {
+      if (event.buttons != kPrimaryButton) return;
+      final MultiDragGestureRecognizer recognizer;
+      if (event.kind == PointerDeviceKind.mouse) {
+        recognizer = ImmediateMultiDragGestureRecognizer(
+          debugOwner: this,
+          supportedDevices: const {PointerDeviceKind.mouse},
+          allowedButtonsFilter: (buttons) => buttons == kPrimaryButton,
+        );
+      } else {
+        recognizer = DelayedMultiDragGestureRecognizer(debugOwner: this);
+      }
+      recognizer.gestureSettings = MediaQuery.maybeGestureSettingsOf(context);
+      final list = SliverReorderableList.maybeOf(context);
+      if (list == null) {
+        recognizer.dispose();
+        return;
+      }
+      list.startItemDragReorder(
+        index: index,
+        event: event,
+        recognizer: recognizer,
+      );
+    },
+    child: child,
+  );
 }

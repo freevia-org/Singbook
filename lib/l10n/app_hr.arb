@@ -1,9 +1,9 @@
 {
   "@@locale": "hr",
   "appTitle": "Singbook",
-  "aboutDescription": "Mirno mjesto za pronalaženje, organiziranje i zajedničko pjevanje uz vašu zbirku pjesama.",
-  "aboutMadeForSinging": "Stvoreno za zajedničko pjevanje",
-  "menuTypeNewSong": "Unesi novu pjesmu", "aboutDetails": "Pretražujte omogućene izvore, uspoređujte verzije, čuvajte tekstove i akorde zajedno te organizirajte pjesme u setliste. Vaša se zbirka sprema na ovom uređaju; neobavezna sinkronizacija putem Google Drivea koristi vaš Google račun. Pretraživanja se šalju izravno omogućenim izvorima.", "aboutSupport": "Podrška i povratne informacije", "appVersion": "Verzija {version}",
+  "aboutDescription": "Tekstovi, akordi i popisi pjesama zajedno, spremni za probu, pozornicu i svako mjesto na kojem sviraš.",
+  "aboutMadeForSinging": "Svaka pjesma spremna.",
+  "menuTypeNewSong": "Unesi novu pjesmu", "aboutDetails": "Pretraži omogućene izvore i usporedi tekstove, akorde, vremenske oznake i pojedinosti o snimci prije nego što spremiš verziju koju želiš svirati. Dostupnost ovisi o pjesmi i usluzi.", "aboutSupport": "Podrška i povratne informacije", "appVersion": "Verzija {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -812,5 +812,63 @@
   "editorStandardTuning": "Standardno ugađanje",
   "editorExampleVerse": "[C]Novi dan nas [G]zove,\n[Am]pratimo svjetlo natrag [F]kući.",
   "editorExampleChorus": "[F]Pjevajmo ovu pjesmu [C]zajedno,\n[G]neka nas melodija ponese [C]dalje.",
-  "editorExampleBridge": "[Am]Još jedan redak, malo [F]bliže."
+  "editorExampleBridge": "[Am]Još jedan redak, malo [F]bliže.",
+  "aboutFindTitle": "Pronađi pravu verziju",
+  "aboutKeepTitle": "Izgradi vlastitu zbirku",
+  "aboutKeepDetails": "Uređuj pjesme i transponiraj ih, čuvaj ih u svojoj lokalnoj zbirci za korištenje izvan mreže i dijeli prenosive datoteke ChordPro. Neobavezna sinkronizacija s Google Driveom koristi privatnu mapu aplikacije na tvom Google računu. Možeš dodirnuti i „Sinkroniziraj sada” da ažuriraš svoje uređaje.",
+  "aboutPlayTitle": "Ponesi svoj popis na pozornicu",
+  "aboutPlayDetails": "Poredaj pjesme u popise, odaberi tonalitet za svaku pjesmu i dijeli popise OpenSong. Prilagodi tekst čitača i automatsko pomicanje stihova te ispisuj PDF-ove pjesama. Singbook ne prenosi ni reproducira zvuk.",
+  "aboutPrivacyTitle": "Besplatno i usmjereno na lokalnu pohranu",
+  "aboutPrivacyDetails": "Singbook je besplatan, bez oglasa, analitike i kupnji unutar aplikacije. Tvoja spremljena zbirka ostaje na uređaju; neobavezna sinkronizacija koristi tvoj Google Drive. Mrežni rezultati dolaze izravno od neovisnih usluga trećih strana i možda nisu dostupni ili su zaštićeni autorskim pravima. Singbook ne hostira njihov sadržaj.",
+  "aboutWebsite": "Web-stranica Singbooka",
+  "aboutSourceCode": "Izvorni kod na GitHubu",
+  "aboutPublisher": "Od Freevije",
+  "aboutLanguages": "Jezici aplikacije: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountDriveFolder": "Mapa biblioteke Google diska",
+  "accountPrivateDriveFolder": "Privatna mapa Singbook",
+  "accountChooseDriveFolder": "Odaberite mapu",
+  "accountDriveFolderMoveTitle": "Premjestiti svoju biblioteku Singbook?",
+  "accountDriveFolderMoveBody": "Odaberite vidljivu mapu Google diska. Singbook će tamo kopirati i potvrditi vaše pjesme i setliste prije nego se prebacite na njega. Izvorne datoteke ostaju na svojoj prethodnoj lokaciji kao sigurnosna kopija. Ostale datoteke ostaju same. ChordPro datoteke koje uvezete u ovu mapu usvajaju se za sinkronizaciju i primaju Singbook metapodatke.",
+  "accountImportChordPro": "Uvezite ChordPro s Diska",
+  "accountImportChordProHint": "Odaberite .cho datoteke za dodavanje u ovu biblioteku. Usvajaju se datoteke koje se već nalaze u mapi; datoteke na drugim mjestima kopiraju se ovdje.",
+  "syncErrorFolderPickerUnavailable": "Odabir mape pogona nije dostupan",
+  "syncErrorFolderPickerUnavailableHint": "Na podržanom uređaju odaberite vidljivu mapu Diska pomoću alata za odabir Google Diska.",
+  "syncErrorDriveFolderMissing": "Mapa Singbook Drive nije dostupna",
+  "syncErrorDriveFolderMissingHint": "Ponovno odaberite mapu ili je vratite na Google disk.",
+  "syncErrorDriveFileAuthorization": "Singbook treba pristup ovoj mapi Diska",
+  "syncErrorDriveFileAuthorizationHint": "Ponovno odaberite mapu da biste odobrili pristup, a zatim sinkronizirajte svoju biblioteku.",
+  "syncErrorFolderMigration": "Knjižnica još nije mogla biti premještena",
+  "syncErrorFolderMigrationHint": "Vaša prethodna biblioteka još uvijek je sigurna. Provjerite vezu i ponovno odaberite mapu za ponovni pokušaj.",
+  "syncErrorVisibleFolderRequired": "Prvo odaberite vidljivu mapu Diska",
+  "syncErrorVisibleFolderRequiredHint": "Prije uvoza datoteka s Diska potrebna je vidljiva mapa knjižnice.",
+  "playerEstimatedKey": "Procijenjeni tonalitet",
+  "songsLibraryView": "Knjižnica",
+  "settingsStartupView": "Početni prikaz",
+  "settingsStartupViewHint": "Odaberite prikaz pjesama koji će se prikazati pri otvaranju aplikacije.",
+  "settingsStartupLastView": "Posljednji otvoreni",
+  "playerExpandControls": "Prikaži kontrole reprodukcije",
+  "playerCollapseControls": "Sakrij kontrole reprodukcije",
+  "settingsShowSections": "Prikaži naslove odjeljaka",
+  "settingsShowSectionsHint": "Prikaži naslove strofa, refrena i drugih odjeljaka u tekstu pjesme.",
+  "settingsShowPlayerControls": "Prikaži kontrole reprodukcije",
+  "settingsShowPlayerControlsHint": "Ploču reproduktora možete prikazati ili sakriti i dodirom ili prelaskom prstom.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

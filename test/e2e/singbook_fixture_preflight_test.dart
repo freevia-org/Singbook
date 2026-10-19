@@ -11,7 +11,13 @@ void main() {
     expect(actual['quietRetryUsable'], 3);
     expect(actual['mainUsable'], 3);
     expect(actual['mainUnavailableCount'], 2);
-    expect(actual['mainContributors'], 2);
+    expect(actual['mainContributors'], 4);
+    expect(actual['mainContributorIds'], [
+      'journey_catalog',
+      'journey_chords',
+      'journey_lyrics',
+      'journey_timing_only',
+    ]);
     expect(actual['mainTimingOnlyState'], 'found');
     expect(actual['mainUnavailableState'], 'unavailable');
     expect(actual['mainFailureState'], 'failed');

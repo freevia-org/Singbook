@@ -1,6 +1,6 @@
 {
   "@@locale": "bg",
-  "appTitle": "Singbook", "aboutDescription": "Спокойно място за намиране, подреждане и пеене от вашата песенна библиотека.", "aboutMadeForSinging": "Създадено за пеене заедно", "menuTypeNewSong": "Въведете нова песен", "aboutDetails": "Търсете в активираните източници, сравнявайте версии, съхранявайте текстове и акорди заедно и подреждайте песни в списъци с песни. Библиотеката ви се пази на това устройство; незадължителната синхронизация с Google Drive използва профила ви в Google. Търсенията се изпращат директно към включените източници.", "aboutSupport": "Поддръжка и обратна връзка", "appVersion": "Версия {version}", "@appVersion": {"placeholders": {"version": {"type": "String"}}},
+  "appTitle": "Singbook", "aboutDescription": "Текстове, акорди и списъци с песни на едно място, готови за репетиции, сцена и всяко място, където свирите.", "aboutMadeForSinging": "Всяка песен е готова.", "menuTypeNewSong": "Въведете нова песен", "aboutDetails": "Търсете в активираните източници и сравнявайте текстове, акорди, времеви маркери и подробности за записа, преди да запазите версията, която искате да изпълнявате. Наличността зависи от песента и услугата.", "aboutSupport": "Поддръжка и обратна връзка", "appVersion": "Версия {version}", "@appVersion": {"placeholders": {"version": {"type": "String"}}},
   "navHome": "Начало", "navSongs": "Песни", "navSetlists": "Списъци с песни", "navSettings": "Настройки", "navSettingsCompact": "Настройки", "navSearch": "Търсене", "navBack": "Назад",
   "appExitBackAgain": "Натиснете Назад отново за изход",
   "navClose": "Затваряне", "navMore": "Още действия",
@@ -272,5 +272,63 @@
   "editorStandardTuning": "Стандартен",
   "editorExampleVerse": "[C]Новият ден ни [G]зове,\n[Am]светлината ни води към [F]дома.",
   "editorExampleChorus": "[F]Да запеем тази песен [C]заедно,\n[G]мелодията да ни води [C]напред.",
-  "editorExampleBridge": "[Am]Още един ред, крачка [F]по-близо."
+  "editorExampleBridge": "[Am]Още един ред, крачка [F]по-близо.",
+  "aboutFindTitle": "Намерете подходящата версия",
+  "aboutKeepTitle": "Създайте своя библиотека",
+  "aboutKeepDetails": "Редактирайте и транспонирайте песни, запазвайте ги в локалната си библиотека за офлайн употреба и споделяйте преносими файлове ChordPro. Незадължителното синхронизиране с Google Drive използва частна папка на приложението във вашия Google профил. Можете също да докоснете „Синхронизирай сега“, за да обновите устройствата си.",
+  "aboutPlayTitle": "Вземете списъка си на сцената",
+  "aboutPlayDetails": "Подреждайте песни в списъци с песни, избирайте тоналност за всяка песен и споделяйте списъци с песни във формат OpenSong. Настройвайте текста в четеца, автоматичното превъртане на текстовете и отпечатвайте PDF файлове с песни. Singbook не излъчва и не възпроизвежда аудио.",
+  "aboutPrivacyTitle": "Безплатно, с библиотека на устройството",
+  "aboutPrivacyDetails": "Singbook е безплатно приложение без реклами, анализи или покупки в приложението. Запазената ви библиотека остава на устройството ви; незадължителното синхронизиране използва вашия Google Drive. Онлайн резултатите идват директно от независими услуги на трети страни и може да не са налични или да са защитени с авторски права. Singbook не хоства тяхното съдържание.",
+  "aboutWebsite": "Уебсайт на Singbook",
+  "aboutSourceCode": "Изходен код в GitHub",
+  "aboutPublisher": "От Freevia",
+  "aboutLanguages": "Езици на приложението: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountDriveFolder": "Папка на библиотеката на Google Диск",
+  "accountPrivateDriveFolder": "Лична папка Singbook",
+  "accountChooseDriveFolder": "Изберете папка",
+  "accountDriveFolderMoveTitle": "Да преместите вашата библиотека Singbook?",
+  "accountDriveFolderMoveBody": "Изберете видима папка на Google Диск. Singbook ще копира и провери вашите песни и списъци с песни там, преди да премине към него. Оригиналните файлове остават на предишното си местоположение като резервно копие. Други файлове остават сами. Файловете на ChordPro, които импортирате в тази папка, се приемат за синхронизиране и получават метаданни на Singbook.",
+  "accountImportChordPro": "Импортирайте ChordPro от Drive",
+  "accountImportChordProHint": "Изберете .cho файлове, които да добавите към тази библиотека. Приемат се файлове, които вече са в папката; файлове на друго място се копират тук.",
+  "syncErrorFolderPickerUnavailable": "Изборът на папка на Диск не е наличен",
+  "syncErrorFolderPickerUnavailableHint": "Изберете видима папка в Диск чрез инструмента за избор на Google Диск на поддържано устройство.",
+  "syncErrorDriveFolderMissing": "Папката Singbook Drive не е налична",
+  "syncErrorDriveFolderMissingHint": "Изберете папката отново или я възстановете в Google Drive.",
+  "syncErrorDriveFileAuthorization": "Singbook се нуждае от достъп до тази папка на Диск",
+  "syncErrorDriveFileAuthorizationHint": "Изберете отново папката, за да предоставите достъп, след което синхронизирайте библиотеката си.",
+  "syncErrorFolderMigration": "Библиотеката все още не може да бъде преместена",
+  "syncErrorFolderMigrationHint": "Вашата предишна библиотека все още е в безопасност. Проверете връзката и изберете отново папката, за да опитате отново.",
+  "syncErrorVisibleFolderRequired": "Първо изберете видима папка на Диск",
+  "syncErrorVisibleFolderRequiredHint": "Необходима е видима папка на библиотеката, преди да импортирате файлове от Диск.",
+  "playerEstimatedKey": "Приблизителна тоналност",
+  "songsLibraryView": "Библиотека",
+  "settingsStartupView": "Начален изглед",
+  "settingsStartupViewHint": "Изберете изгледа „Песни“, който да се показва при отваряне на приложението.",
+  "settingsStartupLastView": "Последно отворен",
+  "playerExpandControls": "Показване на контролите за изпълнение",
+  "playerCollapseControls": "Скриване на контролите за изпълнение",
+  "settingsShowSections": "Показване на заглавията на частите",
+  "settingsShowSectionsHint": "Показвай заглавията на куплетите, припева и другите части в текста.",
+  "settingsShowPlayerControls": "Показване на контролите за изпълнение",
+  "settingsShowPlayerControlsHint": "Можете също да докоснете или плъзнете панела на плейъра, за да го покажете или скриете.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

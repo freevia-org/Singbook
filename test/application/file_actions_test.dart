@@ -27,38 +27,51 @@ void main() {
     expect(text, isNot(contains('{')));
     expect(songRichHtml(song), contains('<h2>Chorus</h2>'));
     expect(songRichHtml(song), contains('Carry the light through the dark'));
-    expect(songRichHtml(song), isNot(contains('UNVERIFIED_COPYRIGHT_MUST_NOT_APPEAR')));
+    expect(
+      songRichHtml(song),
+      isNot(contains('UNVERIFIED_COPYRIGHT_MUST_NOT_APPEAR')),
+    );
   });
 
-  test('setlist copy includes every repeated song body and applied overrides', () {
-    final song = SongDocument(
-      id: 'copy-song',
-      title: 'Evening Song',
-      artist: 'Sample Artist',
-      body: '{comment: Verse 1}\n[C]The room is warm tonight',
-    );
-    final setlist = SetlistDocument(
-      id: 'copy-set',
-      name: 'Two rounds',
-      notes: 'Repeat the chorus',
-      entries: const [
-        SetlistEntry(id: 'one', songId: 'copy-song'),
-        SetlistEntry(id: 'two', songId: 'copy-song', overrides: {'key': 'D'}),
-      ],
-    );
+  test(
+    'setlist copy hides notes but includes repeated songs and overrides',
+    () {
+      final song = SongDocument(
+        id: 'copy-song',
+        title: 'Evening Song',
+        artist: 'Sample Artist',
+        body: '{comment: Verse 1}\n[C]The room is warm tonight',
+      );
+      final setlist = SetlistDocument(
+        id: 'copy-set',
+        name: 'Two rounds',
+        notes: 'Repeat the chorus',
+        entries: const [
+          SetlistEntry(id: 'one', songId: 'copy-song'),
+          SetlistEntry(id: 'two', songId: 'copy-song', overrides: {'key': 'D'}),
+        ],
+      );
 
-    final text = setlistPlainText(setlist, [song]);
-    final html = setlistRichHtml(setlist, [song]);
-    expect(text, contains('Repeat the chorus'));
-    expect('The room is warm tonight'.allMatches(text).length, 2);
-    expect(text, contains('2. Evening Song'));
-    expect(text, contains('D'));
-    expect(text.indexOf('2. Evening Song'), lessThan(text.indexOf('Verse 1')));
-    expect('The room is warm tonight'.allMatches(html).length, 2);
-    expect(html, contains('<section>'));
-    expect(html, contains('Verse 1'));
-    expect(html.indexOf('class="setlist-entry"'), lessThan(html.indexOf('<section>')));
-  });
+      final text = setlistPlainText(setlist, [song]);
+      final html = setlistRichHtml(setlist, [song]);
+      expect(text, isNot(contains('Repeat the chorus')));
+      expect('The room is warm tonight'.allMatches(text).length, 2);
+      expect(text, contains('2. Evening Song'));
+      expect(text, contains('D'));
+      expect(
+        text.indexOf('2. Evening Song'),
+        lessThan(text.indexOf('Verse 1')),
+      );
+      expect('The room is warm tonight'.allMatches(html).length, 2);
+      expect(html, contains('<section>'));
+      expect(html, contains('Verse 1'));
+      expect(html, isNot(contains('Repeat the chorus')));
+      expect(
+        html.indexOf('class="setlist-entry"'),
+        lessThan(html.indexOf('<section>')),
+      );
+    },
+  );
 
   test('timing import shares as exactly one self-contained ChordPro', () {
     final song = decodeSongText(
@@ -79,6 +92,7 @@ void main() {
       final set = SetlistDocument(
         id: 'set1',
         name: 'Twice',
+        notes: 'Stored private note — 備註',
         entries: [
           SetlistEntry(id: 'e1', songId: song.id),
           SetlistEntry(id: 'e2', songId: song.id, overrides: {'capo': 2}),
@@ -91,6 +105,7 @@ void main() {
         restored.songs.single.timingTracks.single.raw,
         song.timingTracks.single.raw,
       );
+      expect(restored.setlists.single.notes, set.notes);
       expect(restored.setlists.single.entries.map((e) => e.id), ['e1', 'e2']);
       expect(restored.setlists.single.entries.last.overrides['capo'], 2);
     },

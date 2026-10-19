@@ -13,14 +13,52 @@ class AppLocalizationsMt extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Post paċifiku fejn issib, torganizza u tkanta l-kanzunetti tiegħek.';
+      'Il-lirika, l-kordi u s-setlists tiegħek flimkien, lesti għall-provi, għall-palk u kull fejn iddoqq.';
 
   @override
-  String get aboutMadeForSinging => 'Magħmul biex inkantaw flimkien';
+  String get aboutMadeForSinging => 'Kull kanzunetta lesta.';
 
   @override
   String get aboutDetails =>
-      'Fittex fis-sorsi attivati, qabbel verżjonijiet, żomm il-lirika u l-kordi flimkien, u organizza l-kanzunetti f’listi. Il-librerija tiegħek tinżamm fuq dan it-tagħmir; is-sinkronizzazzjoni fakultattiva ma’ Google Drive tuża l-kont Google tiegħek. It-tfittxijiet jintbagħtu direttament lis-sorsi attivati.';
+      'Fittex fis-sorsi disponibbli u qabbel il-lirika, il-kordi, il-ħin u d-dettalji tar-reġistrazzjoni qabel issalva l-verżjoni li trid iddoqq. Id-disponibbiltà tvarja skont il-kanzunetta u s-servizz.';
+
+  @override
+  String get aboutFindTitle => 'Sib il-verżjoni t-tajba';
+
+  @override
+  String get aboutKeepTitle => 'Ibni l-librerija tiegħek';
+
+  @override
+  String get aboutKeepDetails =>
+      'Editja u ttrasponi l-kanzunetti, żommhom fil-librerija lokali biex tużahom offline, u aqsam fajls ChordPro portabbli. Is-sinkronizzazzjoni fakultattiva ma’ Google Drive tuża folder privat tal-app fil-kont Google tiegħek. Tista’ wkoll tagħfas “Issinkronizza issa” biex taġġorna t-tagħmir tiegħek.';
+
+  @override
+  String get aboutPlayTitle => 'Ħu s-setlist tiegħek fuq il-palk';
+
+  @override
+  String get aboutPlayDetails =>
+      'Irranġa l-kanzunetti f’setlists, agħżel tonalità għal kull kanzunetta u aqsam setlists OpenSong. Aġġusta t-test tal-qarrej, iskrollja l-lirika awtomatikament u pprintja PDFs tal-kanzunetti. Singbook ma jxandarx jew idoqq awdjo.';
+
+  @override
+  String get aboutPrivacyTitle => 'B’xejn u l-ewwelnett lokali';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook huwa b’xejn, mingħajr reklami, analitika jew xiri fl-app. Il-librerija ssejvjata tibqa’ fuq it-tagħmir tiegħek; is-sinkronizzazzjoni fakultattiva tuża l-Google Drive tiegħek. Ir-riżultati online jiġu direttament minn servizzi indipendenti ta’ partijiet terzi u jistgħu ma jkunux disponibbli jew ikunu protetti bid-drittijiet tal-awtur. Singbook ma jospitax il-kontenut tagħhom.';
+
+  @override
+  String get aboutWebsite => 'Il-websajt ta’ Singbook';
+
+  @override
+  String get aboutSourceCode => 'Il-kodiċi tas-sors fuq GitHub';
+
+  @override
+  String get aboutPublisher => 'Minn Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Lingwi tal-app: $count';
+  }
 
   @override
   String get aboutSupport => 'Għajnuna u feedback';
@@ -1383,6 +1421,70 @@ class AppLocalizationsMt extends AppLocalizations {
       'Is-sinkronizzazzjoni ssir wara li tikkonnettja u wara li żżid, teditja jew tneħħi kanzunetta.';
 
   @override
+  String get accountDriveFolder => 'Folder tal-librerija Google Drive';
+
+  @override
+  String get accountPrivateDriveFolder => 'Folder privat Singbook';
+
+  @override
+  String get accountChooseDriveFolder => 'Agħżel folder';
+
+  @override
+  String get accountDriveFolderMoveTitle =>
+      'Ċaqlaq il-librerija tas-Singbook tiegħek?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Agħżel folder viżibbli ta\' Google Drive. Singbook se tikkopja u tivverifika l-kanzunetti u s-setlists tiegħek hemmhekk qabel ma taqleb għaliha. Fajls oriġinali jibqgħu fil-post preċedenti tagħhom bħala backup. Fajls oħra jitħallew waħedhom. Fajls ChordPro li timporta f\'dan il-folder huma adottati għas-sinkronizzazzjoni u jirċievu metadata Singbook.';
+
+  @override
+  String get accountImportChordPro => 'Importa ChordPro minn Drive';
+
+  @override
+  String get accountImportChordProHint =>
+      'Agħżel fajls .cho biex iżżid ma\' din il-librerija. Fajls diġà fil-folder huma adottati; fajls x\'imkien ieħor huma kkupjati hawn.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'L-għażla tal-folder tas-sewqan mhix disponibbli';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Agħżel folder Drive viżibbli bil-picker ta\' Google Drive fuq apparat appoġġjat.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'Il-folder ta\' Singbook Drive mhuwiex disponibbli';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Agħżel il-folder mill-ġdid, jew irrestawrah fil-Google Drive.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook jeħtieġ aċċess għal dan il-folder Drive';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Erġa\' agħżel il-folder biex tagħti aċċess, imbagħad issinkronizza l-librerija tiegħek.';
+
+  @override
+  String get syncErrorFolderMigration =>
+      'Il-librerija għadha ma setgħetx tiġi mċaqalqa';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Il-librerija preċedenti tiegħek għadha sigura. Iċċekkja l-konnessjoni u agħżel il-folder mill-ġdid biex terġa \'tipprova.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Agħżel folder Drive viżibbli l-ewwel';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Huwa meħtieġ folder tal-librerija viżibbli qabel ma jiġu importati fajls minn Drive.';
+
+  @override
   String get accountSignOutTitle => 'Toħroġ minn dan il-kont?';
 
   @override
@@ -1908,4 +2010,40 @@ class AppLocalizationsMt extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Linja oħra, ftit aktar [F]qrib.';
+
+  @override
+  String get playerEstimatedKey => 'Tonalità stmata';
+
+  @override
+  String get songsLibraryView => 'Librerija';
+
+  @override
+  String get settingsStartupView => 'Ibda fil-veduta';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Agħżel il-veduta tal-kanzunetti li tintwera meta tiftaħ l-app.';
+
+  @override
+  String get settingsStartupLastView => 'L-aħħar veduta miftuħa';
+
+  @override
+  String get playerExpandControls => 'Uri l-kontrolli tad-daqq';
+
+  @override
+  String get playerCollapseControls => 'Aħbi l-kontrolli tad-daqq';
+
+  @override
+  String get settingsShowSections => 'Uri l-intestaturi tat-taqsimiet';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Uri l-intestaturi tal-versi, tal-kor u taqsimiet oħra fil-lirika.';
+
+  @override
+  String get settingsShowPlayerControls => 'Uri l-kontrolli tad-daqq';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Tista’ wkoll tmiss jew tiskrollja l-pannell tal-plejer biex turih jew taħbih.';
 }

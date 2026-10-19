@@ -366,7 +366,7 @@ ThemeData _captureTheme({required Brightness brightness}) {
 void _assertRouteGeometry(WidgetTester tester, String screen, Size viewport) {
   switch (screen) {
     case 'library':
-      final grid = find.byKey(const ValueKey('tablet-songs-grid'));
+      final grid = find.byKey(const PageStorageKey('songs-library-grid'));
       expect(grid, findsOneWidget);
       _insideViewport(tester, grid, viewport);
     case 'reader':
@@ -377,13 +377,18 @@ void _assertRouteGeometry(WidgetTester tester, String screen, Size viewport) {
       final lyricsField = find.byType(TextField).last;
       _insideViewport(tester, lyricsField, viewport);
     case 'settings':
-      final languageLabel = find.text('App language');
-      expect(languageLabel, findsOneWidget);
-      _insideViewport(tester, languageLabel, viewport);
     case 'settings_ukrainian':
-      final languageLabel = find.text('Мова програми');
-      expect(languageLabel, findsOneWidget);
-      _insideViewport(tester, languageLabel, viewport);
+      for (final section in [
+        'appearance',
+        'player',
+        'sources',
+        'account',
+        'about',
+      ]) {
+        final menu = find.byKey(ValueKey('settings-menu-$section'));
+        expect(menu, findsOneWidget);
+        _insideViewport(tester, menu, viewport);
+      }
     case 'home_keyboard':
       final search = find.byType(TextField).first;
       _insideViewport(tester, search, viewport);

@@ -111,6 +111,58 @@ void main() {
       expect(seen!.queryParameters['fields'], contains('headRevisionId'));
     });
 
+    test('visible library listing is limited to the selected folder', () async {
+      Uri? seen;
+      final s = DriveAppDataStore(
+        authorization: FakeAuth()..connected = true,
+        folderId: 'visible-folder',
+        client: MockClient((request) async {
+          seen = request.url;
+          return http.Response(emptyList, 200);
+        }),
+      );
+      expect(await s.listFiles(), isEmpty);
+      expect(seen!.queryParameters['spaces'], 'drive');
+      expect(
+        seen!.queryParameters['q'],
+        contains("'visible-folder' in parents"),
+      );
+      expect(seen!.queryParameters['q'], contains("key='verseSchema'"));
+    });
+
+    test('visible folder validation checks its id and Drive folder type', () async {
+      final s = DriveAppDataStore(
+        authorization: FakeAuth()..connected = true,
+        folderId: 'visible-folder',
+        client: MockClient((request) async {
+          expect(request.url.path, '/drive/v3/files/visible-folder');
+          return http.Response(
+            '{"id":"visible-folder","name":"Singbook","mimeType":"application/vnd.google-apps.folder","trashed":false}',
+            200,
+          );
+        }),
+      );
+      expect((await s.verifyFolder()).name, 'Singbook');
+    });
+
+    test('visible library creates files under its selected parent', () async {
+      String? body;
+      final s = DriveAppDataStore(
+        authorization: FakeAuth()..connected = true,
+        folderId: 'visible-folder',
+        client: MockClient((request) async {
+          body = request.body;
+          return http.Response(
+            '{"id":"file-id","name":"song-a.cho","mimeType":"text/plain","parents":["visible-folder"],"appProperties":{"kind":"song","verseSchema":"2"}}',
+            200,
+          );
+        }),
+      );
+      await s.createFile('song-a.cho', '{title: Test}', {'kind': 'song'});
+      expect(body, contains('"parents":["visible-folder"]'));
+      expect(body, contains('"md5"'));
+    });
+
     test('an id that is not a plain Drive id is never trusted', () async {
       final s = store(
         MockClient(

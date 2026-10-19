@@ -1,9 +1,9 @@
 {
   "@@locale": "cs",
   "appTitle": "Singbook",
-  "aboutDescription": "Klidné místo, kde najdete a uspořádáte svou knihovnu písní a budete si společně zpívat.",
-  "aboutMadeForSinging": "Vytvořeno pro společné zpívání",
-  "menuTypeNewSong": "Zadat novou píseň", "aboutDetails": "Hledejte v povolených zdrojích, porovnávejte verze, uchovávejte texty a akordy spolu a organizujte skladby do playlistů. Vaše knihovna je uložena v tomto zařízení; volitelná synchronizace přes Google Drive používá váš účet Google. Vyhledávání se odesílá přímo povoleným zdrojům.", "aboutSupport": "Podpora a zpětná vazba", "appVersion": "Verze {version}",
+  "aboutDescription": "Texty, akordy a seznamy písní pohromadě, připravené na zkoušku, na pódium i kamkoli, kde hrajete.",
+  "aboutMadeForSinging": "Každá píseň připravená.",
+  "menuTypeNewSong": "Zadat novou píseň", "aboutDetails": "Prohledávejte povolené zdroje a porovnávejte texty, akordy, časování a podrobnosti o nahrávkách, než uložíte verzi, kterou chcete hrát. Dostupnost se liší podle písně a služby.", "aboutSupport": "Podpora a zpětná vazba", "appVersion": "Verze {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -812,5 +812,63 @@
   "editorStandardTuning": "Standardní ladění",
   "editorExampleVerse": "[C]Nový den nás [G]volá,\n[Am]za světlem se vracíme [F]domů.",
   "editorExampleChorus": "[F]Zpívejme tuto píseň [C]společně,\n[G]ať nás melodie nese [C]dál.",
-  "editorExampleBridge": "[Am]Ještě jeden řádek, o něco [F]blíž."
+  "editorExampleBridge": "[Am]Ještě jeden řádek, o něco [F]blíž.",
+  "aboutFindTitle": "Najděte správnou verzi",
+  "aboutKeepTitle": "Vytvořte si vlastní knihovnu",
+  "aboutKeepDetails": "Upravujte a transponujte písně, uchovávejte je ve své místní knihovně pro offline použití a sdílejte přenosné soubory ChordPro. Volitelná synchronizace s Google Drive využívá soukromou složku aplikace ve vašem účtu Google. Klepnutím na „Synchronizovat nyní“ můžete také aktualizovat svá zařízení.",
+  "aboutPlayTitle": "Vezměte si svůj seznam na pódium",
+  "aboutPlayDetails": "Řaďte písně do seznamů, vyberte tóninu pro každou píseň a sdílejte seznamy OpenSong. Upravte velikost textu čtečky, automatické posouvání textu a tiskněte PDF s písněmi. Singbook nepřenáší ani nepřehrává zvuk.",
+  "aboutPrivacyTitle": "Zdarma, s knihovnou v zařízení",
+  "aboutPrivacyDetails": "Singbook je zdarma, bez reklam, analytiky a nákupů v aplikaci. Vaše uložená knihovna zůstává ve vašem zařízení; volitelná synchronizace používá váš Google Drive. Online výsledky pocházejí přímo od nezávislých služeb třetích stran a mohou být nedostupné nebo chráněné autorským právem. Singbook jejich obsah nehostuje.",
+  "aboutWebsite": "Web Singbook",
+  "aboutSourceCode": "Zdrojový kód na GitHubu",
+  "aboutPublisher": "Od Freevia",
+  "aboutLanguages": "Jazyky aplikace: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountDriveFolder": "Složka knihovny Disku Google",
+  "accountPrivateDriveFolder": "Soukromá složka Zpěvník",
+  "accountChooseDriveFolder": "Vyberte složku",
+  "accountDriveFolderMoveTitle": "Přesunout knihovnu Singbooku?",
+  "accountDriveFolderMoveBody": "Vyberte viditelnou složku Disku Google. Singbook tam zkopíruje a ověří vaše skladby a setlisty, než na něj přepnete. Původní soubory zůstanou ve svém předchozím umístění jako záloha. Ostatní soubory jsou ponechány na pokoji. Soubory ChordPro, které importujete do této složky, jsou přijaty pro synchronizaci a přijímání metadat Singbooku.",
+  "accountImportChordPro": "Importujte ChordPro z Disku",
+  "accountImportChordProHint": "Vyberte soubory .cho, které chcete přidat do této knihovny. Soubory již ve složce jsou převzaty; soubory jinde jsou zkopírovány sem.",
+  "syncErrorFolderPickerUnavailable": "Výběr složky na Disku není k dispozici",
+  "syncErrorFolderPickerUnavailableHint": "Na podporovaném zařízení vyberte viditelnou složku na Disku Google pomocí jeho výběru.",
+  "syncErrorDriveFolderMissing": "Složka Singbook Drive není dostupná",
+  "syncErrorDriveFolderMissingHint": "Vyberte složku znovu nebo ji obnovte na Disku Google.",
+  "syncErrorDriveFileAuthorization": "Zpěvník potřebuje přístup k této složce na Disku",
+  "syncErrorDriveFileAuthorizationHint": "Znovu vyberte složku, ke které chcete udělit přístup, a poté knihovnu synchronizujte.",
+  "syncErrorFolderMigration": "Knihovnu se zatím nepodařilo přesunout",
+  "syncErrorFolderMigrationHint": "Vaše předchozí knihovna je stále v bezpečí. Zkontrolujte připojení a znovu vyberte složku a zkuste to znovu.",
+  "syncErrorVisibleFolderRequired": "Nejprve vyberte viditelnou složku na Disku",
+  "syncErrorVisibleFolderRequiredHint": "Před importem souborů z Disku je potřeba viditelná složka knihovny.",
+  "playerEstimatedKey": "Odhadovaná tónina",
+  "songsLibraryView": "Knihovna",
+  "settingsStartupView": "Otevřít při spuštění",
+  "settingsStartupViewHint": "Vyberte zobrazení Písně, které se ukáže po otevření aplikace.",
+  "settingsStartupLastView": "Naposledy otevřené",
+  "playerExpandControls": "Zobrazit ovládání přehrávání",
+  "playerCollapseControls": "Skrýt ovládání přehrávání",
+  "settingsShowSections": "Zobrazovat nadpisy částí",
+  "settingsShowSectionsHint": "Zobrazovat v textu nadpisy slok, refrénu a dalších částí.",
+  "settingsShowPlayerControls": "Zobrazit ovládání přehrávání",
+  "settingsShowPlayerControlsHint": "Panel přehrávače můžete také zobrazit nebo skrýt klepnutím či přejetím.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

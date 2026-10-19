@@ -1,7 +1,11 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../l10n/generated/app_localizations.dart';
+import '../library_actions.dart';
 import '../verse_ui_state.dart';
 import '../widgets/subpage_header.dart';
 
@@ -172,6 +176,19 @@ class _EditorScreenState extends State<EditorScreen> {
   String _safeHeader(String value) =>
       value.replaceAll(RegExp(r'[\r\n{}]'), ' ').trim();
 
+  Future<void> _delete() async {
+    if (_saving || _initial.isNew || _initial.songId.isEmpty) return;
+    setState(() => _saving = true);
+    try {
+      FocusManager.instance.primaryFocus?.unfocus();
+      await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
+      if (!mounted) return;
+      await confirmDeleteSong(context, widget.controller, _initial.songId);
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
   Future<void> _save() async {
     if (_saving) return;
     if (_title.text.trim().isEmpty) {
@@ -213,6 +230,22 @@ class _EditorScreenState extends State<EditorScreen> {
         setState(() => _saving = false);
       }
     }
+  }
+
+  KeyEventResult _handleWindowsKey(FocusNode node, KeyEvent event) {
+    final keyboard = HardwareKeyboard.instance;
+    if (defaultTargetPlatform == TargetPlatform.windows &&
+        event is KeyDownEvent &&
+        event.logicalKey == LogicalKeyboardKey.keyS &&
+        keyboard.isControlPressed &&
+        !keyboard.isAltPressed &&
+        !keyboard.isMetaPressed &&
+        !keyboard.isShiftPressed &&
+        ModalRoute.of(context)?.isCurrent != false) {
+      unawaited(_save());
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
   }
 
   InputDecoration _decoration(
@@ -476,17 +509,27 @@ class _EditorScreenState extends State<EditorScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Column(
+    final content = Column(
       children: [
         SubpageHeader(
           title: l10n.editorTitle,
           onBack: widget.onBack,
           actions: [
             IconButton(
-              tooltip: l10n.actionSave,
+              tooltip: defaultTargetPlatform == TargetPlatform.windows
+                  ? '${l10n.actionSave} (Ctrl+S)'
+                  : l10n.actionSave,
               onPressed: _saving ? null : _save,
               icon: const Icon(Icons.check_rounded),
             ),
+            if (!_initial.isNew && _initial.songId.isNotEmpty)
+              PopupMenuButton<String>(
+                tooltip: l10n.songMenuLabel,
+                enabled: !_saving,
+                itemBuilder: (_) =>
+                    buildLibraryActionMenu(l10n, actions: const {'delete'}),
+                onSelected: (_) => _delete(),
+              ),
           ],
         ),
         Expanded(
@@ -539,6 +582,11 @@ class _EditorScreenState extends State<EditorScreen> {
           ),
         ),
       ],
+    );
+    return Focus(
+      autofocus: defaultTargetPlatform == TargetPlatform.windows,
+      onKeyEvent: _handleWindowsKey,
+      child: content,
     );
   }
 }

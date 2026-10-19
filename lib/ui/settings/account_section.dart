@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 
 import '../../l10n/generated/app_localizations.dart';
@@ -19,7 +21,13 @@ const _signInAgainCodes = {
 const _suspiciousCode = 'remote_listing_suspicious';
 
 /// Codes where retrying cannot help or would only repeat the failure.
-const _noRetryCodes = {'not_configured'};
+const _noRetryCodes = {'not_configured', 'folder_picker_unavailable'};
+const _folderSelectionCodes = {
+  'drive_folder_missing',
+  'drive_file_authorization_required',
+  'folder_migration_incomplete',
+  'invalid_drive_folder',
+};
 
 /// The Settings "Account and sync" card: sign-in state, last sync, conflicts,
 /// errors with a next step, on-demand sync and sign-out.
@@ -138,6 +146,28 @@ class AccountSection extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
         child: Text(l10n.accountAutoSync),
       ),
+      if (defaultTargetPlatform == TargetPlatform.android) ...[
+        ListTile(
+          key: const ValueKey('account-drive-folder'),
+          leading: const Icon(Icons.folder_open_outlined),
+          title: Text(l10n.accountDriveFolder),
+          subtitle: Text(
+            state.syncDriveFolderName ?? l10n.accountPrivateDriveFolder,
+          ),
+          trailing: const Icon(Icons.chevron_right_rounded),
+          enabled: !state.syncBusy,
+          onTap: state.syncBusy ? null : () => _chooseDriveFolder(context),
+        ),
+        if (state.syncDriveFolderName != null)
+          ListTile(
+            key: const ValueKey('account-import-drive-chordpro'),
+            leading: const Icon(Icons.file_download_outlined),
+            title: Text(l10n.accountImportChordPro),
+            subtitle: Text(l10n.accountImportChordProHint),
+            enabled: !state.syncBusy,
+            onTap: state.syncBusy ? null : controller.importChordProFromDrive,
+          ),
+      ],
       ListTile(
         key: const ValueKey('account-use-different'),
         leading: const Icon(Icons.switch_account_outlined),
@@ -157,6 +187,9 @@ class AccountSection extends StatelessWidget {
 
   String? _errorActionLabel(AppLocalizations l10n, String code) {
     if (_noRetryCodes.contains(code)) return null;
+    if (_folderSelectionCodes.contains(code)) {
+      return l10n.accountChooseDriveFolder;
+    }
     if (code == 'account_changed' || code == _suspiciousCode) {
       return l10n.accountChooseAction;
     }
@@ -166,6 +199,9 @@ class AccountSection extends StatelessWidget {
 
   VoidCallback? _errorAction(BuildContext context, String code) {
     if (_noRetryCodes.contains(code)) return null;
+    if (_folderSelectionCodes.contains(code)) {
+      return () => _chooseDriveFolder(context);
+    }
     if (code == 'account_changed') {
       return () => showAccountChangeDialog(context, controller);
     }
@@ -179,6 +215,29 @@ class AccountSection extends StatelessWidget {
   Future<void> _useDifferentAccount() async {
     await controller.signOutFromSync();
     await controller.signInForSync();
+  }
+
+  Future<void> _chooseDriveFolder(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.accountDriveFolderMoveTitle),
+        content: Text(l10n.accountDriveFolderMoveBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.actionCancel),
+          ),
+          FilledButton(
+            key: const ValueKey('account-drive-folder-confirm'),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.accountChooseDriveFolder),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) await controller.chooseSyncDriveFolder();
   }
 
   Future<void> _confirmSignOut(BuildContext context) async {

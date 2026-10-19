@@ -13,14 +13,53 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Ένας ήρεμος χώρος για να βρίσκεις, να οργανώνεις και να τραγουδάς από τη συλλογή τραγουδιών σου.';
+      'Οι στίχοι, οι συγχορδίες και οι λίστες τραγουδιών σας σε ένα μέρος, έτοιμα για πρόβα, για τη σκηνή και όπου κι αν παίζετε.';
 
   @override
-  String get aboutMadeForSinging => 'Φτιαγμένο για να τραγουδάμε μαζί';
+  String get aboutMadeForSinging => 'Κάθε τραγούδι, έτοιμο.';
 
   @override
   String get aboutDetails =>
-      'Αναζητήστε σε ενεργοποιημένες πηγές, συγκρίνετε εκδόσεις, κρατήστε μαζί στίχους και συγχορδίες και οργανώστε τραγούδια σε λίστες. Η βιβλιοθήκη σας αποθηκεύεται σε αυτήν τη συσκευή· ο προαιρετικός συγχρονισμός μέσω Google Drive χρησιμοποιεί τον λογαριασμό σας Google. Οι αναζητήσεις αποστέλλονται απευθείας στις ενεργοποιημένες πηγές.';
+      'Αναζητήστε στις ενεργοποιημένες πηγές και συγκρίνετε στίχους, συγχορδίες, χρονισμό και λεπτομέρειες ηχογράφησης πριν αποθηκεύσετε την εκδοχή που θέλετε να παίξετε. Η διαθεσιμότητα διαφέρει ανά τραγούδι και υπηρεσία.';
+
+  @override
+  String get aboutFindTitle => 'Βρείτε την κατάλληλη εκδοχή';
+
+  @override
+  String get aboutKeepTitle => 'Δημιουργήστε τη δική σας βιβλιοθήκη';
+
+  @override
+  String get aboutKeepDetails =>
+      'Επεξεργαστείτε και μεταφέρετε τραγούδια σε άλλη τονικότητα, διατηρήστε τα στην τοπική βιβλιοθήκη σας για χρήση εκτός σύνδεσης και μοιραστείτε φορητά αρχεία ChordPro. Ο προαιρετικός συγχρονισμός με το Google Drive χρησιμοποιεί έναν ιδιωτικό φάκελο της εφαρμογής στον λογαριασμό σας Google. Μπορείτε επίσης να πατήσετε «Συγχρονισμός τώρα» για να ενημερώσετε τις συσκευές σας.';
+
+  @override
+  String get aboutPlayTitle => 'Πάρτε τη λίστα σας στη σκηνή';
+
+  @override
+  String get aboutPlayDetails =>
+      'Οργανώστε τραγούδια σε λίστες, επιλέξτε τονικότητα για κάθε τραγούδι και μοιραστείτε λίστες OpenSong. Προσαρμόστε το κείμενο ανάγνωσης και την αυτόματη κύλιση των στίχων και εκτυπώστε PDF τραγουδιών. Το Singbook δεν μεταδίδει ούτε αναπαράγει ήχο.';
+
+  @override
+  String get aboutPrivacyTitle =>
+      'Δωρεάν και με προτεραιότητα την τοπική χρήση';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Το Singbook είναι δωρεάν, χωρίς διαφημίσεις, αναλυτικά στοιχεία ή αγορές εντός εφαρμογής. Η αποθηκευμένη βιβλιοθήκη σας παραμένει στη συσκευή σας· ο προαιρετικός συγχρονισμός χρησιμοποιεί το δικό σας Google Drive. Τα διαδικτυακά αποτελέσματα προέρχονται απευθείας από ανεξάρτητες υπηρεσίες τρίτων και ενδέχεται να μην είναι διαθέσιμα ή να προστατεύονται από πνευματικά δικαιώματα. Το Singbook δεν φιλοξενεί το περιεχόμενό τους.';
+
+  @override
+  String get aboutWebsite => 'Ιστότοπος Singbook';
+
+  @override
+  String get aboutSourceCode => 'Πηγαίος κώδικας στο GitHub';
+
+  @override
+  String get aboutPublisher => 'Από τη Freevia';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Γλώσσες εφαρμογής: $count';
+  }
 
   @override
   String get aboutSupport => 'Υποστήριξη και σχόλια';
@@ -1381,6 +1420,70 @@ class AppLocalizationsEl extends AppLocalizations {
       'Ο συγχρονισμός γίνεται μετά τη σύνδεση και μετά την προσθήκη, επεξεργασία ή αφαίρεση ενός τραγουδιού.';
 
   @override
+  String get accountDriveFolder => 'Φάκελος βιβλιοθήκης Google Drive';
+
+  @override
+  String get accountPrivateDriveFolder => 'Ιδιωτικός φάκελος Singbook';
+
+  @override
+  String get accountChooseDriveFolder => 'Επιλέξτε φάκελο';
+
+  @override
+  String get accountDriveFolderMoveTitle =>
+      'Μετακίνηση της βιβλιοθήκης Singbook;';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Επιλέξτε έναν ορατό φάκελο του Google Drive. Το Singbook θα αντιγράψει και θα επαληθεύσει εκεί τα τραγούδια και τις λίστες σας πριν από τη μετάβαση σε αυτό. Τα πρωτότυπα αρχεία παραμένουν στην προηγούμενη θέση τους ως αντίγραφο ασφαλείας. Άλλα αρχεία μένουν μόνα τους. Τα αρχεία ChordPro που εισάγετε σε αυτόν τον φάκελο υιοθετούνται για συγχρονισμό και λήψη μεταδεδομένων Singbook.';
+
+  @override
+  String get accountImportChordPro => 'Εισαγωγή ChordPro από το Drive';
+
+  @override
+  String get accountImportChordProHint =>
+      'Επιλέξτε αρχεία .cho για προσθήκη σε αυτήν τη βιβλιοθήκη. Τα αρχεία που βρίσκονται ήδη στον φάκελο έχουν εγκριθεί. αρχεία αλλού αντιγράφονται εδώ.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Η επιλογή φακέλου μονάδας δίσκου δεν είναι διαθέσιμη';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Επιλέξτε έναν ορατό φάκελο Drive με τον επιλογέα του Google Drive σε υποστηριζόμενη συσκευή.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'Ο φάκελος Singbook Drive δεν είναι διαθέσιμος';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Επιλέξτε ξανά το φάκελο ή επαναφέρετέ τον στο Google Drive.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Το Singbook χρειάζεται πρόσβαση σε αυτόν τον φάκελο Drive';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Επιλέξτε ξανά το φάκελο για να παραχωρήσετε πρόσβαση και, στη συνέχεια, συγχρονίστε τη βιβλιοθήκη σας.';
+
+  @override
+  String get syncErrorFolderMigration =>
+      'Δεν ήταν δυνατή η μετακίνηση της βιβλιοθήκης ακόμα';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Η προηγούμενη βιβλιοθήκη σας είναι ακόμα ασφαλής. Ελέγξτε τη σύνδεση και επιλέξτε ξανά το φάκελο για να προσπαθήσετε ξανά.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Επιλέξτε πρώτα έναν ορατό φάκελο Drive';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Απαιτείται ένας ορατός φάκελος βιβλιοθήκης πριν από την εισαγωγή αρχείων από το Drive.';
+
+  @override
   String get accountSignOutTitle => 'Αποσύνδεση από αυτόν τον λογαριασμό;';
 
   @override
@@ -1907,4 +2010,42 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Άλλος ένας στίχος, λίγο πιο [F]κοντά.';
+
+  @override
+  String get playerEstimatedKey => 'Εκτιμώμενη τονικότητα';
+
+  @override
+  String get songsLibraryView => 'Βιβλιοθήκη';
+
+  @override
+  String get settingsStartupView => 'Έναρξη σε';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Επιλέξτε την προβολή Τραγούδια που θα εμφανίζεται όταν ανοίγει η εφαρμογή.';
+
+  @override
+  String get settingsStartupLastView => 'Τελευταία προβολή';
+
+  @override
+  String get playerExpandControls => 'Εμφάνιση στοιχείων ελέγχου αναπαραγωγής';
+
+  @override
+  String get playerCollapseControls =>
+      'Απόκρυψη στοιχείων ελέγχου αναπαραγωγής';
+
+  @override
+  String get settingsShowSections => 'Εμφάνιση επικεφαλίδων ενοτήτων';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Εμφάνιση των επικεφαλίδων για κουπλέ, ρεφρέν και άλλες ενότητες στους στίχους.';
+
+  @override
+  String get settingsShowPlayerControls =>
+      'Εμφάνιση στοιχείων ελέγχου αναπαραγωγής';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Μπορείτε επίσης να πατήσετε ή να σύρετε το πλαίσιο αναπαραγωγής για να το εμφανίσετε ή να το αποκρύψετε.';
 }

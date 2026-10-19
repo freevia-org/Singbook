@@ -12,14 +12,53 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appTitle => 'Singbook';
 
   @override
-  String get aboutDescription => '노래 라이브러리에서 곡을 찾고 정리해 함께 부를 수 있는 편안한 공간입니다.';
+  String get aboutDescription =>
+      '가사, 코드, 세트리스트를 한곳에 모아 리허설과 무대, 어디서든 바로 사용할 수 있습니다.';
 
   @override
-  String get aboutMadeForSinging => '함께 노래하기 위해 만들었습니다';
+  String get aboutMadeForSinging => '모든 곡을 바로 노래하세요.';
 
   @override
   String get aboutDetails =>
-      '사용 설정한 소스를 검색하고, 곡 버전을 비교하고, 가사와 코드를 함께 보관하며, 곡을 세트리스트로 정리할 수 있습니다. 보관함은 이 기기에 저장됩니다. 선택적 Google Drive 동기화에는 Google 계정이 사용됩니다. 검색은 사용 설정한 소스로 직접 전송됩니다.';
+      '검색 가능한 소스를 찾아 가사, 코드, 타이밍, 녹음 정보를 비교한 뒤 연주할 버전을 저장하세요. 이용 가능 여부는 곡과 서비스에 따라 다릅니다.';
+
+  @override
+  String get aboutFindTitle => '원하는 버전 찾기';
+
+  @override
+  String get aboutKeepTitle => '나만의 라이브러리 만들기';
+
+  @override
+  String get aboutKeepDetails =>
+      '곡을 편집하고 조옮김해 로컬 라이브러리에 보관하면 오프라인에서도 사용할 수 있고, 휴대용 ChordPro 파일로 공유할 수도 있습니다. Google Drive 동기화는 선택 사항이며 Google 계정의 비공개 앱 폴더를 사용합니다. ‘지금 동기화’를 눌러 기기를 업데이트할 수도 있습니다.';
+
+  @override
+  String get aboutPlayTitle => '세트리스트를 무대로 가져가기';
+
+  @override
+  String get aboutPlayDetails =>
+      '곡을 세트리스트로 정렬하고 곡마다 조를 선택하며 OpenSong 세트리스트를 공유하세요. 리더 글자 크기를 조정하고 가사를 자동 스크롤하거나 곡 PDF를 인쇄할 수 있습니다. Singbook은 오디오를 스트리밍하거나 재생하지 않습니다.';
+
+  @override
+  String get aboutPrivacyTitle => '무료이며 로컬을 우선합니다';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook은 광고, 분석, 인앱 구매 없이 무료입니다. 저장한 라이브러리는 기기에 보관되며 선택적 동기화에는 본인의 Google Drive를 사용합니다. 온라인 결과는 독립적인 제3자 서비스에서 직접 제공되며 곡과 서비스에 따라 이용할 수 없거나 저작권으로 보호될 수 있습니다. Singbook은 해당 콘텐츠를 호스팅하지 않습니다.';
+
+  @override
+  String get aboutWebsite => 'Singbook 웹사이트';
+
+  @override
+  String get aboutSourceCode => 'GitHub의 소스 코드';
+
+  @override
+  String get aboutPublisher => 'Freevia 제공';
+
+  @override
+  String aboutLanguages(int count) {
+    return '앱 언어: $count';
+  }
 
   @override
   String get aboutSupport => '지원 및 의견 보내기';
@@ -1337,6 +1376,65 @@ class AppLocalizationsKo extends AppLocalizations {
   String get accountAutoSyncHint => '연결한 후와 노래를 추가, 수정 또는 삭제한 후에 동기화합니다.';
 
   @override
+  String get accountDriveFolder => 'Google 드라이브 라이브러리 폴더';
+
+  @override
+  String get accountPrivateDriveFolder => '개인 Singbook 폴더';
+
+  @override
+  String get accountChooseDriveFolder => '폴더 선택';
+
+  @override
+  String get accountDriveFolderMoveTitle => 'Singbook 라이브러리를 이동하시겠습니까?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      '표시되는 Google 드라이브 폴더를 선택하세요. Singbook은 전환하기 전에 노래와 세트리스트를 복사하고 확인합니다. 원본 파일은 백업으로 이전 위치에 유지됩니다. 다른 파일은 그대로 둡니다. 이 폴더로 가져온 ChordPro 파일은 Singbook 메타데이터를 동기화하고 수신하기 위해 채택됩니다.';
+
+  @override
+  String get accountImportChordPro => '드라이브에서 ChordPro 가져오기';
+
+  @override
+  String get accountImportChordProHint =>
+      '이 라이브러리에 추가할 .cho 파일을 선택하세요. 폴더에 이미 있는 파일이 채택됩니다. 다른 곳에 있는 파일은 여기에 복사됩니다.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable => '드라이브 폴더를 선택할 수 없습니다.';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      '지원되는 기기에서 Google 드라이브 선택기로 표시되는 Drive 폴더를 선택하세요.';
+
+  @override
+  String get syncErrorDriveFolderMissing => 'Singbook Drive 폴더를 사용할 수 없습니다.';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      '폴더를 다시 선택하거나 Google Drive에서 복원하세요.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook은 이 드라이브 폴더에 액세스해야 합니다.';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      '폴더를 다시 선택하여 액세스 권한을 부여한 다음 라이브러리를 동기화하세요.';
+
+  @override
+  String get syncErrorFolderMigration => '아직 라이브러리를 이동할 수 없습니다.';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      '이전 라이브러리는 여전히 안전합니다. 연결을 확인하고 폴더를 다시 선택하여 다시 시도하세요.';
+
+  @override
+  String get syncErrorVisibleFolderRequired => '먼저 표시되는 드라이브 폴더를 선택하세요.';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      '드라이브에서 파일을 가져오기 전에 표시되는 라이브러리 폴더가 필요합니다.';
+
+  @override
   String get accountSignOutTitle => '이 계정에서 로그아웃할까요?';
 
   @override
@@ -1814,4 +1912,38 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]한 줄 더, 조금 더 [F]가까이.';
+
+  @override
+  String get playerEstimatedKey => '추정 조성';
+
+  @override
+  String get songsLibraryView => '라이브러리';
+
+  @override
+  String get settingsStartupView => '시작 화면';
+
+  @override
+  String get settingsStartupViewHint => '앱을 열 때 표시할 노래 화면을 선택하세요.';
+
+  @override
+  String get settingsStartupLastView => '마지막으로 연 화면';
+
+  @override
+  String get playerExpandControls => '재생 컨트롤 표시';
+
+  @override
+  String get playerCollapseControls => '재생 컨트롤 숨기기';
+
+  @override
+  String get settingsShowSections => '섹션 제목 표시';
+
+  @override
+  String get settingsShowSectionsHint => '가사에 절, 후렴 및 기타 섹션 제목을 표시합니다.';
+
+  @override
+  String get settingsShowPlayerControls => '재생 컨트롤 표시';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      '플레이어 패널을 탭하거나 스와이프해 표시하거나 숨길 수도 있습니다.';
 }

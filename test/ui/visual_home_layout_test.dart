@@ -200,7 +200,11 @@ void main() {
 
     await _pumpHome(tester, controller: controller);
     final l10n = AppLocalizations.of(tester.element(find.byType(TextField)));
-    expect(find.text('${l10n.searchRecentTab} (2)'), findsOneWidget);
+    _expectHomeModeCount(tester, HomeListMode.recent, l10n.searchRecentTab, 1);
+    expect(
+      find.byKey(const ValueKey('recent-setlist-row-setlist-signal')),
+      findsNothing,
+    );
     expect(find.text(l10n.homeItemsShownCount(2)), findsNothing);
     expect(find.byKey(const ValueKey('recent-row-other')), findsNothing);
     expect(find.text(l10n.homeRecentSongs), findsNothing);
@@ -227,9 +231,15 @@ void main() {
     );
     controller.notifyListeners();
     await tester.pumpAndSettle();
-    expect(find.text('${l10n.searchFavoritesTab} (2)'), findsOneWidget);
+    _expectHomeModeCount(
+      tester,
+      HomeListMode.favorites,
+      l10n.searchFavoritesTab,
+      1,
+    );
     expect(find.text(l10n.homeItemsShownCount(2)), findsNothing);
-    expect(find.text(l10n.homeFavorites), findsNothing);
+    // The view title remains in the selector, with no duplicate list heading.
+    expect(find.text(l10n.homeFavorites), findsOneWidget);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
   });
@@ -385,7 +395,12 @@ void main() {
       );
       await tester.pumpAndSettle();
       final l10n = AppLocalizations.of(tester.element(find.byType(TextField)));
-      expect(find.text('${l10n.searchOnlineTab} ($count)'), findsOneWidget);
+      _expectHomeModeCount(
+        tester,
+        HomeListMode.online,
+        l10n.searchOnlineTab,
+        count,
+      );
       expect(find.text(l10n.searchResultCount(count)), findsNothing);
       expect(find.text(l10n.searchAutocompleteLabel), findsNothing);
       expect(tester.takeException(), isNull);
@@ -603,13 +618,21 @@ void main() {
               isNull,
               reason: '$locale/$scale/$size',
             );
+            final l10n = AppLocalizations.of(
+              tester.element(find.byType(TextField)),
+            );
 
             for (final mode in HomeListMode.values) {
               final segment = find.byKey(ValueKey('home-mode-${mode.name}'));
               expect(segment, findsOneWidget, reason: '$locale/$scale/$size');
               final label = find.descendant(
                 of: segment,
-                matching: find.byType(Text),
+                matching: find.text(switch (mode) {
+                  HomeListMode.recent => l10n.searchRecentTab,
+                  HomeListMode.library => l10n.songsLibraryView,
+                  HomeListMode.favorites => l10n.searchFavoritesTab,
+                  HomeListMode.online => l10n.searchOnlineTab,
+                }),
               );
               expect(label, findsOneWidget);
               final paragraph = tester.renderObject<RenderParagraph>(label);
@@ -709,10 +732,14 @@ void main() {
 
     for (final mode in HomeListMode.values) {
       final segment = find.byKey(ValueKey('home-mode-${mode.name}'));
+      await tester.ensureVisible(segment);
+      await tester.pumpAndSettle();
       final rect = tester.getRect(segment);
       expect(rect.left, greaterThanOrEqualTo(selectorRect.left));
       expect(rect.right, lessThanOrEqualTo(selectorRect.right));
-      final label = find.descendant(of: segment, matching: find.byType(Text));
+      final label = find
+          .descendant(of: segment, matching: find.byType(Text))
+          .first;
       final paragraph = tester.renderObject<RenderParagraph>(label);
       expect(paragraph.maxLines, 1);
       expect(paragraph.didExceedMaxLines, isFalse);
@@ -968,6 +995,24 @@ void main() {
     checkVisibleRows();
     expect(tester.takeException(), isNull);
   });
+}
+
+void _expectHomeModeCount(
+  WidgetTester tester,
+  HomeListMode mode,
+  String title,
+  int count,
+) {
+  final segment = find.byKey(ValueKey('home-mode-${mode.name}'));
+  expect(segment, findsOneWidget);
+  expect(
+    find.descendant(of: segment, matching: find.text(title)),
+    findsOneWidget,
+  );
+  expect(
+    find.descendant(of: segment, matching: find.text('$count')),
+    findsOneWidget,
+  );
 }
 
 Future<void> _pumpHome(

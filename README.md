@@ -8,6 +8,9 @@ A local-first Flutter songbook for Android and iOS. Search Genius, compare lyric
 
 ## Develop and test
 
+Windows desktop preview setup and current platform gaps are documented in the
+[Windows desktop guide](docs/windows-desktop.md).
+
 For macOS setup, simulator builds, and signing steps, see [iOS build preparation](docs/ios-build.md). Production listing copy, screenshot inventory, offline validation and the remaining publishing decisions are covered in the [App Store handoff](docs/ios-testflight.md#app-store-publishing-handoff--2026-10-19).
 
 Use Flutter 3.44.8 / Dart 3.12, JDK 21 and Android SDK 36. The app ID is `org.freevia.singbook`. Android 24+ is supported. iOS builds require macOS/Xcode and target iOS 15+. Simulator debug and unsigned device release builds have been compiled with Flutter 3.44.8 and Xcode 27.1; iOS sign-in, sync, and localization still need device validation. See the [iOS build guide](docs/ios-build.md) for setup and validation details. The iOS project is prepared for Google sign-in (URL scheme and `GIDClientID` from `ios/Flutter/Secrets.xcconfig`, see [Google Cloud / OAuth setup](docs/google-oauth-setup.md)) and lists the 34 languages in `CFBundleLocalizations`; Runner now bundles a required-reason privacy manifest; a signing team and owner confirmation of the final release privacy answers are still needed. See [TestFlight preparation](docs/ios-testflight.md), the [App Privacy assessment](docs/ios-app-privacy.md), [submission details](docs/testflight-submission.md), and [iOS E2E evidence](docs/ios-e2e.md).
@@ -79,8 +82,8 @@ networking (Cronet) and Google sign-in on a release APK before publishing.
 
 ### Google Play release
 
-Next release: `0.2.6+20`. Every new release increments both the visible patch
-version and the build number: `0.2.6+20`, `0.2.7+21`, and so on. The number after
+Next release: `0.2.8+22`. Every new release increments both the visible patch
+version and the build number: `0.2.8+22`, `0.2.9+23`, and so on. The number after
 `+` is the Play versionCode and must always increase; never reset it when the
 visible version changes. Rebuilds of the same release and promotion between
 internal testing and production keep the same version. Update `pubspec.yaml`,
@@ -95,7 +98,7 @@ a locale config for all 34 app languages (one per `lib/l10n/app_*.arb`; keep
 
 ```powershell
 .\scripts\build-android.ps1 -Bundle -Production   # signed .aab + symbols + SHA-256 in artifacts\
-.\scripts\verify-release.ps1 -Path artifacts\singbook-0.2.6+20-release.aab
+.\scripts\verify-release.ps1 -Path artifacts\singbook-0.2.8+22-release.aab
 ```
 
 The build script refuses to overwrite an existing artifact of the same version
@@ -150,7 +153,7 @@ Import accepts ChordPro, plain text, LRC, enhanced LRC and TTML. Sharing and cop
 
 ## Accounts
 
-Songs work without signing in. Google Drive sync is optional and is available when the build is configured with the public OAuth client IDs (`VERSE_GOOGLE_SERVER_CLIENT_ID`, and `VERSE_GOOGLE_IOS_CLIENT_ID` for iOS) in `config/local.defines.json`; without them the app shows sync as not configured. Sync uses each person's own private Drive app-data folder (scope `drive.appdata` only), not a shared Singbook account; no client secret or application backend is involved. Songs and setlists are stored as individual files. After you connect, song additions, edits and removals sync automatically with a short debounce; Sync now is also available. Starting the app and returning to it do not start cloud sync. Concurrent edits are kept as separate conflict copies. See [Google Cloud / OAuth setup](docs/google-oauth-setup.md) for the owner's configuration steps and [sync design](lib/sync/SETUP.md). `scripts/print-signing-fingerprints.ps1` prints the signing SHA-1s that Android OAuth clients need. iCloud integration also requires an Apple developer team, container, entitlements and a signed Apple build, and remains unavailable.
+Songs work without signing in. Google Drive sync is optional and is available when the build is configured with the public OAuth client IDs (`VERSE_GOOGLE_SERVER_CLIENT_ID`, and `VERSE_GOOGLE_IOS_CLIENT_ID` for iOS) in `config/local.defines.json`; without them the app shows sync as not configured. Sync defaults to each person's private Drive app-data folder; Android users can choose a visible folder through Google Picker. When switching folders, Singbook keeps the previous copies as a backup. It uses the narrow `drive.appdata` and `drive.file` scopes, not a shared Singbook account; no client secret or application backend is involved. Songs and setlists are stored as individual files. After you connect, song additions, edits and removals sync automatically with a short debounce; Sync now is also available. In a visible folder, users can import ChordPro files explicitly from Drive; Singbook tracks only files it created or the user selected. Starting the app and returning to it do not start cloud sync. Concurrent edits are kept as separate conflict copies. See [Google Cloud / OAuth setup](docs/google-oauth-setup.md) for the owner's configuration steps and [sync design](lib/sync/SETUP.md). `scripts/print-signing-fingerprints.ps1` prints the signing SHA-1s that Android OAuth clients need. iCloud integration also requires an Apple developer team, container, entitlements and a signed Apple build, and remains unavailable.
 
 ## Languages and themes
 

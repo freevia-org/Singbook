@@ -1,9 +1,9 @@
 {
   "@@locale": "hi",
   "appTitle": "Singbook",
-  "aboutDescription": "अपनी गीत लाइब्रेरी में गीत खोजने, व्यवस्थित करने और गाने के लिए एक शांत जगह।",
-  "aboutMadeForSinging": "साथ मिलकर गाने के लिए बनाया गया",
-  "menuTypeNewSong": "नया गीत लिखें", "aboutDetails": "चालू स्रोतों में खोजें, गीतों के संस्करणों की तुलना करें, बोल और कॉर्ड साथ रखें, और गीतों को सेटलिस्ट में व्यवस्थित करें। आपकी लाइब्रेरी इस डिवाइस पर सहेजी जाती है; वैकल्पिक Google Drive सिंक आपके Google खाते का उपयोग करता है। खोज सीधे चालू स्रोतों को भेजी जाती है।", "aboutSupport": "सहायता और प्रतिक्रिया", "appVersion": "संस्करण {version}",
+  "aboutDescription": "आपके गीत के बोल, कॉर्ड और गीत सूचियाँ एक साथ, रिहर्सल, मंच और जहाँ भी आप बजाएँ वहाँ के लिए तैयार।",
+  "aboutMadeForSinging": "हर गीत, तैयार।",
+  "menuTypeNewSong": "नया गीत लिखें", "aboutDetails": "सहेजने के लिए मनचाहा संस्करण चुनने से पहले सक्षम स्रोतों में खोजें और बोल, कॉर्ड, समय तथा रिकॉर्डिंग का विवरण देखें। उपलब्धता गीत और सेवा के अनुसार अलग हो सकती है।", "aboutSupport": "सहायता और प्रतिक्रिया", "appVersion": "संस्करण {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
@@ -812,5 +812,63 @@
   "editorStandardTuning": "मानक ट्यूनिंग",
   "editorExampleVerse": "[C]एक नया दिन हमें [G]बुलाता है,\n[Am]हम रोशनी के साथ [F]घर लौटते हैं।",
   "editorExampleChorus": "[F]यह गीत [C]मिलकर गाएँ,\n[G]धुन हमें [C]आगे ले जाए।",
-  "editorExampleBridge": "[Am]एक पंक्ति और, थोड़ा [F]करीब।"
+  "editorExampleBridge": "[Am]एक पंक्ति और, थोड़ा [F]करीब।",
+  "aboutFindTitle": "सही संस्करण खोजें",
+  "aboutKeepTitle": "अपनी लाइब्रेरी बनाएँ",
+  "aboutKeepDetails": "गीत संपादित करें और उनका सुर बदलें, उन्हें ऑफ़लाइन उपयोग के लिए अपनी स्थानीय लाइब्रेरी में रखें, और पोर्टेबल ChordPro फ़ाइलें साझा करें। वैकल्पिक Google Drive सिंक आपके Google खाते में ऐप के निजी फ़ोल्डर का उपयोग करता है। आप अपने डिवाइस अपडेट करने के लिए “अभी सिंक करें” भी टैप कर सकते हैं।",
+  "aboutPlayTitle": "अपनी सूची मंच पर ले जाएँ",
+  "aboutPlayDetails": "गीतों को सूचियों में क्रम दें, हर गीत के लिए सुर चुनें और OpenSong सूचियाँ साझा करें। रीडर का टेक्स्ट और बोलों की ऑटो-स्क्रॉल सेटिंग बदलें, और गीतों के PDF प्रिंट करें। Singbook ऑडियो स्ट्रीम या प्ले नहीं करता।",
+  "aboutPrivacyTitle": "मुफ़्त और डिवाइस पर केंद्रित",
+  "aboutPrivacyDetails": "Singbook मुफ़्त है और इसमें विज्ञापन, एनालिटिक्स या इन-ऐप खरीदारी नहीं हैं। आपकी सहेजी हुई लाइब्रेरी आपके डिवाइस पर रहती है; वैकल्पिक सिंक आपके अपने Google Drive का उपयोग करता है। ऑनलाइन नतीजे सीधे स्वतंत्र तृतीय-पक्ष सेवाओं से आते हैं और अनुपलब्ध या कॉपीराइट से सुरक्षित हो सकते हैं। Singbook उनकी सामग्री होस्ट नहीं करता।",
+  "aboutWebsite": "Singbook वेबसाइट",
+  "aboutSourceCode": "GitHub पर स्रोत कोड",
+  "aboutPublisher": "Freevia की ओर से",
+  "aboutLanguages": "ऐप की भाषाएँ: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountDriveFolder": "Google Drive लाइब्रेरी फ़ोल्डर",
+  "accountPrivateDriveFolder": "निजी सिंगबुक फ़ोल्डर",
+  "accountChooseDriveFolder": "फ़ोल्डर चुनें",
+  "accountDriveFolderMoveTitle": "क्या आप अपनी सिंगबुक लाइब्रेरी को स्थानांतरित करना चाहते हैं?",
+  "accountDriveFolderMoveBody": "एक दृश्यमान Google ड्राइव फ़ोल्डर चुनें. सिंगबुक इस पर स्विच करने से पहले आपके गाने और सेटलिस्ट को कॉपी और सत्यापित करेगा। मूल फ़ाइलें बैकअप के रूप में अपने पिछले स्थान पर रहती हैं। अन्य फ़ाइलें अकेली छोड़ दी गई हैं। इस फ़ोल्डर में आपके द्वारा आयात की जाने वाली कॉर्डप्रो फ़ाइलें सिंक के लिए अपनाई जाती हैं और सिंगबुक मेटाडेटा प्राप्त करती हैं।",
+  "accountImportChordPro": "ड्राइव से कॉर्डप्रो आयात करें",
+  "accountImportChordProHint": "इस लाइब्रेरी में जोड़ने के लिए .cho फ़ाइलें चुनें। फ़ोल्डर में पहले से मौजूद फ़ाइलें अपनाई जाती हैं; अन्यत्र फ़ाइलें यहां कॉपी की गई हैं।",
+  "syncErrorFolderPickerUnavailable": "ड्राइव फ़ोल्डर चयन अनुपलब्ध है",
+  "syncErrorFolderPickerUnavailableHint": "समर्थित डिवाइस पर Google Drive पिकर से दिखाई देने वाला Drive फ़ोल्डर चुनें।",
+  "syncErrorDriveFolderMissing": "सिंगबुक ड्राइव फ़ोल्डर अनुपलब्ध है",
+  "syncErrorDriveFolderMissingHint": "फ़ोल्डर को फिर से चुनें, या इसे Google ड्राइव में पुनर्स्थापित करें।",
+  "syncErrorDriveFileAuthorization": "सिंगबुक को इस ड्राइव फ़ोल्डर तक पहुंच की आवश्यकता है",
+  "syncErrorDriveFileAuthorizationHint": "पहुंच प्रदान करने के लिए फिर से फ़ोल्डर चुनें, फिर अपनी लाइब्रेरी को सिंक करें।",
+  "syncErrorFolderMigration": "लाइब्रेरी को अभी तक स्थानांतरित नहीं किया जा सका",
+  "syncErrorFolderMigrationHint": "आपकी पिछली लाइब्रेरी अभी भी सुरक्षित है. कनेक्शन की जाँच करें और पुनः प्रयास करने के लिए फिर से फ़ोल्डर चुनें।",
+  "syncErrorVisibleFolderRequired": "पहले एक दृश्यमान ड्राइव फ़ोल्डर चुनें",
+  "syncErrorVisibleFolderRequiredHint": "ड्राइव से फ़ाइलें आयात करने से पहले एक दृश्यमान लाइब्रेरी फ़ोल्डर की आवश्यकता होती है।",
+  "playerEstimatedKey": "अनुमानित स्वर",
+  "songsLibraryView": "लाइब्रेरी",
+  "settingsStartupView": "इसमें शुरू करें",
+  "settingsStartupViewHint": "ऐप खुलने पर दिखने वाला गानों का दृश्य चुनें।",
+  "settingsStartupLastView": "पिछली बार खोला गया",
+  "playerExpandControls": "प्लेबैक नियंत्रण दिखाएँ",
+  "playerCollapseControls": "प्लेबैक नियंत्रण छिपाएँ",
+  "settingsShowSections": "खंड शीर्षक दिखाएँ",
+  "settingsShowSectionsHint": "गीत के बोलों में अंतरा, मुखड़ा और अन्य खंडों के शीर्षक दिखाएँ।",
+  "settingsShowPlayerControls": "प्लेबैक नियंत्रण दिखाएँ",
+  "settingsShowPlayerControlsHint": "प्लेयर पैनल दिखाने या छिपाने के लिए उसे टैप या स्वाइप भी कर सकते हैं।",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

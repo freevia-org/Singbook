@@ -13,14 +13,52 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Mierīga vieta, kur atrast un sakārtot dziesmas un kopīgi dziedāt no savas dziesmu bibliotēkas.';
+      'Dziesmu vārdi, akordi un dziesmu saraksti vienuviet — gatavi mēģinājumiem, skatuvei un jebkurai vietai, kur spēlējat.';
 
   @override
-  String get aboutMadeForSinging => 'Radīta kopīgai dziedāšanai';
+  String get aboutMadeForSinging => 'Katra dziesma gatava.';
 
   @override
   String get aboutDetails =>
-      'Meklējiet iespējotajos avotos, salīdziniet versijas, glabājiet vārdus un akordus kopā un kārtojiet dziesmas sarakstos. Jūsu bibliotēka tiek saglabāta šajā ierīcē; izvēles sinhronizācijā ar Google Drive tiek izmantots jūsu Google konts. Meklējumi tiek nosūtīti tieši iespējotajiem avotiem.';
+      'Meklējiet pieejamajos avotos un salīdziniet dziesmu vārdus, akordus, laika atzīmes un ieraksta informāciju, pirms saglabājat vēlamo versiju. Pieejamība ir atkarīga no dziesmas un pakalpojuma.';
+
+  @override
+  String get aboutFindTitle => 'Atrodiet īsto versiju';
+
+  @override
+  String get aboutKeepTitle => 'Veidojiet savu bibliotēku';
+
+  @override
+  String get aboutKeepDetails =>
+      'Rediģējiet un transponējiet dziesmas, glabājiet tās vietējā bibliotēkā lietošanai bezsaistē un kopīgojiet pārnēsājamus ChordPro failus. Izvēles sinhronizācija ar Google Drive izmanto privātu lietotnes mapi jūsu Google kontā. Varat arī pieskarties “Sinhronizēt tagad”, lai atjauninātu ierīces.';
+
+  @override
+  String get aboutPlayTitle => 'Ņemiet dziesmu sarakstu līdzi uz skatuvi';
+
+  @override
+  String get aboutPlayDetails =>
+      'Sakārtojiet dziesmas sarakstos, izvēlieties katrai dziesmai tonalitāti un kopīgojiet OpenSong sarakstus. Pielāgojiet lasītāja teksta lielumu, ieslēdziet dziesmu vārdu automātisko ritināšanu un drukājiet dziesmu PDF failus. Singbook netranslē un neatskaņo audio.';
+
+  @override
+  String get aboutPrivacyTitle => 'Bezmaksas un ar uzsvaru uz lokālu lietošanu';
+
+  @override
+  String get aboutPrivacyDetails =>
+      'Singbook ir bezmaksas, bez reklāmām, analītikas un pirkumiem lietotnē. Saglabātā bibliotēka paliek jūsu ierīcē; izvēles sinhronizācijai tiek izmantots jūsu Google Drive. Tiešsaistes rezultātus nodrošina neatkarīgi trešo pušu pakalpojumi; tie var nebūt pieejami vai būt aizsargāti ar autortiesībām. Singbook šo saturu neizvieto.';
+
+  @override
+  String get aboutWebsite => 'Singbook vietne';
+
+  @override
+  String get aboutSourceCode => 'Avota kods vietnē GitHub';
+
+  @override
+  String get aboutPublisher => 'Freevia veidots';
+
+  @override
+  String aboutLanguages(int count) {
+    return 'Lietotnes valodas: $count';
+  }
 
   @override
   String get aboutSupport => 'Atbalsts un atsauksmes';
@@ -1387,6 +1425,68 @@ class AppLocalizationsLv extends AppLocalizations {
       'Bibliotēka tiek sinhronizēta pēc savienojuma izveides un pēc dziesmas pievienošanas, rediģēšanas vai noņemšanas.';
 
   @override
+  String get accountDriveFolder => 'Google diska bibliotēkas mape';
+
+  @override
+  String get accountPrivateDriveFolder => 'Privātā Singbook mape';
+
+  @override
+  String get accountChooseDriveFolder => 'Izvēlieties mapi';
+
+  @override
+  String get accountDriveFolderMoveTitle =>
+      'Vai pārvietot savu dziesmu grāmatu bibliotēku?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Izvēlieties redzamu Google diska mapi. Singbook pirms pārslēgšanās uz to nokopēs un pārbaudīs jūsu dziesmas un setu sarakstus. Oriģinālie faili tiek saglabāti to iepriekšējā atrašanās vietā kā rezerves kopija. Citi faili tiek atstāti atsevišķi. ChordPro faili, ko importējat šajā mapē, tiek pieņemti sinhronizēšanai un saņem Singbook metadatus.';
+
+  @override
+  String get accountImportChordPro => 'Importējiet ChordPro no diska';
+
+  @override
+  String get accountImportChordProHint =>
+      'Izvēlieties .cho failus, ko pievienot šai bibliotēkai. Mapē jau esošie faili tiek pieņemti; šeit tiek kopēti faili citur.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Diska mapes atlase nav pieejama';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Atbalstītā ierīcē izvēlieties redzamu Diska mapi, izmantojot Google diska atlasītāju.';
+
+  @override
+  String get syncErrorDriveFolderMissing => 'Singbook Drive mape nav pieejama';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Vēlreiz izvēlieties mapi vai atjaunojiet to Google diskā.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook ir nepieciešama piekļuve šai Diska mapei';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Vēlreiz izvēlieties mapi, lai piešķirtu piekļuvi, un pēc tam sinhronizējiet savu bibliotēku.';
+
+  @override
+  String get syncErrorFolderMigration => 'Bibliotēku vēl nevarēja pārvietot';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Jūsu iepriekšējā bibliotēka joprojām ir drošībā. Pārbaudiet savienojumu un vēlreiz izvēlieties mapi, lai mēģinātu vēlreiz.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Vispirms izvēlieties redzamu Diska mapi';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Pirms failu importēšanas no Diska ir nepieciešama redzama bibliotēkas mape.';
+
+  @override
   String get accountSignOutTitle => 'Izrakstīties no šī konta?';
 
   @override
@@ -1905,4 +2005,40 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Vēl viena rinda, mazliet [F]tuvāk.';
+
+  @override
+  String get playerEstimatedKey => 'Aptuvenā tonalitāte';
+
+  @override
+  String get songsLibraryView => 'Bibliotēka';
+
+  @override
+  String get settingsStartupView => 'Sākuma skats';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Izvēlieties dziesmu skatu, kas tiks rādīts, atverot lietotni.';
+
+  @override
+  String get settingsStartupLastView => 'Pēdējoreiz atvērtais';
+
+  @override
+  String get playerExpandControls => 'Rādīt atskaņošanas vadīklas';
+
+  @override
+  String get playerCollapseControls => 'Paslēpt atskaņošanas vadīklas';
+
+  @override
+  String get settingsShowSections => 'Rādīt sadaļu virsrakstus';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Dziesmas tekstā rādīt pantu, piedziedājuma un citu sadaļu virsrakstus.';
+
+  @override
+  String get settingsShowPlayerControls => 'Rādīt atskaņošanas vadīklas';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Atskaņotāja paneli var parādīt vai paslēpt arī, pieskaroties tam vai pārvelkot.';
 }

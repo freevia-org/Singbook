@@ -1,8 +1,6 @@
 {
   "@@locale": "lt",
   "appTitle": "Singbook",
-  "aboutDescription": "Rami vieta, kurioje galite rasti dainas, tvarkyti jų rinkinį ir dainuoti kartu.",
-  "aboutMadeForSinging": "Sukurta dainuoti kartu",
   "menuTypeNewSong": "Įvesti naują dainą", "aboutDetails": "Ieškokite įjungtuose šaltiniuose, lyginkite versijas, laikykite žodžius ir akordus kartu, o dainas tvarkykite grojaraščiuose. Jūsų biblioteka saugoma šiame įrenginyje; pasirenkamas sinchronizavimas su Google Drive naudoja jūsų Google paskyrą. Paieškos siunčiamos tiesiai į įjungtus šaltinius.", "aboutSupport": "Pagalba ir atsiliepimai", "appVersion": "Versija {version}",
   "@appVersion": {
     "placeholders": {
@@ -812,5 +810,66 @@
   "editorStandardTuning": "Standartinis derinimas",
   "editorExampleVerse": "[C]Nauja diena mus [G]šaukia,\n[Am]sekame šviesą atgal į [F]namus.",
   "editorExampleChorus": "[F]Dainuokime šią dainą [C]kartu,\n[G]tegu melodija mus neša [C]toliau.",
-  "editorExampleBridge": "[Am]Dar viena eilutė, truputį [F]arčiau."
+  "editorExampleBridge": "[Am]Dar viena eilutė, truputį [F]arčiau.",
+  "aboutMadeForSinging": "Kiekviena daina – paruošta.",
+  "aboutDescription": "Dainų tekstai, akordai ir grojaraščiai vienoje vietoje – paruošti repeticijoms, scenai ir visur, kur grojate.",
+  "aboutDetails": "Ieškokite prieinamuose šaltiniuose ir palyginkite tekstus, akordus, laiką bei įrašo informaciją prieš išsaugodami norimą versiją. Prieinamumas priklauso nuo dainos ir paslaugos.",
+  "aboutFindTitle": "Raskite tinkamą versiją",
+  "aboutKeepTitle": "Kurkite savo biblioteką",
+  "aboutKeepDetails": "Redaguokite ir transponuokite dainas, laikykite jas vietinėje bibliotekoje, kad galėtumėte naudoti neprisijungę, ir bendrinkite perkeliamus ChordPro failus. Pasirenkamas sinchronizavimas su Google Drive naudoja privačią programos aplanką jūsų Google paskyroje. Taip pat galite paliesti „Sinchronizuoti dabar“, kad atnaujintumėte įrenginius.",
+  "aboutPlayTitle": "Pasiimkite grojaraštį į sceną",
+  "aboutPlayDetails": "Sudėliokite dainas į grojaraščius, pasirinkite kiekvienos dainos tonaciją ir bendrinkite OpenSong grojaraščius. Keiskite skaitytuvo teksto dydį, įjunkite automatinį slinkimą ir spausdinkite dainų PDF failus. Singbook netransliuoja ir neatkuria garso.",
+  "aboutPrivacyTitle": "Nemokama ir pirmiausia vietinė",
+  "aboutPrivacyDetails": "Singbook yra nemokama, be reklamų, analizės ir pirkinių programoje. Išsaugota biblioteka lieka jūsų įrenginyje; pasirenkamas sinchronizavimas vyksta per jūsų Google Drive. Internetinius rezultatus tiesiogiai pateikia nepriklausomos trečiųjų šalių paslaugos; jie gali būti nepasiekiami arba saugomi autorių teisių. Singbook šio turinio nesaugo.",
+  "aboutWebsite": "Singbook svetainė",
+  "aboutSourceCode": "Šaltinio kodas GitHub",
+  "aboutPublisher": "Sukūrė Freevia",
+  "aboutLanguages": "Programos kalbos: {count}",
+  "@aboutLanguages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountDriveFolder": "„Google“ disko bibliotekos aplankas",
+  "accountPrivateDriveFolder": "Privatus dainų knygos aplankas",
+  "accountChooseDriveFolder": "Pasirinkite aplanką",
+  "accountDriveFolderMoveTitle": "Perkelti dainų knygų biblioteką?",
+  "accountDriveFolderMoveBody": "Pasirinkite matomą „Google“ disko aplanką. „Singbook“ nukopijuos ir patikrins jūsų dainas ir rinkinių sąrašus prieš perjungdamas į jį. Originalūs failai lieka ankstesnėje vietoje kaip atsarginė kopija. Kiti failai paliekami ramybėje. „ChordPro“ failai, kuriuos importuojate į šį aplanką, yra pritaikyti sinchronizuoti ir gauti „Singbook“ metaduomenis.",
+  "accountImportChordPro": "Importuokite „ChordPro“ iš Disko",
+  "accountImportChordProHint": "Pasirinkite .cho failus, kuriuos norite pridėti prie šios bibliotekos. Aplanke jau esantys failai priimami; čia kopijuojami failai kitur.",
+  "syncErrorFolderPickerUnavailable": "Disko aplanko pasirinkimas negalimas",
+  "syncErrorFolderPickerUnavailableHint": "Palaikomame įrenginyje pasirinkite matomą Disko aplanką naudodami „Google“ disko parinkiklį.",
+  "syncErrorDriveFolderMissing": "Singbook Drive aplankas nepasiekiamas",
+  "syncErrorDriveFolderMissingHint": "Dar kartą pasirinkite aplanką arba atkurkite jį „Google“ diske.",
+  "syncErrorDriveFileAuthorization": "Singbook reikia prieigos prie šio Disko aplanko",
+  "syncErrorDriveFileAuthorizationHint": "Dar kartą pasirinkite aplanką, kad suteiktumėte prieigą, tada sinchronizuokite biblioteką.",
+  "syncErrorFolderMigration": "Bibliotekos kol kas nepavyko perkelti",
+  "syncErrorFolderMigrationHint": "Jūsų ankstesnė biblioteka vis dar saugi. Patikrinkite ryšį ir dar kartą pasirinkite aplanką, kad bandykite dar kartą.",
+  "syncErrorVisibleFolderRequired": "Pirmiausia pasirinkite matomą Disko aplanką",
+  "syncErrorVisibleFolderRequiredHint": "Prieš importuojant failus iš Disko, būtinas matomas bibliotekos aplankas.",
+  "playerEstimatedKey": "Numatoma tonacija",
+  "songsLibraryView": "Biblioteka",
+  "settingsStartupView": "Paleisti rodant",
+  "settingsStartupViewHint": "Pasirinkite dainų rodinį, kuris bus rodomas atidarius programą.",
+  "settingsStartupLastView": "Paskutinį kartą atidarytas",
+  "playerExpandControls": "Rodyti atkūrimo valdiklius",
+  "playerCollapseControls": "Slėpti atkūrimo valdiklius",
+  "settingsShowSections": "Rodyti dalių antraštes",
+  "settingsShowSectionsHint": "Dainos žodžiuose rodyti posmų, priedainio ir kitų dalių antraštes.",
+  "settingsShowPlayerControls": "Rodyti atkūrimo valdiklius",
+  "settingsShowPlayerControlsHint": "Grotuvo skydelį taip pat galite parodyti arba paslėpti jį palietę ar perbraukę.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }
