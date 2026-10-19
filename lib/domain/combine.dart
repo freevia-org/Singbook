@@ -1041,6 +1041,7 @@ SongDocument combineSources(
       if (entry.value is Map && !metadata.containsKey(entry.key)) {
         final available = <String, dynamic>{};
         for (final mapEntry in jsonMap(entry.value).entries) {
+          if (!_hasMetadata(mapEntry.value)) continue;
           final conflictKey = '${entry.key}.${mapEntry.key}';
           if (conflicts.containsKey(conflictKey)) {
             (conflicts[conflictKey] as List<dynamic>).add({
@@ -1084,7 +1085,8 @@ SongDocument combineSources(
               },
             );
             for (final mapKey in jsonMap(entry.value).keys) {
-              if (!conflicts.containsKey('${entry.key}.$mapKey')) {
+              if (_hasMetadata(jsonMap(entry.value)[mapKey]) &&
+                  !conflicts.containsKey('${entry.key}.$mapKey')) {
                 contributors.putIfAbsent(mapKey, () => {}).add(source.id);
               }
             }

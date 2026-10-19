@@ -613,6 +613,79 @@ void main() {
     }
   });
 
+  test('empty nested donor facts do not create fields or conflict claims', () {
+    const lyrics = 'Amber lanterns glow\nSilver rain returns';
+    for (final empty in [null, '', '  ', <dynamic>[], <String, dynamic>{}]) {
+      final emptyDonor = source(
+        '0-empty',
+        lyrics,
+        metadata: {
+          'externalIdentifiers': {'isrc': empty},
+        },
+      );
+      final a = source(
+        'a',
+        lyrics,
+        metadata: {
+          'externalIdentifiers': {'isrc': 'donor-a'},
+        },
+      );
+      final b = source(
+        'b',
+        lyrics,
+        metadata: {
+          'externalIdentifiers': {'isrc': 'donor-b'},
+        },
+      );
+      final absent = combineSources(selected, [
+        source('lyrics', lyrics),
+        emptyDonor,
+      ], preferredSourceId: 'lyrics:song');
+      expect(absent.metadata, isNot(contains('externalIdentifiers')));
+      expect(
+        absent.extra['fieldContributors'],
+        isNot(contains('externalIdentifiers')),
+      );
+      final selectedEmpty = combineSources(
+        SongCandidate(
+          providerId: 'catalog',
+          id: 'song',
+          title: 'Song',
+          artist: 'Artist',
+          metadata: {
+            'externalIdentifiers': {'isrc': empty},
+          },
+        ),
+        [source('lyrics', lyrics), emptyDonor],
+        preferredSourceId: 'lyrics:song',
+      );
+      expect(selectedEmpty.metadata['externalIdentifiers'], {'isrc': empty});
+      expect(selectedEmpty.extra['fieldContributors']['externalIdentifiers'], [
+        'catalog:song',
+      ]);
+      final filled = combineSources(selected, [
+        source('lyrics', lyrics),
+        emptyDonor,
+        a,
+      ], preferredSourceId: 'lyrics:song');
+      expect(filled.metadata['externalIdentifiers'], {'isrc': 'donor-a'});
+      expect(filled.extra['fieldContributors']['externalIdentifiers'], [
+        'a:song',
+      ]);
+      final disputed = combineSources(selected, [
+        source('lyrics', lyrics),
+        a,
+        b,
+        source('z-empty', lyrics, metadata: emptyDonor.metadata),
+      ], preferredSourceId: 'lyrics:song');
+      expect(disputed.metadata, isNot(contains('externalIdentifiers')));
+      expect(disputed.extra['conflicts']['externalIdentifiers.isrc'], [
+        {'sourceId': 'a:song', 'value': 'donor-a'},
+        {'sourceId': 'b:song', 'value': 'donor-b'},
+      ]);
+    }
+  });
+
   test('display duration validates legacy duration aliases', () {
     for (final invalid in [0, -1, double.infinity, double.nan, 86401]) {
       final song = combineSources(selected, [

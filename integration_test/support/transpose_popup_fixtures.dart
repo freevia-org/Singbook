@@ -9,7 +9,9 @@ const transposePopupFixtures = [
         '[Gm7b5]Harbor [C7]lights\n[Fm]Quiet [Fm/C]water [Fm/E]turns\n'
         '[Fm/Eb]Beneath [Fm/D]the [Db]sky [C7]tonight',
     shifted: ['Am7b5', 'D7', 'Gm', 'Gm/D', 'Gm/F#', 'Gm/F', 'Gm/E', 'Eb', 'D7'],
-    shiftedKey: null,
+    // Display-only estimate after shifting F minor up two semitones. The
+    // source key stays absent and the transpose menu still uses offsets.
+    shiftedKey: 'Gm',
     original: [
       'Gm7b5',
       'C7',
