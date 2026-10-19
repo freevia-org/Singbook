@@ -6,6 +6,7 @@ import 'package:sqflite/sqflite.dart';
 import '../domain/models.dart';
 import '../domain/chordpro.dart';
 import '../domain/arrangement.dart';
+import '../domain/song_identity.dart';
 
 double? _validDuration(Object? value) {
   if (value is! num) return null;
@@ -632,6 +633,106 @@ class LibraryRepository {
       whereArgs: [song.id],
     );
     if (updated == 0) await txn.insert('songs', values);
+  }
+
+  /// An explicit comparison Save replaces the preferred version in place.
+  /// Keep this separate from file imports and stale-editor conflict handling.
+  /// Matching and writing share one transaction, including concurrent saves.
+  Future<SongDocument> saveChosenSong(SongDocument song) async {
+    song = _sanitizeImportedDurations(song);
+    final selected = song.selectedRecording;
+    if (selected == null) {
+      throw ArgumentError('Missing selected song reference');
+    }
+    return database.transaction((txn) async {
+      final rows = await txn.query(
+        'songs',
+        columns: const [
+          'id',
+          'favorite',
+          'revision',
+          'created_at',
+          'updated_at',
+          'content_hash',
+          'full_document_hash',
+          _boundedDocumentColumn,
+          _boundedFullDocumentColumn,
+        ],
+        orderBy: 'created_at, id',
+      );
+      SongDocument? existing;
+      var bestPriority = 0;
+      for (final row in rows) {
+        // The persisted reference can differ from locally edited display
+        // metadata. Resolve it from the same snapshot rather than trusting an
+        // in-memory ID or filtering only on the visible title and artist.
+        final stored = await _readSong(txn, row);
+        final priority = librarySongMatchPriority(stored, selected);
+        // Exact reference first; ties keep the earliest-created library ID.
+        // Pre-existing duplicates are not deleted or silently consolidated.
+        if (priority > bestPriority) {
+          existing = stored;
+          bestPriority = priority;
+        }
+      }
+      if (existing == null) return (await _importSong(txn, song)).song;
+      if (existing.extensionError != null) {
+        throw const FormatException('invalid_local_data');
+      }
+      final sources = <String, SourceResult>{};
+      String sourceKey(SourceResult source) =>
+          '${source.id}:${sha256.convert(utf8.encode(source.body))}';
+      for (final source in existing.sources) {
+        // Retain source history/raw timing for Compare versions, but never
+        // promote an archived version's timing onto the newly selected body.
+        sources[sourceKey(source)] = source.copyWith(
+          timingTracks: [
+            for (final track in source.timingTracks)
+              track.status == TimingStatus.usable
+                  ? track.copyWith(status: TimingStatus.stale)
+                  : track,
+          ],
+        );
+      }
+      for (final source in song.sources) {
+        sources[sourceKey(source)] = source;
+      }
+      final replacement = SongDocument(
+        id: existing.id,
+        title: song.title,
+        artist: song.artist,
+        body: song.body,
+        metadata: {
+          ...song.metadata,
+          for (final entry in existing.metadata.entries)
+            if (entry.key.startsWith('x_verse_player_')) entry.key: entry.value,
+        },
+        favorite: existing.favorite,
+        createdAt: existing.createdAt,
+        updatedAt: DateTime.now().toUtc(),
+        revision: existing.revision + 1,
+        selectedRecording: song.selectedRecording,
+        sources: sources.values.toList(),
+        timingTracks: song.timingTracks,
+        activeTimingTrackId: song.activeTimingTrackId,
+        extra: {
+          ...song.extra,
+          if (existing.extra['rawAssets'] is Map ||
+              song.extra['rawAssets'] is Map)
+            'rawAssets': {
+              ...jsonMap(existing.extra['rawAssets']),
+              ...jsonMap(song.extra['rawAssets']),
+            },
+        },
+        preservedExtensions: {
+          ...existing.preservedExtensions,
+          ...song.preservedExtensions,
+        }.toList(),
+      );
+      await _writeSong(txn, replacement, _codec.encode(replacement));
+      await _queue(txn, replacement.id, 'song', 'save', replacement.revision);
+      return replacement;
+    });
   }
 
   Future<SongDocument> saveImportedSong(
