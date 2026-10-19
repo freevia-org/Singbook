@@ -30,7 +30,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get aboutKeepDetails =>
-      'Modifiez et transposez les chansons, enregistrez-les localement sous forme de fichiers ChordPro portables et utilisez les chansons enregistrées hors ligne. La synchronisation facultative avec Google Drive utilise un dossier privé de l’application dans votre compte Google. Vous pouvez aussi appuyer sur Synchroniser maintenant pour mettre vos appareils à jour.';
+      'Modifiez et transposez les chansons, conservez-les dans votre bibliothèque locale pour les utiliser hors ligne et partagez des fichiers ChordPro portables. La synchronisation facultative avec Google Drive utilise un dossier privé de l’application dans votre compte Google. Vous pouvez aussi appuyer sur Synchroniser maintenant pour mettre vos appareils à jour.';
 
   @override
   String get aboutPlayTitle => 'Emportez votre liste sur scène';

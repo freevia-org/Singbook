@@ -30,7 +30,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get aboutKeepDetails =>
-      'Edit dan ubah nada lagu, simpan secara lokal sebagai file ChordPro portabel, dan gunakan lagu tersimpan secara offline. Sinkronisasi opsional dengan Google Drive menggunakan folder aplikasi pribadi di akun Google Anda. Anda juga dapat mengetuk Sinkronkan sekarang untuk memperbarui perangkat.';
+      'Edit dan ubah nada lagu, simpan di perpustakaan lokal agar dapat digunakan secara offline, dan bagikan file ChordPro portabel. Sinkronisasi opsional dengan Google Drive menggunakan folder aplikasi pribadi di akun Google Anda. Anda juga dapat mengetuk Sinkronkan sekarang untuk memperbarui perangkat.';
 
   @override
   String get aboutPlayTitle => 'Bawa daftar lagu ke panggung';

@@ -30,7 +30,7 @@ class AppLocalizationsMt extends AppLocalizations {
 
   @override
   String get aboutKeepDetails =>
-      'Editja u ttrasponi l-kanzunetti, issejvjahom lokalment bħala fajls ChordPro li tista’ ġġorr magħkom, u uża l-kanzunetti ssejvjati offline. Is-sinkronizzazzjoni fakultattiva ma’ Google Drive tuża folder privat tal-app fil-kont Google tiegħek. Tista’ wkoll tagħfas “Issinkronizza issa” biex taġġorna t-tagħmir tiegħek.';
+      'Editja u ttrasponi l-kanzunetti, żommhom fil-librerija lokali biex tużahom offline, u aqsam fajls ChordPro portabbli. Is-sinkronizzazzjoni fakultattiva ma’ Google Drive tuża folder privat tal-app fil-kont Google tiegħek. Tista’ wkoll tagħfas “Issinkronizza issa” biex taġġorna t-tagħmir tiegħek.';
 
   @override
   String get aboutPlayTitle => 'Ħu s-setlist tiegħek fuq il-palk';

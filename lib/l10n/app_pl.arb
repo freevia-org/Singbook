@@ -816,7 +816,7 @@
   "aboutDetails": "Przeszukuj dostępne źródła i porównuj teksty, akordy, znaczniki czasowe oraz informacje o nagraniu, zanim zapiszesz wybraną wersję. Dostępność zależy od utworu i usługi.",
   "aboutFindTitle": "Znajdź właściwą wersję",
   "aboutKeepTitle": "Zbuduj własną bibliotekę",
-  "aboutKeepDetails": "Edytuj i transponuj utwory, zapisuj je lokalnie jako przenośne pliki ChordPro i korzystaj z nich offline. Opcjonalna synchronizacja z Google Drive używa prywatnego folderu aplikacji na Twoim koncie Google. Możesz też stuknąć „Synchronizuj teraz”, aby zaktualizować urządzenia.",
+  "aboutKeepDetails": "Edytuj i transponuj utwory, przechowuj je w lokalnej bibliotece do użytku offline i udostępniaj przenośne pliki ChordPro. Opcjonalna synchronizacja z Google Drive używa prywatnego folderu aplikacji na Twoim koncie Google. Możesz też stuknąć „Synchronizuj teraz”, aby zaktualizować urządzenia.",
   "aboutPlayTitle": "Zabierz setlistę na scenę",
   "aboutPlayDetails": "Układaj utwory w setlisty, wybieraj tonację dla każdego i udostępniaj setlisty OpenSong. Dostosuj rozmiar tekstu w czytniku, włącz automatyczne przewijanie tekstu i drukuj PDF-y z utworami. Singbook nie przesyła strumieniowo ani nie odtwarza dźwięku.",
   "aboutPrivacyTitle": "Bezpłatna aplikacja, biblioteka na urządzeniu",

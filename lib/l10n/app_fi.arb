@@ -815,7 +815,7 @@
   "editorExampleBridge": "[Am]Vielä yksi rivi, hieman [F]lähempänä.",
   "aboutFindTitle": "Löydä oikea versio",
   "aboutKeepTitle": "Rakenna oma kirjastosi",
-  "aboutKeepDetails": "Muokkaa ja transponoi kappaleita, tallenna ne paikallisesti siirrettävinä ChordPro-tiedostoina ja käytä tallennettuja kappaleita offline-tilassa. Valinnainen Google Drive -synkronointi käyttää Google-tilisi yksityistä sovelluskansiota. Voit myös päivittää laitteesi napauttamalla Synkronoi nyt.",
+  "aboutKeepDetails": "Muokkaa ja transponoi kappaleita, pidä ne paikallisessa kirjastossasi offline-käyttöä varten ja jaa siirrettäviä ChordPro-tiedostoja. Valinnainen Google Drive -synkronointi käyttää Google-tilisi yksityistä sovelluskansiota. Voit myös päivittää laitteesi napauttamalla Synkronoi nyt.",
   "aboutPlayTitle": "Vie kappalelista lavalle",
   "aboutPlayDetails": "Järjestä kappaleet listoiksi, valitse kullekin kappaleelle sävellaji ja jaa OpenSong-listoja. Säädä lukijan tekstin kokoa ja sanoitusten automaattista vieritystä sekä tulosta kappaleiden PDF-tiedostoja. Singbook ei suoratoista eikä toista ääntä.",
   "aboutPrivacyTitle": "Maksuton ja paikallinen",

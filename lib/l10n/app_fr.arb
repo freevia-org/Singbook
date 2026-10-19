@@ -815,7 +815,7 @@
   "editorExampleBridge": "[Am]Encore une ligne, un peu plus [F]près.",
   "aboutFindTitle": "Trouvez la bonne version",
   "aboutKeepTitle": "Créez votre propre bibliothèque",
-  "aboutKeepDetails": "Modifiez et transposez les chansons, enregistrez-les localement sous forme de fichiers ChordPro portables et utilisez les chansons enregistrées hors ligne. La synchronisation facultative avec Google Drive utilise un dossier privé de l’application dans votre compte Google. Vous pouvez aussi appuyer sur Synchroniser maintenant pour mettre vos appareils à jour.",
+  "aboutKeepDetails": "Modifiez et transposez les chansons, conservez-les dans votre bibliothèque locale pour les utiliser hors ligne et partagez des fichiers ChordPro portables. La synchronisation facultative avec Google Drive utilise un dossier privé de l’application dans votre compte Google. Vous pouvez aussi appuyer sur Synchroniser maintenant pour mettre vos appareils à jour.",
   "aboutPlayTitle": "Emportez votre liste sur scène",
   "aboutPlayDetails": "Organisez les chansons en listes, choisissez une tonalité pour chacune et partagez des listes OpenSong. Réglez le texte du lecteur et le défilement automatique des paroles, puis imprimez des PDF de chansons. Singbook ne diffuse ni ne lit de fichiers audio.",
   "aboutPrivacyTitle": "Gratuit et axé sur le stockage local",

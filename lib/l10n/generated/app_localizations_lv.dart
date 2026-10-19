@@ -30,7 +30,7 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String get aboutKeepDetails =>
-      'Rediģējiet un transponējiet dziesmas, saglabājiet tās ierīcē kā pārnēsājamus ChordPro failus un lietojiet bezsaistē. Izvēles sinhronizācija ar Google Drive izmanto privātu lietotnes mapi jūsu Google kontā. Varat arī pieskarties “Sinhronizēt tagad”, lai atjauninātu ierīces.';
+      'Rediģējiet un transponējiet dziesmas, glabājiet tās vietējā bibliotēkā lietošanai bezsaistē un kopīgojiet pārnēsājamus ChordPro failus. Izvēles sinhronizācija ar Google Drive izmanto privātu lietotnes mapi jūsu Google kontā. Varat arī pieskarties “Sinhronizēt tagad”, lai atjauninātu ierīces.';
 
   @override
   String get aboutPlayTitle => 'Ņemiet dziesmu sarakstu līdzi uz skatuvi';

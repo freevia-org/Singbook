@@ -815,7 +815,7 @@
   "editorExampleBridge": "[Am]Még egy sor, egy kicsit [F]közelebb.",
   "aboutFindTitle": "Találd meg a megfelelő változatot",
   "aboutKeepTitle": "Építsd fel saját könyvtáradat",
-  "aboutKeepDetails": "Szerkeszd és transzponáld a dalokat, mentsd őket helyben hordozható ChordPro-fájlként, és használd a mentett dalokat offline. Az opcionális Google Drive-szinkronizálás a Google-fiókod privát alkalmazásmappáját használja. A készülékeid frissítéséhez a Szinkronizálás most lehetőségre is koppinthatsz.",
+  "aboutKeepDetails": "Szerkeszd és transzponáld a dalokat, tartsd őket a helyi könyvtáradban offline használatra, és ossz meg hordozható ChordPro-fájlokat. Az opcionális Google Drive-szinkronizálás a Google-fiókod privát alkalmazásmappáját használja. A készülékeid frissítéséhez a Szinkronizálás most lehetőségre is koppinthatsz.",
   "aboutPlayTitle": "Vidd a dallistádat a színpadra",
   "aboutPlayDetails": "Rendezd a dalokat dallistákba, válassz hangnemet minden dalhoz, és ossz meg OpenSong-dallistákat. Állítsd be az olvasó szövegét és a dalszövegek automatikus görgetését, és nyomtass dal-PDF-eket. A Singbook nem streamel és nem játszik le hangot.",
   "aboutPrivacyTitle": "Ingyenes és helyi használatra épül",

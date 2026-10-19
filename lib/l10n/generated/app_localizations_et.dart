@@ -30,7 +30,7 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get aboutKeepDetails =>
-      'Töötle ja transponeeri laule, salvesta need kohapeal kaasaskantavate ChordPro-failidena ning kasuta salvestatud laule võrguühenduseta. Valikuline Google Drive’i sünkroonimine kasutab sinu Google’i kontol rakenduse privaatkausta. Seadmete uuendamiseks võid puudutada ka nuppu „Sünkrooni kohe“.';
+      'Töötle ja transponeeri laule, hoia neid võrguühenduseta kasutamiseks oma kohalikus kogus ning jaga kaasaskantavaid ChordPro-faile. Valikuline Google Drive’i sünkroonimine kasutab sinu Google’i kontol rakenduse privaatkausta. Seadmete uuendamiseks võid puudutada ka nuppu „Sünkrooni kohe“.';
 
   @override
   String get aboutPlayTitle => 'Võta oma nimekiri lavale kaasa';

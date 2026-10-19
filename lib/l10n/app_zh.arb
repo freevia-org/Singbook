@@ -816,7 +816,7 @@
   "aboutDetails": "搜索可用来源，比较歌词、和弦、时间信息和录音详情，再保存想演奏的版本。内容是否可用取决于歌曲和服务。",
   "aboutFindTitle": "找到合适的版本",
   "aboutKeepTitle": "建立自己的曲库",
-  "aboutKeepDetails": "编辑和移调歌曲，将其作为便携的 ChordPro 文件保存在本地，并离线使用。可选的 Google Drive 同步会使用你 Google 帐号中的应用专用私密文件夹。你也可以点按“立即同步”来更新设备。",
+  "aboutKeepDetails": "编辑和移调歌曲，将其保存在本地曲库中以便离线使用，并分享便携的 ChordPro 文件。可选的 Google Drive 同步会使用你 Google 帐号中的应用专用私密文件夹。你也可以点按“立即同步”来更新设备。",
   "aboutPlayTitle": "带着歌单登上舞台",
   "aboutPlayDetails": "将歌曲编入演出歌单，为每首歌选择调性，并分享 OpenSong 歌单。调整阅读器文字大小、自动滚动歌词，也可打印歌曲 PDF。Singbook 不会串流或播放音频。",
   "aboutPrivacyTitle": "免费使用，优先本地存储",

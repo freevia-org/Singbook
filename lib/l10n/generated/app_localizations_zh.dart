@@ -29,7 +29,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get aboutKeepDetails =>
-      '编辑和移调歌曲，将其作为便携的 ChordPro 文件保存在本地，并离线使用。可选的 Google Drive 同步会使用你 Google 帐号中的应用专用私密文件夹。你也可以点按“立即同步”来更新设备。';
+      '编辑和移调歌曲，将其保存在本地曲库中以便离线使用，并分享便携的 ChordPro 文件。可选的 Google Drive 同步会使用你 Google 帐号中的应用专用私密文件夹。你也可以点按“立即同步”来更新设备。';
 
   @override
   String get aboutPlayTitle => '带着歌单登上舞台';

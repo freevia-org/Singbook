@@ -30,7 +30,7 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get aboutKeepDetails =>
-      'Redigera och transponera låtar, spara dem lokalt som portabla ChordPro-filer och använd sparade låtar offline. Valfri synkronisering med Google Drive använder en privat appmapp i ditt Google-konto. Du kan också trycka på ”Synkronisera nu” för att uppdatera dina enheter.';
+      'Redigera och transponera låtar, behåll dem i det lokala biblioteket för offlineanvändning och dela portabla ChordPro-filer. Valfri synkronisering med Google Drive använder en privat appmapp i ditt Google-konto. Du kan också trycka på ”Synkronisera nu” för att uppdatera dina enheter.';
 
   @override
   String get aboutPlayTitle => 'Ta med setlistan upp på scenen';

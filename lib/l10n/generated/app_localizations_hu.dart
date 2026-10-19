@@ -30,7 +30,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get aboutKeepDetails =>
-      'Szerkeszd és transzponáld a dalokat, mentsd őket helyben hordozható ChordPro-fájlként, és használd a mentett dalokat offline. Az opcionális Google Drive-szinkronizálás a Google-fiókod privát alkalmazásmappáját használja. A készülékeid frissítéséhez a Szinkronizálás most lehetőségre is koppinthatsz.';
+      'Szerkeszd és transzponáld a dalokat, tartsd őket a helyi könyvtáradban offline használatra, és ossz meg hordozható ChordPro-fájlokat. Az opcionális Google Drive-szinkronizálás a Google-fiókod privát alkalmazásmappáját használja. A készülékeid frissítéséhez a Szinkronizálás most lehetőségre is koppinthatsz.';
 
   @override
   String get aboutPlayTitle => 'Vidd a dallistádat a színpadra';

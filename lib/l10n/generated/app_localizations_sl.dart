@@ -30,7 +30,7 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get aboutKeepDetails =>
-      'Urejajte in transponirajte pesmi, jih lokalno shranite kot prenosne datoteke ChordPro ter jih uporabljajte brez povezave. Izbirna sinhronizacija z Google Drive uporablja zasebno mapo aplikacije v vašem Google računu. Naprave lahko posodobite tudi tako, da tapnete »Sinhroniziraj zdaj«.';
+      'Urejajte in transponirajte pesmi, hranite jih v lokalni knjižnici za uporabo brez povezave ter delite prenosne datoteke ChordPro. Izbirna sinhronizacija z Google Drive uporablja zasebno mapo aplikacije v vašem Google računu. Naprave lahko posodobite tudi tako, da tapnete »Sinhroniziraj zdaj«.';
 
   @override
   String get aboutPlayTitle => 'Odnesite seznam skladb na oder';

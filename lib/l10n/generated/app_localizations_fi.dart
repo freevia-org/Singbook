@@ -30,7 +30,7 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get aboutKeepDetails =>
-      'Muokkaa ja transponoi kappaleita, tallenna ne paikallisesti siirrettävinä ChordPro-tiedostoina ja käytä tallennettuja kappaleita offline-tilassa. Valinnainen Google Drive -synkronointi käyttää Google-tilisi yksityistä sovelluskansiota. Voit myös päivittää laitteesi napauttamalla Synkronoi nyt.';
+      'Muokkaa ja transponoi kappaleita, pidä ne paikallisessa kirjastossasi offline-käyttöä varten ja jaa siirrettäviä ChordPro-tiedostoja. Valinnainen Google Drive -synkronointi käyttää Google-tilisi yksityistä sovelluskansiota. Voit myös päivittää laitteesi napauttamalla Synkronoi nyt.';
 
   @override
   String get aboutPlayTitle => 'Vie kappalelista lavalle';

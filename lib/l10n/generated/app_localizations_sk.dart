@@ -30,7 +30,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get aboutKeepDetails =>
-      'Upravujte a transponujte piesne, ukladajte ich lokálne ako prenosné súbory ChordPro a používajte ich offline. Voliteľná synchronizácia s Google Drive používa súkromný priečinok aplikácie vo vašom účte Google. Zariadenia môžete aktualizovať aj klepnutím na „Synchronizovať teraz“.';
+      'Upravujte a transponujte piesne, uchovávajte ich v miestnej knižnici na používanie offline a zdieľajte prenosné súbory ChordPro. Voliteľná synchronizácia s Google Drive používa súkromný priečinok aplikácie vo vašom účte Google. Zariadenia môžete aktualizovať aj klepnutím na „Synchronizovať teraz“.';
 
   @override
   String get aboutPlayTitle => 'Vezmite si zoznam skladieb na pódium';

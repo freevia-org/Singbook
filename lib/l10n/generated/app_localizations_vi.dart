@@ -30,7 +30,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get aboutKeepDetails =>
-      'Chỉnh sửa và chuyển tông bài hát, lưu cục bộ dưới dạng tệp ChordPro dễ mang theo và dùng ngoại tuyến. Tùy chọn đồng bộ Google Drive sử dụng thư mục riêng của ứng dụng trong tài khoản Google của bạn. Bạn cũng có thể nhấn “Đồng bộ ngay” để cập nhật các thiết bị.';
+      'Chỉnh sửa và chuyển tông bài hát, lưu trong thư viện cục bộ để dùng ngoại tuyến và chia sẻ các tệp ChordPro dễ mang theo. Tùy chọn đồng bộ Google Drive sử dụng thư mục riêng của ứng dụng trong tài khoản Google của bạn. Bạn cũng có thể nhấn “Đồng bộ ngay” để cập nhật các thiết bị.';
 
   @override
   String get aboutPlayTitle => 'Mang danh sách biểu diễn lên sân khấu';

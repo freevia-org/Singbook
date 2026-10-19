@@ -816,7 +816,7 @@
   "aboutDetails": "Kullanılabilir kaynaklarda arama yapın; çalmak istediğiniz sürümü kaydetmeden önce şarkı sözlerini, akorları, zamanlamayı ve kayıt bilgilerini karşılaştırın. Kullanılabilirlik şarkıya ve hizmete göre değişir.",
   "aboutFindTitle": "Doğru sürümü bulun",
   "aboutKeepTitle": "Kendi kitaplığınızı oluşturun",
-  "aboutKeepDetails": "Şarkıları düzenleyip transpoze edin, taşınabilir ChordPro dosyaları olarak cihazınıza kaydedin ve çevrimdışı kullanın. İsteğe bağlı Google Drive eşitlemesi, Google hesabınızdaki özel bir uygulama klasörünü kullanır. Cihazlarınızı güncellemek için “Şimdi eşitle”ye de dokunabilirsiniz.",
+  "aboutKeepDetails": "Şarkıları düzenleyip transpoze edin, çevrimdışı kullanmak için yerel kitaplığınızda tutun ve taşınabilir ChordPro dosyalarını paylaşın. İsteğe bağlı Google Drive eşitlemesi, Google hesabınızdaki özel bir uygulama klasörünü kullanır. Cihazlarınızı güncellemek için “Şimdi eşitle”ye de dokunabilirsiniz.",
   "aboutPlayTitle": "Set listenizi sahneye taşıyın",
   "aboutPlayDetails": "Şarkıları set listelerinde sıralayın, her şarkı için bir ton seçin ve OpenSong set listelerini paylaşın. Okuyucu metninin boyutunu ayarlayın, şarkı sözlerini otomatik kaydırın ve şarkı PDF’lerini yazdırın. Singbook ses akışı sağlamaz veya ses çalmaz.",
   "aboutPrivacyTitle": "Ücretsiz ve öncelikle yerel",

@@ -30,7 +30,7 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get aboutKeepDetails =>
-      'Redaguokite ir transponuokite dainas, išsaugokite jas įrenginyje kaip perkeliamus ChordPro failus ir naudokite neprisijungę. Pasirenkamas sinchronizavimas su Google Drive naudoja privačią programos aplanką jūsų Google paskyroje. Taip pat galite paliesti „Sinchronizuoti dabar“, kad atnaujintumėte įrenginius.';
+      'Redaguokite ir transponuokite dainas, laikykite jas vietinėje bibliotekoje, kad galėtumėte naudoti neprisijungę, ir bendrinkite perkeliamus ChordPro failus. Pasirenkamas sinchronizavimas su Google Drive naudoja privačią programos aplanką jūsų Google paskyroje. Taip pat galite paliesti „Sinchronizuoti dabar“, kad atnaujintumėte įrenginius.';
 
   @override
   String get aboutPlayTitle => 'Pasiimkite grojaraštį į sceną';

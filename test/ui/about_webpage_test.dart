@@ -159,7 +159,7 @@ Future<void> _snapshot(WidgetTester tester, GlobalKey key, String name) async {
         key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
     final image = await boundary.toImage(pixelRatio: 1);
     final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
-    final output = Directory('artifacts/about-webpage/captures-v3')
+    final output = Directory('artifacts/about-webpage/captures-v4')
       ..createSync(recursive: true);
     File(
       '${output.path}/$name.png',

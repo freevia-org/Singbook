@@ -30,7 +30,7 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get aboutKeepDetails =>
-      'Editează și transpune melodiile, salvează-le local ca fișiere ChordPro portabile și folosește-le offline. Sincronizarea opțională cu Google Drive folosește un dosar privat al aplicației din contul tău Google. Poți atinge și „Sincronizează acum” pentru a actualiza dispozitivele.';
+      'Editează și transpune melodiile, păstrează-le în biblioteca locală pentru a le folosi offline și distribuie fișiere ChordPro portabile. Sincronizarea opțională cu Google Drive folosește un dosar privat al aplicației din contul tău Google. Poți atinge și „Sincronizează acum” pentru a actualiza dispozitivele.';
 
   @override
   String get aboutPlayTitle => 'Ia lista de melodii pe scenă';

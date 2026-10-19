@@ -30,7 +30,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get aboutKeepDetails =>
-      '곡을 편집하고 조옮김한 뒤 휴대하기 좋은 ChordPro 파일로 기기에 저장하고 오프라인에서도 사용할 수 있습니다. Google Drive 동기화는 선택 사항이며 Google 계정의 비공개 앱 폴더를 사용합니다. ‘지금 동기화’를 눌러 기기를 업데이트할 수도 있습니다.';
+      '곡을 편집하고 조옮김해 로컬 라이브러리에 보관하면 오프라인에서도 사용할 수 있고, 휴대용 ChordPro 파일로 공유할 수도 있습니다. Google Drive 동기화는 선택 사항이며 Google 계정의 비공개 앱 폴더를 사용합니다. ‘지금 동기화’를 눌러 기기를 업데이트할 수도 있습니다.';
 
   @override
   String get aboutPlayTitle => '세트리스트를 무대로 가져가기';

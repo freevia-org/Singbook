@@ -30,7 +30,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get aboutKeepDetails =>
-      'Şarkıları düzenleyip transpoze edin, taşınabilir ChordPro dosyaları olarak cihazınıza kaydedin ve çevrimdışı kullanın. İsteğe bağlı Google Drive eşitlemesi, Google hesabınızdaki özel bir uygulama klasörünü kullanır. Cihazlarınızı güncellemek için “Şimdi eşitle”ye de dokunabilirsiniz.';
+      'Şarkıları düzenleyip transpoze edin, çevrimdışı kullanmak için yerel kitaplığınızda tutun ve taşınabilir ChordPro dosyalarını paylaşın. İsteğe bağlı Google Drive eşitlemesi, Google hesabınızdaki özel bir uygulama klasörünü kullanır. Cihazlarınızı güncellemek için “Şimdi eşitle”ye de dokunabilirsiniz.';
 
   @override
   String get aboutPlayTitle => 'Set listenizi sahneye taşıyın';

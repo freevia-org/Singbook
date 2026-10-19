@@ -30,7 +30,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get aboutKeepDetails =>
-      'Bewerk en transposeer nummers, sla ze lokaal op als draagbare ChordPro-bestanden en gebruik opgeslagen nummers offline. Optionele Google Drive-synchronisatie gebruikt een privémap van de app in je Google-account. Je kunt ook op ‘Nu synchroniseren’ tikken om je apparaten bij te werken.';
+      'Bewerk en transposeer nummers, bewaar ze in je lokale bibliotheek om ze offline te gebruiken, en deel draagbare ChordPro-bestanden. Optionele Google Drive-synchronisatie gebruikt een privémap van de app in je Google-account. Je kunt ook op ‘Nu synchroniseren’ tikken om je apparaten bij te werken.';
 
   @override
   String get aboutPlayTitle => 'Neem je setlist mee het podium op';

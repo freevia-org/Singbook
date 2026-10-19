@@ -30,7 +30,7 @@ class AppLocalizationsGa extends AppLocalizations {
 
   @override
   String get aboutKeepDetails =>
-      'Cuir amhráin in eagar agus athraigh a dtonúlacht, sábháil go háitiúil iad mar chomhaid iniompartha ChordPro, agus úsáid amhráin shábháilte as líne. Úsáideann sioncronú roghnach le Google Drive fillteán príobháideach na haipe i do chuntas Google. Is féidir leat Sioncronaigh anois a thapáil freisin chun do ghléasanna a nuashonrú.';
+      'Cuir amhráin in eagar agus athraigh a dtonúlacht, coinnigh i do leabharlann áitiúil iad le húsáid as líne, agus roinn comhaid iniompartha ChordPro. Úsáideann sioncronú roghnach le Google Drive fillteán príobháideach na haipe i do chuntas Google. Is féidir leat Sioncronaigh anois a thapáil freisin chun do ghléasanna a nuashonrú.';
 
   @override
   String get aboutPlayTitle => 'Tabhair do liosta chuig an stáitse leat';

@@ -30,7 +30,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get aboutKeepDetails =>
-      '曲を編集・移調し、持ち運びやすいChordProファイルとして端末に保存できます。保存した曲はオフラインでも使えます。Google Driveとの同期は任意で、Googleアカウント内のアプリ専用フォルダを使います。「今すぐ同期」をタップして、端末間で更新することもできます。';
+      '曲を編集・移調し、オフラインでも使えるようローカルライブラリに保存して、持ち運べるChordProファイルを共有できます。Google Driveとの同期は任意で、Googleアカウント内のアプリ専用フォルダを使います。「今すぐ同期」をタップして、端末間で更新することもできます。';
 
   @override
   String get aboutPlayTitle => 'セットリストをステージへ';
