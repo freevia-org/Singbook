@@ -161,7 +161,8 @@ void main() {
 
       final state = ui.state;
       expect(state.songs.map((s) => s.id), ['a', 'b']);
-      expect(state.songs.first.durationSeconds, isNull);
+      // Malformed source duration falls back to the shared chart estimate.
+      expect(state.songs.first.durationSeconds, 90);
       expect(state.songs.last.durationSeconds, 215.5);
       expect(state.songLines, isNotEmpty);
       expect(state.recent.map((r) => r.id), contains('a'));

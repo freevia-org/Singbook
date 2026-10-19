@@ -6,6 +6,51 @@ import 'package:singbook/ui/widgets/adaptive_bottom_navigation.dart';
 
 import 'support/fake_controller.dart';
 
+class _InlineSetlistController extends FakeUiController {
+  _InlineSetlistController()
+    : super((controller) {
+        final c = controller as _InlineSetlistController;
+        return VerseUiState(
+          route: VerseRoute.setlistDetail,
+          editingSetlist: c.editing,
+          activeSetlist: SetlistCardData(
+            id: 'set',
+            title: c.title,
+            notes: c.notes,
+            entries: const [
+              SetlistEntryData(id: 'e1', songId: 's1', title: 'Alpha'),
+            ],
+          ),
+        );
+      });
+
+  bool editing = false;
+  String title = 'Sunday';
+  final String notes = 'Keep stored but hidden';
+
+  @override
+  Future<void> editSetlist(String id) async {
+    calls.add('editSetlist($id)');
+    editing = true;
+    refresh();
+  }
+
+  @override
+  Future<void> saveSetlistDetails({
+    required String name,
+    required String notes,
+    List<String>? entryOrder,
+    bool finishEditing = false,
+  }) async {
+    calls.add('saveSetlistDetails($name, $notes, $entryOrder, $finishEditing)');
+    if (name.trim().isNotEmpty) title = name;
+    if (finishEditing) {
+      editing = false;
+      refresh();
+    }
+  }
+}
+
 SongCardData _song(String id, String title, {bool favorite = false}) =>
     SongCardData(id: id, title: title, artist: 'Artist', favorite: favorite);
 
@@ -325,6 +370,74 @@ void main() {
     });
   });
 
+  group('Setlists', () {
+    testWidgets(
+      'compact preview taps expand songs and label partial estimated totals',
+      (tester) async {
+        final c = FakeUiController(
+          (_) => const VerseUiState(
+            activeTab: VerseTab.setlists,
+            setlists: [
+              SetlistCardData(
+                id: 'set',
+                title: 'Sunday',
+                songTitles: ['Alpha', 'Beta', 'Gamma'],
+                durationSeconds: 360,
+                durationEstimated: true,
+                durationPartial: true,
+              ),
+            ],
+          ),
+        );
+        addTearDown(c.dispose);
+        await pumpShell(tester, c);
+        final l10n = l10nOf(tester);
+        expect(find.textContaining('Gamma'), findsNothing);
+        expect(
+          find.textContaining(l10n.setlistDurationPartial('~6:00')),
+          findsOneWidget,
+        );
+        await tester.tap(find.text('Alpha · Beta'));
+        await tester.pumpAndSettle();
+        expect(find.text('1. Alpha\n2. Beta\n3. Gamma'), findsOneWidget);
+        expect(c.calls, isEmpty);
+        await tester.tap(find.text('1. Alpha\n2. Beta\n3. Gamma'));
+        await tester.pumpAndSettle();
+        expect(find.text('Alpha · Beta'), findsOneWidget);
+      },
+    );
+
+    testWidgets('hidden notes do not affect setlist search', (tester) async {
+      final c = FakeUiController(
+        (_) => const VerseUiState(
+          activeTab: VerseTab.setlists,
+          setlists: [
+            SetlistCardData(
+              id: 'set',
+              title: 'Sunday',
+              notes: 'Hidden rehearsal note',
+            ),
+          ],
+        ),
+      );
+      addTearDown(c.dispose);
+      await pumpShell(tester, c);
+      final l10n = l10nOf(tester);
+      final search = find.byType(TextField);
+
+      await tester.enterText(search, 'rehearsal');
+      await tester.pump();
+      expect(find.text(l10n.setlistsEmptySearch), findsOneWidget);
+
+      await tester.enterText(search, 'Sunday');
+      await tester.pump();
+      expect(
+        find.descendant(of: find.byType(Card), matching: find.text('Sunday')),
+        findsOneWidget,
+      );
+    });
+  });
+
   group('Setlist detail', () {
     FakeUiController setlist({required bool editing}) => FakeUiController(
       (_) => VerseUiState(
@@ -371,27 +484,82 @@ void main() {
       expect(c.calls.last, 'restore(e2)');
     });
 
-    testWidgets('typed name and notes travel with a removal while editing', (
+    testWidgets(
+      'editing the title preserves hidden notes when removing a song',
+      (tester) async {
+        final c = setlist(editing: true);
+        addTearDown(c.dispose);
+        await pumpShell(tester, c);
+        final l10n = l10nOf(tester);
+
+        await tester.enterText(find.byType(TextField).first, 'Typed name');
+        expect(find.text(l10n.setlistNotes), findsNothing);
+        expect(find.byType(TextField), findsOneWidget);
+        FocusManager.instance.primaryFocus?.unfocus();
+        await tester.pumpAndSettle();
+        await _dragSetlistRowToDeleteBasket(tester, 'e1');
+        expect(c.calls, ['removeSetlistEntry(set, e1, Typed name, Old notes)']);
+
+        // The inline title remains while removal did not leave edit mode.
+        expect(find.byType(TextField), findsOneWidget);
+        await tester.tap(find.byTooltip(l10n.actionSave));
+        await tester.pump();
+        expect(c.calls.last, contains('Typed name, Old notes'));
+        expect(c.calls.last, endsWith('true)'));
+      },
+    );
+
+    testWidgets('tapping the setlist title edits it in place and hides notes', (
       tester,
     ) async {
-      final c = setlist(editing: true);
+      final c = _InlineSetlistController();
       addTearDown(c.dispose);
       await pumpShell(tester, c);
       final l10n = l10nOf(tester);
 
-      await tester.enterText(find.byType(TextField).first, 'Typed name');
-      await tester.enterText(find.byType(TextField).last, 'Typed notes');
-      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.tap(find.text('Sunday'));
       await tester.pumpAndSettle();
-      await _dragSetlistRowToDeleteBasket(tester, 'e1');
-      expect(c.calls, ['removeSetlistEntry(set, e1, Typed name, Typed notes)']);
 
-      // The fields are still on screen: removal did not leave edit mode.
-      expect(find.byType(TextField), findsNWidgets(2));
+      final nameField = find.byKey(const ValueKey('setlist-name-inline-field'));
+      expect(nameField, findsOneWidget);
+      expect(tester.widget<TextField>(nameField).controller!.text, 'Sunday');
+      expect(find.byType(TextField), findsOneWidget);
+      expect(find.text(l10n.setlistNotes), findsNothing);
+      expect(find.text('Keep stored but hidden'), findsNothing);
+      await tester.enterText(nameField, 'Sunday Set');
       await tester.tap(find.byTooltip(l10n.actionSave));
-      await tester.pump();
-      expect(c.calls.last, contains('Typed name, Typed notes'));
-      expect(c.calls.last, endsWith('true)'));
+      await tester.pumpAndSettle();
+
+      expect(
+        c.calls.last,
+        contains('saveSetlistDetails(Sunday Set, Keep stored but hidden'),
+      );
+      expect(c.editing, isFalse);
+      expect(find.text('Sunday Set'), findsOneWidget);
+    });
+
+    testWidgets('the setlist pencil opens the same inline title editor', (
+      tester,
+    ) async {
+      final c = _InlineSetlistController();
+      addTearDown(c.dispose);
+      await pumpShell(tester, c);
+      final l10n = l10nOf(tester);
+
+      await tester.tap(find.byTooltip(l10n.actionEdit));
+      await tester.pumpAndSettle();
+
+      expect(
+        tester
+            .widget<TextField>(
+              find.byKey(const ValueKey('setlist-name-inline-field')),
+            )
+            .controller!
+            .text,
+        'Sunday',
+      );
+      expect(find.text(l10n.setlistNotes), findsNothing);
+      expect(c.calls, contains('editSetlist(set)'));
     });
 
     for (final missing in [false, true]) {

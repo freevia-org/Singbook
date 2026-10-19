@@ -64,6 +64,14 @@ void main() {
         song.id,
       ))!.metadata;
     }
+    await app.saveSong(
+      SongDocument(
+        id: 'missing',
+        title: 'Unavailable reference',
+        artist: 'Fixture',
+        body: 'Words',
+      ),
+    );
     await app.saveSetlist(
       SetlistDocument(
         id: 'durations',
@@ -73,14 +81,21 @@ void main() {
           SetlistEntry(id: 'two', songId: 'valid', overrides: {'key': 'Dm'}),
           SetlistEntry(id: 'three', songId: 'zero'),
           SetlistEntry(id: 'four', songId: 'text'),
+          SetlistEntry(id: 'missing', songId: 'missing'),
         ],
       ),
     );
+    // Simulate an unavailable library reference without bypassing SQLite's
+    // foreign-key protection while storing the fixture.
+    app.songs.removeWhere((song) => song.id == 'missing');
     await ui.openSetlist('durations');
     expect(
       ui.state.activeSetlist!.entries.map((entry) => entry.durationSeconds),
-      [183, 183, null, null],
+      [183, 183, null, null, null],
     );
+    expect(ui.state.activeSetlist!.durationSeconds, 546);
+    expect(ui.state.activeSetlist!.durationEstimated, isTrue);
+    expect(ui.state.activeSetlist!.durationPartial, isTrue);
     expect(ui.state.activeSetlist!.entries[1].keyOverride, 'Dm');
     for (final song in sources) {
       expect(

@@ -13,6 +13,7 @@ import '../domain/timing.dart' show timingOccurrenceMap;
 import '../domain/source_contributions.dart';
 import 'format.dart';
 import 'player_section_timeline.dart';
+import 'player_duration.dart';
 import 'verse_ui_state.dart';
 
 double? _validDuration(Object? value) {
@@ -314,8 +315,7 @@ class AppControllerAdapter extends VerseUiController {
           );
     final playerDuration = song == null
         ? 0.0
-        : _validDuration(song.metadata['durationSeconds']) ??
-              _estimatedDuration(data.length);
+        : _durationForSong(song, lines: data).seconds;
     final timedLineStarts = song == null
         ? const <String, double>{}
         : _timedLineStarts(data, song, timingMode);
@@ -494,9 +494,7 @@ class AppControllerAdapter extends VerseUiController {
       readerTuning: tuning?.toString(),
       readerTempo: tempo?.toString(),
       readerHasTiming: readerHasTiming,
-      readerDurationEstimated:
-          song != null &&
-          _validDuration(song.metadata['durationSeconds']) == null,
+      readerDurationEstimated: song != null && _durationForSong(song).estimated,
       readerSource: readerSource,
       readerTimingAvailable: readerTimingAvailable,
       readerCanCompareVersions: readerCanCompareVersions,
@@ -526,6 +524,15 @@ class AppControllerAdapter extends VerseUiController {
   );
 
   final _songKeys = Expando<({String? key})>();
+  final _playbackDurations = Expando<PlayerDuration>();
+
+  PlayerDuration _durationForSong(
+    SongDocument song, {
+    List<LyricLineData>? lines,
+  }) => _playbackDurations[song] ??= resolvePlayerDuration(
+    song,
+    estimate: () => estimateChartDuration(lines ?? _lines(song.body)),
+  );
   String? _songKey(SongDocument song) {
     final cached = _songKeys[song];
     if (cached != null) return cached.key;
@@ -541,7 +548,7 @@ class AppControllerAdapter extends VerseUiController {
     artist: song.artist,
     album: _metaString(song.metadata['album']),
     artworkUrl: _metaString(song.metadata['artworkUrl']),
-    durationSeconds: _validDuration(song.metadata['durationSeconds']),
+    durationSeconds: _durationForSong(song).seconds,
     key: _songKey(song),
     favorite: song.favorite,
     modifiedAt: song.updatedAt,
@@ -554,6 +561,19 @@ class AppControllerAdapter extends VerseUiController {
 
   SetlistCardData _setlistCard(SetlistDocument value) {
     final entries = [for (final entry in value.entries) _entryData(entry)];
+    var durationSeconds = 0.0;
+    var durationEstimated = false;
+    var durationPartial = false;
+    for (final entry in value.entries) {
+      final song = _lookupSong(entry.songId);
+      if (song == null) {
+        durationPartial = true;
+        continue;
+      }
+      final duration = _durationForSong(song);
+      durationSeconds += duration.seconds;
+      durationEstimated |= duration.estimated;
+    }
     return SetlistCardData(
       id: value.id,
       title: value.name,
@@ -563,6 +583,9 @@ class AppControllerAdapter extends VerseUiController {
       entries: entries,
       favorite: value.favorite,
       modifiedAt: value.updatedAt,
+      durationSeconds: durationSeconds,
+      durationEstimated: durationEstimated,
+      durationPartial: durationPartial,
     );
   }
 
@@ -1230,6 +1253,10 @@ class AppControllerAdapter extends VerseUiController {
     return starts;
   }
 
+  List<LyricLineData>? _estimatedPositionLines;
+  double? _estimatedPositionDuration;
+  Map<String, double> _estimatedPositionStarts = const {};
+
   String? _currentLineId(List<LyricLineData> lines, SongDocument? song) {
     if (song == null || lines.isEmpty) return null;
     final timingMode = app.settings['timingMode'] as String? ?? 'estimated';
@@ -1272,18 +1299,20 @@ class AppControllerAdapter extends VerseUiController {
       }
     }
     if (timingMode == 'timed') return null;
-    final duration =
-        _validDuration(song.metadata['durationSeconds']) ??
-        _estimatedDuration(lines.length);
+    final duration = _durationForSong(song, lines: lines).seconds;
+    if (!identical(_estimatedPositionLines, lines) ||
+        _estimatedPositionDuration != duration) {
+      _estimatedPositionLines = lines;
+      _estimatedPositionDuration = duration;
+      _estimatedPositionStarts = estimatedLineStartTimes(lines, duration);
+    }
     return estimatedLineIdAtPosition(
       lines,
       progressSeconds: _progress,
       durationSeconds: duration,
+      lineStartTimes: _estimatedPositionStarts,
     );
   }
-
-  static double _estimatedDuration(int lineCount) =>
-      (lineCount * 3.4).clamp(90, 600).toDouble();
 
   String _subtitle(SongDocument song) => [
     if (song.metadata['album'] is String) song.metadata['album'],
@@ -1890,8 +1919,7 @@ class AppControllerAdapter extends VerseUiController {
 
   double _playerDuration() {
     final song = currentSong;
-    return _validDuration(song?.metadata['durationSeconds']) ??
-        _estimatedDuration(_baseState().songLines.length);
+    return song == null ? 0 : _durationForSong(song).seconds;
   }
 
   void _stopPlayer() {

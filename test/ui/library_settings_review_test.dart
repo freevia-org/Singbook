@@ -231,7 +231,7 @@ void main() {
         .controller!
         .text;
 
-    testWidgets('editing starts from the latest synced name and notes', (
+    testWidgets('inline editing starts from the latest synced name', (
       tester,
     ) async {
       final c = make();
@@ -248,9 +248,10 @@ void main() {
       c.refresh();
       await tester.pumpAndSettle();
       expect(field(tester, 0), 'Sunday (synced)');
-      expect(field(tester, 1), 'Newer notes');
+      expect(find.byType(TextField), findsOneWidget);
 
       final l10n = l10nOf(tester);
+      expect(find.text(l10n.setlistNotes), findsNothing);
       await tester.tap(find.byTooltip(l10n.actionSave));
       await tester.pump();
       expect(
@@ -259,7 +260,7 @@ void main() {
       );
     });
 
-    testWidgets('a change arriving mid-edit does not replace typed text', (
+    testWidgets('sync does not replace the inline title or hidden notes', (
       tester,
     ) async {
       editing = true;
@@ -267,11 +268,19 @@ void main() {
       addTearDown(c.dispose);
       await pumpShell(tester, c);
 
-      await tester.enterText(find.byType(TextField).last, 'Typed notes');
+      await tester.enterText(find.byType(TextField).first, 'Typed title');
       notes = 'Remote notes';
       c.refresh();
       await tester.pumpAndSettle();
-      expect(field(tester, 1), 'Typed notes');
+      expect(field(tester, 0), 'Typed title');
+      expect(find.byType(TextField), findsOneWidget);
+
+      await tester.tap(find.byTooltip(l10nOf(tester).actionSave));
+      await tester.pump();
+      expect(
+        c.calls.last,
+        startsWith('saveSetlistDetails(Typed title, Remote notes'),
+      );
     });
   });
 
