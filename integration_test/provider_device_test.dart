@@ -101,7 +101,8 @@ void main() {
             },
           );
           final usable = results.any(
-            (r) => r.matchKind != MatchKind.rejected && r.body.trim().isNotEmpty,
+            (r) =>
+                r.matchKind != MatchKind.rejected && r.body.trim().isNotEmpty,
           );
           if (!usable) {
             final settled = checks.where((c) => c.state != 'pending');
@@ -215,7 +216,17 @@ void main() {
           );
           expect(selectedSource.matchKind, isNot(MatchKind.rejected));
           if (combined.hasChords) {
-            expect(selectedSource.hasChords, true);
+            // The selected lyric source may be enriched by a different chart.
+            final chordSources =
+                (combined.extra['chordSourceIds'] as List? ?? [])
+                    .whereType<String>()
+                    .toSet();
+            expect(chordSources, isNotEmpty);
+            for (final id in chordSources) {
+              final source = results.singleWhere((source) => source.id == id);
+              expect(source.hasChords, true);
+              expect(source.matchKind, isNot(MatchKind.rejected));
+            }
           } else {
             for (final candidate in eligibleChordCandidates) {
               expect(

@@ -479,3 +479,28 @@ explicitly skipped the unconfigured Genius case. The four native workflow
 tests per device passed across the recorded interactive runs and bounded
 retries. Screenshots are native PNG checkpoints; `review-overview.jpg` is a
 derived visual-review contact sheet, not a test result.
+
+
+### Configured live provider follow-up — 2026-10-20
+
+The owner supplied the existing Genius client access token. It was placed only
+in ignored `config/local.defines.json`; the client secret is not used or saved.
+The prior missing-token skips are superseded by these focused native checks:
+
+| Device | Evidence | Result |
+| --- | --- | --- |
+| iPhone 17 Pro Max | `iphone-live-configured-v2` | 1 passed, no skips |
+| iPad Air 13 | `ipad-live-configured` | 1 passed, no skips |
+
+Genius returned a matching recording and usable lyrics on both. Seven live
+sources contributed results, combined chords retained explicit contributor
+provenance, and both timing tracks survived the ChordPro round trip. Other
+providers' unavailable/import-required/identity-required/access-denied outcomes
+remain explicit; this does not certify every source as healthy.
+
+The initial configured iPhone run exposed an obsolete test assertion that the
+selected lyric source itself must contain chords. Current combination can
+merge a different chart into those lyrics. The assertion now requires recorded
+chord contributors to resolve to non-rejected, chord-bearing source results.
+The initial failure remains under `iphone-live-configured`; production code
+was unchanged. Focused Dart analysis and `git diff --check` passed.
