@@ -111,6 +111,8 @@ class _PlayerScreenState extends State<PlayerScreen>
   List<(int, double)>? _sectionPoints;
   List<PlayerSectionMarker>? _pointsSections;
   List<LyricLineData>? _pointsLines;
+  String? _pointsTimingMode;
+  double? _pointsDuration;
   Size? _lastViewportSize;
   double? _lastTextScale;
   VerseUiController get controller => widget.controller;
@@ -121,11 +123,9 @@ class _PlayerScreenState extends State<PlayerScreen>
   bool _inForeground = true;
   bool _leaving = false;
 
-  /// The song's real length, or an estimate from the line count that drives
-  /// scrolling and the slider when the song has none.
+  /// The adapter's resolved duration is shared with its clock and highlighting.
   double _durationOf(VerseUiState state) =>
-      state.song?.durationSeconds ??
-      (state.songLines.length * 3.4).clamp(90, 600).toDouble();
+      state.song?.durationSeconds ?? estimateChartDuration(state.songLines);
 
   bool _isStandardTuning(String? tuning) {
     if (tuning == null) return false;
@@ -383,19 +383,32 @@ class _PlayerScreenState extends State<PlayerScreen>
     if (lines.length < 2) return 0;
     final duration = _durationOf(state);
     if (!identical(_pointsSections, state.playerSections) ||
-        !identical(_pointsLines, lines)) {
+        !identical(_pointsLines, lines) ||
+        _pointsTimingMode != state.timingMode ||
+        _pointsDuration != duration) {
       _pointsSections = state.playerSections;
       _pointsLines = lines;
+      _pointsTimingMode = state.timingMode;
+      _pointsDuration = duration;
+      final estimated = state.timingMode == 'estimated'
+          ? estimatedLineStartTimes(lines, duration)
+          : const <String, double>{};
       _sectionPoints =
-          state.playerSections
-              .map(
-                (marker) => (
-                  lines.indexWhere((line) => line.id == marker.lineId),
-                  marker.startSeconds,
-                ),
-              )
-              .where((point) => point.$1 >= 0)
-              .toList()
+          state.timingMode == 'estimated'
+                ? [
+                    for (var index = 0; index < lines.length; index++)
+                      if (estimated[lines[index].id] case final seconds?)
+                        (index, seconds),
+                  ]
+                : state.playerSections
+                      .map(
+                        (marker) => (
+                          lines.indexWhere((line) => line.id == marker.lineId),
+                          marker.startSeconds,
+                        ),
+                      )
+                      .where((point) => point.$1 >= 0)
+                      .toList()
             ..sort((a, b) => a.$1.compareTo(b.$1));
     }
     var beforeIndex = 0;

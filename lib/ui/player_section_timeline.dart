@@ -2,54 +2,122 @@ import 'verse_ui_state.dart';
 
 const _estimatedBoundaryToleranceSeconds = 0.000001;
 
-/// Returns lyric rows that participate in estimated playback positions.
-///
-/// Blank rows and chord-only rows are visual structure, not lyric positions.
-/// Named sections with no lyric rows get a separate slot in the estimated
-/// timeline below.
+final _progressionNote = RegExp(
+  r'^(?:(?:[x×]\s*\d{1,2}|\d{1,2}\s*[x×])|bis|twice|repeat(?:\s*[x×]?\s*\d{1,2})?)$',
+  caseSensitive: false,
+);
+
+bool _isChordProgression(LyricLineData line) {
+  if (line.section != null || line.isArrangementNote || line.chords.isEmpty) {
+    return false;
+  }
+  final text = line.text.replaceAll(RegExp(r'[\s|:()\[\].-]+'), '').trim();
+  return text.isEmpty || text.length <= 32 && _progressionNote.hasMatch(text);
+}
+
 bool _isEstimatedLyricLine(LyricLineData line) =>
-    line.section == null && !line.isBlank && line.text.trim().isNotEmpty;
+    line.section == null &&
+    !line.isBlank &&
+    !line.isArrangementNote &&
+    !_isChordProgression(line) &&
+    line.text.trim().isNotEmpty;
 
-List<LyricLineData> estimatedTimelineLines(List<LyricLineData> lines) =>
-    List.unmodifiable(lines.where(_isEstimatedLyricLine));
+double _progressionWeight(LyricLineData line) {
+  final text = line.text.toLowerCase();
+  final repeat = RegExp(
+    r'(?:[x×]\s*(\d{1,2})|(\d{1,2})\s*[x×])',
+  ).firstMatch(text);
+  final count = repeat == null
+      ? (text.contains('bis') ||
+                text.contains('twice') ||
+                text.contains('repeat')
+            ? 2
+            : 1)
+      : int.parse(repeat.group(1) ?? repeat.group(2)!);
+  // A progression is a phrase-sized estimate, not a claim about its bars.
+  return ((line.chords.length / 4).clamp(1, 4) * count.clamp(1, 8))
+      .clamp(1, 8)
+      .toDouble();
+}
 
-/// Adds one estimated time slot for each named section that has no lyric rows.
-/// The heading ID represents that section while playback is in its slot.
-List<String> _estimatedTimelineEventIds(List<LyricLineData> lines) {
-  final events = <String>[];
+List<({String id, double weight})> _estimatedEvents(List<LyricLineData> lines) {
+  final accompaniment = <String>{};
+  var lyricAhead = false;
+  for (final line in lines.reversed) {
+    if (line.section != null ||
+        line.isArrangementNote ||
+        line.isBlank && line.chords.isEmpty) {
+      lyricAhead = false;
+    } else if (_isEstimatedLyricLine(line)) {
+      lyricAhead = true;
+    } else if (_isChordProgression(line) && lyricAhead) {
+      // Separate chord rows directly above singing accompany the lyric.
+      accompaniment.add(line.id);
+    }
+  }
+  final events = <({String id, double weight})>[];
   for (var index = 0; index < lines.length; index++) {
     final line = lines[index];
     if (line.section != null) {
       var hasLyrics = false;
-      for (
-        var next = index + 1;
-        next < lines.length && lines[next].section == null;
-        next++
-      ) {
-        if (_isEstimatedLyricLine(lines[next])) {
-          hasLyrics = true;
-          break;
+      var progressions = 0.0;
+      var end = index + 1;
+      for (; end < lines.length && lines[end].section == null; end++) {
+        if (_isEstimatedLyricLine(lines[end])) hasLyrics = true;
+        if (_isChordProgression(lines[end])) {
+          progressions += _progressionWeight(lines[end]);
         }
       }
-      if (!hasLyrics) events.add(line.id);
+      if (!hasLyrics) {
+        // Keep a lyric-free section seekable at its heading, and allow a
+        // longer hold for progressions/repeats without inventing timestamps.
+        events.add((
+          id: line.id,
+          weight: (1 + progressions / 2).clamp(1, 4).toDouble(),
+        ));
+        index = end - 1;
+      }
     } else if (_isEstimatedLyricLine(line)) {
-      events.add(line.id);
+      events.add((id: line.id, weight: 1));
+    } else if (_isChordProgression(line) && !accompaniment.contains(line.id)) {
+      events.add((id: line.id, weight: _progressionWeight(line)));
     }
   }
   return events;
 }
 
-Map<String, double> _estimatedLineStartTimes(
+/// Music positions include standalone progressions and lyric-free sections.
+List<LyricLineData> estimatedTimelineLines(List<LyricLineData> lines) {
+  final ids = _estimatedEvents(lines).map((event) => event.id).toSet();
+  return List.unmodifiable(lines.where((line) => ids.contains(line.id)));
+}
+
+/// Unknown lengths remain a rough chart estimate, with additional allowance
+/// for instrumental phrases. Catalog/recording evidence should take priority.
+double estimateChartDuration(List<LyricLineData> lines) {
+  final events = _estimatedEvents(lines);
+  final additional = events.fold<double>(
+    0,
+    (sum, event) => sum + event.weight - 1,
+  );
+  return ((lines.length + additional) * 3.4).clamp(90, 600).toDouble();
+}
+
+Map<String, double> estimatedLineStartTimes(
   List<LyricLineData> lines,
   double durationSeconds,
 ) {
   if (!durationSeconds.isFinite || durationSeconds <= 0) return const {};
-  final events = _estimatedTimelineEventIds(lines);
+  final events = _estimatedEvents(lines);
   if (events.isEmpty) return const {};
-  return Map.unmodifiable({
-    for (var index = 0; index < events.length; index++)
-      events[index]: durationSeconds * index / events.length,
-  });
+  final total = events.fold<double>(0, (sum, event) => sum + event.weight);
+  var elapsed = 0.0;
+  final starts = <String, double>{};
+  for (final event in events) {
+    starts[event.id] = durationSeconds * elapsed / total;
+    elapsed += event.weight;
+  }
+  return Map.unmodifiable(starts);
 }
 
 /// Returns the estimated start time used for [lineId], including headings for
@@ -58,7 +126,7 @@ double? estimatedLineStartSeconds(
   List<LyricLineData> lines,
   String lineId,
   double durationSeconds,
-) => _estimatedLineStartTimes(lines, durationSeconds)[lineId];
+) => estimatedLineStartTimes(lines, durationSeconds)[lineId];
 
 /// Resolves the active lyric or lyric-free section at [progressSeconds] using
 /// the same boundaries as section markers. The small tolerance makes an exact
@@ -67,18 +135,19 @@ String? estimatedLineIdAtPosition(
   List<LyricLineData> lines, {
   required double progressSeconds,
   required double durationSeconds,
+  Map<String, double>? lineStartTimes,
 }) {
   if (!progressSeconds.isFinite ||
       !durationSeconds.isFinite ||
       durationSeconds <= 0) {
     return null;
   }
-  final events = _estimatedTimelineEventIds(lines);
-  if (events.isEmpty) return null;
-  final starts = _estimatedLineStartTimes(lines, durationSeconds);
+  final starts =
+      lineStartTimes ?? estimatedLineStartTimes(lines, durationSeconds);
+  if (starts.isEmpty) return null;
   final progress = progressSeconds.clamp(0.0, durationSeconds).toDouble();
-  var current = events.first;
-  for (final lineId in events.skip(1)) {
+  var current = starts.keys.first;
+  for (final lineId in starts.keys.skip(1)) {
     final start = starts[lineId]!;
     if (start > progress + _estimatedBoundaryToleranceSeconds) break;
     current = lineId;
@@ -89,7 +158,7 @@ String? estimatedLineIdAtPosition(
 /// Builds timeline markers at the first lyric line in each named section.
 ///
 /// Saved recording cue starts take precedence when supplied. Unmapped sections
-/// use the player's even-line estimated pace, keeping navigation available even
+/// use the player's weighted estimated pace, keeping navigation available even
 /// when a song has no active timing track.
 List<PlayerSectionMarker> buildPlayerSectionMarkers({
   required List<LyricLineData> lines,
@@ -101,7 +170,7 @@ List<PlayerSectionMarker> buildPlayerSectionMarkers({
     return const [];
   }
 
-  final estimatedPositions = _estimatedLineStartTimes(lines, durationSeconds);
+  final estimatedPositions = estimatedLineStartTimes(lines, durationSeconds);
 
   final markers = <PlayerSectionMarker>[];
   for (var index = 0; index < lines.length; index++) {
@@ -111,15 +180,21 @@ List<PlayerSectionMarker> buildPlayerSectionMarkers({
 
     var lineIndex = index + 1;
     while (lineIndex < lines.length && lines[lineIndex].section == null) {
-      if (_isEstimatedLyricLine(lines[lineIndex])) break;
+      if (useEstimatedFallback
+          ? estimatedPositions.containsKey(lines[lineIndex].id)
+          : _isEstimatedLyricLine(lines[lineIndex])) {
+        break;
+      }
       lineIndex++;
     }
-    final hasLyrics =
+    final hasPosition =
         lineIndex < lines.length &&
         lines[lineIndex].section == null &&
-        _isEstimatedLyricLine(lines[lineIndex]);
-    if (!hasLyrics && !useEstimatedFallback) continue;
-    final lineId = hasLyrics ? lines[lineIndex].id : heading.id;
+        (useEstimatedFallback
+            ? estimatedPositions.containsKey(lines[lineIndex].id)
+            : _isEstimatedLyricLine(lines[lineIndex]));
+    if (!hasPosition && !useEstimatedFallback) continue;
+    final lineId = hasPosition ? lines[lineIndex].id : heading.id;
     final rawStart =
         timedLineStarts[lineId] ??
         (useEstimatedFallback ? estimatedPositions[lineId] : null);
