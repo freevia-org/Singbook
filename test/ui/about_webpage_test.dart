@@ -91,7 +91,11 @@ void main() {
       await tester.pumpAndSettle();
       final l10n = l10nOf(tester);
       final about = find.byKey(const ValueKey('settings-menu-about'));
-      await tester.ensureVisible(about);
+      await tester.scrollUntilVisible(
+        about,
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
       await tester.pumpAndSettle();
       await tester.tap(about);
       await tester.pumpAndSettle();

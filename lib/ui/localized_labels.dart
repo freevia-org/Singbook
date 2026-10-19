@@ -107,6 +107,30 @@ SyncErrorText syncErrorText(AppLocalizations l10n, String? code) =>
         message: l10n.syncErrorNotConfigured,
         hint: l10n.syncErrorNotConfiguredHint,
       ),
+      'folder_picker_unavailable' => (
+        message: l10n.syncErrorFolderPickerUnavailable,
+        hint: l10n.syncErrorFolderPickerUnavailableHint,
+      ),
+      'folder_picker_failed' || 'folder_not_selected' => (
+        message: l10n.syncErrorFolderPickerUnavailable,
+        hint: l10n.syncErrorFolderPickerUnavailableHint,
+      ),
+      'drive_folder_missing' => (
+        message: l10n.syncErrorDriveFolderMissing,
+        hint: l10n.syncErrorDriveFolderMissingHint,
+      ),
+      'visible_folder_required' => (
+        message: l10n.syncErrorVisibleFolderRequired,
+        hint: l10n.syncErrorVisibleFolderRequiredHint,
+      ),
+      'drive_file_authorization_required' => (
+        message: l10n.syncErrorDriveFileAuthorization,
+        hint: l10n.syncErrorDriveFileAuthorizationHint,
+      ),
+      'folder_migration_incomplete' || 'invalid_drive_folder' => (
+        message: l10n.syncErrorFolderMigration,
+        hint: l10n.syncErrorFolderMigrationHint,
+      ),
       'not_signed_in' => (
         message: l10n.syncErrorNotSignedIn,
         hint: l10n.syncErrorNotSignedInHint,

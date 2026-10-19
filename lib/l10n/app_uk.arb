@@ -294,5 +294,44 @@
       }
     }
   },
-  "playerEstimatedKey": "Орієнтовна тональність"
+  "accountDriveFolder": "Папка бібліотеки Google Drive",
+  "accountPrivateDriveFolder": "Приватна папка Singbook",
+  "accountChooseDriveFolder": "Виберіть папку",
+  "accountDriveFolderMoveTitle": "Перемістити бібліотеку Singbook?",
+  "accountDriveFolderMoveBody": "Виберіть видиму папку Google Drive. Singbook скопіює та перевірить ваші пісні та сет-листи, перш ніж перейти на нього. Оригінальні файли залишаються в попередньому місці як резервні. Інші файли залишаються в спокої. Файли ChordPro, які ви імпортуєте в цю папку, приймаються для синхронізації та отримують метадані Singbook.",
+  "accountImportChordPro": "Імпортувати ChordPro з Диска",
+  "accountImportChordProHint": "Виберіть файли .cho, щоб додати до цієї бібліотеки. Файли, які вже є в папці, приймаються; файли з інших місць копіюються сюди.",
+  "syncErrorFolderPickerUnavailable": "Вибір папки на Диску недоступний",
+  "syncErrorFolderPickerUnavailableHint": "Виберіть видиму папку Диска за допомогою засобу вибору Google Диска на підтримуваному пристрої.",
+  "syncErrorDriveFolderMissing": "Папка Singbook Drive недоступна",
+  "syncErrorDriveFolderMissingHint": "Виберіть папку ще раз або відновіть її на Диску Google.",
+  "syncErrorDriveFileAuthorization": "Singbook потрібен доступ до цієї папки Диска",
+  "syncErrorDriveFileAuthorizationHint": "Знову виберіть папку, щоб надати доступ, а потім синхронізуйте бібліотеку.",
+  "syncErrorFolderMigration": "Бібліотеку поки не вдалося перенести",
+  "syncErrorFolderMigrationHint": "Ваша попередня бібліотека все ще в безпеці. Перевірте з’єднання та знову виберіть папку, щоб повторити спробу.",
+  "syncErrorVisibleFolderRequired": "Спочатку виберіть видиму папку Диска",
+  "syncErrorVisibleFolderRequiredHint": "Перед імпортом файлів із Диска потрібна видима папка бібліотеки.",
+  "playerEstimatedKey": "Орієнтовна тональність",
+  "songsLibraryView": "Бібліотека",
+  "settingsStartupView": "Початковий вигляд",
+  "settingsStartupViewHint": "Виберіть вигляд «Пісні», який показуватиметься під час відкриття застосунку.",
+  "settingsStartupLastView": "Останній відкритий",
+  "playerExpandControls": "Показати елементи керування відтворенням",
+  "playerCollapseControls": "Приховати елементи керування відтворенням",
+  "settingsShowSections": "Показувати заголовки частин",
+  "settingsShowSectionsHint": "Показувати в тексті заголовки куплетів, приспіву та інших частин.",
+  "settingsShowPlayerControls": "Показати елементи керування відтворенням",
+  "settingsShowPlayerControlsHint": "Панель програвача також можна показати або приховати дотиком чи свайпом.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

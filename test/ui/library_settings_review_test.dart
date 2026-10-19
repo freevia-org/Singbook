@@ -29,6 +29,24 @@ VerseUiState _settings({
   languageCode: languageCode,
 );
 
+class _LibraryFilterController extends FakeUiController {
+  _LibraryFilterController()
+    : super(
+        (controller) => VerseUiState(
+          activeTab: VerseTab.home,
+          homeListMode: HomeListMode.library,
+          query: (controller as _LibraryFilterController).query,
+          songs: [_song('1', 'Éclair'), _song('2', 'Zebra')],
+        ),
+      );
+  String query = '';
+  @override
+  void setQuery(String value) {
+    query = value;
+    refresh();
+  }
+}
+
 void main() {
   group('Songs list', () {
     testWidgets('is ordered and indexed by the alphabet, not code units', (
@@ -47,6 +65,7 @@ void main() {
       final c = FakeUiController(
         (_) => VerseUiState(
           activeTab: VerseTab.songs,
+          homeListMode: HomeListMode.library,
           songs: [for (final (i, t) in titles.indexed) _song('$i', t)],
         ),
       );
@@ -87,6 +106,7 @@ void main() {
       final c = FakeUiController(
         (_) => VerseUiState(
           activeTab: VerseTab.songs,
+          homeListMode: HomeListMode.library,
           songs: [
             _song('1', 'Zebra'),
             _song('2', 'Éclair'),
@@ -113,12 +133,7 @@ void main() {
     testWidgets('search ignores accents, case and surrounding spaces', (
       tester,
     ) async {
-      final c = FakeUiController(
-        (_) => VerseUiState(
-          activeTab: VerseTab.songs,
-          songs: [_song('1', 'Éclair'), _song('2', 'Zebra')],
-        ),
-      );
+      final c = _LibraryFilterController();
       addTearDown(c.dispose);
       await pumpShell(tester, c);
 

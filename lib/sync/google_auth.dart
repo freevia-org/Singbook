@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
+import 'package:flutter/services.dart';
 import 'sync_protocol.dart';
 
 abstract interface class DriveAuthorization {
@@ -68,7 +69,10 @@ class InitializationGate {
 ///  * Android needs nothing else natively: `INTERNET` is already declared and
 ///    the plugin brings its own activity/Play services wiring.
 class GoogleDriveAuth
-    implements DriveAuthorization, RefreshableAuthorization, ProfilePhotoAuthorization {
+    implements
+        DriveAuthorization,
+        RefreshableAuthorization,
+        ProfilePhotoAuthorization {
   GoogleDriveAuth({
     this.serverClientId = const String.fromEnvironment(
       'VERSE_GOOGLE_SERVER_CLIENT_ID',
@@ -87,6 +91,7 @@ class GoogleDriveAuth
   final bool? isAndroidOverride;
   final bool? configuredOverride;
   static const scopes = ['https://www.googleapis.com/auth/drive.appdata'];
+  static const driveFileScopes = ['https://www.googleapis.com/auth/drive.file'];
   bool get _isAndroid => isAndroidOverride ?? Platform.isAndroid;
   static final InitializationGate _gate = InitializationGate();
   GoogleSignInAccount? _account;
@@ -199,7 +204,9 @@ class GoogleDriveAuth
       await _initialize();
       final account = await GoogleSignIn.instance
           .attemptLightweightAuthentication();
-      if (account == null || !_restoreIsCurrent(epoch, generation)) return false;
+      if (account == null || !_restoreIsCurrent(epoch, generation)) {
+        return false;
+      }
       // Signed in even if the access token needs user interaction to renew:
       // the first request then reports `authorization_required` and the UI
       // offers to sign in again, instead of silently losing the account.
@@ -248,8 +255,9 @@ class GoogleDriveAuth
     if (account == null) throw const SyncException('not_signed_in');
     final GoogleSignInClientAuthorization? authorization;
     try {
-      authorization = await account.authorizationClient
-          .authorizationForScopes(scopes);
+      authorization = await account.authorizationClient.authorizationForScopes(
+        scopes,
+      );
     } catch (error) {
       throw mapAuthorizationFailure(error);
     }
@@ -342,11 +350,7 @@ class GoogleDriveAuth
     if (save == null) return;
     final identity = id == null || email == null
         ? null
-        : {
-            'id': id,
-            'email': email,
-            'photoUrl': ?photoUrl,
-          };
+        : {'id': id, 'email': email, 'photoUrl': ?photoUrl};
     final write = _identityWrites
         .catchError((Object _) {})
         .then<void>((_) => save(identity));
@@ -370,4 +374,97 @@ class GoogleDriveAuth
       ),
     ),
   );
+}
+
+/// Authorization for the one visible folder granted through Google Picker.
+/// Kept separate from `drive.appdata`: Google's mobile Picker flow requires
+/// the `drive.file` scope on its own.
+class GoogleDriveFileAuthorization
+    implements DriveAuthorization, RefreshableAuthorization {
+  GoogleDriveFileAuthorization(this.identity);
+  final DriveAuthorization identity;
+  static const _channel = MethodChannel('org.freevia.singbook/rich_clipboard');
+  static const _tokenCacheDuration = Duration(minutes: 45);
+  String? _cachedToken;
+  DateTime? _tokenValidUntil;
+  Future<String>? _tokenRequest;
+  bool _tokenRequestForced = false;
+
+  @override
+  bool get configured => identity.configured;
+  @override
+  bool get isConnected => identity.isConnected;
+  @override
+  String? get accountId => identity.accountId;
+  @override
+  String? get accountEmail => identity.accountEmail;
+  @override
+  Future<void> connect() => identity.connect();
+  @override
+  Future<bool> restore() => identity.restore();
+  @override
+  Future<void> disconnect() => identity.disconnect();
+
+  @override
+  Future<String> accessToken() => _accessToken();
+
+  @override
+  Future<String> refreshAccessToken() => _accessToken(force: true);
+
+  Future<String> _accessToken({bool force = false}) async {
+    if (!identity.isConnected) throw const SyncException('not_signed_in');
+    final cached = _cachedToken;
+    if (!force &&
+        cached != null &&
+        _tokenValidUntil?.isAfter(DateTime.now()) == true) {
+      return cached;
+    }
+    final pending = _tokenRequest;
+    if (pending != null) {
+      if (!force || _tokenRequestForced) return pending;
+      // A rejected token needs a real native renewal, even when an ordinary
+      // token lookup was already in flight. Concurrent force calls then share
+      // the one forced request started after this ordinary lookup settles.
+      try {
+        await pending;
+      } catch (_) {
+        // The explicit forced lookup still gets its own native attempt.
+      }
+      return _accessToken(force: true);
+    }
+    final request = _requestAccessToken(force: force);
+    _tokenRequest = request;
+    _tokenRequestForced = force;
+    try {
+      final token = await request;
+      _cachedToken = token;
+      _tokenValidUntil = DateTime.now().add(_tokenCacheDuration);
+      return token;
+    } finally {
+      if (identical(_tokenRequest, request)) _tokenRequest = null;
+    }
+  }
+
+  Future<String> _requestAccessToken({required bool force}) async {
+    try {
+      final token = await _channel.invokeMethod<String>(
+        'driveFileAccessToken',
+        {
+          'accountEmail': identity.accountEmail,
+          if (force) 'forceRefresh': true,
+        },
+      );
+      if (token == null || token.isEmpty) {
+        throw const SyncException('drive_file_authorization_required');
+      }
+      return token;
+    } on PlatformException catch (error) {
+      throw SyncException(switch (error.code) {
+        'authorization_required' => 'drive_file_authorization_required',
+        'account_mismatch' => 'drive_file_authorization_required',
+        'cancelled' => 'cancelled',
+        _ => 'network',
+      });
+    }
+  }
 }

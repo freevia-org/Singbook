@@ -831,5 +831,44 @@
       }
     }
   },
-  "playerEstimatedKey": "Procijenjeni tonalitet"
+  "accountDriveFolder": "Mapa biblioteke Google diska",
+  "accountPrivateDriveFolder": "Privatna mapa Singbook",
+  "accountChooseDriveFolder": "Odaberite mapu",
+  "accountDriveFolderMoveTitle": "Premjestiti svoju biblioteku Singbook?",
+  "accountDriveFolderMoveBody": "Odaberite vidljivu mapu Google diska. Singbook će tamo kopirati i potvrditi vaše pjesme i setliste prije nego se prebacite na njega. Izvorne datoteke ostaju na svojoj prethodnoj lokaciji kao sigurnosna kopija. Ostale datoteke ostaju same. ChordPro datoteke koje uvezete u ovu mapu usvajaju se za sinkronizaciju i primaju Singbook metapodatke.",
+  "accountImportChordPro": "Uvezite ChordPro s Diska",
+  "accountImportChordProHint": "Odaberite .cho datoteke za dodavanje u ovu biblioteku. Usvajaju se datoteke koje se već nalaze u mapi; datoteke na drugim mjestima kopiraju se ovdje.",
+  "syncErrorFolderPickerUnavailable": "Odabir mape pogona nije dostupan",
+  "syncErrorFolderPickerUnavailableHint": "Na podržanom uređaju odaberite vidljivu mapu Diska pomoću alata za odabir Google Diska.",
+  "syncErrorDriveFolderMissing": "Mapa Singbook Drive nije dostupna",
+  "syncErrorDriveFolderMissingHint": "Ponovno odaberite mapu ili je vratite na Google disk.",
+  "syncErrorDriveFileAuthorization": "Singbook treba pristup ovoj mapi Diska",
+  "syncErrorDriveFileAuthorizationHint": "Ponovno odaberite mapu da biste odobrili pristup, a zatim sinkronizirajte svoju biblioteku.",
+  "syncErrorFolderMigration": "Knjižnica još nije mogla biti premještena",
+  "syncErrorFolderMigrationHint": "Vaša prethodna biblioteka još uvijek je sigurna. Provjerite vezu i ponovno odaberite mapu za ponovni pokušaj.",
+  "syncErrorVisibleFolderRequired": "Prvo odaberite vidljivu mapu Diska",
+  "syncErrorVisibleFolderRequiredHint": "Prije uvoza datoteka s Diska potrebna je vidljiva mapa knjižnice.",
+  "playerEstimatedKey": "Procijenjeni tonalitet",
+  "songsLibraryView": "Knjižnica",
+  "settingsStartupView": "Početni prikaz",
+  "settingsStartupViewHint": "Odaberite prikaz pjesama koji će se prikazati pri otvaranju aplikacije.",
+  "settingsStartupLastView": "Posljednji otvoreni",
+  "playerExpandControls": "Prikaži kontrole reprodukcije",
+  "playerCollapseControls": "Sakrij kontrole reprodukcije",
+  "settingsShowSections": "Prikaži naslove odjeljaka",
+  "settingsShowSectionsHint": "Prikaži naslove strofa, refrena i drugih odjeljaka u tekstu pjesme.",
+  "settingsShowPlayerControls": "Prikaži kontrole reprodukcije",
+  "settingsShowPlayerControlsHint": "Ploču reproduktora možete prikazati ili sakriti i dodirom ili prelaskom prstom.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

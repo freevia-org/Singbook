@@ -127,44 +127,83 @@ void main() {
     expect(controller.state.readerKey, 'C');
   });
 
-  testWidgets('None is reversible and has no checkbox in the key menu', (
-    tester,
-  ) async {
-    await pumpShell(tester, controller);
-    final keyMenu = find.byKey(const ValueKey('pitch-key-dropdown'));
-    final none = l10nOf(tester).playerChordsNone;
-    expect(find.byType(Checkbox), findsNothing);
-    expect(controller.state.showChords, isTrue);
-    await tester.tap(keyMenu);
-    await _settle(tester, controller);
-    expect(find.byType(CheckedPopupMenuItem<String>), findsNothing);
-    final noneOption = find.text(none);
-    expect(
-      tester.getSemantics(noneOption).flagsCollection.isSelected.toBoolOrNull(),
-      isFalse,
-    );
-    await tester.tap(noneOption);
-    await tester.runAsync(() => repository.getSetting('app'));
-    await _settle(tester, controller);
-    expect(controller.state.showChords, isFalse);
-    expect(controller.state.readerKey, 'D');
-    await tester.tap(keyMenu);
-    await _settle(tester, controller);
-    expect(find.byType(CheckedPopupMenuItem<String>), findsNothing);
-    final selectedNone = find.text(none);
-    expect(
-      tester
-          .getSemantics(selectedNone)
-          .flagsCollection
-          .isSelected
-          .toBoolOrNull(),
-      isTrue,
-    );
-    await tester.tap(selectedNone);
-    await tester.runAsync(() => repository.getSetting('app'));
-    await _settle(tester, controller);
-    expect(controller.state.showChords, isTrue);
-  });
+  testWidgets(
+    'chord visibility is reversible in Settings, apart from key transpose',
+    (tester) async {
+      await pumpShell(tester, controller);
+      final keyMenu = find.byKey(const ValueKey('pitch-key-dropdown'));
+      final l10n = l10nOf(tester);
+      expect(find.byType(Checkbox), findsNothing);
+      expect(controller.state.showChords, isTrue);
+      expect(controller.state.readerKey, 'D');
+      await tester.tap(keyMenu);
+      await _settle(tester, controller);
+      expect(find.byType(CheckedPopupMenuItem<String>), findsNothing);
+      expect(find.text(l10n.playerChordsNone), findsNothing);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+
+      controller.setTab(VerseTab.settings);
+      await tester.pumpAndSettle();
+      final playerSettings = find.byKey(const ValueKey('settings-menu-player'));
+      await tester.scrollUntilVisible(
+        playerSettings,
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(playerSettings);
+      await tester.pumpAndSettle();
+      final chordsSetting = find.widgetWithText(
+        SwitchListTile,
+        l10n.readerShowChords,
+      );
+      await tester.scrollUntilVisible(
+        chordsSetting,
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(chordsSetting);
+      await tester.runAsync(() => repository.getSetting('app'));
+      await _settle(tester, controller);
+      expect(controller.state.showChords, isFalse);
+
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      await tester.runAsync(
+        () => controller.openSetlistEntry('setlist', 'd-entry'),
+      );
+      await _settle(tester, controller);
+      expect(controller.state.readerKey, 'D');
+      expect(controller.state.showChords, isFalse);
+
+      controller.setTab(VerseTab.settings);
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        playerSettings,
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(playerSettings);
+      await tester.pumpAndSettle();
+      final chordsSettingAgain = find.widgetWithText(
+        SwitchListTile,
+        l10n.readerShowChords,
+      );
+      await tester.scrollUntilVisible(
+        chordsSettingAgain,
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(chordsSettingAgain);
+      await tester.runAsync(() => repository.getSetting('app'));
+      await _settle(tester, controller);
+      expect(controller.state.showChords, isTrue);
+    },
+  );
 
   testWidgets('unknown key transposes from the same popup beside Play', (
     tester,

@@ -1427,6 +1427,68 @@ class AppLocalizationsRo extends AppLocalizations {
       'Sincronizarea are loc după conectare și după adăugarea, editarea sau eliminarea unei melodii.';
 
   @override
+  String get accountDriveFolder => 'Dosarul bibliotecii Google Drive';
+
+  @override
+  String get accountPrivateDriveFolder => 'Dosar privat Singbook';
+
+  @override
+  String get accountChooseDriveFolder => 'Alegeți folderul';
+
+  @override
+  String get accountDriveFolderMoveTitle => 'Mutați biblioteca dvs. Singbook?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Alegeți un dosar Google Drive vizibil. Singbook va copia și verifica melodiile și setlist-urile dvs. acolo înainte de a trece la el. Fișierele originale rămân în locația lor anterioară ca rezervă. Alte fișiere sunt lăsate în pace. Fișierele ChordPro pe care le importați în acest folder sunt adoptate pentru sincronizare și pentru a primi metadatele Singbook.';
+
+  @override
+  String get accountImportChordPro => 'Importă ChordPro din Drive';
+
+  @override
+  String get accountImportChordProHint =>
+      'Alegeți fișierele .cho pentru a le adăuga la această bibliotecă. Fișierele aflate deja în folder sunt adoptate; fișierele din altă parte sunt copiate aici.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Selectarea folderului Drive nu este disponibilă';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Alegeți un dosar Drive vizibil cu selectorul Google Drive pe un dispozitiv acceptat.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'Dosarul Singbook Drive nu este disponibil';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Alegeți din nou dosarul sau restaurați-l în Google Drive.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook are nevoie de acces la acest dosar Drive';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Alegeți din nou folderul pentru a acorda acces, apoi sincronizați biblioteca.';
+
+  @override
+  String get syncErrorFolderMigration => 'Biblioteca nu a putut fi mutată încă';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Biblioteca anterioară este încă în siguranță. Verificați conexiunea și alegeți din nou folderul pentru a reîncerca.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Alegeți mai întâi un dosar Drive vizibil';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Este necesar un dosar de bibliotecă vizibil înainte de a importa fișiere din Drive.';
+
+  @override
   String get accountSignOutTitle => 'Te deconectezi de la acest cont?';
 
   @override
@@ -1953,4 +2015,37 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Tonalitate estimată';
+
+  @override
+  String get songsLibraryView => 'Bibliotecă';
+
+  @override
+  String get settingsStartupView => 'Pornește în';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Alege vizualizarea melodiilor afișată la deschiderea aplicației.';
+
+  @override
+  String get settingsStartupLastView => 'Ultima vizualizare';
+
+  @override
+  String get playerExpandControls => 'Afișează comenzile de redare';
+
+  @override
+  String get playerCollapseControls => 'Ascunde comenzile de redare';
+
+  @override
+  String get settingsShowSections => 'Afișează titlurile secțiunilor';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Afișează în versuri titlurile strofelor, refrenului și ale altor secțiuni.';
+
+  @override
+  String get settingsShowPlayerControls => 'Afișează comenzile de redare';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Poți atinge sau glisa și panoul playerului pentru a-l afișa sau ascunde.';
 }

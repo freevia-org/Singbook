@@ -1426,6 +1426,69 @@ class AppLocalizationsPl extends AppLocalizations {
       'Synchronizacja odbywa się po połączeniu oraz po dodaniu, edycji lub usunięciu utworu.';
 
   @override
+  String get accountDriveFolder => 'Folder biblioteki Dysku Google';
+
+  @override
+  String get accountPrivateDriveFolder => 'Prywatny folder Śpiewaka';
+
+  @override
+  String get accountChooseDriveFolder => 'Wybierz folder';
+
+  @override
+  String get accountDriveFolderMoveTitle => 'Przenieść bibliotekę Singbook?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Wybierz widoczny folder na Dysku Google. Singbook skopiuje i zweryfikuje tam Twoje utwory i setlisty przed przełączeniem na niego. Oryginalne pliki pozostają w poprzedniej lokalizacji jako kopia zapasowa. Pozostałe pliki pozostawiamy w spokoju. Pliki ChordPro, które zaimportujesz do tego folderu, zostaną przystosowane do synchronizacji i otrzymają metadane Singbooka.';
+
+  @override
+  String get accountImportChordPro => 'Importuj ChordPro z Dysku';
+
+  @override
+  String get accountImportChordProHint =>
+      'Wybierz pliki .cho, które chcesz dodać do tej biblioteki. Pliki znajdujące się już w folderze zostaną przejęte; pliki gdzie indziej są kopiowane tutaj.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Wybór folderu na Dysku jest niedostępny';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Na obsługiwanym urządzeniu wybierz widoczny folder Dysku za pomocą selektora Dysku Google.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'Folder na dysku Singbook jest niedostępny';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Wybierz folder ponownie lub przywróć go na Dysku Google.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook potrzebuje dostępu do tego folderu na Dysku';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Wybierz folder ponownie, aby przyznać dostęp, a następnie zsynchronizuj swoją bibliotekę.';
+
+  @override
+  String get syncErrorFolderMigration =>
+      'Biblioteki nie udało się jeszcze przenieść';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Twoja poprzednia biblioteka jest nadal bezpieczna. Sprawdź połączenie i ponownie wybierz folder, aby spróbować ponownie.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Najpierw wybierz widoczny folder na Dysku';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Przed importowaniem plików z Dysku potrzebny jest widoczny folder biblioteki.';
+
+  @override
   String get accountSignOutTitle => 'Wylogować się z tego konta?';
 
   @override
@@ -1956,4 +2019,38 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Szacowana tonacja';
+
+  @override
+  String get songsLibraryView => 'Biblioteka';
+
+  @override
+  String get settingsStartupView => 'Widok początkowy';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Wybierz widok utworów wyświetlany po otwarciu aplikacji.';
+
+  @override
+  String get settingsStartupLastView => 'Ostatnio otwarty';
+
+  @override
+  String get playerExpandControls => 'Pokaż elementy sterujące odtwarzaniem';
+
+  @override
+  String get playerCollapseControls => 'Ukryj elementy sterujące odtwarzaniem';
+
+  @override
+  String get settingsShowSections => 'Pokazuj nagłówki sekcji';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Pokazuj w tekście nagłówki zwrotek, refrenu i innych sekcji.';
+
+  @override
+  String get settingsShowPlayerControls =>
+      'Pokaż elementy sterujące odtwarzaniem';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Możesz też stuknąć panel odtwarzacza lub przesunąć po nim palcem, aby go pokazać lub ukryć.';
 }

@@ -1404,6 +1404,68 @@ class AppLocalizationsDa extends AppLocalizations {
       'Synkronisering sker efter tilslutning og efter tilføjelse, redigering eller fjernelse af en sang.';
 
   @override
+  String get accountDriveFolder => 'Google Drev biblioteksmappe';
+
+  @override
+  String get accountPrivateDriveFolder => 'Privat Singbook-mappe';
+
+  @override
+  String get accountChooseDriveFolder => 'Vælg mappe';
+
+  @override
+  String get accountDriveFolderMoveTitle => 'Flytte dit Singbook-bibliotek?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Vælg en synlig Google Drev-mappe. Singbook vil kopiere og bekræfte dine sange og sætlister der, før du skifter til den. Originalfiler forbliver på deres tidligere placering som en sikkerhedskopi. Andre filer efterlades alene. ChordPro-filer, du importerer til denne mappe, bruges til synkronisering og modtager Singbook-metadata.';
+
+  @override
+  String get accountImportChordPro => 'Importer ChordPro fra Drive';
+
+  @override
+  String get accountImportChordProHint =>
+      'Vælg .cho-filer, der skal føjes til dette bibliotek. Filer, der allerede er i mappen, overtages; filer andre steder kopieres her.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Valg af Drev-mappe er ikke tilgængeligt';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Vælg en synlig Drev-mappe med Google Drevs mappevælger på en understøttet enhed.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'Singbook Drive-mappen er ikke tilgængelig';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Vælg mappen igen, eller gendan den i Google Drev.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook skal have adgang til denne Drev-mappe';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Vælg mappen igen for at give adgang, og synkroniser derefter dit bibliotek.';
+
+  @override
+  String get syncErrorFolderMigration => 'Biblioteket kunne ikke flyttes endnu';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Dit tidligere bibliotek er stadig sikkert. Kontroller forbindelsen, og vælg mappen igen for at prøve igen.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Vælg først en synlig Drev-mappe';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Der kræves en synlig biblioteksmappe, før du importerer filer fra Drev.';
+
+  @override
   String get accountSignOutTitle => 'Log ud af denne konto?';
 
   @override
@@ -1920,4 +1982,37 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Anslået toneart';
+
+  @override
+  String get songsLibraryView => 'Bibliotek';
+
+  @override
+  String get settingsStartupView => 'Start i';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Vælg den sangvisning, der vises, når appen åbnes.';
+
+  @override
+  String get settingsStartupLastView => 'Senest åbne';
+
+  @override
+  String get playerExpandControls => 'Vis afspilningsknapper';
+
+  @override
+  String get playerCollapseControls => 'Skjul afspilningsknapper';
+
+  @override
+  String get settingsShowSections => 'Vis sektionsoverskrifter';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Vis overskrifter for vers, omkvæd og andre afsnit i sangteksten.';
+
+  @override
+  String get settingsShowPlayerControls => 'Vis afspilningsknapper';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Du kan også trykke på eller stryge på afspillerpanelet for at vise eller skjule det.';
 }

@@ -43,6 +43,7 @@ class AppController extends ChangeNotifier {
   /// The remaining timing arguments stay accepted for source compatibility.
   factory AppController({
     LibraryRepository? repository,
+    String? repositoryPath,
     SourceDiscoveryService? discovery,
     GoogleDriveSyncService? sync,
     Duration autoSyncDelay = const Duration(seconds: 2),
@@ -51,8 +52,18 @@ class AppController extends ChangeNotifier {
     Duration autoSyncBackoff = const Duration(seconds: 30),
     Duration autoSyncMaxBackoff = const Duration(minutes: 15),
   }) {
+    if (repository != null && repositoryPath != null) {
+      throw ArgumentError('Provide a repository or repositoryPath, not both.');
+    }
     if (discovery != null) {
-      return AppController._(repository, discovery, null, sync, autoSyncDelay);
+      return AppController._(
+        repository,
+        discovery,
+        null,
+        sync,
+        autoSyncDelay,
+        repositoryPath,
+      );
     }
     final transport = ProviderTransport();
     return AppController._(
@@ -61,6 +72,7 @@ class AppController extends ChangeNotifier {
       transport,
       sync,
       autoSyncDelay,
+      repositoryPath,
     );
   }
 
@@ -70,6 +82,7 @@ class AppController extends ChangeNotifier {
     this._ownedTransport,
     this._sync,
     this._autoSyncDelay,
+    this._repositoryPath,
   );
 
   static SourceDiscoveryService _createDiscovery(ProviderTransport transport) {
@@ -80,6 +93,7 @@ class AppController extends ChangeNotifier {
   }
 
   final ProviderTransport? _ownedTransport;
+  final String? _repositoryPath;
   LibraryRepository? _repository;
   bool _ownsRepository = false;
   LibraryRepository get repository => _repository!;
@@ -107,6 +121,7 @@ class AppController extends ChangeNotifier {
   bool get syncConnected => _sync?.isConnected ?? false;
   String? get syncAccountEmail => _sync?.accountEmail;
   String? get syncAccountPhotoUrl => _sync?.accountPhotoUrl;
+  String? get syncDriveFolderName => _sync?.selectedDriveFolder?.name;
   bool syncBusy = false;
 
   /// Code of the first unusable remote/local file the last (otherwise
@@ -289,7 +304,7 @@ class AppController extends ChangeNotifier {
   Future<void> _initialize() async {
     if (_disposed) return;
     if (_repository == null) {
-      final opened = await LibraryRepository.open();
+      final opened = await LibraryRepository.open(path: _repositoryPath);
       if (_disposed) {
         await opened.close();
         return;
@@ -336,6 +351,8 @@ class AppController extends ChangeNotifier {
   /// schedules a debounced sync for the signed-in account.
   Future<void> _afterSignIn() async {
     final sync = _sync!;
+    await sync.refreshDriveFolderSelection();
+    if (_disposed) return;
     final lastSuccess = await sync.lastSuccessfulSync();
     if (_disposed) return;
     lastSyncAt = lastSuccess;
@@ -1145,6 +1162,18 @@ class AppController extends ChangeNotifier {
   Future<void> signOutFromSync() => disconnectSync();
 
   Future<void> syncNow() => _runSyncAction(_syncBody);
+
+  /// Moves Singbook's managed library into a user-selected visible Drive
+  /// folder, then verifies the new location with a normal sync.
+  Future<void> chooseSyncDriveFolder() => _runSyncAction(() async {
+    await _sync!.chooseVisibleDriveFolder();
+    await _syncBody();
+  });
+
+  Future<void> importChordProFromDrive() => _runSyncAction(() async {
+    await _sync!.importChordProFilesFromDrive();
+    await _syncBody();
+  });
 
   /// The user's decision after `account_changed`: bind this library to the
   /// signed-in account and sync.

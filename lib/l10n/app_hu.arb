@@ -831,5 +831,44 @@
       }
     }
   },
-  "playerEstimatedKey": "Becsült hangnem"
+  "accountDriveFolder": "Google Drive könyvtár mappa",
+  "accountPrivateDriveFolder": "Privát énekeskönyv mappa",
+  "accountChooseDriveFolder": "Válasszon mappát",
+  "accountDriveFolderMoveTitle": "Áthelyezi a Singbook könyvtárát?",
+  "accountDriveFolderMoveBody": "Válasszon egy látható Google Drive-mappát. A Singbook átmásolja és ellenőrzi a dalait és a setlistjeit, mielőtt átváltana rá. Az eredeti fájlok a korábbi helyükön maradnak biztonsági másolatként. A többi fájl egyedül marad. Az ebbe a mappába importált ChordPro-fájlok szinkronizálásra és a Singbook metaadatok fogadására készülnek.",
+  "accountImportChordPro": "Importálja a ChordPro-t a Drive-ból",
+  "accountImportChordProHint": "Válassza ki a könyvtárhoz hozzáadni kívánt .cho fájlokat. A mappában már lévő fájlok átvételre kerülnek; ide másolják a máshol található fájlok.",
+  "syncErrorFolderPickerUnavailable": "A Drive-mappa nem választható",
+  "syncErrorFolderPickerUnavailableHint": "Válasszon látható Drive-mappát a Google Drive-választóval egy támogatott eszközön.",
+  "syncErrorDriveFolderMissing": "A Singbook Drive mappa nem érhető el",
+  "syncErrorDriveFolderMissingHint": "Válassza ki újra a mappát, vagy állítsa vissza a Google Drive-ban.",
+  "syncErrorDriveFileAuthorization": "A Singbooknak hozzá kell férnie ehhez a Drive-mappához",
+  "syncErrorDriveFileAuthorizationHint": "Válassza ki újra a mappát a hozzáférés megadásához, majd szinkronizálja könyvtárát.",
+  "syncErrorFolderMigration": "A könyvtárat még nem tudták áthelyezni",
+  "syncErrorFolderMigrationHint": "Az előző könyvtár továbbra is biztonságban van. Ellenőrizze a kapcsolatot, és válassza ki újra a mappát az újrapróbálkozáshoz.",
+  "syncErrorVisibleFolderRequired": "Először válasszon egy látható Drive-mappát",
+  "syncErrorVisibleFolderRequiredHint": "A fájlok Drive-ból való importálása előtt látható könyvtármappára van szükség.",
+  "playerEstimatedKey": "Becsült hangnem",
+  "songsLibraryView": "Könyvtár",
+  "settingsStartupView": "Induló nézet",
+  "settingsStartupViewHint": "Válaszd ki, melyik Dalképernyő jelenjen meg az alkalmazás megnyitásakor.",
+  "settingsStartupLastView": "Utoljára megnyitott",
+  "playerExpandControls": "Lejátszásvezérlők megjelenítése",
+  "playerCollapseControls": "Lejátszásvezérlők elrejtése",
+  "settingsShowSections": "Szakaszcímek megjelenítése",
+  "settingsShowSectionsHint": "Jelenítsd meg a dalszövegben a versszakok, a refrén és más részek címeit.",
+  "settingsShowPlayerControls": "Lejátszásvezérlők megjelenítése",
+  "settingsShowPlayerControlsHint": "A lejátszópanelt megérintéssel vagy elhúzással is megjelenítheted vagy elrejtheted.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

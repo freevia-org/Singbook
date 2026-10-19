@@ -1414,6 +1414,69 @@ class AppLocalizationsGa extends AppLocalizations {
       'Déantar sioncrónú tar éis nascadh agus tar éis amhrán a chur leis, a chur in eagar nó a bhaint.';
 
   @override
+  String get accountDriveFolder => 'Fillteán leabharlainne Google Drive';
+
+  @override
+  String get accountPrivateDriveFolder => 'Fillteán Singbook Príobháideach';
+
+  @override
+  String get accountChooseDriveFolder => 'Roghnaigh fillteán';
+
+  @override
+  String get accountDriveFolderMoveTitle => 'Bog do leabharlann Singbook?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Roghnaigh fillteán Google Drive infheicthe. Déanfaidh Singbook do amhráin agus do liostaí tacair a chóipeáil agus a fhíorú ansin sula n-aistreoidh siad chuige. Fanann na bunchomhaid ina suíomh roimhe seo mar chúltaca. Fágtar comhaid eile leo féin. Glactar le comhaid ChordPro a iompórtálann tú isteach san fhillteán seo le haghaidh sioncronaithe agus faigheann siad meiteashonraí Singbook.';
+
+  @override
+  String get accountImportChordPro => 'Iompórtáil ChordPro ó Drive';
+
+  @override
+  String get accountImportChordProHint =>
+      'Roghnaigh comhaid .cho le cur leis an leabharlann seo. Glactar le comhaid atá san fhillteán cheana; déantar comhaid in áiteanna eile a chóipeáil anseo.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Níl an rogha fillteán tiomántán ar fáil';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Roghnaigh fillteán Drive infheicthe le roghnóir Google Drive ar ghléas tacaithe.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'Níl an fillteán Singbook Drive ar fáil';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Roghnaigh an fillteán arís, nó cuir ar ais é in Google Drive.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Tá rochtain ag teastáil ó Singbook ar an bhfillteán Drive seo';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Roghnaigh an fillteán arís chun rochtain a dheonú, ansin sioncronaigh do leabharlann.';
+
+  @override
+  String get syncErrorFolderMigration =>
+      'Níorbh fhéidir an leabharlann a bhogadh go fóill';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Tá do leabharlann roimhe seo fós slán. Seiceáil an nasc agus roghnaigh an fillteán arís chun triail a bhaint as arís.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Roghnaigh fillteán Drive infheicthe ar dtús';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Teastaíonn fillteán leabharlainne infheicthe sula n-iompórtáiltear comhaid ó Drive.';
+
+  @override
   String get accountSignOutTitle => 'Sínigh amach as an gcuntas seo?';
 
   @override
@@ -1946,4 +2009,37 @@ class AppLocalizationsGa extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Tón measta';
+
+  @override
+  String get songsLibraryView => 'Leabharlann';
+
+  @override
+  String get settingsStartupView => 'Tosaigh in';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Roghnaigh an t-amharc Amhráin a thaispeánfar nuair a osclaítear an aip.';
+
+  @override
+  String get settingsStartupLastView => 'Amharc is déanaí';
+
+  @override
+  String get playerExpandControls => 'Taispeáin rialtáin athsheinm';
+
+  @override
+  String get playerCollapseControls => 'Folaigh rialtáin athsheinm';
+
+  @override
+  String get settingsShowSections => 'Taispeáin ceannteidil na rann';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Taispeáin ceannteidil na véarsaí, an churfá agus rann eile sna liricí.';
+
+  @override
+  String get settingsShowPlayerControls => 'Taispeáin rialtáin athsheinm';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Is féidir leat painéal an tseinnteora a thapáil nó a shleamhnú freisin chun é a thaispeáint nó a cheilt.';
 }

@@ -1,7 +1,7 @@
 name: CI
 
-# Analyze and test only. This workflow uses no secrets, builds no release and
-# never signs anything. config/local.defines.json is intentionally absent, so
+# Source checks and an unsigned offline Windows preview. This workflow uses no
+# secrets and never signs anything. config/local.defines.json is absent, so
 # tests run with the same empty defines as a fresh clone.
 on:
   push:
@@ -60,4 +60,66 @@ jobs:
           name: visual-test-failures
           path: test/**/failures/**
           if-no-files-found: ignore
+          retention-days: 7
+
+  windows-build:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Record dependency generation source status
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path artifacts/windows-parity/dependency-generation -Force | Out-Null
+          git status --porcelain | Tee-Object -FilePath artifacts/windows-parity/dependency-generation/status.txt
+          git diff --binary > artifacts/windows-parity/dependency-generation/generated.diff
+
+      - name: Build and package Windows release
+        shell: pwsh
+        run: ./scripts/build-windows.ps1 -AllowMissingDefines
+
+      - name: Check native clipboard and isolated credential storage
+        shell: pwsh
+        run: ./scripts/test-windows-native.ps1 -CredentialStore
+
+      - name: Windows platform regression checks
+        run: >-
+          flutter test --no-pub --concurrency=2
+          test/data/windows_database_test.dart
+          test/application/windows_export_test.dart
+          test/sync/windows_google_auth_test.dart
+          test/sync/windows_drive_file_access_test.dart
+          test/providers/windows_transport_test.dart
+          test/providers/windows_http_client_test.dart
+          test/ui/windows_exit_test.dart
+          test/ui/windows_input_test.dart
+
+      - name: Preserve Windows validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-validation-evidence
+          path: |
+            artifacts/windows-parity/
+            artifacts/windows/**/build.log
+            artifacts/windows/**/manifest.json
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Preserve Windows release bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-release-bundle
+          path: artifacts/windows/
+          if-no-files-found: error
           retention-days: 7

@@ -1404,6 +1404,69 @@ class AppLocalizationsVi extends AppLocalizations {
       'Đồng bộ sau khi kết nối và sau khi thêm, chỉnh sửa hoặc xóa bài hát.';
 
   @override
+  String get accountDriveFolder => 'Thư mục thư viện Google Drive';
+
+  @override
+  String get accountPrivateDriveFolder => 'Thư mục Singbook riêng';
+
+  @override
+  String get accountChooseDriveFolder => 'Chọn thư mục';
+
+  @override
+  String get accountDriveFolderMoveTitle =>
+      'Di chuyển thư viện Singbook của bạn?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Chọn một thư mục Google Drive hiển thị. Singbook sẽ sao chép và xác minh các bài hát cũng như danh sách tập hợp của bạn ở đó trước khi chuyển sang nó. Các tập tin gốc vẫn ở vị trí trước đó như một bản sao lưu. Các tập tin khác được để lại một mình. Các tệp ChordPro bạn nhập vào thư mục này sẽ được sử dụng để đồng bộ hóa và nhận siêu dữ liệu Singbook.';
+
+  @override
+  String get accountImportChordPro => 'Nhập ChordPro từ Drive';
+
+  @override
+  String get accountImportChordProHint =>
+      'Chọn tệp .cho để thêm vào thư viện này. Các tập tin đã có trong thư mục sẽ được chấp nhận; các tập tin ở nơi khác được sao chép ở đây.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Lựa chọn thư mục Drive không khả dụng';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Chọn thư mục Drive hiển thị bằng bộ chọn Google Drive trên thiết bị được hỗ trợ.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'Thư mục Singbook Drive không khả dụng';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Chọn lại thư mục hoặc khôi phục thư mục đó trong Google Drive.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook cần quyền truy cập vào thư mục Drive này';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Chọn lại thư mục để cấp quyền truy cập, sau đó đồng bộ hóa thư viện của bạn.';
+
+  @override
+  String get syncErrorFolderMigration => 'Thư viện chưa thể di chuyển được';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Thư viện trước đây của bạn vẫn an toàn. Kiểm tra kết nối và chọn lại thư mục để thử lại.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Trước tiên, hãy chọn thư mục Drive hiển thị';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Cần có thư mục thư viện hiển thị trước khi nhập tệp từ Drive.';
+
+  @override
   String get accountSignOutTitle => 'Đăng xuất khỏi tài khoản này?';
 
   @override
@@ -1917,4 +1980,37 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Tông ước tính';
+
+  @override
+  String get songsLibraryView => 'Thư viện';
+
+  @override
+  String get settingsStartupView => 'Mở vào';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Chọn chế độ xem Bài hát sẽ hiển thị khi mở ứng dụng.';
+
+  @override
+  String get settingsStartupLastView => 'Mở gần đây nhất';
+
+  @override
+  String get playerExpandControls => 'Hiện điều khiển phát';
+
+  @override
+  String get playerCollapseControls => 'Ẩn điều khiển phát';
+
+  @override
+  String get settingsShowSections => 'Hiện tiêu đề các phần';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Hiện tiêu đề đoạn, điệp khúc và các phần khác trong lời bài hát.';
+
+  @override
+  String get settingsShowPlayerControls => 'Hiện điều khiển phát';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Bạn cũng có thể chạm hoặc vuốt bảng trình phát để hiện hoặc ẩn bảng.';
 }

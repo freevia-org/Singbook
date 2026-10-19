@@ -832,5 +832,44 @@
       }
     }
   },
-  "playerEstimatedKey": "Tahmini tonalite"
+  "accountDriveFolder": "Google Drive kitaplık klasörü",
+  "accountPrivateDriveFolder": "Özel Singbook klasörü",
+  "accountChooseDriveFolder": "Klasör seç",
+  "accountDriveFolderMoveTitle": "Singbook kütüphaneniz taşınsın mı?",
+  "accountDriveFolderMoveBody": "Görünür bir Google Drive klasörü seçin. Singbook, geçiş yapmadan önce şarkılarınızı ve set listelerinizi oraya kopyalayacak ve doğrulayacaktır. Orijinal dosyalar yedek olarak önceki konumlarında kalır. Diğer dosyalar yalnız bırakılır. Bu klasöre aktardığınız ChordPro dosyaları senkronizasyon için benimsenir ve Singbook meta verilerini alır.",
+  "accountImportChordPro": "ChordPro'yu Drive'dan içe aktar",
+  "accountImportChordProHint": "Bu kitaplığa eklenecek .cho dosyalarını seçin. Zaten klasörde bulunan dosyalar benimsenir; başka yerlerdeki dosyalar buraya kopyalanır.",
+  "syncErrorFolderPickerUnavailable": "Drive klasörü seçimi kullanılamıyor",
+  "syncErrorFolderPickerUnavailableHint": "Desteklenen bir cihazda Google Drive seçiciyi kullanarak görünür bir Drive klasörü seçin.",
+  "syncErrorDriveFolderMissing": "Singbook Drive klasörü kullanılamıyor",
+  "syncErrorDriveFolderMissingHint": "Klasörü tekrar seçin veya Google Drive'a geri yükleyin.",
+  "syncErrorDriveFileAuthorization": "Singbook'un bu Drive klasörüne erişmesi gerekiyor",
+  "syncErrorDriveFileAuthorizationHint": "Erişim izni vermek için klasörü tekrar seçin ve ardından kitaplığınızı senkronize edin.",
+  "syncErrorFolderMigration": "Kütüphane henüz taşınamadı",
+  "syncErrorFolderMigrationHint": "Önceki kitaplığınız hâlâ güvende. Bağlantıyı kontrol edin ve yeniden denemek için klasörü tekrar seçin.",
+  "syncErrorVisibleFolderRequired": "Önce görünür bir Drive klasörü seçin",
+  "syncErrorVisibleFolderRequiredHint": "Dosyaları Drive'dan içe aktarmadan önce görünür bir kitaplık klasörüne ihtiyaç vardır.",
+  "playerEstimatedKey": "Tahmini tonalite",
+  "songsLibraryView": "Kitaplık",
+  "settingsStartupView": "Başlangıç görünümü",
+  "settingsStartupViewHint": "Uygulama açıldığında gösterilecek Şarkılar görünümünü seçin.",
+  "settingsStartupLastView": "Son açılan",
+  "playerExpandControls": "Oynatma kontrollerini göster",
+  "playerCollapseControls": "Oynatma kontrollerini gizle",
+  "settingsShowSections": "Bölüm başlıklarını göster",
+  "settingsShowSectionsHint": "Şarkı sözlerinde kıta, nakarat ve diğer bölümlerin başlıklarını göster.",
+  "settingsShowPlayerControls": "Oynatma kontrollerini göster",
+  "settingsShowPlayerControlsHint": "Oynatıcı panelini göstermek veya gizlemek için panele dokunabilir ya da kaydırabilirsiniz.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

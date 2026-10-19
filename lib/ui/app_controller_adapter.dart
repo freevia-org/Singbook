@@ -87,6 +87,7 @@ class AppControllerAdapter extends VerseUiController {
   String _query = '';
   String? _songId, _setlistId, _setlistEntryId, _selectedVersionId;
   String? _selectedQuery;
+  String? _lastCatalogQuery;
   String? _versionOrderReferenceId;
   final Map<String, int> _versionArrivalOrder = {};
   int _nextVersionArrivalOrder = 0;
@@ -415,6 +416,7 @@ class AppControllerAdapter extends VerseUiController {
       route: _route,
       activeTab: _tab,
       homeListMode: _homeMode,
+      startupSongsView: _startupSongsView(app.settings['startupSongsView']),
       query: _query,
       autocomplete: _query.trim() == app.query.trim()
           ? rankedAutocomplete.map((entry) => _reference(entry.value)).toList()
@@ -453,6 +455,7 @@ class AppControllerAdapter extends VerseUiController {
       syncSignedIn: app.syncConnected,
       syncBusy: app.syncBusy,
       accountName: app.syncAccountEmail,
+      syncDriveFolderName: app.syncDriveFolderName,
       accountPhotoUrl: app.syncAccountPhotoUrl,
       accountError: _syncWarningOnly ? null : app.syncError,
       lastSyncAt: _lastSyncAt,
@@ -471,6 +474,9 @@ class AppControllerAdapter extends VerseUiController {
         app.settings['lyricHighlightStyle'],
       ),
       showChords: app.settings['showChords'] as bool? ?? true,
+      showSections: app.settings['showSections'] as bool? ?? true,
+      playerControlsExpanded:
+          app.settings['playerControlsExpanded'] as bool? ?? true,
       autoscroll:
           (app.settings['autoscroll'] as bool? ?? true) &&
           timingMode != 'manual',
@@ -1329,29 +1335,66 @@ class AppControllerAdapter extends VerseUiController {
   @override
   Future<void> initialize() async {
     await app.initialize();
-    final preferred = app.settings['defaultView'] as String?;
-    _tab =
-        VerseTab.values.where((value) => value.name == preferred).firstOrNull ??
-        VerseTab.home;
+    // Startup is a Songs view, independent of the last bottom destination.
+    // Legacy defaultView values were written on every navigation tap and are
+    // not an explicit startup preference.
+    _tab = VerseTab.home;
+    final preferred = _startupSongsView(app.settings['startupSongsView']);
+    final view = preferred == 'last'
+        ? app.settings['lastSongsView']
+        : preferred;
+    _homeMode =
+        HomeListMode.values.where((mode) => mode.name == view).firstOrNull ??
+        HomeListMode.recent;
+    _rememberSongsView();
     notifyListeners();
   }
 
+  static String _startupSongsView(Object? value) =>
+      const {'recent', 'library', 'favorites', 'online', 'last'}.contains(value)
+      ? value! as String
+      : 'recent';
+
+  void _rememberSongsView() {
+    final view = _homeMode.name;
+    if (app.settings['lastSongsView'] == view) return;
+    unawaited(_guard(() => app.setSetting('lastSongsView', view)));
+  }
+
+  @override
+  Future<void> setStartupSongsView(String view) =>
+      app.setSetting('startupSongsView', _startupSongsView(view));
+
   @override
   void setTab(VerseTab tab) {
-    _tab = tab;
+    // Keep the former Songs route as a Library alias for conflict review and
+    // older callers. The visible navigation has one Songs destination.
+    _tab = tab == VerseTab.songs ? VerseTab.home : tab;
+    if (tab == VerseTab.songs) {
+      _homeMode = HomeListMode.library;
+      // Conflict review should reveal all conflict copies, not inherit an
+      // unrelated catalog search that hides them.
+      if (_conflictFilter) _query = '';
+    }
     _route = VerseRoute.main;
     _setlistId = null;
     _setlistEntryId = null;
-    unawaited(_guard(() => app.setSetting('defaultView', tab.name)));
+    if (_tab == VerseTab.home) _rememberSongsView();
     notifyListeners();
   }
 
   @override
   void setHomeListMode(HomeListMode mode) {
+    _searchDebounce?.cancel();
     _homeMode = mode;
+    _rememberSongsView();
     if (mode == HomeListMode.online) {
       _normalizeOnlineMetadataFilter();
-      unawaited(_guard(submitSearch));
+      if (_query.trim().isNotEmpty &&
+          _selectedQuery != _query.trim() &&
+          _lastCatalogQuery != _query.trim()) {
+        unawaited(_guard(submitSearch));
+      }
     }
     notifyListeners();
   }
@@ -1369,28 +1412,32 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   void setQuery(String value) {
-    if (_query.trim() != value.trim()) {
+    final online = _homeMode == HomeListMode.online;
+    if (online && _query.trim() != value.trim()) {
       _cachedAutocomplete = const [];
       _versionOrderReferenceId = null;
       _versionArrivalOrder.clear();
       _nextVersionArrivalOrder = 0;
     }
     _query = value;
-    app.errorCode = null;
-    if (_selectedQuery != value.trim()) {
+    if (online) app.errorCode = null;
+    if (online && _selectedQuery != value.trim()) {
       _selectedVersionId = null;
       _selectedQuery = null;
     }
-    if (value.trim().isNotEmpty) {
-      _homeMode = HomeListMode.online;
+    if (_homeMode == HomeListMode.online) {
       _normalizeOnlineMetadataFilter();
     }
     _searchDebounce?.cancel();
-    app.cancelSearch();
-    if (value.trim().length >= 2) {
+    // Typing in a local view filters that view without contacting providers.
+    if (online) {
+      _lastCatalogQuery = null;
+      app.cancelSearch();
+    }
+    if (_homeMode == HomeListMode.online && value.trim().length >= 2) {
       _searchDebounce = Timer(
         const Duration(milliseconds: 360),
-        () => unawaited(_guard(() => app.search(value))),
+        () => unawaited(_guard(() => _searchCatalog(value))),
       );
     }
     notifyListeners();
@@ -1403,14 +1450,21 @@ class AppControllerAdapter extends VerseUiController {
     _route = VerseRoute.main;
     _tab = VerseTab.home;
     _homeMode = HomeListMode.online;
+    _rememberSongsView();
     notifyListeners();
   }
 
   @override
   Future<void> submitSearch() async {
+    if (_homeMode != HomeListMode.online) return;
     _homeMode = HomeListMode.online;
     _searchDebounce?.cancel();
-    await app.search(_query);
+    await _searchCatalog(_query);
+  }
+
+  Future<void> _searchCatalog(String query) async {
+    _lastCatalogQuery = query.trim();
+    await app.search(query);
     _cachedAutocomplete = app.suggestions;
     notifyListeners();
   }
@@ -1610,6 +1664,7 @@ class AppControllerAdapter extends VerseUiController {
     _route = VerseRoute.main;
     _tab = VerseTab.home;
     _homeMode = HomeListMode.online;
+    _rememberSongsView();
     _selectedVersionId = song.extra['combinedSelection'] == reference.identity
         ? 'combined'
         : song.extra['selectedSourceId'] as String?;
@@ -2508,6 +2563,14 @@ class AppControllerAdapter extends VerseUiController {
   Future<void> setShowChords(bool show) => app.setSetting('showChords', show);
 
   @override
+  Future<void> setShowSections(bool show) =>
+      app.setSetting('showSections', show);
+
+  @override
+  Future<void> setPlayerControlsExpanded(bool expanded) =>
+      app.setSetting('playerControlsExpanded', expanded);
+
+  @override
   Future<void> setAutoscroll(bool enabled) =>
       app.setSetting('autoscroll', enabled);
   @override
@@ -2597,6 +2660,36 @@ class AppControllerAdapter extends VerseUiController {
     _postSyncOutcome(conflictsBefore);
   }
 
+  @override
+  Future<void> chooseSyncDriveFolder() async {
+    if (!app.syncConnected) return;
+    try {
+      await app.chooseSyncDriveFolder();
+      if (app.syncError != null) {
+        postNotice(UiNotice.syncFailed);
+      } else {
+        postNotice(UiNotice.syncSucceeded);
+      }
+    } catch (_) {
+      postNotice(UiNotice.syncFailed);
+    }
+  }
+
+  @override
+  Future<void> importChordProFromDrive() async {
+    if (!app.syncConnected || app.syncDriveFolderName == null) return;
+    try {
+      await app.importChordProFromDrive();
+      if (app.syncError != null) {
+        postNotice(UiNotice.syncFailed);
+      } else {
+        postNotice(UiNotice.syncSucceeded);
+      }
+    } catch (_) {
+      postNotice(UiNotice.syncFailed);
+    }
+  }
+
   void _postSyncOutcome(int conflictsBefore) {
     if (_syncWarningOnly) {
       postNotice(UiNotice.syncSkipped);
@@ -2676,6 +2769,9 @@ class AppControllerAdapter extends VerseUiController {
       _route = VerseRoute.main;
     } else if (_route != VerseRoute.main) {
       _route = VerseRoute.main;
+    }
+    if (_route == VerseRoute.main && _tab == VerseTab.home) {
+      _rememberSongsView();
     }
     notifyListeners();
   }

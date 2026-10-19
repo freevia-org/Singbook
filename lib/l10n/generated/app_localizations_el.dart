@@ -1420,6 +1420,70 @@ class AppLocalizationsEl extends AppLocalizations {
       'Ο συγχρονισμός γίνεται μετά τη σύνδεση και μετά την προσθήκη, επεξεργασία ή αφαίρεση ενός τραγουδιού.';
 
   @override
+  String get accountDriveFolder => 'Φάκελος βιβλιοθήκης Google Drive';
+
+  @override
+  String get accountPrivateDriveFolder => 'Ιδιωτικός φάκελος Singbook';
+
+  @override
+  String get accountChooseDriveFolder => 'Επιλέξτε φάκελο';
+
+  @override
+  String get accountDriveFolderMoveTitle =>
+      'Μετακίνηση της βιβλιοθήκης Singbook;';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Επιλέξτε έναν ορατό φάκελο του Google Drive. Το Singbook θα αντιγράψει και θα επαληθεύσει εκεί τα τραγούδια και τις λίστες σας πριν από τη μετάβαση σε αυτό. Τα πρωτότυπα αρχεία παραμένουν στην προηγούμενη θέση τους ως αντίγραφο ασφαλείας. Άλλα αρχεία μένουν μόνα τους. Τα αρχεία ChordPro που εισάγετε σε αυτόν τον φάκελο υιοθετούνται για συγχρονισμό και λήψη μεταδεδομένων Singbook.';
+
+  @override
+  String get accountImportChordPro => 'Εισαγωγή ChordPro από το Drive';
+
+  @override
+  String get accountImportChordProHint =>
+      'Επιλέξτε αρχεία .cho για προσθήκη σε αυτήν τη βιβλιοθήκη. Τα αρχεία που βρίσκονται ήδη στον φάκελο έχουν εγκριθεί. αρχεία αλλού αντιγράφονται εδώ.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Η επιλογή φακέλου μονάδας δίσκου δεν είναι διαθέσιμη';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Επιλέξτε έναν ορατό φάκελο Drive με τον επιλογέα του Google Drive σε υποστηριζόμενη συσκευή.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'Ο φάκελος Singbook Drive δεν είναι διαθέσιμος';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Επιλέξτε ξανά το φάκελο ή επαναφέρετέ τον στο Google Drive.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Το Singbook χρειάζεται πρόσβαση σε αυτόν τον φάκελο Drive';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Επιλέξτε ξανά το φάκελο για να παραχωρήσετε πρόσβαση και, στη συνέχεια, συγχρονίστε τη βιβλιοθήκη σας.';
+
+  @override
+  String get syncErrorFolderMigration =>
+      'Δεν ήταν δυνατή η μετακίνηση της βιβλιοθήκης ακόμα';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Η προηγούμενη βιβλιοθήκη σας είναι ακόμα ασφαλής. Ελέγξτε τη σύνδεση και επιλέξτε ξανά το φάκελο για να προσπαθήσετε ξανά.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Επιλέξτε πρώτα έναν ορατό φάκελο Drive';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Απαιτείται ένας ορατός φάκελος βιβλιοθήκης πριν από την εισαγωγή αρχείων από το Drive.';
+
+  @override
   String get accountSignOutTitle => 'Αποσύνδεση από αυτόν τον λογαριασμό;';
 
   @override
@@ -1949,4 +2013,39 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Εκτιμώμενη τονικότητα';
+
+  @override
+  String get songsLibraryView => 'Βιβλιοθήκη';
+
+  @override
+  String get settingsStartupView => 'Έναρξη σε';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Επιλέξτε την προβολή Τραγούδια που θα εμφανίζεται όταν ανοίγει η εφαρμογή.';
+
+  @override
+  String get settingsStartupLastView => 'Τελευταία προβολή';
+
+  @override
+  String get playerExpandControls => 'Εμφάνιση στοιχείων ελέγχου αναπαραγωγής';
+
+  @override
+  String get playerCollapseControls =>
+      'Απόκρυψη στοιχείων ελέγχου αναπαραγωγής';
+
+  @override
+  String get settingsShowSections => 'Εμφάνιση επικεφαλίδων ενοτήτων';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Εμφάνιση των επικεφαλίδων για κουπλέ, ρεφρέν και άλλες ενότητες στους στίχους.';
+
+  @override
+  String get settingsShowPlayerControls =>
+      'Εμφάνιση στοιχείων ελέγχου αναπαραγωγής';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Μπορείτε επίσης να πατήσετε ή να σύρετε το πλαίσιο αναπαραγωγής για να το εμφανίσετε ή να το αποκρύψετε.';
 }

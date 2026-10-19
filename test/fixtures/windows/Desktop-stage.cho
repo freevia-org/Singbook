@@ -1,0 +1,31 @@
+{title: Desktop acceptance · Сцена}
+{artist: Singbook test fixture}
+{key: Em}
+{tempo: 100}
+{duration: 1:30}
+
+{comment: Intro}
+[Em] [C] [G] [D]
+
+{start_of_verse: 1}
+[Em]Morning light across the [C]stage,
+[G]Turn the song to one more [D]page.
+{end_of_verse}
+
+{start_of_chorus}
+[C]Keep the words in [G]sight,
+[D]Sing them clear to[Em]night.
+{end_of_chorus}
+
+{start_of_verse: 2}
+[Em]Every window, small or [C]wide,
+[G]Keeps the chorus by our [D]side.
+{end_of_verse}
+
+{start_of_chorus}
+[C]Keep the words in [G]sight,
+[D]Sing them clear to[Em]night.
+{end_of_chorus}
+
+{comment: Outro}
+[Em] [C] [G] [Em]

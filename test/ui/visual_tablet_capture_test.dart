@@ -366,7 +366,7 @@ ThemeData _captureTheme({required Brightness brightness}) {
 void _assertRouteGeometry(WidgetTester tester, String screen, Size viewport) {
   switch (screen) {
     case 'library':
-      final grid = find.byKey(const ValueKey('tablet-songs-grid'));
+      final grid = find.byKey(const PageStorageKey('songs-library-grid'));
       expect(grid, findsOneWidget);
       _insideViewport(tester, grid, viewport);
     case 'reader':
