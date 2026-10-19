@@ -132,4 +132,137 @@ executable SHA-256 is
 The previous verified archive was preserved at
 `artifacts/ios-preparation/archives/Runner-before-navigation-fix.xcarchive`.
 The [updated simulator QA record](ios-e2e.md#native-iphone-and-ipad-verification--2026-10-19)
-separates passing checks from the native workflows still blocked by a locked Mac.
+records the completed native import/backup checks and retains the earlier failed attempts.
+
+## App Store publishing handoff — 2026-10-19
+
+Offline preparation targets the existing `0.2.6 (20)` release. No new release
+number was created for metadata/screenshots. The current profile has no Google
+OAuth client or Genius token, so the production copy does not advertise those
+features. No signed build, App Store record or submission exists yet.
+
+### Prepared package
+
+- `docs/app-store/metadata/en-US/`: name, subtitle, promotional text, keywords,
+  production description and private review-notes draft, as plain text for
+  App Store Connect. English is the initial listing locale; this does not
+  claim every in-app language has a translated store listing.
+- `docs/app-store/submission.json`: exact version/build, URLs, proposed category
+  and SKU, remaining owner fields, screenshot dimensions and SHA-256 hashes.
+- `integration_test/ios_store_screenshots_device_test.dart`: reproducible
+  native portrait captures of the real library, reader, dark reader and
+  setlist UI, using original demonstration lyrics in a temporary database.
+  No resized QA screenshot or fabricated interface is used. Sample content
+  is for the listing and is not embedded in the normal app library.
+- Existing `docs/ios-app-privacy.md` and `docs/ios-privacy-policy-changes.md`:
+  source/SDK-based App Privacy answers and public-policy corrections.
+- Existing export options, optional local signing xcconfig, unsigned archive,
+  privacy inspector and simulator QA evidence. Root manifest review passed;
+  Apple's signed-archive validation remains deferred.
+
+Run `python3 scripts/check-app-store.py` to check version alignment, public
+metadata lengths, required screenshot groups/dimensions/RGB format and hashes.
+The command validates local materials only and explicitly reports remaining
+submission dependencies. Use Apple's live field validation when entering them.
+
+### Content authorization decision
+
+Before publishing, resolve the authorization findings documented in
+[the source review](sources.md#legal-and-terms-of-service-posture).
+Apple's [Guideline 5.2.2](https://developer.apple.com/app-store/review/guidelines/#intellectual-property)
+requires permission under the service's terms for third-party content/services.
+Attribution, anonymous access, personal use and a working endpoint do not
+establish that permission. No provider rights are asserted by these materials.
+
+| Integration group | Evidence needed for the final App Store profile |
+| --- | --- |
+| Genius catalog/API vs song-page lyrics | Distinguish API permission from permission to retrieve/save/share lyric text. Token is currently absent. |
+| Songsterr, Ultimate Guitar, Chordie, YouTube Music, Lyrics.ovh, SyncLRC, Better Lyrics/Unison | Current written service permission/terms and content rights covering the implemented access and uses; undocumented scraping or public API availability alone is insufficient. |
+| LRCLIB | Confirm service permission and rights for lyric storage/export, independently of API availability. |
+| WorshipCommons, Sean McGrath, Open Filk | Keep per-song licence and attribution evidence; independently verify the applicable licence and any conditions. |
+| MusicBrainz, Wikidata, Commons, Wikisource | Verify API/service rules, required attribution and per-file/text licences. Metadata permissions do not grant lyric rights. |
+| Ozbcoz / Worship Together imports | Automatic lookup is disabled; users supply files. Do not claim a commercial catalogue licence from import support. |
+
+Owner must either supply authorization evidence for enabled integrations or
+approve and validate a bounded release profile. Also review remotely refreshed
+catalog definitions so they cannot silently restore unapproved integrations.
+No integrations were silently removed as part of this preparation. Attach the
+final permitted-provider list/evidence to private App Review information.
+
+### Privacy, rating and product-page declarations
+
+- Publish the prepared iOS policy corrections at the public privacy URL and
+  review support contact details. A local draft is not a live policy update.
+  A fresh automated check on 2026-10-19 returned HTTP 403 for both privacy
+  and support URLs (the earlier check returned 200). Verify public/reviewer
+  reachability and resolve any access challenge before submission.
+- Enter the conservative SDK-inclusive profile from `ios-app-privacy.md`
+  (including Search History for active provider queries). Do not choose
+  “Data Not Collected” solely because the library is local or OAuth is off.
+  Resolve endpoint-specific tracking/identifier uncertainties before submission.
+  If Drive is later enabled, re-review Other User Content, privacy declarations,
+  OAuth callbacks and description before signing the release.
+- Complete Apple's current age-rating questionnaire from the actual enabled
+  sources. Local import and remote lyrics can contain mature language/content;
+  no content filter or parental-control claim is made. Account creation, chat,
+  gambling, purchases and advertising were not found in this app, but owner
+  must answer the live questionnaire and select any required override honestly.
+  Do not preassign a 4+ rating from the app's intended music use.
+- Confirm content-rights declaration and copyright owner; proposed Music
+  category, SKU and manual release still require owner confirmation. Do not
+  use placeholder copyright/contact text in public fields.
+- Do not declare untested VoiceOver or other accessibility nutrition labels as
+  supported. Large-text/dark/RTL simulator checks are evidence of tested screens,
+  not a full accessibility certification. Leave unsupported optional claims off.
+- For EU distribution, complete the account's trader-status declarations and
+  required public business/contact information. Pricing, territories, licence
+  agreement choice and Mac/Apple Vision availability need owner decisions.
+
+### When the developer account arrives
+
+1. Confirm team, explicit App ID, app-name/SKU availability and App Store record.
+   Check existing build history before using build 20. Account holder completes
+   agreements, trader declarations and any required commercial setup.
+2. Select the team locally in Xcode or ignored `Signing.xcconfig`. Keep the
+   current no-OAuth profile unless a separately validated change is approved.
+3. Rebuild a signed IPA with `bash scripts/build-ios.sh ipa`; inspect its privacy
+   manifests and Xcode Organizer privacy report. Validate through Organizer and
+   resolve actual signing, SDK or App Store processing errors. Rebuilding the
+   same release does not itself require a version increment.
+4. Upload, wait for processing, enter final privacy/rating/content-rights answers,
+   add approved metadata/screenshots and owner review contacts, and select the
+   processed build. Review notes must name the actual enabled provider profile;
+   remove the preparatory evidence instruction after supplying that evidence.
+5. Submit for App Review only after the policy/content decisions are resolved.
+   Proposed manual release allows the owner to choose publication after approval.
+
+Physical hardware is unavailable. Native iPhone/iPad simulator tests passed the
+recorded app/library, native import, share/print cancellation and backup flows;
+no physical device, signed runtime, Face ID/Keychain/OAuth, real printer or
+VoiceOver validation is claimed. This is a documented testing limitation rather
+than an instruction to obtain hardware before offline preparation can finish.
+Apple may identify device-only issues during review; address any actual issue
+before release. The earlier four golden baseline differences remain recorded.
+
+References checked 2026-10-19: [screenshot specifications](https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications),
+[version metadata](https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information),
+[product-page guidance](https://developer.apple.com/app-store/product-page/),
+[App Review guidelines](https://developer.apple.com/app-store/review/guidelines/),
+[age-rating setup](https://developer.apple.com/help/app-store-connect/manage-app-information/set-an-app-age-rating),
+and [EU trader requirements](https://developer.apple.com/help/app-store-connect/manage-compliance-information/manage-european-union-digital-services-act-trader-requirements).
+
+### Offline package verification
+
+Both original-content capture runs passed on 2026-10-19: four PNGs on iPhone
+17 Pro Max (1320×2868) and four on iPad Air 13 M3 (2048×2732), iOS/iPadOS 27.0.
+All eight were visually reviewed; the tablet reader was also inspected at
+full size. The packaged PNGs retain the original pixels, with only fully opaque
+alpha removed for RGB encoding. Native originals and passing runner summaries
+are preserved under ignored `artifacts/ios-store-20261019/{iphone,ipad}/`.
+No crop, stretch or simulated device-size override was applied.
+
+`check-app-store.py`, focused Dart analysis, Python compilation, and whitespace
+checks passed. Existing unsigned archive privacy inspection passed again.
+The App Store icon was verified at 1024×1024 RGB. These checks prepare the local
+package; they do not substitute for signed-archive/App Store validation.
+All subagent work is complete and temporary build/device reservations released.

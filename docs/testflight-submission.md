@@ -2,12 +2,17 @@
 
 Draft metadata for the first external TestFlight beta. Confirm every owner field
 and re-check feature availability against the exact signed build before entry.
-The current repository version is `0.2.6+20`. The unsigned archive passed its
-18-manifest inspection, and the simulator target passed eight tests with one
-missing-Genius-token skip; see [E2E evidence](ios-e2e.md). No signed IPA or
-physical-device OAuth build has been verified. Native document/share/print cancellation and a local Files export/import
-round trip also passed on 2026-10-19. Physical-device checks, real printer
-output, and the public policy corrections remain release gates.
+The current repository version is `0.2.6+20`. The final unsigned archive passed
+its 18-manifest inspection. Standard iPhone/iPad verification covers all nine
+unattended cases across runs, plus native import/backup workflows; Genius was
+skipped without a token. See [E2E evidence](ios-e2e.md). Physical hardware is
+unavailable and remains an explicitly unperformed check, not a prerequisite
+for preparing these materials. No signed IPA has been verified. Public policy
+corrections and provider authorization review remain publication gates.
+
+Production App Store metadata and screenshot inventory are in
+`docs/app-store/`; the offline publishing handoff is below in
+[iOS publishing preparation](ios-testflight.md#app-store-publishing-handoff--2026-10-19).
 
 ## App record
 
