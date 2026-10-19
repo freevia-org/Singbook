@@ -156,11 +156,13 @@ class SetlistEntryData {
     required this.songId,
     this.title = '',
     this.artist = '',
+    this.durationSeconds,
     this.keyOverride,
     this.capoOverride,
     this.missing = false,
   });
   final String id, songId, title, artist;
+  final double? durationSeconds;
   final String? keyOverride, capoOverride;
 
   /// The referenced song is no longer in the library. [title] is empty and the

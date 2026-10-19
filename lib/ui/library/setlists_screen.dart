@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/generated/app_localizations.dart';
+import '../format.dart';
 import '../library_actions.dart';
 import '../verse_ui_state.dart';
 import '../widgets/subpage_header.dart';
@@ -282,6 +283,7 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
   late final TextEditingController _name;
   late final TextEditingController _notes;
   String? _loadedSetlistId;
+  String? _draggingEntryId;
   bool _wasEditing = false;
   VerseUiController get controller => widget.controller;
 
@@ -421,8 +423,32 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
                 )
               : ReorderableListView.builder(
                   padding: const EdgeInsets.fromLTRB(12, 4, 12, 20),
-                  itemCount: value.entries.length,
+                  buildDefaultDragHandles: false,
+                  itemCount:
+                      value.entries.length + (_draggingEntryId == null ? 0 : 1),
+                  onReorderStart: (index) {
+                    if (index >= value.entries.length) return;
+                    setState(() => _draggingEntryId = value.entries[index].id);
+                  },
+                  onReorderEnd: (_) {
+                    if (mounted) setState(() => _draggingEntryId = null);
+                  },
                   onReorderItem: (oldIndex, newIndex) async {
+                    // The item callback adjusts the destination for the
+                    // removed row. A value of entries.length means the drop
+                    // landed beyond the delete basket; dropping before it
+                    // remains the normal move-to-end behavior.
+                    if (newIndex == value.entries.length &&
+                        oldIndex < value.entries.length) {
+                      await _removeEntryFromSetlist(
+                        context,
+                        value,
+                        value.entries[oldIndex],
+                        editing,
+                      );
+                      return;
+                    }
+                    if (newIndex >= value.entries.length) return;
                     final entries = [...value.entries];
                     final item = entries.removeAt(oldIndex);
                     entries.insert(newIndex, item);
@@ -432,14 +458,24 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
                       entryOrder: [for (final entry in entries) entry.id],
                     );
                   },
-                  itemBuilder: (context, index) => _entryTile(
-                    context,
-                    l10n,
-                    value,
-                    value.entries[index],
-                    index,
-                    editing,
-                  ),
+                  itemBuilder: (context, index) {
+                    if (index == value.entries.length) {
+                      return _deleteBasket(context, l10n);
+                    }
+                    final entry = value.entries[index];
+                    return ReorderableDelayedDragStartListener(
+                      key: ValueKey(entry.id),
+                      index: index,
+                      child: _entryTile(
+                        context,
+                        l10n,
+                        value,
+                        entry,
+                        index,
+                        editing,
+                      ),
+                    );
+                  },
                 ),
         ),
         SafeArea(
@@ -458,6 +494,63 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
     );
   }
 
+  Widget _deleteBasket(BuildContext context, AppLocalizations l10n) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      key: const ValueKey('setlist-delete-basket'),
+      height: 64,
+      margin: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+      decoration: BoxDecoration(
+        color: scheme.errorContainer,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: scheme.error.withValues(alpha: .35)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.delete_outline_rounded, color: scheme.onErrorContainer),
+          const SizedBox(width: 8),
+          Text(
+            l10n.actionRemove,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: scheme.onErrorContainer,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _removeEntryFromSetlist(
+    BuildContext context,
+    SetlistCardData setlist,
+    SetlistEntryData entry,
+    bool editing,
+  ) async {
+    final title = entry.missing
+        ? AppLocalizations.of(context).setlistSongMissing
+        : entry.title;
+    final removed = await controller.removeSetlistEntryWithUndo(
+      setlist.id,
+      entry.id,
+      name: _typedName(editing),
+      notes: _typedNotes(editing),
+    );
+    if (removed == null || !context.mounted) return;
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context)..hideCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(l10n.setlistEntryRemoved(title)),
+        action: SnackBarAction(
+          label: l10n.actionUndo,
+          onPressed: () => controller.restoreSetlistEntry(removed),
+        ),
+      ),
+    );
+  }
+
   Widget _entryTile(
     BuildContext context,
     AppLocalizations l10n,
@@ -467,16 +560,26 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
     bool editing,
   ) {
     final title = entry.missing ? l10n.setlistSongMissing : entry.title;
+    final details = <String>[
+      if (!entry.missing && entry.artist.isNotEmpty) entry.artist,
+      if (!entry.missing && entry.durationSeconds != null)
+        formatDuration(entry.durationSeconds!),
+      if (entry.keyOverride != null)
+        '${l10n.editorKeyField}: ${entry.keyOverride}',
+      if (entry.capoOverride != null)
+        '${l10n.editorCapoField}: ${entry.capoOverride}',
+    ];
     return ListTile(
-      key: ValueKey(entry.id),
+      dense: true,
+      visualDensity: VisualDensity.compact,
+      contentPadding: const EdgeInsetsDirectional.only(start: 16, end: 8),
+      minLeadingWidth: 24,
       leading: Text(
         '${index + 1}',
         style: Theme.of(context).textTheme.labelLarge,
       ),
       title: Text(title),
-      subtitle: entry.missing || entry.artist.isEmpty
-          ? null
-          : Text(entry.artist),
+      subtitle: details.isEmpty ? null : Text(details.join(' · ')),
       onTap: entry.missing
           ? null
           : () => controller.openSetlistEntry(value.id, entry.id),
@@ -487,55 +590,51 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
             PopupMenuButton<String>(
               tooltip: l10n.navMore,
               itemBuilder: (_) => [
+                PopupMenuItem(value: 'edit', child: Text(l10n.actionEdit)),
+                PopupMenuItem(value: 'add', child: Text(l10n.songAddToSetlist)),
+                PopupMenuItem(value: 'info', child: Text(l10n.songInfo)),
+                PopupMenuItem(
+                  value: 'share',
+                  child: Text(l10n.settingsShareSong),
+                ),
+                PopupMenuItem(
+                  value: 'share_pdf',
+                  child: Text(l10n.settingsSharePdf),
+                ),
+                PopupMenuItem(
+                  value: 'copy',
+                  child: Text(l10n.settingsCopySong),
+                ),
+                PopupMenuItem(
+                  value: 'print',
+                  child: Text(l10n.settingsPrintSong),
+                ),
                 PopupMenuItem(
                   value: 'override',
                   child: Text(l10n.setlistEntryOverride),
                 ),
+                PopupMenuItem(value: 'delete', child: Text(l10n.actionDelete)),
               ],
-              onSelected: (_) => editEntryOverrides(
-                context,
-                controller,
-                value.id,
-                entry,
-                name: _typedName(editing),
-                notes: _typedNotes(editing),
-              ),
+              onSelected: (action) {
+                if (action == 'override') {
+                  editEntryOverrides(
+                    context,
+                    controller,
+                    value.id,
+                    entry,
+                    name: _typedName(editing),
+                    notes: _typedNotes(editing),
+                  );
+                } else {
+                  handleSongMenuAction(
+                    context,
+                    controller,
+                    entry.songId,
+                    action,
+                  );
+                }
+              },
             ),
-          IconButton(
-            tooltip: l10n.setlistRemoveSong(title),
-            onPressed: () async {
-              final removed = await controller.removeSetlistEntryWithUndo(
-                value.id,
-                entry.id,
-                name: _typedName(editing),
-                notes: _typedNotes(editing),
-              );
-              if (removed == null || !context.mounted) return;
-              final messenger = ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar();
-              messenger.showSnackBar(
-                SnackBar(
-                  content: Text(l10n.setlistEntryRemoved(title)),
-                  action: SnackBarAction(
-                    label: l10n.actionUndo,
-                    onPressed: () {
-                      controller.restoreSetlistEntry(removed);
-                    },
-                  ),
-                ),
-              );
-            },
-            icon: const Icon(Icons.remove_circle_outline_rounded),
-          ),
-          ReorderableDragStartListener(
-            key: ValueKey('setlist-entry-drag-${entry.id}'),
-            index: index,
-            child: const SizedBox(
-              width: 48,
-              height: 48,
-              child: Center(child: Icon(Icons.drag_handle_rounded)),
-            ),
-          ),
         ],
       ),
     );

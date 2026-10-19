@@ -562,6 +562,9 @@ class AppControllerAdapter extends VerseUiController {
       songId: entry.songId,
       title: song?.title ?? '',
       artist: song?.artist ?? '',
+      durationSeconds: song == null
+          ? null
+          : _validDuration(song.metadata['durationSeconds']),
       keyOverride: key == null || key.isEmpty ? null : key,
       capoOverride: capo == null || capo.isEmpty ? null : capo,
       missing: song == null,
