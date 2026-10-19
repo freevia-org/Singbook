@@ -1,7 +1,7 @@
 {
   "status": "prepared_offline_not_submittable",
-  "version": "0.2.6",
-  "build": "20",
+  "version": "0.2.8",
+  "build": "22",
   "bundle_id": "org.freevia.singbook",
   "primary_locale": "en-US",
   "category_proposed": "MUSIC",
@@ -13,16 +13,14 @@
   "feature_profile": {
     "google_oauth": false,
     "genius": false,
-    "third_party_sources": "current app configuration; authorization review pending"
+    "third_party_sources": "all existing sources retained by owner decision on 2026-10-19; permission evidence remains incomplete"
   },
   "owner_fields_pending": [
-    "copyright owner",
-    "review contact name/email/phone",
-    "feedback email",
-    "pricing and territories",
+    "App Review contact name and phone",
+    "distribution territories",
     "trader status and required account declarations",
-    "content rights and final provider profile",
-    "privacy policy publication and final App Privacy answers",
+    "content-rights declaration and available permission evidence",
+    "final SDK-inclusive App Privacy answers",
     "age-rating questionnaire"
   ],
   "account_steps_pending": [
@@ -42,9 +40,9 @@
         1320,
         2868
       ],
-      "sha256": "b6c66789356f07027e814169cfb8b819f4d69d53ba5622fa5db679d9d1fa0c29",
-      "source_sha256": "c94a4066203659e705af2ad4454d95a3cfd2f28c223c0b09575078372595d184",
-      "source": "native iPhone 17 Pro Max iOS 27.0; opaque RGBA converted losslessly to RGB; no crop/resize"
+      "sha256": "aaaace1e2e6cafbcf9892e2a86384fe87f4378a19714dca3af7343b00c2aad73",
+      "source_sha256": "874ef990820c8bf1f0a34d396a459ba18a85fc06dd2ebf2e4af158a6f1b7cf2a",
+      "source": "native iPhone 17 Pro Max iOS 27.0; opaque RGBA converted losslessly to RGB; no crop/resize; refreshed for 0.2.8+22 parity; test-pointer fade frames rendered before capture"
     },
     {
       "file": "screenshots/en-US/iphone-large/02_reader.png",
@@ -53,9 +51,9 @@
         1320,
         2868
       ],
-      "sha256": "4b761b835eb4dc16b2bd09b2e201c2352a36d5f4dd1c63fabcf1f9fbaa885615",
-      "source_sha256": "35f309b2a21b542a1d8a95ee99f7878795207bcb3e03e25ceaaa905d14a7521d",
-      "source": "native iPhone 17 Pro Max iOS 27.0; opaque RGBA converted losslessly to RGB; no crop/resize"
+      "sha256": "851dcab2ce8cf1e6f92de3b3240b8a627b4d07f99b539486398bd9390482a9e3",
+      "source_sha256": "871627178653fddab2263d87f54ec26ac0c9d72832b473a0eb3617e54315782f",
+      "source": "native iPhone 17 Pro Max iOS 27.0; opaque RGBA converted losslessly to RGB; no crop/resize; refreshed for 0.2.8+22 parity; test-pointer fade frames rendered before capture"
     },
     {
       "file": "screenshots/en-US/iphone-large/03_reader_dark.png",
@@ -64,9 +62,9 @@
         1320,
         2868
       ],
-      "sha256": "8e5e1ff1bd156645815391353ff6169e74ed275d1e2d489cf3637f621cee6975",
-      "source_sha256": "2299ed900e00fe5c4b08ac3d87b3ca90c7246ffad6944d8e027cf41fe2399b1f",
-      "source": "native iPhone 17 Pro Max iOS 27.0; opaque RGBA converted losslessly to RGB; no crop/resize"
+      "sha256": "fc986b09b3ff250df05e99c5cdbec9e0099dbe41412fe585238367d22cf77291",
+      "source_sha256": "acaef0a57aa93a490b6b1afc277a1fda0319efc5c915037f5be0d9094c6c316d",
+      "source": "native iPhone 17 Pro Max iOS 27.0; opaque RGBA converted losslessly to RGB; no crop/resize; refreshed for 0.2.8+22 parity; test-pointer fade frames rendered before capture"
     },
     {
       "file": "screenshots/en-US/iphone-large/04_setlists.png",
@@ -75,9 +73,9 @@
         1320,
         2868
       ],
-      "sha256": "56bca145dc86f7a89407c1649f3e074aa5bb5c6dd07b3f8b9b9e7123b05a9a9b",
-      "source_sha256": "87726f6028ba2e3289e11f1db4345dd129cec5cff92301b82c3867b1c5ba909f",
-      "source": "native iPhone 17 Pro Max iOS 27.0; opaque RGBA converted losslessly to RGB; no crop/resize"
+      "sha256": "87d078423b4a345c05d1b2021786984625dfc4f2964f44421776f54afc8bbe44",
+      "source_sha256": "c2f69f4a2a18533f718000d9aede19298c4a74e4ba2535eb3c839f7c95819814",
+      "source": "native iPhone 17 Pro Max iOS 27.0; opaque RGBA converted losslessly to RGB; no crop/resize; refreshed for 0.2.8+22 parity; test-pointer fade frames rendered before capture"
     },
     {
       "file": "screenshots/en-US/ipad-13/01_library.png",
@@ -86,9 +84,9 @@
         2048,
         2732
       ],
-      "sha256": "84b2c0418f32b5caf76633a80442298cfdb23f3901211c61d3670b3d3ab4fbbf",
-      "source_sha256": "c1bf405aee460eed2e978b1bc2083c826d7181de6b0df5b0f76d36e467ca730f",
-      "source": "native iPad Air 13 M3 iPadOS 27.0; opaque RGBA converted losslessly to RGB; no crop/resize"
+      "sha256": "f75ba0576ea6aa9424755484013670b5b18227cd857150434e1744f23912cfdf",
+      "source_sha256": "5728ba10b207cd5c887d15a91b831f25695669438b1128a7d152f6e44e8335e4",
+      "source": "native iPad Air 13 M3 iPadOS 27.0; opaque RGBA converted losslessly to RGB; no crop/resize; refreshed for 0.2.8+22 parity; test-pointer fade frames rendered before capture"
     },
     {
       "file": "screenshots/en-US/ipad-13/02_reader.png",
@@ -97,9 +95,9 @@
         2048,
         2732
       ],
-      "sha256": "800684a70b9746b1e7820f8c2ff7ce658ffd1cfc40c4d3acb0c97b5d4bcf1da3",
-      "source_sha256": "e943522f822fae7e655c9a3b9d808037112b7e3707f7cc11d7b332195cace065",
-      "source": "native iPad Air 13 M3 iPadOS 27.0; opaque RGBA converted losslessly to RGB; no crop/resize"
+      "sha256": "7a26b2d03fb3ef1f171e6bdea5f7cab9bf729e176326ee93e6c1e82d10333864",
+      "source_sha256": "043fa021bc86d5ee7e9dab05a3c232f5ca5bf20aeab9299ac032d8e8b0c367fb",
+      "source": "native iPad Air 13 M3 iPadOS 27.0; opaque RGBA converted losslessly to RGB; no crop/resize; refreshed for 0.2.8+22 parity; test-pointer fade frames rendered before capture"
     },
     {
       "file": "screenshots/en-US/ipad-13/03_reader_dark.png",
@@ -108,9 +106,9 @@
         2048,
         2732
       ],
-      "sha256": "97b784ffa58ebb7c340909af6626bd8713464667c9c662486b0c11aade53dffc",
-      "source_sha256": "49d81eacb9c0964a69137333101f787b32b7fb468ea4b913ff14262964248a69",
-      "source": "native iPad Air 13 M3 iPadOS 27.0; opaque RGBA converted losslessly to RGB; no crop/resize"
+      "sha256": "abb37bebd1027770a14664019dd1ec60534dc1a9d2f19ac460a86ccf5efaa9ab",
+      "source_sha256": "ad4ff157c75f5c00c272bb5cf534185668a9701295227eec099a39653b74ae5a",
+      "source": "native iPad Air 13 M3 iPadOS 27.0; opaque RGBA converted losslessly to RGB; no crop/resize; refreshed for 0.2.8+22 parity; test-pointer fade frames rendered before capture"
     },
     {
       "file": "screenshots/en-US/ipad-13/04_setlists.png",
@@ -119,9 +117,30 @@
         2048,
         2732
       ],
-      "sha256": "2e60480b7a05af8e2d74e89fd633bad5f6ba9a23f2f87bab5c56e9c5d09660af",
-      "source_sha256": "6732339ab6079991dc0daef906a34dd3e5e57198fa2a11a2df3d1f95536fd276",
-      "source": "native iPad Air 13 M3 iPadOS 27.0; opaque RGBA converted losslessly to RGB; no crop/resize"
+      "sha256": "64911298f6f9c0f3f03f2c5ce52e95dca381c288c8ab5a6217a27f28eaaec46a",
+      "source_sha256": "6630ea6f62086af81e11ab119e53931bf23a4549a9f5396d366dc4a2120b58be",
+      "source": "native iPad Air 13 M3 iPadOS 27.0; opaque RGBA converted losslessly to RGB; no crop/resize; refreshed for 0.2.8+22 parity; test-pointer fade frames rendered before capture"
     }
-  ]
+  ],
+  "privacy_policy_publication": {
+    "date": "2026-10-19",
+    "status": "published_verified_http_200",
+    "deployment": "a4f6548a-fcde-4b74-a622-e24dcad62f4a"
+  },
+  "owner_details": {
+    "publisher": "Freevia",
+    "review_contact_email": "support@freevia.org",
+    "feedback_email": "support@freevia.org",
+    "price": "FREE",
+    "in_app_purchases": false,
+    "ads": false,
+    "territories": null,
+    "review_contact_name": null,
+    "review_contact_phone": null,
+    "provenance": "Android contact and free pricing reused at owner request on 2026-10-19. Owner confirmed public publisher Freevia and full legal entity Freevia EOOD, and accepted the remaining copied details. Distribution territories and private review contact name/phone were not supplied.",
+    "legal_entity": "Freevia EOOD",
+    "copyright": "2026 Freevia EOOD",
+    "apple_developer_display_name_requested": "Freevia"
+  },
+  "screenshots_status": "refreshed_native_0.2.8+22"
 }

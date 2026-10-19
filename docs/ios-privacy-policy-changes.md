@@ -1,9 +1,12 @@
 # Privacy policy corrections for the iOS beta
 
-Local publication draft, reviewed 2026-10-18. The public policy is reachable,
-but still describes Android only. Apply the approved wording consistently to
-the Markdown, HTML, public policy, and translated summaries before iOS beta
-distribution. This file does not publish or replace the current policy.
+Publication completed 2026-10-19. The public policy now covers Android and iOS,
+SDK disclosures, provider identifiers and retention, and iOS deletion/backup
+behavior. Markdown, standalone HTML and translated summaries were updated;
+website source and production deployment provenance are in `docs/site/singbook/`.
+Both policy and support returned HTTP 200 and were visually reviewed.
+The wording below records the correction rationale; the published policy is
+the current user-facing text.
 
 ## App and local storage
 

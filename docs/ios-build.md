@@ -91,7 +91,9 @@ using Flutter 3.44.8 / Dart 3.12.2 and Xcode 27.1 (27A9275):
   Xcode workspace resolution files are retained to record the resolved versions.
 - Earlier Dart analysis passed. The existing full test suite had 1,255 passes
   and four golden image failures in `test/ui/chord_lyrics_line_test.dart`;
-  a focused rerun confirmed pixel differences. Baselines were not regenerated.
+  a focused rerun confirmed pixel differences. On 2026-10-19, reviewed macOS
+  baselines resolved these host rasterization differences; all 12 focused tests
+  passed without updating goldens during verification.
 
 These builds omit local API/OAuth configuration. No signed IPA, physical-device
 installation, or Google sign-in/sync validation has been performed.

@@ -2,7 +2,7 @@
 
 Singbook defaults to the signed-in user's hidden Google Drive application-data
 folder (`appDataFolder`), using
-`https://www.googleapis.com/auth/drive.appdata`. On Android, Settings can switch
+`https://www.googleapis.com/auth/drive.appdata`. On Android or iOS, Settings can switch
 the library to a visible folder selected with Google's Drive Picker and the
 narrow `drive.file` scope. Those permissions are requested in separate flows;
 the app never requests broad `drive` access. There is no Singbook backend,
@@ -28,7 +28,7 @@ needs, precisely (`google_sign_in` 7.x, Credential Manager on Android):
 |---|---|---|
 | Android | An **Android** OAuth client: package `org.freevia.singbook` + the SHA-1 of every signing certificate (debug, upload, and the Play App Signing certificate). | Nothing: Google matches package + SHA-1 itself. It must exist in the same project or sign-in is cancelled without explanation. |
 | Android | A **Web application** OAuth client in the same project. | Its id as `--dart-define=VERSE_GOOGLE_SERVER_CLIENT_ID=<id>.apps.googleusercontent.com` (becomes `serverClientId`). Required: the plugin throws without it. No backend uses it. |
-| iOS | An **iOS** OAuth client for the bundle id. | `--dart-define=VERSE_GOOGLE_IOS_CLIENT_ID=<id>.apps.googleusercontent.com` (`clientId`) plus the reversed client id as URL scheme in `ios/Runner/Info.plist`. Not validated on this Windows workspace. |
+| iOS | An **iOS** OAuth client for the bundle id. | `--dart-define=VERSE_GOOGLE_IOS_CLIENT_ID=<id>.apps.googleusercontent.com` (`clientId`) plus the reversed client id as URL scheme in `ios/Runner/Info.plist`. Native iOS simulator bridge checks are part of the iOS parity suite; live OAuth requires configured credentials. |
 
 Also enable the **Google Drive API** and **Google Picker API**, and configure the
 OAuth consent screen (add test users while it is in Testing). `drive.appdata`
@@ -264,3 +264,20 @@ are additionally confirmed by a second listing. The user then chooses
 `confirmRemoteDeletions()` (apply the deletions) or
 `keepLocalAfterRemoteDeletions()` (upload the library again). "Replace local
 library" only removes items that existed when it was chosen.
+
+## iOS visible-file authorization
+
+The iOS adapter uses ASWebAuthenticationSession and Google’s native mobile
+Picker OAuth parameters (`trigger_onepick`, `prompt=consent`) with `drive.file`
+alone, PKCE S256 and per-request state. It uses the existing iOS OAuth client
+and reversed-client-ID callback scheme; no embedded web login, additional
+client secret or broad Drive scope is needed. Enable Drive and Picker APIs
+in the same Google project.
+
+The shared file-grant implementation verifies the returned Drive account and
+selected folder, persists the separate refresh grant in device-only Keychain
+storage, and renews it silently. Sign-out removes this grant. Existing migration
+verification, rollback, narrow file import and account-switch checks are shared
+with Android/Windows. Local library imports through Files remain available
+without OAuth. Live picker consent/refresh still needs an OAuth-enabled test
+build; simulator bridge checks alone cannot prove Google-side configuration.

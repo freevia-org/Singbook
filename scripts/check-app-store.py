@@ -43,4 +43,4 @@ info = plistlib.loads((root / 'ios/Runner/Info.plist').read_bytes())
 assert info['ITSAppUsesNonExemptEncryption'] is False
 assert 'NSAppTransportSecurity' not in info, 'Review transport exceptions'
 print(f'Offline materials valid: {version}; screenshot sets {counts}.')
-print('Not upload-ready: owner fields, provider authorization/privacy publication, account/signing and Apple validation remain pending.')
+print('Not upload-ready: owner fields, final privacy answers, account/signing and Apple validation remain pending. All sources retained by owner decision; permission evidence remains incomplete.')

@@ -12,6 +12,12 @@ Future<bool> captureIosCheckpoint(String name) async {
   if (!Platform.isIOS) return false;
   assert(RegExp(r'^[\w-]+$').hasMatch(name));
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  // Live test bindings paint a short-lived crosshair after synthetic taps.
+  // Render its fade frames before recording the actual app appearance.
+  for (var frame = 0; frame < 3; frame++) {
+    binding.scheduleFrame();
+    await binding.endOfFrame;
+  }
   final bytes = await binding.takeScreenshot(name);
   try {
     final support = await getApplicationSupportDirectory();

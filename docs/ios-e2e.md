@@ -345,3 +345,52 @@ this report only. All temporary file/build/device reservations are released.
 Authenticated provider flows, physical-device/VoiceOver checks, printer output,
 nonlocal Files destinations and the previously recorded golden differences
 remain outside these results.
+
+## Android parity integration — 2026-10-19
+
+Integrated upstream `dbb3ff5` (Android `0.2.8+22`) into the iOS preparation
+branch, preserving the iOS signing/privacy work. Shared Flutter changes include
+unified Songs startup, larger player controls, Settings submenus and About,
+consistent Delete actions, compact/reorderable setlists with inline titles,
+duration/instrumental timing and combined source metadata with estimated keys.
+Windows-only networking, clipboard and close handling remain platform-specific.
+
+The new iOS visible-folder/file adapter uses the existing account-bound grant
+implementation with a native ASWebAuthenticationSession transport and device-only
+Keychain. It keeps `drive.file` separate from private-folder identity auth,
+validates callback state and PKCE, checks the actual Drive account/folder,
+and clears the file grant on sign-out. No live OAuth claim is made without
+a configured iOS client. Local Files import/export remains independent of OAuth.
+
+`integration_test/ios_parity_device_test.dart` combines native Keychain/invalid
+callback checks, real clipboard/PDF/filesystem checks, original-content store
+captures and full native layout profiles. The layout suite now enters unified
+Songs directly because the Home destination was removed upstream.
+
+The iPhone and iPad parity suites each passed six native tests. Successful runs:
+`artifacts/ios-parity-20261019/iphone-v3/` and `ipad-v2/`. Each includes 42
+layout checkpoints plus four original-content store captures. Phone native sizes
+were 1320×2868 and 2868×1320; iPad sizes were 2048×2732 and 2732×2048.
+All 84 layout images were inspected in contact sheets with representative native
+images inspected separately, including large RTL and Ukrainian layouts. Eight
+store captures were reviewed and packaged as RGB without resizing or cropping.
+Test-pointer fade frames are rendered before capture, preserving app pixels.
+
+The first native attempt used stale Library navigation; test selectors were
+updated for unified Songs/Recent. The first iPad layout attempt used app-only
+orientation requests, which iPad multitasking ignores. Its successful rerun
+used `SINGBOOK_HOST_ROTATION=true` with Device Hub rotation of only the
+dedicated Singbook simulator. Prior failed logs remain preserved.
+
+The first full host suite reported one real-time debounce count failure under
+load. Its test now controls only the debounce timer while retaining real
+database/sync work and the exact one-list/five-song assertions. All 19 focused
+controller tests passed. No runtime debounce behavior was changed.
+
+Final full host suite: **1,531 passed, 13 platform-specific skips**, using
+`--concurrency=4`; evidence: `artifacts/ios-parity-20261019/all-tests-final.log`.
+Focused analysis reported no issues, localization regeneration completed, and
+the store validator accepted all eight refreshed screenshots at `0.2.8+22`.
+Both dedicated simulators were restored to their initial shutdown state and
+Device Hub’s prior simulator selection was restored. Temporary device/build
+reservations are released after the final archive check.

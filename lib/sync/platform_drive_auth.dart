@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 
 import 'drive_file_access.dart';
 import 'google_auth.dart';
+import 'ios_drive_file_access.dart';
+import 'windows_drive_file_access.dart';
 import 'mobile_drive_file_access.dart';
 import 'sync_protocol.dart';
 import 'windows_google_auth.dart';
@@ -50,7 +52,7 @@ DriveAuthorization _mobileAuthorization({
 );
 
 /// Create once per sync service, paired with that service's primary identity.
-/// iOS keeps appData sync but has no native folder Picker adapter yet.
+/// iOS uses a system-browser Picker and device-only Keychain grant.
 DriveFileAccessCapability? createPlatformDriveFileAccess(
   DriveAuthorization authorization, {
   @visibleForTesting TargetPlatform? platformOverride,
@@ -59,11 +61,15 @@ DriveFileAccessCapability? createPlatformDriveFileAccess(
   if (isWebOverride ?? kIsWeb) return null;
   final platform = platformOverride ?? defaultTargetPlatform;
   if (platform != TargetPlatform.windows &&
-      platform != TargetPlatform.android) {
+      platform != TargetPlatform.android &&
+      platform != TargetPlatform.iOS) {
     return null;
   }
   if (authorization is DriveFileAccessCapability) {
     return authorization as DriveFileAccessCapability;
+  }
+  if (platform == TargetPlatform.iOS) {
+    return IOSDriveFileAccess(identity: authorization);
   }
   if (platform != TargetPlatform.android) return null;
   return MobileDriveFileAccess(
@@ -78,6 +84,7 @@ DriveFileAccessCapability? createPlatformDriveFileAccess(
 /// primary interface does not publish account-change notifications.
 void invalidatePlatformDriveFileAccess(DriveFileAccessCapability? access) {
   if (access is MobileDriveFileAccess) access.invalidate();
+  if (access is WindowsDriveFileAccess) access.cancel();
 }
 
 class _UnavailableDriveAuthorization implements DriveAuthorization {
@@ -99,4 +106,11 @@ class _UnavailableDriveAuthorization implements DriveAuthorization {
       throw const SyncException('not_signed_in');
   @override
   Future<void> disconnect() async {}
+}
+
+/// Remove the separate iOS file grant before signing out the primary account.
+Future<void> clearPlatformDriveFileAccess(
+  DriveFileAccessCapability? access,
+) async {
+  if (access is IOSDriveFileAccess) await access.clearAccount();
 }

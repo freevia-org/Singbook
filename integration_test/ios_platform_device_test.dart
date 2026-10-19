@@ -12,6 +12,56 @@ import 'package:singbook/domain/models.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
+  testWidgets(
+    'iOS Keychain isolates, updates and deletes file grants',
+    (tester) async {
+      const channel = MethodChannel('org.freevia.singbook/secure_credentials');
+      final key = 'qa-file-grant-${DateTime.now().microsecondsSinceEpoch}';
+      addTearDown(() => channel.invokeMethod<void>('delete', {'key': key}));
+      expect(await channel.invokeMethod<String>('read', {'key': key}), isNull);
+      await channel.invokeMethod<void>('write', {
+        'key': key,
+        'value': 'original-qa-only',
+      });
+      expect(
+        await channel.invokeMethod<String>('read', {'key': key}),
+        'original-qa-only',
+      );
+      await channel.invokeMethod<void>('write', {
+        'key': key,
+        'value': 'updated-qa-only',
+      });
+      expect(
+        await channel.invokeMethod<String>('read', {'key': key}),
+        'updated-qa-only',
+      );
+      await channel.invokeMethod<void>('delete', {'key': key});
+      expect(await channel.invokeMethod<String>('read', {'key': key}), isNull);
+    },
+    skip: !Platform.isIOS,
+  );
+
+  testWidgets(
+    'iOS OAuth rejects unconfigured callbacks without opening browser',
+    (tester) async {
+      const channel = MethodChannel('org.freevia.singbook/oauth_browser');
+      await expectLater(
+        channel.invokeMethod<String>('authorize', {
+          'url': 'https://accounts.google.com/o/oauth2/v2/auth',
+          'callbackScheme': 'unregistered-qa-scheme',
+        }),
+        throwsA(
+          isA<PlatformException>().having(
+            (e) => e.code,
+            'code',
+            'not_configured',
+          ),
+        ),
+      );
+    },
+    skip: !Platform.isIOS,
+  );
+
   testWidgets('iOS clipboard preserves song and setlist plain text', (
     tester,
   ) async {
