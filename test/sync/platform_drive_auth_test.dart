@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/sync/drive_file_access.dart';
 import 'package:singbook/sync/google_auth.dart';
+import 'package:singbook/sync/ios_drive_file_access.dart';
 import 'package:singbook/sync/mobile_drive_file_access.dart';
 import 'package:singbook/sync/platform_drive_auth.dart';
 import 'package:singbook/sync/sync_protocol.dart';
@@ -215,10 +216,14 @@ void main() {
   });
 
   test(
-    'file access dispatch keeps native capability and only adapts plain Android auth',
+    'file access dispatch keeps native capability and adapts plain mobile auth',
     () {
       final capable = _Auth(), plain = _PlainAuth();
-      for (final platform in [TargetPlatform.windows, TargetPlatform.android]) {
+      for (final platform in [
+        TargetPlatform.windows,
+        TargetPlatform.android,
+        TargetPlatform.iOS,
+      ]) {
         expect(
           createPlatformDriveFileAccess(
             capable,
@@ -242,7 +247,15 @@ void main() {
           platformOverride: TargetPlatform.iOS,
           isWebOverride: false,
         ),
-        isNull,
+        same(capable),
+      );
+      expect(
+        createPlatformDriveFileAccess(
+          plain,
+          platformOverride: TargetPlatform.iOS,
+          isWebOverride: false,
+        ),
+        isA<IOSDriveFileAccess>(),
       );
       final android = createPlatformDriveFileAccess(
         plain,

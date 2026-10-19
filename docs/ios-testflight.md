@@ -25,7 +25,7 @@ review; a signed export remains blocked until the owner configures the account.
 `ios/ExportOptions.plist` uses automatic signing and `app-store-connect`, with
 `destination=export`. It creates a local IPA; it does not upload it. Automatic
 build-number management is disabled so Xcode preserves the repository version.
-The current version is `0.2.6+20`; check App Store Connect for previously used
+The current version is `0.2.8+22`; check App Store Connect for previously used
 build numbers before uploading. For a new release, follow AGENTS.md and update
 all four version locations together. Rebuilding the same release keeps its number.
 
@@ -298,3 +298,17 @@ goldens, with no golden-update flag. Log:
 `artifacts/publication-gates-20261019/all-tests.log`. Focused Dart analysis,
 store package validation and whitespace checks also passed. These checks do
 not add new physical-device or signed-build testing claims.
+
+### Android/iOS parity candidate — 2026-10-19
+
+The current candidate is `0.2.8+22`, integrated from upstream `dbb3ff5`; earlier
+archive and screenshot records above refer to their historical source versions.
+The latest shared UI, timing, setlist and source-metadata changes run on iOS.
+The Android-only Drive Picker gap has an iOS system-browser/Keychain adapter;
+its account/scope/PKCE/state checks reuse the tested grant implementation.
+Live Google consent and token refresh still require configured iOS OAuth and
+remain unperformed. Signing and physical-device limitations remain unchanged.
+
+The privacy/support pages were refreshed in production deployment
+`a4f6548a-fcde-4b74-a622-e24dcad62f4a`, preserving the other 70 site assets.
+Both returned HTTP 200; the live iOS Picker/Keychain text was verified.

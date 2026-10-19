@@ -88,10 +88,9 @@ void main() {
               'native_${profile.locale}_${profile.theme}_${profile.scale}_${landscape ? 'landscape' : 'portrait'}';
           // Screenshot checkpoint names use a filesystem-safe alphabet.
           final name = prefix.replaceAll('.', '_');
-          await tester.tap(find.text(l10n.navHome).first);
-          await tester.pumpAndSettle();
-          await captureIosCheckpoint('${name}_home');
           await tester.tap(find.text(l10n.navSongs).first);
+          await tester.pumpAndSettle();
+          await tester.tap(find.byKey(const ValueKey('home-mode-library')));
           await tester.pumpAndSettle();
           expect(find.text('A Lantern Original'), findsOneWidget);
           await tester.ensureVisible(find.text('A Lantern Original'));

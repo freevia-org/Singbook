@@ -238,6 +238,7 @@ class GoogleDriveSyncService {
   Future<void> disconnect() async {
     if (_busy) throw const SyncException('sync_in_progress');
     invalidatePlatformDriveFileAccess(_fileAccess);
+    await clearPlatformDriveFileAccess(_fileAccess);
     await auth.disconnect();
   }
 

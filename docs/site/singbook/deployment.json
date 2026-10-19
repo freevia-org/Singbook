@@ -1,20 +1,20 @@
 {
   "date": "2026-10-19",
-  "deployment": "51f629dd-4742-448b-9a98-a5c470451e9f",
-  "previous_deployment": "0a2042aa-2c0e-4e86-98e3-892c096c641e",
+  "deployment": "a4f6548a-fcde-4b74-a622-e24dcad62f4a",
+  "previous_deployment": "bd6806ff-3850-4e11-912f-cf53b228a6ac",
   "status": "production_success",
   "changed_paths": [
     "/singbook/privacy/index.html",
     "/singbook/support/index.html"
   ],
-  "other_assets_preserved": 66,
+  "other_assets_preserved": 70,
   "http_status": {
     "privacy": 200,
     "support": 200
   },
   "note": "Cloudflare email protection transforms response HTML; browser verification confirmed contact addresses.",
   "source_sha256": {
-    "privacy": "d5f93886181b58a0787fe8212b65c5fe4288b86f0c6320185f08afb65d608bf5",
-    "support": "3d96cafa9503098b4fadd8e7d0fcaa4c99109b92e953dbd63b0c6cd3744b5c48"
+    "privacy": "4fd2ae6583532a2298bd199c75b976f45e0f31aa432f5ba9e8745d0c9e21bc57",
+    "support": "4676fe05ad82c2cf5f92db73579db907e3221e57791d5fc78ac16372de10d449"
   }
 }

@@ -143,7 +143,7 @@ Create these:
    (`<number>-<hash>.apps.googleusercontent.com`) - this becomes
    `VERSE_GOOGLE_SERVER_CLIENT_ID`. Google shows a client secret once; the app
    does not use it, so do not store it in the repository or the app.
-5. **iOS (optional, only for a future iOS build).** Application type: iOS, Bundle
+5. **iOS (optional, for an iOS build).** Application type: iOS, Bundle
    ID of the iOS app. Its client ID becomes `VERSE_GOOGLE_IOS_CLIENT_ID`.
    The iOS build also needs the client ID and its **reversed** form (the two
    halves swapped: `com.googleusercontent.apps.<number>-<hash>`) in
@@ -186,8 +186,13 @@ GID_REVERSED_CLIENT_ID = com.googleusercontent.apps.<ios client id prefix>
 
 `Info.plist` reads them as `GIDClientID` and as the URL scheme that lets the
 Google sign-in redirect return to the app. `GID_CLIENT_ID` must equal
-`VERSE_GOOGLE_IOS_CLIENT_ID`. iOS sign-in and sync are not validated on this
-Windows workspace; test on macOS before shipping an iOS build.
+`VERSE_GOOGLE_IOS_CLIENT_ID`. Native iOS bridge, Keychain and UI checks passed on simulators for the parity
+candidate. Live sign-in, folder consent and refresh still require validation
+with these configured identifiers before shipping an OAuth-enabled build.
+The optional visible-folder/file Picker uses this same iOS client and reversed
+callback scheme in a system-browser OAuth flow, with `drive.file` alone and
+PKCE. Enable Drive and Picker APIs in the same Google project; no extra
+web client secret or broad Drive scope is used.
 
 Leave `VERSE_GOOGLE_IOS_CLIENT_ID` empty for Android-only builds. Both IDs must
 end in `.apps.googleusercontent.com` or the app treats Google sign-in as not

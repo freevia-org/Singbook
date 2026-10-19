@@ -26,7 +26,7 @@ details](https://developer.apple.com/app-store/app-privacy-details/) and
   not request phone number, contacts, or device location. See
   `lib/sync/google_auth.dart` and `lib/ui/account_avatar.dart`.
 - When the user connects and syncs, song ChordPro payloads and setlists are
-  uploaded to the user's Google Drive `appDataFolder`; remote file metadata,
+  uploaded to the user's Google Drive `appDataFolder` or explicitly selected visible folder; remote file metadata,
   hashes, and content are read and reconciled. Google account ID/email are also
   used locally to bind the library to the selected account. After the user
   connects, the app automatically schedules an initial sync and later syncs
@@ -79,7 +79,7 @@ definition.
 | User ID | Disclose | App Functionality; Analytics | Yes | No | GoogleSignIn-iOS 9.2.0 manifest declaration. App uses the Google account ID for session restoration/account binding; sync state is account-derived. |
 | Device ID | Disclose in the OAuth SDK profile | Analytics | Yes | No | Exact GoogleSignIn-iOS 9.2.0 manifest row. Separately, YouTube Music requests include Google's `VISITOR_DATA`; treating that value as a device ID is an inference, not a verified device-bound identifier. |
 | Other Usage Data | Disclose | Analytics | Yes | No | GoogleSignIn-iOS 9.2.0 manifest declaration. No Singbook interaction telemetry is sent. |
-| Other User Content | Disclose if Drive sync is enabled in the submitted build | App Functionality | Yes | No | User songs and setlists are stored in the user's Drive appDataFolder for backup/sync. They are associated with that user's Drive account. Local import/export alone does not meet Apple's off-device collection definition. |
+| Other User Content | Disclose if Drive sync is enabled in the submitted build | App Functionality | Yes | No | User songs and setlists are stored in the user's Drive appDataFolder or explicitly selected visible folder for backup/sync. They are associated with that user's Drive account. Local import/export alone does not meet Apple's off-device collection definition. |
 | Search History | Disclose when search providers are enabled | App Functionality | Yes, via request IP; Google visitor identifier association is an inference | No, based on reviewed evidence | Searches send title/artist/query text to providers. MetaBrainz documents request-parameter logs with IP and User-Agent; Wikimedia records request data and IP; Better Lyrics/Unison says it temporarily uses IP and deletes logs within seven days. Apple's Search History type covers searches performed in the app. |
 
 For an OAuth-enabled release, enter the eight GoogleSignIn-iOS 9.2.0 rows
@@ -186,3 +186,13 @@ published policies establish some logging and retention, but cannot determine
 how every live API endpoint applies the policy or whether Genius/Google
 requests from Singbook are used for cross-company ad measurement. Search text
 can reveal personal interests and is transmitted with network identifiers.
+
+## iOS parity follow-up — 2026-10-19
+
+The new optional visible-folder/ChordPro picker uses `drive.file` alone through
+the system browser. It verifies that the returned Drive user matches the
+connected account before saving a separate device-only Keychain refresh grant.
+Sign-out removes this grant; portable library backups do not include it. No
+Singbook backend receives authorization codes or tokens. Include user-content
+uploads to a selected folder in the same OAuth-enabled App Privacy review.
+Live OAuth remains unverified until the iOS client and callback are configured.

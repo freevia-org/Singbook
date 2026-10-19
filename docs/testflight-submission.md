@@ -2,8 +2,8 @@
 
 Draft metadata for the first external TestFlight beta. Confirm every owner field
 and re-check feature availability against the exact signed build before entry.
-The current repository version is `0.2.6+20`. The final unsigned archive passed
-its 18-manifest inspection. Standard iPhone/iPad verification covers all nine
+The current repository version is `0.2.8+22`, matching the integrated Android
+release. Historical `0.2.6+20` archive evidence below predates the parity update. Standard iPhone/iPad verification covers all nine
 unattended cases across runs, plus native import/backup workflows; Genius was
 skipped without a token. See [E2E evidence](ios-e2e.md). Physical hardware is
 unavailable and remains an explicitly unperformed check, not a prerequisite
@@ -24,7 +24,7 @@ Production App Store metadata and screenshot inventory are in
 | SKU | Proposed `singbook-ios`; check uniqueness in the owner's account before creating the permanent record |
 | Primary language | English (U.S.) (`en-US`) |
 | Platform | iOS |
-| Version / build | `0.2.6` / `20` (confirm against uploaded archive and App Store Connect history) |
+| Version / build | `0.2.8` / `22` (confirm against uploaded archive and App Store Connect history) |
 | Support URL | `https://freevia.org/singbook/support/` |
 | Privacy Policy URL | `https://freevia.org/singbook/privacy/` |
 | Beta marketing URL (optional) | `https://freevia.org/singbook/` |
@@ -129,7 +129,7 @@ and [export compliance overview](https://developer.apple.com/help/app-store-conn
   Connect record and permanent SKU; configure signing. The local review on
   2026-10-18 found no signing identity, and no signed IPA exists.
 - Confirm App Store Connect has no conflicting prior version/build and upload
-  the archive matching `0.2.6 (20)`; increment versions in all repository
+  the archive matching `0.2.8 (22)`; increment versions in all repository
   locations for a genuinely new release, not a rebuild.
 - Supply the remaining App Review name and phone; confirm who
   will monitor them.
