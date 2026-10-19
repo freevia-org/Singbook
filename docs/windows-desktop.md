@@ -4,6 +4,8 @@ Singbook uses the existing Flutter app and song/library formats on Windows.
 The Windows runner is generated from Flutter's standard desktop template. The
 local SQLite backend uses `sqflite_common_ffi`; its database lives below the
 per-user application-support directory as `databases/verse_library.db`.
+This backend and path selection apply only to Windows. Existing Android, iOS,
+macOS and Linux database factories and default paths are preserved.
 
 ## Development
 

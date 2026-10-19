@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'dart:io' show Directory, Platform;
+import 'dart:io' show Directory;
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as paths;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -124,10 +125,10 @@ class LibraryRepository {
     DatabaseFactory? factory,
   }) async {
     final dbFactory = factory ?? databaseFactory;
-    final desktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+    final windows = defaultTargetPlatform == TargetPlatform.windows;
     final location =
         path ??
-        (desktop && factory == null
+        (windows && factory == null
             ? paths.join(
                 (await getApplicationSupportDirectory()).path,
                 'databases',
@@ -137,7 +138,9 @@ class LibraryRepository {
                 await dbFactory.getDatabasesPath(),
                 'verse_library.db',
               ));
-    await Directory(paths.dirname(location)).create(recursive: true);
+    if (windows && factory == null && path == null) {
+      await Directory(paths.dirname(location)).create(recursive: true);
+    }
     final db = await dbFactory.openDatabase(
       location,
       options: OpenDatabaseOptions(

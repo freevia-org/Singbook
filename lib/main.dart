@@ -1,20 +1,13 @@
-import 'dart:io' show Platform;
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sqflite/sqflite.dart' show databaseFactory;
-import 'package:sqflite_common_ffi/sqflite_ffi.dart'
-    show databaseFactoryFfi, sqfliteFfiInit;
 import 'application/error_reporting.dart';
+import 'data/library_database.dart';
 import 'ui/verse_app.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-  }
+  initializeLibraryDatabase();
   installErrorHandlers();
   LicenseRegistry.addLicense(() async* {
     yield LicenseEntryWithLineBreaks([
