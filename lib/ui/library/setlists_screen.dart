@@ -459,7 +459,7 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
                         _deleteBasketDropPending = false;
                       });
                     },
-                    onReorderEnd: (newIndex) {
+                    onReorderEnd: (_) {
                       final dragIndex = _draggingEntryIndex;
                       final deleteDrop = _isPointerOverDeleteBasket();
                       if (deleteDrop &&
@@ -476,7 +476,10 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
                             editing,
                           ),
                         );
-                      } else if (dragIndex == newIndex && mounted) {
+                      } else if (mounted) {
+                        // This receives a raw insertion slot. Flutter omits
+                        // onReorderItem for normalized no-op drops (old+1), so
+                        // every non-delete end must clear the drag visuals.
                         setState(_clearDragState);
                       }
                     },

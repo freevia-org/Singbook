@@ -237,6 +237,37 @@ void main() {
   );
 
   _windowsTestWidgets(
+    'setlist no-op downward drop clears the basket without saving an order',
+    (tester) async {
+      final controller = _setlistController();
+      addTearDown(controller.dispose);
+      await _pump(tester, SetlistDetailScreen(controller: controller));
+      var list = tester.widget<ReorderableListView>(
+        find.byType(ReorderableListView),
+      );
+      list.onReorderStart!(0);
+      await tester.pump();
+      expect(find.byIcon(Icons.delete_outline_rounded), findsOneWidget);
+      list = tester.widget<ReorderableListView>(
+        find.byType(ReorderableListView),
+      );
+      // Flutter reports the raw insertion slot to onReorderEnd. Slot old+1
+      // normalizes back to old, so it deliberately omits onReorderItem.
+      list.onReorderEnd!(1);
+      await tester.pumpAndSettle();
+      expect(find.byIcon(Icons.delete_outline_rounded), findsNothing);
+      expect(
+        controller.calls.where((call) => call.startsWith('saveSetlistDetails')),
+        isEmpty,
+      );
+      expect(
+        controller.calls.where((call) => call.startsWith('remove')),
+        isEmpty,
+      );
+    },
+  );
+
+  _windowsTestWidgets(
     'Windows touch rows still require a long press to reorder',
     (tester) async {
       final controller = _setlistController();
