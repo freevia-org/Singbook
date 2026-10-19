@@ -43,7 +43,9 @@ void main() {
       'source refresh shows progress and completion ${scenario.$2}/${scenario.$1}',
       (tester) async {
         if (captureScreenshots) {
-          await tester.runAsync(() => _loadCaptureFonts(arabic: scenario.$2.languageCode == 'ar'));
+          await tester.runAsync(
+            () => _loadCaptureFonts(arabic: scenario.$2.languageCode == 'ar'),
+          );
         }
         final c = _RefreshController();
         addTearDown(c.dispose);
@@ -54,6 +56,12 @@ void main() {
           locale: scenario.$2,
           textScale: scenario.$3,
         );
+        await tester.ensureVisible(
+          find.byKey(const ValueKey('settings-menu-sources')),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('settings-menu-sources')));
+        await tester.pumpAndSettle();
         final refresh = find.byKey(const ValueKey('refresh-source-list'));
         await tester.scrollUntilVisible(
           refresh,
@@ -127,6 +135,12 @@ void main() {
     final c = _RefreshController();
     addTearDown(c.dispose);
     await pumpShell(tester, c);
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('settings-menu-sources')),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('settings-menu-sources')));
+    await tester.pumpAndSettle();
     final refresh = find.byKey(const ValueKey('refresh-source-list'));
     await tester.scrollUntilVisible(
       refresh,
