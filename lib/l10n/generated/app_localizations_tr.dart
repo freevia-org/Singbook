@@ -1921,4 +1921,37 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Tahmini tonalite';
+
+  @override
+  String get songsLibraryView => 'Kitaplık';
+
+  @override
+  String get settingsStartupView => 'Başlangıç görünümü';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Uygulama açıldığında gösterilecek Şarkılar görünümünü seçin.';
+
+  @override
+  String get settingsStartupLastView => 'Son açılan';
+
+  @override
+  String get playerExpandControls => 'Oynatma kontrollerini göster';
+
+  @override
+  String get playerCollapseControls => 'Oynatma kontrollerini gizle';
+
+  @override
+  String get settingsShowSections => 'Bölüm başlıklarını göster';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Şarkı sözlerinde kıta, nakarat ve diğer bölümlerin başlıklarını göster.';
+
+  @override
+  String get settingsShowPlayerControls => 'Oynatma kontrollerini göster';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Oynatıcı panelini göstermek veya gizlemek için panele dokunabilir ya da kaydırabilirsiniz.';
 }

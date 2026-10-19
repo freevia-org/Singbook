@@ -832,5 +832,15 @@
       }
     }
   },
-  "playerEstimatedKey": "المفتاح المُقدّر"
+  "playerEstimatedKey": "المفتاح المُقدّر",
+  "songsLibraryView": "المكتبة",
+  "settingsStartupView": "ابدأ في",
+  "settingsStartupViewHint": "اختر عرض الأغاني الذي يظهر عند فتح التطبيق.",
+  "settingsStartupLastView": "آخر عرض مفتوح",
+  "playerExpandControls": "إظهار عناصر التحكم بالتشغيل",
+  "playerCollapseControls": "إخفاء عناصر التحكم بالتشغيل",
+  "settingsShowSections": "إظهار عناوين الأقسام",
+  "settingsShowSectionsHint": "أظهر عناوين المقاطع والكورس والأقسام الأخرى في كلمات الأغاني.",
+  "settingsShowPlayerControls": "إظهار عناصر التحكم بالتشغيل",
+  "settingsShowPlayerControlsHint": "يمكنك أيضًا النقر على لوحة المشغّل أو تمريرها لإظهارها أو إخفائها."
 }

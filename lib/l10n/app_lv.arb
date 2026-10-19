@@ -832,5 +832,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Aptuvenā tonalitāte"
+  "playerEstimatedKey": "Aptuvenā tonalitāte",
+  "songsLibraryView": "Bibliotēka",
+  "settingsStartupView": "Sākuma skats",
+  "settingsStartupViewHint": "Izvēlieties dziesmu skatu, kas tiks rādīts, atverot lietotni.",
+  "settingsStartupLastView": "Pēdējoreiz atvērtais",
+  "playerExpandControls": "Rādīt atskaņošanas vadīklas",
+  "playerCollapseControls": "Paslēpt atskaņošanas vadīklas",
+  "settingsShowSections": "Rādīt sadaļu virsrakstus",
+  "settingsShowSectionsHint": "Dziesmas tekstā rādīt pantu, piedziedājuma un citu sadaļu virsrakstus.",
+  "settingsShowPlayerControls": "Rādīt atskaņošanas vadīklas",
+  "settingsShowPlayerControlsHint": "Atskaņotāja paneli var parādīt vai paslēpt arī, pieskaroties tam vai pārvelkot."
 }

@@ -1953,4 +1953,37 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Tonalitate estimată';
+
+  @override
+  String get songsLibraryView => 'Bibliotecă';
+
+  @override
+  String get settingsStartupView => 'Pornește în';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Alege vizualizarea melodiilor afișată la deschiderea aplicației.';
+
+  @override
+  String get settingsStartupLastView => 'Ultima vizualizare';
+
+  @override
+  String get playerExpandControls => 'Afișează comenzile de redare';
+
+  @override
+  String get playerCollapseControls => 'Ascunde comenzile de redare';
+
+  @override
+  String get settingsShowSections => 'Afișează titlurile secțiunilor';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Afișează în versuri titlurile strofelor, refrenului și ale altor secțiuni.';
+
+  @override
+  String get settingsShowPlayerControls => 'Afișează comenzile de redare';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Poți atinge sau glisa și panoul playerului pentru a-l afișa sau ascunde.';
 }

@@ -1856,4 +1856,35 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => '추정 조성';
+
+  @override
+  String get songsLibraryView => '라이브러리';
+
+  @override
+  String get settingsStartupView => '시작 화면';
+
+  @override
+  String get settingsStartupViewHint => '앱을 열 때 표시할 노래 화면을 선택하세요.';
+
+  @override
+  String get settingsStartupLastView => '마지막으로 연 화면';
+
+  @override
+  String get playerExpandControls => '재생 컨트롤 표시';
+
+  @override
+  String get playerCollapseControls => '재생 컨트롤 숨기기';
+
+  @override
+  String get settingsShowSections => '섹션 제목 표시';
+
+  @override
+  String get settingsShowSectionsHint => '가사에 절, 후렴 및 기타 섹션 제목을 표시합니다.';
+
+  @override
+  String get settingsShowPlayerControls => '재생 컨트롤 표시';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      '플레이어 패널을 탭하거나 스와이프해 표시하거나 숨길 수도 있습니다.';
 }

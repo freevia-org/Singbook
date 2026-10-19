@@ -1940,4 +1940,37 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Procijenjeni tonalitet';
+
+  @override
+  String get songsLibraryView => 'Knjižnica';
+
+  @override
+  String get settingsStartupView => 'Početni prikaz';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Odaberite prikaz pjesama koji će se prikazati pri otvaranju aplikacije.';
+
+  @override
+  String get settingsStartupLastView => 'Posljednji otvoreni';
+
+  @override
+  String get playerExpandControls => 'Prikaži kontrole reprodukcije';
+
+  @override
+  String get playerCollapseControls => 'Sakrij kontrole reprodukcije';
+
+  @override
+  String get settingsShowSections => 'Prikaži naslove odjeljaka';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Prikaži naslove strofa, refrena i drugih odjeljaka u tekstu pjesme.';
+
+  @override
+  String get settingsShowPlayerControls => 'Prikaži kontrole reprodukcije';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Ploču reproduktora možete prikazati ili sakriti i dodirom ili prelaskom prstom.';
 }

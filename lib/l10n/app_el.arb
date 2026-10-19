@@ -831,5 +831,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Εκτιμώμενη τονικότητα"
+  "playerEstimatedKey": "Εκτιμώμενη τονικότητα",
+  "songsLibraryView": "Βιβλιοθήκη",
+  "settingsStartupView": "Έναρξη σε",
+  "settingsStartupViewHint": "Επιλέξτε την προβολή Τραγούδια που θα εμφανίζεται όταν ανοίγει η εφαρμογή.",
+  "settingsStartupLastView": "Τελευταία προβολή",
+  "playerExpandControls": "Εμφάνιση στοιχείων ελέγχου αναπαραγωγής",
+  "playerCollapseControls": "Απόκρυψη στοιχείων ελέγχου αναπαραγωγής",
+  "settingsShowSections": "Εμφάνιση επικεφαλίδων ενοτήτων",
+  "settingsShowSectionsHint": "Εμφάνιση των επικεφαλίδων για κουπλέ, ρεφρέν και άλλες ενότητες στους στίχους.",
+  "settingsShowPlayerControls": "Εμφάνιση στοιχείων ελέγχου αναπαραγωγής",
+  "settingsShowPlayerControlsHint": "Μπορείτε επίσης να πατήσετε ή να σύρετε το πλαίσιο αναπαραγωγής για να το εμφανίσετε ή να το αποκρύψετε."
 }

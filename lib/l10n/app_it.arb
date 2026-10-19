@@ -831,5 +831,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Tonalità stimata"
+  "playerEstimatedKey": "Tonalità stimata",
+  "songsLibraryView": "Libreria",
+  "settingsStartupView": "Apri in",
+  "settingsStartupViewHint": "Scegli la vista dei brani da mostrare all’apertura dell’app.",
+  "settingsStartupLastView": "Ultima visualizzazione",
+  "playerExpandControls": "Mostra i controlli di riproduzione",
+  "playerCollapseControls": "Nascondi i controlli di riproduzione",
+  "settingsShowSections": "Mostra i titoli delle sezioni",
+  "settingsShowSectionsHint": "Mostra nel testo i titoli di strofe, ritornello e altre sezioni.",
+  "settingsShowPlayerControls": "Mostra i controlli di riproduzione",
+  "settingsShowPlayerControlsHint": "Puoi anche toccare o scorrere il pannello del lettore per mostrarlo o nasconderlo."
 }

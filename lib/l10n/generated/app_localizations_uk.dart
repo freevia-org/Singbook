@@ -1959,4 +1959,39 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Орієнтовна тональність';
+
+  @override
+  String get songsLibraryView => 'Бібліотека';
+
+  @override
+  String get settingsStartupView => 'Початковий вигляд';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Виберіть вигляд «Пісні», який показуватиметься під час відкриття застосунку.';
+
+  @override
+  String get settingsStartupLastView => 'Останній відкритий';
+
+  @override
+  String get playerExpandControls => 'Показати елементи керування відтворенням';
+
+  @override
+  String get playerCollapseControls =>
+      'Приховати елементи керування відтворенням';
+
+  @override
+  String get settingsShowSections => 'Показувати заголовки частин';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Показувати в тексті заголовки куплетів, приспіву та інших частин.';
+
+  @override
+  String get settingsShowPlayerControls =>
+      'Показати елементи керування відтворенням';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Панель програвача також можна показати або приховати дотиком чи свайпом.';
 }

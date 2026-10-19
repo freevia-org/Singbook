@@ -832,5 +832,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Geschatte toonsoort"
+  "playerEstimatedKey": "Geschatte toonsoort",
+  "songsLibraryView": "Bibliotheek",
+  "settingsStartupView": "Start in",
+  "settingsStartupViewHint": "Kies de liedweergave die wordt getoond wanneer de app wordt geopend.",
+  "settingsStartupLastView": "Laatst geopend",
+  "playerExpandControls": "Afspeelknoppen tonen",
+  "playerCollapseControls": "Afspeelknoppen verbergen",
+  "settingsShowSections": "Sectiekoppen tonen",
+  "settingsShowSectionsHint": "Toon de koppen van coupletten, refreinen en andere secties in de songtekst.",
+  "settingsShowPlayerControls": "Afspeelknoppen tonen",
+  "settingsShowPlayerControlsHint": "Je kunt het spelerspaneel ook aantikken of vegen om het te tonen of te verbergen."
 }

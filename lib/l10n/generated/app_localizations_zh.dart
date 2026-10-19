@@ -1828,4 +1828,34 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => '估计调性';
+
+  @override
+  String get songsLibraryView => '曲库';
+
+  @override
+  String get settingsStartupView => '启动时打开';
+
+  @override
+  String get settingsStartupViewHint => '选择应用打开时显示的歌曲视图。';
+
+  @override
+  String get settingsStartupLastView => '上次打开';
+
+  @override
+  String get playerExpandControls => '显示播放控件';
+
+  @override
+  String get playerCollapseControls => '隐藏播放控件';
+
+  @override
+  String get settingsShowSections => '显示段落标题';
+
+  @override
+  String get settingsShowSectionsHint => '在歌词中显示主歌、副歌和其他段落的标题。';
+
+  @override
+  String get settingsShowPlayerControls => '显示播放控件';
+
+  @override
+  String get settingsShowPlayerControlsHint => '也可以轻触或滑动播放器面板来显示或隐藏它。';
 }

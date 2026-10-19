@@ -1959,4 +1959,37 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Ocenjena tonaliteta';
+
+  @override
+  String get songsLibraryView => 'Knjižnica';
+
+  @override
+  String get settingsStartupView => 'Začni v';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Izberite pogled Pesmi, ki se prikaže ob odprtju aplikacije.';
+
+  @override
+  String get settingsStartupLastView => 'Nazadnje odprto';
+
+  @override
+  String get playerExpandControls => 'Prikaži kontrolnike predvajanja';
+
+  @override
+  String get playerCollapseControls => 'Skrij kontrolnike predvajanja';
+
+  @override
+  String get settingsShowSections => 'Prikaži naslove razdelkov';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'V besedilu prikaži naslove kitic, refrena in drugih razdelkov.';
+
+  @override
+  String get settingsShowPlayerControls => 'Prikaži kontrolnike predvajanja';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Ploščo predvajalnika lahko prikažete ali skrijete tudi z dotikom ali podrsanjem.';
 }

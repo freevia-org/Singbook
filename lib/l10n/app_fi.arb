@@ -831,5 +831,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Arvioitu sävellaji"
+  "playerEstimatedKey": "Arvioitu sävellaji",
+  "songsLibraryView": "Kirjasto",
+  "settingsStartupView": "Aloitusnäkymä",
+  "settingsStartupViewHint": "Valitse kappalenäkymä, joka näytetään sovelluksen avautuessa.",
+  "settingsStartupLastView": "Viimeksi avattu",
+  "playerExpandControls": "Näytä toiston säätimet",
+  "playerCollapseControls": "Piilota toiston säätimet",
+  "settingsShowSections": "Näytä osioiden otsikot",
+  "settingsShowSectionsHint": "Näytä säkeistöjen, kertosäkeen ja muiden osioiden otsikot sanoituksessa.",
+  "settingsShowPlayerControls": "Näytä toiston säätimet",
+  "settingsShowPlayerControlsHint": "Voit näyttää tai piilottaa soitinpaneelin myös napauttamalla tai pyyhkäisemällä sitä."
 }

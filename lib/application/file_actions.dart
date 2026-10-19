@@ -44,9 +44,13 @@ const backupPreferenceKeys = <String>{
   'readerFontSize',
   'locale',
   'showChords',
+  'showSections',
+  'playerControlsExpanded',
   'autoscroll',
   'timingMode',
   'defaultView',
+  'startupSongsView',
+  'lastSongsView',
   'catalog',
   'providers',
 };
@@ -1070,13 +1074,29 @@ bool _validBackupPreference(String key, Object? value) => switch (key) {
     value is num && value.isFinite && value >= 18 && value <= 36,
   'locale' =>
     value == null || value is String && RegExp(r'^[a-z]{2,3}$').hasMatch(value),
-  'showChords' || 'autoscroll' => value is bool,
+  'showChords' ||
+  'showSections' ||
+  'playerControlsExpanded' ||
+  'autoscroll' => value is bool,
   'timingMode' => const {'estimated', 'timed', 'manual'}.contains(value),
   'defaultView' => const {
     'home',
     'songs',
     'setlists',
     'settings',
+  }.contains(value),
+  'startupSongsView' => const {
+    'recent',
+    'library',
+    'favorites',
+    'online',
+    'last',
+  }.contains(value),
+  'lastSongsView' => const {
+    'recent',
+    'library',
+    'favorites',
+    'online',
   }.contains(value),
   'catalog' =>
     value is String && RegExp(r'^[a-z][a-z0-9_-]{0,63}$').hasMatch(value),

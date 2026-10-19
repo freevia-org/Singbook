@@ -3377,6 +3377,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Estimated key'**
   String get playerEstimatedKey;
+
+  /// Label for the Songs library view.
+  ///
+  /// In en, this message translates to:
+  /// **'Library'**
+  String get songsLibraryView;
+
+  /// Setting that selects which view opens with the app.
+  ///
+  /// In en, this message translates to:
+  /// **'Start in'**
+  String get settingsStartupView;
+
+  /// Help text for the startup view setting.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the Songs view shown when the app opens.'**
+  String get settingsStartupViewHint;
+
+  /// Option that opens the last view used before the app was closed.
+  ///
+  /// In en, this message translates to:
+  /// **'Last opened'**
+  String get settingsStartupLastView;
+
+  /// No description provided for @playerExpandControls.
+  ///
+  /// In en, this message translates to:
+  /// **'Show playback controls'**
+  String get playerExpandControls;
+
+  /// No description provided for @playerCollapseControls.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide playback controls'**
+  String get playerCollapseControls;
+
+  /// No description provided for @settingsShowSections.
+  ///
+  /// In en, this message translates to:
+  /// **'Show section headings'**
+  String get settingsShowSections;
+
+  /// No description provided for @settingsShowSectionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Show verse, chorus and other section headings in the lyrics.'**
+  String get settingsShowSectionsHint;
+
+  /// No description provided for @settingsShowPlayerControls.
+  ///
+  /// In en, this message translates to:
+  /// **'Show playback controls'**
+  String get settingsShowPlayerControls;
+
+  /// No description provided for @settingsShowPlayerControlsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You can also tap or swipe the player panel to show or hide it.'**
+  String get settingsShowPlayerControlsHint;
 }
 
 class _AppLocalizationsDelegate

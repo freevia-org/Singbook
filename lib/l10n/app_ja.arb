@@ -832,5 +832,15 @@
       }
     }
   },
-  "playerEstimatedKey": "推定キー"
+  "playerEstimatedKey": "推定キー",
+  "songsLibraryView": "ライブラリ",
+  "settingsStartupView": "起動時の画面",
+  "settingsStartupViewHint": "アプリを開いたときに表示する曲の画面を選択します。",
+  "settingsStartupLastView": "前回開いた画面",
+  "playerExpandControls": "再生コントロールを表示",
+  "playerCollapseControls": "再生コントロールを非表示",
+  "settingsShowSections": "セクション見出しを表示",
+  "settingsShowSectionsHint": "歌詞に、ヴァース、コーラスなど各セクションの見出しを表示します。",
+  "settingsShowPlayerControls": "再生コントロールを表示",
+  "settingsShowPlayerControlsHint": "プレーヤーパネルをタップまたはスワイプして表示・非表示を切り替えることもできます。"
 }

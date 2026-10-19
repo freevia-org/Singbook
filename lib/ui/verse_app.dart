@@ -13,7 +13,6 @@ import 'app_controller_adapter.dart';
 import 'home/home_screen.dart';
 import 'library/editor_screen.dart';
 import 'library/setlists_screen.dart';
-import 'library/songs_screen.dart';
 import 'library_actions.dart';
 import 'localized_labels.dart';
 import 'player/player_screen.dart';
@@ -587,6 +586,7 @@ class _VerseAppShellState extends State<VerseAppShell>
     final actions = <Widget>[];
     switch (state.activeTab) {
       case VerseTab.songs:
+      case VerseTab.home:
         actions.addAll([
           PopupMenuButton<String>(
             key: const ValueKey('header-overflow-menu'),
@@ -637,7 +637,6 @@ class _VerseAppShellState extends State<VerseAppShell>
             ],
           ),
         ]);
-      case VerseTab.home:
       case VerseTab.settings:
         break;
     }
@@ -667,9 +666,13 @@ class _VerseAppShellState extends State<VerseAppShell>
       });
     }
     // Navigation follows available width so portrait tablets keep the rail.
-    // A compact landscape phone gets it too, but only when the four rail
+    // A compact landscape phone gets it too, but only when the three rail
     // destinations (which do not scroll) fit under the app bar.
-    final railHeight = 54 + 8 + 4 * (56 + 20 * navigationTextScale);
+    const destinations = [VerseTab.home, VerseTab.setlists, VerseTab.settings];
+    final selectedDestination = state.activeTab == VerseTab.songs
+        ? 0
+        : destinations.indexOf(state.activeTab);
+    final railHeight = 54 + 8 + 3 * (56 + 20 * navigationTextScale);
     final availableNavigationHeight =
         size.height -
         MediaQuery.paddingOf(context).vertical -
@@ -736,15 +739,11 @@ class _VerseAppShellState extends State<VerseAppShell>
               if (state.route == VerseRoute.main && useRail && !comparisonMode)
                 NavigationRail(
                   key: const ValueKey('tablet-navigation-rail'),
-                  selectedIndex: state.activeTab.index,
+                  selectedIndex: selectedDestination,
                   onDestinationSelected: (index) =>
-                      controller.setTab(VerseTab.values[index]),
+                      controller.setTab(destinations[index]),
                   labelType: NavigationRailLabelType.all,
                   destinations: [
-                    NavigationRailDestination(
-                      icon: const Icon(Icons.search_rounded),
-                      label: Text(l10n.navHome),
-                    ),
                     NavigationRailDestination(
                       icon: const Icon(Icons.music_note_rounded),
                       label: Text(l10n.navSongs),
@@ -774,17 +773,10 @@ class _VerseAppShellState extends State<VerseAppShell>
         bottomNavigationBar:
             state.route == VerseRoute.main && !useRail && !comparisonMode
             ? AdaptiveBottomNavigation(
-                selectedIndex: state.activeTab.index,
-                onSelected: (index) =>
-                    controller.setTab(VerseTab.values[index]),
-                labels: [
-                  l10n.navHome,
-                  l10n.navSongs,
-                  l10n.navSetlists,
-                  l10n.navSettings,
-                ],
+                selectedIndex: selectedDestination,
+                onSelected: (index) => controller.setTab(destinations[index]),
+                labels: [l10n.navSongs, l10n.navSetlists, l10n.navSettings],
                 icons: const [
-                  Icons.search_rounded,
                   Icons.music_note_rounded,
                   Icons.queue_music_rounded,
                   Icons.tune_rounded,
@@ -812,8 +804,8 @@ class _VerseAppShellState extends State<VerseAppShell>
         break;
     }
     return switch (state.activeTab) {
-      VerseTab.home => VerseHomeScreen(controller: controller, state: state),
-      VerseTab.songs => SongsScreen(controller: controller),
+      VerseTab.home ||
+      VerseTab.songs => VerseHomeScreen(controller: controller, state: state),
       VerseTab.setlists => SetlistsScreen(controller: controller),
       VerseTab.settings => SettingsScreen(
         backupSection: widget.backupController == null

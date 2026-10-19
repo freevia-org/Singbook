@@ -832,5 +832,15 @@
       }
     }
   },
-  "playerEstimatedKey": "估计调性"
+  "playerEstimatedKey": "估计调性",
+  "songsLibraryView": "曲库",
+  "settingsStartupView": "启动时打开",
+  "settingsStartupViewHint": "选择应用打开时显示的歌曲视图。",
+  "settingsStartupLastView": "上次打开",
+  "playerExpandControls": "显示播放控件",
+  "playerCollapseControls": "隐藏播放控件",
+  "settingsShowSections": "显示段落标题",
+  "settingsShowSectionsHint": "在歌词中显示主歌、副歌和其他段落的标题。",
+  "settingsShowPlayerControls": "显示播放控件",
+  "settingsShowPlayerControlsHint": "也可以轻触或滑动播放器面板来显示或隐藏它。"
 }

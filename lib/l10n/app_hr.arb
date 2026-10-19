@@ -831,5 +831,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Procijenjeni tonalitet"
+  "playerEstimatedKey": "Procijenjeni tonalitet",
+  "songsLibraryView": "Knjižnica",
+  "settingsStartupView": "Početni prikaz",
+  "settingsStartupViewHint": "Odaberite prikaz pjesama koji će se prikazati pri otvaranju aplikacije.",
+  "settingsStartupLastView": "Posljednji otvoreni",
+  "playerExpandControls": "Prikaži kontrole reprodukcije",
+  "playerCollapseControls": "Sakrij kontrole reprodukcije",
+  "settingsShowSections": "Prikaži naslove odjeljaka",
+  "settingsShowSectionsHint": "Prikaži naslove strofa, refrena i drugih odjeljaka u tekstu pjesme.",
+  "settingsShowPlayerControls": "Prikaži kontrole reprodukcije",
+  "settingsShowPlayerControlsHint": "Ploču reproduktora možete prikazati ili sakriti i dodirom ili prelaskom prstom."
 }

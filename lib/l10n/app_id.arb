@@ -831,5 +831,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Nada dasar perkiraan"
+  "playerEstimatedKey": "Nada dasar perkiraan",
+  "songsLibraryView": "Pustaka",
+  "settingsStartupView": "Mulai di",
+  "settingsStartupViewHint": "Pilih tampilan Lagu yang ditampilkan saat aplikasi dibuka.",
+  "settingsStartupLastView": "Terakhir dibuka",
+  "playerExpandControls": "Tampilkan kontrol pemutaran",
+  "playerCollapseControls": "Sembunyikan kontrol pemutaran",
+  "settingsShowSections": "Tampilkan judul bagian",
+  "settingsShowSectionsHint": "Tampilkan judul bait, reff, dan bagian lain pada lirik.",
+  "settingsShowPlayerControls": "Tampilkan kontrol pemutaran",
+  "settingsShowPlayerControlsHint": "Ketuk atau geser panel pemutar untuk menampilkan atau menyembunyikannya."
 }

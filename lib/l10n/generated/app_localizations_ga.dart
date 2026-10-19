@@ -1946,4 +1946,37 @@ class AppLocalizationsGa extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Tón measta';
+
+  @override
+  String get songsLibraryView => 'Leabharlann';
+
+  @override
+  String get settingsStartupView => 'Tosaigh in';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Roghnaigh an t-amharc Amhráin a thaispeánfar nuair a osclaítear an aip.';
+
+  @override
+  String get settingsStartupLastView => 'Amharc is déanaí';
+
+  @override
+  String get playerExpandControls => 'Taispeáin rialtáin athsheinm';
+
+  @override
+  String get playerCollapseControls => 'Folaigh rialtáin athsheinm';
+
+  @override
+  String get settingsShowSections => 'Taispeáin ceannteidil na rann';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Taispeáin ceannteidil na véarsaí, an churfá agus rann eile sna liricí.';
+
+  @override
+  String get settingsShowPlayerControls => 'Taispeáin rialtáin athsheinm';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Is féidir leat painéal an tseinnteora a thapáil nó a shleamhnú freisin chun é a thaispeáint nó a cheilt.';
 }

@@ -832,5 +832,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Tonalità stmata"
+  "playerEstimatedKey": "Tonalità stmata",
+  "songsLibraryView": "Librerija",
+  "settingsStartupView": "Ibda fil-veduta",
+  "settingsStartupViewHint": "Agħżel il-veduta tal-kanzunetti li tintwera meta tiftaħ l-app.",
+  "settingsStartupLastView": "L-aħħar veduta miftuħa",
+  "playerExpandControls": "Uri l-kontrolli tad-daqq",
+  "playerCollapseControls": "Aħbi l-kontrolli tad-daqq",
+  "settingsShowSections": "Uri l-intestaturi tat-taqsimiet",
+  "settingsShowSectionsHint": "Uri l-intestaturi tal-versi, tal-kor u taqsimiet oħra fil-lirika.",
+  "settingsShowPlayerControls": "Uri l-kontrolli tad-daqq",
+  "settingsShowPlayerControlsHint": "Tista’ wkoll tmiss jew tiskrollja l-pannell tal-plejer biex turih jew taħbih."
 }

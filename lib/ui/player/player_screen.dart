@@ -122,6 +122,68 @@ class _PlayerScreenState extends State<PlayerScreen>
   bool _awakeHeld = false;
   bool _inForeground = true;
   bool _leaving = false;
+  double _panelDragDistance = 0;
+
+  void _setControlsExpanded(bool expanded) {
+    if (controller.state.playerControlsExpanded == expanded) return;
+    unawaited(controller.setPlayerControlsExpanded(expanded));
+  }
+
+  Widget _controlsHandle(AppLocalizations l10n) {
+    final expanded = controller.state.playerControlsExpanded;
+    final label = expanded
+        ? l10n.playerCollapseControls
+        : l10n.playerExpandControls;
+    return Semantics(
+      button: true,
+      label: label,
+      expanded: expanded,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onVerticalDragStart: (_) => _panelDragDistance = 0,
+        onVerticalDragUpdate: (details) =>
+            _panelDragDistance += details.delta.dy,
+        onVerticalDragEnd: (_) {
+          if (_panelDragDistance > 24) _setControlsExpanded(false);
+          if (_panelDragDistance < -24) _setControlsExpanded(true);
+          _panelDragDistance = 0;
+        },
+        child: Tooltip(
+          message: label,
+          child: InkWell(
+            onTap: () => _setControlsExpanded(!expanded),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+              child: Center(
+                child: ExcludeSemantics(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 36,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.outline,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Icon(
+                        expanded
+                            ? Icons.keyboard_arrow_down_rounded
+                            : Icons.keyboard_arrow_up_rounded,
+                        size: 18,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   /// The adapter's resolved duration is shared with its clock and highlighting.
   double _durationOf(VerseUiState state) =>
@@ -637,7 +699,16 @@ class _PlayerScreenState extends State<PlayerScreen>
               ),
             )
           : content;
-      return SafeArea(top: false, child: body);
+      return SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _controlsHandle(l10n),
+            if (compact) Flexible(child: body) else body,
+          ],
+        ),
+      );
     }
 
     final metadata = [
@@ -658,6 +729,7 @@ class _PlayerScreenState extends State<PlayerScreen>
             constraints.maxWidth > constraints.maxHeight &&
             constraints.maxHeight < 430;
         final largeText = MediaQuery.textScalerOf(context).scale(1) > 1.5;
+        final expanded = state.playerControlsExpanded;
         final shortPortrait =
             constraints.maxHeight < 600 &&
             constraints.maxWidth <= constraints.maxHeight;
@@ -758,7 +830,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                 ],
               ),
             ),
-            if (compactLandscape)
+            if (compactLandscape && expanded)
               Expanded(
                 child: Row(
                   children: [
@@ -775,14 +847,17 @@ class _PlayerScreenState extends State<PlayerScreen>
               )
             else ...[
               Expanded(child: lyrics),
-              controls(
-                compact: false,
-                maxHeight: largeText || shortPortrait
-                    ? (constraints.maxHeight * .4)
-                          .clamp(180.0, 320.0)
-                          .toDouble()
-                    : null,
-              ),
+              if (expanded)
+                controls(
+                  compact: false,
+                  maxHeight: largeText || shortPortrait
+                      ? (constraints.maxHeight * .4)
+                            .clamp(180.0, 320.0)
+                            .toDouble()
+                      : null,
+                )
+              else
+                SafeArea(top: false, child: _controlsHandle(l10n)),
             ],
           ],
         );
@@ -817,6 +892,7 @@ class _PlayerScreenState extends State<PlayerScreen>
     final theme = Theme.of(context);
     final key = _lineKeys.putIfAbsent(line.id, GlobalKey.new);
     if (line.section != null && line.text.trim().isEmpty) {
+      if (!state.showSections) return SizedBox.shrink(key: key);
       return Padding(
         key: key,
         padding: const EdgeInsets.only(top: 18, bottom: 8),
@@ -1277,17 +1353,10 @@ class _PlayerScreenState extends State<PlayerScreen>
       position: PopupMenuPosition.over,
       constraints: _playerPopupConstraints(context),
       menuPadding: EdgeInsets.zero,
-      initialValue: !state.showChords
-          ? 'no-chords'
-          : originalPitch == null
+      initialValue: originalPitch == null
           ? 'offset-$currentOffset'
           : 'pitch-$currentPitch',
       onSelected: (action) async {
-        if (action == 'no-chords') {
-          await controller.setShowChords(!state.showChords);
-          return;
-        }
-        if (!state.showChords) await controller.setShowChords(true);
         if (action.startsWith('offset-')) {
           final target = int.parse(action.substring('offset-'.length));
           final delta = target - state.readerTranspose;
@@ -1335,15 +1404,6 @@ class _PlayerScreenState extends State<PlayerScreen>
                 ),
               ),
             ),
-        PopupMenuItem(
-          value: 'no-chords',
-          height: 34,
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Semantics(
-            selected: !state.showChords,
-            child: Text(l10n.playerChordsNone),
-          ),
-        ),
       ],
       child: Semantics(
         key: const ValueKey('pitch-key-dropdown-label'),

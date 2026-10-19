@@ -1947,4 +1947,37 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'المفتاح المُقدّر';
+
+  @override
+  String get songsLibraryView => 'المكتبة';
+
+  @override
+  String get settingsStartupView => 'ابدأ في';
+
+  @override
+  String get settingsStartupViewHint =>
+      'اختر عرض الأغاني الذي يظهر عند فتح التطبيق.';
+
+  @override
+  String get settingsStartupLastView => 'آخر عرض مفتوح';
+
+  @override
+  String get playerExpandControls => 'إظهار عناصر التحكم بالتشغيل';
+
+  @override
+  String get playerCollapseControls => 'إخفاء عناصر التحكم بالتشغيل';
+
+  @override
+  String get settingsShowSections => 'إظهار عناوين الأقسام';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'أظهر عناوين المقاطع والكورس والأقسام الأخرى في كلمات الأغاني.';
+
+  @override
+  String get settingsShowPlayerControls => 'إظهار عناصر التحكم بالتشغيل';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'يمكنك أيضًا النقر على لوحة المشغّل أو تمريرها لإظهارها أو إخفائها.';
 }

@@ -831,5 +831,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Tonalité estimée"
+  "playerEstimatedKey": "Tonalité estimée",
+  "songsLibraryView": "Bibliothèque",
+  "settingsStartupView": "Ouvrir sur",
+  "settingsStartupViewHint": "Choisissez la vue des chansons affichée à l’ouverture de l’application.",
+  "settingsStartupLastView": "Dernière vue ouverte",
+  "playerExpandControls": "Afficher les commandes de lecture",
+  "playerCollapseControls": "Masquer les commandes de lecture",
+  "settingsShowSections": "Afficher les titres des sections",
+  "settingsShowSectionsHint": "Afficher les titres des couplets, du refrain et des autres sections dans les paroles.",
+  "settingsShowPlayerControls": "Afficher les commandes de lecture",
+  "settingsShowPlayerControlsHint": "Vous pouvez aussi toucher ou balayer le panneau du lecteur pour l’afficher ou le masquer."
 }

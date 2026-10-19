@@ -1920,4 +1920,37 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Anslået toneart';
+
+  @override
+  String get songsLibraryView => 'Bibliotek';
+
+  @override
+  String get settingsStartupView => 'Start i';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Vælg den sangvisning, der vises, når appen åbnes.';
+
+  @override
+  String get settingsStartupLastView => 'Senest åbne';
+
+  @override
+  String get playerExpandControls => 'Vis afspilningsknapper';
+
+  @override
+  String get playerCollapseControls => 'Skjul afspilningsknapper';
+
+  @override
+  String get settingsShowSections => 'Vis sektionsoverskrifter';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Vis overskrifter for vers, omkvæd og andre afsnit i sangteksten.';
+
+  @override
+  String get settingsShowPlayerControls => 'Vis afspilningsknapper';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Du kan også trykke på eller stryge på afspillerpanelet for at vise eller skjule det.';
 }

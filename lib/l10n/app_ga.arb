@@ -831,5 +831,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Tón measta"
+  "playerEstimatedKey": "Tón measta",
+  "songsLibraryView": "Leabharlann",
+  "settingsStartupView": "Tosaigh in",
+  "settingsStartupViewHint": "Roghnaigh an t-amharc Amhráin a thaispeánfar nuair a osclaítear an aip.",
+  "settingsStartupLastView": "Amharc is déanaí",
+  "playerExpandControls": "Taispeáin rialtáin athsheinm",
+  "playerCollapseControls": "Folaigh rialtáin athsheinm",
+  "settingsShowSections": "Taispeáin ceannteidil na rann",
+  "settingsShowSectionsHint": "Taispeáin ceannteidil na véarsaí, an churfá agus rann eile sna liricí.",
+  "settingsShowPlayerControls": "Taispeáin rialtáin athsheinm",
+  "settingsShowPlayerControlsHint": "Is féidir leat painéal an tseinnteora a thapáil nó a shleamhnú freisin chun é a thaispeáint nó a cheilt."
 }

@@ -294,5 +294,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Орієнтовна тональність"
+  "playerEstimatedKey": "Орієнтовна тональність",
+  "songsLibraryView": "Бібліотека",
+  "settingsStartupView": "Початковий вигляд",
+  "settingsStartupViewHint": "Виберіть вигляд «Пісні», який показуватиметься під час відкриття застосунку.",
+  "settingsStartupLastView": "Останній відкритий",
+  "playerExpandControls": "Показати елементи керування відтворенням",
+  "playerCollapseControls": "Приховати елементи керування відтворенням",
+  "settingsShowSections": "Показувати заголовки частин",
+  "settingsShowSectionsHint": "Показувати в тексті заголовки куплетів, приспіву та інших частин.",
+  "settingsShowPlayerControls": "Показати елементи керування відтворенням",
+  "settingsShowPlayerControlsHint": "Панель програвача також можна показати або приховати дотиком чи свайпом."
 }

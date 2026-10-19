@@ -832,5 +832,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Предполагаемая тональность"
+  "playerEstimatedKey": "Предполагаемая тональность",
+  "songsLibraryView": "Библиотека",
+  "settingsStartupView": "Начальный экран",
+  "settingsStartupViewHint": "Выберите раздел «Песни», который будет открываться при запуске приложения.",
+  "settingsStartupLastView": "Последний открытый",
+  "playerExpandControls": "Показать элементы управления воспроизведением",
+  "playerCollapseControls": "Скрыть элементы управления воспроизведением",
+  "settingsShowSections": "Показывать заголовки разделов",
+  "settingsShowSectionsHint": "Показывать в тексте заголовки куплетов, припева и других разделов.",
+  "settingsShowPlayerControls": "Показать элементы управления воспроизведением",
+  "settingsShowPlayerControlsHint": "Панель плеера также можно показать или скрыть касанием или свайпом."
 }

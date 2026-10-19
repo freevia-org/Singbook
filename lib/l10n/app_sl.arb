@@ -832,5 +832,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Ocenjena tonaliteta"
+  "playerEstimatedKey": "Ocenjena tonaliteta",
+  "songsLibraryView": "Knjižnica",
+  "settingsStartupView": "Začni v",
+  "settingsStartupViewHint": "Izberite pogled Pesmi, ki se prikaže ob odprtju aplikacije.",
+  "settingsStartupLastView": "Nazadnje odprto",
+  "playerExpandControls": "Prikaži kontrolnike predvajanja",
+  "playerCollapseControls": "Skrij kontrolnike predvajanja",
+  "settingsShowSections": "Prikaži naslove razdelkov",
+  "settingsShowSectionsHint": "V besedilu prikaži naslove kitic, refrena in drugih razdelkov.",
+  "settingsShowPlayerControls": "Prikaži kontrolnike predvajanja",
+  "settingsShowPlayerControlsHint": "Ploščo predvajalnika lahko prikažete ali skrijete tudi z dotikom ali podrsanjem."
 }

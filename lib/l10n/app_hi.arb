@@ -831,5 +831,15 @@
       }
     }
   },
-  "playerEstimatedKey": "अनुमानित स्वर"
+  "playerEstimatedKey": "अनुमानित स्वर",
+  "songsLibraryView": "लाइब्रेरी",
+  "settingsStartupView": "इसमें शुरू करें",
+  "settingsStartupViewHint": "ऐप खुलने पर दिखने वाला गानों का दृश्य चुनें।",
+  "settingsStartupLastView": "पिछली बार खोला गया",
+  "playerExpandControls": "प्लेबैक नियंत्रण दिखाएँ",
+  "playerCollapseControls": "प्लेबैक नियंत्रण छिपाएँ",
+  "settingsShowSections": "खंड शीर्षक दिखाएँ",
+  "settingsShowSectionsHint": "गीत के बोलों में अंतरा, मुखड़ा और अन्य खंडों के शीर्षक दिखाएँ।",
+  "settingsShowPlayerControls": "प्लेबैक नियंत्रण दिखाएँ",
+  "settingsShowPlayerControlsHint": "प्लेयर पैनल दिखाने या छिपाने के लिए उसे टैप या स्वाइप भी कर सकते हैं।"
 }

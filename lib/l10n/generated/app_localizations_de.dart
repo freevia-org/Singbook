@@ -1947,4 +1947,37 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Geschätzte Tonart';
+
+  @override
+  String get songsLibraryView => 'Bibliothek';
+
+  @override
+  String get settingsStartupView => 'Startansicht';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Wähle die Songansicht aus, die beim Öffnen der App angezeigt wird.';
+
+  @override
+  String get settingsStartupLastView => 'Zuletzt geöffnet';
+
+  @override
+  String get playerExpandControls => 'Wiedergabesteuerung anzeigen';
+
+  @override
+  String get playerCollapseControls => 'Wiedergabesteuerung ausblenden';
+
+  @override
+  String get settingsShowSections => 'Abschnittsüberschriften anzeigen';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Zeige Überschriften für Strophen, Refrain und andere Abschnitte im Songtext an.';
+
+  @override
+  String get settingsShowPlayerControls => 'Wiedergabesteuerung anzeigen';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Du kannst das Playerfeld auch antippen oder wischen, um es ein- oder auszublenden.';
 }

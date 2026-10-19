@@ -831,5 +831,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Hinnanguline helistik"
+  "playerEstimatedKey": "Hinnanguline helistik",
+  "songsLibraryView": "Teek",
+  "settingsStartupView": "Ava käivitamisel",
+  "settingsStartupViewHint": "Vali laulude vaade, mida rakenduse avamisel näidatakse.",
+  "settingsStartupLastView": "Viimati avatud",
+  "playerExpandControls": "Kuva taasesituse juhtnuppe",
+  "playerCollapseControls": "Peida taasesituse juhtnupud",
+  "settingsShowSections": "Kuva osade pealkirjad",
+  "settingsShowSectionsHint": "Kuva laulusõnades salmide, refrääni ja muude osade pealkirju.",
+  "settingsShowPlayerControls": "Kuva taasesituse juhtnuppe",
+  "settingsShowPlayerControlsHint": "Saad pleieripaneeli kuvamiseks või peitmiseks seda ka puudutada või libistada."
 }

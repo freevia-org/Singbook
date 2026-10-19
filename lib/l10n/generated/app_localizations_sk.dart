@@ -1941,4 +1941,37 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Odhadovaná tónina';
+
+  @override
+  String get songsLibraryView => 'Knižnica';
+
+  @override
+  String get settingsStartupView => 'Otvoriť pri spustení';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Vyberte zobrazenie Piesne, ktoré sa ukáže po otvorení aplikácie.';
+
+  @override
+  String get settingsStartupLastView => 'Naposledy otvorené';
+
+  @override
+  String get playerExpandControls => 'Zobraziť ovládanie prehrávania';
+
+  @override
+  String get playerCollapseControls => 'Skryť ovládanie prehrávania';
+
+  @override
+  String get settingsShowSections => 'Zobrazovať nadpisy častí';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Zobrazovať v texte nadpisy sloh, refrénu a ďalších častí.';
+
+  @override
+  String get settingsShowPlayerControls => 'Zobraziť ovládanie prehrávania';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Panel prehrávača môžete zobraziť alebo skryť aj ťuknutím či potiahnutím.';
 }

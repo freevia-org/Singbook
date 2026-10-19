@@ -1912,4 +1912,37 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'अनुमानित स्वर';
+
+  @override
+  String get songsLibraryView => 'लाइब्रेरी';
+
+  @override
+  String get settingsStartupView => 'इसमें शुरू करें';
+
+  @override
+  String get settingsStartupViewHint =>
+      'ऐप खुलने पर दिखने वाला गानों का दृश्य चुनें।';
+
+  @override
+  String get settingsStartupLastView => 'पिछली बार खोला गया';
+
+  @override
+  String get playerExpandControls => 'प्लेबैक नियंत्रण दिखाएँ';
+
+  @override
+  String get playerCollapseControls => 'प्लेबैक नियंत्रण छिपाएँ';
+
+  @override
+  String get settingsShowSections => 'खंड शीर्षक दिखाएँ';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'गीत के बोलों में अंतरा, मुखड़ा और अन्य खंडों के शीर्षक दिखाएँ।';
+
+  @override
+  String get settingsShowPlayerControls => 'प्लेबैक नियंत्रण दिखाएँ';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'प्लेयर पैनल दिखाने या छिपाने के लिए उसे टैप या स्वाइप भी कर सकते हैं।';
 }

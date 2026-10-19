@@ -1957,4 +1957,40 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Предполагаемая тональность';
+
+  @override
+  String get songsLibraryView => 'Библиотека';
+
+  @override
+  String get settingsStartupView => 'Начальный экран';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Выберите раздел «Песни», который будет открываться при запуске приложения.';
+
+  @override
+  String get settingsStartupLastView => 'Последний открытый';
+
+  @override
+  String get playerExpandControls =>
+      'Показать элементы управления воспроизведением';
+
+  @override
+  String get playerCollapseControls =>
+      'Скрыть элементы управления воспроизведением';
+
+  @override
+  String get settingsShowSections => 'Показывать заголовки разделов';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Показывать в тексте заголовки куплетов, припева и других разделов.';
+
+  @override
+  String get settingsShowPlayerControls =>
+      'Показать элементы управления воспроизведением';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Панель плеера также можно показать или скрыть касанием или свайпом.';
 }

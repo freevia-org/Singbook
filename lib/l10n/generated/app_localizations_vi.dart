@@ -1917,4 +1917,37 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Tông ước tính';
+
+  @override
+  String get songsLibraryView => 'Thư viện';
+
+  @override
+  String get settingsStartupView => 'Mở vào';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Chọn chế độ xem Bài hát sẽ hiển thị khi mở ứng dụng.';
+
+  @override
+  String get settingsStartupLastView => 'Mở gần đây nhất';
+
+  @override
+  String get playerExpandControls => 'Hiện điều khiển phát';
+
+  @override
+  String get playerCollapseControls => 'Ẩn điều khiển phát';
+
+  @override
+  String get settingsShowSections => 'Hiện tiêu đề các phần';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Hiện tiêu đề đoạn, điệp khúc và các phần khác trong lời bài hát.';
+
+  @override
+  String get settingsShowPlayerControls => 'Hiện điều khiển phát';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Bạn cũng có thể chạm hoặc vuốt bảng trình phát để hiện hoặc ẩn bảng.';
 }

@@ -832,5 +832,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Szacowana tonacja"
+  "playerEstimatedKey": "Szacowana tonacja",
+  "songsLibraryView": "Biblioteka",
+  "settingsStartupView": "Widok początkowy",
+  "settingsStartupViewHint": "Wybierz widok utworów wyświetlany po otwarciu aplikacji.",
+  "settingsStartupLastView": "Ostatnio otwarty",
+  "playerExpandControls": "Pokaż elementy sterujące odtwarzaniem",
+  "playerCollapseControls": "Ukryj elementy sterujące odtwarzaniem",
+  "settingsShowSections": "Pokazuj nagłówki sekcji",
+  "settingsShowSectionsHint": "Pokazuj w tekście nagłówki zwrotek, refrenu i innych sekcji.",
+  "settingsShowPlayerControls": "Pokaż elementy sterujące odtwarzaniem",
+  "settingsShowPlayerControlsHint": "Możesz też stuknąć panel odtwarzacza lub przesunąć po nim palcem, aby go pokazać lub ukryć."
 }

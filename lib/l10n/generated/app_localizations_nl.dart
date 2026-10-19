@@ -1947,4 +1947,37 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Geschatte toonsoort';
+
+  @override
+  String get songsLibraryView => 'Bibliotheek';
+
+  @override
+  String get settingsStartupView => 'Start in';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Kies de liedweergave die wordt getoond wanneer de app wordt geopend.';
+
+  @override
+  String get settingsStartupLastView => 'Laatst geopend';
+
+  @override
+  String get playerExpandControls => 'Afspeelknoppen tonen';
+
+  @override
+  String get playerCollapseControls => 'Afspeelknoppen verbergen';
+
+  @override
+  String get settingsShowSections => 'Sectiekoppen tonen';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Toon de koppen van coupletten, refreinen en andere secties in de songtekst.';
+
+  @override
+  String get settingsShowPlayerControls => 'Afspeelknoppen tonen';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Je kunt het spelerspaneel ook aantikken of vegen om het te tonen of te verbergen.';
 }

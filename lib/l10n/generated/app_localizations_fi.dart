@@ -1922,4 +1922,37 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Arvioitu sävellaji';
+
+  @override
+  String get songsLibraryView => 'Kirjasto';
+
+  @override
+  String get settingsStartupView => 'Aloitusnäkymä';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Valitse kappalenäkymä, joka näytetään sovelluksen avautuessa.';
+
+  @override
+  String get settingsStartupLastView => 'Viimeksi avattu';
+
+  @override
+  String get playerExpandControls => 'Näytä toiston säätimet';
+
+  @override
+  String get playerCollapseControls => 'Piilota toiston säätimet';
+
+  @override
+  String get settingsShowSections => 'Näytä osioiden otsikot';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Näytä säkeistöjen, kertosäkeen ja muiden osioiden otsikot sanoituksessa.';
+
+  @override
+  String get settingsShowPlayerControls => 'Näytä toiston säätimet';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Voit näyttää tai piilottaa soitinpaneelin myös napauttamalla tai pyyhkäisemällä sitä.';
 }

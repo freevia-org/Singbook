@@ -291,5 +291,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Приблизителна тоналност"
+  "playerEstimatedKey": "Приблизителна тоналност",
+  "songsLibraryView": "Библиотека",
+  "settingsStartupView": "Начален изглед",
+  "settingsStartupViewHint": "Изберете изгледа „Песни“, който да се показва при отваряне на приложението.",
+  "settingsStartupLastView": "Последно отворен",
+  "playerExpandControls": "Показване на контролите за изпълнение",
+  "playerCollapseControls": "Скриване на контролите за изпълнение",
+  "settingsShowSections": "Показване на заглавията на частите",
+  "settingsShowSectionsHint": "Показвай заглавията на куплетите, припева и другите части в текста.",
+  "settingsShowPlayerControls": "Показване на контролите за изпълнение",
+  "settingsShowPlayerControlsHint": "Можете също да докоснете или плъзнете панела на плейъра, за да го покажете или скриете."
 }

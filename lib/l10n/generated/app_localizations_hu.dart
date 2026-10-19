@@ -1929,4 +1929,37 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Becsült hangnem';
+
+  @override
+  String get songsLibraryView => 'Könyvtár';
+
+  @override
+  String get settingsStartupView => 'Induló nézet';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Válaszd ki, melyik Dalképernyő jelenjen meg az alkalmazás megnyitásakor.';
+
+  @override
+  String get settingsStartupLastView => 'Utoljára megnyitott';
+
+  @override
+  String get playerExpandControls => 'Lejátszásvezérlők megjelenítése';
+
+  @override
+  String get playerCollapseControls => 'Lejátszásvezérlők elrejtése';
+
+  @override
+  String get settingsShowSections => 'Szakaszcímek megjelenítése';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Jelenítsd meg a dalszövegben a versszakok, a refrén és más részek címeit.';
+
+  @override
+  String get settingsShowPlayerControls => 'Lejátszásvezérlők megjelenítése';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'A lejátszópanelt megérintéssel vagy elhúzással is megjelenítheted vagy elrejtheted.';
 }

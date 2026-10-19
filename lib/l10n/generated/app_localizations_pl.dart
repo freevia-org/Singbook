@@ -1956,4 +1956,38 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Szacowana tonacja';
+
+  @override
+  String get songsLibraryView => 'Biblioteka';
+
+  @override
+  String get settingsStartupView => 'Widok początkowy';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Wybierz widok utworów wyświetlany po otwarciu aplikacji.';
+
+  @override
+  String get settingsStartupLastView => 'Ostatnio otwarty';
+
+  @override
+  String get playerExpandControls => 'Pokaż elementy sterujące odtwarzaniem';
+
+  @override
+  String get playerCollapseControls => 'Ukryj elementy sterujące odtwarzaniem';
+
+  @override
+  String get settingsShowSections => 'Pokazuj nagłówki sekcji';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Pokazuj w tekście nagłówki zwrotek, refrenu i innych sekcji.';
+
+  @override
+  String get settingsShowPlayerControls =>
+      'Pokaż elementy sterujące odtwarzaniem';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Możesz też stuknąć panel odtwarzacza lub przesunąć po nim palcem, aby go pokazać lub ukryć.';
 }

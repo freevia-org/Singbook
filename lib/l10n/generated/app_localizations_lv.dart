@@ -1946,4 +1946,37 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Aptuvenā tonalitāte';
+
+  @override
+  String get songsLibraryView => 'Bibliotēka';
+
+  @override
+  String get settingsStartupView => 'Sākuma skats';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Izvēlieties dziesmu skatu, kas tiks rādīts, atverot lietotni.';
+
+  @override
+  String get settingsStartupLastView => 'Pēdējoreiz atvērtais';
+
+  @override
+  String get playerExpandControls => 'Rādīt atskaņošanas vadīklas';
+
+  @override
+  String get playerCollapseControls => 'Paslēpt atskaņošanas vadīklas';
+
+  @override
+  String get settingsShowSections => 'Rādīt sadaļu virsrakstus';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Dziesmas tekstā rādīt pantu, piedziedājuma un citu sadaļu virsrakstus.';
+
+  @override
+  String get settingsShowPlayerControls => 'Rādīt atskaņošanas vadīklas';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Atskaņotāja paneli var parādīt vai paslēpt arī, pieskaroties tam vai pārvelkot.';
 }

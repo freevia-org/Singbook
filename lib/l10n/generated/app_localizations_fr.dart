@@ -1952,4 +1952,37 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Tonalité estimée';
+
+  @override
+  String get songsLibraryView => 'Bibliothèque';
+
+  @override
+  String get settingsStartupView => 'Ouvrir sur';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Choisissez la vue des chansons affichée à l’ouverture de l’application.';
+
+  @override
+  String get settingsStartupLastView => 'Dernière vue ouverte';
+
+  @override
+  String get playerExpandControls => 'Afficher les commandes de lecture';
+
+  @override
+  String get playerCollapseControls => 'Masquer les commandes de lecture';
+
+  @override
+  String get settingsShowSections => 'Afficher les titres des sections';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Afficher les titres des couplets, du refrain et des autres sections dans les paroles.';
+
+  @override
+  String get settingsShowPlayerControls => 'Afficher les commandes de lecture';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Vous pouvez aussi toucher ou balayer le panneau du lecteur pour l’afficher ou le masquer.';
 }

@@ -1927,4 +1927,37 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Nada dasar perkiraan';
+
+  @override
+  String get songsLibraryView => 'Pustaka';
+
+  @override
+  String get settingsStartupView => 'Mulai di';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Pilih tampilan Lagu yang ditampilkan saat aplikasi dibuka.';
+
+  @override
+  String get settingsStartupLastView => 'Terakhir dibuka';
+
+  @override
+  String get playerExpandControls => 'Tampilkan kontrol pemutaran';
+
+  @override
+  String get playerCollapseControls => 'Sembunyikan kontrol pemutaran';
+
+  @override
+  String get settingsShowSections => 'Tampilkan judul bagian';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Tampilkan judul bait, reff, dan bagian lain pada lirik.';
+
+  @override
+  String get settingsShowPlayerControls => 'Tampilkan kontrol pemutaran';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Ketuk atau geser panel pemutar untuk menampilkan atau menyembunyikannya.';
 }

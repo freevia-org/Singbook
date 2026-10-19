@@ -831,5 +831,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Becsült hangnem"
+  "playerEstimatedKey": "Becsült hangnem",
+  "songsLibraryView": "Könyvtár",
+  "settingsStartupView": "Induló nézet",
+  "settingsStartupViewHint": "Válaszd ki, melyik Dalképernyő jelenjen meg az alkalmazás megnyitásakor.",
+  "settingsStartupLastView": "Utoljára megnyitott",
+  "playerExpandControls": "Lejátszásvezérlők megjelenítése",
+  "playerCollapseControls": "Lejátszásvezérlők elrejtése",
+  "settingsShowSections": "Szakaszcímek megjelenítése",
+  "settingsShowSectionsHint": "Jelenítsd meg a dalszövegben a versszakok, a refrén és más részek címeit.",
+  "settingsShowPlayerControls": "Lejátszásvezérlők megjelenítése",
+  "settingsShowPlayerControlsHint": "A lejátszópanelt megérintéssel vagy elhúzással is megjelenítheted vagy elrejtheted."
 }

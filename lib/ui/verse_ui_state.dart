@@ -4,7 +4,7 @@ enum VerseTab { home, songs, setlists, settings }
 
 enum VerseRoute { main, reader, editor, setlistDetail }
 
-enum HomeListMode { recent, favorites, online }
+enum HomeListMode { recent, library, favorites, online }
 
 enum LoadState { idle, loading, loaded, failed }
 
@@ -452,6 +452,7 @@ class VerseUiState {
     this.route = VerseRoute.main,
     this.activeTab = VerseTab.home,
     this.homeListMode = HomeListMode.recent,
+    this.startupSongsView = 'recent',
     this.query = '',
     this.autocomplete = const [],
     this.searchState = LoadState.idle,
@@ -484,6 +485,8 @@ class VerseUiState {
     this.lyricsFontSize = 24,
     this.lyricHighlightStyle = 'contrast',
     this.showChords = true,
+    this.showSections = true,
+    this.playerControlsExpanded = true,
     this.autoscroll = true,
     bool? autoscrollPreference,
     this.timingMode = 'estimated',
@@ -522,6 +525,7 @@ class VerseUiState {
   ) : route = o.route,
       activeTab = o.activeTab,
       homeListMode = o.homeListMode,
+      startupSongsView = o.startupSongsView,
       query = o.query,
       autocomplete = o.autocomplete,
       searchState = o.searchState,
@@ -554,6 +558,8 @@ class VerseUiState {
       lyricsFontSize = o.lyricsFontSize,
       lyricHighlightStyle = o.lyricHighlightStyle,
       showChords = o.showChords,
+      showSections = o.showSections,
+      playerControlsExpanded = o.playerControlsExpanded,
       autoscroll = o.autoscroll,
       autoscrollPreference = o.autoscrollPreference,
       timingMode = o.timingMode,
@@ -583,6 +589,7 @@ class VerseUiState {
   final VerseRoute route;
   final VerseTab activeTab;
   final HomeListMode homeListMode;
+  final String startupSongsView;
   final String query;
   final List<SearchReferenceData> autocomplete;
   final LoadState searchState;
@@ -626,6 +633,7 @@ class VerseUiState {
   final double lyricsFontSize;
   final String lyricHighlightStyle;
   final bool showChords, autoscroll;
+  final bool showSections, playerControlsExpanded;
 
   /// The stored "autoscroll by default" preference, which stays on while the
   /// effective [autoscroll] is off (manual timing).
@@ -671,6 +679,9 @@ abstract class VerseUiController extends ChangeNotifier {
   Future<void> initialize();
   void setTab(VerseTab tab);
   void setHomeListMode(HomeListMode mode);
+  Future<void> setStartupSongsView(String view) async {}
+  Future<void> setShowSections(bool show) async {}
+  Future<void> setPlayerControlsExpanded(bool expanded) async {}
   void setQuery(String value);
   void changeSearchSong() => setQuery('');
   Future<void> submitSearch();

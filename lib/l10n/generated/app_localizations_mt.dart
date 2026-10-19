@@ -1949,4 +1949,37 @@ class AppLocalizationsMt extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Tonalità stmata';
+
+  @override
+  String get songsLibraryView => 'Librerija';
+
+  @override
+  String get settingsStartupView => 'Ibda fil-veduta';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Agħżel il-veduta tal-kanzunetti li tintwera meta tiftaħ l-app.';
+
+  @override
+  String get settingsStartupLastView => 'L-aħħar veduta miftuħa';
+
+  @override
+  String get playerExpandControls => 'Uri l-kontrolli tad-daqq';
+
+  @override
+  String get playerCollapseControls => 'Aħbi l-kontrolli tad-daqq';
+
+  @override
+  String get settingsShowSections => 'Uri l-intestaturi tat-taqsimiet';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Uri l-intestaturi tal-versi, tal-kor u taqsimiet oħra fil-lirika.';
+
+  @override
+  String get settingsShowPlayerControls => 'Uri l-kontrolli tad-daqq';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Tista’ wkoll tmiss jew tiskrollja l-pannell tal-plejer biex turih jew taħbih.';
 }

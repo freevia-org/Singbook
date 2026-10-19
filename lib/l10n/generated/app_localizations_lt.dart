@@ -1955,4 +1955,37 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Numatoma tonacija';
+
+  @override
+  String get songsLibraryView => 'Biblioteka';
+
+  @override
+  String get settingsStartupView => 'Paleisti rodant';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Pasirinkite dainų rodinį, kuris bus rodomas atidarius programą.';
+
+  @override
+  String get settingsStartupLastView => 'Paskutinį kartą atidarytas';
+
+  @override
+  String get playerExpandControls => 'Rodyti atkūrimo valdiklius';
+
+  @override
+  String get playerCollapseControls => 'Slėpti atkūrimo valdiklius';
+
+  @override
+  String get settingsShowSections => 'Rodyti dalių antraštes';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Dainos žodžiuose rodyti posmų, priedainio ir kitų dalių antraštes.';
+
+  @override
+  String get settingsShowPlayerControls => 'Rodyti atkūrimo valdiklius';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Grotuvo skydelį taip pat galite parodyti arba paslėpti jį palietę ar perbraukę.';
 }

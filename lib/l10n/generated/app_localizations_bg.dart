@@ -1923,4 +1923,38 @@ class AppLocalizationsBg extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Приблизителна тоналност';
+
+  @override
+  String get songsLibraryView => 'Библиотека';
+
+  @override
+  String get settingsStartupView => 'Начален изглед';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Изберете изгледа „Песни“, който да се показва при отваряне на приложението.';
+
+  @override
+  String get settingsStartupLastView => 'Последно отворен';
+
+  @override
+  String get playerExpandControls => 'Показване на контролите за изпълнение';
+
+  @override
+  String get playerCollapseControls => 'Скриване на контролите за изпълнение';
+
+  @override
+  String get settingsShowSections => 'Показване на заглавията на частите';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Показвай заглавията на куплетите, припева и другите части в текста.';
+
+  @override
+  String get settingsShowPlayerControls =>
+      'Показване на контролите за изпълнение';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Можете също да докоснете или плъзнете панела на плейъра, за да го покажете или скриете.';
 }

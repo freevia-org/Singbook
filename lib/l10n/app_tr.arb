@@ -832,5 +832,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Tahmini tonalite"
+  "playerEstimatedKey": "Tahmini tonalite",
+  "songsLibraryView": "Kitaplık",
+  "settingsStartupView": "Başlangıç görünümü",
+  "settingsStartupViewHint": "Uygulama açıldığında gösterilecek Şarkılar görünümünü seçin.",
+  "settingsStartupLastView": "Son açılan",
+  "playerExpandControls": "Oynatma kontrollerini göster",
+  "playerCollapseControls": "Oynatma kontrollerini gizle",
+  "settingsShowSections": "Bölüm başlıklarını göster",
+  "settingsShowSectionsHint": "Şarkı sözlerinde kıta, nakarat ve diğer bölümlerin başlıklarını göster.",
+  "settingsShowPlayerControls": "Oynatma kontrollerini göster",
+  "settingsShowPlayerControlsHint": "Oynatıcı panelini göstermek veya gizlemek için panele dokunabilir ya da kaydırabilirsiniz."
 }

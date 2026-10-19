@@ -832,5 +832,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Odhadovaná tónina"
+  "playerEstimatedKey": "Odhadovaná tónina",
+  "songsLibraryView": "Knižnica",
+  "settingsStartupView": "Otvoriť pri spustení",
+  "settingsStartupViewHint": "Vyberte zobrazenie Piesne, ktoré sa ukáže po otvorení aplikácie.",
+  "settingsStartupLastView": "Naposledy otvorené",
+  "playerExpandControls": "Zobraziť ovládanie prehrávania",
+  "playerCollapseControls": "Skryť ovládanie prehrávania",
+  "settingsShowSections": "Zobrazovať nadpisy častí",
+  "settingsShowSectionsHint": "Zobrazovať v texte nadpisy sloh, refrénu a ďalších častí.",
+  "settingsShowPlayerControls": "Zobraziť ovládanie prehrávania",
+  "settingsShowPlayerControlsHint": "Panel prehrávača môžete zobraziť alebo skryť aj ťuknutím či potiahnutím."
 }

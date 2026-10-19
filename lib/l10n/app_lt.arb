@@ -832,5 +832,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Numatoma tonacija"
+  "playerEstimatedKey": "Numatoma tonacija",
+  "songsLibraryView": "Biblioteka",
+  "settingsStartupView": "Paleisti rodant",
+  "settingsStartupViewHint": "Pasirinkite dainų rodinį, kuris bus rodomas atidarius programą.",
+  "settingsStartupLastView": "Paskutinį kartą atidarytas",
+  "playerExpandControls": "Rodyti atkūrimo valdiklius",
+  "playerCollapseControls": "Slėpti atkūrimo valdiklius",
+  "settingsShowSections": "Rodyti dalių antraštes",
+  "settingsShowSectionsHint": "Dainos žodžiuose rodyti posmų, priedainio ir kitų dalių antraštes.",
+  "settingsShowPlayerControls": "Rodyti atkūrimo valdiklius",
+  "settingsShowPlayerControlsHint": "Grotuvo skydelį taip pat galite parodyti arba paslėpti jį palietę ar perbraukę."
 }

@@ -832,5 +832,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Tonalitate estimată"
+  "playerEstimatedKey": "Tonalitate estimată",
+  "songsLibraryView": "Bibliotecă",
+  "settingsStartupView": "Pornește în",
+  "settingsStartupViewHint": "Alege vizualizarea melodiilor afișată la deschiderea aplicației.",
+  "settingsStartupLastView": "Ultima vizualizare",
+  "playerExpandControls": "Afișează comenzile de redare",
+  "playerCollapseControls": "Ascunde comenzile de redare",
+  "settingsShowSections": "Afișează titlurile secțiunilor",
+  "settingsShowSectionsHint": "Afișează în versuri titlurile strofelor, refrenului și ale altor secțiuni.",
+  "settingsShowPlayerControls": "Afișează comenzile de redare",
+  "settingsShowPlayerControlsHint": "Poți atinge sau glisa și panoul playerului pentru a-l afișa sau ascunde."
 }

@@ -1949,4 +1949,39 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Εκτιμώμενη τονικότητα';
+
+  @override
+  String get songsLibraryView => 'Βιβλιοθήκη';
+
+  @override
+  String get settingsStartupView => 'Έναρξη σε';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Επιλέξτε την προβολή Τραγούδια που θα εμφανίζεται όταν ανοίγει η εφαρμογή.';
+
+  @override
+  String get settingsStartupLastView => 'Τελευταία προβολή';
+
+  @override
+  String get playerExpandControls => 'Εμφάνιση στοιχείων ελέγχου αναπαραγωγής';
+
+  @override
+  String get playerCollapseControls =>
+      'Απόκρυψη στοιχείων ελέγχου αναπαραγωγής';
+
+  @override
+  String get settingsShowSections => 'Εμφάνιση επικεφαλίδων ενοτήτων';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Εμφάνιση των επικεφαλίδων για κουπλέ, ρεφρέν και άλλες ενότητες στους στίχους.';
+
+  @override
+  String get settingsShowPlayerControls =>
+      'Εμφάνιση στοιχείων ελέγχου αναπαραγωγής';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Μπορείτε επίσης να πατήσετε ή να σύρετε το πλαίσιο αναπαραγωγής για να το εμφανίσετε ή να το αποκρύψετε.';
 }

@@ -1922,4 +1922,37 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Hinnanguline helistik';
+
+  @override
+  String get songsLibraryView => 'Teek';
+
+  @override
+  String get settingsStartupView => 'Ava käivitamisel';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Vali laulude vaade, mida rakenduse avamisel näidatakse.';
+
+  @override
+  String get settingsStartupLastView => 'Viimati avatud';
+
+  @override
+  String get playerExpandControls => 'Kuva taasesituse juhtnuppe';
+
+  @override
+  String get playerCollapseControls => 'Peida taasesituse juhtnupud';
+
+  @override
+  String get settingsShowSections => 'Kuva osade pealkirjad';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Kuva laulusõnades salmide, refrääni ja muude osade pealkirju.';
+
+  @override
+  String get settingsShowPlayerControls => 'Kuva taasesituse juhtnuppe';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Saad pleieripaneeli kuvamiseks või peitmiseks seda ka puudutada või libistada.';
 }

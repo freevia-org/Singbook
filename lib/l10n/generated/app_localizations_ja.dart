@@ -1848,4 +1848,35 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => '推定キー';
+
+  @override
+  String get songsLibraryView => 'ライブラリ';
+
+  @override
+  String get settingsStartupView => '起動時の画面';
+
+  @override
+  String get settingsStartupViewHint => 'アプリを開いたときに表示する曲の画面を選択します。';
+
+  @override
+  String get settingsStartupLastView => '前回開いた画面';
+
+  @override
+  String get playerExpandControls => '再生コントロールを表示';
+
+  @override
+  String get playerCollapseControls => '再生コントロールを非表示';
+
+  @override
+  String get settingsShowSections => 'セクション見出しを表示';
+
+  @override
+  String get settingsShowSectionsHint => '歌詞に、ヴァース、コーラスなど各セクションの見出しを表示します。';
+
+  @override
+  String get settingsShowPlayerControls => '再生コントロールを表示';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'プレーヤーパネルをタップまたはスワイプして表示・非表示を切り替えることもできます。';
 }

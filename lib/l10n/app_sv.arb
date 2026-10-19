@@ -832,5 +832,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Uppskattad tonart"
+  "playerEstimatedKey": "Uppskattad tonart",
+  "songsLibraryView": "Bibliotek",
+  "settingsStartupView": "Starta i",
+  "settingsStartupViewHint": "Välj låtvyn som visas när appen öppnas.",
+  "settingsStartupLastView": "Senast öppnad",
+  "playerExpandControls": "Visa uppspelningskontroller",
+  "playerCollapseControls": "Dölj uppspelningskontroller",
+  "settingsShowSections": "Visa avsnittsrubriker",
+  "settingsShowSectionsHint": "Visa rubriker för verser, refräng och andra avsnitt i låttexten.",
+  "settingsShowPlayerControls": "Visa uppspelningskontroller",
+  "settingsShowPlayerControlsHint": "Du kan också trycka på eller svepa över spelarpanelen för att visa eller dölja den."
 }

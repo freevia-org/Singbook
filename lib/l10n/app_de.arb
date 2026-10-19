@@ -831,5 +831,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Geschätzte Tonart"
+  "playerEstimatedKey": "Geschätzte Tonart",
+  "songsLibraryView": "Bibliothek",
+  "settingsStartupView": "Startansicht",
+  "settingsStartupViewHint": "Wähle die Songansicht aus, die beim Öffnen der App angezeigt wird.",
+  "settingsStartupLastView": "Zuletzt geöffnet",
+  "playerExpandControls": "Wiedergabesteuerung anzeigen",
+  "playerCollapseControls": "Wiedergabesteuerung ausblenden",
+  "settingsShowSections": "Abschnittsüberschriften anzeigen",
+  "settingsShowSectionsHint": "Zeige Überschriften für Strophen, Refrain und andere Abschnitte im Songtext an.",
+  "settingsShowPlayerControls": "Wiedergabesteuerung anzeigen",
+  "settingsShowPlayerControlsHint": "Du kannst das Playerfeld auch antippen oder wischen, um es ein- oder auszublenden."
 }

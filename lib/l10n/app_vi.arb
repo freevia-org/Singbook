@@ -832,5 +832,15 @@
       }
     }
   },
-  "playerEstimatedKey": "Tông ước tính"
+  "playerEstimatedKey": "Tông ước tính",
+  "songsLibraryView": "Thư viện",
+  "settingsStartupView": "Mở vào",
+  "settingsStartupViewHint": "Chọn chế độ xem Bài hát sẽ hiển thị khi mở ứng dụng.",
+  "settingsStartupLastView": "Mở gần đây nhất",
+  "playerExpandControls": "Hiện điều khiển phát",
+  "playerCollapseControls": "Ẩn điều khiển phát",
+  "settingsShowSections": "Hiện tiêu đề các phần",
+  "settingsShowSectionsHint": "Hiện tiêu đề đoạn, điệp khúc và các phần khác trong lời bài hát.",
+  "settingsShowPlayerControls": "Hiện điều khiển phát",
+  "settingsShowPlayerControlsHint": "Bạn cũng có thể chạm hoặc vuốt bảng trình phát để hiện hoặc ẩn bảng."
 }

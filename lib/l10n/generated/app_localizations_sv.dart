@@ -1926,4 +1926,37 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Uppskattad tonart';
+
+  @override
+  String get songsLibraryView => 'Bibliotek';
+
+  @override
+  String get settingsStartupView => 'Starta i';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Välj låtvyn som visas när appen öppnas.';
+
+  @override
+  String get settingsStartupLastView => 'Senast öppnad';
+
+  @override
+  String get playerExpandControls => 'Visa uppspelningskontroller';
+
+  @override
+  String get playerCollapseControls => 'Dölj uppspelningskontroller';
+
+  @override
+  String get settingsShowSections => 'Visa avsnittsrubriker';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Visa rubriker för verser, refräng och andra avsnitt i låttexten.';
+
+  @override
+  String get settingsShowPlayerControls => 'Visa uppspelningskontroller';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Du kan också trycka på eller svepa över spelarpanelen för att visa eller dölja den.';
 }

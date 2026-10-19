@@ -1907,4 +1907,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Estimated key';
+
+  @override
+  String get songsLibraryView => 'Library';
+
+  @override
+  String get settingsStartupView => 'Start in';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Choose the Songs view shown when the app opens.';
+
+  @override
+  String get settingsStartupLastView => 'Last opened';
+
+  @override
+  String get playerExpandControls => 'Show playback controls';
+
+  @override
+  String get playerCollapseControls => 'Hide playback controls';
+
+  @override
+  String get settingsShowSections => 'Show section headings';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Show verse, chorus and other section headings in the lyrics.';
+
+  @override
+  String get settingsShowPlayerControls => 'Show playback controls';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'You can also tap or swipe the player panel to show or hide it.';
 }
