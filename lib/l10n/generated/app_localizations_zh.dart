@@ -579,7 +579,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get setlistFavoriteRemove => '从收藏中移除歌单';
 
   @override
-  String get setlistShare => '分享为歌单文件';
+  String get setlistShare => '分享为 OpenSong';
 
   @override
   String get setlistSharePdf => '分享为 PDF';
@@ -1190,6 +1190,30 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsLyricsPreviewExample => '清晨来临时，我们将再次歌唱。';
+
+  @override
+  String get settingsPreviewSongTitle => '晨间歌曲';
+
+  @override
+  String get settingsPreviewArtist => '示例编曲';
+
+  @override
+  String get settingsPreviewCurrentLine => '清晨来临时';
+
+  @override
+  String get settingsPreviewNextLine => '我们将再次歌唱。';
+
+  @override
+  String get settingsPlayerSections => '章节标题';
+
+  @override
+  String get settingsPlayerControls => '播放面板';
+
+  @override
+  String get settingsPlayerAutoscroll => '自动滚动';
+
+  @override
+  String get settingsSystemShort => '设备';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -1894,6 +1918,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => '上次打开';
+
+  @override
+  String get playerFullScreen => '全屏';
+
+  @override
+  String get playerExitFullScreen => '退出全屏';
 
   @override
   String get playerExpandControls => '显示播放控件';

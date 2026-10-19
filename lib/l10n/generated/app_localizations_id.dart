@@ -590,7 +590,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get setlistFavoriteRemove => 'Hapus daftar lagu dari favorit';
 
   @override
-  String get setlistShare => 'Bagikan sebagai file daftar lagu';
+  String get setlistShare => 'Bagikan sebagai OpenSong';
 
   @override
   String get setlistSharePdf => 'Bagikan sebagai PDF';
@@ -1222,6 +1222,30 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get settingsLyricsPreviewExample =>
       'Saat pagi tiba, kita akan bernyanyi lagi.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Lagu pagi';
+
+  @override
+  String get settingsPreviewArtist => 'Aransemen contoh';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Saat pagi tiba';
+
+  @override
+  String get settingsPreviewNextLine => 'Kita akan bernyanyi lagi.';
+
+  @override
+  String get settingsPlayerSections => 'Judul bagian';
+
+  @override
+  String get settingsPlayerControls => 'Panel pemutaran';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Gulir otomatis';
+
+  @override
+  String get settingsSystemShort => 'Perangkat';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -2003,6 +2027,12 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'Terakhir dibuka';
+
+  @override
+  String get playerFullScreen => 'Layar penuh';
+
+  @override
+  String get playerExitFullScreen => 'Keluar dari layar penuh';
 
   @override
   String get playerExpandControls => 'Tampilkan kontrol pemutaran';

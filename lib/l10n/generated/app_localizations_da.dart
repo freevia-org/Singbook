@@ -586,7 +586,7 @@ class AppLocalizationsDa extends AppLocalizations {
   String get setlistFavoriteRemove => 'Fjern sangliste fra favoritter';
 
   @override
-  String get setlistShare => 'Del som sanglistefil';
+  String get setlistShare => 'Del som OpenSong';
 
   @override
   String get setlistSharePdf => 'Del som PDF';
@@ -1219,6 +1219,30 @@ class AppLocalizationsDa extends AppLocalizations {
   @override
   String get settingsLyricsPreviewExample =>
       'Når morgenen kommer, synger vi igen.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Morgensang';
+
+  @override
+  String get settingsPreviewArtist => 'Eksempelarrangement';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Når morgenen kommer';
+
+  @override
+  String get settingsPreviewNextLine => 'Vi synger igen.';
+
+  @override
+  String get settingsPlayerSections => 'Sektionsoverskrifter';
+
+  @override
+  String get settingsPlayerControls => 'Afspilningspanel';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Automatisk rulning';
+
+  @override
+  String get settingsSystemShort => 'Enhed';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -1995,6 +2019,12 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'Senest åbne';
+
+  @override
+  String get playerFullScreen => 'Fuld skærm';
+
+  @override
+  String get playerExitFullScreen => 'Afslut fuld skærm';
 
   @override
   String get playerExpandControls => 'Vis afspilningsknapper';

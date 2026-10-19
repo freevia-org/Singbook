@@ -82,6 +82,7 @@ class AppControllerAdapter extends VerseUiController {
   VerseTab _tab = VerseTab.home;
   VerseRoute _route = VerseRoute.main;
   HomeListMode _homeMode = HomeListMode.recent;
+  bool _favoritesOnly = false;
   SearchFilterData _filters = const SearchFilterData();
   bool _filtersExpanded = false;
   String _query = '';
@@ -416,6 +417,7 @@ class AppControllerAdapter extends VerseUiController {
       route: _route,
       activeTab: _tab,
       homeListMode: _homeMode,
+      favoritesOnly: _favoritesOnly,
       startupSongsView: _startupSongsView(app.settings['startupSongsView']),
       query: _query,
       autocomplete: _query.trim() == app.query.trim()
@@ -1343,9 +1345,16 @@ class AppControllerAdapter extends VerseUiController {
     final view = preferred == 'last'
         ? app.settings['lastSongsView']
         : preferred;
-    _homeMode =
-        HomeListMode.values.where((mode) => mode.name == view).firstOrNull ??
-        HomeListMode.recent;
+    final legacyFavorites = view == 'favorites';
+    _homeMode = legacyFavorites
+        ? HomeListMode.library
+        : HomeListMode.values.where((mode) => mode.name == view).firstOrNull ??
+              HomeListMode.recent;
+    _favoritesOnly =
+        preferred == 'favorites' ||
+        (preferred == 'last' &&
+            (legacyFavorites ||
+                app.settings['lastSongsFavoritesOnly'] == true));
     _rememberSongsView();
     notifyListeners();
   }
@@ -1357,8 +1366,14 @@ class AppControllerAdapter extends VerseUiController {
 
   void _rememberSongsView() {
     final view = _homeMode.name;
-    if (app.settings['lastSongsView'] == view) return;
-    unawaited(_guard(() => app.setSetting('lastSongsView', view)));
+    if (app.settings['lastSongsView'] != view) {
+      unawaited(_guard(() => app.setSetting('lastSongsView', view)));
+    }
+    if (app.settings['lastSongsFavoritesOnly'] != _favoritesOnly) {
+      unawaited(
+        _guard(() => app.setSetting('lastSongsFavoritesOnly', _favoritesOnly)),
+      );
+    }
   }
 
   @override
@@ -1372,9 +1387,12 @@ class AppControllerAdapter extends VerseUiController {
     _tab = tab == VerseTab.songs ? VerseTab.home : tab;
     if (tab == VerseTab.songs) {
       _homeMode = HomeListMode.library;
-      // Conflict review should reveal all conflict copies, not inherit an
-      // unrelated catalog search that hides them.
-      if (_conflictFilter) _query = '';
+      // Conflict review should reveal every conflict copy without local
+      // search or favorites filters hiding some of them.
+      if (_conflictFilter) {
+        _query = '';
+        _favoritesOnly = false;
+      }
     }
     _route = VerseRoute.main;
     _setlistId = null;
@@ -1386,7 +1404,14 @@ class AppControllerAdapter extends VerseUiController {
   @override
   void setHomeListMode(HomeListMode mode) {
     _searchDebounce?.cancel();
-    _homeMode = mode;
+    if (mode == HomeListMode.favorites) {
+      // Compatibility for persisted and older callers: Favorites is the
+      // Library view with its local favorites filter enabled.
+      _homeMode = HomeListMode.library;
+      _favoritesOnly = true;
+    } else {
+      _homeMode = mode;
+    }
     _rememberSongsView();
     if (mode == HomeListMode.online) {
       _normalizeOnlineMetadataFilter();
@@ -1396,6 +1421,14 @@ class AppControllerAdapter extends VerseUiController {
         unawaited(_guard(submitSearch));
       }
     }
+    notifyListeners();
+  }
+
+  @override
+  void setFavoritesOnly(bool value) {
+    if (_favoritesOnly == value) return;
+    _favoritesOnly = value;
+    _rememberSongsView();
     notifyListeners();
   }
 

@@ -580,7 +580,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get setlistFavoriteRemove => 'セットリストをお気に入りから削除';
 
   @override
-  String get setlistShare => 'セットリストファイルとして共有';
+  String get setlistShare => 'OpenSongとして共有';
 
   @override
   String get setlistSharePdf => 'PDFとして共有';
@@ -1194,6 +1194,30 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get settingsLyricsPreviewExample => '朝が来たら、また一緒に歌いましょう。';
+
+  @override
+  String get settingsPreviewSongTitle => '朝の歌';
+
+  @override
+  String get settingsPreviewArtist => 'アレンジ例';
+
+  @override
+  String get settingsPreviewCurrentLine => '朝が来たら';
+
+  @override
+  String get settingsPreviewNextLine => 'また一緒に歌いましょう。';
+
+  @override
+  String get settingsPlayerSections => 'セクション見出し';
+
+  @override
+  String get settingsPlayerControls => '再生パネル';
+
+  @override
+  String get settingsPlayerAutoscroll => '自動スクロール';
+
+  @override
+  String get settingsSystemShort => 'デバイス';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -1919,6 +1943,12 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => '前回開いた画面';
+
+  @override
+  String get playerFullScreen => '全画面表示';
+
+  @override
+  String get playerExitFullScreen => '全画面表示を終了';
 
   @override
   String get playerExpandControls => '再生コントロールを表示';

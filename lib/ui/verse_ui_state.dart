@@ -452,6 +452,7 @@ class VerseUiState {
     this.route = VerseRoute.main,
     this.activeTab = VerseTab.home,
     this.homeListMode = HomeListMode.recent,
+    this.favoritesOnly = false,
     this.startupSongsView = 'recent',
     this.query = '',
     this.autocomplete = const [],
@@ -526,6 +527,7 @@ class VerseUiState {
   ) : route = o.route,
       activeTab = o.activeTab,
       homeListMode = o.homeListMode,
+      favoritesOnly = o.favoritesOnly,
       startupSongsView = o.startupSongsView,
       query = o.query,
       autocomplete = o.autocomplete,
@@ -591,6 +593,9 @@ class VerseUiState {
   final VerseRoute route;
   final VerseTab activeTab;
   final HomeListMode homeListMode;
+
+  /// Filters local Recent and Library results to favorites.
+  final bool favoritesOnly;
   final String startupSongsView;
   final String query;
   final List<SearchReferenceData> autocomplete;
@@ -682,6 +687,7 @@ abstract class VerseUiController extends ChangeNotifier {
   Future<void> initialize();
   void setTab(VerseTab tab);
   void setHomeListMode(HomeListMode mode);
+  void setFavoritesOnly(bool value);
   Future<void> setStartupSongsView(String view) async {}
   Future<void> setShowSections(bool show) async {}
   Future<void> setPlayerControlsExpanded(bool expanded) async {}

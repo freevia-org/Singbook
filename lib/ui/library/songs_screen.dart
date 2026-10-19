@@ -94,6 +94,9 @@ class _SongsScreenState extends State<SongsScreen> {
       state.songs
           .where((song) => !conflictsOnly || song.isConflictCopy)
           .where(
+            (song) => conflictsOnly || !state.favoritesOnly || song.favorite,
+          )
+          .where(
             (song) => foldForSearch(
               '${song.title} ${song.artist} ${song.album ?? ''}',
             ).contains(needle),

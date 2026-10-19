@@ -317,7 +317,7 @@ void main() {
       await tester.pumpAndSettle();
       final tile = find.widgetWithText(
         SwitchListTile,
-        l10n.settingsDefaultAutoscroll,
+        l10n.settingsPlayerAutoscroll,
       );
       final settingsList = find.byType(ListView);
       expect(settingsList, findsOneWidget);
@@ -357,7 +357,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('settings-menu-appearance')));
       await tester.pumpAndSettle();
-      expect(find.text(l10n.settingsLanguageSystem), findsWidgets);
+      expect(find.text(l10n.settingsSystemShort), findsWidgets);
     });
 
     for (final (size, scale) in const [

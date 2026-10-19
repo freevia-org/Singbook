@@ -593,7 +593,7 @@ class AppLocalizationsMt extends AppLocalizations {
   String get setlistFavoriteRemove => 'Neħħi l-lista mill-favoriti';
 
   @override
-  String get setlistShare => 'Aqsam bħala fajl tal-lista';
+  String get setlistShare => 'Aqsam bħala OpenSong';
 
   @override
   String get setlistSharePdf => 'Aqsam bħala PDF';
@@ -1232,6 +1232,30 @@ class AppLocalizationsMt extends AppLocalizations {
   @override
   String get settingsLyricsPreviewExample =>
       'Meta jasal filgħodu, nerġgħu nkantaw.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Għanja ta’ filgħodu';
+
+  @override
+  String get settingsPreviewArtist => 'Arranġament ta’ eżempju';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Meta jasal filgħodu';
+
+  @override
+  String get settingsPreviewNextLine => 'Nerġgħu nkantaw.';
+
+  @override
+  String get settingsPlayerSections => 'Titli tat-taqsimiet';
+
+  @override
+  String get settingsPlayerControls => 'Panew tad-daqq';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Skrolljar awtomatiku';
+
+  @override
+  String get settingsSystemShort => 'Apparat';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -2026,6 +2050,12 @@ class AppLocalizationsMt extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'L-aħħar veduta miftuħa';
+
+  @override
+  String get playerFullScreen => 'Skrin sħiħ';
+
+  @override
+  String get playerExitFullScreen => 'Oħroġ mill-iskrin sħiħ';
 
   @override
   String get playerExpandControls => 'Uri l-kontrolli tad-daqq';

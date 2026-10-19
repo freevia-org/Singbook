@@ -590,7 +590,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get setlistFavoriteRemove => 'Usuń listę z ulubionych';
 
   @override
-  String get setlistShare => 'Udostępnij jako plik listy';
+  String get setlistShare => 'Udostępnij jako OpenSong';
 
   @override
   String get setlistSharePdf => 'Udostępnij jako PDF';
@@ -1230,6 +1230,30 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get settingsLyricsPreviewExample =>
       'Gdy nadejdzie poranek, znów zaśpiewamy.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Poranna pieśń';
+
+  @override
+  String get settingsPreviewArtist => 'Przykładowa aranżacja';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Gdy nadejdzie poranek';
+
+  @override
+  String get settingsPreviewNextLine => 'Znów zaśpiewamy.';
+
+  @override
+  String get settingsPlayerSections => 'Nagłówki sekcji';
+
+  @override
+  String get settingsPlayerControls => 'Panel odtwarzania';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Automatyczne przewijanie';
+
+  @override
+  String get settingsSystemShort => 'Urządzenie';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -2032,6 +2056,12 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'Ostatnio otwarty';
+
+  @override
+  String get playerFullScreen => 'Pełny ekran';
+
+  @override
+  String get playerExitFullScreen => 'Opuść pełny ekran';
 
   @override
   String get playerExpandControls => 'Pokaż elementy sterujące odtwarzaniem';

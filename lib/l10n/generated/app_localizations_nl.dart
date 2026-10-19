@@ -591,7 +591,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get setlistFavoriteRemove => 'Setlijst uit favorieten verwijderen';
 
   @override
-  String get setlistShare => 'Delen als setlijstbestand';
+  String get setlistShare => 'Delen als OpenSong';
 
   @override
   String get setlistSharePdf => 'Delen als PDF';
@@ -1231,6 +1231,30 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get settingsLyricsPreviewExample =>
       'Wanneer de ochtend komt, zingen we opnieuw.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Ochtendlied';
+
+  @override
+  String get settingsPreviewArtist => 'Voorbeeldarrangement';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Wanneer de ochtend komt';
+
+  @override
+  String get settingsPreviewNextLine => 'We zingen opnieuw.';
+
+  @override
+  String get settingsPlayerSections => 'Sectiekoppen';
+
+  @override
+  String get settingsPlayerControls => 'Afspeelpaneel';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Automatisch scrollen';
+
+  @override
+  String get settingsSystemShort => 'Apparaat';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -2024,6 +2048,12 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'Laatst geopend';
+
+  @override
+  String get playerFullScreen => 'Volledig scherm';
+
+  @override
+  String get playerExitFullScreen => 'Volledig scherm verlaten';
 
   @override
   String get playerExpandControls => 'Afspeelknoppen tonen';

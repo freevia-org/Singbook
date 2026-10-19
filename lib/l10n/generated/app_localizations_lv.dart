@@ -591,7 +591,7 @@ class AppLocalizationsLv extends AppLocalizations {
   String get setlistFavoriteRemove => 'Noņemt koncertprogrammu no izlases';
 
   @override
-  String get setlistShare => 'Kopīgot kā koncertprogrammas failu';
+  String get setlistShare => 'Kopīgot kā OpenSong';
 
   @override
   String get setlistSharePdf => 'Kopīgot kā PDF';
@@ -1234,6 +1234,30 @@ class AppLocalizationsLv extends AppLocalizations {
   @override
   String get settingsLyricsPreviewExample =>
       'Kad pienāks rīts, mēs atkal dziedāsim.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Rīta dziesma';
+
+  @override
+  String get settingsPreviewArtist => 'Parauga aranžējums';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Kad pienāks rīts';
+
+  @override
+  String get settingsPreviewNextLine => 'Mēs atkal dziedāsim.';
+
+  @override
+  String get settingsPlayerSections => 'Sadaļu virsraksti';
+
+  @override
+  String get settingsPlayerControls => 'Atskaņošanas panelis';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Automātiska ritināšana';
+
+  @override
+  String get settingsSystemShort => 'Ierīce';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -2021,6 +2045,12 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'Pēdējoreiz atvērtais';
+
+  @override
+  String get playerFullScreen => 'Pilnekrāna režīms';
+
+  @override
+  String get playerExitFullScreen => 'Iziet no pilnekrāna režīma';
 
   @override
   String get playerExpandControls => 'Rādīt atskaņošanas vadīklas';

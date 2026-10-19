@@ -246,7 +246,7 @@ void main() {
     expect(find.text(l10n.searchSubmit), findsNothing);
   });
 
-  testWidgets('Home, Songs, and Setlists search fields share the same width', (
+  testWidgets('Songs search plus Favorites aligns with the Setlists search', (
     tester,
   ) async {
     var activeTab = VerseTab.home;
@@ -262,6 +262,9 @@ void main() {
     addTearDown(c.dispose);
     await pumpShell(tester, c);
     final homeWidth = tester.getSize(find.byType(TextField).first).width;
+    final favoritesWidth = tester
+        .getSize(find.byTooltip(l10nOf(tester).searchFavoritesTab))
+        .width;
 
     activeTab = VerseTab.songs;
     c.refresh();
@@ -274,7 +277,7 @@ void main() {
     final setlistsWidth = tester.getSize(find.byType(TextField).first).width;
 
     expect(songsWidth, homeWidth);
-    expect(setlistsWidth, homeWidth);
+    expect(setlistsWidth, homeWidth + favoritesWidth);
   });
 
   testWidgets('setlist import is on the Setlists screen', (tester) async {
@@ -726,12 +729,22 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('settings-menu-player')));
       await tester.pumpAndSettle();
+      final autoscrollHint = find.byTooltip(l10n.settingsDefaultAutoscrollHint);
       await tester.scrollUntilVisible(
-        find.text(l10n.settingsDefaultAutoscrollHint),
+        autoscrollHint,
         200,
         scrollable: find.byType(Scrollable).first,
       );
+      await tester.longPress(autoscrollHint);
+      await tester.pumpAndSettle();
       expect(find.text(l10n.settingsDefaultAutoscrollHint), findsOneWidget);
+      await tester.ensureVisible(
+        find.byTooltip(l10n.settingsDefaultShowChordsHint),
+      );
+      await tester.longPress(
+        find.byTooltip(l10n.settingsDefaultShowChordsHint),
+      );
+      await tester.pumpAndSettle();
       expect(find.text(l10n.settingsDefaultShowChordsHint), findsOneWidget);
       expect(find.text(l10n.playerTimingStatusReady), findsNothing);
       expect(find.text(l10n.playerTimingStatusEstimated), findsNothing);

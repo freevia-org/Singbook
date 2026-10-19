@@ -586,7 +586,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get setlistFavoriteRemove => 'गीत-सूची को पसंदीदा से हटाएँ';
 
   @override
-  String get setlistShare => 'गीत-सूची फ़ाइल के रूप में साझा करें';
+  String get setlistShare => 'OpenSong के रूप में साझा करें';
 
   @override
   String get setlistSharePdf => 'PDF के रूप में साझा करें';
@@ -1213,6 +1213,30 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get settingsLyricsPreviewExample => 'सुबह होते ही, हम फिर गाएँगे।';
+
+  @override
+  String get settingsPreviewSongTitle => 'सुबह का गीत';
+
+  @override
+  String get settingsPreviewArtist => 'नमूना संगीत संयोजन';
+
+  @override
+  String get settingsPreviewCurrentLine => 'सुबह होते ही';
+
+  @override
+  String get settingsPreviewNextLine => 'हम फिर गाएँगे।';
+
+  @override
+  String get settingsPlayerSections => 'अनुभाग शीर्षक';
+
+  @override
+  String get settingsPlayerControls => 'प्लेबैक पैनल';
+
+  @override
+  String get settingsPlayerAutoscroll => 'अपने आप स्क्रॉल करें';
+
+  @override
+  String get settingsSystemShort => 'डिवाइस';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -1989,6 +2013,12 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'पिछली बार खोला गया';
+
+  @override
+  String get playerFullScreen => 'पूर्ण स्क्रीन';
+
+  @override
+  String get playerExitFullScreen => 'पूर्ण स्क्रीन से बाहर निकलें';
 
   @override
   String get playerExpandControls => 'प्लेबैक नियंत्रण दिखाएँ';

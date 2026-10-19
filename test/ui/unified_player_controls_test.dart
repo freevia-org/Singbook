@@ -366,10 +366,13 @@ void main() {
       final l10n = l10nOf(tester);
       await tester.tap(find.byKey(const ValueKey('settings-menu-player')));
       await tester.pumpAndSettle();
-      final chords = find.widgetWithText(SwitchListTile, l10n.readerShowChords);
+      final chords = find.widgetWithText(
+        SwitchListTile,
+        l10n.editorChordsField,
+      );
       final sections = find.widgetWithText(
         SwitchListTile,
-        l10n.settingsShowSections,
+        l10n.settingsPlayerSections,
       );
       expect(chords, findsOneWidget);
       expect(sections, findsOneWidget);

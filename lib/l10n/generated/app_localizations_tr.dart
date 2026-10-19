@@ -588,7 +588,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get setlistFavoriteRemove => 'Listeyi favorilerden kaldır';
 
   @override
-  String get setlistShare => 'Liste dosyası olarak paylaş';
+  String get setlistShare => 'OpenSong olarak paylaş';
 
   @override
   String get setlistSharePdf => 'PDF olarak paylaş';
@@ -1221,6 +1221,30 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get settingsLyricsPreviewExample =>
       'Sabah olduğunda yine şarkı söyleyeceğiz.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Sabah şarkısı';
+
+  @override
+  String get settingsPreviewArtist => 'Örnek düzenleme';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Sabah olduğunda';
+
+  @override
+  String get settingsPreviewNextLine => 'Yine şarkı söyleyeceğiz.';
+
+  @override
+  String get settingsPlayerSections => 'Bölüm başlıkları';
+
+  @override
+  String get settingsPlayerControls => 'Oynatma paneli';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Otomatik kaydırma';
+
+  @override
+  String get settingsSystemShort => 'Cihaz';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -1997,6 +2021,12 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'Son açılan';
+
+  @override
+  String get playerFullScreen => 'Tam ekran';
+
+  @override
+  String get playerExitFullScreen => 'Tam ekrandan çık';
 
   @override
   String get playerExpandControls => 'Oynatma kontrollerini göster';

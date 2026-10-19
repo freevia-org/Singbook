@@ -588,7 +588,7 @@ class AppLocalizationsBg extends AppLocalizations {
   String get setlistFavoriteRemove => 'Премахване на списъка от любимите';
 
   @override
-  String get setlistShare => 'Споделяне като файл на списъка';
+  String get setlistShare => 'Споделяне като OpenSong';
 
   @override
   String get setlistSharePdf => 'Споделяне като PDF';
@@ -1219,6 +1219,30 @@ class AppLocalizationsBg extends AppLocalizations {
   @override
   String get settingsLyricsPreviewExample =>
       'Когато настъпи утрото, отново ще запеем.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Утринна песен';
+
+  @override
+  String get settingsPreviewArtist => 'Примерен аранжимент';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Когато настъпи утрото';
+
+  @override
+  String get settingsPreviewNextLine => 'Ще запеем отново.';
+
+  @override
+  String get settingsPlayerSections => 'Заглавия на раздели';
+
+  @override
+  String get settingsPlayerControls => 'Панел за възпроизвеждане';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Автоматично превъртане';
+
+  @override
+  String get settingsSystemShort => 'Устройство';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -2000,6 +2024,12 @@ class AppLocalizationsBg extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'Последно отворен';
+
+  @override
+  String get playerFullScreen => 'Цял екран';
+
+  @override
+  String get playerExitFullScreen => 'Изход от цял екран';
 
   @override
   String get playerExpandControls => 'Показване на контролите за изпълнение';

@@ -595,7 +595,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get setlistFavoriteRemove => 'Прибрати сетлист з обраного';
 
   @override
-  String get setlistShare => 'Поділитися файлом сетлисту';
+  String get setlistShare => 'Поділитися як OpenSong';
 
   @override
   String get setlistSharePdf => 'Поділитися як PDF';
@@ -1234,6 +1234,30 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get settingsLyricsPreviewExample =>
       'Коли настане ранок, ми знову заспіваємо.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Ранкова пісня';
+
+  @override
+  String get settingsPreviewArtist => 'Приклад аранжування';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Коли настане ранок';
+
+  @override
+  String get settingsPreviewNextLine => 'Ми знову заспіваємо.';
+
+  @override
+  String get settingsPlayerSections => 'Заголовки розділів';
+
+  @override
+  String get settingsPlayerControls => 'Панель відтворення';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Автопрокручування';
+
+  @override
+  String get settingsSystemShort => 'Пристрій';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -2033,6 +2057,12 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'Останній відкритий';
+
+  @override
+  String get playerFullScreen => 'Повний екран';
+
+  @override
+  String get playerExitFullScreen => 'Вийти з повноекранного режиму';
 
   @override
   String get playerExpandControls => 'Показати елементи керування відтворенням';

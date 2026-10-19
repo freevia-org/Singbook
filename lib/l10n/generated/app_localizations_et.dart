@@ -586,7 +586,7 @@ class AppLocalizationsEt extends AppLocalizations {
   String get setlistFavoriteRemove => 'Eemalda laulunimekiri lemmikutest';
 
   @override
-  String get setlistShare => 'Jaga laulunimekirja failina';
+  String get setlistShare => 'Jaga OpenSong-vormingus';
 
   @override
   String get setlistSharePdf => 'Jaga PDF-ina';
@@ -1221,6 +1221,30 @@ class AppLocalizationsEt extends AppLocalizations {
   @override
   String get settingsLyricsPreviewExample =>
       'Kui hommik saabub, laulame jälle.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Hommikulaul';
+
+  @override
+  String get settingsPreviewArtist => 'Näidistöötlus';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Kui hommik saabub';
+
+  @override
+  String get settingsPreviewNextLine => 'Laulame jälle.';
+
+  @override
+  String get settingsPlayerSections => 'Jaotiste pealkirjad';
+
+  @override
+  String get settingsPlayerControls => 'Taasesituspaneel';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Automaatne kerimine';
+
+  @override
+  String get settingsSystemShort => 'Seade';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -1999,6 +2023,12 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'Viimati avatud';
+
+  @override
+  String get playerFullScreen => 'Täisekraan';
+
+  @override
+  String get playerExitFullScreen => 'Välju täisekraanilt';
 
   @override
   String get playerExpandControls => 'Kuva taasesituse juhtnuppe';

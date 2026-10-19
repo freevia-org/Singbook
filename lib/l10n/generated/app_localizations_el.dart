@@ -595,7 +595,7 @@ class AppLocalizationsEl extends AppLocalizations {
   String get setlistFavoriteRemove => 'Αφαίρεση λίστας από τα αγαπημένα';
 
   @override
-  String get setlistShare => 'Κοινοποίηση ως αρχείο λίστας τραγουδιών';
+  String get setlistShare => 'Κοινοποίηση ως OpenSong';
 
   @override
   String get setlistSharePdf => 'Κοινοποίηση ως PDF';
@@ -1233,6 +1233,30 @@ class AppLocalizationsEl extends AppLocalizations {
   @override
   String get settingsLyricsPreviewExample =>
       'Όταν έρθει το πρωί, θα τραγουδήσουμε ξανά.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Πρωινό τραγούδι';
+
+  @override
+  String get settingsPreviewArtist => 'Δείγμα ενορχήστρωσης';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Όταν έρθει το πρωί';
+
+  @override
+  String get settingsPreviewNextLine => 'Θα τραγουδήσουμε ξανά.';
+
+  @override
+  String get settingsPlayerSections => 'Τίτλοι ενοτήτων';
+
+  @override
+  String get settingsPlayerControls => 'Πίνακας αναπαραγωγής';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Αυτόματη κύλιση';
+
+  @override
+  String get settingsSystemShort => 'Συσκευή';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -2026,6 +2050,12 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'Τελευταία προβολή';
+
+  @override
+  String get playerFullScreen => 'Πλήρης οθόνη';
+
+  @override
+  String get playerExitFullScreen => 'Έξοδος από πλήρη οθόνη';
 
   @override
   String get playerExpandControls => 'Εμφάνιση στοιχείων ελέγχου αναπαραγωγής';

@@ -594,7 +594,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get setlistFavoriteRemove => 'Elimină lista de la favorite';
 
   @override
-  String get setlistShare => 'Partajează ca fișier de listă';
+  String get setlistShare => 'Partajează ca OpenSong';
 
   @override
   String get setlistSharePdf => 'Partajează ca PDF';
@@ -1235,6 +1235,30 @@ class AppLocalizationsRo extends AppLocalizations {
   @override
   String get settingsLyricsPreviewExample =>
       'Când vine dimineața, vom cânta din nou.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Cântec de dimineață';
+
+  @override
+  String get settingsPreviewArtist => 'Aranjament demonstrativ';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Când vine dimineața';
+
+  @override
+  String get settingsPreviewNextLine => 'Vom cânta din nou.';
+
+  @override
+  String get settingsPlayerSections => 'Titluri de secțiune';
+
+  @override
+  String get settingsPlayerControls => 'Panou de redare';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Derulare automată';
+
+  @override
+  String get settingsSystemShort => 'Dispozitiv';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -2028,6 +2052,12 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'Ultima vizualizare';
+
+  @override
+  String get playerFullScreen => 'Ecran complet';
+
+  @override
+  String get playerExitFullScreen => 'Ieși din ecranul complet';
 
   @override
   String get playerExpandControls => 'Afișează comenzile de redare';

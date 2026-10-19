@@ -39,8 +39,8 @@ List<PopupMenuEntry<String>> buildLibraryActionMenu(
         : isSetlist
         ? l10n.setlistSharePdf
         : l10n.settingsSharePdf,
-    'copy': l10n.settingsCopySong,
-    'print': isSetlist ? l10n.setlistPrint : l10n.settingsPrintSong,
+    'copy': l10n.actionCopy,
+    'print': l10n.actionPrint,
     'delete': l10n.actionDelete,
   };
   const groups = [
@@ -542,21 +542,30 @@ Future<void> showSongInfo(
   await showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
+    useSafeArea: true,
+    showDragHandle: true,
+    constraints: BoxConstraints(
+      maxWidth: 640,
+      maxHeight: MediaQuery.sizeOf(context).height * .9,
+    ),
     builder: (context) => SafeArea(
+      top: false,
       child: ListView(
         shrinkWrap: true,
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
         children: [
           Row(
             children: [
-              IconButton(
-                tooltip: l10n.navBack,
-                onPressed: () => Navigator.of(context).maybePop(),
-                icon: const Icon(Icons.arrow_back_rounded),
+              Expanded(
+                child: Text(
+                  l10n.songInfo,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
               ),
-              Text(
-                l10n.songInfo,
-                style: Theme.of(context).textTheme.titleLarge,
+              IconButton(
+                tooltip: l10n.navClose,
+                onPressed: () => Navigator.of(context).maybePop(),
+                icon: const Icon(Icons.close_rounded),
               ),
             ],
           ),

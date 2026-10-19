@@ -588,7 +588,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get setlistFavoriteRemove => 'Setlista eltávolítása a kedvencekből';
 
   @override
-  String get setlistShare => 'Megosztás setlistafájlként';
+  String get setlistShare => 'Megosztás OpenSong formátumban';
 
   @override
   String get setlistSharePdf => 'Megosztás PDF-ként';
@@ -1223,6 +1223,30 @@ class AppLocalizationsHu extends AppLocalizations {
   @override
   String get settingsLyricsPreviewExample =>
       'Amikor eljön a reggel, újra énekelni fogunk.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Reggeli dal';
+
+  @override
+  String get settingsPreviewArtist => 'Minta hangszerelés';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Amikor eljön a reggel';
+
+  @override
+  String get settingsPreviewNextLine => 'Újra énekelni fogunk.';
+
+  @override
+  String get settingsPlayerSections => 'Szakaszcímek';
+
+  @override
+  String get settingsPlayerControls => 'Lejátszópanel';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Automatikus görgetés';
+
+  @override
+  String get settingsSystemShort => 'Eszköz';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -2005,6 +2029,12 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'Utoljára megnyitott';
+
+  @override
+  String get playerFullScreen => 'Teljes képernyő';
+
+  @override
+  String get playerExitFullScreen => 'Kilépés a teljes képernyőből';
 
   @override
   String get playerExpandControls => 'Lejátszásvezérlők megjelenítése';

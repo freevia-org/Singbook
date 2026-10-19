@@ -1173,7 +1173,7 @@ abstract class AppLocalizations {
   /// No description provided for @setlistShare.
   ///
   /// In en, this message translates to:
-  /// **'Share as setlist file'**
+  /// **'Share as OpenSong'**
   String get setlistShare;
 
   /// No description provided for @setlistSharePdf.
@@ -2279,6 +2279,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'When the morning comes, we will sing again.'**
   String get settingsLyricsPreviewExample;
+
+  /// No description provided for @settingsPreviewSongTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning song'**
+  String get settingsPreviewSongTitle;
+
+  /// No description provided for @settingsPreviewArtist.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample arrangement'**
+  String get settingsPreviewArtist;
+
+  /// No description provided for @settingsPreviewCurrentLine.
+  ///
+  /// In en, this message translates to:
+  /// **'When the morning comes'**
+  String get settingsPreviewCurrentLine;
+
+  /// No description provided for @settingsPreviewNextLine.
+  ///
+  /// In en, this message translates to:
+  /// **'We will sing again.'**
+  String get settingsPreviewNextLine;
+
+  /// No description provided for @settingsPlayerSections.
+  ///
+  /// In en, this message translates to:
+  /// **'Section headings'**
+  String get settingsPlayerSections;
+
+  /// No description provided for @settingsPlayerControls.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback panel'**
+  String get settingsPlayerControls;
+
+  /// No description provided for @settingsPlayerAutoscroll.
+  ///
+  /// In en, this message translates to:
+  /// **'Autoscroll'**
+  String get settingsPlayerAutoscroll;
+
+  /// No description provided for @settingsSystemShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Device'**
+  String get settingsSystemShort;
 
   /// No description provided for @searchDiscoveryProgress.
   ///
@@ -3503,6 +3551,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Last opened'**
   String get settingsStartupLastView;
+
+  /// No description provided for @playerFullScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Full screen'**
+  String get playerFullScreen;
+
+  /// No description provided for @playerExitFullScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit full screen'**
+  String get playerExitFullScreen;
 
   /// No description provided for @playerExpandControls.
   ///

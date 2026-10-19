@@ -580,7 +580,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get setlistFavoriteRemove => '세트리스트를 즐겨찾기에서 제거';
 
   @override
-  String get setlistShare => '세트리스트 파일로 공유';
+  String get setlistShare => 'OpenSong으로 공유';
 
   @override
   String get setlistSharePdf => 'PDF로 공유';
@@ -1196,6 +1196,30 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get settingsLyricsPreviewExample => '아침이 오면 우리는 다시 노래할 거예요.';
+
+  @override
+  String get settingsPreviewSongTitle => '아침 노래';
+
+  @override
+  String get settingsPreviewArtist => '샘플 편곡';
+
+  @override
+  String get settingsPreviewCurrentLine => '아침이 오면';
+
+  @override
+  String get settingsPreviewNextLine => '우리는 다시 노래할 거예요.';
+
+  @override
+  String get settingsPlayerSections => '섹션 제목';
+
+  @override
+  String get settingsPlayerControls => '재생 패널';
+
+  @override
+  String get settingsPlayerAutoscroll => '자동 스크롤';
+
+  @override
+  String get settingsSystemShort => '기기';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -1927,6 +1951,12 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => '마지막으로 연 화면';
+
+  @override
+  String get playerFullScreen => '전체 화면';
+
+  @override
+  String get playerExitFullScreen => '전체 화면 종료';
 
   @override
   String get playerExpandControls => '재생 컨트롤 표시';

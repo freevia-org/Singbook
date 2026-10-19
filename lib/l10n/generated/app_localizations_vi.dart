@@ -588,7 +588,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get setlistFavoriteRemove => 'Xóa danh sách khỏi mục yêu thích';
 
   @override
-  String get setlistShare => 'Chia sẻ dưới dạng tệp danh sách';
+  String get setlistShare => 'Chia sẻ dưới dạng OpenSong';
 
   @override
   String get setlistSharePdf => 'Chia sẻ dưới dạng PDF';
@@ -1219,6 +1219,30 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get settingsLyricsPreviewExample =>
       'Khi bình minh lên, chúng ta sẽ lại hát.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Bài hát buổi sáng';
+
+  @override
+  String get settingsPreviewArtist => 'Bản phối mẫu';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Khi bình minh lên';
+
+  @override
+  String get settingsPreviewNextLine => 'Chúng ta sẽ lại hát.';
+
+  @override
+  String get settingsPlayerSections => 'Tiêu đề mục';
+
+  @override
+  String get settingsPlayerControls => 'Bảng phát nhạc';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Tự động cuộn';
+
+  @override
+  String get settingsSystemShort => 'Thiết bị';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -1993,6 +2017,12 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'Mở gần đây nhất';
+
+  @override
+  String get playerFullScreen => 'Toàn màn hình';
+
+  @override
+  String get playerExitFullScreen => 'Thoát toàn màn hình';
 
   @override
   String get playerExpandControls => 'Hiện điều khiển phát';

@@ -17,6 +17,7 @@ import 'library/editor_screen.dart';
 import 'library/setlists_screen.dart';
 import 'library_actions.dart';
 import 'localized_labels.dart';
+import 'player/player_full_screen.dart';
 import 'player/player_screen.dart';
 import 'settings/account_section.dart';
 import 'settings/backup_section.dart';
@@ -367,6 +368,9 @@ class _VerseAppShellState extends State<VerseAppShell>
   StreamSubscription<UiNotice>? _notices;
   Timer? _exitBackTimer;
   bool _exitBackArmed = false;
+  bool _playerFullScreen = false;
+  final _playerSystemBars = PlayerFullScreen();
+  VerseUiController? _fullScreenController;
   Future<AppExitResponse>? _exitRequest;
   static const _windowCloseChannel = MethodChannel(
     'org.freevia.singbook/window_close',
@@ -396,6 +400,9 @@ class _VerseAppShellState extends State<VerseAppShell>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    _playerSystemBars.setEnabled(
+      state == AppLifecycleState.resumed && _playerFullScreen,
+    );
     if (state == AppLifecycleState.resumed) widget.controller.onAppResumed();
   }
 
@@ -416,16 +423,38 @@ class _VerseAppShellState extends State<VerseAppShell>
   @override
   void didUpdateWidget(covariant VerseAppShell oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!identical(oldWidget.controller, widget.controller)) _subscribe();
+    if (!identical(oldWidget.controller, widget.controller)) {
+      _setPlayerFullScreen(false);
+      _subscribe();
+    }
   }
 
   void _subscribe() {
     _notices?.cancel();
+    _fullScreenController?.removeListener(_syncPlayerFullScreen);
+    _fullScreenController = widget.controller;
+    _fullScreenController!.addListener(_syncPlayerFullScreen);
+    _syncPlayerFullScreen();
     _notices = widget.controller.notices.listen(_showNotice);
+  }
+
+  void _syncPlayerFullScreen() {
+    if (widget.controller.state.route != VerseRoute.reader) {
+      _setPlayerFullScreen(false);
+    }
+  }
+
+  void _setPlayerFullScreen(bool enabled) {
+    if (enabled && widget.controller.state.route != VerseRoute.reader) return;
+    if (_playerFullScreen == enabled || !mounted) return;
+    setState(() => _playerFullScreen = enabled);
+    _playerSystemBars.setEnabled(enabled);
   }
 
   @override
   void dispose() {
+    _fullScreenController?.removeListener(_syncPlayerFullScreen);
+    _playerSystemBars.dispose();
     if (_handlesWindowsClose) _windowCloseChannel.setMethodCallHandler(null);
     WidgetsBinding.instance.removeObserver(this);
     _notices?.cancel();
@@ -472,6 +501,10 @@ class _VerseAppShellState extends State<VerseAppShell>
 
   Future<void> _goBack() async {
     final state = widget.controller.state;
+    if (state.route == VerseRoute.reader && _playerFullScreen) {
+      _setPlayerFullScreen(false);
+      return;
+    }
     if (state.route == VerseRoute.main &&
         state.activeTab == VerseTab.home &&
         state.homeListMode == HomeListMode.online &&
@@ -797,7 +830,12 @@ class _VerseAppShellState extends State<VerseAppShell>
                 child: Center(
                   child: ConstrainedBox(
                     key: const ValueKey('tablet-content-frame'),
-                    constraints: const BoxConstraints(maxWidth: 1200),
+                    constraints: BoxConstraints(
+                      maxWidth:
+                          _playerFullScreen && state.route == VerseRoute.reader
+                          ? double.infinity
+                          : 1200,
+                    ),
                     child: _body(context, state),
                   ),
                 ),
@@ -826,7 +864,11 @@ class _VerseAppShellState extends State<VerseAppShell>
     final controller = widget.controller;
     switch (state.route) {
       case VerseRoute.reader:
-        return PlayerScreen(controller: controller);
+        return PlayerScreen(
+          controller: controller,
+          fullScreen: _playerFullScreen,
+          onFullScreenChanged: _setPlayerFullScreen,
+        );
       case VerseRoute.editor:
         return EditorScreen(
           key: ValueKey('editor-${state.editor?.songId}'),

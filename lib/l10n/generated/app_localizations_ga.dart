@@ -590,7 +590,7 @@ class AppLocalizationsGa extends AppLocalizations {
   String get setlistFavoriteRemove => 'Bain an liosta amhrán de cheanáin';
 
   @override
-  String get setlistShare => 'Comhroinn mar chomhad liosta amhrán';
+  String get setlistShare => 'Comhroinn mar OpenSong';
 
   @override
   String get setlistSharePdf => 'Comhroinn mar PDF';
@@ -1228,6 +1228,30 @@ class AppLocalizationsGa extends AppLocalizations {
   @override
   String get settingsLyricsPreviewExample =>
       'Nuair a thiocfaidh an mhaidin, canfaimid arís.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Amhrán na maidine';
+
+  @override
+  String get settingsPreviewArtist => 'Socrú samplach';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Nuair a thiocfaidh an mhaidin';
+
+  @override
+  String get settingsPreviewNextLine => 'Canfaimid arís.';
+
+  @override
+  String get settingsPlayerSections => 'Ceannteidil na rannán';
+
+  @override
+  String get settingsPlayerControls => 'Painéal athsheinm';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Uathscrollú';
+
+  @override
+  String get settingsSystemShort => 'Gléas';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -2022,6 +2046,12 @@ class AppLocalizationsGa extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'Amharc is déanaí';
+
+  @override
+  String get playerFullScreen => 'Lánscáileán';
+
+  @override
+  String get playerExitFullScreen => 'Scoir den lánscáileán';
 
   @override
   String get playerExpandControls => 'Taispeáin rialtáin athsheinm';

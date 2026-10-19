@@ -587,7 +587,7 @@ class AppLocalizationsFi extends AppLocalizations {
   String get setlistFavoriteRemove => 'Poista settilista suosikeista';
 
   @override
-  String get setlistShare => 'Jaa settilistatiedostona';
+  String get setlistShare => 'Jaa OpenSong-tiedostona';
 
   @override
   String get setlistSharePdf => 'Jaa PDF-tiedostona';
@@ -1218,6 +1218,30 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get settingsLyricsPreviewExample => 'Kun aamu koittaa, laulamme taas.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Aamulaulu';
+
+  @override
+  String get settingsPreviewArtist => 'Esimerkkisovitus';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Kun aamu koittaa';
+
+  @override
+  String get settingsPreviewNextLine => 'Laulamme taas.';
+
+  @override
+  String get settingsPlayerSections => 'Osioiden otsikot';
+
+  @override
+  String get settingsPlayerControls => 'Toistopaneeli';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Automaattinen vieritys';
+
+  @override
+  String get settingsSystemShort => 'Laite';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -1997,6 +2021,12 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'Viimeksi avattu';
+
+  @override
+  String get playerFullScreen => 'Koko näyttö';
+
+  @override
+  String get playerExitFullScreen => 'Poistu koko näytöstä';
 
   @override
   String get playerExpandControls => 'Näytä toiston säätimet';
