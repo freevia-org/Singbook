@@ -4,6 +4,8 @@ import 'package:intl/intl.dart' hide TextDirection;
 import '../../l10n/generated/app_localizations.dart';
 import '../format.dart';
 import '../library_actions.dart';
+import '../library/songs_screen.dart';
+import '../library/collation.dart';
 import '../verse_ui_state.dart';
 import '../widgets/verse_components.dart';
 import 'source_preview_screen.dart';
@@ -148,7 +150,9 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     HomeListMode mode,
     AppLocalizations l10n,
   ) {
-    if (mode == HomeListMode.recent) return widget.state.recent;
+    if (mode == HomeListMode.recent) {
+      return widget.state.recent.where((item) => !item.isSetlist).toList();
+    }
     if (mode != HomeListMode.favorites) return const [];
     return <RecentItemData>[
       ...widget.state.songs
@@ -170,18 +174,6 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
               playCount: song.playCount,
             ),
           ),
-      ...widget.state.setlists
-          .where((item) => item.favorite)
-          .map(
-            (set) => RecentItemData(
-              id: set.id,
-              title: set.title,
-              subtitle: l10n.setlistSongsCount(set.songTitles.length),
-              occurredAt: set.modifiedAt ?? DateTime.now(),
-              isSetlist: true,
-              favorite: true,
-            ),
-          ),
     ]..sort((a, b) => b.occurredAt.compareTo(a.occurredAt));
   }
 
@@ -189,14 +181,14 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     HomeListMode mode,
     AppLocalizations l10n,
   ) {
-    final query = widget.state.query.trim().toLowerCase();
+    final query = foldForSearch(widget.state.query);
     final items = _historyItemsForMode(mode, l10n);
     if (query.isEmpty) return items;
     return items
         .where(
-          (item) => '${item.title} ${item.artist} ${item.subtitle}'
-              .toLowerCase()
-              .contains(query),
+          (item) => foldForSearch(
+            '${item.title} ${item.artist} ${item.subtitle}',
+          ).contains(query),
         )
         .toList();
   }
@@ -256,7 +248,7 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     final viewport = _viewport.currentContext?.findRenderObject();
     final groups = _cachedGroups;
     if (viewport is! RenderBox || !viewport.hasSize || groups == null) return;
-    final edge = viewport.localToGlobal(Offset.zero).dy + 84;
+    final edge = viewport.localToGlobal(Offset.zero).dy + 12;
     var active = 0;
     for (var i = 0; i < groups.length; i++) {
       // The key sits on a box inside the day's sliver; the sliver's own
@@ -318,44 +310,67 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
       return _comparison(context, l10n, state.comparison!);
     }
     final groups = _groups(l10n);
-    return Stack(
-      key: _viewport,
-      children: [
-        CustomScrollView(
-          controller: _scroll,
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          slivers: [
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 12, 0),
-              sliver: SliverToBoxAdapter(
+    return LayoutBuilder(
+      builder: (context, constraints) => Column(
+        children: [
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: constraints.maxHeight),
+            child: SingleChildScrollView(
+              key: const ValueKey('songs-search-header-scroll'),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 8, 12, 8),
                 child: _searchHeader(context, l10n, state),
               ),
             ),
-            if (state.homeListMode != HomeListMode.online)
-              ..._historySlivers(context, l10n, state, groups),
-            if (state.homeListMode == HomeListMode.online)
-              ..._onlineSlivers(context, l10n, state),
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
-          ],
-        ),
-        if (state.homeListMode == HomeListMode.recent && groups.isNotEmpty)
-          PositionedDirectional(
-            end: 4,
-            top: 0,
-            bottom: 0,
-            child: IgnorePointer(
-              ignoring: !_timelineVisible,
-              child: ExcludeSemantics(
-                excluding: !_timelineVisible,
-                child: AnimatedOpacity(
-                  opacity: _timelineVisible ? 1 : 0,
-                  duration: const Duration(milliseconds: 180),
-                  child: _timeline(context, l10n, groups),
-                ),
-              ),
-            ),
           ),
-      ],
+          Expanded(
+            child: state.homeListMode == HomeListMode.library
+                ? SongsScreen(
+                    controller: widget.controller,
+                    showSearch: false,
+                    query: state.query,
+                  )
+                : Stack(
+                    key: _viewport,
+                    children: [
+                      CustomScrollView(
+                        key: PageStorageKey(
+                          'songs-${state.homeListMode.name}-scroll',
+                        ),
+                        controller: _scroll,
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        slivers: [
+                          if (state.homeListMode != HomeListMode.online)
+                            ..._historySlivers(context, l10n, state, groups),
+                          if (state.homeListMode == HomeListMode.online)
+                            ..._onlineSlivers(context, l10n, state),
+                          const SliverToBoxAdapter(child: SizedBox(height: 24)),
+                        ],
+                      ),
+                      if (state.homeListMode == HomeListMode.recent &&
+                          groups.isNotEmpty)
+                        PositionedDirectional(
+                          end: 4,
+                          top: 0,
+                          bottom: 0,
+                          child: IgnorePointer(
+                            ignoring: !_timelineVisible,
+                            child: ExcludeSemantics(
+                              excluding: !_timelineVisible,
+                              child: AnimatedOpacity(
+                                opacity: _timelineVisible ? 1 : 0,
+                                duration: const Duration(milliseconds: 180),
+                                child: _timeline(context, l10n, groups),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -411,12 +426,26 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
         onChanged: widget.controller.setHomeListMode,
         labels: [
           '${l10n.searchRecentTab} (${_filteredHistoryItems(HomeListMode.recent, l10n).length})',
+          '${l10n.songsLibraryView} (${_libraryCount(state)})',
           '${l10n.searchFavoritesTab} (${_filteredHistoryItems(HomeListMode.favorites, l10n).length})',
           '${l10n.searchOnlineTab} (${state.comparison == null ? state.autocomplete.length : 1})',
         ],
       ),
     ],
   );
+
+  int _libraryCount(VerseUiState state) {
+    final query = foldForSearch(state.query);
+    return state.songs
+        .where(
+          (song) =>
+              (!state.songsConflictFilter || song.isConflictCopy) &&
+              foldForSearch(
+                '${song.title} ${song.artist} ${song.album ?? ''}',
+              ).contains(query),
+        )
+        .length;
+  }
 
   Widget _searchFilters(
     BuildContext context,
@@ -521,6 +550,13 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
                 ? Icons.favorite_border_rounded
                 : Icons.history_rounded,
             title: favorites ? l10n.homeFavoritesEmpty : l10n.homeRecentEmpty,
+            actionLabel: !favorites && state.recentHasMore
+                ? l10n.homeAllHistory
+                : null,
+            onAction:
+                !favorites && state.recentHasMore && !state.loadingMoreRecent
+                ? () => unawaited(widget.controller.loadMoreRecent())
+                : null,
           ),
         ),
       );
@@ -1110,23 +1146,26 @@ class _HomeModeSelectorState extends State<_HomeModeSelector> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final textStyle = Theme.of(context).textTheme.labelLarge;
-    final textScaler = MediaQuery.textScalerOf(context);
-    final textDirection = Directionality.of(context);
     final modes = HomeListMode.values;
-    final rowWidth = modes.indexed.fold<double>(0, (width, entry) {
-      final index = entry.$1;
+    final titles = [
+      for (final label in widget.labels)
+        label.replaceFirst(RegExp(r' \(\d+\)$'), ''),
+    ];
+    final counts = [
+      for (final label in widget.labels)
+        RegExp(r'\((\d+)\)$').firstMatch(label)?.group(1) ?? '',
+    ];
+    var minimumWidth = 0.0;
+    for (final title in titles) {
       final painter = TextPainter(
-        text: TextSpan(text: widget.labels[index], style: textStyle),
-        textDirection: textDirection,
-        textScaler: textScaler,
-        maxLines: 1,
+        text: TextSpan(text: title, style: textStyle),
+        textDirection: Directionality.of(context),
+        textScaler: MediaQuery.textScalerOf(context),
       )..layout();
-      final labelWidth = painter.width;
+      if (painter.width + 16 > minimumWidth) minimumWidth = painter.width + 16;
       painter.dispose();
-      return width + labelWidth + 32 + (index == 0 ? 0 : 1);
-    });
-
-    Widget segment(int index, {required bool wrapped}) {
+    }
+    Widget segment(int index, {double? width}) {
       final selected = modes[index] == widget.selected;
       return KeyedSubtree(
         key: ValueKey('home-mode-${modes[index].name}'),
@@ -1138,31 +1177,44 @@ class _HomeModeSelectorState extends State<_HomeModeSelector> {
             borderRadius: BorderRadius.circular(24),
             onTap: () => widget.onChanged(modes[index]),
             child: AnimatedContainer(
-              key: ValueKey('home-mode-${modes[index].name}-$wrapped'),
+              key: ValueKey('home-mode-${modes[index].name}-segment'),
               duration: const Duration(milliseconds: 150),
+              width: width,
               constraints: const BoxConstraints(minHeight: 48),
-              padding: EdgeInsets.symmetric(horizontal: wrapped ? 12 : 16),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: selected ? colors.primaryContainer : Colors.transparent,
-                borderRadius: wrapped ? BorderRadius.circular(24) : null,
-                border: wrapped
-                    ? Border.all(color: colors.outlineVariant)
-                    : index == 0
+                border: index == 0
                     ? null
                     : BorderDirectional(
                         start: BorderSide(color: colors.outlineVariant),
                       ),
               ),
-              child: Text(
-                widget.labels[index],
-                maxLines: 1,
-                softWrap: false,
-                style: textStyle?.copyWith(
-                  color: selected
-                      ? colors.onPrimaryContainer
-                      : colors.onSurface,
-                  fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+              child: Semantics(
+                label: widget.labels[index],
+                excludeSemantics: true,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      titles[index],
+                      maxLines: 1,
+                      softWrap: false,
+                      style: textStyle?.copyWith(
+                        color: selected
+                            ? colors.onPrimaryContainer
+                            : colors.onSurface,
+                        fontWeight: selected
+                            ? FontWeight.w600
+                            : FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      counts[index],
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -1173,17 +1225,10 @@ class _HomeModeSelectorState extends State<_HomeModeSelector> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        if (rowWidth > constraints.maxWidth) {
-          return Wrap(
-            key: const ValueKey('home-mode-scroll'),
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              for (var index = 0; index < modes.length; index++)
-                segment(index, wrapped: true),
-            ],
-          );
-        }
+        final fits = minimumWidth * modes.length + 2 <= constraints.maxWidth;
+        final width = fits
+            ? (constraints.maxWidth - 2) / modes.length
+            : minimumWidth;
         return SingleChildScrollView(
           key: const ValueKey('home-mode-scroll'),
           controller: _scroll,
@@ -1199,7 +1244,7 @@ class _HomeModeSelectorState extends State<_HomeModeSelector> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 for (var index = 0; index < modes.length; index++)
-                  segment(index, wrapped: false),
+                  segment(index, width: width),
               ],
             ),
           ),

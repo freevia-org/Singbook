@@ -30,7 +30,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutKeepDetails =>
-      'Edit and transpose songs, keep them in your local library for offline use, and share portable ChordPro files. Optional Google Drive sync uses a private app folder in your Google account. You can also tap Sync now to update your devices.';
+      'Edit and transpose songs, keep them in your local library for offline use, and share portable ChordPro files. Optional Google Drive sync uses a private app folder by default; on Android you can choose a visible folder. You can also tap Sync now to update your devices.';
 
   @override
   String get aboutPlayTitle => 'Take your set on stage';
@@ -1398,6 +1398,68 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sync after connecting and after adding, editing or removing a song.';
 
   @override
+  String get accountDriveFolder => 'Google Drive library folder';
+
+  @override
+  String get accountPrivateDriveFolder => 'Private Singbook folder';
+
+  @override
+  String get accountChooseDriveFolder => 'Choose folder';
+
+  @override
+  String get accountDriveFolderMoveTitle => 'Move your Singbook library?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Choose a visible Google Drive folder. Singbook will copy and verify your songs and setlists there before switching to it. Original files stay in their previous location as a backup. Other files are left alone. ChordPro files you import into this folder are adopted for sync and receive Singbook metadata.';
+
+  @override
+  String get accountImportChordPro => 'Import ChordPro from Drive';
+
+  @override
+  String get accountImportChordProHint =>
+      'Choose .cho files to add to this library. Files already in the folder are adopted; files elsewhere are copied here.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Drive folder selection is unavailable';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Choose a visible Drive folder using Google Drive’s picker on a supported device.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'The Singbook Drive folder is unavailable';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Choose the folder again, or restore it in Google Drive.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook needs access to this Drive folder';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Choose the folder again to grant access, then sync your library.';
+
+  @override
+  String get syncErrorFolderMigration => 'The library could not be moved yet';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Your previous library is still safe. Check the connection and choose the folder again to retry.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Choose a visible Drive folder first';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'A visible library folder is needed before importing files from Drive.';
+
+  @override
   String get accountSignOutTitle => 'Sign out of this account?';
 
   @override
@@ -1907,4 +1969,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Estimated key';
+
+  @override
+  String get songsLibraryView => 'Library';
+
+  @override
+  String get settingsStartupView => 'Start in';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Choose the Songs view shown when the app opens.';
+
+  @override
+  String get settingsStartupLastView => 'Last opened';
+
+  @override
+  String get playerExpandControls => 'Show playback controls';
+
+  @override
+  String get playerCollapseControls => 'Hide playback controls';
+
+  @override
+  String get settingsShowSections => 'Show section headings';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Show verse, chorus and other section headings in the lyrics.';
+
+  @override
+  String get settingsShowPlayerControls => 'Show playback controls';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'You can also tap or swipe the player panel to show or hide it.';
 }

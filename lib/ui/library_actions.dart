@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -19,6 +21,7 @@ List<PopupMenuEntry<String>> buildLibraryActionMenu(
   bool isSetlist = false,
   bool timedLyricsChecked = false,
 }) {
+  final desktopExport = defaultTargetPlatform == TargetPlatform.windows;
   final labels = {
     'edit': l10n.actionEdit,
     'info': l10n.songInfo,
@@ -26,8 +29,16 @@ List<PopupMenuEntry<String>> buildLibraryActionMenu(
     'timed-lyrics': l10n.playerTimedLyrics,
     'add': l10n.songAddToSetlist,
     'duplicate': l10n.actionDuplicate,
-    'share': isSetlist ? l10n.setlistShare : l10n.settingsShareSong,
-    'share_pdf': isSetlist ? l10n.setlistSharePdf : l10n.settingsSharePdf,
+    'share': desktopExport
+        ? '${l10n.actionExport} · ${isSetlist ? '.osts' : 'ChordPro'}'
+        : isSetlist
+        ? l10n.setlistShare
+        : l10n.settingsShareSong,
+    'share_pdf': desktopExport
+        ? '${l10n.actionExport} · PDF'
+        : isSetlist
+        ? l10n.setlistSharePdf
+        : l10n.settingsSharePdf,
     'copy': l10n.settingsCopySong,
     'print': isSetlist ? l10n.setlistPrint : l10n.settingsPrintSong,
     'delete': l10n.actionDelete,

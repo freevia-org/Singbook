@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -227,6 +230,22 @@ class _EditorScreenState extends State<EditorScreen> {
         setState(() => _saving = false);
       }
     }
+  }
+
+  KeyEventResult _handleWindowsKey(FocusNode node, KeyEvent event) {
+    final keyboard = HardwareKeyboard.instance;
+    if (defaultTargetPlatform == TargetPlatform.windows &&
+        event is KeyDownEvent &&
+        event.logicalKey == LogicalKeyboardKey.keyS &&
+        keyboard.isControlPressed &&
+        !keyboard.isAltPressed &&
+        !keyboard.isMetaPressed &&
+        !keyboard.isShiftPressed &&
+        ModalRoute.of(context)?.isCurrent != false) {
+      unawaited(_save());
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
   }
 
   InputDecoration _decoration(
@@ -490,14 +509,16 @@ class _EditorScreenState extends State<EditorScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Column(
+    final content = Column(
       children: [
         SubpageHeader(
           title: l10n.editorTitle,
           onBack: widget.onBack,
           actions: [
             IconButton(
-              tooltip: l10n.actionSave,
+              tooltip: defaultTargetPlatform == TargetPlatform.windows
+                  ? '${l10n.actionSave} (Ctrl+S)'
+                  : l10n.actionSave,
               onPressed: _saving ? null : _save,
               icon: const Icon(Icons.check_rounded),
             ),
@@ -561,6 +582,11 @@ class _EditorScreenState extends State<EditorScreen> {
           ),
         ),
       ],
+    );
+    return Focus(
+      autofocus: defaultTargetPlatform == TargetPlatform.windows,
+      onKeyEvent: _handleWindowsKey,
+      child: content,
     );
   }
 }

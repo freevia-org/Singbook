@@ -832,5 +832,44 @@
       }
     }
   },
-  "playerEstimatedKey": "Tonalitate estimată"
+  "accountDriveFolder": "Dosarul bibliotecii Google Drive",
+  "accountPrivateDriveFolder": "Dosar privat Singbook",
+  "accountChooseDriveFolder": "Alegeți folderul",
+  "accountDriveFolderMoveTitle": "Mutați biblioteca dvs. Singbook?",
+  "accountDriveFolderMoveBody": "Alegeți un dosar Google Drive vizibil. Singbook va copia și verifica melodiile și setlist-urile dvs. acolo înainte de a trece la el. Fișierele originale rămân în locația lor anterioară ca rezervă. Alte fișiere sunt lăsate în pace. Fișierele ChordPro pe care le importați în acest folder sunt adoptate pentru sincronizare și pentru a primi metadatele Singbook.",
+  "accountImportChordPro": "Importă ChordPro din Drive",
+  "accountImportChordProHint": "Alegeți fișierele .cho pentru a le adăuga la această bibliotecă. Fișierele aflate deja în folder sunt adoptate; fișierele din altă parte sunt copiate aici.",
+  "syncErrorFolderPickerUnavailable": "Selectarea folderului Drive nu este disponibilă",
+  "syncErrorFolderPickerUnavailableHint": "Alegeți un dosar Drive vizibil cu selectorul Google Drive pe un dispozitiv acceptat.",
+  "syncErrorDriveFolderMissing": "Dosarul Singbook Drive nu este disponibil",
+  "syncErrorDriveFolderMissingHint": "Alegeți din nou dosarul sau restaurați-l în Google Drive.",
+  "syncErrorDriveFileAuthorization": "Singbook are nevoie de acces la acest dosar Drive",
+  "syncErrorDriveFileAuthorizationHint": "Alegeți din nou folderul pentru a acorda acces, apoi sincronizați biblioteca.",
+  "syncErrorFolderMigration": "Biblioteca nu a putut fi mutată încă",
+  "syncErrorFolderMigrationHint": "Biblioteca anterioară este încă în siguranță. Verificați conexiunea și alegeți din nou folderul pentru a reîncerca.",
+  "syncErrorVisibleFolderRequired": "Alegeți mai întâi un dosar Drive vizibil",
+  "syncErrorVisibleFolderRequiredHint": "Este necesar un dosar de bibliotecă vizibil înainte de a importa fișiere din Drive.",
+  "playerEstimatedKey": "Tonalitate estimată",
+  "songsLibraryView": "Bibliotecă",
+  "settingsStartupView": "Pornește în",
+  "settingsStartupViewHint": "Alege vizualizarea melodiilor afișată la deschiderea aplicației.",
+  "settingsStartupLastView": "Ultima vizualizare",
+  "playerExpandControls": "Afișează comenzile de redare",
+  "playerCollapseControls": "Ascunde comenzile de redare",
+  "settingsShowSections": "Afișează titlurile secțiunilor",
+  "settingsShowSectionsHint": "Afișează în versuri titlurile strofelor, refrenului și ale altor secțiuni.",
+  "settingsShowPlayerControls": "Afișează comenzile de redare",
+  "settingsShowPlayerControlsHint": "Poți atinge sau glisa și panoul playerului pentru a-l afișa sau ascunde.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

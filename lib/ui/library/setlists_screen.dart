@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../../l10n/generated/app_localizations.dart';
@@ -503,17 +505,25 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
                             : _deleteBasket(context, l10n);
                       }
                       final entry = value.entries[index];
+                      final tile = _entryTile(
+                        context,
+                        l10n,
+                        value,
+                        entry,
+                        index,
+                        editing,
+                      );
+                      if (defaultTargetPlatform == TargetPlatform.windows) {
+                        return _WindowsRowDragStartListener(
+                          key: ValueKey(entry.id),
+                          index: index,
+                          child: tile,
+                        );
+                      }
                       return ReorderableDelayedDragStartListener(
                         key: ValueKey(entry.id),
                         index: index,
-                        child: _entryTile(
-                          context,
-                          l10n,
-                          value,
-                          entry,
-                          index,
-                          editing,
-                        ),
+                        child: tile,
                       );
                     },
                   ),
@@ -739,4 +749,43 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
       ),
     );
   }
+}
+
+/// Mouse drags begin after movement; touch still requires a long press so a
+/// swipe can scroll. The gesture arena leaves normal row/menu clicks intact.
+class _WindowsRowDragStartListener extends ReorderableDragStartListener {
+  const _WindowsRowDragStartListener({
+    super.key,
+    required super.index,
+    required super.child,
+  });
+
+  @override
+  Widget build(BuildContext context) => Listener(
+    onPointerDown: (event) {
+      if (event.buttons != kPrimaryButton) return;
+      final MultiDragGestureRecognizer recognizer;
+      if (event.kind == PointerDeviceKind.mouse) {
+        recognizer = ImmediateMultiDragGestureRecognizer(
+          debugOwner: this,
+          supportedDevices: const {PointerDeviceKind.mouse},
+          allowedButtonsFilter: (buttons) => buttons == kPrimaryButton,
+        );
+      } else {
+        recognizer = DelayedMultiDragGestureRecognizer(debugOwner: this);
+      }
+      recognizer.gestureSettings = MediaQuery.maybeGestureSettingsOf(context);
+      final list = SliverReorderableList.maybeOf(context);
+      if (list == null) {
+        recognizer.dispose();
+        return;
+      }
+      list.startItemDragReorder(
+        index: index,
+        event: event,
+        recognizer: recognizer,
+      );
+    },
+    child: child,
+  );
 }

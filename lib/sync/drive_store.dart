@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
+import 'package:crypto/crypto.dart';
 import '../domain/models.dart';
 import '../providers/native_client.dart';
 import 'google_auth.dart';
@@ -18,10 +19,13 @@ class DriveFile {
     this.size,
     this.md5Checksum,
     this.headRevisionId,
+    this.mimeType,
+    this.parents = const [],
   });
   final String id, name;
 
-  /// `appProperties`: `kind`, `hash` (sha-256 of the body) and `verseSchema`.
+  /// `appProperties`: item identity, `hash` (sha-256), `md5` (body checksum),
+  /// and `verseSchema`.
   final Map<String, String> properties;
   final DateTime? modifiedTime;
 
@@ -30,8 +34,15 @@ class DriveFile {
   final String? version;
   final int? size;
   final String? md5Checksum, headRevisionId;
+  final String? mimeType;
+  final List<String> parents;
 
   String? get hash => properties['hash'];
+}
+
+class DriveFolderInfo {
+  const DriveFolderInfo({required this.id, required this.name});
+  final String id, name;
 }
 
 /// The cloud side of sync: a flat set of files addressed by id. In-place
@@ -64,6 +75,13 @@ abstract interface class SyncCloudStore {
   Future<void> deleteFile(String id);
 }
 
+/// A sync store scoped to one user-selected visible Drive folder.
+abstract interface class VisibleDriveFolderStore implements SyncCloudStore {
+  String? get folderId;
+  Future<DriveFolderInfo> verifyFolder();
+  void close();
+}
+
 class _HttpFailure implements Exception {
   const _HttpFailure(this.status, this.code, this.retryable, [this.retryAfter]);
   final int status;
@@ -84,9 +102,10 @@ const _retryableForbiddenReasons = {
 final _idPattern = RegExp(r'^[A-Za-z0-9_-]{1,200}$');
 final _safeNamePattern = RegExp(r'^[A-Za-z0-9._~-]{1,255}$');
 
-class DriveAppDataStore implements SyncCloudStore {
+class DriveAppDataStore implements VisibleDriveFolderStore {
   DriveAppDataStore({
     required this.authorization,
+    this.folderId,
     http.Client? client,
     this.requestTimeout = const Duration(seconds: 30),
     this.maxAttempts = 4,
@@ -94,6 +113,11 @@ class DriveAppDataStore implements SyncCloudStore {
   }) : _client = client ?? createNativeHttpClient(),
        _backoff = backoff ?? _defaultBackoff;
   final DriveAuthorization authorization;
+
+  /// Null uses the private appDataFolder. A value uses a visible Drive folder
+  /// that the user explicitly granted through Google Picker.
+  @override
+  final String? folderId;
   final http.Client _client;
   final Duration requestTimeout;
   final int maxAttempts;
@@ -105,7 +129,7 @@ class DriveAppDataStore implements SyncCloudStore {
   static const _maxErrorBodyBytes = 64 * 1024;
   static const _maxRetryAfter = Duration(seconds: 30);
   static const _fields =
-      'id,name,modifiedTime,version,size,md5Checksum,headRevisionId,appProperties';
+      'id,name,mimeType,parents,modifiedTime,version,size,md5Checksum,headRevisionId,appProperties';
 
   static Duration _defaultBackoff(int attempt) =>
       Duration(milliseconds: 500 * (1 << attempt));
@@ -177,7 +201,9 @@ class DriveAppDataStore implements SyncCloudStore {
       // (about 100 kB/s minimum) so a big song on a slow link can finish.
       final sendTimeout =
           requestTimeout +
-          Duration(seconds: body == null ? 0 : request.bodyBytes.length ~/ 100000);
+          Duration(
+            seconds: body == null ? 0 : request.bodyBytes.length ~/ 100000,
+          );
       final response = await _client.send(request).timeout(sendTimeout);
       if (response.statusCode < 200 || response.statusCode >= 300) {
         final errorBody = await _readErrorBody(response);
@@ -282,11 +308,53 @@ class DriveAppDataStore implements SyncCloudStore {
       size: size == null ? null : int.tryParse(size.toString()),
       md5Checksum: row['md5Checksum'] as String?,
       headRevisionId: row['headRevisionId'] as String?,
+      mimeType: row['mimeType'] as String?,
+      parents: (row['parents'] as List? ?? const [])
+          .whereType<String>()
+          .toList(),
     );
   }
 
   static Uri _api(String path, [Map<String, String>? query]) =>
       Uri.https('www.googleapis.com', path, query);
+
+  String get _space => folderId == null ? 'appDataFolder' : 'drive';
+  String get _scopeQuery => folderId == null
+      ? "appProperties has { key='verseSchema' and value='$syncSchema' } and trashed = false"
+      : "'${_escapeQuery(folderId!)}' in parents and appProperties has { key='verseSchema' and value='$syncSchema' } and trashed = false";
+  static String _escapeQuery(String value) =>
+      value.replaceAll('\\', '\\\\').replaceAll("'", "\\'");
+
+  /// Confirms the selected ID is a non-trashed Drive folder accessible to the
+  /// scoped `drive.file` authorization, and returns its user-visible name.
+  @override
+  Future<DriveFolderInfo> verifyFolder() async {
+    final id = folderId;
+    if (id == null || !_idPattern.hasMatch(id)) {
+      throw const SyncException('invalid_drive_folder');
+    }
+    final String text;
+    try {
+      text = await _request(
+        'GET',
+        _api('/drive/v3/files/$id', {'fields': 'id,name,mimeType,trashed'}),
+        fileScoped: true,
+      );
+    } on SyncException catch (error) {
+      if (error.code == 'remote_file_missing') {
+        throw const SyncException('drive_folder_missing');
+      }
+      rethrow;
+    }
+    final folder = jsonMap(jsonDecode(text));
+    if (folder['id'] != id ||
+        folder['mimeType'] != 'application/vnd.google-apps.folder' ||
+        folder['trashed'] == true ||
+        folder['name'] is! String) {
+      throw const SyncException('invalid_drive_folder');
+    }
+    return DriveFolderInfo(id: id, name: folder['name'] as String);
+  }
 
   @override
   Future<List<DriveFile>> listFiles() async {
@@ -296,9 +364,8 @@ class DriveAppDataStore implements SyncCloudStore {
       final text = await _request(
         'GET',
         _api('/drive/v3/files', {
-          'spaces': 'appDataFolder',
-          'q':
-              "appProperties has { key='verseSchema' and value='$syncSchema' } and trashed = false",
+          'spaces': _space,
+          'q': _scopeQuery,
           'pageSize': '1000',
           'fields': 'nextPageToken,files($_fields)',
           'pageToken': ?page,
@@ -361,10 +428,12 @@ class DriveAppDataStore implements SyncCloudStore {
       '--$boundary\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${jsonEncode(metadata)}\r\n'
       '--$boundary\r\nContent-Type: $mime; charset=UTF-8\r\n\r\n$content\r\n--$boundary--';
 
-  Map<String, String> _props(Map<String, String> properties) => {
-    ...properties,
-    'verseSchema': syncSchema,
-  };
+  Map<String, String> _props(Map<String, String> properties, String content) =>
+      {
+        ...properties,
+        'md5': md5.convert(utf8.encode(content)).toString(),
+        'verseSchema': syncSchema,
+      };
 
   void _checkSize(String content) {
     if (utf8.encode(content).length > maxFileBytes - 8192) {
@@ -384,19 +453,24 @@ class DriveAppDataStore implements SyncCloudStore {
     _checkSize(content);
     final boundary = 'verse_${newId()}';
     final mime = name.endsWith('.cho') ? 'text/plain' : 'application/json';
-    final props = _props(properties);
+    final props = _props(properties, content);
     final text = await _request(
       'POST',
       _api('/upload/drive/v3/files', {
         'uploadType': 'multipart',
         'fields': _fields,
       }),
-      body: _multipart(boundary, {
-        'name': name,
-        'parents': ['appDataFolder'],
-        'mimeType': mime,
-        'appProperties': props,
-      }, content, mime),
+      body: _multipart(
+        boundary,
+        {
+          'name': name,
+          'parents': [folderId ?? 'appDataFolder'],
+          'mimeType': mime,
+          'appProperties': props,
+        },
+        content,
+        mime,
+      ),
       contentType: 'multipart/related; boundary=$boundary',
       // A create whose answer was lost may have succeeded: look for it before
       // posting again, so a retry does not leave a second file of that name.
@@ -410,9 +484,9 @@ class DriveAppDataStore implements SyncCloudStore {
       final text = await _request(
         'GET',
         _api('/drive/v3/files', {
-          'spaces': 'appDataFolder',
+          'spaces': _space,
           'q':
-              "name = '$name' and appProperties has { key='verseSchema' and value='$syncSchema' } and trashed = false",
+              "name = '${_escapeQuery(name)}' and ${folderId == null ? '' : "'${_escapeQuery(folderId!)}' in parents and "}appProperties has { key='verseSchema' and value='$syncSchema' } and trashed = false",
           'pageSize': '10',
           'fields': 'files($_fields)',
         }),
@@ -448,14 +522,18 @@ class DriveAppDataStore implements SyncCloudStore {
         'uploadType': 'multipart',
         'fields': _fields,
       }),
-      body: _multipart(boundary, {
-        'appProperties': _props(properties),
-      }, content, mime),
+      body: _multipart(
+        boundary,
+        {'appProperties': _props(properties, content)},
+        content,
+        mime,
+      ),
       contentType: 'multipart/related; boundary=$boundary',
       fileScoped: true,
     );
     return _parse(jsonDecode(text));
   }
 
+  @override
   void close() => _client.close();
 }

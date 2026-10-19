@@ -122,6 +122,12 @@ class FakeUiController extends VerseUiController {
   Future<void> syncNow() => _record('syncNow');
 
   @override
+  Future<void> chooseSyncDriveFolder() => _record('chooseSyncDriveFolder');
+
+  @override
+  Future<void> importChordProFromDrive() => _record('importChordProFromDrive');
+
+  @override
   Future<void> signInForSync() => _record('signInForSync');
 
   @override

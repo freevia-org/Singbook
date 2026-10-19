@@ -832,5 +832,44 @@
       }
     }
   },
-  "playerEstimatedKey": "Tonalità stmata"
+  "accountDriveFolder": "Folder tal-librerija Google Drive",
+  "accountPrivateDriveFolder": "Folder privat Singbook",
+  "accountChooseDriveFolder": "Agħżel folder",
+  "accountDriveFolderMoveTitle": "Ċaqlaq il-librerija tas-Singbook tiegħek?",
+  "accountDriveFolderMoveBody": "Agħżel folder viżibbli ta' Google Drive. Singbook se tikkopja u tivverifika l-kanzunetti u s-setlists tiegħek hemmhekk qabel ma taqleb għaliha. Fajls oriġinali jibqgħu fil-post preċedenti tagħhom bħala backup. Fajls oħra jitħallew waħedhom. Fajls ChordPro li timporta f'dan il-folder huma adottati għas-sinkronizzazzjoni u jirċievu metadata Singbook.",
+  "accountImportChordPro": "Importa ChordPro minn Drive",
+  "accountImportChordProHint": "Agħżel fajls .cho biex iżżid ma' din il-librerija. Fajls diġà fil-folder huma adottati; fajls x'imkien ieħor huma kkupjati hawn.",
+  "syncErrorFolderPickerUnavailable": "L-għażla tal-folder tas-sewqan mhix disponibbli",
+  "syncErrorFolderPickerUnavailableHint": "Agħżel folder Drive viżibbli bil-picker ta' Google Drive fuq apparat appoġġjat.",
+  "syncErrorDriveFolderMissing": "Il-folder ta' Singbook Drive mhuwiex disponibbli",
+  "syncErrorDriveFolderMissingHint": "Agħżel il-folder mill-ġdid, jew irrestawrah fil-Google Drive.",
+  "syncErrorDriveFileAuthorization": "Singbook jeħtieġ aċċess għal dan il-folder Drive",
+  "syncErrorDriveFileAuthorizationHint": "Erġa' agħżel il-folder biex tagħti aċċess, imbagħad issinkronizza l-librerija tiegħek.",
+  "syncErrorFolderMigration": "Il-librerija għadha ma setgħetx tiġi mċaqalqa",
+  "syncErrorFolderMigrationHint": "Il-librerija preċedenti tiegħek għadha sigura. Iċċekkja l-konnessjoni u agħżel il-folder mill-ġdid biex terġa 'tipprova.",
+  "syncErrorVisibleFolderRequired": "Agħżel folder Drive viżibbli l-ewwel",
+  "syncErrorVisibleFolderRequiredHint": "Huwa meħtieġ folder tal-librerija viżibbli qabel ma jiġu importati fajls minn Drive.",
+  "playerEstimatedKey": "Tonalità stmata",
+  "songsLibraryView": "Librerija",
+  "settingsStartupView": "Ibda fil-veduta",
+  "settingsStartupViewHint": "Agħżel il-veduta tal-kanzunetti li tintwera meta tiftaħ l-app.",
+  "settingsStartupLastView": "L-aħħar veduta miftuħa",
+  "playerExpandControls": "Uri l-kontrolli tad-daqq",
+  "playerCollapseControls": "Aħbi l-kontrolli tad-daqq",
+  "settingsShowSections": "Uri l-intestaturi tat-taqsimiet",
+  "settingsShowSectionsHint": "Uri l-intestaturi tal-versi, tal-kor u taqsimiet oħra fil-lirika.",
+  "settingsShowPlayerControls": "Uri l-kontrolli tad-daqq",
+  "settingsShowPlayerControlsHint": "Tista’ wkoll tmiss jew tiskrollja l-pannell tal-plejer biex turih jew taħbih.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

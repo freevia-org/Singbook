@@ -518,6 +518,7 @@ void main() {
     app.query = 'signal';
     app.errorCode = 'search_failed';
 
+    ui.setHomeListMode(HomeListMode.online);
     ui.setQuery('signal ');
 
     expect(app.errorCode, isNull);
@@ -527,6 +528,7 @@ void main() {
 
   test('catalog matching ignores filters only known after discovery', () async {
     ui.setSearchFilter('field', 'lyrics');
+    ui.setHomeListMode(HomeListMode.online);
     ui.setQuery('signal');
     app.query = 'signal';
     app.suggestions = [
@@ -586,6 +588,7 @@ void main() {
       await app.initialize();
       app.settings['catalog'] = 'plain';
       ui = AppControllerAdapter(app);
+      ui.setHomeListMode(HomeListMode.online);
       ui.setQuery('sample song');
       await ui.submitSearch();
       await ui.selectReference(
@@ -645,6 +648,7 @@ void main() {
     await app.initialize();
     app.settings['catalog'] = 'plain';
     ui = AppControllerAdapter(app);
+    ui.setHomeListMode(HomeListMode.online);
     ui.setQuery('sample song');
     await ui.submitSearch();
     await ui.selectReference(
@@ -687,6 +691,7 @@ void main() {
     await app.initialize();
     app.settings['catalog'] = 'plain';
     ui = AppControllerAdapter(app);
+    ui.setHomeListMode(HomeListMode.online);
     ui.setQuery('sample song');
     await ui.submitSearch();
     await ui.selectReference(
@@ -704,6 +709,7 @@ void main() {
   test(
     'autocomplete ranks song matches and removes release calendar pages',
     () {
+      ui.setHomeListMode(HomeListMode.online);
       ui.setQuery('Amazing Grace Judy Collins');
       app.query = 'Amazing Grace Judy Collins';
       app.suggestions = [
@@ -801,6 +807,7 @@ void main() {
       app.settings['catalog'] = 'catalog';
       ui = AppControllerAdapter(app);
 
+      ui.setHomeListMode(HomeListMode.online);
       ui.setQuery('sample song');
       await ui.submitSearch();
       await ui.selectReference(
@@ -921,6 +928,7 @@ void main() {
       await app.initialize();
       app.settings['catalog'] = 'catalog';
       ui = AppControllerAdapter(app);
+      ui.setHomeListMode(HomeListMode.online);
       ui.setQuery('sample song');
       await ui.submitSearch();
       await ui.selectReference(
@@ -993,6 +1001,7 @@ void main() {
       );
       await app.initialize();
       ui = AppControllerAdapter(app);
+      ui.setHomeListMode(HomeListMode.online);
       ui.setQuery('preview song');
       await ui.submitSearch();
       app.suggestions = [selected];
@@ -1099,6 +1108,7 @@ void main() {
       );
       await app.initialize();
       ui = AppControllerAdapter(app);
+      ui.setHomeListMode(HomeListMode.online);
       ui.setQuery('ordered song');
       await ui.submitSearch();
       app.suggestions = [selected];
@@ -1193,6 +1203,7 @@ void main() {
           firstResult.complete();
         }
       });
+      ui.setHomeListMode(HomeListMode.online);
       ui.setQuery('sample song');
       await ui.submitSearch();
       final selecting = ui.selectReference(
@@ -1236,6 +1247,7 @@ void main() {
       app = AppController(repository: repository, discovery: discovery);
       await app.initialize();
       ui = AppControllerAdapter(app);
+      ui.setHomeListMode(HomeListMode.online);
       ui.setQuery('stream song');
       await ui.submitSearch();
       final selecting = ui.selectReference(
@@ -1300,6 +1312,7 @@ void main() {
       app = AppController(repository: repository, discovery: discovery);
       await app.initialize();
       ui = AppControllerAdapter(app);
+      ui.setHomeListMode(HomeListMode.online);
       ui.setQuery('stream song');
       await ui.submitSearch();
       final selecting = ui.selectReference(
@@ -1385,6 +1398,7 @@ void main() {
     app = AppController(repository: repository, discovery: discovery);
     await app.initialize();
     ui = AppControllerAdapter(app);
+    ui.setHomeListMode(HomeListMode.online);
     ui.setQuery('pending preview song');
     await ui.submitSearch();
     final selecting = ui.selectReference(
@@ -1459,6 +1473,7 @@ void main() {
     app = AppController(repository: repository, discovery: discovery);
     await app.initialize();
     ui = AppControllerAdapter(app);
+    ui.setHomeListMode(HomeListMode.online);
     ui.setQuery('duration conflict song');
     await ui.submitSearch();
     final selecting = ui.selectReference(

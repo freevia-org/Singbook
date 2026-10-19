@@ -832,5 +832,44 @@
       }
     }
   },
-  "playerEstimatedKey": "추정 조성"
+  "accountDriveFolder": "Google 드라이브 라이브러리 폴더",
+  "accountPrivateDriveFolder": "개인 Singbook 폴더",
+  "accountChooseDriveFolder": "폴더 선택",
+  "accountDriveFolderMoveTitle": "Singbook 라이브러리를 이동하시겠습니까?",
+  "accountDriveFolderMoveBody": "표시되는 Google 드라이브 폴더를 선택하세요. Singbook은 전환하기 전에 노래와 세트리스트를 복사하고 확인합니다. 원본 파일은 백업으로 이전 위치에 유지됩니다. 다른 파일은 그대로 둡니다. 이 폴더로 가져온 ChordPro 파일은 Singbook 메타데이터를 동기화하고 수신하기 위해 채택됩니다.",
+  "accountImportChordPro": "드라이브에서 ChordPro 가져오기",
+  "accountImportChordProHint": "이 라이브러리에 추가할 .cho 파일을 선택하세요. 폴더에 이미 있는 파일이 채택됩니다. 다른 곳에 있는 파일은 여기에 복사됩니다.",
+  "syncErrorFolderPickerUnavailable": "드라이브 폴더를 선택할 수 없습니다.",
+  "syncErrorFolderPickerUnavailableHint": "지원되는 기기에서 Google 드라이브 선택기로 표시되는 Drive 폴더를 선택하세요.",
+  "syncErrorDriveFolderMissing": "Singbook Drive 폴더를 사용할 수 없습니다.",
+  "syncErrorDriveFolderMissingHint": "폴더를 다시 선택하거나 Google Drive에서 복원하세요.",
+  "syncErrorDriveFileAuthorization": "Singbook은 이 드라이브 폴더에 액세스해야 합니다.",
+  "syncErrorDriveFileAuthorizationHint": "폴더를 다시 선택하여 액세스 권한을 부여한 다음 라이브러리를 동기화하세요.",
+  "syncErrorFolderMigration": "아직 라이브러리를 이동할 수 없습니다.",
+  "syncErrorFolderMigrationHint": "이전 라이브러리는 여전히 안전합니다. 연결을 확인하고 폴더를 다시 선택하여 다시 시도하세요.",
+  "syncErrorVisibleFolderRequired": "먼저 표시되는 드라이브 폴더를 선택하세요.",
+  "syncErrorVisibleFolderRequiredHint": "드라이브에서 파일을 가져오기 전에 표시되는 라이브러리 폴더가 필요합니다.",
+  "playerEstimatedKey": "추정 조성",
+  "songsLibraryView": "라이브러리",
+  "settingsStartupView": "시작 화면",
+  "settingsStartupViewHint": "앱을 열 때 표시할 노래 화면을 선택하세요.",
+  "settingsStartupLastView": "마지막으로 연 화면",
+  "playerExpandControls": "재생 컨트롤 표시",
+  "playerCollapseControls": "재생 컨트롤 숨기기",
+  "settingsShowSections": "섹션 제목 표시",
+  "settingsShowSectionsHint": "가사에 절, 후렴 및 기타 섹션 제목을 표시합니다.",
+  "settingsShowPlayerControls": "재생 컨트롤 표시",
+  "settingsShowPlayerControlsHint": "플레이어 패널을 탭하거나 스와이프해 표시하거나 숨길 수도 있습니다.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

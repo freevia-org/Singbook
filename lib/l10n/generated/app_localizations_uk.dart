@@ -1427,6 +1427,67 @@ class AppLocalizationsUk extends AppLocalizations {
       'Синхронізація відбувається після підключення, а також після додавання, редагування чи видалення пісні.';
 
   @override
+  String get accountDriveFolder => 'Папка бібліотеки Google Drive';
+
+  @override
+  String get accountPrivateDriveFolder => 'Приватна папка Singbook';
+
+  @override
+  String get accountChooseDriveFolder => 'Виберіть папку';
+
+  @override
+  String get accountDriveFolderMoveTitle => 'Перемістити бібліотеку Singbook?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Виберіть видиму папку Google Drive. Singbook скопіює та перевірить ваші пісні та сет-листи, перш ніж перейти на нього. Оригінальні файли залишаються в попередньому місці як резервні. Інші файли залишаються в спокої. Файли ChordPro, які ви імпортуєте в цю папку, приймаються для синхронізації та отримують метадані Singbook.';
+
+  @override
+  String get accountImportChordPro => 'Імпортувати ChordPro з Диска';
+
+  @override
+  String get accountImportChordProHint =>
+      'Виберіть файли .cho, щоб додати до цієї бібліотеки. Файли, які вже є в папці, приймаються; файли з інших місць копіюються сюди.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Вибір папки на Диску недоступний';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Виберіть видиму папку Диска за допомогою засобу вибору Google Диска на підтримуваному пристрої.';
+
+  @override
+  String get syncErrorDriveFolderMissing => 'Папка Singbook Drive недоступна';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Виберіть папку ще раз або відновіть її на Диску Google.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook потрібен доступ до цієї папки Диска';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Знову виберіть папку, щоб надати доступ, а потім синхронізуйте бібліотеку.';
+
+  @override
+  String get syncErrorFolderMigration => 'Бібліотеку поки не вдалося перенести';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Ваша попередня бібліотека все ще в безпеці. Перевірте з’єднання та знову виберіть папку, щоб повторити спробу.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Спочатку виберіть видиму папку Диска';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Перед імпортом файлів із Диска потрібна видима папка бібліотеки.';
+
+  @override
   String get accountSignOutTitle => 'Вийти з облікового запису?';
 
   @override
@@ -1959,4 +2020,39 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Орієнтовна тональність';
+
+  @override
+  String get songsLibraryView => 'Бібліотека';
+
+  @override
+  String get settingsStartupView => 'Початковий вигляд';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Виберіть вигляд «Пісні», який показуватиметься під час відкриття застосунку.';
+
+  @override
+  String get settingsStartupLastView => 'Останній відкритий';
+
+  @override
+  String get playerExpandControls => 'Показати елементи керування відтворенням';
+
+  @override
+  String get playerCollapseControls =>
+      'Приховати елементи керування відтворенням';
+
+  @override
+  String get settingsShowSections => 'Показувати заголовки частин';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Показувати в тексті заголовки куплетів, приспіву та інших частин.';
+
+  @override
+  String get settingsShowPlayerControls =>
+      'Показати елементи керування відтворенням';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Панель програвача також можна показати або приховати дотиком чи свайпом.';
 }

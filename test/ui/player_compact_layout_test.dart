@@ -18,6 +18,7 @@ class _Controller extends VerseUiController {
   String? songKey = 'Em';
   double speed = 1;
   bool showChords = true;
+  bool playerControlsExpanded = true;
   String highlightStyle = 'contrast';
   @override
   VerseUiState get state => VerseUiState(
@@ -37,6 +38,7 @@ class _Controller extends VerseUiController {
     readerCanCompareVersions: true,
     playbackSpeed: speed,
     showChords: showChords,
+    playerControlsExpanded: playerControlsExpanded,
     lyricHighlightStyle: highlightStyle,
     songLines: const [
       LyricLineData(id: 'v', section: 'Verse 1', isBlank: true),
@@ -72,6 +74,12 @@ class _Controller extends VerseUiController {
   @override
   Future<void> setShowChords(bool value) async {
     showChords = value;
+    notifyListeners();
+  }
+
+  @override
+  Future<void> setPlayerControlsExpanded(bool expanded) async {
+    playerControlsExpanded = expanded;
     notifyListeners();
   }
 
@@ -211,44 +219,51 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('missing key stays neutral with large text controls reachable', (
-    tester,
-  ) async {
-    final controller = _Controller()..songKey = null;
-    addTearDown(controller.dispose);
-    await _pump(tester, controller, size: const Size(320, 640), scale: 2);
-    final keyMenu = find.byKey(const ValueKey('pitch-key-dropdown'));
-    expect(
-      find.descendant(of: keyMenu, matching: find.text('C')),
-      findsNothing,
-    );
-    expect(
-      find.descendant(of: keyMenu, matching: find.text('0')),
-      findsOneWidget,
-    );
-    expect(tester.takeException(), isNull);
-    await tester.tap(keyMenu);
-    await tester.pumpAndSettle();
-    final l10n = AppLocalizations.of(tester.element(keyMenu));
-    final noneOption = find.text(l10n.playerChordsNone);
-    expect(find.byType(CheckedPopupMenuItem<String>), findsNothing);
-    expect(find.byType(Checkbox), findsNothing);
-    expect(
-      tester.getSemantics(noneOption).flagsCollection.isSelected.toBoolOrNull(),
-      isFalse,
-    );
-    await tester.ensureVisible(noneOption);
-    await tester.tap(noneOption);
-    await tester.pumpAndSettle();
-    expect(controller.showChords, isFalse);
-    await tester.tap(keyMenu);
-    await tester.pumpAndSettle();
-    expect(
-      tester.getSemantics(noneOption).flagsCollection.isSelected.toBoolOrNull(),
-      isTrue,
-    );
-    expect(tester.takeException(), isNull);
-  });
+  testWidgets(
+    'missing key stays neutral and large-text controls can collapse',
+    (tester) async {
+      final controller = _Controller()..songKey = null;
+      addTearDown(controller.dispose);
+      await _pump(tester, controller, size: const Size(320, 640), scale: 2);
+      final keyMenu = find.byKey(const ValueKey('pitch-key-dropdown'));
+      expect(
+        find.descendant(of: keyMenu, matching: find.text('C')),
+        findsNothing,
+      );
+      expect(
+        find.descendant(of: keyMenu, matching: find.text('0')),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+      await tester.tap(keyMenu);
+      await tester.pumpAndSettle();
+      final l10n = AppLocalizations.of(tester.element(keyMenu));
+      expect(find.text(l10n.playerChordsNone), findsNothing);
+      expect(find.byKey(const ValueKey('transpose-offset--6')), findsOneWidget);
+      expect(find.byKey(const ValueKey('transpose-offset-6')), findsOneWidget);
+      expect(find.byType(CheckedPopupMenuItem<String>), findsNothing);
+      expect(find.byType(Checkbox), findsNothing);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('start-lyric-scroll')), findsOneWidget);
+      expect(find.byKey(const ValueKey('player-seek-slider')), findsOneWidget);
+      await tester.tap(find.byTooltip(l10n.playerCollapseControls));
+      await tester.pumpAndSettle();
+      expect(controller.playerControlsExpanded, isFalse);
+      expect(find.byKey(const ValueKey('start-lyric-scroll')), findsNothing);
+      expect(find.byKey(const ValueKey('player-seek-slider')), findsNothing);
+      expect(find.byTooltip(l10n.playerExpandControls), findsOneWidget);
+      expect(find.text('When morning spills across the hills'), findsOneWidget);
+
+      await tester.tap(find.byTooltip(l10n.playerExpandControls));
+      await tester.pumpAndSettle();
+      expect(controller.playerControlsExpanded, isTrue);
+      expect(find.byKey(const ValueKey('start-lyric-scroll')), findsOneWidget);
+      expect(find.byKey(const ValueKey('player-seek-slider')), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   for (final style in [
     'contrast',
@@ -519,13 +534,17 @@ void main() {
         expect(keyPopupWidth, speedPopupWidth);
         expect(keyPopupRect.left, lessThan(keyAnchor.right));
         expect(keyPopupRect.right, greaterThan(keyAnchor.left));
-        final noneOption = find.text(
-          AppLocalizations.of(tester.element(keyMenu)).playerChordsNone,
+        expect(
+          find.text(
+            AppLocalizations.of(tester.element(keyMenu)).playerChordsNone,
+          ),
+          findsNothing,
         );
-        await tester.ensureVisible(noneOption);
+        final lastPitch = find.byKey(const ValueKey('transpose-pitch-11'));
+        await tester.ensureVisible(lastPitch);
         await tester.pumpAndSettle();
         expect(
-          tester.getRect(noneOption).bottom,
+          tester.getRect(lastPitch).bottom,
           lessThanOrEqualTo(scenario.$2.height),
         );
         await expectLater(

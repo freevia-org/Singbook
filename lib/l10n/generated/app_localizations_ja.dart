@@ -1373,6 +1373,65 @@ class AppLocalizationsJa extends AppLocalizations {
   String get accountAutoSyncHint => '接続後、および曲の追加、編集、削除後に同期します。';
 
   @override
+  String get accountDriveFolder => 'Googleドライブのライブラリフォルダ';
+
+  @override
+  String get accountPrivateDriveFolder => 'プライベート Singbook フォルダー';
+
+  @override
+  String get accountChooseDriveFolder => 'フォルダーを選択してください';
+
+  @override
+  String get accountDriveFolderMoveTitle => 'Singbook ライブラリを移動しますか?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      '表示されている Google ドライブ フォルダーを選択します。 Singbook は、そこに切り替える前に、そこに曲とセットリストをコピーして検証します。元のファイルはバックアップとして以前の場所に残ります。他のファイルはそのまま残されます。このフォルダーにインポートした ChordPro ファイルは、同期に採用され、Singbook メタデータを受信します。';
+
+  @override
+  String get accountImportChordPro => 'ChordPro をドライブからインポート';
+
+  @override
+  String get accountImportChordProHint =>
+      'このライブラリに追加する .cho ファイルを選択します。フォルダー内に既にあるファイルが採用されます。他の場所にあるファイルはここにコピーされます。';
+
+  @override
+  String get syncErrorFolderPickerUnavailable => 'ドライブフォルダーの選択は使用できません';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      '対応デバイスで Google ドライブ ピッカーを使い、表示されるドライブ フォルダを選択してください。';
+
+  @override
+  String get syncErrorDriveFolderMissing => 'Singbook Drive フォルダーが使用できません';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'フォルダーを再度選択するか、Google ドライブに復元します。';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook はこのドライブ フォルダーにアクセスする必要があります';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'フォルダーを再度選択してアクセスを許可し、ライブラリを同期します。';
+
+  @override
+  String get syncErrorFolderMigration => 'ライブラリはまだ移動できませんでした';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      '以前のライブラリはまだ安全です。接続を確認し、フォルダーを再度選択して再試行してください。';
+
+  @override
+  String get syncErrorVisibleFolderRequired => '最初に表示されるドライブ フォルダーを選択してください';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'ドライブからファイルをインポートする前に、表示可能なライブラリ フォルダーが必要です。';
+
+  @override
   String get accountSignOutTitle => 'このアカウントからログアウトしますか？';
 
   @override
@@ -1848,4 +1907,35 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => '推定キー';
+
+  @override
+  String get songsLibraryView => 'ライブラリ';
+
+  @override
+  String get settingsStartupView => '起動時の画面';
+
+  @override
+  String get settingsStartupViewHint => 'アプリを開いたときに表示する曲の画面を選択します。';
+
+  @override
+  String get settingsStartupLastView => '前回開いた画面';
+
+  @override
+  String get playerExpandControls => '再生コントロールを表示';
+
+  @override
+  String get playerCollapseControls => '再生コントロールを非表示';
+
+  @override
+  String get settingsShowSections => 'セクション見出しを表示';
+
+  @override
+  String get settingsShowSectionsHint => '歌詞に、ヴァース、コーラスなど各セクションの見出しを表示します。';
+
+  @override
+  String get settingsShowPlayerControls => '再生コントロールを表示';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'プレーヤーパネルをタップまたはスワイプして表示・非表示を切り替えることもできます。';
 }

@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'dart:io' show Directory;
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as paths;
+import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import '../domain/models.dart';
 import '../domain/chordpro.dart';
@@ -122,9 +125,22 @@ class LibraryRepository {
     DatabaseFactory? factory,
   }) async {
     final dbFactory = factory ?? databaseFactory;
+    final windows = defaultTargetPlatform == TargetPlatform.windows;
     final location =
         path ??
-        paths.join(await dbFactory.getDatabasesPath(), 'verse_library.db');
+        (windows && factory == null
+            ? paths.join(
+                (await getApplicationSupportDirectory()).path,
+                'databases',
+                'verse_library.db',
+              )
+            : paths.join(
+                await dbFactory.getDatabasesPath(),
+                'verse_library.db',
+              ));
+    if (windows && factory == null && path == null) {
+      await Directory(paths.dirname(location)).create(recursive: true);
+    }
     final db = await dbFactory.openDatabase(
       location,
       options: OpenDatabaseOptions(
@@ -1754,4 +1770,18 @@ class LibraryRepository {
   }
 
   Future<void> close() => database.close();
+}
+
+/// Writes related sync settings in one SQLite transaction. This is used for
+/// state transitions whose partial persistence could make recovery destructive.
+extension AtomicLibrarySettings on LibraryRepository {
+  Future<void> setSettingsAtomically(Map<String, Object?> values) =>
+      database.transaction((txn) async {
+        for (final entry in values.entries) {
+          await txn.insert('settings', {
+            'key': entry.key,
+            'value': jsonEncode(entry.value),
+          }, conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      });
 }

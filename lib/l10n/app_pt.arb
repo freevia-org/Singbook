@@ -832,5 +832,44 @@
       }
     }
   },
-  "playerEstimatedKey": "Tonalidade estimada"
+  "accountDriveFolder": "Pasta da biblioteca do Google Drive",
+  "accountPrivateDriveFolder": "Pasta privada do Singbook",
+  "accountChooseDriveFolder": "Escolha a pasta",
+  "accountDriveFolderMoveTitle": "Mover sua biblioteca de Singbook?",
+  "accountDriveFolderMoveBody": "Escolha uma pasta visível do Google Drive. O Singbook irá copiar e verificar suas músicas e setlists antes de mudar para ele. Os arquivos originais permanecem no local anterior como backup. Outros arquivos são deixados sozinhos. Os arquivos ChordPro importados para esta pasta são adotados para sincronização e recebem metadados do Singbook.",
+  "accountImportChordPro": "Importar ChordPro do Drive",
+  "accountImportChordProHint": "Escolha arquivos .cho para adicionar a esta biblioteca. Os arquivos que já estão na pasta são adotados; arquivos em outros lugares são copiados aqui.",
+  "syncErrorFolderPickerUnavailable": "A seleção da pasta do Drive não está disponível",
+  "syncErrorFolderPickerUnavailableHint": "Escolha uma pasta visível do Drive com o seletor do Google Drive em um dispositivo compatível.",
+  "syncErrorDriveFolderMissing": "A pasta Singbook Drive não está disponível",
+  "syncErrorDriveFolderMissingHint": "Escolha a pasta novamente ou restaure-a no Google Drive.",
+  "syncErrorDriveFileAuthorization": "O Singbook precisa de acesso a esta pasta do Drive",
+  "syncErrorDriveFileAuthorizationHint": "Escolha a pasta novamente para conceder acesso e sincronize sua biblioteca.",
+  "syncErrorFolderMigration": "A biblioteca ainda não pôde ser movida",
+  "syncErrorFolderMigrationHint": "Sua biblioteca anterior ainda está segura. Verifique a conexão e escolha a pasta novamente para tentar novamente.",
+  "syncErrorVisibleFolderRequired": "Escolha primeiro uma pasta visível do Drive",
+  "syncErrorVisibleFolderRequiredHint": "É necessária uma pasta de biblioteca visível antes de importar arquivos do Drive.",
+  "playerEstimatedKey": "Tonalidade estimada",
+  "songsLibraryView": "Biblioteca",
+  "settingsStartupView": "Iniciar em",
+  "settingsStartupViewHint": "Escolha a vista de músicas apresentada quando a aplicação é aberta.",
+  "settingsStartupLastView": "Última vista aberta",
+  "playerExpandControls": "Mostrar controlos de reprodução",
+  "playerCollapseControls": "Ocultar controlos de reprodução",
+  "settingsShowSections": "Mostrar títulos das secções",
+  "settingsShowSectionsHint": "Mostrar na letra os títulos dos versos, do refrão e de outras secções.",
+  "settingsShowPlayerControls": "Mostrar controlos de reprodução",
+  "settingsShowPlayerControlsHint": "Também pode tocar ou deslizar no painel do leitor para o mostrar ou ocultar.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

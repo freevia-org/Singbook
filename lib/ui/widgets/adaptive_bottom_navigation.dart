@@ -32,9 +32,13 @@ class AdaptiveBottomNavigation extends StatelessWidget {
             textDirection: Directionality.of(context),
             textScaler: scaler,
           )..layout();
-          return painter.width;
+          final width = painter.width;
+          painter.dispose();
+          return width;
         });
-        if (widths.every((width) => width + 16 <= constraints.maxWidth / 4)) {
+        if (widths.every(
+          (width) => width + 16 <= constraints.maxWidth / labels.length,
+        )) {
           return NavigationBar(
             height: 80 + ((scaler.scale(14) / 14 - 1).clamp(0, 2) * 48),
             selectedIndex: selectedIndex,
@@ -53,10 +57,14 @@ class AdaptiveBottomNavigation extends StatelessWidget {
               key: const ValueKey('two-row-navigation'),
               mainAxisSize: MainAxisSize.min,
               children: [
-                for (var row = 0; row < 2; row++)
+                for (var row = 0; row < (labels.length + 1) ~/ 2; row++)
                   Row(
                     children: [
-                      for (var i = row * 2; i < row * 2 + 2; i++)
+                      for (
+                        var i = row * 2;
+                        i < math.min(row * 2 + 2, labels.length);
+                        i++
+                      )
                         Expanded(
                           child: Semantics(
                             key: ValueKey('navigation-tile-$i'),

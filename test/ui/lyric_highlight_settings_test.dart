@@ -34,8 +34,10 @@ void main() {
         size: const Size(320, 640),
       );
       final l10n = l10nOf(tester);
-      await tester.ensureVisible(
+      await tester.scrollUntilVisible(
         find.byKey(const ValueKey('settings-menu-player')),
+        250,
+        scrollable: find.byType(Scrollable).first,
       );
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('settings-menu-player')));

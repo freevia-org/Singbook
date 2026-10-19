@@ -51,14 +51,30 @@ class _InlineSetlistController extends FakeUiController {
   }
 }
 
+class _QueryController extends FakeUiController {
+  _QueryController(super.build);
+
+  String query = '';
+
+  @override
+  void setQuery(String value) {
+    query = value;
+    calls.add('setQuery($value)');
+    refresh();
+  }
+}
+
 SongCardData _song(String id, String title, {bool favorite = false}) =>
     SongCardData(id: id, title: title, artist: 'Artist', favorite: favorite);
 
 VerseUiState _songsTab(
   List<SongCardData> songs, {
   List<SetlistCardData>? sets,
+  String query = '',
 }) => VerseUiState(
   activeTab: VerseTab.songs,
+  homeListMode: HomeListMode.library,
+  query: query,
   songs: songs,
   setlists: sets ?? const [],
 );
@@ -80,8 +96,11 @@ void main() {
     });
 
     testWidgets('the clear button empties the search field', (tester) async {
-      final c = FakeUiController(
-        (_) => _songsTab([_song('1', 'Alpha'), _song('2', 'Beta')]),
+      final c = _QueryController(
+        (controller) => _songsTab([
+          _song('1', 'Alpha'),
+          _song('2', 'Beta'),
+        ], query: (controller as _QueryController).query),
       );
       addTearDown(c.dispose);
       await pumpShell(tester, c);
@@ -231,7 +250,15 @@ void main() {
     tester,
   ) async {
     var activeTab = VerseTab.home;
-    final c = FakeUiController((_) => VerseUiState(activeTab: activeTab));
+    final c = _QueryController(
+      (controller) => VerseUiState(
+        activeTab: activeTab,
+        homeListMode: activeTab == VerseTab.songs
+            ? HomeListMode.library
+            : HomeListMode.recent,
+        query: (controller as _QueryController).query,
+      ),
+    );
     addTearDown(c.dispose);
     await pumpShell(tester, c);
     final homeWidth = tester.getSize(find.byType(TextField).first).width;
@@ -963,7 +990,7 @@ void main() {
       (tester) async {
         final c = FakeUiController((_) => const VerseUiState());
         addTearDown(c.dispose);
-        for (final size in const [Size(640, 360), Size(560, 340)]) {
+        for (final size in const [Size(640, 280), Size(560, 280)]) {
           await pumpShell(tester, c, size: size);
           expect(
             find.byType(AdaptiveBottomNavigation),
@@ -989,7 +1016,7 @@ void main() {
       tester.view.viewPadding = const FakeViewPadding(top: 62, bottom: 34);
       addTearDown(tester.view.resetPadding);
       addTearDown(tester.view.resetViewPadding);
-      await pumpShell(tester, c, size: const Size(874, 402));
+      await pumpShell(tester, c, size: const Size(874, 372));
       expect(find.byType(AdaptiveBottomNavigation), findsOneWidget);
       expect(
         find.byKey(const ValueKey('tablet-navigation-rail')),
@@ -1012,6 +1039,7 @@ void main() {
       final c = FakeUiController((_) => const VerseUiState());
       addTearDown(c.dispose);
       for (final size in const [
+        Size(640, 360),
         Size(700, 480),
         Size(560, 400),
         Size(844, 600),
@@ -1032,8 +1060,12 @@ void main() {
     ) async {
       final c = FakeUiController((_) => const VerseUiState());
       addTearDown(c.dispose);
-      await pumpShell(tester, c, size: const Size(700, 440), textScale: 2);
+      await pumpShell(tester, c, size: const Size(700, 340), textScale: 2);
       expect(find.byType(AdaptiveBottomNavigation), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('tablet-navigation-rail')),
+        findsNothing,
+      );
       expect(tester.takeException(), isNull);
     });
   });

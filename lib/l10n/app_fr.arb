@@ -831,5 +831,44 @@
       }
     }
   },
-  "playerEstimatedKey": "Tonalité estimée"
+  "accountDriveFolder": "Dossier de la bibliothèque Google Drive",
+  "accountPrivateDriveFolder": "Dossier Singbook privé",
+  "accountChooseDriveFolder": "Choisir un dossier",
+  "accountDriveFolderMoveTitle": "Déplacer votre bibliothèque Singbook ?",
+  "accountDriveFolderMoveBody": "Choisissez un dossier Google Drive visible. Singbook y copiera et vérifiera vos chansons et setlists avant de passer à celui-ci. Les fichiers originaux restent à leur emplacement précédent en tant que sauvegarde. Les autres fichiers sont laissés seuls. Les fichiers ChordPro que vous importez dans ce dossier sont adoptés pour la synchronisation et reçoivent les métadonnées Singbook.",
+  "accountImportChordPro": "Importer ChordPro depuis Drive",
+  "accountImportChordProHint": "Choisissez les fichiers .cho à ajouter à cette bibliothèque. Les fichiers déjà présents dans le dossier sont adoptés ; les fichiers ailleurs sont copiés ici.",
+  "syncErrorFolderPickerUnavailable": "La sélection du dossier Drive n'est pas disponible",
+  "syncErrorFolderPickerUnavailableHint": "Choisissez un dossier Drive visible avec le sélecteur Google Drive sur un appareil compatible.",
+  "syncErrorDriveFolderMissing": "Le dossier Singbook Drive n'est pas disponible",
+  "syncErrorDriveFolderMissingHint": "Choisissez à nouveau le dossier ou restaurez-le dans Google Drive.",
+  "syncErrorDriveFileAuthorization": "Singbook doit accéder à ce dossier Drive",
+  "syncErrorDriveFileAuthorizationHint": "Choisissez à nouveau le dossier pour accorder l'accès, puis synchronisez votre bibliothèque.",
+  "syncErrorFolderMigration": "La bibliothèque n'a pas encore pu être déplacée",
+  "syncErrorFolderMigrationHint": "Votre ancienne bibliothèque est toujours en sécurité. Vérifiez la connexion et choisissez à nouveau le dossier pour réessayer.",
+  "syncErrorVisibleFolderRequired": "Choisissez d'abord un dossier Drive visible",
+  "syncErrorVisibleFolderRequiredHint": "Un dossier de bibliothèque visible est nécessaire avant d'importer des fichiers depuis Drive.",
+  "playerEstimatedKey": "Tonalité estimée",
+  "songsLibraryView": "Bibliothèque",
+  "settingsStartupView": "Ouvrir sur",
+  "settingsStartupViewHint": "Choisissez la vue des chansons affichée à l’ouverture de l’application.",
+  "settingsStartupLastView": "Dernière vue ouverte",
+  "playerExpandControls": "Afficher les commandes de lecture",
+  "playerCollapseControls": "Masquer les commandes de lecture",
+  "settingsShowSections": "Afficher les titres des sections",
+  "settingsShowSectionsHint": "Afficher les titres des couplets, du refrain et des autres sections dans les paroles.",
+  "settingsShowPlayerControls": "Afficher les commandes de lecture",
+  "settingsShowPlayerControlsHint": "Vous pouvez aussi toucher ou balayer le panneau du lecteur pour l’afficher ou le masquer.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

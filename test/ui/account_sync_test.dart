@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart'
+    show debugDefaultTargetPlatformOverride;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/l10n/generated/app_localizations.dart';
 import 'package:singbook/l10n/generated/app_localizations_bg.dart';
@@ -39,9 +41,13 @@ VerseUiState _account({
   String? rawError,
   bool autoSync = true,
   bool songsConflictFilter = false,
+  String? driveFolderName,
   List<SongCardData> songs = const [],
 }) => VerseUiState(
   activeTab: tab,
+  homeListMode: tab == VerseTab.songs
+      ? HomeListMode.library
+      : HomeListMode.recent,
   syncReady: ready,
   syncSignedIn: signedIn,
   syncBusy: busy,
@@ -52,6 +58,7 @@ VerseUiState _account({
   lastSyncErrorCode: error,
   autoSyncEnabled: autoSync,
   songsConflictFilter: songsConflictFilter,
+  syncDriveFolderName: driveFolderName,
   songs: songs,
 );
 
@@ -61,6 +68,16 @@ Future<void> _tapKey(WidgetTester tester, String key) async {
   await tester.pumpAndSettle();
   await tester.tap(finder);
   await tester.pumpAndSettle();
+}
+
+Future<void> _withAndroidPlatform(Future<void> Function() action) async {
+  final previous = debugDefaultTargetPlatformOverride;
+  debugDefaultTargetPlatformOverride = TargetPlatform.android;
+  try {
+    await action();
+  } finally {
+    debugDefaultTargetPlatformOverride = previous;
+  }
 }
 
 Future<FakeUiController> _pump(
@@ -198,6 +215,48 @@ void main() {
       expect(c.calls, isEmpty);
       await _tapKey(tester, 'account-sync-now');
       expect(c.calls, contains('syncNow'));
+    });
+
+    testWidgets('visible Drive folder change is confirmed before migration', (
+      tester,
+    ) async {
+      await _withAndroidPlatform(() async {
+        final c = await _pump(tester, () => _account());
+        final l10n = l10nOf(tester);
+        expect(
+          find.byKey(const ValueKey('account-drive-folder')),
+          findsOneWidget,
+        );
+        expect(find.text(l10n.accountPrivateDriveFolder), findsOneWidget);
+
+        await _tapKey(tester, 'account-drive-folder');
+        await tester.tap(find.text(l10n.actionCancel));
+        await tester.pumpAndSettle();
+        expect(c.calls, isNot(contains('chooseSyncDriveFolder')));
+
+        await _tapKey(tester, 'account-drive-folder');
+        await tester.tap(
+          find.byKey(const ValueKey('account-drive-folder-confirm')),
+        );
+        await tester.pumpAndSettle();
+        expect(c.calls, contains('chooseSyncDriveFolder'));
+      });
+    });
+
+    testWidgets('visible folder exposes explicit ChordPro Drive import', (
+      tester,
+    ) async {
+      await _withAndroidPlatform(() async {
+        final c = await _pump(
+          tester,
+          () => _account(driveFolderName: 'Singbook Library'),
+        );
+        final l10n = l10nOf(tester);
+        expect(find.text('Singbook Library'), findsOneWidget);
+        await _tapKey(tester, 'account-import-drive-chordpro');
+        expect(c.calls, contains('importChordProFromDrive'));
+        expect(find.text(l10n.accountImportChordProHint), findsOneWidget);
+      });
     });
 
     testWidgets('signing out asks first and keeps songs on the device', (

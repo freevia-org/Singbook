@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' show AppExitResponse;
 
 import 'package:flutter/cupertino.dart' show CupertinoLocalizations;
 import 'package:flutter/material.dart';
@@ -13,7 +14,6 @@ import 'app_controller_adapter.dart';
 import 'home/home_screen.dart';
 import 'library/editor_screen.dart';
 import 'library/setlists_screen.dart';
-import 'library/songs_screen.dart';
 import 'library_actions.dart';
 import 'localized_labels.dart';
 import 'player/player_screen.dart';
@@ -27,11 +27,13 @@ import 'widgets/adaptive_bottom_navigation.dart';
 import 'widgets/verse_components.dart';
 
 class VerseApp extends StatefulWidget {
-  const VerseApp({super.key, this.controller});
+  const VerseApp({super.key, this.controller, this.libraryPath})
+    : assert(controller == null || libraryPath == null);
 
   /// An application controller to use instead of creating one. The widget does
   /// not dispose a controller it was given.
   final AppController? controller;
+  final String? libraryPath;
 
   @override
   State<VerseApp> createState() => _VerseAppState();
@@ -57,7 +59,8 @@ class _VerseAppState extends State<VerseApp> {
   void initState() {
     super.initState();
     _ownsApp = widget.controller == null;
-    _app = widget.controller ?? AppController();
+    _app =
+        widget.controller ?? AppController(repositoryPath: widget.libraryPath);
     _files = VerseFileActions();
     unawaited(_files.cleanUpShareCache());
     _controller = AppControllerAdapter(
@@ -363,6 +366,7 @@ class _VerseAppShellState extends State<VerseAppShell>
   StreamSubscription<UiNotice>? _notices;
   Timer? _exitBackTimer;
   bool _exitBackArmed = false;
+  Future<AppExitResponse>? _exitRequest;
 
   /// The account-change dialog was shown for the current `account_changed`
   /// stop; cleared when the stop is resolved so it can appear again.
@@ -378,6 +382,20 @@ class _VerseAppShellState extends State<VerseAppShell>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) widget.controller.onAppResumed();
+  }
+
+  @override
+  Future<AppExitResponse> didRequestAppExit() => _exitRequest ??=
+      _confirmWindowExit().whenComplete(() => _exitRequest = null);
+
+  Future<AppExitResponse> _confirmWindowExit() async {
+    if (widget.controller.state.route != VerseRoute.editor ||
+        !widget.controller.state.editorDirty) {
+      return AppExitResponse.exit;
+    }
+    if (!mounted || _backInFlight) return AppExitResponse.cancel;
+    final discard = await confirmDiscardEdits(context);
+    return mounted && discard ? AppExitResponse.exit : AppExitResponse.cancel;
   }
 
   @override
@@ -427,7 +445,7 @@ class _VerseAppShellState extends State<VerseAppShell>
 
   /// Goes back, first asking whether unsaved editor changes may be discarded.
   Future<void> _requestBack() async {
-    if (_backInFlight) return;
+    if (_backInFlight || _exitRequest != null) return;
     _backInFlight = true;
     try {
       await _goBack();
@@ -587,6 +605,7 @@ class _VerseAppShellState extends State<VerseAppShell>
     final actions = <Widget>[];
     switch (state.activeTab) {
       case VerseTab.songs:
+      case VerseTab.home:
         actions.addAll([
           PopupMenuButton<String>(
             key: const ValueKey('header-overflow-menu'),
@@ -637,7 +656,6 @@ class _VerseAppShellState extends State<VerseAppShell>
             ],
           ),
         ]);
-      case VerseTab.home:
       case VerseTab.settings:
         break;
     }
@@ -667,9 +685,13 @@ class _VerseAppShellState extends State<VerseAppShell>
       });
     }
     // Navigation follows available width so portrait tablets keep the rail.
-    // A compact landscape phone gets it too, but only when the four rail
+    // A compact landscape phone gets it too, but only when the three rail
     // destinations (which do not scroll) fit under the app bar.
-    final railHeight = 54 + 8 + 4 * (56 + 20 * navigationTextScale);
+    const destinations = [VerseTab.home, VerseTab.setlists, VerseTab.settings];
+    final selectedDestination = state.activeTab == VerseTab.songs
+        ? 0
+        : destinations.indexOf(state.activeTab);
+    final railHeight = 54 + 8 + 3 * (56 + 20 * navigationTextScale);
     final availableNavigationHeight =
         size.height -
         MediaQuery.paddingOf(context).vertical -
@@ -736,15 +758,11 @@ class _VerseAppShellState extends State<VerseAppShell>
               if (state.route == VerseRoute.main && useRail && !comparisonMode)
                 NavigationRail(
                   key: const ValueKey('tablet-navigation-rail'),
-                  selectedIndex: state.activeTab.index,
+                  selectedIndex: selectedDestination,
                   onDestinationSelected: (index) =>
-                      controller.setTab(VerseTab.values[index]),
+                      controller.setTab(destinations[index]),
                   labelType: NavigationRailLabelType.all,
                   destinations: [
-                    NavigationRailDestination(
-                      icon: const Icon(Icons.search_rounded),
-                      label: Text(l10n.navHome),
-                    ),
                     NavigationRailDestination(
                       icon: const Icon(Icons.music_note_rounded),
                       label: Text(l10n.navSongs),
@@ -774,17 +792,10 @@ class _VerseAppShellState extends State<VerseAppShell>
         bottomNavigationBar:
             state.route == VerseRoute.main && !useRail && !comparisonMode
             ? AdaptiveBottomNavigation(
-                selectedIndex: state.activeTab.index,
-                onSelected: (index) =>
-                    controller.setTab(VerseTab.values[index]),
-                labels: [
-                  l10n.navHome,
-                  l10n.navSongs,
-                  l10n.navSetlists,
-                  l10n.navSettings,
-                ],
+                selectedIndex: selectedDestination,
+                onSelected: (index) => controller.setTab(destinations[index]),
+                labels: [l10n.navSongs, l10n.navSetlists, l10n.navSettings],
                 icons: const [
-                  Icons.search_rounded,
                   Icons.music_note_rounded,
                   Icons.queue_music_rounded,
                   Icons.tune_rounded,
@@ -812,8 +823,8 @@ class _VerseAppShellState extends State<VerseAppShell>
         break;
     }
     return switch (state.activeTab) {
-      VerseTab.home => VerseHomeScreen(controller: controller, state: state),
-      VerseTab.songs => SongsScreen(controller: controller),
+      VerseTab.home ||
+      VerseTab.songs => VerseHomeScreen(controller: controller, state: state),
       VerseTab.setlists => SetlistsScreen(controller: controller),
       VerseTab.settings => SettingsScreen(
         backupSection: widget.backupController == null

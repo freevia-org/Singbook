@@ -67,7 +67,6 @@ void main() {
             for (var offset = -6; offset <= 6; offset++) 'offset-$offset'
           else
             for (var pitch = 0; pitch < 12; pitch++) 'pitch-$pitch',
-          'no-chords',
         ],
       );
       final play = find.byKey(const ValueKey('start-lyric-scroll'));
@@ -132,15 +131,9 @@ void main() {
       expect(_anchors(controller.state), originalAnchors);
       expect(controller.state.readerTranspose, -1);
 
-      // None hides chords; choosing a real transposition restores them, even
-      // when choosing zero requires no additional shift.
-      await tester.tap(dropdown);
-      await tester.pumpAndSettle();
-      final none = find.text(l10nOf(tester).playerChordsNone);
-      await tester.ensureVisible(none);
-      await tester.tap(none);
-      await _settle(tester, controller);
-      expect(controller.state.showChords, isFalse);
+      expect(controller.state.showChords, isTrue);
+      expect(_chords(controller.state), fixture.down);
+      expect(controller.state.readerTranspose, -1);
       await _choose(
         tester,
         controller,
@@ -193,10 +186,7 @@ void main() {
               .itemBuilder(tester.element(dropdown))
               .whereType<PopupMenuItem<String>>()
               .map((item) => item.value),
-          [
-            for (var offset = -6; offset <= 6; offset++) 'offset-$offset',
-            'no-chords',
-          ],
+          [for (var offset = -6; offset <= 6; offset++) 'offset-$offset'],
         );
         expect(
           find.descendant(

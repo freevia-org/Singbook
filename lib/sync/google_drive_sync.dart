@@ -5,6 +5,8 @@ import '../domain/chordpro.dart';
 import '../domain/models.dart';
 import 'drive_store.dart';
 import 'google_auth.dart';
+import 'drive_file_access.dart';
+import 'platform_drive_auth.dart';
 import 'sync_protocol.dart';
 
 export 'drive_store.dart';
@@ -102,7 +104,8 @@ class _Run {
 
 /// Google Drive sync with one cloud file per item, updated in place.
 ///
-/// Cloud layout (Drive appDataFolder, scope `drive.appdata` only):
+/// Cloud layout (private `appDataFolder` by default; an explicitly selected
+/// visible folder uses the separate `drive.file` authorization):
 ///  * `song-<id>.cho`      the complete x_verse ChordPro payload of a song;
 ///  * `setlist-<id>.json`  a setlist as JSON.
 /// Each file carries `appProperties` `{verseSchema: 2, kind, hash}` where
@@ -122,12 +125,14 @@ class GoogleDriveSyncService {
     required this.repository,
     DriveAuthorization? auth,
     SyncCloudStore? store,
+    DriveFileAccessCapability? fileAccess,
+    this.storeFactory,
     this.maxItems = maxSyncItems,
     this.concurrency = 4,
     DateTime Function()? clock,
   }) : auth =
            auth ??
-           GoogleDriveAuth(
+           createPlatformDriveAuthorization(
              loadSavedIdentity: () async {
                final raw = await repository.getSetting(_googleSessionKey);
                if (raw is Map &&
@@ -146,11 +151,39 @@ class GoogleDriveSyncService {
                  repository.setSetting(_googleSessionKey, identity),
            ),
        _providedStore = store,
+       _providedFileAccess = fileAccess,
        _clock = clock; // ignore: prefer_initializing_formals
 
   final LibraryRepository repository;
   final DriveAuthorization auth;
   final SyncCloudStore? _providedStore;
+  final DriveFileAccessCapability? _providedFileAccess;
+  final VisibleDriveFolderStore Function(DriveAuthorization, String?)?
+  storeFactory;
+  late final DriveFileAccessCapability? _fileAccess =
+      _providedFileAccess ??
+      (auth is DriveFileAccessCapability
+          ? auth as DriveFileAccessCapability
+          : createPlatformDriveFileAccess(auth));
+
+  DriveFileAccessCapability _requireFileAccess() =>
+      _fileAccess ?? (throw const SyncException('folder_picker_unavailable'));
+
+  VisibleDriveFolderStore _newStore(
+    DriveAuthorization authorization,
+    String? folderId,
+  ) =>
+      storeFactory?.call(authorization, folderId) ??
+      DriveAppDataStore(authorization: authorization, folderId: folderId);
+
+  void _checkIdentity(String id, String? email) {
+    if (!auth.isConnected ||
+        auth.accountId != id ||
+        auth.accountEmail != email) {
+      throw const SyncException('cancelled');
+    }
+  }
+
   final DateTime Function()? _clock;
 
   /// Songs plus setlists. Beyond it sync fails with `remote_library_too_large`
@@ -162,7 +195,9 @@ class GoogleDriveSyncService {
 
   SyncCloudStore? _activeStore;
   SyncCloudStore get _store =>
-      _activeStore ??= _providedStore ?? DriveAppDataStore(authorization: auth);
+      _activeStore ??= _providedStore ?? _newStore(auth, null);
+
+  DriveFolderInfo? selectedDriveFolder;
   final _codec = ChordProCodec();
   bool _busy = false, _cancelled = false;
   bool _confirmDeletions = false;
@@ -188,16 +223,21 @@ class GoogleDriveSyncService {
 
   Future<void> connect() async {
     if (_busy) throw const SyncException('sync_in_progress');
+    invalidatePlatformDriveFileAccess(_fileAccess);
     await auth.connect();
   }
 
-  Future<bool> restore() => auth.restore();
+  Future<bool> restore() {
+    invalidatePlatformDriveFileAccess(_fileAccess);
+    return auth.restore();
+  }
 
   /// Signs out of this device only. The local library, the baselines and the
   /// cloud files are untouched, so signing in again with the same account
   /// continues where it stopped.
   Future<void> disconnect() async {
     if (_busy) throw const SyncException('sync_in_progress');
+    invalidatePlatformDriveFileAccess(_fileAccess);
     await auth.disconnect();
   }
 
@@ -303,6 +343,252 @@ class GoogleDriveSyncService {
     );
   }
 
+  static String _folderSetting(String account) => 'sync.driveFolder.$account';
+  static String _cleanupSetting(String account) =>
+      'sync.driveFolderCleanup.$account';
+
+  Future<void> refreshDriveFolderSelection() async {
+    final id = auth.accountId;
+    if (id == null || !auth.isConnected) return;
+    await _configureStore(_accountHash(id));
+  }
+
+  Future<void> _configureStore(String account) async {
+    if (_providedStore != null) return;
+    final saved = await repository.getSetting(_folderSetting(account));
+    final folderId = saved is Map ? saved['id'] as String? : null;
+    final folderName = saved is Map ? saved['name'] as String? : null;
+    selectedDriveFolder = folderId == null || folderName == null
+        ? null
+        : DriveFolderInfo(id: folderId, name: folderName);
+    final previous = _activeStore;
+    _activeStore = folderId == null
+        ? _newStore(auth, null)
+        : _newStore(_requireFileAccess().fileAuthorization, folderId);
+    if (previous is VisibleDriveFolderStore &&
+        !identical(previous, _activeStore)) {
+      previous.close();
+    }
+  }
+
+  /// Selects a visible Drive folder and migrates Singbook's managed files.
+  /// The old location remains authoritative until every destination copy has
+  /// been verified. Old copies are retained as a backup because Drive offers
+  /// no revision-conditioned delete for safe cleanup.
+  Future<DriveFolderInfo> chooseVisibleDriveFolder() async {
+    if (_providedStore != null) {
+      throw const SyncException('folder_picker_unavailable');
+    }
+    if (_busy) throw const SyncException('sync_in_progress');
+    if (!auth.configured) throw const SyncException('not_configured');
+    if (!auth.isConnected || auth.accountId == null) {
+      throw const SyncException('not_signed_in');
+    }
+    final identityId = auth.accountId!;
+    final identityEmail = auth.accountEmail;
+    final account = _accountHash(identityId);
+    final access = _requireFileAccess();
+    final folderId = await access.pickFolder(accountEmail: identityEmail);
+    _checkIdentity(identityId, identityEmail);
+    final target = _newStore(access.fileAuthorization, folderId);
+    try {
+      final info = await target.verifyFolder();
+      _checkIdentity(identityId, identityEmail);
+      final savedLocation = await repository.getSetting(
+        _folderSetting(account),
+      );
+      _checkIdentity(identityId, identityEmail);
+      final oldFolderId = savedLocation is Map
+          ? savedLocation['id'] as String?
+          : null;
+      if (oldFolderId == folderId) {
+        // Re-picking the current folder refreshes its drive.file grant and lets
+        // a user recover cleanly after permission revocation.
+        await repository.setSetting(_folderSetting(account), {
+          'id': info.id,
+          'name': info.name,
+        });
+        selectedDriveFolder = info;
+        await sync();
+        return info;
+      }
+      // Reconcile local edits and remote changes before moving the current
+      // library, so migration starts from one agreed state. The picker has
+      // already granted access to the destination folder.
+      await sync();
+      _checkIdentity(identityId, identityEmail);
+      _busy = true;
+      try {
+        final source = _store;
+        final sourceFiles = await source.listFiles();
+        final targetFiles = await target.listFiles();
+        final alreadyPresent = <String>{
+          for (final file in targetFiles) '${file.name}:${file.hash ?? ''}',
+        };
+        for (final file in sourceFiles) {
+          final hash = file.hash;
+          if (hash == null || !isSyncHash(hash)) {
+            throw const SyncException('invalid_remote_data');
+          }
+          final content = await source.readFile(file.id);
+          if (syncHash(content) != hash) {
+            throw const SyncException('invalid_remote_data');
+          }
+          final key = '${file.name}:$hash';
+          if (!alreadyPresent.contains(key)) {
+            await target.createFile(file.name, content, file.properties);
+            alreadyPresent.add(key);
+          }
+        }
+
+        // A fresh status listing and body hash check closes the gap between
+        // upload acknowledgement and switching the active location.
+        final verified = await target.listFiles();
+        final verifiedPairs = {
+          for (final file in verified) '${file.name}:${file.hash ?? ''}',
+        };
+        for (final file in sourceFiles) {
+          if (!verifiedPairs.contains('${file.name}:${file.hash}')) {
+            throw const SyncException('folder_migration_incomplete');
+          }
+        }
+        for (final file in sourceFiles) {
+          final copied = verified.firstWhere(
+            (candidate) =>
+                candidate.name == file.name && candidate.hash == file.hash,
+          );
+          if (syncHash(await target.readFile(copied.id)) != file.hash) {
+            throw const SyncException('folder_migration_incomplete');
+          }
+        }
+
+        // Activation and the cleanup journal are one SQLite commit. A crash
+        // cannot leave a cleanup journal pointing at the still-active source.
+        await repository.setSettingsAtomically({
+          _cleanupSetting(account): {
+            'version': 1,
+            'sourceFolderId': oldFolderId,
+            'destinationFolderId': info.id,
+            'verifiedFileCount': sourceFiles.length,
+          },
+          _folderSetting(account): {'id': info.id, 'name': info.name},
+        });
+        selectedDriveFolder = info;
+        await _configureStore(account);
+        await _completeFolderMigration(account);
+        return info;
+      } finally {
+        _busy = false;
+      }
+    } finally {
+      target.close();
+    }
+  }
+
+  /// Imports explicitly selected ChordPro files into the visible library.
+  /// This uses the per-file grants from Google Picker instead of asking for
+  /// permission to scan every file in a user's Drive folder.
+  Future<int> importChordProFilesFromDrive() async {
+    if (_providedStore != null) {
+      throw const SyncException('folder_picker_unavailable');
+    }
+    if (_busy) throw const SyncException('sync_in_progress');
+    if (!auth.isConnected || auth.accountId == null) {
+      throw const SyncException('not_signed_in');
+    }
+    final access = _requireFileAccess();
+    await sync();
+    _busy = true;
+    try {
+      final identityId = auth.accountId!;
+      final identityEmail = auth.accountEmail;
+      final account = _accountHash(auth.accountId!);
+      final saved = await repository.getSetting(_folderSetting(account));
+      final folderId = saved is Map ? saved['id'] as String? : null;
+      if (folderId == null) {
+        throw const SyncException('visible_folder_required');
+      }
+      final store = _store;
+      if (store is! VisibleDriveFolderStore || store.folderId != folderId) {
+        throw const SyncException('visible_folder_required');
+      }
+      final ids = await access.pickChordProFiles(accountEmail: identityEmail);
+      _checkIdentity(identityId, identityEmail);
+      if (ids.isEmpty) return 0;
+      await store.verifyFolder();
+      _checkIdentity(identityId, identityEmail);
+      var imported = 0;
+      for (final sourceId in ids.toSet()) {
+        final source = await store.getFile(sourceId);
+        if (source == null || !source.name.toLowerCase().endsWith('.cho')) {
+          continue;
+        }
+        final id = 'drive-${syncHash(sourceId).substring(0, 32)}';
+        final existing = await store.listFiles();
+        if (existing.any((file) {
+          final item = _itemForFile(file);
+          return item?.kind == 'song' && item?.id == id;
+        })) {
+          continue;
+        }
+        final content = await store.readFile(sourceId);
+        final normalized = _codec.encode(
+          _codec.decode(content).copyWith(id: id),
+        );
+        final properties = {
+          'kind': 'song',
+          'id': id,
+          'hash': syncHash(normalized),
+        };
+        if (source.parents.contains(folderId)) {
+          // The user selected this file in Drive, so `drive.file` grants access
+          // to adopt and track the existing item in place.
+          final latest = await store.getFile(sourceId);
+          if (latest == null || latest.version != source.version) continue;
+          await store.updateFile(sourceId, normalized, properties);
+        } else {
+          // A file outside the chosen library is copied into it; the source is
+          // left untouched, and the in-folder copy becomes the synced item.
+          await store.createFile(
+            syncFileName('song', id),
+            normalized,
+            properties,
+          );
+        }
+        imported++;
+      }
+      return imported;
+    } finally {
+      _busy = false;
+    }
+  }
+
+  Future<void> _completeFolderMigration(String account) async {
+    final pending = await repository.getSetting(_cleanupSetting(account));
+    if (pending is! Map || pending['destinationFolderId'] is! String) return;
+    final active = await repository.getSetting(_folderSetting(account));
+    final destinationFolderId = pending['destinationFolderId'] as String?;
+    // Never clean a source until the atomically committed active location
+    // proves that this journal's destination is authoritative.
+    if (destinationFolderId == null ||
+        active is! Map ||
+        active['id'] != destinationFolderId) {
+      return;
+    }
+    final destination = _store;
+    if (destination is! VisibleDriveFolderStore ||
+        destination.folderId != destinationFolderId) {
+      return;
+    }
+    await destination.verifyFolder();
+    // This journal marks a committed folder switch, not permission to delete
+    // the source. The Drive v3 delete endpoint has no revision precondition, so
+    // a final version check would still leave a race that could erase a new
+    // edit. Keep all source files as a recoverable backup, then retire only the
+    // journal after the active destination folder is available again.
+    await repository.setSetting(_cleanupSetting(account), null);
+  }
+
   // ---- sync ------------------------------------------------------------
 
   Future<SyncReport> sync() async {
@@ -328,6 +614,19 @@ class GoogleDriveSyncService {
         });
       } else if (bound['id'] != account) {
         throw const SyncException('account_changed');
+      }
+      await _configureStore(account);
+      await _completeFolderMigration(account);
+      final active = _activeStore;
+      if (selectedDriveFolder != null && active is VisibleDriveFolderStore) {
+        final verifiedFolder = await active.verifyFolder();
+        if (verifiedFolder.name != selectedDriveFolder!.name) {
+          selectedDriveFolder = verifiedFolder;
+          await repository.setSetting(_folderSetting(account), {
+            'id': verifiedFolder.id,
+            'name': verifiedFolder.name,
+          });
+        }
       }
       final pending = await repository.getSetting(_replaceKey);
       final replace =
@@ -466,7 +765,7 @@ class GoogleDriveSyncService {
   /// One pass over the whole library: list, decide per item, act.
   Future<void> _round(_Run run) async {
     _check(run);
-    final files = await _store.listFiles();
+    final files = await _folderStatus(run);
     _check(run);
     final local = await _localSnapshot();
     final baselines = await repository.loadSyncBaselines(run.account);
@@ -474,7 +773,7 @@ class GoogleDriveSyncService {
     // Group cloud files by item. Foreign names are not ours and are ignored.
     final groups = <String, List<DriveFile>>{};
     for (final file in files) {
-      final parsed = parseSyncFileName(file.name);
+      final parsed = _itemForFile(file);
       if (parsed == null) continue;
       (groups['${parsed.kind}:${parsed.id}'] ??= []).add(file);
     }
@@ -561,6 +860,65 @@ class GoogleDriveSyncService {
     await _flush(run);
   }
 
+  ({String kind, String id})? _itemForFile(DriveFile file) {
+    final parsed = parseSyncFileName(file.name);
+    if (parsed != null) return parsed;
+    final kind = file.properties['kind'], id = file.properties['id'];
+    if (kind == null || id == null || !isSyncItemId(kind, id)) return null;
+    return (kind: kind, id: id);
+  }
+
+  /// Checks the visible folder on every pass and refreshes app hashes when
+  /// someone edits a Singbook-managed file in Drive.
+  Future<List<DriveFile>> _folderStatus(_Run run) async {
+    final store = _store;
+    if (store is! DriveAppDataStore || store.folderId == null) {
+      return store.listFiles();
+    }
+    await store.verifyFolder();
+    var files = await store.listFiles();
+    var refreshed = false;
+    for (final file in files) {
+      _check(run);
+      final remoteMd5 = file.md5Checksum;
+      if (remoteMd5 == null || file.properties['md5'] == remoteMd5) continue;
+      final identity = _itemForFile(file);
+      if (identity == null) continue;
+      final content = await store.readFile(file.id);
+      try {
+        final String normalized;
+        if (identity.kind == 'song') {
+          normalized = _codec.encode(
+            _codec.decode(content).copyWith(id: identity.id),
+          );
+        } else {
+          final setlist = SetlistDocument.fromJson(
+            jsonMap(jsonDecode(content)),
+          );
+          normalized = jsonEncode(setlist.copyWith(id: identity.id).toJson());
+        }
+        final latest = await store.getFile(file.id);
+        if (latest == null ||
+            latest.version != file.version ||
+            latest.md5Checksum != remoteMd5) {
+          continue;
+        }
+        await store.updateFile(file.id, normalized, {
+          'kind': identity.kind,
+          'id': identity.id,
+          'hash': syncHash(normalized),
+        });
+        refreshed = true;
+      } on _Stale {
+        continue;
+      } on Object {
+        run.skipCodes.add('invalid_remote_data');
+      }
+    }
+    if (refreshed) files = await store.listFiles();
+    return files;
+  }
+
   /// Refuses to apply a sync that would delete a large part of the library
   /// only because the cloud no longer lists it (a wiped appDataFolder, a
   /// partial listing). Nothing has been changed yet when this throws; the user
@@ -598,7 +956,7 @@ class GoogleDriveSyncService {
     _check(run);
     final present = <String>{};
     for (final file in await _store.listFiles()) {
-      final parsed = parseSyncFileName(file.name);
+      final parsed = _itemForFile(file);
       if (parsed != null) present.add('${parsed.kind}:${parsed.id}');
     }
     final result = <_Item>[];
@@ -754,7 +1112,7 @@ class GoogleDriveSyncService {
       throw const SyncException('local_file_too_large');
     }
     final hash = syncHash(local.content);
-    final properties = {'kind': it.kind, 'hash': hash};
+    final properties = {'kind': it.kind, 'id': it.id, 'hash': hash};
     final cloud = it.cloud;
     if (cloud == null) {
       final latest = await _readLocal(it.kind, it.id);
@@ -1130,7 +1488,7 @@ class GoogleDriveSyncService {
 
   void close() {
     final store = _activeStore;
-    if (_providedStore == null && store is DriveAppDataStore) {
+    if (_providedStore == null && store is VisibleDriveFolderStore) {
       store.close();
     }
   }

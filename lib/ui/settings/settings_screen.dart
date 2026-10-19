@@ -163,6 +163,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
         const SizedBox(height: 12),
         Card(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _LabeledDropdown<String>(
+                label: l10n.settingsStartupView,
+                value: widget.controller.state.startupSongsView,
+                entries: [
+                  ('recent', l10n.searchRecentTab),
+                  ('library', l10n.songsLibraryView),
+                  ('favorites', l10n.searchFavoritesTab),
+                  ('online', l10n.searchOnlineTab),
+                  ('last', l10n.settingsStartupLastView),
+                ],
+                onChanged: (value) {
+                  if (value != null) {
+                    widget.controller.setStartupSongsView(value);
+                  }
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: Text(
+                  l10n.settingsStartupViewHint,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Card(
+          child: Column(
             children: [
               _menu(
                 context,
@@ -621,10 +651,22 @@ class _SettingsSectionScreenState extends State<_SettingsSectionScreen> {
                       },
                     ),
                     SwitchListTile(
-                      title: Text(l10n.settingsDefaultShowChords),
+                      title: Text(l10n.readerShowChords),
                       subtitle: Text(l10n.settingsDefaultShowChordsHint),
                       value: state.showChords,
                       onChanged: controller.setShowChords,
+                    ),
+                    SwitchListTile(
+                      title: Text(l10n.settingsShowSections),
+                      subtitle: Text(l10n.settingsShowSectionsHint),
+                      value: state.showSections,
+                      onChanged: controller.setShowSections,
+                    ),
+                    SwitchListTile(
+                      title: Text(l10n.settingsShowPlayerControls),
+                      subtitle: Text(l10n.settingsShowPlayerControlsHint),
+                      value: state.playerControlsExpanded,
+                      onChanged: controller.setPlayerControlsExpanded,
                     ),
                     SwitchListTile(
                       title: Text(l10n.settingsDefaultAutoscroll),

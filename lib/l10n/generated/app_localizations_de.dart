@@ -1417,6 +1417,70 @@ class AppLocalizationsDe extends AppLocalizations {
       'Synchronisiert wird nach dem Verbinden sowie nach dem Hinzufügen, Bearbeiten oder Entfernen eines Songs.';
 
   @override
+  String get accountDriveFolder => 'Bibliotheksordner von Google Drive';
+
+  @override
+  String get accountPrivateDriveFolder => 'Privater Singbook-Ordner';
+
+  @override
+  String get accountChooseDriveFolder => 'Ordner auswählen';
+
+  @override
+  String get accountDriveFolderMoveTitle =>
+      'Verschieben Sie Ihre Singbook-Bibliothek?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Wählen Sie einen sichtbaren Google Drive-Ordner. Singbook kopiert und überprüft Ihre Songs und Setlists dort, bevor Sie dorthin wechseln. Originaldateien bleiben als Backup an ihrem vorherigen Speicherort. Andere Dateien bleiben in Ruhe. ChordPro-Dateien, die Sie in diesen Ordner importieren, werden zur Synchronisierung übernommen und erhalten Singbook-Metadaten.';
+
+  @override
+  String get accountImportChordPro => 'Importieren Sie ChordPro von Drive';
+
+  @override
+  String get accountImportChordProHint =>
+      'Wählen Sie .cho-Dateien aus, die Sie dieser Bibliothek hinzufügen möchten. Bereits im Ordner befindliche Dateien werden übernommen; Dateien an anderer Stelle werden hierher kopiert.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Die Auswahl des Laufwerksordners ist nicht verfügbar';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Wählen Sie auf einem unterstützten Gerät mit der Google-Drive-Auswahl einen sichtbaren Ordner aus.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'Der Singbook Drive-Ordner ist nicht verfügbar';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Wählen Sie den Ordner erneut aus oder stellen Sie ihn in Google Drive wieder her.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook benötigt Zugriff auf diesen Drive-Ordner';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Wählen Sie den Ordner erneut aus, um Zugriff zu gewähren, und synchronisieren Sie dann Ihre Bibliothek.';
+
+  @override
+  String get syncErrorFolderMigration =>
+      'Die Bibliothek konnte noch nicht verschoben werden';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Ihre bisherige Bibliothek ist weiterhin sicher. Überprüfen Sie die Verbindung und wählen Sie den Ordner erneut aus, um es erneut zu versuchen.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Wählen Sie zunächst einen sichtbaren Drive-Ordner';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Vor dem Importieren von Dateien aus Drive ist ein sichtbarer Bibliotheksordner erforderlich.';
+
+  @override
   String get accountSignOutTitle => 'Von diesem Konto abmelden?';
 
   @override
@@ -1947,4 +2011,37 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get playerEstimatedKey => 'Geschätzte Tonart';
+
+  @override
+  String get songsLibraryView => 'Bibliothek';
+
+  @override
+  String get settingsStartupView => 'Startansicht';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Wähle die Songansicht aus, die beim Öffnen der App angezeigt wird.';
+
+  @override
+  String get settingsStartupLastView => 'Zuletzt geöffnet';
+
+  @override
+  String get playerExpandControls => 'Wiedergabesteuerung anzeigen';
+
+  @override
+  String get playerCollapseControls => 'Wiedergabesteuerung ausblenden';
+
+  @override
+  String get settingsShowSections => 'Abschnittsüberschriften anzeigen';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Zeige Überschriften für Strophen, Refrain und andere Abschnitte im Songtext an.';
+
+  @override
+  String get settingsShowPlayerControls => 'Wiedergabesteuerung anzeigen';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Du kannst das Playerfeld auch antippen oder wischen, um es ein- oder auszublenden.';
 }

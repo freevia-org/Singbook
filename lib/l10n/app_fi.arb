@@ -831,5 +831,44 @@
       }
     }
   },
-  "playerEstimatedKey": "Arvioitu sävellaji"
+  "accountDriveFolder": "Google Drive -kirjastokansio",
+  "accountPrivateDriveFolder": "Yksityinen laulukirjakansio",
+  "accountChooseDriveFolder": "Valitse kansio",
+  "accountDriveFolderMoveTitle": "Siirretäänkö Singbook-kirjastosi?",
+  "accountDriveFolderMoveBody": "Valitse näkyvä Google Drive -kansio. Singbook kopioi ja vahvistaa kappaleesi ja settilistasi sinne ennen kuin vaihdat siihen. Alkuperäiset tiedostot pysyvät varmuuskopiona entisessä paikassaan. Muut tiedostot jätetään yksin. Tähän kansioon tuomasi ChordPro-tiedostot otetaan käyttöön synkronointiin ja Singbookin metatietojen vastaanottamiseen.",
+  "accountImportChordPro": "Tuo ChordPro Drivesta",
+  "accountImportChordProHint": "Valitse tähän kirjastoon lisättävät .cho-tiedostot. Kansiossa jo olevat tiedostot otetaan käyttöön; muualla olevat tiedostot kopioidaan tänne.",
+  "syncErrorFolderPickerUnavailable": "Drive-kansion valinta ei ole käytettävissä",
+  "syncErrorFolderPickerUnavailableHint": "Valitse näkyvä Drive-kansio Google Driven valitsimella tuetulla laitteella.",
+  "syncErrorDriveFolderMissing": "Singbook Drive -kansio ei ole käytettävissä",
+  "syncErrorDriveFolderMissingHint": "Valitse kansio uudelleen tai palauta se Google Driveen.",
+  "syncErrorDriveFileAuthorization": "Singbook tarvitsee pääsyn tähän Drive-kansioon",
+  "syncErrorDriveFileAuthorizationHint": "Myönnä käyttöoikeus valitsemalla kansio uudelleen ja synkronoi sitten kirjastosi.",
+  "syncErrorFolderMigration": "Kirjastoa ei voitu vielä siirtää",
+  "syncErrorFolderMigrationHint": "Edellinen kirjastosi on edelleen turvassa. Tarkista yhteys ja yritä uudelleen valitsemalla kansio uudelleen.",
+  "syncErrorVisibleFolderRequired": "Valitse ensin näkyvä Drive-kansio",
+  "syncErrorVisibleFolderRequiredHint": "Näkyvä kirjastokansio tarvitaan ennen tiedostojen tuomista Drivesta.",
+  "playerEstimatedKey": "Arvioitu sävellaji",
+  "songsLibraryView": "Kirjasto",
+  "settingsStartupView": "Aloitusnäkymä",
+  "settingsStartupViewHint": "Valitse kappalenäkymä, joka näytetään sovelluksen avautuessa.",
+  "settingsStartupLastView": "Viimeksi avattu",
+  "playerExpandControls": "Näytä toiston säätimet",
+  "playerCollapseControls": "Piilota toiston säätimet",
+  "settingsShowSections": "Näytä osioiden otsikot",
+  "settingsShowSectionsHint": "Näytä säkeistöjen, kertosäkeen ja muiden osioiden otsikot sanoituksessa.",
+  "settingsShowPlayerControls": "Näytä toiston säätimet",
+  "settingsShowPlayerControlsHint": "Voit näyttää tai piilottaa soitinpaneelin myös napauttamalla tai pyyhkäisemällä sitä.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }

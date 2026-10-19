@@ -291,5 +291,44 @@
       }
     }
   },
-  "playerEstimatedKey": "Приблизителна тоналност"
+  "accountDriveFolder": "Папка на библиотеката на Google Диск",
+  "accountPrivateDriveFolder": "Лична папка Singbook",
+  "accountChooseDriveFolder": "Изберете папка",
+  "accountDriveFolderMoveTitle": "Да преместите вашата библиотека Singbook?",
+  "accountDriveFolderMoveBody": "Изберете видима папка на Google Диск. Singbook ще копира и провери вашите песни и списъци с песни там, преди да премине към него. Оригиналните файлове остават на предишното си местоположение като резервно копие. Други файлове остават сами. Файловете на ChordPro, които импортирате в тази папка, се приемат за синхронизиране и получават метаданни на Singbook.",
+  "accountImportChordPro": "Импортирайте ChordPro от Drive",
+  "accountImportChordProHint": "Изберете .cho файлове, които да добавите към тази библиотека. Приемат се файлове, които вече са в папката; файлове на друго място се копират тук.",
+  "syncErrorFolderPickerUnavailable": "Изборът на папка на Диск не е наличен",
+  "syncErrorFolderPickerUnavailableHint": "Изберете видима папка в Диск чрез инструмента за избор на Google Диск на поддържано устройство.",
+  "syncErrorDriveFolderMissing": "Папката Singbook Drive не е налична",
+  "syncErrorDriveFolderMissingHint": "Изберете папката отново или я възстановете в Google Drive.",
+  "syncErrorDriveFileAuthorization": "Singbook се нуждае от достъп до тази папка на Диск",
+  "syncErrorDriveFileAuthorizationHint": "Изберете отново папката, за да предоставите достъп, след което синхронизирайте библиотеката си.",
+  "syncErrorFolderMigration": "Библиотеката все още не може да бъде преместена",
+  "syncErrorFolderMigrationHint": "Вашата предишна библиотека все още е в безопасност. Проверете връзката и изберете отново папката, за да опитате отново.",
+  "syncErrorVisibleFolderRequired": "Първо изберете видима папка на Диск",
+  "syncErrorVisibleFolderRequiredHint": "Необходима е видима папка на библиотеката, преди да импортирате файлове от Диск.",
+  "playerEstimatedKey": "Приблизителна тоналност",
+  "songsLibraryView": "Библиотека",
+  "settingsStartupView": "Начален изглед",
+  "settingsStartupViewHint": "Изберете изгледа „Песни“, който да се показва при отваряне на приложението.",
+  "settingsStartupLastView": "Последно отворен",
+  "playerExpandControls": "Показване на контролите за изпълнение",
+  "playerCollapseControls": "Скриване на контролите за изпълнение",
+  "settingsShowSections": "Показване на заглавията на частите",
+  "settingsShowSectionsHint": "Показвай заглавията на куплетите, припева и другите части в текста.",
+  "settingsShowPlayerControls": "Показване на контролите за изпълнение",
+  "settingsShowPlayerControlsHint": "Можете също да докоснете или плъзнете панела на плейъра, за да го покажете или скриете.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
+  }
 }
