@@ -50,7 +50,8 @@ they are not yet a claim of full parity.
 ## Google Drive configuration
 
 Create an OAuth client of type **Desktop app** in the **same Google Cloud
-project** as the Android/iOS clients, with Drive API enabled. Do not use the
+project** as the Android/iOS clients, with Drive API and Google Picker API
+enabled. Do not use the
 Android or Web client ID for the desktop loopback flow. Copy its identifier to
 `VERSE_GOOGLE_DESKTOP_CLIENT_ID` in the ignored build configuration. If the
 downloaded desktop registration requires its generated client secret, put it in
@@ -66,7 +67,17 @@ The desktop client must be created before real sign-in/refresh/Drive acceptance
 can be completed. Runtime authorization selection is integrated separately with
 the current mobile Drive changes.
 
-Reference: [Google desktop OAuth](https://developers.google.com/identity/protocols/oauth2/native-app).
+Folder selection and ChordPro imports use Google's native desktop Picker in a
+separate browser authorization containing only `drive.file`. Selected IDs are
+accepted only after Drive's account details match the connected account. Its
+refresh grant is stored separately per desktop client and account; sign-out or
+account switching removes the previous account's grant. Cancellation keeps a
+previously usable grant. Normal sign-in and background sync never open a Picker
+or add this scope automatically. No hosted Picker page or browser API key is
+required for this native flow.
+
+References: [Google desktop OAuth](https://developers.google.com/identity/protocols/oauth2/native-app)
+and [native desktop/mobile Picker](https://developers.google.com/workspace/drive/picker/guides/desktop-mobile-picker).
 
 ## Acceptance evidence
 
@@ -86,6 +97,18 @@ clipboard for an unattended check.
 | Print/links | Windows print/save-to-PDF/cancel and external-browser launch. |
 | Layout | Native screenshots at compact/desktop sizes, large text, DPI changes, themes and RTL. |
 | Delivery | Release bundle extracted outside checkout, dependencies present and clean-machine launch. |
+
+The frozen `e0e14a1` source passed both jobs in
+[CI run 39237237228](https://github.com/freevia-org/Singbook/actions/runs/39237237228):
+analysis/full tests on Linux, Windows debug compilation, isolated native helper
+checks and focused Windows regression tests. This predates the native Picker
+follow-up and does not establish real account, GUI or release-bundle acceptance.
+
+The native Picker follow-up passed 45 focused primary/file authorization and
+loopback tests plus targeted analysis of the six changed Dart source/test files.
+Responses from Google and the vault were mocked; callbacks used real loopback
+HTTP. Evidence is under `artifacts/windows-parity/picker-20261019/`, including
+the initial record-type compile failure, its correction and passing retry.
 
 `pwsh scripts/test-windows-native.ps1` compiles and runs pure native helper
 checks. `-CredentialStore` also creates one unique synthetic vault entry and

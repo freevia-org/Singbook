@@ -7,12 +7,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:singbook/sync/desktop_oauth_flow.dart';
+import 'package:singbook/sync/drive_file_access.dart';
+import 'package:singbook/sync/google_auth.dart';
 import 'package:singbook/sync/sync_protocol.dart';
 import 'package:singbook/sync/windows_google_auth.dart';
 
 class _MemoryCredentials implements DesktopCredentialStore {
   final values = <String, String>{};
   Completer<void>? readWait;
+  Completer<void>? deleteWait;
+  Completer<void>? deleteStarted;
+  String? failPrimaryWriteId;
   int reads = 0;
   @override
   Future<String?> read(String key) async {
@@ -25,15 +30,143 @@ class _MemoryCredentials implements DesktopCredentialStore {
   @override
   Future<void> write(String key, String value) async {
     if (utf8.encode(value).length > 2560) throw StateError('vault_blob_limit');
+    if (failPrimaryWriteId != null &&
+        !key.startsWith('google_drive_file_') &&
+        (jsonDecode(value) as Map<String, dynamic>)['id'] ==
+            failPrimaryWriteId) {
+      throw StateError('vault_write_failed');
+    }
     values[key] = value;
   }
 
   @override
-  Future<void> delete(String key) async => values.remove(key);
+  Future<void> delete(String key) async {
+    if (deleteStarted?.isCompleted == false) deleteStarted!.complete();
+    await deleteWait?.future;
+    values.remove(key);
+  }
 }
 
 Matcher code(String value) =>
     isA<SyncException>().having((e) => e.code, 'code', value);
+
+class _PrimaryFileFixture {
+  static const clientId = 'desktop.apps.googleusercontent.com';
+  static const fileScope = 'https://www.googleapis.com/auth/drive.file';
+  final vault = _MemoryCredentials();
+  final browserUrls = <Uri>[];
+  String id = 'primary-account';
+  String email = 'primary@example.com';
+  bool denyPrimary = false;
+  bool revokePrimary = false;
+  int primaryRefreshes = 0;
+  int fileRefreshes = 0;
+  int aboutRequests = 0;
+  Completer<void>? fileRefreshGate;
+  Completer<void>? fileRefreshStarted;
+  Completer<void>? revokeGate;
+  Completer<void>? revokeStarted;
+
+  late final client = MockClient((request) async {
+    expect(request.url.scheme, 'https');
+    if (request.url.path == '/v1/userinfo') {
+      expect(request.headers['Authorization'], 'Bearer primary-access');
+      return http.Response(
+        jsonEncode({'sub': id, 'email': email, 'email_verified': true}),
+        200,
+      );
+    }
+    if (request.url.path == '/drive/v3/about') {
+      aboutRequests++;
+      expect(
+        request.headers['Authorization'],
+        anyOf('Bearer file-access', 'Bearer file-renewed'),
+      );
+      expect(
+        request.url.queryParameters['fields'],
+        'user(emailAddress,permissionId)',
+      );
+      return http.Response(
+        jsonEncode({
+          'user': {'emailAddress': email, 'permissionId': 'permission-$id'},
+        }),
+        200,
+      );
+    }
+    if (request.url.path == '/drive/v3/files/selected-folder') {
+      return http.Response(
+        '{"id":"selected-folder","mimeType":"application/vnd.google-apps.folder","trashed":false}',
+        200,
+      );
+    }
+    if (request.url.path == '/revoke') {
+      revokeStarted?.complete();
+      await revokeGate?.future;
+      return http.Response('', 200);
+    }
+    expect(request.url.path, '/token');
+    final params = Uri.splitQueryString(request.body);
+    expect(params['client_id'], clientId);
+    final refresh = params['grant_type'] == 'refresh_token';
+    final file = refresh
+        ? params['refresh_token'] == 'file-refresh'
+        : params['code'] == 'file-code';
+    if (refresh && file) {
+      fileRefreshes++;
+      fileRefreshStarted?.complete();
+      await fileRefreshGate?.future;
+    } else if (refresh) {
+      primaryRefreshes++;
+      expect(params['refresh_token'], 'primary-refresh');
+      if (revokePrimary) return http.Response('{"error":"invalid_grant"}', 400);
+    } else {
+      expect(params['code'], file ? 'file-code' : 'primary-code');
+      expect(params['code_verifier']!.length, greaterThanOrEqualTo(43));
+      expect(params['redirect_uri'], startsWith('http://127.0.0.1:'));
+    }
+    return http.Response(
+      jsonEncode({
+        'access_token': file
+            ? (refresh ? 'file-renewed' : 'file-access')
+            : 'primary-access',
+        'refresh_token': file ? 'file-refresh' : 'primary-refresh',
+        'expires_in': 3600,
+        'token_type': 'Bearer',
+        'scope': file
+            ? fileScope
+            : 'openid https://www.googleapis.com/auth/drive.appdata email profile',
+      }),
+      200,
+    );
+  });
+
+  WindowsGoogleDriveAuth createAuth() => WindowsGoogleDriveAuth(
+    clientId: clientId,
+    credentials: vault,
+    client: client,
+    clock: () => DateTime.utc(2026, 10, 19),
+    flow: DesktopOAuthFlow(
+      openBrowser: (uri) async {
+        browserUrls.add(uri);
+        final file = uri.queryParameters['scope'] == fileScope;
+        await callback(uri, {
+          'state': uri.queryParameters['state']!,
+          if (!file && denyPrimary)
+            'error': 'access_denied'
+          else ...{
+            'code': file ? 'file-code' : 'primary-code',
+            if (file)
+              'picked_file_ids':
+                  uri.queryParameters['allow_folder_selection'] == 'true'
+                  ? 'selected-folder'
+                  : 'song-one,song-two',
+          },
+        });
+        return true;
+      },
+    ),
+  );
+}
 
 Future<int> callback(Uri authorization, Map<String, String> query) async {
   final client = HttpClient();
@@ -182,6 +315,257 @@ void main() {
       );
     },
   );
+
+  group('primary Windows auth file capability lifecycle', () {
+    late _PrimaryFileFixture fixture;
+
+    setUp(() => fixture = _PrimaryFileFixture());
+    tearDown(() => fixture.client.close());
+
+    test(
+      'primary scopes stay narrow and both picker delegates cache their grant',
+      () async {
+        final auth = fixture.createAuth();
+        expect(auth, isA<DriveFileAccessCapability>());
+        await auth.connect();
+        expect(fixture.browserUrls, hasLength(1));
+        expect(
+          fixture.browserUrls.single.queryParameters['scope']!
+              .split(' ')
+              .toSet(),
+          {
+            'https://www.googleapis.com/auth/drive.appdata',
+            'openid',
+            'email',
+            'profile',
+          },
+        );
+        expect(fixture.vault.values, hasLength(1));
+
+        expect(
+          await auth.pickFolder(accountEmail: fixture.email),
+          'selected-folder',
+        );
+        expect(await auth.fileAuthorization.accessToken(), 'file-access');
+        expect(await auth.pickChordProFiles(accountEmail: fixture.email), [
+          'song-one',
+          'song-two',
+        ]);
+        expect(fixture.browserUrls, hasLength(3));
+        for (final url in fixture.browserUrls.skip(1)) {
+          expect(url.queryParameters['scope'], _PrimaryFileFixture.fileScope);
+          expect(url.queryParameters['include_granted_scopes'], 'false');
+          expect(url.queryParameters['login_hint'], fixture.email);
+        }
+        expect(
+          fixture.browserUrls[1].queryParameters['allow_folder_selection'],
+          'true',
+        );
+        expect(
+          fixture.browserUrls[2].queryParameters['allow_multiple'],
+          'true',
+        );
+        expect(await auth.fileAuthorization.accessToken(), 'file-access');
+        expect(fixture.fileRefreshes, 0);
+        expect(fixture.aboutRequests, 2);
+        expect(fixture.vault.values, hasLength(2));
+      },
+    );
+
+    test(
+      'restart restores separate primary and file grants without opening consent',
+      () async {
+        final original = fixture.createAuth();
+        await original.connect();
+        await original.pickFolder();
+        final opened = fixture.browserUrls.length;
+        final restarted = fixture.createAuth();
+        expect(await restarted.restore(), isTrue);
+        expect(await restarted.fileAuthorization.accessToken(), 'file-renewed');
+        expect(await restarted.fileAuthorization.accessToken(), 'file-renewed');
+        expect(restarted.fileAuthorization.accountId, restarted.accountId);
+        expect(fixture.primaryRefreshes, 1);
+        expect(fixture.fileRefreshes, 1);
+        expect(fixture.browserUrls, hasLength(opened));
+        for (final encoded in fixture.vault.values.values) {
+          expect(jsonDecode(encoded), isNot(contains('accessToken')));
+        }
+      },
+    );
+
+    for (final initializeFileFacade in [false, true]) {
+      test(
+        'primary disconnect clears saved file grant with facade initialized=$initializeFileFacade',
+        () async {
+          final original = fixture.createAuth();
+          await original.connect();
+          await original.pickFolder();
+          final restarted = fixture.createAuth();
+          expect(await restarted.restore(), isTrue);
+          if (initializeFileFacade) {
+            expect(
+              await restarted.fileAuthorization.accessToken(),
+              'file-renewed',
+            );
+          }
+          expect(fixture.vault.values, hasLength(2));
+          await restarted.disconnect();
+          expect(restarted.isConnected, isFalse);
+          expect(fixture.vault.values, isEmpty);
+          await expectLater(
+            restarted.fileAuthorization.accessToken(),
+            throwsA(code('not_signed_in')),
+          );
+        },
+      );
+    }
+
+    test(
+      'primary account switch deletes the old file grant before new selection',
+      () async {
+        final auth = fixture.createAuth();
+        await auth.connect();
+        await auth.pickFolder();
+        final oldFileKey = fixture.vault.values.keys.singleWhere(
+          (key) => key.startsWith('google_drive_file_'),
+        );
+        fixture.id = 'second-account';
+        fixture.email = 'second@example.com';
+        await auth.connect();
+        expect(auth.accountId, 'second-account');
+        expect(fixture.vault.values, isNot(contains(oldFileKey)));
+        expect(fixture.vault.values, hasLength(1));
+        await expectLater(
+          auth.fileAuthorization.accessToken(),
+          throwsA(code('drive_file_authorization_required')),
+        );
+        expect(await auth.pickFolder(), 'selected-folder');
+        expect(await auth.fileAuthorization.accessToken(), 'file-access');
+        final fileKey = fixture.vault.values.keys.singleWhere(
+          (key) => key.startsWith('google_drive_file_'),
+        );
+        expect(fileKey, isNot(oldFileKey));
+      },
+    );
+
+    test(
+      'failed primary account-switch persistence preserves the prior identity and file grant',
+      () async {
+        final auth = fixture.createAuth();
+        await auth.connect();
+        await auth.pickFolder();
+        final oldId = auth.accountId;
+        final oldEmail = auth.accountEmail;
+        final saved = Map<String, String>.of(fixture.vault.values);
+        fixture.id = 'second-account';
+        fixture.email = 'second@example.com';
+        fixture.vault.failPrimaryWriteId = fixture.id;
+
+        await expectLater(auth.connect(), throwsA(code('sign_in_failed')));
+        expect(auth.isConnected, isTrue);
+        expect(auth.accountId, oldId);
+        expect(auth.accountEmail, oldEmail);
+        expect(fixture.vault.values, saved);
+        expect(await auth.accessToken(), 'primary-access');
+        expect(await auth.fileAuthorization.accessToken(), 'file-access');
+        expect(fixture.fileRefreshes, 0);
+      },
+    );
+
+    test(
+      'cancelled primary reconnect preserves both existing grants',
+      () async {
+        final auth = fixture.createAuth();
+        await auth.connect();
+        await auth.pickFolder();
+        final saved = Map<String, String>.of(fixture.vault.values);
+        fixture.denyPrimary = true;
+        await expectLater(auth.connect(), throwsA(code('cancelled')));
+        expect(auth.isConnected, isTrue);
+        expect(auth.accountId, fixture.id);
+        expect(fixture.vault.values, saved);
+        expect(await auth.accessToken(), 'primary-access');
+        expect(await auth.fileAuthorization.accessToken(), 'file-access');
+      },
+    );
+
+    test(
+      'revoked primary grant also deletes a file grant never loaded after restart',
+      () async {
+        final original = fixture.createAuth();
+        await original.connect();
+        await original.pickFolder();
+        final restarted = fixture.createAuth();
+        expect(await restarted.restore(), isTrue);
+        fixture.revokePrimary = true;
+        await expectLater(
+          restarted.refreshAccessToken(),
+          throwsA(code('authorization_required')),
+        );
+        expect(restarted.isConnected, isFalse);
+        expect(fixture.vault.values, isEmpty);
+        await expectLater(
+          restarted.fileAuthorization.accessToken(),
+          throwsA(code('not_signed_in')),
+        );
+      },
+    );
+
+    test(
+      'reconnect waits for primary and file deletion and remote revocation',
+      () async {
+        final auth = fixture.createAuth();
+        await auth.connect();
+        await auth.pickFolder();
+        final opened = fixture.browserUrls.length;
+        fixture.vault.deleteWait = Completer<void>();
+        fixture.vault.deleteStarted = Completer<void>();
+        fixture.revokeGate = Completer<void>();
+        fixture.revokeStarted = Completer<void>();
+        final disconnect = auth.disconnect();
+        try {
+          await fixture.vault.deleteStarted!.future;
+          await expectLater(auth.connect(), throwsA(code('sync_busy')));
+          expect(fixture.browserUrls, hasLength(opened));
+          fixture.vault.deleteWait!.complete();
+          await fixture.revokeStarted!.future;
+          expect(fixture.vault.values, isEmpty);
+          await expectLater(auth.connect(), throwsA(code('sync_busy')));
+          expect(fixture.browserUrls, hasLength(opened));
+        } finally {
+          if (!fixture.vault.deleteWait!.isCompleted) {
+            fixture.vault.deleteWait!.complete();
+          }
+          fixture.revokeGate!.complete();
+          await disconnect;
+        }
+        await auth.connect();
+        expect(auth.isConnected, isTrue);
+        expect(await auth.accessToken(), 'primary-access');
+        expect(fixture.vault.values, hasLength(1));
+      },
+    );
+
+    test(
+      'primary signout prevents a pending file renewal from restoring credentials',
+      () async {
+        final auth = fixture.createAuth();
+        await auth.connect();
+        await auth.pickFolder();
+        fixture.fileRefreshGate = Completer<void>();
+        fixture.fileRefreshStarted = Completer<void>();
+        final pending = (auth.fileAuthorization as RefreshableAuthorization)
+            .refreshAccessToken();
+        final failure = expectLater(pending, throwsA(code('cancelled')));
+        await fixture.fileRefreshStarted!.future;
+        await auth.disconnect();
+        fixture.fileRefreshGate!.complete();
+        await failure;
+        expect(auth.isConnected, isFalse);
+        expect(fixture.vault.values, isEmpty);
+      },
+    );
+  });
 
   group('Windows Drive authorization', () {
     late _MemoryCredentials vault;

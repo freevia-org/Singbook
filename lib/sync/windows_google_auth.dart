@@ -7,8 +7,10 @@ import 'package:http/http.dart' as http;
 
 import '../providers/native_client.dart';
 import 'desktop_oauth_flow.dart';
+import 'drive_file_access.dart';
 import 'google_auth.dart';
 import 'sync_protocol.dart';
+import 'windows_drive_file_access.dart';
 
 class _InvalidOAuthGrant extends SyncException {
   const _InvalidOAuthGrant() : super('authorization_required');
@@ -41,7 +43,8 @@ class WindowsGoogleDriveAuth
     implements
         DriveAuthorization,
         RefreshableAuthorization,
-        ProfilePhotoAuthorization {
+        ProfilePhotoAuthorization,
+        DriveFileAccessCapability {
   WindowsGoogleDriveAuth({
     this.clientId = const String.fromEnvironment(
       'VERSE_GOOGLE_DESKTOP_CLIENT_ID',
@@ -73,8 +76,31 @@ class WindowsGoogleDriveAuth
   Future<void> _writes = Future.value();
   Future<String>? _refresh;
   Future<bool>? _restore;
+  Future<void>? _disconnect;
   bool _connecting = false;
   int _epoch = 0;
+  WindowsDriveFileAccess? _files;
+
+  WindowsDriveFileAccess get _fileAccess => _files ??= WindowsDriveFileAccess(
+    identity: this,
+    clientId: clientId,
+    clientSecret: clientSecret,
+    credentials: _credentials,
+    flow: _flow,
+    client: _client,
+    clock: _clock,
+  );
+
+  @override
+  DriveAuthorization get fileAuthorization => _fileAccess.fileAuthorization;
+
+  @override
+  Future<String> pickFolder({String? accountEmail}) =>
+      _fileAccess.pickFolder(accountEmail: accountEmail);
+
+  @override
+  Future<List<String>> pickChordProFiles({String? accountEmail}) =>
+      _fileAccess.pickChordProFiles(accountEmail: accountEmail);
 
   String get _key => 'google_drive_${sha256.convert(utf8.encode(clientId))}';
   @override
@@ -116,7 +142,9 @@ class WindowsGoogleDriveAuth
   @override
   Future<void> connect() async {
     if (!configured) throw const SyncException('not_configured');
-    if (_connecting) throw const SyncException('sync_busy');
+    if (_connecting || _disconnect != null) {
+      throw const SyncException('sync_busy');
+    }
     _connecting = true;
     final epoch = ++_epoch;
     try {
@@ -157,6 +185,7 @@ class WindowsGoogleDriveAuth
         throw const SyncException('sign_in_failed');
       }
       if (epoch != _epoch) throw const SyncException('cancelled');
+      final previousAccount = accountId;
       final session = <String, dynamic>{
         'id': identity['sub'],
         'email': identity['email'],
@@ -166,7 +195,13 @@ class WindowsGoogleDriveAuth
         'expiresAt': _expiry(tokens),
       };
       await _write(session);
-      if (epoch == _epoch) _session = session;
+      if (epoch != _epoch) throw const SyncException('cancelled');
+      _session = session;
+      if (previousAccount != null && previousAccount != accountId) {
+        // Keep the old grant usable if persisting the new primary identity
+        // fails. Cleanup targets its captured key after the switch commits.
+        await _fileAccess.clearAccount(accountId: previousAccount);
+      }
     } on SyncException {
       rethrow;
     } catch (_) {
@@ -260,8 +295,14 @@ class WindowsGoogleDriveAuth
       return token;
     } on SyncException catch (error) {
       if (error is _InvalidOAuthGrant && epoch == _epoch) {
-        _session = null;
-        await _write(null);
+        try {
+          await _fileAccess.clearAccount();
+        } finally {
+          if (epoch == _epoch) {
+            _session = null;
+            await _write(null);
+          }
+        }
       }
       rethrow;
     } catch (_) {
@@ -310,12 +351,19 @@ class WindowsGoogleDriveAuth
   }
 
   @override
-  Future<void> disconnect() async {
+  Future<void> disconnect() => _disconnect ??= _disconnectSession()
+      .whenComplete(() => _disconnect = null);
+
+  Future<void> _disconnectSession() async {
     ++_epoch;
     _flow.cancel();
     final refreshToken = _session?['refreshToken'];
+    final clearFiles = _fileAccess.clearAccount();
     _session = null;
-    await _write(null);
+    // Queue both deletions before yielding so a later reconnect writes after
+    // them rather than having its new identity erased by this sign-out.
+    final clearPrimary = _write(null);
+    await Future.wait<void>([clearFiles, clearPrimary]);
     if (refreshToken is! String) return;
     try {
       await _client

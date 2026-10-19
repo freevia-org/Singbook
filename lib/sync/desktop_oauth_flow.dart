@@ -8,6 +8,18 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'sync_protocol.dart';
 
+typedef DesktopAuthorizationGrant = ({
+  String code,
+  String verifier,
+  String redirectUri,
+});
+typedef DesktopPickerGrant = ({
+  String code,
+  String verifier,
+  String redirectUri,
+  List<String> fileIds,
+});
+
 /// A single system-browser authorization with a loopback-only callback.
 /// Codes, state and PKCE verifiers never enter application logs or storage.
 class DesktopOAuthFlow {
@@ -19,7 +31,7 @@ class DesktopOAuthFlow {
   final Future<bool> Function(Uri) _openBrowser;
   final Duration timeout;
   HttpServer? _server;
-  Completer<({String code, String verifier, String redirectUri})>? _pending;
+  Completer<DesktopPickerGrant>? _pending;
 
   static Future<bool> _launchBrowser(Uri uri) =>
       launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -31,13 +43,39 @@ class DesktopOAuthFlow {
         .replaceAll('=', '');
   }
 
-  Future<({String code, String verifier, String redirectUri})> authorize({
+  Future<DesktopAuthorizationGrant> authorize({
     required String clientId,
     required List<String> scopes,
   }) async {
+    final grant = await _authorize(clientId: clientId, scopes: scopes);
+    return (
+      code: grant.code,
+      verifier: grant.verifier,
+      redirectUri: grant.redirectUri,
+    );
+  }
+
+  /// Google's native desktop Picker requires drive.file by itself. Normal
+  /// sign-in scopes cannot be included in this authorization transaction.
+  Future<DesktopPickerGrant> pickDriveFiles({
+    required String clientId,
+    required String accountEmail,
+    bool folders = false,
+  }) => _authorize(
+    clientId: clientId,
+    scopes: const ['https://www.googleapis.com/auth/drive.file'],
+    pickerFolders: folders,
+    accountEmail: accountEmail,
+  );
+
+  Future<DesktopPickerGrant> _authorize({
+    required String clientId,
+    required List<String> scopes,
+    bool? pickerFolders,
+    String? accountEmail,
+  }) async {
     if (_pending != null) throw const SyncException('sync_busy');
-    final pending =
-        Completer<({String code, String verifier, String redirectUri})>();
+    final pending = Completer<DesktopPickerGrant>();
     _pending = pending;
     // Attach an error observer before cancellation can occur during bind/launch.
     final response = pending.future.timeout(
@@ -63,48 +101,96 @@ class DesktopOAuthFlow {
       final verifier = _random();
       final callbackPath = '/oauth/${_random()}';
       final redirectUri = 'http://127.0.0.1:${server.port}$callbackPath';
-      server.listen(
-        (request) async {
-          final query = request.uri.queryParametersAll;
-          if (request.method != 'GET' ||
-              request.uri.path != callbackPath ||
-              query['state']?.length != 1 ||
-              query['state']!.single != state ||
-              pending.isCompleted) {
-            request.response.statusCode = HttpStatus.badRequest;
+      Future<void> handleCallback(HttpRequest request) async {
+        Future<void> reject() async {
+          request.response.statusCode = HttpStatus.badRequest;
+          try {
             await request.response.close();
+          } catch (_) {
+            // A rejected client cannot terminate the real browser's consent.
+          }
+        }
+
+        if (request.method != 'GET' ||
+            request.uri.path != callbackPath ||
+            pending.isCompleted) {
+          await reject();
+          return;
+        }
+        final Map<String, List<String>> query;
+        try {
+          query = request.uri.queryParametersAll;
+        } catch (_) {
+          await reject();
+          return;
+        }
+        if (query['state']?.length != 1 || query['state']!.single != state) {
+          await reject();
+          return;
+        }
+        final code = query['code'];
+        final error = query['error'];
+        request.response.headers.contentType = ContentType.html;
+        request.response.headers.set('Cache-Control', 'no-store');
+        request.response.headers.set(
+          'Content-Security-Policy',
+          "default-src 'none'",
+        );
+        request.response.write(
+          '<!doctype html><meta charset="utf-8"><title>Singbook</title><p>Singbook ✓</p>',
+        );
+        await request.response.close();
+        if (pending.isCompleted) return;
+        if (error != null) {
+          pending.completeError(
+            SyncException(
+              error.singleOrNull == 'access_denied'
+                  ? 'cancelled'
+                  : 'sign_in_failed',
+            ),
+          );
+        } else if (code?.length == 1 && code!.single.isNotEmpty) {
+          final selected = query['picked_file_ids'];
+          final ids = pickerFolders == null
+              ? const <String>[]
+              : (selected?.length == 1
+                    ? selected!.single
+                          .split(',')
+                          .where((id) => id.isNotEmpty)
+                          .toList()
+                    : <String>[]);
+          if (pickerFolders != null && ids.isEmpty) {
+            pending.completeError(const SyncException('cancelled'));
             return;
           }
-          final code = query['code'];
-          final error = query['error'];
-          request.response.headers.contentType = ContentType.html;
-          request.response.headers.set('Cache-Control', 'no-store');
-          request.response.headers.set(
-            'Content-Security-Policy',
-            "default-src 'none'",
-          );
-          request.response.write(
-            '<!doctype html><meta charset="utf-8"><title>Singbook</title><p>Singbook ✓</p>',
-          );
-          await request.response.close();
-          if (pending.isCompleted) return;
-          if (error != null) {
-            pending.completeError(
-              SyncException(
-                error.singleOrNull == 'access_denied'
-                    ? 'cancelled'
-                    : 'sign_in_failed',
-              ),
-            );
-          } else if (code?.length == 1 && code!.single.isNotEmpty) {
-            pending.complete((
-              code: code.single,
-              verifier: verifier,
-              redirectUri: redirectUri,
-            ));
-          } else {
-            pending.completeError(const SyncException('sign_in_failed'));
+          if (ids.length > 10000 ||
+              ids.any(
+                (id) => !RegExp(r'^[A-Za-z0-9_-]{1,512}$').hasMatch(id),
+              ) ||
+              pickerFolders == true && ids.length != 1) {
+            pending.completeError(const SyncException('folder_picker_failed'));
+            return;
           }
+          pending.complete((
+            code: code.single,
+            verifier: verifier,
+            redirectUri: redirectUri,
+            fileIds: List<String>.unmodifiable(ids.toSet()),
+          ));
+        } else {
+          pending.completeError(const SyncException('sign_in_failed'));
+        }
+      }
+
+      server.listen(
+        (request) {
+          unawaited(
+            handleCallback(request).catchError((Object _) {
+              if (!pending.isCompleted) {
+                pending.completeError(const SyncException('network'));
+              }
+            }),
+          );
         },
         onError: (Object _) {
           if (!pending.isCompleted) {
@@ -124,7 +210,15 @@ class DesktopOAuthFlow {
             .replaceAll('=', ''),
         'code_challenge_method': 'S256',
         'access_type': 'offline',
-        'prompt': 'consent select_account',
+        'prompt': pickerFolders == null ? 'consent select_account' : 'consent',
+        if (pickerFolders != null) ...{
+          'trigger_onepick': 'true',
+          'include_granted_scopes': 'false',
+          'login_hint': accountEmail!,
+          if (pickerFolders) 'allow_folder_selection': 'true',
+          if (pickerFolders) 'mimetypes': 'application/vnd.google-apps.folder',
+          if (!pickerFolders) 'allow_multiple': 'true',
+        },
       });
       final launchAndResponse = () async {
         if (!await _openBrowser(url)) {
