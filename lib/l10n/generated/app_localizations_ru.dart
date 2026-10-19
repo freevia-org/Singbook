@@ -1954,4 +1954,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Ещё одна строка, немного [F]ближе.';
+
+  @override
+  String get playerEstimatedKey => 'Предполагаемая тональность';
 }

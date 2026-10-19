@@ -1932,4 +1932,7 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get editorExampleBridge =>
       '[Am]Mais uma linha, um pouco [F]mais perto.';
+
+  @override
+  String get playerEstimatedKey => 'Tonalidade estimada';
 }

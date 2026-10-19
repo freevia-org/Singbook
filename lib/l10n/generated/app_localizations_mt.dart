@@ -1946,4 +1946,7 @@ class AppLocalizationsMt extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Linja oħra, ftit aktar [F]qrib.';
+
+  @override
+  String get playerEstimatedKey => 'Tonalità stmata';
 }

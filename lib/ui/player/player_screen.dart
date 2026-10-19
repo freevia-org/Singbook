@@ -628,6 +628,8 @@ class _PlayerScreenState extends State<PlayerScreen>
     }
 
     final metadata = [
+      if (state.readerKey != null)
+        '${state.readerKeyEstimated ? l10n.playerEstimatedKey : l10n.editorKeyField}: ${state.readerKey}',
       song.artist,
       song.album,
       if (state.readerCapo != null)
@@ -712,7 +714,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                   alignment: AlignmentDirectional.centerStart,
                   child: Text(
                     metadata,
-                    maxLines: 1,
+                    maxLines: state.readerKeyEstimated ? 2 : 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: colors.onSurfaceVariant,

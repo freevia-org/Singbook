@@ -1943,4 +1943,7 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Vēl viena rinda, mazliet [F]tuvāk.';
+
+  @override
+  String get playerEstimatedKey => 'Aptuvenā tonalitāte';
 }

@@ -29,6 +29,28 @@ void main() {
   });
 
   group('editSong', () {
+    test('estimates a key for reader display without trusting or saving it', () async {
+      const body = '[E]One line of melody\n[A/E]Another line singing\n'
+          '[Am/E]A different color\n[C#m]Then the night\n[F#]Turns around\n'
+          '[G#m]And comes back home\n[B]To where it began\n[B/A]Softly now\n'
+          '[D/F#]The song returns\n[E]And settles down';
+      await app.saveSong(_song('keyless', 'Keyless', body: body));
+      await ui.openSong('keyless');
+
+      expect(ui.displayedKey, isNull);
+      expect(ui.state.readerKey, 'E');
+      expect(ui.state.readerKeyEstimated, isTrue);
+      expect(ui.state.song?.key, isNull);
+
+      await ui.transpose(1);
+      expect(ui.state.readerKey, 'F');
+      expect(ui.displayedKey, isNull);
+      await ui.settlePlayerPreferences();
+      final saved = (await repository.getSong('keyless'))!;
+      expect(saved.metadata.containsKey('key'), isFalse);
+      expect(saved.body, body);
+    });
+
     test('does not carry over another song\'s transpose or progress', () async {
       await app.saveSong(_song('a', 'Alpha', metadata: {'key': 'C'}));
       await app.saveSong(_song('b', 'Beta', metadata: {'key': 'C'}));
@@ -160,10 +182,11 @@ SongDocument _song(
   String id,
   String title, {
   JsonMap metadata = const {},
+  String body = '[C]First line\n[G]Second line',
 }) => SongDocument(
   id: id,
   title: title,
   artist: 'Artist',
-  body: '[C]First line\n[G]Second line',
+  body: body,
   metadata: metadata,
 );

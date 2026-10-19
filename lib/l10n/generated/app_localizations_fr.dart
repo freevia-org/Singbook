@@ -1949,4 +1949,7 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get editorExampleBridge =>
       '[Am]Encore une ligne, un peu plus [F]près.';
+
+  @override
+  String get playerEstimatedKey => 'Tonalité estimée';
 }

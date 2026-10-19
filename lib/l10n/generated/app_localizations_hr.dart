@@ -1937,4 +1937,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Još jedan redak, malo [F]bliže.';
+
+  @override
+  String get playerEstimatedKey => 'Procijenjeni tonalitet';
 }

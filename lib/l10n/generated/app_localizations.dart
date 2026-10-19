@@ -3371,6 +3371,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'[Am]One more line, a little [F]closer.'**
   String get editorExampleBridge;
+
+  /// No description provided for @playerEstimatedKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated key'**
+  String get playerEstimatedKey;
 }
 
 class _AppLocalizationsDelegate

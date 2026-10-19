@@ -830,5 +830,6 @@
         "type": "int"
       }
     }
-  }
+  },
+  "playerEstimatedKey": "Tonalidad estimada"
 }

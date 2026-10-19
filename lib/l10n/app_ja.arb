@@ -831,5 +831,6 @@
         "type": "int"
       }
     }
-  }
+  },
+  "playerEstimatedKey": "推定キー"
 }

@@ -1956,4 +1956,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Ще один рядок, на крок [F]ближче.';
+
+  @override
+  String get playerEstimatedKey => 'Орієнтовна тональність';
 }

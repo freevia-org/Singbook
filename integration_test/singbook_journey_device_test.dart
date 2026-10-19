@@ -342,7 +342,13 @@ void main() {
       final expectedContributors = contributingProviderIds(
         app.combined!,
       ).length;
-      expect(expectedContributors, 2);
+      expect(expectedContributors, 4);
+      expect(contributingProviderIds(app.combined!), {
+        _catalogId,
+        _chordSourceId,
+        _lyricSourceId,
+        _timingOnlySourceId,
+      });
       expect(find.textContaining('#'), findsNothing);
       await _capture(binding, '14_source_comparison');
       final comparisonCounts = find.byKey(
@@ -364,7 +370,7 @@ void main() {
           .state
           .comparison!
           .suggested!;
-      expect(combinedVersion.contributions, hasLength(2));
+      expect(combinedVersion.contributions, hasLength(4));
       final infoSheet = find.byKey(const ValueKey('version-info-sheet'));
       final infoScrollable = find
           .descendant(of: infoSheet, matching: find.byType(Scrollable))
@@ -1434,6 +1440,7 @@ Future<Map<String, Object>> runSingbookFixturePreflight() async {
     'mainUsable': usableCount(main.results),
     'mainUnavailableCount': unavailableCount(main.checks),
     'mainContributors': contributingProviderIds(combined).length,
+    'mainContributorIds': contributingProviderIds(combined).toList()..sort(),
     'mainTimingOnlyState': main.checks[_timingOnlySourceId]?.state ?? 'missing',
     'mainUnavailableState':
         main.checks[_unavailableSourceId]?.state ?? 'missing',

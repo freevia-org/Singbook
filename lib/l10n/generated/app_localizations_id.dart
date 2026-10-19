@@ -1924,4 +1924,7 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get editorExampleBridge =>
       '[Am]Satu baris lagi, sedikit lebih [F]dekat.';
+
+  @override
+  String get playerEstimatedKey => 'Nada dasar perkiraan';
 }

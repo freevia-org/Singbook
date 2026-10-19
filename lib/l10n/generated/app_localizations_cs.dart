@@ -1935,4 +1935,7 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Ještě jeden řádek, o něco [F]blíž.';
+
+  @override
+  String get playerEstimatedKey => 'Odhadovaná tónina';
 }

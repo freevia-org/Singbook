@@ -1914,4 +1914,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Thêm một dòng nữa, gần [F]hơn chút.';
+
+  @override
+  String get playerEstimatedKey => 'Tông ước tính';
 }

@@ -1943,4 +1943,7 @@ class AppLocalizationsGa extends AppLocalizations {
   @override
   String get editorExampleBridge =>
       '[Am]Líne amháin eile, beagán níos [F]gaire.';
+
+  @override
+  String get playerEstimatedKey => 'Tón measta';
 }

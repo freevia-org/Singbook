@@ -1909,4 +1909,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]एक पंक्ति और, थोड़ा [F]करीब।';
+
+  @override
+  String get playerEstimatedKey => 'अनुमानित स्वर';
 }

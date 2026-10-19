@@ -1825,4 +1825,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]再写一行，靠近 [F]一点。';
+
+  @override
+  String get playerEstimatedKey => '估计调性';
 }

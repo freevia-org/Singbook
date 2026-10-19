@@ -90,6 +90,10 @@ void main() {
       expect(_chords(controller.state), fixture.shifted);
       expect(_anchors(controller.state), originalAnchors);
       expect(controller.state.readerKey, fixture.shiftedKey);
+      expect(
+        controller.state.readerKeyEstimated,
+        fixture.key == null && fixture.shiftedKey != null,
+      );
       expect(controller.state.readerTranspose, 2);
       expect(
         VerseUiState.withPosition(controller.state, 1, null).readerTranspose,

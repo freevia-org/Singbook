@@ -1919,4 +1919,7 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Vielä yksi rivi, hieman [F]lähempänä.';
+
+  @override
+  String get playerEstimatedKey => 'Arvioitu sävellaji';
 }

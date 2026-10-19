@@ -1946,4 +1946,7 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Άλλος ένας στίχος, λίγο πιο [F]κοντά.';
+
+  @override
+  String get playerEstimatedKey => 'Εκτιμώμενη τονικότητα';
 }

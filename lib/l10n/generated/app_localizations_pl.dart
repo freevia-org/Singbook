@@ -1953,4 +1953,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Jeszcze jeden wers, trochę [F]bliżej.';
+
+  @override
+  String get playerEstimatedKey => 'Szacowana tonacja';
 }

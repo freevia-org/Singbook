@@ -1926,4 +1926,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Még egy sor, egy kicsit [F]közelebb.';
+
+  @override
+  String get playerEstimatedKey => 'Becsült hangnem';
 }

@@ -1917,4 +1917,7 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]En linje mere, lidt [F]tættere på.';
+
+  @override
+  String get playerEstimatedKey => 'Anslået toneart';
 }

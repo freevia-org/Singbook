@@ -328,7 +328,7 @@ void main() {
         find.textContaining('${l10n.editorTuningField}: D A D G B E'),
         findsOneWidget,
       );
-      expect(find.textContaining('${l10n.editorKeyField}:'), findsNothing);
+      expect(find.textContaining('${l10n.editorKeyField}: Em'), findsOneWidget);
     },
   );
 

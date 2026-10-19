@@ -1944,4 +1944,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]سطر آخر، وخطوة [F]أقرب.';
+
+  @override
+  String get playerEstimatedKey => 'المفتاح المُقدّر';
 }
