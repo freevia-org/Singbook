@@ -4,6 +4,7 @@ import 'app_device_test.dart' as app;
 import 'android_parity_features_device_test.dart' as parity;
 import 'ios_platform_device_test.dart' as platform;
 import 'ios_native_layout_device_test.dart' as layouts;
+import 'ios_release23_device_test.dart' as release23;
 import 'provider_device_test.dart' as providers;
 import 'singbook_journey_device_test.dart' as journey;
 import 'source_catalog_device_test.dart' as catalog;
@@ -13,6 +14,7 @@ void main() {
   app.main();
   journey.main();
   parity.main();
+  release23.main();
   transpose.main();
   platform.main();
   catalog.main();

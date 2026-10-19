@@ -25,7 +25,7 @@ review; a signed export remains blocked until the owner configures the account.
 `ios/ExportOptions.plist` uses automatic signing and `app-store-connect`, with
 `destination=export`. It creates a local IPA; it does not upload it. Automatic
 build-number management is disabled so Xcode preserves the repository version.
-The current version is `0.2.8+22`; check App Store Connect for previously used
+The current version is `0.2.9+23`; check App Store Connect for previously used
 build numbers before uploading. For a new release, follow AGENTS.md and update
 all four version locations together. Rebuilding the same release keeps its number.
 
@@ -137,10 +137,11 @@ records the completed native import/backup checks and retains the earlier failed
 
 ## App Store publishing handoff — 2026-10-19
 
-Offline preparation targets the existing `0.2.6 (20)` release. No new release
-number was created for metadata/screenshots. The current profile has no Google
-OAuth client or Genius token, so the production copy does not advertise those
-features. No signed build, App Store record or submission exists yet.
+Offline preparation initially targeted `0.2.6 (20)` and now follows the
+shared `0.2.9+23` release. Refreshing metadata/screenshots does not create a new
+release number. The current profile has no Google OAuth client. The Genius
+client token is configured and verified on both simulators; the production
+copy does not advertise Google sync features. No signed build, App Store record or submission exists yet.
 
 ### Prepared package
 
@@ -180,7 +181,7 @@ establish that permission. No provider rights are asserted by these materials.
 
 | Integration group | Evidence needed for the final App Store profile |
 | --- | --- |
-| Genius catalog/API vs song-page lyrics | Distinguish API permission from permission to retrieve/save/share lyric text. Token is currently absent. |
+| Genius catalog/API vs song-page lyrics | Distinguish API permission from permission to retrieve/save/share lyric text. The client access token is configured locally and live discovery passed on both iOS simulators. |
 | Songsterr, Ultimate Guitar, Chordie, YouTube Music, Lyrics.ovh, SyncLRC, Better Lyrics/Unison | Current written service permission/terms and content rights covering the implemented access and uses; undocumented scraping or public API availability alone is insufficient. |
 | LRCLIB | Confirm service permission and rights for lyric storage/export, independently of API availability. |
 | WorshipCommons, Sean McGrath, Open Filk | Keep per-song licence and attribution evidence; independently verify the applicable licence and any conditions. |
@@ -301,7 +302,7 @@ not add new physical-device or signed-build testing claims.
 
 ### Android/iOS parity candidate — 2026-10-19
 
-The current candidate is `0.2.8+22`, integrated from upstream `dbb3ff5`; earlier
+The previous candidate was `0.2.8+22`, integrated from upstream `dbb3ff5`; earlier
 archive and screenshot records above refer to their historical source versions.
 The latest shared UI, timing, setlist and source-metadata changes run on iOS.
 The Android-only Drive Picker gap has an iOS system-browser/Keychain adapter;
@@ -322,3 +323,31 @@ Runner SHA-256: `86807db89d8ada30a7f2fd094d9bd3f5a55156bc9141dbfadaf358b4c98df46
 The complete host suite passed 1,531 tests with 13 platform-specific skips;
 both native parity runs passed six tests. No signed IPA, physical-device test
 or live Google OAuth validation is claimed. All temporary reservations are released.
+
+
+### Current iOS candidate — 2026-10-20
+
+The iOS candidate now follows Android `0.2.9+23`, source `af67a69` (including
+Android release commit `3702ae3`). The upstream changes are shared Flutter
+code: inline song-tab counts, horizontal setlist swipes including entry-specific
+key overrides, boundary transport behavior, and timeline label font/locale
+measurement. No additional platform-specific implementation was required.
+
+The App Store submission version/build and review notes are aligned with this
+candidate. Eight native store captures were refreshed and visually reviewed;
+source-image and RGB-image hashes are recorded in `submission.json`. Two setlist
+images remain byte-identical because their rendered UI did not change. No
+screenshot was resized or cropped. The package validator passed.
+
+A fresh unsigned archive built with the configured Genius client access token
+and without Google OAuth. The archive identifies `org.freevia.singbook`, version
+`0.2.9`, build `23`; privacy inspection found 18 manifests and minimum iOS 15.0.
+The earlier archive was preserved. Logs, manifest inventory, binary hash and
+source record are under `artifacts/ios-release23-20261020/`. The archive is not
+signed, installable on hardware, or uploadable. Account/signing, live Google
+OAuth, physical-device checks and Apple validation remain pending.
+
+Focused native release-23 checks passed on both iPhone and iPad, including
+setlist swipe boundaries/key overrides and timeline typography in Ukrainian
+150% and Arabic RTL 160%. The default full iOS test target now includes these
+checks. See [native test evidence](ios-e2e.md).

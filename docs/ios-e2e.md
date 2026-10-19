@@ -518,3 +518,54 @@ to `e6a15c7` (`0.2.8+22`); they do not claim a fresh full simulator run of
 Merged-tree validation: 57 focused UI/player/layout tests passed; displayed
 version and User-Agent drift checks both passed; analysis of the parity,
 journey, and provider integration suites reported no issues.
+
+
+## Android release 23 parity — 2026-10-20
+
+Base/current public main `af67a69`, application `0.2.9+23`, including Android
+release commit `3702ae3`. Fetching the public repository found no newer main
+updates at the start of this review. Actual diffs confirmed the new inline
+counts, setlist swipes/transport boundaries and timeline font measurement are
+shared Flutter code and already apply to iOS. No platform implementation gap
+was found. Store version/build, profile and release guidance were stale and
+are now aligned; historical verification records retain their original versions.
+
+`ios_release23_device_test.dart` adds temporary-library native coverage for
+single-line `Library(2)` counts, standalone-reader swipe no-op, left/right
+setlist navigation across repeated songs with C/G key overrides, list
+boundaries, and measured timeline label boxes using the real app font.
+Portrait/light and landscape/dark Ukrainian at 150% and Arabic RTL at 160%
+produce fresh native captures. The suite is included in the default full iOS
+target; `ios_release23_validation_device_test.dart` also runs the store capture
+suite. No original library or legacy app data is used.
+
+Evidence: ignored `artifacts/ios-release23-20261020/`. Initial paired runs
+`iphone-v2` and `ipad` each passed both store capture and release-interaction
+tests (seven valid PNG checkpoints). The first phone run failed only because
+the test compared English marker names to Ukrainian semantics; the corrected
+comparison uses localized section names. Later focused runs add Arabic RTL and
+control-heading reachability without changing the application. The large-text
+control panel initially anchors to its bottom and may show only part of the
+upper current-section heading; scrolling reveals it fully. This is explicitly
+checked rather than claiming all controls are visible simultaneously.
+
+All eight App Store screenshots were refreshed at native resolution and
+reviewed; two unchanged setlist images are byte-identical. Source/RGB hashes
+were updated and the offline store validator passed for `0.2.9+23`. The new
+unsigned archive built successfully; privacy inspection found 18 manifests,
+minimum iOS 15.0, correct bundle ID and version/build. The prior archive is
+preserved, and `archive-record.json` records the source and binary hash.
+No fresh full-app e2e run is claimed here: these are focused release-delta
+checks on top of the preceding full-app and configured live-provider results.
+
+
+Final focused release checks: `iphone-final` and `ipad-final-v2` each passed
+one test with five valid native captures, including the complete Arabic
+control-heading reveal. The initial tablet reveal assertion also matched the
+lyric heading; it was scoped to the seek-control column and rerun successfully.
+Analysis of the release, validation wrapper and default full target reported
+no issues. Store validation and whitespace checks passed. Signing, physical
+hardware and authenticated Google Drive remain outside this verification.
+
+The displayed-version and User-Agent drift checks both passed for `0.2.9+23`.
+All temporary build/device reservations were released after verification.
