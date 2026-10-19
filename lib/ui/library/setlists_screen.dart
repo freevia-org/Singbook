@@ -186,33 +186,19 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                   constraints: BoxConstraints(
                     maxHeight: MediaQuery.sizeOf(context).height * .72,
                   ),
-                  itemBuilder: (_) => [
-                    PopupMenuItem(
-                      value: 'share',
-                      child: Text(l10n.setlistShare),
-                    ),
-                    PopupMenuItem(
-                      value: 'share_pdf',
-                      child: Text(l10n.setlistSharePdf),
-                    ),
-                    PopupMenuItem(
-                      value: 'print',
-                      child: Text(l10n.setlistPrint),
-                    ),
-                    PopupMenuItem(
-                      value: 'copy',
-                      child: Text(l10n.settingsCopySong),
-                    ),
-                    PopupMenuItem(
-                      value: 'duplicate',
-                      child: Text(l10n.actionDuplicate),
-                    ),
-                    PopupMenuItem(value: 'edit', child: Text(l10n.actionEdit)),
-                    PopupMenuItem(
-                      value: 'delete',
-                      child: Text(l10n.actionDelete),
-                    ),
-                  ],
+                  itemBuilder: (_) => buildLibraryActionMenu(
+                    l10n,
+                    isSetlist: true,
+                    actions: const {
+                      'edit',
+                      'duplicate',
+                      'share',
+                      'share_pdf',
+                      'copy',
+                      'print',
+                      'delete',
+                    },
+                  ),
                   onSelected: (action) => handleSetlistAction(
                     context,
                     controller,
@@ -386,23 +372,18 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
             ),
             PopupMenuButton<String>(
               tooltip: l10n.setlistMenuLabel,
-              itemBuilder: (_) => [
-                PopupMenuItem(value: 'share', child: Text(l10n.setlistShare)),
-                PopupMenuItem(
-                  value: 'share_pdf',
-                  child: Text(l10n.setlistSharePdf),
-                ),
-                PopupMenuItem(value: 'print', child: Text(l10n.setlistPrint)),
-                PopupMenuItem(
-                  value: 'duplicate',
-                  child: Text(l10n.setlistDuplicate),
-                ),
-                PopupMenuItem(value: 'delete', child: Text(l10n.actionRemove)),
-                PopupMenuItem(
-                  value: 'copy',
-                  child: Text(l10n.settingsCopySong),
-                ),
-              ],
+              itemBuilder: (_) => buildLibraryActionMenu(
+                l10n,
+                isSetlist: true,
+                actions: const {
+                  'duplicate',
+                  'share',
+                  'share_pdf',
+                  'copy',
+                  'print',
+                  'delete',
+                },
+              ),
               onSelected: (action) =>
                   handleSetlistAction(context, controller, value.id, action),
             ),

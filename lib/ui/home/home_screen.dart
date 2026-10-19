@@ -679,30 +679,17 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
               ? l10n.accessibilitySetlistMenu(item.title)
               : l10n.accessibilitySongMenu(item.title),
           icon: const Icon(Icons.more_horiz_rounded),
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              value: 'share',
-              child: Text(
-                item.isSetlist ? l10n.setlistShare : l10n.settingsShareSong,
-              ),
-            ),
-            PopupMenuItem(
-              value: 'share_pdf',
-              child: Text(l10n.settingsSharePdf),
-            ),
-            PopupMenuItem(
-              value: 'print',
-              child: Text(
-                item.isSetlist ? l10n.setlistPrint : l10n.settingsPrintSong,
-              ),
-            ),
-            if (!item.isSetlist)
-              PopupMenuItem(value: 'add', child: Text(l10n.songAddToSetlist)),
-            if (!item.isSetlist)
-              PopupMenuItem(value: 'copy', child: Text(l10n.settingsCopySong)),
-            if (item.isSetlist)
-              PopupMenuItem(value: 'copy', child: Text(l10n.settingsCopySong)),
-          ],
+          itemBuilder: (_) => buildLibraryActionMenu(
+            l10n,
+            isSetlist: item.isSetlist,
+            actions: {
+              if (!item.isSetlist) 'add',
+              'share',
+              'share_pdf',
+              'copy',
+              'print',
+            },
+          ),
           onSelected: (action) => _recentAction(context, item, action),
         ),
       ],
