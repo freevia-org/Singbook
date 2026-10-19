@@ -779,9 +779,6 @@ class AppController extends ChangeNotifier {
           throw StateError('invalid_source');
         }
       }
-      final existingId = source == null
-          ? _savedCombined[selected.identity]
-          : _savedSources[source.id];
       // combineSources also checks song identity and arrangement usability.
       // For a source save this allows a ready result even while other provider
       // checks are still running.
@@ -800,10 +797,7 @@ class AppController extends ChangeNotifier {
         },
         revision: 1,
       );
-      final saved = await repository.saveImportedSong(
-        song,
-        existingId: existingId,
-      );
+      final saved = await repository.saveChosenSong(song);
       await _afterWrite();
       return saved;
     });
