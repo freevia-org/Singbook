@@ -59,13 +59,11 @@ show the feature, and update the description if beta scope differs.
 ### Feedback Email
 
 ```text
-[OWNER: enter a monitored feedback email address]
+support@freevia.org
 ```
 
-`support@freevia.org` appears as the public Play listing contact in
-`docs/play-store/listing.md`, but this document does not assume it is the
-owner-approved TestFlight feedback address. Apple uses this address in TestFlight
-and as the reply-to address for invitation emails.
+Copied from the Android listing at the owner’s request on 2026-10-19.
+Apple uses this address in TestFlight and as the reply-to address for invitations.
 
 ### What to Test
 
@@ -98,7 +96,7 @@ the invitation.
 | Review field | Entry |
 | --- | --- |
 | Contact name | `[OWNER: legal/operational review contact]` |
-| Contact email | `[OWNER: monitored review contact email]` |
+| Contact email | `support@freevia.org` |
 | Contact phone | `[OWNER: reachable international-format phone number]` |
 | Sign-in required | No, for core app use |
 | Username / password | Leave blank; local library does not require login |
@@ -133,7 +131,7 @@ and [export compliance overview](https://developer.apple.com/help/app-store-conn
 - Confirm App Store Connect has no conflicting prior version/build and upload
   the archive matching `0.2.6 (20)`; increment versions in all repository
   locations for a genuinely new release, not a rebuild.
-- Supply the feedback email and App Review name, email, and phone; confirm who
+- Supply the remaining App Review name and phone; confirm who
   will monitor them.
 - Decide whether OAuth is configured in the submitted build. If enabled,
   perform physical-device sign-in and Drive sync checks and provide private
@@ -161,3 +159,17 @@ character maximum for Beta App Description, What to Test, or Feedback Email.
 Use App Store Connect's live field validation rather than relying on old
 third-party limit tables. The 4000-byte limit documented for App Review Notes is
 a different field and should not be applied to those beta fields.
+
+## Owner fields copied from Android — 2026-10-19
+
+At the owner's request, reuse `support@freevia.org` for feedback and App Review
+email, and the Android price of free with no in-app purchases or ads. Sources:
+`docs/play-store/listing.md` and `docs/play-store/privacy-policy.md`.
+Publisher: Freevia EOOD; proposed copyright field: `2026 Freevia EOOD`.
+The publisher identity does not independently establish software copyright
+ownership, so confirm that declaration in App Store Connect.
+
+The Android materials contain no private review contact name/phone or confirmed
+distribution territory list. Those fields remain empty rather than inferring
+worldwide availability or using a Git author as the review contact. No store
+account configuration was changed.
