@@ -282,8 +282,10 @@ class SetlistDetailScreen extends StatefulWidget {
 class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
   late final TextEditingController _name;
   late final TextEditingController _notes;
+  final GlobalKey _deleteBasketGeometryKey = GlobalKey();
   String? _loadedSetlistId;
   String? _draggingEntryId;
+  Offset? _dragPosition;
   bool _wasEditing = false;
   VerseUiController get controller => widget.controller;
 
@@ -421,67 +423,79 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
                   icon: Icons.queue_music_rounded,
                   title: l10n.setlistSongsEmpty,
                 )
-              : ReorderableListView.builder(
-                  padding: const EdgeInsets.fromLTRB(12, 4, 12, 20),
-                  buildDefaultDragHandles: false,
-                  // Keep a stable child count while dragging. Expanding a new
-                  // final child mid-drag can duplicate Flutter's internal
-                  // reorder keys on the accessibility test route.
-                  itemCount: value.entries.length + 1,
-                  onReorderStart: (index) {
-                    if (index >= value.entries.length) return;
-                    setState(() => _draggingEntryId = value.entries[index].id);
+              : Listener(
+                  behavior: HitTestBehavior.translucent,
+                  onPointerMove: (event) {
+                    if (_draggingEntryId != null) {
+                      _dragPosition = event.position;
+                    }
                   },
-                  onReorderEnd: (_) {
-                    if (mounted) setState(() => _draggingEntryId = null);
-                  },
-                  onReorderItem: (oldIndex, newIndex) async {
-                    // The item callback adjusts the destination for the
-                    // removed row. A value of entries.length means the drop
-                    // landed beyond the delete basket; dropping before it
-                    // remains the normal move-to-end behavior.
-                    if (newIndex == value.entries.length &&
-                        oldIndex < value.entries.length) {
-                      await _removeEntryFromSetlist(
-                        context,
-                        value,
-                        value.entries[oldIndex],
-                        editing,
+                  child: ReorderableListView.builder(
+                    padding: const EdgeInsets.fromLTRB(12, 4, 12, 20),
+                    buildDefaultDragHandles: false,
+                    // Keep a stable child count while dragging. Expanding a new
+                    // final child mid-drag can duplicate Flutter's internal
+                    // reorder keys on the accessibility test route.
+                    itemCount: value.entries.length + 1,
+                    onReorderStart: (index) {
+                      if (index >= value.entries.length) return;
+                      setState(() {
+                        _draggingEntryId = value.entries[index].id;
+                        _dragPosition = null;
+                      });
+                    },
+                    onReorderEnd: (_) {
+                      if (mounted) {
+                        setState(() {
+                          _draggingEntryId = null;
+                          _dragPosition = null;
+                        });
+                      }
+                    },
+                    onReorderItem: (oldIndex, newIndex) async {
+                      if (_isPointerOverDeleteBasket() &&
+                          oldIndex < value.entries.length) {
+                        await _removeEntryFromSetlist(
+                          context,
+                          value,
+                          value.entries[oldIndex],
+                          editing,
+                        );
+                        return;
+                      }
+                      if (newIndex >= value.entries.length) return;
+                      final entries = [...value.entries];
+                      final item = entries.removeAt(oldIndex);
+                      entries.insert(newIndex, item);
+                      await controller.saveSetlistDetails(
+                        name: editing ? _name.text : value.title,
+                        notes: editing ? _notes.text : value.notes,
+                        entryOrder: [for (final entry in entries) entry.id],
                       );
-                      return;
-                    }
-                    if (newIndex >= value.entries.length) return;
-                    final entries = [...value.entries];
-                    final item = entries.removeAt(oldIndex);
-                    entries.insert(newIndex, item);
-                    await controller.saveSetlistDetails(
-                      name: editing ? _name.text : value.title,
-                      notes: editing ? _notes.text : value.notes,
-                      entryOrder: [for (final entry in entries) entry.id],
-                    );
-                  },
-                  itemBuilder: (context, index) {
-                    if (index == value.entries.length) {
-                      return _draggingEntryId == null
-                          ? const SizedBox.shrink(
-                              key: ValueKey('setlist-delete-basket'),
-                            )
-                          : _deleteBasket(context, l10n);
-                    }
-                    final entry = value.entries[index];
-                    return ReorderableDelayedDragStartListener(
-                      key: ValueKey(entry.id),
-                      index: index,
-                      child: _entryTile(
-                        context,
-                        l10n,
-                        value,
-                        entry,
-                        index,
-                        editing,
-                      ),
-                    );
-                  },
+                    },
+                    itemBuilder: (context, index) {
+                      if (index == value.entries.length) {
+                        return _draggingEntryId == null
+                            ? const SizedBox.shrink(
+                                key: ValueKey('setlist-delete-basket'),
+                              )
+                            : _deleteBasket(context, l10n);
+                      }
+                      final entry = value.entries[index];
+                      return ReorderableDelayedDragStartListener(
+                        key: ValueKey(entry.id),
+                        index: index,
+                        child: _entryTile(
+                          context,
+                          l10n,
+                          value,
+                          entry,
+                          index,
+                          editing,
+                        ),
+                      );
+                    },
+                  ),
                 ),
         ),
         SafeArea(
@@ -502,30 +516,46 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
 
   Widget _deleteBasket(BuildContext context, AppLocalizations l10n) {
     final scheme = Theme.of(context).colorScheme;
-    return Container(
+    return KeyedSubtree(
       key: const ValueKey('setlist-delete-basket'),
-      height: 64,
-      margin: const EdgeInsets.fromLTRB(8, 8, 8, 4),
-      decoration: BoxDecoration(
-        color: scheme.errorContainer,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: scheme.error.withValues(alpha: .35)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.delete_outline_rounded, color: scheme.onErrorContainer),
-          const SizedBox(width: 8),
-          Text(
-            l10n.actionRemove,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: scheme.onErrorContainer,
-              fontWeight: FontWeight.w700,
+      child: Container(
+        key: _deleteBasketGeometryKey,
+        height: 64,
+        margin: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+        decoration: BoxDecoration(
+          color: scheme.errorContainer,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: scheme.error.withValues(alpha: .35)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.delete_outline_rounded, color: scheme.onErrorContainer),
+            const SizedBox(width: 8),
+            Text(
+              l10n.actionRemove,
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: scheme.onErrorContainer,
+                fontWeight: FontWeight.w700,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  bool _isPointerOverDeleteBasket() {
+    final position = _dragPosition;
+    final renderObject = _deleteBasketGeometryKey.currentContext
+        ?.findRenderObject();
+    if (position == null ||
+        renderObject is! RenderBox ||
+        !renderObject.hasSize) {
+      return false;
+    }
+    final rect = renderObject.localToGlobal(Offset.zero) & renderObject.size;
+    return rect.contains(position);
   }
 
   Future<void> _removeEntryFromSetlist(
