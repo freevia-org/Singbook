@@ -10,7 +10,10 @@ try {
     $revision = (& git rev-parse HEAD).Trim()
     if ($LASTEXITCODE -ne 0) { throw 'Cannot determine source revision.' }
     $status = & git status --porcelain
-    if ($status) { throw 'Commit the source before creating a traceable Windows bundle.' }
+    if ($status) {
+        $status | Write-Output
+        throw 'Commit the source before creating a traceable Windows bundle.'
+    }
     $versionMatch = [regex]::Match((Get-Content pubspec.yaml -Raw), '(?m)^version:\s*(\S+)')
     if (-not $versionMatch.Success) { throw 'Cannot determine app version.' }
     $mode = if ($Debug) { 'debug' } else { 'release' }

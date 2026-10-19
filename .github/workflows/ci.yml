@@ -77,6 +77,13 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      - name: Record dependency generation source status
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path artifacts/windows-parity/dependency-generation -Force | Out-Null
+          git status --porcelain | Tee-Object -FilePath artifacts/windows-parity/dependency-generation/status.txt
+          git diff --binary > artifacts/windows-parity/dependency-generation/generated.diff
+
       - name: Build and package Windows release
         shell: pwsh
         run: ./scripts/build-windows.ps1 -AllowMissingDefines
