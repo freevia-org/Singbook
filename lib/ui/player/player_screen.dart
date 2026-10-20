@@ -1512,7 +1512,8 @@ class _PlayerScreenState extends State<PlayerScreen>
         : transposeChord(currentKey, -state.readerTranspose);
     final originalPitch = _keyPitchClass(originalKey);
     final currentPitch = _keyPitchClass(currentKey);
-    final keyStyle = _keyPitchClass(savedKey) != null ? savedKey : currentKey;
+    // Menu spelling and quality follow the effective key, including overrides.
+    final keyStyle = currentKey;
     final minorKey =
         keyStyle != null &&
         RegExp(
