@@ -619,6 +619,54 @@ void main() {
       expect(result.timingTracks.single.raw, raw);
     },
   );
+  test('combined chart receives aligned sections from another provider', () {
+    const lyrics =
+        'First line of the song\n'
+        'Second line of the song\n'
+        'Here comes the refrain\n'
+        'Repeat the refrain';
+    final combined = combineSources(selected, [
+      source(
+        'a-chart',
+        '[C]First line of the song\n[G]Second line of the song\n'
+            '[F]Here comes the refrain\n[C]Repeat the refrain',
+      ),
+      source(
+        'z-sections',
+        '[Verse 1]\nFirst line of the song\nSecond line of the song\n'
+            '[Chorus]\nHere comes the refrain\nRepeat the refrain',
+        kind: MatchKind.sameSong,
+      ),
+      source('lyrics', lyrics, kind: MatchKind.sameSong),
+    ]);
+
+    expect(combined.extra['selectedSourceId'], 'a-chart:1');
+    expect(combined.body, contains('{comment: Verse 1}\n[C]First line'));
+    expect(combined.body, contains('{comment: Chorus}\n[F]Here comes'));
+    expect(combined.extra['sectionSourceIds'], ['z-sections:1']);
+    expect(
+      combined.extra['fieldOrigins'],
+      containsPair('sections', 'z-sections:1'),
+    );
+  });
+
+  test('combined lyrics do not inherit sections from unaligned text', () {
+    const baseLyrics =
+        'First line across the quiet valley at dawn\n'
+        'Second line follows the river through the fields';
+    final combined = combineSources(selected, [
+      source('a-lyrics', baseLyrics, kind: MatchKind.sameSong),
+      source(
+        'z-sections',
+        '[Bridge]\nUnrelated words appear here\nSecond line differs too',
+        kind: MatchKind.sameSong,
+      ),
+    ]);
+
+    expect(combined.body, baseLyrics);
+    expect(combined.extra, isNot(contains('sectionSourceIds')));
+  });
+
   test('mismatched recording and lyrics timing retained but not activated', () {
     final result = combineSources(selected, [
       source('ug', '[C]Different words', kind: MatchKind.sameSong),

@@ -342,6 +342,99 @@ String _chordSignature(ArrangementLine line) {
       .join('|');
 }
 
+({String body, List<String> sourceIds}) _overlaySections(
+  String body,
+  List<SourceResult> sources,
+  SourceResult base,
+) {
+  List<String> lyricLinesFor(String value) => [
+    for (final line in parseArrangement(value))
+      if (!line.directive && sectionLabelForLine(line) == null)
+        _normalizedLine(line.text).text,
+  ].where((line) => line.isNotEmpty).toList();
+
+  final baseLines = lyricLinesFor(body);
+  if (baseLines.isEmpty) return (body: body, sourceIds: const []);
+
+  Map<int, String> sectionsByLyricLine(String value) {
+    final sections = <int, String>{};
+    var lyricIndex = 0;
+    String? pending;
+    for (final line in parseArrangement(value)) {
+      final label = sectionLabelForLine(line);
+      if (label != null) {
+        pending = label;
+        continue;
+      }
+      if (line.directive) continue;
+      if (_normalizedLine(line.text).text.isEmpty) continue;
+      if (pending != null) {
+        sections.putIfAbsent(lyricIndex, () => pending!);
+        pending = null;
+      }
+      lyricIndex++;
+    }
+    return sections;
+  }
+
+  final existing = sectionsByLyricLine(body);
+  final votes = <int, Map<String, Set<String>>>{};
+  for (final source in sources) {
+    if (source.id == base.id || source.body.trim().isEmpty) continue;
+    final sourceLines = lyricLinesFor(source.body);
+    if (sourceLines.length != baseLines.length) continue;
+    var aligned = true;
+    for (var index = 0; index < baseLines.length; index++) {
+      if (sourceLines[index] != baseLines[index]) {
+        aligned = false;
+        break;
+      }
+    }
+    if (!aligned) continue;
+    for (final entry in sectionsByLyricLine(source.body).entries) {
+      if (existing.containsKey(entry.key)) continue;
+      votes
+          .putIfAbsent(entry.key, () => {})
+          .putIfAbsent(entry.value, () => <String>{})
+          .add(source.id);
+    }
+  }
+  if (votes.isEmpty) return (body: body, sourceIds: const []);
+
+  final selectedLabels = <int, String>{};
+  final contributors = <String>{};
+  for (final entry in votes.entries) {
+    final labels = entry.value.entries.toList()
+      ..sort((a, b) {
+        final count = b.value.length.compareTo(a.value.length);
+        return count != 0 ? count : a.key.compareTo(b.key);
+      });
+    if (labels.length > 1 && labels[0].value.length == labels[1].value.length) {
+      continue;
+    }
+    selectedLabels[entry.key] = labels.first.key;
+    contributors.addAll(labels.first.value);
+  }
+  if (selectedLabels.isEmpty) return (body: body, sourceIds: const []);
+
+  final rawLines = body.replaceAll('\r\n', '\n').split('\n');
+  final arrangement = parseArrangement(body);
+  final output = <String>[];
+  var lyricIndex = 0;
+  for (var index = 0; index < arrangement.length; index++) {
+    final line = arrangement[index];
+    final label = selectedLabels[lyricIndex];
+    if (!line.directive &&
+        sectionLabelForLine(line) == null &&
+        _normalizedLine(line.text).text.isNotEmpty) {
+      if (label != null) output.add('{comment: $label}');
+      lyricIndex++;
+    }
+    output.add(rawLines[index]);
+  }
+  return (body: output.join('\n'), sourceIds: contributors.toList()..sort());
+}
+
 int _notePitch(String note) {
   const naturals = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11};
   return (naturals[note[0].toUpperCase()]! +
@@ -849,6 +942,13 @@ SongDocument combineSources(
           best,
         )
       : (body: best.body, sourceIds: const <String>[]);
+  final sectionMerged = preferredSourceId == null
+      ? _overlaySections(
+          merged.body,
+          accepted.where((source) => source.id != best.id).toList(),
+          best,
+        )
+      : (body: merged.body, sourceIds: const <String>[]);
   const arrangementFields = {
     'key',
     'capo',
@@ -900,6 +1000,17 @@ SongDocument combineSources(
     ...merged.sourceIds,
   }.toList();
   if (chordSourceIds.isNotEmpty) origins['chords'] = chordSourceIds.first;
+  final sectionSourceIds = <String>{
+    if (parseArrangement(
+      best.body,
+    ).any((line) => sectionLabelForLine(line) != null))
+      best.id,
+    ...sectionMerged.sourceIds,
+  }.toList()..sort();
+  if (sectionSourceIds.isNotEmpty) {
+    origins['sections'] = sectionSourceIds.first;
+    fieldContributors['sections'] = sectionSourceIds.toSet();
+  }
   final sourcesById = {for (final source in matching) source.id: source};
   final arrangementSourceIds = <String>{best.id};
   for (final sourceId in chordSourceIds) {
@@ -1261,7 +1372,7 @@ SongDocument combineSources(
     id: newId(),
     title: selected.title,
     artist: selected.artist,
-    body: inferSectionDirectives(merged.body),
+    body: inferSectionDirectives(sectionMerged.body),
     metadata: metadata,
     sources: results,
     timingTracks: tracks.values.toList(),
@@ -1278,6 +1389,7 @@ SongDocument combineSources(
       'recommendation':
           'Combined lyrics, chords, timing, and metadata from matching sources.',
       if (chordSourceIds.isNotEmpty) 'chordSourceIds': chordSourceIds,
+      if (sectionSourceIds.isNotEmpty) 'sectionSourceIds': sectionSourceIds,
       if (chordSourceIds.any(
         (sourceId) => sourcesById[sourceId]?.extra['pendingMatchCheck'] == true,
       ))

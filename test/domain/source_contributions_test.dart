@@ -125,4 +125,21 @@ void main() {
     );
     expect(contributingProviderIds(song), {'primary', 'additional'});
   });
+
+  test('section donors count as combined contributors', () {
+    final lyrics = source('lyrics', 'one');
+    final sections = source('structure', 'two');
+    final song = SongDocument(
+      id: 'song',
+      title: 'Demo',
+      artist: 'Us',
+      body: lyrics.body,
+      sources: [lyrics, sections],
+      extra: {
+        'selectedSourceId': lyrics.id,
+        'sectionSourceIds': [sections.id],
+      },
+    );
+    expect(contributingProviderIds(song), {'lyrics', 'structure'});
+  });
 }
