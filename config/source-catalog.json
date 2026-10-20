@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "extractionSchemaVersion": 1,
-  "revision": 4,
-  "publishedAt": "2026-10-18T06:01:10Z",
+  "revision": 5,
+  "publishedAt": "2026-10-20T06:07:44Z",
   "sources": [
     {
       "id": "genius",
@@ -655,7 +655,7 @@
       "name": "Wikisource",
       "adapter": "builtin",
       "status": "active",
-      "revision": 1,
+      "revision": 2,
       "capabilities": [
         "catalog",
         "fileImport",
@@ -669,15 +669,55 @@
       "description": "historicalTextPerWorkLicense",
       "probes": [
         {
-          "id": "auld-lang-syne-burns-text",
-          "query": "Auld Lang Syne Burns",
-          "expectedTitle": "Auld Lang Syne (Burns)",
+          "id": "cleansing-wave-palmer",
+          "candidate": {
+            "providerId": "wikisource",
+            "id": "1490913",
+            "title": "Cleansing Wave",
+            "artist": "Phoebe W. Palmer",
+            "url": "https://en.wikisource.org/?curid=1490913",
+            "metadata": {
+              "identityScope": "historicalText"
+            }
+          },
+          "expectedTitle": "Cleansing Wave",
+          "expectedArtist": "Phoebe W. Palmer",
           "requiredFields": [
             "body",
             "metadata"
+          ],
+          "requiredMetadataFields": [
+            "copyrightTags.0",
+            "revision",
+            "identityScope"
+          ]
+        },
+        {
+          "id": "dunbar-hymn-1",
+          "candidate": {
+            "providerId": "wikisource",
+            "id": "212021",
+            "title": "The Complete Poems of Paul Laurence Dunbar/Hymn (1)",
+            "artist": "Paul Laurence Dunbar",
+            "url": "https://en.wikisource.org/?curid=212021",
+            "metadata": {
+              "identityScope": "historicalText"
+            }
+          },
+          "expectedTitle": "The Complete Poems of Paul Laurence Dunbar/Hymn (1)",
+          "expectedArtist": "Paul Laurence Dunbar",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "copyrightTags.0",
+            "revision",
+            "identityScope"
           ]
         }
-      ]
+      ],
+      "changeReason": "2026-10-20: Auld Lang Syne (Burns), page 486561, is a versions index without per-work rights tags. Replace its probe with Cleansing Wave and Dunbar Hymn (1), independently extracted with their own PD-old tags and explicit authors. Lyrics/metadata verified; catalog search/file import remain unverified. Existing adapter, rights checks, attribution, source ID and default-disabled preference are preserved; no rights claim for other works."
     }
   ]
 }
