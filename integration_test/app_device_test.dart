@@ -83,12 +83,9 @@ void main() {
       await controller.initialize();
       await controller.setSetting('themeMode', 'dark');
       await controller.setSetting('locale', 'uk');
-      await controller.setSetting('defaultView', 'songs');
+      await controller.setSetting('startupSongsView', 'library');
 
       await binding.setSurfaceSize(const Size(400, 850));
-      final originalPadding = tester.view.padding;
-      final originalViewPadding = tester.view.viewPadding;
-      final originalViewInsets = tester.view.viewInsets;
       final padding = FakeViewPadding(
         top: 24 * tester.view.devicePixelRatio,
         bottom: 24 * tester.view.devicePixelRatio,
@@ -98,9 +95,9 @@ void main() {
       tester.view.viewInsets = FakeViewPadding.zero;
       addTearDown(() async {
         await binding.setSurfaceSize(null);
-        tester.view.padding = originalPadding;
-        tester.view.viewPadding = originalViewPadding;
-        tester.view.viewInsets = originalViewInsets;
+        tester.view.resetPadding();
+        tester.view.resetViewPadding();
+        tester.view.resetViewInsets();
       });
 
       var viewport = const Size(400, 850);
@@ -145,11 +142,11 @@ void main() {
           debugPrint(
             'VERSE_TABLET_LAYOUT size=$size '
             'rail=${tester.getSize(find.byType(NavigationRail).first)} '
-            'grid=${tester.getSize(find.byKey(const ValueKey('tablet-songs-grid')))} '
+            'grid=${tester.getSize(find.byKey(const PageStorageKey('songs-library-grid')))} '
             'firstSong=${tester.getTopLeft(find.text('Small Hours').first)}',
           );
           expect(
-            find.byKey(const ValueKey('tablet-songs-grid')),
+            find.byKey(const PageStorageKey('songs-library-grid')),
             findsOneWidget,
           );
           expect(

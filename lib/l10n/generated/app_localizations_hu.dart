@@ -588,7 +588,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get setlistFavoriteRemove => 'Setlista eltávolítása a kedvencekből';
 
   @override
-  String get setlistShare => 'Megosztás setlistafájlként';
+  String get setlistShare => 'Megosztás OpenSong formátumban';
 
   @override
   String get setlistSharePdf => 'Megosztás PDF-ként';
@@ -1225,6 +1225,30 @@ class AppLocalizationsHu extends AppLocalizations {
       'Amikor eljön a reggel, újra énekelni fogunk.';
 
   @override
+  String get settingsPreviewSongTitle => 'Reggeli dal';
+
+  @override
+  String get settingsPreviewArtist => 'Minta hangszerelés';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Amikor eljön a reggel';
+
+  @override
+  String get settingsPreviewNextLine => 'Újra énekelni fogunk.';
+
+  @override
+  String get settingsPlayerSections => 'Szakaszcímek';
+
+  @override
+  String get settingsPlayerControls => 'Lejátszópanel';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Automatikus görgetés';
+
+  @override
+  String get settingsSystemShort => 'Eszköz';
+
+  @override
   String searchDiscoveryProgress(int checked, int total) {
     return 'Dalszövegforrások ellenőrzése: $checked/$total kész.';
   }
@@ -1406,6 +1430,69 @@ class AppLocalizationsHu extends AppLocalizations {
   @override
   String get accountAutoSyncHint =>
       'A szinkronizálás csatlakozás után, valamint dal hozzáadása, szerkesztése vagy törlése után történik.';
+
+  @override
+  String get accountDriveFolder => 'Google Drive könyvtár mappa';
+
+  @override
+  String get accountPrivateDriveFolder => 'Privát énekeskönyv mappa';
+
+  @override
+  String get accountChooseDriveFolder => 'Válasszon mappát';
+
+  @override
+  String get accountDriveFolderMoveTitle => 'Áthelyezi a Singbook könyvtárát?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Válasszon egy látható Google Drive-mappát. A Singbook átmásolja és ellenőrzi a dalait és a setlistjeit, mielőtt átváltana rá. Az eredeti fájlok a korábbi helyükön maradnak biztonsági másolatként. A többi fájl egyedül marad. Az ebbe a mappába importált ChordPro-fájlok szinkronizálásra és a Singbook metaadatok fogadására készülnek.';
+
+  @override
+  String get accountImportChordPro => 'Importálja a ChordPro-t a Drive-ból';
+
+  @override
+  String get accountImportChordProHint =>
+      'Válassza ki a könyvtárhoz hozzáadni kívánt .cho fájlokat. A mappában már lévő fájlok átvételre kerülnek; ide másolják a máshol található fájlok.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'A Drive-mappa nem választható';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Válasszon látható Drive-mappát a Google Drive-választóval egy támogatott eszközön.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'A Singbook Drive mappa nem érhető el';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Válassza ki újra a mappát, vagy állítsa vissza a Google Drive-ban.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'A Singbooknak hozzá kell férnie ehhez a Drive-mappához';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Válassza ki újra a mappát a hozzáférés megadásához, majd szinkronizálja könyvtárát.';
+
+  @override
+  String get syncErrorFolderMigration =>
+      'A könyvtárat még nem tudták áthelyezni';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Az előző könyvtár továbbra is biztonságban van. Ellenőrizze a kapcsolatot, és válassza ki újra a mappát az újrapróbálkozáshoz.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Először válasszon egy látható Drive-mappát';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'A fájlok Drive-ból való importálása előtt látható könyvtármappára van szükség.';
 
   @override
   String get accountSignOutTitle => 'Kijelentkezel ebből a fiókból?';
@@ -1926,4 +2013,46 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Még egy sor, egy kicsit [F]közelebb.';
+
+  @override
+  String get playerEstimatedKey => 'Becsült hangnem';
+
+  @override
+  String get songsLibraryView => 'Könyvtár';
+
+  @override
+  String get settingsStartupView => 'Induló nézet';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Válaszd ki, melyik Dalképernyő jelenjen meg az alkalmazás megnyitásakor.';
+
+  @override
+  String get settingsStartupLastView => 'Utoljára megnyitott';
+
+  @override
+  String get playerFullScreen => 'Teljes képernyő';
+
+  @override
+  String get playerExitFullScreen => 'Kilépés a teljes képernyőből';
+
+  @override
+  String get playerExpandControls => 'Lejátszásvezérlők megjelenítése';
+
+  @override
+  String get playerCollapseControls => 'Lejátszásvezérlők elrejtése';
+
+  @override
+  String get settingsShowSections => 'Szakaszcímek megjelenítése';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Jelenítsd meg a dalszövegben a versszakok, a refrén és más részek címeit.';
+
+  @override
+  String get settingsShowPlayerControls => 'Lejátszásvezérlők megjelenítése';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'A lejátszópanelt megérintéssel vagy elhúzással is megjelenítheted vagy elrejtheted.';
 }

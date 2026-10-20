@@ -580,7 +580,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get setlistFavoriteRemove => '세트리스트를 즐겨찾기에서 제거';
 
   @override
-  String get setlistShare => '세트리스트 파일로 공유';
+  String get setlistShare => 'OpenSong으로 공유';
 
   @override
   String get setlistSharePdf => 'PDF로 공유';
@@ -1198,6 +1198,30 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsLyricsPreviewExample => '아침이 오면 우리는 다시 노래할 거예요.';
 
   @override
+  String get settingsPreviewSongTitle => '아침 노래';
+
+  @override
+  String get settingsPreviewArtist => '샘플 편곡';
+
+  @override
+  String get settingsPreviewCurrentLine => '아침이 오면';
+
+  @override
+  String get settingsPreviewNextLine => '우리는 다시 노래할 거예요.';
+
+  @override
+  String get settingsPlayerSections => '섹션 제목';
+
+  @override
+  String get settingsPlayerControls => '재생 패널';
+
+  @override
+  String get settingsPlayerAutoscroll => '자동 스크롤';
+
+  @override
+  String get settingsSystemShort => '기기';
+
+  @override
   String searchDiscoveryProgress(int checked, int total) {
     return '가사 출처 확인 중: $total개 중 $checked개 완료.';
   }
@@ -1374,6 +1398,65 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint => '연결한 후와 노래를 추가, 수정 또는 삭제한 후에 동기화합니다.';
+
+  @override
+  String get accountDriveFolder => 'Google 드라이브 라이브러리 폴더';
+
+  @override
+  String get accountPrivateDriveFolder => '개인 Singbook 폴더';
+
+  @override
+  String get accountChooseDriveFolder => '폴더 선택';
+
+  @override
+  String get accountDriveFolderMoveTitle => 'Singbook 라이브러리를 이동하시겠습니까?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      '표시되는 Google 드라이브 폴더를 선택하세요. Singbook은 전환하기 전에 노래와 세트리스트를 복사하고 확인합니다. 원본 파일은 백업으로 이전 위치에 유지됩니다. 다른 파일은 그대로 둡니다. 이 폴더로 가져온 ChordPro 파일은 Singbook 메타데이터를 동기화하고 수신하기 위해 채택됩니다.';
+
+  @override
+  String get accountImportChordPro => '드라이브에서 ChordPro 가져오기';
+
+  @override
+  String get accountImportChordProHint =>
+      '이 라이브러리에 추가할 .cho 파일을 선택하세요. 폴더에 이미 있는 파일이 채택됩니다. 다른 곳에 있는 파일은 여기에 복사됩니다.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable => '드라이브 폴더를 선택할 수 없습니다.';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      '지원되는 기기에서 Google 드라이브 선택기로 표시되는 Drive 폴더를 선택하세요.';
+
+  @override
+  String get syncErrorDriveFolderMissing => 'Singbook Drive 폴더를 사용할 수 없습니다.';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      '폴더를 다시 선택하거나 Google Drive에서 복원하세요.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook은 이 드라이브 폴더에 액세스해야 합니다.';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      '폴더를 다시 선택하여 액세스 권한을 부여한 다음 라이브러리를 동기화하세요.';
+
+  @override
+  String get syncErrorFolderMigration => '아직 라이브러리를 이동할 수 없습니다.';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      '이전 라이브러리는 여전히 안전합니다. 연결을 확인하고 폴더를 다시 선택하여 다시 시도하세요.';
+
+  @override
+  String get syncErrorVisibleFolderRequired => '먼저 표시되는 드라이브 폴더를 선택하세요.';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      '드라이브에서 파일을 가져오기 전에 표시되는 라이브러리 폴더가 필요합니다.';
 
   @override
   String get accountSignOutTitle => '이 계정에서 로그아웃할까요?';
@@ -1853,4 +1936,44 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]한 줄 더, 조금 더 [F]가까이.';
+
+  @override
+  String get playerEstimatedKey => '추정 조성';
+
+  @override
+  String get songsLibraryView => '라이브러리';
+
+  @override
+  String get settingsStartupView => '시작 화면';
+
+  @override
+  String get settingsStartupViewHint => '앱을 열 때 표시할 노래 화면을 선택하세요.';
+
+  @override
+  String get settingsStartupLastView => '마지막으로 연 화면';
+
+  @override
+  String get playerFullScreen => '전체 화면';
+
+  @override
+  String get playerExitFullScreen => '전체 화면 종료';
+
+  @override
+  String get playerExpandControls => '재생 컨트롤 표시';
+
+  @override
+  String get playerCollapseControls => '재생 컨트롤 숨기기';
+
+  @override
+  String get settingsShowSections => '섹션 제목 표시';
+
+  @override
+  String get settingsShowSectionsHint => '가사에 절, 후렴 및 기타 섹션 제목을 표시합니다.';
+
+  @override
+  String get settingsShowPlayerControls => '재생 컨트롤 표시';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      '플레이어 패널을 탭하거나 스와이프해 표시하거나 숨길 수도 있습니다.';
 }

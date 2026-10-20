@@ -264,7 +264,7 @@
   "setlistDuplicate": "Dubliuoti koncertinę programą",
   "setlistFavoriteAdd": "Pridėti koncertinę programą prie mėgstamų",
   "setlistFavoriteRemove": "Pašalinti koncertinę programą iš mėgstamų",
-  "setlistShare": "Bendrinti kaip koncertinės programos failą",
+  "setlistShare": "Bendrinti kaip OpenSong",
   "setlistSharePdf": "Bendrinti kaip PDF",
   "setlistPrint": "Spausdinti",
   "setlistDeleteConfirmTitle": "Ištrinti koncertinę programą?",
@@ -534,6 +534,14 @@
   "settingsFontSerif": "Su užraitais",
   "settingsFontMonospace": "Vienodo pločio",
   "settingsLyricsPreviewExample": "Kai išauš rytas, vėl dainuosime.",
+  "settingsPreviewSongTitle": "Ryto daina",
+  "settingsPreviewArtist": "Pavyzdinė aranžuotė",
+  "settingsPreviewCurrentLine": "Kai išauš rytas",
+  "settingsPreviewNextLine": "Vėl dainuosime.",
+  "settingsPlayerSections": "Skyrių antraštės",
+  "settingsPlayerControls": "Atkūrimo skydelis",
+  "settingsPlayerAutoscroll": "Automatinis slinkimas",
+  "settingsSystemShort": "Įrenginys",
   "searchDiscoveryProgress": "Tikrinami dainų tekstų šaltiniai: baigta {checked} iš {total}.",
   "@searchDiscoveryProgress": {
     "placeholders": {
@@ -831,5 +839,47 @@
         "type": "int"
       }
     }
+  },
+  "accountDriveFolder": "„Google“ disko bibliotekos aplankas",
+  "accountPrivateDriveFolder": "Privatus dainų knygos aplankas",
+  "accountChooseDriveFolder": "Pasirinkite aplanką",
+  "accountDriveFolderMoveTitle": "Perkelti dainų knygų biblioteką?",
+  "accountDriveFolderMoveBody": "Pasirinkite matomą „Google“ disko aplanką. „Singbook“ nukopijuos ir patikrins jūsų dainas ir rinkinių sąrašus prieš perjungdamas į jį. Originalūs failai lieka ankstesnėje vietoje kaip atsarginė kopija. Kiti failai paliekami ramybėje. „ChordPro“ failai, kuriuos importuojate į šį aplanką, yra pritaikyti sinchronizuoti ir gauti „Singbook“ metaduomenis.",
+  "accountImportChordPro": "Importuokite „ChordPro“ iš Disko",
+  "accountImportChordProHint": "Pasirinkite .cho failus, kuriuos norite pridėti prie šios bibliotekos. Aplanke jau esantys failai priimami; čia kopijuojami failai kitur.",
+  "syncErrorFolderPickerUnavailable": "Disko aplanko pasirinkimas negalimas",
+  "syncErrorFolderPickerUnavailableHint": "Palaikomame įrenginyje pasirinkite matomą Disko aplanką naudodami „Google“ disko parinkiklį.",
+  "syncErrorDriveFolderMissing": "Singbook Drive aplankas nepasiekiamas",
+  "syncErrorDriveFolderMissingHint": "Dar kartą pasirinkite aplanką arba atkurkite jį „Google“ diske.",
+  "syncErrorDriveFileAuthorization": "Singbook reikia prieigos prie šio Disko aplanko",
+  "syncErrorDriveFileAuthorizationHint": "Dar kartą pasirinkite aplanką, kad suteiktumėte prieigą, tada sinchronizuokite biblioteką.",
+  "syncErrorFolderMigration": "Bibliotekos kol kas nepavyko perkelti",
+  "syncErrorFolderMigrationHint": "Jūsų ankstesnė biblioteka vis dar saugi. Patikrinkite ryšį ir dar kartą pasirinkite aplanką, kad bandykite dar kartą.",
+  "syncErrorVisibleFolderRequired": "Pirmiausia pasirinkite matomą Disko aplanką",
+  "syncErrorVisibleFolderRequiredHint": "Prieš importuojant failus iš Disko, būtinas matomas bibliotekos aplankas.",
+  "playerEstimatedKey": "Numatoma tonacija",
+  "songsLibraryView": "Biblioteka",
+  "settingsStartupView": "Paleisti rodant",
+  "settingsStartupViewHint": "Pasirinkite dainų rodinį, kuris bus rodomas atidarius programą.",
+  "settingsStartupLastView": "Paskutinį kartą atidarytas",
+  "playerFullScreen": "Visas ekranas",
+  "playerExitFullScreen": "Išeiti iš viso ekrano",
+  "playerExpandControls": "Rodyti atkūrimo valdiklius",
+  "playerCollapseControls": "Slėpti atkūrimo valdiklius",
+  "settingsShowSections": "Rodyti dalių antraštes",
+  "settingsShowSectionsHint": "Dainos žodžiuose rodyti posmų, priedainio ir kitų dalių antraštes.",
+  "settingsShowPlayerControls": "Rodyti atkūrimo valdiklius",
+  "settingsShowPlayerControlsHint": "Grotuvo skydelį taip pat galite parodyti arba paslėpti jį palietę ar perbraukę.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
   }
 }

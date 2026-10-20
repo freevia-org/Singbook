@@ -264,7 +264,7 @@
   "setlistDuplicate": "Nhân bản danh sách",
   "setlistFavoriteAdd": "Thêm danh sách vào mục yêu thích",
   "setlistFavoriteRemove": "Xóa danh sách khỏi mục yêu thích",
-  "setlistShare": "Chia sẻ dưới dạng tệp danh sách",
+  "setlistShare": "Chia sẻ dưới dạng OpenSong",
   "setlistSharePdf": "Chia sẻ dưới dạng PDF",
   "setlistPrint": "In",
   "setlistDeleteConfirmTitle": "Xóa danh sách?",
@@ -534,6 +534,14 @@
   "settingsFontSerif": "Có chân",
   "settingsFontMonospace": "Đơn cách",
   "settingsLyricsPreviewExample": "Khi bình minh lên, chúng ta sẽ lại hát.",
+  "settingsPreviewSongTitle": "Bài hát buổi sáng",
+  "settingsPreviewArtist": "Bản phối mẫu",
+  "settingsPreviewCurrentLine": "Khi bình minh lên",
+  "settingsPreviewNextLine": "Chúng ta sẽ lại hát.",
+  "settingsPlayerSections": "Tiêu đề mục",
+  "settingsPlayerControls": "Bảng phát nhạc",
+  "settingsPlayerAutoscroll": "Tự động cuộn",
+  "settingsSystemShort": "Thiết bị",
   "searchDiscoveryProgress": "Đang kiểm tra nguồn lời bài hát: hoàn tất {checked}/{total}.",
   "@searchDiscoveryProgress": {
     "placeholders": {
@@ -831,5 +839,47 @@
         "type": "int"
       }
     }
+  },
+  "accountDriveFolder": "Thư mục thư viện Google Drive",
+  "accountPrivateDriveFolder": "Thư mục Singbook riêng",
+  "accountChooseDriveFolder": "Chọn thư mục",
+  "accountDriveFolderMoveTitle": "Di chuyển thư viện Singbook của bạn?",
+  "accountDriveFolderMoveBody": "Chọn một thư mục Google Drive hiển thị. Singbook sẽ sao chép và xác minh các bài hát cũng như danh sách tập hợp của bạn ở đó trước khi chuyển sang nó. Các tập tin gốc vẫn ở vị trí trước đó như một bản sao lưu. Các tập tin khác được để lại một mình. Các tệp ChordPro bạn nhập vào thư mục này sẽ được sử dụng để đồng bộ hóa và nhận siêu dữ liệu Singbook.",
+  "accountImportChordPro": "Nhập ChordPro từ Drive",
+  "accountImportChordProHint": "Chọn tệp .cho để thêm vào thư viện này. Các tập tin đã có trong thư mục sẽ được chấp nhận; các tập tin ở nơi khác được sao chép ở đây.",
+  "syncErrorFolderPickerUnavailable": "Lựa chọn thư mục Drive không khả dụng",
+  "syncErrorFolderPickerUnavailableHint": "Chọn thư mục Drive hiển thị bằng bộ chọn Google Drive trên thiết bị được hỗ trợ.",
+  "syncErrorDriveFolderMissing": "Thư mục Singbook Drive không khả dụng",
+  "syncErrorDriveFolderMissingHint": "Chọn lại thư mục hoặc khôi phục thư mục đó trong Google Drive.",
+  "syncErrorDriveFileAuthorization": "Singbook cần quyền truy cập vào thư mục Drive này",
+  "syncErrorDriveFileAuthorizationHint": "Chọn lại thư mục để cấp quyền truy cập, sau đó đồng bộ hóa thư viện của bạn.",
+  "syncErrorFolderMigration": "Thư viện chưa thể di chuyển được",
+  "syncErrorFolderMigrationHint": "Thư viện trước đây của bạn vẫn an toàn. Kiểm tra kết nối và chọn lại thư mục để thử lại.",
+  "syncErrorVisibleFolderRequired": "Trước tiên, hãy chọn thư mục Drive hiển thị",
+  "syncErrorVisibleFolderRequiredHint": "Cần có thư mục thư viện hiển thị trước khi nhập tệp từ Drive.",
+  "playerEstimatedKey": "Tông ước tính",
+  "songsLibraryView": "Thư viện",
+  "settingsStartupView": "Mở vào",
+  "settingsStartupViewHint": "Chọn chế độ xem Bài hát sẽ hiển thị khi mở ứng dụng.",
+  "settingsStartupLastView": "Mở gần đây nhất",
+  "playerFullScreen": "Toàn màn hình",
+  "playerExitFullScreen": "Thoát toàn màn hình",
+  "playerExpandControls": "Hiện điều khiển phát",
+  "playerCollapseControls": "Ẩn điều khiển phát",
+  "settingsShowSections": "Hiện tiêu đề các phần",
+  "settingsShowSectionsHint": "Hiện tiêu đề đoạn, điệp khúc và các phần khác trong lời bài hát.",
+  "settingsShowPlayerControls": "Hiện điều khiển phát",
+  "settingsShowPlayerControlsHint": "Bạn cũng có thể chạm hoặc vuốt bảng trình phát để hiện hoặc ẩn bảng.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
   }
 }

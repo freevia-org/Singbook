@@ -591,7 +591,7 @@ class AppLocalizationsLv extends AppLocalizations {
   String get setlistFavoriteRemove => 'Noņemt koncertprogrammu no izlases';
 
   @override
-  String get setlistShare => 'Kopīgot kā koncertprogrammas failu';
+  String get setlistShare => 'Kopīgot kā OpenSong';
 
   @override
   String get setlistSharePdf => 'Kopīgot kā PDF';
@@ -1236,6 +1236,30 @@ class AppLocalizationsLv extends AppLocalizations {
       'Kad pienāks rīts, mēs atkal dziedāsim.';
 
   @override
+  String get settingsPreviewSongTitle => 'Rīta dziesma';
+
+  @override
+  String get settingsPreviewArtist => 'Parauga aranžējums';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Kad pienāks rīts';
+
+  @override
+  String get settingsPreviewNextLine => 'Mēs atkal dziedāsim.';
+
+  @override
+  String get settingsPlayerSections => 'Sadaļu virsraksti';
+
+  @override
+  String get settingsPlayerControls => 'Atskaņošanas panelis';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Automātiska ritināšana';
+
+  @override
+  String get settingsSystemShort => 'Ierīce';
+
+  @override
   String searchDiscoveryProgress(int checked, int total) {
     return 'Pārbauda dziesmu vārdu avotus: pabeigti $checked no $total.';
   }
@@ -1423,6 +1447,68 @@ class AppLocalizationsLv extends AppLocalizations {
   @override
   String get accountAutoSyncHint =>
       'Bibliotēka tiek sinhronizēta pēc savienojuma izveides un pēc dziesmas pievienošanas, rediģēšanas vai noņemšanas.';
+
+  @override
+  String get accountDriveFolder => 'Google diska bibliotēkas mape';
+
+  @override
+  String get accountPrivateDriveFolder => 'Privātā Singbook mape';
+
+  @override
+  String get accountChooseDriveFolder => 'Izvēlieties mapi';
+
+  @override
+  String get accountDriveFolderMoveTitle =>
+      'Vai pārvietot savu dziesmu grāmatu bibliotēku?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Izvēlieties redzamu Google diska mapi. Singbook pirms pārslēgšanās uz to nokopēs un pārbaudīs jūsu dziesmas un setu sarakstus. Oriģinālie faili tiek saglabāti to iepriekšējā atrašanās vietā kā rezerves kopija. Citi faili tiek atstāti atsevišķi. ChordPro faili, ko importējat šajā mapē, tiek pieņemti sinhronizēšanai un saņem Singbook metadatus.';
+
+  @override
+  String get accountImportChordPro => 'Importējiet ChordPro no diska';
+
+  @override
+  String get accountImportChordProHint =>
+      'Izvēlieties .cho failus, ko pievienot šai bibliotēkai. Mapē jau esošie faili tiek pieņemti; šeit tiek kopēti faili citur.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Diska mapes atlase nav pieejama';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Atbalstītā ierīcē izvēlieties redzamu Diska mapi, izmantojot Google diska atlasītāju.';
+
+  @override
+  String get syncErrorDriveFolderMissing => 'Singbook Drive mape nav pieejama';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Vēlreiz izvēlieties mapi vai atjaunojiet to Google diskā.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook ir nepieciešama piekļuve šai Diska mapei';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Vēlreiz izvēlieties mapi, lai piešķirtu piekļuvi, un pēc tam sinhronizējiet savu bibliotēku.';
+
+  @override
+  String get syncErrorFolderMigration => 'Bibliotēku vēl nevarēja pārvietot';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Jūsu iepriekšējā bibliotēka joprojām ir drošībā. Pārbaudiet savienojumu un vēlreiz izvēlieties mapi, lai mēģinātu vēlreiz.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Vispirms izvēlieties redzamu Diska mapi';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Pirms failu importēšanas no Diska ir nepieciešama redzama bibliotēkas mape.';
 
   @override
   String get accountSignOutTitle => 'Izrakstīties no šī konta?';
@@ -1943,4 +2029,46 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Vēl viena rinda, mazliet [F]tuvāk.';
+
+  @override
+  String get playerEstimatedKey => 'Aptuvenā tonalitāte';
+
+  @override
+  String get songsLibraryView => 'Bibliotēka';
+
+  @override
+  String get settingsStartupView => 'Sākuma skats';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Izvēlieties dziesmu skatu, kas tiks rādīts, atverot lietotni.';
+
+  @override
+  String get settingsStartupLastView => 'Pēdējoreiz atvērtais';
+
+  @override
+  String get playerFullScreen => 'Pilnekrāna režīms';
+
+  @override
+  String get playerExitFullScreen => 'Iziet no pilnekrāna režīma';
+
+  @override
+  String get playerExpandControls => 'Rādīt atskaņošanas vadīklas';
+
+  @override
+  String get playerCollapseControls => 'Paslēpt atskaņošanas vadīklas';
+
+  @override
+  String get settingsShowSections => 'Rādīt sadaļu virsrakstus';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Dziesmas tekstā rādīt pantu, piedziedājuma un citu sadaļu virsrakstus.';
+
+  @override
+  String get settingsShowPlayerControls => 'Rādīt atskaņošanas vadīklas';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Atskaņotāja paneli var parādīt vai paslēpt arī, pieskaroties tam vai pārvelkot.';
 }

@@ -4,10 +4,12 @@ Owner checklist for turning on Google Sign-In and Drive sync. Singbook has no
 backend and no client secret: the only things you create are a Google Cloud
 project, an OAuth consent screen and OAuth **client IDs** (public identifiers).
 
-What the app needs (from `lib/sync/google_auth.dart`):
+What the app needs (from `lib/sync/google_auth.dart` and the Android Drive Picker):
 
-- Scope: `https://www.googleapis.com/auth/drive.appdata` only (hidden per-app
-  Drive folder; the app cannot see any other Drive file).
+- Scopes: `https://www.googleapis.com/auth/drive.appdata` for the default
+  private app folder and `https://www.googleapis.com/auth/drive.file` for the
+  Android visible-folder and selected-file flows. The Picker request uses
+  `drive.file` alone; Singbook never requests broad `drive` access.
 - Dart define `VERSE_GOOGLE_SERVER_CLIENT_ID`: the **Web application** client ID
   (required by Google Sign-In on Android).
 - Dart define `VERSE_GOOGLE_IOS_CLIENT_ID`: only for an iOS build (optional;
@@ -48,6 +50,8 @@ verified domain, homepage and privacy policy on that domain.
    make sure it is selected.
 3. **APIs & Services > Library**, search `Google Drive API`, open it and click
    **Enable**. (Data Access lists scopes only for APIs that are already enabled.)
+4. In the same library, enable `Google Picker API` for Android's folder and
+   file-selection consent flow.
 
 ## 2. Google Auth Platform: branding, audience, scopes
 
@@ -84,13 +88,12 @@ and the same fields apply.
 ### Data Access
 
 1. **ADD OR REMOVE SCOPES**.
-2. Select `.../auth/drive.appdata` (or paste it under **Manually add scopes** if
-   it is not listed), click **UPDATE**.
-3. Confirm it appears under **Non-sensitive scopes** in the table. If it shows
-   up as Sensitive/Restricted, stop: you picked a different scope (for example
-   `drive` or `drive.file`), which would trigger verification.
+2. Select `.../auth/drive.appdata` and `.../auth/drive.file` (or paste them
+   under **Manually add scopes** if they are not listed), click **UPDATE**.
+3. Confirm both appear under **Non-sensitive scopes** in the table. If either
+   shows as Sensitive/Restricted, stop and verify the scope spelling.
 
-Do **not** add any other scope. The app does not need `email`/`profile` to be
+Do **not** add any other Drive scope. The app does not need `email`/`profile` to be
 listed; Google Sign-In identifies the account with basic profile information.
 
 ### Publish to Production
@@ -140,7 +143,7 @@ Create these:
    (`<number>-<hash>.apps.googleusercontent.com`) - this becomes
    `VERSE_GOOGLE_SERVER_CLIENT_ID`. Google shows a client secret once; the app
    does not use it, so do not store it in the repository or the app.
-5. **iOS (optional, only for a future iOS build).** Application type: iOS, Bundle
+5. **iOS (optional, for an iOS build).** Application type: iOS, Bundle
    ID of the iOS app. Its client ID becomes `VERSE_GOOGLE_IOS_CLIENT_ID`.
    The iOS build also needs the client ID and its **reversed** form (the two
    halves swapped: `com.googleusercontent.apps.<number>-<hash>`) in
@@ -183,8 +186,13 @@ GID_REVERSED_CLIENT_ID = com.googleusercontent.apps.<ios client id prefix>
 
 `Info.plist` reads them as `GIDClientID` and as the URL scheme that lets the
 Google sign-in redirect return to the app. `GID_CLIENT_ID` must equal
-`VERSE_GOOGLE_IOS_CLIENT_ID`. iOS sign-in and sync are not validated on this
-Windows workspace; test on macOS before shipping an iOS build.
+`VERSE_GOOGLE_IOS_CLIENT_ID`. Native iOS bridge, Keychain and UI checks passed on simulators for the parity
+candidate. Live sign-in, folder consent and refresh still require validation
+with these configured identifiers before shipping an OAuth-enabled build.
+The optional visible-folder/file Picker uses this same iOS client and reversed
+callback scheme in a system-browser OAuth flow, with `drive.file` alone and
+PKCE. Enable Drive and Picker APIs in the same Google project; no extra
+web client secret or broad Drive scope is used.
 
 Leave `VERSE_GOOGLE_IOS_CLIENT_ID` empty for Android-only builds. Both IDs must
 end in `.apps.googleusercontent.com` or the app treats Google sign-in as not
@@ -202,8 +210,8 @@ define ships with sync disabled.
 
 ## 6. Verification checklist
 
-- [ ] APIs & Services shows Google Drive API enabled.
-- [ ] Data Access lists exactly `drive.appdata`, under Non-sensitive.
+- [ ] APIs & Services shows Google Drive API and Google Picker API enabled.
+- [ ] Data Access lists exactly `drive.appdata` and `drive.file`, under Non-sensitive.
 - [ ] Audience: External, status **In production** (or your accounts are listed
       as test users while developing).
 - [ ] Android clients exist for debug, upload and Play app-signing SHA-1s, all with

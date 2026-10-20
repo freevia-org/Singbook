@@ -266,7 +266,7 @@
   "setlistDuplicate": "गीत-सूची की कॉपी बनाएँ",
   "setlistFavoriteAdd": "गीत-सूची को पसंदीदा बनाएँ",
   "setlistFavoriteRemove": "गीत-सूची को पसंदीदा से हटाएँ",
-  "setlistShare": "गीत-सूची फ़ाइल के रूप में साझा करें",
+  "setlistShare": "OpenSong के रूप में साझा करें",
   "setlistSharePdf": "PDF के रूप में साझा करें",
   "setlistPrint": "प्रिंट करें",
   "setlistDeleteConfirmTitle": "गीत-सूची हटाएँ?",
@@ -536,6 +536,14 @@
   "settingsFontSerif": "सेरिफ़",
   "settingsFontMonospace": "मोनोस्पेस",
   "settingsLyricsPreviewExample": "सुबह होते ही, हम फिर गाएँगे।",
+  "settingsPreviewSongTitle": "सुबह का गीत",
+  "settingsPreviewArtist": "नमूना संगीत संयोजन",
+  "settingsPreviewCurrentLine": "सुबह होते ही",
+  "settingsPreviewNextLine": "हम फिर गाएँगे।",
+  "settingsPlayerSections": "अनुभाग शीर्षक",
+  "settingsPlayerControls": "प्लेबैक पैनल",
+  "settingsPlayerAutoscroll": "अपने आप स्क्रॉल करें",
+  "settingsSystemShort": "डिवाइस",
   "searchDiscoveryProgress": "बोलों के स्रोत जाँचे जा रहे हैं: {total} में से {checked} पूरे।",
   "@searchDiscoveryProgress": {
     "placeholders": {
@@ -830,5 +838,47 @@
         "type": "int"
       }
     }
+  },
+  "accountDriveFolder": "Google Drive लाइब्रेरी फ़ोल्डर",
+  "accountPrivateDriveFolder": "निजी सिंगबुक फ़ोल्डर",
+  "accountChooseDriveFolder": "फ़ोल्डर चुनें",
+  "accountDriveFolderMoveTitle": "क्या आप अपनी सिंगबुक लाइब्रेरी को स्थानांतरित करना चाहते हैं?",
+  "accountDriveFolderMoveBody": "एक दृश्यमान Google ड्राइव फ़ोल्डर चुनें. सिंगबुक इस पर स्विच करने से पहले आपके गाने और सेटलिस्ट को कॉपी और सत्यापित करेगा। मूल फ़ाइलें बैकअप के रूप में अपने पिछले स्थान पर रहती हैं। अन्य फ़ाइलें अकेली छोड़ दी गई हैं। इस फ़ोल्डर में आपके द्वारा आयात की जाने वाली कॉर्डप्रो फ़ाइलें सिंक के लिए अपनाई जाती हैं और सिंगबुक मेटाडेटा प्राप्त करती हैं।",
+  "accountImportChordPro": "ड्राइव से कॉर्डप्रो आयात करें",
+  "accountImportChordProHint": "इस लाइब्रेरी में जोड़ने के लिए .cho फ़ाइलें चुनें। फ़ोल्डर में पहले से मौजूद फ़ाइलें अपनाई जाती हैं; अन्यत्र फ़ाइलें यहां कॉपी की गई हैं।",
+  "syncErrorFolderPickerUnavailable": "ड्राइव फ़ोल्डर चयन अनुपलब्ध है",
+  "syncErrorFolderPickerUnavailableHint": "समर्थित डिवाइस पर Google Drive पिकर से दिखाई देने वाला Drive फ़ोल्डर चुनें।",
+  "syncErrorDriveFolderMissing": "सिंगबुक ड्राइव फ़ोल्डर अनुपलब्ध है",
+  "syncErrorDriveFolderMissingHint": "फ़ोल्डर को फिर से चुनें, या इसे Google ड्राइव में पुनर्स्थापित करें।",
+  "syncErrorDriveFileAuthorization": "सिंगबुक को इस ड्राइव फ़ोल्डर तक पहुंच की आवश्यकता है",
+  "syncErrorDriveFileAuthorizationHint": "पहुंच प्रदान करने के लिए फिर से फ़ोल्डर चुनें, फिर अपनी लाइब्रेरी को सिंक करें।",
+  "syncErrorFolderMigration": "लाइब्रेरी को अभी तक स्थानांतरित नहीं किया जा सका",
+  "syncErrorFolderMigrationHint": "आपकी पिछली लाइब्रेरी अभी भी सुरक्षित है. कनेक्शन की जाँच करें और पुनः प्रयास करने के लिए फिर से फ़ोल्डर चुनें।",
+  "syncErrorVisibleFolderRequired": "पहले एक दृश्यमान ड्राइव फ़ोल्डर चुनें",
+  "syncErrorVisibleFolderRequiredHint": "ड्राइव से फ़ाइलें आयात करने से पहले एक दृश्यमान लाइब्रेरी फ़ोल्डर की आवश्यकता होती है।",
+  "playerEstimatedKey": "अनुमानित स्वर",
+  "songsLibraryView": "लाइब्रेरी",
+  "settingsStartupView": "इसमें शुरू करें",
+  "settingsStartupViewHint": "ऐप खुलने पर दिखने वाला गानों का दृश्य चुनें।",
+  "settingsStartupLastView": "पिछली बार खोला गया",
+  "playerFullScreen": "पूर्ण स्क्रीन",
+  "playerExitFullScreen": "पूर्ण स्क्रीन से बाहर निकलें",
+  "playerExpandControls": "प्लेबैक नियंत्रण दिखाएँ",
+  "playerCollapseControls": "प्लेबैक नियंत्रण छिपाएँ",
+  "settingsShowSections": "खंड शीर्षक दिखाएँ",
+  "settingsShowSectionsHint": "गीत के बोलों में अंतरा, मुखड़ा और अन्य खंडों के शीर्षक दिखाएँ।",
+  "settingsShowPlayerControls": "प्लेबैक नियंत्रण दिखाएँ",
+  "settingsShowPlayerControlsHint": "प्लेयर पैनल दिखाने या छिपाने के लिए उसे टैप या स्वाइप भी कर सकते हैं।",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
   }
 }

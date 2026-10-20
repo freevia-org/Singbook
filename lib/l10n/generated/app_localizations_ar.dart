@@ -593,7 +593,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get setlistFavoriteRemove => 'إزالة قائمة الأغاني من المفضلة';
 
   @override
-  String get setlistShare => 'مشاركة كملف قائمة أغاني';
+  String get setlistShare => 'مشاركة كملف OpenSong';
 
   @override
   String get setlistSharePdf => 'مشاركة كملف PDF';
@@ -1232,6 +1232,30 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsLyricsPreviewExample => 'عندما يأتي الصباح، سنغني مجددًا.';
 
   @override
+  String get settingsPreviewSongTitle => 'ترنيمة الصباح';
+
+  @override
+  String get settingsPreviewArtist => 'ترتيب موسيقي نموذجي';
+
+  @override
+  String get settingsPreviewCurrentLine => 'عندما يأتي الصباح';
+
+  @override
+  String get settingsPreviewNextLine => 'سنغني مجددًا.';
+
+  @override
+  String get settingsPlayerSections => 'عناوين الأقسام';
+
+  @override
+  String get settingsPlayerControls => 'لوحة التشغيل';
+
+  @override
+  String get settingsPlayerAutoscroll => 'التمرير التلقائي';
+
+  @override
+  String get settingsSystemShort => 'الجهاز';
+
+  @override
   String searchDiscoveryProgress(int checked, int total) {
     return 'جارٍ التحقق من مصادر الكلمات: اكتمل $checked من $total.';
   }
@@ -1431,6 +1455,65 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get accountAutoSyncHint =>
       'تتم المزامنة بعد الاتصال وبعد إضافة أغنية أو تعديلها أو حذفها.';
+
+  @override
+  String get accountDriveFolder => 'مجلد مكتبة جوجل درايف';
+
+  @override
+  String get accountPrivateDriveFolder => 'مجلد Singbook الخاص';
+
+  @override
+  String get accountChooseDriveFolder => 'اختر المجلد';
+
+  @override
+  String get accountDriveFolderMoveTitle => 'نقل مكتبة Singbook الخاصة بك؟';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'اختر مجلد Google Drive مرئيًا. سيقوم Singbook بنسخ الأغاني وقوائم الأغاني الخاصة بك والتحقق منها هناك قبل التبديل إليها. تبقى الملفات الأصلية في موقعها السابق كنسخة احتياطية. يتم ترك الملفات الأخرى وحدها. يتم اعتماد ملفات ChordPro التي تستوردها في هذا المجلد للمزامنة واستقبال البيانات التعريفية لـ Singbook.';
+
+  @override
+  String get accountImportChordPro => 'استيراد ChordPro من Drive';
+
+  @override
+  String get accountImportChordProHint =>
+      'اختر ملفات .cho لإضافتها إلى هذه المكتبة. تم اعتماد الملفات الموجودة بالفعل في المجلد؛ يتم نسخ الملفات في مكان آخر هنا.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable => 'تحديد مجلد Drive غير متاح';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'اختر مجلد Drive مرئيًا باستخدام أداة اختيار Google Drive على جهاز مدعوم.';
+
+  @override
+  String get syncErrorDriveFolderMissing => 'مجلد Singbook Drive غير متوفر';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'اختر المجلد مرة أخرى، أو استعادته في Google Drive.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'يحتاج Singbook إلى الوصول إلى مجلد Drive هذا';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'اختر المجلد مرة أخرى لمنح الوصول، ثم قم بمزامنة مكتبتك.';
+
+  @override
+  String get syncErrorFolderMigration => 'لا يمكن نقل المكتبة بعد';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'مكتبتك السابقة لا تزال آمنة. تحقق من الاتصال واختر المجلد مرة أخرى لإعادة المحاولة.';
+
+  @override
+  String get syncErrorVisibleFolderRequired => 'اختر مجلد Drive مرئيًا أولاً';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'يلزم وجود مجلد مكتبة مرئي قبل استيراد الملفات من Drive.';
 
   @override
   String get accountSignOutTitle => 'تسجيل الخروج من هذا الحساب؟';
@@ -1944,4 +2027,46 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]سطر آخر، وخطوة [F]أقرب.';
+
+  @override
+  String get playerEstimatedKey => 'المفتاح المُقدّر';
+
+  @override
+  String get songsLibraryView => 'المكتبة';
+
+  @override
+  String get settingsStartupView => 'ابدأ في';
+
+  @override
+  String get settingsStartupViewHint =>
+      'اختر عرض الأغاني الذي يظهر عند فتح التطبيق.';
+
+  @override
+  String get settingsStartupLastView => 'آخر عرض مفتوح';
+
+  @override
+  String get playerFullScreen => 'ملء الشاشة';
+
+  @override
+  String get playerExitFullScreen => 'الخروج من ملء الشاشة';
+
+  @override
+  String get playerExpandControls => 'إظهار عناصر التحكم بالتشغيل';
+
+  @override
+  String get playerCollapseControls => 'إخفاء عناصر التحكم بالتشغيل';
+
+  @override
+  String get settingsShowSections => 'إظهار عناوين الأقسام';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'أظهر عناوين المقاطع والكورس والأقسام الأخرى في كلمات الأغاني.';
+
+  @override
+  String get settingsShowPlayerControls => 'إظهار عناصر التحكم بالتشغيل';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'يمكنك أيضًا النقر على لوحة المشغّل أو تمريرها لإظهارها أو إخفائها.';
 }

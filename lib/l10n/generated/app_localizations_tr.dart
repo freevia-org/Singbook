@@ -588,7 +588,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get setlistFavoriteRemove => 'Listeyi favorilerden kaldır';
 
   @override
-  String get setlistShare => 'Liste dosyası olarak paylaş';
+  String get setlistShare => 'OpenSong olarak paylaş';
 
   @override
   String get setlistSharePdf => 'PDF olarak paylaş';
@@ -1223,6 +1223,30 @@ class AppLocalizationsTr extends AppLocalizations {
       'Sabah olduğunda yine şarkı söyleyeceğiz.';
 
   @override
+  String get settingsPreviewSongTitle => 'Sabah şarkısı';
+
+  @override
+  String get settingsPreviewArtist => 'Örnek düzenleme';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Sabah olduğunda';
+
+  @override
+  String get settingsPreviewNextLine => 'Yine şarkı söyleyeceğiz.';
+
+  @override
+  String get settingsPlayerSections => 'Bölüm başlıkları';
+
+  @override
+  String get settingsPlayerControls => 'Oynatma paneli';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Otomatik kaydırma';
+
+  @override
+  String get settingsSystemShort => 'Cihaz';
+
+  @override
   String searchDiscoveryProgress(int checked, int total) {
     return 'Şarkı sözü kaynakları kontrol ediliyor: $total kaynaktan $checked tanesi tamamlandı.';
   }
@@ -1404,6 +1428,69 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get accountAutoSyncHint =>
       'Bağlandıktan ve bir şarkı eklendikten, düzenlendikten veya kaldırıldıktan sonra eşitlenir.';
+
+  @override
+  String get accountDriveFolder => 'Google Drive kitaplık klasörü';
+
+  @override
+  String get accountPrivateDriveFolder => 'Özel Singbook klasörü';
+
+  @override
+  String get accountChooseDriveFolder => 'Klasör seç';
+
+  @override
+  String get accountDriveFolderMoveTitle =>
+      'Singbook kütüphaneniz taşınsın mı?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Görünür bir Google Drive klasörü seçin. Singbook, geçiş yapmadan önce şarkılarınızı ve set listelerinizi oraya kopyalayacak ve doğrulayacaktır. Orijinal dosyalar yedek olarak önceki konumlarında kalır. Diğer dosyalar yalnız bırakılır. Bu klasöre aktardığınız ChordPro dosyaları senkronizasyon için benimsenir ve Singbook meta verilerini alır.';
+
+  @override
+  String get accountImportChordPro => 'ChordPro\'yu Drive\'dan içe aktar';
+
+  @override
+  String get accountImportChordProHint =>
+      'Bu kitaplığa eklenecek .cho dosyalarını seçin. Zaten klasörde bulunan dosyalar benimsenir; başka yerlerdeki dosyalar buraya kopyalanır.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Drive klasörü seçimi kullanılamıyor';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Desteklenen bir cihazda Google Drive seçiciyi kullanarak görünür bir Drive klasörü seçin.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'Singbook Drive klasörü kullanılamıyor';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Klasörü tekrar seçin veya Google Drive\'a geri yükleyin.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook\'un bu Drive klasörüne erişmesi gerekiyor';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Erişim izni vermek için klasörü tekrar seçin ve ardından kitaplığınızı senkronize edin.';
+
+  @override
+  String get syncErrorFolderMigration => 'Kütüphane henüz taşınamadı';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Önceki kitaplığınız hâlâ güvende. Bağlantıyı kontrol edin ve yeniden denemek için klasörü tekrar seçin.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Önce görünür bir Drive klasörü seçin';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Dosyaları Drive\'dan içe aktarmadan önce görünür bir kitaplık klasörüne ihtiyaç vardır.';
 
   @override
   String get accountSignOutTitle => 'Bu hesaptan çıkış yapılsın mı?';
@@ -1918,4 +2005,46 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Bir satır daha, biraz daha [F]yakın.';
+
+  @override
+  String get playerEstimatedKey => 'Tahmini tonalite';
+
+  @override
+  String get songsLibraryView => 'Kitaplık';
+
+  @override
+  String get settingsStartupView => 'Başlangıç görünümü';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Uygulama açıldığında gösterilecek Şarkılar görünümünü seçin.';
+
+  @override
+  String get settingsStartupLastView => 'Son açılan';
+
+  @override
+  String get playerFullScreen => 'Tam ekran';
+
+  @override
+  String get playerExitFullScreen => 'Tam ekrandan çık';
+
+  @override
+  String get playerExpandControls => 'Oynatma kontrollerini göster';
+
+  @override
+  String get playerCollapseControls => 'Oynatma kontrollerini gizle';
+
+  @override
+  String get settingsShowSections => 'Bölüm başlıklarını göster';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Şarkı sözlerinde kıta, nakarat ve diğer bölümlerin başlıklarını göster.';
+
+  @override
+  String get settingsShowPlayerControls => 'Oynatma kontrollerini göster';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Oynatıcı panelini göstermek veya gizlemek için panele dokunabilir ya da kaydırabilirsiniz.';
 }

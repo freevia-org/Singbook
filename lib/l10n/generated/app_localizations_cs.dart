@@ -591,7 +591,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get setlistFavoriteRemove => 'Odebrat koncertní program z oblíbených';
 
   @override
-  String get setlistShare => 'Sdílet jako soubor koncertního programu';
+  String get setlistShare => 'Sdílet jako OpenSong';
 
   @override
   String get setlistSharePdf => 'Sdílet jako PDF';
@@ -1225,6 +1225,30 @@ class AppLocalizationsCs extends AppLocalizations {
       'Až přijde ráno, zazpíváme si znovu.';
 
   @override
+  String get settingsPreviewSongTitle => 'Ranní píseň';
+
+  @override
+  String get settingsPreviewArtist => 'Ukázkové aranžmá';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Až přijde ráno';
+
+  @override
+  String get settingsPreviewNextLine => 'Znovu si zazpíváme.';
+
+  @override
+  String get settingsPlayerSections => 'Nadpisy oddílů';
+
+  @override
+  String get settingsPlayerControls => 'Panel přehrávání';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Automatické posouvání';
+
+  @override
+  String get settingsSystemShort => 'Zařízení';
+
+  @override
   String searchDiscoveryProgress(int checked, int total) {
     return 'Kontrola zdrojů textů písní: dokončeno $checked z $total.';
   }
@@ -1411,6 +1435,69 @@ class AppLocalizationsCs extends AppLocalizations {
   @override
   String get accountAutoSyncHint =>
       'Synchronizace proběhne po připojení a po přidání, úpravě nebo odebrání písně.';
+
+  @override
+  String get accountDriveFolder => 'Složka knihovny Disku Google';
+
+  @override
+  String get accountPrivateDriveFolder => 'Soukromá složka Zpěvník';
+
+  @override
+  String get accountChooseDriveFolder => 'Vyberte složku';
+
+  @override
+  String get accountDriveFolderMoveTitle => 'Přesunout knihovnu Singbooku?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Vyberte viditelnou složku Disku Google. Singbook tam zkopíruje a ověří vaše skladby a setlisty, než na něj přepnete. Původní soubory zůstanou ve svém předchozím umístění jako záloha. Ostatní soubory jsou ponechány na pokoji. Soubory ChordPro, které importujete do této složky, jsou přijaty pro synchronizaci a přijímání metadat Singbooku.';
+
+  @override
+  String get accountImportChordPro => 'Importujte ChordPro z Disku';
+
+  @override
+  String get accountImportChordProHint =>
+      'Vyberte soubory .cho, které chcete přidat do této knihovny. Soubory již ve složce jsou převzaty; soubory jinde jsou zkopírovány sem.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Výběr složky na Disku není k dispozici';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Na podporovaném zařízení vyberte viditelnou složku na Disku Google pomocí jeho výběru.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'Složka Singbook Drive není dostupná';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Vyberte složku znovu nebo ji obnovte na Disku Google.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Zpěvník potřebuje přístup k této složce na Disku';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Znovu vyberte složku, ke které chcete udělit přístup, a poté knihovnu synchronizujte.';
+
+  @override
+  String get syncErrorFolderMigration =>
+      'Knihovnu se zatím nepodařilo přesunout';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Vaše předchozí knihovna je stále v bezpečí. Zkontrolujte připojení a znovu vyberte složku a zkuste to znovu.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Nejprve vyberte viditelnou složku na Disku';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Před importem souborů z Disku je potřeba viditelná složka knihovny.';
 
   @override
   String get accountSignOutTitle => 'Odhlásit se z tohoto účtu?';
@@ -1935,4 +2022,46 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Ještě jeden řádek, o něco [F]blíž.';
+
+  @override
+  String get playerEstimatedKey => 'Odhadovaná tónina';
+
+  @override
+  String get songsLibraryView => 'Knihovna';
+
+  @override
+  String get settingsStartupView => 'Otevřít při spuštění';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Vyberte zobrazení Písně, které se ukáže po otevření aplikace.';
+
+  @override
+  String get settingsStartupLastView => 'Naposledy otevřené';
+
+  @override
+  String get playerFullScreen => 'Celá obrazovka';
+
+  @override
+  String get playerExitFullScreen => 'Ukončit celou obrazovku';
+
+  @override
+  String get playerExpandControls => 'Zobrazit ovládání přehrávání';
+
+  @override
+  String get playerCollapseControls => 'Skrýt ovládání přehrávání';
+
+  @override
+  String get settingsShowSections => 'Zobrazovat nadpisy částí';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Zobrazovat v textu nadpisy slok, refrénu a dalších částí.';
+
+  @override
+  String get settingsShowPlayerControls => 'Zobrazit ovládání přehrávání';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Panel přehrávače můžete také zobrazit nebo skrýt klepnutím či přejetím.';
 }

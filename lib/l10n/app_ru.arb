@@ -264,7 +264,7 @@
   "setlistDuplicate": "Создать копию сет-листа",
   "setlistFavoriteAdd": "Добавить сет-лист в избранное",
   "setlistFavoriteRemove": "Убрать сет-лист из избранного",
-  "setlistShare": "Поделиться файлом сет-листа",
+  "setlistShare": "Поделиться как OpenSong",
   "setlistSharePdf": "Поделиться как PDF",
   "setlistPrint": "Печать",
   "setlistDeleteConfirmTitle": "Удалить сет-лист?",
@@ -534,6 +534,14 @@
   "settingsFontSerif": "С засечками",
   "settingsFontMonospace": "Моноширинный",
   "settingsLyricsPreviewExample": "Когда наступит утро, мы снова запоём.",
+  "settingsPreviewSongTitle": "Утренняя песня",
+  "settingsPreviewArtist": "Пример аранжировки",
+  "settingsPreviewCurrentLine": "Когда наступит утро",
+  "settingsPreviewNextLine": "Мы снова запоём.",
+  "settingsPlayerSections": "Заголовки разделов",
+  "settingsPlayerControls": "Панель воспроизведения",
+  "settingsPlayerAutoscroll": "Автопрокрутка",
+  "settingsSystemShort": "Устройство",
   "searchDiscoveryProgress": "Проверка источников текстов: готово {checked} из {total}.",
   "@searchDiscoveryProgress": {
     "placeholders": {
@@ -831,5 +839,47 @@
         "type": "int"
       }
     }
+  },
+  "accountDriveFolder": "Папка библиотеки Google Диска",
+  "accountPrivateDriveFolder": "Личная папка Singbook",
+  "accountChooseDriveFolder": "Выбрать папку",
+  "accountDriveFolderMoveTitle": "Переместить библиотеку Singbook?",
+  "accountDriveFolderMoveBody": "Выберите видимую папку Google Диска. Singbook скопирует и проверит ваши песни и сетлисты перед переключением на него. Исходные файлы остаются в прежнем месте в качестве резервной копии. Остальные файлы остаются в покое. Файлы ChordPro, которые вы импортируете в эту папку, принимаются для синхронизации и получают метаданные Singbook.",
+  "accountImportChordPro": "Импортировать ChordPro с Диска",
+  "accountImportChordProHint": "Выберите файлы .cho для добавления в эту библиотеку. Файлы, уже находящиеся в папке, принимаются; файлы из других источников копируются сюда.",
+  "syncErrorFolderPickerUnavailable": "Выбор папки на Диске недоступен",
+  "syncErrorFolderPickerUnavailableHint": "Выберите видимую папку на Диске с помощью средства выбора Google Диска на поддерживаемом устройстве.",
+  "syncErrorDriveFolderMissing": "Папка Singbook Drive недоступна",
+  "syncErrorDriveFolderMissingHint": "Выберите папку еще раз или восстановите ее на Google Диске.",
+  "syncErrorDriveFileAuthorization": "Singbook требуется доступ к этой папке на Диске",
+  "syncErrorDriveFileAuthorizationHint": "Снова выберите папку, чтобы предоставить доступ, а затем синхронизируйте свою библиотеку.",
+  "syncErrorFolderMigration": "Библиотеку пока нельзя переместить.",
+  "syncErrorFolderMigrationHint": "Ваша предыдущая библиотека по-прежнему в безопасности. Проверьте соединение и еще раз выберите папку, чтобы повторить попытку.",
+  "syncErrorVisibleFolderRequired": "Сначала выберите видимую папку на Диске",
+  "syncErrorVisibleFolderRequiredHint": "Перед импортом файлов с Диска необходима видимая папка библиотеки.",
+  "playerEstimatedKey": "Предполагаемая тональность",
+  "songsLibraryView": "Библиотека",
+  "settingsStartupView": "Начальный экран",
+  "settingsStartupViewHint": "Выберите раздел «Песни», который будет открываться при запуске приложения.",
+  "settingsStartupLastView": "Последний открытый",
+  "playerFullScreen": "Полный экран",
+  "playerExitFullScreen": "Выйти из полноэкранного режима",
+  "playerExpandControls": "Показать элементы управления воспроизведением",
+  "playerCollapseControls": "Скрыть элементы управления воспроизведением",
+  "settingsShowSections": "Показывать заголовки разделов",
+  "settingsShowSectionsHint": "Показывать в тексте заголовки куплетов, припева и других разделов.",
+  "settingsShowPlayerControls": "Показать элементы управления воспроизведением",
+  "settingsShowPlayerControlsHint": "Панель плеера также можно показать или скрыть касанием или свайпом.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
   }
 }

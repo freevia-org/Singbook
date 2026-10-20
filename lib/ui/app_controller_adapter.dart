@@ -6,13 +6,14 @@ import 'package:flutter/foundation.dart';
 import '../application/app_controller.dart';
 import '../domain/arrangement.dart' as arrangement;
 import '../domain/chordpro.dart';
-import '../domain/combine.dart'
-    show recordingCompatible, corroboratedArrangementKey;
+import '../domain/chord_key_estimate.dart' show estimateChordKey;
+import '../domain/combine.dart' show recordingCompatible, sourcedArrangementKey;
 import '../domain/models.dart';
 import '../domain/timing.dart' show timingOccurrenceMap;
 import '../domain/source_contributions.dart';
 import 'format.dart';
 import 'player_section_timeline.dart';
+import 'player_duration.dart';
 import 'verse_ui_state.dart';
 
 double? _validDuration(Object? value) {
@@ -81,11 +82,13 @@ class AppControllerAdapter extends VerseUiController {
   VerseTab _tab = VerseTab.home;
   VerseRoute _route = VerseRoute.main;
   HomeListMode _homeMode = HomeListMode.recent;
+  bool _favoritesOnly = false;
   SearchFilterData _filters = const SearchFilterData();
   bool _filtersExpanded = false;
   String _query = '';
   String? _songId, _setlistId, _setlistEntryId, _selectedVersionId;
   String? _selectedQuery;
+  String? _lastCatalogQuery;
   String? _versionOrderReferenceId;
   final Map<String, int> _versionArrivalOrder = {};
   int _nextVersionArrivalOrder = 0;
@@ -294,6 +297,18 @@ class AppControllerAdapter extends VerseUiController {
     _opens = opens;
     final song = currentSong;
     final setlist = currentSetlist;
+    final trustedReaderKey = displayedKey;
+    final estimatedReaderKey = trustedReaderKey == null && song != null
+        ? estimateChordKey(song.body)?.key
+        : null;
+    final readerKey =
+        trustedReaderKey ??
+        (estimatedReaderKey == null
+            ? null
+            : arrangement.transposeChord(
+                _keyWithCanonicalRoot(estimatedReaderKey),
+                _transpose.toInt(),
+              ));
     final timingMode = app.settings['timingMode'] as String? ?? 'estimated';
     final data = song == null
         ? const <LyricLineData>[]
@@ -302,8 +317,7 @@ class AppControllerAdapter extends VerseUiController {
           );
     final playerDuration = song == null
         ? 0.0
-        : _validDuration(song.metadata['durationSeconds']) ??
-              _estimatedDuration(data.length);
+        : _durationForSong(song, lines: data).seconds;
     final timedLineStarts = song == null
         ? const <String, double>{}
         : _timedLineStarts(data, song, timingMode);
@@ -403,6 +417,8 @@ class AppControllerAdapter extends VerseUiController {
       route: _route,
       activeTab: _tab,
       homeListMode: _homeMode,
+      favoritesOnly: _favoritesOnly,
+      startupSongsView: _startupSongsView(app.settings['startupSongsView']),
       query: _query,
       autocomplete: _query.trim() == app.query.trim()
           ? rankedAutocomplete.map((entry) => _reference(entry.value)).toList()
@@ -441,6 +457,7 @@ class AppControllerAdapter extends VerseUiController {
       syncSignedIn: app.syncConnected,
       syncBusy: app.syncBusy,
       accountName: app.syncAccountEmail,
+      syncDriveFolderName: app.syncDriveFolderName,
       accountPhotoUrl: app.syncAccountPhotoUrl,
       accountError: _syncWarningOnly ? null : app.syncError,
       lastSyncAt: _lastSyncAt,
@@ -459,6 +476,9 @@ class AppControllerAdapter extends VerseUiController {
         app.settings['lyricHighlightStyle'],
       ),
       showChords: app.settings['showChords'] as bool? ?? true,
+      showSections: app.settings['showSections'] as bool? ?? true,
+      playerControlsExpanded:
+          app.settings['playerControlsExpanded'] as bool? ?? true,
       autoscroll:
           (app.settings['autoscroll'] as bool? ?? true) &&
           timingMode != 'manual',
@@ -475,15 +495,14 @@ class AppControllerAdapter extends VerseUiController {
       editingSetlist: _editingSetlist,
       editor: _editorData,
       editorDirty: _editorDirty,
-      readerKey: displayedKey,
+      readerKey: readerKey,
+      readerKeyEstimated: estimatedReaderKey != null,
       readerTranspose: _transpose.round(),
       readerCapo: displayedCapo?.toString(),
       readerTuning: tuning?.toString(),
       readerTempo: tempo?.toString(),
       readerHasTiming: readerHasTiming,
-      readerDurationEstimated:
-          song != null &&
-          _validDuration(song.metadata['durationSeconds']) == null,
+      readerDurationEstimated: song != null && _durationForSong(song).estimated,
       readerSource: readerSource,
       readerTimingAvailable: readerTimingAvailable,
       readerCanCompareVersions: readerCanCompareVersions,
@@ -513,11 +532,20 @@ class AppControllerAdapter extends VerseUiController {
   );
 
   final _songKeys = Expando<({String? key})>();
+  final _playbackDurations = Expando<PlayerDuration>();
+
+  PlayerDuration _durationForSong(
+    SongDocument song, {
+    List<LyricLineData>? lines,
+  }) => _playbackDurations[song] ??= resolvePlayerDuration(
+    song,
+    estimate: () => estimateChartDuration(lines ?? _lines(song.body)),
+  );
   String? _songKey(SongDocument song) {
     final cached = _songKeys[song];
     if (cached != null) return cached.key;
     final explicit = _metaString(song.metadata['key']);
-    final key = explicit ?? corroboratedArrangementKey(song)?.key;
+    final key = explicit ?? sourcedArrangementKey(song)?.key;
     _songKeys[song] = (key: key);
     return key;
   }
@@ -528,7 +556,7 @@ class AppControllerAdapter extends VerseUiController {
     artist: song.artist,
     album: _metaString(song.metadata['album']),
     artworkUrl: _metaString(song.metadata['artworkUrl']),
-    durationSeconds: _validDuration(song.metadata['durationSeconds']),
+    durationSeconds: _durationForSong(song).seconds,
     key: _songKey(song),
     favorite: song.favorite,
     modifiedAt: song.updatedAt,
@@ -541,6 +569,19 @@ class AppControllerAdapter extends VerseUiController {
 
   SetlistCardData _setlistCard(SetlistDocument value) {
     final entries = [for (final entry in value.entries) _entryData(entry)];
+    var durationSeconds = 0.0;
+    var durationEstimated = false;
+    var durationPartial = false;
+    for (final entry in value.entries) {
+      final song = _lookupSong(entry.songId);
+      if (song == null) {
+        durationPartial = true;
+        continue;
+      }
+      final duration = _durationForSong(song);
+      durationSeconds += duration.seconds;
+      durationEstimated |= duration.estimated;
+    }
     return SetlistCardData(
       id: value.id,
       title: value.name,
@@ -550,6 +591,9 @@ class AppControllerAdapter extends VerseUiController {
       entries: entries,
       favorite: value.favorite,
       modifiedAt: value.updatedAt,
+      durationSeconds: durationSeconds,
+      durationEstimated: durationEstimated,
+      durationPartial: durationPartial,
     );
   }
 
@@ -562,6 +606,9 @@ class AppControllerAdapter extends VerseUiController {
       songId: entry.songId,
       title: song?.title ?? '',
       artist: song?.artist ?? '',
+      durationSeconds: song == null
+          ? null
+          : _validDuration(song.metadata['durationSeconds']),
       keyOverride: key == null || key.isEmpty ? null : key,
       capoOverride: capo == null || capo.isEmpty ? null : capo,
       missing: song == null,
@@ -1214,6 +1261,10 @@ class AppControllerAdapter extends VerseUiController {
     return starts;
   }
 
+  List<LyricLineData>? _estimatedPositionLines;
+  double? _estimatedPositionDuration;
+  Map<String, double> _estimatedPositionStarts = const {};
+
   String? _currentLineId(List<LyricLineData> lines, SongDocument? song) {
     if (song == null || lines.isEmpty) return null;
     final timingMode = app.settings['timingMode'] as String? ?? 'estimated';
@@ -1256,18 +1307,20 @@ class AppControllerAdapter extends VerseUiController {
       }
     }
     if (timingMode == 'timed') return null;
-    final duration =
-        _validDuration(song.metadata['durationSeconds']) ??
-        _estimatedDuration(lines.length);
+    final duration = _durationForSong(song, lines: lines).seconds;
+    if (!identical(_estimatedPositionLines, lines) ||
+        _estimatedPositionDuration != duration) {
+      _estimatedPositionLines = lines;
+      _estimatedPositionDuration = duration;
+      _estimatedPositionStarts = estimatedLineStartTimes(lines, duration);
+    }
     return estimatedLineIdAtPosition(
       lines,
       progressSeconds: _progress,
       durationSeconds: duration,
+      lineStartTimes: _estimatedPositionStarts,
     );
   }
-
-  static double _estimatedDuration(int lineCount) =>
-      (lineCount * 3.4).clamp(90, 600).toDouble();
 
   String _subtitle(SongDocument song) => [
     if (song.metadata['album'] is String) song.metadata['album'],
@@ -1284,30 +1337,98 @@ class AppControllerAdapter extends VerseUiController {
   @override
   Future<void> initialize() async {
     await app.initialize();
-    final preferred = app.settings['defaultView'] as String?;
-    _tab =
-        VerseTab.values.where((value) => value.name == preferred).firstOrNull ??
-        VerseTab.home;
+    // Startup is a Songs view, independent of the last bottom destination.
+    // Legacy defaultView values were written on every navigation tap and are
+    // not an explicit startup preference.
+    _tab = VerseTab.home;
+    final preferred = _startupSongsView(app.settings['startupSongsView']);
+    final view = preferred == 'last'
+        ? app.settings['lastSongsView']
+        : preferred;
+    final legacyFavorites = view == 'favorites';
+    _homeMode = legacyFavorites
+        ? HomeListMode.library
+        : HomeListMode.values.where((mode) => mode.name == view).firstOrNull ??
+              HomeListMode.recent;
+    _favoritesOnly =
+        preferred == 'favorites' ||
+        (preferred == 'last' &&
+            (legacyFavorites ||
+                app.settings['lastSongsFavoritesOnly'] == true));
+    _rememberSongsView();
     notifyListeners();
   }
 
+  static String _startupSongsView(Object? value) =>
+      const {'recent', 'library', 'favorites', 'online', 'last'}.contains(value)
+      ? value! as String
+      : 'recent';
+
+  void _rememberSongsView() {
+    final view = _homeMode.name;
+    if (app.settings['lastSongsView'] != view) {
+      unawaited(_guard(() => app.setSetting('lastSongsView', view)));
+    }
+    if (app.settings['lastSongsFavoritesOnly'] != _favoritesOnly) {
+      unawaited(
+        _guard(() => app.setSetting('lastSongsFavoritesOnly', _favoritesOnly)),
+      );
+    }
+  }
+
+  @override
+  Future<void> setStartupSongsView(String view) =>
+      app.setSetting('startupSongsView', _startupSongsView(view));
+
   @override
   void setTab(VerseTab tab) {
-    _tab = tab;
+    // Keep the former Songs route as a Library alias for conflict review and
+    // older callers. The visible navigation has one Songs destination.
+    _tab = tab == VerseTab.songs ? VerseTab.home : tab;
+    if (tab == VerseTab.songs) {
+      _homeMode = HomeListMode.library;
+      // Conflict review should reveal every conflict copy without local
+      // search or favorites filters hiding some of them.
+      if (_conflictFilter) {
+        _query = '';
+        _favoritesOnly = false;
+      }
+    }
     _route = VerseRoute.main;
     _setlistId = null;
     _setlistEntryId = null;
-    unawaited(_guard(() => app.setSetting('defaultView', tab.name)));
+    if (_tab == VerseTab.home) _rememberSongsView();
     notifyListeners();
   }
 
   @override
   void setHomeListMode(HomeListMode mode) {
-    _homeMode = mode;
+    _searchDebounce?.cancel();
+    if (mode == HomeListMode.favorites) {
+      // Compatibility for persisted and older callers: Favorites is the
+      // Library view with its local favorites filter enabled.
+      _homeMode = HomeListMode.library;
+      _favoritesOnly = true;
+    } else {
+      _homeMode = mode;
+    }
+    _rememberSongsView();
     if (mode == HomeListMode.online) {
       _normalizeOnlineMetadataFilter();
-      unawaited(_guard(submitSearch));
+      if (_query.trim().isNotEmpty &&
+          _selectedQuery != _query.trim() &&
+          _lastCatalogQuery != _query.trim()) {
+        unawaited(_guard(submitSearch));
+      }
     }
+    notifyListeners();
+  }
+
+  @override
+  void setFavoritesOnly(bool value) {
+    if (_favoritesOnly == value) return;
+    _favoritesOnly = value;
+    _rememberSongsView();
     notifyListeners();
   }
 
@@ -1324,28 +1445,32 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   void setQuery(String value) {
-    if (_query.trim() != value.trim()) {
+    final online = _homeMode == HomeListMode.online;
+    if (online && _query.trim() != value.trim()) {
       _cachedAutocomplete = const [];
       _versionOrderReferenceId = null;
       _versionArrivalOrder.clear();
       _nextVersionArrivalOrder = 0;
     }
     _query = value;
-    app.errorCode = null;
-    if (_selectedQuery != value.trim()) {
+    if (online) app.errorCode = null;
+    if (online && _selectedQuery != value.trim()) {
       _selectedVersionId = null;
       _selectedQuery = null;
     }
-    if (value.trim().isNotEmpty) {
-      _homeMode = HomeListMode.online;
+    if (_homeMode == HomeListMode.online) {
       _normalizeOnlineMetadataFilter();
     }
     _searchDebounce?.cancel();
-    app.cancelSearch();
-    if (value.trim().length >= 2) {
+    // Typing in a local view filters that view without contacting providers.
+    if (online) {
+      _lastCatalogQuery = null;
+      app.cancelSearch();
+    }
+    if (_homeMode == HomeListMode.online && value.trim().length >= 2) {
       _searchDebounce = Timer(
         const Duration(milliseconds: 360),
-        () => unawaited(_guard(() => app.search(value))),
+        () => unawaited(_guard(() => _searchCatalog(value))),
       );
     }
     notifyListeners();
@@ -1358,14 +1483,21 @@ class AppControllerAdapter extends VerseUiController {
     _route = VerseRoute.main;
     _tab = VerseTab.home;
     _homeMode = HomeListMode.online;
+    _rememberSongsView();
     notifyListeners();
   }
 
   @override
   Future<void> submitSearch() async {
+    if (_homeMode != HomeListMode.online) return;
     _homeMode = HomeListMode.online;
     _searchDebounce?.cancel();
-    await app.search(_query);
+    await _searchCatalog(_query);
+  }
+
+  Future<void> _searchCatalog(String query) async {
+    _lastCatalogQuery = query.trim();
+    await app.search(query);
     _cachedAutocomplete = app.suggestions;
     notifyListeners();
   }
@@ -1565,6 +1697,7 @@ class AppControllerAdapter extends VerseUiController {
     _route = VerseRoute.main;
     _tab = VerseTab.home;
     _homeMode = HomeListMode.online;
+    _rememberSongsView();
     _selectedVersionId = song.extra['combinedSelection'] == reference.identity
         ? 'combined'
         : song.extra['selectedSourceId'] as String?;
@@ -1874,8 +2007,7 @@ class AppControllerAdapter extends VerseUiController {
 
   double _playerDuration() {
     final song = currentSong;
-    return _validDuration(song?.metadata['durationSeconds']) ??
-        _estimatedDuration(_baseState().songLines.length);
+    return song == null ? 0 : _durationForSong(song).seconds;
   }
 
   void _stopPlayer() {
@@ -2464,6 +2596,14 @@ class AppControllerAdapter extends VerseUiController {
   Future<void> setShowChords(bool show) => app.setSetting('showChords', show);
 
   @override
+  Future<void> setShowSections(bool show) =>
+      app.setSetting('showSections', show);
+
+  @override
+  Future<void> setPlayerControlsExpanded(bool expanded) =>
+      app.setSetting('playerControlsExpanded', expanded);
+
+  @override
   Future<void> setAutoscroll(bool enabled) =>
       app.setSetting('autoscroll', enabled);
   @override
@@ -2553,6 +2693,36 @@ class AppControllerAdapter extends VerseUiController {
     _postSyncOutcome(conflictsBefore);
   }
 
+  @override
+  Future<void> chooseSyncDriveFolder() async {
+    if (!app.syncConnected) return;
+    try {
+      await app.chooseSyncDriveFolder();
+      if (app.syncError != null) {
+        postNotice(UiNotice.syncFailed);
+      } else {
+        postNotice(UiNotice.syncSucceeded);
+      }
+    } catch (_) {
+      postNotice(UiNotice.syncFailed);
+    }
+  }
+
+  @override
+  Future<void> importChordProFromDrive() async {
+    if (!app.syncConnected || app.syncDriveFolderName == null) return;
+    try {
+      await app.importChordProFromDrive();
+      if (app.syncError != null) {
+        postNotice(UiNotice.syncFailed);
+      } else {
+        postNotice(UiNotice.syncSucceeded);
+      }
+    } catch (_) {
+      postNotice(UiNotice.syncFailed);
+    }
+  }
+
   void _postSyncOutcome(int conflictsBefore) {
     if (_syncWarningOnly) {
       postNotice(UiNotice.syncSkipped);
@@ -2632,6 +2802,9 @@ class AppControllerAdapter extends VerseUiController {
       _route = VerseRoute.main;
     } else if (_route != VerseRoute.main) {
       _route = VerseRoute.main;
+    }
+    if (_route == VerseRoute.main && _tab == VerseTab.home) {
+      _rememberSongsView();
     }
     notifyListeners();
   }

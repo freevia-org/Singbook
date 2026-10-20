@@ -591,7 +591,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get setlistFavoriteRemove => 'Setlijst uit favorieten verwijderen';
 
   @override
-  String get setlistShare => 'Delen als setlijstbestand';
+  String get setlistShare => 'Delen als OpenSong';
 
   @override
   String get setlistSharePdf => 'Delen als PDF';
@@ -1233,6 +1233,30 @@ class AppLocalizationsNl extends AppLocalizations {
       'Wanneer de ochtend komt, zingen we opnieuw.';
 
   @override
+  String get settingsPreviewSongTitle => 'Ochtendlied';
+
+  @override
+  String get settingsPreviewArtist => 'Voorbeeldarrangement';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Wanneer de ochtend komt';
+
+  @override
+  String get settingsPreviewNextLine => 'We zingen opnieuw.';
+
+  @override
+  String get settingsPlayerSections => 'Sectiekoppen';
+
+  @override
+  String get settingsPlayerControls => 'Afspeelpaneel';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Automatisch scrollen';
+
+  @override
+  String get settingsSystemShort => 'Apparaat';
+
+  @override
   String searchDiscoveryProgress(int checked, int total) {
     return 'Songtekstbronnen controleren: $checked van $total voltooid.';
   }
@@ -1416,6 +1440,70 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get accountAutoSyncHint =>
       'Synchroniseer na het koppelen en na het toevoegen, bewerken of verwijderen van een nummer.';
+
+  @override
+  String get accountDriveFolder => 'Google Drive-bibliotheekmap';
+
+  @override
+  String get accountPrivateDriveFolder => 'Privé Singbook-map';
+
+  @override
+  String get accountChooseDriveFolder => 'Kies map';
+
+  @override
+  String get accountDriveFolderMoveTitle =>
+      'Uw Singbook-bibliotheek verplaatsen?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Kies een zichtbare Google Drive-map. Singbook kopieert en verifieert uw nummers en setlists daar voordat u ernaar overschakelt. Originele bestanden blijven op hun vorige locatie als back-up. Andere bestanden worden met rust gelaten. ChordPro-bestanden die u in deze map importeert, worden goedgekeurd voor synchronisatie en ontvangen Singbook-metagegevens.';
+
+  @override
+  String get accountImportChordPro => 'Importeer ChordPro vanuit Drive';
+
+  @override
+  String get accountImportChordProHint =>
+      'Kies .cho-bestanden om aan deze bibliotheek toe te voegen. Bestanden die al in de map staan, worden overgenomen; bestanden elders worden hierheen gekopieerd.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Selectie van Drive-mappen is niet beschikbaar';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Kies een zichtbare Drive-map met de Google Drive-kiezer op een ondersteund apparaat.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'De Singbook Drive-map is niet beschikbaar';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Kies de map opnieuw of herstel deze in Google Drive.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook heeft toegang nodig tot deze Drive-map';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Kies opnieuw de map om toegang te verlenen en synchroniseer vervolgens uw bibliotheek.';
+
+  @override
+  String get syncErrorFolderMigration =>
+      'De bibliotheek kon nog niet worden verplaatst';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Uw vorige bibliotheek is nog steeds veilig. Controleer de verbinding en kies de map opnieuw om het opnieuw te proberen.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Kies eerst een zichtbare Drive-map';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Er is een zichtbare bibliotheekmap nodig voordat u bestanden uit Drive kunt importeren.';
 
   @override
   String get accountSignOutTitle => 'Afmelden bij dit account?';
@@ -1944,4 +2032,46 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get editorExampleBridge =>
       '[Am]Nog een regel, een beetje [F]dichterbij.';
+
+  @override
+  String get playerEstimatedKey => 'Geschatte toonsoort';
+
+  @override
+  String get songsLibraryView => 'Bibliotheek';
+
+  @override
+  String get settingsStartupView => 'Start in';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Kies de liedweergave die wordt getoond wanneer de app wordt geopend.';
+
+  @override
+  String get settingsStartupLastView => 'Laatst geopend';
+
+  @override
+  String get playerFullScreen => 'Volledig scherm';
+
+  @override
+  String get playerExitFullScreen => 'Volledig scherm verlaten';
+
+  @override
+  String get playerExpandControls => 'Afspeelknoppen tonen';
+
+  @override
+  String get playerCollapseControls => 'Afspeelknoppen verbergen';
+
+  @override
+  String get settingsShowSections => 'Sectiekoppen tonen';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Toon de koppen van coupletten, refreinen en andere secties in de songtekst.';
+
+  @override
+  String get settingsShowPlayerControls => 'Afspeelknoppen tonen';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Je kunt het spelerspaneel ook aantikken of vegen om het te tonen of te verbergen.';
 }

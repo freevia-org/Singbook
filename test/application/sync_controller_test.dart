@@ -108,16 +108,36 @@ void main() {
   });
 
   test('local song changes are debounced into an automatic sync', () async {
-    final app = await start(delay: const Duration(milliseconds: 300));
-    cloud.resetCounters();
-    for (var i = 0; i < 5; i++) {
-      await addSong(app, 's$i', 'body $i');
-      await Future<void>.delayed(const Duration(milliseconds: 10));
-    }
-    await settle(350);
-    await until(() => cloud.creates == 5);
-    expect(cloud.creates, 5);
-    expect(cloud.lists, 1);
+    const debounce = Duration(milliseconds: 300);
+    final timers = <_DebounceTimer>[];
+    // Control only the debounce timer. Database IO and sync futures still run
+    // normally, so host contention cannot split this explicit mutation burst.
+    await runZoned(
+      () async {
+        final app = await start(delay: debounce);
+        cloud.resetCounters();
+        for (var i = 0; i < 5; i++) {
+          await addSong(app, 's$i', 'body $i');
+        }
+        expect(cloud.lists, 0, reason: 'the debounce has not fired');
+        final active = timers.where((timer) => timer.isActive).toList();
+        expect(active, hasLength(1), reason: 'new edits cancel earlier timers');
+        active.single.fire();
+        await until(() => cloud.creates == 5);
+        expect(cloud.creates, 5);
+        expect(cloud.lists, 1);
+      },
+      zoneSpecification: ZoneSpecification(
+        createTimer: (self, parent, zone, duration, callback) {
+          if (duration != debounce) {
+            return parent.createTimer(zone, duration, callback);
+          }
+          final timer = _DebounceTimer(callback);
+          timers.add(timer);
+          return timer;
+        },
+      ),
+    );
   });
 
   test('add, update, and remove each synchronize the song library',
@@ -417,4 +437,24 @@ void main() {
     await Future.wait([app.initialize(), app.initialize()]);
     expect(app.initialized, isTrue);
   });
+}
+
+class _DebounceTimer implements Timer {
+  _DebounceTimer(this.callback);
+  final void Function() callback;
+  @override
+  bool isActive = true;
+  @override
+  int tick = 0;
+  @override
+  void cancel() => isActive = false;
+
+  void fire() {
+    if (!isActive) {
+      return;
+    }
+    isActive = false;
+    tick++;
+    callback();
+  }
 }

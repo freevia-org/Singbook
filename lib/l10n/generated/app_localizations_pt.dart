@@ -589,7 +589,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get setlistFavoriteRemove => 'Remover lista das favoritas';
 
   @override
-  String get setlistShare => 'Compartilhar como arquivo de lista';
+  String get setlistShare => 'Compartilhar como OpenSong';
 
   @override
   String get setlistSharePdf => 'Compartilhar como PDF';
@@ -1227,6 +1227,30 @@ class AppLocalizationsPt extends AppLocalizations {
       'Quando a manhã chegar, cantaremos novamente.';
 
   @override
+  String get settingsPreviewSongTitle => 'Canção da manhã';
+
+  @override
+  String get settingsPreviewArtist => 'Arranjo de exemplo';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Quando a manhã chegar';
+
+  @override
+  String get settingsPreviewNextLine => 'Cantaremos novamente.';
+
+  @override
+  String get settingsPlayerSections => 'Títulos das seções';
+
+  @override
+  String get settingsPlayerControls => 'Painel de reprodução';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Rolagem automática';
+
+  @override
+  String get settingsSystemShort => 'Dispositivo';
+
+  @override
   String searchDiscoveryProgress(int checked, int total) {
     return 'Verificando fontes de letras: $checked de $total concluídas.';
   }
@@ -1408,6 +1432,69 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get accountAutoSyncHint =>
       'A sincronização ocorre após conectar e após adicionar, editar ou remover uma música.';
+
+  @override
+  String get accountDriveFolder => 'Pasta da biblioteca do Google Drive';
+
+  @override
+  String get accountPrivateDriveFolder => 'Pasta privada do Singbook';
+
+  @override
+  String get accountChooseDriveFolder => 'Escolha a pasta';
+
+  @override
+  String get accountDriveFolderMoveTitle => 'Mover sua biblioteca de Singbook?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Escolha uma pasta visível do Google Drive. O Singbook irá copiar e verificar suas músicas e setlists antes de mudar para ele. Os arquivos originais permanecem no local anterior como backup. Outros arquivos são deixados sozinhos. Os arquivos ChordPro importados para esta pasta são adotados para sincronização e recebem metadados do Singbook.';
+
+  @override
+  String get accountImportChordPro => 'Importar ChordPro do Drive';
+
+  @override
+  String get accountImportChordProHint =>
+      'Escolha arquivos .cho para adicionar a esta biblioteca. Os arquivos que já estão na pasta são adotados; arquivos em outros lugares são copiados aqui.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'A seleção da pasta do Drive não está disponível';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Escolha uma pasta visível do Drive com o seletor do Google Drive em um dispositivo compatível.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'A pasta Singbook Drive não está disponível';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Escolha a pasta novamente ou restaure-a no Google Drive.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'O Singbook precisa de acesso a esta pasta do Drive';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Escolha a pasta novamente para conceder acesso e sincronize sua biblioteca.';
+
+  @override
+  String get syncErrorFolderMigration =>
+      'A biblioteca ainda não pôde ser movida';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Sua biblioteca anterior ainda está segura. Verifique a conexão e escolha a pasta novamente para tentar novamente.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Escolha primeiro uma pasta visível do Drive';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'É necessária uma pasta de biblioteca visível antes de importar arquivos do Drive.';
 
   @override
   String get accountSignOutTitle => 'Sair desta conta?';
@@ -1932,4 +2019,46 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get editorExampleBridge =>
       '[Am]Mais uma linha, um pouco [F]mais perto.';
+
+  @override
+  String get playerEstimatedKey => 'Tonalidade estimada';
+
+  @override
+  String get songsLibraryView => 'Biblioteca';
+
+  @override
+  String get settingsStartupView => 'Iniciar em';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Escolha a vista de músicas apresentada quando a aplicação é aberta.';
+
+  @override
+  String get settingsStartupLastView => 'Última vista aberta';
+
+  @override
+  String get playerFullScreen => 'Tela cheia';
+
+  @override
+  String get playerExitFullScreen => 'Sair da tela cheia';
+
+  @override
+  String get playerExpandControls => 'Mostrar controlos de reprodução';
+
+  @override
+  String get playerCollapseControls => 'Ocultar controlos de reprodução';
+
+  @override
+  String get settingsShowSections => 'Mostrar títulos das secções';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Mostrar na letra os títulos dos versos, do refrão e de outras secções.';
+
+  @override
+  String get settingsShowPlayerControls => 'Mostrar controlos de reprodução';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Também pode tocar ou deslizar no painel do leitor para o mostrar ou ocultar.';
 }

@@ -579,7 +579,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get setlistFavoriteRemove => '从收藏中移除歌单';
 
   @override
-  String get setlistShare => '分享为歌单文件';
+  String get setlistShare => '分享为 OpenSong';
 
   @override
   String get setlistSharePdf => '分享为 PDF';
@@ -1192,6 +1192,30 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsLyricsPreviewExample => '清晨来临时，我们将再次歌唱。';
 
   @override
+  String get settingsPreviewSongTitle => '晨间歌曲';
+
+  @override
+  String get settingsPreviewArtist => '示例编曲';
+
+  @override
+  String get settingsPreviewCurrentLine => '清晨来临时';
+
+  @override
+  String get settingsPreviewNextLine => '我们将再次歌唱。';
+
+  @override
+  String get settingsPlayerSections => '章节标题';
+
+  @override
+  String get settingsPlayerControls => '播放面板';
+
+  @override
+  String get settingsPlayerAutoscroll => '自动滚动';
+
+  @override
+  String get settingsSystemShort => '设备';
+
+  @override
   String searchDiscoveryProgress(int checked, int total) {
     return '正在检查歌词来源：已完成 $checked/$total。';
   }
@@ -1365,6 +1389,60 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get accountAutoSyncHint => '连接后，以及添加、编辑或删除歌曲后进行同步。';
+
+  @override
+  String get accountDriveFolder => 'Google 云端硬盘库文件夹';
+
+  @override
+  String get accountPrivateDriveFolder => '私人Singbook文件夹';
+
+  @override
+  String get accountChooseDriveFolder => '选择文件夹';
+
+  @override
+  String get accountDriveFolderMoveTitle => '移动您的 Singbook 图书馆吗？';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      '请选择一个 Google Drive 中可见的文件夹。Singbook 会先将歌曲和歌单复制到所选文件夹并验证副本，然后再将其设为当前同步文件夹。原始文件会保留在原位置作为备份。其他文件不会受到影响。导入此文件夹的 ChordPro 文件会纳入同步并添加 Singbook 元数据。';
+
+  @override
+  String get accountImportChordPro => '从云端硬盘导入 ChordPro';
+
+  @override
+  String get accountImportChordProHint =>
+      '选择要添加到此库的 .cho 文件。采用文件夹中已有的文件；其他地方的文件复制到这里。';
+
+  @override
+  String get syncErrorFolderPickerUnavailable => '驱动器文件夹选择不可用';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      '请在受支持的设备上使用 Google 云端硬盘选择器选择一个可见的云端硬盘文件夹。';
+
+  @override
+  String get syncErrorDriveFolderMissing => 'Singbook Drive 文件夹不可用';
+
+  @override
+  String get syncErrorDriveFolderMissingHint => '再次选择该文件夹，或在 Google 云端硬盘中将其恢复。';
+
+  @override
+  String get syncErrorDriveFileAuthorization => 'Singbook 需要访问此云端硬盘文件夹';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint => '再次选择该文件夹以授予访问权限，然后同步您的库。';
+
+  @override
+  String get syncErrorFolderMigration => '图书馆还无法移动';
+
+  @override
+  String get syncErrorFolderMigrationHint => '您以前的图书馆仍然安全。检查连接并再次选择文件夹以重试。';
+
+  @override
+  String get syncErrorVisibleFolderRequired => '首先选择一个可见的云端硬盘文件夹';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint => '从云端硬盘导入文件之前，需要一个可见的库文件夹。';
 
   @override
   String get accountSignOutTitle => '退出此账户？';
@@ -1825,4 +1903,43 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]再写一行，靠近 [F]一点。';
+
+  @override
+  String get playerEstimatedKey => '估计调性';
+
+  @override
+  String get songsLibraryView => '曲库';
+
+  @override
+  String get settingsStartupView => '启动时打开';
+
+  @override
+  String get settingsStartupViewHint => '选择应用打开时显示的歌曲视图。';
+
+  @override
+  String get settingsStartupLastView => '上次打开';
+
+  @override
+  String get playerFullScreen => '全屏';
+
+  @override
+  String get playerExitFullScreen => '退出全屏';
+
+  @override
+  String get playerExpandControls => '显示播放控件';
+
+  @override
+  String get playerCollapseControls => '隐藏播放控件';
+
+  @override
+  String get settingsShowSections => '显示段落标题';
+
+  @override
+  String get settingsShowSectionsHint => '在歌词中显示主歌、副歌和其他段落的标题。';
+
+  @override
+  String get settingsShowPlayerControls => '显示播放控件';
+
+  @override
+  String get settingsShowPlayerControlsHint => '也可以轻触或滑动播放器面板来显示或隐藏它。';
 }

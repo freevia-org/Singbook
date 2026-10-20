@@ -8,6 +8,11 @@
 *.sh text eol=lf
 gradlew text eol=lf
 *.bat text eol=crlf
+# Flutter regenerates these with LF on every host. Keep checkout and generator
+# endings identical so clean-source release packaging remains reproducible.
+windows/flutter/generated_plugin_registrant.cc text eol=lf
+windows/flutter/generated_plugin_registrant.h text eol=lf
+windows/flutter/generated_plugins.cmake text eol=lf
 *.png -text
 *.ttf -text
 *.jar -text

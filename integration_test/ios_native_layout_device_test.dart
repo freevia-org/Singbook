@@ -88,10 +88,9 @@ void main() {
               'native_${profile.locale}_${profile.theme}_${profile.scale}_${landscape ? 'landscape' : 'portrait'}';
           // Screenshot checkpoint names use a filesystem-safe alphabet.
           final name = prefix.replaceAll('.', '_');
-          await tester.tap(find.text(l10n.navHome).first);
-          await tester.pumpAndSettle();
-          await captureIosCheckpoint('${name}_home');
           await tester.tap(find.text(l10n.navSongs).first);
+          await tester.pumpAndSettle();
+          await tester.tap(find.byKey(const ValueKey('home-mode-library')));
           await tester.pumpAndSettle();
           expect(find.text('A Lantern Original'), findsOneWidget);
           await tester.ensureVisible(find.text('A Lantern Original'));
@@ -100,27 +99,59 @@ void main() {
           await captureIosCheckpoint('${name}_library');
           await tester.tap(find.text('A Lantern Original'));
           await tester.pumpAndSettle();
-          expect(
-            find.textContaining('Morning light along the road'),
-            findsWidgets,
+          for (
+            var attempt = 0;
+            find.byType(ChordLyricsLine).evaluate().isEmpty && attempt < 120;
+            attempt++
+          ) {
+            await tester.runAsync(
+              () => Future<void>.delayed(const Duration(milliseconds: 100)),
+            );
+            await tester.pumpAndSettle();
+          }
+          if (find.byType(ChordLyricsLine).evaluate().isEmpty) {
+            await captureIosCheckpoint('${name}_reader_open_failure');
+          }
+          expect(find.byType(ChordLyricsLine), findsWidgets);
+          // Reopening the reader preserves its scroll position. Return to the
+          // first lyric before checking and capturing the top of the song.
+          final firstLine = find.byWidgetPredicate(
+            (widget) =>
+                widget is ChordLyricsLine &&
+                widget.text.contains('Morning light along the road'),
           );
+          final initialReaderScrollAncestor = find
+              .ancestor(
+                of: find.byType(ChordLyricsLine).first,
+                matching: find.byType(Scrollable),
+              )
+              .first;
+          final readerScrollElement = initialReaderScrollAncestor
+              .evaluate()
+              .single;
+          final initialReaderScroll = find.byElementPredicate(
+            (element) => identical(element, readerScrollElement),
+          );
+          await tester.scrollUntilVisible(
+            firstLine,
+            -350,
+            scrollable: initialReaderScroll,
+            maxScrolls: 80,
+          );
+          await tester.pumpAndSettle();
+          expect(firstLine.hitTestable(), findsOneWidget);
           await captureIosCheckpoint('${name}_reader');
           final lastLine = find.byWidgetPredicate(
             (widget) =>
                 widget is ChordLyricsLine &&
                 widget.text.contains('Final lantern line'),
           );
-          final readerScroll = find
-              .ancestor(
-                of: find.byType(ChordLyricsLine).first,
-                matching: find.byType(Scrollable),
-              )
-              .first;
+          final readerScroll = initialReaderScroll;
           await tester.scrollUntilVisible(
             lastLine,
-            250,
+            70,
             scrollable: readerScroll,
-            maxScrolls: 80,
+            maxScrolls: 240,
           );
           await tester.pumpAndSettle();
           expect(lastLine.hitTestable(), findsOneWidget);

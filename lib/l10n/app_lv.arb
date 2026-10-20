@@ -264,7 +264,7 @@
   "setlistDuplicate": "Dublēt koncertprogrammu",
   "setlistFavoriteAdd": "Pievienot koncertprogrammu izlasei",
   "setlistFavoriteRemove": "Noņemt koncertprogrammu no izlases",
-  "setlistShare": "Kopīgot kā koncertprogrammas failu",
+  "setlistShare": "Kopīgot kā OpenSong",
   "setlistSharePdf": "Kopīgot kā PDF",
   "setlistPrint": "Drukāt",
   "setlistDeleteConfirmTitle": "Dzēst koncertprogrammu?",
@@ -534,6 +534,14 @@
   "settingsFontSerif": "Serifa",
   "settingsFontMonospace": "Vienāda platuma",
   "settingsLyricsPreviewExample": "Kad pienāks rīts, mēs atkal dziedāsim.",
+  "settingsPreviewSongTitle": "Rīta dziesma",
+  "settingsPreviewArtist": "Parauga aranžējums",
+  "settingsPreviewCurrentLine": "Kad pienāks rīts",
+  "settingsPreviewNextLine": "Mēs atkal dziedāsim.",
+  "settingsPlayerSections": "Sadaļu virsraksti",
+  "settingsPlayerControls": "Atskaņošanas panelis",
+  "settingsPlayerAutoscroll": "Automātiska ritināšana",
+  "settingsSystemShort": "Ierīce",
   "searchDiscoveryProgress": "Pārbauda dziesmu vārdu avotus: pabeigti {checked} no {total}.",
   "@searchDiscoveryProgress": {
     "placeholders": {
@@ -831,5 +839,47 @@
         "type": "int"
       }
     }
+  },
+  "accountDriveFolder": "Google diska bibliotēkas mape",
+  "accountPrivateDriveFolder": "Privātā Singbook mape",
+  "accountChooseDriveFolder": "Izvēlieties mapi",
+  "accountDriveFolderMoveTitle": "Vai pārvietot savu dziesmu grāmatu bibliotēku?",
+  "accountDriveFolderMoveBody": "Izvēlieties redzamu Google diska mapi. Singbook pirms pārslēgšanās uz to nokopēs un pārbaudīs jūsu dziesmas un setu sarakstus. Oriģinālie faili tiek saglabāti to iepriekšējā atrašanās vietā kā rezerves kopija. Citi faili tiek atstāti atsevišķi. ChordPro faili, ko importējat šajā mapē, tiek pieņemti sinhronizēšanai un saņem Singbook metadatus.",
+  "accountImportChordPro": "Importējiet ChordPro no diska",
+  "accountImportChordProHint": "Izvēlieties .cho failus, ko pievienot šai bibliotēkai. Mapē jau esošie faili tiek pieņemti; šeit tiek kopēti faili citur.",
+  "syncErrorFolderPickerUnavailable": "Diska mapes atlase nav pieejama",
+  "syncErrorFolderPickerUnavailableHint": "Atbalstītā ierīcē izvēlieties redzamu Diska mapi, izmantojot Google diska atlasītāju.",
+  "syncErrorDriveFolderMissing": "Singbook Drive mape nav pieejama",
+  "syncErrorDriveFolderMissingHint": "Vēlreiz izvēlieties mapi vai atjaunojiet to Google diskā.",
+  "syncErrorDriveFileAuthorization": "Singbook ir nepieciešama piekļuve šai Diska mapei",
+  "syncErrorDriveFileAuthorizationHint": "Vēlreiz izvēlieties mapi, lai piešķirtu piekļuvi, un pēc tam sinhronizējiet savu bibliotēku.",
+  "syncErrorFolderMigration": "Bibliotēku vēl nevarēja pārvietot",
+  "syncErrorFolderMigrationHint": "Jūsu iepriekšējā bibliotēka joprojām ir drošībā. Pārbaudiet savienojumu un vēlreiz izvēlieties mapi, lai mēģinātu vēlreiz.",
+  "syncErrorVisibleFolderRequired": "Vispirms izvēlieties redzamu Diska mapi",
+  "syncErrorVisibleFolderRequiredHint": "Pirms failu importēšanas no Diska ir nepieciešama redzama bibliotēkas mape.",
+  "playerEstimatedKey": "Aptuvenā tonalitāte",
+  "songsLibraryView": "Bibliotēka",
+  "settingsStartupView": "Sākuma skats",
+  "settingsStartupViewHint": "Izvēlieties dziesmu skatu, kas tiks rādīts, atverot lietotni.",
+  "settingsStartupLastView": "Pēdējoreiz atvērtais",
+  "playerFullScreen": "Pilnekrāna režīms",
+  "playerExitFullScreen": "Iziet no pilnekrāna režīma",
+  "playerExpandControls": "Rādīt atskaņošanas vadīklas",
+  "playerCollapseControls": "Paslēpt atskaņošanas vadīklas",
+  "settingsShowSections": "Rādīt sadaļu virsrakstus",
+  "settingsShowSectionsHint": "Dziesmas tekstā rādīt pantu, piedziedājuma un citu sadaļu virsrakstus.",
+  "settingsShowPlayerControls": "Rādīt atskaņošanas vadīklas",
+  "settingsShowPlayerControlsHint": "Atskaņotāja paneli var parādīt vai paslēpt arī, pieskaroties tam vai pārvelkot.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
   }
 }

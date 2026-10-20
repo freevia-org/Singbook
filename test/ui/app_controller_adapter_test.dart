@@ -33,6 +33,78 @@ void main() {
     await repository.close();
   });
 
+  test('setlist entry durations preserve validated saved metadata', () async {
+    final sources = [
+      SongDocument(
+        id: 'valid',
+        title: 'Valid',
+        artist: 'Fixture',
+        body: '[C]Words',
+        metadata: {'durationSeconds': 183},
+      ),
+      SongDocument(
+        id: 'zero',
+        title: 'Unknown',
+        artist: 'Fixture',
+        body: 'Words',
+        metadata: {'durationSeconds': 0},
+      ),
+      SongDocument(
+        id: 'text',
+        title: 'Text metadata',
+        artist: 'Fixture',
+        body: 'Words',
+        metadata: {'durationSeconds': 'unknown'},
+      ),
+    ];
+    final persistedMetadata = <String, JsonMap>{};
+    for (final song in sources) {
+      await app.saveSong(song);
+      persistedMetadata[song.id] = (await repository.getSong(
+        song.id,
+      ))!.metadata;
+    }
+    await app.saveSong(
+      SongDocument(
+        id: 'missing',
+        title: 'Unavailable reference',
+        artist: 'Fixture',
+        body: 'Words',
+      ),
+    );
+    await app.saveSetlist(
+      SetlistDocument(
+        id: 'durations',
+        name: 'Durations',
+        entries: const [
+          SetlistEntry(id: 'one', songId: 'valid'),
+          SetlistEntry(id: 'two', songId: 'valid', overrides: {'key': 'Dm'}),
+          SetlistEntry(id: 'three', songId: 'zero'),
+          SetlistEntry(id: 'four', songId: 'text'),
+          SetlistEntry(id: 'missing', songId: 'missing'),
+        ],
+      ),
+    );
+    // Simulate an unavailable library reference without bypassing SQLite's
+    // foreign-key protection while storing the fixture.
+    app.songs.removeWhere((song) => song.id == 'missing');
+    await ui.openSetlist('durations');
+    expect(
+      ui.state.activeSetlist!.entries.map((entry) => entry.durationSeconds),
+      [183, 183, null, null, null],
+    );
+    expect(ui.state.activeSetlist!.durationSeconds, 546);
+    expect(ui.state.activeSetlist!.durationEstimated, isTrue);
+    expect(ui.state.activeSetlist!.durationPartial, isTrue);
+    expect(ui.state.activeSetlist!.entries[1].keyOverride, 'Dm');
+    for (final song in sources) {
+      expect(
+        (await repository.getSong(song.id))!.metadata,
+        persistedMetadata[song.id],
+      );
+    }
+  });
+
   test(
     'saved keyless chart recovers source key for reader and setlist without a rewrite',
     () async {
@@ -104,6 +176,40 @@ void main() {
       );
       expect(ui.state.song?.key, isNull);
       expect(ui.displayedKey, isNull);
+    },
+  );
+
+  test(
+    'reader uses a matched lyrics-only source key before estimating',
+    () async {
+      const body = 'Amber lanterns glow\nSilver rain returns';
+      final candidate = SongCandidate(
+        providerId: 'key-provider',
+        id: 'song',
+        title: 'Song',
+        artist: 'Artist',
+      );
+      await app.saveSong(
+        SongDocument(
+          id: 'song',
+          title: 'Song',
+          artist: 'Artist',
+          body: body,
+          sources: [
+            SourceResult(
+              candidate: candidate,
+              body: body,
+              metadata: {'key': 'E'},
+              matchKind: MatchKind.sameSong,
+            ),
+          ],
+        ),
+      );
+      await ui.openSong('song');
+
+      expect(ui.state.readerKey, 'E');
+      expect(ui.state.readerKeyEstimated, isFalse);
+      expect(ui.displayedKey, 'E');
     },
   );
 
@@ -412,6 +518,7 @@ void main() {
     app.query = 'signal';
     app.errorCode = 'search_failed';
 
+    ui.setHomeListMode(HomeListMode.online);
     ui.setQuery('signal ');
 
     expect(app.errorCode, isNull);
@@ -421,6 +528,7 @@ void main() {
 
   test('catalog matching ignores filters only known after discovery', () async {
     ui.setSearchFilter('field', 'lyrics');
+    ui.setHomeListMode(HomeListMode.online);
     ui.setQuery('signal');
     app.query = 'signal';
     app.suggestions = [
@@ -480,6 +588,7 @@ void main() {
       await app.initialize();
       app.settings['catalog'] = 'plain';
       ui = AppControllerAdapter(app);
+      ui.setHomeListMode(HomeListMode.online);
       ui.setQuery('sample song');
       await ui.submitSearch();
       await ui.selectReference(
@@ -539,6 +648,7 @@ void main() {
     await app.initialize();
     app.settings['catalog'] = 'plain';
     ui = AppControllerAdapter(app);
+    ui.setHomeListMode(HomeListMode.online);
     ui.setQuery('sample song');
     await ui.submitSearch();
     await ui.selectReference(
@@ -581,6 +691,7 @@ void main() {
     await app.initialize();
     app.settings['catalog'] = 'plain';
     ui = AppControllerAdapter(app);
+    ui.setHomeListMode(HomeListMode.online);
     ui.setQuery('sample song');
     await ui.submitSearch();
     await ui.selectReference(
@@ -598,6 +709,7 @@ void main() {
   test(
     'autocomplete ranks song matches and removes release calendar pages',
     () {
+      ui.setHomeListMode(HomeListMode.online);
       ui.setQuery('Amazing Grace Judy Collins');
       app.query = 'Amazing Grace Judy Collins';
       app.suggestions = [
@@ -695,6 +807,7 @@ void main() {
       app.settings['catalog'] = 'catalog';
       ui = AppControllerAdapter(app);
 
+      ui.setHomeListMode(HomeListMode.online);
       ui.setQuery('sample song');
       await ui.submitSearch();
       await ui.selectReference(
@@ -815,6 +928,7 @@ void main() {
       await app.initialize();
       app.settings['catalog'] = 'catalog';
       ui = AppControllerAdapter(app);
+      ui.setHomeListMode(HomeListMode.online);
       ui.setQuery('sample song');
       await ui.submitSearch();
       await ui.selectReference(
@@ -887,6 +1001,7 @@ void main() {
       );
       await app.initialize();
       ui = AppControllerAdapter(app);
+      ui.setHomeListMode(HomeListMode.online);
       ui.setQuery('preview song');
       await ui.submitSearch();
       app.suggestions = [selected];
@@ -993,6 +1108,7 @@ void main() {
       );
       await app.initialize();
       ui = AppControllerAdapter(app);
+      ui.setHomeListMode(HomeListMode.online);
       ui.setQuery('ordered song');
       await ui.submitSearch();
       app.suggestions = [selected];
@@ -1087,6 +1203,7 @@ void main() {
           firstResult.complete();
         }
       });
+      ui.setHomeListMode(HomeListMode.online);
       ui.setQuery('sample song');
       await ui.submitSearch();
       final selecting = ui.selectReference(
@@ -1130,6 +1247,7 @@ void main() {
       app = AppController(repository: repository, discovery: discovery);
       await app.initialize();
       ui = AppControllerAdapter(app);
+      ui.setHomeListMode(HomeListMode.online);
       ui.setQuery('stream song');
       await ui.submitSearch();
       final selecting = ui.selectReference(
@@ -1194,6 +1312,7 @@ void main() {
       app = AppController(repository: repository, discovery: discovery);
       await app.initialize();
       ui = AppControllerAdapter(app);
+      ui.setHomeListMode(HomeListMode.online);
       ui.setQuery('stream song');
       await ui.submitSearch();
       final selecting = ui.selectReference(
@@ -1279,6 +1398,7 @@ void main() {
     app = AppController(repository: repository, discovery: discovery);
     await app.initialize();
     ui = AppControllerAdapter(app);
+    ui.setHomeListMode(HomeListMode.online);
     ui.setQuery('pending preview song');
     await ui.submitSearch();
     final selecting = ui.selectReference(
@@ -1353,6 +1473,7 @@ void main() {
     app = AppController(repository: repository, discovery: discovery);
     await app.initialize();
     ui = AppControllerAdapter(app);
+    ui.setHomeListMode(HomeListMode.online);
     ui.setQuery('duration conflict song');
     await ui.submitSearch();
     final selecting = ui.selectReference(

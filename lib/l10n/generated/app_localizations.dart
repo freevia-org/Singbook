@@ -201,7 +201,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutKeepDetails.
   ///
   /// In en, this message translates to:
-  /// **'Edit and transpose songs, keep them in your local library for offline use, and share portable ChordPro files. Optional Google Drive sync uses a private app folder in your Google account. You can also tap Sync now to update your devices.'**
+  /// **'Edit and transpose songs, keep them in your local library for offline use, and share portable ChordPro files. Optional Google Drive sync uses a private app folder by default; on Android you can choose a visible folder. You can also tap Sync now to update your devices.'**
   String get aboutKeepDetails;
 
   /// No description provided for @aboutPlayTitle.
@@ -1173,7 +1173,7 @@ abstract class AppLocalizations {
   /// No description provided for @setlistShare.
   ///
   /// In en, this message translates to:
-  /// **'Share as setlist file'**
+  /// **'Share as OpenSong'**
   String get setlistShare;
 
   /// No description provided for @setlistSharePdf.
@@ -2280,6 +2280,54 @@ abstract class AppLocalizations {
   /// **'When the morning comes, we will sing again.'**
   String get settingsLyricsPreviewExample;
 
+  /// No description provided for @settingsPreviewSongTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning song'**
+  String get settingsPreviewSongTitle;
+
+  /// No description provided for @settingsPreviewArtist.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample arrangement'**
+  String get settingsPreviewArtist;
+
+  /// No description provided for @settingsPreviewCurrentLine.
+  ///
+  /// In en, this message translates to:
+  /// **'When the morning comes'**
+  String get settingsPreviewCurrentLine;
+
+  /// No description provided for @settingsPreviewNextLine.
+  ///
+  /// In en, this message translates to:
+  /// **'We will sing again.'**
+  String get settingsPreviewNextLine;
+
+  /// No description provided for @settingsPlayerSections.
+  ///
+  /// In en, this message translates to:
+  /// **'Section headings'**
+  String get settingsPlayerSections;
+
+  /// No description provided for @settingsPlayerControls.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback panel'**
+  String get settingsPlayerControls;
+
+  /// No description provided for @settingsPlayerAutoscroll.
+  ///
+  /// In en, this message translates to:
+  /// **'Autoscroll'**
+  String get settingsPlayerAutoscroll;
+
+  /// No description provided for @settingsSystemShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Device'**
+  String get settingsSystemShort;
+
   /// No description provided for @searchDiscoveryProgress.
   ///
   /// In en, this message translates to:
@@ -2531,6 +2579,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sync after connecting and after adding, editing or removing a song.'**
   String get accountAutoSyncHint;
+
+  /// No description provided for @accountDriveFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Drive library folder'**
+  String get accountDriveFolder;
+
+  /// No description provided for @accountPrivateDriveFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Private Singbook folder'**
+  String get accountPrivateDriveFolder;
+
+  /// No description provided for @accountChooseDriveFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose folder'**
+  String get accountChooseDriveFolder;
+
+  /// No description provided for @accountDriveFolderMoveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Move your Singbook library?'**
+  String get accountDriveFolderMoveTitle;
+
+  /// No description provided for @accountDriveFolderMoveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a visible Google Drive folder. Singbook will copy and verify your songs and setlists there before switching to it. Original files stay in their previous location as a backup. Other files are left alone. ChordPro files you import into this folder are adopted for sync and receive Singbook metadata.'**
+  String get accountDriveFolderMoveBody;
+
+  /// No description provided for @accountImportChordPro.
+  ///
+  /// In en, this message translates to:
+  /// **'Import ChordPro from Drive'**
+  String get accountImportChordPro;
+
+  /// No description provided for @accountImportChordProHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose .cho files to add to this library. Files already in the folder are adopted; files elsewhere are copied here.'**
+  String get accountImportChordProHint;
+
+  /// No description provided for @syncErrorFolderPickerUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Drive folder selection is unavailable'**
+  String get syncErrorFolderPickerUnavailable;
+
+  /// No description provided for @syncErrorFolderPickerUnavailableHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a visible Drive folder using Google Drive’s picker on a supported device.'**
+  String get syncErrorFolderPickerUnavailableHint;
+
+  /// No description provided for @syncErrorDriveFolderMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'The Singbook Drive folder is unavailable'**
+  String get syncErrorDriveFolderMissing;
+
+  /// No description provided for @syncErrorDriveFolderMissingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the folder again, or restore it in Google Drive.'**
+  String get syncErrorDriveFolderMissingHint;
+
+  /// No description provided for @syncErrorDriveFileAuthorization.
+  ///
+  /// In en, this message translates to:
+  /// **'Singbook needs access to this Drive folder'**
+  String get syncErrorDriveFileAuthorization;
+
+  /// No description provided for @syncErrorDriveFileAuthorizationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the folder again to grant access, then sync your library.'**
+  String get syncErrorDriveFileAuthorizationHint;
+
+  /// No description provided for @syncErrorFolderMigration.
+  ///
+  /// In en, this message translates to:
+  /// **'The library could not be moved yet'**
+  String get syncErrorFolderMigration;
+
+  /// No description provided for @syncErrorFolderMigrationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your previous library is still safe. Check the connection and choose the folder again to retry.'**
+  String get syncErrorFolderMigrationHint;
+
+  /// No description provided for @syncErrorVisibleFolderRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a visible Drive folder first'**
+  String get syncErrorVisibleFolderRequired;
+
+  /// No description provided for @syncErrorVisibleFolderRequiredHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A visible library folder is needed before importing files from Drive.'**
+  String get syncErrorVisibleFolderRequiredHint;
 
   /// No description provided for @accountSignOutTitle.
   ///
@@ -3371,6 +3521,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'[Am]One more line, a little [F]closer.'**
   String get editorExampleBridge;
+
+  /// No description provided for @playerEstimatedKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated key'**
+  String get playerEstimatedKey;
+
+  /// Label for the Songs library view.
+  ///
+  /// In en, this message translates to:
+  /// **'Library'**
+  String get songsLibraryView;
+
+  /// Setting that selects which view opens with the app.
+  ///
+  /// In en, this message translates to:
+  /// **'Start in'**
+  String get settingsStartupView;
+
+  /// Help text for the startup view setting.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the Songs view shown when the app opens.'**
+  String get settingsStartupViewHint;
+
+  /// Option that opens the last view used before the app was closed.
+  ///
+  /// In en, this message translates to:
+  /// **'Last opened'**
+  String get settingsStartupLastView;
+
+  /// No description provided for @playerFullScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Full screen'**
+  String get playerFullScreen;
+
+  /// No description provided for @playerExitFullScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit full screen'**
+  String get playerExitFullScreen;
+
+  /// No description provided for @playerExpandControls.
+  ///
+  /// In en, this message translates to:
+  /// **'Show playback controls'**
+  String get playerExpandControls;
+
+  /// No description provided for @playerCollapseControls.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide playback controls'**
+  String get playerCollapseControls;
+
+  /// No description provided for @settingsShowSections.
+  ///
+  /// In en, this message translates to:
+  /// **'Show section headings'**
+  String get settingsShowSections;
+
+  /// No description provided for @settingsShowSectionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Show verse, chorus and other section headings in the lyrics.'**
+  String get settingsShowSectionsHint;
+
+  /// No description provided for @settingsShowPlayerControls.
+  ///
+  /// In en, this message translates to:
+  /// **'Show playback controls'**
+  String get settingsShowPlayerControls;
+
+  /// No description provided for @settingsShowPlayerControlsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You can also tap or swipe the player panel to show or hide it.'**
+  String get settingsShowPlayerControlsHint;
 }
 
 class _AppLocalizationsDelegate

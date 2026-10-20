@@ -266,7 +266,7 @@
   "setlistDuplicate": "Duplicar lista",
   "setlistFavoriteAdd": "Añadir lista a favoritos",
   "setlistFavoriteRemove": "Quitar lista de favoritos",
-  "setlistShare": "Compartir como archivo de lista",
+  "setlistShare": "Compartir como OpenSong",
   "setlistSharePdf": "Compartir como PDF",
   "setlistPrint": "Imprimir",
   "setlistDeleteConfirmTitle": "¿Eliminar lista?",
@@ -536,6 +536,14 @@
   "settingsFontSerif": "Con remates",
   "settingsFontMonospace": "Monoespaciada",
   "settingsLyricsPreviewExample": "Cuando llegue la mañana, volveremos a cantar.",
+  "settingsPreviewSongTitle": "Canción de la mañana",
+  "settingsPreviewArtist": "Arreglo de ejemplo",
+  "settingsPreviewCurrentLine": "Cuando llegue la mañana",
+  "settingsPreviewNextLine": "Volveremos a cantar.",
+  "settingsPlayerSections": "Títulos de sección",
+  "settingsPlayerControls": "Panel de reproducción",
+  "settingsPlayerAutoscroll": "Desplazamiento automático",
+  "settingsSystemShort": "Dispositivo",
   "searchDiscoveryProgress": "Comprobando fuentes de letras: {checked} de {total} completadas.",
   "@searchDiscoveryProgress": {
     "placeholders": {
@@ -830,5 +838,47 @@
         "type": "int"
       }
     }
+  },
+  "accountDriveFolder": "Carpeta de biblioteca de Google Drive",
+  "accountPrivateDriveFolder": "Carpeta privada de Singbook",
+  "accountChooseDriveFolder": "Elige carpeta",
+  "accountDriveFolderMoveTitle": "¿Mover tu biblioteca Singbook?",
+  "accountDriveFolderMoveBody": "Elija una carpeta visible de Google Drive. Singbook copiará y verificará sus canciones y setlists allí antes de cambiar a él. Los archivos originales permanecen en su ubicación anterior como copia de seguridad. Otros archivos se dejan en paz. Los archivos ChordPro que importe a esta carpeta se adoptan para sincronizarse y recibir metadatos de Singbook.",
+  "accountImportChordPro": "Importar ChordPro desde Drive",
+  "accountImportChordProHint": "Elija archivos .cho para agregarlos a esta biblioteca. Se adoptan los archivos que ya están en la carpeta; Los archivos de otros lugares se copian aquí.",
+  "syncErrorFolderPickerUnavailable": "La selección de carpeta de Drive no está disponible",
+  "syncErrorFolderPickerUnavailableHint": "Elija una carpeta visible de Drive con el selector de Google Drive en un dispositivo compatible.",
+  "syncErrorDriveFolderMissing": "La carpeta Singbook Drive no está disponible",
+  "syncErrorDriveFolderMissingHint": "Elija la carpeta nuevamente o restáurela en Google Drive.",
+  "syncErrorDriveFileAuthorization": "Singbook necesita acceso a esta carpeta de Drive",
+  "syncErrorDriveFileAuthorizationHint": "Elija la carpeta nuevamente para otorgar acceso y luego sincronice su biblioteca.",
+  "syncErrorFolderMigration": "La biblioteca aún no se ha podido mover.",
+  "syncErrorFolderMigrationHint": "Su biblioteca anterior todavía está segura. Verifique la conexión y elija la carpeta nuevamente para volver a intentarlo.",
+  "syncErrorVisibleFolderRequired": "Elija primero una carpeta de Drive visible",
+  "syncErrorVisibleFolderRequiredHint": "Se necesita una carpeta de biblioteca visible antes de importar archivos desde Drive.",
+  "playerEstimatedKey": "Tonalidad estimada",
+  "songsLibraryView": "Biblioteca",
+  "settingsStartupView": "Iniciar en",
+  "settingsStartupViewHint": "Elige la vista de canciones que se mostrará al abrir la aplicación.",
+  "settingsStartupLastView": "Última vista abierta",
+  "playerFullScreen": "Pantalla completa",
+  "playerExitFullScreen": "Salir de pantalla completa",
+  "playerExpandControls": "Mostrar controles de reproducción",
+  "playerCollapseControls": "Ocultar controles de reproducción",
+  "settingsShowSections": "Mostrar encabezados de las secciones",
+  "settingsShowSectionsHint": "Muestra en la letra los encabezados de estrofas, estribillos y otras secciones.",
+  "settingsShowPlayerControls": "Mostrar controles de reproducción",
+  "settingsShowPlayerControlsHint": "También puedes tocar o deslizar el panel del reproductor para mostrarlo u ocultarlo.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
   }
 }

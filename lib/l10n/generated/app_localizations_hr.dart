@@ -588,7 +588,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String get setlistFavoriteRemove => 'Ukloni setlistu iz favorita';
 
   @override
-  String get setlistShare => 'Podijeli kao datoteku setliste';
+  String get setlistShare => 'Podijeli kao OpenSong';
 
   @override
   String get setlistSharePdf => 'Podijeli kao PDF';
@@ -1226,6 +1226,30 @@ class AppLocalizationsHr extends AppLocalizations {
       'Kad jutro svane, ponovno ćemo zapjevati.';
 
   @override
+  String get settingsPreviewSongTitle => 'Jutarnja pjesma';
+
+  @override
+  String get settingsPreviewArtist => 'Primjer aranžmana';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Kad jutro svane';
+
+  @override
+  String get settingsPreviewNextLine => 'Ponovno ćemo zapjevati.';
+
+  @override
+  String get settingsPlayerSections => 'Naslovi odjeljaka';
+
+  @override
+  String get settingsPlayerControls => 'Ploča za reprodukciju';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Automatsko pomicanje';
+
+  @override
+  String get settingsSystemShort => 'Uređaj';
+
+  @override
   String searchDiscoveryProgress(int checked, int total) {
     return 'Provjera izvora tekstova pjesama: dovršeno $checked od $total.';
   }
@@ -1412,6 +1436,69 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get accountAutoSyncHint =>
       'Sinkronizacija se odvija nakon povezivanja te nakon dodavanja, uređivanja ili uklanjanja pjesme.';
+
+  @override
+  String get accountDriveFolder => 'Mapa biblioteke Google diska';
+
+  @override
+  String get accountPrivateDriveFolder => 'Privatna mapa Singbook';
+
+  @override
+  String get accountChooseDriveFolder => 'Odaberite mapu';
+
+  @override
+  String get accountDriveFolderMoveTitle =>
+      'Premjestiti svoju biblioteku Singbook?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Odaberite vidljivu mapu Google diska. Singbook će tamo kopirati i potvrditi vaše pjesme i setliste prije nego se prebacite na njega. Izvorne datoteke ostaju na svojoj prethodnoj lokaciji kao sigurnosna kopija. Ostale datoteke ostaju same. ChordPro datoteke koje uvezete u ovu mapu usvajaju se za sinkronizaciju i primaju Singbook metapodatke.';
+
+  @override
+  String get accountImportChordPro => 'Uvezite ChordPro s Diska';
+
+  @override
+  String get accountImportChordProHint =>
+      'Odaberite .cho datoteke za dodavanje u ovu biblioteku. Usvajaju se datoteke koje se već nalaze u mapi; datoteke na drugim mjestima kopiraju se ovdje.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Odabir mape pogona nije dostupan';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Na podržanom uređaju odaberite vidljivu mapu Diska pomoću alata za odabir Google Diska.';
+
+  @override
+  String get syncErrorDriveFolderMissing => 'Mapa Singbook Drive nije dostupna';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Ponovno odaberite mapu ili je vratite na Google disk.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook treba pristup ovoj mapi Diska';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Ponovno odaberite mapu da biste odobrili pristup, a zatim sinkronizirajte svoju biblioteku.';
+
+  @override
+  String get syncErrorFolderMigration =>
+      'Knjižnica još nije mogla biti premještena';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Vaša prethodna biblioteka još uvijek je sigurna. Provjerite vezu i ponovno odaberite mapu za ponovni pokušaj.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Prvo odaberite vidljivu mapu Diska';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Prije uvoza datoteka s Diska potrebna je vidljiva mapa knjižnice.';
 
   @override
   String get accountSignOutTitle => 'Odjaviti se s ovog računa?';
@@ -1937,4 +2024,46 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Još jedan redak, malo [F]bliže.';
+
+  @override
+  String get playerEstimatedKey => 'Procijenjeni tonalitet';
+
+  @override
+  String get songsLibraryView => 'Knjižnica';
+
+  @override
+  String get settingsStartupView => 'Početni prikaz';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Odaberite prikaz pjesama koji će se prikazati pri otvaranju aplikacije.';
+
+  @override
+  String get settingsStartupLastView => 'Posljednji otvoreni';
+
+  @override
+  String get playerFullScreen => 'Cijeli zaslon';
+
+  @override
+  String get playerExitFullScreen => 'Izađi iz cijelog zaslona';
+
+  @override
+  String get playerExpandControls => 'Prikaži kontrole reprodukcije';
+
+  @override
+  String get playerCollapseControls => 'Sakrij kontrole reprodukcije';
+
+  @override
+  String get settingsShowSections => 'Prikaži naslove odjeljaka';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Prikaži naslove strofa, refrena i drugih odjeljaka u tekstu pjesme.';
+
+  @override
+  String get settingsShowPlayerControls => 'Prikaži kontrole reprodukcije';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Ploču reproduktora možete prikazati ili sakriti i dodirom ili prelaskom prstom.';
 }

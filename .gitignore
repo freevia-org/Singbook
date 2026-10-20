@@ -63,3 +63,6 @@ app.*.map.json
 
 # Local PDF/print preview output
 /output/
+
+# Local Cloudflare deployment cache
+/.wrangler/

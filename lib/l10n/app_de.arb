@@ -266,7 +266,7 @@
   "setlistDuplicate": "Setlist duplizieren",
   "setlistFavoriteAdd": "Setlist zu Favoriten hinzufügen",
   "setlistFavoriteRemove": "Setlist aus Favoriten entfernen",
-  "setlistShare": "Als Setlist-Datei teilen",
+  "setlistShare": "Als OpenSong teilen",
   "setlistSharePdf": "Als PDF teilen",
   "setlistPrint": "Drucken",
   "setlistDeleteConfirmTitle": "Setlist löschen?",
@@ -536,6 +536,14 @@
   "settingsFontSerif": "Serifenschrift",
   "settingsFontMonospace": "Festbreitenschrift",
   "settingsLyricsPreviewExample": "Wenn der Morgen kommt, singen wir wieder.",
+  "settingsPreviewSongTitle": "Morgenlied",
+  "settingsPreviewArtist": "Beispielarrangement",
+  "settingsPreviewCurrentLine": "Wenn der Morgen kommt",
+  "settingsPreviewNextLine": "Wir singen wieder.",
+  "settingsPlayerSections": "Abschnittsüberschriften",
+  "settingsPlayerControls": "Wiedergabebereich",
+  "settingsPlayerAutoscroll": "Automatisches Scrollen",
+  "settingsSystemShort": "Gerät",
   "searchDiscoveryProgress": "Liedtextquellen werden geprüft: {checked} von {total} abgeschlossen.",
   "@searchDiscoveryProgress": {
     "placeholders": {
@@ -830,5 +838,47 @@
         "type": "int"
       }
     }
+  },
+  "accountDriveFolder": "Bibliotheksordner von Google Drive",
+  "accountPrivateDriveFolder": "Privater Singbook-Ordner",
+  "accountChooseDriveFolder": "Ordner auswählen",
+  "accountDriveFolderMoveTitle": "Verschieben Sie Ihre Singbook-Bibliothek?",
+  "accountDriveFolderMoveBody": "Wählen Sie einen sichtbaren Google Drive-Ordner. Singbook kopiert und überprüft Ihre Songs und Setlists dort, bevor Sie dorthin wechseln. Originaldateien bleiben als Backup an ihrem vorherigen Speicherort. Andere Dateien bleiben in Ruhe. ChordPro-Dateien, die Sie in diesen Ordner importieren, werden zur Synchronisierung übernommen und erhalten Singbook-Metadaten.",
+  "accountImportChordPro": "Importieren Sie ChordPro von Drive",
+  "accountImportChordProHint": "Wählen Sie .cho-Dateien aus, die Sie dieser Bibliothek hinzufügen möchten. Bereits im Ordner befindliche Dateien werden übernommen; Dateien an anderer Stelle werden hierher kopiert.",
+  "syncErrorFolderPickerUnavailable": "Die Auswahl des Laufwerksordners ist nicht verfügbar",
+  "syncErrorFolderPickerUnavailableHint": "Wählen Sie auf einem unterstützten Gerät mit der Google-Drive-Auswahl einen sichtbaren Ordner aus.",
+  "syncErrorDriveFolderMissing": "Der Singbook Drive-Ordner ist nicht verfügbar",
+  "syncErrorDriveFolderMissingHint": "Wählen Sie den Ordner erneut aus oder stellen Sie ihn in Google Drive wieder her.",
+  "syncErrorDriveFileAuthorization": "Singbook benötigt Zugriff auf diesen Drive-Ordner",
+  "syncErrorDriveFileAuthorizationHint": "Wählen Sie den Ordner erneut aus, um Zugriff zu gewähren, und synchronisieren Sie dann Ihre Bibliothek.",
+  "syncErrorFolderMigration": "Die Bibliothek konnte noch nicht verschoben werden",
+  "syncErrorFolderMigrationHint": "Ihre bisherige Bibliothek ist weiterhin sicher. Überprüfen Sie die Verbindung und wählen Sie den Ordner erneut aus, um es erneut zu versuchen.",
+  "syncErrorVisibleFolderRequired": "Wählen Sie zunächst einen sichtbaren Drive-Ordner",
+  "syncErrorVisibleFolderRequiredHint": "Vor dem Importieren von Dateien aus Drive ist ein sichtbarer Bibliotheksordner erforderlich.",
+  "playerEstimatedKey": "Geschätzte Tonart",
+  "songsLibraryView": "Bibliothek",
+  "settingsStartupView": "Startansicht",
+  "settingsStartupViewHint": "Wähle die Songansicht aus, die beim Öffnen der App angezeigt wird.",
+  "settingsStartupLastView": "Zuletzt geöffnet",
+  "playerFullScreen": "Vollbild",
+  "playerExitFullScreen": "Vollbild verlassen",
+  "playerExpandControls": "Wiedergabesteuerung anzeigen",
+  "playerCollapseControls": "Wiedergabesteuerung ausblenden",
+  "settingsShowSections": "Abschnittsüberschriften anzeigen",
+  "settingsShowSectionsHint": "Zeige Überschriften für Strophen, Refrain und andere Abschnitte im Songtext an.",
+  "settingsShowPlayerControls": "Wiedergabesteuerung anzeigen",
+  "settingsShowPlayerControlsHint": "Du kannst das Playerfeld auch antippen oder wischen, um es ein- oder auszublenden.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
   }
 }

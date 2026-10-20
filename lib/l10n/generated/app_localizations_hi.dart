@@ -586,7 +586,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get setlistFavoriteRemove => 'गीत-सूची को पसंदीदा से हटाएँ';
 
   @override
-  String get setlistShare => 'गीत-सूची फ़ाइल के रूप में साझा करें';
+  String get setlistShare => 'OpenSong के रूप में साझा करें';
 
   @override
   String get setlistSharePdf => 'PDF के रूप में साझा करें';
@@ -1215,6 +1215,30 @@ class AppLocalizationsHi extends AppLocalizations {
   String get settingsLyricsPreviewExample => 'सुबह होते ही, हम फिर गाएँगे।';
 
   @override
+  String get settingsPreviewSongTitle => 'सुबह का गीत';
+
+  @override
+  String get settingsPreviewArtist => 'नमूना संगीत संयोजन';
+
+  @override
+  String get settingsPreviewCurrentLine => 'सुबह होते ही';
+
+  @override
+  String get settingsPreviewNextLine => 'हम फिर गाएँगे।';
+
+  @override
+  String get settingsPlayerSections => 'अनुभाग शीर्षक';
+
+  @override
+  String get settingsPlayerControls => 'प्लेबैक पैनल';
+
+  @override
+  String get settingsPlayerAutoscroll => 'अपने आप स्क्रॉल करें';
+
+  @override
+  String get settingsSystemShort => 'डिवाइस';
+
+  @override
   String searchDiscoveryProgress(int checked, int total) {
     return 'बोलों के स्रोत जाँचे जा रहे हैं: $total में से $checked पूरे।';
   }
@@ -1396,6 +1420,70 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get accountAutoSyncHint =>
       'कनेक्ट करने के बाद और कोई गीत जोड़ने, संपादित करने या हटाने के बाद सिंक करें।';
+
+  @override
+  String get accountDriveFolder => 'Google Drive लाइब्रेरी फ़ोल्डर';
+
+  @override
+  String get accountPrivateDriveFolder => 'निजी सिंगबुक फ़ोल्डर';
+
+  @override
+  String get accountChooseDriveFolder => 'फ़ोल्डर चुनें';
+
+  @override
+  String get accountDriveFolderMoveTitle =>
+      'क्या आप अपनी सिंगबुक लाइब्रेरी को स्थानांतरित करना चाहते हैं?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'एक दृश्यमान Google ड्राइव फ़ोल्डर चुनें. सिंगबुक इस पर स्विच करने से पहले आपके गाने और सेटलिस्ट को कॉपी और सत्यापित करेगा। मूल फ़ाइलें बैकअप के रूप में अपने पिछले स्थान पर रहती हैं। अन्य फ़ाइलें अकेली छोड़ दी गई हैं। इस फ़ोल्डर में आपके द्वारा आयात की जाने वाली कॉर्डप्रो फ़ाइलें सिंक के लिए अपनाई जाती हैं और सिंगबुक मेटाडेटा प्राप्त करती हैं।';
+
+  @override
+  String get accountImportChordPro => 'ड्राइव से कॉर्डप्रो आयात करें';
+
+  @override
+  String get accountImportChordProHint =>
+      'इस लाइब्रेरी में जोड़ने के लिए .cho फ़ाइलें चुनें। फ़ोल्डर में पहले से मौजूद फ़ाइलें अपनाई जाती हैं; अन्यत्र फ़ाइलें यहां कॉपी की गई हैं।';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'ड्राइव फ़ोल्डर चयन अनुपलब्ध है';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'समर्थित डिवाइस पर Google Drive पिकर से दिखाई देने वाला Drive फ़ोल्डर चुनें।';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'सिंगबुक ड्राइव फ़ोल्डर अनुपलब्ध है';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'फ़ोल्डर को फिर से चुनें, या इसे Google ड्राइव में पुनर्स्थापित करें।';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'सिंगबुक को इस ड्राइव फ़ोल्डर तक पहुंच की आवश्यकता है';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'पहुंच प्रदान करने के लिए फिर से फ़ोल्डर चुनें, फिर अपनी लाइब्रेरी को सिंक करें।';
+
+  @override
+  String get syncErrorFolderMigration =>
+      'लाइब्रेरी को अभी तक स्थानांतरित नहीं किया जा सका';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'आपकी पिछली लाइब्रेरी अभी भी सुरक्षित है. कनेक्शन की जाँच करें और पुनः प्रयास करने के लिए फिर से फ़ोल्डर चुनें।';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'पहले एक दृश्यमान ड्राइव फ़ोल्डर चुनें';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'ड्राइव से फ़ाइलें आयात करने से पहले एक दृश्यमान लाइब्रेरी फ़ोल्डर की आवश्यकता होती है।';
 
   @override
   String get accountSignOutTitle => 'इस खाते से साइन आउट करें?';
@@ -1909,4 +1997,46 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]एक पंक्ति और, थोड़ा [F]करीब।';
+
+  @override
+  String get playerEstimatedKey => 'अनुमानित स्वर';
+
+  @override
+  String get songsLibraryView => 'लाइब्रेरी';
+
+  @override
+  String get settingsStartupView => 'इसमें शुरू करें';
+
+  @override
+  String get settingsStartupViewHint =>
+      'ऐप खुलने पर दिखने वाला गानों का दृश्य चुनें।';
+
+  @override
+  String get settingsStartupLastView => 'पिछली बार खोला गया';
+
+  @override
+  String get playerFullScreen => 'पूर्ण स्क्रीन';
+
+  @override
+  String get playerExitFullScreen => 'पूर्ण स्क्रीन से बाहर निकलें';
+
+  @override
+  String get playerExpandControls => 'प्लेबैक नियंत्रण दिखाएँ';
+
+  @override
+  String get playerCollapseControls => 'प्लेबैक नियंत्रण छिपाएँ';
+
+  @override
+  String get settingsShowSections => 'खंड शीर्षक दिखाएँ';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'गीत के बोलों में अंतरा, मुखड़ा और अन्य खंडों के शीर्षक दिखाएँ।';
+
+  @override
+  String get settingsShowPlayerControls => 'प्लेबैक नियंत्रण दिखाएँ';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'प्लेयर पैनल दिखाने या छिपाने के लिए उसे टैप या स्वाइप भी कर सकते हैं।';
 }

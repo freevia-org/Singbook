@@ -266,7 +266,7 @@
   "setlistDuplicate": "Duplikasi daftar lagu",
   "setlistFavoriteAdd": "Tambahkan daftar lagu ke favorit",
   "setlistFavoriteRemove": "Hapus daftar lagu dari favorit",
-  "setlistShare": "Bagikan sebagai file daftar lagu",
+  "setlistShare": "Bagikan sebagai OpenSong",
   "setlistSharePdf": "Bagikan sebagai PDF",
   "setlistPrint": "Cetak",
   "setlistDeleteConfirmTitle": "Hapus daftar lagu?",
@@ -536,6 +536,14 @@
   "settingsFontSerif": "Serif",
   "settingsFontMonospace": "Monospace",
   "settingsLyricsPreviewExample": "Saat pagi tiba, kita akan bernyanyi lagi.",
+  "settingsPreviewSongTitle": "Lagu pagi",
+  "settingsPreviewArtist": "Aransemen contoh",
+  "settingsPreviewCurrentLine": "Saat pagi tiba",
+  "settingsPreviewNextLine": "Kita akan bernyanyi lagi.",
+  "settingsPlayerSections": "Judul bagian",
+  "settingsPlayerControls": "Panel pemutaran",
+  "settingsPlayerAutoscroll": "Gulir otomatis",
+  "settingsSystemShort": "Perangkat",
   "searchDiscoveryProgress": "Memeriksa sumber lirik: {checked} dari {total} selesai.",
   "@searchDiscoveryProgress": {
     "placeholders": {
@@ -830,5 +838,47 @@
         "type": "int"
       }
     }
+  },
+  "accountDriveFolder": "Folder perpustakaan Google Drive",
+  "accountPrivateDriveFolder": "Folder Buku Nyanyian Pribadi",
+  "accountChooseDriveFolder": "Pilih map",
+  "accountDriveFolderMoveTitle": "Pindahkan perpustakaan Singbook Anda?",
+  "accountDriveFolderMoveBody": "Pilih folder Google Drive yang terlihat. Singbook akan menyalin dan memverifikasi lagu dan daftar lagu Anda di sana sebelum beralih ke sana. File asli tetap berada di lokasi sebelumnya sebagai cadangan. File lain dibiarkan begitu saja. File ChordPro yang Anda impor ke folder ini diadopsi untuk sinkronisasi dan menerima metadata Singbook.",
+  "accountImportChordPro": "Impor ChordPro dari Drive",
+  "accountImportChordProHint": "Pilih file .cho untuk ditambahkan ke perpustakaan ini. File yang sudah ada di folder diadopsi; file di tempat lain disalin di sini.",
+  "syncErrorFolderPickerUnavailable": "Pemilihan folder drive tidak tersedia",
+  "syncErrorFolderPickerUnavailableHint": "Pilih folder Drive yang terlihat dengan pemilih Google Drive di perangkat yang didukung.",
+  "syncErrorDriveFolderMissing": "Folder Singbook Drive tidak tersedia",
+  "syncErrorDriveFolderMissingHint": "Pilih folder itu lagi, atau pulihkan di Google Drive.",
+  "syncErrorDriveFileAuthorization": "Singbook memerlukan akses ke folder Drive ini",
+  "syncErrorDriveFileAuthorizationHint": "Pilih lagi folder untuk memberikan akses, lalu sinkronkan perpustakaan Anda.",
+  "syncErrorFolderMigration": "Perpustakaan belum bisa dipindahkan",
+  "syncErrorFolderMigrationHint": "Perpustakaan Anda sebelumnya masih aman. Periksa koneksi dan pilih folder lagi untuk mencoba lagi.",
+  "syncErrorVisibleFolderRequired": "Pilih folder Drive yang terlihat terlebih dahulu",
+  "syncErrorVisibleFolderRequiredHint": "Folder perpustakaan yang terlihat diperlukan sebelum mengimpor file dari Drive.",
+  "playerEstimatedKey": "Nada dasar perkiraan",
+  "songsLibraryView": "Pustaka",
+  "settingsStartupView": "Mulai di",
+  "settingsStartupViewHint": "Pilih tampilan Lagu yang ditampilkan saat aplikasi dibuka.",
+  "settingsStartupLastView": "Terakhir dibuka",
+  "playerFullScreen": "Layar penuh",
+  "playerExitFullScreen": "Keluar dari layar penuh",
+  "playerExpandControls": "Tampilkan kontrol pemutaran",
+  "playerCollapseControls": "Sembunyikan kontrol pemutaran",
+  "settingsShowSections": "Tampilkan judul bagian",
+  "settingsShowSectionsHint": "Tampilkan judul bait, reff, dan bagian lain pada lirik.",
+  "settingsShowPlayerControls": "Tampilkan kontrol pemutaran",
+  "settingsShowPlayerControlsHint": "Ketuk atau geser panel pemutar untuk menampilkan atau menyembunyikannya.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
   }
 }

@@ -266,7 +266,7 @@
   "setlistDuplicate": "Δημιουργία αντιγράφου λίστας",
   "setlistFavoriteAdd": "Προσθήκη λίστας στα αγαπημένα",
   "setlistFavoriteRemove": "Αφαίρεση λίστας από τα αγαπημένα",
-  "setlistShare": "Κοινοποίηση ως αρχείο λίστας τραγουδιών",
+  "setlistShare": "Κοινοποίηση ως OpenSong",
   "setlistSharePdf": "Κοινοποίηση ως PDF",
   "setlistPrint": "Εκτύπωση",
   "setlistDeleteConfirmTitle": "Διαγραφή λίστας;",
@@ -536,6 +536,14 @@
   "settingsFontSerif": "Με πατούρες",
   "settingsFontMonospace": "Σταθερού πλάτους",
   "settingsLyricsPreviewExample": "Όταν έρθει το πρωί, θα τραγουδήσουμε ξανά.",
+  "settingsPreviewSongTitle": "Πρωινό τραγούδι",
+  "settingsPreviewArtist": "Δείγμα ενορχήστρωσης",
+  "settingsPreviewCurrentLine": "Όταν έρθει το πρωί",
+  "settingsPreviewNextLine": "Θα τραγουδήσουμε ξανά.",
+  "settingsPlayerSections": "Τίτλοι ενοτήτων",
+  "settingsPlayerControls": "Πίνακας αναπαραγωγής",
+  "settingsPlayerAutoscroll": "Αυτόματη κύλιση",
+  "settingsSystemShort": "Συσκευή",
   "searchDiscoveryProgress": "Έλεγχος πηγών στίχων: ολοκληρώθηκαν {checked} από {total}.",
   "@searchDiscoveryProgress": {
     "placeholders": {
@@ -830,5 +838,47 @@
         "type": "int"
       }
     }
+  },
+  "accountDriveFolder": "Φάκελος βιβλιοθήκης Google Drive",
+  "accountPrivateDriveFolder": "Ιδιωτικός φάκελος Singbook",
+  "accountChooseDriveFolder": "Επιλέξτε φάκελο",
+  "accountDriveFolderMoveTitle": "Μετακίνηση της βιβλιοθήκης Singbook;",
+  "accountDriveFolderMoveBody": "Επιλέξτε έναν ορατό φάκελο του Google Drive. Το Singbook θα αντιγράψει και θα επαληθεύσει εκεί τα τραγούδια και τις λίστες σας πριν από τη μετάβαση σε αυτό. Τα πρωτότυπα αρχεία παραμένουν στην προηγούμενη θέση τους ως αντίγραφο ασφαλείας. Άλλα αρχεία μένουν μόνα τους. Τα αρχεία ChordPro που εισάγετε σε αυτόν τον φάκελο υιοθετούνται για συγχρονισμό και λήψη μεταδεδομένων Singbook.",
+  "accountImportChordPro": "Εισαγωγή ChordPro από το Drive",
+  "accountImportChordProHint": "Επιλέξτε αρχεία .cho για προσθήκη σε αυτήν τη βιβλιοθήκη. Τα αρχεία που βρίσκονται ήδη στον φάκελο έχουν εγκριθεί. αρχεία αλλού αντιγράφονται εδώ.",
+  "syncErrorFolderPickerUnavailable": "Η επιλογή φακέλου μονάδας δίσκου δεν είναι διαθέσιμη",
+  "syncErrorFolderPickerUnavailableHint": "Επιλέξτε έναν ορατό φάκελο Drive με τον επιλογέα του Google Drive σε υποστηριζόμενη συσκευή.",
+  "syncErrorDriveFolderMissing": "Ο φάκελος Singbook Drive δεν είναι διαθέσιμος",
+  "syncErrorDriveFolderMissingHint": "Επιλέξτε ξανά το φάκελο ή επαναφέρετέ τον στο Google Drive.",
+  "syncErrorDriveFileAuthorization": "Το Singbook χρειάζεται πρόσβαση σε αυτόν τον φάκελο Drive",
+  "syncErrorDriveFileAuthorizationHint": "Επιλέξτε ξανά το φάκελο για να παραχωρήσετε πρόσβαση και, στη συνέχεια, συγχρονίστε τη βιβλιοθήκη σας.",
+  "syncErrorFolderMigration": "Δεν ήταν δυνατή η μετακίνηση της βιβλιοθήκης ακόμα",
+  "syncErrorFolderMigrationHint": "Η προηγούμενη βιβλιοθήκη σας είναι ακόμα ασφαλής. Ελέγξτε τη σύνδεση και επιλέξτε ξανά το φάκελο για να προσπαθήσετε ξανά.",
+  "syncErrorVisibleFolderRequired": "Επιλέξτε πρώτα έναν ορατό φάκελο Drive",
+  "syncErrorVisibleFolderRequiredHint": "Απαιτείται ένας ορατός φάκελος βιβλιοθήκης πριν από την εισαγωγή αρχείων από το Drive.",
+  "playerEstimatedKey": "Εκτιμώμενη τονικότητα",
+  "songsLibraryView": "Βιβλιοθήκη",
+  "settingsStartupView": "Έναρξη σε",
+  "settingsStartupViewHint": "Επιλέξτε την προβολή Τραγούδια που θα εμφανίζεται όταν ανοίγει η εφαρμογή.",
+  "settingsStartupLastView": "Τελευταία προβολή",
+  "playerFullScreen": "Πλήρης οθόνη",
+  "playerExitFullScreen": "Έξοδος από πλήρη οθόνη",
+  "playerExpandControls": "Εμφάνιση στοιχείων ελέγχου αναπαραγωγής",
+  "playerCollapseControls": "Απόκρυψη στοιχείων ελέγχου αναπαραγωγής",
+  "settingsShowSections": "Εμφάνιση επικεφαλίδων ενοτήτων",
+  "settingsShowSectionsHint": "Εμφάνιση των επικεφαλίδων για κουπλέ, ρεφρέν και άλλες ενότητες στους στίχους.",
+  "settingsShowPlayerControls": "Εμφάνιση στοιχείων ελέγχου αναπαραγωγής",
+  "settingsShowPlayerControlsHint": "Μπορείτε επίσης να πατήσετε ή να σύρετε το πλαίσιο αναπαραγωγής για να το εμφανίσετε ή να το αποκρύψετε.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
   }
 }

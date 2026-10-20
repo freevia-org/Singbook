@@ -590,7 +590,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get setlistFavoriteRemove => 'Hapus daftar lagu dari favorit';
 
   @override
-  String get setlistShare => 'Bagikan sebagai file daftar lagu';
+  String get setlistShare => 'Bagikan sebagai OpenSong';
 
   @override
   String get setlistSharePdf => 'Bagikan sebagai PDF';
@@ -1224,6 +1224,30 @@ class AppLocalizationsId extends AppLocalizations {
       'Saat pagi tiba, kita akan bernyanyi lagi.';
 
   @override
+  String get settingsPreviewSongTitle => 'Lagu pagi';
+
+  @override
+  String get settingsPreviewArtist => 'Aransemen contoh';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Saat pagi tiba';
+
+  @override
+  String get settingsPreviewNextLine => 'Kita akan bernyanyi lagi.';
+
+  @override
+  String get settingsPlayerSections => 'Judul bagian';
+
+  @override
+  String get settingsPlayerControls => 'Panel pemutaran';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Gulir otomatis';
+
+  @override
+  String get settingsSystemShort => 'Perangkat';
+
+  @override
   String searchDiscoveryProgress(int checked, int total) {
     return 'Memeriksa sumber lirik: $checked dari $total selesai.';
   }
@@ -1406,6 +1430,69 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get accountAutoSyncHint =>
       'Sinkronkan setelah terhubung dan setelah menambahkan, mengedit, atau menghapus lagu.';
+
+  @override
+  String get accountDriveFolder => 'Folder perpustakaan Google Drive';
+
+  @override
+  String get accountPrivateDriveFolder => 'Folder Buku Nyanyian Pribadi';
+
+  @override
+  String get accountChooseDriveFolder => 'Pilih map';
+
+  @override
+  String get accountDriveFolderMoveTitle =>
+      'Pindahkan perpustakaan Singbook Anda?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Pilih folder Google Drive yang terlihat. Singbook akan menyalin dan memverifikasi lagu dan daftar lagu Anda di sana sebelum beralih ke sana. File asli tetap berada di lokasi sebelumnya sebagai cadangan. File lain dibiarkan begitu saja. File ChordPro yang Anda impor ke folder ini diadopsi untuk sinkronisasi dan menerima metadata Singbook.';
+
+  @override
+  String get accountImportChordPro => 'Impor ChordPro dari Drive';
+
+  @override
+  String get accountImportChordProHint =>
+      'Pilih file .cho untuk ditambahkan ke perpustakaan ini. File yang sudah ada di folder diadopsi; file di tempat lain disalin di sini.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Pemilihan folder drive tidak tersedia';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Pilih folder Drive yang terlihat dengan pemilih Google Drive di perangkat yang didukung.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'Folder Singbook Drive tidak tersedia';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Pilih folder itu lagi, atau pulihkan di Google Drive.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook memerlukan akses ke folder Drive ini';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Pilih lagi folder untuk memberikan akses, lalu sinkronkan perpustakaan Anda.';
+
+  @override
+  String get syncErrorFolderMigration => 'Perpustakaan belum bisa dipindahkan';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Perpustakaan Anda sebelumnya masih aman. Periksa koneksi dan pilih folder lagi untuk mencoba lagi.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Pilih folder Drive yang terlihat terlebih dahulu';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Folder perpustakaan yang terlihat diperlukan sebelum mengimpor file dari Drive.';
 
   @override
   String get accountSignOutTitle => 'Keluar dari akun ini?';
@@ -1924,4 +2011,46 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get editorExampleBridge =>
       '[Am]Satu baris lagi, sedikit lebih [F]dekat.';
+
+  @override
+  String get playerEstimatedKey => 'Nada dasar perkiraan';
+
+  @override
+  String get songsLibraryView => 'Pustaka';
+
+  @override
+  String get settingsStartupView => 'Mulai di';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Pilih tampilan Lagu yang ditampilkan saat aplikasi dibuka.';
+
+  @override
+  String get settingsStartupLastView => 'Terakhir dibuka';
+
+  @override
+  String get playerFullScreen => 'Layar penuh';
+
+  @override
+  String get playerExitFullScreen => 'Keluar dari layar penuh';
+
+  @override
+  String get playerExpandControls => 'Tampilkan kontrol pemutaran';
+
+  @override
+  String get playerCollapseControls => 'Sembunyikan kontrol pemutaran';
+
+  @override
+  String get settingsShowSections => 'Tampilkan judul bagian';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Tampilkan judul bait, reff, dan bagian lain pada lirik.';
+
+  @override
+  String get settingsShowPlayerControls => 'Tampilkan kontrol pemutaran';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Ketuk atau geser panel pemutar untuk menampilkan atau menyembunyikannya.';
 }

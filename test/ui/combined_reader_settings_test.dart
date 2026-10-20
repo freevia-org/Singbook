@@ -1,0 +1,341 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:singbook/l10n/generated/app_localizations.dart';
+import 'package:singbook/ui/library_actions.dart';
+import 'package:singbook/ui/player/player_full_screen.dart';
+import 'package:singbook/ui/player/player_screen.dart';
+import 'package:singbook/ui/verse_ui_state.dart';
+
+import 'support/fake_controller.dart';
+
+const _bars = MethodChannel('org.freevia.singbook/fullscreen');
+
+VerseUiState _reader({VerseRoute route = VerseRoute.reader}) => VerseUiState(
+  route: route,
+  song: const SongCardData(
+    id: 'reader',
+    title: 'Reader fixture',
+    durationSeconds: 180,
+  ),
+  playerControlsExpanded: false,
+  songLines: [
+    for (var i = 0; i < 60; i++)
+      LyricLineData(id: 'line-$i', text: 'The original lyric line $i'),
+  ],
+);
+
+class _DetailsController extends FakeUiController {
+  _DetailsController() : super((_) => const VerseUiState());
+
+  @override
+  SongInfoData songInfo(String id) => SongInfoData(
+    title: 'A long song title that must remain inside the details sheet',
+    artist: 'Fixture artist',
+    fields: const {'key': 'G', 'album': 'Original album'},
+    sources: [
+      for (var i = 0; i < 12; i++)
+        SongInfoSourceData(
+          providerName: 'Source $i',
+          attribution: 'Original attribution $i',
+        ),
+    ],
+  );
+}
+
+void main() {
+  testWidgets(
+    'late platform enter is followed by exit and disposal',
+    (tester) async {
+      final calls = <bool>[];
+      final enter = Completer<void>();
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(_bars, (
+        call,
+      ) async {
+        final enabled = call.arguments as bool;
+        calls.add(enabled);
+        if (enabled) await enter.future;
+        return null;
+      });
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          _bars,
+          null,
+        ),
+      );
+      final bars = PlayerFullScreen();
+      bars.setEnabled(true);
+      await tester.pump();
+      expect(calls, [true]);
+      bars.setEnabled(false);
+      bars.dispose();
+      bars.setEnabled(true);
+      await tester.pump();
+      expect(calls, [true]);
+      enter.complete();
+      await tester.pump();
+      await tester.pump();
+      expect(calls, [true, false, false]);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.android),
+  );
+
+  testWidgets(
+    'platform failure does not block a later restore request',
+    (tester) async {
+      final calls = <bool>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(_bars, (
+        call,
+      ) async {
+        final enabled = call.arguments as bool;
+        calls.add(enabled);
+        if (enabled) throw PlatformException(code: 'fixture_unavailable');
+        return null;
+      });
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          _bars,
+          null,
+        ),
+      );
+      final bars = PlayerFullScreen();
+      bars.setEnabled(true);
+      bars.dispose();
+      await tester.pump();
+      await tester.pump();
+      expect(calls, [true, false]);
+      expect(tester.takeException(), isNull);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.android),
+  );
+
+  testWidgets(
+    'fullscreen preserves reader scroll and Back exits before reader',
+    (tester) async {
+      final controller = FakeUiController((_) => _reader());
+      addTearDown(controller.dispose);
+      await pumpShell(tester, controller);
+      final scroll = find.byKey(const ValueKey('player-lyrics-scroll'));
+      await tester.drag(scroll, const Offset(0, -450));
+      await tester.pumpAndSettle();
+      ScrollPosition position() => tester
+          .state<ScrollableState>(
+            find
+                .descendant(of: scroll, matching: find.byType(Scrollable))
+                .first,
+          )
+          .position;
+      final before = position().pixels;
+      expect(before, greaterThan(0));
+      // Dragging lyrics intentionally updates playback position; only the
+      // following mode transition must leave it alone.
+      controller.calls.clear();
+      final player = tester.state(find.byType(PlayerScreen));
+      await tester.tap(find.byKey(const ValueKey('player-enter-fullscreen')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('player-header-panel')), findsNothing);
+      expect(
+        find.byKey(const ValueKey('player-exit-fullscreen')),
+        findsOneWidget,
+      );
+      expect(tester.state(find.byType(PlayerScreen)), same(player));
+      expect(position().pixels, closeTo(before, 1));
+      expect(
+        find.byKey(const ValueKey('player-controls-panel')),
+        findsOneWidget,
+      );
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('player-exit-fullscreen')),
+        findsNothing,
+      );
+      expect(find.byKey(const ValueKey('player-header-panel')), findsOneWidget);
+      expect(position().pixels, closeTo(before, 1));
+      expect(controller.calls, isNot(contains('back')));
+      expect(controller.calls.where((c) => c.startsWith('seek(')), isEmpty);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(controller.calls.where((c) => c == 'back'), hasLength(1));
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.windows),
+  );
+
+  testWidgets(
+    'Escape exits fullscreen without playback or reader navigation',
+    (tester) async {
+      final controller = FakeUiController((_) => _reader());
+      addTearDown(controller.dispose);
+      await pumpShell(tester, controller);
+      await tester.tap(find.byKey(const ValueKey('player-enter-fullscreen')));
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('player-exit-fullscreen')),
+        findsNothing,
+      );
+      expect(find.byType(PlayerScreen), findsOneWidget);
+      expect(controller.calls, isNot(contains('back')));
+      expect(controller.calls, isNot(contains('playPause')));
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.windows),
+  );
+
+  testWidgets('reader Edit remains reachable through the overflow menu', (
+    tester,
+  ) async {
+    final controller = FakeUiController((_) => _reader());
+    addTearDown(controller.dispose);
+    await pumpShell(tester, controller);
+    expect(
+      find.byKey(const ValueKey('player-enter-fullscreen')),
+      findsOneWidget,
+    );
+    final l10n = l10nOf(tester);
+    await tester.tap(find.byTooltip(l10n.songMenuLabel));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(l10n.actionEdit));
+    await tester.pumpAndSettle();
+    expect(controller.calls, contains('editSong'));
+  });
+
+  testWidgets(
+    'route changes and disposal restore Android system bars',
+    (tester) async {
+      final calls = <bool>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        _bars,
+        (call) async => calls.add(call.arguments as bool),
+      );
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          _bars,
+          null,
+        ),
+      );
+      var route = VerseRoute.reader;
+      final controller = FakeUiController((_) => _reader(route: route));
+      addTearDown(controller.dispose);
+      await pumpShell(tester, controller);
+      await tester.tap(find.byKey(const ValueKey('player-enter-fullscreen')));
+      await tester.pumpAndSettle();
+      expect(calls.last, isTrue);
+      route = VerseRoute.main;
+      controller.refresh();
+      await tester.pumpAndSettle();
+      expect(calls.last, isFalse);
+      route = VerseRoute.reader;
+      controller.refresh();
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('player-enter-fullscreen')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const ValueKey('player-enter-fullscreen')));
+      await tester.pumpAndSettle();
+      expect(calls.last, isTrue);
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump();
+      expect(calls.last, isFalse);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.android),
+  );
+
+  for (final scenario in [
+    (const Size(320, 640), const Locale('en'), 1.0),
+    (const Size(740, 360), const Locale('ar'), 2.0),
+    (const Size(800, 1000), const Locale('uk'), 2.0),
+  ]) {
+    testWidgets('long Song details respect safe areas and close at $scenario', (
+      tester,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = scenario.$1;
+      tester.view.padding = const FakeViewPadding(top: 32, bottom: 24);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetPadding);
+      final controller = _DetailsController();
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        MaterialApp(
+          locale: scenario.$2,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: TextScaler.linear(scenario.$3)),
+            child: child!,
+          ),
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => TextButton(
+                onPressed: () => showSongInfo(context, controller, 'fixture'),
+                child: const Text('Open details'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Open details'));
+      await tester.pumpAndSettle();
+      final sheet = find.byType(BottomSheet);
+      // BottomSheet's route wrapper spans the viewport. Its Material is the
+      // visible constrained surface the user actually reads and touches.
+      final bounds = tester.getRect(
+        find.descendant(of: sheet, matching: find.byType(Material)).first,
+      );
+      expect(bounds.top, greaterThanOrEqualTo(32));
+      expect(bounds.width, lessThanOrEqualTo(640));
+      final list = find.descendant(of: sheet, matching: find.byType(ListView));
+      final scrollable = find.descendant(
+        of: list,
+        matching: find.byType(Scrollable),
+      );
+      await tester.scrollUntilVisible(
+        find.text('Source 11'),
+        160,
+        scrollable: scrollable,
+      );
+      expect(
+        tester.getRect(find.text('Source 11')).bottom,
+        lessThanOrEqualTo(scenario.$1.height - 24),
+      );
+      tester.state<ScrollableState>(scrollable).position.jumpTo(0);
+      await tester.pumpAndSettle();
+      final l10n = AppLocalizations.of(tester.element(list));
+      await tester.tap(find.byTooltip(l10n.navClose));
+      await tester.pumpAndSettle();
+      expect(sheet, findsNothing);
+      expect(controller.calls, isEmpty);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  for (final isSetlist in [false, true]) {
+    testWidgets('short menu labels preserve action values ($isSetlist)', (
+      tester,
+    ) async {
+      final controller = FakeUiController((_) => const VerseUiState());
+      addTearDown(controller.dispose);
+      await pumpShell(tester, controller);
+      final l10n = l10nOf(tester);
+      final actions = buildLibraryActionMenu(
+        l10n,
+        isSetlist: isSetlist,
+        actions: {'copy', 'print', 'share'},
+      ).whereType<PopupMenuItem<String>>().toList();
+      final labels = {
+        for (final item in actions) item.value: (item.child! as Text).data,
+      };
+      expect(labels['copy'], 'Copy');
+      expect(labels['print'], 'Print');
+      if (isSetlist) expect(labels['share'], 'Share as OpenSong');
+      expect(labels.keys, containsAll(['copy', 'print', 'share']));
+    });
+  }
+}

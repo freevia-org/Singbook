@@ -22,15 +22,20 @@ const maxSyncFileBytes = 16 * 1024 * 1024;
 const maxSyncItems = 20000;
 
 final _hashPattern = RegExp(r'^[a-f0-9]{64}$');
-bool isSyncHash(Object? value) => value is String && _hashPattern.hasMatch(value);
+bool isSyncHash(Object? value) =>
+    value is String && _hashPattern.hasMatch(value);
 
 final _plainId = RegExp(r'^[A-Za-z0-9_-]{1,160}$');
-final _fileName = RegExp(r'^(song|setlist)-([A-Za-z0-9_~-]{1,170})\.(cho|json)$');
+final _fileName = RegExp(
+  r'^(song|setlist)-([A-Za-z0-9_~-]{1,170})\.(cho|json)$',
+);
 
 String _encodeId(String id) {
   if (_plainId.hasMatch(id)) return id;
   final bytes = utf8.encode(id);
-  if (id.isEmpty || bytes.length > 120) throw const SyncException('invalid_local_data');
+  if (id.isEmpty || bytes.length > 120) {
+    throw const SyncException('invalid_local_data');
+  }
   return '~${base64Url.encode(bytes).replaceAll('=', '')}';
 }
 
@@ -70,6 +75,15 @@ String syncFileName(String kind, String id) {
     return null;
   }
   return (kind: kind, id: id);
+}
+
+bool isSyncItemId(String kind, String id) {
+  try {
+    _encodeId(id);
+    return kind == 'song' || kind == 'setlist';
+  } on SyncException {
+    return false;
+  }
 }
 
 String conflictDocumentId(String originalId, String hash) =>

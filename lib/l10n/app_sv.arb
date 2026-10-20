@@ -264,7 +264,7 @@
   "setlistDuplicate": "Duplicera setlista",
   "setlistFavoriteAdd": "Lägg till setlista i favoriter",
   "setlistFavoriteRemove": "Ta bort setlista från favoriter",
-  "setlistShare": "Dela som setlistfil",
+  "setlistShare": "Dela som OpenSong",
   "setlistSharePdf": "Dela som PDF",
   "setlistPrint": "Skriv ut",
   "setlistDeleteConfirmTitle": "Ta bort setlistan?",
@@ -534,6 +534,14 @@
   "settingsFontSerif": "Serif",
   "settingsFontMonospace": "Fast bredd",
   "settingsLyricsPreviewExample": "När morgonen kommer sjunger vi igen.",
+  "settingsPreviewSongTitle": "Morgonsång",
+  "settingsPreviewArtist": "Exempelarrangemang",
+  "settingsPreviewCurrentLine": "När morgonen kommer",
+  "settingsPreviewNextLine": "Vi sjunger igen.",
+  "settingsPlayerSections": "Avsnittsrubriker",
+  "settingsPlayerControls": "Uppspelningspanel",
+  "settingsPlayerAutoscroll": "Automatisk rullning",
+  "settingsSystemShort": "Enhet",
   "searchDiscoveryProgress": "Kontrollerar källor för låttexter: {checked} av {total} klara.",
   "@searchDiscoveryProgress": {
     "placeholders": {
@@ -831,5 +839,47 @@
         "type": "int"
       }
     }
+  },
+  "accountDriveFolder": "Google Drive biblioteksmapp",
+  "accountPrivateDriveFolder": "Privat Singbook-mapp",
+  "accountChooseDriveFolder": "Välj mapp",
+  "accountDriveFolderMoveTitle": "Flytta ditt Singbook-bibliotek?",
+  "accountDriveFolderMoveBody": "Välj en synlig Google Drive-mapp. Singbook kommer att kopiera och verifiera dina låtar och setlistor där innan du byter till den. Originalfilerna stannar på sin tidigare plats som en säkerhetskopia. Andra filer lämnas ifred. ChordPro-filer som du importerar till den här mappen används för synkronisering och tar emot Singbook-metadata.",
+  "accountImportChordPro": "Importera ChordPro från Drive",
+  "accountImportChordProHint": "Välj .cho-filer att lägga till i det här biblioteket. Filer som redan finns i mappen antas; filer på andra ställen kopieras hit.",
+  "syncErrorFolderPickerUnavailable": "Val av Drive-mapp är inte tillgängligt",
+  "syncErrorFolderPickerUnavailableHint": "Välj en synlig Drive-mapp med Google Drives väljare på en enhet som stöds.",
+  "syncErrorDriveFolderMissing": "Mappen Singbook Drive är inte tillgänglig",
+  "syncErrorDriveFolderMissingHint": "Välj mappen igen eller återställ den i Google Drive.",
+  "syncErrorDriveFileAuthorization": "Singbook behöver åtkomst till den här Drive-mappen",
+  "syncErrorDriveFileAuthorizationHint": "Välj mappen igen för att ge åtkomst och synkronisera sedan ditt bibliotek.",
+  "syncErrorFolderMigration": "Biblioteket kunde inte flyttas ännu",
+  "syncErrorFolderMigrationHint": "Ditt tidigare bibliotek är fortfarande säkert. Kontrollera anslutningen och välj mappen igen för att försöka igen.",
+  "syncErrorVisibleFolderRequired": "Välj först en synlig Drive-mapp",
+  "syncErrorVisibleFolderRequiredHint": "En synlig biblioteksmapp behövs innan du importerar filer från Drive.",
+  "playerEstimatedKey": "Uppskattad tonart",
+  "songsLibraryView": "Bibliotek",
+  "settingsStartupView": "Starta i",
+  "settingsStartupViewHint": "Välj låtvyn som visas när appen öppnas.",
+  "settingsStartupLastView": "Senast öppnad",
+  "playerFullScreen": "Helskärm",
+  "playerExitFullScreen": "Avsluta helskärm",
+  "playerExpandControls": "Visa uppspelningskontroller",
+  "playerCollapseControls": "Dölj uppspelningskontroller",
+  "settingsShowSections": "Visa avsnittsrubriker",
+  "settingsShowSectionsHint": "Visa rubriker för verser, refräng och andra avsnitt i låttexten.",
+  "settingsShowPlayerControls": "Visa uppspelningskontroller",
+  "settingsShowPlayerControlsHint": "Du kan också trycka på eller svepa över spelarpanelen för att visa eller dölja den.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
   }
 }

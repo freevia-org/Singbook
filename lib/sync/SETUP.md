@@ -1,10 +1,12 @@
 # Google account sync
 
-Singbook syncs the library through the signed-in user's own hidden Google Drive
-application-data folder (`appDataFolder`), with the single scope
-`https://www.googleapis.com/auth/drive.appdata`. There is no Singbook backend,
-shared storage account or client secret. The app cannot see any other Drive
-file, and the user can remove the data from Google account settings.
+Singbook defaults to the signed-in user's hidden Google Drive application-data
+folder (`appDataFolder`), using
+`https://www.googleapis.com/auth/drive.appdata`. On Android or iOS, Settings can switch
+the library to a visible folder selected with Google's Drive Picker and the
+narrow `drive.file` scope. Those permissions are requested in separate flows;
+the app never requests broad `drive` access. There is no Singbook backend,
+shared storage account or client secret.
 
 Songs work without signing in; sync is optional. After a successful explicit
 connection, the app syncs the library. Later song additions, edits and removals
@@ -26,14 +28,17 @@ needs, precisely (`google_sign_in` 7.x, Credential Manager on Android):
 |---|---|---|
 | Android | An **Android** OAuth client: package `org.freevia.singbook` + the SHA-1 of every signing certificate (debug, upload, and the Play App Signing certificate). | Nothing: Google matches package + SHA-1 itself. It must exist in the same project or sign-in is cancelled without explanation. |
 | Android | A **Web application** OAuth client in the same project. | Its id as `--dart-define=VERSE_GOOGLE_SERVER_CLIENT_ID=<id>.apps.googleusercontent.com` (becomes `serverClientId`). Required: the plugin throws without it. No backend uses it. |
-| iOS | An **iOS** OAuth client for the bundle id. | `--dart-define=VERSE_GOOGLE_IOS_CLIENT_ID=<id>.apps.googleusercontent.com` (`clientId`) plus the reversed client id as URL scheme in `ios/Runner/Info.plist`. Not validated on this Windows workspace. |
+| iOS | An **iOS** OAuth client for the bundle id. | `--dart-define=VERSE_GOOGLE_IOS_CLIENT_ID=<id>.apps.googleusercontent.com` (`clientId`) plus the reversed client id as URL scheme in `ios/Runner/Info.plist`. Native iOS simulator bridge checks are part of the iOS parity suite; live OAuth requires configured credentials. |
 
-Also enable the **Google Drive API** and configure the OAuth consent screen
-(add test users while it is in Testing). `drive.appdata` is a non-sensitive
-scope, so no Google verification review is needed for it.
+Also enable the **Google Drive API** and **Google Picker API**, and configure the
+OAuth consent screen (add test users while it is in Testing). `drive.appdata`
+and `drive.file` are non-sensitive scopes. The Android picker requests only
+`drive.file`, with folder selection enabled and previously granted scopes
+excluded from that request.
 
-Android needs nothing else natively: `INTERNET` is declared, the plugin adds its
-own wiring. R8/minify rules for the plugin are the Android owner's concern.
+Android uses Google Play services `AuthorizationClient` for the picker OAuth
+flow; `INTERNET` is already declared. R8/minify rules for the plugin are the
+Android owner's concern.
 
 `GoogleDriveAuth` (`google_auth.dart`): only an explicit Connect action restores
 a saved identity (local metadata on Android; lightweight authentication on
@@ -43,9 +48,30 @@ token from `authorizationForScopes`; a 401 clears the rejected token and asks
 the platform for a new one once; sign-out clears the token and revokes the grant
 (best effort, falls back to a plain sign-out).
 
+## Visible folder migration
+
+Choosing a folder first syncs the current location, then copies each managed
+song and setlist to the selected folder. Singbook verifies the destination
+listing and content hashes before switching the saved location. Activation and
+its recovery journal are committed atomically. The originals remain in the
+previous location as a backup: Drive's `files.delete` operation has no
+revision precondition, so deleting after a final version check could still
+erase an edit made in the gap before deletion. A failed copy leaves the old
+location active and unchanged. Other files in the selected folder are left
+untouched. Because the narrow `drive.file` permission cannot be used to silently
+scan arbitrary Drive files, new `.cho` uploads are brought in with **Import
+ChordPro from Drive**. Google Picker grants access to each file the user
+selects. A file already in the library folder is adopted in place with
+Singbook's portable `x_verse` metadata; a file selected elsewhere is copied
+into the library folder and the source is left unchanged. The imported copy
+gets a stable ID based on its Drive file ID. After import, its edits and
+deletions sync bidirectionally with the local library. Drive's MD5 checksum
+detects content edits before SHA-256 validation.
+
 ## Cloud layout
 
-One file per item, updated in place, in `appDataFolder`:
+One file per item, updated in place, in the selected sync location: the private
+`appDataFolder` by default, or the Android visible folder chosen in Settings:
 
 * `song-<id>.cho`: the complete `x_verse` ChordPro payload (lyrics, chords,
   timing tracks, source provenance) exactly as stored locally.
@@ -53,7 +79,7 @@ One file per item, updated in place, in `appDataFolder`:
 
 `<id>` is the item id when it matches `[A-Za-z0-9_-]{1,160}`, otherwise `~` +
 base64url of its UTF-8 bytes. Names are parsed strictly (canonical spelling
-only); anything else in the folder is ignored and never modified. Before sync
+only); unrelated files are ignored and never modified. Before sync
 plans changes, it validates local song hashes, identities and complete backup
 sidecars, and checks that local ids can be represented. Unsupported opaque
 ChordPro extensions and damaged or unrepresentable local records fail the sync
@@ -62,11 +88,13 @@ skipped. The local library and pending outbox entries remain available for
 recovery. If a record changes while sync is running, transactional checks stop
 the affected operation before it overwrites or deletes that record.
 
-Every file has `appProperties`: `verseSchema=2`, `kind` (`song`|`setlist`) and
-`hash` (sha-256 of the body). One paginated `files.list` with a `fields`
+Singbook files have `appProperties`: `verseSchema=2`, `kind` (`song`|`setlist`),
+`id`, `hash` (sha-256 of the body) and `md5` (Drive's content checksum). One
+paginated `files.list` with a `fields`
 projection (id, name, modifiedTime, version, size, md5Checksum, headRevisionId,
-appProperties) therefore shows everything that changed without downloading a
-body. Bodies are verified against `hash` after download.
+appProperties) therefore shows app-managed changes without downloading a body.
+Visible-folder sync compares Drive's `md5Checksum` with the saved `md5` and
+downloads only changed bodies before refreshing their SHA-256 hash.
 
 There are no manifests, revision logs, tombstones, device markers or
 compaction. The cloud holds exactly the current state.
@@ -236,3 +264,20 @@ are additionally confirmed by a second listing. The user then chooses
 `confirmRemoteDeletions()` (apply the deletions) or
 `keepLocalAfterRemoteDeletions()` (upload the library again). "Replace local
 library" only removes items that existed when it was chosen.
+
+## iOS visible-file authorization
+
+The iOS adapter uses ASWebAuthenticationSession and Google’s native mobile
+Picker OAuth parameters (`trigger_onepick`, `prompt=consent`) with `drive.file`
+alone, PKCE S256 and per-request state. It uses the existing iOS OAuth client
+and reversed-client-ID callback scheme; no embedded web login, additional
+client secret or broad Drive scope is needed. Enable Drive and Picker APIs
+in the same Google project.
+
+The shared file-grant implementation verifies the returned Drive account and
+selected folder, persists the separate refresh grant in device-only Keychain
+storage, and renews it silently. Sign-out removes this grant. Existing migration
+verification, rollback, narrow file import and account-switch checks are shared
+with Android/Windows. Local library imports through Files remain available
+without OAuth. Live picker consent/refresh still needs an OAuth-enabled test
+build; simulator bridge checks alone cannot prove Google-side configuration.

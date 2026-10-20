@@ -9,7 +9,11 @@ import 'support/fake_controller.dart';
 Finder menu(String section) => find.byKey(ValueKey('settings-menu-$section'));
 
 Future<void> open(WidgetTester tester, String section) async {
-  await tester.ensureVisible(menu(section));
+  await tester.scrollUntilVisible(
+    menu(section),
+    250,
+    scrollable: find.byType(Scrollable).first,
+  );
   await tester.pumpAndSettle();
   await tester.tap(menu(section));
   await tester.pumpAndSettle();
@@ -45,7 +49,14 @@ void main() {
     await pumpShell(tester, c);
     final l10n = l10nOf(tester);
     expect(find.byType(ListTile), findsNWidgets(5));
-    expect(find.byType(DropdownButton<String>), findsNothing);
+    // The startup Songs view is the one setting available on the menu page.
+    expect(find.byType(DropdownButton<String>), findsOneWidget);
+    expect(
+      tester
+          .widget<DropdownButton<String>>(find.byType(DropdownButton<String>))
+          .value,
+      'recent',
+    );
     expect(find.text(l10n.settingsClearHistory), findsNothing);
     for (final section in [
       'appearance',
@@ -204,7 +215,7 @@ void main() {
       expect(tester.takeException(), isNull);
       await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
-      expect(menu('appearance'), findsOneWidget);
+      expect(menu('account'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   }

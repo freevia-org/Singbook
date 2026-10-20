@@ -585,7 +585,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get setlistFavoriteRemove => 'Ta bort setlista från favoriter';
 
   @override
-  String get setlistShare => 'Dela som setlistfil';
+  String get setlistShare => 'Dela som OpenSong';
 
   @override
   String get setlistSharePdf => 'Dela som PDF';
@@ -1223,6 +1223,30 @@ class AppLocalizationsSv extends AppLocalizations {
       'När morgonen kommer sjunger vi igen.';
 
   @override
+  String get settingsPreviewSongTitle => 'Morgonsång';
+
+  @override
+  String get settingsPreviewArtist => 'Exempelarrangemang';
+
+  @override
+  String get settingsPreviewCurrentLine => 'När morgonen kommer';
+
+  @override
+  String get settingsPreviewNextLine => 'Vi sjunger igen.';
+
+  @override
+  String get settingsPlayerSections => 'Avsnittsrubriker';
+
+  @override
+  String get settingsPlayerControls => 'Uppspelningspanel';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Automatisk rullning';
+
+  @override
+  String get settingsSystemShort => 'Enhet';
+
+  @override
   String searchDiscoveryProgress(int checked, int total) {
     return 'Kontrollerar källor för låttexter: $checked av $total klara.';
   }
@@ -1403,6 +1427,68 @@ class AppLocalizationsSv extends AppLocalizations {
   @override
   String get accountAutoSyncHint =>
       'Synkronisering sker efter anslutning och efter att en låt har lagts till, redigerats eller tagits bort.';
+
+  @override
+  String get accountDriveFolder => 'Google Drive biblioteksmapp';
+
+  @override
+  String get accountPrivateDriveFolder => 'Privat Singbook-mapp';
+
+  @override
+  String get accountChooseDriveFolder => 'Välj mapp';
+
+  @override
+  String get accountDriveFolderMoveTitle => 'Flytta ditt Singbook-bibliotek?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Välj en synlig Google Drive-mapp. Singbook kommer att kopiera och verifiera dina låtar och setlistor där innan du byter till den. Originalfilerna stannar på sin tidigare plats som en säkerhetskopia. Andra filer lämnas ifred. ChordPro-filer som du importerar till den här mappen används för synkronisering och tar emot Singbook-metadata.';
+
+  @override
+  String get accountImportChordPro => 'Importera ChordPro från Drive';
+
+  @override
+  String get accountImportChordProHint =>
+      'Välj .cho-filer att lägga till i det här biblioteket. Filer som redan finns i mappen antas; filer på andra ställen kopieras hit.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Val av Drive-mapp är inte tillgängligt';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Välj en synlig Drive-mapp med Google Drives väljare på en enhet som stöds.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'Mappen Singbook Drive är inte tillgänglig';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Välj mappen igen eller återställ den i Google Drive.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook behöver åtkomst till den här Drive-mappen';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Välj mappen igen för att ge åtkomst och synkronisera sedan ditt bibliotek.';
+
+  @override
+  String get syncErrorFolderMigration => 'Biblioteket kunde inte flyttas ännu';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Ditt tidigare bibliotek är fortfarande säkert. Kontrollera anslutningen och välj mappen igen för att försöka igen.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Välj först en synlig Drive-mapp';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'En synlig biblioteksmapp behövs innan du importerar filer från Drive.';
 
   @override
   String get accountSignOutTitle => 'Logga ut från det här kontot?';
@@ -1923,4 +2009,46 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]En rad till, lite [F]närmare.';
+
+  @override
+  String get playerEstimatedKey => 'Uppskattad tonart';
+
+  @override
+  String get songsLibraryView => 'Bibliotek';
+
+  @override
+  String get settingsStartupView => 'Starta i';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Välj låtvyn som visas när appen öppnas.';
+
+  @override
+  String get settingsStartupLastView => 'Senast öppnad';
+
+  @override
+  String get playerFullScreen => 'Helskärm';
+
+  @override
+  String get playerExitFullScreen => 'Avsluta helskärm';
+
+  @override
+  String get playerExpandControls => 'Visa uppspelningskontroller';
+
+  @override
+  String get playerCollapseControls => 'Dölj uppspelningskontroller';
+
+  @override
+  String get settingsShowSections => 'Visa avsnittsrubriker';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Visa rubriker för verser, refräng och andra avsnitt i låttexten.';
+
+  @override
+  String get settingsShowPlayerControls => 'Visa uppspelningskontroller';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Du kan också trycka på eller svepa över spelarpanelen för att visa eller dölja den.';
 }

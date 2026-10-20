@@ -589,7 +589,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get setlistFavoriteRemove => 'Rimuovi scaletta dai preferiti';
 
   @override
-  String get setlistShare => 'Condividi come file di scaletta';
+  String get setlistShare => 'Condividi come OpenSong';
 
   @override
   String get setlistSharePdf => 'Condividi come PDF';
@@ -1227,6 +1227,30 @@ class AppLocalizationsIt extends AppLocalizations {
       'Quando arriverà il mattino, canteremo ancora.';
 
   @override
+  String get settingsPreviewSongTitle => 'Canto del mattino';
+
+  @override
+  String get settingsPreviewArtist => 'Arrangiamento di esempio';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Quando arriverà il mattino';
+
+  @override
+  String get settingsPreviewNextLine => 'Canteremo ancora.';
+
+  @override
+  String get settingsPlayerSections => 'Titoli delle sezioni';
+
+  @override
+  String get settingsPlayerControls => 'Pannello di riproduzione';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Scorrimento automatico';
+
+  @override
+  String get settingsSystemShort => 'Dispositivo';
+
+  @override
   String searchDiscoveryProgress(int checked, int total) {
     return 'Controllo delle fonti dei testi: completate $checked di $total.';
   }
@@ -1410,6 +1434,71 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get accountAutoSyncHint =>
       'La sincronizzazione avviene dopo la connessione e dopo aver aggiunto, modificato o rimosso un brano.';
+
+  @override
+  String get accountDriveFolder => 'Cartella della libreria di Google Drive';
+
+  @override
+  String get accountPrivateDriveFolder =>
+      'Cartella privata del libro dei canti';
+
+  @override
+  String get accountChooseDriveFolder => 'Scegli la cartella';
+
+  @override
+  String get accountDriveFolderMoveTitle =>
+      'Vuoi spostare la tua libreria Singbook?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Scegli una cartella Google Drive visibile. Singbook copierà e verificherà lì le tue canzoni e le tue scalette prima di passare ad esso. I file originali rimangono nella posizione precedente come backup. Gli altri file vengono lasciati soli. I file ChordPro importati in questa cartella vengono adottati per la sincronizzazione e ricevono i metadati di Singbook.';
+
+  @override
+  String get accountImportChordPro => 'Importa ChordPro da Drive';
+
+  @override
+  String get accountImportChordProHint =>
+      'Scegli i file .cho da aggiungere a questa libreria. I file già presenti nella cartella vengono adottati; i file altrove vengono copiati qui.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'La selezione della cartella dell\'unità non è disponibile';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Scegli una cartella Drive visibile con il selettore di Google Drive su un dispositivo supportato.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'La cartella Singbook Drive non è disponibile';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Scegli di nuovo la cartella o ripristinala in Google Drive.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook deve accedere a questa cartella Drive';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Scegli di nuovo la cartella per concedere l\'accesso, quindi sincronizza la tua libreria.';
+
+  @override
+  String get syncErrorFolderMigration =>
+      'Non è stato ancora possibile spostare la libreria';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'La tua libreria precedente è ancora al sicuro. Controlla la connessione e scegli di nuovo la cartella per riprovare.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Scegli prima una cartella Drive visibile';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'È necessaria una cartella di libreria visibile prima di importare file da Drive.';
 
   @override
   String get accountSignOutTitle => 'Uscire da questo account?';
@@ -1934,4 +2023,46 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Un’altra riga, un po’ più [F]vicini.';
+
+  @override
+  String get playerEstimatedKey => 'Tonalità stimata';
+
+  @override
+  String get songsLibraryView => 'Libreria';
+
+  @override
+  String get settingsStartupView => 'Apri in';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Scegli la vista dei brani da mostrare all’apertura dell’app.';
+
+  @override
+  String get settingsStartupLastView => 'Ultima visualizzazione';
+
+  @override
+  String get playerFullScreen => 'Schermo intero';
+
+  @override
+  String get playerExitFullScreen => 'Esci da schermo intero';
+
+  @override
+  String get playerExpandControls => 'Mostra i controlli di riproduzione';
+
+  @override
+  String get playerCollapseControls => 'Nascondi i controlli di riproduzione';
+
+  @override
+  String get settingsShowSections => 'Mostra i titoli delle sezioni';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Mostra nel testo i titoli di strofe, ritornello e altre sezioni.';
+
+  @override
+  String get settingsShowPlayerControls => 'Mostra i controlli di riproduzione';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Puoi anche toccare o scorrere il pannello del lettore per mostrarlo o nasconderlo.';
 }

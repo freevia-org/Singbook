@@ -266,7 +266,7 @@
   "setlistDuplicate": "Duplikovat koncertní program",
   "setlistFavoriteAdd": "Přidat koncertní program k oblíbeným",
   "setlistFavoriteRemove": "Odebrat koncertní program z oblíbených",
-  "setlistShare": "Sdílet jako soubor koncertního programu",
+  "setlistShare": "Sdílet jako OpenSong",
   "setlistSharePdf": "Sdílet jako PDF",
   "setlistPrint": "Tisk",
   "setlistDeleteConfirmTitle": "Smazat koncertní program?",
@@ -536,6 +536,14 @@
   "settingsFontSerif": "Patkové",
   "settingsFontMonospace": "Neproporcionální",
   "settingsLyricsPreviewExample": "Až přijde ráno, zazpíváme si znovu.",
+  "settingsPreviewSongTitle": "Ranní píseň",
+  "settingsPreviewArtist": "Ukázkové aranžmá",
+  "settingsPreviewCurrentLine": "Až přijde ráno",
+  "settingsPreviewNextLine": "Znovu si zazpíváme.",
+  "settingsPlayerSections": "Nadpisy oddílů",
+  "settingsPlayerControls": "Panel přehrávání",
+  "settingsPlayerAutoscroll": "Automatické posouvání",
+  "settingsSystemShort": "Zařízení",
   "searchDiscoveryProgress": "Kontrola zdrojů textů písní: dokončeno {checked} z {total}.",
   "@searchDiscoveryProgress": {
     "placeholders": {
@@ -830,5 +838,47 @@
         "type": "int"
       }
     }
+  },
+  "accountDriveFolder": "Složka knihovny Disku Google",
+  "accountPrivateDriveFolder": "Soukromá složka Zpěvník",
+  "accountChooseDriveFolder": "Vyberte složku",
+  "accountDriveFolderMoveTitle": "Přesunout knihovnu Singbooku?",
+  "accountDriveFolderMoveBody": "Vyberte viditelnou složku Disku Google. Singbook tam zkopíruje a ověří vaše skladby a setlisty, než na něj přepnete. Původní soubory zůstanou ve svém předchozím umístění jako záloha. Ostatní soubory jsou ponechány na pokoji. Soubory ChordPro, které importujete do této složky, jsou přijaty pro synchronizaci a přijímání metadat Singbooku.",
+  "accountImportChordPro": "Importujte ChordPro z Disku",
+  "accountImportChordProHint": "Vyberte soubory .cho, které chcete přidat do této knihovny. Soubory již ve složce jsou převzaty; soubory jinde jsou zkopírovány sem.",
+  "syncErrorFolderPickerUnavailable": "Výběr složky na Disku není k dispozici",
+  "syncErrorFolderPickerUnavailableHint": "Na podporovaném zařízení vyberte viditelnou složku na Disku Google pomocí jeho výběru.",
+  "syncErrorDriveFolderMissing": "Složka Singbook Drive není dostupná",
+  "syncErrorDriveFolderMissingHint": "Vyberte složku znovu nebo ji obnovte na Disku Google.",
+  "syncErrorDriveFileAuthorization": "Zpěvník potřebuje přístup k této složce na Disku",
+  "syncErrorDriveFileAuthorizationHint": "Znovu vyberte složku, ke které chcete udělit přístup, a poté knihovnu synchronizujte.",
+  "syncErrorFolderMigration": "Knihovnu se zatím nepodařilo přesunout",
+  "syncErrorFolderMigrationHint": "Vaše předchozí knihovna je stále v bezpečí. Zkontrolujte připojení a znovu vyberte složku a zkuste to znovu.",
+  "syncErrorVisibleFolderRequired": "Nejprve vyberte viditelnou složku na Disku",
+  "syncErrorVisibleFolderRequiredHint": "Před importem souborů z Disku je potřeba viditelná složka knihovny.",
+  "playerEstimatedKey": "Odhadovaná tónina",
+  "songsLibraryView": "Knihovna",
+  "settingsStartupView": "Otevřít při spuštění",
+  "settingsStartupViewHint": "Vyberte zobrazení Písně, které se ukáže po otevření aplikace.",
+  "settingsStartupLastView": "Naposledy otevřené",
+  "playerFullScreen": "Celá obrazovka",
+  "playerExitFullScreen": "Ukončit celou obrazovku",
+  "playerExpandControls": "Zobrazit ovládání přehrávání",
+  "playerCollapseControls": "Skrýt ovládání přehrávání",
+  "settingsShowSections": "Zobrazovat nadpisy částí",
+  "settingsShowSectionsHint": "Zobrazovat v textu nadpisy slok, refrénu a dalších částí.",
+  "settingsShowPlayerControls": "Zobrazit ovládání přehrávání",
+  "settingsShowPlayerControlsHint": "Panel přehrávače můžete také zobrazit nebo skrýt klepnutím či přejetím.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
   }
 }

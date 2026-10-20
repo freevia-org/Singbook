@@ -24,6 +24,24 @@ String _norm(String text) => text
     .toLowerCase()
     .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
     .trim();
+
+void _syncMapFieldContributors(
+  String field,
+  Map<String, Map<String, Set<String>>> mapEntryContributors,
+  Map<String, Set<String>> fieldContributors,
+) {
+  final contributors = <String>{
+    for (final sourceIds
+        in mapEntryContributors[field]?.values ?? const <Set<String>>[])
+      ...sourceIds,
+  };
+  if (contributors.isEmpty) {
+    fieldContributors.remove(field);
+  } else {
+    fieldContributors[field] = contributors;
+  }
+}
+
 double? _validDuration(Object? value) {
   if (value is! num) return null;
   final seconds = value.toDouble();
@@ -371,6 +389,51 @@ String? _harmonyIdentity(String chord) {
   return '$root:$quality:${match[3] == null ? root : _notePitch(match[3]!)}';
 }
 
+bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
+  final selected =
+      song.selectedRecording ??
+      SongCandidate(
+        providerId: 'library',
+        id: song.id,
+        title: song.title,
+        artist: song.artist,
+      );
+  if (!_sameSong(selected, source.candidate) ||
+      _version(selected.title) != _version(source.candidate.title) ||
+      selected.recordingIds.entries.any(
+        (entry) =>
+            source.candidate.recordingIds.containsKey(entry.key) &&
+            source.candidate.recordingIds[entry.key] != entry.value,
+      ) ||
+      (selected.durationSeconds != null &&
+          source.candidate.durationSeconds != null &&
+          (selected.durationSeconds! - source.candidate.durationSeconds!)
+                  .abs() >
+              3)) {
+    return false;
+  }
+  for (final field in const ['capo', 'tuning', 'timeSignature']) {
+    final base = song.metadata[field] ?? selected.metadata[field];
+    final donor = source.metadata[field] ?? source.candidate.metadata[field];
+    if (_hasMetadata(base) != _hasMetadata(donor)) return false;
+    if (!_hasMetadata(base)) continue;
+    String normalize(Object? value) {
+      if (field == 'tuning') {
+        final text = value is List ? value.join(' ') : value.toString();
+        return text
+            .toLowerCase()
+            .split(RegExp(r'[\s,\[\]]+'))
+            .where((note) => note.isNotEmpty)
+            .join(' ');
+      }
+      return value.toString().trim().toLowerCase();
+    }
+
+    if (normalize(base) != normalize(donor)) return false;
+  }
+  return true;
+}
+
 /// Recovers a supplied key only from charts corroborated against the actual
 /// saved chords. Catalog keys and the first chord are not key evidence. This is
 /// also usable for old saved imports, without rewriting their library records.
@@ -479,6 +542,57 @@ String? _harmonyIdentity(String chord) {
     claim.sourceIds.add(source.id);
   }
   // A relative-major/minor disagreement cannot be resolved by matching roots.
+  return claims.length == 1 ? claims.values.single : null;
+}
+
+/// Returns one non-conflicting provider key for this song.
+///
+/// A key attached to a chord chart must first pass the stricter chord
+/// corroboration above. A lyrics-only source can still contribute its
+/// explicit key when it is positively matched to the same song and edition;
+/// a bare catalog/search candidate or an unverified result cannot. If
+/// providers disagree, leave the field unresolved rather than picking the
+/// first result. This keeps key metadata independent from which provider's
+/// lyrics were selected while retaining its source provenance.
+({String key, List<String> sourceIds})? sourcedArrangementKey(
+  SongDocument song,
+) {
+  if (_hasMetadata(song.metadata['key']) ||
+      jsonMap(song.extra['fieldOrigins'])['key'] == 'user') {
+    return null;
+  }
+  final claims = <String, ({String key, List<String> sourceIds})>{};
+  for (final source in song.sources) {
+    if (source.hasChords ||
+        !const {
+          MatchKind.sameSong,
+          MatchKind.sameRecording,
+        }.contains(source.matchKind) ||
+        source.extra['pendingMatchCheck'] == true ||
+        !_compatibleMetadataKeySource(song, source)) {
+      continue;
+    }
+    final key = _keyIdentity(source.metadata['key']) != null
+        ? source.metadata['key'] as String
+        : source.candidate.metadata['key'];
+    final identity = _keyIdentity(key);
+    if (identity == null) continue;
+    final claim = claims.putIfAbsent(
+      identity,
+      () => (key: (key as String).trim(), sourceIds: []),
+    );
+    claim.sourceIds.add(source.id);
+  }
+
+  // Chord-bearing metadata remains subject to line-level corroboration.
+  final chartClaim = corroboratedArrangementKey(song);
+  if (chartClaim != null) {
+    final identity = _keyIdentity(chartClaim.key)!;
+    final claim = claims.putIfAbsent(identity, () => chartClaim);
+    for (final id in chartClaim.sourceIds) {
+      if (!claim.sourceIds.contains(id)) claim.sourceIds.add(id);
+    }
+  }
   return claims.length == 1 ? claims.values.single : null;
 }
 
@@ -765,6 +879,22 @@ SongDocument combineSources(
   final fieldContributors = <String, Set<String>>{
     for (final k in metadata.keys) k: {selected.identity},
   };
+  final mapEntryContributors = <String, Map<String, Set<String>>>{
+    for (final entry in metadata.entries)
+      if (entry.value is Map)
+        entry.key: {
+          for (final mapKey in jsonMap(entry.value).keys)
+            mapKey: {selected.identity},
+        },
+  };
+  final selectedMapEntryKeys = <String, Set<String>>{
+    for (final entry in metadata.entries)
+      if (entry.value is Map)
+        entry.key: {
+          for (final item in jsonMap(entry.value).entries)
+            if (_hasMetadata(item.value)) item.key,
+        },
+  };
   final chordSourceIds = <String>{
     if (best.hasChords) best.id,
     ...merged.sourceIds,
@@ -795,31 +925,40 @@ SongDocument combineSources(
       fieldContributors['durationSeconds'] = {best.id};
     }
   }
-  const songFields = {
-    'genre',
-    'language',
-    'composer',
-    'lyricist',
-    'writers',
-    'copyright',
-    'license',
-    'licenseUrl',
-    'attribution',
-    'composers',
-    'lyricists',
-    'credits',
-    'genres',
-    'compositionYear',
-    'wikidataId',
-    'description',
-    'types',
-    'performerIds',
-    'partOf',
-    'publicationDates',
-    'durationClaims',
-    'externalIdentifiers',
-    'wikimediaCommonsFile',
-    'licensedImages',
+  // Metadata providers often expose useful fields that did not exist when the
+  // app's canonical metadata schema was written. Keep combining safe facts by
+  // default, while excluding merge-control, provider-internal, and separately
+  // scoped data. Recording-specific fields need verified recording identity;
+  // arrangement fields have the stricter chord-source rule above.
+  const recordingFields = {
+    'album',
+    'artworkUrl',
+    'duration',
+    'durationSeconds',
+    'mediaLinks',
+    'recording',
+    'releaseDate',
+    'year',
+  };
+  const nonFactFields = {
+    'identityScope',
+    'query',
+    'record',
+    'rights',
+    'url',
+    'providerId',
+    'id',
+    'title',
+    'artist',
+    'lyrics',
+    'body',
+    'hasLyrics',
+    'pendingMatchCheck',
+    'sourceId',
+    'timingTracks',
+    'fieldOrigins',
+    'fieldContributors',
+    'conflicts',
   };
   final remaining = matching.where((s) => s.id != best.id).toList()
     ..sort((a, b) => a.id.compareTo(b.id));
@@ -858,6 +997,8 @@ SongDocument combineSources(
         source.candidate.metadata['identityScope'] ??
         source.metadata['identityScope'] ??
         source.extra['identityScope'];
+    final imageScoped = scoped == 'image';
+    if (scoped == 'recording' && !sameRecording) continue;
     final matchingAlbumDisplay =
         source.matchKind == MatchKind.sameSong &&
         !{
@@ -880,18 +1021,88 @@ SongDocument combineSources(
       if (!_hasMetadata(entry.value)) continue;
       final isArrangement = arrangementFields.contains(entry.key);
       if (isArrangement && !arrangementSourceIds.contains(source.id)) continue;
-      if (!isArrangement &&
-          !songFields.contains(entry.key) &&
+      if (nonFactFields.contains(entry.key) || imageScoped) continue;
+      final isRecordingField = recordingFields.contains(entry.key);
+      if (isRecordingField &&
           !sameRecording &&
           !(matchingAlbumDisplay &&
               const {'duration', 'durationSeconds'}.contains(entry.key))) {
+        continue;
+      }
+      if (!metadata.containsKey(entry.key) &&
+          conflicts.containsKey(entry.key)) {
+        (conflicts[entry.key] as List<dynamic>).add({
+          'sourceId': source.id,
+          'value': entry.value,
+        });
+        fieldContributors.putIfAbsent(entry.key, () => {}).add(source.id);
+        continue;
+      }
+      if (entry.value is Map && !metadata.containsKey(entry.key)) {
+        final available = <String, dynamic>{};
+        for (final mapEntry in jsonMap(entry.value).entries) {
+          if (!_hasMetadata(mapEntry.value)) continue;
+          final conflictKey = '${entry.key}.${mapEntry.key}';
+          if (conflicts.containsKey(conflictKey)) {
+            (conflicts[conflictKey] as List<dynamic>).add({
+              'sourceId': source.id,
+              'value': mapEntry.value,
+            });
+          } else {
+            available[mapEntry.key] = mapEntry.value;
+          }
+        }
+        if (available.isEmpty) continue;
+        metadata[entry.key] = available;
+        origins[entry.key] = source.id;
+        mapEntryContributors[entry.key] = {
+          for (final mapKey in available.keys) mapKey: {source.id},
+        };
+        _syncMapFieldContributors(
+          entry.key,
+          mapEntryContributors,
+          fieldContributors,
+        );
         continue;
       }
       if (!metadata.containsKey(entry.key) || metadata[entry.key] == null) {
         metadata[entry.key] = entry.value;
         origins[entry.key] = source.id;
         fieldContributors[entry.key] = {source.id};
-      } else if (jsonEncode(metadata[entry.key]) != jsonEncode(entry.value)) {
+        if (entry.value is Map) {
+          mapEntryContributors[entry.key] = {
+            for (final mapKey in jsonMap(entry.value).keys) mapKey: {source.id},
+          };
+        }
+      } else {
+        if (jsonEncode(metadata[entry.key]) == jsonEncode(entry.value)) {
+          if (entry.value is Map) {
+            final contributors = mapEntryContributors.putIfAbsent(
+              entry.key,
+              () => {
+                for (final mapKey in jsonMap(entry.value).keys)
+                  mapKey: {origins[entry.key] ?? selected.identity},
+              },
+            );
+            for (final mapKey in jsonMap(entry.value).keys) {
+              if (_hasMetadata(jsonMap(entry.value)[mapKey]) &&
+                  !conflicts.containsKey('${entry.key}.$mapKey')) {
+                contributors.putIfAbsent(mapKey, () => {}).add(source.id);
+              }
+            }
+            _syncMapFieldContributors(
+              entry.key,
+              mapEntryContributors,
+              fieldContributors,
+            );
+          } else {
+            fieldContributors.putIfAbsent(entry.key, () => {}).add(source.id);
+          }
+          continue;
+        }
+        if (entry.value is! Map) {
+          fieldContributors.putIfAbsent(entry.key, () => {}).add(source.id);
+        }
         // Lists are additive credits, links, identifiers and other source
         // facts. Arrangement setup arrays (notably tuning) remain one choice.
         if (!isArrangement &&
@@ -911,10 +1122,102 @@ SongDocument combineSources(
           }
           continue;
         }
-        (conflicts[entry.key] ??= <dynamic>[]).add({
-          'sourceId': source.id,
-          'value': entry.value,
-        });
+        if (!isArrangement &&
+            metadata[entry.key] is Map &&
+            entry.value is Map) {
+          final current = Map<String, dynamic>.from(
+            jsonMap(metadata[entry.key]),
+          );
+          final contributors = mapEntryContributors.putIfAbsent(
+            entry.key,
+            () => {
+              for (final mapKey in current.keys)
+                mapKey: {origins[entry.key] ?? selected.identity},
+            },
+          );
+          var changed = false;
+          for (final mapEntry in jsonMap(entry.value).entries) {
+            if (!_hasMetadata(mapEntry.value)) continue;
+            final conflictKey = '${entry.key}.${mapEntry.key}';
+            if (conflicts.containsKey(conflictKey)) {
+              (conflicts[conflictKey] as List<dynamic>).add({
+                'sourceId': source.id,
+                'value': mapEntry.value,
+              });
+              continue;
+            }
+            if (!current.containsKey(mapEntry.key) ||
+                !_hasMetadata(current[mapEntry.key])) {
+              current[mapEntry.key] = mapEntry.value;
+              contributors[mapEntry.key] = {source.id};
+              changed = true;
+            } else if (jsonEncode(current[mapEntry.key]) !=
+                jsonEncode(mapEntry.value)) {
+              final values =
+                  conflicts.putIfAbsent(
+                        conflictKey,
+                        () => <dynamic>[
+                          for (final priorSource
+                              in contributors[mapEntry.key] ??
+                                  {origins[entry.key] ?? selected.identity})
+                            {
+                              'sourceId': priorSource,
+                              'value': current[mapEntry.key],
+                            },
+                        ],
+                      )
+                      as List<dynamic>;
+              values.add({'sourceId': source.id, 'value': mapEntry.value});
+              if (!(selectedMapEntryKeys[entry.key]?.contains(mapEntry.key) ??
+                  false)) {
+                current.remove(mapEntry.key);
+                contributors.remove(mapEntry.key);
+                changed = true;
+              }
+            } else {
+              contributors.putIfAbsent(mapEntry.key, () => {}).add(source.id);
+            }
+          }
+          if (changed) {
+            if (current.isEmpty) {
+              metadata.remove(entry.key);
+              origins.remove(entry.key);
+              fieldContributors.remove(entry.key);
+              mapEntryContributors.remove(entry.key);
+            } else {
+              metadata[entry.key] = current;
+              _syncMapFieldContributors(
+                entry.key,
+                mapEntryContributors,
+                fieldContributors,
+              );
+            }
+          } else {
+            _syncMapFieldContributors(
+              entry.key,
+              mapEntryContributors,
+              fieldContributors,
+            );
+          }
+          continue;
+        }
+        final priorOrigin = origins[entry.key];
+        final values =
+            conflicts.putIfAbsent(
+                  entry.key,
+                  () => <dynamic>[
+                    {'sourceId': priorOrigin, 'value': metadata[entry.key]},
+                  ],
+                )
+                as List<dynamic>;
+        values.add({'sourceId': source.id, 'value': entry.value});
+        // Keep an explicit selected-candidate fact, but don't let iteration
+        // order silently choose between conflicting provider claims.
+        if (priorOrigin != selected.identity && !isArrangement) {
+          metadata.remove(entry.key);
+          origins.remove(entry.key);
+          fieldContributors.remove(entry.key);
+        }
       }
     }
   }
@@ -990,13 +1293,18 @@ SongDocument combineSources(
           .toList(),
     },
   );
-  final recoveredKey = corroboratedArrangementKey(song);
+  final corroboratedKey = corroboratedArrangementKey(song);
+  final recoveredKey = sourcedArrangementKey(song);
   if (recoveredKey != null) {
     metadata['key'] = recoveredKey.key;
     origins['key'] = recoveredKey.sourceIds.first;
     (song.extra['fieldContributors'] as Map<String, dynamic>)['key'] =
         recoveredKey.sourceIds;
-    song.extra['corroboratedKeySourceIds'] = recoveredKey.sourceIds;
+    song.extra['keySourceIds'] = recoveredKey.sourceIds;
+    if (corroboratedKey != null &&
+        _keyIdentity(corroboratedKey.key) == _keyIdentity(recoveredKey.key)) {
+      song.extra['corroboratedKeySourceIds'] = corroboratedKey.sourceIds;
+    }
   }
   return song;
 }

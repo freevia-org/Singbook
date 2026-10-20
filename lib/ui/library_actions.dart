@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -19,6 +21,7 @@ List<PopupMenuEntry<String>> buildLibraryActionMenu(
   bool isSetlist = false,
   bool timedLyricsChecked = false,
 }) {
+  final desktopExport = defaultTargetPlatform == TargetPlatform.windows;
   final labels = {
     'edit': l10n.actionEdit,
     'info': l10n.songInfo,
@@ -26,10 +29,18 @@ List<PopupMenuEntry<String>> buildLibraryActionMenu(
     'timed-lyrics': l10n.playerTimedLyrics,
     'add': l10n.songAddToSetlist,
     'duplicate': l10n.actionDuplicate,
-    'share': isSetlist ? l10n.setlistShare : l10n.settingsShareSong,
-    'share_pdf': isSetlist ? l10n.setlistSharePdf : l10n.settingsSharePdf,
-    'copy': l10n.settingsCopySong,
-    'print': isSetlist ? l10n.setlistPrint : l10n.settingsPrintSong,
+    'share': desktopExport
+        ? '${l10n.actionExport} · ${isSetlist ? '.osts' : 'ChordPro'}'
+        : isSetlist
+        ? l10n.setlistShare
+        : l10n.settingsShareSong,
+    'share_pdf': desktopExport
+        ? '${l10n.actionExport} · PDF'
+        : isSetlist
+        ? l10n.setlistSharePdf
+        : l10n.settingsSharePdf,
+    'copy': l10n.actionCopy,
+    'print': l10n.actionPrint,
     'delete': l10n.actionDelete,
   };
   const groups = [
@@ -531,21 +542,30 @@ Future<void> showSongInfo(
   await showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
+    useSafeArea: true,
+    showDragHandle: true,
+    constraints: BoxConstraints(
+      maxWidth: 640,
+      maxHeight: MediaQuery.sizeOf(context).height * .9,
+    ),
     builder: (context) => SafeArea(
+      top: false,
       child: ListView(
         shrinkWrap: true,
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
         children: [
           Row(
             children: [
-              IconButton(
-                tooltip: l10n.navBack,
-                onPressed: () => Navigator.of(context).maybePop(),
-                icon: const Icon(Icons.arrow_back_rounded),
+              Expanded(
+                child: Text(
+                  l10n.songInfo,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
               ),
-              Text(
-                l10n.songInfo,
-                style: Theme.of(context).textTheme.titleLarge,
+              IconButton(
+                tooltip: l10n.navClose,
+                onPressed: () => Navigator.of(context).maybePop(),
+                icon: const Icon(Icons.close_rounded),
               ),
             ],
           ),

@@ -264,7 +264,7 @@
   "setlistDuplicate": "Podvoji koncertni seznam",
   "setlistFavoriteAdd": "Dodaj koncertni seznam med priljubljene",
   "setlistFavoriteRemove": "Odstrani koncertni seznam iz priljubljenih",
-  "setlistShare": "Deli kot datoteko koncertnega seznama",
+  "setlistShare": "Deli kot OpenSong",
   "setlistSharePdf": "Deli kot PDF",
   "setlistPrint": "Natisni",
   "setlistDeleteConfirmTitle": "Izbrišem koncertni seznam?",
@@ -534,6 +534,14 @@
   "settingsFontSerif": "Serifna",
   "settingsFontMonospace": "Enakomerno široka",
   "settingsLyricsPreviewExample": "Ko pride jutro, bomo spet peli.",
+  "settingsPreviewSongTitle": "Jutranja pesem",
+  "settingsPreviewArtist": "Primer aranžmaja",
+  "settingsPreviewCurrentLine": "Ko pride jutro",
+  "settingsPreviewNextLine": "Spet bomo peli.",
+  "settingsPlayerSections": "Naslovi razdelkov",
+  "settingsPlayerControls": "Plošča za predvajanje",
+  "settingsPlayerAutoscroll": "Samodejno pomikanje",
+  "settingsSystemShort": "Naprava",
   "searchDiscoveryProgress": "Preverjanje virov besedil pesmi: dokončano {checked} od {total}.",
   "@searchDiscoveryProgress": {
     "placeholders": {
@@ -831,5 +839,47 @@
         "type": "int"
       }
     }
+  },
+  "accountDriveFolder": "Mapa knjižnice Google Drive",
+  "accountPrivateDriveFolder": "Zasebna mapa Singbook",
+  "accountChooseDriveFolder": "Izberite mapo",
+  "accountDriveFolderMoveTitle": "Želite premakniti svojo knjižnico Singbook?",
+  "accountDriveFolderMoveBody": "Izberite vidno mapo Google Drive. Singbook bo tam kopiral in preveril vaše pesmi in sezname, preden preklopite nanj. Izvirne datoteke ostanejo na prejšnjem mestu kot varnostna kopija. Druge datoteke ostanejo same. Datoteke ChordPro, ki jih uvozite v to mapo, so sprejete za sinhronizacijo in prejmejo metapodatke Singbook.",
+  "accountImportChordPro": "Uvozi ChordPro iz Drive",
+  "accountImportChordProHint": "Izberite datoteke .cho, ki jih želite dodati v to knjižnico. Datoteke, ki so že v mapi, so sprejete; datoteke drugje se kopirajo sem.",
+  "syncErrorFolderPickerUnavailable": "Izbira mape Drive ni na voljo",
+  "syncErrorFolderPickerUnavailableHint": "V podprti napravi z izbirnikom Google Drive izberite vidno mapo Drive.",
+  "syncErrorDriveFolderMissing": "Mapa Singbook Drive ni na voljo",
+  "syncErrorDriveFolderMissingHint": "Ponovno izberite mapo ali jo obnovite v storitvi Google Drive.",
+  "syncErrorDriveFileAuthorization": "Singbook potrebuje dostop do te mape Drive",
+  "syncErrorDriveFileAuthorizationHint": "Znova izberite mapo, da omogočite dostop, nato sinhronizirajte knjižnico.",
+  "syncErrorFolderMigration": "Knjižnice še ni bilo mogoče preseliti",
+  "syncErrorFolderMigrationHint": "Vaša prejšnja knjižnica je še vedno varna. Preverite povezavo in znova izberite mapo za ponovni poskus.",
+  "syncErrorVisibleFolderRequired": "Najprej izberite vidno mapo Drive",
+  "syncErrorVisibleFolderRequiredHint": "Pred uvozom datotek iz storitve Drive je potrebna vidna mapa knjižnice.",
+  "playerEstimatedKey": "Ocenjena tonaliteta",
+  "songsLibraryView": "Knjižnica",
+  "settingsStartupView": "Začni v",
+  "settingsStartupViewHint": "Izberite pogled Pesmi, ki se prikaže ob odprtju aplikacije.",
+  "settingsStartupLastView": "Nazadnje odprto",
+  "playerFullScreen": "Celoten zaslon",
+  "playerExitFullScreen": "Izhod iz celotnega zaslona",
+  "playerExpandControls": "Prikaži kontrolnike predvajanja",
+  "playerCollapseControls": "Skrij kontrolnike predvajanja",
+  "settingsShowSections": "Prikaži naslove razdelkov",
+  "settingsShowSectionsHint": "V besedilu prikaži naslove kitic, refrena in drugih razdelkov.",
+  "settingsShowPlayerControls": "Prikaži kontrolnike predvajanja",
+  "settingsShowPlayerControlsHint": "Ploščo predvajalnika lahko prikažete ali skrijete tudi z dotikom ali podrsanjem.",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
   }
 }

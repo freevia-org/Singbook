@@ -4,18 +4,129 @@ import android.content.ClipData
 import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
+import android.accounts.Account
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import com.google.android.gms.auth.api.identity.AuthorizationRequest
+import com.google.android.gms.auth.api.identity.Identity
+import com.google.android.gms.auth.api.identity.AuthorizationResult
+import com.google.android.gms.auth.api.identity.ClearTokenRequest
+import com.google.android.gms.common.api.Scope
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
+    private var playerFullScreen = false
+    private var playerActivityResumed = false
+    private var previousSystemBarsBehavior: Int? = null
     private var clipboardWriteReceipt: Map<String, Any?>? = null
+    private var drivePickerResult: MethodChannel.Result? = null
+    private var drivePickerFolderMode = true
+    private var drivePickerExpectedEmail: String? = null
+    private val drivePickerRequestCode = 41827
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
+            "org.freevia.singbook/fullscreen"
+        ).setMethodCallHandler { call, result ->
+            if (call.method != "setEnabled") {
+                result.notImplemented()
+                return@setMethodCallHandler
+            }
+            val enabled = call.arguments as? Boolean
+            if (enabled == null) {
+                result.error("invalid_fullscreen", "Expected a boolean", null)
+                return@setMethodCallHandler
+            }
+            val wasFullScreen = playerFullScreen
+            playerFullScreen = enabled
+            if (enabled) {
+                if (playerActivityResumed) applyPlayerFullScreen(true)
+            } else if (wasFullScreen || previousSystemBarsBehavior != null) {
+                applyPlayerFullScreen(false)
+            }
+            result.success(null)
+        }
+        MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
             "org.freevia.singbook/rich_clipboard"
         ).setMethodCallHandler { call, result ->
+            if (call.method == "pickVisibleDriveFolder" ||
+                call.method == "pickChordProFiles") {
+                if (drivePickerResult != null) {
+                    result.error("picker_busy", "A Drive picker is already open", null)
+                    return@setMethodCallHandler
+                }
+                val expectedEmail = call.argument<String>("accountEmail")?.trim()
+                if (expectedEmail.isNullOrBlank()) {
+                    result.error("account_mismatch", "Reconnect the selected Google account", null)
+                    return@setMethodCallHandler
+                }
+                drivePickerResult = result
+                drivePickerFolderMode = call.method == "pickVisibleDriveFolder"
+                drivePickerExpectedEmail = expectedEmail
+                val builder = AuthorizationRequest.Builder()
+                    .setAccount(Account(expectedEmail, "com.google"))
+                    .setRequestedScopes(listOf(Scope(DRIVE_FILE_SCOPE)))
+                    .setOptOutIncludingGrantedScopes(true)
+                    .setPrompt(AuthorizationRequest.Prompt.CONSENT)
+                    .addResourceParameter(
+                        AuthorizationRequest.ResourceParameter.PICKER_OAUTH_TRIGGER,
+                        "true"
+                    )
+                if (drivePickerFolderMode) {
+                    builder.addResourceParameter(
+                        AuthorizationRequest.ResourceParameter.PICKER_ALLOW_FOLDER_SELECTION,
+                        "true"
+                    )
+                } else {
+                    builder.addResourceParameter(
+                        AuthorizationRequest.ResourceParameter.PICKER_ALLOW_MULTIPLE,
+                        "true"
+                    )
+                }
+                val request = builder.build()
+                Identity.getAuthorizationClient(this).authorize(request)
+                    .addOnSuccessListener { authorization ->
+                        if (authorization.hasResolution()) {
+                            try {
+                                startIntentSenderForResult(
+                                    authorization.pendingIntent!!.intentSender,
+                                    drivePickerRequestCode,
+                                    null,
+                                    0,
+                                    0,
+                                    0
+                                )
+                            } catch (error: Exception) {
+                                finishDrivePickerError("picker_unavailable", error.message)
+                            }
+                        } else {
+                            finishDrivePicker(authorization)
+                        }
+                    }
+                    .addOnFailureListener { error ->
+                        finishDrivePickerError("picker_unavailable", error.message)
+                    }
+                return@setMethodCallHandler
+            }
+            if (call.method == "driveFileAccessToken") {
+                val expected = call.argument<String>("accountEmail")?.trim()
+                if (expected.isNullOrBlank()) {
+                    result.error("account_mismatch", "Reconnect the selected Google account", null)
+                    return@setMethodCallHandler
+                }
+                requestDriveFileToken(
+                    expected,
+                    call.argument<Boolean>("forceRefresh") == true,
+                    result
+                )
+                return@setMethodCallHandler
+            }
             if (call.method == "debugWriteReceipt" &&
                 (applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
                 result.success(clipboardWriteReceipt)
@@ -62,5 +173,148 @@ class MainActivity : FlutterActivity() {
             }
             result.success(null)
         }
+    }
+
+    private fun requestDriveFileToken(
+        expectedEmail: String,
+        forceRefresh: Boolean,
+        result: MethodChannel.Result
+    ) {
+        val request = AuthorizationRequest.Builder()
+            .setAccount(Account(expectedEmail, "com.google"))
+            .setRequestedScopes(listOf(Scope(DRIVE_FILE_SCOPE)))
+            .setOptOutIncludingGrantedScopes(true)
+            .build()
+        val client = Identity.getAuthorizationClient(this)
+        client.authorize(request)
+            .addOnSuccessListener { authorization ->
+                val actual = authorization.toGoogleSignInAccount()?.email?.trim()
+                val token = authorization.accessToken
+                when {
+                    authorization.hasResolution() -> result.error(
+                        "authorization_required", "Reconnect Google Drive to continue", null
+                    )
+                    actual.isNullOrBlank() ||
+                        !expectedEmail.equals(actual, ignoreCase = true) -> result.error(
+                        "account_mismatch", "Reconnect the selected Google account", null
+                    )
+                    token.isNullOrBlank() -> result.error(
+                        "authorization_required", "Reconnect Google Drive to continue", null
+                    )
+                    forceRefresh -> client.clearToken(
+                        ClearTokenRequest.builder().setToken(token).build()
+                    ).addOnSuccessListener {
+                        // Cache eviction is complete before requesting once more.
+                        // This does not revoke the grant or launch consent UI.
+                        requestDriveFileToken(expectedEmail, false, result)
+                    }.addOnFailureListener { error ->
+                        result.error("drive_authorization_failed", error.message, null)
+                    }
+                    else -> result.success(token)
+                }
+            }
+            .addOnFailureListener { error ->
+                result.error("drive_authorization_failed", error.message, null)
+            }
+    }
+
+    private fun applyPlayerFullScreen(enabled: Boolean) {
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        if (enabled) {
+            if (previousSystemBarsBehavior == null) {
+                previousSystemBarsBehavior = controller.systemBarsBehavior
+            }
+            controller.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+        } else {
+            controller.show(WindowInsetsCompat.Type.systemBars())
+            previousSystemBarsBehavior?.let { controller.systemBarsBehavior = it }
+            previousSystemBarsBehavior = null
+        }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus && playerActivityResumed && playerFullScreen) {
+            applyPlayerFullScreen(true)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        playerActivityResumed = true
+        if (hasWindowFocus() && playerFullScreen) applyPlayerFullScreen(true)
+    }
+
+    override fun onPause() {
+        playerActivityResumed = false
+        if (playerFullScreen || previousSystemBarsBehavior != null) {
+            applyPlayerFullScreen(false)
+        }
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        playerActivityResumed = false
+        if (playerFullScreen || previousSystemBarsBehavior != null) {
+            applyPlayerFullScreen(false)
+        }
+        playerFullScreen = false
+        super.onDestroy()
+    }
+
+    @Deprecated("Deprecated in Android, kept for Google AuthorizationClient resolution results")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != drivePickerRequestCode) return
+        if (resultCode != RESULT_OK || data == null) {
+            finishDrivePickerError("cancelled", "Drive folder selection was cancelled")
+            return
+        }
+        try {
+            finishDrivePicker(
+                Identity.getAuthorizationClient(this).getAuthorizationResultFromIntent(data)
+            )
+        } catch (error: Exception) {
+            finishDrivePickerError("picker_failed", error.message)
+        }
+    }
+
+    private fun finishDrivePicker(authorization: AuthorizationResult) {
+        val expectedEmail = drivePickerExpectedEmail
+        val actualEmail = authorization.toGoogleSignInAccount()?.email?.trim()
+        if (expectedEmail.isNullOrBlank() || actualEmail.isNullOrBlank() ||
+            !expectedEmail.equals(actualEmail, ignoreCase = true)) {
+            finishDrivePickerError("account_mismatch", "Select the Google account connected to Singbook")
+            return
+        }
+        val ids = authorization.tokenResponseParams?.getString("picked_file_ids")
+            ?.split(',')?.filter { it.isNotBlank() } ?: emptyList()
+        val token = authorization.accessToken
+        if (ids.isEmpty() || token.isNullOrBlank()) {
+            finishDrivePickerError("nothing_selected", "No Drive items were selected")
+            return
+        }
+        if (drivePickerFolderMode && ids.size != 1) {
+            finishDrivePickerError("folder_not_selected", "Select one Drive folder")
+            return
+        }
+        drivePickerResult?.success(
+            if (drivePickerFolderMode) mapOf("folderId" to ids.single())
+            else mapOf("fileIds" to ids)
+        )
+        drivePickerResult = null
+        drivePickerExpectedEmail = null
+    }
+
+    private fun finishDrivePickerError(code: String, message: String?) {
+        drivePickerResult?.error(code, message ?: "Google Drive authorization failed", null)
+        drivePickerResult = null
+        drivePickerExpectedEmail = null
+    }
+
+    companion object {
+        private const val DRIVE_FILE_SCOPE = "https://www.googleapis.com/auth/drive.file"
     }
 }

@@ -200,14 +200,19 @@ void main() {
 
     await _pumpHome(tester, controller: controller);
     final l10n = AppLocalizations.of(tester.element(find.byType(TextField)));
-    expect(find.text('${l10n.searchRecentTab} (2)'), findsOneWidget);
+    _expectHomeModeCount(tester, HomeListMode.recent, l10n.searchRecentTab, 1);
+    expect(
+      find.byKey(const ValueKey('recent-setlist-row-setlist-signal')),
+      findsNothing,
+    );
     expect(find.text(l10n.homeItemsShownCount(2)), findsNothing);
     expect(find.byKey(const ValueKey('recent-row-other')), findsNothing);
     expect(find.text(l10n.homeRecentSongs), findsNothing);
     expect(tester.takeException(), isNull);
 
     controller._state = VerseUiState(
-      homeListMode: HomeListMode.favorites,
+      homeListMode: HomeListMode.library,
+      favoritesOnly: true,
       songs: [
         const SongCardData(
           id: 'favorite-song',
@@ -216,20 +221,19 @@ void main() {
         ),
         const SongCardData(id: 'other-song', title: 'Other song'),
       ],
-      setlists: [
-        SetlistCardData(
-          id: 'favorite-setlist',
-          title: 'Favorite setlist',
-          favorite: true,
-          modifiedAt: now,
-        ),
-      ],
     );
     controller.notifyListeners();
     await tester.pumpAndSettle();
-    expect(find.text('${l10n.searchFavoritesTab} (2)'), findsOneWidget);
+    _expectHomeModeCount(
+      tester,
+      HomeListMode.library,
+      l10n.songsLibraryView,
+      1,
+    );
     expect(find.text(l10n.homeItemsShownCount(2)), findsNothing);
-    expect(find.text(l10n.homeFavorites), findsNothing);
+    final favoritesButton = find.byTooltip(l10n.searchFavoritesTab);
+    expect(favoritesButton, findsOneWidget);
+    expect(tester.getSize(favoritesButton), const Size(48, 48));
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
   });
@@ -385,7 +389,12 @@ void main() {
       );
       await tester.pumpAndSettle();
       final l10n = AppLocalizations.of(tester.element(find.byType(TextField)));
-      expect(find.text('${l10n.searchOnlineTab} ($count)'), findsOneWidget);
+      _expectHomeModeCount(
+        tester,
+        HomeListMode.online,
+        l10n.searchOnlineTab,
+        count,
+      );
       expect(find.text(l10n.searchResultCount(count)), findsNothing);
       expect(find.text(l10n.searchAutocompleteLabel), findsNothing);
       expect(tester.takeException(), isNull);
@@ -572,250 +581,189 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets(
-    'home mode labels stay on one line at phone and large text sizes',
-    (tester) async {
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.resetDevicePixelRatio);
-      addTearDown(tester.view.resetPhysicalSize);
-      final controller = _VisualHomeController();
-      addTearDown(controller.dispose);
-
-      for (final locale in const [Locale('en'), Locale('bg'), Locale('uk')]) {
-        for (final scale in const [1.0, 1.3, 1.5, 2.0]) {
-          for (final size in const [
-            Size(320, 700),
-            Size(360, 804),
-            Size(393, 873),
-          ]) {
-            tester.view.physicalSize = size;
-            await _pumpHome(
-              tester,
-              locale: locale,
-              scale: scale,
-              controller: controller,
-            );
-
-            final selector = find.byKey(const ValueKey('home-mode-scroll'));
-            expect(selector, findsOneWidget, reason: '$locale/$scale/$size');
-            expect(
-              tester.takeException(),
-              isNull,
-              reason: '$locale/$scale/$size',
-            );
-
-            for (final mode in HomeListMode.values) {
-              final segment = find.byKey(ValueKey('home-mode-${mode.name}'));
-              expect(segment, findsOneWidget, reason: '$locale/$scale/$size');
-              final label = find.descendant(
-                of: segment,
-                matching: find.byType(Text),
-              );
-              expect(label, findsOneWidget);
-              final paragraph = tester.renderObject<RenderParagraph>(label);
-              final text = tester.widget<Text>(label);
-              final metrics = TextPainter(
-                text: TextSpan(text: text.data, style: text.style),
-                textDirection: TextDirection.ltr,
-                textScaler: TextScaler.linear(scale),
-                maxLines: text.maxLines,
-              )..layout(maxWidth: paragraph.size.width);
-              expect(paragraph.maxLines, 1);
-              expect(metrics.computeLineMetrics(), hasLength(1));
-              expect(paragraph.didExceedMaxLines, isFalse);
-            }
-
-            final search = tester.getRect(find.byType(TextField));
-            final modes = tester.getRect(selector);
-            expect(
-              search.bottom,
-              lessThan(modes.top),
-              reason: 'header overlap',
-            );
-            expect(search.left, greaterThanOrEqualTo(0));
-            expect(search.right, lessThanOrEqualTo(size.width));
-          }
-        }
-      }
-      await tester.pumpWidget(const SizedBox.shrink());
-    },
-  );
-
-  testWidgets(
-    'all home modes can be selected and selected segment is revealed',
-    (tester) async {
-      tester.view.devicePixelRatio = 1;
-      tester.view.physicalSize = const Size(360, 804);
-      addTearDown(tester.view.resetDevicePixelRatio);
-      addTearDown(tester.view.resetPhysicalSize);
-      final controller = _VisualHomeController();
-      addTearDown(controller.dispose);
-      await _pumpHome(tester, controller: controller);
-
-      for (final mode in HomeListMode.values) {
-        final segment = find.byKey(ValueKey('home-mode-${mode.name}'));
-        await tester.ensureVisible(segment);
-        await tester.tap(segment);
-        await tester.pumpAndSettle();
-        expect(controller.state.homeListMode, mode);
-        final selected = tester.widget<Semantics>(
-          find.descendant(
-            of: segment,
-            matching: find.byWidgetPredicate(
-              (widget) =>
-                  widget is Semantics && widget.properties.selected == true,
-            ),
-          ),
-        );
-        expect(selected.properties.selected, isTrue);
-        final segmentRect = tester.getRect(
-          find.byKey(ValueKey('home-mode-${mode.name}')),
-        );
-        final scrollRect = tester.getRect(
-          find.byKey(const ValueKey('home-mode-scroll')),
-        );
-        expect(segmentRect.left, greaterThanOrEqualTo(scrollRect.left));
-        expect(segmentRect.right, lessThanOrEqualTo(scrollRect.right));
-      }
-      await tester.pumpWidget(const SizedBox.shrink());
-    },
-  );
-
-  testWidgets('home modes wrap visibly and remain tappable at 2x text', (
+  testWidgets('three local mode tabs fit and wrap across phone sizes', (
     tester,
   ) async {
-    final font = FontLoader('NotoSansHome')
-      ..addFont(rootBundle.load('assets/fonts/NotoSans-Regular.ttf'))
-      ..addFont(rootBundle.load('assets/fonts/NotoSans-Bold.ttf'));
-    await font.load();
-
     tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(360, 804);
     addTearDown(tester.view.resetDevicePixelRatio);
     addTearDown(tester.view.resetPhysicalSize);
     final controller = _VisualHomeController();
     addTearDown(controller.dispose);
-    await _pumpHome(
-      tester,
-      scale: 2,
-      controller: controller,
-      fontFamily: 'NotoSansHome',
-    );
+    const modes = [
+      HomeListMode.recent,
+      HomeListMode.library,
+      HomeListMode.online,
+    ];
 
-    final selector = find.byKey(const ValueKey('home-mode-scroll'));
-    final selectorRect = tester.getRect(selector);
-    expect(selectorRect.right, lessThanOrEqualTo(360));
-    expect(tester.takeException(), isNull);
+    for (final locale in const [Locale('en'), Locale('bg'), Locale('uk')]) {
+      for (final scale in const [1.0, 1.3, 1.5, 2.0]) {
+        for (final size in const [
+          Size(320, 700),
+          Size(360, 804),
+          Size(393, 873),
+        ]) {
+          tester.view.physicalSize = size;
+          await _pumpHome(
+            tester,
+            locale: locale,
+            scale: scale,
+            controller: controller,
+          );
 
-    for (final mode in HomeListMode.values) {
-      final segment = find.byKey(ValueKey('home-mode-${mode.name}'));
-      final rect = tester.getRect(segment);
-      expect(rect.left, greaterThanOrEqualTo(selectorRect.left));
-      expect(rect.right, lessThanOrEqualTo(selectorRect.right));
-      final label = find.descendant(of: segment, matching: find.byType(Text));
-      final paragraph = tester.renderObject<RenderParagraph>(label);
-      expect(paragraph.maxLines, 1);
-      expect(paragraph.didExceedMaxLines, isFalse);
+          expect(find.byKey(const ValueKey('home-mode-scroll')), findsNothing);
+          expect(
+            tester.takeException(),
+            isNull,
+            reason: '$locale/$scale/$size',
+          );
+          final l10n = AppLocalizations.of(
+            tester.element(find.byType(TextField)),
+          );
+          for (final mode in modes) {
+            final segment = find.byKey(ValueKey('home-mode-${mode.name}'));
+            expect(segment, findsOneWidget, reason: '$locale/$scale/$size');
+            final title = switch (mode) {
+              HomeListMode.recent => l10n.searchRecentTab,
+              HomeListMode.library => l10n.songsLibraryView,
+              HomeListMode.online => l10n.searchOnlineTab,
+              HomeListMode.favorites => throw StateError('Legacy mode'),
+            };
+            final label = find.descendant(
+              of: segment,
+              matching: find.text('$title(0)'),
+            );
+            expect(label, findsOneWidget);
+            final paragraph = tester.renderObject<RenderParagraph>(label);
+            expect(paragraph.didExceedMaxLines, isFalse);
+            final rect = tester.getRect(segment);
+            expect(rect.left, greaterThanOrEqualTo(0));
+            expect(rect.right, lessThanOrEqualTo(size.width));
+          }
 
-      await tester.tap(segment);
-      await tester.pumpAndSettle();
-      expect(controller.state.homeListMode, mode);
-      expect(tester.takeException(), isNull);
+          final favoritesButton = find.byTooltip(l10n.searchFavoritesTab);
+          expect(favoritesButton, findsOneWidget);
+          expect(tester.getSize(favoritesButton), const Size(48, 48));
+          final search = tester.getRect(find.byType(TextField));
+          final recentTab = tester.getRect(
+            find.byKey(const ValueKey('home-mode-recent')),
+          );
+          expect(search.bottom, lessThan(recentTab.top));
+          expect(search.left, greaterThanOrEqualTo(0));
+          expect(search.right, lessThanOrEqualTo(size.width));
+        }
+      }
     }
-
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets(
-    'mode reveal stays inside selector at compact landscape and 2x text',
-    (tester) async {
-      final font = FontLoader('NotoSansFixture')
-        ..addFont(rootBundle.load('assets/fonts/NotoSans-Regular.ttf'));
-      await font.load();
+  testWidgets('Online is tappable at 320dp with 2x text', (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 780);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    final controller = _VisualHomeController();
+    addTearDown(controller.dispose);
+    await _pumpHome(tester, scale: 2, controller: controller);
 
-      tester.view.devicePixelRatio = 1;
-      tester.view.physicalSize = const Size(640, 360);
-      addTearDown(tester.view.resetDevicePixelRatio);
-      addTearDown(tester.view.resetPhysicalSize);
-      final controller = _VisualHomeController(
-        VerseUiState(
-          query: 'Lantern',
-          recent: [
-            RecentItemData(
-              id: 'compact-song',
-              title: 'Lanterns at Dawn',
-              artist: 'The Paper Moons',
-              occurredAt: DateTime(2026, 1, 1),
-              isSetlist: false,
+    final online = find.byKey(const ValueKey('home-mode-online'));
+    expect(online, findsOneWidget);
+    await tester.tap(online);
+    await tester.pumpAndSettle();
+    expect(controller.state.homeListMode, HomeListMode.online);
+    expect(find.byKey(const ValueKey('home-mode-recent')), findsOneWidget);
+    expect(find.byKey(const ValueKey('home-mode-library')), findsOneWidget);
+    expect(find.byKey(const ValueKey('home-mode-scroll')), findsNothing);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('Online stays visible in compact landscape at 2x text', (
+    tester,
+  ) async {
+    final font = FontLoader('NotoSansFixture')
+      ..addFont(rootBundle.load('assets/fonts/NotoSans-Regular.ttf'));
+    await font.load();
+
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(640, 360);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    final controller = _VisualHomeController(
+      VerseUiState(
+        query: 'Lantern',
+        recent: [
+          RecentItemData(
+            id: 'compact-song',
+            title: 'Lanterns at Dawn',
+            artist: 'The Paper Moons',
+            occurredAt: DateTime(2026, 1, 1),
+            isSetlist: false,
+          ),
+        ],
+      ),
+    );
+    addTearDown(controller.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: singbookLocalizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme:
+            verseTheme(
+              brightness: Brightness.light,
+              palette: 'navy',
+              fontFamily: 'NotoSansFixture',
+            ).copyWith(
+              textTheme:
+                  verseTheme(
+                    brightness: Brightness.light,
+                    palette: 'navy',
+                    fontFamily: 'NotoSansFixture',
+                  ).textTheme.apply(
+                    fontFamily: 'NotoSansFixture',
+                    fontFamilyFallback: const ['NotoSansFixture'],
+                  ),
             ),
-          ],
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(2)),
+          child: child!,
         ),
-      );
-      addTearDown(controller.dispose);
+        home: VerseAppShell(controller: controller, files: VerseFileActions()),
+      ),
+    );
+    await tester.pumpAndSettle();
 
-      await tester.pumpWidget(
-        MaterialApp(
-          localizationsDelegates: singbookLocalizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          theme:
-              verseTheme(
-                brightness: Brightness.light,
-                palette: 'navy',
-                fontFamily: 'NotoSansFixture',
-              ).copyWith(
-                textTheme:
-                    verseTheme(
-                      brightness: Brightness.light,
-                      palette: 'navy',
-                      fontFamily: 'NotoSansFixture',
-                    ).textTheme.apply(
-                      fontFamily: 'NotoSansFixture',
-                      fontFamilyFallback: const ['NotoSansFixture'],
-                    ),
-              ),
-          builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(
-              context,
-            ).copyWith(textScaler: const TextScaler.linear(2)),
-            child: child!,
-          ),
-          home: VerseAppShell(
-            controller: controller,
-            files: VerseFileActions(),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
+    final outerScrollable = tester.state<ScrollableState>(
+      find
+          .descendant(
+            of: find.byType(CustomScrollView),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    final appBar = tester.getRect(find.byType(AppBar));
+    final search = tester.getRect(find.byType(TextField));
+    expect(outerScrollable.position.pixels, 0);
+    expect(search.top, greaterThanOrEqualTo(appBar.bottom));
 
-      final outerScrollable = tester.state<ScrollableState>(
-        find
-            .descendant(
-              of: find.byType(CustomScrollView),
-              matching: find.byType(Scrollable),
-            )
-            .first,
-      );
-      final appBar = tester.getRect(find.byType(AppBar));
-      final search = tester.getRect(find.byType(TextField));
-      expect(outerScrollable.position.pixels, 0);
-      expect(search.top, greaterThanOrEqualTo(appBar.bottom));
-
-      final selector = find.byKey(const ValueKey('home-mode-scroll'));
-      final online = find.byKey(const ValueKey('home-mode-online'));
-      controller.setHomeListMode(HomeListMode.online);
-      await tester.pumpAndSettle();
-      expect(controller.state.homeListMode, HomeListMode.online);
-      expect(outerScrollable.position.pixels, 0);
-      final selectorRect = tester.getRect(selector);
-      final onlineRect = tester.getRect(online);
-      expect(onlineRect.top, greaterThanOrEqualTo(selectorRect.top));
-      expect(onlineRect.bottom, lessThanOrEqualTo(selectorRect.bottom));
-      expect(onlineRect.left, greaterThanOrEqualTo(selectorRect.left));
-      expect(onlineRect.right, lessThanOrEqualTo(selectorRect.right));
-      expect(tester.takeException(), isNull);
-      await tester.pumpWidget(const SizedBox.shrink());
-    },
-  );
+    final recent = find.byKey(const ValueKey('home-mode-recent'));
+    final online = find.byKey(const ValueKey('home-mode-online'));
+    controller.setHomeListMode(HomeListMode.online);
+    await tester.pumpAndSettle();
+    expect(controller.state.homeListMode, HomeListMode.online);
+    expect(outerScrollable.position.pixels, 0);
+    expect(find.byKey(const ValueKey('home-mode-scroll')), findsNothing);
+    final recentRect = tester.getRect(recent);
+    final onlineRect = tester.getRect(online);
+    expect(onlineRect.top, greaterThanOrEqualTo(recentRect.top));
+    expect(onlineRect.bottom, lessThanOrEqualTo(recentRect.bottom));
+    expect(onlineRect.left, greaterThanOrEqualTo(0));
+    expect(onlineRect.right, lessThanOrEqualTo(640));
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
 
   testWidgets(
     'home search and selector remain laid out with keyboard and landscape',
@@ -835,12 +783,12 @@ void main() {
       tester.view.viewInsets = const FakeViewPadding(bottom: 240);
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
-      expect(find.byKey(const ValueKey('home-mode-scroll')), findsOneWidget);
+      expect(find.byKey(const ValueKey('home-mode-scroll')), findsNothing);
       final search = tester.getRect(find.byType(TextField));
-      final selector = tester.getRect(
-        find.byKey(const ValueKey('home-mode-scroll')),
+      final recent = tester.getRect(
+        find.byKey(const ValueKey('home-mode-recent')),
       );
-      expect(search.bottom, lessThan(selector.top));
+      expect(search.bottom, lessThan(recent.top));
       tester.view.viewInsets = FakeViewPadding.zero;
       await tester.pumpWidget(const SizedBox.shrink());
     },
@@ -970,6 +918,20 @@ void main() {
   });
 }
 
+void _expectHomeModeCount(
+  WidgetTester tester,
+  HomeListMode mode,
+  String title,
+  int count,
+) {
+  final segment = find.byKey(ValueKey('home-mode-${mode.name}'));
+  expect(segment, findsOneWidget);
+  expect(
+    find.descendant(of: segment, matching: find.text('$title($count)')),
+    findsOneWidget,
+  );
+}
+
 Future<void> _pumpHome(
   WidgetTester tester, {
   Locale locale = const Locale('en'),
@@ -979,15 +941,20 @@ Future<void> _pumpHome(
   bool settle = true,
 }) async {
   final homeController = controller ?? _VisualHomeController();
+  final theme = verseTheme(
+    brightness: Brightness.light,
+    palette: 'navy',
+    fontFamily: fontFamily,
+  );
   await tester.pumpWidget(
     MaterialApp(
       locale: locale,
       localizationsDelegates: singbookLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      theme: verseTheme(
-        brightness: Brightness.light,
-        palette: 'navy',
-        fontFamily: fontFamily,
+      // verseTheme supplies an explicit text theme; load the fixture family
+      // into that theme too so large-text geometry uses the real font.
+      theme: theme.copyWith(
+        textTheme: theme.textTheme.apply(fontFamily: fontFamily),
       ),
       builder: (context, child) => MediaQuery(
         data: MediaQuery.of(

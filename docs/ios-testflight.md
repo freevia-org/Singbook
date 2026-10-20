@@ -25,7 +25,7 @@ review; a signed export remains blocked until the owner configures the account.
 `ios/ExportOptions.plist` uses automatic signing and `app-store-connect`, with
 `destination=export`. It creates a local IPA; it does not upload it. Automatic
 build-number management is disabled so Xcode preserves the repository version.
-The current version is `0.2.6+20`; check App Store Connect for previously used
+The current version is `0.2.9+23`; check App Store Connect for previously used
 build numbers before uploading. For a new release, follow AGENTS.md and update
 all four version locations together. Rebuilding the same release keeps its number.
 
@@ -107,8 +107,9 @@ submit a blanket "Data Not Collected" answer from the local-first design alone.
 App Store Connect also needs the correct app record, agreements, export
 compliance answers, beta description, contact details, and test instructions.
 Test OAuth callbacks and Drive sync with the distribution build, plus import,
-export, PDF printing, phone/tablet layouts, and supported locales. Existing
-golden-image failures recorded in the iOS build guide remain unresolved.
+export, PDF printing, phone/tablet layouts, and supported locales. The macOS
+golden differences were resolved on 2026-10-19 with reviewed
+host-specific baselines; see the follow-up verification below.
 
 Prepared materials: [submission fields](testflight-submission.md),
 [App Privacy assessment](ios-app-privacy.md),
@@ -136,10 +137,11 @@ records the completed native import/backup checks and retains the earlier failed
 
 ## App Store publishing handoff — 2026-10-19
 
-Offline preparation targets the existing `0.2.6 (20)` release. No new release
-number was created for metadata/screenshots. The current profile has no Google
-OAuth client or Genius token, so the production copy does not advertise those
-features. No signed build, App Store record or submission exists yet.
+Offline preparation initially targeted `0.2.6 (20)` and now follows the
+shared `0.2.9+23` release. Refreshing metadata/screenshots does not create a new
+release number. The current profile has no Google OAuth client. The Genius
+client token is configured and verified on both simulators; the production
+copy does not advertise Google sync features. No signed build, App Store record or submission exists yet.
 
 ### Prepared package
 
@@ -167,7 +169,10 @@ submission dependencies. Use Apple's live field validation when entering them.
 
 ### Content authorization decision
 
-Before publishing, resolve the authorization findings documented in
+The owner chose on 2026-10-19 to retain all existing sources without a local
+publication gate or restricted provider profile. Permission evidence remains
+incomplete; this decision does not establish rights or guarantee Apple approval.
+The authorization findings are documented in
 [the source review](sources.md#legal-and-terms-of-service-posture).
 Apple's [Guideline 5.2.2](https://developer.apple.com/app-store/review/guidelines/#intellectual-property)
 requires permission under the service's terms for third-party content/services.
@@ -176,26 +181,24 @@ establish that permission. No provider rights are asserted by these materials.
 
 | Integration group | Evidence needed for the final App Store profile |
 | --- | --- |
-| Genius catalog/API vs song-page lyrics | Distinguish API permission from permission to retrieve/save/share lyric text. Token is currently absent. |
+| Genius catalog/API vs song-page lyrics | Distinguish API permission from permission to retrieve/save/share lyric text. The client access token is configured locally and live discovery passed on both iOS simulators. |
 | Songsterr, Ultimate Guitar, Chordie, YouTube Music, Lyrics.ovh, SyncLRC, Better Lyrics/Unison | Current written service permission/terms and content rights covering the implemented access and uses; undocumented scraping or public API availability alone is insufficient. |
 | LRCLIB | Confirm service permission and rights for lyric storage/export, independently of API availability. |
 | WorshipCommons, Sean McGrath, Open Filk | Keep per-song licence and attribution evidence; independently verify the applicable licence and any conditions. |
 | MusicBrainz, Wikidata, Commons, Wikisource | Verify API/service rules, required attribution and per-file/text licences. Metadata permissions do not grant lyric rights. |
 | Ozbcoz / Worship Together imports | Automatic lookup is disabled; users supply files. Do not claim a commercial catalogue licence from import support. |
 
-Owner must either supply authorization evidence for enabled integrations or
-approve and validate a bounded release profile. Also review remotely refreshed
-catalog definitions so they cannot silently restore unapproved integrations.
-No integrations were silently removed as part of this preparation. Attach the
-final permitted-provider list/evidence to private App Review information.
+All existing integrations retain their current configuration. No restriction or
+publishing block was added. Keep available permission evidence and the actual
+provider profile in private App Review information; do not assert authorization
+where it has not been established.
 
 ### Privacy, rating and product-page declarations
 
-- Publish the prepared iOS policy corrections at the public privacy URL and
-  review support contact details. A local draft is not a live policy update.
-  A fresh automated check on 2026-10-19 returned HTTP 403 for both privacy
-  and support URLs (the earlier check returned 200). Verify public/reviewer
-  reachability and resolve any access challenge before submission.
+- The iOS policy corrections and support guidance were published on 2026-10-19.
+  Both URLs returned HTTP 200 and were visually reviewed. The earlier
+  client-specific 403 was not reproduced; no security rule was weakened.
+  Source HTML and deployment provenance are in `docs/site/singbook/`.
 - Enter the conservative SDK-inclusive profile from `ios-app-privacy.md`
   (including Search History for active provider queries). Do not choose
   “Data Not Collected” solely because the library is local or OAuth is off.
@@ -242,7 +245,9 @@ no physical device, signed runtime, Face ID/Keychain/OAuth, real printer or
 VoiceOver validation is claimed. This is a documented testing limitation rather
 than an instruction to obtain hardware before offline preparation can finish.
 Apple may identify device-only issues during review; address any actual issue
-before release. The earlier four golden baseline differences remain recorded.
+before release. The earlier four golden differences were resolved with visually
+reviewed
+macOS baselines; Linux and Windows baselines are unchanged.
 
 References checked 2026-10-19: [screenshot specifications](https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications),
 [version metadata](https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information),
@@ -266,3 +271,83 @@ checks passed. Existing unsigned archive privacy inspection passed again.
 The App Store icon was verified at 1024×1024 RGB. These checks prepare the local
 package; they do not substitute for signed-archive/App Store validation.
 All subagent work is complete and temporary build/device reservations released.
+
+### Publication follow-up — 2026-10-19
+
+Privacy and support production deployment `51f629dd-4742-448b-9a98-a5c470451e9f`
+changed only the two Singbook pages, preserving the other 66 website assets.
+The policy covers iOS storage/deletion/backups, bundled Google SDK disclosures,
+provider request retention and YouTube visitor identifiers. Support now describes
+automatic sync after library changes and manual backup import accurately.
+
+The merged production code at `a8d45f12f8d9dfa881014154d4faa3f33db27cbd`,
+including the newer provider-version replacement change, was archived unsigned
+as `0.2.6+20`. Inspection found 18 privacy manifests, bundle ID
+`org.freevia.singbook`, minimum iOS 15.0. Evidence is under
+`artifacts/ios-merged-20261019/`; the previous archive was copied before rebuilding.
+This archive cannot be uploaded or installed without signing.
+
+Five macOS golden baselines were visually reviewed for chord collisions, wrapping,
+RTL and landscape rendering. All 12 focused chord/lyric tests passed without
+updating goldens during verification. Linux/Windows baselines and geometry
+expectations are unchanged. No app features or source restrictions were added.
+
+Merged archive Runner SHA-256: `ce2f7e22c245e03b0bd96441aba4487803c2048062561c2115a42ed59978dee9`.
+
+Full Flutter unit/widget suite passed: **1,270 tests**, including the macOS
+goldens, with no golden-update flag. Log:
+`artifacts/publication-gates-20261019/all-tests.log`. Focused Dart analysis,
+store package validation and whitespace checks also passed. These checks do
+not add new physical-device or signed-build testing claims.
+
+### Android/iOS parity candidate — 2026-10-19
+
+The previous candidate was `0.2.8+22`, integrated from upstream `dbb3ff5`; earlier
+archive and screenshot records above refer to their historical source versions.
+The latest shared UI, timing, setlist and source-metadata changes run on iOS.
+The Android-only Drive Picker gap has an iOS system-browser/Keychain adapter;
+its account/scope/PKCE/state checks reuse the tested grant implementation.
+Live Google consent and token refresh still require configured iOS OAuth and
+remain unperformed. Signing and physical-device limitations remain unchanged.
+
+The privacy/support pages were refreshed in production deployment
+`a4f6548a-fcde-4b74-a622-e24dcad62f4a`, preserving the other 70 site assets.
+Both returned HTTP 200; the live iOS Picker/Keychain text was verified.
+
+The unsigned `0.2.8+22` release archive built successfully from source commit
+`a0df607`. Privacy inspection confirmed 18 manifests, bundle ID
+`org.freevia.singbook`, and minimum iOS 15.0. Evidence is in
+`artifacts/ios-parity-20261019/{archive-build.log,privacy-inventory.json,archive-record.json}`.
+The previous archive is preserved as `Runner-before-parity.xcarchive` there.
+Runner SHA-256: `86807db89d8ada30a7f2fd094d9bd3f5a55156bc9141dbfadaf358b4c98df46c`.
+The complete host suite passed 1,531 tests with 13 platform-specific skips;
+both native parity runs passed six tests. No signed IPA, physical-device test
+or live Google OAuth validation is claimed. All temporary reservations are released.
+
+
+### Current iOS candidate — 2026-10-20
+
+The iOS candidate now follows Android `0.2.9+23`, source `af67a69` (including
+Android release commit `3702ae3`). The upstream changes are shared Flutter
+code: inline song-tab counts, horizontal setlist swipes including entry-specific
+key overrides, boundary transport behavior, and timeline label font/locale
+measurement. No additional platform-specific implementation was required.
+
+The App Store submission version/build and review notes are aligned with this
+candidate. Eight native store captures were refreshed and visually reviewed;
+source-image and RGB-image hashes are recorded in `submission.json`. Two setlist
+images remain byte-identical because their rendered UI did not change. No
+screenshot was resized or cropped. The package validator passed.
+
+A fresh unsigned archive built with the configured Genius client access token
+and without Google OAuth. The archive identifies `org.freevia.singbook`, version
+`0.2.9`, build `23`; privacy inspection found 18 manifests and minimum iOS 15.0.
+The earlier archive was preserved. Logs, manifest inventory, binary hash and
+source record are under `artifacts/ios-release23-20261020/`. The archive is not
+signed, installable on hardware, or uploadable. Account/signing, live Google
+OAuth, physical-device checks and Apple validation remain pending.
+
+Focused native release-23 checks passed on both iPhone and iPad, including
+setlist swipe boundaries/key overrides and timeline typography in Ukrainian
+150% and Arabic RTL 160%. The default full iOS test target now includes these
+checks. See [native test evidence](ios-e2e.md).

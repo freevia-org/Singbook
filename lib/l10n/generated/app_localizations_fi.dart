@@ -587,7 +587,7 @@ class AppLocalizationsFi extends AppLocalizations {
   String get setlistFavoriteRemove => 'Poista settilista suosikeista';
 
   @override
-  String get setlistShare => 'Jaa settilistatiedostona';
+  String get setlistShare => 'Jaa OpenSong-tiedostona';
 
   @override
   String get setlistSharePdf => 'Jaa PDF-tiedostona';
@@ -1220,6 +1220,30 @@ class AppLocalizationsFi extends AppLocalizations {
   String get settingsLyricsPreviewExample => 'Kun aamu koittaa, laulamme taas.';
 
   @override
+  String get settingsPreviewSongTitle => 'Aamulaulu';
+
+  @override
+  String get settingsPreviewArtist => 'Esimerkkisovitus';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Kun aamu koittaa';
+
+  @override
+  String get settingsPreviewNextLine => 'Laulamme taas.';
+
+  @override
+  String get settingsPlayerSections => 'Osioiden otsikot';
+
+  @override
+  String get settingsPlayerControls => 'Toistopaneeli';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Automaattinen vieritys';
+
+  @override
+  String get settingsSystemShort => 'Laite';
+
+  @override
   String searchDiscoveryProgress(int checked, int total) {
     return 'Tarkistetaan sanoituslähteitä: $checked/$total valmiina.';
   }
@@ -1402,6 +1426,68 @@ class AppLocalizationsFi extends AppLocalizations {
   @override
   String get accountAutoSyncHint =>
       'Synkronointi tapahtuu yhdistämisen jälkeen sekä kappaleen lisäämisen, muokkaamisen tai poistamisen jälkeen.';
+
+  @override
+  String get accountDriveFolder => 'Google Drive -kirjastokansio';
+
+  @override
+  String get accountPrivateDriveFolder => 'Yksityinen laulukirjakansio';
+
+  @override
+  String get accountChooseDriveFolder => 'Valitse kansio';
+
+  @override
+  String get accountDriveFolderMoveTitle => 'Siirretäänkö Singbook-kirjastosi?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Valitse näkyvä Google Drive -kansio. Singbook kopioi ja vahvistaa kappaleesi ja settilistasi sinne ennen kuin vaihdat siihen. Alkuperäiset tiedostot pysyvät varmuuskopiona entisessä paikassaan. Muut tiedostot jätetään yksin. Tähän kansioon tuomasi ChordPro-tiedostot otetaan käyttöön synkronointiin ja Singbookin metatietojen vastaanottamiseen.';
+
+  @override
+  String get accountImportChordPro => 'Tuo ChordPro Drivesta';
+
+  @override
+  String get accountImportChordProHint =>
+      'Valitse tähän kirjastoon lisättävät .cho-tiedostot. Kansiossa jo olevat tiedostot otetaan käyttöön; muualla olevat tiedostot kopioidaan tänne.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'Drive-kansion valinta ei ole käytettävissä';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Valitse näkyvä Drive-kansio Google Driven valitsimella tuetulla laitteella.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'Singbook Drive -kansio ei ole käytettävissä';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Valitse kansio uudelleen tai palauta se Google Driveen.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook tarvitsee pääsyn tähän Drive-kansioon';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Myönnä käyttöoikeus valitsemalla kansio uudelleen ja synkronoi sitten kirjastosi.';
+
+  @override
+  String get syncErrorFolderMigration => 'Kirjastoa ei voitu vielä siirtää';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Edellinen kirjastosi on edelleen turvassa. Tarkista yhteys ja yritä uudelleen valitsemalla kansio uudelleen.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Valitse ensin näkyvä Drive-kansio';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Näkyvä kirjastokansio tarvitaan ennen tiedostojen tuomista Drivesta.';
 
   @override
   String get accountSignOutTitle => 'Kirjaudutaanko tältä tililtä ulos?';
@@ -1919,4 +2005,46 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Vielä yksi rivi, hieman [F]lähempänä.';
+
+  @override
+  String get playerEstimatedKey => 'Arvioitu sävellaji';
+
+  @override
+  String get songsLibraryView => 'Kirjasto';
+
+  @override
+  String get settingsStartupView => 'Aloitusnäkymä';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Valitse kappalenäkymä, joka näytetään sovelluksen avautuessa.';
+
+  @override
+  String get settingsStartupLastView => 'Viimeksi avattu';
+
+  @override
+  String get playerFullScreen => 'Koko näyttö';
+
+  @override
+  String get playerExitFullScreen => 'Poistu koko näytöstä';
+
+  @override
+  String get playerExpandControls => 'Näytä toiston säätimet';
+
+  @override
+  String get playerCollapseControls => 'Piilota toiston säätimet';
+
+  @override
+  String get settingsShowSections => 'Näytä osioiden otsikot';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Näytä säkeistöjen, kertosäkeen ja muiden osioiden otsikot sanoituksessa.';
+
+  @override
+  String get settingsShowPlayerControls => 'Näytä toiston säätimet';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Voit näyttää tai piilottaa soitinpaneelin myös napauttamalla tai pyyhkäisemällä sitä.';
 }

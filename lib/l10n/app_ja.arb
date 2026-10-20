@@ -264,7 +264,7 @@
   "setlistDuplicate": "セットリストを複製",
   "setlistFavoriteAdd": "セットリストをお気に入りに追加",
   "setlistFavoriteRemove": "セットリストをお気に入りから削除",
-  "setlistShare": "セットリストファイルとして共有",
+  "setlistShare": "OpenSongとして共有",
   "setlistSharePdf": "PDFとして共有",
   "setlistPrint": "印刷",
   "setlistDeleteConfirmTitle": "セットリストを削除しますか？",
@@ -534,6 +534,14 @@
   "settingsFontSerif": "セリフ",
   "settingsFontMonospace": "等幅",
   "settingsLyricsPreviewExample": "朝が来たら、また一緒に歌いましょう。",
+  "settingsPreviewSongTitle": "朝の歌",
+  "settingsPreviewArtist": "アレンジ例",
+  "settingsPreviewCurrentLine": "朝が来たら",
+  "settingsPreviewNextLine": "また一緒に歌いましょう。",
+  "settingsPlayerSections": "セクション見出し",
+  "settingsPlayerControls": "再生パネル",
+  "settingsPlayerAutoscroll": "自動スクロール",
+  "settingsSystemShort": "デバイス",
   "searchDiscoveryProgress": "歌詞ソースを確認中: {total}件中{checked}件完了。",
   "@searchDiscoveryProgress": {
     "placeholders": {
@@ -831,5 +839,47 @@
         "type": "int"
       }
     }
+  },
+  "accountDriveFolder": "Googleドライブのライブラリフォルダ",
+  "accountPrivateDriveFolder": "プライベート Singbook フォルダー",
+  "accountChooseDriveFolder": "フォルダーを選択してください",
+  "accountDriveFolderMoveTitle": "Singbook ライブラリを移動しますか?",
+  "accountDriveFolderMoveBody": "表示されている Google ドライブ フォルダーを選択します。 Singbook は、そこに切り替える前に、そこに曲とセットリストをコピーして検証します。元のファイルはバックアップとして以前の場所に残ります。他のファイルはそのまま残されます。このフォルダーにインポートした ChordPro ファイルは、同期に採用され、Singbook メタデータを受信します。",
+  "accountImportChordPro": "ChordPro をドライブからインポート",
+  "accountImportChordProHint": "このライブラリに追加する .cho ファイルを選択します。フォルダー内に既にあるファイルが採用されます。他の場所にあるファイルはここにコピーされます。",
+  "syncErrorFolderPickerUnavailable": "ドライブフォルダーの選択は使用できません",
+  "syncErrorFolderPickerUnavailableHint": "対応デバイスで Google ドライブ ピッカーを使い、表示されるドライブ フォルダを選択してください。",
+  "syncErrorDriveFolderMissing": "Singbook Drive フォルダーが使用できません",
+  "syncErrorDriveFolderMissingHint": "フォルダーを再度選択するか、Google ドライブに復元します。",
+  "syncErrorDriveFileAuthorization": "Singbook はこのドライブ フォルダーにアクセスする必要があります",
+  "syncErrorDriveFileAuthorizationHint": "フォルダーを再度選択してアクセスを許可し、ライブラリを同期します。",
+  "syncErrorFolderMigration": "ライブラリはまだ移動できませんでした",
+  "syncErrorFolderMigrationHint": "以前のライブラリはまだ安全です。接続を確認し、フォルダーを再度選択して再試行してください。",
+  "syncErrorVisibleFolderRequired": "最初に表示されるドライブ フォルダーを選択してください",
+  "syncErrorVisibleFolderRequiredHint": "ドライブからファイルをインポートする前に、表示可能なライブラリ フォルダーが必要です。",
+  "playerEstimatedKey": "推定キー",
+  "songsLibraryView": "ライブラリ",
+  "settingsStartupView": "起動時の画面",
+  "settingsStartupViewHint": "アプリを開いたときに表示する曲の画面を選択します。",
+  "settingsStartupLastView": "前回開いた画面",
+  "playerFullScreen": "全画面表示",
+  "playerExitFullScreen": "全画面表示を終了",
+  "playerExpandControls": "再生コントロールを表示",
+  "playerCollapseControls": "再生コントロールを非表示",
+  "settingsShowSections": "セクション見出しを表示",
+  "settingsShowSectionsHint": "歌詞に、ヴァース、コーラスなど各セクションの見出しを表示します。",
+  "settingsShowPlayerControls": "再生コントロールを表示",
+  "settingsShowPlayerControlsHint": "プレーヤーパネルをタップまたはスワイプして表示・非表示を切り替えることもできます。",
+  "@songsLibraryView": {
+    "description": "Label for the Songs library view."
+  },
+  "@settingsStartupView": {
+    "description": "Setting that selects which view opens with the app."
+  },
+  "@settingsStartupViewHint": {
+    "description": "Help text for the startup view setting."
+  },
+  "@settingsStartupLastView": {
+    "description": "Option that opens the last view used before the app was closed."
   }
 }

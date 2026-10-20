@@ -593,7 +593,7 @@ class AppLocalizationsMt extends AppLocalizations {
   String get setlistFavoriteRemove => 'Neħħi l-lista mill-favoriti';
 
   @override
-  String get setlistShare => 'Aqsam bħala fajl tal-lista';
+  String get setlistShare => 'Aqsam bħala OpenSong';
 
   @override
   String get setlistSharePdf => 'Aqsam bħala PDF';
@@ -1234,6 +1234,30 @@ class AppLocalizationsMt extends AppLocalizations {
       'Meta jasal filgħodu, nerġgħu nkantaw.';
 
   @override
+  String get settingsPreviewSongTitle => 'Għanja ta’ filgħodu';
+
+  @override
+  String get settingsPreviewArtist => 'Arranġament ta’ eżempju';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Meta jasal filgħodu';
+
+  @override
+  String get settingsPreviewNextLine => 'Nerġgħu nkantaw.';
+
+  @override
+  String get settingsPlayerSections => 'Titli tat-taqsimiet';
+
+  @override
+  String get settingsPlayerControls => 'Panew tad-daqq';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Skrolljar awtomatiku';
+
+  @override
+  String get settingsSystemShort => 'Apparat';
+
+  @override
   String searchDiscoveryProgress(int checked, int total) {
     return 'Qed niċċekkja s-sorsi tal-lirika: $checked minn $total lesti.';
   }
@@ -1419,6 +1443,70 @@ class AppLocalizationsMt extends AppLocalizations {
   @override
   String get accountAutoSyncHint =>
       'Is-sinkronizzazzjoni ssir wara li tikkonnettja u wara li żżid, teditja jew tneħħi kanzunetta.';
+
+  @override
+  String get accountDriveFolder => 'Folder tal-librerija Google Drive';
+
+  @override
+  String get accountPrivateDriveFolder => 'Folder privat Singbook';
+
+  @override
+  String get accountChooseDriveFolder => 'Agħżel folder';
+
+  @override
+  String get accountDriveFolderMoveTitle =>
+      'Ċaqlaq il-librerija tas-Singbook tiegħek?';
+
+  @override
+  String get accountDriveFolderMoveBody =>
+      'Agħżel folder viżibbli ta\' Google Drive. Singbook se tikkopja u tivverifika l-kanzunetti u s-setlists tiegħek hemmhekk qabel ma taqleb għaliha. Fajls oriġinali jibqgħu fil-post preċedenti tagħhom bħala backup. Fajls oħra jitħallew waħedhom. Fajls ChordPro li timporta f\'dan il-folder huma adottati għas-sinkronizzazzjoni u jirċievu metadata Singbook.';
+
+  @override
+  String get accountImportChordPro => 'Importa ChordPro minn Drive';
+
+  @override
+  String get accountImportChordProHint =>
+      'Agħżel fajls .cho biex iżżid ma\' din il-librerija. Fajls diġà fil-folder huma adottati; fajls x\'imkien ieħor huma kkupjati hawn.';
+
+  @override
+  String get syncErrorFolderPickerUnavailable =>
+      'L-għażla tal-folder tas-sewqan mhix disponibbli';
+
+  @override
+  String get syncErrorFolderPickerUnavailableHint =>
+      'Agħżel folder Drive viżibbli bil-picker ta\' Google Drive fuq apparat appoġġjat.';
+
+  @override
+  String get syncErrorDriveFolderMissing =>
+      'Il-folder ta\' Singbook Drive mhuwiex disponibbli';
+
+  @override
+  String get syncErrorDriveFolderMissingHint =>
+      'Agħżel il-folder mill-ġdid, jew irrestawrah fil-Google Drive.';
+
+  @override
+  String get syncErrorDriveFileAuthorization =>
+      'Singbook jeħtieġ aċċess għal dan il-folder Drive';
+
+  @override
+  String get syncErrorDriveFileAuthorizationHint =>
+      'Erġa\' agħżel il-folder biex tagħti aċċess, imbagħad issinkronizza l-librerija tiegħek.';
+
+  @override
+  String get syncErrorFolderMigration =>
+      'Il-librerija għadha ma setgħetx tiġi mċaqalqa';
+
+  @override
+  String get syncErrorFolderMigrationHint =>
+      'Il-librerija preċedenti tiegħek għadha sigura. Iċċekkja l-konnessjoni u agħżel il-folder mill-ġdid biex terġa \'tipprova.';
+
+  @override
+  String get syncErrorVisibleFolderRequired =>
+      'Agħżel folder Drive viżibbli l-ewwel';
+
+  @override
+  String get syncErrorVisibleFolderRequiredHint =>
+      'Huwa meħtieġ folder tal-librerija viżibbli qabel ma jiġu importati fajls minn Drive.';
 
   @override
   String get accountSignOutTitle => 'Toħroġ minn dan il-kont?';
@@ -1946,4 +2034,46 @@ class AppLocalizationsMt extends AppLocalizations {
 
   @override
   String get editorExampleBridge => '[Am]Linja oħra, ftit aktar [F]qrib.';
+
+  @override
+  String get playerEstimatedKey => 'Tonalità stmata';
+
+  @override
+  String get songsLibraryView => 'Librerija';
+
+  @override
+  String get settingsStartupView => 'Ibda fil-veduta';
+
+  @override
+  String get settingsStartupViewHint =>
+      'Agħżel il-veduta tal-kanzunetti li tintwera meta tiftaħ l-app.';
+
+  @override
+  String get settingsStartupLastView => 'L-aħħar veduta miftuħa';
+
+  @override
+  String get playerFullScreen => 'Skrin sħiħ';
+
+  @override
+  String get playerExitFullScreen => 'Oħroġ mill-iskrin sħiħ';
+
+  @override
+  String get playerExpandControls => 'Uri l-kontrolli tad-daqq';
+
+  @override
+  String get playerCollapseControls => 'Aħbi l-kontrolli tad-daqq';
+
+  @override
+  String get settingsShowSections => 'Uri l-intestaturi tat-taqsimiet';
+
+  @override
+  String get settingsShowSectionsHint =>
+      'Uri l-intestaturi tal-versi, tal-kor u taqsimiet oħra fil-lirika.';
+
+  @override
+  String get settingsShowPlayerControls => 'Uri l-kontrolli tad-daqq';
+
+  @override
+  String get settingsShowPlayerControlsHint =>
+      'Tista’ wkoll tmiss jew tiskrollja l-pannell tal-plejer biex turih jew taħbih.';
 }

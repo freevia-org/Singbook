@@ -11,10 +11,16 @@ import 'package:singbook/ui/widgets/chord_lyrics_line.dart';
 const _testSansFamily = 'ChordLyricsTestSans';
 const _testArabicFamily = 'ChordLyricsTestArabic';
 
-// Keep exact comparisons on both hosts: bundled fonts still rasterize
-// differently in the Windows and Linux Flutter test engines.
-String _goldenPath(String name) =>
-    'goldens/${Platform.isLinux ? 'linux/' : ''}chord_lyrics_line_$name.png';
+// Keep exact comparisons per host: bundled fonts still rasterize differently
+// in the Windows, Linux, and macOS Flutter test engines.
+String _goldenPath(String name) {
+  final host = Platform.isLinux
+      ? 'linux/'
+      : Platform.isMacOS
+      ? 'macos/'
+      : '';
+  return 'goldens/${host}chord_lyrics_line_$name.png';
+}
 
 const _lyricStyle = TextStyle(
   fontFamily: _testSansFamily,

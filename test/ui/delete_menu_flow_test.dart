@@ -33,6 +33,7 @@ VerseUiState menuState(String screen, {bool draft = false}) => VerseUiState(
       : screen == 'setlists'
       ? VerseTab.setlists
       : VerseTab.home,
+  homeListMode: screen == 'songs' ? HomeListMode.library : HomeListMode.recent,
   songs: const [menuSong],
   setlists: const [menuSetlist],
   recent: [
@@ -96,7 +97,6 @@ List<String> renderedMenuActions(WidgetTester tester) => tester
 void main() {
   for (final screen in [
     'recent-song',
-    'recent-setlist',
     'songs',
     'setlists',
     'player',
@@ -129,7 +129,13 @@ void main() {
           expect(actions.first, 'edit');
         }
         if (screen == 'player') {
-          expect(actions.take(4), ['info', 'compare', 'timed-lyrics', 'add']);
+          expect(actions.take(5), [
+            'edit',
+            'info',
+            'compare',
+            'timed-lyrics',
+            'add',
+          ]);
           final checked = tester.widget<CheckedPopupMenuItem<String>>(
             find.byWidgetPredicate((w) => w is CheckedPopupMenuItem<String>),
           );
@@ -155,6 +161,26 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+
+  testWidgets(
+    'Songs Recent excludes setlists while the Setlists menu remains available',
+    (tester) async {
+      final controller = MenuController('recent-setlist');
+      addTearDown(controller.dispose);
+      await pumpShell(tester, controller, size: const Size(390, 844));
+      expect(
+        find.byKey(const ValueKey('recent-setlist-row-owned-setlist')),
+        findsNothing,
+      );
+      expect(
+        find.byTooltip(
+          l10nOf(tester).accessibilitySetlistMenu(menuSetlist.title),
+        ),
+        findsNothing,
+      );
+      expect(controller.calls, isEmpty);
+    },
+  );
 
   for (final screen in ['player', 'editor', 'setlist-edit']) {
     testWidgets(

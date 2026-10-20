@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -14,10 +15,12 @@ import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/ui/app_controller_adapter.dart';
 import 'package:singbook/ui/theme/verse_theme.dart';
 import 'package:singbook/ui/verse_app.dart';
+import 'package:singbook/ui/library/setlists_screen.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
 
 const _screens = [
   'library',
+  'setlists',
   'reader',
   'editor_keyboard',
   'settings',
@@ -27,11 +30,13 @@ const _screens = [
 const _viewports = <String, Size>{
   'tablet_portrait': Size(800, 1280),
   'tablet_landscape': Size(1280, 800),
+  'desktop_wide': Size(1920, 1080),
 };
 
 const _requiredFiles = [
   'assets/fonts/NotoSans-Regular.ttf',
   'assets/fonts/NotoSans-Bold.ttf',
+  'assets/fonts/NotoSansArabic-Regular.ttf',
   'assets/fonts/NotoSansMono-Regular.ttf',
   'assets/fonts/SingbookBrand-Bold.ttf',
   'assets/fonts/SingbookSerif-Bold.ttf',
@@ -56,11 +61,135 @@ void main() {
   if (reason != null) print(reason);
   final skip = reason != null;
 
+  for (final locale in const [Locale('en'), Locale('ar')]) {
+    testWidgets(
+      'single setlist stays centered without overflow at wide breakpoints ${locale.languageCode}',
+      (tester) async {
+        await _loadFonts();
+        final boundaryKey = GlobalKey();
+        final (fixture, controller) = (await tester.runAsync(() async {
+          final fixture = _Fixture();
+          return (fixture, AppControllerAdapter(fixture.app));
+        }))!;
+        addTearDown(controller.dispose);
+        addTearDown(fixture.app.dispose);
+        tester.view.devicePixelRatio = 1;
+
+        await tester.pumpWidget(
+          MaterialApp(
+            locale: locale,
+            localizationsDelegates: singbookLocalizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            theme: _captureTheme(brightness: Brightness.light),
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(
+                context,
+              ).copyWith(textScaler: const TextScaler.linear(1.6)),
+              child: child!,
+            ),
+            home: AnimatedBuilder(
+              animation: controller,
+              builder: (context, _) => RepaintBoundary(
+                key: boundaryKey,
+                child: Scaffold(
+                  body: Directionality(
+                    textDirection: locale.languageCode == 'ar'
+                        ? TextDirection.rtl
+                        : TextDirection.ltr,
+                    child: SetlistsScreen(controller: controller),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        for (final width in [
+          639.0,
+          640.0,
+          820.0,
+          899.0,
+          900.0,
+          991.0,
+          999.0,
+          1000.0,
+        ]) {
+          tester.view.physicalSize = Size(width, 800);
+          await tester.pump();
+          final card = find.byKey(
+            const ValueKey('setlist-card-tablet-setlist'),
+          );
+          final rect = tester.getRect(card);
+          final expectedWidth = math.min(width - 32, 960.0);
+          expect(rect.left, greaterThanOrEqualTo(0), reason: 'width $width');
+          expect(rect.right, lessThanOrEqualTo(width), reason: 'width $width');
+          expect(
+            rect.center.dx,
+            closeTo(width / 2, 0.5),
+            reason: 'width $width',
+          );
+          expect(
+            rect.width,
+            closeTo(expectedWidth, 0.5),
+            reason: 'width $width',
+          );
+          expect(tester.takeException(), isNull, reason: 'width $width');
+          if (width == 820) {
+            await tester.runAsync(() async {
+              final boundary =
+                  boundaryKey.currentContext!.findRenderObject()!
+                      as RenderRepaintBoundary;
+              final image = await boundary.toImage(pixelRatio: 1);
+              final data = await image.toByteData(
+                format: ui.ImageByteFormat.png,
+              );
+              final output = Directory(
+                'artifacts/singbook-setlist-rtl-captures',
+              )..createSync(recursive: true);
+              File(
+                '${output.path}/single_${locale.languageCode}_820_large.png',
+              ).writeAsBytesSync(data!.buffer.asUint8List());
+              image.dispose();
+            });
+          }
+        }
+
+        fixture.app.setlists = [
+          ...fixture.app.setlists,
+          fixture.app.setlists.single.copyWith(
+            id: 'tablet-setlist-second',
+            name: 'Songs for the Short Road',
+          ),
+        ];
+        controller.setTab(VerseTab.songs);
+        controller.setTab(VerseTab.setlists);
+        tester.view.physicalSize = const Size(1000, 800);
+        await tester.pump();
+        final first = tester.getRect(
+          find.byKey(const ValueKey('setlist-card-tablet-setlist')),
+        );
+        final second = tester.getRect(
+          find.byKey(const ValueKey('setlist-card-tablet-setlist-second')),
+        );
+        expect(
+          locale.languageCode == 'ar'
+              ? first.left - second.right
+              : second.left - first.right,
+          closeTo(8, 0.5),
+        );
+        expect(tester.takeException(), isNull);
+        tester.view.resetDevicePixelRatio();
+        tester.view.resetPhysicalSize();
+      },
+      skip: skip,
+    );
+  }
+
   testWidgets(
     'landscape reader scrolls the final lyric above persistent player controls',
     (tester) async {
       await _loadFonts();
-      final output = Directory('artifacts/singbook-tablet-captures')
+      final output = Directory('artifacts/singbook-layout-captures')
         ..createSync(recursive: true);
       final boundaryKey = GlobalKey();
       // Keep the controller's queued futures in the same real async zone as
@@ -143,7 +272,7 @@ void main() {
     tester,
   ) async {
     await _loadFonts();
-    final output = Directory('artifacts/singbook-tablet-captures')
+    final output = Directory('artifacts/singbook-layout-captures')
       ..createSync(recursive: true);
     final boundaryKey = GlobalKey();
     // Match the real async zone used by the controller operations below.
@@ -180,7 +309,7 @@ void main() {
         for (final screen in _screens) {
           // ignore: avoid_print
           print(
-            'tablet capture start ${viewportEntry.key} ${themeBrightness.name} $screen',
+            'responsive capture start ${viewportEntry.key} ${themeBrightness.name} $screen',
           );
           tester.view.physicalSize = viewportEntry.value;
           tester.view.viewInsets = screen.endsWith('_keyboard')
@@ -197,6 +326,8 @@ void main() {
           switch (screen) {
             case 'library':
               controller.setTab(VerseTab.songs);
+            case 'setlists':
+              controller.setTab(VerseTab.setlists);
             case 'reader':
               await tester.runAsync(() => controller.openSong(fixture.song.id));
             case 'editor_keyboard':
@@ -229,7 +360,7 @@ void main() {
           );
           // ignore: avoid_print
           print(
-            'tablet capture pumped ${viewportEntry.key} ${themeBrightness.name} $screen',
+            'responsive capture pumped ${viewportEntry.key} ${themeBrightness.name} $screen',
           );
 
           if (screen.endsWith('_keyboard')) {
@@ -272,7 +403,7 @@ void main() {
           await tester.pump();
           // ignore: avoid_print
           print(
-            'tablet capture saved ${viewportEntry.key} ${themeBrightness.name} $screen',
+            'responsive capture saved ${viewportEntry.key} ${themeBrightness.name} $screen',
           );
         }
       }
@@ -282,7 +413,7 @@ void main() {
       output.listSync().whereType<File>().where(
         (file) => !file.path.endsWith('reader_scrolled.png'),
       ),
-      hasLength(24),
+      hasLength(42),
     );
     tester.view.resetDevicePixelRatio();
     tester.view.resetPhysicalSize();
@@ -294,6 +425,8 @@ Future<void> _loadFonts() async {
   final sansFixture = FontLoader('NotoSansFixture')
     ..addFont(rootBundle.load('assets/fonts/NotoSans-Regular.ttf'))
     ..addFont(rootBundle.load('assets/fonts/NotoSans-Bold.ttf'));
+  final arabic = FontLoader('SetlistArabic')
+    ..addFont(rootBundle.load('assets/fonts/NotoSansArabic-Regular.ttf'));
   final sansAndroid = FontLoader('sans-serif')
     ..addFont(rootBundle.load('assets/fonts/NotoSans-Regular.ttf'));
   final robotoAlias = FontLoader('Roboto')
@@ -308,6 +441,7 @@ Future<void> _loadFonts() async {
     ..addFont(rootBundle.load('assets/fonts/SingbookSerif-Bold.ttf'));
   await Future.wait([
     sansFixture.load(),
+    arabic.load(),
     sansAndroid.load(),
     robotoAlias.load(),
     mono.load(),
@@ -359,16 +493,30 @@ ThemeData _captureTheme({required Brightness brightness}) {
     fontFamily: 'NotoSansFixture',
   );
   return theme.copyWith(
-    textTheme: theme.textTheme.apply(fontFamily: 'NotoSansFixture'),
+    textTheme: theme.textTheme.apply(
+      fontFamily: 'NotoSansFixture',
+      fontFamilyFallback: const ['SetlistArabic'],
+    ),
   );
 }
 
 void _assertRouteGeometry(WidgetTester tester, String screen, Size viewport) {
   switch (screen) {
     case 'library':
-      final grid = find.byKey(const ValueKey('tablet-songs-grid'));
+      final grid = find.byKey(const PageStorageKey('songs-library-grid'));
       expect(grid, findsOneWidget);
       _insideViewport(tester, grid, viewport);
+    case 'setlists':
+      final card = find.byKey(const ValueKey('setlist-card-tablet-setlist'));
+      expect(card, findsOneWidget);
+      _insideViewport(tester, card, viewport);
+      if (viewport.width >= 1280) {
+        final frame = find.byKey(const ValueKey('tablet-content-frame'));
+        final cardRect = tester.getRect(card);
+        final frameRect = tester.getRect(frame);
+        expect(cardRect.width, greaterThanOrEqualTo(900));
+        expect(cardRect.center.dx, closeTo(frameRect.center.dx, 5));
+      }
     case 'reader':
       final lyric = find.textContaining('When morning spills across the hills');
       expect(lyric, findsOneWidget);

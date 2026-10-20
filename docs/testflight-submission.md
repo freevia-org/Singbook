@@ -2,13 +2,15 @@
 
 Draft metadata for the first external TestFlight beta. Confirm every owner field
 and re-check feature availability against the exact signed build before entry.
-The current repository version is `0.2.6+20`. The final unsigned archive passed
-its 18-manifest inspection. Standard iPhone/iPad verification covers all nine
-unattended cases across runs, plus native import/backup workflows; Genius was
-skipped without a token. See [E2E evidence](ios-e2e.md). Physical hardware is
+The current repository version is `0.2.9+23`, matching the integrated Android
+release. Historical `0.2.6+20` archive evidence below predates the parity update.
+The preceding full iPhone/iPad suites and native import/backup workflows passed;
+configured Genius live tests subsequently passed on both simulators. Focused
+release-23 checks and refreshed native screenshots cover the latest shared UI. See [E2E evidence](ios-e2e.md). Physical hardware is
 unavailable and remains an explicitly unperformed check, not a prerequisite
 for preparing these materials. No signed IPA has been verified. Public policy
-corrections and provider authorization review remain publication gates.
+corrections were published on 2026-10-19. All sources are retained by owner
+decision; permission evidence remains incomplete, without a local publishing gate.
 
 Production App Store metadata and screenshot inventory are in
 `docs/app-store/`; the offline publishing handoff is below in
@@ -23,7 +25,7 @@ Production App Store metadata and screenshot inventory are in
 | SKU | Proposed `singbook-ios`; check uniqueness in the owner's account before creating the permanent record |
 | Primary language | English (U.S.) (`en-US`) |
 | Platform | iOS |
-| Version / build | `0.2.6` / `20` (confirm against uploaded archive and App Store Connect history) |
+| Version / build | `0.2.9` / `23` (confirm against uploaded archive and App Store Connect history) |
 | Support URL | `https://freevia.org/singbook/support/` |
 | Privacy Policy URL | `https://freevia.org/singbook/privacy/` |
 | Beta marketing URL (optional) | `https://freevia.org/singbook/` |
@@ -58,13 +60,11 @@ show the feature, and update the description if beta scope differs.
 ### Feedback Email
 
 ```text
-[OWNER: enter a monitored feedback email address]
+support@freevia.org
 ```
 
-`support@freevia.org` appears as the public Play listing contact in
-`docs/play-store/listing.md`, but this document does not assume it is the
-owner-approved TestFlight feedback address. Apple uses this address in TestFlight
-and as the reply-to address for invitation emails.
+Copied from the Android listing at the owner’s request on 2026-10-19.
+Apple uses this address in TestFlight and as the reply-to address for invitations.
 
 ### What to Test
 
@@ -97,7 +97,7 @@ the invitation.
 | Review field | Entry |
 | --- | --- |
 | Contact name | `[OWNER: legal/operational review contact]` |
-| Contact email | `[OWNER: monitored review contact email]` |
+| Contact email | `support@freevia.org` |
 | Contact phone | `[OWNER: reachable international-format phone number]` |
 | Sign-in required | No, for core app use |
 | Username / password | Leave blank; local library does not require login |
@@ -130,9 +130,9 @@ and [export compliance overview](https://developer.apple.com/help/app-store-conn
   Connect record and permanent SKU; configure signing. The local review on
   2026-10-18 found no signing identity, and no signed IPA exists.
 - Confirm App Store Connect has no conflicting prior version/build and upload
-  the archive matching `0.2.6 (20)`; increment versions in all repository
+  the archive matching `0.2.9 (23)`; increment versions in all repository
   locations for a genuinely new release, not a rebuild.
-- Supply the feedback email and App Review name, email, and phone; confirm who
+- Supply the remaining App Review name and phone; confirm who
   will monitor them.
 - Decide whether OAuth is configured in the submitted build. If enabled,
   perform physical-device sign-in and Drive sync checks and provide private
@@ -160,3 +160,21 @@ character maximum for Beta App Description, What to Test, or Feedback Email.
 Use App Store Connect's live field validation rather than relying on old
 third-party limit tables. The 4000-byte limit documented for App Review Notes is
 a different field and should not be applied to those beta fields.
+
+## Owner fields copied from Android — 2026-10-19
+
+At the owner's request, reuse `support@freevia.org` for feedback and App Review
+email, and the Android price of free with no in-app purchases or ads. Sources:
+`docs/play-store/listing.md` and `docs/play-store/privacy-policy.md`.
+Public publisher/brand: **Freevia**. Full legal entity: **Freevia EOOD**.
+Copyright field: `2026 Freevia EOOD`. The owner confirmed this naming and
+accepted the copied contact/pricing details on 2026-10-19.
+Request **Freevia** as the Apple developer display name if it qualifies as a
+registered trade name/DBA for the organization. Apple’s verified legal seller
+identity remains **Freevia EOOD**. See [Apple’s developer-name rules](https://developer.apple.com/help/app-store-connect/create-an-app-record/set-your-developer-name/).
+Keep the legal entity in the privacy policy and account declarations.
+
+The Android materials contain no private review contact name/phone or confirmed
+distribution territory list. Those fields remain empty rather than inferring
+worldwide availability or using a Git author as the review contact. No store
+account configuration was changed.

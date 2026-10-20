@@ -79,6 +79,8 @@ void main() {
       );
       await tester.tap(find.text(l10n.navSongs).first);
       await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('home-mode-library')));
+      await tester.pumpAndSettle();
       await captureIosCheckpoint('store_01_library');
       await tester.ensureVisible(find.text(titles.first));
       await tester.tap(find.text(titles.first));

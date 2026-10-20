@@ -6,9 +6,11 @@ import '../app_version.dart';
 import '../library_actions.dart';
 import '../localized_labels.dart';
 import '../verse_ui_state.dart';
+import '../widgets/slider_overlay_boundary.dart';
 import '../widgets/singbook_wordmark.dart';
 import '../widgets/verse_components.dart' show SingbookMark;
 import 'account_section.dart';
+import 'lyrics_settings_preview.dart';
 
 /// Native names keep the language picker understandable regardless of the
 /// currently selected app language.
@@ -161,6 +163,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
           style: Theme.of(context).textTheme.headlineSmall,
         ),
         const SizedBox(height: 12),
+        Card(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _LabeledDropdown<String>(
+                label: l10n.settingsStartupView,
+                value: widget.controller.state.startupSongsView,
+                entries: [
+                  ('recent', l10n.searchRecentTab),
+                  ('library', l10n.songsLibraryView),
+                  ('favorites', l10n.searchFavoritesTab),
+                  ('online', l10n.searchOnlineTab),
+                  ('last', l10n.settingsStartupLastView),
+                ],
+                onChanged: (value) {
+                  if (value != null) {
+                    widget.controller.setStartupSongsView(value);
+                  }
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: Text(
+                  l10n.settingsStartupViewHint,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+            ],
+          ),
+        ),
         Card(
           child: Column(
             children: [
@@ -477,6 +509,65 @@ class _SettingsSectionScreenState extends State<_SettingsSectionScreen> {
     });
   }
 
+  Widget _fontSizeControl(
+    BuildContext context,
+    AppLocalizations l10n,
+    double fontSize,
+  ) {
+    final slider = SliderOverlayBoundary(
+      child: Slider(
+        value: fontSize.clamp(18, 36),
+        min: 18,
+        max: 36,
+        divisions: 9,
+        label: fontSize.round().toString(),
+        semanticFormatterCallback: (value) => value.round().toString(),
+        onChanged: (value) => setState(() => _draggingFontSize = value),
+        onChangeEnd: (value) {
+          widget.controller.setLyricsFontSize(value);
+          setState(() => _draggingFontSize = null);
+        },
+      ),
+    );
+    final label = Text(
+      l10n.settingsTextSize,
+      style: Theme.of(context).textTheme.labelLarge,
+    );
+    final value = Text(
+      fontSize.round().toString(),
+      textAlign: TextAlign.center,
+    );
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 8, 4),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          if (MediaQuery.textScalerOf(context).scale(14) > 19 ||
+              constraints.maxWidth < 290) {
+            return Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(child: label),
+                    value,
+                  ],
+                ),
+                slider,
+              ],
+            );
+          }
+          return Row(
+            children: [
+              label,
+              const SizedBox(width: 8),
+              Expanded(child: slider),
+              SizedBox(width: 28, child: value),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
     animation: widget.controller,
@@ -497,160 +588,171 @@ class _SettingsSectionScreenState extends State<_SettingsSectionScreen> {
               if (widget.section == _SettingsSection.appearance) ...[
                 _SettingCard(
                   children: [
-                    _LabeledDropdown<String>(
-                      label: l10n.settingsLanguage,
-                      value: state.languageCode ?? 'system',
-                      entries: [
-                        ('system', l10n.settingsLanguageSystem),
-                        ('en', _languageNames['en']!),
-                        ('bg', _languageNames['bg']!),
-                        ('uk', _languageNames['uk']!),
-                        ...AppLocalizations.supportedLocales
-                            .where(
-                              (locale) => !const {
-                                'en',
-                                'bg',
-                                'uk',
-                              }.contains(locale.languageCode),
-                            )
-                            .map(
-                              (locale) => (
-                                locale.languageCode,
-                                _languageNames[locale.languageCode] ??
-                                    locale.languageCode,
-                              ),
-                            ),
-                      ],
-                      onChanged: (value) {
-                        if (value != null) {
-                          controller.setLanguage(
-                            value == 'system' ? null : value,
-                          );
-                        }
-                      },
-                    ),
-                    _LabeledDropdown<AppThemeMode>(
-                      label: l10n.settingsTheme,
-                      value: state.darkTheme,
-                      entries: [
-                        (AppThemeMode.system, l10n.settingsThemeSystem),
-                        (AppThemeMode.light, l10n.settingsThemeLight),
-                        (AppThemeMode.dark, l10n.settingsThemeDark),
-                      ],
-                      onChanged: (value) {
-                        if (value != null) controller.setThemeMode(value);
-                      },
-                    ),
-                    _LabeledDropdown<String>(
-                      label: l10n.settingsColorPalette,
-                      value: state.palette,
-                      entries: [
-                        ('navy', l10n.settingsPaletteNavy),
-                        ('sage', l10n.settingsPaletteSage),
-                        ('ocean', l10n.settingsPaletteOcean),
-                        ('clay', l10n.settingsPaletteClay),
-                        ('plum', l10n.settingsPalettePlum),
-                      ],
-                      onChanged: (value) {
-                        if (value != null) controller.setPalette(value);
-                      },
-                    ),
-                    _LabeledDropdown<String>(
-                      label: l10n.settingsFont,
-                      value: state.fontFamily,
-                      entries: [
-                        ('system', l10n.settingsFontSystem),
-                        ('serif', l10n.settingsFontSerif),
-                        ('mono', l10n.settingsFontMonospace),
-                      ],
-                      onChanged: (value) {
-                        if (value != null) controller.setFontFamily(value);
-                      },
-                    ),
-                    ListTile(
-                      title: Text(l10n.settingsTextSize),
-                      subtitle: Slider(
-                        value: fontSize.clamp(18, 36),
-                        min: 18,
-                        max: 36,
-                        divisions: 9,
-                        label: fontSize.round().toString(),
-                        semanticFormatterCallback: (value) =>
-                            value.round().toString(),
-                        onChanged: (value) =>
-                            setState(() => _draggingFontSize = value),
-                        onChangeEnd: (value) {
-                          controller.setLyricsFontSize(value);
-                          setState(() => _draggingFontSize = null);
-                        },
+                    Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: _CompactSettingsGrid(
+                        children: [
+                          _LabeledDropdown<String>(
+                            compact: true,
+                            label: l10n.settingsLanguage,
+                            selectedLabels: {
+                              'system': l10n.settingsSystemShort,
+                            },
+                            value: state.languageCode ?? 'system',
+                            entries: [
+                              ('system', l10n.settingsLanguageSystem),
+                              for (final locale
+                                  in AppLocalizations.supportedLocales)
+                                (
+                                  locale.languageCode,
+                                  _languageNames[locale.languageCode] ??
+                                      locale.languageCode,
+                                ),
+                            ],
+                            onChanged: (value) {
+                              if (value != null) {
+                                controller.setLanguage(
+                                  value == 'system' ? null : value,
+                                );
+                              }
+                            },
+                          ),
+                          _LabeledDropdown<AppThemeMode>(
+                            compact: true,
+                            label: l10n.settingsTheme,
+                            selectedLabels: {
+                              AppThemeMode.system: l10n.settingsSystemShort,
+                            },
+                            value: state.darkTheme,
+                            entries: [
+                              (AppThemeMode.system, l10n.settingsThemeSystem),
+                              (AppThemeMode.light, l10n.settingsThemeLight),
+                              (AppThemeMode.dark, l10n.settingsThemeDark),
+                            ],
+                            onChanged: (value) {
+                              if (value != null) controller.setThemeMode(value);
+                            },
+                          ),
+                          _LabeledDropdown<String>(
+                            compact: true,
+                            label: l10n.settingsColorPalette,
+                            value: state.palette,
+                            entries: [
+                              ('navy', l10n.settingsPaletteNavy),
+                              ('sage', l10n.settingsPaletteSage),
+                              ('ocean', l10n.settingsPaletteOcean),
+                              ('clay', l10n.settingsPaletteClay),
+                              ('plum', l10n.settingsPalettePlum),
+                            ],
+                            onChanged: (value) {
+                              if (value != null) controller.setPalette(value);
+                            },
+                          ),
+                          _LabeledDropdown<String>(
+                            compact: true,
+                            label: l10n.settingsFont,
+                            value: state.fontFamily,
+                            entries: [
+                              ('system', l10n.settingsFontSystem),
+                              ('serif', l10n.settingsFontSerif),
+                              ('mono', l10n.settingsFontMonospace),
+                            ],
+                            onChanged: (value) {
+                              if (value != null) {
+                                controller.setFontFamily(value);
+                              }
+                            },
+                          ),
+                        ],
                       ),
                     ),
-                    Card(
-                      color: Theme.of(context).colorScheme.surfaceContainerLow,
-                      child: Padding(
-                        padding: const EdgeInsets.all(14),
-                        child: Text(
-                          l10n.settingsLyricsPreviewExample,
-                          style: TextStyle(fontSize: fontSize, height: 1.3),
-                        ),
-                      ),
-                    ),
+                    _fontSizeControl(context, l10n, fontSize),
                   ],
                 ),
+                const SizedBox(height: 12),
+                LyricsSettingsPreview(state: state, fontSize: fontSize),
               ],
               if (widget.section == _SettingsSection.player) ...[
                 _SettingCard(
                   children: [
-                    _LabeledDropdown<String>(
-                      label: l10n.settingsLyricHighlight,
-                      value: state.lyricHighlightStyle,
-                      entries: [
-                        (
-                          'backgroundUnderline',
-                          l10n.settingsHighlightBackgroundUnderline,
-                        ),
-                        ('background', l10n.settingsHighlightBackground),
-                        ('underline', l10n.settingsHighlightUnderline),
-                        ('contrast', l10n.settingsHighlightContrast),
-                        ('none', l10n.settingsHighlightNone),
-                      ],
-                      onChanged: (value) {
-                        if (value != null) {
-                          controller.setLyricHighlightStyle(value);
-                        }
-                      },
-                    ),
-                    SwitchListTile(
-                      title: Text(l10n.settingsDefaultShowChords),
-                      subtitle: Text(l10n.settingsDefaultShowChordsHint),
-                      value: state.showChords,
-                      onChanged: controller.setShowChords,
-                    ),
-                    SwitchListTile(
-                      title: Text(l10n.settingsDefaultAutoscroll),
-                      subtitle: Text(l10n.settingsDefaultAutoscrollHint),
-                      // In manual timing the effective value is always off, so the
-                      // switch is disabled instead of silently ignoring taps; the
-                      // hint below already explains that it is not used.
-                      value: state.autoscrollPreference,
-                      onChanged: state.timingMode == 'manual'
-                          ? null
-                          : controller.setAutoscroll,
-                    ),
-                    _LabeledDropdown<String>(
-                      label: l10n.settingsDefaultTiming,
-                      value: state.timingMode,
-                      entries: [
-                        ('estimated', l10n.playerEstimatedPace),
-                        ('timed', l10n.playerTimedLyrics),
-                        ('manual', l10n.playerManualScroll),
-                      ],
-                      onChanged: (value) {
-                        if (value != null) controller.setTimingMode(value);
-                      },
+                    Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        children: [
+                          _LabeledDropdown<String>(
+                            compact: true,
+                            label: l10n.settingsLyricHighlight,
+                            value: state.lyricHighlightStyle,
+                            entries: [
+                              (
+                                'backgroundUnderline',
+                                l10n.settingsHighlightBackgroundUnderline,
+                              ),
+                              ('background', l10n.settingsHighlightBackground),
+                              ('underline', l10n.settingsHighlightUnderline),
+                              ('contrast', l10n.settingsHighlightContrast),
+                              ('none', l10n.settingsHighlightNone),
+                            ],
+                            onChanged: (value) {
+                              if (value != null) {
+                                controller.setLyricHighlightStyle(value);
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 8),
+                          _CompactSettingsGrid(
+                            children: [
+                              _CompactSwitch(
+                                label: l10n.editorChordsField,
+                                hint: l10n.settingsDefaultShowChordsHint,
+                                value: state.showChords,
+                                onChanged: controller.setShowChords,
+                              ),
+                              _CompactSwitch(
+                                label: l10n.settingsPlayerSections,
+                                hint: l10n.settingsShowSectionsHint,
+                                value: state.showSections,
+                                onChanged: controller.setShowSections,
+                              ),
+                              _CompactSwitch(
+                                label: l10n.settingsPlayerControls,
+                                hint: l10n.settingsShowPlayerControlsHint,
+                                value: state.playerControlsExpanded,
+                                onChanged: controller.setPlayerControlsExpanded,
+                              ),
+                              _CompactSwitch(
+                                label: l10n.settingsPlayerAutoscroll,
+                                hint: l10n.settingsDefaultAutoscrollHint,
+                                value: state.autoscrollPreference,
+                                onChanged: state.timingMode == 'manual'
+                                    ? null
+                                    : controller.setAutoscroll,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          _LabeledDropdown<String>(
+                            compact: true,
+                            label: l10n.settingsDefaultTiming,
+                            value: state.timingMode,
+                            entries: [
+                              ('estimated', l10n.playerEstimatedPace),
+                              ('timed', l10n.playerTimedLyrics),
+                              ('manual', l10n.playerManualScroll),
+                            ],
+                            onChanged: (value) {
+                              if (value != null) {
+                                controller.setTimingMode(value);
+                              }
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
+                const SizedBox(height: 12),
+                LyricsSettingsPreview(state: state),
               ],
               if (widget.section == _SettingsSection.sources) ...[
                 _SettingCard(
@@ -726,6 +828,67 @@ class _SettingCard extends StatelessWidget {
   Widget build(BuildContext context) => Card(child: Column(children: children));
 }
 
+/// Two columns at ordinary phone sizes; large text keeps full-width controls.
+class _CompactSettingsGrid extends StatelessWidget {
+  const _CompactSettingsGrid({required this.children});
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final columns =
+          constraints.maxWidth >= 280 &&
+              MediaQuery.textScalerOf(context).scale(14) <= 19
+          ? 2
+          : 1;
+      return Column(
+        children: [
+          for (var i = 0; i < children.length; i += columns) ...[
+            if (i != 0) const SizedBox(height: 8),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (var j = 0; j < columns; j++) ...[
+                  if (j != 0) const SizedBox(width: 10),
+                  Expanded(
+                    child: i + j < children.length
+                        ? children[i + j]
+                        : const SizedBox.shrink(),
+                  ),
+                ],
+              ],
+            ),
+          ],
+        ],
+      );
+    },
+  );
+}
+
+class _CompactSwitch extends StatelessWidget {
+  const _CompactSwitch({
+    required this.label,
+    required this.hint,
+    required this.value,
+    required this.onChanged,
+  });
+  final String label, hint;
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+
+  @override
+  Widget build(BuildContext context) => Tooltip(
+    message: hint,
+    child: SwitchListTile(
+      contentPadding: EdgeInsets.zero,
+      dense: true,
+      title: Text(label, style: Theme.of(context).textTheme.labelLarge),
+      value: value,
+      onChanged: onChanged,
+    ),
+  );
+}
+
 /// A titled dropdown. The visible title is hidden from accessibility and
 /// attached as the dropdown's label so it is read together with its value.
 class _LabeledDropdown<T> extends StatelessWidget {
@@ -734,11 +897,15 @@ class _LabeledDropdown<T> extends StatelessWidget {
     required this.value,
     required this.entries,
     required this.onChanged,
+    this.compact = false,
+    this.selectedLabels = const {},
   });
   final String label;
   final T value;
   final List<(T, String)> entries;
   final ValueChanged<T?> onChanged;
+  final bool compact;
+  final Map<T, String> selectedLabels;
   @override
   Widget build(BuildContext context) {
     // A stored value that is not on offer (an old or edited setting) shows the
@@ -746,6 +913,54 @@ class _LabeledDropdown<T> extends StatelessWidget {
     final effective = entries.any((entry) => entry.$1 == value)
         ? value
         : entries.first.$1;
+    final dropdown = DropdownButton<T>(
+      isExpanded: true,
+      isDense: compact,
+      value: effective,
+      selectedItemBuilder: selectedLabels.isEmpty
+          ? null
+          : (context) => [
+              for (final entry in entries)
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Semantics(
+                    label: entry.$2,
+                    excludeSemantics: true,
+                    child: Text(
+                      selectedLabels[entry.$1] ?? entry.$2,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+            ],
+      items: entries
+          .map(
+            (entry) => DropdownMenuItem<T>(
+              value: entry.$1,
+              child: Text(
+                entry.$2,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          )
+          .toList(),
+      onChanged: onChanged,
+    );
+    if (compact) {
+      return Semantics(
+        label: label,
+        child: InputDecorator(
+          decoration: InputDecoration(
+            label: ExcludeSemantics(child: Text(label)),
+            isDense: true,
+            contentPadding: const EdgeInsetsDirectional.fromSTEB(12, 12, 8, 12),
+          ),
+          child: DropdownButtonHideUnderline(child: dropdown),
+        ),
+      );
+    }
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: Column(
@@ -754,26 +969,7 @@ class _LabeledDropdown<T> extends StatelessWidget {
           ExcludeSemantics(
             child: Text(label, style: Theme.of(context).textTheme.titleSmall),
           ),
-          Semantics(
-            label: label,
-            child: DropdownButton<T>(
-              isExpanded: true,
-              value: effective,
-              items: entries
-                  .map(
-                    (entry) => DropdownMenuItem<T>(
-                      value: entry.$1,
-                      child: Text(
-                        entry.$2,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  )
-                  .toList(),
-              onChanged: onChanged,
-            ),
-          ),
+          Semantics(label: label, child: dropdown),
         ],
       ),
     );

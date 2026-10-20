@@ -1,7 +1,7 @@
-The core library does not require login. This release profile has no configured Google OAuth client or Genius token; Google Drive sync is unavailable and is not advertised in the product-page copy. No Singbook account is created.
+The core library does not require login. This release profile has a configured Genius client access token, with live discovery verified on iPhone and iPad simulators. It has no configured Google OAuth client; Google Drive sync is unavailable and is not advertised in the product-page copy. No Singbook account is created.
 
-The app starts with an empty library. Import the original lanterns.cho fixture supplied with the submission materials through Songs > menu > Import. Open the song to read, edit, transpose, or use the system PDF/print interface. Create a setlist from the Setlists tab. Settings exposes backup export and restore through Files.
+The app starts with an empty library. Import the original lanterns.cho fixture supplied with the submission materials through Songs > menu > Import. Open the song to read, edit, transpose, or use the system PDF/print interface. Create a setlist from the Setlists tab. Settings > Account and sync exposes backup export and restore through Files.
 
-Search uses third-party sources, and availability varies. Supply the final permitted-provider list and authorization evidence privately with the submission before sending for review.
+Search uses third-party sources, and availability varies by provider, region and network. All existing sources retain their current configuration.
 
 Screenshots show original demonstration content in the actual app UI; those sample songs are not preloaded into the installed app. iPhone and iPad simulator testing includes portrait/landscape, light/dark, large text, RTL, native Files import/export, duplicate import, backup merge/replacement and share/print cancellation. Physical hardware was unavailable; no physical-device validation is claimed.
