@@ -713,90 +713,128 @@ class _PlayerScreenState extends State<PlayerScreen>
         ),
       ),
     );
-    Widget controls({required bool compact, double? maxHeight}) {
-      final screenWidth = MediaQuery.sizeOf(context).width;
-      final controlWidth = compact
-          ? (screenWidth * .4).clamp(300.0, 360.0)
-          : screenWidth;
-      final speedLabel = TextPainter(
-        text: TextSpan(
-          text: _formatPlaybackSpeed(state.playbackSpeed),
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        textDirection: Directionality.of(context),
-        textScaler: MediaQuery.textScalerOf(context),
-      )..layout();
-      final speedWidth = speedLabel.width + 28;
-      speedLabel.dispose();
-      final separateSpeed =
-          screenWidth < 360 ||
-          MediaQuery.textScalerOf(context).scale(1) > 1.25 ||
-          speedWidth > (controlWidth - 16) / 4;
-      final content = Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ValueListenableBuilder<PlayerPosition>(
-            valueListenable: _position,
-            builder: (context, position, _) =>
-                _seekBar(context, l10n, state, position, duration),
+    Widget controls({required bool compact, double? maxHeight}) => LayoutBuilder(
+      builder: (context, controlConstraints) {
+        final controlWidth = controlConstraints.maxWidth;
+        final fullScreenAction = widget.onFullScreenChanged == null
+            ? null
+            : IconButton(
+                constraints: const BoxConstraints.tightFor(width: 48, height: 48),
+                key: ValueKey(
+                  widget.fullScreen
+                      ? 'player-exit-fullscreen'
+                      : 'player-enter-fullscreen',
+                ),
+                tooltip: widget.fullScreen
+                    ? l10n.playerExitFullScreen
+                    : l10n.playerFullScreen,
+                onPressed: () => widget.onFullScreenChanged!(!widget.fullScreen),
+                icon: Icon(
+                  widget.fullScreen
+                      ? Icons.close_fullscreen_rounded
+                      : Icons.open_in_full_rounded,
+                ),
+              );
+        final speedLabel = TextPainter(
+          text: TextSpan(
+            text: _formatPlaybackSpeed(state.playbackSpeed),
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
-          SizedBox(
-            height: 40,
-            child: OverflowBox(
-              alignment: Alignment.topCenter,
-              minHeight: 48,
-              maxHeight: 48,
-              child: Transform.translate(
-                offset: const Offset(0, -8),
-                child: _transport(
-                  context,
-                  l10n,
-                  state,
-                  inlineChords: song.hasChords,
-                  showSpeed: !separateSpeed,
+          textDirection: Directionality.of(context),
+          textScaler: MediaQuery.textScalerOf(context),
+        )..layout();
+        final speedWidth = speedLabel.width + 28;
+        speedLabel.dispose();
+        final separateSpeed =
+            controlWidth < 360 ||
+            MediaQuery.textScalerOf(context).scale(1) > 1.25 ||
+            speedWidth + (fullScreenAction == null ? 0 : 48) >
+                (controlWidth - 16) / (fullScreenAction == null ? 4 : 5);
+        final content = Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              textDirection: TextDirection.ltr,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: ValueListenableBuilder<PlayerPosition>(
+                    valueListenable: _position,
+                    builder: (context, position, _) =>
+                        _seekBar(context, l10n, state, position, duration),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: IconButton(
+                    key: const ValueKey('player-settings-button'),
+                    constraints: const BoxConstraints.tightFor(width: 48, height: 48),
+                    tooltip: l10n.settingsPlayer,
+                    onPressed: () => showPlayerSettings(context, controller),
+                    icon: const Icon(Icons.settings_outlined),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 40,
+              child: OverflowBox(
+                alignment: Alignment.topCenter,
+                minHeight: 48,
+                maxHeight: 48,
+                child: Transform.translate(
+                  offset: const Offset(0, -8),
+                  child: _transport(
+                    context,
+                    l10n,
+                    state,
+                    inlineChords: song.hasChords,
+                    showSpeed: !separateSpeed,
+                    trailingAction: fullScreenAction,
+                  ),
                 ),
               ),
             ),
-          ),
-          if (separateSpeed)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Align(
-                alignment: AlignmentDirectional.centerEnd,
-                child: _speedControl(l10n, state),
+            if (separateSpeed)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: _speedControl(l10n, state),
+                ),
               ),
-            ),
-        ],
-      );
-      final canScroll = compact || maxHeight != null;
-      final body = canScroll
-          ? ConstrainedBox(
-              constraints: maxHeight == null
-                  ? const BoxConstraints()
-                  : BoxConstraints(maxHeight: maxHeight),
-              child: Scrollbar(
-                controller: _controlsScroll,
-                thumbVisibility: true,
-                child: SingleChildScrollView(
+          ],
+        );
+        final canScroll = compact || maxHeight != null;
+        final body = canScroll
+            ? ConstrainedBox(
+                constraints: maxHeight == null
+                    ? const BoxConstraints()
+                    : BoxConstraints(maxHeight: maxHeight),
+                child: Scrollbar(
                   controller: _controlsScroll,
-                  reverse: true,
-                  child: content,
+                  thumbVisibility: true,
+                  child: SingleChildScrollView(
+                    controller: _controlsScroll,
+                    reverse: true,
+                    child: content,
+                  ),
                 ),
-              ),
-            )
-          : content;
-      return playerPanel(
-        SafeArea(
-          top: false,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [if (compact) Flexible(child: body) else body],
+              )
+            : content;
+        return playerPanel(
+          SafeArea(
+            top: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [if (compact) Flexible(child: body) else body],
+            ),
           ),
-        ),
-        header: false,
-        side: compact,
-      );
-    }
+          header: false,
+          side: compact,
+        );
+      },
+    );
 
     final metadata = [
       if (state.readerKey != null && !state.readerKeyEstimated)
@@ -841,14 +879,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                                 : Icons.favorite_border_rounded,
                           ),
                         ),
-                        if (widget.onFullScreenChanged != null)
-                          IconButton(
-                            key: const ValueKey('player-enter-fullscreen'),
-                            tooltip: l10n.playerFullScreen,
-                            onPressed: () => widget.onFullScreenChanged!(true),
-                            icon: const Icon(Icons.fullscreen_rounded),
-                          )
-                        else
+                        if (widget.onFullScreenChanged == null)
                           IconButton(
                             tooltip: l10n.actionEdit,
                             onPressed: () => controller.editSong(song.id),
@@ -886,13 +917,6 @@ class _PlayerScreenState extends State<PlayerScreen>
                               );
                             }
                           },
-                        ),
-                        IconButton(
-                          key: const ValueKey('player-settings-button'),
-                          tooltip: l10n.settingsPlayer,
-                          onPressed: () =>
-                              showPlayerSettings(context, controller),
-                          icon: const Icon(Icons.settings_outlined),
                         ),
                       ],
                     ),
@@ -977,18 +1001,13 @@ class _PlayerScreenState extends State<PlayerScreen>
               title: song.title,
               artist: song.artist,
               actions: [
-                IconButton(
-                  key: const ValueKey('player-exit-fullscreen'),
-                  tooltip: l10n.playerExitFullScreen,
-                  onPressed: () => widget.onFullScreenChanged?.call(false),
-                  icon: const Icon(Icons.fullscreen_exit_rounded),
-                ),
-                IconButton(
-                  key: const ValueKey('player-settings-button'),
-                  tooltip: l10n.settingsPlayer,
-                  onPressed: () => showPlayerSettings(context, controller),
-                  icon: const Icon(Icons.settings_outlined),
-                ),
+                if (!state.playerControlsExpanded)
+                  IconButton(
+                    key: const ValueKey('player-exit-fullscreen'),
+                    tooltip: l10n.playerExitFullScreen,
+                    onPressed: () => widget.onFullScreenChanged?.call(false),
+                    icon: const Icon(Icons.close_fullscreen_rounded),
+                  ),
               ],
             ),
           Expanded(key: const ValueKey('player-body'), child: content),
@@ -1292,6 +1311,7 @@ class _PlayerScreenState extends State<PlayerScreen>
     VerseUiState state, {
     required bool inlineChords,
     required bool showSpeed,
+    Widget? trailingAction,
   }) => Padding(
     padding: const EdgeInsets.fromLTRB(8, 0, 8, 2),
     child: Builder(
@@ -1365,8 +1385,9 @@ class _PlayerScreenState extends State<PlayerScreen>
             ),
         ];
         return Row(
+          textDirection: TextDirection.ltr,
           children: [
-            if (inlineChords || showSpeed) ...[
+            if (inlineChords || showSpeed || trailingAction != null) ...[
               Expanded(
                 child: Align(
                   alignment: Alignment.centerLeft,
@@ -1376,19 +1397,23 @@ class _PlayerScreenState extends State<PlayerScreen>
                 ),
               ),
               Expanded(
-                flex: 2,
+                flex: trailingAction == null ? 2 : 3,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: controls,
                 ),
               ),
-              if (showSpeed)
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: _speedControl(l10n, state),
-                  ),
+              Expanded(
+                child: Row(
+                  textDirection: TextDirection.ltr,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    if (showSpeed)
+                      Flexible(child: _speedControl(l10n, state)),
+                    if (trailingAction != null) trailingAction,
+                  ],
                 ),
+              ),
             ] else
               Expanded(
                 child: Row(
