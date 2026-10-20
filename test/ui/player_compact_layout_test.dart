@@ -1,7 +1,8 @@
 import 'dart:io';
-import 'dart:ui' show PointerCancelEvent, PointerDownEvent, PointerUpEvent;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart'
+    show PointerCancelEvent, PointerDownEvent, PointerUpEvent;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
