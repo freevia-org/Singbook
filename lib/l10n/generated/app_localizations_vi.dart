@@ -1062,7 +1062,8 @@ class AppLocalizationsVi extends AppLocalizations {
   String get settingsClearHistory => 'Xóa lịch sử';
 
   @override
-  String get settingsClearHistoryConfirm => 'Xóa lịch sử bài hát và danh sách?';
+  String get settingsClearHistoryConfirm =>
+      'Xóa lịch sử hoạt động gần đây của bài hát và danh sách bài hát. Giữ lại bài hát đã lưu, mục yêu thích, danh sách bài hát và cài đặt.';
 
   @override
   String get settingsHistoryCleared => 'Đã xóa lịch sử.';

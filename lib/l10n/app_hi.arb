@@ -442,7 +442,7 @@
   "settingsPrivacy": "गोपनीयता",
   "settingsLegal": "कानूनी जानकारी",
   "settingsClearHistory": "इतिहास मिटाएँ",
-  "settingsClearHistoryConfirm": "गीतों और गीत-सूचियों का इतिहास मिटाएँ?",
+  "settingsClearHistoryConfirm": "गीतों और गीत-सूचियों की हाल की गतिविधि का इतिहास मिटाता है। सहेजे गए गीत, पसंदीदा, गीत-सूचियाँ और सेटिंग्स बनी रहती हैं।",
   "settingsHistoryCleared": "इतिहास मिटा दिया गया।",
   "accountTitle": "खाता और सिंक",
   "accountUnavailable": "सिंक के लिए Google साइन-इन कॉन्फ़िगर किया हुआ Singbook बिल्ड चाहिए। यह बिल्ड आपके गीत केवल इसी डिवाइस पर रखता है।",

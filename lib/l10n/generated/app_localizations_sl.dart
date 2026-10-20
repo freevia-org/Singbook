@@ -1072,7 +1072,7 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Počistim zgodovino pesmi in koncertnih seznamov?';
+      'Počisti zgodovino nedavnih dejavnosti pesmi in koncertnih seznamov. Ohrani shranjene pesmi, priljubljene, koncertne sezname in nastavitve.';
 
   @override
   String get settingsHistoryCleared => 'Zgodovina je počiščena.';

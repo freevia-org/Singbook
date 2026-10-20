@@ -1071,7 +1071,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsClearHistory => 'مسح السجل';
 
   @override
-  String get settingsClearHistoryConfirm => 'هل تريد مسح سجل الأغاني وقوائمها؟';
+  String get settingsClearHistoryConfirm =>
+      'يمسح سجل النشاط الأخير للأغاني وقوائم الأغاني. يحتفظ بالأغاني المحفوظة والمفضلة وقوائم الأغاني والإعدادات.';
 
   @override
   String get settingsHistoryCleared => 'تم مسح السجل.';

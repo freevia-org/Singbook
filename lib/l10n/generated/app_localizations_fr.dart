@@ -1077,7 +1077,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Effacer l’historique de vos chansons et listes ?';
+      'Efface l’activité récente des chansons et des listes. Conserve les chansons enregistrées, les favoris, les listes et les paramètres.';
 
   @override
   String get settingsHistoryCleared => 'Historique effacé.';

@@ -442,7 +442,7 @@
   "settingsPrivacy": "Soukromí",
   "settingsLegal": "Právní informace",
   "settingsClearHistory": "Vymazat historii",
-  "settingsClearHistoryConfirm": "Vymazat historii písní a koncertních programů?",
+  "settingsClearHistoryConfirm": "Vymaže nedávnou historii aktivit u písní a setlistů. Zachová uložené písně, oblíbené položky, setlisty a nastavení.",
   "settingsHistoryCleared": "Historie byla vymazána.",
   "accountTitle": "Účet a synchronizace",
   "accountUnavailable": "Synchronizace vyžaduje sestavení Singbook s nastaveným přihlášením přes Google. Tato verze uchovává vaše písně pouze v tomto zařízení.",

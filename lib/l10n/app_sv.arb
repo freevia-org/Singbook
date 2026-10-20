@@ -440,7 +440,7 @@
   "settingsPrivacy": "Integritet",
   "settingsLegal": "Juridiskt",
   "settingsClearHistory": "Rensa historik",
-  "settingsClearHistoryConfirm": "Rensa historiken för låtar och setlistor?",
+  "settingsClearHistoryConfirm": "Rensar den senaste aktiviteten för låtar och setlistor. Behåller sparade låtar, favoriter, setlistor och inställningar.",
   "settingsHistoryCleared": "Historiken har rensats.",
   "accountTitle": "Konto och synkronisering",
   "accountUnavailable": "Synkronisering kräver en version av Singbook där inloggning med Google har konfigurerats. I den här versionen sparas låtarna endast på den här enheten.",

@@ -1068,7 +1068,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      '¿Borrar el historial de canciones y listas?';
+      'Borra la actividad reciente de canciones y listas. Conserva las canciones guardadas, los favoritos, las listas y los ajustes.';
 
   @override
   String get settingsHistoryCleared => 'Historial borrado.';

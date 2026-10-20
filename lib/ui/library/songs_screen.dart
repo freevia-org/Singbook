@@ -147,6 +147,17 @@ class _SongsScreenState extends State<SongsScreen> {
                     ),
                   ),
                 ),
+                if (!conflictsOnly)
+                  VerseIconButton(
+                    key: const ValueKey('favorites-filter-button'),
+                    tooltip: l10n.searchFavoritesTab,
+                    selected: state.favoritesOnly,
+                    onPressed: () =>
+                        controller.setFavoritesOnly(!state.favoritesOnly),
+                    icon: state.favoritesOnly
+                        ? Icons.favorite_rounded
+                        : Icons.favorite_border_rounded,
+                  ),
               ],
             ),
           ),
@@ -169,13 +180,26 @@ class _SongsScreenState extends State<SongsScreen> {
           ),
         Expanded(
           child: songs.isEmpty
-              ? VerseEmptyState(
-                  icon: Icons.library_music_outlined,
-                  title: conflictsOnly && query.isEmpty
-                      ? l10n.songsConflictEmpty
-                      : query.isEmpty
-                      ? l10n.songsEmpty
-                      : l10n.songsEmptySearch,
+              ? Column(
+                  children: [
+                    Expanded(
+                      child: VerseEmptyState(
+                        icon: Icons.library_music_outlined,
+                        title: conflictsOnly && query.isEmpty
+                            ? l10n.songsConflictEmpty
+                            : query.isEmpty
+                            ? l10n.songsEmpty
+                            : l10n.songsEmptySearch,
+                      ),
+                    ),
+                    _createShortcut(
+                      l10n,
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 4,
+                      ),
+                    ),
+                  ],
                 )
               : LayoutBuilder(
                   builder: (context, constraints) => Row(
@@ -198,16 +222,42 @@ class _SongsScreenState extends State<SongsScreen> {
                                                   .toDouble() *
                                               4,
                                     ),
-                                itemCount: songs.length,
+                                itemCount: songs.length + 1,
                                 itemBuilder: (context, index) =>
-                                    _songListItem(context, l10n, songs, index),
+                                    index == songs.length
+                                    ? _createShortcut(
+                                        l10n,
+                                        margin: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
+                                      )
+                                    : _songListItem(
+                                        context,
+                                        l10n,
+                                        songs,
+                                        index,
+                                      ),
                               )
                             : ListView.builder(
                                 key: const PageStorageKey('songs-library-list'),
                                 controller: _scroll,
-                                itemCount: songs.length,
+                                itemCount: songs.length + 1,
                                 itemBuilder: (context, index) =>
-                                    _songListItem(context, l10n, songs, index),
+                                    index == songs.length
+                                    ? _createShortcut(
+                                        l10n,
+                                        margin: const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 4,
+                                        ),
+                                      )
+                                    : _songListItem(
+                                        context,
+                                        l10n,
+                                        songs,
+                                        index,
+                                      ),
                               ),
                       ),
                       if (sortedLetters.length > 5 &&
@@ -285,6 +335,16 @@ class _SongsScreenState extends State<SongsScreen> {
       ],
     );
   }
+
+  Widget _createShortcut(
+    AppLocalizations l10n, {
+    required EdgeInsetsGeometry margin,
+  }) => LibraryCreateShortcut(
+    key: const ValueKey('songs-create-shortcut'),
+    label: l10n.menuTypeNewSong,
+    margin: margin,
+    onPressed: () => widget.controller.createSong(),
+  );
 }
 
 /// Alphabet index along the edge of the song list. The whole strip is one

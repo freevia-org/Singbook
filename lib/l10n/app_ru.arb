@@ -440,7 +440,7 @@
   "settingsPrivacy": "Конфиденциальность",
   "settingsLegal": "Правовая информация",
   "settingsClearHistory": "Очистить историю",
-  "settingsClearHistoryConfirm": "Очистить историю песен и сет-листов?",
+  "settingsClearHistoryConfirm": "Очищает историю недавних действий с песнями и сет-листами. Сохраняет сохранённые песни, избранное, сет-листы и настройки.",
   "settingsHistoryCleared": "История очищена.",
   "accountTitle": "Аккаунт и синхронизация",
   "accountUnavailable": "Для синхронизации нужна версия Singbook с настроенным входом через Google. В этой версии песни хранятся только на этом устройстве.",

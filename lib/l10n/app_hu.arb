@@ -442,7 +442,7 @@
   "settingsPrivacy": "Adatvédelem",
   "settingsLegal": "Jogi információk",
   "settingsClearHistory": "Előzmények törlése",
-  "settingsClearHistoryConfirm": "Törlöd a dalok és setlisták előzményeit?",
+  "settingsClearHistoryConfirm": "Törli a dalok és setlisták legutóbbi tevékenységeinek előzményeit. Megőrzi a mentett dalokat, kedvenceket, setlistákat és beállításokat.",
   "settingsHistoryCleared": "Előzmények törölve.",
   "accountTitle": "Fiók és szinkronizálás",
   "accountUnavailable": "A szinkronizáláshoz olyan Singbook-verzió szükséges, amelyben be van állítva a Google-bejelentkezés. Ez a verzió csak ezen az eszközön tárolja a dalokat.",

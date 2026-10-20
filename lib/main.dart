@@ -16,6 +16,15 @@ void main(List<String> arguments) {
   initializeLibraryDatabase();
   installErrorHandlers();
   LicenseRegistry.addLicense(() async* {
+    for (final entry in const {
+      'Lora': 'assets/fonts/Lora-OFL.txt',
+      'Nunito': 'assets/fonts/Nunito-OFL.txt',
+      'Source Sans 3': 'assets/fonts/SourceSans3-OFL.txt',
+    }.entries) {
+      yield LicenseEntryWithLineBreaks([
+        entry.key,
+      ], await rootBundle.loadString(entry.value));
+    }
     yield LicenseEntryWithLineBreaks([
       'Noto Sans',
       'Noto Sans Mono',

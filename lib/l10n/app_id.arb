@@ -442,7 +442,7 @@
   "settingsPrivacy": "Privasi",
   "settingsLegal": "Informasi hukum",
   "settingsClearHistory": "Hapus riwayat",
-  "settingsClearHistoryConfirm": "Hapus riwayat lagu dan daftar lagu?",
+  "settingsClearHistoryConfirm": "Menghapus aktivitas terbaru lagu dan daftar lagu. Tetap menyimpan lagu tersimpan, favorit, daftar lagu, dan pengaturan.",
   "settingsHistoryCleared": "Riwayat dihapus.",
   "accountTitle": "Akun dan sinkronisasi",
   "accountUnavailable": "Sinkronisasi memerlukan versi Singbook yang dikonfigurasi untuk login Google. Versi ini hanya menyimpan lagu di perangkat ini.",

@@ -511,11 +511,26 @@ void main() {
         timelineLabels.map((label) => label.semanticsLabel),
         containsAll(names),
       );
+      final labelRects = [
+        for (final label in timelineLabels)
+          tester.getRect(find.byWidget(label)),
+      ];
+      for (var first = 0; first < labelRects.length; first++) {
+        for (var second = first + 1; second < labelRects.length; second++) {
+          expect(
+            labelRects[first].overlaps(labelRects[second]),
+            isFalse,
+            reason:
+                '${timelineLabels[first].data} overlaps ${timelineLabels[second].data}',
+          );
+        }
+      }
       for (final label in timelineLabels) {
         expect(label.data, label.semanticsLabel);
         final finder = find.byWidget(label);
         final element = tester.element(finder);
         final style = DefaultTextStyle.of(element).style.merge(label.style);
+        expect(style.fontSize, 12);
         final painter = TextPainter(
           text: TextSpan(text: label.data, style: style),
           textDirection: Directionality.of(element),

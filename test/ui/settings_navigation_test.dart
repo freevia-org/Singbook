@@ -48,7 +48,8 @@ void main() {
     addTearDown(c.dispose);
     await pumpShell(tester, c);
     final l10n = l10nOf(tester);
-    expect(find.byType(ListTile), findsNWidgets(5));
+    expect(find.byType(ListTile), findsNWidgets(6));
+    expect(menu('support'), findsOneWidget);
     // The startup Songs view is the one setting available on the menu page.
     expect(find.byType(DropdownButton<String>), findsOneWidget);
     expect(
@@ -110,7 +111,13 @@ void main() {
       await tester.ensureVisible(clear);
       await tester.tap(clear);
       await tester.pumpAndSettle();
-      expect(find.text(l10n.settingsClearHistoryConfirm), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AlertDialog),
+          matching: find.text(l10n.settingsClearHistoryConfirm),
+        ),
+        findsOneWidget,
+      );
       await tester.tap(find.text(l10n.actionCancel));
       await tester.pumpAndSettle();
       expect(c.calls, isNot(contains('clearHistory')));

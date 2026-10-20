@@ -1075,7 +1075,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Очистити історію пісень і сетлистів?';
+      'Очищає історію нещодавніх дій із піснями та сетлистами. Зберігає збережені пісні, улюблене, сетлисти й налаштування.';
 
   @override
   String get settingsHistoryCleared => 'Історію очищено.';

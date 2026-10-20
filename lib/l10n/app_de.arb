@@ -442,7 +442,7 @@
   "settingsPrivacy": "Datenschutz",
   "settingsLegal": "Rechtliches",
   "settingsClearHistory": "Verlauf löschen",
-  "settingsClearHistoryConfirm": "Verlauf deiner Songs und Setlists löschen?",
+  "settingsClearHistoryConfirm": "Löscht die letzten Aktivitäten zu Songs und Setlists. Gespeicherte Songs, Favoriten, Setlists und Einstellungen bleiben erhalten.",
   "settingsHistoryCleared": "Verlauf gelöscht.",
   "accountTitle": "Konto und Synchronisierung",
   "accountUnavailable": "Für die Synchronisierung wird eine Singbook-Version mit eingerichtetem Google-Login benötigt. In dieser Version bleiben deine Songs nur auf diesem Gerät.",

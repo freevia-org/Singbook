@@ -442,7 +442,7 @@
   "settingsPrivacy": "Confidentialité",
   "settingsLegal": "Mentions légales",
   "settingsClearHistory": "Effacer l’historique",
-  "settingsClearHistoryConfirm": "Effacer l’historique de vos chansons et listes ?",
+  "settingsClearHistoryConfirm": "Efface l’activité récente des chansons et des listes. Conserve les chansons enregistrées, les favoris, les listes et les paramètres.",
   "settingsHistoryCleared": "Historique effacé.",
   "accountTitle": "Compte et synchronisation",
   "accountUnavailable": "La synchronisation nécessite une version de Singbook configurée pour la connexion Google. Cette version conserve vos chansons uniquement sur cet appareil.",

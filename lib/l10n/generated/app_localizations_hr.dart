@@ -1067,7 +1067,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Izbrisati povijest pjesama i setlista?';
+      'Briše nedavnu povijest aktivnosti pjesama i setlista. Zadržava spremljene pjesme, favorite, setliste i postavke.';
 
   @override
   String get settingsHistoryCleared => 'Povijest je izbrisana.';

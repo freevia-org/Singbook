@@ -7,13 +7,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show ScrollDirection;
 import 'package:flutter/services.dart';
 
+import '../../domain/arrangement.dart' show transposeChord;
 import '../../l10n/generated/app_localizations.dart';
 import '../format.dart';
 import '../library_actions.dart';
 import '../player_section_timeline.dart';
+import '../settings/settings_screen.dart' show showPlayerSettings;
 import '../verse_ui_state.dart';
 import '../widgets/slider_overlay_boundary.dart';
 import 'player_lyric_line.dart';
+import 'player_controls_panel.dart';
+import 'player_fullscreen_header.dart';
 import '../widgets/subpage_header.dart';
 import 'screen_awake.dart';
 import 'section_labels.dart';
@@ -62,21 +66,16 @@ int? _keyPitchClass(String? key) {
       12;
 }
 
-int _transposeMenuOffset(int offset) {
-  final pitch = offset % 12;
-  // Keep either tritone direction when already selected, including legacy
-  // saved offsets. Other octave-equivalent offsets use the nearest choice.
-  if (pitch == 6 && offset < 0) return -6;
-  return pitch > 6 ? pitch - 12 : pitch;
+String? _transposeKey(VerseUiState state) {
+  // The reader key already includes estimates, setlist overrides and transpose.
+  if (_keyPitchClass(state.readerKey) != null) return state.readerKey;
+  final savedKey = state.song?.key;
+  return _keyPitchClass(savedKey) == null
+      ? null
+      : transposeChord(savedKey!, state.readerTranspose);
 }
 
-String _transposeLabel(VerseUiState state) {
-  if (_keyPitchClass(state.song?.key) != null) {
-    return state.readerKey ?? state.song!.key!;
-  }
-  final offset = _transposeMenuOffset(state.readerTranspose);
-  return offset > 0 ? '+$offset' : '$offset';
-}
+const _playerDropdownArrow = Icon(Icons.arrow_drop_up_rounded, size: 20);
 
 /// The lyric reader and player: scrolling lyrics, a seek bar with section
 /// markers and transport controls.
@@ -132,68 +131,11 @@ class _PlayerScreenState extends State<PlayerScreen>
   bool _awakeHeld = false;
   bool _inForeground = true;
   bool _leaving = false;
-  double _panelDragDistance = 0;
   double _lyricsHorizontalDragDistance = 0;
 
   void _setControlsExpanded(bool expanded) {
     if (controller.state.playerControlsExpanded == expanded) return;
     unawaited(controller.setPlayerControlsExpanded(expanded));
-  }
-
-  Widget _controlsHandle(AppLocalizations l10n) {
-    final expanded = controller.state.playerControlsExpanded;
-    final label = expanded
-        ? l10n.playerCollapseControls
-        : l10n.playerExpandControls;
-    return Semantics(
-      button: true,
-      label: label,
-      expanded: expanded,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onVerticalDragStart: (_) => _panelDragDistance = 0,
-        onVerticalDragUpdate: (details) =>
-            _panelDragDistance += details.delta.dy,
-        onVerticalDragEnd: (_) {
-          if (_panelDragDistance > 24) _setControlsExpanded(false);
-          if (_panelDragDistance < -24) _setControlsExpanded(true);
-          _panelDragDistance = 0;
-        },
-        child: Tooltip(
-          message: label,
-          child: InkWell(
-            onTap: () => _setControlsExpanded(!expanded),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-              child: Center(
-                child: ExcludeSemantics(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 36,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.outline,
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Icon(
-                        expanded
-                            ? Icons.keyboard_arrow_down_rounded
-                            : Icons.keyboard_arrow_up_rounded,
-                        size: 18,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
   }
 
   /// The adapter's resolved duration is shared with its clock and highlighting.
@@ -848,10 +790,7 @@ class _PlayerScreenState extends State<PlayerScreen>
           top: false,
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: [
-              _controlsHandle(l10n),
-              if (compact) Flexible(child: body) else body,
-            ],
+            children: [if (compact) Flexible(child: body) else body],
           ),
         ),
         header: false,
@@ -860,8 +799,8 @@ class _PlayerScreenState extends State<PlayerScreen>
     }
 
     final metadata = [
-      if (state.readerKey != null)
-        '${state.readerKeyEstimated ? l10n.playerEstimatedKey : l10n.editorKeyField}: ${state.readerKey}',
+      if (state.readerKey != null && !state.readerKeyEstimated)
+        '${l10n.editorKeyField}: ${state.readerKey}',
       song.artist,
       song.album,
       if (state.readerCapo != null)
@@ -877,7 +816,6 @@ class _PlayerScreenState extends State<PlayerScreen>
             constraints.maxWidth > constraints.maxHeight &&
             constraints.maxHeight < 430;
         final largeText = MediaQuery.textScalerOf(context).scale(1) > 1.5;
-        final expanded = state.playerControlsExpanded;
         final shortPortrait =
             constraints.maxHeight < 600 &&
             constraints.maxWidth <= constraints.maxHeight;
@@ -955,6 +893,13 @@ class _PlayerScreenState extends State<PlayerScreen>
                             }
                           },
                         ),
+                        IconButton(
+                          key: const ValueKey('player-settings-button'),
+                          tooltip: l10n.settingsPlayer,
+                          onPressed: () =>
+                              showPlayerSettings(context, controller),
+                          icon: const Icon(Icons.settings_outlined),
+                        ),
                       ],
                     ),
                     if (metadata.isNotEmpty)
@@ -964,7 +909,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                           alignment: AlignmentDirectional.centerStart,
                           child: Text(
                             metadata,
-                            maxLines: state.readerKeyEstimated ? 2 : 1,
+                            maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.bodyMedium
                                 ?.copyWith(color: colors.onSurfaceVariant),
@@ -997,38 +942,31 @@ class _PlayerScreenState extends State<PlayerScreen>
                 ),
                 header: true,
               ),
-            if (compactLandscape && expanded)
-              Expanded(
-                child: Row(
-                  children: [
-                    Expanded(child: lyrics),
-                    const SizedBox(width: 8),
-                    SizedBox(
-                      width: (constraints.maxWidth * .4)
-                          .clamp(300.0, 360.0)
-                          .toDouble(),
-                      child: controls(compact: true),
-                    ),
-                  ],
-                ),
-              )
-            else ...[
-              Expanded(child: lyrics),
-              if (expanded)
-                controls(
-                  compact: false,
-                  maxHeight: largeText || shortPortrait
-                      ? (constraints.maxHeight * .4)
-                            .clamp(180.0, 320.0)
-                            .toDouble()
-                      : null,
-                )
-              else
-                playerPanel(
-                  SafeArea(top: false, child: _controlsHandle(l10n)),
-                  header: false,
-                ),
-            ],
+            Expanded(
+              child: PlayerControlsPanel(
+                expanded: state.playerControlsExpanded,
+                onChanged: _setControlsExpanded,
+                expandLabel: l10n.playerExpandControls,
+                collapseLabel: l10n.playerCollapseControls,
+                side: compactLandscape,
+                lyrics: lyrics,
+                controls: compactLandscape
+                    ? SizedBox(
+                        width: (constraints.maxWidth * .4)
+                            .clamp(300.0, 360.0)
+                            .toDouble(),
+                        child: controls(compact: true),
+                      )
+                    : controls(
+                        compact: false,
+                        maxHeight: largeText || shortPortrait
+                            ? (constraints.maxHeight * .4)
+                                  .clamp(180.0, 320.0)
+                                  .toDouble()
+                            : null,
+                      ),
+              ),
+            ),
           ],
         );
       },
@@ -1038,30 +976,29 @@ class _PlayerScreenState extends State<PlayerScreen>
       autofocus:
           widget.fullScreen || defaultTargetPlatform == TargetPlatform.windows,
       onKeyEvent: _handleWindowsKey,
-      child: SafeArea(
-        top: widget.fullScreen,
-        bottom: false,
-        left: false,
-        right: false,
-        child: Stack(
-          children: [
-            Positioned.fill(child: content),
-            if (widget.fullScreen)
-              PositionedDirectional(
-                top: 8,
-                end: 8,
-                child: SafeArea(
-                  bottom: false,
-                  child: IconButton.filledTonal(
-                    key: const ValueKey('player-exit-fullscreen'),
-                    tooltip: l10n.playerExitFullScreen,
-                    onPressed: () => widget.onFullScreenChanged?.call(false),
-                    icon: const Icon(Icons.fullscreen_exit_rounded),
-                  ),
+      child: Column(
+        children: [
+          if (widget.fullScreen)
+            PlayerFullscreenHeader(
+              title: song.title,
+              artist: song.artist,
+              actions: [
+                IconButton(
+                  key: const ValueKey('player-exit-fullscreen'),
+                  tooltip: l10n.playerExitFullScreen,
+                  onPressed: () => widget.onFullScreenChanged?.call(false),
+                  icon: const Icon(Icons.fullscreen_exit_rounded),
                 ),
-              ),
-          ],
-        ),
+                IconButton(
+                  key: const ValueKey('player-settings-button'),
+                  tooltip: l10n.settingsPlayer,
+                  onPressed: () => showPlayerSettings(context, controller),
+                  icon: const Icon(Icons.settings_outlined),
+                ),
+              ],
+            ),
+          Expanded(key: const ValueKey('player-body'), child: content),
+        ],
       ),
     );
   }
@@ -1193,12 +1130,13 @@ class _PlayerScreenState extends State<PlayerScreen>
               durationSeconds: displayDuration,
             ),
           ),
-          child: SizedBox(
-            height: 48,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final sliderTheme = SliderTheme.of(context);
-                return Stack(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final desktopTimeline = constraints.maxWidth >= 560;
+              final sliderTheme = SliderTheme.of(context);
+              return SizedBox(
+                height: desktopTimeline ? 60 : 48,
+                child: Stack(
                   children: [
                     Positioned.fill(
                       child: SliderOverlayBoundary(
@@ -1243,9 +1181,9 @@ class _PlayerScreenState extends State<PlayerScreen>
                       l10n: l10n,
                     ),
                   ],
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         ),
       ],
@@ -1344,7 +1282,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                     maxLines: 1,
                     softWrap: false,
                   ),
-                  const Icon(Icons.arrow_drop_up_rounded, size: 20),
+                  _playerDropdownArrow,
                 ],
               ),
             ),
@@ -1499,83 +1437,99 @@ class _PlayerScreenState extends State<PlayerScreen>
       'B♭',
       'B',
     ];
-    final originalKey = state.song?.key;
+    final currentKey = _transposeKey(state);
+    final savedKey = state.song?.key;
+    final originalKey = _keyPitchClass(savedKey) != null
+        ? savedKey
+        : currentKey == null
+        ? null
+        : transposeChord(currentKey, -state.readerTranspose);
     final originalPitch = _keyPitchClass(originalKey);
-    final int currentPitch =
-        _keyPitchClass(state.readerKey) ?? originalPitch ?? 0;
+    final currentPitch = _keyPitchClass(currentKey);
+    // Menu spelling and quality follow the effective key, including overrides.
+    final keyStyle = currentKey;
     final minorKey =
-        originalKey != null &&
+        keyStyle != null &&
         RegExp(
           r'^[A-Ga-g][#b♯♭]?\s*(?:m|min|minor)$',
-        ).hasMatch(originalKey.trim());
+        ).hasMatch(keyStyle.trim());
     final keyNames =
-        originalKey?.contains('b') == true || originalKey?.contains('♭') == true
+        keyStyle?.contains('b') == true || keyStyle?.contains('♭') == true
         ? flatNames
         : sharpNames;
-    final displayedKey = _transposeLabel(state);
-    final currentOffset = _transposeMenuOffset(state.readerTranspose);
+    final originalLabel = _keyPitchClass(savedKey) != null
+        ? savedKey
+        : originalPitch == null
+        ? null
+        : '${keyNames[originalPitch]}${minorKey ? 'm' : ''}';
+    final displayedKey = currentKey ?? l10n.unknownValue;
     return PopupMenuButton<String>(
       key: const ValueKey('pitch-key-dropdown'),
-      tooltip: l10n.readerTranspose,
+      tooltip: state.readerKeyEstimated
+          ? '${l10n.playerEstimatedKey}: $displayedKey'
+          : l10n.readerTranspose,
       position: PopupMenuPosition.over,
       constraints: _playerPopupConstraints(context),
       menuPadding: EdgeInsets.zero,
-      initialValue: originalPitch == null
-          ? 'offset-$currentOffset'
-          : 'pitch-$currentPitch',
+      initialValue: currentPitch == null ? null : 'pitch-$currentPitch',
       onSelected: (action) async {
-        if (action.startsWith('offset-')) {
-          final target = int.parse(action.substring('offset-'.length));
-          final delta = target - state.readerTranspose;
-          if (delta != 0) await controller.transpose(delta);
+        final latest = controller.state;
+        if (latest.song?.id != state.song?.id) return;
+        if (action == 'edit-key') {
+          final song = latest.song;
+          if (song != null) await controller.editSong(song.id);
           return;
         }
+        final latestPitch = _keyPitchClass(_transposeKey(latest));
+        if (latestPitch == null) return;
         final targetPitch = int.parse(action.substring('pitch-'.length));
-        var delta = (targetPitch - currentPitch + 12) % 12;
-        if (delta > 6) delta -= 12;
+        if (targetPitch == latestPitch) return;
+        var delta = (targetPitch - latestPitch + 12) % 12;
+        if (targetPitch == (latestPitch - latest.readerTranspose) % 12) {
+          // Restore the untransposed reader key, including a tritone offset.
+          delta = -latest.readerTranspose;
+        } else if (delta > 6) {
+          delta -= 12;
+        }
         if (delta != 0) await controller.transpose(delta);
       },
       itemBuilder: (context) => [
-        if (originalPitch != null)
+        if (currentPitch != null)
           for (var pitch = 0; pitch < 12; pitch++)
             PopupMenuItem(
               key: ValueKey('transpose-pitch-$pitch'),
               value: 'pitch-$pitch',
               height: 34,
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Text(
-                pitch == originalPitch
-                    ? '${originalKey!}  ★'
-                    : '${keyNames[pitch]}${minorKey ? 'm' : ''}',
-                style: pitch == originalPitch
-                    ? TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.w700,
-                      )
-                    : null,
-              ),
-            ),
-        if (originalPitch == null)
-          for (var offset = -6; offset <= 6; offset++)
-            PopupMenuItem(
-              key: ValueKey('transpose-offset-$offset'),
-              value: 'offset-$offset',
-              height: 34,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Semantics(
-                label: l10n.readerTransposeSemitones(offset),
-                selected: state.showChords && offset == currentOffset,
-                excludeSemantics: true,
+                selected: pitch == currentPitch,
                 child: Text(
-                  '${offset > 0 ? '+' : ''}$offset${offset == 0 ? '  ★' : ''}',
+                  pitch == originalPitch
+                      ? '$originalLabel  ★'
+                      : '${keyNames[pitch]}${minorKey ? 'm' : ''}',
+                  style: pitch == originalPitch
+                      ? TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.w700,
+                        )
+                      : null,
                 ),
               ),
             ),
+        if (currentPitch == null)
+          PopupMenuItem(
+            value: 'edit-key',
+            child: Text(
+              '${l10n.actionEdit} · ${l10n.editorKeyField}',
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
       ],
       child: Semantics(
         key: const ValueKey('pitch-key-dropdown-label'),
-        label: originalPitch == null
-            ? l10n.readerTransposeSemitones(currentOffset)
+        label: state.readerKeyEstimated
+            ? '${l10n.readerTranspose}, ${l10n.playerEstimatedKey}: $displayedKey'
             : '${l10n.readerTranspose}, $displayedKey',
         button: true,
         excludeSemantics: true,
@@ -1588,12 +1542,14 @@ class _PlayerScreenState extends State<PlayerScreen>
               children: [
                 Flexible(
                   child: Text(
-                    displayedKey,
+                    state.readerKeyEstimated && currentKey != null
+                        ? '≈ $displayedKey'
+                        : displayedKey,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const Icon(Icons.arrow_drop_down),
+                _playerDropdownArrow,
               ],
             ),
           ),
@@ -1704,7 +1660,9 @@ List<Widget> _sectionMarkerLabelWidgets({
   final thumbX = textDirection == TextDirection.rtl
       ? right - trackWidth * progressFraction
       : left + trackWidth * progressFraction;
-  final fontSize = width >= 560 ? 10.0 : 9.0;
+  // Timeline cues are secondary, but they still need to read comfortably at
+  // desktop scale. Keep compact layouts denser while honoring text scaling.
+  final fontSize = width >= 560 ? 12.0 : 10.0;
   // Match the inherited typeface when measuring. Measuring with the default
   // font and then painting with the app's display font made the Positioned
   // label narrower than its rendered text, so Flutter ellipsized headings.
@@ -1766,21 +1724,39 @@ List<Widget> _sectionMarkerLabelWidgets({
     );
   final visible =
       <
-        ({double center, String label, String sectionName, double labelWidth})
+        ({
+          double center,
+          String label,
+          String sectionName,
+          double labelWidth,
+          int row,
+        })
       >[];
   for (final candidate in prioritized) {
-    final collides = visible.any((existing) {
-      final needed = (candidate.labelWidth + existing.labelWidth) / 2 + 5;
-      return (candidate.center - existing.center).abs() < needed;
-    });
-    if (!collides) visible.add(candidate);
+    final rowCount = width >= 560 ? 2 : 1;
+    for (var row = 0; row < rowCount; row++) {
+      final collides = visible.any((existing) {
+        if (existing.row != row) return false;
+        final needed = (candidate.labelWidth + existing.labelWidth) / 2 + 5;
+        return (candidate.center - existing.center).abs() < needed;
+      });
+      if (collides) continue;
+      visible.add((
+        center: candidate.center,
+        label: candidate.label,
+        sectionName: candidate.sectionName,
+        labelWidth: candidate.labelWidth,
+        row: row,
+      ));
+      break;
+    }
   }
   return [
     for (final candidate in visible)
       Positioned(
         left: candidate.center - candidate.labelWidth / 2,
         width: candidate.labelWidth,
-        top: 2,
+        top: 2 + candidate.row * 14,
         child: IgnorePointer(
           child: Text(
             candidate.label,

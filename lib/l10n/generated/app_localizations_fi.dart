@@ -1062,7 +1062,7 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Tyhjennetäänkö kappaleiden ja settilistojen historia?';
+      'Tyhjentää kappaleiden ja settilistojen viimeaikaisen toimintahistorian. Säilyttää tallennetut kappaleet, suosikit, settilistat ja asetukset.';
 
   @override
   String get settingsHistoryCleared => 'Historia tyhjennetty.';

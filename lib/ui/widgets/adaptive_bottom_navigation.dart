@@ -39,14 +39,23 @@ class AdaptiveBottomNavigation extends StatelessWidget {
         if (widths.every(
           (width) => width + 16 <= constraints.maxWidth / labels.length,
         )) {
-          return NavigationBar(
-            height: 80 + ((scaler.scale(14) / 14 - 1).clamp(0, 2) * 48),
-            selectedIndex: selectedIndex,
-            onDestinationSelected: onSelected,
-            destinations: [
-              for (var i = 0; i < labels.length; i++)
-                NavigationDestination(icon: Icon(icons[i]), label: labels[i]),
-            ],
+          return Theme(
+            data: theme.copyWith(splashFactory: NoSplash.splashFactory),
+            child: NavigationBar(
+              animationDuration: const Duration(milliseconds: 180),
+              height: 80 + ((scaler.scale(14) / 14 - 1).clamp(0, 2) * 48),
+              selectedIndex: selectedIndex,
+              onDestinationSelected: onSelected,
+              overlayColor: WidgetStateProperty.resolveWith<Color?>(
+                (states) => states.contains(WidgetState.pressed)
+                    ? Colors.transparent
+                    : null,
+              ),
+              destinations: [
+                for (var i = 0; i < labels.length; i++)
+                  NavigationDestination(icon: Icon(icons[i]), label: labels[i]),
+              ],
+            ),
           );
         }
         return Material(
@@ -72,6 +81,14 @@ class AdaptiveBottomNavigation extends StatelessWidget {
                             button: true,
                             label: labels[i],
                             child: InkWell(
+                              splashFactory: NoSplash.splashFactory,
+                              overlayColor:
+                                  WidgetStateProperty.resolveWith<Color?>(
+                                    (states) =>
+                                        states.contains(WidgetState.pressed)
+                                        ? Colors.transparent
+                                        : null,
+                                  ),
                               onTap: () => onSelected(i),
                               child: ConstrainedBox(
                                 constraints: BoxConstraints(

@@ -677,6 +677,41 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('home tabs suppress the pressed flash and retain focus', (
+    tester,
+  ) async {
+    final controller = _VisualHomeController();
+    addTearDown(controller.dispose);
+    await _pumpHome(tester, controller: controller);
+
+    final online = find.byKey(const ValueKey('home-mode-online'));
+    final inkWell = tester.widget<InkWell>(
+      find.descendant(of: online, matching: find.byType(InkWell)),
+    );
+    expect(inkWell.splashFactory, NoSplash.splashFactory);
+    expect(
+      inkWell.overlayColor?.resolve({WidgetState.pressed}),
+      Colors.transparent,
+    );
+    expect(inkWell.overlayColor?.resolve({WidgetState.focused}), isNull);
+    expect(inkWell.canRequestFocus, isTrue);
+
+    await tester.tap(online);
+    await tester.pumpAndSettle();
+    expect(controller.state.homeListMode, HomeListMode.online);
+    expect(
+      tester
+          .getSemantics(online)
+          .getSemanticsData()
+          .flagsCollection
+          .isSelected
+          .toBoolOrNull(),
+      isTrue,
+    );
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('Online stays visible in compact landscape at 2x text', (
     tester,
   ) async {

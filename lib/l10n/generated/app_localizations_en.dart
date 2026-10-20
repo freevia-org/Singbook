@@ -1058,7 +1058,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Clear your song and setlist history?';
+      'Clears recent song and setlist activity. Keeps saved songs, favorites, setlists, and settings.';
 
   @override
   String get settingsHistoryCleared => 'History cleared.';

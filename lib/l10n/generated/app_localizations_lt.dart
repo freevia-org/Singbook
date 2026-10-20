@@ -1077,7 +1077,7 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Išvalyti dainų ir koncertinių programų istoriją?';
+      'Išvalo naujausią dainų ir koncertinių programų veiklos istoriją. Išsaugo įrašytas dainas, mėgstamiausius, koncertines programas ir nustatymus.';
 
   @override
   String get settingsHistoryCleared => 'Istorija išvalyta.';

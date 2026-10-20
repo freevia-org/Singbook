@@ -31,7 +31,7 @@ String _lyricHighlightStyle(Object? value) =>
       'none',
     }.contains(value)
     ? value! as String
-    : 'contrast';
+    : 'background';
 
 /// Adapts the durable domain controller to the deliberately small UI contract.
 /// Account and file actions are injected by the app shell when those integrations

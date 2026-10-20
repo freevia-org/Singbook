@@ -41,6 +41,7 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
     final state = widget.controller.state;
     final needle = foldForSearch(_query);
     final lists = state.setlists
+        .where((value) => !state.favoritesOnly || value.favorite)
         .where((value) => foldForSearch(value.title).contains(needle))
         .toList();
     return Column(
@@ -76,16 +77,40 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                   ),
                 ),
               ),
+              VerseIconButton(
+                key: const ValueKey('favorites-filter-button'),
+                tooltip: l10n.searchFavoritesTab,
+                selected: state.favoritesOnly,
+                onPressed: () =>
+                    widget.controller.setFavoritesOnly(!state.favoritesOnly),
+                icon: state.favoritesOnly
+                    ? Icons.favorite_rounded
+                    : Icons.favorite_border_rounded,
+              ),
             ],
           ),
         ),
         Expanded(
           child: lists.isEmpty
-              ? VerseEmptyState(
-                  icon: Icons.queue_music_rounded,
-                  title: state.setlists.isEmpty
-                      ? l10n.setlistsEmpty
-                      : l10n.setlistsEmptySearch,
+              ? Column(
+                  children: [
+                    Expanded(
+                      child: VerseEmptyState(
+                        icon: Icons.queue_music_rounded,
+                        title: state.setlists.isEmpty
+                            ? l10n.setlistsEmpty
+                            : l10n.setlistsEmptySearch,
+                      ),
+                    ),
+                    LibraryCreateShortcut(
+                      key: const ValueKey('setlists-create-shortcut'),
+                      label: l10n.setlistCreate,
+                      margin: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+                      onPressed: () => widget.controller.createSetlist(
+                        name: l10n.setlistCreate,
+                      ),
+                    ),
+                  ],
                 )
               : LayoutBuilder(
                   builder: (context, constraints) {
@@ -103,7 +128,7 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                     return ListView.builder(
                       key: wide ? const ValueKey('tablet-setlists-grid') : null,
                       padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-                      itemCount: (lists.length + columns - 1) ~/ columns,
+                      itemCount: (lists.length + columns) ~/ columns,
                       itemBuilder: (context, rowIndex) => Padding(
                         padding: const EdgeInsets.only(bottom: 8),
                         child: Row(
@@ -123,6 +148,17 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                                 width: cardWidth.toDouble(),
                                 child: index < lists.length
                                     ? _setlistCard(context, l10n, lists[index])
+                                    : index == lists.length
+                                    ? LibraryCreateShortcut(
+                                        key: const ValueKey(
+                                          'setlists-create-shortcut',
+                                        ),
+                                        label: l10n.setlistCreate,
+                                        onPressed: () =>
+                                            widget.controller.createSetlist(
+                                              name: l10n.setlistCreate,
+                                            ),
+                                      )
                                     : const SizedBox.shrink(),
                               ),
                             );

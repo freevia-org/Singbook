@@ -1065,7 +1065,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Törlöd a dalok és setlisták előzményeit?';
+      'Törli a dalok és setlisták legutóbbi tevékenységeinek előzményeit. Megőrzi a mentett dalokat, kedvenceket, setlistákat és beállításokat.';
 
   @override
   String get settingsHistoryCleared => 'Előzmények törölve.';

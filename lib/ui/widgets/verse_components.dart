@@ -210,6 +210,72 @@ class VerseEmptyState extends StatelessWidget {
   }
 }
 
+/// A consistent final list row for creating another library item.
+class LibraryCreateShortcut extends StatelessWidget {
+  const LibraryCreateShortcut({
+    super.key,
+    required this.label,
+    required this.onPressed,
+    this.margin = EdgeInsets.zero,
+  });
+
+  final String label;
+  final VoidCallback onPressed;
+  final EdgeInsetsGeometry margin;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Semantics(
+      button: true,
+      label: label,
+      onTap: onPressed,
+      child: ExcludeSemantics(
+        child: Card(
+          margin: margin,
+          child: InkWell(
+            onTap: onPressed,
+            borderRadius: BorderRadius.circular(12),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 72),
+              child: Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(16, 10, 16, 10),
+                child: Row(
+                  children: [
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: colors.primaryContainer.withValues(alpha: .65),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: SizedBox(
+                        width: 44,
+                        height: 44,
+                        child: Icon(
+                          Icons.add_rounded,
+                          color: colors.primary,
+                          size: 26,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Text(
+                        label,
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class SongRow extends StatelessWidget {
   const SongRow({
     super.key,

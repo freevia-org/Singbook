@@ -52,7 +52,10 @@ void main() {
             widget is DropdownButton<String> &&
             widget.items!.any((item) => item.value == 'contrast'),
       );
-      expect(tester.widget<DropdownButton<String>>(dropdown).value, 'contrast');
+      expect(
+        tester.widget<DropdownButton<String>>(dropdown).value,
+        'background',
+      );
       for (final choice in [
         ('backgroundUnderline', l10n.settingsHighlightBackgroundUnderline),
         ('background', l10n.settingsHighlightBackground),

@@ -1035,7 +1035,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsClearHistory => '清除历史记录';
 
   @override
-  String get settingsClearHistoryConfirm => '清除歌曲和歌单历史记录？';
+  String get settingsClearHistoryConfirm => '清除歌曲和歌单的最近活动记录。保留已保存的歌曲、收藏、歌单和设置。';
 
   @override
   String get settingsHistoryCleared => '历史记录已清除。';

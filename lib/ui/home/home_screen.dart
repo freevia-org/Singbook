@@ -397,26 +397,16 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
               ),
             ),
           ),
-          if (state.homeListMode != HomeListMode.online &&
-              !state.songsConflictFilter)
-            Semantics(
-              button: true,
+          if (!state.songsConflictFilter)
+            VerseIconButton(
+              key: const ValueKey('favorites-filter-button'),
+              tooltip: l10n.searchFavoritesTab,
               selected: state.favoritesOnly,
-              label: l10n.searchFavoritesTab,
-              child: IconButton(
-                tooltip: l10n.searchFavoritesTab,
-                constraints: const BoxConstraints.tightFor(
-                  width: 48,
-                  height: 48,
-                ),
-                onPressed: () =>
-                    widget.controller.setFavoritesOnly(!state.favoritesOnly),
-                icon: Icon(
-                  state.favoritesOnly
-                      ? Icons.favorite_rounded
-                      : Icons.favorite_border_rounded,
-                ),
-              ),
+              onPressed: () =>
+                  widget.controller.setFavoritesOnly(!state.favoritesOnly),
+              icon: state.favoritesOnly
+                  ? Icons.favorite_rounded
+                  : Icons.favorite_border_rounded,
             ),
         ],
       ),
@@ -1120,6 +1110,12 @@ class _HomeModeSelectorState extends State<_HomeModeSelector> {
           selected: selected,
           child: InkWell(
             borderRadius: BorderRadius.circular(24),
+            splashFactory: NoSplash.splashFactory,
+            overlayColor: WidgetStateProperty.resolveWith<Color?>(
+              (states) => states.contains(WidgetState.pressed)
+                  ? Colors.transparent
+                  : null,
+            ),
             onTap: () => widget.onChanged(mode),
             child: AnimatedContainer(
               key: ValueKey('home-mode-${mode.name}-segment'),

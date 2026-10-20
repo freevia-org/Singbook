@@ -1100,7 +1100,14 @@ Map<String, Object?> selectBackupPreferences(Map<String, Object?> settings) {
 bool _validBackupPreference(String key, Object? value) => switch (key) {
   'themeMode' => const {'system', 'light', 'dark'}.contains(value),
   'palette' => const {'navy', 'sage', 'ocean', 'clay', 'plum'}.contains(value),
-  'fontFamily' => const {'system', 'serif', 'mono'}.contains(value),
+  'fontFamily' => const {
+    'system',
+    'serif',
+    'mono',
+    'lora',
+    'nunito',
+    'sourceSans',
+  }.contains(value),
   'readerFontSize' =>
     value is num && value.isFinite && value >= 18 && value <= 36,
   'locale' =>

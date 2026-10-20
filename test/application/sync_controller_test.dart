@@ -305,7 +305,10 @@ void main() {
     addTearDown(other.close);
     await other.saveSong('s', 'base');
     await other.sync.sync();
-    final app = await start(delay: const Duration(seconds: 1));
+    // This test stages simultaneous local and remote edits before the next
+    // explicit sync. Keep the debounce out of the scenario so slower Windows
+    // runners cannot auto-sync the local edit between those steps.
+    final app = await start(delay: const Duration(hours: 1));
     await app.syncNow();
     await app.saveSong((await app.loadSong('s'))!.copyWith(body: 'mine'));
     await other.editSong('s', 'theirs');

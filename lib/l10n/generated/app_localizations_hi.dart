@@ -1057,7 +1057,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'गीतों और गीत-सूचियों का इतिहास मिटाएँ?';
+      'गीतों और गीत-सूचियों की हाल की गतिविधि का इतिहास मिटाता है। सहेजे गए गीत, पसंदीदा, गीत-सूचियाँ और सेटिंग्स बनी रहती हैं।';
 
   @override
   String get settingsHistoryCleared => 'इतिहास मिटा दिया गया।';

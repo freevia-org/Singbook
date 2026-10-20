@@ -1071,7 +1071,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Wyczyścić historię utworów i list?';
+      'Czyści ostatnią historię aktywności utworów i setlist. Zachowuje zapisane utwory, ulubione, setlisty i ustawienia.';
 
   @override
   String get settingsHistoryCleared => 'Historia została wyczyszczona.';

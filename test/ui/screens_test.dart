@@ -246,7 +246,7 @@ void main() {
     expect(find.text(l10n.searchSubmit), findsNothing);
   });
 
-  testWidgets('Songs search plus Favorites aligns with the Setlists search', (
+  testWidgets('Songs and Setlists search headers align with Home Favorites', (
     tester,
   ) async {
     var activeTab = VerseTab.home;
@@ -262,9 +262,6 @@ void main() {
     addTearDown(c.dispose);
     await pumpShell(tester, c);
     final homeWidth = tester.getSize(find.byType(TextField).first).width;
-    final favoritesWidth = tester
-        .getSize(find.byTooltip(l10nOf(tester).searchFavoritesTab))
-        .width;
 
     activeTab = VerseTab.songs;
     c.refresh();
@@ -277,7 +274,7 @@ void main() {
     final setlistsWidth = tester.getSize(find.byType(TextField).first).width;
 
     expect(songsWidth, homeWidth);
-    expect(setlistsWidth, homeWidth + favoritesWidth);
+    expect(setlistsWidth, homeWidth);
   });
 
   testWidgets('setlist import is on the Setlists screen', (tester) async {

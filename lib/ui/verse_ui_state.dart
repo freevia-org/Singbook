@@ -485,7 +485,7 @@ class VerseUiState {
     this.palette = 'navy',
     this.fontFamily = 'system',
     this.lyricsFontSize = 24,
-    this.lyricHighlightStyle = 'contrast',
+    this.lyricHighlightStyle = 'background',
     this.showChords = true,
     this.showSections = true,
     this.playerControlsExpanded = true,

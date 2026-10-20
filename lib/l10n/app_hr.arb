@@ -442,7 +442,7 @@
   "settingsPrivacy": "Privatnost",
   "settingsLegal": "Pravne informacije",
   "settingsClearHistory": "Izbriši povijest",
-  "settingsClearHistoryConfirm": "Izbrisati povijest pjesama i setlista?",
+  "settingsClearHistoryConfirm": "Briše nedavnu povijest aktivnosti pjesama i setlista. Zadržava spremljene pjesme, favorite, setliste i postavke.",
   "settingsHistoryCleared": "Povijest je izbrisana.",
   "accountTitle": "Račun i sinkronizacija",
   "accountUnavailable": "Za sinkronizaciju je potrebna verzija Singbooka s konfiguriranom prijavom putem Googlea. Ova verzija čuva pjesme samo na ovom uređaju.",

@@ -33,7 +33,7 @@ void main() {
   test(
     'lyric highlight defaults safely and persists explicit styles',
     () async {
-      expect(ui.state.lyricHighlightStyle, 'contrast');
+      expect(ui.state.lyricHighlightStyle, 'background');
       for (final invalid in [
         null,
         'unknown',
@@ -41,7 +41,7 @@ void main() {
         {'bad': true},
       ]) {
         await app.setSetting('lyricHighlightStyle', invalid);
-        expect(ui.state.lyricHighlightStyle, 'contrast');
+        expect(ui.state.lyricHighlightStyle, 'background');
       }
       for (final style in [
         'backgroundUnderline',

@@ -12,6 +12,10 @@ Set<String> contributingProviderIds(SongDocument song) {
   if (chordSources is List) {
     sourceIds.addAll(chordSources.whereType<String>());
   }
+  final sectionSources = song.extra['sectionSourceIds'];
+  if (sectionSources is List) {
+    sourceIds.addAll(sectionSources.whereType<String>());
+  }
   for (final origin in jsonMap(song.extra['fieldOrigins']).entries) {
     final value = song.metadata[origin.key];
     if (value != null && value != '' && origin.value is String) {

@@ -22,6 +22,7 @@ import 'player/player_screen.dart';
 import 'settings/account_section.dart';
 import 'settings/backup_section.dart';
 import 'settings/settings_screen.dart';
+import 'theme/verse_fonts.dart';
 import 'theme/verse_theme.dart';
 import 'verse_ui_state.dart';
 import 'widgets/singbook_wordmark.dart';
@@ -99,7 +100,7 @@ class _VerseAppState extends State<VerseApp> {
     final key = (_appearance.palette, _appearance.fontFamily);
     if (key == _themeKey) return;
     _themeKey = key;
-    final family = _fontFamily(_appearance.fontFamily);
+    final family = verseFontFamily(_appearance.fontFamily);
     _light = verseTheme(
       brightness: Brightness.light,
       palette: _appearance.palette,
@@ -307,12 +308,6 @@ class _AppAppearance {
   @override
   int get hashCode => Object.hash(palette, fontFamily, themeMode, languageCode);
 }
-
-String _fontFamily(String font) => switch (font) {
-  'serif' => 'serif',
-  'mono' => 'monospace',
-  _ => 'sans-serif',
-};
 
 class _StartupError extends StatelessWidget {
   const _StartupError({required this.onRetry});
@@ -655,56 +650,48 @@ class _VerseAppShellState extends State<VerseAppShell>
     switch (state.activeTab) {
       case VerseTab.songs:
       case VerseTab.home:
-        actions.addAll([
-          PopupMenuButton<String>(
-            key: const ValueKey('header-overflow-menu'),
-            tooltip: l10n.navMore,
-            icon: const Icon(Icons.more_vert_rounded),
-            onSelected: (value) {
-              if (value == 'new-song') {
-                unawaited(widget.controller.createSong());
-              } else if (value == 'import-chordpro') {
-                unawaited(widget.controller.importChordPro());
-              }
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 'new-song',
-                child: Text(l10n.menuTypeNewSong),
-              ),
-              PopupMenuItem(
-                value: 'import-chordpro',
-                child: Text(l10n.settingsImportChordPro),
-              ),
-            ],
-          ),
-        ]);
       case VerseTab.setlists:
-        actions.addAll([
-          IconButton.filledTonal(
-            key: const ValueKey('add-header-button'),
-            tooltip: l10n.setlistCreate,
-            onPressed: () =>
-                widget.controller.createSetlist(name: l10n.setlistCreate),
-            icon: const Icon(Icons.add_rounded),
-          ),
+        final setlists = state.activeTab == VerseTab.setlists;
+        actions.add(
           PopupMenuButton<String>(
             key: const ValueKey('header-overflow-menu'),
             tooltip: l10n.navMore,
             icon: const Icon(Icons.more_vert_rounded),
             onSelected: (value) {
-              if (value == 'import-setlist') {
-                unawaited(widget.controller.importSetlist());
+              if (value == 'create') {
+                if (setlists) {
+                  unawaited(
+                    widget.controller.createSetlist(name: l10n.setlistCreate),
+                  );
+                } else {
+                  unawaited(widget.controller.createSong());
+                }
+              } else if (value == 'import') {
+                if (setlists) {
+                  unawaited(widget.controller.importSetlist());
+                } else {
+                  unawaited(widget.controller.importChordPro());
+                }
               }
             },
             itemBuilder: (context) => [
               PopupMenuItem(
-                value: 'import-setlist',
-                child: Text('${l10n.settingsImportSetlist} (.osts)'),
+                value: 'create',
+                child: Text(
+                  setlists ? l10n.setlistCreate : l10n.menuTypeNewSong,
+                ),
+              ),
+              PopupMenuItem(
+                value: 'import',
+                child: Text(
+                  setlists
+                      ? '${l10n.settingsImportSetlist} (.osts)'
+                      : l10n.settingsImportChordPro,
+                ),
               ),
             ],
           ),
-        ]);
+        );
       case VerseTab.settings:
         break;
     }

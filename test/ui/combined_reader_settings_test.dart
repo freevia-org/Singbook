@@ -143,7 +143,7 @@ void main() {
       expect(tester.state(find.byType(PlayerScreen)), same(player));
       expect(position().pixels, closeTo(before, 1));
       expect(
-        find.byKey(const ValueKey('player-controls-panel')),
+        find.byKey(const ValueKey('player-controls-handle')),
         findsOneWidget,
       );
       await tester.binding.handlePopRoute();

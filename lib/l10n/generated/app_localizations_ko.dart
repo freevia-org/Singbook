@@ -1041,7 +1041,8 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsClearHistory => '기록 지우기';
 
   @override
-  String get settingsClearHistoryConfirm => '노래 및 세트리스트 기록을 지울까요?';
+  String get settingsClearHistoryConfirm =>
+      '노래와 세트리스트의 최근 활동 기록을 지웁니다. 저장된 노래, 즐겨찾기, 세트리스트 및 설정은 유지됩니다.';
 
   @override
   String get settingsHistoryCleared => '기록을 지웠습니다.';

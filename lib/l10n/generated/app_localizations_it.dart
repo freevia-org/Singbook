@@ -1067,7 +1067,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Cancellare la cronologia di brani e scalette?';
+      'Cancella le attività recenti di brani e scalette. Conserva i brani salvati, i preferiti, le scalette e le impostazioni.';
 
   @override
   String get settingsHistoryCleared => 'Cronologia cancellata.';

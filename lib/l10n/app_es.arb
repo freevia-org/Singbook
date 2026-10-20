@@ -442,7 +442,7 @@
   "settingsPrivacy": "Privacidad",
   "settingsLegal": "Legal",
   "settingsClearHistory": "Borrar historial",
-  "settingsClearHistoryConfirm": "¿Borrar el historial de canciones y listas?",
+  "settingsClearHistoryConfirm": "Borra la actividad reciente de canciones y listas. Conserva las canciones guardadas, los favoritos, las listas y los ajustes.",
   "settingsHistoryCleared": "Historial borrado.",
   "accountTitle": "Cuenta y sincronización",
   "accountUnavailable": "La sincronización requiere una versión de Singbook configurada para iniciar sesión con Google. Esta versión solo guarda tus canciones en este dispositivo.",
