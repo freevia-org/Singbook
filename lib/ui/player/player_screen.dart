@@ -7,10 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show ScrollDirection;
 import 'package:flutter/services.dart';
 
+import '../../domain/arrangement.dart' show transposeChord;
 import '../../l10n/generated/app_localizations.dart';
 import '../format.dart';
 import '../library_actions.dart';
 import '../player_section_timeline.dart';
+import '../settings/settings_screen.dart' show showPlayerSettings;
 import '../verse_ui_state.dart';
 import '../widgets/slider_overlay_boundary.dart';
 import 'player_lyric_line.dart';
@@ -62,21 +64,16 @@ int? _keyPitchClass(String? key) {
       12;
 }
 
-int _transposeMenuOffset(int offset) {
-  final pitch = offset % 12;
-  // Keep either tritone direction when already selected, including legacy
-  // saved offsets. Other octave-equivalent offsets use the nearest choice.
-  if (pitch == 6 && offset < 0) return -6;
-  return pitch > 6 ? pitch - 12 : pitch;
+String? _transposeKey(VerseUiState state) {
+  // The reader key already includes estimates, setlist overrides and transpose.
+  if (_keyPitchClass(state.readerKey) != null) return state.readerKey;
+  final savedKey = state.song?.key;
+  return _keyPitchClass(savedKey) == null
+      ? null
+      : transposeChord(savedKey!, state.readerTranspose);
 }
 
-String _transposeLabel(VerseUiState state) {
-  if (_keyPitchClass(state.song?.key) != null) {
-    return state.readerKey ?? state.song!.key!;
-  }
-  final offset = _transposeMenuOffset(state.readerTranspose);
-  return offset > 0 ? '+$offset' : '$offset';
-}
+const _playerDropdownArrow = Icon(Icons.arrow_drop_up_rounded, size: 20);
 
 /// The lyric reader and player: scrolling lyrics, a seek bar with section
 /// markers and transport controls.
@@ -955,6 +952,12 @@ class _PlayerScreenState extends State<PlayerScreen>
                             }
                           },
                         ),
+                        IconButton(
+                          key: const ValueKey('player-settings-button'),
+                          tooltip: l10n.settingsPlayer,
+                          onPressed: () => showPlayerSettings(context, controller),
+                          icon: const Icon(Icons.settings_outlined),
+                        ),
                       ],
                     ),
                     if (metadata.isNotEmpty)
@@ -1345,7 +1348,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                     maxLines: 1,
                     softWrap: false,
                   ),
-                  const Icon(Icons.arrow_drop_up_rounded, size: 20),
+                  _playerDropdownArrow,
                 ],
               ),
             ),
@@ -1500,44 +1503,63 @@ class _PlayerScreenState extends State<PlayerScreen>
       'B♭',
       'B',
     ];
-    final originalKey = state.song?.key;
+    final currentKey = _transposeKey(state);
+    final savedKey = state.song?.key;
+    final originalKey = _keyPitchClass(savedKey) != null
+        ? savedKey
+        : currentKey == null
+        ? null
+        : transposeChord(currentKey, -state.readerTranspose);
     final originalPitch = _keyPitchClass(originalKey);
-    final int currentPitch =
-        _keyPitchClass(state.readerKey) ?? originalPitch ?? 0;
+    final currentPitch = _keyPitchClass(currentKey);
+    final keyStyle = _keyPitchClass(savedKey) != null ? savedKey : currentKey;
     final minorKey =
-        originalKey != null &&
+        keyStyle != null &&
         RegExp(
           r'^[A-Ga-g][#b♯♭]?\s*(?:m|min|minor)$',
-        ).hasMatch(originalKey.trim());
+        ).hasMatch(keyStyle.trim());
     final keyNames =
-        originalKey?.contains('b') == true || originalKey?.contains('♭') == true
+        keyStyle?.contains('b') == true || keyStyle?.contains('♭') == true
         ? flatNames
         : sharpNames;
-    final displayedKey = _transposeLabel(state);
-    final currentOffset = _transposeMenuOffset(state.readerTranspose);
+    final originalLabel = _keyPitchClass(savedKey) != null
+        ? savedKey
+        : originalPitch == null
+        ? null
+        : '${keyNames[originalPitch]}${minorKey ? 'm' : ''}';
+    final displayedKey = currentKey ?? l10n.unknownValue;
     return PopupMenuButton<String>(
       key: const ValueKey('pitch-key-dropdown'),
-      tooltip: l10n.readerTranspose,
+      tooltip: state.readerKeyEstimated
+          ? '${l10n.playerEstimatedKey}: $displayedKey'
+          : l10n.readerTranspose,
       position: PopupMenuPosition.over,
       constraints: _playerPopupConstraints(context),
       menuPadding: EdgeInsets.zero,
-      initialValue: originalPitch == null
-          ? 'offset-$currentOffset'
-          : 'pitch-$currentPitch',
+      initialValue: currentPitch == null ? null : 'pitch-$currentPitch',
       onSelected: (action) async {
-        if (action.startsWith('offset-')) {
-          final target = int.parse(action.substring('offset-'.length));
-          final delta = target - state.readerTranspose;
-          if (delta != 0) await controller.transpose(delta);
+        final latest = controller.state;
+        if (latest.song?.id != state.song?.id) return;
+        if (action == 'edit-key') {
+          final song = latest.song;
+          if (song != null) await controller.editSong(song.id);
           return;
         }
+        final latestPitch = _keyPitchClass(_transposeKey(latest));
+        if (latestPitch == null) return;
         final targetPitch = int.parse(action.substring('pitch-'.length));
-        var delta = (targetPitch - currentPitch + 12) % 12;
-        if (delta > 6) delta -= 12;
+        if (targetPitch == latestPitch) return;
+        var delta = (targetPitch - latestPitch + 12) % 12;
+        if (targetPitch == (latestPitch - latest.readerTranspose) % 12) {
+          // Restore the untransposed reader key, including a tritone offset.
+          delta = -latest.readerTranspose;
+        } else if (delta > 6) {
+          delta -= 12;
+        }
         if (delta != 0) await controller.transpose(delta);
       },
       itemBuilder: (context) => [
-        if (originalPitch != null)
+        if (currentPitch != null)
           for (var pitch = 0; pitch < 12; pitch++)
             PopupMenuItem(
               key: ValueKey('transpose-pitch-$pitch'),
@@ -1546,7 +1568,7 @@ class _PlayerScreenState extends State<PlayerScreen>
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Text(
                 pitch == originalPitch
-                    ? '${originalKey!}  ★'
+                    ? '$originalLabel  ★'
                     : '${keyNames[pitch]}${minorKey ? 'm' : ''}',
                 style: pitch == originalPitch
                     ? TextStyle(
@@ -1556,27 +1578,20 @@ class _PlayerScreenState extends State<PlayerScreen>
                     : null,
               ),
             ),
-        if (originalPitch == null)
-          for (var offset = -6; offset <= 6; offset++)
-            PopupMenuItem(
-              key: ValueKey('transpose-offset-$offset'),
-              value: 'offset-$offset',
-              height: 34,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Semantics(
-                label: l10n.readerTransposeSemitones(offset),
-                selected: state.showChords && offset == currentOffset,
-                excludeSemantics: true,
-                child: Text(
-                  '${offset > 0 ? '+' : ''}$offset${offset == 0 ? '  ★' : ''}',
-                ),
-              ),
+        if (currentPitch == null)
+          PopupMenuItem(
+            value: 'edit-key',
+            child: Text(
+              '${l10n.actionEdit} · ${l10n.editorKeyField}',
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
+          ),
       ],
       child: Semantics(
         key: const ValueKey('pitch-key-dropdown-label'),
-        label: originalPitch == null
-            ? l10n.readerTransposeSemitones(currentOffset)
+        label: state.readerKeyEstimated
+            ? '${l10n.readerTranspose}, ${l10n.playerEstimatedKey}: $displayedKey'
             : '${l10n.readerTranspose}, $displayedKey',
         button: true,
         excludeSemantics: true,
@@ -1594,7 +1609,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const Icon(Icons.arrow_drop_down),
+                _playerDropdownArrow,
               ],
             ),
           ),

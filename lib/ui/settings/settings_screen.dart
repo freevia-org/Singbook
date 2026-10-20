@@ -53,6 +53,21 @@ const _languageNames = <String, String>{
 
 enum _SettingsSection { appearance, player, sources, account }
 
+/// Opens Player settings above the reader without changing its route or song.
+Future<void> showPlayerSettings(
+  BuildContext context,
+  VerseUiController controller,
+) => Navigator.of(context).push<void>(
+  MaterialPageRoute(
+    builder: (_) => _SettingsSectionScreen(
+      section: _SettingsSection.player,
+      controller: controller,
+      backupSection: () => null,
+      fromReader: true,
+    ),
+  ),
+);
+
 String _sectionTitle(AppLocalizations l10n, _SettingsSection section) =>
     switch (section) {
       _SettingsSection.appearance => l10n.settingsAppearance,
@@ -438,10 +453,12 @@ class _SettingsSectionScreen extends StatefulWidget {
     required this.section,
     required this.controller,
     required this.backupSection,
-  });
+    this.fromReader = false,
+  }) : assert(!fromReader || section == _SettingsSection.player);
   final _SettingsSection section;
   final VerseUiController controller;
   final Widget? Function() backupSection;
+  final bool fromReader;
 
   @override
   State<_SettingsSectionScreen> createState() => _SettingsSectionScreenState();
@@ -470,6 +487,9 @@ class _SettingsSectionScreenState extends State<_SettingsSectionScreen> {
   void _followShellNavigation() {
     final state = widget.controller.state;
     if (_leaving ||
+        (widget.fromReader &&
+            widget.section == _SettingsSection.player &&
+            state.route == VerseRoute.reader) ||
         (state.route == VerseRoute.main &&
             state.activeTab == VerseTab.settings)) {
       return;
