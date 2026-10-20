@@ -35,6 +35,8 @@ New-Item -ItemType Directory -Path $EvidenceDirectory -Force | Out-Null
 $process = $null
 $startupPassed = $false
 $mainWindowObserved = $false
+$mainWindowTitle = $null
+$databaseHeaderValid = $false
 $gracefulClose = $false
 $forcedStop = $false
 $failure = $null
@@ -62,23 +64,17 @@ try {
         }
         $database = Get-Item -LiteralPath $libraryPath -ErrorAction SilentlyContinue
         if ($database -and $database.Length -ge 16) {
-            $stream = [IO.File]::OpenRead($libraryPath)
-            try {
-                $header = [byte[]]::new(16)
-                [void]$stream.Read($header, 0, $header.Length)
-            } finally {
-                $stream.Dispose()
-            }
-            if ([Text.Encoding]::ASCII.GetString($header) -eq "SQLite format 3`0") {
-                $startupPassed = $true
-                $mainWindowObserved = $process.MainWindowHandle -ne [IntPtr]::Zero
-                break
-            }
+            $process.Refresh()
+            $mainWindowObserved = $process.MainWindowHandle -ne [IntPtr]::Zero
+            $mainWindowTitle = $process.MainWindowTitle
+            $startupPassed = $mainWindowObserved -and
+                -not [string]::IsNullOrWhiteSpace($mainWindowTitle)
+            if ($startupPassed) { break }
         }
         Start-Sleep -Milliseconds 500
     }
     if (-not $startupPassed) {
-        throw 'Packaged app did not create a valid SQLite library within 45 seconds.'
+        throw 'Packaged app did not create a main window and isolated SQLite library within 45 seconds.'
     }
 } catch {
     $failure = $_.Exception.Message
@@ -101,17 +97,33 @@ try {
             if (-not $failure) { $failure = "App cleanup failed: $($_.Exception.Message)" }
         }
     }
+    try {
+        $stream = [IO.File]::OpenRead($libraryPath)
+        try {
+            $header = [byte[]]::new(16)
+            [void]$stream.Read($header, 0, $header.Length)
+        } finally {
+            $stream.Dispose()
+        }
+        $databaseHeaderValid = [Text.Encoding]::ASCII.GetString($header) -eq "SQLite format 3`0"
+        if (-not $databaseHeaderValid -and -not $failure) {
+            $failure = 'Packaged app did not create a valid SQLite library.'
+        }
+    } catch {
+        if (-not $failure) { $failure = "Could not validate the closed SQLite library: $($_.Exception.Message)" }
+    }
     $receipt = [ordered]@{
         result = if ($failure) { 'failed' } else { 'passed' }
-        sourceCommit = (& git -C $workspace rev-parse HEAD).Trim()
+        checkoutCommit = (& git -C $workspace rev-parse HEAD).Trim()
         sourceTree = (& git -C $workspace rev-parse 'HEAD^{tree}').Trim()
         executable = $executable
         runtimeDirectory = $runtimeRoot
         explicitLibraryPath = $libraryPath
         isolatedAppData = $profileDirectory
         developerToolPathExcluded = $true
-        databaseHeaderValid = $startupPassed
+        databaseHeaderValid = $databaseHeaderValid
         mainWindowObserved = $mainWindowObserved
+        mainWindowTitle = $mainWindowTitle
         gracefulClose = $gracefulClose
         forcedStop = $forcedStop
         elapsedMilliseconds = $stopwatch.ElapsedMilliseconds
