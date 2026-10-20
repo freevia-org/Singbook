@@ -259,7 +259,7 @@ void main() {
       await tester.pumpAndSettle();
       final tile = find.widgetWithText(
         SwitchListTile,
-        l10n.settingsDefaultAutoscroll,
+        l10n.settingsPlayerAutoscroll,
       );
       await tester.scrollUntilVisible(
         tile,
@@ -299,7 +299,7 @@ void main() {
       await tester.pumpAndSettle();
       final tile = find.widgetWithText(
         SwitchListTile,
-        l10n.settingsDefaultAutoscroll,
+        l10n.settingsPlayerAutoscroll,
       );
       await tester.scrollUntilVisible(
         tile,

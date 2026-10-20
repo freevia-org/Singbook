@@ -260,6 +260,89 @@ void main() {
   });
 
   group('portable backup preferences', () {
+    for (final view in ['recent', 'library']) {
+      for (final favoritesOnly in [true, false]) {
+        test(
+          '$view Favorites filter survives a v3 archive round trip ($favoritesOnly)',
+          () {
+            final preferences = {
+              'startupSongsView': 'last',
+              'lastSongsView': view,
+              'lastSongsFavoritesOnly': favoritesOnly,
+            };
+            final restored = decodeLibraryPackage(
+              encodeLibraryPackage([], [], preferences: preferences),
+            );
+            expect(restored.schemaVersion, 3);
+            expect(restored.preferences, preferences);
+          },
+        );
+      }
+    }
+
+    test('missing Favorites preference stays optional in older backups', () {
+      final restored = decodeLibraryPackage(
+        encodeLibraryPackage(
+          [],
+          [],
+          preferences: {
+            'startupSongsView': 'last',
+            'lastSongsView': 'favorites',
+          },
+        ),
+      );
+      expect(restored.preferences, {
+        'startupSongsView': 'last',
+        'lastSongsView': 'favorites',
+      });
+      expect(
+        restored.preferences!.containsKey('lastSongsFavoritesOnly'),
+        isFalse,
+      );
+    });
+
+    for (final invalid in [
+      null,
+      'true',
+      1,
+      ['true'],
+      {'enabled': true},
+    ]) {
+      test('Favorites backup filter rejects invalid type $invalid', () {
+        final exported = decodeLibraryPackage(
+          encodeLibraryPackage(
+            [],
+            [],
+            preferences: {
+              'lastSongsView': 'recent',
+              'lastSongsFavoritesOnly': invalid,
+            },
+          ),
+        );
+        expect(exported.preferences, {'lastSongsView': 'recent'});
+        final manifest = {
+          'schemaVersion': 3,
+          'songs': <String, String>{},
+          'hashes': <String, String>{},
+          'setlists': <Object>[],
+          'preferences': {'lastSongsFavoritesOnly': invalid},
+        };
+        final archive = Archive()
+          ..add(
+            ArchiveFile.bytes(
+              'manifest.json',
+              utf8.encode(jsonEncode(manifest)),
+            ),
+          );
+        expect(
+          () => decodeLibraryPackage(
+            Uint8List.fromList(ZipEncoder().encodeBytes(archive)),
+          ),
+          throwsA(formatError('invalid_archive')),
+        );
+      });
+    }
+
     test(
       'v1/v2 archives remain readable and v3 carries only validated keys',
       () {

@@ -588,7 +588,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String get setlistFavoriteRemove => 'Ukloni setlistu iz favorita';
 
   @override
-  String get setlistShare => 'Podijeli kao datoteku setliste';
+  String get setlistShare => 'Podijeli kao OpenSong';
 
   @override
   String get setlistSharePdf => 'Podijeli kao PDF';
@@ -1224,6 +1224,30 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get settingsLyricsPreviewExample =>
       'Kad jutro svane, ponovno ćemo zapjevati.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Jutarnja pjesma';
+
+  @override
+  String get settingsPreviewArtist => 'Primjer aranžmana';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Kad jutro svane';
+
+  @override
+  String get settingsPreviewNextLine => 'Ponovno ćemo zapjevati.';
+
+  @override
+  String get settingsPlayerSections => 'Naslovi odjeljaka';
+
+  @override
+  String get settingsPlayerControls => 'Ploča za reprodukciju';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Automatsko pomicanje';
+
+  @override
+  String get settingsSystemShort => 'Uređaj';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -2016,6 +2040,12 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'Posljednji otvoreni';
+
+  @override
+  String get playerFullScreen => 'Cijeli zaslon';
+
+  @override
+  String get playerExitFullScreen => 'Izađi iz cijelog zaslona';
 
   @override
   String get playerExpandControls => 'Prikaži kontrole reprodukcije';

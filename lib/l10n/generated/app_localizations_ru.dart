@@ -589,7 +589,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get setlistFavoriteRemove => 'Убрать сет-лист из избранного';
 
   @override
-  String get setlistShare => 'Поделиться файлом сет-листа';
+  String get setlistShare => 'Поделиться как OpenSong';
 
   @override
   String get setlistSharePdf => 'Поделиться как PDF';
@@ -1235,6 +1235,30 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get settingsLyricsPreviewExample =>
       'Когда наступит утро, мы снова запоём.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Утренняя песня';
+
+  @override
+  String get settingsPreviewArtist => 'Пример аранжировки';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Когда наступит утро';
+
+  @override
+  String get settingsPreviewNextLine => 'Мы снова запоём.';
+
+  @override
+  String get settingsPlayerSections => 'Заголовки разделов';
+
+  @override
+  String get settingsPlayerControls => 'Панель воспроизведения';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Автопрокрутка';
+
+  @override
+  String get settingsSystemShort => 'Устройство';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -2031,6 +2055,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'Последний открытый';
+
+  @override
+  String get playerFullScreen => 'Полный экран';
+
+  @override
+  String get playerExitFullScreen => 'Выйти из полноэкранного режима';
 
   @override
   String get playerExpandControls =>

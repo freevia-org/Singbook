@@ -52,6 +52,7 @@ const backupPreferenceKeys = <String>{
   'defaultView',
   'startupSongsView',
   'lastSongsView',
+  'lastSongsFavoritesOnly',
   'catalog',
   'providers',
 };
@@ -1107,6 +1108,7 @@ bool _validBackupPreference(String key, Object? value) => switch (key) {
   'showChords' ||
   'showSections' ||
   'playerControlsExpanded' ||
+  'lastSongsFavoritesOnly' ||
   'autoscroll' => value is bool,
   'timingMode' => const {'estimated', 'timed', 'manual'}.contains(value),
   'defaultView' => const {

@@ -595,7 +595,7 @@ class AppLocalizationsSl extends AppLocalizations {
       'Odstrani koncertni seznam iz priljubljenih';
 
   @override
-  String get setlistShare => 'Deli kot datoteko koncertnega seznama';
+  String get setlistShare => 'Deli kot OpenSong';
 
   @override
   String get setlistSharePdf => 'Deli kot PDF';
@@ -1237,6 +1237,30 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get settingsLyricsPreviewExample => 'Ko pride jutro, bomo spet peli.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Jutranja pesem';
+
+  @override
+  String get settingsPreviewArtist => 'Primer aranžmaja';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Ko pride jutro';
+
+  @override
+  String get settingsPreviewNextLine => 'Spet bomo peli.';
+
+  @override
+  String get settingsPlayerSections => 'Naslovi razdelkov';
+
+  @override
+  String get settingsPlayerControls => 'Plošča za predvajanje';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Samodejno pomikanje';
+
+  @override
+  String get settingsSystemShort => 'Naprava';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -2035,6 +2059,12 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'Nazadnje odprto';
+
+  @override
+  String get playerFullScreen => 'Celoten zaslon';
+
+  @override
+  String get playerExitFullScreen => 'Izhod iz celotnega zaslona';
 
   @override
   String get playerExpandControls => 'Prikaži kontrolnike predvajanja';

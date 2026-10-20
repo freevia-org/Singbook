@@ -6,6 +6,9 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.accounts.Account
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.google.android.gms.auth.api.identity.AuthorizationRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.AuthorizationResult
@@ -16,6 +19,9 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
+    private var playerFullScreen = false
+    private var playerActivityResumed = false
+    private var previousSystemBarsBehavior: Int? = null
     private var clipboardWriteReceipt: Map<String, Any?>? = null
     private var drivePickerResult: MethodChannel.Result? = null
     private var drivePickerFolderMode = true
@@ -23,6 +29,28 @@ class MainActivity : FlutterActivity() {
     private val drivePickerRequestCode = 41827
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            "org.freevia.singbook/fullscreen"
+        ).setMethodCallHandler { call, result ->
+            if (call.method != "setEnabled") {
+                result.notImplemented()
+                return@setMethodCallHandler
+            }
+            val enabled = call.arguments as? Boolean
+            if (enabled == null) {
+                result.error("invalid_fullscreen", "Expected a boolean", null)
+                return@setMethodCallHandler
+            }
+            val wasFullScreen = playerFullScreen
+            playerFullScreen = enabled
+            if (enabled) {
+                if (playerActivityResumed) applyPlayerFullScreen(true)
+            } else if (wasFullScreen || previousSystemBarsBehavior != null) {
+                applyPlayerFullScreen(false)
+            }
+            result.success(null)
+        }
         MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
             "org.freevia.singbook/rich_clipboard"
@@ -188,6 +216,52 @@ class MainActivity : FlutterActivity() {
             .addOnFailureListener { error ->
                 result.error("drive_authorization_failed", error.message, null)
             }
+    }
+
+    private fun applyPlayerFullScreen(enabled: Boolean) {
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        if (enabled) {
+            if (previousSystemBarsBehavior == null) {
+                previousSystemBarsBehavior = controller.systemBarsBehavior
+            }
+            controller.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+        } else {
+            controller.show(WindowInsetsCompat.Type.systemBars())
+            previousSystemBarsBehavior?.let { controller.systemBarsBehavior = it }
+            previousSystemBarsBehavior = null
+        }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus && playerActivityResumed && playerFullScreen) {
+            applyPlayerFullScreen(true)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        playerActivityResumed = true
+        if (hasWindowFocus() && playerFullScreen) applyPlayerFullScreen(true)
+    }
+
+    override fun onPause() {
+        playerActivityResumed = false
+        if (playerFullScreen || previousSystemBarsBehavior != null) {
+            applyPlayerFullScreen(false)
+        }
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        playerActivityResumed = false
+        if (playerFullScreen || previousSystemBarsBehavior != null) {
+            applyPlayerFullScreen(false)
+        }
+        playerFullScreen = false
+        super.onDestroy()
     }
 
     @Deprecated("Deprecated in Android, kept for Google AuthorizationClient resolution results")

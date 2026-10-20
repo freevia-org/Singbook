@@ -129,7 +129,13 @@ void main() {
           expect(actions.first, 'edit');
         }
         if (screen == 'player') {
-          expect(actions.take(4), ['info', 'compare', 'timed-lyrics', 'add']);
+          expect(actions.take(5), [
+            'edit',
+            'info',
+            'compare',
+            'timed-lyrics',
+            'add',
+          ]);
           final checked = tester.widget<CheckedPopupMenuItem<String>>(
             find.byWidgetPredicate((w) => w is CheckedPopupMenuItem<String>),
           );

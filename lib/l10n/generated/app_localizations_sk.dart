@@ -591,7 +591,7 @@ class AppLocalizationsSk extends AppLocalizations {
       'Odstrániť koncertný program z obľúbených';
 
   @override
-  String get setlistShare => 'Zdieľať ako súbor koncertného programu';
+  String get setlistShare => 'Zdieľať ako OpenSong';
 
   @override
   String get setlistSharePdf => 'Zdieľať ako PDF';
@@ -1226,6 +1226,30 @@ class AppLocalizationsSk extends AppLocalizations {
   @override
   String get settingsLyricsPreviewExample =>
       'Keď príde ráno, budeme znova spievať.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Ranná pieseň';
+
+  @override
+  String get settingsPreviewArtist => 'Ukážkové aranžmán';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Keď príde ráno';
+
+  @override
+  String get settingsPreviewNextLine => 'Znova zaspievame.';
+
+  @override
+  String get settingsPlayerSections => 'Nadpisy sekcií';
+
+  @override
+  String get settingsPlayerControls => 'Panel prehrávania';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Automatické posúvanie';
+
+  @override
+  String get settingsSystemShort => 'Zariadenie';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -2017,6 +2041,12 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'Naposledy otvorené';
+
+  @override
+  String get playerFullScreen => 'Celá obrazovka';
+
+  @override
+  String get playerExitFullScreen => 'Ukončiť celú obrazovku';
 
   @override
   String get playerExpandControls => 'Zobraziť ovládanie prehrávania';

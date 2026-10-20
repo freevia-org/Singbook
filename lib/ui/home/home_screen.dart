@@ -41,6 +41,7 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
   List<_HistoryGroup>? _cachedGroups;
   Object? _cacheRecent, _cacheSongs, _cacheSetlists;
   HomeListMode? _cacheMode;
+  bool? _cacheFavoritesOnly;
   String? _cacheQuery, _cacheLocale;
   DateTime? _cacheDay;
 
@@ -146,43 +147,19 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     });
   }
 
-  List<RecentItemData> _historyItemsForMode(
-    HomeListMode mode,
-    AppLocalizations l10n,
-  ) {
+  List<RecentItemData> _historyItemsForMode(HomeListMode mode) {
     if (mode == HomeListMode.recent) {
-      return widget.state.recent.where((item) => !item.isSetlist).toList();
+      return widget.state.recent
+          .where((item) => !item.isSetlist)
+          .where((item) => !widget.state.favoritesOnly || item.favorite)
+          .toList();
     }
-    if (mode != HomeListMode.favorites) return const [];
-    return <RecentItemData>[
-      ...widget.state.songs
-          .where((item) => item.favorite)
-          .map(
-            (song) => RecentItemData(
-              id: song.id,
-              title: song.title,
-              artist: song.artist,
-              subtitle: [
-                if (song.album?.isNotEmpty == true) song.album!,
-                if (song.durationSeconds != null)
-                  formatDuration(song.durationSeconds!),
-              ].join(' · '),
-              artworkUrl: song.artworkUrl,
-              occurredAt: song.modifiedAt ?? DateTime.now(),
-              isSetlist: false,
-              favorite: true,
-              playCount: song.playCount,
-            ),
-          ),
-    ]..sort((a, b) => b.occurredAt.compareTo(a.occurredAt));
+    return const [];
   }
 
-  List<RecentItemData> _filteredHistoryItems(
-    HomeListMode mode,
-    AppLocalizations l10n,
-  ) {
+  List<RecentItemData> _filteredHistoryItems(HomeListMode mode) {
     final query = foldForSearch(widget.state.query);
-    final items = _historyItemsForMode(mode, l10n);
+    final items = _historyItemsForMode(mode);
     if (query.isEmpty) return items;
     return items
         .where(
@@ -202,6 +179,7 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
         identical(_cacheSongs, state.songs) &&
         identical(_cacheSetlists, state.setlists) &&
         _cacheMode == state.homeListMode &&
+        _cacheFavoritesOnly == state.favoritesOnly &&
         _cacheQuery == state.query &&
         _cacheLocale == l10n.localeName &&
         _cacheDay == today) {
@@ -211,6 +189,7 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     _cacheSongs = state.songs;
     _cacheSetlists = state.setlists;
     _cacheMode = state.homeListMode;
+    _cacheFavoritesOnly = state.favoritesOnly;
     _cacheQuery = state.query;
     _cacheLocale = l10n.localeName;
     _cacheDay = today;
@@ -218,7 +197,7 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
   }
 
   List<_HistoryGroup> _computeGroups(AppLocalizations l10n) {
-    final filtered = _filteredHistoryItems(widget.state.homeListMode, l10n);
+    final filtered = _filteredHistoryItems(widget.state.homeListMode);
     final groups = <String, _HistoryGroup>{};
     for (final item in filtered) {
       final day = DateUtils.dateOnly(item.occurredAt.toLocal());
@@ -418,16 +397,41 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
               ),
             ),
           ),
+          if (state.homeListMode != HomeListMode.online &&
+              !state.songsConflictFilter)
+            Semantics(
+              button: true,
+              selected: state.favoritesOnly,
+              label: l10n.searchFavoritesTab,
+              child: IconButton(
+                tooltip: l10n.searchFavoritesTab,
+                constraints: const BoxConstraints.tightFor(
+                  width: 48,
+                  height: 48,
+                ),
+                onPressed: () =>
+                    widget.controller.setFavoritesOnly(!state.favoritesOnly),
+                icon: Icon(
+                  state.favoritesOnly
+                      ? Icons.favorite_rounded
+                      : Icons.favorite_border_rounded,
+                ),
+              ),
+            ),
         ],
       ),
       const SizedBox(height: 14),
       _HomeModeSelector(
         selected: state.homeListMode,
+        modes: const [
+          HomeListMode.recent,
+          HomeListMode.library,
+          HomeListMode.online,
+        ],
         onChanged: widget.controller.setHomeListMode,
         labels: [
-          '${l10n.searchRecentTab}(${_filteredHistoryItems(HomeListMode.recent, l10n).length})',
+          '${l10n.searchRecentTab}(${_filteredHistoryItems(HomeListMode.recent).length})',
           '${l10n.songsLibraryView}(${_libraryCount(state)})',
-          '${l10n.searchFavoritesTab}(${_filteredHistoryItems(HomeListMode.favorites, l10n).length})',
           '${l10n.searchOnlineTab}(${state.comparison == null ? state.autocomplete.length : 1})',
         ],
       ),
@@ -440,6 +444,9 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
         .where(
           (song) =>
               (!state.songsConflictFilter || song.isConflictCopy) &&
+              (state.songsConflictFilter ||
+                  !state.favoritesOnly ||
+                  song.favorite) &&
               foldForSearch(
                 '${song.title} ${song.artist} ${song.album ?? ''}',
               ).contains(query),
@@ -538,7 +545,7 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     VerseUiState state,
     List<_HistoryGroup> groups,
   ) {
-    final favorites = state.homeListMode == HomeListMode.favorites;
+    final favorites = state.favoritesOnly;
     final hasItems = groups.isNotEmpty;
     final out = <Widget>[];
     if (!hasItems) {
@@ -550,11 +557,8 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
                 ? Icons.favorite_border_rounded
                 : Icons.history_rounded,
             title: favorites ? l10n.homeFavoritesEmpty : l10n.homeRecentEmpty,
-            actionLabel: !favorites && state.recentHasMore
-                ? l10n.homeAllHistory
-                : null,
-            onAction:
-                !favorites && state.recentHasMore && !state.loadingMoreRecent
+            actionLabel: state.recentHasMore ? l10n.homeAllHistory : null,
+            onAction: state.recentHasMore && !state.loadingMoreRecent
                 ? () => unawaited(widget.controller.loadMoreRecent())
                 : null,
           ),
@@ -593,7 +597,7 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
         ),
       );
     }
-    if (state.recentHasMore && !favorites) {
+    if (state.recentHasMore) {
       out.add(
         SliverToBoxAdapter(
           child: Padding(
@@ -1087,11 +1091,13 @@ const _timelineChipExtent = 48.0;
 class _HomeModeSelector extends StatefulWidget {
   const _HomeModeSelector({
     required this.selected,
+    required this.modes,
     required this.onChanged,
     required this.labels,
   });
 
   final HomeListMode selected;
+  final List<HomeListMode> modes;
   final ValueChanged<HomeListMode> onChanged;
   final List<String> labels;
 
@@ -1100,81 +1106,24 @@ class _HomeModeSelector extends StatefulWidget {
 }
 
 class _HomeModeSelectorState extends State<_HomeModeSelector> {
-  final _scroll = ScrollController();
-  final _segmentKeys = HomeListMode.values
-      .map((_) => GlobalKey())
-      .toList(growable: false);
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _revealSelected());
-  }
-
-  @override
-  void didUpdateWidget(covariant _HomeModeSelector oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.selected != widget.selected) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _revealSelected());
-    }
-  }
-
-  @override
-  void dispose() {
-    _scroll.dispose();
-    super.dispose();
-  }
-
-  void _revealSelected() {
-    if (!mounted || !_scroll.hasClients) return;
-    final context = _segmentKeys[widget.selected.index].currentContext;
-    if (context == null || !context.mounted) return;
-    final target = context.findRenderObject();
-    if (target == null || !target.attached) return;
-    // Reveal only within the selector's horizontal viewport. The global helper
-    // also scrolls ancestor vertical views, which can hide the search field in
-    // compact landscape layouts when large text makes this selector taller.
-    _scroll.position.ensureVisible(
-      target,
-      duration: const Duration(milliseconds: 160),
-      alignment: .5,
-      curve: Curves.easeOut,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final textStyle = Theme.of(context).textTheme.labelLarge;
-    final modes = HomeListMode.values;
-    var minimumWidth = 0.0;
-    for (final label in widget.labels) {
-      final painter = TextPainter(
-        text: TextSpan(
-          text: label,
-          style: textStyle?.copyWith(fontWeight: FontWeight.w600),
-        ),
-        textDirection: Directionality.of(context),
-        textScaler: MediaQuery.textScalerOf(context),
-      )..layout();
-      if (painter.width + 16 > minimumWidth) minimumWidth = painter.width + 16;
-      painter.dispose();
-    }
-    Widget segment(int index, {double? width}) {
-      final selected = modes[index] == widget.selected;
+    Widget segment(int index) {
+      final mode = widget.modes[index];
+      final selected = mode == widget.selected;
       return KeyedSubtree(
-        key: ValueKey('home-mode-${modes[index].name}'),
+        key: ValueKey('home-mode-${mode.name}'),
         child: Semantics(
           button: true,
           selected: selected,
           child: InkWell(
-            key: _segmentKeys[index],
             borderRadius: BorderRadius.circular(24),
-            onTap: () => widget.onChanged(modes[index]),
+            onTap: () => widget.onChanged(mode),
             child: AnimatedContainer(
-              key: ValueKey('home-mode-${modes[index].name}-segment'),
+              key: ValueKey('home-mode-${mode.name}-segment'),
               duration: const Duration(milliseconds: 150),
-              width: width,
               constraints: const BoxConstraints(minHeight: 48),
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               alignment: Alignment.center,
@@ -1191,8 +1140,8 @@ class _HomeModeSelectorState extends State<_HomeModeSelector> {
                 excludeSemantics: true,
                 child: Text(
                   widget.labels[index],
-                  maxLines: 1,
-                  softWrap: false,
+                  textAlign: TextAlign.center,
+                  softWrap: true,
                   style: textStyle?.copyWith(
                     color: selected
                         ? colors.onPrimaryContainer
@@ -1209,14 +1158,8 @@ class _HomeModeSelectorState extends State<_HomeModeSelector> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final fits = minimumWidth * modes.length + 2 <= constraints.maxWidth;
-        final width = fits
-            ? (constraints.maxWidth - 2) / modes.length
-            : minimumWidth;
-        return SingleChildScrollView(
-          key: const ValueKey('home-mode-scroll'),
-          controller: _scroll,
-          scrollDirection: Axis.horizontal,
+        return SizedBox(
+          width: constraints.maxWidth,
           child: Container(
             decoration: BoxDecoration(
               color: colors.surface,
@@ -1225,10 +1168,9 @@ class _HomeModeSelectorState extends State<_HomeModeSelector> {
             ),
             clipBehavior: Clip.antiAlias,
             child: Row(
-              mainAxisSize: MainAxisSize.min,
               children: [
-                for (var index = 0; index < modes.length; index++)
-                  segment(index, width: width),
+                for (var index = 0; index < widget.modes.length; index++)
+                  Expanded(child: segment(index)),
               ],
             ),
           ),

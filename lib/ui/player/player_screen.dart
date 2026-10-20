@@ -13,7 +13,7 @@ import '../library_actions.dart';
 import '../player_section_timeline.dart';
 import '../verse_ui_state.dart';
 import '../widgets/slider_overlay_boundary.dart';
-import '../widgets/chord_lyrics_line.dart';
+import 'player_lyric_line.dart';
 import '../widgets/subpage_header.dart';
 import 'screen_awake.dart';
 import 'section_labels.dart';
@@ -84,8 +84,16 @@ String _transposeLabel(VerseUiState state) {
 /// Only this screen listens to the playback position, so one-second ticks and
 /// scrubbing rebuild the seek bar and the highlighted line, not the app.
 class PlayerScreen extends StatefulWidget {
-  const PlayerScreen({super.key, required this.controller, this.screenAwake});
+  const PlayerScreen({
+    super.key,
+    required this.controller,
+    this.screenAwake,
+    this.fullScreen = false,
+    this.onFullScreenChanged,
+  }) : assert(!fullScreen || onFullScreenChanged != null);
   final VerseUiController controller;
+  final bool fullScreen;
+  final ValueChanged<bool>? onFullScreenChanged;
 
   /// Keeps the display on while playing; [defaultScreenAwake] when null.
   final ScreenAwake? screenAwake;
@@ -265,6 +273,13 @@ class _PlayerScreenState extends State<PlayerScreen>
   }
 
   KeyEventResult _handleWindowsKey(FocusNode node, KeyEvent event) {
+    if (widget.fullScreen &&
+        event is KeyDownEvent &&
+        event.logicalKey == LogicalKeyboardKey.escape &&
+        ModalRoute.of(context)?.isCurrent != false) {
+      widget.onFullScreenChanged?.call(false);
+      return KeyEventResult.handled;
+    }
     if (defaultTargetPlatform != TargetPlatform.windows ||
         event is! KeyDownEvent ||
         ModalRoute.of(context)?.isCurrent == false) {
@@ -708,6 +723,25 @@ class _PlayerScreenState extends State<PlayerScreen>
     _pruneLineKeys(state.songLines);
     final duration = _durationOf(state);
     final colors = Theme.of(context).colorScheme;
+    Widget playerPanel(
+      Widget child, {
+      required bool header,
+      bool side = false,
+    }) => DecoratedBox(
+      key: ValueKey(header ? 'player-header-panel' : 'player-controls-panel'),
+      decoration: BoxDecoration(
+        color: colors.surfaceContainerLow,
+        border: header
+            ? Border(bottom: BorderSide(color: colors.outlineVariant))
+            : BorderDirectional(
+                top: BorderSide(color: colors.outlineVariant),
+                start: side
+                    ? BorderSide(color: colors.outlineVariant)
+                    : BorderSide.none,
+              ),
+      ),
+      child: child,
+    );
     final lyrics = GestureDetector(
       behavior: HitTestBehavior.opaque,
       onHorizontalDragStart: state.activeSetlist == null
@@ -726,6 +760,7 @@ class _PlayerScreenState extends State<PlayerScreen>
           child: NotificationListener<ScrollNotification>(
             onNotification: _handleLyricsScroll,
             child: ListView.builder(
+              key: const ValueKey('player-lyrics-scroll'),
               controller: _lyricsScroll,
               padding: const EdgeInsets.fromLTRB(28, 18, 28, 32),
               itemCount: state.songLines.length,
@@ -808,15 +843,19 @@ class _PlayerScreenState extends State<PlayerScreen>
               ),
             )
           : content;
-      return SafeArea(
-        top: false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _controlsHandle(l10n),
-            if (compact) Flexible(child: body) else body,
-          ],
+      return playerPanel(
+        SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _controlsHandle(l10n),
+              if (compact) Flexible(child: body) else body,
+            ],
+          ),
         ),
+        header: false,
+        side: compact,
       );
     }
 
@@ -844,101 +883,120 @@ class _PlayerScreenState extends State<PlayerScreen>
             constraints.maxWidth <= constraints.maxHeight;
         return Column(
           children: [
-            SubpageHeader(
-              title: song.title,
-              onBack: controller.back,
-              actions: [
-                IconButton(
-                  tooltip: song.favorite
-                      ? l10n.songFavoriteRemove
-                      : l10n.songFavoriteAdd,
-                  onPressed: () => controller.toggleSongFavorite(song.id),
-                  icon: Icon(
-                    song.favorite
-                        ? Icons.favorite_rounded
-                        : Icons.favorite_border_rounded,
-                  ),
-                ),
-                IconButton(
-                  tooltip: l10n.actionEdit,
-                  onPressed: () => controller.editSong(song.id),
-                  icon: const Icon(Icons.edit_outlined),
-                ),
-                PopupMenuButton<String>(
-                  tooltip: l10n.songMenuLabel,
-                  itemBuilder: (_) => buildLibraryActionMenu(
-                    l10n,
-                    timedLyricsChecked: state.timingMode == 'timed',
-                    actions: {
-                      'info',
-                      if (state.readerCanCompareVersions) 'compare',
-                      if (state.readerTimingAvailable || state.readerHasTiming)
-                        'timed-lyrics',
-                      'add',
-                      'share',
-                      'share_pdf',
-                      'copy',
-                      'print',
-                      'delete',
-                    },
-                  ),
-                  onSelected: (action) {
-                    if (action == 'compare') {
-                      controller.compareCurrentSongVersions();
-                    } else if (action == 'timed-lyrics') {
-                      controller.setTimingMode(
-                        state.timingMode == 'timed' ? 'estimated' : 'timed',
-                      );
-                    } else {
-                      handleSongMenuAction(
-                        context,
-                        controller,
-                        song.id,
-                        action,
-                      );
-                    }
-                  },
-                ),
-              ],
-            ),
-            if (metadata.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                child: Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text(
-                    metadata,
-                    maxLines: state.readerKeyEstimated ? 2 : 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: colors.onSurfaceVariant,
+            if (!widget.fullScreen)
+              playerPanel(
+                Column(
+                  children: [
+                    SubpageHeader(
+                      title: song.title,
+                      onBack: controller.back,
+                      actions: [
+                        IconButton(
+                          tooltip: song.favorite
+                              ? l10n.songFavoriteRemove
+                              : l10n.songFavoriteAdd,
+                          onPressed: () =>
+                              controller.toggleSongFavorite(song.id),
+                          icon: Icon(
+                            song.favorite
+                                ? Icons.favorite_rounded
+                                : Icons.favorite_border_rounded,
+                          ),
+                        ),
+                        if (widget.onFullScreenChanged != null)
+                          IconButton(
+                            key: const ValueKey('player-enter-fullscreen'),
+                            tooltip: l10n.playerFullScreen,
+                            onPressed: () => widget.onFullScreenChanged!(true),
+                            icon: const Icon(Icons.fullscreen_rounded),
+                          )
+                        else
+                          IconButton(
+                            tooltip: l10n.actionEdit,
+                            onPressed: () => controller.editSong(song.id),
+                            icon: const Icon(Icons.edit_outlined),
+                          ),
+                        PopupMenuButton<String>(
+                          tooltip: l10n.songMenuLabel,
+                          itemBuilder: (_) => buildLibraryActionMenu(
+                            l10n,
+                            timedLyricsChecked: state.timingMode == 'timed',
+                            actions: {
+                              if (widget.onFullScreenChanged != null) 'edit',
+                              'info',
+                              if (state.readerCanCompareVersions) 'compare',
+                              if (state.readerTimingAvailable ||
+                                  state.readerHasTiming)
+                                'timed-lyrics',
+                              'add',
+                              'share',
+                              'share_pdf',
+                              'copy',
+                              'print',
+                              'delete',
+                            },
+                          ),
+                          onSelected: (action) {
+                            if (action == 'compare') {
+                              controller.compareCurrentSongVersions();
+                            } else if (action == 'timed-lyrics') {
+                              controller.setTimingMode(
+                                state.timingMode == 'timed'
+                                    ? 'estimated'
+                                    : 'timed',
+                              );
+                            } else {
+                              handleSongMenuAction(
+                                context,
+                                controller,
+                                song.id,
+                                action,
+                              );
+                            }
+                          },
+                        ),
+                      ],
                     ),
-                  ),
-                ),
-              ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: [
-                  const Icon(Icons.check_circle_outline, size: 14),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      [
-                        l10n.readerSaved,
-                        state.readerSource,
-                      ].whereType<String>().join(' · '),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: colors.onSurfaceVariant,
+                    if (metadata.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                        child: Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: Text(
+                            metadata,
+                            maxLines: state.readerKeyEstimated ? 2 : 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(color: colors.onSurfaceVariant),
+                          ),
+                        ),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.check_circle_outline, size: 14),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              [
+                                l10n.readerSaved,
+                                state.readerSource,
+                              ].whereType<String>().join(' · '),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.labelSmall
+                                  ?.copyWith(color: colors.onSurfaceVariant),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+                header: true,
               ),
-            ),
             if (compactLandscape && expanded)
               Expanded(
                 child: Row(
@@ -966,7 +1024,10 @@ class _PlayerScreenState extends State<PlayerScreen>
                       : null,
                 )
               else
-                SafeArea(top: false, child: _controlsHandle(l10n)),
+                playerPanel(
+                  SafeArea(top: false, child: _controlsHandle(l10n)),
+                  header: false,
+                ),
             ],
           ],
         );
@@ -974,9 +1035,34 @@ class _PlayerScreenState extends State<PlayerScreen>
     );
     return Focus(
       key: const ValueKey('player-keyboard-focus'),
-      autofocus: defaultTargetPlatform == TargetPlatform.windows,
+      autofocus:
+          widget.fullScreen || defaultTargetPlatform == TargetPlatform.windows,
       onKeyEvent: _handleWindowsKey,
-      child: content,
+      child: SafeArea(
+        top: widget.fullScreen,
+        bottom: false,
+        left: false,
+        right: false,
+        child: Stack(
+          children: [
+            Positioned.fill(child: content),
+            if (widget.fullScreen)
+              PositionedDirectional(
+                top: 8,
+                end: 8,
+                child: SafeArea(
+                  bottom: false,
+                  child: IconButton.filledTonal(
+                    key: const ValueKey('player-exit-fullscreen'),
+                    tooltip: l10n.playerExitFullScreen,
+                    onPressed: () => widget.onFullScreenChanged?.call(false),
+                    icon: const Icon(Icons.fullscreen_exit_rounded),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -1025,50 +1111,10 @@ class _PlayerScreenState extends State<PlayerScreen>
     }
     if (line.isBlank) return SizedBox(height: 15, key: key);
     final current = _currentLineId == line.id;
-    final highlightBackground =
-        current &&
-        (state.lyricHighlightStyle == 'background' ||
-            state.lyricHighlightStyle == 'backgroundUnderline');
-    final highlightUnderline =
-        current &&
-        (state.lyricHighlightStyle == 'underline' ||
-            state.lyricHighlightStyle == 'backgroundUnderline');
-    final highlightContrast =
-        current && state.lyricHighlightStyle == 'contrast';
     return Padding(
       key: key,
       padding: const EdgeInsets.only(bottom: 12),
-      child: Semantics(
-        selected: current,
-        // Paint-only decoration keeps the lyric's position and line metrics fixed.
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: highlightBackground
-                ? theme.colorScheme.primaryContainer.withValues(alpha: .48)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: ChordLyricsLine(
-            text: line.text,
-            chords: line.chords,
-            showChords: state.showChords,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              fontSize: state.lyricsFontSize,
-              height: 1.35,
-              color: highlightContrast ? theme.colorScheme.tertiary : null,
-              decoration: highlightUnderline ? TextDecoration.underline : null,
-              decorationColor: highlightUnderline
-                  ? theme.colorScheme.tertiary
-                  : null,
-              decorationThickness: highlightUnderline ? 2.5 : null,
-            ),
-            chordStyle: theme.textTheme.labelMedium?.copyWith(
-              color: theme.colorScheme.primary,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-      ),
+      child: PlayerLyricLine(line: line, state: state, current: current),
     );
   }
 

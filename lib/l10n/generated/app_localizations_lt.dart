@@ -595,7 +595,7 @@ class AppLocalizationsLt extends AppLocalizations {
       'Pašalinti koncertinę programą iš mėgstamų';
 
   @override
-  String get setlistShare => 'Bendrinti kaip koncertinės programos failą';
+  String get setlistShare => 'Bendrinti kaip OpenSong';
 
   @override
   String get setlistSharePdf => 'Bendrinti kaip PDF';
@@ -1234,6 +1234,30 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get settingsLyricsPreviewExample => 'Kai išauš rytas, vėl dainuosime.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Ryto daina';
+
+  @override
+  String get settingsPreviewArtist => 'Pavyzdinė aranžuotė';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Kai išauš rytas';
+
+  @override
+  String get settingsPreviewNextLine => 'Vėl dainuosime.';
+
+  @override
+  String get settingsPlayerSections => 'Skyrių antraštės';
+
+  @override
+  String get settingsPlayerControls => 'Atkūrimo skydelis';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Automatinis slinkimas';
+
+  @override
+  String get settingsSystemShort => 'Įrenginys';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -2031,6 +2055,12 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'Paskutinį kartą atidarytas';
+
+  @override
+  String get playerFullScreen => 'Visas ekranas';
+
+  @override
+  String get playerExitFullScreen => 'Išeiti iš viso ekrano';
 
   @override
   String get playerExpandControls => 'Rodyti atkūrimo valdiklius';

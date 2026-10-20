@@ -156,7 +156,7 @@ void main() {
       await tester.pumpAndSettle();
       final chordsSetting = find.widgetWithText(
         SwitchListTile,
-        l10n.readerShowChords,
+        l10n.editorChordsField,
       );
       await tester.scrollUntilVisible(
         chordsSetting,
@@ -190,7 +190,7 @@ void main() {
       await tester.pumpAndSettle();
       final chordsSettingAgain = find.widgetWithText(
         SwitchListTile,
-        l10n.readerShowChords,
+        l10n.editorChordsField,
       );
       await tester.scrollUntilVisible(
         chordsSettingAgain,

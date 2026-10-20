@@ -589,7 +589,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get setlistFavoriteRemove => 'Remover lista das favoritas';
 
   @override
-  String get setlistShare => 'Compartilhar como arquivo de lista';
+  String get setlistShare => 'Compartilhar como OpenSong';
 
   @override
   String get setlistSharePdf => 'Compartilhar como PDF';
@@ -1225,6 +1225,30 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get settingsLyricsPreviewExample =>
       'Quando a manhã chegar, cantaremos novamente.';
+
+  @override
+  String get settingsPreviewSongTitle => 'Canção da manhã';
+
+  @override
+  String get settingsPreviewArtist => 'Arranjo de exemplo';
+
+  @override
+  String get settingsPreviewCurrentLine => 'Quando a manhã chegar';
+
+  @override
+  String get settingsPreviewNextLine => 'Cantaremos novamente.';
+
+  @override
+  String get settingsPlayerSections => 'Títulos das seções';
+
+  @override
+  String get settingsPlayerControls => 'Painel de reprodução';
+
+  @override
+  String get settingsPlayerAutoscroll => 'Rolagem automática';
+
+  @override
+  String get settingsSystemShort => 'Dispositivo';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -2011,6 +2035,12 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'Última vista aberta';
+
+  @override
+  String get playerFullScreen => 'Tela cheia';
+
+  @override
+  String get playerExitFullScreen => 'Sair da tela cheia';
 
   @override
   String get playerExpandControls => 'Mostrar controlos de reprodução';

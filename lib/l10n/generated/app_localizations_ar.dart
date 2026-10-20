@@ -593,7 +593,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get setlistFavoriteRemove => 'إزالة قائمة الأغاني من المفضلة';
 
   @override
-  String get setlistShare => 'مشاركة كملف قائمة أغاني';
+  String get setlistShare => 'مشاركة كملف OpenSong';
 
   @override
   String get setlistSharePdf => 'مشاركة كملف PDF';
@@ -1230,6 +1230,30 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsLyricsPreviewExample => 'عندما يأتي الصباح، سنغني مجددًا.';
+
+  @override
+  String get settingsPreviewSongTitle => 'ترنيمة الصباح';
+
+  @override
+  String get settingsPreviewArtist => 'ترتيب موسيقي نموذجي';
+
+  @override
+  String get settingsPreviewCurrentLine => 'عندما يأتي الصباح';
+
+  @override
+  String get settingsPreviewNextLine => 'سنغني مجددًا.';
+
+  @override
+  String get settingsPlayerSections => 'عناوين الأقسام';
+
+  @override
+  String get settingsPlayerControls => 'لوحة التشغيل';
+
+  @override
+  String get settingsPlayerAutoscroll => 'التمرير التلقائي';
+
+  @override
+  String get settingsSystemShort => 'الجهاز';
 
   @override
   String searchDiscoveryProgress(int checked, int total) {
@@ -2019,6 +2043,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsStartupLastView => 'آخر عرض مفتوح';
+
+  @override
+  String get playerFullScreen => 'ملء الشاشة';
+
+  @override
+  String get playerExitFullScreen => 'الخروج من ملء الشاشة';
 
   @override
   String get playerExpandControls => 'إظهار عناصر التحكم بالتشغيل';

@@ -78,11 +78,7 @@ void main() {
     await repository.close();
   });
 
-  for (final mode in [
-    HomeListMode.recent,
-    HomeListMode.library,
-    HomeListMode.favorites,
-  ]) {
+  for (final mode in [HomeListMode.recent, HomeListMode.library]) {
     test('typing and submitting in ${mode.name} stays local', () async {
       ui.setHomeListMode(mode);
       ui.setQuery('Original Lantern');
@@ -97,6 +93,13 @@ void main() {
       expect(app.searching, isFalse);
     });
   }
+
+  test('legacy Favorites mode maps to Library with its filter active', () {
+    ui.setHomeListMode(HomeListMode.favorites);
+    expect(ui.state.homeListMode, HomeListMode.library);
+    expect(ui.state.favoritesOnly, isTrue);
+    expect(discovery.searches, isEmpty);
+  });
 
   test(
     'explicit Online transition searches the shared local query once',
@@ -197,7 +200,11 @@ void main() {
         await restart();
 
         expect(ui.state.activeTab, VerseTab.home);
-        expect(ui.state.homeListMode, mode);
+        expect(
+          ui.state.homeListMode,
+          mode == HomeListMode.favorites ? HomeListMode.library : mode,
+        );
+        expect(ui.state.favoritesOnly, mode == HomeListMode.favorites);
         expect(ui.state.startupSongsView, mode.name);
         expect(discovery.searches, isEmpty);
       },
@@ -210,11 +217,16 @@ void main() {
         ui.setHomeListMode(mode);
         ui.setTab(VerseTab.setlists);
         final saved = await repository.getSetting('app') as Map;
-        expect(saved['lastSongsView'], mode.name);
+        final expectedMode = mode == HomeListMode.favorites
+            ? HomeListMode.library
+            : mode;
+        expect(saved['lastSongsView'], expectedMode.name);
+        expect(saved['lastSongsFavoritesOnly'], mode == HomeListMode.favorites);
 
         await restart();
         expect(ui.state.activeTab, VerseTab.home);
-        expect(ui.state.homeListMode, mode);
+        expect(ui.state.homeListMode, expectedMode);
+        expect(ui.state.favoritesOnly, mode == HomeListMode.favorites);
         expect(ui.state.startupSongsView, 'last');
         expect(discovery.searches, isEmpty);
       },
