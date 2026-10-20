@@ -13,6 +13,28 @@ import 'verse_ui_state.dart';
 /// screens. They talk to the UI controller only; outcomes are reported through
 /// [VerseUiController.notices].
 
+/// Saved items expose the same actions wherever they appear. Reader-only
+/// controls and setlist-entry actions can extend these shared sets.
+const songLibraryActions = <String>{
+  'edit',
+  'info',
+  'add',
+  'share',
+  'share_pdf',
+  'copy',
+  'print',
+  'delete',
+};
+const setlistLibraryActions = <String>{
+  'edit',
+  'duplicate',
+  'share',
+  'share_pdf',
+  'copy',
+  'print',
+  'delete',
+};
+
 /// One action order for library rows, Recent, readers and editors. Screens
 /// supply only their available actions; filtering never changes the order.
 List<PopupMenuEntry<String>> buildLibraryActionMenu(

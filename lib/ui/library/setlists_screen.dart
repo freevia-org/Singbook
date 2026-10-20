@@ -242,21 +242,14 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                 ),
                 PopupMenuButton<String>(
                   tooltip: l10n.accessibilitySetlistMenu(value.title),
+                  icon: const Icon(Icons.more_horiz_rounded),
                   constraints: BoxConstraints(
                     maxHeight: MediaQuery.sizeOf(context).height * .72,
                   ),
                   itemBuilder: (_) => buildLibraryActionMenu(
                     l10n,
                     isSetlist: true,
-                    actions: const {
-                      'edit',
-                      'duplicate',
-                      'share',
-                      'share_pdf',
-                      'copy',
-                      'print',
-                      'delete',
-                    },
+                    actions: setlistLibraryActions,
                   ),
                   onSelected: (action) => handleSetlistAction(
                     context,
@@ -464,17 +457,13 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
             ),
             PopupMenuButton<String>(
               tooltip: l10n.setlistMenuLabel,
+              icon: const Icon(Icons.more_horiz_rounded),
               itemBuilder: (_) => buildLibraryActionMenu(
                 l10n,
                 isSetlist: true,
-                actions: const {
-                  'duplicate',
-                  'share',
-                  'share_pdf',
-                  'copy',
-                  'print',
-                  'delete',
-                },
+                actions: editing
+                    ? setlistLibraryActions.difference(const {'edit'})
+                    : setlistLibraryActions,
               ),
               onSelected: (action) =>
                   handleSetlistAction(context, controller, value.id, action),
@@ -744,24 +733,18 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
         children: [
           PopupMenuButton<String>(
             tooltip: l10n.songMenuLabel,
+            icon: const Icon(Icons.more_horiz_rounded),
             itemBuilder: (_) => [
               if (!entry.missing) ...[
                 ...buildLibraryActionMenu(
                   l10n,
-                  actions: const {
-                    'edit',
-                    'add',
-                    'info',
-                    'share',
-                    'share_pdf',
-                    'copy',
-                    'print',
-                  },
+                  actions: songLibraryActions.difference(const {'delete'}),
                 ),
                 PopupMenuItem(
                   value: 'override',
                   child: Text(l10n.setlistEntryOverride),
                 ),
+                const PopupMenuDivider(),
                 ...buildLibraryActionMenu(l10n, actions: const {'delete'}),
               ],
               PopupMenuItem(

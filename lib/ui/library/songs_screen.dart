@@ -308,18 +308,8 @@ class _SongsScreenState extends State<SongsScreen> {
             menuWidget: PopupMenuButton<String>(
               tooltip: l10n.songMenuLabel,
               icon: const Icon(Icons.more_horiz_rounded),
-              itemBuilder: (_) => buildLibraryActionMenu(
-                l10n,
-                actions: const {
-                  'edit',
-                  'add',
-                  'share',
-                  'share_pdf',
-                  'copy',
-                  'print',
-                  'delete',
-                },
-              ),
+              itemBuilder: (_) =>
+                  buildLibraryActionMenu(l10n, actions: songLibraryActions),
               onSelected: (action) =>
                   handleSongMenuAction(context, controller, song.id, action),
             ),

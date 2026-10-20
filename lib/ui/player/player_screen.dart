@@ -856,22 +856,16 @@ class _PlayerScreenState extends State<PlayerScreen>
                           ),
                         PopupMenuButton<String>(
                           tooltip: l10n.songMenuLabel,
+                          icon: const Icon(Icons.more_horiz_rounded),
                           itemBuilder: (_) => buildLibraryActionMenu(
                             l10n,
                             timedLyricsChecked: state.timingMode == 'timed',
                             actions: {
-                              if (widget.onFullScreenChanged != null) 'edit',
-                              'info',
+                              ...songLibraryActions,
                               if (state.readerCanCompareVersions) 'compare',
                               if (state.readerTimingAvailable ||
                                   state.readerHasTiming)
                                 'timed-lyrics',
-                              'add',
-                              'share',
-                              'share_pdf',
-                              'copy',
-                              'print',
-                              'delete',
                             },
                           ),
                           onSelected: (action) {

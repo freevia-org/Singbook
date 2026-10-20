@@ -10,6 +10,15 @@ import '../domain/models.dart';
 import '../domain/chordpro.dart';
 import '../domain/arrangement.dart';
 import '../domain/song_identity.dart';
+import '../domain/combine.dart';
+
+const _replacementCarryMetadata = {'composer', 'lyricist', 'copyright'};
+
+bool _hasMeaningfulMetadata(Object? value) =>
+    value != null &&
+    (value is! String || value.trim().isNotEmpty) &&
+    (value is! Iterable || value.isNotEmpty) &&
+    (value is! Map || value.isNotEmpty);
 
 double? _validDuration(Object? value) {
   if (value is! num) return null;
@@ -738,16 +747,80 @@ class LibraryRepository {
       for (final source in song.sources) {
         sources[sourceKey(source)] = source;
       }
+      final existingOrigins = jsonMap(existing.extra['fieldOrigins']);
+      final incomingMetadata = {...song.metadata};
+      incomingMetadata.removeWhere(
+        (_, value) => !_hasMeaningfulMetadata(value),
+      );
+      final keyRemovalTombstone =
+          !_hasMeaningfulMetadata(existing.metadata['key']) &&
+          existingOrigins['key'] == 'user';
+      final recoveredKey =
+          !_hasMeaningfulMetadata(incomingMetadata['key']) &&
+              !keyRemovalTombstone
+          ? sourcedArrangementKey(
+              song.copyWith(
+                sources: sources.values.toList(),
+                metadata: incomingMetadata,
+              ),
+            )
+          : null;
+      final carriedMetadata = {
+        // Composition credits may fill gaps. Recording and arrangement facts
+        // must be established again for the selected version.
+        for (final entry in existing.metadata.entries)
+          if (_replacementCarryMetadata.contains(entry.key) &&
+              !_hasMeaningfulMetadata(incomingMetadata[entry.key]) &&
+              _hasMeaningfulMetadata(entry.value))
+            entry.key: entry.value,
+      };
+      final replacementMetadata = {
+        ...incomingMetadata,
+        ...carriedMetadata,
+        if (recoveredKey != null) 'key': recoveredKey.key,
+        for (final entry in existing.metadata.entries)
+          if (entry.key.startsWith('x_verse_player_')) entry.key: entry.value,
+      };
+      final incomingExtra = {...song.extra}
+        ..remove('keySourceIds')
+        ..remove('corroboratedKeySourceIds');
+      final origins = {...jsonMap(song.extra['fieldOrigins'])};
+      final contributors = {...jsonMap(song.extra['fieldContributors'])};
+      for (final field in carriedMetadata.keys) {
+        origins.remove(field);
+        contributors.remove(field);
+        if (existingOrigins.containsKey(field)) {
+          origins[field] = existingOrigins[field];
+        }
+        final prior = jsonMap(existing.extra['fieldContributors']);
+        if (prior.containsKey(field)) contributors[field] = prior[field];
+      }
+      // A deliberate removal remains a user decision when the new version
+      // also omits that field. A new nonempty value takes incoming authority.
+      for (final entry in existingOrigins.entries) {
+        if (entry.value == 'user' &&
+            !const {'lyrics', 'chords', 'sections'}.contains(entry.key) &&
+            !_hasMeaningfulMetadata(existing.metadata[entry.key]) &&
+            !_hasMeaningfulMetadata(incomingMetadata[entry.key])) {
+          origins[entry.key] = 'user';
+          contributors.remove(entry.key);
+        }
+      }
+      if (!_hasMeaningfulMetadata(incomingMetadata['key'])) {
+        origins.remove('key');
+        contributors.remove('key');
+        if (keyRemovalTombstone) origins['key'] = 'user';
+        if (recoveredKey != null) {
+          origins['key'] = recoveredKey.sourceIds.first;
+          contributors['key'] = recoveredKey.sourceIds;
+        }
+      }
       final replacement = SongDocument(
         id: existing.id,
         title: song.title,
         artist: song.artist,
         body: song.body,
-        metadata: {
-          ...song.metadata,
-          for (final entry in existing.metadata.entries)
-            if (entry.key.startsWith('x_verse_player_')) entry.key: entry.value,
-        },
+        metadata: replacementMetadata,
         favorite: existing.favorite,
         createdAt: existing.createdAt,
         updatedAt: DateTime.now().toUtc(),
@@ -772,10 +845,23 @@ class LibraryRepository {
               'chordSourceIds',
               'pendingChordSourceIds',
               'excludedIncompleteSourceIds',
+              'keySourceIds',
               'corroboratedKeySourceIds',
             }.contains(entry.key))
               entry.key: entry.value,
-          ...song.extra,
+          ...incomingExtra,
+          // Preserve incoming roles such as chords/sections, and attach old
+          // provenance only to values that were actually carried forward.
+          'fieldOrigins': origins,
+          'fieldContributors': contributors,
+          if (recoveredKey != null) 'keySourceIds': recoveredKey.sourceIds,
+          if (_hasMeaningfulMetadata(incomingMetadata['key'])) ...{
+            if (song.extra['keySourceIds'] is List)
+              'keySourceIds': song.extra['keySourceIds'],
+            if (song.extra['corroboratedKeySourceIds'] is List)
+              'corroboratedKeySourceIds':
+                  song.extra['corroboratedKeySourceIds'],
+          },
           if (existing.extra['rawAssets'] is Map ||
               song.extra['rawAssets'] is Map)
             'rawAssets': {
@@ -1598,10 +1684,7 @@ class LibraryRepository {
         requireSyncRepresentation: false,
       );
       if (state == null) return null;
-      return (
-        document: state.document,
-        hash: state.hash,
-      );
+      return (document: state.document, hash: state.hash);
     });
   }
 

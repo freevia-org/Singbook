@@ -712,13 +712,9 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
           itemBuilder: (_) => buildLibraryActionMenu(
             l10n,
             isSetlist: item.isSetlist,
-            actions: {
-              if (!item.isSetlist) 'add',
-              'share',
-              'share_pdf',
-              'copy',
-              'print',
-            },
+            actions: item.isSetlist
+                ? setlistLibraryActions
+                : songLibraryActions,
           ),
           onSelected: (action) => _recentAction(context, item, action),
         ),
@@ -732,20 +728,9 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     String action,
   ) async {
     if (item.isSetlist) {
-      if (action == 'share') widget.controller.shareSetlist(item.id);
-      if (action == 'share_pdf') {
-        widget.controller.shareSetlistPdf(item.id);
-      }
-      if (action == 'print') widget.controller.printSetlist(item.id);
-      if (action == 'copy') widget.controller.copySetlist(item.id);
+      await handleSetlistAction(context, widget.controller, item.id, action);
     } else {
-      if (action == 'add') {
-        await showAddSongToSetlist(context, widget.controller, item.id);
-      }
-      if (action == 'share') widget.controller.shareSong(item.id);
-      if (action == 'share_pdf') widget.controller.shareSongPdf(item.id);
-      if (action == 'print') widget.controller.printSong(item.id);
-      if (action == 'copy') widget.controller.copySongChordPro(item.id);
+      await handleSongMenuAction(context, widget.controller, item.id, action);
     }
   }
 

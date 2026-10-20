@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../format.dart';
 import '../localized_labels.dart';
+import '../library_actions.dart';
 import '../player/section_labels.dart';
 import '../verse_ui_state.dart';
 import '../widgets/chord_lyrics_line.dart';
@@ -370,6 +371,23 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
                 ),
                 icon: const Icon(Icons.fact_check_outlined),
               ),
+              if (version?.savedSongId case final songId?)
+                PopupMenuButton<String>(
+                  key: const ValueKey('online-song-menu'),
+                  tooltip: l10n.songMenuLabel,
+                  icon: const Icon(Icons.more_horiz_rounded),
+                  itemBuilder: (_) =>
+                      buildLibraryActionMenu(l10n, actions: songLibraryActions),
+                  onSelected: (action) async {
+                    await handleSongMenuAction(
+                      context,
+                      widget.controller,
+                      songId,
+                      action,
+                    );
+                    if (mounted && action == 'edit') widget.onOpened?.call();
+                  },
+                ),
             ],
           ),
         ),
