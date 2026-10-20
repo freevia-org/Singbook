@@ -28,6 +28,7 @@ const _screens = [
 const _viewports = <String, Size>{
   'tablet_portrait': Size(800, 1280),
   'tablet_landscape': Size(1280, 800),
+  'desktop_wide': Size(1920, 1080),
 };
 
 const _requiredFiles = [
@@ -61,7 +62,7 @@ void main() {
     'landscape reader scrolls the final lyric above persistent player controls',
     (tester) async {
       await _loadFonts();
-      final output = Directory('artifacts/singbook-tablet-captures')
+      final output = Directory('artifacts/singbook-layout-captures')
         ..createSync(recursive: true);
       final boundaryKey = GlobalKey();
       // Keep the controller's queued futures in the same real async zone as
@@ -144,7 +145,7 @@ void main() {
     tester,
   ) async {
     await _loadFonts();
-    final output = Directory('artifacts/singbook-tablet-captures')
+    final output = Directory('artifacts/singbook-layout-captures')
       ..createSync(recursive: true);
     final boundaryKey = GlobalKey();
     // Match the real async zone used by the controller operations below.
@@ -181,7 +182,7 @@ void main() {
         for (final screen in _screens) {
           // ignore: avoid_print
           print(
-            'tablet capture start ${viewportEntry.key} ${themeBrightness.name} $screen',
+            'responsive capture start ${viewportEntry.key} ${themeBrightness.name} $screen',
           );
           tester.view.physicalSize = viewportEntry.value;
           tester.view.viewInsets = screen.endsWith('_keyboard')
@@ -232,7 +233,7 @@ void main() {
           );
           // ignore: avoid_print
           print(
-            'tablet capture pumped ${viewportEntry.key} ${themeBrightness.name} $screen',
+            'responsive capture pumped ${viewportEntry.key} ${themeBrightness.name} $screen',
           );
 
           if (screen.endsWith('_keyboard')) {
@@ -275,7 +276,7 @@ void main() {
           await tester.pump();
           // ignore: avoid_print
           print(
-            'tablet capture saved ${viewportEntry.key} ${themeBrightness.name} $screen',
+            'responsive capture saved ${viewportEntry.key} ${themeBrightness.name} $screen',
           );
         }
       }
@@ -285,7 +286,7 @@ void main() {
       output.listSync().whereType<File>().where(
         (file) => !file.path.endsWith('reader_scrolled.png'),
       ),
-      hasLength(28),
+      hasLength(42),
     );
     tester.view.resetDevicePixelRatio();
     tester.view.resetPhysicalSize();
