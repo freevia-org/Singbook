@@ -1081,6 +1081,24 @@ class _HomeModeSelector extends StatefulWidget {
 }
 
 class _HomeModeSelectorState extends State<_HomeModeSelector> {
+  final _focusedModes = <HomeListMode>{};
+
+  @override
+  void initState() {
+    super.initState();
+    FocusManager.instance.addHighlightModeListener(_onHighlightModeChanged);
+  }
+
+  void _onHighlightModeChanged(FocusHighlightMode mode) {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    FocusManager.instance.removeHighlightModeListener(_onHighlightModeChanged);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
@@ -1088,6 +1106,9 @@ class _HomeModeSelectorState extends State<_HomeModeSelector> {
     Widget segment(int index) {
       final mode = widget.modes[index];
       final selected = mode == widget.selected;
+      final showFocus =
+          _focusedModes.contains(mode) &&
+          FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
       return KeyedSubtree(
         key: ValueKey('home-mode-${mode.name}'),
         child: Semantics(
@@ -1096,26 +1117,39 @@ class _HomeModeSelectorState extends State<_HomeModeSelector> {
           child: InkWell(
             borderRadius: BorderRadius.circular(24),
             splashFactory: NoSplash.splashFactory,
-            overlayColor: WidgetStateProperty.resolveWith<Color?>(
-              (states) => states.contains(WidgetState.pressed)
-                  ? Colors.transparent
-                  : null,
-            ),
+            overlayColor: const WidgetStatePropertyAll(Colors.transparent),
+            onFocusChange: (focused) {
+              final changed = focused
+                  ? _focusedModes.add(mode)
+                  : _focusedModes.remove(mode);
+              if (changed && mounted) setState(() {});
+            },
             onTap: () => widget.onChanged(mode),
             child: AnimatedContainer(
               key: ValueKey('home-mode-${mode.name}-segment'),
-              duration: const Duration(milliseconds: 150),
+              duration: MediaQuery.disableAnimationsOf(context)
+                  ? Duration.zero
+                  : const Duration(milliseconds: 150),
+              curve: Curves.easeOutCubic,
               constraints: const BoxConstraints(minHeight: 48),
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: selected ? colors.primaryContainer : Colors.transparent,
+                // Both endpoints are opaque. Fading toward transparent black
+                // otherwise darkens the intermediate frames into a gray flash.
+                color: selected ? colors.primaryContainer : colors.surface,
                 border: index == 0
                     ? null
                     : BorderDirectional(
                         start: BorderSide(color: colors.outlineVariant),
                       ),
               ),
+              foregroundDecoration: showFocus
+                  ? BoxDecoration(
+                      border: Border.all(color: colors.primary, width: 2),
+                      borderRadius: BorderRadius.circular(20),
+                    )
+                  : null,
               child: Semantics(
                 label: widget.labels[index],
                 excludeSemantics: true,
