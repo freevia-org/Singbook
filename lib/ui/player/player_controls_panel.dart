@@ -11,6 +11,7 @@ class PlayerControlsPanel extends StatefulWidget {
     required this.side,
     this.sideHeader,
     this.sideWidth,
+    this.collapsedAction,
     required this.lyrics,
     required this.controls,
   });
@@ -22,6 +23,7 @@ class PlayerControlsPanel extends StatefulWidget {
   final bool side;
   final Widget? sideHeader;
   final double? sideWidth;
+  final Widget? collapsedAction;
   final Widget lyrics;
   final Widget controls;
 
@@ -229,22 +231,23 @@ class _PlayerControlsPanelState extends State<PlayerControlsPanel>
                         end: 0,
                         child: Center(child: handle),
                       ),
+                      if (!widget.expanded && widget.collapsedAction != null)
+                        PositionedDirectional(
+                          top: 8,
+                          end: 8,
+                          child: Material(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerLow,
+                            shape: const CircleBorder(),
+                            clipBehavior: Clip.antiAlias,
+                            child: widget.collapsedAction!,
+                          ),
+                        ),
                     ],
                   ),
                 ),
-                if (widget.sideHeader != null)
-                  SizedBox(
-                    width: widget.sideWidth,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        widget.sideHeader!,
-                        Expanded(child: _animatedControls()),
-                      ],
-                    ),
-                  )
-                else
-                  _animatedControls(),
+                _animatedControls(),
               ],
             )
           : Column(
@@ -273,12 +276,30 @@ class _PlayerControlsPanelState extends State<PlayerControlsPanel>
     builder: (context, child) => SizeTransition(
       sizeFactor: _reveal,
       axis: widget.side ? Axis.horizontal : Axis.vertical,
-      alignment: widget.side ? Alignment.centerLeft : Alignment.topCenter,
+      alignment: widget.side
+          ? Directionality.of(context) == TextDirection.rtl
+                ? Alignment.centerRight
+                : Alignment.centerLeft
+          : Alignment.topCenter,
       child: ExcludeFocus(
         excluding: _reveal.value == 0,
         child: Offstage(offstage: _reveal.value == 0, child: child),
       ),
     ),
-    child: KeyedSubtree(key: _controlsKey, child: widget.controls),
+    child: KeyedSubtree(
+      key: _controlsKey,
+      child: widget.side && widget.sideHeader != null
+          ? SizedBox(
+              width: widget.sideWidth,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  widget.sideHeader!,
+                  Expanded(child: widget.controls),
+                ],
+              ),
+            )
+          : widget.controls,
+    ),
   );
 }

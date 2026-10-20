@@ -138,6 +138,8 @@ class _PlayerScreenState extends State<PlayerScreen>
   String? _playbackSpeedDraftSongId;
   double? _playbackSpeedDraftDuration;
   VerseUiController? _playbackSpeedDraftController;
+  bool _playbackSpeedPointerActive = false;
+  bool _playbackSpeedPointerCanceled = false;
 
   void _setControlsExpanded(bool expanded) {
     if (controller.state.playerControlsExpanded == expanded) return;
@@ -809,11 +811,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Align(
                   alignment: AlignmentDirectional.centerEnd,
-                  child: _speedControl(
-                    l10n,
-                    state,
-                    duration: _durationOf(state),
-                  ),
+                  child: _speedControl(l10n, state),
                 ),
               ),
           ],
@@ -908,17 +906,6 @@ class _PlayerScreenState extends State<PlayerScreen>
                     ],
                   ),
                 ),
-                if (!state.playerControlsExpanded)
-                  IconButton(
-                    key: const ValueKey('player-exit-fullscreen'),
-                    constraints: const BoxConstraints.tightFor(
-                      width: 48,
-                      height: 48,
-                    ),
-                    tooltip: l10n.playerExitFullScreen,
-                    onPressed: () => widget.onFullScreenChanged?.call(false),
-                    icon: const Icon(Icons.close_fullscreen_rounded),
-                  ),
               ],
             ),
           ),
@@ -1149,6 +1136,21 @@ class _PlayerScreenState extends State<PlayerScreen>
                 sideWidth: compactLandscape
                     ? (constraints.maxWidth * .4).clamp(300.0, 360.0).toDouble()
                     : null,
+                collapsedAction: compactLandscape &&
+                        widget.fullScreen &&
+                        !state.playerControlsExpanded
+                    ? IconButton(
+                        key: const ValueKey('player-exit-fullscreen'),
+                        constraints: const BoxConstraints.tightFor(
+                          width: 48,
+                          height: 48,
+                        ),
+                        tooltip: l10n.playerExitFullScreen,
+                        onPressed: () =>
+                            widget.onFullScreenChanged?.call(false),
+                        icon: const Icon(Icons.close_fullscreen_rounded),
+                      )
+                    : null,
                 lyrics: lyrics,
                 controls: compactLandscape
                     ? SizedBox(
@@ -1374,9 +1376,8 @@ class _PlayerScreenState extends State<PlayerScreen>
 
   Widget _speedControl(
     AppLocalizations l10n,
-    VerseUiState state, {
-    required double duration,
-  }) {
+    VerseUiState state,
+  ) {
     final popupWidth = _playerPopupWidth(context);
     final panelHeight = _speedPopupPanelHeight(context);
     final labelWidth = (popupWidth * .43).clamp(34.0, 68.0).toDouble();
@@ -1403,6 +1404,8 @@ class _PlayerScreenState extends State<PlayerScreen>
                 builder: (context, _) => ValueListenableBuilder<double?>(
                   valueListenable: _playbackSpeedDraft,
                   builder: (context, draftSpeed, _) {
+                    final currentState = controller.state;
+                    final duration = _durationOf(currentState);
                     final speed =
                         draftSpeed ?? controller.state.playbackSpeed;
                     return Column(
@@ -1410,7 +1413,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                         Padding(
                           padding: const EdgeInsets.only(top: 4),
                           child: Semantics(
-                            label: state.readerDurationEstimated
+                            label: currentState.readerDurationEstimated
                                 ? l10n.playerEstimatedDuration(
                                     formatDuration(duration / speed),
                                   )
@@ -1461,8 +1464,10 @@ class _PlayerScreenState extends State<PlayerScreen>
                                       ).colorScheme.onPrimary,
                                     ),
                                     child: Listener(
-                                      onPointerCancel: (_) =>
-                                          _clearPlaybackSpeedDraft(),
+                                      onPointerDown: _onPlaybackSpeedPointerDown,
+                                      onPointerUp: _onPlaybackSpeedPointerUp,
+                                      onPointerCancel:
+                                          _onPlaybackSpeedPointerCancel,
                                       child: Slider(
                                         key: const ValueKey(
                                           'scroll-speed-slider',
@@ -1476,7 +1481,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                                           final durationLabel =
                                               formatDuration(duration / value);
                                           final accessibleDuration =
-                                              state.readerDurationEstimated
+                                              currentState.readerDurationEstimated
                                               ? l10n.playerEstimatedDuration(
                                                   durationLabel,
                                                 )
@@ -1541,16 +1546,34 @@ class _PlayerScreenState extends State<PlayerScreen>
     _playbackSpeedDraft.value = speed;
   }
 
+  void _onPlaybackSpeedPointerDown(PointerDownEvent event) {
+    _playbackSpeedPointerActive = true;
+    _playbackSpeedPointerCanceled = false;
+  }
+
+  void _onPlaybackSpeedPointerUp(PointerUpEvent event) {
+    _playbackSpeedPointerActive = false;
+  }
+
+  void _onPlaybackSpeedPointerCancel(PointerCancelEvent event) {
+    _playbackSpeedPointerActive = false;
+    _playbackSpeedPointerCanceled = true;
+    _clearPlaybackSpeedDraft(preservePointerCancellation: true);
+  }
+
   bool _playbackSpeedDraftIsCurrent() {
     final state = controller.state;
-    return identical(_playbackSpeedDraftController, controller) &&
+    return _playbackSpeedDraft.value != null &&
+        identical(_playbackSpeedDraftController, controller) &&
         _playbackSpeedDraftSongId == state.song?.id &&
         _playbackSpeedDraftDuration == _durationOf(state);
   }
 
   void _updatePlaybackSpeedDraft(double speed) {
+    if (_playbackSpeedPointerCanceled) return;
     if (_playbackSpeedDraft.value == null) {
       _beginPlaybackSpeedDraft(speed);
+      if (!_playbackSpeedPointerActive) _commitPlaybackSpeedDraft(speed);
       return;
     }
     if (!_playbackSpeedDraftIsCurrent()) {
@@ -1558,16 +1581,47 @@ class _PlayerScreenState extends State<PlayerScreen>
       return;
     }
     _playbackSpeedDraft.value = speed;
+    if (!_playbackSpeedPointerActive) _commitPlaybackSpeedDraft(speed);
   }
 
-  void _clearPlaybackSpeedDraft() {
+  void _clearPlaybackSpeedDraft({bool preservePointerCancellation = false}) {
     if (mounted) _playbackSpeedDraft.value = null;
+    _playbackSpeedDraftSongId = null;
+    _playbackSpeedDraftDuration = null;
+    _playbackSpeedDraftController = null;
+    if (!preservePointerCancellation) {
+      _playbackSpeedPointerActive = false;
+      _playbackSpeedPointerCanceled = false;
+    }
   }
 
   void _commitPlaybackSpeedDraft(double speed) {
-    final isCurrent = _playbackSpeedDraftIsCurrent();
+    if (_playbackSpeedPointerCanceled || !_playbackSpeedDraftIsCurrent()) {
+      _clearPlaybackSpeedDraft();
+      return;
+    }
+    if (_playbackSpeedPointerActive) {
+      scheduleMicrotask(() {
+        if (!mounted) return;
+        if (_playbackSpeedPointerCanceled ||
+            !_playbackSpeedDraftIsCurrent()) {
+          _clearPlaybackSpeedDraft();
+          return;
+        }
+        _finishPlaybackSpeedDraft(speed);
+      });
+      return;
+    }
+    _finishPlaybackSpeedDraft(speed);
+  }
+
+  void _finishPlaybackSpeedDraft(double speed) {
+    if (!_playbackSpeedDraftIsCurrent()) {
+      _clearPlaybackSpeedDraft();
+      return;
+    }
     _clearPlaybackSpeedDraft();
-    if (isCurrent) unawaited(controller.setPlaybackSpeed(speed));
+    unawaited(controller.setPlaybackSpeed(speed));
   }
 
   Widget _transport(
@@ -1675,11 +1729,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                   children: [
                     if (showSpeed)
                       Flexible(
-                        child: _speedControl(
-                          l10n,
-                          state,
-                          duration: _durationOf(state),
-                        ),
+                        child: _speedControl(l10n, state),
                       ),
                     if (trailingAction != null) trailingAction,
                   ],

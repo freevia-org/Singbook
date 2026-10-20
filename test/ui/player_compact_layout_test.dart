@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui' show PointerCancelEvent, PointerDownEvent, PointerUpEvent;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -20,17 +21,20 @@ class _Controller extends VerseUiController {
   bool showChords = true;
   bool playerControlsExpanded = true;
   String highlightStyle = 'contrast';
+  String songId = 'song';
+  double duration = 240;
+  int speedWrites = 0;
   @override
   VerseUiState get state => VerseUiState(
     route: VerseRoute.reader,
     song: SongCardData(
-      id: 'song',
+      id: songId,
       title: 'Lanterns at Dawn',
       artist: 'Mira Vale',
       album: 'Quiet Rooms',
       key: songKey,
       hasChords: true,
-      durationSeconds: 240,
+      durationSeconds: duration,
     ),
     readerKey: songKey,
     readerTuning: tuning,
@@ -62,6 +66,7 @@ class _Controller extends VerseUiController {
 
   @override
   Future<void> setPlaybackSpeed(double value) async {
+    speedWrites++;
     speed = value;
     notifyListeners();
   }
@@ -143,6 +148,24 @@ Future<void> _pump(
   );
   await tester.pumpAndSettle();
 }
+
+Slider _speedSlider(WidgetTester tester) => tester.widget<Slider>(
+  find.byKey(const ValueKey('scroll-speed-slider')),
+);
+
+Listener _speedSliderListener(WidgetTester tester) => tester.widget<Listener>(
+  find
+      .ancestor(
+        of: find.byKey(const ValueKey('scroll-speed-slider')),
+        matching: find.byWidgetPredicate(
+          (widget) =>
+              widget is Listener &&
+              widget.onPointerDown != null &&
+              widget.onPointerCancel != null,
+        ),
+      )
+      .first,
+);
 
 void main() {
   for (final missingKey in <String?>[null, 'H']) {
@@ -444,14 +467,17 @@ void main() {
       final speedSlider = tester.widget<Slider>(
         find.byKey(const ValueKey('scroll-speed-slider')),
       );
-      speedSlider.onChangeStart!(1);
       speedSlider.onChanged!(1.25);
       await tester.pump();
-      expect(controller.speed, 1);
-      expect(find.text('3:12'), findsOneWidget);
-      speedSlider.onChangeEnd!(1.25);
-      await tester.pumpAndSettle();
       expect(controller.speed, 1.25);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('scroll-speed-panel')),
+          matching: find.text('3:12'),
+        ),
+        findsOneWidget,
+      );
+      expect(controller.speedWrites, 1);
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('pitch-key-dropdown')));
@@ -467,6 +493,139 @@ void main() {
       TargetPlatform.windows,
     }),
   );
+
+  testWidgets('speed duration draft commits only valid slider interactions', (
+    tester,
+  ) async {
+    final controller = _Controller();
+    addTearDown(controller.dispose);
+    await _pump(tester, controller);
+    await tester.tap(find.byKey(const ValueKey('scroll-speed-toggle')));
+    await tester.pumpAndSettle();
+
+    var slider = _speedSlider(tester);
+    var listener = _speedSliderListener(tester);
+    final canceledGesture = await tester.startGesture(
+      tester.getCenter(find.byKey(const ValueKey('scroll-speed-slider'))),
+      pointer: 10,
+    );
+    await canceledGesture.moveBy(const Offset(0, -32));
+    await tester.pump();
+    await canceledGesture.cancel();
+    await tester.pumpAndSettle();
+    expect(controller.speedWrites, 0);
+    expect(controller.speed, 1);
+
+    listener.onPointerDown!(
+      PointerDownEvent(pointer: 11, position: Offset.zero),
+    );
+    slider.onChangeStart!(1);
+    slider.onChanged!(1.25);
+    await tester.pump();
+    expect(controller.speedWrites, 0);
+    expect(controller.speed, 1);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('scroll-speed-panel')),
+        matching: find.text('3:12'),
+      ),
+      findsOneWidget,
+    );
+
+    // Slider reports onChangeEnd for a cancelled pointer on Flutter versions
+    // where recognizer cancellation reaches _endInteraction first.
+    slider.onChangeEnd!(1.25);
+    listener.onPointerCancel!(
+      PointerCancelEvent(pointer: 11, position: Offset.zero),
+    );
+    await tester.pump();
+    expect(controller.speedWrites, 0);
+    expect(controller.speed, 1);
+
+    listener.onPointerDown!(
+      PointerDownEvent(pointer: 12, position: Offset.zero),
+    );
+    slider.onChangeStart!(1);
+    slider.onChanged!(1.4);
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    slider.onChangeEnd!(1.4);
+    await tester.pump();
+    expect(controller.speedWrites, 0);
+    expect(controller.speed, 1);
+
+    await tester.tap(find.byKey(const ValueKey('scroll-speed-toggle')));
+    await tester.pumpAndSettle();
+    slider = _speedSlider(tester);
+    listener = _speedSliderListener(tester);
+    listener.onPointerDown!(
+      PointerDownEvent(pointer: 13, position: Offset.zero),
+    );
+    slider.onChangeStart!(1);
+    slider.onChanged!(1.5);
+    listener.onPointerUp!(PointerUpEvent(pointer: 13, position: Offset.zero));
+    slider.onChangeEnd!(1.5);
+    await tester.pumpAndSettle();
+    expect(controller.speedWrites, 1);
+    expect(controller.speed, 1.5);
+    slider.onChangeEnd!(1.5);
+    expect(controller.speedWrites, 1);
+
+    listener.onPointerDown!(
+      PointerDownEvent(pointer: 14, position: Offset.zero),
+    );
+    slider.onChangeStart!(1.5);
+    slider.onChanged!(1.25);
+    controller.duration = 180;
+    controller.refresh();
+    await tester.pump();
+    listener.onPointerUp!(PointerUpEvent(pointer: 14, position: Offset.zero));
+    slider.onChangeEnd!(1.25);
+    await tester.pump();
+    expect(controller.speedWrites, 1);
+    expect(controller.speed, 1.5);
+
+    listener.onPointerDown!(
+      PointerDownEvent(pointer: 15, position: Offset.zero),
+    );
+    slider.onChangeStart!(1.5);
+    slider.onChanged!(1.25);
+    controller.songId = 'replacement-song';
+    controller.refresh();
+    await tester.pump();
+    listener.onPointerUp!(PointerUpEvent(pointer: 15, position: Offset.zero));
+    slider.onChangeEnd!(1.25);
+    await tester.pump();
+    expect(controller.speedWrites, 1);
+    expect(controller.speed, 1.5);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('scroll-speed-toggle')));
+    await tester.pumpAndSettle();
+    slider = _speedSlider(tester);
+    final replacementController = _Controller()..speed = 1.5;
+    addTearDown(replacementController.dispose);
+    listener = _speedSliderListener(tester);
+    listener.onPointerDown!(
+      PointerDownEvent(pointer: 16, position: Offset.zero),
+    );
+    slider.onChangeStart!(1.5);
+    slider.onChanged!(1.25);
+    await _pump(tester, replacementController);
+    slider.onChangeEnd!(1.25);
+    await tester.pump();
+    expect(controller.speedWrites, 1);
+    expect(replacementController.speedWrites, 0);
+
+    await tester.tap(find.byKey(const ValueKey('scroll-speed-toggle')));
+    await tester.pumpAndSettle();
+    _speedSlider(tester).onChanged!(1.25); // keyboard/semantics adjustment
+    await tester.pump();
+    expect(replacementController.speedWrites, 1);
+    expect(replacementController.speed, 1.25);
+    expect(tester.takeException(), isNull);
+  });
 
   const capture = bool.fromEnvironment('CAPTURE_COMPACT_PLAYER');
   for (final scenario in [

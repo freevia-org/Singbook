@@ -259,6 +259,7 @@ void main() {
       if (scenario.$1 == 'portrait') {
         expect(collapsedSize.height, greaterThan(expandedSize.height));
       } else {
+        expect(collapsedSize.width, greaterThan(expandedSize.width));
         expect(collapsedSize.height, closeTo(expandedSize.height, .1));
       }
       expect(

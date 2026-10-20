@@ -99,10 +99,9 @@ void main() {
         findsOneWidget,
       );
 
-      speedSlider.onChangeStart!(1);
       speedSlider.onChanged!(.55);
       await tester.pump();
-      expect(controller.state.playbackSpeed, 1);
+      expect(controller.state.playbackSpeed, .55);
       expect(
         find.descendant(
           of: find.byKey(const ValueKey('scroll-speed-panel')),
@@ -110,7 +109,6 @@ void main() {
         ),
         findsOneWidget,
       );
-      speedSlider.onChangeEnd!(.55);
       await tester.pump();
       expect(controller.state.playbackSpeed, .55);
       expect(find.text('7:16'), findsOneWidget);

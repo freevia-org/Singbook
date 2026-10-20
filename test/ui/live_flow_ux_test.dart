@@ -936,10 +936,9 @@ void main() {
         speedSlider.semanticFormatterCallback!(1.5),
         contains(l10n.playerScrollSpeed),
       );
-      speedSlider.onChangeStart!(1);
       speedSlider.onChanged!(1.5);
       await tester.pump();
-      expect(controller.selectedSpeed, isNull);
+      expect(controller.selectedSpeed, 1.5);
       expect(
         find.descendant(
           of: find.byKey(const ValueKey('scroll-speed-panel')),
@@ -947,9 +946,6 @@ void main() {
         ),
         findsOneWidget,
       );
-      speedSlider.onChangeEnd!(1.5);
-      await tester.pump();
-      expect(controller.selectedSpeed, 1.5);
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
 
@@ -1022,10 +1018,9 @@ void main() {
       ),
       findsOneWidget,
     );
-    speedSlider.onChangeStart!(.5);
     speedSlider.onChanged!(1.25);
     await tester.pump();
-    expect(controller.selectedSpeed, isNull);
+    expect(controller.selectedSpeed, 1.25);
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('scroll-speed-panel')),
@@ -1033,7 +1028,6 @@ void main() {
       ),
       findsOneWidget,
     );
-    speedSlider.onChangeEnd!(1.25);
     expect(controller.selectedSpeed, 1.25);
     await tester.pumpWidget(const SizedBox.shrink());
   });

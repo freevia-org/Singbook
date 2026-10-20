@@ -159,6 +159,51 @@ void main() {
     });
   }
 
+  testWidgets('landscape side panel reveals outward in RTL', (tester) async {
+    final expanded = ValueNotifier(false);
+    addTearDown(expanded.dispose);
+    tester.view.physicalSize = const Size(800, 400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Directionality(
+          textDirection: TextDirection.rtl,
+          child: Scaffold(
+            body: ValueListenableBuilder(
+              valueListenable: expanded,
+              builder: (context, value, _) => PlayerControlsPanel(
+                expanded: value,
+                onChanged: (value) => expanded.value = value,
+                expandLabel: 'Expand',
+                collapseLabel: 'Collapse',
+                side: true,
+                lyrics: const ColoredBox(
+                  key: ValueKey('rtl-lyrics'),
+                  color: Colors.transparent,
+                ),
+                controls: const SizedBox(
+                  width: 240,
+                  child: ColoredBox(color: Colors.blue),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final lyrics = find.byKey(const ValueKey('rtl-lyrics'));
+    final before = tester.getRect(lyrics);
+    final handle = find.byKey(const ValueKey('player-controls-handle'));
+    await tester.drag(handle, const Offset(80, 0));
+    await tester.pumpAndSettle();
+    expect(expanded.value, isTrue);
+    expect(tester.getRect(lyrics).width, lessThan(before.width));
+    expect(tester.takeException(), isNull);
+  });
+
   for (final rtl in [false, true]) {
     testWidgets('fullscreen title and actions fit beside the cutout ($rtl)', (
       tester,
