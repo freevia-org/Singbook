@@ -113,8 +113,10 @@ void main() {
           991.0,
           999.0,
           1000.0,
+          1600.0,
         ]) {
-          tester.view.physicalSize = Size(width, 800);
+          final height = width == 1600 ? 900.0 : 800.0;
+          tester.view.physicalSize = Size(width, height);
           await tester.pump();
           final card = find.byKey(
             const ValueKey('setlist-card-tablet-setlist'),
@@ -134,7 +136,7 @@ void main() {
             reason: 'width $width',
           );
           expect(tester.takeException(), isNull, reason: 'width $width');
-          if (width == 820) {
+          if (width == 820 || width == 1600) {
             await tester.runAsync(() async {
               final boundary =
                   boundaryKey.currentContext!.findRenderObject()!
@@ -146,8 +148,9 @@ void main() {
               final output = Directory(
                 'artifacts/singbook-setlist-rtl-captures',
               )..createSync(recursive: true);
+              final dimensions = width == 1600 ? '1600x900' : '820_large';
               File(
-                '${output.path}/single_${locale.languageCode}_820_large.png',
+                '${output.path}/single_${locale.languageCode}_$dimensions.png',
               ).writeAsBytesSync(data!.buffer.asUint8List());
               image.dispose();
             });
