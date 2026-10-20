@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -72,25 +73,47 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
+          locale: const Locale('ar'),
           localizationsDelegates: singbookLocalizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           theme: _captureTheme(brightness: Brightness.light),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(1.6)),
+            child: child!,
+          ),
           home: AnimatedBuilder(
             animation: controller,
-            builder: (context, _) =>
-                Scaffold(body: SetlistsScreen(controller: controller)),
+            builder: (context, _) => Scaffold(
+              body: Directionality(
+                textDirection: TextDirection.rtl,
+                child: SetlistsScreen(controller: controller),
+              ),
+            ),
           ),
         ),
       );
 
-      for (final width in [900.0, 991.0, 999.0, 1000.0]) {
+      for (final width in [
+        639.0,
+        640.0,
+        820.0,
+        899.0,
+        900.0,
+        991.0,
+        999.0,
+        1000.0,
+      ]) {
         tester.view.physicalSize = Size(width, 800);
         await tester.pump();
         final card = find.byKey(const ValueKey('setlist-card-tablet-setlist'));
         final rect = tester.getRect(card);
+        final expectedWidth = math.min(width - 32, 960.0);
         expect(rect.left, greaterThanOrEqualTo(0), reason: 'width $width');
         expect(rect.right, lessThanOrEqualTo(width), reason: 'width $width');
         expect(rect.center.dx, closeTo(width / 2, 0.5), reason: 'width $width');
+        expect(rect.width, closeTo(expectedWidth, 0.5), reason: 'width $width');
         expect(tester.takeException(), isNull, reason: 'width $width');
       }
 
@@ -111,7 +134,7 @@ void main() {
       final second = tester.getRect(
         find.byKey(const ValueKey('setlist-card-tablet-setlist-second')),
       );
-      expect(second.left - first.right, closeTo(8, 0.5));
+      expect(first.left - second.right, closeTo(8, 0.5));
       expect(tester.takeException(), isNull);
       tester.view.resetDevicePixelRatio();
       tester.view.resetPhysicalSize();
