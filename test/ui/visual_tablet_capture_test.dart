@@ -18,6 +18,7 @@ import 'package:singbook/ui/verse_ui_state.dart';
 
 const _screens = [
   'library',
+  'setlists',
   'reader',
   'editor_keyboard',
   'settings',
@@ -197,6 +198,8 @@ void main() {
           switch (screen) {
             case 'library':
               controller.setTab(VerseTab.songs);
+            case 'setlists':
+              controller.setTab(VerseTab.setlists);
             case 'reader':
               await tester.runAsync(() => controller.openSong(fixture.song.id));
             case 'editor_keyboard':
@@ -282,7 +285,7 @@ void main() {
       output.listSync().whereType<File>().where(
         (file) => !file.path.endsWith('reader_scrolled.png'),
       ),
-      hasLength(24),
+      hasLength(28),
     );
     tester.view.resetDevicePixelRatio();
     tester.view.resetPhysicalSize();
@@ -369,6 +372,17 @@ void _assertRouteGeometry(WidgetTester tester, String screen, Size viewport) {
       final grid = find.byKey(const PageStorageKey('songs-library-grid'));
       expect(grid, findsOneWidget);
       _insideViewport(tester, grid, viewport);
+    case 'setlists':
+      final card = find.byKey(const ValueKey('setlist-card-tablet-setlist'));
+      expect(card, findsOneWidget);
+      _insideViewport(tester, card, viewport);
+      if (viewport.width >= 1280) {
+        final frame = find.byKey(const ValueKey('tablet-content-frame'));
+        final cardRect = tester.getRect(card);
+        final frameRect = tester.getRect(frame);
+        expect(cardRect.width, greaterThanOrEqualTo(900));
+        expect(cardRect.center.dx, closeTo(frameRect.center.dx, 5));
+      }
     case 'reader':
       final lyric = find.textContaining('When morning spills across the hills');
       expect(lyric, findsOneWidget);
