@@ -90,8 +90,17 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
               : LayoutBuilder(
                   builder: (context, constraints) {
                     final wide = constraints.maxWidth >= 640;
-                    final columns = wide ? 2 : 1;
-                    final cardWidth = wide
+                    // A lone card should use the available desktop canvas
+                    // and stay visually centered instead of occupying only
+                    // the first half of an otherwise empty two-column grid.
+                    final centeredSingleCard =
+                        wide &&
+                        lists.length == 1 &&
+                        constraints.maxWidth >= 900;
+                    final columns = wide && !centeredSingleCard ? 2 : 1;
+                    final cardWidth = centeredSingleCard
+                        ? (constraints.maxWidth - 32).clamp(0.0, 960.0)
+                        : wide
                         ? (constraints.maxWidth - 40) / 2
                         : constraints.maxWidth - 32;
                     return ListView.builder(
@@ -101,12 +110,17 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                       itemBuilder: (context, rowIndex) => Padding(
                         padding: const EdgeInsets.only(bottom: 8),
                         child: Row(
+                          mainAxisAlignment: centeredSingleCard
+                              ? MainAxisAlignment.center
+                              : MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: List.generate(columns, (column) {
                             final index = rowIndex * columns + column;
                             return Padding(
                               padding: EdgeInsetsDirectional.only(
-                                end: column == 0 && wide ? 8 : 0,
+                                end: column == 0 && wide && !centeredSingleCard
+                                    ? 8
+                                    : 0,
                               ),
                               child: SizedBox(
                                 width: cardWidth.toDouble(),
@@ -152,6 +166,7 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
       () => expanded ? _expanded.remove(value.id) : _expanded.add(value.id),
     );
     return Card(
+      key: ValueKey('setlist-card-${value.id}'),
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 4, 4),

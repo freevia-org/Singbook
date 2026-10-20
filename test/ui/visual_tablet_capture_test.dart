@@ -14,10 +14,12 @@ import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/ui/app_controller_adapter.dart';
 import 'package:singbook/ui/theme/verse_theme.dart';
 import 'package:singbook/ui/verse_app.dart';
+import 'package:singbook/ui/library/setlists_screen.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
 
 const _screens = [
   'library',
+  'setlists',
   'reader',
   'editor_keyboard',
   'settings',
@@ -27,6 +29,7 @@ const _screens = [
 const _viewports = <String, Size>{
   'tablet_portrait': Size(800, 1280),
   'tablet_landscape': Size(1280, 800),
+  'desktop_wide': Size(1920, 1080),
 };
 
 const _requiredFiles = [
@@ -57,10 +60,70 @@ void main() {
   final skip = reason != null;
 
   testWidgets(
+    'single setlist stays centered without overflow at wide breakpoints',
+    (tester) async {
+      final (fixture, controller) = (await tester.runAsync(() async {
+        final fixture = _Fixture();
+        return (fixture, AppControllerAdapter(fixture.app));
+      }))!;
+      addTearDown(controller.dispose);
+      addTearDown(fixture.app.dispose);
+      tester.view.devicePixelRatio = 1;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: singbookLocalizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: _captureTheme(brightness: Brightness.light),
+          home: AnimatedBuilder(
+            animation: controller,
+            builder: (context, _) =>
+                Scaffold(body: SetlistsScreen(controller: controller)),
+          ),
+        ),
+      );
+
+      for (final width in [900.0, 991.0, 999.0, 1000.0]) {
+        tester.view.physicalSize = Size(width, 800);
+        await tester.pump();
+        final card = find.byKey(const ValueKey('setlist-card-tablet-setlist'));
+        final rect = tester.getRect(card);
+        expect(rect.left, greaterThanOrEqualTo(0), reason: 'width $width');
+        expect(rect.right, lessThanOrEqualTo(width), reason: 'width $width');
+        expect(rect.center.dx, closeTo(width / 2, 0.5), reason: 'width $width');
+        expect(tester.takeException(), isNull, reason: 'width $width');
+      }
+
+      fixture.app.setlists = [
+        ...fixture.app.setlists,
+        fixture.app.setlists.single.copyWith(
+          id: 'tablet-setlist-second',
+          name: 'Songs for the Short Road',
+        ),
+      ];
+      controller.setTab(VerseTab.songs);
+      controller.setTab(VerseTab.setlists);
+      tester.view.physicalSize = const Size(1000, 800);
+      await tester.pump();
+      final first = tester.getRect(
+        find.byKey(const ValueKey('setlist-card-tablet-setlist')),
+      );
+      final second = tester.getRect(
+        find.byKey(const ValueKey('setlist-card-tablet-setlist-second')),
+      );
+      expect(second.left - first.right, closeTo(8, 0.5));
+      expect(tester.takeException(), isNull);
+      tester.view.resetDevicePixelRatio();
+      tester.view.resetPhysicalSize();
+    },
+    skip: skip,
+  );
+
+  testWidgets(
     'landscape reader scrolls the final lyric above persistent player controls',
     (tester) async {
       await _loadFonts();
-      final output = Directory('artifacts/singbook-tablet-captures')
+      final output = Directory('artifacts/singbook-layout-captures')
         ..createSync(recursive: true);
       final boundaryKey = GlobalKey();
       // Keep the controller's queued futures in the same real async zone as
@@ -143,7 +206,7 @@ void main() {
     tester,
   ) async {
     await _loadFonts();
-    final output = Directory('artifacts/singbook-tablet-captures')
+    final output = Directory('artifacts/singbook-layout-captures')
       ..createSync(recursive: true);
     final boundaryKey = GlobalKey();
     // Match the real async zone used by the controller operations below.
@@ -180,7 +243,7 @@ void main() {
         for (final screen in _screens) {
           // ignore: avoid_print
           print(
-            'tablet capture start ${viewportEntry.key} ${themeBrightness.name} $screen',
+            'responsive capture start ${viewportEntry.key} ${themeBrightness.name} $screen',
           );
           tester.view.physicalSize = viewportEntry.value;
           tester.view.viewInsets = screen.endsWith('_keyboard')
@@ -197,6 +260,8 @@ void main() {
           switch (screen) {
             case 'library':
               controller.setTab(VerseTab.songs);
+            case 'setlists':
+              controller.setTab(VerseTab.setlists);
             case 'reader':
               await tester.runAsync(() => controller.openSong(fixture.song.id));
             case 'editor_keyboard':
@@ -229,7 +294,7 @@ void main() {
           );
           // ignore: avoid_print
           print(
-            'tablet capture pumped ${viewportEntry.key} ${themeBrightness.name} $screen',
+            'responsive capture pumped ${viewportEntry.key} ${themeBrightness.name} $screen',
           );
 
           if (screen.endsWith('_keyboard')) {
@@ -272,7 +337,7 @@ void main() {
           await tester.pump();
           // ignore: avoid_print
           print(
-            'tablet capture saved ${viewportEntry.key} ${themeBrightness.name} $screen',
+            'responsive capture saved ${viewportEntry.key} ${themeBrightness.name} $screen',
           );
         }
       }
@@ -282,7 +347,7 @@ void main() {
       output.listSync().whereType<File>().where(
         (file) => !file.path.endsWith('reader_scrolled.png'),
       ),
-      hasLength(24),
+      hasLength(42),
     );
     tester.view.resetDevicePixelRatio();
     tester.view.resetPhysicalSize();
@@ -369,6 +434,17 @@ void _assertRouteGeometry(WidgetTester tester, String screen, Size viewport) {
       final grid = find.byKey(const PageStorageKey('songs-library-grid'));
       expect(grid, findsOneWidget);
       _insideViewport(tester, grid, viewport);
+    case 'setlists':
+      final card = find.byKey(const ValueKey('setlist-card-tablet-setlist'));
+      expect(card, findsOneWidget);
+      _insideViewport(tester, card, viewport);
+      if (viewport.width >= 1280) {
+        final frame = find.byKey(const ValueKey('tablet-content-frame'));
+        final cardRect = tester.getRect(card);
+        final frameRect = tester.getRect(frame);
+        expect(cardRect.width, greaterThanOrEqualTo(900));
+        expect(cardRect.center.dx, closeTo(frameRect.center.dx, 5));
+      }
     case 'reader':
       final lyric = find.textContaining('When morning spills across the hills');
       expect(lyric, findsOneWidget);
