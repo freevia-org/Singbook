@@ -619,6 +619,221 @@ void main() {
       expect(result.timingTracks.single.raw, raw);
     },
   );
+  test('combined chart receives aligned sections from another provider', () {
+    const lyrics =
+        'First line of the song\n'
+        'Second line of the song\n'
+        'Here comes the refrain\n'
+        'Repeat the refrain';
+    final combined = combineSources(selected, [
+      source(
+        'a-chart',
+        '[C]First line of the song\n[G]Second line of the song\n'
+            '[F]Here comes the refrain\n[C]Repeat the refrain',
+      ),
+      source(
+        'z-sections',
+        '[Verse 1]\nFirst line of the song\nSecond line of the song\n'
+            '[Chorus]\nHere comes the refrain\nRepeat the refrain',
+        kind: MatchKind.sameSong,
+      ),
+      source('lyrics', lyrics, kind: MatchKind.sameSong),
+    ]);
+
+    expect(combined.extra['selectedSourceId'], 'a-chart:1');
+    expect(combined.body, contains('{comment: Verse 1}\n[C]First line'));
+    expect(combined.body, contains('{comment: Chorus}\n[F]Here comes'));
+    expect(combined.extra['sectionSourceIds'], ['z-sections:1']);
+    expect(
+      combined.extra['fieldOrigins'],
+      containsPair('sections', 'z-sections:1'),
+    );
+  });
+
+  test('combined lyrics do not inherit sections from unaligned text', () {
+    const baseLyrics =
+        'First line across the quiet valley at dawn\n'
+        'Second line follows the river through the fields';
+    final combined = combineSources(selected, [
+      source('a-lyrics', baseLyrics, kind: MatchKind.sameSong),
+      source(
+        'z-sections',
+        '[Bridge]\nUnrelated words appear here\nSecond line differs too',
+        kind: MatchKind.sameSong,
+      ),
+    ]);
+
+    expect(combined.body, baseLyrics);
+    expect(combined.extra, isNot(contains('sectionSourceIds')));
+  });
+
+  test('equal conflicting section labels are skipped without donor credit', () {
+    const lyrics = 'First line in the song\nSecond line in the song';
+    const chart = '[C]First line in the song\n[G]Second line in the song';
+    final combined = combineSources(selected, [
+      source('a-chart', chart),
+      source(
+        'b-chorus',
+        '{comment: Chorus}\nFirst line in the song\nSecond line in the song',
+        kind: MatchKind.sameSong,
+      ),
+      source(
+        'c-verse',
+        '{comment: Verse}\nFirst line in the song\nSecond line in the song',
+        kind: MatchKind.sameSong,
+      ),
+      source('lyrics', lyrics, kind: MatchKind.sameSong),
+    ]);
+
+    expect(combined.extra['selectedSourceId'], 'a-chart:1');
+    expect(combined.body, chart);
+    expect(combined.extra, isNot(contains('sectionSourceIds')));
+  });
+
+  test('selected source section labels win over conflicting donors', () {
+    const chart =
+        '[Verse 1]\n[C]First line in the song\n[G]Second line in the song';
+    final combined = combineSources(selected, [
+      source('a-chart', chart),
+      source(
+        'b-sections',
+        '{comment: Chorus}\nFirst line in the song\nSecond line in the song',
+        kind: MatchKind.sameSong,
+      ),
+    ]);
+
+    expect(combined.body, chart);
+    expect(combined.extra['sectionSourceIds'], ['a-chart:1']);
+  });
+
+  test('explicit source choice does not overlay other providers sections', () {
+    const lyrics = 'First line in the song\nSecond line in the song';
+    final combined = combineSources(selected, [
+      source('a-lyrics', lyrics, kind: MatchKind.sameSong),
+      source(
+        'b-sections',
+        '{comment: Chorus}\nFirst line in the song\nSecond line in the song',
+        kind: MatchKind.sameSong,
+      ),
+    ], preferredSourceId: 'a-lyrics:1');
+
+    expect(combined.body, lyrics);
+    expect(combined.extra, isNot(contains('sectionSourceIds')));
+  });
+
+  test('section majority wins and only majority providers get credit', () {
+    const lyrics = 'First line in the song\nSecond line in the song';
+    final combined = combineSources(selected, [
+      source(
+        'a-chart',
+        '[C]First line in the song\n[G]Second line in the song',
+      ),
+      source(
+        'b-chorus',
+        '{comment: Chorus}\nFirst line in the song\nSecond line in the song',
+        kind: MatchKind.sameSong,
+      ),
+      source(
+        'c-chorus',
+        '{comment: Chorus}\nFirst line in the song\nSecond line in the song',
+        kind: MatchKind.sameSong,
+      ),
+      source(
+        'd-verse',
+        '{comment: Verse}\nFirst line in the song\nSecond line in the song',
+        kind: MatchKind.sameSong,
+      ),
+      source('lyrics', lyrics, kind: MatchKind.sameSong),
+    ]);
+
+    expect(combined.body, contains('{comment: Chorus}\n[C]First line'));
+    expect(combined.extra['sectionSourceIds'], ['b-chorus:1', 'c-chorus:1']);
+  });
+
+  test('equivalent section casing is consensus instead of a conflict', () {
+    const lyrics = 'First line in the song\nSecond line in the song';
+    final combined = combineSources(selected, [
+      source(
+        'a-chart',
+        '[C]First line in the song\n[G]Second line in the song',
+      ),
+      source(
+        'b-sections',
+        '{comment: Chorus}\n$lyrics',
+        kind: MatchKind.sameSong,
+      ),
+      source(
+        'c-sections',
+        '{comment: chorus}\n$lyrics',
+        kind: MatchKind.sameSong,
+      ),
+    ]);
+
+    expect(combined.body, contains('{comment: Chorus}\n[C]First line'));
+    expect(combined.extra['sectionSourceIds'], [
+      'b-sections:1',
+      'c-sections:1',
+    ]);
+  });
+
+  test('equivalent section spellings retain their majority and provenance', () {
+    const lyrics = 'First line in the song\nSecond line in the song';
+    final combined = combineSources(selected, [
+      source(
+        'a-chart',
+        '[C]First line in the song\n[G]Second line in the song',
+      ),
+      source(
+        'b-sections',
+        '{comment: Chorus}\n$lyrics',
+        kind: MatchKind.sameSong,
+      ),
+      source(
+        'c-sections',
+        '{comment: chorus}\n$lyrics',
+        kind: MatchKind.sameSong,
+      ),
+      source(
+        'd-conflict',
+        '{comment: Verse}\n$lyrics',
+        kind: MatchKind.sameSong,
+      ),
+    ]);
+
+    expect(combined.body, contains('{comment: Chorus}\n[C]First line'));
+    expect(combined.extra['sectionSourceIds'], [
+      'b-sections:1',
+      'c-sections:1',
+    ]);
+  });
+
+  test('recognized pre-chorus spelling variants share section votes', () {
+    const lyrics = 'First line in the song\nSecond line in the song';
+    final combined = combineSources(selected, [
+      source(
+        'a-chart',
+        '[C]First line in the song\n[G]Second line in the song',
+      ),
+      source(
+        'b-sections',
+        '{comment: Pre-Chorus}\n$lyrics',
+        kind: MatchKind.sameSong,
+      ),
+      source(
+        'c-sections',
+        '{comment: pre chorus}\n$lyrics',
+        kind: MatchKind.sameSong,
+      ),
+    ]);
+
+    expect(combined.extra['selectedSourceId'], 'a-chart:1');
+    expect(combined.body, contains('{comment: Pre-Chorus}\n[C]First line'));
+    expect(combined.extra['sectionSourceIds'], [
+      'b-sections:1',
+      'c-sections:1',
+    ]);
+  });
+
   test('mismatched recording and lyrics timing retained but not activated', () {
     final result = combineSources(selected, [
       source('ug', '[C]Different words', kind: MatchKind.sameSong),

@@ -173,7 +173,10 @@ class _PlayerControlsPanelState extends State<PlayerControlsPanel>
               alignment: widget.side
                   ? Alignment.centerLeft
                   : Alignment.topCenter,
-              child: Offstage(offstage: _reveal.value == 0, child: child),
+              child: ExcludeFocus(
+                excluding: _reveal.value == 0,
+                child: Offstage(offstage: _reveal.value == 0, child: child),
+              ),
             ),
             child: KeyedSubtree(key: _controlsKey, child: widget.controls),
           ),

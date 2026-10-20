@@ -1064,7 +1064,7 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Kas kustutada laulude ja laulunimekirjade ajalugu?';
+      'Kustutab laulude ja laulunimekirjade hiljutise tegevusajaloo. Säilitab salvestatud laulud, lemmikud, laulunimekirjad ja seaded.';
 
   @override
   String get settingsHistoryCleared => 'Ajalugu kustutati.';

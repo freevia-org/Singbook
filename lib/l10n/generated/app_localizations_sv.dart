@@ -1064,7 +1064,7 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Rensa historiken för låtar och setlistor?';
+      'Rensar den senaste aktiviteten för låtar och setlistor. Behåller sparade låtar, favoriter, setlistor och inställningar.';
 
   @override
   String get settingsHistoryCleared => 'Historiken har rensats.';

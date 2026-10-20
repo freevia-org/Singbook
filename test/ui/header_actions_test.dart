@@ -64,7 +64,12 @@ void main() {
 
       await tester.tap(find.byKey(const ValueKey('header-overflow-menu')));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(l10n.menuTypeNewSong));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(PopupMenuItem<String>),
+          matching: find.text(l10n.menuTypeNewSong),
+        ),
+      );
       await tester.pumpAndSettle();
       expect(controller.calls, contains('createSong'));
 
@@ -73,10 +78,35 @@ void main() {
       await tester.tap(find.text(l10n.settingsImportChordPro));
       await tester.pumpAndSettle();
       expect(controller.calls, contains('importChordPro'));
+      final songsMenuLeft = tester
+          .getRect(find.byKey(const ValueKey('header-overflow-menu')))
+          .left;
+      final songsCloudRight = tester
+          .getRect(find.byKey(const ValueKey('cloud-button')))
+          .right;
 
       state = const VerseUiState(activeTab: VerseTab.setlists);
       controller.refresh();
       await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('add-header-button')), findsNothing);
+      await tester.tap(find.byKey(const ValueKey('header-overflow-menu')));
+      await tester.pumpAndSettle();
+      expect(find.text(l10n.setlistCreate), findsNWidgets(2));
+      await tester.tap(find.text(l10n.setlistCreate).last);
+      await tester.pumpAndSettle();
+      expect(
+        controller.calls,
+        contains('createSetlist(name: ${l10n.setlistCreate}, songId: null)'),
+      );
+
+      expect(
+        tester.getRect(find.byKey(const ValueKey('header-overflow-menu'))).left,
+        songsMenuLeft,
+      );
+      expect(
+        tester.getRect(find.byKey(const ValueKey('cloud-button'))).right,
+        songsCloudRight,
+      );
       await tester.tap(find.byKey(const ValueKey('header-overflow-menu')));
       await tester.pumpAndSettle();
       final importSetlistLabel = '${l10n.settingsImportSetlist} (.osts)';
@@ -136,6 +166,14 @@ void main() {
     await pumpShell(tester, controller);
     final l10n = l10nOf(tester);
 
+    final support = find.byKey(const ValueKey('settings-menu-support'));
+    expect(support, findsOneWidget);
+    expect(tester.widget<ListTile>(support).title, isA<Text>());
+    expect(tester.widget<ListTile>(support).onTap, isNotNull);
+    expect(
+      find.descendant(of: support, matching: find.text(l10n.aboutSupport)),
+      findsOneWidget,
+    );
     final aboutTile = find.widgetWithText(ListTile, l10n.settingsAbout);
     final settingsList = find.byType(ListView);
     expect(settingsList, findsOneWidget);
@@ -156,11 +194,11 @@ void main() {
 
     expect(find.byType(AlertDialog), findsNothing);
     expect(find.text(l10n.aboutDetails), findsOneWidget);
+    expect(find.widgetWithText(TextButton, l10n.aboutSupport), findsNothing);
     for (final label in [
       l10n.aboutWebsite,
       l10n.aboutSourceCode,
       l10n.settingsPrivacy,
-      l10n.aboutSupport,
       l10n.aboutPublisher,
     ]) {
       final link = find.widgetWithText(TextButton, label);

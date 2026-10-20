@@ -440,7 +440,7 @@
   "settingsPrivacy": "Gizlilik",
   "settingsLegal": "Yasal bilgiler",
   "settingsClearHistory": "Geçmişi temizle",
-  "settingsClearHistoryConfirm": "Şarkı ve liste geçmişi temizlensin mi?",
+  "settingsClearHistoryConfirm": "Şarkıların ve listelerin son etkinlik geçmişini temizler. Kayıtlı şarkıları, favorileri, listeleri ve ayarları korur.",
   "settingsHistoryCleared": "Geçmiş temizlendi.",
   "accountTitle": "Hesap ve senkronizasyon",
   "accountUnavailable": "Senkronizasyon için Google oturum açma özelliği yapılandırılmış bir Singbook derlemesi gerekir. Bu derleme şarkılarınızı yalnızca bu cihazda tutar.",

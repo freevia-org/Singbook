@@ -440,7 +440,7 @@
   "settingsPrivacy": "Privatumas",
   "settingsLegal": "Teisinė informacija",
   "settingsClearHistory": "Išvalyti istoriją",
-  "settingsClearHistoryConfirm": "Išvalyti dainų ir koncertinių programų istoriją?",
+  "settingsClearHistoryConfirm": "Išvalo naujausią dainų ir koncertinių programų veiklos istoriją. Išsaugo įrašytas dainas, mėgstamiausius, koncertines programas ir nustatymus.",
   "settingsHistoryCleared": "Istorija išvalyta.",
   "accountTitle": "Paskyra ir sinchronizavimas",
   "accountUnavailable": "Sinchronizavimui reikalinga Singbook versija, kurioje sukonfigūruotas prisijungimas per Google. Šioje versijoje dainos saugomos tik šiame įrenginyje.",

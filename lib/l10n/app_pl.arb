@@ -440,7 +440,7 @@
   "settingsPrivacy": "Prywatność",
   "settingsLegal": "Informacje prawne",
   "settingsClearHistory": "Wyczyść historię",
-  "settingsClearHistoryConfirm": "Wyczyścić historię utworów i list?",
+  "settingsClearHistoryConfirm": "Czyści ostatnią historię aktywności utworów i setlist. Zachowuje zapisane utwory, ulubione, setlisty i ustawienia.",
   "settingsHistoryCleared": "Historia została wyczyszczona.",
   "accountTitle": "Konto i synchronizacja",
   "accountUnavailable": "Synchronizacja wymaga wersji Singbook skonfigurowanej do logowania przez Google. Ta wersja przechowuje utwory tylko na tym urządzeniu.",

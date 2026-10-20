@@ -440,7 +440,7 @@
   "settingsPrivacy": "Konfidencialitāte",
   "settingsLegal": "Juridiskā informācija",
   "settingsClearHistory": "Notīrīt vēsturi",
-  "settingsClearHistoryConfirm": "Notīrīt dziesmu un koncertprogrammu vēsturi?",
+  "settingsClearHistoryConfirm": "Notīra dziesmu un koncertprogrammu neseno darbību vēsturi. Saglabā saglabātās dziesmas, izlasi, koncertprogrammas un iestatījumus.",
   "settingsHistoryCleared": "Vēsture ir notīrīta.",
   "accountTitle": "Konts un sinhronizācija",
   "accountUnavailable": "Sinhronizēšanai vajadzīga Singbook versija ar konfigurētu pierakstīšanos Google kontā. Šajā versijā dziesmas tiek glabātas tikai šajā ierīcē.",

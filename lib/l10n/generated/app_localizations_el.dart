@@ -1074,7 +1074,7 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Να διαγραφεί το ιστορικό τραγουδιών και λιστών;';
+      'Διαγράφει την πρόσφατη δραστηριότητα τραγουδιών και λιστών. Διατηρεί τα αποθηκευμένα τραγούδια, τα αγαπημένα, τις λίστες και τις ρυθμίσεις.';
 
   @override
   String get settingsHistoryCleared => 'Το ιστορικό διαγράφηκε.';

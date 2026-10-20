@@ -1070,7 +1070,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Verlauf deiner Songs und Setlists löschen?';
+      'Löscht die letzten Aktivitäten zu Songs und Setlists. Gespeicherte Songs, Favoriten, Setlists und Einstellungen bleiben erhalten.';
 
   @override
   String get settingsHistoryCleared => 'Verlauf gelöscht.';

@@ -1039,7 +1039,8 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingsClearHistory => '履歴を消去';
 
   @override
-  String get settingsClearHistoryConfirm => '曲とセットリストの履歴を消去しますか？';
+  String get settingsClearHistoryConfirm =>
+      '曲とセットリストの最近の操作履歴を消去します。保存済みの曲、お気に入り、セットリスト、設定は保持されます。';
 
   @override
   String get settingsHistoryCleared => '履歴を消去しました。';

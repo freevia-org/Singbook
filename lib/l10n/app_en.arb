@@ -291,7 +291,7 @@
   "settingsPrivacy": "Privacy",
   "settingsLegal": "Legal",
   "settingsClearHistory": "Clear history",
-  "settingsClearHistoryConfirm": "Clear your song and setlist history?",
+  "settingsClearHistoryConfirm": "Clears recent song and setlist activity. Keeps saved songs, favorites, setlists, and settings.",
   "settingsHistoryCleared": "History cleared.",
   "accountTitle": "Account and sync",
   "accountUnavailable": "Sync needs a build of Singbook with Google sign-in configured. This build keeps your songs on this device only.",

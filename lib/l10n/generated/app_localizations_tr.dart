@@ -1064,7 +1064,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Şarkı ve liste geçmişi temizlensin mi?';
+      'Şarkıların ve listelerin son etkinlik geçmişini temizler. Kayıtlı şarkıları, favorileri, listeleri ve ayarları korur.';
 
   @override
   String get settingsHistoryCleared => 'Geçmiş temizlendi.';

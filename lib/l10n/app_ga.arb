@@ -442,7 +442,7 @@
   "settingsPrivacy": "Príobháideachas",
   "settingsLegal": "Cúrsaí dlí",
   "settingsClearHistory": "Glan an stair",
-  "settingsClearHistoryConfirm": "Glan stair na n-amhrán agus na liostaí amhrán?",
+  "settingsClearHistoryConfirm": "Glanann sé gníomhaíocht le déanaí maidir le hamhráin agus liostaí amhrán. Coinníonn sé amhráin shábháilte, ceanáin, liostaí amhrán agus socruithe.",
   "settingsHistoryCleared": "Glanadh an stair.",
   "accountTitle": "Cuntas agus sioncronú",
   "accountUnavailable": "Teastaíonn leagan de Singbook atá cumraithe le síniú isteach le Google chun sioncronú a dhéanamh. Ní choinníonn an leagan seo d’amhráin ach ar an ngléas seo.",

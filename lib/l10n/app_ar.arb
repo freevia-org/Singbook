@@ -448,7 +448,7 @@
   "settingsPrivacy": "الخصوصية",
   "settingsLegal": "معلومات قانونية",
   "settingsClearHistory": "مسح السجل",
-  "settingsClearHistoryConfirm": "هل تريد مسح سجل الأغاني وقوائمها؟",
+  "settingsClearHistoryConfirm": "يمسح سجل النشاط الأخير للأغاني وقوائم الأغاني. يحتفظ بالأغاني المحفوظة والمفضلة وقوائم الأغاني والإعدادات.",
   "settingsHistoryCleared": "تم مسح السجل.",
   "accountTitle": "الحساب والمزامنة",
   "accountUnavailable": "تتطلب المزامنة إصدارًا من Singbook تم إعداد تسجيل الدخول إلى Google فيه. يحتفظ هذا الإصدار بأغانيك على هذا الجهاز فقط.",

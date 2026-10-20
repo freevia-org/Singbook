@@ -53,8 +53,52 @@ void main() {
       );
       expect(paragraph.didExceedMaxLines, isFalse);
     }
+    final firstTile = find.byKey(const ValueKey('navigation-tile-1'));
+    final firstInkWell = tester.widget<InkWell>(
+      find.descendant(of: firstTile, matching: find.byType(InkWell)),
+    );
+    expect(firstInkWell.splashFactory, NoSplash.splashFactory);
+    expect(
+      firstInkWell.overlayColor?.resolve({WidgetState.pressed}),
+      Colors.transparent,
+    );
+    expect(firstInkWell.overlayColor?.resolve({WidgetState.focused}), isNull);
+    expect(firstInkWell.canRequestFocus, isTrue);
     await tester.tap(find.text('Einstellungen'));
     expect(selected, 3);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('compact navigation keeps a short steady selection animation', (
+    tester,
+  ) async {
+    var selected = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          bottomNavigationBar: AdaptiveBottomNavigation(
+            labels: const ['Home', 'Songs', 'Sets'],
+            icons: const [Icons.home, Icons.music_note, Icons.queue_music],
+            selectedIndex: selected,
+            onSelected: (index) => selected = index,
+          ),
+        ),
+      ),
+    );
+
+    final navigation = tester.widget<NavigationBar>(find.byType(NavigationBar));
+    expect(navigation.animationDuration, const Duration(milliseconds: 180));
+    expect(
+      navigation.overlayColor?.resolve({WidgetState.pressed}),
+      Colors.transparent,
+    );
+    expect(navigation.overlayColor?.resolve({WidgetState.focused}), isNull);
+    final navigationTheme = Theme.of(
+      tester.element(find.byType(NavigationBar)),
+    );
+    expect(navigationTheme.splashFactory, NoSplash.splashFactory);
+    await tester.tap(find.text('Songs'));
+    expect(selected, 1);
     expect(tester.takeException(), isNull);
   });
 

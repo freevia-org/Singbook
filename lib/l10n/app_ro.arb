@@ -440,7 +440,7 @@
   "settingsPrivacy": "Confidențialitate",
   "settingsLegal": "Informații legale",
   "settingsClearHistory": "Șterge istoricul",
-  "settingsClearHistoryConfirm": "Ștergi istoricul melodiilor și listelor?",
+  "settingsClearHistoryConfirm": "Șterge istoricul activității recente pentru melodii și liste. Păstrează melodiile salvate, favoritele, listele și setările.",
   "settingsHistoryCleared": "Istoricul a fost șters.",
   "accountTitle": "Cont și sincronizare",
   "accountUnavailable": "Sincronizarea necesită o versiune Singbook configurată pentru autentificarea Google. Această versiune păstrează melodiile doar pe acest dispozitiv.",

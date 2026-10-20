@@ -1067,7 +1067,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Limpar o histórico de músicas e listas?';
+      'Limpa a atividade recente de músicas e listas. Mantém as músicas guardadas, os favoritos, as listas e as definições.';
 
   @override
   String get settingsHistoryCleared => 'Histórico limpo.';

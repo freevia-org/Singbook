@@ -1069,7 +1069,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Vymazať históriu piesní a koncertných programov?';
+      'Vymaže nedávnu históriu aktivít piesní a setlistov. Zachová uložené piesne, obľúbené položky, setlisty a nastavenia.';
 
   @override
   String get settingsHistoryCleared => 'História bola vymazaná.';

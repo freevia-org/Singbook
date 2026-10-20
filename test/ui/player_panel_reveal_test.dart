@@ -1,11 +1,67 @@
 import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/ui/player/player_controls_panel.dart';
 import 'package:singbook/ui/player/player_fullscreen_header.dart';
 
 void main() {
+  testWidgets('collapsed transport is excluded from keyboard traversal', (
+    tester,
+  ) async {
+    final expanded = ValueNotifier(false);
+    final controlFocus = FocusNode(debugLabel: 'transport-control');
+    addTearDown(expanded.dispose);
+    addTearDown(controlFocus.dispose);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ValueListenableBuilder(
+            valueListenable: expanded,
+            builder: (context, value, _) => PlayerControlsPanel(
+              expanded: value,
+              onChanged: (value) => expanded.value = value,
+              expandLabel: 'Expand',
+              collapseLabel: 'Collapse',
+              side: false,
+              lyrics: const Text('Lyrics'),
+              controls: SizedBox(
+                height: 100,
+                child: TextButton(
+                  focusNode: controlFocus,
+                  onPressed: () {},
+                  child: const Text('Play'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    for (var index = 0; index < 4; index++) {
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+      expect(
+        controlFocus.hasFocus,
+        isFalse,
+        reason: 'hidden transport cannot take keyboard focus',
+      );
+    }
+    expanded.value = true;
+    await tester.pumpAndSettle();
+    var reachable = false;
+    for (var index = 0; index < 4; index++) {
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+      reachable |= controlFocus.hasFocus;
+    }
+    expect(
+      reachable,
+      isTrue,
+      reason: 'expanded controls remain keyboard accessible',
+    );
+  });
   for (final side in [false, true]) {
     testWidgets('drag reveal is continuous and preserves lyrics ($side)', (
       tester,

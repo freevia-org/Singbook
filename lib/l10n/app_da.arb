@@ -442,7 +442,7 @@
   "settingsPrivacy": "Privatliv",
   "settingsLegal": "Juridisk",
   "settingsClearHistory": "Ryd historik",
-  "settingsClearHistoryConfirm": "Ryd historikken over dine sange og sanglister?",
+  "settingsClearHistoryConfirm": "Rydder den seneste aktivitet for sange og sætlister. Beholder gemte sange, favoritter, sætlister og indstillinger.",
   "settingsHistoryCleared": "Historikken er ryddet.",
   "accountTitle": "Konto og synkronisering",
   "accountUnavailable": "Synkronisering kræver en version af Singbook med Google-login konfigureret. I denne version gemmes dine sange kun på denne enhed.",

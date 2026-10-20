@@ -1066,7 +1066,7 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Vymazat historii písní a koncertních programů?';
+      'Vymaže nedávnou historii aktivit u písní a setlistů. Zachová uložené písně, oblíbené položky, setlisty a nastavení.';
 
   @override
   String get settingsHistoryCleared => 'Historie byla vymazána.';

@@ -1070,7 +1070,7 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Notīrīt dziesmu un koncertprogrammu vēsturi?';
+      'Notīra dziesmu un koncertprogrammu neseno darbību vēsturi. Saglabā saglabātās dziesmas, izlasi, koncertprogrammas un iestatījumus.';
 
   @override
   String get settingsHistoryCleared => 'Vēsture ir notīrīta.';

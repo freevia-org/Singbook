@@ -440,7 +440,7 @@
   "settingsPrivacy": "Zasebnost",
   "settingsLegal": "Pravne informacije",
   "settingsClearHistory": "Počisti zgodovino",
-  "settingsClearHistoryConfirm": "Počistim zgodovino pesmi in koncertnih seznamov?",
+  "settingsClearHistoryConfirm": "Počisti zgodovino nedavnih dejavnosti pesmi in koncertnih seznamov. Ohrani shranjene pesmi, priljubljene, koncertne sezname in nastavitve.",
   "settingsHistoryCleared": "Zgodovina je počiščena.",
   "accountTitle": "Račun in sinhronizacija",
   "accountUnavailable": "Za sinhronizacijo je potrebna različica Singbook s konfigurirano prijavo prek storitve Google. Ta različica hrani pesmi samo v tej napravi.",

@@ -440,7 +440,7 @@
   "settingsPrivacy": "Privacy",
   "settingsLegal": "Juridisch",
   "settingsClearHistory": "Geschiedenis wissen",
-  "settingsClearHistoryConfirm": "De geschiedenis van je nummers en setlijsten wissen?",
+  "settingsClearHistoryConfirm": "Wist recente activiteit van nummers en setlijsten. Bewaart opgeslagen nummers, favorieten, setlijsten en instellingen.",
   "settingsHistoryCleared": "Geschiedenis gewist.",
   "accountTitle": "Account en synchronisatie",
   "accountUnavailable": "Voor synchronisatie is een versie van Singbook nodig waarin Google-aanmelding is ingesteld. In deze versie blijven je nummers alleen op dit apparaat.",

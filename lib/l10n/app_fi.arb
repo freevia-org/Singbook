@@ -442,7 +442,7 @@
   "settingsPrivacy": "Tietosuoja",
   "settingsLegal": "Lakiasiat",
   "settingsClearHistory": "Tyhjennä historia",
-  "settingsClearHistoryConfirm": "Tyhjennetäänkö kappaleiden ja settilistojen historia?",
+  "settingsClearHistoryConfirm": "Tyhjentää kappaleiden ja settilistojen viimeaikaisen toimintahistorian. Säilyttää tallennetut kappaleet, suosikit, settilistat ja asetukset.",
   "settingsHistoryCleared": "Historia tyhjennetty.",
   "accountTitle": "Tili ja synkronointi",
   "accountUnavailable": "Synkronointi edellyttää Singbook-versiota, jossa Google-kirjautuminen on määritetty. Tässä versiossa kappaleet säilyvät vain tällä laitteella.",

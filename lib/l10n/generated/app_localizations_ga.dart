@@ -1071,7 +1071,7 @@ class AppLocalizationsGa extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Glan stair na n-amhrán agus na liostaí amhrán?';
+      'Glanann sé gníomhaíocht le déanaí maidir le hamhráin agus liostaí amhrán. Coinníonn sé amhráin shábháilte, ceanáin, liostaí amhrán agus socruithe.';
 
   @override
   String get settingsHistoryCleared => 'Glanadh an stair.';

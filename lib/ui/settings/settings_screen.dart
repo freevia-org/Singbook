@@ -5,6 +5,8 @@ import '../../l10n/generated/app_localizations.dart';
 import '../app_version.dart';
 import '../library_actions.dart';
 import '../localized_labels.dart';
+import '../theme/verse_fonts.dart';
+import '../theme/verse_theme.dart';
 import '../verse_ui_state.dart';
 import '../widgets/slider_overlay_boundary.dart';
 import '../widgets/singbook_wordmark.dart';
@@ -228,6 +230,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Icons.account_circle_outlined,
               ),
               ListTile(
+                key: const ValueKey('settings-menu-support'),
+                leading: const Icon(Icons.support_agent_outlined),
+                title: Text(l10n.aboutSupport),
+                trailing: const Icon(Icons.open_in_new_rounded),
+                onTap: () => launchUrl(
+                  Uri.parse('https://freevia.org/singbook/support/'),
+                  mode: LaunchMode.externalApplication,
+                ),
+              ),
+              ListTile(
                 key: const ValueKey('settings-menu-about'),
                 leading: const SingbookMark(size: 28),
                 title: Text(l10n.settingsAbout),
@@ -385,11 +397,6 @@ class _AboutScreenState extends State<_AboutScreen> {
                           l10n.settingsPrivacy,
                           Icons.privacy_tip_outlined,
                           'https://freevia.org/singbook/privacy/',
-                        ),
-                        (
-                          l10n.aboutSupport,
-                          Icons.support_agent_outlined,
-                          'https://freevia.org/singbook/support/',
                         ),
                         (
                           l10n.aboutPublisher,
@@ -644,6 +651,12 @@ class _SettingsSectionScreenState extends State<_SettingsSectionScreen> {
                               AppThemeMode.system: l10n.settingsSystemShort,
                             },
                             value: state.darkTheme,
+                            entryBuilder: (context, mode, label) =>
+                                _ThemeOption(
+                                  mode: mode,
+                                  label: label,
+                                  palette: state.palette,
+                                ),
                             entries: [
                               (AppThemeMode.system, l10n.settingsThemeSystem),
                               (AppThemeMode.light, l10n.settingsThemeLight),
@@ -657,6 +670,8 @@ class _SettingsSectionScreenState extends State<_SettingsSectionScreen> {
                             compact: true,
                             label: l10n.settingsColorPalette,
                             value: state.palette,
+                            entryBuilder: (context, palette, label) =>
+                                _PaletteOption(palette: palette, label: label),
                             entries: [
                               ('navy', l10n.settingsPaletteNavy),
                               ('sage', l10n.settingsPaletteSage),
@@ -672,10 +687,21 @@ class _SettingsSectionScreenState extends State<_SettingsSectionScreen> {
                             compact: true,
                             label: l10n.settingsFont,
                             value: state.fontFamily,
+                            entryBuilder: (context, font, label) => Text(
+                              label,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: verseFontFamily(font),
+                              ),
+                            ),
                             entries: [
                               ('system', l10n.settingsFontSystem),
                               ('serif', l10n.settingsFontSerif),
                               ('mono', l10n.settingsFontMonospace),
+                              ('lora', 'Lora'),
+                              ('nunito', 'Nunito'),
+                              ('sourceSans', 'Source Sans 3'),
                             ],
                             onChanged: (value) {
                               if (value != null) {
@@ -704,11 +730,11 @@ class _SettingsSectionScreenState extends State<_SettingsSectionScreen> {
                             label: l10n.settingsLyricHighlight,
                             value: state.lyricHighlightStyle,
                             entries: [
+                              ('background', l10n.settingsHighlightBackground),
                               (
                                 'backgroundUnderline',
                                 l10n.settingsHighlightBackgroundUnderline,
                               ),
-                              ('background', l10n.settingsHighlightBackground),
                               ('underline', l10n.settingsHighlightUnderline),
                               ('contrast', l10n.settingsHighlightContrast),
                               ('none', l10n.settingsHighlightNone),
@@ -828,6 +854,7 @@ class _SettingsSectionScreenState extends State<_SettingsSectionScreen> {
                       key: const ValueKey('settings-clear-history'),
                       leading: const Icon(Icons.history_rounded),
                       title: Text(l10n.settingsClearHistory),
+                      subtitle: Text(l10n.settingsClearHistoryConfirm),
                       onTap: () => confirmClearHistory(context, controller),
                     ),
                   ],
@@ -909,6 +936,114 @@ class _CompactSwitch extends StatelessWidget {
   );
 }
 
+/// A palette sample uses the same surface, ink and accent as the app theme.
+class _PaletteOption extends StatelessWidget {
+  const _PaletteOption({required this.palette, required this.label});
+
+  final String palette, label;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = verseTheme(
+      brightness: Theme.of(context).brightness,
+      palette: palette,
+    ).colorScheme;
+    return _AppearanceOption(
+      background: colors.surface,
+      foreground: colors.onSurface,
+      label: label,
+      sample: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (final color in [colors.primary, colors.tertiary])
+            Padding(
+              padding: const EdgeInsetsDirectional.only(start: 3),
+              child: DecoratedBox(
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                child: const SizedBox(width: 12, height: 12),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ThemeOption extends StatelessWidget {
+  const _ThemeOption({
+    required this.mode,
+    required this.label,
+    required this.palette,
+  });
+
+  final AppThemeMode mode;
+  final String label, palette;
+
+  @override
+  Widget build(BuildContext context) {
+    final dark =
+        mode == AppThemeMode.dark ||
+        (mode == AppThemeMode.system &&
+            MediaQuery.platformBrightnessOf(context) == Brightness.dark);
+    final colors = verseTheme(
+      brightness: dark ? Brightness.dark : Brightness.light,
+      palette: palette,
+    ).colorScheme;
+    return _AppearanceOption(
+      background: colors.surface,
+      foreground: colors.onSurface,
+      label: label,
+      sample: Icon(
+        mode == AppThemeMode.system
+            ? Icons.brightness_auto_outlined
+            : dark
+            ? Icons.dark_mode_outlined
+            : Icons.light_mode_outlined,
+        size: 18,
+        color: colors.onSurface,
+      ),
+    );
+  }
+}
+
+class _AppearanceOption extends StatelessWidget {
+  const _AppearanceOption({
+    required this.background,
+    required this.foreground,
+    required this.label,
+    required this.sample,
+  });
+
+  final Color background, foreground;
+  final String label;
+  final Widget sample;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: double.infinity,
+    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+    decoration: BoxDecoration(
+      color: background,
+      border: Border.all(color: foreground.withValues(alpha: .25)),
+      borderRadius: BorderRadius.circular(6),
+    ),
+    child: Row(
+      children: [
+        Expanded(
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: foreground),
+          ),
+        ),
+        const SizedBox(width: 6),
+        ExcludeSemantics(child: sample),
+      ],
+    ),
+  );
+}
+
 /// A titled dropdown. The visible title is hidden from accessibility and
 /// attached as the dropdown's label so it is read together with its value.
 class _LabeledDropdown<T> extends StatelessWidget {
@@ -919,6 +1054,7 @@ class _LabeledDropdown<T> extends StatelessWidget {
     required this.onChanged,
     this.compact = false,
     this.selectedLabels = const {},
+    this.entryBuilder,
   });
   final String label;
   final T value;
@@ -926,6 +1062,8 @@ class _LabeledDropdown<T> extends StatelessWidget {
   final ValueChanged<T?> onChanged;
   final bool compact;
   final Map<T, String> selectedLabels;
+  final Widget Function(BuildContext context, T value, String label)?
+  entryBuilder;
   @override
   Widget build(BuildContext context) {
     // A stored value that is not on offer (an old or edited setting) shows the
@@ -937,7 +1075,7 @@ class _LabeledDropdown<T> extends StatelessWidget {
       isExpanded: true,
       isDense: compact,
       value: effective,
-      selectedItemBuilder: selectedLabels.isEmpty
+      selectedItemBuilder: selectedLabels.isEmpty && entryBuilder == null
           ? null
           : (context) => [
               for (final entry in entries)
@@ -946,11 +1084,17 @@ class _LabeledDropdown<T> extends StatelessWidget {
                   child: Semantics(
                     label: entry.$2,
                     excludeSemantics: true,
-                    child: Text(
-                      selectedLabels[entry.$1] ?? entry.$2,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    child:
+                        entryBuilder?.call(
+                          context,
+                          entry.$1,
+                          selectedLabels[entry.$1] ?? entry.$2,
+                        ) ??
+                        Text(
+                          selectedLabels[entry.$1] ?? entry.$2,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                   ),
                 ),
             ],
@@ -958,11 +1102,9 @@ class _LabeledDropdown<T> extends StatelessWidget {
           .map(
             (entry) => DropdownMenuItem<T>(
               value: entry.$1,
-              child: Text(
-                entry.$2,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
+              child:
+                  entryBuilder?.call(context, entry.$1, entry.$2) ??
+                  Text(entry.$2, maxLines: 1, overflow: TextOverflow.ellipsis),
             ),
           )
           .toList(),

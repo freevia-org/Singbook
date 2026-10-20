@@ -205,7 +205,7 @@ void main() {
     },
   );
 
-  testWidgets('unknown key transposes from the same popup beside Play', (
+  testWidgets('invalid saved key opens an edit draft from the key popup', (
     tester,
   ) async {
     await tester.runAsync(
@@ -222,16 +222,19 @@ void main() {
     await tester.runAsync(() => controller.openSong('song'));
     await pumpShell(tester, controller);
 
+    expect(controller.state.readerKey, 'H');
     expect(find.byKey(const ValueKey('pitch-key-dropdown')), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('pitch-key-dropdown')));
     await _settle(tester, controller);
-    final down = find.byKey(const ValueKey('transpose-offset--1'));
-    expect(down, findsOneWidget);
-    await tester.ensureVisible(down);
-    await tester.tap(down);
-    await tester.runAsync(controller.settlePlayerPreferences);
-    await tester.pump();
-    expect(controller.state.songLines.first.chords.single.symbol, 'B');
+    expect(find.byKey(const ValueKey('transpose-offset--1')), findsNothing);
+    final l10n = l10nOf(tester);
+    await tester.tap(find.text('${l10n.actionEdit} · ${l10n.editorKeyField}'));
+    await _settle(tester, controller);
+    expect(controller.state.route, VerseRoute.editor);
+    expect(controller.state.editor?.songId, 'song');
+    final saved = await tester.runAsync(() => repository.getSong('song'));
+    expect(saved!.metadata['key'], 'H');
+    expect(saved.body, '[C]First line\n[G]Second line');
   });
 
   testWidgets('pitch dropdown handles lowercase minor and major key names', (

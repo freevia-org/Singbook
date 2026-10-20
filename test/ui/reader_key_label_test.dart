@@ -13,7 +13,7 @@ import 'support/fake_controller.dart';
 void main() {
   for (final locale in const [Locale('bg'), Locale('ar')]) {
     testWidgets(
-      'estimated key remains visible before long metadata at 2x: $locale',
+      'estimated key remains visible in its localized dropdown at 2x: $locale',
       (tester) async {
         for (final (family, asset) in [
           ('KeyLabelFixture', 'assets/fonts/NotoSans-Regular.ttf'),
@@ -73,9 +73,10 @@ void main() {
         final l10n = AppLocalizations.of(
           tester.element(find.byType(PlayerScreen)),
         );
-        final prefix = '${l10n.playerEstimatedKey}: ';
+        const prefix = '≈ ';
+        expect(find.byTooltip('${l10n.playerEstimatedKey}: E'), findsOneWidget);
         final paragraph = tester.renderObject<RenderParagraph>(
-          find.textContaining('${prefix}E'),
+          find.text('${prefix}E'),
         );
         final boxes = paragraph.getBoxesForSelection(
           TextSelection(

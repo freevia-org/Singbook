@@ -442,7 +442,7 @@
   "settingsPrivacy": "Privaatsus",
   "settingsLegal": "Õigusteave",
   "settingsClearHistory": "Kustuta ajalugu",
-  "settingsClearHistoryConfirm": "Kas kustutada laulude ja laulunimekirjade ajalugu?",
+  "settingsClearHistoryConfirm": "Kustutab laulude ja laulunimekirjade hiljutise tegevusajaloo. Säilitab salvestatud laulud, lemmikud, laulunimekirjad ja seaded.",
   "settingsHistoryCleared": "Ajalugu kustutati.",
   "accountTitle": "Konto ja sünkroonimine",
   "accountUnavailable": "Sünkroonimiseks on vaja Singbooki versiooni, kus Google'i sisselogimine on seadistatud. Selles versioonis hoitakse laule ainult selles seadmes.",

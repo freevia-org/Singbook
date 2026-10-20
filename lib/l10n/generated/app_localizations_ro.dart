@@ -1077,7 +1077,7 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Ștergi istoricul melodiilor și listelor?';
+      'Șterge istoricul activității recente pentru melodii și liste. Păstrează melodiile salvate, favoritele, listele și setările.';
 
   @override
   String get settingsHistoryCleared => 'Istoricul a fost șters.';

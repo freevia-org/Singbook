@@ -1062,7 +1062,7 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Ryd historikken over dine sange og sanglister?';
+      'Rydder den seneste aktivitet for sange og sætlister. Beholder gemte sange, favoritter, sætlister og indstillinger.';
 
   @override
   String get settingsHistoryCleared => 'Historikken er ryddet.';

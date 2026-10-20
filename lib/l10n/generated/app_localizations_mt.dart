@@ -1074,7 +1074,7 @@ class AppLocalizationsMt extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Tħassar il-kronoloġija tal-kanzunetti u l-listi?';
+      'Tħassar l-attività reċenti tal-kanzunetti u l-listi tal-kanzunetti. Iżżomm il-kanzunetti ssejvjati, il-favoriti, il-listi u s-settings.';
 
   @override
   String get settingsHistoryCleared => 'Il-kronoloġija tħassret.';

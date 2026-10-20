@@ -2013,7 +2013,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsClearHistoryConfirm.
   ///
   /// In en, this message translates to:
-  /// **'Clear your song and setlist history?'**
+  /// **'Clears recent song and setlist activity. Keeps saved songs, favorites, setlists, and settings.'**
   String get settingsClearHistoryConfirm;
 
   /// No description provided for @settingsHistoryCleared.

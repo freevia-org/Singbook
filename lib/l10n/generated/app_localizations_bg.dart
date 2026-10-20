@@ -1062,7 +1062,7 @@ class AppLocalizationsBg extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Да се изчисти ли историята на песните и списъците?';
+      'Изчиства скорошната история на песните и списъците с песни. Запазва съхранените песни, любимите, списъците с песни и настройките.';
 
   @override
   String get settingsHistoryCleared => 'Историята е изчистена.';

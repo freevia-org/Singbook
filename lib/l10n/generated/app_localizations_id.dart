@@ -1065,7 +1065,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Hapus riwayat lagu dan daftar lagu?';
+      'Menghapus aktivitas terbaru lagu dan daftar lagu. Tetap menyimpan lagu tersimpan, favorit, daftar lagu, dan pengaturan.';
 
   @override
   String get settingsHistoryCleared => 'Riwayat dihapus.';

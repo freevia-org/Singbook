@@ -440,7 +440,7 @@
   "settingsPrivacy": "Quyền riêng tư",
   "settingsLegal": "Pháp lý",
   "settingsClearHistory": "Xóa lịch sử",
-  "settingsClearHistoryConfirm": "Xóa lịch sử bài hát và danh sách?",
+  "settingsClearHistoryConfirm": "Xóa lịch sử hoạt động gần đây của bài hát và danh sách bài hát. Giữ lại bài hát đã lưu, mục yêu thích, danh sách bài hát và cài đặt.",
   "settingsHistoryCleared": "Đã xóa lịch sử.",
   "accountTitle": "Tài khoản và đồng bộ hóa",
   "accountUnavailable": "Đồng bộ hóa yêu cầu bản dựng Singbook đã cấu hình đăng nhập Google. Bản dựng này chỉ lưu bài hát trên thiết bị này.",

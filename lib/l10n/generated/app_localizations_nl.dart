@@ -1073,7 +1073,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'De geschiedenis van je nummers en setlijsten wissen?';
+      'Wist recente activiteit van nummers en setlijsten. Bewaart opgeslagen nummers, favorieten, setlijsten en instellingen.';
 
   @override
   String get settingsHistoryCleared => 'Geschiedenis gewist.';

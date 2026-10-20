@@ -1069,7 +1069,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get settingsClearHistoryConfirm =>
-      'Очистить историю песен и сет-листов?';
+      'Очищает историю недавних действий с песнями и сет-листами. Сохраняет сохранённые песни, избранное, сет-листы и настройки.';
 
   @override
   String get settingsHistoryCleared => 'История очищена.';
