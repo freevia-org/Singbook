@@ -53,6 +53,15 @@ jobs:
       - name: Test
         run: flutter test
 
+      - name: Upload setlist visual captures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: setlist-visual-captures
+          path: artifacts/singbook-setlist-rtl-captures/
+          if-no-files-found: ignore
+          retention-days: 7
+
       - name: Upload visual test evidence
         if: failure()
         uses: actions/upload-artifact@v4
