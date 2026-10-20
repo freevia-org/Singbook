@@ -1193,12 +1193,13 @@ class _PlayerScreenState extends State<PlayerScreen>
               durationSeconds: displayDuration,
             ),
           ),
-          child: SizedBox(
-            height: 48,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final sliderTheme = SliderTheme.of(context);
-                return Stack(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final desktopTimeline = constraints.maxWidth >= 560;
+              final sliderTheme = SliderTheme.of(context);
+              return SizedBox(
+                height: desktopTimeline ? 60 : 48,
+                child: Stack(
                   children: [
                     Positioned.fill(
                       child: SliderOverlayBoundary(
@@ -1243,9 +1244,9 @@ class _PlayerScreenState extends State<PlayerScreen>
                       l10n: l10n,
                     ),
                   ],
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         ),
       ],
@@ -1704,7 +1705,9 @@ List<Widget> _sectionMarkerLabelWidgets({
   final thumbX = textDirection == TextDirection.rtl
       ? right - trackWidth * progressFraction
       : left + trackWidth * progressFraction;
-  final fontSize = width >= 560 ? 10.0 : 9.0;
+  // Timeline cues are secondary, but they still need to read comfortably at
+  // desktop scale. Keep compact layouts denser while honoring text scaling.
+  final fontSize = width >= 560 ? 12.0 : 10.0;
   // Match the inherited typeface when measuring. Measuring with the default
   // font and then painting with the app's display font made the Positioned
   // label narrower than its rendered text, so Flutter ellipsized headings.
@@ -1766,21 +1769,39 @@ List<Widget> _sectionMarkerLabelWidgets({
     );
   final visible =
       <
-        ({double center, String label, String sectionName, double labelWidth})
+        ({
+          double center,
+          String label,
+          String sectionName,
+          double labelWidth,
+          int row,
+        })
       >[];
   for (final candidate in prioritized) {
-    final collides = visible.any((existing) {
-      final needed = (candidate.labelWidth + existing.labelWidth) / 2 + 5;
-      return (candidate.center - existing.center).abs() < needed;
-    });
-    if (!collides) visible.add(candidate);
+    final rowCount = width >= 560 ? 2 : 1;
+    for (var row = 0; row < rowCount; row++) {
+      final collides = visible.any((existing) {
+        if (existing.row != row) return false;
+        final needed = (candidate.labelWidth + existing.labelWidth) / 2 + 5;
+        return (candidate.center - existing.center).abs() < needed;
+      });
+      if (collides) continue;
+      visible.add((
+        center: candidate.center,
+        label: candidate.label,
+        sectionName: candidate.sectionName,
+        labelWidth: candidate.labelWidth,
+        row: row,
+      ));
+      break;
+    }
   }
   return [
     for (final candidate in visible)
       Positioned(
         left: candidate.center - candidate.labelWidth / 2,
         width: candidate.labelWidth,
-        top: 2,
+        top: 2 + candidate.row * 14,
         child: IgnorePointer(
           child: Text(
             candidate.label,
