@@ -371,6 +371,12 @@ class WindowsDriveFileAccess implements DriveFileAccessCapability {
       if (value['error'] == 'invalid_client') {
         throw const SyncException('not_configured');
       }
+      final errorDescription = value['error_description'];
+      if (value['error'] == 'invalid_request' &&
+          errorDescription is String &&
+          errorDescription.toLowerCase().contains('client_secret')) {
+        throw const SyncException('not_configured');
+      }
       throw const SyncException('network');
     }
     return value;

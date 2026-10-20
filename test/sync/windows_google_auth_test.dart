@@ -575,6 +575,9 @@ void main() {
     var refreshCount = 0;
     var invalidGrant = false;
     var invalidClient = false;
+    var missingClientSecret = false;
+    var invalidRequest = false;
+    var malformedErrorDescription = false;
     var malformedRefresh = false;
     var deniedScope = false;
     Completer<void>? refreshWait;
@@ -584,7 +587,10 @@ void main() {
       vault = _MemoryCredentials();
       now = DateTime.utc(2026, 1, 1);
       refreshCount = 0;
-      invalidGrant = invalidClient = malformedRefresh = deniedScope = false;
+      invalidGrant = invalidClient = missingClientSecret = invalidRequest =
+          false;
+      malformedErrorDescription = false;
+      malformedRefresh = deniedScope = false;
       refreshWait = null;
       client = MockClient((request) async {
         expect(request.url.scheme, 'https');
@@ -625,6 +631,22 @@ void main() {
         expect(params['code_verifier']!.length, greaterThanOrEqualTo(43));
         expect(params['code'], 'grant-code');
         expect(params['redirect_uri'], startsWith('http://127.0.0.1:'));
+        expect(params, isNot(contains('client_secret')));
+        if (missingClientSecret) {
+          return http.Response(
+            '{"error":"invalid_request","error_description":"Missing required parameter: CLIENT_SECRET"}',
+            400,
+          );
+        }
+        if (invalidRequest) {
+          if (malformedErrorDescription) {
+            return http.Response(
+              '{"error":"invalid_request","error_description":7}',
+              400,
+            );
+          }
+          return http.Response('{"error":"invalid_request"}', 400);
+        }
         return http.Response(
           jsonEncode({
             'access_token': 'granted-access',
@@ -728,6 +750,33 @@ void main() {
         expect(vault.values, isEmpty);
       },
     );
+
+    test(
+      'explicit missing client_secret response is a configuration error',
+      () async {
+        missingClientSecret = true;
+        await expectLater(auth.connect(), throwsA(code('not_configured')));
+        expect(auth.isConnected, isFalse);
+        expect(vault.values, isEmpty);
+      },
+    );
+
+    test('generic invalid_request is not treated as missing configuration',
+        () async {
+      invalidRequest = true;
+      await expectLater(auth.connect(), throwsA(code('network')));
+      expect(auth.isConnected, isFalse);
+      expect(vault.values, isEmpty);
+    });
+
+    test('non-string invalid_request description remains an exchange error',
+        () async {
+      invalidRequest = true;
+      malformedErrorDescription = true;
+      await expectLater(auth.connect(), throwsA(code('network')));
+      expect(auth.isConnected, isFalse);
+      expect(vault.values, isEmpty);
+    });
 
     test(
       'client configuration failure preserves the saved grant for recovery',
