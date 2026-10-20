@@ -1501,16 +1501,19 @@ class _PlayerScreenState extends State<PlayerScreen>
               value: 'pitch-$pitch',
               height: 34,
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Text(
-                pitch == originalPitch
-                    ? '$originalLabel  ★'
-                    : '${keyNames[pitch]}${minorKey ? 'm' : ''}',
-                style: pitch == originalPitch
-                    ? TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.w700,
-                      )
-                    : null,
+              child: Semantics(
+                selected: pitch == currentPitch,
+                child: Text(
+                  pitch == originalPitch
+                      ? '$originalLabel  ★'
+                      : '${keyNames[pitch]}${minorKey ? 'm' : ''}',
+                  style: pitch == originalPitch
+                      ? TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.w700,
+                        )
+                      : null,
+                ),
               ),
             ),
         if (currentPitch == null)
