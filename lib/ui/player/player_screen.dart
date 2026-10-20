@@ -1539,7 +1539,9 @@ class _PlayerScreenState extends State<PlayerScreen>
               children: [
                 Flexible(
                   child: Text(
-                    displayedKey,
+                    state.readerKeyEstimated && currentKey != null
+                        ? '≈ $displayedKey'
+                        : displayedKey,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
