@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
   "catalogRevision": 4,
-  "measuredAt": "2026-10-19T06:00:03.820713Z",
+  "measuredAt": "2026-10-20T06:05:54.657272Z",
   "offline": false,
   "summary": {
     "transient_error": 4,
-    "healthy": 9,
+    "healthy": 8,
+    "unavailable": 2,
     "blocked": 1,
     "import_only": 2,
-    "partial_coverage": 2,
-    "unavailable": 1
+    "partial_coverage": 2
   },
   "sources": [
     {
@@ -195,72 +195,28 @@
     {
       "id": "synclrc",
       "name": "SyncLRC",
-      "status": "healthy",
+      "status": "unavailable",
       "coverage": {
-        "status": "complete",
-        "verifiedCapabilities": [
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
           "catalog",
           "lineTiming",
           "lyrics",
           "metadata",
           "wordTiming"
-        ],
-        "unverifiedCapabilities": []
+        ]
       },
       "probes": [
         {
           "id": "never-gonna-give-you-up-studio",
-          "status": "healthy",
-          "providerId": "synclrc",
-          "bodyCharacters": 1927,
-          "metadataFields": [
-            "album",
-            "duration",
-            "hasLyrics",
-            "instrumental",
-            "query"
-          ],
-          "verifiedCapabilities": [
-            "catalog",
-            "lineTiming",
-            "lyrics",
-            "metadata",
-            "wordTiming"
-          ],
-          "timingTrackCount": 2,
-          "timingGranularities": [
-            "line",
-            "word"
-          ],
-          "timingRawRetained": true,
-          "hasChords": false
+          "status": "unavailable",
+          "reason": "empty_search_results"
         },
         {
           "id": "wonderwall-oasis-timed-version",
-          "status": "healthy",
-          "providerId": "synclrc",
-          "bodyCharacters": 1401,
-          "metadataFields": [
-            "album",
-            "duration",
-            "hasLyrics",
-            "instrumental",
-            "query"
-          ],
-          "verifiedCapabilities": [
-            "catalog",
-            "lineTiming",
-            "lyrics",
-            "metadata",
-            "wordTiming"
-          ],
-          "timingTrackCount": 2,
-          "timingGranularities": [
-            "line",
-            "word"
-          ],
-          "timingRawRetained": true,
-          "hasChords": false
+          "status": "unavailable",
+          "reason": "empty_search_results"
         }
       ]
     },
@@ -690,23 +646,28 @@
   ],
   "execution": {
     "runtime": "managed-cloud",
-    "baseSha": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
-    "sourceState": "clean isolated public-main worktree; original four-file unfinished task checkout preserved",
-    "command": "dart run tool/source_maintenance.dart --report artifacts/source-maintenance/2026-10-19-live.json",
+    "baseSha": "ffdebf6c89b2a7894885bfb2b9b8a2b1aaec51cf",
+    "command": "dart run tool/source_maintenance.dart --report artifacts/source-maintenance/2026-10-20-live.json",
     "exitCode": 1,
     "networkMode": "approved_require_escalated",
+    "sourceState": "clean isolated public-main worktree; original task checkout and unfinished changes preserved",
     "environment": {
       "published": true,
-      "specRevision": "50",
+      "specRevision": "62",
       "observationsCurrent": true,
       "phase": "running",
       "connectivity": "connected",
       "networkPolicy": {
         "mode": "unrestricted",
-        "state": "unknown"
+        "state": "enforced"
       },
-      "geniusBindingState": "unknown",
+      "geniusBindingState": "ready",
       "geniusEnvironmentKeyPresent": true
+    },
+    "fetch": {
+      "initialAttempt": "stalled; interrupted with exit130 without changing work",
+      "boundedRetry": "timeout 90 git fetch --depth=1 https://github.com/freevia-org/Singbook.git main",
+      "retryExitCode": 0
     }
   },
   "validation": {
@@ -715,7 +676,7 @@
       "exitCode": 0
     },
     "offline": {
-      "command": "dart run tool/source_maintenance.dart --offline --report artifacts/source-maintenance/2026-10-19-offline.json",
+      "command": "dart run tool/source_maintenance.dart --offline --report artifacts/source-maintenance/2026-10-20-offline.json",
       "exitCode": 0,
       "summary": {
         "offline_unverified": 17,
@@ -725,28 +686,28 @@
     "focusedTests": {
       "command": "flutter test --no-pub test/providers test/application/controller_test.dart test/application/controller_hardening_test.dart --reporter compact",
       "exitCode": 0,
-      "passed": 243
+      "passed": 243,
+      "skipped": 13
     },
     "analyzer": {
       "command": "flutter analyze --no-pub",
       "exitCode": 0
     },
-    "sourceChanges": "none; no new core/model changes require full-suite rerun"
+    "sourceChanges": "none; full suite not repeated without a new core/model change"
   },
   "comparison": {
     "priorCloud": {
-      "measuredAt": "2026-10-18T06:04:42.370901Z",
-      "ageHours": 23.922625,
-      "baseSha": "e55a2cb3c8c7c2140897eb51d7c4ebf9c5f4d116",
-      "path": "reports/source-maintenance/2026-10-18T060442Z.json"
+      "measuredAt": "2026-10-19T06:00:03.820713Z",
+      "ageHours": 24.09745472222222,
+      "baseSha": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
+      "path": "reports/source-maintenance/2026-10-19T060003Z.json"
     },
     "priorLocal": {
-      "measuredAt": "2026-10-18T06:03:21.920080Z",
-      "ageHours": 23.944972222222223,
-      "baseSha": "e55a2cb3c8c7c2140897eb51d7c4ebf9c5f4d116",
-      "sourceHead": "3460d22bac3631af3b24c237e9f9ade71ffa9f97",
+      "measuredAt": "2026-10-19T06:51:51.136422Z",
+      "ageHours": 23.234311388888887,
       "runtime": "local-windows",
-      "codeState": "review-candidate-not-integrated-or-installed",
+      "baseSha": "624ee9c094b7b2029176dbf5a9b1631be389563a",
+      "sourceHead": "9f5b99430c8c049d3860200d92d1c6c9fe5fd4da",
       "path": "reports/source-maintenance/local/latest.json"
     },
     "sources": [
@@ -1231,6 +1192,33 @@
       {
         "current": {
           "id": "synclrc",
+          "status": "unavailable",
+          "coverage": {
+            "status": "partial",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ]
+          },
+          "probes": [
+            {
+              "id": "never-gonna-give-you-up-studio",
+              "status": "unavailable",
+              "reason": "empty_search_results"
+            },
+            {
+              "id": "wonderwall-oasis-timed-version",
+              "status": "unavailable",
+              "reason": "empty_search_results"
+            }
+          ]
+        },
+        "priorCloud": {
+          "id": "synclrc",
           "status": "healthy",
           "coverage": {
             "status": "complete",
@@ -1280,7 +1268,7 @@
             }
           ]
         },
-        "priorCloud": {
+        "priorLocal": {
           "id": "synclrc",
           "status": "unavailable",
           "coverage": {
@@ -1299,44 +1287,6 @@
               "id": "never-gonna-give-you-up-studio",
               "status": "unavailable",
               "reason": "empty_search_results"
-            },
-            {
-              "id": "wonderwall-oasis-timed-version",
-              "status": "unavailable",
-              "reason": "empty_search_results"
-            }
-          ]
-        },
-        "priorLocal": {
-          "id": "synclrc",
-          "status": "unavailable",
-          "coverage": {
-            "status": "partial",
-            "verifiedCapabilities": [
-              "catalog",
-              "lineTiming",
-              "lyrics",
-              "metadata"
-            ],
-            "unverifiedCapabilities": [
-              "wordTiming"
-            ]
-          },
-          "probes": [
-            {
-              "id": "never-gonna-give-you-up-studio",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "lineTiming",
-                "lyrics",
-                "metadata"
-              ],
-              "timingTrackCount": 1,
-              "timingGranularities": [
-                "line"
-              ],
-              "timingRawRetained": true
             },
             {
               "id": "wonderwall-oasis-timed-version",
@@ -1476,38 +1426,46 @@
         },
         "priorCloud": {
           "id": "unison",
-          "status": "changed_schema",
+          "status": "healthy",
           "coverage": {
-            "status": "partial",
+            "status": "complete",
             "verifiedCapabilities": [
+              "catalog",
               "lineTiming",
               "lyrics",
               "wordTiming"
             ],
-            "unverifiedCapabilities": [
-              "catalog"
-            ]
+            "unverifiedCapabilities": []
           },
           "probes": [
             {
               "id": "search-give-it-up-don-toliver",
-              "status": "changed_schema",
-              "reason": "required_fields_missing",
-              "missingFields": [
-                "timing",
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "catalog",
                 "lineTiming",
+                "lyrics",
                 "wordTiming"
-              ]
+              ],
+              "timingTrackCount": 1,
+              "timingGranularities": [
+                "word"
+              ],
+              "timingRawRetained": true
             },
             {
               "id": "give-it-up-don-toliver",
-              "status": "changed_schema",
-              "reason": "required_fields_missing",
-              "missingFields": [
-                "timing",
+              "status": "healthy",
+              "verifiedCapabilities": [
                 "lineTiming",
+                "lyrics",
                 "wordTiming"
-              ]
+              ],
+              "timingTrackCount": 1,
+              "timingGranularities": [
+                "word"
+              ],
+              "timingRawRetained": true
             },
             {
               "id": "love-never-felt-so-good-michael-jackson",
@@ -2195,26 +2153,20 @@
         },
         "priorLocal": {
           "id": "wikidata",
-          "status": "partial_coverage",
+          "status": "transient_error",
           "coverage": {
             "status": "partial",
-            "verifiedCapabilities": [
-              "metadata"
-            ],
+            "verifiedCapabilities": [],
             "unverifiedCapabilities": [
-              "catalog"
+              "catalog",
+              "metadata"
             ]
           },
           "probes": [
             {
               "id": "imagine-composition",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "metadata"
-              ],
-              "timingTrackCount": 0,
-              "timingGranularities": [],
-              "timingRawRetained": false
+              "status": "transient_error",
+              "reason": "provider_busy"
             }
           ]
         }
@@ -2362,7 +2314,7 @@
         }
       }
     ],
-    "interpretation": "Unison now passes all canaries on integrated revision-4 catalog and parser repair; prior cloud latest retained public-main failure plus separate candidate success. SyncLRC now passes both independent probes with line/word cues and raw retention; recovery does not imply prior empty-result outage was a schema problem. Historical local passes do not override current cloud network failures. Historical local report is repaired review-candidate evidence, not equivalent public-main execution."
+    "interpretation": "Prior local results retain runtime and age; they do not establish cloud reachability. SyncLRC changed from complete live coverage yesterday to two empty-search outcomes today. Bounded follow-up curl requests returned HTTP403 non-JSON for both searches, so current diagnostics show access/transport variability, not proven schema regression. Preserve harness outcomes without reclassifying unmeasured coverage. No rollback, disablement or retirement."
   },
   "catalogProbeCoverage": [
     {
@@ -2802,60 +2754,62 @@
   ],
   "environmentEvidence": [
     {
+      "id": "github",
+      "publisherUrl": "https://github.com",
+      "curlExit": 0,
+      "connectOrigin": "200 200",
+      "at": "2026-10-20T06:04:13.963010+00:00"
+    },
+    {
       "id": "genius",
       "publisherUrl": "https://api.genius.com/search?q=Wonderwall%20Oasis",
       "curlExit": 56,
       "connectOrigin": "403 000",
-      "checkedAt": "2026-10-19T05:59:52.426460+00:00"
+      "at": "2026-10-20T06:04:13.975742+00:00"
     },
     {
-      "id": "lrcshare-catalog",
+      "id": "lrcshare",
       "publisherUrl": "https://api.lrcshare.com/v1/catalog",
       "curlExit": 0,
       "connectOrigin": "200 401",
-      "checkedAt": "2026-10-19T05:59:52.700837+00:00"
+      "at": "2026-10-20T06:04:14.182166+00:00"
+    }
+  ],
+  "followUpDiagnosis": [
+    {
+      "probe": "rick",
+      "curlExit": 0,
+      "originStatus": "403",
+      "checkedAt": "2026-10-20T06:06:44.945335+00:00",
+      "errorEnum": "non_json_response"
     },
     {
-      "id": "amll-docs",
-      "publisherUrl": "https://amll.dev/reference/http-api/overview",
+      "probe": "oasis",
       "curlExit": 0,
-      "connectOrigin": "200 200",
-      "checkedAt": "2026-10-19T05:59:53.215548+00:00"
+      "originStatus": "403",
+      "checkedAt": "2026-10-20T06:06:45.079127+00:00",
+      "errorEnum": "non_json_response"
     }
   ],
   "discovery": {
-    "primaryDocumentationChecks": [
+    "checks": [
       {
-        "id": "lrcshare-catalog",
-        "publisherUrl": "https://api.lrcshare.com/v1/catalog",
+        "id": "spicy-terms",
+        "publisherUrl": "https://developers.spicylyrics.org/terms",
         "curlExit": 0,
-        "connectOrigin": "200 401",
-        "checkedAt": "2026-10-19T05:59:52.700837+00:00"
+        "connectOrigin": "200 200",
+        "checkedAt": "2026-10-20T06:06:17.801347+00:00"
       },
       {
         "id": "amll-docs",
         "publisherUrl": "https://amll.dev/reference/http-api/overview",
         "curlExit": 0,
         "connectOrigin": "200 200",
-        "checkedAt": "2026-10-19T05:59:53.215548+00:00"
+        "checkedAt": "2026-10-20T06:06:18.129769+00:00"
       }
     ],
-    "decisions": "LrcShare remains deferred: current unauthenticated catalog request origin401 confirms configured discovery reason; no credential requested. AMLL publisher docs reachable, but complete array identities, contributor provenance, compatible adapter and independent parsed-cue canaries remain unresolved under existing config/source-discovery.json. Existing discovery decisions unchanged; no candidate activated or new catalog revision proposed.",
-    "openEquivalentRepairPRs": 0,
-    "otherOpenPRs": [
-      {
-        "number": 66,
-        "title": "Organize Settings into section menus"
-      },
-      {
-        "number": 65,
-        "title": "Show setlist duration totals and compact expandable cards"
-      },
-      {
-        "number": 64,
-        "title": "Polish setlist editing rows"
-      }
-    ],
-    "sourceChanges": "none; no duplicate Unison repair"
+    "existingReviewPR": "https://github.com/freevia-org/Singbook/pull/69",
+    "existingReviewHead": "9f5b99430c8c049d3860200d92d1c6c9fe5fd4da",
+    "decisions": "Reviewed existing PR69 config evidence for Start Jamming, Ukrainian Wikisource and Spicy Lyrics rather than duplicating changes. LrcShare current unauthenticated origin401 retains deferred access requirements. AMLL and Spicy publisher pages reachable; no API credentials or signed-out demo used. Array identity/provenance, rights, attribution and persistence/export restrictions still prevent activation. Existing deferral decisions remain; no meaningful new acceptance/config change or source PR proposed."
   }
 }
