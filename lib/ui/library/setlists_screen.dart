@@ -93,10 +93,7 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                     // A lone card should use the available desktop canvas
                     // and stay visually centered instead of occupying only
                     // the first half of an otherwise empty two-column grid.
-                    final centeredSingleCard =
-                        wide &&
-                        lists.length == 1 &&
-                        constraints.maxWidth >= 900;
+                    final centeredSingleCard = wide && lists.length == 1;
                     final columns = wide && !centeredSingleCard ? 2 : 1;
                     final cardWidth = centeredSingleCard
                         ? (constraints.maxWidth - 32).clamp(0.0, 960.0)
