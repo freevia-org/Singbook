@@ -125,9 +125,11 @@ ThemeData verseTheme({
     colorScheme: scheme,
     scaffoldBackgroundColor: scheme.surface,
     fontFamily: fontFamily,
-    textTheme: ThemeData(
-      brightness: brightness,
-    ).textTheme.apply(bodyColor: textColor, displayColor: textColor),
+    textTheme: ThemeData(brightness: brightness).textTheme.apply(
+      fontFamily: fontFamily,
+      bodyColor: textColor,
+      displayColor: textColor,
+    ),
     appBarTheme: AppBarTheme(
       backgroundColor: scheme.surface,
       foregroundColor: textColor,
