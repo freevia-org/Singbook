@@ -88,6 +88,10 @@ jobs:
         shell: pwsh
         run: ./scripts/build-windows.ps1 -AllowMissingDefines
 
+      - name: Smoke test the portable Windows app in an isolated profile
+        shell: pwsh
+        run: ./scripts/test-windows-portable-startup.ps1
+
       - name: Check native clipboard and isolated credential storage
         shell: pwsh
         run: ./scripts/test-windows-native.ps1 -CredentialStore
