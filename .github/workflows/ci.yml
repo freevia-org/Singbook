@@ -105,17 +105,9 @@ jobs:
         shell: pwsh
         run: ./scripts/test-windows-native.ps1 -CredentialStore
 
-      - name: Windows platform regression checks
+      - name: Run the complete Flutter suite on Windows
         run: >-
-          flutter test --no-pub --concurrency=2
-          test/data/windows_database_test.dart
-          test/application/windows_export_test.dart
-          test/sync/windows_google_auth_test.dart
-          test/sync/windows_drive_file_access_test.dart
-          test/providers/windows_transport_test.dart
-          test/providers/windows_http_client_test.dart
-          test/ui/windows_exit_test.dart
-          test/ui/windows_input_test.dart
+          flutter test --no-pub --concurrency=2 --reporter=expanded
 
       - name: Preserve Windows validation evidence
         if: always()
