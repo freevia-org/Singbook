@@ -51,6 +51,7 @@ List<PopupMenuEntry<String>> buildLibraryActionMenu(
     'timed-lyrics': l10n.playerTimedLyrics,
     'add': l10n.songAddToSetlist,
     'duplicate': l10n.actionDuplicate,
+    'override': l10n.setlistEntryOverride,
     'share': desktopExport
         ? '${l10n.actionExport} · ${isSetlist ? '.osts' : 'ChordPro'}'
         : isSetlist
@@ -66,7 +67,7 @@ List<PopupMenuEntry<String>> buildLibraryActionMenu(
     'delete': l10n.actionDelete,
   };
   const groups = [
-    ['edit', 'info', 'compare', 'timed-lyrics', 'add', 'duplicate'],
+    ['edit', 'info', 'compare', 'timed-lyrics', 'add', 'duplicate', 'override'],
     ['share', 'share_pdf', 'copy', 'print'],
     ['delete'],
   ];

@@ -748,13 +748,18 @@ class LibraryRepository {
         sources[sourceKey(source)] = source;
       }
       final existingOrigins = jsonMap(existing.extra['fieldOrigins']);
+      final incomingOrigins = jsonMap(song.extra['fieldOrigins']);
       final incomingMetadata = {...song.metadata};
       incomingMetadata.removeWhere(
         (_, value) => !_hasMeaningfulMetadata(value),
       );
+      bool incomingRemoval(String field) =>
+          incomingOrigins[field] == 'user' &&
+          !_hasMeaningfulMetadata(incomingMetadata[field]);
       final keyRemovalTombstone =
-          !_hasMeaningfulMetadata(existing.metadata['key']) &&
-          existingOrigins['key'] == 'user';
+          incomingRemoval('key') ||
+          (!_hasMeaningfulMetadata(existing.metadata['key']) &&
+              existingOrigins['key'] == 'user');
       final recoveredKey =
           !_hasMeaningfulMetadata(incomingMetadata['key']) &&
               !keyRemovalTombstone
@@ -770,6 +775,7 @@ class LibraryRepository {
         // must be established again for the selected version.
         for (final entry in existing.metadata.entries)
           if (_replacementCarryMetadata.contains(entry.key) &&
+              !incomingRemoval(entry.key) &&
               !_hasMeaningfulMetadata(incomingMetadata[entry.key]) &&
               _hasMeaningfulMetadata(entry.value))
             entry.key: entry.value,
@@ -784,7 +790,7 @@ class LibraryRepository {
       final incomingExtra = {...song.extra}
         ..remove('keySourceIds')
         ..remove('corroboratedKeySourceIds');
-      final origins = {...jsonMap(song.extra['fieldOrigins'])};
+      final origins = {...incomingOrigins};
       final contributors = {...jsonMap(song.extra['fieldContributors'])};
       for (final field in carriedMetadata.keys) {
         origins.remove(field);
@@ -797,13 +803,14 @@ class LibraryRepository {
       }
       // A deliberate removal remains a user decision when the new version
       // also omits that field. A new nonempty value takes incoming authority.
-      for (final entry in existingOrigins.entries) {
-        if (entry.value == 'user' &&
-            !const {'lyrics', 'chords', 'sections'}.contains(entry.key) &&
-            !_hasMeaningfulMetadata(existing.metadata[entry.key]) &&
-            !_hasMeaningfulMetadata(incomingMetadata[entry.key])) {
-          origins[entry.key] = 'user';
-          contributors.remove(entry.key);
+      for (final field in {...existingOrigins.keys, ...incomingOrigins.keys}) {
+        if (!const {'lyrics', 'chords', 'sections'}.contains(field) &&
+            !_hasMeaningfulMetadata(incomingMetadata[field]) &&
+            (incomingRemoval(field) ||
+                (existingOrigins[field] == 'user' &&
+                    !_hasMeaningfulMetadata(existing.metadata[field])))) {
+          origins[field] = 'user';
+          contributors.remove(field);
         }
       }
       if (!_hasMeaningfulMetadata(incomingMetadata['key'])) {

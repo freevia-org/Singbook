@@ -321,7 +321,13 @@ void main() {
             'fieldOrigins': {'composer': 'user', 'lyricist': 'user'},
           },
         ),
-        replacementSong(selected, metadata: {'composer': '   '}),
+        replacementSong(
+          selected,
+          metadata: {'composer': '   '},
+          extra: {
+            'fieldOrigins': {'composer': 'empty-provider'},
+          },
+        ),
       );
       expect(result.metadata, isNot(contains('composer')));
       expect(result.metadata, isNot(contains('lyricist')));
@@ -329,6 +335,97 @@ void main() {
       expect(result.extra['fieldOrigins']['lyricist'], 'user');
     },
   );
+
+  test(
+    'incoming key removal survives reload and a second replacement',
+    () async {
+      final selected = reference();
+      final donor = source('old-key', metadata: {'key': 'E'});
+      await replace(
+        savedSong(selected, metadata: {'key': 'E'}, sources: [donor]),
+        replacementSong(
+          selected,
+          extra: {
+            'fieldOrigins': {'key': 'user'},
+            'fieldContributors': {
+              'key': [donor.id],
+            },
+          },
+        ),
+      );
+      var reloaded = (await repository.getSong('saved-song'))!;
+      expect(reloaded.metadata, isNot(contains('key')));
+      expect(reloaded.extra['fieldOrigins']['key'], 'user');
+      expect(reloaded.extra['fieldContributors'], isNot(contains('key')));
+      expect(sourcedArrangementKey(reloaded), isNull);
+      await repository.saveChosenSong(replacementSong(selected));
+      reloaded = (await repository.getSong('saved-song'))!;
+      expect(reloaded.metadata, isNot(contains('key')));
+      expect(reloaded.extra['fieldOrigins']['key'], 'user');
+      expect(sourcedArrangementKey(reloaded), isNull);
+      final supplied = await repository.saveChosenSong(
+        replacementSong(
+          selected,
+          metadata: {'key': 'F#'},
+          extra: {
+            'fieldOrigins': {'key': 'new-provider'},
+          },
+        ),
+      );
+      expect(supplied.metadata['key'], 'F#');
+      expect(supplied.extra['fieldOrigins']['key'], 'new-provider');
+    },
+  );
+
+  for (final field in ['composer', 'lyricist', 'copyright']) {
+    test(
+      'incoming $field removal blocks carry and retains the decision',
+      () async {
+        final selected = reference();
+        final donor = source('old-credit');
+        final result = await replace(
+          savedSong(
+            selected,
+            metadata: {field: 'Prior value'},
+            extra: {
+              'fieldOrigins': {field: donor.id},
+              'fieldContributors': {
+                field: [donor.id],
+              },
+            },
+          ),
+          replacementSong(
+            selected,
+            extra: {
+              'fieldOrigins': {field: 'user'},
+              'fieldContributors': {
+                field: [donor.id],
+              },
+            },
+          ),
+        );
+        expect(result.metadata, isNot(contains(field)));
+        expect(result.extra['fieldOrigins'][field], 'user');
+        expect(result.extra['fieldContributors'], isNot(contains(field)));
+        final again = await repository.saveChosenSong(
+          replacementSong(selected),
+        );
+        expect(again.metadata, isNot(contains(field)));
+        expect(again.extra['fieldOrigins'][field], 'user');
+        final supplied = await repository.saveChosenSong(
+          replacementSong(
+            selected,
+            metadata: {field: 'New value'},
+            extra: {
+              'fieldOrigins': {field: 'new-credit'},
+            },
+          ),
+        );
+        expect(supplied.metadata[field], 'New value');
+        expect(supplied.extra['fieldOrigins'][field], 'new-credit');
+      },
+    );
+  }
 
   test('same-song source can supply key but wrong identity cannot', () async {
     final selected = reference();

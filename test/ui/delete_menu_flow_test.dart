@@ -339,6 +339,30 @@ void main() {
     }
   }
 
+  testWidgets(
+    'setlist song setup stays with management actions before exports',
+    (tester) async {
+      final controller = MenuController('setlist-edit');
+      addTearDown(controller.dispose);
+      await pumpShell(tester, controller);
+      await tester.tap(find.byTooltip(l10nOf(tester).songMenuLabel));
+      await tester.pumpAndSettle();
+      expect(renderedMenuActions(tester), [
+        'edit',
+        'info',
+        'add',
+        'override',
+        'share',
+        'share_pdf',
+        'copy',
+        'print',
+        'delete',
+        'remove_entry',
+      ]);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('an unsaved editor draft has no persistent Delete action', (
     tester,
   ) async {

@@ -738,14 +738,8 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
               if (!entry.missing) ...[
                 ...buildLibraryActionMenu(
                   l10n,
-                  actions: songLibraryActions.difference(const {'delete'}),
+                  actions: {...songLibraryActions, 'override'},
                 ),
-                PopupMenuItem(
-                  value: 'override',
-                  child: Text(l10n.setlistEntryOverride),
-                ),
-                const PopupMenuDivider(),
-                ...buildLibraryActionMenu(l10n, actions: const {'delete'}),
               ],
               PopupMenuItem(
                 value: 'remove_entry',
