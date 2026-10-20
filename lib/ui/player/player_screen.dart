@@ -16,6 +16,8 @@ import '../settings/settings_screen.dart' show showPlayerSettings;
 import '../verse_ui_state.dart';
 import '../widgets/slider_overlay_boundary.dart';
 import 'player_lyric_line.dart';
+import 'player_controls_panel.dart';
+import 'player_fullscreen_header.dart';
 import '../widgets/subpage_header.dart';
 import 'screen_awake.dart';
 import 'section_labels.dart';
@@ -129,68 +131,11 @@ class _PlayerScreenState extends State<PlayerScreen>
   bool _awakeHeld = false;
   bool _inForeground = true;
   bool _leaving = false;
-  double _panelDragDistance = 0;
   double _lyricsHorizontalDragDistance = 0;
 
   void _setControlsExpanded(bool expanded) {
     if (controller.state.playerControlsExpanded == expanded) return;
     unawaited(controller.setPlayerControlsExpanded(expanded));
-  }
-
-  Widget _controlsHandle(AppLocalizations l10n) {
-    final expanded = controller.state.playerControlsExpanded;
-    final label = expanded
-        ? l10n.playerCollapseControls
-        : l10n.playerExpandControls;
-    return Semantics(
-      button: true,
-      label: label,
-      expanded: expanded,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onVerticalDragStart: (_) => _panelDragDistance = 0,
-        onVerticalDragUpdate: (details) =>
-            _panelDragDistance += details.delta.dy,
-        onVerticalDragEnd: (_) {
-          if (_panelDragDistance > 24) _setControlsExpanded(false);
-          if (_panelDragDistance < -24) _setControlsExpanded(true);
-          _panelDragDistance = 0;
-        },
-        child: Tooltip(
-          message: label,
-          child: InkWell(
-            onTap: () => _setControlsExpanded(!expanded),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-              child: Center(
-                child: ExcludeSemantics(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 36,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.outline,
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Icon(
-                        expanded
-                            ? Icons.keyboard_arrow_down_rounded
-                            : Icons.keyboard_arrow_up_rounded,
-                        size: 18,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
   }
 
   /// The adapter's resolved duration is shared with its clock and highlighting.
@@ -845,10 +790,7 @@ class _PlayerScreenState extends State<PlayerScreen>
           top: false,
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: [
-              _controlsHandle(l10n),
-              if (compact) Flexible(child: body) else body,
-            ],
+            children: [if (compact) Flexible(child: body) else body],
           ),
         ),
         header: false,
@@ -857,8 +799,8 @@ class _PlayerScreenState extends State<PlayerScreen>
     }
 
     final metadata = [
-      if (state.readerKey != null)
-        '${state.readerKeyEstimated ? l10n.playerEstimatedKey : l10n.editorKeyField}: ${state.readerKey}',
+      if (state.readerKey != null && !state.readerKeyEstimated)
+        '${l10n.editorKeyField}: ${state.readerKey}',
       song.artist,
       song.album,
       if (state.readerCapo != null)
@@ -874,7 +816,6 @@ class _PlayerScreenState extends State<PlayerScreen>
             constraints.maxWidth > constraints.maxHeight &&
             constraints.maxHeight < 430;
         final largeText = MediaQuery.textScalerOf(context).scale(1) > 1.5;
-        final expanded = state.playerControlsExpanded;
         final shortPortrait =
             constraints.maxHeight < 600 &&
             constraints.maxWidth <= constraints.maxHeight;
@@ -955,7 +896,8 @@ class _PlayerScreenState extends State<PlayerScreen>
                         IconButton(
                           key: const ValueKey('player-settings-button'),
                           tooltip: l10n.settingsPlayer,
-                          onPressed: () => showPlayerSettings(context, controller),
+                          onPressed: () =>
+                              showPlayerSettings(context, controller),
                           icon: const Icon(Icons.settings_outlined),
                         ),
                       ],
@@ -967,7 +909,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                           alignment: AlignmentDirectional.centerStart,
                           child: Text(
                             metadata,
-                            maxLines: state.readerKeyEstimated ? 2 : 1,
+                            maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.bodyMedium
                                 ?.copyWith(color: colors.onSurfaceVariant),
@@ -1000,38 +942,31 @@ class _PlayerScreenState extends State<PlayerScreen>
                 ),
                 header: true,
               ),
-            if (compactLandscape && expanded)
-              Expanded(
-                child: Row(
-                  children: [
-                    Expanded(child: lyrics),
-                    const SizedBox(width: 8),
-                    SizedBox(
-                      width: (constraints.maxWidth * .4)
-                          .clamp(300.0, 360.0)
-                          .toDouble(),
-                      child: controls(compact: true),
-                    ),
-                  ],
-                ),
-              )
-            else ...[
-              Expanded(child: lyrics),
-              if (expanded)
-                controls(
-                  compact: false,
-                  maxHeight: largeText || shortPortrait
-                      ? (constraints.maxHeight * .4)
-                            .clamp(180.0, 320.0)
-                            .toDouble()
-                      : null,
-                )
-              else
-                playerPanel(
-                  SafeArea(top: false, child: _controlsHandle(l10n)),
-                  header: false,
-                ),
-            ],
+            Expanded(
+              child: PlayerControlsPanel(
+                expanded: state.playerControlsExpanded,
+                onChanged: _setControlsExpanded,
+                expandLabel: l10n.playerExpandControls,
+                collapseLabel: l10n.playerCollapseControls,
+                side: compactLandscape,
+                lyrics: lyrics,
+                controls: compactLandscape
+                    ? SizedBox(
+                        width: (constraints.maxWidth * .4)
+                            .clamp(300.0, 360.0)
+                            .toDouble(),
+                        child: controls(compact: true),
+                      )
+                    : controls(
+                        compact: false,
+                        maxHeight: largeText || shortPortrait
+                            ? (constraints.maxHeight * .4)
+                                  .clamp(180.0, 320.0)
+                                  .toDouble()
+                            : null,
+                      ),
+              ),
+            ),
           ],
         );
       },
@@ -1041,30 +976,29 @@ class _PlayerScreenState extends State<PlayerScreen>
       autofocus:
           widget.fullScreen || defaultTargetPlatform == TargetPlatform.windows,
       onKeyEvent: _handleWindowsKey,
-      child: SafeArea(
-        top: widget.fullScreen,
-        bottom: false,
-        left: false,
-        right: false,
-        child: Stack(
-          children: [
-            Positioned.fill(child: content),
-            if (widget.fullScreen)
-              PositionedDirectional(
-                top: 8,
-                end: 8,
-                child: SafeArea(
-                  bottom: false,
-                  child: IconButton.filledTonal(
-                    key: const ValueKey('player-exit-fullscreen'),
-                    tooltip: l10n.playerExitFullScreen,
-                    onPressed: () => widget.onFullScreenChanged?.call(false),
-                    icon: const Icon(Icons.fullscreen_exit_rounded),
-                  ),
+      child: Column(
+        children: [
+          if (widget.fullScreen)
+            PlayerFullscreenHeader(
+              title: song.title,
+              artist: song.artist,
+              actions: [
+                IconButton(
+                  key: const ValueKey('player-exit-fullscreen'),
+                  tooltip: l10n.playerExitFullScreen,
+                  onPressed: () => widget.onFullScreenChanged?.call(false),
+                  icon: const Icon(Icons.fullscreen_exit_rounded),
                 ),
-              ),
-          ],
-        ),
+                IconButton(
+                  key: const ValueKey('player-settings-button'),
+                  tooltip: l10n.settingsPlayer,
+                  onPressed: () => showPlayerSettings(context, controller),
+                  icon: const Icon(Icons.settings_outlined),
+                ),
+              ],
+            ),
+          Expanded(key: const ValueKey('player-body'), child: content),
+        ],
       ),
     );
   }
