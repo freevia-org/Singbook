@@ -18,14 +18,14 @@
       "id": "startjamming",
       "name": "Start Jamming",
       "firstSeen": "2026-10-15",
-      "lastChecked": "2026-10-18",
+      "lastChecked": "2026-10-19",
       "status": "deferred",
       "documentation": [
         "https://www.startjamming.com/api",
         "https://www.startjamming.com/llms-full.txt"
       ],
       "endpoint": "https://www.startjamming.com",
-      "reason": "Documented public read API; search has object/array response variants, index is keyed by ID, and artist can be absent. Chords use normalized measure arrays; cannot claim lyric-aligned chords. Requires a supported adapter and real canaries before activation. Primary API docs returned HTTP 200 on 2026-10-16 at 06:03:15 UTC. Agent requests to /api/songs/* must include for=agent, honor ETags and preserve canonical IDs/URLs. Agent responses omit license; licensing must not be inferred. Permitted reuse/attribution evidence and two independent live extraction canaries remain pending. Rechecked publisher API documentation on 2026-10-17 at 05:59:04 UTC: origin HTTP 200. On 2026-10-18 at 05:57 UTC, documented public search for Amazing Grace returned HTTP 200, exact canonical ID amazing-grace, canonical URL and API URL; agent response had no license field. Search success is one metadata identity check, not two independent extraction canaries or reuse permission. Still deferred pending rights/attribution, compatible adapter and complete canary coverage."
+      "reason": "Publisher API documentation at https://www.startjamming.com/api was reread on 2026-10-19; it specifies anonymous read endpoints, mandatory for=agent identification, canonical IDs/URLs, ETags, full-song fields and normalized arrangements, and says agent responses omit license. Bounded live checks at 2026-10-19T06:46:42Z and 06:46:43Z used documented exact searches and returned full records: Amazing Grace (id amazing-grace, exact match score 1.0, canonical https://www.startjamming.com/song/amazing-grace; lyrics string 519 characters, arrangement with 1 section) and Blue Moon of Kentucky (id blue-moon-of-kentucky, exact match score 1.0, canonical https://www.startjamming.com/song/blue-moon-of-kentucky; lyrics string 390 characters, arrangement with 2 sections). No raw lyrics were retained. Observed fields include id/title/slug/song_id/canonical_id/url/api_url, key, type, sections, arrangement, lyrics, signature and demo fields; artist is absent on both. This confirms exact identity-by-title and public extraction, not author/recording identity, reusable rights, or two repository canaries. The documented small bluegrass catalog likely overlaps broad lyric sources (Genius, LRCLIB, YouTube Music, Lyrics.ovh) on common songs; actual overlap was not measured. No per-work lyric license or attribution requirement was established; links/credits in returned pages do not grant reuse. Keep deferred pending rights and attribution review, compatible extraction for optional fields/normalized arrangement, and two independent repository canaries for claimed capabilities."
     },
     {
       "id": "lyrica",
@@ -42,7 +42,7 @@
       "id": "ukrainian-wikisource",
       "name": "Ukrainian Wikisource",
       "firstSeen": "2026-10-16",
-      "lastChecked": "2026-10-16",
+      "lastChecked": "2026-10-19",
       "status": "deferred",
       "documentation": [
         "https://uk.wikisource.org/w/api.php?action=query&meta=siteinfo&siprop=rightsinfo%7Cgeneral&format=json",
@@ -50,7 +50,7 @@
         "https://creativecommons.org/licenses/by-sa/4.0/deed.uk"
       ],
       "endpoint": "https://uk.wikisource.org/w/api.php",
-      "reason": "On 2026-10-16 at 06:04:01 UTC, public MediaWiki siteinfo returned Ukrainian Wikisource (uk) and site CC BY-SA 4.0 rights metadata. At 06:04:12 UTC, the Ukrainian folk songs category returned five title metadata entries and continuation. This proves regional catalog metadata access only; no lyric extraction canaries were run. Overlap with existing sources is unmeasured. Defer pending per-work copyright/provenance review, attribution/share-alike handling, compatible identity/search adapter, two independent live extraction canaries and claimed capability coverage. Site rights metadata alone does not clear every work."
+      "reason": "On 2026-10-16 at 06:04:01 UTC, public MediaWiki siteinfo returned Ukrainian Wikisource (uk) and site CC BY-SA 4.0 rights metadata. At 06:04:12 UTC, the Ukrainian folk songs category returned five title metadata entries and continuation. This proves regional catalog metadata access only; no lyric extraction canaries were run. Overlap with existing sources is unmeasured. Defer pending per-work copyright/provenance review, attribution/share-alike handling, compatible identity/search adapter, two independent live extraction canaries and claimed capability coverage. Site rights metadata alone does not clear every work. Fresh bounded primary checks on 2026-10-19T06:48:30Z: siteinfo at https://uk.wikisource.org/w/api.php?action=query&meta=siteinfo&siprop=rightsinfo%7Cgeneral&format=json returned successfully, with language uk, site name Вікіджерела, and site-level rights metadata Creative Commons Attribution-Share Alike 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.uk). A request for the Ukrainian folk-song category at https://uk.wikisource.org/w/api.php?action=query&list=categorymembers&cmtitle=%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D1%96%D1%8F%3A%D0%A3%D0%BA%D1%80%D0%B0%D1%97%D0%BD%D1%81%D1%8C%D0%BA%D1%96%20%D0%BD%D0%B0%D1%80%D0%BE%D0%B4%D0%BD%D1%96%20%D0%BF%D1%96%D1%81%D0%BD%D1%96&cmlimit=5&cmprop=title%7Ctype&format=json returned successfully with 5 page-title metadata records and a continuation marker. This confirms regional catalog metadata reachability only; no page bodies or lyrics were fetched, and site-level rights do not establish per-work status or provenance. Overlap remains unmeasured. Still defer pending per-work copyright/provenance review, attribution/share-alike handling, compatible identity/search extraction, two independent live extraction canaries and claimed capability coverage."
     },
     {
       "id": "open-hymnal",
@@ -67,7 +67,7 @@
       "id": "amll-ttml-database",
       "name": "AMLL TTML Database",
       "firstSeen": "2026-10-17",
-      "lastChecked": "2026-10-18",
+      "lastChecked": "2026-10-20",
       "status": "deferred",
       "documentation": [
         "https://amll.dev/reference/http-api/overview",
@@ -75,7 +75,7 @@
         "https://amll.dev/guides/overview/eco.html"
       ],
       "endpoint": "https://api.amll.dev",
-      "reason": "Documented unauthenticated JSON search/get API. On 2026-10-17 at 05:57:03Z and 05:57:22Z, independent direct IDs 269710089745311 (ME!) and 638303942317135 (Shape of You) returned HTTP 200 and raw TTML with timed paragraphs/spans. Publisher describes the contributed database as CC0-1.0; retain project attribution and contributor usernames/IDs without extending that claim to every underlying work. Titles, artists and contributors are arrays; artist ordering varies and search can return multiple versions. Scalar/index-only extraction would lose contributors or misidentify collaborations. On 2026-10-18 at 05:56 UTC, documented direct ID 269710089745311 still returned HTTP 200 with TTML, arrays of titles/artists/contributors and raw document present. Same-time separate searches for Chinese 晴天 / 周杰伦 and Ukrainian Ой у вишневому саду / Софія Ротару returned zero matches each. Defer until a compatible adapter supports complete identities/provenance and repository canaries verify parsed cues and raw retention. Exact ID lookups are documented immutable. Overlap with existing timed sources remains unmeasured; this recheck does not establish Chinese or Ukrainian catalog coverage."
+      "reason": "Documented unauthenticated JSON search/get API. On 2026-10-17 at 05:57:03Z and 05:57:22Z, independent direct IDs 269710089745311 (ME!) and 638303942317135 (Shape of You) returned HTTP 200 and raw TTML with timed paragraphs/spans. Publisher describes the contributed database as CC0-1.0; retain project attribution and contributor usernames/IDs without extending that claim to every underlying work. Titles, artists and contributors are arrays; artist ordering varies and search can return multiple versions. Scalar/index-only extraction would lose contributors or misidentify collaborations. On 2026-10-18 at 05:56 UTC, documented direct ID 269710089745311 still returned HTTP 200 with TTML, arrays of titles/artists/contributors and raw document present. Same-time separate searches for Chinese 晴天 / 周杰伦 and Ukrainian Ой у вишневому саду / Софія Ротару returned zero matches each. Defer until a compatible adapter supports complete identities/provenance and repository canaries verify parsed cues and raw retention. Exact ID lookups are documented immutable. Overlap with existing timed sources remains unmeasured; this recheck does not establish Chinese or Ukrainian catalog coverage. Publisher docs reread 2026-10-20T06:00:53Z: https://amll.dev/reference/http-api/overview and https://amll.dev/reference/http-api/native specify unauthenticated GET /v1/lyrics/search (title/artist filters, maximum pageSize 100) and a response shaped as status + data.items[] + data.pagination; SongItem includes arrays for title, artist, album, platform IDs, contributor IDs/usernames and TTML format, but no documented language field. The publisher ecosystem page https://amll.dev/guides/overview/eco says community-contributed database lyrics are published under CC0-1.0; retain the existing limitation that this database claim does not independently clear underlying works or establish app-specific attribution/provenance semantics. Bounded live metadata-only searches at 2026-10-20T06:00:44Z for Chinese title 青花瓷 / 周杰伦 and 06:00:46Z for Ukrainian title Ой у вишневому саду / Софія Ротару both returned HTTP/API status 200, 0 items, total 0, hasMore false (pageSize 3). No lyric bodies, filenames or selection IDs were fetched or retained. These results do not establish Chinese or Ukrainian catalog coverage; no live extraction canary or cue parsing was performed. Likely overlap with active timed sources Better Lyrics, SyncLRC and Unison remains unmeasured. Keep deferred pending compatible handling of identity/contributor arrays, language coverage evidence, two independent repository canaries validating exact identities plus parsed/raw TTML cues, and provenance/rights review for actual works."
     },
     {
       "id": "lrcshare",
@@ -107,6 +107,35 @@
       ],
       "endpoint": "https://api.musixmatch.com/ws/1.1",
       "reason": "Publisher documents track search and lyric retrieval with an API key and account/plan. No credential was requested, borrowed or provisioned by this unattended run. Defer pending eligible app access, current API/display/attribution terms, two independent live extraction canaries and claimed capability coverage. Expected overlap with existing broad catalogs is substantial but unmeasured; publisher API availability alone does not establish app redistribution permission."
+    },
+    {
+      "id": "spicy-lyrics",
+      "name": "Spicy Lyrics API",
+      "firstSeen": "2026-10-19",
+      "lastChecked": "2026-10-19",
+      "status": "deferred",
+      "documentation": [
+        "https://developers.spicylyrics.org/",
+        "https://developers.spicylyrics.org/docs/reference/get.lyrics",
+        "https://developers.spicylyrics.org/docs/sync-sources",
+        "https://developers.spicylyrics.org/docs/attribution",
+        "https://developers.spicylyrics.org/docs/keys",
+        "https://developers.spicylyrics.org/terms"
+      ],
+      "endpoint": "https://api.spicylyrics.org",
+      "reason": "New publisher documentation reviewed 2026-10-19T06:46Z. The documented endpoint is GET /v1/lyrics/{trackId}; identity is a 22-character Spotify track ID. Response fields include source, timed content (Syllable/Line/Static), songwriter credits, translations/transliterations, and optional uploader/maker identity and URLs. Publisher requires bearer secret or publishable key; docs show a shared signed-out demo but its terms explicitly prohibit using it as a substitute for a key, so no API request or credential use was attempted and live access/extraction remain unverified. Terms require response-specific attribution wherever lyrics are shown; community sync contributors must be credited, and cached responses must be refetched or discarded within 30 days. Terms do not grant rights to lyric text, allow limited revocable use of community timing data subject to restrictions, prohibit redistribution/downloaders and substantial systematic extraction. Persistent user-saved/offline lyric storage may conflict with the 30-day retention rule and downloader restriction; do not integrate without publisher clarification and a compatible persistence model. Likely overlap with existing timed providers SyncLRC, Better Lyrics and Unison is unmeasured. No canaries, language coverage, or capability coverage established. Defer pending eligible app access, legal/product review of retention and user export semantics, attribution UI, and two independent live canaries; do not use the signed-out demo."
+    },
+    {
+      "id": "hymnal-api-rindra",
+      "name": "Hymnal API",
+      "firstSeen": "2026-10-20",
+      "lastChecked": "2026-10-20",
+      "status": "deferred",
+      "documentation": [
+        "https://hymnal.rindra.org/"
+      ],
+      "endpoint": "https://hymnal.rindra.org/api",
+      "reason": "New multilingual candidate reviewed on 2026-10-20. Publisher page documents a public unauthenticated static JSON API, reporting 4,485 hymn records across seven collections and Malagasy, French and English. Metadata endpoints return collections or hymns without lyric bodies; a documented single-hymn endpoint returns a record with labeled verse text. A bounded live GET of https://hymnal.rindra.org/api/categories.json at 2026-10-20T06:01:43Z returned successfully with 7 records shaped as ID, Name and count; only collection names/counts were retained in sanitized evidence, no hymn/lyric IDs or text. Publisher documentation says free/open API but provides no explicit content license, per-work rights or attribution terms in the page reviewed; treat underlying hymn rights as unverified. Collections include two Malagasy sets (802 and 814 entries), French-language sets and English SDA Hymnal, a potentially useful regional/language supplement. Expected overlap with WorshipCommons, Wikisource and Open Hymnal is unmeasured. Documented routes expose metadata and static per-hymn lyrics, but no search endpoint; full single-hymn lyric extraction has not been tested, and grammar v1 cannot express the documented whole-catalog-plus-per-ID flow as normal search/resolve without adapter work. No chords or timing are documented. Keep deferred pending explicit rights/attribution and per-work provenance review, a compatible searchable adapter, and two independent live repository canaries covering identity and full lyric extraction."
     }
   ]
 }
