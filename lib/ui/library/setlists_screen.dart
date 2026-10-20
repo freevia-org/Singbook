@@ -118,7 +118,9 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                             final index = rowIndex * columns + column;
                             return Padding(
                               padding: EdgeInsetsDirectional.only(
-                                end: column == 0 && wide ? 8 : 0,
+                                end: column == 0 && wide && !centeredSingleCard
+                                    ? 8
+                                    : 0,
                               ),
                               child: SizedBox(
                                 width: cardWidth.toDouble(),
