@@ -170,4 +170,113 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+
+  for (final scenario in [
+    (
+      'large text',
+      const Size(320, 640),
+      2.0,
+      52.0,
+      [const Rect.fromLTWH(140, 0, 40, 52)],
+    ),
+    (
+      'multiple cameras',
+      const Size(390, 844),
+      1.0,
+      52.0,
+      [const Rect.fromLTWH(40, 0, 30, 52), const Rect.fromLTWH(180, 0, 70, 52)],
+    ),
+    (
+      'wide notch',
+      const Size(320, 640),
+      1.0,
+      52.0,
+      [const Rect.fromLTWH(30, 0, 260, 52)],
+    ),
+    ('unknown inset geometry', const Size(390, 844), 1.0, 52.0, <Rect>[]),
+    (
+      'landscape camera',
+      const Size(844, 390),
+      1.6,
+      0.0,
+      [const Rect.fromLTWH(0, 170, 52, 50)],
+    ),
+    ('no camera', const Size(800, 1280), 1.0, 0.0, <Rect>[]),
+  ]) {
+    testWidgets('fullscreen header remains readable: ${scenario.$1}', (
+      tester,
+    ) async {
+      tester.view.physicalSize = scenario.$2;
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: MediaQueryData(
+              size: scenario.$2,
+              textScaler: TextScaler.linear(scenario.$3),
+              viewPadding: EdgeInsets.only(top: scenario.$4),
+              displayFeatures: [
+                for (final bounds in scenario.$5)
+                  DisplayFeature(
+                    bounds: bounds,
+                    type: DisplayFeatureType.cutout,
+                    state: DisplayFeatureState.unknown,
+                  ),
+              ],
+            ),
+            child: Scaffold(
+              body: Column(
+                children: [
+                  PlayerFullscreenHeader(
+                    title: 'A longer original song title',
+                    artist: 'Original fixture artist',
+                    actions: [
+                      IconButton(
+                        key: const ValueKey('exit'),
+                        onPressed: () {},
+                        icon: const Icon(Icons.fullscreen_exit),
+                      ),
+                      IconButton(
+                        key: const ValueKey('settings'),
+                        onPressed: () {},
+                        icon: const Icon(Icons.settings),
+                      ),
+                    ],
+                  ),
+                  const Expanded(child: Text('Lyrics')),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      final header = tester.getRect(
+        find.byKey(const ValueKey('player-fullscreen-header')),
+      );
+      for (final finder in [
+        find.text('A longer original song title'),
+        find.text('Original fixture artist'),
+        find.byKey(const ValueKey('exit')),
+        find.byKey(const ValueKey('settings')),
+      ]) {
+        final rect = tester.getRect(finder);
+        expect(rect.left, greaterThanOrEqualTo(0));
+        expect(rect.right, lessThanOrEqualTo(scenario.$2.width));
+        expect(rect.top, greaterThanOrEqualTo(0));
+        expect(rect.bottom, lessThanOrEqualTo(header.bottom));
+        for (final cutout in scenario.$5) {
+          expect(rect.overlaps(cutout), isFalse);
+        }
+      }
+      if (scenario.$1 == 'unknown inset geometry') {
+        expect(
+          tester.getRect(find.byKey(const ValueKey('exit'))).top,
+          greaterThanOrEqualTo(52),
+        );
+      }
+      expect(tester.takeException(), isNull);
+    });
+  }
 }

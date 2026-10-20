@@ -34,6 +34,7 @@ class _PlayerControlsPanelState extends State<PlayerControlsPanel>
   );
   final _controlsKey = GlobalKey();
   bool _dragging = false;
+  bool _dragCanceled = false;
   double _distance = 0;
 
   @override
@@ -72,62 +73,71 @@ class _PlayerControlsPanelState extends State<PlayerControlsPanel>
       label: label,
       child: Tooltip(
         message: label,
-        child: GestureDetector(
-          key: const ValueKey('player-controls-handle'),
-          behavior: HitTestBehavior.opaque,
-          onVerticalDragStart: (_) {
-            _reveal.stop();
-            _dragging = true;
-            _distance = 0;
-          },
-          onVerticalDragUpdate: (details) {
-            _distance += details.delta.dy;
-            final box = _controlsKey.currentContext?.findRenderObject();
-            final extent = box is RenderBox && box.hasSize
-                ? (widget.side ? box.size.width : box.size.height)
-                : 180.0;
-            _reveal.value =
-                (_reveal.value - details.delta.dy / extent.clamp(80, 400))
-                    .clamp(0.0, 1.0);
-          },
-          onVerticalDragCancel: () {
+        child: Listener(
+          onPointerCancel: (_) {
+            _dragCanceled = true;
             _dragging = false;
             _settle(widget.expanded);
           },
-          onVerticalDragEnd: (details) {
-            _dragging = false;
-            final velocity = details.primaryVelocity ?? 0;
-            final expanded = velocity.abs() > 300
-                ? velocity < 0
-                : _distance.abs() >= 12
-                ? _distance < 0
-                : _reveal.value >= .5;
-            _choose(expanded);
-          },
-          child: InkWell(
-            onTap: () => _choose(!widget.expanded),
-            child: SizedBox(
-              width: 96,
-              height: 48,
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  key: const ValueKey('player-controls-grip'),
-                  width: 64,
-                  height: 12,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceContainerLow,
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(8),
-                    ),
-                  ),
+          child: GestureDetector(
+            key: const ValueKey('player-controls-handle'),
+            behavior: HitTestBehavior.opaque,
+            onVerticalDragStart: (_) {
+              _reveal.stop();
+              _dragging = true;
+              _dragCanceled = false;
+              _distance = 0;
+            },
+            onVerticalDragUpdate: (details) {
+              _distance += details.delta.dy;
+              final box = _controlsKey.currentContext?.findRenderObject();
+              final extent = box is RenderBox && box.hasSize
+                  ? (widget.side ? box.size.width : box.size.height)
+                  : 180.0;
+              _reveal.value =
+                  (_reveal.value - details.delta.dy / extent.clamp(80, 400))
+                      .clamp(0.0, 1.0);
+            },
+            onVerticalDragCancel: () {
+              _dragging = false;
+              _settle(widget.expanded);
+            },
+            onVerticalDragEnd: (details) {
+              _dragging = false;
+              if (_dragCanceled) return;
+              final velocity = details.primaryVelocity ?? 0;
+              final expanded = velocity.abs() > 300
+                  ? velocity < 0
+                  : _distance.abs() >= 12
+                  ? _distance < 0
+                  : _reveal.value >= .5;
+              _choose(expanded);
+            },
+            child: InkWell(
+              onTap: () => _choose(!widget.expanded),
+              child: SizedBox(
+                width: 96,
+                height: 48,
+                child: Align(
+                  alignment: Alignment.bottomCenter,
                   child: Container(
-                    width: 32,
-                    height: 3,
+                    key: const ValueKey('player-controls-grip'),
+                    width: 64,
+                    height: 12,
+                    alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.outline,
-                      borderRadius: BorderRadius.circular(2),
+                      color: Theme.of(context).colorScheme.surfaceContainerLow,
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(8),
+                      ),
+                    ),
+                    child: Container(
+                      width: 32,
+                      height: 3,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.outline,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
                   ),
                 ),

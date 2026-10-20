@@ -72,6 +72,11 @@ class _Controller extends VerseUiController {
   }
 
   @override
+  Future<void> editSong(String id) async {
+    calls.add('edit:$id');
+  }
+
+  @override
   Future<void> setShowChords(bool value) async {
     showChords = value;
     notifyListeners();
@@ -170,17 +175,22 @@ void main() {
           expect(find.byIcon(Icons.add_circle_outline), findsNothing);
           await tester.tap(dropdown);
           await tester.pumpAndSettle();
-          final shift = find.byKey(const ValueKey('transpose-offset-2'));
-          expect(shift, findsOneWidget);
-          await tester.ensureVisible(shift);
-          final popup = tester.getRect(shift);
+          final edit = find.byWidgetPredicate(
+            (widget) =>
+                widget is PopupMenuItem<String> && widget.value == 'edit-key',
+          );
+          expect(edit, findsOneWidget);
+          expect(find.byKey(const ValueKey('transpose-pitch-0')), findsNothing);
+          final popup = tester.getRect(edit);
           expect(popup.left, lessThan(key.right));
           expect(popup.right, greaterThan(key.left));
-          expect(tester.getRect(shift).top, greaterThanOrEqualTo(0));
+          expect(popup.top, greaterThanOrEqualTo(0));
           expect(
-            tester.getRect(shift).bottom,
+            tester.getRect(edit).bottom,
             lessThanOrEqualTo(scenario.$2.height),
           );
+          await tester.tap(edit);
+          expect(controller.calls, contains('edit:song'));
           expect(tester.takeException(), isNull);
         },
       );
@@ -230,21 +240,22 @@ void main() {
         find.descendant(of: keyMenu, matching: find.text('C')),
         findsNothing,
       );
-      expect(
-        find.descendant(of: keyMenu, matching: find.text('0')),
-        findsOneWidget,
-      );
       expect(tester.takeException(), isNull);
       await tester.tap(keyMenu);
       await tester.pumpAndSettle();
       final l10n = AppLocalizations.of(tester.element(keyMenu));
       expect(find.text(l10n.playerChordsNone), findsNothing);
-      expect(find.byKey(const ValueKey('transpose-offset--6')), findsOneWidget);
-      expect(find.byKey(const ValueKey('transpose-offset-6')), findsOneWidget);
+      final editKey = find.byWidgetPredicate(
+        (widget) =>
+            widget is PopupMenuItem<String> && widget.value == 'edit-key',
+      );
+      expect(editKey, findsOneWidget);
+      expect(find.byKey(const ValueKey('transpose-pitch-0')), findsNothing);
       expect(find.byType(CheckedPopupMenuItem<String>), findsNothing);
       expect(find.byType(Checkbox), findsNothing);
-      await tester.binding.handlePopRoute();
+      await tester.tap(editKey);
       await tester.pumpAndSettle();
+      expect(controller.calls, contains('edit:song'));
 
       expect(find.byKey(const ValueKey('start-lyric-scroll')), findsOneWidget);
       expect(find.byKey(const ValueKey('player-seek-slider')), findsOneWidget);
