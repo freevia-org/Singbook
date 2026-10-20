@@ -132,6 +132,12 @@ class _PlayerScreenState extends State<PlayerScreen>
   bool _inForeground = true;
   bool _leaving = false;
   double _lyricsHorizontalDragDistance = 0;
+  final ValueNotifier<double?> _playbackSpeedDraft = ValueNotifier<double?>(
+    null,
+  );
+  String? _playbackSpeedDraftSongId;
+  double? _playbackSpeedDraftDuration;
+  VerseUiController? _playbackSpeedDraftController;
 
   void _setControlsExpanded(bool expanded) {
     if (controller.state.playerControlsExpanded == expanded) return;
@@ -355,6 +361,7 @@ class _PlayerScreenState extends State<PlayerScreen>
   void didUpdateWidget(covariant PlayerScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!identical(oldWidget.controller, widget.controller)) {
+      _clearPlaybackSpeedDraft();
       _position.removeListener(_onPosition);
       _position = widget.controller.playerPosition..addListener(_onPosition);
     }
@@ -373,6 +380,7 @@ class _PlayerScreenState extends State<PlayerScreen>
     final state = controller.state;
     final position = _position.value;
     if (state.song?.id != _lastSongId) {
+      _clearPlaybackSpeedDraft();
       _lastSongId = state.song?.id;
       _lastLineId = null;
       _lastProgress = position.seconds;
@@ -642,6 +650,7 @@ class _PlayerScreenState extends State<PlayerScreen>
     _manualScrollIdle?.cancel();
     _lyricsScroll.dispose();
     _controlsScroll.dispose();
+    _playbackSpeedDraft.dispose();
     super.dispose();
   }
 
@@ -800,7 +809,11 @@ class _PlayerScreenState extends State<PlayerScreen>
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Align(
                   alignment: AlignmentDirectional.centerEnd,
-                  child: _speedControl(l10n, state),
+                  child: _speedControl(
+                    l10n,
+                    state,
+                    duration: _durationOf(state),
+                  ),
                 ),
               ),
           ],
@@ -848,17 +861,179 @@ class _PlayerScreenState extends State<PlayerScreen>
       if (state.readerTempo != null)
         '${l10n.editorTempoField}: ${state.readerTempo}',
     ].whereType<String>().where((v) => v.isNotEmpty).join(' · ');
+    Widget songHeader({required bool side}) {
+      if (widget.fullScreen) {
+        if (!side) {
+          return PlayerFullscreenHeader(
+            title: song.title,
+            artist: song.artist,
+            actions: [
+              if (!state.playerControlsExpanded)
+                IconButton(
+                  key: const ValueKey('player-exit-fullscreen'),
+                  tooltip: l10n.playerExitFullScreen,
+                  onPressed: () => widget.onFullScreenChanged?.call(false),
+                  icon: const Icon(Icons.close_fullscreen_rounded),
+                ),
+            ],
+          );
+        }
+        return SizedBox(
+          key: const ValueKey('player-landscape-header'),
+          height: 56,
+          child: Padding(
+            padding: const EdgeInsetsDirectional.only(start: 12, end: 4),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        song.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                      if (song.artist?.trim().isNotEmpty == true)
+                        Text(
+                          song.artist!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: colors.onSurfaceVariant,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                if (!state.playerControlsExpanded)
+                  IconButton(
+                    key: const ValueKey('player-exit-fullscreen'),
+                    constraints: const BoxConstraints.tightFor(
+                      width: 48,
+                      height: 48,
+                    ),
+                    tooltip: l10n.playerExitFullScreen,
+                    onPressed: () => widget.onFullScreenChanged?.call(false),
+                    icon: const Icon(Icons.close_fullscreen_rounded),
+                  ),
+              ],
+            ),
+          ),
+        );
+      }
+      return playerPanel(
+        Column(
+          children: [
+            SubpageHeader(
+              title: song.title,
+              onBack: controller.back,
+              actions: [
+                IconButton(
+                  tooltip: song.favorite
+                      ? l10n.songFavoriteRemove
+                      : l10n.songFavoriteAdd,
+                  onPressed: () => controller.toggleSongFavorite(song.id),
+                  icon: Icon(
+                    song.favorite
+                        ? Icons.favorite_rounded
+                        : Icons.favorite_border_rounded,
+                  ),
+                ),
+                if (widget.onFullScreenChanged == null)
+                  IconButton(
+                    tooltip: l10n.actionEdit,
+                    onPressed: () => controller.editSong(song.id),
+                    icon: const Icon(Icons.edit_outlined),
+                  ),
+                PopupMenuButton<String>(
+                  tooltip: l10n.songMenuLabel,
+                  icon: const Icon(Icons.more_horiz_rounded),
+                  itemBuilder: (_) => buildLibraryActionMenu(
+                    l10n,
+                    timedLyricsChecked: state.timingMode == 'timed',
+                    actions: {
+                      ...songLibraryActions,
+                      if (state.readerCanCompareVersions) 'compare',
+                      if (state.readerTimingAvailable || state.readerHasTiming)
+                        'timed-lyrics',
+                    },
+                  ),
+                  onSelected: (action) {
+                    if (action == 'compare') {
+                      controller.compareCurrentSongVersions();
+                    } else if (action == 'timed-lyrics') {
+                      controller.setTimingMode(
+                        state.timingMode == 'timed' ? 'estimated' : 'timed',
+                      );
+                    } else {
+                      handleSongMenuAction(
+                        context,
+                        controller,
+                        song.id,
+                        action,
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
+            if (metadata.isNotEmpty)
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(
+                    metadata,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  const Icon(Icons.check_circle_outline, size: 14),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      [l10n.readerSaved, state.readerSource]
+                          .whereType<String>()
+                          .join(' · '),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        header: true,
+        side: side,
+      );
+    }
     final content = LayoutBuilder(
       builder: (context, constraints) {
         final compactLandscape =
             constraints.maxWidth > constraints.maxHeight &&
-            constraints.maxHeight < 430;
+            constraints.maxHeight < 480;
         final largeText = MediaQuery.textScalerOf(context).scale(1) > 1.5;
         final shortPortrait =
             constraints.maxHeight < 600 &&
             constraints.maxWidth <= constraints.maxHeight;
         return Column(
           children: [
+<<<<<<< HEAD
             if (!widget.fullScreen)
               playerPanel(
                 Column(
@@ -960,6 +1135,9 @@ class _PlayerScreenState extends State<PlayerScreen>
                 ),
                 header: true,
               ),
+=======
+            if (!compactLandscape) songHeader(side: false),
+>>>>>>> b8040be (Polish player speed and landscape layout)
             Expanded(
               child: PlayerControlsPanel(
                 expanded: state.playerControlsExpanded,
@@ -967,12 +1145,14 @@ class _PlayerScreenState extends State<PlayerScreen>
                 expandLabel: l10n.playerExpandControls,
                 collapseLabel: l10n.playerCollapseControls,
                 side: compactLandscape,
+                sideHeader: compactLandscape ? songHeader(side: true) : null,
+                sideWidth: compactLandscape
+                    ? (constraints.maxWidth * .4).clamp(300.0, 360.0).toDouble()
+                    : null,
                 lyrics: lyrics,
                 controls: compactLandscape
                     ? SizedBox(
-                        width: (constraints.maxWidth * .4)
-                            .clamp(300.0, 360.0)
-                            .toDouble(),
+                        width: (constraints.maxWidth * .4).clamp(300.0, 360.0).toDouble(),
                         child: controls(compact: true),
                       )
                     : controls(
@@ -996,20 +1176,6 @@ class _PlayerScreenState extends State<PlayerScreen>
       onKeyEvent: _handleWindowsKey,
       child: Column(
         children: [
-          if (widget.fullScreen)
-            PlayerFullscreenHeader(
-              title: song.title,
-              artist: song.artist,
-              actions: [
-                if (!state.playerControlsExpanded)
-                  IconButton(
-                    key: const ValueKey('player-exit-fullscreen'),
-                    tooltip: l10n.playerExitFullScreen,
-                    onPressed: () => widget.onFullScreenChanged?.call(false),
-                    icon: const Icon(Icons.close_fullscreen_rounded),
-                  ),
-              ],
-            ),
           Expanded(key: const ValueKey('player-body'), child: content),
         ],
       ),
@@ -1123,12 +1289,15 @@ class _PlayerScreenState extends State<PlayerScreen>
                     Expanded(child: section),
                     const SizedBox(width: 12),
                   ],
-                  Text(
-                    !narrow && state.readerDurationEstimated
+                  Semantics(
+                    label: state.readerDurationEstimated
                         ? l10n.playerEstimatedDuration(
                             formatDuration(displayDuration),
                           )
                         : formatDuration(displayDuration),
+                    child: ExcludeSemantics(
+                      child: Text(formatDuration(displayDuration)),
+                    ),
                   ),
                 ],
               );
@@ -1203,7 +1372,11 @@ class _PlayerScreenState extends State<PlayerScreen>
     );
   }
 
-  Widget _speedControl(AppLocalizations l10n, VerseUiState state) {
+  Widget _speedControl(
+    AppLocalizations l10n,
+    VerseUiState state, {
+    required double duration,
+  }) {
     final popupWidth = _playerPopupWidth(context);
     final panelHeight = _speedPopupPanelHeight(context);
     final labelWidth = (popupWidth * .43).clamp(34.0, 68.0).toDouble();
@@ -1216,6 +1389,7 @@ class _PlayerScreenState extends State<PlayerScreen>
         offset: Offset(_speedPopupOffsetX, -(panelHeight + 14)),
         constraints: _playerPopupConstraints(context),
         menuPadding: EdgeInsets.zero,
+        onCanceled: _clearPlaybackSpeedDraft,
         itemBuilder: (_) => [
           SliderPopupMenuItem<double>(
             enabled: false,
@@ -1226,51 +1400,104 @@ class _PlayerScreenState extends State<PlayerScreen>
               height: panelHeight,
               child: AnimatedBuilder(
                 animation: controller,
-                builder: (context, _) => Row(
-                  children: [
-                    SizedBox(
-                      width: labelWidth,
-                      height: panelHeight - 20,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('2×'),
-                          Text('1.5×'),
-                          Text('1×'),
-                          Text('0.5×'),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: RotatedBox(
-                        quarterTurns: 3,
-                        child: SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                            overlayShape: SliderComponentShape.noOverlay,
-                            inactiveTickMarkColor: Theme.of(
-                              context,
-                            ).colorScheme.primary.withValues(alpha: .55),
-                            activeTickMarkColor: Theme.of(
-                              context,
-                            ).colorScheme.onPrimary,
-                          ),
-                          child: Slider(
-                            key: const ValueKey('scroll-speed-slider'),
-                            min: .5,
-                            max: 2,
-                            divisions: 15,
-                            value: controller.state.playbackSpeed,
-                            label: _formatPlaybackSpeed(
-                              controller.state.playbackSpeed,
+                builder: (context, _) => ValueListenableBuilder<double?>(
+                  valueListenable: _playbackSpeedDraft,
+                  builder: (context, draftSpeed, _) {
+                    final speed =
+                        draftSpeed ?? controller.state.playbackSpeed;
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Semantics(
+                            label: state.readerDurationEstimated
+                                ? l10n.playerEstimatedDuration(
+                                    formatDuration(duration / speed),
+                                  )
+                                : formatDuration(duration / speed),
+                            child: ExcludeSemantics(
+                              child: Text(
+                                formatDuration(duration / speed),
+                                key: const ValueKey('scroll-speed-duration'),
+                                maxLines: 1,
+                                softWrap: false,
+                                style: Theme.of(context).textTheme.labelMedium,
+                              ),
                             ),
-                            semanticFormatterCallback: (value) =>
-                                '${l10n.playerScrollSpeed}, ${_formatPlaybackSpeed(value)}',
-                            onChanged: controller.setPlaybackSpeed,
                           ),
                         ),
-                      ),
-                    ),
-                  ],
+                        const SizedBox(height: 4),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: labelWidth,
+                                height: panelHeight - 50,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: const [
+                                    Text('2×'),
+                                    Text('1.5×'),
+                                    Text('1×'),
+                                    Text('0.5×'),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: RotatedBox(
+                                  quarterTurns: 3,
+                                  child: SliderTheme(
+                                    data: SliderTheme.of(context).copyWith(
+                                      overlayShape:
+                                          SliderComponentShape.noOverlay,
+                                      inactiveTickMarkColor: Theme.of(
+                                        context,
+                                      ).colorScheme.primary.withValues(
+                                        alpha: .55,
+                                      ),
+                                      activeTickMarkColor: Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimary,
+                                    ),
+                                    child: Listener(
+                                      onPointerCancel: (_) =>
+                                          _clearPlaybackSpeedDraft(),
+                                      child: Slider(
+                                        key: const ValueKey(
+                                          'scroll-speed-slider',
+                                        ),
+                                        min: .5,
+                                        max: 2,
+                                        divisions: 15,
+                                        value: speed,
+                                        label: _formatPlaybackSpeed(speed),
+                                        semanticFormatterCallback: (value) {
+                                          final durationLabel =
+                                              formatDuration(duration / value);
+                                          final accessibleDuration =
+                                              state.readerDurationEstimated
+                                              ? l10n.playerEstimatedDuration(
+                                                  durationLabel,
+                                                )
+                                              : durationLabel;
+                                          return '${l10n.playerScrollSpeed}, ${_formatPlaybackSpeed(value)}, $accessibleDuration';
+                                        },
+                                        onChangeStart: _beginPlaybackSpeedDraft,
+                                        onChanged: _updatePlaybackSpeedDraft,
+                                        onChangeEnd:
+                                            _commitPlaybackSpeedDraft,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
             ),
@@ -1303,6 +1530,44 @@ class _PlayerScreenState extends State<PlayerScreen>
         ),
       ),
     );
+  }
+
+  void _beginPlaybackSpeedDraft(double speed) {
+    if (!mounted) return;
+    final state = controller.state;
+    _playbackSpeedDraftController = controller;
+    _playbackSpeedDraftSongId = state.song?.id;
+    _playbackSpeedDraftDuration = _durationOf(state);
+    _playbackSpeedDraft.value = speed;
+  }
+
+  bool _playbackSpeedDraftIsCurrent() {
+    final state = controller.state;
+    return identical(_playbackSpeedDraftController, controller) &&
+        _playbackSpeedDraftSongId == state.song?.id &&
+        _playbackSpeedDraftDuration == _durationOf(state);
+  }
+
+  void _updatePlaybackSpeedDraft(double speed) {
+    if (_playbackSpeedDraft.value == null) {
+      _beginPlaybackSpeedDraft(speed);
+      return;
+    }
+    if (!_playbackSpeedDraftIsCurrent()) {
+      _clearPlaybackSpeedDraft();
+      return;
+    }
+    _playbackSpeedDraft.value = speed;
+  }
+
+  void _clearPlaybackSpeedDraft() {
+    if (mounted) _playbackSpeedDraft.value = null;
+  }
+
+  void _commitPlaybackSpeedDraft(double speed) {
+    final isCurrent = _playbackSpeedDraftIsCurrent();
+    _clearPlaybackSpeedDraft();
+    if (isCurrent) unawaited(controller.setPlaybackSpeed(speed));
   }
 
   Widget _transport(
@@ -1409,7 +1674,13 @@ class _PlayerScreenState extends State<PlayerScreen>
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     if (showSpeed)
-                      Flexible(child: _speedControl(l10n, state)),
+                      Flexible(
+                        child: _speedControl(
+                          l10n,
+                          state,
+                          duration: _durationOf(state),
+                        ),
+                      ),
                     if (trailingAction != null) trailingAction,
                   ],
                 ),

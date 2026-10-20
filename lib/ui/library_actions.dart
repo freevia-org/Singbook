@@ -13,8 +13,13 @@ import 'verse_ui_state.dart';
 /// screens. They talk to the UI controller only; outcomes are reported through
 /// [VerseUiController.notices].
 
+<<<<<<< HEAD
 /// Saved items expose the same actions wherever they appear. Reader-only
 /// controls and setlist-entry actions can extend these shared sets.
+=======
+/// Saved songs expose the same actions wherever they appear. Reader-only
+/// controls can extend this set.
+>>>>>>> b8040be (Polish player speed and landscape layout)
 const songLibraryActions = <String>{
   'edit',
   'info',
@@ -25,6 +30,7 @@ const songLibraryActions = <String>{
   'print',
   'delete',
 };
+<<<<<<< HEAD
 const setlistLibraryActions = <String>{
   'edit',
   'duplicate',
@@ -34,6 +40,8 @@ const setlistLibraryActions = <String>{
   'print',
   'delete',
 };
+=======
+>>>>>>> b8040be (Polish player speed and landscape layout)
 
 /// One action order for library rows, Recent, readers and editors. Screens
 /// supply only their available actions; filtering never changes the order.

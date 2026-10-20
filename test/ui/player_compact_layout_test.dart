@@ -105,6 +105,8 @@ Future<void> _pump(
   Locale locale = const Locale('en'),
   double scale = 1,
   Brightness brightness = Brightness.light,
+  bool fullScreen = false,
+  ValueChanged<bool>? onFullScreenChanged,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -130,7 +132,11 @@ Future<void> _pump(
       home: Scaffold(
         body: AnimatedBuilder(
           animation: controller,
-          builder: (context, _) => PlayerScreen(controller: controller),
+          builder: (context, _) => PlayerScreen(
+            controller: controller,
+            fullScreen: fullScreen,
+            onFullScreenChanged: onFullScreenChanged,
+          ),
         ),
       ),
     ),
@@ -226,6 +232,35 @@ void main() {
     expect(play.right, lessThanOrEqualTo(speed.left));
     expect(key.center.dy, closeTo(play.center.dy, 1));
     expect(speed.center.dy, closeTo(play.center.dy, 1));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('landscape fullscreen keeps an exit action in the side panel', (
+    tester,
+  ) async {
+    final controller = _Controller();
+    addTearDown(controller.dispose);
+    bool? fullscreen;
+    await _pump(
+      tester,
+      controller,
+      size: const Size(700, 360),
+      fullScreen: true,
+      onFullScreenChanged: (value) => fullscreen = value,
+    );
+    final lyrics = find.byKey(const ValueKey('tablet-reader-content'));
+    expect(tester.getSize(lyrics).height, greaterThan(336));
+    expect(find.byKey(const ValueKey('player-fullscreen-header')), findsNothing);
+    expect(find.byKey(const ValueKey('player-landscape-header')), findsOneWidget);
+    expect(find.byKey(const ValueKey('player-exit-fullscreen')), findsOneWidget);
+
+    await tester.tap(find.byTooltip(AppLocalizations.of(
+      tester.element(find.byType(PlayerScreen)),
+    ).playerCollapseControls));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('player-exit-fullscreen')), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('player-exit-fullscreen')));
+    expect(fullscreen, isFalse);
     expect(tester.takeException(), isNull);
   });
 
@@ -384,6 +419,17 @@ void main() {
         find.byKey(const ValueKey('scroll-speed-panel')),
       );
       expect(panel.height, greaterThan(panel.width));
+      expect(
+        find.byKey(const ValueKey('scroll-speed-duration')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('scroll-speed-panel')),
+          matching: find.text('4:00'),
+        ),
+        findsOneWidget,
+      );
       final speedMenuWidth = tester
           .getSize(
             find
@@ -395,12 +441,17 @@ void main() {
         tester.getRect(find.byKey(const ValueKey('start-lyric-scroll'))),
         playBefore,
       );
-      await tester.drag(
+      final speedSlider = tester.widget<Slider>(
         find.byKey(const ValueKey('scroll-speed-slider')),
-        const Offset(0, -35),
       );
+      speedSlider.onChangeStart!(1);
+      speedSlider.onChanged!(1.25);
       await tester.pump();
-      expect(controller.speed, isNot(1));
+      expect(controller.speed, 1);
+      expect(find.text('3:12'), findsOneWidget);
+      speedSlider.onChangeEnd!(1.25);
+      await tester.pumpAndSettle();
+      expect(controller.speed, 1.25);
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('pitch-key-dropdown')));

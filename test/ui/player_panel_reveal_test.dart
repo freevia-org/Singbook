@@ -105,11 +105,11 @@ void main() {
       await tester.pump();
       final grip = find.byKey(const ValueKey('player-controls-grip'));
       final handle = find.byKey(const ValueKey('player-controls-handle'));
-      expect(tester.getSize(grip).height, 12);
-      expect(tester.getSize(handle).height, 48);
+      expect(tester.getSize(grip).height, side ? 64 : 12);
+      expect(tester.getSize(handle).height, side ? 96 : 48);
       final gesture = await tester.startGesture(tester.getCenter(handle));
-      await gesture.moveBy(const Offset(0, -30));
-      await gesture.moveBy(const Offset(0, -20));
+      await gesture.moveBy(side ? const Offset(-30, 0) : const Offset(0, -30));
+      await gesture.moveBy(side ? const Offset(-20, 0) : const Offset(0, -20));
       await tester.pump();
       final during = tester.getRect(lyrics);
       expect(
@@ -143,8 +143,12 @@ void main() {
       expect(tester.getRect(lyrics), before);
       expect(scroll.offset, 100);
       final canceled = await tester.startGesture(tester.getCenter(handle));
-      await canceled.moveBy(const Offset(0, -30));
-      await canceled.moveBy(const Offset(0, -20));
+      await canceled.moveBy(
+        side ? const Offset(-30, 0) : const Offset(0, -30),
+      );
+      await canceled.moveBy(
+        side ? const Offset(-20, 0) : const Offset(0, -20),
+      );
       await tester.pump();
       await canceled.cancel();
       await tester.pumpAndSettle();

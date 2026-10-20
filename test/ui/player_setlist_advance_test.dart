@@ -91,9 +91,26 @@ void main() {
       expect(speedSlider.divisions, 15);
       expect(speedSlider.min, .5);
       expect(speedSlider.max, 2);
-      expect(find.text('4:00'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('scroll-speed-panel')),
+          matching: find.text('4:00'),
+        ),
+        findsOneWidget,
+      );
 
+      speedSlider.onChangeStart!(1);
       speedSlider.onChanged!(.55);
+      await tester.pump();
+      expect(controller.state.playbackSpeed, 1);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('scroll-speed-panel')),
+          matching: find.text('7:16'),
+        ),
+        findsOneWidget,
+      );
+      speedSlider.onChangeEnd!(.55);
       await tester.pump();
       expect(controller.state.playbackSpeed, .55);
       expect(find.text('7:16'), findsOneWidget);

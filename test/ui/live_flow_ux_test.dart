@@ -921,7 +921,8 @@ void main() {
         tester.element(find.byType(PlayerScreen)),
       );
       expect(find.text(l10n.playerLyricsOnly), findsNothing);
-      expect(find.text(l10n.playerEstimatedDuration('1:30')), findsOneWidget);
+      expect(find.text('1:30'), findsOneWidget);
+      expect(find.text(l10n.playerEstimatedDuration('1:30')), findsNothing);
       expect(find.text(l10n.playerEstimatedPace), findsOneWidget);
       expect(find.text(l10n.playerPlay), findsOneWidget);
       expect(find.byKey(const ValueKey('scroll-speed-slider')), findsNothing);
@@ -935,6 +936,20 @@ void main() {
         speedSlider.semanticFormatterCallback!(1.5),
         contains(l10n.playerScrollSpeed),
       );
+      speedSlider.onChangeStart!(1);
+      speedSlider.onChanged!(1.5);
+      await tester.pump();
+      expect(controller.selectedSpeed, isNull);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('scroll-speed-panel')),
+          matching: find.text('1:00'),
+        ),
+        findsOneWidget,
+      );
+      speedSlider.onChangeEnd!(1.5);
+      await tester.pump();
+      expect(controller.selectedSpeed, 1.5);
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
 
@@ -944,9 +959,6 @@ void main() {
       expect(controller.estimatedTimingRequested, isTrue);
       expect(controller.playbackStarted, isTrue);
 
-      speedSlider.onChanged!(1.5);
-      await tester.pump();
-      expect(controller.selectedSpeed, 1.5);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
     },
@@ -1003,8 +1015,25 @@ void main() {
       find.byKey(const ValueKey('scroll-speed-slider')),
     );
     expect(speedSlider.value, .5);
-    expect(find.text('3:00'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('scroll-speed-panel')),
+        matching: find.text('3:00'),
+      ),
+      findsOneWidget,
+    );
+    speedSlider.onChangeStart!(.5);
     speedSlider.onChanged!(1.25);
+    await tester.pump();
+    expect(controller.selectedSpeed, isNull);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('scroll-speed-panel')),
+        matching: find.text('1:12'),
+      ),
+      findsOneWidget,
+    );
+    speedSlider.onChangeEnd!(1.25);
     expect(controller.selectedSpeed, 1.25);
     await tester.pumpWidget(const SizedBox.shrink());
   });

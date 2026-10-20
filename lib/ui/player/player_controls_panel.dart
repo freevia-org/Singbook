@@ -9,6 +9,8 @@ class PlayerControlsPanel extends StatefulWidget {
     required this.expandLabel,
     required this.collapseLabel,
     required this.side,
+    this.sideHeader,
+    this.sideWidth,
     required this.lyrics,
     required this.controls,
   });
@@ -18,6 +20,8 @@ class PlayerControlsPanel extends StatefulWidget {
   final String expandLabel;
   final String collapseLabel;
   final bool side;
+  final Widget? sideHeader;
+  final double? sideWidth;
   final Widget lyrics;
   final Widget controls;
 
@@ -67,6 +71,41 @@ class _PlayerControlsPanelState extends State<PlayerControlsPanel>
   @override
   Widget build(BuildContext context) {
     final label = widget.expanded ? widget.collapseLabel : widget.expandLabel;
+    final dragSign = widget.side &&
+            Directionality.of(context) == TextDirection.rtl
+        ? 1.0
+        : -1.0;
+    void startDrag() {
+      _reveal.stop();
+      _dragging = true;
+      _dragCanceled = false;
+      _distance = 0;
+    }
+
+    void updateDrag(double delta) {
+      _distance += delta;
+      final box = _controlsKey.currentContext?.findRenderObject();
+      final extent = box is RenderBox && box.hasSize
+          ? (widget.side ? box.size.width : box.size.height)
+          : 180.0;
+      _reveal.value =
+          (_reveal.value + (widget.side ? delta * dragSign : -delta) / extent.clamp(80, 400))
+              .clamp(0.0, 1.0);
+    }
+
+    void endDrag(double velocity) {
+      _dragging = false;
+      if (_dragCanceled) return;
+      final signedVelocity = widget.side ? velocity * dragSign : -velocity;
+      final signedDistance = widget.side ? _distance * dragSign : -_distance;
+      final expanded = signedVelocity.abs() > 300
+          ? signedVelocity > 0
+          : _distance.abs() >= 12
+          ? signedDistance > 0
+          : _reveal.value >= .5;
+      _choose(expanded);
+    }
+
     final handle = Semantics(
       button: true,
       expanded: widget.expanded,
@@ -82,66 +121,93 @@ class _PlayerControlsPanelState extends State<PlayerControlsPanel>
           child: GestureDetector(
             key: const ValueKey('player-controls-handle'),
             behavior: HitTestBehavior.opaque,
-            onVerticalDragStart: (_) {
-              _reveal.stop();
-              _dragging = true;
-              _dragCanceled = false;
-              _distance = 0;
-            },
-            onVerticalDragUpdate: (details) {
-              _distance += details.delta.dy;
-              final box = _controlsKey.currentContext?.findRenderObject();
-              final extent = box is RenderBox && box.hasSize
-                  ? (widget.side ? box.size.width : box.size.height)
-                  : 180.0;
-              _reveal.value =
-                  (_reveal.value - details.delta.dy / extent.clamp(80, 400))
-                      .clamp(0.0, 1.0);
-            },
-            onVerticalDragCancel: () {
-              _dragging = false;
-              _settle(widget.expanded);
-            },
-            onVerticalDragEnd: (details) {
-              _dragging = false;
-              if (_dragCanceled) return;
-              final velocity = details.primaryVelocity ?? 0;
-              final expanded = velocity.abs() > 300
-                  ? velocity < 0
-                  : _distance.abs() >= 12
-                  ? _distance < 0
-                  : _reveal.value >= .5;
-              _choose(expanded);
-            },
+            onVerticalDragStart: widget.side ? null : (_) => startDrag(),
+            onVerticalDragUpdate: widget.side
+                ? null
+                : (details) => updateDrag(details.delta.dy),
+            onVerticalDragCancel: widget.side
+                ? null
+                : () {
+                    _dragging = false;
+                    _settle(widget.expanded);
+                  },
+            onVerticalDragEnd: widget.side
+                ? null
+                : (details) => endDrag(details.primaryVelocity ?? 0),
+            onHorizontalDragStart: widget.side ? (_) => startDrag() : null,
+            onHorizontalDragUpdate: widget.side
+                ? (details) => updateDrag(details.delta.dx)
+                : null,
+            onHorizontalDragCancel: widget.side
+                ? () {
+                    _dragging = false;
+                    _settle(widget.expanded);
+                  }
+                : null,
+            onHorizontalDragEnd: widget.side
+                ? (details) => endDrag(details.primaryVelocity ?? 0)
+                : null,
             child: InkWell(
               onTap: () => _choose(!widget.expanded),
-              child: SizedBox(
-                width: 96,
-                height: 48,
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    key: const ValueKey('player-controls-grip'),
-                    width: 64,
-                    height: 12,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceContainerLow,
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(8),
+              child: widget.side
+                  ? SizedBox(
+                      width: 48,
+                      height: 96,
+                      child: Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: Container(
+                          key: const ValueKey('player-controls-grip'),
+                          width: 12,
+                          height: 64,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerLow,
+                            borderRadius: const BorderRadiusDirectional.horizontal(
+                              end: Radius.circular(8),
+                            ),
+                          ),
+                          child: Container(
+                            width: 3,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.outline,
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : SizedBox(
+                      width: 96,
+                      height: 48,
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          key: const ValueKey('player-controls-grip'),
+                          width: 64,
+                          height: 12,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerLow,
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(8),
+                            ),
+                          ),
+                          child: Container(
+                            width: 32,
+                            height: 3,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.outline,
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                    child: Container(
-                      width: 32,
-                      height: 3,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.outline,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
             ),
           ),
         ),
@@ -149,39 +215,70 @@ class _PlayerControlsPanelState extends State<PlayerControlsPanel>
     );
     return SafeArea(
       top: false,
-      child: Flex(
-        direction: widget.side ? Axis.horizontal : Axis.vertical,
-        children: [
-          Expanded(
-            child: Stack(
+      child: widget.side
+          ? Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Positioned.fill(child: widget.lyrics),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Center(child: handle),
+                Expanded(
+                  child: Stack(
+                    children: [
+                      Positioned.fill(child: widget.lyrics),
+                      PositionedDirectional(
+                        top: 0,
+                        bottom: 0,
+                        end: 0,
+                        child: Center(child: handle),
+                      ),
+                    ],
+                  ),
                 ),
+                if (widget.sideHeader != null)
+                  SizedBox(
+                    width: widget.sideWidth,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        widget.sideHeader!,
+                        Expanded(child: _animatedControls()),
+                      ],
+                    ),
+                  )
+                else
+                  _animatedControls(),
+              ],
+            )
+          : Column(
+              children: [
+                Expanded(
+                  child: Stack(
+                    children: [
+                      Positioned.fill(child: widget.lyrics),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Center(child: handle),
+                      ),
+                    ],
+                  ),
+                ),
+                _animatedControls(),
               ],
             ),
-          ),
-          AnimatedBuilder(
-            animation: _reveal,
-            builder: (context, child) => SizeTransition(
-              sizeFactor: _reveal,
-              axis: widget.side ? Axis.horizontal : Axis.vertical,
-              alignment: widget.side
-                  ? Alignment.centerLeft
-                  : Alignment.topCenter,
-              child: ExcludeFocus(
-                excluding: _reveal.value == 0,
-                child: Offstage(offstage: _reveal.value == 0, child: child),
-              ),
-            ),
-            child: KeyedSubtree(key: _controlsKey, child: widget.controls),
-          ),
-        ],
-      ),
     );
   }
+
+  Widget _animatedControls() => AnimatedBuilder(
+    animation: _reveal,
+    builder: (context, child) => SizeTransition(
+      sizeFactor: _reveal,
+      axis: widget.side ? Axis.horizontal : Axis.vertical,
+      alignment: widget.side ? Alignment.centerLeft : Alignment.topCenter,
+      child: ExcludeFocus(
+        excluding: _reveal.value == 0,
+        child: Offstage(offstage: _reveal.value == 0, child: child),
+      ),
+    ),
+    child: KeyedSubtree(key: _controlsKey, child: widget.controls),
+  );
 }

@@ -338,7 +338,7 @@ void main() {
       expect(c.calls, contains('playPause'));
     });
 
-    testWidgets('an estimated duration is labelled, not shown as real', (
+    testWidgets('estimated duration stays compact on the progress slider', (
       tester,
     ) async {
       final c = FakeUiController(
@@ -347,9 +347,14 @@ void main() {
       addTearDown(c.dispose);
       await pumpShell(tester, c);
       final l10n = l10nOf(tester);
-      // 60 lines are estimated at 3:24; it must only appear as an estimate.
-      expect(find.text(l10n.playerEstimatedDuration('3:24')), findsOneWidget);
-      expect(find.text('3:24'), findsNothing);
+      // The estimate stays compact visually while its semantic label remains
+      // explicit for assistive technology.
+      expect(find.text('3:24'), findsOneWidget);
+      expect(find.text(l10n.playerEstimatedDuration('3:24')), findsNothing);
+      expect(
+        find.bySemanticsLabel(l10n.playerEstimatedDuration('3:24')),
+        findsOneWidget,
+      );
       expect(find.text('3:20'), findsNothing);
     });
 
