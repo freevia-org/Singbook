@@ -76,6 +76,7 @@ jobs:
     timeout-minutes: 30
     env:
       VERSE_GOOGLE_DESKTOP_CLIENT_ID: ${{ vars.VERSE_GOOGLE_DESKTOP_CLIENT_ID }}
+      VERSE_GOOGLE_DESKTOP_CLIENT_SECRET: ${{ secrets.VERSE_GOOGLE_DESKTOP_CLIENT_SECRET }}
     steps:
       - uses: actions/checkout@v4
 

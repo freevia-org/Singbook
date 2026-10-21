@@ -62,9 +62,14 @@ enabled. Do not use the
 Android or Web client ID for the desktop loopback flow. Copy its identifier to
 `VERSE_GOOGLE_DESKTOP_CLIENT_ID` in the ignored build configuration. If the
 downloaded desktop registration requires its generated client secret, put it in
-`VERSE_GOOGLE_DESKTOP_CLIENT_SECRET`. Do not put the downloaded JSON or tokens
-in Git or validation logs. Desktop registrations are public clients; PKCE is
-still required even when a registration has this field.
+`VERSE_GOOGLE_DESKTOP_CLIENT_SECRET`. For GitHub Actions builds, configure the
+ID as the `VERSE_GOOGLE_DESKTOP_CLIENT_ID` Actions variable and, only when the
+registration requires it, configure the secret as the
+`VERSE_GOOGLE_DESKTOP_CLIENT_SECRET` Actions secret. The Windows package embeds
+any configured value, so it is not confidential once distributed. Do not put
+the downloaded JSON or tokens in Git or validation logs. Desktop registrations
+are public clients; PKCE is still required even when a registration has this
+field.
 
 The desktop module opens the system browser, validates a random state value at
 an ephemeral IPv4 loopback callback, exchanges an S256 PKCE code, obtains the
