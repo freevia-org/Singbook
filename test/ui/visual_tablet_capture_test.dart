@@ -344,6 +344,7 @@ void main() {
             const ValueKey('settings-section-title'),
           );
           final titleRect = tester.getRect(title);
+          final backButton = tester.getRect(find.byType(BackButton));
           final isRtl = Directionality.of(tester.element(title)) ==
               TextDirection.rtl;
           expect(rect.left, greaterThanOrEqualTo(0));
@@ -352,6 +353,10 @@ void main() {
           expect(
             isRtl ? titleRect.right : titleRect.left,
             closeTo(isRtl ? rect.right - 56 : rect.left + 56, 1),
+          );
+          expect(
+            backButton.center.dx,
+            closeTo(isRtl ? rect.right - 12 : rect.left + 12, 1),
           );
           expect(
             (rect.width - math.min(viewport.width - 32, 1168)).abs(),
