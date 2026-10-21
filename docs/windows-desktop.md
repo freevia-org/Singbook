@@ -113,8 +113,9 @@ clipboard for an unattended check.
 
 ### Current automated and native evidence — 2026-10-21
 
-PR #93 head `819278c2f13d08ed5b38e80d2bf18ae8f3e1ef50` passed both jobs in
-[CI run 39642446550](https://github.com/freevia-org/Singbook/actions/runs/39642446550).
+PR #93 implementation head `819278c2f13d08ed5b38e80d2bf18ae8f3e1ef50` and
+the following documentation-only head `f7cb72bd13b9fbcf261e21c5e455d433b1d970f4`
+passed both jobs in [CI run 39647967822](https://github.com/freevia-org/Singbook/actions/runs/39647967822).
 Linux analysis and the complete test suite passed. Windows passed OAuth
 configuration preflight, release packaging, isolated portable startup and
 graceful close, native clipboard and Credential Manager checks, and the complete
@@ -124,34 +125,51 @@ fresh user sign-in or the full Drive lifecycle. The clipboard check sends
 `WM_PASTE` to a hidden native edit control and verifies exact Unicode plain
 text; it does not prove formatted paste into another application.
 
-The portable package is version `0.2.12+26`, built from synthetic PR merge
-commit `c3d9125859ebbd4ce35ff673e98277f2e99afdcf` with PR head
-`819278c2f13d08ed5b38e80d2bf18ae8f3e1ef50`, ZIP SHA-256
-`D439E3BADCBE30D9FB468E55EA26A473D121616B7F6C5CC280CB5A87E9654AB8`.
-Its run artifact contains the required runtime manifest and the portable
-startup evidence. Source-layout captures also cover desktop library, setlists,
+The latest portable package is version `0.2.12+26`, built from synthetic PR
+merge commit `b9f3b4a98449e648e2160b5309aceaff97c17f62` with PR head
+`f7cb72bd13b9fbcf261e21c5e455d433b1d970f4`, ZIP SHA-256
+`110D0E8B02DD48C0FF168DFA30CB6AA76C816E9E2133DB09B56CB9F132C4D856`.
+Its run artifact contains the required runtime manifest and portable startup
+evidence. Source-layout captures also cover desktop library, setlists,
 reader, editor, settings, dark mode and compact/large-text variants. Those
 widget captures do not establish the full packaged native size, DPI, theme and
 localization matrix.
 
-An additional scripted Windows Sandbox run exercised this exact package at
-144 DPI on a 2048×1232 display, with a fresh database at an explicit disposable
-path and no Drive sign-in. Native screenshots and summaries are held locally at
-`E:\acceptance\Singbook-native-819278c2\final-evidence` and
-`E:\acceptance\Singbook-native-819278c2\restore-evidence`. It verified app
+The broader scripted Sandbox workflows used the packaged build from CI run
+39642446550 (ZIP SHA-256
+`D439E3BADCBE30D9FB468E55EA26A473D121616B7F6C5CC280CB5A87E9654AB8`), whose
+runtime source was the implementation head above. The later PR update contained
+documentation and screenshots only; CI run 39647967822 also rebuilt and
+smoke-checked the current package. Sandbox testing ran at 144 DPI on a
+2048×1232 display with fresh disposable database paths and no Drive sign-in.
+Native screenshots and summaries are held in the
+run-specific evidence folders below `E:\acceptance\Singbook-native-819278c2\`:
+`final-evidence`, `restore-evidence`, `restore-apply-evidence`,
+`setlist-add2-evidence`, `setlist-reopen-evidence`, and `setlist-export-evidence`.
+It verified app
 startup, native `.cho` import, cancellation of a second import, reader
 navigation, readable untruncated timeline labels (Intro, Verse 1, Chorus,
 Verse 2, Chorus and Outro), account-and-sync layout, native backup Save As, and
 backup preview showing one song and zero conflicts. The exported
 `.lyrics-setlist` archive passed ZIP integrity checks and contains the synthetic
 fixture. The app closed gracefully; the temporary database contains only that
-fixture. A full restore apply was not completed.
+fixture. A second clean disposable database accepted the exported backup in
+the native restore flow; a direct SQLite check found exactly the synthetic song
+and no setlists, and the app closed gracefully. The native setlist flow created
+a list, added the fixture, then showed the saved one-song, 1:30 setlist after a
+fresh app launch; SQLite confirmed one song, one setlist and one setlist entry.
+Native `.osts` export produced well-formed OpenSong XML with the synthetic
+song, PDF export produced a readable two-page PDF, and Print opened the Windows
+Print Setup dialog and closed on cancel. Setlist editing and reorder persistence
+remain unverified.
 
 Representative exact-package native screenshots are committed for review:
 [reader and timeline](images/windows-desktop-review/packaged-20261021/reader-144dpi.png),
+[setlist after restart](images/windows-desktop-review/packaged-20261021/setlists-after-restart.png),
 [account settings](images/windows-desktop-review/packaged-20261021/account-144dpi.png),
 [backup Save As](images/windows-desktop-review/packaged-20261021/backup-save-as.png),
-and [restore preview](images/windows-desktop-review/packaged-20261021/restore-preview.png).
+[restore preview](images/windows-desktop-review/packaged-20261021/restore-preview.png),
+and [Windows Print Setup](images/windows-desktop-review/packaged-20261021/print-setup.png).
 At this desktop size the reader's lyrics column and playback rail are centered
 within the app frame, timeline labels remain legible, and account cards stay
 aligned; this visual review does not substitute for the unrun resolution, DPI,
@@ -171,10 +189,9 @@ file passes locally.
 
 These checks establish automated build, startup, selected native file/backup
 flows, reader layout at one desktop size and source-layout evidence, not full
-native acceptance. Remaining items include restart persistence, Unicode paths,
-ChordPro/OpenSong/PDF export, full backup restore apply and round-trip, setlist
-editing/reorder persistence, player interactions and settings persistence,
-dirty-editor close behavior, print/save-to-PDF, formatted paste into another
+native acceptance. Remaining items include Unicode paths, ChordPro and song-PDF
+exports, setlist editing/reorder persistence, player interactions and settings
+persistence, dirty-editor close behavior, print-to-PDF output, formatted paste into another
 application, provider workflows, the packaged locale/theme/DPI matrix, clean
 machine launch, and the complete Drive sign-in/refresh/revocation lifecycle.
 PR #93 remains Draft; keep the release in review until the required acceptance
