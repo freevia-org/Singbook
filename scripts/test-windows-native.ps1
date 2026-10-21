@@ -1,4 +1,7 @@
-param([switch]$CredentialStore)
+param(
+    [switch]$Clipboard,
+    [switch]$CredentialStore
+)
 $ErrorActionPreference = 'Stop'
 $workspace = Split-Path -Parent $PSScriptRoot
 $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
@@ -21,5 +24,9 @@ if ($LASTEXITCODE -ne 0) { throw "Native checks failed; see $evidence" }
 if ($CredentialStore) {
     & $binary --credentials *> (Join-Path $evidence 'credentials.log')
     if ($LASTEXITCODE -ne 0) { throw "Isolated credential checks failed; see $evidence" }
+}
+if ($Clipboard) {
+    & $binary --clipboard *> (Join-Path $evidence 'clipboard.log')
+    if ($LASTEXITCODE -ne 0) { throw "Native clipboard checks failed; see $evidence" }
 }
 Write-Output "Native checks passed. Evidence: $evidence"

@@ -140,9 +140,9 @@ jobs:
         shell: pwsh
         run: ./scripts/test-windows-portable-startup.ps1
 
-      - name: Check native clipboard and isolated credential storage
+      - name: Check native clipboard formats and isolated credential storage
         shell: pwsh
-        run: ./scripts/test-windows-native.ps1 -CredentialStore
+        run: ./scripts/test-windows-native.ps1 -Clipboard -CredentialStore
 
       - name: Run the complete Flutter suite on Windows
         run: >-
