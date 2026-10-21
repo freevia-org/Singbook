@@ -13,14 +13,17 @@ import 'support/fake_controller.dart';
 
 const _bars = MethodChannel('org.freevia.singbook/fullscreen');
 
-VerseUiState _reader({VerseRoute route = VerseRoute.reader}) => VerseUiState(
+VerseUiState _reader({
+  VerseRoute route = VerseRoute.reader,
+  bool controlsExpanded = false,
+}) => VerseUiState(
   route: route,
   song: const SongCardData(
     id: 'reader',
     title: 'Reader fixture',
     durationSeconds: 180,
   ),
-  playerControlsExpanded: false,
+  playerControlsExpanded: controlsExpanded,
   songLines: [
     for (var i = 0; i < 60; i++)
       LyricLineData(id: 'line-$i', text: 'The original lyric line $i'),
@@ -46,6 +49,116 @@ class _DetailsController extends FakeUiController {
 }
 
 void main() {
+  testWidgets('shell reader preserves full-height landscape lyrics', (
+    tester,
+  ) async {
+    const capture = bool.fromEnvironment('CAPTURE_PLAYER_VISUALS');
+    if (capture) {
+      await tester.runAsync(() async {
+        for (final family in ['Roboto', 'sans-serif']) {
+          await (FontLoader(family)
+                ..addFont(rootBundle.load('assets/fonts/NotoSans-Regular.ttf')))
+              .load();
+        }
+        await (FontLoader(
+          'MaterialIcons',
+        )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
+      });
+    }
+    final controller = FakeUiController((_) => _reader());
+    addTearDown(controller.dispose);
+    for (final scenario in [
+      ('portrait', const Size(360, 780)),
+      ('landscape', const Size(700, 360)),
+    ]) {
+      await pumpShell(tester, controller, size: scenario.$2);
+      final lyrics = find.byKey(const ValueKey('tablet-reader-content'));
+      expect(lyrics, findsOneWidget);
+      if (capture) {
+        await expectLater(
+          find.byType(Scaffold).first,
+          matchesGoldenFile(
+            '../../artifacts/player-speed-landscape-qualification/captures/shell-collapsed-${scenario.$1}.png',
+          ),
+        );
+      }
+      await tester.tap(find.byKey(const ValueKey('player-enter-fullscreen')));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('player-exit-fullscreen')),
+        findsOneWidget,
+      );
+      expect(
+        tester.getRect(lyrics).height,
+        greaterThan(
+          scenario.$2.width > scenario.$2.height
+              ? scenario.$2.height - 24
+              : scenario.$2.height - 60,
+        ),
+      );
+      if (capture) {
+        await expectLater(
+          find.byType(Scaffold).first,
+          matchesGoldenFile(
+            '../../artifacts/player-speed-landscape-qualification/captures/shell-fullscreen-${scenario.$1}.png',
+          ),
+        );
+      }
+      await tester.tap(find.byKey(const ValueKey('player-exit-fullscreen')));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('player-enter-fullscreen')),
+        findsOneWidget,
+      );
+    }
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'shell landscape puts expanded controls beside full-height lyrics',
+    (tester) async {
+      const capture = bool.fromEnvironment('CAPTURE_PLAYER_VISUALS');
+      if (capture) {
+        await tester.runAsync(() async {
+          for (final family in ['Roboto', 'sans-serif']) {
+            await (FontLoader(family)..addFont(
+                  rootBundle.load('assets/fonts/NotoSans-Regular.ttf'),
+                ))
+                .load();
+          }
+          await (FontLoader('MaterialIcons')
+                ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf')))
+              .load();
+        });
+      }
+      final controller = FakeUiController(
+        (_) => _reader(controlsExpanded: true),
+      );
+      addTearDown(controller.dispose);
+      await pumpShell(tester, controller, size: const Size(700, 360));
+      final lyrics = tester.getRect(
+        find.byKey(const ValueKey('tablet-reader-content')),
+      );
+      final controls = tester.getRect(
+        find.byKey(const ValueKey('player-controls-panel')),
+      );
+      expect(lyrics.width, greaterThanOrEqualTo(350));
+      expect(lyrics.height, greaterThan(336));
+      expect(controls.left, greaterThanOrEqualTo(lyrics.right));
+      expect(find.byKey(const ValueKey('start-lyric-scroll')), findsOneWidget);
+      expect(find.byKey(const ValueKey('scroll-speed-toggle')), findsOneWidget);
+      if (capture) {
+        await expectLater(
+          find.byType(Scaffold).first,
+          matchesGoldenFile(
+            '../../artifacts/player-speed-landscape-qualification/captures/shell-expanded-landscape.png',
+          ),
+        );
+      }
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets(
     'late platform enter is followed by exit and disposal',
     (tester) async {

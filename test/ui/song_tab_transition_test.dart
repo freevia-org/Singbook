@@ -63,6 +63,7 @@ Future<void> _pump(
   addTearDown(tester.view.resetDevicePixelRatio);
   await tester.pumpWidget(
     MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: verseTheme(brightness: brightness, palette: 'navy'),
       locale: locale,
       localizationsDelegates: singbookLocalizationsDelegates,
@@ -87,10 +88,22 @@ Future<void> _pump(
 }
 
 void main() {
+  const captureTabVisuals = bool.fromEnvironment('CAPTURE_PLAYER_VISUALS');
   for (final brightness in Brightness.values) {
     testWidgets('song tabs remain opaque through rapid $brightness changes', (
       tester,
     ) async {
+      if (captureTabVisuals) {
+        await tester.runAsync(() async {
+          final font = rootBundle.load('assets/fonts/NotoSans-Regular.ttf');
+          for (final family in ['Roboto', 'sans-serif']) {
+            await (FontLoader(family)..addFont(font)).load();
+          }
+          await (FontLoader('MaterialIcons')
+                ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf')))
+              .load();
+        });
+      }
       final controller = _TabsController();
       addTearDown(controller.dispose);
       final semantics = tester.ensureSemantics();
@@ -111,6 +124,14 @@ void main() {
         expect(intermediate.a, 1);
         expect(intermediate, isNot(colors.surface));
         expect(intermediate, isNot(colors.primaryContainer));
+        if (captureTabVisuals) {
+          await expectLater(
+            find.byType(Scaffold).first,
+            matchesGoldenFile(
+              '../../artifacts/player-speed-landscape-qualification/captures/tabs-${brightness.name}-intermediate.png',
+            ),
+          );
+        }
         expect(_paintedColor(tester, HomeListMode.recent).a, 1);
         // Reverse direction before the first animation has completed.
         await tester.tap(_tab(HomeListMode.online));
@@ -130,6 +151,14 @@ void main() {
           _paintedColor(tester, HomeListMode.online),
           colors.primaryContainer,
         );
+        if (captureTabVisuals) {
+          await expectLater(
+            find.byType(Scaffold).first,
+            matchesGoldenFile(
+              '../../artifacts/player-speed-landscape-qualification/captures/tabs-${brightness.name}-settled.png',
+            ),
+          );
+        }
         expect(_paintedColor(tester, HomeListMode.library), colors.surface);
         final online = tester.getSemantics(_tab(HomeListMode.online));
         expect(online.hasFlag(SemanticsFlag.isButton), isTrue);

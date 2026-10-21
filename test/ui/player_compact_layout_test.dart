@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart'
     show PointerCancelEvent, PointerDownEvent, PointerUpEvent;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -23,6 +24,7 @@ class _Controller extends VerseUiController {
   double speed = 1;
   bool showChords = true;
   bool playerControlsExpanded = true;
+  bool showSections = true;
   String highlightStyle = 'contrast';
   String songId = 'song';
   double duration = 240;
@@ -57,9 +59,11 @@ class _Controller extends VerseUiController {
       LyricLineData(id: 'b', text: 'We raise a song in time'),
       LyricLineData(id: 'c', text: 'The quiet road remembers us'),
     ],
-    playerSections: const [
-      PlayerSectionMarker(name: 'Verse 1', startSeconds: 0, lineId: 'a'),
-    ],
+    playerSections: showSections
+        ? const [
+            PlayerSectionMarker(name: 'Verse 1', startSeconds: 0, lineId: 'a'),
+          ]
+        : const [],
   );
 
   @override
@@ -122,6 +126,7 @@ Future<void> _pump(
   addTearDown(tester.view.resetDevicePixelRatio);
   await tester.pumpWidget(
     MaterialApp(
+      debugShowCheckedModeBanner: false,
       locale: locale,
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: const [
@@ -170,6 +175,7 @@ Listener _speedSliderListener(WidgetTester tester) => tester.widget<Listener>(
 );
 
 void main() {
+  const capturePlayerVisuals = bool.fromEnvironment('CAPTURE_PLAYER_VISUALS');
   for (final missingKey in <String?>[null, 'H']) {
     for (final scenario in [
       ('phone', const Size(360, 800), 1.0, const Locale('en')),
@@ -196,12 +202,20 @@ void main() {
           final play = tester.getRect(
             find.byKey(const ValueKey('start-lyric-scroll')),
           );
-          if (scenario.$4.languageCode == 'ar') {
+          final stackedLandscape =
+              scenario.$2.width > scenario.$2.height &&
+              (scenario.$2.width * .4).clamp(200.0, 360.0) < 330 &&
+              scenario.$3 > 1.3;
+          if (stackedLandscape) {
+            expect(key.center.dy, lessThan(play.center.dy));
+          } else if (scenario.$4.languageCode == 'ar') {
             expect(key.left, greaterThanOrEqualTo(play.right));
           } else {
             expect(key.right, lessThanOrEqualTo(play.left));
           }
-          expect(key.center.dy, closeTo(play.center.dy, 1));
+          if (!stackedLandscape) {
+            expect(key.center.dy, closeTo(play.center.dy, 1));
+          }
           expect(find.byIcon(Icons.remove_circle_outline), findsNothing);
           expect(find.byIcon(Icons.add_circle_outline), findsNothing);
           await tester.tap(dropdown);
@@ -258,7 +272,100 @@ void main() {
     expect(key.center.dy, closeTo(play.center.dy, 1));
     expect(speed.center.dy, closeTo(play.center.dy, 1));
     expect(tester.takeException(), isNull);
+
+    await _pump(
+      tester,
+      controller,
+      size: const Size(700, 360),
+      scale: 1.5,
+      locale: const Locale('bg'),
+    );
+    final localizedPlay = AppLocalizations.of(
+      tester.element(find.byType(PlayerScreen)),
+    ).playerPlay;
+    final compactPlay = find.byKey(const ValueKey('start-lyric-scroll'));
+    expect(tester.getRect(compactPlay).width, greaterThanOrEqualTo(104));
+    final playLabel = find
+        .descendant(of: compactPlay, matching: find.byType(RichText))
+        .last;
+    expect(
+      tester.renderObject<RenderParagraph>(playLabel).didExceedMaxLines,
+      isFalse,
+    );
+    expect(
+      find.descendant(of: compactPlay, matching: find.text(localizedPlay)),
+      findsOneWidget,
+    );
+    final layoutError = tester.takeException();
+    if (layoutError != null) debugDumpRenderTree();
+    expect(layoutError, isNull);
   });
+
+  testWidgets('compact seek slider uses a short speed label', (tester) async {
+    final controller = _Controller()..showSections = false;
+    addTearDown(controller.dispose);
+    await _pump(tester, controller);
+    final l10n = AppLocalizations.of(tester.element(find.byType(PlayerScreen)));
+    expect(find.text(l10n.playerScrollSpeed), findsOneWidget);
+    expect(find.text(l10n.playerEstimatedPace), findsNothing);
+  });
+
+  for (final scenario in [
+    (500.0, const Locale('en'), 1.0),
+    (600.0, const Locale('bg'), 1.5),
+    (640.0, const Locale('ar'), 1.5),
+    (700.0, const Locale('bg'), 1.5),
+  ]) {
+    testWidgets(
+      'landscape transport stays centered and readable at ${scenario.$1}',
+      (tester) async {
+        await tester.runAsync(() async {
+          final font = rootBundle.load('assets/fonts/NotoSans-Regular.ttf');
+          for (final family in ['Roboto', 'sans-serif']) {
+            await (FontLoader(family)..addFont(font)).load();
+          }
+          await (FontLoader('MaterialIcons')
+                ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf')))
+              .load();
+        });
+        final controller = _Controller();
+        addTearDown(controller.dispose);
+        await _pump(
+          tester,
+          controller,
+          size: Size(scenario.$1, 360),
+          locale: scenario.$2,
+          scale: scenario.$3,
+          onFullScreenChanged: (_) {},
+        );
+
+        final lyrics = find.byKey(const ValueKey('tablet-reader-content'));
+        final lyricsRect = tester.getRect(lyrics);
+        expect(lyricsRect.width, greaterThanOrEqualTo(scenario.$1 * .5));
+        expect(lyricsRect.height, greaterThan(336));
+        final play = find.byKey(const ValueKey('start-lyric-scroll'));
+        expect(tester.getRect(play).width, greaterThanOrEqualTo(104));
+        final expectedCenter = scenario.$2.languageCode == 'ar'
+            ? lyricsRect.left / 2
+            : (lyricsRect.right + scenario.$1) / 2;
+        expect(tester.getCenter(play).dx, closeTo(expectedCenter, 1));
+        final playLabel = find
+            .descendant(of: play, matching: find.byType(RichText))
+            .last;
+        expect(
+          tester.renderObject<RenderParagraph>(playLabel).didExceedMaxLines,
+          isFalse,
+        );
+        expect(
+          find.byKey(const ValueKey('player-enter-fullscreen')),
+          findsOneWidget,
+        );
+        expect(find.byIcon(Icons.skip_previous_rounded), findsOneWidget);
+        expect(find.byIcon(Icons.skip_next_rounded), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
 
   testWidgets('landscape fullscreen keeps an exit action in the side panel', (
     tester,
@@ -308,6 +415,19 @@ void main() {
   testWidgets(
     'collapsed portrait and landscape panels keep fullscreen toggle reachable',
     (tester) async {
+      if (capturePlayerVisuals) {
+        await tester.runAsync(() async {
+          for (final family in ['Roboto', 'sans-serif']) {
+            await (FontLoader(family)..addFont(
+                  rootBundle.load('assets/fonts/NotoSans-Regular.ttf'),
+                ))
+                .load();
+          }
+          await (FontLoader('MaterialIcons')
+                ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf')))
+              .load();
+        });
+      }
       for (final size in [const Size(360, 780), const Size(700, 360)]) {
         final controller = _Controller()..playerControlsExpanded = false;
         addTearDown(controller.dispose);
@@ -322,6 +442,15 @@ void main() {
         final enter = find.byKey(const ValueKey('player-enter-fullscreen'));
         expect(enter, findsOneWidget);
         expect(tester.getSize(enter).width, greaterThanOrEqualTo(48));
+        final orientation = size.width > size.height ? 'landscape' : 'portrait';
+        if (capturePlayerVisuals) {
+          await expectLater(
+            find.byType(Scaffold).first,
+            matchesGoldenFile(
+              '../../artifacts/player-speed-landscape-qualification/captures/collapsed-$orientation.png',
+            ),
+          );
+        }
         await tester.tap(enter);
         expect(fullscreen, isTrue);
 
@@ -334,6 +463,14 @@ void main() {
         );
         final exit = find.byKey(const ValueKey('player-exit-fullscreen'));
         expect(exit, findsOneWidget);
+        if (capturePlayerVisuals) {
+          await expectLater(
+            find.byType(Scaffold).first,
+            matchesGoldenFile(
+              '../../artifacts/player-speed-landscape-qualification/captures/collapsed-$orientation-fullscreen.png',
+            ),
+          );
+        }
         await tester.tap(exit);
         expect(fullscreen, isFalse);
         expect(tester.takeException(), isNull);
@@ -704,6 +841,19 @@ void main() {
   testWidgets(
     'speed slider semantics follow duration and reopen after dismissal',
     (tester) async {
+      if (capturePlayerVisuals) {
+        await tester.runAsync(() async {
+          for (final family in ['Roboto', 'sans-serif']) {
+            await (FontLoader(family)..addFont(
+                  rootBundle.load('assets/fonts/NotoSans-Regular.ttf'),
+                ))
+                .load();
+          }
+          await (FontLoader('MaterialIcons')
+                ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf')))
+              .load();
+        });
+      }
       final semantics = tester.ensureSemantics();
       try {
         final controller = _Controller();
@@ -749,6 +899,14 @@ void main() {
           ),
           findsOneWidget,
         );
+        if (capturePlayerVisuals) {
+          await expectLater(
+            find.byType(Overlay).first,
+            matchesGoldenFile(
+              '../../artifacts/player-speed-landscape-qualification/captures/speed-live-preview-${defaultTargetPlatform.name}.png',
+            ),
+          );
+        }
 
         await gesture.up();
         await tester.pumpAndSettle();
