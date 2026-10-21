@@ -170,6 +170,14 @@ database. The first row was dragged below the second, the setlist was renamed
 through the inline editor, and after full restart both the new title and row
 order were visible in the setlist card and SQLite. Screenshots and run summary
 are in `setlist-edit-evidence` and `setlist-edit-final-evidence`.
+The exact portable ZIP from CI run 39657693802 (SHA-256
+`C63ADD111A7F6809FBF4FB00F38CA3CE25B0ABBAE0DF5263096AEB142D6C9E45`) also
+passed packaged ChordPro and song-PDF Save As checks. Both files were saved
+through the Windows dialog into a Unicode directory (`Пісні QA`); ChordPro
+content, PDF signature and size, and graceful app shutdown were verified. The
+run summary and dialog screenshots are in
+`E:\acceptance\Singbook-native-819278c2\song-export-uia-evidence`, and the
+outputs are in `E:\acceptance\Singbook-native-819278c2\exports\Пісні QA`.
 
 Representative exact-package native screenshots are committed for review:
 [reader and timeline](images/windows-desktop-review/packaged-20261021/reader-144dpi.png),
@@ -202,19 +210,20 @@ accessibility reorder behavior, player preference persistence, Windows HTTP
 checks establish the application logic and platform adapters; they do not
 exercise every native dialog or interaction in the packaged app.
 
-Remaining packaged-native checks include Unicode Save As paths and overwrite
-behavior; ChordPro and song-PDF Save As round trips; player mouse/keyboard
-interactions and preference persistence after restart; printing to a saved PDF;
-formatted paste into another application; and representative provider workflows.
-The full packaged locale/theme/DPI and
-compact/large-screen matrix also remains. The user confirmed that their
+Remaining packaged-native checks include Save As overwrite behavior; player
+mouse/keyboard interactions and preference persistence after restart; printing
+to a saved PDF; formatted paste into another application; and representative
+provider workflows. The full packaged locale/theme/DPI and compact/large-screen
+matrix also remains. The user confirmed that their
 existing library synced successfully in a previous `0.2.12+26` interactive
 session; no synthetic song was uploaded. Token refresh, offline recovery,
 revoked-grant handling and sign-out still need lifecycle acceptance. The
-current portable bundle passed CI startup smoke, and the native Sandbox run
-verified selected workflows on the packaged build, but no separate clean
-machine installation test was performed. PR #93 remains Draft; keep the release
-in review until the required acceptance rows are passed or explicitly waived.
+current portable bundle passed CI startup smoke, and the fresh Windows Sandbox
+guest ran the packaged build and selected workflows without installing developer
+runtimes. Installer, SmartScreen and antivirus behavior are not applicable to
+the portable ZIP workflow and were not assessed. PR #93 remains Draft; keep the
+release in review until the required acceptance rows are passed or explicitly
+waived.
 
 The frozen `e0e14a1` source passed both jobs in
 [CI run 39237237228](https://github.com/freevia-org/Singbook/actions/runs/39237237228):
