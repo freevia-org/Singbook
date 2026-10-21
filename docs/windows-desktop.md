@@ -113,6 +113,8 @@ clipboard for an unattended check.
 
 ### Current automated and native evidence — 2026-10-21
 
+The latest PR-head CI run, [39668863757](https://github.com/freevia-org/Singbook/actions/runs/39668863757), passed on `673869eb4c3ffebd17deef452af1ee16f7ad00da`. Linux localization verification, analysis and the full Flutter suite passed. Windows OAuth preflight, release packaging, isolated portable startup and graceful close, native clipboard and Credential Manager checks, and the full Flutter suite passed. The OAuth release-enforcement step was skipped because its preflight dependency succeeded. The run preserved `windows-release-bundle` and `windows-validation-evidence`; the bundle artifact digest is `sha256:06ddd57bdb6c3e6a3411c0409581e4041b00f77fd1f7910d390fd86ae1a7809f` (the digest is for the enclosing GitHub artifact, not the portable ZIP inside it). These checks verify the current PR head's build and automated behavior, but do not close the native UI acceptance gaps listed below.
+
 PR #93 head `fd5d77babc6bc8317e058f8a390d154c830c9fbb` passed both jobs in
 [CI run 39657693802](https://github.com/freevia-org/Singbook/actions/runs/39657693802).
 Linux localization verification, analysis and the full Flutter suite passed.
