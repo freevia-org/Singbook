@@ -178,6 +178,13 @@ content, PDF signature and size, and graceful app shutdown were verified. The
 run summary and dialog screenshots are in
 `E:\acceptance\Singbook-native-819278c2\song-export-uia-evidence`, and the
 outputs are in `E:\acceptance\Singbook-native-819278c2\exports\Пісні QA`.
+Packaged player checks in `E:\acceptance\Singbook-native-819278c2\player-ui-evidence`
+verified mouse Play, Space pause/resume, next-section navigation and persistent
+settings. After disabling chords and section headings, closing and reopening the
+app preserved both settings; the reader hid chords while retaining the full
+timeline. The Settings preview still displayed its sample chord labels with the
+Chords switch off, so this visual inconsistency remains open. Screenshots and
+summary are in `player-ui-evidence` and `player-state-check-evidence`.
 
 Representative exact-package native screenshots are committed for review:
 [reader and timeline](images/windows-desktop-review/packaged-20261021/reader-144dpi.png),
@@ -210,11 +217,10 @@ accessibility reorder behavior, player preference persistence, Windows HTTP
 checks establish the application logic and platform adapters; they do not
 exercise every native dialog or interaction in the packaged app.
 
-Remaining packaged-native checks include Save As overwrite behavior; player
-mouse/keyboard interactions and preference persistence after restart; printing
-to a saved PDF; formatted paste into another application; and representative
-provider workflows. The full packaged locale/theme/DPI and compact/large-screen
-matrix also remains. The user confirmed that their
+Remaining packaged-native checks include printing to a saved PDF; formatted
+paste into another application; representative provider workflows; and resolving
+the Settings preview chord-label inconsistency. The full packaged
+locale/theme/DPI and compact/large-screen matrix also remains. The user confirmed that their
 existing library synced successfully in a previous `0.2.12+26` interactive
 session; no synthetic song was uploaded. Token refresh, offline recovery,
 revoked-grant handling and sign-out still need lifecycle acceptance. The
