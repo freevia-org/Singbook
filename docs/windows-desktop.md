@@ -113,32 +113,31 @@ clipboard for an unattended check.
 
 ### Current automated evidence — 2026-10-21
 
-PR #93 head `1190b2f746bf98af6d621342f4c9ff8054c375c3` passed both jobs in
-[CI run 39627883980](https://github.com/freevia-org/Singbook/actions/runs/39627883980).
-The Windows job passed release packaging, OAuth configuration preflight,
-isolated portable startup and graceful close, native clipboard and credential
-checks, and the full Flutter suite. The Linux analysis and test job also passed.
-The clipboard check sends `WM_PASTE` to a hidden native edit control and verifies
-exact Unicode plain text; it does not prove formatted paste into another
-application. The OAuth preflight reached Google's expected invalid-code response
-and the bundle reports both Desktop OAuth values configured; it does not prove a
-fresh user sign-in or the full Drive lifecycle.
+PR #93 head `acc7330530aa232ddc66b1041de1f1a8590a2b2d` passed both jobs in
+[CI run 39631776512](https://github.com/freevia-org/Singbook/actions/runs/39631776512).
+Linux analysis and the complete test suite passed. Windows passed OAuth
+configuration preflight, release packaging, isolated portable startup and
+graceful close, native clipboard and credential checks, and the complete Flutter
+suite. The CI OAuth preflight reached Google's expected invalid-code response
+and confirmed configured Desktop OAuth values; it does not prove a fresh user
+sign-in or the full Drive lifecycle. The clipboard check sends `WM_PASTE` to a
+hidden native edit control and verifies exact Unicode plain text; it does not
+prove formatted paste into another application.
 
 The portable release is version `0.2.12+26`, built from PR merge commit
-`8358e63ae06dbb83de4a404603a81a61debfd5f3` and source tree
-`08208f158e0d7563c9cd71964240b39149ad8c40`, ZIP SHA-256
-`3B8113A6734B3A923C57A1A50EC946B58B9DE8D3E7B5E4FE9352DC8A65239C5D`.
-Its manifest lists 54 bundled files, including 50 required runtime files. The startup smoke produced a
-valid SQLite database, observed the `Singbook` main window, captured its pixels,
-and closed the app gracefully without a forced stop. The packaged screenshot is
-[available here](images/windows-desktop-review/packaged-startup.png); it is a
-review crop from CI run 39622130652. The raw 1044×720 BMP for that image remains
-in that run's validation artifact; the committed PNG crops the unpainted 8-pixel
-left and bottom margins. Run 39627883980 also captured the current package's
-startup window in its validation artifact. I reviewed that capture: the app
-content shows a centered empty-state message, aligned search and category tabs,
-and no visible clipping. These captures do not cover the complete native size,
-DPI, theme, and localization matrix.
+`5eace270505058c6e359a1ef5d09d4f2bb6c4aaa` and source tree
+`f6ad69142dc82f9f39a305aaedef4a62e3c0eecb`, ZIP SHA-256
+`D30CFB8865AE715B72B205F8B35555C196F12365FF4429D0536BBA0A6A59135D`.
+Its manifest lists 54 bundled files, including 50 required runtime files. The
+startup smoke validated a fresh SQLite database, observed the `Singbook` main
+window, captured its pixels, and closed gracefully without a forced stop. The
+raw startup capture is preserved in the run's `windows-validation-evidence`
+artifact. I reviewed the 1044×720 capture: the full search, all three category
+tabs, navigation rail and centered empty state are visible without clipping.
+This is one packaged startup size; it does not cover the complete native size,
+DPI, theme and localization matrix. The earlier Sandbox capture used logical
+window bounds for a pixel copy and may be cropped at display scaling, so it is
+not used as layout evidence.
 
 Source-layout captures also cover desktop library, setlists, reader, editor,
 settings, dark mode, and compact/large-text variants. Four representative
@@ -156,8 +155,9 @@ These checks establish automated build, startup, screenshot, and source-layout
 evidence, not full native acceptance. The native file-dialog/import-export,
 print-dialog, cross-application formatted-paste, and packaged interaction-
 persistence checks remain unrecorded. Real account authentication and the full
-Drive lifecycle also remain separate acceptance items. Keep the release in
-review until the required rows above are passed or explicitly waived.
+Drive lifecycle also remain separate acceptance items. PR #93 remains Draft;
+keep the release in review until the required rows above are passed or explicitly
+waived.
 
 The frozen `e0e14a1` source passed both jobs in
 [CI run 39237237228](https://github.com/freevia-org/Singbook/actions/runs/39237237228):
