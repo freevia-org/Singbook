@@ -667,6 +667,8 @@
   "accountNoticeSignedOut": "Kirjautunut ulos. Kappaleet säilyvät tällä laitteella.",
   "syncErrorNotConfigured": "Synkronointia ei ole määritetty tässä versiossa.",
   "syncErrorNotConfiguredHint": "Käytä Singbook-versiota, jossa Google-kirjautuminen on määritetty.",
+  "syncErrorOAuthClientConfiguration": "Google hylkäsi tämän version kirjautumisasetukset.",
+  "syncErrorOAuthClientConfigurationHint": "Tarkista, että määritetty OAuth-tunnus kuuluu Singbookin työpöytäsovellukselle.",
   "syncErrorNotSignedIn": "Et ole kirjautunut sisään.",
   "syncErrorNotSignedInHint": "Synkronoi kirjasto kirjautumalla sisään.",
   "syncErrorAuthorizationRequired": "Google edellyttää, että kirjaudut uudelleen sisään.",

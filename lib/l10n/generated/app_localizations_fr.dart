@@ -1590,11 +1590,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get syncErrorOAuthClientConfiguration =>
-      'Google rejected this build\'s sign-in configuration.';
+      'Google a refusé la configuration de connexion de cette version.';
 
   @override
   String get syncErrorOAuthClientConfigurationHint =>
-      'Check that the configured OAuth ID is Singbook\'s Desktop app client.';
+      'Vérifiez que l’identifiant OAuth configuré est celui du client de bureau Singbook.';
 
   @override
   String get syncErrorNotSignedIn => 'Vous n’êtes pas connecté.';

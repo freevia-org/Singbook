@@ -665,6 +665,8 @@
   "accountNoticeSignedOut": "Выполнен выход. Песни останутся на этом устройстве.",
   "syncErrorNotConfigured": "В этой версии синхронизация не настроена.",
   "syncErrorNotConfiguredHint": "Используй версию Singbook с настроенным входом через Google.",
+  "syncErrorOAuthClientConfiguration": "Google отклонил настройки входа в эту сборку.",
+  "syncErrorOAuthClientConfigurationHint": "Проверьте, что указанный OAuth ID принадлежит клиенту Singbook для настольных компьютеров.",
   "syncErrorNotSignedIn": "Вход в аккаунт не выполнен.",
   "syncErrorNotSignedInHint": "Войди, чтобы синхронизировать библиотеку.",
   "syncErrorAuthorizationRequired": "Google просит войти снова.",

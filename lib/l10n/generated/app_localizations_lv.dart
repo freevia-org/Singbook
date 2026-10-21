@@ -1590,11 +1590,11 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String get syncErrorOAuthClientConfiguration =>
-      'Google rejected this build\'s sign-in configuration.';
+      'Google noraidīja šīs versijos pierakstīšanās konfigurāciju.';
 
   @override
   String get syncErrorOAuthClientConfigurationHint =>
-      'Check that the configured OAuth ID is Singbook\'s Desktop app client.';
+      'Pārbaudiet, vai konfigurētais OAuth ID pieder Singbook datora lietotnes klientam.';
 
   @override
   String get syncErrorNotSignedIn => 'Pierakstīšanās nav veikta.';

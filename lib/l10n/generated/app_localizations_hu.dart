@@ -1574,11 +1574,11 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get syncErrorOAuthClientConfiguration =>
-      'Google rejected this build\'s sign-in configuration.';
+      'A Google elutasította a build bejelentkezési konfigurációját.';
 
   @override
   String get syncErrorOAuthClientConfigurationHint =>
-      'Check that the configured OAuth ID is Singbook\'s Desktop app client.';
+      'Ellenőrizd, hogy a beállított OAuth-azonosító a Singbook asztali klienséhez tartozik-e.';
 
   @override
   String get syncErrorNotSignedIn => 'Nincs bejelentkezve.';

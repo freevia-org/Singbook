@@ -665,6 +665,8 @@
   "accountNoticeSignedOut": "로그아웃했습니다. 노래는 이 기기에 남습니다.",
   "syncErrorNotConfigured": "이 빌드에서는 동기화가 설정되지 않았습니다.",
   "syncErrorNotConfiguredHint": "Google 로그인이 설정된 Singbook 빌드를 사용하세요.",
+  "syncErrorOAuthClientConfiguration": "Google에서 이 빌드의 로그인 구성을 거부했습니다.",
+  "syncErrorOAuthClientConfigurationHint": "설정된 OAuth ID가 Singbook 데스크톱 앱 클라이언트인지 확인하세요.",
   "syncErrorNotSignedIn": "로그인되어 있지 않습니다.",
   "syncErrorNotSignedInHint": "라이브러리를 동기화하려면 로그인하세요.",
   "syncErrorAuthorizationRequired": "Google에 다시 로그인해야 합니다.",

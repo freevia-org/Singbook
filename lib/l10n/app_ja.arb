@@ -665,6 +665,8 @@
   "accountNoticeSignedOut": "ログアウトしました。曲はこの端末に残ります。",
   "syncErrorNotConfigured": "このビルドでは同期が設定されていません。",
   "syncErrorNotConfiguredHint": "Googleログインが設定されたSingbookのビルドを使用してください。",
+  "syncErrorOAuthClientConfiguration": "Google がこのビルドのログイン設定を拒否しました。",
+  "syncErrorOAuthClientConfigurationHint": "設定した OAuth ID が Singbook のデスクトップアプリ用クライアントか確認してください。",
   "syncErrorNotSignedIn": "ログインしていません。",
   "syncErrorNotSignedInHint": "ライブラリを同期するにはログインしてください。",
   "syncErrorAuthorizationRequired": "Googleへの再ログインが必要です。",

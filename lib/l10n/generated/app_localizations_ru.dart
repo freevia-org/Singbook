@@ -1591,11 +1591,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get syncErrorOAuthClientConfiguration =>
-      'Google rejected this build\'s sign-in configuration.';
+      'Google отклонил настройки входа в эту сборку.';
 
   @override
   String get syncErrorOAuthClientConfigurationHint =>
-      'Check that the configured OAuth ID is Singbook\'s Desktop app client.';
+      'Проверьте, что указанный OAuth ID принадлежит клиенту Singbook для настольных компьютеров.';
 
   @override
   String get syncErrorNotSignedIn => 'Вход в аккаунт не выполнен.';

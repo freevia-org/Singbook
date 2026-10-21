@@ -1571,11 +1571,11 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get syncErrorOAuthClientConfiguration =>
-      'Google rejected this build\'s sign-in configuration.';
+      'Google lükkas selle järgu sisselogimise konfiguratsiooni tagasi.';
 
   @override
   String get syncErrorOAuthClientConfigurationHint =>
-      'Check that the configured OAuth ID is Singbook\'s Desktop app client.';
+      'Kontrolli, et seadistatud OAuthi ID kuulub Singbooki töölauarakenduse kliendile.';
 
   @override
   String get syncErrorNotSignedIn => 'Sa pole sisse logitud.';

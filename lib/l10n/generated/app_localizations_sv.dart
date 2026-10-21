@@ -1569,11 +1569,11 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get syncErrorOAuthClientConfiguration =>
-      'Google rejected this build\'s sign-in configuration.';
+      'Google avvisade inloggningskonfigurationen för den här versionen.';
 
   @override
   String get syncErrorOAuthClientConfigurationHint =>
-      'Check that the configured OAuth ID is Singbook\'s Desktop app client.';
+      'Kontrollera att det konfigurerade OAuth-ID:t tillhör Singbooks skrivbordsklient.';
 
   @override
   String get syncErrorNotSignedIn => 'Du är inte inloggad.';

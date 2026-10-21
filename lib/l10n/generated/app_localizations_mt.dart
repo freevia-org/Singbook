@@ -1588,11 +1588,11 @@ class AppLocalizationsMt extends AppLocalizations {
 
   @override
   String get syncErrorOAuthClientConfiguration =>
-      'Google rejected this build\'s sign-in configuration.';
+      'Google ċaħdet il-konfigurazzjoni tad-dħul għal din il-build.';
 
   @override
   String get syncErrorOAuthClientConfigurationHint =>
-      'Check that the configured OAuth ID is Singbook\'s Desktop app client.';
+      'Iċċekkja li l-ID OAuth ikkonfigurat huwa tal-klijent tad-desktop ta’ Singbook.';
 
   @override
   String get syncErrorNotSignedIn => 'M’intix illoggjat.';

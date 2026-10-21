@@ -667,6 +667,8 @@
   "accountNoticeSignedOut": "Kijelentkezve. A dalaid ezen az eszközön maradnak.",
   "syncErrorNotConfigured": "Ebben a verzióban nincs beállítva a szinkronizálás.",
   "syncErrorNotConfiguredHint": "Használj olyan Singbook-verziót, amelyben be van állítva a Google-bejelentkezés.",
+  "syncErrorOAuthClientConfiguration": "A Google elutasította a build bejelentkezési konfigurációját.",
+  "syncErrorOAuthClientConfigurationHint": "Ellenőrizd, hogy a beállított OAuth-azonosító a Singbook asztali klienséhez tartozik-e.",
   "syncErrorNotSignedIn": "Nincs bejelentkezve.",
   "syncErrorNotSignedInHint": "Jelentkezz be a könyvtár szinkronizálásához.",
   "syncErrorAuthorizationRequired": "A Google kéri, hogy jelentkezz be újra.",

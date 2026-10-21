@@ -667,6 +667,8 @@
   "accountNoticeSignedOut": "Anda telah keluar. Lagu Anda tetap ada di perangkat ini.",
   "syncErrorNotConfigured": "Sinkronisasi belum disiapkan di versi ini.",
   "syncErrorNotConfiguredHint": "Gunakan versi Singbook yang dikonfigurasi untuk login Google.",
+  "syncErrorOAuthClientConfiguration": "Google menolak konfigurasi masuk untuk build ini.",
+  "syncErrorOAuthClientConfigurationHint": "Pastikan ID OAuth yang dikonfigurasi adalah milik klien desktop Singbook.",
   "syncErrorNotSignedIn": "Anda belum login.",
   "syncErrorNotSignedInHint": "Login untuk menyinkronkan pustaka Anda.",
   "syncErrorAuthorizationRequired": "Google meminta Anda untuk login kembali.",

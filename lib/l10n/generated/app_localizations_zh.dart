@@ -1512,12 +1512,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get syncErrorNotConfiguredHint => '请使用配置了 Google 登录功能的 Singbook 版本。';
 
   @override
-  String get syncErrorOAuthClientConfiguration =>
-      'Google rejected this build\'s sign-in configuration.';
+  String get syncErrorOAuthClientConfiguration => 'Google 拒绝了此版本的登录配置。';
 
   @override
   String get syncErrorOAuthClientConfigurationHint =>
-      'Check that the configured OAuth ID is Singbook\'s Desktop app client.';
+      '请确认配置的 OAuth ID 属于 Singbook 桌面应用客户端。';
 
   @override
   String get syncErrorNotSignedIn => '你尚未登录。';
