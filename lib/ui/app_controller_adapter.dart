@@ -107,6 +107,7 @@ class AppControllerAdapter extends VerseUiController {
   /// Stored hash of the setlist when editing began, so a save after a
   /// background sync changed it becomes a conflict copy, not an overwrite.
   String? _setlistBaseHash;
+  int _setlistEditSessionRevision = 0;
   double _progress = 0, _transpose = 0, _playbackSpeed = 1;
   Timer? _searchDebounce, _playerTimer;
   Timer? _playerPreferenceDebounce;
@@ -1765,6 +1766,7 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> openSetlist(String id) async {
+    _setlistEditSessionRevision++;
     _setlistId = id;
     _setlistEntryId = null;
     _editingSetlist = false;
@@ -1830,6 +1832,7 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> editSetlist(String id) async {
+    _setlistEditSessionRevision++;
     _setlistId = id;
     _editingSetlist = true;
     _setlistBaseHash = app.setlistHash(id);
@@ -2326,6 +2329,7 @@ class AppControllerAdapter extends VerseUiController {
   Future<void> deleteSetlist(String id) async {
     if (!await _guard(() => app.deleteSetlist(id))) return;
     if (_setlistId == id) {
+      _setlistEditSessionRevision++;
       _setlistId = null;
       _setlistEntryId = null;
       _setlistBaseHash = null;
@@ -2348,6 +2352,7 @@ class AppControllerAdapter extends VerseUiController {
   }) async {
     final current = currentSetlist;
     if (current == null) return;
+    final editSessionRevision = _setlistEditSessionRevision;
     final orderedEntries = entryOrder == null
         ? current.entries
         : _orderEntries(current.entries, entryOrder);
@@ -2361,8 +2366,13 @@ class AppControllerAdapter extends VerseUiController {
         entries: orderedEntries,
       ),
     );
-    if (saved && finishEditing) {
+    if (saved &&
+        finishEditing &&
+        _route == VerseRoute.setlistDetail &&
+        _setlistId == current.id &&
+        _setlistEditSessionRevision == editSessionRevision) {
       _editingSetlist = false;
+      _setlistEditSessionRevision++;
       notifyListeners();
     }
   }
@@ -2477,15 +2487,27 @@ class AppControllerAdapter extends VerseUiController {
   /// stale save is kept as a conflict copy and announced).
   Future<bool> _saveSetlistDocument(SetlistDocument setlist) async {
     final editing = _editingSetlist && _setlistId == setlist.id;
+    final editSessionRevision = _setlistEditSessionRevision;
+    final editBaseHash = editing ? _setlistBaseHash : null;
+    String? persistedHash;
     var inPlace = true;
     final ok = await _guard(() async {
-      inPlace = await app.saveSetlist(
+      persistedHash = await app.saveSetlistWithHash(
         setlist,
-        baseHash: editing ? _setlistBaseHash : null,
+        baseHash: editBaseHash,
       );
+      inPlace = persistedHash != null;
     });
-    if (ok && inPlace && editing) {
-      _setlistBaseHash = app.setlistHash(setlist.id);
+    if (ok &&
+        inPlace &&
+        editing &&
+        _editingSetlist &&
+        _setlistId == setlist.id &&
+        _route == VerseRoute.setlistDetail &&
+        _setlistEditSessionRevision == editSessionRevision &&
+        _setlistBaseHash == editBaseHash &&
+        app.setlistHash(setlist.id) == persistedHash) {
+      _setlistBaseHash = persistedHash;
     }
     if (ok && !inPlace) postNotice(UiNotice.setlistSaveConflict);
     return ok;
@@ -2530,14 +2552,25 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> addSongToSetlist(String songId, String setlistId) async {
-    var added = false;
+    final editing = _editingSetlist && _setlistId == setlistId;
+    final editSessionRevision = _setlistEditSessionRevision;
+    final editBaseHash = editing ? _setlistBaseHash : null;
+    String? persistedHash;
     final saved = await _guard(() async {
-      added = await app.addToSetlist(songId, setlistId);
+      persistedHash = await app.addToSetlistWithHash(songId, setlistId);
     });
-    if (saved && added && _editingSetlist && _setlistId == setlistId) {
-      // Adding a song writes the setlist immediately. Advance the open edit
-      // session's conflict baseline so its later Save updates that same list.
-      _setlistBaseHash = app.setlistHash(setlistId);
+    if (saved &&
+        persistedHash != null &&
+        editing &&
+        _editingSetlist &&
+        _setlistId == setlistId &&
+        _route == VerseRoute.setlistDetail &&
+        _setlistEditSessionRevision == editSessionRevision &&
+        _setlistBaseHash == editBaseHash &&
+        app.setlistHash(setlistId) == persistedHash) {
+      // Adopt only the exact hash returned by this write, and only while the
+      // edit session and its baseline are still the ones that initiated it.
+      _setlistBaseHash = persistedHash;
     }
   }
 
@@ -2805,7 +2838,9 @@ class AppControllerAdapter extends VerseUiController {
         _route = VerseRoute.main;
       }
     } else if (_route == VerseRoute.setlistDetail) {
+      _setlistEditSessionRevision++;
       _setlistId = null;
+      _setlistBaseHash = null;
       _editingSetlist = false;
       _route = VerseRoute.main;
     } else if (_route != VerseRoute.main) {

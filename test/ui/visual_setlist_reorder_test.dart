@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -361,10 +364,28 @@ class _MemoryLibraryRepository implements LibraryRepository {
     SetlistDocument setlist,
     String? expectedHash, {
     bool mustNotExist = false,
+  }) async =>
+      await saveSetlistIfUnchangedWithHash(
+        setlist,
+        expectedHash,
+        mustNotExist: mustNotExist,
+      ) !=
+      null;
+
+  @override
+  Future<String?> saveSetlistIfUnchangedWithHash(
+    SetlistDocument setlist,
+    String? expectedHash, {
+    bool mustNotExist = false,
   }) async {
+    // This in-memory fixture models an unconditional successful write; the
+    // repository CAS behavior is covered by conditional_writes_test.dart.
     await saveSetlist(setlist);
-    return true;
+    return _hashSetlist(setlist);
   }
+
+  String _hashSetlist(SetlistDocument setlist) =>
+      sha256.convert(utf8.encode(jsonEncode(setlist.toJson()))).toString();
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

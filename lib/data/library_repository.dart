@@ -1168,6 +1168,21 @@ class LibraryRepository {
     SetlistDocument setlist,
     String? expectedHash, {
     bool mustNotExist = false,
+  }) async =>
+      await saveSetlistIfUnchangedWithHash(
+        setlist,
+        expectedHash,
+        mustNotExist: mustNotExist,
+      ) !=
+      null;
+
+  /// Atomic compare-and-set save that returns the hash of the exact persisted
+  /// document, including any entry ids regenerated during the write. Returns
+  /// null when the expected version does not match.
+  Future<String?> saveSetlistIfUnchangedWithHash(
+    SetlistDocument setlist,
+    String? expectedHash, {
+    bool mustNotExist = false,
   }) => database.transaction((txn) async {
     if (expectedHash != null || mustNotExist) {
       final rows = await txn.query(
@@ -1180,11 +1195,18 @@ class LibraryRepository {
           (expectedHash == null ||
               _setlistHashOf(await _setlist(txn, rows.single)) !=
                   expectedHash)) {
-        return false;
+        return null;
       }
     }
     await _writeSetlist(txn, setlist);
-    return true;
+    final rows = await txn.query(
+      'setlists',
+      where: 'id = ?',
+      whereArgs: [setlist.id],
+      limit: 1,
+    );
+    if (rows.isEmpty) return null;
+    return _setlistHashOf(await _setlist(txn, rows.single));
   });
 
   /// Entry ids may be regenerated on write, so only name, notes, favorite and

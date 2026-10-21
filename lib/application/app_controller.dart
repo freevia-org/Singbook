@@ -970,40 +970,49 @@ class AppController extends ChangeNotifier {
   /// Saves [setlist]; like [saveSong], a stale snapshot never overwrites a
   /// newer stored setlist but is kept as a conflict copy. Returns true when
   /// saved in place.
-  Future<bool> saveSetlist(SetlistDocument setlist, {String? baseHash}) =>
-      _tracked('save', () async {
-        final expected = baseHash ?? _setlistHashes[setlist.id];
-        if (!await repository.saveSetlistIfUnchanged(
-          setlist,
-          expected,
-          mustNotExist: expected == null,
-        )) {
-          final copyId = conflictDocumentId(setlist.id, _setlistHash(setlist));
-          await repository.saveSetlist(
-            SetlistDocument(
-              id: copyId,
-              name: '${setlist.name} [${copyId.substring(copyId.length - 6)}]',
-              notes: setlist.notes,
-              favorite: setlist.favorite,
-              entries: [
-                for (var i = 0; i < setlist.entries.length; i++)
-                  SetlistEntry(
-                    id: _stableId('$copyId:$i'),
-                    songId: setlist.entries[i].songId,
-                    overrides: setlist.entries[i].overrides,
-                  ),
-              ],
-              createdAt: setlist.createdAt,
-              updatedAt: setlist.updatedAt,
-            ),
-          );
-          await _afterWrite(songsChanged: false);
-          postMessage('save_conflict', operation: 'save', isError: false);
-          return false;
-        }
-        await _afterWrite(songsChanged: false);
-        return true;
-      });
+  Future<bool> saveSetlist(SetlistDocument setlist, {String? baseHash}) async =>
+      await saveSetlistWithHash(setlist, baseHash: baseHash) != null;
+
+  /// Like [saveSetlist], but returns the exact persisted hash for an in-place
+  /// write. A conflict copy is still preserved and announced, and returns
+  /// null.
+  Future<String?> saveSetlistWithHash(
+    SetlistDocument setlist, {
+    String? baseHash,
+  }) => _tracked('save', () async {
+    final expected = baseHash ?? _setlistHashes[setlist.id];
+    final persistedHash = await repository.saveSetlistIfUnchangedWithHash(
+      setlist,
+      expected,
+      mustNotExist: expected == null,
+    );
+    if (persistedHash == null) {
+      final copyId = conflictDocumentId(setlist.id, _setlistHash(setlist));
+      await repository.saveSetlist(
+        SetlistDocument(
+          id: copyId,
+          name: '${setlist.name} [${copyId.substring(copyId.length - 6)}]',
+          notes: setlist.notes,
+          favorite: setlist.favorite,
+          entries: [
+            for (var i = 0; i < setlist.entries.length; i++)
+              SetlistEntry(
+                id: _stableId('$copyId:$i'),
+                songId: setlist.entries[i].songId,
+                overrides: setlist.entries[i].overrides,
+              ),
+          ],
+          createdAt: setlist.createdAt,
+          updatedAt: setlist.updatedAt,
+        ),
+      );
+      await _afterWrite(songsChanged: false);
+      postMessage('save_conflict', operation: 'save', isError: false);
+      return null;
+    }
+    await _afterWrite(songsChanged: false);
+    return persistedHash;
+  });
 
   Future<void> deleteSetlist(String id) => _tracked('delete', () async {
     await repository.deleteSetlist(id);
@@ -1042,15 +1051,21 @@ class AppController extends ChangeNotifier {
   /// Appends [songId] to the stored setlist. Returns false (and posts
   /// `setlist_missing`) when the setlist no longer exists, e.g. because a sync
   /// or another action deleted it.
-  Future<bool> addToSetlist(String songId, String setlistId) =>
+  Future<bool> addToSetlist(String songId, String setlistId) async =>
+      await addToSetlistWithHash(songId, setlistId) != null;
+
+  /// Appends [songId] and returns the exact hash from the successful persisted
+  /// CAS. Returns null when the setlist is missing or remains too contended to
+  /// update.
+  Future<String?> addToSetlistWithHash(String songId, String setlistId) =>
       _tracked('setlist', () async {
         for (var attempt = 0; attempt < 4; attempt++) {
           final value = await repository.getSetlist(setlistId);
           if (value == null) {
             postMessage('setlist_missing', operation: 'setlist');
-            return false;
+            return null;
           }
-          if (await repository.saveSetlistIfUnchanged(
+          final persistedHash = await repository.saveSetlistIfUnchangedWithHash(
             SetlistDocument(
               id: value.id,
               name: value.name,
@@ -1063,14 +1078,15 @@ class AppController extends ChangeNotifier {
               ],
             ),
             _setlistHash(value),
-          )) {
+          );
+          if (persistedHash != null) {
             await _afterWrite(songsChanged: false);
-            return true;
+            return persistedHash;
           }
         }
         // Kept changing underneath us; nothing was overwritten.
         postMessage('save_conflict', operation: 'setlist', isError: false);
-        return false;
+        return null;
       });
 
   // A visit can move a group across a page boundary. Keep paging, refreshes
