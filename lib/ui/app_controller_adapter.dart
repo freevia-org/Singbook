@@ -2489,14 +2489,14 @@ class AppControllerAdapter extends VerseUiController {
     final editing = _editingSetlist && _setlistId == setlist.id;
     final editSessionRevision = _setlistEditSessionRevision;
     final editBaseHash = editing ? _setlistBaseHash : null;
-    String? persistedHash;
+    SetlistWriteHashes? writeHashes;
     var inPlace = true;
     final ok = await _guard(() async {
-      persistedHash = await app.saveSetlistWithHash(
+      writeHashes = await app.saveSetlistWithHashes(
         setlist,
         baseHash: editBaseHash,
       );
-      inPlace = persistedHash != null;
+      inPlace = writeHashes != null;
     });
     if (ok &&
         inPlace &&
@@ -2506,8 +2506,9 @@ class AppControllerAdapter extends VerseUiController {
         _route == VerseRoute.setlistDetail &&
         _setlistEditSessionRevision == editSessionRevision &&
         _setlistBaseHash == editBaseHash &&
-        app.setlistHash(setlist.id) == persistedHash) {
-      _setlistBaseHash = persistedHash;
+        writeHashes?.expectedHash == editBaseHash &&
+        app.setlistHash(setlist.id) == writeHashes?.persistedHash) {
+      _setlistBaseHash = writeHashes!.persistedHash;
     }
     if (ok && !inPlace) postNotice(UiNotice.setlistSaveConflict);
     return ok;
@@ -2555,22 +2556,24 @@ class AppControllerAdapter extends VerseUiController {
     final editing = _editingSetlist && _setlistId == setlistId;
     final editSessionRevision = _setlistEditSessionRevision;
     final editBaseHash = editing ? _setlistBaseHash : null;
-    String? persistedHash;
+    SetlistWriteHashes? writeHashes;
     final saved = await _guard(() async {
-      persistedHash = await app.addToSetlistWithHash(songId, setlistId);
+      writeHashes = await app.addToSetlistWithHashes(songId, setlistId);
     });
     if (saved &&
-        persistedHash != null &&
+        writeHashes != null &&
         editing &&
         _editingSetlist &&
         _setlistId == setlistId &&
         _route == VerseRoute.setlistDetail &&
         _setlistEditSessionRevision == editSessionRevision &&
         _setlistBaseHash == editBaseHash &&
-        app.setlistHash(setlistId) == persistedHash) {
+        writeHashes?.expectedHash == editBaseHash &&
+        app.setlistHash(setlistId) == writeHashes?.persistedHash) {
       // Adopt only the exact hash returned by this write, and only while the
-      // edit session and its baseline are still the ones that initiated it.
-      _setlistBaseHash = persistedHash;
+      // CAS began from the baseline and the session remains the one that
+      // initiated it.
+      _setlistBaseHash = writeHashes!.persistedHash;
     }
   }
 

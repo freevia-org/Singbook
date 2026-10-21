@@ -38,6 +38,9 @@ class AppMessage {
   String toString() => 'AppMessage($operation:$code)';
 }
 
+/// The expected and persisted hashes for a successful setlist CAS write.
+typedef SetlistWriteHashes = ({String? expectedHash, String persistedHash});
+
 /// Owns durable application state; navigation and player clock stay in the UI.
 class AppController extends ChangeNotifier {
   /// The remaining timing arguments stay accepted for source compatibility.
@@ -979,6 +982,14 @@ class AppController extends ChangeNotifier {
   Future<String?> saveSetlistWithHash(
     SetlistDocument setlist, {
     String? baseHash,
+  }) async =>
+      (await saveSetlistWithHashes(setlist, baseHash: baseHash))?.persistedHash;
+
+  /// Returns both hashes used by the successful in-place compare-and-set.
+  /// Conflict copies are preserved and announced, then null is returned.
+  Future<SetlistWriteHashes?> saveSetlistWithHashes(
+    SetlistDocument setlist, {
+    String? baseHash,
   }) => _tracked('save', () async {
     final expected = baseHash ?? _setlistHashes[setlist.id];
     final persistedHash = await repository.saveSetlistIfUnchangedWithHash(
@@ -1011,7 +1022,7 @@ class AppController extends ChangeNotifier {
       return null;
     }
     await _afterWrite(songsChanged: false);
-    return persistedHash;
+    return (expectedHash: expected, persistedHash: persistedHash);
   });
 
   Future<void> deleteSetlist(String id) => _tracked('delete', () async {
@@ -1057,37 +1068,43 @@ class AppController extends ChangeNotifier {
   /// Appends [songId] and returns the exact hash from the successful persisted
   /// CAS. Returns null when the setlist is missing or remains too contended to
   /// update.
-  Future<String?> addToSetlistWithHash(String songId, String setlistId) =>
-      _tracked('setlist', () async {
-        for (var attempt = 0; attempt < 4; attempt++) {
-          final value = await repository.getSetlist(setlistId);
-          if (value == null) {
-            postMessage('setlist_missing', operation: 'setlist');
-            return null;
-          }
-          final persistedHash = await repository.saveSetlistIfUnchangedWithHash(
-            SetlistDocument(
-              id: value.id,
-              name: value.name,
-              notes: value.notes,
-              favorite: value.favorite,
-              createdAt: value.createdAt,
-              entries: [
-                ...value.entries,
-                SetlistEntry(id: newId(), songId: songId),
-              ],
-            ),
-            _setlistHash(value),
-          );
-          if (persistedHash != null) {
-            await _afterWrite(songsChanged: false);
-            return persistedHash;
-          }
-        }
-        // Kept changing underneath us; nothing was overwritten.
-        postMessage('save_conflict', operation: 'setlist', isError: false);
+  Future<String?> addToSetlistWithHash(String songId, String setlistId) async =>
+      (await addToSetlistWithHashes(songId, setlistId))?.persistedHash;
+
+  Future<SetlistWriteHashes?> addToSetlistWithHashes(
+    String songId,
+    String setlistId,
+  ) => _tracked('setlist', () async {
+    for (var attempt = 0; attempt < 4; attempt++) {
+      final value = await repository.getSetlist(setlistId);
+      if (value == null) {
+        postMessage('setlist_missing', operation: 'setlist');
         return null;
-      });
+      }
+      final expectedHash = _setlistHash(value);
+      final persistedHash = await repository.saveSetlistIfUnchangedWithHash(
+        SetlistDocument(
+          id: value.id,
+          name: value.name,
+          notes: value.notes,
+          favorite: value.favorite,
+          createdAt: value.createdAt,
+          entries: [
+            ...value.entries,
+            SetlistEntry(id: newId(), songId: songId),
+          ],
+        ),
+        expectedHash,
+      );
+      if (persistedHash != null) {
+        await _afterWrite(songsChanged: false);
+        return (expectedHash: expectedHash, persistedHash: persistedHash);
+      }
+    }
+    // Kept changing underneath us; nothing was overwritten.
+    postMessage('save_conflict', operation: 'setlist', isError: false);
+    return null;
+  });
 
   // A visit can move a group across a page boundary. Keep paging, refreshes
   // and clearing in call order so an old page cannot skip or restore groups.

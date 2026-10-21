@@ -543,6 +543,29 @@ void main() {
       );
 
       test(
+        'adding after a concurrent change does not adopt the newer baseline',
+        () async {
+          await app.saveSong(song('b'));
+          await ui.editSetlist('set');
+          await app.saveSetlist(setlist('Synced from phone'));
+          notices.clear();
+
+          await ui.addSongToSetlist('b', 'set');
+          await ui.saveSetlistDetails(name: 'Mine', notes: '');
+          await pumpEventQueue();
+
+          expect(notices, contains(UiNotice.setlistSaveConflict));
+          final original = app.setlists.firstWhere((item) => item.id == 'set');
+          expect(original.name, 'Synced from phone');
+          expect(original.entries.map((entry) => entry.songId), ['a', 'b']);
+          expect(
+            app.setlists.where((item) => item.name.startsWith('Mine')),
+            hasLength(1),
+          );
+        },
+      );
+
+      test(
         'a fresh edit session starts from the current stored version',
         () async {
           await ui.editSetlist('set');
