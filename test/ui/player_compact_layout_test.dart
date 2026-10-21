@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/l10n/generated/app_localizations.dart';
+import 'package:singbook/ui/format.dart' show formatDuration;
 import 'package:singbook/ui/player/player_screen.dart';
 import 'package:singbook/ui/theme/verse_theme.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
@@ -688,14 +689,19 @@ void main() {
           contains('4:00'),
         );
 
-        await tester.drag(sliderFinder, const Offset(0, -24));
-        await tester.pumpAndSettle();
-        expect(controller.speedWrites, 1);
-        expect(controller.speed, greaterThan(1));
-        final adjustedDuration = tester
-            .widget<Text>(find.byKey(const ValueKey('scroll-speed-duration')))
-            .data!;
-        expect(adjustedDuration, isNot('4:00'));
+        final gesture = await tester.startGesture(
+          tester.getCenter(sliderFinder),
+          pointer: 42,
+        );
+        await gesture.moveBy(const Offset(0, -24));
+        await tester.pump();
+        final draftSpeed = _speedSlider(tester).value;
+        expect(draftSpeed, greaterThan(1));
+        expect(controller.speedWrites, 0);
+        expect(controller.speed, 1);
+        final adjustedDuration = formatDuration(
+          controller.duration / draftSpeed,
+        );
         expect(
           tester.getSemantics(sliderFinder).getSemanticsData().value,
           contains(adjustedDuration),
@@ -708,12 +714,24 @@ void main() {
           findsOneWidget,
         );
 
+        await gesture.up();
+        await tester.pumpAndSettle();
+        expect(controller.speedWrites, 1);
+        expect(controller.speed, closeTo(draftSpeed, 0.001));
+
         await tester.binding.handlePopRoute();
         await tester.pumpAndSettle();
         expect(sliderFinder, findsNothing);
         await tester.tap(find.byKey(const ValueKey('scroll-speed-toggle')));
         await tester.pumpAndSettle();
         expect(sliderFinder, findsOneWidget);
+        expect(
+          find.descendant(
+            of: find.byKey(const ValueKey('scroll-speed-panel')),
+            matching: find.text(adjustedDuration),
+          ),
+          findsOneWidget,
+        );
         expect(tester.takeException(), isNull);
       } finally {
         semantics.dispose();
