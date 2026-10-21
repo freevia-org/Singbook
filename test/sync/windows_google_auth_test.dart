@@ -238,6 +238,7 @@ void main() {
             Uri.parse(uri.queryParameters['redirect_uri']!).host,
             '127.0.0.1',
           );
+          expect(Uri.parse(uri.queryParameters['redirect_uri']!).path, isEmpty);
           expect(
             await callback(uri, {'state': 'wrong', 'code': 'untrusted'}),
             400,
@@ -267,6 +268,38 @@ void main() {
           client.getUrl(Uri.parse(result.redirectUri)),
           throwsA(isA<SocketException>()),
         );
+      } finally {
+        client.close(force: true);
+      }
+    },
+  );
+
+  test(
+    'loopback page does not claim sign-in succeeded before token exchange',
+    () async {
+      final client = HttpClient();
+      try {
+        final flow = DesktopOAuthFlow(
+          openBrowser: (authorization) async {
+            final redirect =
+                Uri.parse(
+                  authorization.queryParameters['redirect_uri']!,
+                ).replace(
+                  queryParameters: {
+                    'state': authorization.queryParameters['state']!,
+                    'code': 'received-code',
+                  },
+                );
+            final response = await (await client.getUrl(redirect)).close();
+            final body = await utf8.decoder.bind(response).join();
+            expect(response.statusCode, HttpStatus.ok);
+            expect(body, contains('Return to Singbook to finish signing in'));
+            expect(body, isNot(contains('✓')));
+            return true;
+          },
+        );
+        final grant = await flow.authorize(clientId: 'test', scopes: []);
+        expect(grant.code, 'received-code');
       } finally {
         client.close(force: true);
       }
@@ -761,22 +794,26 @@ void main() {
       },
     );
 
-    test('generic invalid_request is not treated as missing configuration',
-        () async {
-      invalidRequest = true;
-      await expectLater(auth.connect(), throwsA(code('network')));
-      expect(auth.isConnected, isFalse);
-      expect(vault.values, isEmpty);
-    });
+    test(
+      'generic invalid_request is not treated as missing configuration',
+      () async {
+        invalidRequest = true;
+        await expectLater(auth.connect(), throwsA(code('network')));
+        expect(auth.isConnected, isFalse);
+        expect(vault.values, isEmpty);
+      },
+    );
 
-    test('non-string invalid_request description remains an exchange error',
-        () async {
-      invalidRequest = true;
-      malformedErrorDescription = true;
-      await expectLater(auth.connect(), throwsA(code('network')));
-      expect(auth.isConnected, isFalse);
-      expect(vault.values, isEmpty);
-    });
+    test(
+      'non-string invalid_request description remains an exchange error',
+      () async {
+        invalidRequest = true;
+        malformedErrorDescription = true;
+        await expectLater(auth.connect(), throwsA(code('network')));
+        expect(auth.isConnected, isFalse);
+        expect(vault.values, isEmpty);
+      },
+    );
 
     test(
       'client configuration failure preserves the saved grant for recovery',

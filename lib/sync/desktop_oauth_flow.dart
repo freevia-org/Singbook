@@ -99,8 +99,9 @@ class DesktopOAuthFlow {
       _server = server;
       final state = _random();
       final verifier = _random();
-      final callbackPath = '/oauth/${_random()}';
-      final redirectUri = 'http://127.0.0.1:${server.port}$callbackPath';
+      // Google only supports the root loopback redirect for native desktop
+      // OAuth clients. State and PKCE protect the callback against forgery.
+      final redirectUri = 'http://127.0.0.1:${server.port}';
       Future<void> handleCallback(HttpRequest request) async {
         Future<void> reject() async {
           request.response.statusCode = HttpStatus.badRequest;
@@ -112,7 +113,7 @@ class DesktopOAuthFlow {
         }
 
         if (request.method != 'GET' ||
-            request.uri.path != callbackPath ||
+            (request.uri.path.isNotEmpty && request.uri.path != '/') ||
             pending.isCompleted) {
           await reject();
           return;
@@ -137,7 +138,7 @@ class DesktopOAuthFlow {
           "default-src 'none'",
         );
         request.response.write(
-          '<!doctype html><meta charset="utf-8"><title>Singbook</title><p>Singbook ✓</p>',
+          '<!doctype html><meta charset="utf-8"><title>Singbook</title><p>Sign-in response received. Return to Singbook to finish signing in.</p>',
         );
         await request.response.close();
         if (pending.isCompleted) return;
