@@ -113,8 +113,8 @@ clipboard for an unattended check.
 
 ### Current automated and native evidence — 2026-10-21
 
-PR #93 head `a4bac5798f14f6c71fdda67bb993b49cfed7e943` passed both jobs in
-[CI run 39651315377](https://github.com/freevia-org/Singbook/actions/runs/39651315377).
+PR #93 head `71cb5a80862dfba7b65a2070f8c3d0bb9b398ec5` passed both jobs in
+[CI run 39653863257](https://github.com/freevia-org/Singbook/actions/runs/39653863257).
 Linux localization verification, analysis and the full Flutter suite passed.
 Windows passed Desktop OAuth configuration preflight, release packaging,
 isolated portable startup and graceful close, native clipboard and Credential
@@ -125,12 +125,12 @@ not a fresh sign-in or the complete Drive lifecycle. The clipboard check sends
 does not prove formatted paste into another application.
 
 The run's portable package is version `0.2.12+26`, built from synthetic PR
-merge commit `eee92beca47580676f4ba9dd395eccbfd2e3ce88` with PR head
-`a4bac5798f14f6c71fdda67bb993b49cfed7e943`, ZIP SHA-256
-`74CCCD1DA1A7CA7A871D26DDC13C33DAE3F9B7B59FE725D423E63067AD84BD01`.
-The downloaded archive was checked against its manifest: all 50 required files
-were present and all 54 manifest hashes matched. The package embeds the
-configured Desktop OAuth client ID and secret. Source-layout captures also
+merge commit `16b4c9ab088019ed8163ca043244df2c854dd159` with PR head
+`71cb5a80862dfba7b65a2070f8c3d0bb9b398ec5`, ZIP SHA-256
+`7DA14D0FF43D14B98883EC458A5800E8F7ECB3ACE8F2E92ACE0E0EDF107F40AB`.
+The downloaded archive was checked against its manifest: all 54 files were
+present and all hashes matched. The package embeds the configured Desktop
+OAuth client ID and secret. Source-layout captures also
 cover desktop library, setlists, reader, editor, settings, dark mode and
 compact/large-text variants. Those widget captures do not establish the full
 packaged native size, DPI, theme and localization matrix.
@@ -160,8 +160,12 @@ a list, added the fixture, then showed the saved one-song, 1:30 setlist after a
 fresh app launch; SQLite confirmed one song, one setlist and one setlist entry.
 Native `.osts` export produced well-formed OpenSong XML with the synthetic
 song, PDF export produced a readable two-page PDF, and Print opened the Windows
-Print Setup dialog and closed on cancel. Setlist editing and reorder persistence
-remain unverified.
+Print Setup dialog and closed on cancel. A dirty-editor close test showed the
+native discard prompt, confirmed cancel kept the editor open, saved the edited
+synthetic title, then reopened the same database after a full app restart and
+confirmed the saved title persisted. This test used the same prior packaged
+build and a disposable database; evidence is in `editor-close-evidence`.
+Setlist editing and reorder persistence remain unverified.
 
 Representative exact-package native screenshots are committed for review:
 [reader and timeline](images/windows-desktop-review/packaged-20261021/reader-144dpi.png),
@@ -197,8 +201,8 @@ exercise every native dialog or interaction in the packaged app.
 Remaining packaged-native checks include Unicode Save As paths and overwrite
 behavior; ChordPro and song-PDF Save As round trips; setlist edit/reorder
 persistence after a fresh restart; player mouse/keyboard interactions and
-preference persistence after restart; the actual dirty-editor close prompt;
-printing to a saved PDF; formatted paste into another application; and
+preference persistence after restart; printing to a saved PDF; formatted paste
+into another application; and
 representative provider workflows. The full packaged locale/theme/DPI and
 compact/large-screen matrix also remains. The user confirmed that their
 existing library synced successfully in a previous `0.2.12+26` interactive
