@@ -113,27 +113,27 @@ clipboard for an unattended check.
 
 ### Current automated and native evidence — 2026-10-21
 
-PR #93 implementation head `819278c2f13d08ed5b38e80d2bf18ae8f3e1ef50` and
-the following documentation-only head `f7cb72bd13b9fbcf261e21c5e455d433b1d970f4`
-passed both jobs in [CI run 39647967822](https://github.com/freevia-org/Singbook/actions/runs/39647967822).
-Linux analysis and the complete test suite passed. Windows passed OAuth
-configuration preflight, release packaging, isolated portable startup and
-graceful close, native clipboard and Credential Manager checks, and the complete
-Flutter suite. The OAuth preflight reached Google's expected invalid-code
-response and confirmed configured Desktop OAuth values; it does not prove a
-fresh user sign-in or the full Drive lifecycle. The clipboard check sends
-`WM_PASTE` to a hidden native edit control and verifies exact Unicode plain
-text; it does not prove formatted paste into another application.
+PR #93 head `a4bac5798f14f6c71fdda67bb993b49cfed7e943` passed both jobs in
+[CI run 39651315377](https://github.com/freevia-org/Singbook/actions/runs/39651315377).
+Linux localization verification, analysis and the full Flutter suite passed.
+Windows passed Desktop OAuth configuration preflight, release packaging,
+isolated portable startup and graceful close, native clipboard and Credential
+Manager checks, and the full Flutter suite. The OAuth preflight reached Google's
+expected invalid-code response; it confirms configured Desktop OAuth values,
+not a fresh sign-in or the complete Drive lifecycle. The clipboard check sends
+`WM_PASTE` to a hidden native edit control and verifies Unicode plain text; it
+does not prove formatted paste into another application.
 
-The latest portable package is version `0.2.12+26`, built from synthetic PR
-merge commit `b9f3b4a98449e648e2160b5309aceaff97c17f62` with PR head
-`f7cb72bd13b9fbcf261e21c5e455d433b1d970f4`, ZIP SHA-256
-`110D0E8B02DD48C0FF168DFA30CB6AA76C816E9E2133DB09B56CB9F132C4D856`.
-Its run artifact contains the required runtime manifest and portable startup
-evidence. Source-layout captures also cover desktop library, setlists,
-reader, editor, settings, dark mode and compact/large-text variants. Those
-widget captures do not establish the full packaged native size, DPI, theme and
-localization matrix.
+The run's portable package is version `0.2.12+26`, built from synthetic PR
+merge commit `eee92beca47580676f4ba9dd395eccbfd2e3ce88` with PR head
+`a4bac5798f14f6c71fdda67bb993b49cfed7e943`, ZIP SHA-256
+`74CCCD1DA1A7CA7A871D26DDC13C33DAE3F9B7B59FE725D423E63067AD84BD01`.
+The downloaded archive was checked against its manifest: all 50 required files
+were present and all 54 manifest hashes matched. The package embeds the
+configured Desktop OAuth client ID and secret. Source-layout captures also
+cover desktop library, setlists, reader, editor, settings, dark mode and
+compact/large-text variants. Those widget captures do not establish the full
+packaged native size, DPI, theme and localization matrix.
 
 The broader scripted Sandbox workflows used the packaged build from CI run
 39642446550 (ZIP SHA-256
@@ -187,15 +187,27 @@ the `native-shaped short landscape shows chords and match above Save` regression
 test covers a 2.625× device scale with safe-area insets. The full affected UI test
 file passes locally.
 
-These checks establish automated build, startup, selected native file/backup
-flows, reader layout at one desktop size and source-layout evidence, not full
-native acceptance. Remaining items include Unicode paths, ChordPro and song-PDF
-exports, setlist editing/reorder persistence, player interactions and settings
-persistence, dirty-editor close behavior, print-to-PDF output, formatted paste into another
-application, provider workflows, the packaged locale/theme/DPI matrix, clean
-machine launch, and the complete Drive sign-in/refresh/revocation lifecycle.
-PR #93 remains Draft; keep the release in review until the required acceptance
-rows are passed or explicitly waived.
+Automated Windows tests additionally cover Unicode export filenames, ChordPro
+and song/setlist PDF bytes, Save As cancellation and errors, setlist drag and
+accessibility reorder behavior, player preference persistence, Windows HTTP
+103/redirect/concurrency behavior, and database/startup path handling. These
+checks establish the application logic and platform adapters; they do not
+exercise every native dialog or interaction in the packaged app.
+
+Remaining packaged-native checks include Unicode Save As paths and overwrite
+behavior; ChordPro and song-PDF Save As round trips; setlist edit/reorder
+persistence after a fresh restart; player mouse/keyboard interactions and
+preference persistence after restart; the actual dirty-editor close prompt;
+printing to a saved PDF; formatted paste into another application; and
+representative provider workflows. The full packaged locale/theme/DPI and
+compact/large-screen matrix also remains. The user confirmed that their
+existing library synced successfully in a previous `0.2.12+26` interactive
+session; no synthetic song was uploaded. Token refresh, offline recovery,
+revoked-grant handling and sign-out still need lifecycle acceptance. The
+current portable bundle passed CI startup smoke, and the native Sandbox run
+verified selected workflows on the packaged build, but no separate clean
+machine installation test was performed. PR #93 remains Draft; keep the release
+in review until the required acceptance rows are passed or explicitly waived.
 
 The frozen `e0e14a1` source passed both jobs in
 [CI run 39237237228](https://github.com/freevia-org/Singbook/actions/runs/39237237228):
