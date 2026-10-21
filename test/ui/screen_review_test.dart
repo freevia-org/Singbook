@@ -565,7 +565,7 @@ void main() {
         final finder = find.byWidget(label);
         final element = tester.element(finder);
         final style = DefaultTextStyle.of(element).style.merge(label.style);
-        expect(style.fontSize, 12);
+        expect(style.fontSize, 13);
         final painter = TextPainter(
           text: TextSpan(text: label.data, style: style),
           textDirection: Directionality.of(element),

@@ -2098,7 +2098,7 @@ List<Widget> _sectionMarkerLabelWidgets({
       : left + trackWidth * progressFraction;
   // Timeline cues are secondary, but they still need to read comfortably at
   // desktop scale. Keep compact layouts denser while honoring text scaling.
-  final fontSize = width >= 560 ? 12.0 : 10.0;
+  final fontSize = width >= 560 ? 13.0 : 10.0;
   // Match the inherited typeface when measuring. Measuring with the default
   // font and then painting with the app's display font made the Positioned
   // label narrower than its rendered text, so Flutter ellipsized headings.

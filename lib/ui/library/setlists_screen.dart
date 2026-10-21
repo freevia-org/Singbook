@@ -306,7 +306,8 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                                   overflow: expanded
                                       ? TextOverflow.visible
                                       : TextOverflow.ellipsis,
-                                  style: Theme.of(context).textTheme.bodySmall,
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(fontSize: 13, height: 1.15),
                                 ),
                               ],
                             ],
@@ -714,9 +715,10 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
       if (entry.capoOverride != null)
         '${l10n.editorCapoField}: ${entry.capoOverride}',
     ];
+    final desktop = MediaQuery.sizeOf(context).width >= 900;
     return ListTile(
-      dense: true,
-      visualDensity: VisualDensity.compact,
+      dense: !desktop,
+      visualDensity: desktop ? VisualDensity.standard : VisualDensity.compact,
       contentPadding: const EdgeInsetsDirectional.only(start: 16, end: 8),
       minLeadingWidth: 24,
       leading: Text(

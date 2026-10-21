@@ -137,6 +137,37 @@ void main() {
     });
   }
 
+  testWidgets('desktop setlist rows use comfortable text density', (
+    tester,
+  ) async {
+    final fixture = _SetlistFixture();
+    final app = fixture.app;
+    final controller = AppControllerAdapter(app);
+    await controller.openSetlist(fixture.setlist.id);
+    await _pumpShell(tester, controller, size: const Size(1280, 800));
+
+    final row = find.byKey(const ValueKey('entry-one'));
+    final tile = tester.widget<ListTile>(
+      find.descendant(of: row, matching: find.byType(ListTile)),
+    );
+    expect(tile.dense, isFalse);
+    expect(tile.visualDensity, VisualDensity.standard);
+
+    final rowRect = tester.getRect(row);
+    final titleRect = tester.getRect(
+      find.descendant(of: row, matching: find.text('Shared song')),
+    );
+    final subtitleRect = tester.getRect(
+      find.descendant(of: row, matching: find.text('The Testers')),
+    );
+    expect(rowRect.height, greaterThanOrEqualTo(64));
+    expect(titleRect.top, greaterThanOrEqualTo(rowRect.top));
+    expect(subtitleRect.bottom, lessThanOrEqualTo(rowRect.bottom));
+    expect(titleRect.bottom, lessThanOrEqualTo(subtitleRect.top));
+    expect(tester.takeException(), isNull);
+    await _dispose(tester, controller, app);
+  });
+
   testWidgets('setlist row drag reorders repeated song entries', (
     tester,
   ) async {
@@ -220,10 +251,11 @@ void main() {
 Future<void> _pumpShell(
   WidgetTester tester,
   AppControllerAdapter controller, {
+  Size size = const Size(360, 804),
   double textScale = 1,
 }) async {
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = const Size(360, 804);
+  tester.view.physicalSize = size;
   addTearDown(tester.view.resetDevicePixelRatio);
   addTearDown(tester.view.resetPhysicalSize);
   await tester.pumpWidget(

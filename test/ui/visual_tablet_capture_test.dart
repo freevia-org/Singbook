@@ -113,6 +113,9 @@ void main() {
         await tester.pumpAndSettle();
         final expandedSongs = find.textContaining('1. Lanterns at Dawn');
         expect(expandedSongs, findsOneWidget);
+        final previewText = tester.widget<Text>(expandedSongs);
+        expect(previewText.style?.fontSize, 13);
+        expect(previewText.style?.height, 1.15);
 
         for (final width in [
           639.0,
