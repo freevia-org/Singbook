@@ -213,7 +213,7 @@ class _SongsScreenState extends State<SongsScreen> {
                                     SliverGridDelegateWithMaxCrossAxisExtent(
                                       maxCrossAxisExtent: 520,
                                       mainAxisExtent:
-                                          112 +
+                                          128 +
                                           (MediaQuery.textScalerOf(
                                                         context,
                                                       ).scale(16) -

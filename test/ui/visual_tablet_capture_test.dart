@@ -43,6 +43,8 @@ const _requiredFiles = [
   'assets/branding/singbook-mark-foreground.png',
 ];
 
+const _longDesktopSongTitle = 'Desktop acceptance reprise · Життя';
+
 /// Captures are written to the gitignored `artifacts/` directory. When a
 /// prerequisite file is missing the captures are skipped with this message
 /// instead of failing the suite.
@@ -405,6 +407,16 @@ void main() {
           );
           expect(boundary.size.height, greaterThan(300), reason: screen);
           _assertRouteGeometry(tester, screen, viewportEntry.value);
+          if (screen == 'library') {
+            final longTitle = find.text(_longDesktopSongTitle);
+            expect(longTitle, findsOneWidget);
+            expect(
+              tester.renderObject<RenderParagraph>(longTitle).didExceedMaxLines,
+              isFalse,
+              reason:
+                  'long library titles should remain readable at ${viewportEntry.key}',
+            );
+          }
           expect(tester.takeException(), isNull, reason: screen);
 
           final themeName = themeBrightness == Brightness.light
@@ -613,6 +625,7 @@ class _Fixture {
       'The Lantern Keeper',
       'Where the Bluebells Grow',
       'A Place at the Table',
+      _longDesktopSongTitle,
     ];
     for (var index = 0; index < titles.length; index++) {
       repository.songs.add(
