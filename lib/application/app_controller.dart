@@ -554,7 +554,9 @@ class AppController extends ChangeNotifier {
     errorCode = null;
     _emit();
     try {
-      final requested = settings['catalog'] as String? ?? 'genius';
+      // LRCLIB is the only built-in catalog that works without an app API
+      // token. Prefer it on first run so search succeeds for fresh installs.
+      final requested = settings['catalog'] as String? ?? 'lrclib';
       final available = providers.where(
         (p) => p.capabilities.contains('catalog'),
       );

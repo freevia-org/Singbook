@@ -49,6 +49,34 @@ class _PendingProvider implements LyricsProvider {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  test(
+    'first-run catalog search uses token-free LRCLIB when available',
+    () async {
+      sqfliteFfiInit();
+      final repo = await LibraryRepository.open(
+        path: inMemoryDatabasePath,
+        factory: databaseFactoryFfi,
+      );
+      addTearDown(repo.close);
+      final genius = _PendingProvider('genius');
+      final lrclib = _PendingProvider('lrclib')
+        ..searchResponse = Completer<List<SongCandidate>>();
+      final app = AppController(
+        repository: repo,
+        discovery: SourceDiscoveryService([genius, lrclib]),
+      );
+      addTearDown(app.dispose);
+
+      final search = app.search('Fixture');
+      await lrclib.searchStarted.future;
+      expect(genius.searchStarted.isCompleted, isFalse);
+      lrclib.searchResponse!.complete([lrclib.song]);
+      await search;
+
+      expect(app.suggestions.single.providerId, 'lrclib');
+    },
+  );
+
   for (final reenable in [false, true]) {
     test(
       'disable excludes late YouTube discovery and preserves other providers: $reenable',
