@@ -107,6 +107,10 @@ SyncErrorText syncErrorText(AppLocalizations l10n, String? code) =>
         message: l10n.syncErrorNotConfigured,
         hint: l10n.syncErrorNotConfiguredHint,
       ),
+      'oauth_client_configuration' => (
+        message: l10n.syncErrorOAuthClientConfiguration,
+        hint: l10n.syncErrorOAuthClientConfigurationHint,
+      ),
       'folder_picker_unavailable' => (
         message: l10n.syncErrorFolderPickerUnavailable,
         hint: l10n.syncErrorFolderPickerUnavailableHint,

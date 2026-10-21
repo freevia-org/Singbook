@@ -788,7 +788,10 @@ void main() {
       'explicit missing client_secret response is a configuration error',
       () async {
         missingClientSecret = true;
-        await expectLater(auth.connect(), throwsA(code('not_configured')));
+        await expectLater(
+          auth.connect(),
+          throwsA(code('oauth_client_configuration')),
+        );
         expect(auth.isConnected, isFalse);
         expect(vault.values, isEmpty);
       },
@@ -824,7 +827,7 @@ void main() {
         invalidClient = true;
         await expectLater(
           auth.refreshAccessToken(),
-          throwsA(code('not_configured')),
+          throwsA(code('oauth_client_configuration')),
         );
         expect(auth.isConnected, isTrue);
         expect(vault.values, saved);

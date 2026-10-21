@@ -16,6 +16,7 @@ import 'theme_contrast_test.dart' show contrastRatio;
 /// Every machine code the engine can report, plus one it cannot.
 const _codes = [
   'not_configured',
+  'oauth_client_configuration',
   'not_signed_in',
   'authorization_required',
   'access_denied',
@@ -448,9 +449,14 @@ void main() {
       }
     });
 
-    testWidgets('an unconfigured build offers no retry', (tester) async {
-      await _pump(tester, () => _account(error: 'not_configured'));
-      expect(find.text(l10nOf(tester).actionRetry), findsNothing);
+    testWidgets('OAuth configuration errors offer no retry', (tester) async {
+      for (final code in const [
+        'not_configured',
+        'oauth_client_configuration',
+      ]) {
+        await _pump(tester, () => _account(error: code));
+        expect(find.text(l10nOf(tester).actionRetry), findsNothing);
+      }
     });
 
     testWidgets('the error clears while a new sync runs', (tester) async {

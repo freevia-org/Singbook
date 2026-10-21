@@ -618,7 +618,8 @@ class VerseUiState {
   /// Conflicting edits the last sync kept as separate copies.
   final int lastSyncConflicts;
 
-  /// Machine code of the last sync failure (`authorization_required`,
+  /// Machine code of the last sync failure (`oauth_client_configuration`,
+  /// `authorization_required`,
   /// `storage_full`, ...), or null. Falls back to [accountError].
   final String? lastSyncErrorCode;
 

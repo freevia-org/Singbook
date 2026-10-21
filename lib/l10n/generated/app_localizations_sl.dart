@@ -1597,6 +1597,14 @@ class AppLocalizationsSl extends AppLocalizations {
       'Uporabite različico Singbook s konfigurirano prijavo prek storitve Google.';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'Google rejected this build\'s sign-in configuration.';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'Check that the configured OAuth ID is Singbook\'s Desktop app client.';
+
+  @override
   String get syncErrorNotSignedIn => 'Niste prijavljeni.';
 
   @override

@@ -21,7 +21,11 @@ const _signInAgainCodes = {
 const _suspiciousCode = 'remote_listing_suspicious';
 
 /// Codes where retrying cannot help or would only repeat the failure.
-const _noRetryCodes = {'not_configured', 'folder_picker_unavailable'};
+const _noRetryCodes = {
+  'not_configured',
+  'oauth_client_configuration',
+  'folder_picker_unavailable',
+};
 const _folderSelectionCodes = {
   'drive_folder_missing',
   'drive_file_authorization_required',

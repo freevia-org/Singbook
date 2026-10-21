@@ -413,7 +413,10 @@ void main() {
       await access.pickFolder();
       final saved = Map<String, String>.from(vault.values);
       exchangeError = 'invalid_client';
-      await expectLater(access.pickFolder(), throwsA(_error('not_configured')));
+      await expectLater(
+        access.pickFolder(),
+        throwsA(_error('oauth_client_configuration')),
+      );
       expect(vault.values, saved);
       expect(await access.fileAuthorization.accessToken(), 'picked-file-token');
     },
@@ -527,7 +530,10 @@ void main() {
     () async {
       exchangeError = 'invalid_request';
       tokenErrorDescription = 'Missing required parameter: CLIENT_SECRET';
-      await expectLater(access.pickFolder(), throwsA(_error('not_configured')));
+      await expectLater(
+        access.pickFolder(),
+        throwsA(_error('oauth_client_configuration')),
+      );
       expect(vault.values, isEmpty);
     },
   );
@@ -607,7 +613,11 @@ void main() {
       await expectLater(
         access.fileAuthorization.accessToken(),
         throwsA(
-          _error(error == 'invalid_client' ? 'not_configured' : 'network'),
+          _error(
+            error == 'invalid_client'
+                ? 'oauth_client_configuration'
+                : 'network',
+          ),
         ),
       );
       expect(vault.values, saved);

@@ -1573,6 +1573,14 @@ class AppLocalizationsHu extends AppLocalizations {
       'Használj olyan Singbook-verziót, amelyben be van állítva a Google-bejelentkezés.';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'Google rejected this build\'s sign-in configuration.';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'Check that the configured OAuth ID is Singbook\'s Desktop app client.';
+
+  @override
   String get syncErrorNotSignedIn => 'Nincs bejelentkezve.';
 
   @override

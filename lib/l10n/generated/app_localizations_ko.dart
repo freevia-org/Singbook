@@ -1529,6 +1529,14 @@ class AppLocalizationsKo extends AppLocalizations {
       'Google 로그인이 설정된 Singbook 빌드를 사용하세요.';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'Google rejected this build\'s sign-in configuration.';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'Check that the configured OAuth ID is Singbook\'s Desktop app client.';
+
+  @override
   String get syncErrorNotSignedIn => '로그인되어 있지 않습니다.';
 
   @override

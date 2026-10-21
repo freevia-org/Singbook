@@ -1578,6 +1578,14 @@ class AppLocalizationsGa extends AppLocalizations {
       'Úsáid leagan de Singbook atá cumraithe le síniú isteach le Google.';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'Google rejected this build\'s sign-in configuration.';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'Check that the configured OAuth ID is Singbook\'s Desktop app client.';
+
+  @override
   String get syncErrorNotSignedIn => 'Níl síniú isteach déanta agat.';
 
   @override

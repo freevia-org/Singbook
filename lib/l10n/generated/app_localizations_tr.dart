@@ -1570,6 +1570,14 @@ class AppLocalizationsTr extends AppLocalizations {
       'Google oturum açma özelliği yapılandırılmış bir Singbook derlemesi kullanın.';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'Google rejected this build\'s sign-in configuration.';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'Check that the configured OAuth ID is Singbook\'s Desktop app client.';
+
+  @override
   String get syncErrorNotSignedIn => 'Oturum açmadınız.';
 
   @override

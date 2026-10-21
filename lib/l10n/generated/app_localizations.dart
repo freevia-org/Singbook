@@ -2814,6 +2814,18 @@ abstract class AppLocalizations {
   /// **'Use a Singbook build with Google sign-in configured.'**
   String get syncErrorNotConfiguredHint;
 
+  /// No description provided for @syncErrorOAuthClientConfiguration.
+  ///
+  /// In en, this message translates to:
+  /// **'Google rejected this build\'s sign-in configuration.'**
+  String get syncErrorOAuthClientConfiguration;
+
+  /// No description provided for @syncErrorOAuthClientConfigurationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Check that the configured OAuth ID is Singbook\'s Desktop app client.'**
+  String get syncErrorOAuthClientConfigurationHint;
+
   /// No description provided for @syncErrorNotSignedIn.
   ///
   /// In en, this message translates to:

@@ -327,7 +327,7 @@ class WindowsGoogleDriveAuth
         throw const _InvalidOAuthGrant();
       }
       if (error['error'] == 'invalid_client') {
-        throw const SyncException('not_configured');
+        throw const SyncException('oauth_client_configuration');
       }
       // An explicit response that diagnoses a missing client_secret is a
       // client configuration error. Desktop OAuth secrets are optional in
@@ -337,7 +337,7 @@ class WindowsGoogleDriveAuth
       if (error['error'] == 'invalid_request' &&
           errorDescription is String &&
           errorDescription.toLowerCase().contains('client_secret')) {
-        throw const SyncException('not_configured');
+        throw const SyncException('oauth_client_configuration');
       }
       throw const SyncException('network');
     }
