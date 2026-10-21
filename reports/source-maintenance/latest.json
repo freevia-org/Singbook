@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
-  "catalogRevision": 4,
-  "measuredAt": "2026-10-20T06:05:54.657272Z",
+  "catalogRevision": 5,
+  "measuredAt": "2026-10-21T06:02:11.342115Z",
   "offline": false,
   "summary": {
     "transient_error": 4,
     "healthy": 8,
-    "unavailable": 2,
+    "unavailable": 1,
     "blocked": 1,
     "import_only": 2,
-    "partial_coverage": 2
+    "partial_coverage": 3
   },
   "sources": [
     {
@@ -624,50 +624,79 @@
     {
       "id": "wikisource",
       "name": "Wikisource",
-      "status": "unavailable",
+      "status": "partial_coverage",
       "coverage": {
         "status": "partial",
-        "verifiedCapabilities": [],
-        "unverifiedCapabilities": [
-          "catalog",
-          "fileImport",
+        "verifiedCapabilities": [
           "lyrics",
           "metadata"
+        ],
+        "unverifiedCapabilities": [
+          "catalog",
+          "fileImport"
         ]
       },
       "probes": [
         {
-          "id": "auld-lang-syne-burns-text",
-          "status": "unavailable",
-          "reason": "rights_review_required"
+          "id": "cleansing-wave-palmer",
+          "status": "healthy",
+          "providerId": "wikisource",
+          "bodyCharacters": 664,
+          "metadataFields": [
+            "copyrightTags",
+            "identityScope",
+            "revision"
+          ],
+          "verifiedCapabilities": [
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false
+        },
+        {
+          "id": "dunbar-hymn-1",
+          "status": "healthy",
+          "providerId": "wikisource",
+          "bodyCharacters": 496,
+          "metadataFields": [
+            "copyrightTags",
+            "identityScope",
+            "revision"
+          ],
+          "verifiedCapabilities": [
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false
         }
       ]
     }
   ],
   "execution": {
     "runtime": "managed-cloud",
-    "baseSha": "ffdebf6c89b2a7894885bfb2b9b8a2b1aaec51cf",
-    "command": "dart run tool/source_maintenance.dart --report artifacts/source-maintenance/2026-10-20-live.json",
+    "baseSha": "4d700c021c6303c93078a95bcd12b28365c0ac9d",
+    "command": "dart run tool/source_maintenance.dart --report artifacts/source-maintenance/2026-10-21-live.json",
     "exitCode": 1,
-    "networkMode": "approved_require_escalated",
-    "sourceState": "clean isolated public-main worktree; original task checkout and unfinished changes preserved",
+    "mode": "approved_require_escalated",
+    "sourceState": "clean isolated public-main worktree; existing unfinished task checkout preserved",
     "environment": {
       "published": true,
-      "specRevision": "62",
+      "specRevision": "88",
       "observationsCurrent": true,
       "phase": "running",
       "connectivity": "connected",
       "networkPolicy": {
         "mode": "unrestricted",
-        "state": "enforced"
+        "state": "unknown"
       },
-      "geniusBindingState": "ready",
+      "geniusBindingState": "unknown",
       "geniusEnvironmentKeyPresent": true
-    },
-    "fetch": {
-      "initialAttempt": "stalled; interrupted with exit130 without changing work",
-      "boundedRetry": "timeout 90 git fetch --depth=1 https://github.com/freevia-org/Singbook.git main",
-      "retryExitCode": 0
     }
   },
   "validation": {
@@ -676,7 +705,7 @@
       "exitCode": 0
     },
     "offline": {
-      "command": "dart run tool/source_maintenance.dart --offline --report artifacts/source-maintenance/2026-10-20-offline.json",
+      "command": "dart run tool/source_maintenance.dart --offline --report artifacts/source-maintenance/2026-10-21-offline.json",
       "exitCode": 0,
       "summary": {
         "offline_unverified": 17,
@@ -693,21 +722,21 @@
       "command": "flutter analyze --no-pub",
       "exitCode": 0
     },
-    "sourceChanges": "none; full suite not repeated without a new core/model change"
+    "sourceChanges": "none; no new core/model change or full-suite requirement"
   },
   "comparison": {
     "priorCloud": {
-      "measuredAt": "2026-10-19T06:00:03.820713Z",
-      "ageHours": 24.09745472222222,
-      "baseSha": "fe72eb6a481e02f39cfe13bba0a9cf593e6c19d8",
-      "path": "reports/source-maintenance/2026-10-19T060003Z.json"
+      "measuredAt": "2026-10-20T06:05:54.657272Z",
+      "ageHours": 23.937968055555555,
+      "baseSha": "ffdebf6c89b2a7894885bfb2b9b8a2b1aaec51cf",
+      "path": "reports/source-maintenance/2026-10-20T060554Z.json"
     },
     "priorLocal": {
-      "measuredAt": "2026-10-19T06:51:51.136422Z",
-      "ageHours": 23.234311388888887,
+      "measuredAt": "2026-10-20T06:12:13.816602Z",
+      "ageHours": 23.83264611111111,
       "runtime": "local-windows",
-      "baseSha": "624ee9c094b7b2029176dbf5a9b1631be389563a",
-      "sourceHead": "9f5b99430c8c049d3860200d92d1c6c9fe5fd4da",
+      "baseSha": "ffdebf6c89b2a7894885bfb2b9b8a2b1aaec51cf",
+      "sourceHead": "570dcbf80f6f29ac34d9ec5205da87f5d46ef8be",
       "path": "reports/source-maintenance/local/latest.json"
     },
     "sources": [
@@ -1219,52 +1248,28 @@
         },
         "priorCloud": {
           "id": "synclrc",
-          "status": "healthy",
+          "status": "unavailable",
           "coverage": {
-            "status": "complete",
-            "verifiedCapabilities": [
+            "status": "partial",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
               "catalog",
               "lineTiming",
               "lyrics",
               "metadata",
               "wordTiming"
-            ],
-            "unverifiedCapabilities": []
+            ]
           },
           "probes": [
             {
               "id": "never-gonna-give-you-up-studio",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "lineTiming",
-                "lyrics",
-                "metadata",
-                "wordTiming"
-              ],
-              "timingTrackCount": 2,
-              "timingGranularities": [
-                "line",
-                "word"
-              ],
-              "timingRawRetained": true
+              "status": "unavailable",
+              "reason": "empty_search_results"
             },
             {
               "id": "wonderwall-oasis-timed-version",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "lineTiming",
-                "lyrics",
-                "metadata",
-                "wordTiming"
-              ],
-              "timingTrackCount": 2,
-              "timingGranularities": [
-                "line",
-                "word"
-              ],
-              "timingRawRetained": true
+              "status": "unavailable",
+              "reason": "empty_search_results"
             }
           ]
         },
@@ -2153,20 +2158,26 @@
         },
         "priorLocal": {
           "id": "wikidata",
-          "status": "transient_error",
+          "status": "partial_coverage",
           "coverage": {
             "status": "partial",
-            "verifiedCapabilities": [],
-            "unverifiedCapabilities": [
-              "catalog",
+            "verifiedCapabilities": [
               "metadata"
+            ],
+            "unverifiedCapabilities": [
+              "catalog"
             ]
           },
           "probes": [
             {
               "id": "imagine-composition",
-              "status": "transient_error",
-              "reason": "provider_busy"
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "metadata"
+              ],
+              "timingTrackCount": 0,
+              "timingGranularities": [],
+              "timingRawRetained": false
             }
           ]
         }
@@ -2251,22 +2262,40 @@
       {
         "current": {
           "id": "wikisource",
-          "status": "unavailable",
+          "status": "partial_coverage",
           "coverage": {
             "status": "partial",
-            "verifiedCapabilities": [],
-            "unverifiedCapabilities": [
-              "catalog",
-              "fileImport",
+            "verifiedCapabilities": [
               "lyrics",
               "metadata"
+            ],
+            "unverifiedCapabilities": [
+              "catalog",
+              "fileImport"
             ]
           },
           "probes": [
             {
-              "id": "auld-lang-syne-burns-text",
-              "status": "unavailable",
-              "reason": "rights_review_required"
+              "id": "cleansing-wave-palmer",
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "lyrics",
+                "metadata"
+              ],
+              "timingTrackCount": 0,
+              "timingGranularities": [],
+              "timingRawRetained": false
+            },
+            {
+              "id": "dunbar-hymn-1",
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "lyrics",
+                "metadata"
+              ],
+              "timingTrackCount": 0,
+              "timingGranularities": [],
+              "timingRawRetained": false
             }
           ]
         },
@@ -2293,28 +2322,46 @@
         },
         "priorLocal": {
           "id": "wikisource",
-          "status": "unavailable",
+          "status": "partial_coverage",
           "coverage": {
             "status": "partial",
-            "verifiedCapabilities": [],
-            "unverifiedCapabilities": [
-              "catalog",
-              "fileImport",
+            "verifiedCapabilities": [
               "lyrics",
               "metadata"
+            ],
+            "unverifiedCapabilities": [
+              "catalog",
+              "fileImport"
             ]
           },
           "probes": [
             {
-              "id": "auld-lang-syne-burns-text",
-              "status": "unavailable",
-              "reason": "rights_review_required"
+              "id": "cleansing-wave-palmer",
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "lyrics",
+                "metadata"
+              ],
+              "timingTrackCount": 0,
+              "timingGranularities": [],
+              "timingRawRetained": false
+            },
+            {
+              "id": "dunbar-hymn-1",
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "lyrics",
+                "metadata"
+              ],
+              "timingTrackCount": 0,
+              "timingGranularities": [],
+              "timingRawRetained": false
             }
           ]
         }
       }
     ],
-    "interpretation": "Prior local results retain runtime and age; they do not establish cloud reachability. SyncLRC changed from complete live coverage yesterday to two empty-search outcomes today. Bounded follow-up curl requests returned HTTP403 non-JSON for both searches, so current diagnostics show access/transport variability, not proven schema regression. Preserve harness outcomes without reclassifying unmeasured coverage. No rollback, disablement or retirement."
+    "interpretation": "Wikisource revision2 has two new explicit-author/rights-tag canaries, replacing the old versions-index probe. Both now pass lyrics/metadata; catalog search and file import remain unverified. This is changed probe identity, not proof the old index page became suitable. Prior local results preserve age/runtime/code provenance and do not override cloud failures. SyncLRC empty results remain unresolved; no retirement/rollback or repeated rate-limit retries."
   },
   "catalogProbeCoverage": [
     {
@@ -2733,7 +2780,7 @@
     },
     {
       "id": "wikisource",
-      "revision": 1,
+      "revision": 2,
       "capabilities": [
         "catalog",
         "fileImport",
@@ -2742,11 +2789,31 @@
       ],
       "probes": [
         {
-          "id": "auld-lang-syne-burns-text",
-          "expectedTitle": "Auld Lang Syne (Burns)",
+          "id": "cleansing-wave-palmer",
+          "expectedTitle": "Cleansing Wave",
+          "expectedArtist": "Phoebe W. Palmer",
           "requiredFields": [
             "body",
             "metadata"
+          ],
+          "requiredMetadataFields": [
+            "copyrightTags.0",
+            "revision",
+            "identityScope"
+          ]
+        },
+        {
+          "id": "dunbar-hymn-1",
+          "expectedTitle": "The Complete Poems of Paul Laurence Dunbar/Hymn (1)",
+          "expectedArtist": "Paul Laurence Dunbar",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "copyrightTags.0",
+            "revision",
+            "identityScope"
           ]
         }
       ]
@@ -2754,62 +2821,55 @@
   ],
   "environmentEvidence": [
     {
-      "id": "github",
-      "publisherUrl": "https://github.com",
-      "curlExit": 0,
-      "connectOrigin": "200 200",
-      "at": "2026-10-20T06:04:13.963010+00:00"
-    },
-    {
       "id": "genius",
       "publisherUrl": "https://api.genius.com/search?q=Wonderwall%20Oasis",
       "curlExit": 56,
       "connectOrigin": "403 000",
-      "at": "2026-10-20T06:04:13.975742+00:00"
+      "checkedAt": "2026-10-21T06:02:04.222777+00:00"
+    },
+    {
+      "id": "hymnal-categories",
+      "publisherUrl": "https://hymnal.rindra.org/api/categories.json",
+      "curlExit": 0,
+      "connectOrigin": "200 200",
+      "checkedAt": "2026-10-21T06:02:04.746197+00:00",
+      "jsonType": "list",
+      "recordCount": 7
     },
     {
       "id": "lrcshare",
       "publisherUrl": "https://api.lrcshare.com/v1/catalog",
       "curlExit": 0,
       "connectOrigin": "200 401",
-      "at": "2026-10-20T06:04:14.182166+00:00"
-    }
-  ],
-  "followUpDiagnosis": [
-    {
-      "probe": "rick",
-      "curlExit": 0,
-      "originStatus": "403",
-      "checkedAt": "2026-10-20T06:06:44.945335+00:00",
-      "errorEnum": "non_json_response"
-    },
-    {
-      "probe": "oasis",
-      "curlExit": 0,
-      "originStatus": "403",
-      "checkedAt": "2026-10-20T06:06:45.079127+00:00",
-      "errorEnum": "non_json_response"
+      "checkedAt": "2026-10-21T06:02:04.960273+00:00"
     }
   ],
   "discovery": {
     "checks": [
       {
-        "id": "spicy-terms",
-        "publisherUrl": "https://developers.spicylyrics.org/terms",
+        "id": "hymnal-categories",
+        "publisherUrl": "https://hymnal.rindra.org/api/categories.json",
         "curlExit": 0,
         "connectOrigin": "200 200",
-        "checkedAt": "2026-10-20T06:06:17.801347+00:00"
+        "checkedAt": "2026-10-21T06:02:04.746197+00:00",
+        "jsonType": "list",
+        "recordCount": 7
       },
       {
-        "id": "amll-docs",
-        "publisherUrl": "https://amll.dev/reference/http-api/overview",
+        "id": "lrcshare",
+        "publisherUrl": "https://api.lrcshare.com/v1/catalog",
         "curlExit": 0,
-        "connectOrigin": "200 200",
-        "checkedAt": "2026-10-20T06:06:18.129769+00:00"
+        "connectOrigin": "200 401",
+        "checkedAt": "2026-10-21T06:02:04.960273+00:00"
       }
     ],
-    "existingReviewPR": "https://github.com/freevia-org/Singbook/pull/69",
-    "existingReviewHead": "9f5b99430c8c049d3860200d92d1c6c9fe5fd4da",
-    "decisions": "Reviewed existing PR69 config evidence for Start Jamming, Ukrainian Wikisource and Spicy Lyrics rather than duplicating changes. LrcShare current unauthenticated origin401 retains deferred access requirements. AMLL and Spicy publisher pages reachable; no API credentials or signed-out demo used. Array identity/provenance, rights, attribution and persistence/export restrictions still prevent activation. Existing deferral decisions remain; no meaningful new acceptance/config change or source PR proposed."
+    "decisions": "Hymnal API metadata endpoint returns seven collections, confirming existing deferred metadata evidence, not full hymn identity/lyrics or per-work rights. Existing config/source-discovery.json requires explicit rights/attribution/provenance, a compatible searchable adapter and two independent repository canaries; those gates remain unmet. LrcShare remains origin401 without a key; no key or signed-out demo used. No new acceptance/rejection decision, source activation or meaningful discovery change justified; retain existing config reasons.",
+    "equivalentOpenSourcePRs": 0,
+    "openPRs": [
+      {
+        "number": 93,
+        "title": "Align song menus, metadata retention and player controls"
+      }
+    ]
   }
 }
