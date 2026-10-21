@@ -96,6 +96,33 @@ jobs:
             throw 'The VERSE_GOOGLE_DESKTOP_CLIENT_ID Actions variable is required for the Windows release bundle.'
           }
 
+          # A public client ID can be syntactically valid while pointing at an
+          # OAuth client that cannot complete the app's installed-desktop flow.
+          # Exchange a deliberately invalid code: a working registration should
+          # reach Google's invalid_grant response without authenticating anyone.
+          $probe = @{
+            client_id = $env:VERSE_GOOGLE_DESKTOP_CLIENT_ID
+            code = 'codex-release-preflight-invalid-code'
+            code_verifier = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+            grant_type = 'authorization_code'
+            redirect_uri = 'http://127.0.0.1:49152'
+          }
+          if (-not [string]::IsNullOrWhiteSpace($env:VERSE_GOOGLE_DESKTOP_CLIENT_SECRET)) {
+            $probe.client_secret = $env:VERSE_GOOGLE_DESKTOP_CLIENT_SECRET
+          }
+          try {
+            $response = Invoke-RestMethod -Method Post -Uri 'https://oauth2.googleapis.com/token' -ContentType 'application/x-www-form-urlencoded' -Body $probe
+            $oauthError = $response.error
+          } catch {
+            $errorBody = $_.ErrorDetails.Message
+            try { $oauthError = ($errorBody | ConvertFrom-Json).error }
+            catch { throw 'Google OAuth desktop-client preflight could not read the token endpoint response.' }
+          }
+          if ($oauthError -ne 'invalid_grant') {
+            if ($errorBody -match 'client_secret') { $oauthError = 'missing_client_secret' }
+            throw "Google OAuth desktop-client preflight failed ($oauthError). Check that the ID is a Desktop app client and that its optional secret is configured when required."
+          }
+
       - name: Record dependency generation source status
         shell: pwsh
         run: |
