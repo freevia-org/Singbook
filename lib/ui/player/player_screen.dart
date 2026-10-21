@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show ScrollDirection;
+import 'package:flutter/scheduler.dart' show SchedulerBinding, SchedulerPhase;
 import 'package:flutter/services.dart';
 
 import '../../domain/arrangement.dart' show transposeChord;
@@ -140,6 +141,9 @@ class _PlayerScreenState extends State<PlayerScreen>
   VerseUiController? _playbackSpeedDraftController;
   bool _playbackSpeedPointerActive = false;
   bool _playbackSpeedPointerCanceled = false;
+  int? _playbackSpeedPointerId;
+  int _playbackSpeedDraftRevision = 0;
+  int _playbackSpeedInteractionEpoch = 0;
 
   void _setControlsExpanded(bool expanded) {
     if (controller.state.playerControlsExpanded == expanded) return;
@@ -1304,6 +1308,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                     final duration = _durationOf(currentState);
                     final speed =
                         draftSpeed ?? controller.state.playbackSpeed;
+                    final interactionEpoch = _playbackSpeedInteractionEpoch;
                     return Column(
                       children: [
                         Padding(
@@ -1364,30 +1369,41 @@ class _PlayerScreenState extends State<PlayerScreen>
                                       onPointerUp: _onPlaybackSpeedPointerUp,
                                       onPointerCancel:
                                           _onPlaybackSpeedPointerCancel,
-                                      child: Slider(
-                                        key: const ValueKey(
-                                          'scroll-speed-slider',
+                                      child: KeyedSubtree(
+                                        key: ValueKey(
+                                          'scroll-speed-slider-epoch-$interactionEpoch',
                                         ),
-                                        min: .5,
-                                        max: 2,
-                                        divisions: 15,
-                                        value: speed,
-                                        label: _formatPlaybackSpeed(speed),
-                                        semanticFormatterCallback: (value) {
-                                          final durationLabel =
-                                              formatDuration(duration / value);
-                                          final accessibleDuration =
-                                              currentState.readerDurationEstimated
-                                              ? l10n.playerEstimatedDuration(
-                                                  durationLabel,
-                                                )
-                                              : durationLabel;
-                                          return '${l10n.playerScrollSpeed}, ${_formatPlaybackSpeed(value)}, $accessibleDuration';
-                                        },
-                                        onChangeStart: _beginPlaybackSpeedDraft,
-                                        onChanged: _updatePlaybackSpeedDraft,
-                                        onChangeEnd:
-                                            _commitPlaybackSpeedDraft,
+                                        child: Slider(
+                                          key: const ValueKey(
+                                            'scroll-speed-slider',
+                                          ),
+                                          min: .5,
+                                          max: 2,
+                                          divisions: 15,
+                                          value: speed,
+                                          label: _formatPlaybackSpeed(speed),
+                                          semanticFormatterCallback: (value) {
+                                            final durationLabel =
+                                                formatDuration(duration / value);
+                                            final accessibleDuration =
+                                                currentState.readerDurationEstimated
+                                                    ? l10n.playerEstimatedDuration(
+                                                        durationLabel,
+                                                      )
+                                                    : durationLabel;
+                                            return '${l10n.playerScrollSpeed}, ${_formatPlaybackSpeed(value)}, $accessibleDuration';
+                                          },
+                                          onChangeStart:
+                                              _beginPlaybackSpeedDraft,
+                                          onChanged: _updatePlaybackSpeedDraft,
+                                          onChangeEnd: (value) {
+                                            if (interactionEpoch !=
+                                                _playbackSpeedInteractionEpoch) {
+                                              return;
+                                            }
+                                            _commitPlaybackSpeedDraft(value);
+                                          },
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -1435,6 +1451,7 @@ class _PlayerScreenState extends State<PlayerScreen>
 
   void _beginPlaybackSpeedDraft(double speed) {
     if (!mounted) return;
+    _playbackSpeedDraftRevision++;
     final state = controller.state;
     _playbackSpeedDraftController = controller;
     _playbackSpeedDraftSongId = state.song?.id;
@@ -1443,15 +1460,24 @@ class _PlayerScreenState extends State<PlayerScreen>
   }
 
   void _onPlaybackSpeedPointerDown(PointerDownEvent event) {
+    if (_playbackSpeedPointerActive &&
+        event.pointer != _playbackSpeedPointerId) {
+      return;
+    }
+    _playbackSpeedPointerId = event.pointer;
     _playbackSpeedPointerActive = true;
     _playbackSpeedPointerCanceled = false;
   }
 
   void _onPlaybackSpeedPointerUp(PointerUpEvent event) {
+    if (event.pointer != _playbackSpeedPointerId) return;
+    _playbackSpeedPointerId = null;
     _playbackSpeedPointerActive = false;
   }
 
   void _onPlaybackSpeedPointerCancel(PointerCancelEvent event) {
+    if (event.pointer != _playbackSpeedPointerId) return;
+    _playbackSpeedPointerId = null;
     _playbackSpeedPointerActive = false;
     _playbackSpeedPointerCanceled = true;
     _clearPlaybackSpeedDraft(preservePointerCancellation: true);
@@ -1481,13 +1507,27 @@ class _PlayerScreenState extends State<PlayerScreen>
   }
 
   void _clearPlaybackSpeedDraft({bool preservePointerCancellation = false}) {
-    if (mounted) _playbackSpeedDraft.value = null;
+    final revision = ++_playbackSpeedDraftRevision;
+    _playbackSpeedInteractionEpoch++;
     _playbackSpeedDraftSongId = null;
     _playbackSpeedDraftDuration = null;
     _playbackSpeedDraftController = null;
+    _playbackSpeedPointerId = null;
     if (!preservePointerCancellation) {
       _playbackSpeedPointerActive = false;
       _playbackSpeedPointerCanceled = false;
+    }
+
+    void clearVisualDraft() {
+      if (!mounted || revision != _playbackSpeedDraftRevision) return;
+      if (_playbackSpeedDraft.value != null) _playbackSpeedDraft.value = null;
+    }
+
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => clearVisualDraft());
+    } else {
+      clearVisualDraft();
     }
   }
 
@@ -1497,8 +1537,9 @@ class _PlayerScreenState extends State<PlayerScreen>
       return;
     }
     if (_playbackSpeedPointerActive) {
+      final revision = _playbackSpeedDraftRevision;
       scheduleMicrotask(() {
-        if (!mounted) return;
+        if (!mounted || revision != _playbackSpeedDraftRevision) return;
         if (_playbackSpeedPointerCanceled ||
             !_playbackSpeedDraftIsCurrent()) {
           _clearPlaybackSpeedDraft();
@@ -1528,13 +1569,38 @@ class _PlayerScreenState extends State<PlayerScreen>
     required bool showSpeed,
     Widget? trailingAction,
   }) => Padding(
-    padding: const EdgeInsets.fromLTRB(8, 0, 8, 2),
-    child: Builder(
-      builder: (context) {
+    padding: const EdgeInsets.fromLTRB(4, 0, 4, 2),
+    child: LayoutBuilder(
+      builder: (context, constraints) {
+        final direction = Directionality.of(context);
+        final isRtl = direction == TextDirection.rtl;
+        final hasNavigation =
+            state.playerSections.isNotEmpty || state.activeSetlist != null;
+        final centerFlex = trailingAction == null ? 2 : 3;
+        final centerWidth =
+            constraints.maxWidth * centerFlex / (centerFlex + 2);
+        final playLabel = state.isPlaying ? l10n.playerPause : l10n.playerPlay;
+        final playLabelPainter = TextPainter(
+          text: TextSpan(
+            text: playLabel,
+            style: Theme.of(context).textTheme.labelLarge,
+          ),
+          textDirection: direction,
+          textScaler: MediaQuery.textScalerOf(context),
+        )..layout();
+        final playWidth = centerWidth - (hasNavigation ? 80 : 0);
+        final playHorizontalPadding =
+            ((playWidth - 32 - playLabelPainter.width) / 2)
+                .clamp(4.0, 12.0)
+                .toDouble();
+        playLabelPainter.dispose();
         final start = FilledButton.icon(
           key: const ValueKey('start-lyric-scroll'),
           style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            padding: EdgeInsets.symmetric(
+              horizontal: playHorizontalPadding,
+              vertical: 4,
+            ),
             minimumSize: const Size(104, 46),
           ),
           onPressed: _togglePlayback,
@@ -1542,7 +1608,7 @@ class _PlayerScreenState extends State<PlayerScreen>
             state.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
           ),
           label: Text(
-            state.isPlaying ? l10n.playerPause : l10n.playerPlay,
+            playLabel,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
@@ -1599,41 +1665,50 @@ class _PlayerScreenState extends State<PlayerScreen>
               icon: const Icon(Icons.skip_next_rounded),
             ),
         ];
+        final chordSlot = Expanded(
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: inlineChords
+                ? _chordControls(l10n, state)
+                : const SizedBox.shrink(),
+          ),
+        );
+        final transportSlot = Expanded(
+          flex: centerFlex,
+          child: Row(
+            textDirection: direction,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: controls,
+          ),
+        );
+        final actionSlot = Expanded(
+          child: Row(
+            textDirection: TextDirection.ltr,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              if (showSpeed)
+                Flexible(child: _speedControl(l10n, state)),
+              if (trailingAction != null) trailingAction,
+            ],
+          ),
+        );
         return Row(
           textDirection: TextDirection.ltr,
           children: [
             if (inlineChords || showSpeed || trailingAction != null) ...[
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: inlineChords
-                      ? _chordControls(l10n, state)
-                      : const SizedBox.shrink(),
-                ),
-              ),
-              Expanded(
-                flex: trailingAction == null ? 2 : 3,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: controls,
-                ),
-              ),
-              Expanded(
-                child: Row(
-                  textDirection: TextDirection.ltr,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    if (showSpeed)
-                      Flexible(
-                        child: _speedControl(l10n, state),
-                      ),
-                    if (trailingAction != null) trailingAction,
-                  ],
-                ),
-              ),
+              if (isRtl) ...[
+                actionSlot,
+                transportSlot,
+                chordSlot,
+              ] else ...[
+                chordSlot,
+                transportSlot,
+                actionSlot,
+              ],
             ] else
               Expanded(
                 child: Row(
+                  textDirection: direction,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: controls,
                 ),

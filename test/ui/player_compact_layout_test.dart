@@ -150,9 +150,8 @@ Future<void> _pump(
   await tester.pumpAndSettle();
 }
 
-Slider _speedSlider(WidgetTester tester) => tester.widget<Slider>(
-  find.byKey(const ValueKey('scroll-speed-slider')),
-);
+Slider _speedSlider(WidgetTester tester) =>
+    tester.widget<Slider>(find.byKey(const ValueKey('scroll-speed-slider')));
 
 Listener _speedSliderListener(WidgetTester tester) => tester.widget<Listener>(
   find
@@ -274,15 +273,31 @@ void main() {
     );
     final lyrics = find.byKey(const ValueKey('tablet-reader-content'));
     expect(tester.getSize(lyrics).height, greaterThan(336));
-    expect(find.byKey(const ValueKey('player-fullscreen-header')), findsNothing);
-    expect(find.byKey(const ValueKey('player-landscape-header')), findsOneWidget);
-    expect(find.byKey(const ValueKey('player-exit-fullscreen')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('player-fullscreen-header')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey('player-landscape-header')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('player-exit-fullscreen')),
+      findsOneWidget,
+    );
 
-    await tester.tap(find.byTooltip(AppLocalizations.of(
-      tester.element(find.byType(PlayerScreen)),
-    ).playerCollapseControls));
+    await tester.tap(
+      find.byTooltip(
+        AppLocalizations.of(
+          tester.element(find.byType(PlayerScreen)),
+        ).playerCollapseControls,
+      ),
+    );
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('player-exit-fullscreen')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('player-exit-fullscreen')),
+      findsOneWidget,
+    );
     await tester.tap(find.byKey(const ValueKey('player-exit-fullscreen')));
     expect(fullscreen, isFalse);
     expect(tester.takeException(), isNull);
@@ -613,12 +628,32 @@ void main() {
     );
     slider.onChangeStart!(1.5);
     slider.onChanged!(1.25);
+    Listener? replacementListener;
+    tester.binding.addPostFrameCallback((_) {
+      replacementListener = _speedSliderListener(tester);
+      replacementListener!.onPointerDown!(
+        PointerDownEvent(pointer: 17, position: Offset.zero),
+      );
+      final replacementSlider = _speedSlider(tester);
+      replacementSlider.onChangeStart!(1.5);
+      replacementSlider.onChanged!(1.35);
+    });
     await _pump(tester, replacementController);
+    // The old slider's delayed end must not commit or clear the new draft.
     slider.onChangeEnd!(1.25);
     await tester.pump();
     expect(controller.speedWrites, 1);
     expect(replacementController.speedWrites, 0);
+    expect(_speedSlider(tester).value, closeTo(1.35, 0.001));
 
+    replacementListener!.onPointerCancel!(
+      PointerCancelEvent(pointer: 17, position: Offset.zero),
+    );
+    await tester.pumpAndSettle();
+    expect(replacementController.speedWrites, 0);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('scroll-speed-toggle')));
     await tester.pumpAndSettle();
     _speedSlider(tester).onChanged!(1.25); // keyboard/semantics adjustment
