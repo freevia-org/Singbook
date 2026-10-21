@@ -31,12 +31,11 @@ $tempDirectory = Join-Path $runtimeRoot 'temp'
 $libraryPath = Join-Path $libraryDirectory 'singbook.db'
 New-Item -ItemType Directory -Path $libraryDirectory, $localAppData, $roamingAppData, $tempDirectory -Force | Out-Null
 New-Item -ItemType Directory -Path $EvidenceDirectory -Force | Out-Null
-$windowScreenshotPath = Join-Path $EvidenceDirectory 'portable-startup-window.png'
+$windowScreenshotPath = Join-Path $EvidenceDirectory 'portable-startup-window.bmp'
 
 Add-Type -TypeDefinition @'
 using System;
-using System.Drawing;
-using System.Drawing.Imaging;
+using System.IO;
 using System.Runtime.InteropServices;
 
 public static class SingbookWindowCapture
@@ -50,11 +49,50 @@ public static class SingbookWindowCapture
         public int Bottom;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    private struct BITMAPINFOHEADER
+    {
+        public uint Size;
+        public int Width;
+        public int Height;
+        public ushort Planes;
+        public ushort BitCount;
+        public uint Compression;
+        public uint SizeImage;
+        public int XPelsPerMeter;
+        public int YPelsPerMeter;
+        public uint ColorsUsed;
+        public uint ColorsImportant;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct BITMAPINFO
+    {
+        public BITMAPINFOHEADER Header;
+        public uint Color;
+    }
+
     [DllImport("user32.dll", SetLastError = true)]
     private static extern bool GetWindowRect(IntPtr handle, out RECT rect);
 
     [DllImport("user32.dll", SetLastError = true)]
     private static extern bool PrintWindow(IntPtr handle, IntPtr deviceContext, uint flags);
+
+    [DllImport("gdi32.dll", SetLastError = true)]
+    private static extern IntPtr CreateCompatibleDC(IntPtr deviceContext);
+
+    [DllImport("gdi32.dll", SetLastError = true)]
+    private static extern IntPtr CreateDIBSection(IntPtr deviceContext, ref BITMAPINFO info,
+        uint usage, out IntPtr bits, IntPtr section, uint offset);
+
+    [DllImport("gdi32.dll", SetLastError = true)]
+    private static extern IntPtr SelectObject(IntPtr deviceContext, IntPtr value);
+
+    [DllImport("gdi32.dll", SetLastError = true)]
+    private static extern bool DeleteObject(IntPtr value);
+
+    [DllImport("gdi32.dll", SetLastError = true)]
+    private static extern bool DeleteDC(IntPtr deviceContext);
 
     public static void Capture(IntPtr handle, string path)
     {
@@ -67,26 +105,73 @@ public static class SingbookWindowCapture
         if (width <= 0 || height <= 0)
             throw new InvalidOperationException("The app window has invalid screenshot dimensions.");
 
-        using (var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb))
-        using (var graphics = Graphics.FromImage(bitmap))
-        {
-            IntPtr deviceContext = graphics.GetHdc();
-            bool captured;
-            try
-            {
-                captured = PrintWindow(handle, deviceContext, 2); // PW_RENDERFULLCONTENT
-                if (!captured)
-                    captured = PrintWindow(handle, deviceContext, 0);
-            }
-            finally
-            {
-                graphics.ReleaseHdc(deviceContext);
-            }
+        long byteCount = (long)width * height * 4;
+        if (width > 8192 || height > 8192 || byteCount > Int32.MaxValue)
+            throw new InvalidOperationException("The app window exceeds the screenshot size limit.");
 
+        IntPtr deviceContext = CreateCompatibleDC(IntPtr.Zero);
+        if (deviceContext == IntPtr.Zero)
+            throw new InvalidOperationException("CreateCompatibleDC failed: " + Marshal.GetLastWin32Error());
+
+        IntPtr bitmap = IntPtr.Zero;
+        IntPtr previous = IntPtr.Zero;
+        try
+        {
+            var info = new BITMAPINFO();
+            info.Header.Size = (uint)Marshal.SizeOf(typeof(BITMAPINFOHEADER));
+            info.Header.Width = width;
+            info.Header.Height = -height; // top-down rows
+            info.Header.Planes = 1;
+            info.Header.BitCount = 32;
+            info.Header.Compression = 0; // BI_RGB
+            info.Header.SizeImage = (uint)byteCount;
+
+            IntPtr bits;
+            bitmap = CreateDIBSection(deviceContext, ref info, 0, out bits, IntPtr.Zero, 0);
+            if (bitmap == IntPtr.Zero || bits == IntPtr.Zero)
+                throw new InvalidOperationException("CreateDIBSection failed: " + Marshal.GetLastWin32Error());
+
+            previous = SelectObject(deviceContext, bitmap);
+            if (previous == IntPtr.Zero)
+                throw new InvalidOperationException("SelectObject failed: " + Marshal.GetLastWin32Error());
+
+            bool captured = PrintWindow(handle, deviceContext, 2); // PW_RENDERFULLCONTENT
+            if (!captured)
+                captured = PrintWindow(handle, deviceContext, 0);
             if (!captured)
                 throw new InvalidOperationException("PrintWindow failed: " + Marshal.GetLastWin32Error());
 
-            bitmap.Save(path, ImageFormat.Png);
+            var pixels = new byte[(int)byteCount];
+            Marshal.Copy(bits, pixels, 0, pixels.Length);
+            using (var stream = File.Create(path))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write((ushort)0x4d42); // BMP signature
+                writer.Write((uint)(54 + pixels.Length));
+                writer.Write((ushort)0);
+                writer.Write((ushort)0);
+                writer.Write((uint)54);
+                writer.Write((uint)40);
+                writer.Write(width);
+                writer.Write(-height); // top-down rows
+                writer.Write((ushort)1);
+                writer.Write((ushort)32);
+                writer.Write((uint)0); // BI_RGB
+                writer.Write((uint)pixels.Length);
+                writer.Write(0);
+                writer.Write(0);
+                writer.Write((uint)0);
+                writer.Write((uint)0);
+                writer.Write(pixels);
+            }
+        }
+        finally
+        {
+            if (previous != IntPtr.Zero)
+                SelectObject(deviceContext, previous);
+            if (bitmap != IntPtr.Zero)
+                DeleteObject(bitmap);
+            DeleteDC(deviceContext);
         }
     }
 }
