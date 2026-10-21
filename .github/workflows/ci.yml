@@ -90,6 +90,8 @@ jobs:
         run: flutter pub get
 
       - name: Check Windows OAuth configuration
+        id: windows-oauth-preflight
+        continue-on-error: true
         shell: pwsh
         run: |
           if ([string]::IsNullOrWhiteSpace($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID)) {
@@ -165,3 +167,9 @@ jobs:
           path: artifacts/windows/
           if-no-files-found: error
           retention-days: 7
+
+      - name: Enforce Windows OAuth release readiness
+        if: always() && steps.windows-oauth-preflight.outcome != 'success'
+        shell: pwsh
+        run: |
+          throw 'Windows OAuth preflight failed. The package and native checks ran, but the release is not ready for Google Drive sign-in.'
