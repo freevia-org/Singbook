@@ -131,12 +131,14 @@ The portable release is version `0.2.12+26`, built from PR merge commit
 Its manifest lists 54 bundled files, including 50 required runtime files. The startup smoke produced a
 valid SQLite database, observed the `Singbook` main window, captured its pixels,
 and closed the app gracefully without a forced stop. The packaged screenshot is
-[available here](images/windows-desktop-review/packaged-startup.png); it is the
-default empty state and matches the current package's captured startup. The raw
-1044×720 BMP is preserved in the run artifact. The app content shows a centered
-empty-state message, aligned search and category tabs, and no visible clipping.
-This single capture does not cover the complete native size, DPI, theme, and
-localization matrix.
+[available here](images/windows-desktop-review/packaged-startup.png); it is a
+review crop from CI run 39622130652. The raw 1044×720 BMP for that image remains
+in that run's validation artifact; the committed PNG crops the unpainted 8-pixel
+left and bottom margins. Run 39627883980 also captured the current package's
+startup window in its validation artifact. I reviewed that capture: the app
+content shows a centered empty-state message, aligned search and category tabs,
+and no visible clipping. These captures do not cover the complete native size,
+DPI, theme, and localization matrix.
 
 Source-layout captures also cover desktop library, setlists, reader, editor,
 settings, dark mode, and compact/large-text variants. Four representative
