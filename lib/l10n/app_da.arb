@@ -667,6 +667,8 @@
   "accountNoticeSignedOut": "Logget ud. Dine sange forbliver på denne enhed.",
   "syncErrorNotConfigured": "Synkronisering er ikke konfigureret i denne version.",
   "syncErrorNotConfiguredHint": "Brug en Singbook-version med Google-login konfigureret.",
+  "syncErrorOAuthClientConfiguration": "Google afviste loginopsætningen i denne version.",
+  "syncErrorOAuthClientConfigurationHint": "Kontrollér, at det konfigurerede OAuth-id er Singbooks desktopklient.",
   "syncErrorNotSignedIn": "Du er ikke logget ind.",
   "syncErrorNotSignedInHint": "Log ind for at synkronisere dit bibliotek.",
   "syncErrorAuthorizationRequired": "Google kræver, at du logger ind igen.",

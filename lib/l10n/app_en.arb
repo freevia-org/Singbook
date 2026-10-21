@@ -440,6 +440,8 @@
   "accountNoticeSignedOut": "Signed out. Your songs stay on this device.",
   "syncErrorNotConfigured": "Sync isn't set up in this build.",
   "syncErrorNotConfiguredHint": "Use a Singbook build with Google sign-in configured.",
+  "syncErrorOAuthClientConfiguration": "Google rejected this build's sign-in configuration.",
+  "syncErrorOAuthClientConfigurationHint": "Check that the configured OAuth ID is Singbook's Desktop app client.",
   "syncErrorNotSignedIn": "You're not signed in.",
   "syncErrorNotSignedInHint": "Sign in to sync your library.",
   "syncErrorAuthorizationRequired": "Google needs you to sign in again.",

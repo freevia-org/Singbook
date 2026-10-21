@@ -1594,6 +1594,14 @@ class AppLocalizationsLt extends AppLocalizations {
       'Naudokite Singbook versiją su sukonfigūruotu prisijungimu per Google.';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'Google atmetė šios versijos prisijungimo konfigūraciją.';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'Patikrinkite, ar nustatytas OAuth ID priklauso Singbook darbalaukio programos klientui.';
+
+  @override
   String get syncErrorNotSignedIn => 'Esate neprisijungę.';
 
   @override

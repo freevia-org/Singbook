@@ -91,17 +91,44 @@ void main() {
       expect(speedSlider.divisions, 15);
       expect(speedSlider.min, .5);
       expect(speedSlider.max, 2);
-      expect(find.text('4:00'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('scroll-speed-panel')),
+          matching: find.text('4:00'),
+        ),
+        findsOneWidget,
+      );
 
       speedSlider.onChanged!(.55);
       await tester.pump();
       expect(controller.state.playbackSpeed, .55);
-      expect(find.text('7:16'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('scroll-speed-panel')),
+          matching: find.text('7:16'),
+        ),
+        findsOneWidget,
+      );
+      await tester.pump();
+      expect(controller.state.playbackSpeed, .55);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('scroll-speed-panel')),
+          matching: find.text('7:16'),
+        ),
+        findsOneWidget,
+      );
 
       await controller.setPlaybackSpeed(1.5);
       await tester.pump();
       expect(controller.state.playbackSpeed, 1.5);
-      expect(find.text('2:40'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('scroll-speed-panel')),
+          matching: find.text('2:40'),
+        ),
+        findsOneWidget,
+      );
       await tester.binding.handlePopRoute();
       await _settle(tester, controller);
       expect(find.byKey(const ValueKey('scroll-speed-slider')), findsNothing);

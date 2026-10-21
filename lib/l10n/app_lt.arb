@@ -665,6 +665,8 @@
   "accountNoticeSignedOut": "Atsijungėte. Dainos liks šiame įrenginyje.",
   "syncErrorNotConfigured": "Šioje versijoje sinchronizavimas nesukonfigūruotas.",
   "syncErrorNotConfiguredHint": "Naudokite Singbook versiją su sukonfigūruotu prisijungimu per Google.",
+  "syncErrorOAuthClientConfiguration": "Google atmetė šios versijos prisijungimo konfigūraciją.",
+  "syncErrorOAuthClientConfigurationHint": "Patikrinkite, ar nustatytas OAuth ID priklauso Singbook darbalaukio programos klientui.",
   "syncErrorNotSignedIn": "Esate neprisijungę.",
   "syncErrorNotSignedInHint": "Prisijunkite, kad sinchronizuotumėte biblioteką.",
   "syncErrorAuthorizationRequired": "Google prašo prisijungti iš naujo.",

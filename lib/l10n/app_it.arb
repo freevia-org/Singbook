@@ -667,6 +667,8 @@
   "accountNoticeSignedOut": "Disconnessione effettuata. I brani restano su questo dispositivo.",
   "syncErrorNotConfigured": "La sincronizzazione non è configurata in questa versione.",
   "syncErrorNotConfiguredHint": "Usa una versione di Singbook configurata per l'accesso con Google.",
+  "syncErrorOAuthClientConfiguration": "Google ha rifiutato la configurazione di accesso di questa build.",
+  "syncErrorOAuthClientConfigurationHint": "Verifica che l’ID OAuth configurato appartenga al client desktop di Singbook.",
   "syncErrorNotSignedIn": "Non hai effettuato l'accesso.",
   "syncErrorNotSignedInHint": "Accedi per sincronizzare la raccolta.",
   "syncErrorAuthorizationRequired": "Google richiede un nuovo accesso.",

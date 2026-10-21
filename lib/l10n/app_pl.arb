@@ -665,6 +665,8 @@
   "accountNoticeSignedOut": "Wylogowano. Utwory pozostają na tym urządzeniu.",
   "syncErrorNotConfigured": "Synchronizacja nie jest skonfigurowana w tej wersji.",
   "syncErrorNotConfiguredHint": "Użyj wersji Singbook skonfigurowanej do logowania przez Google.",
+  "syncErrorOAuthClientConfiguration": "Google odrzuciło konfigurację logowania w tej kompilacji.",
+  "syncErrorOAuthClientConfigurationHint": "Sprawdź, czy skonfigurowany identyfikator OAuth należy do klienta Singbook dla komputerów.",
   "syncErrorNotSignedIn": "Nie jesteś zalogowany.",
   "syncErrorNotSignedInHint": "Zaloguj się, aby zsynchronizować bibliotekę.",
   "syncErrorAuthorizationRequired": "Google wymaga ponownego zalogowania.",

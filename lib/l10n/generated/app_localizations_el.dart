@@ -1588,6 +1588,14 @@ class AppLocalizationsEl extends AppLocalizations {
       'Χρησιμοποίησε έκδοση του Singbook με ρυθμισμένη σύνδεση Google.';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'Η Google απέρριψε τη ρύθμιση σύνδεσης αυτής της έκδοσης.';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'Ελέγξτε ότι το ρυθμισμένο OAuth ID ανήκει στον υπολογιστή-πελάτη Singbook για υπολογιστές.';
+
+  @override
   String get syncErrorNotSignedIn => 'Δεν έχεις συνδεθεί.';
 
   @override

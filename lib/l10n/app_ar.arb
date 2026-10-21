@@ -673,6 +673,8 @@
   "accountNoticeSignedOut": "تم تسجيل الخروج. ستبقى أغانيك على هذا الجهاز.",
   "syncErrorNotConfigured": "المزامنة غير مُعدّة في هذا الإصدار.",
   "syncErrorNotConfiguredHint": "استخدم إصدارًا من Singbook مُعَدًّا لتسجيل الدخول إلى Google.",
+  "syncErrorOAuthClientConfiguration": "رفضت Google إعداد تسجيل الدخول لهذا الإصدار.",
+  "syncErrorOAuthClientConfigurationHint": "تحقق من أن معرّف OAuth المحدد هو عميل Singbook لسطح المكتب.",
   "syncErrorNotSignedIn": "لم تسجل الدخول.",
   "syncErrorNotSignedInHint": "سجّل الدخول لمزامنة مكتبتك.",
   "syncErrorAuthorizationRequired": "تطلب Google تسجيل الدخول مرة أخرى.",

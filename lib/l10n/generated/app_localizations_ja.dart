@@ -1526,6 +1526,14 @@ class AppLocalizationsJa extends AppLocalizations {
       'Googleログインが設定されたSingbookのビルドを使用してください。';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'Google がこのビルドのログイン設定を拒否しました。';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      '設定した OAuth ID が Singbook のデスクトップアプリ用クライアントか確認してください。';
+
+  @override
   String get syncErrorNotSignedIn => 'ログインしていません。';
 
   @override

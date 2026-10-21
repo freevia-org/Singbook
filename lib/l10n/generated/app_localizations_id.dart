@@ -1571,6 +1571,14 @@ class AppLocalizationsId extends AppLocalizations {
       'Gunakan versi Singbook yang dikonfigurasi untuk login Google.';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'Google menolak konfigurasi masuk untuk build ini.';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'Pastikan ID OAuth yang dikonfigurasi adalah milik klien desktop Singbook.';
+
+  @override
   String get syncErrorNotSignedIn => 'Anda belum login.';
 
   @override

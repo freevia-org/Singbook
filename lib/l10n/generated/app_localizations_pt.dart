@@ -1574,6 +1574,14 @@ class AppLocalizationsPt extends AppLocalizations {
       'Use uma versão do Singbook configurada para login com o Google.';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'O Google rejeitou a configuração de início de sessão desta versão.';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'Confirme se o ID OAuth configurado pertence ao cliente para computador do Singbook.';
+
+  @override
   String get syncErrorNotSignedIn => 'Você não está conectado.';
 
   @override

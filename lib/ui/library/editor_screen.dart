@@ -525,6 +525,7 @@ class _EditorScreenState extends State<EditorScreen> {
             if (!_initial.isNew && _initial.songId.isNotEmpty)
               PopupMenuButton<String>(
                 tooltip: l10n.songMenuLabel,
+                icon: const Icon(Icons.more_horiz_rounded),
                 enabled: !_saving,
                 itemBuilder: (_) =>
                     buildLibraryActionMenu(l10n, actions: const {'delete'}),

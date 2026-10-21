@@ -1584,6 +1584,14 @@ class AppLocalizationsDe extends AppLocalizations {
       'Verwende eine Singbook-Version mit eingerichtetem Google-Login.';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'Google hat die Anmeldekonfiguration dieses Builds abgelehnt.';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'Prüfe, ob die konfigurierte OAuth-ID zu Singbooks Desktop-App-Client gehört.';
+
+  @override
   String get syncErrorNotSignedIn => 'Du bist nicht angemeldet.';
 
   @override

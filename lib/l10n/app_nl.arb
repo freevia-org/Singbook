@@ -665,6 +665,8 @@
   "accountNoticeSignedOut": "Afgemeld. Je nummers blijven op dit apparaat.",
   "syncErrorNotConfigured": "Synchronisatie is in deze versie niet ingesteld.",
   "syncErrorNotConfiguredHint": "Gebruik een versie van Singbook waarin Google-aanmelding is ingesteld.",
+  "syncErrorOAuthClientConfiguration": "Google heeft de aanmeldconfiguratie van deze build afgewezen.",
+  "syncErrorOAuthClientConfigurationHint": "Controleer of de ingestelde OAuth-ID bij de desktopclient van Singbook hoort.",
   "syncErrorNotSignedIn": "Je bent niet aangemeld.",
   "syncErrorNotSignedInHint": "Meld je aan om je bibliotheek te synchroniseren.",
   "syncErrorAuthorizationRequired": "Google vraagt je om je opnieuw aan te melden.",

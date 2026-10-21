@@ -604,13 +604,37 @@ class _SettingsSectionScreenState extends State<_SettingsSectionScreen> {
       final state = controller.state;
       final fontSize = _draggingFontSize ?? state.lyricsFontSize;
       final backup = widget.backupSection();
+      final contentWidth = MediaQuery.sizeOf(context).width;
+      final frameInset = contentWidth > 1200
+          ? (contentWidth - 1200) / 2
+          : 0.0;
+      final horizontalInset = frameInset + 16;
       return Scaffold(
-        appBar: AppBar(title: Text(_sectionTitle(l10n, widget.section))),
+        appBar: AppBar(
+          centerTitle: false,
+          leadingWidth: 56 + frameInset,
+          leading: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Padding(
+              padding: EdgeInsetsDirectional.only(start: frameInset),
+              child: const SizedBox(width: 56, child: BackButton()),
+            ),
+          ),
+          title: Text(
+            _sectionTitle(l10n, widget.section),
+            key: const ValueKey('settings-section-title'),
+          ),
+        ),
         body: SafeArea(
           top: false,
           child: ListView(
             key: PageStorageKey('settings-${widget.section.name}'),
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 28),
+            padding: EdgeInsets.fromLTRB(
+              horizontalInset,
+              4,
+              horizontalInset,
+              28,
+            ),
             children: [
               if (widget.section == _SettingsSection.appearance) ...[
                 _SettingCard(

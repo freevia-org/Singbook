@@ -1587,6 +1587,14 @@ class AppLocalizationsMt extends AppLocalizations {
       'Uża verżjoni ta’ Singbook b’aċċess għal Google kkonfigurat.';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'Google ċaħdet il-konfigurazzjoni tad-dħul għal din il-build.';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'Iċċekkja li l-ID OAuth ikkonfigurat huwa tal-klijent tad-desktop ta’ Singbook.';
+
+  @override
   String get syncErrorNotSignedIn => 'M’intix illoggjat.';
 
   @override

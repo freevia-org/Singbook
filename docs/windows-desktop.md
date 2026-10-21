@@ -60,11 +60,16 @@ Create an OAuth client of type **Desktop app** in the **same Google Cloud
 project** as the Android/iOS clients, with Drive API and Google Picker API
 enabled. Do not use the
 Android or Web client ID for the desktop loopback flow. Copy its identifier to
-`VERSE_GOOGLE_DESKTOP_CLIENT_ID` in the ignored build configuration. If the
+`SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID` in the ignored build configuration. If the
 downloaded desktop registration requires its generated client secret, put it in
-`VERSE_GOOGLE_DESKTOP_CLIENT_SECRET`. Do not put the downloaded JSON or tokens
-in Git or validation logs. Desktop registrations are public clients; PKCE is
-still required even when a registration has this field.
+`SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET`. For GitHub Actions builds, configure the
+ID as the `SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID` Actions variable and, only when the
+registration requires it, configure the secret as the
+`SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET` Actions secret. The Windows package embeds
+any configured value, so it is not confidential once distributed. Do not put
+the downloaded JSON or tokens in Git or validation logs. Desktop registrations
+are public clients; PKCE is still required even when a registration has this
+field.
 
 The desktop module opens the system browser, validates a random state value at
 an ephemeral IPv4 loopback callback, exchanges an S256 PKCE code, obtains the
@@ -105,6 +110,167 @@ clipboard for an unattended check.
 | Print/links | Windows print/save-to-PDF/cancel and external-browser launch. |
 | Layout | Native screenshots at compact/desktop sizes, large text, DPI changes, themes and RTL. |
 | Delivery | Release bundle extracted outside checkout, dependencies present and clean-machine launch. |
+
+### Current automated and native evidence — 2026-10-21
+
+The latest PR-head CI run, [39668863757](https://github.com/freevia-org/Singbook/actions/runs/39668863757), passed on `673869eb4c3ffebd17deef452af1ee16f7ad00da`. Linux localization verification, analysis and the full Flutter suite passed. Windows OAuth preflight, release packaging, isolated portable startup and graceful close, native clipboard and Credential Manager checks, and the full Flutter suite passed. The OAuth release-enforcement step was skipped because its preflight dependency succeeded. The run preserved `windows-release-bundle` and `windows-validation-evidence`; the bundle artifact digest is `sha256:06ddd57bdb6c3e6a3411c0409581e4041b00f77fd1f7910d390fd86ae1a7809f` (the digest is for the enclosing GitHub artifact, not the portable ZIP inside it). These checks verify the current PR head's build and automated behavior, but do not close the native UI acceptance gaps listed below.
+
+PR #93 head `fd5d77babc6bc8317e058f8a390d154c830c9fbb` passed both jobs in
+[CI run 39657693802](https://github.com/freevia-org/Singbook/actions/runs/39657693802).
+Linux localization verification, analysis and the full Flutter suite passed.
+Windows passed Desktop OAuth configuration preflight, release packaging,
+isolated portable startup and graceful close, native clipboard and Credential
+Manager checks, and the full Flutter suite. The OAuth preflight reached Google's
+expected invalid-code response; it confirms configured Desktop OAuth values,
+not a fresh sign-in or the complete Drive lifecycle. The clipboard check sends
+`WM_PASTE` to a hidden native edit control and verifies Unicode plain text; it
+does not prove formatted paste into another application.
+
+The run's portable package is version `0.2.12+26`, built from synthetic PR
+merge commit `dba0f64aa4f39d3e0a3ce500ff181d64671ac72f` with PR head
+`fd5d77babc6bc8317e058f8a390d154c830c9fbb`, ZIP SHA-256
+`C63ADD111A7F6809FBF4FB00F38CA3CE25B0ABBAE0DF5263096AEB142D6C9E45`.
+The downloaded archive was checked against its manifest: all 54 files were
+present and all hashes matched. The package embeds the configured Desktop
+OAuth client ID and secret. Source-layout captures also
+cover desktop library, setlists, reader, editor, settings, dark mode and
+compact/large-text variants. Those widget captures do not establish the full
+packaged native size, DPI, theme and localization matrix.
+
+The broader scripted Sandbox workflows used the packaged build from CI run
+39642446550 (ZIP SHA-256
+`D439E3BADCBE30D9FB468E55EA26A473D121616B7F6C5CC280CB5A87E9654AB8`), whose
+runtime source was the implementation head above. The later PR update contained
+documentation and screenshots only; CI run 39647967822 also rebuilt and
+smoke-checked the current package. Sandbox testing ran at 144 DPI on a
+2048×1232 display with fresh disposable database paths and no Drive sign-in.
+Native screenshots and summaries are held in the
+run-specific evidence folders below `E:\acceptance\Singbook-native-819278c2\`:
+`final-evidence`, `restore-evidence`, `restore-apply-evidence`,
+`setlist-add2-evidence`, `setlist-reopen-evidence`, and `setlist-export-evidence`.
+It verified app
+startup, native `.cho` import, cancellation of a second import, reader
+navigation, readable untruncated timeline labels (Intro, Verse 1, Chorus,
+Verse 2, Chorus and Outro), account-and-sync layout, native backup Save As, and
+backup preview showing one song and zero conflicts. The exported
+`.lyrics-setlist` archive passed ZIP integrity checks and contains the synthetic
+fixture. The app closed gracefully; the temporary database contains only that
+fixture. A second clean disposable database accepted the exported backup in
+the native restore flow; a direct SQLite check found exactly the synthetic song
+and no setlists, and the app closed gracefully. The native setlist flow created
+a list, added the fixture, then showed the saved one-song, 1:30 setlist after a
+fresh app launch; SQLite confirmed one song, one setlist and one setlist entry.
+Native `.osts` export produced well-formed OpenSong XML with the synthetic
+song, PDF export produced a readable two-page PDF, and Print opened the Windows
+Print Setup dialog and closed on cancel. A dirty-editor close test showed the
+native discard prompt, confirmed cancel kept the editor open, saved the edited
+synthetic title, then reopened the same database after a full app restart and
+confirmed the saved title persisted. This test used the same prior packaged
+build and a disposable database; evidence is in `editor-close-evidence`.
+
+The follow-up print-to-PDF attempt did not produce a saved file. Sandbox
+inspection confirmed `Printing-PrintToPDFServices-Features` is
+`DisabledWithPayloadRemoved`; every available printer is redirected through
+Remote Desktop Easy Print, including “Microsoft Print to PDF (redirected 1).”
+This explains the missing local save dialog but does not count as a successful
+print acceptance.
+
+Setlist edit and mouse reorder were then verified using a disposable two-song
+database. The first row was dragged below the second, the setlist was renamed
+through the inline editor, and after full restart both the new title and row
+order were visible in the setlist card and SQLite. Screenshots and run summary
+are in `setlist-edit-evidence` and `setlist-edit-final-evidence`.
+The exact portable ZIP from CI run 39657693802 (SHA-256
+`C63ADD111A7F6809FBF4FB00F38CA3CE25B0ABBAE0DF5263096AEB142D6C9E45`) also
+passed packaged ChordPro and song-PDF Save As checks. Both files were saved
+through the Windows dialog into a Unicode directory (`Пісні QA`); ChordPro
+content, PDF signature and size, and graceful app shutdown were verified. The
+run summary and dialog screenshots are in
+`E:\acceptance\Singbook-native-819278c2\song-export-uia-evidence`, and the
+outputs are in `E:\acceptance\Singbook-native-819278c2\exports\Пісні QA`.
+Packaged player checks in `E:\acceptance\Singbook-native-819278c2\player-ui-evidence`
+verified mouse Play, Space pause/resume, next-section navigation and persistent
+settings. After disabling chords and section headings, closing and reopening the
+app preserved both settings; the reader hid chords while retaining the full
+timeline. Reinspection of the packaged Settings screenshots confirms the preview
+also hides its sample chord labels and section heading when both switches are
+off. The live preview widget test covers changing both switches without leaving
+Settings. Screenshots and summary are in `player-ui-evidence` and
+`player-state-check-evidence`.
+
+Representative exact-package native screenshots are committed for review:
+[reader and timeline](images/windows-desktop-review/packaged-20261021/reader-144dpi.png),
+[setlist after restart](images/windows-desktop-review/packaged-20261021/setlists-after-restart.png),
+[account settings](images/windows-desktop-review/packaged-20261021/account-144dpi.png),
+[backup Save As](images/windows-desktop-review/packaged-20261021/backup-save-as.png),
+[restore preview](images/windows-desktop-review/packaged-20261021/restore-preview.png),
+and [Windows Print Setup](images/windows-desktop-review/packaged-20261021/print-setup.png).
+At this desktop size the reader's lyrics column and playback rail are centered
+within the app frame, timeline labels remain legible, and account cards stay
+aligned. A fresh exact-package Sandbox review at 1024×720 confirms the Songs
+library remains legible and aligned in a compact desktop window: [library at
+1024×720](images/windows-desktop-review/packaged-20261021/library-1024x720.png).
+The 1280×800 Sandbox matrix also covers library, setlists, and reader. This
+review does not substitute for the remaining DPI, theme, and locale matrix.
+
+Source-layout captures also cover desktop library, setlists, reader, editor,
+settings, dark mode, and compact/large-text variants. Four representative
+captures are committed for review: [library](images/windows-desktop-review/library.png),
+[setlists](images/windows-desktop-review/setlists.png),
+[reader](images/windows-desktop-review/reader.png), and
+[editor](images/windows-desktop-review/editor.png). The library uses a balanced
+three-column grid, and the reader and setlist content stay centered with no
+visible clipping. Short landscape comparison previews now use denser spacing;
+the `native-shaped short landscape shows chords and match above Save` regression
+test covers a 2.625× device scale with safe-area insets. The full affected UI test
+file passes locally.
+
+Automated Windows tests additionally cover Unicode export filenames, ChordPro
+and song/setlist PDF bytes, Save As cancellation and errors, setlist drag and
+accessibility reorder behavior, player preference persistence, Windows HTTP
+103/redirect/concurrency behavior, and database/startup path handling. These
+checks establish the application logic and platform adapters; they do not
+exercise every native dialog or interaction in the packaged app.
+
+Last fully verified package candidate before the Windows live-smoke helper update:
+PR #93 head `868bee9cf2740ee8fef39ba2911cfaf7c988dd2d` (the PR remains open and
+Draft).
+CI run [39675132042](https://github.com/freevia-org/Singbook/actions/runs/39675132042)
+passed both Linux and Windows jobs on that PR head. Windows OAuth preflight,
+release packaging, isolated portable startup and graceful close, native
+clipboard and Credential Manager checks, and the full Flutter suite passed.
+The release-enforcement step was skipped because OAuth preflight succeeded.
+The run produced a version `0.2.12+26` portable ZIP with SHA-256
+`C2416218C96954958EB164EBDEAB87F0ACB6F4AFF1D8BF5BAF99FB60272ABB3B`.
+Its manifest identifies source commit `f12501a85098281a9dec5abe2beb15eafce79d2d`
+and source tree `420923c412fb7b02d3bb643aa1851905e5d53f8e`; all 54 packaged
+file hashes and 50 required-file entries were verified from the downloaded CI
+artifact. OAuth configuration is present (only presence flags are recorded).
+
+The current large-screen widget captures remain source-current: production UI
+code has not changed since commit `819278c`. A read-only review of the 1920×1080
+English/Ukrainian light/dark library, setlists, reader, editor, home and account
+captures found no actionable alignment or clipping defect. This is source/widget
+evidence, not packaged Windows DPI/font-scaling proof.
+
+Release readiness is still unproven. Remaining packaged-native checks include
+printing to a saved PDF; formatted paste into another application; the packaged
+UI's provider search-to-open workflow; and the complete locale/theme/DPI and
+compact/large-screen matrix. An opt-in public-provider smoke run on 2026-10-22
+used `WindowsHttpClient` directly (the `dart run` conditional import otherwise
+selects a fallback client): Worship Commons, Sean McGrath Music, Open Filk
+Songbook and Chordie returned lyric results; MusicBrainz returned catalog rows
+without lyrics; Wikidata and Wikisource returned HTTP 403. The probe exited 0
+and logged provider IDs, result titles, counts, body lengths, chord/timing flags
+and metadata keys, not lyrics or credentials. This is partial provider/transport evidence, not packaged UI
+acceptance or a pass for providers returning 403. The user confirmed that their
+existing library synced successfully in a previous `0.2.12+26` interactive
+session; no synthetic song was uploaded. Token refresh, offline recovery,
+revoked-grant handling and sign-out still need lifecycle acceptance. This turn
+used CI, repository and command-line provider evidence only; no Sandbox was
+used. Installer, SmartScreen and antivirus behavior are not applicable to the
+portable ZIP workflow and were not assessed. Keep PR #93 in Draft until the
+required acceptance rows are passed or explicitly waived.
 
 The frozen `e0e14a1` source passed both jobs in
 [CI run 39237237228](https://github.com/freevia-org/Singbook/actions/runs/39237237228):

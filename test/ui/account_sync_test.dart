@@ -16,6 +16,7 @@ import 'theme_contrast_test.dart' show contrastRatio;
 /// Every machine code the engine can report, plus one it cannot.
 const _codes = [
   'not_configured',
+  'oauth_client_configuration',
   'not_signed_in',
   'authorization_required',
   'access_denied',
@@ -448,9 +449,14 @@ void main() {
       }
     });
 
-    testWidgets('an unconfigured build offers no retry', (tester) async {
-      await _pump(tester, () => _account(error: 'not_configured'));
-      expect(find.text(l10nOf(tester).actionRetry), findsNothing);
+    testWidgets('OAuth configuration errors offer no retry', (tester) async {
+      for (final code in const [
+        'not_configured',
+        'oauth_client_configuration',
+      ]) {
+        await _pump(tester, () => _account(error: code));
+        expect(find.text(l10nOf(tester).actionRetry), findsNothing);
+      }
     });
 
     testWidgets('the error clears while a new sync runs', (tester) async {
@@ -637,6 +643,57 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('cloud-button')));
       expect(opened, 1);
     });
+
+    testWidgets(
+      'desktop header and home controls fit at 150% Windows scaling',
+      (tester) async {
+        const physicalSize = Size(1365, 821);
+        const dpiScale = 1.5;
+        final controller = FakeUiController(
+          (_) => _account(tab: VerseTab.home, signedIn: false),
+        );
+        addTearDown(controller.dispose);
+        await pumpShell(
+          tester,
+          controller,
+          size: physicalSize,
+          devicePixelRatio: dpiScale,
+        );
+
+        final logicalWidth = physicalSize.width / dpiScale;
+        for (final key in const [
+          'cloud-button',
+          'header-overflow-menu',
+          'home-mode-online',
+        ]) {
+          final rect = tester.getRect(find.byKey(ValueKey(key)));
+          expect(rect.left, greaterThanOrEqualTo(0), reason: key);
+          expect(rect.right, lessThanOrEqualTo(logicalWidth), reason: key);
+        }
+        expect(tester.takeException(), isNull);
+
+        // Also exercise a wider desktop viewport at 150% DPI. This gives
+        // Flutter a 1138dp logical width for the home controls to fit within.
+        const sandboxPhysicalSize = Size(1707, 987);
+        tester.view.physicalSize = sandboxPhysicalSize;
+        await tester.pump();
+        final sandboxLogicalWidth = sandboxPhysicalSize.width / dpiScale;
+        for (final key in const [
+          'cloud-button',
+          'header-overflow-menu',
+          'home-mode-online',
+        ]) {
+          final rect = tester.getRect(find.byKey(ValueKey(key)));
+          expect(rect.left, greaterThanOrEqualTo(0), reason: key);
+          expect(
+            rect.right,
+            lessThanOrEqualTo(sandboxLogicalWidth),
+            reason: key,
+          );
+        }
+        expect(tester.takeException(), isNull);
+      },
+    );
   });
 
   group('App lifecycle', () {

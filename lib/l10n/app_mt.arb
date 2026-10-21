@@ -665,6 +665,8 @@
   "accountNoticeSignedOut": "Ħriġt mill-kont. Il-kanzunetti tiegħek jibqgħu fuq dan l-apparat.",
   "syncErrorNotConfigured": "Is-sinkronizzazzjoni mhix ikkonfigurata f’din il-verżjoni.",
   "syncErrorNotConfiguredHint": "Uża verżjoni ta’ Singbook b’aċċess għal Google kkonfigurat.",
+  "syncErrorOAuthClientConfiguration": "Google ċaħdet il-konfigurazzjoni tad-dħul għal din il-build.",
+  "syncErrorOAuthClientConfigurationHint": "Iċċekkja li l-ID OAuth ikkonfigurat huwa tal-klijent tad-desktop ta’ Singbook.",
   "syncErrorNotSignedIn": "M’intix illoggjat.",
   "syncErrorNotSignedInHint": "Idħol biex tissinkronizza l-librerija tiegħek.",
   "syncErrorAuthorizationRequired": "Google teħtieġ li terġa’ tidħol.",

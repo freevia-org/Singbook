@@ -1569,6 +1569,14 @@ class AppLocalizationsVi extends AppLocalizations {
       'Dùng bản dựng Singbook đã cấu hình đăng nhập Google.';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'Google đã từ chối cấu hình đăng nhập của bản dựng này.';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'Hãy kiểm tra xem OAuth ID đã cấu hình có thuộc ứng dụng máy tính Singbook hay không.';
+
+  @override
   String get syncErrorNotSignedIn => 'Bạn chưa đăng nhập.';
 
   @override

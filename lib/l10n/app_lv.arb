@@ -665,6 +665,8 @@
   "accountNoticeSignedOut": "Izrakstījāties. Dziesmas paliek šajā ierīcē.",
   "syncErrorNotConfigured": "Šajā versijā sinhronizācija nav iestatīta.",
   "syncErrorNotConfiguredHint": "Izmantojiet Singbook versiju ar konfigurētu pierakstīšanos Google kontā.",
+  "syncErrorOAuthClientConfiguration": "Google noraidīja šīs versijos pierakstīšanās konfigurāciju.",
+  "syncErrorOAuthClientConfigurationHint": "Pārbaudiet, vai konfigurētais OAuth ID pieder Singbook datora lietotnes klientam.",
   "syncErrorNotSignedIn": "Pierakstīšanās nav veikta.",
   "syncErrorNotSignedInHint": "Pierakstieties, lai sinhronizētu bibliotēku.",
   "syncErrorAuthorizationRequired": "Google pieprasa pierakstīties vēlreiz.",

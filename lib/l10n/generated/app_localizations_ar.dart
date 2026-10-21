@@ -1590,6 +1590,14 @@ class AppLocalizationsAr extends AppLocalizations {
       'استخدم إصدارًا من Singbook مُعَدًّا لتسجيل الدخول إلى Google.';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'رفضت Google إعداد تسجيل الدخول لهذا الإصدار.';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'تحقق من أن معرّف OAuth المحدد هو عميل Singbook لسطح المكتب.';
+
+  @override
   String get syncErrorNotSignedIn => 'لم تسجل الدخول.';
 
   @override

@@ -297,13 +297,17 @@ void main() {
           artist: 'Judy Collins',
         ),
         body: 'Amazing grace, how sweet the sound',
-        metadata: {'durationSeconds': 247},
+        metadata: {'durationSeconds': 247, 'key': 'E'},
         matchKind: MatchKind.sameSong,
       );
       final previous = combineSources(selected, [source]).copyWith(
         id: 'existing-song',
         body: '[D]My edited lyric stays here',
-        metadata: {'durationSeconds': 90, 'key': 'D'},
+        metadata: {
+          'durationSeconds': 90,
+          'key': 'D',
+          'composer': 'Prior Composer',
+        },
         extra: {
           ...combineSources(selected, [source]).extra,
           'savedSourceId': source.id,
@@ -321,9 +325,145 @@ void main() {
       final repaired = app.findSong('existing-song')!;
       expect(app.songs, hasLength(1));
       expect(repaired.metadata['durationSeconds'], 247);
-      expect(repaired.metadata['key'], isNull);
+      expect(repaired.metadata['key'], 'E');
+      expect(repaired.metadata['composer'], 'Prior Composer');
       expect(repaired.body, source.body);
       expect(repaired.extra['fieldOrigins']['durationSeconds'], source.id);
+      expect(repaired.extra['fieldOrigins']['key'], source.id);
+    },
+  );
+
+  test(
+    'replacement recovers an old sourced key from matching chords',
+    () async {
+      const selected = SongCandidate(
+        providerId: 'catalog',
+        id: 'keyed-song',
+        title: 'Keyed Song',
+        artist: 'Artist',
+      );
+      const chart = '[D]One [G]two\n[A]three [D]four\n[Bm]five [G]six';
+      const oldKeySource = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'chart_catalog',
+          id: 'old-chart',
+          title: 'Keyed Song',
+          artist: 'Artist',
+        ),
+        body: chart,
+        metadata: {'key': 'D'},
+        matchKind: MatchKind.sameSong,
+      );
+      const replacementSource = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'new_catalog',
+          id: 'new-chart',
+          title: 'Keyed Song',
+          artist: 'Artist',
+        ),
+        body: chart,
+        matchKind: MatchKind.sameSong,
+      );
+      await app.saveSong(
+        SongDocument(
+          id: 'keyed-song-local',
+          title: selected.title,
+          artist: selected.artist,
+          body: chart,
+          metadata: {'key': 'D'},
+          sources: const [oldKeySource],
+          selectedRecording: selected,
+          extra: {
+            'fieldOrigins': {'key': oldKeySource.id},
+            'fieldContributors': {
+              'key': [oldKeySource.id],
+            },
+            'keySourceIds': [oldKeySource.id],
+          },
+        ),
+      );
+
+      final replacement = combineSources(selected, [replacementSource]);
+      final saved = await repository.saveChosenSong(replacement);
+
+      expect(saved.metadata['key'], 'D');
+      expect(saved.extra['fieldOrigins']['key'], oldKeySource.id);
+
+      const mismatchedChart =
+          '[D]One [G]two\n[B]three [D]four\n[Bm]five [G]six';
+      final replacedAgain = await repository.saveChosenSong(
+        combineSources(selected, [
+          const SourceResult(
+            candidate: SongCandidate(
+              providerId: 'new_catalog',
+              id: 'different-chart',
+              title: 'Keyed Song',
+              artist: 'Artist',
+            ),
+            body: mismatchedChart,
+            matchKind: MatchKind.sameSong,
+          ),
+        ]),
+      );
+      expect(replacedAgain.metadata.containsKey('key'), isFalse);
+      expect(replacedAgain.extra['fieldOrigins'], isNot(contains('key')));
+      expect(replacedAgain.extra['fieldContributors'], isNot(contains('key')));
+      expect(replacedAgain.extra, isNot(contains('keySourceIds')));
+    },
+  );
+
+  test(
+    'replacement keeps an explicit key-removal marker through reload',
+    () async {
+      const selected = SongCandidate(
+        providerId: 'catalog',
+        id: 'removed-key-song',
+        title: 'Removed Key Song',
+        artist: 'Artist',
+      );
+      const oldKeySource = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'old_catalog',
+          id: 'old-song',
+          title: 'Removed Key Song',
+          artist: 'Artist',
+        ),
+        body: 'Same lyrics',
+        metadata: {'key': 'D'},
+        matchKind: MatchKind.sameSong,
+      );
+      const replacementSource = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'new_catalog',
+          id: 'new-song',
+          title: 'Removed Key Song',
+          artist: 'Artist',
+        ),
+        body: 'Same lyrics',
+        matchKind: MatchKind.sameSong,
+      );
+      await app.saveSong(
+        SongDocument(
+          id: 'removed-key-song-local',
+          title: selected.title,
+          artist: selected.artist,
+          body: oldKeySource.body,
+          sources: const [oldKeySource],
+          selectedRecording: selected,
+          extra: {
+            'fieldOrigins': {'key': 'user'},
+          },
+        ),
+      );
+
+      final saved = await repository.saveChosenSong(
+        combineSources(selected, [replacementSource]),
+      );
+      final reloaded = await repository.getSong(saved.id);
+
+      expect(reloaded!.metadata.containsKey('key'), isFalse);
+      expect(reloaded.extra['fieldOrigins']['key'], 'user');
+      expect(reloaded.extra, isNot(contains('keySourceIds')));
     },
   );
 

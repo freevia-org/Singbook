@@ -237,6 +237,14 @@ void main() {
       final l10n = l10nOf(tester);
       final lyrics = find.byKey(const ValueKey('tablet-reader-content'));
       final expandedSize = tester.getSize(lyrics);
+      if (scenario.$1 == 'compact landscape') {
+        expect(expandedSize.height, greaterThan(scenario.$2.height - 24));
+        expect(find.text('Original panel fixture'), findsOneWidget);
+        expect(
+          tester.getRect(find.text('Original panel fixture')).left,
+          greaterThanOrEqualTo(tester.getRect(lyrics).right),
+        );
+      }
       final hide = find.byTooltip(l10n.playerCollapseControls);
       expect(tester.getSize(hide).height, greaterThanOrEqualTo(48));
       await tester.tap(hide);
@@ -252,20 +260,28 @@ void main() {
         expect(collapsedSize.height, greaterThan(expandedSize.height));
       } else {
         expect(collapsedSize.width, greaterThan(expandedSize.width));
+        expect(collapsedSize.height, closeTo(expandedSize.height, .1));
       }
       expect(
         tester.getRect(restore).bottom,
         lessThanOrEqualTo(scenario.$2.height),
       );
 
-      await tester.drag(restore, const Offset(0, -80));
+      await tester.drag(
+        restore,
+        scenario.$1 == 'portrait'
+            ? const Offset(0, -80)
+            : const Offset(-80, 0),
+      );
       await flush(tester);
       expect(ui.state.playerControlsExpanded, isTrue);
       expect(find.byKey(const ValueKey('player-seek-slider')), findsOneWidget);
 
       await tester.drag(
         find.byTooltip(l10n.playerCollapseControls),
-        const Offset(0, 80),
+        scenario.$1 == 'portrait'
+            ? const Offset(0, 80)
+            : const Offset(80, 0),
       );
       await flush(tester);
       expect(ui.state.playerControlsExpanded, isFalse);

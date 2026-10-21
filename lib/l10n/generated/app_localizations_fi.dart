@@ -1566,6 +1566,14 @@ class AppLocalizationsFi extends AppLocalizations {
       'Käytä Singbook-versiota, jossa Google-kirjautuminen on määritetty.';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'Google hylkäsi tämän version kirjautumisasetukset.';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'Tarkista, että määritetty OAuth-tunnus kuuluu Singbookin työpöytäsovellukselle.';
+
+  @override
   String get syncErrorNotSignedIn => 'Et ole kirjautunut sisään.';
 
   @override

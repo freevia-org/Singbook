@@ -665,6 +665,8 @@
   "accountNoticeSignedOut": "Deconectat. Melodiile rămân pe acest dispozitiv.",
   "syncErrorNotConfigured": "Sincronizarea nu este configurată în această versiune.",
   "syncErrorNotConfiguredHint": "Folosește o versiune Singbook configurată pentru autentificarea Google.",
+  "syncErrorOAuthClientConfiguration": "Google a respins configurația de conectare a acestei versiuni.",
+  "syncErrorOAuthClientConfigurationHint": "Verificați dacă ID-ul OAuth configurat aparține clientului desktop Singbook.",
   "syncErrorNotSignedIn": "Nu ești conectat.",
   "syncErrorNotSignedInHint": "Conectează-te pentru a sincroniza biblioteca.",
   "syncErrorAuthorizationRequired": "Google îți cere să te conectezi din nou.",

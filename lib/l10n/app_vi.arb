@@ -665,6 +665,8 @@
   "accountNoticeSignedOut": "Đã đăng xuất. Bài hát vẫn trên thiết bị này.",
   "syncErrorNotConfigured": "Bản dựng này chưa thiết lập đồng bộ hóa.",
   "syncErrorNotConfiguredHint": "Dùng bản dựng Singbook đã cấu hình đăng nhập Google.",
+  "syncErrorOAuthClientConfiguration": "Google đã từ chối cấu hình đăng nhập của bản dựng này.",
+  "syncErrorOAuthClientConfigurationHint": "Hãy kiểm tra xem OAuth ID đã cấu hình có thuộc ứng dụng máy tính Singbook hay không.",
   "syncErrorNotSignedIn": "Bạn chưa đăng nhập.",
   "syncErrorNotSignedInHint": "Đăng nhập để đồng bộ hóa thư viện.",
   "syncErrorAuthorizationRequired": "Google yêu cầu bạn đăng nhập lại.",

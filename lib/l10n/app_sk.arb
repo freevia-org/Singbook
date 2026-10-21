@@ -665,6 +665,8 @@
   "accountNoticeSignedOut": "Odhlásili ste sa. Vaše piesne zostávajú v tomto zariadení.",
   "syncErrorNotConfigured": "V tomto zostavení nie je synchronizácia nastavená.",
   "syncErrorNotConfiguredHint": "Použite verziu aplikácie Singbook s nakonfigurovaným prihlasovaním cez Google.",
+  "syncErrorOAuthClientConfiguration": "Google odmietol konfiguráciu prihlásenia v tomto zostavení.",
+  "syncErrorOAuthClientConfigurationHint": "Skontrolujte, či nastavené OAuth ID patrí desktopovému klientovi Singbook.",
   "syncErrorNotSignedIn": "Nie ste prihlásení.",
   "syncErrorNotSignedInHint": "Prihláste sa a synchronizujte svoju knižnicu.",
   "syncErrorAuthorizationRequired": "Google vyžaduje, aby ste sa znova prihlásili.",
