@@ -19,14 +19,19 @@ try {
     $mode = if ($Debug) { 'debug' } else { 'release' }
     $configuration = if ($Debug) { 'Debug' } else { 'Release' }
     $buildArguments = @('build', 'windows', "--$mode")
+    $desktopClientId = $null
     if (Test-Path -LiteralPath $DefinesFile) {
         $buildArguments += "--dart-define-from-file=$DefinesFile"
+        $defines = Get-Content -LiteralPath $DefinesFile -Raw | ConvertFrom-Json
+        $desktopIdProperty = $defines.PSObject.Properties['VERSE_GOOGLE_DESKTOP_CLIENT_ID']
+        if ($null -ne $desktopIdProperty) { $desktopClientId = [string]$desktopIdProperty.Value }
     } elseif (-not $AllowMissingDefines) {
         throw 'Build configuration is missing. Provide -DefinesFile or use -AllowMissingDefines for an offline preview.'
     }
     # CI supplies the public Desktop OAuth client ID as an Actions variable.
     # Keep it out of the checkout and pass it directly to Flutter's compiler.
     if (-not [string]::IsNullOrWhiteSpace($env:VERSE_GOOGLE_DESKTOP_CLIENT_ID)) {
+        $desktopClientId = $env:VERSE_GOOGLE_DESKTOP_CLIENT_ID
         $buildArguments += "--dart-define=VERSE_GOOGLE_DESKTOP_CLIENT_ID=$($env:VERSE_GOOGLE_DESKTOP_CLIENT_ID)"
     }
     $stamp = [DateTime]::UtcNow.ToString('yyyyMMddTHHmmssfffZ')
@@ -105,12 +110,27 @@ try {
             throw "Windows bundle is incomplete: missing or empty $relative"
         }
     }
+    $desktopClientIdSha256 = $null
+    if (-not [string]::IsNullOrWhiteSpace($desktopClientId)) {
+        $sha256 = [Security.Cryptography.SHA256]::Create()
+        try {
+            $desktopClientIdSha256 = [BitConverter]::ToString(
+                $sha256.ComputeHash([Text.Encoding]::UTF8.GetBytes($desktopClientId))
+            ).Replace('-', '')
+        } finally {
+            $sha256.Dispose()
+        }
+    }
     $manifest = @{
         version = $versionMatch.Groups[1].Value
         sourceCommit = $revision
         sourceTree = (& git rev-parse 'HEAD^{tree}').Trim()
         configuration = $mode
         distribution = if ($Debug) { 'local-development-only' } else { 'portable-release' }
+        oauthConfiguration = @{
+            googleDesktopClientIdConfigured = -not [string]::IsNullOrWhiteSpace($desktopClientId)
+            googleDesktopClientIdSha256 = $desktopClientIdSha256
+        }
         builtAtUtc = $stamp
         requiredFiles = @($requiredFiles | Sort-Object)
         files = @(Get-ChildItem -LiteralPath $bundle -File -Recurse | ForEach-Object {
