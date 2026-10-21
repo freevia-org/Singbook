@@ -39,7 +39,11 @@ SourceResult _source(
 );
 
 void main() {
-  for (final title in ["It's Probably Me", 'Its Probably Me', 'It‘s Probably Me']) {
+  for (final title in [
+    "It's Probably Me",
+    'Its Probably Me',
+    'It‘s Probably Me',
+  ]) {
     test('Combined includes chords discovery accepted for $title', () {
       final donor = _source('chart', _chart, title: title);
       expect(sameSong(_selected, donor.candidate), isTrue);
@@ -65,7 +69,12 @@ void main() {
       title: 'Song',
       artist: 'Artist’s Band',
     );
-    final donor = _source('chart', _chart, title: 'Song', artist: 'Artists Band');
+    final donor = _source(
+      'chart',
+      _chart,
+      title: 'Song',
+      artist: 'Artists Band',
+    );
     expect(sameSong(selected, donor.candidate), isTrue);
     final song = combineSources(selected, [
       _source('lyrics', _lyrics, title: 'Song', artist: 'Artist’s Band'),
@@ -75,23 +84,29 @@ void main() {
     expect(song.extra['chordSourceIds'], [donor.id]);
   });
 
-  test('complete chart retains every chord and instrumental row in Combined', () {
-    const chart =
-        '{comment: Intro}\n[Em] [Am] [B7]\n'
-        '[Em]Amber lanterns glow above the quiet [Am]harbor\n'
-        '[D]Silver rain returns across the sleepy [G]water\n'
-        '[C]Morning brings another distant [B7]melody\n'
-        '{comment: Outro}\n[Em] [Am] [B7] [Em]';
-    final lyrics = _source('lyrics', _lyrics);
-    final donor = _source('chart', chart, title: 'Its Probably Me');
-    for (final sources in [[lyrics, donor], [donor, lyrics]]) {
-      final song = combineSources(_selected, sources);
-      expect(song.body, chart);
-      expect(plainLyrics(song.body), _lyrics);
-      expect(song.extra['chordSourceIds'], [donor.id]);
-      expect(song.extra['selectedSourceId'], donor.id);
-    }
-  });
+  test(
+    'complete chart retains every chord and instrumental row in Combined',
+    () {
+      const chart =
+          '{comment: Intro}\n[Em] [Am] [B7]\n'
+          '[Em]Amber lanterns glow above the quiet [Am]harbor\n'
+          '[D]Silver rain returns across the sleepy [G]water\n'
+          '[C]Morning brings another distant [B7]melody\n'
+          '{comment: Outro}\n[Em] [Am] [B7] [Em]';
+      final lyrics = _source('lyrics', _lyrics);
+      final donor = _source('chart', chart, title: 'Its Probably Me');
+      for (final sources in [
+        [lyrics, donor],
+        [donor, lyrics],
+      ]) {
+        final song = combineSources(_selected, sources);
+        expect(song.body, chart);
+        expect(plainLyrics(song.body), _lyrics);
+        expect(song.extra['chordSourceIds'], [donor.id]);
+        expect(song.extra['selectedSourceId'], donor.id);
+      }
+    },
+  );
 
   test('apostrophe normalization does not join hyphenated words', () {
     const selected = SongCandidate(
@@ -108,27 +123,30 @@ void main() {
     expect(song.hasChords, isFalse);
   });
 
-  test('normalization does not erase meaningful word boundaries or identity', () {
-    for (final donor in [
-      _source('other-word', _chart, title: 'It s Probably Me'),
-      _source('other-title', _chart, title: 'Probably Me'),
-      _source('other-artist', _chart, artist: 'Another Artist'),
-      _source(
-        'rejected',
-        _chart,
-        title: 'Its Probably Me',
-        kind: MatchKind.rejected,
-      ),
-    ]) {
-      final song = combineSources(_selected, [
-        _source('lyrics', _lyrics),
-        donor,
-      ]);
-      expect(song.body, _lyrics);
-      expect(song.hasChords, isFalse);
-      expect(song.extra['chordSourceIds'], isNull);
-    }
-  });
+  test(
+    'normalization does not erase meaningful word boundaries or identity',
+    () {
+      for (final donor in [
+        _source('other-word', _chart, title: 'It s Probably Me'),
+        _source('other-title', _chart, title: 'Probably Me'),
+        _source('other-artist', _chart, artist: 'Another Artist'),
+        _source(
+          'rejected',
+          _chart,
+          title: 'Its Probably Me',
+          kind: MatchKind.rejected,
+        ),
+      ]) {
+        final song = combineSources(_selected, [
+          _source('lyrics', _lyrics),
+          donor,
+        ]);
+        expect(song.body, _lyrics);
+        expect(song.hasChords, isFalse);
+        expect(song.extra['chordSourceIds'], isNull);
+      }
+    },
+  );
 
   test('apostrophe compatibility retains conflicting arrangement guards', () {
     final song = combineSources(_selected, [

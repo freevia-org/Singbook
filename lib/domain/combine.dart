@@ -67,7 +67,8 @@ final _dashQualifier = RegExp(
 // Catalogs and charts often omit apostrophes (e.g. "It's" / "Its"). Keep
 // identity handling consistent with discovery without changing lyric phrase
 // offsets or treating other word boundaries as interchangeable.
-String _identityNorm(String text) => _norm(text.replaceAll(RegExp("['‘’]"), ''));
+String _identityNorm(String text) =>
+    _norm(text.replaceAll(RegExp("['‘’]"), ''));
 String _baseTitle(String title) => _identityNorm(
   title.replaceAll(_bracketQualifier, '').replaceAll(_dashQualifier, ''),
 );
