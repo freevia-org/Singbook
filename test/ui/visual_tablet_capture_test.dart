@@ -79,6 +79,7 @@ void main() {
 
         await tester.pumpWidget(
           MaterialApp(
+            debugShowCheckedModeBanner: false,
             locale: locale,
             localizationsDelegates: singbookLocalizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
