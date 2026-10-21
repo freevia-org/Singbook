@@ -1477,8 +1477,20 @@ class _PlayerScreenState extends State<PlayerScreen>
                                               : durationLabel;
                                           return '${l10n.playerScrollSpeed}, ${_formatPlaybackSpeed(value)}, $accessibleDuration';
                                         },
-                                        onChangeStart: _beginPlaybackSpeedDraft,
-                                        onChanged: _updatePlaybackSpeedDraft,
+                                        onChangeStart: (value) {
+                                          if (interactionEpoch !=
+                                              _playbackSpeedInteractionEpoch) {
+                                            return;
+                                          }
+                                          _beginPlaybackSpeedDraft(value);
+                                        },
+                                        onChanged: (value) {
+                                          if (interactionEpoch !=
+                                              _playbackSpeedInteractionEpoch) {
+                                            return;
+                                          }
+                                          _updatePlaybackSpeedDraft(value);
+                                        },
                                         onChangeEnd: (value) {
                                           if (interactionEpoch !=
                                               _playbackSpeedInteractionEpoch) {
@@ -1536,6 +1548,7 @@ class _PlayerScreenState extends State<PlayerScreen>
 
   void _beginPlaybackSpeedDraft(double speed) {
     if (!mounted) return;
+    _playbackSpeedPointerCanceled = false;
     _playbackSpeedDraftRevision++;
     final state = controller.state;
     _playbackSpeedDraftController = controller;

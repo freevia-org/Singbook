@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui' as ui show SemanticsAction;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -768,6 +769,11 @@ void main() {
     expect(controller.speedWrites, 0);
     expect(controller.speed, 1);
 
+    // Cancellation invalidates the callbacks captured by the old Slider.
+    // A new interaction must use the freshly built slider callbacks.
+    slider = _speedSlider(tester);
+    listener = _speedSliderListener(tester);
+
     listener.onPointerDown!(
       PointerDownEvent(pointer: 11, position: Offset.zero),
     );
@@ -898,6 +904,83 @@ void main() {
     expect(replacementController.speed, 1.25);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'speed popup accepts semantic increase after a real pointer cancel',
+    (tester) async {
+      final semantics = tester.ensureSemantics();
+      try {
+        final controller = _Controller();
+        addTearDown(controller.dispose);
+        await _pump(tester, controller);
+        await tester.tap(find.byKey(const ValueKey('scroll-speed-toggle')));
+        await tester.pumpAndSettle();
+
+        final slider = find.byKey(const ValueKey('scroll-speed-slider'));
+        final canceledSlider = tester.widget<Slider>(slider);
+        final canceledDrag = await tester.startGesture(
+          tester.getCenter(slider),
+          pointer: 33,
+        );
+        await canceledDrag.moveBy(const Offset(0, -24));
+        await tester.pump();
+        await canceledDrag.cancel();
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(const ValueKey('scroll-speed-panel')),
+          findsOneWidget,
+        );
+        expect(controller.speedWrites, 0);
+        expect(controller.speed, 1);
+        final sliderNode = tester.getSemantics(slider);
+        expect(
+          sliderNode.getSemanticsData().hasAction(ui.SemanticsAction.increase),
+          isTrue,
+        );
+        sliderNode.owner!.performAction(
+          sliderNode.id,
+          ui.SemanticsAction.increase,
+        );
+        await tester.pumpAndSettle();
+        final expectedSpeed = 1.1;
+
+        expect(
+          find.byKey(const ValueKey('scroll-speed-panel')),
+          findsOneWidget,
+        );
+        expect(controller.speedWrites, 1);
+        expect(controller.speed, expectedSpeed);
+        expect(_speedSlider(tester).value, expectedSpeed);
+        expect(
+          find.descendant(
+            of: find.byKey(const ValueKey('scroll-speed-panel')),
+            matching: find.text(
+              formatDuration(controller.duration / controller.speed),
+            ),
+          ),
+          findsOneWidget,
+        );
+
+        // Callbacks saved before cancellation must remain inert after the
+        // accessibility action starts and commits a new interaction.
+        canceledSlider.onChangeStart!(1);
+        canceledSlider.onChanged!(2);
+        canceledSlider.onChangeEnd!(2);
+        await tester.pumpAndSettle();
+        expect(controller.speedWrites, 1);
+        expect(controller.speed, expectedSpeed);
+        expect(_speedSlider(tester).value, expectedSpeed);
+        expect(tester.takeException(), isNull);
+      } finally {
+        semantics.dispose();
+      }
+    },
+    variant: TargetPlatformVariant({
+      TargetPlatform.android,
+      TargetPlatform.windows,
+    }),
+  );
 
   testWidgets(
     'speed slider semantics follow duration and reopen after dismissal',
