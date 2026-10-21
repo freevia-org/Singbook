@@ -605,11 +605,19 @@ class _SettingsSectionScreenState extends State<_SettingsSectionScreen> {
       final fontSize = _draggingFontSize ?? state.lyricsFontSize;
       final backup = widget.backupSection();
       final contentWidth = MediaQuery.sizeOf(context).width;
-      final horizontalInset = contentWidth > 1200
-          ? (contentWidth - 1200) / 2 + 16
-          : 16.0;
+      final frameInset = contentWidth > 1200
+          ? (contentWidth - 1200) / 2
+          : 0.0;
+      final horizontalInset = frameInset + 16;
       return Scaffold(
-        appBar: AppBar(title: Text(_sectionTitle(l10n, widget.section))),
+        appBar: AppBar(
+          centerTitle: false,
+          leadingWidth: 56 + frameInset,
+          title: Text(
+            _sectionTitle(l10n, widget.section),
+            key: const ValueKey('settings-section-title'),
+          ),
+        ),
         body: SafeArea(
           top: false,
           child: ListView(

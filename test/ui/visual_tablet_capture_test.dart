@@ -330,35 +330,49 @@ void main() {
     ]) {
       tester.view.physicalSize = viewport;
       await tester.pumpAndSettle();
-      for (final mode in [Brightness.light, Brightness.dark]) {
-        brightness.value = mode;
+      for (final language in const ['en', 'ar']) {
+        locale.value = Locale(language);
         await tester.pumpAndSettle();
-        final rect = tester.getRect(
-          find.byKey(const ValueKey('settings-account-card')),
-        );
-        expect(rect.left, greaterThanOrEqualTo(0));
-        expect(rect.right, lessThanOrEqualTo(viewport.width));
-        expect(rect.center.dx, closeTo(viewport.width / 2, 0.5));
-        expect(
-          (rect.width - math.min(viewport.width - 32, 1168)).abs(),
-          lessThanOrEqualTo(12),
-          reason: 'account card should stay inside the centered 1200px frame',
-        );
-        expect(find.text('Account and sync'), findsOneWidget);
-        expect(tester.takeException(), isNull);
+        for (final mode in [Brightness.light, Brightness.dark]) {
+          brightness.value = mode;
+          await tester.pumpAndSettle();
+          final rect = tester.getRect(
+            find.byKey(const ValueKey('settings-account-card')),
+          );
+          final title = find.byKey(
+            const ValueKey('settings-section-title'),
+          );
+          final titleRect = tester.getRect(title);
+          final isRtl = Directionality.of(tester.element(title)) ==
+              TextDirection.rtl;
+          expect(rect.left, greaterThanOrEqualTo(0));
+          expect(rect.right, lessThanOrEqualTo(viewport.width));
+          expect(rect.center.dx, closeTo(viewport.width / 2, 0.5));
+          expect(
+            isRtl ? titleRect.right : titleRect.left,
+            closeTo(isRtl ? rect.right - 56 : rect.left + 56, 1),
+          );
+          expect(
+            (rect.width - math.min(viewport.width - 32, 1168)).abs(),
+            lessThanOrEqualTo(12),
+            reason: 'account card should stay inside the centered 1200px frame',
+          );
+          expect(title, findsOneWidget);
+          expect(tester.takeException(), isNull);
 
-        final boundary =
-            boundaryKey.currentContext!.findRenderObject()
-                as RenderRepaintBoundary;
-        await tester.runAsync(() async {
-          final image = await boundary.toImage(pixelRatio: 1);
-          final png = await image.toByteData(format: ui.ImageByteFormat.png);
-          image.dispose();
-          File(
-            '${output.path}${Platform.pathSeparator}account_${viewport.width.toInt()}x${viewport.height.toInt()}_${mode.name}.png',
-          ).writeAsBytesSync(png!.buffer.asUint8List());
-        });
-        await tester.pump();
+          final boundary =
+              boundaryKey.currentContext!.findRenderObject()
+                  as RenderRepaintBoundary;
+          await tester.runAsync(() async {
+            final image = await boundary.toImage(pixelRatio: 1);
+            final png = await image.toByteData(format: ui.ImageByteFormat.png);
+            image.dispose();
+            File(
+              '${output.path}${Platform.pathSeparator}account_${viewport.width.toInt()}x${viewport.height.toInt()}_${language}_${mode.name}.png',
+            ).writeAsBytesSync(png!.buffer.asUint8List());
+          });
+          await tester.pump();
+        }
       }
     }
 
@@ -572,6 +586,7 @@ Future<void> _pumpShell(
       child: AnimatedBuilder(
         animation: Listenable.merge([brightness, locale]),
         builder: (context, _) => MaterialApp(
+          debugShowCheckedModeBanner: false,
           localizationsDelegates: singbookLocalizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: locale.value,
