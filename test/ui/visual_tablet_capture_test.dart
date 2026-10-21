@@ -24,7 +24,6 @@ const _screens = [
   'reader',
   'editor_keyboard',
   'settings',
-  'settings_account',
   'settings_ukrainian',
   'home_keyboard',
 ];
@@ -290,6 +289,83 @@ void main() {
     skip: skip,
   );
 
+  testWidgets('account settings stay centered at wide breakpoints', (
+    tester,
+  ) async {
+    await _loadFonts();
+    final (fixture, controller) = (await tester.runAsync(() async {
+      final fixture = _Fixture();
+      return (fixture, AppControllerAdapter(fixture.app));
+    }))!;
+    final boundaryKey = GlobalKey();
+    final brightness = ValueNotifier(Brightness.light);
+    final locale = ValueNotifier(const Locale('en'));
+    addTearDown(brightness.dispose);
+    addTearDown(locale.dispose);
+    addTearDown(controller.dispose);
+    addTearDown(fixture.app.dispose);
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(800, 1280);
+    controller.setTab(VerseTab.settings);
+    await _pumpShell(
+      tester,
+      controller,
+      boundaryKey: boundaryKey,
+      brightness: brightness,
+      locale: locale,
+    );
+    await tester.pumpAndSettle();
+
+    final accountMenu = find.byKey(const ValueKey('settings-menu-account'));
+    await tester.ensureVisible(accountMenu);
+    await tester.tap(accountMenu);
+    await tester.pumpAndSettle();
+
+    final output = Directory('artifacts/singbook-layout-captures')
+      ..createSync(recursive: true);
+    for (final viewport in const [
+      Size(800, 1280),
+      Size(1280, 800),
+      Size(1920, 1080),
+    ]) {
+      tester.view.physicalSize = viewport;
+      await tester.pumpAndSettle();
+      for (final mode in [Brightness.light, Brightness.dark]) {
+        brightness.value = mode;
+        await tester.pumpAndSettle();
+        final rect = tester.getRect(
+          find.byKey(const ValueKey('settings-account-card')),
+        );
+        expect(rect.left, greaterThanOrEqualTo(0));
+        expect(rect.right, lessThanOrEqualTo(viewport.width));
+        expect(rect.center.dx, closeTo(viewport.width / 2, 0.5));
+        expect(
+          (rect.width - math.min(viewport.width - 32, 1168)).abs(),
+          lessThanOrEqualTo(12),
+          reason: 'account card should stay inside the centered 1200px frame',
+        );
+        expect(find.text('Account and sync'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+
+        final boundary =
+            boundaryKey.currentContext!.findRenderObject()
+                as RenderRepaintBoundary;
+        await tester.runAsync(() async {
+          final image = await boundary.toImage(pixelRatio: 1);
+          final png = await image.toByteData(format: ui.ImageByteFormat.png);
+          image.dispose();
+          File(
+            '${output.path}${Platform.pathSeparator}account_${viewport.width.toInt()}x${viewport.height.toInt()}_${mode.name}.png',
+          ).writeAsBytesSync(png!.buffer.asUint8List());
+        });
+        await tester.pump();
+      }
+    }
+
+    tester.view.resetDevicePixelRatio();
+    tester.view.resetPhysicalSize();
+  }, skip: skip);
+
   testWidgets('capture populated tablet UI across routes, themes and sizes', (
     tester,
   ) async {
@@ -355,7 +431,6 @@ void main() {
             case 'editor_keyboard':
               await tester.runAsync(() => controller.editSong(fixture.song.id));
             case 'settings':
-            case 'settings_account':
             case 'settings_ukrainian':
               controller.setTab(VerseTab.settings);
             case 'home_keyboard':
@@ -376,14 +451,6 @@ void main() {
             EnginePhase.sendSemanticsUpdate,
             const Duration(seconds: 3),
           );
-          if (screen == 'settings_account') {
-            final accountMenu = find.byKey(
-              const ValueKey('settings-menu-account'),
-            );
-            await tester.ensureVisible(accountMenu);
-            await tester.tap(accountMenu);
-            await tester.pumpAndSettle();
-          }
           expect(
             Theme.of(boundaryKey.currentContext!).brightness,
             themeBrightness,
@@ -446,10 +513,6 @@ void main() {
           print(
             'responsive capture saved ${viewportEntry.key} ${themeBrightness.name} $screen',
           );
-          if (screen == 'settings_account') {
-            await tester.pageBack();
-            await tester.pumpAndSettle();
-          }
         }
       }
     }
@@ -504,22 +567,22 @@ Future<void> _pumpShell(
   required ValueNotifier<Locale> locale,
 }) async {
   await tester.pumpWidget(
-    AnimatedBuilder(
-      animation: Listenable.merge([brightness, locale]),
-      builder: (context, _) => MaterialApp(
-        localizationsDelegates: singbookLocalizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        locale: locale.value,
-        theme: _captureTheme(brightness: Brightness.light),
-        darkTheme: _captureTheme(brightness: Brightness.dark),
-        themeMode: brightness.value == Brightness.dark
-            ? ThemeMode.dark
-            : ThemeMode.light,
-        home: AnimatedBuilder(
-          animation: controller,
-          builder: (context, _) => RepaintBoundary(
-            key: boundaryKey,
-            child: VerseAppShell(
+    RepaintBoundary(
+      key: boundaryKey,
+      child: AnimatedBuilder(
+        animation: Listenable.merge([brightness, locale]),
+        builder: (context, _) => MaterialApp(
+          localizationsDelegates: singbookLocalizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: locale.value,
+          theme: _captureTheme(brightness: Brightness.light),
+          darkTheme: _captureTheme(brightness: Brightness.dark),
+          themeMode: brightness.value == Brightness.dark
+              ? ThemeMode.dark
+              : ThemeMode.light,
+          home: AnimatedBuilder(
+            animation: controller,
+            builder: (context, _) => VerseAppShell(
               controller: controller,
               files: VerseFileActions(),
             ),
@@ -582,18 +645,6 @@ void _assertRouteGeometry(WidgetTester tester, String screen, Size viewport) {
         expect(menu, findsOneWidget);
         _insideViewport(tester, menu, viewport);
       }
-    case 'settings_account':
-      final card = find.byKey(const ValueKey('settings-account-card'));
-      final rect = tester.getRect(card);
-      expect(rect.left, greaterThanOrEqualTo(0));
-      expect(rect.right, lessThanOrEqualTo(viewport.width));
-      expect(rect.center.dx, closeTo(viewport.width / 2, 0.5));
-      expect(
-        (rect.width - math.min(viewport.width - 32, 1168)).abs(),
-        lessThanOrEqualTo(12),
-        reason: 'account card should stay inside the centered 1200px frame',
-      );
-      expect(find.text('Account and sync'), findsOneWidget);
     case 'home_keyboard':
       final search = find.byType(TextField).first;
       _insideViewport(tester, search, viewport);
