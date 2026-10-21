@@ -1,10 +1,17 @@
 // ignore_for_file: avoid_print
 // Opt-in smoke probe. Emits metadata/counts only, never song text or tokens.
+import 'dart:io';
+
 import 'package:singbook/providers/extra/extra_providers.dart';
 import 'package:singbook/providers/provider.dart';
+import 'package:singbook/providers/windows_http_client.dart';
 
 Future<void> main() async {
-  final transport = ProviderTransport();
+  // `dart run` doesn't load the Flutter conditional import that selects the
+  // app's Windows client, so inject it explicitly for a Windows host smoke run.
+  final transport = ProviderTransport(
+    client: Platform.isWindows ? WindowsHttpClient() : null,
+  );
   final cases = <LyricsProvider, String>{
     WorshipCommonsProvider(transport): 'Amazing Grace',
     SeanMcGrathProvider(transport): 'Be Here Soon',
