@@ -149,6 +149,60 @@ void main() {
     },
   );
 
+  testWidgets(
+    'player settings update their live preview when switches change',
+    (tester) async {
+      final controller = _MutableSettingsController();
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: TextButton(
+                onPressed: () => showPlayerSettings(context, controller),
+                child: const Text('Open player settings'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Open player settings'));
+      await tester.pumpAndSettle();
+      final l10n = l10nOf(tester);
+      expect(
+        tester
+            .widgetList<ChordLyricsLine>(find.byType(ChordLyricsLine))
+            .every((line) => line.showChords),
+        isTrue,
+      );
+
+      await tester.tap(
+        find.widgetWithText(SwitchListTile, l10n.editorChordsField),
+      );
+      await tester.pumpAndSettle();
+      expect(controller.current.showChords, isFalse);
+      expect(
+        tester
+            .widgetList<ChordLyricsLine>(find.byType(ChordLyricsLine))
+            .every((line) => !line.showChords),
+        isTrue,
+      );
+
+      await tester.tap(
+        find.widgetWithText(SwitchListTile, l10n.settingsPlayerSections),
+      );
+      await tester.pumpAndSettle();
+      expect(controller.current.showSections, isFalse);
+      expect(
+        find.byKey(const ValueKey('settings-preview-section-heading')),
+        findsNothing,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   for (final section in ['appearance', 'player']) {
     for (final scenario in [
       (const Size(360, 780), const Locale('en'), 1.0),
@@ -244,6 +298,32 @@ void main() {
     tester.view.resetDevicePixelRatio();
     tester.view.resetPhysicalSize();
   });
+}
+
+class _MutableSettingsController extends FakeUiController {
+  _MutableSettingsController()
+    : super((controller) => (controller as _MutableSettingsController).current);
+
+  bool showChords = true;
+  bool showSections = true;
+
+  VerseUiState get current => VerseUiState(
+    route: VerseRoute.reader,
+    showChords: showChords,
+    showSections: showSections,
+  );
+
+  @override
+  Future<void> setShowChords(bool show) async {
+    showChords = show;
+    refresh();
+  }
+
+  @override
+  Future<void> setShowSections(bool show) async {
+    showSections = show;
+    refresh();
+  }
 }
 
 Future<void> _capture(WidgetTester tester, GlobalKey key, String path) async {
