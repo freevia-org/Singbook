@@ -104,6 +104,16 @@ void main() {
           ),
         );
 
+        final card = find.byKey(const ValueKey('setlist-card-tablet-setlist'));
+        final cardTaps = find.descendant(
+          of: card,
+          matching: find.byType(InkWell),
+        );
+        await tester.tap(cardTaps.last);
+        await tester.pumpAndSettle();
+        final expandedSongs = find.textContaining('1. Lanterns at Dawn');
+        expect(expandedSongs, findsOneWidget);
+
         for (final width in [
           639.0,
           640.0,
@@ -118,10 +128,8 @@ void main() {
           final height = width == 1600 ? 900.0 : 800.0;
           tester.view.physicalSize = Size(width, height);
           await tester.pump();
-          final card = find.byKey(
-            const ValueKey('setlist-card-tablet-setlist'),
-          );
           final rect = tester.getRect(card);
+          final songListRect = tester.getRect(expandedSongs);
           final expectedWidth = math.min(width - 32, 960.0);
           expect(rect.left, greaterThanOrEqualTo(0), reason: 'width $width');
           expect(rect.right, lessThanOrEqualTo(width), reason: 'width $width');
@@ -134,6 +142,11 @@ void main() {
             rect.width,
             closeTo(expectedWidth, 0.5),
             reason: 'width $width',
+          );
+          expect(
+            rect.bottom - songListRect.bottom,
+            greaterThanOrEqualTo(8),
+            reason: 'expanded setlist preview bottom spacing at width $width',
           );
           expect(tester.takeException(), isNull, reason: 'width $width');
           if (width == 820 || width == 1600) {
@@ -614,6 +627,8 @@ class _Fixture {
         notes: 'A small set for an evening together.',
         entries: const [
           SetlistEntry(id: 'tablet-entry', songId: 'tablet-song'),
+          SetlistEntry(id: 'tablet-entry-2', songId: 'tablet-song-2'),
+          SetlistEntry(id: 'tablet-entry-3', songId: 'tablet-song-3'),
         ],
       ),
     );
