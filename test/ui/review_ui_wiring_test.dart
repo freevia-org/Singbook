@@ -520,6 +520,29 @@ void main() {
       );
 
       test(
+        'adding a song while editing advances the conflict baseline',
+        () async {
+          await app.saveSong(song('b'));
+          await ui.editSetlist('set');
+          notices.clear();
+
+          await ui.addSongToSetlist('b', 'set');
+          await ui.saveSetlistDetails(
+            name: 'Updated after add',
+            notes: '',
+            finishEditing: true,
+          );
+          await pumpEventQueue();
+
+          expect(notices, isNot(contains(UiNotice.setlistSaveConflict)));
+          expect(app.setlists, hasLength(1));
+          expect(app.setlists.single.name, 'Updated after add');
+          expect(app.setlists.single.entries, hasLength(2));
+          expect(app.setlists.single.entries.last.songId, 'b');
+        },
+      );
+
+      test(
         'a fresh edit session starts from the current stored version',
         () async {
           await ui.editSetlist('set');

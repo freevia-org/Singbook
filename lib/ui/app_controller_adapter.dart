@@ -2530,7 +2530,15 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> addSongToSetlist(String songId, String setlistId) async {
-    await _guard(() => app.addToSetlist(songId, setlistId));
+    var added = false;
+    final saved = await _guard(() async {
+      added = await app.addToSetlist(songId, setlistId);
+    });
+    if (saved && added && _editingSetlist && _setlistId == setlistId) {
+      // Adding a song writes the setlist immediately. Advance the open edit
+      // session's conflict baseline so its later Save updates that same list.
+      _setlistBaseHash = app.setlistHash(setlistId);
+    }
   }
 
   @override
