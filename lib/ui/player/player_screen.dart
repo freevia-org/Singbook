@@ -1183,22 +1183,38 @@ class _PlayerScreenState extends State<PlayerScreen>
               );
               final times = Row(
                 children: [
-                  Text(formatDuration(displayPosition)),
-                  if (narrow)
-                    const Spacer()
-                  else ...[
+                  Expanded(
+                    child: Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: AlignmentDirectional.centerStart,
+                        child: Text(formatDuration(displayPosition)),
+                      ),
+                    ),
+                  ),
+                  if (!narrow) ...[
                     const SizedBox(width: 12),
-                    Expanded(child: section),
+                    Expanded(flex: 2, child: section),
                     const SizedBox(width: 12),
                   ],
-                  Semantics(
-                    label: state.readerDurationEstimated
-                        ? l10n.playerEstimatedDuration(
-                            formatDuration(displayDuration),
-                          )
-                        : formatDuration(displayDuration),
-                    child: ExcludeSemantics(
-                      child: Text(formatDuration(displayDuration)),
+                  Expanded(
+                    child: Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: Semantics(
+                        label: state.readerDurationEstimated
+                            ? l10n.playerEstimatedDuration(
+                                formatDuration(displayDuration),
+                              )
+                            : formatDuration(displayDuration),
+                        child: ExcludeSemantics(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: AlignmentDirectional.centerEnd,
+                            child: Text(formatDuration(displayDuration)),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -1369,41 +1385,36 @@ class _PlayerScreenState extends State<PlayerScreen>
                                       onPointerUp: _onPlaybackSpeedPointerUp,
                                       onPointerCancel:
                                           _onPlaybackSpeedPointerCancel,
-                                      child: KeyedSubtree(
-                                        key: ValueKey(
-                                          'scroll-speed-slider-epoch-$interactionEpoch',
+                                      child: Slider(
+                                        key: const ValueKey(
+                                          'scroll-speed-slider',
                                         ),
-                                        child: Slider(
-                                          key: const ValueKey(
-                                            'scroll-speed-slider',
-                                          ),
-                                          min: .5,
-                                          max: 2,
-                                          divisions: 15,
-                                          value: speed,
-                                          label: _formatPlaybackSpeed(speed),
-                                          semanticFormatterCallback: (value) {
-                                            final durationLabel =
-                                                formatDuration(duration / value);
-                                            final accessibleDuration =
-                                                currentState.readerDurationEstimated
-                                                    ? l10n.playerEstimatedDuration(
-                                                        durationLabel,
-                                                      )
-                                                    : durationLabel;
-                                            return '${l10n.playerScrollSpeed}, ${_formatPlaybackSpeed(value)}, $accessibleDuration';
-                                          },
-                                          onChangeStart:
-                                              _beginPlaybackSpeedDraft,
-                                          onChanged: _updatePlaybackSpeedDraft,
-                                          onChangeEnd: (value) {
-                                            if (interactionEpoch !=
-                                                _playbackSpeedInteractionEpoch) {
-                                              return;
-                                            }
-                                            _commitPlaybackSpeedDraft(value);
-                                          },
-                                        ),
+                                        min: .5,
+                                        max: 2,
+                                        divisions: 15,
+                                        value: speed,
+                                        label: _formatPlaybackSpeed(speed),
+                                        semanticFormatterCallback: (value) {
+                                          final durationLabel =
+                                              formatDuration(duration / value);
+                                          final accessibleDuration =
+                                              currentState.readerDurationEstimated
+                                                  ? l10n.playerEstimatedDuration(
+                                                      durationLabel,
+                                                    )
+                                                  : durationLabel;
+                                          return '${l10n.playerScrollSpeed}, ${_formatPlaybackSpeed(value)}, $accessibleDuration';
+                                        },
+                                        onChangeStart:
+                                            _beginPlaybackSpeedDraft,
+                                        onChanged: _updatePlaybackSpeedDraft,
+                                        onChangeEnd: (value) {
+                                          if (interactionEpoch !=
+                                              _playbackSpeedInteractionEpoch) {
+                                            return;
+                                          }
+                                          _commitPlaybackSpeedDraft(value);
+                                        },
                                       ),
                                     ),
                                   ),

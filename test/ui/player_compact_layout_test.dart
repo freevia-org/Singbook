@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui' show SemanticsFlag;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart'
@@ -662,6 +663,67 @@ void main() {
     expect(replacementController.speed, 1.25);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'speed slider semantics follow duration and reopen after dismissal',
+    (tester) async {
+      final semantics = tester.ensureSemantics();
+      try {
+        final controller = _Controller();
+        addTearDown(controller.dispose);
+        await _pump(tester, controller);
+        await tester.tap(find.byKey(const ValueKey('scroll-speed-toggle')));
+        await tester.pumpAndSettle();
+
+        final sliderFinder = find.byKey(const ValueKey('scroll-speed-slider'));
+        expect(
+          tester
+              .getSemantics(sliderFinder)
+              .getSemanticsData()
+              .hasFlag(SemanticsFlag.isSlider),
+          isTrue,
+        );
+        expect(
+          tester.getSemantics(sliderFinder).getSemanticsData().value,
+          contains('4:00'),
+        );
+
+        await tester.drag(sliderFinder, const Offset(0, -24));
+        await tester.pumpAndSettle();
+        expect(controller.speedWrites, 1);
+        expect(controller.speed, greaterThan(1));
+        final adjustedDuration = tester
+            .widget<Text>(find.byKey(const ValueKey('scroll-speed-duration')))
+            .data!;
+        expect(adjustedDuration, isNot('4:00'));
+        expect(
+          tester.getSemantics(sliderFinder).getSemanticsData().value,
+          contains(adjustedDuration),
+        );
+        expect(
+          find.descendant(
+            of: find.byKey(const ValueKey('scroll-speed-panel')),
+            matching: find.text(adjustedDuration),
+          ),
+          findsOneWidget,
+        );
+
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(sliderFinder, findsNothing);
+        await tester.tap(find.byKey(const ValueKey('scroll-speed-toggle')));
+        await tester.pumpAndSettle();
+        expect(sliderFinder, findsOneWidget);
+        expect(tester.takeException(), isNull);
+      } finally {
+        semantics.dispose();
+      }
+    },
+    variant: TargetPlatformVariant({
+      TargetPlatform.android,
+      TargetPlatform.windows,
+    }),
+  );
 
   const capture = bool.fromEnvironment('CAPTURE_COMPACT_PLAYER');
   for (final scenario in [
