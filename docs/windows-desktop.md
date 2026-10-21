@@ -111,33 +111,51 @@ clipboard for an unattended check.
 | Layout | Native screenshots at compact/desktop sizes, large text, DPI changes, themes and RTL. |
 | Delivery | Release bundle extracted outside checkout, dependencies present and clean-machine launch. |
 
-### Current automated evidence — 2026-10-21
+### Current automated and native evidence — 2026-10-21
 
-PR #93 head `acc7330530aa232ddc66b1041de1f1a8590a2b2d` passed both jobs in
-[CI run 39631776512](https://github.com/freevia-org/Singbook/actions/runs/39631776512).
+PR #93 head `819278c2f13d08ed5b38e80d2bf18ae8f3e1ef50` passed both jobs in
+[CI run 39642446550](https://github.com/freevia-org/Singbook/actions/runs/39642446550).
 Linux analysis and the complete test suite passed. Windows passed OAuth
 configuration preflight, release packaging, isolated portable startup and
-graceful close, native clipboard and credential checks, and the complete Flutter
-suite. The CI OAuth preflight reached Google's expected invalid-code response
-and confirmed configured Desktop OAuth values; it does not prove a fresh user
-sign-in or the full Drive lifecycle. The clipboard check sends `WM_PASTE` to a
-hidden native edit control and verifies exact Unicode plain text; it does not
-prove formatted paste into another application.
+graceful close, native clipboard and Credential Manager checks, and the complete
+Flutter suite. The OAuth preflight reached Google's expected invalid-code
+response and confirmed configured Desktop OAuth values; it does not prove a
+fresh user sign-in or the full Drive lifecycle. The clipboard check sends
+`WM_PASTE` to a hidden native edit control and verifies exact Unicode plain
+text; it does not prove formatted paste into another application.
 
-The portable release is version `0.2.12+26`, built from PR merge commit
-`5eace270505058c6e359a1ef5d09d4f2bb6c4aaa` and source tree
-`f6ad69142dc82f9f39a305aaedef4a62e3c0eecb`, ZIP SHA-256
-`D30CFB8865AE715B72B205F8B35555C196F12365FF4429D0536BBA0A6A59135D`.
-Its manifest lists 54 bundled files, including 50 required runtime files. The
-startup smoke validated a fresh SQLite database, observed the `Singbook` main
-window, captured its pixels, and closed gracefully without a forced stop. The
-raw startup capture is preserved in the run's `windows-validation-evidence`
-artifact. I reviewed the 1044×720 capture: the full search, all three category
-tabs, navigation rail and centered empty state are visible without clipping.
-This is one packaged startup size; it does not cover the complete native size,
-DPI, theme and localization matrix. The earlier Sandbox capture used logical
-window bounds for a pixel copy and may be cropped at display scaling, so it is
-not used as layout evidence.
+The portable package is version `0.2.12+26`, built from synthetic PR merge
+commit `c3d9125859ebbd4ce35ff673e98277f2e99afdcf` with PR head
+`819278c2f13d08ed5b38e80d2bf18ae8f3e1ef50`, ZIP SHA-256
+`D439E3BADCBE30D9FB468E55EA26A473D121616B7F6C5CC280CB5A87E9654AB8`.
+Its run artifact contains the required runtime manifest and the portable
+startup evidence. Source-layout captures also cover desktop library, setlists,
+reader, editor, settings, dark mode and compact/large-text variants. Those
+widget captures do not establish the full packaged native size, DPI, theme and
+localization matrix.
+
+An additional scripted Windows Sandbox run exercised this exact package at
+144 DPI on a 2048×1232 display, with a fresh database at an explicit disposable
+path and no Drive sign-in. Native screenshots and summaries are held locally at
+`E:\acceptance\Singbook-native-819278c2\final-evidence` and
+`E:\acceptance\Singbook-native-819278c2\restore-evidence`. It verified app
+startup, native `.cho` import, cancellation of a second import, reader
+navigation, readable untruncated timeline labels (Intro, Verse 1, Chorus,
+Verse 2, Chorus and Outro), account-and-sync layout, native backup Save As, and
+backup preview showing one song and zero conflicts. The exported
+`.lyrics-setlist` archive passed ZIP integrity checks and contains the synthetic
+fixture. The app closed gracefully; the temporary database contains only that
+fixture. A full restore apply was not completed.
+
+Representative exact-package native screenshots are committed for review:
+[reader and timeline](images/windows-desktop-review/packaged-20261021/reader-144dpi.png),
+[account settings](images/windows-desktop-review/packaged-20261021/account-144dpi.png),
+[backup Save As](images/windows-desktop-review/packaged-20261021/backup-save-as.png),
+and [restore preview](images/windows-desktop-review/packaged-20261021/restore-preview.png).
+At this desktop size the reader's lyrics column and playback rail are centered
+within the app frame, timeline labels remain legible, and account cards stay
+aligned; this visual review does not substitute for the unrun resolution, DPI,
+theme and locale matrix.
 
 Source-layout captures also cover desktop library, setlists, reader, editor,
 settings, dark mode, and compact/large-text variants. Four representative
@@ -151,13 +169,16 @@ the `native-shaped short landscape shows chords and match above Save` regression
 test covers a 2.625× device scale with safe-area insets. The full affected UI test
 file passes locally.
 
-These checks establish automated build, startup, screenshot, and source-layout
-evidence, not full native acceptance. The native file-dialog/import-export,
-print-dialog, cross-application formatted-paste, and packaged interaction-
-persistence checks remain unrecorded. Real account authentication and the full
-Drive lifecycle also remain separate acceptance items. PR #93 remains Draft;
-keep the release in review until the required rows above are passed or explicitly
-waived.
+These checks establish automated build, startup, selected native file/backup
+flows, reader layout at one desktop size and source-layout evidence, not full
+native acceptance. Remaining items include restart persistence, Unicode paths,
+ChordPro/OpenSong/PDF export, full backup restore apply and round-trip, setlist
+editing/reorder persistence, player interactions and settings persistence,
+dirty-editor close behavior, print/save-to-PDF, formatted paste into another
+application, provider workflows, the packaged locale/theme/DPI matrix, clean
+machine launch, and the complete Drive sign-in/refresh/revocation lifecycle.
+PR #93 remains Draft; keep the release in review until the required acceptance
+rows are passed or explicitly waived.
 
 The frozen `e0e14a1` source passed both jobs in
 [CI run 39237237228](https://github.com/freevia-org/Singbook/actions/runs/39237237228):
