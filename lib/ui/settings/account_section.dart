@@ -47,6 +47,7 @@ class AccountSection extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final state = controller.state;
     return Card(
+      key: const ValueKey('settings-account-card'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

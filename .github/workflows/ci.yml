@@ -62,6 +62,15 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+      - name: Upload responsive layout captures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: responsive-layout-captures
+          path: artifacts/singbook-layout-captures/
+          if-no-files-found: ignore
+          retention-days: 7
+
       - name: Upload visual test evidence
         if: failure()
         uses: actions/upload-artifact@v4
@@ -157,6 +166,7 @@ jobs:
             artifacts/windows-parity/
             artifacts/windows/**/build.log
             artifacts/windows/**/manifest.json
+            artifacts/singbook-layout-captures/
           if-no-files-found: ignore
           retention-days: 7
 

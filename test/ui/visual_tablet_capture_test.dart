@@ -24,6 +24,7 @@ const _screens = [
   'reader',
   'editor_keyboard',
   'settings',
+  'settings_account',
   'settings_ukrainian',
   'home_keyboard',
 ];
@@ -354,6 +355,7 @@ void main() {
             case 'editor_keyboard':
               await tester.runAsync(() => controller.editSong(fixture.song.id));
             case 'settings':
+            case 'settings_account':
             case 'settings_ukrainian':
               controller.setTab(VerseTab.settings);
             case 'home_keyboard':
@@ -374,6 +376,12 @@ void main() {
             EnginePhase.sendSemanticsUpdate,
             const Duration(seconds: 3),
           );
+          if (screen == 'settings_account') {
+            await tester.tap(
+              find.byKey(const ValueKey('settings-menu-account')),
+            );
+            await tester.pumpAndSettle();
+          }
           expect(
             Theme.of(boundaryKey.currentContext!).brightness,
             themeBrightness,
@@ -436,6 +444,10 @@ void main() {
           print(
             'responsive capture saved ${viewportEntry.key} ${themeBrightness.name} $screen',
           );
+          if (screen == 'settings_account') {
+            await tester.pageBack();
+            await tester.pumpAndSettle();
+          }
         }
       }
     }
@@ -444,7 +456,7 @@ void main() {
       output.listSync().whereType<File>().where(
         (file) => !file.path.endsWith('reader_scrolled.png'),
       ),
-      hasLength(42),
+      hasLength(48),
     );
     tester.view.resetDevicePixelRatio();
     tester.view.resetPhysicalSize();
@@ -568,6 +580,14 @@ void _assertRouteGeometry(WidgetTester tester, String screen, Size viewport) {
         expect(menu, findsOneWidget);
         _insideViewport(tester, menu, viewport);
       }
+    case 'settings_account':
+      final card = find.byKey(const ValueKey('settings-account-card'));
+      final rect = tester.getRect(card);
+      expect(rect.left, greaterThanOrEqualTo(0));
+      expect(rect.right, lessThanOrEqualTo(viewport.width));
+      expect(rect.center.dx, closeTo(viewport.width / 2, 0.5));
+      expect(rect.width, closeTo(math.min(viewport.width - 32, 1168), 0.5));
+      expect(find.text('Account and sync'), findsOneWidget);
     case 'home_keyboard':
       final search = find.byType(TextField).first;
       _insideViewport(tester, search, viewport);
