@@ -165,7 +165,11 @@ native discard prompt, confirmed cancel kept the editor open, saved the edited
 synthetic title, then reopened the same database after a full app restart and
 confirmed the saved title persisted. This test used the same prior packaged
 build and a disposable database; evidence is in `editor-close-evidence`.
-Setlist editing and reorder persistence remain unverified.
+Setlist edit and mouse reorder were then verified using a disposable two-song
+database. The first row was dragged below the second, the setlist was renamed
+through the inline editor, and after full restart both the new title and row
+order were visible in the setlist card and SQLite. Screenshots and run summary
+are in `setlist-edit-evidence` and `setlist-edit-final-evidence`.
 
 Representative exact-package native screenshots are committed for review:
 [reader and timeline](images/windows-desktop-review/packaged-20261021/reader-144dpi.png),
@@ -199,11 +203,10 @@ checks establish the application logic and platform adapters; they do not
 exercise every native dialog or interaction in the packaged app.
 
 Remaining packaged-native checks include Unicode Save As paths and overwrite
-behavior; ChordPro and song-PDF Save As round trips; setlist edit/reorder
-persistence after a fresh restart; player mouse/keyboard interactions and
-preference persistence after restart; printing to a saved PDF; formatted paste
-into another application; and
-representative provider workflows. The full packaged locale/theme/DPI and
+behavior; ChordPro and song-PDF Save As round trips; player mouse/keyboard
+interactions and preference persistence after restart; printing to a saved PDF;
+formatted paste into another application; and representative provider workflows.
+The full packaged locale/theme/DPI and
 compact/large-screen matrix also remains. The user confirmed that their
 existing library synced successfully in a previous `0.2.12+26` interactive
 session; no synthetic song was uploaded. Token refresh, offline recovery,
