@@ -75,8 +75,8 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 30
     env:
-      VERSE_GOOGLE_DESKTOP_CLIENT_ID: ${{ vars.VERSE_GOOGLE_DESKTOP_CLIENT_ID }}
-      VERSE_GOOGLE_DESKTOP_CLIENT_SECRET: ${{ secrets.VERSE_GOOGLE_DESKTOP_CLIENT_SECRET }}
+      SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID: ${{ vars.SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID }}
+      SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET: ${{ secrets.SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET }}
     steps:
       - uses: actions/checkout@v4
 
@@ -92,8 +92,8 @@ jobs:
       - name: Check Windows OAuth configuration
         shell: pwsh
         run: |
-          if ([string]::IsNullOrWhiteSpace($env:VERSE_GOOGLE_DESKTOP_CLIENT_ID)) {
-            throw 'The VERSE_GOOGLE_DESKTOP_CLIENT_ID Actions variable is required for the Windows release bundle.'
+          if ([string]::IsNullOrWhiteSpace($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID)) {
+            throw 'The SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID Actions variable is required for the Windows release bundle.'
           }
 
           # A public client ID can be syntactically valid while pointing at an
@@ -101,14 +101,14 @@ jobs:
           # Exchange a deliberately invalid code: a working registration should
           # reach Google's invalid_grant response without authenticating anyone.
           $probe = @{
-            client_id = $env:VERSE_GOOGLE_DESKTOP_CLIENT_ID
+            client_id = $env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID
             code = 'codex-release-preflight-invalid-code'
             code_verifier = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
             grant_type = 'authorization_code'
             redirect_uri = 'http://127.0.0.1:49152'
           }
-          if (-not [string]::IsNullOrWhiteSpace($env:VERSE_GOOGLE_DESKTOP_CLIENT_SECRET)) {
-            $probe.client_secret = $env:VERSE_GOOGLE_DESKTOP_CLIENT_SECRET
+          if (-not [string]::IsNullOrWhiteSpace($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET)) {
+            $probe.client_secret = $env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET
           }
           try {
             $response = Invoke-RestMethod -Method Post -Uri 'https://oauth2.googleapis.com/token' -ContentType 'application/x-www-form-urlencoded' -Body $probe

@@ -47,10 +47,10 @@ class WindowsGoogleDriveAuth
         DriveFileAccessCapability {
   WindowsGoogleDriveAuth({
     this.clientId = const String.fromEnvironment(
-      'VERSE_GOOGLE_DESKTOP_CLIENT_ID',
+      'SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID',
     ),
     this.clientSecret = const String.fromEnvironment(
-      'VERSE_GOOGLE_DESKTOP_CLIENT_SECRET',
+      'SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET',
     ),
     DesktopCredentialStore? credentials,
     DesktopOAuthFlow? flow,

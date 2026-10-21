@@ -24,8 +24,8 @@ try {
     if (Test-Path -LiteralPath $DefinesFile) {
         $buildArguments += "--dart-define-from-file=$DefinesFile"
         $defines = Get-Content -LiteralPath $DefinesFile -Raw | ConvertFrom-Json
-        $desktopIdProperty = $defines.PSObject.Properties['VERSE_GOOGLE_DESKTOP_CLIENT_ID']
-        $desktopSecretProperty = $defines.PSObject.Properties['VERSE_GOOGLE_DESKTOP_CLIENT_SECRET']
+        $desktopIdProperty = $defines.PSObject.Properties['SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID']
+        $desktopSecretProperty = $defines.PSObject.Properties['SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET']
         if ($null -ne $desktopIdProperty) { $desktopClientId = [string]$desktopIdProperty.Value }
         if ($null -ne $desktopSecretProperty) { $desktopClientSecret = [string]$desktopSecretProperty.Value }
     } elseif (-not $AllowMissingDefines) {
@@ -33,16 +33,16 @@ try {
     }
     # CI supplies the public Desktop OAuth client ID as an Actions variable.
     # Keep it out of the checkout and pass it directly to Flutter's compiler.
-    if (-not [string]::IsNullOrWhiteSpace($env:VERSE_GOOGLE_DESKTOP_CLIENT_ID)) {
-        $desktopClientId = $env:VERSE_GOOGLE_DESKTOP_CLIENT_ID
-        $buildArguments += "--dart-define=VERSE_GOOGLE_DESKTOP_CLIENT_ID=$($env:VERSE_GOOGLE_DESKTOP_CLIENT_ID)"
+    if (-not [string]::IsNullOrWhiteSpace($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID)) {
+        $desktopClientId = $env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID
+        $buildArguments += "--dart-define=SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID=$($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID)"
     }
     # The optional registration field is a public-client value embedded in the
     # distributed app. Accept it from ignored local defines or a masked CI
     # secret, and record presence only; never print or write its value to logs.
-    if (-not [string]::IsNullOrWhiteSpace($env:VERSE_GOOGLE_DESKTOP_CLIENT_SECRET)) {
-        $desktopClientSecret = $env:VERSE_GOOGLE_DESKTOP_CLIENT_SECRET
-        $buildArguments += "--dart-define=VERSE_GOOGLE_DESKTOP_CLIENT_SECRET=$($env:VERSE_GOOGLE_DESKTOP_CLIENT_SECRET)"
+    if (-not [string]::IsNullOrWhiteSpace($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET)) {
+        $desktopClientSecret = $env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET
+        $buildArguments += "--dart-define=SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET=$($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET)"
     }
     $stamp = [DateTime]::UtcNow.ToString('yyyyMMddTHHmmssfffZ')
     $name = "singbook-$($versionMatch.Groups[1].Value)-windows-x64-$mode-$($revision.Substring(0,8))-$stamp"
