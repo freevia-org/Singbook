@@ -452,7 +452,7 @@ void main() {
             const Duration(seconds: 3),
           );
           expect(
-            Theme.of(boundaryKey.currentContext!).brightness,
+            Theme.of(tester.element(find.byType(Scaffold).first)).brightness,
             themeBrightness,
             reason: '${viewportEntry.key} ${themeBrightness.name} $screen',
           );
