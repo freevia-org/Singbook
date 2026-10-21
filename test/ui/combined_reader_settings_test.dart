@@ -78,7 +78,7 @@ void main() {
         await expectLater(
           find.byType(Scaffold).first,
           matchesGoldenFile(
-            '../../artifacts/player-speed-landscape-qualification/captures/shell-collapsed-${scenario.$1}.png',
+            '../../artifacts/player-speed-landscape-qualification/captures-v2/shell-collapsed-${scenario.$1}.png',
           ),
         );
       }
@@ -100,7 +100,7 @@ void main() {
         await expectLater(
           find.byType(Scaffold).first,
           matchesGoldenFile(
-            '../../artifacts/player-speed-landscape-qualification/captures/shell-fullscreen-${scenario.$1}.png',
+            '../../artifacts/player-speed-landscape-qualification/captures-v2/shell-fullscreen-${scenario.$1}.png',
           ),
         );
       }
@@ -151,7 +151,7 @@ void main() {
         await expectLater(
           find.byType(Scaffold).first,
           matchesGoldenFile(
-            '../../artifacts/player-speed-landscape-qualification/captures/shell-expanded-landscape.png',
+            '../../artifacts/player-speed-landscape-qualification/captures-v2/shell-expanded-landscape.png',
           ),
         );
       }

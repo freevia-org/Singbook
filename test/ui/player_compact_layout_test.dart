@@ -24,11 +24,11 @@ class _Controller extends VerseUiController {
   double speed = 1;
   bool showChords = true;
   bool playerControlsExpanded = true;
-  bool showSections = true;
   String highlightStyle = 'contrast';
   String songId = 'song';
   double duration = 240;
   int speedWrites = 0;
+  List<LyricLineData>? lines;
   @override
   VerseUiState get state => VerseUiState(
     route: VerseRoute.reader,
@@ -49,21 +49,21 @@ class _Controller extends VerseUiController {
     showChords: showChords,
     playerControlsExpanded: playerControlsExpanded,
     lyricHighlightStyle: highlightStyle,
-    songLines: const [
-      LyricLineData(id: 'v', section: 'Verse 1', isBlank: true),
-      LyricLineData(
-        id: 'a',
-        text: 'When morning spills across the hills',
-        chords: [LyricChord(graphemeOffset: 0, symbol: 'Em')],
-      ),
-      LyricLineData(id: 'b', text: 'We raise a song in time'),
-      LyricLineData(id: 'c', text: 'The quiet road remembers us'),
+    songLines:
+        lines ??
+        const [
+          LyricLineData(id: 'v', section: 'Verse 1', isBlank: true),
+          LyricLineData(
+            id: 'a',
+            text: 'When morning spills across the hills',
+            chords: [LyricChord(graphemeOffset: 0, symbol: 'Em')],
+          ),
+          LyricLineData(id: 'b', text: 'We raise a song in time'),
+          LyricLineData(id: 'c', text: 'The quiet road remembers us'),
+        ],
+    playerSections: const [
+      PlayerSectionMarker(name: 'Verse 1', startSeconds: 0, lineId: 'a'),
     ],
-    playerSections: showSections
-        ? const [
-            PlayerSectionMarker(name: 'Verse 1', startSeconds: 0, lineId: 'a'),
-          ]
-        : const [],
   );
 
   @override
@@ -202,18 +202,14 @@ void main() {
           final play = tester.getRect(
             find.byKey(const ValueKey('start-lyric-scroll')),
           );
-          final stackedLandscape =
-              scenario.$2.width > scenario.$2.height &&
-              (scenario.$2.width * .4).clamp(200.0, 360.0) < 330 &&
-              scenario.$3 > 1.3;
-          if (stackedLandscape) {
-            expect(key.center.dy, lessThan(play.center.dy));
-          } else if (scenario.$4.languageCode == 'ar') {
+          final stacked = key.bottom <= play.top;
+          expect(key.overlaps(play), isFalse);
+          if (!stacked && scenario.$4.languageCode == 'ar') {
             expect(key.left, greaterThanOrEqualTo(play.right));
-          } else {
+          } else if (!stacked) {
             expect(key.right, lessThanOrEqualTo(play.left));
           }
-          if (!stackedLandscape) {
+          if (!stacked) {
             expect(key.center.dy, closeTo(play.center.dy, 1));
           }
           expect(find.byIcon(Icons.remove_circle_outline), findsNothing);
@@ -271,6 +267,13 @@ void main() {
     expect(play.right, lessThanOrEqualTo(speed.left));
     expect(key.center.dy, closeTo(play.center.dy, 1));
     expect(speed.center.dy, closeTo(play.center.dy, 1));
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('pitch-key-dropdown')),
+        matching: find.text('D#'),
+      ),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
 
     await _pump(
@@ -301,15 +304,6 @@ void main() {
     expect(layoutError, isNull);
   });
 
-  testWidgets('compact seek slider uses a short speed label', (tester) async {
-    final controller = _Controller()..showSections = false;
-    addTearDown(controller.dispose);
-    await _pump(tester, controller);
-    final l10n = AppLocalizations.of(tester.element(find.byType(PlayerScreen)));
-    expect(find.text(l10n.playerScrollSpeed), findsOneWidget);
-    expect(find.text(l10n.playerEstimatedPace), findsNothing);
-  });
-
   for (final scenario in [
     (500.0, const Locale('en'), 1.0),
     (600.0, const Locale('bg'), 1.5),
@@ -329,6 +323,7 @@ void main() {
               .load();
         });
         final controller = _Controller();
+        if (scenario.$2.languageCode == 'ar') controller.songKey = 'D#min';
         addTearDown(controller.dispose);
         await _pump(
           tester,
@@ -345,6 +340,15 @@ void main() {
         expect(lyricsRect.height, greaterThan(336));
         final play = find.byKey(const ValueKey('start-lyric-scroll'));
         expect(tester.getRect(play).width, greaterThanOrEqualTo(104));
+        final visibleKey = find.descendant(
+          of: find.byKey(const ValueKey('pitch-key-dropdown')),
+          matching: find.text(controller.songKey!),
+        );
+        expect(visibleKey, findsOneWidget);
+        expect(
+          tester.renderObject<RenderParagraph>(visibleKey).didExceedMaxLines,
+          isFalse,
+        );
         final expectedCenter = scenario.$2.languageCode == 'ar'
             ? lyricsRect.left / 2
             : (lyricsRect.right + scenario.$1) / 2;
@@ -447,7 +451,7 @@ void main() {
           await expectLater(
             find.byType(Scaffold).first,
             matchesGoldenFile(
-              '../../artifacts/player-speed-landscape-qualification/captures/collapsed-$orientation.png',
+              '../../artifacts/player-speed-landscape-qualification/captures-v2/collapsed-$orientation.png',
             ),
           );
         }
@@ -467,7 +471,7 @@ void main() {
           await expectLater(
             find.byType(Scaffold).first,
             matchesGoldenFile(
-              '../../artifacts/player-speed-landscape-qualification/captures/collapsed-$orientation-fullscreen.png',
+              '../../artifacts/player-speed-landscape-qualification/captures-v2/collapsed-$orientation-fullscreen.png',
             ),
           );
         }
@@ -477,6 +481,66 @@ void main() {
       }
     },
   );
+
+  testWidgets('collapsed fullscreen action clears the long first lyric line', (
+    tester,
+  ) async {
+    const text =
+        'A long first lyric line stretches across the whole page so its actual letters would run underneath the fullscreen button';
+    await tester.runAsync(() async {
+      for (final family in ['Roboto', 'sans-serif']) {
+        await (FontLoader(family)
+              ..addFont(rootBundle.load('assets/fonts/NotoSans-Regular.ttf')))
+            .load();
+      }
+      await (FontLoader(
+        'MaterialIcons',
+      )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
+    });
+
+    for (final locale in [const Locale('en'), const Locale('ar')]) {
+      final controller = _Controller()
+        ..playerControlsExpanded = false
+        ..lines = const [LyricLineData(id: 'long-first', text: text)];
+      addTearDown(controller.dispose);
+      await _pump(
+        tester,
+        controller,
+        size: const Size(700, 360),
+        locale: locale,
+        onFullScreenChanged: (_) {},
+      );
+
+      final action = tester.getRect(
+        find.byKey(const ValueKey('player-enter-fullscreen')),
+      );
+      final paragraph = tester.renderObject<RenderParagraph>(find.text(text));
+      final glyphBoxes = paragraph
+          .getBoxesForSelection(
+            TextSelection(baseOffset: 0, extentOffset: text.length),
+          )
+          .map((box) {
+            final bounds = box.toRect();
+            return Rect.fromPoints(
+              paragraph.localToGlobal(bounds.topLeft),
+              paragraph.localToGlobal(bounds.bottomRight),
+            );
+          });
+      expect(glyphBoxes, isNotEmpty);
+      expect(glyphBoxes.any((box) => box.overlaps(action)), isFalse);
+      expect(paragraph.didExceedMaxLines, isFalse);
+      if (capturePlayerVisuals) {
+        final orientation = locale.languageCode == 'ar' ? 'rtl' : 'ltr';
+        await expectLater(
+          find.byType(Scaffold).first,
+          matchesGoldenFile(
+            '../../artifacts/player-speed-landscape-qualification/captures-v2/collapsed-long-first-line-$orientation.png',
+          ),
+        );
+      }
+      expect(tester.takeException(), isNull);
+    }
+  });
 
   testWidgets(
     'missing key stays neutral and large-text controls can collapse',
@@ -903,7 +967,7 @@ void main() {
           await expectLater(
             find.byType(Overlay).first,
             matchesGoldenFile(
-              '../../artifacts/player-speed-landscape-qualification/captures/speed-live-preview-${defaultTargetPlatform.name}.png',
+              '../../artifacts/player-speed-landscape-qualification/captures-v2/speed-live-preview-${defaultTargetPlatform.name}.png',
             ),
           );
         }
@@ -1032,7 +1096,7 @@ void main() {
         await expectLater(
           find.byType(Scaffold),
           matchesGoldenFile(
-            '../../artifacts/compact-player-${scenario.$1}.png',
+            '../../artifacts/player-speed-landscape-qualification/captures-v2/compact-player-${scenario.$1}.png',
           ),
         );
         await tester.tap(find.byKey(const ValueKey('scroll-speed-toggle')));
@@ -1061,7 +1125,7 @@ void main() {
         await expectLater(
           find.byType(Overlay).first,
           matchesGoldenFile(
-            '../../artifacts/compact-player-${scenario.$1}-speed.png',
+            '../../artifacts/player-speed-landscape-qualification/captures-v2/compact-player-${scenario.$1}-speed.png',
           ),
         );
         await tester.binding.handlePopRoute();
@@ -1097,7 +1161,7 @@ void main() {
         await expectLater(
           find.byType(Overlay).first,
           matchesGoldenFile(
-            '../../artifacts/compact-player-${scenario.$1}-chords.png',
+            '../../artifacts/player-speed-landscape-qualification/captures-v2/compact-player-${scenario.$1}-chords.png',
           ),
         );
       }

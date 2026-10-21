@@ -128,7 +128,7 @@ void main() {
           await expectLater(
             find.byType(Scaffold).first,
             matchesGoldenFile(
-              '../../artifacts/player-speed-landscape-qualification/captures/tabs-${brightness.name}-intermediate.png',
+              '../../artifacts/player-speed-landscape-qualification/captures-v2/tabs-${brightness.name}-intermediate.png',
             ),
           );
         }
@@ -155,7 +155,7 @@ void main() {
           await expectLater(
             find.byType(Scaffold).first,
             matchesGoldenFile(
-              '../../artifacts/player-speed-landscape-qualification/captures/tabs-${brightness.name}-settled.png',
+              '../../artifacts/player-speed-landscape-qualification/captures-v2/tabs-${brightness.name}-settled.png',
             ),
           );
         }

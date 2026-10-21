@@ -923,7 +923,7 @@ void main() {
       expect(find.text(l10n.playerLyricsOnly), findsNothing);
       expect(find.text('1:30'), findsOneWidget);
       expect(find.text(l10n.playerEstimatedDuration('1:30')), findsNothing);
-      expect(find.text(l10n.playerScrollSpeed), findsOneWidget);
+      expect(find.text(l10n.playerEstimatedPace), findsOneWidget);
       expect(find.text(l10n.playerPlay), findsOneWidget);
       expect(find.byKey(const ValueKey('scroll-speed-slider')), findsNothing);
       await tester.tap(find.byKey(const ValueKey('scroll-speed-toggle')));
@@ -1046,7 +1046,7 @@ void main() {
     );
     await _pumpPlayer(tester, controller);
     final l10n = AppLocalizations.of(tester.element(find.byType(PlayerScreen)));
-    expect(find.text(l10n.playerScrollSpeed), findsOneWidget);
+    expect(find.text(l10n.playerEstimatedPace), findsOneWidget);
     await tester.tap(find.byTooltip(l10n.songMenuLabel));
     await tester.pumpAndSettle();
     await tester.tap(find.text(l10n.playerTimedLyrics));

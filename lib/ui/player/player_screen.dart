@@ -699,7 +699,7 @@ class _PlayerScreenState extends State<PlayerScreen>
       ),
       child: child,
     );
-    final lyrics = GestureDetector(
+    Widget lyrics({required bool reserveCollapsedAction}) => GestureDetector(
       behavior: HitTestBehavior.opaque,
       onHorizontalDragStart: state.activeSetlist == null
           ? null
@@ -719,7 +719,12 @@ class _PlayerScreenState extends State<PlayerScreen>
             child: ListView.builder(
               key: const ValueKey('player-lyrics-scroll'),
               controller: _lyricsScroll,
-              padding: const EdgeInsets.fromLTRB(28, 18, 28, 32),
+              padding: EdgeInsets.fromLTRB(
+                28,
+                18 + (reserveCollapsedAction ? 48 : 0),
+                28,
+                32,
+              ),
               itemCount: state.songLines.length,
               itemBuilder: (context, index) =>
                   _lyricLine(context, state, state.songLines[index]),
@@ -765,15 +770,47 @@ class _PlayerScreenState extends State<PlayerScreen>
             )..layout();
             final speedWidth = speedLabel.width + 28;
             speedLabel.dispose();
+            final currentKey = _transposeKey(state);
+            final keyText = currentKey == null
+                ? l10n.unknownValue
+                : state.readerKeyEstimated
+                ? '≈ $currentKey'
+                : currentKey;
+            final keyLabel = TextPainter(
+              text: TextSpan(
+                text: keyText,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              textDirection: Directionality.of(context),
+              textScaler: MediaQuery.textScalerOf(context),
+            )..layout();
+            final chordSlotWidth = math.max(48.0, keyLabel.width + 36);
+            keyLabel.dispose();
             final separateSpeed =
                 controlWidth < 360 ||
                 MediaQuery.textScalerOf(context).scale(1) > 1.25 ||
                 speedWidth + (fullScreenAction == null ? 0 : 48) >
                     (controlWidth - 16) / (fullScreenAction == null ? 4 : 5);
+            final actionSlotWidth =
+                (separateSpeed ? 0.0 : speedWidth) +
+                (fullScreenAction == null ? 0.0 : 48.0);
+            final balancedSideWidth = math.max(
+              64.0,
+              math.max(chordSlotWidth, actionSlotWidth),
+            );
+            final unstackedPlayWidth =
+                controlWidth -
+                8 -
+                balancedSideWidth * 2 -
+                ((state.playerSections.isNotEmpty ||
+                        state.activeSetlist != null)
+                    ? 80
+                    : 0);
             final stackTransport =
-                compact &&
-                (controlWidth < 330 ||
-                    MediaQuery.textScalerOf(context).scale(1) > 1.3) &&
+                ((compact &&
+                        (controlWidth < 330 ||
+                            MediaQuery.textScalerOf(context).scale(1) > 1.3)) ||
+                    unstackedPlayWidth < 104) &&
                 (song.hasChords || !separateSpeed || fullScreenAction != null);
             final content = Column(
               mainAxisSize: MainAxisSize.min,
@@ -820,6 +857,8 @@ class _PlayerScreenState extends State<PlayerScreen>
                         inlineChords: song.hasChords,
                         showSpeed: !separateSpeed,
                         stackActions: stackTransport,
+                        sideSlotWidth: balancedSideWidth,
+                        chordSlotWidth: chordSlotWidth,
                         trailingAction: fullScreenAction,
                       ),
                     ),
@@ -1079,7 +1118,12 @@ class _PlayerScreenState extends State<PlayerScreen>
                         ),
                       )
                     : null,
-                lyrics: lyrics,
+                lyrics: lyrics(
+                  reserveCollapsedAction:
+                      !state.playerControlsExpanded &&
+                      widget.onFullScreenChanged != null &&
+                      (compactLandscape || !widget.fullScreen),
+                ),
                 controls: compactLandscape
                     ? SizedBox(
                         width: (constraints.maxWidth * .4)
@@ -1202,7 +1246,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                           ? l10n.playerTimedLyrics
                           : state.timingMode == 'manual'
                           ? l10n.playerManualScroll
-                          : l10n.playerScrollSpeed)
+                          : l10n.playerEstimatedPace)
                     : localizedSectionName(l10n, currentSection.name),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -1608,6 +1652,8 @@ class _PlayerScreenState extends State<PlayerScreen>
     required bool inlineChords,
     required bool showSpeed,
     required bool stackActions,
+    required double sideSlotWidth,
+    required double chordSlotWidth,
     Widget? trailingAction,
   }) => Padding(
     padding: const EdgeInsets.fromLTRB(4, 0, 4, 2),
@@ -1617,7 +1663,6 @@ class _PlayerScreenState extends State<PlayerScreen>
         final isRtl = direction == TextDirection.rtl;
         final hasNavigation =
             state.playerSections.isNotEmpty || state.activeSetlist != null;
-        final sideSlotWidth = showSpeed && trailingAction != null ? 96.0 : 64.0;
         final hasActionSlot = showSpeed || trailingAction != null;
         final centerWidth = stackActions
             ? constraints.maxWidth
@@ -1709,7 +1754,14 @@ class _PlayerScreenState extends State<PlayerScreen>
             ),
         ];
         final chordSlot = SizedBox(
-          width: sideSlotWidth,
+          width: stackActions
+              ? math
+                    .min(
+                      chordSlotWidth,
+                      math.max(48.0, constraints.maxWidth - sideSlotWidth),
+                    )
+                    .toDouble()
+              : sideSlotWidth,
           child: Align(
             alignment: AlignmentDirectional.centerStart,
             child: inlineChords
