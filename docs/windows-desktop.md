@@ -111,6 +111,38 @@ clipboard for an unattended check.
 | Layout | Native screenshots at compact/desktop sizes, large text, DPI changes, themes and RTL. |
 | Delivery | Release bundle extracted outside checkout, dependencies present and clean-machine launch. |
 
+### Current automated evidence — 2026-10-21
+
+PR #93 head `8782b5afce18c77dc8ce0bacf78adcc52a89a014` passed both jobs in
+[CI run 39614414423](https://github.com/freevia-org/Singbook/actions/runs/39614414423).
+The Windows job passed the full Flutter suite (1,722 tests), release packaging,
+OAuth configuration preflight, isolated portable startup, and native clipboard
+and credential-store checks. The clipboard check sends `WM_PASTE` to a hidden
+native edit control and verifies exact Unicode plain text; it does not prove
+formatted paste into another application. The OAuth preflight proves package
+configuration is present, not that a user can complete a fresh account flow.
+
+The portable release is version `0.2.12+26`, source tree
+`1627fddfce71b39f2d9afb67a4d3ea093e8a0d27`, ZIP SHA-256
+`8C1F97577814A0266DF5CA5B7BE5D9F6096AA8706E5597E8A86484D95AD3461D`.
+Its manifest lists 50 required runtime files and reports Desktop OAuth
+configuration present. Source-layout captures also cover desktop library,
+setlists, reader, editor, settings, dark mode, and compact/large-text variants.
+Four representative desktop captures are committed for review: [library](images/windows-desktop-review/library.png),
+[setlists](images/windows-desktop-review/setlists.png),
+[reader](images/windows-desktop-review/reader.png), and
+[editor](images/windows-desktop-review/editor.png). The library uses a balanced
+three-column grid, and the reader and setlist content stay centered with no
+visible clipping.
+
+These checks establish automated build, startup, and source-layout evidence.
+They do not establish full native acceptance. The current exact ZIP has not had
+a fresh packaged-app visual matrix or the native file-dialog, print-dialog,
+cross-application formatted-paste, and packaged interaction-persistence checks
+recorded. Real account authentication and the full Drive lifecycle also remain
+separate user-operated acceptance items. Keep the release in review until the
+required rows above are passed or explicitly waived.
+
 The frozen `e0e14a1` source passed both jobs in
 [CI run 39237237228](https://github.com/freevia-org/Singbook/actions/runs/39237237228):
 analysis/full tests on Linux, Windows debug compilation, isolated native helper
