@@ -113,8 +113,8 @@ clipboard for an unattended check.
 
 ### Current automated and native evidence — 2026-10-21
 
-PR #93 head `71cb5a80862dfba7b65a2070f8c3d0bb9b398ec5` passed both jobs in
-[CI run 39653863257](https://github.com/freevia-org/Singbook/actions/runs/39653863257).
+PR #93 head `fd5d77babc6bc8317e058f8a390d154c830c9fbb` passed both jobs in
+[CI run 39657693802](https://github.com/freevia-org/Singbook/actions/runs/39657693802).
 Linux localization verification, analysis and the full Flutter suite passed.
 Windows passed Desktop OAuth configuration preflight, release packaging,
 isolated portable startup and graceful close, native clipboard and Credential
@@ -125,9 +125,9 @@ not a fresh sign-in or the complete Drive lifecycle. The clipboard check sends
 does not prove formatted paste into another application.
 
 The run's portable package is version `0.2.12+26`, built from synthetic PR
-merge commit `16b4c9ab088019ed8163ca043244df2c854dd159` with PR head
-`71cb5a80862dfba7b65a2070f8c3d0bb9b398ec5`, ZIP SHA-256
-`7DA14D0FF43D14B98883EC458A5800E8F7ECB3ACE8F2E92ACE0E0EDF107F40AB`.
+merge commit `dba0f64aa4f39d3e0a3ce500ff181d64671ac72f` with PR head
+`fd5d77babc6bc8317e058f8a390d154c830c9fbb`, ZIP SHA-256
+`C63ADD111A7F6809FBF4FB00F38CA3CE25B0ABBAE0DF5263096AEB142D6C9E45`.
 The downloaded archive was checked against its manifest: all 54 files were
 present and all hashes matched. The package embeds the configured Desktop
 OAuth client ID and secret. Source-layout captures also
