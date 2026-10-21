@@ -256,6 +256,19 @@ class _PlayerControlsPanelState extends State<PlayerControlsPanel>
                   child: Stack(
                     children: [
                       Positioned.fill(child: widget.lyrics),
+                      if (!widget.expanded && widget.collapsedAction != null)
+                        PositionedDirectional(
+                          top: 8,
+                          end: 8,
+                          child: Material(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerLow,
+                            shape: const CircleBorder(),
+                            clipBehavior: Clip.antiAlias,
+                            child: widget.collapsedAction!,
+                          ),
+                        ),
                       Positioned(
                         bottom: 0,
                         left: 0,

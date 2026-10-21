@@ -1036,19 +1036,30 @@ class _PlayerScreenState extends State<PlayerScreen>
                 sideWidth: compactLandscape
                     ? (constraints.maxWidth * .4).clamp(300.0, 360.0).toDouble()
                     : null,
-                collapsedAction: compactLandscape &&
-                        widget.fullScreen &&
-                        !state.playerControlsExpanded
+                collapsedAction: !state.playerControlsExpanded &&
+                        widget.onFullScreenChanged != null &&
+                        (compactLandscape || !widget.fullScreen)
                     ? IconButton(
-                        key: const ValueKey('player-exit-fullscreen'),
+                        key: ValueKey(
+                          widget.fullScreen
+                              ? 'player-exit-fullscreen'
+                              : 'player-enter-fullscreen',
+                        ),
                         constraints: const BoxConstraints.tightFor(
                           width: 48,
                           height: 48,
                         ),
-                        tooltip: l10n.playerExitFullScreen,
-                        onPressed: () =>
-                            widget.onFullScreenChanged?.call(false),
-                        icon: const Icon(Icons.close_fullscreen_rounded),
+                        tooltip: widget.fullScreen
+                            ? l10n.playerExitFullScreen
+                            : l10n.playerFullScreen,
+                        onPressed: () => widget.onFullScreenChanged?.call(
+                          !widget.fullScreen,
+                        ),
+                        icon: Icon(
+                          widget.fullScreen
+                              ? Icons.close_fullscreen_rounded
+                              : Icons.open_in_full_rounded,
+                        ),
                       )
                     : null,
                 lyrics: lyrics,

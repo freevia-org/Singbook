@@ -306,6 +306,42 @@ void main() {
   });
 
   testWidgets(
+    'collapsed portrait and landscape panels keep fullscreen toggle reachable',
+    (tester) async {
+      for (final size in [const Size(360, 780), const Size(700, 360)]) {
+        final controller = _Controller()..playerControlsExpanded = false;
+        addTearDown(controller.dispose);
+        bool? fullscreen;
+        await _pump(
+          tester,
+          controller,
+          size: size,
+          onFullScreenChanged: (value) => fullscreen = value,
+        );
+
+        final enter = find.byKey(const ValueKey('player-enter-fullscreen'));
+        expect(enter, findsOneWidget);
+        expect(tester.getSize(enter).width, greaterThanOrEqualTo(48));
+        await tester.tap(enter);
+        expect(fullscreen, isTrue);
+
+        await _pump(
+          tester,
+          controller,
+          size: size,
+          fullScreen: true,
+          onFullScreenChanged: (value) => fullscreen = value,
+        );
+        final exit = find.byKey(const ValueKey('player-exit-fullscreen'));
+        expect(exit, findsOneWidget);
+        await tester.tap(exit);
+        expect(fullscreen, isFalse);
+        expect(tester.takeException(), isNull);
+      }
+    },
+  );
+
+  testWidgets(
     'missing key stays neutral and large-text controls can collapse',
     (tester) async {
       final controller = _Controller()..songKey = null;
