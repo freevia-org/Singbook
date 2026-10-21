@@ -165,6 +165,14 @@ native discard prompt, confirmed cancel kept the editor open, saved the edited
 synthetic title, then reopened the same database after a full app restart and
 confirmed the saved title persisted. This test used the same prior packaged
 build and a disposable database; evidence is in `editor-close-evidence`.
+
+The follow-up print-to-PDF attempt did not produce a saved file. Sandbox
+inspection confirmed `Printing-PrintToPDFServices-Features` is
+`DisabledWithPayloadRemoved`; every available printer is redirected through
+Remote Desktop Easy Print, including “Microsoft Print to PDF (redirected 1).”
+This explains the missing local save dialog but does not count as a successful
+print acceptance.
+
 Setlist edit and mouse reorder were then verified using a disposable two-song
 database. The first row was dragged below the second, the setlist was renamed
 through the inline editor, and after full restart both the new title and row
@@ -182,9 +190,11 @@ Packaged player checks in `E:\acceptance\Singbook-native-819278c2\player-ui-evid
 verified mouse Play, Space pause/resume, next-section navigation and persistent
 settings. After disabling chords and section headings, closing and reopening the
 app preserved both settings; the reader hid chords while retaining the full
-timeline. The Settings preview still displayed its sample chord labels with the
-Chords switch off, so this visual inconsistency remains open. Screenshots and
-summary are in `player-ui-evidence` and `player-state-check-evidence`.
+timeline. Reinspection of the packaged Settings screenshots confirms the preview
+also hides its sample chord labels and section heading when both switches are
+off. The live preview widget test covers changing both switches without leaving
+Settings. Screenshots and summary are in `player-ui-evidence` and
+`player-state-check-evidence`.
 
 Representative exact-package native screenshots are committed for review:
 [reader and timeline](images/windows-desktop-review/packaged-20261021/reader-144dpi.png),
@@ -195,8 +205,11 @@ Representative exact-package native screenshots are committed for review:
 and [Windows Print Setup](images/windows-desktop-review/packaged-20261021/print-setup.png).
 At this desktop size the reader's lyrics column and playback rail are centered
 within the app frame, timeline labels remain legible, and account cards stay
-aligned; this visual review does not substitute for the unrun resolution, DPI,
-theme and locale matrix.
+aligned. A fresh exact-package Sandbox review at 1024×720 confirms the Songs
+library remains legible and aligned in a compact desktop window: [library at
+1024×720](images/windows-desktop-review/packaged-20261021/library-1024x720.png).
+The 1280×800 Sandbox matrix also covers library, setlists, and reader. This
+review does not substitute for the remaining DPI, theme, and locale matrix.
 
 Source-layout captures also cover desktop library, setlists, reader, editor,
 settings, dark mode, and compact/large-text variants. Four representative
@@ -218,15 +231,19 @@ checks establish the application logic and platform adapters; they do not
 exercise every native dialog or interaction in the packaged app.
 
 Remaining packaged-native checks include printing to a saved PDF; formatted
-paste into another application; representative provider workflows; and resolving
-the Settings preview chord-label inconsistency. The full packaged
-locale/theme/DPI and compact/large-screen matrix also remains. The user confirmed that their
-existing library synced successfully in a previous `0.2.12+26` interactive
-session; no synthetic song was uploaded. Token refresh, offline recovery,
-revoked-grant handling and sign-out still need lifecycle acceptance. The
-current portable bundle passed CI startup smoke, and the fresh Windows Sandbox
-guest ran the packaged build and selected workflows without installing developer
-runtimes. Installer, SmartScreen and antivirus behavior are not applicable to
+paste into another application; and representative provider workflows. The full
+packaged locale/theme/DPI and compact/large-screen matrix also remains. The user
+confirmed that their existing library synced successfully in a previous
+`0.2.12+26` interactive session; no synthetic song was uploaded. Token refresh,
+offline recovery, revoked-grant handling and sign-out still need lifecycle
+acceptance. The
+CI run [39666447817](https://github.com/freevia-org/Singbook/actions/runs/39666447817)
+passed Linux analysis/tests, Windows packaging, portable startup smoke, native
+clipboard/credential checks, the complete Windows Flutter suite, and the Google
+OAuth preflight. It produced `windows-release-bundle` and
+`windows-validation-evidence` artifacts. The fresh Windows Sandbox guest ran the
+packaged build and selected workflows without installing developer runtimes.
+Installer, SmartScreen and antivirus behavior are not applicable to
 the portable ZIP workflow and were not assessed. PR #93 remains Draft; keep the
 release in review until the required acceptance rows are passed or explicitly
 waived.
