@@ -261,8 +261,7 @@ void main() {
         return http.Response(
           jsonEncode({
             'error': error,
-            if (tokenErrorDescription != null)
-              'error_description': tokenErrorDescription,
+            'error_description': ?tokenErrorDescription,
             if (malformedTokenErrorDescription) 'error_description': 7,
           }),
           400,
@@ -523,16 +522,15 @@ void main() {
     );
   });
 
-  test('explicit missing client_secret response maps to configuration error',
-      () async {
-    exchangeError = 'invalid_request';
-    tokenErrorDescription = 'Missing required parameter: CLIENT_SECRET';
-    await expectLater(
-      access.pickFolder(),
-      throwsA(_error('not_configured')),
-    );
-    expect(vault.values, isEmpty);
-  });
+  test(
+    'explicit missing client_secret response maps to configuration error',
+    () async {
+      exchangeError = 'invalid_request';
+      tokenErrorDescription = 'Missing required parameter: CLIENT_SECRET';
+      await expectLater(access.pickFolder(), throwsA(_error('not_configured')));
+      expect(vault.values, isEmpty);
+    },
+  );
 
   test('generic invalid_request remains an exchange error', () async {
     exchangeError = 'invalid_request';
@@ -540,21 +538,25 @@ void main() {
     expect(vault.values, isEmpty);
   });
 
-  test('unrelated invalid_request description remains an exchange error',
-      () async {
-    exchangeError = 'invalid_request';
-    tokenErrorDescription = 'Authorization code rejected';
-    await expectLater(access.pickFolder(), throwsA(_error('network')));
-    expect(vault.values, isEmpty);
-  });
+  test(
+    'unrelated invalid_request description remains an exchange error',
+    () async {
+      exchangeError = 'invalid_request';
+      tokenErrorDescription = 'Authorization code rejected';
+      await expectLater(access.pickFolder(), throwsA(_error('network')));
+      expect(vault.values, isEmpty);
+    },
+  );
 
-  test('non-string invalid_request description remains an exchange error',
-      () async {
-    exchangeError = 'invalid_request';
-    malformedTokenErrorDescription = true;
-    await expectLater(access.pickFolder(), throwsA(_error('network')));
-    expect(vault.values, isEmpty);
-  });
+  test(
+    'non-string invalid_request description remains an exchange error',
+    () async {
+      exchangeError = 'invalid_request';
+      malformedTokenErrorDescription = true;
+      await expectLater(access.pickFolder(), throwsA(_error('network')));
+      expect(vault.values, isEmpty);
+    },
+  );
 
   test(
     'concurrent startup calls coalesce vault read and silent renewal',
