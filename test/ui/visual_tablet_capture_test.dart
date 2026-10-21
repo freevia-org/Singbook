@@ -532,12 +532,18 @@ void main() {
       }
     }
 
-    expect(
-      output.listSync().whereType<File>().where(
-        (file) => !file.path.endsWith('reader_scrolled.png'),
-      ),
-      hasLength(48),
-    );
+    final expectedCaptures = {
+      for (final viewport in _viewports.keys)
+        for (final theme in ['light', 'dark'])
+          for (final screen in _screens)
+            '${viewport}_${theme}_$screen.png',
+    };
+    final writtenCaptures = output
+        .listSync()
+        .whereType<File>()
+        .map((file) => file.uri.pathSegments.last)
+        .toSet();
+    expect(writtenCaptures, containsAll(expectedCaptures));
     tester.view.resetDevicePixelRatio();
     tester.view.resetPhysicalSize();
     tester.view.resetViewInsets();
