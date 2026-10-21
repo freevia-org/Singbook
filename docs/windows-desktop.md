@@ -113,8 +113,8 @@ clipboard for an unattended check.
 
 ### Current automated evidence — 2026-10-21
 
-PR #93 head `5d661df181acdf63461325704195168497c40ebe` passed both jobs in
-[CI run 39619646702](https://github.com/freevia-org/Singbook/actions/runs/39619646702).
+PR #93 head `1f5b3df5865d1a670fbfb1a7c58852a3fd4b1f6c` passed both jobs in
+[CI run 39622130652](https://github.com/freevia-org/Singbook/actions/runs/39622130652).
 The Windows job passed release packaging, OAuth configuration preflight,
 isolated portable startup and graceful close, native clipboard and credential
 checks, and the full Flutter suite. The Linux analysis and test job also passed.
@@ -125,8 +125,8 @@ and the bundle reports both Desktop OAuth values configured; it does not prove a
 fresh user sign-in or the full Drive lifecycle.
 
 The portable release is version `0.2.12+26`, built from source tree
-`46c779694429022b5401c3626896547746112d78`, ZIP SHA-256
-`4C2384EEC0DE2E845C8F419358BF4D24C1EF685F88A8BA79A34960CCAD48DED6`.
+`86c9fff59ee0eaf74a91428512c3bebe48ffa733`, ZIP SHA-256
+`4465EB68036924CEE13319CDB7F64C53A5ABDF7AB6C77672F4BFAFF01C298163`.
 Its manifest lists 50 required runtime files. The startup smoke produced a
 valid SQLite database, observed the `Singbook` main window, captured its pixels,
 and closed the app gracefully without a forced stop. The packaged screenshot is
