@@ -872,9 +872,160 @@ void main() {
       findsOneWidget,
     );
     expect(find.byKey(const ValueKey('save-open-lyrics')), findsOneWidget);
+    expect(find.byKey(const ValueKey('version-info-button')), findsOneWidget);
+    expect(find.byKey(const ValueKey('source-checks-button')), findsOneWidget);
+    expect(find.text('First source preview').hitTestable(), findsOneWidget);
     expect(find.byType(TextField), findsNothing);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets(
+    'native-shaped short landscape shows chords and match above Save',
+    (tester) async {
+      tester.view.devicePixelRatio = 2.625;
+      tester.view.physicalSize = const Size(2400, 1080);
+      tester.view.padding = const FakeViewPadding(
+        left: 136,
+        top: 74,
+        right: 0,
+        bottom: 63,
+      );
+      tester.view.viewPadding = const FakeViewPadding(
+        left: 136,
+        top: 74,
+        right: 0,
+        bottom: 63,
+      );
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetPadding);
+      addTearDown(tester.view.resetViewPadding);
+
+      final controller = _LiveFlowController(_denseLandscapeComparisonState());
+      addTearDown(controller.dispose);
+      final semantics = tester.ensureSemantics();
+      try {
+        await _pumpHome(tester, controller, productionFrame: true);
+
+        final chord = find.bySemanticsLabel('E');
+        final save = find.byKey(const ValueKey('save-open-lyrics'));
+        expect(chord.hitTestable(), findsOneWidget);
+        expect(
+          tester.getRect(chord).bottom,
+          lessThanOrEqualTo(tester.getRect(save).top),
+        );
+        expect(
+          find.text('Synthetic fixture is a title and duration match.')
+              .hitTestable(),
+          findsOneWidget,
+        );
+        final l10n = AppLocalizations.of(
+          tester.element(find.byType(VerseHomeScreen)),
+        );
+        expect(
+          find.text(l10n.playerEstimatedPace).hitTestable(),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('version-selection-footer')),
+          findsOneWidget,
+        );
+        for (final key in [
+          const ValueKey('version-info-button'),
+          const ValueKey('source-checks-button'),
+        ]) {
+          final button = find.byKey(key);
+          expect(tester.getSize(button).width, greaterThanOrEqualTo(48));
+          expect(tester.getSize(button).height, greaterThanOrEqualTo(48));
+        }
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox.shrink());
+      } finally {
+        semantics.dispose();
+      }
+    },
+  );
+
+  testWidgets('tall landscape comparison keeps inline source contributions', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(1920, 1080);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+
+    final controller = _LiveFlowController(_landscapeComparisonState());
+    addTearDown(controller.dispose);
+    await _pumpHome(tester, controller);
+
+    expect(find.textContaining('Catalog contributor').hitTestable(), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('landscape preview keeps rich lyrics and contributor details', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(914, 411);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+
+    final controller = _LiveFlowController(_landscapeComparisonState());
+    addTearDown(controller.dispose);
+    final semantics = tester.ensureSemantics();
+    try {
+      await _pumpHome(tester, controller);
+
+      final chord = find.bySemanticsLabel('E');
+      final save = find.byKey(const ValueKey('save-open-lyrics'));
+      expect(chord.hitTestable(), findsOneWidget);
+      expect(
+        tester.getRect(chord).bottom,
+        lessThanOrEqualTo(tester.getRect(save).top),
+      );
+
+      final lyric = find.text(
+        'Original QA melody phrase 1 follows the harbor lights.',
+      );
+      await tester.ensureVisible(lyric);
+      await tester.pumpAndSettle();
+      expect(lyric.hitTestable(), findsOneWidget);
+      expect(
+        tester.getRect(lyric).bottom,
+        lessThanOrEqualTo(tester.getRect(save).top),
+      );
+
+      await tester.tap(find.byKey(const ValueKey('version-info-button')));
+      await tester.pumpAndSettle();
+      final sheet = find.byKey(const ValueKey('version-info-sheet'));
+      expect(sheet, findsOneWidget);
+      final provider = find.text('Catalog contributor');
+      await tester.scrollUntilVisible(
+        provider,
+        120,
+        scrollable: find.descendant(
+          of: sheet,
+          matching: find.byType(Scrollable),
+        ).first,
+        maxScrolls: 12,
+      );
+      await tester.pumpAndSettle();
+      expect(provider.hitTestable(), findsOneWidget);
+      expect(tester.getRect(provider).top, greaterThanOrEqualTo(tester.getRect(sheet).top));
+      expect(tester.getRect(provider).bottom, lessThanOrEqualTo(tester.getRect(sheet).bottom));
+      final contribution = find.ancestor(of: provider, matching: find.byType(Column)).first;
+      final role = find.descendant(of: contribution, matching: find.byWidgetPredicate(
+        (widget) => widget is SelectableText && widget.data == 'Lyrics',
+      ));
+      expect(role.hitTestable(), findsOneWidget);
+      expect(tester.getRect(role).bottom, lessThanOrEqualTo(tester.getRect(sheet).bottom));
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+    } finally {
+      semantics.dispose();
+    }
   });
 
   testWidgets(
@@ -1436,11 +1587,115 @@ VerseUiState _comparisonState() => const VerseUiState(
   ),
 );
 
+VerseUiState _landscapeComparisonState() => const VerseUiState(
+  homeListMode: HomeListMode.online,
+  query: 'qa melody',
+  searchState: LoadState.loaded,
+  comparison: SearchComparisonData(
+    reference: SearchReferenceData(
+      id: 'qa-melody',
+      title: 'QA’s Melody',
+      artist: 'QA',
+      album: 'Small Weather',
+      durationSeconds: 240,
+    ),
+    suggested: SourceVersionData(
+      id: 'qa-chord-chart',
+      providerId: 'catalog',
+      providerName: 'QA Chord Chart',
+      title: 'QA’s Melody',
+      artist: 'QA',
+      album: 'Small Weather',
+      durationSeconds: 240,
+      hasLyrics: true,
+      hasChords: true,
+      sameRecording: true,
+      sourceCount: 2,
+      contributions: [
+        SourceContributionData(
+          providerName: 'Catalog contributor',
+          roles: ['lyrics'],
+        ),
+      ],
+      isUsableVersion: true,
+      canSave: true,
+      bodyPreview: [
+        LyricLineData(id: 'qa-preview-lyric', text: 'Preview melody'),
+      ],
+      bodyLines: [
+        LyricLineData(id: 'qa-intro', section: 'Intro', isBlank: true),
+        LyricLineData(
+          id: 'qa-instrumental-chord',
+          chords: [LyricChord(graphemeOffset: 0, symbol: 'E')],
+        ),
+        LyricLineData(
+          id: 'qa-first-lyric',
+          text: 'Original QA melody phrase 1 follows the harbor lights.',
+          chords: [LyricChord(graphemeOffset: 0, symbol: 'E')],
+        ),
+      ],
+    ),
+  ),
+);
+
+VerseUiState _denseLandscapeComparisonState() => const VerseUiState(
+  homeListMode: HomeListMode.online,
+  query: 'qa melody',
+  searchState: LoadState.loaded,
+  comparison: SearchComparisonData(
+    reference: SearchReferenceData(
+      id: 'qa-melody-dense',
+      title: 'QA’s Melody',
+      artist: 'QA',
+      album: 'Small Weather',
+      durationSeconds: 240,
+    ),
+    suggested: SourceVersionData(
+      id: 'qa-chord-chart-dense',
+      providerId: 'catalog',
+      providerName: 'QA Chord Chart',
+      title: 'QA’s Melody',
+      artist: 'QA',
+      album: 'Small Weather',
+      durationSeconds: 240,
+      hasLyrics: true,
+      hasChords: true,
+      matchSummary: 'Synthetic fixture is a title and duration match.',
+      isUsableVersion: true,
+      canSave: true,
+      bodyPreview: [
+        LyricLineData(id: 'dense-preview-lyric', text: 'Preview melody'),
+      ],
+      bodyLines: [
+        LyricLineData(id: 'dense-intro', section: 'Intro', isBlank: true),
+        LyricLineData(
+          id: 'dense-instrumental-e',
+          chords: [LyricChord(graphemeOffset: 0, symbol: 'E')],
+        ),
+        LyricLineData(
+          id: 'dense-instrumental-a-e',
+          chords: [LyricChord(graphemeOffset: 0, symbol: 'A/E')],
+        ),
+        LyricLineData(
+          id: 'dense-instrumental-am-e',
+          chords: [LyricChord(graphemeOffset: 0, symbol: 'Am/E')],
+        ),
+        LyricLineData(
+          id: 'dense-first-lyric',
+          text: 'Original QA melody phrase 1 follows the harbor lights.',
+          chords: [LyricChord(graphemeOffset: 0, symbol: 'E')],
+        ),
+      ],
+    ),
+  ),
+);
+
 Future<void> _pumpHome(
   WidgetTester tester,
   _LiveFlowController controller, {
   double scale = 1,
   String language = 'en',
+  bool productionFrame = false,
 }) async {
   await tester.pumpWidget(
     MaterialApp(
@@ -1469,9 +1724,15 @@ Future<void> _pumpHome(
                   leading: const BackButton(),
                   title: const Text('Compare'),
                 ),
-          body: VerseHomeScreen(
-            controller: controller,
-            state: controller.state,
+          body: SafeArea(
+            top: false,
+            bottom: false,
+            left: productionFrame,
+            right: productionFrame,
+            child: VerseHomeScreen(
+              controller: controller,
+              state: controller.state,
+            ),
           ),
         ),
       ),

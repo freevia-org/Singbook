@@ -282,6 +282,9 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
         .where((c) => c.state != 'pending')
         .length;
     final filters = state.searchFilters;
+    final media = MediaQuery.of(context);
+    final compactLandscape =
+        media.orientation == Orientation.landscape && media.size.height <= 480;
     final filteredEmpty =
         !comparison.discovering &&
         comparison.discoveryError == null &&
@@ -296,7 +299,10 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
         SingleChildScrollView(
           key: const ValueKey('version-tabs'),
           scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          padding: EdgeInsets.symmetric(
+            horizontal: compactLandscape ? 8 : 12,
+            vertical: compactLandscape ? 0 : 4,
+          ),
           child: Row(
             children: [
               for (final id in _order)
@@ -329,14 +335,19 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
             minHeight: 2,
           ),
         Padding(
-          padding: const EdgeInsetsDirectional.only(start: 16, end: 4),
+          padding: EdgeInsetsDirectional.only(
+            start: compactLandscape ? 12 : 16,
+            end: 4,
+          ),
           child: Row(
             children: [
               Expanded(
                 child: Text(
                   l10n.searchReadyVersions(ready),
                   key: const ValueKey('home-search-comparison-counts'),
-                  style: Theme.of(context).textTheme.labelSmall,
+                  style: compactLandscape
+                      ? Theme.of(context).textTheme.bodySmall
+                      : Theme.of(context).textTheme.labelSmall,
                 ),
               ),
               if (comparison.discovering)
@@ -510,6 +521,7 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
                             available: _current.containsKey(id),
                             showChords: state.showChords,
                             fontSize: state.lyricsFontSize,
+                            compactLandscape: compactLandscape,
                           ),
                         ),
                       );
@@ -565,12 +577,14 @@ class _VersionDocument extends StatefulWidget {
     required this.available,
     required this.showChords,
     required this.fontSize,
+    required this.compactLandscape,
   });
   final SourceVersionData version;
   final Map<String, double> readingOffsets;
   final SearchReferenceData reference;
   final bool available, showChords;
   final double fontSize;
+  final bool compactLandscape;
   @override
   State<_VersionDocument> createState() => _VersionDocumentState();
 }
@@ -694,17 +708,27 @@ class _VersionDocumentState extends State<_VersionDocument>
       child: SingleChildScrollView(
         key: const ValueKey('full-preview-body'),
         controller: _scroll,
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+        padding: EdgeInsets.fromLTRB(
+          widget.compactLandscape ? 12 : 20,
+          widget.compactLandscape ? 4 : 12,
+          widget.compactLandscape ? 12 : 20,
+          widget.compactLandscape ? 8 : 20,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(widget.reference.title, style: theme.textTheme.titleLarge),
+            Text(
+              widget.reference.title,
+              style: widget.compactLandscape
+                  ? theme.textTheme.titleMedium
+                  : theme.textTheme.titleLarge,
+            ),
             if (metadata.isNotEmpty)
               Text(metadata, style: theme.textTheme.bodySmall),
-            const SizedBox(height: 8),
+            SizedBox(height: widget.compactLandscape ? 2 : 8),
             Wrap(
-              spacing: 12,
-              runSpacing: 4,
+              spacing: widget.compactLandscape ? 8 : 12,
+              runSpacing: widget.compactLandscape ? 0 : 4,
               children: [
                 _Capability(
                   version.sameRecording
@@ -741,7 +765,8 @@ class _VersionDocumentState extends State<_VersionDocument>
                 ),
               ],
             ),
-            if ((version.sourceCount ?? 0) > 1) ...[
+            if ((version.sourceCount ?? 0) > 1 &&
+                !widget.compactLandscape) ...[
               const SizedBox(height: 8),
               SourceContributions(version: version),
             ],
