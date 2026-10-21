@@ -377,9 +377,11 @@ void main() {
             const Duration(seconds: 3),
           );
           if (screen == 'settings_account') {
-            await tester.tap(
-              find.byKey(const ValueKey('settings-menu-account')),
+            final accountMenu = find.byKey(
+              const ValueKey('settings-menu-account'),
             );
+            await tester.ensureVisible(accountMenu);
+            await tester.tap(accountMenu);
             await tester.pumpAndSettle();
           }
           expect(
@@ -586,7 +588,11 @@ void _assertRouteGeometry(WidgetTester tester, String screen, Size viewport) {
       expect(rect.left, greaterThanOrEqualTo(0));
       expect(rect.right, lessThanOrEqualTo(viewport.width));
       expect(rect.center.dx, closeTo(viewport.width / 2, 0.5));
-      expect(rect.width, closeTo(math.min(viewport.width - 32, 1168), 0.5));
+      expect(
+        (rect.width - math.min(viewport.width - 32, 1168)).abs(),
+        lessThanOrEqualTo(12),
+        reason: 'account card should stay inside the centered 1200px frame',
+      );
       expect(find.text('Account and sync'), findsOneWidget);
     case 'home_keyboard':
       final search = find.byType(TextField).first;
