@@ -615,7 +615,10 @@ class _SettingsSectionScreenState extends State<_SettingsSectionScreen> {
           leadingWidth: 56 + frameInset,
           leading: Align(
             alignment: AlignmentDirectional.centerStart,
-            child: const SizedBox(width: 56, child: BackButton()),
+            child: Padding(
+              padding: EdgeInsetsDirectional.only(start: frameInset),
+              child: const SizedBox(width: 56, child: BackButton()),
+            ),
           ),
           title: Text(
             _sectionTitle(l10n, widget.section),
