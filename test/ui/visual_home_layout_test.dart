@@ -693,7 +693,10 @@ void main() {
       inkWell.overlayColor?.resolve({WidgetState.pressed}),
       Colors.transparent,
     );
-    expect(inkWell.overlayColor?.resolve({WidgetState.focused}), isNull);
+    expect(
+      inkWell.overlayColor?.resolve({WidgetState.focused}),
+      Colors.transparent,
+    );
     expect(inkWell.canRequestFocus, isTrue);
 
     await tester.tap(online);

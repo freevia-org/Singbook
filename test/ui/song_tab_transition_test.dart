@@ -1,4 +1,4 @@
-import 'dart:ui' show PointerDeviceKind, SemanticsFlag;
+import 'dart:ui' show PointerDeviceKind;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -161,8 +161,8 @@ void main() {
         }
         expect(_paintedColor(tester, HomeListMode.library), colors.surface);
         final online = tester.getSemantics(_tab(HomeListMode.online));
-        expect(online.hasFlag(SemanticsFlag.isButton), isTrue);
-        expect(online.hasFlag(SemanticsFlag.isSelected), isTrue);
+        expect(online.flagsCollection.isButton, isTrue);
+        expect(online.flagsCollection.isSelected.toBoolOrNull(), isTrue);
         expect(controller.state.query, 'Retained query');
         expect(controller.calls, ['mode:library', 'mode:online']);
         expect(tester.takeException(), isNull);

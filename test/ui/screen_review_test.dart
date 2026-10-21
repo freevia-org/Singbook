@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/l10n/generated/app_localizations.dart';
@@ -341,21 +342,50 @@ void main() {
     testWidgets('estimated duration stays compact on the progress slider', (
       tester,
     ) async {
-      final c = FakeUiController(
-        (_) => _reader(duration: null, durationEstimated: true),
-      );
-      addTearDown(c.dispose);
-      await pumpShell(tester, c);
-      final l10n = l10nOf(tester);
-      // The estimate stays compact visually while its semantic label remains
-      // explicit for assistive technology.
-      expect(find.text('3:24'), findsOneWidget);
-      expect(find.text(l10n.playerEstimatedDuration('3:24')), findsNothing);
-      expect(
-        find.bySemanticsLabel(l10n.playerEstimatedDuration('3:24')),
-        findsOneWidget,
-      );
-      expect(find.text('3:20'), findsNothing);
+      final semantics = tester.ensureSemantics();
+      try {
+        final c = FakeUiController(
+          (_) => _reader(duration: null, durationEstimated: true),
+        );
+        addTearDown(c.dispose);
+        await pumpShell(tester, c);
+        final l10n = l10nOf(tester);
+        // The estimate stays compact visually while its semantic label remains
+        // explicit for assistive technology. The reader groups its timeline
+        // labels into one semantics node, so check the aggregate node label.
+        expect(find.text('3:24'), findsOneWidget);
+        expect(find.text(l10n.playerEstimatedDuration('3:24')), findsNothing);
+        final semanticsLabels = <String>[];
+        void collectSemanticsLabels(SemanticsNode node) {
+          final label = node.getSemanticsData().label;
+          if (label.isNotEmpty) semanticsLabels.add(label);
+          node.visitChildren((child) {
+            collectSemanticsLabels(child);
+            return true;
+          });
+        }
+
+        collectSemanticsLabels(
+          tester
+              .binding
+              .renderViews
+              .single
+              .owner!
+              .semanticsOwner!
+              .rootSemanticsNode!,
+        );
+        final estimatedDuration = l10n.playerEstimatedDuration('3:24');
+        expect(
+          semanticsLabels.any((label) => label.contains(estimatedDuration)),
+          isTrue,
+          reason:
+              'No aggregated semantics node contained $estimatedDuration:\n'
+              '${semanticsLabels.join('\n---\n')}',
+        );
+        expect(find.text('3:20'), findsNothing);
+      } finally {
+        semantics.dispose();
+      }
     });
 
     testWidgets('a real duration is shown', (tester) async {

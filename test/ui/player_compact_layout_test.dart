@@ -1,9 +1,6 @@
 import 'dart:io';
-import 'dart:ui' show SemanticsFlag;
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart'
-    show PointerCancelEvent, PointerDownEvent, PointerUpEvent;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter/services.dart';
@@ -931,7 +928,8 @@ void main() {
           tester
               .getSemantics(sliderFinder)
               .getSemanticsData()
-              .hasFlag(SemanticsFlag.isSlider),
+              .flagsCollection
+              .isSlider,
           isTrue,
         );
         expect(

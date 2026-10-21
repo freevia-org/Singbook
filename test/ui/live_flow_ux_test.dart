@@ -1589,11 +1589,13 @@ class _LiveFlowController extends VerseUiController {
 }
 
 class _PlaybackSpeedState extends VerseUiState {
-  _PlaybackSpeedState(VerseUiState state, this.playbackSpeed)
+  _PlaybackSpeedState(VerseUiState state, this._playbackSpeed)
     : super.withPosition(state, state.progressSeconds, state.currentLineId);
 
   @override
-  final double playbackSpeed;
+  double get playbackSpeed => _playbackSpeed;
+
+  final double _playbackSpeed;
 }
 
 /// A small adapter-like fixture: filtering changes both the filter state and

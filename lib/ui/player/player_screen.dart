@@ -952,9 +952,9 @@ class _PlayerScreenState extends State<PlayerScreen>
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
-                      if (song.artist?.trim().isNotEmpty == true)
+                      if (song.artist.trim().isNotEmpty)
                         Text(
-                          song.artist!,
+                          song.artist,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.bodySmall
@@ -1783,7 +1783,7 @@ class _PlayerScreenState extends State<PlayerScreen>
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               if (showSpeed) Flexible(child: _speedControl(l10n, state)),
-              if (trailingAction != null) trailingAction,
+              ?trailingAction,
             ],
           ),
         );
