@@ -74,6 +74,8 @@ jobs:
   windows-build:
     runs-on: windows-latest
     timeout-minutes: 30
+    env:
+      VERSE_GOOGLE_DESKTOP_CLIENT_ID: ${{ vars.VERSE_GOOGLE_DESKTOP_CLIENT_ID }}
     steps:
       - uses: actions/checkout@v4
 
@@ -85,6 +87,13 @@ jobs:
 
       - name: Get dependencies
         run: flutter pub get
+
+      - name: Check Windows OAuth configuration
+        shell: pwsh
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:VERSE_GOOGLE_DESKTOP_CLIENT_ID)) {
+            throw 'The VERSE_GOOGLE_DESKTOP_CLIENT_ID Actions variable is required for the Windows release bundle.'
+          }
 
       - name: Record dependency generation source status
         shell: pwsh

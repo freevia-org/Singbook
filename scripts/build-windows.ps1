@@ -24,6 +24,11 @@ try {
     } elseif (-not $AllowMissingDefines) {
         throw 'Build configuration is missing. Provide -DefinesFile or use -AllowMissingDefines for an offline preview.'
     }
+    # CI supplies the public Desktop OAuth client ID as an Actions variable.
+    # Keep it out of the checkout and pass it directly to Flutter's compiler.
+    if (-not [string]::IsNullOrWhiteSpace($env:VERSE_GOOGLE_DESKTOP_CLIENT_ID)) {
+        $buildArguments += "--dart-define=VERSE_GOOGLE_DESKTOP_CLIENT_ID=$($env:VERSE_GOOGLE_DESKTOP_CLIENT_ID)"
+    }
     $stamp = [DateTime]::UtcNow.ToString('yyyyMMddTHHmmssfffZ')
     $name = "singbook-$($versionMatch.Groups[1].Value)-windows-x64-$mode-$($revision.Substring(0,8))-$stamp"
     $evidence = Join-Path $workspace "artifacts/windows/$name"
