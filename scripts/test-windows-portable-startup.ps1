@@ -31,11 +31,73 @@ $tempDirectory = Join-Path $runtimeRoot 'temp'
 $libraryPath = Join-Path $libraryDirectory 'singbook.db'
 New-Item -ItemType Directory -Path $libraryDirectory, $localAppData, $roamingAppData, $tempDirectory -Force | Out-Null
 New-Item -ItemType Directory -Path $EvidenceDirectory -Force | Out-Null
+$windowScreenshotPath = Join-Path $EvidenceDirectory 'portable-startup-window.png'
+
+Add-Type -TypeDefinition @'
+using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
+
+public static class SingbookWindowCapture
+{
+    [StructLayout(LayoutKind.Sequential)]
+    private struct RECT
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+    }
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern bool GetWindowRect(IntPtr handle, out RECT rect);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern bool PrintWindow(IntPtr handle, IntPtr deviceContext, uint flags);
+
+    public static void Capture(IntPtr handle, string path)
+    {
+        RECT rect;
+        if (!GetWindowRect(handle, out rect))
+            throw new InvalidOperationException("GetWindowRect failed: " + Marshal.GetLastWin32Error());
+
+        int width = rect.Right - rect.Left;
+        int height = rect.Bottom - rect.Top;
+        if (width <= 0 || height <= 0)
+            throw new InvalidOperationException("The app window has invalid screenshot dimensions.");
+
+        using (var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb))
+        using (var graphics = Graphics.FromImage(bitmap))
+        {
+            IntPtr deviceContext = graphics.GetHdc();
+            bool captured;
+            try
+            {
+                captured = PrintWindow(handle, deviceContext, 2); // PW_RENDERFULLCONTENT
+                if (!captured)
+                    captured = PrintWindow(handle, deviceContext, 0);
+            }
+            finally
+            {
+                graphics.ReleaseHdc(deviceContext);
+            }
+
+            if (!captured)
+                throw new InvalidOperationException("PrintWindow failed: " + Marshal.GetLastWin32Error());
+
+            bitmap.Save(path, ImageFormat.Png);
+        }
+    }
+}
+'@
 
 $process = $null
 $startupPassed = $false
 $mainWindowObserved = $false
 $mainWindowTitle = $null
+$windowScreenshotCaptured = $false
+$windowScreenshotFailure = $null
 $databaseHeaderValid = $false
 $gracefulClose = $false
 $forcedStop = $false
@@ -69,7 +131,15 @@ try {
             $mainWindowTitle = $process.MainWindowTitle
             $startupPassed = $mainWindowObserved -and
                 -not [string]::IsNullOrWhiteSpace($mainWindowTitle)
-            if ($startupPassed) { break }
+            if ($startupPassed) {
+                try {
+                    [SingbookWindowCapture]::Capture($process.MainWindowHandle, $windowScreenshotPath)
+                    $windowScreenshotCaptured = $true
+                } catch {
+                    $windowScreenshotFailure = $_.Exception.Message
+                }
+                break
+            }
         }
         Start-Sleep -Milliseconds 500
     }
@@ -124,6 +194,9 @@ try {
         databaseHeaderValid = $databaseHeaderValid
         mainWindowObserved = $mainWindowObserved
         mainWindowTitle = $mainWindowTitle
+        windowScreenshotCaptured = $windowScreenshotCaptured
+        windowScreenshotPath = $windowScreenshotPath
+        windowScreenshotFailure = $windowScreenshotFailure
         gracefulClose = $gracefulClose
         forcedStop = $forcedStop
         elapsedMilliseconds = $stopwatch.ElapsedMilliseconds
