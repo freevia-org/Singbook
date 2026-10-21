@@ -131,10 +131,11 @@ Its manifest lists 50 required runtime files. The startup smoke produced a
 valid SQLite database, observed the `Singbook` main window, captured its pixels,
 and closed the app gracefully without a forced stop. The packaged screenshot is
 [available here](images/windows-desktop-review/packaged-startup.png); it is the
-default empty state at 1044×720. The screenshot shows a centered empty-state
-message, aligned search and category tabs, and no visible clipping. This single
-capture does not cover the complete native size, DPI, theme, and localization
-matrix.
+default empty state. The review PNG removes the unpainted 8-pixel left and bottom
+margins from the raw 1044×720 CI BMP, which remains in the run artifact. The app
+content shows a centered empty-state message, aligned search and category tabs,
+and no visible clipping. This single capture does not cover the complete native
+size, DPI, theme, and localization matrix.
 
 Source-layout captures also cover desktop library, setlists, reader, editor,
 settings, dark mode, and compact/large-text variants. Four representative
