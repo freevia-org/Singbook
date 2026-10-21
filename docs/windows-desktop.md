@@ -113,8 +113,8 @@ clipboard for an unattended check.
 
 ### Current automated evidence — 2026-10-21
 
-PR #93 head `1f5b3df5865d1a670fbfb1a7c58852a3fd4b1f6c` passed both jobs in
-[CI run 39622130652](https://github.com/freevia-org/Singbook/actions/runs/39622130652).
+PR #93 head `1190b2f746bf98af6d621342f4c9ff8054c375c3` passed both jobs in
+[CI run 39627883980](https://github.com/freevia-org/Singbook/actions/runs/39627883980).
 The Windows job passed release packaging, OAuth configuration preflight,
 isolated portable startup and graceful close, native clipboard and credential
 checks, and the full Flutter suite. The Linux analysis and test job also passed.
@@ -124,18 +124,19 @@ application. The OAuth preflight reached Google's expected invalid-code response
 and the bundle reports both Desktop OAuth values configured; it does not prove a
 fresh user sign-in or the full Drive lifecycle.
 
-The portable release is version `0.2.12+26`, built from source tree
-`86c9fff59ee0eaf74a91428512c3bebe48ffa733`, ZIP SHA-256
-`4465EB68036924CEE13319CDB7F64C53A5ABDF7AB6C77672F4BFAFF01C298163`.
-Its manifest lists 50 required runtime files. The startup smoke produced a
+The portable release is version `0.2.12+26`, built from PR merge commit
+`8358e63ae06dbb83de4a404603a81a61debfd5f3` and source tree
+`08208f158e0d7563c9cd71964240b39149ad8c40`, ZIP SHA-256
+`3B8113A6734B3A923C57A1A50EC946B58B9DE8D3E7B5E4FE9352DC8A65239C5D`.
+Its manifest lists 54 bundled files, including 50 required runtime files. The startup smoke produced a
 valid SQLite database, observed the `Singbook` main window, captured its pixels,
 and closed the app gracefully without a forced stop. The packaged screenshot is
 [available here](images/windows-desktop-review/packaged-startup.png); it is the
-default empty state. The review PNG removes the unpainted 8-pixel left and bottom
-margins from the raw 1044×720 CI BMP, which remains in the run artifact. The app
-content shows a centered empty-state message, aligned search and category tabs,
-and no visible clipping. This single capture does not cover the complete native
-size, DPI, theme, and localization matrix.
+default empty state and matches the current package's captured startup. The raw
+1044×720 BMP is preserved in the run artifact. The app content shows a centered
+empty-state message, aligned search and category tabs, and no visible clipping.
+This single capture does not cover the complete native size, DPI, theme, and
+localization matrix.
 
 Source-layout captures also cover desktop library, setlists, reader, editor,
 settings, dark mode, and compact/large-text variants. Four representative
@@ -144,7 +145,10 @@ captures are committed for review: [library](images/windows-desktop-review/libra
 [reader](images/windows-desktop-review/reader.png), and
 [editor](images/windows-desktop-review/editor.png). The library uses a balanced
 three-column grid, and the reader and setlist content stay centered with no
-visible clipping.
+visible clipping. Short landscape comparison previews now use denser spacing;
+the `native-shaped short landscape shows chords and match above Save` regression
+test covers a 2.625× device scale with safe-area insets. The full affected UI test
+file passes locally.
 
 These checks establish automated build, startup, screenshot, and source-layout
 evidence, not full native acceptance. The native file-dialog/import-export,
