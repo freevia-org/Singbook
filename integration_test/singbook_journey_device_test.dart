@@ -586,7 +586,7 @@ void main() {
         editorBody,
         '[C]Lanterns light the winding road\n[G]We carry sparks into the dawn\n$_savedLine',
       );
-      await tester.tap(_iconButtonWithTooltip('Save'));
+      await tester.tap(_saveButton(l10n));
       await tester.pumpAndSettle();
       await _waitForSavedReader(tester, app);
       expect(tester.view.viewInsets.bottom, 0);
@@ -608,7 +608,9 @@ void main() {
       await _scrollIntoView(tester, savedReaderLine);
       expect(savedReaderLine, findsOneWidget);
       expect(find.textContaining(_savedLine), findsOneWidget);
-      await tester.tap(_iconButtonWithTooltip('Edit'));
+      await tester.tap(find.byTooltip(l10n.songMenuLabel).last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(l10n.actionEdit).last);
       await tester.pumpAndSettle();
       await tester.enterText(
         find.byKey(const ValueKey('editor-lyrics-input')),
@@ -748,7 +750,7 @@ void main() {
       await tester.tap(_iconButtonWithTooltip('Edit'));
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField).first, 'Dawn Set');
-      await tester.tap(_iconButtonWithTooltip('Save'));
+      await tester.tap(_saveButton(l10n));
       await tester.pumpAndSettle();
       await _waitForState(
         tester,
@@ -1160,6 +1162,13 @@ Future<void> _waitForState(
 Finder _iconButtonWithTooltip(String tooltip) => find.byWidgetPredicate(
   (widget) => widget is IconButton && widget.tooltip == tooltip,
   description: 'IconButton with tooltip "$tooltip"',
+);
+
+Finder _saveButton(AppLocalizations l10n) => find.byWidgetPredicate(
+  (widget) =>
+      widget is IconButton &&
+      widget.tooltip?.startsWith(l10n.actionSave) == true,
+  description: 'Save icon button',
 );
 
 Finder _homeMode(String mode) => find.byKey(ValueKey('home-mode-$mode'));
