@@ -22,6 +22,7 @@ import 'player_fullscreen_header.dart';
 import '../widgets/subpage_header.dart';
 import 'screen_awake.dart';
 import 'section_labels.dart';
+import 'speed_slider_track.dart';
 
 const _playerPopupBaseWidth = 96.0;
 
@@ -699,7 +700,7 @@ class _PlayerScreenState extends State<PlayerScreen>
       ),
       child: child,
     );
-    Widget lyrics({required bool reserveCollapsedAction}) => GestureDetector(
+    Widget lyrics() => GestureDetector(
       behavior: HitTestBehavior.opaque,
       onHorizontalDragStart: state.activeSetlist == null
           ? null
@@ -710,200 +711,189 @@ class _PlayerScreenState extends State<PlayerScreen>
       onHorizontalDragEnd: state.activeSetlist == null
           ? null
           : _handleLyricsHorizontalDragEnd,
-      child: Center(
-        key: const ValueKey('tablet-reader-content'),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 960),
-          child: NotificationListener<ScrollNotification>(
-            onNotification: _handleLyricsScroll,
-            child: ListView.builder(
-              key: const ValueKey('player-lyrics-scroll'),
-              controller: _lyricsScroll,
-              padding: EdgeInsets.fromLTRB(
-                28,
-                18 + (reserveCollapsedAction ? 48 : 0),
-                28,
-                32,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Padding(
+              padding: EdgeInsetsDirectional.only(
+                end: widget.onFullScreenChanged == null ? 0 : 48,
               ),
-              itemCount: state.songLines.length,
-              itemBuilder: (context, index) =>
-                  _lyricLine(context, state, state.songLines[index]),
+              child: Center(
+                key: const ValueKey('tablet-reader-content'),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 960),
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: _handleLyricsScroll,
+                    child: ListView.builder(
+                      key: const ValueKey('player-lyrics-scroll'),
+                      controller: _lyricsScroll,
+                      padding: const EdgeInsets.fromLTRB(28, 18, 28, 32),
+                      itemCount: state.songLines.length,
+                      itemBuilder: (context, index) =>
+                          _lyricLine(context, state, state.songLines[index]),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
-        ),
+          if (widget.onFullScreenChanged != null)
+            PositionedDirectional(
+              top: 0,
+              end: 0,
+              child: Material(
+                color: colors.surfaceContainerLow,
+                shape: const CircleBorder(),
+                clipBehavior: Clip.antiAlias,
+                child: IconButton(
+                  key: ValueKey(
+                    widget.fullScreen
+                        ? 'player-exit-fullscreen'
+                        : 'player-enter-fullscreen',
+                  ),
+                  constraints: const BoxConstraints.tightFor(
+                    width: 48,
+                    height: 48,
+                  ),
+                  tooltip: widget.fullScreen
+                      ? l10n.playerExitFullScreen
+                      : l10n.playerFullScreen,
+                  onPressed: () =>
+                      widget.onFullScreenChanged?.call(!widget.fullScreen),
+                  icon: Icon(
+                    widget.fullScreen
+                        ? Icons.close_fullscreen_rounded
+                        : Icons.open_in_full_rounded,
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
-    Widget controls({required bool compact, double? maxHeight}) =>
-        LayoutBuilder(
-          builder: (context, controlConstraints) {
-            final controlWidth = controlConstraints.maxWidth;
-            final fullScreenAction = widget.onFullScreenChanged == null
-                ? null
-                : IconButton(
-                    constraints: const BoxConstraints.tightFor(
-                      width: 48,
-                      height: 48,
-                    ),
-                    key: ValueKey(
-                      widget.fullScreen
-                          ? 'player-exit-fullscreen'
-                          : 'player-enter-fullscreen',
-                    ),
-                    tooltip: widget.fullScreen
-                        ? l10n.playerExitFullScreen
-                        : l10n.playerFullScreen,
-                    onPressed: () =>
-                        widget.onFullScreenChanged!(!widget.fullScreen),
-                    icon: Icon(
-                      widget.fullScreen
-                          ? Icons.close_fullscreen_rounded
-                          : Icons.open_in_full_rounded,
-                    ),
-                  );
-            final speedLabel = TextPainter(
-              text: TextSpan(
-                text: _formatPlaybackSpeed(state.playbackSpeed),
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              textDirection: Directionality.of(context),
-              textScaler: MediaQuery.textScalerOf(context),
-            )..layout();
-            final speedWidth = speedLabel.width + 28;
-            speedLabel.dispose();
-            final currentKey = _transposeKey(state);
-            final keyText = currentKey == null
-                ? l10n.unknownValue
-                : state.readerKeyEstimated
-                ? '≈ $currentKey'
-                : currentKey;
-            final keyLabel = TextPainter(
-              text: TextSpan(
-                text: keyText,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              textDirection: Directionality.of(context),
-              textScaler: MediaQuery.textScalerOf(context),
-            )..layout();
-            final chordSlotWidth = math.max(48.0, keyLabel.width + 36);
-            keyLabel.dispose();
-            final separateSpeed =
-                controlWidth < 360 ||
-                MediaQuery.textScalerOf(context).scale(1) > 1.25 ||
-                speedWidth + (fullScreenAction == null ? 0 : 48) >
-                    (controlWidth - 16) / (fullScreenAction == null ? 4 : 5);
-            final actionSlotWidth =
-                (separateSpeed ? 0.0 : speedWidth) +
-                (fullScreenAction == null ? 0.0 : 48.0);
-            final balancedSideWidth = math.max(
-              64.0,
-              math.max(chordSlotWidth, actionSlotWidth),
-            );
-            final unstackedPlayWidth =
-                controlWidth -
-                8 -
-                balancedSideWidth * 2 -
-                ((state.playerSections.isNotEmpty ||
-                        state.activeSetlist != null)
-                    ? 80
-                    : 0);
-            final stackTransport =
-                ((compact &&
-                        (controlWidth < 330 ||
-                            MediaQuery.textScalerOf(context).scale(1) > 1.3)) ||
-                    unstackedPlayWidth < 104) &&
-                (song.hasChords || !separateSpeed || fullScreenAction != null);
-            final content = Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  textDirection: TextDirection.ltr,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: ValueListenableBuilder<PlayerPosition>(
-                        valueListenable: _position,
-                        builder: (context, position, _) =>
-                            _seekBar(context, l10n, state, position, duration),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: IconButton(
-                        key: const ValueKey('player-settings-button'),
-                        constraints: const BoxConstraints.tightFor(
-                          width: 48,
-                          height: 48,
-                        ),
-                        tooltip: l10n.settingsPlayer,
-                        onPressed: () =>
-                            showPlayerSettings(context, controller),
-                        icon: const Icon(Icons.settings_outlined),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: stackTransport ? 88 : 40,
-                  child: OverflowBox(
-                    alignment: Alignment.topCenter,
-                    minHeight: stackTransport ? 98 : 48,
-                    maxHeight: stackTransport ? 98 : 48,
-                    child: Transform.translate(
-                      offset: const Offset(0, -8),
-                      child: _transport(
-                        context,
-                        l10n,
-                        state,
-                        inlineChords: song.hasChords,
-                        showSpeed: !separateSpeed,
-                        stackActions: stackTransport,
-                        sideSlotWidth: balancedSideWidth,
-                        chordSlotWidth: chordSlotWidth,
-                        trailingAction: fullScreenAction,
-                      ),
-                    ),
-                  ),
-                ),
-                if (separateSpeed)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Align(
-                      alignment: AlignmentDirectional.centerEnd,
-                      child: _speedControl(l10n, state),
-                    ),
-                  ),
-              ],
-            );
-            final canScroll = compact || maxHeight != null;
-            final body = canScroll
-                ? ConstrainedBox(
-                    constraints: maxHeight == null
-                        ? const BoxConstraints()
-                        : BoxConstraints(maxHeight: maxHeight),
-                    child: Scrollbar(
-                      controller: _controlsScroll,
-                      thumbVisibility: true,
-                      child: SingleChildScrollView(
-                        controller: _controlsScroll,
-                        reverse: true,
-                        child: content,
-                      ),
-                    ),
-                  )
-                : content;
-            return playerPanel(
-              SafeArea(
-                top: false,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [if (compact) Flexible(child: body) else body],
-                ),
-              ),
-              header: false,
-              side: compact,
-            );
-          },
+    Widget controls({
+      required bool compact,
+      double? maxHeight,
+    }) => LayoutBuilder(
+      builder: (context, controlConstraints) {
+        final style = DefaultTextStyle.of(
+          context,
+        ).style.copyWith(fontSize: 20, fontWeight: FontWeight.w600);
+        Size labelSize(String label) {
+          final painter = TextPainter(
+            text: TextSpan(text: label, style: style),
+            textDirection: Directionality.of(context),
+            textScaler: MediaQuery.textScalerOf(context),
+            locale: Localizations.localeOf(context),
+          )..layout();
+          final size = Size(
+            painter.width.ceilToDouble() + 2,
+            painter.height.ceilToDouble() + 2,
+          );
+          painter.dispose();
+          return size;
+        }
+
+        final keySize = labelSize(_transposeKey(state) ?? l10n.unknownValue);
+        final speedSize = labelSize(_formatPlaybackSpeed(state.playbackSpeed));
+        final sideWidth = math.max(
+          64.0,
+          math.max(keySize.width, speedSize.width) + 36,
         );
+        final hasNavigation =
+            state.playerSections.isNotEmpty || state.activeSetlist != null;
+        final playPainter = TextPainter(
+          text: TextSpan(
+            text: state.isPlaying ? l10n.playerPause : l10n.playerPlay,
+            style: Theme.of(
+              context,
+            ).textTheme.labelLarge?.copyWith(height: kTextHeightNone),
+          ),
+          textDirection: Directionality.of(context),
+          textScaler: MediaQuery.textScalerOf(context),
+          locale: Localizations.localeOf(context),
+        )..layout();
+        final playWidth = math.max(
+          104.0,
+          playPainter.width.ceilToDouble() + 48,
+        );
+        // Keep the compact row at least 48 dp, but let actual font metrics
+        // grow it for large text and fallback scripts instead of clipping.
+        final rowHeight = math.max(
+          48.0,
+          math.max(
+            math.max(keySize.height, speedSize.height),
+            playPainter.height.ceilToDouble() + 8,
+          ),
+        );
+        playPainter.dispose();
+        final minimumWidth =
+            sideWidth * 2 + (hasNavigation ? 80 : 0) + playWidth + 8;
+        final rowWidth = math.max(controlConstraints.maxWidth, minimumWidth);
+        final transport = SizedBox(
+          width: rowWidth,
+          height: rowHeight,
+          child: _transport(
+            context,
+            l10n,
+            state,
+            inlineChords: song.hasChords,
+            showSpeed: true,
+            stackActions: false,
+            sideSlotWidth: sideWidth,
+            chordSlotWidth: sideWidth,
+          ),
+        );
+        final content = Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ValueListenableBuilder<PlayerPosition>(
+              valueListenable: _position,
+              builder: (context, position, _) =>
+                  _seekBar(context, l10n, state, position, duration),
+            ),
+            // Narrow landscape panes and large text retain a single control
+            // row. Horizontal scrolling keeps every control reachable.
+            if (rowWidth > controlConstraints.maxWidth)
+              SingleChildScrollView(
+                key: const ValueKey('player-transport-horizontal-scroll'),
+                scrollDirection: Axis.horizontal,
+                child: transport,
+              )
+            else
+              transport,
+          ],
+        );
+        final canScroll = compact || maxHeight != null;
+        final body = canScroll
+            ? ConstrainedBox(
+                constraints: maxHeight == null
+                    ? const BoxConstraints()
+                    : BoxConstraints(maxHeight: maxHeight),
+                child: Scrollbar(
+                  controller: _controlsScroll,
+                  thumbVisibility: true,
+                  child: SingleChildScrollView(
+                    controller: _controlsScroll,
+                    reverse: true,
+                    child: content,
+                  ),
+                ),
+              )
+            : content;
+        return playerPanel(
+          SafeArea(
+            top: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [if (compact) Flexible(child: body) else body],
+            ),
+          ),
+          header: false,
+          side: compact,
+        );
+      },
+    );
 
     final metadata = [
       if (state.readerKey != null && !state.readerKeyEstimated)
@@ -917,55 +907,94 @@ class _PlayerScreenState extends State<PlayerScreen>
       if (state.readerTempo != null)
         '${l10n.editorTempoField}: ${state.readerTempo}',
     ].whereType<String>().where((v) => v.isNotEmpty).join(' · ');
-    Widget songHeader({required bool side}) {
-      if (widget.fullScreen) {
-        if (!side) {
-          return PlayerFullscreenHeader(
-            title: song.title,
-            artist: song.artist,
-            actions: [
-              if (!state.playerControlsExpanded)
-                IconButton(
-                  key: const ValueKey('player-exit-fullscreen'),
-                  tooltip: l10n.playerExitFullScreen,
-                  onPressed: () => widget.onFullScreenChanged?.call(false),
-                  icon: const Icon(Icons.close_fullscreen_rounded),
-                ),
-            ],
-          );
-        }
-        return SizedBox(
-          key: const ValueKey('player-landscape-header'),
-          height: 56,
-          child: Padding(
-            padding: const EdgeInsetsDirectional.only(start: 12, end: 4),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        song.title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                      if (song.artist.trim().isNotEmpty)
-                        Text(
-                          song.artist,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(color: colors.onSurfaceVariant),
-                        ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+
+    Widget playerSettingsAction() => IconButton(
+      key: const ValueKey('player-settings-button'),
+      tooltip: l10n.settingsPlayer,
+      onPressed: () => showPlayerSettings(context, controller),
+      icon: const Icon(Icons.settings_outlined),
+    );
+
+    List<Widget> songActions() => [
+      IconButton(
+        tooltip: song.favorite ? l10n.songFavoriteRemove : l10n.songFavoriteAdd,
+        onPressed: () => controller.toggleSongFavorite(song.id),
+        icon: Icon(
+          song.favorite
+              ? Icons.favorite_rounded
+              : Icons.favorite_border_rounded,
+        ),
+      ),
+      if (widget.onFullScreenChanged == null)
+        IconButton(
+          tooltip: l10n.actionEdit,
+          onPressed: () => controller.editSong(song.id),
+          icon: const Icon(Icons.edit_outlined),
+        ),
+      PopupMenuButton<String>(
+        tooltip: l10n.songMenuLabel,
+        icon: const Icon(Icons.more_horiz_rounded),
+        itemBuilder: (_) => [
+          PopupMenuItem<String>(
+            value: 'player-settings',
+            child: Text(l10n.settingsPlayer),
           ),
+          const PopupMenuDivider(),
+          ...buildLibraryActionMenu(
+            l10n,
+            timedLyricsChecked: state.timingMode == 'timed',
+            actions: {
+              ...songLibraryActions,
+              if (state.readerCanCompareVersions) 'compare',
+              if (state.readerTimingAvailable || state.readerHasTiming)
+                'timed-lyrics',
+            },
+          ),
+        ],
+        onSelected: (action) {
+          if (action == 'player-settings') {
+            showPlayerSettings(context, controller);
+          } else if (action == 'compare') {
+            controller.compareCurrentSongVersions();
+          } else if (action == 'timed-lyrics') {
+            controller.setTimingMode(
+              state.timingMode == 'timed' ? 'estimated' : 'timed',
+            );
+          } else {
+            handleSongMenuAction(context, controller, song.id, action);
+          }
+        },
+      ),
+    ];
+
+    Widget landscapeHeader() => SafeArea(
+      left: true,
+      right: true,
+      top: false,
+      bottom: false,
+      child: PlayerFullscreenHeader(
+        key: const ValueKey('player-landscape-header'),
+        title: song.title,
+        artist: song.artist,
+        actions: widget.fullScreen
+            ? [playerSettingsAction()]
+            : [
+                IconButton(
+                  tooltip: l10n.navBack,
+                  onPressed: controller.back,
+                  icon: const Icon(Icons.arrow_back_rounded),
+                ),
+                ...songActions(),
+              ],
+      ),
+    );
+
+    Widget songHeader() {
+      if (widget.fullScreen) {
+        return PlayerFullscreenHeader(
+          title: song.title,
+          artist: song.artist,
+          actions: [playerSettingsAction()],
         );
       }
       return playerPanel(
@@ -974,55 +1003,7 @@ class _PlayerScreenState extends State<PlayerScreen>
             SubpageHeader(
               title: song.title,
               onBack: controller.back,
-              actions: [
-                IconButton(
-                  tooltip: song.favorite
-                      ? l10n.songFavoriteRemove
-                      : l10n.songFavoriteAdd,
-                  onPressed: () => controller.toggleSongFavorite(song.id),
-                  icon: Icon(
-                    song.favorite
-                        ? Icons.favorite_rounded
-                        : Icons.favorite_border_rounded,
-                  ),
-                ),
-                if (widget.onFullScreenChanged == null)
-                  IconButton(
-                    tooltip: l10n.actionEdit,
-                    onPressed: () => controller.editSong(song.id),
-                    icon: const Icon(Icons.edit_outlined),
-                  ),
-                PopupMenuButton<String>(
-                  tooltip: l10n.songMenuLabel,
-                  icon: const Icon(Icons.more_horiz_rounded),
-                  itemBuilder: (_) => buildLibraryActionMenu(
-                    l10n,
-                    timedLyricsChecked: state.timingMode == 'timed',
-                    actions: {
-                      ...songLibraryActions,
-                      if (state.readerCanCompareVersions) 'compare',
-                      if (state.readerTimingAvailable || state.readerHasTiming)
-                        'timed-lyrics',
-                    },
-                  ),
-                  onSelected: (action) {
-                    if (action == 'compare') {
-                      controller.compareCurrentSongVersions();
-                    } else if (action == 'timed-lyrics') {
-                      controller.setTimingMode(
-                        state.timingMode == 'timed' ? 'estimated' : 'timed',
-                      );
-                    } else {
-                      handleSongMenuAction(
-                        context,
-                        controller,
-                        song.id,
-                        action,
-                      );
-                    }
-                  },
-                ),
-              ],
+              actions: songActions(),
             ),
             if (metadata.isNotEmpty)
               Padding(
@@ -1064,7 +1045,7 @@ class _PlayerScreenState extends State<PlayerScreen>
           ],
         ),
         header: true,
-        side: side,
+        side: false,
       );
     }
 
@@ -1079,7 +1060,7 @@ class _PlayerScreenState extends State<PlayerScreen>
             constraints.maxWidth <= constraints.maxHeight;
         return Column(
           children: [
-            if (!compactLandscape) songHeader(side: false),
+            if (compactLandscape) landscapeHeader() else songHeader(),
             Expanded(
               child: PlayerControlsPanel(
                 expanded: state.playerControlsExpanded,
@@ -1087,43 +1068,12 @@ class _PlayerScreenState extends State<PlayerScreen>
                 expandLabel: l10n.playerExpandControls,
                 collapseLabel: l10n.playerCollapseControls,
                 side: compactLandscape,
-                sideHeader: compactLandscape ? songHeader(side: true) : null,
+                sideHeader: null,
                 sideWidth: compactLandscape
                     ? (constraints.maxWidth * .4).clamp(200.0, 360.0).toDouble()
                     : null,
-                collapsedAction:
-                    !state.playerControlsExpanded &&
-                        widget.onFullScreenChanged != null &&
-                        (compactLandscape || !widget.fullScreen)
-                    ? IconButton(
-                        key: ValueKey(
-                          widget.fullScreen
-                              ? 'player-exit-fullscreen'
-                              : 'player-enter-fullscreen',
-                        ),
-                        constraints: const BoxConstraints.tightFor(
-                          width: 48,
-                          height: 48,
-                        ),
-                        tooltip: widget.fullScreen
-                            ? l10n.playerExitFullScreen
-                            : l10n.playerFullScreen,
-                        onPressed: () => widget.onFullScreenChanged?.call(
-                          !widget.fullScreen,
-                        ),
-                        icon: Icon(
-                          widget.fullScreen
-                              ? Icons.close_fullscreen_rounded
-                              : Icons.open_in_full_rounded,
-                        ),
-                      )
-                    : null,
-                lyrics: lyrics(
-                  reserveCollapsedAction:
-                      !state.playerControlsExpanded &&
-                      widget.onFullScreenChanged != null &&
-                      (compactLandscape || !widget.fullScreen),
-                ),
+                collapsedAction: null,
+                lyrics: lyrics(),
                 controls: compactLandscape
                     ? SizedBox(
                         width: (constraints.maxWidth * .4)
@@ -1217,7 +1167,6 @@ class _PlayerScreenState extends State<PlayerScreen>
     PlayerPosition position,
     double duration,
   ) {
-    final currentSection = _sectionAt(state.playerSections, position.seconds);
     final speed = state.playbackSpeed;
     final displayDuration = duration / speed;
     final displayPosition = position.seconds / speed;
@@ -1237,24 +1186,6 @@ class _PlayerScreenState extends State<PlayerScreen>
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final narrow =
-                  constraints.maxWidth < 300 ||
-                  MediaQuery.textScalerOf(context).scale(1) > 1.3;
-              final section = Text(
-                currentSection == null
-                    ? (state.readerHasTiming && state.timingMode == 'timed'
-                          ? l10n.playerTimedLyrics
-                          : state.timingMode == 'manual'
-                          ? l10n.playerManualScroll
-                          : l10n.playerEstimatedPace)
-                    : localizedSectionName(l10n, currentSection.name),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              );
               final times = Row(
                 children: [
                   Expanded(
@@ -1267,11 +1198,6 @@ class _PlayerScreenState extends State<PlayerScreen>
                       ),
                     ),
                   ),
-                  if (!narrow) ...[
-                    const SizedBox(width: 12),
-                    Expanded(flex: 2, child: section),
-                    const SizedBox(width: 12),
-                  ],
                   Expanded(
                     child: Align(
                       alignment: AlignmentDirectional.centerEnd,
@@ -1293,7 +1219,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                   ),
                 ],
               );
-              return narrow ? Column(children: [section, times]) : times;
+              return times;
             },
           ),
         ),
@@ -1441,6 +1367,8 @@ class _PlayerScreenState extends State<PlayerScreen>
                                     data: SliderTheme.of(context).copyWith(
                                       overlayShape:
                                           SliderComponentShape.noOverlay,
+                                      trackShape:
+                                          const FineSpeedSliderTrackShape(),
                                       inactiveTickMarkColor: Theme.of(context)
                                           .colorScheme
                                           .primary
@@ -1461,7 +1389,6 @@ class _PlayerScreenState extends State<PlayerScreen>
                                         ),
                                         min: .5,
                                         max: 2,
-                                        divisions: 15,
                                         value: speed,
                                         label: _formatPlaybackSpeed(speed),
                                         semanticFormatterCallback: (value) {
@@ -1532,6 +1459,10 @@ class _PlayerScreenState extends State<PlayerScreen>
                     Text(
                       _formatPlaybackSpeed(state.playbackSpeed),
                       key: const ValueKey('scroll-speed-value'),
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
                       maxLines: 1,
                       softWrap: false,
                     ),
@@ -1669,7 +1600,7 @@ class _PlayerScreenState extends State<PlayerScreen>
     required double chordSlotWidth,
     Widget? trailingAction,
   }) => Padding(
-    padding: const EdgeInsets.fromLTRB(4, 0, 4, 2),
+    padding: const EdgeInsets.symmetric(horizontal: 4),
     child: LayoutBuilder(
       builder: (context, constraints) {
         final direction = Directionality.of(context);
@@ -1684,10 +1615,13 @@ class _PlayerScreenState extends State<PlayerScreen>
         final playLabelPainter = TextPainter(
           text: TextSpan(
             text: playLabel,
-            style: Theme.of(context).textTheme.labelLarge,
+            style: Theme.of(
+              context,
+            ).textTheme.labelLarge?.copyWith(height: kTextHeightNone),
           ),
           textDirection: direction,
           textScaler: MediaQuery.textScalerOf(context),
+          locale: Localizations.localeOf(context),
         )..layout();
         final playWidth = centerWidth - (hasNavigation ? 80 : 0);
         final playHorizontalPadding =
@@ -1710,6 +1644,8 @@ class _PlayerScreenState extends State<PlayerScreen>
           ),
           label: Text(
             playLabel,
+            // Natural metrics preserve tall fallback-script glyphs.
+            style: const TextStyle(height: kTextHeightNone),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
@@ -1978,9 +1914,11 @@ class _PlayerScreenState extends State<PlayerScreen>
               children: [
                 Flexible(
                   child: Text(
-                    state.readerKeyEstimated && currentKey != null
-                        ? '≈ $displayedKey'
-                        : displayedKey,
+                    displayedKey,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

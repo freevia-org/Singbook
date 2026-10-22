@@ -68,9 +68,7 @@ void main() {
         expect(
           find.descendant(
             of: dropdown,
-            matching: find.text(
-              '${controller.state.readerKeyEstimated ? '≈ ' : ''}${controller.state.readerKey}',
-            ),
+            matching: find.text(controller.state.readerKey!),
           ),
           findsOneWidget,
         );

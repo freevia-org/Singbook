@@ -57,6 +57,7 @@ void main() {
     ('large-text', const Size(360, 780), 1.6, 'en', Brightness.light),
     ('rtl-dark', const Size(390, 844), 1.2, 'ar', Brightness.dark),
     ('landscape', const Size(640, 360), 2.0, 'en', Brightness.light),
+    ('desktop-landscape', const Size(1440, 900), 1.0, 'en', Brightness.light),
   ]) {
     testWidgets('all checks open and live errors expand ${configuration.$1}', (
       tester,
@@ -171,6 +172,34 @@ void main() {
       await _step(tester);
       await tester.tap(find.byKey(const ValueKey('source-checks-button')));
       await _step(tester);
+      if (configuration.$1 == 'desktop-landscape') {
+        final checksSheet = find.byKey(const ValueKey('source-checks-sheet'));
+        final draggableSheet = find
+            .ancestor(
+              of: checksSheet,
+              matching: find.byType(DraggableScrollableSheet),
+            )
+            .first;
+        expect(
+          tester
+              .widget<DraggableScrollableSheet>(draggableSheet)
+              .initialChildSize,
+          .85,
+        );
+        final constraintsBuilder = find
+            .ancestor(of: checksSheet, matching: find.byType(LayoutBuilder))
+            .first;
+        final availableHeight = tester
+            .renderObject<RenderBox>(constraintsBuilder)
+            .constraints
+            .maxHeight;
+        expect(
+          tester.getSize(checksSheet).height,
+          closeTo(availableHeight * .85, 1),
+          reason:
+              'Desktop landscape details should use 85% of available height.',
+        );
+      }
       await _image(tester, '${configuration.$1}-checks');
       for (final id in ['ready', 'empty', 'checking']) {
         final sheet = find.byKey(const ValueKey('source-checks-sheet'));

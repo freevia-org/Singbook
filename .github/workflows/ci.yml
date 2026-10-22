@@ -145,6 +145,40 @@ jobs:
         shell: pwsh
         run: ./scripts/build-windows.ps1 -AllowMissingDefines
 
+      - name: Inspect hosted Windows PDF printer capability
+        shell: pwsh
+        run: |
+          $evidencePath = 'artifacts/windows-parity/print-acceptance-host-capabilities.json'
+          New-Item -ItemType Directory -Path (Split-Path $evidencePath) -Force | Out-Null
+          $printers = @()
+          $printerQueryError = $null
+          try {
+            $printers = @(Get-Printer | Select-Object Name, DriverName, PortName, Type, Shared)
+          } catch {
+            $printerQueryError = $_.Exception.GetType().FullName
+          }
+          $printToPdfFeature = $null
+          $featureQueryError = $null
+          try {
+            $feature = Get-WindowsOptionalFeature -Online -FeatureName Printing-PrintToPDFServices-Features
+            $printToPdfFeature = $feature.State.ToString()
+          } catch {
+            $featureQueryError = $_.Exception.GetType().FullName
+          }
+          $evidence = [ordered]@{
+            os = [System.Runtime.InteropServices.RuntimeInformation]::OSDescription
+            spooler = (Get-Service -Name Spooler).Status.ToString()
+            printerQueryError = $printerQueryError
+            printers = $printers
+            printToPdfOptionalFeature = $printToPdfFeature
+            featureQueryError = $featureQueryError
+            localMicrosoftPrintToPdf = [bool]($printers | Where-Object {
+              $_.Name -eq 'Microsoft Print to PDF' -and $_.DriverName -match 'Microsoft Print To PDF'
+            })
+          }
+          $evidence | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $evidencePath -Encoding utf8
+          $evidence | ConvertTo-Json -Depth 5
+
       - name: Smoke test the portable Windows app in an isolated profile
         shell: pwsh
         run: ./scripts/test-windows-portable-startup.ps1
@@ -156,6 +190,12 @@ jobs:
       - name: Run the complete Flutter suite on Windows
         run: >-
           flutter test --no-pub --concurrency=2 --reporter=expanded
+
+      - name: Run the deterministic Windows desktop journey
+        run: >-
+          flutter test integration_test/singbook_journey_device_test.dart
+          -d windows --dart-define=SINGBOOK_SKIP_SCREENSHOTS=true
+          --reporter=expanded
 
       - name: Preserve Windows validation evidence
         if: always()

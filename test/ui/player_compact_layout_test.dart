@@ -70,6 +70,11 @@ class _Controller extends VerseUiController {
   void refresh() => notifyListeners();
 
   @override
+  Future<void> seek(double seconds) async {
+    calls.add('seek:$seconds');
+  }
+
+  @override
   Future<void> setPlaybackSpeed(double value) async {
     speedWrites++;
     speed = value;
@@ -309,7 +314,7 @@ void main() {
     (700.0, const Locale('bg'), 1.5),
   ]) {
     testWidgets(
-      'landscape transport stays centered and readable at ${scenario.$1}',
+      'landscape transport stays readable and reachable at ${scenario.$1}',
       (tester) async {
         await tester.runAsync(() async {
           final font = rootBundle.load('assets/fonts/NotoSans-Regular.ttf');
@@ -335,7 +340,12 @@ void main() {
         final lyrics = find.byKey(const ValueKey('tablet-reader-content'));
         final lyricsRect = tester.getRect(lyrics);
         expect(lyricsRect.width, greaterThanOrEqualTo(scenario.$1 * .5));
-        expect(lyricsRect.height, greaterThan(336));
+        final header = find.byKey(const ValueKey('player-landscape-header'));
+        expect(header, findsOneWidget);
+        final headerRect = tester.getRect(header);
+        expect(lyricsRect.top, greaterThanOrEqualTo(headerRect.bottom));
+        expect(lyricsRect.bottom, lessThanOrEqualTo(360));
+        expect(lyricsRect.height, greaterThan(250));
         final play = find.byKey(const ValueKey('start-lyric-scroll'));
         expect(tester.getRect(play).width, greaterThanOrEqualTo(104));
         final visibleKey = find.descendant(
@@ -347,10 +357,33 @@ void main() {
           tester.renderObject<RenderParagraph>(visibleKey).didExceedMaxLines,
           isFalse,
         );
-        final expectedCenter = scenario.$2.languageCode == 'ar'
-            ? lyricsRect.left / 2
-            : (lyricsRect.right + scenario.$1) / 2;
-        expect(tester.getCenter(play).dx, closeTo(expectedCenter, 1));
+        // A narrow pane keeps one row and reveals its larger controls by
+        // horizontal scrolling instead of clipping the key or play label.
+        await Scrollable.ensureVisible(tester.element(play), alignment: .5);
+        await tester.pumpAndSettle();
+        final playRect = tester.getRect(play);
+        final controlsRect = tester.getRect(
+          find.byKey(const ValueKey('player-controls-panel')),
+        );
+        expect(playRect.left, greaterThanOrEqualTo(controlsRect.left - .01));
+        expect(playRect.top, greaterThanOrEqualTo(controlsRect.top - .01));
+        expect(playRect.right, lessThanOrEqualTo(controlsRect.right + .01));
+        expect(playRect.bottom, lessThanOrEqualTo(controlsRect.bottom + .01));
+        expect(playRect.width, lessThan(controlsRect.width));
+        expect(play.hitTestable(), findsOneWidget);
+        final key = find.byKey(const ValueKey('pitch-key-dropdown'));
+        await Scrollable.ensureVisible(tester.element(key), alignment: .5);
+        await tester.pumpAndSettle();
+        expect(key.hitTestable(), findsOneWidget);
+        expect(tester.getSize(key).height, greaterThanOrEqualTo(48));
+        final speed = find.byKey(const ValueKey('scroll-speed-toggle'));
+        await Scrollable.ensureVisible(tester.element(speed), alignment: .5);
+        await tester.pumpAndSettle();
+        expect(controlsRect.contains(tester.getCenter(speed)), isTrue);
+        expect(speed.hitTestable(), findsOneWidget);
+        expect(tester.getSize(speed).height, greaterThanOrEqualTo(48));
+        await Scrollable.ensureVisible(tester.element(play), alignment: .5);
+        await tester.pumpAndSettle();
         final playLabel = find
             .descendant(of: play, matching: find.byType(RichText))
             .last;
@@ -369,50 +402,126 @@ void main() {
     );
   }
 
-  testWidgets('landscape fullscreen keeps an exit action in the side panel', (
-    tester,
-  ) async {
-    final controller = _Controller();
-    addTearDown(controller.dispose);
-    bool? fullscreen;
-    await _pump(
-      tester,
-      controller,
-      size: const Size(700, 360),
-      fullScreen: true,
-      onFullScreenChanged: (value) => fullscreen = value,
-    );
-    final lyrics = find.byKey(const ValueKey('tablet-reader-content'));
-    expect(tester.getSize(lyrics).height, greaterThan(336));
-    expect(
-      find.byKey(const ValueKey('player-fullscreen-header')),
-      findsNothing,
-    );
-    expect(
-      find.byKey(const ValueKey('player-landscape-header')),
-      findsOneWidget,
-    );
-    expect(
-      find.byKey(const ValueKey('player-exit-fullscreen')),
-      findsOneWidget,
-    );
+  testWidgets(
+    'landscape fullscreen keeps a persistent header and lyrics exit action',
+    (tester) async {
+      final controller = _Controller();
+      addTearDown(controller.dispose);
+      bool? fullscreen;
+      await _pump(
+        tester,
+        controller,
+        size: const Size(700, 360),
+        fullScreen: true,
+        onFullScreenChanged: (value) => fullscreen = value,
+      );
+      final lyrics = find.byKey(const ValueKey('tablet-reader-content'));
+      final header = find.byKey(const ValueKey('player-landscape-header'));
+      expect(header, findsOneWidget);
+      final headerRect = tester.getRect(header);
+      final lyricsRect = tester.getRect(lyrics);
+      expect(lyricsRect.top, greaterThanOrEqualTo(headerRect.bottom));
+      expect(lyricsRect.height, greaterThan(250));
+      expect(
+        find.byKey(const ValueKey('player-fullscreen-header')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('player-landscape-header')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('player-exit-fullscreen')),
+        findsOneWidget,
+      );
 
-    await tester.tap(
-      find.byTooltip(
+      await tester.tap(
+        find.byTooltip(
+          AppLocalizations.of(
+            tester.element(find.byType(PlayerScreen)),
+          ).playerCollapseControls,
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('player-exit-fullscreen')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const ValueKey('player-exit-fullscreen')));
+      expect(fullscreen, isFalse);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'landscape song header stays visible through collapse and lyric scrolling within safe insets',
+    (tester) async {
+      tester.view.viewPadding = const FakeViewPadding(
+        top: 24,
+        left: 24,
+        right: 32,
+      );
+      tester.view.padding = const FakeViewPadding(top: 24, left: 24, right: 32);
+      addTearDown(tester.view.resetPadding);
+      addTearDown(tester.view.resetViewPadding);
+      final controller = _Controller()
+        ..lines = List.generate(
+          24,
+          (index) => LyricLineData(
+            id: 'scroll-$index',
+            text: 'Lyric line $index keeps the reader content scrollable',
+          ),
+        );
+      addTearDown(controller.dispose);
+      await _pump(
+        tester,
+        controller,
+        size: const Size(700, 360),
+        onFullScreenChanged: (_) {},
+      );
+
+      final collapse = find.byTooltip(
         AppLocalizations.of(
           tester.element(find.byType(PlayerScreen)),
         ).playerCollapseControls,
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(
-      find.byKey(const ValueKey('player-exit-fullscreen')),
-      findsOneWidget,
-    );
-    await tester.tap(find.byKey(const ValueKey('player-exit-fullscreen')));
-    expect(fullscreen, isFalse);
-    expect(tester.takeException(), isNull);
-  });
+      );
+      expect(collapse, findsOneWidget);
+      await tester.tap(collapse);
+      await tester.pumpAndSettle();
+      expect(controller.playerControlsExpanded, isFalse);
+
+      final header = find.byKey(const ValueKey('player-landscape-header'));
+      final lyrics = find.byKey(const ValueKey('tablet-reader-content'));
+      final headerRect = tester.getRect(header);
+      final lyricsRect = tester.getRect(lyrics);
+      expect(find.text('Lanterns at Dawn'), findsOneWidget);
+      expect(find.text('Mira Vale'), findsOneWidget);
+      expect(headerRect.left, greaterThanOrEqualTo(24));
+      expect(
+        tester.getRect(find.text('Lanterns at Dawn')).top,
+        greaterThanOrEqualTo(24),
+      );
+      expect(headerRect.right, lessThanOrEqualTo(668));
+      expect(lyricsRect.top, greaterThanOrEqualTo(headerRect.bottom));
+
+      await tester.drag(
+        find.byKey(const ValueKey('player-lyrics-scroll')),
+        const Offset(0, -1000),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('player-landscape-header')),
+        findsOneWidget,
+      );
+      expect(find.text('Lanterns at Dawn'), findsOneWidget);
+      expect(find.text('Mira Vale'), findsOneWidget);
+      expect(
+        tester.getRect(lyrics).top,
+        greaterThanOrEqualTo(tester.getRect(header).bottom),
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets(
     'collapsed portrait and landscape panels keep fullscreen toggle reachable',
@@ -509,9 +618,21 @@ void main() {
         onFullScreenChanged: (_) {},
       );
 
-      final action = tester.getRect(
-        find.byKey(const ValueKey('player-enter-fullscreen')),
+      final actionFinder = find.byKey(
+        const ValueKey('player-enter-fullscreen'),
       );
+      final action = tester.getRect(actionFinder);
+      expect(action.width, 48);
+      expect(action.height, 48);
+      final lyricsRect = tester.getRect(
+        find.byKey(const ValueKey('tablet-reader-content')),
+      );
+      // The reserved 48 dp trailing gutter follows text direction.
+      if (locale.languageCode == 'ar') {
+        expect(action.right, closeTo(lyricsRect.left, 1));
+      } else {
+        expect(action.left, closeTo(lyricsRect.right, 1));
+      }
       final paragraph = tester.renderObject<RenderParagraph>(find.text(text));
       final glyphBoxes = paragraph
           .getBoxesForSelection(
@@ -943,7 +1064,7 @@ void main() {
           ui.SemanticsAction.increase,
         );
         await tester.pumpAndSettle();
-        final expectedSpeed = 1.1;
+        final expectedSpeed = 1 + (2 - .5) * .05;
 
         expect(
           find.byKey(const ValueKey('scroll-speed-panel')),

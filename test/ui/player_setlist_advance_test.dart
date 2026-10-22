@@ -5,6 +5,7 @@ import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/data/library_repository.dart';
 import 'package:singbook/domain/models.dart';
 import 'package:singbook/ui/app_controller_adapter.dart';
+import 'package:singbook/ui/player/speed_slider_track.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
 
 import 'support/fake_controller.dart';
@@ -88,9 +89,18 @@ void main() {
       final speedSlider = tester.widget<Slider>(
         find.byKey(const ValueKey('scroll-speed-slider')),
       );
-      expect(speedSlider.divisions, 15);
+      expect(speedSlider.divisions, isNull);
       expect(speedSlider.min, .5);
       expect(speedSlider.max, 2);
+      final speedSliderTheme = tester.widget<SliderTheme>(
+        find
+            .ancestor(
+              of: find.byKey(const ValueKey('scroll-speed-slider')),
+              matching: find.byType(SliderTheme),
+            )
+            .first,
+      );
+      expect(speedSliderTheme.data.trackShape, isA<FineSpeedSliderTrackShape>());
       expect(
         find.descendant(
           of: find.byKey(const ValueKey('scroll-speed-panel')),
