@@ -13,7 +13,7 @@ import 'support/fake_controller.dart';
 void main() {
   for (final locale in const [Locale('bg'), Locale('ar')]) {
     testWidgets(
-      'estimated key remains visible in its localized dropdown at 2x: $locale',
+      'plain key stays readable with estimated disclosure at 2x: $locale',
       (tester) async {
         for (final (family, asset) in [
           ('KeyLabelFixture', 'assets/fonts/NotoSans-Regular.ttf'),
@@ -73,16 +73,24 @@ void main() {
         final l10n = AppLocalizations.of(
           tester.element(find.byType(PlayerScreen)),
         );
-        const prefix = '≈ ';
         expect(find.byTooltip('${l10n.playerEstimatedKey}: E'), findsOneWidget);
+        final keyLabel = find.byKey(
+          const ValueKey('pitch-key-dropdown-label'),
+        );
+        final semantics = tester.widget<Semantics>(keyLabel);
+        expect(
+          semantics.properties.label,
+          '${l10n.readerTranspose}, ${l10n.playerEstimatedKey}: E',
+        );
+        expect(semantics.properties.button, isTrue);
+        final keyText = find.descendant(of: keyLabel, matching: find.text('E'));
+        expect(keyText, findsOneWidget);
+        expect(find.text('≈ E'), findsNothing);
         final paragraph = tester.renderObject<RenderParagraph>(
-          find.text('${prefix}E'),
+          keyText,
         );
         final boxes = paragraph.getBoxesForSelection(
-          TextSelection(
-            baseOffset: prefix.length,
-            extentOffset: prefix.length + 1,
-          ),
+          const TextSelection(baseOffset: 0, extentOffset: 1),
         );
         expect(
           boxes,
