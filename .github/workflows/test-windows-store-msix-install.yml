@@ -1,0 +1,101 @@
+name: Test Microsoft Store MSIX install
+
+# Tests the exact unsigned Store artifact on an isolated hosted runner.
+# The runner signs only a temporary copy; the retained Store package is untouched.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/test-windows-store-msix-install.yml'
+      - 'scripts/test-windows-store-msix-install.ps1'
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  install-smoke:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    env:
+      STORE_RUN_ID: '39771768067'
+      STORE_HEAD_SHA: 'ec5534e4925a18b405e5f01b6d91a3f08dd62df7'
+      STORE_ARTIFACT_ID: '12422577924'
+      STORE_ARTIFACT_DIGEST: 'sha256:4db127f27d3c0f1c26ddaf4b102f048ecd6e1c4a19c2eb8af447769c2d8cc15f'
+      STORE_MSIX_SHA256: '474ed2c686a8a1f1d8633dd56b12ac1f192528631d2eec7deb1c51b0eee0de89'
+      STORE_SOURCE_TREE: '53f0156515f61e23b6a73d2e9bd9977653478f48'
+      STORE_SOURCE_MANIFEST_SHA256: 'a9400a9d2d8ef367e3469ed1da12ba71de5a7e0ded5857af65928b817b93014b'
+    steps:
+      - name: Check out the pinned test harness
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Verify exact successful Store package artifact
+        id: artifact
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runId = Number(process.env.STORE_RUN_ID);
+            const expectedSha = process.env.STORE_HEAD_SHA.toLowerCase();
+            const artifactId = Number(process.env.STORE_ARTIFACT_ID);
+            const expectedDigest = process.env.STORE_ARTIFACT_DIGEST.toLowerCase();
+            const { data: run } = await github.rest.actions.getWorkflowRun({
+              owner: context.repo.owner, repo: context.repo.repo, run_id: runId
+            });
+            if (run.status !== "completed" || run.conclusion !== "success" ||
+                run.name !== "Package Microsoft Store MSIX" ||
+                run.head_branch !== "codex/release28-integration" ||
+                run.head_sha.toLowerCase() !== expectedSha) {
+              throw new Error("Pinned Store package run is not successful at the expected source commit.");
+            }
+            const { data } = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner, repo: context.repo.repo, run_id: runId, per_page: 100
+            });
+            const matches = data.artifacts.filter(a =>
+              a.id === artifactId && a.name === "singbook-msix-1.0.28.0-unsigned" && !a.expired
+            );
+            if (matches.length !== 1 || matches[0].digest.toLowerCase() !== expectedDigest) {
+              throw new Error("Pinned unsigned MSIX artifact ID, availability, or digest changed.");
+            }
+            core.setOutput("artifact_id", String(artifactId));
+
+      - name: Download the pinned unsigned MSIX artifact
+        uses: actions/download-artifact@v8
+        with:
+          artifact-ids: ${{ steps.artifact.outputs.artifact_id }}
+          run-id: ${{ env.STORE_RUN_ID }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/singbook-msix-artifact
+          digest-mismatch: error
+
+      - name: Set up Python for the isolated SQLite persistence check
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install and launch a temporary signed copy
+        shell: pwsh
+        run: |
+          $artifacts = @(Get-ChildItem -LiteralPath (Join-Path $env:RUNNER_TEMP 'singbook-msix-artifact') -Filter '*.msix' -File -Recurse)
+          if ($artifacts.Count -ne 1) { throw "Expected one MSIX, found $($artifacts.Count)." }
+          $provenance = @(Get-ChildItem -LiteralPath (Join-Path $env:RUNNER_TEMP 'singbook-msix-artifact') -Filter 'package-provenance.json' -File -Recurse)
+          if ($provenance.Count -ne 1) { throw "Expected one package provenance file, found $($provenance.Count)." }
+          ./scripts/test-windows-store-msix-install.ps1 `
+            -MsixPath $artifacts[0].FullName `
+            -ProvenancePath $provenance[0].FullName `
+            -ExpectedSha256 $env:STORE_MSIX_SHA256 `
+            -ExpectedSourceTree $env:STORE_SOURCE_TREE `
+            -ExpectedSourceManifestSha256 $env:STORE_SOURCE_MANIFEST_SHA256 `
+            -EvidenceDirectory (Join-Path $PWD "artifacts/windows-store-msix-smoke/$env:GITHUB_RUN_ID")
+
+      - name: Preserve hosted MSIX smoke evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: singbook-msix-install-smoke-${{ github.run_id }}
+          path: artifacts/windows-store-msix-smoke/${{ github.run_id }}/
+          if-no-files-found: warn
+          retention-days: 7
