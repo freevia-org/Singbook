@@ -1272,14 +1272,15 @@ Future<void> _selectDropdown(
 ) async {
   final labelFinder = find.text(label);
   await _scrollIntoView(tester, labelFinder);
-  // Desktop settings group several compact controls in a shared Column. Scope
-  // the dropdown to its own InputDecorator so another control in the grid
-  // cannot make this finder ambiguous.
-  final decorator = find
-      .ancestor(of: labelFinder, matching: find.byType(InputDecorator))
-      .first;
+  // The label may be a sibling of the dropdown in standard settings rows or
+  // part of a compact InputDecorator on desktop. Both layouts expose the
+  // control's label through Semantics, which keeps this lookup unambiguous.
+  final labeledControl = find.byWidgetPredicate(
+    (widget) => widget is Semantics && widget.properties.label == label,
+    description: 'settings control labeled "$label"',
+  );
   final dropdown = find.descendant(
-    of: decorator,
+    of: labeledControl,
     matching: find.byWidgetPredicate((widget) => widget is DropdownButton),
   );
   expect(dropdown, findsOneWidget, reason: 'Dropdown for "$label".');
