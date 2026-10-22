@@ -167,7 +167,8 @@ void main() {
           expect(actions.first, 'edit');
         }
         if (screen == 'player') {
-          expect(actions.take(5), [
+          expect(actions.take(6), [
+            'player-settings',
             'edit',
             'info',
             'compare',
