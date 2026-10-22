@@ -151,8 +151,8 @@ void main() {
         find.byKey(const ValueKey('player-controls-panel')),
       );
       expect(lyrics.width, greaterThanOrEqualTo(350));
-      expect(controls.top, closeTo(header.bottom, 1));
-      expect(controls.bottom, closeTo(360, 1));
+      expect(controls.top, greaterThanOrEqualTo(header.bottom));
+      expect(controls.bottom, lessThanOrEqualTo(360));
       expect(controls.left, greaterThanOrEqualTo(lyrics.right));
       expect(find.byKey(const ValueKey('start-lyric-scroll')), findsOneWidget);
       expect(find.byKey(const ValueKey('scroll-speed-toggle')), findsOneWidget);

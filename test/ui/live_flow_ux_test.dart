@@ -1085,7 +1085,11 @@ void main() {
       );
       expect(find.text(l10n.playerPlay), findsOneWidget);
       expect(find.byKey(const ValueKey('scroll-speed-slider')), findsNothing);
-      await tester.tap(find.byKey(const ValueKey('scroll-speed-toggle')));
+      final speedToggle = find.byKey(const ValueKey('scroll-speed-toggle'));
+      await tester.ensureVisible(speedToggle);
+      await tester.pumpAndSettle();
+      expect(speedToggle.hitTestable(), findsOneWidget);
+      await tester.tap(speedToggle);
       await tester.pumpAndSettle();
       final speedSlider = tester.widget<Slider>(
         find.byKey(const ValueKey('scroll-speed-slider')),
