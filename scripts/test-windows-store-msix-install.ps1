@@ -5,13 +5,17 @@ param(
     [Parameter(Mandatory)][string]$ExpectedSha256,
     [Parameter(Mandatory)][string]$ExpectedSourceTree,
     [Parameter(Mandatory)][string]$ExpectedSourceManifestSha256,
-    [Parameter(Mandatory)][string]$EvidenceDirectory
+    [Parameter(Mandatory)][string]$EvidenceDirectory,
+    [string]$ExpectedProductVersion = '0.2.14+28'
 )
 $ErrorActionPreference = 'Stop'
 
 $expectedIdentity = 'Freevia.Singbook'
 $expectedPublisher = 'CN=BCFA4DEF-81A8-41BB-A9C8-5DDAB2101C9A'
-$expectedVersion = [version]'1.0.28.0'
+if ($ExpectedProductVersion -notmatch '^\d+\.\d+\.\d+\+(\d+)$') {
+    throw 'ExpectedProductVersion must contain a monotonic numeric build number.'
+}
+$expectedVersion = [version]("1.0.$($Matches[1]).0")
 $expectedArchitecture = 'x64'
 $expectedExecutable = 'Singbook\singbook.exe'
 $expectedPortableExecutable = 'singbook.exe'
@@ -79,12 +83,13 @@ try {
         throw 'Unsigned source MSIX SHA-256 does not match the pinned package.'
     }
     $provenance = Get-Content -LiteralPath (Resolve-Path -LiteralPath $ProvenancePath).Path -Raw | ConvertFrom-Json
-    if ($provenance.productVersion -ne '0.2.14+28' -or $provenance.packageVersion -ne '1.0.28.0' -or
+    if ($provenance.productVersion -ne $ExpectedProductVersion -or $provenance.packageVersion -ne $expectedVersion.ToString() -or
         $provenance.architecture -ne $expectedArchitecture -or $provenance.storeIdentity -ne $expectedIdentity -or
         $provenance.sourceTree -ne $ExpectedSourceTree -or
         $provenance.sourcePortableManifestSha256 -ne $ExpectedSourceManifestSha256.ToUpperInvariant() -or
         $provenance.msixSha256 -ne $ExpectedSha256.ToUpperInvariant() -or
-        $provenance.sourcePortableFileCount -ne 54 -or $provenance.sourcePortableFiles.Count -ne 54) {
+        $provenance.sourcePortableFileCount -le 0 -or
+        $provenance.sourcePortableFileCount -ne $provenance.sourcePortableFiles.Count) {
         throw 'Package provenance does not match the pinned version, source tree, manifest, or file count.'
     }
     $expectedPayloadHashes = @{}
@@ -194,7 +199,7 @@ try {
     }
     $installedPayloadFiles = @(Get-ChildItem -LiteralPath $appRoot -File -Recurse -Force)
     if ($installedPayloadFiles.Count -ne $expectedPayloadHashes.Count) {
-        throw 'Installed package has an extra or missing runtime file compared with the pinned 54-file manifest.'
+        throw 'Installed package has an extra or missing runtime file compared with the pinned payload manifest.'
     }
     foreach ($item in $installedPayloadFiles) {
         $relative = [IO.Path]::GetRelativePath($appRoot, $item.FullName).Replace('/', '\')
