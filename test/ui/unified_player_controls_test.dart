@@ -38,6 +38,8 @@ Future<void> _pumpPlayer(
   AppControllerAdapter controller,
   ScreenAwake awake, {
   Size size = const Size(390, 844),
+  bool fullScreen = false,
+  ValueChanged<bool>? onFullScreenChanged,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -52,8 +54,12 @@ Future<void> _pumpPlayer(
       home: Scaffold(
         body: ListenableBuilder(
           listenable: controller,
-          builder: (context, _) =>
-              PlayerScreen(controller: controller, screenAwake: awake),
+          builder: (context, _) => PlayerScreen(
+            controller: controller,
+            screenAwake: awake,
+            fullScreen: fullScreen,
+            onFullScreenChanged: onFullScreenChanged,
+          ),
         ),
       ),
     ),
@@ -376,6 +382,51 @@ void main() {
       );
     },
   );
+
+  testWidgets('reader overflow keeps player settings reachable', (
+    tester,
+  ) async {
+    await openFixture(tester);
+    await _pumpPlayer(tester, ui, awake);
+    final l10n = l10nOf(tester);
+
+    await tester.tap(find.byTooltip(l10n.songMenuLabel));
+    await tester.pumpAndSettle();
+    expect(find.text(l10n.settingsPlayer), findsOneWidget);
+    await tester.tap(find.text(l10n.settingsPlayer));
+    await tester.pumpAndSettle();
+    expect(
+      find.widgetWithText(SwitchListTile, l10n.editorChordsField),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('fullscreen reader keeps player settings reachable', (
+    tester,
+  ) async {
+    await openFixture(tester);
+    await _pumpPlayer(
+      tester,
+      ui,
+      awake,
+      fullScreen: true,
+      onFullScreenChanged: (_) {},
+    );
+    final l10n = l10nOf(tester);
+
+    expect(
+      find.byKey(const ValueKey('player-settings-button')),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const ValueKey('player-settings-button')));
+    await tester.pumpAndSettle();
+    expect(
+      find.widgetWithText(SwitchListTile, l10n.editorChordsField),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets(
     'Settings Player exposes independent persisted chord and heading switches',

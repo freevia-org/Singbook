@@ -13,6 +13,7 @@ import '../../l10n/generated/app_localizations.dart';
 import '../format.dart';
 import '../library_actions.dart';
 import '../player_section_timeline.dart';
+import '../settings/settings_screen.dart' show showPlayerSettings;
 import '../verse_ui_state.dart';
 import '../widgets/slider_overlay_boundary.dart';
 import 'player_lyric_line.dart';
@@ -907,6 +908,13 @@ class _PlayerScreenState extends State<PlayerScreen>
         '${l10n.editorTempoField}: ${state.readerTempo}',
     ].whereType<String>().where((v) => v.isNotEmpty).join(' · ');
 
+    Widget playerSettingsAction() => IconButton(
+      key: const ValueKey('player-settings-button'),
+      tooltip: l10n.settingsPlayer,
+      onPressed: () => showPlayerSettings(context, controller),
+      icon: const Icon(Icons.settings_outlined),
+    );
+
     List<Widget> songActions() => [
       IconButton(
         tooltip: song.favorite ? l10n.songFavoriteRemove : l10n.songFavoriteAdd,
@@ -926,18 +934,27 @@ class _PlayerScreenState extends State<PlayerScreen>
       PopupMenuButton<String>(
         tooltip: l10n.songMenuLabel,
         icon: const Icon(Icons.more_horiz_rounded),
-        itemBuilder: (_) => buildLibraryActionMenu(
-          l10n,
-          timedLyricsChecked: state.timingMode == 'timed',
-          actions: {
-            ...songLibraryActions,
-            if (state.readerCanCompareVersions) 'compare',
-            if (state.readerTimingAvailable || state.readerHasTiming)
-              'timed-lyrics',
-          },
-        ),
+        itemBuilder: (_) => [
+          PopupMenuItem<String>(
+            value: 'player-settings',
+            child: Text(l10n.settingsPlayer),
+          ),
+          const PopupMenuDivider(),
+          ...buildLibraryActionMenu(
+            l10n,
+            timedLyricsChecked: state.timingMode == 'timed',
+            actions: {
+              ...songLibraryActions,
+              if (state.readerCanCompareVersions) 'compare',
+              if (state.readerTimingAvailable || state.readerHasTiming)
+                'timed-lyrics',
+            },
+          ),
+        ],
         onSelected: (action) {
-          if (action == 'compare') {
+          if (action == 'player-settings') {
+            showPlayerSettings(context, controller);
+          } else if (action == 'compare') {
             controller.compareCurrentSongVersions();
           } else if (action == 'timed-lyrics') {
             controller.setTimingMode(
@@ -960,7 +977,7 @@ class _PlayerScreenState extends State<PlayerScreen>
         title: song.title,
         artist: song.artist,
         actions: widget.fullScreen
-            ? const []
+            ? [playerSettingsAction()]
             : [
                 IconButton(
                   tooltip: l10n.navBack,
@@ -977,7 +994,7 @@ class _PlayerScreenState extends State<PlayerScreen>
         return PlayerFullscreenHeader(
           title: song.title,
           artist: song.artist,
-          actions: const [],
+          actions: [playerSettingsAction()],
         );
       }
       return playerPanel(
