@@ -115,6 +115,14 @@ jobs:
           if ($manifests.Count -ne 1) { throw "Expected one portable manifest, found $($manifests.Count)." }
           $manifestHash = (Get-FileHash -LiteralPath $manifests[0].FullName -Algorithm SHA256).Hash
           if ($manifestHash -ne ([string]$env:PORTABLE_MANIFEST_SHA256).ToUpperInvariant()) { throw 'Portable manifest SHA-256 differs from the supplied pin.' }
+          $releaseManifest = Get-Content -LiteralPath $manifests[0].FullName -Raw | ConvertFrom-Json
+          if ($releaseManifest.version -ne $env:RELEASE_PRODUCT_VERSION -or
+              $releaseManifest.sourceCommit -ne $env:RELEASE_HEAD_SHA -or
+              $releaseManifest.sourceTree -ne $env:RELEASE_SOURCE_TREE -or
+              $releaseManifest.configuration -ne 'release' -or
+              $releaseManifest.distribution -ne 'portable-release') {
+            throw 'Portable manifest version, source commit/tree, or release configuration does not match the pinned candidate.'
+          }
           $zips = @(Get-ChildItem -LiteralPath $artifactRoot -Filter '*.zip' -File -Recurse)
           if ($zips.Count -ne 1) { throw "Expected one portable ZIP, found $($zips.Count)." }
           if ((Get-FileHash -LiteralPath $zips[0].FullName -Algorithm SHA256).Hash -ne ([string]$env:PORTABLE_ZIP_SHA256).ToUpperInvariant()) { throw 'Portable ZIP SHA-256 differs from the supplied pin.' }
