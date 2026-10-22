@@ -37,6 +37,9 @@ jobs:
     timeout-minutes: 25
     env:
       RELEASE_HEAD_SHA: '49f5b8cd00b264fddcaff247e4f280b758260581'
+      # CI builds pull requests from GitHub's synthetic merge commit. Keep this
+      # separate from the release head SHA used to validate the run and checkout.
+      RELEASE_COMPILED_SOURCE_SHA: 'd66c1c8173748251b761e15b84f592fa383a8b94'
       RELEASE_SOURCE_TREE: 'a6c373c3d92a4ce7bdb6031ebc1af9a168c39d1f'
       RELEASE_PRODUCT_VERSION: '0.2.15+29'
       CI_RUN_ID: ${{ inputs.ci_run_id }}
@@ -117,7 +120,7 @@ jobs:
           if ($manifestHash -ne ([string]$env:PORTABLE_MANIFEST_SHA256).ToUpperInvariant()) { throw 'Portable manifest SHA-256 differs from the supplied pin.' }
           $releaseManifest = Get-Content -LiteralPath $manifests[0].FullName -Raw | ConvertFrom-Json
           if ($releaseManifest.version -ne $env:RELEASE_PRODUCT_VERSION -or
-              $releaseManifest.sourceCommit -ne $env:RELEASE_HEAD_SHA -or
+              $releaseManifest.sourceCommit -ne $env:RELEASE_COMPILED_SOURCE_SHA -or
               $releaseManifest.sourceTree -ne $env:RELEASE_SOURCE_TREE -or
               $releaseManifest.configuration -ne 'release' -or
               $releaseManifest.distribution -ne 'portable-release') {
