@@ -9,6 +9,7 @@ import 'package:pdf/pdf.dart';
 import 'package:sqflite/sqflite.dart' show deleteDatabase, getDatabasesPath;
 import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/application/file_actions.dart';
+import 'package:singbook/data/library_database.dart';
 import 'package:singbook/data/library_repository.dart';
 import 'package:singbook/domain/combine.dart';
 import 'package:singbook/domain/source_contributions.dart';
@@ -43,6 +44,10 @@ void main() {
   testWidgets(
     'native Singbook journey captures populated app screens',
     (tester) async {
+      // The production entry point initializes sqflite_common_ffi on Windows.
+      // This journey builds the controller directly, so mirror that startup
+      // before asking sqflite for the isolated test database directory.
+      initializeLibraryDatabase();
       final dbPath = paths.join(
         await getDatabasesPath(),
         'singbook_journey_${DateTime.now().microsecondsSinceEpoch}.db',
