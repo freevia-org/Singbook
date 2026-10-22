@@ -111,9 +111,32 @@ clipboard for an unattended check.
 | Layout | Native screenshots at compact/desktop sizes, large text, DPI changes, themes and RTL. |
 | Delivery | Release bundle extracted outside checkout, dependencies present and clean-machine launch. |
 
-### Current automated and native evidence — 2026-10-21
+### Current automated and native evidence — 2026-10-22
 
-The latest PR-head CI run, [39668863757](https://github.com/freevia-org/Singbook/actions/runs/39668863757), passed on `673869eb4c3ffebd17deef452af1ee16f7ad00da`. Linux localization verification, analysis and the full Flutter suite passed. Windows OAuth preflight, release packaging, isolated portable startup and graceful close, native clipboard and Credential Manager checks, and the full Flutter suite passed. The OAuth release-enforcement step was skipped because its preflight dependency succeeded. The run preserved `windows-release-bundle` and `windows-validation-evidence`; the bundle artifact digest is `sha256:06ddd57bdb6c3e6a3411c0409581e4041b00f77fd1f7910d390fd86ae1a7809f` (the digest is for the enclosing GitHub artifact, not the portable ZIP inside it). These checks verify the current PR head's build and automated behavior, but do not close the native UI acceptance gaps listed below.
+The current Windows candidate is Singbook `0.2.13+27` from merged commit
+`593fcc15b7846651a1e6abcd7d3c820645d28e5f` (tree
+`8ef825e976f98f35b0fa92a3fa5d6a141df96055`). Post-merge CI run
+[39689602453](https://github.com/freevia-org/Singbook/actions/runs/39689602453)
+passed Linux localization generation, analysis and the full Flutter suite, and
+Windows OAuth preflight, release packaging, isolated portable startup/graceful
+close, native clipboard and Credential Manager checks, and the full Flutter
+suite. The run's isolated startup evidence confirms a valid disposable database,
+the Singbook main window and graceful close without a forced stop. The Windows
+release ZIP SHA-256 is
+`0573DEFCEB234CC8743D53FBD4E9FDEF044F63A628713403217A709A529C9413`; I checked
+all 54 manifest file hashes and confirmed all 50 required-file entries are
+present. Desktop OAuth client ID and secret presence are recorded in the
+manifest without exposing their values. These checks establish a buildable
+portable candidate, not full native acceptance.
+
+The current CI artifact's desktop-wide light captures cover Library, Setlists,
+Reader and Settings at 1920×1080. A visual review found the library grid
+balanced, the setlist card centered, and the reader column and playback rail
+aligned, with no visible clipping. The exact-package Windows startup capture is
+at 1044×720. These visuals do not prove the full packaged DPI, theme and
+localization matrix.
+
+An earlier PR-head CI run, [39668863757](https://github.com/freevia-org/Singbook/actions/runs/39668863757), passed on `673869eb4c3ffebd17deef452af1ee16f7ad00da`. Linux localization verification, analysis and the full Flutter suite passed. Windows OAuth preflight, release packaging, isolated portable startup and graceful close, native clipboard and Credential Manager checks, and the full Flutter suite passed. The OAuth release-enforcement step was skipped because its preflight dependency succeeded. The run preserved `windows-release-bundle` and `windows-validation-evidence`; the bundle artifact digest is `sha256:06ddd57bdb6c3e6a3411c0409581e4041b00f77fd1f7910d390fd86ae1a7809f` (the digest is for the enclosing GitHub artifact, not the portable ZIP inside it). These checks verify that earlier PR head's build and automated behavior, but do not close the native UI acceptance gaps listed below.
 
 PR #93 head `fd5d77babc6bc8317e058f8a390d154c830c9fbb` passed both jobs in
 [CI run 39657693802](https://github.com/freevia-org/Singbook/actions/runs/39657693802).
@@ -232,9 +255,9 @@ accessibility reorder behavior, player preference persistence, Windows HTTP
 checks establish the application logic and platform adapters; they do not
 exercise every native dialog or interaction in the packaged app.
 
-Last fully verified package candidate before the Windows live-smoke helper update:
-PR #93 head `868bee9cf2740ee8fef39ba2911cfaf7c988dd2d` (the PR remains open and
-Draft).
+Earlier verified package candidate before the Windows live-smoke helper update:
+PR #93 head `868bee9cf2740ee8fef39ba2911cfaf7c988dd2d` (PR #93 has since been
+merged; this earlier candidate is superseded by the current build above).
 CI run [39675132042](https://github.com/freevia-org/Singbook/actions/runs/39675132042)
 passed both Linux and Windows jobs on that PR head. Windows OAuth preflight,
 release packaging, isolated portable startup and graceful close, native
@@ -256,21 +279,25 @@ evidence, not packaged Windows DPI/font-scaling proof.
 Release readiness is still unproven. Remaining packaged-native checks include
 printing to a saved PDF; formatted paste into another application; the packaged
 UI's provider search-to-open workflow; and the complete locale/theme/DPI and
-compact/large-screen matrix. An opt-in public-provider smoke run on 2026-10-22
-used `WindowsHttpClient` directly (the `dart run` conditional import otherwise
-selects a fallback client): Worship Commons, Sean McGrath Music, Open Filk
+compact/large-screen matrix. An opt-in public-provider smoke run on 2026-10-22,
+rerun against the current source, used `WindowsHttpClient` directly (the
+`dart run` conditional import otherwise selects a fallback client): Worship
+Commons, Sean McGrath Music, Open Filk
 Songbook and Chordie returned lyric results; MusicBrainz returned catalog rows
 without lyrics; Wikidata and Wikisource returned HTTP 403. The probe exited 0
 and logged provider IDs, result titles, counts, body lengths, chord/timing flags
-and metadata keys, not lyrics or credentials. This is partial provider/transport evidence, not packaged UI
-acceptance or a pass for providers returning 403. The user confirmed that their
+and metadata keys, not lyrics or credentials. Current-source output and run
+metadata are in `artifacts/windows-parity/current-live-smoke-20261022T070617966/`.
+This is partial provider/transport evidence, not packaged UI acceptance or a
+pass for providers returning 403. The user confirmed that their
 existing library synced successfully in a previous `0.2.12+26` interactive
 session; no synthetic song was uploaded. Token refresh, offline recovery,
 revoked-grant handling and sign-out still need lifecycle acceptance. This turn
 used CI, repository and command-line provider evidence only; no Sandbox was
 used. Installer, SmartScreen and antivirus behavior are not applicable to the
-portable ZIP workflow and were not assessed. Keep PR #93 in Draft until the
-required acceptance rows are passed or explicitly waived.
+portable ZIP workflow and were not assessed. PR #93 has been merged; no Windows
+GitHub Release has been published. The CI artifact is temporary, so a permanent
+distribution step remains separate from acceptance.
 
 The frozen `e0e14a1` source passed both jobs in
 [CI run 39237237228](https://github.com/freevia-org/Singbook/actions/runs/39237237228):
