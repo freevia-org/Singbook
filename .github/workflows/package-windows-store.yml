@@ -65,41 +65,28 @@ jobs:
           path: release-source
           persist-credentials: false
 
-      - name: Download and verify release artifact archive
+      - name: Download exact artifact with strict digest validation
+        uses: actions/download-artifact@v8
+        with:
+          artifact-ids: ${{ env.RELEASE_ARTIFACT_ID }}
+          run-id: ${{ env.RELEASE_RUN_ID }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/release-artifact
+          digest-mismatch: error
+
+      - name: Verify release payload provenance
         id: payload
         shell: pwsh
-        env:
-          GH_TOKEN: ${{ github.token }}
-          ARTIFACT_ID: ${{ steps.artifact.outputs.artifact_id }}
-          ARTIFACT_DIGEST: ${{ steps.artifact.outputs.artifact_digest }}
         run: |
           $tree = (git -C release-source rev-parse 'HEAD^{tree}').Trim()
           if ($LASTEXITCODE -ne 0 -or $tree -ne $env:RELEASE_SOURCE_TREE) { throw 'Checked-out source tree does not match release tree.' }
-          $archive = Join-Path $env:RUNNER_TEMP 'windows-release-bundle.zip'
-          $apiUri = "https://api.github.com/repos/$env:GITHUB_REPOSITORY/actions/artifacts/$env:ARTIFACT_ID/zip"
-          Add-Type -AssemblyName System.Net.Http
-          $handler = [System.Net.Http.HttpClientHandler]::new()
-          $handler.AllowAutoRedirect = $false
-          $client = [System.Net.Http.HttpClient]::new($handler)
-          try {
-            $request = [System.Net.Http.HttpRequestMessage]::new([System.Net.Http.HttpMethod]::Get, $apiUri)
-            $request.Headers.Authorization = [System.Net.Http.Headers.AuthenticationHeaderValue]::new('Bearer', $env:GH_TOKEN)
-            $request.Headers.Accept.ParseAdd('application/vnd.github+json')
-            $request.Headers.Add('X-GitHub-Api-Version', '2022-11-28')
-            $response = $client.SendAsync($request).GetAwaiter().GetResult()
-            try {
-              if ($response.StatusCode -ne [Net.HttpStatusCode]::Found -or $null -eq $response.Headers.Location) { throw 'GitHub artifact API did not return a download redirect.' }
-              $downloadUri = $response.Headers.Location
-            } finally { $response.Dispose(); $request.Dispose() }
-          } finally { $client.Dispose(); $handler.Dispose() }
-          Invoke-WebRequest -Uri $downloadUri -OutFile $archive -ErrorAction Stop
-          if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne $env:ARTIFACT_DIGEST) { throw 'Downloaded GitHub artifact digest mismatch.' }
           $extract = Join-Path $env:RUNNER_TEMP 'release-artifact'
-          Expand-Archive -LiteralPath $archive -DestinationPath $extract
           $manifests = @(Get-ChildItem -LiteralPath $extract -Filter manifest.json -File -Recurse)
           if ($manifests.Count -ne 1) { throw "Expected one release manifest, found $($manifests.Count)." }
+          if ((Get-FileHash -LiteralPath $manifests[0].FullName -Algorithm SHA256).Hash -ne 'A9400A9D2D8EF367E3469ED1DA12BA71DE5A7E0DED5857AF65928B817B93014B') { throw 'Portable manifest differs from Root-qualified input.' }
           $zips = @(Get-ChildItem -LiteralPath $extract -Filter '*.zip' -File -Recurse)
           if ($zips.Count -ne 1) { throw "Expected one portable ZIP, found $($zips.Count)." }
+          if ((Get-FileHash -LiteralPath $zips[0].FullName -Algorithm SHA256).Hash -ne 'A8A63C4260D9A65EFD4D178FF2C1A95A36ADFCF8C2C3024FFCD7770BCD5CA821') { throw 'Portable ZIP differs from Root-qualified input.' }
           $payload = Join-Path $env:RUNNER_TEMP 'portable-payload'
           Expand-Archive -LiteralPath $zips[0].FullName -DestinationPath $payload
           $folders = @(Get-ChildItem -LiteralPath $payload -Directory)
