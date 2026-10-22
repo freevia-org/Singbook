@@ -1287,7 +1287,15 @@ Future<void> _selectDropdown(
   await _ensureBelowPinnedHeader(tester, dropdown);
   await tester.tap(dropdown);
   await tester.pumpAndSettle();
-  await tester.tap(find.text(value).last);
+  final option = find.text(value);
+  // Long dropdowns such as the language picker lazily build only visible
+  // options. Scroll the popup itself until the requested option is mounted.
+  await tester.scrollUntilVisible(
+    option,
+    240,
+    scrollable: find.byType(Scrollable).last,
+  );
+  await tester.tap(option.last);
   await tester.pumpAndSettle();
 }
 
