@@ -753,7 +753,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Setlists'));
       await tester.pumpAndSettle();
-      await tester.tap(_iconButtonWithTooltip('New setlist'));
+      await tester.tap(find.byKey(const ValueKey('setlists-create-shortcut')));
       await tester.pumpAndSettle();
       await _waitForState(
         tester,
