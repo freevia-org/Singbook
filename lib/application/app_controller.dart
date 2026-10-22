@@ -387,21 +387,13 @@ class AppController extends ChangeNotifier {
   }
 
   Future<void> _loadSnapshot(int epoch) async {
-    final loadedSongs = await repository.listSongs();
-    final loadedSetlists = await repository.listSetlists();
-    final hashRows = await repository.database.query(
-      'songs',
-      columns: ['id', 'content_hash'],
-    );
+    final snapshot = await repository.librarySnapshot();
     if (_disposed || epoch != _reloadEpoch) return;
-    songs = loadedSongs;
-    setlists = loadedSetlists;
-    _songHashes = {
-      for (final row in hashRows)
-        row['id'] as String: row['content_hash'] as String,
-    };
+    songs = snapshot.songs;
+    setlists = snapshot.setlists;
+    _songHashes = snapshot.songHashes;
     _setlistHashes = {
-      for (final set in loadedSetlists) set.id: _setlistHash(set),
+      for (final set in snapshot.setlists) set.id: _setlistHash(set),
     };
   }
 
@@ -888,6 +880,7 @@ class AppController extends ChangeNotifier {
           song,
           expected,
           mustNotExist: expected == null,
+          mustExist: expected != null,
         )) {
           final text = ChordProCodec().encode(song);
           final copyId = conflictDocumentId(
@@ -961,11 +954,18 @@ class AppController extends ChangeNotifier {
     var saved = false;
     for (var attempt = 0; attempt < 4 && !saved; attempt++) {
       final hash = await repository.getSongHash(song.id);
-      final current = await repository.getSong(song.id) ?? song;
+      final current = await repository.getSong(song.id);
+      if (current == null) {
+        await _reload();
+        _indexSaved();
+        _emit();
+        return;
+      }
       saved = await repository.saveSongIfUnchanged(
         current.copyWith(favorite: !current.favorite),
         hash,
         mustNotExist: hash == null,
+        mustExist: true,
       );
     }
     await _afterWrite();
@@ -998,6 +998,7 @@ class AppController extends ChangeNotifier {
       setlist,
       expected,
       mustNotExist: expected == null,
+      mustExist: expected != null,
     );
     if (persistedHash == null) {
       final copyId = conflictDocumentId(setlist.id, _setlistHash(setlist));
@@ -1041,7 +1042,13 @@ class AppController extends ChangeNotifier {
         var saved = false;
         for (var attempt = 0; attempt < 4 && !saved; attempt++) {
           final stored = await repository.getSetlist(value.id);
-          final current = stored ?? value;
+          if (stored == null) {
+            await _reload();
+            _indexSaved();
+            _emit();
+            return;
+          }
+          final current = stored;
           saved = await repository.saveSetlistIfUnchanged(
             SetlistDocument(
               id: current.id,
@@ -1051,8 +1058,8 @@ class AppController extends ChangeNotifier {
               favorite: !current.favorite,
               createdAt: current.createdAt,
             ),
-            stored == null ? null : _setlistHash(stored),
-            mustNotExist: stored == null,
+            _setlistHash(stored),
+            mustExist: true,
           );
         }
         await _afterWrite(songsChanged: false);

@@ -5,6 +5,8 @@ import 'dart:io';
 import 'package:integration_test/integration_test_driver_extended.dart';
 import 'package:path/path.dart' as path;
 
+import 'support/adb_device_selection.dart';
+
 Future<void> main() async {
   final watcher = await _NativeScreenshotWatcher.start();
   final expectedScreenshots = <String>{};
@@ -194,34 +196,26 @@ class _NativeScreenshotWatcher {
   }
 }
 
-/// The device whose logcat is cleared and captured. An explicit
-/// SINGBOOK_ADB_SERIAL / ANDROID_SERIAL always wins; otherwise the single
-/// attached device is used, and several attached devices are refused instead of
-/// clearing the logs of the wrong one.
+/// The ready device whose logcat is cleared and captured. An explicit
+/// SINGBOOK_ADB_SERIAL / ANDROID_SERIAL must match a ready attached device;
+/// without one, exactly one ready device must be attached.
 Future<String> _resolveSerial() async {
-  final configured =
-      Platform.environment['SINGBOOK_ADB_SERIAL'] ??
-      Platform.environment['ANDROID_SERIAL'];
-  if (configured != null && configured.trim().isNotEmpty) {
-    return configured.trim();
+  final preferred = Platform.environment['SINGBOOK_ADB_SERIAL']?.trim();
+  final legacy = Platform.environment['ANDROID_SERIAL']?.trim();
+  final String? configured;
+  if (preferred != null && preferred.isNotEmpty) {
+    configured = preferred;
+  } else if (legacy != null && legacy.isNotEmpty) {
+    configured = legacy;
+  } else {
+    configured = null;
   }
   final listing = await Process.run(_adbExecutable(), ['devices']);
-  final devices = listing.exitCode != 0
-      ? <String>[]
-      : [
-          for (final line in const LineSplitter().convert(
-            listing.stdout as String,
-          ))
-            if (RegExp(r'^(\S+)\s+device').firstMatch(line) case final m?)
-              m.group(1)!,
-        ];
-  if (devices.length > 1) {
-    throw StateError(
-      'Several adb devices are attached (${devices.join(', ')}); set '
-      'SINGBOOK_ADB_SERIAL so the right device is used.',
-    );
-  }
-  return devices.isEmpty ? 'emulator-5554' : devices.single;
+  return selectAdbDeviceSerial(
+    stdout: listing.stdout as String,
+    exitCode: listing.exitCode,
+    configuredSerial: configured,
+  );
 }
 
 String _adbExecutable() {

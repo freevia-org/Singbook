@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/application/file_actions.dart';
 import 'package:singbook/data/library_repository.dart';
+import 'package:singbook/domain/chordpro.dart';
 import 'package:singbook/domain/models.dart';
 import 'package:singbook/l10n/generated/app_localizations.dart';
 import 'package:singbook/providers/core/service.dart';
@@ -340,13 +343,11 @@ void main() {
           final rect = tester.getRect(
             find.byKey(const ValueKey('settings-account-card')),
           );
-          final title = find.byKey(
-            const ValueKey('settings-section-title'),
-          );
+          final title = find.byKey(const ValueKey('settings-section-title'));
           final titleRect = tester.getRect(title);
           final backButton = tester.getRect(find.byType(BackButton));
-          final isRtl = Directionality.of(tester.element(title)) ==
-              TextDirection.rtl;
+          final isRtl =
+              Directionality.of(tester.element(title)) == TextDirection.rtl;
           expect(rect.left, greaterThanOrEqualTo(0));
           expect(rect.right, lessThanOrEqualTo(viewport.width));
           expect(rect.center.dx, closeTo(viewport.width / 2, 0.5));
@@ -540,8 +541,7 @@ void main() {
     final expectedCaptures = {
       for (final viewport in _viewports.keys)
         for (final theme in ['light', 'dark'])
-          for (final screen in _screens)
-            '${viewport}_${theme}_$screen.png',
+          for (final screen in _screens) '${viewport}_${theme}_$screen.png',
     };
     final writtenCaptures = output
         .listSync()
@@ -770,6 +770,37 @@ class _MemoryRepository implements LibraryRepository {
   final List<SongDocument> songs = [];
   final List<SetlistDocument> setlists = [];
   final List<ActivityEntry> activity = [];
+
+  @override
+  Future<
+    ({
+      List<SongDocument> songs,
+      List<SetlistDocument> setlists,
+      Map<String, String> songHashes,
+    })
+  >
+  librarySnapshot() async {
+    final snapshotSongs = List<SongDocument>.of(songs);
+    return (
+      songs: snapshotSongs,
+      setlists: List<SetlistDocument>.of(setlists),
+      songHashes: {for (final song in snapshotSongs) song.id: _hashSong(song)},
+    );
+  }
+
+  String _hashSong(SongDocument song) {
+    final document = ChordProCodec().encode(song);
+    final fullDocument = song.extensionError == null
+        ? null
+        : jsonEncode(song.toJson());
+    final fullDocumentHash = fullDocument == null
+        ? null
+        : sha256.convert(utf8.encode(fullDocument)).toString();
+    final localDocument = fullDocumentHash == null
+        ? document
+        : '$document\u0000$fullDocumentHash';
+    return sha256.convert(utf8.encode(localDocument)).toString();
+  }
 
   @override
   Future<List<SongDocument>> listSongs({

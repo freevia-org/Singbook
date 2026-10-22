@@ -117,9 +117,24 @@ String _value(List<String> args, int index, String flag) {
 /// Desktop-only smoke transport. Secret headers travel in a private temp file,
 /// never in curl's process arguments. TLS verification remains enabled.
 class DesktopMaintenanceClient extends http.BaseClient {
-  DesktopMaintenanceClient({this.curlExecutable = 'curl.exe'});
+  DesktopMaintenanceClient({
+    this.curlExecutable = 'curl.exe',
+    Future<Process> Function(String executable, List<String> arguments)?
+    processStarter,
+    this.maxResponseBytes = _maxResponseBytes,
+  }) : _processStarter = processStarter ?? Process.start {
+    if (maxResponseBytes < 0 || maxResponseBytes > _maxResponseBytes) {
+      throw ArgumentError.value(maxResponseBytes, 'maxResponseBytes');
+    }
+  }
 
   final String curlExecutable;
+  final Future<Process> Function(String executable, List<String> arguments)
+  _processStarter;
+  final int maxResponseBytes;
+  static const _maxResponseBytes = 16 * 1024 * 1024;
+  static const _maxHeaderBytes = 1024 * 1024;
+  static const _statusSuffixBytes = 4; // newline plus three status digits
   static const _secretHeaders = {
     'authorization',
     'cookie',
@@ -155,7 +170,7 @@ class DesktopMaintenanceClient extends http.BaseClient {
     String? secretFile,
     String responseHeaders,
   ) async {
-    final process = await Process.start(curlExecutable, [
+    final process = await _processStarter(curlExecutable, [
       '--silent',
       '--show-error',
       '--max-time',
@@ -175,28 +190,105 @@ class DesktopMaintenanceClient extends http.BaseClient {
       if (secretFile != null) ...['--header', '@$secretFile'],
       if (bytes.isNotEmpty) ...['--data-binary', '@-'],
     ]);
-    if (request is http.Abortable && request.abortTrigger != null) {
-      request.abortTrigger!.then((_) => process.kill());
+    var aborted = false;
+    var retired = false;
+    var exited = false;
+    var killRequested = false;
+    void stopOwnedProcess() {
+      if (retired || exited || killRequested) return;
+      killRequested = true;
+      process.kill();
     }
-    if (bytes.isNotEmpty) process.stdin.add(bytes);
-    await process.stdin.close();
-    final errors = process.stderr.transform(utf8.decoder).join();
-    final output = await process.stdout.fold<List<int>>(
-      [],
-      (all, chunk) => all..addAll(chunk),
+
+    final abortTrigger = request is http.Abortable
+        ? request.abortTrigger
+        : null;
+    abortTrigger?.then((_) {
+      if (retired) return;
+      aborted = true;
+      stopOwnedProcess();
+    }, onError: (Object _) {});
+    final exitCodeFuture = process.exitCode;
+    final exitObserved = exitCodeFuture.then<void>(
+      (_) {
+        exited = true;
+      },
+      onError: (Object _) {
+        exited = true;
+      },
     );
-    if (await process.exitCode != 0) {
-      await errors;
+    final stderrDrained = process.stderr.drain<void>();
+    final stderrObserved = stderrDrained.then<void>(
+      (_) {},
+      onError: (Object _) {
+        stopOwnedProcess();
+      },
+    );
+    final output = <int>[];
+    var oversized = false;
+    final stdoutDrained = () async {
+      await for (final chunk in process.stdout) {
+        if (oversized) continue;
+        final limit = maxResponseBytes + _statusSuffixBytes;
+        if (chunk.length > limit - output.length) {
+          oversized = true;
+          output.clear();
+          stopOwnedProcess();
+          continue;
+        }
+        output.addAll(chunk);
+      }
+    }();
+    final stdoutObserved = stdoutDrained.then<void>(
+      (_) {},
+      onError: (Object _) {
+        stopOwnedProcess();
+      },
+    );
+    try {
+      if (bytes.isNotEmpty) process.stdin.add(bytes);
+      await process.stdin.close();
+      await stdoutDrained;
+      final exitCode = await exitCodeFuture;
+      await stderrDrained;
+      retired = true;
+      if (oversized) {
+        throw const ProviderException('invalid_response', 'Response too large');
+      }
+      if (aborted || exitCode != 0) {
+        throw http.ClientException(
+          'Desktop maintenance HTTP failed',
+          request.url,
+        );
+      }
+    } catch (error) {
+      // Finish draining the owned child before the caller removes its private
+      // temporary directory. Never include curl stderr or header content in
+      // an exception.
+      stopOwnedProcess();
+      await Future.wait<void>([exitObserved, stdoutObserved, stderrObserved]);
+      if (error is ProviderException || error is http.ClientException) {
+        rethrow;
+      }
       throw http.ClientException(
         'Desktop maintenance HTTP failed',
         request.url,
       );
     }
-    await errors;
     final split = output.lastIndexOf(10);
+    if (split < 0 || output.length - split - 1 != 3) {
+      throw const ProviderException('invalid_response', 'Invalid HTTP status');
+    }
     final status = int.parse(utf8.decode(output.sublist(split + 1)));
+    final headerFile = File(responseHeaders);
+    if (!headerFile.existsSync() || headerFile.lengthSync() > _maxHeaderBytes) {
+      throw const ProviderException(
+        'invalid_response',
+        'Response headers too large',
+      );
+    }
     final headers = parseDesktopResponseHeaders(
-      File(responseHeaders).readAsStringSync(encoding: latin1),
+      headerFile.readAsStringSync(encoding: latin1),
       status,
     );
     return http.StreamedResponse(
