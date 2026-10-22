@@ -411,6 +411,21 @@ public static class SingbookMsixWindowCapture
         return $ids.ToArray()
     }
 
+    function Test-SqliteDatabaseHeader([string]$Path) {
+        $stream = [IO.File]::Open($Path, [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::ReadWrite)
+        try {
+            if ($stream.Length -lt 16) { return $false }
+            $header = [byte[]]::new(16)
+            $read = 0
+            while ($read -lt $header.Length) {
+                $count = $stream.Read($header, $read, $header.Length - $read)
+                if ($count -eq 0) { return $false }
+                $read += $count
+            }
+            return [Text.Encoding]::ASCII.GetString($header) -eq "SQLite format 3`0"
+        } finally { $stream.Dispose() }
+    }
+
     $databaseDirectory = Join-Path $runtimeRoot 'library'
     $databasePath = Join-Path $databaseDirectory 'singbook.db'
     New-Item -ItemType Directory -Path $databaseDirectory -Force | Out-Null
@@ -459,10 +474,6 @@ with sqlite3.connect(database_path) as connection:
                 throw 'Activated process package identity differs from the exact installed package.'
             }
             if ($mainWindowTitle -ne 'Singbook') { throw 'Activated package did not expose the Singbook main window.' }
-            $bytes = [IO.File]::ReadAllBytes($databasePath)
-            $databaseHeaderValid = $bytes.Length -ge 16 -and
-                [Text.Encoding]::ASCII.GetString($bytes, 0, 16) -eq "SQLite format 3`0"
-            if (-not $databaseHeaderValid) { throw 'MSIX activation did not create a valid isolated SQLite library.' }
             $processIds = @(Get-InstalledPackageProcessIds $executablePath)
             if ($processIds.Count -ne 1 -or $processIds[0] -ne $processId) {
                 throw 'MSIX activation did not produce exactly one process for the installed package executable.'
@@ -488,6 +499,8 @@ with sqlite3.connect(database_path) as connection:
         Start-Sleep -Milliseconds 250
     } while ([DateTime]::UtcNow -lt $closeDeadline)
     if ($remainingProcessIds.Count -ne 0) { throw 'First MSIX app process remained after graceful close.' }
+    $databaseHeaderValid = Test-SqliteDatabaseHeader $databasePath
+    if (-not $databaseHeaderValid) { throw 'MSIX activation did not create a valid isolated SQLite library.' }
 
     & python $persistenceProbePath write $databasePath $persistenceMarker
     if ($LASTEXITCODE -ne 0) { throw 'Could not write a disposable SQLite marker before the package restart.' }
@@ -513,10 +526,6 @@ with sqlite3.connect(database_path) as connection:
             if ($secondProcessIds.Count -ne 1 -or $secondProcessIds[0] -ne $secondProcessId) {
                 throw 'Second activation did not produce exactly one process for the installed package executable.'
             }
-            $bytes = [IO.File]::ReadAllBytes($databasePath)
-            $databaseHeaderValid = $bytes.Length -ge 16 -and
-                [Text.Encoding]::ASCII.GetString($bytes, 0, 16) -eq "SQLite format 3`0"
-            if (-not $databaseHeaderValid) { throw 'Second activation did not reopen the same valid isolated SQLite library.' }
             break
         }
         Start-Sleep -Milliseconds 500
@@ -532,6 +541,8 @@ with sqlite3.connect(database_path) as connection:
         Start-Sleep -Milliseconds 250
     } while ([DateTime]::UtcNow -lt $closeDeadline)
     if ($remainingProcessIds.Count -ne 0) { throw 'Second MSIX app process remained after graceful close.' }
+    $databaseHeaderValid = Test-SqliteDatabaseHeader $databasePath
+    if (-not $databaseHeaderValid) { throw 'Second activation did not reopen the same valid isolated SQLite library.' }
     & python $persistenceProbePath verify $databasePath $persistenceMarker
     $persistenceMarkerConfirmed = $LASTEXITCODE -eq 0
     if (-not $persistenceMarkerConfirmed) { throw 'Disposable library marker did not persist across the packaged app restart.' }
