@@ -573,7 +573,9 @@ void main() {
       await tester.drag(seekSlider, const Offset(75, 0));
       await tester.pumpAndSettle();
       expect(tester.widget<Slider>(seekSlider).value, greaterThan(0));
-      await tester.tap(_iconButtonWithTooltip('Edit'));
+      await tester.tap(find.byTooltip(l10n.songMenuLabel));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(l10n.actionEdit).last);
       await tester.pumpAndSettle();
       final editorBody = find.byKey(const ValueKey('editor-lyrics-input'));
       await _scrollIntoView(tester, editorBody);
