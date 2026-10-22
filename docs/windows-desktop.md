@@ -113,28 +113,36 @@ clipboard for an unattended check.
 
 ### Current automated and native evidence — 2026-10-22
 
-The current Windows candidate is Singbook `0.2.13+27` from merged commit
-`593fcc15b7846651a1e6abcd7d3c820645d28e5f` (tree
-`8ef825e976f98f35b0fa92a3fa5d6a141df96055`). Post-merge CI run
-[39689602453](https://github.com/freevia-org/Singbook/actions/runs/39689602453)
+The current Windows candidate is Singbook `0.2.14+28` from PR #97 head
+`c933c0a54e88498464803a8889b0f8af1cccda50`. The branch is clean, the PR is
+open as a draft, and GitHub reports it mergeable. CI run
+[39777236285](https://github.com/freevia-org/Singbook/actions/runs/39777236285)
 passed Linux localization generation, analysis and the full Flutter suite, and
 Windows OAuth preflight, release packaging, isolated portable startup/graceful
-close, native clipboard and Credential Manager checks, and the full Flutter
-suite. The run's isolated startup evidence confirms a valid disposable database,
-the Singbook main window and graceful close without a forced stop. The Windows
-release ZIP SHA-256 is
-`0573DEFCEB234CC8743D53FBD4E9FDEF044F63A628713403217A709A529C9413`; I checked
-all 54 manifest file hashes and confirmed all 50 required-file entries are
-present. Desktop OAuth client ID and secret presence are recorded in the
-manifest without exposing their values. These checks establish a buildable
-portable candidate, not full native acceptance.
+close, native clipboard and Credential Manager checks, the full Flutter suite,
+and the deterministic desktop journey. The OAuth enforcement step was skipped
+because preflight succeeded. The downloaded portable ZIP SHA-256 is
+`56301A61E61219C912673267250736920BF79827520319BFA6064FF20837804A`; all 54
+runtime-file hashes match the downloaded package, and the executable SHA-256 is
+`FF49E17772FCB4D6EF74CB53829A1C48D9F92BEB6D447C31B19374C51A868D9B`.
 
-The current CI artifact's desktop-wide light captures cover Library, Setlists,
-Reader and Settings at 1920×1080. A visual review found the library grid
-balanced, the setlist card centered, and the reader column and playback rail
-aligned, with no visible clipping. The exact-package Windows startup capture is
-at 1044×720. These visuals do not prove the full packaged DPI, theme and
-localization matrix.
+The same CI run's unsigned Store MSIX was installed, launched, closed, and
+reopened in hosted Windows runner job
+[39777236298](https://github.com/freevia-org/Singbook/actions/runs/39777236298).
+The test verified the exact package identity and image path, isolated database
+creation and persistence across restart, and graceful close; it also captured
+the native package window. The package SHA-256 is
+`474ED2C686A8A1F1D8633DD56B12AC1F192528631D2EEC7DEB1C51B0EEE0DE89`. This is
+hosted install and lifecycle evidence, not a Store-signed or Store-delivered
+release.
+
+Current CI layout captures include 1920×1080 desktop reader, setlists, settings
+and Ukrainian settings, plus tablet landscape and portrait layouts. A separate
+read-only visual review found no actionable alignment, clipping, or density
+defects: desktop timeline labels are fully visible, setlist and settings content
+is centered consistently, and tablet spacing remains readable. The current
+native MSIX capture is a 1032×728 Songs screen. These captures do not prove the
+complete packaged locale/theme/DPI matrix.
 
 An earlier PR-head CI run, [39668863757](https://github.com/freevia-org/Singbook/actions/runs/39668863757), passed on `673869eb4c3ffebd17deef452af1ee16f7ad00da`. Linux localization verification, analysis and the full Flutter suite passed. Windows OAuth preflight, release packaging, isolated portable startup and graceful close, native clipboard and Credential Manager checks, and the full Flutter suite passed. The OAuth release-enforcement step was skipped because its preflight dependency succeeded. The run preserved `windows-release-bundle` and `windows-validation-evidence`; the bundle artifact digest is `sha256:06ddd57bdb6c3e6a3411c0409581e4041b00f77fd1f7910d390fd86ae1a7809f` (the digest is for the enclosing GitHub artifact, not the portable ZIP inside it). These checks verify that earlier PR head's build and automated behavior, but do not close the native UI acceptance gaps listed below.
 
@@ -276,10 +284,21 @@ English/Ukrainian light/dark library, setlists, reader, editor, home and account
 captures found no actionable alignment or clipping defect. This is source/widget
 evidence, not packaged Windows DPI/font-scaling proof.
 
-Release readiness is still unproven. Remaining packaged-native checks include
-printing to a saved PDF; formatted paste into another application; the packaged
-UI's provider search-to-open workflow; and the complete locale/theme/DPI and
-compact/large-screen matrix. An opt-in public-provider smoke run on 2026-10-22,
+Release readiness is still unproven. Current gate status:
+
+| Gate | Current evidence | Status |
+| --- | --- | --- |
+| Portable package build and automated Windows suite | CI run 39777236285; 54/54 packaged file hashes verified. | Passed |
+| Store package installation and restart | Hosted MSIX smoke run 39777236298; temporary test signing, not Store delivery. | Passed for hosted smoke |
+| Large-screen visual alignment | 1920×1080 CI captures and read-only review; no visible clipping or alignment defects. | Passed for reviewed captures |
+| Packaged locale/theme/DPI and compact/large layout matrix | Current packaged screenshot covers one 1032×728 Songs screen. | Not complete |
+| Print to a saved PDF from the packaged UI | Older Sandbox check opened Print Setup, but did not save a PDF; hosted runner flow not yet exercised. | Not passed |
+| Formatted paste into another application | Clipboard format and plain-text paste are tested; rich paste rendering in a receiving app is unverified. | Not passed |
+| Packaged provider search-to-open workflow | Current-source provider transport smoke ran, but not through packaged UI. | Not complete |
+| OAuth lifecycle on the current package | Prior `0.2.12+26` same-account sync succeeded; current-package refresh, offline recovery, revoked grant and sign-out were not exercised. | Not complete |
+| Distribution | No Windows GitHub Release or Store-delivered package exists. | Not published |
+
+An opt-in public-provider smoke run on 2026-10-22,
 rerun against the current source, used `WindowsHttpClient` directly (the
 `dart run` conditional import otherwise selects a fallback client): Worship
 Commons, Sean McGrath Music, Open Filk
