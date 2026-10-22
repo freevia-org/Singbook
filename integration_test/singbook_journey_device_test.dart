@@ -1272,13 +1272,17 @@ Future<void> _selectDropdown(
 ) async {
   final labelFinder = find.text(label);
   await _scrollIntoView(tester, labelFinder);
-  final fieldColumn = find
-      .ancestor(of: labelFinder, matching: find.byType(Column))
+  // Desktop settings group several compact controls in a shared Column. Scope
+  // the dropdown to its own InputDecorator so another control in the grid
+  // cannot make this finder ambiguous.
+  final decorator = find
+      .ancestor(of: labelFinder, matching: find.byType(InputDecorator))
       .first;
   final dropdown = find.descendant(
-    of: fieldColumn,
+    of: decorator,
     matching: find.byWidgetPredicate((widget) => widget is DropdownButton),
   );
+  expect(dropdown, findsOneWidget, reason: 'Dropdown for "$label".');
   await _ensureBelowPinnedHeader(tester, dropdown);
   await tester.tap(dropdown);
   await tester.pumpAndSettle();
