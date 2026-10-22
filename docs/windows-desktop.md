@@ -126,23 +126,30 @@ because preflight succeeded. The downloaded portable ZIP SHA-256 is
 runtime-file hashes match the downloaded package, and the executable SHA-256 is
 `FF49E17772FCB4D6EF74CB53829A1C48D9F92BEB6D447C31B19374C51A868D9B`.
 
-The same CI run's unsigned Store MSIX was installed, launched, closed, and
-reopened in hosted Windows runner job
-[39777236298](https://github.com/freevia-org/Singbook/actions/runs/39777236298).
-The test verified the exact package identity and image path, isolated database
-creation and persistence across restart, and graceful close; it also captured
-the native package window. The package SHA-256 is
-`474ED2C686A8A1F1D8633DD56B12AC1F192528631D2EEC7DEB1C51B0EEE0DE89`. This is
-hosted install and lifecycle evidence, not a Store-signed or Store-delivered
-release.
+The submitted unsigned Store MSIX was built from Windows release bundle
+artifact `12421818168` in CI run
+[39769176975](https://github.com/freevia-org/Singbook/actions/runs/39769176975),
+at source commit `b54a863c7d8443ada08c64b31840fda88f16e621`. Packaging workflow
+[39771768067](https://github.com/freevia-org/Singbook/actions/runs/39771768067)
+created artifact `12422577924`; its package SHA-256 is
+`474ED2C686A8A1F1D8633DD56B12AC1F192528631D2EEC7DEB1C51B0EEE0DE89`. Hosted
+MSIX smoke run
+[39777236298](https://github.com/freevia-org/Singbook/actions/runs/39777236298)
+installed, launched, closed, and reopened that exact unchanged package. It
+verified package identity and image path, isolated database persistence across
+restart, and graceful close. The package has since been submitted to Microsoft
+Store certification; certification and publication are still pending. The
+submission does not establish full native parity. The source difference from
+`b54a863` to PR #97 head `c933c0a` contains only Store packaging and hosted
+install-test workflow/helper files; the app runtime and UI are unchanged.
 
 Current CI layout captures include 1920×1080 desktop reader, setlists, settings
 and Ukrainian settings, plus tablet landscape and portrait layouts. A separate
 read-only visual review found no actionable alignment, clipping, or density
 defects: desktop timeline labels are fully visible, setlist and settings content
-is centered consistently, and tablet spacing remains readable. The current
-native MSIX capture is a 1032×728 Songs screen. These captures do not prove the
-complete packaged locale/theme/DPI matrix.
+is centered consistently, and tablet spacing remains readable. The native
+startup image for the submitted MSIX is 1040×736 and shows the Songs screen.
+These captures do not prove the complete packaged locale/theme/DPI matrix.
 
 An earlier PR-head CI run, [39668863757](https://github.com/freevia-org/Singbook/actions/runs/39668863757), passed on `673869eb4c3ffebd17deef452af1ee16f7ad00da`. Linux localization verification, analysis and the full Flutter suite passed. Windows OAuth preflight, release packaging, isolated portable startup and graceful close, native clipboard and Credential Manager checks, and the full Flutter suite passed. The OAuth release-enforcement step was skipped because its preflight dependency succeeded. The run preserved `windows-release-bundle` and `windows-validation-evidence`; the bundle artifact digest is `sha256:06ddd57bdb6c3e6a3411c0409581e4041b00f77fd1f7910d390fd86ae1a7809f` (the digest is for the enclosing GitHub artifact, not the portable ZIP inside it). These checks verify that earlier PR head's build and automated behavior, but do not close the native UI acceptance gaps listed below.
 
@@ -284,19 +291,21 @@ English/Ukrainian light/dark library, setlists, reader, editor, home and account
 captures found no actionable alignment or clipping defect. This is source/widget
 evidence, not packaged Windows DPI/font-scaling proof.
 
-Release readiness is still unproven. Current gate status:
+The exact Store candidate is in certification. Full packaged native parity is
+still incomplete; the following broader acceptance items remain follow-up and
+must not be represented as verified:
 
 | Gate | Current evidence | Status |
 | --- | --- | --- |
 | Portable package build and automated Windows suite | CI run 39777236285; 54/54 packaged file hashes verified. | Passed |
-| Store package installation and restart | Hosted MSIX smoke run 39777236298; temporary test signing, not Store delivery. | Passed for hosted smoke |
+| Store package installation and restart | Exact submitted MSIX; hosted smoke run 39777236298. | Passed for hosted smoke |
 | Large-screen visual alignment | 1920×1080 CI captures and read-only review; no visible clipping or alignment defects. | Passed for reviewed captures |
-| Packaged locale/theme/DPI and compact/large layout matrix | Current packaged screenshot covers one 1032×728 Songs screen. | Not complete |
-| Print to a saved PDF from the packaged UI | Older Sandbox check opened Print Setup, but did not save a PDF; hosted runner flow not yet exercised. | Not passed |
-| Formatted paste into another application | Clipboard format and plain-text paste are tested; rich paste rendering in a receiving app is unverified. | Not passed |
-| Packaged provider search-to-open workflow | Current-source provider transport smoke ran, but not through packaged UI. | Not complete |
-| OAuth lifecycle on the current package | Prior `0.2.12+26` same-account sync succeeded; current-package refresh, offline recovery, revoked grant and sign-out were not exercised. | Not complete |
-| Distribution | No Windows GitHub Release or Store-delivered package exists. | Not published |
+| Packaged locale/theme/DPI and compact/large layout matrix | Submitted package screenshot covers one 1040×736 Songs screen. | Follow-up |
+| Print to a saved PDF from the packaged UI | Older Sandbox check opened Print Setup, but did not save a PDF; hosted runner flow not yet exercised. | Follow-up |
+| Formatted paste into another application | Clipboard format and plain-text paste are tested; rich paste rendering in a receiving app is unverified. | Follow-up |
+| Packaged provider search-to-open workflow | Current-source provider transport smoke ran, but not through packaged UI. | Follow-up |
+| OAuth lifecycle on the current package | Prior `0.2.12+26` same-account sync succeeded; current-package refresh, offline recovery, revoked grant and sign-out were not exercised. | Follow-up |
+| Distribution | Submitted to Store certification; automatic publication is pending certification. | In certification |
 
 An opt-in public-provider smoke run on 2026-10-22,
 rerun against the current source, used `WindowsHttpClient` directly (the
