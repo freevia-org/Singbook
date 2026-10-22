@@ -721,7 +721,13 @@ void main() {
       expect(app.recent.single.openCount, 2);
       _expectHomeModeCount('recent', 1);
       await _capture(binding, '21_home_recent_populated');
-      await tester.tap(_homeMode('favorites'));
+      await tester.tap(_homeMode('library'));
+      await tester.pumpAndSettle();
+      final favoritesFilter = find.descendant(
+        of: find.byKey(const ValueKey('favorites-filter-button')),
+        matching: find.byType(IconButton),
+      );
+      await tester.tap(favoritesFilter);
       await tester.pumpAndSettle();
       expect(
         tester
@@ -729,13 +735,22 @@ void main() {
             .state
             .homeListMode
             .name,
-        'favorites',
+        'library',
+      );
+      expect(
+        tester
+            .widget<VerseHomeScreen>(find.byType(VerseHomeScreen))
+            .state
+            .favoritesOnly,
+        isTrue,
       );
       expect(find.text(_title), findsWidgets);
-      _expectHomeModeCount('favorites', 1);
+      _expectHomeModeCount('library', 1);
       // Counted tab labels retain stable mode keys.
-      expect(_homeMode('favorites'), findsOneWidget);
+      expect(_homeMode('library'), findsOneWidget);
       await _capture(binding, '22_home_favorites_populated');
+      await tester.tap(favoritesFilter);
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Setlists'));
       await tester.pumpAndSettle();
       await tester.tap(_iconButtonWithTooltip('New setlist'));
