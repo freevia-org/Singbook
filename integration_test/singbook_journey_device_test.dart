@@ -883,10 +883,7 @@ void main() {
       final regularEntryId = app.setlists.single.entries.last.id;
       final firstRow = find.byKey(ValueKey(overrideEntryId));
       final lastRow = find.byKey(ValueKey(regularEntryId));
-      expect(
-        tester.widget(firstRow),
-        isA<ReorderableDelayedDragStartListener>(),
-      );
+      expect(tester.widget(firstRow), isA<ReorderableDragStartListener>());
       final start = tester.getCenter(firstRow);
       final destination = tester.getCenter(lastRow);
       final gesture = await tester.startGesture(start);
@@ -901,7 +898,7 @@ void main() {
       }
       await tester.pump(const Duration(milliseconds: 150));
       final keyedRowsWhileHeld = find
-          .byType(ReorderableDelayedDragStartListener)
+          .byWidgetPredicate((widget) => widget is ReorderableDragStartListener)
           .evaluate()
           .map((element) => element.widget.key)
           .toList();
