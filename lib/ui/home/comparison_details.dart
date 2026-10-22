@@ -224,27 +224,32 @@ void _showDetails(
     context: context,
     isScrollControlled: true,
     showDragHandle: true,
-    builder: (context) => SafeArea(
-      child: DraggableScrollableSheet(
-        expand: false,
-        initialChildSize: MediaQuery.sizeOf(context).height < 480
-            ? .95
-            : MediaQuery.textScalerOf(context).scale(14) > 20
-            ? .85
-            : .65,
-        minChildSize: .3,
-        maxChildSize: .95,
-        builder: (context, scroll) => AnimatedBuilder(
-          animation: controller,
-          builder: (context, _) => ListView(
-            key: key,
-            controller: scroll,
-            padding: const EdgeInsets.only(bottom: 20),
-            children: content(context),
+    builder: (context) {
+      final size = MediaQuery.sizeOf(context);
+      final desktopLandscape = size.width >= 840 && size.width > size.height;
+      final largeText = MediaQuery.textScalerOf(context).scale(14) > 20;
+      return SafeArea(
+        child: DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: size.height < 480
+              ? .95
+              : desktopLandscape || largeText
+              ? .85
+              : .65,
+          minChildSize: .3,
+          maxChildSize: .95,
+          builder: (context, scroll) => AnimatedBuilder(
+            animation: controller,
+            builder: (context, _) => ListView(
+              key: key,
+              controller: scroll,
+              padding: const EdgeInsets.only(bottom: 20),
+              children: content(context),
+            ),
           ),
         ),
-      ),
-    ),
+      );
+    },
   );
 }
 

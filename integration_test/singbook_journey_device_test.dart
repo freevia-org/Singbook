@@ -9,6 +9,7 @@ import 'package:pdf/pdf.dart';
 import 'package:sqflite/sqflite.dart' show deleteDatabase, getDatabasesPath;
 import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/application/file_actions.dart';
+import 'package:singbook/data/library_database.dart';
 import 'package:singbook/data/library_repository.dart';
 import 'package:singbook/domain/combine.dart';
 import 'package:singbook/domain/source_contributions.dart';
@@ -43,6 +44,10 @@ void main() {
   testWidgets(
     'native Singbook journey captures populated app screens',
     (tester) async {
+      // The production entry point initializes sqflite_common_ffi on Windows.
+      // This journey builds the controller directly, so mirror that startup
+      // before asking sqflite for the isolated test database directory.
+      initializeLibraryDatabase();
       final dbPath = paths.join(
         await getDatabasesPath(),
         'singbook_journey_${DateTime.now().microsecondsSinceEpoch}.db',
@@ -568,7 +573,9 @@ void main() {
       await tester.drag(seekSlider, const Offset(75, 0));
       await tester.pumpAndSettle();
       expect(tester.widget<Slider>(seekSlider).value, greaterThan(0));
-      await tester.tap(_iconButtonWithTooltip('Edit'));
+      await tester.tap(find.byTooltip(l10n.songMenuLabel));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(l10n.actionEdit).last);
       await tester.pumpAndSettle();
       final editorBody = find.byKey(const ValueKey('editor-lyrics-input'));
       await _scrollIntoView(tester, editorBody);
@@ -579,7 +586,7 @@ void main() {
         editorBody,
         '[C]Lanterns light the winding road\n[G]We carry sparks into the dawn\n$_savedLine',
       );
-      await tester.tap(_iconButtonWithTooltip('Save'));
+      await tester.tap(_saveButton(l10n));
       await tester.pumpAndSettle();
       await _waitForSavedReader(tester, app);
       expect(tester.view.viewInsets.bottom, 0);
@@ -601,7 +608,9 @@ void main() {
       await _scrollIntoView(tester, savedReaderLine);
       expect(savedReaderLine, findsOneWidget);
       expect(find.textContaining(_savedLine), findsOneWidget);
-      await tester.tap(_iconButtonWithTooltip('Edit'));
+      await tester.tap(find.byTooltip(l10n.songMenuLabel).last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(l10n.actionEdit).last);
       await tester.pumpAndSettle();
       await tester.enterText(
         find.byKey(const ValueKey('editor-lyrics-input')),
@@ -648,7 +657,7 @@ void main() {
       expect(app.songs, hasLength(1));
       await tester.tap(find.byKey(const ValueKey('header-overflow-menu')));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Type in a new song'));
+      await tester.tap(find.text(l10n.menuTypeNewSong).last);
       await tester.pumpAndSettle();
       expect(find.byType(TextField), findsWidgets);
       await tester.tap(_iconButtonWithTooltip('Back'));
@@ -712,7 +721,13 @@ void main() {
       expect(app.recent.single.openCount, 2);
       _expectHomeModeCount('recent', 1);
       await _capture(binding, '21_home_recent_populated');
-      await tester.tap(_homeMode('favorites'));
+      await tester.tap(_homeMode('library'));
+      await tester.pumpAndSettle();
+      final favoritesFilter = find.descendant(
+        of: find.byKey(const ValueKey('favorites-filter-button')),
+        matching: find.byType(IconButton),
+      );
+      await tester.tap(favoritesFilter);
       await tester.pumpAndSettle();
       expect(
         tester
@@ -720,16 +735,25 @@ void main() {
             .state
             .homeListMode
             .name,
-        'favorites',
+        'library',
+      );
+      expect(
+        tester
+            .widget<VerseHomeScreen>(find.byType(VerseHomeScreen))
+            .state
+            .favoritesOnly,
+        isTrue,
       );
       expect(find.text(_title), findsWidgets);
-      _expectHomeModeCount('favorites', 1);
+      _expectHomeModeCount('library', 1);
       // Counted tab labels retain stable mode keys.
-      expect(_homeMode('favorites'), findsOneWidget);
+      expect(_homeMode('library'), findsOneWidget);
       await _capture(binding, '22_home_favorites_populated');
+      await tester.tap(favoritesFilter);
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Setlists'));
       await tester.pumpAndSettle();
-      await tester.tap(_iconButtonWithTooltip('New setlist'));
+      await tester.tap(find.byKey(const ValueKey('setlists-create-shortcut')));
       await tester.pumpAndSettle();
       await _waitForState(
         tester,
@@ -741,7 +765,7 @@ void main() {
       await tester.tap(_iconButtonWithTooltip('Edit'));
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField).first, 'Dawn Set');
-      await tester.tap(_iconButtonWithTooltip('Save'));
+      await tester.tap(_saveButton(l10n));
       await tester.pumpAndSettle();
       await _waitForState(
         tester,
@@ -859,10 +883,7 @@ void main() {
       final regularEntryId = app.setlists.single.entries.last.id;
       final firstRow = find.byKey(ValueKey(overrideEntryId));
       final lastRow = find.byKey(ValueKey(regularEntryId));
-      expect(
-        tester.widget(firstRow),
-        isA<ReorderableDelayedDragStartListener>(),
-      );
+      expect(tester.widget(firstRow), isA<ReorderableDragStartListener>());
       final start = tester.getCenter(firstRow);
       final destination = tester.getCenter(lastRow);
       final gesture = await tester.startGesture(start);
@@ -877,7 +898,7 @@ void main() {
       }
       await tester.pump(const Duration(milliseconds: 150));
       final keyedRowsWhileHeld = find
-          .byType(ReorderableDelayedDragStartListener)
+          .byWidgetPredicate((widget) => widget is ReorderableDragStartListener)
           .evaluate()
           .map((element) => element.widget.key)
           .toList();
@@ -1155,6 +1176,13 @@ Finder _iconButtonWithTooltip(String tooltip) => find.byWidgetPredicate(
   description: 'IconButton with tooltip "$tooltip"',
 );
 
+Finder _saveButton(AppLocalizations l10n) => find.byWidgetPredicate(
+  (widget) =>
+      widget is IconButton &&
+      widget.tooltip?.startsWith(l10n.actionSave) == true,
+  description: 'Save icon button',
+);
+
 Finder _homeMode(String mode) => find.byKey(ValueKey('home-mode-$mode'));
 
 void _expectHomeModeCount(String mode, int count) {
@@ -1244,17 +1272,30 @@ Future<void> _selectDropdown(
 ) async {
   final labelFinder = find.text(label);
   await _scrollIntoView(tester, labelFinder);
-  final fieldColumn = find
-      .ancestor(of: labelFinder, matching: find.byType(Column))
-      .first;
+  // The label may be a sibling of the dropdown in standard settings rows or
+  // part of a compact InputDecorator on desktop. Both layouts expose the
+  // control's label through Semantics, which keeps this lookup unambiguous.
+  final labeledControl = find.byWidgetPredicate(
+    (widget) => widget is Semantics && widget.properties.label == label,
+    description: 'settings control labeled "$label"',
+  );
   final dropdown = find.descendant(
-    of: fieldColumn,
+    of: labeledControl,
     matching: find.byWidgetPredicate((widget) => widget is DropdownButton),
   );
+  expect(dropdown, findsOneWidget, reason: 'Dropdown for "$label".');
   await _ensureBelowPinnedHeader(tester, dropdown);
   await tester.tap(dropdown);
   await tester.pumpAndSettle();
-  await tester.tap(find.text(value).last);
+  final option = find.text(value);
+  // Long dropdowns such as the language picker lazily build only visible
+  // options. Scroll the popup itself until the requested option is mounted.
+  await tester.scrollUntilVisible(
+    option,
+    240,
+    scrollable: find.byType(Scrollable).last,
+  );
+  await tester.tap(option.last);
   await tester.pumpAndSettle();
 }
 

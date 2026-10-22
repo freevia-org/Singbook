@@ -157,6 +157,12 @@ jobs:
         run: >-
           flutter test --no-pub --concurrency=2 --reporter=expanded
 
+      - name: Run the deterministic Windows desktop journey
+        run: >-
+          flutter test integration_test/singbook_journey_device_test.dart
+          -d windows --dart-define=SINGBOOK_SKIP_SCREENSHOTS=true
+          --reporter=expanded
+
       - name: Preserve Windows validation evidence
         if: always()
         uses: actions/upload-artifact@v4
