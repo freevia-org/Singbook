@@ -657,7 +657,7 @@ void main() {
       expect(app.songs, hasLength(1));
       await tester.tap(find.byKey(const ValueKey('header-overflow-menu')));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Type in a new song'));
+      await tester.tap(find.text(l10n.menuTypeNewSong).last);
       await tester.pumpAndSettle();
       expect(find.byType(TextField), findsWidgets);
       await tester.tap(_iconButtonWithTooltip('Back'));
