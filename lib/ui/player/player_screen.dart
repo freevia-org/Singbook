@@ -770,115 +770,129 @@ class _PlayerScreenState extends State<PlayerScreen>
         ],
       ),
     );
-    Widget controls({required bool compact, double? maxHeight}) =>
-        LayoutBuilder(
-          builder: (context, controlConstraints) {
-            final style = DefaultTextStyle.of(
-              context,
-            ).style.copyWith(fontSize: 20, fontWeight: FontWeight.w600);
-            double labelWidth(String label) {
-              final painter = TextPainter(
-                text: TextSpan(text: label, style: style),
-                textDirection: Directionality.of(context),
-                textScaler: MediaQuery.textScalerOf(context),
-              )..layout();
-              final width = painter.width.ceilToDouble() + 2;
-              painter.dispose();
-              return width;
-            }
+    Widget controls({
+      required bool compact,
+      double? maxHeight,
+    }) => LayoutBuilder(
+      builder: (context, controlConstraints) {
+        final style = DefaultTextStyle.of(
+          context,
+        ).style.copyWith(fontSize: 20, fontWeight: FontWeight.w600);
+        Size labelSize(String label) {
+          final painter = TextPainter(
+            text: TextSpan(text: label, style: style),
+            textDirection: Directionality.of(context),
+            textScaler: MediaQuery.textScalerOf(context),
+            locale: Localizations.localeOf(context),
+          )..layout();
+          final size = Size(
+            painter.width.ceilToDouble() + 2,
+            painter.height.ceilToDouble() + 2,
+          );
+          painter.dispose();
+          return size;
+        }
 
-            final sideWidth = math.max(
-              64.0,
-              math.max(
-                labelWidth(_transposeKey(state) ?? l10n.unknownValue) + 36,
-                labelWidth(_formatPlaybackSpeed(state.playbackSpeed)) + 36,
-              ),
-            );
-            final hasNavigation =
-                state.playerSections.isNotEmpty || state.activeSetlist != null;
-            final playPainter = TextPainter(
-              text: TextSpan(
-                text: state.isPlaying ? l10n.playerPause : l10n.playerPlay,
-                style: Theme.of(context).textTheme.labelLarge,
-              ),
-              textDirection: Directionality.of(context),
-              textScaler: MediaQuery.textScalerOf(context),
-            )..layout();
-            final playWidth = math.max(
-              104.0,
-              playPainter.width.ceilToDouble() + 48,
-            );
-            playPainter.dispose();
-            final minimumWidth =
-                sideWidth * 2 + (hasNavigation ? 80 : 0) + playWidth + 8;
-            final rowWidth = math.max(
-              controlConstraints.maxWidth,
-              minimumWidth,
-            );
-            final transport = SizedBox(
-              width: rowWidth,
-              height: 48,
-              child: _transport(
-                context,
-                l10n,
-                state,
-                inlineChords: song.hasChords,
-                showSpeed: true,
-                stackActions: false,
-                sideSlotWidth: sideWidth,
-                chordSlotWidth: sideWidth,
-              ),
-            );
-            final content = Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ValueListenableBuilder<PlayerPosition>(
-                  valueListenable: _position,
-                  builder: (context, position, _) =>
-                      _seekBar(context, l10n, state, position, duration),
-                ),
-                // Narrow landscape panes and large text retain a single control
-                // row. Horizontal scrolling keeps every control reachable.
-                if (rowWidth > controlConstraints.maxWidth)
-                  SingleChildScrollView(
-                    key: const ValueKey('player-transport-horizontal-scroll'),
-                    scrollDirection: Axis.horizontal,
-                    child: transport,
-                  )
-                else
-                  transport,
-              ],
-            );
-            final canScroll = compact || maxHeight != null;
-            final body = canScroll
-                ? ConstrainedBox(
-                    constraints: maxHeight == null
-                        ? const BoxConstraints()
-                        : BoxConstraints(maxHeight: maxHeight),
-                    child: Scrollbar(
-                      controller: _controlsScroll,
-                      thumbVisibility: true,
-                      child: SingleChildScrollView(
-                        controller: _controlsScroll,
-                        reverse: true,
-                        child: content,
-                      ),
-                    ),
-                  )
-                : content;
-            return playerPanel(
-              SafeArea(
-                top: false,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [if (compact) Flexible(child: body) else body],
-                ),
-              ),
-              header: false,
-              side: compact,
-            );
-          },
+        final keySize = labelSize(_transposeKey(state) ?? l10n.unknownValue);
+        final speedSize = labelSize(_formatPlaybackSpeed(state.playbackSpeed));
+        final sideWidth = math.max(
+          64.0,
+          math.max(keySize.width, speedSize.width) + 36,
         );
+        final hasNavigation =
+            state.playerSections.isNotEmpty || state.activeSetlist != null;
+        final playPainter = TextPainter(
+          text: TextSpan(
+            text: state.isPlaying ? l10n.playerPause : l10n.playerPlay,
+            style: Theme.of(
+              context,
+            ).textTheme.labelLarge?.copyWith(height: kTextHeightNone),
+          ),
+          textDirection: Directionality.of(context),
+          textScaler: MediaQuery.textScalerOf(context),
+          locale: Localizations.localeOf(context),
+        )..layout();
+        final playWidth = math.max(
+          104.0,
+          playPainter.width.ceilToDouble() + 48,
+        );
+        // Keep the compact row at least 48 dp, but let actual font metrics
+        // grow it for large text and fallback scripts instead of clipping.
+        final rowHeight = math.max(
+          48.0,
+          math.max(
+            math.max(keySize.height, speedSize.height),
+            playPainter.height.ceilToDouble() + 8,
+          ),
+        );
+        playPainter.dispose();
+        final minimumWidth =
+            sideWidth * 2 + (hasNavigation ? 80 : 0) + playWidth + 8;
+        final rowWidth = math.max(controlConstraints.maxWidth, minimumWidth);
+        final transport = SizedBox(
+          width: rowWidth,
+          height: rowHeight,
+          child: _transport(
+            context,
+            l10n,
+            state,
+            inlineChords: song.hasChords,
+            showSpeed: true,
+            stackActions: false,
+            sideSlotWidth: sideWidth,
+            chordSlotWidth: sideWidth,
+          ),
+        );
+        final content = Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ValueListenableBuilder<PlayerPosition>(
+              valueListenable: _position,
+              builder: (context, position, _) =>
+                  _seekBar(context, l10n, state, position, duration),
+            ),
+            // Narrow landscape panes and large text retain a single control
+            // row. Horizontal scrolling keeps every control reachable.
+            if (rowWidth > controlConstraints.maxWidth)
+              SingleChildScrollView(
+                key: const ValueKey('player-transport-horizontal-scroll'),
+                scrollDirection: Axis.horizontal,
+                child: transport,
+              )
+            else
+              transport,
+          ],
+        );
+        final canScroll = compact || maxHeight != null;
+        final body = canScroll
+            ? ConstrainedBox(
+                constraints: maxHeight == null
+                    ? const BoxConstraints()
+                    : BoxConstraints(maxHeight: maxHeight),
+                child: Scrollbar(
+                  controller: _controlsScroll,
+                  thumbVisibility: true,
+                  child: SingleChildScrollView(
+                    controller: _controlsScroll,
+                    reverse: true,
+                    child: content,
+                  ),
+                ),
+              )
+            : content;
+        return playerPanel(
+          SafeArea(
+            top: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [if (compact) Flexible(child: body) else body],
+            ),
+          ),
+          header: false,
+          side: compact,
+        );
+      },
+    );
 
     final metadata = [
       if (state.readerKey != null && !state.readerKeyEstimated)
@@ -1584,10 +1598,13 @@ class _PlayerScreenState extends State<PlayerScreen>
         final playLabelPainter = TextPainter(
           text: TextSpan(
             text: playLabel,
-            style: Theme.of(context).textTheme.labelLarge,
+            style: Theme.of(
+              context,
+            ).textTheme.labelLarge?.copyWith(height: kTextHeightNone),
           ),
           textDirection: direction,
           textScaler: MediaQuery.textScalerOf(context),
+          locale: Localizations.localeOf(context),
         )..layout();
         final playWidth = centerWidth - (hasNavigation ? 80 : 0);
         final playHorizontalPadding =
@@ -1610,6 +1627,8 @@ class _PlayerScreenState extends State<PlayerScreen>
           ),
           label: Text(
             playLabel,
+            // Natural metrics preserve tall fallback-script glyphs.
+            style: const TextStyle(height: kTextHeightNone),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,

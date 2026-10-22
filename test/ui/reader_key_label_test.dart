@@ -12,9 +12,10 @@ import 'support/fake_controller.dart';
 
 void main() {
   for (final locale in const [Locale('bg'), Locale('ar')]) {
-    testWidgets(
-      'plain key stays readable with estimated disclosure at 2x: $locale',
-      (tester) async {
+    for (final size in const [Size(360, 800), Size(700, 360)]) {
+      testWidgets('plain key and controls stay readable at 2x: $locale $size', (
+        tester,
+      ) async {
         for (final (family, asset) in [
           ('KeyLabelFixture', 'assets/fonts/NotoSans-Regular.ttf'),
           ('KeyLabelArabic', 'assets/fonts/NotoSansArabic-Regular.ttf'),
@@ -41,7 +42,7 @@ void main() {
         );
         addTearDown(controller.dispose);
         tester.view.devicePixelRatio = 1;
-        tester.view.physicalSize = const Size(360, 800);
+        tester.view.physicalSize = size;
         addTearDown(tester.view.resetDevicePixelRatio);
         addTearDown(tester.view.resetPhysicalSize);
         final theme = verseTheme(
@@ -74,9 +75,7 @@ void main() {
           tester.element(find.byType(PlayerScreen)),
         );
         expect(find.byTooltip('${l10n.playerEstimatedKey}: E'), findsOneWidget);
-        final keyLabel = find.byKey(
-          const ValueKey('pitch-key-dropdown-label'),
-        );
+        final keyLabel = find.byKey(const ValueKey('pitch-key-dropdown-label'));
         final semantics = tester.widget<Semantics>(keyLabel);
         expect(
           semantics.properties.label,
@@ -86,9 +85,7 @@ void main() {
         final keyText = find.descendant(of: keyLabel, matching: find.text('E'));
         expect(keyText, findsOneWidget);
         expect(find.text('≈ E'), findsNothing);
-        final paragraph = tester.renderObject<RenderParagraph>(
-          keyText,
-        );
+        final paragraph = tester.renderObject<RenderParagraph>(keyText);
         final boxes = paragraph.getBoxesForSelection(
           const TextSelection(baseOffset: 0, extentOffset: 1),
         );
@@ -100,8 +97,68 @@ void main() {
         for (final box in boxes) {
           expect(box.bottom, lessThanOrEqualTo(paragraph.size.height));
         }
+        for (final control in [
+          find.byKey(const ValueKey('pitch-key-dropdown')),
+          find.byKey(const ValueKey('scroll-speed-toggle')),
+          find.byKey(const ValueKey('start-lyric-scroll')),
+        ]) {
+          await Scrollable.ensureVisible(
+            tester.element(control),
+            alignment: .5,
+          );
+          await tester.pumpAndSettle();
+          expect(control.hitTestable(), findsOneWidget);
+          expect(tester.getSize(control).height, greaterThanOrEqualTo(48));
+          final paragraphs = find.descendant(
+            of: control,
+            matching: find.byType(Text),
+          );
+          for (final element in paragraphs.evaluate()) {
+            final text = element.renderObject! as RenderParagraph;
+            expect(text.didExceedMaxLines, isFalse);
+            final glyphs = text.getBoxesForSelection(
+              TextSelection(
+                baseOffset: 0,
+                extentOffset: text.text.toPlainText().length,
+              ),
+            );
+            expect(glyphs, isNotEmpty);
+            for (final glyph in glyphs) {
+              // Natural font ascent/descent can extend by a fractional pixel
+              // beyond the rounded paragraph box. The whole glyph must remain
+              // inside the actual button, including any FittedBox transform.
+              final visibleGlyph = Rect.fromPoints(
+                text.localToGlobal(Offset(glyph.left, glyph.top)),
+                text.localToGlobal(Offset(glyph.right, glyph.bottom)),
+              );
+              final bounds = tester.getRect(control);
+              final description =
+                  '${text.text.toPlainText()}: $visibleGlyph in $bounds';
+              expect(
+                visibleGlyph.left,
+                greaterThanOrEqualTo(bounds.left),
+                reason: description,
+              );
+              expect(
+                visibleGlyph.top,
+                greaterThanOrEqualTo(bounds.top),
+                reason: description,
+              );
+              expect(
+                visibleGlyph.right,
+                lessThanOrEqualTo(bounds.right),
+                reason: description,
+              );
+              expect(
+                visibleGlyph.bottom,
+                lessThanOrEqualTo(bounds.bottom),
+                reason: description,
+              );
+            }
+          }
+        }
         expect(tester.takeException(), isNull);
-      },
-    );
+      });
+    }
   }
 }
