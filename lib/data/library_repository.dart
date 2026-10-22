@@ -308,6 +308,46 @@ class LibraryRepository {
     });
   }
 
+  /// Reads all library documents and song content hashes from one SQLite
+  /// snapshot. Hashes stay paired with the exact song payloads returned here,
+  /// including opaque sidecars that require chunked reads.
+  Future<
+    ({
+      List<SongDocument> songs,
+      List<SetlistDocument> setlists,
+      Map<String, String> songHashes,
+    })
+  >
+  librarySnapshot() => database.transaction((txn) async {
+    final songRows = await txn.query(
+      'songs',
+      columns: const [
+        'id',
+        'favorite',
+        'revision',
+        'created_at',
+        'updated_at',
+        'content_hash',
+        'full_document_hash',
+        _boundedDocumentColumn,
+        _boundedFullDocumentColumn,
+      ],
+      orderBy: 'updated_at DESC, id',
+    );
+    final setlistRows = await txn.query(
+      'setlists',
+      orderBy: 'updated_at DESC,id',
+    );
+    return (
+      songs: [for (final row in songRows) await _readSong(txn, row)],
+      setlists: [for (final row in setlistRows) await _setlist(txn, row)],
+      songHashes: {
+        for (final row in songRows)
+          row['id'] as String: row['content_hash'] as String,
+      },
+    );
+  });
+
   /// Reads the complete library and app preferences from one SQLite snapshot.
   Future<
     ({
@@ -1163,16 +1203,19 @@ class LibraryRepository {
 
   /// Atomic compare-and-set counterpart of [saveSetlist]; see
   /// [saveSongIfUnchanged]. [expectedHash] is the hash of the setlist's JSON
-  /// as returned by [getSetlistHash].
+  /// as returned by [getSetlistHash]. [mustExist] refuses to recreate a
+  /// setlist deleted since the expected hash was captured.
   Future<bool> saveSetlistIfUnchanged(
     SetlistDocument setlist,
     String? expectedHash, {
     bool mustNotExist = false,
+    bool mustExist = false,
   }) async =>
       await saveSetlistIfUnchangedWithHash(
         setlist,
         expectedHash,
         mustNotExist: mustNotExist,
+        mustExist: mustExist,
       ) !=
       null;
 
@@ -1183,18 +1226,21 @@ class LibraryRepository {
     SetlistDocument setlist,
     String? expectedHash, {
     bool mustNotExist = false,
+    bool mustExist = false,
   }) => database.transaction((txn) async {
-    if (expectedHash != null || mustNotExist) {
+    if (expectedHash != null || mustNotExist || mustExist) {
       final rows = await txn.query(
         'setlists',
         where: 'id = ?',
         whereArgs: [setlist.id],
         limit: 1,
       );
+      if (mustExist && rows.isEmpty) return null;
       if (rows.isNotEmpty &&
-          (expectedHash == null ||
-              _setlistHashOf(await _setlist(txn, rows.single)) !=
-                  expectedHash)) {
+          (expectedHash == null
+              ? mustNotExist
+              : _setlistHashOf(await _setlist(txn, rows.single)) !=
+                    expectedHash)) {
         return null;
       }
     }

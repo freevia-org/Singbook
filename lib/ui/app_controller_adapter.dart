@@ -103,6 +103,7 @@ class AppControllerAdapter extends VerseUiController {
   bool _editorDirty = false, _loadingMoreRecent = false, _disposed = false;
   bool _conflictFilter = false;
   String? _editorBaseHash;
+  int _editorSessionRevision = 0;
 
   /// Stored hash of the setlist when editing began, so a save after a
   /// background sync changed it becomes a conflict copy, not an overwrite.
@@ -121,6 +122,7 @@ class AppControllerAdapter extends VerseUiController {
   // State cache. [_revision] bumps on every notification; the base state is
   // rebuilt lazily when it is stale.
   int _revision = 0, _builtRevision = -1, _builds = 0;
+  int _navigationIntentRevision = 0;
   VerseUiState? _base, _composed;
   PlayerPosition _composedPosition = PlayerPosition.zero;
   Map<String, int> _opens = const {};
@@ -153,6 +155,11 @@ class AppControllerAdapter extends VerseUiController {
   }
 
   void _onAppChanged() => notifyListeners();
+
+  int _beginNavigationIntent() => ++_navigationIntentRevision;
+
+  bool _isCurrentNavigationIntent(int revision) =>
+      !_disposed && revision == _navigationIntentRevision;
 
   String _keyWithCanonicalRoot(String key) => key.replaceFirstMapped(
     RegExp(r'^(\s*)([a-g])'),
@@ -1383,6 +1390,7 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   void setTab(VerseTab tab) {
+    _beginNavigationIntent();
     // Keep the former Songs route as a Library alias for conflict review and
     // older callers. The visible navigation has one Songs destination.
     _tab = tab == VerseTab.songs ? VerseTab.home : tab;
@@ -1479,6 +1487,7 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   void changeSearchSong() {
+    _beginNavigationIntent();
     _selectedQuery = null;
     _selectedVersionId = null;
     _route = VerseRoute.main;
@@ -1643,10 +1652,12 @@ class AppControllerAdapter extends VerseUiController {
     if (version != null && !app.isSourceReady(version)) {
       final savedSongId = app.savedResultId(source: version);
       if (savedSongId != null) {
-        _setlistId = null;
-        _setlistEntryId = null;
-        _homeMode = HomeListMode.recent;
-        await _openSong(savedSongId);
+        final navigationIntent = _beginNavigationIntent();
+        await _openSong(
+          savedSongId,
+          navigationIntent: navigationIntent,
+          returnToRecent: true,
+        );
         return;
       }
     }
@@ -1663,6 +1674,7 @@ class AppControllerAdapter extends VerseUiController {
       postNotice(UiNotice.songSaveFailed);
       return;
     }
+    final navigationIntent = _beginNavigationIntent();
     final SongDocument song;
     try {
       song = await app.saveResult(
@@ -1673,10 +1685,13 @@ class AppControllerAdapter extends VerseUiController {
       postNotice(UiNotice.songSaveFailed);
       return;
     }
-    _setlistId = null;
-    _setlistEntryId = null;
-    _homeMode = HomeListMode.recent;
-    await _openSong(song.id);
+    if (_isCurrentNavigationIntent(navigationIntent)) {
+      await _openSong(
+        song.id,
+        navigationIntent: navigationIntent,
+        returnToRecent: true,
+      );
+    }
     postNotice(UiNotice.songSaved);
   }
 
@@ -1686,6 +1701,7 @@ class AppControllerAdapter extends VerseUiController {
     if (song == null) return;
     final reference = _comparisonReference(song);
     if (reference == null) return;
+    _beginNavigationIntent();
     final reuseComparison =
         app.selection?.identity == reference.identity &&
         _songMatchesSearchReference(song, reference.identity) &&
@@ -1731,9 +1747,8 @@ class AppControllerAdapter extends VerseUiController {
   @override
   Future<void> openSong(String id) async {
     if (app.findSong(id) == null) return;
-    _setlistId = null;
-    _setlistEntryId = null;
-    await _openSong(id);
+    final navigationIntent = _beginNavigationIntent();
+    await _openSong(id, navigationIntent: navigationIntent);
   }
 
   @override
@@ -1745,14 +1760,31 @@ class AppControllerAdapter extends VerseUiController {
         .where((item) => item.id == entryId)
         .firstOrNull;
     if (entry == null || app.findSong(entry.songId) == null) return;
-    _setlistId = setlistId;
-    _setlistEntryId = entryId;
-    await _openSong(entry.songId);
+    final navigationIntent = _beginNavigationIntent();
+    await _openSong(
+      entry.songId,
+      navigationIntent: navigationIntent,
+      setlistId: setlistId,
+      setlistEntryId: entryId,
+    );
   }
 
-  Future<void> _openSong(String id) async {
+  Future<void> _openSong(
+    String id, {
+    int? navigationIntent,
+    String? setlistId,
+    String? setlistEntryId,
+    bool returnToRecent = false,
+  }) async {
+    final intent = navigationIntent ?? _beginNavigationIntent();
     _playerPreferenceDebounce?.cancel();
     await _savePlayerPreferences();
+    if (!_isCurrentNavigationIntent(intent) || app.findSong(id) == null) {
+      return;
+    }
+    _setlistId = setlistId;
+    _setlistEntryId = setlistEntryId;
+    if (returnToRecent) _homeMode = HomeListMode.recent;
     _songId = id;
     _route = VerseRoute.reader;
     _stopPlayer();
@@ -1766,6 +1798,7 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> openSetlist(String id) async {
+    _beginNavigationIntent();
     _setlistEditSessionRevision++;
     _setlistId = id;
     _setlistEntryId = null;
@@ -1778,8 +1811,10 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> editSong(String id) async {
+    final navigationIntent = _beginNavigationIntent();
     _playerPreferenceDebounce?.cancel();
     await _savePlayerPreferences();
+    if (!_isCurrentNavigationIntent(navigationIntent)) return;
     final song = app.findSong(id);
     if (song == null) return;
     // Editing from the song's own reader keeps its transpose and position;
@@ -1802,6 +1837,7 @@ class AppControllerAdapter extends VerseUiController {
   bool _editorReturnsToReader = true;
 
   void _openEditor(SongDocument song, {required bool isNew}) {
+    _editorSessionRevision++;
     final metadata = song.metadata;
     String text(String key) => metadata[key]?.toString() ?? '';
     _editorBaseHash = isNew ? null : app.songHash(song.id);
@@ -1832,6 +1868,7 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> editSetlist(String id) async {
+    _beginNavigationIntent();
     _setlistEditSessionRevision++;
     _setlistId = id;
     _editingSetlist = true;
@@ -1856,6 +1893,7 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> createSong() {
+    _beginNavigationIntent();
     final song = SongDocument(id: newId(), title: '', artist: '', body: '');
     _stopPlayer();
     _progress = 0;
@@ -1873,6 +1911,7 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> createSetlist({String? name, String? songId}) async {
+    final navigationIntent = songId == null ? _beginNavigationIntent() : null;
     final value = SetlistDocument(
       id: newId(),
       name: name?.trim() ?? '',
@@ -1885,6 +1924,7 @@ class AppControllerAdapter extends VerseUiController {
       // Adding a song to a brand-new setlist keeps the person where they are.
       return;
     }
+    if (!_isCurrentNavigationIntent(navigationIntent!)) return;
     _setlistId = value.id;
     _route = VerseRoute.setlistDetail;
     notifyListeners();
@@ -2097,23 +2137,42 @@ class AppControllerAdapter extends VerseUiController {
   Future<void> previousSong() async => _advance(-1);
   Future<void> _advance(int direction) async {
     final list = currentSetlist;
-    if (list == null || _songId == null) return;
-    var index = list.entries.indexWhere((entry) => entry.id == _setlistEntryId);
-    if (index < 0) {
-      index = list.entries.indexWhere((entry) => entry.songId == _songId);
+    final songId = _songId;
+    if (list == null || songId == null || _route != VerseRoute.reader) return;
+    final listId = list.id;
+    final entryId = _setlistEntryId;
+    var index = list.entries.indexWhere((entry) => entry.id == entryId);
+    if (entryId == null || index < 0) {
+      index = list.entries.indexWhere((entry) => entry.songId == songId);
     }
-    var next = index + direction;
-    // Entries whose song was deleted cannot be opened; step over them.
-    while (next >= 0 &&
-        next < list.entries.length &&
-        app.findSong(list.entries[next].songId) == null) {
-      next += direction;
-    }
-    if (next < 0 || next >= list.entries.length) return;
+    if (index < 0) return;
+    final navigationIntent = _beginNavigationIntent();
     _playerPreferenceDebounce?.cancel();
     await _savePlayerPreferences();
-    _songId = list.entries[next].songId;
-    _setlistEntryId = list.entries[next].id;
+    if (!_isCurrentNavigationIntent(navigationIntent) ||
+        _route != VerseRoute.reader ||
+        _setlistId != listId ||
+        _setlistEntryId != entryId ||
+        _songId != songId) {
+      return;
+    }
+    final currentList = _setlistById(listId);
+    if (currentList == null) return;
+    final currentIndex = entryId == null
+        ? currentList.entries.indexWhere((entry) => entry.songId == songId)
+        : currentList.entries.indexWhere((entry) => entry.id == entryId);
+    if (currentIndex < 0) return;
+    var next = currentIndex + direction;
+    // Entries whose song was deleted cannot be opened; step over them.
+    while (next >= 0 &&
+        next < currentList.entries.length &&
+        app.findSong(currentList.entries[next].songId) == null) {
+      next += direction;
+    }
+    if (next < 0 || next >= currentList.entries.length) return;
+    final target = currentList.entries[next];
+    _songId = target.songId;
+    _setlistEntryId = target.id;
     _progress = 0;
     final song = app.findSong(_songId!);
     _transpose = _storedTranspose(song);
@@ -2236,6 +2295,8 @@ class AppControllerAdapter extends VerseUiController {
   Future<void> saveLyricsEdit(String chordProText) async {
     final old = currentSong;
     if (old == null) return;
+    final editorSessionRevision = _editorSessionRevision;
+    final editorBaseHash = _editorBaseHash;
     final parsed = _codec.decode(chordProText);
     if (old.id == _draftSong?.id &&
         parsed.title.trim().isEmpty &&
@@ -2253,8 +2314,17 @@ class AppControllerAdapter extends VerseUiController {
     );
     var conflicted = false;
     if (!await _guard(() async {
-      conflicted = !await app.saveSong(edited, baseHash: _editorBaseHash);
+      conflicted = !await app.saveSong(edited, baseHash: editorBaseHash);
     }, failure: UiNotice.editorSaveFailed)) {
+      return;
+    }
+    if (_disposed ||
+        _editorSessionRevision != editorSessionRevision ||
+        _route != VerseRoute.editor ||
+        _songId != old.id) {
+      postNotice(
+        conflicted ? UiNotice.editorSaveConflict : UiNotice.editorSaved,
+      );
       return;
     }
     final wasDraft = old.id == _draftSong?.id;
@@ -2297,7 +2367,9 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> deleteSong(String id) async {
+    _beginNavigationIntent();
     if (_draftSong?.id == id) {
+      _editorSessionRevision++;
       _draftSong = null;
       _songId = null;
       _editorData = null;
@@ -2310,6 +2382,7 @@ class AppControllerAdapter extends VerseUiController {
     if (!await _guard(() => app.deleteSong(id))) return;
     _pendingPlayerPreferences.remove(id);
     if (_songId == id) {
+      _editorSessionRevision++;
       _stopPlayer();
       _progress = 0;
       _songId = null;
@@ -2327,6 +2400,7 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> deleteSetlist(String id) async {
+    _beginNavigationIntent();
     if (!await _guard(() => app.deleteSetlist(id))) return;
     if (_setlistId == id) {
       _setlistEditSessionRevision++;
@@ -2483,8 +2557,8 @@ class AppControllerAdapter extends VerseUiController {
   );
 
   /// Saves [setlist]; while it is being edited the save is checked against the
-  /// hash captured when editing began. Returns whether the write succeeded (a
-  /// stale save is kept as a conflict copy and announced).
+  /// hash captured when editing began. A stale save is kept as a conflict copy
+  /// and announced, but is not reported as an in-place change to its caller.
   Future<bool> _saveSetlistDocument(SetlistDocument setlist) async {
     final editing = _editingSetlist && _setlistId == setlist.id;
     final editSessionRevision = _setlistEditSessionRevision;
@@ -2511,7 +2585,7 @@ class AppControllerAdapter extends VerseUiController {
       _setlistBaseHash = writeHashes!.persistedHash;
     }
     if (ok && !inPlace) postNotice(UiNotice.setlistSaveConflict);
-    return ok;
+    return ok && inPlace;
   }
 
   @override
@@ -2820,8 +2894,10 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> back() async {
+    _beginNavigationIntent();
     _stopPlayer();
     if (_route == VerseRoute.editor) {
+      _editorSessionRevision++;
       _editing = false;
       _editorData = null;
       _editorDirty = false;
@@ -2858,6 +2934,7 @@ class AppControllerAdapter extends VerseUiController {
   @override
   void dispose() {
     _disposed = true;
+    _beginNavigationIntent();
     _searchDebounce?.cancel();
     _playerTimer?.cancel();
     _playerPreferenceDebounce?.cancel();

@@ -1,12 +1,19 @@
 # TestFlight submission details
 
-Draft metadata for the first external TestFlight beta. Confirm every owner field
-and re-check feature availability against the exact signed build before entry.
-The current repository version is `0.2.9+23`, matching the integrated Android
-release. Historical `0.2.6+20` archive evidence below predates the parity update.
-The preceding full iPhone/iPad suites and native import/backup workflows passed;
+Historical offline draft for the first external TestFlight beta, prepared for
+iOS `0.2.9 (23)` on 2026-10-20. It is not current release metadata: as of
+2026-10-23, the latest shared repository release is `0.2.14+28` for Android
+and Windows. Keep this
+packet and its screenshots labeled with their original `0.2.9 (23)` provenance;
+do not reuse them for a later iOS release. The strict App Store package checker
+compares this packet with the current repository version and is expected to fail
+until a new, verified iOS packet is prepared. Confirm every owner field and
+re-check feature availability against the exact signed build before entry.
+Historical `0.2.6+20` archive evidence below predates the parity update. The
+preceding full iPhone/iPad suites and native import/backup workflows passed;
 configured Genius live tests subsequently passed on both simulators. Focused
-release-23 checks and refreshed native screenshots cover the latest shared UI. See [E2E evidence](ios-e2e.md). Physical hardware is
+release-23 checks and refreshed native screenshots cover the shared UI as it
+stood on 2026-10-20. See [E2E evidence](ios-e2e.md). Physical hardware is
 unavailable and remains an explicitly unperformed check, not a prerequisite
 for preparing these materials. No signed IPA has been verified. Public policy
 corrections were published on 2026-10-19. All sources are retained by owner
@@ -30,8 +37,8 @@ Production App Store metadata and screenshot inventory are in
 | Privacy Policy URL | `https://freevia.org/singbook/privacy/` |
 | Beta marketing URL (optional) | `https://freevia.org/singbook/` |
 
-The app name, bundle ID, current version and links are traced to `README.md`,
-`pubspec.yaml`, and `docs/ios-testflight.md`. The Play listing identifies the
+The app name, bundle ID, historical iOS version and links are traced to the
+source records cited below. The Play listing identifies the
 category as Music & Audio; choose Apple's closest available category when the
 owner creates the record. The proposed SKU has not been registered; its uniqueness and the
 account-owned contact details require the owner’s account.
@@ -129,9 +136,10 @@ and [export compliance overview](https://developer.apple.com/help/app-store-conn
 - Create/confirm the paid Apple Developer team, explicit App ID, App Store
   Connect record and permanent SKU; configure signing. The local review on
   2026-10-18 found no signing identity, and no signed IPA exists.
-- Confirm App Store Connect has no conflicting prior version/build and upload
-  the archive matching `0.2.9 (23)`; increment versions in all repository
-  locations for a genuinely new release, not a rebuild.
+- Prepare a new iOS packet and archive for the intended release. Confirm App
+  Store Connect has no conflicting prior version/build; do not upload this
+  historical packet or its `0.2.9 (23)` archive evidence as current. Increment
+  versions in all repository locations for a genuinely new release, not a rebuild.
 - Supply the remaining App Review name and phone; confirm who
   will monitor them.
 - Decide whether OAuth is configured in the submitted build. If enabled,

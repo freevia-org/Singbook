@@ -25,9 +25,13 @@ review; a signed export remains blocked until the owner configures the account.
 `ios/ExportOptions.plist` uses automatic signing and `app-store-connect`, with
 `destination=export`. It creates a local IPA; it does not upload it. Automatic
 build-number management is disabled so Xcode preserves the repository version.
-The current version is `0.2.9+23`; check App Store Connect for previously used
-build numbers before uploading. For a new release, follow AGENTS.md and update
-all four version locations together. Rebuilding the same release keeps its number.
+This historical iOS preparation packet targeted `0.2.9+23`; it does not describe
+the current repository release. As of 2026-10-23, the latest shared repository
+release is `0.2.14+28` for Android and Windows, and no current iOS native or signed
+qualification is recorded here. Check App Store Connect for previously used
+build numbers before preparing an iOS upload. For a new release, follow
+AGENTS.md and update all four version locations together. Rebuilding the same
+release keeps its number.
 
 ```sh
 export PATH="/Users/tony/development/flutter/bin:$PATH"
@@ -300,11 +304,11 @@ goldens, with no golden-update flag. Log:
 store package validation and whitespace checks also passed. These checks do
 not add new physical-device or signed-build testing claims.
 
-### Android/iOS parity candidate — 2026-10-19
+### Historical Android/iOS parity candidate — 2026-10-19
 
-The previous candidate was `0.2.8+22`, integrated from upstream `dbb3ff5`; earlier
-archive and screenshot records above refer to their historical source versions.
-The latest shared UI, timing, setlist and source-metadata changes run on iOS.
+The `0.2.8+22` snapshot integrated upstream `dbb3ff5`; earlier archive and
+screenshot records above refer to their historical source versions. At that
+snapshot, the shared UI, timing, setlist and source-metadata changes ran on iOS.
 The Android-only Drive Picker gap has an iOS system-browser/Keychain adapter;
 its account/scope/PKCE/state checks reuse the tested grant implementation.
 Live Google consent and token refresh still require configured iOS OAuth and
@@ -325,16 +329,21 @@ both native parity runs passed six tests. No signed IPA, physical-device test
 or live Google OAuth validation is claimed. All temporary reservations are released.
 
 
-### Current iOS candidate — 2026-10-20
+### Historical iOS candidate — 2026-10-20 (0.2.9+23)
 
-The iOS candidate now follows Android `0.2.9+23`, source `af67a69` (including
-Android release commit `3702ae3`). The upstream changes are shared Flutter
+This section records the iOS snapshot prepared on 2026-10-20; it is not the
+current iOS candidate or current repository version. It followed Android
+`0.2.9+23`, source `af67a69` (including Android release commit `3702ae3`).
+The upstream changes were shared Flutter
 code: inline song-tab counts, horizontal setlist swipes including entry-specific
 key overrides, boundary transport behavior, and timeline label font/locale
 measurement. No additional platform-specific implementation was required.
 
-The App Store submission version/build and review notes are aligned with this
-candidate. Eight native store captures were refreshed and visually reviewed;
+The historical App Store packet and review notes were aligned with this
+snapshot. The strict `scripts/check-app-store.py` current-version comparison is
+intentionally expected to reject this stale packet until a new, verified iOS
+packet is prepared; do not change the historical version fields or screenshot
+provenance to make that check pass. Eight native store captures were refreshed and visually reviewed;
 source-image and RGB-image hashes are recorded in `submission.json`. Two setlist
 images remain byte-identical because their rendered UI did not change. No
 screenshot was resized or cropped. The package validator passed.
