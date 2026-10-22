@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/l10n/generated/app_localizations.dart';
@@ -173,12 +174,31 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('source-checks-button')));
       await _step(tester);
       if (configuration.$1 == 'desktop-landscape') {
+        final checksSheet = find.byKey(const ValueKey('source-checks-sheet'));
+        final draggableSheet = find
+            .ancestor(
+              of: checksSheet,
+              matching: find.byType(DraggableScrollableSheet),
+            )
+            .first;
         expect(
           tester
-              .getSize(find.byKey(const ValueKey('source-checks-sheet')))
-              .height,
-          closeTo(configuration.$2.height * .85, 1),
-          reason: 'Desktop landscape details should open at 85% height.',
+              .widget<DraggableScrollableSheet>(draggableSheet)
+              .initialChildSize,
+          .85,
+        );
+        final constraintsBuilder = find
+            .ancestor(of: checksSheet, matching: find.byType(LayoutBuilder))
+            .first;
+        final availableHeight = tester
+            .renderObject<RenderBox>(constraintsBuilder)
+            .constraints
+            .maxHeight;
+        expect(
+          tester.getSize(checksSheet).height,
+          closeTo(availableHeight * .85, 1),
+          reason:
+              'Desktop landscape details should use 85% of available height.',
         );
       }
       await _image(tester, '${configuration.$1}-checks');
