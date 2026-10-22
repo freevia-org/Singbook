@@ -1214,7 +1214,10 @@ void main() {
           widget.value == 'timed-lyrics',
     );
     expect(timedLyrics, findsOneWidget);
-    expect(tester.widget<CheckedPopupMenuItem<String>>(timedLyrics).checked, isFalse);
+    expect(
+      tester.widget<CheckedPopupMenuItem<String>>(timedLyrics).checked,
+      isFalse,
+    );
     await tester.tap(find.text(l10n.playerTimedLyrics));
     await tester.pumpAndSettle();
     expect(controller.selectedTimingMode, 'timed');
@@ -1257,6 +1260,9 @@ void main() {
       final text = tester.widget<Text>(value);
       expect(text.maxLines, 1);
       expect(text.softWrap, false);
+      await tester.ensureVisible(value);
+      await tester.pumpAndSettle();
+      expect(value.hitTestable(), findsOneWidget);
       final rect = tester.getRect(value);
       expect(rect.left, greaterThanOrEqualTo(0));
       expect(rect.right, lessThanOrEqualTo(size.width));
@@ -1309,6 +1315,9 @@ void main() {
     expect(speed, findsOneWidget);
     expect(start, findsOneWidget);
     for (final control in [previous, start, speed, next]) {
+      await tester.ensureVisible(control);
+      await tester.pumpAndSettle();
+      expect(control.hitTestable(), findsOneWidget);
       final rect = tester.getRect(control);
       expect(rect.left, greaterThanOrEqualTo(0));
       expect(rect.right, lessThanOrEqualTo(520));
@@ -1370,8 +1379,7 @@ void main() {
 
     await _pumpPlayer(tester, controller);
     final l10n = AppLocalizations.of(tester.element(find.byType(PlayerScreen)));
-    expect(find.text('Artist Name · Album Name'), findsOneWidget);
-    expect(find.textContaining('LRCLIB'), findsOneWidget);
+    expect(find.text('Artist Name'), findsOneWidget);
     expect(find.text(l10n.searchCompare), findsNothing);
     expect(find.text(l10n.playerLyricsOnly), findsNothing);
     final start = find.byKey(const ValueKey('start-lyric-scroll'));
@@ -1379,12 +1387,16 @@ void main() {
     expect(start, findsOneWidget);
     expect(speed, findsOneWidget);
     for (final control in [start, speed]) {
+      await tester.ensureVisible(control);
+      await tester.pumpAndSettle();
+      expect(control.hitTestable(), findsOneWidget);
       final rect = tester.getRect(control);
       expect(rect.left, greaterThanOrEqualTo(0));
       expect(rect.right, lessThanOrEqualTo(872));
       expect(rect.top, greaterThanOrEqualTo(0));
       expect(rect.bottom, lessThanOrEqualTo(393));
     }
+    await _expectLandscapeSongInfo(tester, l10n);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
   });
@@ -1444,12 +1456,15 @@ void main() {
     final speed = find.byKey(const ValueKey('scroll-speed-toggle'));
     final nextSection = find.byTooltip(l10n.playerNextSection);
     final chords = find.byKey(const ValueKey('pitch-key-dropdown'));
-    expect(find.text('Artist Name · Album Name'), findsOneWidget);
+    expect(find.text('Artist Name'), findsOneWidget);
     expect(find.text(l10n.searchCompare), findsNothing);
     expect(start, findsOneWidget);
     expect(speed, findsOneWidget);
     expect(nextSection, findsOneWidget);
     expect(chords, findsOneWidget);
+    await tester.ensureVisible(start);
+    await tester.pumpAndSettle();
+    expect(start.hitTestable(), findsOneWidget);
     final startRect = tester.getRect(start);
     expect(startRect.top, greaterThanOrEqualTo(0));
     expect(startRect.bottom, lessThanOrEqualTo(393));
@@ -1460,6 +1475,8 @@ void main() {
     final chordsRect = tester.getRect(chords);
     expect(chordsRect.top, greaterThanOrEqualTo(0));
     expect(chordsRect.bottom, lessThanOrEqualTo(393));
+    expect(chords.hitTestable(), findsOneWidget);
+    await _expectLandscapeSongInfo(tester, l10n);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
   });
@@ -1783,6 +1800,25 @@ Future<void> _pumpPlayer(
   await tester.pumpAndSettle();
 }
 
+Future<void> _expectLandscapeSongInfo(
+  WidgetTester tester,
+  AppLocalizations l10n,
+) async {
+  await tester.tap(find.byTooltip(l10n.songMenuLabel));
+  await tester.pumpAndSettle();
+  await tester.tap(find.text(l10n.songInfo));
+  await tester.pumpAndSettle();
+  for (final detail in ['Album Name', 'LRCLIB']) {
+    final value = find.text(detail);
+    await tester.ensureVisible(value);
+    await tester.pumpAndSettle();
+    expect(value.hitTestable(), findsOneWidget);
+  }
+  await tester.binding.handlePopRoute();
+  await tester.pumpAndSettle();
+  expect(find.byType(PlayerScreen), findsOneWidget);
+}
+
 class _LiveFlowController extends VerseUiController {
   _LiveFlowController(this._state)
     : _position = ValueNotifier(PlayerPosition.zero);
@@ -1808,6 +1844,21 @@ class _LiveFlowController extends VerseUiController {
 
   @override
   VerseUiState get state => _state;
+
+  @override
+  SongInfoData? songInfo(String id) {
+    final song = _state.song;
+    if (song == null || song.id != id) return null;
+    return SongInfoData(
+      title: song.title,
+      artist: song.artist,
+      fields: {if (song.album != null) 'album': song.album},
+      sources: [
+        if (_state.readerSource != null)
+          SongInfoSourceData(providerName: _state.readerSource!),
+      ],
+    );
+  }
 
   @override
   void selectVersion(String versionId) {
