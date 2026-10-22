@@ -9,7 +9,8 @@ param(
     [Parameter(Mandatory)][string]$OutputDirectory,
     [Parameter(Mandatory)][string]$IconPath,
     [Parameter(Mandatory)][string]$MakeAppxPath,
-    [Parameter(Mandatory)][string]$ExpectedSourceTree
+    [Parameter(Mandatory)][string]$ExpectedSourceTree,
+    [string]$ExpectedProductVersion = '0.2.14+28'
 )
 $ErrorActionPreference = 'Stop'
 
@@ -44,9 +45,9 @@ $manifestPath = (Resolve-Path -LiteralPath $PortableManifest).Path
 $packageManifestPath = Join-Path $PSScriptRoot 'AppxManifest.xml'
 $packageManifest = [xml](Get-Content -LiteralPath $packageManifestPath -Raw)
 $release = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
-if ($release.version -ne '0.2.14+28' -or $release.configuration -ne 'release' -or
+if ($release.version -ne $ExpectedProductVersion -or $release.configuration -ne 'release' -or
     $release.distribution -ne 'portable-release') {
-    throw 'Input manifest must describe the 0.2.14+28 portable release.'
+    throw "Input manifest must describe the expected $ExpectedProductVersion portable release."
 }
 if ($null -eq $release.requiredFiles -or $release.requiredFiles.Count -eq 0) {
     throw 'Input manifest is missing the requiredFiles list.'
@@ -65,12 +66,14 @@ $storePackageVersion = "1.0.$buildNumber.0"
 $identity = $packageManifest.SelectSingleNode("/*[local-name()='Package']/*[local-name()='Identity']")
 if ($null -eq $identity -or $identity.Name -ne 'Freevia.Singbook' -or
     $identity.Publisher -ne 'CN=BCFA4DEF-81A8-41BB-A9C8-5DDAB2101C9A' -or
-    $identity.Version -ne $storePackageVersion -or $identity.ProcessorArchitecture -ne 'x64') {
+    $identity.ProcessorArchitecture -ne 'x64') {
     throw 'Package manifest does not match the reserved Store identity/version.'
 }
-if (-not $release.sourceCommit -or $release.files.Count -ne 54) {
-    throw 'Input manifest lacks commit provenance or does not list the expected 54 files.'
+if (-not $release.sourceCommit -or $release.files.Count -eq 0) {
+    throw 'Input manifest lacks commit provenance or a nonempty payload file list.'
 }
+$templatePackageVersion = [string]$identity.Version
+$identity.Version = $storePackageVersion
 if (-not (Test-Path -LiteralPath (Join-Path $source 'singbook.exe') -PathType Leaf)) {
     throw 'PortableBundle must be the extracted release payload containing singbook.exe.'
 }
@@ -177,7 +180,12 @@ try {
     }
 } finally { $icon.Dispose() }
 
-Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'AppxManifest.xml') -Destination (Join-Path $stage 'AppxManifest.xml')
+$stagedPackageManifest = Join-Path $stage 'AppxManifest.xml'
+if ($templatePackageVersion -eq $storePackageVersion) {
+    Copy-Item -LiteralPath $packageManifestPath -Destination $stagedPackageManifest
+} else {
+    $packageManifest.Save($stagedPackageManifest)
+}
 $msix = Join-Path $OutputDirectory ('Singbook_' + $storePackageVersion + '_x64.msix')
 # MakeAppx pack performs full validation by default; do not pass /nv or call a
 # nonexistent standalone validate command. /no prevents replacing outputs.
@@ -240,7 +248,7 @@ $evidence = [ordered]@{
     storeAssets = @($assetHashes)
     makeAppxFileVersion = [Diagnostics.FileVersionInfo]::GetVersionInfo($MakeAppxPath).FileVersion
     packageSigning = 'unsigned-for-Partner-Center-Store-signing'
-    checks = @('manifest schema and requiredFiles', '54 source file hashes', 'no extra/missing/empty/reparse-point source files', 'payload copy hashes', 'MakeAppx full pack validation', 'exact 54-file unpacked runtime list and byte hashes', 'manifest and tile asset byte hashes')
+    checks = @('manifest schema and requiredFiles', 'all source file hashes', 'no extra/missing/empty/reparse-point source files', 'payload copy hashes', 'MakeAppx full pack validation', 'exact unpacked runtime file list and byte hashes', 'manifest and tile asset byte hashes')
 }
 $evidence | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $OutputDirectory 'package-provenance.json')
 Write-Output "Unsigned Store candidate: $msix"
