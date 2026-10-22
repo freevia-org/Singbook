@@ -74,6 +74,9 @@ void main() {
       await pumpShell(tester, controller, size: scenario.$2);
       final lyrics = find.byKey(const ValueKey('tablet-reader-content'));
       expect(lyrics, findsOneWidget);
+      if (scenario.$1 == 'landscape') {
+        _expectLandscapeHeaderAndLyrics(tester, scenario.$2, lyrics);
+      }
       if (capture) {
         await expectLater(
           find.byType(Scaffold).first,
@@ -88,14 +91,14 @@ void main() {
         find.byKey(const ValueKey('player-exit-fullscreen')),
         findsOneWidget,
       );
-      expect(
-        tester.getRect(lyrics).height,
-        greaterThan(
-          scenario.$2.width > scenario.$2.height
-              ? scenario.$2.height - 24
-              : scenario.$2.height - 60,
-        ),
-      );
+      if (scenario.$1 == 'landscape') {
+        _expectLandscapeHeaderAndLyrics(tester, scenario.$2, lyrics);
+      } else {
+        expect(
+          tester.getRect(lyrics).height,
+          greaterThan(scenario.$2.height - 60),
+        );
+      }
       if (capture) {
         await expectLater(
           find.byType(Scaffold).first,
@@ -136,14 +139,20 @@ void main() {
       );
       addTearDown(controller.dispose);
       await pumpShell(tester, controller, size: const Size(700, 360));
-      final lyrics = tester.getRect(
+      final lyrics = _expectLandscapeHeaderAndLyrics(
+        tester,
+        const Size(700, 360),
         find.byKey(const ValueKey('tablet-reader-content')),
+      );
+      final header = tester.getRect(
+        find.byKey(const ValueKey('player-landscape-header')),
       );
       final controls = tester.getRect(
         find.byKey(const ValueKey('player-controls-panel')),
       );
       expect(lyrics.width, greaterThanOrEqualTo(350));
-      expect(lyrics.height, greaterThan(336));
+      expect(controls.top, closeTo(header.bottom, 1));
+      expect(controls.bottom, closeTo(360, 1));
       expect(controls.left, greaterThanOrEqualTo(lyrics.right));
       expect(find.byKey(const ValueKey('start-lyric-scroll')), findsOneWidget);
       expect(find.byKey(const ValueKey('scroll-speed-toggle')), findsOneWidget);
@@ -451,4 +460,22 @@ void main() {
       expect(labels.keys, containsAll(['copy', 'print', 'share']));
     });
   }
+}
+
+Rect _expectLandscapeHeaderAndLyrics(
+  WidgetTester tester,
+  Size viewport,
+  Finder lyricsFinder,
+) {
+  final headerFinder = find.byKey(const ValueKey('player-landscape-header'));
+  expect(headerFinder, findsOneWidget);
+  final header = tester.getRect(headerFinder);
+  final lyrics = tester.getRect(lyricsFinder);
+  expect(header.top, closeTo(0, 1));
+  expect(header.height, greaterThanOrEqualTo(48));
+  expect(header.bottom, lessThan(viewport.height));
+  expect(lyrics.top, closeTo(header.bottom, 1));
+  expect(lyrics.bottom, closeTo(viewport.height, 1));
+  expect(lyrics.height, closeTo(viewport.height - header.bottom, 1));
+  return lyrics;
 }
