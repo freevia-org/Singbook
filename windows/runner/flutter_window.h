@@ -10,6 +10,7 @@
 
 #include "win32_window.h"
 #include "window_close_guard.h"
+#include "window_fullscreen.h"
 
 // A window that does nothing but host a Flutter view.
 class FlutterWindow : public Win32Window {
@@ -39,6 +40,9 @@ class FlutterWindow : public Win32Window {
   std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>>
       window_close_channel_;
   std::unique_ptr<singbook::WindowCloseGuard> window_close_guard_;
+  std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>>
+      fullscreen_channel_;
+  std::unique_ptr<singbook::WindowFullscreen> fullscreen_;
 };
 
 #endif  // RUNNER_FLUTTER_WINDOW_H_

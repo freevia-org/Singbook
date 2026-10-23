@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -49,6 +50,43 @@ class _DetailsController extends FakeUiController {
 }
 
 void main() {
+  testWidgets(
+    'native desktop width and all-platform reader width remain combined',
+    (tester) async {
+      const size = Size(1600, 900);
+      var route = VerseRoute.main;
+      final controller = FakeUiController((_) => _reader(route: route));
+      addTearDown(controller.dispose);
+      await pumpShell(tester, controller, size: size);
+      final frame = find.byKey(const ValueKey('tablet-content-frame'));
+      final rail = find.byType(NavigationRail);
+      final availableWidth = size.width - tester.getSize(rail).width;
+      final desktop =
+          !kIsWeb &&
+          {
+            TargetPlatform.windows,
+            TargetPlatform.macOS,
+            TargetPlatform.linux,
+          }.contains(defaultTargetPlatform);
+      expect(
+        tester.getSize(frame).width,
+        closeTo(desktop ? availableWidth : 1200, 1),
+      );
+      route = VerseRoute.reader;
+      controller.refresh();
+      await tester.pumpAndSettle();
+      expect(rail, findsNothing);
+      expect(tester.getSize(frame).width, closeTo(size.width, 1));
+      expect(tester.takeException(), isNull);
+    },
+    variant: TargetPlatformVariant({
+      TargetPlatform.android,
+      TargetPlatform.windows,
+      TargetPlatform.macOS,
+      TargetPlatform.linux,
+    }),
+  );
+
   testWidgets('shell reader preserves full-height landscape lyrics', (
     tester,
   ) async {
@@ -70,10 +108,13 @@ void main() {
     for (final scenario in [
       ('portrait', const Size(360, 780)),
       ('landscape', const Size(700, 360)),
+      ('wide_desktop', const Size(1600, 900)),
     ]) {
       await pumpShell(tester, controller, size: scenario.$2);
       final lyrics = find.byKey(const ValueKey('tablet-reader-content'));
+      final frame = find.byKey(const ValueKey('tablet-content-frame'));
       expect(lyrics, findsOneWidget);
+      expect(tester.getRect(frame).width, closeTo(scenario.$2.width, 1));
       if (scenario.$1 == 'landscape') {
         _expectLandscapeHeaderAndLyrics(tester, scenario.$2, lyrics);
       }
@@ -91,6 +132,7 @@ void main() {
         find.byKey(const ValueKey('player-exit-fullscreen')),
         findsOneWidget,
       );
+      expect(tester.getRect(frame).width, closeTo(scenario.$2.width, 1));
       if (scenario.$1 == 'landscape') {
         _expectLandscapeHeaderAndLyrics(tester, scenario.$2, lyrics);
       } else {

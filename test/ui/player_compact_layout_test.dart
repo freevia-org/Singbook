@@ -241,7 +241,7 @@ void main() {
     }
   }
 
-  testWidgets('compact sidebar keeps key play and speed on one ordered row', (
+  testWidgets('compact sidebar adapts between fitted and stacked controls', (
     tester,
   ) async {
     // Match native font metrics used by the player's measured fit guards.
@@ -254,7 +254,7 @@ void main() {
     });
     final controller = _Controller()
       ..songKey = 'D#'
-      ..speed = 1.25;
+      ..speed = 1;
     addTearDown(controller.dispose);
     await _pump(tester, controller, size: const Size(900, 400));
     final key = tester.getRect(
@@ -270,6 +270,50 @@ void main() {
     expect(play.right, lessThanOrEqualTo(speed.left));
     expect(key.center.dy, closeTo(play.center.dy, 1));
     expect(speed.center.dy, closeTo(play.center.dy, 1));
+    expect(
+      find.byKey(const ValueKey('player-transport-horizontal-scroll')),
+      findsNothing,
+    );
+
+    // Preserve the original longer 1.25× ratio at the same 900×400 size.
+    // Its measured minimum exceeds the pane, so every control must stack and
+    // fit initially without requiring a horizontal reveal gesture.
+    controller.speed = 1.25;
+    controller.refresh();
+    await tester.pumpAndSettle();
+    final stackedKey = tester.getRect(
+      find.byKey(const ValueKey('pitch-key-dropdown')),
+    );
+    final stackedPlay = tester.getRect(
+      find.byKey(const ValueKey('start-lyric-scroll')),
+    );
+    final stackedSpeed = tester.getRect(
+      find.byKey(const ValueKey('scroll-speed-toggle')),
+    );
+    final panelRect = tester.getRect(
+      find.byKey(const ValueKey('player-controls-panel')),
+    );
+    expect(stackedKey.right, lessThanOrEqualTo(stackedSpeed.left));
+    expect(stackedKey.center.dy, closeTo(stackedSpeed.center.dy, 1));
+    expect(stackedPlay.top, greaterThanOrEqualTo(stackedKey.bottom - 1));
+    expect(stackedPlay.top, greaterThanOrEqualTo(stackedSpeed.bottom - 1));
+    for (final (name, rect) in [
+      ('key', stackedKey), ('play', stackedPlay), ('speed', stackedSpeed),
+    ]) {
+      final diagnostic = '1.25× $name: control=$rect; panel=$panelRect';
+      expect(rect.left, greaterThanOrEqualTo(panelRect.left - 1), reason: diagnostic);
+      expect(rect.right, lessThanOrEqualTo(panelRect.right + 1), reason: diagnostic);
+      expect(rect.top, greaterThanOrEqualTo(panelRect.top - 1), reason: diagnostic);
+      expect(rect.bottom, lessThanOrEqualTo(panelRect.bottom + 1), reason: diagnostic);
+    }
+    expect(
+      find.byKey(const ValueKey('player-transport-horizontal-scroll')),
+      findsNothing,
+    );
+    expect(
+      tester.widget<Text>(find.byKey(const ValueKey('scroll-speed-value'))).data,
+      '1.25×',
+    );
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('pitch-key-dropdown')),
@@ -403,6 +447,100 @@ void main() {
   }
 
   testWidgets(
+    'landscape controls start fully visible and popup ratio stays readable while held',
+    (tester) async {
+      await tester.runAsync(() async {
+        for (final family in ['Roboto', 'sans-serif']) {
+          await (FontLoader(family)
+            ..addFont(rootBundle.load('assets/fonts/NotoSans-Regular.ttf'))).load();
+        }
+        await (FontLoader('MaterialIcons')
+          ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
+      });
+      final controller = _Controller();
+      addTearDown(controller.dispose);
+      await _pump(
+        tester,
+        controller,
+        size: const Size(700, 360),
+        locale: const Locale('bg'),
+        scale: 1.5,
+        onFullScreenChanged: (_) {},
+      );
+      final panelRect = tester.getRect(
+        find.byKey(const ValueKey('player-controls-panel')),
+      );
+      expect(
+        find.byKey(const ValueKey('player-transport-horizontal-scroll')),
+        findsNothing,
+      );
+      final key = find.byKey(const ValueKey('pitch-key-dropdown'));
+      final play = find.byKey(const ValueKey('start-lyric-scroll'));
+      final speed = find.byKey(const ValueKey('scroll-speed-toggle'));
+      // No ensureVisible or swipe: all controls must fit before interaction.
+      for (final (name, control) in [
+        ('key', key), ('play', play), ('speed', speed),
+        ('previous', find.widgetWithIcon(IconButton, Icons.skip_previous_rounded)),
+        ('next', find.widgetWithIcon(IconButton, Icons.skip_next_rounded)),
+      ]) {
+        final rect = tester.getRect(control);
+        final diagnostic =
+            '${defaultTargetPlatform.name} $name: control=$rect; panel=$panelRect';
+        expect(rect.left, greaterThanOrEqualTo(panelRect.left - 1), reason: diagnostic);
+        expect(rect.right, lessThanOrEqualTo(panelRect.right + 1), reason: diagnostic);
+        expect(rect.top, greaterThanOrEqualTo(panelRect.top - 1), reason: diagnostic);
+        expect(rect.bottom, lessThanOrEqualTo(panelRect.bottom + 1), reason: diagnostic);
+        expect(rect.width, greaterThanOrEqualTo(48), reason: diagnostic);
+        expect(rect.height, greaterThanOrEqualTo(48), reason: diagnostic);
+        expect(control.hitTestable(), findsOneWidget, reason: diagnostic);
+      }
+      expect(tester.getSize(play).width, greaterThanOrEqualTo(104));
+      await tester.tap(speed);
+      await tester.pumpAndSettle();
+      final slider = find.byKey(const ValueKey('scroll-speed-slider'));
+      final gesture = await tester.startGesture(tester.getCenter(slider));
+      try {
+        await gesture.moveBy(const Offset(0, -24));
+        await tester.pump();
+        final expected = tester.widget<Slider>(slider).label;
+        expect(expected, isNot('1×'));
+        final value = find.byKey(const ValueKey('scroll-speed-popup-value'));
+        expect(tester.widget<Text>(value).data, expected);
+        expect(
+          tester.widget<Text>(find.byKey(const ValueKey('scroll-speed-value'))).data,
+          expected,
+        );
+        final popupRect = tester.getRect(
+          find.byKey(const ValueKey('scroll-speed-panel')),
+        );
+        final valueRect = tester.getRect(value);
+        expect(valueRect.left, greaterThanOrEqualTo(popupRect.left - 1));
+        expect(valueRect.right, lessThanOrEqualTo(popupRect.right + 1));
+        expect(valueRect.top, greaterThanOrEqualTo(popupRect.top - 1));
+        expect(valueRect.bottom, lessThanOrEqualTo(popupRect.bottom + 1));
+        expect(
+          tester.renderObject<RenderParagraph>(value).didExceedMaxLines,
+          isFalse,
+        );
+        expect(controller.speedWrites, 0);
+      } finally {
+        await gesture.cancel();
+      }
+      await tester.pump();
+      expect(controller.speedWrites, 0);
+      expect(controller.speed, 1);
+      expect(
+        tester.widget<Text>(find.byKey(const ValueKey('scroll-speed-popup-value'))).data,
+        '1×',
+      );
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    },
+    variant: TargetPlatformVariant({TargetPlatform.android, TargetPlatform.windows}),
+  );
+
+  testWidgets(
     'landscape fullscreen keeps a persistent header and lyrics exit action',
     (tester) async {
       final controller = _Controller();
@@ -523,6 +661,77 @@ void main() {
     },
   );
 
+  for (final scenario in [
+    ('narrow_rtl', const Size(700, 360)),
+    ('wide_rtl', const Size(1600, 900)),
+  ]) {
+    testWidgets(
+      'lyrics scrollbar reaches pane edge in ${scenario.$1}',
+      (tester) async {
+        final controller = _Controller()
+          ..lines = List.generate(
+            30,
+            (index) => LyricLineData(
+              id: 'edge-$index',
+              text: 'Reachable lyric row $index',
+            ),
+          );
+        addTearDown(controller.dispose);
+        await _pump(
+          tester,
+          controller,
+          size: scenario.$2,
+          locale: const Locale('ar'),
+          onFullScreenChanged: (_) {},
+        );
+
+        final pane = find.byKey(const ValueKey('tablet-reader-content'));
+        final scrollbar = find.byKey(const ValueKey('player-lyrics-scrollbar'));
+        final list = find.byKey(const ValueKey('player-lyrics-scroll'));
+        expect(
+          find.descendant(of: pane, matching: find.byType(Scrollbar)),
+          findsOneWidget,
+        );
+        expect(scrollbar, findsOneWidget);
+        expect(
+          tester.getRect(scrollbar).left,
+          closeTo(tester.getRect(pane).left, 1),
+        );
+        expect(
+          tester.getRect(scrollbar).right,
+          closeTo(tester.getRect(pane).right, 1),
+        );
+        final listView = tester.widget<ListView>(list);
+        expect(listView.controller, isNotNull);
+        expect(
+          tester.widget<Scrollbar>(scrollbar).controller,
+          same(listView.controller),
+        );
+
+        final lastLine = find.text('Reachable lyric row 29');
+        await tester.scrollUntilVisible(
+          lastLine,
+          240,
+          scrollable: find.descendant(
+            of: list,
+            matching: find.byType(Scrollable),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(lastLine.hitTestable(), findsOneWidget);
+        expect(
+          tester.getRect(lastLine).bottom,
+          lessThanOrEqualTo(tester.getRect(pane).bottom),
+        );
+        expect(tester.takeException(), isNull);
+      },
+      variant: TargetPlatformVariant({
+        TargetPlatform.android,
+        TargetPlatform.windows,
+      }),
+    );
+  }
+
   testWidgets(
     'collapsed portrait and landscape panels keep fullscreen toggle reachable',
     (tester) async {
@@ -627,13 +836,32 @@ void main() {
       final lyricsRect = tester.getRect(
         find.byKey(const ValueKey('tablet-reader-content')),
       );
-      // The reserved 48 dp trailing gutter follows text direction.
-      if (locale.languageCode == 'ar') {
-        expect(action.right, closeTo(lyricsRect.left, 1));
+      // The viewport now includes the reserved action gutter, so align the
+      // button with its outer trailing edge in each text direction.
+      final listFinder = find.byKey(const ValueKey('player-lyrics-scroll'));
+      final listRect = tester.getRect(listFinder);
+      final direction = Directionality.of(tester.element(listFinder));
+      final padding = tester.widget<ListView>(listFinder).padding!.resolve(
+        direction,
+      );
+      expect(listRect, lyricsRect);
+      expect(actionFinder.hitTestable(), findsOneWidget);
+      expect(tester.widget<IconButton>(actionFinder).tooltip, isNotEmpty);
+      if (direction == TextDirection.rtl) {
+        expect(action.left, closeTo(lyricsRect.left, 1));
+        expect(padding.left - padding.right, closeTo(action.width, 1));
       } else {
-        expect(action.left, closeTo(lyricsRect.right, 1));
+        expect(action.right, closeTo(lyricsRect.right, 1));
+        expect(padding.right - padding.left, closeTo(action.width, 1));
       }
-      final paragraph = tester.renderObject<RenderParagraph>(find.text(text));
+      final paragraphFinder = find.text(text);
+      final paragraph = tester.renderObject<RenderParagraph>(paragraphFinder);
+      final paragraphRect = tester.getRect(paragraphFinder);
+      final contentLeft = listRect.left + padding.left;
+      final contentRight = listRect.right - padding.right;
+      expect(paragraphRect.left, closeTo(contentLeft, 1));
+      expect(paragraphRect.right, closeTo(contentRight, 1));
+      expect(paragraphRect.overlaps(action), isFalse);
       final glyphBoxes = paragraph
           .getBoxesForSelection(
             TextSelection(baseOffset: 0, extentOffset: text.length),
@@ -644,9 +872,49 @@ void main() {
               paragraph.localToGlobal(bounds.topLeft),
               paragraph.localToGlobal(bounds.bottomRight),
             );
-          });
+          }).toList();
       expect(glyphBoxes, isNotEmpty);
       expect(glyphBoxes.any((box) => box.overlaps(action)), isFalse);
+      // Full-range selection boxes can include whitespace at a wrapped line
+      // edge. Check visible graphemes separately, retaining the full selection
+      // no-overlap assertion above and the same one-pixel geometry tolerance.
+      var offset = 0;
+      var visibleBoxCount = 0;
+      for (final character in text.characters) {
+        final nextOffset = offset + character.length;
+        if (character.trim().isNotEmpty) {
+          final boxes = paragraph.getBoxesForSelection(
+            TextSelection(baseOffset: offset, extentOffset: nextOffset),
+          );
+          for (final box in boxes) {
+            final local = box.toRect();
+            final bounds = Rect.fromPoints(
+              paragraph.localToGlobal(local.topLeft),
+              paragraph.localToGlobal(local.bottomRight),
+            );
+            final diagnostic =
+                '$direction UTF-16 [$offset, $nextOffset) "$character": '
+                '$bounds; content=[$contentLeft, $contentRight]; '
+                'paragraph=$paragraphRect; action=$action; '
+                'fullSelection=$glyphBoxes';
+            expect(
+              bounds.left,
+              greaterThanOrEqualTo(contentLeft - 1),
+              reason: diagnostic,
+            );
+            expect(
+              bounds.right,
+              lessThanOrEqualTo(contentRight + 1),
+              reason: diagnostic,
+            );
+            expect(bounds.overlaps(action), isFalse, reason: diagnostic);
+            visibleBoxCount++;
+          }
+        }
+        offset = nextOffset;
+      }
+      expect(offset, text.length);
+      expect(visibleBoxCount, greaterThan(0));
       expect(paragraph.didExceedMaxLines, isFalse);
       if (capturePlayerVisuals) {
         final orientation = locale.languageCode == 'ar' ? 'rtl' : 'ltr';
@@ -910,6 +1178,13 @@ void main() {
       ),
       findsOneWidget,
     );
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('scroll-speed-toggle')),
+        matching: find.text('1.25×'),
+      ),
+      findsOneWidget,
+    );
 
     // Slider reports onChangeEnd for a cancelled pointer on Flutter versions
     // where recognizer cancellation reaches _endInteraction first.
@@ -920,6 +1195,13 @@ void main() {
     await tester.pump();
     expect(controller.speedWrites, 0);
     expect(controller.speed, 1);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('scroll-speed-toggle')),
+        matching: find.text('1×'),
+      ),
+      findsOneWidget,
+    );
 
     listener.onPointerDown!(
       PointerDownEvent(pointer: 12, position: Offset.zero),
@@ -947,6 +1229,13 @@ void main() {
     await tester.pumpAndSettle();
     expect(controller.speedWrites, 1);
     expect(controller.speed, 1.5);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('scroll-speed-toggle')),
+        matching: find.text('1.5×'),
+      ),
+      findsOneWidget,
+    );
     slider.onChangeEnd!(1.5);
     expect(controller.speedWrites, 1);
 
@@ -963,6 +1252,13 @@ void main() {
     await tester.pump();
     expect(controller.speedWrites, 1);
     expect(controller.speed, 1.5);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('scroll-speed-toggle')),
+        matching: find.text('1.5×'),
+      ),
+      findsOneWidget,
+    );
 
     listener.onPointerDown!(
       PointerDownEvent(pointer: 15, position: Offset.zero),
@@ -977,6 +1273,13 @@ void main() {
     await tester.pump();
     expect(controller.speedWrites, 1);
     expect(controller.speed, 1.5);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('scroll-speed-toggle')),
+        matching: find.text('1.5×'),
+      ),
+      findsOneWidget,
+    );
 
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
@@ -1147,7 +1450,9 @@ void main() {
         );
         await gesture.moveBy(const Offset(0, -24));
         await tester.pump();
-        final draftSpeed = _speedSlider(tester).value;
+        final draftSpeedSlider = _speedSlider(tester);
+        final draftSpeed = draftSpeedSlider.value;
+        final draftSpeedLabel = draftSpeedSlider.label!;
         expect(draftSpeed, greaterThan(1));
         expect(controller.speedWrites, 0);
         expect(controller.speed, 1);
@@ -1157,6 +1462,15 @@ void main() {
         expect(
           tester.getSemantics(sliderFinder).getSemanticsData().value,
           contains(adjustedDuration),
+        );
+        expect(
+          tester
+              .widget<Semantics>(
+                find.byKey(const ValueKey('scroll-speed-toggle-label')),
+              )
+              .properties
+              .label,
+          contains(draftSpeedLabel),
         );
         expect(
           find.descendant(

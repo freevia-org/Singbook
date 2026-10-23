@@ -148,7 +148,7 @@ void main() {
       'saving details while editing keeps edit mode and typed text',
       () async {
         await saveTwoSongs();
-        await app.addToSetlist('a', await _newSetlist(ui, app));
+        await app.addToSetlist('a', await _newSetlist(app));
         await app.addToSetlist('b', app.setlists.single.id);
         final setlist = app.setlists.single;
         await ui.editSetlist(setlist.id);
@@ -455,9 +455,10 @@ void main() {
   });
 }
 
-Future<String> _newSetlist(AppControllerAdapter ui, AppController app) async {
-  await ui.createSetlist(name: 'Set');
-  return app.setlists.single.id;
+Future<String> _newSetlist(AppController app) async {
+  // This fixture needs a stored setlist, not the creation form's private draft.
+  await app.saveSetlist(SetlistDocument(id: 'stored-setlist', name: 'Set'));
+  return 'stored-setlist';
 }
 
 const _longBody =

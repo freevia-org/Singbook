@@ -366,17 +366,46 @@ void main() {
       );
     });
 
-    testWidgets('saving an empty new song explains what is missing', (
+    testWidgets('saving an untouched new song leaves without writing', (
       tester,
     ) async {
       final c = editor();
       addTearDown(c.dispose);
       await pumpShell(tester, c);
       final l10n = l10nOf(tester);
+      final body = tester.widget<TextField>(
+        find.byKey(const ValueKey('editor-lyrics-input')),
+      );
+      expect(body.controller!.text, contains('{start_of_verse: 1}'));
+
+      await tester.tap(find.byTooltip(l10n.actionSave));
+      await tester.pump();
+      expect(c.calls.where((call) => call == 'back'), ['back']);
+      expect(find.text(l10n.editorFieldRequired), findsNothing);
+      expect(
+        c.calls.where((call) => call.startsWith('saveLyricsEdit')),
+        isEmpty,
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('dirty titleless song stays open then saves the exact edit', (
+      tester,
+    ) async {
+      final c = editor();
+      addTearDown(c.dispose);
+      await pumpShell(tester, c);
+      final l10n = l10nOf(tester);
+      const editedBody = '[C]Changed lyric';
+      final body = find.byKey(const ValueKey('editor-lyrics-input'));
+      await tester.enterText(body, editedBody);
+      await tester.pump();
 
       await tester.tap(find.byTooltip(l10n.actionSave));
       await tester.pump();
       expect(find.text(l10n.editorFieldRequired), findsOneWidget);
+      expect(body, findsOneWidget);
+      expect(c.calls.where((call) => call == 'back'), isEmpty);
       expect(
         c.calls.where((call) => call.startsWith('saveLyricsEdit')),
         isEmpty,
@@ -387,13 +416,27 @@ void main() {
       expect(find.text(l10n.editorFieldRequired), findsNothing);
 
       await tester.tap(find.byTooltip(l10n.actionSave));
-      // A valid save waits for the keyboard inset to clear before navigating.
+      // Preserve the keyboard-inset settle before the valid save completes.
       await tester.pump(const Duration(milliseconds: 250));
       await tester.pump();
+      final expectedPayload = [
+        '{title: My song}',
+        '{artist: }',
+        '{album: }',
+        '{key: }',
+        '{capo: }',
+        '{tuning: }',
+        '{tempo: }',
+        '{duration: }',
+        '',
+        editedBody,
+      ].join('|');
       expect(
-        c.calls.singleWhere((call) => call.startsWith('saveLyricsEdit')),
-        contains('{title: My song}'),
+        c.calls.where((call) => call.startsWith('saveLyricsEdit')).toList(),
+        ['saveLyricsEdit($expectedPayload)'],
       );
+      expect(c.calls.where((call) => call == 'back'), isEmpty);
+      expect(tester.takeException(), isNull);
     });
   });
 

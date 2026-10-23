@@ -94,6 +94,8 @@ class AppControllerAdapter extends VerseUiController {
   int _nextVersionArrivalOrder = 0;
   List<SongCandidate> _cachedAutocomplete = const [];
   SongDocument? _draftSong;
+  SetlistDocument? _draftSetlist;
+  String? _draftSetlistInitialName;
   SongEditorData? _editorData;
   bool _editing = false, _playing = false, _editingSetlist = false;
   int _playerPreferenceRevision = 0;
@@ -231,9 +233,8 @@ class AppControllerAdapter extends VerseUiController {
         12;
   }
 
-  SetlistDocument? get currentSetlist => _setlistId == null
-      ? null
-      : app.setlists.where((item) => item.id == _setlistId).firstOrNull;
+  SetlistDocument? get currentSetlist =>
+      _setlistId == null ? null : _setlistById(_setlistId!);
 
   @override
   VerseUiState get state {
@@ -1404,6 +1405,8 @@ class AppControllerAdapter extends VerseUiController {
       }
     }
     _route = VerseRoute.main;
+    _draftSetlist = null;
+    _draftSetlistInitialName = null;
     _setlistId = null;
     _setlistEntryId = null;
     if (_tab == VerseTab.home) _rememberSongsView();
@@ -1892,6 +1895,12 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> toggleSetlistFavorite(String id) async {
+    final draft = _draftSetlist;
+    if (draft != null && draft.id == id) {
+      _draftSetlist = draft.copyWith(favorite: !draft.favorite);
+      notifyListeners();
+      return;
+    }
     final value = app.setlists.where((item) => item.id == id).firstOrNull;
     if (value == null) return;
     await _guard(() => app.toggleSetlistFavorite(value));
@@ -1925,12 +1934,19 @@ class AppControllerAdapter extends VerseUiController {
           ? const []
           : [SetlistEntry(id: newId(), songId: songId)],
     );
-    if (!await _guard(() => app.saveSetlist(value))) return;
     if (songId != null) {
       // Adding a song to a brand-new setlist keeps the person where they are.
+      await _guard(() => app.saveSetlist(value));
       return;
     }
     if (!_isCurrentNavigationIntent(navigationIntent!)) return;
+    // Opening the form is not a library write. Keep its placeholder private
+    // until the person supplies a name, notes or at least one song.
+    _draftSetlist = value;
+    _draftSetlistInitialName = value.name;
+    _setlistEditSessionRevision++;
+    _setlistBaseHash = null;
+    _editingSetlist = true;
     _setlistId = value.id;
     _route = VerseRoute.setlistDetail;
     notifyListeners();
@@ -2003,7 +2019,8 @@ class AppControllerAdapter extends VerseUiController {
   }
 
   SetlistDocument? _setlistById(String id) =>
-      app.setlists.where((item) => item.id == id).firstOrNull;
+      app.setlists.where((item) => item.id == id).firstOrNull ??
+      (_draftSetlist?.id == id ? _draftSetlist : null);
 
   SongDocument? _readerPdfSong(String id) {
     final song = app.findSong(id);
@@ -2304,9 +2321,9 @@ class AppControllerAdapter extends VerseUiController {
     final editorSessionRevision = _editorSessionRevision;
     final editorBaseHash = _editorBaseHash;
     final parsed = _codec.decode(chordProText);
-    if (old.id == _draftSong?.id &&
-        parsed.title.trim().isEmpty &&
-        parsed.body.trim().isEmpty) {
+    // A new song always needs a real title, even when its body contains the
+    // editor's example template or this method is called outside the form.
+    if (old.id == _draftSong?.id && parsed.title.trim().isEmpty) {
       return;
     }
     final metadata = {...old.metadata, ...parsed.metadata}
@@ -2407,7 +2424,12 @@ class AppControllerAdapter extends VerseUiController {
   @override
   Future<void> deleteSetlist(String id) async {
     _beginNavigationIntent();
-    if (!await _guard(() => app.deleteSetlist(id))) return;
+    if (_draftSetlist?.id == id) {
+      _draftSetlist = null;
+      _draftSetlistInitialName = null;
+    } else if (!await _guard(() => app.deleteSetlist(id))) {
+      return;
+    }
     if (_setlistId == id) {
       _setlistEditSessionRevision++;
       _setlistId = null;
@@ -2566,6 +2588,17 @@ class AppControllerAdapter extends VerseUiController {
   /// hash captured when editing began. A stale save is kept as a conflict copy
   /// and announced, but is not reported as an in-place change to its caller.
   Future<bool> _saveSetlistDocument(SetlistDocument setlist) async {
+    final isDraft = _draftSetlist?.id == setlist.id;
+    if (isDraft &&
+        setlist.entries.isEmpty &&
+        setlist.name.trim() == _draftSetlistInitialName &&
+        setlist.notes.trim().isEmpty &&
+        !setlist.favorite) {
+      // Save on an untouched placeholder may leave edit mode, but must not
+      // create an empty item (or schedule any cloud write).
+      _draftSetlist = setlist;
+      return true;
+    }
     final editing = _editingSetlist && _setlistId == setlist.id;
     final editSessionRevision = _setlistEditSessionRevision;
     final editBaseHash = editing ? _setlistBaseHash : null;
@@ -2591,6 +2624,10 @@ class AppControllerAdapter extends VerseUiController {
       _setlistBaseHash = writeHashes!.persistedHash;
     }
     if (ok && !inPlace) postNotice(UiNotice.setlistSaveConflict);
+    if (ok && inPlace && isDraft && _draftSetlist?.id == setlist.id) {
+      _draftSetlist = null;
+      _draftSetlistInitialName = null;
+    }
     return ok && inPlace;
   }
 
@@ -2633,6 +2670,18 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> addSongToSetlist(String songId, String setlistId) async {
+    final draft = _draftSetlist;
+    if (draft != null && draft.id == setlistId) {
+      if (app.findSong(songId) == null) return;
+      await _saveSetlistWith(
+        draft,
+        entries: [
+          ...draft.entries,
+          SetlistEntry(id: newId(), songId: songId),
+        ],
+      );
+      return;
+    }
     final editing = _editingSetlist && _setlistId == setlistId;
     final editSessionRevision = _setlistEditSessionRevision;
     final editBaseHash = editing ? _setlistBaseHash : null;
@@ -2924,6 +2973,8 @@ class AppControllerAdapter extends VerseUiController {
       }
     } else if (_route == VerseRoute.setlistDetail) {
       _setlistEditSessionRevision++;
+      _draftSetlist = null;
+      _draftSetlistInitialName = null;
       _setlistId = null;
       _setlistBaseHash = null;
       _editingSetlist = false;

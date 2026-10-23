@@ -18,6 +18,7 @@ import 'package:singbook/l10n/generated/app_localizations.dart';
 import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/providers/provider.dart';
 import 'package:singbook/ui/verse_app.dart';
+import 'package:singbook/ui/verse_ui_state.dart';
 import 'package:singbook/ui/home/home_screen.dart';
 import 'package:singbook/ui/player/player_screen.dart';
 import 'package:singbook/ui/settings/settings_screen.dart';
@@ -755,26 +756,54 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('setlists-create-shortcut')));
       await tester.pumpAndSettle();
+      final setlistUi = tester
+          .widget<VerseAppShell>(find.byType(VerseAppShell))
+          .controller;
+      final setlistName = find.byKey(
+        const ValueKey('setlist-name-inline-field'),
+      );
       await _waitForState(
         tester,
         () =>
-            app.setlists.length == 1 &&
+            setlistUi.state.route == VerseRoute.setlistDetail &&
+            setlistUi.state.editingSetlist &&
+            setlistUi.state.activeSetlist != null &&
+            app.setlists.isEmpty &&
+            setlistName.evaluate().isNotEmpty &&
             find.text('Add songs').evaluate().isNotEmpty,
-        'new setlist to persist and open',
+        'private new setlist draft to open in edit mode',
       );
-      await tester.tap(_iconButtonWithTooltip('Edit'));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField).first, 'Dawn Set');
+      final draftSetlistId = setlistUi.state.activeSetlist!.id;
+      expect(app.setlists, isEmpty);
+      final unopenedStorage =
+          (await tester.runAsync(() => repository.listSetlists()))!;
+      expect(
+        unopenedStorage,
+        isEmpty,
+        reason: 'Opening an untouched setlist must not write a placeholder.',
+      );
+      // Creation already opens the inline editor. A meaningful title is the
+      // first write; no redundant Edit action or automatic storage is needed.
+      await tester.enterText(setlistName, 'Dawn Set');
       await tester.tap(_saveButton(l10n));
       await tester.pumpAndSettle();
       await _waitForState(
         tester,
         () =>
             app.setlists.length == 1 &&
+            app.setlists.single.id == draftSetlistId &&
             app.setlists.single.name == 'Dawn Set' &&
+            setlistUi.state.route == VerseRoute.setlistDetail &&
+            !setlistUi.state.editingSetlist &&
+            setlistUi.state.activeSetlist?.id == draftSetlistId &&
             find.text('Add songs').evaluate().isNotEmpty,
-        'setlist name to persist',
+        'named setlist to persist once with its draft identity',
       );
+      final namedStorage =
+          (await tester.runAsync(() => repository.listSetlists()))!;
+      expect(namedStorage, hasLength(1));
+      expect(namedStorage.single.id, draftSetlistId);
+      expect(namedStorage.single.name, 'Dawn Set');
       await tester.tap(find.text('Add songs'));
       final pickerSong = find.text(_title).last;
       await _waitForStableTarget(tester, pickerSong);
@@ -1087,6 +1116,8 @@ void main() {
       );
       expect(restored.songs.single.body, contains(_savedLine));
       expect(restored.songs.single.favorite, isTrue);
+      expect(restored.setlists.single.id, draftSetlistId);
+      expect(restored.setlists.single.name, 'Dawn Set');
       expect(restored.setlists.single.entries, hasLength(2));
       expect(restored.setlists.single.entries.last.overrides['key'], 'D');
 

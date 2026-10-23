@@ -41,6 +41,32 @@ bool FlutterWindow::OnCreate() {
           "org.freevia.singbook/window_close",
           &flutter::StandardMethodCodec::GetInstance());
   const HWND window = GetHandle();
+  fullscreen_ = std::make_unique<singbook::WindowFullscreen>(window);
+  fullscreen_channel_ =
+      std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
+          flutter_controller_->engine()->messenger(),
+          "org.freevia.singbook/fullscreen",
+          &flutter::StandardMethodCodec::GetInstance());
+  fullscreen_channel_->SetMethodCallHandler(
+      [this](const flutter::MethodCall<flutter::EncodableValue>& call,
+             std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+        if (call.method_name() != "setEnabled") {
+          result->NotImplemented();
+          return;
+        }
+        const auto* enabled = call.arguments()
+                                  ? std::get_if<bool>(call.arguments())
+                                  : nullptr;
+        if (!enabled) {
+          result->Error("invalid_arguments", "A fullscreen boolean is required");
+          return;
+        }
+        if (!fullscreen_->SetEnabled(*enabled)) {
+          result->Error("fullscreen_failed", "Could not change window fullscreen");
+          return;
+        }
+        result->Success();
+      });
   window_close_guard_ = std::make_unique<singbook::WindowCloseGuard>(
       [this](singbook::WindowCloseGuard::Completion complete) {
         window_close_channel_->InvokeMethod(
@@ -178,6 +204,8 @@ bool FlutterWindow::OnCreate() {
 }
 
 void FlutterWindow::OnDestroy() {
+  fullscreen_channel_ = nullptr;
+  fullscreen_ = nullptr;
   window_close_guard_ = nullptr;
   window_close_channel_ = nullptr;
   rich_clipboard_channel_ = nullptr;
@@ -193,6 +221,9 @@ LRESULT
 FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
                               WPARAM const wparam,
                               LPARAM const lparam) noexcept {
+  const bool update_fullscreen_bounds =
+      fullscreen_ && fullscreen_->enabled() && !fullscreen_->changing() &&
+      (message == WM_DPICHANGED || message == WM_DISPLAYCHANGE);
   // Flutter's default quit guard only asks Dart when this is the final
   // parentless HWND in the process. Other parentless HWNDs can bypass it.
   // Always consult the existing Dart exit observers for our library window.
@@ -211,6 +242,7 @@ FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
         flutter_controller_->HandleTopLevelWindowProc(hwnd, message, wparam,
                                                       lparam);
     if (result) {
+      if (update_fullscreen_bounds) fullscreen_->UpdateBounds();
       return *result;
     }
   }
@@ -221,5 +253,9 @@ FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
       break;
   }
 
-  return Win32Window::MessageHandler(hwnd, message, wparam, lparam);
+  const auto result = Win32Window::MessageHandler(hwnd, message, wparam, lparam);
+  // Let Flutter/plugins and the normal DPI handler update the child view first,
+  // then keep the outer window on monitor bounds rather than a windowed rect.
+  if (update_fullscreen_bounds) fullscreen_->UpdateBounds();
+  return result;
 }

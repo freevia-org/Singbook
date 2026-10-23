@@ -714,27 +714,45 @@ class _PlayerScreenState extends State<PlayerScreen>
       child: Stack(
         children: [
           Positioned.fill(
-            child: Padding(
-              padding: EdgeInsetsDirectional.only(
-                end: widget.onFullScreenChanged == null ? 0 : 48,
-              ),
-              child: Center(
-                key: const ValueKey('tablet-reader-content'),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 960),
-                  child: NotificationListener<ScrollNotification>(
-                    onNotification: _handleLyricsScroll,
-                    child: ListView.builder(
-                      key: const ValueKey('player-lyrics-scroll'),
-                      controller: _lyricsScroll,
-                      padding: const EdgeInsets.fromLTRB(28, 18, 28, 32),
-                      itemCount: state.songLines.length,
-                      itemBuilder: (context, index) =>
-                          _lyricLine(context, state, state.songLines[index]),
+            child: LayoutBuilder(
+              key: const ValueKey('tablet-reader-content'),
+              builder: (context, constraints) {
+                final actionGutter = widget.onFullScreenChanged == null
+                    ? 0.0
+                    : 48.0;
+                final textWidth = math.max(
+                  0.0,
+                  constraints.maxWidth - actionGutter,
+                );
+                final centeredInset = math.max(0.0, (textWidth - 960) / 2);
+                // Keep the text column centered, but let the scroll viewport
+                // and its single scrollbar reach the outside of the pane.
+                return Scrollbar(
+                  key: const ValueKey('player-lyrics-scrollbar'),
+                  controller: _lyricsScroll,
+                  child: ScrollConfiguration(
+                    behavior: ScrollConfiguration.of(
+                      context,
+                    ).copyWith(scrollbars: false),
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: _handleLyricsScroll,
+                      child: ListView.builder(
+                        key: const ValueKey('player-lyrics-scroll'),
+                        controller: _lyricsScroll,
+                        padding: EdgeInsetsDirectional.fromSTEB(
+                          centeredInset + 28,
+                          18,
+                          centeredInset + 28 + actionGutter,
+                          32,
+                        ),
+                        itemCount: state.songLines.length,
+                        itemBuilder: (context, index) =>
+                            _lyricLine(context, state, state.songLines[index]),
+                      ),
                     ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
           if (widget.onFullScreenChanged != null)
@@ -829,17 +847,27 @@ class _PlayerScreenState extends State<PlayerScreen>
         playPainter.dispose();
         final minimumWidth =
             sideWidth * 2 + (hasNavigation ? 80 : 0) + playWidth + 8;
-        final rowWidth = math.max(controlConstraints.maxWidth, minimumWidth);
+        final stackActions = compact &&
+            minimumWidth > controlConstraints.maxWidth;
+        final stackedMinimumWidth = math.max(
+          sideWidth * 2,
+          (hasNavigation ? 96.0 : 0.0) + playWidth,
+        ) + 8;
+        final rowWidth = math.max(
+          controlConstraints.maxWidth,
+          stackActions ? stackedMinimumWidth : minimumWidth,
+        );
         final transport = SizedBox(
           width: rowWidth,
-          height: rowHeight,
+          height: rowHeight * (stackActions ? 2 : 1),
           child: _transport(
             context,
             l10n,
             state,
             inlineChords: song.hasChords,
             showSpeed: true,
-            stackActions: false,
+            stackActions: stackActions,
+            rowHeight: rowHeight,
             sideSlotWidth: sideWidth,
             chordSlotWidth: sideWidth,
           ),
@@ -852,8 +880,8 @@ class _PlayerScreenState extends State<PlayerScreen>
               builder: (context, position, _) =>
                   _seekBar(context, l10n, state, position, duration),
             ),
-            // Narrow landscape panes and large text retain a single control
-            // row. Horizontal scrolling keeps every control reachable.
+            // Stack narrow landscape controls before using horizontal scroll
+            // as a fallback for panes too small even for the two-row layout.
             if (rowWidth > controlConstraints.maxWidth)
               SingleChildScrollView(
                 key: const ValueKey('player-transport-horizontal-scroll'),
@@ -1325,21 +1353,41 @@ class _PlayerScreenState extends State<PlayerScreen>
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(top: 4),
-                          child: Semantics(
-                            label: currentState.readerDurationEstimated
-                                ? l10n.playerEstimatedDuration(
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 8,
+                            runSpacing: 2,
+                            children: [
+                              Semantics(
+                                label: currentState.readerDurationEstimated
+                                    ? l10n.playerEstimatedDuration(
+                                        formatDuration(duration / speed),
+                                      )
+                                    : formatDuration(duration / speed),
+                                child: ExcludeSemantics(
+                                  child: Text(
                                     formatDuration(duration / speed),
-                                  )
-                                : formatDuration(duration / speed),
-                            child: ExcludeSemantics(
-                              child: Text(
-                                formatDuration(duration / speed),
-                                key: const ValueKey('scroll-speed-duration'),
-                                maxLines: 1,
-                                softWrap: false,
-                                style: Theme.of(context).textTheme.labelMedium,
+                                    key: const ValueKey('scroll-speed-duration'),
+                                    maxLines: 1,
+                                    softWrap: false,
+                                    style: Theme.of(context).textTheme.labelMedium,
+                                  ),
+                                ),
                               ),
-                            ),
+                              Semantics(
+                                label: '${l10n.playerScrollSpeed}, ${_formatPlaybackSpeed(speed)}',
+                                child: ExcludeSemantics(
+                                  child: Text(
+                                    _formatPlaybackSpeed(speed),
+                                    key: const ValueKey('scroll-speed-popup-value'),
+                                    maxLines: 1,
+                                    softWrap: false,
+                                    style: Theme.of(context).textTheme.labelMedium,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -1348,7 +1396,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                             children: [
                               SizedBox(
                                 width: labelWidth,
-                                height: panelHeight - 50,
+                                height: double.infinity,
                                 child: Column(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -1441,37 +1489,47 @@ class _PlayerScreenState extends State<PlayerScreen>
             ),
           ),
         ],
-        child: Semantics(
-          key: const ValueKey('scroll-speed-toggle-label'),
-          label:
-              '${l10n.playerScrollSpeed}, ${_formatPlaybackSpeed(state.playbackSpeed)}',
-          button: true,
-          excludeSemantics: true,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      _formatPlaybackSpeed(state.playbackSpeed),
-                      key: const ValueKey('scroll-speed-value'),
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 1,
-                      softWrap: false,
+        child: ValueListenableBuilder<double?>(
+          valueListenable: _playbackSpeedDraft,
+          builder: (context, draftSpeed, _) {
+            // Preview the same ratio as the popup throughout the gesture.
+            // The existing completion/cancel handlers still own persistence.
+            final speed = _playbackSpeedDraftIsCurrent()
+                ? draftSpeed!
+                : state.playbackSpeed;
+            final label = _formatPlaybackSpeed(speed);
+            return Semantics(
+              key: const ValueKey('scroll-speed-toggle-label'),
+              label: '${l10n.playerScrollSpeed}, $label',
+              button: true,
+              excludeSemantics: true,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          label,
+                          key: const ValueKey('scroll-speed-value'),
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          softWrap: false,
+                        ),
+                        _playerDropdownArrow,
+                      ],
                     ),
-                    _playerDropdownArrow,
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );
@@ -1596,6 +1654,7 @@ class _PlayerScreenState extends State<PlayerScreen>
     required bool inlineChords,
     required bool showSpeed,
     required bool stackActions,
+    required double rowHeight,
     required double sideSlotWidth,
     required double chordSlotWidth,
     Widget? trailingAction,
@@ -1623,7 +1682,8 @@ class _PlayerScreenState extends State<PlayerScreen>
           textScaler: MediaQuery.textScalerOf(context),
           locale: Localizations.localeOf(context),
         )..layout();
-        final playWidth = centerWidth - (hasNavigation ? 80 : 0);
+        final navigationWidth = stackActions ? 96.0 : 80.0;
+        final playWidth = centerWidth - (hasNavigation ? navigationWidth : 0);
         final playHorizontalPadding =
             ((playWidth - 32 - playLabelPainter.width) / 2)
                 .clamp(4.0, 12.0)
@@ -1636,7 +1696,8 @@ class _PlayerScreenState extends State<PlayerScreen>
               horizontal: playHorizontalPadding,
               vertical: 4,
             ),
-            minimumSize: const Size(104, 46),
+            minimumSize: Size(104, rowHeight),
+            visualDensity: stackActions ? VisualDensity.standard : null,
           ),
           onPressed: _togglePlayback,
           icon: Icon(
@@ -1654,7 +1715,12 @@ class _PlayerScreenState extends State<PlayerScreen>
         final controls = <Widget>[
           if (state.playerSections.isNotEmpty || state.activeSetlist != null)
             IconButton(
-              visualDensity: VisualDensity.compact,
+              visualDensity: stackActions
+                  ? VisualDensity.standard
+                  : VisualDensity.compact,
+              constraints: stackActions
+                  ? const BoxConstraints(minWidth: 48, minHeight: 48)
+                  : null,
               tooltip: _shortcutHint(
                 state.activeSetlist == null
                     ? l10n.playerPreviousSection
@@ -1684,7 +1750,12 @@ class _PlayerScreenState extends State<PlayerScreen>
           ),
           if (state.playerSections.isNotEmpty || state.activeSetlist != null)
             IconButton(
-              visualDensity: VisualDensity.compact,
+              visualDensity: stackActions
+                  ? VisualDensity.standard
+                  : VisualDensity.compact,
+              constraints: stackActions
+                  ? const BoxConstraints(minWidth: 48, minHeight: 48)
+                  : null,
               tooltip: _shortcutHint(
                 state.activeSetlist == null
                     ? l10n.playerNextSection
@@ -1747,7 +1818,7 @@ class _PlayerScreenState extends State<PlayerScreen>
             children: [
               if (inlineChords || hasActionSlot)
                 SizedBox(
-                  height: 48,
+                  height: rowHeight,
                   child: Row(
                     textDirection: TextDirection.ltr,
                     children: isRtl
@@ -1763,12 +1834,12 @@ class _PlayerScreenState extends State<PlayerScreen>
                           ],
                   ),
                 ),
-              SizedBox(height: 48, child: transportRow),
+              SizedBox(height: rowHeight, child: transportRow),
             ],
           );
         }
         if (!inlineChords && !hasActionSlot) {
-          return SizedBox(height: 48, child: transportRow);
+          return SizedBox(height: rowHeight, child: transportRow);
         }
         return Row(
           textDirection: TextDirection.ltr,

@@ -217,11 +217,13 @@ class LibraryCreateShortcut extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.margin = EdgeInsets.zero,
+    this.minHeight = 72,
   });
 
   final String label;
   final VoidCallback onPressed;
   final EdgeInsetsGeometry margin;
+  final double minHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -237,9 +239,9 @@ class LibraryCreateShortcut extends StatelessWidget {
             onTap: onPressed,
             borderRadius: BorderRadius.circular(12),
             child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 72),
+              constraints: BoxConstraints(minHeight: minHeight),
               child: Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(16, 10, 16, 10),
+                padding: const EdgeInsetsDirectional.fromSTEB(4, 8, 4, 8),
                 child: Row(
                   children: [
                     DecoratedBox(
@@ -248,8 +250,8 @@ class LibraryCreateShortcut extends StatelessWidget {
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: SizedBox(
-                        width: 44,
-                        height: 44,
+                        width: 48,
+                        height: 48,
                         child: Icon(
                           Icons.add_rounded,
                           color: colors.primary,
@@ -257,7 +259,7 @@ class LibraryCreateShortcut extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 14),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         label,
