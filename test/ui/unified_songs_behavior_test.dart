@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/data/library_repository.dart';
+import 'package:singbook/domain/models.dart' show SongDocument;
 import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/providers/provider.dart';
 import 'package:singbook/ui/app_controller_adapter.dart';
@@ -88,11 +89,36 @@ void main() {
     await repository.close();
   });
 
+  testWidgets('Search button opens Online when Library has no matching songs', (
+    tester,
+  ) async {
+    ui.setHomeListMode(HomeListMode.library);
+    await pumpShell(tester, ui);
+    await tester.enterText(find.byType(TextField), 'Original Lantern');
+    await tester.pump(const Duration(milliseconds: 450));
+    expect(ui.state.homeListMode, HomeListMode.library);
+    expect(discovery.searches, isEmpty);
+
+    await tester.tap(find.byTooltip(l10nOf(tester).searchSubmit));
+    await tester.pumpAndSettle();
+    expect(ui.state.homeListMode, HomeListMode.online);
+    expect(ui.state.query, 'Original Lantern');
+    expect(discovery.searches, ['Original Lantern']);
+    expect(find.text(_candidate.title), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 450));
+    expect(discovery.searches, hasLength(1));
+    // Navigation persists settings through the real SQLite isolate. Drain
+    // those writes before the widget binding checks for pending fake timers.
+    await tester.runAsync(() => repository.getSetting('app'));
+    await tester.pump();
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   for (final mode in [HomeListMode.recent, HomeListMode.library]) {
-    test('typing and submitting in ${mode.name} stays local', () async {
+    test('typing in ${mode.name} stays local until explicit Search', () async {
       ui.setHomeListMode(mode);
       ui.setQuery('Original Lantern');
-      await ui.submitSearch();
       // Longer than the Online debounce: catches an accidentally armed timer.
       await Future<void>.delayed(const Duration(milliseconds: 450));
 
@@ -101,7 +127,91 @@ void main() {
       expect(discovery.searches, isEmpty);
       expect(app.query, isEmpty);
       expect(app.searching, isFalse);
+
+      await ui.submitSearch();
+      expect(ui.state.homeListMode, HomeListMode.online);
+      expect(discovery.searches, ['Original Lantern']);
+      await Future<void>.delayed(const Duration(milliseconds: 450));
+      expect(discovery.searches, hasLength(1));
     });
+
+    test('matching ${mode.name} results keep explicit Search local', () async {
+      await app.saveSong(
+        SongDocument(
+          id: 'local-song',
+          title: 'Éclair Lantern',
+          artist: 'Original Artist',
+          body: '[C]Original words',
+          favorite: true,
+        ),
+      );
+      await app.recordUse('song', 'local-song');
+      ui.setHomeListMode(mode);
+      ui.setFavoritesOnly(true);
+      ui.setQuery('eclair');
+      await ui.submitSearch();
+      expect(ui.state.homeListMode, mode);
+      expect(discovery.searches, isEmpty);
+    });
+
+    test(
+      'nonfavorite ${mode.name} match does not block Online fallback',
+      () async {
+        await app.saveSong(
+          SongDocument(
+            id: 'nonfavorite-song',
+            title: 'Éclair Lantern',
+            artist: 'Original Artist',
+            body: '[C]Original words',
+          ),
+        );
+        await app.recordUse('song', 'nonfavorite-song');
+        ui.setHomeListMode(mode);
+        ui.setFavoritesOnly(true);
+        ui.setQuery('eclair');
+        await ui.submitSearch();
+        expect(ui.state.homeListMode, HomeListMode.online);
+        expect(discovery.searches, ['eclair']);
+      },
+    );
+
+    for (final query in ['', '   ']) {
+      test(
+        'empty query in ${mode.name} never starts Online search ($query)',
+        () async {
+          ui.setHomeListMode(mode);
+          ui.setQuery(query);
+          await ui.submitSearch();
+          expect(ui.state.homeListMode, mode);
+          expect(discovery.searches, isEmpty);
+        },
+      );
+    }
+  }
+
+  for (final conflictMatch in [false, true]) {
+    test(
+      'conflict review searches its visible matches only ($conflictMatch)',
+      () async {
+        await app.saveSong(
+          SongDocument(
+            id: conflictMatch ? 'conflict-lantern' : 'regular-lantern',
+            title: 'Éclair Lantern',
+            artist: 'Original Artist',
+            body: '[C]Original words',
+          ),
+        );
+        ui.reviewSyncConflicts();
+        ui.setFavoritesOnly(true);
+        ui.setQuery('eclair');
+        await ui.submitSearch();
+        expect(
+          ui.state.homeListMode,
+          conflictMatch ? HomeListMode.library : HomeListMode.online,
+        );
+        expect(discovery.searches, conflictMatch ? isEmpty : ['eclair']);
+      },
+    );
   }
 
   test('legacy Favorites mode maps to Library with its filter active', () {
