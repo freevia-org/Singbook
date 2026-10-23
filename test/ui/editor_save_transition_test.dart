@@ -10,6 +10,28 @@ import 'package:singbook/ui/verse_ui_state.dart';
 import 'package:singbook/ui/verse_app.dart';
 
 void main() {
+  testWidgets('untouched new-song template returns without saving', (tester) async {
+    final controller = _TestController(title: '');
+    addTearDown(controller.dispose);
+    var backCalls = 0;
+    await _pumpEditor(
+      tester,
+      controller,
+      edit: false,
+      onBack: () => backCalls++,
+    );
+    final body = tester.widget<TextField>(
+      find.byKey(const ValueKey('editor-lyrics-input')),
+    );
+    expect(body.controller!.text, contains('{start_of_verse: 1}'));
+    final l10n = AppLocalizations.of(tester.element(find.byType(EditorScreen)));
+    await tester.tap(find.byTooltip(l10n.actionSave));
+    await tester.pump();
+    expect(backCalls, 1);
+    expect(controller.savedBodies, isEmpty);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('repeated Save taps during keyboard hide save only once', (
     tester,
   ) async {
@@ -107,27 +129,42 @@ void main() {
   });
 }
 
-Future<void> _pumpEditor(WidgetTester tester, _TestController controller) =>
-    tester.pumpWidget(
-      MaterialApp(
-        localizationsDelegates: singbookLocalizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: Scaffold(
-          body: EditorScreen(controller: controller, onBack: () {}),
-        ),
+Future<void> _pumpEditor(
+  WidgetTester tester,
+  _TestController controller, {
+  bool edit = true,
+  VoidCallback? onBack,
+}) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      localizationsDelegates: singbookLocalizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: Scaffold(
+        body: EditorScreen(controller: controller, onBack: onBack ?? () {}),
       ),
-    );
+    ),
+  );
+  if (edit) {
+    // These transition tests need an actual edit before Save becomes useful.
+    tester.widget<TextField>(
+      find.byKey(const ValueKey('editor-lyrics-input')),
+    ).controller!.text = '[C]New lyrics';
+    await tester.pump();
+  }
+}
 
 class _TestController extends VerseUiController {
+  _TestController({this.title = 'Song'});
+  final String title;
   final savedBodies = <String>[];
   final _position = ValueNotifier(PlayerPosition.zero);
   final _notices = StreamController<UiNotice>.broadcast();
 
   @override
-  VerseUiState get state => const VerseUiState(
+  VerseUiState get state => VerseUiState(
     route: VerseRoute.editor,
     editing: true,
-    editor: SongEditorData(songId: 'draft', isNew: true, title: 'Song'),
+    editor: SongEditorData(songId: 'draft', isNew: true, title: title),
   );
 
   @override

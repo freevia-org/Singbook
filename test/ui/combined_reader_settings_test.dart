@@ -70,10 +70,13 @@ void main() {
     for (final scenario in [
       ('portrait', const Size(360, 780)),
       ('landscape', const Size(700, 360)),
+      ('wide_desktop', const Size(1600, 900)),
     ]) {
       await pumpShell(tester, controller, size: scenario.$2);
       final lyrics = find.byKey(const ValueKey('tablet-reader-content'));
+      final frame = find.byKey(const ValueKey('tablet-content-frame'));
       expect(lyrics, findsOneWidget);
+      expect(tester.getRect(frame).width, closeTo(scenario.$2.width, 1));
       if (scenario.$1 == 'landscape') {
         _expectLandscapeHeaderAndLyrics(tester, scenario.$2, lyrics);
       }
@@ -91,6 +94,7 @@ void main() {
         find.byKey(const ValueKey('player-exit-fullscreen')),
         findsOneWidget,
       );
+      expect(tester.getRect(frame).width, closeTo(scenario.$2.width, 1));
       if (scenario.$1 == 'landscape') {
         _expectLandscapeHeaderAndLyrics(tester, scenario.$2, lyrics);
       } else {

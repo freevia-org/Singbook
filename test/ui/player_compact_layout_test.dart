@@ -523,6 +523,79 @@ void main() {
     },
   );
 
+  for (final scenario in [
+    ('narrow_rtl', const Size(700, 360)),
+    ('wide_rtl', const Size(1600, 900)),
+  ]) {
+    testWidgets(
+      'lyrics scrollbar reaches pane edge in ${scenario.$1}',
+      (tester) async {
+        final controller = _Controller()
+          ..lines = List.generate(
+            30,
+            (index) => LyricLineData(
+              id: 'edge-$index',
+              text: 'Reachable lyric row $index',
+            ),
+          );
+        addTearDown(controller.dispose);
+        await _pump(
+          tester,
+          controller,
+          size: scenario.$2,
+          locale: const Locale('ar'),
+          onFullScreenChanged: (_) {},
+        );
+
+        final pane = find.byKey(const ValueKey('tablet-reader-content'));
+        final scrollbar = find.byKey(
+          const ValueKey('player-lyrics-scrollbar'),
+        );
+        final list = find.byKey(const ValueKey('player-lyrics-scroll'));
+        expect(
+          find.descendant(of: pane, matching: find.byType(Scrollbar)),
+          findsOneWidget,
+        );
+        expect(scrollbar, findsOneWidget);
+        expect(
+          tester.getRect(scrollbar).left,
+          closeTo(tester.getRect(pane).left, 1),
+        );
+        expect(
+          tester.getRect(scrollbar).right,
+          closeTo(tester.getRect(pane).right, 1),
+        );
+        final listView = tester.widget<ListView>(list);
+        expect(listView.controller, isNotNull);
+        expect(
+          tester.widget<Scrollbar>(scrollbar).controller,
+          same(listView.controller),
+        );
+
+        final lastLine = find.text('Reachable lyric row 29');
+        await tester.scrollUntilVisible(
+          lastLine,
+          240,
+          scrollable: find.descendant(
+            of: list,
+            matching: find.byType(Scrollable),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(lastLine.hitTestable(), findsOneWidget);
+        expect(
+          tester.getRect(lastLine).bottom,
+          lessThanOrEqualTo(tester.getRect(pane).bottom),
+        );
+        expect(tester.takeException(), isNull);
+      },
+      variant: TargetPlatformVariant({
+        TargetPlatform.android,
+        TargetPlatform.windows,
+      }),
+    );
+  }
+
   testWidgets(
     'collapsed portrait and landscape panels keep fullscreen toggle reachable',
     (tester) async {
@@ -910,6 +983,13 @@ void main() {
       ),
       findsOneWidget,
     );
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('scroll-speed-toggle')),
+        matching: find.text('1.25×'),
+      ),
+      findsOneWidget,
+    );
 
     // Slider reports onChangeEnd for a cancelled pointer on Flutter versions
     // where recognizer cancellation reaches _endInteraction first.
@@ -920,6 +1000,13 @@ void main() {
     await tester.pump();
     expect(controller.speedWrites, 0);
     expect(controller.speed, 1);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('scroll-speed-toggle')),
+        matching: find.text('1×'),
+      ),
+      findsOneWidget,
+    );
 
     listener.onPointerDown!(
       PointerDownEvent(pointer: 12, position: Offset.zero),
@@ -947,6 +1034,13 @@ void main() {
     await tester.pumpAndSettle();
     expect(controller.speedWrites, 1);
     expect(controller.speed, 1.5);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('scroll-speed-toggle')),
+        matching: find.text('1.5×'),
+      ),
+      findsOneWidget,
+    );
     slider.onChangeEnd!(1.5);
     expect(controller.speedWrites, 1);
 
@@ -963,6 +1057,13 @@ void main() {
     await tester.pump();
     expect(controller.speedWrites, 1);
     expect(controller.speed, 1.5);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('scroll-speed-toggle')),
+        matching: find.text('1.5×'),
+      ),
+      findsOneWidget,
+    );
 
     listener.onPointerDown!(
       PointerDownEvent(pointer: 15, position: Offset.zero),
@@ -977,6 +1078,13 @@ void main() {
     await tester.pump();
     expect(controller.speedWrites, 1);
     expect(controller.speed, 1.5);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('scroll-speed-toggle')),
+        matching: find.text('1.5×'),
+      ),
+      findsOneWidget,
+    );
 
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
@@ -1147,7 +1255,9 @@ void main() {
         );
         await gesture.moveBy(const Offset(0, -24));
         await tester.pump();
-        final draftSpeed = _speedSlider(tester).value;
+        final draftSpeedSlider = _speedSlider(tester);
+        final draftSpeed = draftSpeedSlider.value;
+        final draftSpeedLabel = draftSpeedSlider.label!;
         expect(draftSpeed, greaterThan(1));
         expect(controller.speedWrites, 0);
         expect(controller.speed, 1);
@@ -1157,6 +1267,15 @@ void main() {
         expect(
           tester.getSemantics(sliderFinder).getSemanticsData().value,
           contains(adjustedDuration),
+        );
+        expect(
+          tester
+              .widget<Semantics>(
+                find.byKey(const ValueKey('scroll-speed-toggle-label')),
+              )
+              .properties
+              .label,
+          contains(draftSpeedLabel),
         );
         expect(
           find.descendant(
