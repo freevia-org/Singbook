@@ -709,6 +709,12 @@ class _VerseAppShellState extends State<VerseAppShell>
     _promptAccountChange(state);
     _promptRemoteDeletions(state);
     final size = MediaQuery.sizeOf(context);
+    final isDesktop = switch (defaultTargetPlatform) {
+      TargetPlatform.windows ||
+      TargetPlatform.macOS ||
+      TargetPlatform.linux => !kIsWeb,
+      _ => false,
+    };
     final navigationTextScale = MediaQuery.textScalerOf(context).scale(14) / 14;
     final comparisonMode =
         state.route == VerseRoute.main &&
@@ -820,7 +826,7 @@ class _VerseAppShellState extends State<VerseAppShell>
                   child: ConstrainedBox(
                     key: const ValueKey('tablet-content-frame'),
                     constraints: BoxConstraints(
-                      maxWidth: state.route == VerseRoute.reader
+                      maxWidth: isDesktop || state.route == VerseRoute.reader
                           ? double.infinity
                           : 1200,
                     ),

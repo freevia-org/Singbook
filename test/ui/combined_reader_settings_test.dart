@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -49,6 +50,39 @@ class _DetailsController extends FakeUiController {
 }
 
 void main() {
+  testWidgets(
+    'native desktop width and all-platform reader width remain combined',
+    (tester) async {
+      const size = Size(1600, 900);
+      var route = VerseRoute.main;
+      final controller = FakeUiController((_) => _reader(route: route));
+      addTearDown(controller.dispose);
+      await pumpShell(tester, controller, size: size);
+      final frame = find.byKey(const ValueKey('tablet-content-frame'));
+      final rail = find.byType(NavigationRail);
+      final availableWidth = size.width - tester.getSize(rail).width;
+      final desktop = !kIsWeb &&
+          {TargetPlatform.windows, TargetPlatform.macOS, TargetPlatform.linux}
+              .contains(defaultTargetPlatform);
+      expect(
+        tester.getSize(frame).width,
+        closeTo(desktop ? availableWidth : 1200, 1),
+      );
+      route = VerseRoute.reader;
+      controller.refresh();
+      await tester.pumpAndSettle();
+      expect(rail, findsNothing);
+      expect(tester.getSize(frame).width, closeTo(size.width, 1));
+      expect(tester.takeException(), isNull);
+    },
+    variant: TargetPlatformVariant({
+      TargetPlatform.android,
+      TargetPlatform.windows,
+      TargetPlatform.macOS,
+      TargetPlatform.linux,
+    }),
+  );
+
   testWidgets('shell reader preserves full-height landscape lyrics', (
     tester,
   ) async {
