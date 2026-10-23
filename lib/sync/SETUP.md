@@ -2,9 +2,9 @@
 
 Singbook defaults to the signed-in user's hidden Google Drive application-data
 folder (`appDataFolder`), using
-`https://www.googleapis.com/auth/drive.appdata`. On Android or iOS, Settings can switch
-the library to a visible folder selected with Google's Drive Picker and the
-narrow `drive.file` scope. Those permissions are requested in separate flows;
+`https://www.googleapis.com/auth/drive.appdata`. On Android, iOS or macOS,
+Settings can switch the library to a visible folder selected with Google's
+Drive Picker and the narrow `drive.file` scope. Those permissions are requested in separate flows;
 the app never requests broad `drive` access. There is no Singbook backend,
 shared storage account or client secret.
 
@@ -29,6 +29,7 @@ needs, precisely (`google_sign_in` 7.x, Credential Manager on Android):
 | Android | An **Android** OAuth client: package `org.freevia.singbook` + the SHA-1 of every signing certificate (debug, upload, and the Play App Signing certificate). | Nothing: Google matches package + SHA-1 itself. It must exist in the same project or sign-in is cancelled without explanation. |
 | Android | A **Web application** OAuth client in the same project. | Its id as `--dart-define=VERSE_GOOGLE_SERVER_CLIENT_ID=<id>.apps.googleusercontent.com` (becomes `serverClientId`). Required: the plugin throws without it. No backend uses it. |
 | iOS | An **iOS** OAuth client for the bundle id. | `--dart-define=VERSE_GOOGLE_IOS_CLIENT_ID=<id>.apps.googleusercontent.com` (`clientId`) plus the reversed client id as URL scheme in `ios/Runner/Info.plist`. Native iOS simulator bridge checks are part of the iOS parity suite; live OAuth requires configured credentials. |
+| macOS | Follow the endorsed `google_sign_in` plugin's documented iOS/macOS registration steps for bundle ID `org.freevia.singbook`; use the OAuth client configuration the plugin instructs for macOS. | Its ID as `--dart-define=VERSE_GOOGLE_MACOS_CLIENT_ID=<id>.apps.googleusercontent.com` (`clientId`), with the ID and reversed ID supplied through `macos/Runner/Configs/Secrets.xcconfig` for `GIDClientID` and the callback URL scheme. See [macOS publishing setup](../../docs/macos-publishing.md#google-drive-and-online-sources). |
 
 Also enable the **Google Drive API** and **Google Picker API**, and configure the
 OAuth consent screen (add test users while it is in Testing). `drive.appdata`
@@ -39,6 +40,11 @@ excluded from that request.
 Android uses Google Play services `AuthorizationClient` for the picker OAuth
 flow; `INTERNET` is already declared. R8/minify rules for the plugin are the
 Android owner's concern.
+
+macOS uses `ASWebAuthenticationSession` with a state- and S256-PKCE-bound
+callback for the separate Picker grant. That grant is stored in a
+non-synchronizing macOS Keychain item and is cleared on sign-out. The native
+Google sign-in plugin manages the primary app-data authorization.
 
 `GoogleDriveAuth` (`google_auth.dart`): only an explicit Connect action restores
 a saved identity (local metadata on Android; lightweight authentication on
@@ -71,7 +77,8 @@ detects content edits before SHA-256 validation.
 ## Cloud layout
 
 One file per item, updated in place, in the selected sync location: the private
-`appDataFolder` by default, or the Android visible folder chosen in Settings:
+`appDataFolder` by default, or a visible folder chosen in Settings on Android,
+iOS or macOS:
 
 * `song-<id>.cho`: the complete `x_verse` ChordPro payload (lyrics, chords,
   timing tracks, source provenance) exactly as stored locally.
@@ -282,3 +289,11 @@ verification, rollback, narrow file import and account-switch checks are shared
 with Android/Windows. Local library imports through Files remain available
 without OAuth. Live picker consent/refresh still needs an OAuth-enabled test
 build; simulator bridge checks alone cannot prove Google-side configuration.
+
+## macOS visible-file authorization
+
+The macOS adapter uses the same system-browser PKCE flow with the configured
+macOS client ID and its reversed-ID callback URL scheme. The separate
+`drive.file` refresh grant is stored in a non-synchronizing macOS Keychain item
+and removed on sign-out. This is separate from the primary Google sign-in
+plugin's app-data authorization.

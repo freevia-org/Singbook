@@ -1,0 +1,64 @@
+{
+  "status": "waiting_for_review",
+  "version": "0.2.16",
+  "build": "30",
+  "bundle_id": "org.freevia.singbook",
+  "platform": "MAC_OS",
+  "minimum_os": "12.0",
+  "architectures": [
+    "arm64",
+    "x86_64"
+  ],
+  "primary_locale": "en-US",
+  "category": "MUSIC",
+  "release_option": "AFTER_APPROVAL",
+  "app_record": "macOS added to existing Singbook app record",
+  "support_url": "https://freevia.org/singbook/support/",
+  "privacy_url": "https://freevia.org/singbook/privacy/",
+  "marketing_url": "https://freevia.org/singbook/",
+  "feature_profile": {
+    "google_oauth": false,
+    "genius": false,
+    "third_party_sources": "existing public configuration retained"
+  },
+  "screenshots": [
+    {
+      "locale": "en-US",
+      "file": "artifacts/macos-acceptance/screenshots/store-en-US-library.jpg",
+      "size": [
+        1280,
+        800
+      ]
+    },
+    {
+      "locale": "en-US",
+      "file": "artifacts/macos-acceptance/screenshots/store-en-US-reader.jpg",
+      "size": [
+        1280,
+        800
+      ]
+    }
+  ],
+  "owner_fields_pending": [
+    "Review contact, territories, rights and age rating confirmation",
+    "SDK-inclusive privacy questionnaire and publication of updated policy",
+    "Native file dialogs, window-close cancellation and clean-machine acceptance",
+    "Intel runtime acceptance; configured OAuth/Genius validation if enabled"
+  ],
+  "upload_status": "0.2.16 (30) submitted for review; Waiting for Review",
+  "source_commit": "8f3d1cda",
+  "artifact_directory": "artifacts/macos/20261023T052143Z-8f3d1cda-38951",
+  "signed_package": "artifacts/macos/20261023T052143Z-8f3d1cda-38951/export-retry1/Singbook.pkg",
+  "app_store_connect_url": "https://appstoreconnect.apple.com/apps/6825974960/distribution/macos/version/inflight",
+  "screenshots_uploaded": 2,
+  "review_attachment": "Singbook-mac-review-fixtures.zip",
+  "direct_download": {
+    "signing": "Developer ID Application created with owner approval and imported; signed export verified",
+    "notarization": "Accepted; stapled ticket and Gatekeeper verified",
+    "public_release": "Not published; clean-machine and interactive acceptance pending",
+    "package": "artifacts/macos/20261023T052143Z-8f3d1cda-38951/Singbook-0.2.16-macos-universal.zip",
+    "sha256": "f24273b25e50faf46a80ffb20b01cd8140f583b3dc64d734f72ef39bff468b33"
+  },
+  "review_submission_id": "1b1a0272-ee5c-4a4c-9864-8f18de8abecb",
+  "submitted_date": "2026-10-23"
+}

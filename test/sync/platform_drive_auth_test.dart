@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/sync/drive_file_access.dart';
 import 'package:singbook/sync/google_auth.dart';
 import 'package:singbook/sync/ios_drive_file_access.dart';
+import 'package:singbook/sync/macos_drive_file_access.dart';
 import 'package:singbook/sync/mobile_drive_file_access.dart';
 import 'package:singbook/sync/platform_drive_auth.dart';
 import 'package:singbook/sync/sync_protocol.dart';
@@ -67,7 +68,11 @@ Matcher _error(String code) =>
     isA<SyncException>().having((error) => error.code, 'code', code);
 
 void main() {
-  for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+  for (final platform in [
+    TargetPlatform.android,
+    TargetPlatform.iOS,
+    TargetPlatform.macOS,
+  ]) {
     test(
       '$platform forwards exact saved identity callbacks and optional capabilities',
       () async {
@@ -141,7 +146,11 @@ void main() {
     () {
       Future<Map<String, String>?> load() async => null;
       Future<void> save(Map<String, String>? identity) async {}
-      for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+      for (final platform in [
+        TargetPlatform.android,
+        TargetPlatform.iOS,
+        TargetPlatform.macOS,
+      ]) {
         final auth = createPlatformDriveAuthorization(
           platformOverride: platform,
           isWebOverride: false,
@@ -162,11 +171,7 @@ void main() {
     },
   );
 
-  for (final platform in [
-    TargetPlatform.linux,
-    TargetPlatform.macOS,
-    TargetPlatform.fuchsia,
-  ]) {
+  for (final platform in [TargetPlatform.linux, TargetPlatform.fuchsia]) {
     test(
       '$platform is unavailable without constructing platform authorization or showing UI',
       () async {
@@ -196,6 +201,46 @@ void main() {
     );
   }
 
+  test(
+    'macOS primary auth uses GoogleDriveAuth with a separate Picker grant',
+    () {
+      final auth = createPlatformDriveAuthorization(
+        platformOverride: TargetPlatform.macOS,
+        isWebOverride: false,
+      );
+      expect(auth, isA<GoogleDriveAuth>());
+      final fileAccess = createPlatformDriveFileAccess(
+        auth,
+        platformOverride: TargetPlatform.macOS,
+        isWebOverride: false,
+      );
+      expect(fileAccess, isA<MacOSDriveFileAccess>());
+      expect((fileAccess as MacOSDriveFileAccess).identity, same(auth));
+    },
+  );
+
+  test('GoogleDriveAuth selects macOS client ID for macOS configuration', () {
+    final auth = GoogleDriveAuth(
+      serverClientId: 'server.apps.googleusercontent.com',
+      iosClientId: '',
+      macosClientId: 'mac.apps.googleusercontent.com',
+      isAndroidOverride: false,
+      isIOSOverride: false,
+      isMacOSOverride: true,
+    );
+    expect(auth.configured, isTrue);
+
+    final missing = GoogleDriveAuth(
+      serverClientId: 'server.apps.googleusercontent.com',
+      iosClientId: 'ios.apps.googleusercontent.com',
+      macosClientId: '',
+      isAndroidOverride: false,
+      isIOSOverride: false,
+      isMacOSOverride: true,
+    );
+    expect(missing.configured, isFalse);
+  });
+
   test('web fails closed even when platform says Windows', () async {
     final auth = createPlatformDriveAuthorization(
       platformOverride: TargetPlatform.windows,
@@ -223,6 +268,7 @@ void main() {
         TargetPlatform.windows,
         TargetPlatform.android,
         TargetPlatform.iOS,
+        TargetPlatform.macOS,
       ]) {
         expect(
           createPlatformDriveFileAccess(
@@ -257,6 +303,19 @@ void main() {
         ),
         isA<IOSDriveFileAccess>(),
       );
+      final macos = createPlatformDriveFileAccess(
+        plain,
+        platformOverride: TargetPlatform.macOS,
+        isWebOverride: false,
+      );
+      expect(macos, isA<MacOSDriveFileAccess>());
+      expect(macos, isA<DriveFileAccessCapability>());
+      expect((macos as MacOSDriveFileAccess).identity, same(plain));
+      final configuredMacPicker = MacOSDriveFileAccess(
+        identity: plain,
+        clientId: 'mac.apps.googleusercontent.com',
+      );
+      expect(configuredMacPicker.clientId, 'mac.apps.googleusercontent.com');
       final android = createPlatformDriveFileAccess(
         plain,
         platformOverride: TargetPlatform.android,
@@ -266,6 +325,7 @@ void main() {
       expect((android as MobileDriveFileAccess).identity, same(plain));
       expect(android.fileAuthorization, isA<RefreshableAuthorization>());
       invalidatePlatformDriveFileAccess(capable);
+      invalidatePlatformDriveFileAccess(macos);
       invalidatePlatformDriveFileAccess(null);
       expect(capable.isConnected, isTrue);
     },

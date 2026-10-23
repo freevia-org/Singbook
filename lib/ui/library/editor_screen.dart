@@ -46,6 +46,11 @@ class EditorScreen extends StatefulWidget {
 }
 
 class _EditorScreenState extends State<EditorScreen> {
+  static const _nativeShortcuts = MethodChannel(
+    'org.freevia.singbook/editor_shortcuts',
+  );
+  bool get _usesNativeShortcuts =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.macOS;
   late final SongEditorData _initial;
   late final TextEditingController _title;
   late final TextEditingController _artist;
@@ -68,6 +73,18 @@ class _EditorScreenState extends State<EditorScreen> {
   @override
   void initState() {
     super.initState();
+    if (_usesNativeShortcuts) {
+      _nativeShortcuts.setMethodCallHandler((call) async {
+        if (call.method != 'save') {
+          throw MissingPluginException();
+        }
+        if (!mounted || ModalRoute.of(context)?.isCurrent == false) {
+          return false;
+        }
+        await _save();
+        return true;
+      });
+    }
     _initial =
         widget.controller.state.editor ??
         const SongEditorData(songId: '', isNew: true);
@@ -128,6 +145,7 @@ class _EditorScreenState extends State<EditorScreen> {
 
   @override
   void dispose() {
+    if (_usesNativeShortcuts) _nativeShortcuts.setMethodCallHandler(null);
     _metadataScroll.dispose();
     for (final controller in _all) {
       controller
@@ -232,14 +250,18 @@ class _EditorScreenState extends State<EditorScreen> {
     }
   }
 
-  KeyEventResult _handleWindowsKey(FocusNode node, KeyEvent event) {
+  KeyEventResult _handleDesktopKey(FocusNode node, KeyEvent event) {
     final keyboard = HardwareKeyboard.instance;
-    if (defaultTargetPlatform == TargetPlatform.windows &&
+    final isMacOS = defaultTargetPlatform == TargetPlatform.macOS;
+    final saveModifier = isMacOS
+        ? keyboard.isMetaPressed
+        : keyboard.isControlPressed;
+    if ((defaultTargetPlatform == TargetPlatform.windows || isMacOS) &&
         event is KeyDownEvent &&
         event.logicalKey == LogicalKeyboardKey.keyS &&
-        keyboard.isControlPressed &&
+        saveModifier &&
         !keyboard.isAltPressed &&
-        !keyboard.isMetaPressed &&
+        (isMacOS || !keyboard.isMetaPressed) &&
         !keyboard.isShiftPressed &&
         ModalRoute.of(context)?.isCurrent != false) {
       unawaited(_save());
@@ -516,8 +538,10 @@ class _EditorScreenState extends State<EditorScreen> {
           onBack: widget.onBack,
           actions: [
             IconButton(
-              tooltip: defaultTargetPlatform == TargetPlatform.windows
-                  ? '${l10n.actionSave} (Ctrl+S)'
+              tooltip:
+                  defaultTargetPlatform == TargetPlatform.windows ||
+                      defaultTargetPlatform == TargetPlatform.macOS
+                  ? '${l10n.actionSave} (${defaultTargetPlatform == TargetPlatform.macOS ? '⌘' : 'Ctrl+'}S)'
                   : l10n.actionSave,
               onPressed: _saving ? null : _save,
               icon: const Icon(Icons.check_rounded),
@@ -585,8 +609,10 @@ class _EditorScreenState extends State<EditorScreen> {
       ],
     );
     return Focus(
-      autofocus: defaultTargetPlatform == TargetPlatform.windows,
-      onKeyEvent: _handleWindowsKey,
+      autofocus:
+          defaultTargetPlatform == TargetPlatform.windows ||
+          defaultTargetPlatform == TargetPlatform.macOS,
+      onKeyEvent: _handleDesktopKey,
       child: content,
     );
   }

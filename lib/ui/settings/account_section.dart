@@ -151,7 +151,8 @@ class AccountSection extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
         child: Text(l10n.accountAutoSync),
       ),
-      if (defaultTargetPlatform == TargetPlatform.android) ...[
+      if (defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.macOS) ...[
         ListTile(
           key: const ValueKey('account-drive-folder'),
           leading: const Icon(Icons.folder_open_outlined),
