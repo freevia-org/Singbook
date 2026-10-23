@@ -602,9 +602,110 @@ class AppController extends ChangeNotifier {
     combined = null;
     checks.clear();
     _cachedDiscoverySourceIds = const {};
+    _historicalCacheUses = const [];
   }
 
   Set<String> _cachedDiscoverySourceIds = const {};
+  List<HistoricalCacheUse> _historicalCacheUses = const [];
+
+  /// Only a repository read grants permission to reuse legacy historical
+  /// sources. Arbitrary cachedResults passed to selectCandidate never do.
+  Future<void> compareSavedSong(
+    String songId, {
+    required SongCandidate expectedReference,
+    String? searchQuery,
+  }) async {
+    final searchEpoch = ++_searchEpoch;
+    _searchCancel?.cancel();
+    searching = false;
+    selection = null;
+    cancelDiscovery();
+    final epoch = _discoveryEpoch;
+    try {
+      final loaded = await loadSong(songId);
+      if (_disposed ||
+          epoch != _discoveryEpoch ||
+          searchEpoch != _searchEpoch) {
+        return;
+      }
+      if (loaded == null || loaded.extensionError != null) {
+        throw const FormatException('invalid_local_data');
+      }
+      final stored = SongDocument.fromJson(_snapshotJsonMap(loaded.toJson()));
+      final reference =
+          stored.selectedRecording ??
+          stored.sources
+              .where((source) => source.id == stored.extra['selectedSourceId'])
+              .firstOrNull
+              ?.candidate ??
+          stored.sources
+              .where(
+                (source) =>
+                    source.matchKind != MatchKind.rejected &&
+                    plainLyrics(source.body).trim().isNotEmpty,
+              )
+              .firstOrNull
+              ?.candidate;
+      if (reference == null ||
+          _comparisonKey(reference.toJson()) !=
+              _comparisonKey(expectedReference.toJson())) {
+        throw const FormatException('invalid_local_data');
+      }
+      await _selectCandidate(
+        reference,
+        searchQuery: searchQuery,
+        cachedResults: stored.sources,
+        storedComparison: stored,
+      );
+    } catch (_) {
+      if (!_disposed &&
+          epoch == _discoveryEpoch &&
+          searchEpoch == _searchEpoch) {
+        errorCode = 'invalid_local_data';
+        _emit();
+      }
+    }
+  }
+
+  String _comparisonKey(Object? value) {
+    Object? ordered(Object? item) {
+      if (item is Map) {
+        final keys = item.keys.cast<String>().toList()..sort();
+        return {for (final key in keys) key: ordered(item[key])};
+      }
+      if (item is List) return item.map(ordered).toList();
+      return item;
+    }
+
+    return jsonEncode(ordered(value));
+  }
+
+  List<SourceResult> _mergeDiscoveryResults(
+    SongCandidate selected,
+    List<SourceResult> existing,
+    Iterable<SourceResult> incoming,
+  ) {
+    final merged = {for (final source in existing) source.id: source};
+    for (final source in incoming) {
+      final previous = merged[source.id];
+      final cachedHistorical =
+          previous != null &&
+          _historicalCacheUses.any((use) => use.allows(selected, previous));
+      if (cachedHistorical &&
+          !explicitHistoricalWorkMatches(selected, source)) {
+        // Keep diagnostics in checks, but do not discard a usable saved page
+        // because a fresh response for the same ID failed its own validation.
+        continue;
+      }
+      if (cachedHistorical) {
+        _historicalCacheUses = _historicalCacheUses
+            .where((use) => !use.allows(selected, previous))
+            .toList();
+      }
+      merged[source.id] = source;
+    }
+    return merged.values.toList();
+  }
 
   /// Chord arrangements receive a final lyric-agreement check after providers
   /// finish. Plain lyrics and previously saved sources can be opened sooner.
@@ -617,6 +718,17 @@ class AppController extends ChangeNotifier {
     SongCandidate candidate, {
     String? searchQuery,
     List<SourceResult> cachedResults = const [],
+  }) => _selectCandidate(
+    candidate,
+    searchQuery: searchQuery,
+    cachedResults: cachedResults,
+  );
+
+  Future<void> _selectCandidate(
+    SongCandidate candidate, {
+    String? searchQuery,
+    List<SourceResult> cachedResults = const [],
+    SongDocument? storedComparison,
   }) async {
     ++_searchEpoch;
     _searchCancel?.cancel();
@@ -630,10 +742,23 @@ class AppController extends ChangeNotifier {
     selection = candidate;
     if (searchQuery != null) query = searchQuery;
     // Saved provenance remains available during refresh, including offline.
-    // Fresh results replace only the matching cached source by identity.
+    // Fresh results replace matching cached identities; a saved historical
+    // version additionally requires the replacement's own fresh page proof.
     final cached = {
       for (final source in cachedResults) source.id: _snapshotSource(source),
     }.values.toList();
+    if (storedComparison != null) {
+      final uses = <HistoricalCacheUse>[];
+      for (final source in cached) {
+        final use = HistoricalCacheUse.fromLibrarySnapshot(
+          storedComparison,
+          candidate,
+          source,
+        );
+        if (use != null) uses.add(use);
+      }
+      _historicalCacheUses = uses;
+    }
     _cachedDiscoverySourceIds = cached.map((source) => source.id).toSet();
     results = cached;
     discovering = true;
@@ -660,8 +785,20 @@ class AppController extends ChangeNotifier {
                   !providerEnabled('youtubemusic'))) {
             return;
           }
-          checks[check.providerId] = check;
           final result = check.result;
+          checks[check.providerId] =
+              result != null &&
+                  result.candidate.providerId == 'wikisource' &&
+                  result.matchKind != MatchKind.rejected &&
+                  !explicitHistoricalWorkMatches(candidate, result)
+              ? ProviderCheck(
+                  providerId: check.providerId,
+                  state: 'failed',
+                  code: 'validation_rejected',
+                  result: result,
+                  operations: check.operations,
+                )
+              : check;
           if (result != null &&
               !identical(
                 results.where((item) => item.id == result.id).firstOrNull,
@@ -669,25 +806,20 @@ class AppController extends ChangeNotifier {
               ) &&
               !(result.hasChords &&
                   _cachedDiscoverySourceIds.contains(result.id))) {
-            results = [
-              ...results.where((item) => item.id != result.id),
-              result,
-            ];
+            results = _mergeDiscoveryResults(candidate, results, [result]);
             _combine(candidate);
           }
           _emit();
         },
       );
       if (epoch != _discoveryEpoch || _disposed) return;
-      final latestById = <String, SourceResult>{
-        for (final source in cached) source.id: source,
+      results = _mergeDiscoveryResults(candidate, cached, [
         for (final source in found)
           if (source.candidate.providerId != 'youtubemusic' ||
               (!youtubeCancellation.isCancelled &&
                   providerEnabled('youtubemusic')))
-            source.id: source,
-      };
-      results = latestById.values.toList();
+            source,
+      ]);
       _combine(candidate);
     } catch (error) {
       if (epoch != _discoveryEpoch || _disposed) return;
@@ -714,12 +846,17 @@ class AppController extends ChangeNotifier {
         .toList();
     final usable = available.where(
       (r) =>
-          r.matchKind != MatchKind.rejected &&
+          (r.matchKind != MatchKind.rejected ||
+              _historicalCacheUses.any((use) => use.allows(candidate, r))) &&
           plainLyrics(r.body).trim().isNotEmpty,
     );
     try {
       if (usable.isNotEmpty) {
-        combined = combineSources(candidate, available);
+        combined = combineSources(
+          candidate,
+          available,
+          historicalCacheUses: _historicalCacheUses,
+        );
       } else {
         final fallback = bestLyricsFallback(available);
         if (fallback == null) {
@@ -730,6 +867,7 @@ class AppController extends ChangeNotifier {
             available,
             preferredSourceId: fallback.id,
             allowRejectedPreferredSource: true,
+            historicalCacheUses: _historicalCacheUses,
           );
           combined = fallbackDocument.copyWith(
             extra: {...fallbackDocument.extra, 'combinedFallbackSource': true},
@@ -761,9 +899,16 @@ class AppController extends ChangeNotifier {
         ? combined?.extra['selectedSourceId'] as String?
         : null;
     final requestedSourceId = source?.id ?? fallbackCombinedSourceId;
+    final historicalSaveUses = <HistoricalCacheUse>[];
     final resultSnapshots = results
         .map((item) {
           final snapshot = _snapshotSource(item);
+          if (selectedSnapshot != null) {
+            for (final use in _historicalCacheUses) {
+              final captured = use.capture(selectedSnapshot, item, snapshot);
+              if (captured != null) historicalSaveUses.add(captured);
+            }
+          }
           if (source == null && !isSourceReady(item)) {
             return snapshot.copyWith(
               timingTracks: const [],
@@ -802,11 +947,27 @@ class AppController extends ChangeNotifier {
         preferredSourceId: selectedSource?.id ?? fallbackCombinedSourceId,
         allowRejectedPreferredSource:
             allowRejectedSource || fallbackCombinedSourceId != null,
+        historicalCacheUses: historicalSaveUses,
       );
+      // A combined save may still choose the exact old source that the person
+      // explicitly saved. Keep that decision only while its repository-issued
+      // cache capability still authorizes this unchanged captured payload.
+      final retainedExplicitSource = source == null
+          ? resultSnapshots.where((result) =>
+              result.id == document.extra['selectedSourceId'] &&
+              result.matchKind == MatchKind.rejected &&
+              result.matchReason == 'identity_mismatch' &&
+              selected.artist.trim().isEmpty &&
+              result.candidate.artist.trim().isNotEmpty &&
+              historicalSaveUses.any((use) => use.allows(selected, result)),
+            ).firstOrNull
+          : null;
       final song = document.copyWith(
         extra: {
           ...document.extra,
           if (source != null) 'savedSourceId': source.id,
+          if (retainedExplicitSource != null)
+            'savedSourceId': retainedExplicitSource.id,
           if (source == null) 'combinedSelection': selected.identity,
         },
         revision: 1,
@@ -1644,6 +1805,7 @@ class AppController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _historicalCacheUses = const [];
     _autoSyncTimer?.cancel();
     _sync?.cancel();
     _searchCancel?.cancel();

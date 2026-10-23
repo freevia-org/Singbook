@@ -1,0 +1,63 @@
+{
+  "id": "legacy-wikisource-explicit-save",
+  "title": "Example Text",
+  "artist": "",
+  "body": "Invented opening words for a historical text\nInvented closing words kept exactly as saved",
+  "metadata": {},
+  "sources": [
+    {
+      "parserVersion": "verse-extra-1",
+      "sourceDocumentId": "wikisource:7",
+      "rights": {
+        "source": "wikisource",
+        "sourceId": "7",
+        "sourceUrl": "https://en.wikisource.org/?curid=7",
+        "license": "Template:PD-old",
+        "licenseUrl": "https://en.wikisource.org/wiki/Wikisource:Copyright_policy",
+        "attribution": "Writer; Wikisource contributors",
+        "permissions": {"status": "per_work_and_jurisdiction", "tags": ["Template:PD-old"]}
+      },
+      "revision": "123",
+      "userSelectedImport": true,
+      "candidate": {
+        "providerId": "wikisource",
+        "id": "7",
+        "title": "Example Text",
+        "artist": "Writer",
+        "url": "https://en.wikisource.org/?curid=7",
+        "metadata": {"identityScope": "historicalText", "revision": 123, "copyrightTags": ["Template:PD-old"]}
+      },
+      "body": "Invented opening words for a historical text\nInvented closing words kept exactly as saved",
+      "metadata": {"identityScope": "historicalText", "revision": 123, "copyrightTags": ["Template:PD-old"]},
+      "timingTracks": [],
+      "matchKind": "rejected",
+      "attribution": "Writer; Wikisource contributors",
+      "matchReason": "identity_mismatch",
+      "retrievedAt": "2026-10-22T10:00:00.000Z"
+    }
+  ],
+  "timingTracks": [],
+  "favorite": true,
+  "createdAt": "2026-10-22T10:00:00.000Z",
+  "updatedAt": "2026-10-22T10:00:00.000Z",
+  "selectedRecording": {
+    "providerId": "wikisource",
+    "id": "7",
+    "title": "Example Text",
+    "artist": "",
+    "url": "https://en.wikisource.org/?curid=7",
+    "metadata": {"identityScope": "historicalText", "snippet": "Invented excerpt"}
+  },
+  "activeTimingTrackId": null,
+  "revision": 1,
+  "extra": {
+    "selectedSourceId": "wikisource:7",
+    "savedSourceId": "wikisource:7",
+    "fieldOrigins": {"lyrics": "wikisource:7"},
+    "fieldContributors": {"lyrics": ["wikisource:7"]},
+    "recommendation": "Combined lyrics, chords, timing, and metadata from matching sources.",
+    "excludedIncompleteSourceIds": []
+  },
+  "preservedExtensions": [],
+  "extensionError": null
+}

@@ -294,6 +294,19 @@ class WikisourceProvider implements LyricsProvider {
       'prop': 'text|revid|templates|categories',
     }, cancel);
     final parsed = jsonMap(result['parse']);
+    final pageId = parsed['pageid'];
+    if (pageId is! int ||
+        pageId <= 0 ||
+        pageId.toString() != candidate.id ||
+        stringValue(parsed['title']).isEmpty ||
+        _wikisourceTitleIdentity(stringValue(parsed['title'])) !=
+            _wikisourceTitleIdentity(candidate.title)) {
+      throw const ProviderException('identity_mismatch');
+    }
+    final revision = parsed['revid'];
+    if (revision is! int || revision <= 0) {
+      throw const ProviderException('invalid_response');
+    }
     final templates = maps(
       parsed['templates'],
     ).map((r) => stringValue(r['title'])).toList();
@@ -342,7 +355,9 @@ class WikisourceProvider implements LyricsProvider {
       url: candidate.url,
       metadata: {
         'identityScope': 'historicalText',
-        'revision': parsed['revid'],
+        'resolvedPageId': pageId.toString(),
+        'resolvedTitle': stringValue(parsed['title']),
+        'revision': revision,
         'copyrightTags': rights,
       },
     );
@@ -359,7 +374,7 @@ class WikisourceProvider implements LyricsProvider {
           licenseUrl:
               'https://en.wikisource.org/wiki/Wikisource:Copyright_policy',
           attribution: '${found.artist}; Wikisource contributors',
-          revision: parsed['revid']?.toString(),
+          revision: revision.toString(),
           permissions: {'status': 'per_work_and_jurisdiction', 'tags': rights},
         ),
         'userSelectedImport': true,
@@ -367,3 +382,9 @@ class WikisourceProvider implements LyricsProvider {
     );
   }
 }
+
+String _wikisourceTitleIdentity(String value) => value
+    .toLowerCase()
+    .replaceAll(RegExp("['‘’]"), '')
+    .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
+    .trim();
