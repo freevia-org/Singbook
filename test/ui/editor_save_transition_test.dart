@@ -10,7 +10,9 @@ import 'package:singbook/ui/verse_ui_state.dart';
 import 'package:singbook/ui/verse_app.dart';
 
 void main() {
-  testWidgets('untouched new-song template returns without saving', (tester) async {
+  testWidgets('untouched new-song template returns without saving', (
+    tester,
+  ) async {
     final controller = _TestController(title: '');
     addTearDown(controller.dispose);
     var backCalls = 0;
@@ -60,9 +62,7 @@ void main() {
 
     await _pumpEditor(tester, controller);
     final save = find.byTooltip(
-      AppLocalizations.of(
-        tester.element(find.byType(EditorScreen)),
-      ).actionSave,
+      AppLocalizations.of(tester.element(find.byType(EditorScreen))).actionSave,
     );
     await tester.tap(save);
     await tester.pump();
@@ -112,9 +112,7 @@ void main() {
     );
 
     await _pumpEditor(tester, controller);
-    final l10n = AppLocalizations.of(
-      tester.element(find.byType(EditorScreen)),
-    );
+    final l10n = AppLocalizations.of(tester.element(find.byType(EditorScreen)));
     await tester.tap(find.byTooltip(l10n.actionSave));
     await tester.pump();
     await hideCalled.future;
@@ -146,9 +144,13 @@ Future<void> _pumpEditor(
   );
   if (edit) {
     // These transition tests need an actual edit before Save becomes useful.
-    tester.widget<TextField>(
-      find.byKey(const ValueKey('editor-lyrics-input')),
-    ).controller!.text = '[C]New lyrics';
+    tester
+            .widget<TextField>(
+              find.byKey(const ValueKey('editor-lyrics-input')),
+            )
+            .controller!
+            .text =
+        '[C]New lyrics';
     await tester.pump();
   }
 }

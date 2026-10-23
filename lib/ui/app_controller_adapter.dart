@@ -233,9 +233,8 @@ class AppControllerAdapter extends VerseUiController {
         12;
   }
 
-  SetlistDocument? get currentSetlist => _setlistId == null
-      ? null
-      : _setlistById(_setlistId!);
+  SetlistDocument? get currentSetlist =>
+      _setlistId == null ? null : _setlistById(_setlistId!);
 
   @override
   VerseUiState get state {
@@ -2670,7 +2669,10 @@ class AppControllerAdapter extends VerseUiController {
       if (app.findSong(songId) == null) return;
       await _saveSetlistWith(
         draft,
-        entries: [...draft.entries, SetlistEntry(id: newId(), songId: songId)],
+        entries: [
+          ...draft.entries,
+          SetlistEntry(id: newId(), songId: songId),
+        ],
       );
       return;
     }

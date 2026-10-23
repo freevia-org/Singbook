@@ -548,9 +548,7 @@ void main() {
         );
 
         final pane = find.byKey(const ValueKey('tablet-reader-content'));
-        final scrollbar = find.byKey(
-          const ValueKey('player-lyrics-scrollbar'),
-        );
+        final scrollbar = find.byKey(const ValueKey('player-lyrics-scrollbar'));
         final list = find.byKey(const ValueKey('player-lyrics-scroll'));
         expect(
           find.descendant(of: pane, matching: find.byType(Scrollbar)),

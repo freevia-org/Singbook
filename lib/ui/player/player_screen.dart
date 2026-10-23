@@ -717,8 +717,9 @@ class _PlayerScreenState extends State<PlayerScreen>
             child: LayoutBuilder(
               key: const ValueKey('tablet-reader-content'),
               builder: (context, constraints) {
-                final actionGutter =
-                    widget.onFullScreenChanged == null ? 0.0 : 48.0;
+                final actionGutter = widget.onFullScreenChanged == null
+                    ? 0.0
+                    : 48.0;
                 final textWidth = math.max(
                   0.0,
                   constraints.maxWidth - actionGutter,

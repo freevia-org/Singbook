@@ -61,9 +61,13 @@ void main() {
       final frame = find.byKey(const ValueKey('tablet-content-frame'));
       final rail = find.byType(NavigationRail);
       final availableWidth = size.width - tester.getSize(rail).width;
-      final desktop = !kIsWeb &&
-          {TargetPlatform.windows, TargetPlatform.macOS, TargetPlatform.linux}
-              .contains(defaultTargetPlatform);
+      final desktop =
+          !kIsWeb &&
+          {
+            TargetPlatform.windows,
+            TargetPlatform.macOS,
+            TargetPlatform.linux,
+          }.contains(defaultTargetPlatform);
       expect(
         tester.getSize(frame).width,
         closeTo(desktop ? availableWidth : 1200, 1),
