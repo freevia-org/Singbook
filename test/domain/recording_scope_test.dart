@@ -61,6 +61,7 @@ void main() {
         recordingIds: const {'musicbrainz': 'recording-1'},
       );
 
+      expect(recordingCompatible(selectedRecording, source), isTrue);
       final document = combineSources(selectedRecording, [source]);
       expect(document.timingTracks.single.status, TimingStatus.usable);
       expect(document.activeTimingTrackId, document.timingTracks.single.id);
@@ -70,4 +71,65 @@ void main() {
       );
     },
   );
+
+  for (final historicalLocation in [
+    'selected scope',
+    'candidate scope',
+    'source metadata scope',
+    'source extra scope',
+    'selected Wikisource provider',
+    'candidate Wikisource provider',
+  ]) {
+    test('explicit recording ID cannot authorize $historicalLocation', () {
+      final selectedJson = cloneJson(const SongCandidate(
+        providerId: 'musicbrainz',
+        id: 'recording-1',
+        title: 'Amazing Grace',
+        artist: 'John Newton',
+        metadata: {'identityScope': 'recording'},
+        recordingIds: {'musicbrainz': 'recording-1'},
+      ).toJson());
+      final sourceJson = cloneJson(worshipSource(
+        recordingIds: const {'musicbrainz': 'recording-1'},
+      ).toJson());
+      final candidate = sourceJson['candidate'] as JsonMap;
+      switch (historicalLocation) {
+        case 'selected scope':
+          (selectedJson['metadata'] as JsonMap)['identityScope'] = 'historicalText';
+          break;
+        case 'candidate scope':
+          (candidate['metadata'] as JsonMap)['identityScope'] = 'historicalText';
+          break;
+        case 'source metadata scope':
+          (sourceJson['metadata'] as JsonMap)['identityScope'] = 'historicalText';
+          break;
+        case 'source extra scope':
+          sourceJson['identityScope'] = 'historicalText';
+          break;
+        case 'selected Wikisource provider':
+          selectedJson['providerId'] = 'wikisource';
+          break;
+        case 'candidate Wikisource provider':
+          candidate['providerId'] = 'wikisource';
+          break;
+      }
+      final selected = SongCandidate.fromJson(selectedJson);
+      final source = SourceResult.fromJson(sourceJson);
+      expect(selected.recordingIds['musicbrainz'], 'recording-1');
+      expect(source.candidate.recordingIds['musicbrainz'], 'recording-1');
+      expect(recordingCompatible(selected, source), isFalse);
+      if (historicalLocation == 'candidate Wikisource provider') {
+        // A provider label with no validated own-page proof is not an import.
+        expect(() => combineSources(selected, [source]),
+            throwsA(isA<FormatException>()));
+      } else {
+        final document = combineSources(selected, [source]);
+        expect(document.timingTracks.single.status, TimingStatus.unverified);
+        expect(document.activeTimingTrackId, isNull);
+        expect(document.timingTracks.single.extra['binding']['recordingVerified'],
+            isFalse);
+        expect(document.timingTracks.single.raw, '[00:01]Amazing grace');
+      }
+    });
+  }
 }

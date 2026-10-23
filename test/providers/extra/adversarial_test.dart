@@ -32,12 +32,14 @@ const wikisourceCandidate = SongCandidate(
 
 Map<String, dynamic> wikisourceParse(String poem) => {
   'parse': {
+    'pageid': 12,
     'title': 'Old Song',
     'revid': 7,
     'templates': [
       {'title': 'Template:PD-old'},
     ],
-    'text': '<a href="/wiki/Author:Writer">Writer</a><div class="poem">$poem</div>',
+    'text':
+        '<a href="/wiki/Author:Writer">Writer</a><div class="poem">$poem</div>',
   },
 };
 
@@ -100,9 +102,8 @@ void main() {
     test('a poem made only of directives is rejected', () async {
       final provider = WikisourceProvider(
         mock(
-          (_) async => jsonResponse(
-            wikisourceParse('{x_verse: 1 json-base64url 1}'),
-          ),
+          (_) async =>
+              jsonResponse(wikisourceParse('{x_verse: 1 json-base64url 1}')),
         ),
       );
       await expectLater(
@@ -114,9 +115,8 @@ void main() {
     test('deeply nested markup is a typed extraction failure', () async {
       final provider = WikisourceProvider(
         mock(
-          (_) async => jsonResponse(
-            wikisourceParse('${'<span>' * 20000}deep text'),
-          ),
+          (_) async =>
+              jsonResponse(wikisourceParse('${'<span>' * 20000}deep text')),
         ),
       );
       await expectLater(
@@ -126,7 +126,9 @@ void main() {
     });
 
     test('maxlag is a retryable busy failure for search and resolve', () async {
-      final provider = WikisourceProvider(mock((_) async => jsonResponse(maxlag)));
+      final provider = WikisourceProvider(
+        mock((_) async => jsonResponse(maxlag)),
+      );
       await expectLater(
         provider.search('rose'),
         throwsA(errorCode('provider_busy')),
@@ -163,109 +165,117 @@ void main() {
       );
     });
 
-    test('licenseUrl must be a known https host; image host is restricted', () async {
-      final bad = await WikimediaCommonsProvider(
-        mock(
-          (_) async => jsonResponse(
-            commonsFile(licenseUrl: 'javascript:alert(1)'),
+    test(
+      'licenseUrl must be a known https host; image host is restricted',
+      () async {
+        final bad = await WikimediaCommonsProvider(
+          mock(
+            (_) async =>
+                jsonResponse(commonsFile(licenseUrl: 'javascript:alert(1)')),
           ),
-        ),
-      ).resolve(commonsCandidate);
-      expect(bad.extra['rights'].containsKey('licenseUrl'), false);
-      expect(bad.metadata['licensedImages'][0].containsKey('licenseUrl'), false);
-      final tracker = await WikimediaCommonsProvider(
-        mock(
-          (_) async => jsonResponse(
-            commonsFile(licenseUrl: 'http://tracker.example/l'),
-          ),
-        ),
-      ).resolve(commonsCandidate);
-      expect(tracker.extra['rights'].containsKey('licenseUrl'), false);
-      final good = await WikimediaCommonsProvider(
-        mock((_) async => jsonResponse(commonsFile())),
-      ).resolve(commonsCandidate);
-      expect(
-        good.extra['rights']['licenseUrl'],
-        'https://creativecommons.org/licenses/by-sa/4.0/',
-      );
-      await expectLater(
-        WikimediaCommonsProvider(
+        ).resolve(commonsCandidate);
+        expect(bad.extra['rights'].containsKey('licenseUrl'), false);
+        expect(
+          bad.metadata['licensedImages'][0].containsKey('licenseUrl'),
+          false,
+        );
+        final tracker = await WikimediaCommonsProvider(
           mock(
             (_) async => jsonResponse(
-              commonsFile(url: 'https://images.example.org/x.jpg'),
+              commonsFile(licenseUrl: 'http://tracker.example/l'),
             ),
           ),
-        ).resolve(commonsCandidate),
-        throwsA(errorCode('invalid_response')),
-      );
-    });
+        ).resolve(commonsCandidate);
+        expect(tracker.extra['rights'].containsKey('licenseUrl'), false);
+        final good = await WikimediaCommonsProvider(
+          mock((_) async => jsonResponse(commonsFile())),
+        ).resolve(commonsCandidate);
+        expect(
+          good.extra['rights']['licenseUrl'],
+          'https://creativecommons.org/licenses/by-sa/4.0/',
+        );
+        await expectLater(
+          WikimediaCommonsProvider(
+            mock(
+              (_) async => jsonResponse(
+                commonsFile(url: 'https://images.example.org/x.jpg'),
+              ),
+            ),
+          ).resolve(commonsCandidate),
+          throwsA(errorCode('invalid_response')),
+        );
+      },
+    );
   });
 
   group('metadata from extra providers is bounded', () {
-    test('WorshipCommons rows: wrong types and huge values are normalised', () async {
-      final rlo = String.fromCharCode(0x202e);
-      final provider = WorshipCommonsProvider(
-        mock(
-          (_) async => jsonResponse({
-            'rows': [
-              {
-                'id': 42,
-                'title': 'Example${rlo}Song',
-                'writer': 'Author',
-                'license': 'PD',
-                'status': 'approved',
-                'bpm': 'fast',
-                'songKey': 'C' * 5000,
-                'themes': {
-                  'a': {
-                    'b': {
-                      'c': {
-                        'd': {
-                          'e': {
-                            'f': {'g': 'deep'},
+    test(
+      'WorshipCommons rows: wrong types and huge values are normalised',
+      () async {
+        final rlo = String.fromCharCode(0x202e);
+        final provider = WorshipCommonsProvider(
+          mock(
+            (_) async => jsonResponse({
+              'rows': [
+                {
+                  'id': 42,
+                  'title': 'Example${rlo}Song',
+                  'writer': 'Author',
+                  'license': 'PD',
+                  'status': 'approved',
+                  'bpm': 'fast',
+                  'songKey': 'C' * 5000,
+                  'themes': {
+                    'a': {
+                      'b': {
+                        'c': {
+                          'd': {
+                            'e': {
+                              'f': {'g': 'deep'},
+                            },
                           },
                         },
                       },
                     },
                   },
+                  'scripture': List.generate(500, (i) => 'Psalm $i'),
+                  'videoUrl': 'https://www.youtube.com/watch?v=abcdefghijk',
+                  'chordPro': '{capo: 999999}\n{year: 3}\n[C]A synthetic line',
                 },
-                'scripture': List.generate(500, (i) => 'Psalm $i'),
-                'videoUrl': 'https://www.youtube.com/watch?v=abcdefghijk',
-                'chordPro': '{capo: 999999}\n{year: 3}\n[C]A synthetic line',
-              },
-              {
-                'id': '',
-                'title': 'No Id',
-                'license': 'PD',
-                'status': 'approved',
-                'chordPro': 'x',
-              },
-              {
-                'id': 'notitle',
-                'title': '  ',
-                'license': 'PD',
-                'status': 'approved',
-                'chordPro': 'x',
-              },
-            ],
-          }),
-        ),
-      );
-      final rows = await provider.search('example');
-      expect(rows.single.id, '42');
-      expect(rows.single.title, 'Example${rlo}Song'.replaceAll(rlo, ''));
-      final result = await provider.resolve(rows.single);
-      final meta = result.metadata;
-      expect(meta.containsKey('tempo'), false);
-      expect(meta.containsKey('capo'), false);
-      expect(meta.containsKey('year'), false);
-      expect((meta['key'] as String).length, lessThanOrEqualTo(500));
-      expect((meta['scripture'] as List).length, 30);
-      expect(jsonEncode(meta['themes']), isNot(contains('deep')));
-      final link = (meta['mediaLinks'] as List).single as Map;
-      expect(link['kind'], 'videoUrl');
-      expect(link.containsKey('type'), false);
-    });
+                {
+                  'id': '',
+                  'title': 'No Id',
+                  'license': 'PD',
+                  'status': 'approved',
+                  'chordPro': 'x',
+                },
+                {
+                  'id': 'notitle',
+                  'title': '  ',
+                  'license': 'PD',
+                  'status': 'approved',
+                  'chordPro': 'x',
+                },
+              ],
+            }),
+          ),
+        );
+        final rows = await provider.search('example');
+        expect(rows.single.id, '42');
+        expect(rows.single.title, 'Example${rlo}Song'.replaceAll(rlo, ''));
+        final result = await provider.resolve(rows.single);
+        final meta = result.metadata;
+        expect(meta.containsKey('tempo'), false);
+        expect(meta.containsKey('capo'), false);
+        expect(meta.containsKey('year'), false);
+        expect((meta['key'] as String).length, lessThanOrEqualTo(500));
+        expect((meta['scripture'] as List).length, 30);
+        expect(jsonEncode(meta['themes']), isNot(contains('deep')));
+        final link = (meta['mediaLinks'] as List).single as Map;
+        expect(link['kind'], 'videoUrl');
+        expect(link.containsKey('type'), false);
+      },
+    );
 
     test('MusicBrainz releases and relations are capped', () async {
       const id = '11111111-2222-3333-4444-555555555555';

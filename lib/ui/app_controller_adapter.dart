@@ -1729,11 +1729,17 @@ class AppControllerAdapter extends VerseUiController {
       ].where((part) => part.trim().isNotEmpty).join(' ');
       _selectedQuery = _query.trim();
       _cachedAutocomplete = [reference];
-      final refresh = app.selectCandidate(
-        reference,
-        searchQuery: _query,
-        cachedResults: song.sources,
-      );
+      final refresh = reference.providerId == 'wikisource'
+          ? app.compareSavedSong(
+              song.id,
+              expectedReference: reference,
+              searchQuery: _query,
+            )
+          : app.selectCandidate(
+              reference,
+              searchQuery: _query,
+              cachedResults: song.sources,
+            );
       notifyListeners();
       await refresh;
       _chooseFallbackVersion();
