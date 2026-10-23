@@ -8,8 +8,9 @@ import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/providers/provider.dart';
 
 class _PendingProvider implements LyricsProvider {
-  _PendingProvider(this.id);
+  _PendingProvider(this.id, {this.configured = true});
   final String id;
+  final bool configured;
   final started = Completer<CancellationToken?>();
   final response = Completer<SourceResult>();
   Completer<List<SongCandidate>>? searchResponse;
@@ -25,8 +26,12 @@ class _PendingProvider implements LyricsProvider {
     body: 'Original fixture words preserved for this particular recording.',
   );
   @override
-  ProviderDefinition get definition =>
-      ProviderDefinition(id: id, name: id, capabilities: {'catalog', 'lyrics'});
+  ProviderDefinition get definition => ProviderDefinition(
+    id: id,
+    name: id,
+    capabilities: {'catalog', 'lyrics'},
+    configured: configured,
+  );
   @override
   Future<List<SongCandidate>> search(
     String query, {
@@ -58,7 +63,7 @@ void main() {
         factory: databaseFactoryFfi,
       );
       addTearDown(repo.close);
-      final genius = _PendingProvider('genius');
+      final genius = _PendingProvider('genius', configured: false);
       final lrclib = _PendingProvider('lrclib')
         ..searchResponse = Completer<List<SongCandidate>>();
       final app = AppController(

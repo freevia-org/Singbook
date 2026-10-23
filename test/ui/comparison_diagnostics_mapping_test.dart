@@ -82,6 +82,15 @@ class _IdentityDiscovery extends SourceDiscoveryService {
   bool updatedCombinedMetadata = false;
 
   @override
+  List<ProviderDefinition> get definitions => const [
+    ProviderDefinition(
+      id: 'fixture',
+      name: 'Identity fixture',
+      capabilities: {'lyrics'},
+    ),
+  ];
+
+  @override
   Future<List<SourceResult>> discover(
     SongCandidate selection, {
     Set<String>? enabledIds,

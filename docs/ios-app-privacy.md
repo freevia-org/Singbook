@@ -35,8 +35,13 @@ details](https://developer.apple.com/app-store/app-privacy-details/) and
   See
   `lib/application/app_controller.dart`, `lib/sync/drive_store.dart`, and
   `lib/sync/google_drive_sync.dart`.
-- Searches for lyrics, charts, recordings, and metadata send the search text
-  (often a song title and artist) to the selected provider. Providers include
+- When you search, Singbook may send your query to several available song
+  catalogs enabled in settings. It remembers your preferred catalog and shows
+  its results first when available. Otherwise it uses the normal fallback,
+  preferring Genius when configured and available. Wikisource searches
+  historical texts separately and is searched only when you select it. After
+  you choose a song, Singbook may check enabled sources for lyrics, chords,
+  and metadata. Providers include
   Genius, LRCLIB, YouTube Music, Songsterr, Ultimate Guitar, MusicBrainz,
   Wikidata, Wikimedia Commons, and other sources in the bundled or refreshed
   source catalog. Requests include a Singbook versioned User-Agent; no

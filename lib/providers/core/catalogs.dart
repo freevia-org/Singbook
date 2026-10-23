@@ -3,8 +3,36 @@ import 'dart:io' show gzip;
 import 'package:html/dom.dart';
 import '../../domain/models.dart';
 import '../../domain/timing.dart';
+import '../../domain/lyrics_variants.dart';
 import '../provider.dart';
 import 'common.dart';
+
+const _maxPreservedLyricsVariant = 200000;
+
+String? _preservedLyricsVariant(dynamic value) {
+  if (value is! String) return null;
+  if (value.length > _maxPreservedLyricsVariant) {
+    throw const ProviderException('invalid_response');
+  }
+  return value;
+}
+
+SourceResult _withLyricsVariants(
+  SourceResult result, {
+  required JsonMap rawVariants,
+  required String selected,
+}) => result.copyWith(
+  extra: {
+    ...result.extra,
+    'lyricsVariants': {...rawVariants, 'selected': selected},
+  },
+);
+
+bool _canSupplyLyrics(TimingTrack track) =>
+    track.status != TimingStatus.invalid &&
+    track.status != TimingStatus.unsupported &&
+    track.cues.isNotEmpty &&
+    track.sourceLyrics.trim().isNotEmpty;
 
 class GeniusProvider implements LyricsProvider {
   GeniusProvider(
@@ -251,6 +279,10 @@ class LrclibProvider implements LyricsProvider {
     if (song.id != candidate.id) {
       throw const ProviderException('invalid_response');
     }
+    final rawVariants = {
+      'plain': ?_preservedLyricsVariant(data['plainLyrics']),
+      'synced': ?_preservedLyricsVariant(data['syncedLyrics']),
+    };
     final raw = clean(data['syncedLyrics'], 200000);
     final timing = raw == null
         ? null
@@ -259,11 +291,23 @@ class LrclibProvider implements LyricsProvider {
             sourceDocumentId: song.identity,
             recordingId: song.identity,
           );
-    return lyricsResult(
+    final plain = clean(data['plainLyrics'], 200000) ?? '';
+    final choices = <String>[
+      if (timing != null && _canSupplyLyrics(timing)) timing.sourceLyrics,
+    ];
+    final selectedLyrics = preferCompatibleLyrics(plain, choices);
+    final result = lyricsResult(
       song,
-      clean(data['plainLyrics'], 200000) ?? timing?.sourceLyrics ?? '',
+      selectedLyrics,
       timing: timing == null ? [] : [timing],
       attribution: 'LRCLIB',
+    );
+    return _withLyricsVariants(
+      result,
+      rawVariants: rawVariants,
+      selected: choices.isNotEmpty && (plain.isEmpty || selectedLyrics != plain)
+          ? 'synced'
+          : 'plain',
     );
   }
 }
@@ -548,6 +592,11 @@ class SyncLrcProvider implements LyricsProvider {
         continue;
       }
       final lyrics = object(row['lyrics']), timing = <TimingTrack>[];
+      final rawVariants = {
+        'plain': ?_preservedLyricsVariant(lyrics['plain']),
+        'synced': ?_preservedLyricsVariant(lyrics['synced']),
+        'karaoke': ?_preservedLyricsVariant(lyrics['karaoke']),
+      };
       for (final field in ['synced', 'karaoke']) {
         final raw = clean(lyrics[field], 200000);
         if (raw != null && !timing.any((t) => t.raw == raw)) {
@@ -560,12 +609,35 @@ class SyncLrcProvider implements LyricsProvider {
           );
         }
       }
-      return lyricsResult(
+      final plain = clean(lyrics['plain'], 200000) ?? '';
+      final choices = [
+        for (final track in timing)
+          if (_canSupplyLyrics(track)) track.sourceLyrics,
+      ];
+      final selectedLyrics = preferCompatibleLyrics(plain, choices);
+      TimingTrack? chosenTrack;
+      if (plain.isEmpty || selectedLyrics != plain) {
+        for (final track in timing) {
+          if (_canSupplyLyrics(track) && track.sourceLyrics == selectedLyrics) {
+            chosenTrack = track;
+            break;
+          }
+        }
+      }
+      final result = lyricsResult(
         song,
-        clean(lyrics['plain'], 200000) ??
-            (timing.isEmpty ? '' : timing.last.sourceLyrics),
+        selectedLyrics,
         timing: timing,
         attribution: 'SyncLRC',
+      );
+      return _withLyricsVariants(
+        result,
+        rawVariants: rawVariants,
+        selected: chosenTrack != null
+            ? (chosenTrack.sourceDocumentId.endsWith(':karaoke')
+                  ? 'karaoke'
+                  : 'synced')
+            : 'plain',
       );
     }
     return null;
