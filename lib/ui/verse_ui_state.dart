@@ -278,10 +278,12 @@ class SearchReferenceData {
     this.durationSeconds,
     this.artworkUrl,
     this.matchReason,
+    this.isHistoricalText = false,
   });
   final String id, title, artist;
   final String? album, artworkUrl, matchReason;
   final double? durationSeconds;
+  final bool isHistoricalText;
 }
 
 @immutable
@@ -465,6 +467,8 @@ class VerseUiState {
     this.songs = const [],
     this.setlists = const [],
     this.providers = const [],
+    this.searchCatalogs = const [],
+    this.searchCatalogId,
     this.searchFiltersExpanded = false,
     this.searchFilters = const SearchFilterData(),
     this.syncReady = false,
@@ -540,6 +544,8 @@ class VerseUiState {
       songs = o.songs,
       setlists = o.setlists,
       providers = o.providers,
+      searchCatalogs = o.searchCatalogs,
+      searchCatalogId = o.searchCatalogId,
       searchFilters = o.searchFilters,
       searchFiltersExpanded = o.searchFiltersExpanded,
       syncReady = o.syncReady,
@@ -607,6 +613,8 @@ class VerseUiState {
   final List<SongCardData> songs;
   final List<SetlistCardData> setlists;
   final List<ProviderSettingData> providers;
+  final List<ProviderSettingData> searchCatalogs;
+  final String? searchCatalogId;
   final SearchFilterData searchFilters;
   final bool searchFiltersExpanded, syncReady, syncSignedIn, syncBusy;
   final String? accountName, accountPhotoUrl, accountError;
@@ -695,6 +703,7 @@ abstract class VerseUiController extends ChangeNotifier {
   void setQuery(String value);
   void changeSearchSong() => setQuery('');
   Future<void> submitSearch();
+  Future<void> setSearchCatalog(String id) async {}
   void toggleSearchFilters();
   void setSearchFilter(String key, Object? value);
   Future<void> loadMoreRecent();

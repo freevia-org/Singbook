@@ -28,6 +28,16 @@ class _CountingDiscovery extends SourceDiscoveryService {
   final searches = <String>[];
   Completer<List<SongCandidate>>? pending;
 
+  // Search is implemented here rather than by a transport-backed provider.
+  @override
+  List<ProviderDefinition> get definitions => const [
+    ProviderDefinition(
+      id: 'genius',
+      name: 'Synthetic catalog',
+      capabilities: {'catalog'},
+    ),
+  ];
+
   @override
   Future<List<SongCandidate>> search(
     String query, {

@@ -59,6 +59,9 @@ class AppControllerAdapter extends VerseUiController {
     this.onSignOut,
     this.onSavePlayerPreferences,
   }) {
+    _observedSearchCatalogId = app.searchCatalogId;
+    _observedSourceCatalogRevision =
+        app.discovery.catalogClient?.runtime.catalog?.revision;
     app.addListener(_onAppChanged);
   }
 
@@ -90,6 +93,9 @@ class AppControllerAdapter extends VerseUiController {
   String? _songId, _setlistId, _setlistEntryId, _selectedVersionId;
   String? _selectedQuery;
   String? _lastCatalogQuery;
+  String? _observedSearchCatalogId;
+  int? _observedSourceCatalogRevision;
+  int _catalogRequestRevision = 0, _catalogChangeRevision = 0;
   String? _versionOrderReferenceId;
   final Map<String, int> _versionArrivalOrder = {};
   int _nextVersionArrivalOrder = 0;
@@ -157,7 +163,24 @@ class AppControllerAdapter extends VerseUiController {
     super.notifyListeners();
   }
 
-  void _onAppChanged() => notifyListeners();
+  void _onAppChanged() {
+    final catalogId = app.searchCatalogId;
+    final revision = app.discovery.catalogClient?.runtime.catalog?.revision;
+    if (_observedSearchCatalogId != catalogId ||
+        _observedSourceCatalogRevision != revision) {
+      _observedSearchCatalogId = catalogId;
+      _observedSourceCatalogRevision = revision;
+      ++_catalogRequestRevision;
+      _searchDebounce?.cancel();
+      _cachedAutocomplete = const [];
+      _lastCatalogQuery = null;
+      if (app.selection == null) {
+        _selectedQuery = null;
+        _selectedVersionId = null;
+      }
+    }
+    notifyListeners();
+  }
 
   int _beginNavigationIntent() => ++_navigationIntentRevision;
 
@@ -461,6 +484,16 @@ class AppControllerAdapter extends VerseUiController {
             ),
           )
           .toList(),
+      searchCatalogs: app.searchCatalogs
+          .map(
+            (provider) => ProviderSettingData(
+              id: provider.id,
+              name: provider.name,
+              enabled: true,
+            ),
+          )
+          .toList(),
+      searchCatalogId: app.searchCatalogId,
       searchFiltersExpanded: _filtersExpanded,
       searchFilters: _filters,
       syncReady: app.syncConfigured,
@@ -634,6 +667,7 @@ class AppControllerAdapter extends VerseUiController {
         _validDuration(value.durationSeconds) ??
         _validDuration(value.metadata['durationSeconds']),
     artworkUrl: value.artworkUrl,
+    isHistoricalText: value.providerId == 'wikisource',
   );
 
   bool _matchesFilters(SongCandidate candidate) {
@@ -1538,9 +1572,53 @@ class AppControllerAdapter extends VerseUiController {
     );
   }
 
+  @override
+  Future<void> setSearchCatalog(String id) => _guard(() async {
+    if (_disposed ||
+        _route != VerseRoute.main ||
+        _tab != VerseTab.home ||
+        _homeMode != HomeListMode.online ||
+        app.selection != null) {
+      return;
+    }
+    if (!app.searchCatalogs.any((provider) => provider.id == id)) return;
+    final intent = _beginNavigationIntent();
+    final change = ++_catalogChangeRevision;
+    ++_catalogRequestRevision;
+    _searchDebounce?.cancel();
+    _cachedAutocomplete = const [];
+    _lastCatalogQuery = null;
+    _selectedQuery = null;
+    _selectedVersionId = null;
+    _versionOrderReferenceId = null;
+    _versionArrivalOrder.clear();
+    _nextVersionArrivalOrder = 0;
+    final query = _query;
+    final changed = await app.setSearchCatalog(id);
+    if (!changed ||
+        change != _catalogChangeRevision ||
+        !_isCurrentNavigationIntent(intent) ||
+        _homeMode != HomeListMode.online ||
+        _query != query ||
+        app.searchCatalogId != id) {
+      return;
+    }
+    _searchDebounce?.cancel();
+    if (query.trim().length >= 2) await _searchCatalog(query);
+    notifyListeners();
+  });
+
   Future<void> _searchCatalog(String query) async {
+    final request = ++_catalogRequestRevision;
+    final catalog = app.searchCatalogId;
     _lastCatalogQuery = query.trim();
     await app.search(query);
+    if (_disposed ||
+        request != _catalogRequestRevision ||
+        catalog != app.searchCatalogId ||
+        _query != query) {
+      return;
+    }
     _cachedAutocomplete = app.suggestions;
     notifyListeners();
   }
@@ -1613,6 +1691,7 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> selectReference(SearchReferenceData reference) async {
+    final request = _catalogRequestRevision;
     final candidates = app.suggestions.isNotEmpty
         ? app.suggestions
         : _cachedAutocomplete;
@@ -1624,6 +1703,11 @@ class AppControllerAdapter extends VerseUiController {
     _selectedVersionId = null;
     _selectedQuery = _query.trim();
     await app.selectCandidate(candidate);
+    if (_disposed ||
+        request != _catalogRequestRevision ||
+        app.selection?.identity != candidate.identity) {
+      return;
+    }
     _chooseFallbackVersion();
     notifyListeners();
   }
