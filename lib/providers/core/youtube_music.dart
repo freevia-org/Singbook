@@ -108,17 +108,14 @@ class YoutubeMusicProvider implements LyricsProvider {
         config?['INNERTUBE_CLIENT_VERSION'] ??
         client['clientVersion'] ??
         (upgrade ? '1.$date.01.00' : null);
-    final visitor = config?['VISITOR_DATA'] ?? client['visitorData'];
     if (version is! String ||
-        !RegExp(r'^[A-Za-z0-9._-]{1,100}$').hasMatch(version) ||
-        (visitor != null &&
-            (visitor is! String ||
-                visitor.length > 4096 ||
-                RegExp(r'[\r\n]').hasMatch(visitor)))) {
+        !RegExp(r'^[A-Za-z0-9._-]{1,100}$').hasMatch(version)) {
       throwIfBlocked(source);
       throw const ProviderException('extraction_failed');
     }
-    _configuration = {'version': version, 'visitor': ?visitor};
+    // Anonymous requests need the client version, not Google's visitor token.
+    // Do not retain or replay VISITOR_DATA / client.visitorData from the page.
+    _configuration = {'version': version};
     _expires = DateTime.now().add(const Duration(hours: 1));
     return _configuration!;
   }
@@ -152,12 +149,7 @@ class YoutubeMusicProvider implements LyricsProvider {
       await http.requestJson(
         Uri.parse('https://music.youtube.com/youtubei/v1/$endpoint?alt=json'),
         method: 'POST',
-        headers: {
-          ..._requestHeaders,
-          'Origin': 'https://music.youtube.com',
-          if (config['visitor'] != null)
-            'X-Goog-Visitor-Id': config['visitor'] as String,
-        },
+        headers: {..._requestHeaders, 'Origin': 'https://music.youtube.com'},
         body: {
           ...fields,
           'context': {
