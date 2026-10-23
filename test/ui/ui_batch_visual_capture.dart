@@ -97,9 +97,26 @@ Future<void> _captureScrolling(
   final gesture = await tester.startGesture(tester.getCenter(list));
   try {
     await gesture.moveBy(const Offset(0, -100));
-    // Hold the scroll gesture while the scrollbar fades in; a settled idle
-    // view could hide the mobile thumb and would not demonstrate placement.
+    // Start the fade ticker, then advance it while the scroll stays held.
+    // A settled idle view could hide the thumb and not show its placement.
+    await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
+    final scrollbar = find.byKey(const ValueKey('player-lyrics-scrollbar'));
+    final paint = find.descendant(
+      of: scrollbar,
+      matching: find.byWidgetPredicate(
+        (widget) => widget is CustomPaint &&
+            widget.foregroundPainter is ScrollbarPainter,
+      ),
+    );
+    expect(paint, findsOneWidget);
+    final painter = tester.widget<CustomPaint>(paint).foregroundPainter!
+        as ScrollbarPainter;
+    expect(
+      painter.fadeoutOpacityAnimation.value,
+      greaterThan(.5),
+      reason: '$name must capture a visibly active scrollbar thumb',
+    );
     await _capture(tester, key, name);
   } finally {
     await gesture.cancel();
@@ -140,6 +157,7 @@ void main() {
         await tester.pumpWidget(RepaintBoundary(
           key: boundaryKey,
           child: MaterialApp(
+            debugShowCheckedModeBanner: false,
             locale: scenario.$3,
             localizationsDelegates: singbookLocalizationsDelegates,
             supportedLocales: const [Locale('en'), Locale('bg'), Locale('ar'), Locale('uk')],

@@ -737,10 +737,46 @@ void main() {
           }).toList();
       expect(glyphBoxes, isNotEmpty);
       expect(glyphBoxes.any((box) => box.overlaps(action)), isFalse);
-      for (final box in glyphBoxes) {
-        expect(box.left, greaterThanOrEqualTo(contentLeft - 1));
-        expect(box.right, lessThanOrEqualTo(contentRight + 1));
+      // Full-range selection boxes can include whitespace at a wrapped line
+      // edge. Check visible graphemes separately, retaining the full selection
+      // no-overlap assertion above and the same one-pixel geometry tolerance.
+      var offset = 0;
+      var visibleBoxCount = 0;
+      for (final character in text.characters) {
+        final nextOffset = offset + character.length;
+        if (character.trim().isNotEmpty) {
+          final boxes = paragraph.getBoxesForSelection(
+            TextSelection(baseOffset: offset, extentOffset: nextOffset),
+          );
+          for (final box in boxes) {
+            final local = box.toRect();
+            final bounds = Rect.fromPoints(
+              paragraph.localToGlobal(local.topLeft),
+              paragraph.localToGlobal(local.bottomRight),
+            );
+            final diagnostic =
+                '$direction UTF-16 [$offset, $nextOffset) "$character": '
+                '$bounds; content=[$contentLeft, $contentRight]; '
+                'paragraph=$paragraphRect; action=$action; '
+                'fullSelection=$glyphBoxes';
+            expect(
+              bounds.left,
+              greaterThanOrEqualTo(contentLeft - 1),
+              reason: diagnostic,
+            );
+            expect(
+              bounds.right,
+              lessThanOrEqualTo(contentRight + 1),
+              reason: diagnostic,
+            );
+            expect(bounds.overlaps(action), isFalse, reason: diagnostic);
+            visibleBoxCount++;
+          }
+        }
+        offset = nextOffset;
       }
+      expect(offset, text.length);
+      expect(visibleBoxCount, greaterThan(0));
       expect(paragraph.didExceedMaxLines, isFalse);
       if (capturePlayerVisuals) {
         final orientation = locale.languageCode == 'ar' ? 'rtl' : 'ltr';
