@@ -381,6 +381,12 @@ void main() {
                     'en': {'value': 'Example'},
                   },
                   'claims': {
+                    'P31': [
+                      claim({'id': 'Q7366'}),
+                    ],
+                    'P86': [
+                      claim({'id': 'Q2'}),
+                    ],
                     'P175': [
                       claim({'id': 'Q2'}),
                     ],

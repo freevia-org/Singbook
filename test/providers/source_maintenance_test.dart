@@ -301,6 +301,223 @@ void main() {
       ).run(_catalog(includeProbe: false));
       expect((report['sources'] as List).single['status'], 'coverage_gap');
     });
+
+    test('selected ID verifies search among same-name arrangements', () async {
+      final report = await SourceMaintenanceHarness(
+        providers: [
+          _Provider(
+            searchResults: const [
+              SongCandidate(
+                providerId: 'fake',
+                id: 'other',
+                title: 'Known Song',
+                artist: 'Known Artist',
+              ),
+              SongCandidate(
+                providerId: 'fake',
+                id: 'song-1',
+                title: 'Known Song',
+                artist: 'Known Artist',
+              ),
+            ],
+          ),
+        ],
+      ).run(_catalog(searchAndCandidate: true));
+      expect(_probe(report)['status'], 'healthy');
+      expect(_probe(report)['verifiedCapabilities'], contains('catalog'));
+    });
+
+    test('same names cannot replace the selected search ID', () async {
+      final report = await SourceMaintenanceHarness(
+        providers: [
+          _Provider(
+            searchResults: const [
+              SongCandidate(
+                providerId: 'fake',
+                id: 'other',
+                title: 'Known Song',
+                artist: 'Known Artist',
+              ),
+            ],
+          ),
+        ],
+      ).run(_catalog(searchAndCandidate: true));
+      expect(_probe(report)['reason'], 'expected_candidate_not_found');
+    });
+
+    test('repeated selected search ID remains ambiguous', () async {
+      const row = SongCandidate(
+        providerId: 'fake',
+        id: 'song-1',
+        title: 'Known Song',
+        artist: 'Known Artist',
+      );
+      final report = await SourceMaintenanceHarness(
+        providers: [
+          _Provider(searchResults: const [row, row]),
+        ],
+      ).run(_catalog(searchAndCandidate: true));
+      expect(_probe(report)['status'], 'coverage_gap');
+      expect(_probe(report)['reason'], 'ambiguous_candidate');
+    });
+
+    test(
+      'selected search ID still requires matching title and artist',
+      () async {
+        for (final row in const [
+          SongCandidate(
+            providerId: 'fake',
+            id: 'song-1',
+            title: 'Different Song',
+            artist: 'Known Artist',
+          ),
+          SongCandidate(
+            providerId: 'fake',
+            id: 'song-1',
+            title: 'Known Song',
+            artist: 'Different Artist',
+          ),
+          SongCandidate(
+            providerId: 'fake',
+            id: 'song-1',
+            title: 'Known Song',
+            artist: '',
+          ),
+        ]) {
+          final report = await SourceMaintenanceHarness(
+            providers: [
+              _Provider(searchResults: [row]),
+            ],
+          ).run(_catalog(searchAndCandidate: true));
+          expect(_probe(report)['reason'], 'searched_candidate_changed');
+        }
+      },
+    );
+
+    test(
+      'historical search can omit author but resolved author must match',
+      () async {
+        final report = await SourceMaintenanceHarness(
+          providers: [
+            _Provider(
+              searchResults: const [
+                SongCandidate(
+                  providerId: 'fake',
+                  id: 'song-1',
+                  title: 'Known Song',
+                  artist: '',
+                ),
+              ],
+            ),
+          ],
+        ).run(_catalog(searchAndCandidate: true, historicalText: true));
+        expect(_probe(report)['status'], 'healthy');
+        expect(_probe(report)['verifiedCapabilities'], contains('catalog'));
+      },
+    );
+
+    test(
+      'historical search does not permit a changed resolved author',
+      () async {
+        final report = await SourceMaintenanceHarness(
+          providers: [
+            _Provider(
+              resolvedArtist: 'Another Author',
+              searchResults: const [
+                SongCandidate(
+                  providerId: 'fake',
+                  id: 'song-1',
+                  title: 'Known Song',
+                  artist: '',
+                ),
+              ],
+            ),
+          ],
+        ).run(_catalog(searchAndCandidate: true, historicalText: true));
+        expect(_probe(report)['status'], 'identity_mismatch');
+        expect(_probe(report)['reason'], 'resolved_candidate_changed');
+      },
+    );
+
+    test('selected ID from another provider cannot verify search', () async {
+      final report = await SourceMaintenanceHarness(
+        providers: [
+          _Provider(
+            searchResults: const [
+              SongCandidate(
+                providerId: 'another',
+                id: 'song-1',
+                title: 'Known Song',
+                artist: 'Known Artist',
+              ),
+            ],
+          ),
+        ],
+      ).run(_catalog(searchAndCandidate: true));
+      expect(_probe(report)['reason'], 'expected_candidate_not_found');
+    });
+
+    test(
+      'selected search ID must retain expected album and duration',
+      () async {
+        for (final row in const [
+          SongCandidate(
+            providerId: 'fake',
+            id: 'song-1',
+            title: 'Known Song',
+            artist: 'Known Artist',
+            album: 'Different Album',
+            durationSeconds: 200,
+          ),
+          SongCandidate(
+            providerId: 'fake',
+            id: 'song-1',
+            title: 'Known Song',
+            artist: 'Known Artist',
+            album: 'Known Album',
+            durationSeconds: 250,
+          ),
+        ]) {
+          final report =
+              await SourceMaintenanceHarness(
+                providers: [
+                  _Provider(searchResults: [row]),
+                ],
+              ).run(
+                _catalog(
+                  searchAndCandidate: true,
+                  expectedAlbum: 'Known Album',
+                  expectedDuration: 200,
+                ),
+              );
+          expect(_probe(report)['reason'], 'searched_candidate_changed');
+        }
+      },
+    );
+
+    test(
+      'successful historical search does not bypass resolved rights checks',
+      () async {
+        final report = await SourceMaintenanceHarness(
+          providers: [
+            _Provider(
+              error: const ProviderException('rights_review_required'),
+              searchResults: const [
+                SongCandidate(
+                  providerId: 'fake',
+                  id: 'song-1',
+                  title: 'Known Song',
+                  artist: '',
+                ),
+              ],
+            ),
+          ],
+        ).run(_catalog(searchAndCandidate: true, historicalText: true));
+        expect(_probe(report)['status'], 'unavailable');
+        expect(_probe(report)['reason'], 'rights_review_required');
+        expect(_probe(report)['verifiedCapabilities'], isNull);
+      },
+    );
   });
 }
 
@@ -318,6 +535,10 @@ SourceCatalog _catalog({
   String status = 'active',
   bool includeProbe = true,
   bool searchProbe = false,
+  bool searchAndCandidate = false,
+  bool historicalText = false,
+  String? expectedAlbum,
+  double? expectedDuration,
   List<String> requiredMetadataFields = const [],
   List<String> capabilities = const ['catalog', 'lyrics', 'metadata'],
   List<String> requiredFields = const ['body', 'metadata'],
@@ -342,16 +563,23 @@ SourceCatalog _catalog({
         if (includeProbe)
           {
             'id': 'known-song',
-            if (searchProbe) 'query': 'Known Song Known Artist',
+            if (searchProbe || searchAndCandidate)
+              'query': 'Known Song Known Artist',
             if (!searchProbe)
               'candidate': {
                 'providerId': 'fake',
                 'id': 'song-1',
                 'title': 'Known Song',
                 'artist': 'Known Artist',
+                'album': ?expectedAlbum,
+                'durationSeconds': ?expectedDuration,
+                if (historicalText)
+                  'metadata': {'identityScope': 'historicalText'},
               },
             'expectedTitle': 'Known Song',
             'expectedArtist': 'Known Artist',
+            'expectedAlbum': ?expectedAlbum,
+            'expectedDurationSeconds': ?expectedDuration,
             'requiredFields': requiredFields,
             if (requiredMetadataFields.isNotEmpty)
               'requiredMetadataFields': requiredMetadataFields,
@@ -365,12 +593,14 @@ class _Provider implements LyricsProvider {
   _Provider({
     this.body = 'verified lyric body',
     this.resolvedId,
+    this.resolvedArtist = 'Known Artist',
     this.error,
     this.timingTracks = const [],
     this.searchResults,
   });
   final String body;
   final String? resolvedId;
+  final String resolvedArtist;
   final Object? error;
   final List<TimingTrack> timingTracks;
   final List<SongCandidate>? searchResults;
@@ -407,7 +637,7 @@ class _Provider implements LyricsProvider {
       providerId: 'fake',
       id: resolvedId ?? candidate.id,
       title: 'Known Song',
-      artist: 'Known Artist',
+      artist: resolvedArtist,
     );
     return SourceResult(
       candidate: resolved,

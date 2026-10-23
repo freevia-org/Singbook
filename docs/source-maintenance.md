@@ -109,6 +109,18 @@ with `expectedTitle`/`expectedArtist`, optional `expectedAlbum` and
 metadata). Use explicit recordings, composition identities or Commons file IDs
 as appropriate. Multiple ambiguous search matches do not become the first hit.
 Choose at least two independent canaries for new or repaired content extraction.
+For search checks with multiple same-name arrangements or recordings, include
+both the existing `query` and `candidate` fields. The checker requires that
+exact provider/stable ID once in the search response, checks its identity, and
+then resolves that declared selection. It never chooses the first same-name
+result. Historical-text search may omit the author, but resolution must still
+verify the declared author and per-work rights. Candidate-only probes verify
+direct retrieval and do not establish catalog-search coverage.
+Local file-ingestion regression tests exercise the app's decoder with synthetic
+documents. They do not verify a publisher's download workflow or establish live
+`fileImport` coverage. Keep that capability unverified until an actual permitted
+download canary has been imported and its identity, chords, metadata and credits
+checked. Do not replace login or bot-challenge pages with guessed download URLs.
 Cover each claimed content capability with an appropriate canary; a field that
 varies by song must not become required for every song. Optional variants not
 required by a canary remain unverified, even when that canary is healthy. Reports
