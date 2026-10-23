@@ -396,7 +396,9 @@ class _VerseAppShellState extends State<VerseAppShell>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     _playerSystemBars.setEnabled(
-      state == AppLifecycleState.resumed && _playerFullScreen,
+      _playerFullScreen &&
+          ((!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) ||
+              state == AppLifecycleState.resumed),
     );
     if (state == AppLifecycleState.resumed) widget.controller.onAppResumed();
   }
