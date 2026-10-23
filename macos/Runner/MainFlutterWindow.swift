@@ -3,6 +3,7 @@ import FlutterMacOS
 
 class MainFlutterWindow: NSWindow, NSWindowDelegate {
   private var clipboardChannel: FlutterMethodChannel?
+  private var editorChannel: FlutterMethodChannel?
   private var closeChannel: FlutterMethodChannel?
   private var closeRequestPending = false
 
@@ -16,6 +17,10 @@ class MainFlutterWindow: NSWindow, NSWindowDelegate {
     (NSApp.delegate as? AppDelegate)?.installNativeChannels(messenger: controller.engine.binaryMessenger)
     RegisterGeneratedPlugins(registry: controller)
     delegate = self
+    editorChannel = FlutterMethodChannel(
+      name: "org.freevia.singbook/editor_shortcuts",
+      binaryMessenger: controller.engine.binaryMessenger
+    )
     closeChannel = FlutterMethodChannel(
       name: "org.freevia.singbook/window_close",
       binaryMessenger: controller.engine.binaryMessenger
@@ -45,6 +50,20 @@ class MainFlutterWindow: NSWindow, NSWindowDelegate {
       ))
     }
     super.awakeFromNib()
+  }
+
+  override func performKeyEquivalent(with event: NSEvent) -> Bool {
+    // Cocoa carries per-event modifiers even when synthetic input has no
+    // separate flagsChanged event for Flutter's HardwareKeyboard state.
+    let modifiers = event.modifierFlags.intersection([.command, .control, .option, .shift])
+    if event.type == .keyDown,
+       modifiers == .command,
+       event.charactersIgnoringModifiers?.lowercased() == "s",
+       let editorChannel {
+      editorChannel.invokeMethod("save", arguments: nil)
+      return true
+    }
+    return super.performKeyEquivalent(with: event)
   }
 
   func windowShouldClose(_ sender: NSWindow) -> Bool {

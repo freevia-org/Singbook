@@ -46,6 +46,11 @@ class EditorScreen extends StatefulWidget {
 }
 
 class _EditorScreenState extends State<EditorScreen> {
+  static const _nativeShortcuts = MethodChannel(
+    'org.freevia.singbook/editor_shortcuts',
+  );
+  bool get _usesNativeShortcuts =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.macOS;
   late final SongEditorData _initial;
   late final TextEditingController _title;
   late final TextEditingController _artist;
@@ -68,6 +73,17 @@ class _EditorScreenState extends State<EditorScreen> {
   @override
   void initState() {
     super.initState();
+    if (_usesNativeShortcuts) {
+      _nativeShortcuts.setMethodCallHandler((call) async {
+        if (call.method != 'save') {
+          throw MissingPluginException();
+        }
+        if (!mounted || ModalRoute.of(context)?.isCurrent == false)
+          return false;
+        await _save();
+        return true;
+      });
+    }
     _initial =
         widget.controller.state.editor ??
         const SongEditorData(songId: '', isNew: true);
@@ -128,6 +144,7 @@ class _EditorScreenState extends State<EditorScreen> {
 
   @override
   void dispose() {
+    if (_usesNativeShortcuts) _nativeShortcuts.setMethodCallHandler(null);
     _metadataScroll.dispose();
     for (final controller in _all) {
       controller

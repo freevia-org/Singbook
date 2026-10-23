@@ -111,6 +111,29 @@ void main() {
       expect(saves.single, contains('{title: Saved title}'));
       expect(saves.single, contains('New lyrics'));
       expect(find.byTooltip('Save (⌘S)'), findsOneWidget);
+      await tester.enterText(title, 'Native saved title');
+      final nativeSave = _nativeMacEditorSave(tester);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 230));
+      await tester.pumpAndSettle();
+      expect(await nativeSave, isTrue);
+      expect(
+        controller.calls.where((call) => call.startsWith('saveLyricsEdit(')),
+        hasLength(2),
+      );
+      expect(controller.calls.last, contains('Native saved title'));
+      showDialog<void>(
+        context: tester.element(find.byType(EditorScreen)),
+        builder: (_) => const AlertDialog(content: Text('Modal owns focus')),
+      );
+      await tester.pumpAndSettle();
+      expect(await _nativeMacEditorSave(tester), isFalse);
+      expect(
+        controller.calls.where((call) => call.startsWith('saveLyricsEdit(')),
+        hasLength(2),
+      );
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
     },
     variant: TargetPlatformVariant.only(TargetPlatform.macOS),
   );
@@ -246,6 +269,18 @@ Future<void> _commandKey(WidgetTester tester, LogicalKeyboardKey key) async {
   await tester.sendKeyEvent(key);
   await tester.sendKeyUpEvent(LogicalKeyboardKey.metaLeft);
   await tester.pump();
+}
+
+Future<Object?> _nativeMacEditorSave(WidgetTester tester) async {
+  const codec = StandardMethodCodec();
+  final reply = Completer<ByteData?>();
+  tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+    'org.freevia.singbook/editor_shortcuts',
+    codec.encodeMethodCall(const MethodCall('save')),
+    reply.complete,
+  );
+  final bytes = await reply.future;
+  return bytes == null ? null : codec.decodeEnvelope(bytes);
 }
 
 Future<Object?> _nativeMacClose(WidgetTester tester) async {
