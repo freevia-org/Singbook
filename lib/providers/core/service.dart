@@ -436,7 +436,8 @@ Future<SourceResult> findMatchingSource(
     if (song.providerId != provider.definition.id ||
         song.id != candidate.id ||
         (!sameSong(candidate, song) && !historicalText) ||
-        (!strict && !sameArrangement(selection, song, provider) &&
+        (!strict &&
+            !sameArrangement(selection, song, provider) &&
             !historicalText)) {
       report(
         'validate',
@@ -455,7 +456,13 @@ Future<SourceResult> findMatchingSource(
     final scope = song.metadata['identityScope'];
     final exact =
         selection.identity == song.identity &&
-        !{'composition', 'arrangement', 'image', 'work', 'historicalText'}.contains(scope) &&
+        !{
+          'composition',
+          'arrangement',
+          'image',
+          'work',
+          'historicalText',
+        }.contains(scope) &&
         !provider.definition.capabilities.contains('chords');
     final verifiedRecording =
         _sameAlbum(selection, song) &&
@@ -466,7 +473,13 @@ Future<SourceResult> findMatchingSource(
     // Artist/title-only APIs cannot establish which recording supplied lyrics.
     final recording =
         provider.definition.id != 'lyricsovh' &&
-        !{'composition', 'arrangement', 'image', 'work', 'historicalText'}.contains(scope) &&
+        !{
+          'composition',
+          'arrangement',
+          'image',
+          'work',
+          'historicalText',
+        }.contains(scope) &&
         (exact || verifiedRecording);
     final matched = _matched(
       result,

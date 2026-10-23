@@ -623,21 +623,29 @@ class AppController extends ChangeNotifier {
     final epoch = _discoveryEpoch;
     try {
       final loaded = await loadSong(songId);
-      if (_disposed || epoch != _discoveryEpoch || searchEpoch != _searchEpoch) {
+      if (_disposed ||
+          epoch != _discoveryEpoch ||
+          searchEpoch != _searchEpoch) {
         return;
       }
       if (loaded == null || loaded.extensionError != null) {
         throw const FormatException('invalid_local_data');
       }
       final stored = SongDocument.fromJson(_snapshotJsonMap(loaded.toJson()));
-      final reference = stored.selectedRecording ??
-          stored.sources.where(
-            (source) => source.id == stored.extra['selectedSourceId'],
-          ).firstOrNull?.candidate ??
-          stored.sources.where((source) =>
-            source.matchKind != MatchKind.rejected &&
-            plainLyrics(source.body).trim().isNotEmpty,
-          ).firstOrNull?.candidate;
+      final reference =
+          stored.selectedRecording ??
+          stored.sources
+              .where((source) => source.id == stored.extra['selectedSourceId'])
+              .firstOrNull
+              ?.candidate ??
+          stored.sources
+              .where(
+                (source) =>
+                    source.matchKind != MatchKind.rejected &&
+                    plainLyrics(source.body).trim().isNotEmpty,
+              )
+              .firstOrNull
+              ?.candidate;
       if (reference == null ||
           _comparisonKey(reference.toJson()) !=
               _comparisonKey(expectedReference.toJson())) {
@@ -650,7 +658,9 @@ class AppController extends ChangeNotifier {
         storedComparison: stored,
       );
     } catch (_) {
-      if (!_disposed && epoch == _discoveryEpoch && searchEpoch == _searchEpoch) {
+      if (!_disposed &&
+          epoch == _discoveryEpoch &&
+          searchEpoch == _searchEpoch) {
         errorCode = 'invalid_local_data';
         _emit();
       }
@@ -666,6 +676,7 @@ class AppController extends ChangeNotifier {
       if (item is List) return item.map(ordered).toList();
       return item;
     }
+
     return jsonEncode(ordered(value));
   }
 
@@ -677,7 +688,8 @@ class AppController extends ChangeNotifier {
     final merged = {for (final source in existing) source.id: source};
     for (final source in incoming) {
       final previous = merged[source.id];
-      final cachedHistorical = previous != null &&
+      final cachedHistorical =
+          previous != null &&
           _historicalCacheUses.any((use) => use.allows(selected, previous));
       if (cachedHistorical &&
           !explicitHistoricalWorkMatches(selected, source)) {
@@ -687,7 +699,8 @@ class AppController extends ChangeNotifier {
       }
       if (cachedHistorical) {
         _historicalCacheUses = _historicalCacheUses
-            .where((use) => !use.allows(selected, previous!)).toList();
+            .where((use) => !use.allows(selected, previous!))
+            .toList();
       }
       merged[source.id] = source;
     }
@@ -706,7 +719,9 @@ class AppController extends ChangeNotifier {
     String? searchQuery,
     List<SourceResult> cachedResults = const [],
   }) => _selectCandidate(
-    candidate, searchQuery: searchQuery, cachedResults: cachedResults,
+    candidate,
+    searchQuery: searchQuery,
+    cachedResults: cachedResults,
   );
 
   Future<void> _selectCandidate(
@@ -736,7 +751,9 @@ class AppController extends ChangeNotifier {
       final uses = <HistoricalCacheUse>[];
       for (final source in cached) {
         final use = HistoricalCacheUse.fromLibrarySnapshot(
-          storedComparison, candidate, source,
+          storedComparison,
+          candidate,
+          source,
         );
         if (use != null) uses.add(use);
       }
@@ -769,14 +786,17 @@ class AppController extends ChangeNotifier {
             return;
           }
           final result = check.result;
-          checks[check.providerId] = result != null &&
+          checks[check.providerId] =
+              result != null &&
                   result.candidate.providerId == 'wikisource' &&
                   result.matchKind != MatchKind.rejected &&
                   !explicitHistoricalWorkMatches(candidate, result)
               ? ProviderCheck(
                   providerId: check.providerId,
-                  state: 'failed', code: 'validation_rejected',
-                  result: result, operations: check.operations,
+                  state: 'failed',
+                  code: 'validation_rejected',
+                  result: result,
+                  operations: check.operations,
                 )
               : check;
           if (result != null &&
@@ -833,7 +853,9 @@ class AppController extends ChangeNotifier {
     try {
       if (usable.isNotEmpty) {
         combined = combineSources(
-          candidate, available, historicalCacheUses: _historicalCacheUses,
+          candidate,
+          available,
+          historicalCacheUses: _historicalCacheUses,
         );
       } else {
         final fallback = bestLyricsFallback(available);

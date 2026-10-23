@@ -150,7 +150,10 @@ bool recordingCompatible(SongCandidate selected, SourceResult result) {
       found.durationSeconds != null;
 }
 
-bool explicitHistoricalWorkMatches(SongCandidate selected, SourceResult source) {
+bool explicitHistoricalWorkMatches(
+  SongCandidate selected,
+  SourceResult source,
+) {
   final candidate = source.candidate;
   final metadata = source.metadata;
   final revision = metadata['revision'];
@@ -209,6 +212,7 @@ String _historicalPayload(Object? value) {
     if (item is List) return item.map(ordered).toList();
     return item;
   }
+
   return jsonEncode(ordered(value));
 }
 
@@ -236,7 +240,9 @@ class HistoricalCacheUse {
       return null;
     }
     return HistoricalCacheUse._(
-      source, payload, _historicalPayload(selected.toJson()),
+      source,
+      payload,
+      _historicalPayload(selected.toJson()),
     );
   }
 
@@ -251,7 +257,8 @@ class HistoricalCacheUse {
     SongCandidate selected,
     SourceResult original,
     SourceResult snapshot,
-  ) => allows(selected, original) &&
+  ) =>
+      allows(selected, original) &&
           _payload == _historicalPayload(snapshot.toJson())
       ? HistoricalCacheUse._(snapshot, _payload, _selection)
       : null;
@@ -264,7 +271,8 @@ bool _legacyHistoricalWork(
 ) {
   final found = source.candidate;
   final metadata = source.metadata;
-  final anchor = stored.selectedRecording ??
+  final anchor =
+      stored.selectedRecording ??
       (stored.extra['selectedSourceId'] == source.id ? found : null);
   if (anchor == null ||
       _historicalPayload(anchor.toJson()) !=
@@ -287,7 +295,8 @@ bool _legacyHistoricalWork(
     return false;
   }
   final acceptedLegacy =
-      source.matchKind == MatchKind.sameSong && source.matchReason == 'same_song' ||
+      source.matchKind == MatchKind.sameSong &&
+          source.matchReason == 'same_song' ||
       source.matchKind == MatchKind.sameRecording &&
           source.matchReason == 'same_recording';
   // The original matcher rejected the newly populated author even though the
@@ -303,7 +312,7 @@ bool _legacyHistoricalWork(
   if (!acceptedLegacy && !rejectedAuthorFill) return false;
   for (final facts in [found.metadata, metadata]) {
     if (facts.containsKey('resolvedPageId') &&
-        facts['resolvedPageId'] != selected.id ||
+            facts['resolvedPageId'] != selected.id ||
         facts.containsKey('resolvedTitle') &&
             facts['resolvedTitle'] != found.title) {
       return false;
@@ -313,10 +322,16 @@ bool _legacyHistoricalWork(
   final rights = jsonMap(source.extra['rights']);
   final permissions = jsonMap(rights['permissions']);
   final revision = metadata['revision'];
-  if (tags is! List || tags.isEmpty ||
-      tags.any((tag) => tag is! String ||
-          !RegExp(r'^Template:(?:PD-|Cc-by|CC0)', caseSensitive: false)
-              .hasMatch(tag)) ||
+  if (tags is! List ||
+      tags.isEmpty ||
+      tags.any(
+        (tag) =>
+            tag is! String ||
+            !RegExp(
+              r'^Template:(?:PD-|Cc-by|CC0)',
+              caseSensitive: false,
+            ).hasMatch(tag),
+      ) ||
       _historicalPayload(tags) !=
           _historicalPayload(found.metadata['copyrightTags']) ||
       _historicalPayload(tags) != _historicalPayload(permissions['tags']) ||
@@ -324,7 +339,8 @@ bool _legacyHistoricalWork(
       rights['sourceId'] != selected.id ||
       permissions['status'] != 'per_work_and_jurisdiction' ||
       rights['license'] != tags.join('; ') ||
-      revision is! int || revision <= 0 ||
+      revision is! int ||
+      revision <= 0 ||
       found.metadata['revision'] != revision ||
       source.extra.containsKey('revision') &&
           source.extra['revision'] != revision.toString()) {
@@ -334,8 +350,10 @@ bool _legacyHistoricalWork(
     if (value == null) return true;
     if (value is! String) return false;
     final uri = Uri.tryParse(value);
-    if (uri == null || uri.scheme != 'https' ||
-        uri.host != 'en.wikisource.org' || uri.userInfo.isNotEmpty ||
+    if (uri == null ||
+        uri.scheme != 'https' ||
+        uri.host != 'en.wikisource.org' ||
+        uri.userInfo.isNotEmpty ||
         uri.hasPort && uri.port != 443) {
       return false;
     }
@@ -347,16 +365,21 @@ bool _legacyHistoricalWork(
     }
     if (!uri.path.startsWith('/wiki/') || uri.hasQuery) return false;
     try {
-      return _identityNorm(Uri.decodeComponent(uri.path.substring(6))
-          .replaceAll('_', ' ')) == _identityNorm(found.title);
+      return _identityNorm(
+            Uri.decodeComponent(uri.path.substring(6)).replaceAll('_', ' '),
+          ) ==
+          _identityNorm(found.title);
     } on FormatException {
       return false;
     }
   }
-  return pageUrl(selected.url) && pageUrl(found.url) &&
+
+  return pageUrl(selected.url) &&
+      pageUrl(found.url) &&
       pageUrl(rights['sourceUrl']) &&
-      (!rights.containsKey('licenseUrl') || rights['licenseUrl'] ==
-          'https://en.wikisource.org/wiki/Wikisource:Copyright_policy');
+      (!rights.containsKey('licenseUrl') ||
+          rights['licenseUrl'] ==
+              'https://en.wikisource.org/wiki/Wikisource:Copyright_policy');
 }
 
 bool _completeChart(String chart, String reference) {
@@ -1121,25 +1144,20 @@ SongDocument combineSources(
   bool historicalMatches(SourceResult source) =>
       explicitHistoricalWorkMatches(selected, source) ||
       historicalCacheUses.any((use) => use.allows(selected, source));
-  final matching = results
-      .where(
-        (s) {
-          final wikiSource = s.candidate.providerId == 'wikisource';
-          final allowedRejectedAlternative =
-              allowRejectedPreferredSource &&
-              s.id == preferredSourceId &&
-              !wikiSource;
-          final identityMatches = wikiSource
-              ? historicalMatches(s)
-              : _sameSong(s.candidate, selected) ||
-                    allowedRejectedAlternative;
-          return identityMatches &&
-              (s.matchKind != MatchKind.rejected ||
-                  wikiSource && historicalMatches(s) ||
-                  allowedRejectedAlternative);
-        },
-      )
-      .toList();
+  final matching = results.where((s) {
+    final wikiSource = s.candidate.providerId == 'wikisource';
+    final allowedRejectedAlternative =
+        allowRejectedPreferredSource &&
+        s.id == preferredSourceId &&
+        !wikiSource;
+    final identityMatches = wikiSource
+        ? historicalMatches(s)
+        : _sameSong(s.candidate, selected) || allowedRejectedAlternative;
+    return identityMatches &&
+        (s.matchKind != MatchKind.rejected ||
+            wikiSource && historicalMatches(s) ||
+            allowedRejectedAlternative);
+  }).toList();
   final accepted = matching
       .where((s) => plainLyrics(s.body).trim().isNotEmpty)
       .toList();
@@ -1626,8 +1644,11 @@ SongDocument combineSources(
   }
   final usable = tracks.values.where((t) => t.status == TimingStatus.usable);
   final historicalAuthors = accepted
-      .where((source) => source.candidate.providerId == 'wikisource' &&
-          historicalMatches(source))
+      .where(
+        (source) =>
+            source.candidate.providerId == 'wikisource' &&
+            historicalMatches(source),
+      )
       .map((source) => source.candidate.artist.trim())
       .where((artist) => artist.isNotEmpty)
       .toList();
