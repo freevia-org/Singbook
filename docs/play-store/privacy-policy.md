@@ -55,7 +55,7 @@ These services are independent of the publisher and have their own privacy polic
 
 Source definitions can refresh from the public Singbook GitHub repository. Which integrations are available depends on the platform, release profile and user settings. The provider table covers supported integrations across builds, not a claim that every release contacts every host. Tapping a link in the app opens it in your browser, governed by that site's policy.
 
-The YouTube Music adapter also obtains a Google-issued visitor value and sends it as X-Goog-Visitor-Id on subsequent service requests. This is separate from SOCS=CAI and is not an advertising ID. No signed-in browser cookies are imported. Source-catalog updates use raw.githubusercontent.com; Unison uses unison.betterlyrics.org (legacy attribution may name unison.boidu.dev). Providers may retain these requests under their policies.
+Singbook 0.2.16+30 and later do not read or send YouTube Music’s Google-issued VISITOR_DATA as X-Goog-Visitor-Id. Some earlier builds, including 0.2.15+29, sent that value on subsequent service requests; this legacy behavior is separate from the fixed SOCS=CAI consent marker and is not an advertising ID. Current versions still send the fixed marker to the Music homepage/JSON endpoints as described above. No signed-in browser cookies are imported. Source-catalog updates use raw.githubusercontent.com; Unison uses unison.betterlyrics.org (legacy attribution may name unison.boidu.dev). Providers may retain requests, including search terms and network information, under their policies.
 
 ## 4. No tracking, ads or analytics
 

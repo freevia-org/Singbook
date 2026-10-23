@@ -40,9 +40,12 @@ details](https://developer.apple.com/app-store/app-privacy-details/) and
   Genius, LRCLIB, YouTube Music, Songsterr, Ultimate Guitar, MusicBrainz,
   Wikidata, Wikimedia Commons, and other sources in the bundled or refreshed
   source catalog. Requests include a Singbook versioned User-Agent; no
-  Singbook account ID is added by `ProviderTransport`. The YouTube Music
-  adapter additionally sends Google's returned `VISITOR_DATA` as
-  `X-Goog-Visitor-Id`. The catalog itself can refresh from GitHub. See
+  Singbook account ID is added by `ProviderTransport`. In release 0.2.16+30,
+  the YouTube Music adapter does not read or send Google's `VISITOR_DATA` as
+  `X-Goog-Visitor-Id`; some earlier builds, including 0.2.15+29, did send it.
+  Both versions send search text and ordinary network data such as IP
+  addresses. The catalog
+  itself can refresh from GitHub. See
   `lib/providers/transport.dart`, provider adapters, and
   `lib/providers/source_catalog_client.dart`.
 - File import/export is user initiated. Imported songs and setlists remain
@@ -77,10 +80,10 @@ definition.
 | Other Data Types | Disclose | App Functionality; Analytics | Yes | No | GoogleSignIn-iOS 9.2.0 manifest declaration. This broad SDK category is included in the conservative profile as declared. |
 | Coarse Location | Disclose | App Functionality | Yes | No | GoogleSignIn-iOS 9.2.0 manifest declaration. The app requests no OS location permission or GPS coordinates. |
 | User ID | Disclose | App Functionality; Analytics | Yes | No | GoogleSignIn-iOS 9.2.0 manifest declaration. App uses the Google account ID for session restoration/account binding; sync state is account-derived. |
-| Device ID | Disclose in the OAuth SDK profile | Analytics | Yes | No | Exact GoogleSignIn-iOS 9.2.0 manifest row. Separately, YouTube Music requests include Google's `VISITOR_DATA`; treating that value as a device ID is an inference, not a verified device-bound identifier. |
+| Device ID | Disclose in the OAuth SDK profile | Analytics | Yes | No | Exact GoogleSignIn-iOS 9.2.0 manifest row. Release 0.2.16+30 does not send YouTube Music's `VISITOR_DATA`; release 0.2.15+29 did. Treating that legacy value as a device ID is an inference, not a verified device-bound identifier. |
 | Other Usage Data | Disclose | Analytics | Yes | No | GoogleSignIn-iOS 9.2.0 manifest declaration. No Singbook interaction telemetry is sent. |
 | Other User Content | Disclose if Drive sync is enabled in the submitted build | App Functionality | Yes | No | User songs and setlists are stored in the user's Drive appDataFolder or explicitly selected visible folder for backup/sync. They are associated with that user's Drive account. Local import/export alone does not meet Apple's off-device collection definition. |
-| Search History | Disclose when search providers are enabled | App Functionality | Yes, via request IP; Google visitor identifier association is an inference | No, based on reviewed evidence | Searches send title/artist/query text to providers. MetaBrainz documents request-parameter logs with IP and User-Agent; Wikimedia records request data and IP; Better Lyrics/Unison says it temporarily uses IP and deletes logs within seven days. Apple's Search History type covers searches performed in the app. |
+| Search History | Disclose when search providers are enabled | App Functionality | Yes, via request IP | No, based on reviewed evidence | Searches send title/artist/query text to providers. MetaBrainz documents request-parameter logs with IP and User-Agent; Wikimedia records request data and IP; Better Lyrics/Unison says it temporarily uses IP and deletes logs within seven days. Apple's Search History type covers searches performed in the app. The visitor-identifier association inference applies to release 0.2.15+29. |
 
 For an OAuth-enabled release, enter the eight GoogleSignIn-iOS 9.2.0 rows
 above exactly as declared, plus Search History when provider searches are
@@ -93,9 +96,10 @@ SDK never collects data. Omit the eight SDK rows in a no-OAuth profile only
 with version-specific evidence that the SDK performs no collection in that
 configuration; otherwise retain the conservative SDK-inclusive profile. Search
 History remains applicable when providers are active. Other User Content from
-Drive sync is absent when Drive authorization is not configured. YouTube Music's `VISITOR_DATA`
-could merit Device ID disclosure, but the mapping is an inference; verify the
-identifier's classification and handling before adding that row. Email and
+Drive sync is absent when Drive authorization is not configured. Release
+0.2.16+30 does not read or send YouTube Music's `VISITOR_DATA`; 0.2.15+29
+did. The possible Device ID mapping is an inference about that older behavior,
+not the current release. Email and
 photo URL kept locally, and a photo URL request, do not independently
 establish collection of those data types. Verify which profile the signed
 archive implements.
@@ -137,7 +141,7 @@ configuration again. Evidence for the primary providers:
 | Provider | Primary policy/source evidence | App Privacy implication |
 | --- | --- | --- |
 | Genius | MediaLab's [policy](https://www.medialab.la/privacy-policy) says it covers Genius and collects usage and device information, including IP, approximate location from IP, and search-history/website interaction categories. It also describes combining information across devices for content personalization or ad measurement. | Search text and IP can be associated. The policy is broad and does not document retention for Singbook API requests. It mentions advertising use; this review did not establish whether these specific searches are used with third-party data for ad targeting/measurement, so Tracking remains No on evidence reviewed. |
-| YouTube Music | Google's [Privacy Policy](https://policies.google.com/privacy) describes collecting search/activity, IP address, and unique identifiers tied to browser, app, or device. Singbook sends the query and Google-issued `VISITOR_DATA` as `X-Goog-Visitor-Id`, without signed-in cookies or a Singbook account ID. | Disclose Search History for app-functionality requests. The SDK-inclusive profile separately includes the SDK's declared Device ID. Classifying the provider visitor ID itself as Device ID remains an inference requiring verification. |
+| YouTube Music | Google's [Privacy Policy](https://policies.google.com/privacy) describes collecting search/activity, IP address, and unique identifiers tied to browser, app, or device. Singbook 0.2.16+30 sends search text and ordinary request data such as IP, but does not read or send Google's `VISITOR_DATA` as `X-Goog-Visitor-Id`; 0.2.15+29 did. No signed-in cookies or Singbook account ID are sent. | Disclose Search History for app-functionality requests. The SDK-inclusive profile separately includes the SDK's declared Device ID. Whether Google's legacy visitor value maps to Apple's Device ID remains an inference. |
 | MusicBrainz | MetaBrainz's [privacy policy](https://metabrainz.org/privacy) says web/API access logs include IP address, client User-Agent, and requested endpoint with parameters. Singbook sends search terms in URL parameters. | Disclose Search History, linked through request IP, for App Functionality. |
 | Wikimedia Commons / Wikidata | Wikimedia Foundation's [privacy policy](https://foundation.wikimedia.org/wiki/Policy:Privacy_policy/en) covers its APIs, describes IP, user-agent, requested pages and use data, and says personal information is generally deleted, aggregated, or de-identified after at most 90 days. Search terms are sent in request parameters. | Disclose Search History, linked through request IP, for App Functionality. The policy states a typical retention limit, subject to exceptions. |
 | Unison | Better Lyrics' [privacy description](https://betterlyrics.org/) says it receives song title, artist, album, video ID, temporarily uses IP, and deletes request logs within seven days. The Unison [API source](https://github.com/better-lyrics/unison) documents its search endpoint. | Disclose Search History, linked through request IP, for App Functionality. The provider states a seven-day log period. |
@@ -161,9 +165,10 @@ pending archive/provider evidence.
 2. Confirm which refreshed provider catalog/configuration ships in the release
    and whether optional providers remain available. Current bundled defaults
    are documented above; runtime sources may change.
-3. Resolve whether Genius or Google uses the app's specific search requests and
-   visitor identifier with third-party data for targeted advertising or
-   advertising measurement. This review found broad provider policy language
+3. Resolve whether Genius or Google uses the app's specific search requests
+   with third-party data for targeted advertising or advertising measurement.
+   Singbook 0.2.15+29 sent YouTube Music's visitor identifier; release
+   0.2.16+30 no longer does. This review found broad provider policy language
    about ads, but no evidence establishing that these API requests are joined
    with third-party data. LRCLIB and several smaller default providers also
    publish no clear API request-retention period in the reviewed sources.

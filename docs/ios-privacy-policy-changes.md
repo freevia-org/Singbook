@@ -1,12 +1,17 @@
 # Privacy policy corrections for the iOS beta
 
-Publication completed 2026-10-19. The public policy now covers Android and iOS,
-SDK disclosures, provider identifiers and retention, and iOS deletion/backup
-behavior. Markdown, standalone HTML and translated summaries were updated;
-website source and production deployment provenance are in `docs/site/singbook/`.
-Both policy and support returned HTTP 200 and were visually reviewed.
-The wording below records the correction rationale; the published policy is
-the current user-facing text.
+Publication completed 2026-10-19. The public policy then covered Android and
+iOS, SDK disclosures, provider identifiers and retention, and iOS
+deletion/backup behavior. Markdown, standalone HTML and translated summaries
+were updated; website source and production deployment provenance are in
+`docs/site/singbook/`. Both policy and support returned HTTP 200 and were
+visually reviewed. The wording below records the correction rationale. The
+visitor-identifier wording below also describes behavior confirmed in
+published release 0.2.15+29. Current release 0.2.16+30 no longer reads or sends
+YouTube Music `VISITOR_DATA` as `X-Goog-Visitor-Id`; its local policy template
+has been updated, but that update has not been deployed. The fixed `SOCS=CAI`
+marker remains distinct and is still sent to the exact YouTube Music
+homepage/JSON endpoints.
 
 ## App and local storage
 
