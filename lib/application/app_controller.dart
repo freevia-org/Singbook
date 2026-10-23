@@ -699,7 +699,7 @@ class AppController extends ChangeNotifier {
       }
       if (cachedHistorical) {
         _historicalCacheUses = _historicalCacheUses
-            .where((use) => !use.allows(selected, previous!))
+            .where((use) => !use.allows(selected, previous))
             .toList();
       }
       merged[source.id] = source;
@@ -949,10 +949,25 @@ class AppController extends ChangeNotifier {
             allowRejectedSource || fallbackCombinedSourceId != null,
         historicalCacheUses: historicalSaveUses,
       );
+      // A combined save may still choose the exact old source that the person
+      // explicitly saved. Keep that decision only while its repository-issued
+      // cache capability still authorizes this unchanged captured payload.
+      final retainedExplicitSource = source == null
+          ? resultSnapshots.where((result) =>
+              result.id == document.extra['selectedSourceId'] &&
+              result.matchKind == MatchKind.rejected &&
+              result.matchReason == 'identity_mismatch' &&
+              selected.artist.trim().isEmpty &&
+              result.candidate.artist.trim().isNotEmpty &&
+              historicalSaveUses.any((use) => use.allows(selected, result)),
+            ).firstOrNull
+          : null;
       final song = document.copyWith(
         extra: {
           ...document.extra,
           if (source != null) 'savedSourceId': source.id,
+          if (retainedExplicitSource != null)
+            'savedSourceId': retainedExplicitSource.id,
           if (source == null) 'combinedSelection': selected.identity,
         },
         revision: 1,

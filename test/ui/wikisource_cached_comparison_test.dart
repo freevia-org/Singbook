@@ -76,6 +76,31 @@ void main() {
           ))!.entries.single.songId,
           original.id,
         );
+        // A second cold comparison must retain the original explicit decision,
+        // including after a combined save, without rewriting old match facts.
+        await h.ui.openSong(original.id);
+        await h.ui.compareCurrentSongVersions();
+        expect(h.app.combined!.body, original.body);
+        h.ui.selectVersion(combined ? 'combined' : original.sources.single.id);
+        await h.ui.saveSelectedVersion();
+        expect(h.ui.state.route, VerseRoute.reader);
+        await h.reopen();
+        final twiceSaved = (await h.repository.getSong(original.id))!;
+        expect(twiceSaved.revision, greaterThan(restored.revision));
+        expect(twiceSaved.body, original.body);
+        expect(twiceSaved.artist, 'Writer');
+        expect(twiceSaved.extra['savedSourceId'], original.sources.single.id);
+        expect(twiceSaved.extra['selectedSourceId'], original.sources.single.id);
+        if (combined) {
+          expect(twiceSaved.extra['combinedSelection'],
+              original.selectedRecording!.identity);
+        }
+        expect(twiceSaved.selectedRecording!.toJson(),
+            original.selectedRecording!.toJson());
+        expect(twiceSaved.sources.single.toJson(), original.sources.single.toJson());
+        expect((await h.repository.listSongs()), hasLength(1));
+        expect((await h.repository.getSetlist('legacy-setlist'))!
+            .entries.single.songId, original.id);
       });
     }
   }
@@ -200,13 +225,28 @@ void main() {
           await h.repository.saveSong(SongDocument.fromJson(json));
           await h.reopen();
         }
+        final expectedCached = (await h.repository.getSong(_fixture().id))!
+            .sources.single;
         await h.ui.openSong(_fixture().id);
         await h.ui.compareCurrentSongVersions();
         expect(h.app.combined!.body, _fixture().body);
+        final cached = h.app.results.singleWhere(
+          (result) => result.id == _fixture().sources.single.id,
+        );
+        expect(cached.toJson(), expectedCached.toJson());
         expect(
-          h.app.results.single.metadata.containsKey('resolvedPageId'),
+          cached.metadata.containsKey('resolvedPageId'),
           isFalse,
         );
+        expect(h.app.results, hasLength(bad == 'page' ? 2 : 1));
+        if (bad == 'page') {
+          final invalid = h.app.results.singleWhere(
+            (result) => result.id == 'wikisource:8',
+          );
+          expect(invalid.toJson(), h.app.checks['wikisource']!.result!.toJson());
+          expect(invalid.matchKind, MatchKind.rejected);
+          expect(explicitHistoricalWorkMatches(h.app.selection!, invalid), isFalse);
+        }
         expect(h.app.checks['wikisource']!.state, isNot('found'));
         expect(
           explicitHistoricalWorkMatches(
@@ -218,6 +258,25 @@ void main() {
       },
     );
   }
+
+  test('fresh replacement combined save does not inherit the old source decision',
+      () async {
+    final h = await _LibraryHarness.open(
+      provider: _ReplyProvider(() async => _fresh()),
+    );
+    addTearDown(h.close);
+    await h.app.setSetting('providers', {'wikisource': true});
+    await h.ui.openSong(_fixture().id);
+    await h.ui.compareCurrentSongVersions();
+    final saved = await h.app.saveResult();
+    expect(saved.body, _fresh().body);
+    expect(saved.extra.containsKey('savedSourceId'), isFalse);
+    expect(saved.extra['combinedSelection'], _fixture().selectedRecording!.identity);
+    await h.reopen();
+    final restored = (await h.repository.getSong(saved.id))!;
+    expect(restored.body, _fresh().body);
+    expect(restored.extra.containsKey('savedSourceId'), isFalse);
+  });
 
   for (final invalid in [
     'source missing',
@@ -398,6 +457,7 @@ void main() {
         h.app.saveResult(source: source, allowRejectedSource: true),
         throwsA(isA<FormatException>()),
       );
+      await expectLater(h.app.saveResult(), throwsA(isA<FormatException>()));
       expect(
         (await h.repository.getSong(
           _fixture().id,
@@ -406,6 +466,58 @@ void main() {
       );
     },
   );
+
+  test('cancelled comparison cannot carry an old decision into combined save',
+      () async {
+    final h = await _LibraryHarness.open();
+    addTearDown(h.close);
+    await h.ui.openSong(_fixture().id);
+    await h.ui.compareCurrentSongVersions();
+    h.app.cancelSearch();
+    await expectLater(h.app.saveResult(), throwsA(isA<StateError>()));
+    expect((await h.repository.getSong(_fixture().id))!.toJson(),
+        _fixture().toJson());
+  });
+
+  test('another rejection reason cannot carry an explicit source decision',
+      () async {
+    final h = await _LibraryHarness.open();
+    addTearDown(h.close);
+    final json = _fixture().toJson();
+    ((json['sources'] as List).single as JsonMap)['matchReason'] =
+        'different_recording';
+    final stored = SongDocument.fromJson(json);
+    await h.repository.saveSong(stored);
+    await h.reopen();
+    await h.ui.openSong(stored.id);
+    await h.ui.compareCurrentSongVersions();
+    expect(h.app.combined, isNull);
+    await expectLater(h.app.saveResult(), throwsA(isA<FormatException>()));
+    expect((await h.repository.getSong(stored.id))!.toJson(), stored.toJson());
+  });
+
+  test('different chosen output after selection change drops the old decision',
+      () async {
+    final h = await _LibraryHarness.open();
+    addTearDown(h.close);
+    await h.ui.openSong(_fixture().id);
+    await h.ui.compareCurrentSongVersions();
+    final old = h.app.results.single;
+    final json = _fixture().sources.single.toJson();
+    final candidate = json['candidate'] as JsonMap;
+    candidate['providerId'] = 'lrclib';
+    candidate['id'] = 'different-output';
+    json['matchKind'] = 'sameSong';
+    json['matchReason'] = 'same_song';
+    final other = SourceResult.fromJson(json);
+    await h.app.selectCandidate(other.candidate, cachedResults: [old, other]);
+    final saved = await h.app.saveResult();
+    expect(saved.extra['selectedSourceId'], other.id);
+    expect(saved.extra.containsKey('savedSourceId'), isFalse);
+    await h.reopen();
+    expect((await h.repository.getSong(saved.id))!
+        .extra.containsKey('savedSourceId'), isFalse);
+  });
 }
 
 SongDocument _fixture() => SongDocument.fromJson(
@@ -506,7 +618,7 @@ class _LibraryHarness {
     );
     app = AppController(
       repository: repository,
-      discovery: SourceDiscoveryService([if (provider != null) provider!]),
+      discovery: SourceDiscoveryService([?provider]),
     );
     await app.initialize();
     ui = AppControllerAdapter(app);
