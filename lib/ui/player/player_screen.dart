@@ -714,27 +714,44 @@ class _PlayerScreenState extends State<PlayerScreen>
       child: Stack(
         children: [
           Positioned.fill(
-            child: Padding(
-              padding: EdgeInsetsDirectional.only(
-                end: widget.onFullScreenChanged == null ? 0 : 48,
-              ),
-              child: Center(
-                key: const ValueKey('tablet-reader-content'),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 960),
-                  child: NotificationListener<ScrollNotification>(
-                    onNotification: _handleLyricsScroll,
-                    child: ListView.builder(
-                      key: const ValueKey('player-lyrics-scroll'),
-                      controller: _lyricsScroll,
-                      padding: const EdgeInsets.fromLTRB(28, 18, 28, 32),
-                      itemCount: state.songLines.length,
-                      itemBuilder: (context, index) =>
-                          _lyricLine(context, state, state.songLines[index]),
+            child: LayoutBuilder(
+              key: const ValueKey('tablet-reader-content'),
+              builder: (context, constraints) {
+                final actionGutter =
+                    widget.onFullScreenChanged == null ? 0.0 : 48.0;
+                final textWidth = math.max(
+                  0.0,
+                  constraints.maxWidth - actionGutter,
+                );
+                final centeredInset = math.max(0.0, (textWidth - 960) / 2);
+                // Keep the text column centered, but let the scroll viewport
+                // and its single scrollbar reach the outside of the pane.
+                return Scrollbar(
+                  key: const ValueKey('player-lyrics-scrollbar'),
+                  controller: _lyricsScroll,
+                  child: ScrollConfiguration(
+                    behavior: ScrollConfiguration.of(
+                      context,
+                    ).copyWith(scrollbars: false),
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: _handleLyricsScroll,
+                      child: ListView.builder(
+                        key: const ValueKey('player-lyrics-scroll'),
+                        controller: _lyricsScroll,
+                        padding: EdgeInsetsDirectional.fromSTEB(
+                          centeredInset + 28,
+                          18,
+                          centeredInset + 28 + actionGutter,
+                          32,
+                        ),
+                        itemCount: state.songLines.length,
+                        itemBuilder: (context, index) =>
+                            _lyricLine(context, state, state.songLines[index]),
+                      ),
                     ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
           if (widget.onFullScreenChanged != null)

@@ -818,8 +818,7 @@ class _VerseAppShellState extends State<VerseAppShell>
                   child: ConstrainedBox(
                     key: const ValueKey('tablet-content-frame'),
                     constraints: BoxConstraints(
-                      maxWidth:
-                          _playerFullScreen && state.route == VerseRoute.reader
+                      maxWidth: state.route == VerseRoute.reader
                           ? double.infinity
                           : 1200,
                     ),
