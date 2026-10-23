@@ -2,7 +2,7 @@
 
 **Website:** [freevia.org/singbook](https://freevia.org/singbook/) · **Privacy policy:** [freevia.org/singbook/privacy](https://freevia.org/singbook/privacy/) · **Support and feedback:** [freevia.org/singbook/support](https://freevia.org/singbook/support/)
 
-**Get the app:** [Google Play for Android](https://play.google.com/store/apps/details?id=org.freevia.singbook) (public listing 0.2.14 in supported regions) · [Microsoft Store for Windows](https://apps.microsoft.com/detail/9P2J824JLQGZ) (public listing; Store version not exposed).
+**Get the app:** [Google Play for Android](https://play.google.com/store/apps/details?id=org.freevia.singbook) (public listing 0.2.15 in supported regions) · [Microsoft Store for Windows](https://apps.microsoft.com/detail/9P2J824JLQGZ) (public listing; Store version not exposed).
 
 The [website](https://freevia.org/singbook/) shows real Android and Windows app screenshots using fictional sample-song content. The iOS version remains in development and is not on the App Store or TestFlight.
 
@@ -84,8 +84,8 @@ networking (Cronet) and Google sign-in on a release APK before publishing.
 
 ### Google Play release
 
-Next release: `0.2.15+29`. Every new release increments both the visible patch
-version and the build number: `0.2.15+29`, `0.2.16+30`, and so on. The number after
+Next release: `0.2.16+30`. Every new release increments both the visible patch
+version and the build number: `0.2.16+30`, `0.2.17+31`, and so on. The number after
 `+` is the Play versionCode and must always increase; never reset it when the
 visible version changes. Rebuilds of the same release and promotion between
 internal testing and production keep the same version. Update `pubspec.yaml`,
@@ -100,7 +100,7 @@ a locale config for all 34 app languages (one per `lib/l10n/app_*.arb`; keep
 
 ```powershell
 .\scripts\build-android.ps1 -Bundle -Production   # signed .aab + symbols + SHA-256 in artifacts\
-.\scripts\verify-release.ps1 -Path artifacts\singbook-0.2.15+29-release.aab
+.\scripts\verify-release.ps1 -Path artifacts\singbook-0.2.16+30-release.aab
 ```
 
 The build script refuses to overwrite an existing artifact of the same version
