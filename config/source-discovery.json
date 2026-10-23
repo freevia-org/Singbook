@@ -149,6 +149,18 @@
       ],
       "endpoint": "https://kennethyork.github.io/PubDomainOnly",
       "reason": "New candidate documented in https://github.com/kennethyork/PubDomainOnly README on 2026-10-21. Maintainer describes two static JSON catalogs: 1,334 songs it considers public domain in the US (published 1928 or earlier) and 3,653 CC0 original songs, with 4,987 total; advertised fields are title, author, year, category, lyrics and optional source_url. Categories include hymns, folk songs, spirituals, ballads and sea songs. Published docs claim about 87% of the public-domain set has source URLs and name Wikisource/Project Gutenberg as sources. HEAD checks at 2026-10-21T06:02:19Z returned HTTP 200 and application/json for https://kennethyork.github.io/PubDomainOnly/lyrics_data.json and /cc0_lyrics_data.json; no response bodies were fetched or retained. Keep deferred: the public-domain claim is explicitly US-limited, the CC0 set is maintainer-described as partly automatically generated and needs quality/provenance review, field docs show no stable per-song identity key, and source overlap with existing Wikisource/Open Hymnal coverage is unmeasured. No full extraction or repository canaries were run; endpoint reachability is not proof of response shape or rights. Reassess rights and jurisdiction, identity/deduplication, attribution/provenance, grammar compatibility and two independent real repository canaries before considering activation."
+    },
+    {
+      "id": "sanu-folklore-database",
+      "name": "SANU Ethnographic Institute Folklore Collection",
+      "firstSeen": "2026-10-23",
+      "lastChecked": "2026-10-23",
+      "status": "deferred",
+      "documentation": [
+        "https://folklornazbirka.ei.sanu.ac.rs/lppesme/index.php"
+      ],
+      "endpoint": "https://folklornazbirka.ei.sanu.ac.rs/lppesme/index.php",
+      "reason": "New institutional regional candidate reviewed 2026-10-23. Publisher page identifies a digital folklore database of Serbia's SANU Ethnographic Institute and reports 3,619 folklore texts by end-2025, mostly songs, with collector/narrator/place/date metadata. It documents search by assigned number, words/phrases, and language; current records include Serbian/Croatian, Macedonian and Bulgarian (Slovenian/Albanian options are offered for future additions but have no current records). A bounded HEAD request to https://folklornazbirka.ei.sanu.ac.rs/lppesme/index.php at 2026-10-23T06:03:18Z returned HTTP 200 text/html; no body was fetched in that request. This is homepage reachability only, not API or song extraction evidence. Publisher terms permit free use for scientific and noncommercial purposes only, prohibit commercial use, and request citation in scientific work. Defer pending clarity that intended app use is permitted, stable song identity plus complete metadata/lyrics response shape, machine-readable/search endpoint contract and grammar compatibility, overlap assessment with Wikisource and regional folk sources, and two independent repository canaries."
     }
   ]
 }
