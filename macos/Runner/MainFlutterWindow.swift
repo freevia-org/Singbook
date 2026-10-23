@@ -8,7 +8,9 @@ class MainFlutterWindow: NSWindow, NSWindowDelegate {
   private var closeRequestPending = false
 
   override func awakeFromNib() {
-    let controller = FlutterViewController()
+    let project = FlutterDartProject()
+    project.dartEntrypointArguments = Array(CommandLine.arguments.dropFirst())
+    let controller = FlutterViewController(project: project)
     let windowFrame = frame
     contentViewController = controller
     setFrame(windowFrame, display: true)
