@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io' show File;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/testing.dart';
@@ -459,6 +460,197 @@ void main() {
   );
 
   test(
+    'a newer Online selection and discovery survive an earlier catalog commit',
+    () async {
+      final h = await open();
+      h.discovery.holdDiscoveries = true;
+      h.online('');
+      await h.app.setSetting('syntheticBarrier', true);
+      final gate = await _holdWrites(h.repository);
+      addTearDown(gate.release);
+      h.ui.setQuery('Original query');
+      final change = h.ui.setSearchCatalog('wikisource');
+      expect(h.ui.state.searchCatalogId, 'lrclib');
+
+      // These are the normal Online query, result and selection entry points.
+      h.ui.setQuery('Newer lantern query');
+      final interimSearch = h.ui.submitSearch();
+      (await h.lrclib.requestAt(0)).complete('newer-selection');
+      await interimSearch;
+      final candidate = h.app.suggestions.single;
+      final selection = h.ui.selectReference(h.ui.state.autocomplete.single);
+      final discovery = await h.discovery.discoveryAt(0);
+      expect(discovery.selection.identity, candidate.identity);
+      final source = SourceResult(
+        candidate: candidate,
+        body: 'Synthetic lanterns greet the day\nSynthetic clouds drift away',
+        matchKind: MatchKind.sameSong,
+        matchReason: 'same_song',
+      );
+      discovery.publish(source);
+      expect(h.app.selection?.identity, candidate.identity);
+      expect(h.app.discovering, isTrue);
+      expect(h.app.combined?.body, source.body);
+
+      await gate.release();
+      await change;
+      await _expectCatalogAgreement(h, 'wikisource');
+      expect(h.app.selection?.identity, candidate.identity);
+      expect(h.app.results.single.toJson(), source.toJson());
+      expect(h.app.combined?.body, source.body);
+      expect(h.app.discovering, isTrue);
+      expect(discovery.cancel?.isCancelled, isFalse);
+      expect(h.ui.state.comparison, isNotNull);
+      expect(h.ui.state.query, 'Newer lantern query');
+      expect(h.ui.state.homeListMode, HomeListMode.online);
+      expect(
+        h.wiki.requests,
+        isEmpty,
+        reason: 'the old catalog setter cannot search its obsolete query',
+      );
+      expect(h.lrclib.requests, hasLength(1));
+
+      discovery.response.complete([source]);
+      await selection;
+      expect(h.app.discovering, isFalse);
+      expect(h.app.selection?.identity, candidate.identity);
+      expect(h.app.combined?.body, source.body);
+      expect(h.ui.state.comparison, isNotNull);
+    },
+  );
+
+  test(
+    'a saved comparison queued after catalog persistence retains repository cache authority',
+    () async {
+      final h = await open();
+      final saved = SongDocument.fromJson(
+        jsonDecode(
+              File(
+                'test/fixtures/wikisource_legacy_saved_song.json',
+              ).readAsStringSync(),
+            )
+            as JsonMap,
+      );
+      await h.repository.saveSong(saved);
+      h.discovery.holdDiscoveries = true;
+      final reference = saved.selectedRecording!;
+
+      // Identical raw source data cannot grant the repository-only capability.
+      final forged = h.app.selectCandidate(
+        reference,
+        cachedResults: saved.sources,
+      );
+      (await h.discovery.discoveryAt(0)).response.complete([]);
+      await forged;
+      expect(h.app.combined, isNull);
+      await expectLater(
+        h.app.saveResult(
+          source: h.app.results.single,
+          allowRejectedSource: true,
+        ),
+        throwsA(isA<FormatException>()),
+      );
+      h.app.cancelSearch();
+      h.online('');
+      await h.app.setSetting('syntheticBarrier', true);
+      final gate = await _holdWrites(h.repository);
+      addTearDown(gate.release);
+      final change = h.app.setSearchCatalog('wikisource');
+      // Dispatch the catalog INSERT into SQLite's queue before the saved read.
+      await Future<void>.delayed(Duration.zero);
+      final oldSearch = h.app.search('Interim catalog query');
+      final old = await h.lrclib.requestAt(0);
+      final comparison = h.app.compareSavedSong(
+        saved.id,
+        expectedReference: reference,
+        searchQuery: 'Saved historical comparison',
+      );
+      // compareSavedSong cancels the HTTP token and marks searching false,
+      // while its repository read is still queued behind the catalog write.
+      expect(old.cancel?.isCancelled, isTrue);
+      expect(h.app.searching, isFalse);
+      expect(h.app.selection, isNull);
+
+      await gate.release();
+      expect(await change, isTrue);
+      final discovery = await Future.any<_DiscoveryRequest?>([
+        h.discovery.discoveryAt(1),
+        comparison.then<_DiscoveryRequest?>((_) => null),
+      ]);
+      expect(
+        discovery,
+        isNotNull,
+        reason: 'the committed preference must not invalidate the queued read',
+      );
+      final active = discovery!;
+      expect(active.selection.toJson(), reference.toJson());
+      expect(active.cancel?.isCancelled, isFalse);
+      expect(h.app.selection?.toJson(), reference.toJson());
+      expect(h.app.results.single.toJson(), saved.sources.single.toJson());
+      expect(h.app.combined?.body, saved.body);
+      expect(h.app.discovering, isTrue);
+      await h.app.setProviderEnabled('lrclib', false);
+      expect(h.app.providerEnabled('lrclib'), isFalse);
+      expect(active.cancel?.isCancelled, isFalse);
+      expect(h.app.discovering, isTrue);
+      expect(h.app.selection?.toJson(), reference.toJson());
+      expect(h.app.results.single.toJson(), saved.sources.single.toJson());
+      expect(h.app.combined?.body, saved.body);
+      old.complete('obsolete-interim-catalog');
+      await oldSearch;
+      active.response.complete([]);
+      await comparison;
+      expect(h.app.selection?.toJson(), reference.toJson());
+      expect(h.app.combined?.body, saved.body);
+      expect(h.app.query, 'Saved historical comparison');
+      expect(h.app.discovering, isFalse);
+      expect((await h.repository.getSong(saved.id))!.toJson(), saved.toJson());
+      final resaved = await h.app.saveResult(
+        source: h.app.results.single,
+        allowRejectedSource: true,
+      );
+      expect(resaved.body, saved.body);
+      expect(resaved.sources.single.matchReason, 'identity_mismatch');
+      await _expectCatalogAgreement(h, 'wikisource');
+    },
+  );
+
+  test(
+    'a catalog commit cancels an interim active lookup without changing navigation',
+    () async {
+      final h = await open();
+      h.online('');
+      await h.app.setSetting('syntheticBarrier', true);
+      final gate = await _holdWrites(h.repository);
+      addTearDown(gate.release);
+      h.ui.setQuery('Original query');
+      final change = h.ui.setSearchCatalog('wikisource');
+      h.ui.setQuery('Interim lantern query');
+      final search = h.ui.submitSearch();
+      final old = await h.lrclib.requestAt(0);
+      expect(h.app.searching, isTrue);
+      h.ui.setTab(VerseTab.settings);
+
+      await gate.release();
+      await change;
+      expect(old.cancel?.isCancelled, isTrue);
+      expect(h.app.searching, isFalse);
+      old.complete('late-interim-result');
+      await search;
+      await _expectCatalogAgreement(h, 'wikisource');
+      expect(h.app.suggestions, isEmpty);
+      expect(h.ui.state.autocomplete, isEmpty);
+      expect(h.app.selection, isNull);
+      expect(h.ui.state.query, 'Interim lantern query');
+      expect(h.app.query, 'Interim lantern query');
+      expect(h.ui.state.activeTab, VerseTab.settings);
+      expect(h.ui.state.route, VerseRoute.main);
+      expect(h.wiki.requests, isEmpty);
+      expect(h.lrclib.requests, hasLength(1));
+    },
+  );
+
+  test(
     'a failed preference write allows the same choice to be retried',
     () async {
       final h = await open();
@@ -912,6 +1104,9 @@ class _Harness {
     for (final request in allRequests) {
       if (!request.response.isCompleted) request.response.complete([]);
     }
+    for (final request in discovery.discoveries) {
+      if (!request.response.isCompleted) request.response.complete([]);
+    }
     await repository.close();
   }
 }
@@ -919,10 +1114,58 @@ class _Harness {
 class _RegistryDiscovery extends SourceDiscoveryService {
   _RegistryDiscovery(this.active) : super([]);
   List<LyricsProvider> active;
+  bool holdDiscoveries = false;
+  final discoveries = <_DiscoveryRequest>[];
+  final _discoveryWaiters = <int, Completer<_DiscoveryRequest>>{};
+
+  Future<_DiscoveryRequest> discoveryAt(int index) => index < discoveries.length
+      ? Future.value(discoveries[index])
+      : (_discoveryWaiters[index] ??= Completer<_DiscoveryRequest>()).future;
 
   @override
   List<LyricsProvider> get providers =>
       catalogClient?.runtime.providers ?? active;
+
+  @override
+  Future<List<SourceResult>> discover(
+    SongCandidate selection, {
+    Set<String>? enabledIds,
+    void Function(ProviderCheck)? onProgress,
+    CancellationToken? cancel,
+    Map<String, CancellationToken> providerCancellation = const {},
+    Duration alternativeTimeout = const Duration(seconds: 30),
+  }) {
+    if (!holdDiscoveries) {
+      return super.discover(
+        selection,
+        enabledIds: enabledIds,
+        onProgress: onProgress,
+        cancel: cancel,
+        providerCancellation: providerCancellation,
+        alternativeTimeout: alternativeTimeout,
+      );
+    }
+    final request = _DiscoveryRequest(selection, cancel, onProgress);
+    discoveries.add(request);
+    _discoveryWaiters.remove(discoveries.length - 1)?.complete(request);
+    return request.response.future;
+  }
+}
+
+class _DiscoveryRequest {
+  _DiscoveryRequest(this.selection, this.cancel, this.onProgress);
+  final SongCandidate selection;
+  final CancellationToken? cancel;
+  final void Function(ProviderCheck)? onProgress;
+  final response = Completer<List<SourceResult>>();
+
+  void publish(SourceResult source) => onProgress?.call(
+    ProviderCheck(
+      providerId: source.candidate.providerId,
+      state: 'found',
+      result: source,
+    ),
+  );
 }
 
 class _PendingProvider implements LyricsProvider {

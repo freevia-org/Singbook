@@ -157,7 +157,17 @@ class AppController extends ChangeNotifier {
       // operation's ID while retaining unrelated settings changed in flight.
       await repository.setSetting('app', {...settings, 'catalog': id});
       settings = {...settings, 'catalog': id};
-      if (!_disposed) cancelSearch();
+      if (!_disposed) {
+        // A newer selected reference or saved comparison owns its discovery.
+        // Retire only a catalog lookup started during this preference write.
+        if (searching) {
+          ++_searchEpoch;
+          _searchCancel?.cancel();
+          searching = false;
+        }
+        _searchProviderId = null;
+        suggestions = [];
+      }
     });
     if (!_disposed && change == _catalogSettingRevision) errorCode = null;
     _emit();
