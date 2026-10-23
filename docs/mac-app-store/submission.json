@@ -1,5 +1,5 @@
 {
-  "status": "signed_export_ready_for_owner_validation",
+  "status": "uploaded_build_selected_prepare_for_submission",
   "version": "0.2.16",
   "build": "30",
   "bundle_id": "org.freevia.singbook",
@@ -12,7 +12,7 @@
   "primary_locale": "en-US",
   "category": "MUSIC",
   "release_option": "MANUAL",
-  "app_record": "Add macOS to the existing Singbook record where eligible; owner confirmation required",
+  "app_record": "macOS added to existing Singbook app record",
   "support_url": "https://freevia.org/singbook/support/",
   "privacy_url": "https://freevia.org/singbook/privacy/",
   "marketing_url": "https://freevia.org/singbook/",
@@ -40,14 +40,22 @@
     }
   ],
   "owner_fields_pending": [
-    "App Store Connect macOS platform, binary validation and final listing review",
+    "Final macOS listing and submission review",
     "Review contact, territories, rights and age rating confirmation",
     "SDK-inclusive privacy questionnaire and publication of updated policy",
     "Native file dialogs, window-close cancellation and clean-machine acceptance",
     "Intel runtime acceptance; configured OAuth/Genius validation if enabled"
   ],
-  "upload_status": "No upload or review submission performed",
+  "upload_status": "0.2.16 (30) uploaded, processed and selected; not added for review or submitted",
   "source_commit": "8f3d1cda",
   "artifact_directory": "artifacts/macos/20261023T052143Z-8f3d1cda-38951",
-  "signed_package": "artifacts/macos/20261023T052143Z-8f3d1cda-38951/export-retry1/Singbook.pkg"
+  "signed_package": "artifacts/macos/20261023T052143Z-8f3d1cda-38951/export-retry1/Singbook.pkg",
+  "app_store_connect_url": "https://appstoreconnect.apple.com/apps/6825974960/distribution/macos/version/inflight",
+  "screenshots_uploaded": 2,
+  "review_attachment": "Singbook-mac-review-fixtures.zip",
+  "direct_download": {
+    "signing": "Developer ID Application created with owner approval and imported; signed export verified",
+    "notarization": "Uploaded through Xcode; Apple processing pending",
+    "public_release": "Not published"
+  }
 }

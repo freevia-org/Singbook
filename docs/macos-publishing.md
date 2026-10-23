@@ -109,8 +109,28 @@ local signing configuration and run:
 bash scripts/build-macos.sh developer-id
 ```
 
-The export uses `macos/ExportOptions-developer-id.plist`. Verify the exported
-app, then notarize it using an existing Keychain credential profile:
+The export uses `macos/ExportOptions-developer-id.plist`. If the owner is already
+signed into Xcode, notarization can reuse that account without creating an
+extra API key or app-specific password. Preserve the verified archive and work
+on a clone:
+
+```sh
+cp -cR path/to/Singbook.xcarchive path/to/Singbook-developer-id.xcarchive
+xcodebuild -exportArchive -archivePath path/to/Singbook-developer-id.xcarchive \
+  -exportOptionsPlist macos/ExportOptions-notarize.plist \
+  -exportPath path/to/notarization-upload -allowProvisioningUpdates
+xcodebuild -exportNotarizedApp -archivePath path/to/Singbook-developer-id.xcarchive \
+  -exportPath path/to/notarized-export
+```
+
+The second command uploads to Apple's notary service. The final command may
+report that Apple is still processing; retry that final export after processing
+finishes, keeping the same archive and release number. Verify the exported
+app's stapled ticket and Gatekeeper assessment, then create the final ZIP.
+This follows [Apple's Xcode notarization workflow](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution).
+
+Alternatively, verify the Developer ID export and notarize it using an existing
+Keychain credential profile:
 
 ```sh
 codesign --verify --deep --strict path/to/export/Singbook.app

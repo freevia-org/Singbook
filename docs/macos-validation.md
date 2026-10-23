@@ -4,7 +4,9 @@ The native macOS candidate is **0.2.16 (30)**, bundle ID
 `org.freevia.singbook`, targeting macOS 12+. Application source is commit
 `8f3d1cda`, based on public main `0a40d7f` (including the latest anonymous
 YouTube request fix). Preparation lives on `codex/macos-publishing`; it has
-not been merged into main or uploaded to Apple.
+not been merged into main. Build 30 was uploaded to Apple, processed and
+selected for the macOS draft on the existing Singbook app record. No macOS
+review submission or release has occurred; iOS 0.2.10 remains waiting for review.
 
 ## Artifacts
 
@@ -15,6 +17,10 @@ All generated evidence is local and ignored by Git:
 - `Singbook.xcarchive`: signed archive, preserved after verification.
 - `export-retry1/Singbook.pkg`: Mac App Store export, approximately 70 MB.
 - `Singbook-preview.zip`: development-signed local preview, approximately 33 MB.
+- `developer-id-export/Singbook.app`: Developer ID-signed direct-download
+  candidate; not yet notarized.
+- `Singbook-developer-id.xcarchive`: cloned archive submitted for notarization,
+  preserving the verified original archive.
 - `package-report.json`, `archive-report.json`, `bundle-report.json`,
   `SHA256SUMS`, source revision/status/diff and build/archive/export logs.
 
@@ -67,17 +73,20 @@ notes. Those demonstration songs are not preloaded in the release app.
 
 ## Publishing handoff and limits
 
-The Mac App Store package is prepared locally. App Store Connect binary
-validation, the macOS platform/listing, SDK-inclusive privacy answers, review
-contact, rights/age-rating/territory confirmations and submission remain
-owner actions. No upload, submission or privacy-site deployment occurred.
+The macOS platform and version draft are saved in App Store Connect with the
+Mac-specific English text, two screenshots, original review fixtures, sandbox
+usage notes and manual release selection. Build 30 uploaded successfully,
+finished processing, and is selected for the draft. The existing review
+contact was retained. Final SDK-inclusive privacy/rights/age-rating/territory
+review and submission remain owner actions. No macOS review submission,
+release or privacy-site deployment occurred.
 
 This candidate has **no macOS Google OAuth client or Genius access token**.
 The native auth/Picker/Keychain implementation is present, but Google sync
 and Genius are unavailable in this binary. Configure and validate real
 consent, refresh, account switching, revocation and sign-out before publishing
-a build that advertises these integrations. Reuse build 30 until an upload
-requires a genuinely new release under the repository's versioning rules.
+a build that advertises these integrations. Build 30 has now been uploaded. Further binary changes require
+`0.2.17+31` under the repository's versioning rules; do not overwrite build 30.
 
 Native file dialogs, print-dialog cancellation, actual keyboard delivery and
 dirty-editor window-close cancellation still need a reliable interactive
@@ -86,10 +95,14 @@ passed automated tests; computer-control input was unreliable during native
 inspection. Intel runtime and clean-machine installation were not tested.
 The generated Xcode RunnerTests target was not executed separately.
 
-A Developer ID Application identity is not installed, so a notarized
-direct-download distribution was not created. The Mac App Store `.pkg` is
-not a direct-download installer. The development preview ZIP is for local
-review. See [publishing steps](macos-publishing.md) for both routes.
+The owner explicitly approved creation/import of a Developer ID Application
+certificate. Its matching private key was verified and imported into Keychain.
+The direct-download export passed deep/strict signature verification and has
+hardened runtime and a secure timestamp. Xcode uploaded the cloned archive
+successfully for notarization; Apple is still processing it. No notarized ZIP
+or stapled-ticket claim is made until that processing succeeds. The Mac App
+Store `.pkg` is not a direct-download installer. The development preview ZIP
+is for local review. See [publishing steps](macos-publishing.md) for both routes.
 
 All delegated work is integrated and reviewed. No physical device, simulator,
 shared build directory or ongoing Flutter/Xcode process is reserved. The
