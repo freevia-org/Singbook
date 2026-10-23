@@ -108,6 +108,74 @@ class AppController extends ChangeNotifier {
   Future<void> _recentQueue = Future.value();
   bool hasMoreRecent = true;
   List<ProviderDefinition> get providers => discovery.definitions;
+  List<ProviderDefinition> get searchCatalogs => providers
+      .where(
+        (provider) =>
+            provider.capabilities.contains('catalog') &&
+            provider.configured &&
+            providerEnabled(provider.id),
+      )
+      .toList();
+
+  String? get searchCatalogId {
+    final available = searchCatalogs;
+    final requested = settings['catalog'];
+    if (available.any((provider) => provider.id == requested)) {
+      return requested as String;
+    }
+    if (available.any((provider) => provider.id == 'lrclib')) return 'lrclib';
+    return available.firstOrNull?.id;
+  }
+
+  Future<void> _settingsWrite = Future<void>.value();
+  int _queuedSettingsWrites = 0;
+  int _catalogSettingRevision = 0;
+
+  Future<void> _queueSettingsWrite(Future<void> Function() operation) {
+    ++_queuedSettingsWrites;
+    final write = _settingsWrite
+        .catchError((Object _) {})
+        .then((_) => operation())
+        .whenComplete(() {
+          --_queuedSettingsWrites;
+        });
+    _settingsWrite = write;
+    return write;
+  }
+
+  /// Changes only the search catalog; source enablement and saved works stay
+  /// untouched. Invalidate before persistence so late old-catalog data cannot
+  /// become a new selection, even when the query text has not changed.
+  Future<bool> setSearchCatalog(String id) async {
+    if (_disposed) return false;
+    if (!searchCatalogs.any((provider) => provider.id == id)) return false;
+    final change = ++_catalogSettingRevision;
+    cancelSearch();
+    await _queueSettingsWrite(() async {
+      // Publish only committed choices. Failed writes need no compensating
+      // read, which could itself fail during a storage outage. Bind this
+      // operation's ID while retaining unrelated settings changed in flight.
+      await repository.setSetting('app', {...settings, 'catalog': id});
+      settings = {...settings, 'catalog': id};
+      if (!_disposed) {
+        // A newer selected reference or saved comparison owns its discovery.
+        // Retire only a catalog lookup started during this preference write.
+        if (searching) {
+          ++_searchEpoch;
+          _searchCancel?.cancel();
+          searching = false;
+        }
+        _searchProviderId = null;
+        suggestions = [];
+      }
+    });
+    if (!_disposed && change == _catalogSettingRevision) errorCode = null;
+    _emit();
+    return !_disposed &&
+        change == _catalogSettingRevision &&
+        searchCatalogId == id;
+  }
+
   bool sourcesRefreshing = false;
   String? sourceRefreshError;
   Future<bool>? _sourceRefreshFuture;
@@ -491,6 +559,13 @@ class AppController extends ChangeNotifier {
   }
 
   Future<void> setProviderEnabled(String id, bool enabled) async {
+    final previousCatalog = searchCatalogId;
+    if (!enabled &&
+        (_searchProviderId == id ||
+            (selection == null &&
+                suggestions.any((candidate) => candidate.providerId == id)))) {
+      cancelSearch();
+    }
     if (id == 'youtubemusic' && !enabled) {
       _youtubeDiscoveryCancel?.cancel();
       if (_searchProviderId == id) {
@@ -515,11 +590,20 @@ class AppController extends ChangeNotifier {
       ...jsonMap(settings['providers']),
       id: enabled,
     });
+    if (previousCatalog != searchCatalogId && selection == null) cancelSearch();
   }
 
   Future<void> setSetting(String key, dynamic value) async {
     settings = {...settings, key: value};
-    await repository.setSetting('app', settings);
+    if (_queuedSettingsWrites == 0) {
+      // Preserve normal immediate dispatch, including unawaited navigation
+      // preferences followed by an immediate repository read or reopen.
+      await repository.setSetting('app', settings);
+    } else {
+      // While a catalog write or its tail is pending, retain the catalog that
+      // actually committed before this write rather than a stale snapshot.
+      await _queueSettingsWrite(() => repository.setSetting('app', settings));
+    }
     _emit();
   }
 
@@ -545,21 +629,10 @@ class AppController extends ChangeNotifier {
     searching = true;
     errorCode = null;
     _emit();
+    final catalog = searchCatalogId;
+    final catalogRevision = discovery.catalogClient?.runtime.catalog?.revision;
     try {
-      // LRCLIB is the only built-in catalog that works without an app API
-      // token. Prefer it on first run so search succeeds for fresh installs.
-      final requested = settings['catalog'] as String? ?? 'lrclib';
-      final available = providers.where(
-        (p) => p.capabilities.contains('catalog'),
-      );
-      final catalog = providers.any((p) => p.id == requested)
-          ? requested
-          : available.isNotEmpty
-          ? available.first.id
-          : providers.isNotEmpty
-          ? providers.first.id
-          : requested;
-      if (catalog == 'youtubemusic' && !providerEnabled(catalog)) {
+      if (catalog == null) {
         throw const ProviderException('not_configured');
       }
       _searchProviderId = catalog;
@@ -568,10 +641,22 @@ class AppController extends ChangeNotifier {
         providerId: catalog,
         cancel: cancellation,
       );
-      if (epoch != _searchEpoch || _disposed) return;
+      if (epoch != _searchEpoch ||
+          _disposed ||
+          catalog != searchCatalogId ||
+          catalogRevision !=
+              discovery.catalogClient?.runtime.catalog?.revision) {
+        return;
+      }
       suggestions = found;
     } catch (error) {
-      if (epoch != _searchEpoch || _disposed) return;
+      if (epoch != _searchEpoch ||
+          _disposed ||
+          catalog != searchCatalogId ||
+          catalogRevision !=
+              discovery.catalogClient?.runtime.catalog?.revision) {
+        return;
+      }
       errorCode = error is ProviderException ? error.code : 'search_failed';
     } finally {
       if (epoch == _searchEpoch) {
@@ -953,14 +1038,19 @@ class AppController extends ChangeNotifier {
       // explicitly saved. Keep that decision only while its repository-issued
       // cache capability still authorizes this unchanged captured payload.
       final retainedExplicitSource = source == null
-          ? resultSnapshots.where((result) =>
-              result.id == document.extra['selectedSourceId'] &&
-              result.matchKind == MatchKind.rejected &&
-              result.matchReason == 'identity_mismatch' &&
-              selected.artist.trim().isEmpty &&
-              result.candidate.artist.trim().isNotEmpty &&
-              historicalSaveUses.any((use) => use.allows(selected, result)),
-            ).firstOrNull
+          ? resultSnapshots
+                .where(
+                  (result) =>
+                      result.id == document.extra['selectedSourceId'] &&
+                      result.matchKind == MatchKind.rejected &&
+                      result.matchReason == 'identity_mismatch' &&
+                      selected.artist.trim().isEmpty &&
+                      result.candidate.artist.trim().isNotEmpty &&
+                      historicalSaveUses.any(
+                        (use) => use.allows(selected, result),
+                      ),
+                )
+                .firstOrNull
           : null;
       final song = document.copyWith(
         extra: {

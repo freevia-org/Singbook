@@ -1593,7 +1593,7 @@ class _JourneyCatalog implements LyricsProvider {
   ProviderDefinition get definition => const ProviderDefinition(
     id: _catalogId,
     name: 'Journey catalog',
-    capabilities: {'lyrics'},
+    capabilities: {'catalog', 'lyrics'},
   );
 
   @override

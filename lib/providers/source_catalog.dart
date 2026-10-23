@@ -500,6 +500,7 @@ class ConfiguredBuiltinProvider implements LyricsProvider {
       name: configured.name,
       capabilities: configured.capabilities,
       accessMode: configured.accessMode,
+      configured: compiled.configured,
       enabledByDefault:
           configured.enabledByDefault &&
           (compiled.accessMode != 'app_token' || compiled.enabledByDefault),
