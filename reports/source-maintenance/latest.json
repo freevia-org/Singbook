@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
   "catalogRevision": 5,
-  "measuredAt": "2026-10-22T05:58:23.712824Z",
+  "measuredAt": "2026-10-23T06:01:28.378993Z",
   "offline": false,
   "summary": {
-    "transient_error": 4,
+    "transient_error": 5,
     "healthy": 8,
     "unavailable": 1,
     "blocked": 1,
     "import_only": 2,
-    "partial_coverage": 3
+    "partial_coverage": 2
   },
   "sources": [
     {
@@ -197,15 +197,15 @@
       "name": "SyncLRC",
       "status": "unavailable",
       "coverage": {
-        "status": "partial",
-        "verifiedCapabilities": [],
-        "unverifiedCapabilities": [
+        "status": "complete",
+        "verifiedCapabilities": [
           "catalog",
           "lineTiming",
           "lyrics",
           "metadata",
           "wordTiming"
-        ]
+        ],
+        "unverifiedCapabilities": []
       },
       "probes": [
         {
@@ -215,8 +215,30 @@
         },
         {
           "id": "wonderwall-oasis-timed-version",
-          "status": "unavailable",
-          "reason": "empty_search_results"
+          "status": "healthy",
+          "providerId": "synclrc",
+          "bodyCharacters": 1401,
+          "metadataFields": [
+            "album",
+            "duration",
+            "hasLyrics",
+            "instrumental",
+            "query"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata",
+            "wordTiming"
+          ],
+          "timingTrackCount": 2,
+          "timingGranularities": [
+            "line",
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false
         }
       ]
     },
@@ -550,42 +572,20 @@
     {
       "id": "wikidata",
       "name": "Wikidata",
-      "status": "partial_coverage",
+      "status": "transient_error",
       "coverage": {
         "status": "partial",
-        "verifiedCapabilities": [
-          "metadata"
-        ],
+        "verifiedCapabilities": [],
         "unverifiedCapabilities": [
-          "catalog"
+          "catalog",
+          "metadata"
         ]
       },
       "probes": [
         {
           "id": "imagine-composition",
-          "status": "healthy",
-          "providerId": "wikidata",
-          "bodyCharacters": 0,
-          "metadataFields": [
-            "composers",
-            "description",
-            "durationClaims",
-            "externalIdentifiers",
-            "identityScope",
-            "lyricists",
-            "partOf",
-            "performerIds",
-            "publicationDates",
-            "types",
-            "wikidataId"
-          ],
-          "verifiedCapabilities": [
-            "metadata"
-          ],
-          "timingTrackCount": 0,
-          "timingGranularities": [],
-          "timingRawRetained": false,
-          "hasChords": false
+          "status": "transient_error",
+          "reason": "provider_busy"
         }
       ]
     },
@@ -680,14 +680,14 @@
   ],
   "execution": {
     "runtime": "managed-cloud",
-    "baseSha": "593fcc15b7846651a1e6abcd7d3c820645d28e5f",
-    "command": "dart run tool/source_maintenance.dart --report artifacts/source-maintenance/2026-10-22-live.json",
+    "baseSha": "0a40d7f1179293213203a8335fe3aed8efc4cd8c",
+    "command": "dart run tool/source_maintenance.dart --report artifacts/source-maintenance/2026-10-23-live.json",
     "exitCode": 1,
     "mode": "approved_require_escalated",
-    "sourceState": "clean isolated public-main worktree; unfinished original task checkout preserved",
+    "sourceState": "clean isolated public-main worktree; original unfinished checkout preserved",
     "environment": {
       "published": true,
-      "specRevision": "110",
+      "specRevision": "119",
       "observationsCurrent": true,
       "phase": "running",
       "connectivity": "connected",
@@ -705,7 +705,7 @@
       "exitCode": 0
     },
     "offline": {
-      "command": "dart run tool/source_maintenance.dart --offline --report artifacts/source-maintenance/2026-10-22-offline.json",
+      "command": "dart run tool/source_maintenance.dart --offline --report artifacts/source-maintenance/2026-10-23-offline.json",
       "exitCode": 0,
       "summary": {
         "offline_unverified": 17,
@@ -715,25 +715,25 @@
     "focusedTests": {
       "command": "flutter test --no-pub test/providers test/application/controller_test.dart test/application/controller_hardening_test.dart --reporter compact",
       "exitCode": 0,
-      "passed": 243,
+      "passed": 261,
       "skipped": 13
     },
     "analyzer": {
       "command": "flutter analyze --no-pub",
       "exitCode": 0
     },
-    "sourceChanges": "none; no full-suite rerun without a new core/model change"
+    "sourceChanges": "none; full suite not repeated without a new core/model change"
   },
   "comparison": {
     "priorCloud": {
-      "measuredAt": "2026-10-21T06:02:11.342115Z",
-      "ageHours": 23.936769444444444,
-      "baseSha": "4d700c021c6303c93078a95bcd12b28365c0ac9d",
-      "path": "reports/source-maintenance/2026-10-21T060211Z.json"
+      "measuredAt": "2026-10-22T05:58:23.712824Z",
+      "ageHours": 24.05129611111111,
+      "baseSha": "593fcc15b7846651a1e6abcd7d3c820645d28e5f",
+      "path": "reports/source-maintenance/2026-10-22T055823Z.json"
     },
     "priorLocal": {
       "measuredAt": "2026-10-21T06:01:50.763911Z",
-      "ageHours": 23.942485833333333,
+      "ageHours": 47.99378194444444,
       "runtime": "local-windows",
       "baseSha": "4d700c021c6303c93078a95bcd12b28365c0ac9d",
       "sourceHead": "4d700c021c6303c93078a95bcd12b28365c0ac9d",
@@ -1223,15 +1223,15 @@
           "id": "synclrc",
           "status": "unavailable",
           "coverage": {
-            "status": "partial",
-            "verifiedCapabilities": [],
-            "unverifiedCapabilities": [
+            "status": "complete",
+            "verifiedCapabilities": [
               "catalog",
               "lineTiming",
               "lyrics",
               "metadata",
               "wordTiming"
-            ]
+            ],
+            "unverifiedCapabilities": []
           },
           "probes": [
             {
@@ -1241,8 +1241,20 @@
             },
             {
               "id": "wonderwall-oasis-timed-version",
-              "status": "unavailable",
-              "reason": "empty_search_results"
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "catalog",
+                "lineTiming",
+                "lyrics",
+                "metadata",
+                "wordTiming"
+              ],
+              "timingTrackCount": 2,
+              "timingGranularities": [
+                "line",
+                "word"
+              ],
+              "timingRawRetained": true
             }
           ]
         },
@@ -2132,26 +2144,20 @@
       {
         "current": {
           "id": "wikidata",
-          "status": "partial_coverage",
+          "status": "transient_error",
           "coverage": {
             "status": "partial",
-            "verifiedCapabilities": [
-              "metadata"
-            ],
+            "verifiedCapabilities": [],
             "unverifiedCapabilities": [
-              "catalog"
+              "catalog",
+              "metadata"
             ]
           },
           "probes": [
             {
               "id": "imagine-composition",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "metadata"
-              ],
-              "timingTrackCount": 0,
-              "timingGranularities": [],
-              "timingRawRetained": false
+              "status": "transient_error",
+              "reason": "provider_busy"
             }
           ]
         },
@@ -2403,7 +2409,7 @@
         }
       }
     ],
-    "interpretation": "Source/probe outcomes and verified capability coverage unchanged from prior cloud live run. Historical local Genius/YouTube/UG/Chordie/SyncLRC success remains local evidence with measurement age, never cloud health. Genius binding is ready but proxy rejects CONNECT403 before origin (000). SyncLRC both queries return empty results; no schema proof, retirement, rollback or repeated retries. Wikisource selected works pass with rights metadata while search/file import remain unverified."
+    "interpretation": "SyncLRC Wonderwall canary now passes actual line/word timing and raw retention, while Rick Astley still returns empty_search_results; source remains unavailable despite measured capabilities on one recording. Wikidata provider_busy is a transient condition, not schema evidence. Merged YouTube request change does not establish cloud reachability: actual cloud probe remains network failure. Historical local success retains code/runtime/age provenance and never overrides cloud health."
   },
   "catalogProbeCoverage": [
     {
@@ -2867,14 +2873,14 @@
       "publisherUrl": "https://api.genius.com/search?q=Wonderwall%20Oasis",
       "curlExit": 56,
       "connectOrigin": "403 000",
-      "checkedAt": "2026-10-22T05:58:14.751273+00:00"
+      "checkedAt": "2026-10-23T06:01:32.121738+00:00"
     },
     {
       "id": "hymnal",
       "publisherUrl": "https://hymnal.rindra.org/api/categories.json",
       "curlExit": 0,
       "connectOrigin": "200 200",
-      "checkedAt": "2026-10-22T05:58:15.286114+00:00",
+      "checkedAt": "2026-10-23T06:01:32.645340+00:00",
       "recordCount": 7,
       "jsonType": "list"
     },
@@ -2883,7 +2889,7 @@
       "publisherUrl": "https://api.lrcshare.com/v1/catalog",
       "curlExit": 0,
       "connectOrigin": "200 401",
-      "checkedAt": "2026-10-22T05:58:15.506866+00:00"
+      "checkedAt": "2026-10-23T06:01:32.872445+00:00"
     }
   ],
   "discovery": {
@@ -2893,7 +2899,7 @@
         "publisherUrl": "https://hymnal.rindra.org/api/categories.json",
         "curlExit": 0,
         "connectOrigin": "200 200",
-        "checkedAt": "2026-10-22T05:58:15.286114+00:00",
+        "checkedAt": "2026-10-23T06:01:32.645340+00:00",
         "recordCount": 7,
         "jsonType": "list"
       },
@@ -2902,22 +2908,12 @@
         "publisherUrl": "https://api.lrcshare.com/v1/catalog",
         "curlExit": 0,
         "connectOrigin": "200 401",
-        "checkedAt": "2026-10-22T05:58:15.506866+00:00"
+        "checkedAt": "2026-10-23T06:01:32.872445+00:00"
       }
     ],
     "existingReviewPR": "https://github.com/freevia-org/Singbook/pull/94",
     "existingReviewHead": "ef70df6f0a7c5d2ab9ab280e08612e36003f14e5",
-    "decisions": "Reviewed existing PR94 publisher-documentation evidence and gated-access/public-domain deferrals; do not duplicate its registry changes. Hymnal metadata still returns seven collections, not sufficient identity/rights/adapter/independent lyrics-canary evidence. LrcShare remains origin401 without credentials; no session/demo/key use. Existing config/source-discovery.json decisions remain in force. No new qualified activation or meaningful configuration change.",
-    "openEquivalentDiscoveryPRs": 1,
-    "otherOpenPRs": [
-      {
-        "number": 96,
-        "title": "Run the desktop journey on Windows CI"
-      },
-      {
-        "number": 94,
-        "title": "Record gated lyric access and deferred public-domain catalog discovery"
-      }
-    ]
+    "decisions": "Reused existing PR94 investigation of gated LrcShare and deferred public-domain discovery instead of competing registry changes. LrcShare still origin401 without credentials. Hymnal metadata still seven collections; collection counts do not establish per-work rights, complete identities, compatible searchable adapter or two passing live extraction canaries. Existing config/source-discovery.json deferrals remain applicable; no newly qualified activation or meaningful new configuration change.",
+    "equivalentOpenDiscoveryPRs": 1
   }
 }
