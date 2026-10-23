@@ -12,6 +12,7 @@ import '../domain/models.dart';
 import '../domain/timing.dart' show timingOccurrenceMap;
 import '../domain/source_contributions.dart';
 import 'format.dart';
+import 'library/collation.dart' show foldForSearch;
 import 'player_section_timeline.dart';
 import 'player_duration.dart';
 import 'verse_ui_state.dart';
@@ -1502,10 +1503,39 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> submitSearch() async {
-    if (_homeMode != HomeListMode.online) return;
+    if (_query.trim().length < 2) return;
+    if (_homeMode != HomeListMode.online && _hasLocalSearchMatches()) return;
     _homeMode = HomeListMode.online;
+    _normalizeOnlineMetadataFilter();
+    _rememberSongsView();
     _searchDebounce?.cancel();
+    notifyListeners();
     await _searchCatalog(_query);
+  }
+
+  // Use the same fields and filters as the visible local lists. Typing stays
+  // local; only an explicit Search with no visible matches opens Online.
+  bool _hasLocalSearchMatches() {
+    final current = state;
+    final needle = foldForSearch(_query);
+    if (_homeMode == HomeListMode.recent) {
+      return current.recent.any(
+        (item) =>
+            !item.isSetlist &&
+            (!_favoritesOnly || item.favorite) &&
+            foldForSearch(
+              '${item.title} ${item.artist} ${item.subtitle}',
+            ).contains(needle),
+      );
+    }
+    return current.songs.any(
+      (song) =>
+          (!_conflictFilter || song.isConflictCopy) &&
+          (_conflictFilter || !_favoritesOnly || song.favorite) &&
+          foldForSearch(
+            '${song.title} ${song.artist} ${song.album ?? ''}',
+          ).contains(needle),
+    );
   }
 
   Future<void> _searchCatalog(String query) async {

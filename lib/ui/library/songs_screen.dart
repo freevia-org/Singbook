@@ -180,17 +180,18 @@ class _SongsScreenState extends State<SongsScreen> {
           ),
         Expanded(
           child: songs.isEmpty
-              ? Column(
+              ? ListView(
+                  key: const PageStorageKey('songs-library-empty'),
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
                   children: [
-                    Expanded(
-                      child: VerseEmptyState(
-                        icon: Icons.library_music_outlined,
-                        title: conflictsOnly && query.isEmpty
-                            ? l10n.songsConflictEmpty
-                            : query.isEmpty
-                            ? l10n.songsEmpty
-                            : l10n.songsEmptySearch,
-                      ),
+                    VerseEmptyState(
+                      icon: Icons.library_music_outlined,
+                      title: conflictsOnly && query.isEmpty
+                          ? l10n.songsConflictEmpty
+                          : query.isEmpty
+                          ? l10n.songsEmpty
+                          : l10n.songsEmptySearch,
                     ),
                     _createShortcut(
                       l10n,
