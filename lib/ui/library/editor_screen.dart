@@ -191,6 +191,10 @@ class _EditorScreenState extends State<EditorScreen> {
 
   Future<void> _save() async {
     if (_saving) return;
+    if (_initial.isNew && !_dirty) {
+      widget.onBack();
+      return;
+    }
     if (_title.text.trim().isEmpty) {
       setState(() => _titleMissing = true);
       return;

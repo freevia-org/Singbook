@@ -104,6 +104,7 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                     ),
                     LibraryCreateShortcut(
                       key: const ValueKey('setlists-create-shortcut'),
+                      minHeight: 100,
                       label: l10n.setlistCreate,
                       margin: const EdgeInsets.fromLTRB(16, 4, 16, 8),
                       onPressed: () => widget.controller.createSetlist(
@@ -150,6 +151,7 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                                     ? _setlistCard(context, l10n, lists[index])
                                     : index == lists.length
                                     ? LibraryCreateShortcut(
+                                        minHeight: 100,
                                         key: const ValueKey(
                                           'setlists-create-shortcut',
                                         ),
@@ -575,8 +577,25 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: FilledButton.icon(
-              onPressed: () =>
-                  showAddSongsToSetlist(context, controller, value.id),
+              onPressed: () async {
+                // Carry a typed name into the first song write. Cancelling
+                // the picker on an untouched draft still creates nothing.
+                if (editing) {
+                  final name = _name.text.trim();
+                  await controller.saveSetlistDetails(
+                    name: name,
+                    notes: value.notes,
+                  );
+                  if (!context.mounted) return;
+                  final saved = controller.state.activeSetlist;
+                  if (saved?.id != value.id ||
+                      (name.isNotEmpty && saved?.title != name)) {
+                    return;
+                  }
+                }
+                if (!context.mounted) return;
+                await showAddSongsToSetlist(context, controller, value.id);
+              },
               icon: const Icon(Icons.add_rounded),
               label: Text(l10n.setlistAddSongs),
             ),
