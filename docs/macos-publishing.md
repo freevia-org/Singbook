@@ -79,9 +79,12 @@ through Organizer or Transporter. Keep the same version/build for this release
 across channels; if that build was already uploaded, follow the repository's
 monotonic release rules before another upload.
 
-Reuse the supported-language listing text under `docs/app-store/metadata/`
-after removing iPhone/iPad-only claims. Prepare native Mac screenshots at the
-App Store Connect dimensions, including library, reader and editor. Verify
+A Mac-specific English listing draft and exact candidate feature profile are
+in `docs/mac-app-store/`. Two original-content renderer captures are prepared
+under `artifacts/macos-acceptance/screenshots/store-en-US-*.jpg` at 1280×800,
+without alpha channels, matching [Apple’s Mac screenshot specifications](https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications).
+Other listing languages can be adapted from `docs/app-store/metadata/` after
+removing iPhone/iPad-only claims. Add an editor screenshot if desired. Verify
 their text and layout at compact and large windows, enlarged text, light/dark
 themes and RTL. Existing iOS screenshots are not macOS submission assets.
 Use the existing support and privacy URLs on `freevia.org/singbook/`.

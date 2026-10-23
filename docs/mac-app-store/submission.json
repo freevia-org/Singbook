@@ -1,0 +1,53 @@
+{
+  "status": "signed_export_ready_for_owner_validation",
+  "version": "0.2.16",
+  "build": "30",
+  "bundle_id": "org.freevia.singbook",
+  "platform": "MAC_OS",
+  "minimum_os": "12.0",
+  "architectures": [
+    "arm64",
+    "x86_64"
+  ],
+  "primary_locale": "en-US",
+  "category": "MUSIC",
+  "release_option": "MANUAL",
+  "app_record": "Add macOS to the existing Singbook record where eligible; owner confirmation required",
+  "support_url": "https://freevia.org/singbook/support/",
+  "privacy_url": "https://freevia.org/singbook/privacy/",
+  "marketing_url": "https://freevia.org/singbook/",
+  "feature_profile": {
+    "google_oauth": false,
+    "genius": false,
+    "third_party_sources": "existing public configuration retained"
+  },
+  "screenshots": [
+    {
+      "locale": "en-US",
+      "file": "artifacts/macos-acceptance/screenshots/store-en-US-library.jpg",
+      "size": [
+        1280,
+        800
+      ]
+    },
+    {
+      "locale": "en-US",
+      "file": "artifacts/macos-acceptance/screenshots/store-en-US-reader.jpg",
+      "size": [
+        1280,
+        800
+      ]
+    }
+  ],
+  "owner_fields_pending": [
+    "App Store Connect macOS platform, binary validation and final listing review",
+    "Review contact, territories, rights and age rating confirmation",
+    "SDK-inclusive privacy questionnaire and publication of updated policy",
+    "Native file dialogs, window-close cancellation and clean-machine acceptance",
+    "Intel runtime acceptance; configured OAuth/Genius validation if enabled"
+  ],
+  "upload_status": "No upload or review submission performed",
+  "source_commit": "8f3d1cda",
+  "artifact_directory": "artifacts/macos/20261023T052143Z-8f3d1cda-38951",
+  "signed_package": "artifacts/macos/20261023T052143Z-8f3d1cda-38951/export-retry1/Singbook.pkg"
+}
