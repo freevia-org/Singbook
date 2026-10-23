@@ -33,7 +33,7 @@ jobs:
           cache: true
       - name: Get locked dependencies
         run: flutter pub get --enforce-lockfile --no-example
-      - name: Run the five focused regression files
+      - name: Run the six focused regression files
         timeout-minutes: 10
         run: |
           mkdir -p artifacts/ux-batch-validation
@@ -44,6 +44,7 @@ jobs:
             test/ui/editor_save_transition_test.dart \
             test/ui/player_compact_layout_test.dart \
             test/ui/combined_reader_settings_test.dart \
+            test/ui/screens_test.dart \
             2>&1 | tee artifacts/ux-batch-validation/focused-tests.log
       - name: Preserve focused regression logs
         if: always()

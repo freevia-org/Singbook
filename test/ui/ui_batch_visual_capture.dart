@@ -161,9 +161,22 @@ void main() {
             locale: scenario.$3,
             localizationsDelegates: singbookLocalizationsDelegates,
             supportedLocales: const [Locale('en'), Locale('bg'), Locale('ar'), Locale('uk')],
-            theme: theme.copyWith(textTheme: theme.textTheme.apply(
-              fontFamily: 'NotoSansFixture', fontFamilyFallback: const ['SetlistArabic'],
-            )),
+            theme: theme.copyWith(
+              textTheme: theme.textTheme.apply(
+                fontFamily: 'NotoSansFixture',
+                fontFamilyFallback: const ['SetlistArabic'],
+              ),
+              navigationRailTheme: theme.navigationRailTheme.copyWith(
+                selectedLabelTextStyle: theme.navigationRailTheme
+                    .selectedLabelTextStyle?.copyWith(
+                      fontFamilyFallback: const ['SetlistArabic'],
+                    ),
+                unselectedLabelTextStyle: theme.navigationRailTheme
+                    .unselectedLabelTextStyle?.copyWith(
+                      fontFamilyFallback: const ['SetlistArabic'],
+                    ),
+              ),
+            ),
             builder: (context, child) => MediaQuery(
               data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scenario.$4)),
               child: child!,
@@ -214,6 +227,20 @@ void main() {
             const ValueKey('scroll-speed-value'),
           )).data, expected);
           expect(controller.calls.where((call) => call.startsWith('setPlaybackSpeed')), isEmpty);
+          final popupValue = find.byKey(const ValueKey('scroll-speed-popup-value'));
+          expect(tester.widget<Text>(popupValue).data, expected);
+          final popupRect = tester.getRect(
+            find.byKey(const ValueKey('scroll-speed-panel')),
+          );
+          final valueRect = tester.getRect(popupValue);
+          expect(valueRect.left, greaterThanOrEqualTo(popupRect.left - 1));
+          expect(valueRect.right, lessThanOrEqualTo(popupRect.right + 1));
+          expect(valueRect.top, greaterThanOrEqualTo(popupRect.top - 1));
+          expect(valueRect.bottom, lessThanOrEqualTo(popupRect.bottom + 1));
+          expect(
+            tester.renderObject<RenderParagraph>(popupValue).didExceedMaxLines,
+            isFalse,
+          );
           await _capture(tester, boundaryKey, '${scenario.$1}-speed-held');
         } finally {
           await gesture.cancel();

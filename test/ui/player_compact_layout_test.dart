@@ -403,6 +403,98 @@ void main() {
   }
 
   testWidgets(
+    'landscape controls start fully visible and popup ratio stays readable while held',
+    (tester) async {
+      await tester.runAsync(() async {
+        for (final family in ['Roboto', 'sans-serif']) {
+          await (FontLoader(family)
+            ..addFont(rootBundle.load('assets/fonts/NotoSans-Regular.ttf'))).load();
+        }
+        await (FontLoader('MaterialIcons')
+          ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
+      });
+      final controller = _Controller();
+      addTearDown(controller.dispose);
+      await _pump(
+        tester,
+        controller,
+        size: const Size(700, 360),
+        locale: const Locale('bg'),
+        scale: 1.5,
+        onFullScreenChanged: (_) {},
+      );
+      final panelRect = tester.getRect(
+        find.byKey(const ValueKey('player-controls-panel')),
+      );
+      expect(
+        find.byKey(const ValueKey('player-transport-horizontal-scroll')),
+        findsNothing,
+      );
+      final key = find.byKey(const ValueKey('pitch-key-dropdown'));
+      final play = find.byKey(const ValueKey('start-lyric-scroll'));
+      final speed = find.byKey(const ValueKey('scroll-speed-toggle'));
+      // No ensureVisible or swipe: all controls must fit before interaction.
+      for (final control in [
+        key, play, speed,
+        find.widgetWithIcon(IconButton, Icons.skip_previous_rounded),
+        find.widgetWithIcon(IconButton, Icons.skip_next_rounded),
+      ]) {
+        final rect = tester.getRect(control);
+        expect(rect.left, greaterThanOrEqualTo(panelRect.left - 1));
+        expect(rect.right, lessThanOrEqualTo(panelRect.right + 1));
+        expect(rect.top, greaterThanOrEqualTo(panelRect.top - 1));
+        expect(rect.bottom, lessThanOrEqualTo(panelRect.bottom + 1));
+        expect(rect.width, greaterThanOrEqualTo(48));
+        expect(rect.height, greaterThanOrEqualTo(48));
+        expect(control.hitTestable(), findsOneWidget);
+      }
+      expect(tester.getSize(play).width, greaterThanOrEqualTo(104));
+      await tester.tap(speed);
+      await tester.pumpAndSettle();
+      final slider = find.byKey(const ValueKey('scroll-speed-slider'));
+      final gesture = await tester.startGesture(tester.getCenter(slider));
+      try {
+        await gesture.moveBy(const Offset(0, -24));
+        await tester.pump();
+        final expected = tester.widget<Slider>(slider).label;
+        expect(expected, isNot('1×'));
+        final value = find.byKey(const ValueKey('scroll-speed-popup-value'));
+        expect(tester.widget<Text>(value).data, expected);
+        expect(
+          tester.widget<Text>(find.byKey(const ValueKey('scroll-speed-value'))).data,
+          expected,
+        );
+        final popupRect = tester.getRect(
+          find.byKey(const ValueKey('scroll-speed-panel')),
+        );
+        final valueRect = tester.getRect(value);
+        expect(valueRect.left, greaterThanOrEqualTo(popupRect.left - 1));
+        expect(valueRect.right, lessThanOrEqualTo(popupRect.right + 1));
+        expect(valueRect.top, greaterThanOrEqualTo(popupRect.top - 1));
+        expect(valueRect.bottom, lessThanOrEqualTo(popupRect.bottom + 1));
+        expect(
+          tester.renderObject<RenderParagraph>(value).didExceedMaxLines,
+          isFalse,
+        );
+        expect(controller.speedWrites, 0);
+      } finally {
+        await gesture.cancel();
+      }
+      await tester.pump();
+      expect(controller.speedWrites, 0);
+      expect(controller.speed, 1);
+      expect(
+        tester.widget<Text>(find.byKey(const ValueKey('scroll-speed-popup-value'))).data,
+        '1×',
+      );
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    },
+    variant: TargetPlatformVariant({TargetPlatform.android, TargetPlatform.windows}),
+  );
+
+  testWidgets(
     'landscape fullscreen keeps a persistent header and lyrics exit action',
     (tester) async {
       final controller = _Controller();
