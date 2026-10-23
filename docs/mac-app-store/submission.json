@@ -54,8 +54,10 @@
   "review_attachment": "Singbook-mac-review-fixtures.zip",
   "direct_download": {
     "signing": "Developer ID Application created with owner approval and imported; signed export verified",
-    "notarization": "Uploaded through Xcode; Apple processing pending",
-    "public_release": "Not published"
+    "notarization": "Accepted; stapled ticket and Gatekeeper verified",
+    "public_release": "Not published; clean-machine and interactive acceptance pending",
+    "package": "artifacts/macos/20261023T052143Z-8f3d1cda-38951/Singbook-0.2.16-macos-universal.zip",
+    "sha256": "f24273b25e50faf46a80ffb20b01cd8140f583b3dc64d734f72ef39bff468b33"
   },
   "review_submission_id": "1b1a0272-ee5c-4a4c-9864-8f18de8abecb",
   "submitted_date": "2026-10-23"

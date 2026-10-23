@@ -18,7 +18,7 @@ All generated evidence is local and ignored by Git:
 - `export-retry1/Singbook.pkg`: Mac App Store export, approximately 70 MB.
 - `Singbook-preview.zip`: development-signed local preview, approximately 33 MB.
 - `developer-id-export/Singbook.app`: Developer ID-signed direct-download
-  candidate; not yet notarized.
+  candidate; notarization subsequently accepted.
 - `Singbook-developer-id.xcarchive`: cloned archive submitted for notarization,
   preserving the verified original archive.
 - `package-report.json`, `archive-report.json`, `bundle-report.json`,
@@ -98,8 +98,12 @@ The owner explicitly approved creation/import of a Developer ID Application
 certificate. Its matching private key was verified and imported into Keychain.
 The direct-download export passed deep/strict signature verification and has
 hardened runtime and a secure timestamp. Xcode uploaded the cloned archive
-successfully for notarization; Apple is still processing it. No notarized ZIP
-or stapled-ticket claim is made until that processing succeeds. The Mac App
+successfully for notarization; Apple accepted it. The exported app passed
+deep/strict signature verification, stapled-ticket validation and Gatekeeper
+assessment (`Notarized Developer ID`). The final archive is
+`Singbook-0.2.16-macos-universal.zip`; its SHA-256 is
+`f24273b25e50faf46a80ffb20b01cd8140f583b3dc64d734f72ef39bff468b33`. Public GitHub publication remains pending
+clean-machine and interactive acceptance; no public asset URL exists yet. The Mac App
 Store `.pkg` is not a direct-download installer. The development preview ZIP
 is for local review. See [publishing steps](macos-publishing.md) for both routes.
 
