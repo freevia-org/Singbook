@@ -241,7 +241,7 @@ void main() {
     }
   }
 
-  testWidgets('compact sidebar keeps key play and speed on one ordered row', (
+  testWidgets('compact sidebar adapts between fitted and stacked controls', (
     tester,
   ) async {
     // Match native font metrics used by the player's measured fit guards.
@@ -254,7 +254,7 @@ void main() {
     });
     final controller = _Controller()
       ..songKey = 'D#'
-      ..speed = 1.25;
+      ..speed = 1;
     addTearDown(controller.dispose);
     await _pump(tester, controller, size: const Size(900, 400));
     final key = tester.getRect(
@@ -270,6 +270,50 @@ void main() {
     expect(play.right, lessThanOrEqualTo(speed.left));
     expect(key.center.dy, closeTo(play.center.dy, 1));
     expect(speed.center.dy, closeTo(play.center.dy, 1));
+    expect(
+      find.byKey(const ValueKey('player-transport-horizontal-scroll')),
+      findsNothing,
+    );
+
+    // Preserve the original longer 1.25× ratio at the same 900×400 size.
+    // Its measured minimum exceeds the pane, so every control must stack and
+    // fit initially without requiring a horizontal reveal gesture.
+    controller.speed = 1.25;
+    controller.refresh();
+    await tester.pumpAndSettle();
+    final stackedKey = tester.getRect(
+      find.byKey(const ValueKey('pitch-key-dropdown')),
+    );
+    final stackedPlay = tester.getRect(
+      find.byKey(const ValueKey('start-lyric-scroll')),
+    );
+    final stackedSpeed = tester.getRect(
+      find.byKey(const ValueKey('scroll-speed-toggle')),
+    );
+    final panelRect = tester.getRect(
+      find.byKey(const ValueKey('player-controls-panel')),
+    );
+    expect(stackedKey.right, lessThanOrEqualTo(stackedSpeed.left));
+    expect(stackedKey.center.dy, closeTo(stackedSpeed.center.dy, 1));
+    expect(stackedPlay.top, greaterThanOrEqualTo(stackedKey.bottom - 1));
+    expect(stackedPlay.top, greaterThanOrEqualTo(stackedSpeed.bottom - 1));
+    for (final (name, rect) in [
+      ('key', stackedKey), ('play', stackedPlay), ('speed', stackedSpeed),
+    ]) {
+      final diagnostic = '1.25× $name: control=$rect; panel=$panelRect';
+      expect(rect.left, greaterThanOrEqualTo(panelRect.left - 1), reason: diagnostic);
+      expect(rect.right, lessThanOrEqualTo(panelRect.right + 1), reason: diagnostic);
+      expect(rect.top, greaterThanOrEqualTo(panelRect.top - 1), reason: diagnostic);
+      expect(rect.bottom, lessThanOrEqualTo(panelRect.bottom + 1), reason: diagnostic);
+    }
+    expect(
+      find.byKey(const ValueKey('player-transport-horizontal-scroll')),
+      findsNothing,
+    );
+    expect(
+      tester.widget<Text>(find.byKey(const ValueKey('scroll-speed-value'))).data,
+      '1.25×',
+    );
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('pitch-key-dropdown')),
@@ -434,19 +478,21 @@ void main() {
       final play = find.byKey(const ValueKey('start-lyric-scroll'));
       final speed = find.byKey(const ValueKey('scroll-speed-toggle'));
       // No ensureVisible or swipe: all controls must fit before interaction.
-      for (final control in [
-        key, play, speed,
-        find.widgetWithIcon(IconButton, Icons.skip_previous_rounded),
-        find.widgetWithIcon(IconButton, Icons.skip_next_rounded),
+      for (final (name, control) in [
+        ('key', key), ('play', play), ('speed', speed),
+        ('previous', find.widgetWithIcon(IconButton, Icons.skip_previous_rounded)),
+        ('next', find.widgetWithIcon(IconButton, Icons.skip_next_rounded)),
       ]) {
         final rect = tester.getRect(control);
-        expect(rect.left, greaterThanOrEqualTo(panelRect.left - 1));
-        expect(rect.right, lessThanOrEqualTo(panelRect.right + 1));
-        expect(rect.top, greaterThanOrEqualTo(panelRect.top - 1));
-        expect(rect.bottom, lessThanOrEqualTo(panelRect.bottom + 1));
-        expect(rect.width, greaterThanOrEqualTo(48));
-        expect(rect.height, greaterThanOrEqualTo(48));
-        expect(control.hitTestable(), findsOneWidget);
+        final diagnostic =
+            '${defaultTargetPlatform.name} $name: control=$rect; panel=$panelRect';
+        expect(rect.left, greaterThanOrEqualTo(panelRect.left - 1), reason: diagnostic);
+        expect(rect.right, lessThanOrEqualTo(panelRect.right + 1), reason: diagnostic);
+        expect(rect.top, greaterThanOrEqualTo(panelRect.top - 1), reason: diagnostic);
+        expect(rect.bottom, lessThanOrEqualTo(panelRect.bottom + 1), reason: diagnostic);
+        expect(rect.width, greaterThanOrEqualTo(48), reason: diagnostic);
+        expect(rect.height, greaterThanOrEqualTo(48), reason: diagnostic);
+        expect(control.hitTestable(), findsOneWidget, reason: diagnostic);
       }
       expect(tester.getSize(play).width, greaterThanOrEqualTo(104));
       await tester.tap(speed);

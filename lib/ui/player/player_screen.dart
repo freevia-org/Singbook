@@ -1697,6 +1697,7 @@ class _PlayerScreenState extends State<PlayerScreen>
               vertical: 4,
             ),
             minimumSize: Size(104, rowHeight),
+            visualDensity: stackActions ? VisualDensity.standard : null,
           ),
           onPressed: _togglePlayback,
           icon: Icon(
