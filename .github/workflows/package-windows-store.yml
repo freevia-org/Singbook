@@ -26,7 +26,7 @@ jobs:
     steps:
       - name: Verify successful release run and exact artifact metadata
         id: artifact
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const runId = Number(process.env.RELEASE_RUN_ID);
@@ -54,12 +54,12 @@ jobs:
             core.setOutput("artifact_digest", expectedDigest);
 
       - name: Check out package workflow source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
       - name: Check out exact product source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ env.RELEASE_HEAD_SHA }}
           path: release-source
@@ -117,7 +117,7 @@ jobs:
           ./scripts/windows-store/package-msix.ps1 -PortableBundle $env:PORTABLE -PortableManifest $env:MANIFEST -OutputDirectory $output -IconPath $icon -MakeAppxPath $makeAppx.FullName -ExpectedSourceTree $env:RELEASE_SOURCE_TREE
 
       - name: Preserve unsigned MSIX and provenance evidence
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: singbook-msix-1.0.28.0-unsigned
           path: |

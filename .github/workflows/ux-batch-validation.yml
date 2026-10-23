@@ -2,6 +2,11 @@ name: UX batch validation
 
 on:
   pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+      - 'LICENSE'
+      - 'NOTICE'
   workflow_dispatch:
 
 permissions:
@@ -12,8 +17,8 @@ defaults:
     shell: bash
 
 concurrency:
-  group: ux-batch-${{ github.ref }}
-  cancel-in-progress: true
+  group: ux-batch-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   FLUTTER_VERSION: "3.44.8"
@@ -23,9 +28,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -48,7 +54,7 @@ jobs:
             2>&1 | tee artifacts/ux-batch-validation/focused-tests.log
       - name: Preserve focused regression logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ux-focused-regressions-${{ github.sha }}
           path: artifacts/ux-batch-validation/
@@ -59,9 +65,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -110,7 +117,7 @@ jobs:
           PY
       - name: Preserve fresh host screenshots and logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ux-host-visuals-${{ github.sha }}
           path: artifacts/ux-batch-validation/
