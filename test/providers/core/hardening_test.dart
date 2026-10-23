@@ -14,13 +14,14 @@ const words =
     'A paper satellite sails above the desk tonight\nOur quiet room remembers all the stories from the rain';
 Matcher errorCode(String code) =>
     isA<ProviderException>().having((e) => e.code, 'code', code);
-ProviderTransport wire(FutureOr<http.Response> Function(http.Request) handler) =>
-    ProviderTransport(
-      client: MockClient((request) async => handler(request)),
-      hostInterval: Duration.zero,
-      timeout: const Duration(seconds: 2),
-      retryBaseDelay: const Duration(milliseconds: 1),
-    );
+ProviderTransport wire(
+  FutureOr<http.Response> Function(http.Request) handler,
+) => ProviderTransport(
+  client: MockClient((request) async => handler(request)),
+  hostInterval: Duration.zero,
+  timeout: const Duration(seconds: 2),
+  retryBaseDelay: const Duration(milliseconds: 1),
+);
 http.Response json(Object value) => http.Response(
   jsonEncode(value),
   200,
@@ -81,7 +82,9 @@ Map<String, dynamic> ytRow(String id, {int columns = 2, List? thumbnails}) => {
         },
     ],
     'thumbnail': {
-      'musicThumbnailRenderer': {'thumbnail': {'thumbnails': thumbnails ?? []}},
+      'musicThumbnailRenderer': {
+        'thumbnail': {'thumbnails': thumbnails ?? []},
+      },
     },
   },
 };
@@ -109,8 +112,10 @@ class _FailingProvider implements LyricsProvider {
     capabilities: {'lyrics'},
   );
   @override
-  Future<List<SongCandidate>> search(String q, {CancellationToken? cancel}) async =>
-      hits;
+  Future<List<SongCandidate>> search(
+    String q, {
+    CancellationToken? cancel,
+  }) async => hits;
   @override
   Future<SourceResult> resolve(
     SongCandidate c, {
@@ -161,7 +166,11 @@ void main() {
         throwsA(errorCode('invalid_response')),
       );
       await shapeless.close();
-      final none = wire((_) => json({'response': {'hits': []}}));
+      final none = wire(
+        (_) => json({
+          'response': {'hits': []},
+        }),
+      );
       expect(await GeniusProvider(none, token: 't').search('x'), isEmpty);
       await none.close();
     });
@@ -273,7 +282,9 @@ void main() {
       var calls = 0;
       final t = wire((_) {
         calls++;
-        return json({'results': [target]});
+        return json({
+          'results': [target],
+        });
       });
       final selection = (await SyncLrcProvider(t).search('paper')).single;
       expect(selection.metadata.containsKey('record'), isFalse);
@@ -297,7 +308,9 @@ void main() {
       var calls = 0;
       final t = wire((_) {
         calls++;
-        return json({'results': [target]});
+        return json({
+          'results': [target],
+        });
       });
       final selection = (await SyncLrcProvider(t).search('paper')).single;
       expect(selection.id.length, lessThanOrEqualTo(16384));
@@ -307,39 +320,42 @@ void main() {
       expect(r.timingTracks, hasLength(1));
       await t.close();
     });
-    test('finds the record via an exact title/artist query when the original ranked it low', () async {
-      final queries = <String>[];
-      Map<String, dynamic> row(String id, String title) => {
-        'id': id,
-        'track': title,
-        'artist': 'Fixture Ensemble',
-        'duration': 123,
-        'lyrics': {'plain': bulky, 'synced': '[00:01.00]$bulky'},
-      };
-      final target = row('a' * 32, 'Paper Satellites');
-      final t = wire((request) {
-        final q = request.url.queryParameters['q']!;
-        queries.add(q);
-        return json({
-          'results': q == 'Paper Satellites Fixture Ensemble'
-              ? [target]
-              : [for (var i = 0; i < 10; i++) row('${i}b' * 16, 'Other $i')],
+    test(
+      'finds the record via an exact title/artist query when the original ranked it low',
+      () async {
+        final queries = <String>[];
+        Map<String, dynamic> row(String id, String title) => {
+          'id': id,
+          'track': title,
+          'artist': 'Fixture Ensemble',
+          'duration': 123,
+          'lyrics': {'plain': bulky, 'synced': '[00:01.00]$bulky'},
+        };
+        final target = row('a' * 32, 'Paper Satellites');
+        final t = wire((request) {
+          final q = request.url.queryParameters['q']!;
+          queries.add(q);
+          return json({
+            'results': q == 'Paper Satellites Fixture Ensemble'
+                ? [target]
+                : [for (var i = 0; i < 10; i++) row('${i}b' * 16, 'Other $i')],
+          });
         });
-      });
-      final p = SyncLrcProvider(t);
-      // Search with a vague query that returns the target...
-      final vague = wire(
-        (_) => json({
-          'results': [target],
-        }),
-      );
-      final selection = (await SyncLrcProvider(vague).search('paper')).single;
-      await vague.close();
-      final r = await p.resolve(selection);
-      expect(r.timingTracks, hasLength(1));
-      expect(queries, ['paper', 'Paper Satellites Fixture Ensemble']);
-      await t.close();
-    });
+        final p = SyncLrcProvider(t);
+        // Search with a vague query that returns the target...
+        final vague = wire(
+          (_) => json({
+            'results': [target],
+          }),
+        );
+        final selection = (await SyncLrcProvider(vague).search('paper')).single;
+        await vague.close();
+        final r = await p.resolve(selection);
+        expect(r.timingTracks, hasLength(1));
+        expect(queries, ['paper', 'Paper Satellites Fixture Ensemble']);
+        await t.close();
+      },
+    );
     test('unavailable when no query finds it', () async {
       final target = {
         'id': 'a' * 32,
@@ -347,7 +363,11 @@ void main() {
         'artist': 'Fixture Ensemble',
         'lyrics': {'plain': bulky},
       };
-      final vague = wire((_) => json({'results': [target]}));
+      final vague = wire(
+        (_) => json({
+          'results': [target],
+        }),
+      );
       final selection = (await SyncLrcProvider(vague).search('paper')).single;
       await vague.close();
       final t = wire((_) => json({'results': []}));
@@ -376,7 +396,8 @@ void main() {
         throwsA(errorCode('blocked')),
       );
       expect(
-        () => UltimateGuitarProvider.parseSearch('<html><body>Hi</body></html>'),
+        () =>
+            UltimateGuitarProvider.parseSearch('<html><body>Hi</body></html>'),
         throwsA(errorCode('extraction_failed')),
       );
       expect(
@@ -394,44 +415,50 @@ void main() {
         'First invented line\nSecond line',
       );
     });
-    test('YouTube Music reports a consent page even with the fixed marker', () async {
-      final cookies = <String?>[];
-      final t = wire((request) {
-        cookies.add(request.headers['Cookie']);
-        return http.Response(
-          '<html><form action="https://consent.youtube.com/save">Before you continue to YouTube</form></html>',
-          200,
+    test(
+      'YouTube Music reports a consent page even with the fixed marker',
+      () async {
+        final cookies = <String?>[];
+        final t = wire((request) {
+          cookies.add(request.headers['Cookie']);
+          return http.Response(
+            '<html><form action="https://consent.youtube.com/save">Before you continue to YouTube</form></html>',
+            200,
+          );
+        });
+        await expectLater(
+          YoutubeMusicProvider(t).search('paper'),
+          throwsA(
+            isA<ProviderException>()
+                .having((e) => e.code, 'code', 'blocked')
+                .having((e) => e.message, 'message', 'consent_required'),
+          ),
         );
-      });
-      await expectLater(
-        YoutubeMusicProvider(t).search('paper'),
-        throwsA(
-          isA<ProviderException>()
-              .having((e) => e.code, 'code', 'blocked')
-              .having((e) => e.message, 'message', 'consent_required'),
-        ),
-      );
-      expect(cookies, ['SOCS=CAI']);
-      await t.close();
-    });
-    test('YouTube Music consent redirect is also blocked/consent_required', () async {
-      final t = wire(
-        (_) => http.Response(
-          '',
-          302,
-          headers: {'location': 'https://consent.youtube.com/m?continue=x'},
-        ),
-      );
-      await expectLater(
-        YoutubeMusicProvider(t).search('paper'),
-        throwsA(
-          isA<ProviderException>()
-              .having((e) => e.code, 'code', 'blocked')
-              .having((e) => e.message, 'message', 'consent_required'),
-        ),
-      );
-      await t.close();
-    });
+        expect(cookies, ['SOCS=CAI']);
+        await t.close();
+      },
+    );
+    test(
+      'YouTube Music consent redirect is also blocked/consent_required',
+      () async {
+        final t = wire(
+          (_) => http.Response(
+            '',
+            302,
+            headers: {'location': 'https://consent.youtube.com/m?continue=x'},
+          ),
+        );
+        await expectLater(
+          YoutubeMusicProvider(t).search('paper'),
+          throwsA(
+            isA<ProviderException>()
+                .having((e) => e.code, 'code', 'blocked')
+                .having((e) => e.message, 'message', 'consent_required'),
+          ),
+        );
+        await t.close();
+      },
+    );
     test('a changed page still reports extraction_failed', () async {
       final t = wire((_) => http.Response('<html>nothing here</html>', 200));
       await expectLater(
@@ -449,11 +476,23 @@ void main() {
         song('2'),
       ], const ProviderException('extraction_failed', 'layout'));
       await expectLater(
-        findMatchingSource(provider, song('0')),
+        findMatchingSource(
+          provider,
+          const SongCandidate(
+            providerId: 'primary',
+            id: '0',
+            title: 'Paper Satellites',
+            artist: 'Fixture Ensemble',
+          ),
+        ),
         throwsA(
           isA<ProviderException>()
               .having((e) => e.code, 'code', 'extraction_failed')
-              .having((e) => e.message, 'message', allOf(contains('1 '), contains('2 '))),
+              .having(
+                (e) => e.message,
+                'message',
+                allOf(contains('1 '), contains('2 ')),
+              ),
         ),
       );
     });
@@ -469,69 +508,105 @@ void main() {
   });
 
   group('untrusted URLs', () {
-    test('artwork and media links keep only safe https URLs on expected hosts', () {
-      final song = GeniusProvider.parseSong({
-        'id': 9,
-        'title': 'Paper Satellites',
-        'primary_artist': {'name': 'Fixture Ensemble'},
-        'url': 'https://genius.com/fixture',
-        'song_art_image_url': 'https://tracker.example/pixel.png',
-        'header_image_url': 'https://images.genius.com/header.jpg',
-        'media': [
-          {'type': 'video', 'provider': 'youtube', 'url': 'http://youtube.com/x'},
-          {'type': 'video', 'provider': 'youtube', 'url': 'https://u:p@youtube.com/x'},
-          {'type': 'video', 'provider': 'youtube', 'url': 'https://127.0.0.1/x'},
-          {'type': 'video', 'provider': 'youtube', 'url': 'javascript:alert(1)'},
-          {'type': 'video', 'provider': 'youtube', 'url': 'https://www.youtube.com/watch?v=abcdefghijk'},
-        ],
-      });
-      expect(song.metadata['artworkUrl'], 'https://images.genius.com/header.jpg');
-      final links = song.metadata['mediaLinks'] as List;
-      expect(links.map((l) => l['url']), [
-        'https://www.youtube.com/watch?v=abcdefghijk',
-      ]);
-    });
-    test('Lyrics.ovh upgrades Deezer http art and drops foreign hosts', () async {
-      final t = wire(
-        (_) => json({
-          'data': [
+    test(
+      'artwork and media links keep only safe https URLs on expected hosts',
+      () {
+        final song = GeniusProvider.parseSong({
+          'id': 9,
+          'title': 'Paper Satellites',
+          'primary_artist': {'name': 'Fixture Ensemble'},
+          'url': 'https://genius.com/fixture',
+          'song_art_image_url': 'https://tracker.example/pixel.png',
+          'header_image_url': 'https://images.genius.com/header.jpg',
+          'media': [
             {
-              'id': 5,
-              'title': 'Paper Satellites',
-              'artist': {'name': 'Fixture Ensemble'},
-              'album': {
-                'title': 'A',
-                'cover_xl': 'https://evil.example/cover.jpg',
-                'cover_big': 'http://cdn-images.dzcdn.net/images/cover/big.jpg',
-              },
+              'type': 'video',
+              'provider': 'youtube',
+              'url': 'http://youtube.com/x',
+            },
+            {
+              'type': 'video',
+              'provider': 'youtube',
+              'url': 'https://u:p@youtube.com/x',
+            },
+            {
+              'type': 'video',
+              'provider': 'youtube',
+              'url': 'https://127.0.0.1/x',
+            },
+            {
+              'type': 'video',
+              'provider': 'youtube',
+              'url': 'javascript:alert(1)',
+            },
+            {
+              'type': 'video',
+              'provider': 'youtube',
+              'url': 'https://www.youtube.com/watch?v=abcdefghijk',
             },
           ],
-        }),
-      );
-      final song = (await LyricsOvhProvider(t).search('x')).single;
-      expect(
-        song.metadata['artworkUrl'],
-        'https://cdn-images.dzcdn.net/images/cover/big.jpg',
-      );
-      await t.close();
-    });
-    test('YouTube Music thumbnails are limited to Google/YouTube image hosts', () {
-      final results = YoutubeMusicProvider.parseSearch(
-        ytSearch([
-          ytRow(
-            'abcdefghijk',
-            thumbnails: [
-              {'url': 'https://evil.example/a.jpg', 'width': 900},
-              {'url': 'https://lh3.googleusercontent.com/a=w120', 'width': 120},
+        });
+        expect(
+          song.metadata['artworkUrl'],
+          'https://images.genius.com/header.jpg',
+        );
+        final links = song.metadata['mediaLinks'] as List;
+        expect(links.map((l) => l['url']), [
+          'https://www.youtube.com/watch?v=abcdefghijk',
+        ]);
+      },
+    );
+    test(
+      'Lyrics.ovh upgrades Deezer http art and drops foreign hosts',
+      () async {
+        final t = wire(
+          (_) => json({
+            'data': [
+              {
+                'id': 5,
+                'title': 'Paper Satellites',
+                'artist': {'name': 'Fixture Ensemble'},
+                'album': {
+                  'title': 'A',
+                  'cover_xl': 'https://evil.example/cover.jpg',
+                  'cover_big':
+                      'http://cdn-images.dzcdn.net/images/cover/big.jpg',
+                },
+              },
             ],
-          ),
-        ]),
-      );
-      expect(
-        results.single.metadata['artworkUrl'],
-        'https://lh3.googleusercontent.com/a=w120',
-      );
-    });
+          }),
+        );
+        final song = (await LyricsOvhProvider(t).search('x')).single;
+        expect(
+          song.metadata['artworkUrl'],
+          'https://cdn-images.dzcdn.net/images/cover/big.jpg',
+        );
+        await t.close();
+      },
+    );
+    test(
+      'YouTube Music thumbnails are limited to Google/YouTube image hosts',
+      () {
+        final results = YoutubeMusicProvider.parseSearch(
+          ytSearch([
+            ytRow(
+              'abcdefghijk',
+              thumbnails: [
+                {'url': 'https://evil.example/a.jpg', 'width': 900},
+                {
+                  'url': 'https://lh3.googleusercontent.com/a=w120',
+                  'width': 120,
+                },
+              ],
+            ),
+          ]),
+        );
+        expect(
+          results.single.metadata['artworkUrl'],
+          'https://lh3.googleusercontent.com/a=w120',
+        );
+      },
+    );
     test('httpsUrl rejects userinfo, ports, IP literals and local names', () {
       for (final bad in [
         'http://example.org/',
@@ -549,25 +624,31 @@ void main() {
       ]) {
         expect(httpsUrl(bad), isNull, reason: '$bad');
       }
-      expect(httpsUrl('https://example.org/a?b=c'), 'https://example.org/a?b=c');
+      expect(
+        httpsUrl('https://example.org/a?b=c'),
+        'https://example.org/a?b=c',
+      );
     });
   });
 
   group('rights metadata stays conservative', () {
-    test('plain-text sources record unknown rights with a user-responsibility note', () {
-      final r = lyricsResult(
-        const SongCandidate(
-          providerId: 'lrclib',
-          id: '1',
-          title: 'Paper Satellites',
-          artist: 'Fixture Ensemble',
-        ),
-        words,
-        attribution: 'LRCLIB',
-      );
-      final rights = r.extra['rights'] as Map;
-      expect(rights['status'], 'unknown');
-      expect(rights['note'], contains('responsibility'));
-    });
+    test(
+      'plain-text sources record unknown rights with a user-responsibility note',
+      () {
+        final r = lyricsResult(
+          const SongCandidate(
+            providerId: 'lrclib',
+            id: '1',
+            title: 'Paper Satellites',
+            artist: 'Fixture Ensemble',
+          ),
+          words,
+          attribution: 'LRCLIB',
+        );
+        final rights = r.extra['rights'] as Map;
+        expect(rights['status'], 'unknown');
+        expect(rights['note'], contains('responsibility'));
+      },
+    );
   });
 }

@@ -645,11 +645,27 @@ void main() {
 
         expect(merged.id, saved.id);
         expect(merged.metadata['durationSeconds'], 247, reason: '$invalid');
-        expect(merged.sources.single.candidate.durationSeconds, isNull);
-        expect(
-          merged.sources.single.metadata,
-          isNot(contains('durationSeconds')),
-        );
+        // Repeated invalid imports retain the valid raw payload and one
+        // sanitized incoming payload, without growing duplicate history.
+        expect(merged.sources, hasLength(2), reason: '$invalid');
+        final validPayload = merged.sources
+            .where((source) => source.metadata['durationSeconds'] == 247)
+            .single;
+        final sanitizedPayload = merged.sources
+            .where((source) => !source.metadata.containsKey('durationSeconds'))
+            .single;
+        expect(validPayload.body, goodSource.body);
+        expect(validPayload.metadata, {'durationSeconds': 247});
+        expect(sanitizedPayload.body, goodSource.body);
+        expect(sanitizedPayload.metadata, isNot(contains('durationSeconds')));
+        for (final source in merged.sources) {
+          expect(source.candidate.durationSeconds, isNull);
+          expect(
+            source.metadata['durationSeconds'],
+            anyOf(isNull, equals(247)),
+            reason: '$invalid',
+          );
+        }
       }
     },
   );
@@ -1427,6 +1443,57 @@ void main() {
     },
   );
 
+  test('rejected lyrics require explicit selection before saving', () async {
+    ui.dispose();
+    app.dispose();
+    const candidate = SongCandidate(
+      providerId: 'catalog',
+      id: 'stream',
+      title: 'Stream Song',
+      artist: 'Test Artist',
+    );
+    const rejected = SourceResult(
+      candidate: SongCandidate(
+        providerId: 'songsterr',
+        id: 'stream',
+        title: 'Stream Song',
+        artist: 'Test Artist',
+      ),
+      body: '[C]A result that failed the automatic match check',
+      matchKind: MatchKind.rejected,
+      matchReason: 'identity_mismatch',
+    );
+    final discovery = _StreamingDiscovery(candidate, rejected);
+    app = AppController(repository: repository, discovery: discovery);
+    await app.initialize();
+    ui = AppControllerAdapter(app);
+    ui.setHomeListMode(HomeListMode.online);
+    ui.setQuery('stream song');
+    await ui.submitSearch();
+    final selecting = ui.selectReference(
+      const SearchReferenceData(
+        id: 'catalog:stream',
+        title: 'Stream Song',
+        artist: 'Test Artist',
+      ),
+    );
+    await discovery.started.future;
+    discovery.finished.complete([rejected]);
+    await selecting;
+
+    expect(ui.state.comparison?.suggested, isNull);
+    expect(ui.state.comparison?.selectedVersionId, isNot('combined'));
+    expect(ui.state.comparison?.alternatives.single.canSave, isTrue);
+    expect(app.combined, isNull);
+    expect(app.songs, isEmpty);
+    ui.selectVersion(rejected.id);
+    expect(ui.state.comparison?.selected?.id, rejected.id);
+    expect(ui.state.comparison?.selected?.matchSummary, 'identity_mismatch');
+    await ui.saveSelectedVersion();
+    expect(app.songs, hasLength(1));
+    expect(app.songs.single.body, rejected.body);
+  });
+
   test(
     'combined remains the default when every lyric match is unverified',
     () async {
@@ -1434,45 +1501,46 @@ void main() {
       app.dispose();
       const candidate = SongCandidate(
         providerId: 'catalog',
-        id: 'stream',
-        title: 'Stream Song',
+        id: 'unverified-stream',
+        title: 'Unverified Stream Song',
         artist: 'Test Artist',
       );
-      const rejected = SourceResult(
+      const unverified = SourceResult(
         candidate: SongCandidate(
           providerId: 'songsterr',
-          id: 'stream',
-          title: 'Stream Song',
+          id: 'unverified-stream',
+          title: 'Unverified Stream Song',
           artist: 'Test Artist',
         ),
-        body: '[C]A result that failed the automatic match check',
-        matchKind: MatchKind.rejected,
+        body: '[C]An unverified lyric result',
+        matchKind: MatchKind.unverified,
       );
-      final discovery = _StreamingDiscovery(candidate, rejected);
+      final discovery = _StreamingDiscovery(candidate, unverified);
       app = AppController(repository: repository, discovery: discovery);
       await app.initialize();
       ui = AppControllerAdapter(app);
       ui.setHomeListMode(HomeListMode.online);
-      ui.setQuery('stream song');
+      ui.setQuery('unverified stream song');
       await ui.submitSearch();
       final selecting = ui.selectReference(
         const SearchReferenceData(
-          id: 'catalog:stream',
-          title: 'Stream Song',
+          id: 'catalog:unverified-stream',
+          title: 'Unverified Stream Song',
           artist: 'Test Artist',
         ),
       );
       await discovery.started.future;
-      discovery.finished.complete([rejected]);
+      discovery.finished.complete([unverified]);
       await selecting;
 
       expect(ui.state.comparison?.suggested?.id, 'combined');
       expect(ui.state.comparison?.selectedVersionId, 'combined');
+      expect(ui.state.comparison?.suggested?.sameRecording, isFalse);
       expect(ui.state.comparison?.suggested?.matchSummary, 'identity_mismatch');
       expect(ui.state.comparison?.alternatives.single.canSave, isTrue);
       await ui.saveSelectedVersion();
       expect(app.songs, hasLength(1));
-      expect(app.songs.single.body, rejected.body);
+      expect(app.songs.single.body, unverified.body);
     },
   );
 
@@ -1766,15 +1834,37 @@ class _StreamingDiscovery extends SourceDiscoveryService {
   final List<SourceResult> additionalSources;
   final started = Completer<void>();
   final finished = Completer<List<SourceResult>>();
-  // This double overrides catalog search, so declare its registered role too.
+  // Register every provider emitted by this discovery double, including
+  // secondary chart providers, so production cancellation filters apply.
   @override
-  List<ProviderDefinition> get definitions => [
-    ProviderDefinition(
-      id: candidate.providerId,
-      name: candidate.providerId,
-      capabilities: const {'catalog'},
-    ),
-  ];
+  List<ProviderDefinition> get definitions {
+    final emitted = [source, ...additionalSources];
+    return [
+      for (final providerId in {
+        candidate.providerId,
+        ...emitted.map((result) => result.candidate.providerId),
+      })
+        ProviderDefinition(
+          id: providerId,
+          name: providerId,
+          capabilities: {
+            if (providerId == candidate.providerId) 'catalog',
+            if (emitted.any(
+              (result) =>
+                  result.candidate.providerId == providerId &&
+                  result.body.trim().isNotEmpty,
+            ))
+              'lyrics',
+            if (emitted.any(
+              (result) =>
+                  result.candidate.providerId == providerId && result.hasChords,
+            ))
+              'chords',
+          },
+        ),
+    ];
+  }
+
   @override
   Future<List<SongCandidate>> search(
     String query, {

@@ -11,6 +11,7 @@ import '../domain/arrangement.dart' show plainLyrics;
 import '../domain/models.dart';
 import '../domain/chordpro.dart';
 import '../domain/combine.dart';
+import '../domain/source_result_merge.dart';
 import '../providers/provider.dart';
 import '../providers/core/core_providers.dart';
 import '../providers/extra/extra_providers.dart';
@@ -123,6 +124,7 @@ class AppController extends ChangeNotifier {
     if (available.any((provider) => provider.id == requested)) {
       return requested as String;
     }
+    if (available.any((provider) => provider.id == 'genius')) return 'genius';
     if (available.any((provider) => provider.id == 'lrclib')) return 'lrclib';
     return available.firstOrNull?.id;
   }
@@ -162,7 +164,7 @@ class AppController extends ChangeNotifier {
         // Retire only a catalog lookup started during this preference write.
         if (searching) {
           ++_searchEpoch;
-          _searchCancel?.cancel();
+          _cancelCatalogSearch();
           searching = false;
         }
         _searchProviderId = null;
@@ -185,6 +187,9 @@ class AppController extends ChangeNotifier {
   List<SourceResult> results = [];
   SongDocument? combined;
   final Map<String, ProviderCheck> checks = {};
+  final Map<String, ProviderCheck> catalogChecks = {};
+  Map<String, CancellationToken> _catalogCancellations = {};
+  Map<String, CancellationToken> _providerDiscoveryCancellations = {};
   bool searching = false, discovering = false, initialized = false;
   String? errorCode;
   GoogleDriveSyncService? _sync;
@@ -560,21 +565,17 @@ class AppController extends ChangeNotifier {
 
   Future<void> setProviderEnabled(String id, bool enabled) async {
     final previousCatalog = searchCatalogId;
-    if (!enabled &&
-        (_searchProviderId == id ||
-            (selection == null &&
-                suggestions.any((candidate) => candidate.providerId == id)))) {
+    if (!enabled && _searchProviderId == id) {
       cancelSearch();
+    } else if (!enabled) {
+      _catalogCancellations[id]?.cancel();
+      suggestions = suggestions
+          .where((candidate) => candidate.providerId != id)
+          .toList();
     }
-    if (id == 'youtubemusic' && !enabled) {
-      _youtubeDiscoveryCancel?.cancel();
-      if (_searchProviderId == id) {
-        ++_searchEpoch;
-        _searchCancel?.cancel();
-        _searchProviderId = null;
-        searching = false;
-        suggestions = [];
-      }
+    if (!enabled) {
+      _providerDiscoveryCancellations[id]?.cancel();
+      if (id == 'youtubemusic') _youtubeDiscoveryCancel?.cancel();
       checks.remove(id);
       // Saved-source snapshots remain available; discard only live lookups.
       results = results
@@ -609,7 +610,7 @@ class AppController extends ChangeNotifier {
 
   Future<void> search(String value) async {
     final epoch = ++_searchEpoch;
-    _searchCancel?.cancel();
+    _cancelCatalogSearch();
     _searchProviderId = null;
     if (value != query) {
       selection = null;
@@ -626,7 +627,12 @@ class AppController extends ChangeNotifier {
       return;
     }
     final cancellation = _searchCancel = CancellationToken();
+    final participating = searchCatalogs.map((provider) => provider.id).toSet();
+    final providerCancellations = _catalogCancellations = {
+      for (final id in participating) id: CancellationToken(),
+    };
     searching = true;
+    catalogChecks.clear();
     errorCode = null;
     _emit();
     final catalog = searchCatalogId;
@@ -636,10 +642,43 @@ class AppController extends ChangeNotifier {
         throw const ProviderException('not_configured');
       }
       _searchProviderId = catalog;
-      final found = await discovery.search(
+      final found = await discovery.searchAcrossCatalogs(
         value.trim(),
-        providerId: catalog,
+        primaryProviderId: catalog,
+        enabledIds: participating,
+        providerCancellation: providerCancellations,
         cancel: cancellation,
+        onProgress: (found) {
+          if (epoch != _searchEpoch ||
+              _disposed ||
+              catalog != searchCatalogId ||
+              catalogRevision !=
+                  discovery.catalogClient?.runtime.catalog?.revision) {
+            return;
+          }
+          final eligible = searchCatalogs
+              .map((provider) => provider.id)
+              .toSet();
+          suggestions = found
+              .where((row) => eligible.contains(row.providerId))
+              .toList();
+          _emit();
+        },
+        onStatus: (id, state, code) {
+          if (epoch != _searchEpoch ||
+              _disposed ||
+              catalog != searchCatalogId ||
+              catalogRevision !=
+                  discovery.catalogClient?.runtime.catalog?.revision) {
+            return;
+          }
+          catalogChecks[id] = ProviderCheck(
+            providerId: id,
+            state: state,
+            code: code,
+          );
+          _emit();
+        },
       );
       if (epoch != _searchEpoch ||
           _disposed ||
@@ -648,7 +687,10 @@ class AppController extends ChangeNotifier {
               discovery.catalogClient?.runtime.catalog?.revision) {
         return;
       }
-      suggestions = found;
+      final eligible = searchCatalogs.map((provider) => provider.id).toSet();
+      suggestions = found
+          .where((row) => eligible.contains(row.providerId))
+          .toList();
     } catch (error) {
       if (epoch != _searchEpoch ||
           _disposed ||
@@ -662,14 +704,22 @@ class AppController extends ChangeNotifier {
       if (epoch == _searchEpoch) {
         searching = false;
         _searchProviderId = null;
+        _catalogCancellations = {};
         _emit();
       }
     }
   }
 
+  void _cancelCatalogSearch() {
+    _searchCancel?.cancel();
+    for (final token in _catalogCancellations.values) {
+      token.cancel();
+    }
+  }
+
   void cancelSearch() {
     ++_searchEpoch;
-    _searchCancel?.cancel();
+    _cancelCatalogSearch();
     _searchProviderId = null;
     searching = false;
     suggestions = [];
@@ -681,6 +731,10 @@ class AppController extends ChangeNotifier {
   void cancelDiscovery() {
     ++_discoveryEpoch;
     _discoveryCancel?.cancel();
+    for (final token in _providerDiscoveryCancellations.values) {
+      token.cancel();
+    }
+    _providerDiscoveryCancellations = {};
     _youtubeDiscoveryCancel?.cancel();
     discovering = false;
     results = [];
@@ -701,7 +755,7 @@ class AppController extends ChangeNotifier {
     String? searchQuery,
   }) async {
     final searchEpoch = ++_searchEpoch;
-    _searchCancel?.cancel();
+    _cancelCatalogSearch();
     searching = false;
     selection = null;
     cancelDiscovery();
@@ -787,7 +841,9 @@ class AppController extends ChangeNotifier {
             .where((use) => !use.allows(selected, previous))
             .toList();
       }
-      merged[source.id] = source;
+      merged[source.id] = previous == null
+          ? source
+          : mergeSourceResult(previous, source);
     }
     return merged.values.toList();
   }
@@ -816,14 +872,20 @@ class AppController extends ChangeNotifier {
     SongDocument? storedComparison,
   }) async {
     ++_searchEpoch;
-    _searchCancel?.cancel();
+    _cancelCatalogSearch();
     _searchProviderId = null;
     searching = false;
     suggestions = [];
     cancelDiscovery();
     final epoch = _discoveryEpoch;
     final cancellation = _discoveryCancel = CancellationToken();
-    final youtubeCancellation = _youtubeDiscoveryCancel = CancellationToken();
+    final providerCancellations = _providerDiscoveryCancellations = {
+      for (final provider in providers)
+        if (provider.configured && providerEnabled(provider.id))
+          provider.id: CancellationToken(),
+    };
+    final youtubeCancellation = _youtubeDiscoveryCancel =
+        providerCancellations['youtubemusic'] ?? CancellationToken();
     selection = candidate;
     if (searchQuery != null) query = searchQuery;
     // Saved provenance remains available during refresh, including offline.
@@ -850,17 +912,20 @@ class AppController extends ChangeNotifier {
     _combine(candidate);
     errorCode = null;
     _emit();
+    var discoveryClosed = false;
     try {
       final found = await discovery.discover(
         candidate,
-        enabledIds: providers
-            .where((p) => providerEnabled(p.id))
-            .map((p) => p.id)
-            .toSet(),
+        enabledIds: providerCancellations.keys.toSet(),
         cancel: cancellation,
-        providerCancellation: {'youtubemusic': youtubeCancellation},
+        providerCancellation: providerCancellations,
         onProgress: (check) {
-          if (epoch != _discoveryEpoch || _disposed) return;
+          if (discoveryClosed || epoch != _discoveryEpoch || _disposed) return;
+          if (!providerCancellations.containsKey(check.providerId) ||
+              providerCancellations[check.providerId]!.isCancelled ||
+              !providerEnabled(check.providerId)) {
+            return;
+          }
           if (check.providerId == 'youtubemusic' &&
               _youtubeDiscoveryCancel != youtubeCancellation) {
             return;
@@ -898,11 +963,12 @@ class AppController extends ChangeNotifier {
         },
       );
       if (epoch != _discoveryEpoch || _disposed) return;
-      results = _mergeDiscoveryResults(candidate, cached, [
+      results = _mergeDiscoveryResults(candidate, results, [
         for (final source in found)
-          if (source.candidate.providerId != 'youtubemusic' ||
-              (!youtubeCancellation.isCancelled &&
-                  providerEnabled('youtubemusic')))
+          if (providerCancellations.containsKey(source.candidate.providerId) &&
+              !providerCancellations[source.candidate.providerId]!
+                  .isCancelled &&
+              providerEnabled(source.candidate.providerId))
             source,
       ]);
       _combine(candidate);
@@ -910,7 +976,9 @@ class AppController extends ChangeNotifier {
       if (epoch != _discoveryEpoch || _disposed) return;
       errorCode = error is ProviderException ? error.code : 'discovery_failed';
     } finally {
+      discoveryClosed = true;
       if (epoch == _discoveryEpoch) {
+        _providerDiscoveryCancellations = {};
         discovering = false;
         _combine(candidate);
         _emit();
@@ -943,21 +1011,10 @@ class AppController extends ChangeNotifier {
           historicalCacheUses: _historicalCacheUses,
         );
       } else {
-        final fallback = bestLyricsFallback(available);
-        if (fallback == null) {
-          combined = null;
-        } else {
-          final fallbackDocument = combineSources(
-            candidate,
-            available,
-            preferredSourceId: fallback.id,
-            allowRejectedPreferredSource: true,
-            historicalCacheUses: _historicalCacheUses,
-          );
-          combined = fallbackDocument.copyWith(
-            extra: {...fallbackDocument.extra, 'combinedFallbackSource': true},
-          );
-        }
+        // Rejected payloads remain inspectable as alternatives. Only an
+        // explicit source save may opt into a rejected arrangement; automatic
+        // recombination must not restore authority withdrawn by final checks.
+        combined = null;
       }
     } on FormatException {
       combined = null;
@@ -1898,7 +1955,7 @@ class AppController extends ChangeNotifier {
     _historicalCacheUses = const [];
     _autoSyncTimer?.cancel();
     _sync?.cancel();
-    _searchCancel?.cancel();
+    _cancelCatalogSearch();
     _discoveryCancel?.cancel();
     // Close the HTTP client only once the cancelled sync has stopped, so its
     // workers do not spend retries on a closed client.

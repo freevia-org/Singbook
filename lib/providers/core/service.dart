@@ -2,8 +2,11 @@ import 'dart:async';
 import 'diagnostics.dart';
 import 'dart:math' as math;
 import '../../domain/models.dart';
+import '../../domain/lyrics_variants.dart';
+import '../../domain/edition_identity.dart';
 import '../provider.dart';
 import '../source_catalog_client.dart';
+import '../catalog_search.dart';
 
 const _diagnosticCodes = <String>{
   'blocked',
@@ -256,8 +259,27 @@ Future<SourceResult> findMatchingSource(
   // fails it is skipped so the next candidate can be tried.
   bool Function(SourceResult result)? accept,
   void Function(ProviderOperation operation)? onOperation,
+  void Function(SourceResult result)? onAlternative,
+  void Function(SourceResult result)? onCandidate,
+  // Only deliberate internal corroboration may explore alternatives to the
+  // selected provider's exact row. Ordinary selection never substitutes one.
+  bool allowSelectedProviderAlternatives = false,
+  // During initial chord discovery, defer later matching rows until the
+  // selected chart has been checked against a full lyric reference. That
+  // retry path has its own timeout and cancellation scope.
+  bool stopAfterFirstChordCandidate = false,
   String operationPrefix = 'lookup',
 }) async {
+  cancel?.throwIfCancelled();
+  void observeCandidate(SourceResult result) {
+    if (cancel?.isCancelled == true) return;
+    try {
+      onCandidate?.call(result);
+    } catch (_) {
+      // Observation cannot invalidate an already validated provider payload.
+    }
+  }
+
   final phaseSequences = <String, int>{};
   final activeOperationIds = <String, String>{};
   void report(
@@ -306,6 +328,7 @@ Future<SourceResult> findMatchingSource(
     late final SourceResult result;
     try {
       result = await provider.resolve(selection, cancel: cancel);
+      cancel?.throwIfCancelled();
       report(
         'metadata',
         'completed',
@@ -313,6 +336,7 @@ Future<SourceResult> findMatchingSource(
         elapsedMilliseconds: fetchWatch.elapsedMilliseconds,
       );
     } on ProviderException catch (error) {
+      cancel?.throwIfCancelled();
       report(
         'metadata',
         'failed',
@@ -322,6 +346,7 @@ Future<SourceResult> findMatchingSource(
       );
       rethrow;
     } catch (_) {
+      cancel?.throwIfCancelled();
       report(
         'metadata',
         'failed',
@@ -354,6 +379,12 @@ Future<SourceResult> findMatchingSource(
     final recordingScope = song.metadata['identityScope'] == 'recording';
     final exact =
         recordingScope &&
+        explicitEditionsCompatible(
+          selection,
+          song,
+          metadata: result.metadata,
+          extra: result.extra,
+        ) &&
         (selection.identity == song.identity ||
             sharedId ||
             _sameAlbum(selection, song) &&
@@ -361,11 +392,13 @@ Future<SourceResult> findMatchingSource(
                 song.durationSeconds != null &&
                 (selection.durationSeconds! - song.durationSeconds!).abs() <=
                     3);
-    return _matched(
+    final matched = _matched(
       result,
       exact ? MatchKind.sameRecording : MatchKind.sameSong,
       exact ? 'same_recording' : 'same_song',
     );
+    observeCandidate(matched);
+    return matched;
   }
   var attempts = 0;
   final seen = <String>{...exclude};
@@ -388,7 +421,9 @@ Future<SourceResult> findMatchingSource(
     report('fetch', 'pending', candidate: candidate);
     try {
       result = await provider.resolve(candidate, cancel: cancel);
+      cancel?.throwIfCancelled();
     } on ProviderException catch (e) {
+      cancel?.throwIfCancelled();
       report(
         'fetch',
         'failed',
@@ -408,6 +443,7 @@ Future<SourceResult> findMatchingSource(
       }
       rethrow;
     } catch (_) {
+      cancel?.throwIfCancelled();
       report(
         'fetch',
         'failed',
@@ -456,6 +492,12 @@ Future<SourceResult> findMatchingSource(
     final scope = song.metadata['identityScope'];
     final exact =
         selection.identity == song.identity &&
+        explicitEditionsCompatible(
+          selection,
+          song,
+          metadata: result.metadata,
+          extra: result.extra,
+        ) &&
         !{
           'composition',
           'arrangement',
@@ -465,6 +507,12 @@ Future<SourceResult> findMatchingSource(
         }.contains(scope) &&
         !provider.definition.capabilities.contains('chords');
     final verifiedRecording =
+        explicitEditionsCompatible(
+          selection,
+          song,
+          metadata: result.metadata,
+          extra: result.extra,
+        ) &&
         _sameAlbum(selection, song) &&
         selection.durationSeconds != null &&
         song.durationSeconds != null &&
@@ -507,13 +555,15 @@ Future<SourceResult> findMatchingSource(
       return null;
     }
     report('validate', 'completed', candidate: song);
+    observeCandidate(matched);
     return matched;
   }
 
   if (selection.providerId == provider.definition.id) {
     final result = await attempt(selection);
     if (result != null) return result;
-    if (provider.definition.id == 'wikisource') {
+    if (!allowSelectedProviderAlternatives ||
+        provider.definition.id == 'wikisource') {
       if (rejected != null) return rejected!;
       if (unresolved.isNotEmpty) {
         throw ProviderException(
@@ -539,6 +589,7 @@ Future<SourceResult> findMatchingSource(
   late final List<SongCandidate> results;
   try {
     results = await provider.search(searchQuery, cancel: cancel);
+    cancel?.throwIfCancelled();
   } on ProviderException catch (error) {
     report(
       'search',
@@ -568,7 +619,10 @@ Future<SourceResult> findMatchingSource(
                     sameArrangement(selection, s, provider)),
           )
           .toList()
-        ..sort((a, b) => _rank(selection, b).compareTo(_rank(selection, a)));
+        ..sort((a, b) {
+          final rank = _rank(selection, b).compareTo(_rank(selection, a));
+          return rank != 0 ? rank : a.id.compareTo(b.id);
+        });
   report(
     'search',
     'completed',
@@ -576,11 +630,65 @@ Future<SourceResult> findMatchingSource(
     resultCount: results.length,
     elapsedMilliseconds: searchWatch.elapsedMilliseconds,
   );
+  SourceResult? best;
+  final alternatives = <SourceResult>[];
+  String? alternativeFailure;
   for (final candidate in candidates) {
     if (attempts >= 3) break;
-    final result = await attempt(candidate);
-    if (result != null) return result;
+    SourceResult? result;
+    try {
+      result = await attempt(candidate);
+    } on ProviderException catch (error) {
+      cancel?.throwIfCancelled();
+      if (best == null) rethrow;
+      alternativeFailure = _safeDiagnosticCode(error.code);
+      break;
+    } catch (_) {
+      cancel?.throwIfCancelled();
+      if (best == null) rethrow;
+      alternativeFailure = 'invalid_response';
+      break;
+    }
+    if (result == null) continue;
+    alternatives.add(result);
+    if (stopAfterFirstChordCandidate && !allowSelectedProviderAlternatives) {
+      cancel?.throwIfCancelled();
+      return result;
+    }
+    if (best == null ||
+        (result.matchKind == MatchKind.sameRecording &&
+            best.matchKind != MatchKind.sameRecording) ||
+        (result.matchKind == best.matchKind &&
+            preferCompatibleLyrics(best.body, [result.body]) == result.body &&
+            best.body != result.body)) {
+      best = result;
+    }
   }
+  if (best != null) {
+    cancel?.throwIfCancelled();
+    for (final alternative in alternatives) {
+      if (!identical(alternative, best)) {
+        try {
+          onAlternative?.call(alternative);
+        } catch (_) {
+          // A consumer may ignore alternatives; it cannot erase the best one.
+        }
+      }
+    }
+    return best.copyWith(
+      extra: {
+        ...best.extra,
+        if (alternatives.length > 1)
+          'providerAlternatives': [
+            for (final alternative in alternatives)
+              if (!identical(alternative, best))
+                {...alternative.toJson()}..remove('providerAlternatives'),
+          ],
+        'alternativeLookupFailure': ?alternativeFailure,
+      },
+    );
+  }
+  cancel?.throwIfCancelled();
   if (rejected != null) return rejected!;
   if (unresolved.isEmpty) throw const ProviderException('unavailable');
   // 'blocked' is rethrown at once (hammering a bot wall helps nobody); layout
@@ -605,10 +713,36 @@ class SourceDiscoveryService {
     String providerId = 'genius',
     CancellationToken? cancel,
   }) async {
+    cancel?.throwIfCancelled();
     final matches = providers.where((p) => p.definition.id == providerId);
     if (matches.isEmpty) throw const ProviderException('not_configured');
-    return matches.single.search(query, cancel: cancel);
+    final rows = await matches.single.search(query, cancel: cancel);
+    cancel?.throwIfCancelled();
+    return rows;
   }
+
+  /// Queries each eligible catalog once while retaining the preferred catalog's
+  /// identities and rank. Exact provider search remains available to adapters
+  /// and maintenance probes, and test overrides participate through [search].
+  Future<List<SongCandidate>> searchAcrossCatalogs(
+    String query, {
+    required String primaryProviderId,
+    required Set<String> enabledIds,
+    CancellationToken? cancel,
+    Map<String, CancellationToken> providerCancellation = const {},
+    void Function(List<SongCandidate>)? onProgress,
+    void Function(String providerId, String state, String? code)? onStatus,
+  }) => searchCatalogsTogether(
+    query,
+    definitions: definitions,
+    primaryProviderId: primaryProviderId,
+    enabledIds: enabledIds,
+    search: (id, token) => search(query, providerId: id, cancel: token),
+    cancel: cancel,
+    providerCancellation: providerCancellation,
+    onProgress: onProgress,
+    onStatus: onStatus,
+  );
 
   Future<List<SourceResult>> discover(
     SongCandidate selection, {
@@ -621,8 +755,9 @@ class SourceDiscoveryService {
     final active = providers
         .where(
           (p) =>
-              enabledIds?.contains(p.definition.id) ??
-              p.definition.enabledByDefault,
+              p.definition.configured &&
+              (enabledIds?.contains(p.definition.id) ??
+                  p.definition.enabledByDefault),
         )
         .toList();
     final results = <SourceResult>[];
@@ -631,6 +766,7 @@ class SourceDiscoveryService {
     final correlationSequence = <String, int>{};
     final providerChecksState = <String, String>{};
     final providerResults = <String, SourceResult>{};
+    final preferredResultIds = <String, String>{};
     final providerCodes = <String, String?>{};
     final operationWatches = <String, Stopwatch>{};
     final corroborationOperationIds = <String, String>{};
@@ -799,12 +935,40 @@ class SourceDiscoveryService {
         final local =
             providerCancellation[provider.definition.id] ?? CancellationToken();
         cancel?.cancelled.then((_) => local.cancel());
+        void retainCandidate(SourceResult result) {
+          if (local.isCancelled || cancel?.isCancelled == true) return;
+          final previous = results.indexWhere((item) => item.id == result.id);
+          if (previous < 0) {
+            results.add(result);
+          } else {
+            results[previous] = result;
+          }
+          final state = result.matchKind == MatchKind.rejected
+              ? 'unavailable'
+              : 'found';
+          providerChecksState[provider.definition.id] = state;
+          providerResults[provider.definition.id] = result;
+          publish(
+            provider.definition.id,
+            state,
+            code: result.matchKind == MatchKind.rejected
+                ? 'identity_mismatch'
+                : null,
+            result: result,
+          );
+        }
+
         try {
+          final alternatives = <SourceResult>[];
           final result =
               await findMatchingSource(
                 provider,
                 selection,
                 cancel: local,
+                onAlternative: alternatives.add,
+                onCandidate: retainCandidate,
+                stopAfterFirstChordCandidate: provider.definition.capabilities
+                    .contains('chords'),
                 onOperation: (operation) {
                   if (!local.isCancelled) {
                     recordOperation(provider.definition.id, operation);
@@ -819,7 +983,11 @@ class SourceDiscoveryService {
               );
           local.throwIfCancelled();
           cancel?.throwIfCancelled();
-          results.add(result);
+          preferredResultIds[provider.definition.id] = result.id;
+          for (final alternative in alternatives) {
+            retainCandidate(alternative);
+          }
+          retainCandidate(result);
           final state = result.matchKind == MatchKind.rejected
               ? 'unavailable'
               : 'found';
@@ -865,6 +1033,8 @@ class SourceDiscoveryService {
         results
             .where(
               (r) =>
+                  providerCancellation[r.candidate.providerId]?.isCancelled !=
+                      true &&
                   r.matchKind != MatchKind.rejected &&
                   !r.hasChords &&
                   r.body.trim().isNotEmpty &&
@@ -878,6 +1048,8 @@ class SourceDiscoveryService {
           );
     for (var i = 0; i < results.length; i++) {
       final result = results[i];
+      final providerCancel = providerCancellation[result.candidate.providerId];
+      if (providerCancel?.isCancelled == true) continue;
       if (!result.hasChords || result.matchKind == MatchKind.rejected) continue;
       if (cancel?.isCancelled == true) {
         finalizeCancelledChecks();
@@ -913,14 +1085,17 @@ class SourceDiscoveryService {
             // retry cannot keep issuing requests after discover has returned.
             final alternativeCancel = CancellationToken();
             cancel?.cancelled.then((_) => alternativeCancel.cancel());
+            providerCancel?.cancelled.then((_) => alternativeCancel.cancel());
             try {
               cancel?.throwIfCancelled();
+              providerCancel?.throwIfCancelled();
               alternative =
                   await findMatchingSource(
                     owners.first,
                     selection,
                     cancel: alternativeCancel,
                     exclude: {result.candidate.id},
+                    allowSelectedProviderAlternatives: true,
                     operationPrefix: 'corroboration',
                     onOperation: (operation) {
                       if (!alternativeCancel.isCancelled) {
@@ -982,7 +1157,31 @@ class SourceDiscoveryService {
             }
           }
           if (alternative != null) {
-            results[i] = alternative;
+            // Withdraw the chart already emitted as a tentative result before
+            // publishing its corroborated alternative under that source's ID.
+            // Replacing the list slot alone leaves progressive consumers with
+            // the old chart still accepted.
+            results[i] = _matched(
+              result,
+              MatchKind.rejected,
+              'incomplete_or_different_lyrics',
+            );
+            publish(
+              result.candidate.providerId,
+              'unavailable',
+              code: results[i].matchReason,
+              result: results[i],
+            );
+            final alternativeIndex = results.indexWhere(
+              (item) => item.id == alternative!.id,
+            );
+            if (alternativeIndex < 0) {
+              results.add(alternative);
+            } else {
+              results[alternativeIndex] = alternative;
+            }
+            preferredResultIds[alternative.candidate.providerId] =
+                alternative.id;
             providerResults[alternative.candidate.providerId] = alternative;
             publish(
               alternative.candidate.providerId,
@@ -990,6 +1189,7 @@ class SourceDiscoveryService {
               result: alternative,
             );
             recordCorroboration(alternative.candidate.providerId, 'completed');
+            continue;
           } else if (_partialAgreement(result.body, references.first.body)) {
             recordCorroboration(result.candidate.providerId, 'pending');
             // A chart can omit repeated choruses or ad-libs yet supply accurate
@@ -1036,6 +1236,34 @@ class SourceDiscoveryService {
       }
     }
     for (final provider in active) {
+      final id = provider.definition.id;
+      final accepted = results
+          .where(
+            (source) =>
+                source.candidate.providerId == id &&
+                source.matchKind != MatchKind.rejected,
+          )
+          .toList();
+      if (accepted.isNotEmpty) {
+        final current =
+            accepted
+                .where((source) => source.id == preferredResultIds[id])
+                .firstOrNull ??
+            accepted.first;
+        providerResults[id] = current;
+        if (providerChecksState[id] != 'failed') {
+          providerChecksState[id] = 'found';
+          publish(id, 'found', result: current);
+        } else {
+          publish(
+            id,
+            'failed',
+            code: providerCodes[id],
+            result: current,
+            preserveCode: true,
+          );
+        }
+      }
       finalizePending(provider.definition.id, 'failed', 'provider_error');
       traceOpen[provider.definition.id] = false;
     }

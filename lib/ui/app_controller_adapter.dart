@@ -459,7 +459,7 @@ class AppControllerAdapter extends VerseUiController {
           ? LoadState.loaded
           : _query.trim().length >= 2 && _query != app.query
           ? LoadState.loading
-          : app.searching
+          : app.searching && app.suggestions.isEmpty
           ? LoadState.loading
           : app.errorCode != null
           ? LoadState.failed

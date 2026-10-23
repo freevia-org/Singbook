@@ -342,19 +342,27 @@ void main() {
       'a truncated first chart falls through to the next candidate',
       () async {
         final chart = _Chart({
-          'short': '[C]A paper satellite',
-          'full': _chart(_lyrics),
+          'a-short': '[C]A paper satellite',
+          'b-full': _chart(_lyrics),
         });
         final results = await SourceDiscoveryService([
           chart,
           _Reference(),
         ]).discover(selection());
-        final found = results.firstWhere(
-          (r) => r.candidate.providerId == 'chart',
+        final found = results.singleWhere(
+          (r) =>
+              r.candidate.providerId == 'chart' && r.candidate.id == 'b-full',
         );
         expect(found.matchKind, isNot(MatchKind.rejected));
-        expect(found.candidate.id, 'full');
-        expect(chart.resolved, ['short', 'full']);
+        expect(found.candidate.id, 'b-full');
+        final truncated = results.singleWhere(
+          (r) =>
+              r.candidate.providerId == 'chart' && r.candidate.id == 'a-short',
+        );
+        expect(truncated.matchKind, MatchKind.rejected);
+        expect(truncated.matchReason, 'incomplete_or_different_lyrics');
+        expect(truncated.body, '[C]A paper satellite');
+        expect(chart.resolved, ['a-short', 'b-full']);
       },
     );
 

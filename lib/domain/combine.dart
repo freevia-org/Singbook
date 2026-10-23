@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:characters/characters.dart';
 import 'models.dart';
+import 'edition_identity.dart';
+import 'metadata_enrichment.dart';
 import 'arrangement.dart';
 import 'timing.dart' show timingOccurrenceMap;
 
@@ -93,6 +95,14 @@ bool _demonstrationTimingSelected(
               (e) => source.candidate.recordingIds[e.key] == e.value,
             )));
 bool recordingCompatible(SongCandidate selected, SourceResult result) {
+  if (!explicitEditionsCompatible(
+    selected,
+    result.candidate,
+    metadata: result.metadata,
+    extra: result.extra,
+  )) {
+    return false;
+  }
   if (selected.providerId == 'wikisource' ||
       result.candidate.providerId == 'wikisource' ||
       selected.metadata['identityScope'] == 'historicalText' ||
@@ -755,7 +765,13 @@ bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
         title: song.title,
         artist: song.artist,
       );
-  if (!_sameSong(selected, source.candidate) ||
+  if (!explicitEditionsCompatible(
+        selected,
+        source.candidate,
+        metadata: source.metadata,
+        extra: source.extra,
+      ) ||
+      !_sameSong(selected, source.candidate) ||
       _version(selected.title) != _version(source.candidate.title) ||
       selected.recordingIds.entries.any(
         (entry) =>
@@ -963,6 +979,14 @@ bool _compatibleArrangementSetup(
   SourceResult donor,
   SongCandidate selected,
 ) {
+  if (!explicitEditionsCompatible(
+    selected,
+    donor.candidate,
+    metadata: donor.metadata,
+    extra: donor.extra,
+  )) {
+    return false;
+  }
   for (final key in const ['key', 'capo', 'tuning', 'timeSignature']) {
     final baseValue = _setupValue(base, selected, key);
     final donorValue = _setupValue(donor, selected, key);
@@ -1148,9 +1172,18 @@ SongDocument combineSources(
         allowRejectedPreferredSource &&
         s.id == preferredSourceId &&
         !wikiSource;
+    final editionAllowed =
+        explicitEditionsCompatible(
+          selected,
+          s.candidate,
+          metadata: s.metadata,
+          extra: s.extra,
+        ) ||
+        s.id == preferredSourceId;
     final identityMatches = wikiSource
         ? historicalMatches(s)
-        : _sameSong(s.candidate, selected) || allowedRejectedAlternative;
+        : (_sameSong(s.candidate, selected) && editionAllowed) ||
+              allowedRejectedAlternative;
     return identityMatches &&
         (s.matchKind != MatchKind.rejected ||
             wikiSource && historicalMatches(s) ||
@@ -1708,7 +1741,10 @@ SongDocument combineSources(
       song.extra['corroboratedKeySourceIds'] = corroboratedKey.sourceIds;
     }
   }
-  return song;
+  return enrichCombinedDisplayMetadata(
+    song,
+    isSameRecording: recordingCompatible,
+  );
 }
 
 bool _hasMetadata(Object? value) =>

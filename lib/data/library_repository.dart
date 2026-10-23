@@ -11,6 +11,7 @@ import '../domain/chordpro.dart';
 import '../domain/arrangement.dart';
 import '../domain/song_identity.dart';
 import '../domain/combine.dart';
+import '../domain/source_result_merge.dart';
 
 const _replacementCarryMetadata = {'composer', 'lyricist', 'copyright'};
 
@@ -746,7 +747,7 @@ class LibraryRepository {
       }
       final sources = <String, SourceResult>{};
       String sourceKey(SourceResult source) =>
-          '${source.id}:${sha256.convert(utf8.encode(source.body))}';
+          '${source.id}:${sourcePayloadFingerprint(source)}';
       final timingIds = {
         for (final track in song.timingTracks) track.id,
         for (final source in song.sources)
@@ -785,7 +786,11 @@ class LibraryRepository {
         );
       }
       for (final source in song.sources) {
-        sources[sourceKey(source)] = source;
+        final key = sourceKey(source);
+        final previous = sources[key];
+        sources[key] = previous == null
+            ? source
+            : mergeSourceResult(previous, source);
       }
       final existingOrigins = jsonMap(existing.extra['fieldOrigins']);
       final incomingOrigins = jsonMap(song.extra['fieldOrigins']);
@@ -901,6 +906,7 @@ class LibraryRepository {
           // provenance only to values that were actually carried forward.
           'fieldOrigins': origins,
           'fieldContributors': contributors,
+          'previousSavedVersions': retainedSavedVersions(existing, song),
           if (recoveredKey != null) 'keySourceIds': recoveredKey.sourceIds,
           if (_hasMeaningfulMetadata(incomingMetadata['key'])) ...{
             if (song.extra['keySourceIds'] is List)
@@ -966,22 +972,58 @@ class LibraryRepository {
                   )) {
             final sources = <String, SourceResult>{
               for (final source in existing.sources)
-                '${source.id}:${sha256.convert(utf8.encode(source.body))}':
-                    source,
+                '${source.id}:${sourcePayloadFingerprint(source)}': source,
             };
-            for (final source in song.sources) {
-              sources['${source.id}:${sha256.convert(utf8.encode(source.body))}'] =
-                  source;
-            }
             final sameLyrics =
                 lyricOrderHash(existing.body) == lyricOrderHash(song.body);
             final tracks = <String, TimingTrack>{
-              for (final track in song.timingTracks)
-                track.id: !sameLyrics && track.status == TimingStatus.usable
-                    ? track.copyWith(status: TimingStatus.stale)
-                    : track,
               for (final track in existing.timingTracks) track.id: track,
             };
+            final timingByPayload = <String, TimingTrack>{
+              for (final track in tracks.values)
+                timingPayloadFingerprint(track): track,
+            };
+            TimingTrack retainTrack(TimingTrack track) {
+              final payload = timingPayloadFingerprint(track);
+              final prior = timingByPayload[payload];
+              if (prior != null) return prior;
+              final collision = tracks.containsKey(track.id);
+              var archiveId = 'history:${existing.id}:$payload';
+              while (tracks.containsKey(archiveId)) {
+                archiveId = '$archiveId:history';
+              }
+              final retained = collision
+                  ? TimingTrack.fromJson({
+                      ...track.toJson(),
+                      'id': archiveId,
+                      'archivedOriginalTrackId':
+                          track.extra['archivedOriginalTrackId'] ?? track.id,
+                      'status': track.status == TimingStatus.usable
+                          ? TimingStatus.stale.name
+                          : track.status.name,
+                    })
+                  : !sameLyrics && track.status == TimingStatus.usable
+                  ? track.copyWith(status: TimingStatus.stale)
+                  : track;
+              tracks[retained.id] = retained;
+              timingByPayload[payload] = retained;
+              return retained;
+            }
+
+            for (final source in song.sources) {
+              final key = '${source.id}:${sourcePayloadFingerprint(source)}';
+              final previous = sources[key];
+              if (previous != null) {
+                sources[key] = mergeSourceResult(source, previous);
+              } else {
+                sources[key] = source.copyWith(
+                  timingTracks: source.timingTracks.map(retainTrack).toList(),
+                );
+              }
+            }
+            for (final track in song.timingTracks) {
+              retainTrack(track);
+            }
             final existingOrigins = jsonMap(existing.extra['fieldOrigins']);
             final incomingOrigins = jsonMap(song.extra['fieldOrigins']);
             final incomingSourceId = song.extra['savedSourceId'];
@@ -1038,11 +1080,45 @@ class LibraryRepository {
                 (existingDuration == null ||
                     sameDuration(existingDuration, provenExistingDuration));
             final mergedMetadata = {...song.metadata, ...existing.metadata};
+            final mergedOrigins = {...incomingOrigins, ...existingOrigins};
+            for (final field in existingOrigins.keys) {
+              if (existingOrigins[field] == 'user' &&
+                  !_hasMeaningfulMetadata(existing.metadata[field])) {
+                // An absent user-owned field is an intentional removal, not a
+                // missing provider fact to refill on the next import.
+                mergedMetadata.remove(field);
+              }
+            }
+            for (final entry in song.metadata.entries) {
+              if (existingOrigins[entry.key] == 'user' ||
+                  !_hasMeaningfulMetadata(entry.value)) {
+                continue;
+              }
+              if (!_hasMeaningfulMetadata(existing.metadata[entry.key])) {
+                mergedMetadata[entry.key] = entry.value;
+                if (incomingOrigins.containsKey(entry.key)) {
+                  mergedOrigins[entry.key] = incomingOrigins[entry.key];
+                } else {
+                  mergedOrigins.remove(entry.key);
+                }
+              } else if (!const {'tuning', 'arrangement'}.contains(entry.key) &&
+                  existing.metadata[entry.key] is List &&
+                  entry.value is List) {
+                final seen = <String>{};
+                mergedMetadata[entry.key] = [
+                  for (final value in [
+                    ...existing.metadata[entry.key] as List,
+                    ...entry.value as List,
+                  ])
+                    if (seen.add(jsonEncode(value))) value,
+                ];
+              }
+            }
             final mergedExtra = {
               ...song.extra,
               ...existing.extra,
-              // Provenance maps merge key by key; the existing entry wins.
-              for (final key in const ['fieldOrigins', 'conflicts'])
+              'fieldOrigins': mergedOrigins,
+              for (final key in const ['conflicts'])
                 if (song.extra[key] is Map || existing.extra[key] is Map)
                   key: {
                     ...jsonMap(song.extra[key]),
@@ -1056,6 +1132,48 @@ class LibraryRepository {
                 'durationSeconds': incomingSourceId,
               };
             }
+            final mergedContributors = <String, dynamic>{};
+            for (final field in {
+              ...jsonMap(existing.extra['fieldContributors']).keys,
+              ...jsonMap(song.extra['fieldContributors']).keys,
+            }) {
+              final values = <String>{};
+              if (existingOrigins[field] == 'user') {
+                final priorContributors = jsonMap(
+                  existing.extra['fieldContributors'],
+                )[field];
+                if (priorContributors is List) {
+                  mergedContributors[field] = [...priorContributors];
+                }
+                continue;
+              }
+              for (final document in [existing, song]) {
+                final fieldValues = jsonMap(
+                  document.extra['fieldContributors'],
+                )[field];
+                final fact = document.metadata[field];
+                final chosen = mergedMetadata[field];
+                final contributes =
+                    jsonEncode(fact) == jsonEncode(chosen) ||
+                    (fact is List &&
+                        chosen is List &&
+                        fact.any(
+                          (value) => chosen.any(
+                            (item) => jsonEncode(item) == jsonEncode(value),
+                          ),
+                        ));
+                if (fieldValues is! List ||
+                    !_hasMeaningfulMetadata(fact) ||
+                    !contributes) {
+                  continue;
+                }
+                values.addAll(fieldValues.whereType<String>());
+              }
+              if (values.isNotEmpty) {
+                mergedContributors[field] = values.toList()..sort();
+              }
+            }
+            mergedExtra['fieldContributors'] = mergedContributors;
             final merged = existing.copyWith(
               sources: sources.values.toList(),
               timingTracks: tracks.values.toList(),
