@@ -429,7 +429,19 @@ class WikidataProvider implements LyricsProvider {
     if (exactId.isNotEmpty) {
       found = await _candidates([exactId], cancel);
     } else {
-      found = (await search(candidate.title, cancel: cancel))
+      found = await search(candidate.title, cancel: cancel);
+    }
+    final external = candidate.providerId != definition.id;
+    if (external) {
+      // A recording performer need not be the work's author. Require the
+      // fetched work's own P175 evidence before associating it with that
+      // performer; a caller-supplied work ID alone proves no association.
+      found = found
+          .map((work) => _forPerformer(work, candidate))
+          .nonNulls
+          .toList();
+    } else if (exactId.isEmpty) {
+      found = found
           .where(
             (r) =>
                 normalized(r.title) == normalized(candidate.title) &&
@@ -461,7 +473,29 @@ class WikidataProvider implements LyricsProvider {
         ),
         'metadataOnly': true,
         'identityScope': 'composition',
+        if (external)
+          'identityMatch': {'property': 'P175', 'performer': result.artist},
       },
+    );
+  }
+
+  SongCandidate? _forPerformer(SongCandidate work, SongCandidate selected) {
+    if (normalized(work.title) != normalized(selected.title) ||
+        selected.artist.trim().isEmpty) {
+      return null;
+    }
+    final matches = (work.metadata['performers'] as List? ?? const [])
+        .whereType<String>()
+        .where((name) => normalized(name) == normalized(selected.artist))
+        .toSet();
+    if (matches.length != 1) return null;
+    return SongCandidate(
+      providerId: work.providerId,
+      id: work.id,
+      title: work.title,
+      artist: matches.single,
+      url: work.url,
+      metadata: work.metadata,
     );
   }
 }
