@@ -226,6 +226,17 @@ String entityLabel(JsonMap entity) {
 class WikidataProvider implements LyricsProvider {
   WikidataProvider(this.transport);
   final ProviderTransport transport;
+  // Positive, bounded type evidence: composed musical work, song, or the
+  // work/composition metaclass. Q2188189 is too broad (it includes albums and
+  // films). Albums, films, recordings and untyped items
+  // must not become compositions merely because their labels match a song.
+  static const _compositionTypes = {'Q207628', 'Q7366', 'Q105543609'};
+  static const _nonCompositionTypes = {
+    'Q482994',
+    'Q11424',
+    'Q134556',
+    'Q193018',
+  };
   @override
   final definition = const ProviderDefinition(
     id: 'wikidata',
@@ -269,7 +280,10 @@ class WikidataProvider implements LyricsProvider {
       'props': 'labels|descriptions|claims',
       'languages': 'en',
     }, cancel);
-    return jsonMap(data['entities']).map((k, v) => MapEntry(k, jsonMap(v)));
+    return {
+      for (final entry in jsonMap(data['entities']).entries)
+        if (valid.contains(entry.key)) entry.key: jsonMap(entry.value),
+    };
   }
 
   Future<List<SongCandidate>> _candidates(
@@ -277,7 +291,23 @@ class WikidataProvider implements LyricsProvider {
     CancellationToken? cancel,
   ) async {
     final entities = await _entities(ids, cancel);
-    final related = entities.values
+    final works = entities.entries
+        .where(
+          (entry) =>
+              entry.value['missing'] == null &&
+              entityClaims(
+                entry.value,
+                'P31',
+              ).any(_compositionTypes.contains) &&
+              !entityClaims(
+                entry.value,
+                'P31',
+              ).any(_nonCompositionTypes.contains),
+        )
+        .toList();
+    if (works.isEmpty) return [];
+    final related = works
+        .map((entry) => entry.value)
         .expand(
           (e) => [
             ...entityClaims(e, 'P175'),
@@ -288,13 +318,21 @@ class WikidataProvider implements LyricsProvider {
         )
         .toList();
     final labels = await _entities(related, cancel);
-    return entities.entries
-        .where((e) => e.value['missing'] == null)
+    return works
         .map((e) {
           final artists = entityClaims(e.value, 'P175')
               .map((id) => entityLabel(labels[id] ?? {}))
               .where((s) => s.isNotEmpty)
+              .toSet()
               .toList();
+          final creators =
+              {
+                    ...entityClaims(e.value, 'P86'),
+                    ...entityClaims(e.value, 'P676'),
+                  }
+                  .map((id) => entityLabel(labels[id] ?? {}))
+                  .where((name) => name.isNotEmpty)
+                  .toSet();
           final metadata = <String, dynamic>{
             'identityScope': 'composition',
             'wikidataId': e.key,
@@ -303,6 +341,7 @@ class WikidataProvider implements LyricsProvider {
             ),
             'types': entityClaims(e.value, 'P31'),
             'performerIds': entityClaims(e.value, 'P175'),
+            'performers': artists,
             'composers': entityClaims(e.value, 'P86')
                 .map(
                   (id) => {
@@ -348,7 +387,9 @@ class WikidataProvider implements LyricsProvider {
             providerId: definition.id,
             id: e.key,
             title: entityLabel(e.value),
-            artist: artists.join(', '),
+            // Work authorship is independent of the many recordings/covers
+            // linked through P175; retain performers separately as metadata.
+            artist: creators.join(', '),
             url: 'https://www.wikidata.org/wiki/${e.key}',
             metadata: sanitizeExtraMetadata(metadata),
           );
@@ -366,7 +407,9 @@ class WikidataProvider implements LyricsProvider {
       'action': 'wbsearchentities',
       'search': queryText(query),
       'language': 'en',
-      'limit': '6',
+      // A title can rank albums, films and individual recordings before the
+      // composition. Fetch a bounded page, then retain only typed works.
+      'limit': '12',
       'type': 'item',
     }, cancel);
     final ids = maps(data['search']).map((r) => stringValue(r['id'])).toList();

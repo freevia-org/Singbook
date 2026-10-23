@@ -212,6 +212,43 @@ class SourceMaintenanceHarness {
         selected = SongCandidate.fromJson(
           Map<String, dynamic>.from(candidateJson),
         );
+        // A selected stable ID can also verify search without choosing the
+        // first of several arrangements or recordings with the same name.
+        final query = probe['query'];
+        if (query is String && query.trim().isNotEmpty) {
+          final found = await provider.search(query, cancel: cancel);
+          final matches = found
+              .where(
+                (row) => row.providerId == entry.id && row.id == selected.id,
+              )
+              .toList();
+          if (matches.length != 1) {
+            return {
+              'id': id,
+              'status': matches.isEmpty ? 'identity_mismatch' : 'coverage_gap',
+              'reason': matches.isEmpty
+                  ? 'expected_candidate_not_found'
+                  : 'ambiguous_candidate',
+            };
+          }
+          final row = matches.single;
+          final historicalText =
+              selected.metadata['identityScope'] == 'historicalText';
+          if (_normalized(row.title) != _normalized(selected.title) ||
+              _normalized(row.artist) != _normalized(selected.artist) &&
+                  !(historicalText && row.artist.trim().isEmpty) ||
+              expectedAlbum != null &&
+                  _normalized(row.album) != expectedAlbum ||
+              expectedDuration != null &&
+                  !_durationMatches(row.durationSeconds, expectedDuration)) {
+            return {
+              'id': id,
+              'status': 'identity_mismatch',
+              'reason': 'searched_candidate_changed',
+            };
+          }
+          searchedCatalog = true;
+        }
       } else {
         final query = probe['query'];
         if (query is! String ||

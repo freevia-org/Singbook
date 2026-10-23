@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "extractionSchemaVersion": 1,
-  "revision": 5,
-  "publishedAt": "2026-10-20T06:07:44Z",
+  "revision": 6,
+  "publishedAt": "2026-10-23T06:34:31Z",
   "sources": [
     {
       "id": "genius",
@@ -67,7 +67,7 @@
       "name": "Ultimate Guitar",
       "adapter": "builtin",
       "status": "active",
-      "revision": 1,
+      "revision": 2,
       "capabilities": [
         "catalog",
         "lyrics",
@@ -93,9 +93,11 @@
             "body",
             "metadata",
             "chords"
-          ]
+          ],
+          "query": "Wonderwall Oasis"
         }
-      ]
+      ],
+      "changeReason": "2026-10-23: Add search coverage bound to the existing public chord arrangement ID, then resolve and verify its same title/artist, lyrics, chords and metadata. Multiple same-name versions are not interchangeable and no first-hit selection is used."
     },
     {
       "id": "lrclib",
@@ -542,7 +544,7 @@
       "name": "MusicBrainz",
       "adapter": "builtin",
       "status": "active",
-      "revision": 1,
+      "revision": 2,
       "capabilities": [
         "catalog",
         "metadata"
@@ -570,16 +572,18 @@
           ],
           "requiredMetadataFields": [
             "musicbrainzRecordingId"
-          ]
+          ],
+          "query": "recording:\"Wonderwall\" AND artist:\"Oasis\" AND dur:[269000 TO 269500]"
         }
-      ]
+      ],
+      "changeReason": "2026-10-23: Add an exact search canary for the existing recording UUID using title, artist and observed duration, followed by the same ID-bound metadata resolve. Other recordings and ambiguous same-name matches are never substituted."
     },
     {
       "id": "wikidata",
       "name": "Wikidata",
       "adapter": "builtin",
       "status": "active",
-      "revision": 2,
+      "revision": 3,
       "capabilities": [
         "catalog",
         "metadata"
@@ -589,16 +593,20 @@
       "website": "https://www.wikidata.org/",
       "hosts": [],
       "description": "compositionMetadataOnly",
-      "changeReason": "Pinned Q333266 after live search for Imagine John Lennon returned an unrelated film; exact composition metadata remains validated, while catalog search coverage is explicitly unverified.",
+      "changeReason": "2026-10-23: Q333266 is the Imagine album, not the composition. Pin the actual Imagine work Q1971 and Wonderwall work Q1045517. Require positive composition types, keep cover performers separate from authors, and verify bounded catalog search plus exact-ID metadata. Saved source IDs and user data are not rewritten.",
       "probes": [
         {
           "id": "imagine-composition",
+          "query": "Imagine",
           "candidate": {
             "providerId": "wikidata",
-            "id": "Q333266",
+            "id": "Q1971",
             "title": "Imagine",
             "artist": "John Lennon",
-            "url": "https://www.wikidata.org/wiki/Q333266"
+            "url": "https://www.wikidata.org/wiki/Q1971",
+            "metadata": {
+              "identityScope": "composition"
+            }
           },
           "expectedTitle": "Imagine",
           "expectedArtist": "John Lennon",
@@ -606,7 +614,33 @@
             "metadata"
           ],
           "requiredMetadataFields": [
-            "wikidataId"
+            "wikidataId",
+            "types.0",
+            "composers.0.wikidataId"
+          ]
+        },
+        {
+          "id": "wonderwall-composition",
+          "query": "Wonderwall",
+          "candidate": {
+            "providerId": "wikidata",
+            "id": "Q1045517",
+            "title": "Wonderwall",
+            "artist": "Noel Gallagher",
+            "url": "https://www.wikidata.org/wiki/Q1045517",
+            "metadata": {
+              "identityScope": "composition"
+            }
+          },
+          "expectedTitle": "Wonderwall",
+          "expectedArtist": "Noel Gallagher",
+          "requiredFields": [
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "wikidataId",
+            "types.0",
+            "composers.0.wikidataId"
           ]
         }
       ]
@@ -655,7 +689,7 @@
       "name": "Wikisource",
       "adapter": "builtin",
       "status": "active",
-      "revision": 2,
+      "revision": 3,
       "capabilities": [
         "catalog",
         "fileImport",
@@ -690,7 +724,8 @@
             "copyrightTags.0",
             "revision",
             "identityScope"
-          ]
+          ],
+          "query": "intitle:\"Cleansing Wave\""
         },
         {
           "id": "dunbar-hymn-1",
@@ -714,10 +749,11 @@
             "copyrightTags.0",
             "revision",
             "identityScope"
-          ]
+          ],
+          "query": "intitle:\"The Complete Poems of Paul Laurence Dunbar/Hymn (1)\""
         }
       ],
-      "changeReason": "2026-10-20: Auld Lang Syne (Burns), page 486561, is a versions index without per-work rights tags. Replace its probe with Cleansing Wave and Dunbar Hymn (1), independently extracted with their own PD-old tags and explicit authors. Lyrics/metadata verified; catalog search/file import remain unverified. Existing adapter, rights checks, attribution, source ID and default-disabled preference are preserved; no rights claim for other works."
+      "changeReason": "2026-10-23: Verify search for each of the two already validated historical works by exact page ID and title before resolution. Author and per-work rights checks remain required at resolve. File-import coverage remains separate; source ID, saved preferences and default-disabled state are unchanged."
     }
   ]
 }
