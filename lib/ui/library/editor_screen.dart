@@ -78,8 +78,9 @@ class _EditorScreenState extends State<EditorScreen> {
         if (call.method != 'save') {
           throw MissingPluginException();
         }
-        if (!mounted || ModalRoute.of(context)?.isCurrent == false)
+        if (!mounted || ModalRoute.of(context)?.isCurrent == false) {
           return false;
+        }
         await _save();
         return true;
       });

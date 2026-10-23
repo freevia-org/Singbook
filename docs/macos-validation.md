@@ -4,9 +4,10 @@ The native macOS candidate is **0.2.16 (30)**, bundle ID
 `org.freevia.singbook`, targeting macOS 12+. Application source is commit
 `8f3d1cda`, based on public main `0a40d7f` (including the latest anonymous
 YouTube request fix). Preparation lives on `codex/macos-publishing`; it has
-not been merged into main. Build 30 was uploaded to Apple, processed and
-selected for the macOS draft on the existing Singbook app record. No macOS
-review submission or release has occurred; iOS 0.2.10 remains waiting for review.
+not been merged into main. Build 30 was uploaded to Apple and submitted
+for review with automatic release after approval. iOS 0.2.10 remains waiting
+for review. For the subsequent full-width direct-download candidate, see
+[macOS 0.2.17 acceptance](macos-release-0.2.17.md).
 
 ## Artifacts
 
