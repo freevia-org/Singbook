@@ -29,6 +29,8 @@ Files you export, print or share go to the destination you choose through Androi
 
 There is no Singbook backend. When you search for a song, open a song, or when the app looks up metadata, the app on your device makes HTTPS requests to the services below. Which of them are contacted depends on which sources are enabled and which songs you open; some are only contacted on demand.
 
+When you search, Singbook may send your query to several available song catalogs enabled in settings. It remembers your preferred catalog and shows its results first when available. Otherwise it uses the normal fallback, preferring Genius when configured and available. Wikisource searches historical texts separately and is searched only when you select it. After you choose a song, Singbook may check enabled sources for lyrics, chords, and metadata.
+
 What each service can receive: the **search text or the song title/artist/album/duration you looked up**, standard request information such as your **IP address**, device network details, and a User-Agent header of the form `Singbook/<version>` (with the publisher's contact URL if configured). Singbook does not send your library or Google Drive account identity to song-source services, and it does not log in to them (except the token below).
 
 | Host | Purpose |
