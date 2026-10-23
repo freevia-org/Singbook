@@ -1,10 +1,85 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
 
 import 'support/fake_controller.dart';
 
+// Optional synthetic host screenshots; these are not Android captures.
+const _captureOutput = String.fromEnvironment('SEARCH_RESULTS_CAPTURE_DIR');
+
 void main() {
+  setUpAll(() async {
+    await (FontLoader('sans-serif')
+          ..addFont(rootBundle.load('assets/fonts/NotoSans-Regular.ttf'))
+          ..addFont(rootBundle.load('assets/fonts/NotoSans-Bold.ttf')))
+        .load();
+    await (FontLoader(
+      'MaterialIcons',
+    )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
+  });
+
+  for (final scenario in [
+    (const Size(360, 600), 1.0),
+    (const Size(320, 640), 2.0),
+  ]) {
+    testWidgets('empty Library and creation stay reachable at $scenario', (
+      tester,
+    ) async {
+      final controller = FakeUiController(
+        (_) => const VerseUiState(
+          homeListMode: HomeListMode.library,
+          query: 'Unmatched fixture',
+        ),
+      );
+      addTearDown(controller.dispose);
+      await pumpShell(
+        tester,
+        controller,
+        size: scenario.$1,
+        textScale: scenario.$2,
+      );
+      final message = find.text(l10nOf(tester).songsEmptySearch);
+      final create = find.byKey(const ValueKey('songs-create-shortcut'));
+      expect(message, findsOneWidget);
+      final scrollable = find.descendant(
+        of: find.byKey(const PageStorageKey('songs-library-empty')),
+        matching: find.byType(Scrollable),
+      ).first;
+      double scrollOffset() =>
+          tester.state<ScrollableState>(scrollable).position.pixels;
+      final messageBottom = tester.getRect(message).bottom + scrollOffset();
+      // At large text sizes the creation row is beyond the lazy build range.
+      await tester.scrollUntilVisible(create, 80, scrollable: scrollable);
+      await tester.pumpAndSettle();
+      expect(create, findsOneWidget);
+      expect(
+        messageBottom,
+        lessThanOrEqualTo(tester.getRect(create).top + scrollOffset()),
+      );
+      expect(create.hitTestable(), findsOneWidget);
+      await tester.scrollUntilVisible(message, -80, scrollable: scrollable);
+      await tester.ensureVisible(message);
+      await tester.pumpAndSettle();
+      expect(message.hitTestable(), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      if (_captureOutput.isNotEmpty) {
+        await _captureLibrary(tester, scenario.$1, scenario.$2);
+      }
+      await tester.scrollUntilVisible(create, 80, scrollable: scrollable);
+      await tester.pumpAndSettle();
+      expect(create.hitTestable(), findsOneWidget);
+      await tester.tap(create);
+      await tester.pumpAndSettle();
+      expect(controller.calls, contains('createSong'));
+    });
+  }
+
   testWidgets(
     'Songs and Setlists share Favorites and bottom create shortcuts',
     (tester) async {
@@ -95,5 +170,48 @@ void main() {
           .onPressed,
       isNotNull,
     );
+  });
+}
+
+Future<void> _captureLibrary(
+  WidgetTester tester,
+  Size size,
+  double textScale,
+) async {
+  final boundary = tester
+      .element(find.byType(Scaffold).first)
+      .findAncestorRenderObjectOfType<RenderRepaintBoundary>();
+  expect(boundary, isNotNull);
+  expect(boundary!.size, size, reason: 'capture the complete app viewport');
+  await tester.runAsync(() async {
+    final image = await boundary.toImage(pixelRatio: 1);
+    try {
+      final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
+      expect(bytes, isNotNull);
+      final name =
+          'library-empty-${size.width.toInt()}x${size.height.toInt()}'
+          '-scale$textScale';
+      final file = File('$_captureOutput/$name.png');
+      final sidecar = File('$_captureOutput/$name.json');
+      expect(file.existsSync(), isFalse, reason: 'never replace evidence');
+      expect(sidecar.existsSync(), isFalse);
+      await file.parent.create(recursive: true);
+      await file.writeAsBytes(bytes!.buffer.asUint8List(), flush: true);
+      await sidecar.writeAsString(
+        jsonEncode({
+          'screen': 'library-empty-search',
+          'width': image.width,
+          'height': image.height,
+          'textScale': textScale,
+          'locale': 'en',
+          'evidenceKind': 'host_widget_screenshot',
+          'syntheticContentOnly': true,
+          'nativeAndroidVerified': false,
+        }),
+        flush: true,
+      );
+    } finally {
+      image.dispose();
+    }
   });
 }
