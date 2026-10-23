@@ -556,8 +556,9 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
                         index,
                         editing,
                       );
-                      if (defaultTargetPlatform == TargetPlatform.windows) {
-                        return _WindowsRowDragStartListener(
+                      if (defaultTargetPlatform == TargetPlatform.windows ||
+                          defaultTargetPlatform == TargetPlatform.macOS) {
+                        return _DesktopRowDragStartListener(
                           key: ValueKey(entry.id),
                           index: index,
                           child: tile,
@@ -802,8 +803,8 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
 
 /// Mouse drags begin after movement; touch still requires a long press so a
 /// swipe can scroll. The gesture arena leaves normal row/menu clicks intact.
-class _WindowsRowDragStartListener extends ReorderableDragStartListener {
-  const _WindowsRowDragStartListener({
+class _DesktopRowDragStartListener extends ReorderableDragStartListener {
+  const _DesktopRowDragStartListener({
     super.key,
     required super.index,
     required super.child,

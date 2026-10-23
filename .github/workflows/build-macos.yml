@@ -26,7 +26,7 @@ jobs:
       - run: flutter pub get --enforce-lockfile
       - run: flutter gen-l10n
       - name: macOS regression checks
-        run: flutter test --no-pub test/sync/platform_drive_auth_test.dart test/sync/macos_platform_drive_auth_test.dart test/ui/macos_account_sync_test.dart test/ui/macos_exit_test.dart
+        run: flutter test --no-pub test/sync/platform_drive_auth_test.dart test/sync/macos_platform_drive_auth_test.dart test/ui/macos_account_sync_test.dart test/ui/macos_exit_test.dart test/application/macos_desktop_parity_test.dart test/ui/macos_setlist_drag_test.dart
       - name: Configure macOS
         run: flutter build macos --release --config-only --no-pub
       - name: Compile unsigned universal app

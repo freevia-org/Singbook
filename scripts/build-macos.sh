@@ -49,13 +49,13 @@ ditto "$app" "$evidence/Singbook.app"
 if [[ "$mode" == archive || "$mode" == app-store || "$mode" == developer-id ]]; then
   xcodebuild -workspace macos/Runner.xcworkspace -scheme Runner \
     -configuration Release -destination 'generic/platform=macOS' \
-    -derivedDataPath build/macos -archivePath "$PWD/$evidence/Singbook.xcarchive" -allowProvisioningUpdates -allowProvisioningDeviceRegistration archive \
+    -derivedDataPath build/macos -archivePath "$PWD/$evidence/Singbook.xcarchive" archive \
     2>&1 | tee "$evidence/archive.log"
 fi
 if [[ "$mode" == app-store || "$mode" == developer-id ]]; then
   xcodebuild -exportArchive -archivePath "$PWD/$evidence/Singbook.xcarchive" \
     -exportOptionsPlist "macos/ExportOptions-$mode.plist" \
-    -exportPath "$PWD/$evidence/export" -allowProvisioningUpdates 2>&1 | tee "$evidence/export.log"
+    -exportPath "$PWD/$evidence/export" 2>&1 | tee "$evidence/export.log"
 fi
 ditto -c -k --sequesterRsrc --keepParent "$evidence/Singbook.app" "$evidence/Singbook-preview.zip"
 shasum -a 256 "$evidence/Singbook-preview.zip" > "$evidence/SHA256SUMS"
