@@ -227,7 +227,7 @@ class _PlayerScreenState extends State<PlayerScreen>
     await _playPause();
   }
 
-  KeyEventResult _handleWindowsKey(FocusNode node, KeyEvent event) {
+  KeyEventResult _handleDesktopKey(FocusNode node, KeyEvent event) {
     if (widget.fullScreen &&
         event is KeyDownEvent &&
         event.logicalKey == LogicalKeyboardKey.escape &&
@@ -235,7 +235,10 @@ class _PlayerScreenState extends State<PlayerScreen>
       widget.onFullScreenChanged?.call(false);
       return KeyEventResult.handled;
     }
-    if (defaultTargetPlatform != TargetPlatform.windows ||
+    final isMacOS = defaultTargetPlatform == TargetPlatform.macOS;
+    final isDesktop =
+        defaultTargetPlatform == TargetPlatform.windows || isMacOS;
+    if (!isDesktop ||
         event is! KeyDownEvent ||
         ModalRoute.of(context)?.isCurrent == false) {
       return KeyEventResult.ignored;
@@ -247,13 +250,18 @@ class _PlayerScreenState extends State<PlayerScreen>
       return KeyEventResult.ignored;
     }
     final keyboard = HardwareKeyboard.instance;
-    if (keyboard.isAltPressed ||
-        keyboard.isMetaPressed ||
-        keyboard.isShiftPressed) {
+    if (keyboard.isAltPressed || keyboard.isShiftPressed) {
       return KeyEventResult.ignored;
     }
+    final platformModifier = isMacOS
+        ? keyboard.isMetaPressed
+        : keyboard.isControlPressed;
+    final otherPlatformModifier = isMacOS
+        ? keyboard.isControlPressed
+        : keyboard.isMetaPressed;
     if (event.logicalKey == LogicalKeyboardKey.space &&
-        !keyboard.isControlPressed) {
+        !platformModifier &&
+        !otherPlatformModifier) {
       // Button activation is resolved by an ancestor Shortcuts widget after
       // this Focus callback. Let its existing action receive Space first.
       if (focused != null &&
@@ -263,7 +271,8 @@ class _PlayerScreenState extends State<PlayerScreen>
       unawaited(_togglePlayback());
       return KeyEventResult.handled;
     }
-    if (keyboard.isControlPressed &&
+    if (platformModifier &&
+        !otherPlatformModifier &&
         controller.state.playerSections.isNotEmpty) {
       if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
         _skipSection(-1);
@@ -277,10 +286,15 @@ class _PlayerScreenState extends State<PlayerScreen>
     return KeyEventResult.ignored;
   }
 
-  String _shortcutHint(String label, String shortcut) =>
-      defaultTargetPlatform == TargetPlatform.windows && shortcut.isNotEmpty
-      ? '$label ($shortcut)'
-      : label;
+  String _shortcutHint(String label, String shortcut) {
+    if (shortcut.isEmpty) return label;
+    if (defaultTargetPlatform == TargetPlatform.macOS) {
+      return '$label (${shortcut.replaceFirst('Ctrl+', '⌘')})';
+    }
+    return defaultTargetPlatform == TargetPlatform.windows
+        ? '$label ($shortcut)'
+        : label;
+  }
 
   void _skipSection(int direction) {
     final state = controller.state;
@@ -1098,8 +1112,10 @@ class _PlayerScreenState extends State<PlayerScreen>
     return Focus(
       key: const ValueKey('player-keyboard-focus'),
       autofocus:
-          widget.fullScreen || defaultTargetPlatform == TargetPlatform.windows,
-      onKeyEvent: _handleWindowsKey,
+          widget.fullScreen ||
+          defaultTargetPlatform == TargetPlatform.windows ||
+          defaultTargetPlatform == TargetPlatform.macOS,
+      onKeyEvent: _handleDesktopKey,
       child: Column(
         children: [
           Expanded(key: const ValueKey('player-body'), child: content),
@@ -1672,7 +1688,9 @@ class _PlayerScreenState extends State<PlayerScreen>
               icon: const Icon(Icons.skip_previous_rounded),
             ),
           Flexible(
-            child: defaultTargetPlatform == TargetPlatform.windows
+            child:
+                defaultTargetPlatform == TargetPlatform.windows ||
+                    defaultTargetPlatform == TargetPlatform.macOS
                 ? Tooltip(
                     message: _shortcutHint(
                       state.isPlaying ? l10n.playerPause : l10n.playerPlay,

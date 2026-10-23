@@ -566,7 +566,8 @@ class VerseFileActions {
     // A desktop backup/export must work without an installed share target.
     // file_picker writes these bytes after the native Save As confirmation,
     // including overwrite confirmation and the suggested file's extension.
-    if (_platform == TargetPlatform.windows) {
+    if (_platform == TargetPlatform.windows ||
+        _platform == TargetPlatform.macOS) {
       final saved = await _saveFile(
         fileName: name,
         bytes: bytes is Uint8List ? bytes : Uint8List.fromList(bytes),
