@@ -1,0 +1,188 @@
+name: Package and smoke test Microsoft Store 33
+
+# This workflow consumes the exact hosted CI bundle pinned for 0.2.19+33.
+# It never uploads to Partner Center; the unsigned MSIX and evidence are retained
+# for a separate owner-verified submission.
+on:
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  package-and-smoke:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    env:
+      RELEASE_HEAD_SHA: '9ec6b29504a380531dc38db6f8beed98a9f55195'
+      # Successful candidate CI compiled a synthetic merge of main and release33.
+      # Keep this separate from the release branch head checkout.
+      RELEASE_COMPILED_SOURCE_SHA: '870d1e604c9bd1a28e39591ea4140d0cbbd04707'
+      RELEASE_SOURCE_TREE: '315bf164f7d657e853804d0c184cb395a2e9f5b5'
+      RELEASE_PRODUCT_VERSION: '0.2.19+33'
+      CI_RUN_ID: '40033776263'
+      CI_ARTIFACT_ID: '12536417941'
+      CI_ARTIFACT_DIGEST: 'sha256:856f0e33df3cb9e226f9322ea37cdb55fef6a181302f50afa4df5c63ece15a3e'
+      PORTABLE_MANIFEST_SHA256: '167a02f5689c41f2bab9c01597f43a70ef31a934d028e05635103f45eb198ab0'
+      PORTABLE_ZIP_SHA256: 'a3bcf1afaae94193cc3a55bf07c45112dc8d3229c04ccdb78ac01dea9f33e2f3'
+    steps:
+      - name: Refuse packaging until successful CI pins are frozen
+        shell: pwsh
+        run: |
+          if ($env:RELEASE_HEAD_SHA -notmatch '^[A-Fa-f0-9]{40}$' -or
+              $env:RELEASE_COMPILED_SOURCE_SHA -notmatch '^[A-Fa-f0-9]{40}$' -or
+              $env:RELEASE_SOURCE_TREE -notmatch '^[A-Fa-f0-9]{40}$') {
+            throw 'Release 33 source pins are incomplete; wait for the successful CI manifest and freeze exact commit/tree metadata before dispatch.'
+          }
+          if ($env:RELEASE_PRODUCT_VERSION -ne '0.2.19+33') {
+            throw 'Release 33 product version pin changed unexpectedly.'
+          }
+
+      - name: Validate supplied CI artifact pins
+        shell: pwsh
+        run: |
+          if ($env:CI_RUN_ID -notmatch '^\d+$') { throw 'CI_RUN_ID must be numeric.' }
+          if ($env:CI_ARTIFACT_ID -notmatch '^\d+$') { throw 'CI_ARTIFACT_ID must be numeric.' }
+          if ($env:CI_ARTIFACT_DIGEST -notmatch '^sha256:[A-Fa-f0-9]{64}$') { throw 'CI_ARTIFACT_DIGEST must be sha256:<64 hex characters>.' }
+          if ($env:PORTABLE_MANIFEST_SHA256 -notmatch '^[A-Fa-f0-9]{64}$') { throw 'PORTABLE_MANIFEST_SHA256 must be 64 hex characters.' }
+          if ($env:PORTABLE_ZIP_SHA256 -notmatch '^[A-Fa-f0-9]{64}$') { throw 'PORTABLE_ZIP_SHA256 must be 64 hex characters.' }
+
+      - name: Verify exact successful release CI run and artifact
+        id: artifact
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runId = Number(process.env.CI_RUN_ID);
+            const artifactId = Number(process.env.CI_ARTIFACT_ID);
+            const expectedDigest = process.env.CI_ARTIFACT_DIGEST.toLowerCase();
+            const expectedSha = process.env.RELEASE_HEAD_SHA.toLowerCase();
+            const { data: run } = await github.rest.actions.getWorkflowRun({
+              owner: context.repo.owner, repo: context.repo.repo, run_id: runId
+            });
+            if (run.status !== "completed" || run.conclusion !== "success" ||
+                run.name !== "CI" || run.head_branch !== "codex/release33" ||
+                run.head_sha.toLowerCase() !== expectedSha) {
+              throw new Error("Release CI run is not successful at the pinned release 33 commit.");
+            }
+            const { data } = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner, repo: context.repo.repo, run_id: runId, per_page: 100
+            });
+            const matches = data.artifacts.filter(a =>
+              a.id === artifactId && a.name === "windows-release-bundle" && !a.expired
+            );
+            if (matches.length !== 1 || matches[0].digest.toLowerCase() !== expectedDigest) {
+              throw new Error("Release bundle artifact ID, name, availability, or digest does not match the supplied pin.");
+            }
+            core.setOutput("artifact_id", String(artifactId));
+
+      - name: Download the exact portable CI artifact
+        uses: actions/download-artifact@v8
+        with:
+          artifact-ids: ${{ steps.artifact.outputs.artifact_id }}
+          run-id: ${{ env.CI_RUN_ID }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/singbook-release33-artifact
+          digest-mismatch: error
+
+      - name: Check out the pinned release source and Store packaging tools
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Check out the exact release product source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_HEAD_SHA }}
+          path: release-source
+          persist-credentials: false
+
+      - name: Verify the source tree and portable payload hashes
+        id: payload
+        shell: pwsh
+        run: |
+          $tree = (git -C release-source rev-parse 'HEAD^{tree}').Trim()
+          if ($LASTEXITCODE -ne 0 -or $tree -ne $env:RELEASE_SOURCE_TREE) { throw 'Checked-out product source tree differs from the pinned release 33 tree.' }
+          $artifactRoot = Join-Path $env:RUNNER_TEMP 'singbook-release33-artifact'
+          $manifests = @(Get-ChildItem -LiteralPath $artifactRoot -Filter 'manifest.json' -File -Recurse)
+          if ($manifests.Count -ne 1) { throw "Expected one portable manifest, found $($manifests.Count)." }
+          $manifestHash = (Get-FileHash -LiteralPath $manifests[0].FullName -Algorithm SHA256).Hash
+          if ($manifestHash -ne ([string]$env:PORTABLE_MANIFEST_SHA256).ToUpperInvariant()) { throw 'Portable manifest SHA-256 differs from the supplied pin.' }
+          $releaseManifest = Get-Content -LiteralPath $manifests[0].FullName -Raw | ConvertFrom-Json
+          if ($releaseManifest.version -ne $env:RELEASE_PRODUCT_VERSION -or
+              $releaseManifest.sourceCommit -ne $env:RELEASE_COMPILED_SOURCE_SHA -or
+              $releaseManifest.sourceTree -ne $env:RELEASE_SOURCE_TREE -or
+              $releaseManifest.configuration -ne 'release' -or
+              $releaseManifest.distribution -ne 'portable-release') {
+            throw 'Portable manifest version, source commit/tree, or release configuration does not match the pinned candidate.'
+          }
+          $zips = @(Get-ChildItem -LiteralPath $artifactRoot -Filter '*.zip' -File -Recurse)
+          if ($zips.Count -ne 1) { throw "Expected one portable ZIP, found $($zips.Count)." }
+          if ((Get-FileHash -LiteralPath $zips[0].FullName -Algorithm SHA256).Hash -ne ([string]$env:PORTABLE_ZIP_SHA256).ToUpperInvariant()) { throw 'Portable ZIP SHA-256 differs from the supplied pin.' }
+          $payload = Join-Path $env:RUNNER_TEMP 'singbook-release33-payload'
+          Expand-Archive -LiteralPath $zips[0].FullName -DestinationPath $payload
+          $rootEntries = @(Get-ChildItem -LiteralPath $payload -Force)
+          if ($rootEntries.Count -ne 1 -or -not $rootEntries[0].PSIsContainer -or $rootEntries[0].Name -ne 'Singbook') { throw 'Portable ZIP must contain exactly one root entry: the Singbook directory.' }
+          "portable=$($rootEntries[0].FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "manifest=$($manifests[0].FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Locate Windows SDK MakeAppx
+        id: sdk
+        shell: pwsh
+        run: |
+          $sdkRoot = Join-Path (Get-Item -LiteralPath 'Env:ProgramFiles(x86)').Value 'Windows Kits/10/bin'
+          $candidates = @(Get-ChildItem -LiteralPath $sdkRoot -Filter 'makeappx.exe' -File -Recurse |
+            Where-Object { $_.FullName -match '[\\/]x64[\\/]makeappx\.exe$' } |
+            Sort-Object FullName -Descending)
+          if ($candidates.Count -eq 0) { throw 'Windows SDK x64 MakeAppx was not found.' }
+          "path=$($candidates[0].FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Package one unsigned release 33 MSIX
+        id: package
+        shell: pwsh
+        env:
+          PORTABLE: ${{ steps.payload.outputs.portable }}
+          MANIFEST: ${{ steps.payload.outputs.manifest }}
+          MAKEAPPX: ${{ steps.sdk.outputs.path }}
+        run: |
+          $icon = Join-Path $PWD 'assets/branding/singbook-icon.png'
+          $releaseIcon = Join-Path $PWD 'release-source/assets/branding/singbook-icon.png'
+          if ((Get-FileHash -LiteralPath $icon -Algorithm SHA256).Hash -ne (Get-FileHash -LiteralPath $releaseIcon -Algorithm SHA256).Hash) { throw 'Packaging icon differs from the pinned product source.' }
+          $output = Join-Path $env:RUNNER_TEMP 'singbook-release33-output'
+          ./scripts/windows-store/package-msix.ps1 -PortableBundle $env:PORTABLE -PortableManifest $env:MANIFEST -OutputDirectory $output -IconPath $icon -MakeAppxPath $env:MAKEAPPX -ExpectedSourceTree $env:RELEASE_SOURCE_TREE -ExpectedProductVersion $env:RELEASE_PRODUCT_VERSION
+          $msix = @(Get-ChildItem -LiteralPath $output -Filter '*.msix' -File)
+          $provenance = @(Get-ChildItem -LiteralPath $output -Filter 'package-provenance.json' -File)
+          if ($msix.Count -ne 1 -or $provenance.Count -ne 1) { throw 'Expected exactly one MSIX and one provenance file.' }
+          "msix=$($msix[0].FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "provenance=$($provenance[0].FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "sha256=$((Get-FileHash -LiteralPath $msix[0].FullName -Algorithm SHA256).Hash)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Install and smoke test a temporary signed copy
+        shell: pwsh
+        env:
+          MSIX: ${{ steps.package.outputs.msix }}
+          PROVENANCE: ${{ steps.package.outputs.provenance }}
+          MSIX_SHA256: ${{ steps.package.outputs.sha256 }}
+        run: |
+          ./scripts/test-windows-store-msix-install.ps1 `
+            -MsixPath $env:MSIX `
+            -ProvenancePath $env:PROVENANCE `
+            -ExpectedSha256 $env:MSIX_SHA256 `
+            -ExpectedSourceTree $env:RELEASE_SOURCE_TREE `
+            -ExpectedSourceManifestSha256 $env:PORTABLE_MANIFEST_SHA256 `
+            -ExpectedProductVersion $env:RELEASE_PRODUCT_VERSION `
+            -EvidenceDirectory (Join-Path $PWD "artifacts/windows-store-msix-smoke/$env:GITHUB_RUN_ID")
+
+      - name: Preserve package and hosted smoke evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: singbook-store33-msix-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/singbook-release33-output/*.msix
+            ${{ runner.temp }}/singbook-release33-output/*.json
+            ${{ runner.temp }}/singbook-release33-output/Package/Assets/*.png
+            artifacts/windows-store-msix-smoke/${{ github.run_id }}/
+          if-no-files-found: warn
+          retention-days: 30
