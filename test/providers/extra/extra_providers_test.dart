@@ -524,6 +524,7 @@ void main() {
         mockTransport(
           (_) async => jsonResponse({
             'parse': {
+              'pageid': 12,
               'title': 'Old Song',
               'revid': 7,
               'templates': [

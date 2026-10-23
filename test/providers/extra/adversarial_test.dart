@@ -32,6 +32,7 @@ const wikisourceCandidate = SongCandidate(
 
 Map<String, dynamic> wikisourceParse(String poem) => {
   'parse': {
+    'pageid': 12,
     'title': 'Old Song',
     'revid': 7,
     'templates': [

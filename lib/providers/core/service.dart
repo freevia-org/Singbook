@@ -206,6 +206,21 @@ bool _sameAlbum(SongCandidate a, SongCandidate b) =>
     a.album != null &&
     b.album != null &&
     normalizedIdentity(a.album!) == normalizedIdentity(b.album!);
+bool _selectedHistoricalText(
+  SongCandidate selected,
+  SongCandidate result,
+  String providerId,
+) =>
+    providerId == 'wikisource' &&
+    selected.providerId == providerId &&
+    result.providerId == providerId &&
+    selected.id == result.id &&
+    RegExp(r'^\d+$').hasMatch(selected.id) &&
+    result.metadata['identityScope'] == 'historicalText' &&
+    normalizedIdentity(selected.title) == normalizedIdentity(result.title) &&
+    (selected.artist.trim().isEmpty ||
+        normalizedIdentity(selected.artist) ==
+            normalizedIdentity(result.artist));
 double _rank(SongCandidate selection, SongCandidate song) =>
     (_sameAlbum(selection, song) ? 100 : 0) +
     (normalizedIdentity(selection.title) == normalizedIdentity(song.title)
@@ -410,11 +425,19 @@ Future<SourceResult> findMatchingSource(
     );
     report('validate', 'pending', candidate: result.candidate);
     final song = result.candidate,
+        historicalText =
+            candidate.identity == selection.identity &&
+            _selectedHistoricalText(selection, song, provider.definition.id) &&
+            song.metadata['resolvedPageId'] == candidate.id &&
+            song.metadata['resolvedTitle'] == song.title &&
+            song.metadata['copyrightTags'] is List &&
+            (song.metadata['copyrightTags'] as List).isNotEmpty,
         strict = sameSong(selection, result.candidate);
     if (song.providerId != provider.definition.id ||
         song.id != candidate.id ||
-        !sameSong(candidate, song) ||
-        (!strict && !sameArrangement(selection, song, provider))) {
+        (!sameSong(candidate, song) && !historicalText) ||
+        (!strict && !sameArrangement(selection, song, provider) &&
+            !historicalText)) {
       report(
         'validate',
         'rejected',
@@ -432,7 +455,7 @@ Future<SourceResult> findMatchingSource(
     final scope = song.metadata['identityScope'];
     final exact =
         selection.identity == song.identity &&
-        !{'composition', 'arrangement', 'image', 'work'}.contains(scope) &&
+        !{'composition', 'arrangement', 'image', 'work', 'historicalText'}.contains(scope) &&
         !provider.definition.capabilities.contains('chords');
     final verifiedRecording =
         _sameAlbum(selection, song) &&
@@ -443,17 +466,21 @@ Future<SourceResult> findMatchingSource(
     // Artist/title-only APIs cannot establish which recording supplied lyrics.
     final recording =
         provider.definition.id != 'lyricsovh' &&
-        !{'composition', 'arrangement', 'image', 'work'}.contains(scope) &&
+        !{'composition', 'arrangement', 'image', 'work', 'historicalText'}.contains(scope) &&
         (exact || verifiedRecording);
     final matched = _matched(
       result,
       recording ? MatchKind.sameRecording : MatchKind.sameSong,
       recording
           ? 'same_recording'
+          : historicalText
+          ? 'explicit_historical_work'
           : strict
           ? 'same_song'
           : 'arrangement_requires_agreement',
-      extra: !strict ? {'requiresLyricsAgreement': true} : {},
+      extra: !strict && !historicalText
+          ? {'requiresLyricsAgreement': true}
+          : {},
     );
     if (accept != null && !accept(matched)) {
       report(
@@ -473,6 +500,16 @@ Future<SourceResult> findMatchingSource(
   if (selection.providerId == provider.definition.id) {
     final result = await attempt(selection);
     if (result != null) return result;
+    if (provider.definition.id == 'wikisource') {
+      if (rejected != null) return rejected!;
+      if (unresolved.isNotEmpty) {
+        throw ProviderException(
+          unresolved.first.code,
+          unresolved.map((e) => '${e.code}: ${e.message}').join('; '),
+        );
+      }
+      throw const ProviderException('unavailable');
+    }
   }
   final artist = selection.artist.length <= 100
       ? selection.artist
