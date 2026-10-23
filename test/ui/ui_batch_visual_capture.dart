@@ -118,100 +118,103 @@ void main() {
     testWidgets('fresh UI batch visuals ${scenario.$1}', (tester) async {
       final previousPlatform = debugDefaultTargetPlatformOverride;
       debugDefaultTargetPlatformOverride = scenario.$6;
-      addTearDown(() => debugDefaultTargetPlatformOverride = previousPlatform);
-      tester.view.devicePixelRatio = 1;
-      tester.view.physicalSize = scenario.$2;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-      await tester.runAsync(_fonts);
-      const fullscreen = MethodChannel('org.freevia.singbook/fullscreen');
-      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-        fullscreen, (_) async => null,
-      );
-      addTearDown(() => tester.binding.defaultBinaryMessenger
-          .setMockMethodCallHandler(fullscreen, null));
-      var screen = 'library';
-      final controller = FakeUiController((_) => _state(screen));
-      addTearDown(controller.dispose);
-      final boundaryKey = GlobalKey();
-      final theme = verseTheme(
-        brightness: scenario.$5, palette: 'navy', fontFamily: 'NotoSansFixture',
-      );
-      await tester.pumpWidget(RepaintBoundary(
-        key: boundaryKey,
-        child: MaterialApp(
-          locale: scenario.$3,
-          localizationsDelegates: singbookLocalizationsDelegates,
-          supportedLocales: const [Locale('en'), Locale('bg'), Locale('ar'), Locale('uk')],
-          theme: theme.copyWith(textTheme: theme.textTheme.apply(
-            fontFamily: 'NotoSansFixture', fontFamilyFallback: const ['SetlistArabic'],
-          )),
-          builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scenario.$4)),
-            child: child!,
+      try {
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = scenario.$2;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        await tester.runAsync(_fonts);
+        const fullscreen = MethodChannel('org.freevia.singbook/fullscreen');
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          fullscreen, (_) async => null,
+        );
+        addTearDown(() => tester.binding.defaultBinaryMessenger
+            .setMockMethodCallHandler(fullscreen, null));
+        var screen = 'library';
+        final controller = FakeUiController((_) => _state(screen));
+        addTearDown(controller.dispose);
+        final boundaryKey = GlobalKey();
+        final theme = verseTheme(
+          brightness: scenario.$5, palette: 'navy', fontFamily: 'NotoSansFixture',
+        );
+        await tester.pumpWidget(RepaintBoundary(
+          key: boundaryKey,
+          child: MaterialApp(
+            locale: scenario.$3,
+            localizationsDelegates: singbookLocalizationsDelegates,
+            supportedLocales: const [Locale('en'), Locale('bg'), Locale('ar'), Locale('uk')],
+            theme: theme.copyWith(textTheme: theme.textTheme.apply(
+              fontFamily: 'NotoSansFixture', fontFamilyFallback: const ['SetlistArabic'],
+            )),
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scenario.$4)),
+              child: child!,
+            ),
+            home: VerseAppShell(controller: controller, files: VerseFileActions()),
           ),
-          home: VerseAppShell(controller: controller, files: VerseFileActions()),
-        ),
-      ));
-      await tester.pumpAndSettle(const Duration(milliseconds: 100),
-          EnginePhase.sendSemanticsUpdate, const Duration(seconds: 3));
-      await tester.runAsync(() => precacheImage(
-        const AssetImage('assets/branding/singbook-mark-foreground.png'),
-        boundaryKey.currentContext!,
-      ));
-      await tester.pump();
-      for (final stage in ['library', 'setlists', 'reader']) {
-        screen = stage;
-        controller.refresh();
+        ));
         await tester.pumpAndSettle(const Duration(milliseconds: 100),
             EnginePhase.sendSemanticsUpdate, const Duration(seconds: 3));
-        if (stage != 'reader') {
-          final shortcut = find.byKey(ValueKey(
-            stage == 'library' ? 'songs-create-shortcut' : 'setlists-create-shortcut',
-          ));
-          await tester.ensureVisible(shortcut);
-          await tester.pumpAndSettle();
-          expect(shortcut.hitTestable(), findsOneWidget);
-        } else {
-          final bar = find.byKey(const ValueKey('player-lyrics-scrollbar'));
-          final pane = find.byKey(const ValueKey('tablet-reader-content'));
-          expect(tester.getRect(bar), tester.getRect(pane));
-        }
-        if (stage == 'reader') {
-          await _captureScrolling(tester, boundaryKey, '${scenario.$1}-$stage');
-        } else {
-          await _capture(tester, boundaryKey, '${scenario.$1}-$stage');
-        }
-      }
-      await tester.tap(find.byKey(const ValueKey('scroll-speed-toggle')));
-      await tester.pumpAndSettle();
-      final slider = find.byKey(const ValueKey('scroll-speed-slider'));
-      final gesture = await tester.startGesture(tester.getCenter(slider));
-      try {
-        await gesture.moveBy(const Offset(0, -24));
+        await tester.runAsync(() => precacheImage(
+          const AssetImage('assets/branding/singbook-mark-foreground.png'),
+          boundaryKey.currentContext!,
+        ));
         await tester.pump();
-        final expected = tester.widget<Slider>(slider).label;
-        expect(expected, isNot('1×'));
-        expect(tester.widget<Text>(find.byKey(
-          const ValueKey('scroll-speed-value'),
-        )).data, expected);
-        expect(controller.calls.where((call) => call.startsWith('setPlaybackSpeed')), isEmpty);
-        await _capture(tester, boundaryKey, '${scenario.$1}-speed-held');
+        for (final stage in ['library', 'setlists', 'reader']) {
+          screen = stage;
+          controller.refresh();
+          await tester.pumpAndSettle(const Duration(milliseconds: 100),
+              EnginePhase.sendSemanticsUpdate, const Duration(seconds: 3));
+          if (stage != 'reader') {
+            final shortcut = find.byKey(ValueKey(
+              stage == 'library' ? 'songs-create-shortcut' : 'setlists-create-shortcut',
+            ));
+            await tester.ensureVisible(shortcut);
+            await tester.pumpAndSettle();
+            expect(shortcut.hitTestable(), findsOneWidget);
+          } else {
+            final bar = find.byKey(const ValueKey('player-lyrics-scrollbar'));
+            final pane = find.byKey(const ValueKey('tablet-reader-content'));
+            expect(tester.getRect(bar), tester.getRect(pane));
+          }
+          if (stage == 'reader') {
+            await _captureScrolling(tester, boundaryKey, '${scenario.$1}-$stage');
+          } else {
+            await _capture(tester, boundaryKey, '${scenario.$1}-$stage');
+          }
+        }
+        await tester.tap(find.byKey(const ValueKey('scroll-speed-toggle')));
+        await tester.pumpAndSettle();
+        final slider = find.byKey(const ValueKey('scroll-speed-slider'));
+        final gesture = await tester.startGesture(tester.getCenter(slider));
+        try {
+          await gesture.moveBy(const Offset(0, -24));
+          await tester.pump();
+          final expected = tester.widget<Slider>(slider).label;
+          expect(expected, isNot('1×'));
+          expect(tester.widget<Text>(find.byKey(
+            const ValueKey('scroll-speed-value'),
+          )).data, expected);
+          expect(controller.calls.where((call) => call.startsWith('setPlaybackSpeed')), isEmpty);
+          await _capture(tester, boundaryKey, '${scenario.$1}-speed-held');
+        } finally {
+          await gesture.cancel();
+        }
+        await tester.pumpAndSettle();
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        screen = 'fullscreen';
+        controller.refresh();
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('player-enter-fullscreen')));
+        await tester.pumpAndSettle();
+        expect(find.byKey(const ValueKey('player-exit-fullscreen')), findsOneWidget);
+        await _captureScrolling(tester, boundaryKey, '${scenario.$1}-fullscreen');
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump();
       } finally {
-        await gesture.cancel();
+        debugDefaultTargetPlatformOverride = previousPlatform;
       }
-      await tester.pumpAndSettle();
-      await tester.binding.handlePopRoute();
-      await tester.pumpAndSettle();
-      screen = 'fullscreen';
-      controller.refresh();
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('player-enter-fullscreen')));
-      await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('player-exit-fullscreen')), findsOneWidget);
-      await _captureScrolling(tester, boundaryKey, '${scenario.$1}-fullscreen');
-      await tester.pumpWidget(const SizedBox.shrink());
-      await tester.pump();
     });
   }
 }

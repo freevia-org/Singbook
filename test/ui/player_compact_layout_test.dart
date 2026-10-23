@@ -698,13 +698,32 @@ void main() {
       final lyricsRect = tester.getRect(
         find.byKey(const ValueKey('tablet-reader-content')),
       );
-      // The reserved 48 dp trailing gutter follows text direction.
-      if (locale.languageCode == 'ar') {
-        expect(action.right, closeTo(lyricsRect.left, 1));
+      // The viewport now includes the reserved action gutter, so align the
+      // button with its outer trailing edge in each text direction.
+      final listFinder = find.byKey(const ValueKey('player-lyrics-scroll'));
+      final listRect = tester.getRect(listFinder);
+      final direction = Directionality.of(tester.element(listFinder));
+      final padding = tester.widget<ListView>(listFinder).padding!.resolve(
+        direction,
+      );
+      expect(listRect, lyricsRect);
+      expect(actionFinder.hitTestable(), findsOneWidget);
+      expect(tester.widget<IconButton>(actionFinder).tooltip, isNotEmpty);
+      if (direction == TextDirection.rtl) {
+        expect(action.left, closeTo(lyricsRect.left, 1));
+        expect(padding.left - padding.right, closeTo(action.width, 1));
       } else {
-        expect(action.left, closeTo(lyricsRect.right, 1));
+        expect(action.right, closeTo(lyricsRect.right, 1));
+        expect(padding.right - padding.left, closeTo(action.width, 1));
       }
-      final paragraph = tester.renderObject<RenderParagraph>(find.text(text));
+      final paragraphFinder = find.text(text);
+      final paragraph = tester.renderObject<RenderParagraph>(paragraphFinder);
+      final paragraphRect = tester.getRect(paragraphFinder);
+      final contentLeft = listRect.left + padding.left;
+      final contentRight = listRect.right - padding.right;
+      expect(paragraphRect.left, closeTo(contentLeft, 1));
+      expect(paragraphRect.right, closeTo(contentRight, 1));
+      expect(paragraphRect.overlaps(action), isFalse);
       final glyphBoxes = paragraph
           .getBoxesForSelection(
             TextSelection(baseOffset: 0, extentOffset: text.length),
@@ -715,9 +734,13 @@ void main() {
               paragraph.localToGlobal(bounds.topLeft),
               paragraph.localToGlobal(bounds.bottomRight),
             );
-          });
+          }).toList();
       expect(glyphBoxes, isNotEmpty);
       expect(glyphBoxes.any((box) => box.overlaps(action)), isFalse);
+      for (final box in glyphBoxes) {
+        expect(box.left, greaterThanOrEqualTo(contentLeft - 1));
+        expect(box.right, lessThanOrEqualTo(contentRight + 1));
+      }
       expect(paragraph.didExceedMaxLines, isFalse);
       if (capturePlayerVisuals) {
         final orientation = locale.languageCode == 'ar' ? 'rtl' : 'ltr';
