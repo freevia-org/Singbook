@@ -151,6 +151,7 @@ void main() {
     }
 
     for (final profile in [
+      (locale: 'en', theme: 'light', scale: 1.0, size: const Size(1920, 1080)),
       (locale: 'en', theme: 'light', scale: 1.0, size: const Size(1280, 800)),
       (locale: 'uk', theme: 'dark', scale: 1.5, size: const Size(800, 600)),
       (locale: 'ar', theme: 'dark', scale: 1.6, size: const Size(390, 720)),
@@ -165,7 +166,9 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('home-mode-library')));
       await tester.pumpAndSettle();
       expect(find.text(song.title), findsOneWidget);
-      await capture('${profile.locale}-${profile.theme}-library');
+      await capture(
+        '${profile.locale}-${profile.theme}-${profile.size.width.toInt()}-library',
+      );
       await tester.tap(find.text(song.title));
       await tester.pumpAndSettle();
       for (
@@ -179,7 +182,9 @@ void main() {
         await tester.pumpAndSettle();
       }
       expect(find.byType(ChordLyricsLine), findsWidgets);
-      await capture('${profile.locale}-${profile.theme}-reader');
+      await capture(
+        '${profile.locale}-${profile.theme}-${profile.size.width.toInt()}-reader',
+      );
       final l10n = AppLocalizations.of(
         tester.element(find.byType(Scaffold).first),
       );

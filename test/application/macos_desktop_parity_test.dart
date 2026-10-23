@@ -21,6 +21,26 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets(
+    'desktop content fills a wide window without tablet side gutters',
+    (tester) async {
+      final controller = FakeUiController((_) => const VerseUiState());
+      addTearDown(controller.dispose);
+      await pumpShell(tester, controller, size: const Size(1920, 1080));
+      final frame = tester.getRect(
+        find.byKey(const ValueKey('tablet-content-frame')),
+      );
+      expect(frame.right, closeTo(1920, 1));
+      expect(frame.width, greaterThan(1700));
+      expect(tester.takeException(), isNull);
+    },
+    variant: TargetPlatformVariant({
+      TargetPlatform.macOS,
+      TargetPlatform.windows,
+      TargetPlatform.linux,
+    }),
+  );
+
+  testWidgets(
     'macOS player uses Space and Command arrows, preserving text input',
     (tester) async {
       final controller = FakeUiController(
