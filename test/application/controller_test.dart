@@ -14,7 +14,7 @@ class Catalog implements LyricsProvider {
   ProviderDefinition get definition => ProviderDefinition(
     id: 'genius',
     name: 'Catalog',
-    capabilities: {'lyrics', 'search'},
+    capabilities: {'catalog', 'lyrics', 'search'},
   );
   @override
   Future<List<SongCandidate>> search(

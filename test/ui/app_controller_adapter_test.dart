@@ -1766,6 +1766,15 @@ class _StreamingDiscovery extends SourceDiscoveryService {
   final List<SourceResult> additionalSources;
   final started = Completer<void>();
   final finished = Completer<List<SourceResult>>();
+  // This double overrides catalog search, so declare its registered role too.
+  @override
+  List<ProviderDefinition> get definitions => [
+    ProviderDefinition(
+      id: candidate.providerId,
+      name: candidate.providerId,
+      capabilities: const {'catalog'},
+    ),
+  ];
   @override
   Future<List<SongCandidate>> search(
     String query, {
@@ -1818,8 +1827,11 @@ class _StatusProvider implements LyricsProvider {
   final Future<void>? waitBeforeResolve;
 
   @override
-  ProviderDefinition get definition =>
-      ProviderDefinition(id: id, name: id, capabilities: capabilities);
+  ProviderDefinition get definition => ProviderDefinition(
+    id: id,
+    name: id,
+    capabilities: {'catalog', ...capabilities},
+  );
 
   SongCandidate get _candidate => SongCandidate(
     providerId: id,

@@ -19,6 +19,7 @@ class GeniusProvider implements LyricsProvider {
     name: 'Genius',
     capabilities: const {'catalog', 'lyrics', 'metadata'},
     enabledByDefault: token.trim().isNotEmpty,
+    configured: token.trim().isNotEmpty,
     accessMode: 'app_token',
     website: 'https://genius.com',
   );
@@ -378,9 +379,10 @@ class SyncLrcProvider implements LyricsProvider {
     final data = object(
       await http.requestJson(
         // This API treats form-style '+' as a literal plus in search terms.
-        Uri.https('api.synclrc.dev', '/search').replace(
-          query: 'q=${Uri.encodeComponent(queryText(query))}&limit=10',
-        ),
+        Uri.https(
+          'api.synclrc.dev',
+          '/search',
+        ).replace(query: 'q=${Uri.encodeComponent(queryText(query))}&limit=10'),
         cancel: cancel,
       ),
     );

@@ -28,6 +28,9 @@ class ProviderDefinition {
   final String id, name, accessMode;
   final Set<String> capabilities;
   final bool enabledByDefault;
+
+  /// Whether required app configuration is available; never contains credentials.
+  final bool configured;
   final String? description, website;
   const ProviderDefinition({
     required this.id,
@@ -35,6 +38,7 @@ class ProviderDefinition {
     this.capabilities = const {},
     this.accessMode = 'public',
     this.enabledByDefault = true,
+    this.configured = true,
     this.description,
     this.website,
   });

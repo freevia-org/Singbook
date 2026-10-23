@@ -425,6 +425,43 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
           '${l10n.searchOnlineTab}(${state.comparison == null ? state.autocomplete.length : 1})',
         ],
       ),
+      if (state.homeListMode == HomeListMode.online &&
+          state.searchCatalogs.isNotEmpty) ...[
+        const SizedBox(height: 12),
+        InputDecorator(
+          key: const ValueKey('search-catalog-selector'),
+          isEmpty: state.searchCatalogId == null,
+          decoration: InputDecoration(labelText: l10n.searchSourceLabel),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value:
+                  state.searchCatalogs.any(
+                    (catalog) => catalog.id == state.searchCatalogId,
+                  )
+                  ? state.searchCatalogId
+                  : null,
+              isDense: false,
+              isExpanded: true,
+              items: [
+                for (final catalog in state.searchCatalogs)
+                  DropdownMenuItem(
+                    value: catalog.id,
+                    child: Text(
+                      catalog.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+              ],
+              onChanged: (value) {
+                if (value != null) {
+                  unawaited(widget.controller.setSearchCatalog(value));
+                }
+              },
+            ),
+          ),
+        ),
+      ],
     ],
   );
 
@@ -838,6 +875,11 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  if (item.isHistoricalText)
+                    Text(
+                      l10n.providerDescHistoricalTextPerWorkLicense,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
                   if (item.album?.isNotEmpty == true ||
                       item.durationSeconds != null)
                     Text(
