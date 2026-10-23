@@ -11,6 +11,7 @@ name: Wikisource validation
       - lib/ui/app_controller_adapter.dart
       - test/application/historical_text_import_test.dart
       - test/domain/historical_text_import_test.dart
+      - test/domain/recording_scope_test.dart
       - test/fixtures/wikisource_legacy_saved_song.json
       - test/providers/extra/adversarial_test.dart
       - test/providers/extra/extra_providers_test.dart
@@ -75,7 +76,7 @@ jobs:
           sha256sum -c artifacts/wikisource-ci/analyze/lock-before.txt
           git diff --exit-code
 
-      - name: Analyze the eleven owned Dart paths
+      - name: Analyze Wikisource and recording scope paths
         timeout-minutes: 10
         shell: bash
         run: |
@@ -89,6 +90,7 @@ jobs:
             lib/ui/app_controller_adapter.dart \
             test/application/historical_text_import_test.dart \
             test/domain/historical_text_import_test.dart \
+            test/domain/recording_scope_test.dart \
             test/providers/extra/adversarial_test.dart \
             test/providers/extra/extra_providers_test.dart \
             test/providers/extra/wikisource_identity_test.dart \
@@ -131,6 +133,7 @@ jobs:
               test/providers/core/providers_test.dart
               test/domain/combined_enrichment_test.dart
               test/domain/combined_chord_union_test.dart
+              test/domain/recording_scope_test.dart
           - group: cached-comparison
             paths: >-
               test/application/ready_source_save_test.dart

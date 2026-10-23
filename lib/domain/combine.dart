@@ -94,20 +94,11 @@ bool _demonstrationTimingSelected(
             )));
 bool recordingCompatible(SongCandidate selected, SourceResult result) {
   if (selected.providerId == 'wikisource' ||
-      result.candidate.providerId == 'wikisource') {
-    return false;
-  }
-  const nonRecordingScopes = {
-    'composition',
-    'work',
-    'artist',
-    'image',
-    'historicalText',
-  };
-  if (nonRecordingScopes.contains(selected.metadata['identityScope']) ||
-      nonRecordingScopes.contains(result.candidate.metadata['identityScope']) ||
-      nonRecordingScopes.contains(result.metadata['identityScope']) ||
-      nonRecordingScopes.contains(result.extra['identityScope'])) {
+      result.candidate.providerId == 'wikisource' ||
+      selected.metadata['identityScope'] == 'historicalText' ||
+      result.candidate.metadata['identityScope'] == 'historicalText' ||
+      result.metadata['identityScope'] == 'historicalText' ||
+      result.extra['identityScope'] == 'historicalText') {
     return false;
   }
   if (result.matchKind == MatchKind.rejected ||
@@ -132,6 +123,13 @@ bool recordingCompatible(SongCandidate selected, SourceResult result) {
   // is explicitly scoped to a recording (or is a legacy unscoped ID).
   final selectedScope = selected.metadata['identityScope'];
   final foundScope = found.metadata['identityScope'];
+  const nonRecordingScopes = {
+    'composition',
+    'work',
+    'artist',
+    'image',
+    'historicalText',
+  };
   if (selected.identity == found.identity &&
       !nonRecordingScopes.contains(selectedScope) &&
       !nonRecordingScopes.contains(foundScope)) {
