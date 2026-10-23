@@ -1589,6 +1589,14 @@ class AppLocalizationsRo extends AppLocalizations {
       'Folosește o versiune Singbook configurată pentru autentificarea Google.';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'Google a respins configurația de conectare a acestei versiuni.';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'Verificați dacă ID-ul OAuth configurat aparține clientului desktop Singbook.';
+
+  @override
   String get syncErrorNotSignedIn => 'Nu ești conectat.';
 
   @override

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show ScrollDirection;
+import 'package:flutter/scheduler.dart' show SchedulerBinding, SchedulerPhase;
 import 'package:flutter/services.dart';
 
 import '../../domain/arrangement.dart' show transposeChord;
@@ -21,6 +22,7 @@ import 'player_fullscreen_header.dart';
 import '../widgets/subpage_header.dart';
 import 'screen_awake.dart';
 import 'section_labels.dart';
+import 'speed_slider_track.dart';
 
 const _playerPopupBaseWidth = 96.0;
 
@@ -132,6 +134,17 @@ class _PlayerScreenState extends State<PlayerScreen>
   bool _inForeground = true;
   bool _leaving = false;
   double _lyricsHorizontalDragDistance = 0;
+  final ValueNotifier<double?> _playbackSpeedDraft = ValueNotifier<double?>(
+    null,
+  );
+  String? _playbackSpeedDraftSongId;
+  double? _playbackSpeedDraftDuration;
+  VerseUiController? _playbackSpeedDraftController;
+  bool _playbackSpeedPointerActive = false;
+  bool _playbackSpeedPointerCanceled = false;
+  int? _playbackSpeedPointerId;
+  int _playbackSpeedDraftRevision = 0;
+  int _playbackSpeedInteractionEpoch = 0;
 
   void _setControlsExpanded(bool expanded) {
     if (controller.state.playerControlsExpanded == expanded) return;
@@ -355,6 +368,7 @@ class _PlayerScreenState extends State<PlayerScreen>
   void didUpdateWidget(covariant PlayerScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!identical(oldWidget.controller, widget.controller)) {
+      _clearPlaybackSpeedDraft();
       _position.removeListener(_onPosition);
       _position = widget.controller.playerPosition..addListener(_onPosition);
     }
@@ -373,6 +387,7 @@ class _PlayerScreenState extends State<PlayerScreen>
     final state = controller.state;
     final position = _position.value;
     if (state.song?.id != _lastSongId) {
+      _clearPlaybackSpeedDraft();
       _lastSongId = state.song?.id;
       _lastLineId = null;
       _lastProgress = position.seconds;
@@ -642,6 +657,7 @@ class _PlayerScreenState extends State<PlayerScreen>
     _manualScrollIdle?.cancel();
     _lyricsScroll.dispose();
     _controlsScroll.dispose();
+    _playbackSpeedDraft.dispose();
     super.dispose();
   }
 
@@ -684,7 +700,7 @@ class _PlayerScreenState extends State<PlayerScreen>
       ),
       child: child,
     );
-    final lyrics = GestureDetector(
+    Widget lyrics() => GestureDetector(
       behavior: HitTestBehavior.opaque,
       onHorizontalDragStart: state.activeSetlist == null
           ? null
@@ -695,108 +711,189 @@ class _PlayerScreenState extends State<PlayerScreen>
       onHorizontalDragEnd: state.activeSetlist == null
           ? null
           : _handleLyricsHorizontalDragEnd,
-      child: Center(
-        key: const ValueKey('tablet-reader-content'),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 960),
-          child: NotificationListener<ScrollNotification>(
-            onNotification: _handleLyricsScroll,
-            child: ListView.builder(
-              key: const ValueKey('player-lyrics-scroll'),
-              controller: _lyricsScroll,
-              padding: const EdgeInsets.fromLTRB(28, 18, 28, 32),
-              itemCount: state.songLines.length,
-              itemBuilder: (context, index) =>
-                  _lyricLine(context, state, state.songLines[index]),
-            ),
-          ),
-        ),
-      ),
-    );
-    Widget controls({required bool compact, double? maxHeight}) {
-      final screenWidth = MediaQuery.sizeOf(context).width;
-      final controlWidth = compact
-          ? (screenWidth * .4).clamp(300.0, 360.0)
-          : screenWidth;
-      final speedLabel = TextPainter(
-        text: TextSpan(
-          text: _formatPlaybackSpeed(state.playbackSpeed),
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        textDirection: Directionality.of(context),
-        textScaler: MediaQuery.textScalerOf(context),
-      )..layout();
-      final speedWidth = speedLabel.width + 28;
-      speedLabel.dispose();
-      final separateSpeed =
-          screenWidth < 360 ||
-          MediaQuery.textScalerOf(context).scale(1) > 1.25 ||
-          speedWidth > (controlWidth - 16) / 4;
-      final content = Column(
-        mainAxisSize: MainAxisSize.min,
+      child: Stack(
         children: [
-          ValueListenableBuilder<PlayerPosition>(
-            valueListenable: _position,
-            builder: (context, position, _) =>
-                _seekBar(context, l10n, state, position, duration),
-          ),
-          SizedBox(
-            height: 40,
-            child: OverflowBox(
-              alignment: Alignment.topCenter,
-              minHeight: 48,
-              maxHeight: 48,
-              child: Transform.translate(
-                offset: const Offset(0, -8),
-                child: _transport(
-                  context,
-                  l10n,
-                  state,
-                  inlineChords: song.hasChords,
-                  showSpeed: !separateSpeed,
+          Positioned.fill(
+            child: Padding(
+              padding: EdgeInsetsDirectional.only(
+                end: widget.onFullScreenChanged == null ? 0 : 48,
+              ),
+              child: Center(
+                key: const ValueKey('tablet-reader-content'),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 960),
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: _handleLyricsScroll,
+                    child: ListView.builder(
+                      key: const ValueKey('player-lyrics-scroll'),
+                      controller: _lyricsScroll,
+                      padding: const EdgeInsets.fromLTRB(28, 18, 28, 32),
+                      itemCount: state.songLines.length,
+                      itemBuilder: (context, index) =>
+                          _lyricLine(context, state, state.songLines[index]),
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-          if (separateSpeed)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Align(
-                alignment: AlignmentDirectional.centerEnd,
-                child: _speedControl(l10n, state),
+          if (widget.onFullScreenChanged != null)
+            PositionedDirectional(
+              top: 0,
+              end: 0,
+              child: Material(
+                color: colors.surfaceContainerLow,
+                shape: const CircleBorder(),
+                clipBehavior: Clip.antiAlias,
+                child: IconButton(
+                  key: ValueKey(
+                    widget.fullScreen
+                        ? 'player-exit-fullscreen'
+                        : 'player-enter-fullscreen',
+                  ),
+                  constraints: const BoxConstraints.tightFor(
+                    width: 48,
+                    height: 48,
+                  ),
+                  tooltip: widget.fullScreen
+                      ? l10n.playerExitFullScreen
+                      : l10n.playerFullScreen,
+                  onPressed: () =>
+                      widget.onFullScreenChanged?.call(!widget.fullScreen),
+                  icon: Icon(
+                    widget.fullScreen
+                        ? Icons.close_fullscreen_rounded
+                        : Icons.open_in_full_rounded,
+                  ),
+                ),
               ),
             ),
         ],
-      );
-      final canScroll = compact || maxHeight != null;
-      final body = canScroll
-          ? ConstrainedBox(
-              constraints: maxHeight == null
-                  ? const BoxConstraints()
-                  : BoxConstraints(maxHeight: maxHeight),
-              child: Scrollbar(
-                controller: _controlsScroll,
-                thumbVisibility: true,
-                child: SingleChildScrollView(
-                  controller: _controlsScroll,
-                  reverse: true,
-                  child: content,
-                ),
-              ),
-            )
-          : content;
-      return playerPanel(
-        SafeArea(
-          top: false,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [if (compact) Flexible(child: body) else body],
+      ),
+    );
+    Widget controls({
+      required bool compact,
+      double? maxHeight,
+    }) => LayoutBuilder(
+      builder: (context, controlConstraints) {
+        final style = DefaultTextStyle.of(
+          context,
+        ).style.copyWith(fontSize: 20, fontWeight: FontWeight.w600);
+        Size labelSize(String label) {
+          final painter = TextPainter(
+            text: TextSpan(text: label, style: style),
+            textDirection: Directionality.of(context),
+            textScaler: MediaQuery.textScalerOf(context),
+            locale: Localizations.localeOf(context),
+          )..layout();
+          final size = Size(
+            painter.width.ceilToDouble() + 2,
+            painter.height.ceilToDouble() + 2,
+          );
+          painter.dispose();
+          return size;
+        }
+
+        final keySize = labelSize(_transposeKey(state) ?? l10n.unknownValue);
+        final speedSize = labelSize(_formatPlaybackSpeed(state.playbackSpeed));
+        final sideWidth = math.max(
+          64.0,
+          math.max(keySize.width, speedSize.width) + 36,
+        );
+        final hasNavigation =
+            state.playerSections.isNotEmpty || state.activeSetlist != null;
+        final playPainter = TextPainter(
+          text: TextSpan(
+            text: state.isPlaying ? l10n.playerPause : l10n.playerPlay,
+            style: Theme.of(
+              context,
+            ).textTheme.labelLarge?.copyWith(height: kTextHeightNone),
           ),
-        ),
-        header: false,
-        side: compact,
-      );
-    }
+          textDirection: Directionality.of(context),
+          textScaler: MediaQuery.textScalerOf(context),
+          locale: Localizations.localeOf(context),
+        )..layout();
+        final playWidth = math.max(
+          104.0,
+          playPainter.width.ceilToDouble() + 48,
+        );
+        // Keep the compact row at least 48 dp, but let actual font metrics
+        // grow it for large text and fallback scripts instead of clipping.
+        final rowHeight = math.max(
+          48.0,
+          math.max(
+            math.max(keySize.height, speedSize.height),
+            playPainter.height.ceilToDouble() + 8,
+          ),
+        );
+        playPainter.dispose();
+        final minimumWidth =
+            sideWidth * 2 + (hasNavigation ? 80 : 0) + playWidth + 8;
+        final rowWidth = math.max(controlConstraints.maxWidth, minimumWidth);
+        final transport = SizedBox(
+          width: rowWidth,
+          height: rowHeight,
+          child: _transport(
+            context,
+            l10n,
+            state,
+            inlineChords: song.hasChords,
+            showSpeed: true,
+            stackActions: false,
+            sideSlotWidth: sideWidth,
+            chordSlotWidth: sideWidth,
+          ),
+        );
+        final content = Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ValueListenableBuilder<PlayerPosition>(
+              valueListenable: _position,
+              builder: (context, position, _) =>
+                  _seekBar(context, l10n, state, position, duration),
+            ),
+            // Narrow landscape panes and large text retain a single control
+            // row. Horizontal scrolling keeps every control reachable.
+            if (rowWidth > controlConstraints.maxWidth)
+              SingleChildScrollView(
+                key: const ValueKey('player-transport-horizontal-scroll'),
+                scrollDirection: Axis.horizontal,
+                child: transport,
+              )
+            else
+              transport,
+          ],
+        );
+        final canScroll = compact || maxHeight != null;
+        final body = canScroll
+            ? ConstrainedBox(
+                constraints: maxHeight == null
+                    ? const BoxConstraints()
+                    : BoxConstraints(maxHeight: maxHeight),
+                child: Scrollbar(
+                  controller: _controlsScroll,
+                  thumbVisibility: true,
+                  child: SingleChildScrollView(
+                    controller: _controlsScroll,
+                    reverse: true,
+                    child: content,
+                  ),
+                ),
+              )
+            : content;
+        return playerPanel(
+          SafeArea(
+            top: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [if (compact) Flexible(child: body) else body],
+            ),
+          ),
+          header: false,
+          side: compact,
+        );
+      },
+    );
 
     final metadata = [
       if (state.readerKey != null && !state.readerKeyEstimated)
@@ -810,138 +907,160 @@ class _PlayerScreenState extends State<PlayerScreen>
       if (state.readerTempo != null)
         '${l10n.editorTempoField}: ${state.readerTempo}',
     ].whereType<String>().where((v) => v.isNotEmpty).join(' · ');
+
+    Widget playerSettingsAction() => IconButton(
+      key: const ValueKey('player-settings-button'),
+      tooltip: l10n.settingsPlayer,
+      onPressed: () => showPlayerSettings(context, controller),
+      icon: const Icon(Icons.settings_outlined),
+    );
+
+    List<Widget> songActions() => [
+      IconButton(
+        tooltip: song.favorite ? l10n.songFavoriteRemove : l10n.songFavoriteAdd,
+        onPressed: () => controller.toggleSongFavorite(song.id),
+        icon: Icon(
+          song.favorite
+              ? Icons.favorite_rounded
+              : Icons.favorite_border_rounded,
+        ),
+      ),
+      if (widget.onFullScreenChanged == null)
+        IconButton(
+          tooltip: l10n.actionEdit,
+          onPressed: () => controller.editSong(song.id),
+          icon: const Icon(Icons.edit_outlined),
+        ),
+      PopupMenuButton<String>(
+        tooltip: l10n.songMenuLabel,
+        icon: const Icon(Icons.more_horiz_rounded),
+        itemBuilder: (_) => [
+          PopupMenuItem<String>(
+            value: 'player-settings',
+            child: Text(l10n.settingsPlayer),
+          ),
+          const PopupMenuDivider(),
+          ...buildLibraryActionMenu(
+            l10n,
+            timedLyricsChecked: state.timingMode == 'timed',
+            actions: {
+              ...songLibraryActions,
+              if (state.readerCanCompareVersions) 'compare',
+              if (state.readerTimingAvailable || state.readerHasTiming)
+                'timed-lyrics',
+            },
+          ),
+        ],
+        onSelected: (action) {
+          if (action == 'player-settings') {
+            showPlayerSettings(context, controller);
+          } else if (action == 'compare') {
+            controller.compareCurrentSongVersions();
+          } else if (action == 'timed-lyrics') {
+            controller.setTimingMode(
+              state.timingMode == 'timed' ? 'estimated' : 'timed',
+            );
+          } else {
+            handleSongMenuAction(context, controller, song.id, action);
+          }
+        },
+      ),
+    ];
+
+    Widget landscapeHeader() => SafeArea(
+      left: true,
+      right: true,
+      top: false,
+      bottom: false,
+      child: PlayerFullscreenHeader(
+        key: const ValueKey('player-landscape-header'),
+        title: song.title,
+        artist: song.artist,
+        actions: widget.fullScreen
+            ? [playerSettingsAction()]
+            : [
+                IconButton(
+                  tooltip: l10n.navBack,
+                  onPressed: controller.back,
+                  icon: const Icon(Icons.arrow_back_rounded),
+                ),
+                ...songActions(),
+              ],
+      ),
+    );
+
+    Widget songHeader() {
+      if (widget.fullScreen) {
+        return PlayerFullscreenHeader(
+          title: song.title,
+          artist: song.artist,
+          actions: [playerSettingsAction()],
+        );
+      }
+      return playerPanel(
+        Column(
+          children: [
+            SubpageHeader(
+              title: song.title,
+              onBack: controller.back,
+              actions: songActions(),
+            ),
+            if (metadata.isNotEmpty)
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(
+                    metadata,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  const Icon(Icons.check_circle_outline, size: 14),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      [
+                        l10n.readerSaved,
+                        state.readerSource,
+                      ].whereType<String>().join(' · '),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        header: true,
+        side: false,
+      );
+    }
+
     final content = LayoutBuilder(
       builder: (context, constraints) {
         final compactLandscape =
             constraints.maxWidth > constraints.maxHeight &&
-            constraints.maxHeight < 430;
+            constraints.maxHeight < 480;
         final largeText = MediaQuery.textScalerOf(context).scale(1) > 1.5;
         final shortPortrait =
             constraints.maxHeight < 600 &&
             constraints.maxWidth <= constraints.maxHeight;
         return Column(
           children: [
-            if (!widget.fullScreen)
-              playerPanel(
-                Column(
-                  children: [
-                    SubpageHeader(
-                      title: song.title,
-                      onBack: controller.back,
-                      actions: [
-                        IconButton(
-                          tooltip: song.favorite
-                              ? l10n.songFavoriteRemove
-                              : l10n.songFavoriteAdd,
-                          onPressed: () =>
-                              controller.toggleSongFavorite(song.id),
-                          icon: Icon(
-                            song.favorite
-                                ? Icons.favorite_rounded
-                                : Icons.favorite_border_rounded,
-                          ),
-                        ),
-                        if (widget.onFullScreenChanged != null)
-                          IconButton(
-                            key: const ValueKey('player-enter-fullscreen'),
-                            tooltip: l10n.playerFullScreen,
-                            onPressed: () => widget.onFullScreenChanged!(true),
-                            icon: const Icon(Icons.fullscreen_rounded),
-                          )
-                        else
-                          IconButton(
-                            tooltip: l10n.actionEdit,
-                            onPressed: () => controller.editSong(song.id),
-                            icon: const Icon(Icons.edit_outlined),
-                          ),
-                        PopupMenuButton<String>(
-                          tooltip: l10n.songMenuLabel,
-                          itemBuilder: (_) => buildLibraryActionMenu(
-                            l10n,
-                            timedLyricsChecked: state.timingMode == 'timed',
-                            actions: {
-                              if (widget.onFullScreenChanged != null) 'edit',
-                              'info',
-                              if (state.readerCanCompareVersions) 'compare',
-                              if (state.readerTimingAvailable ||
-                                  state.readerHasTiming)
-                                'timed-lyrics',
-                              'add',
-                              'share',
-                              'share_pdf',
-                              'copy',
-                              'print',
-                              'delete',
-                            },
-                          ),
-                          onSelected: (action) {
-                            if (action == 'compare') {
-                              controller.compareCurrentSongVersions();
-                            } else if (action == 'timed-lyrics') {
-                              controller.setTimingMode(
-                                state.timingMode == 'timed'
-                                    ? 'estimated'
-                                    : 'timed',
-                              );
-                            } else {
-                              handleSongMenuAction(
-                                context,
-                                controller,
-                                song.id,
-                                action,
-                              );
-                            }
-                          },
-                        ),
-                        IconButton(
-                          key: const ValueKey('player-settings-button'),
-                          tooltip: l10n.settingsPlayer,
-                          onPressed: () =>
-                              showPlayerSettings(context, controller),
-                          icon: const Icon(Icons.settings_outlined),
-                        ),
-                      ],
-                    ),
-                    if (metadata.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                        child: Align(
-                          alignment: AlignmentDirectional.centerStart,
-                          child: Text(
-                            metadata,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(color: colors.onSurfaceVariant),
-                          ),
-                        ),
-                      ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.check_circle_outline, size: 14),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              [
-                                l10n.readerSaved,
-                                state.readerSource,
-                              ].whereType<String>().join(' · '),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.labelSmall
-                                  ?.copyWith(color: colors.onSurfaceVariant),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                header: true,
-              ),
+            if (compactLandscape) landscapeHeader() else songHeader(),
             Expanded(
               child: PlayerControlsPanel(
                 expanded: state.playerControlsExpanded,
@@ -949,11 +1068,16 @@ class _PlayerScreenState extends State<PlayerScreen>
                 expandLabel: l10n.playerExpandControls,
                 collapseLabel: l10n.playerCollapseControls,
                 side: compactLandscape,
-                lyrics: lyrics,
+                sideHeader: null,
+                sideWidth: compactLandscape
+                    ? (constraints.maxWidth * .4).clamp(200.0, 360.0).toDouble()
+                    : null,
+                collapsedAction: null,
+                lyrics: lyrics(),
                 controls: compactLandscape
                     ? SizedBox(
                         width: (constraints.maxWidth * .4)
-                            .clamp(300.0, 360.0)
+                            .clamp(200.0, 360.0)
                             .toDouble(),
                         child: controls(compact: true),
                       )
@@ -978,25 +1102,6 @@ class _PlayerScreenState extends State<PlayerScreen>
       onKeyEvent: _handleWindowsKey,
       child: Column(
         children: [
-          if (widget.fullScreen)
-            PlayerFullscreenHeader(
-              title: song.title,
-              artist: song.artist,
-              actions: [
-                IconButton(
-                  key: const ValueKey('player-exit-fullscreen'),
-                  tooltip: l10n.playerExitFullScreen,
-                  onPressed: () => widget.onFullScreenChanged?.call(false),
-                  icon: const Icon(Icons.fullscreen_exit_rounded),
-                ),
-                IconButton(
-                  key: const ValueKey('player-settings-button'),
-                  tooltip: l10n.settingsPlayer,
-                  onPressed: () => showPlayerSettings(context, controller),
-                  icon: const Icon(Icons.settings_outlined),
-                ),
-              ],
-            ),
           Expanded(key: const ValueKey('player-body'), child: content),
         ],
       ),
@@ -1062,7 +1167,6 @@ class _PlayerScreenState extends State<PlayerScreen>
     PlayerPosition position,
     double duration,
   ) {
-    final currentSection = _sectionAt(state.playerSections, position.seconds);
     final speed = state.playbackSpeed;
     final displayDuration = duration / speed;
     final displayPosition = position.seconds / speed;
@@ -1082,44 +1186,40 @@ class _PlayerScreenState extends State<PlayerScreen>
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final narrow =
-                  constraints.maxWidth < 300 ||
-                  MediaQuery.textScalerOf(context).scale(1) > 1.3;
-              final section = Text(
-                currentSection == null
-                    ? (state.readerHasTiming && state.timingMode == 'timed'
-                          ? l10n.playerTimedLyrics
-                          : state.timingMode == 'manual'
-                          ? l10n.playerManualScroll
-                          : l10n.playerEstimatedPace)
-                    : localizedSectionName(l10n, currentSection.name),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              );
               final times = Row(
                 children: [
-                  Text(formatDuration(displayPosition)),
-                  if (narrow)
-                    const Spacer()
-                  else ...[
-                    const SizedBox(width: 12),
-                    Expanded(child: section),
-                    const SizedBox(width: 12),
-                  ],
-                  Text(
-                    !narrow && state.readerDurationEstimated
-                        ? l10n.playerEstimatedDuration(
-                            formatDuration(displayDuration),
-                          )
-                        : formatDuration(displayDuration),
+                  Expanded(
+                    child: Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: AlignmentDirectional.centerStart,
+                        child: Text(formatDuration(displayPosition)),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: Semantics(
+                        label: state.readerDurationEstimated
+                            ? l10n.playerEstimatedDuration(
+                                formatDuration(displayDuration),
+                              )
+                            : formatDuration(displayDuration),
+                        child: ExcludeSemantics(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: AlignmentDirectional.centerEnd,
+                            child: Text(formatDuration(displayDuration)),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               );
-              return narrow ? Column(children: [section, times]) : times;
+              return times;
             },
           ),
         ),
@@ -1203,6 +1303,7 @@ class _PlayerScreenState extends State<PlayerScreen>
         offset: Offset(_speedPopupOffsetX, -(panelHeight + 14)),
         constraints: _playerPopupConstraints(context),
         menuPadding: EdgeInsets.zero,
+        onCanceled: _clearPlaybackSpeedDraft,
         itemBuilder: (_) => [
           SliderPopupMenuItem<double>(
             enabled: false,
@@ -1213,51 +1314,128 @@ class _PlayerScreenState extends State<PlayerScreen>
               height: panelHeight,
               child: AnimatedBuilder(
                 animation: controller,
-                builder: (context, _) => Row(
-                  children: [
-                    SizedBox(
-                      width: labelWidth,
-                      height: panelHeight - 20,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('2×'),
-                          Text('1.5×'),
-                          Text('1×'),
-                          Text('0.5×'),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: RotatedBox(
-                        quarterTurns: 3,
-                        child: SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                            overlayShape: SliderComponentShape.noOverlay,
-                            inactiveTickMarkColor: Theme.of(
-                              context,
-                            ).colorScheme.primary.withValues(alpha: .55),
-                            activeTickMarkColor: Theme.of(
-                              context,
-                            ).colorScheme.onPrimary,
-                          ),
-                          child: Slider(
-                            key: const ValueKey('scroll-speed-slider'),
-                            min: .5,
-                            max: 2,
-                            divisions: 15,
-                            value: controller.state.playbackSpeed,
-                            label: _formatPlaybackSpeed(
-                              controller.state.playbackSpeed,
+                builder: (context, _) => ValueListenableBuilder<double?>(
+                  valueListenable: _playbackSpeedDraft,
+                  builder: (context, draftSpeed, _) {
+                    final currentState = controller.state;
+                    final duration = _durationOf(currentState);
+                    final speed = draftSpeed ?? controller.state.playbackSpeed;
+                    final interactionEpoch = _playbackSpeedInteractionEpoch;
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Semantics(
+                            label: currentState.readerDurationEstimated
+                                ? l10n.playerEstimatedDuration(
+                                    formatDuration(duration / speed),
+                                  )
+                                : formatDuration(duration / speed),
+                            child: ExcludeSemantics(
+                              child: Text(
+                                formatDuration(duration / speed),
+                                key: const ValueKey('scroll-speed-duration'),
+                                maxLines: 1,
+                                softWrap: false,
+                                style: Theme.of(context).textTheme.labelMedium,
+                              ),
                             ),
-                            semanticFormatterCallback: (value) =>
-                                '${l10n.playerScrollSpeed}, ${_formatPlaybackSpeed(value)}',
-                            onChanged: controller.setPlaybackSpeed,
                           ),
                         ),
-                      ),
-                    ),
-                  ],
+                        const SizedBox(height: 4),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: labelWidth,
+                                height: panelHeight - 50,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: const [
+                                    Text('2×'),
+                                    Text('1.5×'),
+                                    Text('1×'),
+                                    Text('0.5×'),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: RotatedBox(
+                                  quarterTurns: 3,
+                                  child: SliderTheme(
+                                    data: SliderTheme.of(context).copyWith(
+                                      overlayShape:
+                                          SliderComponentShape.noOverlay,
+                                      trackShape:
+                                          const FineSpeedSliderTrackShape(),
+                                      inactiveTickMarkColor: Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withValues(alpha: .55),
+                                      activeTickMarkColor: Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimary,
+                                    ),
+                                    child: Listener(
+                                      onPointerDown:
+                                          _onPlaybackSpeedPointerDown,
+                                      onPointerUp: _onPlaybackSpeedPointerUp,
+                                      onPointerCancel:
+                                          _onPlaybackSpeedPointerCancel,
+                                      child: Slider(
+                                        key: const ValueKey(
+                                          'scroll-speed-slider',
+                                        ),
+                                        min: .5,
+                                        max: 2,
+                                        value: speed,
+                                        label: _formatPlaybackSpeed(speed),
+                                        semanticFormatterCallback: (value) {
+                                          final durationLabel = formatDuration(
+                                            duration / value,
+                                          );
+                                          final accessibleDuration =
+                                              currentState
+                                                  .readerDurationEstimated
+                                              ? l10n.playerEstimatedDuration(
+                                                  durationLabel,
+                                                )
+                                              : durationLabel;
+                                          return '${l10n.playerScrollSpeed}, ${_formatPlaybackSpeed(value)}, $accessibleDuration';
+                                        },
+                                        onChangeStart: (value) {
+                                          if (interactionEpoch !=
+                                              _playbackSpeedInteractionEpoch) {
+                                            return;
+                                          }
+                                          _beginPlaybackSpeedDraft(value);
+                                        },
+                                        onChanged: (value) {
+                                          if (interactionEpoch !=
+                                              _playbackSpeedInteractionEpoch) {
+                                            return;
+                                          }
+                                          _updatePlaybackSpeedDraft(value);
+                                        },
+                                        onChangeEnd: (value) {
+                                          if (interactionEpoch !=
+                                              _playbackSpeedInteractionEpoch) {
+                                            return;
+                                          }
+                                          _commitPlaybackSpeedDraft(value);
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
             ),
@@ -1273,17 +1451,24 @@ class _PlayerScreenState extends State<PlayerScreen>
             constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    _formatPlaybackSpeed(state.playbackSpeed),
-                    key: const ValueKey('scroll-speed-value'),
-                    maxLines: 1,
-                    softWrap: false,
-                  ),
-                  _playerDropdownArrow,
-                ],
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      _formatPlaybackSpeed(state.playbackSpeed),
+                      key: const ValueKey('scroll-speed-value'),
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      maxLines: 1,
+                      softWrap: false,
+                    ),
+                    _playerDropdownArrow,
+                  ],
+                ),
               ),
             ),
           ),
@@ -1292,20 +1477,165 @@ class _PlayerScreenState extends State<PlayerScreen>
     );
   }
 
+  void _beginPlaybackSpeedDraft(double speed) {
+    if (!mounted) return;
+    _playbackSpeedPointerCanceled = false;
+    _playbackSpeedDraftRevision++;
+    final state = controller.state;
+    _playbackSpeedDraftController = controller;
+    _playbackSpeedDraftSongId = state.song?.id;
+    _playbackSpeedDraftDuration = _durationOf(state);
+    _playbackSpeedDraft.value = speed;
+  }
+
+  void _onPlaybackSpeedPointerDown(PointerDownEvent event) {
+    if (_playbackSpeedPointerActive &&
+        event.pointer != _playbackSpeedPointerId) {
+      return;
+    }
+    _playbackSpeedPointerId = event.pointer;
+    _playbackSpeedPointerActive = true;
+    _playbackSpeedPointerCanceled = false;
+  }
+
+  void _onPlaybackSpeedPointerUp(PointerUpEvent event) {
+    if (event.pointer != _playbackSpeedPointerId) return;
+    _playbackSpeedPointerId = null;
+    _playbackSpeedPointerActive = false;
+  }
+
+  void _onPlaybackSpeedPointerCancel(PointerCancelEvent event) {
+    if (event.pointer != _playbackSpeedPointerId) return;
+    _playbackSpeedPointerId = null;
+    _playbackSpeedPointerActive = false;
+    _playbackSpeedPointerCanceled = true;
+    _clearPlaybackSpeedDraft(preservePointerCancellation: true);
+  }
+
+  bool _playbackSpeedDraftIsCurrent() {
+    final state = controller.state;
+    return _playbackSpeedDraft.value != null &&
+        identical(_playbackSpeedDraftController, controller) &&
+        _playbackSpeedDraftSongId == state.song?.id &&
+        _playbackSpeedDraftDuration == _durationOf(state);
+  }
+
+  void _updatePlaybackSpeedDraft(double speed) {
+    if (_playbackSpeedPointerCanceled) return;
+    if (_playbackSpeedDraft.value == null) {
+      _beginPlaybackSpeedDraft(speed);
+      if (!_playbackSpeedPointerActive) _commitPlaybackSpeedDraft(speed);
+      return;
+    }
+    if (!_playbackSpeedDraftIsCurrent()) {
+      _clearPlaybackSpeedDraft();
+      return;
+    }
+    _playbackSpeedDraft.value = speed;
+    if (!_playbackSpeedPointerActive) _commitPlaybackSpeedDraft(speed);
+  }
+
+  void _clearPlaybackSpeedDraft({bool preservePointerCancellation = false}) {
+    final revision = ++_playbackSpeedDraftRevision;
+    _playbackSpeedInteractionEpoch++;
+    _playbackSpeedDraftSongId = null;
+    _playbackSpeedDraftDuration = null;
+    _playbackSpeedDraftController = null;
+    _playbackSpeedPointerId = null;
+    if (!preservePointerCancellation) {
+      _playbackSpeedPointerActive = false;
+      _playbackSpeedPointerCanceled = false;
+    }
+
+    void clearVisualDraft() {
+      if (!mounted || revision != _playbackSpeedDraftRevision) return;
+      if (_playbackSpeedDraft.value != null) _playbackSpeedDraft.value = null;
+    }
+
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => clearVisualDraft());
+    } else {
+      clearVisualDraft();
+    }
+  }
+
+  void _commitPlaybackSpeedDraft(double speed) {
+    if (_playbackSpeedPointerCanceled || !_playbackSpeedDraftIsCurrent()) {
+      _clearPlaybackSpeedDraft();
+      return;
+    }
+    if (_playbackSpeedPointerActive) {
+      final revision = _playbackSpeedDraftRevision;
+      scheduleMicrotask(() {
+        if (!mounted || revision != _playbackSpeedDraftRevision) return;
+        if (_playbackSpeedPointerCanceled || !_playbackSpeedDraftIsCurrent()) {
+          _clearPlaybackSpeedDraft();
+          return;
+        }
+        _finishPlaybackSpeedDraft(speed);
+      });
+      return;
+    }
+    _finishPlaybackSpeedDraft(speed);
+  }
+
+  void _finishPlaybackSpeedDraft(double speed) {
+    if (!_playbackSpeedDraftIsCurrent()) {
+      _clearPlaybackSpeedDraft();
+      return;
+    }
+    _clearPlaybackSpeedDraft();
+    unawaited(controller.setPlaybackSpeed(speed));
+  }
+
   Widget _transport(
     BuildContext context,
     AppLocalizations l10n,
     VerseUiState state, {
     required bool inlineChords,
     required bool showSpeed,
+    required bool stackActions,
+    required double sideSlotWidth,
+    required double chordSlotWidth,
+    Widget? trailingAction,
   }) => Padding(
-    padding: const EdgeInsets.fromLTRB(8, 0, 8, 2),
-    child: Builder(
-      builder: (context) {
+    padding: const EdgeInsets.symmetric(horizontal: 4),
+    child: LayoutBuilder(
+      builder: (context, constraints) {
+        final direction = Directionality.of(context);
+        final isRtl = direction == TextDirection.rtl;
+        final hasNavigation =
+            state.playerSections.isNotEmpty || state.activeSetlist != null;
+        final hasActionSlot = showSpeed || trailingAction != null;
+        final centerWidth = stackActions
+            ? constraints.maxWidth
+            : constraints.maxWidth - (sideSlotWidth * 2);
+        final playLabel = state.isPlaying ? l10n.playerPause : l10n.playerPlay;
+        final playLabelPainter = TextPainter(
+          text: TextSpan(
+            text: playLabel,
+            style: Theme.of(
+              context,
+            ).textTheme.labelLarge?.copyWith(height: kTextHeightNone),
+          ),
+          textDirection: direction,
+          textScaler: MediaQuery.textScalerOf(context),
+          locale: Localizations.localeOf(context),
+        )..layout();
+        final playWidth = centerWidth - (hasNavigation ? 80 : 0);
+        final playHorizontalPadding =
+            ((playWidth - 32 - playLabelPainter.width) / 2)
+                .clamp(4.0, 12.0)
+                .toDouble();
+        playLabelPainter.dispose();
         final start = FilledButton.icon(
           key: const ValueKey('start-lyric-scroll'),
           style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            padding: EdgeInsets.symmetric(
+              horizontal: playHorizontalPadding,
+              vertical: 4,
+            ),
             minimumSize: const Size(104, 46),
           ),
           onPressed: _togglePlayback,
@@ -1313,7 +1643,9 @@ class _PlayerScreenState extends State<PlayerScreen>
             state.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
           ),
           label: Text(
-            state.isPlaying ? l10n.playerPause : l10n.playerPlay,
+            playLabel,
+            // Natural metrics preserve tall fallback-script glyphs.
+            style: const TextStyle(height: kTextHeightNone),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
@@ -1370,39 +1702,79 @@ class _PlayerScreenState extends State<PlayerScreen>
               icon: const Icon(Icons.skip_next_rounded),
             ),
         ];
-        return Row(
-          children: [
-            if (inlineChords || showSpeed) ...[
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: inlineChords
-                      ? _chordControls(l10n, state)
-                      : const SizedBox.shrink(),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: controls,
-                ),
-              ),
-              if (showSpeed)
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: _speedControl(l10n, state),
+        final chordSlot = SizedBox(
+          width: stackActions
+              ? math
+                    .min(
+                      chordSlotWidth,
+                      math.max(48.0, constraints.maxWidth - sideSlotWidth),
+                    )
+                    .toDouble()
+              : sideSlotWidth,
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: inlineChords
+                ? _chordControls(l10n, state)
+                : const SizedBox.shrink(),
+          ),
+        );
+        final transportSlot = Expanded(
+          child: Row(
+            textDirection: direction,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: controls,
+          ),
+        );
+        final actionSlot = SizedBox(
+          width: sideSlotWidth,
+          child: Row(
+            textDirection: TextDirection.ltr,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              if (showSpeed) Flexible(child: _speedControl(l10n, state)),
+              ?trailingAction,
+            ],
+          ),
+        );
+        final transportRow = Row(
+          textDirection: direction,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: controls,
+        );
+        if (stackActions) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (inlineChords || hasActionSlot)
+                SizedBox(
+                  height: 48,
+                  child: Row(
+                    textDirection: TextDirection.ltr,
+                    children: isRtl
+                        ? [
+                            if (hasActionSlot) actionSlot,
+                            const Spacer(),
+                            if (inlineChords) chordSlot,
+                          ]
+                        : [
+                            if (inlineChords) chordSlot,
+                            const Spacer(),
+                            if (hasActionSlot) actionSlot,
+                          ],
                   ),
                 ),
-            ] else
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: controls,
-                ),
-              ),
-          ],
+              SizedBox(height: 48, child: transportRow),
+            ],
+          );
+        }
+        if (!inlineChords && !hasActionSlot) {
+          return SizedBox(height: 48, child: transportRow);
+        }
+        return Row(
+          textDirection: TextDirection.ltr,
+          children: isRtl
+              ? [actionSlot, transportSlot, chordSlot]
+              : [chordSlot, transportSlot, actionSlot],
         );
       },
     ),
@@ -1542,9 +1914,11 @@ class _PlayerScreenState extends State<PlayerScreen>
               children: [
                 Flexible(
                   child: Text(
-                    state.readerKeyEstimated && currentKey != null
-                        ? '≈ $displayedKey'
-                        : displayedKey,
+                    displayedKey,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -1662,7 +2036,7 @@ List<Widget> _sectionMarkerLabelWidgets({
       : left + trackWidth * progressFraction;
   // Timeline cues are secondary, but they still need to read comfortably at
   // desktop scale. Keep compact layouts denser while honoring text scaling.
-  final fontSize = width >= 560 ? 12.0 : 10.0;
+  final fontSize = width >= 560 ? 13.0 : 10.0;
   // Match the inherited typeface when measuring. Measuring with the default
   // font and then painting with the app's display font made the Positioned
   // label narrower than its rendered text, so Flutter ellipsized headings.

@@ -76,6 +76,44 @@ void main() {
     expect((await repo.getSetlist('l'))!.name, 'fresh');
   });
 
+  test(
+    'setlist CAS returns the persisted hash after colliding entry ids are regenerated',
+    () async {
+      await repo.saveSong(song('x'));
+      await repo.saveSetlist(
+        SetlistDocument(
+          id: 'other',
+          name: 'Other',
+          entries: const [SetlistEntry(id: 'global-entry', songId: 's')],
+        ),
+      );
+      await repo.saveSetlist(
+        SetlistDocument(
+          id: 'target',
+          name: 'Target',
+          entries: const [SetlistEntry(id: 'old-entry', songId: 's')],
+        ),
+      );
+      final expected = await repo.getSetlistHash('target');
+
+      final persistedHash = await repo.saveSetlistIfUnchangedWithHash(
+        SetlistDocument(
+          id: 'target',
+          name: 'Target after write',
+          entries: const [SetlistEntry(id: 'global-entry', songId: 's')],
+        ),
+        expected,
+      );
+
+      expect(persistedHash, isNotNull);
+      expect(persistedHash, await repo.getSetlistHash('target'));
+      expect(
+        (await repo.getSetlist('target'))!.entries.single.id,
+        isNot('global-entry'),
+      );
+    },
+  );
+
   test('setlists applied from sync are not echoed into the outbox', () async {
     await repo.saveSong(song('x'));
     await repo.database.delete('outbox');

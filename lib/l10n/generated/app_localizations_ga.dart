@@ -1578,6 +1578,14 @@ class AppLocalizationsGa extends AppLocalizations {
       'Úsáid leagan de Singbook atá cumraithe le síniú isteach le Google.';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'Dhiúltaigh Google cumraíocht sínithe isteach an leagain seo.';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'Seiceáil gurb é ID OAuth Singbook don ríomhaire deisce atá cumraithe.';
+
+  @override
   String get syncErrorNotSignedIn => 'Níl síniú isteach déanta agat.';
 
   @override

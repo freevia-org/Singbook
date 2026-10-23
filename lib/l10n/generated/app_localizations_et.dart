@@ -1570,6 +1570,14 @@ class AppLocalizationsEt extends AppLocalizations {
       'Kasuta Singbooki versiooni, kus Google\'i sisselogimine on seadistatud.';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'Google lükkas selle järgu sisselogimise konfiguratsiooni tagasi.';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'Kontrolli, et seadistatud OAuthi ID kuulub Singbooki töölauarakenduse kliendile.';
+
+  @override
   String get syncErrorNotSignedIn => 'Sa pole sisse logitud.';
 
   @override

@@ -238,6 +238,7 @@ void main() {
             Uri.parse(uri.queryParameters['redirect_uri']!).host,
             '127.0.0.1',
           );
+          expect(Uri.parse(uri.queryParameters['redirect_uri']!).path, isEmpty);
           expect(
             await callback(uri, {'state': 'wrong', 'code': 'untrusted'}),
             400,
@@ -267,6 +268,38 @@ void main() {
           client.getUrl(Uri.parse(result.redirectUri)),
           throwsA(isA<SocketException>()),
         );
+      } finally {
+        client.close(force: true);
+      }
+    },
+  );
+
+  test(
+    'loopback page does not claim sign-in succeeded before token exchange',
+    () async {
+      final client = HttpClient();
+      try {
+        final flow = DesktopOAuthFlow(
+          openBrowser: (authorization) async {
+            final redirect =
+                Uri.parse(
+                  authorization.queryParameters['redirect_uri']!,
+                ).replace(
+                  queryParameters: {
+                    'state': authorization.queryParameters['state']!,
+                    'code': 'received-code',
+                  },
+                );
+            final response = await (await client.getUrl(redirect)).close();
+            final body = await utf8.decoder.bind(response).join();
+            expect(response.statusCode, HttpStatus.ok);
+            expect(body, contains('Return to Singbook to finish signing in'));
+            expect(body, isNot(contains('✓')));
+            return true;
+          },
+        );
+        final grant = await flow.authorize(clientId: 'test', scopes: []);
+        expect(grant.code, 'received-code');
       } finally {
         client.close(force: true);
       }
@@ -575,6 +608,9 @@ void main() {
     var refreshCount = 0;
     var invalidGrant = false;
     var invalidClient = false;
+    var missingClientSecret = false;
+    var invalidRequest = false;
+    var malformedErrorDescription = false;
     var malformedRefresh = false;
     var deniedScope = false;
     Completer<void>? refreshWait;
@@ -584,7 +620,10 @@ void main() {
       vault = _MemoryCredentials();
       now = DateTime.utc(2026, 1, 1);
       refreshCount = 0;
-      invalidGrant = invalidClient = malformedRefresh = deniedScope = false;
+      invalidGrant = invalidClient = missingClientSecret = invalidRequest =
+          false;
+      malformedErrorDescription = false;
+      malformedRefresh = deniedScope = false;
       refreshWait = null;
       client = MockClient((request) async {
         expect(request.url.scheme, 'https');
@@ -625,6 +664,22 @@ void main() {
         expect(params['code_verifier']!.length, greaterThanOrEqualTo(43));
         expect(params['code'], 'grant-code');
         expect(params['redirect_uri'], startsWith('http://127.0.0.1:'));
+        expect(params, isNot(contains('client_secret')));
+        if (missingClientSecret) {
+          return http.Response(
+            '{"error":"invalid_request","error_description":"Missing required parameter: CLIENT_SECRET"}',
+            400,
+          );
+        }
+        if (invalidRequest) {
+          if (malformedErrorDescription) {
+            return http.Response(
+              '{"error":"invalid_request","error_description":7}',
+              400,
+            );
+          }
+          return http.Response('{"error":"invalid_request"}', 400);
+        }
         return http.Response(
           jsonEncode({
             'access_token': 'granted-access',
@@ -730,6 +785,40 @@ void main() {
     );
 
     test(
+      'explicit missing client_secret response is a configuration error',
+      () async {
+        missingClientSecret = true;
+        await expectLater(
+          auth.connect(),
+          throwsA(code('oauth_client_configuration')),
+        );
+        expect(auth.isConnected, isFalse);
+        expect(vault.values, isEmpty);
+      },
+    );
+
+    test(
+      'generic invalid_request is not treated as missing configuration',
+      () async {
+        invalidRequest = true;
+        await expectLater(auth.connect(), throwsA(code('network')));
+        expect(auth.isConnected, isFalse);
+        expect(vault.values, isEmpty);
+      },
+    );
+
+    test(
+      'non-string invalid_request description remains an exchange error',
+      () async {
+        invalidRequest = true;
+        malformedErrorDescription = true;
+        await expectLater(auth.connect(), throwsA(code('network')));
+        expect(auth.isConnected, isFalse);
+        expect(vault.values, isEmpty);
+      },
+    );
+
+    test(
       'client configuration failure preserves the saved grant for recovery',
       () async {
         await auth.connect();
@@ -738,7 +827,7 @@ void main() {
         invalidClient = true;
         await expectLater(
           auth.refreshAccessToken(),
-          throwsA(code('not_configured')),
+          throwsA(code('oauth_client_configuration')),
         );
         expect(auth.isConnected, isTrue);
         expect(vault.values, saved);

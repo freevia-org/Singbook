@@ -1578,6 +1578,14 @@ class AppLocalizationsCs extends AppLocalizations {
       'Použijte sestavení Singbook s nastaveným přihlášením přes Google.';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'Google odmítl nastavení přihlášení v této verzi.';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'Zkontrolujte, zda nastavené OAuth ID patří desktopovému klientovi Singbook.';
+
+  @override
   String get syncErrorNotSignedIn => 'Nejste přihlášeni.';
 
   @override

@@ -195,6 +195,7 @@ requests run in parallel inside one phase.
   item boundary (`cancelled`).
 
 Error codes (stable, mapped to text by the UI): `not_configured`,
+`oauth_client_configuration`,
 `not_signed_in`, `authorization_required`, `access_denied`, `rate_limited`,
 `storage_full`, `network`, `account_changed`, `remote_library_too_large`,
 `library_too_large`, `remote_file_too_large`, `invalid_remote_data`,

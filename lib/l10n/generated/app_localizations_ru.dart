@@ -1590,6 +1590,14 @@ class AppLocalizationsRu extends AppLocalizations {
       'Используй версию Singbook с настроенным входом через Google.';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'Google отклонил настройки входа в эту сборку.';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'Проверьте, что указанный OAuth ID принадлежит клиенту Singbook для настольных компьютеров.';
+
+  @override
   String get syncErrorNotSignedIn => 'Вход в аккаунт не выполнен.';
 
   @override

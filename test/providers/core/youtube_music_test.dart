@@ -22,8 +22,10 @@ http.Response json(Object value) => http.Response(
   headers: {'content-type': 'application/json'},
 );
 
-http.Response homepage() => http.Response(
-  '<script>ytcfg.set({"INNERTUBE_CLIENT_VERSION":"fixture.1"});</script>',
+http.Response homepage([
+  Map<String, Object?> extra = const {},
+]) => http.Response(
+  '<script>ytcfg.set(${jsonEncode({'INNERTUBE_CLIENT_VERSION': 'fixture.1', ...extra})});</script>',
   200,
 );
 
@@ -90,6 +92,80 @@ Map<String, dynamic> selectedTrack() => {
 };
 
 void main() {
+  for (final visitor in <Object>[
+    'anonymous-fixture-visitor',
+    'malformed\r\nvisitor',
+    42,
+    'v' * 4097,
+  ]) {
+    for (final nested in [false, true]) {
+      test(
+        'ignores ${nested ? 'nested' : 'top-level'} visitor ${visitor is String ? visitor.length : 'type'}',
+        () async {
+          final requests = <http.Request>[];
+          final t = transport((request) {
+            requests.add(request);
+            return request.url.path == '/'
+                ? homepage(
+                    nested
+                        ? {
+                            'INNERTUBE_CLIENT_VERSION': null,
+                            'INNERTUBE_CONTEXT': {
+                              'client': {
+                                'clientVersion': 'fixture.1',
+                                'visitorData': visitor,
+                              },
+                            },
+                          }
+                        : {'VISITOR_DATA': visitor},
+                  )
+                : json(emptySearch());
+          });
+          try {
+            expect(await YoutubeMusicProvider(t).search('fixture'), isEmpty);
+            expect(requests, hasLength(2));
+            for (final request in requests) {
+              expect(request.headers['x-goog-visitor-id'], isNull);
+            }
+            final body = jsonDecode(requests.last.body) as Map<String, dynamic>;
+            final client = (body['context'] as Map)['client'] as Map;
+            expect(client['clientVersion'], 'fixture.1');
+            expect(client.containsKey('visitorData'), isFalse);
+          } finally {
+            await t.close();
+          }
+        },
+      );
+    }
+  }
+  test('invalid client version is still rejected', () async {
+    var posts = 0;
+    final t = transport((request) {
+      if (request.url.path == '/') {
+        return homepage({
+          'INNERTUBE_CLIENT_VERSION': 'invalid\r\nversion',
+          'VISITOR_DATA': 'unused',
+        });
+      }
+      posts++;
+      return json(emptySearch());
+    });
+    try {
+      await expectLater(
+        YoutubeMusicProvider(t).search('fixture'),
+        throwsA(
+          isA<ProviderException>().having(
+            (e) => e.code,
+            'code',
+            'extraction_failed',
+          ),
+        ),
+      );
+      expect(posts, 0);
+    } finally {
+      await t.close();
+    }
+  });
   test('search carries only the fixed anonymous consent marker', () async {
     final requests = <http.Request>[];
     final t = transport((request) {
@@ -122,7 +198,9 @@ void main() {
       final requests = <http.Request>[];
       final t = transport((request) {
         requests.add(request);
-        if (request.url.path == '/') return homepage();
+        if (request.url.path == '/') {
+          return homepage({'VISITOR_DATA': 'must-not-be-replayed'});
+        }
         if (request.url.path.endsWith('/next')) return json(selectedTrack());
         return json({
           'contents': {
@@ -151,6 +229,14 @@ void main() {
           ),
         );
         expect(result.body, contains('First invented line'));
+        expect(
+          requests.map((request) => request.headers['x-goog-visitor-id']),
+          everyElement(isNull),
+        );
+        expect(
+          requests.skip(1).map((request) => request.body),
+          everyElement(isNot(contains('must-not-be-replayed'))),
+        );
         expect(
           requests.map((request) => request.url.host),
           everyElement('music.youtube.com'),

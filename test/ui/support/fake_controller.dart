@@ -175,6 +175,7 @@ Future<void> pumpShell(
   WidgetTester tester,
   VerseUiController controller, {
   Size size = const Size(360, 780),
+  double devicePixelRatio = 1,
   Locale locale = const Locale('en'),
   double textScale = 1,
   int syncFocusRequest = 0,
@@ -182,7 +183,7 @@ Future<void> pumpShell(
   VoidCallback? onOpenSyncSettings,
   bool settle = true,
 }) async {
-  tester.view.devicePixelRatio = 1;
+  tester.view.devicePixelRatio = devicePixelRatio;
   tester.view.physicalSize = size;
   addTearDown(tester.view.resetDevicePixelRatio);
   addTearDown(tester.view.resetPhysicalSize);

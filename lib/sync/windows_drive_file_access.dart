@@ -369,7 +369,13 @@ class WindowsDriveFileAccess implements DriveFileAccessCapability {
     if (response.statusCode != 200) {
       if (value['error'] == 'invalid_grant') throw const _RevokedFileGrant();
       if (value['error'] == 'invalid_client') {
-        throw const SyncException('not_configured');
+        throw const SyncException('oauth_client_configuration');
+      }
+      final errorDescription = value['error_description'];
+      if (value['error'] == 'invalid_request' &&
+          errorDescription is String &&
+          errorDescription.toLowerCase().contains('client_secret')) {
+        throw const SyncException('oauth_client_configuration');
       }
       throw const SyncException('network');
     }

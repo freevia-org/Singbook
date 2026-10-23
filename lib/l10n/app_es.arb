@@ -667,6 +667,8 @@
   "accountNoticeSignedOut": "Sesión cerrada. Tus canciones permanecen en este dispositivo.",
   "syncErrorNotConfigured": "La sincronización no está configurada en esta versión.",
   "syncErrorNotConfiguredHint": "Usa una versión de Singbook configurada para iniciar sesión con Google.",
+  "syncErrorOAuthClientConfiguration": "Google rechazó la configuración de inicio de sesión de esta versión.",
+  "syncErrorOAuthClientConfigurationHint": "Comprueba que el ID de OAuth configurado sea el cliente de escritorio de Singbook.",
   "syncErrorNotSignedIn": "No has iniciado sesión.",
   "syncErrorNotSignedInHint": "Inicia sesión para sincronizar tu biblioteca.",
   "syncErrorAuthorizationRequired": "Google necesita que vuelvas a iniciar sesión.",

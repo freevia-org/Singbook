@@ -1568,6 +1568,14 @@ class AppLocalizationsSv extends AppLocalizations {
       'Använd en version av Singbook med inloggning via Google konfigurerad.';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'Google avvisade inloggningskonfigurationen för den här versionen.';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'Kontrollera att det konfigurerade OAuth-ID:t tillhör Singbooks skrivbordsklient.';
+
+  @override
   String get syncErrorNotSignedIn => 'Du är inte inloggad.';
 
   @override

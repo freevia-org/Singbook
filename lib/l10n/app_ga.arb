@@ -667,6 +667,8 @@
   "accountNoticeSignedOut": "Síníodh amach. Fanann d’amhráin ar an ngléas seo.",
   "syncErrorNotConfigured": "Níl sioncronú socraithe sa leagan seo.",
   "syncErrorNotConfiguredHint": "Úsáid leagan de Singbook atá cumraithe le síniú isteach le Google.",
+  "syncErrorOAuthClientConfiguration": "Dhiúltaigh Google cumraíocht sínithe isteach an leagain seo.",
+  "syncErrorOAuthClientConfigurationHint": "Seiceáil gurb é ID OAuth Singbook don ríomhaire deisce atá cumraithe.",
   "syncErrorNotSignedIn": "Níl síniú isteach déanta agat.",
   "syncErrorNotSignedInHint": "Sínigh isteach chun do leabharlann a shioncronú.",
   "syncErrorAuthorizationRequired": "Iarrann Google ort síniú isteach arís.",

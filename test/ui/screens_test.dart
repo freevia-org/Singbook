@@ -842,6 +842,7 @@ void main() {
         (360.0, 1.0, 'V1', 'C'),
         (360.0, 2.0, 'V1', 'C'),
         (430.0, 1.0, 'V1', 'CH'),
+        (460.0, 1.0, 'V1', 'CH'),
         (800.0, 1.0, 'Verse 1', 'Chorus'),
       ]) {
         await pumpShell(
@@ -890,7 +891,7 @@ void main() {
       expect(tester.takeException(), isNull);
 
       await pumpShell(tester, c, size: const Size(800, 640), textScale: 2);
-      expect(find.text(longSection), findsWidgets);
+      expect(find.text('ПІН'), findsOneWidget);
       expect(
         find.byWidgetPredicate(
           (widget) => widget is Text && widget.semanticsLabel == longSection,

@@ -1,14 +1,16 @@
-# Singbook mobile
+# Singbook
 
 **Website:** [freevia.org/singbook](https://freevia.org/singbook/) · **Privacy policy:** [freevia.org/singbook/privacy](https://freevia.org/singbook/privacy/) · **Support and feedback:** [freevia.org/singbook/support](https://freevia.org/singbook/support/)
 
-Singbook's Android release is being prepared for Google Play. There is no live public Play listing or download link yet. The website shows real app screenshots with fictional sample-song content.
+**Get the app:** [Google Play for Android](https://play.google.com/store/apps/details?id=org.freevia.singbook) (public listing 0.2.14 in supported regions) · [Microsoft Store for Windows](https://apps.microsoft.com/detail/9P2J824JLQGZ) (public listing; Store version not exposed).
 
-A local-first Flutter songbook for Android and iOS. Search Genius, compare lyrics and chord arrangements from free sources, and keep each song in one portable ChordPro file. No Singbook backend is required. SQLite stores the local library; source HTTP requests run on the device.
+The [website](https://freevia.org/singbook/) shows real Android and Windows app screenshots using fictional sample-song content. The iOS version remains in development and is not on the App Store or TestFlight.
+
+A local-first Flutter songbook for Android and Windows, with iOS in development. Search Genius, compare lyrics and chord arrangements from free sources, and keep each song in one portable ChordPro file. No Singbook backend is required. SQLite stores the local library; source HTTP requests run on the device.
 
 ## Develop and test
 
-Windows desktop preview setup and current platform gaps are documented in the
+Windows desktop setup and current platform gaps are documented in the
 [Windows desktop guide](docs/windows-desktop.md).
 
 For macOS setup, simulator builds, and signing steps, see [iOS build preparation](docs/ios-build.md). Production listing copy, screenshot inventory, offline validation and the remaining publishing decisions are covered in the [App Store handoff](docs/ios-testflight.md#app-store-publishing-handoff--2026-10-19).
@@ -82,8 +84,8 @@ networking (Cronet) and Google sign-in on a release APK before publishing.
 
 ### Google Play release
 
-Next release: `0.2.12+26`. Every new release increments both the visible patch
-version and the build number: `0.2.12+26`, `0.2.13+27`, and so on. The number after
+Next release: `0.2.15+29`. Every new release increments both the visible patch
+version and the build number: `0.2.15+29`, `0.2.16+30`, and so on. The number after
 `+` is the Play versionCode and must always increase; never reset it when the
 visible version changes. Rebuilds of the same release and promotion between
 internal testing and production keep the same version. Update `pubspec.yaml`,
@@ -98,7 +100,7 @@ a locale config for all 34 app languages (one per `lib/l10n/app_*.arb`; keep
 
 ```powershell
 .\scripts\build-android.ps1 -Bundle -Production   # signed .aab + symbols + SHA-256 in artifacts\
-.\scripts\verify-release.ps1 -Path artifacts\singbook-0.2.12+26-release.aab
+.\scripts\verify-release.ps1 -Path artifacts\singbook-0.2.15+29-release.aab
 ```
 
 The build script refuses to overwrite an existing artifact of the same version

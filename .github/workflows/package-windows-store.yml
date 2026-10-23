@@ -1,0 +1,128 @@
+name: Package Microsoft Store MSIX
+
+# This packages existing CI output; it does not build Flutter or run tests.
+on:
+  push:
+    branches: [codex/release28-integration]
+    paths:
+      - '.github/workflows/package-windows-store.yml'
+      - 'scripts/windows-store/**'
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  package:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    env:
+      RELEASE_RUN_ID: '39769176975'
+      RELEASE_HEAD_SHA: 'b54a863c7d8443ada08c64b31840fda88f16e621'
+      RELEASE_ARTIFACT_ID: '12421818168'
+      RELEASE_ARTIFACT_SHA256: 'b30211cce0ee402e948a72c594e277bdb2f4bf2b4268535b0efb7f95a700c16b'
+      RELEASE_SOURCE_TREE: '53f0156515f61e23b6a73d2e9bd9977653478f48'
+    steps:
+      - name: Verify successful release run and exact artifact metadata
+        id: artifact
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runId = Number(process.env.RELEASE_RUN_ID);
+            const expectedSha = process.env.RELEASE_HEAD_SHA.toLowerCase();
+            const artifactId = Number(process.env.RELEASE_ARTIFACT_ID);
+            const expectedDigest = process.env.RELEASE_ARTIFACT_SHA256.toLowerCase();
+            const { data: run } = await github.rest.actions.getWorkflowRun({
+              owner: context.repo.owner, repo: context.repo.repo, run_id: runId
+            });
+            if (run.status !== "completed" || run.conclusion !== "success" ||
+                run.head_sha.toLowerCase() !== expectedSha) {
+              throw new Error("Release CI run is not successful at the expected commit.");
+            }
+            const { data } = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner, repo: context.repo.repo, run_id: runId, per_page: 100
+            });
+            const matches = data.artifacts.filter(a =>
+              a.id === artifactId && a.name === "windows-release-bundle" && !a.expired
+            );
+            if (matches.length !== 1 ||
+                matches[0].digest.toLowerCase() !== "sha256:" + expectedDigest) {
+              throw new Error("Release bundle ID, availability, name, or digest does not match the approved artifact.");
+            }
+            core.setOutput("artifact_id", String(artifactId));
+            core.setOutput("artifact_digest", expectedDigest);
+
+      - name: Check out package workflow source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Check out exact product source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_HEAD_SHA }}
+          path: release-source
+          persist-credentials: false
+
+      - name: Download exact artifact with strict digest validation
+        uses: actions/download-artifact@v8
+        with:
+          artifact-ids: ${{ env.RELEASE_ARTIFACT_ID }}
+          run-id: ${{ env.RELEASE_RUN_ID }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/release-artifact
+          digest-mismatch: error
+
+      - name: Verify release payload provenance
+        id: payload
+        shell: pwsh
+        run: |
+          $tree = (git -C release-source rev-parse 'HEAD^{tree}').Trim()
+          if ($LASTEXITCODE -ne 0 -or $tree -ne $env:RELEASE_SOURCE_TREE) { throw 'Checked-out source tree does not match release tree.' }
+          $extract = Join-Path $env:RUNNER_TEMP 'release-artifact'
+          $manifests = @(Get-ChildItem -LiteralPath $extract -Filter manifest.json -File -Recurse)
+          if ($manifests.Count -ne 1) { throw "Expected one release manifest, found $($manifests.Count)." }
+          if ((Get-FileHash -LiteralPath $manifests[0].FullName -Algorithm SHA256).Hash -ne 'A9400A9D2D8EF367E3469ED1DA12BA71DE5A7E0DED5857AF65928B817B93014B') { throw 'Portable manifest differs from Root-qualified input.' }
+          $zips = @(Get-ChildItem -LiteralPath $extract -Filter '*.zip' -File -Recurse)
+          if ($zips.Count -ne 1) { throw "Expected one portable ZIP, found $($zips.Count)." }
+          if ((Get-FileHash -LiteralPath $zips[0].FullName -Algorithm SHA256).Hash -ne 'A8A63C4260D9A65EFD4D178FF2C1A95A36ADFCF8C2C3024FFCD7770BCD5CA821') { throw 'Portable ZIP differs from Root-qualified input.' }
+          $payload = Join-Path $env:RUNNER_TEMP 'portable-payload'
+          Expand-Archive -LiteralPath $zips[0].FullName -DestinationPath $payload
+          $folders = @(Get-ChildItem -LiteralPath $payload -Directory)
+          if ($folders.Count -ne 1 -or $folders[0].Name -ne 'Singbook') { throw 'Portable ZIP must contain one Singbook directory.' }
+          "portable=$($folders[0].FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "manifest=$($manifests[0].FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Package unsigned Store candidate
+        shell: pwsh
+        env:
+          PORTABLE: ${{ steps.payload.outputs.portable }}
+          MANIFEST: ${{ steps.payload.outputs.manifest }}
+        run: |
+          $icon = Join-Path $PWD 'assets/branding/singbook-icon.png'
+          $releaseIcon = Join-Path $PWD 'release-source/assets/branding/singbook-icon.png'
+          if ((Get-FileHash -LiteralPath $icon -Algorithm SHA256).Hash -ne (Get-FileHash -LiteralPath $releaseIcon -Algorithm SHA256).Hash) { throw 'Packaging icon differs from pinned product asset.' }
+          if (-not (Test-Path -LiteralPath $icon -PathType Leaf)) { throw 'Release source product icon is missing.' }
+          $programFilesX86 = (Get-Item -LiteralPath 'Env:ProgramFiles(x86)').Value
+          $sdkRoot = Join-Path $programFilesX86 'Windows Kits/10/bin'
+          $sdkVersions = @(Get-ChildItem -LiteralPath $sdkRoot -Directory)
+          $makeAppx = $null
+          foreach ($version in ($sdkVersions | Sort-Object Name -Descending)) {
+            $candidate = Join-Path $version.FullName 'x64/makeappx.exe'
+            if (Test-Path -LiteralPath $candidate -PathType Leaf) { $makeAppx = Get-Item -LiteralPath $candidate; break }
+          }
+          if ($null -eq $makeAppx) { throw 'Windows SDK x64 MakeAppx was not found.' }
+          $output = Join-Path $env:RUNNER_TEMP 'singbook-store-output'
+          ./scripts/windows-store/package-msix.ps1 -PortableBundle $env:PORTABLE -PortableManifest $env:MANIFEST -OutputDirectory $output -IconPath $icon -MakeAppxPath $makeAppx.FullName -ExpectedSourceTree $env:RELEASE_SOURCE_TREE
+
+      - name: Preserve unsigned MSIX and provenance evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: singbook-msix-1.0.28.0-unsigned
+          path: |
+            ${{ runner.temp }}/singbook-store-output/*.msix
+            ${{ runner.temp }}/singbook-store-output/*.json
+            ${{ runner.temp }}/singbook-store-output/Package/Assets/*.png
+          if-no-files-found: error
+          retention-days: 30

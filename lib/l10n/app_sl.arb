@@ -665,6 +665,8 @@
   "accountNoticeSignedOut": "Odjavljeni ste. Pesmi ostanejo v tej napravi.",
   "syncErrorNotConfigured": "Sinhronizacija v tej različici ni nastavljena.",
   "syncErrorNotConfiguredHint": "Uporabite različico Singbook s konfigurirano prijavo prek storitve Google.",
+  "syncErrorOAuthClientConfiguration": "Google je zavrnil konfiguracijo prijave v tej različici.",
+  "syncErrorOAuthClientConfigurationHint": "Preverite, ali nastavljeni ID OAuth pripada namiznemu odjemalcu Singbook.",
   "syncErrorNotSignedIn": "Niste prijavljeni.",
   "syncErrorNotSignedInHint": "Prijavite se za sinhronizacijo knjižnice.",
   "syncErrorAuthorizationRequired": "Google zahteva, da se znova prijavite.",

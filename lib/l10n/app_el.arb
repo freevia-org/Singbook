@@ -667,6 +667,8 @@
   "accountNoticeSignedOut": "Αποσυνδέθηκες. Τα τραγούδια σου παραμένουν σε αυτήν τη συσκευή.",
   "syncErrorNotConfigured": "Ο συγχρονισμός δεν έχει ρυθμιστεί σε αυτήν την έκδοση.",
   "syncErrorNotConfiguredHint": "Χρησιμοποίησε έκδοση του Singbook με ρυθμισμένη σύνδεση Google.",
+  "syncErrorOAuthClientConfiguration": "Η Google απέρριψε τη ρύθμιση σύνδεσης αυτής της έκδοσης.",
+  "syncErrorOAuthClientConfigurationHint": "Ελέγξτε ότι το ρυθμισμένο OAuth ID ανήκει στον υπολογιστή-πελάτη Singbook για υπολογιστές.",
   "syncErrorNotSignedIn": "Δεν έχεις συνδεθεί.",
   "syncErrorNotSignedInHint": "Συνδέσου για να συγχρονίσεις τη συλλογή σου.",
   "syncErrorAuthorizationRequired": "Η Google χρειάζεται να συνδεθείς ξανά.",

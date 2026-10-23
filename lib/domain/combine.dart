@@ -64,14 +64,19 @@ final _dashQualifier = RegExp(
   r'\s+[-\u2013\u2014]\s+(?=.*\b' + _versionWords + r'\b).*$',
   caseSensitive: false,
 );
-String _baseTitle(String title) => _norm(
+// Catalogs and charts often omit apostrophes (e.g. "It's" / "Its"). Keep
+// identity handling consistent with discovery without changing lyric phrase
+// offsets or treating other word boundaries as interchangeable.
+String _identityNorm(String text) =>
+    _norm(text.replaceAll(RegExp("['‘’]"), ''));
+String _baseTitle(String title) => _identityNorm(
   title.replaceAll(_bracketQualifier, '').replaceAll(_dashQualifier, ''),
 );
 bool _sameSong(SongCandidate a, SongCandidate b) {
-  final artist = _norm(a.artist), title = _baseTitle(a.title);
+  final artist = _identityNorm(a.artist), title = _baseTitle(a.title);
   // Two unknown (empty) artists or titles are not evidence of the same song.
   if (artist.isEmpty || title.isEmpty) return false;
-  return artist == _norm(b.artist) && title == _baseTitle(b.title);
+  return artist == _identityNorm(b.artist) && title == _baseTitle(b.title);
 }
 
 bool _hasRecordingIdentityScope(SongCandidate candidate) =>

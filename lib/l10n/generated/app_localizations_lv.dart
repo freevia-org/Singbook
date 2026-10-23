@@ -1589,6 +1589,14 @@ class AppLocalizationsLv extends AppLocalizations {
       'Izmantojiet Singbook versiju ar konfigurētu pierakstīšanos Google kontā.';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'Google noraidīja šīs versijos pierakstīšanās konfigurāciju.';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'Pārbaudiet, vai konfigurētais OAuth ID pieder Singbook datora lietotnes klientam.';
+
+  @override
   String get syncErrorNotSignedIn => 'Pierakstīšanās nav veikta.';
 
   @override

@@ -665,6 +665,8 @@
   "accountNoticeSignedOut": "Oturum kapatıldı. Şarkılarınız bu cihazda kalır.",
   "syncErrorNotConfigured": "Bu derlemede senkronizasyon ayarlanmamış.",
   "syncErrorNotConfiguredHint": "Google oturum açma özelliği yapılandırılmış bir Singbook derlemesi kullanın.",
+  "syncErrorOAuthClientConfiguration": "Google bu derlemenin oturum açma yapılandırmasını reddetti.",
+  "syncErrorOAuthClientConfigurationHint": "Yapılandırılan OAuth kimliğinin Singbook masaüstü uygulama istemcisine ait olduğunu kontrol edin.",
   "syncErrorNotSignedIn": "Oturum açmadınız.",
   "syncErrorNotSignedInHint": "Kitaplığınızı senkronize etmek için oturum açın.",
   "syncErrorAuthorizationRequired": "Google yeniden oturum açmanızı istiyor.",

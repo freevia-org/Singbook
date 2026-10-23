@@ -1,8 +1,8 @@
 name: CI
 
-# Source checks and an unsigned offline Windows preview. This workflow uses no
-# secrets and never signs anything. config/local.defines.json is absent, so
-# tests run with the same empty defines as a fresh clone.
+# Source checks use the same empty defines as a fresh clone. The unsigned
+# Windows release bundle embeds the repository's public Desktop OAuth client
+# ID as a GitHub Actions variable. This workflow uses no secrets and never signs.
 on:
   push:
     branches: [main]
@@ -62,6 +62,15 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+      - name: Upload responsive layout captures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: responsive-layout-captures
+          path: artifacts/singbook-layout-captures/
+          if-no-files-found: ignore
+          retention-days: 7
+
       - name: Upload visual test evidence
         if: failure()
         uses: actions/upload-artifact@v4
@@ -74,6 +83,9 @@ jobs:
   windows-build:
     runs-on: windows-latest
     timeout-minutes: 30
+    env:
+      SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID: ${{ vars.SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID }}
+      SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET: ${{ secrets.SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET }}
     steps:
       - uses: actions/checkout@v4
 
@@ -86,6 +98,42 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      - name: Check Windows OAuth configuration
+        id: windows-oauth-preflight
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID)) {
+            throw 'The SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID Actions variable is required for the Windows release bundle.'
+          }
+
+          # A public client ID can be syntactically valid while pointing at an
+          # OAuth client that cannot complete the app's installed-desktop flow.
+          # Exchange a deliberately invalid code: a working registration should
+          # reach Google's invalid_grant response without authenticating anyone.
+          $probe = @{
+            client_id = $env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID
+            code = 'codex-release-preflight-invalid-code'
+            code_verifier = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+            grant_type = 'authorization_code'
+            redirect_uri = 'http://127.0.0.1:49152'
+          }
+          if (-not [string]::IsNullOrWhiteSpace($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET)) {
+            $probe.client_secret = $env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET
+          }
+          try {
+            $response = Invoke-RestMethod -Method Post -Uri 'https://oauth2.googleapis.com/token' -ContentType 'application/x-www-form-urlencoded' -Body $probe
+            $oauthError = $response.error
+          } catch {
+            $errorBody = $_.ErrorDetails.Message
+            try { $oauthError = ($errorBody | ConvertFrom-Json).error }
+            catch { throw 'Google OAuth desktop-client preflight could not read the token endpoint response.' }
+          }
+          if ($oauthError -ne 'invalid_grant') {
+            if ($errorBody -match 'client_secret') { $oauthError = 'missing_client_secret' }
+            throw "Google OAuth desktop-client preflight failed ($oauthError). Check that the ID is a Desktop app client and that its optional secret is configured when required."
+          }
+
       - name: Record dependency generation source status
         shell: pwsh
         run: |
@@ -97,17 +145,57 @@ jobs:
         shell: pwsh
         run: ./scripts/build-windows.ps1 -AllowMissingDefines
 
+      - name: Inspect hosted Windows PDF printer capability
+        shell: pwsh
+        run: |
+          $evidencePath = 'artifacts/windows-parity/print-acceptance-host-capabilities.json'
+          New-Item -ItemType Directory -Path (Split-Path $evidencePath) -Force | Out-Null
+          $printers = @()
+          $printerQueryError = $null
+          try {
+            $printers = @(Get-Printer | Select-Object Name, DriverName, PortName, Type, Shared)
+          } catch {
+            $printerQueryError = $_.Exception.GetType().FullName
+          }
+          $printToPdfFeature = $null
+          $featureQueryError = $null
+          try {
+            $feature = Get-WindowsOptionalFeature -Online -FeatureName Printing-PrintToPDFServices-Features
+            $printToPdfFeature = $feature.State.ToString()
+          } catch {
+            $featureQueryError = $_.Exception.GetType().FullName
+          }
+          $evidence = [ordered]@{
+            os = [System.Runtime.InteropServices.RuntimeInformation]::OSDescription
+            spooler = (Get-Service -Name Spooler).Status.ToString()
+            printerQueryError = $printerQueryError
+            printers = $printers
+            printToPdfOptionalFeature = $printToPdfFeature
+            featureQueryError = $featureQueryError
+            localMicrosoftPrintToPdf = [bool]($printers | Where-Object {
+              $_.Name -eq 'Microsoft Print to PDF' -and $_.DriverName -match 'Microsoft Print To PDF'
+            })
+          }
+          $evidence | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $evidencePath -Encoding utf8
+          $evidence | ConvertTo-Json -Depth 5
+
       - name: Smoke test the portable Windows app in an isolated profile
         shell: pwsh
         run: ./scripts/test-windows-portable-startup.ps1
 
-      - name: Check native clipboard and isolated credential storage
+      - name: Check native clipboard formats and isolated credential storage
         shell: pwsh
-        run: ./scripts/test-windows-native.ps1 -CredentialStore
+        run: ./scripts/test-windows-native.ps1 -Clipboard -CredentialStore
 
       - name: Run the complete Flutter suite on Windows
         run: >-
           flutter test --no-pub --concurrency=2 --reporter=expanded
+
+      - name: Run the deterministic Windows desktop journey
+        run: >-
+          flutter test integration_test/singbook_journey_device_test.dart
+          -d windows --dart-define=SINGBOOK_SKIP_SCREENSHOTS=true
+          --reporter=expanded
 
       - name: Preserve Windows validation evidence
         if: always()
@@ -118,6 +206,7 @@ jobs:
             artifacts/windows-parity/
             artifacts/windows/**/build.log
             artifacts/windows/**/manifest.json
+            artifacts/singbook-layout-captures/
           if-no-files-found: ignore
           retention-days: 7
 
@@ -128,3 +217,9 @@ jobs:
           path: artifacts/windows/
           if-no-files-found: error
           retention-days: 7
+
+      - name: Enforce Windows OAuth release readiness
+        if: always() && steps.windows-oauth-preflight.outcome != 'success'
+        shell: pwsh
+        run: |
+          throw 'Windows OAuth preflight failed. The package and native checks ran, but the release is not ready for Google Drive sign-in.'

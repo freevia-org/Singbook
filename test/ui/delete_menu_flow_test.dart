@@ -33,7 +33,35 @@ VerseUiState menuState(String screen, {bool draft = false}) => VerseUiState(
       : screen == 'setlists'
       ? VerseTab.setlists
       : VerseTab.home,
-  homeListMode: screen == 'songs' ? HomeListMode.library : HomeListMode.recent,
+  homeListMode: screen.startsWith('online')
+      ? HomeListMode.online
+      : screen == 'songs'
+      ? HomeListMode.library
+      : HomeListMode.recent,
+  query: screen.startsWith('online') ? 'Owned' : '',
+  comparison: screen.startsWith('online')
+      ? SearchComparisonData(
+          reference: const SearchReferenceData(
+            id: 'online-reference',
+            title: 'Owned song',
+            artist: 'Local fixture',
+          ),
+          suggested: SourceVersionData(
+            id: 'online-version',
+            providerId: 'fixture',
+            providerName: 'Fixture',
+            title: 'Owned song',
+            artist: 'Local fixture',
+            hasLyrics: true,
+            isUsableVersion: true,
+            canSave: screen == 'online-unsaved',
+            savedSongId: screen == 'online-unsaved' ? null : menuSong.id,
+            bodyLines: const [
+              LyricLineData(id: 'fixture-line', text: 'A local lyric'),
+            ],
+          ),
+        )
+      : null,
   songs: const [menuSong],
   setlists: const [menuSetlist],
   recent: [
@@ -97,6 +125,7 @@ List<String> renderedMenuActions(WidgetTester tester) => tester
 void main() {
   for (final screen in [
     'recent-song',
+    'online',
     'songs',
     'setlists',
     'player',
@@ -119,17 +148,27 @@ void main() {
           actions.where({'share', 'share_pdf', 'copy', 'print'}.contains),
           ['share', 'share_pdf', 'copy', 'print'],
         );
-        if (!screen.startsWith('recent')) {
-          expect(actions.last, 'delete');
-        }
-        if (screen.startsWith('recent')) {
-          expect(actions, isNot(contains('delete')));
+        expect(actions.last, 'delete');
+        if (screen == 'songs' ||
+            screen == 'recent-song' ||
+            screen == 'online') {
+          expect(actions, [
+            'edit',
+            'info',
+            'add',
+            'share',
+            'share_pdf',
+            'copy',
+            'print',
+            'delete',
+          ]);
         }
         if (screen == 'songs' || screen == 'setlists') {
           expect(actions.first, 'edit');
         }
         if (screen == 'player') {
-          expect(actions.take(5), [
+          expect(actions.take(6), [
+            'player-settings',
             'edit',
             'info',
             'compare',
@@ -182,14 +221,21 @@ void main() {
     },
   );
 
-  for (final screen in ['player', 'editor', 'setlist-edit']) {
+  for (final screen in [
+    'recent-song',
+    'online',
+    'songs',
+    'player',
+    'editor',
+    'setlist-edit',
+  ]) {
     testWidgets(
       '$screen confirms deletion and cancellation preserves typed data',
       (tester) async {
         final controller = MenuController(screen);
         addTearDown(controller.dispose);
         await pumpShell(tester, controller, size: const Size(390, 844));
-        if (screen != 'player') {
+        if (screen == 'editor' || screen == 'setlist-edit') {
           await tester.enterText(
             find.byType(TextField).first,
             'Unsaved sentinel',
@@ -210,7 +256,7 @@ void main() {
         expect(controller.deletedSetlists, isEmpty);
         await tester.tap(find.text(l10n.actionCancel));
         await tester.pumpAndSettle();
-        if (screen != 'player') {
+        if (screen == 'editor' || screen == 'setlist-edit') {
           expect(
             tester
                 .widget<TextField>(find.byType(TextField).first)
@@ -241,6 +287,82 @@ void main() {
       },
     );
   }
+
+  testWidgets('an unsaved online version has Save and no library menu', (
+    tester,
+  ) async {
+    final controller = MenuController('online-unsaved');
+    addTearDown(controller.dispose);
+    await pumpShell(tester, controller);
+    expect(find.byKey(const ValueKey('online-song-menu')), findsNothing);
+    expect(find.text(l10nOf(tester).actionSave), findsOneWidget);
+  });
+
+  for (final locale in [
+    const Locale('en'),
+    const Locale('bg'),
+    const Locale('uk'),
+    const Locale('ar'),
+  ]) {
+    for (final screen in ['recent-song', 'songs', 'online']) {
+      testWidgets(
+        '$screen localized large text menu stays reachable: $locale',
+        (tester) async {
+          final controller = MenuController(screen);
+          addTearDown(controller.dispose);
+          await pumpShell(
+            tester,
+            controller,
+            size: const Size(360, 780),
+            locale: locale,
+            textScale: 1.6,
+          );
+          await openActionMenu(tester, screen);
+          expect(renderedMenuActions(tester), [
+            'edit',
+            'info',
+            'add',
+            'share',
+            'share_pdf',
+            'copy',
+            'print',
+            'delete',
+          ]);
+          final remove = find.widgetWithText(
+            PopupMenuItem<String>,
+            l10nOf(tester).actionDelete,
+          );
+          await tester.ensureVisible(remove);
+          expect(tester.getRect(remove).bottom, lessThanOrEqualTo(780));
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
+  }
+
+  testWidgets(
+    'setlist song setup stays with management actions before exports',
+    (tester) async {
+      final controller = MenuController('setlist-edit');
+      addTearDown(controller.dispose);
+      await pumpShell(tester, controller);
+      await tester.tap(find.byTooltip(l10nOf(tester).songMenuLabel));
+      await tester.pumpAndSettle();
+      expect(renderedMenuActions(tester), [
+        'edit',
+        'info',
+        'add',
+        'override',
+        'share',
+        'share_pdf',
+        'copy',
+        'print',
+        'delete',
+        'remove_entry',
+      ]);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('an unsaved editor draft has no persistent Delete action', (
     tester,

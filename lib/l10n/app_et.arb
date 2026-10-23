@@ -667,6 +667,8 @@
   "accountNoticeSignedOut": "Välja logitud. Sinu laulud jäävad sellesse seadmesse.",
   "syncErrorNotConfigured": "Selles versioonis pole sünkroonimine seadistatud.",
   "syncErrorNotConfiguredHint": "Kasuta Singbooki versiooni, kus Google'i sisselogimine on seadistatud.",
+  "syncErrorOAuthClientConfiguration": "Google lükkas selle järgu sisselogimise konfiguratsiooni tagasi.",
+  "syncErrorOAuthClientConfigurationHint": "Kontrolli, et seadistatud OAuthi ID kuulub Singbooki töölauarakenduse kliendile.",
   "syncErrorNotSignedIn": "Sa pole sisse logitud.",
   "syncErrorNotSignedInHint": "Kogu sünkroonimiseks logi sisse.",
   "syncErrorAuthorizationRequired": "Google nõuab uuesti sisselogimist.",

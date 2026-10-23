@@ -242,21 +242,14 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                 ),
                 PopupMenuButton<String>(
                   tooltip: l10n.accessibilitySetlistMenu(value.title),
+                  icon: const Icon(Icons.more_horiz_rounded),
                   constraints: BoxConstraints(
                     maxHeight: MediaQuery.sizeOf(context).height * .72,
                   ),
                   itemBuilder: (_) => buildLibraryActionMenu(
                     l10n,
                     isSetlist: true,
-                    actions: const {
-                      'edit',
-                      'duplicate',
-                      'share',
-                      'share_pdf',
-                      'copy',
-                      'print',
-                      'delete',
-                    },
+                    actions: setlistLibraryActions,
                   ),
                   onSelected: (action) => handleSetlistAction(
                     context,
@@ -313,7 +306,8 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                                   overflow: expanded
                                       ? TextOverflow.visible
                                       : TextOverflow.ellipsis,
-                                  style: Theme.of(context).textTheme.bodySmall,
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(fontSize: 13, height: 1.15),
                                 ),
                               ],
                             ],
@@ -464,17 +458,13 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
             ),
             PopupMenuButton<String>(
               tooltip: l10n.setlistMenuLabel,
+              icon: const Icon(Icons.more_horiz_rounded),
               itemBuilder: (_) => buildLibraryActionMenu(
                 l10n,
                 isSetlist: true,
-                actions: const {
-                  'duplicate',
-                  'share',
-                  'share_pdf',
-                  'copy',
-                  'print',
-                  'delete',
-                },
+                actions: editing
+                    ? setlistLibraryActions.difference(const {'edit'})
+                    : setlistLibraryActions,
               ),
               onSelected: (action) =>
                   handleSetlistAction(context, controller, value.id, action),
@@ -725,9 +715,10 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
       if (entry.capoOverride != null)
         '${l10n.editorCapoField}: ${entry.capoOverride}',
     ];
+    final desktop = MediaQuery.sizeOf(context).width >= 900;
     return ListTile(
-      dense: true,
-      visualDensity: VisualDensity.compact,
+      dense: !desktop,
+      visualDensity: desktop ? VisualDensity.standard : VisualDensity.compact,
       contentPadding: const EdgeInsetsDirectional.only(start: 16, end: 8),
       minLeadingWidth: 24,
       leading: Text(
@@ -744,25 +735,13 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
         children: [
           PopupMenuButton<String>(
             tooltip: l10n.songMenuLabel,
+            icon: const Icon(Icons.more_horiz_rounded),
             itemBuilder: (_) => [
               if (!entry.missing) ...[
                 ...buildLibraryActionMenu(
                   l10n,
-                  actions: const {
-                    'edit',
-                    'add',
-                    'info',
-                    'share',
-                    'share_pdf',
-                    'copy',
-                    'print',
-                  },
+                  actions: {...songLibraryActions, 'override'},
                 ),
-                PopupMenuItem(
-                  value: 'override',
-                  child: Text(l10n.setlistEntryOverride),
-                ),
-                ...buildLibraryActionMenu(l10n, actions: const {'delete'}),
               ],
               PopupMenuItem(
                 value: 'remove_entry',

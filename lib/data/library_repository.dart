@@ -10,6 +10,15 @@ import '../domain/models.dart';
 import '../domain/chordpro.dart';
 import '../domain/arrangement.dart';
 import '../domain/song_identity.dart';
+import '../domain/combine.dart';
+
+const _replacementCarryMetadata = {'composer', 'lyricist', 'copyright'};
+
+bool _hasMeaningfulMetadata(Object? value) =>
+    value != null &&
+    (value is! String || value.trim().isNotEmpty) &&
+    (value is! Iterable || value.isNotEmpty) &&
+    (value is! Map || value.isNotEmpty);
 
 double? _validDuration(Object? value) {
   if (value is! num) return null;
@@ -298,6 +307,46 @@ class LibraryRepository {
       return songs;
     });
   }
+
+  /// Reads all library documents and song content hashes from one SQLite
+  /// snapshot. Hashes stay paired with the exact song payloads returned here,
+  /// including opaque sidecars that require chunked reads.
+  Future<
+    ({
+      List<SongDocument> songs,
+      List<SetlistDocument> setlists,
+      Map<String, String> songHashes,
+    })
+  >
+  librarySnapshot() => database.transaction((txn) async {
+    final songRows = await txn.query(
+      'songs',
+      columns: const [
+        'id',
+        'favorite',
+        'revision',
+        'created_at',
+        'updated_at',
+        'content_hash',
+        'full_document_hash',
+        _boundedDocumentColumn,
+        _boundedFullDocumentColumn,
+      ],
+      orderBy: 'updated_at DESC, id',
+    );
+    final setlistRows = await txn.query(
+      'setlists',
+      orderBy: 'updated_at DESC,id',
+    );
+    return (
+      songs: [for (final row in songRows) await _readSong(txn, row)],
+      setlists: [for (final row in setlistRows) await _setlist(txn, row)],
+      songHashes: {
+        for (final row in songRows)
+          row['id'] as String: row['content_hash'] as String,
+      },
+    );
+  });
 
   /// Reads the complete library and app preferences from one SQLite snapshot.
   Future<
@@ -738,16 +787,87 @@ class LibraryRepository {
       for (final source in song.sources) {
         sources[sourceKey(source)] = source;
       }
+      final existingOrigins = jsonMap(existing.extra['fieldOrigins']);
+      final incomingOrigins = jsonMap(song.extra['fieldOrigins']);
+      final incomingMetadata = {...song.metadata};
+      incomingMetadata.removeWhere(
+        (_, value) => !_hasMeaningfulMetadata(value),
+      );
+      bool incomingRemoval(String field) =>
+          incomingOrigins[field] == 'user' &&
+          !_hasMeaningfulMetadata(incomingMetadata[field]);
+      final keyRemovalTombstone =
+          incomingRemoval('key') ||
+          (!_hasMeaningfulMetadata(existing.metadata['key']) &&
+              existingOrigins['key'] == 'user');
+      final recoveredKey =
+          !_hasMeaningfulMetadata(incomingMetadata['key']) &&
+              !keyRemovalTombstone
+          ? sourcedArrangementKey(
+              song.copyWith(
+                sources: sources.values.toList(),
+                metadata: incomingMetadata,
+              ),
+            )
+          : null;
+      final carriedMetadata = {
+        // Composition credits may fill gaps. Recording and arrangement facts
+        // must be established again for the selected version.
+        for (final entry in existing.metadata.entries)
+          if (_replacementCarryMetadata.contains(entry.key) &&
+              !incomingRemoval(entry.key) &&
+              !_hasMeaningfulMetadata(incomingMetadata[entry.key]) &&
+              _hasMeaningfulMetadata(entry.value))
+            entry.key: entry.value,
+      };
+      final replacementMetadata = {
+        ...incomingMetadata,
+        ...carriedMetadata,
+        if (recoveredKey != null) 'key': recoveredKey.key,
+        for (final entry in existing.metadata.entries)
+          if (entry.key.startsWith('x_verse_player_')) entry.key: entry.value,
+      };
+      final incomingExtra = {...song.extra}
+        ..remove('keySourceIds')
+        ..remove('corroboratedKeySourceIds');
+      final origins = {...incomingOrigins};
+      final contributors = {...jsonMap(song.extra['fieldContributors'])};
+      for (final field in carriedMetadata.keys) {
+        origins.remove(field);
+        contributors.remove(field);
+        if (existingOrigins.containsKey(field)) {
+          origins[field] = existingOrigins[field];
+        }
+        final prior = jsonMap(existing.extra['fieldContributors']);
+        if (prior.containsKey(field)) contributors[field] = prior[field];
+      }
+      // A deliberate removal remains a user decision when the new version
+      // also omits that field. A new nonempty value takes incoming authority.
+      for (final field in {...existingOrigins.keys, ...incomingOrigins.keys}) {
+        if (!const {'lyrics', 'chords', 'sections'}.contains(field) &&
+            !_hasMeaningfulMetadata(incomingMetadata[field]) &&
+            (incomingRemoval(field) ||
+                (existingOrigins[field] == 'user' &&
+                    !_hasMeaningfulMetadata(existing.metadata[field])))) {
+          origins[field] = 'user';
+          contributors.remove(field);
+        }
+      }
+      if (!_hasMeaningfulMetadata(incomingMetadata['key'])) {
+        origins.remove('key');
+        contributors.remove('key');
+        if (keyRemovalTombstone) origins['key'] = 'user';
+        if (recoveredKey != null) {
+          origins['key'] = recoveredKey.sourceIds.first;
+          contributors['key'] = recoveredKey.sourceIds;
+        }
+      }
       final replacement = SongDocument(
         id: existing.id,
         title: song.title,
         artist: song.artist,
         body: song.body,
-        metadata: {
-          ...song.metadata,
-          for (final entry in existing.metadata.entries)
-            if (entry.key.startsWith('x_verse_player_')) entry.key: entry.value,
-        },
+        metadata: replacementMetadata,
         favorite: existing.favorite,
         createdAt: existing.createdAt,
         updatedAt: DateTime.now().toUtc(),
@@ -772,10 +892,23 @@ class LibraryRepository {
               'chordSourceIds',
               'pendingChordSourceIds',
               'excludedIncompleteSourceIds',
+              'keySourceIds',
               'corroboratedKeySourceIds',
             }.contains(entry.key))
               entry.key: entry.value,
-          ...song.extra,
+          ...incomingExtra,
+          // Preserve incoming roles such as chords/sections, and attach old
+          // provenance only to values that were actually carried forward.
+          'fieldOrigins': origins,
+          'fieldContributors': contributors,
+          if (recoveredKey != null) 'keySourceIds': recoveredKey.sourceIds,
+          if (_hasMeaningfulMetadata(incomingMetadata['key'])) ...{
+            if (song.extra['keySourceIds'] is List)
+              'keySourceIds': song.extra['keySourceIds'],
+            if (song.extra['corroboratedKeySourceIds'] is List)
+              'corroboratedKeySourceIds':
+                  song.extra['corroboratedKeySourceIds'],
+          },
           if (existing.extra['rawAssets'] is Map ||
               song.extra['rawAssets'] is Map)
             'rawAssets': {
@@ -1070,28 +1203,56 @@ class LibraryRepository {
 
   /// Atomic compare-and-set counterpart of [saveSetlist]; see
   /// [saveSongIfUnchanged]. [expectedHash] is the hash of the setlist's JSON
-  /// as returned by [getSetlistHash].
+  /// as returned by [getSetlistHash]. [mustExist] refuses to recreate a
+  /// setlist deleted since the expected hash was captured.
   Future<bool> saveSetlistIfUnchanged(
     SetlistDocument setlist,
     String? expectedHash, {
     bool mustNotExist = false,
+    bool mustExist = false,
+  }) async =>
+      await saveSetlistIfUnchangedWithHash(
+        setlist,
+        expectedHash,
+        mustNotExist: mustNotExist,
+        mustExist: mustExist,
+      ) !=
+      null;
+
+  /// Atomic compare-and-set save that returns the hash of the exact persisted
+  /// document, including any entry ids regenerated during the write. Returns
+  /// null when the expected version does not match.
+  Future<String?> saveSetlistIfUnchangedWithHash(
+    SetlistDocument setlist,
+    String? expectedHash, {
+    bool mustNotExist = false,
+    bool mustExist = false,
   }) => database.transaction((txn) async {
-    if (expectedHash != null || mustNotExist) {
+    if (expectedHash != null || mustNotExist || mustExist) {
       final rows = await txn.query(
         'setlists',
         where: 'id = ?',
         whereArgs: [setlist.id],
         limit: 1,
       );
+      if (mustExist && rows.isEmpty) return null;
       if (rows.isNotEmpty &&
-          (expectedHash == null ||
-              _setlistHashOf(await _setlist(txn, rows.single)) !=
-                  expectedHash)) {
-        return false;
+          (expectedHash == null
+              ? mustNotExist
+              : _setlistHashOf(await _setlist(txn, rows.single)) !=
+                    expectedHash)) {
+        return null;
       }
     }
     await _writeSetlist(txn, setlist);
-    return true;
+    final rows = await txn.query(
+      'setlists',
+      where: 'id = ?',
+      whereArgs: [setlist.id],
+      limit: 1,
+    );
+    if (rows.isEmpty) return null;
+    return _setlistHashOf(await _setlist(txn, rows.single));
   });
 
   /// Entry ids may be regenerated on write, so only name, notes, favorite and
@@ -1598,10 +1759,7 @@ class LibraryRepository {
         requireSyncRepresentation: false,
       );
       if (state == null) return null;
-      return (
-        document: state.document,
-        hash: state.hash,
-      );
+      return (document: state.document, hash: state.hash);
     });
   }
 

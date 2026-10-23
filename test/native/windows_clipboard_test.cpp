@@ -151,6 +151,28 @@ void CheckClipboard() {
     if (rich_data) GlobalUnlock(rich);
     CloseClipboard();
   }
+
+  // Exercise the receiver side of the Windows paste contract without opening
+  // or driving another application window. The hidden standard EDIT control
+  // consumes CF_UNICODETEXT through the same WM_PASTE path used by native text
+  // fields, which catches data that is advertised but cannot actually paste.
+  HWND receiver = CreateWindowExW(0, L"EDIT", L"", WS_POPUP | ES_MULTILINE,
+                                  0, 0, 320, 120, nullptr, nullptr,
+                                  GetModuleHandleW(nullptr), nullptr);
+  Check(receiver != nullptr, "hidden native paste receiver created");
+  if (receiver) {
+    SendMessageW(receiver, WM_PASTE, 0, 0);
+    const int pasted_length = GetWindowTextLengthW(receiver);
+    std::wstring pasted(static_cast<size_t>(pasted_length) + 1, L'\0');
+    const int copied_length = GetWindowTextW(receiver, pasted.data(),
+                                              pasted_length + 1);
+    pasted.resize(static_cast<size_t>(copied_length));
+    std::wstring expected;
+    singbook::ClipboardUtf16(text, &expected);
+    Check(pasted == expected,
+          "native edit control pastes exact Unicode clipboard text");
+    DestroyWindow(receiver);
+  }
   DestroyWindow(owner);
 }
 }  // namespace

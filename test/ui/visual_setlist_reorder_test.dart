@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -5,6 +8,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/application/file_actions.dart';
 import 'package:singbook/data/library_repository.dart';
+import 'package:singbook/domain/chordpro.dart';
 import 'package:singbook/domain/models.dart';
 import 'package:singbook/l10n/generated/app_localizations.dart';
 import 'package:singbook/providers/core/service.dart';
@@ -134,6 +138,37 @@ void main() {
     });
   }
 
+  testWidgets('desktop setlist rows use comfortable text density', (
+    tester,
+  ) async {
+    final fixture = _SetlistFixture();
+    final app = fixture.app;
+    final controller = AppControllerAdapter(app);
+    await controller.openSetlist(fixture.setlist.id);
+    await _pumpShell(tester, controller, size: const Size(1280, 800));
+
+    final row = find.byKey(const ValueKey('entry-one'));
+    final tile = tester.widget<ListTile>(
+      find.descendant(of: row, matching: find.byType(ListTile)),
+    );
+    expect(tile.dense, isFalse);
+    expect(tile.visualDensity, VisualDensity.standard);
+
+    final rowRect = tester.getRect(row);
+    final titleRect = tester.getRect(
+      find.descendant(of: row, matching: find.text('Shared song')),
+    );
+    final subtitleRect = tester.getRect(
+      find.descendant(of: row, matching: find.text('The Testers')),
+    );
+    expect(rowRect.height, greaterThanOrEqualTo(64));
+    expect(titleRect.top, greaterThanOrEqualTo(rowRect.top));
+    expect(subtitleRect.bottom, lessThanOrEqualTo(rowRect.bottom));
+    expect(titleRect.bottom, lessThanOrEqualTo(subtitleRect.top));
+    expect(tester.takeException(), isNull);
+    await _dispose(tester, controller, app);
+  });
+
   testWidgets('setlist row drag reorders repeated song entries', (
     tester,
   ) async {
@@ -217,10 +252,11 @@ void main() {
 Future<void> _pumpShell(
   WidgetTester tester,
   AppControllerAdapter controller, {
+  Size size = const Size(360, 804),
   double textScale = 1,
 }) async {
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = const Size(360, 804);
+  tester.view.physicalSize = size;
   addTearDown(tester.view.resetDevicePixelRatio);
   addTearDown(tester.view.resetPhysicalSize);
   await tester.pumpWidget(
@@ -295,6 +331,37 @@ class _MemoryLibraryRepository implements LibraryRepository {
   final List<ActivityEntry> activity = [];
 
   @override
+  Future<
+    ({
+      List<SongDocument> songs,
+      List<SetlistDocument> setlists,
+      Map<String, String> songHashes,
+    })
+  >
+  librarySnapshot() async {
+    final snapshotSongs = List<SongDocument>.of(songs);
+    return (
+      songs: snapshotSongs,
+      setlists: List<SetlistDocument>.of(setlists),
+      songHashes: {for (final song in snapshotSongs) song.id: _hashSong(song)},
+    );
+  }
+
+  String _hashSong(SongDocument song) {
+    final document = ChordProCodec().encode(song);
+    final fullDocument = song.extensionError == null
+        ? null
+        : jsonEncode(song.toJson());
+    final fullDocumentHash = fullDocument == null
+        ? null
+        : sha256.convert(utf8.encode(fullDocument)).toString();
+    final localDocument = fullDocumentHash == null
+        ? document
+        : '$document\u0000$fullDocumentHash';
+    return sha256.convert(utf8.encode(localDocument)).toString();
+  }
+
+  @override
   Future<List<SongDocument>> listSongs({
     String query = '',
     bool favoritesOnly = false,
@@ -361,10 +428,34 @@ class _MemoryLibraryRepository implements LibraryRepository {
     SetlistDocument setlist,
     String? expectedHash, {
     bool mustNotExist = false,
+    bool mustExist = false,
+  }) async =>
+      await saveSetlistIfUnchangedWithHash(
+        setlist,
+        expectedHash,
+        mustNotExist: mustNotExist,
+        mustExist: mustExist,
+      ) !=
+      null;
+
+  @override
+  Future<String?> saveSetlistIfUnchangedWithHash(
+    SetlistDocument setlist,
+    String? expectedHash, {
+    bool mustNotExist = false,
+    bool mustExist = false,
   }) async {
+    // This in-memory fixture models an unconditional successful write; the
+    // repository CAS behavior is covered by conditional_writes_test.dart.
+    if (mustExist && !setlists.any((item) => item.id == setlist.id)) {
+      return null;
+    }
     await saveSetlist(setlist);
-    return true;
+    return _hashSetlist(setlist);
   }
+
+  String _hashSetlist(SetlistDocument setlist) =>
+      sha256.convert(utf8.encode(jsonEncode(setlist.toJson()))).toString();
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

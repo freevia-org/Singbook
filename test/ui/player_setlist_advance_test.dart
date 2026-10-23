@@ -5,6 +5,7 @@ import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/data/library_repository.dart';
 import 'package:singbook/domain/models.dart';
 import 'package:singbook/ui/app_controller_adapter.dart';
+import 'package:singbook/ui/player/speed_slider_track.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
 
 import 'support/fake_controller.dart';
@@ -88,20 +89,56 @@ void main() {
       final speedSlider = tester.widget<Slider>(
         find.byKey(const ValueKey('scroll-speed-slider')),
       );
-      expect(speedSlider.divisions, 15);
+      expect(speedSlider.divisions, isNull);
       expect(speedSlider.min, .5);
       expect(speedSlider.max, 2);
-      expect(find.text('4:00'), findsOneWidget);
+      final speedSliderTheme = tester.widget<SliderTheme>(
+        find
+            .ancestor(
+              of: find.byKey(const ValueKey('scroll-speed-slider')),
+              matching: find.byType(SliderTheme),
+            )
+            .first,
+      );
+      expect(speedSliderTheme.data.trackShape, isA<FineSpeedSliderTrackShape>());
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('scroll-speed-panel')),
+          matching: find.text('4:00'),
+        ),
+        findsOneWidget,
+      );
 
       speedSlider.onChanged!(.55);
       await tester.pump();
       expect(controller.state.playbackSpeed, .55);
-      expect(find.text('7:16'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('scroll-speed-panel')),
+          matching: find.text('7:16'),
+        ),
+        findsOneWidget,
+      );
+      await tester.pump();
+      expect(controller.state.playbackSpeed, .55);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('scroll-speed-panel')),
+          matching: find.text('7:16'),
+        ),
+        findsOneWidget,
+      );
 
       await controller.setPlaybackSpeed(1.5);
       await tester.pump();
       expect(controller.state.playbackSpeed, 1.5);
-      expect(find.text('2:40'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('scroll-speed-panel')),
+          matching: find.text('2:40'),
+        ),
+        findsOneWidget,
+      );
       await tester.binding.handlePopRoute();
       await _settle(tester, controller);
       expect(find.byKey(const ValueKey('scroll-speed-slider')), findsNothing);

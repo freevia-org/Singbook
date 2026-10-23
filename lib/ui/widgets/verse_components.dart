@@ -339,7 +339,7 @@ class SongRow extends StatelessWidget {
                         children: [
                           Text(
                             song.title,
-                            maxLines: 1,
+                            maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.titleSmall
                                 ?.copyWith(fontWeight: FontWeight.w600),

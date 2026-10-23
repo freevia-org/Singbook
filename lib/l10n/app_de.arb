@@ -667,6 +667,8 @@
   "accountNoticeSignedOut": "Abgemeldet. Deine Songs bleiben auf diesem Gerät.",
   "syncErrorNotConfigured": "Die Synchronisierung ist in dieser Version nicht eingerichtet.",
   "syncErrorNotConfiguredHint": "Verwende eine Singbook-Version mit eingerichtetem Google-Login.",
+  "syncErrorOAuthClientConfiguration": "Google hat die Anmeldekonfiguration dieses Builds abgelehnt.",
+  "syncErrorOAuthClientConfigurationHint": "Prüfe, ob die konfigurierte OAuth-ID zu Singbooks Desktop-App-Client gehört.",
   "syncErrorNotSignedIn": "Du bist nicht angemeldet.",
   "syncErrorNotSignedInHint": "Melde dich an, um deine Bibliothek zu synchronisieren.",
   "syncErrorAuthorizationRequired": "Google verlangt, dass du dich erneut anmeldest.",

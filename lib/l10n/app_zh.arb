@@ -665,6 +665,8 @@
   "accountNoticeSignedOut": "已退出登录。你的歌曲会保留在此设备上。",
   "syncErrorNotConfigured": "此版本尚未设置同步。",
   "syncErrorNotConfiguredHint": "请使用配置了 Google 登录功能的 Singbook 版本。",
+  "syncErrorOAuthClientConfiguration": "Google 拒绝了此版本的登录配置。",
+  "syncErrorOAuthClientConfigurationHint": "请确认配置的 OAuth ID 属于 Singbook 桌面应用客户端。",
   "syncErrorNotSignedIn": "你尚未登录。",
   "syncErrorNotSignedInHint": "登录以同步曲库。",
   "syncErrorAuthorizationRequired": "Google 要求你重新登录。",

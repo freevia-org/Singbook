@@ -47,10 +47,10 @@ class WindowsGoogleDriveAuth
         DriveFileAccessCapability {
   WindowsGoogleDriveAuth({
     this.clientId = const String.fromEnvironment(
-      'VERSE_GOOGLE_DESKTOP_CLIENT_ID',
+      'SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID',
     ),
     this.clientSecret = const String.fromEnvironment(
-      'VERSE_GOOGLE_DESKTOP_CLIENT_SECRET',
+      'SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET',
     ),
     DesktopCredentialStore? credentials,
     DesktopOAuthFlow? flow,
@@ -327,7 +327,17 @@ class WindowsGoogleDriveAuth
         throw const _InvalidOAuthGrant();
       }
       if (error['error'] == 'invalid_client') {
-        throw const SyncException('not_configured');
+        throw const SyncException('oauth_client_configuration');
+      }
+      // An explicit response that diagnoses a missing client_secret is a
+      // client configuration error. Desktop OAuth secrets are optional in
+      // general; do not infer this from a generic invalid_request. Never
+      // include the remote description in app state or logs.
+      final errorDescription = error['error_description'];
+      if (error['error'] == 'invalid_request' &&
+          errorDescription is String &&
+          errorDescription.toLowerCase().contains('client_secret')) {
+        throw const SyncException('oauth_client_configuration');
       }
       throw const SyncException('network');
     }

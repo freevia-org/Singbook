@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/application/file_actions.dart';
 import 'package:singbook/data/library_repository.dart';
+import 'package:singbook/domain/chordpro.dart';
 import 'package:singbook/domain/models.dart';
 import 'package:singbook/l10n/generated/app_localizations.dart';
 import 'package:singbook/providers/core/service.dart';
@@ -42,6 +45,8 @@ const _requiredFiles = [
   'assets/fonts/SingbookSerif-Bold.ttf',
   'assets/branding/singbook-mark-foreground.png',
 ];
+
+const _longDesktopSongTitle = 'Desktop acceptance reprise · Життя';
 
 /// Captures are written to the gitignored `artifacts/` directory. When a
 /// prerequisite file is missing the captures are skipped with this message
@@ -77,6 +82,7 @@ void main() {
 
         await tester.pumpWidget(
           MaterialApp(
+            debugShowCheckedModeBanner: false,
             locale: locale,
             localizationsDelegates: singbookLocalizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
@@ -104,6 +110,19 @@ void main() {
           ),
         );
 
+        final card = find.byKey(const ValueKey('setlist-card-tablet-setlist'));
+        final cardTaps = find.descendant(
+          of: card,
+          matching: find.byType(InkWell),
+        );
+        await tester.tap(cardTaps.last);
+        await tester.pumpAndSettle();
+        final expandedSongs = find.textContaining('1. Lanterns at Dawn');
+        expect(expandedSongs, findsOneWidget);
+        final previewText = tester.widget<Text>(expandedSongs);
+        expect(previewText.style?.fontSize, 13);
+        expect(previewText.style?.height, 1.15);
+
         for (final width in [
           639.0,
           640.0,
@@ -118,10 +137,8 @@ void main() {
           final height = width == 1600 ? 900.0 : 800.0;
           tester.view.physicalSize = Size(width, height);
           await tester.pump();
-          final card = find.byKey(
-            const ValueKey('setlist-card-tablet-setlist'),
-          );
           final rect = tester.getRect(card);
+          final songListRect = tester.getRect(expandedSongs);
           final expectedWidth = math.min(width - 32, 960.0);
           expect(rect.left, greaterThanOrEqualTo(0), reason: 'width $width');
           expect(rect.right, lessThanOrEqualTo(width), reason: 'width $width');
@@ -134,6 +151,11 @@ void main() {
             rect.width,
             closeTo(expectedWidth, 0.5),
             reason: 'width $width',
+          );
+          expect(
+            rect.bottom - songListRect.bottom,
+            greaterThanOrEqualTo(8),
+            reason: 'expanded setlist preview bottom spacing at width $width',
           );
           expect(tester.takeException(), isNull, reason: 'width $width');
           if (width == 820 || width == 1600) {
@@ -271,6 +293,100 @@ void main() {
     skip: skip,
   );
 
+  testWidgets('account settings stay centered at wide breakpoints', (
+    tester,
+  ) async {
+    await _loadFonts();
+    final (fixture, controller) = (await tester.runAsync(() async {
+      final fixture = _Fixture();
+      return (fixture, AppControllerAdapter(fixture.app));
+    }))!;
+    final boundaryKey = GlobalKey();
+    final brightness = ValueNotifier(Brightness.light);
+    final locale = ValueNotifier(const Locale('en'));
+    addTearDown(brightness.dispose);
+    addTearDown(locale.dispose);
+    addTearDown(controller.dispose);
+    addTearDown(fixture.app.dispose);
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(800, 1280);
+    controller.setTab(VerseTab.settings);
+    await _pumpShell(
+      tester,
+      controller,
+      boundaryKey: boundaryKey,
+      brightness: brightness,
+      locale: locale,
+    );
+    await tester.pumpAndSettle();
+
+    final accountMenu = find.byKey(const ValueKey('settings-menu-account'));
+    await tester.ensureVisible(accountMenu);
+    await tester.tap(accountMenu);
+    await tester.pumpAndSettle();
+
+    final output = Directory('artifacts/singbook-layout-captures')
+      ..createSync(recursive: true);
+    for (final viewport in const [
+      Size(800, 1280),
+      Size(1280, 800),
+      Size(1920, 1080),
+    ]) {
+      tester.view.physicalSize = viewport;
+      await tester.pumpAndSettle();
+      for (final language in const ['en', 'ar']) {
+        locale.value = Locale(language);
+        await tester.pumpAndSettle();
+        for (final mode in [Brightness.light, Brightness.dark]) {
+          brightness.value = mode;
+          await tester.pumpAndSettle();
+          final rect = tester.getRect(
+            find.byKey(const ValueKey('settings-account-card')),
+          );
+          final title = find.byKey(const ValueKey('settings-section-title'));
+          final titleRect = tester.getRect(title);
+          final backButton = tester.getRect(find.byType(BackButton));
+          final isRtl =
+              Directionality.of(tester.element(title)) == TextDirection.rtl;
+          expect(rect.left, greaterThanOrEqualTo(0));
+          expect(rect.right, lessThanOrEqualTo(viewport.width));
+          expect(rect.center.dx, closeTo(viewport.width / 2, 0.5));
+          expect(
+            isRtl ? titleRect.right : titleRect.left,
+            closeTo(isRtl ? rect.right - 56 : rect.left + 56, 1),
+          );
+          expect(
+            backButton.center.dx,
+            closeTo(isRtl ? rect.right - 12 : rect.left + 12, 1),
+          );
+          expect(
+            (rect.width - math.min(viewport.width - 32, 1168)).abs(),
+            lessThanOrEqualTo(12),
+            reason: 'account card should stay inside the centered 1200px frame',
+          );
+          expect(title, findsOneWidget);
+          expect(tester.takeException(), isNull);
+
+          final boundary =
+              boundaryKey.currentContext!.findRenderObject()
+                  as RenderRepaintBoundary;
+          await tester.runAsync(() async {
+            final image = await boundary.toImage(pixelRatio: 1);
+            final png = await image.toByteData(format: ui.ImageByteFormat.png);
+            image.dispose();
+            File(
+              '${output.path}${Platform.pathSeparator}account_${viewport.width.toInt()}x${viewport.height.toInt()}_${language}_${mode.name}.png',
+            ).writeAsBytesSync(png!.buffer.asUint8List());
+          });
+          await tester.pump();
+        }
+      }
+    }
+
+    tester.view.resetDevicePixelRatio();
+    tester.view.resetPhysicalSize();
+  }, skip: skip);
+
   testWidgets('capture populated tablet UI across routes, themes and sizes', (
     tester,
   ) async {
@@ -357,7 +473,7 @@ void main() {
             const Duration(seconds: 3),
           );
           expect(
-            Theme.of(boundaryKey.currentContext!).brightness,
+            Theme.of(tester.element(find.byType(Scaffold).first)).brightness,
             themeBrightness,
             reason: '${viewportEntry.key} ${themeBrightness.name} $screen',
           );
@@ -389,6 +505,16 @@ void main() {
           );
           expect(boundary.size.height, greaterThan(300), reason: screen);
           _assertRouteGeometry(tester, screen, viewportEntry.value);
+          if (screen == 'library') {
+            final longTitle = find.text(_longDesktopSongTitle);
+            expect(longTitle, findsOneWidget);
+            expect(
+              tester.renderObject<RenderParagraph>(longTitle).didExceedMaxLines,
+              isFalse,
+              reason:
+                  'long library titles should remain readable at ${viewportEntry.key}',
+            );
+          }
           expect(tester.takeException(), isNull, reason: screen);
 
           final themeName = themeBrightness == Brightness.light
@@ -412,12 +538,17 @@ void main() {
       }
     }
 
-    expect(
-      output.listSync().whereType<File>().where(
-        (file) => !file.path.endsWith('reader_scrolled.png'),
-      ),
-      hasLength(42),
-    );
+    final expectedCaptures = {
+      for (final viewport in _viewports.keys)
+        for (final theme in ['light', 'dark'])
+          for (final screen in _screens) '${viewport}_${theme}_$screen.png',
+    };
+    final writtenCaptures = output
+        .listSync()
+        .whereType<File>()
+        .map((file) => file.uri.pathSegments.last)
+        .toSet();
+    expect(writtenCaptures, containsAll(expectedCaptures));
     tester.view.resetDevicePixelRatio();
     tester.view.resetPhysicalSize();
     tester.view.resetViewInsets();
@@ -462,22 +593,23 @@ Future<void> _pumpShell(
   required ValueNotifier<Locale> locale,
 }) async {
   await tester.pumpWidget(
-    AnimatedBuilder(
-      animation: Listenable.merge([brightness, locale]),
-      builder: (context, _) => MaterialApp(
-        localizationsDelegates: singbookLocalizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        locale: locale.value,
-        theme: _captureTheme(brightness: Brightness.light),
-        darkTheme: _captureTheme(brightness: Brightness.dark),
-        themeMode: brightness.value == Brightness.dark
-            ? ThemeMode.dark
-            : ThemeMode.light,
-        home: AnimatedBuilder(
-          animation: controller,
-          builder: (context, _) => RepaintBoundary(
-            key: boundaryKey,
-            child: VerseAppShell(
+    RepaintBoundary(
+      key: boundaryKey,
+      child: AnimatedBuilder(
+        animation: Listenable.merge([brightness, locale]),
+        builder: (context, _) => MaterialApp(
+          debugShowCheckedModeBanner: false,
+          localizationsDelegates: singbookLocalizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: locale.value,
+          theme: _captureTheme(brightness: Brightness.light),
+          darkTheme: _captureTheme(brightness: Brightness.dark),
+          themeMode: brightness.value == Brightness.dark
+              ? ThemeMode.dark
+              : ThemeMode.light,
+          home: AnimatedBuilder(
+            animation: controller,
+            builder: (context, _) => VerseAppShell(
               controller: controller,
               files: VerseFileActions(),
             ),
@@ -597,6 +729,7 @@ class _Fixture {
       'The Lantern Keeper',
       'Where the Bluebells Grow',
       'A Place at the Table',
+      _longDesktopSongTitle,
     ];
     for (var index = 0; index < titles.length; index++) {
       repository.songs.add(
@@ -614,6 +747,8 @@ class _Fixture {
         notes: 'A small set for an evening together.',
         entries: const [
           SetlistEntry(id: 'tablet-entry', songId: 'tablet-song'),
+          SetlistEntry(id: 'tablet-entry-2', songId: 'tablet-song-2'),
+          SetlistEntry(id: 'tablet-entry-3', songId: 'tablet-song-3'),
         ],
       ),
     );
@@ -635,6 +770,37 @@ class _MemoryRepository implements LibraryRepository {
   final List<SongDocument> songs = [];
   final List<SetlistDocument> setlists = [];
   final List<ActivityEntry> activity = [];
+
+  @override
+  Future<
+    ({
+      List<SongDocument> songs,
+      List<SetlistDocument> setlists,
+      Map<String, String> songHashes,
+    })
+  >
+  librarySnapshot() async {
+    final snapshotSongs = List<SongDocument>.of(songs);
+    return (
+      songs: snapshotSongs,
+      setlists: List<SetlistDocument>.of(setlists),
+      songHashes: {for (final song in snapshotSongs) song.id: _hashSong(song)},
+    );
+  }
+
+  String _hashSong(SongDocument song) {
+    final document = ChordProCodec().encode(song);
+    final fullDocument = song.extensionError == null
+        ? null
+        : jsonEncode(song.toJson());
+    final fullDocumentHash = fullDocument == null
+        ? null
+        : sha256.convert(utf8.encode(fullDocument)).toString();
+    final localDocument = fullDocumentHash == null
+        ? document
+        : '$document\u0000$fullDocumentHash';
+    return sha256.convert(utf8.encode(localDocument)).toString();
+  }
 
   @override
   Future<List<SongDocument>> listSongs({

@@ -1560,6 +1560,14 @@ class AppLocalizationsHi extends AppLocalizations {
       'Google साइन-इन कॉन्फ़िगर किया हुआ Singbook बिल्ड इस्तेमाल करें।';
 
   @override
+  String get syncErrorOAuthClientConfiguration =>
+      'Google ने इस बिल्ड के साइन-इन कॉन्फ़िगरेशन को अस्वीकार कर दिया।';
+
+  @override
+  String get syncErrorOAuthClientConfigurationHint =>
+      'जाँचें कि कॉन्फ़िगर किया गया OAuth ID Singbook के डेस्कटॉप ऐप क्लाइंट का है।';
+
+  @override
   String get syncErrorNotSignedIn => 'आप साइन इन नहीं हैं।';
 
   @override

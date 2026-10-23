@@ -145,7 +145,8 @@ void main() {
   late DateTime now;
   late List<Uri> launches;
   late List<String> selectedIds;
-  String? pickerError, exchangeError, refreshError;
+  String? pickerError, exchangeError, refreshError, tokenErrorDescription;
+  bool malformedTokenErrorDescription = false;
   late String grantedScope, aboutEmail, permissionId, refreshToken;
   late String folderMime;
   late bool folderTrashed;
@@ -170,7 +171,8 @@ void main() {
     now = DateTime.utc(2026, 10, 19);
     launches = [];
     selectedIds = ['selected-folder'];
-    pickerError = exchangeError = refreshError = null;
+    pickerError = exchangeError = refreshError = tokenErrorDescription = null;
+    malformedTokenErrorDescription = false;
     grantedScope = _scope;
     aboutEmail = 'singer@example.com';
     permissionId = 'drive-permission-a';
@@ -256,7 +258,14 @@ void main() {
       }
       final error = refreshing ? refreshError : exchangeError;
       if (error != null) {
-        return http.Response(jsonEncode({'error': error}), 400);
+        return http.Response(
+          jsonEncode({
+            'error': error,
+            'error_description': ?tokenErrorDescription,
+            if (malformedTokenErrorDescription) 'error_description': 7,
+          }),
+          400,
+        );
       }
       return http.Response(
         jsonEncode({
@@ -404,7 +413,10 @@ void main() {
       await access.pickFolder();
       final saved = Map<String, String>.from(vault.values);
       exchangeError = 'invalid_client';
-      await expectLater(access.pickFolder(), throwsA(_error('not_configured')));
+      await expectLater(
+        access.pickFolder(),
+        throwsA(_error('oauth_client_configuration')),
+      );
       expect(vault.values, saved);
       expect(await access.fileAuthorization.accessToken(), 'picked-file-token');
     },
@@ -514,6 +526,45 @@ void main() {
   });
 
   test(
+    'explicit missing client_secret response maps to configuration error',
+    () async {
+      exchangeError = 'invalid_request';
+      tokenErrorDescription = 'Missing required parameter: CLIENT_SECRET';
+      await expectLater(
+        access.pickFolder(),
+        throwsA(_error('oauth_client_configuration')),
+      );
+      expect(vault.values, isEmpty);
+    },
+  );
+
+  test('generic invalid_request remains an exchange error', () async {
+    exchangeError = 'invalid_request';
+    await expectLater(access.pickFolder(), throwsA(_error('network')));
+    expect(vault.values, isEmpty);
+  });
+
+  test(
+    'unrelated invalid_request description remains an exchange error',
+    () async {
+      exchangeError = 'invalid_request';
+      tokenErrorDescription = 'Authorization code rejected';
+      await expectLater(access.pickFolder(), throwsA(_error('network')));
+      expect(vault.values, isEmpty);
+    },
+  );
+
+  test(
+    'non-string invalid_request description remains an exchange error',
+    () async {
+      exchangeError = 'invalid_request';
+      malformedTokenErrorDescription = true;
+      await expectLater(access.pickFolder(), throwsA(_error('network')));
+      expect(vault.values, isEmpty);
+    },
+  );
+
+  test(
     'concurrent startup calls coalesce vault read and silent renewal',
     () async {
       await access.pickFolder();
@@ -562,7 +613,11 @@ void main() {
       await expectLater(
         access.fileAuthorization.accessToken(),
         throwsA(
-          _error(error == 'invalid_client' ? 'not_configured' : 'network'),
+          _error(
+            error == 'invalid_client'
+                ? 'oauth_client_configuration'
+                : 'network',
+          ),
         ),
       );
       expect(vault.values, saved);

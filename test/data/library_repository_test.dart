@@ -498,6 +498,14 @@ void main() {
         extensionError: 'Unsupported x_verse extension',
       );
       await repo.saveSong(large);
+      final setlist = SetlistDocument(
+        id: 'large-sidecar-setlist',
+        name: 'Large sidecar setlist',
+        entries: const [
+          SetlistEntry(id: 'large-entry', songId: 'large-opaque'),
+        ],
+      );
+      await repo.saveSetlist(setlist);
 
       expect(
         (await repo.getSong(large.id))!.extra['largeField'],
@@ -512,6 +520,13 @@ void main() {
         snapshot.songs.single.extra['largeField'],
         large.extra['largeField'],
       );
+      final library = await repo.librarySnapshot();
+      expect(
+        library.songs.single.extra['largeField'],
+        large.extra['largeField'],
+      );
+      expect(library.songHashes[large.id], await repo.getSongHash(large.id));
+      expect(library.setlists.single.entries.single.songId, large.id);
     },
   );
 
