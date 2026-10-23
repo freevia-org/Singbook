@@ -53,11 +53,25 @@
   "screenshots_uploaded": 2,
   "review_attachment": "Singbook-mac-review-fixtures.zip",
   "direct_download": {
-    "signing": "Developer ID Application created with owner approval and imported; signed export verified",
+    "version": "0.2.17",
+    "build": "31",
+    "binary_source": "b08d285d39f6e550b79c5f170a550514588ead3f",
+    "release_tag_commit": "3ef30783e3eea113e6cd96a9e349ffd4e2383ea4",
+    "signing": "Developer ID Application; deep/strict signature verified",
     "notarization": "Accepted; stapled ticket and Gatekeeper verified",
-    "public_release": "Not published; clean-machine and interactive acceptance pending",
-    "package": "artifacts/macos/20261023T052143Z-8f3d1cda-38951/Singbook-0.2.16-macos-universal.zip",
-    "sha256": "f24273b25e50faf46a80ffb20b01cd8140f583b3dc64d734f72ef39bff468b33"
+    "fresh_package_launch": "Quarantined fresh extraction launched through App Translocation and opened the preserved QA library",
+    "package": "artifacts/macos/20261023T073342Z-b08d285d-49381/Singbook-0.2.17-macos-universal.zip",
+    "sha256": "b2d343197214a1335c7e546a869059b9aef2a0b505bfb7a63deae2536a8bbde9",
+    "public_release": "Published; public download checksum verified",
+    "release_url": "https://github.com/freevia-org/Singbook/releases/tag/macos-v0.2.17",
+    "download_url": "https://github.com/freevia-org/Singbook/releases/download/macos-v0.2.17/Singbook-0.2.17-macos-universal.zip",
+    "published_at": "2026-10-23T08:37:55Z",
+    "website_handoff": "Sent to Website session at owner request",
+    "limitations": [
+      "Physical Intel, macOS 12 runtime and separate pristine Mac/user account not tested",
+      "Google Drive sync and Genius unavailable",
+      "Bundled catalog revision 5; later Android/Windows PR102 source-coverage changes not included"
+    ]
   },
   "review_submission_id": "1b1a0272-ee5c-4a4c-9864-8f18de8abecb",
   "submitted_date": "2026-10-23"
