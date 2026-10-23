@@ -370,7 +370,7 @@ class _VerseAppShellState extends State<VerseAppShell>
   static const _windowCloseChannel = MethodChannel(
     'org.freevia.singbook/window_close',
   );
-  bool _handlesWindowsClose = false;
+  bool _handlesDesktopClose = false;
 
   /// The account-change dialog was shown for the current `account_changed`
   /// stop; cleared when the stop is resolved so it can appear again.
@@ -380,9 +380,11 @@ class _VerseAppShellState extends State<VerseAppShell>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _handlesWindowsClose =
-        !kIsWeb && defaultTargetPlatform == TargetPlatform.windows;
-    if (_handlesWindowsClose) {
+    _handlesDesktopClose =
+        !kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.windows ||
+            defaultTargetPlatform == TargetPlatform.macOS);
+    if (_handlesDesktopClose) {
       _windowCloseChannel.setMethodCallHandler((call) async {
         if (call.method != 'requestClose') throw MissingPluginException();
         if (!mounted) return false;
@@ -405,9 +407,9 @@ class _VerseAppShellState extends State<VerseAppShell>
 
   @override
   Future<AppExitResponse> didRequestAppExit() => _exitRequest ??=
-      _confirmWindowExit().whenComplete(() => _exitRequest = null);
+      _confirmDesktopExit().whenComplete(() => _exitRequest = null);
 
-  Future<AppExitResponse> _confirmWindowExit() async {
+  Future<AppExitResponse> _confirmDesktopExit() async {
     if (widget.controller.state.route != VerseRoute.editor ||
         !widget.controller.state.editorDirty) {
       return AppExitResponse.exit;
@@ -452,7 +454,7 @@ class _VerseAppShellState extends State<VerseAppShell>
   void dispose() {
     _fullScreenController?.removeListener(_syncPlayerFullScreen);
     _playerSystemBars.dispose();
-    if (_handlesWindowsClose) _windowCloseChannel.setMethodCallHandler(null);
+    if (_handlesDesktopClose) _windowCloseChannel.setMethodCallHandler(null);
     WidgetsBinding.instance.removeObserver(this);
     _notices?.cancel();
     _exitBackTimer?.cancel();

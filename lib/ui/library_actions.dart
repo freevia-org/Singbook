@@ -43,7 +43,9 @@ List<PopupMenuEntry<String>> buildLibraryActionMenu(
   bool isSetlist = false,
   bool timedLyricsChecked = false,
 }) {
-  final desktopExport = defaultTargetPlatform == TargetPlatform.windows;
+  final desktopExport =
+      defaultTargetPlatform == TargetPlatform.windows ||
+      defaultTargetPlatform == TargetPlatform.macOS;
   final labels = {
     'edit': l10n.actionEdit,
     'info': l10n.songInfo,

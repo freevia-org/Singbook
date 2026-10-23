@@ -164,7 +164,6 @@ void main() {
 
   for (final platform in [
     TargetPlatform.linux,
-    TargetPlatform.macOS,
     TargetPlatform.fuchsia,
   ]) {
     test(

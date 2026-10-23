@@ -66,3 +66,7 @@ app.*.map.json
 
 # Local Cloudflare deployment cache
 /.wrangler/
+
+# Local macOS signing and OAuth configuration
+/macos/Runner/Configs/Secrets.xcconfig
+/macos/Runner/Configs/Signing.xcconfig

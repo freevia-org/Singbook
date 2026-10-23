@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'drive_file_access.dart';
 import 'google_auth.dart';
 import 'ios_drive_file_access.dart';
+import 'macos_drive_file_access.dart';
 import 'windows_drive_file_access.dart';
 import 'mobile_drive_file_access.dart';
 import 'sync_protocol.dart';
@@ -34,6 +35,7 @@ DriveAuthorization createPlatformDriveAuthorization({
       return windowsBuilder?.call() ?? WindowsGoogleDriveAuth();
     case TargetPlatform.android:
     case TargetPlatform.iOS:
+    case TargetPlatform.macOS:
       return (mobileBuilder ?? _mobileAuthorization)(
         loadSavedIdentity: loadSavedIdentity,
         saveSavedIdentity: saveSavedIdentity,
@@ -62,7 +64,8 @@ DriveFileAccessCapability? createPlatformDriveFileAccess(
   final platform = platformOverride ?? defaultTargetPlatform;
   if (platform != TargetPlatform.windows &&
       platform != TargetPlatform.android &&
-      platform != TargetPlatform.iOS) {
+      platform != TargetPlatform.iOS &&
+      platform != TargetPlatform.macOS) {
     return null;
   }
   if (authorization is DriveFileAccessCapability) {
@@ -70,6 +73,9 @@ DriveFileAccessCapability? createPlatformDriveFileAccess(
   }
   if (platform == TargetPlatform.iOS) {
     return IOSDriveFileAccess(identity: authorization);
+  }
+  if (platform == TargetPlatform.macOS) {
+    return MacOSDriveFileAccess(identity: authorization);
   }
   if (platform != TargetPlatform.android) return null;
   return MobileDriveFileAccess(
@@ -113,4 +119,5 @@ Future<void> clearPlatformDriveFileAccess(
   DriveFileAccessCapability? access,
 ) async {
   if (access is IOSDriveFileAccess) await access.clearAccount();
+  if (access is MacOSDriveFileAccess) await access.clearAccount();
 }
