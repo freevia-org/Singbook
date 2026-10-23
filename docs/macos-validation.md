@@ -73,13 +73,12 @@ notes. Those demonstration songs are not preloaded in the release app.
 
 ## Publishing handoff and limits
 
-The macOS platform and version draft are saved in App Store Connect with the
-Mac-specific English text, two screenshots, original review fixtures, sandbox
-usage notes and manual release selection. Build 30 uploaded successfully,
-finished processing, and is selected for the draft. The existing review
-contact was retained. Final SDK-inclusive privacy/rights/age-rating/territory
-review and submission remain owner actions. No macOS review submission,
-release or privacy-site deployment occurred.
+The macOS version 0.2.16 (30) was submitted for review on 23 October 2026
+at the owner's request. App Store Connect confirms **Waiting for Review**.
+Automatic release after approval is saved. Submission ID:
+`1b1a0272-ee5c-4a4c-9864-8f18de8abecb`. Mac-specific English text, two
+screenshots, original review fixtures, sandbox notes and the existing review
+contact were retained. No privacy-site deployment occurred.
 
 This candidate has **no macOS Google OAuth client or Genius access token**.
 The native auth/Picker/Keychain implementation is present, but Google sync
