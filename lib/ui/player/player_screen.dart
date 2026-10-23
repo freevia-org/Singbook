@@ -1441,37 +1441,47 @@ class _PlayerScreenState extends State<PlayerScreen>
             ),
           ),
         ],
-        child: Semantics(
-          key: const ValueKey('scroll-speed-toggle-label'),
-          label:
-              '${l10n.playerScrollSpeed}, ${_formatPlaybackSpeed(state.playbackSpeed)}',
-          button: true,
-          excludeSemantics: true,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      _formatPlaybackSpeed(state.playbackSpeed),
-                      key: const ValueKey('scroll-speed-value'),
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 1,
-                      softWrap: false,
+        child: ValueListenableBuilder<double?>(
+          valueListenable: _playbackSpeedDraft,
+          builder: (context, draftSpeed, _) {
+            // Preview the same ratio as the popup throughout the gesture.
+            // The existing completion/cancel handlers still own persistence.
+            final speed = _playbackSpeedDraftIsCurrent()
+                ? draftSpeed!
+                : state.playbackSpeed;
+            final label = _formatPlaybackSpeed(speed);
+            return Semantics(
+              key: const ValueKey('scroll-speed-toggle-label'),
+              label: '${l10n.playerScrollSpeed}, $label',
+              button: true,
+              excludeSemantics: true,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          label,
+                          key: const ValueKey('scroll-speed-value'),
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          softWrap: false,
+                        ),
+                        _playerDropdownArrow,
+                      ],
                     ),
-                    _playerDropdownArrow,
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );
