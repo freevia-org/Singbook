@@ -198,6 +198,10 @@ build. Its copyright and SIL Open Font License are retained in
 serif derived from Libre Baskerville, with its license in
 `assets/fonts/LibreBaskerville-LICENSE.txt`. Both fonts are bundled for offline use.
 
+Appearance-font provenance and reproduction steps are documented in
+[appearance fonts](docs/appearance-fonts.md). Font files and their licenses remain
+bundled for offline use.
+
 ## License
 
 Singbook's original source code, documentation, and app artwork are licensed under the
