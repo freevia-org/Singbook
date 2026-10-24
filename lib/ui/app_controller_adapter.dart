@@ -8,6 +8,7 @@ import '../domain/arrangement.dart' as arrangement;
 import '../domain/chordpro.dart';
 import '../domain/chord_key_estimate.dart' show estimateChordKey;
 import '../domain/combine.dart' show recordingCompatible, sourcedArrangementKey;
+import '../domain/metadata_enrichment.dart' show displayMetadataFor;
 import '../domain/models.dart';
 import '../domain/search_grouping.dart';
 import '../domain/timing.dart' show timingOccurrenceMap;
@@ -663,22 +664,71 @@ class AppControllerAdapter extends VerseUiController {
     );
   }
 
-  SearchReferenceData _reference(SongCandidate value) => SearchReferenceData(
-    id: value.identity,
-    providerId: value.providerId,
-    providerName: _providerName(value.providerId),
-    title: value.title,
-    artist: value.artist,
-    album: value.album,
-    durationSeconds:
-        _validDuration(value.durationSeconds) ??
-        _validDuration(value.metadata['durationSeconds']),
-    artworkUrl: value.artworkUrl,
-    isHistoricalText: value.providerId == 'wikisource',
-  );
+  /// Every row of the current search. Enabled catalogs are searched
+  /// together, so one catalog's hit can fill another's missing display facts.
+  List<SongCandidate> get _suggestionDonors =>
+      app.suggestions.isNotEmpty ? app.suggestions : _cachedAutocomplete;
+
+  /// Records that may fill display gaps on the selected song's version cards:
+  /// the selection, every discovered record that was not rejected, and the
+  /// search rows. [displayMetadataFor] decides which of them match.
+  List<SongCandidate> _versionDonors() => [
+    ?app.selection,
+    for (final result in app.results)
+      if (result.matchKind != MatchKind.rejected) _resultRecord(result),
+    ..._suggestionDonors,
+  ];
+
+  /// [result]'s catalog record with the album, duration and artwork its
+  /// resolved page added, keeping the record's own values first.
+  SongCandidate _resultRecord(SourceResult result) {
+    final candidate = result.candidate;
+    final artwork =
+        _metaString(candidate.metadata['artworkUrl']) ??
+        _metaString(result.metadata['artworkUrl']);
+    return SongCandidate(
+      providerId: candidate.providerId,
+      id: candidate.id,
+      title: candidate.title,
+      artist: candidate.artist,
+      album: candidate.album ?? _metaString(result.metadata['album']),
+      durationSeconds:
+          _validDuration(candidate.durationSeconds) ??
+          _validDuration(result.metadata['durationSeconds']) ??
+          _validDuration(candidate.metadata['durationSeconds']),
+      url: candidate.url,
+      metadata: {
+        ...result.metadata,
+        ...candidate.metadata,
+        'artworkUrl': ?artwork,
+      },
+      recordingIds: candidate.recordingIds,
+      extra: {...result.extra, ...candidate.extra},
+    );
+  }
+
+  SearchReferenceData _reference(
+    SongCandidate value, [
+    List<SongCandidate>? donors,
+  ]) {
+    final display = displayMetadataFor(value, donors ?? _suggestionDonors);
+    return SearchReferenceData(
+      id: value.identity,
+      providerId: value.providerId,
+      providerName: _providerName(value.providerId),
+      title: value.title,
+      artist: value.artist,
+      album: display.album,
+      durationSeconds: display.durationSeconds,
+      artworkUrl: display.artworkUrl,
+      isHistoricalText: value.providerId == 'wikisource',
+    );
+  }
 
   /// One search row per recording. The representative's identity is what a
-  /// tap selects, so discovery and saving work as for a single row.
+  /// tap selects, so discovery and saving work as for a single row. Display
+  /// facts come from the group's own members only: a row without an album was
+  /// placed in one group and must not lend its art to another.
   SearchReferenceData _groupReference(SearchRecordingGroup group) {
     final value = group.representative;
     final names = <String>{
@@ -770,11 +820,13 @@ class AppControllerAdapter extends VerseUiController {
     final candidate = app.selection;
     if (candidate == null || _selectedQuery != _query.trim()) return null;
     _rememberVersionArrivalOrder(candidate.identity, app.results);
-    final knownResults = app.results.map(_version).toList()
-      ..sort(
-        (a, b) =>
-            _versionArrivalOrder[a.id]!.compareTo(_versionArrivalOrder[b.id]!),
-      );
+    final donors = _versionDonors();
+    final knownResults =
+        app.results.map((result) => _version(result, donors)).toList()..sort(
+          (a, b) => _versionArrivalOrder[a.id]!.compareTo(
+            _versionArrivalOrder[b.id]!,
+          ),
+        );
     final alternatives = knownResults
         .where(_versionMatchesFilters)
         .toList(growable: true);
@@ -931,7 +983,7 @@ class AppControllerAdapter extends VerseUiController {
         )
         .toList();
     return SearchComparisonData(
-      reference: _reference(candidate),
+      reference: _reference(candidate, donors),
       suggested: suggested,
       alternatives: alternatives,
       selectedVersionId: chosenId,
@@ -1115,8 +1167,19 @@ class AppControllerAdapter extends VerseUiController {
     return true;
   }
 
-  SourceVersionData _version(SourceResult result) {
+  SourceVersionData _version(
+    SourceResult result, [
+    List<SongCandidate>? donors,
+  ]) {
     final candidate = result.candidate;
+    // A rejected record may be another song or recording, so it shows only
+    // its own facts.
+    final display = displayMetadataFor(
+      _resultRecord(result),
+      result.matchKind == MatchKind.rejected
+          ? const []
+          : donors ?? _versionDonors(),
+    );
     final check = app.checks[candidate.providerId];
     final savedId = app.savedResultId(source: result);
     final lines = _lines(result.body);
@@ -1146,13 +1209,9 @@ class AppControllerAdapter extends VerseUiController {
         ...candidate.metadata,
         ...result.metadata,
       }),
-      album: candidate.album ?? _metaString(result.metadata['album']),
-      durationSeconds:
-          _validDuration(candidate.durationSeconds) ??
-          _validDuration(result.metadata['durationSeconds']) ??
-          _validDuration(candidate.metadata['durationSeconds']),
-      artworkUrl:
-          candidate.artworkUrl ?? _metaString(result.metadata['artworkUrl']),
+      album: display.album,
+      durationSeconds: display.durationSeconds,
+      artworkUrl: display.artworkUrl,
       rating: _metaDouble(result.metadata['rating']),
       ratingCount: _metaInt(result.metadata['ratingCount']),
       hasLyrics: arrangement.plainLyrics(result.body).trim().isNotEmpty,

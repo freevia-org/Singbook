@@ -57,7 +57,7 @@ void main() {
     expect(groups.single.representative.providerId, 'lrclib');
   });
 
-  test('different albums, durations, editions and recordings stay apart', () {
+  test('different albums, editions and recordings stay apart', () {
     final groups = groupSearchRecordings([
       _row('a', album: 'Demo Album', duration: 200),
       _row('b', album: 'Greatest Hits', duration: 200),
@@ -69,10 +69,10 @@ void main() {
       _row('h', artist: 'Someone Else'),
     ]);
     expect(_ids(groups), [
-      ['a:1', 'f:1'],
+      // Durations do not split one album's recording.
+      ['a:1', 'c:1', 'f:1'],
       // g conflicts with f's recording ID, so it joins the next match.
       ['b:1', 'g:1'],
-      ['c:1'],
       ['d:1'],
       ['e:1'],
       ['h:1'],
@@ -113,7 +113,7 @@ void main() {
     expect(groups.single.artworkUrl, _art);
   });
 
-  test('a bracketed credit merges only when durations corroborate it', () {
+  test('a bracketed credit does not split a recording', () {
     final groups = groupSearchRecordings([
       _row('genius', title: 'Hallelujah'),
       _row('lrclib', title: 'Hallelujah', album: 'Hallelujah', duration: 269),
@@ -135,7 +135,7 @@ void main() {
     expect(groups.first.representative.title, 'Hallelujah');
   });
 
-  test('bracketed editions and different durations stay apart', () {
+  test('bracketed editions and parts stay apart; durations do not', () {
     final groups = groupSearchRecordings([
       _row('a', title: 'Never Stop', album: 'Hallelujah', duration: 175),
       _row(
@@ -144,14 +144,18 @@ void main() {
         album: 'Hallelujah',
         duration: 175,
       ),
-      _row('c', title: 'Song', duration: 200),
+      _row('c', title: 'Song', album: 'First Album', duration: 200),
       _row('d', title: 'Song (Leonard Cohen)', duration: 240),
+      _row('e', title: 'Song (Reprise)'),
+      _row('f', title: 'Song (Leonard Cohen)', album: 'Other Album'),
+      _row('g', title: 'Song', album: 'Other Album'),
     ]);
     expect(_ids(groups), [
       ['a:1'],
       ['b:1'],
-      ['c:1'],
-      ['d:1'],
+      ['c:1', 'd:1'],
+      ['e:1'],
+      ['f:1', 'g:1'],
     ]);
   });
 
