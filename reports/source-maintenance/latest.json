@@ -1,15 +1,14 @@
 {
   "schemaVersion": 1,
-  "catalogRevision": 5,
-  "measuredAt": "2026-10-23T06:01:28.378993Z",
+  "catalogRevision": 6,
+  "measuredAt": "2026-10-24T05:56:51.879916Z",
   "offline": false,
   "summary": {
-    "transient_error": 5,
-    "healthy": 8,
+    "transient_error": 6,
+    "healthy": 9,
     "unavailable": 1,
     "blocked": 1,
-    "import_only": 2,
-    "partial_coverage": 2
+    "import_only": 2
   },
   "sources": [
     {
@@ -210,14 +209,9 @@
       "probes": [
         {
           "id": "never-gonna-give-you-up-studio",
-          "status": "unavailable",
-          "reason": "empty_search_results"
-        },
-        {
-          "id": "wonderwall-oasis-timed-version",
           "status": "healthy",
           "providerId": "synclrc",
-          "bodyCharacters": 1401,
+          "bodyCharacters": 1927,
           "metadataFields": [
             "album",
             "duration",
@@ -239,6 +233,11 @@
           ],
           "timingRawRetained": true,
           "hasChords": false
+        },
+        {
+          "id": "wonderwall-oasis-timed-version",
+          "status": "unavailable",
+          "reason": "empty_search_results"
         }
       ]
     },
@@ -533,15 +532,14 @@
     {
       "id": "musicbrainz",
       "name": "MusicBrainz",
-      "status": "partial_coverage",
+      "status": "healthy",
       "coverage": {
-        "status": "partial",
+        "status": "complete",
         "verifiedCapabilities": [
+          "catalog",
           "metadata"
         ],
-        "unverifiedCapabilities": [
-          "catalog"
-        ]
+        "unverifiedCapabilities": []
       },
       "probes": [
         {
@@ -560,6 +558,7 @@
             "version"
           ],
           "verifiedCapabilities": [
+            "catalog",
             "metadata"
           ],
           "timingTrackCount": 0,
@@ -572,83 +571,37 @@
     {
       "id": "wikidata",
       "name": "Wikidata",
-      "status": "transient_error",
-      "coverage": {
-        "status": "partial",
-        "verifiedCapabilities": [],
-        "unverifiedCapabilities": [
-          "catalog",
-          "metadata"
-        ]
-      },
-      "probes": [
-        {
-          "id": "imagine-composition",
-          "status": "transient_error",
-          "reason": "provider_busy"
-        }
-      ]
-    },
-    {
-      "id": "wikimediacommons",
-      "name": "Wikimedia Commons",
       "status": "healthy",
       "coverage": {
         "status": "complete",
         "verifiedCapabilities": [
-          "artwork",
+          "catalog",
           "metadata"
         ],
         "unverifiedCapabilities": []
       },
       "probes": [
         {
-          "id": "bach-portrait",
+          "id": "imagine-composition",
           "status": "healthy",
-          "providerId": "wikimediacommons",
+          "providerId": "wikidata",
           "bodyCharacters": 0,
           "metadataFields": [
-            "licensedImages"
-          ],
-          "verifiedCapabilities": [
-            "artwork",
-            "metadata"
-          ],
-          "timingTrackCount": 0,
-          "timingGranularities": [],
-          "timingRawRetained": false,
-          "hasChords": false
-        }
-      ]
-    },
-    {
-      "id": "wikisource",
-      "name": "Wikisource",
-      "status": "partial_coverage",
-      "coverage": {
-        "status": "partial",
-        "verifiedCapabilities": [
-          "lyrics",
-          "metadata"
-        ],
-        "unverifiedCapabilities": [
-          "catalog",
-          "fileImport"
-        ]
-      },
-      "probes": [
-        {
-          "id": "cleansing-wave-palmer",
-          "status": "healthy",
-          "providerId": "wikisource",
-          "bodyCharacters": 664,
-          "metadataFields": [
-            "copyrightTags",
+            "composers",
+            "description",
+            "durationClaims",
+            "externalIdentifiers",
             "identityScope",
-            "revision"
+            "lyricists",
+            "partOf",
+            "performerIds",
+            "performers",
+            "publicationDates",
+            "types",
+            "wikidataId"
           ],
           "verifiedCapabilities": [
-            "lyrics",
+            "catalog",
             "metadata"
           ],
           "timingTrackCount": 0,
@@ -657,17 +610,27 @@
           "hasChords": false
         },
         {
-          "id": "dunbar-hymn-1",
+          "id": "wonderwall-composition",
           "status": "healthy",
-          "providerId": "wikisource",
-          "bodyCharacters": 496,
+          "providerId": "wikidata",
+          "bodyCharacters": 0,
           "metadataFields": [
-            "copyrightTags",
+            "composers",
+            "description",
+            "durationClaims",
+            "externalIdentifiers",
             "identityScope",
-            "revision"
+            "lyricists",
+            "partOf",
+            "performerIds",
+            "performers",
+            "publicationDates",
+            "types",
+            "wikidataId",
+            "wikimediaCommonsFile"
           ],
           "verifiedCapabilities": [
-            "lyrics",
+            "catalog",
             "metadata"
           ],
           "timingTrackCount": 0,
@@ -676,26 +639,73 @@
           "hasChords": false
         }
       ]
+    },
+    {
+      "id": "wikimediacommons",
+      "name": "Wikimedia Commons",
+      "status": "transient_error",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "artwork",
+          "metadata"
+        ]
+      },
+      "probes": [
+        {
+          "id": "bach-portrait",
+          "status": "transient_error",
+          "reason": "rate_limited"
+        }
+      ]
+    },
+    {
+      "id": "wikisource",
+      "name": "Wikisource",
+      "status": "transient_error",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "fileImport",
+          "lyrics",
+          "metadata"
+        ]
+      },
+      "probes": [
+        {
+          "id": "cleansing-wave-palmer",
+          "status": "transient_error",
+          "reason": "rate_limited"
+        },
+        {
+          "id": "dunbar-hymn-1",
+          "status": "transient_error",
+          "reason": "rate_limited"
+        }
+      ]
     }
   ],
   "execution": {
     "runtime": "managed-cloud",
-    "baseSha": "0a40d7f1179293213203a8335fe3aed8efc4cd8c",
-    "command": "dart run tool/source_maintenance.dart --report artifacts/source-maintenance/2026-10-23-live.json",
+    "baseSha": "23a485cca78dd33d5ef0c71edca5739be00c5a0e",
+    "command": "dart run tool/source_maintenance.dart --report artifacts/source-maintenance/2026-10-24-live.json",
     "exitCode": 1,
     "mode": "approved_require_escalated",
     "sourceState": "clean isolated public-main worktree; original unfinished checkout preserved",
     "environment": {
       "published": true,
-      "specRevision": "119",
+      "specRevision": "123",
       "observationsCurrent": true,
       "phase": "running",
       "connectivity": "connected",
       "networkPolicy": {
         "mode": "unrestricted",
-        "state": "enforced"
+        "state": "unknown"
       },
-      "geniusBindingState": "ready",
+      "geniusBindingState": "unknown",
       "geniusEnvironmentKeyPresent": true
     }
   },
@@ -705,7 +715,7 @@
       "exitCode": 0
     },
     "offline": {
-      "command": "dart run tool/source_maintenance.dart --offline --report artifacts/source-maintenance/2026-10-23-offline.json",
+      "command": "dart run tool/source_maintenance.dart --offline --report artifacts/source-maintenance/2026-10-24-offline.json",
       "exitCode": 0,
       "summary": {
         "offline_unverified": 17,
@@ -715,28 +725,28 @@
     "focusedTests": {
       "command": "flutter test --no-pub test/providers test/application/controller_test.dart test/application/controller_hardening_test.dart --reporter compact",
       "exitCode": 0,
-      "passed": 261,
+      "passed": 385,
       "skipped": 13
     },
     "analyzer": {
       "command": "flutter analyze --no-pub",
       "exitCode": 0
     },
-    "sourceChanges": "none; full suite not repeated without a new core/model change"
+    "sourceChanges": "none; no new core/model change requiring a full-suite rerun"
   },
   "comparison": {
     "priorCloud": {
-      "measuredAt": "2026-10-22T05:58:23.712824Z",
-      "ageHours": 24.05129611111111,
-      "baseSha": "593fcc15b7846651a1e6abcd7d3c820645d28e5f",
-      "path": "reports/source-maintenance/2026-10-22T055823Z.json"
+      "measuredAt": "2026-10-23T06:01:28.378993Z",
+      "ageHours": 23.923194722222224,
+      "baseSha": "0a40d7f1179293213203a8335fe3aed8efc4cd8c",
+      "path": "reports/source-maintenance/2026-10-23T060128Z.json"
     },
     "priorLocal": {
-      "measuredAt": "2026-10-21T06:01:50.763911Z",
-      "ageHours": 47.99378194444444,
+      "measuredAt": "2026-10-23T06:04:21.352222Z",
+      "ageHours": 23.87514638888889,
       "runtime": "local-windows",
-      "baseSha": "4d700c021c6303c93078a95bcd12b28365c0ac9d",
-      "sourceHead": "4d700c021c6303c93078a95bcd12b28365c0ac9d",
+      "baseSha": "0a40d7f1179293213203a8335fe3aed8efc4cd8c",
+      "sourceHead": "91700bb5af28ecc5461ef202ecc853ed70c198fb",
       "path": "reports/source-maintenance/local/latest.json"
     },
     "sources": [
@@ -1236,6 +1246,45 @@
           "probes": [
             {
               "id": "never-gonna-give-you-up-studio",
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "catalog",
+                "lineTiming",
+                "lyrics",
+                "metadata",
+                "wordTiming"
+              ],
+              "timingTrackCount": 2,
+              "timingGranularities": [
+                "line",
+                "word"
+              ],
+              "timingRawRetained": true
+            },
+            {
+              "id": "wonderwall-oasis-timed-version",
+              "status": "unavailable",
+              "reason": "empty_search_results"
+            }
+          ]
+        },
+        "priorCloud": {
+          "id": "synclrc",
+          "status": "unavailable",
+          "coverage": {
+            "status": "complete",
+            "verifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ],
+            "unverifiedCapabilities": []
+          },
+          "probes": [
+            {
+              "id": "never-gonna-give-you-up-studio",
               "status": "unavailable",
               "reason": "empty_search_results"
             },
@@ -1258,7 +1307,7 @@
             }
           ]
         },
-        "priorCloud": {
+        "priorLocal": {
           "id": "synclrc",
           "status": "unavailable",
           "coverage": {
@@ -1284,57 +1333,6 @@
               "reason": "empty_search_results"
             }
           ]
-        },
-        "priorLocal": {
-          "id": "synclrc",
-          "status": "healthy",
-          "coverage": {
-            "status": "complete",
-            "verifiedCapabilities": [
-              "catalog",
-              "lineTiming",
-              "lyrics",
-              "metadata",
-              "wordTiming"
-            ],
-            "unverifiedCapabilities": []
-          },
-          "probes": [
-            {
-              "id": "never-gonna-give-you-up-studio",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "lineTiming",
-                "lyrics",
-                "metadata",
-                "wordTiming"
-              ],
-              "timingTrackCount": 2,
-              "timingGranularities": [
-                "line",
-                "word"
-              ],
-              "timingRawRetained": true
-            },
-            {
-              "id": "wonderwall-oasis-timed-version",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "lineTiming",
-                "lyrics",
-                "metadata",
-                "wordTiming"
-              ],
-              "timingTrackCount": 2,
-              "timingGranularities": [
-                "line",
-                "word"
-              ],
-              "timingRawRetained": true
-            }
-          ]
         }
       },
       {
@@ -2067,21 +2065,21 @@
       {
         "current": {
           "id": "musicbrainz",
-          "status": "partial_coverage",
+          "status": "healthy",
           "coverage": {
-            "status": "partial",
+            "status": "complete",
             "verifiedCapabilities": [
+              "catalog",
               "metadata"
             ],
-            "unverifiedCapabilities": [
-              "catalog"
-            ]
+            "unverifiedCapabilities": []
           },
           "probes": [
             {
               "id": "wonderwall-oasis-recording",
               "status": "healthy",
               "verifiedCapabilities": [
+                "catalog",
                 "metadata"
               ],
               "timingTrackCount": 0,
@@ -2143,6 +2141,42 @@
       },
       {
         "current": {
+          "id": "wikidata",
+          "status": "healthy",
+          "coverage": {
+            "status": "complete",
+            "verifiedCapabilities": [
+              "catalog",
+              "metadata"
+            ],
+            "unverifiedCapabilities": []
+          },
+          "probes": [
+            {
+              "id": "imagine-composition",
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "catalog",
+                "metadata"
+              ],
+              "timingTrackCount": 0,
+              "timingGranularities": [],
+              "timingRawRetained": false
+            },
+            {
+              "id": "wonderwall-composition",
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "catalog",
+                "metadata"
+              ],
+              "timingTrackCount": 0,
+              "timingGranularities": [],
+              "timingRawRetained": false
+            }
+          ]
+        },
+        "priorCloud": {
           "id": "wikidata",
           "status": "transient_error",
           "coverage": {
@@ -2161,53 +2195,22 @@
             }
           ]
         },
-        "priorCloud": {
-          "id": "wikidata",
-          "status": "partial_coverage",
-          "coverage": {
-            "status": "partial",
-            "verifiedCapabilities": [
-              "metadata"
-            ],
-            "unverifiedCapabilities": [
-              "catalog"
-            ]
-          },
-          "probes": [
-            {
-              "id": "imagine-composition",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "metadata"
-              ],
-              "timingTrackCount": 0,
-              "timingGranularities": [],
-              "timingRawRetained": false
-            }
-          ]
-        },
         "priorLocal": {
           "id": "wikidata",
-          "status": "partial_coverage",
+          "status": "transient_error",
           "coverage": {
             "status": "partial",
-            "verifiedCapabilities": [
-              "metadata"
-            ],
+            "verifiedCapabilities": [],
             "unverifiedCapabilities": [
-              "catalog"
+              "catalog",
+              "metadata"
             ]
           },
           "probes": [
             {
               "id": "imagine-composition",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "metadata"
-              ],
-              "timingTrackCount": 0,
-              "timingGranularities": [],
-              "timingRawRetained": false
+              "status": "transient_error",
+              "reason": "provider_busy"
             }
           ]
         }
@@ -2215,26 +2218,20 @@
       {
         "current": {
           "id": "wikimediacommons",
-          "status": "healthy",
+          "status": "transient_error",
           "coverage": {
-            "status": "complete",
-            "verifiedCapabilities": [
+            "status": "partial",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
               "artwork",
               "metadata"
-            ],
-            "unverifiedCapabilities": []
+            ]
           },
           "probes": [
             {
               "id": "bach-portrait",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "artwork",
-                "metadata"
-              ],
-              "timingTrackCount": 0,
-              "timingGranularities": [],
-              "timingRawRetained": false
+              "status": "transient_error",
+              "reason": "rate_limited"
             }
           ]
         },
@@ -2292,40 +2289,27 @@
       {
         "current": {
           "id": "wikisource",
-          "status": "partial_coverage",
+          "status": "transient_error",
           "coverage": {
             "status": "partial",
-            "verifiedCapabilities": [
-              "lyrics",
-              "metadata"
-            ],
+            "verifiedCapabilities": [],
             "unverifiedCapabilities": [
               "catalog",
-              "fileImport"
+              "fileImport",
+              "lyrics",
+              "metadata"
             ]
           },
           "probes": [
             {
               "id": "cleansing-wave-palmer",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "lyrics",
-                "metadata"
-              ],
-              "timingTrackCount": 0,
-              "timingGranularities": [],
-              "timingRawRetained": false
+              "status": "transient_error",
+              "reason": "rate_limited"
             },
             {
               "id": "dunbar-hymn-1",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "lyrics",
-                "metadata"
-              ],
-              "timingTrackCount": 0,
-              "timingGranularities": [],
-              "timingRawRetained": false
+              "status": "transient_error",
+              "reason": "rate_limited"
             }
           ]
         },
@@ -2409,7 +2393,7 @@
         }
       }
     ],
-    "interpretation": "SyncLRC Wonderwall canary now passes actual line/word timing and raw retention, while Rick Astley still returns empty_search_results; source remains unavailable despite measured capabilities on one recording. Wikidata provider_busy is a transient condition, not schema evidence. Merged YouTube request change does not establish cloud reachability: actual cloud probe remains network failure. Historical local success retains code/runtime/age provenance and never overrides cloud health."
+    "interpretation": "Current catalog6 adds query-plus-stable-selection coverage for UG, MusicBrainz and Wikisource. Wikidata revision3 corrects Imagine album-versus-composition identity and adds a second positive-composition canary. These are changed probe semantics, not interchangeable recordings/entities. MusicBrainz and both Wikidata composition probes now pass complete claimed capability coverage. Commons and Wikisource rate_limited are transient; no immediate retries, schema changes or disablements. SyncLRC Rick Astley passes line/word cues and raw retention while Wonderwall is empty: per-feature coverage can be complete from one result, but source remains unavailable due to failed independent probe. Historical local success remains local aged evidence, never cloud reachability."
   },
   "catalogProbeCoverage": [
     {
@@ -2423,6 +2407,8 @@
       "probes": [
         {
           "id": "wonderwall-oasis",
+          "hasSearchQuery": true,
+          "hasDeclaredSelection": false,
           "expectedTitle": "Wonderwall",
           "expectedArtist": "Oasis",
           "requiredFields": [
@@ -2444,6 +2430,8 @@
       "probes": [
         {
           "id": "wonderwall",
+          "hasSearchQuery": true,
+          "hasDeclaredSelection": false,
           "expectedTitle": "Wonderwall",
           "expectedArtist": "Oasis",
           "requiredFields": [
@@ -2456,7 +2444,7 @@
     },
     {
       "id": "ultimateguitar",
-      "revision": 1,
+      "revision": 2,
       "capabilities": [
         "catalog",
         "lyrics",
@@ -2466,6 +2454,8 @@
       "probes": [
         {
           "id": "wonderwall-oasis-chords",
+          "hasSearchQuery": true,
+          "hasDeclaredSelection": true,
           "expectedTitle": "Wonderwall",
           "expectedArtist": "Oasis",
           "requiredFields": [
@@ -2488,6 +2478,8 @@
       "probes": [
         {
           "id": "sound-of-silence-studio-recording",
+          "hasSearchQuery": true,
+          "hasDeclaredSelection": false,
           "expectedTitle": "The Sound Of Silence",
           "expectedArtist": "Simon & Garfunkel",
           "requiredFields": [
@@ -2510,6 +2502,8 @@
       "probes": [
         {
           "id": "never-gonna-give-you-up",
+          "hasSearchQuery": true,
+          "hasDeclaredSelection": false,
           "expectedTitle": "Never Gonna Give You Up",
           "expectedArtist": "Rick Astley",
           "requiredFields": [
@@ -2530,6 +2524,8 @@
       "probes": [
         {
           "id": "wonderwall-oasis-studio",
+          "hasSearchQuery": true,
+          "hasDeclaredSelection": false,
           "expectedTitle": "Wonderwall",
           "expectedArtist": "Oasis",
           "requiredFields": [
@@ -2552,6 +2548,8 @@
       "probes": [
         {
           "id": "never-gonna-give-you-up-studio",
+          "hasSearchQuery": true,
+          "hasDeclaredSelection": false,
           "expectedTitle": "Never Gonna Give You Up",
           "expectedArtist": "Rick Astley",
           "requiredFields": [
@@ -2563,6 +2561,8 @@
         },
         {
           "id": "wonderwall-oasis-timed-version",
+          "hasSearchQuery": true,
+          "hasDeclaredSelection": false,
           "expectedTitle": "Wonderwall",
           "expectedArtist": "Oasis",
           "requiredFields": [
@@ -2588,6 +2588,8 @@
       "probes": [
         {
           "id": "never-gonna-give-you-up-studio-recording",
+          "hasSearchQuery": true,
+          "hasDeclaredSelection": false,
           "expectedTitle": "Never Gonna Give You Up",
           "expectedArtist": "Rick Astley",
           "requiredFields": [
@@ -2610,6 +2612,8 @@
       "probes": [
         {
           "id": "search-give-it-up-don-toliver",
+          "hasSearchQuery": true,
+          "hasDeclaredSelection": false,
           "expectedTitle": "Give It Up",
           "expectedArtist": "Don Toliver",
           "requiredFields": [
@@ -2621,6 +2625,8 @@
         },
         {
           "id": "give-it-up-don-toliver",
+          "hasSearchQuery": false,
+          "hasDeclaredSelection": true,
           "expectedTitle": "Give It Up",
           "expectedArtist": "Don Toliver",
           "requiredFields": [
@@ -2632,6 +2638,8 @@
         },
         {
           "id": "love-never-felt-so-good-michael-jackson",
+          "hasSearchQuery": false,
+          "hasDeclaredSelection": true,
           "expectedTitle": "Love Never Felt So Good",
           "expectedArtist": "Michael Jackson",
           "requiredFields": [
@@ -2654,7 +2662,9 @@
       ],
       "probes": [
         {
-          "id": "import-only"
+          "id": "import-only",
+          "hasSearchQuery": false,
+          "hasDeclaredSelection": false
         }
       ]
     },
@@ -2671,6 +2681,8 @@
       "probes": [
         {
           "id": "seventh-stranger-duran-duran",
+          "hasSearchQuery": true,
+          "hasDeclaredSelection": false,
           "expectedTitle": "The Seventh Stranger",
           "expectedArtist": "Duran Duran",
           "requiredFields": [
@@ -2694,6 +2706,8 @@
       "probes": [
         {
           "id": "amazing-grace",
+          "hasSearchQuery": true,
+          "hasDeclaredSelection": false,
           "expectedTitle": "Amazing Grace",
           "expectedArtist": "John Newton",
           "requiredFields": [
@@ -2717,6 +2731,8 @@
       "probes": [
         {
           "id": "everything-lastalda",
+          "hasSearchQuery": true,
+          "hasDeclaredSelection": false,
           "expectedTitle": "Everything",
           "expectedArtist": "Lastalda",
           "requiredFields": [
@@ -2739,6 +2755,8 @@
       "probes": [
         {
           "id": "be-here-soon",
+          "hasSearchQuery": true,
+          "hasDeclaredSelection": false,
           "expectedTitle": "Be Here Soon",
           "expectedArtist": "Sean McGrath",
           "requiredFields": [
@@ -2760,13 +2778,15 @@
       ],
       "probes": [
         {
-          "id": "import-only"
+          "id": "import-only",
+          "hasSearchQuery": false,
+          "hasDeclaredSelection": false
         }
       ]
     },
     {
       "id": "musicbrainz",
-      "revision": 1,
+      "revision": 2,
       "capabilities": [
         "catalog",
         "metadata"
@@ -2774,6 +2794,8 @@
       "probes": [
         {
           "id": "wonderwall-oasis-recording",
+          "hasSearchQuery": true,
+          "hasDeclaredSelection": true,
           "expectedTitle": "Wonderwall",
           "expectedArtist": "Oasis",
           "requiredFields": [
@@ -2787,7 +2809,7 @@
     },
     {
       "id": "wikidata",
-      "revision": 2,
+      "revision": 3,
       "capabilities": [
         "catalog",
         "metadata"
@@ -2795,13 +2817,32 @@
       "probes": [
         {
           "id": "imagine-composition",
+          "hasSearchQuery": true,
+          "hasDeclaredSelection": true,
           "expectedTitle": "Imagine",
           "expectedArtist": "John Lennon",
           "requiredFields": [
             "metadata"
           ],
           "requiredMetadataFields": [
-            "wikidataId"
+            "wikidataId",
+            "types.0",
+            "composers.0.wikidataId"
+          ]
+        },
+        {
+          "id": "wonderwall-composition",
+          "hasSearchQuery": true,
+          "hasDeclaredSelection": true,
+          "expectedTitle": "Wonderwall",
+          "expectedArtist": "Noel Gallagher",
+          "requiredFields": [
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "wikidataId",
+            "types.0",
+            "composers.0.wikidataId"
           ]
         }
       ]
@@ -2816,6 +2857,8 @@
       "probes": [
         {
           "id": "bach-portrait",
+          "hasSearchQuery": false,
+          "hasDeclaredSelection": true,
           "expectedTitle": "Johann Sebastian Bach",
           "requiredFields": [
             "metadata"
@@ -2828,7 +2871,7 @@
     },
     {
       "id": "wikisource",
-      "revision": 2,
+      "revision": 3,
       "capabilities": [
         "catalog",
         "fileImport",
@@ -2838,6 +2881,8 @@
       "probes": [
         {
           "id": "cleansing-wave-palmer",
+          "hasSearchQuery": true,
+          "hasDeclaredSelection": true,
           "expectedTitle": "Cleansing Wave",
           "expectedArtist": "Phoebe W. Palmer",
           "requiredFields": [
@@ -2852,6 +2897,8 @@
         },
         {
           "id": "dunbar-hymn-1",
+          "hasSearchQuery": true,
+          "hasDeclaredSelection": true,
           "expectedTitle": "The Complete Poems of Paul Laurence Dunbar/Hymn (1)",
           "expectedArtist": "Paul Laurence Dunbar",
           "requiredFields": [
@@ -2873,14 +2920,14 @@
       "publisherUrl": "https://api.genius.com/search?q=Wonderwall%20Oasis",
       "curlExit": 56,
       "connectOrigin": "403 000",
-      "checkedAt": "2026-10-23T06:01:32.121738+00:00"
+      "checkedAt": "2026-10-24T05:56:37.269177+00:00"
     },
     {
       "id": "hymnal",
       "publisherUrl": "https://hymnal.rindra.org/api/categories.json",
       "curlExit": 0,
       "connectOrigin": "200 200",
-      "checkedAt": "2026-10-23T06:01:32.645340+00:00",
+      "checkedAt": "2026-10-24T05:56:37.727006+00:00",
       "recordCount": 7,
       "jsonType": "list"
     },
@@ -2889,7 +2936,7 @@
       "publisherUrl": "https://api.lrcshare.com/v1/catalog",
       "curlExit": 0,
       "connectOrigin": "200 401",
-      "checkedAt": "2026-10-23T06:01:32.872445+00:00"
+      "checkedAt": "2026-10-24T05:56:37.970832+00:00"
     }
   ],
   "discovery": {
@@ -2899,7 +2946,7 @@
         "publisherUrl": "https://hymnal.rindra.org/api/categories.json",
         "curlExit": 0,
         "connectOrigin": "200 200",
-        "checkedAt": "2026-10-23T06:01:32.645340+00:00",
+        "checkedAt": "2026-10-24T05:56:37.727006+00:00",
         "recordCount": 7,
         "jsonType": "list"
       },
@@ -2908,12 +2955,12 @@
         "publisherUrl": "https://api.lrcshare.com/v1/catalog",
         "curlExit": 0,
         "connectOrigin": "200 401",
-        "checkedAt": "2026-10-23T06:01:32.872445+00:00"
+        "checkedAt": "2026-10-24T05:56:37.970832+00:00"
       }
     ],
     "existingReviewPR": "https://github.com/freevia-org/Singbook/pull/94",
-    "existingReviewHead": "ef70df6f0a7c5d2ab9ab280e08612e36003f14e5",
-    "decisions": "Reused existing PR94 investigation of gated LrcShare and deferred public-domain discovery instead of competing registry changes. LrcShare still origin401 without credentials. Hymnal metadata still seven collections; collection counts do not establish per-work rights, complete identities, compatible searchable adapter or two passing live extraction canaries. Existing config/source-discovery.json deferrals remain applicable; no newly qualified activation or meaningful new configuration change.",
+    "existingReviewHead": "4c37bb75117022d6c3b5f80040fa7d2debb8feba",
+    "decisions": "Reviewed current PR94 publisher evidence for gated access, public-domain eligibility and institutional regional catalog deferrals; avoid duplicate registry updates. Hymnal metadata still seven collections, without independently verified lyric identity, explicit per-work rights/attribution, searchable compatible adapter or two extraction canaries. LrcShare still origin401 without key/session; no credential requested or demo used. Existing config/source-discovery.json deferrals unchanged. No qualified new activation or meaningful configuration delta.",
     "equivalentOpenDiscoveryPRs": 1
   }
 }
