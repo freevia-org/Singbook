@@ -134,6 +134,75 @@ class _PlayerScreenState extends State<PlayerScreen>
   bool _inForeground = true;
   bool _leaving = false;
   double _lyricsHorizontalDragDistance = 0;
+  final _lyricsPointers = <int, Offset>{};
+  double? _lyricsFontSizeDraft;
+  double _lyricsPinchStartDistance = 0;
+  double _lyricsPinchStartSize = 24;
+  bool _lyricsPinchUsed = false;
+  int _lyricsFontSizeRevision = 0;
+
+  double get _lyricsFontSize =>
+      _lyricsFontSizeDraft ?? controller.state.lyricsFontSize;
+
+  double get _lyricsPointerDistance {
+    final points = _lyricsPointers.values.take(2).toList();
+    return points.length == 2 ? (points[0] - points[1]).distance : 0;
+  }
+
+  void _startLyricsPinch() {
+    // An older asynchronous button save must not clear this gesture's draft.
+    _lyricsFontSizeRevision++;
+    _lyricsPinchUsed = true;
+    _lyricsHorizontalDragDistance = 0;
+    _lyricsPinchStartDistance = _lyricsPointerDistance;
+    _lyricsPinchStartSize = _lyricsFontSize;
+    setState(() {});
+  }
+
+  void _lyricsPointerDown(PointerDownEvent event) {
+    if (_lyricsPointers.isEmpty) _lyricsPinchUsed = false;
+    _lyricsPointers[event.pointer] = event.localPosition;
+    if (_lyricsPointers.length == 2) _startLyricsPinch();
+  }
+
+  void _lyricsPointerMove(PointerMoveEvent event) {
+    if (!_lyricsPointers.containsKey(event.pointer)) return;
+    _lyricsPointers[event.pointer] = event.localPosition;
+    if (_lyricsPointers.length < 2 || _lyricsPinchStartDistance < 1) return;
+    final size =
+        (_lyricsPinchStartSize *
+                _lyricsPointerDistance /
+                _lyricsPinchStartDistance)
+            .clamp(18.0, 36.0);
+    setState(() => _lyricsFontSizeDraft = size);
+  }
+
+  void _lyricsPointerEnd(PointerEvent event) {
+    final wasPinching = _lyricsPointers.length >= 2;
+    _lyricsPointers.remove(event.pointer);
+    if (!wasPinching) return;
+    if (_lyricsPointers.length >= 2) {
+      _startLyricsPinch();
+    } else {
+      setState(() {});
+      final size = _lyricsFontSizeDraft;
+      if (size != null) _saveLyricsFontSize(size);
+    }
+  }
+
+  void _saveLyricsFontSize(double size) {
+    final value = size.clamp(18.0, 36.0);
+    final revision = ++_lyricsFontSizeRevision;
+    setState(() => _lyricsFontSizeDraft = value);
+    unawaited(
+      controller.setLyricsFontSize(value).whenComplete(() {
+        if (mounted && revision == _lyricsFontSizeRevision) {
+          setState(() => _lyricsFontSizeDraft = null);
+        }
+      }),
+    );
+  }
+
   final ValueNotifier<double?> _playbackSpeedDraft = ValueNotifier<double?>(
     null,
   );
@@ -329,7 +398,7 @@ class _PlayerScreenState extends State<PlayerScreen>
   void _handleLyricsHorizontalDragEnd(DragEndDetails details) {
     final distance = _lyricsHorizontalDragDistance;
     _lyricsHorizontalDragDistance = 0;
-    if (controller.state.activeSetlist == null) return;
+    if (_lyricsPinchUsed || controller.state.activeSetlist == null) return;
     final velocity = details.primaryVelocity ?? 0;
     final longEnough = distance.abs() >= 72;
     final quickEnough = distance.abs() >= 32 && velocity.abs() >= 450;
@@ -383,6 +452,9 @@ class _PlayerScreenState extends State<PlayerScreen>
     super.didUpdateWidget(oldWidget);
     if (!identical(oldWidget.controller, widget.controller)) {
       _clearPlaybackSpeedDraft();
+      _lyricsPointers.clear();
+      _lyricsFontSizeDraft = null;
+      _lyricsFontSizeRevision++;
       _position.removeListener(_onPosition);
       _position = widget.controller.playerPosition..addListener(_onPosition);
     }
@@ -579,7 +651,7 @@ class _PlayerScreenState extends State<PlayerScreen>
   }
 
   void _scrollToCurrentLine({bool immediate = false}) {
-    if (!mounted) return;
+    if (!mounted || _lyricsPointers.length >= 2) return;
     final state = controller.state;
     final lineId = _position.value.currentLineId;
     if (!state.autoscroll || lineId == null) return;
@@ -595,7 +667,7 @@ class _PlayerScreenState extends State<PlayerScreen>
       final index = state.songLines.indexWhere((line) => line.id == lineId);
       if (index < 0) return;
       final width = MediaQuery.sizeOf(context).width.clamp(0.0, 960.0) - 56;
-      final charsPerRow = (width / (state.lyricsFontSize * .52)).floor().clamp(
+      final charsPerRow = (width / (_lyricsFontSize * .52)).floor().clamp(
         12,
         120,
       );
@@ -609,7 +681,7 @@ class _PlayerScreenState extends State<PlayerScreen>
           final wraps = (line.text.characters.length / charsPerRow)
               .ceil()
               .clamp(1, 40);
-          estimatedOffset += wraps * state.lyricsFontSize * 1.35 + 12;
+          estimatedOffset += wraps * _lyricsFontSize * 1.35 + 12;
         }
       }
       final target =
@@ -714,93 +786,151 @@ class _PlayerScreenState extends State<PlayerScreen>
       ),
       child: child,
     );
-    Widget lyrics() => GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onHorizontalDragStart: state.activeSetlist == null
-          ? null
-          : (_) => _lyricsHorizontalDragDistance = 0,
-      onHorizontalDragUpdate: state.activeSetlist == null
-          ? null
-          : (details) => _lyricsHorizontalDragDistance += details.delta.dx,
-      onHorizontalDragEnd: state.activeSetlist == null
-          ? null
-          : _handleLyricsHorizontalDragEnd,
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: LayoutBuilder(
-              key: const ValueKey('tablet-reader-content'),
-              builder: (context, constraints) {
-                final actionGutter = widget.onFullScreenChanged == null
-                    ? 0.0
-                    : 48.0;
-                final textWidth = math.max(
-                  0.0,
-                  constraints.maxWidth - actionGutter,
-                );
-                final centeredInset = math.max(0.0, (textWidth - 960) / 2);
-                // Keep the text column centered, but let the scroll viewport
-                // and its single scrollbar reach the outside of the pane.
-                return Scrollbar(
-                  key: const ValueKey('player-lyrics-scrollbar'),
-                  controller: _lyricsScroll,
-                  child: ScrollConfiguration(
-                    behavior: ScrollConfiguration.of(
-                      context,
-                    ).copyWith(scrollbars: false),
-                    child: NotificationListener<ScrollNotification>(
-                      onNotification: _handleLyricsScroll,
-                      child: ListView.builder(
-                        key: const ValueKey('player-lyrics-scroll'),
-                        controller: _lyricsScroll,
-                        padding: EdgeInsetsDirectional.fromSTEB(
-                          centeredInset + 28,
-                          18,
-                          centeredInset + 28 + actionGutter,
-                          32,
+    final desktopFontControls = switch (defaultTargetPlatform) {
+      TargetPlatform.windows ||
+      TargetPlatform.macOS ||
+      TargetPlatform.linux => true,
+      _ => false,
+    };
+    Widget lyrics() => Listener(
+      onPointerDown: _lyricsPointerDown,
+      onPointerMove: _lyricsPointerMove,
+      onPointerUp: _lyricsPointerEnd,
+      onPointerCancel: _lyricsPointerEnd,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onHorizontalDragStart: state.activeSetlist == null
+            ? null
+            : (_) => _lyricsHorizontalDragDistance = 0,
+        onHorizontalDragUpdate: state.activeSetlist == null
+            ? null
+            : (details) => _lyricsHorizontalDragDistance += details.delta.dx,
+        onHorizontalDragEnd: state.activeSetlist == null
+            ? null
+            : _handleLyricsHorizontalDragEnd,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              top: desktopFontControls && widget.onFullScreenChanged != null
+                  ? 48
+                  : 0,
+              child: LayoutBuilder(
+                key: const ValueKey('tablet-reader-content'),
+                builder: (context, constraints) {
+                  final actionGutter =
+                      widget.onFullScreenChanged == null || desktopFontControls
+                      ? 0.0
+                      : 48.0;
+                  final textWidth = math.max(
+                    0.0,
+                    constraints.maxWidth - actionGutter,
+                  );
+                  final centeredInset = math.max(0.0, (textWidth - 960) / 2);
+                  // Keep the text column centered, but let the scroll viewport
+                  // and its single scrollbar reach the outside of the pane.
+                  return Scrollbar(
+                    key: const ValueKey('player-lyrics-scrollbar'),
+                    controller: _lyricsScroll,
+                    child: ScrollConfiguration(
+                      behavior: ScrollConfiguration.of(
+                        context,
+                      ).copyWith(scrollbars: false),
+                      child: NotificationListener<ScrollNotification>(
+                        onNotification: _handleLyricsScroll,
+                        child: ListView.builder(
+                          key: const ValueKey('player-lyrics-scroll'),
+                          controller: _lyricsScroll,
+                          physics: _lyricsPointers.length >= 2
+                              ? const NeverScrollableScrollPhysics()
+                              : null,
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                            centeredInset + 28,
+                            18,
+                            centeredInset + 28 + actionGutter,
+                            32,
+                          ),
+                          itemCount: state.songLines.length,
+                          itemBuilder: (context, index) => _lyricLine(
+                            context,
+                            state,
+                            state.songLines[index],
+                          ),
                         ),
-                        itemCount: state.songLines.length,
-                        itemBuilder: (context, index) =>
-                            _lyricLine(context, state, state.songLines[index]),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-          if (widget.onFullScreenChanged != null)
-            PositionedDirectional(
-              top: 0,
-              end: 0,
-              child: Material(
-                color: colors.surfaceContainerLow,
-                shape: const CircleBorder(),
-                clipBehavior: Clip.antiAlias,
-                child: IconButton(
-                  key: ValueKey(
-                    widget.fullScreen
-                        ? 'player-exit-fullscreen'
-                        : 'player-enter-fullscreen',
-                  ),
-                  constraints: const BoxConstraints.tightFor(
-                    width: 48,
-                    height: 48,
-                  ),
-                  tooltip: widget.fullScreen
-                      ? l10n.playerExitFullScreen
-                      : l10n.playerFullScreen,
-                  onPressed: () =>
-                      widget.onFullScreenChanged?.call(!widget.fullScreen),
-                  icon: Icon(
-                    widget.fullScreen
-                        ? Icons.close_fullscreen_rounded
-                        : Icons.open_in_full_rounded,
+            if (widget.onFullScreenChanged != null)
+              PositionedDirectional(
+                top: 0,
+                end: 0,
+                child: Material(
+                  color: colors.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(24),
+                  clipBehavior: Clip.antiAlias,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (desktopFontControls) ...[
+                        IconButton(
+                          key: const ValueKey('player-decrease-font-size'),
+                          tooltip: '${l10n.settingsTextSize} −',
+                          onPressed: _lyricsFontSize <= 18
+                              ? null
+                              : () => _saveLyricsFontSize(_lyricsFontSize - 2),
+                          icon: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('A'),
+                              Icon(Icons.keyboard_arrow_down_rounded, size: 16),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          key: const ValueKey('player-increase-font-size'),
+                          tooltip: '${l10n.settingsTextSize} +',
+                          onPressed: _lyricsFontSize >= 36
+                              ? null
+                              : () => _saveLyricsFontSize(_lyricsFontSize + 2),
+                          icon: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('A'),
+                              Icon(Icons.keyboard_arrow_up_rounded, size: 16),
+                            ],
+                          ),
+                        ),
+                      ],
+                      IconButton(
+                        key: ValueKey(
+                          widget.fullScreen
+                              ? 'player-exit-fullscreen'
+                              : 'player-enter-fullscreen',
+                        ),
+                        constraints: const BoxConstraints.tightFor(
+                          width: 48,
+                          height: 48,
+                        ),
+                        tooltip: widget.fullScreen
+                            ? l10n.playerExitFullScreen
+                            : l10n.playerFullScreen,
+                        onPressed: () => widget.onFullScreenChanged?.call(
+                          !widget.fullScreen,
+                        ),
+                        icon: Icon(
+                          widget.fullScreen
+                              ? Icons.close_fullscreen_rounded
+                              : Icons.open_in_full_rounded,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
     Widget controls({
@@ -861,12 +991,11 @@ class _PlayerScreenState extends State<PlayerScreen>
         playPainter.dispose();
         final minimumWidth =
             sideWidth * 2 + (hasNavigation ? 80 : 0) + playWidth + 8;
-        final stackActions = compact &&
-            minimumWidth > controlConstraints.maxWidth;
-        final stackedMinimumWidth = math.max(
-          sideWidth * 2,
-          (hasNavigation ? 96.0 : 0.0) + playWidth,
-        ) + 8;
+        final stackActions =
+            compact && minimumWidth > controlConstraints.maxWidth;
+        final stackedMinimumWidth =
+            math.max(sideWidth * 2, (hasNavigation ? 96.0 : 0.0) + playWidth) +
+            8;
         final rowWidth = math.max(
           controlConstraints.maxWidth,
           stackActions ? stackedMinimumWidth : minimumWidth,
@@ -1200,7 +1329,12 @@ class _PlayerScreenState extends State<PlayerScreen>
     return Padding(
       key: key,
       padding: const EdgeInsets.only(bottom: 12),
-      child: PlayerLyricLine(line: line, state: state, current: current),
+      child: PlayerLyricLine(
+        line: line,
+        state: state,
+        current: current,
+        fontSize: _lyricsFontSize,
+      ),
     );
   }
 
@@ -1384,22 +1518,31 @@ class _PlayerScreenState extends State<PlayerScreen>
                                 child: ExcludeSemantics(
                                   child: Text(
                                     formatDuration(duration / speed),
-                                    key: const ValueKey('scroll-speed-duration'),
+                                    key: const ValueKey(
+                                      'scroll-speed-duration',
+                                    ),
                                     maxLines: 1,
                                     softWrap: false,
-                                    style: Theme.of(context).textTheme.labelMedium,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.labelMedium,
                                   ),
                                 ),
                               ),
                               Semantics(
-                                label: '${l10n.playerScrollSpeed}, ${_formatPlaybackSpeed(speed)}',
+                                label:
+                                    '${l10n.playerScrollSpeed}, ${_formatPlaybackSpeed(speed)}',
                                 child: ExcludeSemantics(
                                   child: Text(
                                     _formatPlaybackSpeed(speed),
-                                    key: const ValueKey('scroll-speed-popup-value'),
+                                    key: const ValueKey(
+                                      'scroll-speed-popup-value',
+                                    ),
                                     maxLines: 1,
                                     softWrap: false,
-                                    style: Theme.of(context).textTheme.labelMedium,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.labelMedium,
                                   ),
                                 ),
                               ),
