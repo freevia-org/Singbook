@@ -20,6 +20,7 @@ import 'package:singbook/providers/extra/import_sources.dart';
 import 'package:singbook/providers/provider.dart';
 import 'package:singbook/ui/app_controller_adapter.dart';
 import 'package:singbook/ui/home/home_screen.dart';
+import 'package:singbook/ui/settings/search_catalog_selector.dart';
 import 'package:singbook/ui/theme/verse_theme.dart';
 import 'package:singbook/ui/verse_app.dart';
 
@@ -469,6 +470,9 @@ void main() {
     });
     await _initializeOnlineUi(tester, repository, ui, 'selector');
     await _pumpOnlineHome(tester, ui);
+    // The choice lives in Settings > Sources, not on the search screen.
+    expect(find.byKey(const ValueKey('search-catalog-selector')), findsNothing);
+    await _pumpCatalogSettings(tester, ui);
     _expectPreferredSourceSelector(tester, includesOtherSources: true);
 
     // LRCLIB remains the only ordinary source while historical text is enabled.
@@ -481,7 +485,7 @@ void main() {
         await app.setSearchCatalog('lrclib');
       },
     );
-    await _pumpOnlineHome(tester, ui);
+    await _pumpCatalogSettings(tester, ui);
     expect(ui.state.searchIncludesOtherSources, isFalse);
     _expectPreferredSourceSelector(tester, includesOtherSources: false);
 
@@ -492,7 +496,7 @@ void main() {
         await app.setSearchCatalog('wikisource');
       },
     );
-    await _pumpOnlineHome(tester, ui);
+    await _pumpCatalogSettings(tester, ui);
     expect(ui.state.searchIncludesOtherSources, isFalse);
     _expectPreferredSourceSelector(tester, includesOtherSources: false);
 
@@ -504,7 +508,7 @@ void main() {
         await app.setSearchCatalog('synthetic-public-domain');
       },
     );
-    await _pumpOnlineHome(tester, ui);
+    await _pumpCatalogSettings(tester, ui);
     expect(ui.state.searchIncludesOtherSources, isFalse);
     _expectPreferredSourceSelector(tester, includesOtherSources: false);
 
@@ -518,7 +522,7 @@ void main() {
         await app.setSearchCatalog('genius');
       },
     );
-    await _pumpOnlineHome(tester, ui);
+    await _pumpCatalogSettings(tester, ui);
     expect(ui.state.searchIncludesOtherSources, isTrue);
     _expectPreferredSourceSelector(tester, includesOtherSources: true);
     expect(requests, isEmpty);
@@ -850,6 +854,29 @@ Future<List<Object>> _precacheTileImage(
   );
   await tester.pump();
   return errors;
+}
+
+/// The search catalog choice as Settings > Sources hosts it.
+Future<void> _pumpCatalogSettings(
+  WidgetTester tester,
+  AppControllerAdapter ui,
+) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      localizationsDelegates: singbookLocalizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: AnimatedBuilder(
+        animation: ui,
+        builder: (context, _) => Scaffold(
+          body: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [SearchCatalogSelector(controller: ui, state: ui.state)],
+          ),
+        ),
+      ),
+    ),
+  );
+  await tester.pump();
 }
 
 Future<void> _pumpOnlineHome(

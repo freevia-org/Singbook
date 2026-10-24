@@ -13,6 +13,7 @@ import '../widgets/singbook_wordmark.dart';
 import '../widgets/verse_components.dart' show SingbookMark;
 import 'account_section.dart';
 import 'lyrics_settings_preview.dart';
+import 'search_catalog_selector.dart';
 
 /// Native names keep the language picker understandable regardless of the
 /// currently selected app language.
@@ -605,9 +606,7 @@ class _SettingsSectionScreenState extends State<_SettingsSectionScreen> {
       final fontSize = _draggingFontSize ?? state.lyricsFontSize;
       final backup = widget.backupSection();
       final contentWidth = MediaQuery.sizeOf(context).width;
-      final frameInset = contentWidth > 1200
-          ? (contentWidth - 1200) / 2
-          : 0.0;
+      final frameInset = contentWidth > 1200 ? (contentWidth - 1200) / 2 : 0.0;
       final horizontalInset = frameInset + 16;
       return Scaffold(
         appBar: AppBar(
@@ -825,6 +824,20 @@ class _SettingsSectionScreenState extends State<_SettingsSectionScreen> {
                 LyricsSettingsPreview(state: state),
               ],
               if (widget.section == _SettingsSection.sources) ...[
+                if (state.searchCatalogs.isNotEmpty) ...[
+                  _SettingCard(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+                        child: SearchCatalogSelector(
+                          controller: controller,
+                          state: state,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                ],
                 _SettingCard(
                   children: [
                     ListTile(
