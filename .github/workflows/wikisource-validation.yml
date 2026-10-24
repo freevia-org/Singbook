@@ -42,88 +42,9 @@ env:
   CI_EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
 
 jobs:
-  analyze:
-    name: Wikisource scoped analysis
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-          persist-credentials: false
-
-      - name: Record exact source head and input hashes
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p artifacts/wikisource-ci/analyze
-          git rev-parse HEAD | tee artifacts/wikisource-ci/analyze/head.txt
-          test "$(git rev-parse HEAD)" = "$CI_EXPECTED_HEAD"
-          git rev-parse 'HEAD^{tree}' > artifacts/wikisource-ci/analyze/tree.txt
-          git ls-files -z | xargs -0 sha256sum > artifacts/wikisource-ci/analyze/source-sha256.txt
-          sha256sum pubspec.lock > artifacts/wikisource-ci/analyze/lock-before.txt
-
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
-
-      - name: Resolve locked dependencies
-        timeout-minutes: 5
-        shell: bash
-        run: |
-          set -euo pipefail
-          flutter --suppress-analytics --no-version-check --version > artifacts/wikisource-ci/analyze/flutter-version.txt 2>&1
-          set +e
-          flutter --suppress-analytics --no-version-check pub get --enforce-lockfile --no-example 2>&1 | tee artifacts/wikisource-ci/analyze/dependencies.log
-          ci_results=("${PIPESTATUS[@]}")
-          set -e
-          printf '%s\n' "${ci_results[0]}" > artifacts/wikisource-ci/analyze/dependencies.exit
-          printf '%s\n' "${ci_results[1]}" > artifacts/wikisource-ci/analyze/dependencies-tee.exit
-          git diff --binary > artifacts/wikisource-ci/analyze/dependency-generation.diff
-          test "${ci_results[1]}" -eq 0
-          test "${ci_results[0]}" -eq 0
-          sha256sum -c artifacts/wikisource-ci/analyze/lock-before.txt
-          git diff --exit-code
-
-      - name: Analyze Wikisource and recording scope paths
-        timeout-minutes: 10
-        shell: bash
-        run: |
-          set -euo pipefail
-          set +e
-          flutter --suppress-analytics --no-version-check analyze --no-pub \
-            lib/application/app_controller.dart \
-            lib/domain/combine.dart \
-            lib/providers/core/service.dart \
-            lib/providers/extra/import_sources.dart \
-            lib/ui/app_controller_adapter.dart \
-            test/application/historical_text_import_test.dart \
-            test/domain/historical_text_import_test.dart \
-            test/domain/recording_scope_test.dart \
-            test/providers/extra/adversarial_test.dart \
-            test/providers/extra/extra_providers_test.dart \
-            test/providers/extra/wikisource_identity_test.dart \
-            test/ui/wikisource_cached_comparison_test.dart \
-            2>&1 | tee artifacts/wikisource-ci/analyze/analysis.log
-          ci_results=("${PIPESTATUS[@]}")
-          set -e
-          printf '%s\n' "${ci_results[0]}" > artifacts/wikisource-ci/analyze/analysis.exit
-          printf '%s\n' "${ci_results[1]}" > artifacts/wikisource-ci/analyze/analysis-tee.exit
-          test "${ci_results[1]}" -eq 0
-          exit "${ci_results[0]}"
-
-      - name: Preserve analysis evidence
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: wikisource-analysis-${{ github.event.pull_request.head.sha || github.sha }}
-          path: artifacts/wikisource-ci/analyze/
-          if-no-files-found: warn
-          retention-days: 7
-
+  # Static analysis of these files is covered by the full `flutter analyze`
+  # in ci.yml (same Flutter version); this workflow keeps only the
+  # mock-only regression groups that run with the source catalog disabled.
   regressions:
     name: Wikisource ${{ matrix.group }}
     runs-on: ubuntu-latest
