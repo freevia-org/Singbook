@@ -208,3 +208,21 @@ Sign-out removes this grant; portable library backups do not include it. No
 Singbook backend receives authorization codes or tokens. Include user-content
 uploads to a selected folder in the same OAuth-enabled App Privacy review.
 Live OAuth remains unverified until the iOS client and callback are configured.
+
+## Google Drive and iCloud sync implementation profile
+
+The pending dual-provider iOS implementation declares account-linked Other User
+Content for App Functionality in Runner's privacy manifest. Songs, setlists and
+associated sync metadata may leave the device when the user connects a service.
+Google Drive uses the selected Google account; iCloud uses the system Apple
+Account and the app's private CloudKit database. Each service keeps a separate
+account baseline. Neither service introduces advertising tracking.
+
+The official IPA build path now requires a configured iOS Google OAuth client
+and matching native callback settings. This is a build-time guard, not evidence
+of a successful consent or sync session. CloudKit capability and production
+schema provisioning must also be verified against the signed archive and Apple
+Developer container. Retain the conservative Google SDK disclosures above for
+Google-enabled builds. Review the final App Store Connect answers and public
+privacy policy before submitting the dual-provider release; earlier submitted
+no-OAuth build notes do not describe this pending profile.

@@ -70,7 +70,8 @@ Archives go to `build/ios/archive`, exported IPAs to `build/ios/ipa`.
 Before distribution, audit app and plugin privacy manifests and required-reason
 APIs (see the [TestFlight privacy review](ios-testflight.md)), verify signing and App
 Store Connect configuration, and test Google sign-in/sync, file import/export,
-printing, and phone/tablet layouts on iOS. iCloud remains unavailable.
+printing, and phone/tablet layouts on iOS. See [Google and iCloud sync](ios-sync.md)
+for both services and their configuration and validation requirements.
 Preparation does not establish App Store readiness or device compatibility.
 
 ## Local validation — 2026-10-18
