@@ -667,10 +667,8 @@ class _PlayerScreenState extends State<PlayerScreen>
       final index = state.songLines.indexWhere((line) => line.id == lineId);
       if (index < 0) return;
       final width = MediaQuery.sizeOf(context).width.clamp(0.0, 960.0) - 56;
-      final charsPerRow = (width / (_lyricsFontSize * .52)).floor().clamp(
-        12,
-        120,
-      );
+      final fontSize = _lyricsFontSizeDraft ?? state.lyricsFontSize;
+      final charsPerRow = (width / (fontSize * .52)).floor().clamp(12, 120);
       var estimatedOffset = 18.0;
       for (final line in state.songLines.take(index)) {
         if (line.isBlank) {
@@ -681,7 +679,7 @@ class _PlayerScreenState extends State<PlayerScreen>
           final wraps = (line.text.characters.length / charsPerRow)
               .ceil()
               .clamp(1, 40);
-          estimatedOffset += wraps * _lyricsFontSize * 1.35 + 12;
+          estimatedOffset += wraps * fontSize * 1.35 + 12;
         }
       }
       final target =
@@ -1333,7 +1331,7 @@ class _PlayerScreenState extends State<PlayerScreen>
         line: line,
         state: state,
         current: current,
-        fontSize: _lyricsFontSize,
+        fontSize: _lyricsFontSizeDraft ?? state.lyricsFontSize,
       ),
     );
   }
