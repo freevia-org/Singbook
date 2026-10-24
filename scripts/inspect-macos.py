@@ -30,7 +30,9 @@ for data_type in ['OtherUserContent', 'SearchHistory']:
         'NSPrivacyCollectedDataTypePurposeAppFunctionality'
     ], f'Unexpected data purpose: {data_type}'
 manifests = list(contents.rglob('PrivacyInfo.xcprivacy'))
-assert any(plistlib.loads(p.read_bytes()) == expected for p in manifests), 'Missing app privacy manifest'
+app_manifest = contents / 'Resources/PrivacyInfo.xcprivacy'
+assert app_manifest.is_file(), 'Missing app privacy manifest at Contents/Resources'
+assert plistlib.loads(app_manifest.read_bytes()) == expected, 'App privacy manifest differs from source'
 for path in manifests:
     for entry in plistlib.loads(path.read_bytes()).get('NSPrivacyAccessedAPITypes', []):
         assert entry.get('NSPrivacyAccessedAPITypeReasons'), f'Missing required reason: {path.name}'
