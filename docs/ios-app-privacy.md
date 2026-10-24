@@ -1,6 +1,6 @@
 # iOS App Privacy assessment
 
-Assessment date: 2026-10-18. This is a source and dependency review for the
+Assessment date: 2026-10-24. This is a source and dependency review for the
 current iOS app, intended to prepare App Store Connect answers. It is not a
 completed App Store Connect submission or a legal determination. Apple makes
 the developer responsible for describing collection by the app and integrated
@@ -70,8 +70,10 @@ details](https://developer.apple.com/app-store/app-privacy-details/) and
 Runner's manifest now declares Search History for App Functionality (linked,
 not tracking) for the active provider flows. Its app-container FileTimestamp
 required reason remains `C617.1`. SDK collection declarations remain in their
-own bundles. A future OAuth/Drive-enabled distribution build also needs Runner's
-Other User Content declaration for account-linked Drive library uploads.
+own bundles. A distribution build with Google Drive or iCloud sync available needs Runner's
+Other User Content declaration for account-linked library uploads. The iCloud
+path is present in the release35 source and uses CloudKit private databases;
+this source review does not itself verify a signed archive or live cloud records.
 
 Apple's categories below are selected based on the user-visible data and SDK
 disclosures. “Linked” means the app or provider can associate the data with an
@@ -89,12 +91,12 @@ definition.
 | User ID | Disclose | App Functionality; Analytics | Yes | No | GoogleSignIn-iOS 9.2.0 manifest declaration. App uses the Google account ID for session restoration/account binding; sync state is account-derived. |
 | Device ID | Disclose in the OAuth SDK profile | Analytics | Yes | No | Exact GoogleSignIn-iOS 9.2.0 manifest row. Release 0.2.16+30 does not send YouTube Music's `VISITOR_DATA`; release 0.2.15+29 did. Treating that legacy value as a device ID is an inference, not a verified device-bound identifier. |
 | Other Usage Data | Disclose | Analytics | Yes | No | GoogleSignIn-iOS 9.2.0 manifest declaration. No Singbook interaction telemetry is sent. |
-| Other User Content | Disclose if Drive sync is enabled in the submitted build | App Functionality | Yes | No | User songs and setlists are stored in the user's Drive appDataFolder or explicitly selected visible folder for backup/sync. They are associated with that user's Drive account. Local import/export alone does not meet Apple's off-device collection definition. |
+| Other User Content | Disclose if Google Drive or iCloud sync is enabled in the submitted build | App Functionality | Yes | No | User songs and setlists are stored in the user's Google Drive appDataFolder/selected folder or iCloud private CloudKit database for sync. Cloud copies are associated with the respective Google or Apple account. Local import/export alone does not meet Apple's off-device collection definition. |
 | Search History | Disclose when search providers are enabled | App Functionality | Yes, via request IP | No, based on reviewed evidence | Searches send title/artist/query text to providers. MetaBrainz documents request-parameter logs with IP and User-Agent; Wikimedia records request data and IP; Better Lyrics/Unison says it temporarily uses IP and deletes logs within seven days. Apple's Search History type covers searches performed in the app. The visitor-identifier association inference applies to release 0.2.15+29. |
 
 For an OAuth-enabled release, enter the eight GoogleSignIn-iOS 9.2.0 rows
 above exactly as declared, plus Search History when provider searches are
-available and Other User Content if Drive sync is available. The checked-in
+available and Other User Content if Google Drive or iCloud sync is available. The checked-in
 `GID_CLIENT_ID` and Dart OAuth defaults are empty, and the IPA build script
 requires a local defines file. Without valid OAuth IDs, the Dart authorization flow does not call
 GoogleSignIn initialization. Native plugin registration and the embedded SDK
@@ -103,7 +105,20 @@ SDK never collects data. Omit the eight SDK rows in a no-OAuth profile only
 with version-specific evidence that the SDK performs no collection in that
 configuration; otherwise retain the conservative SDK-inclusive profile. Search
 History remains applicable when providers are active. Other User Content from
-Drive sync is absent when Drive authorization is not configured. Release
+Drive sync is absent when Drive authorization is not configured. iCloud sync
+uses the system iCloud account without Singbook sign-in or an email address;
+the app queries CloudKit account status and the signed-in account record name,
+then uses the private database in container `iCloud.org.freevia.singbook`.
+Synced ChordPro content, setlists, and sync metadata are stored as private
+CloudKit records. The account identifier is used for account-scoped requests
+and a hashed binding is stored locally. Disconnecting clears the active local
+session and preserves local and cloud data. Syncing an item deletion removes its
+content from the active library but CloudKit may retain a small tombstone with
+the record ID and name to propagate the deletion across devices. Manage the
+full app CloudKit storage through Apple Account iCloud storage controls where
+available. The release owner verified the production private container is
+configured, but reported no synced production records. This source review does
+not establish a successful user sync or end-to-end encryption. Release
 0.2.16+30 does not read or send YouTube Music's `VISITOR_DATA`; 0.2.15+29
 did. The possible Device ID mapping is an inference about that older behavior,
 not the current release. Email and
@@ -179,8 +194,9 @@ pending archive/provider evidence.
    about ads, but no evidence establishing that these API requests are joined
    with third-party data. LRCLIB and several smaller default providers also
    publish no clear API request-retention period in the reviewed sources.
-4. Confirm the public privacy policy describes Google as the storage provider
-   and explains what songs, setlists, and account identifiers sync.
+4. Confirm the public privacy policy describes Google Drive and iCloud as
+   optional storage providers and explains what songs, setlists, and account
+   identifiers or bindings sync.
 5. Check the signed archive's privacy report and the exact transitive SDK
    manifests before finalizing the answers. An SDK manifest is a required
    privacy-manifest declaration and useful evidence, but it does not replace
@@ -188,7 +204,8 @@ pending archive/provider evidence.
 
 ## Scope and limits
 
-Reviewed the current iOS source/configuration, provider and sync code, local
+Reviewed the current iOS and macOS source/configuration, provider and sync
+code, including the CloudKit private-database adapter and its entitlements, local
 storage paths, `pubspec.yaml`, SwiftPM lockfiles, the pinned GoogleSignIn-iOS
 9.2.0 privacy manifest, Google's primary SDK App Store disclosure, and primary
 provider policies available on 2026-10-18. No network capture, provider
@@ -211,18 +228,19 @@ Live OAuth remains unverified until the iOS client and callback are configured.
 
 ## Google Drive and iCloud sync implementation profile
 
-The pending dual-provider iOS implementation declares account-linked Other User
-Content for App Functionality in Runner's privacy manifest. Songs, setlists and
+Release 0.2.21+35 declares account-linked Other User Content for App
+Functionality in Runner's privacy manifest. Songs, setlists and
 associated sync metadata may leave the device when the user connects a service.
 Google Drive uses the selected Google account; iCloud uses the system Apple
 Account and the app's private CloudKit database. Each service keeps a separate
 account baseline. Neither service introduces advertising tracking.
 
-The official IPA build path now requires a configured iOS Google OAuth client
-and matching native callback settings. This is a build-time guard, not evidence
-of a successful consent or sync session. CloudKit capability and production
-schema provisioning must also be verified against the signed archive and Apple
-Developer container. Retain the conservative Google SDK disclosures above for
-Google-enabled builds. Review the final App Store Connect answers and public
-privacy policy before submitting the dual-provider release; earlier submitted
-no-OAuth build notes do not describe this pending profile.
+The official IPA build path requires a configured iOS Google OAuth client and
+matching native callback settings. This is a build-time guard, not evidence of
+a successful consent or sync session. The iOS and macOS targets declare the
+CloudKit capability for the private container
+`iCloud.org.freevia.singbook`; the release35 owner verified its production
+container setup, but this review did not inspect a signed archive or observe a
+live sync. Retain the conservative Google SDK disclosures above for
+Google-enabled builds. Final App Store Connect answers must match the exact
+submitted build; earlier no-OAuth build notes do not describe this profile.
