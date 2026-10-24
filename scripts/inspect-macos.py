@@ -18,8 +18,21 @@ assert info['CFBundleIdentifier'] == 'org.freevia.singbook', 'Unexpected bundle 
 assert (info['CFBundleShortVersionString'], info['CFBundleVersion']) == version.groups(), 'Version drift'
 assert info['LSApplicationCategoryType'] == 'public.app-category.music'
 expected = plistlib.loads((root / 'macos/Runner/PrivacyInfo.xcprivacy').read_bytes())
+declared = {entry['NSPrivacyCollectedDataType']: entry
+            for entry in expected.get('NSPrivacyCollectedDataTypes', [])}
+for data_type in ['OtherUserContent', 'SearchHistory']:
+    entry = declared.get('NSPrivacyCollectedDataType' + data_type, {})
+    assert entry.get('NSPrivacyCollectedDataTypeLinked') is True, (
+        f'Missing linked sync/search disclosure: {data_type}')
+    assert entry.get('NSPrivacyCollectedDataTypeTracking') is False, (
+        f'Unexpected tracking disclosure: {data_type}')
+    assert entry.get('NSPrivacyCollectedDataTypePurposes') == [
+        'NSPrivacyCollectedDataTypePurposeAppFunctionality'
+    ], f'Unexpected data purpose: {data_type}'
 manifests = list(contents.rglob('PrivacyInfo.xcprivacy'))
-assert any(plistlib.loads(p.read_bytes()) == expected for p in manifests), 'Missing app privacy manifest'
+app_manifest = contents / 'Resources/PrivacyInfo.xcprivacy'
+assert app_manifest.is_file(), 'Missing app privacy manifest at Contents/Resources'
+assert plistlib.loads(app_manifest.read_bytes()) == expected, 'App privacy manifest differs from source'
 for path in manifests:
     for entry in plistlib.loads(path.read_bytes()).get('NSPrivacyAccessedAPITypes', []):
         assert entry.get('NSPrivacyAccessedAPITypeReasons'), f'Missing required reason: {path.name}'

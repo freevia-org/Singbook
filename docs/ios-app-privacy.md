@@ -228,7 +228,7 @@ Live OAuth remains unverified until the iOS client and callback are configured.
 
 ## Google Drive and iCloud sync implementation profile
 
-Release 0.2.21+35 declares account-linked Other User Content for App
+Release 0.2.22+36 declares account-linked Other User Content for App
 Functionality in Runner's privacy manifest. Songs, setlists and
 associated sync metadata may leave the device when the user connects a service.
 Google Drive uses the selected Google account; iCloud uses the system Apple
@@ -237,7 +237,11 @@ account baseline. Neither service introduces advertising tracking.
 
 The official IPA build path requires a configured iOS Google OAuth client and
 matching native callback settings. This is a build-time guard, not evidence of
-a successful consent or sync session. The iOS and macOS targets declare the
+a successful consent or sync session. Release 35 iOS declared Other User
+Content in its root manifest, while the macOS root omitted that row. Release 36
+aligns the macOS root manifest with
+iOS; the shared App Store privacy label must also include the category.
+The iOS and macOS targets declare the
 CloudKit capability for the private container
 `iCloud.org.freevia.singbook`; the release35 owner verified its production
 container setup, but this review did not inspect a signed archive or observe a

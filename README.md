@@ -84,8 +84,8 @@ networking (Cronet) and Google sign-in on a release APK before publishing.
 
 ### Google Play release
 
-Next release: `0.2.21+35`. Every new release increments both the visible patch
-version and the build number: `0.2.21+35`, `0.2.22+36`, and so on. The number after
+Next release: `0.2.22+36`. Every new release increments both the visible patch
+version and the build number: `0.2.22+36`, `0.2.23+37`, and so on. The number after
 `+` is the Play versionCode and must always increase; never reset it when the
 visible version changes. Rebuilds of the same release and promotion between
 internal testing and production keep the same version. Update `pubspec.yaml`,
@@ -100,7 +100,7 @@ a locale config for all 34 app languages (one per `lib/l10n/app_*.arb`; keep
 
 ```powershell
 .\scripts\build-android.ps1 -Bundle -Production   # signed .aab + symbols + SHA-256 in artifacts\
-.\scripts\verify-release.ps1 -Path artifacts\singbook-0.2.21+35-release.aab
+.\scripts\verify-release.ps1 -Path artifacts\singbook-0.2.22+36-release.aab
 ```
 
 The build script refuses to overwrite an existing artifact of the same version
@@ -159,7 +159,7 @@ Import accepts ChordPro, plain text, LRC, enhanced LRC and TTML. Sharing and cop
 
 ## Accounts
 
-Songs work without signing in. Google Drive sync is optional and is available when the build is configured with the public OAuth client IDs (`VERSE_GOOGLE_SERVER_CLIENT_ID`, and `VERSE_GOOGLE_IOS_CLIENT_ID` for iOS) in `config/local.defines.json`; without them the app shows sync as not configured. Sync defaults to each person's private Drive app-data folder; Android users can choose a visible folder through Google Picker. When switching folders, Singbook keeps the previous copies as a backup. It uses the narrow `drive.appdata` and `drive.file` scopes, not a shared Singbook account; no client secret or application backend is involved. Songs and setlists are stored as individual files. After you connect, song additions, edits and removals sync automatically with a short debounce; Sync now is also available. In a visible folder, users can import ChordPro files explicitly from Drive; Singbook tracks only files it created or the user selected. Starting the app and returning to it do not start cloud sync. Concurrent edits are kept as separate conflict copies. See [Google Cloud / OAuth setup](docs/google-oauth-setup.md) for the owner's configuration steps and [sync design](lib/sync/SETUP.md). `scripts/print-signing-fingerprints.ps1` prints the signing SHA-1s that Android OAuth clients need. iCloud integration also requires an Apple developer team, container, entitlements and a signed Apple build, and remains unavailable.
+Songs work without signing in. Google Drive sync is optional and is available when the build is configured with the public OAuth client IDs (`VERSE_GOOGLE_SERVER_CLIENT_ID`, and `VERSE_GOOGLE_IOS_CLIENT_ID` for iOS) in `config/local.defines.json`; without them the app shows sync as not configured. Sync defaults to each person's private Drive app-data folder; Android users can choose a visible folder through Google Picker. When switching folders, Singbook keeps the previous copies as a backup. It uses the narrow `drive.appdata` and `drive.file` scopes, not a shared Singbook account; no client secret or application backend is involved. Songs and setlists are stored as individual files. After you connect, song additions, edits and removals sync automatically with a short debounce; Sync now is also available. In a visible folder, users can import ChordPro files explicitly from Drive; Singbook tracks only files it created or the user selected. Starting the app and returning to it do not start cloud sync. Concurrent edits are kept as separate conflict copies. See [Google Cloud / OAuth setup](docs/google-oauth-setup.md) for the owner's configuration steps and [sync design](lib/sync/SETUP.md). `scripts/print-signing-fingerprints.ps1` prints the signing SHA-1s that Android OAuth clients need. Configured, signed Apple builds also offer optional iCloud sync using the app’s private CloudKit database. It requires the existing Apple developer team, container, entitlements and matching signing profile. Disconnecting preserves local and cloud copies.
 
 ## Languages and themes
 

@@ -1,7 +1,7 @@
 {
-  "status": "release_35_draft_not_upload_ready",
-  "version": "0.2.21",
-  "build": "35",
+  "status": "release_36_draft_not_upload_ready",
+  "version": "0.2.22",
+  "build": "36",
   "bundle_id": "org.freevia.singbook",
   "primary_locale": "en-US",
   "category_proposed": "MUSIC",
@@ -29,9 +29,9 @@
   ],
   "account_steps_pending": [
     "Verify current App Store Connect app/version/build state",
-    "Enable and associate iCloud.org.freevia.singbook with org.freevia.singbook; regenerate iCloud-capable provisioning",
-    "Deploy reviewed CloudKit production schema",
-    "Validate final signed 0.2.21+35 archive and embedded entitlements/privacy manifests",
+    "Verify existing approved iCloud.org.freevia.singbook association and existing iCloud-capable profiles without recreating them",
+    "Verify existing deployed CloudKit production schema without redeploying",
+    "Validate final signed 0.2.22+36 archive and embedded entitlements/privacy manifests",
     "Upload and processing",
     "Select verified build and submit for review"
   ],
@@ -146,9 +146,9 @@
     "copyright": "2026 Freevia EOOD",
     "apple_developer_display_name_requested": "Freevia"
   },
-  "screenshots_status": "historical_native_0.2.9+23_preserved_not_release35_qualification",
+  "screenshots_status": "historical_native_0.2.9+23_preserved_not_release36_qualification",
   "submission_preparation": {
-    "target": "0.2.21+35",
+    "target": "0.2.22+36",
     "source_compile_qualification": "35f9e3461238bdd30d0f70875a67f40d7fd2ca78; unsigned simulator build passed; final release source may differ",
     "readiness_document": "release-35-readiness.md",
     "historical_screenshots_release": "0.2.9+23",
