@@ -301,6 +301,8 @@ void main() {
           find.byKey(const ValueKey('player-exit-fullscreen')),
         );
         final increase = tester.getRect(find.byKey(_increase));
+        final viewport = tester.getRect(find.byKey(_lyrics));
+        expect(fullscreen.top, viewport.top);
         expect(increase.center.dy, fullscreen.center.dy);
         expect(increase.right, lessThanOrEqualTo(fullscreen.left));
         await tester.tap(find.byKey(_increase));
