@@ -81,7 +81,7 @@
       "id": "lrcshare",
       "name": "LrcShare API",
       "firstSeen": "2026-10-18",
-      "lastChecked": "2026-10-18",
+      "lastChecked": "2026-10-21",
       "status": "deferred",
       "documentation": [
         "https://api.lrcshare.com/docs/",
@@ -92,7 +92,7 @@
         "https://api.lrcshare.com/docs/guide/requirements.html"
       ],
       "endpoint": "https://api.lrcshare.com",
-      "reason": "Publisher docs describe a niche manually curated catalog centered on Chinese rap, with original/translated/romanized lyrics in Chinese, Japanese, Korean and other languages, line/word timing formats, structured rows, metadata and per-version attribution. Quickstart says anonymous/no-key; lyric docs require X-API-Key and X-LrcShare-Session, and on 2026-10-18 at 05:57 UTC live GET requests to /v1/catalog and /v1/search returned HTTP 401 missing X-API-Key, so unauthenticated access was not verified and no credentials were requested. Publisher FAQ limits API use to noncommercial personal/local-library/player contexts; underlying lyric rights remain with rightsholders and the service disclaims ownership, so redistribution/display rights for Singbook remain uncleared. No live lyric extraction canaries or overlap assessment. Defer pending compatible identity/attribution and multilingual extraction support, eligible access, rights review, and two independent live canaries covering claimed capabilities."
+      "reason": "Publisher docs describe a niche manually curated catalog centered on Chinese rap, with original/translated/romanized lyrics in Chinese, Japanese, Korean and other languages, line/word timing formats, structured rows, metadata and per-version attribution. At 2026-10-21T06:00Z, primary docs were reviewed: https://api.lrcshare.com/docs/ says API key required; https://api.lrcshare.com/docs/guide/requirements.html says every request needs X-API-Key and non-catalog routes additionally require X-LrcShare-Session; https://api.lrcshare.com/docs/api/search.html documents keyword/title/artist and song/album/artist/lyric search types; https://api.lrcshare.com/docs/api/lyric.html documents language/kind variants, line/enhanced/verbatim/TTML output, structured rows and per-version source/comment attribution. The FAQ https://api.lrcshare.com/docs/faq.html still says anonymous access, contradicting those current requirements. A bounded anonymous GET https://api.lrcshare.com/v1/catalog at 2026-10-21T06:00:47Z returned HTTP 401; response body omitted. This matches prior 2026-10-18 anonymous 401s and indicates key-gated access, so no credentials were requested or used. Publisher FAQ says noncommercial personal learning/local music library/player display only; lyrics remain each rightsholder's property and source attribution comment must be preserved. No redistribution/display rights for Singbook are established. No lyric extraction canaries or overlap assessment; exact identity path is catalog/search song ID then detail by ID, while current Singbook declarative grammar support for this flow and multilingual row variants is unverified. Defer pending publisher-approved eligible access, compatible identity/attribution and multilingual extraction, rights review, overlap assessment and two independent live repository canaries covering claimed capabilities. Sanitized shape-only evidence: artifacts/source-maintenance/2026-10-21/discovery/lrcshare-docs-and-access.json."
     },
     {
       "id": "musixmatch",
@@ -136,6 +136,31 @@
       ],
       "endpoint": "https://hymnal.rindra.org/api",
       "reason": "New multilingual candidate reviewed on 2026-10-20. Publisher page documents a public unauthenticated static JSON API, reporting 4,485 hymn records across seven collections and Malagasy, French and English. Metadata endpoints return collections or hymns without lyric bodies; a documented single-hymn endpoint returns a record with labeled verse text. A bounded live GET of https://hymnal.rindra.org/api/categories.json at 2026-10-20T06:01:43Z returned successfully with 7 records shaped as ID, Name and count; only collection names/counts were retained in sanitized evidence, no hymn/lyric IDs or text. Publisher documentation says free/open API but provides no explicit content license, per-work rights or attribution terms in the page reviewed; treat underlying hymn rights as unverified. Collections include two Malagasy sets (802 and 814 entries), French-language sets and English SDA Hymnal, a potentially useful regional/language supplement. Expected overlap with WorshipCommons, Wikisource and Open Hymnal is unmeasured. Documented routes expose metadata and static per-hymn lyrics, but no search endpoint; full single-hymn lyric extraction has not been tested, and grammar v1 cannot express the documented whole-catalog-plus-per-ID flow as normal search/resolve without adapter work. No chords or timing are documented. Keep deferred pending explicit rights/attribution and per-work provenance review, a compatible searchable adapter, and two independent live repository canaries covering identity and full lyric extraction."
+    },
+    {
+      "id": "pubdomainonly",
+      "name": "Public Domain Lyrics Database",
+      "firstSeen": "2026-10-21",
+      "lastChecked": "2026-10-21",
+      "status": "deferred",
+      "documentation": [
+        "https://github.com/kennethyork/PubDomainOnly",
+        "https://github.com/kennethyork/PubDomainOnly/blob/main/LICENSE.md"
+      ],
+      "endpoint": "https://kennethyork.github.io/PubDomainOnly",
+      "reason": "New candidate documented in https://github.com/kennethyork/PubDomainOnly README on 2026-10-21. Maintainer describes two static JSON catalogs: 1,334 songs it considers public domain in the US (published 1928 or earlier) and 3,653 CC0 original songs, with 4,987 total; advertised fields are title, author, year, category, lyrics and optional source_url. Categories include hymns, folk songs, spirituals, ballads and sea songs. Published docs claim about 87% of the public-domain set has source URLs and name Wikisource/Project Gutenberg as sources. HEAD checks at 2026-10-21T06:02:19Z returned HTTP 200 and application/json for https://kennethyork.github.io/PubDomainOnly/lyrics_data.json and /cc0_lyrics_data.json; no response bodies were fetched or retained. Keep deferred: the public-domain claim is explicitly US-limited, the CC0 set is maintainer-described as partly automatically generated and needs quality/provenance review, field docs show no stable per-song identity key, and source overlap with existing Wikisource/Open Hymnal coverage is unmeasured. No full extraction or repository canaries were run; endpoint reachability is not proof of response shape or rights. Reassess rights and jurisdiction, identity/deduplication, attribution/provenance, grammar compatibility and two independent real repository canaries before considering activation."
+    },
+    {
+      "id": "sanu-folklore-database",
+      "name": "SANU Ethnographic Institute Folklore Collection",
+      "firstSeen": "2026-10-23",
+      "lastChecked": "2026-10-23",
+      "status": "deferred",
+      "documentation": [
+        "https://folklornazbirka.ei.sanu.ac.rs/lppesme/index.php"
+      ],
+      "endpoint": "https://folklornazbirka.ei.sanu.ac.rs/lppesme/index.php",
+      "reason": "New institutional regional candidate reviewed 2026-10-23. Publisher page identifies a digital folklore database of Serbia's SANU Ethnographic Institute and reports 3,619 folklore texts by end-2025, mostly songs, with collector/narrator/place/date metadata. It documents search by assigned number, words/phrases, and language; current records include Serbian/Croatian, Macedonian and Bulgarian (Slovenian/Albanian options are offered for future additions but have no current records). A bounded HEAD request to https://folklornazbirka.ei.sanu.ac.rs/lppesme/index.php at 2026-10-23T06:03:18Z returned HTTP 200 text/html; no body was fetched in that request. This is homepage reachability only, not API or song extraction evidence. Publisher terms permit free use for scientific and noncommercial purposes only, prohibit commercial use, and request citation in scientific work. Defer pending clarity that intended app use is permitted, stable song identity plus complete metadata/lyrics response shape, machine-readable/search endpoint contract and grammar compatibility, overlap assessment with Wikisource and regional folk sources, and two independent repository canaries."
     }
   ]
 }
