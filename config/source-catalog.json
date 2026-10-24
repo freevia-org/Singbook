@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "extractionSchemaVersion": 1,
-  "revision": 6,
-  "publishedAt": "2026-10-23T06:34:31Z",
+  "revision": 7,
+  "publishedAt": "2026-10-24T06:44:00Z",
   "sources": [
     {
       "id": "genius",
@@ -520,8 +520,8 @@
       "id": "worshiptogether",
       "name": "Worship Together",
       "adapter": "builtin",
-      "status": "active",
-      "revision": 1,
+      "status": "retired",
+      "revision": 2,
       "capabilities": [
         "chords",
         "fileImport",
@@ -537,7 +537,8 @@
         {
           "id": "import-only"
         }
-      ]
+      ],
+      "changeReason": "2026-10-24: Retired at the owner's request because this dedicated religious catalog is outside the app's intended general-music focus. Stable source identity and saved attribution remain compatible."
     },
     {
       "id": "musicbrainz",
