@@ -75,20 +75,24 @@ void main() {
         'https://images.genius.com/synthetic.png',
       );
       expect(references[1].providerId, 'lrclib');
-      expect(references, hasLength(82));
-      final editions = {
-        for (final reference in references.where(
-          (reference) => reference.providerId == 'lrclib',
-        ))
-          reference.id: reference,
+      // Search grouping follows title/artist/album compatibility, not duration.
+      expect(references, hasLength(81));
+      final editions = references.where((row) => row.providerId == 'lrclib');
+      final groupedEdition = editions.singleWhere(
+        (row) => row.album!.contains('Unplugged'),
+      );
+      expect(groupedEdition.id, anyOf('lrclib:late-0', 'lrclib:edition-327'));
+      // Grouping is display-only: both source records keep their own facts.
+      final rawEditions = {
+        for (final candidate in h.app.suggestions)
+          candidate.identity: candidate,
       };
-      expect(editions['lrclib:late-0']!.album, 'Eric Clapton Unplugged');
-      expect(editions['lrclib:late-0']!.durationSeconds, 351);
+      expect(rawEditions['lrclib:late-0']!.durationSeconds, 351);
+      expect(rawEditions['lrclib:edition-327']!.durationSeconds, 327);
       expect(
-        editions['lrclib:edition-327']!.album,
+        rawEditions['lrclib:edition-327']!.album,
         'Eric Clapton - MTV Unplugged',
       );
-      expect(editions['lrclib:edition-327']!.durationSeconds, 327);
 
       final selection = h.ui.selectReference(references.first);
       await _settle();

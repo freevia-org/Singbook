@@ -582,6 +582,14 @@ class AppController extends ChangeNotifier {
 
   Future<void> setProviderEnabled(String id, bool enabled) async {
     final previousCatalog = searchCatalogId;
+    if (providerEnabled(id) != enabled) {
+      // Artwork lookups use a separate queue from catalog search. Retire all
+      // pending work and cached art when source eligibility changes, so a late
+      // response or a cached result from a newly disabled source cannot be
+      // shown on the next build.
+      _cancelArtworkLookups();
+      artworkLookups.clear();
+    }
     if (!enabled && _searchProviderId == id) {
       cancelSearch();
     } else if (!enabled) {

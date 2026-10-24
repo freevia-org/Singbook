@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:singbook/application/app_controller.dart';
@@ -15,9 +17,17 @@ void main() {
   late AppController app;
   late AppControllerAdapter ui;
   late List<String> queries;
+  late List<String> youtubeQueries;
+  late Completer<List<SongCandidate>> delayedLyricsLookup;
+  late Completer<void> lyricsLookupStarted;
+  late bool delayLyricsLookup;
 
   setUp(() async {
     queries = [];
+    youtubeQueries = [];
+    delayedLyricsLookup = Completer<List<SongCandidate>>();
+    lyricsLookupStarted = Completer<void>();
+    delayLyricsLookup = false;
     repository = await LibraryRepository.open(
       path: inMemoryDatabasePath,
       factory: databaseFactoryFfi,
@@ -47,6 +57,12 @@ void main() {
         }),
         _Catalog('lyricsovh', (query) {
           queries.add(query);
+          if (query == 'Pentatonix Hallelujah' && delayLyricsLookup) {
+            if (!lyricsLookupStarted.isCompleted) {
+              lyricsLookupStarted.complete();
+            }
+            return delayedLyricsLookup.future;
+          }
           return switch (query) {
             'Pentatonix Hallelujah' => const [
               SongCandidate(
@@ -70,6 +86,22 @@ void main() {
             ],
             _ => const [],
           };
+        }),
+        _Catalog('youtubemusic', (query) {
+          youtubeQueries.add(query);
+          return query == 'Pentatonix Hallelujah'
+              ? const [
+                  SongCandidate(
+                    providerId: 'youtubemusic',
+                    id: 'yt-p',
+                    title: 'Hallelujah',
+                    artist: 'Pentatonix',
+                    metadata: {
+                      'artworkUrl': 'https://images.example/youtube.jpg',
+                    },
+                  ),
+                ]
+              : const [];
         }),
       ]),
     );
@@ -105,11 +137,14 @@ void main() {
         unorderedEquals(['Pentatonix Hallelujah', 'Kate Voegele Hallelujah']),
       );
       expect(app.artworkLookups, {'chordie:p': _art, 'chordie:k': null});
+      await app.setProviderEnabled('lyricsovh', false);
+      expect(app.artworkLookups, isEmpty);
     },
   );
 
   test('no lookup runs when artwork catalogs are disabled', () async {
     await app.setProviderEnabled('lyricsovh', false);
+    await app.setProviderEnabled('youtubemusic', false);
     ui.setHomeListMode(HomeListMode.online);
     ui.setQuery('Hallelujah');
     await ui.submitSearch();
@@ -118,7 +153,57 @@ void main() {
       ui.state;
     }
     expect(queries, isEmpty);
+    expect(youtubeQueries, isEmpty);
     expect(app.artworkLookups, isEmpty);
+  });
+
+  test('late artwork from a disabled provider is discarded', () async {
+    delayLyricsLookup = true;
+    await app.setProviderEnabled('youtubemusic', false);
+    ui.setHomeListMode(HomeListMode.online);
+    ui.setQuery('Hallelujah');
+    await ui.submitSearch();
+    ui.state;
+    await lyricsLookupStarted.future;
+
+    await app.setProviderEnabled('lyricsovh', false);
+    expect(app.artworkLookups, isEmpty);
+    await app.setProviderEnabled('youtubemusic', true);
+    ui.state;
+    for (var i = 0; i < 5; i++) {
+      await pumpEventQueue();
+      ui.state;
+    }
+
+    delayedLyricsLookup.complete(const [
+      SongCandidate(
+        providerId: 'lyricsovh',
+        id: 'late',
+        title: 'Hallelujah',
+        artist: 'Pentatonix',
+        metadata: {'artworkUrl': 'https://images.example/disabled.jpg'},
+      ),
+    ]);
+    for (var i = 0; i < 5; i++) {
+      await pumpEventQueue();
+      ui.state;
+    }
+
+    expect(youtubeQueries, contains('Pentatonix Hallelujah'));
+    expect(
+      app.artworkLookups['chordie:p'],
+      'https://images.example/youtube.jpg',
+    );
+    expect(
+      ui.state.autocomplete
+          .firstWhere((item) => item.id == 'chordie:p')
+          .artworkUrl,
+      'https://images.example/youtube.jpg',
+    );
+    expect(
+      app.artworkLookups.values,
+      isNot(contains('https://images.example/disabled.jpg')),
+    );
   });
 }
 
@@ -126,7 +211,7 @@ class _Catalog implements LyricsProvider {
   _Catalog(this.id, this.rows);
 
   final String id;
-  final List<SongCandidate> Function(String query) rows;
+  final FutureOr<List<SongCandidate>> Function(String query) rows;
 
   @override
   ProviderDefinition get definition => ProviderDefinition(
@@ -139,7 +224,7 @@ class _Catalog implements LyricsProvider {
   Future<List<SongCandidate>> search(
     String query, {
     CancellationToken? cancel,
-  }) async => rows(query);
+  }) async => await rows(query);
 
   @override
   Future<SourceResult> resolve(
