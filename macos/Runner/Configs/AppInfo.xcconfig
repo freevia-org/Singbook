@@ -1,0 +1,9 @@
+// Shared release identity; version/build come from pubspec.yaml via Flutter.
+PRODUCT_NAME = Singbook
+PRODUCT_BUNDLE_IDENTIFIER = org.freevia.singbook
+PRODUCT_COPYRIGHT = Copyright © 2026 Freevia. Licensed under Apache 2.0.
+GID_CLIENT_ID =
+GID_REVERSED_CLIENT_ID = com.googleusercontent.apps.not-configured
+#include? "Secrets.xcconfig"
+#include? "Signing.xcconfig"
+ENABLE_HARDENED_RUNTIME = YES

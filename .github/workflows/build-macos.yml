@@ -1,0 +1,46 @@
+name: macOS compilation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macos-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  compile:
+    runs-on: macos-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.8'
+          channel: stable
+          cache: true
+      - run: flutter pub get --enforce-lockfile
+      - run: flutter gen-l10n
+      - name: macOS regression checks
+        run: flutter test --no-pub test/sync/platform_drive_auth_test.dart test/sync/macos_platform_drive_auth_test.dart test/ui/macos_account_sync_test.dart test/ui/macos_exit_test.dart test/application/macos_desktop_parity_test.dart test/ui/macos_setlist_drag_test.dart test/application/macos_startup_options_test.dart test/application/windows_startup_options_test.dart
+      - name: Configure macOS
+        run: flutter build macos --release --config-only --no-pub
+      - name: Compile unsigned universal app
+        run: >-
+          xcodebuild -workspace macos/Runner.xcworkspace -scheme Runner
+          -configuration Release -destination 'generic/platform=macOS'
+          -derivedDataPath build/macos CODE_SIGNING_ALLOWED=NO build
+      - name: Verify universal executable
+        run: |
+          lipo build/macos/Build/Products/Release/Singbook.app/Contents/MacOS/Singbook -verify_arch arm64 x86_64
+      - name: Preserve compile output
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-unsigned-compile-only
+          path: build/macos/Build/Products/Release/Singbook.app
+          retention-days: 7
+          if-no-files-found: error

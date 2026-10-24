@@ -66,6 +66,8 @@ class InitializationGate {
 ///  * iOS: an *iOS* OAuth client for the bundle id:
 ///    `--dart-define=VERSE_GOOGLE_IOS_CLIENT_ID` (passed as `clientId`), plus
 ///    the reversed client id URL scheme in `Info.plist`.
+///  * macOS: a macOS OAuth client for the bundle id:
+///    `--dart-define=VERSE_GOOGLE_MACOS_CLIENT_ID` (passed as `clientId`).
 ///  * Android needs nothing else natively: `INTERNET` is already declared and
 ///    the plugin brings its own activity/Play services wiring.
 class GoogleDriveAuth
@@ -80,12 +82,17 @@ class GoogleDriveAuth
     this.iosClientId = const String.fromEnvironment(
       'VERSE_GOOGLE_IOS_CLIENT_ID',
     ),
+    this.macosClientId = const String.fromEnvironment(
+      'VERSE_GOOGLE_MACOS_CLIENT_ID',
+    ),
+    @visibleForTesting this.isMacOSOverride,
     this.loadSavedIdentity,
     this.saveSavedIdentity,
     @visibleForTesting this.isAndroidOverride,
     @visibleForTesting this.configuredOverride,
   });
-  final String serverClientId, iosClientId;
+  final String serverClientId, iosClientId, macosClientId;
+  final bool? isMacOSOverride;
   final Future<Map<String, String>?> Function()? loadSavedIdentity;
   final Future<void> Function(Map<String, String>?)? saveSavedIdentity;
   final bool? isAndroidOverride;
@@ -93,6 +100,7 @@ class GoogleDriveAuth
   static const scopes = ['https://www.googleapis.com/auth/drive.appdata'];
   static const driveFileScopes = ['https://www.googleapis.com/auth/drive.file'];
   bool get _isAndroid => isAndroidOverride ?? Platform.isAndroid;
+  bool get _isMacOS => isMacOSOverride ?? Platform.isMacOS;
   static final InitializationGate _gate = InitializationGate();
   GoogleSignInAccount? _account;
   String? _restoredId, _restoredEmail, _restoredPhotoUrl;
@@ -102,10 +110,12 @@ class GoogleDriveAuth
   @override
   bool get configured =>
       configuredOverride ??
-      (Platform.isAndroid
+      (_isAndroid
           ? serverClientId.endsWith('.apps.googleusercontent.com')
-          : Platform.isIOS &&
-                iosClientId.endsWith('.apps.googleusercontent.com'));
+          : (Platform.isIOS &&
+                iosClientId.endsWith('.apps.googleusercontent.com')) ||
+                (_isMacOS &&
+                    macosClientId.endsWith('.apps.googleusercontent.com')));
   @override
   bool get isConnected => _account != null || _restoredId != null;
   @override
@@ -119,7 +129,7 @@ class GoogleDriveAuth
     try {
       await _gate.run(
         () => GoogleSignIn.instance.initialize(
-          clientId: Platform.isIOS ? iosClientId : null,
+          clientId: Platform.isIOS ? iosClientId : (_isMacOS ? macosClientId : null),
           serverClientId: serverClientId.isEmpty ? null : serverClientId,
         ),
       );
