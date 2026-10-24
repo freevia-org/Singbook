@@ -78,16 +78,10 @@ String _edition(SongCandidate candidate) => {
 }.join(' ');
 
 /// Rows that never join a group: they name something other than one
-/// recording, or still await a match check.
+/// recording, or still await a match check. A chord sheet ("arrangement")
+/// may join the recording group of its song.
 bool _ungroupable(SongCandidate candidate) {
-  const scopes = {
-    'historicalText',
-    'composition',
-    'work',
-    'artist',
-    'image',
-    'arrangement',
-  };
+  const scopes = {'historicalText', 'composition', 'work', 'artist', 'image'};
   return candidate.providerId == 'wikisource' ||
       scopes.contains(candidate.metadata['identityScope']) ||
       scopes.contains(candidate.extra['identityScope']) ||

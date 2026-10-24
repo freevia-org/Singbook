@@ -456,10 +456,7 @@ class AppControllerAdapter extends VerseUiController {
       startupSongsView: _startupSongsView(app.settings['startupSongsView']),
       query: _query,
       autocomplete: _query.trim() == app.query.trim()
-          ? groupSearchRecordings(
-              rankedAutocomplete.map((entry) => entry.value),
-              preferredProviderId: app.searchCatalogId,
-            ).map(_groupReference).toList()
+          ? _searchRows(rankedAutocomplete.map((entry) => entry.value))
           : const [],
       searchState: comparison != null
           ? LoadState.loaded
@@ -725,6 +722,25 @@ class AppControllerAdapter extends VerseUiController {
     );
   }
 
+  /// Groups search results by recording and asks for artwork for the first
+  /// rows that still have none; lookups arrive later through [AppController].
+  List<SearchReferenceData> _searchRows(Iterable<SongCandidate> ranked) {
+    final groups = groupSearchRecordings(
+      ranked,
+      preferredProviderId: app.searchCatalogId,
+    );
+    final missing = [
+      for (final group in groups)
+        if (group.artworkUrl == null &&
+            group.representative.providerId != 'wikisource')
+          group.representative,
+    ].take(20).toList();
+    if (missing.isNotEmpty) {
+      scheduleMicrotask(() => app.requestArtwork(missing));
+    }
+    return groups.map(_groupReference).toList();
+  }
+
   /// One search row per recording. The representative's identity is what a
   /// tap selects, so discovery and saving work as for a single row. Display
   /// facts come from the group's own members only: a row without an album was
@@ -743,7 +759,7 @@ class AppControllerAdapter extends VerseUiController {
       artist: value.artist,
       album: group.album,
       durationSeconds: group.durationSeconds,
-      artworkUrl: group.artworkUrl,
+      artworkUrl: group.artworkUrl ?? app.artworkLookups[value.identity],
       isHistoricalText: value.providerId == 'wikisource',
       sourceNames: names,
     );

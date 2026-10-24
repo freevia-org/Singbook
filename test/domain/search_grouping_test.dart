@@ -105,6 +105,16 @@ void main() {
     expect(groups, hasLength(8));
   });
 
+  test('a chord sheet joins its recording group', () {
+    final groups = groupSearchRecordings([
+      _row('lrclib', album: 'Demo Album', duration: 200),
+      _row('chordie', metadata: {'identityScope': 'arrangement'}),
+    ]);
+    expect(_ids(groups), [
+      ['lrclib:1', 'chordie:1'],
+    ]);
+  });
+
   test('only https artwork is shown', () {
     final groups = groupSearchRecordings([
       _row('a', artwork: 'http://images.example/cover.jpg'),

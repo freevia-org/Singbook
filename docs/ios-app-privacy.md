@@ -39,7 +39,9 @@ details](https://developer.apple.com/app-store/app-privacy-details/) and
   catalogs enabled in settings. It remembers your preferred catalog and shows
   its results first when available. Otherwise it uses the normal fallback,
   preferring Genius when configured and available. Wikisource searches
-  historical texts separately and is searched only when you select it. After
+  historical texts separately and is searched only when you select it. Results
+  that arrive without artwork may be looked up by artist and title in enabled
+  artwork catalogs (Lyrics.ovh and YouTube Music). After
   you choose a song, Singbook may check enabled sources for lyrics, chords,
   and metadata. Providers include
   Genius, LRCLIB, YouTube Music, Songsterr, Ultimate Guitar, MusicBrainz,
