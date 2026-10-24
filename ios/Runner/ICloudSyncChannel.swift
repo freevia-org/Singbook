@@ -94,7 +94,7 @@ final class ICloudSyncChannel {
      "name": record["name"] as? String ?? "",
      "properties": properties,
      "changeTag": record.recordChangeTag ?? "",
-     "size": record[sizeKey] as? Int ?? 0,
+     "size": record[self.sizeKey] as? Int ?? 0,
      "modifiedTime": (record.modificationDate ?? Date()).ISO8601Format()]
   }
 
@@ -166,7 +166,7 @@ final class ICloudSyncChannel {
   private func attachContent(_ content: String, to record: CKRecord) throws -> URL {
     let url = try contentURL(content)
     record["contentAsset"] = CKAsset(fileURL: url)
-    record[sizeKey] = content.utf8.count as CKRecordValue
+    record[self.sizeKey] = content.utf8.count as CKRecordValue
     return url.deletingLastPathComponent()
   }
 
@@ -237,8 +237,8 @@ final class ICloudSyncChannel {
         if method == "delete" {
           // Physical deletes cannot be guarded by savePolicy. Saving a tombstone
           // as the fetched record keeps the same server change-tag protection.
-          record[tombstoneKey] = true as CKRecordValue
-          record[sizeKey] = 0 as CKRecordValue
+          record[self.tombstoneKey] = true as CKRecordValue
+          record[self.sizeKey] = 0 as CKRecordValue
           record["contentAsset"] = nil
           record["propertiesJSON"] = "{}" as CKRecordValue
           self.modify([record], temporaryDirectories: [], context: context, result: result)
@@ -250,7 +250,7 @@ final class ICloudSyncChannel {
         do {
           let directory = try self.attachContent(content, to: record)
           record["propertiesJSON"] = propertiesJSON as CKRecordValue
-          record[tombstoneKey] = false as CKRecordValue
+          record[self.tombstoneKey] = false as CKRecordValue
           self.modify([record], temporaryDirectories: [directory], context: context, result: result)
         } catch { self.fail(result, "local_file_too_large") }
       }
@@ -263,7 +263,7 @@ final class ICloudSyncChannel {
       let record = CKRecord(recordType: type, recordID: CKRecord.ID(recordName: UUID().uuidString.lowercased()))
       record["name"] = name as CKRecordValue
       record["propertiesJSON"] = propertiesJSON as CKRecordValue
-      record[tombstoneKey] = false as CKRecordValue
+      record[self.tombstoneKey] = false as CKRecordValue
       do {
         let directory = try attachContent(content, to: record)
         modify([record], temporaryDirectories: [directory], context: context, result: result)
