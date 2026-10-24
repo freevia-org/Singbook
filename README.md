@@ -108,9 +108,13 @@ The build script refuses to overwrite an existing artifact of the same version
 debug key, `targetSdkVersion >= 36`, the debuggable flag, and the 16 KB ELF
 segment alignment of the 64-bit native libraries; for an `.aab` it needs
 `bundletool` (on `PATH` or a `bundletool*.jar` in your home folder) and reports
-`UNVERIFIED` and fails without it. Continuous integration
-(`.github/workflows/ci.yml`) runs analyze and tests only; it never builds or
-signs a release.
+`UNVERIFIED` and fails without it. Continuous integration runs analysis, the
+complete Linux and sharded Windows test suites, Windows native smoke checks,
+and a desktop journey. It also builds an unsigned Windows portable bundle;
+the separate macOS lane builds an unsigned universal app. Store packaging
+reuses the pinned Windows bundle instead of compiling it again. These jobs
+do not sign or submit store releases. See the [integration and release
+pipeline](docs/release-pipeline.md) for validation gates and artifact reuse.
 
 Store listing text and the public privacy policy (Markdown and hostable HTML)
 are in [docs/play-store](docs/play-store). The published

@@ -103,9 +103,7 @@ try {
     $managedPropertyPattern = '(?<!\S)"?-Dorg\.gradle\.daemon(?:=[^"\s]*)?"?(?=\s|$)|(?<!\S)"?-Dorg\.gradle\.project\.kotlin\.compiler\.execution\.strategy(?:=[^"\s]*)?"?(?=\s|$)'
     $gradleOptions = [regex]::Replace($gradleOptions, $managedPropertyPattern, '').Trim()
     $env:GRADLE_OPTS = if ($gradleOptions) { "$gradleOptions $managedGradleProperties" } else { $managedGradleProperties }
-    & flutter @arguments
-    if ($LASTEXITCODE -ne 0) { throw "Flutter build failed ($LASTEXITCODE)" }
-
+    # Refuse immutable output collisions before Flutter touches build/.
     if ($Bundle) {
         $pubspec = Get-Content -LiteralPath (Join-Path $workspace 'pubspec.yaml') -Raw
         if ($pubspec -notmatch '(?m)^version:\s*([^\s+]+)\+(\d+)') { throw 'Cannot read version from pubspec.yaml.' }
@@ -113,16 +111,27 @@ try {
         $versionCode = $Matches[2]
         $suffix = "$versionName+$versionCode"
         $artifacts = Join-Path $workspace 'artifacts'
-        New-Item -ItemType Directory -Force -Path $artifacts | Out-Null
 
-        $aabSource = Join-Path $workspace 'build/app/outputs/bundle/release/app-release.aab'
-        if (-not (Test-Path -LiteralPath $aabSource)) { throw "Expected bundle not found: $aabSource" }
         $aabName = "singbook-$suffix-release.aab"
         $aabTarget = Join-Path $artifacts $aabName
         $symName = "singbook-$suffix-native-debug-symbols.zip"
         foreach ($existing in @($aabTarget, (Join-Path $artifacts $symName))) {
             if ((Test-Path -LiteralPath $existing) -and -not $Force) {
-                throw "$existing already exists. Raise the versionCode in pubspec.yaml, or pass -Force to replace it (a verified artifact must not be overwritten silently)."
+                throw "$existing already exists. Reuse the verified artifact, or pass -Force only for an intentional replacement. Retrying a build keeps the same release number."
+            }
+        }
+    }
+    & flutter @arguments
+    if ($LASTEXITCODE -ne 0) { throw "Flutter build failed ($LASTEXITCODE)" }
+
+    if ($Bundle) {
+        New-Item -ItemType Directory -Force -Path $artifacts | Out-Null
+        $aabSource = Join-Path $workspace 'build/app/outputs/bundle/release/app-release.aab'
+        if (-not (Test-Path -LiteralPath $aabSource)) { throw "Expected bundle not found: $aabSource" }
+        # Another owner may have published an output while Flutter was running.
+        foreach ($existing in @($aabTarget, (Join-Path $artifacts $symName))) {
+            if ((Test-Path -LiteralPath $existing) -and -not $Force) {
+                throw "$existing already exists. Reuse the verified artifact, or pass -Force only for an intentional replacement. Retrying a build keeps the same release number."
             }
         }
         $aabBuilt = Get-Item -LiteralPath $aabSource

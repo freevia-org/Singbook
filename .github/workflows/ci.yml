@@ -2,7 +2,8 @@ name: CI
 
 # Source checks use the same empty defines as a fresh clone. The unsigned
 # Windows release bundle embeds the repository's public Desktop OAuth client
-# ID as a GitHub Actions variable. This workflow uses no secrets and never signs.
+# ID as a GitHub Actions variable and its optional registration field as a
+# masked Actions secret. This workflow never signs.
 #
 # Layout (fail fast, then fan out):
 #   analyze ──┬─> windows-build    (release bundle, packaging + native smoke)
@@ -43,6 +44,9 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Check build orchestration without SDKs
+        run: python3 -m unittest discover -s tests/scripts -p 'test_*.py' -v
+
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -53,7 +57,7 @@ jobs:
         run: flutter --version
 
       - name: Get dependencies
-        run: flutter pub get
+        run: flutter pub get --enforce-lockfile --no-example
 
       - name: Generated localizations are up to date
         run: |
@@ -82,7 +86,7 @@ jobs:
           cache: true
 
       - name: Get dependencies
-        run: flutter pub get
+        run: flutter pub get --enforce-lockfile --no-example
 
       - name: Test
         run: flutter test --no-pub
@@ -132,8 +136,12 @@ jobs:
           channel: stable
           cache: true
 
+      - name: Check Android output preflight without an SDK
+        shell: pwsh
+        run: ./tests/scripts/build-android-preflight.Tests.ps1
+
       - name: Get dependencies
-        run: flutter pub get
+        run: flutter pub get --enforce-lockfile --no-example
 
       - name: Check Windows OAuth configuration
         id: windows-oauth-preflight
@@ -240,9 +248,13 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: windows-release-bundle
-          path: artifacts/windows/
+          # Store packaging consumes the archive and matching provenance only;
+          # build logs remain in the separate validation evidence artifact.
+          path: |
+            artifacts/windows/*/*.zip
+            artifacts/windows/*/manifest.json
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 90
 
       - name: Enforce Windows OAuth release readiness
         if: always() && steps.windows-oauth-preflight.outcome != 'success'
@@ -271,7 +283,7 @@ jobs:
           cache: true
 
       - name: Get dependencies
-        run: flutter pub get
+        run: flutter pub get --enforce-lockfile --no-example
 
       - name: Run the complete Flutter suite on Windows (shard ${{ matrix.shard }} of 2)
         env:
@@ -309,7 +321,7 @@ jobs:
           cache: true
 
       - name: Get dependencies
-        run: flutter pub get
+        run: flutter pub get --enforce-lockfile --no-example
 
       - name: Run the deterministic Windows desktop journey
         run: >-

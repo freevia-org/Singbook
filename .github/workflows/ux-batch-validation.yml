@@ -25,12 +25,14 @@ env:
 
 jobs:
   focused-regressions:
+    # The complete CI suite already discovers all six files on every PR.
+    # Keep this serial diagnostic lane available for targeted manual runs.
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - uses: subosito/flutter-action@v2
         with:
@@ -67,7 +69,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - uses: subosito/flutter-action@v2
         with:
@@ -87,12 +88,15 @@ jobs:
             2>&1 | tee artifacts/ux-batch-validation/host-visuals.log
       - name: Verify and hash the fresh capture set
         env:
-          VALIDATED_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          VALIDATED_SOURCE_SHA: ${{ github.sha }}
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import hashlib, json, os
+          import hashlib, json, os, subprocess
           root = Path('artifacts/ux-batch-validation')
+          source = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+          assert source == os.environ['VALIDATED_SOURCE_SHA'], 'Capture checkout differs from the workflow source'
+          tree = subprocess.check_output(['git', 'rev-parse', 'HEAD^{tree}'], text=True).strip()
           captures = root / 'captures'
           scenarios = ('phone', 'compact_large', 'landscape', 'wide_rtl', 'tablet')
           screens = ('library', 'setlists', 'reader', 'speed-held', 'fullscreen')
@@ -110,7 +114,7 @@ jobs:
               for extension in ('png', 'json'):
                   path = captures / f'{name}.{extension}'
                   files[path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
-          manifest = {'sourceSha': os.environ['VALIDATED_SOURCE_SHA'],
+          manifest = {'sourceSha': source, 'sourceTree': tree,
                       'evidenceKind': 'host_widget_screenshots', 'pngCount': 25,
                       'nativeFullscreenVerified': False, 'files': files}
           (root / 'capture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
