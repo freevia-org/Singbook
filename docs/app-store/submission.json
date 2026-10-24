@@ -1,7 +1,7 @@
 {
-  "status": "release_35_draft_not_upload_ready",
-  "version": "0.2.21",
-  "build": "35",
+  "status": "release_36_draft_not_upload_ready",
+  "version": "0.2.22",
+  "build": "36",
   "bundle_id": "org.freevia.singbook",
   "primary_locale": "en-US",
   "category_proposed": "MUSIC",
