@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/material.dart';
 
 import '../../l10n/generated/app_localizations.dart';
+import '../../sync/sync_provider.dart';
 import '../localized_labels.dart';
 import '../verse_ui_state.dart';
 import '../account_avatar.dart';
@@ -15,6 +16,8 @@ const _signInAgainCodes = {
   'access_denied',
   'not_signed_in',
   'sign_in_failed',
+  'icloud_unavailable',
+  'account_unavailable',
 };
 
 /// The sync refused to delete items the cloud no longer lists.
@@ -51,6 +54,41 @@ class AccountSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          if (state.appleSyncSupported)
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: DropdownButtonFormField<SyncProvider>(
+                key: const ValueKey('account-sync-provider'),
+                isExpanded: true,
+                initialValue: state.syncProvider,
+                decoration: InputDecoration(labelText: l10n.accountTitle),
+                items: const [
+                  DropdownMenuItem(
+                    value: SyncProvider.googleDrive,
+                    child: Text(
+                      'Google Drive',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: SyncProvider.iCloud,
+                    child: Text(
+                      'iCloud',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+                onChanged: state.syncBusy
+                    ? null
+                    : (value) {
+                        if (value != null) {
+                          unawaited(controller.selectSyncProvider(value));
+                        }
+                      },
+              ),
+            ),
           if (!state.syncReady)
             _unavailable(l10n)
           else if (!state.syncSignedIn)
@@ -80,7 +118,11 @@ class AccountSection extends StatelessWidget {
         key: const ValueKey('account-signed-out'),
         leading: const Icon(Icons.cloud_outlined),
         title: Text(l10n.accountSignedOut),
-        subtitle: Text(l10n.accountSignedOutBenefits),
+        subtitle: Text(
+          state.syncProvider == SyncProvider.iCloud
+              ? l10n.accountICloudBenefits
+              : l10n.accountSignedOutBenefits,
+        ),
       ),
       if (code != null) _ErrorCallout(code: code, action: null, onAction: null),
       Padding(
@@ -93,7 +135,11 @@ class AccountSection extends StatelessWidget {
               ? const _Spinner()
               : const Icon(Icons.login_rounded),
           label: Text(
-            state.syncBusy ? l10n.accountWorking : l10n.accountSignInWithGoogle,
+            state.syncBusy
+                ? l10n.accountWorking
+                : state.syncProvider == SyncProvider.iCloud
+                ? l10n.accountConnectICloud
+                : l10n.accountSignInWithGoogle,
           ),
         ),
       ),
@@ -151,8 +197,9 @@ class AccountSection extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
         child: Text(l10n.accountAutoSync),
       ),
-      if (defaultTargetPlatform == TargetPlatform.android ||
-          defaultTargetPlatform == TargetPlatform.macOS) ...[
+      if (state.syncProvider == SyncProvider.googleDrive &&
+          (defaultTargetPlatform == TargetPlatform.android ||
+              defaultTargetPlatform == TargetPlatform.macOS)) ...[
         ListTile(
           key: const ValueKey('account-drive-folder'),
           leading: const Icon(Icons.folder_open_outlined),
@@ -174,17 +221,22 @@ class AccountSection extends StatelessWidget {
             onTap: state.syncBusy ? null : controller.importChordProFromDrive,
           ),
       ],
-      ListTile(
-        key: const ValueKey('account-use-different'),
-        leading: const Icon(Icons.switch_account_outlined),
-        title: Text(l10n.accountUseDifferent),
-        enabled: !state.syncBusy,
-        onTap: state.syncBusy ? null : () => _useDifferentAccount(),
-      ),
+      if (state.syncProvider == SyncProvider.googleDrive)
+        ListTile(
+          key: const ValueKey('account-use-different'),
+          leading: const Icon(Icons.switch_account_outlined),
+          title: Text(l10n.accountUseDifferent),
+          enabled: !state.syncBusy,
+          onTap: state.syncBusy ? null : () => _useDifferentAccount(),
+        ),
       ListTile(
         key: const ValueKey('account-sign-out'),
         leading: const Icon(Icons.logout_rounded),
-        title: Text(l10n.accountSignOut),
+        title: Text(
+          state.syncProvider == SyncProvider.iCloud
+              ? l10n.accountDisconnectICloud
+              : l10n.accountSignOut,
+        ),
         enabled: !state.syncBusy,
         onTap: state.syncBusy ? null : () => _confirmSignOut(context),
       ),

@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart'
+    show debugDefaultTargetPlatformOverride, TargetPlatform;
+import 'package:singbook/sync/sync_provider.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/application/file_actions.dart';
@@ -81,8 +84,47 @@ void main() {
     await device.close();
   });
 
-  Future<void> addSong(AppController app, String id, String body) => app.saveSong(
-    SongDocument(id: id, title: id, artist: 'A', body: body),
+  Future<void> addSong(AppController app, String id, String body) =>
+      app.saveSong(SongDocument(id: id, title: id, artist: 'A', body: body));
+
+  test(
+    'switching cloud provider disconnects without cloud work or library edits',
+    () async {
+      final previous = debugDefaultTargetPlatformOverride;
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = previous);
+      await device.saveSong('local', 'keep this song');
+      final app = await start();
+      cloud.resetCounters();
+      await app.selectSyncProvider(SyncProvider.iCloud);
+      expect(app.syncProvider, SyncProvider.iCloud);
+      expect(device.auth.connected, isFalse);
+      expect(app.syncConnected, isFalse);
+      expect(await device.repo.getSetting('sync.provider'), 'icloud');
+      expect(await device.body('local'), 'keep this song');
+      expect(cloud.requests, 0);
+      await app.selectSyncProvider(SyncProvider.googleDrive);
+      expect(app.syncProvider, SyncProvider.googleDrive);
+      expect(app.syncConnected, isFalse);
+      expect(await device.repo.getSetting('sync.provider'), 'google');
+      expect(cloud.requests, 0);
+    },
+  );
+
+  test(
+    'unsupported Apple sync selection preserves the current provider',
+    () async {
+      final previous = debugDefaultTargetPlatformOverride;
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      addTearDown(() => debugDefaultTargetPlatformOverride = previous);
+      final app = await start();
+      await app.selectSyncProvider(SyncProvider.iCloud);
+      expect(app.syncProvider, SyncProvider.googleDrive);
+      expect(app.syncConnected, isTrue);
+      expect(app.lastSyncErrorCode, 'icloud_unavailable');
+      expect(await device.repo.getSetting('sync.provider'), isNull);
+      expect(cloud.requests, 0);
+    },
   );
 
   test('startup does no cloud work; manual sync records the time', () async {
@@ -140,8 +182,7 @@ void main() {
     );
   });
 
-  test('add, update, and remove each synchronize the song library',
-      () async {
+  test('add, update, and remove each synchronize the song library', () async {
     final app = await start();
     cloud.resetCounters();
     await addSong(app, 'x', 'first');
@@ -156,33 +197,29 @@ void main() {
     expect(app.autoSyncEnabled, isTrue);
   });
 
-  test(
-    'setlist-only and no-op imports do not sync; song imports do',
-    () async {
-      final app = await start();
-      cloud.resetCounters();
-      final set = SetlistDocument(id: 'set', name: 'Set');
-      await app.importCollection(ImportedCollection([], [set]));
-      await app.importCollection(ImportedCollection([], [set]));
-      await settle(100);
-      expect(cloud.requests, 0);
+  test('setlist-only and no-op imports do not sync; song imports do', () async {
+    final app = await start();
+    cloud.resetCounters();
+    final set = SetlistDocument(id: 'set', name: 'Set');
+    await app.importCollection(ImportedCollection([], [set]));
+    await app.importCollection(ImportedCollection([], [set]));
+    await settle(100);
+    expect(cloud.requests, 0);
 
-      await app.importCollection(
-        ImportedCollection([
-          SongDocument(
-            id: 'imported',
-            title: 'Imported',
-            artist: 'A',
-            body: 'words',
-          ),
-        ], []),
-      );
-      await until(() => cloud.has('song-imported.cho'));
-    },
-  );
+    await app.importCollection(
+      ImportedCollection([
+        SongDocument(
+          id: 'imported',
+          title: 'Imported',
+          artist: 'A',
+          body: 'words',
+        ),
+      ], []),
+    );
+    await until(() => cloud.has('song-imported.cho'));
+  });
 
-  test('a song change during sync queues one follow-up run',
-      () async {
+  test('a song change during sync queues one follow-up run', () async {
     final app = await start();
     final gate = Completer<void>();
     var concurrent = 0, maxConcurrent = 0;
@@ -208,26 +245,29 @@ void main() {
     expect(cloud.creates, 2);
   });
 
-  test('failed automatic sync waits for the next change or manual retry', () async {
-    final app = await start();
-    final times = <DateTime>[];
-    cloud.hook = (op, target) {
-      if (op == 'list') {
-        times.add(DateTime.now());
-        throw const SyncException('network');
-      }
-    };
-    await addSong(app, 'a', '1');
-    await until(() => times.isNotEmpty);
-    expect(times, hasLength(1));
-    expect(app.lastSyncErrorCode, 'network');
-    await settle(250);
-    expect(times, hasLength(1), reason: 'no scheduled retry');
-    cloud.hook = null;
-    await app.syncNow();
-    expect(cloud.creates, 1);
-    expect(app.lastSyncErrorCode, isNull);
-  });
+  test(
+    'failed automatic sync waits for the next change or manual retry',
+    () async {
+      final app = await start();
+      final times = <DateTime>[];
+      cloud.hook = (op, target) {
+        if (op == 'list') {
+          times.add(DateTime.now());
+          throw const SyncException('network');
+        }
+      };
+      await addSong(app, 'a', '1');
+      await until(() => times.isNotEmpty);
+      expect(times, hasLength(1));
+      expect(app.lastSyncErrorCode, 'network');
+      await settle(250);
+      expect(times, hasLength(1), reason: 'no scheduled retry');
+      cloud.hook = null;
+      await app.syncNow();
+      expect(cloud.creates, 1);
+      expect(app.lastSyncErrorCode, isNull);
+    },
+  );
 
   test('authorization errors are surfaced without automatic retry', () async {
     final app = await start();
@@ -276,29 +316,31 @@ void main() {
     expect(app.lastSyncAt, isNotNull);
   });
 
-  test('a different account needs an explicit choice before anything happens',
-      () async {
-    await device.saveSong('mine', 'local');
-    final app = await start();
-    await app.syncNow();
-    await app.signOutFromSync();
-    device.auth.id = 'person-b';
-    await app.signInForSync();
-    expect(app.syncConnected, isTrue);
-    expect(app.lastSyncErrorCode, 'account_changed');
-    expect(app.syncAccountChangePending, isTrue);
-    expect(app.syncPreviousAccountEmail, 'person-a@example.test');
-    cloud.resetCounters();
-    await app.syncNow();
-    expect(app.lastSyncErrorCode, 'account_changed');
-    await settle(150);
-    expect(cloud.requests, 0, reason: 'no silent merge, no background retry');
-    await app.adoptAccount(mergeLocal: true);
-    expect(app.lastSyncErrorCode, isNull);
-    expect(app.syncAccountChangePending, isFalse);
-    expect(app.songs.map((s) => s.id), ['mine']);
-    expect(app.lastSyncAt, isNotNull);
-  });
+  test(
+    'a different account needs an explicit choice before anything happens',
+    () async {
+      await device.saveSong('mine', 'local');
+      final app = await start();
+      await app.syncNow();
+      await app.signOutFromSync();
+      device.auth.id = 'person-b';
+      await app.signInForSync();
+      expect(app.syncConnected, isTrue);
+      expect(app.lastSyncErrorCode, 'account_changed');
+      expect(app.syncAccountChangePending, isTrue);
+      expect(app.syncPreviousAccountEmail, 'person-a@example.test');
+      cloud.resetCounters();
+      await app.syncNow();
+      expect(app.lastSyncErrorCode, 'account_changed');
+      await settle(150);
+      expect(cloud.requests, 0, reason: 'no silent merge, no background retry');
+      await app.adoptAccount(mergeLocal: true);
+      expect(app.lastSyncErrorCode, isNull);
+      expect(app.syncAccountChangePending, isFalse);
+      expect(app.songs.map((s) => s.id), ['mine']);
+      expect(app.lastSyncAt, isNotNull);
+    },
+  );
 
   test('conflicts and unusable remote files are reported by code', () async {
     final other = await Device.create(cloud);
@@ -316,7 +358,11 @@ void main() {
     await app.syncNow();
     expect(app.lastSyncConflicts, 1);
     expect(app.songs, hasLength(2));
-    cloud.put('song-bad.cho', 'garbage', properties: {'kind': 'song', 'hash': syncHash('other')});
+    cloud.put(
+      'song-bad.cho',
+      'garbage',
+      properties: {'kind': 'song', 'hash': syncHash('other')},
+    );
     await app.syncNow();
     expect(app.lastSyncConflicts, 0);
     expect(app.lastSyncErrorCode, 'invalid_remote_data');
@@ -335,73 +381,82 @@ void main() {
     expect(cloud.requests, 0);
   });
 
-  test('sync before initialize and without configuration stay handled', () async {
-    final fresh = AppController(
-      discovery: SourceDiscoveryService([_QuietCatalog()]),
-    );
-    await fresh.signInForSync();
-    expect(fresh.lastSyncErrorCode, 'not_initialized');
-    expect(fresh.autoSyncEnabled, isTrue);
-    controllers.add(fresh);
-    fresh.onAppResumed(); // harmless
-    controllers.remove(fresh);
-    fresh.dispose();
-  });
+  test(
+    'sync before initialize and without configuration stay handled',
+    () async {
+      final fresh = AppController(
+        discovery: SourceDiscoveryService([_QuietCatalog()]),
+      );
+      await fresh.signInForSync();
+      expect(fresh.lastSyncErrorCode, 'not_initialized');
+      expect(fresh.autoSyncEnabled, isTrue);
+      controllers.add(fresh);
+      fresh.onAppResumed(); // harmless
+      controllers.remove(fresh);
+      fresh.dispose();
+    },
+  );
 
-  test('a failed sync still refreshes the cache from what it committed', () async {
-    final other = await Device.create(cloud);
-    addTearDown(other.close);
-    final app = await start();
-    for (var i = 0; i < 3; i++) {
-      await other.saveSong('p$i', 'body $i');
-    }
-    await other.sync.sync();
-    var reads = 0;
-    cloud.hook = (op, target) {
-      if (op == 'read' && ++reads == 3) throw const SyncException('network');
-    };
-    await app.syncNow();
-    cloud.hook = null;
-    expect(app.lastSyncErrorCode, 'network');
-    expect(app.songs, hasLength(2), reason: 'pulled items are committed');
-    final pulled = app.songs.first;
-    expect(app.songHash(pulled.id), isNotNull);
-    expect(await app.saveSong(pulled.copyWith(body: 'edited')), isTrue);
-  });
+  test(
+    'a failed sync still refreshes the cache from what it committed',
+    () async {
+      final other = await Device.create(cloud);
+      addTearDown(other.close);
+      final app = await start();
+      for (var i = 0; i < 3; i++) {
+        await other.saveSong('p$i', 'body $i');
+      }
+      await other.sync.sync();
+      var reads = 0;
+      cloud.hook = (op, target) {
+        if (op == 'read' && ++reads == 3) throw const SyncException('network');
+      };
+      await app.syncNow();
+      cloud.hook = null;
+      expect(app.lastSyncErrorCode, 'network');
+      expect(app.songs, hasLength(2), reason: 'pulled items are committed');
+      final pulled = app.songs.first;
+      expect(app.songHash(pulled.id), isNotNull);
+      expect(await app.saveSong(pulled.copyWith(body: 'edited')), isTrue);
+    },
+  );
 
-  test('a wiped cloud asks before deleting; the user can keep or confirm', () async {
-    // This scenario controls sync explicitly; background uploads must not race
-    // the setup writes or the simulated remote deletion.
-    final app = await start(
-      delay: const Duration(days: 1),
-      startDelay: const Duration(days: 1),
-    );
-    await app.syncNow();
-    for (var i = 0; i < 6; i++) {
-      await addSong(app, 'w$i', 'body $i');
-    }
-    await app.syncNow();
-    expect(cloud.names, hasLength(6));
-    for (final name in List.of(cloud.names)) {
-      cloud.remove(name);
-    }
-    await app.syncNow();
-    expect(app.lastSyncErrorCode, 'remote_listing_suspicious');
-    expect(app.syncSuspiciousDeletionCount, 6);
-    expect(app.songs, hasLength(6));
-    await app.keepLocalAfterRemoteDeletions();
-    expect(app.lastSyncErrorCode, isNull);
-    expect(cloud.names, hasLength(6));
-    expect(app.songs, hasLength(6));
-    for (final name in List.of(cloud.names)) {
-      cloud.remove(name);
-    }
-    await app.syncNow();
-    expect(app.lastSyncErrorCode, 'remote_listing_suspicious');
-    await app.confirmRemoteDeletions();
-    expect(app.lastSyncErrorCode, isNull);
-    expect(app.songs, isEmpty);
-  });
+  test(
+    'a wiped cloud asks before deleting; the user can keep or confirm',
+    () async {
+      // This scenario controls sync explicitly; background uploads must not race
+      // the setup writes or the simulated remote deletion.
+      final app = await start(
+        delay: const Duration(days: 1),
+        startDelay: const Duration(days: 1),
+      );
+      await app.syncNow();
+      for (var i = 0; i < 6; i++) {
+        await addSong(app, 'w$i', 'body $i');
+      }
+      await app.syncNow();
+      expect(cloud.names, hasLength(6));
+      for (final name in List.of(cloud.names)) {
+        cloud.remove(name);
+      }
+      await app.syncNow();
+      expect(app.lastSyncErrorCode, 'remote_listing_suspicious');
+      expect(app.syncSuspiciousDeletionCount, 6);
+      expect(app.songs, hasLength(6));
+      await app.keepLocalAfterRemoteDeletions();
+      expect(app.lastSyncErrorCode, isNull);
+      expect(cloud.names, hasLength(6));
+      expect(app.songs, hasLength(6));
+      for (final name in List.of(cloud.names)) {
+        cloud.remove(name);
+      }
+      await app.syncNow();
+      expect(app.lastSyncErrorCode, 'remote_listing_suspicious');
+      await app.confirmRemoteDeletions();
+      expect(app.lastSyncErrorCode, isNull);
+      expect(app.songs, isEmpty);
+    },
+  );
 
   test('a favourite tap flips the stored value, not a stale snapshot', () async {
     final app = await start();
@@ -409,23 +464,28 @@ void main() {
     final snapshot = app.songs.single;
     expect(snapshot.favorite, isFalse);
     // Changed elsewhere (e.g. by a sync) while the UI still shows the snapshot.
-    await device.repo.saveSong((await device.repo.getSong('f'))!.copyWith(favorite: true));
+    await device.repo.saveSong(
+      (await device.repo.getSong('f'))!.copyWith(favorite: true),
+    );
     await app.toggleFavorite(snapshot);
     expect((await app.loadSong('f'))!.favorite, isFalse);
   });
 
-  test('concurrent writes leave the cache and hashes on the newest state', () async {
-    final app = await start();
-    await Future.wait([
-      addSong(app, 'c1', 'one'),
-      addSong(app, 'c2', 'two'),
-      addSong(app, 'c3', 'three'),
-    ]);
-    expect(app.songs.map((s) => s.id).toSet(), {'c1', 'c2', 'c3'});
-    for (final id in ['c1', 'c2', 'c3']) {
-      expect(app.songHash(id), await device.repo.getSongHash(id));
-    }
-  });
+  test(
+    'concurrent writes leave the cache and hashes on the newest state',
+    () async {
+      final app = await start();
+      await Future.wait([
+        addSong(app, 'c1', 'one'),
+        addSong(app, 'c2', 'two'),
+        addSong(app, 'c3', 'three'),
+      ]);
+      expect(app.songs.map((s) => s.id).toSet(), {'c1', 'c2', 'c3'});
+      for (final id in ['c1', 'c2', 'c3']) {
+        expect(app.songHash(id), await device.repo.getSongHash(id));
+      }
+    },
+  );
 
   test('an edit made before shutdown stays local on next start', () async {
     await device.saveSong('a', 'one');

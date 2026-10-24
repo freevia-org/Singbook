@@ -1080,6 +1080,20 @@ class AppLocalizationsSv extends AppLocalizations {
   String get accountTitle => 'Konto och synkronisering';
 
   @override
+  String get accountICloudBenefits =>
+      'Använd ditt Apple-konto för att synkronisera låtar och låtlistor privat med iCloud. Ändringar synkroniseras automatiskt när du har anslutit.';
+
+  @override
+  String get accountICloudUnavailable =>
+      'iCloud är inte tillgängligt. Kontrollera ditt Apple-konto och åtkomsten till iCloud i systeminställningarna och försök igen.';
+
+  @override
+  String get accountConnectICloud => 'Anslut iCloud';
+
+  @override
+  String get accountDisconnectICloud => 'Koppla från iCloud';
+
+  @override
   String get accountUnavailable =>
       'Synkronisering kräver en version av Singbook där inloggning med Google har konfigurerats. I den här versionen sparas låtarna endast på den här enheten.';
 

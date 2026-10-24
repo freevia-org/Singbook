@@ -1073,6 +1073,20 @@ class AppLocalizationsHi extends AppLocalizations {
   String get accountTitle => 'खाता और सिंक';
 
   @override
+  String get accountICloudBenefits =>
+      'iCloud के साथ गाने और सेटसूचियों को निजी तौर पर सिंक करने के लिए अपने Apple खाते का उपयोग करें। कनेक्ट करने के बाद बदलाव अपने-आप सिंक होते हैं।';
+
+  @override
+  String get accountICloudUnavailable =>
+      'iCloud उपलब्ध नहीं है। सिस्टम सेटिंग्स में अपना Apple खाता और iCloud एक्सेस जाँचें, फिर दोबारा कोशिश करें।';
+
+  @override
+  String get accountConnectICloud => 'iCloud कनेक्ट करें';
+
+  @override
+  String get accountDisconnectICloud => 'iCloud डिस्कनेक्ट करें';
+
+  @override
   String get accountUnavailable =>
       'सिंक के लिए Google साइन-इन कॉन्फ़िगर किया हुआ Singbook बिल्ड चाहिए। यह बिल्ड आपके गीत केवल इसी डिवाइस पर रखता है।';
 

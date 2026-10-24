@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/l10n/generated/app_localizations.dart';
 import 'package:singbook/ui/home/home_screen.dart';
+import 'package:singbook/ui/settings/search_catalog_selector.dart';
 import 'package:singbook/ui/theme/verse_theme.dart';
 import 'package:singbook/ui/verse_app.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
@@ -47,43 +48,40 @@ const _recordingReference = SearchReferenceData(
 Finder get _selector => find.byKey(const ValueKey('search-catalog-selector'));
 
 void main() {
-  testWidgets(
-    'catalog selector appears only in Online with its localized label',
-    (tester) async {
-      final controller = _CatalogController(mode: HomeListMode.recent);
-      addTearDown(controller.dispose);
-      await _pumpHome(tester, controller, locale: const Locale('uk'));
-
+  testWidgets('the search screen has no catalog selector in any mode', (
+    tester,
+  ) async {
+    final controller = _CatalogController(mode: HomeListMode.recent);
+    addTearDown(controller.dispose);
+    await _pumpHome(tester, controller);
+    for (final mode in const ['library', 'online', 'recent']) {
       expect(_selector, findsNothing);
-      await tester.tap(find.byKey(const ValueKey('home-mode-library')));
+      await tester.tap(find.byKey(ValueKey('home-mode-$mode')));
       await tester.pumpAndSettle();
-      expect(controller.state.homeListMode, HomeListMode.library);
-      expect(_selector, findsNothing);
+    }
+    expect(_selector, findsNothing);
+    expect(controller.catalogSelections, isEmpty);
+    expect(tester.takeException(), isNull);
+  });
 
-      await tester.tap(find.byKey(const ValueKey('home-mode-online')));
-      await tester.pumpAndSettle();
-      final l10n = _l10n(tester);
-      expect(_selector, findsOneWidget);
-      expect(find.text(l10n.searchSourceLabel), findsOneWidget);
-      expect(_selectedId(tester), 'lrclib');
-
-      await tester.tap(find.byKey(const ValueKey('home-mode-recent')));
-      await tester.pumpAndSettle();
-      expect(_selector, findsNothing);
-      expect(controller.catalogSelections, isEmpty);
-      expect(tester.takeException(), isNull);
-    },
-  );
+  testWidgets('catalog selector in settings uses its localized label', (
+    tester,
+  ) async {
+    final controller = _CatalogController();
+    addTearDown(controller.dispose);
+    await _pumpSelector(tester, controller, locale: const Locale('uk'));
+    expect(_selector, findsOneWidget);
+    expect(find.text(_l10n(tester).searchSourceLabel), findsOneWidget);
+    expect(_selectedId(tester), 'lrclib');
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets(
     'normal source menu selection submits the registered ID and keeps query',
     (tester) async {
-      final controller = _CatalogController();
+      final controller = _CatalogController(query: 'Lanterns');
       addTearDown(controller.dispose);
-      await _pumpHome(tester, controller);
-      await tester.enterText(find.byType(TextField), 'Lanterns');
-      await tester.pumpAndSettle();
-      expect(controller.state.query, 'Lanterns');
+      await _pumpSelector(tester, controller);
 
       await tester.tap(_selector);
       await tester.pumpAndSettle();
@@ -94,10 +92,6 @@ void main() {
       expect(controller.state.searchCatalogId, 'wikisource');
       expect(_selectedId(tester), 'wikisource');
       expect(controller.state.query, 'Lanterns');
-      expect(
-        tester.widget<TextField>(find.byType(TextField)).controller!.text,
-        'Lanterns',
-      );
       expect(tester.takeException(), isNull);
     },
   );
@@ -107,7 +101,7 @@ void main() {
     (tester) async {
       final controller = _FailingCatalogController();
       addTearDown(controller.dispose);
-      await _pumpHome(tester, controller);
+      await _pumpSelector(tester, controller);
       _expectVisibleCatalog(tester, 'lrclib', 'LRCLIB');
 
       await tester.tap(_selector);
@@ -133,10 +127,6 @@ void main() {
         findsNothing,
       );
       expect(controller.state.query, 'Lanterns');
-      expect(
-        tester.widget<TextField>(find.byType(TextField)).controller!.text,
-        'Lanterns',
-      );
       expect(tester.takeException(), isNull);
 
       // Retrying the same choice must work through the real popup. Calling the
@@ -152,10 +142,6 @@ void main() {
       expect(controller.state.searchCatalogId, 'wikisource');
       _expectVisibleCatalog(tester, 'wikisource', 'Wikisource');
       expect(controller.state.query, 'Lanterns');
-      expect(
-        tester.widget<TextField>(find.byType(TextField)).controller!.text,
-        'Lanterns',
-      );
       expect(tester.takeException(), isNull);
     },
   );
@@ -165,7 +151,7 @@ void main() {
     (tester) async {
       final controller = _CatalogController(query: 'Lanterns');
       addTearDown(controller.dispose);
-      await _pumpHome(tester, controller);
+      await _pumpSelector(tester, controller);
       expect(_selectedId(tester), 'lrclib');
 
       // A settings refresh can change the effective selection without a menu tap.
@@ -203,7 +189,7 @@ void main() {
         selectedId: null,
       );
       addTearDown(controller.dispose);
-      await _pumpHome(tester, controller);
+      await _pumpSelector(tester, controller);
       expect(_selector, findsNothing);
       expect(find.text(_l10n(tester).searchSourceLabel), findsNothing);
 
@@ -301,7 +287,7 @@ void main() {
       );
       addTearDown(controller.dispose);
       final boundaryKey = GlobalKey();
-      await _pumpHome(
+      await _pumpSelector(
         tester,
         controller,
         size: scenario.$2,
@@ -391,11 +377,48 @@ void _expectVisibleCatalog(WidgetTester tester, String id, String name) {
 }
 
 AppLocalizations _l10n(WidgetTester tester) =>
-    AppLocalizations.of(tester.element(find.byType(VerseHomeScreen)));
+    AppLocalizations.of(tester.element(find.byType(Scaffold).first));
 
 Future<void> _pumpHome(
   WidgetTester tester,
   _CatalogController controller, {
+  Size size = const Size(360, 780),
+  Locale locale = const Locale('en'),
+}) => _pumpHost(
+  tester,
+  controller,
+  (state) => VerseHomeScreen(controller: controller, state: state),
+  size: size,
+  locale: locale,
+);
+
+/// The selector as Settings > Sources hosts it: padded inside a scroll view.
+Future<void> _pumpSelector(
+  WidgetTester tester,
+  _CatalogController controller, {
+  Size size = const Size(360, 780),
+  Locale locale = const Locale('en'),
+  double textScale = 1,
+  Brightness brightness = Brightness.light,
+  GlobalKey? boundaryKey,
+}) => _pumpHost(
+  tester,
+  controller,
+  (state) => ListView(
+    padding: const EdgeInsets.all(16),
+    children: [SearchCatalogSelector(controller: controller, state: state)],
+  ),
+  size: size,
+  locale: locale,
+  textScale: textScale,
+  brightness: brightness,
+  boundaryKey: boundaryKey,
+);
+
+Future<void> _pumpHost(
+  WidgetTester tester,
+  _CatalogController controller,
+  Widget Function(VerseUiState state) body, {
   Size size = const Size(360, 780),
   Locale locale = const Locale('en'),
   double textScale = 1,
@@ -433,12 +456,7 @@ Future<void> _pumpHome(
         ),
         home: AnimatedBuilder(
           animation: controller,
-          builder: (context, _) => Scaffold(
-            body: VerseHomeScreen(
-              controller: controller,
-              state: controller.state,
-            ),
-          ),
+          builder: (context, _) => Scaffold(body: body(controller.state)),
         ),
       ),
     ),
@@ -482,7 +500,7 @@ Future<void> _capture(
       await file.writeAsBytes(data!.buffer.asUint8List(), flush: true);
       await sidecar.writeAsString(
         jsonEncode({
-          'screen': 'online-catalog-selector-$name',
+          'screen': 'settings-catalog-selector-$name',
           'width': image.width,
           'height': image.height,
           'locale': locale.toLanguageTag(),

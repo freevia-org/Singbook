@@ -1083,6 +1083,20 @@ class AppLocalizationsHr extends AppLocalizations {
   String get accountTitle => 'Račun i sinkronizacija';
 
   @override
+  String get accountICloudBenefits =>
+      'Upotrijebite svoj Apple račun za privatnu sinkronizaciju pjesama i popisa pjesama putem iClouda. Nakon povezivanja promjene se sinkroniziraju automatski.';
+
+  @override
+  String get accountICloudUnavailable =>
+      'iCloud nije dostupan. Provjerite svoj Apple račun i pristup iCloudu u postavkama sustava pa pokušajte ponovno.';
+
+  @override
+  String get accountConnectICloud => 'Poveži iCloud';
+
+  @override
+  String get accountDisconnectICloud => 'Odspoji iCloud';
+
+  @override
   String get accountUnavailable =>
       'Za sinkronizaciju je potrebna verzija Singbooka s konfiguriranom prijavom putem Googlea. Ova verzija čuva pjesme samo na ovom uređaju.';
 

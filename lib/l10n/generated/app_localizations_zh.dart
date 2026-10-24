@@ -1050,6 +1050,20 @@ class AppLocalizationsZh extends AppLocalizations {
   String get accountTitle => '账户与同步';
 
   @override
+  String get accountICloudBenefits =>
+      '使用 Apple 账户通过 iCloud 私密同步歌曲和歌单。连接后，所有更改都会自动同步。';
+
+  @override
+  String get accountICloudUnavailable =>
+      'iCloud 不可用。请在系统设置中检查 Apple 账户和 iCloud 访问权限，然后重试。';
+
+  @override
+  String get accountConnectICloud => '连接 iCloud';
+
+  @override
+  String get accountDisconnectICloud => '断开 iCloud';
+
+  @override
   String get accountUnavailable =>
       '同步需要配置了 Google 登录功能的 Singbook 版本。此版本只会将歌曲保存在此设备上。';
 

@@ -148,6 +148,10 @@ Create these:
    The iOS build also needs the client ID and its **reversed** form (the two
    halves swapped: `com.googleusercontent.apps.<number>-<hash>`) in
    `ios/Flutter/Secrets.xcconfig` (git-ignored; see the next section).
+   Google documents this iOS-type OAuth client for both iOS and macOS apps.
+   Singbook reuses `VERSE_GOOGLE_IOS_CLIENT_ID` on macOS when no
+   `VERSE_GOOGLE_MACOS_CLIENT_ID` override is supplied. The bundle ID must
+   match `org.freevia.singbook` on both Apple targets.
 
 The Android clients themselves never appear in the app's configuration: Google
 matches the running APK to them by package name and certificate. Leave the
@@ -166,6 +170,7 @@ into chats). Start from `config/defines.example.json`:
   "GENIUS_ACCESS_TOKEN": "<genius client access token>",
   "VERSE_GOOGLE_SERVER_CLIENT_ID": "<web client id>.apps.googleusercontent.com",
   "VERSE_GOOGLE_IOS_CLIENT_ID": "",
+  "VERSE_GOOGLE_MACOS_CLIENT_ID": "",
   "SINGBOOK_CONTACT_URL": ""
 }
 ```
@@ -193,6 +198,13 @@ The optional visible-folder/file Picker uses this same iOS client and reversed
 callback scheme in a system-browser OAuth flow, with `drive.file` alone and
 PKCE. Enable Drive and Picker APIs in the same Google project; no extra
 web client secret or broad Drive scope is used.
+
+For macOS, the build uses `VERSE_GOOGLE_MACOS_CLIENT_ID` when set, otherwise
+the iOS client ID above. Its callback scheme in
+`macos/Runner/Configs/Secrets.xcconfig` must match that effective ID. Run
+`python3 scripts/generate-macos-config.py` to create the ignored file from
+local defines when needed, then run `python3 scripts/check-macos-config.py`.
+The generator refuses to overwrite an existing file.
 
 Leave `VERSE_GOOGLE_IOS_CLIENT_ID` empty for Android-only builds. Both IDs must
 end in `.apps.googleusercontent.com` or the app treats Google sign-in as not

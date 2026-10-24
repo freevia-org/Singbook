@@ -1087,6 +1087,20 @@ class AppLocalizationsGa extends AppLocalizations {
   String get accountTitle => 'Cuntas agus sioncronú';
 
   @override
+  String get accountICloudBenefits =>
+      'Úsáid do Chuntas Apple chun amhráin agus seinmliostaí a shioncronú go príobháideach le iCloud. Sioncronófar athruithe go huathoibríoch tar éis nascadh.';
+
+  @override
+  String get accountICloudUnavailable =>
+      'Níl iCloud ar fáil. Seiceáil do Chuntas Apple agus rochtain iCloud i socruithe an chórais, ansin bain triail eile as.';
+
+  @override
+  String get accountConnectICloud => 'Ceangail le iCloud';
+
+  @override
+  String get accountDisconnectICloud => 'Dícheangail ó iCloud';
+
+  @override
   String get accountUnavailable =>
       'Teastaíonn leagan de Singbook atá cumraithe le síniú isteach le Google chun sioncronú a dhéanamh. Ní choinníonn an leagan seo d’amhráin ach ar an ngléas seo.';
 

@@ -5,6 +5,7 @@ import Security
 
 @main
 class AppDelegate: FlutterAppDelegate {
+  private var iCloudSyncChannel: ICloudSyncChannel?
   private var oauthBrowserChannel: FlutterMethodChannel?
   private var secureCredentialsChannel: FlutterMethodChannel?
   private var authorizationSession: ASWebAuthenticationSession?
@@ -35,6 +36,7 @@ class AppDelegate: FlutterAppDelegate {
   }
 
   func installNativeChannels(messenger: FlutterBinaryMessenger) {
+    iCloudSyncChannel = ICloudSyncChannel(messenger: messenger)
     let oauthChannel = FlutterMethodChannel(
       name: "org.freevia.singbook/oauth_browser",
       binaryMessenger: messenger

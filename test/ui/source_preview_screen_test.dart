@@ -7,6 +7,7 @@ import 'package:singbook/ui/home/home_screen.dart';
 import 'package:singbook/ui/home/source_preview_screen.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
 import 'package:singbook/ui/widgets/chord_lyrics_line.dart';
+import 'package:singbook/ui/widgets/verse_components.dart';
 
 const _lines = [
   LyricLineData(id: 's', section: 'Verse 1', isBlank: true),
@@ -759,6 +760,50 @@ void main() {
           _app(controller, language: configuration.$2, scale: configuration.$3),
         );
         expect(find.byKey(const ValueKey('preview-save-open')), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
+  for (final (language, scale) in [('en', 1.0), ('ar', 2.0)]) {
+    testWidgets(
+      'version preview shows its artwork and album ($language, ${scale}x)',
+      (tester) async {
+        final controller = _Controller()
+          ..versions = [
+            SourceVersionData(
+              id: 'a',
+              providerId: 'a',
+              providerName: 'Lyrics A',
+              title: 'An original test song',
+              artist: 'The Testers',
+              album: 'Demo Album',
+              artworkUrl: 'https://images.example/cover.jpg',
+              hasLyrics: true,
+              isUsableVersion: true,
+              canSave: true,
+              bodyLines: _lines,
+              bodyPreview: _lines.sublist(1, 4),
+            ),
+          ];
+        addTearDown(controller.dispose);
+        await tester.binding.setSurfaceSize(const Size(360, 720));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        await tester.pumpWidget(
+          _app(controller, language: language, scale: scale),
+        );
+        await tester.pump();
+        final artwork = tester.widget<VerseArtwork>(
+          find.byKey(const ValueKey('version-preview-artwork')),
+        );
+        expect(artwork.url, 'https://images.example/cover.jpg');
+        expect(
+          find.descendant(
+            of: find.byKey(const ValueKey('version-preview-header')),
+            matching: find.textContaining('Demo Album'),
+          ),
+          findsOneWidget,
+        );
         expect(tester.takeException(), isNull);
       },
     );

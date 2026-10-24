@@ -1088,6 +1088,20 @@ class AppLocalizationsAr extends AppLocalizations {
   String get accountTitle => 'الحساب والمزامنة';
 
   @override
+  String get accountICloudBenefits =>
+      'استخدم حساب Apple لمزامنة الأغاني وقوائم التشغيل بخصوصية عبر iCloud. تتم مزامنة التغييرات تلقائيًا بعد الاتصال.';
+
+  @override
+  String get accountICloudUnavailable =>
+      'iCloud غير متاح. تحقّق من حساب Apple وإمكانية الوصول إلى iCloud في إعدادات النظام، ثم حاول مرة أخرى.';
+
+  @override
+  String get accountConnectICloud => 'الاتصال بـ iCloud';
+
+  @override
+  String get accountDisconnectICloud => 'قطع الاتصال بـ iCloud';
+
+  @override
   String get accountUnavailable =>
       'تتطلب المزامنة إصدارًا من Singbook تم إعداد تسجيل الدخول إلى Google فيه. يحتفظ هذا الإصدار بأغانيك على هذا الجهاز فقط.';
 

@@ -1074,6 +1074,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountTitle => 'Account and sync';
 
   @override
+  String get accountICloudBenefits =>
+      'Use your Apple Account to sync songs and setlists privately with iCloud. Changes sync automatically after connecting.';
+
+  @override
+  String get accountICloudUnavailable =>
+      'iCloud is unavailable. Check your Apple Account and iCloud access in system settings, then try again.';
+
+  @override
+  String get accountConnectICloud => 'Connect iCloud';
+
+  @override
+  String get accountDisconnectICloud => 'Disconnect iCloud';
+
+  @override
   String get accountUnavailable =>
       'Sync needs a build of Singbook with Google sign-in configured. This build keeps your songs on this device only.';
 

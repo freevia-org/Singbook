@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import '../sync/sync_provider.dart';
+
 enum VerseTab { home, songs, setlists, settings }
 
 enum VerseRoute { main, reader, editor, setlistDetail }
@@ -281,11 +283,16 @@ class SearchReferenceData {
     this.artworkUrl,
     this.matchReason,
     this.isHistoricalText = false,
+    this.sourceNames = const [],
   });
   final String id, title, artist, providerId, providerName;
   final String? album, artworkUrl, matchReason;
   final double? durationSeconds;
   final bool isHistoricalText;
+
+  /// Every source that found this recording, the opened one ([providerName])
+  /// first. Empty for a reference that is not a grouped search result.
+  final List<String> sourceNames;
 }
 
 @immutable
@@ -474,6 +481,8 @@ class VerseUiState {
     this.searchIncludesOtherSources = false,
     this.searchFiltersExpanded = false,
     this.searchFilters = const SearchFilterData(),
+    this.syncProvider = SyncProvider.googleDrive,
+    this.appleSyncSupported = false,
     this.syncReady = false,
     this.syncSignedIn = false,
     this.syncBusy = false,
@@ -552,6 +561,8 @@ class VerseUiState {
       searchIncludesOtherSources = o.searchIncludesOtherSources,
       searchFilters = o.searchFilters,
       searchFiltersExpanded = o.searchFiltersExpanded,
+      syncProvider = o.syncProvider,
+      appleSyncSupported = o.appleSyncSupported,
       syncReady = o.syncReady,
       syncSignedIn = o.syncSignedIn,
       syncBusy = o.syncBusy,
@@ -624,6 +635,8 @@ class VerseUiState {
   /// This describes eligibility, not a promise that other sources found rows.
   final bool searchIncludesOtherSources;
   final SearchFilterData searchFilters;
+  final SyncProvider syncProvider;
+  final bool appleSyncSupported;
   final bool searchFiltersExpanded, syncReady, syncSignedIn, syncBusy;
   final String? accountName, accountPhotoUrl, accountError;
   final String? syncDriveFolderName;
@@ -835,6 +848,8 @@ abstract class VerseUiController extends ChangeNotifier {
     String? name,
     String? notes,
   }) async {}
+  Future<void> selectSyncProvider(SyncProvider provider) async {}
+
   Future<void> syncNow() async {}
   SongInfoData? songInfo(String id) => null;
 

@@ -11,6 +11,8 @@ import '../domain/arrangement.dart' show plainLyrics;
 import '../domain/models.dart';
 import '../domain/chordpro.dart';
 import '../domain/combine.dart';
+import '../domain/metadata_enrichment.dart' show displayMetadataFor;
+import '../domain/search_grouping.dart' show sameSearchRecording;
 import '../domain/source_result_merge.dart';
 import '../providers/provider.dart';
 import '../providers/core/core_providers.dart';
@@ -20,6 +22,9 @@ import '../providers/source_catalog_client.dart';
 import '../providers/configurable_provider.dart';
 import 'file_actions.dart';
 import '../sync/google_drive_sync.dart';
+import '../sync/icloud_auth.dart';
+import '../sync/icloud_store.dart';
+import '../sync/sync_provider.dart';
 
 /// A user-visible outcome of an operation, identified by a stable [code] (never
 /// free text, never containing credentials) that the UI maps to a localized
@@ -193,6 +198,12 @@ class AppController extends ChangeNotifier {
   bool searching = false, discovering = false, initialized = false;
   String? errorCode;
   GoogleDriveSyncService? _sync;
+  final _syncProviders = <SyncProvider, GoogleDriveSyncService>{};
+  SyncProvider syncProvider = SyncProvider.googleDrive;
+  bool get appleSyncSupported =>
+      !kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.iOS ||
+          defaultTargetPlatform == TargetPlatform.macOS);
   bool get syncConfigured => _sync?.configured ?? false;
   bool get syncConnected => _sync?.isConnected ?? false;
   String? get syncAccountEmail => _sync?.accountEmail;
@@ -389,6 +400,12 @@ class AppController extends ChangeNotifier {
       _ownsRepository = true;
     }
     _sync ??= GoogleDriveSyncService(repository: repository);
+    _syncProviders.putIfAbsent(SyncProvider.googleDrive, () => _sync!);
+    if (appleSyncSupported &&
+        await repository.getSetting('sync.provider') == 'icloud') {
+      syncProvider = SyncProvider.iCloud;
+      _sync = _serviceForProvider(syncProvider);
+    }
     settings = jsonMap(await repository.getSetting('app'));
     if (_disposed) return;
     await _initializeSourceCatalog();
@@ -565,6 +582,14 @@ class AppController extends ChangeNotifier {
 
   Future<void> setProviderEnabled(String id, bool enabled) async {
     final previousCatalog = searchCatalogId;
+    if (providerEnabled(id) != enabled) {
+      // Artwork lookups use a separate queue from catalog search. Retire all
+      // pending work and cached art when source eligibility changes, so a late
+      // response or a cached result from a newly disabled source cannot be
+      // shown on the next build.
+      _cancelArtworkLookups();
+      artworkLookups.clear();
+    }
     if (!enabled && _searchProviderId == id) {
       cancelSearch();
     } else if (!enabled) {
@@ -611,6 +636,7 @@ class AppController extends ChangeNotifier {
   Future<void> search(String value) async {
     final epoch = ++_searchEpoch;
     _cancelCatalogSearch();
+    _cancelArtworkLookups();
     _searchProviderId = null;
     if (value != query) {
       selection = null;
@@ -717,9 +743,91 @@ class AppController extends ChangeNotifier {
     }
   }
 
+  /// Artwork for search rows that no result had art for, keyed by the row's
+  /// identity; null records a lookup that found nothing. Kept for the session.
+  final Map<String, String?> artworkLookups = {};
+  final List<SongCandidate> _artworkQueue = [];
+  final Set<String> _artworkQueued = {};
+  int _artworkWorkers = 0, _artworkEpoch = 0;
+  CancellationToken? _artworkCancel;
+
+  /// Enabled catalogs whose search hits carry artwork, tried in this order.
+  static const _artworkCatalogIds = ['lyricsovh', 'youtubemusic'];
+
+  /// Looks up artwork for [rows] (search results still without any) in the
+  /// enabled artwork catalogs, two at a time, in the given order. Only a hit
+  /// that [sameSearchRecording] accepts, by the rules that group search rows,
+  /// supplies artwork.
+  /// Rows already looked up or queued are skipped, so callers may repeat a
+  /// request on every rebuild; a new search or [cancelSearch] drops the queue.
+  void requestArtwork(Iterable<SongCandidate> rows) {
+    if (_disposed || _artworkCatalogs.isEmpty) return;
+    for (final row in rows) {
+      if (artworkLookups.containsKey(row.identity) ||
+          !_artworkQueued.add(row.identity)) {
+        continue;
+      }
+      _artworkQueue.add(row);
+    }
+    while (_artworkWorkers < 2 && _artworkQueue.isNotEmpty) {
+      ++_artworkWorkers;
+      unawaited(_runArtworkLookups(_artworkEpoch));
+    }
+  }
+
+  List<String> get _artworkCatalogs => [
+    for (final id in _artworkCatalogIds)
+      if (searchCatalogs.any((provider) => provider.id == id)) id,
+  ];
+
+  Future<void> _runArtworkLookups(int epoch) async {
+    final cancel = _artworkCancel ??= CancellationToken();
+    try {
+      while (epoch == _artworkEpoch && !_disposed && _artworkQueue.isNotEmpty) {
+        final row = _artworkQueue.removeAt(0);
+        String? found;
+        for (final id in _artworkCatalogs) {
+          final hits = await discovery
+              .search(
+                '${row.artist} ${row.title}',
+                providerId: id,
+                cancel: cancel,
+              )
+              .timeout(const Duration(seconds: 8))
+              .then<List<SongCandidate>>(
+                (rows) => rows,
+                onError: (Object _) => const <SongCandidate>[],
+              );
+          if (epoch != _artworkEpoch || _disposed) return;
+          found = hits
+              .where((hit) => sameSearchRecording(row, hit))
+              .map((hit) => displayMetadataFor(hit).artworkUrl)
+              .nonNulls
+              .firstOrNull;
+          if (found != null) break;
+        }
+        _artworkQueued.remove(row.identity);
+        artworkLookups[row.identity] = found;
+        if (found != null) _emit();
+      }
+    } finally {
+      if (epoch == _artworkEpoch) --_artworkWorkers;
+    }
+  }
+
+  void _cancelArtworkLookups() {
+    ++_artworkEpoch;
+    _artworkCancel?.cancel();
+    _artworkCancel = null;
+    _artworkQueue.clear();
+    _artworkQueued.clear();
+    _artworkWorkers = 0;
+  }
+
   void cancelSearch() {
     ++_searchEpoch;
     _cancelCatalogSearch();
+    _cancelArtworkLookups();
     _searchProviderId = null;
     searching = false;
     suggestions = [];
@@ -1469,7 +1577,46 @@ class AppController extends ChangeNotifier {
     _emit();
   });
 
-  // ---- Google Drive sync ------------------------------------------------
+  // ---- Cloud sync -------------------------------------------------------
+
+  GoogleDriveSyncService _serviceForProvider(SyncProvider provider) =>
+      _syncProviders.putIfAbsent(provider, () {
+        if (provider == SyncProvider.googleDrive) {
+          return GoogleDriveSyncService(repository: repository);
+        }
+        final auth = ICloudAuthorization();
+        return GoogleDriveSyncService(
+          repository: repository,
+          auth: auth,
+          store: ICloudSyncStore(authorization: auth),
+          settingsNamespace: 'sync.icloud',
+        );
+      });
+
+  /// Switching providers is opt-in and never copies, removes or syncs a library.
+  /// The selected provider must then be explicitly connected by the user.
+  Future<void> selectSyncProvider(
+    SyncProvider provider,
+  ) => _runSyncAction(() async {
+    if (provider == syncProvider) return;
+    if (provider == SyncProvider.iCloud && !appleSyncSupported) {
+      throw const SyncException('icloud_unavailable');
+    }
+    _sync?.cancel();
+    // Drop this device's session without revoking grants or deleting cloud data.
+    await _sync?.disconnect();
+    await repository.setSetting(
+      'sync.provider',
+      provider == SyncProvider.iCloud ? 'icloud' : 'google',
+    );
+    syncProvider = provider;
+    _sync = _serviceForProvider(provider);
+    syncReport = null;
+    syncWarning = null;
+    syncPreviousAccountEmail = null;
+    lastSyncAt = null;
+    lastSyncConflicts = 0;
+  });
 
   /// Connects after an explicit user action. A saved session is tried first;
   /// when it cannot be restored, the account picker is shown. A successful
@@ -1954,17 +2101,24 @@ class AppController extends ChangeNotifier {
     _disposed = true;
     _historicalCacheUses = const [];
     _autoSyncTimer?.cancel();
-    _sync?.cancel();
+    for (final service in {..._syncProviders.values, ?_sync}) {
+      service.cancel();
+    }
     _cancelCatalogSearch();
+    _cancelArtworkLookups();
     _discoveryCancel?.cancel();
     // Close the HTTP client only once the cancelled sync has stopped, so its
     // workers do not spend retries on a closed client.
-    final closing = _sync;
-    if (closing != null) {
+    final closing = {..._syncProviders.values, ?_sync};
+    if (closing.isNotEmpty) {
       unawaited(
         (_activeSyncAction ?? Future<void>.value())
             .catchError((Object _) {})
-            .then<void>((_) => closing.close()),
+            .then<void>((_) {
+              for (final service in closing) {
+                service.close();
+              }
+            }),
       );
     }
     final transport = _ownedTransport;

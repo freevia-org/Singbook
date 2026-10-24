@@ -27,6 +27,12 @@ else
   echo "No local defines: Genius and Google sync will be unavailable."
 fi
 
+sync_requirements=()
+if [[ "$mode" == ipa ]]; then
+  sync_requirements+=(--require-google)
+fi
+python3 scripts/check-ios-sync-config.py "${sync_requirements[@]}"
+
 if [[ "$mode" == ipa ]]; then
   python3 - <<'PY'
 import json

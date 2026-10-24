@@ -1080,6 +1080,20 @@ class AppLocalizationsTr extends AppLocalizations {
   String get accountTitle => 'Hesap ve senkronizasyon';
 
   @override
+  String get accountICloudBenefits =>
+      'Şarkıları ve şarkı listelerini iCloud ile gizli bir şekilde eşzamanlamak için Apple Hesabınızı kullanın. Bağlandıktan sonra değişiklikler otomatik olarak eşzamanlanır.';
+
+  @override
+  String get accountICloudUnavailable =>
+      'iCloud kullanılamıyor. Sistem ayarlarından Apple Hesabınızı ve iCloud erişimini kontrol edip yeniden deneyin.';
+
+  @override
+  String get accountConnectICloud => 'iCloud’u Bağla';
+
+  @override
+  String get accountDisconnectICloud => 'iCloud Bağlantısını Kes';
+
+  @override
   String get accountUnavailable =>
       'Senkronizasyon için Google oturum açma özelliği yapılandırılmış bir Singbook derlemesi gerekir. Bu derleme şarkılarınızı yalnızca bu cihazda tutar.';
 

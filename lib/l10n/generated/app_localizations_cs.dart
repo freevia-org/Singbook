@@ -1082,6 +1082,20 @@ class AppLocalizationsCs extends AppLocalizations {
   String get accountTitle => 'Účet a synchronizace';
 
   @override
+  String get accountICloudBenefits =>
+      'Pomocí svého účtu Apple můžete soukromě synchronizovat skladby a seznamy skladeb přes iCloud. Po připojení se změny synchronizují automaticky.';
+
+  @override
+  String get accountICloudUnavailable =>
+      'iCloud není k dispozici. Zkontrolujte svůj účet Apple a přístup k iCloudu v nastavení systému a zkuste to znovu.';
+
+  @override
+  String get accountConnectICloud => 'Připojit iCloud';
+
+  @override
+  String get accountDisconnectICloud => 'Odpojit iCloud';
+
+  @override
   String get accountUnavailable =>
       'Synchronizace vyžaduje sestavení Singbook s nastaveným přihlášením přes Google. Tato verze uchovává vaše písně pouze v tomto zařízení.';
 

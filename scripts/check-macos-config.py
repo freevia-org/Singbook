@@ -7,7 +7,7 @@ from pathlib import Path
 root = Path(__file__).resolve().parent.parent
 defines_path = root / 'config/local.defines.json'
 defines = json.loads(defines_path.read_text()) if defines_path.exists() else {}
-client = defines.get('VERSE_GOOGLE_MACOS_CLIENT_ID', '')
+client = defines.get('VERSE_GOOGLE_MACOS_CLIENT_ID') or defines.get('VERSE_GOOGLE_IOS_CLIENT_ID', '')
 if client:
     if not isinstance(client, str) or not re.fullmatch(r'[A-Za-z0-9_-]+\.apps\.googleusercontent\.com', client):
         raise SystemExit('Invalid macOS OAuth client identifier.')

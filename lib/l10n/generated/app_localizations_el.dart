@@ -1090,6 +1090,20 @@ class AppLocalizationsEl extends AppLocalizations {
   String get accountTitle => 'Λογαριασμός και συγχρονισμός';
 
   @override
+  String get accountICloudBenefits =>
+      'Χρησιμοποιήστε τον λογαριασμό Apple σας για ιδιωτικό συγχρονισμό τραγουδιών και λιστών τραγουδιών μέσω iCloud. Μετά τη σύνδεση, οι αλλαγές συγχρονίζονται αυτόματα.';
+
+  @override
+  String get accountICloudUnavailable =>
+      'Το iCloud δεν είναι διαθέσιμο. Ελέγξτε τον λογαριασμό Apple και την πρόσβαση στο iCloud στις ρυθμίσεις συστήματος και δοκιμάστε ξανά.';
+
+  @override
+  String get accountConnectICloud => 'Σύνδεση iCloud';
+
+  @override
+  String get accountDisconnectICloud => 'Αποσύνδεση iCloud';
+
+  @override
   String get accountUnavailable =>
       'Ο συγχρονισμός απαιτεί έκδοση του Singbook με ρυθμισμένη σύνδεση Google. Αυτή η έκδοση διατηρεί τα τραγούδια σου μόνο σε αυτήν τη συσκευή.';
 

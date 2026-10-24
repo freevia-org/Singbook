@@ -66,8 +66,10 @@ class InitializationGate {
 ///  * iOS: an *iOS* OAuth client for the bundle id:
 ///    `--dart-define=VERSE_GOOGLE_IOS_CLIENT_ID` (passed as `clientId`), plus
 ///    the reversed client id URL scheme in `Info.plist`.
-///  * macOS: a macOS OAuth client for the bundle id:
-///    `--dart-define=VERSE_GOOGLE_MACOS_CLIENT_ID` (passed as `clientId`).
+///  * macOS: an iOS-type OAuth client for the shared Apple bundle id. Use
+///    `VERSE_GOOGLE_MACOS_CLIENT_ID` when supplied, otherwise reuse
+///    `VERSE_GOOGLE_IOS_CLIENT_ID` (Google documents iOS OAuth client IDs for
+///    both iOS and macOS applications).
 ///  * Android needs nothing else natively: `INTERNET` is already declared and
 ///    the plugin brings its own activity/Play services wiring.
 class GoogleDriveAuth
@@ -99,6 +101,10 @@ class GoogleDriveAuth
   final bool? configuredOverride;
   static const scopes = ['https://www.googleapis.com/auth/drive.appdata'];
   static const driveFileScopes = ['https://www.googleapis.com/auth/drive.file'];
+  String get _appleClientId =>
+      macosClientId.endsWith('.apps.googleusercontent.com')
+      ? macosClientId
+      : iosClientId;
   bool get _isAndroid => isAndroidOverride ?? Platform.isAndroid;
   bool get _isMacOS => isMacOSOverride ?? Platform.isMacOS;
   static final InitializationGate _gate = InitializationGate();
@@ -113,9 +119,9 @@ class GoogleDriveAuth
       (_isAndroid
           ? serverClientId.endsWith('.apps.googleusercontent.com')
           : (Platform.isIOS &&
-                iosClientId.endsWith('.apps.googleusercontent.com')) ||
+                    iosClientId.endsWith('.apps.googleusercontent.com')) ||
                 (_isMacOS &&
-                    macosClientId.endsWith('.apps.googleusercontent.com')));
+                    _appleClientId.endsWith('.apps.googleusercontent.com')));
   @override
   bool get isConnected => _account != null || _restoredId != null;
   @override
@@ -129,7 +135,9 @@ class GoogleDriveAuth
     try {
       await _gate.run(
         () => GoogleSignIn.instance.initialize(
-          clientId: Platform.isIOS ? iosClientId : (_isMacOS ? macosClientId : null),
+          clientId: Platform.isIOS
+              ? iosClientId
+              : (_isMacOS ? _appleClientId : null),
           serverClientId: serverClientId.isEmpty ? null : serverClientId,
         ),
       );

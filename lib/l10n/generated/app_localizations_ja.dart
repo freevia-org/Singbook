@@ -1055,6 +1055,20 @@ class AppLocalizationsJa extends AppLocalizations {
   String get accountTitle => 'アカウントと同期';
 
   @override
+  String get accountICloudBenefits =>
+      'Apple Accountを使って、曲やセットリストをiCloudと非公開で同期できます。接続後は変更が自動的に同期されます。';
+
+  @override
+  String get accountICloudUnavailable =>
+      'iCloudを利用できません。システム設定でApple AccountとiCloudへのアクセスを確認してから、もう一度お試しください。';
+
+  @override
+  String get accountConnectICloud => 'iCloudに接続';
+
+  @override
+  String get accountDisconnectICloud => 'iCloudを切断';
+
+  @override
   String get accountUnavailable =>
       '同期にはGoogleログインを設定したSingbookのビルドが必要です。このビルドでは曲はこの端末にのみ保存されます。';
 

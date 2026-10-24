@@ -1093,6 +1093,20 @@ class AppLocalizationsFr extends AppLocalizations {
   String get accountTitle => 'Compte et synchronisation';
 
   @override
+  String get accountICloudBenefits =>
+      'Utilisez votre compte Apple pour synchroniser vos chansons et listes de morceaux en privé avec iCloud. Une fois connecté, les modifications se synchronisent automatiquement.';
+
+  @override
+  String get accountICloudUnavailable =>
+      'iCloud est indisponible. Vérifiez votre compte Apple et l’accès à iCloud dans les réglages système, puis réessayez.';
+
+  @override
+  String get accountConnectICloud => 'Connecter iCloud';
+
+  @override
+  String get accountDisconnectICloud => 'Déconnecter iCloud';
+
+  @override
   String get accountUnavailable =>
       'La synchronisation nécessite une version de Singbook configurée pour la connexion Google. Cette version conserve vos chansons uniquement sur cet appareil.';
 

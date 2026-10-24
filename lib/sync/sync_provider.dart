@@ -1,0 +1,1 @@
+enum SyncProvider { googleDrive, iCloud }

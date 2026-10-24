@@ -5,6 +5,7 @@ import Security
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
+  private var iCloudSyncChannel: ICloudSyncChannel?
   private var oauthBrowserChannel: FlutterMethodChannel?
   private var secureCredentialsChannel: FlutterMethodChannel?
   private var authorizationSession: ASWebAuthenticationSession?
@@ -26,6 +27,7 @@ import Security
       return
     }
     let messenger = registrar.messenger()
+    iCloudSyncChannel = ICloudSyncChannel(messenger: messenger)
     let oauthChannel = FlutterMethodChannel(
       name: "org.freevia.singbook/oauth_browser",
       binaryMessenger: messenger

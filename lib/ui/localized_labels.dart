@@ -103,6 +103,10 @@ typedef SyncErrorText = ({String message, String hint});
 /// failure; raw exception text is never shown.
 SyncErrorText syncErrorText(AppLocalizations l10n, String? code) =>
     switch (code) {
+      'icloud_unavailable' || 'account_unavailable' => (
+        message: l10n.accountSyncFailed,
+        hint: l10n.accountICloudUnavailable,
+      ),
       'not_configured' => (
         message: l10n.syncErrorNotConfigured,
         hint: l10n.syncErrorNotConfiguredHint,

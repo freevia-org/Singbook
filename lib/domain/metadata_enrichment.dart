@@ -373,3 +373,103 @@ SongDocument enrichCombinedDisplayMetadata(
     },
   );
 }
+
+/// Album, duration and artwork shown on a search result or version card.
+class DisplayMetadata {
+  const DisplayMetadata({this.album, this.durationSeconds, this.artworkUrl});
+  final String? album, artworkUrl;
+  final double? durationSeconds;
+  bool get isComplete =>
+      album != null && durationSeconds != null && artworkUrl != null;
+}
+
+/// Fills one row's missing display facts from other rows of the same song,
+/// such as another catalog's hit in the same search. Like
+/// [enrichCombinedDisplayMetadata] this is display only: candidates, their
+/// identities and saved provenance are unchanged, and nothing here is
+/// recording evidence.
+///
+/// A donor must have the same title and artist, compatible explicit editions,
+/// no conflicting recording IDs, and must not contradict a known album or
+/// duration (within 3 seconds). Known facts are never replaced. Once an album
+/// is known, donors naming another album are skipped, so artwork and duration
+/// stay with one release; donors from the row's own album are tried first.
+DisplayMetadata displayMetadataFor(
+  SongCandidate target, [
+  Iterable<SongCandidate> donors = const [],
+]) {
+  String? artworkOf(SongCandidate candidate) {
+    final value = candidate.metadata['artworkUrl'];
+    return _secureArtwork(value) ? (value as String).trim() : null;
+  }
+
+  var album = _album(target);
+  var duration = _duration(target);
+  var artwork = artworkOf(target);
+  const excludedScopes = {
+    'historicalText',
+    'composition',
+    'work',
+    'artist',
+    'image',
+    'arrangement',
+  };
+  bool excluded(SongCandidate candidate) =>
+      candidate.providerId == 'wikisource' ||
+      excludedScopes.contains(candidate.metadata['identityScope']) ||
+      excludedScopes.contains(candidate.extra['identityScope']) ||
+      candidate.metadata['pendingMatchCheck'] == true ||
+      candidate.extra['pendingMatchCheck'] == true;
+  final title = _identity(target.title), artist = _identity(target.artist);
+  if (title.isEmpty || artist.isEmpty || excluded(target)) {
+    return DisplayMetadata(
+      album: album,
+      durationSeconds: duration,
+      artworkUrl: artwork,
+    );
+  }
+  final targetAlbum = album == null ? null : _identity(album);
+  final ordered = donors.toList().asMap().entries.toList()
+    ..sort((a, b) {
+      int rank(SongCandidate candidate) {
+        final found = _album(candidate);
+        return targetAlbum != null &&
+                found != null &&
+                _identity(found) == targetAlbum
+            ? 0
+            : 1;
+      }
+
+      final score = rank(a.value).compareTo(rank(b.value));
+      return score != 0 ? score : a.key.compareTo(b.key);
+    });
+  for (final donor in ordered.map((entry) => entry.value)) {
+    if (album != null && duration != null && artwork != null) break;
+    if (excluded(donor) ||
+        title != _identity(donor.title) ||
+        artist != _identity(donor.artist) ||
+        _conflictingIds(target, donor) ||
+        !explicitEditionsCompatible(target, donor)) {
+      continue;
+    }
+    final donorAlbum = _album(donor), donorDuration = _duration(donor);
+    if (album != null &&
+        donorAlbum != null &&
+        _identity(album) != _identity(donorAlbum)) {
+      continue;
+    }
+    if (duration != null &&
+        donorDuration != null &&
+        (duration - donorDuration).abs() > 3) {
+      continue;
+    }
+    album ??= donorAlbum;
+    duration ??= donorDuration;
+    artwork ??= artworkOf(donor);
+  }
+  return DisplayMetadata(
+    album: album,
+    durationSeconds: duration,
+    artworkUrl: artwork,
+  );
+}

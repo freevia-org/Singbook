@@ -1,7 +1,7 @@
 {
-  "status": "prepared_offline_not_submittable",
-  "version": "0.2.9",
-  "build": "23",
+  "status": "release_35_draft_not_upload_ready",
+  "version": "0.2.21",
+  "build": "35",
   "bundle_id": "org.freevia.singbook",
   "primary_locale": "en-US",
   "category_proposed": "MUSIC",
@@ -11,9 +11,13 @@
   "marketing_url": "https://freevia.org/singbook/",
   "release_option_proposed": "MANUAL",
   "feature_profile": {
-    "google_oauth": false,
+    "google_oauth": true,
     "genius": true,
-    "third_party_sources": "all existing sources retained by owner decision on 2026-10-19; permission evidence remains incomplete"
+    "third_party_sources": "all existing sources retained by owner decision on 2026-10-19; permission evidence remains incomplete",
+    "icloud_sync": true,
+    "artwork_lookups": "Artist/title lookups in enabled artwork catalogues; search and image requests reach third-party services",
+    "configuration_qualification": "Google iOS client configured locally; final signed archive configuration and live Google/iCloud transfers unverified",
+    "genius_qualification": "Final release credential configuration and live checks pending"
   },
   "owner_fields_pending": [
     "App Review contact name and phone",
@@ -24,12 +28,12 @@
     "age-rating questionnaire"
   ],
   "account_steps_pending": [
-    "paid developer team",
-    "App ID and app record",
-    "signing certificate and provisioning",
-    "signed archive validation",
-    "upload and processing",
-    "select build and submit for review"
+    "Verify current App Store Connect app/version/build state",
+    "Enable and associate iCloud.org.freevia.singbook with org.freevia.singbook; regenerate iCloud-capable provisioning",
+    "Deploy reviewed CloudKit production schema",
+    "Validate final signed 0.2.21+35 archive and embedded entitlements/privacy manifests",
+    "Upload and processing",
+    "Select verified build and submit for review"
   ],
   "physical_device": "unavailable; simulator verification only",
   "screenshots": [
@@ -142,5 +146,12 @@
     "copyright": "2026 Freevia EOOD",
     "apple_developer_display_name_requested": "Freevia"
   },
-  "screenshots_status": "refreshed_native_0.2.9+23"
+  "screenshots_status": "historical_native_0.2.9+23_preserved_not_release35_qualification",
+  "submission_preparation": {
+    "target": "0.2.21+35",
+    "source_compile_qualification": "35f9e3461238bdd30d0f70875a67f40d7fd2ca78; unsigned simulator build passed; final release source may differ",
+    "readiness_document": "release-35-readiness.md",
+    "historical_screenshots_release": "0.2.9+23",
+    "current_account_state": "Not inspected during this source-only review; paid team/signing previously established, capability/profile and final archive still require verification"
+  }
 }
