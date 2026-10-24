@@ -15,8 +15,7 @@ Future<bool> captureIosCheckpoint(String name) async {
   // Live test bindings paint a short-lived crosshair after synthetic taps.
   // Render its fade frames before recording the actual app appearance.
   for (var frame = 0; frame < 3; frame++) {
-    binding.scheduleFrame();
-    await binding.endOfFrame;
+    await binding.pump(const Duration(milliseconds: 16));
   }
   final bytes = await binding.takeScreenshot(name);
   try {
