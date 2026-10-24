@@ -1,6 +1,6 @@
 name: Package and smoke test Microsoft Store release
 
-# Replaces the per-release package-windows-store29/30/32 workflows, which were
+# Replaces the per-release package-windows-store29/30/32/33 workflows, which were
 # identical apart from their pins. Each release consumes the exact hosted CI
 # bundle pinned below. It never uploads to Partner Center; the unsigned MSIX and
 # evidence are retained for a separate owner-verified submission.
@@ -8,19 +8,19 @@ name: Package and smoke test Microsoft Store release
 # Adding a release: add a `release` choice and a matching block in the
 # "Resolve release pins" step. Releases whose CI artifact pins were supplied at
 # dispatch time (29, 30) still require all five artifact inputs; releases with
-# frozen pins (32) reject overrides.
+# frozen pins (32, 33) reject overrides.
 #
 # Pull requests that change this workflow or the Store scripts package and
-# smoke test the default release as a self-test.
+# smoke test the default (newest frozen) release as a self-test.
 on:
   workflow_dispatch:
     inputs:
       release:
         description: Store release build number to package
         required: true
-        default: '32'
+        default: '33'
         type: choice
-        options: ['29', '30', '32']
+        options: ['29', '30', '32', '33']
       ci_run_id:
         description: Successful CI run ID for the pinned release commit (releases 29 and 30 only)
         required: false
@@ -58,11 +58,11 @@ concurrency:
 
 jobs:
   package-and-smoke:
-    name: package-and-smoke (release ${{ inputs.release || '32' }})
+    name: package-and-smoke (release ${{ inputs.release || '33' }})
     runs-on: windows-latest
     timeout-minutes: 25
     env:
-      RELEASE: ${{ inputs.release || '32' }}
+      RELEASE: ${{ inputs.release || '33' }}
       INPUT_CI_RUN_ID: ${{ inputs.ci_run_id }}
       INPUT_CI_ARTIFACT_ID: ${{ inputs.ci_artifact_id }}
       INPUT_CI_ARTIFACT_DIGEST: ${{ inputs.ci_artifact_digest }}
@@ -120,6 +120,24 @@ jobs:
                 CI_ARTIFACT_DIGEST = 'sha256:1284dbf4aeceb851cc035c04ff2db82d464383fb313e36f379d8fd5be9734dd2'
                 PORTABLE_MANIFEST_SHA256 = '50A546BE5009101D06B750EDF87D0B9C40C191E0169A58EDA8E971F6E12DC31A'
                 PORTABLE_ZIP_SHA256 = '1F32D7870EBF9CBC094E6A39C35B58357E778A8FC8107CA11CD6D9D93511FAD6'
+              }
+            }
+            '33' {
+              # Successful candidate CI compiled a synthetic merge of main and release33.
+              # Keep this separate from the release branch head checkout.
+              $pins = [ordered]@{
+                RELEASE_HEAD_SHA = '9ec6b29504a380531dc38db6f8beed98a9f55195'
+                RELEASE_COMPILED_SOURCE_SHA = '870d1e604c9bd1a28e39591ea4140d0cbbd04707'
+                RELEASE_SOURCE_TREE = '315bf164f7d657e853804d0c184cb395a2e9f5b5'
+                RELEASE_PRODUCT_VERSION = '0.2.19+33'
+                RELEASE_CI_BRANCH = 'codex/release33'
+              }
+              $artifactPins = [ordered]@{
+                CI_RUN_ID = '40033776263'
+                CI_ARTIFACT_ID = '12536417941'
+                CI_ARTIFACT_DIGEST = 'sha256:856f0e33df3cb9e226f9322ea37cdb55fef6a181302f50afa4df5c63ece15a3e'
+                PORTABLE_MANIFEST_SHA256 = '167a02f5689c41f2bab9c01597f43a70ef31a934d028e05635103f45eb198ab0'
+                PORTABLE_ZIP_SHA256 = 'a3bcf1afaae94193cc3a55bf07c45112dc8d3229c04ccdb78ac01dea9f33e2f3'
               }
             }
             default { throw "Unknown Store release '$($env:RELEASE)'." }
@@ -236,9 +254,10 @@ jobs:
           if ((Get-FileHash -LiteralPath $zips[0].FullName -Algorithm SHA256).Hash -ne ([string]$env:PORTABLE_ZIP_SHA256).ToUpperInvariant()) { throw 'Portable ZIP SHA-256 differs from the supplied pin.' }
           $payload = Join-Path $env:RUNNER_TEMP "singbook-release$($env:RELEASE)-payload"
           Expand-Archive -LiteralPath $zips[0].FullName -DestinationPath $payload
-          $folders = @(Get-ChildItem -LiteralPath $payload -Directory)
-          if ($folders.Count -ne 1 -or $folders[0].Name -ne 'Singbook') { throw 'Portable ZIP must contain exactly one Singbook directory.' }
-          "portable=$($folders[0].FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          # Stricter root check introduced with release 33, applied to every release.
+          $rootEntries = @(Get-ChildItem -LiteralPath $payload -Force)
+          if ($rootEntries.Count -ne 1 -or -not $rootEntries[0].PSIsContainer -or $rootEntries[0].Name -ne 'Singbook') { throw 'Portable ZIP must contain exactly one root entry: the Singbook directory.' }
+          "portable=$($rootEntries[0].FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
           "manifest=$($manifests[0].FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
       - name: Locate Windows SDK MakeAppx
