@@ -4,7 +4,7 @@ homepage: https://freevia.org/singbook/
 repository: https://github.com/freevia-org/Singbook
 issue_tracker: https://github.com/freevia-org/Singbook/issues
 publish_to: 'none'
-version: 0.2.19+33
+version: 0.2.20+34
 
 environment:
   sdk: ^3.12.2
