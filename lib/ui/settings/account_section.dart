@@ -59,16 +59,25 @@ class AccountSection extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: DropdownButtonFormField<SyncProvider>(
                 key: const ValueKey('account-sync-provider'),
+                isExpanded: true,
                 initialValue: state.syncProvider,
                 decoration: InputDecoration(labelText: l10n.accountTitle),
                 items: const [
                   DropdownMenuItem(
                     value: SyncProvider.googleDrive,
-                    child: Text('Google Drive'),
+                    child: Text(
+                      'Google Drive',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   DropdownMenuItem(
                     value: SyncProvider.iCloud,
-                    child: Text('iCloud'),
+                    child: Text(
+                      'iCloud',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ],
                 onChanged: state.syncBusy
