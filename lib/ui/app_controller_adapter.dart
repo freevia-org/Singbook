@@ -417,6 +417,18 @@ class AppControllerAdapter extends VerseUiController {
     final autocompleteCandidates = app.suggestions.isNotEmpty
         ? app.suggestions
         : _cachedAutocomplete;
+    final preferredCatalog = app.searchCatalogId;
+    final catalogOrder = <String, int>{};
+    if (preferredCatalog != null) catalogOrder[preferredCatalog] = 0;
+    final otherCatalogs =
+        app.searchCatalogs
+            .map((provider) => provider.id)
+            .where((id) => id != preferredCatalog)
+            .toList()
+          ..sort();
+    for (final id in otherCatalogs) {
+      catalogOrder.putIfAbsent(id, () => catalogOrder.length);
+    }
     final rankedAutocomplete =
         autocompleteCandidates
             .asMap()
@@ -424,6 +436,12 @@ class AppControllerAdapter extends VerseUiController {
             .where((entry) => _matchesFilters(entry.value))
             .toList()
           ..sort((a, b) {
+            final providerOrder =
+                (catalogOrder[a.value.providerId] ?? catalogOrder.length)
+                    .compareTo(
+                      catalogOrder[b.value.providerId] ?? catalogOrder.length,
+                    );
+            if (providerOrder != 0) return providerOrder;
             final relevance = _candidateRelevance(
               b.value,
               _query,
