@@ -425,51 +425,6 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
           '${l10n.searchOnlineTab}(${state.comparison == null ? state.autocomplete.length : 1})',
         ],
       ),
-      if (state.homeListMode == HomeListMode.online &&
-          state.searchCatalogs.isNotEmpty) ...[
-        const SizedBox(height: 12),
-        InputDecorator(
-          key: const ValueKey('search-catalog-selector'),
-          isEmpty: state.searchCatalogId == null,
-          decoration: InputDecoration(
-            labelText: state.searchIncludesOtherSources
-                ? l10n.searchPreferredSourceLabel
-                : l10n.searchSourceLabel,
-            helperText: state.searchIncludesOtherSources
-                ? l10n.searchPreferredSourceHint
-                : null,
-            helperMaxLines: 3,
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value:
-                  state.searchCatalogs.any(
-                    (catalog) => catalog.id == state.searchCatalogId,
-                  )
-                  ? state.searchCatalogId
-                  : null,
-              isDense: false,
-              isExpanded: true,
-              items: [
-                for (final catalog in state.searchCatalogs)
-                  DropdownMenuItem(
-                    value: catalog.id,
-                    child: Text(
-                      catalog.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-              ],
-              onChanged: (value) {
-                if (value != null) {
-                  unawaited(widget.controller.setSearchCatalog(value));
-                }
-              },
-            ),
-          ),
-        ),
-      ],
     ],
   );
 
@@ -892,10 +847,13 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
                       if (item.providerName.isNotEmpty)
                         Semantics(
                           label:
-                              '${l10n.searchSourceLabel}: ${item.providerName}',
+                              '${l10n.searchSourceLabel}: ${_sourceNames(item).join(', ')}',
                           child: ExcludeSemantics(
                             child: Text(
-                              item.providerName,
+                              _sourceNames(item).join(' · '),
+                              key: ValueKey('online-sources-${item.id}'),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: Theme.of(context).textTheme.labelSmall,
                             ),
                           ),
@@ -938,6 +896,9 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     );
     return out;
   }
+
+  List<String> _sourceNames(SearchReferenceData item) =>
+      item.sourceNames.isEmpty ? [item.providerName] : item.sourceNames;
 
   void _openFullPreview() {
     final selected = widget.controller.state.comparison?.selected;

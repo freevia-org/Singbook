@@ -11,6 +11,8 @@ import '../domain/arrangement.dart' show plainLyrics;
 import '../domain/models.dart';
 import '../domain/chordpro.dart';
 import '../domain/combine.dart';
+import '../domain/metadata_enrichment.dart' show displayMetadataFor;
+import '../domain/search_grouping.dart' show sameSearchRecording;
 import '../domain/source_result_merge.dart';
 import '../providers/provider.dart';
 import '../providers/core/core_providers.dart';
@@ -611,6 +613,7 @@ class AppController extends ChangeNotifier {
   Future<void> search(String value) async {
     final epoch = ++_searchEpoch;
     _cancelCatalogSearch();
+    _cancelArtworkLookups();
     _searchProviderId = null;
     if (value != query) {
       selection = null;
@@ -717,9 +720,91 @@ class AppController extends ChangeNotifier {
     }
   }
 
+  /// Artwork for search rows that no result had art for, keyed by the row's
+  /// identity; null records a lookup that found nothing. Kept for the session.
+  final Map<String, String?> artworkLookups = {};
+  final List<SongCandidate> _artworkQueue = [];
+  final Set<String> _artworkQueued = {};
+  int _artworkWorkers = 0, _artworkEpoch = 0;
+  CancellationToken? _artworkCancel;
+
+  /// Enabled catalogs whose search hits carry artwork, tried in this order.
+  static const _artworkCatalogIds = ['lyricsovh', 'youtubemusic'];
+
+  /// Looks up artwork for [rows] (search results still without any) in the
+  /// enabled artwork catalogs, two at a time, in the given order. Only a hit
+  /// that [sameSearchRecording] accepts, by the rules that group search rows,
+  /// supplies artwork.
+  /// Rows already looked up or queued are skipped, so callers may repeat a
+  /// request on every rebuild; a new search or [cancelSearch] drops the queue.
+  void requestArtwork(Iterable<SongCandidate> rows) {
+    if (_disposed || _artworkCatalogs.isEmpty) return;
+    for (final row in rows) {
+      if (artworkLookups.containsKey(row.identity) ||
+          !_artworkQueued.add(row.identity)) {
+        continue;
+      }
+      _artworkQueue.add(row);
+    }
+    while (_artworkWorkers < 2 && _artworkQueue.isNotEmpty) {
+      ++_artworkWorkers;
+      unawaited(_runArtworkLookups(_artworkEpoch));
+    }
+  }
+
+  List<String> get _artworkCatalogs => [
+    for (final id in _artworkCatalogIds)
+      if (searchCatalogs.any((provider) => provider.id == id)) id,
+  ];
+
+  Future<void> _runArtworkLookups(int epoch) async {
+    final cancel = _artworkCancel ??= CancellationToken();
+    try {
+      while (epoch == _artworkEpoch && !_disposed && _artworkQueue.isNotEmpty) {
+        final row = _artworkQueue.removeAt(0);
+        String? found;
+        for (final id in _artworkCatalogs) {
+          final hits = await discovery
+              .search(
+                '${row.artist} ${row.title}',
+                providerId: id,
+                cancel: cancel,
+              )
+              .timeout(const Duration(seconds: 8))
+              .then<List<SongCandidate>>(
+                (rows) => rows,
+                onError: (Object _) => const <SongCandidate>[],
+              );
+          if (epoch != _artworkEpoch || _disposed) return;
+          found = hits
+              .where((hit) => sameSearchRecording(row, hit))
+              .map((hit) => displayMetadataFor(hit).artworkUrl)
+              .nonNulls
+              .firstOrNull;
+          if (found != null) break;
+        }
+        _artworkQueued.remove(row.identity);
+        artworkLookups[row.identity] = found;
+        if (found != null) _emit();
+      }
+    } finally {
+      if (epoch == _artworkEpoch) --_artworkWorkers;
+    }
+  }
+
+  void _cancelArtworkLookups() {
+    ++_artworkEpoch;
+    _artworkCancel?.cancel();
+    _artworkCancel = null;
+    _artworkQueue.clear();
+    _artworkQueued.clear();
+    _artworkWorkers = 0;
+  }
+
   void cancelSearch() {
     ++_searchEpoch;
     _cancelCatalogSearch();
+    _cancelArtworkLookups();
     _searchProviderId = null;
     searching = false;
     suggestions = [];
@@ -1956,6 +2041,7 @@ class AppController extends ChangeNotifier {
     _autoSyncTimer?.cancel();
     _sync?.cancel();
     _cancelCatalogSearch();
+    _cancelArtworkLookups();
     _discoveryCancel?.cancel();
     // Close the HTTP client only once the cancelled sync has stopped, so its
     // workers do not spend retries on a closed client.

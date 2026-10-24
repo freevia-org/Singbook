@@ -695,11 +695,17 @@ class _VersionDocumentState extends State<_VersionDocument>
     final hasBody = lyrics.any(
       (line) => line.text.trim().isNotEmpty || line.chords.isNotEmpty,
     );
+    // The version's own release comes first; the selected song fills gaps.
+    final album = version.album?.trim().isNotEmpty == true
+        ? version.album!
+        : widget.reference.album;
+    final artworkUrl = version.artworkUrl?.isNotEmpty == true
+        ? version.artworkUrl
+        : widget.reference.artworkUrl;
     final metadata = [
       widget.reference.artist,
-      if (widget.reference.album?.trim().isNotEmpty == true &&
-          widget.reference.album!.toLowerCase() != 'unknown')
-        widget.reference.album!,
+      if (album?.trim().isNotEmpty == true && album!.toLowerCase() != 'unknown')
+        album,
       if (widget.reference.durationSeconds != null)
         formatDuration(widget.reference.durationSeconds!),
     ].where((part) => part.isNotEmpty).join(' · ');
@@ -717,14 +723,32 @@ class _VersionDocumentState extends State<_VersionDocument>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              widget.reference.title,
-              style: widget.compactLandscape
-                  ? theme.textTheme.titleMedium
-                  : theme.textTheme.titleLarge,
+            Row(
+              key: const ValueKey('version-preview-header'),
+              children: [
+                VerseArtwork(
+                  key: const ValueKey('version-preview-artwork'),
+                  url: artworkUrl,
+                  size: widget.compactLandscape ? 40 : 56,
+                ),
+                SizedBox(width: widget.compactLandscape ? 8 : 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.reference.title,
+                        style: widget.compactLandscape
+                            ? theme.textTheme.titleMedium
+                            : theme.textTheme.titleLarge,
+                      ),
+                      if (metadata.isNotEmpty)
+                        Text(metadata, style: theme.textTheme.bodySmall),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            if (metadata.isNotEmpty)
-              Text(metadata, style: theme.textTheme.bodySmall),
             SizedBox(height: widget.compactLandscape ? 2 : 8),
             Wrap(
               spacing: widget.compactLandscape ? 8 : 12,
@@ -765,8 +789,7 @@ class _VersionDocumentState extends State<_VersionDocument>
                 ),
               ],
             ),
-            if ((version.sourceCount ?? 0) > 1 &&
-                !widget.compactLandscape) ...[
+            if ((version.sourceCount ?? 0) > 1 && !widget.compactLandscape) ...[
               const SizedBox(height: 8),
               SourceContributions(version: version),
             ],
