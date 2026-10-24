@@ -339,6 +339,13 @@ class AppLocalizationsHr extends AppLocalizations {
   String get searchSourceLabel => 'Izvor';
 
   @override
+  String get searchPreferredSourceLabel => 'Preferirani izvor';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'Rezultati mogu doći i iz drugih uključenih izvora pretraživanja.';
+
+  @override
   String get searchMetadata => 'Pojedinosti o pjesmi';
 
   @override

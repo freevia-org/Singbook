@@ -338,6 +338,13 @@ class AppLocalizationsFi extends AppLocalizations {
   String get searchSourceLabel => 'Lähde';
 
   @override
+  String get searchPreferredSourceLabel => 'Ensisijainen lähde';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'Tuloksia voi tulla myös muista käytössä olevista hakulähteistä.';
+
+  @override
   String get searchMetadata => 'Kappaleen tiedot';
 
   @override

@@ -340,6 +340,13 @@ class AppLocalizationsSl extends AppLocalizations {
   String get searchSourceLabel => 'Vir';
 
   @override
+  String get searchPreferredSourceLabel => 'Prednostni vir';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'Rezultati so lahko tudi iz drugih omogočenih virov iskanja.';
+
+  @override
   String get searchMetadata => 'Podatki o pesmi';
 
   @override

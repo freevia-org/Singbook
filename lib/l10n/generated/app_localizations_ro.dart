@@ -341,6 +341,13 @@ class AppLocalizationsRo extends AppLocalizations {
   String get searchSourceLabel => 'Sursă';
 
   @override
+  String get searchPreferredSourceLabel => 'Sursă preferată';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'Rezultatele pot proveni și din alte surse de căutare activate.';
+
+  @override
   String get searchMetadata => 'Detalii despre melodie';
 
   @override

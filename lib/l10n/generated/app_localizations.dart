@@ -774,6 +774,18 @@ abstract class AppLocalizations {
   /// **'Source'**
   String get searchSourceLabel;
 
+  /// No description provided for @searchPreferredSourceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferred source'**
+  String get searchPreferredSourceLabel;
+
+  /// No description provided for @searchPreferredSourceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Results may also come from other enabled search sources.'**
+  String get searchPreferredSourceHint;
+
   /// No description provided for @searchMetadata.
   ///
   /// In en, this message translates to:

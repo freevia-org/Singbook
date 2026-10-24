@@ -109,6 +109,8 @@
     }
   },
   "searchSourceLabel": "Πηγή",
+  "searchPreferredSourceLabel": "Προτιμώμενη πηγή",
+  "searchPreferredSourceHint": "Τα αποτελέσματα μπορεί να προέρχονται και από άλλες ενεργές πηγές αναζήτησης.",
   "searchMetadata": "Στοιχεία τραγουδιού",
   "searchAlbum": "Άλμπουμ",
   "searchArtist": "Καλλιτέχνης",

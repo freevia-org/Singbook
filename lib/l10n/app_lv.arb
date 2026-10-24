@@ -107,6 +107,8 @@
     }
   },
   "searchSourceLabel": "Avots",
+  "searchPreferredSourceLabel": "Vēlamais avots",
+  "searchPreferredSourceHint": "Rezultāti var būt arī no citiem ieslēgtiem meklēšanas avotiem.",
   "searchMetadata": "Dziesmas informācija",
   "searchAlbum": "Albums",
   "searchArtist": "Izpildītājs",

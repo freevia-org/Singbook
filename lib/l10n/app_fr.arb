@@ -109,6 +109,8 @@
     }
   },
   "searchSourceLabel": "Source",
+  "searchPreferredSourceLabel": "Source préférée",
+  "searchPreferredSourceHint": "Les résultats peuvent aussi provenir d’autres sources de recherche activées.",
   "searchMetadata": "Détails de la chanson",
   "searchAlbum": "Album",
   "searchArtist": "Artiste",

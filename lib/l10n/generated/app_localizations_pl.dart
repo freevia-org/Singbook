@@ -341,6 +341,13 @@ class AppLocalizationsPl extends AppLocalizations {
   String get searchSourceLabel => 'Źródło';
 
   @override
+  String get searchPreferredSourceLabel => 'Preferowane źródło';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'Wyniki mogą pochodzić także z innych włączonych źródeł wyszukiwania.';
+
+  @override
   String get searchMetadata => 'Szczegóły utworu';
 
   @override

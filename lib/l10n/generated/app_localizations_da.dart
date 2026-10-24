@@ -339,6 +339,13 @@ class AppLocalizationsDa extends AppLocalizations {
   String get searchSourceLabel => 'Kilde';
 
   @override
+  String get searchPreferredSourceLabel => 'Foretrukken kilde';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'Resultater kan også komme fra andre aktiverede søgekilder.';
+
+  @override
   String get searchMetadata => 'Sangdetaljer';
 
   @override

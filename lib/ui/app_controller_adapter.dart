@@ -494,6 +494,7 @@ class AppControllerAdapter extends VerseUiController {
           )
           .toList(),
       searchCatalogId: app.searchCatalogId,
+      searchIncludesOtherSources: _searchIncludesOtherSources,
       searchFiltersExpanded: _filtersExpanded,
       searchFilters: _filters,
       syncReady: app.syncConfigured,
@@ -660,6 +661,8 @@ class AppControllerAdapter extends VerseUiController {
 
   SearchReferenceData _reference(SongCandidate value) => SearchReferenceData(
     id: value.identity,
+    providerId: value.providerId,
+    providerName: _providerName(value.providerId),
     title: value.title,
     artist: value.artist,
     album: value.album,
@@ -669,6 +672,21 @@ class AppControllerAdapter extends VerseUiController {
     artworkUrl: value.artworkUrl,
     isHistoricalText: value.providerId == 'wikisource',
   );
+
+  bool get _searchIncludesOtherSources {
+    final catalogs = app.searchCatalogs;
+    final primary = catalogs
+        .where((provider) => provider.id == app.searchCatalogId)
+        .firstOrNull;
+    // Match searchCatalogsTogether's historical isolation policy for both
+    // the built-in catalog and definitions that declare public-domain text.
+    bool isolated(ProviderDefinition provider) =>
+        provider.id == 'wikisource' ||
+        provider.accessMode == 'publicDomainText';
+    return primary != null &&
+        !isolated(primary) &&
+        catalogs.where((provider) => !isolated(provider)).length > 1;
+  }
 
   bool _matchesFilters(SongCandidate candidate) {
     if (_isEditorialCandidate(candidate)) return false;

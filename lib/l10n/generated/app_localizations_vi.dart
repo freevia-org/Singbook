@@ -339,6 +339,13 @@ class AppLocalizationsVi extends AppLocalizations {
   String get searchSourceLabel => 'Nguồn';
 
   @override
+  String get searchPreferredSourceLabel => 'Nguồn ưu tiên';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'Kết quả cũng có thể đến từ các nguồn tìm kiếm khác đang bật.';
+
+  @override
   String get searchMetadata => 'Thông tin bài hát';
 
   @override

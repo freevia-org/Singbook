@@ -107,6 +107,8 @@
     }
   },
   "searchSourceLabel": "Bron",
+  "searchPreferredSourceLabel": "Voorkeursbron",
+  "searchPreferredSourceHint": "Resultaten kunnen ook uit andere ingeschakelde zoekbronnen komen.",
   "searchMetadata": "Nummergegevens",
   "searchAlbum": "Album",
   "searchArtist": "Artiest",

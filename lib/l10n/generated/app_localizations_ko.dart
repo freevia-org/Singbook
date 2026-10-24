@@ -335,6 +335,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get searchSourceLabel => '출처';
 
   @override
+  String get searchPreferredSourceLabel => '우선 출처';
+
+  @override
+  String get searchPreferredSourceHint => '결과는 사용 설정된 다른 검색 소스에서도 제공될 수 있습니다.';
+
+  @override
   String get searchMetadata => '노래 세부정보';
 
   @override

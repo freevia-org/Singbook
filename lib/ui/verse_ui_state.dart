@@ -274,13 +274,15 @@ class SearchReferenceData {
     required this.id,
     required this.title,
     required this.artist,
+    this.providerId = '',
+    this.providerName = '',
     this.album,
     this.durationSeconds,
     this.artworkUrl,
     this.matchReason,
     this.isHistoricalText = false,
   });
-  final String id, title, artist;
+  final String id, title, artist, providerId, providerName;
   final String? album, artworkUrl, matchReason;
   final double? durationSeconds;
   final bool isHistoricalText;
@@ -469,6 +471,7 @@ class VerseUiState {
     this.providers = const [],
     this.searchCatalogs = const [],
     this.searchCatalogId,
+    this.searchIncludesOtherSources = false,
     this.searchFiltersExpanded = false,
     this.searchFilters = const SearchFilterData(),
     this.syncReady = false,
@@ -546,6 +549,7 @@ class VerseUiState {
       providers = o.providers,
       searchCatalogs = o.searchCatalogs,
       searchCatalogId = o.searchCatalogId,
+      searchIncludesOtherSources = o.searchIncludesOtherSources,
       searchFilters = o.searchFilters,
       searchFiltersExpanded = o.searchFiltersExpanded,
       syncReady = o.syncReady,
@@ -615,6 +619,10 @@ class VerseUiState {
   final List<ProviderSettingData> providers;
   final List<ProviderSettingData> searchCatalogs;
   final String? searchCatalogId;
+
+  /// Whether this primary can search alongside another enabled catalog.
+  /// This describes eligibility, not a promise that other sources found rows.
+  final bool searchIncludesOtherSources;
   final SearchFilterData searchFilters;
   final bool searchFiltersExpanded, syncReady, syncSignedIn, syncBusy;
   final String? accountName, accountPhotoUrl, accountError;

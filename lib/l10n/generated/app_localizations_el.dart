@@ -341,6 +341,13 @@ class AppLocalizationsEl extends AppLocalizations {
   String get searchSourceLabel => 'Πηγή';
 
   @override
+  String get searchPreferredSourceLabel => 'Προτιμώμενη πηγή';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'Τα αποτελέσματα μπορεί να προέρχονται και από άλλες ενεργές πηγές αναζήτησης.';
+
+  @override
   String get searchMetadata => 'Στοιχεία τραγουδιού';
 
   @override

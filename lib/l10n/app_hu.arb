@@ -109,6 +109,8 @@
     }
   },
   "searchSourceLabel": "Forrás",
+  "searchPreferredSourceLabel": "Előnyben részesített forrás",
+  "searchPreferredSourceHint": "A találatok más engedélyezett keresési forrásokból is származhatnak.",
   "searchMetadata": "Dal adatai",
   "searchAlbum": "Album",
   "searchArtist": "Előadó",

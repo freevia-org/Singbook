@@ -109,6 +109,8 @@
     }
   },
   "searchSourceLabel": "Allikas",
+  "searchPreferredSourceLabel": "Eelistatud allikas",
+  "searchPreferredSourceHint": "Tulemused võivad pärineda ka muudest lubatud otsinguallikatest.",
   "searchMetadata": "Laulu andmed",
   "searchAlbum": "Album",
   "searchArtist": "Esitaja",

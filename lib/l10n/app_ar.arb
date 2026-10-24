@@ -109,6 +109,8 @@
     }
   },
   "searchSourceLabel": "المصدر",
+  "searchPreferredSourceLabel": "المصدر المفضّل",
+  "searchPreferredSourceHint": "قد تأتي النتائج أيضًا من مصادر بحث أخرى مفعّلة.",
   "searchMetadata": "تفاصيل الأغنية",
   "searchAlbum": "الألبوم",
   "searchArtist": "الفنان",

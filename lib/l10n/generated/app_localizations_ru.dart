@@ -339,6 +339,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get searchSourceLabel => 'Источник';
 
   @override
+  String get searchPreferredSourceLabel => 'Предпочитаемый источник';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'Результаты могут поступать и из других включённых источников поиска.';
+
+  @override
   String get searchMetadata => 'Сведения о песне';
 
   @override

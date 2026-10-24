@@ -107,6 +107,8 @@
     }
   },
   "searchSourceLabel": "Vir",
+  "searchPreferredSourceLabel": "Prednostni vir",
+  "searchPreferredSourceHint": "Rezultati so lahko tudi iz drugih omogočenih virov iskanja.",
   "searchMetadata": "Podatki o pesmi",
   "searchAlbum": "Album",
   "searchArtist": "Izvajalec",

@@ -340,6 +340,13 @@ class AppLocalizationsLv extends AppLocalizations {
   String get searchSourceLabel => 'Avots';
 
   @override
+  String get searchPreferredSourceLabel => 'Vēlamais avots';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'Rezultāti var būt arī no citiem ieslēgtiem meklēšanas avotiem.';
+
+  @override
   String get searchMetadata => 'Dziesmas informācija';
 
   @override

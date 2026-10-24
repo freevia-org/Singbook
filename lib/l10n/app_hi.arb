@@ -109,6 +109,8 @@
     }
   },
   "searchSourceLabel": "स्रोत",
+  "searchPreferredSourceLabel": "पसंदीदा स्रोत",
+  "searchPreferredSourceHint": "नतीजे अन्य चालू खोज स्रोतों से भी आ सकते हैं।",
   "searchMetadata": "गीत का विवरण",
   "searchAlbum": "एल्बम",
   "searchArtist": "कलाकार",

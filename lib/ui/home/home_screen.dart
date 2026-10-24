@@ -431,7 +431,15 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
         InputDecorator(
           key: const ValueKey('search-catalog-selector'),
           isEmpty: state.searchCatalogId == null,
-          decoration: InputDecoration(labelText: l10n.searchSourceLabel),
+          decoration: InputDecoration(
+            labelText: state.searchIncludesOtherSources
+                ? l10n.searchPreferredSourceLabel
+                : l10n.searchSourceLabel,
+            helperText: state.searchIncludesOtherSources
+                ? l10n.searchPreferredSourceHint
+                : null,
+            helperMaxLines: 3,
+          ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value:
@@ -854,6 +862,7 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
           itemBuilder: (context, index) {
             final item = state.autocomplete[index];
             return ListTile(
+              key: ValueKey('online-reference-${item.id}'),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 4,
                 vertical: 4,
@@ -870,10 +879,28 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    item.artist,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 2,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Text(
+                        item.artist,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      if (item.providerName.isNotEmpty)
+                        Semantics(
+                          label:
+                              '${l10n.searchSourceLabel}: ${item.providerName}',
+                          child: ExcludeSemantics(
+                            child: Text(
+                              item.providerName,
+                              style: Theme.of(context).textTheme.labelSmall,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                   if (item.isHistoricalText)
                     Text(

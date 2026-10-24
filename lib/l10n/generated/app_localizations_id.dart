@@ -338,6 +338,13 @@ class AppLocalizationsId extends AppLocalizations {
   String get searchSourceLabel => 'Sumber';
 
   @override
+  String get searchPreferredSourceLabel => 'Sumber pilihan';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'Hasil juga dapat berasal dari sumber pencarian lain yang aktif.';
+
+  @override
   String get searchMetadata => 'Detail lagu';
 
   @override

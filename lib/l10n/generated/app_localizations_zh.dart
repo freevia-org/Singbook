@@ -334,6 +334,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get searchSourceLabel => '来源';
 
   @override
+  String get searchPreferredSourceLabel => '首选来源';
+
+  @override
+  String get searchPreferredSourceHint => '结果也可能来自其他已启用的搜索来源。';
+
+  @override
   String get searchMetadata => '歌曲详情';
 
   @override

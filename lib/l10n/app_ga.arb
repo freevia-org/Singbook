@@ -109,6 +109,8 @@
     }
   },
   "searchSourceLabel": "Foinse",
+  "searchPreferredSourceLabel": "Foinse roghnaithe",
+  "searchPreferredSourceHint": "D’fhéadfadh torthaí teacht ó fhoinsí cuardaigh eile atá cumasaithe freisin.",
   "searchMetadata": "Sonraí an amhráin",
   "searchAlbum": "Albam",
   "searchArtist": "Ealaíontóir",

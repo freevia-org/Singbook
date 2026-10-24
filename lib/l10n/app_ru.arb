@@ -107,6 +107,8 @@
     }
   },
   "searchSourceLabel": "Источник",
+  "searchPreferredSourceLabel": "Предпочитаемый источник",
+  "searchPreferredSourceHint": "Результаты могут поступать и из других включённых источников поиска.",
   "searchMetadata": "Сведения о песне",
   "searchAlbum": "Альбом",
   "searchArtist": "Исполнитель",

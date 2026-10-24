@@ -336,6 +336,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchSourceLabel => 'Source';
 
   @override
+  String get searchPreferredSourceLabel => 'Preferred source';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'Results may also come from other enabled search sources.';
+
+  @override
   String get searchMetadata => 'Song details';
 
   @override

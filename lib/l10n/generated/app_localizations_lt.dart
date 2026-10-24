@@ -339,6 +339,13 @@ class AppLocalizationsLt extends AppLocalizations {
   String get searchSourceLabel => 'Šaltinis';
 
   @override
+  String get searchPreferredSourceLabel => 'Pageidaujamas šaltinis';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'Rezultatai taip pat gali būti iš kitų įjungtų paieškos šaltinių.';
+
+  @override
   String get searchMetadata => 'Dainos informacija';
 
   @override

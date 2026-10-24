@@ -107,6 +107,8 @@
     }
   },
   "searchSourceLabel": "ソース",
+  "searchPreferredSourceLabel": "優先するソース",
+  "searchPreferredSourceHint": "結果は有効にした他の検索ソースからも表示されることがあります。",
   "searchMetadata": "曲の詳細",
   "searchAlbum": "アルバム",
   "searchArtist": "アーティスト",
