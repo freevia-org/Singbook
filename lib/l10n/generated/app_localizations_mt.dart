@@ -1090,6 +1090,20 @@ class AppLocalizationsMt extends AppLocalizations {
   String get accountTitle => 'Kont u sinkronizzazzjoni';
 
   @override
+  String get accountICloudBenefits =>
+      'Uża l-Kont Apple tiegħek biex tissinkronizza kanzunetti u listi ta’ kanzunetti privatament ma’ iCloud. Wara li tikkonnettja, il-bidliet jissinkronizzaw awtomatikament.';
+
+  @override
+  String get accountICloudUnavailable =>
+      'iCloud mhux disponibbli. Iċċekkja l-Kont Apple tiegħek u l-aċċess għal iCloud fis-settings tas-sistema, imbagħad erġa’ pprova.';
+
+  @override
+  String get accountConnectICloud => 'Qabbad iCloud';
+
+  @override
+  String get accountDisconnectICloud => 'Skonnettja iCloud';
+
+  @override
   String get accountUnavailable =>
       'Is-sinkronizzazzjoni teħtieġ verżjoni ta’ Singbook b’aċċess għal Google kkonfigurat. Din il-verżjoni żżomm il-kanzunetti tiegħek fuq dan l-apparat biss.';
 

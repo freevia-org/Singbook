@@ -1081,6 +1081,20 @@ class AppLocalizationsHu extends AppLocalizations {
   String get accountTitle => 'Fiók és szinkronizálás';
 
   @override
+  String get accountICloudBenefits =>
+      'Apple-fiókoddal privát módon szinkronizálhatod a dalokat és a dallistákat az iClouddal. Csatlakozás után a módosítások automatikusan szinkronizálódnak.';
+
+  @override
+  String get accountICloudUnavailable =>
+      'Az iCloud nem érhető el. Ellenőrizd az Apple-fiókodat és az iCloud-hozzáférést a rendszerbeállításokban, majd próbáld újra.';
+
+  @override
+  String get accountConnectICloud => 'iCloud csatlakoztatása';
+
+  @override
+  String get accountDisconnectICloud => 'iCloud leválasztása';
+
+  @override
   String get accountUnavailable =>
       'A szinkronizáláshoz olyan Singbook-verzió szükséges, amelyben be van állítva a Google-bejelentkezés. Ez a verzió csak ezen az eszközön tárolja a dalokat.';
 

@@ -1078,6 +1078,20 @@ class AppLocalizationsFi extends AppLocalizations {
   String get accountTitle => 'Tili ja synkronointi';
 
   @override
+  String get accountICloudBenefits =>
+      'Synkronoi kappaleet ja kappalelistat yksityisesti iCloudin kautta Apple-tililläsi. Muutokset synkronoituvat automaattisesti yhdistämisen jälkeen.';
+
+  @override
+  String get accountICloudUnavailable =>
+      'iCloud ei ole käytettävissä. Tarkista Apple-tilisi ja iCloudin käyttö järjestelmäasetuksista ja yritä uudelleen.';
+
+  @override
+  String get accountConnectICloud => 'Yhdistä iCloud';
+
+  @override
+  String get accountDisconnectICloud => 'Katkaise iCloud-yhteys';
+
+  @override
   String get accountUnavailable =>
       'Synkronointi edellyttää Singbook-versiota, jossa Google-kirjautuminen on määritetty. Tässä versiossa kappaleet säilyvät vain tällä laitteella.';
 

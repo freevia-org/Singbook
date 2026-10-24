@@ -2040,6 +2040,30 @@ abstract class AppLocalizations {
   /// **'Account and sync'**
   String get accountTitle;
 
+  /// No description provided for @accountICloudBenefits.
+  ///
+  /// In en, this message translates to:
+  /// **'Use your Apple Account to sync songs and setlists privately with iCloud. Changes sync automatically after connecting.'**
+  String get accountICloudBenefits;
+
+  /// No description provided for @accountICloudUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'iCloud is unavailable. Check your Apple Account and iCloud access in system settings, then try again.'**
+  String get accountICloudUnavailable;
+
+  /// No description provided for @accountConnectICloud.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect iCloud'**
+  String get accountConnectICloud;
+
+  /// No description provided for @accountDisconnectICloud.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect iCloud'**
+  String get accountDisconnectICloud;
+
   /// No description provided for @accountUnavailable.
   ///
   /// In en, this message translates to:

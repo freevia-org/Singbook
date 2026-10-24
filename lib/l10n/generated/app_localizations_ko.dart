@@ -1057,6 +1057,20 @@ class AppLocalizationsKo extends AppLocalizations {
   String get accountTitle => '계정 및 동기화';
 
   @override
+  String get accountICloudBenefits =>
+      'Apple 계정으로 노래와 세트리스트를 iCloud에 비공개로 동기화하세요. 연결하면 변경 사항이 자동으로 동기화됩니다.';
+
+  @override
+  String get accountICloudUnavailable =>
+      'iCloud를 사용할 수 없습니다. 시스템 설정에서 Apple 계정과 iCloud 접근 권한을 확인한 다음 다시 시도하세요.';
+
+  @override
+  String get accountConnectICloud => 'iCloud 연결';
+
+  @override
+  String get accountDisconnectICloud => 'iCloud 연결 해제';
+
+  @override
   String get accountUnavailable =>
       '동기화하려면 Google 로그인이 설정된 Singbook 빌드가 필요합니다. 이 빌드에서는 노래가 이 기기에만 저장됩니다.';
 

@@ -1086,6 +1086,20 @@ class AppLocalizationsLv extends AppLocalizations {
   String get accountTitle => 'Konts un sinhronizācija';
 
   @override
+  String get accountICloudBenefits =>
+      'Izmantojiet savu Apple kontu, lai privāti sinhronizētu dziesmas un dziesmu sarakstus ar iCloud. Pēc savienojuma izveides izmaiņas tiek sinhronizētas automātiski.';
+
+  @override
+  String get accountICloudUnavailable =>
+      'iCloud nav pieejams. Sistēmas iestatījumos pārbaudiet savu Apple kontu un piekļuvi iCloud, pēc tam mēģiniet vēlreiz.';
+
+  @override
+  String get accountConnectICloud => 'Savienot iCloud';
+
+  @override
+  String get accountDisconnectICloud => 'Atvienot iCloud';
+
+  @override
   String get accountUnavailable =>
       'Sinhronizēšanai vajadzīga Singbook versija ar konfigurētu pierakstīšanos Google kontā. Šajā versijā dziesmas tiek glabātas tikai šajā ierīcē.';
 

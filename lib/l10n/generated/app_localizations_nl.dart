@@ -1089,6 +1089,20 @@ class AppLocalizationsNl extends AppLocalizations {
   String get accountTitle => 'Account en synchronisatie';
 
   @override
+  String get accountICloudBenefits =>
+      'Gebruik je Apple-account om nummers en setlists privé met iCloud te synchroniseren. Na het verbinden worden wijzigingen automatisch gesynchroniseerd.';
+
+  @override
+  String get accountICloudUnavailable =>
+      'iCloud is niet beschikbaar. Controleer je Apple-account en toegang tot iCloud in de systeeminstellingen en probeer het opnieuw.';
+
+  @override
+  String get accountConnectICloud => 'Verbind iCloud';
+
+  @override
+  String get accountDisconnectICloud => 'Verbreek iCloud-verbinding';
+
+  @override
   String get accountUnavailable =>
       'Voor synchronisatie is een versie van Singbook nodig waarin Google-aanmelding is ingesteld. In deze versie blijven je nummers alleen op dit apparaat.';
 

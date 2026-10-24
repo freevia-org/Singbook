@@ -1081,6 +1081,20 @@ class AppLocalizationsId extends AppLocalizations {
   String get accountTitle => 'Akun dan sinkronisasi';
 
   @override
+  String get accountICloudBenefits =>
+      'Gunakan Akun Apple untuk menyelaraskan lagu dan daftar lagu secara privat dengan iCloud. Perubahan akan diselaraskan otomatis setelah terhubung.';
+
+  @override
+  String get accountICloudUnavailable =>
+      'iCloud tidak tersedia. Periksa Akun Apple dan akses iCloud di pengaturan sistem, lalu coba lagi.';
+
+  @override
+  String get accountConnectICloud => 'Hubungkan iCloud';
+
+  @override
+  String get accountDisconnectICloud => 'Putuskan iCloud';
+
+  @override
   String get accountUnavailable =>
       'Sinkronisasi memerlukan versi Singbook yang dikonfigurasi untuk login Google. Versi ini hanya menyimpan lagu di perangkat ini.';
 

@@ -127,6 +127,7 @@ class GoogleDriveSyncService {
     SyncCloudStore? store,
     DriveFileAccessCapability? fileAccess,
     this.storeFactory,
+    this.settingsNamespace = 'sync',
     this.maxItems = maxSyncItems,
     this.concurrency = 4,
     DateTime Function()? clock,
@@ -154,6 +155,8 @@ class GoogleDriveSyncService {
        _providedFileAccess = fileAccess,
        _clock = clock; // ignore: prefer_initializing_formals
 
+  /// Google keeps its historical keys; other providers use a separate binding.
+  final String settingsNamespace;
   final LibraryRepository repository;
   final DriveAuthorization auth;
   final SyncCloudStore? _providedStore;
@@ -164,7 +167,9 @@ class GoogleDriveSyncService {
       _providedFileAccess ??
       (auth is DriveFileAccessCapability
           ? auth as DriveFileAccessCapability
-          : createPlatformDriveFileAccess(auth));
+          : (_providedStore == null
+                ? createPlatformDriveFileAccess(auth)
+                : null));
 
   DriveFileAccessCapability _requireFileAccess() =>
       _fileAccess ?? (throw const SyncException('folder_picker_unavailable'));
@@ -248,9 +253,9 @@ class GoogleDriveSyncService {
 
   // ---- account binding -------------------------------------------------
 
-  static const _bindingKey = 'sync.account';
+  String get _bindingKey => '$settingsNamespace.account';
   static const _googleSessionKey = 'sync.googleSession';
-  static const _replaceKey = 'sync.replacePending';
+  String get _replaceKey => '$settingsNamespace.replacePending';
 
   String _accountHash(String id) => syncHash(id);
 
@@ -275,7 +280,8 @@ class GoogleDriveSyncService {
   }
 
   /// Explicit user decision after `account_changed`. Binds this library to the
-  /// signed-in account and forgets the sync state of every other account.
+  /// signed-in account and retires this provider's old and new account state.
+  /// Baselines belonging to another provider remain intact.
   ///  * [mergeLocal] true: the next sync merges the local library with the
   ///    account (local-only items are uploaded, same-id differences become
   ///    conflict copies).
@@ -299,7 +305,17 @@ class GoogleDriveSyncService {
     // Remember what exists now: "replace" only removes these items, never
     // songs created while the replace sync was still waiting to run.
     final existing = mergeLocal ? null : (await _localSnapshot()).keys.toList();
-    await repository.clearSyncBaselines();
+    // Retire only this provider's old/new account state. Other cloud providers
+    // retain their baselines when the user changes an account here.
+    final previous = (await _binding())['id'];
+    for (final key in {if (previous is String) previous, account}) {
+      final baselines = await repository.loadSyncBaselines(key);
+      await repository.writeSyncBaselines(
+        key,
+        puts: const [],
+        removeKeys: baselines.keys.toList(),
+      );
+    }
     await repository.setSetting(_bindingKey, {
       'id': account,
       'email': auth.accountEmail,
@@ -338,7 +354,9 @@ class GoogleDriveSyncService {
     final id = auth.accountId;
     if (id == null) return null;
     return DateTime.tryParse(
-      await repository.getSetting('sync.google.${_accountHash(id)}.lastSuccess')
+      await repository.getSetting(
+                '$settingsNamespace.google.${_accountHash(id)}.lastSuccess',
+              )
               as String? ??
           '',
     );
@@ -672,7 +690,7 @@ class GoogleDriveSyncService {
       if (replace) await repository.setSetting(_replaceKey, null);
       await repository.clearOutboxThrough(outboxMark);
       await repository.setSetting(
-        'sync.google.$account.lastSuccess',
+        '$settingsNamespace.google.$account.lastSuccess',
         _now().toIso8601String(),
       );
       return SyncReport(

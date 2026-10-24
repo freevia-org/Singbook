@@ -5,11 +5,11 @@ import 'package:singbook/sync/macos_drive_file_access.dart';
 import 'package:singbook/sync/platform_drive_auth.dart';
 
 void main() {
-  test('macOS uses its own OAuth client and separate Drive Picker access', () {
+  test('macOS reuses the iOS OAuth client when no override is supplied', () {
     final configured = GoogleDriveAuth(
       serverClientId: '',
-      iosClientId: '',
-      macosClientId: 'mac.apps.googleusercontent.com',
+      iosClientId: 'ios.apps.googleusercontent.com',
+      macosClientId: '',
       isAndroidOverride: false,
       isMacOSOverride: true,
     );
@@ -22,8 +22,24 @@ void main() {
       isAndroidOverride: false,
       isMacOSOverride: true,
     );
-    expect(missingClient.configured, isFalse);
+    expect(missingClient.configured, isTrue);
+  });
 
+  test(
+    'an explicit macOS OAuth client takes precedence over the iOS client',
+    () {
+      final auth = GoogleDriveAuth(
+        serverClientId: '',
+        iosClientId: 'ios.apps.googleusercontent.com',
+        macosClientId: 'mac.apps.googleusercontent.com',
+        isAndroidOverride: false,
+        isMacOSOverride: true,
+      );
+      expect(auth.configured, isTrue);
+    },
+  );
+
+  test('macOS routes through Google auth and separate Drive Picker access', () {
     final auth = createPlatformDriveAuthorization(
       platformOverride: TargetPlatform.macOS,
       isWebOverride: false,

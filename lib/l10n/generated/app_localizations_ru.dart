@@ -1085,6 +1085,20 @@ class AppLocalizationsRu extends AppLocalizations {
   String get accountTitle => 'Аккаунт и синхронизация';
 
   @override
+  String get accountICloudBenefits =>
+      'Используйте учётную запись Apple для конфиденциальной синхронизации песен и сет-листов с iCloud. После подключения изменения синхронизируются автоматически.';
+
+  @override
+  String get accountICloudUnavailable =>
+      'iCloud недоступен. Проверьте учётную запись Apple и доступ к iCloud в системных настройках, затем попробуйте снова.';
+
+  @override
+  String get accountConnectICloud => 'Подключить iCloud';
+
+  @override
+  String get accountDisconnectICloud => 'Отключить iCloud';
+
+  @override
   String get accountUnavailable =>
       'Для синхронизации нужна версия Singbook с настроенным входом через Google. В этой версии песни хранятся только на этом устройстве.';
 

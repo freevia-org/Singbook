@@ -1080,6 +1080,20 @@ class AppLocalizationsEt extends AppLocalizations {
   String get accountTitle => 'Konto ja sünkroonimine';
 
   @override
+  String get accountICloudBenefits =>
+      'Kasuta oma Apple’i kontot, et sünkroonida laule ja esitusloendeid iCloudiga privaatselt. Pärast ühendamist sünkroonitakse muudatused automaatselt.';
+
+  @override
+  String get accountICloudUnavailable =>
+      'iCloud pole saadaval. Kontrolli süsteemiseadetes oma Apple’i kontot ja iCloudi juurdepääsu ning proovi uuesti.';
+
+  @override
+  String get accountConnectICloud => 'Ühenda iCloud';
+
+  @override
+  String get accountDisconnectICloud => 'Katkesta iCloudi ühendus';
+
+  @override
   String get accountUnavailable =>
       'Sünkroonimiseks on vaja Singbooki versiooni, kus Google\'i sisselogimine on seadistatud. Selles versioonis hoitakse laule ainult selles seadmes.';
 

@@ -22,6 +22,9 @@ import '../providers/source_catalog_client.dart';
 import '../providers/configurable_provider.dart';
 import 'file_actions.dart';
 import '../sync/google_drive_sync.dart';
+import '../sync/icloud_auth.dart';
+import '../sync/icloud_store.dart';
+import '../sync/sync_provider.dart';
 
 /// A user-visible outcome of an operation, identified by a stable [code] (never
 /// free text, never containing credentials) that the UI maps to a localized
@@ -195,6 +198,12 @@ class AppController extends ChangeNotifier {
   bool searching = false, discovering = false, initialized = false;
   String? errorCode;
   GoogleDriveSyncService? _sync;
+  final _syncProviders = <SyncProvider, GoogleDriveSyncService>{};
+  SyncProvider syncProvider = SyncProvider.googleDrive;
+  bool get appleSyncSupported =>
+      !kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.iOS ||
+          defaultTargetPlatform == TargetPlatform.macOS);
   bool get syncConfigured => _sync?.configured ?? false;
   bool get syncConnected => _sync?.isConnected ?? false;
   String? get syncAccountEmail => _sync?.accountEmail;
@@ -391,6 +400,12 @@ class AppController extends ChangeNotifier {
       _ownsRepository = true;
     }
     _sync ??= GoogleDriveSyncService(repository: repository);
+    _syncProviders.putIfAbsent(SyncProvider.googleDrive, () => _sync!);
+    if (appleSyncSupported &&
+        await repository.getSetting('sync.provider') == 'icloud') {
+      syncProvider = SyncProvider.iCloud;
+      _sync = _serviceForProvider(syncProvider);
+    }
     settings = jsonMap(await repository.getSetting('app'));
     if (_disposed) return;
     await _initializeSourceCatalog();
@@ -1554,7 +1569,46 @@ class AppController extends ChangeNotifier {
     _emit();
   });
 
-  // ---- Google Drive sync ------------------------------------------------
+  // ---- Cloud sync -------------------------------------------------------
+
+  GoogleDriveSyncService _serviceForProvider(SyncProvider provider) =>
+      _syncProviders.putIfAbsent(provider, () {
+        if (provider == SyncProvider.googleDrive) {
+          return GoogleDriveSyncService(repository: repository);
+        }
+        final auth = ICloudAuthorization();
+        return GoogleDriveSyncService(
+          repository: repository,
+          auth: auth,
+          store: ICloudSyncStore(authorization: auth),
+          settingsNamespace: 'sync.icloud',
+        );
+      });
+
+  /// Switching providers is opt-in and never copies, removes or syncs a library.
+  /// The selected provider must then be explicitly connected by the user.
+  Future<void> selectSyncProvider(
+    SyncProvider provider,
+  ) => _runSyncAction(() async {
+    if (provider == syncProvider) return;
+    if (provider == SyncProvider.iCloud && !appleSyncSupported) {
+      throw const SyncException('icloud_unavailable');
+    }
+    _sync?.cancel();
+    // Drop this device's session without revoking grants or deleting cloud data.
+    await _sync?.disconnect();
+    await repository.setSetting(
+      'sync.provider',
+      provider == SyncProvider.iCloud ? 'icloud' : 'google',
+    );
+    syncProvider = provider;
+    _sync = _serviceForProvider(provider);
+    syncReport = null;
+    syncWarning = null;
+    syncPreviousAccountEmail = null;
+    lastSyncAt = null;
+    lastSyncConflicts = 0;
+  });
 
   /// Connects after an explicit user action. A saved session is tried first;
   /// when it cannot be restored, the account picker is shown. A successful
@@ -2039,18 +2093,24 @@ class AppController extends ChangeNotifier {
     _disposed = true;
     _historicalCacheUses = const [];
     _autoSyncTimer?.cancel();
-    _sync?.cancel();
+    for (final service in {..._syncProviders.values, ?_sync}) {
+      service.cancel();
+    }
     _cancelCatalogSearch();
     _cancelArtworkLookups();
     _discoveryCancel?.cancel();
     // Close the HTTP client only once the cancelled sync has stopped, so its
     // workers do not spend retries on a closed client.
-    final closing = _sync;
-    if (closing != null) {
+    final closing = {..._syncProviders.values, ?_sync};
+    if (closing.isNotEmpty) {
       unawaited(
         (_activeSyncAction ?? Future<void>.value())
             .catchError((Object _) {})
-            .then<void>((_) => closing.close()),
+            .then<void>((_) {
+              for (final service in closing) {
+                service.close();
+              }
+            }),
       );
     }
     final transport = _ownedTransport;

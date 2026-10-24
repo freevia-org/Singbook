@@ -1093,6 +1093,20 @@ class AppLocalizationsRo extends AppLocalizations {
   String get accountTitle => 'Cont și sincronizare';
 
   @override
+  String get accountICloudBenefits =>
+      'Folosește contul Apple pentru a sincroniza în mod privat melodiile și listele de piese cu iCloud. După conectare, modificările se sincronizează automat.';
+
+  @override
+  String get accountICloudUnavailable =>
+      'iCloud nu este disponibil. Verifică-ți contul Apple și accesul la iCloud în configurările sistemului, apoi încearcă din nou.';
+
+  @override
+  String get accountConnectICloud => 'Conectează iCloud';
+
+  @override
+  String get accountDisconnectICloud => 'Deconectează iCloud';
+
+  @override
   String get accountUnavailable =>
       'Sincronizarea necesită o versiune Singbook configurată pentru autentificarea Google. Această versiune păstrează melodiile doar pe acest dispozitiv.';
 

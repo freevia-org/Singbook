@@ -4,6 +4,7 @@ import '../providers/core/diagnostics.dart';
 import 'package:flutter/foundation.dart';
 
 import '../application/app_controller.dart';
+import '../sync/sync_provider.dart';
 import '../domain/arrangement.dart' as arrangement;
 import '../domain/chordpro.dart';
 import '../domain/chord_key_estimate.dart' show estimateChordKey;
@@ -499,6 +500,8 @@ class AppControllerAdapter extends VerseUiController {
       searchIncludesOtherSources: _searchIncludesOtherSources,
       searchFiltersExpanded: _filtersExpanded,
       searchFilters: _filters,
+      syncProvider: app.syncProvider,
+      appleSyncSupported: app.appleSyncSupported,
       syncReady: app.syncConfigured,
       syncSignedIn: app.syncConnected,
       syncBusy: app.syncBusy,
@@ -3090,6 +3093,10 @@ class AppControllerAdapter extends VerseUiController {
     }
     if (wasConnected && !app.syncConnected) postNotice(UiNotice.signedOut);
   }
+
+  @override
+  Future<void> selectSyncProvider(SyncProvider provider) =>
+      app.selectSyncProvider(provider);
 
   @override
   Future<void> syncNow() async {

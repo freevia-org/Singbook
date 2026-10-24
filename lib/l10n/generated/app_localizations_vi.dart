@@ -1079,6 +1079,20 @@ class AppLocalizationsVi extends AppLocalizations {
   String get accountTitle => 'Tài khoản và đồng bộ hóa';
 
   @override
+  String get accountICloudBenefits =>
+      'Dùng Tài khoản Apple để đồng bộ riêng tư các bài hát và danh sách bài hát với iCloud. Sau khi kết nối, các thay đổi sẽ tự động đồng bộ.';
+
+  @override
+  String get accountICloudUnavailable =>
+      'iCloud không khả dụng. Hãy kiểm tra Tài khoản Apple và quyền truy cập iCloud trong cài đặt hệ thống, rồi thử lại.';
+
+  @override
+  String get accountConnectICloud => 'Kết nối iCloud';
+
+  @override
+  String get accountDisconnectICloud => 'Ngắt kết nối iCloud';
+
+  @override
   String get accountUnavailable =>
       'Đồng bộ hóa yêu cầu bản dựng Singbook đã cấu hình đăng nhập Google. Bản dựng này chỉ lưu bài hát trên thiết bị này.';
 

@@ -1093,6 +1093,20 @@ class AppLocalizationsLt extends AppLocalizations {
   String get accountTitle => 'Paskyra ir sinchronizavimas';
 
   @override
+  String get accountICloudBenefits =>
+      'Naudokite savo „Apple“ paskyrą, kad privačiai sinchronizuotumėte dainas ir grojaraščius su „iCloud“. Prisijungus pakeitimai sinchronizuojami automatiškai.';
+
+  @override
+  String get accountICloudUnavailable =>
+      '„iCloud“ nepasiekiama. Sistemos nustatymuose patikrinkite savo „Apple“ paskyrą ir prieigą prie „iCloud“, tada bandykite dar kartą.';
+
+  @override
+  String get accountConnectICloud => 'Prijungti „iCloud“';
+
+  @override
+  String get accountDisconnectICloud => 'Atjungti „iCloud“';
+
+  @override
   String get accountUnavailable =>
       'Sinchronizavimui reikalinga Singbook versija, kurioje sukonfigūruotas prisijungimas per Google. Šioje versijoje dainos saugomos tik šiame įrenginyje.';
 
