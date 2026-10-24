@@ -45,11 +45,11 @@ if isinstance(ios_id, str) and ios_id.endswith('.apps.googleusercontent.com'):
 PY
 fi
 
-flutter pub get
+flutter pub get --enforce-lockfile
 flutter gen-l10n
 case "$mode" in
-  simulator) flutter build ios --simulator --debug "${defines[@]}" ;;
-  device) flutter build ios --release --no-codesign "${defines[@]}" ;;
-  archive) flutter build ipa --release --no-codesign "${defines[@]}" ;;
-  ipa) flutter build ipa --release --export-options-plist=ios/ExportOptions.plist "${defines[@]}" ;;
+  simulator) flutter build ios --simulator --debug --no-pub "${defines[@]}" ;;
+  device) flutter build ios --release --no-codesign --no-pub "${defines[@]}" ;;
+  archive) flutter build ipa --release --no-codesign --no-pub "${defines[@]}" ;;
+  ipa) flutter build ipa --release --no-pub --export-options-plist=ios/ExportOptions.plist "${defines[@]}" ;;
 esac
