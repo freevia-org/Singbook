@@ -337,6 +337,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get searchSourceLabel => 'स्रोत';
 
   @override
+  String get searchPreferredSourceLabel => 'पसंदीदा स्रोत';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'नतीजे अन्य चालू खोज स्रोतों से भी आ सकते हैं।';
+
+  @override
   String get searchMetadata => 'गीत का विवरण';
 
   @override

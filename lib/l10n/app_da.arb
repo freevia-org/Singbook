@@ -109,6 +109,8 @@
     }
   },
   "searchSourceLabel": "Kilde",
+  "searchPreferredSourceLabel": "Foretrukken kilde",
+  "searchPreferredSourceHint": "Resultater kan også komme fra andre aktiverede søgekilder.",
   "searchMetadata": "Sangdetaljer",
   "searchAlbum": "Album",
   "searchArtist": "Kunstner",

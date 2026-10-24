@@ -109,6 +109,8 @@
     }
   },
   "searchSourceLabel": "Sumber",
+  "searchPreferredSourceLabel": "Sumber pilihan",
+  "searchPreferredSourceHint": "Hasil juga dapat berasal dari sumber pencarian lain yang aktif.",
   "searchMetadata": "Detail lagu",
   "searchAlbum": "Album",
   "searchArtist": "Artis",

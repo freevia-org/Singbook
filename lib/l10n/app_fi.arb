@@ -109,6 +109,8 @@
     }
   },
   "searchSourceLabel": "Lähde",
+  "searchPreferredSourceLabel": "Ensisijainen lähde",
+  "searchPreferredSourceHint": "Tuloksia voi tulla myös muista käytössä olevista hakulähteistä.",
   "searchMetadata": "Kappaleen tiedot",
   "searchAlbum": "Albumi",
   "searchArtist": "Artisti",

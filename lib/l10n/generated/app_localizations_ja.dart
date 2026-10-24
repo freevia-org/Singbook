@@ -335,6 +335,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get searchSourceLabel => 'ソース';
 
   @override
+  String get searchPreferredSourceLabel => '優先するソース';
+
+  @override
+  String get searchPreferredSourceHint => '結果は有効にした他の検索ソースからも表示されることがあります。';
+
+  @override
   String get searchMetadata => '曲の詳細';
 
   @override

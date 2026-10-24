@@ -107,6 +107,8 @@
     }
   },
   "searchSourceLabel": "Šaltinis",
+  "searchPreferredSourceLabel": "Pageidaujamas šaltinis",
+  "searchPreferredSourceHint": "Rezultatai taip pat gali būti iš kitų įjungtų paieškos šaltinių.",
   "searchMetadata": "Dainos informacija",
   "searchAlbum": "Albumas",
   "searchArtist": "Atlikėjas",

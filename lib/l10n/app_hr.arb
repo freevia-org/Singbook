@@ -109,6 +109,8 @@
     }
   },
   "searchSourceLabel": "Izvor",
+  "searchPreferredSourceLabel": "Preferirani izvor",
+  "searchPreferredSourceHint": "Rezultati mogu doći i iz drugih uključenih izvora pretraživanja.",
   "searchMetadata": "Pojedinosti o pjesmi",
   "searchAlbum": "Album",
   "searchArtist": "Izvođač",

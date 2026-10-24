@@ -107,6 +107,8 @@
     }
   },
   "searchSourceLabel": "Kaynak",
+  "searchPreferredSourceLabel": "Tercih edilen kaynak",
+  "searchPreferredSourceHint": "Sonuçlar etkinleştirilmiş diğer arama kaynaklarından da gelebilir.",
   "searchMetadata": "Şarkı ayrıntıları",
   "searchAlbum": "Albüm",
   "searchArtist": "Sanatçı",

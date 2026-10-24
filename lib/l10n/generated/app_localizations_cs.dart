@@ -340,6 +340,13 @@ class AppLocalizationsCs extends AppLocalizations {
   String get searchSourceLabel => 'Zdroj';
 
   @override
+  String get searchPreferredSourceLabel => 'Upřednostněný zdroj';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'Výsledky mohou pocházet také z dalších zapnutých zdrojů vyhledávání.';
+
+  @override
   String get searchMetadata => 'Informace o písni';
 
   @override

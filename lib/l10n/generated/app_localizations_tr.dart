@@ -339,6 +339,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get searchSourceLabel => 'Kaynak';
 
   @override
+  String get searchPreferredSourceLabel => 'Tercih edilen kaynak';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'Sonuçlar etkinleştirilmiş diğer arama kaynaklarından da gelebilir.';
+
+  @override
   String get searchMetadata => 'Şarkı ayrıntıları';
 
   @override

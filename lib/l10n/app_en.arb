@@ -106,6 +106,8 @@
   "searchRating": "Rating {rating}",
   "@searchRating": {"placeholders": {"rating": {"type": "String"}}},
   "searchSourceLabel": "Source",
+  "searchPreferredSourceLabel": "Preferred source",
+  "searchPreferredSourceHint": "Results may also come from other enabled search sources.",
   "searchMetadata": "Song details",
   "searchAlbum": "Album",
   "searchArtist": "Artist",

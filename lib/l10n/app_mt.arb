@@ -107,6 +107,8 @@
     }
   },
   "searchSourceLabel": "Sors",
+  "searchPreferredSourceLabel": "Sors preferut",
+  "searchPreferredSourceHint": "Ir-riżultati jistgħu jiġu wkoll minn sorsi oħra tat-tfittxija attivati.",
   "searchMetadata": "Dettalji tal-kanzunetta",
   "searchAlbum": "Album",
   "searchArtist": "Artist",

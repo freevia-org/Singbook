@@ -342,6 +342,13 @@ class AppLocalizationsUk extends AppLocalizations {
   String get searchSourceLabel => 'Джерело';
 
   @override
+  String get searchPreferredSourceLabel => 'Бажане джерело';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'Результати можуть надходити також з інших увімкнених джерел пошуку.';
+
+  @override
   String get searchMetadata => 'Відомості про пісню';
 
   @override

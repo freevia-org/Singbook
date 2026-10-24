@@ -340,6 +340,13 @@ class AppLocalizationsNl extends AppLocalizations {
   String get searchSourceLabel => 'Bron';
 
   @override
+  String get searchPreferredSourceLabel => 'Voorkeursbron';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'Resultaten kunnen ook uit andere ingeschakelde zoekbronnen komen.';
+
+  @override
   String get searchMetadata => 'Nummergegevens';
 
   @override

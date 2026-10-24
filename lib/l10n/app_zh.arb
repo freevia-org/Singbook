@@ -107,6 +107,8 @@
     }
   },
   "searchSourceLabel": "来源",
+  "searchPreferredSourceLabel": "首选来源",
+  "searchPreferredSourceHint": "结果也可能来自其他已启用的搜索来源。",
   "searchMetadata": "歌曲详情",
   "searchAlbum": "专辑",
   "searchArtist": "艺人",

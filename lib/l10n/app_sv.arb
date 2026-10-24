@@ -107,6 +107,8 @@
     }
   },
   "searchSourceLabel": "Källa",
+  "searchPreferredSourceLabel": "Föredragen källa",
+  "searchPreferredSourceHint": "Resultat kan även komma från andra aktiverade sökkällor.",
   "searchMetadata": "Låtinformation",
   "searchAlbum": "Album",
   "searchArtist": "Artist",

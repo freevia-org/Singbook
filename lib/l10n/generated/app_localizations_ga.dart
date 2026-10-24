@@ -339,6 +339,13 @@ class AppLocalizationsGa extends AppLocalizations {
   String get searchSourceLabel => 'Foinse';
 
   @override
+  String get searchPreferredSourceLabel => 'Foinse roghnaithe';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'D’fhéadfadh torthaí teacht ó fhoinsí cuardaigh eile atá cumasaithe freisin.';
+
+  @override
   String get searchMetadata => 'Sonraí an amhráin';
 
   @override

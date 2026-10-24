@@ -339,6 +339,13 @@ class AppLocalizationsSk extends AppLocalizations {
   String get searchSourceLabel => 'Zdroj';
 
   @override
+  String get searchPreferredSourceLabel => 'Uprednostnený zdroj';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'Výsledky môžu pochádzať aj z ďalších zapnutých zdrojov vyhľadávania.';
+
+  @override
   String get searchMetadata => 'Informácie o piesni';
 
   @override

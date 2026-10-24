@@ -339,6 +339,13 @@ class AppLocalizationsSv extends AppLocalizations {
   String get searchSourceLabel => 'Källa';
 
   @override
+  String get searchPreferredSourceLabel => 'Föredragen källa';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'Resultat kan även komma från andra aktiverade sökkällor.';
+
+  @override
   String get searchMetadata => 'Låtinformation';
 
   @override

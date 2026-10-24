@@ -338,6 +338,13 @@ class AppLocalizationsHu extends AppLocalizations {
   String get searchSourceLabel => 'Forrás';
 
   @override
+  String get searchPreferredSourceLabel => 'Előnyben részesített forrás';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'A találatok más engedélyezett keresési forrásokból is származhatnak.';
+
+  @override
   String get searchMetadata => 'Dal adatai';
 
   @override

@@ -340,6 +340,13 @@ class AppLocalizationsMt extends AppLocalizations {
   String get searchSourceLabel => 'Sors';
 
   @override
+  String get searchPreferredSourceLabel => 'Sors preferut';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'Ir-riżultati jistgħu jiġu wkoll minn sorsi oħra tat-tfittxija attivati.';
+
+  @override
   String get searchMetadata => 'Dettalji tal-kanzunetta';
 
   @override

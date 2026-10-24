@@ -107,6 +107,8 @@
     }
   },
   "searchSourceLabel": "Sursă",
+  "searchPreferredSourceLabel": "Sursă preferată",
+  "searchPreferredSourceHint": "Rezultatele pot proveni și din alte surse de căutare activate.",
   "searchMetadata": "Detalii despre melodie",
   "searchAlbum": "Album",
   "searchArtist": "Artist",

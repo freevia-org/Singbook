@@ -338,6 +338,13 @@ class AppLocalizationsEt extends AppLocalizations {
   String get searchSourceLabel => 'Allikas';
 
   @override
+  String get searchPreferredSourceLabel => 'Eelistatud allikas';
+
+  @override
+  String get searchPreferredSourceHint =>
+      'Tulemused võivad pärineda ka muudest lubatud otsinguallikatest.';
+
+  @override
   String get searchMetadata => 'Laulu andmed';
 
   @override

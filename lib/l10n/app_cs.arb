@@ -109,6 +109,8 @@
     }
   },
   "searchSourceLabel": "Zdroj",
+  "searchPreferredSourceLabel": "Upřednostněný zdroj",
+  "searchPreferredSourceHint": "Výsledky mohou pocházet také z dalších zapnutých zdrojů vyhledávání.",
   "searchMetadata": "Informace o písni",
   "searchAlbum": "Album",
   "searchArtist": "Interpret",
