@@ -1,26 +1,39 @@
 name: macOS compilation
 
+# Compile-only lane: macOS regression tests plus an unsigned universal build.
 on:
   push:
     branches: [main]
+    paths-ignore: &docs-only
+      - 'docs/**'
+      - '**/*.md'
+      - 'LICENSE'
+      - 'NOTICE'
   pull_request:
+    paths-ignore: *docs-only
 
 permissions:
   contents: read
 
 concurrency:
-  group: macos-${{ github.ref }}
-  cancel-in-progress: true
+  group: macos-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  # Keep in sync with ci.yml and README.md ("Develop and test").
+  FLUTTER_VERSION: "3.44.8"
 
 jobs:
   compile:
     runs-on: macos-latest
-    timeout-minutes: 40
+    timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.44.8'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
       - run: flutter pub get --enforce-lockfile
@@ -38,7 +51,7 @@ jobs:
         run: |
           lipo build/macos/Build/Products/Release/Singbook.app/Contents/MacOS/Singbook -verify_arch arm64 x86_64
       - name: Preserve compile output
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: macos-unsigned-compile-only
           path: build/macos/Build/Products/Release/Singbook.app

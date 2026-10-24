@@ -17,17 +17,29 @@ name: Wikisource validation
       - test/providers/extra/extra_providers_test.dart
       - test/providers/extra/wikisource_identity_test.dart
       - test/ui/wikisource_cached_comparison_test.dart
+      # Every other file the regression matrix below runs, plus dependency pins.
+      - test/providers/core/providers_test.dart
+      - test/domain/combined_enrichment_test.dart
+      - test/domain/combined_chord_union_test.dart
+      - test/application/ready_source_save_test.dart
+      - test/application/youtube_provider_toggle_test.dart
+      - test/ui/followup_ux_test.dart
+      - test/ui/comparison_diagnostics_mapping_test.dart
+      - test/ui/app_controller_adapter_test.dart
+      - pubspec.yaml
+      - pubspec.lock
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: wikisource-validation-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  group: wikisource-validation-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   FLUTTER_VERSION: "3.44.8"
-  CI_EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+  CI_EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
 
 jobs:
   analyze:
@@ -35,10 +47,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
 
       - name: Record exact source head and input hashes
@@ -105,9 +117,9 @@ jobs:
 
       - name: Preserve analysis evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
-          name: wikisource-analysis-${{ github.event.pull_request.head.sha }}
+          name: wikisource-analysis-${{ github.event.pull_request.head.sha || github.sha }}
           path: artifacts/wikisource-ci/analyze/
           if-no-files-found: warn
           retention-days: 7
@@ -145,10 +157,10 @@ jobs:
       CI_GROUP: ${{ matrix.group }}
       CI_TEST_PATHS: ${{ matrix.paths }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
 
       - name: Record exact source head and input hashes
@@ -206,9 +218,9 @@ jobs:
 
       - name: Preserve group evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
-          name: wikisource-${{ matrix.group }}-${{ github.event.pull_request.head.sha }}
+          name: wikisource-${{ matrix.group }}-${{ github.event.pull_request.head.sha || github.sha }}
           path: artifacts/wikisource-ci/${{ matrix.group }}/
           if-no-files-found: warn
           retention-days: 7

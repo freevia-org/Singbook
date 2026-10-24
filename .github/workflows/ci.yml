@@ -3,28 +3,45 @@ name: CI
 # Source checks use the same empty defines as a fresh clone. The unsigned
 # Windows release bundle embeds the repository's public Desktop OAuth client
 # ID as a GitHub Actions variable. This workflow uses no secrets and never signs.
+#
+# Layout (fail fast, then fan out):
+#   analyze ──┬─> windows-build    (release bundle, packaging + native smoke)
+#             ├─> windows-test     (complete Flutter suite on Windows, sharded)
+#             └─> windows-journey  (deterministic desktop integration journey)
+#   test        (complete Flutter suite on Linux; runs in parallel with analyze)
+# The Microsoft Store packaging workflows consume the `windows-release-bundle`
+# artifact of a successful run of this workflow, so keep its name and contents.
 on:
   push:
     branches: [main]
+    paths-ignore: &docs-only
+      - 'docs/**'
+      - '**/*.md'
+      - 'LICENSE'
+      - 'NOTICE'
   pull_request:
+    paths-ignore: *docs-only
 
 permissions:
   contents: read
 
+# Supersede stale pull request runs; never cancel runs on main.
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   # Keep in sync with README.md ("Develop and test").
   FLUTTER_VERSION: "3.44.8"
 
 jobs:
-  check:
+  analyze:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - uses: subosito/flutter-action@v2
         with:
@@ -50,12 +67,29 @@ jobs:
       - name: Analyze
         run: flutter analyze
 
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
       - name: Test
-        run: flutter test
+        run: flutter test --no-pub
 
       - name: Upload setlist visual captures
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: setlist-visual-captures
           path: artifacts/singbook-setlist-rtl-captures/
@@ -64,7 +98,7 @@ jobs:
 
       - name: Upload responsive layout captures
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: responsive-layout-captures
           path: artifacts/singbook-layout-captures/
@@ -73,7 +107,7 @@ jobs:
 
       - name: Upload visual test evidence
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: visual-test-failures
           path: test/**/failures/**
@@ -81,13 +115,16 @@ jobs:
           retention-days: 7
 
   windows-build:
+    needs: analyze
     runs-on: windows-latest
     timeout-minutes: 30
     env:
       SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID: ${{ vars.SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID }}
       SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET: ${{ secrets.SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - uses: subosito/flutter-action@v2
         with:
@@ -187,31 +224,20 @@ jobs:
         shell: pwsh
         run: ./scripts/test-windows-native.ps1 -Clipboard -CredentialStore
 
-      - name: Run the complete Flutter suite on Windows
-        run: >-
-          flutter test --no-pub --concurrency=2 --reporter=expanded
-
-      - name: Run the deterministic Windows desktop journey
-        run: >-
-          flutter test integration_test/singbook_journey_device_test.dart
-          -d windows --dart-define=SINGBOOK_SKIP_SCREENSHOTS=true
-          --reporter=expanded
-
       - name: Preserve Windows validation evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: windows-validation-evidence
           path: |
             artifacts/windows-parity/
             artifacts/windows/**/build.log
             artifacts/windows/**/manifest.json
-            artifacts/singbook-layout-captures/
           if-no-files-found: ignore
           retention-days: 7
 
       - name: Preserve Windows release bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: windows-release-bundle
           path: artifacts/windows/
@@ -223,3 +249,70 @@ jobs:
         shell: pwsh
         run: |
           throw 'Windows OAuth preflight failed. The package and native checks ran, but the release is not ready for Google Drive sign-in.'
+
+  windows-test:
+    name: windows-test (${{ matrix.shard }}/2)
+    needs: analyze
+    runs-on: windows-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Run the complete Flutter suite on Windows (shard ${{ matrix.shard }} of 2)
+        env:
+          SHARD_INDEX: ${{ matrix.shard }}
+        shell: bash
+        run: >-
+          flutter test --no-pub --concurrency=2 --reporter=expanded
+          --total-shards=2 --shard-index=$((SHARD_INDEX - 1))
+
+      - name: Preserve Windows test evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-test-evidence-${{ matrix.shard }}
+          path: |
+            artifacts/singbook-layout-captures/
+            artifacts/singbook-setlist-rtl-captures/
+            test/**/failures/**
+          if-no-files-found: ignore
+          retention-days: 7
+
+  windows-journey:
+    needs: analyze
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Run the deterministic Windows desktop journey
+        run: >-
+          flutter test integration_test/singbook_journey_device_test.dart
+          -d windows --dart-define=SINGBOOK_SKIP_SCREENSHOTS=true
+          --reporter=expanded

@@ -28,14 +28,14 @@ jobs:
       STORE_SOURCE_MANIFEST_SHA256: 'a9400a9d2d8ef367e3469ed1da12ba71de5a7e0ded5857af65928b817b93014b'
     steps:
       - name: Check out the pinned test harness
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
 
       - name: Verify exact successful Store package artifact
         id: artifact
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const runId = Number(process.env.STORE_RUN_ID);
@@ -72,7 +72,7 @@ jobs:
           digest-mismatch: error
 
       - name: Set up Python for the isolated SQLite persistence check
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.12'
 
@@ -93,7 +93,7 @@ jobs:
 
       - name: Preserve hosted MSIX smoke evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: singbook-msix-install-smoke-${{ github.run_id }}
           path: artifacts/windows-store-msix-smoke/${{ github.run_id }}/
