@@ -892,10 +892,13 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
                       if (item.providerName.isNotEmpty)
                         Semantics(
                           label:
-                              '${l10n.searchSourceLabel}: ${item.providerName}',
+                              '${l10n.searchSourceLabel}: ${_sourceNames(item).join(', ')}',
                           child: ExcludeSemantics(
                             child: Text(
-                              item.providerName,
+                              _sourceNames(item).join(' · '),
+                              key: ValueKey('online-sources-${item.id}'),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: Theme.of(context).textTheme.labelSmall,
                             ),
                           ),
@@ -938,6 +941,9 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     );
     return out;
   }
+
+  List<String> _sourceNames(SearchReferenceData item) =>
+      item.sourceNames.isEmpty ? [item.providerName] : item.sourceNames;
 
   void _openFullPreview() {
     final selected = widget.controller.state.comparison?.selected;

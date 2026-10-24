@@ -9,6 +9,7 @@ import '../domain/chordpro.dart';
 import '../domain/chord_key_estimate.dart' show estimateChordKey;
 import '../domain/combine.dart' show recordingCompatible, sourcedArrangementKey;
 import '../domain/models.dart';
+import '../domain/search_grouping.dart';
 import '../domain/timing.dart' show timingOccurrenceMap;
 import '../domain/source_contributions.dart';
 import 'format.dart';
@@ -454,7 +455,10 @@ class AppControllerAdapter extends VerseUiController {
       startupSongsView: _startupSongsView(app.settings['startupSongsView']),
       query: _query,
       autocomplete: _query.trim() == app.query.trim()
-          ? rankedAutocomplete.map((entry) => _reference(entry.value)).toList()
+          ? groupSearchRecordings(
+              rankedAutocomplete.map((entry) => entry.value),
+              preferredProviderId: app.searchCatalogId,
+            ).map(_groupReference).toList()
           : const [],
       searchState: comparison != null
           ? LoadState.loaded
@@ -672,6 +676,28 @@ class AppControllerAdapter extends VerseUiController {
     artworkUrl: value.artworkUrl,
     isHistoricalText: value.providerId == 'wikisource',
   );
+
+  /// One search row per recording. The representative's identity is what a
+  /// tap selects, so discovery and saving work as for a single row.
+  SearchReferenceData _groupReference(SearchRecordingGroup group) {
+    final value = group.representative;
+    final names = <String>{
+      for (final member in [value, ...group.members])
+        _providerName(member.providerId),
+    }.toList();
+    return SearchReferenceData(
+      id: value.identity,
+      providerId: value.providerId,
+      providerName: _providerName(value.providerId),
+      title: value.title,
+      artist: value.artist,
+      album: group.album,
+      durationSeconds: group.durationSeconds,
+      artworkUrl: group.artworkUrl,
+      isHistoricalText: value.providerId == 'wikisource',
+      sourceNames: names,
+    );
+  }
 
   bool get _searchIncludesOtherSources {
     final catalogs = app.searchCatalogs;
