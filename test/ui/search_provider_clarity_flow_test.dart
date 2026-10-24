@@ -100,7 +100,8 @@ void main() {
       await tester.pumpAndSettle();
 
       final references = ui.state.autocomplete;
-      expect(references, hasLength(5));
+      // The two LRCLIB records of the Unplugged release form one row.
+      expect(references, hasLength(4));
       expect(
         references.map((row) => row.id),
         unorderedEquals([
@@ -108,17 +109,16 @@ void main() {
           'genius:5796943',
           'genius:12940913',
           'lrclib:36984333',
-          'lrclib:36990105',
         ]),
       );
       final byId = {for (final row in references) row.id: row};
       expect(
         references.map((row) => row.providerId),
-        unorderedEquals(['genius', 'genius', 'genius', 'lrclib', 'lrclib']),
+        unorderedEquals(['genius', 'genius', 'genius', 'lrclib']),
       );
       expect(
         references.map((row) => row.providerName),
-        unorderedEquals(['Genius', 'Genius', 'Genius', 'LRCLIB', 'LRCLIB']),
+        unorderedEquals(['Genius', 'Genius', 'Genius', 'LRCLIB']),
       );
       expect(
         references.map((row) => row.artist),
@@ -126,7 +126,6 @@ void main() {
           'Eric Clapton',
           'Georgia Parker',
           'Cynik',
-          'Eric Clapton',
           'Eric Clapton',
         ]),
       );
@@ -150,8 +149,8 @@ void main() {
       expect(byId['genius:333411']!.durationSeconds, isNull);
       expect(byId['lrclib:36984333']!.album, 'Eric Clapton Unplugged');
       expect(byId['lrclib:36984333']!.durationSeconds, 351);
-      expect(byId['lrclib:36990105']!.album, 'Eric Clapton - MTV Unplugged');
-      expect(byId['lrclib:36990105']!.durationSeconds, 327);
+      expect(byId['lrclib:36984333']!.sourceNames, ['LRCLIB']);
+      expect(byId.containsKey('lrclib:36990105'), isFalse);
       expect(
         byId.values
             .where((row) => row.providerId == 'genius')
@@ -219,7 +218,7 @@ void main() {
       await _scrollOnlineResultIntoView(tester, lrclibTile, 100);
       await tester.pump();
       final requestsBeforeNullArtworkTiles = imageRequests.length;
-      for (final id in const ['lrclib:36984333', 'lrclib:36990105']) {
+      for (final id in const ['lrclib:36984333']) {
         final tile = find.byKey(ValueKey('online-reference-$id'));
         await _scrollOnlineResultIntoView(tester, tile, 100);
         expect(
@@ -780,7 +779,7 @@ void main() {
       );
 
       final lastLrclib = find.byKey(
-        const ValueKey('online-reference-lrclib:36990105'),
+        const ValueKey('online-reference-lrclib:36984333'),
       );
       await _scrollOnlineResultIntoView(tester, lastLrclib, 120);
       await tester.pumpAndSettle();

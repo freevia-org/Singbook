@@ -57,24 +57,27 @@ void main() {
     expect(groups.single.representative.providerId, 'lrclib');
   });
 
-  test('different albums, editions and recordings stay apart', () {
+  test('different labels, albums and recordings stay apart', () {
     final groups = groupSearchRecordings([
-      _row('a', album: 'Demo Album', duration: 200),
-      _row('b', album: 'Greatest Hits', duration: 200),
+      _row('a', title: 'Sample Song (Live)', album: 'Demo Album'),
+      _row('b', title: 'Sample Song (Acoustic)', album: 'Demo Album'),
+      // Without a label, a row joins a labelled group only on a known
+      // matching album.
       _row('c', album: 'Demo Album', duration: 260),
-      _row('d', title: 'Sample Song (Live)'),
-      _row('e', metadata: {'version': 'Live'}),
-      _row('f', recordingIds: {'isrc': 'A'}),
-      _row('g', recordingIds: {'isrc': 'B'}),
+      _row('d', album: 'Greatest Hits'),
+      // Without label or album, e can only join an unlabelled group.
+      _row('e', recordingIds: {'isrc': 'A'}),
+      // f conflicts with e's recording ID.
+      _row('f', recordingIds: {'isrc': 'B'}),
+      _row('g', metadata: {'version': 'Studio'}, album: 'Demo Album'),
       _row('h', artist: 'Someone Else'),
     ]);
     expect(_ids(groups), [
-      // Durations do not split one album's recording.
-      ['a:1', 'c:1', 'f:1'],
-      // g conflicts with f's recording ID, so it joins the next match.
-      ['b:1', 'g:1'],
-      ['d:1'],
-      ['e:1'],
+      ['a:1', 'c:1'],
+      ['b:1'],
+      ['d:1', 'e:1'],
+      ['f:1'],
+      ['g:1'],
       ['h:1'],
     ]);
   });
@@ -145,27 +148,123 @@ void main() {
     expect(groups.first.representative.title, 'Hallelujah');
   });
 
-  test('bracketed editions and parts stay apart; durations do not', () {
+  test('parts, reprises and instrumentals stay apart', () {
     final groups = groupSearchRecordings([
-      _row('a', title: 'Never Stop', album: 'Hallelujah', duration: 175),
-      _row(
-        'b',
-        title: 'Never Stop (Wedding Version)',
-        album: 'Hallelujah',
-        duration: 175,
-      ),
-      _row('c', title: 'Song', album: 'First Album', duration: 200),
-      _row('d', title: 'Song (Leonard Cohen)', duration: 240),
+      _row('a', title: 'Song', album: 'First Album', duration: 200),
+      _row('b', title: 'Song (Leonard Cohen)', duration: 240),
+      _row('c', title: 'Song - Remastered 2011'),
+      _row('d', title: 'Song (Wedding Version)'),
       _row('e', title: 'Song (Reprise)'),
-      _row('f', title: 'Song (Leonard Cohen)', album: 'Other Album'),
-      _row('g', title: 'Song', album: 'Other Album'),
+      _row('f', title: 'Song (Part 2)'),
+      _row('g', title: 'Song (Instrumental)'),
+      _row('h', title: 'Song', album: 'Other Album'),
     ]);
     expect(_ids(groups), [
-      ['a:1'],
-      ['b:1'],
-      ['c:1', 'd:1'],
+      ['a:1', 'b:1', 'c:1'],
+      // A labelled edition without an album is not folded into the album.
+      ['d:1'],
       ['e:1'],
-      ['f:1', 'g:1'],
+      ['f:1'],
+      ['g:1'],
+      ['h:1'],
+    ]);
+  });
+
+  test('album name variants of one release match', () {
+    final albums = [
+      'Eric Clapton Unplugged',
+      'Eric Clapton - MTV Unplugged',
+      'Clapton Chronicles: Unplugged',
+      'Eric Clapton Unplugged [Enhanced, HD]',
+      'Unplugged [MFSL] [SACD]  (Live) [HD]',
+      'Unplugged (Remastered Deluxe Edition) CD1',
+      'Unplugged (Live)',
+    ];
+    final groups = groupSearchRecordings([
+      for (final (index, album) in albums.indexed)
+        _row(
+          'p$index',
+          title: index.isEven
+              ? 'Lonely Stranger'
+              : 'Lonely Stranger (Acoustic Live)',
+          artist: 'Eric Clapton',
+          album: album,
+        ),
+      _row(
+        'inverted',
+        title: 'Lonely Stranger',
+        artist: 'Clapton, Eric',
+        album: 'eric clapton unplugged',
+      ),
+      _row(
+        'other',
+        title: 'Lonely Stranger',
+        artist: 'Eric Clapton',
+        album: 'Pilgrim',
+      ),
+    ]);
+    expect(groups.map((group) => group.members.length), [8, 1]);
+    expect(
+      sameSearchRecording(
+        _row(
+          'a',
+          title: 'Lonely Stranger',
+          artist: 'Eric Clapton',
+          album: 'Clapton Chronicles: Unplugged',
+        ),
+        _row(
+          'b',
+          title: 'Lonely Stranger (Acoustic Live)',
+          artist: 'Eric Clapton',
+          album: 'Unplugged (Deluxe Edition) (Live)',
+        ),
+      ),
+      isTrue,
+    );
+  });
+
+  test('an album links labelled and unlabelled rows in any order', () {
+    final groups = groupSearchRecordings([
+      _row(
+        'genius',
+        title: 'Lonely Stranger (Acoustic Live)',
+        artist: 'Eric Clapton',
+      ),
+      // No label or album: it meets the release through the LRCLIB row.
+      _row('ultimateguitar', title: 'Lonely Stranger', artist: 'Eric Clapton'),
+      // "Acoustic" fits within "Acoustic Live".
+      _row(
+        'ug-acoustic',
+        title: 'Lonely Stranger',
+        artist: 'Eric Clapton',
+        metadata: {'recording': 'Acoustic'},
+      ),
+      _row(
+        'lrclib',
+        title: 'Lonely Stranger',
+        artist: 'Eric Clapton',
+        album: 'Eric Clapton Unplugged',
+      ),
+      _row(
+        'youtubemusic',
+        title: 'Lonely Stranger (Acoustic Live)',
+        artist: 'Eric Clapton',
+        album: 'Unplugged (Live)',
+      ),
+      _row('studio', title: 'Amazing Grace', artist: 'Judy Collins'),
+      _row('live', title: 'Amazing Grace (Live)', artist: 'Judy Collins'),
+    ], preferredProviderId: 'genius');
+    expect(_ids(groups), [
+      [
+        'genius:1',
+        'ultimateguitar:1',
+        'ug-acoustic:1',
+        'lrclib:1',
+        'youtubemusic:1',
+      ],
+      // Without albums, a live take is not folded into the studio row.
+      ['studio:1'],
+      ['live:1'],
     ]);
   });
 

@@ -12,6 +12,7 @@ import '../domain/models.dart';
 import '../domain/chordpro.dart';
 import '../domain/combine.dart';
 import '../domain/metadata_enrichment.dart' show displayMetadataFor;
+import '../domain/search_grouping.dart' show sameSearchRecording;
 import '../domain/source_result_merge.dart';
 import '../providers/provider.dart';
 import '../providers/core/core_providers.dart';
@@ -732,7 +733,8 @@ class AppController extends ChangeNotifier {
 
   /// Looks up artwork for [rows] (search results still without any) in the
   /// enabled artwork catalogs, two at a time, in the given order. Only a hit
-  /// that passes [displayMetadataFor]'s matching rules supplies artwork.
+  /// that [sameSearchRecording] accepts, by the rules that group search rows,
+  /// supplies artwork.
   /// Rows already looked up or queued are skipped, so callers may repeat a
   /// request on every rebuild; a new search or [cancelSearch] drops the queue.
   void requestArtwork(Iterable<SongCandidate> rows) {
@@ -774,7 +776,11 @@ class AppController extends ChangeNotifier {
                 onError: (Object _) => const <SongCandidate>[],
               );
           if (epoch != _artworkEpoch || _disposed) return;
-          found = displayMetadataFor(_songOf(row), hits).artworkUrl;
+          found = hits
+              .where((hit) => sameSearchRecording(row, hit))
+              .map((hit) => displayMetadataFor(hit).artworkUrl)
+              .nonNulls
+              .firstOrNull;
           if (found != null) break;
         }
         _artworkQueued.remove(row.identity);
@@ -785,23 +791,6 @@ class AppController extends ChangeNotifier {
       if (epoch == _artworkEpoch) --_artworkWorkers;
     }
   }
-
-  /// A chord sheet ("arrangement") row illustrates its song, so artwork is
-  /// matched as for the song itself. Other non-recording scopes stay excluded.
-  static SongCandidate _songOf(SongCandidate row) =>
-      row.metadata['identityScope'] != 'arrangement'
-      ? row
-      : SongCandidate(
-          providerId: row.providerId,
-          id: row.id,
-          title: row.title,
-          artist: row.artist,
-          album: row.album,
-          durationSeconds: row.durationSeconds,
-          url: row.url,
-          metadata: {...row.metadata}..remove('identityScope'),
-          recordingIds: row.recordingIds,
-        );
 
   void _cancelArtworkLookups() {
     ++_artworkEpoch;
