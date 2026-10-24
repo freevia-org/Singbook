@@ -809,21 +809,13 @@ class _PlayerScreenState extends State<PlayerScreen>
         child: Stack(
           children: [
             Positioned.fill(
-              top: desktopFontControls && widget.onFullScreenChanged != null
-                  ? 48
-                  : 0,
               child: LayoutBuilder(
                 key: const ValueKey('tablet-reader-content'),
                 builder: (context, constraints) {
-                  final actionGutter =
-                      widget.onFullScreenChanged == null || desktopFontControls
-                      ? 0.0
-                      : 48.0;
-                  final textWidth = math.max(
+                  final centeredInset = math.max(
                     0.0,
-                    constraints.maxWidth - actionGutter,
+                    (constraints.maxWidth - 960) / 2,
                   );
-                  final centeredInset = math.max(0.0, (textWidth - 960) / 2);
                   // Keep the text column centered, but let the scroll viewport
                   // and its single scrollbar reach the outside of the pane.
                   return Scrollbar(
@@ -844,7 +836,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                           padding: EdgeInsetsDirectional.fromSTEB(
                             centeredInset + 28,
                             18,
-                            centeredInset + 28 + actionGutter,
+                            centeredInset + 28,
                             32,
                           ),
                           itemCount: state.songLines.length,

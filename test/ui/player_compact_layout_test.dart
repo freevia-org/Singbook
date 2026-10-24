@@ -298,20 +298,40 @@ void main() {
     expect(stackedPlay.top, greaterThanOrEqualTo(stackedKey.bottom - 1));
     expect(stackedPlay.top, greaterThanOrEqualTo(stackedSpeed.bottom - 1));
     for (final (name, rect) in [
-      ('key', stackedKey), ('play', stackedPlay), ('speed', stackedSpeed),
+      ('key', stackedKey),
+      ('play', stackedPlay),
+      ('speed', stackedSpeed),
     ]) {
       final diagnostic = '1.25× $name: control=$rect; panel=$panelRect';
-      expect(rect.left, greaterThanOrEqualTo(panelRect.left - 1), reason: diagnostic);
-      expect(rect.right, lessThanOrEqualTo(panelRect.right + 1), reason: diagnostic);
-      expect(rect.top, greaterThanOrEqualTo(panelRect.top - 1), reason: diagnostic);
-      expect(rect.bottom, lessThanOrEqualTo(panelRect.bottom + 1), reason: diagnostic);
+      expect(
+        rect.left,
+        greaterThanOrEqualTo(panelRect.left - 1),
+        reason: diagnostic,
+      );
+      expect(
+        rect.right,
+        lessThanOrEqualTo(panelRect.right + 1),
+        reason: diagnostic,
+      );
+      expect(
+        rect.top,
+        greaterThanOrEqualTo(panelRect.top - 1),
+        reason: diagnostic,
+      );
+      expect(
+        rect.bottom,
+        lessThanOrEqualTo(panelRect.bottom + 1),
+        reason: diagnostic,
+      );
     }
     expect(
       find.byKey(const ValueKey('player-transport-horizontal-scroll')),
       findsNothing,
     );
     expect(
-      tester.widget<Text>(find.byKey(const ValueKey('scroll-speed-value'))).data,
+      tester
+          .widget<Text>(find.byKey(const ValueKey('scroll-speed-value')))
+          .data,
       '1.25×',
     );
     expect(
@@ -452,10 +472,12 @@ void main() {
       await tester.runAsync(() async {
         for (final family in ['Roboto', 'sans-serif']) {
           await (FontLoader(family)
-            ..addFont(rootBundle.load('assets/fonts/NotoSans-Regular.ttf'))).load();
+                ..addFont(rootBundle.load('assets/fonts/NotoSans-Regular.ttf')))
+              .load();
         }
-        await (FontLoader('MaterialIcons')
-          ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
+        await (FontLoader(
+          'MaterialIcons',
+        )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
       });
       final controller = _Controller();
       addTearDown(controller.dispose);
@@ -479,17 +501,38 @@ void main() {
       final speed = find.byKey(const ValueKey('scroll-speed-toggle'));
       // No ensureVisible or swipe: all controls must fit before interaction.
       for (final (name, control) in [
-        ('key', key), ('play', play), ('speed', speed),
-        ('previous', find.widgetWithIcon(IconButton, Icons.skip_previous_rounded)),
+        ('key', key),
+        ('play', play),
+        ('speed', speed),
+        (
+          'previous',
+          find.widgetWithIcon(IconButton, Icons.skip_previous_rounded),
+        ),
         ('next', find.widgetWithIcon(IconButton, Icons.skip_next_rounded)),
       ]) {
         final rect = tester.getRect(control);
         final diagnostic =
             '${defaultTargetPlatform.name} $name: control=$rect; panel=$panelRect';
-        expect(rect.left, greaterThanOrEqualTo(panelRect.left - 1), reason: diagnostic);
-        expect(rect.right, lessThanOrEqualTo(panelRect.right + 1), reason: diagnostic);
-        expect(rect.top, greaterThanOrEqualTo(panelRect.top - 1), reason: diagnostic);
-        expect(rect.bottom, lessThanOrEqualTo(panelRect.bottom + 1), reason: diagnostic);
+        expect(
+          rect.left,
+          greaterThanOrEqualTo(panelRect.left - 1),
+          reason: diagnostic,
+        );
+        expect(
+          rect.right,
+          lessThanOrEqualTo(panelRect.right + 1),
+          reason: diagnostic,
+        );
+        expect(
+          rect.top,
+          greaterThanOrEqualTo(panelRect.top - 1),
+          reason: diagnostic,
+        );
+        expect(
+          rect.bottom,
+          lessThanOrEqualTo(panelRect.bottom + 1),
+          reason: diagnostic,
+        );
         expect(rect.width, greaterThanOrEqualTo(48), reason: diagnostic);
         expect(rect.height, greaterThanOrEqualTo(48), reason: diagnostic);
         expect(control.hitTestable(), findsOneWidget, reason: diagnostic);
@@ -507,7 +550,9 @@ void main() {
         final value = find.byKey(const ValueKey('scroll-speed-popup-value'));
         expect(tester.widget<Text>(value).data, expected);
         expect(
-          tester.widget<Text>(find.byKey(const ValueKey('scroll-speed-value'))).data,
+          tester
+              .widget<Text>(find.byKey(const ValueKey('scroll-speed-value')))
+              .data,
           expected,
         );
         final popupRect = tester.getRect(
@@ -530,14 +575,21 @@ void main() {
       expect(controller.speedWrites, 0);
       expect(controller.speed, 1);
       expect(
-        tester.widget<Text>(find.byKey(const ValueKey('scroll-speed-popup-value'))).data,
+        tester
+            .widget<Text>(
+              find.byKey(const ValueKey('scroll-speed-popup-value')),
+            )
+            .data,
         '1×',
       );
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
     },
-    variant: TargetPlatformVariant({TargetPlatform.android, TargetPlatform.windows}),
+    variant: TargetPlatformVariant({
+      TargetPlatform.android,
+      TargetPlatform.windows,
+    }),
   );
 
   testWidgets(
@@ -798,7 +850,7 @@ void main() {
     },
   );
 
-  testWidgets('collapsed fullscreen action clears the long first lyric line', (
+  testWidgets('collapsed fullscreen action overlays the full-width lyrics', (
     tester,
   ) async {
     const text =
@@ -836,23 +888,23 @@ void main() {
       final lyricsRect = tester.getRect(
         find.byKey(const ValueKey('tablet-reader-content')),
       );
-      // The viewport now includes the reserved action gutter, so align the
-      // button with its outer trailing edge in each text direction.
+      // The action overlays the viewport without reserving a text gutter.
       final listFinder = find.byKey(const ValueKey('player-lyrics-scroll'));
       final listRect = tester.getRect(listFinder);
       final direction = Directionality.of(tester.element(listFinder));
-      final padding = tester.widget<ListView>(listFinder).padding!.resolve(
-        direction,
-      );
+      final padding = tester
+          .widget<ListView>(listFinder)
+          .padding!
+          .resolve(direction);
       expect(listRect, lyricsRect);
       expect(actionFinder.hitTestable(), findsOneWidget);
       expect(tester.widget<IconButton>(actionFinder).tooltip, isNotEmpty);
       if (direction == TextDirection.rtl) {
         expect(action.left, closeTo(lyricsRect.left, 1));
-        expect(padding.left - padding.right, closeTo(action.width, 1));
+        expect(padding.left, padding.right);
       } else {
         expect(action.right, closeTo(lyricsRect.right, 1));
-        expect(padding.right - padding.left, closeTo(action.width, 1));
+        expect(padding.right, padding.left);
       }
       final paragraphFinder = find.text(text);
       final paragraph = tester.renderObject<RenderParagraph>(paragraphFinder);
@@ -861,60 +913,8 @@ void main() {
       final contentRight = listRect.right - padding.right;
       expect(paragraphRect.left, closeTo(contentLeft, 1));
       expect(paragraphRect.right, closeTo(contentRight, 1));
-      expect(paragraphRect.overlaps(action), isFalse);
-      final glyphBoxes = paragraph
-          .getBoxesForSelection(
-            TextSelection(baseOffset: 0, extentOffset: text.length),
-          )
-          .map((box) {
-            final bounds = box.toRect();
-            return Rect.fromPoints(
-              paragraph.localToGlobal(bounds.topLeft),
-              paragraph.localToGlobal(bounds.bottomRight),
-            );
-          }).toList();
-      expect(glyphBoxes, isNotEmpty);
-      expect(glyphBoxes.any((box) => box.overlaps(action)), isFalse);
-      // Full-range selection boxes can include whitespace at a wrapped line
-      // edge. Check visible graphemes separately, retaining the full selection
-      // no-overlap assertion above and the same one-pixel geometry tolerance.
-      var offset = 0;
-      var visibleBoxCount = 0;
-      for (final character in text.characters) {
-        final nextOffset = offset + character.length;
-        if (character.trim().isNotEmpty) {
-          final boxes = paragraph.getBoxesForSelection(
-            TextSelection(baseOffset: offset, extentOffset: nextOffset),
-          );
-          for (final box in boxes) {
-            final local = box.toRect();
-            final bounds = Rect.fromPoints(
-              paragraph.localToGlobal(local.topLeft),
-              paragraph.localToGlobal(local.bottomRight),
-            );
-            final diagnostic =
-                '$direction UTF-16 [$offset, $nextOffset) "$character": '
-                '$bounds; content=[$contentLeft, $contentRight]; '
-                'paragraph=$paragraphRect; action=$action; '
-                'fullSelection=$glyphBoxes';
-            expect(
-              bounds.left,
-              greaterThanOrEqualTo(contentLeft - 1),
-              reason: diagnostic,
-            );
-            expect(
-              bounds.right,
-              lessThanOrEqualTo(contentRight + 1),
-              reason: diagnostic,
-            );
-            expect(bounds.overlaps(action), isFalse, reason: diagnostic);
-            visibleBoxCount++;
-          }
-        }
-        offset = nextOffset;
-      }
-      expect(offset, text.length);
-      expect(visibleBoxCount, greaterThan(0));
+      expect(padding.left, 28);
+      expect(padding.right, 28);
       expect(paragraph.didExceedMaxLines, isFalse);
       if (capturePlayerVisuals) {
         final orientation = locale.languageCode == 'ar' ? 'rtl' : 'ltr';
