@@ -12,6 +12,7 @@ import '../../domain/combine.dart'
         soundingChartKey,
         soundingTransposition;
 import '../../domain/artist_credit.dart';
+import '../../domain/arrangement_context.dart';
 import '../../domain/lyric_word_identity.dart';
 import '../../domain/models.dart';
 import '../../domain/lyrics_variants.dart';
@@ -229,11 +230,20 @@ Future<SourceResult> findMatchingSource(
   // selected chart has been checked against a full lyric reference. That
   // retry path has its own timeout and cancellation scope.
   bool stopAfterFirstChordCandidate = false,
+  // Reuse bounded search rows when resolved recording metadata adds context.
+  List<SongCandidate>? searchedCandidates,
+  void Function(List<SongCandidate>)? onSearchCandidates,
+  // Only a full resolved recording reference authorizes this discovery pass.
+  bool allowContextualArrangements = false,
   String operationPrefix = 'lookup',
   // Candidates resolved from the provider's search before giving up.
   int maxAttempts = 3,
 }) async {
   cancel?.throwIfCancelled();
+  bool arrangementMatches(SongCandidate candidate) =>
+      sameArrangement(selection, candidate, provider) ||
+      (allowContextualArrangements &&
+          contextualArrangementCandidate(selection, candidate));
   void observeCandidate(SourceResult result) {
     if (cancel?.isCancelled == true) return;
     try {
@@ -437,9 +447,7 @@ Future<SourceResult> findMatchingSource(
     if (song.providerId != provider.definition.id ||
         song.id != candidate.id ||
         (!sameSong(candidate, song) && !historicalText) ||
-        (!strict &&
-            !sameArrangement(selection, song, provider) &&
-            !historicalText)) {
+        (!strict && !arrangementMatches(song) && !historicalText)) {
       report(
         'validate',
         'rejected',
@@ -505,7 +513,12 @@ Future<SourceResult> findMatchingSource(
           ? 'same_song'
           : 'arrangement_requires_agreement',
       extra: !strict && !historicalText
-          ? {'requiresLyricsAgreement': true}
+          ? {
+              'requiresLyricsAgreement': true,
+              if (allowContextualArrangements &&
+                  contextualArrangementCandidate(selection, song))
+                'requiresRecordingLyricsAgreement': true,
+            }
           : {},
     );
     if (accept != null && !accept(matched)) {
@@ -553,8 +566,11 @@ Future<SourceResult> findMatchingSource(
   report('search', 'pending', query: searchQuery);
   late final List<SongCandidate> results;
   try {
-    results = await provider.search(searchQuery, cancel: cancel);
+    results = searchedCandidates == null
+        ? await provider.search(searchQuery, cancel: cancel)
+        : List.unmodifiable(searchedCandidates.take(100));
     cancel?.throwIfCancelled();
+    onSearchCandidates?.call(List.unmodifiable(results.take(100)));
   } on ProviderException catch (error) {
     report(
       'search',
@@ -580,8 +596,7 @@ Future<SourceResult> findMatchingSource(
           .where(
             (s) =>
                 s.providerId == provider.definition.id &&
-                (sameSong(selection, s) ||
-                    sameArrangement(selection, s, provider)),
+                (sameSong(selection, s) || arrangementMatches(s)),
           )
           .toList()
         ..sort((a, b) {
@@ -743,6 +758,8 @@ class SourceDiscoveryService {
     final providerCodes = <String, String?>{};
     final operationWatches = <String, Stopwatch>{};
     final corroborationOperationIds = <String, String>{};
+    final searchedByProvider = <String, List<SongCandidate>>{};
+    final lookupCancellation = <String, CancellationToken>{};
     var index = 0;
     void publish(
       String providerId,
@@ -907,6 +924,7 @@ class SourceDiscoveryService {
         final provider = active[index++];
         final local =
             providerCancellation[provider.definition.id] ?? CancellationToken();
+        lookupCancellation[provider.definition.id] = local;
         cancel?.cancelled.then((_) => local.cancel());
         void retainCandidate(SourceResult result) {
           if (local.isCancelled || cancel?.isCancelled == true) return;
@@ -942,6 +960,15 @@ class SourceDiscoveryService {
                 onCandidate: retainCandidate,
                 stopAfterFirstChordCandidate: provider.definition.capabilities
                     .contains('chords'),
+                onSearchCandidates:
+                    provider.definition.capabilities.contains('chords')
+                    ? (candidates) {
+                        if (!local.isCancelled && cancel?.isCancelled != true) {
+                          searchedByProvider[provider.definition.id] =
+                              candidates;
+                        }
+                      }
+                    : null,
                 onOperation: (operation) {
                   if (!local.isCancelled) {
                     recordOperation(provider.definition.id, operation);
@@ -1009,6 +1036,7 @@ class SourceDiscoveryService {
                   providerCancellation[r.candidate.providerId]?.isCancelled !=
                       true &&
                   r.matchKind != MatchKind.rejected &&
+                  r.matchKind != MatchKind.unverified &&
                   !r.hasChords &&
                   r.body.trim().isNotEmpty &&
                   _words(r.body).toSet().length >= 12,
@@ -1026,6 +1054,127 @@ class SourceDiscoveryService {
             ).toSet().length.compareTo(_words(a.body).toSet().length);
             return words != 0 ? words : a.id.compareTo(b.id);
           });
+    final recordingReference = references
+        .where((reference) => recordingCompatible(selection, reference))
+        .firstOrNull;
+    if (recordingReference != null) {
+      // Only resolved recording metadata supplies composer/work context. Reuse
+      // the original search rows; do not issue another broad catalog search.
+      for (final provider in active) {
+        final id = provider.definition.id;
+        final lookupCancel = lookupCancellation[id];
+        final providerCancel = providerCancellation[id];
+        cancel?.throwIfCancelled();
+        if (!provider.definition.capabilities.contains('chords') ||
+            lookupCancel?.isCancelled == true ||
+            providerCancel?.isCancelled == true ||
+            !const {'found', 'unavailable'}.contains(providerChecksState[id]) ||
+            results.any(
+              (r) =>
+                  r.candidate.providerId == id &&
+                  r.hasChords &&
+                  r.matchKind != MatchKind.rejected,
+            )) {
+          continue;
+        }
+        final candidates = (searchedByProvider[id] ?? const <SongCandidate>[])
+            .where(
+              (candidate) => contextualArrangementCandidate(
+                recordingReference.candidate,
+                candidate,
+              ),
+            )
+            .toList();
+        if (candidates.isEmpty) continue;
+        final contextualCancel = CancellationToken();
+        cancel?.cancelled.then((_) => contextualCancel.cancel());
+        lookupCancel?.cancelled.then((_) => contextualCancel.cancel());
+        providerCancel?.cancelled.then((_) => contextualCancel.cancel());
+        final alternatives = <SourceResult>[];
+        var succeeded = false;
+        traceOpen[id] = true;
+        providerChecksState[id] = 'pending';
+        publish(id, 'pending');
+        recordCorroboration(id, 'pending');
+        try {
+          final result =
+              await findMatchingSource(
+                provider,
+                recordingReference.candidate,
+                searchedCandidates: candidates,
+                allowContextualArrangements: true,
+                operationPrefix: 'contextual',
+                cancel: contextualCancel,
+                onAlternative: alternatives.add,
+                onOperation: (operation) {
+                  if (!contextualCancel.isCancelled) {
+                    recordOperation(id, operation);
+                  }
+                },
+                accept: (result) =>
+                    result.hasChords &&
+                    _agreement(result.body, recordingReference.body),
+              ).timeout(
+                alternativeTimeout,
+                onTimeout: () {
+                  contextualCancel.cancel();
+                  throw const ProviderException('timeout');
+                },
+              );
+          cancel?.throwIfCancelled();
+          lookupCancel?.throwIfCancelled();
+          providerCancel?.throwIfCancelled();
+          contextualCancel.throwIfCancelled();
+          if (result.matchKind == MatchKind.rejected || !result.hasChords) {
+            throw const ProviderException('unavailable');
+          }
+          for (final accepted in [...alternatives, result]) {
+            final existing = results.indexWhere((r) => r.id == accepted.id);
+            if (existing < 0) {
+              results.add(accepted);
+            } else {
+              results[existing] = accepted;
+            }
+          }
+          preferredResultIds[id] = result.id;
+          providerResults[id] = result;
+          providerChecksState[id] = 'found';
+          succeeded = true;
+          recordCorroboration(id, 'completed');
+          publish(id, 'found', result: result);
+        } on ProviderException catch (error) {
+          finalizePending(
+            id,
+            error.code == 'cancelled' ? 'cancelled' : 'failed',
+            error.code,
+            operationIdPrefix: '$id:contextual:',
+          );
+          if (cancel?.isCancelled == true) {
+            finalizeCancelledChecks();
+            cancel!.throwIfCancelled();
+          }
+          providerChecksState[id] = error.code == 'unavailable'
+              ? 'unavailable'
+              : 'failed';
+          recordCorroboration(id, 'failed', code: error.code);
+          publish(id, providerChecksState[id]!, code: error.code);
+        } catch (_) {
+          finalizePending(
+            id,
+            'failed',
+            'invalid_response',
+            operationIdPrefix: '$id:contextual:',
+          );
+          cancel?.throwIfCancelled();
+          providerChecksState[id] = 'failed';
+          recordCorroboration(id, 'failed', code: 'invalid_response');
+          publish(id, 'failed', code: 'invalid_response');
+        } finally {
+          contextualCancel.cancel();
+          if (!succeeded) traceOpen[id] = false;
+        }
+      }
+    }
     for (var i = 0; i < results.length; i++) {
       final result = results[i];
       final providerCancel = providerCancellation[result.candidate.providerId];
@@ -1060,6 +1209,21 @@ class SourceDiscoveryService {
           );
           if (owners.isNotEmpty) {
             final referenceBody = references.first.body;
+            final contextRows =
+                recordingReference == null ||
+                    lookupCancellation[result.candidate.providerId]
+                            ?.isCancelled ==
+                        true
+                ? null
+                : searchedByProvider[result.candidate.providerId];
+            final canUseContext =
+                contextRows?.any(
+                  (candidate) => contextualArrangementCandidate(
+                    recordingReference!.candidate,
+                    candidate,
+                  ),
+                ) ==
+                true;
             // Linked local token: a timeout (or the caller cancelling) must stop
             // the underlying lookup, not just stop waiting for it, so a slow
             // retry cannot keep issuing requests after discover has returned.
@@ -1072,7 +1236,9 @@ class SourceDiscoveryService {
               alternative =
                   await findMatchingSource(
                     owners.first,
-                    selection,
+                    canUseContext ? recordingReference!.candidate : selection,
+                    searchedCandidates: canUseContext ? contextRows : null,
+                    allowContextualArrangements: canUseContext,
                     cancel: alternativeCancel,
                     exclude: {result.candidate.id},
                     allowSelectedProviderAlternatives: true,
