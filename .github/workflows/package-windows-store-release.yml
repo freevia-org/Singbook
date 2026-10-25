@@ -8,7 +8,7 @@ name: Package and smoke test Microsoft Store release
 # Adding a release: add a `release` choice and a matching block in the
 # "Resolve release pins" step. Releases whose CI artifact pins were supplied at
 # dispatch time (29, 30) still require all five artifact inputs; releases with
-# frozen pins (32, 33, 34, 35, 36) reject overrides.
+# frozen pins (32, 33, 34, 35, 36, 37) reject overrides.
 #
 # Pull requests that change this workflow or the Store scripts package and
 # smoke test the default (newest frozen) release as a self-test.
@@ -18,9 +18,9 @@ on:
       release:
         description: Store release build number to package
         required: true
-        default: '36'
+        default: '37'
         type: choice
-        options: ['29', '30', '32', '33', '34', '35', '36']
+        options: ['29', '30', '32', '33', '34', '35', '36', '37']
       ci_run_id:
         description: Successful CI run ID for the pinned release commit (releases 29 and 30 only)
         required: false
@@ -58,11 +58,11 @@ concurrency:
 
 jobs:
   package-and-smoke:
-    name: package-and-smoke (release ${{ inputs.release || '36' }})
+    name: package-and-smoke (release ${{ inputs.release || '37' }})
     runs-on: windows-latest
     timeout-minutes: 25
     env:
-      RELEASE: ${{ inputs.release || '36' }}
+      RELEASE: ${{ inputs.release || '37' }}
       INPUT_CI_RUN_ID: ${{ inputs.ci_run_id }}
       INPUT_CI_ARTIFACT_ID: ${{ inputs.ci_artifact_id }}
       INPUT_CI_ARTIFACT_DIGEST: ${{ inputs.ci_artifact_digest }}
@@ -189,6 +189,23 @@ jobs:
                 CI_ARTIFACT_DIGEST = 'sha256:de367997d70392b09c74beb3cf5f26ba144c62b11843ea838d1d061cc5736bef'
                 PORTABLE_MANIFEST_SHA256 = '675ad3bb0543d2404095a5920546a00ae8ade924d1177a2be3b8984783390d81'
                 PORTABLE_ZIP_SHA256 = '052b2738ff9afdd26c0a5d9a8c16d3f63f072279e0955430b8eb77741570acb4'
+              }
+            }
+            '37' {
+              # Qualified PR135 CI compiled the synthetic merge of the frozen release37 product tree.
+              $pins = [ordered]@{
+                RELEASE_HEAD_SHA = '20b2a7f2a80a53c015a75645e84595cca82b0599'
+                RELEASE_COMPILED_SOURCE_SHA = 'aecce35cf55939b1106ebc92920cf580289f9464'
+                RELEASE_SOURCE_TREE = '59e74c24c4766a6c50af699918b59e750e3182eb'
+                RELEASE_PRODUCT_VERSION = '0.2.23+37'
+                RELEASE_CI_BRANCH = 'codex/release37-overlay'
+              }
+              $artifactPins = [ordered]@{
+                CI_RUN_ID = '40164441869'
+                CI_ARTIFACT_ID = '12587721677'
+                CI_ARTIFACT_DIGEST = 'sha256:9d45b8973e483ec93d001a7d094b830238ad85dcf1934def50eb46b09efe45ff'
+                PORTABLE_MANIFEST_SHA256 = '0953e4851eaadaef5c28be03868ce87e8faa9fec31ff0dfa87f89a30369dfee3'
+                PORTABLE_ZIP_SHA256 = 'e9ec95c7d582de0d9b64d611d3cd2c1a9e620f40c5f317a7eeefd708a1df969c'
               }
             }
             default { throw "Unknown Store release '$($env:RELEASE)'." }
