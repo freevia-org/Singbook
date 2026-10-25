@@ -1314,6 +1314,181 @@ int _keyConsensusRank(SourceResult source) =>
       _ => 1,
     };
 
+final _wordToken = RegExp(r"[\p{L}\p{N}']+", unicode: true);
+
+List<({String word, int start, int end})> _lineWords(String text) => [
+  for (final match in _wordToken.allMatches(text))
+    (
+      word: match[0]!.toLowerCase().replaceAll("'", ''),
+      start: match.start,
+      end: match.end,
+    ),
+];
+
+/// Chart lines placed on [target] lines by word alignment: a target line of
+/// three or more words takes the chords of the chart line sharing at least
+/// 80% of its words in order (longest common subsequence), each chord on the
+/// aligned word. A tie between chart lines with different chords places
+/// nothing. Lines whose offsets are not plain characters are skipped.
+Map<int, List<ChordAnchor>> _fuzzyLineChords(
+  List<ArrangementLine> target,
+  String chart,
+) {
+  bool plainText(String text) => text.characters.length == text.length;
+  final donors = [
+    for (final line in parseArrangement(chart))
+      if (!line.directive &&
+          line.chords.isNotEmpty &&
+          plainText(line.text) &&
+          _lineWords(line.text).length >= 3)
+        (line: line, words: _lineWords(line.text)),
+  ];
+  if (donors.isEmpty || donors.length > 400) return const {};
+  final result = <int, List<ChordAnchor>>{};
+  for (var i = 0; i < target.length; i++) {
+    final line = target[i];
+    if (line.directive || !plainText(line.text)) continue;
+    final words = _lineWords(line.text);
+    if (words.length < 3 || words.length > 40) continue;
+    ({ArrangementLine line, List<({String word, int start, int end})> words})?
+    best;
+    List<(int, int)> bestPairs = const [];
+    var bestScore = 0.0;
+    var ambiguous = false;
+    for (final donor in donors) {
+      if (donor.words.length > 40) continue;
+      final pairs = _alignWords(donor.words, words);
+      final score =
+          pairs.length /
+          (donor.words.length > words.length
+              ? donor.words.length
+              : words.length);
+      if (score < .8) continue;
+      if (score > bestScore) {
+        best = donor;
+        bestPairs = pairs;
+        bestScore = score;
+        ambiguous = false;
+      } else if (score == bestScore &&
+          _chordSignature(donor.line) != _chordSignature(best!.line)) {
+        ambiguous = true;
+      }
+    }
+    if (best == null || ambiguous) continue;
+    final aligned = {for (final (from, to) in bestPairs) from: to};
+    final anchors = <ChordAnchor>[];
+    for (final chord in best.line.chords) {
+      var index = best.words.indexWhere((word) => chord.offset < word.end);
+      if (index < 0) {
+        anchors.add(ChordAnchor(line.text.length, chord.chord));
+        continue;
+      }
+      // An unaligned word borrows the position of the nearest aligned one.
+      var probe = index;
+      while (probe >= 0 && !aligned.containsKey(probe)) {
+        probe--;
+      }
+      if (probe < 0) {
+        probe = index;
+        while (probe < best.words.length && !aligned.containsKey(probe)) {
+          probe++;
+        }
+      }
+      if (!aligned.containsKey(probe)) continue;
+      final targetWord = words[aligned[probe]!];
+      final inWord = probe == index
+          ? (chord.offset - best.words[index].start).clamp(
+              0,
+              targetWord.end - targetWord.start,
+            )
+          : 0;
+      anchors.add(ChordAnchor(targetWord.start + inWord, chord.chord));
+      index = probe;
+    }
+    if (anchors.isNotEmpty) result[i] = anchors;
+  }
+  return result;
+}
+
+/// Index pairs of the longest common subsequence of two word lists.
+List<(int, int)> _alignWords(
+  List<({String word, int start, int end})> a,
+  List<({String word, int start, int end})> b,
+) {
+  final table = List.generate(
+    a.length + 1,
+    (_) => List.filled(b.length + 1, 0),
+  );
+  for (var i = a.length - 1; i >= 0; i--) {
+    for (var j = b.length - 1; j >= 0; j--) {
+      table[i][j] = a[i].word == b[j].word
+          ? table[i + 1][j + 1] + 1
+          : (table[i + 1][j] > table[i][j + 1]
+                ? table[i + 1][j]
+                : table[i][j + 1]);
+    }
+  }
+  final pairs = <(int, int)>[];
+  var i = 0, j = 0;
+  while (i < a.length && j < b.length) {
+    if (a[i].word == b[j].word) {
+      pairs.add((i, j));
+      i++;
+      j++;
+    } else if (table[i + 1][j] >= table[i][j + 1]) {
+      i++;
+    } else {
+      j++;
+    }
+  }
+  return pairs;
+}
+
+final _bracketed = RegExp(r'\([^()]*\)|\[[^\[\]]*\]');
+
+/// A lyric line's words outside brackets, for finding repeats of a line.
+String _repeatKey(String text) => _norm(text.replaceAll(_bracketed, ' '));
+
+/// [chords] placed on [from] moved to the same words of [to], whose words
+/// outside brackets are the same. Null when a chord cannot be placed.
+List<ChordAnchor>? _retargetChords(
+  String from,
+  String to,
+  List<ChordAnchor> chords,
+) {
+  List<({int start, int end})> words(String text) {
+    final masked = text.replaceAllMapped(
+      _bracketed,
+      (match) => ' ' * match[0]!.length,
+    );
+    return [
+      for (final match in RegExp(r'\S+').allMatches(masked))
+        (start: match.start, end: match.end),
+    ];
+  }
+
+  final source = words(from), target = words(to);
+  if (source.isEmpty || source.length != target.length) return null;
+  final fromCharacters = from.characters.length == from.length;
+  final toCharacters = to.characters.length == to.length;
+  // Offsets count grapheme clusters; only plain lines map one to one.
+  if (!fromCharacters || !toCharacters) return null;
+  final moved = <ChordAnchor>[];
+  for (final chord in chords) {
+    var index = source.indexWhere((word) => chord.offset < word.end);
+    if (index < 0) {
+      moved.add(ChordAnchor(to.length, chord.chord));
+      continue;
+    }
+    final inWord = (chord.offset - source[index].start).clamp(
+      0,
+      target[index].end - target[index].start,
+    );
+    moved.add(ChordAnchor(target[index].start + inWord, chord.chord));
+  }
+  return moved;
+}
+
 ({String body, List<String> sourceIds}) _overlayChords(
   String body,
   List<SourceResult> sources,
@@ -1339,7 +1514,14 @@ int _keyConsensusRank(SourceResult source) =>
         !_compatibleArrangementSetup(base, source, selected)) {
       continue;
     }
-    final chords = _phraseChords(plain, _keyCorrectedBody(source));
+    final donorBody = _keyCorrectedBody(source);
+    // Lines whose wording differs slightly between sources (an extra "let it
+    // be", a contraction) are aligned word by word where exact phrases fail.
+    final chords = {
+      ..._fuzzyLineChords(plain, donorBody),
+      for (final entry in _phraseChords(plain, donorBody).entries)
+        if (entry.value.isNotEmpty) entry.key: entry.value,
+    };
     final coverage = chords.entries.fold<int>(
       0,
       (n, entry) =>
@@ -1422,6 +1604,30 @@ int _keyConsensusRank(SourceResult source) =>
     }
   }
   if (contributorIds.isEmpty) return (body: body, sourceIds: const []);
+  // Charts often write a repeated chorus once, and repeats vary in backing
+  // vocals ("(stand by me)"). A lyric line whose words, outside brackets,
+  // equal a line that received chords takes those chords at the same word
+  // positions, unless it already has chords.
+  final chordsByText = <String, int>{};
+  for (var i = 0; i < lines.length; i++) {
+    final chords = chartChords[i];
+    final text = _repeatKey(lines[i].text);
+    if (chords != null && chords.isNotEmpty && text.isNotEmpty) {
+      chordsByText.putIfAbsent(text, () => i);
+    }
+  }
+  for (var i = 0; i < lines.length; i++) {
+    // An aligned line may carry an empty chord list; that is not a choice.
+    if ((chartChords[i]?.isNotEmpty ?? false) || lines[i].directive) continue;
+    final from = chordsByText[_repeatKey(lines[i].text)];
+    if (from == null) continue;
+    final moved = _retargetChords(
+      lines[from].text,
+      lines[i].text,
+      chartChords[from]!,
+    );
+    if (moved != null) chartChords[i] = moved;
+  }
 
   final rawLines = body.split('\n');
   final output = <String>[];

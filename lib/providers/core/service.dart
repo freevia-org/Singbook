@@ -1210,7 +1210,8 @@ class SourceDiscoveryService {
             );
             recordCorroboration(alternative.candidate.providerId, 'completed');
             continue;
-          } else if (_partialAgreement(result.body, references.first.body)) {
+          } else if (_partialAgreement(result.body, references.first.body) ||
+              _noisyAgreement(result.body, references.first.body)) {
             recordCorroboration(result.candidate.providerId, 'pending');
             // A chart can omit repeated choruses or ad-libs yet supply accurate
             // chords. Keep it as a donor; combineSources retains the full lyrics.
@@ -1432,7 +1433,9 @@ class SourceDiscoveryService {
         });
     if (!disagree && !contradicted && !unheard) return;
     bool lyricsAgree(String body) => reference != null
-        ? _agreement(body, reference) || _partialAgreement(body, reference)
+        ? _agreement(body, reference) ||
+              _partialAgreement(body, reference) ||
+              _noisyAgreement(body, reference)
         : charts.any(
             (chart) =>
                 _agreement(body, chart) || _partialAgreement(body, chart),
@@ -1610,6 +1613,37 @@ bool _agreement(String chart, String reference) {
       ba.isNotEmpty &&
       both.length / ab.length >= .65 &&
       both.length / ba.length >= .65;
+}
+
+/// A chord chart can carry the whole song among notes that are not lyrics:
+/// chords typed as text, tab and strumming notation, links, capo or tuning
+/// instructions and commentary. Judge only its lyric-like lines (three or
+/// more words, at least 70% of them in the reference): they must cover most
+/// of the reference's words in the same order. A different song with the
+/// same title has no such lines.
+bool _noisyAgreement(String chart, String reference) {
+  final referenceWords = _words(reference);
+  final vocabulary = referenceWords.toSet();
+  if (vocabulary.length < 12) return false;
+  final lyricWords = <String>[];
+  var lyricLines = 0;
+  for (final line in chart.split('\n')) {
+    final words = _words(line);
+    if (words.length < 3) continue;
+    final known = words.where(vocabulary.contains).length;
+    if (known / words.length < .7) continue;
+    lyricLines++;
+    lyricWords.addAll(words);
+  }
+  if (lyricLines < 4) return false;
+  final covered = lyricWords.toSet().intersection(vocabulary);
+  if (covered.length / vocabulary.length < .6) return false;
+  Set<String> bigrams(List<String> values) => {
+    for (var i = 1; i < values.length; i++) '${values[i - 1]} ${values[i]}',
+  };
+  final pairs = bigrams(lyricWords);
+  return pairs.isNotEmpty &&
+      pairs.intersection(bigrams(referenceWords)).length / pairs.length >= .75;
 }
 
 bool _partialAgreement(String chart, String reference) {
