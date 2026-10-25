@@ -1372,12 +1372,24 @@ const _repeatingSections = {'verse', 'chorus', 'pre-chorus', 'refrain'};
       final index = target.lyrics[n];
       final to = parsed[index];
       if (to.chords.isNotEmpty) continue;
-      // The most recent earlier section of this kind with chords on this line.
-      final model = models.lastWhere(
-        (section) => parsed[section.lyrics[n]].chords.isNotEmpty,
-        orElse: () => (kind: '', lyrics: const <int>[]),
-      );
-      if (model.lyrics.isEmpty) continue;
+      // The most recent earlier section of this kind with chords on this
+      // line; none when such sections disagree on its chords.
+      final chorded = models
+          .where((section) => parsed[section.lyrics[n]].chords.isNotEmpty)
+          .toList();
+      if (chorded.isEmpty ||
+          chorded
+                  .map(
+                    (section) => parsed[section.lyrics[n]].chords
+                        .map((chord) => chord.chord)
+                        .join(' '),
+                  )
+                  .toSet()
+                  .length >
+              1) {
+        continue;
+      }
+      final model = chorded.last;
       final from = parsed[model.lyrics[n]];
       if (raw[index].contains('\\') ||
           to.text.characters.length != to.text.length ||

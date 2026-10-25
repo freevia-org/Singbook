@@ -237,4 +237,48 @@ void main() {
       isEmpty,
     ]);
   });
+
+  test('section fill abstains when earlier choruses disagree', () {
+    final doc = _combine(
+      [
+        '[Verse]',
+        _verse[0],
+        '',
+        '[Chorus]',
+        _chorus,
+        '',
+        '[Verse]',
+        _verse[1],
+        '',
+        '[Chorus]',
+        _chorus,
+        '',
+        '[Verse]',
+        _tail[0],
+        '',
+        '[Chorus]',
+        _chorus,
+        '',
+        '[Outro]',
+        _tail[1],
+      ].join('\n'),
+      [
+        '[G]Someone hums a tune along the [C]winding river road',
+        '[C]Paper lanterns drifting over the [G]quiet harbor water',
+        '[Em]Bells are ringing gently down the [D]empty market halls',
+        '[D]Paper lanterns drifting over the [A]quiet harbor water',
+        '[G]Morning carries salt and cedar [C]through the open door',
+        '[G]Little boats are waiting where the [C]gulls begin to call',
+      ].join('\n'),
+    );
+    final repeats = [
+      for (final line in parseArrangement(doc.body))
+        if (line.text == _chorus) [for (final c in line.chords) c.chord],
+    ];
+    expect(repeats, [
+      ['C', 'G'],
+      ['D', 'A'],
+      isEmpty,
+    ]);
+  });
 }
