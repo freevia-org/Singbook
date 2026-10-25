@@ -69,6 +69,29 @@ void main() {
     );
   });
 
+  test('a leading "The" in the artist is ignored', () {
+    expect(
+      sameArrangement(
+        _song('Harbor Lights', 'The Lantern Dolls'),
+        _song('Harbor Lights', 'Lantern Dolls'),
+        _Chords(),
+      ),
+      isTrue,
+    );
+    // Only a leading article goes; other words must still match.
+    for (final other in ['Lantern Dollz', 'The Lantern', 'Dolls']) {
+      expect(
+        sameArrangement(
+          _song('Harbor Lights', 'The Lantern Dolls'),
+          _song('Harbor Lights', other),
+          _Chords(),
+        ),
+        isFalse,
+        reason: other,
+      );
+    }
+  });
+
   test('band names joined by "and" or "+" are not split', () {
     final chords = _Chords();
     for (final band in ['Lanterns and the Machine', 'Lanterns + The Machine']) {

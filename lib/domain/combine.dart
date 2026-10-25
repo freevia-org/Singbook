@@ -7,6 +7,7 @@ import 'edition_identity.dart';
 import 'metadata_enrichment.dart';
 import 'arrangement.dart';
 import 'artist_credit.dart';
+import 'lyric_word_identity.dart';
 import 'chord_key_estimate.dart' show estimateChordKey;
 import 'timing.dart' show timingOccurrenceMap;
 
@@ -179,7 +180,9 @@ bool _sameSong(SongCandidate a, SongCandidate b) {
   final artist = _identityNorm(a.artist), title = _baseTitle(a.title);
   // Two unknown (empty) artists or titles are not evidence of the same song.
   if (artist.isEmpty || title.isEmpty) return false;
-  return artist == _identityNorm(b.artist) && title == _baseTitle(b.title);
+  return title == _baseTitle(b.title) &&
+      (artist == _identityNorm(b.artist) ||
+          sameGeniusPrimaryCredit(a, b, _identityNorm));
 }
 
 /// A chord site's arrangement of [b]'s song: chord sites may credit only
@@ -786,8 +789,9 @@ bool _legacyHistoricalWork(
 }
 
 bool _completeChart(String chart, String reference) {
-  List<String> words(String value) =>
-      _norm(plainLyrics(value)).split(' ').where((w) => w.isNotEmpty).toList();
+  List<String> words(String value) => _norm(
+    foldLyricVowelAccents(plainLyrics(value)),
+  ).split(' ').where((w) => w.isNotEmpty).toList();
   final a = words(chart), b = words(reference);
   if (a.length < 12 || b.length < 12) return true;
   Map<String, int> counts(List<String> list) {
@@ -1461,6 +1465,25 @@ String? _recordingHintedEstimate(
   )?.key;
 }
 
+/// The key of the one chart that gave all of [body]'s chords, estimated from
+/// the whole chart, when [body] holds too few chords for any estimate (fewer
+/// than six, or fewer than three roots). A body with enough chords whose key
+/// the estimator left open stays open.
+String? _singleChartEstimate(String body, List<SourceResult> sources) {
+  if (sources.length != 1) return null;
+  final chords = [
+    for (final line in parseArrangement(body))
+      for (final anchor in line.chords) anchor.chord,
+  ];
+  final roots = {
+    for (final chord in chords)
+      if (RegExp(r'^[A-G][#b♯♭]?').firstMatch(chord) case final match?)
+        match[0],
+  };
+  if (chords.length >= 6 && roots.length >= 3) return null;
+  return estimateChordKey(_keyCorrectedBody(sources.single))?.key;
+}
+
 /// The key discovery estimated from the majority of a song's chord charts,
 /// while the song still holds the exact chart it was estimated for. Like
 /// [estimateChordKey], it is display-only.
@@ -1606,10 +1629,9 @@ final _wordToken = RegExp(r"[\p{L}\p{N}']+", unicode: true);
 List<({String word, int start, int end})> _lineWords(String text) => [
   for (final match in _wordToken.allMatches(text))
     (
-      word: match[0]!
-          .toLowerCase()
-          .replaceFirst(RegExp(r"in'$"), 'ing')
-          .replaceAll("'", ''),
+      word: foldLyricVowelAccents(
+        match[0]!.toLowerCase(),
+      ).replaceFirst(RegExp(r"in'$"), 'ing').replaceAll("'", ''),
       start: match.start,
       end: match.end,
     ),
@@ -2339,8 +2361,19 @@ SongDocument combineSources(
   if (accepted.isEmpty) {
     throw const FormatException('No matching lyrics are available to save.');
   }
+  // Use resolved selected-recording text as the chart completeness reference
+  // when it is available; another performance's longer lyric page must not
+  // make a compatible chart appear incomplete.
+  final resolvedLyricAnchors = preferredSourceId == null
+      ? accepted
+            .where((source) => recordingCompatible(selected, source))
+            .toList()
+      : <SourceResult>[];
+  final referencePool = resolvedLyricAnchors.isEmpty
+      ? accepted
+      : resolvedLyricAnchors;
   final references =
-      accepted
+      referencePool
           .where((s) => !s.hasChords && s.matchKind != MatchKind.unverified)
           .toList()
         ..sort(
@@ -2364,6 +2397,28 @@ SongDocument combineSources(
   if (eligible.isEmpty) {
     throw const FormatException('No complete matching lyrics are available.');
   }
+  // Once a source has resolved lyrics against the selected recording, a
+  // longer same-song result from another performance must not replace them.
+  // Keep the normal fallback when no recording-compatible lyrics are present;
+  // a user-selected source also remains authoritative below.
+  final recordingAnchored = preferredSourceId == null
+      ? eligible
+            .where((source) => recordingCompatible(selected, source))
+            .toList()
+      : <SourceResult>[];
+  final rankedEligible = recordingAnchored.isEmpty
+      ? eligible
+      : eligible.where((source) {
+          if (recordingAnchored.contains(source)) return true;
+          // Keep an otherwise complete chart when it carries the exact same
+          // lyric sequence. Chords/formatting can improve that text without
+          // choosing a different performance's extra verses or remix intro.
+          if (!source.hasChords) return false;
+          final words = _norm(plainLyrics(source.body));
+          return recordingAnchored.any(
+            (anchor) => _norm(plainLyrics(anchor.body)) == words,
+          );
+        }).toList();
   int rank(SourceResult s) =>
       _norm(plainLyrics(s.body)).length.clamp(0, 100000) * 1000 +
       lyricLines(s.body).length.clamp(0, 100) +
@@ -2373,7 +2428,7 @@ SongDocument combineSources(
           ? 200
           : 0) +
       (s.hasChords && s.extra['keyConsensus'] != false ? 500 : 0);
-  eligible.sort((a, b) {
+  rankedEligible.sort((a, b) {
     final score = rank(b).compareTo(rank(a));
     return score != 0 ? score : a.id.compareTo(b.id);
   });
@@ -2383,7 +2438,7 @@ SongDocument combineSources(
       'The selected source does not contain a complete matching arrangement.',
     );
   }
-  final best = preferred.isEmpty ? eligible.first : preferred.first;
+  final best = preferred.isEmpty ? rankedEligible.first : preferred.first;
   final merged = preferredSourceId == null
       ? _overlayChords(
           _keyCorrectedBody(best),
@@ -2948,6 +3003,15 @@ SongDocument combineSources(
             'key': shapes,
             'bodyHash': _bodyHash(finalBody),
             'hint': 'recording',
+          }
+        else if (_singleChartEstimate(finalBody, [
+              for (final id in chordSourceIds) ?sourcesById[id],
+            ])
+            case final String shapes)
+          'chordKeyEstimate': {
+            'key': shapes,
+            'bodyHash': _bodyHash(finalBody),
+            'hint': 'chart',
           },
       if (chordSourceIds.any(
         (sourceId) => sourcesById[sourceId]?.extra['pendingMatchCheck'] == true,

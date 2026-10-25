@@ -2,7 +2,7 @@
 // Opt-in metadata audit over a fixed song set, outside the test suite:
 //   flutter test tool/metadata_audit_test.dart \
 //     [--dart-define=AUDIT_OFFLINE=true] [--dart-define=AUDIT_ONLY=Title]
-//     [--dart-define=AUDIT_JITTER=<seed>]
+//     [--dart-define=AUDIT_JITTER=<seed>] [--dart-define=AUDIT_MAX_NETWORK=<n>]
 // It runs under flutter test for the platform HTTP stack the app uses.
 //
 // Every provider response is cached under build/metadata_audit/cache, keyed
@@ -126,7 +126,17 @@ const songs = <(String, String, String?)>[
 /// successful and not-found answers. Keys leave out headers, so tokens are
 /// never written.
 class CachingClient extends http.BaseClient {
-  CachingClient(this.directory, {required this.offline, this.jitter});
+  CachingClient(
+    this.directory, {
+    required this.offline,
+    this.jitter,
+    this.networkBudget,
+  });
+
+  /// The most network requests one run may make; further misses fail as
+  /// unavailable and are counted, so a run cannot exceed its allowance.
+  final int? networkBudget;
+  int overBudget = 0;
 
   final Directory directory;
   final bool offline;
@@ -163,6 +173,10 @@ class CachingClient extends http.BaseClient {
       uncached++;
       uncachedHosts.update(request.url.host, (n) => n + 1, ifAbsent: () => 1);
       throw const ProviderException('unavailable', 'not in audit cache');
+    }
+    if (networkBudget case final budget? when misses >= budget) {
+      overBudget++;
+      throw const ProviderException('unavailable', 'audit network budget');
     }
     misses++;
     final response = await _inner.send(request);
@@ -222,10 +236,12 @@ Future<void> _audit() async {
   const verbose = bool.fromEnvironment('AUDIT_VERBOSE');
   final out = Directory('build/metadata_audit');
   const jitterSeed = int.fromEnvironment('AUDIT_JITTER', defaultValue: -1);
+  const budget = int.fromEnvironment('AUDIT_MAX_NETWORK', defaultValue: -1);
   final client = CachingClient(
     Directory('${out.path}/cache'),
     offline: offline,
     jitter: jitterSeed < 0 ? null : math.Random(jitterSeed),
+    networkBudget: budget < 0 ? null : budget,
   );
   var token = Platform.environment['GENIUS_ACCESS_TOKEN'] ?? '';
   for (final path in [
@@ -475,6 +491,7 @@ Future<void> _audit() async {
         'hits': client.hits,
         'misses': client.misses,
         'uncachedOffline': client.uncached,
+        'overNetworkBudget': client.overBudget,
         'uncachedHosts': client.uncachedHosts,
         'networkStatuses': {
           for (final e in client.storedStatuses.entries) '${e.key}': e.value,
@@ -486,7 +503,8 @@ Future<void> _audit() async {
   print(
     '\n${rows.where((r) => (r['issues'] as List).isEmpty).length}/${rows.length} '
     'songs without findings; cache hits ${client.hits}, misses ${client.misses}'
-    '${client.uncached == 0 ? '' : '; ${client.uncached} requests not in the cache (rerun online)'}',
+    '${client.uncached == 0 ? '' : '; ${client.uncached} requests not in the cache (rerun online)'}'
+    '${client.overBudget == 0 ? '' : '; ${client.overBudget} requests refused over the network budget'}',
   );
   for (final entry in findings.entries) {
     print('${entry.key}: ${entry.value.length}');

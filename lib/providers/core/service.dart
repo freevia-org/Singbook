@@ -8,9 +8,11 @@ import '../../domain/combine.dart'
         chordKeyVerdict,
         declaredKeyFitsChords,
         keysAgree,
+        recordingCompatible,
         soundingChartKey,
         soundingTransposition;
 import '../../domain/artist_credit.dart';
+import '../../domain/lyric_word_identity.dart';
 import '../../domain/models.dart';
 import '../../domain/lyrics_variants.dart';
 import '../../domain/edition_identity.dart';
@@ -109,64 +111,6 @@ String arrangementTitle(String title) => title
       '',
     )
     .trim();
-Set<String> _versions(String value, {bool album = false}) {
-  final labels = album
-      ? [value]
-      : RegExp(
-          r'\(([^()]*)\)|\[([^\[\]]*)\]|\s[-–—]\s(.+)$',
-        ).allMatches(value).map((m) => m[1] ?? m[2] ?? m[3]!).toList();
-  final result = <String>{};
-  for (final label in labels) {
-    final text = normalizedIdentity(label);
-    var remaining = text;
-    final found = <String>{};
-    for (final marker in [
-      'live',
-      'acoustic',
-      'unplugged',
-      'karaoke',
-      'instrumental',
-      'sped up',
-      'slowed',
-      'nightcore',
-    ]) {
-      final matches = RegExp('(?:^|\\s)$marker(?:\\s|\$)').hasMatch(text);
-      if (!matches) continue;
-      if (album) {
-        final explicit =
-            RegExp(
-              '(?:[\\[(]\\s*|\\s[-–—]\\s+)$marker\\b',
-              caseSensitive: false,
-            ).hasMatch(value) ||
-            (marker == 'live'
-                ? RegExp(
-                    r'^live(?:\s+\d{4})?\s*$|\blive\s+(?:at|in|from|on)\b|^live\s+\d{4}',
-                    caseSensitive: false,
-                  ).hasMatch(value)
-                : RegExp('^$marker\\b', caseSensitive: false).hasMatch(value));
-        if (!explicit) continue;
-      }
-      final version = marker == 'unplugged' ? 'acoustic' : marker;
-      if (album) {
-        result.add(version);
-      } else {
-        found.add(version);
-        remaining = remaining.replaceAll(RegExp('\\b$marker\\b'), ' ');
-      }
-    }
-    if (!album &&
-        remaining
-            .replaceAll(
-              RegExp(r'\b(?:version|recording|performance|session)\b'),
-              ' ',
-            )
-            .trim()
-            .isEmpty) {
-      result.addAll(found);
-    }
-  }
-  return result;
-}
 
 bool sameSong(SongCandidate selected, SongCandidate result) {
   for (final id in selected.recordingIds.entries) {
@@ -176,16 +120,17 @@ bool sameSong(SongCandidate selected, SongCandidate result) {
     }
   }
   if (_titleKey(selected.title) != _titleKey(result.title) ||
-      normalizedIdentity(selected.artist) !=
-          normalizedIdentity(result.artist)) {
+      (normalizedIdentity(selected.artist) !=
+              normalizedIdentity(result.artist) &&
+          !sameGeniusPrimaryCredit(selected, result, normalizedIdentity))) {
     return false;
   }
-  final a = _versions(selected.album ?? '', album: true),
-      b = _versions(result.album ?? '', album: true);
+  final a = recordingVersionMarkers(selected.album ?? '', album: true),
+      b = recordingVersionMarkers(result.album ?? '', album: true);
   if (a.difference(b).isNotEmpty || b.difference(a).isNotEmpty) {
     if (selected.album != null && result.album != null) return false;
     if (selected.identity != result.identity &&
-        !_versions(selected.title).containsAll({...a, ...b})) {
+        !recordingVersionMarkers(selected.title).containsAll({...a, ...b})) {
       return false;
     }
   }
@@ -1069,11 +1014,18 @@ class SourceDiscoveryService {
                   _words(r.body).toSet().length >= 12,
             )
             .toList()
-          ..sort(
-            (a, b) => _words(
+          ..sort((a, b) {
+            // A longer same-song transcription may be a remix or another
+            // performance. Corroborate charts against the selected recording
+            // before falling back to unanchored same-song references.
+            final recording = (recordingCompatible(selection, b) ? 1 : 0)
+                .compareTo(recordingCompatible(selection, a) ? 1 : 0);
+            if (recording != 0) return recording;
+            final words = _words(
               b.body,
-            ).toSet().length.compareTo(_words(a.body).toSet().length),
-          );
+            ).toSet().length.compareTo(_words(a.body).toSet().length);
+            return words != 0 ? words : a.id.compareTo(b.id);
+          });
     for (var i = 0; i < results.length; i++) {
       final result = results[i];
       final providerCancel = providerCancellation[result.candidate.providerId];
@@ -1607,7 +1559,7 @@ class SourceDiscoveryService {
 const _recordingTranscriptions = {'songsterr'};
 
 List<String> _words(String body) => normalizedIdentity(
-  body
+  foldLyricVowelAccents(body)
       .replaceAll(RegExp(r'\{[^}\n]*\}'), ' ')
       .replaceAll(RegExp(r'(?<!\\)\[[^\]\n]*\]'), ''),
 ).split(' ').where((w) => w.isNotEmpty).toList();
