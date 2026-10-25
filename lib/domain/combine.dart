@@ -30,6 +30,59 @@ String _norm(String text) => text
     .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
     .trim();
 
+/// Whether [source], found as the same song, may lend display facts to
+/// [selected] through a matching album name.
+bool _lendsAlbumDisplay(
+  SongCandidate selected,
+  SourceResult source,
+  String album,
+) {
+  final scoped =
+      source.candidate.metadata['identityScope'] ??
+      source.metadata['identityScope'] ??
+      source.extra['identityScope'];
+  final found = source.candidate.album ?? source.metadata['album'];
+  return source.matchKind == MatchKind.sameSong &&
+      !{
+        'composition',
+        'work',
+        'arrangement',
+        'artist',
+        'image',
+      }.contains(scoped) &&
+      album.trim().isNotEmpty &&
+      found is String &&
+      _sameDisplayAlbum(album, found, selected.artist) &&
+      _version(selected.title) == _version(source.candidate.title);
+}
+
+double? _sourceDuration(SourceResult source) =>
+    _validDuration(source.metadata['durationSeconds']) ??
+    _validDuration(source.candidate.durationSeconds) ??
+    _validDuration(source.candidate.metadata['durationSeconds']) ??
+    _validDuration(source.candidate.metadata['duration']) ??
+    _validDuration(source.metadata['duration']);
+
+/// The range of the largest group of durations within three seconds of its
+/// shortest, when no other group is as large.
+(double, double)? _majorityDurationRange(List<double> durations) {
+  final sorted = [...durations]..sort();
+  final groups = <List<double>>[];
+  for (final value in sorted) {
+    if (groups.isNotEmpty && value - groups.last.first <= 3) {
+      groups.last.add(value);
+    } else {
+      groups.add([value]);
+    }
+  }
+  if (groups.isEmpty) return null;
+  groups.sort((a, b) => b.length.compareTo(a.length));
+  if (groups.length > 1 && groups[1].length == groups.first.length) {
+    return null;
+  }
+  return (groups.first.first, groups.first.last);
+}
+
 /// Whether two catalog album names name the same release for display:
 /// equal once bracketed qualifiers, the artist's name, years, anniversaries
 /// and packaging words ("Remastered", "Deluxe Edition") are set aside.
@@ -2398,6 +2451,23 @@ SongDocument combineSources(
   };
   final remaining = matching.where((s) => s.id != best.id).toList()
     ..sort((a, b) => a.id.compareTo(b.id));
+  // Catalogs list one release with slightly different durations, and other
+  // masters or edits under the same album name. Lend a display duration only
+  // from the one group of agreeing durations (within three seconds) that more
+  // album-matching sources support than any other.
+  final displayAlbum =
+      metadata['album'] ??
+      [best, ...remaining]
+          .where((source) => recordingCompatible(selected, source))
+          .map((source) => source.candidate.album ?? source.metadata['album'])
+          .whereType<String>()
+          .firstOrNull;
+  final displayDurations = _majorityDurationRange([
+    if (displayAlbum is String && selected.recordingIds.isEmpty)
+      for (final source in remaining)
+        if (_lendsAlbumDisplay(selected, source, displayAlbum))
+          ?_sourceDuration(source),
+  ]);
   for (final source in [best, ...remaining]) {
     final candidateDuration =
         _validDuration(source.candidate.durationSeconds) ??
@@ -2461,23 +2531,16 @@ SongDocument combineSources(
     final imageScoped = scoped == 'image';
     if (scoped == 'recording' && !sameRecording) continue;
     final matchingAlbumDisplay =
-        source.matchKind == MatchKind.sameSong &&
-        !{
-          'composition',
-          'work',
-          'arrangement',
-          'artist',
-          'image',
-        }.contains(scoped) &&
         selected.recordingIds.isEmpty &&
         knownAlbum is String &&
         knownAlbum.trim().isNotEmpty &&
         foundAlbum is String &&
-        _sameDisplayAlbum(knownAlbum, foundAlbum, selected.artist) &&
-        _version(selected.title) == _version(source.candidate.title) &&
-        (knownDuration == null ||
-            sourceDuration == null ||
-            (knownDuration - sourceDuration).abs() <= 3);
+        _lendsAlbumDisplay(selected, source, knownAlbum) &&
+        sourceDuration != null &&
+        displayDurations != null &&
+        sourceDuration >= displayDurations.$1 &&
+        sourceDuration <= displayDurations.$2 &&
+        (knownDuration == null || (knownDuration - sourceDuration).abs() <= 3);
     for (final entry in facts.entries) {
       if (!_hasMetadata(entry.value)) continue;
       final isArrangement = arrangementFields.contains(entry.key);
