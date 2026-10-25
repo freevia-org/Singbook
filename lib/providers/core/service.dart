@@ -760,6 +760,51 @@ class SourceDiscoveryService {
     final corroborationOperationIds = <String, String>{};
     final searchedByProvider = <String, List<SongCandidate>>{};
     final lookupCancellation = <String, CancellationToken>{};
+    final wordCounts = <SourceResult, int>{};
+    final agreementCache = <SourceResult, Map<SourceResult, bool>>{};
+    bool liveReference(SourceResult reference) =>
+        !reference.hasChords &&
+        const {
+          MatchKind.sameSong,
+          MatchKind.sameRecording,
+        }.contains(reference.matchKind) &&
+        reference.extra['requiresLyricsAgreement'] != true &&
+        reference.extra['requiresRecordingLyricsAgreement'] != true &&
+        providerCancellation[reference.candidate.providerId]?.isCancelled !=
+            true &&
+        wordCounts.putIfAbsent(
+              reference,
+              () => _words(reference.body).toSet().length,
+            ) >=
+            12;
+    bool liveDependencyFor(SourceResult chart) =>
+        providerCancellation[chart.candidate.providerId]?.isCancelled != true &&
+        results.any((reference) {
+          if (!liveReference(reference)) return false;
+          final contextual =
+              chart.extra['requiresRecordingLyricsAgreement'] == true;
+          if (contextual &&
+              (lookupCancellation[reference.candidate.providerId]
+                          ?.isCancelled ==
+                      true ||
+                  !recordingCompatible(selection, reference) ||
+                  !contextualArrangementCandidate(
+                    reference.candidate,
+                    chart.candidate,
+                  ))) {
+            return false;
+          }
+          return agreementCache
+              .putIfAbsent(chart, () => {})
+              .putIfAbsent(
+                reference,
+                () =>
+                    _agreement(chart.body, reference.body) ||
+                    !contextual &&
+                        (_partialAgreement(chart.body, reference.body) ||
+                            _noisyAgreement(chart.body, reference.body)),
+              );
+        });
     var index = 0;
     void publish(
       String providerId,
@@ -769,7 +814,17 @@ class SourceDiscoveryService {
       bool preserveCode = false,
     }) {
       // A closed comparison must not receive delayed provider callbacks.
-      if (cancel?.isCancelled == true) return;
+      if (cancel?.isCancelled == true ||
+          providerCancellation[providerId]?.isCancelled == true) {
+        return;
+      }
+      if (result != null &&
+          result.matchKind != MatchKind.rejected &&
+          (result.extra['requiresLyricsAgreement'] == true ||
+              result.extra['requiresRecordingLyricsAgreement'] == true) &&
+          !liveDependencyFor(result)) {
+        return;
+      }
       if (!preserveCode) providerCodes[providerId] = code;
       onProgress?.call(
         ProviderCheck(
@@ -908,6 +963,43 @@ class SourceDiscoveryService {
       }
     }
 
+    void invalidateLyricDependentResults() {
+      // Progress consumers can disable another provider synchronously. Repeat
+      // until every dependent chart has been withdrawn; each row changes once.
+      var changed = true;
+      while (changed) {
+        cancel?.throwIfCancelled();
+        changed = false;
+        for (var i = 0; i < results.length; i++) {
+          final result = results[i];
+          if (result.matchKind == MatchKind.rejected ||
+              (result.extra['requiresLyricsAgreement'] != true &&
+                  result.extra['requiresRecordingLyricsAgreement'] != true) ||
+              liveDependencyFor(result)) {
+            continue;
+          }
+          final rejected = _matched(
+            result,
+            MatchKind.rejected,
+            'uncorroborated_arrangement',
+          );
+          results[i] = rejected;
+          final id = result.candidate.providerId;
+          if (providerResults[id]?.id == result.id) {
+            providerResults[id] = rejected;
+          }
+          providerChecksState[id] = 'unavailable';
+          publish(
+            id,
+            'unavailable',
+            code: rejected.matchReason,
+            result: rejected,
+          );
+          changed = true;
+        }
+      }
+    }
+
     for (final provider in active) {
       final id = provider.definition.id;
       traceOpen[id] = true;
@@ -1029,31 +1121,20 @@ class SourceDiscoveryService {
     );
     // Chord sources describe arrangements: corroborate their words against the
     // strongest full lyric reference before making them eligible for combining.
-    final references =
-        results
-            .where(
-              (r) =>
-                  providerCancellation[r.candidate.providerId]?.isCancelled !=
-                      true &&
-                  r.matchKind != MatchKind.rejected &&
-                  r.matchKind != MatchKind.unverified &&
-                  !r.hasChords &&
-                  r.body.trim().isNotEmpty &&
-                  _words(r.body).toSet().length >= 12,
-            )
-            .toList()
-          ..sort((a, b) {
-            // A longer same-song transcription may be a remix or another
-            // performance. Corroborate charts against the selected recording
-            // before falling back to unanchored same-song references.
-            final recording = (recordingCompatible(selection, b) ? 1 : 0)
-                .compareTo(recordingCompatible(selection, a) ? 1 : 0);
-            if (recording != 0) return recording;
-            final words = _words(
-              b.body,
-            ).toSet().length.compareTo(_words(a.body).toSet().length);
-            return words != 0 ? words : a.id.compareTo(b.id);
-          });
+    final references = results.where(liveReference).toList()
+      ..sort((a, b) {
+        // A longer same-song transcription may be a remix or another
+        // performance. Corroborate charts against the selected recording
+        // before falling back to unanchored same-song references.
+        final recording = (recordingCompatible(selection, b) ? 1 : 0).compareTo(
+          recordingCompatible(selection, a) ? 1 : 0,
+        );
+        if (recording != 0) return recording;
+        final words = _words(
+          b.body,
+        ).toSet().length.compareTo(_words(a.body).toSet().length);
+        return words != 0 ? words : a.id.compareTo(b.id);
+      });
     final recordingReference = references
         .where((reference) => recordingCompatible(selection, reference))
         .firstOrNull;
@@ -1064,7 +1145,15 @@ class SourceDiscoveryService {
         final id = provider.definition.id;
         final lookupCancel = lookupCancellation[id];
         final providerCancel = providerCancellation[id];
+        final referenceCancel =
+            providerCancellation[recordingReference.candidate.providerId];
+        final referenceLookupCancel =
+            lookupCancellation[recordingReference.candidate.providerId];
         cancel?.throwIfCancelled();
+        if (referenceCancel?.isCancelled == true ||
+            referenceLookupCancel?.isCancelled == true) {
+          break;
+        }
         if (!provider.definition.capabilities.contains('chords') ||
             lookupCancel?.isCancelled == true ||
             providerCancel?.isCancelled == true ||
@@ -1090,6 +1179,8 @@ class SourceDiscoveryService {
         cancel?.cancelled.then((_) => contextualCancel.cancel());
         lookupCancel?.cancelled.then((_) => contextualCancel.cancel());
         providerCancel?.cancelled.then((_) => contextualCancel.cancel());
+        referenceCancel?.cancelled.then((_) => contextualCancel.cancel());
+        referenceLookupCancel?.cancelled.then((_) => contextualCancel.cancel());
         final alternatives = <SourceResult>[];
         var succeeded = false;
         traceOpen[id] = true;
@@ -1097,6 +1188,11 @@ class SourceDiscoveryService {
         publish(id, 'pending');
         recordCorroboration(id, 'pending');
         try {
+          cancel?.throwIfCancelled();
+          providerCancel?.throwIfCancelled();
+          lookupCancel?.throwIfCancelled();
+          referenceCancel?.throwIfCancelled();
+          referenceLookupCancel?.throwIfCancelled();
           final result =
               await findMatchingSource(
                 provider,
@@ -1124,6 +1220,8 @@ class SourceDiscoveryService {
           cancel?.throwIfCancelled();
           lookupCancel?.throwIfCancelled();
           providerCancel?.throwIfCancelled();
+          referenceCancel?.throwIfCancelled();
+          referenceLookupCancel?.throwIfCancelled();
           contextualCancel.throwIfCancelled();
           if (result.matchKind == MatchKind.rejected || !result.hasChords) {
             throw const ProviderException('unavailable');
@@ -1209,6 +1307,12 @@ class SourceDiscoveryService {
           );
           if (owners.isNotEmpty) {
             final referenceBody = references.first.body;
+            final contextReferenceCancel = recordingReference == null
+                ? null
+                : providerCancellation[recordingReference.candidate.providerId];
+            final contextReferenceLookupCancel = recordingReference == null
+                ? null
+                : lookupCancellation[recordingReference.candidate.providerId];
             final contextRows =
                 recordingReference == null ||
                     lookupCancellation[result.candidate.providerId]
@@ -1217,22 +1321,36 @@ class SourceDiscoveryService {
                 ? null
                 : searchedByProvider[result.candidate.providerId];
             final canUseContext =
+                contextReferenceCancel?.isCancelled != true &&
+                contextReferenceLookupCancel?.isCancelled != true &&
                 contextRows?.any(
-                  (candidate) => contextualArrangementCandidate(
-                    recordingReference!.candidate,
-                    candidate,
-                  ),
-                ) ==
-                true;
+                      (candidate) => contextualArrangementCandidate(
+                        recordingReference!.candidate,
+                        candidate,
+                      ),
+                    ) ==
+                    true;
             // Linked local token: a timeout (or the caller cancelling) must stop
             // the underlying lookup, not just stop waiting for it, so a slow
             // retry cannot keep issuing requests after discover has returned.
             final alternativeCancel = CancellationToken();
             cancel?.cancelled.then((_) => alternativeCancel.cancel());
             providerCancel?.cancelled.then((_) => alternativeCancel.cancel());
+            if (canUseContext) {
+              contextReferenceCancel?.cancelled.then(
+                (_) => alternativeCancel.cancel(),
+              );
+              contextReferenceLookupCancel?.cancelled.then(
+                (_) => alternativeCancel.cancel(),
+              );
+            }
             try {
               cancel?.throwIfCancelled();
               providerCancel?.throwIfCancelled();
+              if (canUseContext) {
+                contextReferenceCancel?.throwIfCancelled();
+                contextReferenceLookupCancel?.throwIfCancelled();
+              }
               alternative =
                   await findMatchingSource(
                     owners.first,
@@ -1257,6 +1375,13 @@ class SourceDiscoveryService {
                       throw const ProviderException('timeout');
                     },
                   );
+              cancel?.throwIfCancelled();
+              providerCancel?.throwIfCancelled();
+              alternativeCancel.throwIfCancelled();
+              if (canUseContext) {
+                contextReferenceCancel?.throwIfCancelled();
+                contextReferenceLookupCancel?.throwIfCancelled();
+              }
               if (alternative.matchKind == MatchKind.rejected ||
                   !alternative.hasChords) {
                 alternative = null;
@@ -1382,6 +1507,7 @@ class SourceDiscoveryService {
         );
       }
     }
+    invalidateLyricDependentResults();
     await _checkChordKeys(
       results,
       active,
@@ -1392,6 +1518,7 @@ class SourceDiscoveryService {
       onOperation: recordOperation,
       timeout: alternativeTimeout,
     );
+    invalidateLyricDependentResults();
     for (final provider in active) {
       final id = provider.definition.id;
       final accepted = results
@@ -1424,7 +1551,14 @@ class SourceDiscoveryService {
       finalizePending(provider.definition.id, 'failed', 'provider_error');
       traceOpen[provider.definition.id] = false;
     }
-    return results;
+    invalidateLyricDependentResults();
+    return results
+        .where(
+          (result) =>
+              providerCancellation[result.candidate.providerId]?.isCancelled !=
+              true,
+        )
+        .toList();
   }
 
   /// The key measured from the selected recording's audio, when results

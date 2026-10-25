@@ -2334,6 +2334,8 @@ SongDocument combineSources(
             !source.hasChords &&
             source.matchKind != MatchKind.rejected &&
             source.matchKind != MatchKind.unverified &&
+            source.extra['requiresLyricsAgreement'] != true &&
+            source.extra['requiresRecordingLyricsAgreement'] != true &&
             recordingCompatible(selected, source) &&
             _norm(
                   plainLyrics(source.body),
@@ -2354,17 +2356,51 @@ SongDocument combineSources(
   bool historicalMatches(SourceResult source) =>
       explicitHistoricalWorkMatches(selected, source) ||
       historicalCacheUses.any((use) => use.allows(selected, source));
+  final lyricReferences = results
+      .where(
+        (source) =>
+            !source.hasChords &&
+            const {
+              MatchKind.sameSong,
+              MatchKind.sameRecording,
+            }.contains(source.matchKind) &&
+            source.extra['requiresLyricsAgreement'] != true &&
+            source.extra['requiresRecordingLyricsAgreement'] != true &&
+            (_sameSong(selected, source.candidate) ||
+                historicalMatches(source)) &&
+            _norm(
+                  plainLyrics(source.body),
+                ).split(' ').where((word) => word.isNotEmpty).toSet().length >=
+                12,
+      )
+      .toList();
   final matching = results.where((s) {
-    final requiresRecordingContext =
-        s.extra['requiresRecordingLyricsAgreement'] == true;
-    if (requiresRecordingContext && (!s.hasChords || !contextMatches(s))) {
-      return false;
-    }
     final wikiSource = s.candidate.providerId == 'wikisource';
     final allowedRejectedAlternative =
         allowRejectedPreferredSource &&
         s.id == preferredSourceId &&
         !wikiSource;
+    final requiresRecordingContext =
+        s.extra['requiresRecordingLyricsAgreement'] == true;
+    if (!allowedRejectedAlternative &&
+        requiresRecordingContext &&
+        (!const {
+              MatchKind.sameSong,
+              MatchKind.sameRecording,
+            }.contains(s.matchKind) ||
+            !s.hasChords ||
+            !contextMatches(s))) {
+      return false;
+    }
+    if (!allowedRejectedAlternative &&
+        s.extra['requiresLyricsAgreement'] == true &&
+        (!const {
+              MatchKind.sameSong,
+              MatchKind.sameRecording,
+            }.contains(s.matchKind) ||
+            lyricReferences.isEmpty)) {
+      return false;
+    }
     final editionAllowed =
         explicitEditionsCompatible(
           selected,

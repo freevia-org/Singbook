@@ -145,6 +145,7 @@ class _ContextChart implements LyricsProvider {
     this.rows, {
     String? body,
     this.holdResolve = false,
+    this.honorCancellation = true,
   }) : body = body ?? _composerChartBody;
 
   @override
@@ -152,6 +153,7 @@ class _ContextChart implements LyricsProvider {
   final List<SongCandidate> rows;
   final String body;
   final bool holdResolve;
+  final bool honorCancellation;
   final startedSearch = Completer<void>();
   final startedResolve = Completer<CancellationToken?>();
   final releaseResolve = Completer<void>();
@@ -176,29 +178,33 @@ class _ContextChart implements LyricsProvider {
     resolvedIds.add(candidate.id);
     if (!startedResolve.isCompleted) startedResolve.complete(cancel);
     if (holdResolve) await releaseResolve.future;
-    cancel?.throwIfCancelled();
+    if (honorCancellation) cancel?.throwIfCancelled();
     return SourceResult(candidate: candidate, body: body);
   }
 }
 
-_ContextChart _composerChart({String? body, bool hold = false}) =>
-    _ContextChart(
-      const ProviderDefinition(
-        id: 'songsterr',
-        name: 'Songsterr',
-        capabilities: {'catalog', 'lyrics', 'chords'},
-      ),
-      const [
-        SongCandidate(
-          providerId: 'songsterr',
-          id: 'composer-chart-1',
-          title: 'Harbor Song',
-          artist: _writer,
-        ),
-      ],
-      body: body,
-      holdResolve: hold,
-    );
+_ContextChart _composerChart({
+  String? body,
+  bool hold = false,
+  bool honorCancellation = true,
+}) => _ContextChart(
+  const ProviderDefinition(
+    id: 'songsterr',
+    name: 'Songsterr',
+    capabilities: {'catalog', 'lyrics', 'chords'},
+  ),
+  const [
+    SongCandidate(
+      providerId: 'songsterr',
+      id: 'composer-chart-1',
+      title: 'Harbor Song',
+      artist: _writer,
+    ),
+  ],
+  body: body,
+  holdResolve: hold,
+  honorCancellation: honorCancellation,
+);
 
 _ContextChart _soundtrackChart({String? body}) => _ContextChart(
   const ProviderDefinition(
@@ -217,6 +223,48 @@ _ContextChart _soundtrackChart({String? body}) => _ContextChart(
   body: body ?? _soundtrackChartBody,
 );
 
+class _FailedThenContextChart extends _ContextChart {
+  _FailedThenContextChart()
+    : super(
+        const ProviderDefinition(
+          id: 'songsterr',
+          name: 'Charts',
+          capabilities: {'catalog', 'lyrics', 'chords'},
+        ),
+        [
+          SongCandidate(
+            providerId: 'songsterr',
+            id: 'ordinary',
+            title: _selected.title,
+            artist: _selected.artist,
+          ),
+          SongCandidate(
+            providerId: 'songsterr',
+            id: 'contextual',
+            title: _selected.title,
+            artist: _writer,
+          ),
+        ],
+        holdResolve: true,
+        honorCancellation: false,
+      );
+
+  @override
+  Future<SourceResult> resolve(
+    SongCandidate candidate, {
+    CancellationToken? cancel,
+  }) async {
+    if (candidate.id != 'ordinary') {
+      return super.resolve(candidate, cancel: cancel);
+    }
+    return SourceResult(
+      candidate: candidate,
+      body:
+          '[D]Copper mountains sleep beside a silver railway\n[A]Paper kites escape beyond the distant valley',
+    );
+  }
+}
+
 Future<void> _waitForInitialChartSearches(
   Iterable<_ContextChart> charts,
 ) async {
@@ -228,6 +276,245 @@ Future<void> _waitForInitialChartSearches(
 }
 
 void main() {
+  test(
+    'missing lyric evidence blocks automatic donors but preserves explicit override',
+    () {
+      for (final contextual in [false, true]) {
+        final source = SourceResult(
+          candidate: SongCandidate(
+            providerId: 'songsterr',
+            id: contextual ? 'context' : 'main',
+            title: _selected.title,
+            artist: contextual ? _writer : 'Lantern Coast',
+          ),
+          body: _composerChartBody,
+          matchKind: MatchKind.sameSong,
+          extra: {
+            'requiresLyricsAgreement': true,
+            if (contextual) 'requiresRecordingLyricsAgreement': true,
+          },
+        );
+        expect(
+          () => combineSources(_selected, [source]),
+          throwsFormatException,
+        );
+        final explicit = combineSources(
+          _selected,
+          [source],
+          preferredSourceId: source.id,
+          allowRejectedPreferredSource: true,
+        );
+        expect(plainLyrics(explicit.body), _lyricsText);
+        expect(
+          parseArrangement(explicit.body).any((line) => line.chords.isNotEmpty),
+          isTrue,
+        );
+        expect(recordingCompatible(_selected, source), isFalse);
+      }
+    },
+  );
+  test(
+    'ordinary lyric-dependent donors are withdrawn only when all live references disappear',
+    () async {
+      for (final keepFallback in [false, true]) {
+        final referenceCancel = CancellationToken();
+        final charts = _ContextChart(_composerChart().definition, [
+          SongCandidate(
+            providerId: 'songsterr',
+            id: 'main-credit',
+            title: _selected.title,
+            artist: 'Lantern Coast',
+          ),
+        ]);
+        var cancelledAtCompletion = false;
+        final results =
+            await SourceDiscoveryService([
+              _RecordingLyrics(),
+              charts,
+              if (keepFallback) _OtherLyrics(),
+            ]).discover(
+              _selected,
+              providerCancellation: {'genius': referenceCancel},
+              onProgress: (check) {
+                if (!cancelledAtCompletion &&
+                    check.providerId == 'songsterr' &&
+                    check.operations.any(
+                      (operation) =>
+                          operation.phase == 'corroborate' &&
+                          operation.state == 'completed',
+                    )) {
+                  cancelledAtCompletion = true;
+                  referenceCancel.cancel();
+                }
+              },
+            );
+        expect(cancelledAtCompletion, isTrue);
+        expect(
+          results.any(
+            (source) =>
+                source.hasChords && source.matchKind != MatchKind.rejected,
+          ),
+          keepFallback,
+        );
+      }
+    },
+  );
+  test(
+    'failed-chart context retry is linked to recording-reference cancellation',
+    () async {
+      final referenceCancel = CancellationToken();
+      final charts = _FailedThenContextChart();
+      final pending = SourceDiscoveryService([
+        _RecordingLyrics(),
+        charts,
+      ]).discover(_selected, providerCancellation: {'genius': referenceCancel});
+      final token = await charts.startedResolve.future.timeout(
+        const Duration(seconds: 2),
+      );
+      referenceCancel.cancel();
+      await Future<void>.delayed(Duration.zero);
+      final cancelledBeforeResponse = token?.isCancelled;
+      charts.releaseResolve.complete();
+      final results = await pending.timeout(const Duration(seconds: 2));
+      expect(cancelledBeforeResponse, isTrue);
+      expect(charts.queries, hasLength(1));
+      expect(
+        results.where((r) => r.hasChords && r.matchKind != MatchKind.rejected),
+        isEmpty,
+      );
+    },
+  );
+  test(
+    'an unverified contextual donor remains ineligible despite a full reference',
+    () {
+      final reference = SourceResult(
+        candidate: _enrichedRecording(),
+        body: _lyricsText,
+        matchKind: MatchKind.sameRecording,
+      );
+      final pendingChart = SourceResult(
+        candidate: _composerChart().rows.single,
+        body: _composerChartBody,
+        matchKind: MatchKind.unverified,
+        extra: const {
+          'requiresLyricsAgreement': true,
+          'requiresRecordingLyricsAgreement': true,
+        },
+      );
+      final combined = combineSources(_selected, [reference, pendingChart]);
+      expect(plainLyrics(combined.body), _lyricsText);
+      expect(
+        parseArrangement(combined.body).any((line) => line.chords.isNotEmpty),
+        isFalse,
+      );
+    },
+  );
+  test(
+    'cancelling the recording reference cancels its in-flight context lookup',
+    () async {
+      final referenceCancel = CancellationToken();
+      final composer = _composerChart(hold: true, honorCancellation: false);
+      final late = <ProviderCheck>[];
+      final pending = SourceDiscoveryService([_RecordingLyrics(), composer])
+          .discover(
+            _selected,
+            providerCancellation: {'genius': referenceCancel},
+            onProgress: (check) {
+              if (referenceCancel.isCancelled &&
+                  check.result?.hasChords == true &&
+                  check.result?.matchKind != MatchKind.rejected) {
+                late.add(check);
+              }
+            },
+          );
+      final token = await composer.startedResolve.future.timeout(
+        const Duration(seconds: 2),
+      );
+      referenceCancel.cancel();
+      composer.releaseResolve.complete();
+      final results = await pending.timeout(const Duration(seconds: 2));
+      expect(token?.isCancelled, isTrue);
+      expect(late, isEmpty);
+      expect(
+        results.where((r) => r.hasChords && r.matchKind != MatchKind.rejected),
+        isEmpty,
+      );
+      expect(composer.resolvedIds, hasLength(1));
+    },
+  );
+
+  test(
+    'disabling the lyric reference withdraws an already published contextual donor',
+    () async {
+      final referenceCancel = CancellationToken();
+      var published = false, withdrawn = false;
+      final results =
+          await SourceDiscoveryService([
+            _RecordingLyrics(),
+            _composerChart(),
+          ]).discover(
+            _selected,
+            providerCancellation: {'genius': referenceCancel},
+            onProgress: (check) {
+              if (check.providerId != 'songsterr' ||
+                  check.result?.hasChords != true) {
+                return;
+              }
+              if (check.result!.matchKind == MatchKind.rejected) {
+                withdrawn = true;
+              } else if (!published) {
+                published = true;
+                referenceCancel.cancel();
+              }
+            },
+          );
+      expect(published, isTrue);
+      expect(withdrawn, isTrue);
+      expect(
+        results.where((r) => r.hasChords && r.matchKind != MatchKind.rejected),
+        isEmpty,
+      );
+    },
+  );
+
+  test(
+    'a provider disabled by progress callback receives no later chart data',
+    () async {
+      final providerCancel = CancellationToken();
+      final late = <ProviderCheck>[];
+      var firstFound = 0;
+      final results =
+          await SourceDiscoveryService([
+            _RecordingLyrics(),
+            _composerChart(),
+          ]).discover(
+            _selected,
+            providerCancellation: {'songsterr': providerCancel},
+            onProgress: (check) {
+              if (check.providerId != 'songsterr' ||
+                  check.result?.hasChords != true) {
+                return;
+              }
+              if (providerCancel.isCancelled) {
+                late.add(check);
+              } else {
+                firstFound++;
+                providerCancel.cancel();
+              }
+            },
+          );
+      expect(firstFound, 1);
+      expect(late, isEmpty);
+      expect(
+        results.where(
+          (r) =>
+              r.candidate.providerId == 'songsterr' &&
+              r.matchKind != MatchKind.rejected,
+        ),
+        isEmpty,
+      );
+    },
+  );
   test('unverified same-ID lyrics cannot authorize a contextual chart', () {
     final pending = SourceResult(
       candidate: _enrichedRecording(),
