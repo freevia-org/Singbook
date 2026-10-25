@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:math' as math;
 import 'package:characters/characters.dart';
+import 'package:crypto/crypto.dart' show sha256;
 import 'models.dart';
 import 'edition_identity.dart';
 import 'metadata_enrichment.dart';
@@ -94,6 +96,106 @@ bool _demonstrationTimingSelected(
             selected.recordingIds.entries.any(
               (e) => source.candidate.recordingIds[e.key] == e.value,
             )));
+const _pitchClasses = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11};
+
+/// Pitch-class counts of a chart's chord roots, one per chord occurrence.
+List<int> _rootHistogram(String chart) {
+  final counts = List<int>.filled(12, 0);
+  for (final line in parseArrangement(chart)) {
+    for (final anchor in line.chords) {
+      final match = RegExp(
+        r'^([A-G])([#b♯♭]?)',
+      ).firstMatch(anchor.chord.trim());
+      if (match == null) continue;
+      var pitch = _pitchClasses[match[1]!]!;
+      if (match[2] == '#' || match[2] == '♯') pitch++;
+      if (match[2] == 'b' || match[2] == '♭') pitch--;
+      counts[pitch % 12]++;
+    }
+  }
+  return counts;
+}
+
+double _similarity(List<int> a, List<int> b, int shift) {
+  var dot = 0.0, normA = 0.0, normB = 0.0;
+  for (var pitch = 0; pitch < 12; pitch++) {
+    final x = a[pitch].toDouble(), y = b[(pitch + shift) % 12].toDouble();
+    dot += x * y;
+    normA += x * x;
+    normB += y * y;
+  }
+  return normA == 0 || normB == 0 ? 0 : dot / math.sqrt(normA * normB);
+}
+
+/// Semitones (0-11) that move chart [a]'s chord roots onto chart [b]'s: 0 when
+/// both are in the same key, 9 when [a] is in G and [b] the same progression
+/// in E. Null when either chart is too sparse or the two do not look like one
+/// progression in any key.
+int? chordTransposition(String a, String b) {
+  final first = _rootHistogram(a), second = _rootHistogram(b);
+  if (first.fold<int>(0, (n, c) => n + c) < 8 ||
+      second.fold<int>(0, (n, c) => n + c) < 8) {
+    return null;
+  }
+  var best = 0;
+  var bestScore = -1.0;
+  for (var shift = 0; shift < 12; shift++) {
+    final score = _similarity(first, second, shift);
+    if (score > bestScore) {
+      best = shift;
+      bestScore = score;
+    }
+  }
+  if (bestScore < .85) return null;
+  // A close second reading in the original key keeps the charts together.
+  return _similarity(first, second, 0) >= bestScore - .05 ? 0 : best;
+}
+
+/// How far each of [charts] is from the key most charts are written in. Each
+/// chart is compared with the first; identical chord sequences (one chart
+/// copied to another site) vote once. Returns one entry per chart: the
+/// semitones that move it into the majority key (0 when it is already
+/// there), or null when its key could not be compared. Returns null unless one
+/// key has more than half of all distinct charts: a plurality such as 2 of 4
+/// is not enough to move a chart.
+List<int?>? chordKeyMajority(List<String> charts) {
+  if (charts.length < 2) return null;
+  final shifts = [
+    0,
+    for (final chart in charts.skip(1)) chordTransposition(charts.first, chart),
+  ];
+  final votes = <int, Set<String>>{};
+  for (var i = 0; i < charts.length; i++) {
+    final shift = shifts[i];
+    if (shift == null) continue;
+    final sequence = [
+      for (final line in parseArrangement(charts[i]))
+        for (final anchor in line.chords) anchor.chord.trim(),
+    ].join(' ');
+    votes.putIfAbsent(shift, () => {}).add(sequence);
+  }
+  if (votes.length < 2) return null;
+  final ranked = votes.entries.toList()
+    ..sort((a, b) => b.value.length.compareTo(a.value.length));
+  final total = votes.values.fold<int>(0, (n, set) => n + set.length);
+  if (ranked.first.value.length * 2 <= total) return null;
+  final majority = ranked.first.key;
+  return [
+    for (final shift in shifts)
+      shift == null ? null : (majority - shift + 12) % 12,
+  ];
+}
+
+/// A chord chart moved into the key most charts share, when discovery found
+/// it transposed (`keyShift`). Saved sources keep their published chart; only
+/// the automatically combined arrangement uses the corrected key.
+String _keyCorrectedBody(SourceResult source) {
+  final shift = source.extra['keyShift'];
+  return shift is int && shift % 12 != 0 && source.hasChords
+      ? transposeBody(source.body, shift)
+      : source.body;
+}
+
 bool recordingCompatible(SongCandidate selected, SourceResult result) {
   if (!explicitEditionsCompatible(
     selected,
@@ -847,16 +949,24 @@ bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
         _version(source.candidate.title) != _version(selected.title)) {
       continue;
     }
-    final key = _keyIdentity(source.metadata['key']) != null
+    // A chart the combined arrangement moved into the majority key is judged
+    // in that key, without its capo (see [_keyCorrectedBody]).
+    final shift = jsonMap(song.extra['chordKeyShifts'])[source.id];
+    final shifted = shift is int && shift % 12 != 0;
+    final declared = _keyIdentity(source.metadata['key']) != null
         ? source.metadata['key'] as String
         : source.candidate.metadata['key'];
+    final key = shifted && declared is String
+        ? transposeChord(declared.trim(), shift)
+        : declared;
     final identity = _keyIdentity(key);
     if (identity == null) continue;
     var compatible = true;
     for (final field in const ['capo', 'tuning', 'timeSignature']) {
       final baseValue = song.metadata[field];
-      final donorValue =
-          source.metadata[field] ?? source.candidate.metadata[field];
+      final donorValue = shifted && field == 'capo'
+          ? null
+          : source.metadata[field] ?? source.candidate.metadata[field];
       String normalize(Object? value) {
         // ChordPro headers serialize list tuning as "[E, A, ...]". Compare
         // those saved headers with the provider's equivalent string array.
@@ -880,7 +990,10 @@ bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
       }
     }
     if (!compatible) continue;
-    final aligned = _phraseChords(plain, source.body);
+    final aligned = _phraseChords(
+      plain,
+      shifted ? transposeBody(source.body, shift) : source.body,
+    );
     var agreements = 0, contradicts = false;
     final roots = <String>{}, matchedLines = <int>{};
     for (final entry in aligned.entries) {
@@ -1002,6 +1115,37 @@ bool _compatibleArrangementSetup(
   return true;
 }
 
+String _bodyHash(String body) => sha256.convert(utf8.encode(body)).toString();
+
+String? _agreedKeyEstimate(List<SourceResult> sources) {
+  final keys = {
+    for (final source in sources)
+      if (source.extra['keyEstimate'] case final String key) key,
+  };
+  return keys.length == 1 ? keys.single : null;
+}
+
+/// The key discovery estimated from the majority of a song's chord charts,
+/// while the song still holds the exact chart it was estimated for. Like
+/// [estimateChordKey], it is display-only.
+String? checkedChordKeyEstimate(SongDocument song) {
+  final estimate = jsonMap(song.extra['chordKeyEstimate']);
+  final key = estimate['key'];
+  return key is String && estimate['bodyHash'] == _bodyHash(song.body)
+      ? key
+      : null;
+}
+
+/// 2 for a chart discovery found in the majority key, 1 when no check was
+/// needed or possible or the chart was moved into that key, 0 for a chart
+/// transposed from it by an unknown amount.
+int _keyConsensusRank(SourceResult source) =>
+    switch (source.extra['keyConsensus']) {
+      true => 2,
+      false => source.extra['keyShift'] is int ? 1 : 0,
+      _ => 1,
+    };
+
 ({String body, List<String> sourceIds}) _overlayChords(
   String body,
   List<SourceResult> sources,
@@ -1027,7 +1171,7 @@ bool _compatibleArrangementSetup(
         !_compatibleArrangementSetup(base, source, selected)) {
       continue;
     }
-    final chords = _phraseChords(plain, source.body);
+    final chords = _phraseChords(plain, _keyCorrectedBody(source));
     final coverage = chords.entries.fold<int>(
       0,
       (n, entry) =>
@@ -1047,6 +1191,13 @@ bool _compatibleArrangementSetup(
     ));
   }
   candidates.sort((a, b) {
+    // Discovery double checks disagreeing charts against more charts of the
+    // song; a chart transposed from the key most charts share (for example a
+    // capo chart in G of a song recorded in E) comes last.
+    final key = _keyConsensusRank(
+      b.source,
+    ).compareTo(_keyConsensusRank(a.source));
+    if (key != 0) return key;
     final confidence = b.confidence.compareTo(a.confidence);
     if (confidence != 0) return confidence;
     final score = b.coverage.compareTo(a.coverage);
@@ -1228,7 +1379,7 @@ SongDocument combineSources(
           : s.matchKind == MatchKind.sameSong
           ? 200
           : 0) +
-      (s.hasChords ? 500 : 0);
+      (s.hasChords && s.extra['keyConsensus'] != false ? 500 : 0);
   eligible.sort((a, b) {
     final score = rank(b).compareTo(rank(a));
     return score != 0 ? score : a.id.compareTo(b.id);
@@ -1242,7 +1393,7 @@ SongDocument combineSources(
   final best = preferred.isEmpty ? eligible.first : preferred.first;
   final merged = preferredSourceId == null
       ? _overlayChords(
-          best.body,
+          _keyCorrectedBody(best),
           accepted.where((source) => source.id != best.id).toList(),
           selected,
           best,
@@ -1402,6 +1553,16 @@ SongDocument combineSources(
       facts.remove('durationSeconds');
     } else if (sourceDuration != null) {
       facts['durationSeconds'] = sourceDuration;
+    }
+    // A transposed chart's chords were moved into the majority key, so its
+    // declared key moves with them and its capo no longer applies.
+    final keyShift = source.extra['keyShift'];
+    if (preferredSourceId == null && keyShift is int && keyShift % 12 != 0) {
+      final declared = facts['key'];
+      if (declared is String && declared.trim().isNotEmpty) {
+        facts['key'] = transposeChord(declared.trim(), keyShift);
+      }
+      facts.remove('capo');
     }
     final sameRecording = recordingCompatible(selected, source);
     // A catalog search hit may lack duration or album although its resolved
@@ -1689,13 +1850,14 @@ SongDocument combineSources(
   final historicalAuthor = historicalAuthorIdentities.length == 1
       ? historicalAuthors.first
       : null;
+  final finalBody = inferSectionDirectives(sectionMerged.body);
   final song = SongDocument(
     id: newId(),
     title: selected.title,
     artist: selected.artist.trim().isNotEmpty
         ? selected.artist
         : historicalAuthor ?? selected.artist,
-    body: inferSectionDirectives(sectionMerged.body),
+    body: finalBody,
     metadata: metadata,
     sources: results,
     timingTracks: tracks.values.toList(),
@@ -1712,7 +1874,23 @@ SongDocument combineSources(
       'recommendation':
           'Combined lyrics, chords, timing, and metadata from matching sources.',
       if (chordSourceIds.isNotEmpty) 'chordSourceIds': chordSourceIds,
+      // Chord sources whose chart was moved into the key most charts share.
+      if (preferredSourceId == null &&
+          chordSourceIds.any((id) => sourcesById[id]?.extra['keyShift'] is int))
+        'chordKeyShifts': {
+          for (final id in chordSourceIds)
+            if (sourcesById[id]?.extra['keyShift'] case final int shift)
+              id: shift,
+        },
       if (sectionSourceIds.isNotEmpty) 'sectionSourceIds': sectionSourceIds,
+      // A display-only key estimate from discovery's chord key double check,
+      // valid only for this exact chart (see [checkedChordKeyEstimate]).
+      if (preferredSourceId == null)
+        if (_agreedKeyEstimate([
+              for (final id in chordSourceIds) ?sourcesById[id],
+            ])
+            case final String key)
+          'chordKeyEstimate': {'key': key, 'bodyHash': _bodyHash(finalBody)},
       if (chordSourceIds.any(
         (sourceId) => sourcesById[sourceId]?.extra['pendingMatchCheck'] == true,
       ))

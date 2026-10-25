@@ -8,7 +8,8 @@ import '../sync/sync_provider.dart';
 import '../domain/arrangement.dart' as arrangement;
 import '../domain/chordpro.dart';
 import '../domain/chord_key_estimate.dart' show estimateChordKey;
-import '../domain/combine.dart' show recordingCompatible, sourcedArrangementKey;
+import '../domain/combine.dart'
+    show checkedChordKeyEstimate, recordingCompatible, sourcedArrangementKey;
 import '../domain/metadata_enrichment.dart' show displayMetadataFor;
 import '../domain/models.dart';
 import '../domain/search_grouping.dart';
@@ -335,7 +336,7 @@ class AppControllerAdapter extends VerseUiController {
     final setlist = currentSetlist;
     final trustedReaderKey = displayedKey;
     final estimatedReaderKey = trustedReaderKey == null && song != null
-        ? estimateChordKey(song.body)?.key
+        ? estimateChordKey(song.body)?.key ?? checkedChordKeyEstimate(song)
         : null;
     final readerKey =
         trustedReaderKey ??
