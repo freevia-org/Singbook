@@ -43,7 +43,10 @@ details](https://developer.apple.com/app-store/app-privacy-details/) and
   that arrive without artwork may be looked up by artist and title in enabled
   artwork catalogs (Lyrics.ovh and YouTube Music). After
   you choose a song, Singbook may check enabled sources for lyrics, chords,
-  and metadata. Providers include
+  and metadata. To check a song's key, Singbook may send the chosen
+  recording's Spotify track ID or ISRC (never an account or library) to
+  ReccoBeats (api.reccobeats.com), which returns a key measured from the
+  recording. Providers include
   Genius, LRCLIB, YouTube Music, Songsterr, Ultimate Guitar, MusicBrainz,
   Wikidata, Wikimedia Commons, and other sources in the bundled or refreshed
   source catalog. Requests include a Singbook versioned User-Agent; no

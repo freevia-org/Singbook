@@ -1,15 +1,22 @@
 import 'dart:async';
 import 'diagnostics.dart';
 import 'dart:math' as math;
-import '../../domain/arrangement.dart' show transposeBody;
+import '../../domain/arrangement.dart' show transposeBody, transposeChord;
 import '../../domain/chord_key_estimate.dart' show estimateChordKey;
-import '../../domain/combine.dart' show chordKeyMajority, chordTransposition;
+import '../../domain/combine.dart'
+    show
+        chordKeyVerdict,
+        declaredKeyFitsChords,
+        keysAgree,
+        soundingChartKey,
+        soundingTransposition;
 import '../../domain/models.dart';
 import '../../domain/lyrics_variants.dart';
 import '../../domain/edition_identity.dart';
 import '../provider.dart';
 import '../source_catalog_client.dart';
 import '../catalog_search.dart';
+import 'recording_key.dart';
 
 const _diagnosticCodes = <String>{
   'blocked',
@@ -272,6 +279,8 @@ Future<SourceResult> findMatchingSource(
   // retry path has its own timeout and cancellation scope.
   bool stopAfterFirstChordCandidate = false,
   String operationPrefix = 'lookup',
+  // Candidates resolved from the provider's search before giving up.
+  int maxAttempts = 3,
 }) async {
   cancel?.throwIfCancelled();
   void observeCandidate(SourceResult result) {
@@ -415,7 +424,7 @@ Future<SourceResult> findMatchingSource(
     if (!seen.add(candidate.id) ||
         candidate.metadata['instrumental'] == true ||
         candidate.metadata['hasLyrics'] == false ||
-        attempts >= 3) {
+        attempts >= maxAttempts) {
       return null;
     }
     attempts++;
@@ -637,7 +646,7 @@ Future<SourceResult> findMatchingSource(
   final alternatives = <SourceResult>[];
   String? alternativeFailure;
   for (final candidate in candidates) {
-    if (attempts >= 3) break;
+    if (attempts >= maxAttempts) break;
     SourceResult? result;
     try {
       result = await attempt(candidate);
@@ -704,9 +713,17 @@ Future<SourceResult> findMatchingSource(
 
 /// Shared by the UI and headless device tests; no result is fabricated on failure.
 class SourceDiscoveryService {
-  SourceDiscoveryService(this._providers, {this.catalogClient});
+  SourceDiscoveryService(
+    this._providers, {
+    this.catalogClient,
+    this.recordingKeys,
+  });
   final List<LyricsProvider> _providers;
   SourceCatalogClient? catalogClient;
+
+  /// Measures a recording's key from its audio (ReccoBeats), as one piece of
+  /// evidence in the chord key check. Null disables the lookup.
+  final RecordingKeyService? recordingKeys;
   List<LyricsProvider> get providers =>
       catalogClient?.runtime.providers ?? _providers;
   List<ProviderDefinition> get definitions =>
@@ -1283,13 +1300,60 @@ class SourceDiscoveryService {
     return results;
   }
 
+  /// The key measured from the selected recording's audio, when results
+  /// already identified as that recording carry a Spotify link or ISRC.
+  /// Failures and missing identifiers give null; cancellation still throws.
+  /// [providers] names the providers whose results gave the identifiers.
+  Future<({RecordingKey key, Set<String> providers})?> _recordingKey(
+    List<SourceResult> results,
+    bool Function(String providerId) eligible, {
+    CancellationToken? cancel,
+  }) async {
+    final service = recordingKeys;
+    if (service == null) return null;
+    final spotify = <String>{}, isrcs = <String>{}, providers = <String>{};
+    for (final result in results) {
+      if (result.matchKind != MatchKind.sameRecording ||
+          !eligible(result.candidate.providerId)) {
+        continue;
+      }
+      final ids = recordingIdentifiers(result);
+      if (ids.spotify.isEmpty && ids.isrcs.isEmpty) continue;
+      spotify.addAll(ids.spotify);
+      isrcs.addAll(ids.isrcs);
+      providers.add(result.candidate.providerId);
+    }
+    if (spotify.isEmpty && isrcs.isEmpty) return null;
+    cancel?.throwIfCancelled();
+    final lookupCancel = CancellationToken();
+    cancel?.cancelled.then((_) => lookupCancel.cancel());
+    try {
+      final key = await service.lookup(
+        spotifyIds: spotify.toList(),
+        isrcs: isrcs.toList(),
+        cancel: lookupCancel,
+      );
+      return key == null || !providers.every(eligible)
+          ? null
+          : (key: key, providers: providers);
+    } on ProviderException {
+      cancel?.throwIfCancelled();
+      return null;
+    } catch (_) {
+      cancel?.throwIfCancelled();
+      return null;
+    } finally {
+      lookupCancel.cancel();
+    }
+  }
+
   /// Chord charts of one song are sometimes written in another key, such as a
   /// capo chart in G of a song recorded in E. When accepted charts disagree,
-  /// this double checks with up to three more charts from each chord source
+  /// or a chart's declared key contradicts its own chords, this double checks with up to six more charts from each chord source
   /// and marks each accepted chart with `keyConsensus`: true in the key most
   /// charts share, false when transposed from it, with `keyShift` semitones
-  /// that move it into that key, and `keyEstimate`, the estimated majority
-  /// key, when the charts' estimates agree. Nothing is marked when the
+  /// that move it into that key, and `keyEstimate`, the estimated sounding
+  /// majority key, when the charts' estimates agree. Nothing is marked when the
   /// charts agree, no key has more than half of the distinct charts, or the
   /// extra lookups fail; the extra charts are only votes and never become
   /// results.
@@ -1319,12 +1383,54 @@ class SourceDiscoveryService {
           i,
     ];
     final indexes = acceptedIndexes();
-    if (indexes.length < 2) return;
+    if (indexes.isEmpty) return;
     final charts = [for (final i in indexes) results[i].body];
-    final disagree = charts
+    Object? setup(SourceResult source, String field) =>
+        source.metadata[field] ?? source.candidate.metadata[field];
+    final heard = await _recordingKey(results, eligible, cancel: cancel);
+    var recording = heard?.key;
+    // Doubt: charts in different keys, or a chart whose declared key
+    // contradicts its own chords (a transposed chart or a missing capo).
+    // Charts are compared by sounding key: the same shapes with a different
+    // capo are in different keys.
+    final disagree = indexes
         .skip(1)
-        .any((chart) => (chordTransposition(charts.first, chart) ?? 0) != 0);
-    if (!disagree) return;
+        .any(
+          (i) =>
+              (soundingTransposition(
+                    results[indexes.first].body,
+                    setup(results[indexes.first], 'capo'),
+                    results[i].body,
+                    setup(results[i], 'capo'),
+                  ) ??
+                  0) !=
+              0,
+        );
+    final contradicted = indexes.any((i) {
+      final source = results[i];
+      final declared =
+          source.metadata['key'] ?? source.candidate.metadata['key'];
+      return declared is String &&
+          declared.trim().isNotEmpty &&
+          !declaredKeyFitsChords(
+            source.body,
+            declared.trim(),
+            source.metadata['capo'] ?? source.candidate.metadata['capo'],
+          );
+    });
+    // The recording's measured key disagreeing with a chart's chords (beyond
+    // a relative major/minor) is doubt as well.
+    final measured = heard?.key.key;
+    final unheard =
+        measured != null &&
+        indexes.any((i) {
+          final key = soundingChartKey(
+            results[i].body,
+            setup(results[i], 'capo'),
+          );
+          return key != null && !keysAgree(key, measured);
+        });
+    if (!disagree && !contradicted && !unheard) return;
     bool lyricsAgree(String body) => reference != null
         ? _agreement(body, reference) || _partialAgreement(body, reference)
         : charts.any(
@@ -1341,7 +1447,7 @@ class SourceDiscoveryService {
           extra: result.extra,
         ) &&
         lyricsAgree(result.body);
-    final votes = <({String providerId, String body})>[];
+    final votes = <({String providerId, SourceResult chart})>[];
     for (final provider in active.where(
       (p) => p.definition.capabilities.contains('chords'),
     )) {
@@ -1365,6 +1471,8 @@ class SourceDiscoveryService {
               },
               allowSelectedProviderAlternatives: true,
               operationPrefix: 'keycheck',
+              // A key in doubt needs enough charts to show a majority.
+              maxAttempts: 6,
               accept: canVote,
               onAlternative: found.add,
               onOperation: (operation) {
@@ -1380,7 +1488,7 @@ class SourceDiscoveryService {
         cancel?.throwIfCancelled();
         if (!eligible(id)) continue;
         for (final chart in [best, ...found]) {
-          if (canVote(chart)) votes.add((providerId: id, body: chart.body));
+          if (canVote(chart)) votes.add((providerId: id, chart: chart));
         }
       } on ProviderException {
         if (cancel?.isCancelled == true) rethrow;
@@ -1397,14 +1505,35 @@ class SourceDiscoveryService {
       for (final i in acceptedIndexes())
         if (indexes.contains(i)) i,
     ];
-    if (current.length < 2) return;
-    final all = [
-      for (final i in current) results[i].body,
+    if (current.isEmpty) return;
+    final sources = [
+      for (final i in current) results[i],
       for (final vote in votes)
-        if (eligible(vote.providerId)) vote.body,
+        if (eligible(vote.providerId)) vote.chart,
     ];
-    final verdict = chordKeyMajority(all);
-    if (verdict == null) return;
+    // A recording identified only by providers disabled since is no evidence.
+    if (heard != null && !heard.providers.every(eligible)) recording = null;
+    final all = [for (final source in sources) source.body];
+    final outcome = chordKeyVerdict(
+      all,
+      recordingKey: recording?.key,
+      capos: [for (final source in sources) setup(source, 'capo')],
+      declaredKeys: [
+        for (final source in sources)
+          if (setup(source, 'key') case final String key) key else null,
+      ],
+      // Accepted charts transcribed against the recording settle a key when
+      // the other charts show no majority.
+      anchors: [
+        for (var n = 0; n < sources.length; n++)
+          n < current.length &&
+              _recordingTranscriptions.contains(
+                sources[n].candidate.providerId,
+              ),
+      ],
+    );
+    if (outcome == null) return;
+    final verdict = outcome.shifts;
     // Estimate the majority key from every chart moved into it; a key is
     // named only when the estimates that do not abstain all agree.
     final estimates = <String>{};
@@ -1412,14 +1541,26 @@ class SourceDiscoveryService {
     for (var n = 0; n < all.length; n++) {
       final shift = verdict[n];
       if (shift == null) continue;
-      final key = estimateChordKey(
+      final shapes = estimateChordKey(
         shift == 0 ? all[n] : transposeBody(all[n], shift),
       )?.key;
-      if (key == null) continue;
+      if (shapes == null) continue;
+      // Compare sounding keys: chord shapes plus the chart's capo.
+      final capo = setup(sources[n], 'capo');
+      final frets = capo is num ? capo.toInt() : int.tryParse('${capo ?? ''}');
+      final key = frets == null || frets <= 0
+          ? shapes
+          : transposeChord(shapes, frets);
       estimate ??= key;
       estimates.add(key);
     }
-    final keyEstimate = estimates.length == 1 ? estimate : null;
+    // Chord estimates name the mode best; the recording's key fills in when
+    // the chords give none and it voted for the winning key.
+    final keyEstimate = estimates.length == 1
+        ? estimate
+        : estimates.isEmpty && outcome.recordingAgrees
+        ? recording?.key
+        : null;
     for (var n = 0; n < current.length; n++) {
       final shift = verdict[n];
       if (shift == null) continue;
@@ -1431,11 +1572,17 @@ class SourceDiscoveryService {
           'keyShift': ?(shift == 0 ? null : shift),
           'keyCheckCharts': all.length,
           'keyEstimate': ?keyEstimate,
+          'keyRecording': ?recording?.toJson(),
         },
       );
     }
   }
 }
+
+/// Chord providers whose charts are transcribed against the recording itself
+/// (Songsterr's tabs play in sync with the original audio), unlike user
+/// arrangements that are often written in a singer's key.
+const _recordingTranscriptions = {'songsterr'};
 
 List<String> _words(String body) => normalizedIdentity(
   body

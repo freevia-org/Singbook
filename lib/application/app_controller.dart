@@ -98,7 +98,7 @@ class AppController extends ChangeNotifier {
     return SourceDiscoveryService([
       ...createCoreProviders(transport: transport),
       ...createExtraProviders(transport: transport),
-    ]);
+    ], recordingKeys: RecordingKeyService(transport));
   }
 
   final ProviderTransport? _ownedTransport;
