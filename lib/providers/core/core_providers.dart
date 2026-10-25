@@ -2,6 +2,7 @@ import '../provider.dart';
 import 'catalogs.dart';
 import 'charts.dart';
 import 'youtube_music.dart';
+export 'recording_key.dart' show RecordingKeyService;
 export 'service.dart';
 
 List<LyricsProvider> createCoreProviders({

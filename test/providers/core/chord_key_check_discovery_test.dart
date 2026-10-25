@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
+import 'package:singbook/providers/core/recording_key.dart';
 import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/providers/provider.dart';
 
@@ -45,11 +50,18 @@ const _selection = SongCandidate(
 );
 
 class _Provider implements LyricsProvider {
-  _Provider(this.id, this.charts, {this.chords = true, this.onResolve});
+  _Provider(
+    this.id,
+    this.charts, {
+    this.chords = true,
+    this.onResolve,
+    this.labels = const {},
+  });
 
   final String id;
   final Map<String, String> charts;
   final bool chords;
+  final Map<String, String> labels;
   final void Function(String chartId)? onResolve;
   final resolved = <String>[];
 
@@ -81,7 +93,11 @@ class _Provider implements LyricsProvider {
   }) async {
     resolved.add(candidate.id);
     onResolve?.call(candidate.id);
-    return SourceResult(candidate: candidate, body: charts[candidate.id]!);
+    return SourceResult(
+      candidate: candidate,
+      body: charts[candidate.id]!,
+      metadata: {'key': ?labels[candidate.id]},
+    );
   }
 }
 
@@ -177,5 +193,75 @@ void main() {
         isA<ProviderException>().having((e) => e.code, 'code', 'cancelled'),
       ),
     );
+  });
+
+  group('recording key', () {
+    // A cadential progression the key estimator commits to, in G.
+    final clearG = _chart(['G', 'C', 'D7', 'G', 'Em', 'C', 'D7', 'G']);
+    const recorded = SongCandidate(
+      providerId: 'lyrics',
+      id: 'song',
+      title: 'Harbor Song',
+      artist: 'Test Artist',
+      metadata: {
+        'mediaLinks': [
+          {
+            'kind': 'audio',
+            'url': 'https://open.spotify.com/track/1kgdslQYmeTR4thk9whoRw',
+          },
+        ],
+      },
+    );
+    RecordingKeyService service(int key, List<Uri> requests) =>
+        RecordingKeyService(
+          ProviderTransport(
+            hostInterval: Duration.zero,
+            client: MockClient((request) async {
+              requests.add(request.url);
+              return http.Response(
+                jsonEncode({
+                  'content': [
+                    {'isrc': 'USRE19100010', 'key': key, 'mode': 1},
+                  ],
+                }),
+                200,
+                headers: {'content-type': 'application/json'},
+              );
+            }),
+          ),
+        );
+    List<SourceResult> chartsOf(List<SourceResult> results) =>
+        results.where((r) => r.hasChords).toList();
+
+    test('a recording key agreeing with a label moves the chart', () async {
+      final requests = <Uri>[];
+      final results = await SourceDiscoveryService([
+        _Provider('lyrics', {'song': _lines.join('\n')}, chords: false),
+        _Provider('ug', {'g': clearG}, labels: {'g': 'C'}),
+      ], recordingKeys: service(0, requests)).discover(recorded);
+
+      final chart = chartsOf(results).single;
+      expect(chart.extra['keyShift'], 5);
+      expect(chart.extra['keyRecording'], containsPair('key', 'C'));
+      expect(requests.single.queryParameters['ids'], '1kgdslQYmeTR4thk9whoRw');
+    });
+
+    test('a recording key alone does not move a chart', () async {
+      final results = await SourceDiscoveryService([
+        _Provider('lyrics', {'song': _lines.join('\n')}, chords: false),
+        _Provider('ug', {'g': clearG}),
+      ], recordingKeys: service(0, [])).discover(recorded);
+
+      expect(chartsOf(results).single.extra.containsKey('keyShift'), isFalse);
+    });
+
+    test('without the service no recording key is requested', () async {
+      final results = await SourceDiscoveryService([
+        _Provider('lyrics', {'song': _lines.join('\n')}, chords: false),
+        _Provider('ug', {'g': clearG}, labels: {'g': 'C'}),
+      ]).discover(recorded);
+      // The contradicting label alone ties with the chart: nothing moves.
+      expect(chartsOf(results).single.extra.containsKey('keyShift'), isFalse);
+    });
   });
 }

@@ -4,13 +4,19 @@ import 'dart:math' as math;
 import '../../domain/arrangement.dart' show transposeBody, transposeChord;
 import '../../domain/chord_key_estimate.dart' show estimateChordKey;
 import '../../domain/combine.dart'
-    show chordKeyMajority, chordTransposition, declaredKeyFitsChords;
+    show
+        chordKeyVerdict,
+        chordTransposition,
+        declaredKeyFitsChords,
+        keysAgree,
+        soundingChartKey;
 import '../../domain/models.dart';
 import '../../domain/lyrics_variants.dart';
 import '../../domain/edition_identity.dart';
 import '../provider.dart';
 import '../source_catalog_client.dart';
 import '../catalog_search.dart';
+import 'recording_key.dart';
 
 const _diagnosticCodes = <String>{
   'blocked',
@@ -707,9 +713,17 @@ Future<SourceResult> findMatchingSource(
 
 /// Shared by the UI and headless device tests; no result is fabricated on failure.
 class SourceDiscoveryService {
-  SourceDiscoveryService(this._providers, {this.catalogClient});
+  SourceDiscoveryService(
+    this._providers, {
+    this.catalogClient,
+    this.recordingKeys,
+  });
   final List<LyricsProvider> _providers;
   SourceCatalogClient? catalogClient;
+
+  /// Measures a recording's key from its audio (ReccoBeats), as one piece of
+  /// evidence in the chord key check. Null disables the lookup.
+  final RecordingKeyService? recordingKeys;
   List<LyricsProvider> get providers =>
       catalogClient?.runtime.providers ?? _providers;
   List<ProviderDefinition> get definitions =>
@@ -1286,6 +1300,47 @@ class SourceDiscoveryService {
     return results;
   }
 
+  /// The key measured from the selected recording's audio, when results
+  /// already identified as that recording carry a Spotify link or ISRC.
+  /// Failures and missing identifiers give null; cancellation still throws.
+  Future<RecordingKey?> _recordingKey(
+    List<SourceResult> results,
+    bool Function(String providerId) eligible, {
+    CancellationToken? cancel,
+  }) async {
+    final service = recordingKeys;
+    if (service == null) return null;
+    final spotify = <String>{}, isrcs = <String>{};
+    for (final result in results) {
+      if (result.matchKind != MatchKind.sameRecording ||
+          !eligible(result.candidate.providerId)) {
+        continue;
+      }
+      final ids = recordingIdentifiers(result);
+      spotify.addAll(ids.spotify);
+      isrcs.addAll(ids.isrcs);
+    }
+    if (spotify.isEmpty && isrcs.isEmpty) return null;
+    cancel?.throwIfCancelled();
+    final lookupCancel = CancellationToken();
+    cancel?.cancelled.then((_) => lookupCancel.cancel());
+    try {
+      return await service.lookup(
+        spotifyIds: spotify.toList(),
+        isrcs: isrcs.toList(),
+        cancel: lookupCancel,
+      );
+    } on ProviderException {
+      cancel?.throwIfCancelled();
+      return null;
+    } catch (_) {
+      cancel?.throwIfCancelled();
+      return null;
+    } finally {
+      lookupCancel.cancel();
+    }
+  }
+
   /// Chord charts of one song are sometimes written in another key, such as a
   /// capo chart in G of a song recorded in E. When accepted charts disagree,
   /// or a chart's declared key contradicts its own chords, this double checks with up to six more charts from each chord source
@@ -1324,6 +1379,9 @@ class SourceDiscoveryService {
     final indexes = acceptedIndexes();
     if (indexes.isEmpty) return;
     final charts = [for (final i in indexes) results[i].body];
+    Object? setup(SourceResult source, String field) =>
+        source.metadata[field] ?? source.candidate.metadata[field];
+    final recording = await _recordingKey(results, eligible, cancel: cancel);
     // Doubt: charts in different keys, or a chart whose declared key
     // contradicts its own chords (a transposed chart or a missing capo).
     final disagree = charts
@@ -1341,7 +1399,18 @@ class SourceDiscoveryService {
             source.metadata['capo'] ?? source.candidate.metadata['capo'],
           );
     });
-    if (!disagree && !contradicted) return;
+    // The recording's measured key disagreeing with a chart's chords (beyond
+    // a relative major/minor) is doubt as well.
+    final unheard =
+        recording != null &&
+        indexes.any((i) {
+          final key = soundingChartKey(
+            results[i].body,
+            setup(results[i], 'capo'),
+          );
+          return key != null && !keysAgree(key, recording.key);
+        });
+    if (!disagree && !contradicted && !unheard) return;
     bool lyricsAgree(String body) => reference != null
         ? _agreement(body, reference) || _partialAgreement(body, reference)
         : charts.any(
@@ -1423,10 +1492,9 @@ class SourceDiscoveryService {
         if (eligible(vote.providerId)) vote.chart,
     ];
     final all = [for (final source in sources) source.body];
-    Object? setup(SourceResult source, String field) =>
-        source.metadata[field] ?? source.candidate.metadata[field];
-    final verdict = chordKeyMajority(
+    final outcome = chordKeyVerdict(
       all,
+      recordingKey: recording?.key,
       capos: [for (final source in sources) setup(source, 'capo')],
       declaredKeys: [
         for (final source in sources)
@@ -1442,7 +1510,8 @@ class SourceDiscoveryService {
               ),
       ],
     );
-    if (verdict == null) return;
+    if (outcome == null) return;
+    final verdict = outcome.shifts;
     // Estimate the majority key from every chart moved into it; a key is
     // named only when the estimates that do not abstain all agree.
     final estimates = <String>{};
@@ -1463,7 +1532,13 @@ class SourceDiscoveryService {
       estimate ??= key;
       estimates.add(key);
     }
-    final keyEstimate = estimates.length == 1 ? estimate : null;
+    // Chord estimates name the mode best; the recording's key fills in when
+    // the chords give none and it voted for the winning key.
+    final keyEstimate = estimates.length == 1
+        ? estimate
+        : estimates.isEmpty && outcome.recordingAgrees
+        ? recording?.key
+        : null;
     for (var n = 0; n < current.length; n++) {
       final shift = verdict[n];
       if (shift == null) continue;
@@ -1475,6 +1550,7 @@ class SourceDiscoveryService {
           'keyShift': ?(shift == 0 ? null : shift),
           'keyCheckCharts': all.length,
           'keyEstimate': ?keyEstimate,
+          'keyRecording': ?recording?.toJson(),
         },
       );
     }

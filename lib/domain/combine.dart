@@ -202,27 +202,62 @@ String? declaredKeyAfterShift(
       : null;
 }
 
+/// Whether keys [a] and [b] share a tonic or are relative major and minor
+/// ("D" and "Bm"), the confusion typical of keys measured from audio.
+bool keysAgree(String a, String b) => _keyDistance(a, b) == 0;
+
+/// A chart's estimated sounding key: the estimate from its chord shapes,
+/// raised by its capo. Null when the chords give no estimate.
+String? soundingChartKey(String chart, Object? capo) {
+  final estimate = estimateChordKey(chart)?.key;
+  if (estimate == null) return null;
+  final frets = _capoOf(capo);
+  return frets == 0 ? estimate : transposeChord(estimate, frets);
+}
+
 /// How far each of [charts] sounds from the key most charts are written in.
-/// Each chart is compared with the first, by its chord shapes plus its
-/// [capos] entry. Identical chord sequences (one chart copied to another
-/// site) vote once. A chart whose [declaredKeys] entry contradicts its own
-/// chords also votes for the key its label names, so a label that agrees with
-/// other charts can settle the doubt. Returns one entry per chart: the
-/// semitones that move its chords into the majority key, keeping its capo (0
-/// when it is already there), or null when its key could not be compared.
-/// Returns null unless one key has more than half of all distinct votes: a
-/// plurality such as 2 of 4 is not enough to move a chart.
-///
-/// Without a majority, charts marked in [anchors] (transcribed against the
-/// recording, such as Songsterr's) decide when they all sound in one key and
-/// at least one other distinct vote agrees with them.
+/// See [chordKeyVerdict], which also reports how a [recordingKey] voted.
 List<int?>? chordKeyMajority(
   List<String> charts, {
   List<Object?> capos = const [],
   List<String?> declaredKeys = const [],
   List<bool> anchors = const [],
+  String? recordingKey,
+}) => chordKeyVerdict(
+  charts,
+  capos: capos,
+  declaredKeys: declaredKeys,
+  anchors: anchors,
+  recordingKey: recordingKey,
+)?.shifts;
+
+/// How far each of [charts] sounds from the key most charts are written in.
+///
+/// Each chart is compared with the first, by its chord shapes plus its
+/// [capos] entry. Identical chord sequences (one chart copied to another
+/// site) vote once. A chart whose [declaredKeys] entry contradicts its own
+/// chords also votes for the key its label names. A [recordingKey] measured
+/// from the recording's audio votes too, placed through any chart whose
+/// chords give an estimate; a relative major or minor counts as agreeing.
+///
+/// One key wins with more than half of all distinct votes. Without such a
+/// majority, recording-level evidence (charts marked in [anchors], such as
+/// Songsterr transcriptions, and [recordingKey]) decides when exactly one key
+/// has both recording-level support and at least one other distinct vote: a
+/// plurality of crowd charts alone never moves a chart.
+///
+/// `shifts` has one entry per chart: the semitones that move its chords into
+/// the winning key, keeping its capo (0 when it is already there), or null
+/// when its key could not be compared. `recordingAgrees` tells whether the
+/// recording key voted for the winner. Returns null without a winner.
+({List<int?> shifts, bool recordingAgrees})? chordKeyVerdict(
+  List<String> charts, {
+  List<Object?> capos = const [],
+  List<String?> declaredKeys = const [],
+  List<bool> anchors = const [],
+  String? recordingKey,
 }) {
-  if (charts.length < 2) return null;
+  if (charts.isEmpty) return null;
   int capo(int i) => i < capos.length ? _capoOf(capos[i]) : 0;
   final shapes = [
     0,
@@ -233,6 +268,7 @@ List<int?>? chordKeyMajority(
       shapes[i] == null ? null : (shapes[i]! + capo(i)) % 12,
   ];
   final votes = <int, Set<String>>{};
+  final special = <String>{};
   for (var i = 0; i < charts.length; i++) {
     final sound = sounds[i];
     if (sound == null) continue;
@@ -241,6 +277,7 @@ List<int?>? chordKeyMajority(
         for (final anchor in line.chords) anchor.chord.trim(),
     ].join(' ');
     votes.putIfAbsent(sound, () => {}).add(sequence);
+    if (i < anchors.length && anchors[i]) special.add(sequence);
     final declared = i < declaredKeys.length ? declaredKeys[i] : null;
     final estimate = declared == null ? null : estimateChordKey(charts[i])?.key;
     if (declared == null || estimate == null) continue;
@@ -250,32 +287,48 @@ List<int?>? chordKeyMajority(
         .putIfAbsent((shapes[i]! + distance) % 12, () => {})
         .add('label:$sequence');
   }
-  if (votes.length < 2) return null;
-  final ranked = votes.entries.toList()
-    ..sort((a, b) => b.value.length.compareTo(a.value.length));
-  final total = votes.values.fold<int>(0, (n, set) => n + set.length);
-  int? majority = ranked.first.value.length * 2 > total
-      ? ranked.first.key
-      : null;
-  if (majority == null) {
-    final anchored = {
-      for (var i = 0; i < charts.length; i++)
-        if (i < anchors.length && anchors[i]) sounds[i],
-    };
-    if (anchored.length == 1 && anchored.single != null) {
-      final key = anchored.single!;
-      final anchorCount = [
-        for (var i = 0; i < charts.length; i++)
-          if (i < anchors.length && anchors[i]) i,
-      ].length;
-      if ((votes[key]?.length ?? 0) > anchorCount) majority = key;
+  int? recordingClass;
+  if (recordingKey != null) {
+    for (var i = 0; i < charts.length && recordingClass == null; i++) {
+      final sound = sounds[i];
+      final sounding = sound == null ? null : soundingChartKey(charts[i], null);
+      if (sound == null || sounding == null) continue;
+      // [sounding] is the chart's shape key; add its capo to compare.
+      final distance = _keyDistance(sounding, recordingKey);
+      if (distance == null) continue;
+      recordingClass = (sound - capo(i) + distance + 12) % 12;
+    }
+    if (recordingClass != null) {
+      const vote = 'recording';
+      votes.putIfAbsent(recordingClass, () => {}).add(vote);
+      special.add(vote);
     }
   }
-  if (majority == null) return null;
-  return [
-    for (final sound in sounds)
-      sound == null ? null : (majority - sound + 12) % 12,
-  ];
+  if (votes.length < 2 && charts.length < 2) return null;
+  final ranked = votes.entries.toList()
+    ..sort((a, b) => b.value.length.compareTo(a.value.length));
+  if (ranked.isEmpty) return null;
+  final total = votes.values.fold<int>(0, (n, set) => n + set.length);
+  int? winner = ranked.first.value.length * 2 > total && votes.length > 1
+      ? ranked.first.key
+      : null;
+  if (winner == null) {
+    final supported = [
+      for (final entry in votes.entries)
+        if (entry.value.any(special.contains) &&
+            entry.value.any((vote) => !special.contains(vote)))
+          entry.key,
+    ];
+    if (supported.length == 1) winner = supported.single;
+  }
+  if (winner == null) return null;
+  return (
+    shifts: [
+      for (final sound in sounds)
+        sound == null ? null : (winner - sound + 12) % 12,
+    ],
+    recordingAgrees: recordingClass == winner,
+  );
 }
 
 /// A chord chart moved into the key most charts share, when discovery found
