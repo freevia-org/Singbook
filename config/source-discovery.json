@@ -172,6 +172,39 @@
         "https://docs.radiosmihun.com/reference/rest"
       ],
       "reason": "Publisher REST documentation reviewed on 2026-10-24 describes a public /api/library limited to the current day/night radio mode, with IDs shaped as radio filenames. The /api/lyrics route requires an art token, accepts title/artist and optional album, and returns synced line times plus an offset; responses are token-encoded and uncached lyrics come from LRCLIB. This does not establish independent Ukrainian lyric coverage; the documentation language alone is not catalog-language evidence. No live lyric request, credential, per-work rights or attribution grant, stable external song identity, or two repository canaries was established. Defer pending eligible access, compatible authenticated/encoded-response handling, actual identity and regional coverage evidence, rights/provenance review and independent canaries. Overlap with the registered LRCLIB source is documented; independent cache coverage is unmeasured."
+    },
+    {
+      "id": "lrc-red",
+      "name": "lrc.red API",
+      "firstSeen": "2026-10-25",
+      "lastChecked": "2026-10-25",
+      "status": "deferred",
+      "documentation": [
+        "https://lrc.red/api"
+      ],
+      "reason": "2026-10-25: Publisher API documentation landing returned HTTP 200, but the available read exposed only a small application shell; detailed endpoint/field/access/attribution terms were not independently verified. Search-index descriptions suggest lyric lookup, but are not sufficient source-contract or rights evidence. No API, lyric or credential requests were made. Potential overlap with LRCLIB and other timed sources remains unmeasured, and distinct regional coverage is unproven. Defer pending a readable primary API contract, per-work rights and attribution review, compatible identity/extraction rules, and two independent live repository canaries."
+    },
+    {
+      "id": "folk-song-catalogue-eu",
+      "name": "Folk Song Catalogue",
+      "firstSeen": "2026-10-25",
+      "lastChecked": "2026-10-25",
+      "status": "deferred",
+      "documentation": [
+        "https://folksong.eu/en/home"
+      ],
+      "reason": "2026-10-25: Publisher describes a comparative European folk-song database of melodies/texts from printed/manuscript catalogues and audio, including digitized Susil 1860 texts. Its access notice says collaborators/researchers may obtain expanded access to complete search results and facsimiles, and it supplies citation guidance. No documented public machine API or content-reuse license was established by the reviewed page; citation is not a license. Potential Central European folk coverage is useful but languages, independent coverage and overlap with Wikisource/institutional catalogs remain unmeasured. No record bodies, accounts or API calls were requested. Defer pending public access and rights/attribution clarification, compatible identity/search extraction, and two independent live canaries."
+    },
+    {
+      "id": "little-songbook",
+      "name": "Little Songbook",
+      "firstSeen": "2026-10-25",
+      "lastChecked": "2026-10-25",
+      "status": "deferred",
+      "documentation": [
+        "https://littlesongbook.com/licensing/"
+      ],
+      "reason": "2026-10-25: Publisher describes traditional children songs from around the world with country/language, known author or tradition, and edition/variant context. Its licensing page distinguishes original English translations, essays, instructions and Q&A, allowing short quotations with links while asking that original writing not be republished wholesale. This does not establish per-work song/translation reuse rights for persistent app display/storage. No public machine API, lyric extraction or account access was verified. Potential regional/language supplement and overlap with folk/public-domain catalogs remain unmeasured. Defer pending an explicit access and per-work rights/attribution contract, compatible adapter and two independent live canaries; do not scrape original translations under quotation permission."
     }
   ]
 }
