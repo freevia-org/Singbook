@@ -442,6 +442,29 @@ Future<void> _benchmark() async {
           .toList();
       row['editionCompatibleMemberCount'] = compatibleMembers.length;
       final results = await discovery.discover(selected);
+      row['sourceSummary'] = [
+        for (final source in results)
+          {
+            'provider': source.candidate.providerId,
+            'candidateIdSha256': _sha(source.candidate.id),
+            'match': source.matchKind.name,
+            'reason': source.matchReason,
+            'recordingCompatible': recordingCompatible(selected, source),
+            'lyricWordCount': _normalizedLyrics(source.body).isEmpty
+                ? 0
+                : _normalizedLyrics(source.body).split(' ').length,
+            'chordCount': parseArrangement(
+              source.body,
+            ).fold<int>(0, (n, line) => n + line.chords.length),
+            'declaredKey':
+                source.metadata['key'] ?? source.candidate.metadata['key'],
+            'capo':
+                source.metadata['capo'] ?? source.candidate.metadata['capo'],
+            'keyConsensus': source.extra['keyConsensus'],
+            'keyShift': source.extra['keyShift'],
+            'requiresLyricsAgreement': source.extra['requiresLyricsAgreement'],
+          },
+      ];
       final compatibleResults = results
           .where(
             (r) => explicitEditionsCompatible(
@@ -472,6 +495,13 @@ Future<void> _benchmark() async {
         'sourceIds': (contributingProviderIds(doc).toList()..sort()),
         'normalizedLyricsSha256': lyricsHash,
         'key': key,
+        'keyEvidence': doc.metadata['key'] != null
+            ? 'source'
+            : checkedChordKeyEstimate(doc) != null
+            ? 'checkedChartEstimate'
+            : key != null
+            ? 'chartEstimate'
+            : null,
         'capo': doc.metadata['capo'],
         'chordAlignmentSha256': _chordAlignmentHash(doc),
         'baseLyricsSourceId': doc.extra['selectedSourceId'],
@@ -527,6 +557,16 @@ Future<void> _benchmark() async {
       unavailable = true;
       row['availability'] = 'unavailable';
       row['errorCode'] = e.code;
+    } on FormatException catch (e) {
+      unavailable = true;
+      const reasons = {
+        'No matching lyrics are available to save.': 'no_matching_lyrics',
+        'No complete matching lyrics are available.': 'no_complete_lyrics',
+      };
+      final reason = reasons[e.message];
+      row['availability'] = reason == null ? 'error' : 'unavailable';
+      row['errorType'] = e.runtimeType.toString();
+      if (reason != null) row['errorCode'] = reason;
     } catch (e) {
       unavailable = true;
       row['availability'] = 'error';

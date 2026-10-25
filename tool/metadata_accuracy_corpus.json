@@ -1501,13 +1501,13 @@
         "providerId": "genius",
         "candidateId": "3352793",
         "title": "Shallow",
-        "artist": "Lady Gaga",
+        "artist": "Lady Gaga & Bradley Cooper",
         "evidence": [
           "https://www.youtube.com/watch?v=MUX4ZWkDS-s",
           "https://www.ladygaga.com/us-en/music/a-star-is-born-soundtrack",
           "https://www.qobuz.com/us-en/album/a-star-is-born-soundtrack-bradley-cooper-lady-gaga/crvuuq6xznfsc"
         ],
-        "notes": "The exact Genius candidate has Lady Gaga as primary artist and both names in its recording URL; label-distributed soundtrack data confirms both singers. Bind this individual candidate via duet credits rather than dropping Bradley Cooper from the corpus or globally relaxing artist matching. Catalog selection only; recording and accuracy references remain unverified."
+        "notes": "Structured Genius primary_artists names agree with independently published duet/album credits. Select this exact catalog ID; recording and accuracy references remain unverified."
       },
       "recordingEditionStatus": "unverified"
     },
@@ -3476,7 +3476,7 @@
       "title": "La Vie en Rose",
       "artist": "Édith Piaf",
       "recordingEdition": "Studio recording",
-      "language": "English",
+      "language": "French",
       "genre": "world/pop/soundtrack",
       "expected": {
         "status": "unverified",
@@ -3516,7 +3516,7 @@
       "title": "Oye Cómo Va",
       "artist": "Santana",
       "recordingEdition": "Original album recording",
-      "language": "English",
+      "language": "Spanish",
       "genre": "world/pop/soundtrack",
       "expected": {
         "status": "unverified",
@@ -3556,7 +3556,7 @@
       "title": "Bésame Mucho",
       "artist": "Los Panchos",
       "recordingEdition": "Spanish-language recording",
-      "language": "English",
+      "language": "Spanish",
       "genre": "world/pop/soundtrack",
       "expected": {
         "status": "unverified",
@@ -3596,7 +3596,7 @@
       "title": "Ai Se Eu Te Pego",
       "artist": "Michel Teló",
       "recordingEdition": "Portuguese studio recording",
-      "language": "English",
+      "language": "Portuguese",
       "genre": "world/pop/soundtrack",
       "expected": {
         "status": "unverified",
@@ -3714,13 +3714,13 @@
         "providerId": "genius",
         "candidateId": "821238",
         "title": "The Girl from Ipanema",
-        "artist": "Stan Getz",
+        "artist": "Stan Getz & João Gilberto",
         "evidence": [
           "https://music.apple.com/us/album/getz-gilberto/1422655717",
           "https://music.apple.com/us/song/1422656474",
           "https://www.kpl.gov/catalog/item/?i=ent%3A%2F%2FSD_ILS%2F0%2FSD_ILS%3A1464271"
         ],
-        "notes": "Apple Music song 1422656474 is the album-context candidate for the stated 1964 Getz/Gilberto recording. Genius 821238 is a strong title/artist-alias candidate but exposes Stan Getz as primary artist; corroborate João Gilberto as a co-performer rather than requiring the candidate's single primary-artist field to equal the full duet credit. Do not substitute the explicit Single Version candidate 1945648. Catalog selection only; recording and accuracy references remain unverified."
+        "notes": "Structured Genius primary_artists names agree with independently published duet/album credits. Select this exact catalog ID; recording and accuracy references remain unverified."
       }
     },
     {
@@ -3728,7 +3728,7 @@
       "title": "Sukiyaki",
       "artist": "Kyu Sakamoto",
       "recordingEdition": "Japanese original recording",
-      "language": "English",
+      "language": "Japanese",
       "genre": "world/pop/soundtrack",
       "expected": {
         "status": "unverified",
@@ -3780,7 +3780,7 @@
       "title": "Bella Ciao",
       "artist": "Manu Pilas",
       "recordingEdition": "Money Heist recording",
-      "language": "English",
+      "language": "Italian",
       "genre": "world/pop/soundtrack",
       "expected": {
         "status": "unverified",
@@ -3820,7 +3820,7 @@
       "title": "Moliendo Café",
       "artist": "Hugo Blanco",
       "recordingEdition": "Original recording",
-      "language": "English",
+      "language": "Spanish",
       "genre": "world/pop/soundtrack",
       "expected": {
         "status": "unverified",
@@ -3860,7 +3860,7 @@
       "title": "Dragostea Din Tei",
       "artist": "O-Zone",
       "recordingEdition": "Romanian studio recording",
-      "language": "English",
+      "language": "Romanian",
       "genre": "world/pop/soundtrack",
       "expected": {
         "status": "unverified",
@@ -3938,13 +3938,13 @@
         "providerId": "genius",
         "candidateId": "132111",
         "title": "A Whole New World",
-        "artist": "Brad Kane",
+        "artist": "Brad Kane & Lea Salonga",
         "evidence": [
           "https://music.apple.com/us/album/aladdin-original-motion-picture-soundtrack/1440722016",
           "https://www.qobuz.com/us-en/album/aladdin-various-artists/f84gg30deokwb",
           "https://www.kpl.gov/catalog/item/?i=ent%3A%2F%2FSD_ILS%2F0%2FSD_ILS%3A137876"
         ],
-        "notes": "Candidate 132111 is the correct title and the Genius URL names both performers, though its candidate record exposes Brad Kane as primary artist. Bind through a pair-specific co-performer credit. Exclude the similarly titled end-title version by Peabo Bryson and Regina Belle, which is a different recording. Catalog selection only; recording and accuracy references remain unverified."
+        "notes": "Structured Genius primary_artists names agree with independently published duet/album credits. Select this exact catalog ID; recording and accuracy references remain unverified."
       }
     },
     {
