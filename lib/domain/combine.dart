@@ -84,6 +84,27 @@ bool _sameSong(SongCandidate a, SongCandidate b) {
   return artist == _identityNorm(b.artist) && title == _baseTitle(b.title);
 }
 
+/// A chord site's arrangement of [b]'s song: chord sites credit only the
+/// main artist and may drop a leading article. Only for charts whose lyrics
+/// discovery has corroborated.
+bool _sameArrangedSong(SongCandidate a, SongCandidate b) {
+  String main(String artist) => _identityNorm(
+    artist
+        .split(
+          RegExp(
+            r'\s*(?:&|,|\+|\bfeat\.?|\bft\.?|\bfeaturing\b|\bwith\b|\band\b|\bx\b)\s*',
+            caseSensitive: false,
+          ),
+        )
+        .first,
+  );
+  String title(String value) =>
+      _baseTitle(value).replaceFirst(RegExp(r'^(?:the|a|an) '), '');
+  final artist = main(a.artist), song = title(a.title);
+  if (artist.isEmpty || song.isEmpty) return false;
+  return artist == main(b.artist) && song == title(b.title);
+}
+
 bool _hasRecordingIdentityScope(SongCandidate candidate) =>
     candidate.metadata['identityScope'] == 'recording';
 bool _demonstrationTimingSelected(
@@ -1433,16 +1454,54 @@ const _repeatingSections = {'verse', 'chorus', 'pre-chorus', 'refrain'};
 
 final _wordToken = RegExp(r"[\p{L}\p{N}']+", unicode: true);
 
+/// A line's words, lower case and without apostrophes; a dropped "g"
+/// ("darlin'") is restored, as charts and lyrics spell it either way.
 List<({String word, int start, int end})> _lineWords(String text) => [
   for (final match in _wordToken.allMatches(text))
     (
-      word: match[0]!.toLowerCase().replaceAll("'", ''),
+      word: match[0]!
+          .toLowerCase()
+          .replaceFirst(RegExp(r"in'$"), 'ing')
+          .replaceAll("'", ''),
       start: match.start,
       end: match.end,
     ),
 ];
 
 typedef _Words = List<({String word, int start, int end})>;
+
+/// Vocables sung around the lyrics that charts often leave out.
+const _interjections = {
+  'oh',
+  'ooh',
+  'oooh',
+  'ah',
+  'ahh',
+  'aah',
+  'uh',
+  'whoa',
+  'woah',
+  'woo',
+  'yeah',
+  'yeh',
+  'hey',
+  'na',
+  'la',
+  'da',
+  'doo',
+  'dum',
+  'ba',
+  'sha',
+  'mm',
+  'mmm',
+  'hmm',
+  'ha',
+  'oh-oh',
+  'ay',
+  'ayy',
+  'eh',
+  'o',
+};
 
 /// [line]'s chords moved onto words [to] through word alignment [pairs]
 /// (from-index, to-index): each chord's target word index and offset inside
@@ -1532,8 +1591,9 @@ double _lineSimilarity(_Words a, _Words b, List<(int, int)> pairs) {
 /// cover two adjacent lyric lines, as charts that join short lines do. Lyric
 /// lines left over (a chorus the chart writes once) then take the chords of
 /// the single closest chart line; equally close chart lines with different
-/// chords place nothing. Lines of fewer than three words, or whose offsets
-/// are not plain characters, are skipped.
+/// chords place nothing. A lyric line of fewer than three words takes part
+/// only joined with the next line; chart lines of fewer than three words,
+/// and lines whose offsets are not plain characters, are skipped.
 Map<int, List<ChordAnchor>> _fuzzyLineChords(
   List<ArrangementLine> target,
   String chart,
@@ -1553,18 +1613,27 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
       for (final word in donor.words) word.word,
   };
   _Words known(_Words words) {
-    final kept = [
+    // Interjections the chart never writes ("doo doo", "oh") always go.
+    final sung = [
       for (final word in words)
+        if (vocabulary.contains(word.word) ||
+            !_interjections.contains(word.word))
+          word,
+    ];
+    final kept = [
+      for (final word in sung)
         if (vocabulary.contains(word.word)) word,
     ];
-    return kept.length >= 3 && kept.length >= words.length * .6 ? kept : words;
+    if (kept.length >= 3 && kept.length >= words.length * .6) return kept;
+    return sung.length >= 3 ? sung : words;
   }
 
+  // Lines of one or two words take part only joined with the next line.
   final lyrics = [
     for (var i = 0; i < target.length; i++)
       if (!target[i].directive &&
           plainText(target[i].text) &&
-          _lineWords(target[i].text).length >= 3 &&
+          _lineWords(target[i].text).isNotEmpty &&
           _lineWords(target[i].text).length <= 40)
         (index: i, words: known(_lineWords(target[i].text))),
   ];
@@ -1588,6 +1657,7 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
   ), () => _alignWords(donors[d].words, wordsOf(l, span)));
   double similarity(int d, int l, [int span = 1]) {
     if (span == 2 && !joinable(l)) return 0;
+    if (wordsOf(l, span).length < 3) return 0;
     final value = _lineSimilarity(
       donors[d].words,
       wordsOf(l, span),
@@ -2064,7 +2134,11 @@ SongDocument combineSources(
         s.id == preferredSourceId;
     final identityMatches = wikiSource
         ? historicalMatches(s)
-        : (_sameSong(s.candidate, selected) && editionAllowed) ||
+        : ((_sameSong(s.candidate, selected) ||
+                      (s.hasChords &&
+                          s.extra['requiresLyricsAgreement'] == true &&
+                          _sameArrangedSong(s.candidate, selected))) &&
+                  editionAllowed) ||
               allowedRejectedAlternative;
     return identityMatches &&
         (s.matchKind != MatchKind.rejected ||

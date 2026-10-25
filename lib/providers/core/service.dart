@@ -197,14 +197,17 @@ bool sameSong(SongCandidate selected, SongCandidate result) {
   return true;
 }
 
+/// Whether a chord site's arrangement may be [selected]'s song. Chord sites
+/// credit only the main artist ("Bob Marley" for "Bob Marley & The Wailers")
+/// and drop a leading article ("House of the Rising Sun"); such matches still
+/// need their lyrics to agree before they are used.
 bool sameArrangement(
   SongCandidate selected,
   SongCandidate result,
   LyricsProvider provider,
 ) {
   if (!provider.definition.capabilities.contains('chords') ||
-      normalizedIdentity(selected.artist) !=
-          normalizedIdentity(result.artist)) {
+      _mainArtist(selected.artist) != _mainArtist(result.artist)) {
     return false;
   }
   final a = arrangementTitle(selected.title);
@@ -212,8 +215,22 @@ bool sameArrangement(
   if (a != selected.title) {
     b = b.replaceFirst(RegExp(r'\s+acoustic$', caseSensitive: false), '');
   }
-  return _titleKey(a) == _titleKey(b);
+  String key(String title) =>
+      _titleKey(title).replaceFirst(RegExp(r'^(?:the|a|an) '), '');
+  return key(a) == key(b);
 }
+
+/// The first credited artist: "Lady Gaga & Bradley Cooper" -> "lady gaga".
+String _mainArtist(String artist) => normalizedIdentity(
+  artist
+      .split(
+        RegExp(
+          r'\s*(?:&|,|\+|\bfeat\.?|\bft\.?|\bfeaturing\b|\bwith\b|\band\b|\bx\b)\s*',
+          caseSensitive: false,
+        ),
+      )
+      .first,
+);
 
 bool _sameAlbum(SongCandidate a, SongCandidate b) =>
     a.album != null &&

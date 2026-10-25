@@ -281,4 +281,25 @@ void main() {
       isEmpty,
     ]);
   });
+
+  test('a short lyric line joins the next one to meet the chart line', () {
+    const lyrics = [
+      'Little darling',
+      'the quiet harbor water waits for us',
+      'Someone hums a tune along the river road doo doo doo doo',
+    ];
+    final doc = _combine(
+      [...lyrics, ..._tail].join('\n'),
+      [
+        "[D]Little darlin', the quiet [G]harbor water waits for [A]us",
+        '[Em]Someone hums a tune along the [C]river road',
+      ].join('\n'),
+    );
+    final chords = _chordsByLine(doc.body);
+    // "darlin'" is the same word as "darling".
+    expect(chords[lyrics[0]], ['D']);
+    expect(chords[lyrics[1]], ['G', 'A']);
+    // Vocables the chart leaves out do not stop the match.
+    expect(chords[lyrics[2]], ['Em', 'C']);
+  });
 }

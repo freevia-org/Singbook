@@ -682,8 +682,9 @@ class BetterLyricsProvider implements LyricsProvider {
     if (song.album == null || song.durationSeconds == null) {
       throw const ProviderException('unavailable');
     }
-    final data = object(
-      await http.requestJson(
+    final Object? response;
+    try {
+      response = await http.requestJson(
         Uri.https('api.betterlyrics.org', '/getLyrics', {
           's': song.title,
           'a': song.artist,
@@ -691,8 +692,16 @@ class BetterLyricsProvider implements LyricsProvider {
           'd': song.durationSeconds!.round().toString(),
         }),
         cancel: cancel,
-      ),
-    );
+      );
+    } on ProviderException catch (e) {
+      // Without an API key the service answers only songs it has cached; any
+      // other song is refused, which means it is not available here.
+      if (e.code == 'access_denied') {
+        throw const ProviderException('unavailable');
+      }
+      rethrow;
+    }
+    final data = object(response);
     final raw = requiredText(data['ttml'], 200000);
     // Keep the original TTML and word/span cues; never flatten it to LRC.
     final timing = parseTtml(

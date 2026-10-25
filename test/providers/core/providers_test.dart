@@ -330,6 +330,24 @@ void main() {
       await t.close();
     });
   });
+  test('Better Lyrics refusing an uncached song means unavailable', () async {
+    final t = wire(
+      (r) => r.url.host == 'lrclib.net'
+          ? jsonResponse(lrcRecord())
+          : http.Response(
+              '{"error":"API key required"}',
+              401,
+              headers: {'content-type': 'application/json'},
+            ),
+    );
+    await expectLater(
+      BetterLyricsProvider(t).resolve(candidate(provider: 'betterlyrics')),
+      throwsA(
+        isA<ProviderException>().having((e) => e.code, 'code', 'unavailable'),
+      ),
+    );
+    await t.close();
+  });
   group('matching and discovery', () {
     test(
       'unsupported raw timing survives a timing-only provider result',

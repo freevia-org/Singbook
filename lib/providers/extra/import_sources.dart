@@ -132,8 +132,16 @@ class ChordieProvider implements LyricsProvider {
       if (url.host != base.host || !url.path.startsWith('/chord.pere/')) {
         continue;
       }
-      final title = textValue(spans[0].innerHtml),
-          artist = textValue(spans[1].innerHtml);
+      // Chordie double-encodes some characters ("&amp;#38;").
+      String decoded(String html) =>
+          textValue(html).replaceAllMapped(RegExp(r'&#(\d{1,6});'), (m) {
+            final code = int.parse(m[1]!);
+            return code > 0 && code <= 0x10FFFF
+                ? String.fromCharCode(code)
+                : m[0]!;
+          });
+      final title = decoded(spans[0].innerHtml),
+          artist = decoded(spans[1].innerHtml);
       if (title.isEmpty || artist.isEmpty) continue;
       found[url.path] = SongCandidate(
         providerId: definition.id,
