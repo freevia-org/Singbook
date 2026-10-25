@@ -621,6 +621,35 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('trailing chords without room stack inside the line width', (
+    tester,
+  ) async {
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(240, 400);
+    const text = 'Lanterns drift';
+    await tester.pumpWidget(
+      _host(
+        _line(text, const [
+          LyricChord(graphemeOffset: text.length, symbol: 'Cmaj7'),
+          LyricChord(graphemeOffset: text.length, symbol: 'F#m7b5'),
+          LyricChord(graphemeOffset: text.length, symbol: 'Bbmaj9'),
+        ], key: const ValueKey('narrow-trailing')),
+        width: 240,
+        height: 400,
+        scale: 2,
+      ),
+    );
+    expect(tester.takeException(), isNull);
+    expect(
+      tester.getSize(find.byKey(const ValueKey('narrow-trailing'))).width,
+      lessThanOrEqualTo(240 - 32),
+    );
+  });
+
   testWidgets('chord-only and whitespace rows keep their anchor spacing', (
     tester,
   ) async {

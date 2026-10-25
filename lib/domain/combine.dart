@@ -1435,7 +1435,8 @@ typedef _Words = List<({String word, int start, int end})>;
 /// [line]'s chords moved onto words [to] through word alignment [pairs]
 /// (from-index, to-index): each chord's target word index and offset inside
 /// that word, or a null index for a chord after the last word. An unaligned
-/// chord word borrows the position of the nearest aligned word.
+/// chord word borrows the position of the nearest aligned word that keeps
+/// the chords in order.
 List<(int?, int, String)> _mapChordWords(
   ArrangementLine line,
   _Words from,
@@ -1444,8 +1445,8 @@ List<(int?, int, String)> _mapChordWords(
 ) {
   final aligned = {for (final (a, b) in pairs) a: b};
   final anchors = <(int?, int, String)>[];
-  // Chords keep their order: a chord never lands at or before the previous
-  // one, which would reorder or stack them.
+  // Chords keep their order: a chord never lands before the previous one,
+  // or on its word unless both sat on one chart word.
   int? previous, previousWord;
   var ended = false;
   for (final chord in line.chords) {
@@ -1456,21 +1457,26 @@ List<(int?, int, String)> _mapChordWords(
       continue;
     }
     bool free(int probe) =>
+        probe >= 0 &&
+        probe < from.length &&
         aligned.containsKey(probe) &&
         (previous == null ||
             aligned[probe]! > previous ||
             (index == previousWord && aligned[probe] == previous));
-    var probe = index;
-    while (probe >= 0 && !aligned.containsKey(probe)) {
-      probe--;
-    }
-    if (probe < 0 || !free(probe)) {
-      probe = index;
-      while (probe < from.length && !free(probe)) {
-        probe++;
+    // The nearest free aligned word; the earlier one on a tie.
+    int? probe;
+    for (
+      var distance = 0;
+      distance < from.length && probe == null;
+      distance++
+    ) {
+      if (free(index - distance)) {
+        probe = index - distance;
+      } else if (free(index + distance)) {
+        probe = index + distance;
       }
     }
-    if (probe >= from.length) {
+    if (probe == null) {
       // No aligned word left: the chord follows the line's last word.
       if (previous == null) continue;
       ended = true;
@@ -1940,14 +1946,21 @@ List<ChordAnchor>? _retargetChords(
   // vocals ("(stand by me)"). A lyric line whose words, outside brackets,
   // equal a line that received chords takes those chords at the same word
   // positions, unless it already has chords.
+  // A line whose chorded copies disagree on harmony has no single chords
+  // to lend.
   final chordsByText = <String, int>{};
+  final harmonies = <String, Set<String>>{};
   for (var i = 0; i < lines.length; i++) {
     final chords = chartChords[i];
     final text = _repeatKey(lines[i].text);
     if (chords != null && chords.isNotEmpty && text.isNotEmpty) {
       chordsByText.putIfAbsent(text, () => i);
+      harmonies
+          .putIfAbsent(text, () => {})
+          .add(chords.map((chord) => chord.chord).join(' '));
     }
   }
+  chordsByText.removeWhere((text, _) => harmonies[text]!.length > 1);
   for (var i = 0; i < lines.length; i++) {
     // An aligned line may carry an empty chord list; that is not a choice.
     if ((chartChords[i]?.isNotEmpty ?? false) || lines[i].directive) continue;

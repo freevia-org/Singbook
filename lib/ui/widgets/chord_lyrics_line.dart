@@ -332,6 +332,7 @@ class _ChordLineLayout {
       // trailing chords they follow one another instead of stacking.
       final end = codeUnitOffsets.length - 1;
       final trailingEdges = <int, double>{};
+      final trailingStarts = <int, double>{};
       double? trailingGap;
       for (final (_, chord) in ordered) {
         final graphemeOffset = chord.graphemeOffset.clamp(
@@ -381,7 +382,16 @@ class _ChordLineLayout {
           if (start >= 0 && start + labelWidth <= limit) {
             x = start;
             paintWidth = math.max(paintWidth, x + labelWidth);
+          } else if (edge != null) {
+            // No room left: stack it, but never before an earlier one.
+            final last = trailingStarts[lineIndex]!;
+            x = (rtl ? math.min(x, last) : math.max(x, last)).clamp(
+              0.0,
+              math.max(0.0, limit - labelWidth),
+            );
+            paintWidth = math.max(paintWidth, x + labelWidth);
           }
+          trailingStarts[lineIndex] = x;
           trailingEdges[lineIndex] = rtl ? x : x + labelWidth;
         }
         grouped[lineIndex].add(

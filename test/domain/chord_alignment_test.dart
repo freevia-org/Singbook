@@ -193,4 +193,48 @@ void main() {
       'D',
     ]);
   });
+
+  test('a chord on a word the lyrics lack moves to the nearest word', () {
+    const target = 'We need the lanterns near the harbor tonight';
+    final doc = _combine(
+      [target, ..._tail].join('\n'),
+      'We really [D]really need the lanterns near the harbor tonight',
+    );
+    final line = parseArrangement(
+      doc.body,
+    ).firstWhere((line) => line.text == target);
+    expect(line.chords.single.chord, 'D');
+    expect(line.chords.single.offset, target.indexOf('need'));
+  });
+
+  test('a repeat whose chorded copies disagree takes no chords', () {
+    final doc = _combine(
+      [
+        _verse[0],
+        _chorus,
+        _verse[1],
+        _chorus,
+        _tail[0],
+        _chorus,
+        _tail[1],
+      ].join('\n'),
+      [
+        '[G]Someone hums a tune along the [C]winding river road',
+        '[C]Paper lanterns drifting over the [G]quiet harbor water',
+        '[Em]Bells are ringing gently down the [D]empty market halls',
+        '[D]Paper lanterns drifting over the [A]quiet harbor water',
+        '[G]Morning carries salt and cedar [C]through the open door',
+        '[G]Little boats are waiting where the [C]gulls begin to call',
+      ].join('\n'),
+    );
+    final repeats = [
+      for (final line in parseArrangement(doc.body))
+        if (line.text == _chorus) [for (final c in line.chords) c.chord],
+    ];
+    expect(repeats, [
+      ['C', 'G'],
+      ['D', 'A'],
+      isEmpty,
+    ]);
+  });
 }
