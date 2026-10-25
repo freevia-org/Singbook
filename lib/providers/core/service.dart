@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'diagnostics.dart';
 import 'dart:math' as math;
+import '../../domain/arrangement.dart' show transposeBody;
+import '../../domain/chord_key_estimate.dart' show estimateChordKey;
+import '../../domain/combine.dart' show chordKeyMajority, chordTransposition;
 import '../../domain/models.dart';
 import '../../domain/lyrics_variants.dart';
 import '../../domain/edition_identity.dart';
@@ -1235,6 +1238,15 @@ class SourceDiscoveryService {
         );
       }
     }
+    await _checkChordKeys(
+      results,
+      active,
+      selection,
+      cancel: cancel,
+      providerCancellation: providerCancellation,
+      onOperation: recordOperation,
+      timeout: alternativeTimeout,
+    );
     for (final provider in active) {
       final id = provider.definition.id;
       final accepted = results
@@ -1268,6 +1280,121 @@ class SourceDiscoveryService {
       traceOpen[provider.definition.id] = false;
     }
     return results;
+  }
+
+  /// Chord charts of one song are sometimes written in another key, such as a
+  /// capo chart in G of a song recorded in E. When accepted charts disagree,
+  /// this double checks with up to three more charts from each chord source
+  /// and marks each accepted chart with `keyConsensus`: true in the key most
+  /// charts share, false when transposed from it, with `keyShift` semitones
+  /// that move it into that key, and `keyEstimate`, the estimated majority
+  /// key, when the charts' estimates agree. Nothing is marked when the
+  /// charts agree, a majority is not clear, or the extra lookups fail; the
+  /// extra charts are only votes and never become results.
+  Future<void> _checkChordKeys(
+    List<SourceResult> results,
+    List<LyricsProvider> active,
+    SongCandidate selection, {
+    CancellationToken? cancel,
+    Map<String, CancellationToken> providerCancellation = const {},
+    void Function(String providerId, ProviderOperation operation)? onOperation,
+    Duration timeout = const Duration(seconds: 30),
+  }) async {
+    final indexes = [
+      for (var i = 0; i < results.length; i++)
+        if (results[i].hasChords &&
+            results[i].matchKind != MatchKind.rejected &&
+            providerCancellation[results[i].candidate.providerId]
+                    ?.isCancelled !=
+                true)
+          i,
+    ];
+    if (indexes.length < 2) return;
+    final charts = [for (final i in indexes) results[i].body];
+    final disagree = charts
+        .skip(1)
+        .any((chart) => (chordTransposition(charts.first, chart) ?? 0) != 0);
+    if (!disagree) return;
+    final votes = <String>[];
+    for (final provider in active.where(
+      (p) => p.definition.capabilities.contains('chords'),
+    )) {
+      final id = provider.definition.id;
+      if (providerCancellation[id]?.isCancelled == true) continue;
+      final checkCancel = CancellationToken();
+      cancel?.cancelled.then((_) => checkCancel.cancel());
+      providerCancellation[id]?.cancelled.then((_) => checkCancel.cancel());
+      try {
+        final found = <SourceResult>[];
+        final best =
+            await findMatchingSource(
+              provider,
+              selection,
+              cancel: checkCancel,
+              exclude: {
+                for (final i in indexes)
+                  if (results[i].candidate.providerId == id)
+                    results[i].candidate.id,
+              },
+              allowSelectedProviderAlternatives: true,
+              operationPrefix: 'keycheck',
+              accept: (result) => result.hasChords,
+              onAlternative: found.add,
+              onOperation: (operation) {
+                if (!checkCancel.isCancelled) onOperation?.call(id, operation);
+              },
+            ).timeout(
+              timeout,
+              onTimeout: () {
+                checkCancel.cancel();
+                throw const ProviderException('timeout');
+              },
+            );
+        for (final chart in [best, ...found]) {
+          if (chart.hasChords && chart.matchKind != MatchKind.rejected) {
+            votes.add(chart.body);
+          }
+        }
+      } on ProviderException {
+        if (cancel?.isCancelled == true) rethrow;
+      } catch (_) {
+        // A failed double check leaves the charts as they were.
+      } finally {
+        checkCancel.cancel();
+      }
+    }
+    final all = [...charts, ...votes];
+    final verdict = chordKeyMajority(all);
+    if (verdict == null) return;
+    // Estimate the majority key from every chart moved into it; a key is
+    // named only when the estimates that do not abstain all agree.
+    final estimates = <String>{};
+    String? estimate;
+    for (var n = 0; n < all.length; n++) {
+      final shift = verdict[n];
+      if (shift == null) continue;
+      final key = estimateChordKey(
+        shift == 0 ? all[n] : transposeBody(all[n], shift),
+      )?.key;
+      if (key == null) continue;
+      estimate ??= key;
+      estimates.add(key);
+    }
+    final keyEstimate = estimates.length == 1 ? estimate : null;
+    for (var n = 0; n < indexes.length; n++) {
+      final shift = verdict[n];
+      if (shift == null) continue;
+      final i = indexes[n];
+      results[i] = results[i].copyWith(
+        extra: {
+          ...results[i].extra,
+          'keyConsensus': shift == 0,
+          'keyShift': ?(shift == 0 ? null : shift),
+          'keyCheckCharts': all.length,
+          'keyEstimate': ?keyEstimate,
+        },
+      );
+    }
   }
 }
 
