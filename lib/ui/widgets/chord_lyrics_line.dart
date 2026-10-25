@@ -324,9 +324,15 @@ class _ChordLineLayout {
             width: width,
           )
         : null;
+    var paintWidth = width;
     if (chordOnlyPacking != null) {
       grouped[0].addAll(chordOnlyPacking.items);
     } else {
+      // Chords after the last letter anchor to no word: like a chart's
+      // trailing chords they follow one another instead of stacking.
+      final end = codeUnitOffsets.length - 1;
+      final trailingEdges = <int, double>{};
+      double? trailingGap;
       for (final (_, chord) in ordered) {
         final graphemeOffset = chord.graphemeOffset.clamp(
           0,
@@ -354,6 +360,30 @@ class _ChordLineLayout {
         if (x + labelWidth > width && x >= 0) x = anchor.caret.dx - labelWidth;
         if (x < 0 && x + labelWidth <= width) x = anchor.caret.dx;
         x = x.clamp(0.0, math.max(0.0, width - labelWidth));
+        if (graphemeOffset == end && end > 0) {
+          final rtl = anchor.direction == TextDirection.rtl;
+          final edge = trailingEdges[lineIndex];
+          final gap = edge == null
+              ? 0.0
+              : trailingGap ??= _spacingWidth(
+                  chordStyle,
+                  direction,
+                  textScaler,
+                  locale,
+                );
+          final start = rtl
+              ? (edge ?? anchor.caret.dx) - gap - labelWidth
+              : (edge ?? anchor.caret.dx) + gap;
+          // The free width beside the text, when the parent offers it.
+          final limit = constraints.maxWidth.isFinite
+              ? math.max(width, constraints.maxWidth)
+              : width;
+          if (start >= 0 && start + labelWidth <= limit) {
+            x = start;
+            paintWidth = math.max(paintWidth, x + labelWidth);
+          }
+          trailingEdges[lineIndex] = rtl ? x : x + labelWidth;
+        }
         grouped[lineIndex].add(
           _ChordPaintData(graphemeOffset: graphemeOffset, label: label, x: x),
         );
@@ -412,10 +442,31 @@ class _ChordLineLayout {
       lines: lines,
       chordsByLine: grouped,
       chordRowHeights: rowHeights,
-      size: Size(width, lyricHeight + extraHeight),
+      size: Size(paintWidth, lyricHeight + extraHeight),
     );
     emptyLineMetrics?.dispose();
     return layout;
+  }
+
+  /// The gap between chords written one after another: two spaces in the
+  /// chord font, at least [_chordGap].
+  static double _spacingWidth(
+    TextStyle chordStyle,
+    TextDirection direction,
+    TextScaler textScaler,
+    Locale? locale,
+  ) {
+    final spacing = TextPainter(
+      text: TextSpan(text: '  ', style: chordStyle),
+      textDirection: direction,
+      textScaler: textScaler,
+      locale: locale,
+      textAlign: TextAlign.start,
+      textWidthBasis: TextWidthBasis.longestLine,
+    )..layout();
+    final width = math.max(_chordGap, spacing.width);
+    spacing.dispose();
+    return width;
   }
 
   static _ChordOnlyPacking _packChordOnly({
@@ -428,16 +479,7 @@ class _ChordLineLayout {
     required TextStyle chordStyle,
     required double width,
   }) {
-    final spacing = TextPainter(
-      text: TextSpan(text: '  ', style: chordStyle),
-      textDirection: direction,
-      textScaler: textScaler,
-      locale: locale,
-      textAlign: TextAlign.start,
-      textWidthBasis: TextWidthBasis.longestLine,
-    )..layout();
-    final minimumGap = math.max(_chordGap, spacing.width);
-    spacing.dispose();
+    final minimumGap = _spacingWidth(chordStyle, direction, textScaler, locale);
 
     final rows = <List<_ChordPaintData>>[<_ChordPaintData>[]];
     var rowIndex = 0;
