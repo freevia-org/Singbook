@@ -23,6 +23,8 @@ String _chart(List<String> chords) => [
 final _inG = _chart(['G', 'C', 'Em', 'A', 'Bm', 'D', 'C', 'G']);
 final _inE = _chart(['E', 'A', 'C#m', 'F#', 'G#m', 'B', 'A', 'E']);
 final _lyrics = _lines.join('\n');
+// A cadential progression the key estimator commits to (E).
+final _clearE = _chart(['E', 'A', 'B7', 'E', 'C#m', 'A', 'B7', 'E']);
 
 const _selected = SongCandidate(
   providerId: 'lyrics',
@@ -114,30 +116,64 @@ void main() {
     expect(_chords(doc.body).first, 'E');
   });
 
-  test('a declared key moves with the chart and its capo is dropped', () {
-    final source = SourceResult(
-      candidate: const SongCandidate(
-        providerId: 'ug',
-        id: 'ug',
-        title: 'Harbor Song',
-        artist: 'Test Artist',
+  SourceResult labelled(String body, String key, {JsonMap extra = const {}}) =>
+      SourceResult(
+        candidate: const SongCandidate(
+          providerId: 'ug',
+          id: 'ug',
+          title: 'Harbor Song',
+          artist: 'Test Artist',
+        ),
+        body: body,
+        matchKind: MatchKind.sameSong,
+        metadata: {'key': key},
+        extra: extra,
+      );
+
+  test('a declared key that fits its chords moves with them', () {
+    expect(declaredKeyAfterShift(_inG, 'G', null, 9), 'E');
+    final doc = combineSources(_selected, [
+      _source('lyrics', _lyrics),
+      labelled(_inG, 'G', extra: const {'keyConsensus': false, 'keyShift': 9}),
+    ]);
+    expect(doc.metadata['key'], 'E');
+  });
+
+  test('a label contradicting its chords can settle the key', () {
+    final inC = transposeBody(_clearE, 8);
+    // The C chart says it is in E; with the E chart that is a majority.
+    expect(chordKeyMajority([_clearE, inC], declaredKeys: [null, 'E']), [0, 4]);
+    // Its label already names the majority key, so it is kept as is.
+    expect(declaredKeyAfterShift(inC, 'E', null, 4), 'E');
+    final doc = combineSources(_selected, [
+      _source('lyrics', _lyrics),
+      labelled(inC, 'E', extra: const {'keyConsensus': false, 'keyShift': 4}),
+    ]);
+    expect(_chords(doc.body).first, 'E');
+    expect(doc.metadata['key'], 'E');
+  });
+
+  test('a contradicting label without a correction names no key', () {
+    final inC = transposeBody(_clearE, 8);
+    expect(declaredKeyFitsChords(inC, 'E', null), isFalse);
+    final doc = combineSources(_selected, [
+      _source('lyrics', _lyrics),
+      labelled(inC, 'E'),
+    ]);
+    expect(doc.metadata.containsKey('key'), isFalse);
+  });
+
+  test('charts are compared by sounding key, capo included', () {
+    final inBm = transposeBody(_inG, 2), shapesWithCapo = _inG;
+    // G shapes with capo 2 sound like the chart written in A.
+    expect(
+      chordKeyMajority(
+        [inBm, shapesWithCapo, transposeBody(inBm, 0).replaceAll('A]', 'A7]')],
+        capos: [null, 2, null],
       ),
-      body: _inG,
-      matchKind: MatchKind.sameRecording,
-      metadata: const {'key': 'G', 'capo': 3},
-      extra: const {'keyConsensus': false, 'keyShift': 9},
+      isNull,
     );
-    final doc = combineSources(
-      const SongCandidate(
-        providerId: 'ug',
-        id: 'ug',
-        title: 'Harbor Song',
-        artist: 'Test Artist',
-      ),
-      [_source('lyrics', _lyrics), source],
-    );
-    expect(doc.metadata['key'], isNot('G'));
-    expect(doc.metadata.containsKey('capo'), isFalse);
+    expect(chordKeyMajority([inBm, shapesWithCapo], capos: [null, 2]), isNull);
   });
 
   test('an explicit version choice keeps the published chart', () {

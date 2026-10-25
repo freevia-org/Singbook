@@ -6,6 +6,7 @@ import 'models.dart';
 import 'edition_identity.dart';
 import 'metadata_enrichment.dart';
 import 'arrangement.dart';
+import 'chord_key_estimate.dart' show estimateChordKey;
 import 'timing.dart' show timingOccurrenceMap;
 
 SourceResult? bestLyricsFallback(Iterable<SourceResult> sources) {
@@ -151,38 +152,129 @@ int? chordTransposition(String a, String b) {
   return _similarity(first, second, 0) >= bestScore - .05 ? 0 : best;
 }
 
-/// How far each of [charts] is from the key most charts are written in. Each
-/// chart is compared with the first; identical chord sequences (one chart
-/// copied to another site) vote once. Returns one entry per chart: the
-/// semitones that move it into the majority key (0 when it is already
-/// there), or null when its key could not be compared. Returns null unless one
-/// key has more than half of all distinct charts: a plurality such as 2 of 4
-/// is not enough to move a chart.
-List<int?>? chordKeyMajority(List<String> charts) {
+/// Semitones from key [from] up to key [to], comparing a minor key by its
+/// relative major ("Am" and "C" are 0 apart). Null when either is not a key.
+int? _keyDistance(String from, String to) {
+  int? major(String key) {
+    final identity = _keyIdentity(key);
+    if (identity == null) return null;
+    final parts = identity.split(':');
+    final pitch = int.parse(parts[0]);
+    return parts[1] == 'minor' ? (pitch + 3) % 12 : pitch;
+  }
+
+  final a = major(from), b = major(to);
+  return a == null || b == null ? null : (b - a + 12) % 12;
+}
+
+int _capoOf(Object? capo) {
+  final value = capo is num ? capo.toInt() : int.tryParse('${capo ?? ''}');
+  return value == null || value < 0 ? 0 : value % 12;
+}
+
+/// Whether a chart's declared (sounding) key fits its own chords played with
+/// [capo]. A chart whose chords give no key estimate is not contradicted.
+bool declaredKeyFitsChords(String chart, String declared, Object? capo) {
+  final estimate = estimateChordKey(chart)?.key;
+  if (estimate == null) return true;
+  return _keyDistance(estimate, declared) == _capoOf(capo);
+}
+
+/// The declared key to keep for a chart whose chords were moved [shift]
+/// semitones into the majority key: unchanged when it already fits the moved
+/// chords (its label was right and its chords were not), moved with the
+/// chords when it fitted the original chords, otherwise none.
+String? declaredKeyAfterShift(
+  String chart,
+  String? declared,
+  Object? capo,
+  int shift,
+) {
+  if (declared == null || declared.trim().isEmpty) return null;
+  final key = declared.trim();
+  if (declaredKeyFitsChords(transposeBody(chart, shift), key, capo)) {
+    final estimate = estimateChordKey(chart)?.key;
+    // Without an estimate both readings fit; the label moves with the chords.
+    if (estimate != null) return key;
+  }
+  return declaredKeyFitsChords(chart, key, capo)
+      ? transposeChord(key, shift)
+      : null;
+}
+
+/// How far each of [charts] sounds from the key most charts are written in.
+/// Each chart is compared with the first, by its chord shapes plus its
+/// [capos] entry. Identical chord sequences (one chart copied to another
+/// site) vote once. A chart whose [declaredKeys] entry contradicts its own
+/// chords also votes for the key its label names, so a label that agrees with
+/// other charts can settle the doubt. Returns one entry per chart: the
+/// semitones that move its chords into the majority key, keeping its capo (0
+/// when it is already there), or null when its key could not be compared.
+/// Returns null unless one key has more than half of all distinct votes: a
+/// plurality such as 2 of 4 is not enough to move a chart.
+///
+/// Without a majority, charts marked in [anchors] (transcribed against the
+/// recording, such as Songsterr's) decide when they all sound in one key and
+/// at least one other distinct vote agrees with them.
+List<int?>? chordKeyMajority(
+  List<String> charts, {
+  List<Object?> capos = const [],
+  List<String?> declaredKeys = const [],
+  List<bool> anchors = const [],
+}) {
   if (charts.length < 2) return null;
-  final shifts = [
+  int capo(int i) => i < capos.length ? _capoOf(capos[i]) : 0;
+  final shapes = [
     0,
     for (final chart in charts.skip(1)) chordTransposition(charts.first, chart),
   ];
+  final sounds = [
+    for (var i = 0; i < charts.length; i++)
+      shapes[i] == null ? null : (shapes[i]! + capo(i)) % 12,
+  ];
   final votes = <int, Set<String>>{};
   for (var i = 0; i < charts.length; i++) {
-    final shift = shifts[i];
-    if (shift == null) continue;
+    final sound = sounds[i];
+    if (sound == null) continue;
     final sequence = [
       for (final line in parseArrangement(charts[i]))
         for (final anchor in line.chords) anchor.chord.trim(),
     ].join(' ');
-    votes.putIfAbsent(shift, () => {}).add(sequence);
+    votes.putIfAbsent(sound, () => {}).add(sequence);
+    final declared = i < declaredKeys.length ? declaredKeys[i] : null;
+    final estimate = declared == null ? null : estimateChordKey(charts[i])?.key;
+    if (declared == null || estimate == null) continue;
+    final distance = _keyDistance(estimate, declared);
+    if (distance == null || distance == capo(i)) continue;
+    votes
+        .putIfAbsent((shapes[i]! + distance) % 12, () => {})
+        .add('label:$sequence');
   }
   if (votes.length < 2) return null;
   final ranked = votes.entries.toList()
     ..sort((a, b) => b.value.length.compareTo(a.value.length));
   final total = votes.values.fold<int>(0, (n, set) => n + set.length);
-  if (ranked.first.value.length * 2 <= total) return null;
-  final majority = ranked.first.key;
+  int? majority = ranked.first.value.length * 2 > total
+      ? ranked.first.key
+      : null;
+  if (majority == null) {
+    final anchored = {
+      for (var i = 0; i < charts.length; i++)
+        if (i < anchors.length && anchors[i]) sounds[i],
+    };
+    if (anchored.length == 1 && anchored.single != null) {
+      final key = anchored.single!;
+      final anchorCount = [
+        for (var i = 0; i < charts.length; i++)
+          if (i < anchors.length && anchors[i]) i,
+      ].length;
+      if ((votes[key]?.length ?? 0) > anchorCount) majority = key;
+    }
+  }
+  if (majority == null) return null;
   return [
-    for (final shift in shifts)
-      shift == null ? null : (majority - shift + 12) % 12,
+    for (final sound in sounds)
+      sound == null ? null : (majority - sound + 12) % 12,
   ];
 }
 
@@ -950,23 +1042,36 @@ bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
       continue;
     }
     // A chart the combined arrangement moved into the majority key is judged
-    // in that key, without its capo (see [_keyCorrectedBody]).
+    // in that key (see [_keyCorrectedBody] and [declaredKeyAfterShift]).
     final shift = jsonMap(song.extra['chordKeyShifts'])[source.id];
     final shifted = shift is int && shift % 12 != 0;
     final declared = _keyIdentity(source.metadata['key']) != null
         ? source.metadata['key'] as String
         : source.candidate.metadata['key'];
-    final key = shifted && declared is String
-        ? transposeChord(declared.trim(), shift)
+    final key = shifted
+        ? declaredKeyAfterShift(
+            source.body,
+            declared is String ? declared : null,
+            source.metadata['capo'] ?? source.candidate.metadata['capo'],
+            shift,
+          )
         : declared;
     final identity = _keyIdentity(key);
     if (identity == null) continue;
+    // A label contradicting the chart's own chords is not evidence of a key.
+    if (!shifted &&
+        !declaredKeyFitsChords(
+          source.body,
+          key as String,
+          source.metadata['capo'] ?? source.candidate.metadata['capo'],
+        )) {
+      continue;
+    }
     var compatible = true;
     for (final field in const ['capo', 'tuning', 'timeSignature']) {
       final baseValue = song.metadata[field];
-      final donorValue = shifted && field == 'capo'
-          ? null
-          : source.metadata[field] ?? source.candidate.metadata[field];
+      final donorValue =
+          source.metadata[field] ?? source.candidate.metadata[field];
       String normalize(Object? value) {
         // ChordPro headers serialize list tuning as "[E, A, ...]". Compare
         // those saved headers with the provider's equivalent string array.
@@ -1554,15 +1659,29 @@ SongDocument combineSources(
     } else if (sourceDuration != null) {
       facts['durationSeconds'] = sourceDuration;
     }
-    // A transposed chart's chords were moved into the majority key, so its
-    // declared key moves with them and its capo no longer applies.
+    // A transposed chart's chords were moved into the majority key (its capo
+    // still applies); keep its declared key only where it fits them. Without
+    // such a correction, a chord chart whose declared key contradicts its
+    // own chords cannot name the combined key.
     final keyShift = source.extra['keyShift'];
+    final declared = facts['key'];
     if (preferredSourceId == null && keyShift is int && keyShift % 12 != 0) {
-      final declared = facts['key'];
-      if (declared is String && declared.trim().isNotEmpty) {
-        facts['key'] = transposeChord(declared.trim(), keyShift);
+      final kept = declaredKeyAfterShift(
+        source.body,
+        declared is String ? declared : null,
+        facts['capo'],
+        keyShift,
+      );
+      if (kept == null) {
+        facts.remove('key');
+      } else {
+        facts['key'] = kept;
       }
-      facts.remove('capo');
+    } else if (source.hasChords &&
+        declared is String &&
+        declared.trim().isNotEmpty &&
+        !declaredKeyFitsChords(source.body, declared.trim(), facts['capo'])) {
+      facts.remove('key');
     }
     final sameRecording = recordingCompatible(selected, source);
     // A catalog search hit may lack duration or album although its resolved
@@ -1889,8 +2008,15 @@ SongDocument combineSources(
         if (_agreedKeyEstimate([
               for (final id in chordSourceIds) ?sourcesById[id],
             ])
-            case final String key)
-          'chordKeyEstimate': {'key': key, 'bodyHash': _bodyHash(finalBody)},
+            case final String sounding)
+          'chordKeyEstimate': {
+            // The estimate is a sounding key; the chart is read in shapes.
+            'key': transposeChord(
+              sounding,
+              (12 - _capoOf(metadata['capo'])) % 12,
+            ),
+            'bodyHash': _bodyHash(finalBody),
+          },
       if (chordSourceIds.any(
         (sourceId) => sourcesById[sourceId]?.extra['pendingMatchCheck'] == true,
       ))

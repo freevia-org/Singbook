@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'diagnostics.dart';
 import 'dart:math' as math;
-import '../../domain/arrangement.dart' show transposeBody;
+import '../../domain/arrangement.dart' show transposeBody, transposeChord;
 import '../../domain/chord_key_estimate.dart' show estimateChordKey;
-import '../../domain/combine.dart' show chordKeyMajority, chordTransposition;
+import '../../domain/combine.dart'
+    show chordKeyMajority, chordTransposition, declaredKeyFitsChords;
 import '../../domain/models.dart';
 import '../../domain/lyrics_variants.dart';
 import '../../domain/edition_identity.dart';
@@ -272,6 +273,8 @@ Future<SourceResult> findMatchingSource(
   // retry path has its own timeout and cancellation scope.
   bool stopAfterFirstChordCandidate = false,
   String operationPrefix = 'lookup',
+  // Candidates resolved from the provider's search before giving up.
+  int maxAttempts = 3,
 }) async {
   cancel?.throwIfCancelled();
   void observeCandidate(SourceResult result) {
@@ -415,7 +418,7 @@ Future<SourceResult> findMatchingSource(
     if (!seen.add(candidate.id) ||
         candidate.metadata['instrumental'] == true ||
         candidate.metadata['hasLyrics'] == false ||
-        attempts >= 3) {
+        attempts >= maxAttempts) {
       return null;
     }
     attempts++;
@@ -637,7 +640,7 @@ Future<SourceResult> findMatchingSource(
   final alternatives = <SourceResult>[];
   String? alternativeFailure;
   for (final candidate in candidates) {
-    if (attempts >= 3) break;
+    if (attempts >= maxAttempts) break;
     SourceResult? result;
     try {
       result = await attempt(candidate);
@@ -1285,11 +1288,11 @@ class SourceDiscoveryService {
 
   /// Chord charts of one song are sometimes written in another key, such as a
   /// capo chart in G of a song recorded in E. When accepted charts disagree,
-  /// this double checks with up to three more charts from each chord source
+  /// or a chart's declared key contradicts its own chords, this double checks with up to six more charts from each chord source
   /// and marks each accepted chart with `keyConsensus`: true in the key most
   /// charts share, false when transposed from it, with `keyShift` semitones
-  /// that move it into that key, and `keyEstimate`, the estimated majority
-  /// key, when the charts' estimates agree. Nothing is marked when the
+  /// that move it into that key, and `keyEstimate`, the estimated sounding
+  /// majority key, when the charts' estimates agree. Nothing is marked when the
   /// charts agree, no key has more than half of the distinct charts, or the
   /// extra lookups fail; the extra charts are only votes and never become
   /// results.
@@ -1319,12 +1322,26 @@ class SourceDiscoveryService {
           i,
     ];
     final indexes = acceptedIndexes();
-    if (indexes.length < 2) return;
+    if (indexes.isEmpty) return;
     final charts = [for (final i in indexes) results[i].body];
+    // Doubt: charts in different keys, or a chart whose declared key
+    // contradicts its own chords (a transposed chart or a missing capo).
     final disagree = charts
         .skip(1)
         .any((chart) => (chordTransposition(charts.first, chart) ?? 0) != 0);
-    if (!disagree) return;
+    final contradicted = indexes.any((i) {
+      final source = results[i];
+      final declared =
+          source.metadata['key'] ?? source.candidate.metadata['key'];
+      return declared is String &&
+          declared.trim().isNotEmpty &&
+          !declaredKeyFitsChords(
+            source.body,
+            declared.trim(),
+            source.metadata['capo'] ?? source.candidate.metadata['capo'],
+          );
+    });
+    if (!disagree && !contradicted) return;
     bool lyricsAgree(String body) => reference != null
         ? _agreement(body, reference) || _partialAgreement(body, reference)
         : charts.any(
@@ -1341,7 +1358,7 @@ class SourceDiscoveryService {
           extra: result.extra,
         ) &&
         lyricsAgree(result.body);
-    final votes = <({String providerId, String body})>[];
+    final votes = <({String providerId, SourceResult chart})>[];
     for (final provider in active.where(
       (p) => p.definition.capabilities.contains('chords'),
     )) {
@@ -1365,6 +1382,8 @@ class SourceDiscoveryService {
               },
               allowSelectedProviderAlternatives: true,
               operationPrefix: 'keycheck',
+              // A key in doubt needs enough charts to show a majority.
+              maxAttempts: 6,
               accept: canVote,
               onAlternative: found.add,
               onOperation: (operation) {
@@ -1380,7 +1399,7 @@ class SourceDiscoveryService {
         cancel?.throwIfCancelled();
         if (!eligible(id)) continue;
         for (final chart in [best, ...found]) {
-          if (canVote(chart)) votes.add((providerId: id, body: chart.body));
+          if (canVote(chart)) votes.add((providerId: id, chart: chart));
         }
       } on ProviderException {
         if (cancel?.isCancelled == true) rethrow;
@@ -1397,13 +1416,32 @@ class SourceDiscoveryService {
       for (final i in acceptedIndexes())
         if (indexes.contains(i)) i,
     ];
-    if (current.length < 2) return;
-    final all = [
-      for (final i in current) results[i].body,
+    if (current.isEmpty) return;
+    final sources = [
+      for (final i in current) results[i],
       for (final vote in votes)
-        if (eligible(vote.providerId)) vote.body,
+        if (eligible(vote.providerId)) vote.chart,
     ];
-    final verdict = chordKeyMajority(all);
+    final all = [for (final source in sources) source.body];
+    Object? setup(SourceResult source, String field) =>
+        source.metadata[field] ?? source.candidate.metadata[field];
+    final verdict = chordKeyMajority(
+      all,
+      capos: [for (final source in sources) setup(source, 'capo')],
+      declaredKeys: [
+        for (final source in sources)
+          if (setup(source, 'key') case final String key) key else null,
+      ],
+      // Accepted charts transcribed against the recording settle a key when
+      // the other charts show no majority.
+      anchors: [
+        for (var n = 0; n < sources.length; n++)
+          n < current.length &&
+              _recordingTranscriptions.contains(
+                sources[n].candidate.providerId,
+              ),
+      ],
+    );
     if (verdict == null) return;
     // Estimate the majority key from every chart moved into it; a key is
     // named only when the estimates that do not abstain all agree.
@@ -1412,10 +1450,16 @@ class SourceDiscoveryService {
     for (var n = 0; n < all.length; n++) {
       final shift = verdict[n];
       if (shift == null) continue;
-      final key = estimateChordKey(
+      final shapes = estimateChordKey(
         shift == 0 ? all[n] : transposeBody(all[n], shift),
       )?.key;
-      if (key == null) continue;
+      if (shapes == null) continue;
+      // Compare sounding keys: chord shapes plus the chart's capo.
+      final capo = setup(sources[n], 'capo');
+      final frets = capo is num ? capo.toInt() : int.tryParse('${capo ?? ''}');
+      final key = frets == null || frets <= 0
+          ? shapes
+          : transposeChord(shapes, frets);
       estimate ??= key;
       estimates.add(key);
     }
@@ -1436,6 +1480,11 @@ class SourceDiscoveryService {
     }
   }
 }
+
+/// Chord providers whose charts are transcribed against the recording itself
+/// (Songsterr's tabs play in sync with the original audio), unlike user
+/// arrangements that are often written in a singer's key.
+const _recordingTranscriptions = {'songsterr'};
 
 List<String> _words(String body) => normalizedIdentity(
   body
