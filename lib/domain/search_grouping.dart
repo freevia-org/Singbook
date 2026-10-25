@@ -373,3 +373,93 @@ List<SearchRecordingGroup> groupSearchRecordings(
       }(),
   ];
 }
+
+final _searchToken = RegExp(r'[\p{L}\p{N}]+', unicode: true);
+
+Set<String> _searchTokens(String text) =>
+    _searchToken.allMatches(text.toLowerCase()).map((m) => m[0]!).toSet();
+
+/// Words in a title's qualifier ("(Piano Version)", "- Karaoke") that mark
+/// another performance than the original recording.
+const _otherPerformanceWords = {
+  'instrumental',
+  'karaoke',
+  'cover',
+  'tribute',
+  'remix',
+  'lullaby',
+  'acapella',
+  'nightcore',
+  'sped',
+  'slowed',
+  'piano',
+  'backing',
+  'originally',
+  'translation',
+  'traducción',
+  'traduction',
+  'tradução',
+  'übersetzung',
+  'romanized',
+};
+
+/// Words in an artist name that mark a tribute, karaoke or lullaby act.
+const _otherPerformerWords = {
+  'karaoke',
+  'tribute',
+  'lullaby',
+  'covers',
+  'instrumental',
+};
+
+const _artistStopWords = {'the', 'and', 'a'};
+
+/// How well [candidate] answers a search for [query]; higher is better.
+///
+/// Each query word counts once, whether the title or the artist has it;
+/// words in a title's qualifier match only when they name a performance
+/// ("karaoke"), never as a credit. Title words the query lacks
+/// count against a row; artist words the query
+/// lacks count only when the artist matched at all, so a query without an
+/// artist does not favour short names. A cover, karaoke track, translation
+/// page or other performance the query did not ask for ranks well below the
+/// original: "Let It Be (Beatles Instrumental Version)" by another act must
+/// not outrank "Let It Be" by The Beatles for "let it be beatles".
+int searchRelevance(SongCandidate candidate, String query) {
+  final tokens = _searchTokens(query);
+  if (tokens.isEmpty) return 0;
+  // Words in a title's brackets or after a dash qualify it; a credit there
+  // ("Imagine (John Lennon)" by another singer) names someone else's song.
+  final title = _searchTokens(candidate.title.replaceAll(_qualifier, ' '));
+  final qualifiers = <String>{
+    for (final match in _qualifier.allMatches(candidate.title))
+      ..._searchTokens(match[1] ?? match[2]!),
+  };
+  final artist = _searchTokens(candidate.artist);
+  var score =
+      tokens
+              .where(
+                (t) =>
+                    title.contains(t) ||
+                    artist.contains(t) ||
+                    (qualifiers.contains(t) &&
+                        _otherPerformanceWords.contains(t)),
+              )
+              .length *
+          4 -
+      title.difference(tokens).length -
+      qualifiers.difference(tokens).difference(title).length;
+  if (artist.any(tokens.contains)) {
+    score -= artist.difference(tokens).difference(_artistStopWords).length;
+  }
+  score -=
+      4 *
+      {
+        ...qualifiers.where(_otherPerformanceWords.contains),
+        ...artist.where(_otherPerformerWords.contains),
+      }.where((word) => !tokens.contains(word)).length;
+  // Genius publishes translations under accounts such as "Genius English
+  // Translations".
+  if (artist.contains('genius') && !tokens.contains('genius')) score -= 8;
+  return score;
+}
