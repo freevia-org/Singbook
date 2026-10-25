@@ -70,9 +70,21 @@ class GeniusProvider implements LyricsProvider {
       throw const ProviderException('invalid_response');
     }
     final album = jsonMap(data['album']);
+    final primaryName = requiredText(artist['name']);
+    final primaryNames = <String>[primaryName];
+    final primaryIdentities = {primaryName.toLowerCase()};
+    for (final person
+        in data['primary_artists'] is List ? data['primary_artists'] : []) {
+      final name = clean(jsonMap(person)['name']);
+      if (name != null && primaryIdentities.add(name.toLowerCase())) {
+        primaryNames.add(name);
+      }
+    }
     final credits = <JsonMap>[];
+    for (final name in primaryNames) {
+      credits.add({'role': 'Artist', 'name': name});
+    }
     for (final entry in {
-      'primary_artists': 'Artist',
       'featured_artists': 'Featured artist',
       'writer_artists': 'Writer',
       'producer_artists': 'Producer',
@@ -120,7 +132,7 @@ class GeniusProvider implements LyricsProvider {
       providerId: 'genius',
       id: numericId(data['id']),
       title: requiredText(data['title']),
-      artist: requiredText(artist['name']),
+      artist: requiredText(primaryNames.join(' & ')),
       album: clean(album['name']),
       url: url,
       metadata: meta,

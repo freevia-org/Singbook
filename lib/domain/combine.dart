@@ -180,7 +180,9 @@ bool _sameSong(SongCandidate a, SongCandidate b) {
   final artist = _identityNorm(a.artist), title = _baseTitle(a.title);
   // Two unknown (empty) artists or titles are not evidence of the same song.
   if (artist.isEmpty || title.isEmpty) return false;
-  return artist == _identityNorm(b.artist) && title == _baseTitle(b.title);
+  return title == _baseTitle(b.title) &&
+      (artist == _identityNorm(b.artist) ||
+          sameGeniusPrimaryCredit(a, b, _identityNorm));
 }
 
 /// A chord site's arrangement of [b]'s song: chord sites may credit only
