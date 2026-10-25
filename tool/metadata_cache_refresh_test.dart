@@ -9,6 +9,7 @@ import 'package:singbook/providers/core/core_providers.dart';
 import 'package:singbook/providers/extra/extra_providers.dart';
 import 'package:singbook/providers/provider.dart';
 import 'src/metadata_response_cache.dart';
+import 'src/metadata_corpus_identity.dart';
 
 const _run = bool.fromEnvironment('METADATA_REFRESH_RUN');
 const _ids = String.fromEnvironment('METADATA_REFRESH_IDS');
@@ -22,12 +23,6 @@ const _credentials = String.fromEnvironment(
   defaultValue: 'config/local.defines.json',
 );
 
-String _norm(String value) => value
-    .toLowerCase()
-    .replaceAll(RegExp("['‘’]"), '')
-    .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
-    .trim();
-String _artist(String value) => _norm(value).replaceFirst(RegExp(r'^the '), '');
 void main() {
   test(
     'bounded 100-song source cache refresh',
@@ -102,7 +97,7 @@ void main() {
         for (final raw in ordered) {
           if (_ids.isNotEmpty && !_ids.split(',').contains(raw['id'])) continue;
           if (client.networkAttempts >= _budget) break;
-          final song = raw as Map;
+          final song = (raw as Map).cast<String, dynamic>();
           final title = song['title'] as String,
               artist = song['artist'] as String;
           final outcome = <String, Object?>{
@@ -115,11 +110,7 @@ void main() {
             for (final query in ['$title $artist', '$artist $title', title]) {
               final rows = await service.search(query);
               selected = rows
-                  .where(
-                    (c) =>
-                        _norm(c.title) == _norm(title) &&
-                        _artist(c.artist) == _artist(artist),
-                  )
+                  .where((c) => matchesCorpusCandidate(song, c))
                   .firstOrNull;
               if (selected != null || client.networkAttempts >= _budget) break;
             }

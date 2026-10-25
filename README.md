@@ -49,7 +49,9 @@ curated per recording and per field; a source being available or agreeing with
 another source does not establish accuracy. Lyrics compare normalized words,
 keys compare exact concert-pitch tonic and mode, and chord checks include lyric
 word placement and capo. Unavailable and unverified cases remain in the fixed
-100-song denominator.
+100-song denominator. A reviewed catalog alias may select one specific record
+with its exact catalog ID, title, credit and supporting links; that selection
+is kept separate from verified recording and accuracy references.
 
 ```sh
 # CI-safe corpus/scorer/cache checks; no catalog requests.

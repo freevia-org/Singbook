@@ -18,6 +18,7 @@ import 'package:singbook/providers/extra/extra_providers.dart';
 import 'package:singbook/providers/provider.dart';
 
 import 'src/metadata_response_cache.dart';
+import 'src/metadata_corpus_identity.dart';
 
 const _jitterSeed = int.fromEnvironment(
   'METADATA_BENCHMARK_JITTER',
@@ -42,9 +43,6 @@ String _normalizedLyrics(String body) => _normalize(
       .replaceAll(RegExp(r'\{[^}\n]*\}'), ' ')
       .replaceAll(RegExp(r'\[[^\]\n]*\]'), ''),
 );
-
-String _artistIdentity(String value) =>
-    _normalize(value).replaceFirst(RegExp(r'^the '), '');
 
 String _sha(String value) => sha256.convert(utf8.encode(value)).toString();
 
@@ -120,6 +118,64 @@ String? _chordAlignmentHash(SongDocument doc) {
 }
 
 void main() {
+  test('reviewed catalog aliases select only the bound record and credits', () {
+    const original = SongCandidate(
+      providerId: 'catalog',
+      id: 'original',
+      title: '星の道 (Star Road)',
+      artist: '夜の歌 (Night Songs)',
+    );
+    final song = <String, dynamic>{
+      'title': 'Star Road',
+      'artist': 'Night Songs',
+      'catalogSelection': {
+        'providerId': original.providerId,
+        'candidateId': original.id,
+        'title': original.title,
+        'artist': original.artist,
+        'evidence': ['https://example.org/official-release'],
+      },
+    };
+    expect(matchesCorpusCandidate(song, original), isTrue);
+    for (final candidate in [
+      const SongCandidate(
+        providerId: 'catalog',
+        id: 'cover',
+        title: 'Star Road',
+        artist: 'Night Songs',
+      ),
+      const SongCandidate(
+        providerId: 'another',
+        id: 'original',
+        title: '星の道 (Star Road)',
+        artist: '夜の歌 (Night Songs)',
+      ),
+      const SongCandidate(
+        providerId: 'catalog',
+        id: 'original',
+        title: '星の道 (Star Road)',
+        artist: 'Different Performer',
+      ),
+    ]) {
+      expect(matchesCorpusCandidate(song, candidate), isFalse);
+    }
+    (song['catalogSelection'] as Map)['evidence'] = <String>[];
+    expect(matchesCorpusCandidate(song, original), isFalse);
+    song.remove('catalogSelection');
+    expect(matchesCorpusCandidate(song, original), isFalse);
+    expect(
+      matchesCorpusCandidate(
+        song,
+        const SongCandidate(
+          providerId: 'catalog',
+          id: 'exact',
+          title: 'Star Road',
+          artist: 'The Night Songs',
+        ),
+      ),
+      isTrue,
+    );
+  });
   test(
     'accuracy distinguishes tonic and mode, retaining enharmonic equivalence',
     () {
@@ -168,6 +224,13 @@ void main() {
         hasLength(88),
       );
       for (final song in songs) {
+        if (song['catalogSelection'] case final Map binding) {
+          for (final key in ['providerId', 'candidateId', 'title', 'artist']) {
+            expect(binding[key], isA<String>());
+            expect((binding[key] as String).trim(), isNotEmpty);
+          }
+          expect(binding['evidence'], isNotEmpty);
+        }
         final expected = song['expected'] as Map<String, dynamic>;
         expect(expected['status'], anyOf('unverified', 'verified'));
         final recordingReference =
@@ -297,12 +360,9 @@ Future<void> _benchmark() async {
             enabledIds: catalogIds,
           ),
         );
-        if (found.any(
-          (c) =>
-              _normalize(c.title) == _normalize(title) &&
-              _artistIdentity(c.artist) == _artistIdentity(artist),
-        ))
+        if (found.any((c) => matchesCorpusCandidate(song, c))) {
           break;
+        }
       }
       final ranked = found.indexed.toList()
         ..sort((a, b) {
@@ -329,9 +389,7 @@ Future<void> _benchmark() async {
         ranked.map((e) => e.$2),
         preferredProviderId: 'genius',
       );
-      bool matches(SongCandidate c) =>
-          _normalize(c.title) == _normalize(title) &&
-          _artistIdentity(artist) == _artistIdentity(c.artist);
+      bool matches(SongCandidate c) => matchesCorpusCandidate(song, c);
       final group = groups.where((g) => matches(g.representative)).firstOrNull;
       if (group == null) {
         throw const ProviderException(
