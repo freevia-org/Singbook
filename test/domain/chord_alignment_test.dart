@@ -9,6 +9,11 @@ const _verse = [
   'Bells are ringing gently down the empty market halls',
 ];
 const _chorus = 'Paper lanterns drifting over quiet harbor water';
+// Lyric lines no chart writes, so the lyrics stay the combined text.
+const _tail = [
+  'Morning carries salt and cedar through the open door',
+  'Little boats are waiting where the gulls begin to call',
+];
 
 const _selected = SongCandidate(
   providerId: 'lyrics',
@@ -95,5 +100,97 @@ void main() {
       _chordsByLine(doc.body)['Lanterns drift over the harbor tonight'],
       isEmpty,
     );
+  });
+
+  test('a chart line joining two lyric lines splits its chords', () {
+    const lyrics = [
+      'Paper lanterns drifting over',
+      'quiet harbor water tonight oh oh',
+      'Bells are ringing gently',
+      'down the empty market halls',
+    ];
+    final doc = _combine(
+      [...lyrics, ..._tail].join('\n'),
+      [
+        '[G]Paper lanterns drifting [C]over the quiet harbor [D]water tonight',
+        '[Em]Bells are ringing [C]gently down all the empty [G]market halls',
+      ].join('\n'),
+    );
+    final chords = _chordsByLine(doc.body);
+    expect(chords[lyrics[0]], ['G', 'C']);
+    // Ad-libs the chart does not write do not stop the match.
+    expect(chords[lyrics[1]], ['D']);
+    expect(chords[lyrics[2]], ['Em', 'C']);
+    expect(chords[lyrics[3]], ['G']);
+  });
+
+  test('chords keep their order when the chart has an extra word', () {
+    const line = 'Someone hums a tune along the river road';
+    final doc = _combine(
+      [line, ..._verse.skip(1), ..._tail].join('\n'),
+      [
+        '[G]Someone hums a tune along the ri[D]ver [C]again road',
+        '[Em]Bells are ringing [D]gently down the empty market halls',
+      ].join('\n'),
+    );
+    final first = parseArrangement(
+      doc.body,
+    ).firstWhere((arranged) => arranged.text == line);
+    expect([for (final chord in first.chords) chord.chord], ['G', 'D', 'C']);
+    expect(first.chords.last.offset, line.indexOf('road'));
+  });
+
+  test('a repeated chorus takes the chords of its own section', () {
+    final doc = _combine(
+      [_verse[0], _chorus, _verse[1], _chorus, ..._tail].join('\n'),
+      [
+        '[G]Someone hums a tune along the [C]winding river road',
+        '[C]Paper lanterns drifting over the [G]quiet harbor water',
+        '[Em]Bells are ringing gently down the [D]empty market halls',
+        '[D]Paper lanterns drifting over the [A]quiet harbor water',
+        // An unambiguous line on each side lets order decide.
+        '[G]Morning carries salt and cedar [C]through the open door',
+      ].join('\n'),
+    );
+    final choruses = [
+      for (final line in parseArrangement(doc.body))
+        if (line.text == _chorus) [for (final c in line.chords) c.chord],
+    ];
+    expect(choruses, [
+      ['C', 'G'],
+      ['D', 'A'],
+    ]);
+  });
+
+  test('a partly chorded chorus fills its other lines from the first', () {
+    final doc = _combine(
+      [
+        '[Chorus]',
+        _chorus,
+        'Every window glowing softly as the evening falls',
+        '',
+        '[Verse]',
+        _verse[0],
+        '',
+        '[Chorus]',
+        'Silver lanterns drifting over sleepy harbor water',
+        'Every candle burning slowly as the morning calls',
+      ].join('\n'),
+      [
+        '[G]Paper lanterns drifting [C]over quiet harbor water',
+        '[Em]Every window glowing [D]softly as the evening falls',
+        '[A]Someone hums a tune along the [E]winding river road',
+        '[G]Silver lanterns drifting [C]over sleepy harbor water',
+      ].join('\n'),
+    );
+    final chords = _chordsByLine(doc.body);
+    expect(chords['Silver lanterns drifting over sleepy harbor water'], [
+      'G',
+      'C',
+    ]);
+    expect(chords['Every candle burning slowly as the morning calls'], [
+      'Em',
+      'D',
+    ]);
   });
 }
