@@ -909,6 +909,11 @@ Map<int, List<ChordAnchor>> _phraseChords(
     phrases.putIfAbsent(phrase, () => []).add(line);
   }
   final result = <int, List<ChordAnchor>>{};
+  // Text already given chords by a phrase; another placement may not overlap
+  // it, or two readings of one passage ("na na na ...") would interleave.
+  final claimed = <(int, int)>[];
+  bool overlapsClaimed(int start, int end) =>
+      claimed.any((range) => start < range.$2 && range.$1 < end);
   // Bound synchronous matching even for deliberately repetitive documents.
   // Unplaced chart data remains in the original source document.
   var comparisonBudget = (haystack.length + chart.length) * 8;
@@ -937,6 +942,8 @@ Map<int, List<ChordAnchor>> _phraseChords(
       if (entry.key.split(' ').length < 3 && !wholeLine) {
         continue;
       }
+      // Overlapping occurrences of one phrase are one passage.
+      if (matches.isNotEmpty && start < matches.last.end) continue;
       matches.add((start: start, end: end, wholeLine: wholeLine));
     }
     // A single partial phrase does not identify which of several different
@@ -947,6 +954,8 @@ Map<int, List<ChordAnchor>> _phraseChords(
     for (final match in matches) {
       if (ambiguous && !match.wholeLine) continue;
       final start = match.start, end = match.end;
+      if (overlapsClaimed(start, end)) continue;
+      claimed.add((start, end));
       for (final chord in donor.chords) {
         var index = normalized.offsets
             .where((offset) => offset < chord.offset)

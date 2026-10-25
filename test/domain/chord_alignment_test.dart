@@ -347,4 +347,21 @@ void main() {
     // The moved chart's capo does not become the song's.
     expect(doc.metadata.containsKey('capo'), isFalse);
   });
+
+  test('overlapping readings of a repeated phrase do not interleave', () {
+    const line = 'la la la la la la la la';
+    final doc = _combine(
+      [line, ..._verse, ..._tail].join('\n'),
+      [
+        '[E]la la la la la la [D]la',
+        '[E]la la la la la la [D]la',
+        '[G]Someone hums a tune along the [C]winding river road',
+      ].join('\n'),
+    );
+    final chords = parseArrangement(
+      doc.body,
+    ).firstWhere((l) => l.text == line).chords.map((c) => c.chord).toList();
+    // Either one reading or none; never E E D D.
+    expect(chords, anyOf(isEmpty, ['E', 'D']));
+  });
 }
