@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/domain/arrangement.dart';
+import 'package:singbook/domain/chord_key_estimate.dart';
 import 'package:singbook/domain/combine.dart';
 import 'package:singbook/domain/models.dart';
 
@@ -363,5 +364,35 @@ void main() {
     ).firstWhere((l) => l.text == line).chords.map((c) => c.chord).toList();
     // Either one reading or none; never E E D D.
     expect(chords, anyOf(isEmpty, ['E', 'D']));
+  });
+
+  test('the one chart that gave the chords names the key when few reach '
+      'the lyrics', () {
+    // The chart's intro carries the cadences; only two of its chords reach
+    // the lyric lines, too few for an estimate of their own.
+    final doc = _combine(
+      [_verse[0], _chorus, ..._tail].join('\n'),
+      [
+        '[E] [A] [B7] [E] [C#m] [A] [B7] [E]',
+        '[E] [A] [B7] [E] [C#m] [A] [B7] [E]',
+        '[E]Someone hums a tune along the [B7]winding river road',
+      ].join('\n'),
+    );
+    expect(estimateChordKey(doc.body), isNull);
+    expect(checkedChordKeyEstimate(doc), 'E');
+  });
+
+  test('lyrics with enough chords whose key is open stay open', () {
+    // The lyric lines carry a full but ambiguous loop (Am F C G: A minor or
+    // C major); the chart's cadential intro must not decide for them.
+    final doc = _combine(
+      [_verse[0], _verse[1], _chorus, ..._tail].join('\n'),
+      [
+        '[E] [A] [B7] [E] [C#m] [A] [B7] [E]',
+        '[Am]Someone hums a tune [F]along the [C]winding river [G]road',
+        '[Am]Bells are ringing [F]gently down the [C]empty market [G]halls',
+      ].join('\n'),
+    );
+    expect(checkedChordKeyEstimate(doc), isNull);
   });
 }

@@ -1461,6 +1461,25 @@ String? _recordingHintedEstimate(
   )?.key;
 }
 
+/// The key of the one chart that gave all of [body]'s chords, estimated from
+/// the whole chart, when [body] holds too few chords for any estimate (fewer
+/// than six, or fewer than three roots). A body with enough chords whose key
+/// the estimator left open stays open.
+String? _singleChartEstimate(String body, List<SourceResult> sources) {
+  if (sources.length != 1) return null;
+  final chords = [
+    for (final line in parseArrangement(body))
+      for (final anchor in line.chords) anchor.chord,
+  ];
+  final roots = {
+    for (final chord in chords)
+      if (RegExp(r'^[A-G][#b♯♭]?').firstMatch(chord) case final match?)
+        match[0],
+  };
+  if (chords.length >= 6 && roots.length >= 3) return null;
+  return estimateChordKey(_keyCorrectedBody(sources.single))?.key;
+}
+
 /// The key discovery estimated from the majority of a song's chord charts,
 /// while the song still holds the exact chart it was estimated for. Like
 /// [estimateChordKey], it is display-only.
@@ -2981,6 +3000,15 @@ SongDocument combineSources(
             'key': shapes,
             'bodyHash': _bodyHash(finalBody),
             'hint': 'recording',
+          }
+        else if (_singleChartEstimate(finalBody, [
+              for (final id in chordSourceIds) ?sourcesById[id],
+            ])
+            case final String shapes)
+          'chordKeyEstimate': {
+            'key': shapes,
+            'bodyHash': _bodyHash(finalBody),
+            'hint': 'chart',
           },
       if (chordSourceIds.any(
         (sourceId) => sourcesById[sourceId]?.extra['pendingMatchCheck'] == true,
