@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "catalogRevision": 6,
-  "measuredAt": "2026-10-24T05:56:51.879916Z",
+  "catalogRevision": 7,
+  "measuredAt": "2026-10-25T06:56:50.774327Z",
   "offline": false,
   "summary": {
     "transient_error": 6,
-    "healthy": 9,
-    "unavailable": 1,
+    "healthy": 10,
     "blocked": 1,
-    "import_only": 2
+    "import_only": 1,
+    "retired": 1
   },
   "sources": [
     {
@@ -194,7 +194,7 @@
     {
       "id": "synclrc",
       "name": "SyncLRC",
-      "status": "unavailable",
+      "status": "healthy",
       "coverage": {
         "status": "complete",
         "verifiedCapabilities": [
@@ -236,8 +236,30 @@
         },
         {
           "id": "wonderwall-oasis-timed-version",
-          "status": "unavailable",
-          "reason": "empty_search_results"
+          "status": "healthy",
+          "providerId": "synclrc",
+          "bodyCharacters": 1401,
+          "metadataFields": [
+            "album",
+            "duration",
+            "hasLyrics",
+            "instrumental",
+            "query"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata",
+            "wordTiming"
+          ],
+          "timingTrackCount": 2,
+          "timingGranularities": [
+            "line",
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false
         }
       ]
     },
@@ -511,7 +533,7 @@
     {
       "id": "worshiptogether",
       "name": "Worship Together",
-      "status": "import_only",
+      "status": "retired",
       "coverage": {
         "status": "unverified",
         "verifiedCapabilities": [],
@@ -525,7 +547,7 @@
       "probes": [
         {
           "id": "import-only",
-          "status": "import_only"
+          "status": "retired"
         }
       ]
     },
@@ -690,14 +712,14 @@
   ],
   "execution": {
     "runtime": "managed-cloud",
-    "baseSha": "23a485cca78dd33d5ef0c71edca5739be00c5a0e",
-    "command": "dart run tool/source_maintenance.dart --report artifacts/source-maintenance/2026-10-24-live.json",
+    "baseSha": "ea4baf303352f5a6530ac1587eba0c46f1ec9f3d",
+    "command": "dart run tool/source_maintenance.dart --report artifacts/source-maintenance/2026-10-25-live.json",
     "exitCode": 1,
     "mode": "approved_require_escalated",
-    "sourceState": "clean isolated public-main worktree; original unfinished checkout preserved",
+    "sourceState": "clean isolated public-main worktree; original unfinished task checkout preserved",
     "environment": {
       "published": true,
-      "specRevision": "123",
+      "specRevision": "130",
       "observationsCurrent": true,
       "phase": "running",
       "connectivity": "connected",
@@ -715,11 +737,12 @@
       "exitCode": 0
     },
     "offline": {
-      "command": "dart run tool/source_maintenance.dart --offline --report artifacts/source-maintenance/2026-10-24-offline.json",
+      "command": "dart run tool/source_maintenance.dart --offline --report artifacts/source-maintenance/2026-10-25-offline.json",
       "exitCode": 0,
       "summary": {
         "offline_unverified": 17,
-        "import_only": 2
+        "import_only": 1,
+        "retired": 1
       }
     },
     "focusedTests": {
@@ -732,21 +755,18 @@
       "command": "flutter analyze --no-pub",
       "exitCode": 0
     },
-    "sourceChanges": "none; no new core/model change requiring a full-suite rerun"
+    "sourceChanges": "none; no new core/model change requiring full-suite rerun"
   },
   "comparison": {
     "priorCloud": {
-      "measuredAt": "2026-10-23T06:01:28.378993Z",
-      "ageHours": 23.923194722222224,
-      "baseSha": "0a40d7f1179293213203a8335fe3aed8efc4cd8c",
-      "path": "reports/source-maintenance/2026-10-23T060128Z.json"
+      "measuredAt": "2026-10-24T05:56:51.879916Z",
+      "ageHours": 24.999693055555557,
+      "baseSha": "23a485cca78dd33d5ef0c71edca5739be00c5a0e",
+      "path": "reports/source-maintenance/2026-10-24T055651Z.json"
     },
     "priorLocal": {
-      "measuredAt": "2026-10-23T06:04:21.352222Z",
-      "ageHours": 23.87514638888889,
-      "runtime": "local-windows",
-      "baseSha": "0a40d7f1179293213203a8335fe3aed8efc4cd8c",
-      "sourceHead": "91700bb5af28ecc5461ef202ecc853ed70c198fb",
+      "measuredAt": "2026-10-24T06:04:21.995682Z",
+      "ageHours": 24.874660833333333,
       "path": "reports/source-maintenance/local/latest.json"
     },
     "sources": [
@@ -953,23 +973,23 @@
         },
         "priorLocal": {
           "id": "ultimateguitar",
-          "status": "partial_coverage",
+          "status": "healthy",
           "coverage": {
-            "status": "partial",
+            "status": "complete",
             "verifiedCapabilities": [
+              "catalog",
               "chords",
               "lyrics",
               "metadata"
             ],
-            "unverifiedCapabilities": [
-              "catalog"
-            ]
+            "unverifiedCapabilities": []
           },
           "probes": [
             {
               "id": "wonderwall-oasis-chords",
               "status": "healthy",
               "verifiedCapabilities": [
+                "catalog",
                 "chords",
                 "lyrics",
                 "metadata"
@@ -1231,7 +1251,7 @@
       {
         "current": {
           "id": "synclrc",
-          "status": "unavailable",
+          "status": "healthy",
           "coverage": {
             "status": "complete",
             "verifiedCapabilities": [
@@ -1263,8 +1283,20 @@
             },
             {
               "id": "wonderwall-oasis-timed-version",
-              "status": "unavailable",
-              "reason": "empty_search_results"
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "catalog",
+                "lineTiming",
+                "lyrics",
+                "metadata",
+                "wordTiming"
+              ],
+              "timingTrackCount": 2,
+              "timingGranularities": [
+                "line",
+                "word"
+              ],
+              "timingRawRetained": true
             }
           ]
         },
@@ -1285,11 +1317,6 @@
           "probes": [
             {
               "id": "never-gonna-give-you-up-studio",
-              "status": "unavailable",
-              "reason": "empty_search_results"
-            },
-            {
-              "id": "wonderwall-oasis-timed-version",
               "status": "healthy",
               "verifiedCapabilities": [
                 "catalog",
@@ -1304,6 +1331,11 @@
                 "word"
               ],
               "timingRawRetained": true
+            },
+            {
+              "id": "wonderwall-oasis-timed-version",
+              "status": "unavailable",
+              "reason": "empty_search_results"
             }
           ]
         },
@@ -1311,21 +1343,33 @@
           "id": "synclrc",
           "status": "unavailable",
           "coverage": {
-            "status": "partial",
-            "verifiedCapabilities": [],
-            "unverifiedCapabilities": [
+            "status": "complete",
+            "verifiedCapabilities": [
               "catalog",
               "lineTiming",
               "lyrics",
               "metadata",
               "wordTiming"
-            ]
+            ],
+            "unverifiedCapabilities": []
           },
           "probes": [
             {
               "id": "never-gonna-give-you-up-studio",
-              "status": "unavailable",
-              "reason": "empty_search_results"
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "catalog",
+                "lineTiming",
+                "lyrics",
+                "metadata",
+                "wordTiming"
+              ],
+              "timingTrackCount": 2,
+              "timingGranularities": [
+                "line",
+                "word"
+              ],
+              "timingRawRetained": true
             },
             {
               "id": "wonderwall-oasis-timed-version",
@@ -2003,7 +2047,7 @@
       {
         "current": {
           "id": "worshiptogether",
-          "status": "import_only",
+          "status": "retired",
           "coverage": {
             "status": "unverified",
             "verifiedCapabilities": [],
@@ -2017,7 +2061,7 @@
           "probes": [
             {
               "id": "import-only",
-              "status": "import_only"
+              "status": "retired"
             }
           ]
         },
@@ -2090,21 +2134,21 @@
         },
         "priorCloud": {
           "id": "musicbrainz",
-          "status": "partial_coverage",
+          "status": "healthy",
           "coverage": {
-            "status": "partial",
+            "status": "complete",
             "verifiedCapabilities": [
+              "catalog",
               "metadata"
             ],
-            "unverifiedCapabilities": [
-              "catalog"
-            ]
+            "unverifiedCapabilities": []
           },
           "probes": [
             {
               "id": "wonderwall-oasis-recording",
               "status": "healthy",
               "verifiedCapabilities": [
+                "catalog",
                 "metadata"
               ],
               "timingTrackCount": 0,
@@ -2115,21 +2159,21 @@
         },
         "priorLocal": {
           "id": "musicbrainz",
-          "status": "partial_coverage",
+          "status": "healthy",
           "coverage": {
-            "status": "partial",
+            "status": "complete",
             "verifiedCapabilities": [
+              "catalog",
               "metadata"
             ],
-            "unverifiedCapabilities": [
-              "catalog"
-            ]
+            "unverifiedCapabilities": []
           },
           "probes": [
             {
               "id": "wonderwall-oasis-recording",
               "status": "healthy",
               "verifiedCapabilities": [
+                "catalog",
                 "metadata"
               ],
               "timingTrackCount": 0,
@@ -2178,20 +2222,37 @@
         },
         "priorCloud": {
           "id": "wikidata",
-          "status": "transient_error",
+          "status": "healthy",
           "coverage": {
-            "status": "partial",
-            "verifiedCapabilities": [],
-            "unverifiedCapabilities": [
+            "status": "complete",
+            "verifiedCapabilities": [
               "catalog",
               "metadata"
-            ]
+            ],
+            "unverifiedCapabilities": []
           },
           "probes": [
             {
               "id": "imagine-composition",
-              "status": "transient_error",
-              "reason": "provider_busy"
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "catalog",
+                "metadata"
+              ],
+              "timingTrackCount": 0,
+              "timingGranularities": [],
+              "timingRawRetained": false
+            },
+            {
+              "id": "wonderwall-composition",
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "catalog",
+                "metadata"
+              ],
+              "timingTrackCount": 0,
+              "timingGranularities": [],
+              "timingRawRetained": false
             }
           ]
         },
@@ -2209,6 +2270,11 @@
           "probes": [
             {
               "id": "imagine-composition",
+              "status": "transient_error",
+              "reason": "provider_busy"
+            },
+            {
+              "id": "wonderwall-composition",
               "status": "transient_error",
               "reason": "provider_busy"
             }
@@ -2237,26 +2303,20 @@
         },
         "priorCloud": {
           "id": "wikimediacommons",
-          "status": "healthy",
+          "status": "transient_error",
           "coverage": {
-            "status": "complete",
-            "verifiedCapabilities": [
+            "status": "partial",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
               "artwork",
               "metadata"
-            ],
-            "unverifiedCapabilities": []
+            ]
           },
           "probes": [
             {
               "id": "bach-portrait",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "artwork",
-                "metadata"
-              ],
-              "timingTrackCount": 0,
-              "timingGranularities": [],
-              "timingRawRetained": false
+              "status": "transient_error",
+              "reason": "rate_limited"
             }
           ]
         },
@@ -2315,40 +2375,27 @@
         },
         "priorCloud": {
           "id": "wikisource",
-          "status": "partial_coverage",
+          "status": "transient_error",
           "coverage": {
             "status": "partial",
-            "verifiedCapabilities": [
-              "lyrics",
-              "metadata"
-            ],
+            "verifiedCapabilities": [],
             "unverifiedCapabilities": [
               "catalog",
-              "fileImport"
+              "fileImport",
+              "lyrics",
+              "metadata"
             ]
           },
           "probes": [
             {
               "id": "cleansing-wave-palmer",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "lyrics",
-                "metadata"
-              ],
-              "timingTrackCount": 0,
-              "timingGranularities": [],
-              "timingRawRetained": false
+              "status": "transient_error",
+              "reason": "rate_limited"
             },
             {
               "id": "dunbar-hymn-1",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "lyrics",
-                "metadata"
-              ],
-              "timingTrackCount": 0,
-              "timingGranularities": [],
-              "timingRawRetained": false
+              "status": "transient_error",
+              "reason": "rate_limited"
             }
           ]
         },
@@ -2358,11 +2405,11 @@
           "coverage": {
             "status": "partial",
             "verifiedCapabilities": [
+              "catalog",
               "lyrics",
               "metadata"
             ],
             "unverifiedCapabilities": [
-              "catalog",
               "fileImport"
             ]
           },
@@ -2371,6 +2418,7 @@
               "id": "cleansing-wave-palmer",
               "status": "healthy",
               "verifiedCapabilities": [
+                "catalog",
                 "lyrics",
                 "metadata"
               ],
@@ -2382,6 +2430,7 @@
               "id": "dunbar-hymn-1",
               "status": "healthy",
               "verifiedCapabilities": [
+                "catalog",
                 "lyrics",
                 "metadata"
               ],
@@ -2393,12 +2442,13 @@
         }
       }
     ],
-    "interpretation": "Current catalog6 adds query-plus-stable-selection coverage for UG, MusicBrainz and Wikisource. Wikidata revision3 corrects Imagine album-versus-composition identity and adds a second positive-composition canary. These are changed probe semantics, not interchangeable recordings/entities. MusicBrainz and both Wikidata composition probes now pass complete claimed capability coverage. Commons and Wikisource rate_limited are transient; no immediate retries, schema changes or disablements. SyncLRC Rick Astley passes line/word cues and raw retention while Wonderwall is empty: per-feature coverage can be complete from one result, but source remains unavailable due to failed independent probe. Historical local success remains local aged evidence, never cloud reachability."
+    "interpretation": "SyncLRC now passes both independent canaries with line/word cues and raw timing retention; prior intermittent empty results are not schema proof. Commons and Wikisource rate_limited outcomes remain transient; no immediate retries or policy changes. Current catalog7 retires Worship Together by explicit owner request, preserving tombstone/source identity; this is not an automatic failure-based retirement or healthy result. Historical local success remains aged runtime-specific evidence and does not override cloud reachability. Genius key is present; binding status unknown and actual CONNECT403/origin000 is environmental access evidence, not not_configured."
   },
   "catalogProbeCoverage": [
     {
       "id": "genius",
       "revision": 1,
+      "lifecycle": "active",
       "capabilities": [
         "catalog",
         "lyrics",
@@ -2421,6 +2471,7 @@
     {
       "id": "songsterr",
       "revision": 1,
+      "lifecycle": "active",
       "capabilities": [
         "catalog",
         "lyrics",
@@ -2445,6 +2496,7 @@
     {
       "id": "ultimateguitar",
       "revision": 2,
+      "lifecycle": "active",
       "capabilities": [
         "catalog",
         "lyrics",
@@ -2469,6 +2521,7 @@
     {
       "id": "lrclib",
       "revision": 2,
+      "lifecycle": "active",
       "capabilities": [
         "catalog",
         "lyrics",
@@ -2494,6 +2547,7 @@
     {
       "id": "youtubemusic",
       "revision": 1,
+      "lifecycle": "active",
       "capabilities": [
         "catalog",
         "lyrics",
@@ -2516,6 +2570,7 @@
     {
       "id": "lyricsovh",
       "revision": 1,
+      "lifecycle": "active",
       "capabilities": [
         "catalog",
         "lyrics",
@@ -2538,6 +2593,7 @@
     {
       "id": "synclrc",
       "revision": 3,
+      "lifecycle": "active",
       "capabilities": [
         "catalog",
         "lyrics",
@@ -2578,6 +2634,7 @@
     {
       "id": "betterlyrics",
       "revision": 1,
+      "lifecycle": "active",
       "capabilities": [
         "catalog",
         "lyrics",
@@ -2603,6 +2660,7 @@
     {
       "id": "unison",
       "revision": 3,
+      "lifecycle": "active",
       "capabilities": [
         "catalog",
         "lyrics",
@@ -2654,6 +2712,7 @@
     {
       "id": "ozbcoz",
       "revision": 1,
+      "lifecycle": "active",
       "capabilities": [
         "chords",
         "fileImport",
@@ -2671,6 +2730,7 @@
     {
       "id": "chordie",
       "revision": 1,
+      "lifecycle": "active",
       "capabilities": [
         "catalog",
         "chords",
@@ -2696,6 +2756,7 @@
     {
       "id": "worshipcommons",
       "revision": 1,
+      "lifecycle": "active",
       "capabilities": [
         "catalog",
         "chords",
@@ -2722,6 +2783,7 @@
     {
       "id": "openfilksongbook",
       "revision": 1,
+      "lifecycle": "active",
       "capabilities": [
         "catalog",
         "chords",
@@ -2746,6 +2808,7 @@
     {
       "id": "seanmcgrathmusic",
       "revision": 1,
+      "lifecycle": "active",
       "capabilities": [
         "catalog",
         "chords",
@@ -2769,7 +2832,8 @@
     },
     {
       "id": "worshiptogether",
-      "revision": 1,
+      "revision": 2,
+      "lifecycle": "retired",
       "capabilities": [
         "chords",
         "fileImport",
@@ -2787,6 +2851,7 @@
     {
       "id": "musicbrainz",
       "revision": 2,
+      "lifecycle": "active",
       "capabilities": [
         "catalog",
         "metadata"
@@ -2810,6 +2875,7 @@
     {
       "id": "wikidata",
       "revision": 3,
+      "lifecycle": "active",
       "capabilities": [
         "catalog",
         "metadata"
@@ -2850,6 +2916,7 @@
     {
       "id": "wikimediacommons",
       "revision": 1,
+      "lifecycle": "active",
       "capabilities": [
         "artwork",
         "metadata"
@@ -2872,6 +2939,7 @@
     {
       "id": "wikisource",
       "revision": 3,
+      "lifecycle": "active",
       "capabilities": [
         "catalog",
         "fileImport",
@@ -2920,47 +2988,43 @@
       "publisherUrl": "https://api.genius.com/search?q=Wonderwall%20Oasis",
       "curlExit": 56,
       "connectOrigin": "403 000",
-      "checkedAt": "2026-10-24T05:56:37.269177+00:00"
-    },
-    {
-      "id": "hymnal",
-      "publisherUrl": "https://hymnal.rindra.org/api/categories.json",
-      "curlExit": 0,
-      "connectOrigin": "200 200",
-      "checkedAt": "2026-10-24T05:56:37.727006+00:00",
-      "recordCount": 7,
-      "jsonType": "list"
+      "checkedAt": "2026-10-25T06:56:35.636480+00:00"
     },
     {
       "id": "lrcshare",
       "publisherUrl": "https://api.lrcshare.com/v1/catalog",
       "curlExit": 0,
       "connectOrigin": "200 401",
-      "checkedAt": "2026-10-24T05:56:37.970832+00:00"
+      "checkedAt": "2026-10-25T06:56:35.860512+00:00"
+    },
+    {
+      "id": "amll-docs",
+      "publisherUrl": "https://amll.dev/reference/http-api/overview",
+      "curlExit": 0,
+      "connectOrigin": "200 200",
+      "checkedAt": "2026-10-25T06:56:36.298658+00:00"
     }
   ],
   "discovery": {
     "checks": [
       {
-        "id": "hymnal",
-        "publisherUrl": "https://hymnal.rindra.org/api/categories.json",
-        "curlExit": 0,
-        "connectOrigin": "200 200",
-        "checkedAt": "2026-10-24T05:56:37.727006+00:00",
-        "recordCount": 7,
-        "jsonType": "list"
-      },
-      {
         "id": "lrcshare",
         "publisherUrl": "https://api.lrcshare.com/v1/catalog",
         "curlExit": 0,
         "connectOrigin": "200 401",
-        "checkedAt": "2026-10-24T05:56:37.970832+00:00"
+        "checkedAt": "2026-10-25T06:56:35.860512+00:00"
+      },
+      {
+        "id": "amll-docs",
+        "publisherUrl": "https://amll.dev/reference/http-api/overview",
+        "curlExit": 0,
+        "connectOrigin": "200 200",
+        "checkedAt": "2026-10-25T06:56:36.298658+00:00"
       }
     ],
     "existingReviewPR": "https://github.com/freevia-org/Singbook/pull/94",
-    "existingReviewHead": "4c37bb75117022d6c3b5f80040fa7d2debb8feba",
-    "decisions": "Reviewed current PR94 publisher evidence for gated access, public-domain eligibility and institutional regional catalog deferrals; avoid duplicate registry updates. Hymnal metadata still seven collections, without independently verified lyric identity, explicit per-work rights/attribution, searchable compatible adapter or two extraction canaries. LrcShare still origin401 without key/session; no credential requested or demo used. Existing config/source-discovery.json deferrals unchanged. No qualified new activation or meaningful configuration delta.",
+    "existingReviewHead": "af3b9d8e32484c6fb4a59ebb4958188ff90cff4a",
+    "decisions": "Reviewed latest PR94 primary-evidence deferrals, including Ukrainian Radio Smihun inventory versus token-gated encoded lyrics/LRCLIB fallback; no independent lyric coverage or rights inferred, and no duplicate registry PR. LrcShare still origin401 without credentials. AMLL docs reachable, but complete identity/contributor provenance, compatible extraction and two repository canaries remain unresolved under existing config/source-discovery.json. No new qualified acceptance or meaningful configuration delta; no source activated.",
     "equivalentOpenDiscoveryPRs": 1
   }
 }
