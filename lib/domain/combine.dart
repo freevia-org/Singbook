@@ -7,6 +7,7 @@ import 'edition_identity.dart';
 import 'metadata_enrichment.dart';
 import 'arrangement.dart';
 import 'artist_credit.dart';
+import 'arrangement_context.dart';
 import 'lyric_word_identity.dart';
 import 'chord_key_estimate.dart' show estimateChordKey;
 import 'timing.dart' show timingOccurrenceMap;
@@ -2325,15 +2326,81 @@ SongDocument combineSources(
   bool allowRejectedPreferredSource = false,
   List<HistoricalCacheUse> historicalCacheUses = const [],
 }) {
+  // Contextual composer/work credits can authorize a chart only through a
+  // resolved full lyric reference belonging to this selected recording.
+  final arrangementContexts = results
+      .where(
+        (source) =>
+            !source.hasChords &&
+            source.matchKind != MatchKind.rejected &&
+            source.matchKind != MatchKind.unverified &&
+            source.extra['requiresLyricsAgreement'] != true &&
+            source.extra['requiresRecordingLyricsAgreement'] != true &&
+            recordingCompatible(selected, source) &&
+            _norm(
+                  plainLyrics(source.body),
+                ).split(' ').where((word) => word.isNotEmpty).toSet().length >=
+                12,
+      )
+      .toList();
+  bool contextMatches(SourceResult chart) => arrangementContexts.any(
+    (reference) =>
+        contextualArrangementCandidate(reference.candidate, chart.candidate) &&
+        explicitEditionsCompatible(
+          reference.candidate,
+          chart.candidate,
+          metadata: chart.metadata,
+          extra: chart.extra,
+        ),
+  );
   bool historicalMatches(SourceResult source) =>
       explicitHistoricalWorkMatches(selected, source) ||
       historicalCacheUses.any((use) => use.allows(selected, source));
+  final lyricReferences = results
+      .where(
+        (source) =>
+            !source.hasChords &&
+            const {
+              MatchKind.sameSong,
+              MatchKind.sameRecording,
+            }.contains(source.matchKind) &&
+            source.extra['requiresLyricsAgreement'] != true &&
+            source.extra['requiresRecordingLyricsAgreement'] != true &&
+            (_sameSong(selected, source.candidate) ||
+                historicalMatches(source)) &&
+            _norm(
+                  plainLyrics(source.body),
+                ).split(' ').where((word) => word.isNotEmpty).toSet().length >=
+                12,
+      )
+      .toList();
   final matching = results.where((s) {
     final wikiSource = s.candidate.providerId == 'wikisource';
     final allowedRejectedAlternative =
         allowRejectedPreferredSource &&
         s.id == preferredSourceId &&
         !wikiSource;
+    final requiresRecordingContext =
+        s.extra['requiresRecordingLyricsAgreement'] == true;
+    if (!allowedRejectedAlternative &&
+        requiresRecordingContext &&
+        (!const {
+              MatchKind.sameSong,
+              MatchKind.sameRecording,
+            }.contains(s.matchKind) ||
+            !s.hasChords ||
+            !contextMatches(s))) {
+      return false;
+    }
+    if (!allowedRejectedAlternative &&
+        s.extra['requiresLyricsAgreement'] == true &&
+        (!const {
+              MatchKind.sameSong,
+              MatchKind.sameRecording,
+            }.contains(s.matchKind) ||
+            lyricReferences.isEmpty)) {
+      return false;
+    }
     final editionAllowed =
         explicitEditionsCompatible(
           selected,
@@ -2347,7 +2414,9 @@ SongDocument combineSources(
         : ((_sameSong(s.candidate, selected) ||
                       (s.hasChords &&
                           s.extra['requiresLyricsAgreement'] == true &&
-                          _sameArrangedSong(s.candidate, selected))) &&
+                          (_sameArrangedSong(s.candidate, selected) ||
+                              requiresRecordingContext &&
+                                  contextMatches(s)))) &&
                   editionAllowed) ||
               allowedRejectedAlternative;
     return identityMatches &&

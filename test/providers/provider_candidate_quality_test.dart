@@ -727,7 +727,8 @@ void main() {
               check.result?.id == first.identity &&
               check.result?.matchKind == MatchKind.sameSong,
         ),
-        isTrue,
+        isFalse,
+        reason: 'Uncorroborated charts must not appear as accepted progress',
       );
       expect(provider.resolved.map((request) => request.candidate.id), [
         first.id,
