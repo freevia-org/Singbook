@@ -450,7 +450,9 @@ Future<SourceResult> findMatchingSource(
         elapsedMilliseconds: fetchWatch.elapsedMilliseconds,
       );
       if (e.code == 'unavailable') return null;
-      if (e.code == 'extraction_failed') {
+      // One chart that cannot be read leaves the provider's other candidates
+      // to try; all failing still reports why.
+      if (e.code == 'extraction_failed' || e.code == 'invalid_response') {
         unresolved.add(
           ProviderException(
             e.code,

@@ -262,7 +262,19 @@ Future<void> _audit() async {
           '${group.members.map((m) => '${m.providerId}:${m.album}:${m.durationSeconds}').join(', ')}',
         );
       }
-      final results = await discovery.discover(selection);
+      final checks = <String, ProviderCheck>{};
+      final results = await discovery.discover(
+        selection,
+        onProgress: (check) => checks[check.providerId] = check,
+      );
+      if (verbose) {
+        for (final check in checks.values) {
+          print(
+            '   check ${check.providerId}: ${check.state} ${check.code ?? ''} '
+            '${check.operations.where((o) => o.state != 'completed').map((o) => '${o.phase}:${o.state}:${o.code ?? ''}').join(' ')}',
+          );
+        }
+      }
       final doc = combineSources(selection, results);
       if (verbose) {
         final reference = results
