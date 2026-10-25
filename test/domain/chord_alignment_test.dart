@@ -302,4 +302,49 @@ void main() {
     // Vocables the chart leaves out do not stop the match.
     expect(chords[lyrics[2]], ['Em', 'C']);
   });
+
+  test('a key-checked chart with a capo fills lines in the main chart\'s '
+      'shapes', () {
+    final lyrics = [..._verse, _chorus, ..._tail];
+    final doc = combineSources(_selected, [
+      SourceResult(
+        candidate: _selected,
+        body: lyrics.join('\n'),
+        matchKind: MatchKind.sameRecording,
+      ),
+      // Eb shapes, no capo: it gives the verse.
+      SourceResult(
+        candidate: const SongCandidate(
+          providerId: 'songsterr',
+          id: 's',
+          title: 'Harbor Song',
+          artist: 'Test Artist',
+        ),
+        body: [
+          '[Eb]Someone hums a tune along the [Bb]winding river road',
+          '[Cm]Bells are ringing gently down the [Ab]empty market halls',
+        ].join('\n'),
+        matchKind: MatchKind.sameSong,
+        extra: const {'partialLyrics': true, 'keyConsensus': true},
+      ),
+      // C shapes at capo 3 sound the same; its chorus moves to Eb shapes.
+      SourceResult(
+        candidate: const SongCandidate(
+          providerId: 'ug',
+          id: 'u',
+          title: 'Harbor Song',
+          artist: 'Test Artist',
+        ),
+        body: '[C]Paper lanterns drifting over [G]quiet harbor water',
+        matchKind: MatchKind.sameSong,
+        metadata: const {'capo': 3},
+        extra: const {'partialLyrics': true, 'keyConsensus': true},
+      ),
+    ]);
+    final chords = _chordsByLine(doc.body);
+    expect(chords[_verse[0]], ['Eb', 'Bb']);
+    expect(chords[_chorus], ['Eb', 'Bb']);
+    // The moved chart's capo does not become the song's.
+    expect(doc.metadata.containsKey('capo'), isFalse);
+  });
 }

@@ -450,9 +450,38 @@ List<int?>? chordKeyMajority(
 /// the automatically combined arrangement uses the corrected key.
 String _keyCorrectedBody(SourceResult source) {
   final shift = source.extra['keyShift'];
+  final estimate = source.extra['keyEstimate'];
   return shift is int && shift % 12 != 0 && source.hasChords
-      ? transposeBody(source.body, shift)
+      ? transposeBody(
+          source.body,
+          shift,
+          flats: estimate is String ? _flatKey(estimate) : null,
+        )
       : source.body;
+}
+
+/// Whether a key is conventionally written with flats (F, Bb, Eb, Ab, Db,
+/// Gb and their relative minors).
+bool _flatKey(String key) => const {
+  'F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb', 'Cb', //
+  'Dm', 'Gm', 'Cm', 'Fm', 'Bbm', 'Ebm', 'Abm',
+}.contains(key.trim());
+
+/// The note spelling a chart's chords use: flats when its roots are mostly
+/// flat, sharps when mostly sharp, otherwise its estimated key's spelling.
+bool? _chartSpelling(String body) {
+  var flats = 0, sharps = 0;
+  for (final line in parseArrangement(body)) {
+    for (final anchor in line.chords) {
+      final root = RegExp(r'^[A-G]([#b♯♭]?)').firstMatch(anchor.chord);
+      final accidental = root?.group(1) ?? '';
+      if (accidental == 'b' || accidental == '♭') flats++;
+      if (accidental == '#' || accidental == '♯') sharps++;
+    }
+  }
+  if (flats != sharps) return flats > sharps;
+  final key = estimateChordKey(body)?.key;
+  return key == null ? null : _flatKey(key);
 }
 
 bool recordingCompatible(SongCandidate selected, SourceResult result) {
@@ -2013,7 +2042,7 @@ List<ChordAnchor>? _retargetChords(
   return moved;
 }
 
-({String body, List<String> sourceIds}) _overlayChords(
+({String body, List<String> sourceIds, Set<String> movedIds}) _overlayChords(
   String body,
   List<SourceResult> sources,
   SongCandidate selected,
@@ -2083,8 +2112,37 @@ List<ChordAnchor>? _retargetChords(
   };
   SourceResult? primary = base.hasChords ? base : null;
   final contributorIds = <String>[];
-  for (final candidate in candidates) {
+  // Donors whose chords were moved into the primary chart's shapes.
+  final movedIds = <String>{};
+  for (var candidate in candidates) {
     if (primary != null) {
+      // A chart played with another capo sounds the same once its chords
+      // move by the capo difference: C shapes at capo 3 are Eb shapes at no
+      // capo. Charts still transposed from the majority key by an unknown
+      // amount are not moved.
+      final move =
+          (_capoOf(_setupValue(candidate.source, selected, 'capo')) -
+              _capoOf(_setupValue(primary, selected, 'capo'))) %
+          12;
+      if (move != 0 && _keyConsensusRank(candidate.source) > 0) {
+        final flats = _chartSpelling(_keyCorrectedBody(primary));
+        candidate = (
+          source: candidate.source,
+          chords: {
+            for (final entry in candidate.chords.entries)
+              entry.key: [
+                for (final anchor in entry.value)
+                  ChordAnchor(
+                    anchor.offset,
+                    transposeChord(anchor.chord, move, flats: flats),
+                  ),
+              ],
+          },
+          coverage: candidate.coverage,
+          confidence: candidate.confidence,
+        );
+        movedIds.add(candidate.source.id);
+      }
       if (!_compatibleArrangementSetup(primary, candidate.source, selected)) {
         continue;
       }
@@ -2114,7 +2172,16 @@ List<ChordAnchor>? _retargetChords(
                 (explicitSetupValue(primary!, key) == null) ==
                 (explicitSetupValue(candidate.source, key) == null),
           );
-      if (contradicts || (!agrees && !explicitSetup)) continue;
+      // Discovery's key check placing both charts in the key most charts
+      // share also shows they can be read together.
+      final checkedSameKey =
+          primary.extra.containsKey('keyConsensus') &&
+          candidate.source.extra.containsKey('keyConsensus') &&
+          _keyConsensusRank(primary) > 0 &&
+          _keyConsensusRank(candidate.source) > 0;
+      if (contradicts || (!agrees && !explicitSetup && !checkedSameKey)) {
+        continue;
+      }
     }
     var added = false;
     for (final entry in candidate.chords.entries) {
@@ -2127,7 +2194,9 @@ List<ChordAnchor>? _retargetChords(
       contributorIds.add(candidate.source.id);
     }
   }
-  if (contributorIds.isEmpty) return (body: body, sourceIds: const []);
+  if (contributorIds.isEmpty) {
+    return (body: body, sourceIds: const [], movedIds: const <String>{});
+  }
   // Charts often write a repeated chorus once, and repeats vary in backing
   // vocals ("(stand by me)"). A lyric line whose words, outside brackets,
   // equal a line that received chords takes those chords at the same word
@@ -2209,6 +2278,7 @@ List<ChordAnchor>? _retargetChords(
   return (
     body: output.join('\n'),
     sourceIds: applied ? contributorIds : const [],
+    movedIds: applied ? movedIds : const <String>{},
   );
 }
 
@@ -2307,7 +2377,11 @@ SongDocument combineSources(
           selected,
           best,
         )
-      : (body: best.body, sourceIds: const <String>[]);
+      : (
+          body: best.body,
+          sourceIds: const <String>[],
+          movedIds: const <String>{},
+        );
   final sectionMerged = preferredSourceId == null
       ? _overlaySections(
           merged.body,
@@ -2381,7 +2455,10 @@ SongDocument combineSources(
   final arrangementSourceIds = <String>{best.id};
   for (final sourceId in chordSourceIds) {
     final source = sourcesById[sourceId];
+    // A chart whose chords were moved into the main chart's shapes no longer
+    // has its own key or capo.
     if (source != null &&
+        !merged.movedIds.contains(sourceId) &&
         (recordingCompatible(selected, source) ||
             merged.sourceIds.contains(sourceId))) {
       arrangementSourceIds.add(sourceId);

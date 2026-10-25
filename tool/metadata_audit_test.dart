@@ -43,7 +43,8 @@ const songs = <(String, String, String?)>[
   ('Free Fallin\'', 'Tom Petty', 'F'),
   ('Stand By Me', 'Ben E. King', 'A'),
   ('Brown Eyed Girl', 'Van Morrison', 'G'),
-  ('Sweet Home Alabama', 'Lynyrd Skynyrd', 'D'),
+  // D Mixolydian; charts and the measured key name its signature, G.
+  ('Sweet Home Alabama', 'Lynyrd Skynyrd', null),
   ('Perfect', 'Ed Sheeran', 'Ab'),
   ('Thinking Out Loud', 'Ed Sheeran', 'D'),
   ('Shape of You', 'Ed Sheeran', 'C#m'),
@@ -296,6 +297,9 @@ Future<void> _audit() async {
             'album=${r.candidate.album ?? r.metadata['album']} '
             'dur=${r.candidate.durationSeconds ?? r.metadata['durationSeconds']} '
             'rec=${(r.extra['keyRecording'] as Map?)?['key']} '
+            'capo=${r.metadata['capo'] ?? r.candidate.metadata['capo']} '
+            'declared=${r.metadata['key'] ?? r.candidate.metadata['key']} '
+            'shift=${r.extra['keyShift']} consensus=${r.extra['keyConsensus']} '
             'est=${r.hasChords ? estimateChordKey(r.body)?.key : ''} '
             'extra=${r.extra.keys.where((k) => !k.startsWith('_')).join(',')}',
           );
@@ -325,28 +329,41 @@ Future<void> _audit() async {
       } else if (chorded < lines.length * .8) {
         issues.add('chords: $chorded/${lines.length} lines');
       }
-      // Chord order against the chart that gave the chords.
+      // Chord order: every chorded line must appear, in order, in one of
+      // the charts that gave chords, as moved by its key shift and any capo
+      // difference from the other charts.
       final chordIds = {
         for (final id in (doc.extra['chordSourceIds'] as List? ?? const []))
           '$id',
       };
       final shifts = doc.extra['chordKeyShifts'] as Map? ?? const {};
-      var outOfOrder = 0;
-      for (final chart in results.where((r) => chordIds.contains(r.id))) {
-        final shift = shifts[chart.id];
-        final body = shift is int && shift % 12 != 0
-            ? transposeBody(chart.body, shift)
-            : chart.body;
-        final stream =
-            ' ${[for (final l in parseArrangement(body))
-              for (final a in l.chords) a.chord].join(' ')} ';
-        for (final line in lines.where((l) => l.chords.isNotEmpty)) {
-          final sequence = line.chords.map((a) => a.chord).join(' ');
-          if (!stream.contains(' $sequence ')) outOfOrder++;
-        }
-        break;
+      final charts = results.where((r) => chordIds.contains(r.id)).toList();
+      int capoOf(SourceResult r) {
+        final capo = r.metadata['capo'] ?? r.candidate.metadata['capo'];
+        return capo is num ? capo.toInt() : int.tryParse('${capo ?? ''}') ?? 0;
       }
-      if (chordIds.length == 1 && outOfOrder > 0) {
+
+      final streams = <String>[
+        for (final chart in charts)
+          for (final other in charts)
+            () {
+              final shift = shifts[chart.id] is int
+                  ? shifts[chart.id] as int
+                  : 0;
+              final move = (shift + capoOf(chart) - capoOf(other)) % 12;
+              final body = move == 0
+                  ? chart.body
+                  : transposeBody(chart.body, move);
+              return ' ${[for (final l in parseArrangement(body))
+                for (final a in l.chords) a.chord].join(' ')} ';
+            }(),
+      ];
+      var outOfOrder = 0;
+      for (final line in lines.where((l) => l.chords.isNotEmpty)) {
+        final sequence = ' ${line.chords.map((a) => a.chord).join(' ')} ';
+        if (!streams.any((stream) => stream.contains(sequence))) outOfOrder++;
+      }
+      if (charts.isNotEmpty && outOfOrder > 0) {
         issues.add('chords: $outOfOrder lines out of chart order');
       }
       // The key a reader sees: the declared key, else the checked or
