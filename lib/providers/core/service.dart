@@ -12,6 +12,7 @@ import '../../domain/combine.dart'
         soundingChartKey,
         soundingTransposition;
 import '../../domain/artist_credit.dart';
+import '../../domain/lyric_word_identity.dart';
 import '../../domain/models.dart';
 import '../../domain/lyrics_variants.dart';
 import '../../domain/edition_identity.dart';
@@ -1615,7 +1616,7 @@ class SourceDiscoveryService {
 const _recordingTranscriptions = {'songsterr'};
 
 List<String> _words(String body) => normalizedIdentity(
-  body
+  foldLyricVowelAccents(body)
       .replaceAll(RegExp(r'\{[^}\n]*\}'), ' ')
       .replaceAll(RegExp(r'(?<!\\)\[[^\]\n]*\]'), ''),
 ).split(' ').where((w) => w.isNotEmpty).toList();

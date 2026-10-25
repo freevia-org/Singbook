@@ -7,6 +7,7 @@ import 'edition_identity.dart';
 import 'metadata_enrichment.dart';
 import 'arrangement.dart';
 import 'artist_credit.dart';
+import 'lyric_word_identity.dart';
 import 'chord_key_estimate.dart' show estimateChordKey;
 import 'timing.dart' show timingOccurrenceMap;
 
@@ -786,8 +787,9 @@ bool _legacyHistoricalWork(
 }
 
 bool _completeChart(String chart, String reference) {
-  List<String> words(String value) =>
-      _norm(plainLyrics(value)).split(' ').where((w) => w.isNotEmpty).toList();
+  List<String> words(String value) => _norm(
+    foldLyricVowelAccents(plainLyrics(value)),
+  ).split(' ').where((w) => w.isNotEmpty).toList();
   final a = words(chart), b = words(reference);
   if (a.length < 12 || b.length < 12) return true;
   Map<String, int> counts(List<String> list) {
@@ -1625,10 +1627,9 @@ final _wordToken = RegExp(r"[\p{L}\p{N}']+", unicode: true);
 List<({String word, int start, int end})> _lineWords(String text) => [
   for (final match in _wordToken.allMatches(text))
     (
-      word: match[0]!
-          .toLowerCase()
-          .replaceFirst(RegExp(r"in'$"), 'ing')
-          .replaceAll("'", ''),
+      word: foldLyricVowelAccents(
+        match[0]!.toLowerCase(),
+      ).replaceFirst(RegExp(r"in'$"), 'ing').replaceAll("'", ''),
       start: match.start,
       end: match.end,
     ),

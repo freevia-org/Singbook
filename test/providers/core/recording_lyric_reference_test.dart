@@ -1,6 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/providers/provider.dart';
+import 'package:singbook/domain/combine.dart';
+import 'package:singbook/domain/arrangement.dart';
+import 'package:singbook/domain/lyric_word_identity.dart';
 
 // Original invented text. Alternate performances share a refrain but cannot
 // replace the selected recording's full verse as chord corroboration evidence.
@@ -53,7 +56,49 @@ class _Provider implements LyricsProvider {
   }) async => SourceResult(candidate: candidate, body: body);
 }
 
+const _accented = [
+  'El capitán camina junto al viejo café del puerto',
+  'La música ilumina la mañana detrás del cristal',
+  'Los pájaros regresan donde el río encuentra la ciudad',
+  'Cada corazón recuerda la canción al despertar',
+];
+
 void main() {
+  test('accent comparison keeps distinctive consonants and original text', () {
+    expect(foldLyricVowelAccents('café café\u0301'), 'cafe cafe');
+    expect(foldLyricVowelAccents('año niño'), 'año niño');
+    expect(foldLyricVowelAccents('أغنية שיר'), 'أغنية שיר');
+  });
+  test(
+    'missing vowel accents do not discard corroborated chord placements',
+    () async {
+      final original = _accented.join('\n');
+      final chart = [
+        'Capo 0 standard tuning use a relaxed strumming pattern',
+        for (final line in _accented) '[C]${foldLyricVowelAccents(line)}',
+        'Repeat chorus twice before the instrumental ending',
+      ].join('\n');
+      final results = await SourceDiscoveryService([
+        _Provider('catalog', original),
+        _Provider('chords', chart, chords: true),
+      ]).discover(_selected);
+      expect(
+        results
+            .singleWhere((r) => r.candidate.providerId == 'chords')
+            .matchKind,
+        isNot(MatchKind.rejected),
+      );
+      final combined = combineSources(_selected, results);
+      expect(plainLyrics(combined.body), original);
+      expect(
+        parseArrangement(
+          combined.body,
+        ).where((l) => l.chords.isNotEmpty).length,
+        _accented.length,
+      );
+    },
+  );
+
   test(
     'longer same-song remix cannot disqualify original-recording chords',
     () async {
