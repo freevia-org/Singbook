@@ -8,6 +8,7 @@ import '../../domain/combine.dart'
         chordKeyVerdict,
         declaredKeyFitsChords,
         keysAgree,
+        recordingCompatible,
         soundingChartKey,
         soundingTransposition;
 import '../../domain/artist_credit.dart';
@@ -1069,11 +1070,18 @@ class SourceDiscoveryService {
                   _words(r.body).toSet().length >= 12,
             )
             .toList()
-          ..sort(
-            (a, b) => _words(
+          ..sort((a, b) {
+            // A longer same-song transcription may be a remix or another
+            // performance. Corroborate charts against the selected recording
+            // before falling back to unanchored same-song references.
+            final recording = (recordingCompatible(selection, b) ? 1 : 0)
+                .compareTo(recordingCompatible(selection, a) ? 1 : 0);
+            if (recording != 0) return recording;
+            final words = _words(
               b.body,
-            ).toSet().length.compareTo(_words(a.body).toSet().length),
-          );
+            ).toSet().length.compareTo(_words(a.body).toSet().length);
+            return words != 0 ? words : a.id.compareTo(b.id);
+          });
     for (var i = 0; i < results.length; i++) {
       final result = results[i];
       final providerCancel = providerCancellation[result.candidate.providerId];
