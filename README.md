@@ -2,11 +2,13 @@
 
 **Website:** [freevia.org/singbook](https://freevia.org/singbook/) · **Privacy policy:** [freevia.org/singbook/privacy](https://freevia.org/singbook/privacy/) · **Support and feedback:** [freevia.org/singbook/support](https://freevia.org/singbook/support/)
 
-**Get the app:** [Google Play for Android](https://play.google.com/store/apps/details?id=org.freevia.singbook) (public listing 0.2.15 in supported regions) · [Microsoft Store for Windows](https://apps.microsoft.com/detail/9P2J824JLQGZ) (public listing; Store version not exposed).
+**Stores:** [Google Play for Android](https://play.google.com/store/apps/details?id=org.freevia.singbook) (0.2.23 was the last verified public version; 0.2.24 is in review) · [Microsoft Store for Windows](https://apps.microsoft.com/detail/9P2J824JLQGZ) (0.2.24 in certification; public version not exposed).
 
-The [website](https://freevia.org/singbook/) shows real Android and Windows app screenshots using fictional sample-song content. The iOS version remains in development and is not on the App Store or TestFlight.
+**GitHub 0.2.24 (build 38):** [Android APK](https://github.com/freevia-org/Singbook/releases/download/v0.2.24/singbook-0.2.24%2B38-release.apk) · [Portable Windows x64 ZIP](https://github.com/freevia-org/Singbook/releases/download/v0.2.24/singbook-0.2.24%2B38-windows-x64-release-f11a5341-20261025T071344096Z.zip) · [macOS universal ZIP](https://github.com/freevia-org/Singbook/releases/download/v0.2.24/Singbook-0.2.24-macos-universal.zip) · [Release notes and checksums](https://github.com/freevia-org/Singbook/releases/tag/v0.2.24).
 
-A local-first Flutter songbook for Android and Windows, with iOS in development. Search Genius, compare lyrics and chord arrangements from free sources, and keep each song in one portable ChordPro file. No Singbook backend is required. SQLite stores the local library; source HTTP requests run on the device.
+The [website](https://freevia.org/singbook/) shows real Android and Windows app screenshots using fictional sample-song content. iOS and macOS 0.2.24 are submitted and waiting for Apple review; App Store availability is not confirmed.
+
+A local-first Flutter songbook for Android, Windows and macOS, with an iOS release in review. Search Genius, compare lyrics and chord arrangements from free sources, and keep each song in one portable ChordPro file. No Singbook backend is required. SQLite stores the local library; source HTTP requests run on the device.
 
 ## Develop and test
 
@@ -84,8 +86,8 @@ networking (Cronet) and Google sign-in on a release APK before publishing.
 
 ### Google Play release
 
-Next release: `0.2.24+38`. Every new release increments both the visible patch
-version and the build number: `0.2.24+38`, `0.2.25+39`, and so on. The number after
+Current GitHub release: `0.2.24+38`. Every new release increments both the visible patch
+version and the build number: `0.2.25+39`, `0.2.26+40`, and so on. The number after
 `+` is the Play versionCode and must always increase; never reset it when the
 visible version changes. Rebuilds of the same release and promotion between
 internal testing and production keep the same version. Update `pubspec.yaml`,
