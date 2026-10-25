@@ -443,10 +443,10 @@ class AppControllerAdapter extends VerseUiController {
                       catalogOrder[b.value.providerId] ?? catalogOrder.length,
                     );
             if (providerOrder != 0) return providerOrder;
-            final relevance = _candidateRelevance(
+            final relevance = searchRelevance(
               b.value,
               _query,
-            ).compareTo(_candidateRelevance(a.value, _query));
+            ).compareTo(searchRelevance(a.value, _query));
             return relevance != 0 ? relevance : a.key.compareTo(b.key);
           });
     final tuning = song?.metadata['tuning'];
@@ -833,25 +833,6 @@ class AppControllerAdapter extends VerseUiController {
       r'\brelease\s+calendar\b',
       caseSensitive: false,
     ).hasMatch(candidate.title);
-  }
-
-  int _candidateRelevance(SongCandidate candidate, String query) {
-    final tokens = RegExp(
-      r'[\p{L}\p{N}]+',
-      unicode: true,
-    ).allMatches(query.toLowerCase()).map((match) => match.group(0)!).toSet();
-    if (tokens.isEmpty) return 0;
-    final title = RegExp(r'[\p{L}\p{N}]+', unicode: true)
-        .allMatches(candidate.title.toLowerCase())
-        .map((match) => match.group(0)!)
-        .toSet();
-    final artist = RegExp(r'[\p{L}\p{N}]+', unicode: true)
-        .allMatches(candidate.artist.toLowerCase())
-        .map((match) => match.group(0)!)
-        .toSet();
-    return tokens.where(title.contains).length * 4 +
-        tokens.where(artist.contains).length -
-        title.difference(tokens).length;
   }
 
   SearchComparisonData? _comparison() {
