@@ -22,6 +22,21 @@ final _inG = _chart(['G', 'C', 'Em', 'A', 'Bm', 'D', 'C', 'G']);
 final _inE = _chart(['E', 'A', 'C#m', 'F#', 'G#m', 'B', 'A', 'E']);
 final _inE2 = _chart(['E', 'A', 'C#m7', 'F#7', 'G#m', 'B7', 'A', 'E']);
 
+// The same E progression over a different song's words, under the same
+// title and artist.
+const _otherLines = [
+  'Copper kettles rattle on a crowded kitchen stove',
+  'Grandma counts the spoons beneath a flickering lamp',
+  'Thunder rolls along the hills behind the orchard',
+  'Muddy boots are drying on the porch beside the ramp',
+  'Crickets argue loudly in the tall September grass',
+  'Somebody forgot the bicycle out in the damp',
+];
+String _otherChart(List<String> chords) => [
+  for (var i = 0; i < _otherLines.length; i++)
+    '[${chords[i % chords.length]}]${_otherLines[i]}',
+].join('\n');
+
 const _selection = SongCandidate(
   providerId: 'lyrics',
   id: 'song',
@@ -30,11 +45,12 @@ const _selection = SongCandidate(
 );
 
 class _Provider implements LyricsProvider {
-  _Provider(this.id, this.charts, {this.chords = true});
+  _Provider(this.id, this.charts, {this.chords = true, this.onResolve});
 
   final String id;
   final Map<String, String> charts;
   final bool chords;
+  final void Function(String chartId)? onResolve;
   final resolved = <String>[];
 
   @override
@@ -64,6 +80,7 @@ class _Provider implements LyricsProvider {
     CancellationToken? cancel,
   }) async {
     resolved.add(candidate.id);
+    onResolve?.call(candidate.id);
     return SourceResult(candidate: candidate, body: charts[candidate.id]!);
   }
 }
@@ -104,5 +121,61 @@ void main() {
 
     expect(ug.resolved, ['b-in-e']);
     expect(results.where((r) => r.extra.containsKey('keyConsensus')), isEmpty);
+  });
+
+  test('charts with unrelated lyrics cannot vote', () async {
+    final ug = _Provider('ug', {
+      'a-in-g': _inG,
+      'x-other-e': _otherChart(['E', 'A', 'C#m', 'B']),
+      'y-other-e': _otherChart(['E', 'A7', 'C#m7', 'B7']),
+    });
+    final results = await SourceDiscoveryService([
+      _Provider('lyrics', {'song': _lines.join('\n')}, chords: false),
+      ug,
+      _Provider('songsterr', {'s-in-e': _inE}),
+    ]).discover(_selection);
+
+    // One accepted chart in each key and no valid votes: no majority.
+    expect(ug.resolved, containsAll(['x-other-e', 'y-other-e']));
+    expect(results.where((r) => r.extra.containsKey('keyConsensus')), isEmpty);
+  });
+
+  test('a provider disabled during the key check drops out', () async {
+    final ugCancel = CancellationToken();
+    final ug = _Provider(
+      'ug',
+      {'a-in-g': _inG, 'b-in-e': _inE, 'c-in-e': _inE2},
+      onResolve: (id) {
+        if (id != 'a-in-g') ugCancel.cancel();
+      },
+    );
+    final results = await SourceDiscoveryService([
+      _Provider('lyrics', {'song': _lines.join('\n')}, chords: false),
+      ug,
+      _Provider('songsterr', {'s-in-e': _inE}),
+    ]).discover(_selection, providerCancellation: {'ug': ugCancel});
+
+    expect(results.where((r) => r.extra.containsKey('keyConsensus')), isEmpty);
+  });
+
+  test('cancelling during the key check stops discovery', () async {
+    final cancel = CancellationToken();
+    final ug = _Provider(
+      'ug',
+      {'a-in-g': _inG, 'b-in-e': _inE, 'c-in-e': _inE2},
+      onResolve: (id) {
+        if (id != 'a-in-g') cancel.cancel();
+      },
+    );
+    await expectLater(
+      SourceDiscoveryService([
+        _Provider('lyrics', {'song': _lines.join('\n')}, chords: false),
+        ug,
+        _Provider('songsterr', {'s-in-e': _inE}),
+      ]).discover(_selection, cancel: cancel),
+      throwsA(
+        isA<ProviderException>().having((e) => e.code, 'code', 'cancelled'),
+      ),
+    );
   });
 }

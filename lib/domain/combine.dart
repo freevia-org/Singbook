@@ -155,8 +155,9 @@ int? chordTransposition(String a, String b) {
 /// chart is compared with the first; identical chord sequences (one chart
 /// copied to another site) vote once. Returns one entry per chart: the
 /// semitones that move it into the majority key (0 when it is already
-/// there), or null when its key could not be compared. Returns null when no
-/// key has a strict majority.
+/// there), or null when its key could not be compared. Returns null unless one
+/// key has more than half of all distinct charts: a plurality such as 2 of 4
+/// is not enough to move a chart.
 List<int?>? chordKeyMajority(List<String> charts) {
   if (charts.length < 2) return null;
   final shifts = [
@@ -176,7 +177,8 @@ List<int?>? chordKeyMajority(List<String> charts) {
   if (votes.length < 2) return null;
   final ranked = votes.entries.toList()
     ..sort((a, b) => b.value.length.compareTo(a.value.length));
-  if (ranked[0].value.length == ranked[1].value.length) return null;
+  final total = votes.values.fold<int>(0, (n, set) => n + set.length);
+  if (ranked.first.value.length * 2 <= total) return null;
   final majority = ranked.first.key;
   return [
     for (final shift in shifts)

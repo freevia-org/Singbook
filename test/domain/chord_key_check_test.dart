@@ -72,6 +72,18 @@ void main() {
     expect(chordKeyMajority([_inG, _inE, _inG]), isNull);
   });
 
+  test('a plurality without a majority moves nothing', () {
+    final inA = transposeBody(_inG, 2), inD = transposeBody(_inG, 7);
+    final inE2 = _inE.replaceAll('B]', 'B7]');
+    // 2 of 4 distinct charts in E.
+    expect(chordKeyMajority([_inG, _inE, inE2, inA]), isNull);
+    // 2 of 5 distinct charts in E.
+    expect(chordKeyMajority([_inG, _inE, inE2, inA, inD]), isNull);
+    // 3 of 4 is a majority.
+    final inE3 = _inE.replaceAll('A]', 'A7]');
+    expect(chordKeyMajority([_inG, _inE, inE2, inE3]), [9, 0, 0, 0]);
+  });
+
   test('combining moves a transposed chart into the majority key', () {
     final doc = combineSources(_selected, [
       _source('lyrics', _lyrics),
