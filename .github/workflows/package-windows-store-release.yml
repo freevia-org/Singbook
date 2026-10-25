@@ -8,7 +8,7 @@ name: Package and smoke test Microsoft Store release
 # Adding a release: add a `release` choice and a matching block in the
 # "Resolve release pins" step. Releases whose CI artifact pins were supplied at
 # dispatch time (29, 30) still require all five artifact inputs; releases with
-# frozen pins (32, 33, 34, 35, 36, 37) reject overrides.
+# frozen pins (32, 33, 34, 35, 36, 37, 38) reject overrides.
 #
 # Pull requests that change this workflow or the Store scripts package and
 # smoke test the default (newest frozen) release as a self-test.
@@ -18,9 +18,9 @@ on:
       release:
         description: Store release build number to package
         required: true
-        default: '37'
+        default: '38'
         type: choice
-        options: ['29', '30', '32', '33', '34', '35', '36', '37']
+        options: ['29', '30', '32', '33', '34', '35', '36', '37', '38']
       ci_run_id:
         description: Successful CI run ID for the pinned release commit (releases 29 and 30 only)
         required: false
@@ -58,11 +58,11 @@ concurrency:
 
 jobs:
   package-and-smoke:
-    name: package-and-smoke (release ${{ inputs.release || '37' }})
+    name: package-and-smoke (release ${{ inputs.release || '38' }})
     runs-on: windows-latest
     timeout-minutes: 25
     env:
-      RELEASE: ${{ inputs.release || '37' }}
+      RELEASE: ${{ inputs.release || '38' }}
       INPUT_CI_RUN_ID: ${{ inputs.ci_run_id }}
       INPUT_CI_ARTIFACT_ID: ${{ inputs.ci_artifact_id }}
       INPUT_CI_ARTIFACT_DIGEST: ${{ inputs.ci_artifact_digest }}
@@ -206,6 +206,23 @@ jobs:
                 CI_ARTIFACT_DIGEST = 'sha256:9d45b8973e483ec93d001a7d094b830238ad85dcf1934def50eb46b09efe45ff'
                 PORTABLE_MANIFEST_SHA256 = '0953e4851eaadaef5c28be03868ce87e8faa9fec31ff0dfa87f89a30369dfee3'
                 PORTABLE_ZIP_SHA256 = 'e9ec95c7d582de0d9b64d611d3cd2c1a9e620f40c5f317a7eeefd708a1df969c'
+              }
+            }
+            '38' {
+              # Qualified PR138 CI compiled the synthetic merge of the frozen release38 product tree.
+              $pins = [ordered]@{
+                RELEASE_HEAD_SHA = '8cd337172c7cf6b8c11d1837ebde0813119d28bd'
+                RELEASE_COMPILED_SOURCE_SHA = 'f11a5341a0012440e3cfad40f1a17ca4b8423551'
+                RELEASE_SOURCE_TREE = 'ff45c1cdba3edac42daa9fbd86ba8d214b8fee33'
+                RELEASE_PRODUCT_VERSION = '0.2.24+38'
+                RELEASE_CI_BRANCH = 'codex/release38-key-check'
+              }
+              $artifactPins = [ordered]@{
+                CI_RUN_ID = '40171792559'
+                CI_ARTIFACT_ID = '12590777173'
+                CI_ARTIFACT_DIGEST = 'sha256:c7b249c8312ae0fcc8b5b788d88f536714bb33c534e159f5720c7bef7e57910d'
+                PORTABLE_MANIFEST_SHA256 = 'a6229972795ef1450eed540890a72e2ae2a5bda1d171e012e4ebcab08fc30259'
+                PORTABLE_ZIP_SHA256 = 'a0717d87b11573bf5081dcf31603e6e025ff0c07b9606374ef7bf52a7e49e6ec'
               }
             }
             default { throw "Unknown Store release '$($env:RELEASE)'." }
