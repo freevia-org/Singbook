@@ -10,6 +10,7 @@ import '../../domain/combine.dart'
         keysAgree,
         soundingChartKey,
         soundingTransposition;
+import '../../domain/artist_credit.dart';
 import '../../domain/models.dart';
 import '../../domain/lyrics_variants.dart';
 import '../../domain/edition_identity.dart';
@@ -198,16 +199,16 @@ bool sameSong(SongCandidate selected, SongCandidate result) {
 }
 
 /// Whether a chord site's arrangement may be [selected]'s song. Chord sites
-/// credit only the main artist ("Bob Marley" for "Bob Marley & The Wailers")
-/// and drop a leading article ("House of the Rising Sun"); such matches still
-/// need their lyrics to agree before they are used.
+/// may credit only the main artist ("Bob Marley" for "Bob Marley & The
+/// Wailers") and drop a leading article ("House of the Rising Sun"); such
+/// matches still need their lyrics to agree before they are used.
 bool sameArrangement(
   SongCandidate selected,
   SongCandidate result,
   LyricsProvider provider,
 ) {
   if (!provider.definition.capabilities.contains('chords') ||
-      _mainArtist(selected.artist) != _mainArtist(result.artist)) {
+      !artistCreditsMatch(selected.artist, result.artist, normalizedIdentity)) {
     return false;
   }
   final a = arrangementTitle(selected.title);
@@ -219,18 +220,6 @@ bool sameArrangement(
       _titleKey(title).replaceFirst(RegExp(r'^(?:the|a|an) '), '');
   return key(a) == key(b);
 }
-
-/// The first credited artist: "Lady Gaga & Bradley Cooper" -> "lady gaga".
-String _mainArtist(String artist) => normalizedIdentity(
-  artist
-      .split(
-        RegExp(
-          r'\s*(?:&|,|\+|\bfeat\.?|\bft\.?|\bfeaturing\b|\bwith\b|\band\b|\bx\b)\s*',
-          caseSensitive: false,
-        ),
-      )
-      .first,
-);
 
 bool _sameAlbum(SongCandidate a, SongCandidate b) =>
     a.album != null &&

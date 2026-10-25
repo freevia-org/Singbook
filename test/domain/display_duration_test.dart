@@ -74,4 +74,35 @@ void main() {
     ]);
     expect(apart.metadata.containsKey('durationSeconds'), isFalse);
   });
+
+  test('a live or acoustic edition of the album lends nothing', () {
+    for (final album in ['Harbor Lights (Live)', 'Harbor Lights - Acoustic']) {
+      expect(
+        _combine([
+          _catalog('a', album, 250),
+        ]).metadata.containsKey('durationSeconds'),
+        isFalse,
+        reason: album,
+      );
+    }
+  });
+
+  test('the agreeing durations must be a strict majority', () {
+    // 103, 104 and 105 agree within three seconds; 100 does not.
+    final majority = _combine([
+      _catalog('a', 'Harbor Lights', 100),
+      _catalog('b', 'Harbor Lights', 103),
+      _catalog('c', 'Harbor Lights', 104),
+      _catalog('d', 'Harbor Lights', 105),
+    ]);
+    expect(majority.metadata['durationSeconds'], inInclusiveRange(103, 105));
+    // Two of four is no majority.
+    final split = _combine([
+      _catalog('a', 'Harbor Lights', 100),
+      _catalog('b', 'Harbor Lights', 101),
+      _catalog('c', 'Harbor Lights', 110),
+      _catalog('d', 'Harbor Lights', 111),
+    ]);
+    expect(split.metadata.containsKey('durationSeconds'), isFalse);
+  });
 }

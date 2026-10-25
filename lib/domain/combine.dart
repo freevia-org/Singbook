@@ -6,6 +6,7 @@ import 'models.dart';
 import 'edition_identity.dart';
 import 'metadata_enrichment.dart';
 import 'arrangement.dart';
+import 'artist_credit.dart';
 import 'chord_key_estimate.dart' show estimateChordKey;
 import 'timing.dart' show timingOccurrenceMap;
 
@@ -63,37 +64,34 @@ double? _sourceDuration(SourceResult source) =>
     _validDuration(source.candidate.metadata['duration']) ??
     _validDuration(source.metadata['duration']);
 
-/// The range of the largest group of durations within three seconds of its
-/// shortest, when no other group is as large.
+/// The range of the durations that fall within one three-second window and
+/// make up a strict majority of [durations]; null when none does.
 (double, double)? _majorityDurationRange(List<double> durations) {
   final sorted = [...durations]..sort();
-  final groups = <List<double>>[];
-  for (final value in sorted) {
-    if (groups.isNotEmpty && value - groups.last.first <= 3) {
-      groups.last.add(value);
-    } else {
-      groups.add([value]);
+  (double, double)? best;
+  var bestCount = 0;
+  for (var start = 0; start < sorted.length; start++) {
+    var end = start;
+    while (end + 1 < sorted.length && sorted[end + 1] - sorted[start] <= 3) {
+      end++;
+    }
+    if (end - start + 1 > bestCount) {
+      bestCount = end - start + 1;
+      best = (sorted[start], sorted[end]);
     }
   }
-  if (groups.isEmpty) return null;
-  groups.sort((a, b) => b.length.compareTo(a.length));
-  if (groups.length > 1 && groups[1].length == groups.first.length) {
-    return null;
-  }
-  return (groups.first.first, groups.first.last);
+  return bestCount * 2 > sorted.length ? best : null;
 }
 
 /// Whether two catalog album names name the same release for display:
-/// equal once bracketed qualifiers, the artist's name, years, anniversaries
-/// and packaging words ("Remastered", "Deluxe Edition") are set aside.
-/// "Let It Be (Remastered 2009)" and "The Beatles - Let It Be" match "Let It
-/// Be"; "Let It Be... Naked" does not.
+/// equal once the artist's name, years, anniversaries and packaging words
+/// ("Remastered", "Deluxe Edition") are set aside. "Let It Be (Remastered
+/// 2009)" and "The Beatles - Let It Be" match "Let It Be"; "Let It Be...
+/// Naked" and "Hotel California (Live)" keep their own words and do not.
 bool _sameDisplayAlbum(String a, String b, String artist) {
   final artistWords = _norm(artist).split(' ').toSet();
   Set<String> words(String album) => {
-    for (final word in _norm(
-      album.replaceAll(RegExp(r'[(\[][^()\[\]]*[)\]]'), ' '),
-    ).split(' '))
+    for (final word in _norm(album).split(' '))
       if (word.isNotEmpty &&
           !artistWords.contains(word) &&
           !_albumPackaging.contains(word) &&
@@ -179,25 +177,15 @@ bool _sameSong(SongCandidate a, SongCandidate b) {
   return artist == _identityNorm(b.artist) && title == _baseTitle(b.title);
 }
 
-/// A chord site's arrangement of [b]'s song: chord sites credit only the
-/// main artist and may drop a leading article. Only for charts whose lyrics
-/// discovery has corroborated.
+/// A chord site's arrangement of [b]'s song: chord sites may credit only
+/// the main artist of "Main & Others" or "Main feat. Guest", and may drop a
+/// leading article. Only for charts whose lyrics discovery has corroborated.
 bool _sameArrangedSong(SongCandidate a, SongCandidate b) {
-  String main(String artist) => _identityNorm(
-    artist
-        .split(
-          RegExp(
-            r'\s*(?:&|,|\+|\bfeat\.?|\bft\.?|\bfeaturing\b|\bwith\b|\band\b|\bx\b)\s*',
-            caseSensitive: false,
-          ),
-        )
-        .first,
-  );
   String title(String value) =>
       _baseTitle(value).replaceFirst(RegExp(r'^(?:the|a|an) '), '');
-  final artist = main(a.artist), song = title(a.title);
-  if (artist.isEmpty || song.isEmpty) return false;
-  return artist == main(b.artist) && song == title(b.title);
+  final song = title(a.title);
+  if (song.isEmpty || song != title(b.title)) return false;
+  return artistCreditsMatch(a.artist, b.artist, _identityNorm);
 }
 
 bool _hasRecordingIdentityScope(SongCandidate candidate) =>

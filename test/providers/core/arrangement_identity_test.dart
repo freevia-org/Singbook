@@ -69,6 +69,29 @@ void main() {
     );
   });
 
+  test('band names joined by "and" or "+" are not split', () {
+    final chords = _Chords();
+    for (final band in ['Lanterns and the Machine', 'Lanterns + The Machine']) {
+      expect(
+        sameArrangement(
+          _song('Harbor Lights', band),
+          _song('Harbor Lights', 'Lanterns'),
+          chords,
+        ),
+        isFalse,
+        reason: band,
+      );
+    }
+    expect(
+      sameArrangement(
+        _song('Harbor Lights', 'The Mariners feat. A Guest'),
+        _song('Harbor Lights', 'The Mariners'),
+        chords,
+      ),
+      isTrue,
+    );
+  });
+
   test('a corroborated chart crediting the main artist gives chords', () {
     const selected = SongCandidate(
       providerId: 'lyrics',
