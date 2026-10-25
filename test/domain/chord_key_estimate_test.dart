@@ -134,5 +134,10 @@ void main() {
 [D#] [G#] [A#] [D#] [Cm] [G#] [A#] [D#]
 ''';
     expect(estimateChordKey(sharps)?.key, 'Eb');
+    const cSharp = '''
+[C#] [F#] [G#] [C#] [A#m] [F#] [G#] [C#]
+[C#] [F#] [G#] [C#] [A#m] [F#] [G#] [C#]
+''';
+    expect(estimateChordKey(cSharp)?.key, 'Db');
   });
 }

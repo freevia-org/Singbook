@@ -306,9 +306,9 @@ bool _isSecondaryDominant(int root, int tonic, List<int> scale) {
   return false;
 }
 
-/// The conventional name of a key: Eb rather than D#, F#m rather than Gbm.
-/// The chart's own spelling decides only between keys written either way
-/// (Db or C#, F# or Gb, Ebm or D#m, G#m or Abm, Bbm or A#m).
+/// The conventional name of a key: Db rather than C#, Bbm rather than A#m,
+/// G#m rather than Abm. The chart's own spelling decides only between keys
+/// written with equally many accidentals (F# or Gb, D#m or Ebm).
 String _keyName(int tonic, _Mode mode, int flats, int sharps) {
   const major = [
     'C',
@@ -340,16 +340,8 @@ String _keyName(int tonic, _Mode mode, int flats, int sharps) {
   ];
   final flatNames = flats > sharps;
   if (mode == _Mode.major) {
-    final name = major[tonic];
-    if (tonic == 1 && !flatNames && sharps > 0) return 'C#';
-    if (tonic == 6 && flatNames) return 'Gb';
-    return name;
+    return tonic == 6 && flatNames ? 'Gb' : major[tonic];
   }
-  final name = switch (tonic) {
-    3 when !flatNames && sharps > 0 => 'D#',
-    8 when flatNames => 'Ab',
-    10 when !flatNames && sharps > 0 => 'A#',
-    _ => minor[tonic],
-  };
+  final name = tonic == 3 && !flatNames && sharps > 0 ? 'D#' : minor[tonic];
   return '${name}m';
 }

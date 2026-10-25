@@ -2,6 +2,7 @@
 // Opt-in metadata audit over a fixed song set, outside the test suite:
 //   flutter test tool/metadata_audit_test.dart \
 //     [--dart-define=AUDIT_OFFLINE=true] [--dart-define=AUDIT_ONLY=Title]
+//     [--dart-define=AUDIT_JITTER=<seed>]
 // It runs under flutter test for the platform HTTP stack the app uses.
 //
 // Every provider response is cached under build/metadata_audit/cache, keyed
@@ -11,6 +12,7 @@
 // counts and chord symbols only, never lyrics or credentials.
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -79,16 +81,59 @@ const songs = <(String, String, String?)>[
   ('Ho Hey', 'The Lumineers', 'C'),
   ('Bohemian Rhapsody', 'Queen', 'Bb'),
   ('Despacito', 'Luis Fonsi', 'Bm'),
+  // Wider coverage: newer pop, folk, rock, country, worship and songs in
+  // other languages.
+  ('Someone You Loved', 'Lewis Capaldi', 'Db'),
+  ('Shake It Off', 'Taylor Swift', 'G'),
+  ('Love Story', 'Taylor Swift', null),
+  ('All of Me', 'John Legend', 'Ab'),
+  ('Rolling in the Deep', 'Adele', 'Cm'),
+  ('Hello', 'Adele', 'Fm'),
+  ('Let Her Go', 'Passenger', null),
+  ('Counting Stars', 'OneRepublic', null),
+  ('Africa', 'Toto', null),
+  ('Dreams', 'Fleetwood Mac', null),
+  ('Landslide', 'Fleetwood Mac', null),
+  ('The Sound of Silence', 'Simon & Garfunkel', null),
+  ('Mrs. Robinson', 'Simon & Garfunkel', null),
+  ('Piano Man', 'Billy Joel', 'C'),
+  ('Sweet Caroline', 'Neil Diamond', 'B'),
+  ('Amazing Grace (My Chains Are Gone)', 'Chris Tomlin', null),
+  ('How Great Thou Art', 'Carrie Underwood', null),
+  ('La Bamba', 'Ritchie Valens', 'C'),
+  ('Cielito Lindo', 'Pedro Infante', null),
+  ('99 Luftballons', 'Nena', null),
+  ('Under the Bridge', 'Red Hot Chili Peppers', null),
+  ('Californication', 'Red Hot Chili Peppers', 'Am'),
+  ('Stairway to Heaven', 'Led Zeppelin', 'Am'),
+  ('Dust in the Wind', 'Kansas', 'C'),
+  ('Blackbird', 'The Beatles', 'G'),
+  ('Yellow Submarine', 'The Beatles', null),
+  ('Halo', 'Beyoncé', 'A'),
+  ('Hey, Soul Sister', 'Train', 'E'),
+  ("I'm Yours", 'Jason Mraz', 'B'),
+  ('Iris', 'The Goo Goo Dolls', null),
+  ('Torn', 'Natalie Imbruglia', 'F'),
+  ('Budapest', 'George Ezra', null),
+  ('Ride', 'Twenty One Pilots', null),
+  ('Mad World', 'Gary Jules', null),
+  ('Vienna', 'Billy Joel', null),
+  ('Tennessee Whiskey', 'Chris Stapleton', null),
+  ('Before He Cheats', 'Carrie Underwood', null),
 ];
 
 /// Answers from the cache when it can; otherwise asks the network and keeps
 /// successful and not-found answers. Keys leave out headers, so tokens are
 /// never written.
 class CachingClient extends http.BaseClient {
-  CachingClient(this.directory, {required this.offline});
+  CachingClient(this.directory, {required this.offline, this.jitter});
 
   final Directory directory;
   final bool offline;
+
+  /// Random delays for cached answers, so replays can arrive in another
+  /// order, as live responses do; differing results show order dependence.
+  final math.Random? jitter;
   final http.Client _inner = createNativeHttpClient();
   int hits = 0, misses = 0, uncached = 0;
   final uncachedHosts = <String, int>{};
@@ -103,6 +148,9 @@ class CachingClient extends http.BaseClient {
     final file = File('${directory.path}/$key.json');
     if (file.existsSync()) {
       hits++;
+      if (jitter case final random?) {
+        await Future<void>.delayed(Duration(milliseconds: random.nextInt(120)));
+      }
       final stored = jsonDecode(file.readAsStringSync()) as Map;
       return http.StreamedResponse(
         Stream.value(base64Decode(stored['body'] as String)),
@@ -173,9 +221,11 @@ Future<void> _audit() async {
   final only = onlyValue == '' ? null : onlyValue.split('|').toSet();
   const verbose = bool.fromEnvironment('AUDIT_VERBOSE');
   final out = Directory('build/metadata_audit');
+  const jitterSeed = int.fromEnvironment('AUDIT_JITTER', defaultValue: -1);
   final client = CachingClient(
     Directory('${out.path}/cache'),
     offline: offline,
+    jitter: jitterSeed < 0 ? null : math.Random(jitterSeed),
   );
   var token = Platform.environment['GENIUS_ACCESS_TOKEN'] ?? '';
   for (final path in [
