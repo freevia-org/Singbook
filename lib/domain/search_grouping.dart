@@ -417,8 +417,9 @@ const _artistStopWords = {'the', 'and', 'a'};
 /// How well [candidate] answers a search for [query]; higher is better.
 ///
 /// Each query word counts once, whether the title or the artist has it;
-/// words in a title's qualifier match only when they name a performance
-/// ("karaoke"), never as a credit. Title words the query lacks
+/// a word only in the title's qualifier counts half unless the artist also
+/// matched, so a credit does not make another singer's cover a match. Title
+/// words the query lacks
 /// count against a row; artist words the query
 /// lacks count only when the artist matched at all, so a query without an
 /// artist does not favour short names. A cover, karaoke track, translation
@@ -428,28 +429,29 @@ const _artistStopWords = {'the', 'and', 'a'};
 int searchRelevance(SongCandidate candidate, String query) {
   final tokens = _searchTokens(query);
   if (tokens.isEmpty) return 0;
-  // Words in a title's brackets or after a dash qualify it; a credit there
-  // ("Imagine (John Lennon)" by another singer) names someone else's song.
   final title = _searchTokens(candidate.title.replaceAll(_qualifier, ' '));
   final qualifiers = <String>{
     for (final match in _qualifier.allMatches(candidate.title))
       ..._searchTokens(match[1] ?? match[2]!),
   };
   final artist = _searchTokens(candidate.artist);
-  var score =
-      tokens
-              .where(
-                (t) =>
-                    title.contains(t) ||
-                    artist.contains(t) ||
-                    (qualifiers.contains(t) &&
-                        _otherPerformanceWords.contains(t)),
-              )
-              .length *
-          4 -
-      title.difference(tokens).length -
+  final artistMatched = artist.any(tokens.contains);
+  // A qualifier may be a subtitle ("Lanterns (Over Quiet Water)") or a
+  // credit ("Imagine (John Lennon)" by another singer). It counts fully when
+  // the artist matched the query too, half otherwise; a performance word the
+  // query asks for ("karaoke") always counts.
+  var score = 0;
+  for (final token in tokens) {
+    if (title.contains(token) || artist.contains(token)) {
+      score += 4;
+    } else if (qualifiers.contains(token)) {
+      score += artistMatched || _otherPerformanceWords.contains(token) ? 4 : 2;
+    }
+  }
+  score -=
+      title.difference(tokens).length +
       qualifiers.difference(tokens).difference(title).length;
-  if (artist.any(tokens.contains)) {
+  if (artistMatched) {
     score -= artist.difference(tokens).difference(_artistStopWords).length;
   }
   score -=
@@ -458,8 +460,21 @@ int searchRelevance(SongCandidate candidate, String query) {
         ...qualifiers.where(_otherPerformanceWords.contains),
         ...artist.where(_otherPerformerWords.contains),
       }.where((word) => !tokens.contains(word)).length;
-  // Genius publishes translations under accounts such as "Genius English
-  // Translations".
-  if (artist.contains('genius') && !tokens.contains('genius')) score -= 8;
+  if (_translationAccount(candidate.artist) && !tokens.contains('genius')) {
+    score -= 8;
+  }
   return score;
 }
+
+/// Genius publishes translations under accounts such as "Genius English
+/// Translations" or "Genius Romanizations"; "Perfume Genius" is an artist.
+bool _translationAccount(String artist) {
+  final words = artist.toLowerCase().split(RegExp(r'\s+'));
+  return words.length > 1 &&
+      words.first == 'genius' &&
+      words.skip(1).any((word) => _translationStem.hasMatch(word));
+}
+
+final _translationStem = RegExp(
+  r'^(?:transl|tradu|übersetz|roman|prevod|çeviri|tłumacz|перевод|vertal|översätt|oversæt|overset|käänn|fordít|preklad|překlad|terjemah|dịch|번역|翻訳|翻译)',
+);

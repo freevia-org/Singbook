@@ -89,4 +89,31 @@ void main() {
       'Harbor Lights / The Mariners',
     );
   });
+
+  test('a subtitle in brackets matches when the artist matches too', () {
+    expect(
+      _ranked('lanterns over quiet water mariners', [
+        _row('Lanterns Over Quiet Water', 'Other Band'),
+        _row('Lanterns (Over Quiet Water)', 'The Mariners'),
+      ]).first,
+      'Lanterns (Over Quiet Water) / The Mariners',
+    );
+  });
+
+  test('only Genius translation accounts are treated as translations', () {
+    expect(
+      _ranked('lanterns', [
+        _row('Lanterns (Live)', 'Other Band'),
+        _row('Lanterns', 'Perfume Genius'),
+      ]).first,
+      'Lanterns / Perfume Genius',
+    );
+    expect(
+      _ranked('lanterns', [
+        _row('Lanterns (Traduzione Italiana)', 'Genius Traduzioni Italiane'),
+        _row('Lanterns', 'Other Band'),
+      ]).first,
+      'Lanterns / Other Band',
+    );
+  });
 }
