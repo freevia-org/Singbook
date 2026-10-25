@@ -113,9 +113,26 @@ class RecordingKeyService {
     if (content is! List) return null;
     // One vote per distinct recording (ISRC): the same audio is often listed
     // under several catalog entries, which must not outvote other audio.
+    // Rows must name a requested recording: its ISRC, or the Spotify track
+    // its link points to.
+    final requested = ids.toSet();
+    bool asked(Map raw) {
+      final isrc = raw['isrc'];
+      if (isrc is String && requested.contains(isrc.trim().toUpperCase())) {
+        return true;
+      }
+      final href = raw['href'];
+      final uri = href is String ? Uri.tryParse(href) : null;
+      return uri != null &&
+          uri.host == 'open.spotify.com' &&
+          uri.pathSegments.length == 2 &&
+          uri.pathSegments.first == 'track' &&
+          requested.contains(uri.pathSegments.last);
+    }
+
     final byRecording = <String, ({String key, double? tempo})>{};
     for (final raw in content) {
-      if (raw is! Map) continue;
+      if (raw is! Map || !asked(raw)) continue;
       final key = raw['key'], mode = raw['mode'];
       if (key is! int || key < 0 || key > 11 || (mode != 0 && mode != 1)) {
         continue;

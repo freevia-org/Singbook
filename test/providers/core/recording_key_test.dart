@@ -19,9 +19,16 @@ ProviderTransport _transport(Object body, List<Uri> requests) =>
       }),
     );
 
-Map<String, Object?> _feature(String isrc, int key, int mode, num tempo) => {
+Map<String, Object?> _feature(
+  String isrc,
+  int key,
+  int mode,
+  num tempo, {
+  String? track,
+}) => {
   'id': 'id-$isrc',
   'isrc': isrc,
+  'href': ?(track == null ? null : 'https://open.spotify.com/track/$track'),
   'key': key,
   'mode': mode,
   'tempo': tempo,
@@ -36,13 +43,21 @@ void main() {
           // The same audio listed twice must not outvote other recordings.
           _feature('USRE19100010', 9, 1, 77.4),
           _feature('USRE19100010', 9, 1, 77.4),
-          _feature('USRE10201368', 9, 1, 77.2),
-          _feature('GBXXX0000001', 0, 1, 154.8),
+          _feature('USRE10201368', 9, 1, 77.2, track: '1kgdslQYmeTR4thk9whoRw'),
+          _feature(
+            'GBXXX0000001',
+            0,
+            1,
+            154.8,
+            track: '2kgdslQYmeTR4thk9whoRw',
+          ),
+          // Not a requested recording: ignored, or it would tie the vote.
+          _feature('GBXXX0000002', 0, 1, 154.8),
         ],
       }, requests),
     );
     final found = await service.lookup(
-      spotifyIds: const ['1kgdslQYmeTR4thk9whoRw'],
+      spotifyIds: const ['1kgdslQYmeTR4thk9whoRw', '2kgdslQYmeTR4thk9whoRw'],
       isrcs: const ['usre19100010', 'not-an-isrc'],
     );
     expect(found?.key, 'A');
@@ -51,25 +66,28 @@ void main() {
     expect(requests.single.host, 'api.reccobeats.com');
     expect(
       requests.single.queryParameters['ids'],
-      '1kgdslQYmeTR4thk9whoRw,USRE19100010',
+      '1kgdslQYmeTR4thk9whoRw,2kgdslQYmeTR4thk9whoRw,USRE19100010',
     );
   });
 
   test('minor keys, ties and malformed rows', () async {
     Future<RecordingKey?> lookup(List<Object?> content) => RecordingKeyService(
       _transport({'content': content}, []),
-    ).lookup(isrcs: const ['USRE19100010']);
+    ).lookup(isrcs: const ['USRE19100001', 'USRE19100002', 'USRE19100003']);
 
-    expect((await lookup([_feature('A', 4, 0, 90)]))?.key, 'Em');
+    expect((await lookup([_feature('USRE19100001', 4, 0, 90)]))?.key, 'Em');
     expect(
-      await lookup([_feature('A', 4, 0, 90), _feature('B', 7, 1, 90)]),
+      await lookup([
+        _feature('USRE19100001', 4, 0, 90),
+        _feature('USRE19100002', 7, 1, 90),
+      ]),
       isNull,
     );
     expect(
       await lookup([
-        {'isrc': 'A', 'key': -1, 'mode': 1},
-        {'isrc': 'B', 'key': 12, 'mode': 1},
-        {'isrc': 'C', 'key': 3, 'mode': 2},
+        {'isrc': 'USRE19100001', 'key': -1, 'mode': 1},
+        {'isrc': 'USRE19100002', 'key': 12, 'mode': 1},
+        {'isrc': 'USRE19100003', 'key': 3, 'mode': 2},
         'garbage',
       ]),
       isNull,

@@ -6,10 +6,10 @@ import '../../domain/chord_key_estimate.dart' show estimateChordKey;
 import '../../domain/combine.dart'
     show
         chordKeyVerdict,
-        chordTransposition,
         declaredKeyFitsChords,
         keysAgree,
-        soundingChartKey;
+        soundingChartKey,
+        soundingTransposition;
 import '../../domain/models.dart';
 import '../../domain/lyrics_variants.dart';
 import '../../domain/edition_identity.dart';
@@ -1303,33 +1303,39 @@ class SourceDiscoveryService {
   /// The key measured from the selected recording's audio, when results
   /// already identified as that recording carry a Spotify link or ISRC.
   /// Failures and missing identifiers give null; cancellation still throws.
-  Future<RecordingKey?> _recordingKey(
+  /// [providers] names the providers whose results gave the identifiers.
+  Future<({RecordingKey key, Set<String> providers})?> _recordingKey(
     List<SourceResult> results,
     bool Function(String providerId) eligible, {
     CancellationToken? cancel,
   }) async {
     final service = recordingKeys;
     if (service == null) return null;
-    final spotify = <String>{}, isrcs = <String>{};
+    final spotify = <String>{}, isrcs = <String>{}, providers = <String>{};
     for (final result in results) {
       if (result.matchKind != MatchKind.sameRecording ||
           !eligible(result.candidate.providerId)) {
         continue;
       }
       final ids = recordingIdentifiers(result);
+      if (ids.spotify.isEmpty && ids.isrcs.isEmpty) continue;
       spotify.addAll(ids.spotify);
       isrcs.addAll(ids.isrcs);
+      providers.add(result.candidate.providerId);
     }
     if (spotify.isEmpty && isrcs.isEmpty) return null;
     cancel?.throwIfCancelled();
     final lookupCancel = CancellationToken();
     cancel?.cancelled.then((_) => lookupCancel.cancel());
     try {
-      return await service.lookup(
+      final key = await service.lookup(
         spotifyIds: spotify.toList(),
         isrcs: isrcs.toList(),
         cancel: lookupCancel,
       );
+      return key == null || !providers.every(eligible)
+          ? null
+          : (key: key, providers: providers);
     } on ProviderException {
       cancel?.throwIfCancelled();
       return null;
@@ -1381,12 +1387,25 @@ class SourceDiscoveryService {
     final charts = [for (final i in indexes) results[i].body];
     Object? setup(SourceResult source, String field) =>
         source.metadata[field] ?? source.candidate.metadata[field];
-    final recording = await _recordingKey(results, eligible, cancel: cancel);
+    final heard = await _recordingKey(results, eligible, cancel: cancel);
+    var recording = heard?.key;
     // Doubt: charts in different keys, or a chart whose declared key
     // contradicts its own chords (a transposed chart or a missing capo).
-    final disagree = charts
+    // Charts are compared by sounding key: the same shapes with a different
+    // capo are in different keys.
+    final disagree = indexes
         .skip(1)
-        .any((chart) => (chordTransposition(charts.first, chart) ?? 0) != 0);
+        .any(
+          (i) =>
+              (soundingTransposition(
+                    results[indexes.first].body,
+                    setup(results[indexes.first], 'capo'),
+                    results[i].body,
+                    setup(results[i], 'capo'),
+                  ) ??
+                  0) !=
+              0,
+        );
     final contradicted = indexes.any((i) {
       final source = results[i];
       final declared =
@@ -1401,14 +1420,15 @@ class SourceDiscoveryService {
     });
     // The recording's measured key disagreeing with a chart's chords (beyond
     // a relative major/minor) is doubt as well.
+    final measured = heard?.key.key;
     final unheard =
-        recording != null &&
+        measured != null &&
         indexes.any((i) {
           final key = soundingChartKey(
             results[i].body,
             setup(results[i], 'capo'),
           );
-          return key != null && !keysAgree(key, recording.key);
+          return key != null && !keysAgree(key, measured);
         });
     if (!disagree && !contradicted && !unheard) return;
     bool lyricsAgree(String body) => reference != null
@@ -1491,6 +1511,8 @@ class SourceDiscoveryService {
       for (final vote in votes)
         if (eligible(vote.providerId)) vote.chart,
     ];
+    // A recording identified only by providers disabled since is no evidence.
+    if (heard != null && !heard.providers.every(eligible)) recording = null;
     final all = [for (final source in sources) source.body];
     final outcome = chordKeyVerdict(
       all,

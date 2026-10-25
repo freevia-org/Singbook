@@ -167,6 +167,16 @@ int? _keyDistance(String from, String to) {
   return a == null || b == null ? null : (b - a + 12) % 12;
 }
 
+/// Semitones from chart [a] played with [capoA] to chart [b] played with
+/// [capoB]: the difference in sounding key, or null when the chords do not
+/// line up.
+int? soundingTransposition(String a, Object? capoA, String b, Object? capoB) {
+  final shapes = chordTransposition(a, b);
+  return shapes == null
+      ? null
+      : (shapes + _capoOf(capoB) - _capoOf(capoA)) % 12;
+}
+
 int _capoOf(Object? capo) {
   final value = capo is num ? capo.toInt() : int.tryParse('${capo ?? ''}');
   return value == null || value < 0 ? 0 : value % 12;
@@ -1730,7 +1740,8 @@ SongDocument combineSources(
       } else {
         facts['key'] = kept;
       }
-    } else if (source.hasChords &&
+    } else if (preferredSourceId == null &&
+        source.hasChords &&
         declared is String &&
         declared.trim().isNotEmpty &&
         !declaredKeyFitsChords(source.body, declared.trim(), facts['capo'])) {

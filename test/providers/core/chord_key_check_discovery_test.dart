@@ -56,12 +56,14 @@ class _Provider implements LyricsProvider {
     this.chords = true,
     this.onResolve,
     this.labels = const {},
+    this.capos = const {},
   });
 
   final String id;
   final Map<String, String> charts;
   final bool chords;
   final Map<String, String> labels;
+  final Map<String, int> capos;
   final void Function(String chartId)? onResolve;
   final resolved = <String>[];
 
@@ -96,7 +98,7 @@ class _Provider implements LyricsProvider {
     return SourceResult(
       candidate: candidate,
       body: charts[candidate.id]!,
-      metadata: {'key': ?labels[candidate.id]},
+      metadata: {'key': ?labels[candidate.id], 'capo': ?capos[candidate.id]},
     );
   }
 }
@@ -124,6 +126,24 @@ void main() {
     // Extra charts were only votes: they are not offered as versions.
     expect(results.where((r) => r.candidate.id == 'b-in-e'), isEmpty);
     expect(ug.resolved, containsAll(['a-in-g', 'b-in-e', 'c-in-e']));
+  });
+
+  test('the same shapes with another capo are double checked', () async {
+    final g = _chart(['G', 'C', 'D7', 'G', 'Em', 'C', 'D7', 'G']);
+    final ug = _Provider('ug', {'a': g, 'b': g.replaceAll('D7]', 'D]')});
+    final results = await SourceDiscoveryService([
+      _Provider('lyrics', {'song': _lines.join('\n')}, chords: false),
+      ug,
+      _Provider('songsterr', {'s': g}, capos: {'s': 2}),
+    ]).discover(_selection);
+    expect(ug.resolved, contains('b'));
+    // G shapes with capo 2 sound in A; the two G charts move it down.
+    expect(
+      results
+          .firstWhere((r) => r.candidate.providerId == 'songsterr')
+          .extra['keyShift'],
+      10,
+    );
   });
 
   test('agreeing charts need no double check', () async {
@@ -212,24 +232,32 @@ void main() {
         ],
       },
     );
-    RecordingKeyService service(int key, List<Uri> requests) =>
-        RecordingKeyService(
-          ProviderTransport(
-            hostInterval: Duration.zero,
-            client: MockClient((request) async {
-              requests.add(request.url);
-              return http.Response(
-                jsonEncode({
-                  'content': [
-                    {'isrc': 'USRE19100010', 'key': key, 'mode': 1},
-                  ],
-                }),
-                200,
-                headers: {'content-type': 'application/json'},
-              );
+    RecordingKeyService service(
+      int key,
+      List<Uri> requests,
+    ) => RecordingKeyService(
+      ProviderTransport(
+        hostInterval: Duration.zero,
+        client: MockClient((request) async {
+          requests.add(request.url);
+          return http.Response(
+            jsonEncode({
+              'content': [
+                {
+                  'isrc': 'USRE19100010',
+                  'href':
+                      'https://open.spotify.com/track/1kgdslQYmeTR4thk9whoRw',
+                  'key': key,
+                  'mode': 1,
+                },
+              ],
             }),
-          ),
-        );
+            200,
+            headers: {'content-type': 'application/json'},
+          );
+        }),
+      ),
+    );
     List<SourceResult> chartsOf(List<SourceResult> results) =>
         results.where((r) => r.hasChords).toList();
 
@@ -253,6 +281,43 @@ void main() {
       ], recordingKeys: service(0, [])).discover(recorded);
 
       expect(chartsOf(results).single.extra.containsKey('keyShift'), isFalse);
+    });
+
+    test('a provider disabled during the lookup loses its recording', () async {
+      final disabled = CancellationToken();
+      final recording = RecordingKeyService(
+        ProviderTransport(
+          hostInterval: Duration.zero,
+          client: MockClient((request) async {
+            disabled.cancel();
+            return http.Response(
+              jsonEncode({
+                'content': [
+                  {
+                    'isrc': 'USRE19100010',
+                    'href':
+                        'https://open.spotify.com/track/1kgdslQYmeTR4thk9whoRw',
+                    'key': 0,
+                    'mode': 1,
+                  },
+                ],
+              }),
+              200,
+              headers: {'content-type': 'application/json'},
+            );
+          }),
+        ),
+      );
+      final results = await SourceDiscoveryService(
+        [
+          _Provider('lyrics', {'song': _lines.join('\n')}, chords: false),
+          _Provider('ug', {'g': clearG}, labels: {'g': 'C'}),
+        ],
+        recordingKeys: recording,
+      ).discover(recorded, providerCancellation: {'lyrics': disabled});
+      final chart = chartsOf(results).single;
+      expect(chart.extra.containsKey('keyShift'), isFalse);
+      expect(chart.extra.containsKey('keyRecording'), isFalse);
     });
 
     test('without the service no recording key is requested', () async {

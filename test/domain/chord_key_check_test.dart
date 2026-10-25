@@ -176,6 +176,17 @@ void main() {
     expect(chordKeyMajority([inBm, shapesWithCapo], capos: [null, 2]), isNull);
   });
 
+  test('an explicit version choice keeps its published key', () {
+    final source = labelled(transposeBody(_clearE, 8), 'E');
+    final doc = combineSources(
+      _selected,
+      [_source('lyrics', _lyrics), source],
+      preferredSourceId: 'ug:ug',
+      allowRejectedPreferredSource: true,
+    );
+    expect(doc.metadata['key'], 'E');
+  });
+
   test('an explicit version choice keeps the published chart', () {
     final doc = combineSources(
       _selected,
