@@ -163,6 +163,121 @@ void main() {
     },
   );
 
+  test(
+    'root-relative redirect and target replay offline through transport',
+    () async {
+      var networkCalls = 0;
+      final url = Uri.https(
+        'www.songsterr.com',
+        '/a/wsa/beyonce-halo-chords-s190194',
+      );
+      final onlineCache = MetadataResponseCacheClient(
+        temp,
+        offline: false,
+        networkBudget: 2,
+        inner: MockClient((request) async {
+          networkCalls++;
+          if (request.url.path == url.path) {
+            return http.Response(
+              '',
+              301,
+              headers: {
+                'location': '/a/wsa/beyonce-knowles-halo-chords-s190194',
+                'set-cookie': 'private=redirect-cookie',
+              },
+            );
+          }
+          return http.Response(
+            'resolved chords',
+            200,
+            headers: {
+              'content-type': 'text/plain',
+              'set-cookie': 'private=target-cookie',
+            },
+          );
+        }),
+      );
+      final onlineTransport = ProviderTransport(
+        client: onlineCache,
+        hostInterval: Duration.zero,
+      );
+      final onlineBody = await onlineTransport.getText(url);
+      expect(onlineBody, 'resolved chords');
+      expect(networkCalls, 2);
+      expect(onlineCache.networkAttempts, 2);
+      await onlineTransport.close();
+
+      final persisted = <Map<String, dynamic>>[];
+      final cacheFiles = await temp
+          .list()
+          .where((e) => e.path.endsWith('.json.gz'))
+          .toList();
+      for (final entity in cacheFiles) {
+        final bytes = await (entity as File).readAsBytes();
+        persisted.add(
+          jsonDecode(utf8.decode(gzip.decode(bytes))) as Map<String, dynamic>,
+        );
+      }
+      expect(persisted, hasLength(2));
+      expect(
+        persisted.every(
+          (record) => !(record['headers'] as Map<String, dynamic>).containsKey(
+            'set-cookie',
+          ),
+        ),
+        isTrue,
+      );
+      expect(
+        persisted.any(
+          (record) =>
+              (record['headers'] as Map<String, dynamic>)['location'] ==
+              '/a/wsa/beyonce-knowles-halo-chords-s190194',
+        ),
+        isTrue,
+      );
+
+      final offlineCache = MetadataResponseCacheClient(temp, offline: true);
+      final offlineTransport = ProviderTransport(
+        client: offlineCache,
+        hostInterval: Duration.zero,
+      );
+      final offlineBody = await offlineTransport.getText(url);
+      expect(offlineBody, onlineBody);
+      expect(offlineCache.hits, 2);
+      expect(offlineCache.networkAttempts, 0);
+      expect(offlineCache.uncached, 0);
+      await offlineTransport.close();
+    },
+  );
+
+  test(
+    'unsafe root-relative and non-HTTPS redirect locations are not cached',
+    () async {
+      for (final location in [
+        '/next?access_token=secret',
+        '//evil.invalid/next',
+        'http://example.invalid/next',
+        r'/\evil.invalid/next',
+        '/next#fragment',
+        '/next\nX-Injected: yes',
+      ]) {
+        final client = MetadataResponseCacheClient(
+          temp,
+          offline: false,
+          networkBudget: 1,
+          inner: MockClient(
+            (_) async =>
+                http.Response('', 302, headers: {'location': location}),
+          ),
+        );
+        await client.get(Uri.https('example.invalid', '/redirect'));
+        expect(await temp.list().toList(), isEmpty, reason: location);
+        expect(client.uncached, 1, reason: location);
+        client.close();
+      }
+    },
+  );
+
   test('live response preserves original headers and request', () async {
     final client = MetadataResponseCacheClient(
       temp,
