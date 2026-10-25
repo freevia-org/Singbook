@@ -215,12 +215,27 @@ class MetadataResponseCacheClient extends http.BaseClient {
 
   bool _safeLocation(String? location) {
     if (location == null) return false;
+    // Root-relative redirects are safe to replay because ProviderTransport
+    // resolves them against the original HTTPS request URL. Keep this narrow:
+    // scheme-relative URLs, backslashes, and controls can be interpreted
+    // differently by URI parsers and HTTP clients.
+    final isRootRelative =
+        location.startsWith('/') &&
+        !location.startsWith('//') &&
+        !location.contains('\\') &&
+        !RegExp(r'[\x00-\x1f\x7f]').hasMatch(location);
     final uri = Uri.tryParse(location);
-    if (uri == null ||
-        uri.scheme != 'https' ||
+    if (uri == null || uri.hasFragment) return false;
+    if (isRootRelative) {
+      if (uri.hasScheme ||
+          uri.hasAuthority ||
+          uri.userInfo.isNotEmpty ||
+          !uri.path.startsWith('/')) {
+        return false;
+      }
+    } else if (uri.scheme != 'https' ||
         uri.host.isEmpty ||
-        uri.userInfo.isNotEmpty ||
-        uri.fragment.isNotEmpty) {
+        uri.userInfo.isNotEmpty) {
       return false;
     }
     final sensitive = RegExp(

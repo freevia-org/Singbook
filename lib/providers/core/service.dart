@@ -14,6 +14,7 @@ import '../../domain/combine.dart'
 import '../../domain/artist_credit.dart';
 import '../../domain/arrangement_context.dart';
 import '../../domain/lyric_word_identity.dart';
+import '../../domain/short_lyric_reference.dart';
 import '../../domain/models.dart';
 import '../../domain/lyrics_variants.dart';
 import '../../domain/edition_identity.dart';
@@ -154,16 +155,27 @@ bool sameArrangement(
   LyricsProvider provider,
 ) {
   if (!provider.definition.capabilities.contains('chords') ||
-      !artistCreditsMatch(selected.artist, result.artist, normalizedIdentity)) {
+      !artistCreditsMatch(
+        selected.artist,
+        result.artist,
+        (value) => normalizedIdentity(foldLyricVowelAccents(value)),
+      )) {
     return false;
+  }
+  for (final entry in selected.recordingIds.entries) {
+    if (result.recordingIds.containsKey(entry.key) &&
+        result.recordingIds[entry.key] != entry.value) {
+      return false;
+    }
   }
   final a = arrangementTitle(selected.title);
   var b = arrangementTitle(result.title);
   if (a != selected.title) {
     b = b.replaceFirst(RegExp(r'\s+acoustic$', caseSensitive: false), '');
   }
-  String key(String title) =>
-      _titleKey(title).replaceFirst(RegExp(r'^(?:the|a|an) '), '');
+  String key(String title) => _titleKey(
+    foldLyricVowelAccents(title),
+  ).replaceFirst(RegExp(r'^(?:the|a|an) '), '');
   return key(a) == key(b);
 }
 
@@ -762,6 +774,14 @@ class SourceDiscoveryService {
     final lookupCancellation = <String, CancellationToken>{};
     final wordCounts = <SourceResult, int>{};
     final agreementCache = <SourceResult, Map<SourceResult, bool>>{};
+    bool agreesWithReference(SourceResult chart, SourceResult reference) =>
+        _agreement(
+          chart.body,
+          reference.body,
+          allowShortRecordingReference:
+              reference.matchKind == MatchKind.sameRecording &&
+              recordingCompatible(selection, reference),
+        );
     bool liveReference(SourceResult reference) =>
         !reference.hasChords &&
         const {
@@ -772,39 +792,58 @@ class SourceDiscoveryService {
         reference.extra['requiresRecordingLyricsAgreement'] != true &&
         providerCancellation[reference.candidate.providerId]?.isCancelled !=
             true &&
-        wordCounts.putIfAbsent(
+        (wordCounts.putIfAbsent(
+                  reference,
+                  () => _words(reference.body).toSet().length,
+                ) >=
+                12 ||
+            reference.matchKind == MatchKind.sameRecording &&
+                recordingCompatible(selection, reference) &&
+                isShortRecordingLyricBody(reference.body));
+    bool liveDependencyFor(SourceResult chart) {
+      if (providerCancellation[chart.candidate.providerId]?.isCancelled ==
+          true) {
+        return false;
+      }
+      final references = results.where(liveReference).toList();
+      final shortAnchors = references
+          .where(
+            (reference) =>
+                reference.matchKind == MatchKind.sameRecording &&
+                recordingCompatible(selection, reference) &&
+                isShortRecordingLyricBody(reference.body),
+          )
+          .toList();
+      // A longer unanchored performance cannot bypass a short recording's
+      // ordered-sequence evidence during progressive publication either.
+      final donors = shortAnchors.isEmpty ? references : shortAnchors;
+      return donors.any((reference) {
+        if (!liveReference(reference)) return false;
+        final contextual =
+            chart.extra['requiresRecordingLyricsAgreement'] == true;
+        if (contextual &&
+            (lookupCancellation[reference.candidate.providerId]?.isCancelled ==
+                    true ||
+                !recordingCompatible(selection, reference) ||
+                !contextualArrangementCandidate(
+                  reference.candidate,
+                  chart.candidate,
+                ))) {
+          return false;
+        }
+        return agreementCache
+            .putIfAbsent(chart, () => {})
+            .putIfAbsent(
               reference,
-              () => _words(reference.body).toSet().length,
-            ) >=
-            12;
-    bool liveDependencyFor(SourceResult chart) =>
-        providerCancellation[chart.candidate.providerId]?.isCancelled != true &&
-        results.any((reference) {
-          if (!liveReference(reference)) return false;
-          final contextual =
-              chart.extra['requiresRecordingLyricsAgreement'] == true;
-          if (contextual &&
-              (lookupCancellation[reference.candidate.providerId]
-                          ?.isCancelled ==
-                      true ||
-                  !recordingCompatible(selection, reference) ||
-                  !contextualArrangementCandidate(
-                    reference.candidate,
-                    chart.candidate,
-                  ))) {
-            return false;
-          }
-          return agreementCache
-              .putIfAbsent(chart, () => {})
-              .putIfAbsent(
-                reference,
-                () =>
-                    _agreement(chart.body, reference.body) ||
-                    !contextual &&
-                        (_partialAgreement(chart.body, reference.body) ||
-                            _noisyAgreement(chart.body, reference.body)),
-              );
-        });
+              () =>
+                  agreesWithReference(chart, reference) ||
+                  !contextual &&
+                      (_partialAgreement(chart.body, reference.body) ||
+                          _noisyAgreement(chart.body, reference.body)),
+            );
+      });
+    }
+
     var index = 0;
     void publish(
       String providerId,
@@ -1209,7 +1248,7 @@ class SourceDiscoveryService {
                 },
                 accept: (result) =>
                     result.hasChords &&
-                    _agreement(result.body, recordingReference.body),
+                    agreesWithReference(result, recordingReference),
               ).timeout(
                 alternativeTimeout,
                 onTimeout: () {
@@ -1298,7 +1337,7 @@ class SourceDiscoveryService {
         }
       } else {
         recordCorroboration(result.candidate.providerId, 'pending');
-        if (!_agreement(result.body, references.first.body)) {
+        if (!agreesWithReference(result, references.first)) {
           // The first chart may be a truncated or different-lyrics version: try
           // the provider's other candidates against the same reference.
           SourceResult? alternative;
@@ -1306,7 +1345,6 @@ class SourceDiscoveryService {
             (p) => p.definition.id == result.candidate.providerId,
           );
           if (owners.isNotEmpty) {
-            final referenceBody = references.first.body;
             final contextReferenceCancel = recordingReference == null
                 ? null
                 : providerCancellation[recordingReference.candidate.providerId];
@@ -1367,7 +1405,7 @@ class SourceDiscoveryService {
                       }
                     },
                     accept: (r) =>
-                        r.hasChords && _agreement(r.body, referenceBody),
+                        r.hasChords && agreesWithReference(r, references.first),
                   ).timeout(
                     alternativeTimeout,
                     onTimeout: () {
@@ -1512,7 +1550,7 @@ class SourceDiscoveryService {
       results,
       active,
       selection,
-      reference: references.firstOrNull?.body,
+      reference: references.firstOrNull,
       cancel: cancel,
       providerCancellation: providerCancellation,
       onOperation: recordOperation,
@@ -1628,7 +1666,7 @@ class SourceDiscoveryService {
     List<SourceResult> results,
     List<LyricsProvider> active,
     SongCandidate selection, {
-    String? reference,
+    SourceResult? reference,
     CancellationToken? cancel,
     Map<String, CancellationToken> providerCancellation = const {},
     void Function(String providerId, ProviderOperation operation)? onOperation,
@@ -1703,14 +1741,28 @@ class SourceDiscoveryService {
       }
       return;
     }
-    bool lyricsAgree(String body) => reference != null
-        ? _agreement(body, reference) ||
-              _partialAgreement(body, reference) ||
-              _noisyAgreement(body, reference)
-        : charts.any(
-            (chart) =>
-                _agreement(body, chart) || _partialAgreement(body, chart),
-          );
+    bool referenceEligible() =>
+        reference == null || eligible(reference.candidate.providerId);
+    bool lyricsAgree(String body) {
+      if (!referenceEligible()) return false;
+      if (reference == null) {
+        // Chart-to-chart votes have no anchored lyric reference and therefore
+        // retain the normal vocabulary requirement.
+        return charts.any(
+          (chart) => _agreement(body, chart) || _partialAgreement(body, chart),
+        );
+      }
+      return _agreement(
+            body,
+            reference.body,
+            allowShortRecordingReference:
+                reference.matchKind == MatchKind.sameRecording &&
+                recordingCompatible(selection, reference),
+          ) ||
+          _partialAgreement(body, reference.body) ||
+          _noisyAgreement(body, reference.body);
+    }
+
     bool canVote(SourceResult result) =>
         result.hasChords &&
         result.matchKind != MatchKind.rejected &&
@@ -1727,10 +1779,15 @@ class SourceDiscoveryService {
     )) {
       final id = provider.definition.id;
       cancel?.throwIfCancelled();
-      if (!eligible(id)) continue;
+      if (!eligible(id) || !referenceEligible()) continue;
       final checkCancel = CancellationToken();
       cancel?.cancelled.then((_) => checkCancel.cancel());
       providerCancellation[id]?.cancelled.then((_) => checkCancel.cancel());
+      if (reference != null) {
+        providerCancellation[reference.candidate.providerId]?.cancelled.then(
+          (_) => checkCancel.cancel(),
+        );
+      }
       try {
         final found = <SourceResult>[];
         final best =
@@ -1760,7 +1817,7 @@ class SourceDiscoveryService {
               },
             );
         cancel?.throwIfCancelled();
-        if (!eligible(id)) continue;
+        if (!eligible(id) || !referenceEligible()) continue;
         for (final chart in [best, ...found]) {
           if (canVote(chart)) votes.add((providerId: id, chart: chart));
         }
@@ -1774,6 +1831,8 @@ class SourceDiscoveryService {
       }
     }
     cancel?.throwIfCancelled();
+    // Reference cancellation invalidates the lyric proof for this vote batch.
+    if (!referenceEligible()) return;
     // Providers cancelled or disabled during the lookups drop out entirely.
     final current = [
       for (final i in acceptedIndexes())
@@ -1863,7 +1922,15 @@ List<String> _words(String body) => normalizedIdentity(
       .replaceAll(RegExp(r'\{[^}\n]*\}'), ' ')
       .replaceAll(RegExp(r'(?<!\\)\[[^\]\n]*\]'), ''),
 ).split(' ').where((w) => w.isNotEmpty).toList();
-bool _agreement(String chart, String reference) {
+bool _agreement(
+  String chart,
+  String reference, {
+  bool allowShortRecordingReference = false,
+}) {
+  if (allowShortRecordingReference &&
+      shortRecordingLyricAgreement(chart, reference)) {
+    return true;
+  }
   final a = _words(chart),
       b = _words(reference),
       aa = a.toSet(),

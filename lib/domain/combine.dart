@@ -9,6 +9,7 @@ import 'arrangement.dart';
 import 'artist_credit.dart';
 import 'arrangement_context.dart';
 import 'lyric_word_identity.dart';
+import 'short_lyric_reference.dart';
 import 'chord_key_estimate.dart' show estimateChordKey;
 import 'timing.dart' show timingOccurrenceMap;
 
@@ -190,11 +191,22 @@ bool _sameSong(SongCandidate a, SongCandidate b) {
 /// the main artist of "Main & Others" or "Main feat. Guest", and may drop a
 /// leading article. Only for charts whose lyrics discovery has corroborated.
 bool _sameArrangedSong(SongCandidate a, SongCandidate b) {
-  String title(String value) =>
-      _baseTitle(value).replaceFirst(RegExp(r'^(?:the|a|an) '), '');
+  for (final entry in a.recordingIds.entries) {
+    if (b.recordingIds.containsKey(entry.key) &&
+        b.recordingIds[entry.key] != entry.value) {
+      return false;
+    }
+  }
+  String title(String value) => _baseTitle(
+    foldLyricVowelAccents(value),
+  ).replaceFirst(RegExp(r'^(?:the|a|an) '), '');
   final song = title(a.title);
   if (song.isEmpty || song != title(b.title)) return false;
-  return artistCreditsMatch(a.artist, b.artist, _identityNorm);
+  return artistCreditsMatch(
+    a.artist,
+    b.artist,
+    (value) => _identityNorm(foldLyricVowelAccents(value)),
+  );
 }
 
 bool _hasRecordingIdentityScope(SongCandidate candidate) =>
@@ -2328,6 +2340,14 @@ SongDocument combineSources(
 }) {
   // Contextual composer/work credits can authorize a chart only through a
   // resolved full lyric reference belonging to this selected recording.
+  bool enoughLyricEvidence(SourceResult source) =>
+      _norm(
+            plainLyrics(source.body),
+          ).split(' ').where((word) => word.isNotEmpty).toSet().length >=
+          12 ||
+      source.matchKind == MatchKind.sameRecording &&
+          recordingCompatible(selected, source) &&
+          isShortRecordingLyricBody(source.body);
   final arrangementContexts = results
       .where(
         (source) =>
@@ -2337,10 +2357,7 @@ SongDocument combineSources(
             source.extra['requiresLyricsAgreement'] != true &&
             source.extra['requiresRecordingLyricsAgreement'] != true &&
             recordingCompatible(selected, source) &&
-            _norm(
-                  plainLyrics(source.body),
-                ).split(' ').where((word) => word.isNotEmpty).toSet().length >=
-                12,
+            enoughLyricEvidence(source),
       )
       .toList();
   bool contextMatches(SourceResult chart) => arrangementContexts.any(
@@ -2368,18 +2385,42 @@ SongDocument combineSources(
             source.extra['requiresRecordingLyricsAgreement'] != true &&
             (_sameSong(selected, source.candidate) ||
                 historicalMatches(source)) &&
-            _norm(
-                  plainLyrics(source.body),
-                ).split(' ').where((word) => word.isNotEmpty).toSet().length >=
-                12,
+            enoughLyricEvidence(source),
       )
       .toList();
+  // A longer same-song performance must not bypass the selected short
+  // recording's stricter ordered-sequence proof.
+  final shortRecordingReferences = lyricReferences
+      .where(
+        (reference) =>
+            reference.matchKind == MatchKind.sameRecording &&
+            recordingCompatible(selected, reference) &&
+            isShortRecordingLyricBody(reference.body),
+      )
+      .toList();
+  final donorReferences = shortRecordingReferences.isEmpty
+      ? lyricReferences
+      : shortRecordingReferences;
   final matching = results.where((s) {
     final wikiSource = s.candidate.providerId == 'wikisource';
     final allowedRejectedAlternative =
         allowRejectedPreferredSource &&
         s.id == preferredSourceId &&
         !wikiSource;
+    if (!allowedRejectedAlternative &&
+        s.id != preferredSourceId &&
+        s.hasChords &&
+        shortRecordingReferences.isNotEmpty &&
+        (!const {
+              MatchKind.sameSong,
+              MatchKind.sameRecording,
+            }.contains(s.matchKind) ||
+            !shortRecordingReferences.any(
+              (reference) =>
+                  shortRecordingLyricAgreement(s.body, reference.body),
+            ))) {
+      return false;
+    }
     final requiresRecordingContext =
         s.extra['requiresRecordingLyricsAgreement'] == true;
     if (!allowedRejectedAlternative &&
@@ -2398,7 +2439,11 @@ SongDocument combineSources(
               MatchKind.sameSong,
               MatchKind.sameRecording,
             }.contains(s.matchKind) ||
-            lyricReferences.isEmpty)) {
+            !donorReferences.any(
+              (reference) =>
+                  !isShortRecordingLyricBody(reference.body) ||
+                  shortRecordingLyricAgreement(s.body, reference.body),
+            ))) {
       return false;
     }
     final editionAllowed =
