@@ -92,6 +92,31 @@ void main() {
     );
   });
 
+  test('commas inside band names do not establish a main artist', () {
+    final chords = _Chords();
+    for (final pair in [
+      ('Earth, Wind & Fire', 'Earth'),
+      ('Earth', 'Earth, Wind & Fire'),
+    ]) {
+      expect(
+        sameArrangement(
+          _song('Harbor Lights', pair.$1),
+          _song('Harbor Lights', pair.$2),
+          chords,
+        ),
+        isFalse,
+      );
+    }
+    expect(
+      sameArrangement(
+        _song('Harbor Lights', 'Earth, Wind & Fire'),
+        _song('Harbor Lights', 'Earth, Wind & Fire'),
+        chords,
+      ),
+      isTrue,
+    );
+  });
+
   test('a corroborated chart crediting the main artist gives chords', () {
     const selected = SongCandidate(
       providerId: 'lyrics',

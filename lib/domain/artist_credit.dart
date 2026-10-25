@@ -1,6 +1,6 @@
 /// Whether two artist credits name the same act on a chord site: equal, or
 /// one is the other's main credit ("Bob Marley" for "Bob Marley & The
-/// Wailers", "Lady Gaga" for "Lady Gaga feat. Someone"). Only "&", commas and
+/// Wailers", "Lady Gaga" for "Lady Gaga feat. Someone"). Only "&" and
 /// featuring credits separate artists; "Florence and the Machine" and
 /// "Florence + The Machine" are band names, not "Florence".
 bool artistCreditsMatch(String a, String b, String Function(String) normalize) {
@@ -12,6 +12,6 @@ bool artistCreditsMatch(String a, String b, String Function(String) normalize) {
 }
 
 final _separators = RegExp(
-  r'\s*(?:&|,|\bfeat\.?|\bft\.?|\bfeaturing\b)\s*',
+  r'\s*(?:&|\bfeat\.?|\bft\.?|\bfeaturing\b)\s*',
   caseSensitive: false,
 );
