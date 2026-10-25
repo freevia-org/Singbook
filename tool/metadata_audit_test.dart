@@ -253,6 +253,14 @@ Future<void> _audit() async {
       if (group.durationSeconds == null) issues.add('search: no duration');
 
       final selection = group.representative;
+      if (verbose) {
+        print(
+          '   selected ${selection.providerId} album=${selection.album} '
+          'dur=${selection.durationSeconds} group album=${group.album} '
+          'dur=${group.durationSeconds} members='
+          '${group.members.map((m) => '${m.providerId}:${m.album}:${m.durationSeconds}').join(', ')}',
+        );
+      }
       final results = await discovery.discover(selection);
       final doc = combineSources(selection, results);
       if (verbose) {
@@ -285,11 +293,21 @@ Future<void> _audit() async {
           print(
             '   ${r.candidate.providerId} ${r.matchKind.name} '
             'chords=${r.hasChords} lines=${parseArrangement(r.body).length} '
+            'album=${r.candidate.album ?? r.metadata['album']} '
+            'dur=${r.candidate.durationSeconds ?? r.metadata['durationSeconds']} '
+            'rec=${(r.extra['keyRecording'] as Map?)?['key']} '
+            'est=${r.hasChords ? estimateChordKey(r.body)?.key : ''} '
             'extra=${r.extra.keys.where((k) => !k.startsWith('_')).join(',')}',
           );
         }
       }
       final m = doc.metadata;
+      if (verbose) {
+        print(
+          '   combined chordKeyEstimate=${doc.extra['chordKeyEstimate']} '
+          'capo=${m['capo']} key=${m['key']} chordSources=${doc.extra['chordSourceIds']}',
+        );
+      }
       for (final field in ['album', 'artworkUrl', 'durationSeconds']) {
         if (m[field] == null) issues.add('combined: no $field');
       }

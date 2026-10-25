@@ -344,6 +344,16 @@ void main() {
       },
     );
 
+    test('an agreeing recording key is kept for naming the key', () async {
+      final results = await SourceDiscoveryService([
+        _Provider('lyrics', {'song': _lines.join('\n')}, chords: false),
+        _Provider('ug', {'g': clearG}),
+      ], recordingKeys: service(7, [])).discover(recorded);
+      final chart = chartsOf(results).single;
+      expect(chart.extra['keyRecording'], containsPair('key', 'G'));
+      expect(chart.extra.containsKey('keyConsensus'), isFalse);
+    });
+
     test('without the service no recording key is requested', () async {
       final results = await SourceDiscoveryService([
         _Provider('lyrics', {'song': _lines.join('\n')}, chords: false),

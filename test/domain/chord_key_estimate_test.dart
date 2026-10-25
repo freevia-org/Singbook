@@ -107,4 +107,32 @@ void main() {
       );
     }
   });
+
+  test('a measured key settles a key the chords leave open', () {
+    const body = '''
+[Am] [F] [C] [G]
+[Am] [F] [C] [G]
+''';
+    expect(estimateChordKey(body, hint: 'Am')?.key, 'Am');
+    expect(estimateChordKey(body, hint: 'C')?.key, 'C');
+    // A key outside the chords' signature is no evidence.
+    expect(estimateChordKey(body, hint: 'E'), isNull);
+    // A clear estimate is never overridden.
+    const clear = '''
+[E] [A/E] [Am/E] [E]
+[E] [A/E] [C#m] [F#]
+[G#m] [F#] [B] [B/A]
+[E] [A/E] [C#m] [F#]
+[D/F#] [A/E] [E]
+''';
+    expect(estimateChordKey(clear, hint: 'C#m')?.key, 'E');
+  });
+
+  test('keys take their conventional names', () {
+    const sharps = '''
+[D#] [G#] [A#] [D#] [Cm] [G#] [A#] [D#]
+[D#] [G#] [A#] [D#] [Cm] [G#] [A#] [D#]
+''';
+    expect(estimateChordKey(sharps)?.key, 'Eb');
+  });
 }

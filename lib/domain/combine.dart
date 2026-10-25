@@ -30,6 +30,48 @@ String _norm(String text) => text
     .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
     .trim();
 
+/// Whether two catalog album names name the same release for display:
+/// equal once bracketed qualifiers, the artist's name, years, anniversaries
+/// and packaging words ("Remastered", "Deluxe Edition") are set aside.
+/// "Let It Be (Remastered 2009)" and "The Beatles - Let It Be" match "Let It
+/// Be"; "Let It Be... Naked" does not.
+bool _sameDisplayAlbum(String a, String b, String artist) {
+  final artistWords = _norm(artist).split(' ').toSet();
+  Set<String> words(String album) => {
+    for (final word in _norm(
+      album.replaceAll(RegExp(r'[(\[][^()\[\]]*[)\]]'), ' '),
+    ).split(' '))
+      if (word.isNotEmpty &&
+          !artistWords.contains(word) &&
+          !_albumPackaging.contains(word) &&
+          !RegExp(r'^(?:(?:19|20)\d\d|\d+(?:st|nd|rd|th))$').hasMatch(word))
+        word,
+  };
+  final first = words(a), second = words(b);
+  return first.isNotEmpty &&
+      first.length == second.length &&
+      first.containsAll(second);
+}
+
+const _albumPackaging = {
+  'remaster',
+  'remastered',
+  'deluxe',
+  'edition',
+  'expanded',
+  'anniversary',
+  'special',
+  'version',
+  'bonus',
+  'track',
+  'tracks',
+  'disc',
+  'cd',
+  'cd1',
+  'cd2',
+  'the',
+};
+
 void _syncMapFieldContributors(
   String field,
   Map<String, Map<String, Set<String>>> mapEntryContributors,
@@ -1314,6 +1356,27 @@ String? _agreedKeyEstimate(List<SourceResult> sources) {
   return keys.length == 1 ? keys.single : null;
 }
 
+/// A key for [body] (in chord shapes) when its chords alone leave a relative
+/// major and minor open and the recording key measured for its chord
+/// [sources] names one of them.
+String? _recordingHintedEstimate(
+  String body,
+  List<SourceResult> sources,
+  Object? capo,
+) {
+  if (estimateChordKey(body) != null) return null;
+  final measured = {
+    for (final source in sources)
+      if (jsonMap(source.extra['keyRecording'])['key'] case final String key)
+        key,
+  };
+  if (measured.length != 1) return null;
+  return estimateChordKey(
+    body,
+    hint: transposeChord(measured.single, (12 - _capoOf(capo)) % 12),
+  )?.key;
+}
+
 /// The key discovery estimated from the majority of a song's chord charts,
 /// while the song still holds the exact chart it was estimated for. Like
 /// [estimateChordKey], it is display-only.
@@ -2410,7 +2473,7 @@ SongDocument combineSources(
         knownAlbum is String &&
         knownAlbum.trim().isNotEmpty &&
         foundAlbum is String &&
-        _norm(knownAlbum) == _norm(foundAlbum) &&
+        _sameDisplayAlbum(knownAlbum, foundAlbum, selected.artist) &&
         _version(selected.title) == _version(source.candidate.title) &&
         (knownDuration == null ||
             sourceDuration == null ||
@@ -2609,9 +2672,20 @@ SongDocument combineSources(
                 )
                 as List<dynamic>;
         values.add({'sourceId': source.id, 'value': entry.value});
+        // Catalogs measure one release a little differently (243.0 and
+        // 243.36 seconds): within three seconds the difference is kept as a
+        // conflict but does not discard the duration.
+        final current = metadata[entry.key];
+        final closeDurations =
+            entry.key == 'durationSeconds' &&
+            current is num &&
+            entry.value is num &&
+            (current - (entry.value as num)).abs() <= 3;
         // Keep an explicit selected-candidate fact, but don't let iteration
         // order silently choose between conflicting provider claims.
-        if (priorOrigin != selected.identity && !isArrangement) {
+        if (priorOrigin != selected.identity &&
+            !isArrangement &&
+            !closeDurations) {
           metadata.remove(entry.key);
           origins.remove(entry.key);
           fieldContributors.remove(entry.key);
@@ -2723,6 +2797,15 @@ SongDocument combineSources(
               (12 - _capoOf(metadata['capo'])) % 12,
             ),
             'bodyHash': _bodyHash(finalBody),
+          }
+        else if (_recordingHintedEstimate(finalBody, [
+              for (final id in chordSourceIds) ?sourcesById[id],
+            ], metadata['capo'])
+            case final String shapes)
+          'chordKeyEstimate': {
+            'key': shapes,
+            'bodyHash': _bodyHash(finalBody),
+            'hint': 'recording',
           },
       if (chordSourceIds.any(
         (sourceId) => sourcesById[sourceId]?.extra['pendingMatchCheck'] == true,

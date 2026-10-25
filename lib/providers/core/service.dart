@@ -1448,7 +1448,18 @@ class SourceDiscoveryService {
           );
           return key != null && !keysAgree(key, measured);
         });
-    if (!disagree && !contradicted && !unheard) return;
+    if (!disagree && !contradicted && !unheard) {
+      // No doubt to settle; the measured key still helps name a key the
+      // chords leave open (a relative major or minor).
+      if (heard != null && heard.providers.every(eligible)) {
+        for (final i in indexes) {
+          results[i] = results[i].copyWith(
+            extra: {...results[i].extra, 'keyRecording': heard.key.toJson()},
+          );
+        }
+      }
+      return;
+    }
     bool lyricsAgree(String body) => reference != null
         ? _agreement(body, reference) ||
               _partialAgreement(body, reference) ||
