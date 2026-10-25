@@ -104,5 +104,12 @@ void main() {
       _catalog('d', 'Harbor Lights', 111),
     ]);
     expect(split.metadata.containsKey('durationSeconds'), isFalse);
+    // [100, 103] and [103, 106] are equally supported: no choice.
+    final tied = _combine([
+      _catalog('a', 'Harbor Lights', 100),
+      _catalog('b', 'Harbor Lights', 103),
+      _catalog('c', 'Harbor Lights', 106),
+    ]);
+    expect(tied.metadata.containsKey('durationSeconds'), isFalse);
   });
 }

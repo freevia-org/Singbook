@@ -65,22 +65,27 @@ double? _sourceDuration(SourceResult source) =>
     _validDuration(source.metadata['duration']);
 
 /// The range of the durations that fall within one three-second window and
-/// make up a strict majority of [durations]; null when none does.
+/// make up a strict majority of [durations]; null when none does, or when two
+/// different windows are equally supported ([100, 103, 106]).
 (double, double)? _majorityDurationRange(List<double> durations) {
   final sorted = [...durations]..sort();
-  (double, double)? best;
+  final windows = <(double, double)>{};
   var bestCount = 0;
   for (var start = 0; start < sorted.length; start++) {
     var end = start;
     while (end + 1 < sorted.length && sorted[end + 1] - sorted[start] <= 3) {
       end++;
     }
-    if (end - start + 1 > bestCount) {
-      bestCount = end - start + 1;
-      best = (sorted[start], sorted[end]);
+    final count = end - start + 1;
+    if (count > bestCount) {
+      bestCount = count;
+      windows.clear();
     }
+    if (count == bestCount) windows.add((sorted[start], sorted[end]));
   }
-  return bestCount * 2 > sorted.length ? best : null;
+  return bestCount * 2 > sorted.length && windows.length == 1
+      ? windows.single
+      : null;
 }
 
 /// Whether two catalog album names name the same release for display:
