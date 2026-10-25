@@ -184,12 +184,16 @@ class SongsterrProvider implements LyricsProvider {
         final anchors = <({int offset, String symbol})>[];
         for (var i = 0; i < pieces.length; i++) {
           final piece = pieces[i];
+          // A chord the site could not name (null) is skipped rather than
+          // failing the whole chart.
+          if (piece['type'] == 'chord' && piece['chord'] == null) continue;
           if (piece['type'] == 'chord') {
             var symbol = _chord(piece['chord']);
             if (i + 2 < pieces.length &&
                 pieces[i + 1]['type'] == 'noise' &&
                 pieces[i + 1]['text'] == '/' &&
-                pieces[i + 2]['type'] == 'chord') {
+                pieces[i + 2]['type'] == 'chord' &&
+                pieces[i + 2]['chord'] != null) {
               final bass = _chord(pieces[i + 2]['chord']);
               if (RegExp(r'^[A-G][#b♯♭]?$').hasMatch(bass) &&
                   !symbol.contains('/')) {
@@ -440,7 +444,18 @@ class UltimateGuitarProvider implements LyricsProvider {
       ).hasMatch(value);
   static const _accidentals = '#b♯♭';
   static const _chordWords = [
-    'maj', 'min', 'dim', 'aug', 'sus', 'add', 'omit', 'no', 'M', 'm', 'Δ', 'ø',
+    'maj',
+    'min',
+    'dim',
+    'aug',
+    'sus',
+    'add',
+    'omit',
+    'no',
+    'M',
+    'm',
+    'Δ',
+    'ø',
     '°',
   ];
 
@@ -464,7 +479,8 @@ class UltimateGuitarProvider implements LyricsProvider {
     if (s.isEmpty || !isRoot(s.codeUnitAt(0))) return false;
     i = accidentals(1);
     const symbols = '#b♯♭+−-';
-    const parenChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#b♯♭,+−-';
+    const parenChars =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#b♯♭,+−-';
     while (i < s.length) {
       final c = s.codeUnitAt(i);
       if (isDigit(c)) {
@@ -543,8 +559,12 @@ class UltimateGuitarProvider implements LyricsProvider {
       r'\[ch\]([^\[\]\r\n]+)\[/ch\]',
       caseSensitive: false,
     ).allMatches(source)) {
+      // "C#o" is shorthand for a diminished chord.
       final before = source.substring(cursor, match.start),
-          symbol = match[1]!.trim();
+          symbol = match[1]!.trim().replaceFirstMapped(
+            RegExp(r'^([A-G](?:#|b)?)o(\d{0,2})(?=$|/)'),
+            (m) => '${m[1]}dim${m[2]}',
+          );
       if (!_validChord(symbol)) {
         throw const ProviderException('invalid_response');
       }

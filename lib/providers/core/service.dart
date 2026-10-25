@@ -10,6 +10,7 @@ import '../../domain/combine.dart'
         keysAgree,
         soundingChartKey,
         soundingTransposition;
+import '../../domain/artist_credit.dart';
 import '../../domain/models.dart';
 import '../../domain/lyrics_variants.dart';
 import '../../domain/edition_identity.dart';
@@ -197,14 +198,17 @@ bool sameSong(SongCandidate selected, SongCandidate result) {
   return true;
 }
 
+/// Whether a chord site's arrangement may be [selected]'s song. Chord sites
+/// may credit only the main artist ("Bob Marley" for "Bob Marley & The
+/// Wailers") and drop a leading article ("House of the Rising Sun"); such
+/// matches still need their lyrics to agree before they are used.
 bool sameArrangement(
   SongCandidate selected,
   SongCandidate result,
   LyricsProvider provider,
 ) {
   if (!provider.definition.capabilities.contains('chords') ||
-      normalizedIdentity(selected.artist) !=
-          normalizedIdentity(result.artist)) {
+      !artistCreditsMatch(selected.artist, result.artist, normalizedIdentity)) {
     return false;
   }
   final a = arrangementTitle(selected.title);
@@ -212,7 +216,9 @@ bool sameArrangement(
   if (a != selected.title) {
     b = b.replaceFirst(RegExp(r'\s+acoustic$', caseSensitive: false), '');
   }
-  return _titleKey(a) == _titleKey(b);
+  String key(String title) =>
+      _titleKey(title).replaceFirst(RegExp(r'^(?:the|a|an) '), '');
+  return key(a) == key(b);
 }
 
 bool _sameAlbum(SongCandidate a, SongCandidate b) =>
@@ -444,7 +450,9 @@ Future<SourceResult> findMatchingSource(
         elapsedMilliseconds: fetchWatch.elapsedMilliseconds,
       );
       if (e.code == 'unavailable') return null;
-      if (e.code == 'extraction_failed') {
+      // One chart that cannot be read leaves the provider's other candidates
+      // to try; all failing still reports why.
+      if (e.code == 'extraction_failed' || e.code == 'invalid_response') {
         unresolved.add(
           ProviderException(
             e.code,
@@ -1431,7 +1439,18 @@ class SourceDiscoveryService {
           );
           return key != null && !keysAgree(key, measured);
         });
-    if (!disagree && !contradicted && !unheard) return;
+    if (!disagree && !contradicted && !unheard) {
+      // No doubt to settle; the measured key still helps name a key the
+      // chords leave open (a relative major or minor).
+      if (heard != null && heard.providers.every(eligible)) {
+        for (final i in indexes) {
+          results[i] = results[i].copyWith(
+            extra: {...results[i].extra, 'keyRecording': heard.key.toJson()},
+          );
+        }
+      }
+      return;
+    }
     bool lyricsAgree(String body) => reference != null
         ? _agreement(body, reference) ||
               _partialAgreement(body, reference) ||

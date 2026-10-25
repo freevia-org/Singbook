@@ -235,7 +235,9 @@ String inferSectionDirectives(String body) {
   return output.join('\n');
 }
 
-String transposeChord(String chord, int semitones) {
+/// [chord] moved by [semitones]. Notes keep the chord's own accidental
+/// (sharps for natural roots) unless [flats] names the target spelling.
+String transposeChord(String chord, int semitones, {bool? flats}) {
   const sharp = [
     'C',
     'C#',
@@ -292,9 +294,11 @@ String transposeChord(String chord, int semitones) {
   final rootPattern = RegExp(r'(^|/)([A-G][#b]{0,2})');
   // Spelling follows the accidental on the root/bass notes only; a lowercase
   // "b" elsewhere (C#7b9, Cadd9b5) is a chord alteration, not a flat note.
-  final useFlats = rootPattern
-      .allMatches(normalized)
-      .any((m) => m.group(2)!.length > 1 && m.group(2)![1] == 'b');
+  final useFlats =
+      flats ??
+      rootPattern
+          .allMatches(normalized)
+          .any((m) => m.group(2)!.length > 1 && m.group(2)![1] == 'b');
   final notes = useFlats ? flat : sharp;
   return normalized.replaceAllMapped(rootPattern, (match) {
     final note = match.group(2)!;
@@ -310,7 +314,7 @@ String transposeChord(String chord, int semitones) {
   });
 }
 
-String transposeBody(String body, int semitones) => body
+String transposeBody(String body, int semitones, {bool? flats}) => body
     .split('\n')
     .map(
       // Directive lines ({comment: Capo [D] shape}) are never transposed; this
@@ -319,7 +323,8 @@ String transposeBody(String body, int semitones) => body
           ? line
           : line.replaceAllMapped(
               chordPattern,
-              (match) => '[${transposeChord(match.group(1)!, semitones)}]',
+              (match) =>
+                  '[${transposeChord(match.group(1)!, semitones, flats: flats)}]',
             ),
     )
     .join('\n');

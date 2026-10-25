@@ -330,6 +330,24 @@ void main() {
       await t.close();
     });
   });
+  test('Better Lyrics refusing an uncached song means unavailable', () async {
+    final t = wire(
+      (r) => r.url.host == 'lrclib.net'
+          ? jsonResponse(lrcRecord())
+          : http.Response(
+              '{"error":"API key required"}',
+              401,
+              headers: {'content-type': 'application/json'},
+            ),
+    );
+    await expectLater(
+      BetterLyricsProvider(t).resolve(candidate(provider: 'betterlyrics')),
+      throwsA(
+        isA<ProviderException>().having((e) => e.code, 'code', 'unavailable'),
+      ),
+    );
+    await t.close();
+  });
   group('matching and discovery', () {
     test(
       'unsupported raw timing survives a timing-only provider result',
@@ -601,6 +619,23 @@ void main() {
         );
       },
     );
+    test('Songsterr skips a chord it could not name', () {
+      final r = SongsterrProvider.parsePage(
+        page([
+          ...lines(),
+          {
+            'type': 'line',
+            'line': [
+              text('A third invented '),
+              {'type': 'chord', 'chord': null},
+              text('line'),
+            ],
+          },
+        ]),
+        path,
+      );
+      expect(r.body.split('\n').last, 'A third invented line');
+    });
     test('Songsterr rejects unknown rows, tabs-only and wrong identity', () {
       expect(
         () => SongsterrProvider.parsePage(
@@ -655,6 +690,14 @@ void main() {
         expect(body.endsWith('[C]'), true);
       },
     );
+    test('Ultimate Guitar reads "o" as a diminished chord', () {
+      const raw =
+          '[tab][ch]C#o[/ch]      [ch]Bo7[/ch]\nA paper satellite sails[/tab]\n'
+          '[tab][ch]D[/ch]\nAbove an empty desk at night[/tab]';
+      final body = UltimateGuitarProvider.parseText(raw);
+      expect(body, contains('[C#dim]'));
+      expect(body, contains('[Bdim7]'));
+    });
     test(
       'Ultimate Guitar rejects invalid tags and charts without meaningful words',
       () {

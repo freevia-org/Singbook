@@ -6,6 +6,7 @@ import 'models.dart';
 import 'edition_identity.dart';
 import 'metadata_enrichment.dart';
 import 'arrangement.dart';
+import 'artist_credit.dart';
 import 'chord_key_estimate.dart' show estimateChordKey;
 import 'timing.dart' show timingOccurrenceMap;
 
@@ -29,6 +30,103 @@ String _norm(String text) => text
     .toLowerCase()
     .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
     .trim();
+
+/// Whether [source], found as the same song, may lend display facts to
+/// [selected] through a matching album name.
+bool _lendsAlbumDisplay(
+  SongCandidate selected,
+  SourceResult source,
+  String album,
+) {
+  final scoped =
+      source.candidate.metadata['identityScope'] ??
+      source.metadata['identityScope'] ??
+      source.extra['identityScope'];
+  final found = source.candidate.album ?? source.metadata['album'];
+  return source.matchKind == MatchKind.sameSong &&
+      !{
+        'composition',
+        'work',
+        'arrangement',
+        'artist',
+        'image',
+      }.contains(scoped) &&
+      album.trim().isNotEmpty &&
+      found is String &&
+      _sameDisplayAlbum(album, found, selected.artist) &&
+      _version(selected.title) == _version(source.candidate.title);
+}
+
+double? _sourceDuration(SourceResult source) =>
+    _validDuration(source.metadata['durationSeconds']) ??
+    _validDuration(source.candidate.durationSeconds) ??
+    _validDuration(source.candidate.metadata['durationSeconds']) ??
+    _validDuration(source.candidate.metadata['duration']) ??
+    _validDuration(source.metadata['duration']);
+
+/// The range of the durations that fall within one three-second window and
+/// make up a strict majority of [durations]; null when none does, or when two
+/// different windows are equally supported ([100, 103, 106]).
+(double, double)? _majorityDurationRange(List<double> durations) {
+  final sorted = [...durations]..sort();
+  final windows = <(double, double)>{};
+  var bestCount = 0;
+  for (var start = 0; start < sorted.length; start++) {
+    var end = start;
+    while (end + 1 < sorted.length && sorted[end + 1] - sorted[start] <= 3) {
+      end++;
+    }
+    final count = end - start + 1;
+    if (count > bestCount) {
+      bestCount = count;
+      windows.clear();
+    }
+    if (count == bestCount) windows.add((sorted[start], sorted[end]));
+  }
+  return bestCount * 2 > sorted.length && windows.length == 1
+      ? windows.single
+      : null;
+}
+
+/// Whether two catalog album names name the same release for display:
+/// equal once the artist's name, years, anniversaries and packaging words
+/// ("Remastered", "Deluxe Edition") are set aside. "Let It Be (Remastered
+/// 2009)" and "The Beatles - Let It Be" match "Let It Be"; "Let It Be...
+/// Naked" and "Hotel California (Live)" keep their own words and do not.
+bool _sameDisplayAlbum(String a, String b, String artist) {
+  final artistWords = _norm(artist).split(' ').toSet();
+  Set<String> words(String album) => {
+    for (final word in _norm(album).split(' '))
+      if (word.isNotEmpty &&
+          !artistWords.contains(word) &&
+          !_albumPackaging.contains(word) &&
+          !RegExp(r'^(?:(?:19|20)\d\d|\d+(?:st|nd|rd|th))$').hasMatch(word))
+        word,
+  };
+  final first = words(a), second = words(b);
+  return first.isNotEmpty &&
+      first.length == second.length &&
+      first.containsAll(second);
+}
+
+const _albumPackaging = {
+  'remaster',
+  'remastered',
+  'deluxe',
+  'edition',
+  'expanded',
+  'anniversary',
+  'special',
+  'version',
+  'bonus',
+  'track',
+  'tracks',
+  'disc',
+  'cd',
+  'cd1',
+  'cd2',
+  'the',
+};
 
 void _syncMapFieldContributors(
   String field,
@@ -82,6 +180,17 @@ bool _sameSong(SongCandidate a, SongCandidate b) {
   // Two unknown (empty) artists or titles are not evidence of the same song.
   if (artist.isEmpty || title.isEmpty) return false;
   return artist == _identityNorm(b.artist) && title == _baseTitle(b.title);
+}
+
+/// A chord site's arrangement of [b]'s song: chord sites may credit only
+/// the main artist of "Main & Others" or "Main feat. Guest", and may drop a
+/// leading article. Only for charts whose lyrics discovery has corroborated.
+bool _sameArrangedSong(SongCandidate a, SongCandidate b) {
+  String title(String value) =>
+      _baseTitle(value).replaceFirst(RegExp(r'^(?:the|a|an) '), '');
+  final song = title(a.title);
+  if (song.isEmpty || song != title(b.title)) return false;
+  return artistCreditsMatch(a.artist, b.artist, _identityNorm);
 }
 
 bool _hasRecordingIdentityScope(SongCandidate candidate) =>
@@ -346,9 +455,38 @@ List<int?>? chordKeyMajority(
 /// the automatically combined arrangement uses the corrected key.
 String _keyCorrectedBody(SourceResult source) {
   final shift = source.extra['keyShift'];
+  final estimate = source.extra['keyEstimate'];
   return shift is int && shift % 12 != 0 && source.hasChords
-      ? transposeBody(source.body, shift)
+      ? transposeBody(
+          source.body,
+          shift,
+          flats: estimate is String ? _flatKey(estimate) : null,
+        )
       : source.body;
+}
+
+/// Whether a key is conventionally written with flats (F, Bb, Eb, Ab, Db,
+/// Gb and their relative minors).
+bool _flatKey(String key) => const {
+  'F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb', 'Cb', //
+  'Dm', 'Gm', 'Cm', 'Fm', 'Bbm', 'Ebm', 'Abm',
+}.contains(key.trim());
+
+/// The note spelling a chart's chords use: flats when its roots are mostly
+/// flat, sharps when mostly sharp, otherwise its estimated key's spelling.
+bool? _chartSpelling(String body) {
+  var flats = 0, sharps = 0;
+  for (final line in parseArrangement(body)) {
+    for (final anchor in line.chords) {
+      final root = RegExp(r'^[A-G]([#b♯♭]?)').firstMatch(anchor.chord);
+      final accidental = root?.group(1) ?? '';
+      if (accidental == 'b' || accidental == '♭') flats++;
+      if (accidental == '#' || accidental == '♯') sharps++;
+    }
+  }
+  if (flats != sharps) return flats > sharps;
+  final key = estimateChordKey(body)?.key;
+  return key == null ? null : _flatKey(key);
 }
 
 bool recordingCompatible(SongCandidate selected, SourceResult result) {
@@ -776,6 +914,11 @@ Map<int, List<ChordAnchor>> _phraseChords(
     phrases.putIfAbsent(phrase, () => []).add(line);
   }
   final result = <int, List<ChordAnchor>>{};
+  // Text already given chords by a phrase; another placement may not overlap
+  // it, or two readings of one passage ("na na na ...") would interleave.
+  final claimed = <(int, int)>[];
+  bool overlapsClaimed(int start, int end) =>
+      claimed.any((range) => start < range.$2 && range.$1 < end);
   // Bound synchronous matching even for deliberately repetitive documents.
   // Unplaced chart data remains in the original source document.
   var comparisonBudget = (haystack.length + chart.length) * 8;
@@ -804,6 +947,8 @@ Map<int, List<ChordAnchor>> _phraseChords(
       if (entry.key.split(' ').length < 3 && !wholeLine) {
         continue;
       }
+      // Overlapping occurrences of one phrase are one passage.
+      if (matches.isNotEmpty && start < matches.last.end) continue;
       matches.add((start: start, end: end, wholeLine: wholeLine));
     }
     // A single partial phrase does not identify which of several different
@@ -814,6 +959,8 @@ Map<int, List<ChordAnchor>> _phraseChords(
     for (final match in matches) {
       if (ambiguous && !match.wholeLine) continue;
       final start = match.start, end = match.end;
+      if (overlapsClaimed(start, end)) continue;
+      claimed.add((start, end));
       for (final chord in donor.chords) {
         var index = normalized.offsets
             .where((offset) => offset < chord.offset)
@@ -1293,6 +1440,27 @@ String? _agreedKeyEstimate(List<SourceResult> sources) {
   return keys.length == 1 ? keys.single : null;
 }
 
+/// A key for [body] (in chord shapes) when its chords alone leave a relative
+/// major and minor open and the recording key measured for its chord
+/// [sources] names one of them.
+String? _recordingHintedEstimate(
+  String body,
+  List<SourceResult> sources,
+  Object? capo,
+) {
+  if (estimateChordKey(body) != null) return null;
+  final measured = {
+    for (final source in sources)
+      if (jsonMap(source.extra['keyRecording'])['key'] case final String key)
+        key,
+  };
+  if (measured.length != 1) return null;
+  return estimateChordKey(
+    body,
+    hint: transposeChord(measured.single, (12 - _capoOf(capo)) % 12),
+  )?.key;
+}
+
 /// The key discovery estimated from the majority of a song's chord charts,
 /// while the song still holds the exact chart it was estimated for. Like
 /// [estimateChordKey], it is display-only.
@@ -1433,16 +1601,54 @@ const _repeatingSections = {'verse', 'chorus', 'pre-chorus', 'refrain'};
 
 final _wordToken = RegExp(r"[\p{L}\p{N}']+", unicode: true);
 
+/// A line's words, lower case and without apostrophes; a dropped "g"
+/// ("darlin'") is restored, as charts and lyrics spell it either way.
 List<({String word, int start, int end})> _lineWords(String text) => [
   for (final match in _wordToken.allMatches(text))
     (
-      word: match[0]!.toLowerCase().replaceAll("'", ''),
+      word: match[0]!
+          .toLowerCase()
+          .replaceFirst(RegExp(r"in'$"), 'ing')
+          .replaceAll("'", ''),
       start: match.start,
       end: match.end,
     ),
 ];
 
 typedef _Words = List<({String word, int start, int end})>;
+
+/// Vocables sung around the lyrics that charts often leave out.
+const _interjections = {
+  'oh',
+  'ooh',
+  'oooh',
+  'ah',
+  'ahh',
+  'aah',
+  'uh',
+  'whoa',
+  'woah',
+  'woo',
+  'yeah',
+  'yeh',
+  'hey',
+  'na',
+  'la',
+  'da',
+  'doo',
+  'dum',
+  'ba',
+  'sha',
+  'mm',
+  'mmm',
+  'hmm',
+  'ha',
+  'oh-oh',
+  'ay',
+  'ayy',
+  'eh',
+  'o',
+};
 
 /// [line]'s chords moved onto words [to] through word alignment [pairs]
 /// (from-index, to-index): each chord's target word index and offset inside
@@ -1532,8 +1738,9 @@ double _lineSimilarity(_Words a, _Words b, List<(int, int)> pairs) {
 /// cover two adjacent lyric lines, as charts that join short lines do. Lyric
 /// lines left over (a chorus the chart writes once) then take the chords of
 /// the single closest chart line; equally close chart lines with different
-/// chords place nothing. Lines of fewer than three words, or whose offsets
-/// are not plain characters, are skipped.
+/// chords place nothing. A lyric line of fewer than three words takes part
+/// only joined with the next line; chart lines of fewer than three words,
+/// and lines whose offsets are not plain characters, are skipped.
 Map<int, List<ChordAnchor>> _fuzzyLineChords(
   List<ArrangementLine> target,
   String chart,
@@ -1553,18 +1760,27 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
       for (final word in donor.words) word.word,
   };
   _Words known(_Words words) {
-    final kept = [
+    // Interjections the chart never writes ("doo doo", "oh") always go.
+    final sung = [
       for (final word in words)
+        if (vocabulary.contains(word.word) ||
+            !_interjections.contains(word.word))
+          word,
+    ];
+    final kept = [
+      for (final word in sung)
         if (vocabulary.contains(word.word)) word,
     ];
-    return kept.length >= 3 && kept.length >= words.length * .6 ? kept : words;
+    if (kept.length >= 3 && kept.length >= words.length * .6) return kept;
+    return sung.length >= 3 ? sung : words;
   }
 
+  // Lines of one or two words take part only joined with the next line.
   final lyrics = [
     for (var i = 0; i < target.length; i++)
       if (!target[i].directive &&
           plainText(target[i].text) &&
-          _lineWords(target[i].text).length >= 3 &&
+          _lineWords(target[i].text).isNotEmpty &&
           _lineWords(target[i].text).length <= 40)
         (index: i, words: known(_lineWords(target[i].text))),
   ];
@@ -1588,6 +1804,7 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
   ), () => _alignWords(donors[d].words, wordsOf(l, span)));
   double similarity(int d, int l, [int span = 1]) {
     if (span == 2 && !joinable(l)) return 0;
+    if (wordsOf(l, span).length < 3) return 0;
     final value = _lineSimilarity(
       donors[d].words,
       wordsOf(l, span),
@@ -1839,7 +2056,7 @@ List<ChordAnchor>? _retargetChords(
   return moved;
 }
 
-({String body, List<String> sourceIds}) _overlayChords(
+({String body, List<String> sourceIds, Set<String> movedIds}) _overlayChords(
   String body,
   List<SourceResult> sources,
   SongCandidate selected,
@@ -1909,8 +2126,37 @@ List<ChordAnchor>? _retargetChords(
   };
   SourceResult? primary = base.hasChords ? base : null;
   final contributorIds = <String>[];
-  for (final candidate in candidates) {
+  // Donors whose chords were moved into the primary chart's shapes.
+  final movedIds = <String>{};
+  for (var candidate in candidates) {
     if (primary != null) {
+      // A chart played with another capo sounds the same once its chords
+      // move by the capo difference: C shapes at capo 3 are Eb shapes at no
+      // capo. Charts still transposed from the majority key by an unknown
+      // amount are not moved.
+      final move =
+          (_capoOf(_setupValue(candidate.source, selected, 'capo')) -
+              _capoOf(_setupValue(primary, selected, 'capo'))) %
+          12;
+      if (move != 0 && _keyConsensusRank(candidate.source) > 0) {
+        final flats = _chartSpelling(_keyCorrectedBody(primary));
+        candidate = (
+          source: candidate.source,
+          chords: {
+            for (final entry in candidate.chords.entries)
+              entry.key: [
+                for (final anchor in entry.value)
+                  ChordAnchor(
+                    anchor.offset,
+                    transposeChord(anchor.chord, move, flats: flats),
+                  ),
+              ],
+          },
+          coverage: candidate.coverage,
+          confidence: candidate.confidence,
+        );
+        movedIds.add(candidate.source.id);
+      }
       if (!_compatibleArrangementSetup(primary, candidate.source, selected)) {
         continue;
       }
@@ -1940,7 +2186,16 @@ List<ChordAnchor>? _retargetChords(
                 (explicitSetupValue(primary!, key) == null) ==
                 (explicitSetupValue(candidate.source, key) == null),
           );
-      if (contradicts || (!agrees && !explicitSetup)) continue;
+      // Discovery's key check placing both charts in the key most charts
+      // share also shows they can be read together.
+      final checkedSameKey =
+          primary.extra.containsKey('keyConsensus') &&
+          candidate.source.extra.containsKey('keyConsensus') &&
+          _keyConsensusRank(primary) > 0 &&
+          _keyConsensusRank(candidate.source) > 0;
+      if (contradicts || (!agrees && !explicitSetup && !checkedSameKey)) {
+        continue;
+      }
     }
     var added = false;
     for (final entry in candidate.chords.entries) {
@@ -1953,7 +2208,9 @@ List<ChordAnchor>? _retargetChords(
       contributorIds.add(candidate.source.id);
     }
   }
-  if (contributorIds.isEmpty) return (body: body, sourceIds: const []);
+  if (contributorIds.isEmpty) {
+    return (body: body, sourceIds: const [], movedIds: const <String>{});
+  }
   // Charts often write a repeated chorus once, and repeats vary in backing
   // vocals ("(stand by me)"). A lyric line whose words, outside brackets,
   // equal a line that received chords takes those chords at the same word
@@ -2035,6 +2292,7 @@ List<ChordAnchor>? _retargetChords(
   return (
     body: output.join('\n'),
     sourceIds: applied ? contributorIds : const [],
+    movedIds: applied ? movedIds : const <String>{},
   );
 }
 
@@ -2064,7 +2322,11 @@ SongDocument combineSources(
         s.id == preferredSourceId;
     final identityMatches = wikiSource
         ? historicalMatches(s)
-        : (_sameSong(s.candidate, selected) && editionAllowed) ||
+        : ((_sameSong(s.candidate, selected) ||
+                      (s.hasChords &&
+                          s.extra['requiresLyricsAgreement'] == true &&
+                          _sameArrangedSong(s.candidate, selected))) &&
+                  editionAllowed) ||
               allowedRejectedAlternative;
     return identityMatches &&
         (s.matchKind != MatchKind.rejected ||
@@ -2129,7 +2391,11 @@ SongDocument combineSources(
           selected,
           best,
         )
-      : (body: best.body, sourceIds: const <String>[]);
+      : (
+          body: best.body,
+          sourceIds: const <String>[],
+          movedIds: const <String>{},
+        );
   final sectionMerged = preferredSourceId == null
       ? _overlaySections(
           merged.body,
@@ -2203,7 +2469,10 @@ SongDocument combineSources(
   final arrangementSourceIds = <String>{best.id};
   for (final sourceId in chordSourceIds) {
     final source = sourcesById[sourceId];
+    // A chart whose chords were moved into the main chart's shapes no longer
+    // has its own key or capo.
     if (source != null &&
+        !merged.movedIds.contains(sourceId) &&
         (recordingCompatible(selected, source) ||
             merged.sourceIds.contains(sourceId))) {
       arrangementSourceIds.add(sourceId);
@@ -2261,6 +2530,23 @@ SongDocument combineSources(
   };
   final remaining = matching.where((s) => s.id != best.id).toList()
     ..sort((a, b) => a.id.compareTo(b.id));
+  // Catalogs list one release with slightly different durations, and other
+  // masters or edits under the same album name. Lend a display duration only
+  // from the one group of agreeing durations (within three seconds) that more
+  // album-matching sources support than any other.
+  final displayAlbum =
+      metadata['album'] ??
+      [best, ...remaining]
+          .where((source) => recordingCompatible(selected, source))
+          .map((source) => source.candidate.album ?? source.metadata['album'])
+          .whereType<String>()
+          .firstOrNull;
+  final displayDurations = _majorityDurationRange([
+    if (displayAlbum is String && selected.recordingIds.isEmpty)
+      for (final source in remaining)
+        if (_lendsAlbumDisplay(selected, source, displayAlbum))
+          ?_sourceDuration(source),
+  ]);
   for (final source in [best, ...remaining]) {
     final candidateDuration =
         _validDuration(source.candidate.durationSeconds) ??
@@ -2324,23 +2610,16 @@ SongDocument combineSources(
     final imageScoped = scoped == 'image';
     if (scoped == 'recording' && !sameRecording) continue;
     final matchingAlbumDisplay =
-        source.matchKind == MatchKind.sameSong &&
-        !{
-          'composition',
-          'work',
-          'arrangement',
-          'artist',
-          'image',
-        }.contains(scoped) &&
         selected.recordingIds.isEmpty &&
         knownAlbum is String &&
         knownAlbum.trim().isNotEmpty &&
         foundAlbum is String &&
-        _norm(knownAlbum) == _norm(foundAlbum) &&
-        _version(selected.title) == _version(source.candidate.title) &&
-        (knownDuration == null ||
-            sourceDuration == null ||
-            (knownDuration - sourceDuration).abs() <= 3);
+        _lendsAlbumDisplay(selected, source, knownAlbum) &&
+        sourceDuration != null &&
+        displayDurations != null &&
+        sourceDuration >= displayDurations.$1 &&
+        sourceDuration <= displayDurations.$2 &&
+        (knownDuration == null || (knownDuration - sourceDuration).abs() <= 3);
     for (final entry in facts.entries) {
       if (!_hasMetadata(entry.value)) continue;
       final isArrangement = arrangementFields.contains(entry.key);
@@ -2535,9 +2814,20 @@ SongDocument combineSources(
                 )
                 as List<dynamic>;
         values.add({'sourceId': source.id, 'value': entry.value});
+        // Catalogs measure one release a little differently (243.0 and
+        // 243.36 seconds): within three seconds the difference is kept as a
+        // conflict but does not discard the duration.
+        final current = metadata[entry.key];
+        final closeDurations =
+            entry.key == 'durationSeconds' &&
+            current is num &&
+            entry.value is num &&
+            (current - (entry.value as num)).abs() <= 3;
         // Keep an explicit selected-candidate fact, but don't let iteration
         // order silently choose between conflicting provider claims.
-        if (priorOrigin != selected.identity && !isArrangement) {
+        if (priorOrigin != selected.identity &&
+            !isArrangement &&
+            !closeDurations) {
           metadata.remove(entry.key);
           origins.remove(entry.key);
           fieldContributors.remove(entry.key);
@@ -2649,6 +2939,15 @@ SongDocument combineSources(
               (12 - _capoOf(metadata['capo'])) % 12,
             ),
             'bodyHash': _bodyHash(finalBody),
+          }
+        else if (_recordingHintedEstimate(finalBody, [
+              for (final id in chordSourceIds) ?sourcesById[id],
+            ], metadata['capo'])
+            case final String shapes)
+          'chordKeyEstimate': {
+            'key': shapes,
+            'bodyHash': _bodyHash(finalBody),
+            'hint': 'recording',
           },
       if (chordSourceIds.any(
         (sourceId) => sourcesById[sourceId]?.extra['pendingMatchCheck'] == true,

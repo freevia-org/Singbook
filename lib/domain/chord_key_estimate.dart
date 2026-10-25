@@ -24,7 +24,11 @@ class ChordKeyEstimate {
 /// The estimator abstains when the chart is too sparse or its best key is too
 /// close to another candidate. It analyzes the whole chart; a first chord by
 /// itself never establishes a key.
-ChordKeyEstimate? estimateChordKey(String body) {
+///
+/// [hint], a key measured from the recording, is used only when the chords
+/// leave the key open, and only if it shares a key signature with one of the
+/// two best candidates; it never overrides a clear estimate.
+ChordKeyEstimate? estimateChordKey(String body, {String? hint}) {
   final chords = <_Chord>[], groups = <List<_Chord>>[];
   var group = <_Chord>[], sawSectionHeading = false;
   var flatSpellings = 0, sharpSpellings = 0;
@@ -58,12 +62,22 @@ ChordKeyEstimate? estimateChordKey(String body) {
   }
   finishGroup();
 
-  final estimate = _estimateChords(chords, flatSpellings, sharpSpellings);
+  final estimate = _estimateChords(
+    chords,
+    flatSpellings,
+    sharpSpellings,
+    hint: hint,
+  );
   if (estimate == null) return null;
   if (sawSectionHeading || groups.length > 1) {
     final sectionKeys = <String>{};
     for (final section in groups) {
-      final local = _estimateChords(section, flatSpellings, sharpSpellings);
+      final local = _estimateChords(
+        section,
+        flatSpellings,
+        sharpSpellings,
+        hint: hint,
+      );
       if (local != null) sectionKeys.add(_keyIdentity(local.key));
     }
     if (sectionKeys.length > 1) return null;
@@ -80,8 +94,9 @@ String _keyIdentity(String key) {
 ChordKeyEstimate? _estimateChords(
   List<_Chord> chords,
   int flatSpellings,
-  int sharpSpellings,
-) {
+  int sharpSpellings, {
+  String? hint,
+}) {
   final roots = chords.map((chord) => chord.root).toSet();
   if (chords.length < 6 || roots.length < 3) return null;
 
@@ -92,7 +107,7 @@ ChordKeyEstimate? _estimateChords(
       _scoreKey(chords, tonic, _Mode.minor),
   ]..sort((a, b) => b.score.compareTo(a.score));
 
-  final best = candidates.first;
+  var best = candidates.first;
   final runnerUp = candidates[1];
   final margin = best.score - runnerUp.score;
   final separation = margin / chords.length;
@@ -103,12 +118,26 @@ ChordKeyEstimate? _estimateChords(
       runnerUp.mode != best.mode &&
       runnerUp.tonic == relativeTonic &&
       margin < chords.length * 0.65;
-  if (margin < 2.0 || separation < 0.32 || relativeAmbiguity) return null;
+  if (margin < 2.0 || separation < 0.32 || relativeAmbiguity) {
+    // The chords leave the key open. A measured recording key that shares a
+    // key signature with one of the two best candidates names the key: the
+    // chords confirm the signature, the recording its tonic (Am, not C).
+    final measured = hint == null ? null : _keyIdentity(hint).split(':');
+    final tonic = measured == null ? null : int.tryParse(measured[0]);
+    if (tonic == null) return null;
+    final mode = measured![1] == 'minor' ? _Mode.minor : _Mode.major;
+    int signature(int tonic, _Mode mode) =>
+        mode == _Mode.major ? tonic : (tonic + 3) % 12;
+    final fits = [
+      best,
+      runnerUp,
+    ].any((c) => signature(c.tonic, c.mode) == signature(tonic, mode));
+    if (!fits) return null;
+    best = _ScoredKey(tonic, mode, best.score);
+  }
 
-  final flatNames = flatSpellings > sharpSpellings;
-  final names = flatNames ? _flatNames : _sharpNames;
   return ChordKeyEstimate(
-    key: '${names[best.tonic]}${best.mode == _Mode.minor ? 'm' : ''}',
+    key: _keyName(best.tonic, best.mode, flatSpellings, sharpSpellings),
     separation: separation,
     chordCount: chords.length,
     distinctRoots: roots.length,
@@ -277,31 +306,42 @@ bool _isSecondaryDominant(int root, int tonic, List<int> scale) {
   return false;
 }
 
-const _sharpNames = [
-  'C',
-  'C#',
-  'D',
-  'D#',
-  'E',
-  'F',
-  'F#',
-  'G',
-  'G#',
-  'A',
-  'A#',
-  'B',
-];
-const _flatNames = [
-  'C',
-  'Db',
-  'D',
-  'Eb',
-  'E',
-  'F',
-  'Gb',
-  'G',
-  'Ab',
-  'A',
-  'Bb',
-  'B',
-];
+/// The conventional name of a key: Db rather than C#, Bbm rather than A#m,
+/// G#m rather than Abm. The chart's own spelling decides only between keys
+/// written with equally many accidentals (F# or Gb, D#m or Ebm).
+String _keyName(int tonic, _Mode mode, int flats, int sharps) {
+  const major = [
+    'C',
+    'Db',
+    'D',
+    'Eb',
+    'E',
+    'F',
+    'F#',
+    'G',
+    'Ab',
+    'A',
+    'Bb',
+    'B',
+  ];
+  const minor = [
+    'C',
+    'C#',
+    'D',
+    'Eb',
+    'E',
+    'F',
+    'F#',
+    'G',
+    'G#',
+    'A',
+    'Bb',
+    'B',
+  ];
+  final flatNames = flats > sharps;
+  if (mode == _Mode.major) {
+    return tonic == 6 && flatNames ? 'Gb' : major[tonic];
+  }
+  final name = tonic == 3 && !flatNames && sharps > 0 ? 'D#' : minor[tonic];
+  return '${name}m';
+}
