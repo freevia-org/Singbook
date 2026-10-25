@@ -253,7 +253,7 @@
       "id": "song-007",
       "title": "Hey Jude",
       "artist": "The Beatles",
-      "recordingEdition": null,
+      "recordingEdition": "1968 original Apple single performance, long 7:11 version",
       "language": "English",
       "genre": "unspecified",
       "expected": {
@@ -266,9 +266,17 @@
             "evidence": []
           },
           "key": {
-            "status": "unverified",
-            "value": null,
-            "evidence": []
+            "status": "verified",
+            "value": "F",
+            "evidence": [
+              "https://online.berklee.edu/takenote/modulation-101-berklee-online-instructors-on-how-to-leap-into-a-key-change/",
+              "https://hub.yamaha.com/keyboards/k-how-to/basic-piano-chords-for-beginners-part-2/",
+              "https://www.thebeatles.com/hey-jude",
+              "https://apps.musicnotes.com/sheetmusic/the-beatles/hey-jude/MN0053747",
+              "https://music.apple.com/us/album/hey-jude/1441133100?i=1441133277"
+            ],
+            "reviewRecord": "tool/metadata_reference_evidence/hey_jude_key.json",
+            "notes": "Global/home key F major. Independent primary musical analysis distinguishes later modal/coda harmony while the tonic remains F. Score and official-preview measurement corroborate; neither alone establishes this reference. Lyrics and chord-placement references remain unverified."
           },
           "chords": {
             "status": "unverified",
@@ -280,12 +288,30 @@
           "recordingKey": "F"
         },
         "recordingReference": {
-          "status": "unverified",
-          "providerId": null,
-          "candidateId": null,
+          "status": "verified",
+          "providerId": "genius",
+          "candidateId": "82381",
           "isrc": null,
-          "evidence": []
+          "evidence": [
+            "https://www.thebeatles.com/hey-jude",
+            "https://genius.com/The-beatles-hey-jude-lyrics",
+            "https://music.apple.com/us/album/hey-jude/1441133100?i=1441133277"
+          ],
+          "recordingEdition": "1968 original Apple single performance, long 7:11 version",
+          "notes": "Artist catalog and resolved public candidate agree on original single/date/Trident. Apple’s 7:11 compilation reissue is audio corroboration of the same performance, not exact 1968 lacquer identity. Retired linked Apple ID 400835962 returned no results; it is not identity proof."
         }
+      },
+      "recordingEditionStatus": "verified",
+      "catalogSelection": {
+        "providerId": "genius",
+        "candidateId": "82381",
+        "title": "Hey Jude",
+        "artist": "The Beatles",
+        "evidence": [
+          "https://www.thebeatles.com/hey-jude",
+          "https://genius.com/The-beatles-hey-jude-lyrics"
+        ],
+        "notes": "Resolved catalog entry identifies Hey Jude - Single, released 1968-08-26 and Trident recording location. Binds this row to the original single performance; does not assert bit-identical mastering of later reissues."
       }
     },
     {

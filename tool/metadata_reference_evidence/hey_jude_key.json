@@ -1,0 +1,67 @@
+{
+  "songId": "song-007",
+  "reviewedOn": "2026-10-26",
+  "field": "key",
+  "status": "verified",
+  "value": "F",
+  "scope": "1968 original Apple single performance, long 7:11 version",
+  "recordingBinding": {
+    "status": "verified",
+    "providerId": "genius",
+    "candidateId": "82381",
+    "isrc": null,
+    "evidence": [
+      "https://www.thebeatles.com/hey-jude",
+      "https://genius.com/The-beatles-hey-jude-lyrics",
+      "https://music.apple.com/us/album/hey-jude/1441133100?i=1441133277"
+    ],
+    "recordingEdition": "1968 original Apple single performance, long 7:11 version",
+    "notes": "Artist catalog and resolved public candidate agree on original single/date/Trident. Apple’s 7:11 compilation reissue is audio corroboration of the same performance, not exact 1968 lacquer identity. Retired linked Apple ID 400835962 returned no results; it is not identity proof."
+  },
+  "independentSources": [
+    {
+      "url": "https://online.berklee.edu/takenote/modulation-101-berklee-online-instructors-on-how-to-leap-into-a-key-change/",
+      "role": "Primary educator harmonic analysis",
+      "finding": "Analyzes the first section as F major and the coda as a modal shift with unchanged tonal center; local secondary dominants do not redefine the global tonic."
+    },
+    {
+      "url": "https://hub.yamaha.com/keyboards/k-how-to/basic-piano-chords-for-beginners-part-2/",
+      "role": "Primary musician/educator recording analysis",
+      "finding": "Identifies the recording opening harmony as F, C, C7, F; supports F tonic, independent of the app charts."
+    },
+    {
+      "url": "https://apps.musicnotes.com/sheetmusic/the-beatles/hey-jude/MN0053747",
+      "role": "Licensed publisher corroboration only",
+      "finding": "Sony/ATV Piano/Vocal/Guitar edition MN0053747 lists original published key F major. It is an arrangement, not standalone recording proof."
+    }
+  ],
+  "officialAudioCorroboration": {
+    "catalogURL": "https://music.apple.com/us/album/hey-jude/1441133100?i=1441133277",
+    "trackId": "1441133277",
+    "durationMs": 431333,
+    "previewSeconds": 30,
+    "decodedAudioSha256": "92ae5b85df6a387fe8e7b92fbf8decce574b77a5c1e9076228b35374ddadb17a",
+    "method": "fft-chroma-ks-v1.1",
+    "ranked": [
+      {
+        "key": "F",
+        "mode": "major",
+        "correlation": 0.90476
+      },
+      {
+        "key": "Am",
+        "mode": "minor",
+        "correlation": 0.697938
+      },
+      {
+        "key": "Dm",
+        "mode": "minor",
+        "correlation": 0.687515
+      }
+    ],
+    "tuningCentsFromA440": -12.26,
+    "limits": "Short official compilation-reissue preview; correlation is not probability or a standalone key oracle. Full bridge/coda not measured. Raw audio is not included."
+  },
+  "verificationDecision": "Convergent primary recording identity, independent musical analysis, and corroborating audio/publisher evidence establish the global F-major label at the performance level. No claim of exact mastering/mix bit identity, lyric gold or chord-placement gold.",
+  "notDerivedFromActualBenchmarkKey": true
+}
