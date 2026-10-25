@@ -1,0 +1,3935 @@
+{
+  "schemaVersion": 1,
+  "description": "100-song accuracy corpus. Legacy key guesses are unverified hints. Independent recording and field references are verified individually; missing or unverified records never count as passes.",
+  "songs": [
+    {
+      "id": "song-001",
+      "title": "Tears in Heaven",
+      "artist": "Eric Clapton",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "A"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-002",
+      "title": "Lonely Stranger",
+      "artist": "Eric Clapton",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "E"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-003",
+      "title": "Wonderful Tonight",
+      "artist": "Eric Clapton",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "G"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-004",
+      "title": "Wonderwall",
+      "artist": "Oasis",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "F#m"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-005",
+      "title": "Hotel California",
+      "artist": "Eagles",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "Bm"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-006",
+      "title": "Let It Be",
+      "artist": "The Beatles",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "C"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-007",
+      "title": "Hey Jude",
+      "artist": "The Beatles",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "F"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-008",
+      "title": "Yesterday",
+      "artist": "The Beatles",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "F"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-009",
+      "title": "Here Comes the Sun",
+      "artist": "The Beatles",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "A"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-010",
+      "title": "Imagine",
+      "artist": "John Lennon",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "C"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-011",
+      "title": "Wish You Were Here",
+      "artist": "Pink Floyd",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "G"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-012",
+      "title": "Fast Car",
+      "artist": "Tracy Chapman",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-013",
+      "title": "Hallelujah",
+      "artist": "Leonard Cohen",
+      "recordingEdition": "Grace album recording",
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "C"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      },
+      "recordingEditionStatus": "unverified"
+    },
+    {
+      "id": "song-014",
+      "title": "Free Fallin'",
+      "artist": "Tom Petty",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "F"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-015",
+      "title": "Stand By Me",
+      "artist": "Ben E. King",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "A"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-016",
+      "title": "Brown Eyed Girl",
+      "artist": "Van Morrison",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "G"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-017",
+      "title": "Sweet Home Alabama",
+      "artist": "Lynyrd Skynyrd",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-018",
+      "title": "Perfect",
+      "artist": "Ed Sheeran",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "Ab"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-019",
+      "title": "Thinking Out Loud",
+      "artist": "Ed Sheeran",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "D"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-020",
+      "title": "Shape of You",
+      "artist": "Ed Sheeran",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "C#m"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-021",
+      "title": "Zombie",
+      "artist": "The Cranberries",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "Em"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-022",
+      "title": "Creep",
+      "artist": "Radiohead",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "G"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-023",
+      "title": "Riptide",
+      "artist": "Vance Joy",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-024",
+      "title": "Knockin' on Heaven's Door",
+      "artist": "Bob Dylan",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "G"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-025",
+      "title": "Blowin' in the Wind",
+      "artist": "Bob Dylan",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "D"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-026",
+      "title": "The House of the Rising Sun",
+      "artist": "The Animals",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "Am"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-027",
+      "title": "Losing My Religion",
+      "artist": "R.E.M.",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "Am"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-028",
+      "title": "Every Breath You Take",
+      "artist": "The Police",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "Ab"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-029",
+      "title": "Hey There Delilah",
+      "artist": "Plain White T's",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "D"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-030",
+      "title": "Have You Ever Seen the Rain",
+      "artist": "Creedence Clearwater Revival",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "C"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-031",
+      "title": "Take Me Home, Country Roads",
+      "artist": "John Denver",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "A"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-032",
+      "title": "Redemption Song",
+      "artist": "Bob Marley & The Wailers",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "G"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-033",
+      "title": "Three Little Birds",
+      "artist": "Bob Marley & The Wailers",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "A"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-034",
+      "title": "No Woman, No Cry",
+      "artist": "Bob Marley & The Wailers",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "C"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-035",
+      "title": "Jolene",
+      "artist": "Dolly Parton",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "C#m"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-036",
+      "title": "Ring of Fire",
+      "artist": "Johnny Cash",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "G"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-037",
+      "title": "Hurt",
+      "artist": "Johnny Cash",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "Am"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-038",
+      "title": "Shallow",
+      "artist": "Lady Gaga & Bradley Cooper",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "G"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-039",
+      "title": "Someone Like You",
+      "artist": "Adele",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "A"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-040",
+      "title": "Yellow",
+      "artist": "Coldplay",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "B"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-041",
+      "title": "Fix You",
+      "artist": "Coldplay",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "Eb"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-042",
+      "title": "Chasing Cars",
+      "artist": "Snow Patrol",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "A"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-043",
+      "title": "Boulevard of Broken Dreams",
+      "artist": "Green Day",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "Fm"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-044",
+      "title": "Good Riddance (Time of Your Life)",
+      "artist": "Green Day",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "G"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-045",
+      "title": "Black",
+      "artist": "Pearl Jam",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "E"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-046",
+      "title": "Nothing Else Matters",
+      "artist": "Metallica",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "Em"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-047",
+      "title": "Smells Like Teen Spirit",
+      "artist": "Nirvana",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "Fm"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-048",
+      "title": "Take Me to Church",
+      "artist": "Hozier",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "Em"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-049",
+      "title": "Ho Hey",
+      "artist": "The Lumineers",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "C"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-050",
+      "title": "Bohemian Rhapsody",
+      "artist": "Queen",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "Bb"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-051",
+      "title": "Despacito",
+      "artist": "Luis Fonsi",
+      "recordingEdition": null,
+      "language": "Spanish",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [
+          "https://www.musicnotes.com/sheetmusic/luis-fonsi-feat-daddy-yankee/despacito/MN0173584"
+        ],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": [
+              "https://www.musicnotes.com/sheetmusic/luis-fonsi-feat-daddy-yankee/despacito/MN0173584"
+            ],
+            "notes": "Licensed original-artist PVG publisher lists B minor as original published key; still requires exact recording/audio cross-check, not promoted from notation alone.",
+            "candidateValue": "Bm"
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "Bm"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": "genius",
+          "candidateId": "2955220",
+          "isrc": null,
+          "evidence": [
+            "https://api.genius.com/songs/2955220",
+            "https://www.musicnotes.com/sheetmusic/luis-fonsi-feat-daddy-yankee/despacito/MN0173584"
+          ],
+          "notes": "Catalog page identifies the Spanish original rather than the Bieber remix, but no independently verified master-recording ID is bound yet."
+        }
+      }
+    },
+    {
+      "id": "song-052",
+      "title": "Someone You Loved",
+      "artist": "Lewis Capaldi",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "Db"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-053",
+      "title": "Shake It Off",
+      "artist": "Taylor Swift",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "G"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-054",
+      "title": "Love Story",
+      "artist": "Taylor Swift",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-055",
+      "title": "All of Me",
+      "artist": "John Legend",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "Ab"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-056",
+      "title": "Rolling in the Deep",
+      "artist": "Adele",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "Cm"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-057",
+      "title": "Hello",
+      "artist": "Adele",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "Fm"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-058",
+      "title": "Let Her Go",
+      "artist": "Passenger",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-059",
+      "title": "Counting Stars",
+      "artist": "OneRepublic",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-060",
+      "title": "Africa",
+      "artist": "Toto",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-061",
+      "title": "Dreams",
+      "artist": "Fleetwood Mac",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-062",
+      "title": "Landslide",
+      "artist": "Fleetwood Mac",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-063",
+      "title": "The Sound of Silence",
+      "artist": "Simon & Garfunkel",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-064",
+      "title": "Mrs. Robinson",
+      "artist": "Simon & Garfunkel",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-065",
+      "title": "Piano Man",
+      "artist": "Billy Joel",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "C"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-066",
+      "title": "Sweet Caroline",
+      "artist": "Neil Diamond",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "B"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-067",
+      "title": "Amazing Grace (My Chains Are Gone)",
+      "artist": "Chris Tomlin",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-068",
+      "title": "How Great Thou Art",
+      "artist": "Carrie Underwood",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-069",
+      "title": "La Bamba",
+      "artist": "Ritchie Valens",
+      "recordingEdition": null,
+      "language": "Spanish",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "C"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-070",
+      "title": "Cielito Lindo",
+      "artist": "Pedro Infante",
+      "recordingEdition": null,
+      "language": "Spanish",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-071",
+      "title": "99 Luftballons",
+      "artist": "Nena",
+      "recordingEdition": null,
+      "language": "German",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-072",
+      "title": "Under the Bridge",
+      "artist": "Red Hot Chili Peppers",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-073",
+      "title": "Californication",
+      "artist": "Red Hot Chili Peppers",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "Am"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-074",
+      "title": "Stairway to Heaven",
+      "artist": "Led Zeppelin",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "Am"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-075",
+      "title": "Dust in the Wind",
+      "artist": "Kansas",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "C"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-076",
+      "title": "Blackbird",
+      "artist": "The Beatles",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "G"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-077",
+      "title": "Yellow Submarine",
+      "artist": "The Beatles",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-078",
+      "title": "Halo",
+      "artist": "Beyoncé",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "A"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-079",
+      "title": "Hey, Soul Sister",
+      "artist": "Train",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "E"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-080",
+      "title": "I'm Yours",
+      "artist": "Jason Mraz",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "B"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-081",
+      "title": "Iris",
+      "artist": "The Goo Goo Dolls",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-082",
+      "title": "Torn",
+      "artist": "Natalie Imbruglia",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": "F"
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-083",
+      "title": "Budapest",
+      "artist": "George Ezra",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-084",
+      "title": "Ride",
+      "artist": "Twenty One Pilots",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-085",
+      "title": "Mad World",
+      "artist": "Gary Jules",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-086",
+      "title": "Vienna",
+      "artist": "Billy Joel",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-087",
+      "title": "Tennessee Whiskey",
+      "artist": "Chris Stapleton",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-088",
+      "title": "Before He Cheats",
+      "artist": "Carrie Underwood",
+      "recordingEdition": null,
+      "language": "English",
+      "genre": "unspecified",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "song-089",
+      "title": "La Vie en Rose",
+      "artist": "Édith Piaf",
+      "recordingEdition": "Studio recording",
+      "language": "English",
+      "genre": "world/pop/soundtrack",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      },
+      "recordingEditionStatus": "unverified"
+    },
+    {
+      "id": "song-090",
+      "title": "Oye Cómo Va",
+      "artist": "Santana",
+      "recordingEdition": "Original album recording",
+      "language": "English",
+      "genre": "world/pop/soundtrack",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      },
+      "recordingEditionStatus": "unverified"
+    },
+    {
+      "id": "song-091",
+      "title": "Bésame Mucho",
+      "artist": "Los Panchos",
+      "recordingEdition": "Spanish-language recording",
+      "language": "English",
+      "genre": "world/pop/soundtrack",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      },
+      "recordingEditionStatus": "unverified"
+    },
+    {
+      "id": "song-092",
+      "title": "Ai Se Eu Te Pego",
+      "artist": "Michel Teló",
+      "recordingEdition": "Portuguese studio recording",
+      "language": "English",
+      "genre": "world/pop/soundtrack",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      },
+      "recordingEditionStatus": "unverified"
+    },
+    {
+      "id": "song-093",
+      "title": "99 Red Balloons",
+      "artist": "Nena",
+      "recordingEdition": "English-language version",
+      "language": "English",
+      "genre": "world/pop/soundtrack",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      },
+      "recordingEditionStatus": "unverified"
+    },
+    {
+      "id": "song-094",
+      "title": "The Girl from Ipanema",
+      "artist": "Stan Getz & João Gilberto",
+      "recordingEdition": "1964 album recording",
+      "language": "Portuguese and English",
+      "genre": "world/pop/soundtrack",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      },
+      "recordingEditionStatus": "unverified"
+    },
+    {
+      "id": "song-095",
+      "title": "Sukiyaki",
+      "artist": "Kyu Sakamoto",
+      "recordingEdition": "Japanese original recording",
+      "language": "English",
+      "genre": "world/pop/soundtrack",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      },
+      "recordingEditionStatus": "unverified"
+    },
+    {
+      "id": "song-096",
+      "title": "Bella Ciao",
+      "artist": "Manu Pilas",
+      "recordingEdition": "Money Heist recording",
+      "language": "English",
+      "genre": "world/pop/soundtrack",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      },
+      "recordingEditionStatus": "unverified"
+    },
+    {
+      "id": "song-097",
+      "title": "Moliendo Café",
+      "artist": "Hugo Blanco",
+      "recordingEdition": "Original recording",
+      "language": "English",
+      "genre": "world/pop/soundtrack",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      },
+      "recordingEditionStatus": "unverified"
+    },
+    {
+      "id": "song-098",
+      "title": "Dragostea Din Tei",
+      "artist": "O-Zone",
+      "recordingEdition": "Romanian studio recording",
+      "language": "English",
+      "genre": "world/pop/soundtrack",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      },
+      "recordingEditionStatus": "unverified"
+    },
+    {
+      "id": "song-099",
+      "title": "A Whole New World",
+      "artist": "Brad Kane & Lea Salonga",
+      "recordingEdition": "Aladdin original soundtrack recording",
+      "language": "English",
+      "genre": "world/pop/soundtrack",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      },
+      "recordingEditionStatus": "unverified"
+    },
+    {
+      "id": "song-100",
+      "title": "Hallelujah",
+      "artist": "Jeff Buckley",
+      "recordingEdition": "Grace album recording",
+      "language": "English",
+      "genre": "world/pop/soundtrack",
+      "expected": {
+        "status": "unverified",
+        "evidence": [],
+        "fields": {
+          "lyrics": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "key": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          },
+          "chords": {
+            "status": "unverified",
+            "value": null,
+            "evidence": []
+          }
+        },
+        "legacyUnverifiedExpectation": {
+          "recordingKey": null
+        },
+        "recordingReference": {
+          "status": "unverified",
+          "providerId": null,
+          "candidateId": null,
+          "isrc": null,
+          "evidence": []
+        }
+      },
+      "recordingEditionStatus": "unverified"
+    }
+  ],
+  "scoring": {
+    "lyrics": "SHA256 of normalized lyric token sequence; punctuation/case are not lyric-word errors",
+    "key": "Exact concert-pitch tonic and mode; enharmonic spellings equivalent, relative major/minor NOT equivalent",
+    "chords": "SHA256 of lyric hash plus global word positions and sounding chord symbols after capo; sequence hash alone is diagnostic only",
+    "recording": "Verified provider/candidate identity or ISRC plus independently reviewed evidence required before any field can pass"
+  }
+}

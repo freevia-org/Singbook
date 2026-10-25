@@ -44,6 +44,30 @@ flutter analyze
 flutter run -d emulator-5554 --dart-define-from-file=config/local.defines.json --dart-define=cronetHttpNoPlay=true
 ```
 
+The opt-in metadata accuracy corpus contains 100 songs. Its references are
+curated per recording and per field; a source being available or agreeing with
+another source does not establish accuracy. Lyrics compare normalized words,
+keys compare exact concert-pitch tonic and mode, and chord checks include lyric
+word placement and capo. Unavailable and unverified cases remain in the fixed
+100-song denominator.
+
+```sh
+# CI-safe corpus/scorer/cache checks; no catalog requests.
+flutter test tool/metadata_accuracy_benchmark_test.dart tool/metadata_response_cache_test.dart
+# Replay an existing private cache without network access.
+flutter test tool/metadata_accuracy_benchmark_test.dart --dart-define=METADATA_BENCHMARK_RUN=true
+# Optional cache-first collection using existing local Genius configuration.
+flutter test tool/metadata_cache_refresh_test.dart --dart-define=METADATA_REFRESH_RUN=true --dart-define=METADATA_REFRESH_BUDGET=120
+```
+
+These tools default to the ignored `artifacts/metadata-accuracy/cache` directory
+and report under `build/metadata_accuracy`. Cache collection preserves approved
+source identity and stores compressed response fixtures locally; never commit
+those responses or local credentials. An optional `METADATA_REFRESH_IDS` selects
+corpus IDs, and `METADATA_BENCHMARK_CACHE`/`METADATA_REFRESH_CACHE` select another
+cache directory. A successful run is not a claim of 100% verified accuracy; the
+per-field report identifies missing data and unverified references.
+
 `scripts/build-android.ps1` runs Flutter in an owned process tree and configures
 Gradle and Kotlin to exit with the build. It temporarily overrides conflicting
 daemon settings in `GRADLE_OPTS`, preserves other caller options, and restores

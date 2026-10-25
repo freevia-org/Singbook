@@ -737,7 +737,7 @@ void main() {
             id: 'chords',
             capabilities: const {'lyrics'},
             selected: selected,
-            body: '[C]A chord lyric line\n[G]Another chord line',
+            body: '[C]A plain lyric line\n[G]Another plain line',
           ),
         ]),
       );
@@ -778,6 +778,73 @@ void main() {
         app.combined!.extra['selectedSourceId'],
       );
       expect(saved.extra['selectedSourceId'], isNot('plain:sample-song'));
+    },
+  );
+
+  test(
+    'filtering incompatible lyrics saves the visible explicit version, not hidden combined lyrics',
+    () async {
+      ui.dispose();
+      app.dispose();
+      const selected = SongCandidate(
+        providerId: 'plain',
+        id: 'sample-song',
+        title: 'Sample Song',
+        artist: 'Test Artist',
+      );
+      app = AppController(
+        repository: repository,
+        discovery: SourceDiscoveryService([
+          _StatusProvider(
+            id: 'plain',
+            capabilities: const {'lyrics'},
+            selected: selected,
+            body: 'A plain lyric line\nAnother plain line',
+          ),
+          _StatusProvider(
+            id: 'chords',
+            capabilities: const {'lyrics'},
+            selected: selected,
+            body: '[C]A chord lyric line\n[G]Another chord line',
+          ),
+        ]),
+      );
+      await app.initialize();
+      app.settings['catalog'] = 'plain';
+      ui = AppControllerAdapter(app);
+      ui.setHomeListMode(HomeListMode.online);
+      ui.setQuery('sample song');
+      await ui.submitSearch();
+      await ui.selectReference(
+        const SearchReferenceData(
+          id: 'plain:sample-song',
+          title: 'Sample Song',
+          artist: 'Test Artist',
+        ),
+      );
+      expect(
+        ui.state.comparison,
+        isNotNull,
+        reason:
+            'selection=${app.selection?.identity}; query=${ui.state.query}; '
+            'suggestions=${app.suggestions.map((item) => item.identity).toList()}; '
+            'results=${app.results.map((item) => item.id).toList()}; '
+            'combined=${app.combined?.extra['selectedSourceId']}',
+      );
+      ui.selectVersion('plain:sample-song');
+
+      ui.setSearchFilter('chordsOnly', true);
+      final displayedSelection = ui.state.comparison!.selected;
+      expect(displayedSelection?.id, 'chords:sample-song');
+      expect(ui.state.comparison!.selectedVersionId, 'chords:sample-song');
+
+      await ui.saveSelectedVersion();
+
+      final saved = app.songs.single;
+      expect(saved.extra['selectedSourceId'], 'chords:sample-song');
+      expect(app.combined!.extra['selectedSourceId'], 'plain:sample-song');
+      expect(app.combined!.body, contains('A plain lyric line'));
+      expect(saved.body, contains('A chord lyric line'));
     },
   );
 
