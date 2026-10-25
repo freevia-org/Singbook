@@ -1,15 +1,16 @@
 {
   "schemaVersion": 1,
-  "catalogRevision": 6,
-  "measuredAt": "2026-10-24T06:04:21.995682Z",
+  "catalogRevision": 7,
+  "measuredAt": "2026-10-25T07:08:19.429108Z",
   "offline": false,
   "summary": {
-    "healthy": 12,
+    "healthy": 11,
+    "transient_error": 3,
     "unavailable": 1,
     "blocked": 1,
-    "import_only": 2,
-    "partial_coverage": 2,
-    "transient_error": 1
+    "import_only": 1,
+    "partial_coverage": 1,
+    "retired": 1
   },
   "sources": [
     {
@@ -137,42 +138,22 @@
     {
       "id": "lrclib",
       "name": "LRCLIB",
-      "status": "healthy",
+      "status": "transient_error",
       "coverage": {
-        "status": "complete",
-        "verifiedCapabilities": [
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
           "catalog",
           "lineTiming",
           "lyrics",
           "metadata"
-        ],
-        "unverifiedCapabilities": []
+        ]
       },
       "probes": [
         {
           "id": "sound-of-silence-studio-recording",
-          "status": "healthy",
-          "candidateId": "14961166",
-          "providerId": "lrclib",
-          "bodyCharacters": 1157,
-          "metadataFields": [
-            "album",
-            "duration",
-            "hasLyrics",
-            "instrumental"
-          ],
-          "verifiedCapabilities": [
-            "catalog",
-            "lineTiming",
-            "lyrics",
-            "metadata"
-          ],
-          "timingTrackCount": 1,
-          "timingGranularities": [
-            "line"
-          ],
-          "timingRawRetained": true,
-          "hasChords": false
+          "status": "transient_error",
+          "reason": "rate_limited"
         }
       ]
     },
@@ -231,7 +212,7 @@
         {
           "id": "wonderwall-oasis-studio",
           "status": "healthy",
-          "candidateId": "sha256:61e974cdee9e0235",
+          "candidateId": "sha256:2c5d123decd1a47f",
           "providerId": "lyricsovh",
           "bodyCharacters": 1307,
           "metadataFields": [
@@ -257,44 +238,21 @@
       "name": "SyncLRC",
       "status": "unavailable",
       "coverage": {
-        "status": "complete",
-        "verifiedCapabilities": [
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
           "catalog",
           "lineTiming",
           "lyrics",
           "metadata",
           "wordTiming"
-        ],
-        "unverifiedCapabilities": []
+        ]
       },
       "probes": [
         {
           "id": "never-gonna-give-you-up-studio",
-          "status": "healthy",
-          "candidateId": "sha256:2b029a0d7fbc7f3b",
-          "providerId": "synclrc",
-          "bodyCharacters": 1927,
-          "metadataFields": [
-            "album",
-            "duration",
-            "hasLyrics",
-            "instrumental",
-            "query"
-          ],
-          "verifiedCapabilities": [
-            "catalog",
-            "lineTiming",
-            "lyrics",
-            "metadata",
-            "wordTiming"
-          ],
-          "timingTrackCount": 2,
-          "timingGranularities": [
-            "line",
-            "word"
-          ],
-          "timingRawRetained": true,
-          "hasChords": false
+          "status": "unavailable",
+          "reason": "empty_search_results"
         },
         {
           "id": "wonderwall-oasis-timed-version",
@@ -595,7 +553,7 @@
     {
       "id": "worshiptogether",
       "name": "Worship Together",
-      "status": "import_only",
+      "status": "retired",
       "coverage": {
         "status": "unverified",
         "verifiedCapabilities": [],
@@ -609,7 +567,7 @@
       "probes": [
         {
           "id": "import-only",
-          "status": "import_only"
+          "status": "retired"
         }
       ]
     },
@@ -656,52 +614,68 @@
     {
       "id": "wikidata",
       "name": "Wikidata",
-      "status": "transient_error",
-      "coverage": {
-        "status": "partial",
-        "verifiedCapabilities": [],
-        "unverifiedCapabilities": [
-          "catalog",
-          "metadata"
-        ]
-      },
-      "probes": [
-        {
-          "id": "imagine-composition",
-          "status": "transient_error",
-          "reason": "provider_busy"
-        },
-        {
-          "id": "wonderwall-composition",
-          "status": "transient_error",
-          "reason": "provider_busy"
-        }
-      ]
-    },
-    {
-      "id": "wikimediacommons",
-      "name": "Wikimedia Commons",
       "status": "healthy",
       "coverage": {
         "status": "complete",
         "verifiedCapabilities": [
-          "artwork",
+          "catalog",
           "metadata"
         ],
         "unverifiedCapabilities": []
       },
       "probes": [
         {
-          "id": "bach-portrait",
+          "id": "imagine-composition",
           "status": "healthy",
-          "candidateId": "File:Johann Sebastian Bach.jpg",
-          "providerId": "wikimediacommons",
+          "candidateId": "Q1971",
+          "providerId": "wikidata",
           "bodyCharacters": 0,
           "metadataFields": [
-            "licensedImages"
+            "composers",
+            "description",
+            "durationClaims",
+            "externalIdentifiers",
+            "identityScope",
+            "lyricists",
+            "partOf",
+            "performerIds",
+            "performers",
+            "publicationDates",
+            "types",
+            "wikidataId"
           ],
           "verifiedCapabilities": [
-            "artwork",
+            "catalog",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false
+        },
+        {
+          "id": "wonderwall-composition",
+          "status": "healthy",
+          "candidateId": "Q1045517",
+          "providerId": "wikidata",
+          "bodyCharacters": 0,
+          "metadataFields": [
+            "composers",
+            "description",
+            "durationClaims",
+            "externalIdentifiers",
+            "identityScope",
+            "lyricists",
+            "partOf",
+            "performerIds",
+            "performers",
+            "publicationDates",
+            "types",
+            "wikidataId",
+            "wikimediaCommonsFile"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
             "metadata"
           ],
           "timingTrackCount": 0,
@@ -712,66 +686,49 @@
       ]
     },
     {
-      "id": "wikisource",
-      "name": "Wikisource",
-      "status": "partial_coverage",
+      "id": "wikimediacommons",
+      "name": "Wikimedia Commons",
+      "status": "transient_error",
       "coverage": {
         "status": "partial",
-        "verifiedCapabilities": [
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "artwork",
+          "metadata"
+        ]
+      },
+      "probes": [
+        {
+          "id": "bach-portrait",
+          "status": "transient_error",
+          "reason": "rate_limited"
+        }
+      ]
+    },
+    {
+      "id": "wikisource",
+      "name": "Wikisource",
+      "status": "transient_error",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
           "catalog",
+          "fileImport",
           "lyrics",
           "metadata"
-        ],
-        "unverifiedCapabilities": [
-          "fileImport"
         ]
       },
       "probes": [
         {
           "id": "cleansing-wave-palmer",
-          "status": "healthy",
-          "candidateId": "sha256:e915a1ba387e3dd0",
-          "providerId": "wikisource",
-          "bodyCharacters": 664,
-          "metadataFields": [
-            "copyrightTags",
-            "identityScope",
-            "resolvedPageId",
-            "resolvedTitle",
-            "revision"
-          ],
-          "verifiedCapabilities": [
-            "catalog",
-            "lyrics",
-            "metadata"
-          ],
-          "timingTrackCount": 0,
-          "timingGranularities": [],
-          "timingRawRetained": false,
-          "hasChords": false
+          "status": "transient_error",
+          "reason": "rate_limited"
         },
         {
           "id": "dunbar-hymn-1",
-          "status": "healthy",
-          "candidateId": "sha256:9395d47d4cb4346c",
-          "providerId": "wikisource",
-          "bodyCharacters": 496,
-          "metadataFields": [
-            "copyrightTags",
-            "identityScope",
-            "resolvedPageId",
-            "resolvedTitle",
-            "revision"
-          ],
-          "verifiedCapabilities": [
-            "catalog",
-            "lyrics",
-            "metadata"
-          ],
-          "timingTrackCount": 0,
-          "timingGranularities": [],
-          "timingRawRetained": false,
-          "hasChords": false
+          "status": "transient_error",
+          "reason": "rate_limited"
         }
       ]
     }
@@ -780,11 +737,11 @@
   "maintenanceContext": {
     "runtime": "local-windows",
     "executionProvenance": {
-      "runtime": "local-windows",
-      "sourceHead": "23a485cca78dd33d5ef0c71edca5739be00c5a0e",
-      "catalogRevision": 6,
-      "catalogSha256": "2002bf41304eda7ee51b9b98d708f88918ebae901cd46726d0f5a830d0aa2c07",
+      "sourceHead": "ea4baf303352f5a6530ac1587eba0c46f1ec9f3d",
+      "catalogRevision": 7,
+      "catalogSha256": "eb23bd9999d2e70a04912bb5150d0874fc2bd5490e6f6f60fb426d2fe9838c59",
       "packageConfigSha256": "3058d6d08e9d6c717eb1c88d02489de71aa10970da2c6361bf715efb4f2de77a",
+      "lockedDependenciesUnchanged": true,
       "sourceIds": [
         "genius",
         "songsterr",
@@ -806,345 +763,408 @@
         "wikimediacommons",
         "wikisource"
       ],
-      "credentials": "dedicated ignored maintenance.defines.json; child environment token override removed without reading value",
-      "youtube": "anonymous HTTP only; no session/browser/profile"
+      "credentials": "dedicated ignored maintenance credential only; environment override removed, no app token or credential upload",
+      "youtube": "anonymous production HTTP only; no browser, private cookies, session or consent flow"
     },
     "executionReceipts": {
       "offline": {
-        "runtime": "local-windows",
-        "phase": "offline",
-        "startedAtUtc": "2026-10-24T06:03:31.086788+00:00",
-        "finishedAtUtc": "2026-10-24T06:03:35.856329+00:00",
+        "startedAt": "2026-10-25T07:07:17.302776+00:00",
+        "finishedAt": "2026-10-25T07:07:23.522333+00:00",
         "exitCode": 0,
-        "reportWritten": true,
-        "dartClientReleased": true,
-        "arguments": [
-          "C:\\Users\\anton\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
-          "--packages=.dart_tool/package_config.json",
-          "tool/source_maintenance.dart",
-          "--offline",
-          "--report",
-          "E:\\Users\\anton\\Documents\\Claude\\Singbook-datasources\\artifacts\\source-maintenance\\2026-10-24\\offline.json"
-        ]
+        "nativeElapsedSeconds": 6.234000000025844,
+        "timedOut": false,
+        "stdoutAndStderrEof": true,
+        "ownedJobActiveProcessesAfter": 0,
+        "jobHandleClosed": true,
+        "localSdkReleased": true,
+        "preGuards": {
+          "head": true,
+          "clean": true,
+          "tracked": true,
+          "extra": true,
+          "sdk": true
+        },
+        "postGuards": {
+          "head": true,
+          "clean": true,
+          "tracked": true,
+          "extra": true,
+          "sdk": true
+        }
       },
       "live": {
-        "runtime": "local-windows",
-        "phase": "live",
-        "startedAtUtc": "2026-10-24T06:03:41.483595+00:00",
-        "finishedAtUtc": "2026-10-24T06:04:22.129097+00:00",
+        "startedAt": "2026-10-25T07:07:34.607165+00:00",
+        "finishedAt": "2026-10-25T07:08:19.612714+00:00",
         "exitCode": 1,
-        "reportWritten": true,
-        "dartClientReleased": true,
-        "arguments": [
-          "C:\\Users\\anton\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
-          "--packages=.dart_tool/package_config.json",
-          "tool/source_maintenance.dart",
-          "--report",
-          "E:\\Users\\anton\\Documents\\Claude\\Singbook-datasources\\artifacts\\source-maintenance\\2026-10-24\\live.json"
-        ]
+        "nativeElapsedSeconds": 45.0,
+        "timedOut": false,
+        "stdoutAndStderrEof": true,
+        "ownedJobActiveProcessesAfter": 0,
+        "jobHandleClosed": true,
+        "localSdkReleased": true,
+        "preGuards": {
+          "head": true,
+          "clean": true,
+          "tracked": true,
+          "extra": true,
+          "sdk": true
+        },
+        "postGuards": {
+          "head": true,
+          "clean": true,
+          "tracked": true,
+          "extra": true,
+          "sdk": true
+        }
       },
-      "wikidata-followup": {
-        "phase": "wikidata-followup",
-        "startedAtUtc": "2026-10-24T06:05:44.275686+00:00",
-        "finishedAtUtc": "2026-10-24T06:05:47.074850+00:00",
+      "synclrc-followup": {
+        "startedAt": "2026-10-25T07:10:54.941330+00:00",
+        "finishedAt": "2026-10-25T07:10:57.579190+00:00",
         "exitCode": 1,
-        "dartClientReleased": true,
-        "reason": "One delayed ordinary CLI followup; maxlag policy unchanged; no bypass or aggressive retry."
+        "nativeElapsedSeconds": 2.6410000000032596,
+        "timedOut": false,
+        "stdoutAndStderrEof": true,
+        "ownedJobActiveProcessesAfter": 0,
+        "jobHandleClosed": true,
+        "localSdkReleased": true,
+        "preGuards": {
+          "head": true,
+          "clean": true,
+          "tracked": true,
+          "extra": true,
+          "sdk": true
+        },
+        "postGuards": {
+          "head": true,
+          "clean": true,
+          "tracked": true,
+          "extra": true,
+          "sdk": true
+        }
       }
     },
-    "executionReceiptSha256": {
-      "offline": "1004a4e53e14e143f474b22eb857ccf2f793937a4a0faf8e6fce7b037ed41fe7",
-      "live": "07ed1c8b2191243863adcb75f3d688e16174e743b14715be273eb368db2b4ae1",
-      "wikidata-followup": "c2d0243918c87aa09afa0ecedf71711c2964ba16d552ae9d3fc303f3262aa712"
-    },
-    "timingScope": "CLI measuredAt is batch completion, not fabricated per-probe request timestamps. Stable source/probe IDs and observed capability/count data are retained.",
-    "comparison": {
-      "priorLocalMeasuredAt": "2026-10-23T06:04:21.352222Z",
-      "priorLocalCatalogRevision": 5,
-      "changes": [
-        {
-          "id": "ultimateguitar",
-          "previousStatus": "partial_coverage",
-          "currentStatus": "healthy",
-          "previousVerified": [
-            "chords",
-            "lyrics",
-            "metadata"
-          ],
-          "currentVerified": [
-            "catalog",
-            "chords",
-            "lyrics",
-            "metadata"
-          ]
-        },
-        {
-          "id": "synclrc",
-          "previousStatus": "unavailable",
-          "currentStatus": "unavailable",
-          "previousVerified": [],
-          "currentVerified": [
-            "catalog",
-            "lineTiming",
-            "lyrics",
-            "metadata",
-            "wordTiming"
-          ]
-        },
-        {
-          "id": "musicbrainz",
-          "previousStatus": "partial_coverage",
-          "currentStatus": "healthy",
-          "previousVerified": [
-            "metadata"
-          ],
-          "currentVerified": [
-            "catalog",
-            "metadata"
-          ]
-        },
-        {
-          "id": "wikisource",
-          "previousStatus": "partial_coverage",
-          "currentStatus": "partial_coverage",
-          "previousVerified": [
-            "lyrics",
-            "metadata"
-          ],
-          "currentVerified": [
-            "catalog",
-            "lyrics",
-            "metadata"
-          ]
-        }
-      ],
-      "cloudMeasuredAt": "2026-10-24T05:56:51.879916Z",
-      "cloudCatalogRevision": 6,
-      "cloudSummary": {
-        "transient_error": 6,
-        "healthy": 9,
-        "unavailable": 1,
-        "blocked": 1,
-        "import_only": 2
-      },
-      "cloudIssues": [
-        {
-          "id": "genius",
-          "status": "transient_error",
-          "probeReasons": [
-            "network"
-          ]
-        },
-        {
-          "id": "ultimateguitar",
-          "status": "transient_error",
-          "probeReasons": [
-            "network"
-          ]
-        },
-        {
-          "id": "youtubemusic",
-          "status": "transient_error",
-          "probeReasons": [
-            "network"
-          ]
-        },
-        {
-          "id": "synclrc",
-          "status": "unavailable",
-          "probeReasons": [
-            "empty_search_results"
-          ]
-        },
-        {
-          "id": "betterlyrics",
-          "status": "blocked",
-          "probeReasons": [
-            "access_denied"
-          ]
-        },
-        {
-          "id": "ozbcoz",
-          "status": "import_only",
-          "probeReasons": [
-            null
-          ]
-        },
-        {
-          "id": "chordie",
-          "status": "transient_error",
-          "probeReasons": [
-            "network"
-          ]
-        },
-        {
-          "id": "worshiptogether",
-          "status": "import_only",
-          "probeReasons": [
-            null
-          ]
-        },
-        {
-          "id": "wikimediacommons",
-          "status": "transient_error",
-          "probeReasons": [
-            "rate_limited"
-          ]
-        },
-        {
-          "id": "wikisource",
-          "status": "transient_error",
-          "probeReasons": [
-            "rate_limited",
-            "rate_limited"
-          ]
-        }
-      ],
-      "runtimeBoundary": "Local success does not establish cloud reachability; cloud failures do not establish local failures."
-    },
-    "followups": {
-      "wikidata": {
+    "followup": {
+      "reason": "Cloud canaries were healthy while local searches returned empty; one delayed ordinary CLI recheck",
+      "report": {
         "schemaVersion": 1,
-        "catalogRevision": 6,
-        "measuredAt": "2026-10-24T06:05:47.050930Z",
+        "catalogRevision": 7,
+        "measuredAt": "2026-10-25T07:10:57.411675Z",
         "offline": false,
         "summary": {
-          "transient_error": 1
+          "unavailable": 1
         },
         "sources": [
           {
-            "id": "wikidata",
-            "name": "Wikidata",
-            "status": "transient_error",
+            "id": "synclrc",
+            "name": "SyncLRC",
+            "status": "unavailable",
             "coverage": {
               "status": "partial",
               "verifiedCapabilities": [],
               "unverifiedCapabilities": [
                 "catalog",
-                "metadata"
+                "lineTiming",
+                "lyrics",
+                "metadata",
+                "wordTiming"
               ]
             },
             "probes": [
               {
-                "id": "imagine-composition",
-                "status": "transient_error",
-                "reason": "provider_busy"
+                "id": "never-gonna-give-you-up-studio",
+                "status": "unavailable",
+                "reason": "empty_search_results"
               },
               {
-                "id": "wonderwall-composition",
-                "status": "transient_error",
-                "reason": "provider_busy"
+                "id": "wonderwall-oasis-timed-version",
+                "status": "unavailable",
+                "reason": "empty_search_results"
               }
             ]
           }
         ]
-      }
+      },
+      "primaryReportUnmodified": true
+    },
+    "comparison": {
+      "priorLocalMeasuredAt": "2026-10-24T06:04:21.995682Z",
+      "priorLocalCatalogRevision": 6,
+      "cloudMeasuredAt": "2026-10-25T06:56:50.774327Z",
+      "cloudCatalogRevision": 7,
+      "cloudSourceHead": "ea4baf303352f5a6530ac1587eba0c46f1ec9f3d",
+      "cloudSummary": {
+        "transient_error": 6,
+        "healthy": 10,
+        "blocked": 1,
+        "import_only": 1,
+        "retired": 1
+      },
+      "sourceOutcomes": [
+        {
+          "id": "genius",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "transient_error"
+        },
+        {
+          "id": "songsterr",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "healthy"
+        },
+        {
+          "id": "ultimateguitar",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "transient_error"
+        },
+        {
+          "id": "lrclib",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "transient_error",
+          "cloudStatus": "healthy"
+        },
+        {
+          "id": "youtubemusic",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "transient_error"
+        },
+        {
+          "id": "lyricsovh",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "healthy"
+        },
+        {
+          "id": "synclrc",
+          "previousLocalStatus": "unavailable",
+          "currentLocalStatus": "unavailable",
+          "cloudStatus": "healthy"
+        },
+        {
+          "id": "betterlyrics",
+          "previousLocalStatus": "blocked",
+          "currentLocalStatus": "blocked",
+          "cloudStatus": "blocked"
+        },
+        {
+          "id": "unison",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "healthy"
+        },
+        {
+          "id": "ozbcoz",
+          "previousLocalStatus": "import_only",
+          "currentLocalStatus": "import_only",
+          "cloudStatus": "import_only"
+        },
+        {
+          "id": "chordie",
+          "previousLocalStatus": "partial_coverage",
+          "currentLocalStatus": "partial_coverage",
+          "cloudStatus": "transient_error"
+        },
+        {
+          "id": "worshipcommons",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "healthy"
+        },
+        {
+          "id": "openfilksongbook",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "healthy"
+        },
+        {
+          "id": "seanmcgrathmusic",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "healthy"
+        },
+        {
+          "id": "worshiptogether",
+          "previousLocalStatus": "import_only",
+          "currentLocalStatus": "retired",
+          "cloudStatus": "retired"
+        },
+        {
+          "id": "musicbrainz",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "healthy"
+        },
+        {
+          "id": "wikidata",
+          "previousLocalStatus": "transient_error",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "healthy"
+        },
+        {
+          "id": "wikimediacommons",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "transient_error",
+          "cloudStatus": "transient_error"
+        },
+        {
+          "id": "wikisource",
+          "previousLocalStatus": "partial_coverage",
+          "currentLocalStatus": "transient_error",
+          "cloudStatus": "transient_error"
+        }
+      ],
+      "limits": "Runtime results are independent. Local success does not establish cloud reachability; cloud success does not erase local failures."
     },
     "roadblocks": [
       {
-        "source": "synclrc",
-        "reason": "Wonderwall canary search returned no records; Rick Astley canary passed all advertised capabilities including line/word timing.",
-        "tried": "Normal all-source CLI exact queries; no unrelated recording substituted.",
+        "source": "lrclib",
+        "status": "transient_error",
+        "reason": "rate_limited",
+        "unverifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "metadata"
+        ],
+        "tried": "Regular CLI with its normal bounded retry and Retry-After policy; no extra requests after rate_limited outcomes and no policy bypass.",
         "resolved": false,
-        "userAction": "None required; preserve identity and retry normal canary on a later daily run."
+        "userAction": "No user action required; next scheduled run will recheck upstream availability."
+      },
+      {
+        "source": "synclrc",
+        "status": "unavailable",
+        "reason": "empty_search_results",
+        "unverifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "metadata",
+          "wordTiming"
+        ],
+        "tried": "All-source CLI plus one delayed ordinary --source synclrc followup; both named canaries returned empty results in both runs. No guessed IDs or alternate endpoint used.",
+        "resolved": false,
+        "userAction": "No user action required; retain source and retry on the next scheduled run."
       },
       {
         "source": "betterlyrics",
-        "reason": "Anonymous access_denied; extraction never reached.",
-        "tried": "Normal all-source live CLI; no CAPTCHA/access-policy bypass or repeated wall requests.",
+        "status": "blocked",
+        "reason": "access_denied",
+        "unverifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "metadata",
+          "wordTiming"
+        ],
+        "tried": "Regular registered canary; access_denied retained, no challenge/proxy bypass or credential substitution.",
         "resolved": false,
-        "userAction": "No immediate action; upstream access policy must permit ordinary requests."
-      },
-      {
-        "source": "wikidata",
-        "reason": "provider_busy/maxlag prevents validation.",
-        "tried": "Both composition canaries plus one delayed ordinary --source wikidata CLI follow-up; policy unchanged, still provider_busy.",
-        "resolved": false,
-        "userAction": "None required; wait for upstream load to recover."
+        "userAction": "No user action required; validation needs permitted upstream access to recover."
       },
       {
         "source": "ozbcoz",
-        "reason": "Live fileImport workflow/capability unverified; import-only adapter has no unattended live extraction canary.",
-        "tried": "Registered source retained in all-source checker; synthetic parser tests are not claimed as live import proof.",
+        "status": "import_only",
+        "reason": "import_only",
+        "unverifiedCapabilities": [
+          "chords",
+          "fileImport",
+          "lyrics",
+          "metadata"
+        ],
+        "tried": "Kept in the full registered-source run. Synthetic decoder tests and the earlier Chordie public-text copy are not treated as live publisher file-download/import proof.",
         "resolved": false,
-        "userAction": "A permitted downloaded document and end-to-end import test are needed; no new account/session flow was opened unattended."
-      },
-      {
-        "source": "worshiptogether",
-        "reason": "Live fileImport workflow/capability unverified; import-only adapter has no unattended live extraction canary.",
-        "tried": "Registered source retained in all-source checker; synthetic parser tests are not claimed as live import proof.",
-        "resolved": false,
-        "userAction": "A permitted downloaded document and end-to-end import test are needed; no new account/session flow was opened unattended."
+        "userAction": "A permitted publisher file-download and end-to-end import canary remain necessary; no unattended account/browser flow opened."
       },
       {
         "source": "chordie",
-        "reason": "Live fileImport workflow/capability unverified; catalog/lyrics/metadata canaries passed, but no real permitted file import was exercised.",
-        "tried": "Registered source retained in all-source checker; synthetic parser tests are not claimed as live import proof.",
+        "status": "partial_coverage",
+        "reason": "healthy",
+        "unverifiedCapabilities": [
+          "fileImport"
+        ],
+        "tried": "Kept in the full registered-source run. Synthetic decoder tests and the earlier Chordie public-text copy are not treated as live publisher file-download/import proof.",
         "resolved": false,
-        "userAction": "A permitted downloaded document and end-to-end import test are needed; no new account/session flow was opened unattended."
+        "userAction": "A permitted publisher file-download and end-to-end import canary remain necessary; no unattended account/browser flow opened."
+      },
+      {
+        "source": "wikimediacommons",
+        "status": "transient_error",
+        "reason": "rate_limited",
+        "unverifiedCapabilities": [
+          "artwork",
+          "metadata"
+        ],
+        "tried": "Regular CLI with its normal bounded retry and Retry-After policy; no extra requests after rate_limited outcomes and no policy bypass.",
+        "resolved": false,
+        "userAction": "No user action required; next scheduled run will recheck upstream availability."
       },
       {
         "source": "wikisource",
-        "reason": "Live fileImport workflow/capability unverified; catalog/lyrics/metadata canaries passed, but no real permitted file import was exercised.",
-        "tried": "Registered source retained in all-source checker; synthetic parser tests are not claimed as live import proof.",
+        "status": "transient_error",
+        "reason": "rate_limited",
+        "unverifiedCapabilities": [
+          "catalog",
+          "fileImport",
+          "lyrics",
+          "metadata"
+        ],
+        "tried": "Regular CLI with its normal bounded retry and Retry-After policy; no extra requests after rate_limited outcomes and no policy bypass.",
         "resolved": false,
-        "userAction": "A permitted downloaded document and end-to-end import test are needed; no new account/session flow was opened unattended."
+        "userAction": "No user action required; next scheduled run will recheck upstream availability."
+      }
+    ],
+    "resolvedPriorRoadblocks": [
+      {
+        "source": "wikidata",
+        "prior": "provider_busy/maxlag on both canaries",
+        "current": "Both composition catalog/metadata canaries healthy in this run; no schema change or policy bypass."
       }
     ],
     "discovery": {
-      "checkedAtUtc": "2026-10-24T06:11:03.810683+00:00",
-      "newCandidate": "radio-smihun",
-      "decision": "deferred",
-      "primaryDocumentation": [
-        "https://docs.radiosmihun.com/reference/rest",
-        "https://api.lrcshare.com/docs/guide/requirements.html"
+      "checkedDate": "2026-10-25",
+      "newCandidates": [
+        "lrc-red",
+        "folk-song-catalogue-eu",
+        "little-songbook"
       ],
-      "evidence": "Radio current-mode library is public metadata; lyric retrieval requires token/encoded response and falls back to LRCLIB. No independent coverage/rights/canaries established. LrcShare requirements confirm key and catalog session; documentation review only.",
-      "noLyricOrCredentialRequests": true,
-      "sourceAudit": {
-        "sourceBase": "23a485cca78dd33d5ef0c71edca5739be00c5a0e",
-        "preservedExistingReviewHead": "4c37bb75117022d6c3b5f80040fa7d2debb8feba",
-        "changedPath": "config/source-discovery.json",
-        "newCandidate": "radio-smihun",
-        "newCandidateStatus": "deferred",
-        "newLastChecked": "2026-10-24",
-        "unchangedCandidatesPreserved": true,
-        "catalogRevisionUnchanged": 6,
-        "noSourceActivation": true,
-        "noRawLyricsOrCredentials": true,
-        "validation": "JSON parse, unique IDs, exact candidate delta, preserved existing PR94 evidence; app does not consume discovery registry."
-      }
+      "decision": "all deferred; no live extraction or capability/rights claim",
+      "sourceChange": "Discovery registry only, existing draft PR94 reused. All 13 prior pending entries preserved; three new unique deferred entries. No active catalog/source revision change.",
+      "documentation": [
+        "https://lrc.red/api",
+        "https://folksong.eu/en/home",
+        "https://littlesongbook.com/licensing/"
+      ],
+      "publication": "review-only; no automatic merge/public-main publication"
+    },
+    "servedCatalogVerification": {
+      "checkedAtUtc": "2026-10-25T07:14:46.733625+00:00",
+      "url": "https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog.json",
+      "httpStatus": 200,
+      "revision": 7,
+      "publishedAt": "2026-10-24T06:44:00Z",
+      "sourceCount": 19,
+      "matchesValidatedCatalog": true,
+      "catalogChangedThisRun": false,
+      "rawResponseSha256": "eb23bd9999d2e70a04912bb5150d0874fc2bd5490e6f6f60fb426d2fe9838c59"
+    },
+    "validationScope": "Current public-source offline catalog validation exit0; all19 live exit1 and delayed SyncLRC followup exit1 are completed diagnostic runs with external/coverage blockers, not launcher failures. Registry-only JSON exact-delta/unique-ID/primary-evidence/diff checks passed; no extraction/runtime code changed requiring another local provider/controller suite.",
+    "runtimeOwnership": {
+      "allDartClientsReleased": true,
+      "lastReleaseAtUtc": "2026-10-25T07:10:57.579190+00:00",
+      "noFlutterPubgetAnalyzeBuildJavaGradleAdbDevice": true,
+      "noSecretsOrRawDocumentsPublished": true
     },
     "publication": {
       "pullRequest": "https://github.com/freevia-org/Singbook/pull/94",
-      "publicBase": "23a485cca78dd33d5ef0c71edca5739be00c5a0e",
-      "previousCandidateHead": "4c37bb75117022d6c3b5f80040fa7d2debb8feba",
-      "candidateHead": "af3b9d8e32484c6fb4a59ebb4958188ff90cff4a",
-      "files": [
+      "sourceBaseAtProbe": "ea4baf303352f5a6530ac1587eba0c46f1ec9f3d",
+      "reviewHead": "6bfb9f98149ffa691cf152d9749801d580d99817",
+      "changedFiles": [
         "config/source-discovery.json"
       ],
-      "state": "Existing draft PR94 branch updated non-forced for review; not merged or activated.",
-      "catalogChangedThisRun": false,
-      "catalogRevision": 6,
-      "newSourcesActivated": 0
-    },
-    "servedCatalogVerification": {
-      "checkedAtUtc": "2026-10-24T06:07:28.141059+00:00",
-      "url": "https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog.json",
-      "httpStatus": 200,
-      "revision": 6,
-      "publishedAt": "2026-10-23T06:34:31Z",
-      "sourceCount": 19,
-      "matchesCurrentMainCheckout": true,
-      "rawResponseSha256": "499b06f220616efd0f5f245d80e8267d758d1ab02cb2a27bd4b43aa0d4da8fb9",
-      "catalogChangedByThisRun": false
-    },
-    "runtimeOwnership": {
-      "allDartClientsReleased": true,
-      "noFlutterPubgetAnalyzeBuildOrDevice": true,
-      "packageConfigUnchanged": true,
-      "noBrowserSessionOrCredentialChanges": true
-    },
-    "validationScope": "Full current catalog offline exit0. Live all19 exit1 and Wikidata followup exit1 retained. Discovery-only JSON structural/delta audit and independent primary-evidence review passed; no runtime/extraction/catalog changes requiring another provider/controller suite."
+      "catalogRevision": 7,
+      "newSourcesActivated": 0,
+      "automaticMerge": false
+    }
   }
 }
