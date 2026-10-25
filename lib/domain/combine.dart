@@ -1314,6 +1314,531 @@ int _keyConsensusRank(SourceResult source) =>
       _ => 1,
     };
 
+/// Section kinds whose later instances usually repeat an earlier one's
+/// harmony.
+const _repeatingSections = {'verse', 'chorus', 'pre-chorus', 'refrain'};
+
+/// Charts often give chords for the first verse only ("same as verse 1"). A
+/// lyric line without chords in a later section takes the chords of the same
+/// line in the most recent earlier section of the same kind (verse, chorus,
+/// pre-chorus, refrain) with as many lyric lines, if that line has chords.
+/// Chords keep their relative word positions. Lines with escapes or
+/// non-plain characters are left alone.
+({String body, int lines}) _fillRepeatedSections(String body) {
+  final raw = body.split('\n');
+  final parsed = parseArrangement(body);
+  final sections = <({String kind, List<int> lyrics})>[];
+  String? kind;
+  var lyrics = <int>[];
+  void close() {
+    if (kind != null && lyrics.isNotEmpty) {
+      sections.add((kind: kind, lyrics: lyrics));
+    }
+    lyrics = <int>[];
+  }
+
+  for (var i = 0; i < parsed.length; i++) {
+    final label = sectionLabelForLine(parsed[i]);
+    if (label != null) {
+      close();
+      kind = label.toLowerCase().replaceAll(RegExp(r'\s*\d+$'), '').trim();
+      continue;
+    }
+    if (parsed[i].directive) {
+      if (RegExp(r'^\s*\{(end_of_|eo)').hasMatch(parsed[i].text)) {
+        close();
+        kind = null;
+      }
+      continue;
+    }
+    if (parsed[i].text.trim().isEmpty) continue;
+    lyrics.add(i);
+  }
+  close();
+  var filled = 0;
+  for (var s = 0; s < sections.length; s++) {
+    final target = sections[s];
+    if (!_repeatingSections.contains(target.kind)) continue;
+    final models = sections
+        .take(s)
+        .where(
+          (section) =>
+              section.kind == target.kind &&
+              section.lyrics.length == target.lyrics.length,
+        )
+        .toList();
+    if (models.isEmpty) continue;
+    for (var n = 0; n < target.lyrics.length; n++) {
+      final index = target.lyrics[n];
+      final to = parsed[index];
+      if (to.chords.isNotEmpty) continue;
+      // The most recent earlier section of this kind with chords on this
+      // line; none when such sections disagree on its chords.
+      final chorded = models
+          .where((section) => parsed[section.lyrics[n]].chords.isNotEmpty)
+          .toList();
+      if (chorded.isEmpty ||
+          chorded
+                  .map(
+                    (section) => parsed[section.lyrics[n]].chords
+                        .map((chord) => chord.chord)
+                        .join(' '),
+                  )
+                  .toSet()
+                  .length >
+              1) {
+        continue;
+      }
+      final model = chorded.last;
+      final from = parsed[model.lyrics[n]];
+      if (raw[index].contains('\\') ||
+          to.text.characters.length != to.text.length ||
+          from.text.characters.length != from.text.length) {
+        continue;
+      }
+      final fromWords = _lineWords(from.text), toWords = _lineWords(to.text);
+      if (fromWords.isEmpty || toWords.isEmpty) continue;
+      final anchors = <ChordAnchor>[];
+      for (final chord in from.chords) {
+        final word = fromWords.indexWhere((w) => chord.offset < w.end);
+        final position = word < 0
+            ? toWords.length - 1
+            : fromWords.length == 1
+            ? 0
+            : (word * (toWords.length - 1) / (fromWords.length - 1)).round();
+        anchors.add(
+          ChordAnchor(
+            word < 0 ? to.text.length : toWords[position].start,
+            chord.chord,
+          ),
+        );
+      }
+      final buffer = StringBuffer();
+      var cursor = 0;
+      for (final chord
+          in anchors..sort((a, b) => a.offset.compareTo(b.offset))) {
+        buffer.write(
+          _escapeLiteralChordTokens(to.text.substring(cursor, chord.offset)),
+        );
+        buffer.write('[${chord.chord}]');
+        cursor = chord.offset;
+      }
+      buffer.write(_escapeLiteralChordTokens(to.text.substring(cursor)));
+      raw[index] = buffer.toString();
+      filled++;
+    }
+  }
+  return (body: raw.join('\n'), lines: filled);
+}
+
+final _wordToken = RegExp(r"[\p{L}\p{N}']+", unicode: true);
+
+List<({String word, int start, int end})> _lineWords(String text) => [
+  for (final match in _wordToken.allMatches(text))
+    (
+      word: match[0]!.toLowerCase().replaceAll("'", ''),
+      start: match.start,
+      end: match.end,
+    ),
+];
+
+typedef _Words = List<({String word, int start, int end})>;
+
+/// [line]'s chords moved onto words [to] through word alignment [pairs]
+/// (from-index, to-index): each chord's target word index and offset inside
+/// that word, or a null index for a chord after the last word. An unaligned
+/// chord word borrows the position of the nearest aligned word that keeps
+/// the chords in order.
+List<(int?, int, String)> _mapChordWords(
+  ArrangementLine line,
+  _Words from,
+  _Words to,
+  List<(int, int)> pairs,
+) {
+  final aligned = {for (final (a, b) in pairs) a: b};
+  final anchors = <(int?, int, String)>[];
+  // Chords keep their order: a chord never lands before the previous one,
+  // or on its word unless both sat on one chart word.
+  int? previous, previousWord;
+  var ended = false;
+  for (final chord in line.chords) {
+    final index = from.indexWhere((word) => chord.offset < word.end);
+    if (index < 0 || ended) {
+      ended = true;
+      anchors.add((null, 0, chord.chord));
+      continue;
+    }
+    bool free(int probe) =>
+        probe >= 0 &&
+        probe < from.length &&
+        aligned.containsKey(probe) &&
+        (previous == null ||
+            aligned[probe]! > previous ||
+            (index == previousWord && aligned[probe] == previous));
+    // The nearest free aligned word; the earlier one on a tie.
+    int? probe;
+    for (
+      var distance = 0;
+      distance < from.length && probe == null;
+      distance++
+    ) {
+      if (free(index - distance)) {
+        probe = index - distance;
+      } else if (free(index + distance)) {
+        probe = index + distance;
+      }
+    }
+    if (probe == null) {
+      // No aligned word left: the chord follows the line's last word.
+      if (previous == null) continue;
+      ended = true;
+      anchors.add((null, 0, chord.chord));
+      continue;
+    }
+    final target = to[aligned[probe]!];
+    final inWord = probe == index
+        ? (chord.offset - from[index].start).clamp(0, target.end - target.start)
+        : 0;
+    previous = aligned[probe]!;
+    previousWord = index;
+    anchors.add((previous, inWord, chord.chord));
+  }
+  return anchors;
+}
+
+/// The share of words two lines have in order. A line of four or more words
+/// written almost entirely inside a longer one (at most 2.5 times as long),
+/// as charts that write a repeated phrase once or break lines differently
+/// do, counts as the weakest acceptable similarity, 0.8.
+double _lineSimilarity(_Words a, _Words b, List<(int, int)> pairs) {
+  final longer = a.length > b.length ? a.length : b.length;
+  final shorter = a.length > b.length ? b.length : a.length;
+  final overall = pairs.length / longer;
+  if (overall >= .8) return overall;
+  return shorter >= 4 && longer <= shorter * 2.5 && pairs.length / shorter >= .9
+      ? .8
+      : overall;
+}
+
+/// Chart lines placed on [target] lines by word alignment, where exact
+/// phrase placement found none. Line similarity is the share of words in
+/// order (longest common subsequence); 80% is required. Lyric words the
+/// chart never writes (ad-libs, backing vocals) are left out of the
+/// comparison when most of a line's words remain.
+///
+/// First the chart and the lyrics are aligned line by line in order (a
+/// sequence alignment), so a lyric repeated with different chords in
+/// different sections takes the chords of its own section. A chart line may
+/// cover two adjacent lyric lines, as charts that join short lines do. Lyric
+/// lines left over (a chorus the chart writes once) then take the chords of
+/// the single closest chart line; equally close chart lines with different
+/// chords place nothing. Lines of fewer than three words, or whose offsets
+/// are not plain characters, are skipped.
+Map<int, List<ChordAnchor>> _fuzzyLineChords(
+  List<ArrangementLine> target,
+  String chart,
+) {
+  bool plainText(String text) => text.characters.length == text.length;
+  final donors = [
+    for (final line in parseArrangement(chart))
+      if (!line.directive &&
+          line.chords.isNotEmpty &&
+          plainText(line.text) &&
+          _lineWords(line.text).length >= 3 &&
+          _lineWords(line.text).length <= 40)
+        (line: line, words: _lineWords(line.text)),
+  ];
+  final vocabulary = {
+    for (final donor in donors)
+      for (final word in donor.words) word.word,
+  };
+  _Words known(_Words words) {
+    final kept = [
+      for (final word in words)
+        if (vocabulary.contains(word.word)) word,
+    ];
+    return kept.length >= 3 && kept.length >= words.length * .6 ? kept : words;
+  }
+
+  final lyrics = [
+    for (var i = 0; i < target.length; i++)
+      if (!target[i].directive &&
+          plainText(target[i].text) &&
+          _lineWords(target[i].text).length >= 3 &&
+          _lineWords(target[i].text).length <= 40)
+        (index: i, words: known(_lineWords(target[i].text))),
+  ];
+  if (donors.isEmpty ||
+      lyrics.isEmpty ||
+      donors.length * lyrics.length > 40000) {
+    return const {};
+  }
+  // A match covers one lyric line, or two adjacent ones ([span] 2) whose
+  // words are compared as one line.
+  bool joinable(int l) =>
+      l + 1 < lyrics.length && lyrics[l + 1].index == lyrics[l].index + 1;
+  _Words wordsOf(int l, int span) => span == 1
+      ? lyrics[l].words
+      : [...lyrics[l].words, ...lyrics[l + 1].words];
+  final pairsOf = <(int, int, int), List<(int, int)>>{};
+  List<(int, int)> pairs(int d, int l, int span) => pairsOf.putIfAbsent((
+    d,
+    l,
+    span,
+  ), () => _alignWords(donors[d].words, wordsOf(l, span)));
+  double similarity(int d, int l, [int span = 1]) {
+    if (span == 2 && !joinable(l)) return 0;
+    final value = _lineSimilarity(
+      donors[d].words,
+      wordsOf(l, span),
+      pairs(d, l, span),
+    );
+    return value >= .8 ? value : 0;
+  }
+
+  // A containment match (most of one line inside a longer one) is weaker:
+  // it needs anchors like an ambiguous line and never fills leftovers.
+  bool contained(int d, int l, [int span = 1]) {
+    final words = wordsOf(l, span).length;
+    final longer = donors[d].words.length > words
+        ? donors[d].words.length
+        : words;
+    return pairs(d, l, span).length / longer < .8;
+  }
+
+  // Ordered alignment: maximise the summed similarity of matched lyric
+  // lines. Joining two lines counts for both, but only when it fits better
+  // than either line alone and is not a containment match.
+  final rows = donors.length, columns = lyrics.length;
+  double joined(int d, int l) {
+    final value = similarity(d, l, 2);
+    return value > 0 &&
+            !contained(d, l, 2) &&
+            value > similarity(d, l) &&
+            (!joinable(l) || value > similarity(d, l + 1))
+        ? value
+        : 0;
+  }
+
+  final score = List.generate(rows + 1, (_) => List.filled(columns + 2, 0.0));
+  for (var d = rows - 1; d >= 0; d--) {
+    for (var l = columns - 1; l >= 0; l--) {
+      final match = similarity(d, l);
+      final pair = joined(d, l);
+      var best = score[d + 1][l] > score[d][l + 1]
+          ? score[d + 1][l]
+          : score[d][l + 1];
+      if (match > 0 && match + score[d + 1][l + 1] > best) {
+        best = match + score[d + 1][l + 1];
+      }
+      if (pair > 0 && 2 * pair + score[d + 1][l + 2] > best) {
+        best = 2 * pair + score[d + 1][l + 2];
+      }
+      score[d][l] = best;
+    }
+  }
+  // Chart text written more than once with different chords is ambiguous;
+  // order may resolve it only between unambiguous matches on both sides.
+  final signatures = <String, Set<String>>{};
+  for (final donor in donors) {
+    signatures
+        .putIfAbsent(_repeatKey(donor.line.text), () => {})
+        .add(_chordSignature(donor.line));
+  }
+  bool ambiguousDonor(int d) =>
+      signatures[_repeatKey(donors[d].line.text)]!.length > 1;
+  final matched = <(int, int, int)>[];
+  // The same lyric text left uncovered elsewhere makes the place where a
+  // match lands as arbitrary as an ambiguous chart line.
+  final covered = <int>{};
+  String textOf(int l, int span) =>
+      wordsOf(l, span).map((word) => word.word).join(' ');
+  bool repeatedElsewhere(int l, int span) {
+    final text = textOf(l, span);
+    for (var other = 0; other < columns; other++) {
+      if (other == l ||
+          covered.contains(other) ||
+          (span == 2 && (!joinable(other) || covered.contains(other + 1)))) {
+        continue;
+      }
+      if (textOf(other, span) == text) return true;
+    }
+    return false;
+  }
+
+  bool weak((int, int, int) match) =>
+      ambiguousDonor(match.$1) ||
+      contained(match.$1, match.$2, match.$3) ||
+      repeatedElsewhere(match.$2, match.$3);
+  var d = 0, l = 0;
+  while (d < rows && l < columns) {
+    final match = similarity(d, l);
+    final pair = joined(d, l);
+    if (pair > 0 && score[d][l] == 2 * pair + score[d + 1][l + 2]) {
+      matched.add((d, l, 2));
+      d++;
+      l += 2;
+    } else if (match > 0 && score[d][l] == match + score[d + 1][l + 1]) {
+      matched.add((d, l, 1));
+      d++;
+      l++;
+    } else if (score[d + 1][l] >= score[d][l + 1]) {
+      d++;
+    } else {
+      l++;
+    }
+  }
+  for (final (_, l, span) in matched) {
+    covered.addAll([l, if (span == 2) l + 1]);
+  }
+  final result = <int, List<ChordAnchor>>{};
+  void place(int d, int l, int span) {
+    final words = wordsOf(l, span);
+    final split = lyrics[l].words.length;
+    for (final (word, inWord, chord) in _mapChordWords(
+      donors[d].line,
+      donors[d].words,
+      words,
+      pairs(d, l, span),
+    )) {
+      // Chords after the last word stay at the end of the last line.
+      final second = word == null ? span == 2 : word >= split;
+      final line = lyrics[second ? l + 1 : l].index;
+      final offset = word == null
+          ? target[line].text.length
+          : words[word].start + inWord;
+      result.putIfAbsent(line, () => []).add(ChordAnchor(offset, chord));
+    }
+  }
+
+  for (var m = 0; m < matched.length; m++) {
+    final (d, l, span) = matched[m];
+    // Another chart line between the neighbouring matches that fits this
+    // lyric equally well with different chords makes the choice arbitrary.
+    final low = m == 0 ? 0 : matched[m - 1].$1 + 1;
+    final high = m + 1 == matched.length ? rows : matched[m + 1].$1;
+    final value = similarity(d, l, span);
+    var tied = false;
+    for (var other = low; other < high && !tied; other++) {
+      tied =
+          other != d &&
+          similarity(other, l, span) == value &&
+          _chordSignature(donors[other].line) !=
+              _chordSignature(donors[d].line);
+    }
+    if (tied) continue;
+    if (weak((d, l, span)) &&
+        (!matched.take(m).any((match) => !weak(match)) ||
+            !matched.skip(m + 1).any((match) => !weak(match)))) {
+      continue;
+    }
+    place(d, l, span);
+  }
+  // Leftover lyric lines: the single closest chart line, if unambiguous.
+  for (var l = 0; l < columns; l++) {
+    if (result.containsKey(lyrics[l].index)) continue;
+    var best = -1;
+    var bestScore = 0.0;
+    var ambiguous = false;
+    for (var d = 0; d < rows; d++) {
+      final value = similarity(d, l);
+      if (value == 0 || contained(d, l)) continue;
+      if (value > bestScore) {
+        best = d;
+        bestScore = value;
+        ambiguous = false;
+      } else if (value == bestScore &&
+          _chordSignature(donors[d].line) !=
+              _chordSignature(donors[best].line)) {
+        ambiguous = true;
+      }
+    }
+    if (best < 0 || ambiguous) continue;
+    place(best, l, 1);
+  }
+  result.removeWhere((_, anchors) => anchors.isEmpty);
+  return result;
+}
+
+/// Index pairs of the longest common subsequence of two word lists.
+List<(int, int)> _alignWords(
+  List<({String word, int start, int end})> a,
+  List<({String word, int start, int end})> b,
+) {
+  final table = List.generate(
+    a.length + 1,
+    (_) => List.filled(b.length + 1, 0),
+  );
+  for (var i = a.length - 1; i >= 0; i--) {
+    for (var j = b.length - 1; j >= 0; j--) {
+      table[i][j] = a[i].word == b[j].word
+          ? table[i + 1][j + 1] + 1
+          : (table[i + 1][j] > table[i][j + 1]
+                ? table[i + 1][j]
+                : table[i][j + 1]);
+    }
+  }
+  final pairs = <(int, int)>[];
+  var i = 0, j = 0;
+  while (i < a.length && j < b.length) {
+    if (a[i].word == b[j].word) {
+      pairs.add((i, j));
+      i++;
+      j++;
+    } else if (table[i + 1][j] >= table[i][j + 1]) {
+      i++;
+    } else {
+      j++;
+    }
+  }
+  return pairs;
+}
+
+final _bracketed = RegExp(r'\([^()]*\)|\[[^\[\]]*\]');
+
+/// A lyric line's words outside brackets, for finding repeats of a line.
+String _repeatKey(String text) => _norm(text.replaceAll(_bracketed, ' '));
+
+/// [chords] placed on [from] moved to the same words of [to], whose words
+/// outside brackets are the same. Null when a chord cannot be placed.
+List<ChordAnchor>? _retargetChords(
+  String from,
+  String to,
+  List<ChordAnchor> chords,
+) {
+  List<({int start, int end})> words(String text) {
+    final masked = text.replaceAllMapped(
+      _bracketed,
+      (match) => ' ' * match[0]!.length,
+    );
+    return [
+      for (final match in RegExp(r'\S+').allMatches(masked))
+        (start: match.start, end: match.end),
+    ];
+  }
+
+  final source = words(from), target = words(to);
+  if (source.isEmpty || source.length != target.length) return null;
+  final fromCharacters = from.characters.length == from.length;
+  final toCharacters = to.characters.length == to.length;
+  // Offsets count grapheme clusters; only plain lines map one to one.
+  if (!fromCharacters || !toCharacters) return null;
+  final moved = <ChordAnchor>[];
+  for (final chord in chords) {
+    var index = source.indexWhere((word) => chord.offset < word.end);
+    if (index < 0) {
+      moved.add(ChordAnchor(to.length, chord.chord));
+      continue;
+    }
+    final inWord = (chord.offset - source[index].start).clamp(
+      0,
+      target[index].end - target[index].start,
+    );
+    moved.add(ChordAnchor(target[index].start + inWord, chord.chord));
+  }
+  return moved;
+}
+
 ({String body, List<String> sourceIds}) _overlayChords(
   String body,
   List<SourceResult> sources,
@@ -1339,7 +1864,14 @@ int _keyConsensusRank(SourceResult source) =>
         !_compatibleArrangementSetup(base, source, selected)) {
       continue;
     }
-    final chords = _phraseChords(plain, _keyCorrectedBody(source));
+    final donorBody = _keyCorrectedBody(source);
+    // Lines whose wording differs slightly between sources (an extra "let it
+    // be", a contraction) are aligned word by word where exact phrases fail.
+    final chords = {
+      ..._fuzzyLineChords(plain, donorBody),
+      for (final entry in _phraseChords(plain, donorBody).entries)
+        if (entry.value.isNotEmpty) entry.key: entry.value,
+    };
     final coverage = chords.entries.fold<int>(
       0,
       (n, entry) =>
@@ -1422,6 +1954,37 @@ int _keyConsensusRank(SourceResult source) =>
     }
   }
   if (contributorIds.isEmpty) return (body: body, sourceIds: const []);
+  // Charts often write a repeated chorus once, and repeats vary in backing
+  // vocals ("(stand by me)"). A lyric line whose words, outside brackets,
+  // equal a line that received chords takes those chords at the same word
+  // positions, unless it already has chords.
+  // A line whose chorded copies disagree on harmony has no single chords
+  // to lend.
+  final chordsByText = <String, int>{};
+  final harmonies = <String, Set<String>>{};
+  for (var i = 0; i < lines.length; i++) {
+    final chords = chartChords[i];
+    final text = _repeatKey(lines[i].text);
+    if (chords != null && chords.isNotEmpty && text.isNotEmpty) {
+      chordsByText.putIfAbsent(text, () => i);
+      harmonies
+          .putIfAbsent(text, () => {})
+          .add(chords.map((chord) => chord.chord).join(' '));
+    }
+  }
+  chordsByText.removeWhere((text, _) => harmonies[text]!.length > 1);
+  for (var i = 0; i < lines.length; i++) {
+    // An aligned line may carry an empty chord list; that is not a choice.
+    if ((chartChords[i]?.isNotEmpty ?? false) || lines[i].directive) continue;
+    final from = chordsByText[_repeatKey(lines[i].text)];
+    if (from == null) continue;
+    final moved = _retargetChords(
+      lines[from].text,
+      lines[i].text,
+      chartChords[from]!,
+    );
+    if (moved != null) chartChords[i] = moved;
+  }
 
   final rawLines = body.split('\n');
   final output = <String>[];
@@ -2033,7 +2596,11 @@ SongDocument combineSources(
   final historicalAuthor = historicalAuthorIdentities.length == 1
       ? historicalAuthors.first
       : null;
-  final finalBody = inferSectionDirectives(sectionMerged.body);
+  final sectioned = inferSectionDirectives(sectionMerged.body);
+  final filled = preferredSourceId == null && chordSourceIds.isNotEmpty
+      ? _fillRepeatedSections(sectioned)
+      : (body: sectioned, lines: 0);
+  final finalBody = filled.body;
   final song = SongDocument(
     id: newId(),
     title: selected.title,
@@ -2066,6 +2633,8 @@ SongDocument combineSources(
               id: shift,
         },
       if (sectionSourceIds.isNotEmpty) 'sectionSourceIds': sectionSourceIds,
+      // Lines that took the chords of an earlier section of the same kind.
+      if (filled.lines > 0) 'chordsFromSections': filled.lines,
       // A display-only key estimate from discovery's chord key double check,
       // valid only for this exact chart (see [checkedChordKeyEstimate]).
       if (preferredSourceId == null)

@@ -572,6 +572,84 @@ void main() {
     );
   });
 
+  testWidgets('chords after the last word follow one another in one row', (
+    tester,
+  ) async {
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+    const text = 'Lanterns drift';
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(360, 320);
+    await tester.pumpWidget(
+      _host(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Offstage(
+              offstage: true,
+              child: Text(
+                text,
+                key: const ValueKey('trailing-plain'),
+                style: _lyricStyle,
+              ),
+            ),
+            _line(text, const [
+              LyricChord(graphemeOffset: 9, symbol: 'F'),
+              LyricChord(graphemeOffset: text.length, symbol: 'C'),
+              LyricChord(graphemeOffset: text.length, symbol: 'Dm'),
+              LyricChord(graphemeOffset: text.length, symbol: 'C'),
+            ], key: const ValueKey('trailing-line')),
+          ],
+        ),
+        width: 360,
+        height: 320,
+      ),
+    );
+
+    final baseline = _paragraph(
+      tester,
+      find.byKey(const ValueKey('trailing-plain'), skipOffstage: false),
+    );
+    // One chord row above the lyric, not three stacked rows.
+    expect(
+      tester.getSize(find.byKey(const ValueKey('trailing-line'))).height -
+          baseline.size.height,
+      lessThan(2 * (_chordStyle.fontSize ?? 13)),
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('trailing chords without room stack inside the line width', (
+    tester,
+  ) async {
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(240, 400);
+    const text = 'Lanterns drift';
+    await tester.pumpWidget(
+      _host(
+        _line(text, const [
+          LyricChord(graphemeOffset: text.length, symbol: 'Cmaj7'),
+          LyricChord(graphemeOffset: text.length, symbol: 'F#m7b5'),
+          LyricChord(graphemeOffset: text.length, symbol: 'Bbmaj9'),
+        ], key: const ValueKey('narrow-trailing')),
+        width: 240,
+        height: 400,
+        scale: 2,
+      ),
+    );
+    expect(tester.takeException(), isNull);
+    expect(
+      tester.getSize(find.byKey(const ValueKey('narrow-trailing'))).width,
+      lessThanOrEqualTo(240 - 32),
+    );
+  });
+
   testWidgets('chord-only and whitespace rows keep their anchor spacing', (
     tester,
   ) async {
