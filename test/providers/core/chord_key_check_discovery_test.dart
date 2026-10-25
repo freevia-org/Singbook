@@ -320,6 +320,30 @@ void main() {
       expect(chart.extra.containsKey('keyRecording'), isFalse);
     });
 
+    test(
+      'a provider disabled during the chart lookups loses its recording',
+      () async {
+        final disabled = CancellationToken();
+        final results = await SourceDiscoveryService(
+          [
+            _Provider('lyrics', {'song': _lines.join('\n')}, chords: false),
+            _Provider(
+              'ug',
+              {'g': clearG, 'g2': clearG},
+              labels: {'g': 'C'},
+              onResolve: (id) {
+                if (id == 'g2') disabled.cancel();
+              },
+            ),
+          ],
+          recordingKeys: service(0, []),
+        ).discover(recorded, providerCancellation: {'lyrics': disabled});
+        final chart = chartsOf(results).single;
+        expect(chart.extra.containsKey('keyShift'), isFalse);
+        expect(chart.extra.containsKey('keyRecording'), isFalse);
+      },
+    );
+
     test('without the service no recording key is requested', () async {
       final results = await SourceDiscoveryService([
         _Provider('lyrics', {'song': _lines.join('\n')}, chords: false),
