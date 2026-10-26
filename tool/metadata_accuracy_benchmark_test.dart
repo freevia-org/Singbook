@@ -482,6 +482,62 @@ void main() {
         'notDerivedFromActualBenchmarkKey': true,
       };
       expect(reviewedReferenceErrors(song(), 'key', review()), isEmpty);
+      final lyricSong = song();
+      (((lyricSong['expected'] as Map)['fields'] as Map)['lyrics'] = {
+        'status': 'verified',
+        'value': 'a' * 64,
+        'evidence': ['https://example.test/licensed-lyrics'],
+      });
+      final lyricReview = {
+        ...review(),
+        'field': 'lyrics',
+        'value': 'a' * 64,
+        'trustedReferences': [
+          {
+            'url': 'https://example.test/licensed-lyrics',
+            'role': 'Licensed lyrics panel attributed to a publisher',
+            'finding': 'Exact normalized text hash matches the selected text',
+            'sourceClass': 'licensed_lyrics_provider',
+            'provider': 'Example licensed provider',
+            'referenceTextSha256': 'a' * 64,
+            'selectedTextSha256': 'a' * 64,
+            'exactNormalizedTextMatch': true,
+            'scopeCompatibility': 'compatible',
+            'lineageStatus': 'attributed_not_independent',
+          },
+        ],
+      };
+      expect(
+        reviewedReferenceErrors(lyricSong, 'lyrics', lyricReview),
+        isEmpty,
+        reason: 'a licensed, edition-compatible exact reference is sufficient',
+      );
+      final wrongLyricsHash = {
+        ...lyricReview,
+        'trustedReferences': [
+          {
+            ...(lyricReview['trustedReferences'] as List).single,
+            'referenceTextSha256': 'b' * 64,
+          },
+        ],
+      };
+      expect(
+        reviewedReferenceErrors(lyricSong, 'lyrics', wrongLyricsHash),
+        isNotEmpty,
+      );
+      final wrongLyricsScope = {
+        ...lyricReview,
+        'trustedReferences': [
+          {
+            ...(lyricReview['trustedReferences'] as List).single,
+            'scopeCompatibility': 'unknown',
+          },
+        ],
+      };
+      expect(
+        reviewedReferenceErrors(lyricSong, 'lyrics', wrongLyricsScope),
+        isNotEmpty,
+      );
       for (final entry in {
         'value': 'D',
         'songId': 'another-song',

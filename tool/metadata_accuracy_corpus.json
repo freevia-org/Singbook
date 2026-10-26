@@ -144,13 +144,16 @@
         "evidence": [],
         "fields": {
           "lyrics": {
-            "status": "unverified",
-            "value": null,
-            "evidence": [],
+            "status": "verified",
+            "value": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f",
+            "evidence": [
+              "https://www.google.com/search?q=Oasis+Wonderwall+lyrics"
+            ],
+            "reviewRecord": "tool/metadata_reference_evidence/wonderwall_lyrics_practical_review.json",
             "practicalEvidence": {
-              "status": "strong_practical_corroboration_with_repetition_variance",
+              "status": "verified_against_licensed_provider_and_official_artist_reference",
               "reviewRecord": "tool/metadata_reference_evidence/wonderwall_lyrics_practical_review.json",
-              "notes": "Google/Musixmatch panel hash exactly matches the selected Genius candidate. Official Oasis text is a 276-token ordered subsequence of the selected 283-token text; seven selected-only tokens align as repeats, with no substitutions. This supports wording but does not yet adjudicate exact album-performance repetitions."
+              "notes": "The exact selected text hash matches Google's panel attributed to Musixmatch, which displays Oasis, Wonderwall, and 1995. The official Oasis page's full 276-token sequence appears in order in the selected 283-token sequence; the seven extra selected tokens align as repetitions, with no substitutions. The catalog-bound reference supports the lyric text for the 1995 Morning Glory album performance. Exact-master identity and independent upstream lineage are not claimed."
             }
           },
           "key": {
