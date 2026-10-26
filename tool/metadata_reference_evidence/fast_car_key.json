@@ -1,0 +1,49 @@
+{
+  "songId": "song-012",
+  "reviewedOn": "2026-10-26",
+  "field": "key",
+  "status": "verified",
+  "value": "A",
+  "scope": "1988 original Tracy Chapman studio album performance",
+  "recordingBinding": {
+    "status": "verified",
+    "providerId": "genius",
+    "candidateId": "2408099",
+    "isrc": null,
+    "recordingEdition": "1988 original Tracy Chapman studio album performance",
+    "evidence": [
+      "https://genius.com/Tracy-chapman-fast-car-lyrics",
+      "https://music.apple.com/us/album/fast-car/79565550?i=79565507"
+    ],
+    "notes": "Exact Apple track ID is linked by the resolved Genius song record. Fresh independent Apple lookup agrees on performer, title and original album. Performance-level binding; no bit-identical master claim."
+  },
+  "catalogCrosscheck": {
+    "genius": {
+      "candidateId": "2408099",
+      "releaseDate": "1988-04-15",
+      "album": "Tracy Chapman",
+      "appleMusicId": "79565507",
+      "cacheEnvelopeSha256": "7288910ed0abfa908e758d3a98b8df56fa39fc41eaf04984c56b8de5dfa08980"
+    },
+    "apple": {
+      "trackId": 79565507,
+      "trackName": "Fast Car",
+      "artistName": "Tracy Chapman",
+      "collectionName": "Tracy Chapman",
+      "trackTimeMillis": 296800,
+      "releaseDate": "1988-04-05T07:00:00Z",
+      "trackViewUrl": "https://music.apple.com/us/album/fast-car/79565550?i=79565507&uo=4"
+    },
+    "dateCaveat": "Genius song date April15 differs from album date April5; exact linked Apple track and album identify the original performance. No exact day-based identity claim."
+  },
+  "independentSources": [
+    {
+      "url": "https://www.musicradar.com/news/tracy-chapman-fast-car-theory",
+      "role": "Primary educator harmonic analysis by Ethan Hein",
+      "finding": "Analyzes the original 1988 recording, distinguishes G-major guitar shapes with capo 2 from sounding A major, and explains its A-centered melody, pedal tone and D-A-F#m-E loop."
+    }
+  ],
+  "verificationDecision": "Global sounding key only. Harmonic ambiguity of individual voicings and melodic-harmonic divorce are acknowledged by the analysis. Guitar G shapes are not sounding G; no chord-placement or lyric reference is certified.",
+  "notDerivedFromActualBenchmarkKey": true,
+  "rawLyricsOrAudioIncluded": false
+}
