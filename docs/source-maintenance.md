@@ -31,6 +31,16 @@ attribution. Its explicit timing profile handles the publisher's bare-second
 and short media clocks without changing generic TTML semantics. Album artwork
 remains linked source metadata; no blanket redistribution license is claimed.
 
+Roswell Music Jam is also staged disabled on channel 2. It discovers the latest
+publisher-linked all-ChordPro ZIP from the public songbooks page, checks a
+bounded single-disk archive in memory, and exposes individual chart selections.
+Successful downloads are cached for 24 hours per provider instance, so searches
+and resolving multiple selections reuse one archive. Failed refreshes are
+reported without replacing the prior cache. Filenames identify arrangements;
+artist tags are not treated as recording identities. Imported charts retain
+source attribution, archive revision, original ChordPro and unknown rights.
+No publisher corpus is automatically imported into a user's library.
+
 ## Version and lifecycle contract
 
 The envelope has `schemaVersion: 1`, `extractionSchemaVersion: 1`, a positive

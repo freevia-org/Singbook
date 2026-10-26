@@ -3,11 +3,13 @@ import 'import_sources.dart';
 import 'metadata.dart';
 import 'open_catalogs.dart';
 import 'lrc_red.dart';
+import 'roswell.dart';
 
 export 'import_sources.dart';
 export 'metadata.dart';
 export 'open_catalogs.dart';
 export 'lrc_red.dart';
+export 'roswell.dart';
 
 /// All sources in the architecture, including truthful file-import-only routes.
 List<LyricsProvider> createExtraProviders({ProviderTransport? transport}) {
@@ -24,5 +26,6 @@ List<LyricsProvider> createExtraProviders({ProviderTransport? transport}) {
     WikimediaCommonsProvider(http),
     WikisourceProvider(http),
     LrcRedProvider(http),
+    RoswellMusicJamProvider(http),
   ];
 }

@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "extractionSchemaVersion": 1,
-  "revision": 8,
-  "publishedAt": "2026-10-26T10:35:17.614960Z",
+  "revision": 9,
+  "publishedAt": "2026-10-26T11:20:40.927214Z",
   "sources": [
     {
       "id": "genius",
@@ -838,6 +838,78 @@
             "language",
             "credits.0.name",
             "artworkUrl"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "roswellmusicjam",
+      "name": "Roswell Music Jam",
+      "adapter": "builtin",
+      "status": "disabled",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "chords",
+        "metadata"
+      ],
+      "enabledByDefault": false,
+      "accessMode": "publicWeb",
+      "website": "https://www.roswellmusicjam.com/songbooks",
+      "hosts": [],
+      "attribution": "Roswell Music Jam",
+      "changeReason": "Publisher documents a public all-ChordPro archive for use in ChordPro apps. Two independent live search/resolve canaries qualified lyrics/chords/metadata on 2026-10-26 with one page and one archive GET reused across both probes. Native adapter stages individual charts with bounded validation, 24-hour in-memory caching and arrangement provenance. Disabled pending review and compatible app-release qualification; channel1 remains unchanged.",
+      "probes": [
+        {
+          "id": "if-not-for-you-dylan",
+          "query": "If Not For You Bob Dylan",
+          "candidate": {
+            "providerId": "roswellmusicjam",
+            "id": "if-not-for-you.chordpro",
+            "title": "If Not For You",
+            "artist": "Bob Dylan",
+            "url": "https://www.roswellmusicjam.com/songbooks"
+          },
+          "expectedTitle": "If Not For You",
+          "expectedArtist": "Bob Dylan",
+          "requiredFields": [
+            "body",
+            "chords",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "key",
+            "sourceCollections.0",
+            "identityScope",
+            "sourceArchiveSha256",
+            "sourceArchiveFile"
+          ]
+        },
+        {
+          "id": "breakdown-petty",
+          "query": "Breakdown Tom Petty",
+          "candidate": {
+            "providerId": "roswellmusicjam",
+            "id": "breakdown.chordpro",
+            "title": "Breakdown",
+            "artist": "Tom Petty",
+            "url": "https://www.roswellmusicjam.com/songbooks"
+          },
+          "expectedTitle": "Breakdown",
+          "expectedArtist": "Tom Petty",
+          "requiredFields": [
+            "body",
+            "chords",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "key",
+            "tempo",
+            "sourceCollections.0",
+            "identityScope",
+            "sourceArchiveSha256",
+            "sourceArchiveFile"
           ]
         }
       ]
