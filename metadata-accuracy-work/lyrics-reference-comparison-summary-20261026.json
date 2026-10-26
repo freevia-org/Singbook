@@ -14,6 +14,7 @@
       "lyrics": {
         "verifiedCorrect": 0,
         "verifiedIncorrect": 0,
+        "scopeMismatch": 0,
         "unverified": 99,
         "unavailable": 1,
         "denominator": 100,
@@ -26,33 +27,36 @@
         "referenceCoveragePercent": 0.0,
         "adjudicatedGoldReferenceCoverage": 0,
         "adjudicatedGoldReferenceCoveragePercent": 0.0,
-        "correctnessBasis": "Only manually adjudicated field-level gold counts as correct/incorrect. Public references and candidate hashes are tracked separately.",
-        "sourceObservationCoverage": 17,
-        "sourceObservationCoveragePercent": 17.0,
-        "sourceTextDifferencesAwaitingAdjudication": 14,
-        "sourceTextDifferencesAdjudicated": 3,
-        "referenceCoverageMeaning": "Adjudicated correctness references only; the 17 source-page observations are separate evidence coverage.",
-        "classifiedMismatchesNotPromotedToGold": 3
+        "correctnessBasis": "Only reviewed field-level gold references with comparable output scope count here. A mismatching arrangement-scoped key is reported separately as scopeMismatch, not as a wrong recording key. Observed source pages and provider candidates are evidence coverage, not correctness comparisons.",
+        "scopeMismatchMeaning": null,
+        "scopeMismatchesExcludedFromEvaluatedDenominator": 0,
+        "referenceCoverageMeaning": "Adjudicated field-level gold rows only; source-page observations are reported separately."
       },
       "key": {
         "verifiedCorrect": 7,
-        "verifiedIncorrect": 1,
+        "verifiedIncorrect": 0,
+        "scopeMismatch": 1,
         "unverified": 67,
         "unavailable": 25,
         "denominator": 100,
         "percent": null,
         "strictCorpusAccuracyPercent": null,
         "evaluationStatus": "partial_adjudicated_comparisons",
-        "accuracyAmongEvaluatedPercent": 87.5,
+        "accuracyAmongEvaluatedPercent": 100.0,
         "referenceCoverage": 8,
-        "evaluatedReferences": 8,
+        "evaluatedReferences": 7,
         "referenceCoveragePercent": 8.0,
         "adjudicatedGoldReferenceCoverage": 8,
-        "adjudicatedGoldReferenceCoveragePercent": 8.0
+        "adjudicatedGoldReferenceCoveragePercent": 8.0,
+        "correctnessBasis": "Only reviewed field-level gold references with comparable output scope count here. A mismatching arrangement-scoped key is reported separately as scopeMismatch, not as a wrong recording key. Observed source pages and provider candidates are evidence coverage, not correctness comparisons.",
+        "scopeMismatchMeaning": "The selected key is supported as a chart/arrangement key, while the reviewed reference is the recording home key; the values are retained but not compared as like-scoped claims.",
+        "scopeMismatchesExcludedFromEvaluatedDenominator": 1,
+        "referenceCoverageMeaning": "Adjudicated field-level gold rows only; source-page observations are reported separately."
       },
       "chords": {
         "verifiedCorrect": 0,
         "verifiedIncorrect": 0,
+        "scopeMismatch": 0,
         "unverified": 95,
         "unavailable": 5,
         "denominator": 100,
@@ -64,11 +68,15 @@
         "evaluatedReferences": 0,
         "referenceCoveragePercent": 0.0,
         "adjudicatedGoldReferenceCoverage": 0,
-        "adjudicatedGoldReferenceCoveragePercent": 0.0
+        "adjudicatedGoldReferenceCoveragePercent": 0.0,
+        "correctnessBasis": "Only reviewed field-level gold references with comparable output scope count here. A mismatching arrangement-scoped key is reported separately as scopeMismatch, not as a wrong recording key. Observed source pages and provider candidates are evidence coverage, not correctness comparisons.",
+        "scopeMismatchMeaning": null,
+        "scopeMismatchesExcludedFromEvaluatedDenominator": 0,
+        "referenceCoverageMeaning": "Adjudicated field-level gold rows only; source-page observations are reported separately."
       }
     },
-    "reportSha256": "d94b953c177eacebeb1c04d24afd323a5c13a59ab4fdacbf536369417d4e7726",
-    "runtimeCodeHead": "7ca45ed0cb619e0d208dbd413becd616281c4f48"
+    "reportSha256": "09824d06dcb00a23893d39cfc9021a0307aee07f1ef661b7471ff1a4cb3b81b4",
+    "runtimeCodeHead": "271753d4f613cf642f04e2c3f9af496435595a65"
   },
   "sourceCoverage": {
     "lyrics": {
@@ -858,6 +866,30 @@
       "selectedOutputReviewCandidates": [],
       "selectedOutputHashHasMaximumProviderLabelSupport": 1,
       "interpretation": "Strict arrangement-level agreement: normalized lyric hash plus chord word positions and capo-normalized chord pitches. A mismatch can reflect lyric, placement, capo, or arrangement differences; it is not by itself a correctness failure."
+    },
+    "transpositionInvariantChordProgression": {
+      "songsWithSourceData": 96,
+      "songsWithOneHashVariant": 30,
+      "songsWithMultipleHashVariants": 66,
+      "songsWithAtLeastOneHashSharedAcrossProviderLabels": 2,
+      "songsWithOneProviderLabelOnly": 29,
+      "hashVariantCountDistribution": {
+        "3": 22,
+        "2": 35,
+        "1": 30,
+        "4": 9
+      },
+      "selectedOutputRows": 95,
+      "selectedOutputHashProviderSupportCounts": {
+        "0": 92,
+        "1": 3
+      },
+      "selectedOutputHashHasCrossProviderSupport": 0,
+      "selectedOutputHashHasOnlyOneProviderLabel": 3,
+      "selectedOutputHasSharedAlternativeButChosenHashHasOneProvider": 0,
+      "selectedOutputReviewCandidates": [],
+      "selectedOutputHashHasMaximumProviderLabelSupport": 3,
+      "interpretation": "An exact ordered progression hash after transposition normalization corroborates chord quality and bass structure only. It does not establish sounding key, lyric placement, recording identity, independent provenance, or correctness."
     }
   },
   "crossProviderCandidateIdReuse": {
@@ -910,11 +942,11 @@
   },
   "perSongSupportScorecard": {
     "file": "metadata-accuracy-work/metadata-practical-support-100-20261026.json",
-    "sha256": "33c2ef47b1381ad9303916ac47965a7a461ba1f5d6a498cff93c1727808c8eef",
+    "sha256": "d719e3ad29b7cd12f3d7b82cde16d01a85fe6ccd2914ae733c6736b40ee21e01",
     "rows": 100,
     "containsLyricBodies": false,
     "sourceReport": "build/metadata_accuracy/report.json",
-    "sourceReportSha256": "d94b953c177eacebeb1c04d24afd323a5c13a59ab4fdacbf536369417d4e7726",
+    "sourceReportSha256": "09824d06dcb00a23893d39cfc9021a0307aee07f1ef661b7471ff1a4cb3b81b4",
     "includesSelectedKeySourceClaims": true,
     "includesChordSequenceAndAlignmentSupport": true,
     "includesLyricHashVariants": true,
@@ -924,6 +956,22 @@
     "includesNormalizedContentHashes": true,
     "includesSourceChordVariantHashes": true,
     "normalizedLyricHashVariants": 467,
-    "chordChartVariants": 204
+    "chordChartVariants": 204,
+    "selectedChordMultiProviderTranspositionInvariantSupport": 0,
+    "songsWithCrossProviderProgressionAgreement": 2,
+    "sourceProgressionHashVariants": 202
+  },
+  "chordProgressionEvidence": {
+    "sourceHashVariants": 202,
+    "songsWithSourceData": 96,
+    "songsWithAnyCrossProviderAgreement": 2,
+    "selectedOutputRows": 95,
+    "selectedRowsWithCrossProviderAgreement": 0,
+    "selectedProgressionProviderSupportCounts": {
+      "0": 92,
+      "1": 3
+    },
+    "normalization": "Progressions compared after removing absolute root transposition while retaining chord quality and slash-bass structure.",
+    "interpretation": "An exact ordered progression hash after transposition normalization corroborates chord quality and bass structure only. It does not establish sounding key, lyric placement, recording identity, independent provenance, or correctness."
   }
 }

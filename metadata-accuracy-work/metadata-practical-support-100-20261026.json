@@ -3,8 +3,8 @@
   "date": "2026-10-26",
   "generatedFrom": {
     "benchmarkReport": "build/metadata_accuracy/report.json",
-    "runtimeCodeHead": "7ca45ed0cb619e0d208dbd413becd616281c4f48",
-    "benchmarkReportSha256": "d94b953c177eacebeb1c04d24afd323a5c13a59ab4fdacbf536369417d4e7726",
+    "runtimeCodeHead": "271753d4f613cf642f04e2c3f9af496435595a65",
+    "benchmarkReportSha256": "09824d06dcb00a23893d39cfc9021a0307aee07f1ef661b7471ff1a4cb3b81b4",
     "corpusSize": 100,
     "cacheHits": 3100,
     "networkAttempts": 0,
@@ -14,7 +14,8 @@
     "providerLabelAgreement": "practical exact-text support only; labels and candidate IDs do not establish independent source lineage",
     "strictCorrectness": "only reviewed field-level gold references with compatible claim scope count as verified correctness",
     "referenceDifference": "hash mismatch prompts text/version review and is not automatically incorrect",
-    "copyright": "no lyric text retained"
+    "copyright": "no lyric text retained",
+    "practicalCorroboration": "Provider-labelled exact-hash agreement and public lyric or chart references are useful practical corroboration even when lineage is unknown. They do not by themselves establish that a selected value matches the specified recording or edition."
   },
   "summary": {
     "songs": 100,
@@ -116,7 +117,11 @@
       "chordChartVariants": 204,
       "lyricBodiesStored": false,
       "rawCandidateIdsStored": false
-    }
+    },
+    "selectedChordProgressionsWithMultiProviderTranspositionInvariantSupport": 0,
+    "songsWithCrossProviderTranspositionInvariantProgressionAgreement": 2,
+    "transpositionInvariantChordProgressionHashVariants": 202,
+    "transpositionInvariantProgressionInterpretation": "An exact ordered progression hash after transposition normalization corroborates chord quality and bass structure only. It does not establish sounding key, lyric placement, recording identity, independent provenance, or correctness."
   },
   "songs": [
     {
@@ -309,6 +314,57 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "64fa9aab4e4f4bc53ae3195c55b0f2eee717d8769b0b7aec110e105a9d58663e",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "803bf1fa786da1bac674c4da63360183fc62f7be0a4df62213e634ff0200659f",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              123
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "b8ca38b7aea562aef6c5914df4ddf58f2ae098b19bbaf2a3e8374a2ae6f2b839",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              258
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "d48a9845103cbf9f819c550c1f325beb60dec14001ca323e274cf7b83aeca8c0",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              167
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -470,6 +526,42 @@
           {
             "rawChordSequenceSha256": "a46277e314a28c9ef6ca3dfb7672b0d5936b0a09e0aab1d56c2045755249bd0e",
             "alignedChartSha256": "8754cdcc1c6fac4672b77587c60b500d3f8670f75dba15c813bb1a32323e75b1",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              113
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "78b5314e24f11559cde92576f6b5b54dedf773001e7ede5606ce0426e904111b",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "952b8fe42e8a021dea86d78a62cc66b1a80925ebbd7470c5396a5b71bb3bdc68",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              115
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "ba69dddb2e291a25da45402b0975cd1a6d3e9ce5b91cdc68c6cc47e3cbf59426",
             "providerLabels": [
               "songsterr"
             ],
@@ -665,6 +757,42 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "a6aeacd638fc8c6c820562b5b4d327d29fdca33f0b55e52a13cd017626dafc2b",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "d0128b7560a3e253bcac26c8e722226a28407d2924ded878bcd614b294414a48",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              91
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "fe684704e4e3d8981f863239b14dbd863c47fff79f350e48b8c0023f794875b2",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              89
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -838,6 +966,42 @@
           {
             "rawChordSequenceSha256": "3d717e7f494eb121406b3725b0d294c5ccf94cee3c83ec7edc2c7a24d951fc8b",
             "alignedChartSha256": "b0a5872031c257de37a00fae7611403779042bde49683986aa8a2e0414bb2a5f",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              126
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "566338be712143060e55f2f9d5864f0a57003ce55aaff0bb0a5e4f69f5f1564d",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "70ab51a7939bb56865c1691bb6bd633087a63de55ccaa1b46fad0880d9cd2717",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              166
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "76956dac0c1209094dbb8562c59787da59d46162edc92b41c465ff6888788381",
             "providerLabels": [
               "songsterr"
             ],
@@ -1088,6 +1252,57 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "d24c162dbc919977ea60e4763c03672371a895eb9f255021849e448a6523b757",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "68ece42e81cb895e196802a664c0ebe06f1453699ba74387fcce82b332426084",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              94
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "7219528261754f488a1e51c3b5102d79f64c49c1f9bab3721af217ff719e10bb",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              16
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "d4f338905eedbc3b643b564270c0f5db63234b5d774346586a05a409278ead9a",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              64
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -1257,6 +1472,42 @@
           {
             "rawChordSequenceSha256": "ff4134b27466203bbd380146eee46682f89efc4bbcdf8dab513e054580734654",
             "alignedChartSha256": "aa280b735e258f84e0401c292ddc49b02913128eb68ae284fad27caeaef57c12",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              198
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "1c1b6c4f1780373cf9e16d9f578361287d1587fe8cfa44dc929d2f1df0ce60fa",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "1b7f2568fd7f1e534eba894f20029c43d8f74990685e5b3b8e7dd61a056b55d4",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              160
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "f8d6dcbc3154e25225ab7576a53e3a1c541b7c4dad7041880dbfea90628d8dd3",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -1473,6 +1724,57 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "68530c10d070ed1c5ccb7c0933a84abaffc421624682e57c82cf3e78f7ec17b8",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "19d2891f01e9e954df2b1fc9715d033817b07ce42d8fb0b0f04089de0d08053d",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              64
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "c1cd10ae623c8bbb5df166698480c9620329b517065635db1583b156622a98cd",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              72
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "cbf229806ca6eddc6064f4c936a3bc6e15cbaa692221b5ddd4a8c6340b783c23",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              100
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": {
@@ -1665,6 +1967,57 @@
           {
             "rawChordSequenceSha256": "4d9ae1b7809f8504d0206a6e2b074aa165f8c8b6b1a6414d4e1ac99e0082c636",
             "alignedChartSha256": "36fd7b3300a81678dc763f3a0779accdb8118b3f051ee57bbd00722fac578e35",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              131
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "c767a9a35c7ccb5224627f759627e44a55e313fc0b8208313ea511b4dbcf7575",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "282bede58d2fe0aa885c1aff175cf994e64ecf593358f5dfcd24f4f2adbf173b",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              51
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "9f3752323bd351dff33161924232fc1774a7bc167859b5d10da9af94ba4c3225",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              110
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "dcb9345cab7702c8afafd426157303a83acb205df97fca04d100b31f78571c7e",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -1905,6 +2258,57 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "ac378ff3091835bbe0593b44996a61cd0a42c4509224ec89f740ea79379b2986",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "2f61abbe143fbffd8b30faecbcd45d037b1de50179f5dc9c0ba1bc2e7b92d862",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              53
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "b832a709ec91152800430a3c8307c10984cff43a54291a845fbe197279e5477b",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              152
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "b8d2c81721de80661bb45aaf2cd27ee0322d12694a446062625990e94fb4afb0",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              11
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": {
@@ -2022,6 +2426,29 @@
           {
             "rawChordSequenceSha256": "332eea4881db587144682989a600f43af7c671b5e9508ac2a8ea28400f18eda2",
             "alignedChartSha256": "d893bc3ad4b3639baf9c98568ae5bef066a76e3d8b0361abeb6123546a8ad820",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              93
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "d589e3f47876d20b75ff2727050d88798efeec142f4fe1fa484a8afbf9b20a2b",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [
+          "ultimateguitar"
+        ],
+        "selectedTranspositionInvariantProgressionSupportCount": 1,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "d589e3f47876d20b75ff2727050d88798efeec142f4fe1fa484a8afbf9b20a2b",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -2203,6 +2630,42 @@
               "sameSong"
             ],
             "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "8b9c28c4db0f1d70ff20f8a527c4011026460dfdbe04781181fd3536f68f00d2",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "3b58daa030ec044d419ffbd590c342df707f6982c0e376ccd9bc615285150aa1",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              66
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "5d0d5b5ca91e76ec1f6eb548c830587a3867846410cd3cdf0536a68d3c5e91b2",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              41
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
           }
         ]
       },
@@ -2386,6 +2849,42 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "e54b2ceede113d7930a229bd0dfbce5c21780933d9e538d80c852f054a930627",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "09edc8c95a5684f7e33ad83fbb1a06d87c8f8b80e8a2832417e7351f2ac1f3c1",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              40
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "fb6b1a96529c37b9263d239b5ac5dfc05ec58f0f0cecf7e4491fa43aa36e1f39",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              230
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -2550,6 +3049,42 @@
               "sameSong"
             ],
             "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "9e045483f9e5cbd34db6d4e1c774b747b04cb8ccdd8ba4879bd83e49dd521297",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "6f414db00ec1d7290529c7570af4fff6d264040428fec35dad4421cc21b4259b",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              96
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "a1a912820d8fa061b5309fb1bba60cf9d2925ff8cb1e5740275839989c04ccdc",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              192
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
           }
         ]
       },
@@ -2738,6 +3273,42 @@
               "rejected"
             ],
             "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "5ecff75d4608c57aced52c0688b0958c287acc306d208178ca89f7d355e2b27c",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "9176b39d1975af0d1e659d613f2e46fdbaedaeb035670415f14618a2ac587900",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              163
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "b512d639c1c6397d8386b800dfbc24bf8ae5d1808da2d5a5bc75f4e82507093e",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              155
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
           }
         ]
       },
@@ -2969,6 +3540,57 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "9c786e3e364b9d7a3ef305e68311c8e4e14f1484f743fe3ed6938a6d9980bdeb",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "16bbefe86dffc95881cf9adb6f63fbd99656c1f7347838877b3ce9b52ec1cd00",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              50
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "93fcf43c4892a1bfef0794b4592a79a666b048ac8fabc9ecbbb9f3b013eca760",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              34
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "b1f479914339a4b5d7a0193547861ec3cf5a8decb4732d60d88dfa98df9dd413",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              72
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -3181,6 +3803,57 @@
             ],
             "matchKinds": [
               "sameSong"
+            ],
+            "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "5f5be07f6ee938fba3b55b6db3d0921cfcdbb9b3bff60d17c5c4851a3dd52701",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "1cd2af35d049ccc5ab327698a80d3ec3f96b59e15973e4337b4c327f117f6899",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              94
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "6dee09b57a2887bb41e7793bf2b3c30e5050d9df9900e933c1a9745d17ddc7a1",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              94
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "ef351cf9f614684cf405110c506c47b96feb924b99d384aa68eb67e825ee6613",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              33
+            ],
+            "matchKinds": [
+              "rejected"
             ],
             "selectedContributor": false
           }
@@ -3421,6 +4094,72 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "cc7ddb7630bb14738b70c036e2e8dd13986f010cc0890d9f7d90b5009b2a17a2",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "353e7b7d27acd856dd5635e69e1e849d659aabe3f1302937d3e8ede4b767158f",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              24
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "71a982798972b00447f57627956952ddd87436d9cbe95b751b857c280ba3eab7",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              27
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "b4b0ad601642a6013951ac485dfc8478c8fc579b38d67f70584f4b951a31ba4f",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              121
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "cf718d54401e220f308b801198b1f2606258437f88daae1443d384f9a471183f",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              170
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -3540,6 +4279,27 @@
           {
             "rawChordSequenceSha256": "97c28290664db74c70b9b9d04ac02c6c1f85dbf0d097c348204658b1f5d53b46",
             "alignedChartSha256": "fcde1eb3d6e55e7c8857af7d968bfc52660cfdb9cc9dcd6e371205f34bdaeb18",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              108
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "32707880331d03c6bd64807861dd9ead92c44f55ba3a43b90a7f6c1b981f70f7",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "69e4bfb03b12232fa52d39ac36b1d27523884b0cbc609d5f0850915e7b03cb50",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -3702,6 +4462,27 @@
             ],
             "selectedContributor": true
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "52c62fcf5382ae448e3a580196d275d69ffc291b53f346a8839c0cfd36d62765",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "70b1ae1aafbce9eb4d32c2859f2ac78d0898a464b6f9711851b75f70b04a1137",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              183
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -3821,6 +4602,27 @@
           {
             "rawChordSequenceSha256": "f35dc038a245af48d483f9bd81884a1a33562ca3bb7d8ceb4bd207528a06994b",
             "alignedChartSha256": "02082c4c97e60d14521a4450c0ac0a1e16fb844b60073f61cb427952085c4e1a",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              169
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "173666fa7d07a9014c0b43f5c9c1b3181756ffa61923cb961cfcbd7c73624697",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "09610b902812bd96843bd42acca5b721392fd9a6f22763682e12a23a78737fee",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -4057,6 +4859,57 @@
               "sameSong"
             ],
             "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "1fa2683b09c94dca6e42dad3488e060fad5ea72efd83d9a09ce09a03da005ec0",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "1fd71945bf61bd59243fd14511c6c1b8a3a5e6350853665af1381e0071bf6e88",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              52
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "21caa8b4ee984903b32a07e66904664a931c4e1c4ee59b0169734ac06b02820d",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              61
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "357cdedfb2d3a445c57d327937422d614e81f4c7a5105d10e154ded73374e819",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              48
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
           }
         ]
       },
@@ -4307,6 +5160,72 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "81885e9677f81fa35e30fbf26b5c754904e7d0575211323bded7e8337429995f",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "af79bc7565c574f5300d21ab2dff6a36de4207ad2e18ad558b30791d485a17bf",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              125
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "b03d420e3aeb41806b47cb08e4e4111c035c3e70e34502ef0f34f2bf577b4a34",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              127
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "d15fe65add8aef627dd467f735487e355a11ba927b9caa5013f2b5bc37ba7ad6",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              16
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "e9df9e8c71abae8a810741134607be296682373c4837d76ee54fc093ecfe21f1",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              61
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -4506,6 +5425,42 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "e6557264eda31a390c8e5f2984f64ec1852151dc8ae4bdf57856f8cdd94789f7",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "47bcbfa74fa12cef2d9f4ee798f5b7ec718de1972e09eb09389da5c5086af028",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              87
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "c0df07fd8fc9d774ac0cd353bdc3409847682b5ffda4eb3a6473b056a51e4c95",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              119
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -4673,6 +5628,27 @@
             ],
             "selectedContributor": true
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "4092c312189dd3016de9c7a6d483a53f72272fe4cc53cef06c07c06571ab76f2",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "7d288b150f5aca0510d731603f5b3ee333814c8141652925996d9ed836730836",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              66
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
         ]
       },
       "publicReferenceObservation": {
@@ -4820,6 +5796,27 @@
           {
             "rawChordSequenceSha256": "bbe711726ab0caca7957a9ac54df504d881fd1552ffbeefcf0bb8aa94c41ac51",
             "alignedChartSha256": "37e0f867de78aa8b9a5b9fa12d9dfcc6cb4a80b756e1fa1ae5ff50da3ad1c9f4",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              104
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "8a4521e69eb9399cf99963227d9ba14d48bde7f116cda956f1624dd286a556ae",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "f27bbab086b14dbe6ad2fe70072c371460b45ca57b7ed110c5249f843acfcfe1",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -5059,6 +6056,57 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "cf474a0e11b69b0c17cf7f15ca603369126374c5eb410c276bd1c019ef3df2a0",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "289bccbd4c0b3021b7d33c230aafd0a5e2d47c1b1cdd3d4f53905d27d62cd87d",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              160
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "3a16cb8fb26e708640ccc9afc9a67ee81903eca5819382a4eadc5e4fbf8b1f66",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              171
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "ac4dc1538d3013ce76ae44fb21962a81b54ea7c5a167573e81a715197a6c3ed0",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              42
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -5233,6 +6281,42 @@
               "sameSong"
             ],
             "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "0cf263bfde94916687e1101d93634158ef0dd66b2452d0fb740e474da249dec9",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "a2e59478ad6bd8e511cf8544730334b751e5a6d6bbb0fdedc8387c93381491c3",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              152
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "cd705b153812ebdce378f26920e84aa9771f95097faf2f9c3c7704ad48b418f7",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              125
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
           }
         ]
       },
@@ -5464,6 +6548,72 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "cf854ec8f6b7d650f23a03d4216f5372222c0e50fca74e25ddb722d466ead0a6",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "1420caef6b7f9024aba48eb71d772b4f2be54e577767ab51e01349a52d7e08c5",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              60
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "266e2b075ce1ca9137c12228b43e2104a702697ba7a65bc714ecc1b54075a342",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              33
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "6912e20501fc4bdbdaf07d895bd8a34c26347b1b577d89ad99dab057452ad556",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              138
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "cf3663fb02a01f85f912f18d21d66c1b5778b06a7949826bd87dcaa607451a8d",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              51
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -5592,6 +6742,27 @@
           {
             "rawChordSequenceSha256": "e8c652e668957de7568fe6c6d83fab1a25017f944ddd78b0d273adb40aa2c03b",
             "alignedChartSha256": "476f365686fc85234c32d3ecb03ceb3daa8438ff1f391bae8139ab0029933892",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              78
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "14fff98eada8d86ad32cfbcafe51eadc2dd4920cbbd31e4846e1c05f2eb533b1",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "7441a58414f70090233b613473e2fbcc2f7a37e4bd354e5746932bfb228c0392",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -5803,6 +6974,57 @@
               "sameSong"
             ],
             "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "518ea4443f41afe9dbf844c3aaa8017471439dddad4a395b8b32163f03eff864",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "7e2cbe05ee01ce49e8b67b33ed409ccd54beda25398cb384ad302d2e2eb488a5",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              80
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "92a528c30813843b71891f1a73865e3697f3a5e6d3822b6e62590299cee2b9d7",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              26
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "a1f1ac7cee81b6b4bdcf20c88264040a03fe1e5583df41cb52887022c80dfa89",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              61
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
           }
         ]
       },
@@ -6095,6 +7317,74 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "58e06a0936a7e22e03db8f6295d54533c8630579da00d230f0b5fbebd9102007",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [
+          "ultimateguitar"
+        ],
+        "selectedTranspositionInvariantProgressionSupportCount": 1,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "3942b630112f75fe614e033e641e7a50a9e9fcbb6ec940392f71465f2b10dd45",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              103
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "58e06a0936a7e22e03db8f6295d54533c8630579da00d230f0b5fbebd9102007",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              68
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "95f3478bbfcd52866360dc23c08b35d7d644227e292a6a76685e98ecb570570a",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              54
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "ca2621d9acad88296e6f52fe58ec5baa19b12f0fc72d54eb2818544006ebe29a",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              38
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": {
@@ -6234,6 +7524,27 @@
           {
             "rawChordSequenceSha256": "6cc4f2b77b5f7daa0c84eaa14f3839a57cbd460a7ff9515a3d75743a809b184c",
             "alignedChartSha256": "e9f09bbb8be333a52b11f309c0dba2b6940f77185c95ae26b3b5fb83fa0eb6c0",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              85
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "10057d049796ad1d04166e70b0edf51c298dac468ad49790d22ef82359c9f02f",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "eef4d89302b73fe1d24fe52ae9de8c7c73145f90d4756365b6b61865dc7ab13e",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -6414,6 +7725,42 @@
           {
             "rawChordSequenceSha256": "2e978c07f5e402e3d856893934d0a3bd2d1fe622b97678251d0df9ae19127575",
             "alignedChartSha256": "56cbb386bb04f9f7a78424a748b01e6e673f7ba434ef51eb0dc8863bc8388f10",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              52
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": null,
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "1621f4f3a9f552c6d17e2b55289ab309ce5255e341b6c15ffb89fda6f0754d44",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              24
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "f118affa33a31ee1b0470253921d177714eedb3a303aa8d946a4b6927c3b55c3",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -6617,6 +7964,57 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "75f1b2d0bb5fd094f9d9fd86efb9bbd2fbb7ac9aed4ef90821be7d8134eabea3",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "5443df1bc25c9d9b30ebc7aacb4491be5799390ac332aaf7f3fbf5a268132700",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              40
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "7331c491f7faae9741f9886f9b61180348256cd8cf91e0fcc13270623725a22e",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              48
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "cc4c9bad011fc1d78c90d109b2b9e3150871952d582c188dce79aa716b6943b9",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              56
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -6736,6 +8134,27 @@
           {
             "rawChordSequenceSha256": "912cf1af3834bb77b84e04767f623f45db66bea5b58e0d99cd1c7f8efc8ba410",
             "alignedChartSha256": "0051d287c78c2190e04affc771fd7db3de7089a8e2aa9388fd5853684560cfb9",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              72
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "fbb8470097fe4e326c4c381be172e5c0582636cb77840ac173f997dbe4e7bb58",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "4e00479fed00716ac2aba759684b7b247443620c5e2de571d23020d01ea9ca90",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -6931,6 +8350,42 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "a2a254f6a3b0886468ab5a51479c247f59c457354da8bac4bf0250569f3763a3",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "91e1c94d0633a4d951dbeadc24c4508e816d1560329305a1623c6f0b345b0caa",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              84
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "bc66b7b4eb89a933b062aecd71382682fa6b9405b3ae9d3aa9ae8d7a6480cce9",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              57
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -7029,6 +8484,27 @@
           {
             "rawChordSequenceSha256": "1fbfaba3390751748bf26524685d3a14f8d895b6a148dddeea7bef0a0be4b66e",
             "alignedChartSha256": "f1465fa98a2eaf046f8ee51308608e641df74980ce9a73972fb0e9ac8a69c927",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              80
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "f1c2cdf7db2b59949ca104e4628b02acfe4dee4d753e9411bcf231c58bae5470",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "ae115c18a5cffe7076a58440b6bece6f99045ffb3c458a2faaff269de38a2d82",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -7196,6 +8672,42 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "0443d26670e1b4a7e3e9bab75ed20a3941189c7007b6f46f9c4c13a72679b4c0",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "2dd7dec3dc7e861487cc61bb87a4e7747f9bfc52cf00a181137b775b4f18675f",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              131
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "43e34e48c6d8ea9f65d8566af3d85c1fecdd902e72a33eb526557b3a70580e41",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              112
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -7332,6 +8844,27 @@
           {
             "rawChordSequenceSha256": "53131f08b6d945e4cd6333023113aa9073bb9890c6e9e1978a2d5736bb5ad531",
             "alignedChartSha256": "500007c68d090af9c13ad6e9d693eae810ac796f31b4933f5ae4c0ff5386cbb0",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              120
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "ecb46a6a94dfa2cf81f7f43a480cdd009da58e9e4bd2f63be8ebf661651bf19f",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "a418bf7cbe24c6b5cce0bd320c831d07e14314faf611f1bc8a37a3f627abc041",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -7561,6 +9094,57 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "0e8db698e6b0671a043549129eefa3db18ab09c28cdd5d8f7a1a23c3aa53ae58",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "1c3bed4ed1732918436ea5dbac1fd45b850b35908c75e087af248a40b0ae4ebc",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              104
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "513c621d21b4f8197f0d100784907db3af79b35b38fd845b628f32794d1564c5",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              40
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "840222ff9ddcea33b1698161fef89aee53f4198af9943e69d2eb4e2b904fe9ec",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              54
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": {
@@ -7740,6 +9324,42 @@
               "sameSong"
             ],
             "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "f01ac6e3ad9962cf091837b737cc61a635ec4755efe8983b34ea6e69f12e5d78",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "ce9da10075e749cf95a59b11fdfdbf425ab9c70b197d97bd75ca89b4ef855af1",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              19
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "f25522b11155c54383071d3209c3d27189022a84cafb2ca68a80865a60464491",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              143
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
           }
         ]
       },
@@ -7965,6 +9585,72 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "799c9c787158b386f93156b1d35247a90bf34836d06c543b67c251507ff47ce6",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "1fda4da43d06a58bd326d176fd9d64407dd30e4b6eff7469b12a63bc9378e998",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              56
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "33eb459f3a49f42d35f37a2086863e52bb55d840021b4a1421ad19702e16f19d",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              60
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "4d0ff66d1a4fcb8479422051eb18417cd7d5462db1f3365073029826b92a8d7a",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              56
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "dcdf3f8bdbc05f40cc89f2a76b5d4ce287a36a4ce6278624984b4bcb8e02e35e",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              57
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -8174,6 +9860,57 @@
           {
             "rawChordSequenceSha256": "69a1e03dfd1607ea49d898187503b46ac73ce2a2354a003f3557f28e4eaad284",
             "alignedChartSha256": "2f1d3c018983882094c7928edb224e1f4648e0a3b14b36de9d53fb70f978fe95",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              126
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "7711708be0e73b664ef7c76732abc9e8cc27f52151cbeddf341b99bdc70bd6ca",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "0b79283c4c890205cab7e6b1f41156fb36cc6ab2881efbaac90023937c27e2fa",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              141
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "1a8f90af172b752f8dd912ad0438f2e54f59ff300043fb385e9e62c6d738f568",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              125
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "32fe5fad19e21b6671d2fd5a38ec3318a85647b52fffb72b1cc491a8d904166e",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -8435,6 +10172,72 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "37bb9a8541a424f37bb33e0176f3183191a4e521b0d38b9953bf16abcc077ad6",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "0ba3ff844e8a7a101728d8e3f423ec9ed8b953b2ba60bcbad7f53c8836814343",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              101
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "1eadeb44a447eb16e8e16a04f0e730e1dd0d3e005ec98b7e50357890a98ae950",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              100
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "8ee2365aa2dd323f3e2616be190151e4220bb325c665579fee84a1e706a5fd1d",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              70
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "a3b02d284ec3521c9267b5e61dafca1667f42b84981f70e021fa941b2dce2208",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              73
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -8618,6 +10421,42 @@
             ],
             "selectedContributor": true
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "48c059a3914176da621a102cb3a8c137132d8d3858d84664387e04cc97bc6eb9",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "30d4b3b0a1106755304c40b89ee6a7806f4fef5de20f65f3c65f74a997d597a7",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              74
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "5036bb6fd19584c5afabb2c65c66db8603ab410b9aa0c3037067a3e2d428c7f9",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              61
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -8787,6 +10626,42 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "ea7090c447d6616ba70fd100c7cbd96ce80b28cf742e6cfbe7655f45b545f2bb",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "06fb0ed736706dcbdca8eb1cc4a68f42b9fd89ef5454753b9f2be5a64852c3c1",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              160
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "23e33825765f9a78327585a55dc740f5ff88f2a54e3df70f1494b858bc59c4e4",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              159
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -8930,6 +10805,42 @@
               "rejected"
             ],
             "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "e4651bd0793a6ab3dda8c901ac0b4ed92dcbd1d2917ffe764330bdec23e74f9f",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "81f0f5f74eb742cc32976f2f6498e18c62dbdf787a391cfbcac0a9495e7f02d1",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              55
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "a19fe4ee59ebed0b314f118acf13fc5fcc4fef3ca0d2416035dbe24580cdf009",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              118
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
           }
         ]
       },
@@ -9130,6 +11041,42 @@
               "sameSong"
             ],
             "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "003b890893e033eec538ce9eae7af0a855f783e46b2274cd5b33295666b59acd",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "6a9180b1dab1d9d6be8af0aaebdaad922d296e8269ba2beb21e2eea15e37e4b1",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              64
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "bf5456e8432b0febfb7b5b48c0209e14d94979ad9f39b18b92c98384ef50c389",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              152
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
           }
         ]
       },
@@ -9349,6 +11296,57 @@
               "rejected"
             ],
             "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "b064281ab980ed2434a288fec91dbe12cf96ad027a1cc1604948461cc97444e7",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "02a66de70b3a6b26cd4c71a6174b602b2713a1f459bd37418758f182422ffea8",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              91
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "10fc11e964bbe3ab6ef59b8c8d9d13093a49247b90c2f4827d57b21d4c6389f2",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              45
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "d66366f3549697d675d1dd7dc0724836715ffced15ae853218ff4e19d90a14f0",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              93
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
           }
         ]
       },
@@ -9614,6 +11612,72 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "6285f77b0fb9f97a93b14661b2957ecb6e458ad4100a02e432382a28421e9784",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "4d5eb4ea3d6163e5abd527cb88643721722ae3d23d92fd5909d5c503634dfebb",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              230
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "7fedcd4edfd881105700d31cbbaf0e068b329f0fc3b092d9d22bdcecea6bc1f2",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              207
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "e8f054412502271f586d3f2b43d02d399b5e469be3729027b8be604fbb450b6e",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              245
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "eae1bed360f7cf8e79b41c71a20e19463be634d7f368907000246cdc0e7e72d6",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              39
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -9795,6 +11859,27 @@
             ],
             "selectedContributor": true
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "194dc1424fccc59a702eb95098dad3dd0667a9b96adc6f37754693bd0a5aa3ce",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "9f807c8b0cfec96a727fdcafaf088355590fe30dabd1a655235c75759b23f6d7",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              83
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -9918,6 +12003,27 @@
           {
             "rawChordSequenceSha256": "6e01dbe8580b441549549befe4af8516b64f37d93ca4e6fd50a57ce498d9bea1",
             "alignedChartSha256": "e8cc7b8c813aa81a63f1b86313fd123d3a241c51e9dd7fca3b149371bb4bff95",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              79
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "d3854c13113ae0124981be5c82cef547aea3f1d194bc9d40a3d70afa246a4205",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "26d3d5cb8bdacacf4580cdfe7b907891d4ddc608dc6fd0b0bab1357454ee057f",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -10067,6 +12173,27 @@
           {
             "rawChordSequenceSha256": "ac9fa8d81f75c31044f745cd74edc35fc087dcea8776d3d1fabd76f2b97007a5",
             "alignedChartSha256": "0b91936cffb54ea887156b384781a623dfac5180f1660116fabde7c02ddaff91",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              58
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "107a01185223d3b6f98b47f8b0de1a761c1a8287bd35726f92c95f47ac0c0d0b",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "b8f2fc0dec6477cb5317f1044bf0707705b3971fe4be47d5b767c9c93f746d19",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -10237,6 +12364,42 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "501cbad539a3193a0c559579dc33b3f330046bfbfe09f1042560ee3ddbd1ef23",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "7a44062c81fb0e10849ac7063fdd8e8068090e1186bcf26d98b128154d681253",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              77
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "8910a4091b98f3a18f9f735aa03bd54cfcfbe3192d885f3d2a348ea17aa4d89a",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              73
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -10362,6 +12525,27 @@
           {
             "rawChordSequenceSha256": "6b8ec41628f4c794bb16965a299f255b438ba0a9daeaec368c3feed8ccf1081d",
             "alignedChartSha256": "2f436f60ee44df75070d80a7746d9d5cece56f2ef4f3ceef5e54aec20b7f1323",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              120
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "c9c33ac565ad54ec5b4f33e355f26520cf5560d7884d0f73f810c606453768d1",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "c170263b7f8fc4ac28ea2d275a57b31fe11143b71ae2a008647a2cda9f0c7e5e",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -10576,6 +12760,42 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "c1eae59608a38cad7df1dd7b317a80d5b9fdb48e5ce8ad940405d1bf09b2d3d5",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "527a3089dd6516a596e14d57648eb9c99d8ec08ce269838df09997a36d13d331",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              96
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "a86b8c9e783bbe392eac8a717ef874e18ed09d110e4ade0eb6894917818894ae",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              23
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -10695,6 +12915,27 @@
           {
             "rawChordSequenceSha256": "be66b06722d30550727c747590a79690505ddc9380f50d042e3fd292c453f858",
             "alignedChartSha256": "c73bc70702765c8b25ee27a8b7c7334b5fb8ad646dfe99d7e2503bcdc7029863",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              186
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "47f916f8b687847d8d2355bbd70625c21e802b7c8c9daf129dac248565c35ea4",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "6a57e46c2bb54caf16ce56ddfd90de1ce9068f900b761d7408ced1eaaf1e0201",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -10955,6 +13196,72 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "b8fc7f48abd6160d54732ad4e0fd7f1e5f3e12e6b499858f5db0fa09ffb5a89e",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "0a34f35efa6b941cbefd17c1b9356a6f15eb741e1914f56d7eb558e3a5423091",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              134
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "86373862100713aceda2ea2be07dc3a283698125fe3b06c6c0af0fac8fbdd2b1",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              134
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "dc62932c712c5901f887b9ab99664d245cc264c1eb0487e40f6af78816fe91d5",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              120
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "eb2e38150debe18aaa06d418656a0de182b21ef4d7ad03e30f4b662a46c3b2f0",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              153
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -11098,6 +13405,42 @@
           {
             "rawChordSequenceSha256": "429a3a7cfbdb598af4e9f825f09ba21f4929e92a43498252a8ef16d79984ad27",
             "alignedChartSha256": "af5d1e460b22229574ff62d94f3a54325aa45bc5a471a3a3d94006b82d1a041e",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              110
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "9590059b529bb935cee43264e08cc0f28dd627f61ad155b960b72153a4ff625e",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "0fcf5e9c43fc90ba57aafbc20203bd20a6bc9dfbd8627d75bcb5fc78e8770318",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              205
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "388dfa84208bb1e7a560ee3d23cccc7aaa5d12e24e469e7ab0425dac4891bf87",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -11255,6 +13598,42 @@
           {
             "rawChordSequenceSha256": "60c5a66c7dafaa248ffd5881328f35b733167d07d2f71add4dccf4c491794bc3",
             "alignedChartSha256": "51b36467227f4320b74788e3012e8dae846e79c43e03c3342f3d7921bc64380d",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              132
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "3eafe9a4ba277fdac2eb2da5bd40f0a895bd772a0b79cbbfa5aa920195be9f86",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "77a89dfa41c44f9fde1ce805da991cec5b3b6c8720e62d96a0f6af513649278f",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              148
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "a5afa0d765b48ce48213f52cea32b2823fd0a5e9457a8718677998eb22328da9",
             "providerLabels": [
               "songsterr"
             ],
@@ -11430,6 +13809,42 @@
           {
             "rawChordSequenceSha256": "f2de5232e8c94ec6321c75ea2fbb9a6e64274ee93f2ca2465a7af9ddbe58ac3f",
             "alignedChartSha256": "05d6d17ea14c338521ae1f99ce4692d982b118b6fa184453b0cf47c3d5341fc4",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              107
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "94e5963d2ae8131364e2cfded7797bbbd0a94766d8882db13105edd26c424355",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "44eeda5d721b78c628f9911049c69905c651a1721f64cfee6aa2e15556dbdb9f",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              108
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "d36a6cb30ae7ecdd83d2e0a14253ad42eed5ff13c2125c76ef5777a77ee3ccee",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -11640,6 +14055,57 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "5d39fed6c78e9acb7b0946d362470145f28ae0a419761c74150fb9a81bcd7a7a",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "877863289054f10351e8686365d5253ec5ae313d0ea24a7844b144398cf04c1b",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              99
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "c7a9811412519f79e50f20327bca49a92b54347ba24faf89721821f353ffd513",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              146
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "faa53ddc3fba3d3910ed6bbb7bf20bbf9de1785af6097f119c992fe112f3ba2c",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              94
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -11831,6 +14297,42 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "a49eab7149e03741949313b8ca97855cc57024fb2f333441c2baa805c3cfc316",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "0a29b1127cb7af7237c152dffd52bdf1eecb7423056ac330f02bb70e1c2ef884",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              46
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "0f5243b031f0a2cb40b6cc5db9ea0873cc04171eca88a1711baa305b0ee56672",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              212
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -11959,6 +14461,27 @@
           {
             "rawChordSequenceSha256": "69bc4dd8d347b2e245439b44a85332c6aada6a46fc178be78df5ccca555ed0ec",
             "alignedChartSha256": "5f19cf32d563e685efcb009e85f1044ee6095da546d3124323030e06f5be15b7",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              96
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "6957b49ee1631619677c64d2de9a371c7af774506066b43e7cc6f476bbb868ef",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "9ef2ad410448bd225ae66891619f8140854553667ded14ab59dc8dd3d3afb90f",
             "providerLabels": [
               "songsterr"
             ],
@@ -12170,6 +14693,57 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "f666f50a6f0dd9f0e377d2d0237f296b4d193ccbe6a32a06bc1d5f8440d9bd40",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "2c506bb46d9e2c9d4174f538a6edb38fd0116976e676ff832f787e44d8a04dee",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              202
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "5b93bd401a891343b9b239251c02a9ffa4b33a4c97373169b8cb6e8163084eb9",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              223
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "b9b0c52c99dc2180d34f75777d1496e8406beef1da032a6e4abcb17a990a2ff0",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              249
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -12344,6 +14918,42 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "b51095ffa2281f391487817676b21c6962a96b6d6ac934fdb74a329e239fe179",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "23dc634d670bba0e4a1b179acce5d81e12befa8710c50c766e20f8948c3b4f57",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              47
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "7689186d0d852ae71a60bb69e53a19c8496faf39ec7d2c12a09f32895f0984bb",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              161
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -12490,6 +15100,28 @@
               "sameSong"
             ],
             "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "b4b0db300b391fe8c032aa2a5368ee6727a2dde3a9b310be1cf1ce63fb4e046d",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "6ad0b70c30117d7753c4797e034654b765e3158335c9804117f9e870b52f7a52",
+            "providerLabels": [
+              "chordie",
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 2,
+            "chordCounts": [
+              56
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
           }
         ]
       },
@@ -12662,6 +15294,27 @@
           {
             "rawChordSequenceSha256": "d7b8c01647d775e379490343f7f3fc0658bfcb1b4b0ad99066815a1b888c1ed2",
             "alignedChartSha256": "3a841607fb9bb6658d722ab900283665c607199c43966f3b61ae749ce8e354aa",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              92
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "020544da793b0555664734d7735581925ea81726c4be59f3a768b2b7ecb98719",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "155799fd9eebfc9a26a42d5da185dc52d171d1910c61584d9ab88d0720a7f4e3",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -12890,6 +15543,57 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "2bc2ef534f11f0a36060937074a2463d11c264d551b04dc797285feb3e44e4f2",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "0202564224512fe4db6127fe41006b9c9381d4c0063903e193ba2edc000c7a85",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              6
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "041e3045d35d832d1e07f9e81a51480f0c454e6fc78f680e531aab95691976c5",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              65
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "30b6bd3948c70608e70bb9e5845bd2d0a6772448c890ee2fa78d0d066ed249a4",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              123
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -12978,7 +15682,12 @@
         "independentLineageConfirmed": false,
         "selectedRawChordSequenceSha256": null,
         "selectedAlignedChartSha256": null,
-        "sourceChartVariants": []
+        "sourceChartVariants": [],
+        "selectedTranspositionInvariantProgressionSha256": null,
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": []
       },
       "publicReferenceObservation": null
     },
@@ -13248,6 +15957,72 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "bc7b2fe772b3b489b6b7bb91067921c75d5ba2792127b0f3f49ba541989a040b",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "378e0902a7f1e4f5ba33707afaa4578555ed758241bb71fd193fcc5311bff037",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              80
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "591e84794f4fdecbbdc9124aaee1d6955f57074f06cc595c9dd64289250051b6",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              33
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "6ee2710cc5fba7392c910a1eef469e915dc27344e1f8ff76d11bebf40418292f",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              100
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "b59b0c388d449204253003eec5217b3fdac24752b57ca5822476de8ed95605f3",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              117
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
         ]
       },
       "publicReferenceObservation": {
@@ -13420,6 +16195,42 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "36b66c96db1a2e9e09fe9219011ba5c4aadd1fb8111eb97062321951726b4915",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "127a8ea638644d25df33a8835ce498db6ad4638576071467df188b24d6e2b161",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              133
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "d0f1c0c886a761149698e1d76daabba1e0e17c581d248fe9a9a597ddd65c8e8d",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              159
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -13568,6 +16379,44 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "6106389a7cd5733a254d555a7b7d9f8caa61ab78024d210db8c50d26127f5886",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [
+          "ultimateguitar"
+        ],
+        "selectedTranspositionInvariantProgressionSupportCount": 1,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "6106389a7cd5733a254d555a7b7d9f8caa61ab78024d210db8c50d26127f5886",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              162
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "a9e492758ef95e769a3c3926025e8a7359fef774148fcaa51924b0d679818be1",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              131
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -13691,6 +16540,42 @@
           {
             "rawChordSequenceSha256": "fe73cd42bf0f01d63637672059b6d4ff1c592d636e4172b7b7faf94638137862",
             "alignedChartSha256": "0582dba274cf14791916bcbe425c7c10988f05adc7e25bf71b3d788649ba5b0b",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              188
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "b284a39014360bc424f0626d01d841e906302749f084b479ab882b1b342123ba",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "514f894104b5e8ba6e39dd8aa57ec6234bae8d1ef9e6bc7eb95e944def25f010",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              153
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "ed13e37ccecb72b34e2d2a66d733c9bbdd21061cde25e8f28fc77d60eb03a5fb",
             "providerLabels": [
               "songsterr"
             ],
@@ -13908,6 +16793,57 @@
             "candidateCount": 1,
             "chordCounts": [
               60
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "7e95456874e2cb741811106a4afbd1531cbb164c6c247a9b7689f5c4cf0f6923",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "48dfae3ff25b2b05b9b279b9a01e4036455b2d56d361c9ca50aa5b70871c82bc",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              60
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "65c29adc8c4b61450e809c55adaac04b1020f3183972645ab7831dc03e2bd38c",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              82
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "a06fdc823ccd03b10f6aa5e2c55a89d71de86994c45294805cce3502718663fa",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              117
             ],
             "matchKinds": [
               "sameSong"
@@ -14132,6 +17068,57 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "bd59d276c9c251c8d4294657073147d8ce50f933bd74cb4a89001789fa82203d",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "2abddd57a17765474143c1b57d7c8fc5f87014f2ed971253377e7dce966bacbf",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              77
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "2def5081bbe2f2c4c796f557cbe06a3a86bb8588dae4ba84bf8c99c36888e67e",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              69
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "670ced189e96128bdea7e0ff8a33b80f6259bb0119e4b1ccaa948638908c2ecb",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              109
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": {
@@ -14300,6 +17287,42 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "09072d2b3086950a683f1edd7c27ab530b9f299ecf31e20351bd58d0bc56ad9e",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "2fb77ff4e3d01d71b060a3fc578090bf7d66dbdb265bcf13444dfc4b28c44e8a",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              14
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "411add9d6fafbfa225e6a33f376adb71c52950dace52aa4a7d0d2cd0e87332c7",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              71
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
         ]
       },
       "publicReferenceObservation": {
@@ -14434,6 +17457,27 @@
           {
             "rawChordSequenceSha256": "eecddf498a2ad6a563f8ca9314b492e55b4fdaf7a4595b3485722aed36e6e2c8",
             "alignedChartSha256": "c25b19fccbdb969b083cf848124ba1e147e7ffb2ce68b16eafb3548e6c225fad",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              25
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "83f7e5d79bf6bfa9f12512703580697838c7f025ddd10a753bdb15208e97cc9e",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "d37619b4b48606b5be5c7a2e1b207c3e14d078c313b6536329a7305102e068b9",
             "providerLabels": [
               "songsterr"
             ],
@@ -14654,6 +17698,43 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "4f09e19b3717f1caa6538044a06587ffc8e903120fa50755302264372c3095ca",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "3f4799d1958edfe36b30d07882bdbc7d6a8acb9576770214777c71803728541f",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              101
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "5b0ffde7d3978b429f6d6fc3e6bb5608cf59e722e116f0b0cbedf88287cc8614",
+            "providerLabels": [
+              "chordie",
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 2,
+            "chordCounts": [
+              114
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -14795,6 +17876,27 @@
             ],
             "selectedContributor": true
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "bf0626aae5913df12f140e932ec173b9c8e2bfdde37742115d156c7588118c85",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "afcaac7a8304bdf5a8a5ce4eb7a30f9a99dfbec2947f2cb04fbd1abee724c69c",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              80
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -14910,6 +18012,27 @@
           {
             "rawChordSequenceSha256": "2638b5c2adcedff28935754bc7b5d270eef652b04952d39366f895b0ef138a56",
             "alignedChartSha256": "8dbd6945e2aad374d5f9799d5ded1712a0cc69baa959d137ba586689948dd0ea",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              72
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "8865abe6e57b98935108761190ad3839866f7d802d7efae610d9065755138932",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "957b2492ac83a73cbc2f8ba02904730165d4f02eb3426e287d1d7639ef112e41",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -15109,6 +18232,42 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "acd9cb41ba27158ac7a1a226ade933108a8afbbba5836947c15831bcd4fe5046",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "0ecdef95dc8cfc6239c431be1c15d63243c7b41bfb69d6bd86530a9b95c2ddf3",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              90
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "7122fa6e7733b64308a543b56710398848044fc24d378cd811f49573b526d0ea",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              51
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -15250,6 +18409,27 @@
             ],
             "selectedContributor": true
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "66f328a0f53c94dd5a6fcab50d53314ec38e703acfcbc3e7390c50ce6acab3f7",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "b83f2592ac25cad30e304f6a55e78c9ff2ff000a0cbd9b0809dea39597c98717",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              39
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -15361,6 +18541,27 @@
           {
             "rawChordSequenceSha256": "b682ca2159581b85097fd48a95255e8886c1e7f9d67f1c18d538499e885aac76",
             "alignedChartSha256": "fd04cf07e85521db7d34922e799b3db06a7c8359565787fceb8e19d117ada84e",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              132
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "9f7f691d074f4709a7d5ef5ebf69be502e97f9f343b598066f35ad891422e96b",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "47b4164b91cb42d37b2c2063626eb35d8650fde6a5e3917163f8c0e7fd367f04",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -15502,6 +18703,27 @@
           {
             "rawChordSequenceSha256": "cbb1adb85a38c765733a99340a7edf5d93ddcb2e7324e4a926606949fdc5bedb",
             "alignedChartSha256": "8fc5880bed989ce7ef7d14b434d252f075a77ac01748dd7d57d62c729e1f1840",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              64
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "a88ad15a9129401600a75085e5c3cfe9b2be23c2a107103fc4962dcd0e92a920",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "dec13c4be0c63c91aa56010c509a04f2658af5ea999133c6aff94947b6da2d52",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -15684,6 +18906,42 @@
           {
             "rawChordSequenceSha256": "b564f8b1c28e59337215a200ba60383aad2e560f21fe3bc408bc679b86ef5194",
             "alignedChartSha256": "1a957f7ead00a539606f8c5f952161b5d2ccde3388ce1e63a6df30085de11e42",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              28
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "120217ed21a08c04f061851862b624b7b52a15d81c63f5c48913a84933a6d804",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "b38b6c2f5524f82bed934a0c996a94d2ec1d18c761ee1aeafb4d631b93c37139",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              114
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "cb41cda86d7dbd3410cd3431138c9d65045819bb3b6df18046c92a1c133f78be",
             "providerLabels": [
               "chordie"
             ],
@@ -15917,6 +19175,57 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "f93ff6445138e9ae6b5488dc9a60bbe8a5764a34205bcfc44e4a279207143ba3",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "2027fe412bed2eb6f81b4e1ef325a4ecd8115623516ca3b70ab1572706960993",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              47
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "e93b6bf8b69d13483ef053925f26cf4154efd3ca7223bbb35d44ecc454014446",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              166
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "f70e3743ca814eb427d9c98292207d41ce0a8467d0623646abb97f9d1ec9ff6b",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              149
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": {
@@ -16100,6 +19409,42 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "db75ea445ed77519f9c974dd8c0e6c2df5382dd506734d9a05fbdad839d6be0c",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "737e0043912c3ad23d059389cc4f95c934239c916481bdec20ee7e5ba921fe7a",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              75
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "d36705c3011d7b6e8e380f19bfee1cfd9e3f8b83ba556dbff8430de59bcda4e5",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              62
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -16240,6 +19585,27 @@
             ],
             "selectedContributor": true
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "7c2931954c6a37772459026427287409a584406b30360b2d2164aee12ffe0c57",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "15015f15f5e527f6ebef7a8219b4a0cffc56b52616aa17a9de03ee30e2b5a91b",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              51
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -16355,6 +19721,27 @@
             ],
             "selectedContributor": true
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "b0e56822ff174274895e7ed63a285ea24a4d43231b322cc5dc6f8178b19573bf",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "ecdc7b747d52e9d4c7fbb1943e931adddd97294b53e1d96b518b2c17f0563437",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              135
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -16449,6 +19836,27 @@
           {
             "rawChordSequenceSha256": "5781137da1382351a06285204412131ad644fb545d7de88f87c8610b844729bf",
             "alignedChartSha256": "df586725e1505d63a043906ad94ccefad7dd8a5010757a5b0f71187c67f00cd2",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              25
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "68198e7d95d8859730f8421f8c805f74f98258a1d251d4e3a9eb24213be0c1ad",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "89ca7b627316bfa168985d8f3ae41d1b50c426db6f0d56078058cd1f38995198",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -16605,6 +20013,27 @@
             ],
             "selectedContributor": true
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "c5f46cfbabadd457ae3856d7fd594dd841b47e0b23302ce2f6a85a5ffea8a32a",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "bbe9ce3d15efb750758b7c239e354d53d01866d6056ddec3ee5ef373b037a51a",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              24
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -16733,6 +20162,27 @@
           {
             "rawChordSequenceSha256": "e1d15a3e36d452192b527a5e5d344c2509c2bd8e911ee7dd6f5ba4594fa46352",
             "alignedChartSha256": "cfefe81d6b8dc3ea1e8bef97af8b454eb47f91064b545f6e236ce2e70f3f9a05",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              97
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "3248de27bc6751e198ec3fa8123ada2ff6924e24a98e3de84445bb94a2101c1f",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "ed7095f3c58a864d67f63480e726739789ce933b6376958a926774652f5e7a40",
             "providerLabels": [
               "ultimateguitar"
             ],
@@ -16965,6 +20415,57 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "ca965f3eae548f4b08ca285d85fb211a6daef1b9a8606cf8e61c227edb2a27fb",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "03a020718a24455135d752eed4759145163fd353afdb5272e7c984cce116d8df",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              58
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "26c105c31db78b881282a759b46cda920888dcc4e0621201ad22cf88dd776e91",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              62
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "37f574028046b66ba2a8f45ce1e56bb93579826a56d7d0c54d18fe0f4be1b155",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              31
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -17036,7 +20537,12 @@
         "independentLineageConfirmed": false,
         "selectedRawChordSequenceSha256": null,
         "selectedAlignedChartSha256": null,
-        "sourceChartVariants": []
+        "sourceChartVariants": [],
+        "selectedTranspositionInvariantProgressionSha256": null,
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": []
       },
       "publicReferenceObservation": null
     },
@@ -17107,7 +20613,12 @@
         "independentLineageConfirmed": false,
         "selectedRawChordSequenceSha256": null,
         "selectedAlignedChartSha256": null,
-        "sourceChartVariants": []
+        "sourceChartVariants": [],
+        "selectedTranspositionInvariantProgressionSha256": null,
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": []
       },
       "publicReferenceObservation": null
     },
@@ -17153,7 +20664,12 @@
         "independentLineageConfirmed": false,
         "selectedRawChordSequenceSha256": null,
         "selectedAlignedChartSha256": null,
-        "sourceChartVariants": []
+        "sourceChartVariants": [],
+        "selectedTranspositionInvariantProgressionSha256": null,
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": []
       },
       "publicReferenceObservation": null
     },
@@ -17370,6 +20886,42 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "dd9b6171c419954d525588344e613fd330b3a177f6370ff9e4239ce77eed48f4",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "23736431e19f349680d3661d3f5d78fa0c89ba4f83a984a2581a2f0489feb730",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              116
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "f329b10295d7c47f78c74a1c115fca67b5462106fb2138f7397e86b5b8d26316",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              44
+            ],
+            "matchKinds": [
+              "rejected"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": {
@@ -17560,6 +21112,57 @@
             ],
             "selectedContributor": false
           }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "115adf14d52b14c2b0c15114df4f5a7f9c68686820f5397742c905dc63d989a0",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "787a210740f7174e8ae2c6dd64702f502b156d35174322cecb4e5151f1a848c1",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              119
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "c457c362676366dc948f10d28425aea3310d853d359869384063edc4c6aad271",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              107
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
+          },
+          {
+            "transpositionInvariantProgressionSha256": "db4d14000adad25b256ee5e52997292619b4b4eb0edcae209c6f9de4cb44bba8",
+            "providerLabels": [
+              "songsterr"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              121
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          }
         ]
       },
       "publicReferenceObservation": null
@@ -17733,6 +21336,42 @@
               "sameSong"
             ],
             "selectedContributor": false
+          }
+        ],
+        "selectedTranspositionInvariantProgressionSha256": "64f30664287d452880b9922d025a2003ec842d05abb823ea090f5581a8c949bd",
+        "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
+        "selectedTranspositionInvariantProgressionSupportCount": 0,
+        "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
+        "sourceProgressionVariants": [
+          {
+            "transpositionInvariantProgressionSha256": "4f748948ef2c33d8338f7d66b4ec4b6704094bedf23dab49fe1b9346237bcdde",
+            "providerLabels": [
+              "chordie"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              154
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": false
+          },
+          {
+            "transpositionInvariantProgressionSha256": "fc867ed3bac1e439eec2274ecccef17b921637309d8b850446295e603de201b9",
+            "providerLabels": [
+              "ultimateguitar"
+            ],
+            "recordingCompatibleProviderLabels": [],
+            "candidateCount": 1,
+            "chordCounts": [
+              119
+            ],
+            "matchKinds": [
+              "sameSong"
+            ],
+            "selectedContributor": true
           }
         ]
       },
