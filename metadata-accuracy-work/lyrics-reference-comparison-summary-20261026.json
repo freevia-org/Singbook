@@ -27,11 +27,12 @@
         "adjudicatedGoldReferenceCoverage": 0,
         "adjudicatedGoldReferenceCoveragePercent": 0.0,
         "correctnessBasis": "Only manually adjudicated field-level gold counts as correct/incorrect. Public references and candidate hashes are tracked separately.",
-        "sourceObservationCoverage": 15,
-        "sourceObservationCoveragePercent": 15.0,
+        "sourceObservationCoverage": 16,
+        "sourceObservationCoveragePercent": 16.0,
         "sourceTextDifferencesAwaitingAdjudication": 15,
-        "sourceTextDifferencesAdjudicated": 0,
-        "referenceCoverageMeaning": "Adjudicated correctness references only; the 15 source-page observations are separate evidence coverage."
+        "sourceTextDifferencesAdjudicated": 1,
+        "referenceCoverageMeaning": "Adjudicated correctness references only; the 15 source-page observations are separate evidence coverage.",
+        "classifiedMismatchesNotPromotedToGold": 1
       },
       "key": {
         "verifiedCorrect": 7,
@@ -73,8 +74,8 @@
       "songsWithSelectedBaseLyricsContribution": 99,
       "songsWithSectionContribution": 84,
       "contributingProviderCount": 3,
-      "observedSourcePageComparisons": 15,
-      "sourcePageComparisonCoveragePercent": 15.0,
+      "observedSourcePageComparisons": 16,
+      "sourcePageComparisonCoveragePercent": 16.0,
       "corpusRowsWithVerifiedClaim": 0,
       "comparisonsEvaluated": 0,
       "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness."
@@ -253,6 +254,23 @@
       "editionNote": "Corpus specifies Jeff Buckley’s Grace recording; exact source recording binding needs review",
       "comparisonStatus": "full_text_hash_diff_unadjudicated",
       "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
+    },
+    {
+      "songId": "song-076",
+      "title": "Blackbird",
+      "reference": "https://www.thebeatles.com/blackbird",
+      "source": "The Beatles official",
+      "editionNote": "Official artist page and album track listing support the 1968 White Album performance scope; exact audio asset or mastering was not checked.",
+      "result": "Official Beatles text differs from selected Genius text; localized wording/tokenization diff classified.",
+      "comparisonStatus": "full_text_diff_adjudicated",
+      "differenceClass": "localized_wording_and_compound_tokenization_variant",
+      "selectedSource": "Genius song 1556",
+      "selectedNormalizedWordCount": 124,
+      "selectedNormalizedSha256": "67fbf90037de77d333062eaa89ac4c639959cf0ae82e1d5f4e6e16dfde121872",
+      "referenceNormalizedWordCount": 128,
+      "referenceNormalizedSha256": "7a6b93130bc42747fdd27909c1ec8a2e9c7816ee05b3397d9974a75fa60487b3",
+      "wordSequenceEditDistance": 12,
+      "accuracyDisposition": "Selected Genius text does not exactly match the official displayed lyric sequence. The localized wording and compound-token differences are classified, but neither sequence is promoted as exact performance-level gold."
     }
   ],
   "existingAuditsNotRepeated": [
@@ -273,14 +291,14 @@
       "result": "official album text differs from selected Genius text"
     }
   ],
-  "interpretation": "The offline replay found lyric candidates for 99/100 songs. Fifteen public lyric pages were observed and compared against selected source text by normalized hash (15% source-observation coverage); all 15 hashes differed and await human-readable diff adjudication. The former 0/100 was an adjudicated-correctness count, not a source-search result or a claim that the lyrics were wrong. Separate source observation, substantive cross-source corroboration, and recording-specific checking.",
+  "interpretation": "The offline replay found lyric candidates for 99/100 songs. Sixteen public lyric pages were compared against selected text by normalized hash (16% source-observation coverage). One mismatch (Blackbird) now has a reproduced hash and classified word-level diff; 15 remain to review. None currently establishes exact performance-level lyric gold, so the 0 adjudicated-correctness count is not a source-search result and does not mean the lyrics were rejected.",
   "referenceEvaluation": {
-    "sourceCandidateComparisons": 15,
-    "sourceCandidateComparisonPercent": 15.0,
+    "sourceCandidateComparisons": 16,
+    "sourceCandidateComparisonPercent": 16.0,
     "exactNormalizedFullTextMatches": 0,
     "exactRecordingLevelGoldClaims": 0,
     "strictAccuracyPercent": null,
-    "interpretation": "The zero is an adjudication count, not a source discovery count and not evidence that the selected lyrics are wrong. Fifteen traceable lyric pages were observed and compared by normalized full-text hash. Each mismatch remains unresolved until its wording/repetition and edition differences are reviewed; do not mark it failed merely for a different hash.",
+    "interpretation": "Sixteen traceable lyric pages have now been compared against selected source text by normalized full-text hash (16% source-page coverage). One mismatch (Blackbird) has a reproduced source hash and a classified word-level diff; 15 mismatches still need review. A classified mismatch is not automatically an incorrect performance transcription, and none of these pages has yet been promoted as exact recording-level gold.",
     "futureDiffClasses": [
       "formatting_only",
       "minor_wording_or_transcription_variant",
@@ -289,12 +307,12 @@
       "source_or_song_match_failure",
       "unresolved"
     ],
-    "sourcePagesObservedAndCompared": 15,
-    "sourcePageCoveragePercent": 15.0,
+    "sourcePagesObservedAndCompared": 16,
+    "sourcePageCoveragePercent": 16.0,
     "fullTextHashDifferencesAwaitingAdjudication": 15,
-    "fullTextDifferencesAdjudicated": 0,
+    "fullTextDifferencesAdjudicated": 1,
     "correctnessClaimsFromTheseComparisons": 0,
-    "accuracyStatus": "not_calculated_no_adjudicated_diffs",
+    "accuracyStatus": "no_performance_gold_claims",
     "practicalLevels": [
       {
         "level": "source_observed",
@@ -312,7 +330,8 @@
         "doesNotClaim": "Exact digital master identity unless separately established."
       }
     ],
-    "countingRule": "Hash equality is a strong exact-match signal. Hash inequality triggers diff review; it is not automatically an incorrect result. Provider labels count as independent only when provenance is known to be distinct."
+    "countingRule": "Hash equality is a strong exact-match signal. Hash inequality triggers diff review; it is not automatically an incorrect result. A classified difference remains nonmatching until the intended lyric scope is adjudicated. Provider labels count as independent only when provenance is known to be distinct.",
+    "adjudicatedNonmatchingSourceComparisons": 1
   },
   "sourceContributions": {
     "selectedBaseLyricsSongs": 99,
@@ -331,7 +350,7 @@
     "method": "SHA-256 source identity joins each discovered result to combineSources provenance. Candidate use is reported without raw candidate IDs or lyrics.",
     "interpretation": "Candidate availability is distinct from actual use. Contribution counts are distinct songs. Agreement among provider labels is not proof of independent sourcing or correctness."
   },
-  "next": "For each observed source page, verify song/artist identity, retain URL and provenance cluster, compare normalized sequences, classify wording/repetition/edition differences, then record whether the selected text is corroborated for the intended scope. Use source-observation coverage and adjudicated accuracy as separate measures.",
+  "next": "Complete the remaining 15 source-page diff reviews; for each, verify song/artist identity, source provenance, normalized sequence, and edition scope. Classify wording, repeats, and version differences before deciding whether the selected text is corroborated or incorrect for its intended scope.",
   "sourceAgreement": {
     "lyrics": {
       "songsWithSourceData": 99,
