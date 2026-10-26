@@ -255,8 +255,7 @@
       "referenceNormalizedSha256": "86d7d3a043310a10bb1b81559d51912d0718a7caf09a87e0632b68af15a53843",
       "selectedNormalizedSha256": "24e68fb6b8304b8c870bacf0512c0633df6d97ab499ea5a198c258f6e84fa7ad",
       "referenceWordCount": 201,
-      "selectedWordCount": 210,
-      "evidenceArtifact": "metadata-accuracy-work/independent-lyric-reference-audit.json"
+      "selectedWordCount": 210
     },
     {
       "songId": "song-077",
@@ -381,12 +380,6 @@
     }
   ],
   "existingAuditsNotRepeated": [
-    {
-      "songId": "song-040",
-      "title": "Yellow",
-      "artifact": "metadata-accuracy-work/independent-lyric-reference-audit.json",
-      "result": "Integrated as an unadjudicated primary-source comparison in manualLyricComparisons and the song-040 per-song scorecard; source audit retained as provenance."
-    },
     {
       "songId": "song-076",
       "title": "Blackbird",
@@ -915,7 +908,7 @@
   },
   "perSongSupportScorecard": {
     "file": "metadata-accuracy-work/metadata-practical-support-100-20261026.json",
-    "sha256": "4b0f1628eb39aee5e57868c5b9c19276d95e49160b341f64ec1fa63f4ad5aa91",
+    "sha256": "d9dde0b19f308c7b84343a376b6d250d1979aa964da919b79ec6a7dd0369eb4e",
     "rows": 100,
     "containsLyricBodies": false,
     "sourceReport": "build/metadata_accuracy/report.json",

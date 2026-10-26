@@ -5748,7 +5748,8 @@
         "selectedWordCount": 210,
         "selectedNormalizedSha256": "24e68fb6b8304b8c870bacf0512c0633df6d97ab499ea5a198c258f6e84fa7ad",
         "editionNote": "Official page associates its text with Parachutes; corpus edition is unspecified and the page does not bind the text to an exact master.",
-        "accuracyDisposition": "Useful primary-source observation; wording/version difference is unresolved, so neither transcript is scored correct or incorrect."
+        "accuracyDisposition": "Useful primary-source observation; wording/version difference is unresolved, so neither transcript is scored correct or incorrect.",
+        "evidenceMethod": "Source-text extraction and normalized hash comparison were recorded in the row; only counts and hashes are retained."
       }
     },
     {
