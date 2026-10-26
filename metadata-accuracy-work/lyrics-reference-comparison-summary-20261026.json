@@ -1019,7 +1019,7 @@
   },
   "perSongSupportScorecard": {
     "file": "metadata-accuracy-work/metadata-practical-support-100-20261026.json",
-    "sha256": "ca09905f362dd3a37035ab016ddbe850a54071aadbb9e3a4ead59e46d1d543ab",
+    "sha256": "de3326d789ca17ffba2722baaad94978891b45dc0c2cfb7e3c7b224cccf984c6",
     "rows": 100,
     "containsLyricBodies": false,
     "sourceReport": "build/metadata_accuracy/report.json",
@@ -1042,7 +1042,7 @@
     "officialLyricSourceCandidateRowsCompared": 36,
     "googleLyricsPanelObservations": 8,
     "googleLyricsPanelsHashCompared": 6,
-    "benchmarkLogicHead": "6e624afd235aaa3838257581b0be8b0ee2655e41",
+    "benchmarkLogicHead": "e9c36f96adf6ea66cb55d0868af21c01b0b7f024",
     "googleLyricsPanelSelectedHashMatches": 1,
     "googleLyricsPanelDifferentHashes": 5,
     "googleLyricsSearchesWithoutPanel": 2,

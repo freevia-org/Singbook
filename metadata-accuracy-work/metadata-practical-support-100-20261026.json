@@ -9,7 +9,7 @@
     "cacheHits": 3100,
     "networkAttempts": 0,
     "uncachedOffline": 1030,
-    "benchmarkLogicHead": "6e624afd235aaa3838257581b0be8b0ee2655e41"
+    "benchmarkLogicHead": "e9c36f96adf6ea66cb55d0868af21c01b0b7f024"
   },
   "policy": {
     "providerLabelAgreement": "practical exact-text support only; labels and candidate IDs do not establish independent source lineage",
@@ -201,7 +201,8 @@
           "lyricsProvider": "lrclib"
         }
       ]
-    }
+    },
+    "benchmarkLogicHead": "e9c36f96adf6ea66cb55d0868af21c01b0b7f024"
   },
   "songs": [
     {
