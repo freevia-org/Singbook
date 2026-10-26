@@ -29,10 +29,10 @@
         "correctnessBasis": "Only manually adjudicated field-level gold counts as correct/incorrect. Public references and candidate hashes are tracked separately.",
         "sourceObservationCoverage": 17,
         "sourceObservationCoveragePercent": 17.0,
-        "sourceTextDifferencesAwaitingAdjudication": 15,
-        "sourceTextDifferencesAdjudicated": 2,
+        "sourceTextDifferencesAwaitingAdjudication": 14,
+        "sourceTextDifferencesAdjudicated": 3,
         "referenceCoverageMeaning": "Adjudicated correctness references only; the 17 source-page observations are separate evidence coverage.",
-        "classifiedMismatchesNotPromotedToGold": 2
+        "classifiedMismatchesNotPromotedToGold": 3
       },
       "key": {
         "verifiedCorrect": 7,
@@ -156,10 +156,18 @@
       "title": "Yesterday",
       "reference": "https://www.thebeatles.com/yesterday",
       "source": "The Beatles official",
-      "result": "normalized text differs",
-      "editionNote": "Corpus names the 1965 Help! performance; source page text was not proven to be master-specific",
-      "comparisonStatus": "full_text_hash_diff_unadjudicated",
-      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
+      "result": "Official displayed lyrics differ from the selected Genius text by three token-level edits; localized transcription variant classified.",
+      "editionNote": "Corpus edition is the 1965 original Help! studio album performance. The official page identifies the Help! album and recording date, but does not bind the displayed text to an exact digital master.",
+      "comparisonStatus": "full_text_diff_adjudicated",
+      "accuracyDisposition": "The selected text differs from the official displayed sequence by a small localized token edit distance. This is a classified source variant, not proof that either sequence is wrong for the vocal performance; neither is promoted as exact performance-level gold.",
+      "differenceClass": "localized_transcription_variant",
+      "selectedSource": "Genius; selected output reproduced from cached song-page extraction",
+      "selectedNormalizedWordCount": 133,
+      "selectedNormalizedSha256": "054ea2afab9218f4475d234bc533d7c21a246c9695157b978213838e364dd9b9",
+      "referenceNormalizedWordCount": 131,
+      "referenceNormalizedSha256": "00bd4bc81c882df2f388c743b005fa1dcc10418e8f85d83362bde3017f03e657",
+      "tokenSequenceEditDistance": 3,
+      "editionAssessment": "Artist page ties the lyric display to the 1965 Help! song and recording context; exact source-master transcription was not verified."
     },
     {
       "songId": "song-009",
@@ -340,14 +348,14 @@
       "result": "official album text differs from selected Genius text"
     }
   ],
-  "interpretation": "The offline replay found lyric candidates for 99/100 songs. Seventeen public lyric pages were compared against selected text by normalized hash (17% source-observation coverage). Two mismatches (Blackbird and Iris) now have reproduced selected hashes and classified word-level differences; 15 remain to review. None currently establishes exact performance-level lyric gold, so the 0 adjudicated-correctness count is not a source-search result and does not mean the lyrics were rejected.",
+  "interpretation": "The offline replay found lyric candidates for 99/100 songs. Seventeen public lyric pages were compared (17% source-page coverage); three localized/source text differences are classified (Yesterday, Blackbird, and Iris), and 14 remain to review. Separately, 30 songs have at least one exact candidate hash shared across provider labels, while 15 selected outputs have such multi-label hash support. These are practical support measures, not proof that provider data is independent. The gold-only score remains 0 because it required adjudicated exact-performance correctness; it must not be read as meaning zero lyrics have useful source support.",
   "referenceEvaluation": {
     "sourceCandidateComparisons": 17,
     "sourceCandidateComparisonPercent": 17.0,
     "exactNormalizedFullTextMatches": 0,
     "exactRecordingLevelGoldClaims": 0,
     "strictAccuracyPercent": null,
-    "interpretation": "Seventeen traceable lyric pages have now been compared against selected text by normalized full-text hash (17% source-page coverage). Two mismatches (Blackbird and Iris) have reproduced selected hashes and classified word-level differences; 15 mismatches still need review. Classified mismatches are not automatically incorrect performance transcriptions. None of these pages is currently promoted as exact recording-level gold.",
+    "interpretation": "17 traceable lyric pages were compared against selected text by normalized hash. Three differences (Yesterday, Blackbird, and Iris) have been classified; 14 remain to review. Separately, exact candidate agreement across provider labels is a useful practical support signal: 30/99 songs have at least one candidate hash shared across labels, and 15/99 selected outputs match a candidate hash shown under multiple labels. These are not counts of proven independent sources because some providers reuse upstream catalogs (including LRCLIB IDs). The strict adjudicated performance-correctness count remains zero because source-page observations, candidate consensus, and exact recording-level validation were previously collapsed into one gold-only metric.",
     "futureDiffClasses": [
       "formatting_only",
       "minor_wording_or_transcription_variant",
@@ -358,8 +366,8 @@
     ],
     "sourcePagesObservedAndCompared": 17,
     "sourcePageCoveragePercent": 17.0,
-    "fullTextHashDifferencesAwaitingAdjudication": 15,
-    "fullTextDifferencesAdjudicated": 2,
+    "fullTextHashDifferencesAwaitingAdjudication": 14,
+    "fullTextDifferencesAdjudicated": 3,
     "correctnessClaimsFromTheseComparisons": 0,
     "accuracyStatus": "no_performance_gold_claims",
     "practicalLevels": [
@@ -379,8 +387,18 @@
         "doesNotClaim": "Exact digital master identity unless separately established."
       }
     ],
-    "countingRule": "Hash equality is a strong exact-match signal. Hash inequality triggers diff review; it is not automatically an incorrect result. A classified difference remains nonmatching until the intended lyric scope is adjudicated. Provider labels count as independent only when provenance is known to be distinct.",
-    "adjudicatedNonmatchingSourceComparisons": 2
+    "countingRule": "Report source-page observations and exact candidate consensus across provider labels as practical support evidence. A shared normalized hash is useful corroboration but provider labels are not assumed independent when upstream lineage may overlap. Hash inequality triggers diff review; it is not automatically an incorrect result. Keep performance-level adjudication separate.",
+    "adjudicatedNonmatchingSourceComparisons": 3,
+    "practicalEvidence": {
+      "selectedLyricsWithCandidate": 99,
+      "songsWithAnyExactCandidateHashSharedAcrossProviderLabels": 30,
+      "selectedLyricsWithExactHashSupportAcrossProviderLabels": 15,
+      "songsWithPublicLyricPageCompared": 17,
+      "classifiedTextDifferences": 3,
+      "textDifferencesAwaitingReview": 14,
+      "independentSourceLineageConfirmed": 0,
+      "interpretation": "Provider-label consensus is useful evidence for a practical reference score, but do not call it independent-source verification until upstream lineage is checked. Directly inspected lyric pages are reported separately. Neither support metric claims exact performed wording."
+    }
   },
   "sourceContributions": {
     "selectedBaseLyricsSongs": 99,
@@ -399,7 +417,7 @@
     "method": "SHA-256 source identity joins each discovered result to combineSources provenance. Candidate use is reported without raw candidate IDs or lyrics.",
     "interpretation": "Candidate availability is distinct from actual use. Contribution counts are distinct songs. Agreement among provider labels is not proof of independent sourcing or correctness."
   },
-  "next": "Continue adjudicating the 15 observed lyric-source differences and build reviewed lyric/chord references across the 100-song corpus. Use raw chord-sequence agreement for exact chord-symbol consensus and chordAlignment for stricter lyrics-plus-placement/capo agreement; keep both separate from correctness gold and provenance confidence.",
+  "next": "Review the remaining 14 lyric-source differences, then expand practical source-supported coverage across the 100-song corpus. Report inspected source pages and provider-label consensus separately from confirmed independent-source support and recording-specific performance accuracy.",
   "sourceAgreement": {
     "lyrics": {
       "songsWithSourceData": 99,
