@@ -177,12 +177,12 @@
       "id": "lrc-red",
       "name": "lrc.red API",
       "firstSeen": "2026-10-25",
-      "lastChecked": "2026-10-25",
+      "lastChecked": "2026-10-26",
       "status": "deferred",
       "documentation": [
         "https://lrc.red/api"
       ],
-      "reason": "2026-10-25: Publisher API documentation landing returned HTTP 200, but the available read exposed only a small application shell; detailed endpoint/field/access/attribution terms were not independently verified. Search-index descriptions suggest lyric lookup, but are not sufficient source-contract or rights evidence. No API, lyric or credential requests were made. Potential overlap with LRCLIB and other timed sources remains unmeasured, and distinct regional coverage is unproven. Defer pending a readable primary API contract, per-work rights and attribution review, compatible identity/extraction rules, and two independent live repository canaries."
+      "reason": "2026-10-25: Publisher API documentation landing returned HTTP 200, but the available read exposed only a small application shell; detailed endpoint/field/access/attribution terms were not independently verified. Search-index descriptions suggest lyric lookup, but are not sufficient source-contract or rights evidence. No API, lyric or credential requests were made. Potential overlap with LRCLIB and other timed sources remains unmeasured, and distinct regional coverage is unproven. Defer pending a readable primary API contract, per-work rights and attribution review, compatible identity/extraction rules, and two independent live repository canaries. 2026-10-26: Parent read rendered publisher API docs: free app API requires identifying User-Agent with project link/contact email and visible attribution/link. Documented search.json and ISRC track JSON plus separate TTML/LRC/YAML files. Six bounded local requests (two exact search/track/TTML canaries) all returned HTTP200: Radiohead/Creep GBAYE9200070 and Queen/Bohemian Rhapsody (Remastered 2011) GBUM71029604. Each search contained its exact ISRC once and track title/artist/ISRC matched; duration, album, language, release date and songwriter fields observed. Production parseTtml retained raw documents and nonempty text but returned invalid with zero cues for both. Therefore timing extraction is NOT qualified. Keep deferred pending compatible native profile/multi-response adapter, content-use review and passing repository canaries; do not flatten claimed word timing or activate a builtin unknown to shipped clients. Regional uniqueness/catalog size and overlap remain unmeasured."
     },
     {
       "id": "folk-song-catalogue-eu",
@@ -217,6 +217,54 @@
         "https://docs.openlyrics.org/en/latest/dataformat.html"
       ],
       "reason": "Publisher identifies an XML interchange standard for Christian worship songs and an archive containing some examples, rather than a documented searchable regional catalog. This dedicated focus falls outside the owner's requested provider scope. Format language/chord/translation support does not establish catalog coverage. No per-work rights, attribution, stable source IDs, live query/extraction flow or independent canaries were established. No archive/lyric requests, credentials, accounts or source activation. Existing deferred regional candidates remain unchanged; overlap not measured."
+    },
+    {
+      "id": "chordify",
+      "name": "Chordify",
+      "documentation": [
+        "https://chordify.net/pages/chordify-app/",
+        "https://chordify.net/pages/terms-and-conditions/"
+      ],
+      "reason": "Publisher advertises over 36 million chordified songs, title/artist search, synchronized chord progressions, key/BPM and lyrics for selected songs. This is a publisher size claim, not measured coverage. API/Embed are named in terms but no public integration schema/price/quota was established. Terms restrict use to personal noncommercial use and require written permission for automated access. Defer pending publisher-approved API/access and content-use agreement, stable arrangement/recording identity and two live repository canaries. No automated content requests or account created; overlap unmeasured.",
+      "firstSeen": "2026-10-26",
+      "lastChecked": "2026-10-26",
+      "status": "deferred"
+    },
+    {
+      "id": "cifra-club",
+      "name": "Cifra Club",
+      "documentation": [
+        "https://www.cifraclub.com.br/aviso-legal.html",
+        "https://suporte.cifraclub.com.br/pt-BR/support/solutions/articles/64000236814-conheca-o-padr%C3%A3o-para-envio-de-cifras-e-tablaturas"
+      ],
+      "reason": "Potential Brazilian/Portuguese chord and tab catalog. Publisher arrangement-submission documentation surfaced during research, but the parent legal-page read returned403. Numeric catalog size, complete language coverage, authorized machine API, schema/identity, rights/attribution and quotas remain unverified. No lyric/download/account calls or canaries. Keep deferred pending readable primary contract and two exact extraction canaries; regional benefit and overlap unmeasured.",
+      "firstSeen": "2026-10-26",
+      "lastChecked": "2026-10-26",
+      "status": "deferred"
+    },
+    {
+      "id": "e-chords",
+      "name": "E-Chords",
+      "documentation": [
+        "https://www.e-chords.com/en/terms",
+        "https://www.e-chords.com/en/"
+      ],
+      "reason": "Publisher terms describe by-ear transcriptions for study, skill development and scholarship. They do not establish an app integration/API contract. Numeric catalog size, complete language coverage, stable machine identity/schema and content-use permission remain unverified; consumer access and a platform license are not an app reuse grant. No lyric/API/account requests or canaries performed. Defer pending publisher access and attribution/rights review, compatible adapter and two live canaries. Overlap unmeasured.",
+      "firstSeen": "2026-10-26",
+      "lastChecked": "2026-10-26",
+      "status": "deferred"
+    },
+    {
+      "id": "lololyrics",
+      "name": "Lololyrics",
+      "documentation": [
+        "https://www.lololyrics.com/faq",
+        "https://api.lololyrics.com"
+      ],
+      "reason": "Publisher FAQ explicitly directs application developers to its API and currently displays61953 lyrics; this is a dated publisher count. It says the catalog covers all music rather than only electronic dance music. The linked API documentation was not readable in this research, so exact endpoints, supported HTTPS access, auth/quota/price, fields/stable identities and content/attribution terms remain unverified. No API/lyric/account calls or canaries performed. Promising documented app-access lead, deferred until full API contract and two independent exact-identity extraction canaries pass. Distinct language benefit and overlap remain unmeasured.",
+      "firstSeen": "2026-10-26",
+      "lastChecked": "2026-10-26",
+      "status": "deferred"
     }
   ]
 }
