@@ -102,6 +102,50 @@
       "format": "Dolly Parton guitar chart with transposed Am, original C#m, and capo-5 options",
       "scope": "artist arrangement with 1973 album Jolene association",
       "scopeNote": "The listing explicitly calls C-sharp minor the original key, includes that chart and a capo-5 version that sounds in C-sharp minor; this is a useful but secondary chart source, not exact-master proof."
+    },
+    {
+      "songId": "song-036",
+      "title": "Ring of Fire",
+      "product": "Musicnotes MN0280463",
+      "url": "https://www.musicnotes.com/sheetmusic/johnny-cash/ring-of-fire/MN0280463",
+      "publisherClaimedKey": "G",
+      "format": "Johnny Cash guitar chord chart / TAB",
+      "scope": "artist song arrangement",
+      "scopeNote": "Musicnotes lists G major as the original published key for this Johnny Cash guitar chart. It does not identify an exact album master."
+    },
+    {
+      "songId": "song-037",
+      "title": "Hurt",
+      "product": "Musicnotes MN0072578",
+      "url": "https://www.musicnotes.com/sheetmusic/johnny-cash/hurt/MN0072578",
+      "publisherClaimedKey": "Am",
+      "format": "Johnny Cash Piano/Vocal/Guitar Singer Pro",
+      "scope": "Johnny Cash arrangement associated with American IV",
+      "scopeNote": "Musicnotes lists A minor as the original published key, and its appearances section associates the product with American IV. The Johnny Cash official track page confirms Hurt is from American IV. The sheet arrangement is not claimed to reproduce the exact master; current app key is unavailable.",
+      "recordingIdentityEvidence": [
+        "https://www.johnnycash.com/track/hurt-2/",
+        "https://www.johnnycash.com/music/american-iv-the-man-comes-around/"
+      ]
+    },
+    {
+      "songId": "song-038",
+      "title": "Shallow",
+      "product": "Musicnotes MN0189819",
+      "url": "https://www.musicnotes.com/sheetmusic/a-star-is-born-2018/shallow/MN0189819",
+      "publisherClaimedKey": "G",
+      "format": "A Star Is Born [2018] Piano/Vocal/Chords Singer Pro",
+      "scope": "2018 film-song arrangement performed by Lady Gaga & Bradley Cooper",
+      "scopeNote": "Musicnotes identifies the 2018 film, lists Lady Gaga & Bradley Cooper as performers, and gives G major as the original published key. This supports the arrangement key, not an exact master transcription."
+    },
+    {
+      "songId": "song-039",
+      "title": "Someone Like You",
+      "product": "Musicnotes MN0100903",
+      "url": "https://www.musicnotes.com/sheetmusic/adele/someone-like-you/MN0100903",
+      "publisherClaimedKey": "A",
+      "format": "Adele Piano/Vocal/Guitar",
+      "scope": "artist song arrangement",
+      "scopeNote": "Musicnotes gives A major as the original published key for its Adele arrangement; the page does not bind the arrangement to a particular album master."
     }
   ],
   "interpretationPolicy": {

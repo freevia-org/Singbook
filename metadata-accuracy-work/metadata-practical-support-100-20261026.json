@@ -4,7 +4,11 @@
   "generatedFrom": {
     "report": "artifacts/integration-coordinator/metadata-accuracy-100-20261027/replay-c125d1e/report.json",
     "reportSha256": "8de6ba6b2df4b4dd668aa16b7b604b08d17da9fdf3f4cf062207ac6e41426eb2",
-    "corpusSha256": "e07d8790467de689f2d5181e9c571b784c54c503a432e290cf943783ee2f9d48"
+    "corpusSha256": "e07d8790467de689f2d5181e9c571b784c54c503a432e290cf943783ee2f9d48",
+    "licensedChartKeyObservations": {
+      "path": "tool/metadata_reference_evidence/licensed_chart_key_observations_20261027.json",
+      "sha256": "db4e03acb9e343cb97b79a77a6f3d9b7c6058559fc3f2f8ad925ab1c218e2655"
+    }
   },
   "policy": {
     "providerLabelAgreement": "practical exact-text support only; labels and candidate IDs do not establish independent source lineage",
@@ -216,6 +220,17 @@
       "evaluated": 8,
       "scopeMismatch": 1,
       "notFullCorpusAccuracy": true
+    },
+    "practicalLicensedChartKeys": {
+      "source": "tool/metadata_reference_evidence/licensed_chart_key_observations_20261027.json",
+      "observations": 14,
+      "practicalChartKeyMatches": 8,
+      "differencesNeedingReview": 4,
+      "scopeMismatches": 1,
+      "selectedKeyUnavailable": 1,
+      "strictRecordingGold": false,
+      "interpretation": "Licensed arrangement-key corroboration only. Matching publisher keys do not establish exact recording-key correctness; differences require edition/capo/transposition review.",
+      "sha256": "db4e03acb9e343cb97b79a77a6f3d9b7c6058559fc3f2f8ad925ab1c218e2655"
     }
   },
   "songs": [
@@ -23426,7 +23441,18 @@
         "status": "verifiedCorrect",
         "evidenceRecord": "tool/metadata_reference_evidence/wonderwall_key.json"
       },
-      "unavailableReferenceRows": 1
+      "unavailableReferenceRows": 1,
+      "licensedChartKeyComparisons": {
+        "source": "tool/metadata_reference_evidence/licensed_chart_key_observations_20261027.json",
+        "observations": 14,
+        "practicalChartKeyMatches": 8,
+        "differencesNeedingReview": 4,
+        "scopeMismatches": 1,
+        "selectedKeyUnavailable": 1,
+        "strictRecordingGold": false,
+        "interpretation": "Licensed arrangement-key corroboration only. Matching publisher keys do not establish exact recording-key correctness; differences require edition/capo/transposition review.",
+        "sha256": "db4e03acb9e343cb97b79a77a6f3d9b7c6058559fc3f2f8ad925ab1c218e2655"
+      }
     },
     "chords": {
       "selectedChartsAvailable": 95,
@@ -23438,6 +23464,6 @@
       "rawSourceProgressionsWithCrossLabelAgreement": 2,
       "selectedProgressionsWithCrossLabelSupport": 0
     },
-    "doNotInterpretAs": "Do not read strict verifiedCorrect=0 as a claim that the 99 selected lyrics are wrong or unsupported."
+    "doNotInterpretAs": "Do not read strict verifiedCorrect as evidence that unverified selected metadata is wrong; practical support counts are not correctness percentages."
   }
 }

@@ -1064,13 +1064,18 @@ void main() {
       {'id': 'song-018', 'key': 'Ab', 'keyClaimScope': 'arrangement'},
       {'id': 'song-031', 'key': 'A', 'keyClaimScope': 'arrangement'},
       {'id': 'song-035', 'key': 'C#m', 'keyClaimScope': 'arrangement'},
+      {'id': 'song-036', 'key': 'G', 'keyClaimScope': 'arrangement'},
+      {'id': 'song-037', 'key': null, 'keyClaimScope': null},
+      {'id': 'song-038', 'key': 'G', 'keyClaimScope': 'arrangement'},
+      {'id': 'song-039', 'key': 'A', 'keyClaimScope': 'arrangement'},
     ].cast<Map<String, Object?>>();
     final result = _practicalLicensedChartReview(rows, observations);
     final counts = result['counts'] as Map;
-    expect(counts['observations'], 10);
-    expect(counts['practicalChartKeyMatches'], 5);
+    expect(counts['observations'], 14);
+    expect(counts['practicalChartKeyMatches'], 8);
     expect(counts['scopeMismatches'], 1);
     expect(counts['differencesNeedingReview'], 4);
+    expect(counts['selectedKeyUnavailable'], 1);
     expect(result['isStrictRecordingGold'], isFalse);
   });
   test('chord accuracy includes word placement and sounding capo pitch', () {
