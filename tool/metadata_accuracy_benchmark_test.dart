@@ -202,6 +202,23 @@ String _canonicalChord(String chord, int capo) {
   });
 }
 
+/// Hashes the ordered chord progression independently of its transposition.
+/// Chord qualities and slash basses remain significant; lyric placement and
+/// sounding pitch are evaluated separately by _chordAlignmentHash.
+String? _transpositionInvariantChordProgressionHash(
+  Iterable<String> chordSymbols,
+) {
+  final chords = chordSymbols.map((chord) => chord.trim()).toList();
+  if (chords.isEmpty) return null;
+  final signatures = [
+    for (var shift = 0; shift < 12; shift++)
+      chords
+          .map((chord) => _canonicalChord(transposeChord(chord, shift), 0))
+          .join(' '),
+  ]..sort();
+  return _sha(signatures.first);
+}
+
 String? _chordAlignmentHash(SongDocument doc) {
   final anchors = <String>[];
   var wordBase = 0;
@@ -670,6 +687,24 @@ void main() {
       _chordAlignmentHash(song('[Db]Amber windows')),
     );
   });
+  test('chord progression corroboration ignores transposition only', () {
+    expect(
+      _transpositionInvariantChordProgressionHash(['C', 'G', 'Am', 'F']),
+      _transpositionInvariantChordProgressionHash(['D', 'A', 'Bm', 'G']),
+    );
+    expect(
+      _transpositionInvariantChordProgressionHash(['C#', 'F#m', 'A']),
+      _transpositionInvariantChordProgressionHash(['Db', 'F#m', 'A']),
+    );
+    expect(
+      _transpositionInvariantChordProgressionHash(['C', 'G', 'Am', 'F']),
+      isNot(_transpositionInvariantChordProgressionHash(['C', 'F', 'G', 'C'])),
+    );
+    expect(
+      _transpositionInvariantChordProgressionHash(['C', 'G/B', 'Am']),
+      isNot(_transpositionInvariantChordProgressionHash(['C', 'G', 'Am'])),
+    );
+  });
   test('source chord evidence uses the selected chart alignment hash', () {
     const candidate = SongCandidate(
       providerId: 'fixture',
@@ -962,6 +997,12 @@ Future<void> _benchmark() async {
           // agreement with the selected chart must use the same lyric-anchor,
           // capo-normalized representation as the selected output.
           'chordAlignmentSha256': _sourceChordAlignmentHash(source),
+          'transpositionInvariantChordProgressionSha256':
+              _transpositionInvariantChordProgressionHash(
+                sourceArrangement.expand(
+                  (line) => line.chords.map((annotation) => annotation.chord),
+                ),
+              ),
           'declaredKey':
               source.metadata['key'] ?? source.candidate.metadata['key'],
           'capo': source.metadata['capo'] ?? source.candidate.metadata['capo'],
@@ -1059,6 +1100,12 @@ Future<void> _benchmark() async {
         'chordSequenceSha256': chordSequence.isEmpty
             ? null
             : _sha(chordSequence),
+        'transpositionInvariantChordProgressionSha256':
+            _transpositionInvariantChordProgressionHash(
+              arrangement.expand(
+                (line) => line.chords.map((annotation) => annotation.chord),
+              ),
+            ),
         'lineCount': arrangement
             .where((l) => !l.directive && l.text.trim().isNotEmpty)
             .length,
@@ -1467,6 +1514,10 @@ Future<void> _benchmark() async {
     'chordAlignment': sourceAgreement(
       'chordAlignmentSha256',
       selectedHashField: 'chordAlignmentSha256',
+    ),
+    'transpositionInvariantChordProgression': sourceAgreement(
+      'transpositionInvariantChordProgressionSha256',
+      selectedHashField: 'transpositionInvariantChordProgressionSha256',
     ),
   };
   final reusedCatalogIds = <String, Object?>{};
