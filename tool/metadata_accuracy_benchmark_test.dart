@@ -946,6 +946,8 @@ Future<void> _benchmark() async {
       'adjudicatedGoldReferenceCoveragePercent': 100 * refs / songs.length,
       'correctnessBasis':
           'Only reviewed field-level gold references count here. Observed source pages and provider candidates are evidence coverage, not correctness comparisons.',
+      'referenceCoverageMeaning':
+          'Adjudicated field-level gold rows only; source-page observations are reported separately.',
     };
 
     bool hasFieldData(Map source) => switch (field) {
