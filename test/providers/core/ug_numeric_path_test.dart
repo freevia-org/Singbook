@@ -59,6 +59,9 @@ void main() {
     expect(result.candidate.id, '/tab/1643189');
     expect(result.candidate.artist, 'Los Panchos (Trio Los Panchos)');
     expect(result.candidate.title, 'Bésame Mucho');
+    expect(result.candidate.extra['providerArtistId'], '325614');
+    expect(result.candidate.extra['providerSongId'], '4155044');
+    expect(result.candidate.extra['providerChartId'], '1643189');
   });
 
   test(

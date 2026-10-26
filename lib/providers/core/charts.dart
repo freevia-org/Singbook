@@ -408,14 +408,28 @@ class UltimateGuitarProvider implements LyricsProvider {
     JsonMap tab,
     String path, {
     JsonMap metadata = const {},
-  }) => SongCandidate(
-    providerId: 'ultimateguitar',
-    id: path,
-    title: requiredText(tab['song_name']),
-    artist: requiredText(tab['artist_name']),
-    url: 'https://tabs.ultimate-guitar.com$path',
-    metadata: metadata,
-  );
+  }) {
+    String? providerId(Object? value) {
+      if (value is! int && value is! String) return null;
+      final text = '$value';
+      return RegExp(r'^[1-9][0-9]{0,14}$').hasMatch(text) ? text : null;
+    }
+
+    return SongCandidate(
+      providerId: 'ultimateguitar',
+      id: path,
+      title: requiredText(tab['song_name']),
+      artist: requiredText(tab['artist_name']),
+      url: 'https://tabs.ultimate-guitar.com$path',
+      metadata: metadata,
+      extra: {
+        'providerArtistId': ?providerId(tab['artist_id']),
+        'providerSongId': ?providerId(tab['song_id']),
+        'providerChartId': ?providerId(tab['id']),
+      },
+    );
+  }
+
   static List<SongCandidate> parseSearch(String source) {
     final results = <SongCandidate>[], seen = <String>{};
     for (final raw in array(_data(source)['results']).take(200)) {
