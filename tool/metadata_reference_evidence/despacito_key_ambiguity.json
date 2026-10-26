@@ -1,0 +1,51 @@
+{
+  "songId": "song-051",
+  "reviewedOn": "2026-10-26",
+  "field": "key",
+  "status": "unverified",
+  "target": "Luis Fonsi feat. Daddy Yankee original Spanish performance, not the Justin Bieber remix",
+  "primaryAnalysis": {
+    "url": "https://academic.oup.com/book/32340/chapter-abstract/268586245",
+    "doi": "10.1093/oso/9780190056650.003.0015",
+    "authors": [
+      "Nate Sloan",
+      "Charlie Harding",
+      "Iris Gottlieb"
+    ],
+    "publication": "Switched On Pop, chapter 14, Oxford University Press",
+    "finding": "The public abstract analyzes the original Luis Fonsi/Daddy Yankee song as having two tonal homes and no unique major/minor global interpretation. Root inspected the indexed primary abstract, not the inaccessible full chapter."
+  },
+  "publisherCorroboration": {
+    "url": "https://www.musicnotes.com/sheetmusic/luis-fonsi-feat-daddy-yankee/despacito/MN0173584",
+    "finding": "The licensed original-published arrangement key is B minor; this is arrangement metadata rather than proof of a uniquely minor original recording."
+  },
+  "officialPreviewDiagnostic": {
+    "method": "fft-chroma-ks-v1.1",
+    "durationSeconds": 30.021,
+    "candidates": [
+      {
+        "key": "D",
+        "mode": "major",
+        "correlation": 0.734463
+      },
+      {
+        "key": "F#m",
+        "mode": "minor",
+        "correlation": 0.670946
+      },
+      {
+        "key": "Bm",
+        "mode": "minor",
+        "correlation": 0.659177
+      }
+    ],
+    "limit": "A short-excerpt chroma correlation is advisory, not a probability or a recording-key oracle."
+  },
+  "decision": "Do not promote a single B-minor gold label or accept any relative major/minor as automatically correct. Recording identity, tonal ambiguity and the declared arrangement key must remain separate. The current scalar-key benchmark cannot certify the unresolved ambiguity; the complete accuracy objective remains open.",
+  "notClaimed": [
+    "No verified ISRC binding in this row",
+    "No full-chapter or full-audio inspection",
+    "No single unambiguous global key",
+    "No automatic correction of stored keys"
+  ]
+}

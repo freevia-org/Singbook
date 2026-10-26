@@ -1,0 +1,74 @@
+{
+  "songId": "song-081",
+  "reviewedOn": "2026-10-26",
+  "field": "lyrics",
+  "status": "unverified",
+  "targetEdition": "1998 original studio performance on Dizzy Up the Girl",
+  "recordingBinding": {
+    "status": "verified",
+    "providerId": "genius",
+    "candidateId": "138482",
+    "isrc": null,
+    "recordingEdition": "1998 original studio performance on Dizzy Up the Girl",
+    "evidence": [
+      "https://genius.com/The-goo-goo-dolls-iris-lyrics",
+      "https://www.googoodolls.com/album/dizzy-girl",
+      "https://music.apple.com/us/album/iris/1109658139?i=1109658204"
+    ],
+    "notes": "Performance-level binding from the original album catalog and the exact linked Apple track. The catalog dates differ by six days for the early single; both identify the 1998 original performance and original album. No ISRC or bit-identical master claim."
+  },
+  "officialAlbumReference": {
+    "url": "https://www.googoodolls.com/album/dizzy-girl",
+    "retrieval": "Complete Iris section in the primary artist album page indexed by web search; direct fetch returned 403. Isolated after Iris/Lyrics and before Extra Pale.",
+    "normalizedWords": 244,
+    "normalizedSha256": "9730af186d72b4cb1e9428903cad25e4d6d5d81d336a6859a9633b49453dfc70",
+    "normalization": "Lowercase; remove ASCII/curly apostrophes; collapse all non-Unicode-letter-or-number runs to spaces; trim. SHA-256 over UTF-8.",
+    "hashValidation": "Root independently extracted the indexed section and reproduced the audit hash. SHA-256 implementation checked against standard empty-string and abc vectors."
+  },
+  "selectedProviderReference": {
+    "url": "https://genius.com/The-goo-goo-dolls-iris-lyrics",
+    "providerId": "genius",
+    "candidateId": "138482",
+    "normalizedWords": 244,
+    "normalizedSha256": "4a4abab320c46d63343bc89e64e83277d6dec78390d25d80c8fa56cca935ccf9",
+    "extractionValidation": "Root replayed the actual GeniusProvider.extractLyrics/ChordPro pipeline against the cached source and reproduced the complete benchmark hash before comparing per-token hashes."
+  },
+  "differences": [
+    {
+      "tokenIndex": 36,
+      "official": "can",
+      "selected": "could",
+      "kind": "wording"
+    },
+    {
+      "tokenIndex": 49,
+      "official": "when",
+      "selected": "and",
+      "kind": "wording"
+    },
+    {
+      "tokenIndex": 101,
+      "official": "coming",
+      "selected": "comin",
+      "kind": "spelling"
+    }
+  ],
+  "secondaryOfficialReference": {
+    "url": "https://www.youtube.com/watch?v=zDOILKOOUCo",
+    "status": "candidate",
+    "normalizedWords": 246,
+    "normalizedSha256": "751fdfceaaf09e0522cfb199c943549e3e427eb0cacd4073ae0b1f558e4ab9ce",
+    "limit": "Earlier independent audit of the indexed official lyric-video text; root did not certify its performed-wording alignment. It differs from the album page."
+  },
+  "decision": "Keep full lyric accuracy unverified. The artist album page is strong written evidence, but the actual performed wording and conflicting official text need resolution; a spelling variant alone is not evidence of a wrong lyric. No saved song or live source text was overwritten.",
+  "recordingCatalogCrosscheck": {
+    "url": "https://itunes.apple.com/lookup?id=1109658204&entity=song",
+    "trackId": 1109658204,
+    "artist": "The Goo Goo Dolls",
+    "title": "Iris",
+    "album": "Dizzy Up the Girl",
+    "durationMs": 289559,
+    "releaseDate": "1998-04-07T07:00:00Z"
+  },
+  "rawLyricsIncluded": false
+}

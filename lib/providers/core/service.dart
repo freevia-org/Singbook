@@ -12,6 +12,7 @@ import '../../domain/combine.dart'
         soundingChartKey,
         soundingTransposition;
 import '../../domain/artist_credit.dart';
+import '../../domain/reviewed_chart_artist.dart';
 import '../../domain/arrangement_context.dart';
 import '../../domain/lyric_word_identity.dart';
 import '../../domain/short_lyric_reference.dart';
@@ -124,7 +125,8 @@ bool sameSong(SongCandidate selected, SongCandidate result) {
   if (_titleKey(selected.title) != _titleKey(result.title) ||
       (normalizedIdentity(selected.artist) !=
               normalizedIdentity(result.artist) &&
-          !sameGeniusPrimaryCredit(selected, result, normalizedIdentity))) {
+          !sameGeniusPrimaryCredit(selected, result, normalizedIdentity) &&
+          !sameReviewedChartArtist(selected, result))) {
     return false;
   }
   final a = recordingVersionMarkers(selected.album ?? '', album: true),
@@ -156,8 +158,8 @@ bool sameArrangement(
 ) {
   if (!provider.definition.capabilities.contains('chords') ||
       !artistCreditsMatch(
-        selected.artist,
-        result.artist,
+        reviewedChartArtistCredit(selected)?.canonicalName ?? selected.artist,
+        reviewedChartArtistCredit(result)?.canonicalName ?? result.artist,
         (value) => normalizedIdentity(foldLyricVowelAccents(value)),
       )) {
     return false;
@@ -527,6 +529,8 @@ Future<SourceResult> findMatchingSource(
       extra: !strict && !historicalText
           ? {
               'requiresLyricsAgreement': true,
+              if (reviewedChartArtistCredit(song) case final credit?)
+                'artistIdentityEvidence': credit.toJson(),
               if (allowContextualArrangements &&
                   contextualArrangementCandidate(selection, song))
                 'requiresRecordingLyricsAgreement': true,

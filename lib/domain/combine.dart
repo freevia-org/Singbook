@@ -7,6 +7,7 @@ import 'edition_identity.dart';
 import 'metadata_enrichment.dart';
 import 'arrangement.dart';
 import 'artist_credit.dart';
+import 'reviewed_chart_artist.dart';
 import 'arrangement_context.dart';
 import 'lyric_word_identity.dart';
 import 'short_lyric_reference.dart';
@@ -184,7 +185,8 @@ bool _sameSong(SongCandidate a, SongCandidate b) {
   if (artist.isEmpty || title.isEmpty) return false;
   return title == _baseTitle(b.title) &&
       (artist == _identityNorm(b.artist) ||
-          sameGeniusPrimaryCredit(a, b, _identityNorm));
+          sameGeniusPrimaryCredit(a, b, _identityNorm) ||
+          sameReviewedChartArtist(a, b));
 }
 
 /// A chord site's arrangement of [b]'s song: chord sites may credit only
@@ -203,8 +205,8 @@ bool _sameArrangedSong(SongCandidate a, SongCandidate b) {
   final song = title(a.title);
   if (song.isEmpty || song != title(b.title)) return false;
   return artistCreditsMatch(
-    a.artist,
-    b.artist,
+    reviewedChartArtistCredit(a)?.canonicalName ?? a.artist,
+    reviewedChartArtistCredit(b)?.canonicalName ?? b.artist,
     (value) => _identityNorm(foldLyricVowelAccents(value)),
   );
 }

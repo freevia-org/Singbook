@@ -32,3 +32,51 @@ bool matchesCorpusCandidate(
       corpusArtistIdentity(song['artist'] as String) ==
           corpusArtistIdentity(candidate.artist);
 }
+
+/// Independent review binds a reference to an actual catalog result or ISRC;
+/// a status flag alone must not certify a stale ID or another performance.
+bool corpusRecordingReferenceMatches(
+  Map<String, dynamic> song,
+  SongCandidate candidate,
+) {
+  if (!matchesCorpusCandidate(song, candidate)) return false;
+  final expected = song['expected'];
+  if (expected is! Map) return false;
+  final reference = expected['recordingReference'];
+  if (reference is! Map || reference['status'] != 'verified') return false;
+  final evidence = reference['evidence'];
+  if (evidence is! List ||
+      evidence.isEmpty ||
+      !evidence.every((item) => item is String && item.trim().isNotEmpty)) {
+    return false;
+  }
+  final provider = reference['providerId'];
+  final id = reference['candidateId'];
+  final isrc = reference['isrc'];
+  return (provider is String &&
+          provider.isNotEmpty &&
+          id is String &&
+          id.isNotEmpty &&
+          provider == candidate.providerId &&
+          id == candidate.id) ||
+      (isrc is String &&
+          isrc.isNotEmpty &&
+          isrc == candidate.recordingIds['isrc']);
+}
+
+/// A reviewed edition is evidence separate from a literal catalog title.
+/// Require the same recording binding and exactly the reviewed target scope.
+bool corpusReviewedEditionMatches(
+  Map<String, dynamic> song,
+  SongCandidate candidate,
+) {
+  final edition = song['recordingEdition'];
+  if (edition is! String ||
+      edition.trim().isEmpty ||
+      song['recordingEditionStatus'] != 'verified' ||
+      !corpusRecordingReferenceMatches(song, candidate)) {
+    return false;
+  }
+  final reference = (song['expected'] as Map)['recordingReference'] as Map;
+  return reference['recordingEdition'] == edition;
+}
