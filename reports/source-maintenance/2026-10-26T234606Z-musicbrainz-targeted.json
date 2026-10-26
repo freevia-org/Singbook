@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "catalogRevision": 12,
+  "measuredAt": "2026-10-26T23:46:06.958353Z",
+  "offline": false,
+  "summary": {
+    "healthy": 1
+  },
+  "sources": [
+    {
+      "id": "musicbrainz",
+      "name": "MusicBrainz",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "wonderwall-oasis-recording",
+          "status": "healthy",
+          "providerId": "musicbrainz",
+          "bodyCharacters": 0,
+          "metadataFields": [
+            "artistCredits",
+            "durationSeconds",
+            "identityScope",
+            "isrcs",
+            "musicbrainzRecordingId",
+            "relationships",
+            "releases",
+            "version"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false
+        }
+      ]
+    }
+  ],
+  "httpDiagnostics": {
+    "networkFailures": 0,
+    "hosts": {
+      "musicbrainz.org": {
+        "requests": 4,
+        "statuses": {
+          "200": 2,
+          "503": 2
+        },
+        "retryAfterSeconds": {
+          "0": 2
+        },
+        "databaseLag": {}
+      }
+    }
+  },
+  "scope": "targeted-followup",
+  "execution": {
+    "runtime": "managed-cloud",
+    "baseSha": "4189fa7560eda1b2f2eb80511884d26962ebef0b",
+    "sourceSha": "4189fa7560eda1b2f2eb80511884d26962ebef0b",
+    "catalogPath": "config/source-catalog-v2.json",
+    "command": "dart run tool/source_maintenance.dart --catalog config/source-catalog-v2.json --source musicbrainz --report artifacts/source-maintenance/2026-10-27-musicbrainz-targeted.json",
+    "exitCode": 0,
+    "liveExecutions": 1,
+    "lockedDependenciesExitCode": 0,
+    "networkExecutionMode": "approved_require_escalated",
+    "environment": {
+      "specRevision": "136",
+      "phase": "running",
+      "connectivity": "connected",
+      "observationsCurrent": true,
+      "networkPolicy": {
+        "mode": "unrestricted",
+        "state": "enforced"
+      }
+    },
+    "proxyAndTls": "inherited proxy and trusted CA preserved; TLS verification enabled",
+    "sourceState": "clean detached current-public-main worktree; original unfinished work preserved"
+  },
+  "interpretation": {
+    "outcome": "Wonderwall/Oasis recording canary passed catalog and metadata coverage. Four HTTP attempts: two200 and two503 with Retry-After0; automatic bounded retries recovered. No manual retry loop or additional provider run.",
+    "limits": "Ordinary CLI aggregates status counts; it does not measure per-attempt intervals or establish shared-IP/global provider load recovery. No new pacing-regression/CI/Android validation claimed."
+  },
+  "publication": {
+    "targetedHistoryOnly": true,
+    "fullCloudLatestUntouched": true,
+    "allLocalReportsAndHistoryUntouched": true,
+    "sourceChanges": false
+  }
+}
