@@ -133,6 +133,16 @@ String? _chordAlignmentHash(SongDocument doc) {
   return _sha('${_sha(_normalizedLyrics(doc.body))}\n${anchors.join('\n')}');
 }
 
+String? _sourceChordAlignmentHash(SourceResult source) => _chordAlignmentHash(
+  SongDocument(
+    id: source.id,
+    title: source.candidate.title,
+    artist: source.candidate.artist,
+    body: source.body,
+    metadata: {...source.candidate.metadata, ...source.metadata},
+  ),
+);
+
 Map<String, dynamic> _readCorpus() {
   final data =
       jsonDecode(File('tool/metadata_accuracy_corpus.json').readAsStringSync())
@@ -459,6 +469,30 @@ void main() {
       _chordAlignmentHash(song('[Db]Amber windows')),
     );
   });
+  test('source chord evidence uses the selected chart alignment hash', () {
+    const candidate = SongCandidate(
+      providerId: 'fixture',
+      id: 'same-recording',
+      title: 'Original fixture',
+      artist: 'Test',
+      metadata: {'capo': 1},
+    );
+    const source = SourceResult(
+      candidate: candidate,
+      body: '[C]Amber windows',
+      metadata: {'capo': 1},
+    );
+    final selected = SongDocument(
+      id: 'selected',
+      title: 'Original fixture',
+      artist: 'Test',
+      body: '[Db]Amber windows',
+    );
+    expect(
+      _sourceChordAlignmentHash(source),
+      _chordAlignmentHash(selected),
+    );
+  });
   test(
     'metadata accuracy corpus has 100 entries and valid reference states',
     () {
@@ -725,6 +759,10 @@ Future<void> _benchmark() async {
           'chordSequenceSha256': sourceChordSequence.isEmpty
               ? null
               : _sha(sourceChordSequence),
+          // Keep the raw chord spelling hash above for transcription diffs;
+          // agreement with the selected chart must use the same lyric-anchor,
+          // capo-normalized representation as the selected output.
+          'chordAlignmentSha256': _sourceChordAlignmentHash(source),
           'declaredKey':
               source.metadata['key'] ?? source.candidate.metadata['key'],
           'capo': source.metadata['capo'] ?? source.candidate.metadata['capo'],
@@ -1206,8 +1244,8 @@ Future<void> _benchmark() async {
       selectedHashField: 'normalizedLyricsSha256',
     ),
     'chords': sourceAgreement(
-      'chordSequenceSha256',
-      selectedHashField: 'chordSequenceSha256',
+      'chordAlignmentSha256',
+      selectedHashField: 'chordAlignmentSha256',
     ),
   };
   final reusedCatalogIds = <String, Object?>{};

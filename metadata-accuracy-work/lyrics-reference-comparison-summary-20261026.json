@@ -383,7 +383,7 @@
     "method": "SHA-256 source identity joins each discovered result to combineSources provenance. Candidate use is reported without raw candidate IDs or lyrics.",
     "interpretation": "Candidate availability is distinct from actual use. Contribution counts are distinct songs. Agreement among provider labels is not proof of independent sourcing or correctness."
   },
-  "next": "Complete the remaining 15 source-page diff reviews; for each, verify song/artist identity, source provenance, normalized sequence, and edition scope. Classify wording, repeats, and version differences before deciding whether the selected text is corroborated or incorrect for its intended scope.",
+  "next": "Rerun the offline 100-song benchmark with source chordAlignmentSha256 now emitted using the same lyric-anchor and capo-normalized function as the combined result. Then use aligned per-source charts and the 8 existing key references to expand field adjudication; keep source agreement, provenance confidence, and correctness as separate measures.",
   "sourceAgreement": {
     "lyrics": {
       "songsWithSourceData": 99,
@@ -739,7 +739,19 @@
       "selectedOutputHasSharedAlternativeButChosenHashHasOneProvider": 0,
       "selectedOutputReviewCandidates": [],
       "selectedOutputHashHasMaximumProviderLabelSupport": 2,
-      "interpretation": "Exact normalized lyric or chord-sequence hash agreement, including a shared hash within a conflicting group, is a consolidation signal, not proof of independent provenance or correctness."
+      "interpretation": "Chord candidate availability and actual chart contribution remain measurable. Cross-provider agreement is not currently reported because the previous comparison used incompatible hash representations; rerun the updated benchmark to calculate valid alignment agreement.",
+      "metricStatus": "invalidated_comparator_mismatch_requires_regeneration",
+      "invalidatedMetricNote": "The prior selected-output value was a canonical, capo-normalized chord-position hash bound to normalized lyrics; source values were hashes of raw chord-symbol sequences. Those representations cannot be compared. The benchmark now emits chordAlignmentSha256 for every source and must be rerun before reporting chord agreement.",
+      "supersededRawSequenceComparison": {
+        "selectedOutputRows": 95,
+        "selectedOutputHashProviderSupportCounts": {
+          "0": 93,
+          "1": 2
+        },
+        "selectedOutputHashHasCrossProviderSupport": 0,
+        "selectedOutputHasSharedAlternativeButChosenHashHasOneProvider": 0,
+        "selectedOutputHashHasMaximumProviderLabelSupport": 2
+      }
     }
   },
   "crossProviderCandidateIdReuse": {
