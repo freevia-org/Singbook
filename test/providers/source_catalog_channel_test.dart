@@ -26,7 +26,11 @@ SourceCatalogRuntime _runtime(
           .where(
             (p) =>
                 !released ||
-                !{'lrcred', 'roswellmusicjam'}.contains(p.definition.id),
+                !{
+                  'lrcred',
+                  'roswellmusicjam',
+                  'karamoe',
+                }.contains(p.definition.id),
           )
           .toList(),
   createProvider: (entry) => ConfigurableProvider(entry, transport),
@@ -133,7 +137,7 @@ void main() {
         expect(settings['sourceCatalog'], legacy);
         expect(settings['providers'], {'genius': false});
         expect(settings[SourceCatalogClient.cacheKey], next);
-        for (final id in ['lrcred', 'roswellmusicjam']) {
+        for (final id in ['lrcred', 'roswellmusicjam', 'karamoe']) {
           final added = runtime.catalog!.sources.singleWhere((s) => s.id == id);
           expect(added.status, 'disabled');
           expect(runtime.providers.any((p) => p.definition.id == id), false);

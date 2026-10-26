@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "extractionSchemaVersion": 1,
-  "revision": 9,
-  "publishedAt": "2026-10-26T11:20:40.927214Z",
+  "revision": 10,
+  "publishedAt": "2026-10-26T12:49:19.684785Z",
   "sources": [
     {
       "id": "genius",
@@ -910,6 +910,77 @@
             "identityScope",
             "sourceArchiveSha256",
             "sourceArchiveFile"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "karamoe",
+      "name": "kara.moe",
+      "adapter": "builtin",
+      "status": "disabled",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "metadata",
+        "lineTiming"
+      ],
+      "enabledByDefault": false,
+      "accessMode": "publicApi",
+      "website": "https://kara.moe/",
+      "hosts": [],
+      "attribution": "Kara.moe contributors; per-song karaoke authors",
+      "changeReason": "Two independent production repository canaries passed on 2026-10-26 for catalog/lyrics/metadata/line timing using four HTTP200 responses with no rate limits or network failures. Public karaoke JSON and raw subtitle tags are retained; source video IDs/year/duration are not recording facts, and timing remains sourceDemonstrationOnly. Disabled pending independent review and a compatible app release; channel1 unchanged.",
+      "probes": [
+        {
+          "id": "man-of-war-radiohead",
+          "query": "Radiohead",
+          "candidate": {
+            "providerId": "karamoe",
+            "id": "998a3b0b-d41c-429b-9229-8600de1c80a6",
+            "title": "Man of war",
+            "artist": "Radiohead",
+            "url": "https://kara.moe/api/karas/998a3b0b-d41c-429b-9229-8600de1c80a6"
+          },
+          "expectedTitle": "Man of war",
+          "expectedArtist": "Radiohead",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "lineTiming"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "language",
+            "sourceVideoDurationSeconds",
+            "sourceVideoYear",
+            "credits.0.name"
+          ]
+        },
+        {
+          "id": "dune-ai-kizuna-cover",
+          "query": "Kenshi Yonezu",
+          "candidate": {
+            "providerId": "karamoe",
+            "id": "3624f1bc-d346-42ca-9c89-2443632afbcb",
+            "title": "Suna no Wakusei",
+            "artist": "Ai Kizuna",
+            "url": "https://kara.moe/api/karas/3624f1bc-d346-42ca-9c89-2443632afbcb"
+          },
+          "expectedTitle": "Suna no Wakusei",
+          "expectedArtist": "Ai Kizuna",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "lineTiming"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "language",
+            "sourceVideoDurationSeconds",
+            "sourceVideoYear",
+            "credits.0.name"
           ]
         }
       ]

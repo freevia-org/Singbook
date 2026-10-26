@@ -41,6 +41,17 @@ artist tags are not treated as recording identities. Imported charts retain
 source attribution, archive revision, original ChordPro and unknown rights.
 No publisher corpus is automatically imported into a user's library.
 
+The staged kara.moe adapter uses the documented public search/detail API and
+retains its parsed lyric-line timeline and the full original detail JSON,
+including subtitle tags. These are karaoke-video arrangements: KIDs are source
+identities, not recording IDs; video year/duration remain source-specific facts.
+Timing carries `recordingEvidence: sourceDemonstrationOnly`, so it cannot become
+verified playback timing for an unrelated studio recording or cover. Parsed
+line timing does not imply that subtitle syllables are verified word timing.
+Database licensing, synchronization attribution and lyric rights remain
+separate. This native adapter also stays disabled pending compatible release
+qualification, and it never downloads a video or signs in.
+
 ## Version and lifecycle contract
 
 The envelope has `schemaVersion: 1`, `extractionSchemaVersion: 1`, a positive
