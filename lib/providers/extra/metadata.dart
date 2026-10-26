@@ -1,4 +1,5 @@
 import '../../domain/models.dart';
+import '../../domain/metadata_artist_credit.dart';
 import '../provider.dart';
 import 'common.dart';
 
@@ -68,32 +69,49 @@ class MusicBrainzProvider implements LyricsProvider {
       durationSeconds: length is num && length > 0 ? length / 1000 : null,
       url: 'https://musicbrainz.org/recording/$id',
       recordingIds: {'musicbrainz': id},
-      metadata: sanitizeExtraMetadata({
-        'identityScope': 'recording',
-        if (stringValue(r['disambiguation']).isNotEmpty)
-          'version': r['disambiguation'],
+      metadata: {
+        ...sanitizeExtraMetadata({
+          'identityScope': 'recording',
+          if (stringValue(r['disambiguation']).isNotEmpty)
+            'version': r['disambiguation'],
+          'releases': releases
+              .map(
+                (r) => {
+                  'id': r['id'],
+                  'title': r['title'],
+                  if (r['date'] != null) 'date': r['date'],
+                  if (r['country'] != null) 'country': r['country'],
+                  if (r['status'] != null) 'status': r['status'],
+                  if (r['release-group'] != null)
+                    'releaseGroup': r['release-group'],
+                },
+              )
+              .toList(),
+        }),
+        // Join phrases carry structural whitespace and an empty final join.
+        // Generic text cleanup would destroy that source evidence.
         'artistCredits': credits
+            .take(8)
             .map(
               (c) => {
-                'name': c['name'],
-                'musicbrainzId': jsonMap(c['artist'])['id'],
+                'name': boundedText(
+                  c['name'] ?? jsonMap(c['artist'])['name'],
+                  max: 200,
+                ),
+                'musicbrainzId': boundedText(
+                  jsonMap(c['artist'])['id'],
+                  max: 36,
+                ),
+                'joinPhrase': c['joinphrase'] == null
+                    ? ''
+                    : c['joinphrase'] is String &&
+                          (c['joinphrase'] as String).length <= 40
+                    ? c['joinphrase']
+                    : '?',
               },
             )
             .toList(),
-        'releases': releases
-            .map(
-              (r) => {
-                'id': r['id'],
-                'title': r['title'],
-                if (r['date'] != null) 'date': r['date'],
-                if (r['country'] != null) 'country': r['country'],
-                if (r['status'] != null) 'status': r['status'],
-                if (r['release-group'] != null)
-                  'releaseGroup': r['release-group'],
-              },
-            )
-            .toList(),
-      }),
+      },
     );
   }
 
@@ -129,33 +147,47 @@ class MusicBrainzProvider implements LyricsProvider {
         : candidate.recordingIds['musicbrainz'];
     if (id == null) {
       String escaped(String s) => s.replaceAll(RegExp(r'["\\]'), ' ');
-      final matches =
-          (await search(
-                'recording:"${escaped(candidate.title)}" AND artist:"${escaped(candidate.artist)}"',
-                cancel: cancel,
-              ))
-              .where(
-                (c) =>
-                    normalized(c.title) == normalized(candidate.title) &&
-                    normalized(c.artist) == normalized(candidate.artist),
-              )
-              .where(
-                (c) =>
-                    candidate.durationSeconds == null ||
-                    c.durationSeconds == null ||
-                    (candidate.durationSeconds! - c.durationSeconds!).abs() <=
-                        2,
-              )
-              .where(
-                (c) =>
-                    candidate.album == null ||
-                    maps(c.metadata['releases']).any(
-                      (r) =>
-                          normalized(stringValue(r['title'])) ==
-                          normalized(candidate.album!),
-                    ),
-              )
-              .toList();
+      final artistNames = candidate.artist
+          .split(RegExp(r'\s+&\s+'))
+          .map((name) => name.trim())
+          .where((name) => name.isNotEmpty)
+          .toList();
+      // A compound credit's punctuation is not stable across catalogs. Query
+      // each name without relying on its join phrase; post-search identity and
+      // feature-credit checks below remain mandatory.
+      final artists = artistNames.length > 1 && artistNames.length <= 8
+          ? artistNames
+                .map((name) => 'artistname:"${escaped(name)}"')
+                .join(' AND ')
+          : 'artist:"${escaped(candidate.artist)}"';
+      final album = candidate.album?.trim();
+      final query =
+          'recording:"${escaped(candidate.title)}" AND $artists'
+          '${album == null || album.isEmpty ? '' : ' AND release:"${escaped(album)}"'}';
+      final matches = (await search(query, cancel: cancel))
+          .where(
+            (c) =>
+                normalized(c.title) == normalized(candidate.title) &&
+                (normalized(c.artist) == normalized(candidate.artist) ||
+                    musicBrainzArtistCreditEvidence(candidate, c, normalized) !=
+                        null),
+          )
+          .where(
+            (c) =>
+                candidate.durationSeconds == null ||
+                c.durationSeconds == null ||
+                (candidate.durationSeconds! - c.durationSeconds!).abs() <= 2,
+          )
+          .where(
+            (c) =>
+                candidate.album == null ||
+                maps(c.metadata['releases']).any(
+                  (r) =>
+                      normalized(stringValue(r['title'])) ==
+                      normalized(candidate.album!),
+                ),
+          )
+          .toList();
       if (matches.isEmpty) throw const ProviderException('unavailable');
       if (matches.length != 1) throw const ProviderException('ambiguous_match');
       id = matches.single.id;
@@ -184,7 +216,10 @@ class MusicBrainzProvider implements LyricsProvider {
     return SourceResult(
       candidate: found,
       body: '',
-      metadata: sanitizeExtraMetadata(metadata),
+      metadata: {
+        ...sanitizeExtraMetadata(metadata),
+        'artistCredits': found.metadata['artistCredits'],
+      },
       attribution: 'MusicBrainz',
       retrievedAt: DateTime.now().toUtc(),
       extra: {
@@ -196,6 +231,7 @@ class MusicBrainzProvider implements LyricsProvider {
           permissions: {'status': 'field_specific', 'coreData': 'CC0'},
         ),
         'metadataOnly': true,
+        'artistIdentityEvidence': ?musicBrainzArtistCreditEvidence(candidate, found, normalized),
       },
     );
   }

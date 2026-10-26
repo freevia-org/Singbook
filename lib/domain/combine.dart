@@ -8,6 +8,7 @@ import 'metadata_enrichment.dart';
 import 'arrangement.dart';
 import 'artist_credit.dart';
 import 'reviewed_chart_artist.dart';
+import 'metadata_artist_credit.dart';
 import 'arrangement_context.dart';
 import 'lyric_word_identity.dart';
 import 'short_lyric_reference.dart';
@@ -186,7 +187,8 @@ bool _sameSong(SongCandidate a, SongCandidate b) {
   return title == _baseTitle(b.title) &&
       (artist == _identityNorm(b.artist) ||
           sameGeniusPrimaryCredit(a, b, _identityNorm) ||
-          sameReviewedChartArtist(a, b));
+          sameReviewedChartArtist(a, b) ||
+          musicBrainzArtistCreditEvidence(a, b, _identityNorm) != null);
 }
 
 /// A chord site's arrangement of [b]'s song: chord sites may credit only
@@ -2572,6 +2574,46 @@ SongDocument combineSources(
             enoughLyricEvidence(source),
       )
       .toList();
+  bool metadataContextMatches(SourceResult source) {
+    if (source.candidate.providerId != 'musicbrainz' ||
+        source.extra['metadataOnly'] != true ||
+        source.body.trim().isNotEmpty ||
+        source.hasChords ||
+        source.extra['pendingMatchCheck'] == true ||
+        !const {
+          MatchKind.sameSong,
+          MatchKind.sameRecording,
+        }.contains(source.matchKind)) {
+      return false;
+    }
+    bool knownFactsAgree(SongCandidate reference) {
+      for (final id in reference.recordingIds.entries) {
+        if (source.candidate.recordingIds.containsKey(id.key) &&
+            source.candidate.recordingIds[id.key] != id.value) {
+          return false;
+        }
+      }
+      final a = reference.durationSeconds, b = source.candidate.durationSeconds;
+      return a == null ||
+          b == null ||
+          (a - b).abs() <= math.min(15, math.max(8, a * 0.02));
+    }
+
+    if (!knownFactsAgree(selected)) return false;
+    return arrangementContexts.any(
+      (reference) =>
+          reference.candidate.identity == selected.identity &&
+          knownFactsAgree(reference.candidate) &&
+          _sameSong(reference.candidate, source.candidate) &&
+          musicBrainzArtistCreditEvidence(
+                reference.candidate,
+                source.candidate,
+                _identityNorm,
+              ) !=
+              null,
+    );
+  }
+
   bool contextMatches(SourceResult chart) => arrangementContexts.any(
     (reference) =>
         contextualArrangementCandidate(reference.candidate, chart.candidate) &&
@@ -2669,6 +2711,7 @@ SongDocument combineSources(
     final identityMatches = wikiSource
         ? historicalMatches(s)
         : ((_sameSong(s.candidate, selected) ||
+                      metadataContextMatches(s) ||
                       (s.hasChords &&
                           s.extra['requiresLyricsAgreement'] == true &&
                           (_sameArrangedSong(s.candidate, selected) ||
@@ -2990,7 +3033,13 @@ SongDocument combineSources(
         source.metadata['identityScope'] ??
         source.extra['identityScope'];
     final imageScoped = scoped == 'image';
-    if (scoped == 'recording' && !sameRecording) continue;
+    final creditContext = !sameRecording && metadataContextMatches(source);
+    if (scoped == 'recording' && !sameRecording && !creditContext) continue;
+    if (creditContext) {
+      // Credit agreement can map performer names to artist IDs. It does not
+      // authorize any recording-specific fact, including ISRCs or keys.
+      facts.removeWhere((key, _) => key != 'artistCredits');
+    }
     final matchingAlbumDisplay =
         selected.recordingIds.isEmpty &&
         knownAlbum is String &&
