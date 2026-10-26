@@ -103,6 +103,23 @@ class ProviderTransport {
     allowedHosts: allowedHosts,
   );
 
+  Future<Uint8List> getBytes(
+    Uri url, {
+    Map<String, String> headers = const {},
+    CancellationToken? cancel,
+    int? maxBytes,
+    Duration? timeout,
+    Set<String>? allowedHosts,
+  }) async => (await _requestBytes(
+    url,
+    method: 'GET',
+    headers: headers,
+    cancel: cancel,
+    maxBytes: maxBytes,
+    timeout: timeout,
+    allowedHosts: allowedHosts,
+  )).bytes!;
+
   Future<dynamic> requestJson(
     Uri url, {
     String method = 'GET',
@@ -137,6 +154,29 @@ class ProviderTransport {
   /// An async function: validation failures are failed Futures, never
   /// synchronous throws.
   Future<String> requestText(
+    Uri url, {
+    String method = 'GET',
+    Map<String, String> headers = const {},
+    Object? body,
+    CancellationToken? cancel,
+    int? maxBytes,
+    Duration? timeout,
+    Set<String>? allowedHosts,
+  }) async {
+    final reply = await _requestBytes(
+      url,
+      method: method,
+      headers: headers,
+      body: body,
+      cancel: cancel,
+      maxBytes: maxBytes,
+      timeout: timeout,
+      allowedHosts: allowedHosts,
+    );
+    return _decode(reply.bytes!, reply.headers['content-type']);
+  }
+
+  Future<_Reply> _requestBytes(
     Uri url, {
     String method = 'GET',
     Map<String, String> headers = const {},
@@ -183,7 +223,7 @@ class ProviderTransport {
     cancel?.throwIfCancelled();
   }
 
-  Future<String> _run(
+  Future<_Reply> _run(
     Uri start,
     String method,
     Map<String, String> headers,
@@ -210,7 +250,7 @@ class ProviderTransport {
         timeout,
       );
       final code = reply.status;
-      if (code >= 200 && code < 300) return reply.text!;
+      if (code >= 200 && code < 300) return reply;
       if ({301, 302, 303, 307, 308}.contains(code)) {
         final location = reply.headers['location'];
         final parsed = location == null || location.trim().isEmpty
@@ -307,7 +347,7 @@ class ProviderTransport {
         final code = response.statusCode;
         if (code < 200 || code >= 300) {
           await response.stream.listen((_) {}).cancel();
-          return (status: code, headers: response.headers, text: null);
+          return (status: code, headers: response.headers, bytes: null);
         }
         if ((response.contentLength ?? 0) > limit) {
           await response.stream.listen((_) {}).cancel();
@@ -330,7 +370,7 @@ class ProviderTransport {
         return (
           status: code,
           headers: response.headers,
-          text: _decode(bytes.takeBytes(), response.headers['content-type']),
+          bytes: bytes.takeBytes(),
         );
       }();
       _track(operation, abortRequest);
@@ -417,7 +457,7 @@ class ProviderTransport {
   }
 }
 
-typedef _Reply = ({int status, Map<String, String> headers, String? text});
+typedef _Reply = ({int status, Map<String, String> headers, Uint8List? bytes});
 
 const _cp1252 = {
   0x80: 0x20AC,
