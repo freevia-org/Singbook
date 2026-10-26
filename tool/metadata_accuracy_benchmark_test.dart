@@ -77,6 +77,54 @@ String? _soundingKey(SongDocument doc) {
   return capo == 0 ? shapeKey : transposeChord(shapeKey, capo);
 }
 
+/// Identifies the scope of the combined key value for reference comparison.
+/// A chart can name the transposed arrangement key without establishing the
+/// selected recording's home key. Keep that useful chart claim, but do not
+/// compare a different-scope claim as a recording-key error.
+String _keyClaimScope(SongDocument doc) {
+  final estimate = jsonMap(doc.extra['chordKeyEstimate']);
+  if (estimate['hint'] == 'recording') return 'recording';
+  if (_hasMeaningfulMetadata(doc.metadata['key'])) {
+    final origin = jsonMap(doc.extra['fieldOrigins'])['key'];
+    if (origin is String) {
+      for (final source in doc.sources) {
+        if (source.id != origin) continue;
+        final selected =
+            doc.selectedRecording ??
+            SongCandidate(
+              providerId: 'library',
+              id: doc.id,
+              title: doc.title,
+              artist: doc.artist,
+            );
+        return recordingCompatible(selected, source)
+            ? 'recording'
+            : 'arrangement';
+      }
+    }
+    return 'unknown';
+  }
+  if (estimate['key'] is String || estimateChordKey(doc.body) != null) {
+    return 'arrangement';
+  }
+  return 'unknown';
+}
+
+bool _hasMeaningfulMetadata(Object? value) =>
+    value != null && (value is! String || value.trim().isNotEmpty);
+
+String _keyComparisonStatus({
+  required bool matchesReference,
+  required String claimScope,
+}) {
+  if (matchesReference) return 'verifiedCorrect';
+  return switch (claimScope) {
+    'arrangement' => 'scopeMismatch',
+    'recording' => 'verifiedIncorrect',
+    _ => 'unverified',
+  };
+}
+
 // Accuracy requires the same tonic AND mode. Relative major/minor agreement
 // used by chart voting is useful evidence, but is not an exact key answer.
 String? _exactKeyIdentity(String value) {
@@ -315,6 +363,73 @@ void main() {
       _accuracyEvaluationStatus(evaluated: 100, corpusSize: 100),
       'all_songs_compared',
     );
+  });
+  test('recording key comparisons distinguish chart-scoped key claims', () {
+    const selected = SongCandidate(
+      providerId: 'genius',
+      id: '821238',
+      title: 'The Girl from Ipanema',
+      artist: 'Stan Getz & João Gilberto',
+    );
+    final alternateArrangement = SourceResult(
+      candidate: const SongCandidate(
+        providerId: 'ultimateguitar',
+        id: 'chart-1',
+        title: 'The Girl from Ipanema',
+        artist: 'Stan Getz & João Gilberto',
+      ),
+      body: '[F]Example lyric line',
+      matchKind: MatchKind.sameSong,
+    );
+    final chartKey = SongDocument(
+      id: 'ipanema',
+      title: selected.title,
+      artist: selected.artist,
+      body: '[F]Example lyric line',
+      metadata: const {'key': 'F'},
+      sources: [alternateArrangement],
+      selectedRecording: selected,
+      extra: {
+        'fieldOrigins': {'key': alternateArrangement.id},
+      },
+    );
+    expect(_keyClaimScope(chartKey), 'arrangement');
+    expect(
+      _keyComparisonStatus(
+        matchesReference: false,
+        claimScope: _keyClaimScope(chartKey),
+      ),
+      'scopeMismatch',
+    );
+    expect(
+      _keyComparisonStatus(matchesReference: false, claimScope: 'recording'),
+      'verifiedIncorrect',
+    );
+    expect(
+      _keyComparisonStatus(matchesReference: false, claimScope: 'unknown'),
+      'unverified',
+    );
+    expect(
+      _keyComparisonStatus(
+        matchesReference: true,
+        claimScope: _keyClaimScope(chartKey),
+      ),
+      'verifiedCorrect',
+    );
+
+    final recordingSource = SourceResult(
+      candidate: selected,
+      body: '[Db]Example lyric line',
+      matchKind: MatchKind.sameRecording,
+    );
+    final recordingKey = chartKey.copyWith(
+      metadata: const {'key': 'Db'},
+      sources: [recordingSource],
+      extra: {
+        'fieldOrigins': {'key': recordingSource.id},
+      },
+    );
+    expect(_keyClaimScope(recordingKey), 'recording');
   });
   test(
     'reviewed edition proof requires the bound recording and target scope',
@@ -599,6 +714,7 @@ Future<void> _benchmark() async {
       field: {
         'verifiedCorrect': 0,
         'verifiedIncorrect': 0,
+        'scopeMismatch': 0,
         'unverified': 0,
         'unavailable': 0,
       },
@@ -830,6 +946,7 @@ Future<void> _benchmark() async {
           .expand((l) => l.chords.map((a) => a.chord))
           .join(' ');
       final key = _soundingKey(doc);
+      final keyClaimScope = _keyClaimScope(doc);
       final identityReady =
           recordingReferenceAnchored &&
           (edition == null || row['recordingEditionAnchored'] == true);
@@ -849,6 +966,7 @@ Future<void> _benchmark() async {
             : key != null
             ? 'chartEstimate'
             : null,
+        'keyClaimScope': key == null ? null : keyClaimScope,
         'capo': doc.metadata['capo'],
         'chordAlignmentSha256': _chordAlignmentHash(doc),
         'baseLyricsSourceId': doc.extra['selectedSourceId'],
@@ -894,7 +1012,12 @@ Future<void> _benchmark() async {
                     _exactKeyIdentity(reference['value'] as String),
           _ => actual == reference['value'],
         };
-        final status = matchesReference
+        final status = field == 'key'
+            ? _keyComparisonStatus(
+                matchesReference: matchesReference,
+                claimScope: keyClaimScope,
+              )
+            : matchesReference
             ? 'verifiedCorrect'
             : 'verifiedIncorrect';
         fieldResults[field] = status;
@@ -980,7 +1103,12 @@ Future<void> _benchmark() async {
       'adjudicatedGoldReferenceCoverage': refs,
       'adjudicatedGoldReferenceCoveragePercent': 100 * refs / songs.length,
       'correctnessBasis':
-          'Only reviewed field-level gold references count here. Observed source pages and provider candidates are evidence coverage, not correctness comparisons.',
+          'Only reviewed field-level gold references with comparable output scope count here. A mismatching arrangement-scoped key is reported separately as scopeMismatch, not as a wrong recording key. Observed source pages and provider candidates are evidence coverage, not correctness comparisons.',
+      'scopeMismatchMeaning': field == 'key'
+          ? 'The selected key is supported as a chart/arrangement key, while the reviewed reference is the recording home key; the values are retained but not compared as like-scoped claims.'
+          : null,
+      'scopeMismatchesExcludedFromEvaluatedDenominator':
+          counts['scopeMismatch'],
       'referenceCoverageMeaning':
           'Adjudicated field-level gold rows only; source-page observations are reported separately.',
     };
@@ -1313,6 +1441,8 @@ Future<void> _benchmark() async {
     'coverage': rows.where((r) => r.containsKey('selectedProvider')).length,
     'unavailableCount': rows.where((r) => r['availability'] != null).length,
     'accuracy': accuracy,
+    'keyScopePolicy':
+        'A chart-sourced key that is not recordingCompatible with the selected recording remains available as an arrangement key. If it differs from a recording-home-key reference, report scopeMismatch separately instead of calling it a verified incorrect recording key.',
     'sourceCoverage': sourceCoverage,
     'sourceAgreement': sourceAgreementSummary,
     'crossProviderCandidateIdReuse': reusedCatalogIds,
