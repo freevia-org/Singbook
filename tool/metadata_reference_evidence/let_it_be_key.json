@@ -1,0 +1,46 @@
+{
+  "songId": "song-006",
+  "reviewedOn": "2026-10-26",
+  "field": "key",
+  "status": "verified",
+  "value": "C",
+  "scope": "1970 original Let It Be album performance, 4:03 version",
+  "recordingBinding": {
+    "status": "verified",
+    "providerId": "genius",
+    "candidateId": "1575",
+    "isrc": null,
+    "recordingEdition": "1970 original Let It Be album performance, 4:03 version",
+    "evidence": [
+      "https://genius.com/The-beatles-let-it-be-lyrics",
+      "https://www.thebeatles.com/let-it-be-1",
+      "https://www.thebeatles.com/let-it-be-0",
+      "https://music.apple.com/us/album/let-it-be/1441164495?i=1441164738"
+    ],
+    "notes": "Genius record 1575 identifies the original album and its 8 May 1970 release. The artist catalog distinguishes the 4:03 album performance from the 3:50 single. Current Apple track 1441164738 is a corroborating 4:03 album reissue, not the retired linked track 401151904. Performance-level binding only; no ISRC or bit-identical mix/master claim."
+  },
+  "independentSources": [
+    {
+      "url": "https://www.icce.rug.nl/~soundscapes/DATABASES/AWP/lib.shtml",
+      "role": "Primary harmonic analysis by Alan W. Pollack",
+      "finding": "Labels the global key C major, names Let It Be CD track 6 and the Past Masters single, and analyzes the C-centered intro, verses, refrain and coda. The detailed reference uses the Get Back mix of the same Take 27 and explicitly contrasts official album/single overdubs. This supports the performance-level tonic, not exact mastering identity."
+    },
+    {
+      "url": "https://www.musicnotes.com/sheetmusic/the-beatles/let-it-be/MN0053244",
+      "role": "Licensed Sony/ATV publisher corroboration only",
+      "finding": "PVG edition MN0053244 lists C major as original published key. Arrangement metadata corroborates the independent harmonic analysis; it is not standalone recording proof."
+    }
+  ],
+  "catalogCrosscheck": {
+    "geniusCandidateId": "1575",
+    "geniusAlbum": "Let It Be",
+    "geniusReleaseDate": "1970-05-08",
+    "retiredLinkedAppleId": "401151904",
+    "retiredLinkedAppleLookup": "No result; not identity proof",
+    "currentCorroboratingAppleId": "1441164738",
+    "durationMs": 243027,
+    "dateCaveat": "Current Apple track release date uses March 6 (the earlier single date); album name and 4:03 duration corroborate the album performance. The official artist catalog and resolved Genius album date supply the May 8 scope."
+  },
+  "verificationDecision": "Independent musical analysis identifies global C major for the original album performance. The analysis also distinguishes the single and Get Back mixes; their identity is not asserted to be bit-identical. No exact bitmaster, full lyric or chord-placement accuracy is certified.",
+  "notDerivedFromActualBenchmarkKey": true
+}

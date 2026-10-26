@@ -236,7 +236,7 @@
       "id": "song-006",
       "title": "Let It Be",
       "artist": "The Beatles",
-      "recordingEdition": null,
+      "recordingEdition": "1970 original Let It Be album performance, 4:03 version",
       "language": "English",
       "genre": "unspecified",
       "expected": {
@@ -249,9 +249,14 @@
             "evidence": []
           },
           "key": {
-            "status": "unverified",
-            "value": null,
-            "evidence": []
+            "status": "verified",
+            "value": "C",
+            "evidence": [
+              "https://www.icce.rug.nl/~soundscapes/DATABASES/AWP/lib.shtml",
+              "https://www.musicnotes.com/sheetmusic/the-beatles/let-it-be/MN0053244"
+            ],
+            "reviewRecord": "tool/metadata_reference_evidence/let_it_be_key.json",
+            "notes": "Independent musical analysis identifies global C major for the original album performance. The analysis also distinguishes the single and Get Back mixes; their identity is not asserted to be bit-identical. No exact bitmaster, full lyric or chord-placement accuracy is certified."
           },
           "chords": {
             "status": "unverified",
@@ -263,12 +268,33 @@
           "recordingKey": "C"
         },
         "recordingReference": {
-          "status": "unverified",
-          "providerId": null,
-          "candidateId": null,
+          "status": "verified",
+          "providerId": "genius",
+          "candidateId": "1575",
           "isrc": null,
-          "evidence": []
+          "recordingEdition": "1970 original Let It Be album performance, 4:03 version",
+          "evidence": [
+            "https://genius.com/The-beatles-let-it-be-lyrics",
+            "https://www.thebeatles.com/let-it-be-1",
+            "https://www.thebeatles.com/let-it-be-0",
+            "https://music.apple.com/us/album/let-it-be/1441164495?i=1441164738"
+          ],
+          "notes": "Genius record 1575 identifies the original album and its 8 May 1970 release. The artist catalog distinguishes the 4:03 album performance from the 3:50 single. Current Apple track 1441164738 is a corroborating 4:03 album reissue, not the retired linked track 401151904. Performance-level binding only; no ISRC or bit-identical mix/master claim."
         }
+      },
+      "recordingEditionStatus": "verified",
+      "catalogSelection": {
+        "providerId": "genius",
+        "candidateId": "1575",
+        "title": "Let It Be",
+        "artist": "The Beatles",
+        "evidence": [
+          "https://genius.com/The-beatles-let-it-be-lyrics",
+          "https://www.thebeatles.com/let-it-be-1",
+          "https://www.thebeatles.com/let-it-be-0",
+          "https://music.apple.com/us/album/let-it-be/1441164495?i=1441164738"
+        ],
+        "notes": "Genius record 1575 identifies the original album and its 8 May 1970 release. The artist catalog distinguishes the 4:03 album performance from the 3:50 single. Current Apple track 1441164738 is a corroborating 4:03 album reissue, not the retired linked track 401151904. Performance-level binding only; no ISRC or bit-identical mix/master claim."
       }
     },
     {
