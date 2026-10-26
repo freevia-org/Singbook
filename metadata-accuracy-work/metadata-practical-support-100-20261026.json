@@ -7,7 +7,7 @@
     "corpusSha256": "e07d8790467de689f2d5181e9c571b784c54c503a432e290cf943783ee2f9d48",
     "licensedChartKeyObservations": {
       "path": "tool/metadata_reference_evidence/licensed_chart_key_observations_20261027.json",
-      "sha256": "db4e03acb9e343cb97b79a77a6f3d9b7c6058559fc3f2f8ad925ab1c218e2655"
+      "sha256": "fb477a9a07463a5a1b0a8434777030e831d931fa2fa4f2f44899016d8d77fd1a"
     }
   },
   "policy": {
@@ -10387,7 +10387,15 @@
         "eligibleExactProgressionProviderLabels": [],
         "eligibleExactProgressionProviderLabelCount": 0
       },
-      "publicReferenceObservation": null
+      "publicReferenceObservation": {
+        "field": "key",
+        "source": "licensed publisher chart",
+        "publisherClaimedValue": "Eb",
+        "selectedValue": "D#",
+        "comparisonResult": "practical chart-key match (enharmonic); not recording gold",
+        "strictCorrectnessCredit": false,
+        "note": "Musicnotes MN0049625_U2; official Coldplay arrangement associated with X&Y."
+      }
     },
     {
       "songId": "song-042",
@@ -10693,7 +10701,15 @@
         "eligibleExactProgressionProviderLabels": [],
         "eligibleExactProgressionProviderLabelCount": 0
       },
-      "publicReferenceObservation": null
+      "publicReferenceObservation": {
+        "field": "key",
+        "source": "licensed publisher chart",
+        "publisherClaimedValue": "A",
+        "selectedValue": "A",
+        "comparisonResult": "practical chart-key match; edition not set in corpus",
+        "strictCorrectnessCredit": false,
+        "note": "Faber describes its licensed TAB as recorded by Snow Patrol; Musicnotes lists A major and associates it with Eyes Open."
+      }
     },
     {
       "songId": "song-043",
@@ -11768,7 +11784,15 @@
         "eligibleExactProgressionProviderLabels": [],
         "eligibleExactProgressionProviderLabelCount": 0
       },
-      "publicReferenceObservation": null
+      "publicReferenceObservation": {
+        "field": "key",
+        "source": "licensed publisher chart",
+        "publisherClaimedValue": "Em",
+        "selectedValue": null,
+        "comparisonResult": "reference available; selected key unavailable",
+        "strictCorrectnessCredit": false,
+        "note": "Musicnotes official leadsheet lists E minor and associates it with Metallica (1991)."
+      }
     },
     {
       "songId": "song-047",
@@ -16154,7 +16178,15 @@
         "eligibleExactProgressionProviderLabels": [],
         "eligibleExactProgressionProviderLabelCount": 0
       },
-      "publicReferenceObservation": null
+      "publicReferenceObservation": {
+        "field": "key",
+        "source": "licensed publisher chart",
+        "publisherClaimedValue": "C",
+        "selectedValue": "C",
+        "comparisonResult": "practical chart-key match; not recording gold",
+        "strictCorrectnessCredit": false,
+        "note": "Musicnotes official Billy Joel Piano/Vocal/Chords arrangement lists C major."
+      }
     },
     {
       "songId": "song-066",
@@ -18151,7 +18183,15 @@
         "eligibleExactProgressionProviderLabels": [],
         "eligibleExactProgressionProviderLabelCount": 0
       },
-      "publicReferenceObservation": null
+      "publicReferenceObservation": {
+        "field": "key",
+        "source": "licensed publisher chart",
+        "publisherClaimedValue": "Am",
+        "selectedValue": null,
+        "comparisonResult": "reference corroborates gold key; selected output unavailable",
+        "strictCorrectnessCredit": false,
+        "note": "Musicnotes official Guitar TAB transcription lists A minor and appears on Led Zeppelin IV; existing reviewed album-performance reference remains the gold record."
+      }
     },
     {
       "songId": "song-075",
@@ -23453,14 +23493,14 @@
       "unavailableReferenceRows": 1,
       "licensedChartKeyComparisons": {
         "source": "tool/metadata_reference_evidence/licensed_chart_key_observations_20261027.json",
-        "observations": 14,
-        "practicalChartKeyMatches": 8,
+        "observations": 19,
+        "practicalChartKeyMatches": 11,
         "differencesNeedingReview": 4,
         "scopeMismatches": 1,
-        "selectedKeyUnavailable": 1,
+        "selectedKeyUnavailable": 3,
         "strictRecordingGold": false,
-        "interpretation": "Licensed arrangement-key corroboration only. Matching publisher keys do not establish exact recording-key correctness; differences require edition/capo/transposition review.",
-        "sha256": "db4e03acb9e343cb97b79a77a6f3d9b7c6058559fc3f2f8ad925ab1c218e2655"
+        "interpretation": "Licensed publisher arrangement-key corroboration only. Exact and enharmonic matches are counted as practical chart support; matching chart keys do not establish exact recording-key correctness. Differences require edition/capo/transposition review, and unavailable selected outputs remain unavailable.",
+        "sha256": "fb477a9a07463a5a1b0a8434777030e831d931fa2fa4f2f44899016d8d77fd1a"
       }
     },
     "chords": {

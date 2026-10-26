@@ -146,6 +146,64 @@
       "format": "Adele Piano/Vocal/Guitar",
       "scope": "artist song arrangement",
       "scopeNote": "Musicnotes gives A major as the original published key for its Adele arrangement; the page does not bind the arrangement to a particular album master."
+    },
+    {
+      "songId": "song-041",
+      "title": "Fix You",
+      "product": "Musicnotes MN0049625_U2",
+      "url": "https://www.musicnotes.com/sheetmusic/coldplay/fix-you/MN0049625_U2",
+      "publisherClaimedKey": "Eb",
+      "format": "Official Coldplay Piano/Vocal/Guitar arrangement",
+      "scope": "artist arrangement associated with X&Y",
+      "scopeNote": "Musicnotes lists E-flat major as the original published key and associates the arrangement with Coldplay's X&Y. The selected chart estimate D-sharp is enharmonically equivalent; this is practical chart-level agreement, not a recording-key gold claim."
+    },
+    {
+      "songId": "song-042",
+      "title": "Chasing Cars",
+      "product": "Musicnotes MN0056560 / Faber D211",
+      "url": "https://www.musicnotes.com/sheetmusic/snow-patrol/chasing-cars/MN0056560",
+      "publisherClaimedKey": "A",
+      "format": "Official Faber guitar TAB / voice arrangement",
+      "scope": "artist arrangement; Faber describes it as recorded by Snow Patrol, Musicnotes associates it with Eyes Open",
+      "scopeNote": "Faber identifies the transcription as 'as recorded by Snow Patrol'; Musicnotes lists A major as the original published key and associates this product with Eyes Open. The corpus edition is unspecified, so the A/A agreement remains practical chart support rather than a strict recording-specific correctness claim.",
+      "recordingIdentityEvidence": [
+        "https://www.fabermusic.com/shop/chasing-cars-d211",
+        "https://www.musicnotes.com/sheetmusic/snow-patrol/chasing-cars/MN0056560"
+      ]
+    },
+    {
+      "songId": "song-046",
+      "title": "Nothing Else Matters",
+      "product": "Musicnotes MN0253739",
+      "url": "https://www.musicnotes.com/sheetmusic/metallica/nothing-else-matters/MN0253739",
+      "publisherClaimedKey": "Em",
+      "format": "Official Metallica leadsheet with lyrics, melody, and chords",
+      "scope": "artist arrangement associated with Metallica (1991)",
+      "scopeNote": "Musicnotes lists E minor as the original published key and associates the leadsheet with Metallica (1991). The selected application key is unavailable, so this adds a reference but does not count as a key match or correctness result."
+    },
+    {
+      "songId": "song-065",
+      "title": "Piano Man",
+      "product": "Musicnotes MN0136667",
+      "url": "https://www.musicnotes.com/sheetmusic/billy-joel/piano-man/MN0136667",
+      "publisherClaimedKey": "C",
+      "format": "Official Billy Joel Piano/Vocal/Chords Singer Pro arrangement",
+      "scope": "artist arrangement associated with Piano Man",
+      "scopeNote": "Musicnotes lists C major as the original published key, identifies voice/piano/accordion scoring, and associates it with the Piano Man catalog. The selected output C agrees at arrangement level; no exact master transcription is claimed."
+    },
+    {
+      "songId": "song-074",
+      "title": "Stairway to Heaven",
+      "product": "Musicnotes MN0108941",
+      "url": "https://www.musicnotes.com/sheetmusic/led-zeppelin/stairway-to-heaven/MN0108941",
+      "publisherClaimedKey": "Am",
+      "format": "Official Led Zeppelin guitar TAB transcription arrangement",
+      "scope": "artist arrangement appearing on Led Zeppelin IV",
+      "scopeNote": "Musicnotes identifies this as an A-minor Guitar TAB transcription arrangement and lists it on Led Zeppelin IV. It corroborates the existing album-performance home-key reference; application output is unavailable, so it adds no output match.",
+      "recordingIdentityEvidence": [
+        "https://www.musicnotes.com/sheetmusic/led-zeppelin/stairway-to-heaven/MN0108941",
+        "https://music.apple.com/ag/song/stairway-to-heaven/580708180"
+      ]
     }
   ],
   "interpretationPolicy": {
