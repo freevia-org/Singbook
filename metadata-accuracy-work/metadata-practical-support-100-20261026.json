@@ -3,8 +3,8 @@
   "date": "2026-10-26",
   "generatedFrom": {
     "benchmarkReport": "build/metadata_accuracy/report.json",
-    "runtimeCodeHead": "ebec30888b5353803902e837f12cbcda3caddefe",
-    "benchmarkReportSha256": "8f24899e81176f448b95a3a26e11e105289f71a140eb237da0c5d22060570973",
+    "runtimeCodeHead": "7ca45ed0cb619e0d208dbd413becd616281c4f48",
+    "benchmarkReportSha256": "d94b953c177eacebeb1c04d24afd323a5c13a59ab4fdacbf536369417d4e7726",
     "corpusSize": 100,
     "cacheHits": 3100,
     "networkAttempts": 0,

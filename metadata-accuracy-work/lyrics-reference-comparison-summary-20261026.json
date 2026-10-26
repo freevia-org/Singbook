@@ -66,7 +66,9 @@
         "adjudicatedGoldReferenceCoverage": 0,
         "adjudicatedGoldReferenceCoveragePercent": 0.0
       }
-    }
+    },
+    "reportSha256": "d94b953c177eacebeb1c04d24afd323a5c13a59ab4fdacbf536369417d4e7726",
+    "runtimeCodeHead": "7ca45ed0cb619e0d208dbd413becd616281c4f48"
   },
   "sourceCoverage": {
     "lyrics": {
@@ -908,11 +910,11 @@
   },
   "perSongSupportScorecard": {
     "file": "metadata-accuracy-work/metadata-practical-support-100-20261026.json",
-    "sha256": "d9dde0b19f308c7b84343a376b6d250d1979aa964da919b79ec6a7dd0369eb4e",
+    "sha256": "50c90a53e64eb33757f8df92cb2aaa256ea0d798f3daae23931c836c105968f9",
     "rows": 100,
     "containsLyricBodies": false,
     "sourceReport": "build/metadata_accuracy/report.json",
-    "sourceReportSha256": "8f24899e81176f448b95a3a26e11e105289f71a140eb237da0c5d22060570973",
+    "sourceReportSha256": "d94b953c177eacebeb1c04d24afd323a5c13a59ab4fdacbf536369417d4e7726",
     "includesSelectedKeySourceClaims": true,
     "includesChordSequenceAndAlignmentSupport": true,
     "includesLyricHashVariants": true,
