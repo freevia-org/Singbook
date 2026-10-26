@@ -27,7 +27,11 @@ void main() {
       final legacyText = jsonEncode(legacy);
       await repo.setSetting('sourceCatalog', legacyText);
       await repo.setSetting('app', {
-        'providers': {'lrclib': false, 'worshiptogether': true},
+        'providers': {
+          'lrclib': false,
+          'worshiptogether': true,
+          'karamoe': false,
+        },
         'themeMode': 'dark',
       });
       final song = SongDocument(
@@ -71,10 +75,15 @@ void main() {
               as Map)['worshiptogether'],
           true,
         );
+        for (final id in ['lrcred', 'roswellmusicjam', 'karamoe']) {
+          expect(app.providers.any((p) => p.id == id), true);
+        }
+        expect(app.providerEnabled('lrcred'), true);
+        expect(app.providerEnabled('roswellmusicjam'), true);
         expect(
-          app.providers.any((p) => p.id == 'lrcred'),
+          app.providerEnabled('karamoe'),
           false,
-          reason: 'rollout remains disabled',
+          reason: 'A saved user opt-out survives activation and refresh',
         );
         expect(jsonEncode((await repo.listSongs()).single.toJson()), before);
         expect(app.songs.single.id, 'preserved-user-song');

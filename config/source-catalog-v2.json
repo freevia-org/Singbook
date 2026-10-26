@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "extractionSchemaVersion": 1,
-  "revision": 10,
-  "publishedAt": "2026-10-26T12:49:19.684785Z",
+  "revision": 11,
+  "publishedAt": "2026-10-26T22:14:03.295667Z",
   "sources": [
     {
       "id": "genius",
@@ -760,8 +760,8 @@
       "id": "lrcred",
       "name": "lrc.red",
       "adapter": "builtin",
-      "status": "disabled",
-      "revision": 1,
+      "status": "active",
+      "revision": 2,
       "capabilities": [
         "catalog",
         "lyrics",
@@ -769,12 +769,12 @@
         "lineTiming",
         "wordTiming"
       ],
-      "enabledByDefault": false,
+      "enabledByDefault": true,
       "accessMode": "publicApi",
       "website": "https://lrc.red/",
       "hosts": [],
       "attribution": "lrc.red",
-      "changeReason": "Two independent exact-ISRC search/detail/TTML canaries qualified on 2026-10-26, including parsed line/word cues and retained raw timing. Native adapter and explicit timing profile staged only on channel2; disabled pending reviewed new-app release qualification. Released channel1 is unchanged.",
+      "changeReason": "Two exact-ISRC canaries passed on 2026-10-26. Android live search/import/readers, native artwork decoding and exact raw timing/source payload retention across SQLite reopening and ChordPro round trips passed. Active in compatible channel2 apps; channel1 unchanged. Timing profile is source-specific; independent transcription or musical accuracy was not adjudicated.",
       "probes": [
         {
           "id": "creep-radiohead",
@@ -846,20 +846,20 @@
       "id": "roswellmusicjam",
       "name": "Roswell Music Jam",
       "adapter": "builtin",
-      "status": "disabled",
-      "revision": 1,
+      "status": "active",
+      "revision": 2,
       "capabilities": [
         "catalog",
         "lyrics",
         "chords",
         "metadata"
       ],
-      "enabledByDefault": false,
+      "enabledByDefault": true,
       "accessMode": "publicWeb",
       "website": "https://www.roswellmusicjam.com/songbooks",
       "hosts": [],
       "attribution": "Roswell Music Jam",
-      "changeReason": "Publisher documents a public all-ChordPro archive for use in ChordPro apps. Two independent live search/resolve canaries qualified lyrics/chords/metadata on 2026-10-26 with one page and one archive GET reused across both probes. Native adapter stages individual charts with bounded validation, 24-hour in-memory caching and arrangement provenance. Disabled pending review and compatible app-release qualification; channel1 remains unchanged.",
+      "changeReason": "Two live search/resolve canaries passed using the publisher-documented public ChordPro archive, reused through its 24-hour in-memory cache. Android search/import/readers and exact source/raw payload retention across SQLite reopening and ChordPro round trips passed. Active in compatible channel2 apps; channel1 unchanged. Charts retain arrangement provenance and unknown rights; musical accuracy was not independently adjudicated.",
       "probes": [
         {
           "id": "if-not-for-you-dylan",
@@ -918,20 +918,20 @@
       "id": "karamoe",
       "name": "kara.moe",
       "adapter": "builtin",
-      "status": "disabled",
-      "revision": 1,
+      "status": "active",
+      "revision": 2,
       "capabilities": [
         "catalog",
         "lyrics",
         "metadata",
         "lineTiming"
       ],
-      "enabledByDefault": false,
+      "enabledByDefault": true,
       "accessMode": "publicApi",
       "website": "https://kara.moe/",
       "hosts": [],
       "attribution": "Kara.moe contributors; per-song karaoke authors",
-      "changeReason": "Two independent production repository canaries passed on 2026-10-26 for catalog/lyrics/metadata/line timing using four HTTP200 responses with no rate limits or network failures. Public karaoke JSON and raw subtitle tags are retained; source video IDs/year/duration are not recording facts, and timing remains sourceDemonstrationOnly. Disabled pending independent review and a compatible app release; channel1 unchanged.",
+      "changeReason": "Two live catalog/lyrics/metadata/line-timing canaries and Android search/import/readers passed. Exact source/raw payloads and the prior cached version survive SQLite reopening and ChordPro round trips. Active in compatible channel2 apps; channel1 unchanged. Karaoke IDs/year/duration remain source-video facts; timing stays sourceDemonstrationOnly. Independent transcription or video synchronization accuracy was not adjudicated.",
       "probes": [
         {
           "id": "man-of-war-radiohead",

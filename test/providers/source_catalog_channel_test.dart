@@ -139,8 +139,12 @@ void main() {
         expect(settings[SourceCatalogClient.cacheKey], next);
         for (final id in ['lrcred', 'roswellmusicjam', 'karamoe']) {
           final added = runtime.catalog!.sources.singleWhere((s) => s.id == id);
-          expect(added.status, 'disabled');
-          expect(runtime.providers.any((p) => p.definition.id == id), false);
+          expect(added.status, 'active');
+          expect(added.enabledByDefault, true);
+          final provider = runtime.providers.singleWhere(
+            (p) => p.definition.id == id,
+          );
+          expect(provider.definition.enabledByDefault, true);
         }
         final oldIds = SourceCatalog.parse(legacy).sources.map((s) => s.id);
         expect(runtime.catalog!.sources.map((s) => s.id), containsAll(oldIds));

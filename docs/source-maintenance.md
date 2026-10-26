@@ -24,14 +24,18 @@ cause a refresh to fail before any live/cache mutation. Thus a channel-2 entry,
 even when disabled, must never be added to channel 1 if released clients do not
 compile that adapter.
 
-The initial channel-2 lrc.red entry stays disabled pending reviewed release
-qualification. Its native adapter uses the publisher's identifying User-Agent,
+Channel 2 enables lrc.red, Roswell Music Jam and kara.moe for compatible app
+builds. Existing channel-1 apps keep their original source list and URL. Native
+qualification covers real search/import, cached readers, artwork decoding and
+exact source-payload retention across SQLite reopening and ChordPro round trips;
+it does not establish independent lyric transcription or musical accuracy.
+The lrc.red native adapter uses the publisher's identifying User-Agent,
 exact ISRC search/detail identity, same-host TTML/artwork references and visible
 attribution. Its explicit timing profile handles the publisher's bare-second
 and short media clocks without changing generic TTML semantics. Album artwork
 remains linked source metadata; no blanket redistribution license is claimed.
 
-Roswell Music Jam is also staged disabled on channel 2. It discovers the latest
+Roswell Music Jam is active on channel 2. It discovers the latest
 publisher-linked all-ChordPro ZIP from the public songbooks page, checks a
 bounded single-disk archive in memory, and exposes individual chart selections.
 Successful downloads are cached for 24 hours per provider instance, so searches
@@ -41,7 +45,7 @@ artist tags are not treated as recording identities. Imported charts retain
 source attribution, archive revision, original ChordPro and unknown rights.
 No publisher corpus is automatically imported into a user's library.
 
-The staged kara.moe adapter uses the documented public search/detail API and
+The kara.moe adapter uses the documented public search/detail API and
 retains its parsed lyric-line timeline and the full original detail JSON,
 including subtitle tags. These are karaoke-video arrangements: KIDs are source
 identities, not recording IDs; video year/duration remain source-specific facts.
@@ -49,8 +53,8 @@ Timing carries `recordingEvidence: sourceDemonstrationOnly`, so it cannot become
 verified playback timing for an unrelated studio recording or cover. Parsed
 line timing does not imply that subtitle syllables are verified word timing.
 Database licensing, synchronization attribution and lyric rights remain
-separate. This native adapter also stays disabled pending compatible release
-qualification, and it never downloads a video or signs in.
+separate. The native adapter is active only in channel 2, which requires a
+compatible app release; it never downloads a video or signs in.
 
 ## Version and lifecycle contract
 
