@@ -13,6 +13,7 @@ import '../../domain/combine.dart'
         soundingTransposition;
 import '../../domain/artist_credit.dart';
 import '../../domain/reviewed_chart_artist.dart';
+import '../../domain/metadata_artist_credit.dart';
 import '../../domain/arrangement_context.dart';
 import '../../domain/lyric_word_identity.dart';
 import '../../domain/short_lyric_reference.dart';
@@ -126,7 +127,13 @@ bool sameSong(SongCandidate selected, SongCandidate result) {
       (normalizedIdentity(selected.artist) !=
               normalizedIdentity(result.artist) &&
           !sameGeniusPrimaryCredit(selected, result, normalizedIdentity) &&
-          !sameReviewedChartArtist(selected, result))) {
+          !sameReviewedChartArtist(selected, result) &&
+          musicBrainzArtistCreditEvidence(
+                selected,
+                result,
+                normalizedIdentity,
+              ) ==
+              null)) {
     return false;
   }
   final a = recordingVersionMarkers(selected.album ?? '', album: true),
@@ -1189,6 +1196,137 @@ class SourceDiscoveryService {
         .where((reference) => recordingCompatible(selection, reference))
         .firstOrNull;
     if (recordingReference != null) {
+      // A catalog hit may omit the album/featured credits subsequently supplied
+      // by its resolved lyrics. Give MusicBrainz one narrower, album-scoped
+      // lookup after a semantic miss, without retrying rate limits or failures.
+      final resolvedAlbum = recordingReference.candidate.album?.trim();
+      if (selection.providerId == 'genius' &&
+          recordingReference.candidate.identity == selection.identity &&
+          (selection.album?.trim().isEmpty ?? true) &&
+          resolvedAlbum != null &&
+          resolvedAlbum.isNotEmpty) {
+        for (final provider in active.where(
+          (p) => p.definition.id == 'musicbrainz',
+        )) {
+          final id = provider.definition.id;
+          final dependencies = <CancellationToken?>[
+            cancel,
+            lookupCancellation[id],
+            providerCancellation[id],
+            lookupCancellation[recordingReference.candidate.providerId],
+            providerCancellation[recordingReference.candidate.providerId],
+          ];
+          if (dependencies.any((token) => token?.isCancelled == true) ||
+              !const {
+                'unavailable',
+                'ambiguous_match',
+              }.contains(providerCodes[id]) ||
+              results.any(
+                (result) =>
+                    result.candidate.providerId == id &&
+                    result.matchKind != MatchKind.rejected,
+              )) {
+            continue;
+          }
+          final contextCancel = CancellationToken();
+          for (final token in dependencies) {
+            token?.cancelled.then((_) => contextCancel.cancel());
+          }
+          void checkContext() {
+            for (final token in dependencies) {
+              token?.throwIfCancelled();
+            }
+            contextCancel.throwIfCancelled();
+          }
+
+          final context = SongCandidate.fromJson({
+            ...recordingReference.candidate.toJson(),
+            'durationSeconds':
+                recordingReference.candidate.durationSeconds ??
+                selection.durationSeconds,
+            'recordingIds': {
+              ...selection.recordingIds,
+              ...recordingReference.candidate.recordingIds,
+            },
+          });
+          traceOpen[id] = true;
+          providerChecksState[id] = 'pending';
+          publish(id, 'pending');
+          try {
+            checkContext();
+            final result =
+                await findMatchingSource(
+                  provider,
+                  context,
+                  cancel: contextCancel,
+                  operationPrefix: 'metadata-context',
+                  onOperation: (operation) {
+                    if (!contextCancel.isCancelled) {
+                      recordOperation(id, operation);
+                    }
+                  },
+                ).timeout(
+                  alternativeTimeout,
+                  onTimeout: () {
+                    contextCancel.cancel();
+                    throw const ProviderException('timeout');
+                  },
+                );
+            checkContext();
+            if (result.matchKind == MatchKind.rejected) {
+              throw const ProviderException('identity_mismatch');
+            }
+            final enriched = result.copyWith(
+              extra: {
+                ...result.extra,
+                'resolvedRecordingContext': {
+                  'providerId': context.providerId,
+                  'candidateId': context.id,
+                  'album': resolvedAlbum,
+                },
+              },
+            );
+            final existing = results.indexWhere((old) => old.id == enriched.id);
+            if (existing < 0) {
+              results.add(enriched);
+            } else {
+              results[existing] = enriched;
+            }
+            preferredResultIds[id] = enriched.id;
+            providerResults[id] = enriched;
+            providerChecksState[id] = 'found';
+            publish(id, 'found', result: enriched);
+          } on ProviderException catch (error) {
+            finalizePending(
+              id,
+              error.code == 'cancelled' ? 'cancelled' : 'failed',
+              error.code,
+              operationIdPrefix: '$id:metadata-context:',
+            );
+            if (cancel?.isCancelled == true) {
+              finalizeCancelledChecks();
+              cancel!.throwIfCancelled();
+            }
+            providerChecksState[id] = error.code == 'unavailable'
+                ? 'unavailable'
+                : 'failed';
+            publish(id, providerChecksState[id]!, code: error.code);
+          } catch (_) {
+            cancel?.throwIfCancelled();
+            finalizePending(
+              id,
+              'failed',
+              'invalid_response',
+              operationIdPrefix: '$id:metadata-context:',
+            );
+            providerChecksState[id] = 'failed';
+            publish(id, 'failed', code: 'invalid_response');
+          } finally {
+            contextCancel.cancel();
+            traceOpen[id] = false;
+          }
+        }
+      }
       // Only resolved recording metadata supplies composer/work context. Reuse
       // the original search rows; do not issue another broad catalog search.
       for (final provider in active) {

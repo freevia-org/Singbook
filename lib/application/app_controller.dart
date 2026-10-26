@@ -54,6 +54,7 @@ class AppController extends ChangeNotifier {
     LibraryRepository? repository,
     String? repositoryPath,
     SourceDiscoveryService? discovery,
+    ProviderTransport? transport,
     GoogleDriveSyncService? sync,
     Duration autoSyncDelay = const Duration(seconds: 2),
     Duration autoSyncStartDelay = const Duration(seconds: 3),
@@ -65,6 +66,9 @@ class AppController extends ChangeNotifier {
       throw ArgumentError('Provide a repository or repositoryPath, not both.');
     }
     if (discovery != null) {
+      if (transport != null) {
+        throw ArgumentError('Provide discovery or transport, not both.');
+      }
       return AppController._(
         repository,
         discovery,
@@ -74,11 +78,11 @@ class AppController extends ChangeNotifier {
         repositoryPath,
       );
     }
-    final transport = ProviderTransport();
+    final ownedTransport = transport ?? ProviderTransport();
     return AppController._(
       repository,
-      _createDiscovery(transport),
-      transport,
+      _createDiscovery(ownedTransport),
+      ownedTransport,
       sync,
       autoSyncDelay,
       repositoryPath,
@@ -539,12 +543,16 @@ class AppController extends ChangeNotifier {
       discovery.catalogClient = SourceCatalogClient(
         runtime: runtime,
         transport: transport,
-        loadBundled: () => rootBundle.loadString('config/source-catalog.json'),
+        loadBundled: () =>
+            rootBundle.loadString(SourceCatalogClient.bundledAsset),
         readCache: () async {
-          final value = await repository.getSetting('sourceCatalog');
+          final value = await repository.getSetting(
+            SourceCatalogClient.cacheKey,
+          );
           return value is String ? value : null;
         },
-        writeCache: (value) => repository.setSetting('sourceCatalog', value),
+        writeCache: (value) =>
+            repository.setSetting(SourceCatalogClient.cacheKey, value),
       );
     }
     await discovery.catalogClient?.initialize();

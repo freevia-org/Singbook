@@ -1,8 +1,11 @@
 # Source catalog and daily maintenance
 
-`config/source-catalog.json` is the published, complete source list. The Flutter
-app bundles that file, restores a compatible cached snapshot, and refreshes from
-the same file on public GitHub `main`. `SINGBOOK_SOURCE_CATALOG_URL` can override
+`config/source-catalog.json` remains the complete channel-1 source list used by
+released clients through build 38. Keep this file and its URL compatible with
+those clients. New code uses `config/source-catalog-v2.json` as its complete
+channel-2 bundle and refresh URL on public GitHub `main`. This is a distribution
+channel change; both files still use envelope/extraction schema version 1.
+`SINGBOOK_SOURCE_CATALOG_URL` can override
 the HTTPS publisher URL at build time. Settings → Sources → Refresh source list
 performs the same refresh manually. A new app build containing this implementation
 is required before an existing installation can consume catalog updates.
@@ -13,6 +16,20 @@ unsupported schema, rollback, or failed cache write preserves the previous live
 and durable snapshot. Bundle and cache loading do not depend on a network call.
 No provider update changes saved songs, ChordPro provenance or user preferences.
 Catalog storage is separate from the user's synced application settings.
+Channel 2 reads/writes `sourceCatalog:v2` and never overwrites the old
+`sourceCatalog` cache or provider preferences. It starts from its own bundled
+snapshot when the new cache is absent; an independently higher legacy revision
+cannot lock out channel-2 updates. Unknown native providers
+cause a refresh to fail before any live/cache mutation. Thus a channel-2 entry,
+even when disabled, must never be added to channel 1 if released clients do not
+compile that adapter.
+
+The initial channel-2 lrc.red entry stays disabled pending reviewed release
+qualification. Its native adapter uses the publisher's identifying User-Agent,
+exact ISRC search/detail identity, same-host TTML/artwork references and visible
+attribution. Its explicit timing profile handles the publisher's bare-second
+and short media clocks without changing generic TTML semantics. Album artwork
+remains linked source metadata; no blanket redistribution license is claimed.
 
 ## Version and lifecycle contract
 
@@ -95,8 +112,13 @@ dart run tool/source_maintenance.dart --report artifacts/sources-live.json
 dart run tool/source_maintenance.dart --source lrclib --report artifacts/lrclib-live.json
 ```
 
-Options also include `--catalog path` to validate a candidate catalog. Offline
-mode checks parsing, adapter construction and probe coverage; its results are
+Options also include `--catalog path` to validate a candidate catalog. Both
+offline and live CLI defaults follow the current channel-2 catalog. To qualify a pending
+native source before release, use an ignored temporary active copy with
+`--catalog` and `--source`; do not publish that copy or change the disabled
+rollout entry merely to make a probe run. Released channel-1 clients and their
+published catalog remain unchanged.
+Offline mode checks parsing, adapter construction and probe coverage; its results are
 explicitly `offline_unverified`, never proof of live health. Live mode checks
 every registered source, including those disabled by default. Import-only,
 disabled and retired sources have explicit skipped states. A source missing from
@@ -134,6 +156,44 @@ Reports list `coverage.verifiedCapabilities` and `coverage.unverifiedCapabilitie
 passing canaries with advertised but untested capabilities are `partial_coverage`,
 which also returns exit 1. Extend coverage when a representative real canary is
 available; incomplete coverage alone does not justify retiring a source.
+
+### Publisher file-import checks
+
+The opt-in host check downloads two exact Ozbcoz guitar arrangements from links
+observed in its public ChordPro index, then runs the production file decoder,
+controller import, disposable SQLite save/reopen and ChordPro export. It verifies
+title/artist, key, chord order, original comments and exact stored/exported data.
+It uses no browser profile, cookies, user library or native file picker. A
+challenge, missing file or wrong identity fails instead of selecting a substitute.
+
+```powershell
+$env:SINGBOOK_LIVE_IMPORT_CHECK = '1'
+flutter test --no-pub tool/source_import_maintenance_test.dart
+Remove-Item Env:SINGBOOK_LIVE_IMPORT_CHECK
+```
+
+On Linux/macOS use
+`SINGBOOK_LIVE_IMPORT_CHECK=1 flutter test --no-pub tool/source_import_maintenance_test.dart`.
+Normal offline test runs skip these network requests. The redacted result is
+`artifacts/source-maintenance/imports-live.json`; retain a dated copy with the
+daily report. It records its own runtime/timestamp and HTTP counts. Report this
+supplemental host import evidence alongside the regular CLI result: the CLI's
+`import_only` state remains an accurate description of lookup support. Do not
+turn a generic decoded file into an invented provider source record, or claim
+native picker coverage. Chordie's public text-copy workflow and Wikisource's
+separate export service are not covered by this Ozbcoz check.
+
+### HTTP diagnostics and request volume
+
+Live CLI reports add `httpDiagnostics`: actual request counts and HTTP response
+status frequencies by host, numeric Retry-After values and database lag, plus
+send failures. No paths, query values, headers, credentials or response bodies
+are retained. Redirects and retries count as additional HTTP requests; one daily
+run is not one request per provider. The existing `rate_limited` reason covers
+both HTTP 429 and HTTP 503 for compatibility. Use the exact status counts to
+distinguish throttling from service unavailability, and database-lag evidence
+where supplied; do not infer that a daily quota was exceeded from that reason.
+The local and cloud jobs have separate request totals and reachability.
 
 Reports include timestamp, source/probe IDs, outcome, missing field names,
 lengths/counts and metadata field names. They contain no full lyrics, raw source
@@ -234,6 +294,12 @@ schema change. Do not bypass the proxy or disable TLS verification.
    and do not open report-only PRs. Local runs compare both local and cloud
    evidence, preserving runtime/source/probe/timestamp provenance. A missing
    credential is a coverage limitation, never a schema repair or a healthy source.
+   Run the opt-in publisher file-import check once as a separate, sequential
+   phase when Flutter test dependencies are available. Retain its dated redacted
+   report with the health report, including failed/unverified outcomes. Keep its
+   runtime and capability provenance separate from the ordinary CLI result. Do
+   not repeat the entire live suite to chase an individual unavailable source;
+   use a bounded selected-source recheck only when new evidence warrants one.
 3. Diagnose changed extraction and missing fields against the actual source and
    primary documentation. Repair compatible rules, or a compiled adapter when
    necessary; add synthetic regression fixtures from the smallest required
