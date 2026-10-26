@@ -1,0 +1,56 @@
+{
+  "songId": "song-008",
+  "reviewedOn": "2026-10-26",
+  "field": "key",
+  "status": "verified",
+  "value": "F",
+  "scope": "1965 original Help! studio album performance",
+  "recordingBinding": {
+    "status": "verified",
+    "providerId": "genius",
+    "candidateId": "2236",
+    "isrc": null,
+    "recordingEdition": "1965 original Help! studio album performance",
+    "evidence": [
+      "https://genius.com/The-beatles-yesterday-lyrics",
+      "https://www.thebeatles.com/yesterday"
+    ],
+    "notes": "Decoded Genius song 2236 identifies Help!, release 1965-08-06 and EMI Studios London. The artist catalog agrees on original album, release date and recording location. Performance-level binding; no ISRC or exact digital master claim. Initial search-row album null is not absence of resolved album metadata."
+  },
+  "independentSources": [
+    {
+      "url": "https://isophonics.net/files/annotations/keylab/The%20Beatles/05_-_Help%21/13_-_Yesterday.lab",
+      "role": "Primary C4DM Isophonics main-key annotation",
+      "finding": "The downloaded annotation labels Key F over 0.000-127.427 seconds for Help! track 13. Its SHA256 is 3d38d6d964df0e5b6b3e0117e70fc208efdf71322fd6f71a048fa40cea6b71e9. This supports the main key, not completeness of local modulations."
+    },
+    {
+      "url": "https://isophonics.net/content/reference-annotations.html",
+      "role": "Primary annotation methodology and source-CD catalog",
+      "finding": "Identifies Help! CDP 7 46439 2 as audio source and warns Beatles main-key annotations can omit local key changes. No exact audio/master hash is supplied."
+    },
+    {
+      "url": "https://symposium.music.org/49/articles/using-beatles-songs-to-demonstrate-modulation-concepts",
+      "role": "Primary scholarly harmonic analysis by Richard Repp, College Music Symposium, 2009",
+      "finding": "Identifies F major established by tonic chords and analyzes motion to relative D minor and return to F. The author explicitly notes pedagogical simplification and differing interpretations of local modulation; this is main-key corroboration, not a complete transcription."
+    }
+  ],
+  "catalogCrosscheck": {
+    "geniusCandidateId": "2236",
+    "geniusAlbum": "Help!",
+    "geniusReleaseDate": "1965-08-06",
+    "geniusRecordingLocation": "EMI Studios, London",
+    "apiCacheFile": "5ec166946fc1e67797b71acd910d6ba5b701d072.json.gz",
+    "artistCatalogDurationSeconds": 123,
+    "annotationEndSeconds": 127.427,
+    "durationCaveat": "Different stated duration and annotation extent do not establish bit-identical master. Scope is the original album performance, not timing or audio-byte identity.",
+    "linkedAppleId": "401138311",
+    "linkedAppleIdVerified": false
+  },
+  "verificationDecision": "Global sounding/home key F major only. Independent C4DM annotation identifies main key F; scholarly harmonic analysis distinguishes the relative D-minor regions. No claim that every section stays in F, and no full chord/lyric accuracy is certified.",
+  "notDerivedFromActualBenchmarkKey": true,
+  "limits": [
+    "No full lyrics or chord-placement gold reference is added.",
+    "G-shape/whole-step-down guitar explanations are not used as standalone sounding-key proof.",
+    "Pollack host was unavailable during root verification; its analysis is not counted as freshly inspected evidence."
+  ]
+}
