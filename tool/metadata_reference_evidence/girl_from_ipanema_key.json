@@ -1,0 +1,47 @@
+{
+  "songId": "song-094",
+  "reviewedOn": "2026-10-26",
+  "field": "key",
+  "status": "verified",
+  "value": "Db",
+  "scope": "1964 original Getz/Gilberto studio album performance with João and Astrud vocals",
+  "recordingBinding": {
+    "status": "verified",
+    "providerId": "genius",
+    "candidateId": "821238",
+    "isrc": null,
+    "recordingEdition": "1964 original Getz/Gilberto studio album performance with João and Astrud vocals",
+    "evidence": [
+      "https://genius.com/Stan-getz-and-joao-gilberto-the-girl-from-ipanema-lyrics",
+      "https://music.apple.com/us/song/1422656474",
+      "https://mtg.github.io/JAAH/data/girl_from_ipanema.html"
+    ],
+    "notes": "Decoded Genius song 821238 identifies Getz/Gilberto, Stan Getz and João Gilberto, A&R Recording in New York, and April 1964. Label catalog corroborates the original album/performers with March 1964 date metadata. JAAH identifies both vocal sections and the March 1963 sessions. No exact master, take or day-level release-date identity is claimed."
+  },
+  "independentSources": [
+    {
+      "url": "https://mtg.github.io/JAAH/data/girl_from_ipanema.html",
+      "role": "Primary scholarly Jazz Audio-Aligned Harmony recording annotation",
+      "finding": "Identifies MusicBrainz recording fd889e33-a067-498f-bbf8-9ffe305bde16, duration 326.37 seconds, March 18-19 1963 recording sessions, key Db, a Db-centered introduction and male vocal section, and a separately named female vocal section. The source names the Smithsonian Anthology compilation audio. This supports the original album performance home key, not exact master bytes or word-level chord alignment."
+    }
+  ],
+  "catalogCrosscheck": {
+    "geniusId": "821238",
+    "geniusAlbum": "Getz/Gilberto",
+    "geniusDisplayReleaseDate": "April 1964",
+    "geniusRecordingLocation": "A & R Recording, Manhattan, New York City, New York, United States",
+    "apiCacheFile": "c5e87643d3f1e0efa8837fc6c9246082f990a553.json.gz",
+    "geniusLinkedAppleId": "878762106",
+    "linkedAppleIdVerified": false,
+    "separateLabelCatalogTrack": "1422656474",
+    "dateCaveat": "Label catalog uses March 1964, while Genius displays April. Album/performance scope is verified; exact release day and digital master are not."
+  },
+  "verificationDecision": "Global sounding key D-flat major for the original album performance. JAAH recording-linked annotation gives Db and Db-centered opening and vocal harmony. An F-key chart does not establish this recording key. Local chromatic harmony and full chord/lyric accuracy are outside this key-only reference.",
+  "notDerivedFromActualBenchmarkKey": true,
+  "knownImplementationDiscrepancy": "Current combined F comes from a same-song F-key chart. Retain this as a known recording-key benchmark failure until arrangement and recording evidence are consolidated correctly. Do not replace the expected value with the app output.",
+  "limits": [
+    "No automatic runtime override is added from this benchmark reference.",
+    "No full lyric or chord-placement accuracy is certified.",
+    "Conflicting secondary lesson claims about F-to-Db vocal-section modulation are not used as decisive evidence; primary annotation shows Db-centered male-section harmony."
+  ]
+}
