@@ -1047,134 +1047,135 @@
     "comparison": {
       "priorLocalMeasuredAt": "2026-10-25T07:08:19.429108Z",
       "priorLocalCatalogRevision": 7,
-      "cloudMeasuredAt": "2026-10-25T06:56:50.774327Z",
+      "cloudMeasuredAt": "2026-10-26T07:06:03.123567Z",
       "cloudCatalogRevision": 7,
-      "cloudSourceHead": "ea4baf303352f5a6530ac1587eba0c46f1ec9f3d",
+      "cloudSourceHead": "82fd67f7425f7dffbaf033fc18703d82f7d96cf2",
       "cloudSummary": {
-        "transient_error": 6,
+        "transient_error": 4,
         "healthy": 10,
-        "blocked": 1,
+        "unavailable": 2,
         "import_only": 1,
-        "retired": 1
+        "retired": 1,
+        "partial_coverage": 1
       },
-      "cloudEvidenceDate": "2026-10-25; no Oct26 cloud result present at comparison time",
+      "cloudEvidenceDate": "2026-10-26; fresh cloud report fetched during publication",
       "sourceOutcomes": [
         {
           "id": "genius",
-          "previousLocalStatus": "healthy",
           "currentLocalStatus": "healthy",
-          "cloudStatus": "transient_error"
+          "cloudStatus": "transient_error",
+          "localMeasuredAt": "2026-10-26T07:00:44.924337Z"
         },
         {
           "id": "songsterr",
-          "previousLocalStatus": "healthy",
           "currentLocalStatus": "healthy",
-          "cloudStatus": "healthy"
+          "cloudStatus": "healthy",
+          "localMeasuredAt": "2026-10-26T07:00:44.924337Z"
         },
         {
           "id": "ultimateguitar",
-          "previousLocalStatus": "healthy",
           "currentLocalStatus": "healthy",
-          "cloudStatus": "transient_error"
+          "cloudStatus": "transient_error",
+          "localMeasuredAt": "2026-10-26T07:00:44.924337Z"
         },
         {
           "id": "lrclib",
-          "previousLocalStatus": "transient_error",
           "currentLocalStatus": "healthy",
-          "cloudStatus": "healthy"
+          "cloudStatus": "healthy",
+          "localMeasuredAt": "2026-10-26T07:00:44.924337Z"
         },
         {
           "id": "youtubemusic",
-          "previousLocalStatus": "healthy",
           "currentLocalStatus": "healthy",
-          "cloudStatus": "transient_error"
+          "cloudStatus": "transient_error",
+          "localMeasuredAt": "2026-10-26T07:00:44.924337Z"
         },
         {
           "id": "lyricsovh",
-          "previousLocalStatus": "healthy",
           "currentLocalStatus": "healthy",
-          "cloudStatus": "healthy"
+          "cloudStatus": "healthy",
+          "localMeasuredAt": "2026-10-26T07:00:44.924337Z"
         },
         {
           "id": "synclrc",
-          "previousLocalStatus": "unavailable",
           "currentLocalStatus": "unavailable",
-          "cloudStatus": "healthy"
+          "cloudStatus": "unavailable",
+          "localMeasuredAt": "2026-10-26T09:24:45.078437Z"
         },
         {
           "id": "betterlyrics",
-          "previousLocalStatus": "blocked",
           "currentLocalStatus": "unavailable",
-          "cloudStatus": "blocked"
+          "cloudStatus": "unavailable",
+          "localMeasuredAt": "2026-10-26T09:24:52.264826Z"
         },
         {
           "id": "unison",
-          "previousLocalStatus": "healthy",
           "currentLocalStatus": "healthy",
-          "cloudStatus": "healthy"
+          "cloudStatus": "healthy",
+          "localMeasuredAt": "2026-10-26T07:00:44.924337Z"
         },
         {
           "id": "ozbcoz",
-          "previousLocalStatus": "import_only",
           "currentLocalStatus": "import_only",
-          "cloudStatus": "import_only"
+          "cloudStatus": "import_only",
+          "localMeasuredAt": "2026-10-26T07:00:44.924337Z"
         },
         {
           "id": "chordie",
-          "previousLocalStatus": "partial_coverage",
           "currentLocalStatus": "partial_coverage",
-          "cloudStatus": "transient_error"
+          "cloudStatus": "transient_error",
+          "localMeasuredAt": "2026-10-26T07:00:44.924337Z"
         },
         {
           "id": "worshipcommons",
-          "previousLocalStatus": "healthy",
           "currentLocalStatus": "healthy",
-          "cloudStatus": "healthy"
+          "cloudStatus": "healthy",
+          "localMeasuredAt": "2026-10-26T07:00:44.924337Z"
         },
         {
           "id": "openfilksongbook",
-          "previousLocalStatus": "healthy",
           "currentLocalStatus": "healthy",
-          "cloudStatus": "healthy"
+          "cloudStatus": "healthy",
+          "localMeasuredAt": "2026-10-26T07:00:44.924337Z"
         },
         {
           "id": "seanmcgrathmusic",
-          "previousLocalStatus": "healthy",
           "currentLocalStatus": "healthy",
-          "cloudStatus": "healthy"
+          "cloudStatus": "healthy",
+          "localMeasuredAt": "2026-10-26T07:00:44.924337Z"
         },
         {
           "id": "worshiptogether",
-          "previousLocalStatus": "retired",
           "currentLocalStatus": "retired",
-          "cloudStatus": "retired"
+          "cloudStatus": "retired",
+          "localMeasuredAt": "2026-10-26T07:00:44.924337Z"
         },
         {
           "id": "musicbrainz",
-          "previousLocalStatus": "healthy",
           "currentLocalStatus": "healthy",
-          "cloudStatus": "healthy"
+          "cloudStatus": "healthy",
+          "localMeasuredAt": "2026-10-26T07:00:44.924337Z"
         },
         {
           "id": "wikidata",
-          "previousLocalStatus": "healthy",
           "currentLocalStatus": "healthy",
-          "cloudStatus": "healthy"
+          "cloudStatus": "healthy",
+          "localMeasuredAt": "2026-10-26T07:00:44.924337Z"
         },
         {
           "id": "wikimediacommons",
-          "previousLocalStatus": "transient_error",
-          "currentLocalStatus": "transient_error",
-          "cloudStatus": "transient_error"
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "healthy",
+          "localMeasuredAt": "2026-10-26T09:24:35.397109Z"
         },
         {
           "id": "wikisource",
-          "previousLocalStatus": "transient_error",
-          "currentLocalStatus": "transient_error",
-          "cloudStatus": "transient_error"
+          "currentLocalStatus": "partial_coverage",
+          "cloudStatus": "partial_coverage",
+          "localMeasuredAt": "2026-10-26T09:24:40.849705Z"
         }
       ],
-      "limits": "Local and cloud results have separate source/probe/runtime/timestamp provenance. Neither proves the other runtime; cloud evidence is older than today local run."
+      "limits": "Separate runtime/source/probe/timestamp provenance. Today cloud Commons and Wikisource lookup also recovered. Four cloud network errors persist for Genius/UG/YT/Chordie; local success does not establish cloud reachability. Cloud report predates new diagnostic tool."
     },
     "roadblocks": [
       {
@@ -1533,7 +1534,151 @@
         "Different sources have explicit measurement timestamps/source heads; no new full-suite claim",
         "Native file picker not tested; no user library accessed",
         "Wikisource file export service returned503; Chordie copied-text import is not publisher-file-download evidence"
-      ]
+      ],
+      "latestCloudComparison": {
+        "measuredAt": "2026-10-26T07:06:03.123567Z",
+        "summary": {
+          "transient_error": 4,
+          "healthy": 10,
+          "unavailable": 2,
+          "import_only": 1,
+          "retired": 1,
+          "partial_coverage": 1
+        }
+      }
+    },
+    "previousCloudComparison": {
+      "priorLocalMeasuredAt": "2026-10-25T07:08:19.429108Z",
+      "priorLocalCatalogRevision": 7,
+      "cloudMeasuredAt": "2026-10-25T06:56:50.774327Z",
+      "cloudCatalogRevision": 7,
+      "cloudSourceHead": "ea4baf303352f5a6530ac1587eba0c46f1ec9f3d",
+      "cloudSummary": {
+        "transient_error": 6,
+        "healthy": 10,
+        "blocked": 1,
+        "import_only": 1,
+        "retired": 1
+      },
+      "cloudEvidenceDate": "2026-10-25; no Oct26 cloud result present at comparison time",
+      "sourceOutcomes": [
+        {
+          "id": "genius",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "transient_error"
+        },
+        {
+          "id": "songsterr",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "healthy"
+        },
+        {
+          "id": "ultimateguitar",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "transient_error"
+        },
+        {
+          "id": "lrclib",
+          "previousLocalStatus": "transient_error",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "healthy"
+        },
+        {
+          "id": "youtubemusic",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "transient_error"
+        },
+        {
+          "id": "lyricsovh",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "healthy"
+        },
+        {
+          "id": "synclrc",
+          "previousLocalStatus": "unavailable",
+          "currentLocalStatus": "unavailable",
+          "cloudStatus": "healthy"
+        },
+        {
+          "id": "betterlyrics",
+          "previousLocalStatus": "blocked",
+          "currentLocalStatus": "unavailable",
+          "cloudStatus": "blocked"
+        },
+        {
+          "id": "unison",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "healthy"
+        },
+        {
+          "id": "ozbcoz",
+          "previousLocalStatus": "import_only",
+          "currentLocalStatus": "import_only",
+          "cloudStatus": "import_only"
+        },
+        {
+          "id": "chordie",
+          "previousLocalStatus": "partial_coverage",
+          "currentLocalStatus": "partial_coverage",
+          "cloudStatus": "transient_error"
+        },
+        {
+          "id": "worshipcommons",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "healthy"
+        },
+        {
+          "id": "openfilksongbook",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "healthy"
+        },
+        {
+          "id": "seanmcgrathmusic",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "healthy"
+        },
+        {
+          "id": "worshiptogether",
+          "previousLocalStatus": "retired",
+          "currentLocalStatus": "retired",
+          "cloudStatus": "retired"
+        },
+        {
+          "id": "musicbrainz",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "healthy"
+        },
+        {
+          "id": "wikidata",
+          "previousLocalStatus": "healthy",
+          "currentLocalStatus": "healthy",
+          "cloudStatus": "healthy"
+        },
+        {
+          "id": "wikimediacommons",
+          "previousLocalStatus": "transient_error",
+          "currentLocalStatus": "transient_error",
+          "cloudStatus": "transient_error"
+        },
+        {
+          "id": "wikisource",
+          "previousLocalStatus": "transient_error",
+          "currentLocalStatus": "transient_error",
+          "cloudStatus": "transient_error"
+        }
+      ],
+      "limits": "Local and cloud results have separate source/probe/runtime/timestamp provenance. Neither proves the other runtime; cloud evidence is older than today local run."
     }
-  }
+  },
+  "snapshotAt": "2026-10-26T09:33:43.391139+00:00"
 }
