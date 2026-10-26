@@ -870,10 +870,12 @@
   },
   "perSongSupportScorecard": {
     "file": "metadata-accuracy-work/metadata-practical-support-100-20261026.json",
-    "sha256": "a26901a141475d9ae308a6cffa0eca4a55f2739fce535d32ac3613dacc968a80",
+    "sha256": "ab0a1f76f2605e93c011dcd430b677d635d3032d12fd86bc9463d1115920c0a8",
     "rows": 100,
     "containsLyricBodies": false,
     "sourceReport": "build/metadata_accuracy/report.json",
-    "sourceReportSha256": "8f24899e81176f448b95a3a26e11e105289f71a140eb237da0c5d22060570973"
+    "sourceReportSha256": "8f24899e81176f448b95a3a26e11e105289f71a140eb237da0c5d22060570973",
+    "includesSelectedKeySourceClaims": true,
+    "includesChordSequenceAndAlignmentSupport": true
   }
 }

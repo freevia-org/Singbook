@@ -4,11 +4,11 @@
   "generatedFrom": {
     "benchmarkReport": "build/metadata_accuracy/report.json",
     "runtimeCodeHead": "ebec30888b5353803902e837f12cbcda3caddefe",
+    "benchmarkReportSha256": "8f24899e81176f448b95a3a26e11e105289f71a140eb237da0c5d22060570973",
     "corpusSize": 100,
     "cacheHits": 3100,
     "networkAttempts": 0,
-    "uncachedOffline": 1030,
-    "benchmarkReportSha256": "8f24899e81176f448b95a3a26e11e105289f71a140eb237da0c5d22060570973"
+    "uncachedOffline": 1030
   },
   "policy": {
     "providerLabelAgreement": "practical exact-text support only; labels and candidate IDs do not establish independent source lineage",
@@ -24,6 +24,8 @@
       "single_provider_exact_text_support": 84,
       "no_selected_lyrics": 1
     },
+    "selectedRawChordSequencesWithMultiProviderSupport": 0,
+    "selectedAlignedChartsWithMultiProviderSupport": 0,
     "publicLyricPagesCompared": 17,
     "classifiedDifferences": 3,
     "unadjudicatedDifferences": 14,
@@ -126,15 +128,37 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "A",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "checkedChartEstimate"
+        "evidenceType": "checkedChartEstimate",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "A",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          },
+          {
+            "provider": "ultimateguitar",
+            "key": "A",
+            "recordingCompatible": false,
+            "keyConsensus": false,
+            "keyShift": 9
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "songsterr"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -168,15 +192,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "E",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "checkedChartEstimate"
+        "evidenceType": "checkedChartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -210,15 +241,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "G",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "chartEstimate"
+        "evidenceType": "chartEstimate",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "G",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "songsterr"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -254,15 +300,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "F#m",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "F#m",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": {
         "source": "Oasis official",
@@ -303,15 +364,30 @@
       },
       "key": {
         "fieldResult": "verifiedCorrect",
+        "selectedValue": "Bm",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "Bm",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -345,15 +421,30 @@
       },
       "key": {
         "fieldResult": "verifiedCorrect",
+        "selectedValue": "C",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "C",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "songsterr"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": {
         "source": "The Beatles official",
@@ -392,15 +483,30 @@
       },
       "key": {
         "fieldResult": "verifiedCorrect",
+        "selectedValue": "F",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "checkedChartEstimate"
+        "evidenceType": "checkedChartEstimate",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "E",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": {
         "source": "The Beatles official",
@@ -440,15 +546,30 @@
       },
       "key": {
         "fieldResult": "verifiedCorrect",
+        "selectedValue": "F",
         "selectedClaimScope": "recording",
-        "evidenceType": "checkedChartEstimate"
+        "evidenceType": "checkedChartEstimate",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "G",
+            "recordingCompatible": false,
+            "keyConsensus": false,
+            "keyShift": 10
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "songsterr"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": {
         "source": "The Beatles official",
@@ -495,15 +616,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "A",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "checkedChartEstimate"
+        "evidenceType": "checkedChartEstimate",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "A",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": {
         "source": "The Beatles official",
@@ -541,15 +677,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "C",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "checkedChartEstimate"
+        "evidenceType": "checkedChartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -584,15 +727,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "G",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "G",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "songsterr"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -626,15 +784,30 @@
       },
       "key": {
         "fieldResult": "verifiedCorrect",
+        "selectedValue": "A",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "A",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -667,15 +840,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "C",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "C",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -708,15 +896,37 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "F",
         "selectedClaimScope": "recording",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "F",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          },
+          {
+            "provider": "ultimateguitar",
+            "key": "F",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -750,15 +960,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "A",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "checkedChartEstimate"
+        "evidenceType": "checkedChartEstimate",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "A",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "chordie"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -793,15 +1018,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "G",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "chartEstimate"
+        "evidenceType": "chartEstimate",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "G",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "chordie"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -835,15 +1075,37 @@
       },
       "key": {
         "fieldResult": "verifiedCorrect",
+        "selectedValue": "G",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "D",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          },
+          {
+            "provider": "ultimateguitar",
+            "key": "G",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -875,15 +1137,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "Ab",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "Ab",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -916,15 +1193,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "D",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "D",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -956,15 +1248,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "C#m",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "C#m",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -999,8 +1306,10 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
@@ -1008,7 +1317,12 @@
         "contributingProviderLabels": [
           "chordie",
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -1044,15 +1358,30 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "G",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "chordie"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -1087,15 +1416,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "Bbm",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "Bbm",
+            "recordingCompatible": false,
+            "keyConsensus": true,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -1129,15 +1473,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "G",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "G",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": {
         "source": "Bob Dylan official",
@@ -1176,15 +1535,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "D",
         "selectedClaimScope": "recording",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "D",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": {
         "source": "Bob Dylan official",
@@ -1225,15 +1599,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "Am",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "Am",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -1267,15 +1656,22 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "songsterr"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -1309,15 +1705,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "G",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "checkedChartEstimate"
+        "evidenceType": "checkedChartEstimate",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "Ab",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "songsterr"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -1350,15 +1761,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "D",
         "selectedClaimScope": "recording",
-        "evidenceType": "checkedChartEstimate"
+        "evidenceType": "checkedChartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -1392,8 +1810,18 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "C",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "C",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
@@ -1401,7 +1829,12 @@
         "contributingProviderLabels": [
           "chordie",
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -1437,8 +1870,25 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "A",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "A",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          },
+          {
+            "provider": "ultimateguitar",
+            "key": "A",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
@@ -1446,7 +1896,14 @@
         "contributingProviderLabels": [
           "chordie",
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [
+          "ultimateguitar"
+        ],
+        "selectedRawSequenceSupportCount": 1,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": {
         "source": "John Denver official",
@@ -1485,15 +1942,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "G",
         "selectedClaimScope": "recording",
-        "evidenceType": "checkedChartEstimate"
+        "evidenceType": "checkedChartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -1527,13 +1991,28 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "A",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unavailable",
         "chartAvailable": false,
-        "contributingProviderLabels": []
+        "contributingProviderLabels": [],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -1567,15 +2046,22 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -1607,15 +2093,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "C#m",
         "selectedClaimScope": "recording",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "C#m",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -1649,15 +2150,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "G",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "G",
+            "recordingCompatible": false,
+            "keyConsensus": true,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -1690,15 +2206,22 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -1729,15 +2252,37 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "G",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "G",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          },
+          {
+            "provider": "ultimateguitar",
+            "key": "G",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -1770,15 +2315,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "A",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "A",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -1813,15 +2373,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "B",
         "selectedClaimScope": "recording",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "B",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -1854,15 +2429,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "D#",
         "selectedClaimScope": "recording",
-        "evidenceType": "checkedChartEstimate"
+        "evidenceType": "checkedChartEstimate",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "C",
+            "recordingCompatible": false,
+            "keyConsensus": true,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -1897,15 +2487,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "A",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "chartEstimate"
+        "evidenceType": "chartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -1939,15 +2536,22 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -1982,15 +2586,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "G",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "G",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2024,8 +2643,18 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "E",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "E",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
@@ -2033,7 +2662,12 @@
         "contributingProviderLabels": [
           "songsterr",
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2068,15 +2702,30 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "Em",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "songsterr"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2110,15 +2759,22 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2153,15 +2809,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "Em",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "Em",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2198,15 +2869,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "C",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "C",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2242,15 +2928,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "G",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "G",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2283,15 +2984,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "Bm",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "Bm",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2325,15 +3041,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "C#",
         "selectedClaimScope": "recording",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "C#",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2366,15 +3097,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "G",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "G",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2407,15 +3153,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "D",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "chartEstimate"
+        "evidenceType": "chartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2450,15 +3203,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "Fm",
         "selectedClaimScope": "recording",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "Fm",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2494,15 +3262,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "Cm",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "Cm",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2534,15 +3317,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "Fm",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "Fm",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2577,15 +3375,30 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "Em",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2617,15 +3430,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "C#m",
         "selectedClaimScope": "recording",
-        "evidenceType": "checkedChartEstimate"
+        "evidenceType": "checkedChartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2658,15 +3478,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "A",
         "selectedClaimScope": "recording",
-        "evidenceType": "checkedChartEstimate"
+        "evidenceType": "checkedChartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2700,15 +3527,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "C",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "checkedChartEstimate"
+        "evidenceType": "checkedChartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "songsterr"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2741,15 +3575,30 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "Eb",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2784,15 +3633,22 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2825,15 +3681,22 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "songsterr"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2867,15 +3730,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "C",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "C",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "songsterr"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2909,15 +3787,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "B",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "chartEstimate"
+        "evidenceType": "chartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2953,15 +3838,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "G",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "checkedChartEstimate"
+        "evidenceType": "checkedChartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -2996,15 +3888,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "Ab",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "Ab",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -3039,15 +3946,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "C",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "C",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -3078,13 +4000,20 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unavailable",
         "chartAvailable": false,
-        "contributingProviderLabels": []
+        "contributingProviderLabels": [],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -3119,15 +4048,37 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "E",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "E",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          },
+          {
+            "provider": "ultimateguitar",
+            "key": "E",
+            "recordingCompatible": false,
+            "keyConsensus": true,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": {
         "source": "Nena official",
@@ -3173,15 +4124,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "E",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "checkedChartEstimate"
+        "evidenceType": "checkedChartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "songsterr"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -3213,15 +4171,34 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "Am",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "Am",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [
+          "ultimateguitar"
+        ],
+        "selectedRawSequenceSupportCount": 1,
+        "selectedAlignedChartSupportProviderLabels": [
+          "ultimateguitar"
+        ],
+        "selectedAlignedChartSupportCount": 1,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -3253,15 +4230,22 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -3297,15 +4281,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "G",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "checkedChartEstimate"
+        "evidenceType": "checkedChartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -3341,15 +4332,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "G",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "G",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": {
         "source": "The Beatles official",
@@ -3393,15 +4399,22 @@
       },
       "key": {
         "fieldResult": "verifiedCorrect",
+        "selectedValue": "G",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "chartEstimate"
+        "evidenceType": "chartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "songsterr"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": {
         "source": "The Beatles official",
@@ -3440,15 +4453,22 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "songsterr"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -3483,15 +4503,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "E",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "checkedChartEstimate"
+        "evidenceType": "checkedChartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -3524,15 +4551,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "B",
         "selectedClaimScope": "recording",
-        "evidenceType": "checkedChartEstimate"
+        "evidenceType": "checkedChartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -3566,15 +4600,22 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": {
         "source": "Goo Goo Dolls official album page",
@@ -3620,15 +4661,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "F",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "chartEstimate"
+        "evidenceType": "chartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -3661,15 +4709,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "F",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "chartEstimate"
+        "evidenceType": "chartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -3701,15 +4756,22 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -3742,15 +4804,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "Eb",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "chartEstimate"
+        "evidenceType": "chartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -3784,15 +4853,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "Bb",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "Bb",
+            "recordingCompatible": false,
+            "keyConsensus": true,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": {
         "source": "Billy Joel official",
@@ -3832,15 +4916,30 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "A",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "chordie"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": {
         "source": "Chris Stapleton official",
@@ -3881,15 +4980,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "F#m",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "checkedChartEstimate"
+        "evidenceType": "checkedChartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -3921,15 +5027,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "F",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "chartEstimate"
+        "evidenceType": "chartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "songsterr"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -3960,15 +5073,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "Am",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "Am",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -3999,15 +5127,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "Dm",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "chartEstimate"
+        "evidenceType": "chartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -4040,15 +5175,22 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "songsterr"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -4081,15 +5223,22 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "E",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "chartEstimate"
+        "evidenceType": "chartEstimate",
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": {
         "source": "Nena official",
@@ -4137,15 +5286,37 @@
       },
       "key": {
         "fieldResult": "scopeMismatch",
+        "selectedValue": "F",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "Db",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          },
+          {
+            "provider": "ultimateguitar",
+            "key": "F",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -4175,13 +5346,20 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unavailable",
         "chartAvailable": false,
-        "contributingProviderLabels": []
+        "contributingProviderLabels": [],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -4211,13 +5389,20 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unavailable",
         "chartAvailable": false,
-        "contributingProviderLabels": []
+        "contributingProviderLabels": [],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -4243,13 +5428,20 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unavailable",
         "chartAvailable": false,
-        "contributingProviderLabels": []
+        "contributingProviderLabels": [],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -4285,15 +5477,30 @@
       },
       "key": {
         "fieldResult": "unverified",
+        "selectedValue": "F",
         "selectedClaimScope": "arrangement",
-        "evidenceType": "source"
+        "evidenceType": "source",
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "F",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": {
         "source": "Shazam",
@@ -4333,15 +5540,30 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": [
+          {
+            "provider": "ultimateguitar",
+            "key": "D",
+            "recordingCompatible": false,
+            "keyConsensus": null,
+            "keyShift": null
+          }
+        ]
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "songsterr"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": null
     },
@@ -4375,15 +5597,22 @@
       },
       "key": {
         "fieldResult": "unavailable",
+        "selectedValue": null,
         "selectedClaimScope": null,
-        "evidenceType": null
+        "evidenceType": null,
+        "sourceClaims": []
       },
       "chords": {
         "fieldResult": "unverified",
         "chartAvailable": true,
         "contributingProviderLabels": [
           "ultimateguitar"
-        ]
+        ],
+        "selectedRawSequenceSupportProviderLabels": [],
+        "selectedRawSequenceSupportCount": 0,
+        "selectedAlignedChartSupportProviderLabels": [],
+        "selectedAlignedChartSupportCount": 0,
+        "independentLineageConfirmed": false
       },
       "publicReferenceObservation": {
         "source": "Shazam",
