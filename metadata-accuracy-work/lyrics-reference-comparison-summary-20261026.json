@@ -27,12 +27,12 @@
         "adjudicatedGoldReferenceCoverage": 0,
         "adjudicatedGoldReferenceCoveragePercent": 0.0,
         "correctnessBasis": "Only manually adjudicated field-level gold counts as correct/incorrect. Public references and candidate hashes are tracked separately.",
-        "sourceObservationCoverage": 16,
-        "sourceObservationCoveragePercent": 16.0,
+        "sourceObservationCoverage": 17,
+        "sourceObservationCoveragePercent": 17.0,
         "sourceTextDifferencesAwaitingAdjudication": 15,
-        "sourceTextDifferencesAdjudicated": 1,
+        "sourceTextDifferencesAdjudicated": 2,
         "referenceCoverageMeaning": "Adjudicated correctness references only; the 15 source-page observations are separate evidence coverage.",
-        "classifiedMismatchesNotPromotedToGold": 1
+        "classifiedMismatchesNotPromotedToGold": 2
       },
       "key": {
         "verifiedCorrect": 7,
@@ -74,8 +74,8 @@
       "songsWithSelectedBaseLyricsContribution": 99,
       "songsWithSectionContribution": 84,
       "contributingProviderCount": 3,
-      "observedSourcePageComparisons": 16,
-      "sourcePageComparisonCoveragePercent": 16.0,
+      "observedSourcePageComparisons": 17,
+      "sourcePageComparisonCoveragePercent": 17.0,
       "corpusRowsWithVerifiedClaim": 0,
       "comparisonsEvaluated": 0,
       "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness."
@@ -271,6 +271,39 @@
       "referenceNormalizedSha256": "7a6b93130bc42747fdd27909c1ec8a2e9c7816ee05b3397d9974a75fa60487b3",
       "wordSequenceEditDistance": 12,
       "accuracyDisposition": "Selected Genius text does not exactly match the official displayed lyric sequence. The localized wording and compound-token differences are classified, but neither sequence is promoted as exact performance-level gold."
+    },
+    {
+      "songId": "song-081",
+      "title": "Iris",
+      "reference": "https://www.googoodolls.com/album/dizzy-girl",
+      "source": "Goo Goo Dolls official album page",
+      "editionNote": "Artist album page identifies the track on Dizzy Up The Girl; official album audio independently confirms album identity.",
+      "result": "Official album lyric text differs from selected Genius text; localized three-token wording diff classified.",
+      "comparisonStatus": "full_text_diff_adjudicated",
+      "differenceClass": "localized_wording_variant",
+      "selectedSource": "Genius song page; exact selected output reproduced from cache",
+      "selectedNormalizedWordCount": 244,
+      "selectedNormalizedSha256": "4a4abab320c46d63343bc89e64e83277d6dec78390d25d80c8fa56cca935ccf9",
+      "referenceNormalizedWordCount": 244,
+      "referenceNormalizedSha256": "9730af186d72b4cb1e9428903cad25e4d6d5d81d336a6859a9633b49453dfc70",
+      "sequenceMatcherRatio": 0.9877,
+      "changedTokenCounts": {
+        "selectedOnly": 3,
+        "referenceOnly": 3
+      },
+      "changedRegions": 3,
+      "editionAssessment": "Album-specific official lyric section for Dizzy Up The Girl; Warner-delivered official album audio separately identifies the 1998 album track. Audio was not played or transcribed.",
+      "providerConvergence": {
+        "sameNormalizedHashProviderLabels": [
+          "genius",
+          "lyricsovh"
+        ],
+        "otherObservedVariant": [
+          "lrclib"
+        ],
+        "independentProvenanceEstablished": false
+      },
+      "accuracyDisposition": "Selected text is close to, but not identical with, the official album lyric text. Three localized wording differences are classified; source-label convergence does not establish independent lineage or exact performed wording."
     }
   ],
   "existingAuditsNotRepeated": [
@@ -291,14 +324,14 @@
       "result": "official album text differs from selected Genius text"
     }
   ],
-  "interpretation": "The offline replay found lyric candidates for 99/100 songs. Sixteen public lyric pages were compared against selected text by normalized hash (16% source-observation coverage). One mismatch (Blackbird) now has a reproduced hash and classified word-level diff; 15 remain to review. None currently establishes exact performance-level lyric gold, so the 0 adjudicated-correctness count is not a source-search result and does not mean the lyrics were rejected.",
+  "interpretation": "The offline replay found lyric candidates for 99/100 songs. Seventeen public lyric pages were compared against selected text by normalized hash (17% source-observation coverage). Two mismatches (Blackbird and Iris) now have reproduced selected hashes and classified word-level differences; 15 remain to review. None currently establishes exact performance-level lyric gold, so the 0 adjudicated-correctness count is not a source-search result and does not mean the lyrics were rejected.",
   "referenceEvaluation": {
-    "sourceCandidateComparisons": 16,
-    "sourceCandidateComparisonPercent": 16.0,
+    "sourceCandidateComparisons": 17,
+    "sourceCandidateComparisonPercent": 17.0,
     "exactNormalizedFullTextMatches": 0,
     "exactRecordingLevelGoldClaims": 0,
     "strictAccuracyPercent": null,
-    "interpretation": "Sixteen traceable lyric pages have now been compared against selected source text by normalized full-text hash (16% source-page coverage). One mismatch (Blackbird) has a reproduced source hash and a classified word-level diff; 15 mismatches still need review. A classified mismatch is not automatically an incorrect performance transcription, and none of these pages has yet been promoted as exact recording-level gold.",
+    "interpretation": "Seventeen traceable lyric pages have now been compared against selected text by normalized full-text hash (17% source-page coverage). Two mismatches (Blackbird and Iris) have reproduced selected hashes and classified word-level differences; 15 mismatches still need review. Classified mismatches are not automatically incorrect performance transcriptions. None of these pages is currently promoted as exact recording-level gold.",
     "futureDiffClasses": [
       "formatting_only",
       "minor_wording_or_transcription_variant",
@@ -307,10 +340,10 @@
       "source_or_song_match_failure",
       "unresolved"
     ],
-    "sourcePagesObservedAndCompared": 16,
-    "sourcePageCoveragePercent": 16.0,
+    "sourcePagesObservedAndCompared": 17,
+    "sourcePageCoveragePercent": 17.0,
     "fullTextHashDifferencesAwaitingAdjudication": 15,
-    "fullTextDifferencesAdjudicated": 1,
+    "fullTextDifferencesAdjudicated": 2,
     "correctnessClaimsFromTheseComparisons": 0,
     "accuracyStatus": "no_performance_gold_claims",
     "practicalLevels": [
@@ -331,7 +364,7 @@
       }
     ],
     "countingRule": "Hash equality is a strong exact-match signal. Hash inequality triggers diff review; it is not automatically an incorrect result. A classified difference remains nonmatching until the intended lyric scope is adjudicated. Provider labels count as independent only when provenance is known to be distinct.",
-    "adjudicatedNonmatchingSourceComparisons": 1
+    "adjudicatedNonmatchingSourceComparisons": 2
   },
   "sourceContributions": {
     "selectedBaseLyricsSongs": 99,
