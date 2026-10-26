@@ -277,6 +277,42 @@ Future<void> _waitForInitialChartSearches(
 
 void main() {
   test(
+    'composer context cannot exhaust the performer chart attempt budget',
+    () async {
+      final provider = _ContextChart(
+        const ProviderDefinition(
+          id: 'songsterr',
+          name: 'Songsterr',
+          capabilities: {'lyrics', 'chords'},
+        ),
+        [
+          for (var i = 0; i < 4; i++)
+            SongCandidate(
+              providerId: 'songsterr',
+              id: 'a-composer-$i',
+              title: 'Harbor Song',
+              artist: _writer,
+            ),
+          const SongCandidate(
+            providerId: 'songsterr',
+            id: 'z-performer',
+            title: 'Harbor Song',
+            artist: 'Lantern Coast',
+          ),
+        ],
+      );
+      final result = await findMatchingSource(
+        provider,
+        _enrichedRecording(),
+        allowContextualArrangements: true,
+        maxAttempts: 1,
+      );
+      expect(result.candidate.id, 'z-performer');
+      expect(provider.resolvedIds, ['z-performer']);
+    },
+  );
+
+  test(
     'missing lyric evidence blocks automatic donors but preserves explicit override',
     () {
       for (final contextual in [false, true]) {
