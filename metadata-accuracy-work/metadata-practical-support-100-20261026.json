@@ -17,7 +17,7 @@
     "referenceDifference": "hash mismatch prompts text/version review and is not automatically incorrect",
     "copyright": "no lyric text retained",
     "practicalCorroboration": "Lyrics support counts only sameSong/sameRecording candidates explicitly compatible with the edition, not pending, and without an unmet lyric-agreement guard. Chord support is chart-scoped and requires an accepted same-song/same-recording candidate that contributed the selected chart value, is explicitly edition-compatible, and is not pending. Neither tier establishes correctness or independent upstream lineage.",
-    "googleLyricsPanel": "Record visible source attribution (for example, Musixmatch) and song/result identity. Treat Google Search as the discovery/display surface, not an independent lyrics provider when an upstream provider is named. Compare the payload only after storing hashes and edition scope, never full lyric text.",
+    "googleLyricsPanel": "When the Google lyrics panel names an upstream provider, record and hash the panel as that attributed provider. An exact match supports the selected text but does not establish independent Google lineage or recording-edition fit.",
     "strictCorrectnessMeaning": "Strict verifiedCorrect counts reviewed field-level references with compatible recording/edition scope only. It is separate from practical source corroboration; see practicalEvidenceSummary."
   },
   "summary": {
@@ -148,8 +148,9 @@
     "googleLyricsPanelAttributedProviders": {
       "musixmatch": 1
     },
-    "googleLyricsPanelsHashCompared": 0,
-    "googleLyricsPanelInterpretation": "Google lyrics Search can be recorded as a practical source when its panel attribution and selected song result are captured. In this sample, the live panel attributes the lyrics to Musixmatch; it is not counted as a distinct Google provider or independent corroboration, and no text hash has yet been computed."
+    "googleLyricsPanelsHashCompared": 1,
+    "googleLyricsPanelInterpretation": "Google lyrics Search can be recorded as a practical source when its panel attribution and selected song result are captured. In this sample, the live panel attributes the lyrics to Musixmatch; it is not counted as a distinct Google provider or independent corroboration, and no text hash has yet been computed.",
+    "googleLyricsPanelSelectedHashMatches": 1
   },
   "songs": [
     {
@@ -974,6 +975,21 @@
         "selectedNormalizedTextSha256": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
+        ],
+        "attributedExternalReferenceHashMatches": [
+          {
+            "source": "Google Search lyrics panel",
+            "sourceUrl": "https://www.google.com/search?q=Oasis+Wonderwall+lyrics",
+            "attributedProvider": "Musixmatch",
+            "displayedArtist": "Oasis",
+            "displayedReleaseYear": "1995",
+            "normalizedTextSha256": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f",
+            "selectedHashMatch": true,
+            "normalizedWordCount": 283,
+            "corpusEditionStatus": "unspecified",
+            "independentLineageConfirmed": false,
+            "lyricBodyRetained": false
+          }
         ]
       },
       "key": {
@@ -22413,8 +22429,12 @@
       "googleLyricsPanel": {
         "observedSongs": 1,
         "attributedUpstreamProvider": "Musixmatch",
-        "hashCompared": 0,
-        "treatment": "Useful attributed source observation; count as Musixmatch lineage rather than an independent Google source."
+        "hashCompared": 1,
+        "exactSelectedHashMatches": 1,
+        "displayedResult": "Oasis, Wonderwall (1995)",
+        "corpusEditionStatus": "unspecified",
+        "independentLineageConfirmed": false,
+        "treatment": "Exact normalized hash match to the selected benchmark text from a Musixmatch-attributed panel; count as an attributed-source match, not a distinct Google provider lineage."
       }
     },
     "keys": {

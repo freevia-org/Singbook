@@ -427,7 +427,7 @@
       "result": "official album text differs from selected Genius text"
     }
   ],
-  "interpretation": "The offline replay found lyric candidates for 99/100 songs. Strict lyric verifiedCorrect remains zero because no row is adjudicated against a reviewed field-level correctness reference; this is not a measure of source discovery. Practical exact selected-text support is separately reported: 15 songs have eligible matching text under multiple provider labels and 84 under one label, with upstream independence unconfirmed. The report also records 95 selected charts, 2 exact raw chart hashes supported by one eligible provider label, and no exact selected chart hash supported by multiple labels. Public lyric-page comparisons remain a separate review queue.",
+  "interpretation": "The offline replay found lyric candidates for 99/100 songs. Strict lyric verifiedCorrect remains zero because no row is adjudicated against a reviewed field-level correctness reference; this is not a measure of source discovery. Practical exact selected-text support is separately reported: 15 songs have eligible matching text under multiple provider labels and 84 under one label, with upstream independence unconfirmed. The report also records 95 selected charts, 2 exact raw chart hashes supported by one eligible provider label, and no exact selected chart hash supported by multiple labels. The Google Search panel for Wonderwall is one exact selected-text hash match attributed to Musixmatch, with the corpus edition still unspecified. Public lyric-page comparisons remain a separate review queue.",
   "referenceEvaluation": {
     "sourceCandidateComparisons": 18,
     "sourceCandidateComparisonPercent": 18.0,
@@ -476,7 +476,9 @@
       "classifiedTextDifferences": 3,
       "textDifferencesAwaitingReview": 15,
       "independentSourceLineageConfirmed": 0,
-      "interpretation": "Provider-label agreement and inspected public pages are practical evidence, not adjudicated correctness. Three page differences are classified as source variants and fifteen remain awaiting review; neither group is counted correct or incorrect without field-level adjudication."
+      "interpretation": "Provider-label agreement and inspected public pages are practical evidence, not adjudicated correctness. Three page differences are classified as source variants and fifteen remain awaiting review; neither group is counted correct or incorrect without field-level adjudication.",
+      "attributedExternalPanelExactSelectedHashMatches": 1,
+      "googlePanelIndependentLineageConfirmed": false
     },
     "independentlyRecomputedSourceTextHashes": 5,
     "selectedHashComparisonsIndependentlyConfirmed": 5,
@@ -997,7 +999,7 @@
   },
   "perSongSupportScorecard": {
     "file": "metadata-accuracy-work/metadata-practical-support-100-20261026.json",
-    "sha256": "b6e657dbeeb17fbb85cd4a0966caa4ee62cdce9bbc184a0e91fd40cf978a88b2",
+    "sha256": "48f2f48c48e54e9ab887ff291ca8ac9d887018a9f29f65ca54a6d189adc6850d",
     "rows": 100,
     "containsLyricBodies": false,
     "sourceReport": "build/metadata_accuracy/report.json",
@@ -1019,8 +1021,9 @@
     "officialLyricPagesMatchedAnyCachedCandidate": 0,
     "officialLyricSourceCandidateRowsCompared": 36,
     "googleLyricsPanelObservations": 1,
-    "googleLyricsPanelsHashCompared": 0,
-    "benchmarkLogicHead": "6e624afd235aaa3838257581b0be8b0ee2655e41"
+    "googleLyricsPanelsHashCompared": 1,
+    "benchmarkLogicHead": "6e624afd235aaa3838257581b0be8b0ee2655e41",
+    "googleLyricsPanelSelectedHashMatches": 1
   },
   "chordProgressionEvidence": {
     "sourceHashVariants": 202,
@@ -1037,7 +1040,7 @@
   },
   "manualLyricComparisonArtifact": "tool/metadata_reference_evidence/official_lyrics_page_comparisons_20261026.json",
   "officialLyricSourceCoverageInterpretation": "In addition to selected-text comparison, each official page hash was compared with every cached provider lyric candidate summary for its song. None of the five official hashes exactly matches any candidate in the current offline result set; this is a reference/source coverage gap, not proof that any one transcript is incorrect.",
-  "googleLyricsPanelInterpretation": "Google lyrics Search can be recorded as a practical source when its panel attribution and selected song result are captured. In this sample, the live panel attributes the lyrics to Musixmatch; it is not counted as a distinct Google provider or independent corroboration, and no text hash has yet been computed.",
+  "googleLyricsPanelInterpretation": "The Google Search panel for Oasis Wonderwall (displayed as 1995) attributes the lyrics to Musixmatch. A hash of the displayed text exactly matches the selected benchmark text for song-004 under the benchmark normalization (283 normalized words). This is one exact attributed-source match, not an independent Google lineage; corpus edition remains unspecified. No lyric body is retained.",
   "practicalEvidenceSummary": {
     "label": "practical source corroboration, not recording-specific correctness",
     "interpretation": "The strict lyric count of zero means none of the selected lyrics has yet been adjudicated against a reviewed field-level correctness reference. It does not mean there are no source candidates: this replay finds 99 selected lyrics, with eligible exact-text support from multiple provider labels on 15 rows and one label on 84. Provider lineage is unresolved, so these are practical support tiers, not correctness claims.",
@@ -1053,9 +1056,15 @@
       "googleLyricsPanel": {
         "observedSongs": 1,
         "attributedUpstreamProvider": "Musixmatch",
-        "hashCompared": 0,
-        "treatment": "Useful attributed source observation; count as Musixmatch lineage rather than an independent Google source."
-      }
+        "hashCompared": 1,
+        "exactSelectedHashMatches": 1,
+        "displayedResult": "Oasis, Wonderwall (1995)",
+        "corpusEditionStatus": "unspecified",
+        "independentLineageConfirmed": false,
+        "treatment": "Exact normalized hash match to the selected benchmark text from a Musixmatch-attributed panel; count as an attributed-source match, not a distinct Google provider lineage."
+      },
+      "attributedExternalPanelExactSelectedHashMatches": 1,
+      "googlePanelIndependentLineageConfirmed": false
     },
     "keys": {
       "comparableAdjudicatedReferences": 7,
