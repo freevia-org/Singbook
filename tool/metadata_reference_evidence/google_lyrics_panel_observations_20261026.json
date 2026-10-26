@@ -32,7 +32,8 @@
       "independentLineageConfirmed": false,
       "sourceReferenceTier": "attributed_external_text_comparison",
       "independentGoogleLineageConfirmed": false,
-      "corpusEditionStatus": "unspecified"
+      "corpusEditionStatus": "unspecified",
+      "songId": "song-004"
     },
     {
       "songId": "song-006",

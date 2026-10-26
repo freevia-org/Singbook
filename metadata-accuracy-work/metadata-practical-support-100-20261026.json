@@ -1220,7 +1220,21 @@
         "offlineProviderAlreadyPresent": false,
         "sourceLineageInterpretation": "Count this as a Musixmatch-attributed source observation, not an independent Google transcription. If a Musixmatch candidate is added later, compare the payloads and avoid double-counting provider lineage.",
         "limitations": "Google panel selected a song/release result but the corpus recordingEdition is unspecified. Text not normalized or hash-compared in this observation."
-      }
+      },
+      "additionalPublicReferenceObservations": [
+        {
+          "source": "Google Search lyrics panel",
+          "reference": "https://www.google.com/search?q=Oasis+Wonderwall+lyrics",
+          "attributedLyricsProvider": "Musixmatch",
+          "comparisonStatus": "exact_selected_text_hash_match",
+          "selectedNormalizedSha256": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f",
+          "selectedProvider": "genius",
+          "recordingEditionStatus": "unspecified",
+          "independentLineageConfirmed": false,
+          "interpretation": "Useful attributed-source text agreement; Google attributes the displayed panel to Musixmatch. This supports the selected text but does not prove an exact recording edition or independent lineage.",
+          "evidenceArtifact": "tool/metadata_reference_evidence/google_lyrics_panel_observations_20261026.json"
+        }
+      ]
     },
     {
       "songId": "song-005",

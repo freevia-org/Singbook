@@ -1150,5 +1150,11 @@
       }
     ],
     "interpretation": "The actual base lyric contributor is reported separately from the selected metadata provider. Same-song-only sources remain usable fallback content but are flagged as lower identity confidence."
+  },
+  "practicalReferenceLinks": {
+    "googlePanelExactMatchSongIds": [
+      "song-004"
+    ],
+    "interpretation": "An exact attributed Google panel hash match is linked to the Wonderwall row as source corroboration, not independent Google lineage or recording-edition gold."
   }
 }
