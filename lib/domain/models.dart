@@ -65,6 +65,9 @@ class SongCandidate {
   });
   String get identity => '$providerId:$id';
   String? get artworkUrl => metadata['artworkUrl'] as String?;
+  bool get hasPendingMatchCheck =>
+      metadata['pendingMatchCheck'] == true ||
+      extra['pendingMatchCheck'] == true;
   JsonMap toJson() => {
     ...extra,
     'providerId': providerId,
@@ -285,6 +288,10 @@ class SourceResult {
   });
   String get id => candidate.identity;
   bool get hasChords => containsChords(body);
+  bool get hasPendingMatchCheck =>
+      candidate.hasPendingMatchCheck ||
+      metadata['pendingMatchCheck'] == true ||
+      extra['pendingMatchCheck'] == true;
   SourceResult copyWith({List<TimingTrack>? timingTracks, JsonMap? extra}) =>
       SourceResult(
         candidate: candidate,

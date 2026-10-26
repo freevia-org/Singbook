@@ -1267,7 +1267,7 @@ bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
             // while still supplying a key corroborated against chosen chords.
             (source.matchKind == MatchKind.rejected &&
                 source.matchReason == 'incomplete_or_different_lyrics')) ||
-        source.extra['pendingMatchCheck'] == true ||
+        source.hasPendingMatchCheck ||
         !_sameSong(source.candidate, selected) ||
         _version(source.candidate.title) != _version(selected.title)) {
       continue;
@@ -1390,7 +1390,7 @@ bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
           MatchKind.sameSong,
           MatchKind.sameRecording,
         }.contains(source.matchKind) ||
-        source.extra['pendingMatchCheck'] == true ||
+        source.hasPendingMatchCheck ||
         !_compatibleMetadataKeySource(song, source)) {
       continue;
     }
@@ -2568,6 +2568,7 @@ SongDocument combineSources(
             !source.hasChords &&
             source.matchKind != MatchKind.rejected &&
             source.matchKind != MatchKind.unverified &&
+            !source.hasPendingMatchCheck &&
             source.extra['requiresLyricsAgreement'] != true &&
             source.extra['requiresRecordingLyricsAgreement'] != true &&
             recordingCompatible(selected, source) &&
@@ -2579,7 +2580,7 @@ SongDocument combineSources(
         source.extra['metadataOnly'] != true ||
         source.body.trim().isNotEmpty ||
         source.hasChords ||
-        source.extra['pendingMatchCheck'] == true ||
+        source.hasPendingMatchCheck ||
         !const {
           MatchKind.sameSong,
           MatchKind.sameRecording,
@@ -3395,12 +3396,11 @@ SongDocument combineSources(
             'hint': 'chart',
           },
       if (chordSourceIds.any(
-        (sourceId) => sourcesById[sourceId]?.extra['pendingMatchCheck'] == true,
+        (sourceId) => sourcesById[sourceId]?.hasPendingMatchCheck == true,
       ))
         'pendingChordSourceIds': chordSourceIds
             .where(
-              (sourceId) =>
-                  sourcesById[sourceId]?.extra['pendingMatchCheck'] == true,
+              (sourceId) => sourcesById[sourceId]?.hasPendingMatchCheck == true,
             )
             .toList(),
       'excludedIncompleteSourceIds': accepted

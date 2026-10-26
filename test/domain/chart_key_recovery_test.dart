@@ -23,6 +23,8 @@ SourceResult _source(
   String body, {
   JsonMap metadata = const {},
   JsonMap candidateMetadata = const {},
+  JsonMap candidateExtra = const {},
+  JsonMap extra = const {},
   MatchKind kind = MatchKind.sameSong,
 }) => SourceResult(
   candidate: SongCandidate(
@@ -31,10 +33,12 @@ SourceResult _source(
     title: 'Song',
     artist: 'Artist',
     metadata: candidateMetadata,
+    extra: candidateExtra,
   ),
   body: body,
   metadata: metadata,
   matchKind: kind,
+  extra: extra,
 );
 
 SongDocument _saved({
@@ -421,4 +425,63 @@ void main() {
       expect(song.metadata.containsKey('key'), isFalse);
     },
   );
+
+  test('pending key metadata in any persisted map cannot supply a key', () {
+    final lyrics = _source(
+      'lyrics',
+      'Amber lanterns carry silver rain across the quiet harbor tonight',
+      kind: MatchKind.sameRecording,
+    );
+    final placements =
+        <
+          ({
+            String name,
+            JsonMap metadata,
+            JsonMap extra,
+            JsonMap candidateMetadata,
+            JsonMap candidateExtra,
+          })
+        >[
+          (
+            name: 'source extra',
+            metadata: const {},
+            extra: const {'pendingMatchCheck': true},
+            candidateMetadata: const {},
+            candidateExtra: const {},
+          ),
+          (
+            name: 'source metadata',
+            metadata: const {'pendingMatchCheck': true},
+            extra: const {},
+            candidateMetadata: const {},
+            candidateExtra: const {},
+          ),
+          (
+            name: 'candidate metadata',
+            metadata: const {},
+            extra: const {},
+            candidateMetadata: const {'pendingMatchCheck': true},
+            candidateExtra: const {},
+          ),
+          (
+            name: 'candidate extra',
+            metadata: const {},
+            extra: const {},
+            candidateMetadata: const {},
+            candidateExtra: const {'pendingMatchCheck': true},
+          ),
+        ];
+    for (final placement in placements) {
+      final keySource = _source(
+        'pending-${placement.name}',
+        '',
+        metadata: {'key': 'F#m', ...placement.metadata},
+        extra: placement.extra,
+        candidateMetadata: placement.candidateMetadata,
+        candidateExtra: placement.candidateExtra,
+      );
+      final song = combineSources(_candidate, [lyrics, keySource]);
+      expect(song.metadata['key'], isNull, reason: placement.name);
+    }
+  });
 }
