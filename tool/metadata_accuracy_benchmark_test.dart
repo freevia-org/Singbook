@@ -1006,11 +1006,13 @@ void main() {
       {'id': 'song-014', 'key': 'F', 'keyClaimScope': 'arrangement'},
       {'id': 'song-017', 'key': 'G', 'keyClaimScope': 'arrangement'},
       {'id': 'song-018', 'key': 'Ab', 'keyClaimScope': 'arrangement'},
+      {'id': 'song-031', 'key': 'A', 'keyClaimScope': 'arrangement'},
+      {'id': 'song-035', 'key': 'C#m', 'keyClaimScope': 'arrangement'},
     ].cast<Map<String, Object?>>();
     final result = _practicalLicensedChartReview(rows, observations);
     final counts = result['counts'] as Map;
-    expect(counts['observations'], 8);
-    expect(counts['practicalChartKeyMatches'], 3);
+    expect(counts['observations'], 10);
+    expect(counts['practicalChartKeyMatches'], 5);
     expect(counts['scopeMismatches'], 1);
     expect(counts['differencesNeedingReview'], 4);
     expect(result['isStrictRecordingGold'], isFalse);

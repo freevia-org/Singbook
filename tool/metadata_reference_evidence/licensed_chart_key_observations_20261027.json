@@ -82,6 +82,26 @@
       "format": "Ed Sheeran guitar chord chart and lyric sheet",
       "scope": "artist song arrangement",
       "scopeNote": "The listing gives G major for this arrangement; it does not identify the recording version or state whether a capo/transposition is involved."
+    },
+    {
+      "songId": "song-031",
+      "title": "Take Me Home, Country Roads",
+      "product": "Cherry Lane HL.2504214",
+      "url": "https://www.sheetmusicplus.com/en/product/take-me-home-country-roads-2990523.html",
+      "publisherClaimedKey": "A",
+      "format": "John Denver piano/vocal/guitar single with chord names and guitar chord diagrams",
+      "scope": "artist arrangement",
+      "scopeNote": "The licensed Cherry Lane listing identifies John Denver and A major, but does not name an album performance."
+    },
+    {
+      "songId": "song-035",
+      "title": "Jolene",
+      "product": "Dr. Tom's Charts via Sheet Music Plus",
+      "url": "https://www.sheetmusicplus.com/en/product/jolene-23894647.html",
+      "publisherClaimedKey": "C#m",
+      "format": "Dolly Parton guitar chart with transposed Am, original C#m, and capo-5 options",
+      "scope": "artist arrangement with 1973 album Jolene association",
+      "scopeNote": "The listing explicitly calls C-sharp minor the original key, includes that chart and a capo-5 version that sounds in C-sharp minor; this is a useful but secondary chart source, not exact-master proof."
     }
   ],
   "interpretationPolicy": {
