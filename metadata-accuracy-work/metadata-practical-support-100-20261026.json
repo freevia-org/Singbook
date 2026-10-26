@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "date": "2026-10-26",
   "generatedFrom": {
-    "report": "artifacts/integration-coordinator/metadata-accuracy-100-20261026/progress-28-wonderwall-reference/report.json",
-    "reportSha256": "c5d76f488efe63cd4a3f386c165675ab17ca9147e15742abb26e09cb5bed0326",
+    "report": "artifacts/integration-coordinator/metadata-accuracy-100-20261026/progress-29-key-scope-precedence/report.json",
+    "reportSha256": "45c40da8d0a13b0cd60503886eb029edeb266fd8d982b0736318f7014648d939",
     "corpusSha256": "ad7c9f02aad2134cce5b59544055c60b0bb9f0ef157eee015d0806eec311d3f6"
   },
   "policy": {
@@ -3736,7 +3736,7 @@
       "key": {
         "fieldResult": "unverified",
         "selectedValue": "F",
-        "selectedClaimScope": "recording",
+        "selectedClaimScope": "arrangement",
         "evidenceType": "source",
         "sourceClaims": [
           {
@@ -6489,7 +6489,7 @@
       "key": {
         "fieldResult": "unverified",
         "selectedValue": "D",
-        "selectedClaimScope": "recording",
+        "selectedClaimScope": "arrangement",
         "evidenceType": "source",
         "sourceClaims": [
           {
@@ -8991,7 +8991,7 @@
       "key": {
         "fieldResult": "unverified",
         "selectedValue": "C#m",
-        "selectedClaimScope": "recording",
+        "selectedClaimScope": "arrangement",
         "evidenceType": "source",
         "sourceClaims": [
           {
@@ -9986,7 +9986,7 @@
       "key": {
         "fieldResult": "unverified",
         "selectedValue": "B",
-        "selectedClaimScope": "recording",
+        "selectedClaimScope": "arrangement",
         "evidenceType": "source",
         "sourceClaims": [
           {
@@ -13132,7 +13132,7 @@
       "key": {
         "fieldResult": "unverified",
         "selectedValue": "C#",
-        "selectedClaimScope": "recording",
+        "selectedClaimScope": "arrangement",
         "evidenceType": "source",
         "sourceClaims": [
           {
@@ -13702,7 +13702,7 @@
       "key": {
         "fieldResult": "unverified",
         "selectedValue": "Fm",
-        "selectedClaimScope": "recording",
+        "selectedClaimScope": "arrangement",
         "evidenceType": "source",
         "sourceClaims": [
           {
@@ -23413,7 +23413,8 @@
         "selectedOutput": "F#m",
         "status": "verifiedCorrect",
         "evidenceRecord": "tool/metadata_reference_evidence/wonderwall_key.json"
-      }
+      },
+      "unavailableReferenceRows": 1
     },
     "chords": {
       "selectedChartsAvailable": 95,

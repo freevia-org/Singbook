@@ -184,7 +184,6 @@ String? _soundingKey(SongDocument doc) {
 /// compare a different-scope claim as a recording-key error.
 String _keyClaimScope(SongDocument doc) {
   final estimate = jsonMap(doc.extra['chordKeyEstimate']);
-  if (estimate['hint'] == 'recording') return 'recording';
   if (_hasMeaningfulMetadata(doc.metadata['key'])) {
     final origin = jsonMap(doc.extra['fieldOrigins'])['key'];
     if (origin is String) {
@@ -206,6 +205,11 @@ String _keyClaimScope(SongDocument doc) {
     }
     return 'unknown';
   }
+  // A recording-key estimate can resolve an ambiguous chord-derived key, but
+  // it does not change the scope of an explicitly selected metadata key. If
+  // the displayed key came from a chart, keep it arrangement-scoped even when
+  // a separate recording-key lookup helped interpret that chart.
+  if (estimate['hint'] == 'recording') return 'recording';
   if (estimate['key'] is String || estimateChordKey(doc.body) != null) {
     return 'arrangement';
   }
@@ -735,7 +739,30 @@ void main() {
         'chordKeyEstimate': {'hint': 'recording', 'key': 'Db'},
       },
     );
-    expect(_keyClaimScope(recordingKeyEstimate), 'recording');
+    expect(
+      _keyClaimScope(recordingKeyEstimate),
+      'arrangement',
+      reason:
+          'an estimate hint must not override the provenance of the selected metadata key',
+    );
+
+    final estimatedRecordingKey = SongDocument(
+      id: 'ipanema-estimate',
+      title: selected.title,
+      artist: selected.artist,
+      body: chartKey.body,
+      metadata: const {},
+      sources: [recordingSource],
+      selectedRecording: selected,
+      extra: {
+        'chordKeyEstimate': {'hint': 'recording', 'key': 'Db'},
+      },
+    );
+    expect(
+      _keyClaimScope(estimatedRecordingKey),
+      'recording',
+      reason: 'a recording-scoped estimate remains recording-scoped',
+    );
 
     final explicitlyScopedRecordingKey = recordingKey.copyWith(
       sources: [

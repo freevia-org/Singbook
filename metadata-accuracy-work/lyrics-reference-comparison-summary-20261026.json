@@ -75,7 +75,7 @@
         "referenceCoverageMeaning": "Adjudicated field-level gold rows only; source-page observations are reported separately."
       }
     },
-    "reportSha256": "c5d76f488efe63cd4a3f386c165675ab17ca9147e15742abb26e09cb5bed0326",
+    "reportSha256": "45c40da8d0a13b0cd60503886eb029edeb266fd8d982b0736318f7014648d939",
     "runtimeCodeHead": "271753d4f613cf642f04e2c3f9af496435595a65",
     "benchmarkLogicHead": "6e624afd235aaa3838257581b0be8b0ee2655e41",
     "referenceCoverage": {
@@ -89,8 +89,8 @@
       "chords": 0
     },
     "latestReport": {
-      "path": "artifacts/integration-coordinator/metadata-accuracy-100-20261026/progress-28-wonderwall-reference/report.json",
-      "sha256": "c5d76f488efe63cd4a3f386c165675ab17ca9147e15742abb26e09cb5bed0326"
+      "path": "artifacts/integration-coordinator/metadata-accuracy-100-20261026/progress-29-key-scope-precedence/report.json",
+      "sha256": "45c40da8d0a13b0cd60503886eb029edeb266fd8d982b0736318f7014648d939"
     },
     "googleObservationArtifact": {
       "path": "tool/metadata_reference_evidence/google_lyrics_panel_observations_20261026.json",
@@ -134,9 +134,9 @@
       "songsWithChordChartContribution": null,
       "songsWithSectionContribution": null,
       "contributingProviderCount": 3,
-      "corpusRowsWithVerifiedClaim": 8,
-      "rowsWithAdjudicatedCorrectnessReference": 8,
-      "comparisonsEvaluated": 7,
+      "corpusRowsWithVerifiedClaim": 10,
+      "rowsWithAdjudicatedCorrectnessReference": 10,
+      "comparisonsEvaluated": 8,
       "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness.",
       "referenceCoverageMeaning": "Count of corpus rows with reviewed field-level correctness gold; this is not a count of source pages discovered or checked."
     },
@@ -1061,9 +1061,9 @@
   },
   "keyReferenceScopeEvaluation": {
     "offlineReplaySongs": 100,
-    "recordingKeyReferences": 8,
-    "comparableRecordingKeyClaims": 7,
-    "verifiedCorrect": 7,
+    "recordingKeyReferences": 10,
+    "comparableRecordingKeyClaims": 8,
+    "verifiedCorrect": 8,
     "verifiedIncorrect": 0,
     "arrangementScopeMismatches": 1,
     "scopeMismatchExample": {
@@ -1074,7 +1074,7 @@
       "reason": "The selected key is from a same-song Ultimate Guitar chart that is not recordingCompatible with the selected Getz/Gilberto recording. Preserve the chart key; do not score it as a wrong recording-home key."
     },
     "corpusAccuracyPercent": null,
-    "note": "100% among the seven like-scoped, adjudicated recording-key comparisons; this is partial coverage, not a 100-song score. One differing arrangement-scoped claim remains separately visible.",
+    "note": "8/8 comparable recording-key outputs match across 10 reviewed reference rows; one arrangement-scoped claim is a scope mismatch and one reference has no selected output. This is not 100-song key accuracy.",
     "latestReviewedReference": {
       "songId": "song-074",
       "title": "Stairway to Heaven",
@@ -1103,7 +1103,8 @@
         "result": "unavailable; not counted correct",
         "evidenceRecord": "tool/metadata_reference_evidence/stairway_to_heaven_key.json"
       }
-    ]
+    ],
+    "unavailableOutputs": 1
   },
   "perSongSupportTiers": {
     "reportField": "build/metadata_accuracy/report.json:songs[].practicalLyricsSupport",
@@ -1127,11 +1128,11 @@
   },
   "perSongSupportScorecard": {
     "file": "metadata-accuracy-work/metadata-practical-support-100-20261026.json",
-    "sha256": "3f7b6bbdef3f3b2579bd6cf0b06c100e1057ea2e7794db14a2eaca06fe3931eb",
+    "sha256": "1da735e79fbb39655613e2529d32ed1d3738b2d0c957df37888be43532eb6e0b",
     "rows": 100,
     "containsLyricBodies": false,
-    "sourceReport": "build/metadata_accuracy/report.json",
-    "sourceReportSha256": "c5d76f488efe63cd4a3f386c165675ab17ca9147e15742abb26e09cb5bed0326",
+    "sourceReport": "artifacts/integration-coordinator/metadata-accuracy-100-20261026/progress-29-key-scope-precedence/report.json",
+    "sourceReportSha256": "45c40da8d0a13b0cd60503886eb029edeb266fd8d982b0736318f7014648d939",
     "includesSelectedKeySourceClaims": true,
     "includesChordSequenceAndAlignmentSupport": true,
     "includesLyricHashVariants": true,
