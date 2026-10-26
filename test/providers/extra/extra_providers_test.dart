@@ -20,8 +20,8 @@ void main() {
     'extra roster distinguishes imports, catalogs, and identity-bound artwork',
     () {
       final providers = createExtraProviders();
-      expect(providers.length, 10);
-      expect(providers.map((p) => p.definition.id).toSet().length, 10);
+      expect(providers.length, 11);
+      expect(providers.map((p) => p.definition.id).toSet().length, 11);
       expect(
         providers.whereType<FileImportProvider>().map((p) => p.definition.id),
         ['ozbcoz', 'worshiptogether'],

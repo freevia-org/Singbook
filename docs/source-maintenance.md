@@ -1,8 +1,11 @@
 # Source catalog and daily maintenance
 
-`config/source-catalog.json` is the published, complete source list. The Flutter
-app bundles that file, restores a compatible cached snapshot, and refreshes from
-the same file on public GitHub `main`. `SINGBOOK_SOURCE_CATALOG_URL` can override
+`config/source-catalog.json` remains the complete channel-1 source list used by
+released clients through build 38. Keep this file and its URL compatible with
+those clients. New code uses `config/source-catalog-v2.json` as its complete
+channel-2 bundle and refresh URL on public GitHub `main`. This is a distribution
+channel change; both files still use envelope/extraction schema version 1.
+`SINGBOOK_SOURCE_CATALOG_URL` can override
 the HTTPS publisher URL at build time. Settings → Sources → Refresh source list
 performs the same refresh manually. A new app build containing this implementation
 is required before an existing installation can consume catalog updates.
@@ -13,6 +16,20 @@ unsupported schema, rollback, or failed cache write preserves the previous live
 and durable snapshot. Bundle and cache loading do not depend on a network call.
 No provider update changes saved songs, ChordPro provenance or user preferences.
 Catalog storage is separate from the user's synced application settings.
+Channel 2 reads/writes `sourceCatalog:v2` and never overwrites the old
+`sourceCatalog` cache or provider preferences. It starts from its own bundled
+snapshot when the new cache is absent; an independently higher legacy revision
+cannot lock out channel-2 updates. Unknown native providers
+cause a refresh to fail before any live/cache mutation. Thus a channel-2 entry,
+even when disabled, must never be added to channel 1 if released clients do not
+compile that adapter.
+
+The initial channel-2 lrc.red entry stays disabled pending reviewed release
+qualification. Its native adapter uses the publisher's identifying User-Agent,
+exact ISRC search/detail identity, same-host TTML/artwork references and visible
+attribution. Its explicit timing profile handles the publisher's bare-second
+and short media clocks without changing generic TTML semantics. Album artwork
+remains linked source metadata; no blanket redistribution license is claimed.
 
 ## Version and lifecycle contract
 
@@ -95,8 +112,13 @@ dart run tool/source_maintenance.dart --report artifacts/sources-live.json
 dart run tool/source_maintenance.dart --source lrclib --report artifacts/lrclib-live.json
 ```
 
-Options also include `--catalog path` to validate a candidate catalog. Offline
-mode checks parsing, adapter construction and probe coverage; its results are
+Options also include `--catalog path` to validate a candidate catalog. Both
+offline and live CLI defaults follow the current channel-2 catalog. To qualify a pending
+native source before release, use an ignored temporary active copy with
+`--catalog` and `--source`; do not publish that copy or change the disabled
+rollout entry merely to make a probe run. Released channel-1 clients and their
+published catalog remain unchanged.
+Offline mode checks parsing, adapter construction and probe coverage; its results are
 explicitly `offline_unverified`, never proof of live health. Live mode checks
 every registered source, including those disabled by default. Import-only,
 disabled and retired sources have explicit skipped states. A source missing from
