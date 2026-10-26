@@ -1,15 +1,14 @@
 {
   "schemaVersion": 1,
   "catalogRevision": 7,
-  "measuredAt": "2026-10-26T07:00:44.924337Z",
+  "measuredAt": "2026-10-26T09:24:52.264826Z",
   "offline": false,
   "summary": {
-    "healthy": 12,
+    "healthy": 13,
     "unavailable": 2,
     "import_only": 1,
-    "partial_coverage": 1,
-    "retired": 1,
-    "transient_error": 2
+    "partial_coverage": 2,
+    "retired": 1
   },
   "sources": [
     {
@@ -51,7 +50,12 @@
           "timingRawRetained": false,
           "hasChords": false
         }
-      ]
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-26T07:00:44.924337Z",
+        "sourceHead": "82fd67f7425f7dffbaf033fc18703d82f7d96cf2"
+      }
     },
     {
       "id": "songsterr",
@@ -90,7 +94,12 @@
           "timingRawRetained": false,
           "hasChords": true
         }
-      ]
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-26T07:00:44.924337Z",
+        "sourceHead": "82fd67f7425f7dffbaf033fc18703d82f7d96cf2"
+      }
     },
     {
       "id": "ultimateguitar",
@@ -132,7 +141,12 @@
           "timingRawRetained": false,
           "hasChords": true
         }
-      ]
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-26T07:00:44.924337Z",
+        "sourceHead": "82fd67f7425f7dffbaf033fc18703d82f7d96cf2"
+      }
     },
     {
       "id": "lrclib",
@@ -174,7 +188,12 @@
           "timingRawRetained": true,
           "hasChords": false
         }
-      ]
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-26T07:00:44.924337Z",
+        "sourceHead": "82fd67f7425f7dffbaf033fc18703d82f7d96cf2"
+      }
     },
     {
       "id": "youtubemusic",
@@ -212,7 +231,12 @@
           "timingRawRetained": false,
           "hasChords": false
         }
-      ]
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-26T07:00:44.924337Z",
+        "sourceHead": "82fd67f7425f7dffbaf033fc18703d82f7d96cf2"
+      }
     },
     {
       "id": "lyricsovh",
@@ -250,7 +274,12 @@
           "timingRawRetained": false,
           "hasChords": false
         }
-      ]
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-26T07:00:44.924337Z",
+        "sourceHead": "82fd67f7425f7dffbaf033fc18703d82f7d96cf2"
+      }
     },
     {
       "id": "synclrc",
@@ -278,7 +307,25 @@
           "status": "unavailable",
           "reason": "empty_search_results"
         }
-      ]
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-26T09:24:45.078437Z",
+        "sourceHead": "af3c65124588bee4496f3c5d197809d59f804738",
+        "httpDiagnostics": {
+          "networkFailures": 0,
+          "hosts": {
+            "api.synclrc.dev": {
+              "requests": 2,
+              "statuses": {
+                "200": 2
+              },
+              "retryAfterSeconds": {},
+              "databaseLag": {}
+            }
+          }
+        }
+      }
     },
     {
       "id": "betterlyrics",
@@ -301,7 +348,36 @@
           "status": "unavailable",
           "reason": "unavailable"
         }
-      ]
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-26T09:24:52.264826Z",
+        "sourceHead": "af3c65124588bee4496f3c5d197809d59f804738",
+        "httpDiagnostics": {
+          "networkFailures": 0,
+          "hosts": {
+            "api.betterlyrics.org": {
+              "requests": 1,
+              "statuses": {
+                "401": 1
+              },
+              "retryAfterSeconds": {},
+              "databaseLag": {}
+            },
+            "lrclib.net": {
+              "requests": 3,
+              "statuses": {
+                "200": 2,
+                "503": 1
+              },
+              "retryAfterSeconds": {
+                "1": 1
+              },
+              "databaseLag": {}
+            }
+          }
+        }
+      }
     },
     {
       "id": "unison",
@@ -376,7 +452,12 @@
           "timingRawRetained": true,
           "hasChords": false
         }
-      ]
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-26T07:00:44.924337Z",
+        "sourceHead": "82fd67f7425f7dffbaf033fc18703d82f7d96cf2"
+      }
     },
     {
       "id": "ozbcoz",
@@ -397,7 +478,12 @@
           "id": "import-only",
           "status": "import_only"
         }
-      ]
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-26T07:00:44.924337Z",
+        "sourceHead": "82fd67f7425f7dffbaf033fc18703d82f7d96cf2"
+      }
     },
     {
       "id": "chordie",
@@ -436,7 +522,12 @@
           "timingRawRetained": false,
           "hasChords": true
         }
-      ]
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-26T07:00:44.924337Z",
+        "sourceHead": "82fd67f7425f7dffbaf033fc18703d82f7d96cf2"
+      }
     },
     {
       "id": "worshipcommons",
@@ -489,7 +580,12 @@
           "timingRawRetained": true,
           "hasChords": true
         }
-      ]
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-26T07:00:44.924337Z",
+        "sourceHead": "82fd67f7425f7dffbaf033fc18703d82f7d96cf2"
+      }
     },
     {
       "id": "openfilksongbook",
@@ -528,7 +624,12 @@
           "timingRawRetained": false,
           "hasChords": true
         }
-      ]
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-26T07:00:44.924337Z",
+        "sourceHead": "82fd67f7425f7dffbaf033fc18703d82f7d96cf2"
+      }
     },
     {
       "id": "seanmcgrathmusic",
@@ -567,7 +668,12 @@
           "timingRawRetained": false,
           "hasChords": true
         }
-      ]
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-26T07:00:44.924337Z",
+        "sourceHead": "82fd67f7425f7dffbaf033fc18703d82f7d96cf2"
+      }
     },
     {
       "id": "worshiptogether",
@@ -588,7 +694,12 @@
           "id": "import-only",
           "status": "retired"
         }
-      ]
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-26T07:00:44.924337Z",
+        "sourceHead": "82fd67f7425f7dffbaf033fc18703d82f7d96cf2"
+      }
     },
     {
       "id": "musicbrainz",
@@ -628,7 +739,12 @@
           "timingRawRetained": false,
           "hasChords": false
         }
-      ]
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-26T07:00:44.924337Z",
+        "sourceHead": "82fd67f7425f7dffbaf033fc18703d82f7d96cf2"
+      }
     },
     {
       "id": "wikidata",
@@ -702,54 +818,145 @@
           "timingRawRetained": false,
           "hasChords": false
         }
-      ]
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-26T07:00:44.924337Z",
+        "sourceHead": "82fd67f7425f7dffbaf033fc18703d82f7d96cf2"
+      }
     },
     {
       "id": "wikimediacommons",
       "name": "Wikimedia Commons",
-      "status": "transient_error",
+      "status": "healthy",
       "coverage": {
-        "status": "partial",
-        "verifiedCapabilities": [],
-        "unverifiedCapabilities": [
+        "status": "complete",
+        "verifiedCapabilities": [
           "artwork",
           "metadata"
-        ]
+        ],
+        "unverifiedCapabilities": []
       },
       "probes": [
         {
           "id": "bach-portrait",
-          "status": "transient_error",
-          "reason": "rate_limited"
+          "status": "healthy",
+          "candidateId": "File:Johann Sebastian Bach.jpg",
+          "providerId": "wikimediacommons",
+          "bodyCharacters": 0,
+          "metadataFields": [
+            "licensedImages"
+          ],
+          "verifiedCapabilities": [
+            "artwork",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false
         }
-      ]
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-26T09:24:35.397109Z",
+        "sourceHead": "af3c65124588bee4496f3c5d197809d59f804738",
+        "httpDiagnostics": {
+          "networkFailures": 0,
+          "hosts": {
+            "commons.wikimedia.org": {
+              "requests": 1,
+              "statuses": {
+                "200": 1
+              },
+              "retryAfterSeconds": {},
+              "databaseLag": {}
+            }
+          }
+        }
+      }
     },
     {
       "id": "wikisource",
       "name": "Wikisource",
-      "status": "transient_error",
+      "status": "partial_coverage",
       "coverage": {
         "status": "partial",
-        "verifiedCapabilities": [],
-        "unverifiedCapabilities": [
+        "verifiedCapabilities": [
           "catalog",
-          "fileImport",
           "lyrics",
           "metadata"
+        ],
+        "unverifiedCapabilities": [
+          "fileImport"
         ]
       },
       "probes": [
         {
           "id": "cleansing-wave-palmer",
-          "status": "transient_error",
-          "reason": "rate_limited"
+          "status": "healthy",
+          "candidateId": "sha256:e915a1ba387e3dd0",
+          "providerId": "wikisource",
+          "bodyCharacters": 664,
+          "metadataFields": [
+            "copyrightTags",
+            "identityScope",
+            "resolvedPageId",
+            "resolvedTitle",
+            "revision"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false
         },
         {
           "id": "dunbar-hymn-1",
-          "status": "transient_error",
-          "reason": "rate_limited"
+          "status": "healthy",
+          "candidateId": "sha256:9395d47d4cb4346c",
+          "providerId": "wikisource",
+          "bodyCharacters": 496,
+          "metadataFields": [
+            "copyrightTags",
+            "identityScope",
+            "resolvedPageId",
+            "resolvedTitle",
+            "revision"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false
         }
-      ]
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-26T09:24:40.849705Z",
+        "sourceHead": "af3c65124588bee4496f3c5d197809d59f804738",
+        "httpDiagnostics": {
+          "networkFailures": 0,
+          "hosts": {
+            "en.wikisource.org": {
+              "requests": 4,
+              "statuses": {
+                "200": 4
+              },
+              "retryAfterSeconds": {},
+              "databaseLag": {}
+            }
+          }
+        }
+      }
     }
   ],
   "runtime": "local",
@@ -972,84 +1179,31 @@
     "roadblocks": [
       {
         "source": "synclrc",
-        "status": "unavailable",
-        "reason": "empty_search_results",
-        "unverifiedCapabilities": [
-          "catalog",
-          "lineTiming",
-          "lyrics",
-          "metadata",
-          "wordTiming"
-        ],
-        "tried": "Regular all-source live CLI. SyncLRC returned empty_search_results for both independent named canaries, repeating prior local evidence; Better Lyrics returned unavailable rather than yesterday access_denied. No identity/field/schema regression proved, endpoint guessing, login or bypass attempted.",
+        "reason": "HTTP200 normal response schema with empty results on both canaries",
+        "tried": "Production selected-source CLI plus one bounded response-shape diagnostic; no alternate IDs/endpoints",
         "resolved": false,
-        "userAction": "No immediate user action; retain source and recheck availability next run."
+        "userAction": "No immediate action; upstream availability recheck later"
       },
       {
         "source": "betterlyrics",
-        "status": "unavailable",
-        "reason": "unavailable",
-        "unverifiedCapabilities": [
-          "catalog",
-          "lineTiming",
-          "lyrics",
-          "metadata",
-          "wordTiming"
-        ],
-        "tried": "Regular all-source live CLI. SyncLRC returned empty_search_results for both independent named canaries, repeating prior local evidence; Better Lyrics returned unavailable rather than yesterday access_denied. No identity/field/schema regression proved, endpoint guessing, login or bypass attempted.",
+        "reason": "HTTP401 anonymous cache miss; publisher docs say uncached fetch needs API key and new keys are not being issued",
+        "tried": "Exact registered canary with title/artist/album/duration, recorded actual HTTP status, reviewed publisher authentication/errors docs",
         "resolved": false,
-        "userAction": "No immediate user action; retain source and recheck availability next run."
-      },
-      {
-        "source": "ozbcoz",
-        "status": "import_only",
-        "reason": "import_only",
-        "unverifiedCapabilities": [
-          "chords",
-          "fileImport",
-          "lyrics",
-          "metadata"
-        ],
-        "tried": "Included in full registered-source check. Prior Chordie copied-text host import and synthetic fixtures do not prove publisher file download/native import. No unattended browser/account flow opened.",
-        "resolved": false,
-        "userAction": "Permitted publisher download and end-to-end import canaries remain necessary; capability is explicitly unverified."
+        "userAction": "No immediate action; no credential substitution or cache-priming workaround attempted"
       },
       {
         "source": "chordie",
-        "status": "partial_coverage",
-        "reason": "healthy",
-        "unverifiedCapabilities": [
-          "fileImport"
-        ],
-        "tried": "Included in full registered-source check. Prior Chordie copied-text host import and synthetic fixtures do not prove publisher file download/native import. No unattended browser/account flow opened.",
+        "reason": "fileImport remains unverified; normal catalog/lyrics/chords/metadata verified",
+        "tried": "Reviewed public page controls and linked publisher JavaScript; public ChordPro view/copy confirmed but no publisher file download control established",
         "resolved": false,
-        "userAction": "Permitted publisher download and end-to-end import canaries remain necessary; capability is explicitly unverified."
-      },
-      {
-        "source": "wikimediacommons",
-        "status": "transient_error",
-        "reason": "rate_limited",
-        "unverifiedCapabilities": [
-          "artwork",
-          "metadata"
-        ],
-        "tried": "Normal production CLI bounded retry/pacing/Retry-After handling; no extra requests following rate_limited outcomes. Rate/service classification does not assert an exact HTTP status.",
-        "resolved": false,
-        "userAction": "No immediate user action; retry next scheduled run. Wikisource fileImport also remains unverified."
+        "userAction": "A permitted publisher-download route is needed to verify this separate advertised capability"
       },
       {
         "source": "wikisource",
-        "status": "transient_error",
-        "reason": "rate_limited",
-        "unverifiedCapabilities": [
-          "catalog",
-          "fileImport",
-          "lyrics",
-          "metadata"
-        ],
-        "tried": "Normal production CLI bounded retry/pacing/Retry-After handling; no extra requests following rate_limited outcomes. Rate/service classification does not assert an exact HTTP status.",
+        "reason": "fileImport export service503 while both normal lookup canaries now pass4HTTP200",
+        "tried": "Normal CLI recheck and official export homepage request; no guessed download URL or substitute document",
         "resolved": false,
-        "userAction": "No immediate user action; retry next scheduled run. Wikisource fileImport also remains unverified."
+        "userAction": "No immediate action; official export service must recover for file import verification"
       }
     ],
     "resolvedPriorRoadblocks": [
@@ -1057,6 +1211,18 @@
         "source": "lrclib",
         "prior": "rate_limited",
         "current": "Production catalog/lyrics/metadata/lineTiming canary healthy; no schema or policy change."
+      },
+      {
+        "source": "wikimediacommons",
+        "current": "Normal production canary recovered1HTTP200"
+      },
+      {
+        "source": "wikisource",
+        "current": "Both normal search/resolve canaries recovered4HTTP200; separate file import still unverified"
+      },
+      {
+        "source": "ozbcoz",
+        "current": "Two real public HTTP downloads passed production import/save/reopen/export with chords/metadata/comments retained; host ingestion verified, no native picker claim"
       }
     ],
     "changedExternalOutcomes": [
@@ -1094,21 +1260,280 @@
     "validationScope": "Full offline catalog validation exit0; full19-source live diagnostic exit1 with external/coverage blockers. Discovery-only registry JSON parse,17 unique IDs,preservation of all16 prior decisions and diff-check passed. No extraction/schema/runtime code changes requiring provider/controller tests or analysis; no source activated.",
     "runtimeOwnership": {
       "allDartClientsReleased": true,
-      "lastReleaseAtUtc": "2026-10-26T07:00:45.065042+00:00",
-      "noFlutterPubgetAnalyzeBuildJavaGradleAdbDevice": true,
-      "noSecretsOrRawDocumentsPublished": true
+      "lastReleaseAtUtc": "2026-10-26T09:29:57.264692+00:00",
+      "noFlutterPubgetAnalyzeBuildJavaGradleAdbDevice": false,
+      "noSecretsOrRawDocumentsPublished": true,
+      "details": "Host Flutter tests/analysis/private locked pubget only; no build/Java/Gradle/ADB/device/user library"
     },
     "publication": {
-      "pullRequest": "https://github.com/freevia-org/Singbook/pull/94",
-      "sourceBaseAtProbe": "82fd67f7425f7dffbaf033fc18703d82f7d96cf2",
-      "reviewHead": "4fc1506ba6c67a3a4213d009b74935f59582437e",
+      "pullRequest": "https://github.com/freevia-org/Singbook/pull/154",
+      "sourceBaseAtProbe": "7c667864",
+      "reviewHead": "af3c65124588bee4496f3c5d197809d59f804738",
       "changedFiles": [
-        "config/source-discovery.json"
+        "docs/source-maintenance.md",
+        "tool/source_maintenance.dart",
+        "tool/source_import_maintenance_test.dart",
+        "tool/src/maintenance_http_diagnostics.dart",
+        "test/providers/maintenance_http_diagnostics_test.dart"
       ],
       "catalogRevision": 7,
       "newSourcesActivated": 0,
       "automaticMerge": false,
-      "state": "draft review only; no public-main publication"
+      "state": "review pending; code not yet integrated"
+    },
+    "followup": {
+      "reason": "Human requested completion and diagnosis of apparent rate limits",
+      "sourceHead": "af3c65124588bee4496f3c5d197809d59f804738",
+      "primaryAllSourceMeasuredAt": "2026-10-26T07:00:44.924337Z",
+      "selectedSourceExecutions": {
+        "wikimediacommons": {
+          "startedAt": "2026-10-26T09:24:31.712881+00:00",
+          "command": [
+            "C:\\Users\\anton\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
+            "--packages=.dart_tool/package_config.json",
+            "tool/source_maintenance.dart",
+            "--source",
+            "wikimediacommons",
+            "--report",
+            "E:\\Users\\anton\\Documents\\Claude\\Singbook-datasources\\artifacts\\source-maintenance\\2026-10-26-validation\\wikimediacommons.json"
+          ],
+          "preGuards": {
+            "head": true,
+            "clean": true,
+            "tracked": true,
+            "extra": true,
+            "sdk": true
+          },
+          "nativeHardTimeoutSeconds": 120,
+          "deviceUsed": false,
+          "networkRequested": true,
+          "ownedPid": 71632,
+          "finishedAt": "2026-10-26T09:24:35.625698+00:00",
+          "nativeElapsedSeconds": 3.905999999959022,
+          "exitCode": 0,
+          "timedOut": false,
+          "stdoutAndStderrEof": true,
+          "ownedJobActiveProcessesAfter": 0,
+          "jobHandleClosed": true,
+          "postGuards": {
+            "head": true,
+            "clean": true,
+            "tracked": true,
+            "extra": true,
+            "sdk": true
+          },
+          "failureType": null,
+          "localSdkReleased": true,
+          "passed": true
+        },
+        "wikisource": {
+          "startedAt": "2026-10-26T09:24:35.937863+00:00",
+          "command": [
+            "C:\\Users\\anton\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
+            "--packages=.dart_tool/package_config.json",
+            "tool/source_maintenance.dart",
+            "--source",
+            "wikisource",
+            "--report",
+            "E:\\Users\\anton\\Documents\\Claude\\Singbook-datasources\\artifacts\\source-maintenance\\2026-10-26-validation\\wikisource.json"
+          ],
+          "preGuards": {
+            "head": true,
+            "clean": true,
+            "tracked": true,
+            "extra": true,
+            "sdk": true
+          },
+          "nativeHardTimeoutSeconds": 120,
+          "deviceUsed": false,
+          "networkRequested": true,
+          "ownedPid": 1472,
+          "finishedAt": "2026-10-26T09:24:41.081219+00:00",
+          "nativeElapsedSeconds": 5.14000000001397,
+          "exitCode": 1,
+          "timedOut": false,
+          "stdoutAndStderrEof": true,
+          "ownedJobActiveProcessesAfter": 0,
+          "jobHandleClosed": true,
+          "postGuards": {
+            "head": true,
+            "clean": true,
+            "tracked": true,
+            "extra": true,
+            "sdk": true
+          },
+          "failureType": null,
+          "localSdkReleased": true,
+          "passed": false
+        },
+        "synclrc": {
+          "startedAt": "2026-10-26T09:24:41.516085+00:00",
+          "command": [
+            "C:\\Users\\anton\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
+            "--packages=.dart_tool/package_config.json",
+            "tool/source_maintenance.dart",
+            "--source",
+            "synclrc",
+            "--report",
+            "E:\\Users\\anton\\Documents\\Claude\\Singbook-datasources\\artifacts\\source-maintenance\\2026-10-26-validation\\synclrc.json"
+          ],
+          "preGuards": {
+            "head": true,
+            "clean": true,
+            "tracked": true,
+            "extra": true,
+            "sdk": true
+          },
+          "nativeHardTimeoutSeconds": 120,
+          "deviceUsed": false,
+          "networkRequested": true,
+          "ownedPid": 7312,
+          "finishedAt": "2026-10-26T09:24:45.293978+00:00",
+          "nativeElapsedSeconds": 3.7810000000172295,
+          "exitCode": 1,
+          "timedOut": false,
+          "stdoutAndStderrEof": true,
+          "ownedJobActiveProcessesAfter": 0,
+          "jobHandleClosed": true,
+          "postGuards": {
+            "head": true,
+            "clean": true,
+            "tracked": true,
+            "extra": true,
+            "sdk": true
+          },
+          "failureType": null,
+          "localSdkReleased": true,
+          "passed": false
+        },
+        "betterlyrics": {
+          "startedAt": "2026-10-26T09:24:45.589786+00:00",
+          "command": [
+            "C:\\Users\\anton\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
+            "--packages=.dart_tool/package_config.json",
+            "tool/source_maintenance.dart",
+            "--source",
+            "betterlyrics",
+            "--report",
+            "E:\\Users\\anton\\Documents\\Claude\\Singbook-datasources\\artifacts\\source-maintenance\\2026-10-26-validation\\betterlyrics.json"
+          ],
+          "preGuards": {
+            "head": true,
+            "clean": true,
+            "tracked": true,
+            "extra": true,
+            "sdk": true
+          },
+          "nativeHardTimeoutSeconds": 120,
+          "deviceUsed": false,
+          "networkRequested": true,
+          "ownedPid": 62108,
+          "finishedAt": "2026-10-26T09:24:52.515181+00:00",
+          "nativeElapsedSeconds": 6.921999999962281,
+          "exitCode": 1,
+          "timedOut": false,
+          "stdoutAndStderrEof": true,
+          "ownedJobActiveProcessesAfter": 0,
+          "jobHandleClosed": true,
+          "postGuards": {
+            "head": true,
+            "clean": true,
+            "tracked": true,
+            "extra": true,
+            "sdk": true
+          },
+          "failureType": null,
+          "localSdkReleased": true,
+          "passed": false
+        }
+      },
+      "networkVolumeFinding": "No HTTP429 observed in selected checks. Commons1x200; Wikisource4x200; SyncLRC2x200 empty results; BetterLyrics1x401 plus LRCLIB2x200/1x503 Retry-After1 recovered. Earlier report lacked status diagnostics, so its generic rate_limited cannot establish a quota excess.",
+      "importValidation": {
+        "schemaVersion": 1,
+        "runtime": "host-flutter-test",
+        "measuredAt": "2026-10-26T09:21:46.414569Z",
+        "userLibraryAccessed": false,
+        "documentsRetained": false,
+        "httpDiagnostics": {
+          "networkFailures": 0,
+          "hosts": {
+            "ozbcoz.com": {
+              "requests": 2,
+              "statuses": {
+                "200": 2
+              },
+              "retryAfterSeconds": {},
+              "databaseLag": {}
+            }
+          }
+        },
+        "probes": [
+          {
+            "id": "2941",
+            "source": "ozbcoz",
+            "sourceUrl": "https://ozbcoz.com/Songs/cp/get_pro.php?ID=2941&instr=guitar",
+            "expectedTitle": "Wild Rover [C]",
+            "expectedArtist": "The Dubliners",
+            "measuredAt": "2026-10-26T09:21:44.654053Z",
+            "nativeFilePickerTested": false,
+            "status": "healthy",
+            "downloadedBytes": 2110,
+            "downloadedTextSha256": "2babd7545e39e10c463775f1e7b6da454160963f59ef9a8cba5de0fb87052ee4",
+            "chordTokensRetained": 79,
+            "metadataFields": [
+              "key"
+            ],
+            "commentLinesRetained": 11,
+            "sourceRecordCount": 0,
+            "saveReopenExact": true,
+            "exportBodyMetadataIdentityExact": true,
+            "verifiedCapabilities": [
+              "fileImport",
+              "lyrics",
+              "chords",
+              "metadata"
+            ]
+          },
+          {
+            "id": "1683",
+            "source": "ozbcoz",
+            "sourceUrl": "https://ozbcoz.com/Songs/cp/get_pro.php?ID=1683&instr=guitar",
+            "expectedTitle": "Banana Boat Song",
+            "expectedArtist": "Harry Belafonte",
+            "measuredAt": "2026-10-26T09:21:45.362834Z",
+            "nativeFilePickerTested": false,
+            "status": "healthy",
+            "downloadedBytes": 1648,
+            "downloadedTextSha256": "4c37793866fb8c37f1f05eef968eff072b0498af4cf4d51d1aa8e45e306b8e57",
+            "chordTokensRetained": 65,
+            "metadataFields": [
+              "key"
+            ],
+            "commentLinesRetained": 10,
+            "sourceRecordCount": 0,
+            "saveReopenExact": true,
+            "exportBodyMetadataIdentityExact": true,
+            "verifiedCapabilities": [
+              "fileImport",
+              "lyrics",
+              "chords",
+              "metadata"
+            ]
+          }
+        ]
+      },
+      "validation": {
+        "focusedTestsPassed": 28,
+        "liveImportTestPassed": true,
+        "analyzerIssues": 0,
+        "fullCatalogOfflineExitCode": 0,
+        "dependencyRecovery": "8 shared cache libraries missing, resolved using private PUB_CACHE and locked pubget; tracked lock unchanged"
+      },
+      "limitations": [
+        "Different sources have explicit measurement timestamps/source heads; no new full-suite claim",
+        "Native file picker not tested; no user library accessed",
+        "Wikisource file export service returned503; Chordie copied-text import is not publisher-file-download evidence"
+      ]
     }
   }
 }
