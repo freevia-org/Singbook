@@ -205,6 +205,18 @@
         "https://littlesongbook.com/licensing/"
       ],
       "reason": "2026-10-25: Publisher describes traditional children songs from around the world with country/language, known author or tradition, and edition/variant context. Its licensing page distinguishes original English translations, essays, instructions and Q&A, allowing short quotations with links while asking that original writing not be republished wholesale. This does not establish per-work song/translation reuse rights for persistent app display/storage. No public machine API, lyric extraction or account access was verified. Potential regional/language supplement and overlap with folk/public-domain catalogs remain unmeasured. Defer pending an explicit access and per-work rights/attribution contract, compatible adapter and two independent live canaries; do not scrape original translations under quotation permission."
+    },
+    {
+      "id": "openlyrics-examples",
+      "name": "OpenLyrics format and examples",
+      "firstSeen": "2026-10-26",
+      "lastChecked": "2026-10-26",
+      "status": "rejected",
+      "documentation": [
+        "https://docs.openlyrics.org/en/latest/",
+        "https://docs.openlyrics.org/en/latest/dataformat.html"
+      ],
+      "reason": "Publisher identifies an XML interchange standard for Christian worship songs and an archive containing some examples, rather than a documented searchable regional catalog. This dedicated focus falls outside the owner's requested provider scope. Format language/chord/translation support does not establish catalog coverage. No per-work rights, attribution, stable source IDs, live query/extraction flow or independent canaries were established. No archive/lyric requests, credentials, accounts or source activation. Existing deferred regional candidates remain unchanged; overlap not measured."
     }
   ]
 }
