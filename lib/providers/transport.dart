@@ -196,12 +196,13 @@ class ProviderTransport {
     }
     cancel?.throwIfCancelled();
     final limit = (maxBytes ?? this.maxBytes).clamp(1, _hardMaxBytes);
-    final previous = _queues[url.host] ?? Future<void>.value();
+    final queueKey = _rateKey(url.host);
+    final previous = _queues[queueKey] ?? Future<void>.value();
     final result = previous.then(
       (_) =>
           _run(url, method, headers, body, cancel, limit, timeout, hostPolicy),
     );
-    _queues[url.host] = result.then<void>((_) {}, onError: (Object _) {});
+    _queues[queueKey] = result.then<void>((_) {}, onError: (Object _) {});
     return _cancellable(result, cancel);
   }
 
@@ -214,8 +215,13 @@ class ProviderTransport {
         redirectHosts.contains(b);
   }
 
+  String _rateKey(String host) =>
+      host == 'www.musicbrainz.org' ? 'musicbrainz.org' : host;
+
   Future<void> _pace(String host, CancellationToken? cancel) async {
-    final wait = (_next[host] ?? DateTime.now()).difference(DateTime.now());
+    final wait = (_next[_rateKey(host)] ?? DateTime.now()).difference(
+      DateTime.now(),
+    );
     if (wait > Duration.zero) {
       await _cancellable(Future<void>.delayed(wait), cancel);
     }
@@ -391,7 +397,15 @@ class ProviderTransport {
       cancel?.throwIfCancelled();
       throw const ProviderException('network');
     } finally {
-      _next[url.host] = DateTime.now().add(hostInterval);
+      final key = _rateKey(url.host);
+      // MusicBrainz's per-second policy also applies to retries and redirects,
+      // which run inside the transport and bypass the adapter's outer queue.
+      const musicBrainzInterval = Duration(milliseconds: 1100);
+      final interval =
+          key == 'musicbrainz.org' && hostInterval < musicBrainzInterval
+          ? musicBrainzInterval
+          : hostInterval;
+      _next[key] = DateTime.now().add(interval);
     }
   }
 
