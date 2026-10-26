@@ -1530,7 +1530,10 @@ const _repeatingSections = {'verse', 'chorus', 'pre-chorus', 'refrain'};
 /// pre-chorus, refrain) with as many lyric lines, if that line has chords.
 /// Chords keep their relative word positions. Lines with escapes or
 /// non-plain characters are left alone.
-({String body, int lines}) _fillRepeatedSections(String body) {
+({String body, int lines}) _fillRepeatedSections(
+  String body, {
+  bool requireMatchingLyrics = false,
+}) {
   final raw = body.split('\n');
   final parsed = parseArrangement(body);
   final sections = <({String kind, List<int> lyrics})>[];
@@ -1604,6 +1607,10 @@ const _repeatingSections = {'verse', 'chorus', 'pre-chorus', 'refrain'};
       }
       final fromWords = _lineWords(from.text), toWords = _lineWords(to.text);
       if (fromWords.isEmpty || toWords.isEmpty) continue;
+      if (requireMatchingLyrics &&
+          _repeatKey(from.text) != _repeatKey(to.text)) {
+        continue;
+      }
       final anchors = <ChordAnchor>[];
       for (final chord in from.chords) {
         final word = fromWords.indexWhere((w) => chord.offset < w.end);
@@ -2093,7 +2100,172 @@ List<ChordAnchor>? _retargetChords(
   return moved;
 }
 
-({String body, List<String> sourceIds, Set<String> movedIds}) _overlayChords(
+/// Exact whole-line contexts for charts whose rows subdivide lyric paragraphs.
+/// Complete contexts provide exact evidence independently of fuzzy alignment.
+/// Source intervals may support repeated identical contexts, but cannot lend
+/// overlapping evidence to different contexts. Conflicting occurrences abstain.
+Map<int, List<ChordAnchor>> _exactContextChords(
+  List<ArrangementLine> target,
+  String chart,
+) {
+  if (chart.length > 200000 || target.length > 5000) return const {};
+  final source = parseArrangement(chart);
+  bool usable(ArrangementLine line) =>
+      !line.directive &&
+      sectionLabelForLine(line) == null &&
+      line.text.length <= 2000 &&
+      line.text.characters.length == line.text.length &&
+      _lineWords(line.text).isNotEmpty;
+  final groups =
+      <
+        String,
+        ({
+          List<(int, int, String)> anchors,
+          String signature,
+          List<(int, int)> ranges,
+        })
+      >{};
+  final ambiguous = <String>{};
+  var budget = 100000;
+  for (var start = 0; start < source.length; start++) {
+    final tokens = <String>[];
+    final anchors = <(int, int, String)>[];
+    for (var end = start; end < source.length && end < start + 8; end++) {
+      final line = source[end];
+      if (!usable(line)) break;
+      final words = _lineWords(line.text);
+      if (tokens.length + words.length > 80) break;
+      budget -= words.length;
+      if (budget < 0) return const {};
+      for (final chord in line.chords) {
+        final next = words.indexWhere((word) => chord.offset < word.end);
+        final word = next < 0 ? words.length - 1 : next;
+        final inside = next < 0
+            ? words[word].end - words[word].start
+            : (chord.offset - words[word].start).clamp(
+                0,
+                words[word].end - words[word].start,
+              );
+        anchors.add((tokens.length + word, inside, chord.chord));
+      }
+      tokens.addAll(words.map((word) => word.word));
+      if (end == start ||
+          tokens.length < 12 ||
+          tokens.toSet().length < 6 ||
+          anchors.isEmpty) {
+        continue;
+      }
+      final key = tokens.join(' ');
+      final signature = jsonEncode(
+        anchors.map((a) => [a.$1, a.$2, a.$3]).toList(),
+      );
+      final prior = groups[key];
+      if (prior != null) {
+        if (prior.signature != signature) ambiguous.add(key);
+        prior.ranges.add((start, end + 1));
+      } else {
+        groups[key] = (
+          anchors: List.of(anchors),
+          signature: signature,
+          ranges: [(start, end + 1)],
+        );
+      }
+    }
+  }
+  final matches =
+      <
+        ({
+          String key,
+          int start,
+          int end,
+          List<({int line, int start, int end})> words,
+        })
+      >[];
+  for (var start = 0; start < target.length; start++) {
+    final tokens = <String>[];
+    final locations = <({int line, int start, int end})>[];
+    for (var end = start; end < target.length && end < start + 3; end++) {
+      if (!usable(target[end])) break;
+      final words = _lineWords(target[end].text);
+      if (tokens.length + words.length > 80) break;
+      budget -= words.length;
+      if (budget < 0) return const {};
+      tokens.addAll(words.map((word) => word.word));
+      locations.addAll(
+        words.map((word) => (line: end, start: word.start, end: word.end)),
+      );
+      final key = tokens.join(' ');
+      if (groups.containsKey(key) && !ambiguous.contains(key)) {
+        matches.add((
+          key: key,
+          start: start,
+          end: end + 1,
+          words: List.of(locations),
+        ));
+      }
+    }
+  }
+  matches.sort((a, b) {
+    final length = b.words.length.compareTo(a.words.length);
+    return length != 0 ? length : a.start.compareTo(b.start);
+  });
+  final claimedLines = <int>{};
+  final used = <({int start, int end, String key})>[];
+  final result = <int, List<ChordAnchor>>{};
+  for (final match in matches) {
+    if (List.generate(
+      match.end - match.start,
+      (i) => match.start + i,
+    ).any(claimedLines.contains)) {
+      continue;
+    }
+    final group = groups[match.key]!;
+    final available = group.ranges.where(
+      (range) => !used.any(
+        (prior) =>
+            prior.key != match.key &&
+            range.$1 < prior.end &&
+            prior.start < range.$2,
+      ),
+    );
+    if (available.isEmpty) continue;
+    final mapped = <int, List<ChordAnchor>>{};
+    var conflict = false;
+    for (final (word, inside, chord) in group.anchors) {
+      final location = match.words[word];
+      final offset =
+          location.start + inside.clamp(0, location.end - location.start);
+      final line = mapped.putIfAbsent(location.line, () => []);
+      if (line.any(
+        (anchor) => anchor.offset == offset && anchor.chord != chord,
+      )) {
+        conflict = true;
+        break;
+      }
+      if (!line.any(
+        (anchor) => anchor.offset == offset && anchor.chord == chord,
+      )) {
+        line.add(ChordAnchor(offset, chord));
+      }
+    }
+    if (conflict) continue;
+    result.addAll(mapped);
+    claimedLines.addAll(
+      List.generate(match.end - match.start, (i) => match.start + i),
+    );
+    final range = available.first;
+    used.add((start: range.$1, end: range.$2, key: match.key));
+  }
+  return result;
+}
+
+({
+  String body,
+  List<String> sourceIds,
+  Set<String> movedIds,
+  bool contextApplied,
+})
+_overlayChords(
   String body,
   List<SourceResult> sources,
   SongCandidate selected,
@@ -2113,6 +2285,7 @@ List<ChordAnchor>? _retargetChords(
           int confidence,
         })
       >[];
+  final contextSources = <String>{};
   for (final source in sources) {
     if (!source.hasChords ||
         !_compatibleArrangementSetup(base, source, selected)) {
@@ -2121,11 +2294,42 @@ List<ChordAnchor>? _retargetChords(
     final donorBody = _keyCorrectedBody(source);
     // Lines whose wording differs slightly between sources (an extra "let it
     // be", a contraction) are aligned word by word where exact phrases fail.
-    final chords = {
-      ..._fuzzyLineChords(plain, donorBody),
-      for (final entry in _phraseChords(plain, donorBody).entries)
+    final contexts = _exactContextChords(plain, donorBody);
+    final fuzzy = _fuzzyLineChords(plain, donorBody);
+    final phrases = _phraseChords(plain, donorBody);
+    final priorChords = {
+      ...fuzzy,
+      for (final entry in phrases.entries)
         if (entry.value.isNotEmpty) entry.key: entry.value,
     };
+    final chords = {...fuzzy, ...contexts};
+    for (final entry in phrases.entries) {
+      if (entry.value.isEmpty) continue;
+      final context = contexts[entry.key];
+      // Keep every exact phrase placement. A complete exact context may add
+      // anchors only when it preserves all of those positions and symbols.
+      final agrees =
+          context != null &&
+          entry.value.every(
+            (anchor) => context.any(
+              (other) =>
+                  other.offset == anchor.offset && other.chord == anchor.chord,
+            ),
+          );
+      if (!agrees) chords[entry.key] = entry.value;
+    }
+    if (contexts.entries.any(
+      (entry) =>
+          identical(chords[entry.key], entry.value) &&
+          entry.value.any(
+            (anchor) => !(priorChords[entry.key] ?? const <ChordAnchor>[]).any(
+              (prior) =>
+                  prior.offset == anchor.offset && prior.chord == anchor.chord,
+            ),
+          ),
+    )) {
+      contextSources.add(source.id);
+    }
     final coverage = chords.entries.fold<int>(
       0,
       (n, entry) =>
@@ -2246,7 +2450,12 @@ List<ChordAnchor>? _retargetChords(
     }
   }
   if (contributorIds.isEmpty) {
-    return (body: body, sourceIds: const [], movedIds: const <String>{});
+    return (
+      body: body,
+      sourceIds: const [],
+      movedIds: const <String>{},
+      contextApplied: false,
+    );
   }
   // Charts often write a repeated chorus once, and repeats vary in backing
   // vocals ("(stand by me)"). A lyric line whose words, outside brackets,
@@ -2330,6 +2539,7 @@ List<ChordAnchor>? _retargetChords(
     body: output.join('\n'),
     sourceIds: applied ? contributorIds : const [],
     movedIds: applied ? movedIds : const <String>{},
+    contextApplied: applied && contributorIds.any(contextSources.contains),
   );
 }
 
@@ -2566,6 +2776,7 @@ SongDocument combineSources(
           body: best.body,
           sourceIds: const <String>[],
           movedIds: const <String>{},
+          contextApplied: false,
         );
   final sectionMerged = preferredSourceId == null
       ? _overlaySections(
@@ -3059,7 +3270,10 @@ SongDocument combineSources(
       : null;
   final sectioned = inferSectionDirectives(sectionMerged.body);
   final filled = preferredSourceId == null && chordSourceIds.isNotEmpty
-      ? _fillRepeatedSections(sectioned)
+      ? _fillRepeatedSections(
+          sectioned,
+          requireMatchingLyrics: merged.contextApplied,
+        )
       : (body: sectioned, lines: 0);
   final finalBody = filled.body;
   final song = SongDocument(
