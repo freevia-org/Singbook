@@ -270,7 +270,11 @@
       "selectedNormalizedSha256": "45a9d8f7b237a6b4e038762d939e505a9868940afdaae64b5a375f9fb3f5815e",
       "hashComparison": "Independently recomputed from the official English-version page rich-text block and matched against the benchmark selected-candidate report; normalized hashes differ.",
       "editionAssessment": "The official page is the English-language version named in the corpus; exact recording-master binding is not established.",
-      "adjudication": "unresolved localized transcription or repeat variant; hash difference alone is not scored incorrect."
+      "adjudication": "The normalized sequences differ materially (29 token edits; 88.4% similarity). The official page matches the corpus English language, but exact recording/edition binding is unproven; review before assigning correctness.",
+      "selectedSourcePage": "https://genius.com/Nena-99-red-balloons-lyrics",
+      "differenceClass": "material_text_difference_unadjudicated",
+      "tokenSequenceEditDistance": 29,
+      "sequenceSimilarityPercent": 88.4
     },
     {
       "songId": "song-098",
