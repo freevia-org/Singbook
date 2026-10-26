@@ -3034,7 +3034,7 @@
       "id": "song-074",
       "title": "Stairway to Heaven",
       "artist": "Led Zeppelin",
-      "recordingEdition": null,
+      "recordingEdition": "1971 Led Zeppelin IV original studio performance, represented by the official Led Zeppelin IV (Remastered) track",
       "language": "English",
       "genre": "unspecified",
       "expected": {
@@ -3047,9 +3047,14 @@
             "evidence": []
           },
           "key": {
-            "status": "unverified",
-            "value": null,
-            "evidence": []
+            "status": "verified",
+            "value": "Am",
+            "evidence": [
+              "https://apps.musicnotes.com/sheetmusic/led-zeppelin/stairway-to-heaven/MN0158500",
+              "https://www.fabermusic.com/shop/stairway-to-heaven-d52760"
+            ],
+            "reviewRecord": "tool/metadata_reference_evidence/stairway_to_heaven_key.json",
+            "notes": "Album-performance home key is A minor. A separate licensed leadsheet writes the relative-major key signature as C major; see the scope caveat in the review record."
           },
           "chords": {
             "status": "unverified",
@@ -3061,12 +3066,29 @@
           "recordingKey": "Am"
         },
         "recordingReference": {
-          "status": "unverified",
-          "providerId": null,
-          "candidateId": null,
+          "status": "verified",
+          "providerId": "genius",
+          "candidateId": "1061",
           "isrc": null,
-          "evidence": []
+          "recordingEdition": "1971 Led Zeppelin IV original studio performance, represented by the official Led Zeppelin IV (Remastered) track",
+          "evidence": [
+            "https://genius.com/Led-zeppelin-stairway-to-heaven-lyrics",
+            "https://music.apple.com/ag/song/stairway-to-heaven/580708180"
+          ],
+          "notes": "Genius record 1061 cross-links Apple Music track 580708180; Apple identifies Led Zeppelin IV (Remastered)."
         }
+      },
+      "recordingEditionStatus": "verified",
+      "catalogSelection": {
+        "providerId": "genius",
+        "candidateId": "1061",
+        "title": "Stairway to Heaven",
+        "artist": "Led Zeppelin",
+        "evidence": [
+          "https://genius.com/Led-zeppelin-stairway-to-heaven-lyrics",
+          "https://music.apple.com/ag/song/stairway-to-heaven/580708180"
+        ],
+        "notes": "Exact Genius record is linked to Apple Music track 580708180; Apple identifies the Led Zeppelin IV (Remastered) album track dated 1971-11-08."
       }
     },
     {

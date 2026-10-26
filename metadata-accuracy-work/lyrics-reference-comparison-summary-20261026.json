@@ -43,11 +43,11 @@
         "strictCorpusAccuracyPercent": null,
         "evaluationStatus": "partial_adjudicated_comparisons",
         "accuracyAmongEvaluatedPercent": 100.0,
-        "referenceCoverage": 8,
+        "referenceCoverage": 9,
         "evaluatedReferences": 7,
-        "referenceCoveragePercent": 8.0,
-        "adjudicatedGoldReferenceCoverage": 8,
-        "adjudicatedGoldReferenceCoveragePercent": 8.0,
+        "referenceCoveragePercent": 9.0,
+        "adjudicatedGoldReferenceCoverage": 9,
+        "adjudicatedGoldReferenceCoveragePercent": 9.0,
         "correctnessBasis": "Only reviewed field-level gold references with comparable output scope count here. A mismatching arrangement-scoped key is reported separately as scopeMismatch, not as a wrong recording key. Observed source pages and provider candidates are evidence coverage, not correctness comparisons.",
         "scopeMismatchMeaning": "The selected key is supported as a chart/arrangement key, while the reviewed reference is the recording home key; the values are retained but not compared as like-scoped claims.",
         "scopeMismatchesExcludedFromEvaluatedDenominator": 1,
@@ -77,7 +77,21 @@
     },
     "reportSha256": "cca829d507ba46bcd912b89dae056514c0aadb4082b69b5904c80948b5c8f763",
     "runtimeCodeHead": "271753d4f613cf642f04e2c3f9af496435595a65",
-    "benchmarkLogicHead": "6e624afd235aaa3838257581b0be8b0ee2655e41"
+    "benchmarkLogicHead": "6e624afd235aaa3838257581b0be8b0ee2655e41",
+    "referenceCoverage": {
+      "lyrics": 0,
+      "key": 9,
+      "chords": 0
+    },
+    "strictComparisonsEvaluated": {
+      "lyrics": 0,
+      "key": 7,
+      "chords": 0
+    },
+    "latestReport": {
+      "path": "/Users/tony/Documents/ChatGPT/Singbook/artifacts/integration-coordinator/metadata-accuracy-100-20261026/progress-27-stairway-key-reference/report.json",
+      "sha256": "b78927f980c48dd315cffd7e480abc4432b07a1d1cebe1a09230c9abfcb5acbc"
+    }
   },
   "sourceCoverage": {
     "lyrics": {
@@ -513,6 +527,37 @@
         "sourcePageDifferencesAwaitingReview": 14
       },
       "nextStep": "Use attributed Google/Musixmatch/LyricFind panels and public lyric pages as practical reference evidence; adjudicate hash differences at the intended recording/edition level, and keep those results distinct from provider-label agreement and performance-specific correctness."
+    },
+    "strictAccuracy": {
+      "verifiedCorrect": 0,
+      "verifiedIncorrect": 0,
+      "scopeMismatch": 0,
+      "unverified": 99,
+      "unavailable": 1,
+      "denominator": 100,
+      "percent": null,
+      "strictCorpusAccuracyPercent": null,
+      "evaluationStatus": "no_adjudicated_correctness_comparisons",
+      "accuracyAmongEvaluatedPercent": null,
+      "referenceCoverage": 0,
+      "evaluatedReferences": 0,
+      "referenceCoveragePercent": 0.0,
+      "adjudicatedGoldReferenceCoverage": 0,
+      "adjudicatedGoldReferenceCoveragePercent": 0.0,
+      "correctnessBasis": "Only reviewed field-level gold references with comparable output scope count here. A mismatching arrangement-scoped key is reported separately as scopeMismatch, not as a wrong recording key. Observed source pages and provider candidates are evidence coverage, not correctness comparisons.",
+      "scopeMismatchMeaning": null,
+      "scopeMismatchesExcludedFromEvaluatedDenominator": 0,
+      "referenceCoverageMeaning": "Adjudicated field-level gold rows only; source-page observations are reported separately."
+    },
+    "practicalCoverage": {
+      "selectedLyrics": 99,
+      "multiProviderExactTextSupport": 15,
+      "singleProviderExactTextSupport": 84,
+      "googleLyricsPanelSearches": 8,
+      "googlePanelsHashed": 6,
+      "googleExactSelectedHashMatches": 1,
+      "googleDifferentHashesForReview": 5,
+      "interpretation": "Google panel observations count as practical external text evidence attributed to Musixmatch or LyricFind, not as a second independent lineage."
     }
   },
   "sourceContributions": {
@@ -995,7 +1040,16 @@
       "reason": "The selected key is from a same-song Ultimate Guitar chart that is not recordingCompatible with the selected Getz/Gilberto recording. Preserve the chart key; do not score it as a wrong recording-home key."
     },
     "corpusAccuracyPercent": null,
-    "note": "100% among the seven like-scoped, adjudicated recording-key comparisons; this is partial coverage, not a 100-song score. One differing arrangement-scoped claim remains separately visible."
+    "note": "100% among the seven like-scoped, adjudicated recording-key comparisons; this is partial coverage, not a 100-song score. One differing arrangement-scoped claim remains separately visible.",
+    "latestReviewedReference": {
+      "songId": "song-074",
+      "title": "Stairway to Heaven",
+      "recordingEdition": "1971 Led Zeppelin IV album performance",
+      "expectedHomeKey": "Am",
+      "currentApplicationKey": null,
+      "result": "reference added; output unavailable; not counted correct",
+      "evidenceRecord": "tool/metadata_reference_evidence/stairway_to_heaven_key.json"
+    }
   },
   "perSongSupportTiers": {
     "reportField": "build/metadata_accuracy/report.json:songs[].practicalLyricsSupport",
@@ -1094,7 +1148,7 @@
         "searchesWithoutPanel": 2,
         "independentLineageConfirmed": false,
         "lyricBodiesRetained": false,
-        "treatment": "Attributed source evidence. Exact hash match is practical corroboration; differences are review leads and not correctness judgments. Google is not counted as an independent upstream lineage.",
+        "treatment": "Google panels are practical reference evidence and differences trigger review. Exact text matches are corroboration; Google is attributed to Musixmatch or LyricFind and is not double-counted as an independent lineage.",
         "observedSongsWithPanel": 6,
         "searches": 8,
         "displayedResult": "Wonderwall exact hash; five differing hashes across four additional songs",
@@ -1118,7 +1172,14 @@
       "correctAmongComparable": 7,
       "scopeMismatch": 1,
       "referenceRowsIncludingScopeMismatch": 8,
-      "correctAmongComparablePercent": 100.0
+      "correctAmongComparablePercent": 100.0,
+      "latestReviewedReference": {
+        "songId": "song-074",
+        "expectedHomeKey": "Am",
+        "currentApplicationKey": null,
+        "status": "not passed: output unavailable",
+        "evidenceRecord": "tool/metadata_reference_evidence/stairway_to_heaven_key.json"
+      }
     },
     "chords": {
       "selectedChartsAvailable": 95,

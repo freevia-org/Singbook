@@ -2,14 +2,9 @@
   "schemaVersion": 1,
   "date": "2026-10-26",
   "generatedFrom": {
-    "benchmarkReport": "build/metadata_accuracy/report.json",
-    "runtimeCodeHead": "271753d4f613cf642f04e2c3f9af496435595a65",
-    "benchmarkReportSha256": "cca829d507ba46bcd912b89dae056514c0aadb4082b69b5904c80948b5c8f763",
-    "corpusSize": 100,
-    "cacheHits": 3100,
-    "networkAttempts": 0,
-    "uncachedOffline": 1030,
-    "benchmarkLogicHead": "e9c36f96adf6ea66cb55d0868af21c01b0b7f024"
+    "report": "artifacts/integration-coordinator/metadata-accuracy-100-20261026/progress-27-stairway-key-reference/report.json",
+    "reportSha256": "b78927f980c48dd315cffd7e480abc4432b07a1d1cebe1a09230c9abfcb5acbc",
+    "corpusSha256": "28835c7fe1660b3e4662af00129bb9a0bda349278d8e01875ed214cfb1aa5a72"
   },
   "policy": {
     "providerLabelAgreement": "practical exact-text support only; labels and candidate IDs do not establish independent source lineage",
@@ -66,11 +61,11 @@
         "strictCorpusAccuracyPercent": null,
         "evaluationStatus": "partial_adjudicated_comparisons",
         "accuracyAmongEvaluatedPercent": 100.0,
-        "referenceCoverage": 8,
+        "referenceCoverage": 9,
         "evaluatedReferences": 7,
-        "referenceCoveragePercent": 8.0,
-        "adjudicatedGoldReferenceCoverage": 8,
-        "adjudicatedGoldReferenceCoveragePercent": 8.0,
+        "referenceCoveragePercent": 9.0,
+        "adjudicatedGoldReferenceCoverage": 9,
+        "adjudicatedGoldReferenceCoveragePercent": 9.0,
         "correctnessBasis": "Only reviewed field-level gold references with comparable output scope count here. A mismatching arrangement-scoped key is reported separately as scopeMismatch, not as a wrong recording key. Observed source pages and provider candidates are evidence coverage, not correctness comparisons.",
         "scopeMismatchMeaning": "The selected key is supported as a chart/arrangement key, while the reviewed reference is the recording home key; the values are retained but not compared as like-scoped claims.",
         "scopeMismatchesExcludedFromEvaluatedDenominator": 1,
@@ -100,7 +95,7 @@
     },
     "songsWithMultiProviderSharedAlternativeButSelectedHashDiffers": 16,
     "suchRowsWhereSelectedHashHasRecordingCompatibleSupportAndAlternativesAreSameSongOnly": 16,
-    "interpretation": "For the reviewed rows, shared alternative text hashes are from sameSong candidates with no recording-compatible provider; the selected text retains recording-compatible support. Provider consensus is recorded but must not override edition identity.",
+    "interpretation": "Strict accuracy counts reviewed field-level references against scope-compatible application output. Practical source support and independently reviewed reference coverage are separate: 99/100 selected lyrics, 15 exact selected-text matches across multiple provider labels, 84 with one label, and Google panel evidence on 8 searches (6 hashes, one exact selected hash). These indicate useful corroboration, not complete recording-level correctness. Key references cover 9 rows; only 7 outputs are comparable, with one scope mismatch and one unavailable Stairway output.",
     "independentlyRecomputedSourceTextHashes": 5,
     "readerInterpretation": {
       "strictVerifiedMeans": "A song counts as verified-correct only after a reviewed, scope-compatible reference comparison supports the selected value. The current zero means no lyric comparison has been adjudicated to that standard; it does not mean the 99 selected lyric texts are all wrong or unsupported.",
@@ -202,7 +197,17 @@
         }
       ]
     },
-    "benchmarkLogicHead": "e9c36f96adf6ea66cb55d0868af21c01b0b7f024"
+    "benchmarkLogicHead": "e9c36f96adf6ea66cb55d0868af21c01b0b7f024",
+    "reviewedFieldReferenceCounts": {
+      "lyrics": 0,
+      "key": 9,
+      "chords": 0
+    },
+    "strictComparisonsEvaluated": {
+      "lyrics": 0,
+      "key": 7,
+      "chords": 0
+    }
   },
   "songs": [
     {
@@ -17878,7 +17883,7 @@
       "songId": "song-074",
       "title": "Stairway to Heaven",
       "artist": "Led Zeppelin",
-      "recordingEditionStatus": "unspecified",
+      "recordingEditionStatus": "verified",
       "sources": {
         "lyricCandidateCount": 3,
         "lyricProviderLabels": [
@@ -17966,7 +17971,13 @@
         "selectedValue": null,
         "selectedClaimScope": null,
         "evidenceType": null,
-        "sourceClaims": []
+        "sourceClaims": [],
+        "reviewedReference": {
+          "status": "verified",
+          "value": "Am",
+          "scope": "1971 Led Zeppelin IV album performance",
+          "evidenceRecord": "tool/metadata_reference_evidence/stairway_to_heaven_key.json"
+        }
       },
       "chords": {
         "fieldResult": "unverified",
@@ -23302,7 +23313,7 @@
         "searchesWithoutPanel": 2,
         "independentLineageConfirmed": false,
         "lyricBodiesRetained": false,
-        "treatment": "Attributed source evidence. Exact hash match is practical corroboration; differences are review leads. Google is not counted as an independent lineage."
+        "treatment": "An exact hash is practical text corroboration, while a different hash is a review lead. Google attributes these panels to Musixmatch or LyricFind; do not count the panel as independent of the attributed upstream provider."
       },
       "selectedLyricsRecordingScope": {
         "selectedLyrics": 99,
@@ -23329,7 +23340,18 @@
       "correctAmongComparable": 7,
       "scopeMismatch": 1,
       "referenceRowsIncludingScopeMismatch": 8,
-      "correctAmongComparablePercent": 100.0
+      "correctAmongComparablePercent": 100.0,
+      "reviewedRecordingScopedReferences": 9,
+      "stairwayToHeaven": {
+        "reference": "Am",
+        "selectedOutput": null,
+        "status": "reference added; output remains unavailable",
+        "scope": "1971 Led Zeppelin IV album performance",
+        "sources": [
+          "https://apps.musicnotes.com/sheetmusic/led-zeppelin/stairway-to-heaven/MN0158500",
+          "https://www.fabermusic.com/shop/stairway-to-heaven-d52760"
+        ]
+      }
     },
     "chords": {
       "selectedChartsAvailable": 95,
