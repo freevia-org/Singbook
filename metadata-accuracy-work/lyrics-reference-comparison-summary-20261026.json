@@ -31,7 +31,7 @@
         "sourceObservationCoveragePercent": 17.0,
         "sourceTextDifferencesAwaitingAdjudication": 15,
         "sourceTextDifferencesAdjudicated": 2,
-        "referenceCoverageMeaning": "Adjudicated correctness references only; the 15 source-page observations are separate evidence coverage.",
+        "referenceCoverageMeaning": "Adjudicated correctness references only; the 17 source-page observations are separate evidence coverage.",
         "classifiedMismatchesNotPromotedToGold": 2
       },
       "key": {
@@ -42,11 +42,13 @@
         "denominator": 100,
         "percent": null,
         "strictCorpusAccuracyPercent": null,
-        "evaluationStatus": "partial_reference_coverage",
+        "evaluationStatus": "partial_adjudicated_comparisons",
         "accuracyAmongEvaluatedPercent": 87.5,
         "referenceCoverage": 8,
         "evaluatedReferences": 8,
-        "referenceCoveragePercent": 8.0
+        "referenceCoveragePercent": 8.0,
+        "adjudicatedGoldReferenceCoverage": 8,
+        "adjudicatedGoldReferenceCoveragePercent": 8.0
       },
       "chords": {
         "verifiedCorrect": 0,
@@ -56,11 +58,13 @@
         "denominator": 100,
         "percent": null,
         "strictCorpusAccuracyPercent": null,
-        "evaluationStatus": "no_reference_comparisons",
+        "evaluationStatus": "no_adjudicated_correctness_comparisons",
         "accuracyAmongEvaluatedPercent": null,
         "referenceCoverage": 0,
         "evaluatedReferences": 0,
-        "referenceCoveragePercent": 0.0
+        "referenceCoveragePercent": 0.0,
+        "adjudicatedGoldReferenceCoverage": 0,
+        "adjudicatedGoldReferenceCoveragePercent": 0.0
       }
     }
   },
@@ -78,7 +82,10 @@
       "sourcePageComparisonCoveragePercent": 17.0,
       "corpusRowsWithVerifiedClaim": 0,
       "comparisonsEvaluated": 0,
-      "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness."
+      "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness.",
+      "songsWithChordChartContribution": null,
+      "rowsWithAdjudicatedCorrectnessReference": 0,
+      "referenceCoverageMeaning": "Count of corpus rows with reviewed field-level correctness gold; this is not a count of source pages discovered or checked."
     },
     "key": {
       "songsWithCandidateData": 59,
@@ -89,7 +96,12 @@
       "contributingProviderCount": 3,
       "corpusRowsWithVerifiedClaim": 8,
       "comparisonsEvaluated": 8,
-      "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness."
+      "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness.",
+      "songsWithSelectedBaseLyricsContribution": null,
+      "songsWithChordChartContribution": null,
+      "songsWithSectionContribution": null,
+      "rowsWithAdjudicatedCorrectnessReference": 8,
+      "referenceCoverageMeaning": "Count of corpus rows with reviewed field-level correctness gold; this is not a count of source pages discovered or checked."
     },
     "chords": {
       "songsWithCandidateData": 96,
@@ -101,7 +113,11 @@
       "contributingProviderCount": 3,
       "corpusRowsWithVerifiedClaim": 0,
       "comparisonsEvaluated": 0,
-      "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness."
+      "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness.",
+      "songsWithSelectedBaseLyricsContribution": null,
+      "songsWithSectionContribution": null,
+      "rowsWithAdjudicatedCorrectnessReference": 0,
+      "referenceCoverageMeaning": "Count of corpus rows with reviewed field-level correctness gold; this is not a count of source pages discovered or checked."
     }
   },
   "manualLyricComparisons": [
@@ -383,7 +399,7 @@
     "method": "SHA-256 source identity joins each discovered result to combineSources provenance. Candidate use is reported without raw candidate IDs or lyrics.",
     "interpretation": "Candidate availability is distinct from actual use. Contribution counts are distinct songs. Agreement among provider labels is not proof of independent sourcing or correctness."
   },
-  "next": "Rerun the offline 100-song benchmark with source chordAlignmentSha256 now emitted using the same lyric-anchor and capo-normalized function as the combined result. Then use aligned per-source charts and the 8 existing key references to expand field adjudication; keep source agreement, provenance confidence, and correctness as separate measures.",
+  "next": "Continue adjudicating the 15 observed lyric-source differences and build reviewed lyric/chord references across the 100-song corpus. Use raw chord-sequence agreement for exact chord-symbol consensus and chordAlignment for stricter lyrics-plus-placement/capo agreement; keep both separate from correctness gold and provenance confidence.",
   "sourceAgreement": {
     "lyrics": {
       "songsWithSourceData": 99,
@@ -739,19 +755,32 @@
       "selectedOutputHasSharedAlternativeButChosenHashHasOneProvider": 0,
       "selectedOutputReviewCandidates": [],
       "selectedOutputHashHasMaximumProviderLabelSupport": 2,
-      "interpretation": "Chord candidate availability and actual chart contribution remain measurable. Cross-provider agreement is not currently reported because the previous comparison used incompatible hash representations; rerun the updated benchmark to calculate valid alignment agreement.",
-      "metricStatus": "invalidated_comparator_mismatch_requires_regeneration",
-      "invalidatedMetricNote": "The prior selected-output value was a canonical, capo-normalized chord-position hash bound to normalized lyrics; source values were hashes of raw chord-symbol sequences. Those representations cannot be compared. The benchmark now emits chordAlignmentSha256 for every source and must be rerun before reporting chord agreement.",
-      "supersededRawSequenceComparison": {
-        "selectedOutputRows": 95,
-        "selectedOutputHashProviderSupportCounts": {
-          "0": 93,
-          "1": 2
-        },
-        "selectedOutputHashHasCrossProviderSupport": 0,
-        "selectedOutputHasSharedAlternativeButChosenHashHasOneProvider": 0,
-        "selectedOutputHashHasMaximumProviderLabelSupport": 2
-      }
+      "interpretation": "Exact raw chord-symbol sequence agreement, using the same representation for source and combined output. It does not compare chord word placement, capo-normalized sounding pitch, or source independence.",
+      "metricStatus": "valid_exact_chord_symbol_sequence"
+    },
+    "chordAlignment": {
+      "songsWithSourceData": 96,
+      "songsWithOneHashVariant": 29,
+      "songsWithMultipleHashVariants": 67,
+      "songsWithAtLeastOneHashSharedAcrossProviderLabels": 0,
+      "songsWithOneProviderLabelOnly": 29,
+      "hashVariantCountDistribution": {
+        "3": 23,
+        "2": 35,
+        "1": 29,
+        "4": 9
+      },
+      "selectedOutputRows": 95,
+      "selectedOutputHashProviderSupportCounts": {
+        "0": 94,
+        "1": 1
+      },
+      "selectedOutputHashHasCrossProviderSupport": 0,
+      "selectedOutputHashHasOnlyOneProviderLabel": 1,
+      "selectedOutputHasSharedAlternativeButChosenHashHasOneProvider": 0,
+      "selectedOutputReviewCandidates": [],
+      "selectedOutputHashHasMaximumProviderLabelSupport": 1,
+      "interpretation": "Strict arrangement-level agreement: normalized lyric hash plus chord word positions and capo-normalized chord pitches. A mismatch can reflect lyric, placement, capo, or arrangement differences; it is not by itself a correctness failure."
     }
   },
   "crossProviderCandidateIdReuse": {
@@ -762,7 +791,7 @@
     "providerPairGroupCounts": {
       "betterlyrics+lrclib": 9
     },
-    "interpretation": "Candidate-ID reuse across provider adapters is not enough to merge or count evidence as independent; compare field payload hashes and provider provenance.",
-    "betterLyricsAdapterNote": "BetterLyrics uses LRCLIB as its catalog and then resolves lyric content through the Better Lyrics API; a shared catalog ID does not guarantee identical lyric payloads."
+    "betterLyricsAdapterNote": "BetterLyrics uses LRCLIB as its catalog and then resolves lyric content through the Better Lyrics API; a shared catalog ID does not guarantee identical lyric payloads.",
+    "interpretation": "Candidate-ID reuse across provider adapters is not enough to merge or count evidence as independent; compare field payload hashes and provider provenance."
   }
 }

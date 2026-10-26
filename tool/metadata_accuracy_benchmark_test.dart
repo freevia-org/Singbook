@@ -488,10 +488,7 @@ void main() {
       artist: 'Test',
       body: '[Db]Amber windows',
     );
-    expect(
-      _sourceChordAlignmentHash(source),
-      _chordAlignmentHash(selected),
-    );
+    expect(_sourceChordAlignmentHash(source), _chordAlignmentHash(selected));
   });
   test(
     'metadata accuracy corpus has 100 entries and valid reference states',
@@ -1244,6 +1241,10 @@ Future<void> _benchmark() async {
       selectedHashField: 'normalizedLyricsSha256',
     ),
     'chords': sourceAgreement(
+      'chordSequenceSha256',
+      selectedHashField: 'chordSequenceSha256',
+    ),
+    'chordAlignment': sourceAgreement(
       'chordAlignmentSha256',
       selectedHashField: 'chordAlignmentSha256',
     ),
