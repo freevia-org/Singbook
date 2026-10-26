@@ -135,6 +135,44 @@ passing canaries with advertised but untested capabilities are `partial_coverage
 which also returns exit 1. Extend coverage when a representative real canary is
 available; incomplete coverage alone does not justify retiring a source.
 
+### Publisher file-import checks
+
+The opt-in host check downloads two exact Ozbcoz guitar arrangements from links
+observed in its public ChordPro index, then runs the production file decoder,
+controller import, disposable SQLite save/reopen and ChordPro export. It verifies
+title/artist, key, chord order, original comments and exact stored/exported data.
+It uses no browser profile, cookies, user library or native file picker. A
+challenge, missing file or wrong identity fails instead of selecting a substitute.
+
+```powershell
+$env:SINGBOOK_LIVE_IMPORT_CHECK = '1'
+flutter test --no-pub tool/source_import_maintenance_test.dart
+Remove-Item Env:SINGBOOK_LIVE_IMPORT_CHECK
+```
+
+On Linux/macOS use
+`SINGBOOK_LIVE_IMPORT_CHECK=1 flutter test --no-pub tool/source_import_maintenance_test.dart`.
+Normal offline test runs skip these network requests. The redacted result is
+`artifacts/source-maintenance/imports-live.json`; retain a dated copy with the
+daily report. It records its own runtime/timestamp and HTTP counts. Report this
+supplemental host import evidence alongside the regular CLI result: the CLI's
+`import_only` state remains an accurate description of lookup support. Do not
+turn a generic decoded file into an invented provider source record, or claim
+native picker coverage. Chordie's public text-copy workflow and Wikisource's
+separate export service are not covered by this Ozbcoz check.
+
+### HTTP diagnostics and request volume
+
+Live CLI reports add `httpDiagnostics`: actual request counts and HTTP response
+status frequencies by host, numeric Retry-After values and database lag, plus
+send failures. No paths, query values, headers, credentials or response bodies
+are retained. Redirects and retries count as additional HTTP requests; one daily
+run is not one request per provider. The existing `rate_limited` reason covers
+both HTTP 429 and HTTP 503 for compatibility. Use the exact status counts to
+distinguish throttling from service unavailability, and database-lag evidence
+where supplied; do not infer that a daily quota was exceeded from that reason.
+The local and cloud jobs have separate request totals and reachability.
+
 Reports include timestamp, source/probe IDs, outcome, missing field names,
 lengths/counts and metadata field names. They contain no full lyrics, raw source
 documents or credentials. The normalized SourceResult JSON is round-tripped to
@@ -234,6 +272,12 @@ schema change. Do not bypass the proxy or disable TLS verification.
    and do not open report-only PRs. Local runs compare both local and cloud
    evidence, preserving runtime/source/probe/timestamp provenance. A missing
    credential is a coverage limitation, never a schema repair or a healthy source.
+   Run the opt-in publisher file-import check once as a separate, sequential
+   phase when Flutter test dependencies are available. Retain its dated redacted
+   report with the health report, including failed/unverified outcomes. Keep its
+   runtime and capability provenance separate from the ordinary CLI result. Do
+   not repeat the entire live suite to chase an individual unavailable source;
+   use a bounded selected-source recheck only when new evidence warrants one.
 3. Diagnose changed extraction and missing fields against the actual source and
    primary documentation. Repair compatible rules, or a compiled adapter when
    necessary; add synthetic regression fixtures from the smallest required
