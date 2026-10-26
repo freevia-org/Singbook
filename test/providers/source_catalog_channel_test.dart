@@ -18,10 +18,17 @@ SourceCatalogRuntime _runtime(
   ProviderTransport transport, {
   bool released = false,
 }) => SourceCatalogRuntime(
-  builtins: [
-    ...createCoreProviders(transport: transport),
-    ...createExtraProviders(transport: transport),
-  ].where((p) => !released || p.definition.id != 'lrcred').toList(),
+  builtins:
+      [
+            ...createCoreProviders(transport: transport),
+            ...createExtraProviders(transport: transport),
+          ]
+          .where(
+            (p) =>
+                !released ||
+                !{'lrcred', 'roswellmusicjam'}.contains(p.definition.id),
+          )
+          .toList(),
   createProvider: (entry) => ConfigurableProvider(entry, transport),
 );
 String _next(String text, {bool unknown = false}) {
@@ -117,20 +124,20 @@ void main() {
       );
       try {
         await client.initialize();
-        expect(runtime.catalog!.revision, 8);
+        expect(
+          runtime.catalog!.revision,
+          jsonDecode(_bundle('-v2'))['revision'],
+        );
         expect(await client.refresh(), true);
-        expect(runtime.catalog!.revision, 9);
+        expect(runtime.catalog!.revision, jsonDecode(next)['revision']);
         expect(settings['sourceCatalog'], legacy);
         expect(settings['providers'], {'genius': false});
         expect(settings[SourceCatalogClient.cacheKey], next);
-        final added = runtime.catalog!.sources.singleWhere(
-          (s) => s.id == 'lrcred',
-        );
-        expect(added.status, 'disabled');
-        expect(
-          runtime.providers.any((p) => p.definition.id == 'lrcred'),
-          false,
-        );
+        for (final id in ['lrcred', 'roswellmusicjam']) {
+          final added = runtime.catalog!.sources.singleWhere((s) => s.id == id);
+          expect(added.status, 'disabled');
+          expect(runtime.providers.any((p) => p.definition.id == id), false);
+        }
         final oldIds = SourceCatalog.parse(legacy).sources.map((s) => s.id);
         expect(runtime.catalog!.sources.map((s) => s.id), containsAll(oldIds));
         for (final previous in SourceCatalog.parse(legacy).sources) {
@@ -173,7 +180,7 @@ void main() {
       try {
         expect(await client.refresh(), false);
         expect(cached, bundle);
-        expect(runtime.catalog!.revision, 8);
+        expect(runtime.catalog!.revision, jsonDecode(bundle)['revision']);
         expect(
           runtime.providers.any((p) => p.definition.id == 'notcompiled'),
           false,

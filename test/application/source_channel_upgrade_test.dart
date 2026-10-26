@@ -41,7 +41,8 @@ void main() {
       final next =
           jsonDecode(File(SourceCatalogClient.bundledAsset).readAsStringSync())
               as Map<String, dynamic>;
-      next['revision'] = 9;
+      final nextRevision = (next['revision'] as int) + 1;
+      next['revision'] = nextRevision;
       final nextText = jsonEncode(next);
       final seen = <Uri>[];
       final transport = ProviderTransport(
@@ -57,7 +58,10 @@ void main() {
         await app.initialize();
         await app.refreshSources();
         expect(seen.single.path, endsWith('/source-catalog-v2.json'));
-        expect(app.discovery.catalogClient!.runtime.catalog!.revision, 9);
+        expect(
+          app.discovery.catalogClient!.runtime.catalog!.revision,
+          nextRevision,
+        );
         expect(await repo.getSetting('sourceCatalog'), legacyText);
         expect(await repo.getSetting(SourceCatalogClient.cacheKey), nextText);
         expect(app.providerEnabled('lrclib'), false);
