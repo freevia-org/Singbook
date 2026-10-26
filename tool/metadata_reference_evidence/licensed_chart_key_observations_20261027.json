@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "reviewedOn": "2026-10-27",
+  "purpose": "Practical licensed-chart key comparisons. These product listings support chart-level comparison and do not automatically establish a particular recording's tonic.",
+  "sources": [
+    {
+      "songId": "song-001",
+      "title": "Tears in Heaven",
+      "product": "Musicnotes MN0019083",
+      "url": "https://apps.musicnotes.com/sheetmusic/eric-clapton/tears-in-heaven/MN0019083",
+      "publisherClaimedKey": "A",
+      "format": "Piano/Vocal/Guitar",
+      "scope": "artist song arrangement",
+      "scopeNote": "The listing says A major is the original published key; it does not identify a particular Eric Clapton master."
+    },
+    {
+      "songId": "song-004",
+      "title": "Wonderwall",
+      "product": "Musicnotes MN0143527",
+      "url": "https://www.musicnotes.com/sheetmusic/oasis/wonderwall/MN0143527",
+      "publisherClaimedKey": "F#m",
+      "format": "Oasis leadsheet with lyrics, melody, and chords",
+      "scope": "artist song arrangement",
+      "scopeNote": "The page describes a 3-page Oasis leadsheet in F-sharp minor; no exact album performance/master is named."
+    },
+    {
+      "songId": "song-006",
+      "title": "Let It Be",
+      "product": "Musicnotes MN0274887",
+      "url": "https://www.musicnotes.com/sheetmusic/the-beatles/let-it-be/MN0274887",
+      "publisherClaimedKey": "C",
+      "format": "Official Beatles guitar chord chart and lyric sheet",
+      "scope": "artist song arrangement",
+      "scopeNote": "Sony/ATV listing, two pages, C major; no particular album take or duration is bound."
+    },
+    {
+      "songId": "song-008",
+      "title": "Yesterday",
+      "product": "Musicnotes MN0274886",
+      "url": "https://www.musicnotes.com/sheetmusic/the-beatles/yesterday/MN0274886",
+      "publisherClaimedKey": "G",
+      "format": "Official Beatles guitar chord chart and lyric sheet",
+      "scope": "artist song arrangement",
+      "scopeNote": "The app output is recording-scoped F while this listing is an arrangement in G; these claims are not like-scoped."
+    },
+    {
+      "songId": "song-009",
+      "title": "Here Comes the Sun",
+      "product": "Musicnotes MN0274888",
+      "url": "https://www.musicnotes.com/sheetmusic/the-beatles/here-comes-the-sun/MN0274888",
+      "publisherClaimedKey": "D",
+      "format": "Official Beatles guitar chord chart and lyric sheet",
+      "scope": "artist song arrangement",
+      "scopeNote": "The listing identifies a two-page chord chart in D major; it does not bind the chart to an album master or disclose whether the guitar part is transposed."
+    },
+    {
+      "songId": "song-014",
+      "title": "Free Fallin'",
+      "product": "Musicnotes MN0283347",
+      "url": "https://www.musicnotes.com/sheetmusic/tom-petty/free-fallin/MN0283347",
+      "publisherClaimedKey": "D",
+      "format": "Tom Petty guitar tab and chord chart",
+      "scope": "artist arrangement with Full Moon Fever catalog association",
+      "scopeNote": "The product page associates the arrangement with Full Moon Fever but describes it as this particular arrangement; its D-major label needs capo/notation-scope review before comparing to a sounding recording key."
+    },
+    {
+      "songId": "song-017",
+      "title": "Sweet Home Alabama",
+      "product": "Musicnotes MN0277054",
+      "url": "https://www.musicnotes.com/sheetmusic/lynyrd-skynyrd/sweet-home-alabama/MN0277054",
+      "publisherClaimedKey": "D",
+      "format": "Lynyrd Skynyrd guitar tab and chord chart",
+      "scope": "artist song arrangement",
+      "scopeNote": "The listing says D major for the guitar chart but does not identify the recording edition or clarify capo/sounding-key treatment."
+    },
+    {
+      "songId": "song-018",
+      "title": "Perfect",
+      "product": "Musicnotes MN0284650",
+      "url": "https://www.musicnotes.com/sheetmusic/ed-sheeran/perfect/MN0284650",
+      "publisherClaimedKey": "G",
+      "format": "Ed Sheeran guitar chord chart and lyric sheet",
+      "scope": "artist song arrangement",
+      "scopeNote": "The listing gives G major for this arrangement; it does not identify the recording version or state whether a capo/transposition is involved."
+    }
+  ],
+  "interpretationPolicy": {
+    "equalKeys": "A matching key is practical corroboration for the chart claim, not strict recording-specific gold.",
+    "differentKeys": "A difference is a review lead, not an automatic error; inspect edition, capo, transposition, and sounding-key scope.",
+    "scopeDifference": "Do not compare arrangement-key claims to recording-home-key claims as like-scoped values.",
+    "copyright": "No score images, lyric text, or chord-chart bodies are retained."
+  }
+}

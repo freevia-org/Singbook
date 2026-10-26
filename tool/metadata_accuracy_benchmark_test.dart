@@ -348,6 +348,90 @@ Map<String, dynamic> _readCorpus() {
   return data;
 }
 
+Map<String, Object?> _practicalLicensedChartReview(
+  List<Map<String, Object?>> benchmarkRows,
+  Map<String, dynamic> observations,
+) {
+  final rowsById = {for (final row in benchmarkRows) row['id']: row};
+  final reviewed = <Map<String, Object?>>[];
+  for (final raw in (observations['sources'] as List).cast<Map>()) {
+    final songId = raw['songId'] as String;
+    final row = rowsById[songId];
+    if (row == null) throw StateError('unknown chart observation $songId');
+    final chartKey = raw['publisherClaimedKey'] as String;
+    final selectedKey = row['key'] as String?;
+    final selectedScope = row['keyClaimScope'] as String?;
+    final String status;
+    if (selectedKey == null) {
+      status = 'selected_key_unavailable';
+    } else if (selectedScope != 'arrangement') {
+      status = 'scope_mismatch';
+    } else if (_exactKeyIdentity(chartKey) == _exactKeyIdentity(selectedKey)) {
+      status = 'practical_chart_key_match';
+    } else {
+      status = 'practical_difference_needs_review';
+    }
+    reviewed.add({
+      ...raw.cast<String, Object?>(),
+      'selectedKey': selectedKey,
+      'selectedKeyScope': selectedScope,
+      'comparison': status,
+    });
+  }
+  return {
+    'source': 'licensed chart product listings',
+    'isStrictRecordingGold': false,
+    'interpretation':
+        'Arrangement-scope chart comparisons are useful practical evidence. Matches do not establish exact-recording correctness; differences need review for edition, capo, transposition, and claim scope.',
+    'counts': {
+      'observations': reviewed.length,
+      'practicalChartKeyMatches': reviewed
+          .where((row) => row['comparison'] == 'practical_chart_key_match')
+          .length,
+      'differencesNeedingReview': reviewed
+          .where(
+            (row) => row['comparison'] == 'practical_difference_needs_review',
+          )
+          .length,
+      'scopeMismatches': reviewed
+          .where((row) => row['comparison'] == 'scope_mismatch')
+          .length,
+      'selectedKeyUnavailable': reviewed
+          .where((row) => row['comparison'] == 'selected_key_unavailable')
+          .length,
+    },
+    'observations': reviewed,
+  };
+}
+
+Map<String, dynamic> _readLicensedChartObservations() {
+  final data =
+      jsonDecode(
+            File(
+              'tool/metadata_reference_evidence/licensed_chart_key_observations_20261027.json',
+            ).readAsStringSync(),
+          )
+          as Map<String, dynamic>;
+  if (data['schemaVersion'] != 1 || data['sources'] is! List) {
+    throw const FormatException('invalid licensed chart observations schema');
+  }
+  final seen = <String>{};
+  for (final source in (data['sources'] as List).cast<Map>()) {
+    final songId = source['songId'];
+    if (songId is! String || !seen.add(songId)) {
+      throw const FormatException('missing or duplicate chart observation row');
+    }
+    if (source['url'] is! String ||
+        !(source['url'] as String).startsWith('https://') ||
+        source['publisherClaimedKey'] is! String ||
+        source['scope'] is! String ||
+        source['scopeNote'] is! String) {
+      throw FormatException('incomplete chart observation for $songId');
+    }
+  }
+  return data;
+}
+
 void main() {
   test(
     'reviewed references reject stale value, recording, field and scope',
@@ -911,6 +995,26 @@ void main() {
       expect(_exactKeyIdentity('C MAJOR'), _exactKeyIdentity('C'));
     },
   );
+  test('licensed chart observations stay practical and scope-aware', () {
+    final observations = _readLicensedChartObservations();
+    final rows = [
+      {'id': 'song-001', 'key': 'A', 'keyClaimScope': 'arrangement'},
+      {'id': 'song-004', 'key': 'F#m', 'keyClaimScope': 'arrangement'},
+      {'id': 'song-006', 'key': 'C', 'keyClaimScope': 'arrangement'},
+      {'id': 'song-008', 'key': 'F', 'keyClaimScope': 'recording'},
+      {'id': 'song-009', 'key': 'A', 'keyClaimScope': 'arrangement'},
+      {'id': 'song-014', 'key': 'F', 'keyClaimScope': 'arrangement'},
+      {'id': 'song-017', 'key': 'G', 'keyClaimScope': 'arrangement'},
+      {'id': 'song-018', 'key': 'Ab', 'keyClaimScope': 'arrangement'},
+    ].cast<Map<String, Object?>>();
+    final result = _practicalLicensedChartReview(rows, observations);
+    final counts = result['counts'] as Map;
+    expect(counts['observations'], 8);
+    expect(counts['practicalChartKeyMatches'], 3);
+    expect(counts['scopeMismatches'], 1);
+    expect(counts['differencesNeedingReview'], 4);
+    expect(result['isStrictRecordingGold'], isFalse);
+  });
   test('chord accuracy includes word placement and sounding capo pitch', () {
     SongDocument song(String body, [int capo = 0]) => SongDocument(
       id: 'fixture',
@@ -1886,6 +1990,10 @@ Future<void> _benchmark() async {
     'sourceCoverage': sourceCoverage,
     'sourceAgreement': sourceAgreementSummary,
     'crossProviderCandidateIdReuse': reusedCatalogIds,
+    'practicalLicensedChartReview': _practicalLicensedChartReview(
+      rows,
+      _readLicensedChartObservations(),
+    ),
     'cache': {
       'hits': client.hits,
       'networkAttempts': client.networkAttempts,
@@ -1899,7 +2007,7 @@ Future<void> _benchmark() async {
     '${out.path}/report.json',
   ).writeAsStringSync(const JsonEncoder.withIndent('  ').convert(report));
   print(
-    'METADATA_ACCURACY ${jsonEncode({'coverage': report['coverage'], 'corpusSize': songs.length, 'unavailableCount': report['unavailableCount'], 'sourceCoverage': sourceCoverage, 'sourceAgreement': sourceAgreementSummary, 'crossProviderCandidateIdReuse': reusedCatalogIds, 'accuracy': accuracy, 'cacheHits': client.hits, 'uncachedOffline': client.uncached})}',
+    'METADATA_ACCURACY ${jsonEncode({'coverage': report['coverage'], 'corpusSize': songs.length, 'unavailableCount': report['unavailableCount'], 'sourceCoverage': sourceCoverage, 'sourceAgreement': sourceAgreementSummary, 'crossProviderCandidateIdReuse': reusedCatalogIds, 'practicalLicensedChartReview': report['practicalLicensedChartReview'], 'accuracy': accuracy, 'cacheHits': client.hits, 'uncachedOffline': client.uncached})}',
   );
   await transport.close();
 }
