@@ -14,7 +14,7 @@ import 'src/maintenance_credentials.dart';
 import 'src/maintenance_http_diagnostics.dart';
 
 Future<void> main(List<String> args) async {
-  String catalogPath = 'config/source-catalog.json';
+  String catalogPath = 'config/source-catalog-v2.json';
   String? reportPath;
   var offline = false;
   String? onlySource;

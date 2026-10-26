@@ -420,12 +420,25 @@ TimingTrack parseTtml(
           'https://composer.betterlyrics.org/ttml',
         }.contains(attr(root, 'composer')) &&
         attr(root, 'timeBase') == 'media';
+    final lrcRedProfile =
+        profile == 'lrc-red' &&
+        root.attributes.any(
+          (a) =>
+              a.name.local == 'timing' &&
+              a.name.namespaceUri == 'http://lrc.red/lyric-ttml-internal' &&
+              a.value == 'Word',
+        );
+    if (profile == 'lrc-red' && !lrcRedProfile) {
+      throw const FormatException(
+        'The lrc.red timing profile marker is missing or invalid.',
+      );
+    }
     final appleProfile =
         profile == 'apple-lyrics' ||
         root.attributes.any(
           (a) => a.value == 'http://itunes.apple.com/lyric-ttml-extensions',
         );
-    final absoluteClockProfile = appleProfile || unisonProfile;
+    final absoluteClockProfile = appleProfile || unisonProfile || lrcRedProfile;
     text = root.descendants
         .whereType<XmlElement>()
         .where((e) => e.name.local == 'p')
@@ -496,6 +509,16 @@ TimingTrack parseTtml(
         r'^([+-]?\d+(?:\.\d+)?)(h|m|s|ms|f|t)$',
       ).firstMatch(expr);
       if (offset == null) {
+        if (lrcRedProfile && RegExp(r'^\d+(?:\.\d+)?$').hasMatch(expr)) {
+          final seconds = double.tryParse(expr);
+          if (seconds == null ||
+              !seconds.isFinite ||
+              seconds < 0 ||
+              seconds > 604800) {
+            throw const FormatException('Invalid or out-of-range seconds.');
+          }
+          return (seconds * 1000000).round();
+        }
         throw FormatException('Unsupported time expression: $expr');
       }
       final units = {
@@ -541,10 +564,20 @@ TimingTrack parseTtml(
       // A child that begins after its parent has ended can never be active;
       // clamp it to the parent's end instead of rejecting the whole document.
       if (parentEnd != null && start > parentEnd) {
+        if (lrcRedProfile) {
+          throw const FormatException(
+            'Child cue begins after its parent ends.',
+          );
+        }
         start = parentEnd;
         end = parentEnd;
       }
-      if (parentEnd != null && end != null && end > parentEnd) end = parentEnd;
+      if (parentEnd != null && end != null && end > parentEnd) {
+        if (lrcRedProfile) {
+          throw const FormatException('Child cue ends after its parent ends.');
+        }
+        end = parentEnd;
+      }
       if (start < 0 || end != null && end < start) {
         throw const FormatException('Invalid cue interval.');
       }
@@ -687,6 +720,8 @@ TimingTrack parseTtml(
             ? 'apple-lyrics'
             : unisonProfile
             ? 'unison-ttml'
+            : lrcRedProfile
+            ? 'lrc-red-ttml'
             : 'w3c-ttml',
         'frameRate': effectiveFrames,
         'tickRate': tickRate,
