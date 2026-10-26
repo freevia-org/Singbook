@@ -142,11 +142,6 @@ bool _practicalChordSupportEligible(Map source) {
           source['reason'] == 'incomplete_or_different_lyrics' &&
           contributed;
   if (!acceptedMatch || !contributed) return false;
-  if ((source['requiresLyricsAgreement'] == true ||
-          source['requiresRecordingLyricsAgreement'] == true) &&
-      !contributed) {
-    return false;
-  }
   return true;
 }
 
@@ -603,6 +598,15 @@ void main() {
       _eligibleAgreementSource(sameSongChart, 'chordSequenceSha256'),
       isTrue,
       reason: 'a contributed same-song chart is arrangement evidence',
+    );
+    expect(
+      _eligibleAgreementSource({
+        ...sameSongChart,
+        'match': 'rejected',
+        'reason': 'incomplete_or_different_lyrics',
+      }, 'chordSequenceSha256'),
+      isTrue,
+      reason: 'an accepted chart can contribute even when its lyrics differ',
     );
     expect(
       _eligibleAgreementSource({
