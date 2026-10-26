@@ -1,0 +1,55 @@
+{
+  "songId": "song-077",
+  "reviewedOn": "2026-10-26",
+  "field": "key",
+  "status": "verified",
+  "value": "G",
+  "scope": "1966 original Revolver studio album performance",
+  "recordingBinding": {
+    "status": "verified",
+    "providerId": "genius",
+    "candidateId": "106575",
+    "isrc": null,
+    "recordingEdition": "1966 original Revolver studio album performance",
+    "evidence": [
+      "https://genius.com/The-beatles-yellow-submarine-lyrics",
+      "https://www.thebeatles.com/yellow-submarine-0"
+    ],
+    "notes": "Decoded Genius song106575 identifies Revolver, release1966-08-05 and EMI Recording Studios London. Official artist catalog identifies the same original album performance and recording sessions. Performance-level binding; no exact digital mix/master identity claim."
+  },
+  "independentSources": [
+    {
+      "url": "https://isophonics.net/files/annotations/keylab/The%20Beatles/07_-_Revolver/06_-_Yellow_Submarine.lab",
+      "role": "Primary C4DM Isophonics home-key annotation",
+      "finding": "Annotation line0.000-160.400 seconds labels Key G. Exact response SHA256 abe7a1b19fa1cd2fd59c6c99b27eeea3bea63f73cd684de9ec3b265c625f13b9. Mode is not stated in that file; use Pollack for explicit major mode."
+    },
+    {
+      "url": "https://www.icce.rug.nl/~soundscapes/DATABASES/AWP/ys.shtml",
+      "role": "Primary harmonic analysis by Alan W.Pollack, NotesOn series97",
+      "finding": "Publisher-indexed primary text explicitly identifies G Major and Revolver track6, Parlophone CDP7 46441-2, with recording sessions26May/1June1966. Root inspected the publisher indexed page; direct current retrieval failed, so no fresh direct body hash is claimed."
+    },
+    {
+      "url": "https://isophonics.net/content/reference-annotations",
+      "role": "Primary annotation methodology and source-CD inventory",
+      "finding": "Names Revolver CDP7 46441 2 and warns main-key annotations may omit local changes. Cites Pollack among analysis references, so these are not asserted to be two statistically independent annotators."
+    }
+  ],
+  "catalogCrosscheck": {
+    "geniusCandidateId": "106575",
+    "geniusAlbum": "Revolver",
+    "geniusReleaseDate": "1966-08-05",
+    "apiCacheFile": "2b45acdde61f50f7ca5e40048dbfeb77a43ac5ea.json.gz",
+    "apiBodySha256": "8a7128166202e8fc7fce315da72945cf062344e3a88fe3209c5a44d4faf4f80a",
+    "artistCatalogDurationSeconds": 158,
+    "annotationEndSeconds": 160.4,
+    "durationCaveat": "Differences do not establish same exact digital master; scope is original album performance."
+  },
+  "verificationDecision": "Sounding/home key G major for the original Revolver album performance. C4DM labels G; Pollack explicitly identifies G Major and the same Revolver CD track. No full lyric/chord-placement accuracy claim.",
+  "notDerivedFromActualBenchmarkKey": true,
+  "limits": [
+    "No full lyrics or chord-placement reference added.",
+    "No runtime key override or source priority change.",
+    "Pollack direct origin was unavailable; indexed primary text is distinguished from fresh direct retrieval.",
+    "C4DM references Pollack; agreement is not claimed as two independent judgments."
+  ]
+}
