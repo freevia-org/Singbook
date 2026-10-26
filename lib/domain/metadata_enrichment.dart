@@ -273,6 +273,13 @@ SongDocument enrichCombinedDisplayMetadata(
     if (origins[field] == 'user') continue;
     final claims = <({String sourceId, dynamic value})>[];
     for (final donor in eligible) {
+      // A matching display artist/album cannot validate structured artist IDs.
+      // Credit-only MusicBrainz mappings are checked in combineSources instead.
+      if (field == 'artistCredits' &&
+          donor.source.candidate.providerId == 'musicbrainz' &&
+          !donor.verified) {
+        continue;
+      }
       final value = donor.facts[field];
       if (!_present(value)) continue;
       if (field == 'album' && value is! String) continue;

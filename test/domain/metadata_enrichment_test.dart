@@ -623,43 +623,52 @@ void main() {
     },
   );
 
-  test('MusicBrainz shaped artist credits enrich a sparse selected album', () {
-    const selected = SongCandidate(
-      providerId: 'primary',
-      id: 'hit',
-      title: 'Amber Song',
-      artist: 'Example Artist',
-      album: 'Album',
-    );
-    const primaryCredit = {
-      'name': 'Example Artist',
-      'musicbrainzId': 'artist-1',
-    };
-    const additionalCredit = {
-      'name': 'Guest Performer',
-      'musicbrainzId': 'artist-2',
-    };
-    final musicBrainz = _source(
-      'musicbrainz',
-      recordingIds: {'musicbrainz': 'recording-1'},
-      candidateMetadata: {
-        'identityScope': 'recording',
-        'artistCredits': [primaryCredit, additionalCredit],
-      },
-    );
-    final song = combineSources(selected, [_lyrics(), musicBrainz]);
-    expect(recordingCompatible(selected, musicBrainz), false);
-    expect(song.metadata['artistCredits'], [primaryCredit, additionalCredit]);
-    expect(song.extra['fieldOrigins']['artistCredits'], musicBrainz.id);
-    expect(song.extra['fieldContributors']['artistCredits'], [musicBrainz.id]);
-    final restored = SongDocument.fromJson(
-      jsonDecode(jsonEncode(song.toJson())),
-    );
-    expect(restored.metadata['artistCredits'], song.metadata['artistCredits']);
-    expect(restored.extra['fieldContributors']['artistCredits'], [
-      musicBrainz.id,
-    ]);
-  });
+  test(
+    'recording-bound MusicBrainz artist credits retain provenance after save',
+    () {
+      const selected = SongCandidate(
+        providerId: 'primary',
+        id: 'hit',
+        title: 'Amber Song',
+        artist: 'Example Artist',
+        album: 'Album',
+        recordingIds: {'musicbrainz': 'recording-1'},
+      );
+      const primaryCredit = {
+        'name': 'Example Artist',
+        'musicbrainzId': 'artist-1',
+      };
+      const additionalCredit = {
+        'name': 'Guest Performer',
+        'musicbrainzId': 'artist-2',
+      };
+      final musicBrainz = _source(
+        'musicbrainz',
+        recordingIds: {'musicbrainz': 'recording-1'},
+        candidateMetadata: {
+          'identityScope': 'recording',
+          'artistCredits': [primaryCredit, additionalCredit],
+        },
+      );
+      final song = combineSources(selected, [_lyrics(), musicBrainz]);
+      expect(recordingCompatible(selected, musicBrainz), true);
+      expect(song.metadata['artistCredits'], [primaryCredit, additionalCredit]);
+      expect(song.extra['fieldOrigins']['artistCredits'], musicBrainz.id);
+      expect(song.extra['fieldContributors']['artistCredits'], [
+        musicBrainz.id,
+      ]);
+      final restored = SongDocument.fromJson(
+        jsonDecode(jsonEncode(song.toJson())),
+      );
+      expect(
+        restored.metadata['artistCredits'],
+        song.metadata['artistCredits'],
+      );
+      expect(restored.extra['fieldContributors']['artistCredits'], [
+        musicBrainz.id,
+      ]);
+    },
+  );
 
   test('contradictory edition facts reject same-title same-album donors', () {
     const selected = SongCandidate(
