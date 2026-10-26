@@ -11,6 +11,7 @@ import 'package:singbook/providers/source_catalog.dart';
 import 'package:singbook/providers/source_maintenance.dart';
 
 import 'src/maintenance_credentials.dart';
+import 'src/maintenance_http_diagnostics.dart';
 
 Future<void> main(List<String> args) async {
   String catalogPath = 'config/source-catalog.json';
@@ -39,9 +40,10 @@ Future<void> main(List<String> args) async {
     final text = await File(catalogPath).readAsString();
     final catalog = SourceCatalog.parse(text);
     final token = maintenanceGeniusToken();
-    final transport = ProviderTransport(
-      client: Platform.isWindows ? DesktopMaintenanceClient() : null,
+    final diagnostics = MaintenanceHttpDiagnosticsClient(
+      Platform.isWindows ? DesktopMaintenanceClient() : http.Client(),
     );
+    final transport = ProviderTransport(client: diagnostics);
     try {
       final providers = [
         ...createCoreProviders(transport: transport, geniusToken: token),
@@ -68,6 +70,7 @@ Future<void> main(List<String> args) async {
             offline: offline,
             sourceIds: onlySource == null ? null : {onlySource},
           );
+      report['httpDiagnostics'] = diagnostics.report;
       final json = const JsonEncoder.withIndent('  ').convert(report);
       if (reportPath == null) {
         stdout.writeln(json);
