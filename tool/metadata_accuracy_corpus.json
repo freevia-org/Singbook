@@ -3126,7 +3126,7 @@
       "id": "song-077",
       "title": "Yellow Submarine",
       "artist": "The Beatles",
-      "recordingEdition": null,
+      "recordingEdition": "1966 original Revolver studio album performance",
       "language": "English",
       "genre": "unspecified",
       "expected": {
@@ -3139,9 +3139,14 @@
             "evidence": []
           },
           "key": {
-            "status": "unverified",
-            "value": null,
-            "evidence": []
+            "status": "verified",
+            "value": "G",
+            "evidence": [
+              "https://isophonics.net/files/annotations/keylab/The%20Beatles/07_-_Revolver/06_-_Yellow_Submarine.lab",
+              "https://www.icce.rug.nl/~soundscapes/DATABASES/AWP/ys.shtml"
+            ],
+            "reviewRecord": "tool/metadata_reference_evidence/yellow_submarine_key.json",
+            "notes": "Sounding/home key G major for the original Revolver album performance. C4DM labels G; Pollack explicitly identifies G Major and the same Revolver CD track. No full lyric/chord-placement accuracy claim."
           },
           "chords": {
             "status": "unverified",
@@ -3153,12 +3158,29 @@
           "recordingKey": null
         },
         "recordingReference": {
-          "status": "unverified",
-          "providerId": null,
-          "candidateId": null,
+          "status": "verified",
+          "providerId": "genius",
+          "candidateId": "106575",
           "isrc": null,
-          "evidence": []
+          "recordingEdition": "1966 original Revolver studio album performance",
+          "evidence": [
+            "https://genius.com/The-beatles-yellow-submarine-lyrics",
+            "https://www.thebeatles.com/yellow-submarine-0"
+          ],
+          "notes": "Decoded Genius song106575 identifies Revolver, release1966-08-05 and EMI Recording Studios London. Official artist catalog identifies the same original album performance and recording sessions. Performance-level binding; no exact digital mix/master identity claim."
         }
+      },
+      "recordingEditionStatus": "verified",
+      "catalogSelection": {
+        "providerId": "genius",
+        "candidateId": "106575",
+        "title": "Yellow Submarine",
+        "artist": "The Beatles",
+        "evidence": [
+          "https://genius.com/The-beatles-yellow-submarine-lyrics",
+          "https://www.thebeatles.com/yellow-submarine-0"
+        ],
+        "notes": "Decoded Genius song106575 identifies Revolver, release1966-08-05 and EMI Recording Studios London. Official artist catalog identifies the same original album performance and recording sessions. Performance-level binding; no exact digital mix/master identity claim."
       }
     },
     {
