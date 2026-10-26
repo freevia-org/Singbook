@@ -7,7 +7,7 @@
     "corpusSha256": "e07d8790467de689f2d5181e9c571b784c54c503a432e290cf943783ee2f9d48",
     "licensedChartKeyObservations": {
       "path": "tool/metadata_reference_evidence/licensed_chart_key_observations_20261027.json",
-      "sha256": "f7ad02e97c5d72775ea8b49d8c4c29d10861f7960ec5b440fc9a10da6d2f4fe6"
+      "sha256": "acef65aa2f58d154d008770b2b4d1d279f01e64f77523cd59fd22c914e7c79e2"
     }
   },
   "policy": {
@@ -13090,7 +13090,16 @@
         "eligibleExactProgressionProviderLabels": [],
         "eligibleExactProgressionProviderLabelCount": 0
       },
-      "publicReferenceObservation": null
+      "publicReferenceObservation": {
+        "field": "key",
+        "source": "licensed publisher chart",
+        "publisherClaimedValue": "Bm",
+        "selectedValue": "Bm",
+        "comparisonResult": "practical chart-key match; not recording gold",
+        "strictCorrectnessCredit": false,
+        "note": "PVG publisher key matches the selected Bm arrangement value; publisher credits Daddy Yankee as a featured performer while corpus artist credit is Luis Fonsi only.",
+        "reference": "Musicnotes MN0173584"
+      }
     },
     {
       "songId": "song-052",
@@ -13263,7 +13272,16 @@
         "eligibleExactProgressionProviderLabels": [],
         "eligibleExactProgressionProviderLabelCount": 0
       },
-      "publicReferenceObservation": null
+      "publicReferenceObservation": {
+        "field": "key",
+        "source": "licensed publisher chart",
+        "publisherClaimedValue": "Db",
+        "selectedValue": "C#",
+        "comparisonResult": "practical chart-key match; not recording gold",
+        "strictCorrectnessCredit": false,
+        "note": "PVG publisher key Db is enharmonically equivalent to selected C#; practical arrangement comparison.",
+        "reference": "Musicnotes MN0191129"
+      }
     },
     {
       "songId": "song-053",
@@ -13449,7 +13467,16 @@
         "eligibleExactProgressionProviderLabels": [],
         "eligibleExactProgressionProviderLabelCount": 0
       },
-      "publicReferenceObservation": null
+      "publicReferenceObservation": {
+        "field": "key",
+        "source": "licensed publisher chart",
+        "publisherClaimedValue": "G",
+        "selectedValue": "G",
+        "comparisonResult": "practical chart-key match; not recording gold",
+        "strictCorrectnessCredit": false,
+        "note": "Licensed Taylor Swift PVG original key G matches selected arrangement value.",
+        "reference": "Musicnotes MN0138575"
+      }
     },
     {
       "songId": "song-054",
@@ -13658,7 +13685,16 @@
         "eligibleExactProgressionProviderLabels": [],
         "eligibleExactProgressionProviderLabelCount": 0
       },
-      "publicReferenceObservation": null
+      "publicReferenceObservation": {
+        "field": "key",
+        "source": "licensed publisher chart",
+        "publisherClaimedValue": "D",
+        "selectedValue": "D",
+        "comparisonResult": "practical chart-key match; not recording gold",
+        "strictCorrectnessCredit": false,
+        "note": "Licensed Taylor Swift leadsheet original key D matches selected arrangement value.",
+        "reference": "Musicnotes MN0095377"
+      }
     },
     {
       "songId": "song-055",
@@ -23493,14 +23529,14 @@
       "unavailableReferenceRows": 1,
       "licensedChartKeyComparisons": {
         "source": "tool/metadata_reference_evidence/licensed_chart_key_observations_20261027.json",
-        "observations": 19,
-        "practicalChartKeyMatches": 10,
+        "observations": 23,
+        "practicalChartKeyMatches": 14,
         "differencesNeedingReview": 4,
         "scopeMismatches": 2,
         "selectedKeyUnavailable": 3,
         "strictRecordingGold": false,
         "interpretation": "Licensed publisher arrangement-key corroboration only. Exact and enharmonic matches are counted as practical chart support; matching chart keys do not establish exact recording-key correctness. Differences require edition/capo/transposition review, and unavailable selected outputs remain unavailable.",
-        "sha256": "f7ad02e97c5d72775ea8b49d8c4c29d10861f7960ec5b440fc9a10da6d2f4fe6"
+        "sha256": "acef65aa2f58d154d008770b2b4d1d279f01e64f77523cd59fd22c914e7c79e2"
       }
     },
     "chords": {

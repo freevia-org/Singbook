@@ -204,6 +204,46 @@
         "https://www.musicnotes.com/sheetmusic/led-zeppelin/stairway-to-heaven/MN0108941",
         "https://music.apple.com/ag/song/stairway-to-heaven/580708180"
       ]
+    },
+    {
+      "songId": "song-051",
+      "title": "Despacito",
+      "product": "Musicnotes MN0173584",
+      "url": "https://www.musicnotes.com/sheetmusic/luis-fonsi-feat-daddy-yankee/despacito/MN0173584",
+      "publisherClaimedKey": "Bm",
+      "format": "Official Luis Fonsi feat. Daddy Yankee Piano/Vocal/Guitar Singer Pro arrangement",
+      "scope": "artist arrangement",
+      "scopeNote": "Musicnotes lists B minor as the original published key for the Luis Fonsi feat. Daddy Yankee PVG chart. The selected key B minor matches at arrangement level. The corpus credits only Luis Fonsi, so the co-performer credit requires separate catalog review; no exact recording-key gold is claimed."
+    },
+    {
+      "songId": "song-052",
+      "title": "Someone You Loved",
+      "product": "Musicnotes MN0191129",
+      "url": "https://www.musicnotes.com/sheetmusic/lewis-capaldi/someone-you-loved/MN0191129",
+      "publisherClaimedKey": "Db",
+      "format": "Official Lewis Capaldi Piano/Vocal/Guitar Singer Pro arrangement",
+      "scope": "artist arrangement",
+      "scopeNote": "Musicnotes lists D-flat major as the original published key for a Lewis Capaldi PVG arrangement. The selected C-sharp major is enharmonically equivalent, giving practical chart-key support only."
+    },
+    {
+      "songId": "song-053",
+      "title": "Shake It Off",
+      "product": "Musicnotes MN0138575",
+      "url": "https://www.musicnotes.com/sheetmusic/taylor-swift/shake-it-off/MN0138575",
+      "publisherClaimedKey": "G",
+      "format": "Official Taylor Swift Piano/Vocal/Chords Singer Pro arrangement",
+      "scope": "artist arrangement",
+      "scopeNote": "Musicnotes identifies this as a Taylor Swift Piano/Vocal/Chords arrangement and lists G major as the original published key. The selected G major matches at arrangement level; no album-version or exact-master link is claimed."
+    },
+    {
+      "songId": "song-054",
+      "title": "Love Story",
+      "product": "Musicnotes MN0095377",
+      "url": "https://www.musicnotes.com/sheetmusic/taylor-swift/love-story/MN0095377",
+      "publisherClaimedKey": "D",
+      "format": "Official Taylor Swift Lyrics/Melody/Chords leadsheet",
+      "scope": "artist arrangement",
+      "scopeNote": "Musicnotes lists D major as the original published key for this licensed Taylor Swift leadsheet. The selected D major matches at arrangement level; no exact performance-master binding is claimed."
     }
   ],
   "interpretationPolicy": {
