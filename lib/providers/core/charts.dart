@@ -36,7 +36,7 @@ String _chartPath(String value, String provider, {bool selection = false}) {
           caseSensitive: false,
         )
       : RegExp(
-          r"^/tab/[a-z0-9_%'-]+/[a-z0-9_%'-]+-chords-([1-9]\d{0,14})$",
+          r"^/tab/(?:[a-z0-9_%'-]+/[a-z0-9_%'-]+-chords-)?([1-9]\d{0,14})$",
           caseSensitive: false,
         );
   if (value.length > 1500 ||

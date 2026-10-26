@@ -616,6 +616,13 @@ Future<SourceResult> findMatchingSource(
           )
           .toList()
         ..sort((a, b) {
+          // Composer/work context broadens discovery, but must not displace
+          // charts credited to the selected performer within the attempt cap.
+          final aPerformer =
+              sameSong(selection, a) || sameArrangement(selection, a, provider);
+          final bPerformer =
+              sameSong(selection, b) || sameArrangement(selection, b, provider);
+          if (aPerformer != bPerformer) return aPerformer ? -1 : 1;
           final rank = _rank(selection, b).compareTo(_rank(selection, a));
           return rank != 0 ? rank : a.id.compareTo(b.id);
         });
