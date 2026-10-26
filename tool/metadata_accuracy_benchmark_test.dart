@@ -53,6 +53,15 @@ double? _strictCorpusAccuracyPercent({
   required int corpusSize,
 }) => evaluated == corpusSize ? 100 * correct / corpusSize : null;
 
+String _accuracyEvaluationStatus({
+  required int evaluated,
+  required int corpusSize,
+}) => switch (evaluated) {
+  0 => 'no_adjudicated_correctness_comparisons',
+  _ when evaluated == corpusSize => 'all_songs_compared',
+  _ => 'partial_adjudicated_comparisons',
+};
+
 int _capoOf(Object? raw) =>
     raw is num ? raw.toInt() : int.tryParse('$raw') ?? 0;
 
@@ -281,6 +290,20 @@ void main() {
         corpusSize: 100,
       ),
       97,
+    );
+  });
+  test('accuracy status describes adjudication, not source discovery', () {
+    expect(
+      _accuracyEvaluationStatus(evaluated: 0, corpusSize: 100),
+      'no_adjudicated_correctness_comparisons',
+    );
+    expect(
+      _accuracyEvaluationStatus(evaluated: 8, corpusSize: 100),
+      'partial_adjudicated_comparisons',
+    );
+    expect(
+      _accuracyEvaluationStatus(evaluated: 100, corpusSize: 100),
+      'all_songs_compared',
     );
   });
   test(
@@ -909,17 +932,20 @@ Future<void> _benchmark() async {
         evaluated: evaluated,
         corpusSize: songs.length,
       ),
-      'evaluationStatus': evaluated == 0
-          ? 'no_reference_comparisons'
-          : evaluated == songs.length
-          ? 'all_songs_compared'
-          : 'partial_reference_coverage',
+      'evaluationStatus': _accuracyEvaluationStatus(
+        evaluated: evaluated,
+        corpusSize: songs.length,
+      ),
       'accuracyAmongEvaluatedPercent': evaluated == 0
           ? null
           : 100 * correct / evaluated,
       'referenceCoverage': refs,
       'evaluatedReferences': evaluated,
       'referenceCoveragePercent': 100 * refs / songs.length,
+      'adjudicatedGoldReferenceCoverage': refs,
+      'adjudicatedGoldReferenceCoveragePercent': 100 * refs / songs.length,
+      'correctnessBasis':
+          'Only reviewed field-level gold references count here. Observed source pages and provider candidates are evidence coverage, not correctness comparisons.',
     };
 
     bool hasFieldData(Map source) => switch (field) {
@@ -1020,9 +1046,12 @@ Future<void> _benchmark() async {
           : null,
       'contributingProviderCount': contributingProviders.length,
       'corpusRowsWithVerifiedClaim': refs,
+      'rowsWithAdjudicatedCorrectnessReference': refs,
       'comparisonsEvaluated': evaluated,
       'compatibilityBasis':
           'Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness.',
+      'referenceCoverageMeaning':
+          'Count of corpus rows with reviewed field-level correctness gold; this is not a count of source pages discovered or checked.',
     };
   }
   Map<String, Object?> sourceAgreement(

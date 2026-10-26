@@ -19,11 +19,18 @@
         "denominator": 100,
         "percent": null,
         "strictCorpusAccuracyPercent": null,
-        "evaluationStatus": "no_reference_comparisons",
+        "evaluationStatus": "no_adjudicated_correctness_comparisons",
         "accuracyAmongEvaluatedPercent": null,
         "referenceCoverage": 0,
         "evaluatedReferences": 0,
-        "referenceCoveragePercent": 0.0
+        "referenceCoveragePercent": 0.0,
+        "adjudicatedGoldReferenceCoverage": 0,
+        "adjudicatedGoldReferenceCoveragePercent": 0.0,
+        "correctnessBasis": "Only manually adjudicated field-level gold counts as correct/incorrect. Public references and candidate hashes are tracked separately.",
+        "sourceObservationCoverage": 15,
+        "sourceObservationCoveragePercent": 15.0,
+        "sourceTextDifferencesAwaitingAdjudication": 15,
+        "sourceTextDifferencesAdjudicated": 0
       },
       "key": {
         "verifiedCorrect": 7,
@@ -102,7 +109,9 @@
       "reference": "https://oasisinet.com/lyrics/wonderwall-2/",
       "source": "Oasis official",
       "result": "normalized text differs",
-      "editionNote": "Corpus edition unspecified"
+      "editionNote": "Corpus edition unspecified",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
     },
     {
       "songId": "song-006",
@@ -110,7 +119,9 @@
       "reference": "https://www.thebeatles.com/let-it-be-1",
       "source": "The Beatles official",
       "result": "normalized text differs",
-      "editionNote": "Corpus names the 1970 album performance; source page text was not proven to be master-specific"
+      "editionNote": "Corpus names the 1970 album performance; source page text was not proven to be master-specific",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
     },
     {
       "songId": "song-007",
@@ -118,7 +129,9 @@
       "reference": "https://www.thebeatles.com/hey-jude",
       "source": "The Beatles official",
       "result": "normalized text differs",
-      "editionNote": "Corpus names the 1968 long single performance; source page text was not proven to be master-specific"
+      "editionNote": "Corpus names the 1968 long single performance; source page text was not proven to be master-specific",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
     },
     {
       "songId": "song-008",
@@ -126,7 +139,9 @@
       "reference": "https://www.thebeatles.com/yesterday",
       "source": "The Beatles official",
       "result": "normalized text differs",
-      "editionNote": "Corpus names the 1965 Help! performance; source page text was not proven to be master-specific"
+      "editionNote": "Corpus names the 1965 Help! performance; source page text was not proven to be master-specific",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
     },
     {
       "songId": "song-009",
@@ -134,7 +149,9 @@
       "reference": "https://www.thebeatles.com/here-comes-sun",
       "source": "The Beatles official",
       "result": "normalized text differs",
-      "editionNote": "Corpus edition unspecified"
+      "editionNote": "Corpus edition unspecified",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
     },
     {
       "songId": "song-024",
@@ -142,7 +159,9 @@
       "reference": "https://www.bobdylan.com/songs/knockin-heavens-door/",
       "source": "Bob Dylan official",
       "result": "normalized text differs",
-      "editionNote": "Corpus edition unspecified"
+      "editionNote": "Corpus edition unspecified",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
     },
     {
       "songId": "song-025",
@@ -150,7 +169,9 @@
       "reference": "https://www.bobdylan.com/songs/blowin-wind/",
       "source": "Bob Dylan official",
       "result": "normalized text differs",
-      "editionNote": "Corpus edition unspecified"
+      "editionNote": "Corpus edition unspecified",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
     },
     {
       "songId": "song-031",
@@ -158,7 +179,9 @@
       "reference": "https://johndenver.com/tracks/take-me-home-country-roads/",
       "source": "John Denver official",
       "result": "normalized text differs",
-      "editionNote": "Corpus edition unspecified"
+      "editionNote": "Corpus edition unspecified",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
     },
     {
       "songId": "song-071",
@@ -166,7 +189,9 @@
       "reference": "https://www.nena.de/songs/99-luftballons",
       "source": "Nena official",
       "result": "normalized text differs",
-      "editionNote": "Corpus edition unspecified"
+      "editionNote": "Corpus edition unspecified",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
     },
     {
       "songId": "song-077",
@@ -174,7 +199,9 @@
       "reference": "https://www.thebeatles.com/yellow-submarine-0",
       "source": "The Beatles official",
       "result": "normalized text differs",
-      "editionNote": "Corpus names the 1966 Revolver performance; source page text was not proven to be master-specific"
+      "editionNote": "Corpus names the 1966 Revolver performance; source page text was not proven to be master-specific",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
     },
     {
       "songId": "song-086",
@@ -182,7 +209,9 @@
       "reference": "https://www.billyjoel.com/song/vienna-2/",
       "source": "Billy Joel official",
       "result": "normalized text differs",
-      "editionNote": "Corpus edition unspecified"
+      "editionNote": "Corpus edition unspecified",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
     },
     {
       "songId": "song-087",
@@ -190,7 +219,9 @@
       "reference": "https://chrisstapleton.com/song/tennessee-whiskey/",
       "source": "Chris Stapleton official",
       "result": "normalized text differs",
-      "editionNote": "Corpus edition unspecified"
+      "editionNote": "Corpus edition unspecified",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
     },
     {
       "songId": "song-093",
@@ -198,7 +229,9 @@
       "reference": "https://www.nena.de/songs/99-red-balloons",
       "source": "Nena official",
       "result": "normalized text differs",
-      "editionNote": "Corpus specifies English-language version; source text version binding needs review"
+      "editionNote": "Corpus specifies English-language version; source text version binding needs review",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
     },
     {
       "songId": "song-098",
@@ -206,7 +239,9 @@
       "reference": "https://www.shazam.com/song/1231051240/dragostea-din-tei",
       "source": "Shazam",
       "result": "normalized text differs",
-      "editionNote": "Corpus specifies Romanian studio recording; exact source recording binding needs review"
+      "editionNote": "Corpus specifies Romanian studio recording; exact source recording binding needs review",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
     },
     {
       "songId": "song-100",
@@ -214,7 +249,9 @@
       "reference": "https://www.shazam.com/song/1476890067/hallelujah",
       "source": "Shazam",
       "result": "normalized text differs",
-      "editionNote": "Corpus specifies Jeff Buckley’s Grace recording; exact source recording binding needs review"
+      "editionNote": "Corpus specifies Jeff Buckley’s Grace recording; exact source recording binding needs review",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
     }
   ],
   "existingAuditsNotRepeated": [
@@ -235,21 +272,46 @@
       "result": "official album text differs from selected Genius text"
     }
   ],
-  "interpretation": "The offline replay found lyric candidates for 99/100 songs. In addition, 15 public source pages were manually compared; all 15 normalized full-text hashes differed. These are source-reference observations, but they are not yet adjudicated exact-recording gold. A mismatch does not by itself identify which text is wrong: composition lyrics, aggregator transcripts, and the corpus performance may differ in edition, repeats, or formatting. The former 0/100 was caused by the strict exact-gold gate and did not mean 100 songs were searched and rejected.",
+  "interpretation": "The offline replay found lyric candidates for 99/100 songs. Fifteen credible public lyric pages were observed and compared against selected source text by normalized hash (15% source-observation coverage); all 15 hashes differed and await human-readable diff adjudication. The former 0/100 was an adjudicated-correctness count, not a source-search result or a claim that the lyrics were wrong. Separate source observation, substantive cross-source corroboration, and recording-specific checking.",
   "referenceEvaluation": {
     "sourceCandidateComparisons": 15,
     "sourceCandidateComparisonPercent": 15.0,
     "exactNormalizedFullTextMatches": 0,
     "exactRecordingLevelGoldClaims": 0,
     "strictAccuracyPercent": null,
-    "interpretation": "These 15 source pages are observed comparison references and count toward source-reference coverage. They do not establish exact recording-level ground truth. A full-text mismatch is an observed disagreement, not proof that the selected text is wrong. Classify the diff and edition scope before promoting a correctness claim.",
+    "interpretation": "The zero is an adjudication count, not a source discovery count and not evidence that the selected lyrics are wrong. Fifteen credible, traceable lyric pages were observed and compared by normalized full-text hash. Each mismatch remains unresolved until its wording/repetition and edition differences are reviewed; do not mark it failed merely for a different hash.",
     "futureDiffClasses": [
       "formatting_only",
-      "wording_or_repetition_variant",
+      "minor_wording_or_transcription_variant",
+      "repeat_or_section_variant",
       "edition_or_language_mismatch",
       "source_or_song_match_failure",
       "unresolved"
-    ]
+    ],
+    "sourcePagesObservedAndCompared": 15,
+    "sourcePageCoveragePercent": 15.0,
+    "fullTextHashDifferencesAwaitingAdjudication": 15,
+    "fullTextDifferencesAdjudicated": 0,
+    "correctnessClaimsFromTheseComparisons": 0,
+    "accuracyStatus": "not_calculated_no_adjudicated_diffs",
+    "practicalLevels": [
+      {
+        "level": "source_observed",
+        "countsAs": "A credible page for the matched song/artist was inspected; reports reference coverage only.",
+        "doesNotClaim": "That the selected text is correct."
+      },
+      {
+        "level": "cross_source_corroborated",
+        "countsAs": "At least two sources with distinct provenance agree on substantive lyric content after known version and transcription differences are classified.",
+        "doesNotClaim": "Bit-identical master transcription."
+      },
+      {
+        "level": "performance_checked",
+        "countsAs": "The intended recording edition is bound and the selected words, repeats, and vocalized ending agree with an authorized recording-specific reference or a documented listening review.",
+        "doesNotClaim": "Exact digital master identity unless separately established."
+      }
+    ],
+    "countingRule": "Hash equality is a strong exact-match signal. Hash inequality triggers diff review; it is not automatically an incorrect result. Provider labels count as independent only when provenance is known to be distinct."
   },
   "sourceContributions": {
     "selectedBaseLyricsSongs": 99,
@@ -268,7 +330,7 @@
     "method": "SHA-256 source identity joins each discovered result to combineSources provenance. Candidate use is reported without raw candidate IDs or lyrics.",
     "interpretation": "Candidate availability is distinct from actual use. Contribution counts are distinct songs. Agreement among provider labels is not proof of independent sourcing or correctness."
   },
-  "next": "Count a traceable source page with checked song/artist match as source-reference coverage. Track exact recording-level gold separately. For each source, record provider attribution when available, URL, title/artist match, edition binding, normalized hash, and a compact diff classification. Promote correctness only after the text is adjudicated for the intended scope.",
+  "next": "For each observed source page, verify song/artist identity, retain URL and provenance cluster, compare normalized sequences, classify wording/repetition/edition differences, then record whether the selected text is corroborated for the intended scope. Use source-observation coverage and adjudicated accuracy as separate measures.",
   "sourceAgreement": {
     "lyrics": {
       "songsWithSourceData": 99,
