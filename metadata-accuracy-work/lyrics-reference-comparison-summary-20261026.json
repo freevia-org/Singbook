@@ -75,7 +75,7 @@
         "referenceCoverageMeaning": "Adjudicated field-level gold rows only; source-page observations are reported separately."
       }
     },
-    "reportSha256": "2cf1e5775c2dcc1f612c682db3dba39cc244927d0c0686576dc44455c4d57565",
+    "reportSha256": "cca829d507ba46bcd912b89dae056514c0aadb4082b69b5904c80948b5c8f763",
     "runtimeCodeHead": "271753d4f613cf642f04e2c3f9af496435595a65",
     "benchmarkLogicHead": "6e624afd235aaa3838257581b0be8b0ee2655e41"
   },
@@ -482,7 +482,23 @@
       "attributedExternalPanelDifferentHashComparisons": 5,
       "attributedExternalPanelSearches": 8,
       "attributedExternalPanelPayloadsHashed": 6,
-      "attributedExternalPanelNoPanel": 2
+      "attributedExternalPanelNoPanel": 2,
+      "selectedLyricsWithRecordingCompatibleSource": 97,
+      "selectedLyricsWithOnlySameSongSupport": 2,
+      "onlySameSongRows": [
+        {
+          "songId": "song-073",
+          "title": "Californication",
+          "selectedLyricsProvider": "ultimateguitar",
+          "match": "sameSong"
+        },
+        {
+          "songId": "song-074",
+          "title": "Stairway to Heaven",
+          "selectedLyricsProvider": "lrclib",
+          "match": "sameSong"
+        }
+      ]
     },
     "independentlyRecomputedSourceTextHashes": 5,
     "selectedHashComparisonsIndependentlyConfirmed": 5,
@@ -1003,11 +1019,11 @@
   },
   "perSongSupportScorecard": {
     "file": "metadata-accuracy-work/metadata-practical-support-100-20261026.json",
-    "sha256": "fa809d803606121b2bd23b8b010feaa7f8e64099090c8a2188c0d287ea7b6120",
+    "sha256": "ca09905f362dd3a37035ab016ddbe850a54071aadbb9e3a4ead59e46d1d543ab",
     "rows": 100,
     "containsLyricBodies": false,
     "sourceReport": "build/metadata_accuracy/report.json",
-    "sourceReportSha256": "2cf1e5775c2dcc1f612c682db3dba39cc244927d0c0686576dc44455c4d57565",
+    "sourceReportSha256": "cca829d507ba46bcd912b89dae056514c0aadb4082b69b5904c80948b5c8f763",
     "includesSelectedKeySourceClaims": true,
     "includesChordSequenceAndAlignmentSupport": true,
     "includesLyricHashVariants": true,
@@ -1033,7 +1049,10 @@
     "googleLyricsPanelAttributedProviders": {
       "musixmatch": 4,
       "lyricfind": 2
-    }
+    },
+    "selectedLyricsProviderCorrections": 2,
+    "selectedHashWithRecordingCompatibleSource": 97,
+    "selectedHashWithOnlySameSongSupport": 2
   },
   "chordProgressionEvidence": {
     "sourceHashVariants": 202,
@@ -1112,5 +1131,24 @@
       "selectedProgressionsWithCrossLabelSupport": 0
     },
     "doNotInterpretAs": "Do not read strict verifiedCorrect=0 as a claim that the 99 selected lyrics are wrong or unsupported."
+  },
+  "providerAttributionAudit": {
+    "rowsWhereMetadataAndLyricsProviderDiffer": 2,
+    "rowsWithSelectedLyricsButOnlySameSongSupport": 2,
+    "onlySameSongRows": [
+      {
+        "songId": "song-073",
+        "title": "Californication",
+        "selectedLyricsProvider": "ultimateguitar",
+        "match": "sameSong"
+      },
+      {
+        "songId": "song-074",
+        "title": "Stairway to Heaven",
+        "selectedLyricsProvider": "lrclib",
+        "match": "sameSong"
+      }
+    ],
+    "interpretation": "The actual base lyric contributor is reported separately from the selected metadata provider. Same-song-only sources remain usable fallback content but are flagged as lower identity confidence."
   }
 }

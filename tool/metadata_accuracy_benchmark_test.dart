@@ -118,6 +118,19 @@ Map<String, Object?> _selectedLyricsSupport({
   };
 }
 
+String? _selectedLyricsProvider(Iterable<Map> sourceSummaries) {
+  final contributors = sourceSummaries
+      .where((source) {
+        final contribution = source['combinedContribution'];
+        return contribution is Map &&
+            contribution['selectedBaseLyrics'] == true;
+      })
+      .map((source) => source['provider'])
+      .whereType<String>()
+      .toSet();
+  return contributors.length == 1 ? contributors.single : null;
+}
+
 bool _positiveSourceMatch(Map source) =>
     const {'sameSong', 'sameRecording'}.contains(source['match']);
 
@@ -620,6 +633,33 @@ void main() {
     expect(
       _selectedLyricsSupport(selectedHash: null, sources: const [])['level'],
       'no_selected_lyrics',
+    );
+  });
+  test('selected lyric provenance follows the combined lyrics contributor', () {
+    final sources = [
+      {
+        'provider': 'genius',
+        'combinedContribution': {'selectedBaseLyrics': false},
+      },
+      {
+        'provider': 'lrclib',
+        'combinedContribution': {'selectedBaseLyrics': true},
+      },
+    ];
+
+    expect(_selectedLyricsProvider(sources), 'lrclib');
+    expect(_selectedLyricsProvider(const []), isNull);
+    expect(
+      _selectedLyricsProvider([
+        ...sources,
+        {
+          'provider': 'betterlyrics',
+          'combinedContribution': {'selectedBaseLyrics': true},
+        },
+      ]),
+      isNull,
+      reason:
+          'ambiguous base contributors must not be attributed to one source',
     );
   });
   test('recording key comparisons distinguish chart-scoped key claims', () {
@@ -1266,6 +1306,8 @@ Future<void> _benchmark() async {
           (edition == null || row['recordingEditionAnchored'] == true);
       row.addAll({
         'selectedProvider': selected.providerId,
+        'selectedMetadataProvider': selected.providerId,
+        'selectedLyricsProvider': _selectedLyricsProvider(sourceSummaries),
         'selectedTitle': selected.title,
         'selectedArtist': selected.artist,
         'selectedAlbum': selected.album,

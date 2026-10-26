@@ -4,7 +4,7 @@
   "generatedFrom": {
     "benchmarkReport": "build/metadata_accuracy/report.json",
     "runtimeCodeHead": "271753d4f613cf642f04e2c3f9af496435595a65",
-    "benchmarkReportSha256": "2cf1e5775c2dcc1f612c682db3dba39cc244927d0c0686576dc44455c4d57565",
+    "benchmarkReportSha256": "cca829d507ba46bcd912b89dae056514c0aadb4082b69b5904c80948b5c8f763",
     "corpusSize": 100,
     "cacheHits": 3100,
     "networkAttempts": 0,
@@ -163,7 +163,45 @@
     "googleLyricsPanelsWithDisplayedTextHashed": 6,
     "googleLyricsPanelExactSelectedHashMatches": 1,
     "googleLyricsPanelDifferentSelectedHashes": 5,
-    "googleLyricsSearchesWithoutLyricsPanel": 2
+    "googleLyricsSearchesWithoutLyricsPanel": 2,
+    "selectedMetadataProviderDiffersFromSelectedLyricsProvider": 2,
+    "selectedProviderMeaning": "lyrics.selectedProvider is the actual provider of combined base lyrics; lyrics.selectedMetadataProvider records the selected catalog metadata provider.",
+    "selectedLyricsRecordingScope": {
+      "selectedLyrics": 99,
+      "selectedHashWithRecordingCompatibleSource": 97,
+      "selectedHashWithOnlySameSongSupport": 2,
+      "onlySameSongRows": [
+        {
+          "songId": "song-073",
+          "title": "Californication",
+          "selectedLyricsProvider": "ultimateguitar",
+          "match": "sameSong"
+        },
+        {
+          "songId": "song-074",
+          "title": "Stairway to Heaven",
+          "selectedLyricsProvider": "lrclib",
+          "match": "sameSong"
+        }
+      ]
+    },
+    "providerAttributionCorrections": {
+      "rowsWhereMetadataAndLyricsProviderDiffer": 2,
+      "examples": [
+        {
+          "songId": "song-073",
+          "title": "Californication",
+          "metadataProvider": "betterlyrics",
+          "lyricsProvider": "ultimateguitar"
+        },
+        {
+          "songId": "song-074",
+          "title": "Stairway to Heaven",
+          "metadataProvider": "genius",
+          "lyricsProvider": "lrclib"
+        }
+      ]
+    }
   },
   "songs": [
     {
@@ -273,7 +311,14 @@
         "selectedNormalizedTextSha256": "0b26232bc7025d3344d97b3dfde73be80dbc33d7fd44f4e99c577eefdde4c3f1",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "f420dd4f5d5eca1916c541748bfd00a541f0859c0cef1e200014b8cb7e1d794c",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -538,7 +583,14 @@
         "selectedNormalizedTextSha256": "36321c6116eca8e96292c87911c9c8bd4d544ef3f9779accef9891d6a2226fc0",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "38d2aedfe8850d8b45d7e3fe686e2b3cd5ed62e90c9c1d9362e54778b1b6f9d6",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -757,7 +809,14 @@
         "selectedNormalizedTextSha256": "b2d9681e845b0dc05f58a261b2371c47d05fb27f17cd8496a19d8140db0c4e7f",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "5297d65a07fe9e4c15ac7fa113a5536027212b1f683c28090da967ff06d6ac4a",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -1005,7 +1064,14 @@
             "independentLineageConfirmed": false,
             "lyricBodyRetained": false
           }
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "c10451e60a79d95b8ea20f410e67efc3bd5782333c66f0f3a6b353084c36883e",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -1306,7 +1372,14 @@
         "selectedNormalizedTextSha256": "e38ddbef1ae6476d0809d37a1341425093389541817b890914844ac446785248",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "5a8c09628e02861f642fdfccb86f2758abf8130c510514e977cadb1b00bede08",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "verifiedCorrect",
@@ -1583,7 +1656,14 @@
             "sourceReferenceTier": "attributed_external_text_comparison",
             "independentGoogleLineageConfirmed": false
           }
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "351db9678aa7659d3d16c87fafe724c49fdc2c9d68d00d3aab8bed778a03910b",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "verifiedCorrect",
@@ -1846,7 +1926,14 @@
             "sourceReferenceTier": "attributed_external_text_comparison",
             "independentGoogleLineageConfirmed": false
           }
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "e97479ce6385ddacdb22d19d5839452e811f740a2eefef75c45cf0e29480c421",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "verifiedCorrect",
@@ -2123,7 +2210,14 @@
         "selectedNormalizedTextSha256": "054ea2afab9218f4475d234bc533d7c21a246c9695157b978213838e364dd9b9",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "798c43098a9ef83fb3e9a07779d9b2fa9d8f4338a28fcb172d22a10aa6c43eb1",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "verifiedCorrect",
@@ -2438,7 +2532,14 @@
             "sourceReferenceTier": "attributed_external_text_comparison",
             "independentGoogleLineageConfirmed": false
           }
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "435294bea4e929a7f87ad0ced44e294a5b818c05ccab44be515a88e10c0006f4",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -2687,7 +2788,14 @@
             "sourceReferenceTier": "attributed_external_text_comparison",
             "independentGoogleLineageConfirmed": false
           }
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "cf000d4bcb35a7311ef86a6dc8e86d95a9ff0a7519ecb16778a8cd533fd224a1",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -2866,7 +2974,14 @@
         "selectedNormalizedTextSha256": "cb3cae8ebfb090c1a1484e7520a280e8f600cb1e05b81c3206571002e995d729",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "e238a4c91ed7b3e39b8a4c26814daa268bbafa714ead335c3c397f54dbd81fec",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -3093,7 +3208,14 @@
         "selectedNormalizedTextSha256": "88c14d71765d06b8ea99ac1fd339603ee285680100f2b4b820731db299f77b00",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "2ec459b7b9c8ab7302d925b76a94863ae7a4772a092aa7b7ac0df0a30cceddee",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "verifiedCorrect",
@@ -3303,7 +3425,14 @@
         "selectedNormalizedTextSha256": "850a16ca8cdd8166a0c6c2e6e8d46038ad020f08ba5bf5c257e4df1c9ab30753",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "a91ac8211a98bb65e79cc454b536915f28738a67de864b0ea06ab329b0bb929a",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -3529,7 +3658,14 @@
         "selectedNormalizedTextSha256": "50137f9328c0267fc0f35d12fbc442b85045bc71dc5b99239692736711d631fe",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "79f78df1f9a9a846b76a4fbc168038889726a87955de48b4f588d3374b868a18",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -3795,7 +3931,14 @@
         "selectedNormalizedTextSha256": "33dde58a26a576a123f7b786814262f665119a21b8d9c07deb70a6ea5b140ff2",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "90247bd91706c2a6eec9e9a0e046632d2e71ccddd7b77747c94655414a22af3b",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -4070,7 +4213,14 @@
         "selectedNormalizedTextSha256": "1609e30fc7db3e2f379638e3024a8018de1bbe5120a916aa293145e83b1c3233",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "170025bebe17a03eda06107facd38a3c001f1cd59dbde266e1ea073e2aeabaa5",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -4344,7 +4494,14 @@
         "selectedNormalizedTextSha256": "9887b2cbbaf3caba0e4d4bccea939fc198372d0d2555656e42f515170182c686",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "5ea57786e64133fdbfcf71ebd2b23cec0029e4f6fcc4523b67f72f1c16c5ede9",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "verifiedCorrect",
@@ -4606,7 +4763,14 @@
         "selectedNormalizedTextSha256": "8d51835703abfab1287be59622651046fdb8e1b36828e5cc6a0d0c8b0cfe2039",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "b6ea2b3d7c6ee8181c1917680a5b802410de8f26ce47e222c7e5a014e213dc7f",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -4785,7 +4949,14 @@
         "selectedNormalizedTextSha256": "7fd7b49aa922e18a1326bdddc1fc52e26d770fa26f5b9606e60d9825936ea745",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "7dcda0fe8ebb2b41bbaec0080d88960d038f0e82c2b7522d5492a28c9140a33c",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -4947,7 +5118,14 @@
         "selectedNormalizedTextSha256": "9a5c82f94ac8508941e79e554da1989fa709269ad462ebb18210dac947f5fb8e",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "fc3fd39368da89eeffbe02d683aaf74aedbba1ad70dbe94ef11466ba345dc10f",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -5176,7 +5354,14 @@
         "selectedNormalizedTextSha256": "3d8524d49f59ac9b8c3e2c2df100e6dd51135718b547f53396d1117ae344317f",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "e95cc9b1e1c130b45e5f4b9785184fd9428454ff4cde73e0b8f723cd74886017",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -5462,7 +5647,14 @@
         "selectedNormalizedTextSha256": "7a8edf8c79f4f05128ad71c23deed83b42eaaf598d960cf2511f25dfe19e1931",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "b8660c39924532e261ceb03ce347fb40264662e4883af1d247c51d8ef3f3e76f",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -5768,7 +5960,14 @@
         "selectedNormalizedTextSha256": "cbcd9e0cc1ba39268937a72dbb977446e25bd14708f700f00368db1a4f45a6e5",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "34c3c27b9c5d0bf39edfd15c3b5965f772dd6b29d65a3474734d8cb9a5bd332d",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -5996,7 +6195,14 @@
         "selectedNormalizedTextSha256": "75298ec9db5afa40ef9e52d172df2b58bae7adb1feffbd69f91410a5f04377f2",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "26bdb358a5bdfdd6017ff4e068a809865067aaac6f29402e0cdb13bac857c187",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -6205,7 +6411,14 @@
             "sourceReferenceTier": "attributed_external_text_comparison",
             "independentGoogleLineageConfirmed": false
           }
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "7f1bb7640702fcf5f1faf4bac7dd6e0dd5e7360669b45c5fcb791a3d082d8dac",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -6429,7 +6642,14 @@
         "selectedNormalizedTextSha256": "1c4c0e0fe0625ff3b5a051ac9dfa611d5a2f3acce80baf12d15e38854836f4cf",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "0c40aa7b5f27de1bf1ac3048451c2c574d296275d03b9a5ae124002e8e4e6845",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -6688,7 +6908,14 @@
         "selectedNormalizedTextSha256": "08ac6aa537ed99157c3bd87761dabdb125e678190639992512952afb31a6daf6",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "1a935332c35fe9fc40d74291f28667d22a1e911473788fa04de07faf3eac6cff",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -6923,7 +7150,14 @@
         "selectedNormalizedTextSha256": "7d0035be7af76af4d2335697b72549cbedc476e6f891e6e9b631d321dfe575ae",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "188913f3ea73250fc57ebc4c3c0e47f176c8c5d2530ade5f04f66a89b34d6609",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -7195,7 +7429,14 @@
         "selectedNormalizedTextSha256": "0b0cda77173d5fc0719f0a66274ed3bcc19287b42e0d3027de994d79e310c682",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "e5076d8eeac795ea6f7284464b5ef3cca4dca0c4aa4acf4a047ec9e7e8f6f42d",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -7383,7 +7624,14 @@
         "selectedNormalizedTextSha256": "ae8db0eef9f5e8dc3b8702c2e6ed008c856b0c05086487729f848dc70ed4cfe3",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "245161d5a2d48883f17912f3bd065a652ed94dc9f29f06d11a08fffdb8b77025",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -7709,7 +7957,14 @@
         "selectedNormalizedTextSha256": "ff1a24b9c3e22e42512bd39d89cd2372dd5a249239f2d7899fc7e5486002a43b",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "81f99f204b9af2610099ce069c906675c7e021d220acc4d674ddf1187d3fcdf7",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -8008,7 +8263,14 @@
         "selectedNormalizedTextSha256": "cdf45179805debaaab13883e6164e1c59cec11bf9a18fd0c28fed819b7dedd58",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "b76e6653bbae89439014c4928c3559119a1268a8a7ba0c14fb7880fcb1669057",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -8196,7 +8458,14 @@
         "selectedNormalizedTextSha256": "02f5a59cfb198af740f71a84941f66f65f903f1a1824e7b9c8def9feaaea8ce2",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "e723d8a93f3e5b38c6cd4606d7540418ff2c93d4217c305cd8f24ce9e1fb4aa7",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -8421,7 +8690,14 @@
         "selectedNormalizedTextSha256": "afae138f8d13517f4d9f3de659fe852e057eb90c3e49572166414200f42d797e",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "c7ef794d73c94e2f403269bb587c0dccb994e90e1dd008e7defaa171135438dd",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -8637,7 +8913,14 @@
         "selectedNormalizedTextSha256": "567aa21cd1837c395358ebce10c54684d22fb303884b30efc3c8f4bf4c22ba0c",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "739702c69c405f644bfd9c74b4bc76ee2e0b316bf26227a6a8c4098fccc65930",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -8833,7 +9116,14 @@
         "selectedNormalizedTextSha256": "8c7d00b843604ecaa19b02b16142ec0bebd19666225990126e9859b746946f08",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "0048c3a903086e6e040ef1d23b89b11b0eba183d6548d6807ff6d4e9d30fff61",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -9013,7 +9303,14 @@
         "selectedNormalizedTextSha256": "e4f2a6d686d7903e82f3747b49dcd28e0fcebe12bd0d24a46db06ed65d1156f6",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "949d3ea8a4823dc1494901d69011cbc222d77c04bcfb35c10be9fda0f80498f8",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -9166,7 +9463,14 @@
         "selectedNormalizedTextSha256": "0106ac0cfee37ff83beba7eb81a4d11fa84b14da5cfaee58e49b6c363ee78c21",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "a4a7023c85030a8f58d96f6d4ecede9b569e9f695e6a84d5a587db394e3642e6",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -9383,7 +9687,14 @@
         "selectedNormalizedTextSha256": "ef53ae818ba3f9e66052e79676d4f1cfb1911ff3e4619e9d2023fdfdecd595c7",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "2f05586cdcdd363dce708ae828b14b2aeb3ab94a0a597bcbb53a4cd9f40ca5d9",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -9597,7 +9908,14 @@
         "selectedNormalizedTextSha256": "24e68fb6b8304b8c870bacf0512c0633df6d97ab499ea5a198c258f6e84fa7ad",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "93516d19d2d55bced415280ef4340ffb4b1822a368a793b55ab5a8e544a8c6f3",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -9853,7 +10171,14 @@
         "selectedNormalizedTextSha256": "26d4a8667129259e7a84ad1805263e8743d08302ab34e12c6960ac5f976653d5",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "3122c5d0486857c0b918de318a702197d5621ffceb1a6830d4bc94fbbbf4c57e",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -10098,7 +10423,14 @@
         "selectedNormalizedTextSha256": "c941eb7ad70e78a9f05542faa0820d507ff9489ff1ddd87c6d9811230c9884c0",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "19cc011d0ed0ca5d4ff85b0029cef1b188b50cef6d7e6ec2b4ee081b249a95eb",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -10411,7 +10743,14 @@
         "selectedNormalizedTextSha256": "6381bcba5798a3a8e8a10b72b45f6d35ac8c2874a29e5805e89ef9e1db54b50b",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "70b8fb577034421e5a8d102df17c92da076d7893b8207f9da05aba41dd1b62c2",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -10695,7 +11034,14 @@
         "selectedNormalizedTextSha256": "d7c095d6dab574c4f904d2b4b5a70184be908e62fcd79064d6cdbddd06c28dce",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "165304442eddfc9c44668174cff9615a11832e05716fde87cced66335793f30c",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -10984,7 +11330,14 @@
         "selectedNormalizedTextSha256": "a55890b611d8421efe07aab988521150e51cf1fa46a47504c008d9f59d71849f",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "b8f3bcfcd0d29fcc61dc190a50e1d8872ce759e196cea9a9e9a05b4d2734969b",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -11199,7 +11552,14 @@
         "selectedNormalizedTextSha256": "dfbd4b20f7c0df272cae8e85a6483c519345216f03cd01e11abe6530ecc0471e",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "9468f05c3722896609a878f251a6ecc4478387db9ae61f057d2d56d4aa7e4b25",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -11396,7 +11756,14 @@
         "selectedNormalizedTextSha256": "b9813665199a5625df09ba6c76b658680354f4beaf60d4a53bd904e35e70dbb5",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "a2427d5ec93f7960372d447a59b4df60ebd4c36471b34ad379454ab0b307b8b7",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -11633,7 +12000,14 @@
         "selectedNormalizedTextSha256": "29f1c67958bfc01edf803841b5d035d3785dd43cf3c96710ae77d9492879a0a6",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "1a356369b3144d29a17bc5962bb8c2e65cbf97ce9562918edfb76dfe5adbee19",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -11881,7 +12255,14 @@
         "selectedNormalizedTextSha256": "0b5863ce6df28be322a5a49749f7c5e409cb410452f243843b56fc36d139a1bb",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "1816dc6aec230e68b56bd822875738646859440cfc0e2520f9db81c4ea1c1753",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -12189,7 +12570,14 @@
         "selectedNormalizedTextSha256": "c35b1cd2591f543a7f244ca56bb0cab96fbd7639d277d2d175ec2d9b585352e6",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "ee0fc73f96a9630cb9346d63d4e5565d97d7a496ddb09887132eecb6f8cbbb66",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -12493,7 +12881,14 @@
         "selectedNormalizedTextSha256": "0728cdb2c569ba9226ce1337d8cf1321976d0a96833cc3ebc7ce840e2d409d12",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "cf4947969e08399a9ecd27b18c1a84c10daf98930b85aafc8346a5e8b1e9dcb1",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -12659,7 +13054,14 @@
         "selectedNormalizedTextSha256": "bff72c79c19b226ad00588e085c022ab2da243fab5abd32f4549a3d59ebcda4b",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "36ea44fd7826695bf7fb60c396998165c0d69734a45b5168567c895332c9bbf9",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -12838,7 +13240,14 @@
         "selectedNormalizedTextSha256": "15919a9cb848c315ca7c9a1c823ae3f1c8dbbe62bff89ca7d908085baf36b7ad",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "43eb9c15f36ceeebb3dafc6644f5ed1b92aa42b9d6bc64e5b5748ec5ec42fd77",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -13017,7 +13426,14 @@
         "selectedNormalizedTextSha256": "40b086c2fc940b3da81cd785e52f6ae83fa6f14faf38078ca1baf107104e530a",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "a53ec04b848f30d7d77b924a0bb7a65be4429b2fee881a9b073c665a36fc359c",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -13208,7 +13624,14 @@
         "selectedNormalizedTextSha256": "5ad23dae8c6cf0314e5b2608b1ef54a74ac5dd037c5e1bcbd0617dfb05940853",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "42964fb32abd529f617684a1318eb87a015006bf127f7bea98e768f87f7d46b9",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -13423,7 +13846,14 @@
         "selectedNormalizedTextSha256": "066494e21786c960d0fd432f06d04b9798ae36e18f2ce2d4a320c1b078fa4d02",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "fe2d1324023e68ad4836418801ff519f2f146fb986d7c656cfbf5015472ae9cb",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -13616,7 +14046,14 @@
         "selectedNormalizedTextSha256": "5324ed3a78d0b9d8236dac5cbf874848ab9a26001893bffbe6da4d367d043567",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "100cc88c3df64dfcbef24a6e5d094bcac11034649608177c5ef57a739db10f86",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -13845,7 +14282,14 @@
         "selectedNormalizedTextSha256": "bfabaee2487dbbab559442d600666c6b5663b41a9a891605ae8a417e489e5f54",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "34b4e92dbd28b21f0883e2a208d03c35bdd602665c991cdadb1de1698571ccd8",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -14116,7 +14560,14 @@
         "selectedNormalizedTextSha256": "d0e593b2d8c5c65bb071560e214c3be7a76996aad113da1ae9818db4c334d087",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "dd193b9d252b153eb36934dbeab4ba9c387c0b93b7cf7cb286ce5b02c784f8b0",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -14318,7 +14769,14 @@
         "selectedNormalizedTextSha256": "9f3a140d85a99c272dcf01385ea77995ddef4ec3ff8d1455b7910692557fe16e",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "49898bb669bb45416c3845d06288339a87aab6dfcec20452cf5e3b03dbc48ce5",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -14538,7 +14996,14 @@
         "selectedNormalizedTextSha256": "f42c894fa0226f367d1e6cb4d9e65c7e751e52b4632f5ff09968fb0c5afc7767",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "cb86b09f6e695d9280f96ae79979d71e6fe5db12882a8c24d43560e913c9478f",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -14756,7 +15221,14 @@
         "selectedNormalizedTextSha256": "a76b6b846e835a8bc1970ff9eb503a25e4d052399e21d7af1a623bbc82c9eb65",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "15b98e1f251916e62c9a444820c7ad6811b8e653fd3e537d4474450f06ac567a",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -15031,7 +15503,14 @@
         "selectedNormalizedTextSha256": "a8fdfcdc19e08b754f5e63611ece33ca79bbbe95c82dc97461232b8959b00831",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "dfdc211b3d47e6ea3e9a1473ad2ccf6f81d26629c02117d2b6c8515d45c2f2c8",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -15233,7 +15712,14 @@
         "selectedNormalizedTextSha256": "83363da58f51d5ac60ede52ba8234cfbd63a420c8b7efb6781bbb1026b785e93",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "50359148e045ee2355e478c2dc803c7a1d8549033bf4c4c033baa237555078c7",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -15421,7 +15907,14 @@
         "selectedNormalizedTextSha256": "832758f73ff8c83f65647271c5b1bfd44f0d4ee99e6a5cb2f3a11840036a77b7",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "3acde0beb0d1e955afd24379bba13c220ef63ab979f392edd399dca04b93d4e1",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -15679,7 +16172,14 @@
         "selectedNormalizedTextSha256": "105717c0ece96b6cf695316c4a6deda39fd5d757da94d81309dc0317f8a4a6e9",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "70a49db3e08a5128545fe79f8cf00eee4361a2a1272c0fe8ee47737d4b16e8fc",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -15871,7 +16371,14 @@
         "selectedNormalizedTextSha256": "8429e119c0189d8ffae70482006199597272b7a53a602d8d77075095a777cfdb",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "cbff5ab18099e4a69f3fec2d210d56d2ec79c5abb58245db71186e0ed79aa3be",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -16094,7 +16601,14 @@
         "selectedNormalizedTextSha256": "8bfadea02da545a337f9e064e879d1834f6d64584bdd7b3a3d625af0195c10c1",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "352b7773f7c3039d7bb08b66becaa5f2165ef9b8ecf812e3544f69fbe11511a7",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -16307,7 +16821,14 @@
         "selectedNormalizedTextSha256": "61270ce637372fd22d4250fb3e28f073d91a313712d36d905fbd54e7302e6784",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "d85b49928c7006b7085943778e83afc088f6219ea7536d2eda8266112a788411",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -16514,7 +17035,14 @@
         "selectedNormalizedTextSha256": "b9c5ccb1ae1bdf4f7f27852b4e451bdb92792a8c891e3b1b66da919a75e0d718",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "27d1b272a4de7b31171d0b84287cb046715ae4ff0df42734a64e397e360d9900",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -16716,7 +17244,14 @@
         "selectedNormalizedTextSha256": "8a3a76fafa316288be12ef998fd4e5fc25376139ea6d025154c92c791b59dfa9",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "81afb3f4bc773f498dc4a815b27f3cd413dfe2a664e983f8a628461f016eb909",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -17010,7 +17545,14 @@
         "selectedNormalizedTextSha256": "df2d37cb20a90e09326c6d3c501f419095ea33b83e09b8568254569672c25fee",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "10132fe6bc014908710581cd4f7921b73f98d94c01592b0c792e8d4c5015058a",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -17128,7 +17670,7 @@
       "lyrics": {
         "fieldResult": "unverified",
         "selected": true,
-        "selectedProvider": "betterlyrics",
+        "selectedProvider": "ultimateguitar",
         "supportLevel": "single_provider_exact_text_support",
         "supportProviderLabels": [
           "ultimateguitar"
@@ -17189,7 +17731,14 @@
         "sharedAlternativeHashGroupCount": 0,
         "selectedHashRecordingCompatibleProviderLabels": [],
         "selectedNormalizedTextSha256": "3e3f1db18864477d9c87ba6e44606c1c25641d6885dce59d07475ef6c744cc8c",
-        "recordingCompatibleSupportProviderLabels": []
+        "recordingCompatibleSupportProviderLabels": [],
+        "selectedMetadataProvider": "betterlyrics",
+        "selectedLyricsSourceIdentitySha256": "461636703784919df3e4f003eaed8ac0d1ec60d423449ded7fbdd45ec1e11f59",
+        "selectedBaseSourceMatch": "sameSong",
+        "selectedBaseSourceRecordingCompatible": false,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -17327,7 +17876,7 @@
       "lyrics": {
         "fieldResult": "unverified",
         "selected": true,
-        "selectedProvider": "genius",
+        "selectedProvider": "lrclib",
         "supportLevel": "single_provider_exact_text_support",
         "supportProviderLabels": [
           "lrclib"
@@ -17388,7 +17937,14 @@
         "sharedAlternativeHashGroupCount": 0,
         "selectedHashRecordingCompatibleProviderLabels": [],
         "selectedNormalizedTextSha256": "6fc8633a4fb8fda90c95e83cbb0c1b41b41c1f3591b7c3c0c6491ccc8a52341d",
-        "recordingCompatibleSupportProviderLabels": []
+        "recordingCompatibleSupportProviderLabels": [],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "f4108150b8d98364e7a07008247b1e446115050c1ee84961993ade394c2d4a7d",
+        "selectedBaseSourceMatch": "sameSong",
+        "selectedBaseSourceRecordingCompatible": false,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -17627,7 +18183,14 @@
         "selectedNormalizedTextSha256": "cc06e150233e43ecda064ce35c4fc06281838005861c7538a8b120e13b6bbd97",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "23840abaeefe77ecbbe2081458bb87c7d6b93e5ebdc4c0b924514e5101bceba8",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -17897,7 +18460,14 @@
         "selectedNormalizedTextSha256": "67fbf90037de77d333062eaa89ac4c639959cf0ae82e1d5f4e6e16dfde121872",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "faaf5bc88a188ebde2ff11eb42152c1a653c1032e2ed9f7c2780c5a2522c9097",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -18149,7 +18719,14 @@
         "selectedNormalizedTextSha256": "5fa0891923f9af1874901cebe561c6f4a8dab2df1f52b174332b8de5f5582e3b",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "baf3f1221b0616e00f313c115251aa45bc2e427035c327b697b7f71715116992",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "verifiedCorrect",
@@ -18369,7 +18946,14 @@
         "selectedNormalizedTextSha256": "3b95156d11babb67d0be0710eb4f6551a0d78d44bf051a1dd317dd4a735c500c",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "74b43ab6dae3c2af31d7cfcd65ace33908f434dfd41fe85d10d85be11b1623c6",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -18574,7 +19158,14 @@
         "selectedNormalizedTextSha256": "243d1e47e4d37605ee6280d53588b90dd8339d05796144e4280cc0f2fa6ce270",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "2c2961b4d04f0c0fcaeae9eb973a7eaa2a5697722d1a7785c31557fc8fc3304f",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -18793,7 +19384,14 @@
         "selectedNormalizedTextSha256": "dd209956a9bc871d3b43b053ec5c2c1e6951d8da45fb25c3ed1b4da6277bcfb0",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "71e8613d12c4b53b3e5a9a6ffdc74a90c9288f426020afe521a47fd1528e23e2",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -18951,7 +19549,14 @@
         "selectedNormalizedTextSha256": "4a4abab320c46d63343bc89e64e83277d6dec78390d25d80c8fa56cca935ccf9",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "0d9089444f98e82d7f796e5bc3f7bcb8e05440b8d28a916ea958247bcc820c55",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -19151,7 +19756,14 @@
         "selectedNormalizedTextSha256": "c682e7329523cb01c0cd4dbe07fb582cf49ce68150281db7e4fdcc69207a6132",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "d027640e41316f245f18529152b2023924172717c0051def2d53404bae115b9c",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -19353,7 +19965,14 @@
         "selectedNormalizedTextSha256": "0f3a3247e13135d3069e606e474e935cb2f6c069b12a4742440d55ce9bc6d941",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "423d7121ff5ac1184e800da8deca2ab462ecca8ab667fbb19244937902ac5918",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -19507,7 +20126,14 @@
         "selectedNormalizedTextSha256": "6bbc0550d073d40466fb41c17c0c2795448d94e5707ff9baccda4b5df8e94ddb",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "a441008df00203d7aeb5b2fe77bb9cf932a33231390e3d5a60f662316fcde47b",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -19678,7 +20304,14 @@
         "selectedNormalizedTextSha256": "ffdeedc5581f185bdf9198e924085640a7745268d19fc97a3da743df597f1835",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "b31d06084111af90ddbc19399f3a32c935ff0836f39b0c3cdc9acf717634f2f3",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -19866,7 +20499,14 @@
         "selectedNormalizedTextSha256": "eae37e575696702b54e59657da0013a132f62d537c750032b2bd4d6d2fe2557c",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "5dfe3f634bbf9da49938775f33c7bc0b4f2bccea4873c319e06b316a20a8a31a",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -20115,7 +20755,14 @@
         "selectedNormalizedTextSha256": "5c16bdeb481645273865ddcd574250c7edbdbb79175aa080d24d135cbb91685d",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "515f5eb49060ae8af27111e4048a3736a138d0376e84e871320427480d3fc2b8",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -20382,7 +21029,14 @@
         "selectedNormalizedTextSha256": "a77f965d6ce4b2b9af50366bc08a1b454f88f56356b1eae8352d2bd6c16c5646",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "77222a8c60b8e9f6f902658f9aefde48b12988e82aad9a4c26e8f227cb24f346",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -20583,7 +21237,14 @@
         "selectedNormalizedTextSha256": "03530c278b9c35b55f8a153d7a7791cca0efd5b3440f42ae7b2950aa5a1a46c1",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "ac00f3550b5688a5a06e7ebe5b0d9faccff693228f69c9638c1620281599603d",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -20720,7 +21381,14 @@
         "selectedNormalizedTextSha256": "85cb4e490b5b8e6c85d434ae332f8b92ed241be32791d1cf942778c953d964ae",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "c6d9b6d5f851f42b711a7507ff504cb7ac7aa0ea64b65b7958aa5589aabae83f",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -20865,7 +21533,14 @@
         "selectedNormalizedTextSha256": "a890943c0505380c0830bface1be16906f80bbfd0edbb1787e42aa231012e3e4",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "2224cd75aa166de299025672edf761b3f90c21d32516de9f0a7dfd42dd441924",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -21038,7 +21713,14 @@
         "selectedNormalizedTextSha256": "1a1f380f97a5d1580db4bcfe094b3734cb80a5eb899da5184f3bd552ad2b478a",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "6f1ee2623ab0f0e383eab432375c1f13f47800443c69cedf784b3f21aeafae85",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -21209,7 +21891,14 @@
         "selectedNormalizedTextSha256": "45a9d8f7b237a6b4e038762d939e505a9868940afdaae64b5a375f9fb3f5815e",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "43ae6c9e1556e384fc6d3924ca4bee2725bc3db474f232daf08f7932c9730134",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -21411,7 +22100,14 @@
         "selectedNormalizedTextSha256": "671a04820c91d42cdde7d46e93d1e1e1586216bb0f8a0065df3ca463417a207f",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "cba18223646c038a40b73b7b3542c24065296e29cd6d5585a801c8b8a57fa6fc",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "scopeMismatch",
@@ -21608,7 +22304,14 @@
         "selectedNormalizedTextSha256": "652b2b2640f6565aee03c166e193da6eade6a75260dc34cbd864579b6443ec02",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "10629226ed19bae8ff710dea2ed858d2d860f699f94c61fb004c88b9bd4c4dcf",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -21693,7 +22396,14 @@
         "selectedNormalizedTextSha256": "878b4d4fbd3cd913795c6f837ccffe79f7f7a7adb73da40d47105a25eb510556",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "688b7a1dcffe36226b4e301a7c4f285a04fd27411b07ba6cfa7af685ecaab6ec",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -21751,7 +22461,14 @@
         "sharedAlternativeHashGroupCount": 0,
         "selectedHashRecordingCompatibleProviderLabels": [],
         "selectedNormalizedTextSha256": null,
-        "recordingCompatibleSupportProviderLabels": []
+        "recordingCompatibleSupportProviderLabels": [],
+        "selectedMetadataProvider": null,
+        "selectedLyricsSourceIdentitySha256": null,
+        "selectedBaseSourceMatch": null,
+        "selectedBaseSourceRecordingCompatible": null,
+        "selectedBaseSourceEditionCompatible": null,
+        "selectedBaseSourcePending": null,
+        "selectedBaseSourceHashMatchesOutput": false
       },
       "key": {
         "fieldResult": "unavailable",
@@ -21939,7 +22656,14 @@
         "selectedNormalizedTextSha256": "1a10e03b06d0ba76b0a4c0436bd068940b46a00042185fe8fae111bfedf30aa5",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "3fc6831b4b2de4450809364a8411af3994e67e7e37ca4bb6c4d7ed86a7fa1479",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unverified",
@@ -22158,7 +22882,14 @@
         "selectedNormalizedTextSha256": "1e6f924496f8cb44e29029a6cfb8e5c826f6550ed016f7033ee0d60c369af58d",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "b2c39bc88e9f7b9bd74564b09df9e2b492de372f5cb6d8123a772d18f3e4fa4f",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -22416,7 +23147,14 @@
         "selectedNormalizedTextSha256": "63767873fa39273d11943fbb485e6f02a0d8024aaec8b342c84e7f8d5e229974",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
-        ]
+        ],
+        "selectedMetadataProvider": "genius",
+        "selectedLyricsSourceIdentitySha256": "f281980ace7da5a574fc45ab74af48a464cda7ef27f7caabc8a2ef26b601b98f",
+        "selectedBaseSourceMatch": "sameRecording",
+        "selectedBaseSourceRecordingCompatible": true,
+        "selectedBaseSourceEditionCompatible": true,
+        "selectedBaseSourcePending": false,
+        "selectedBaseSourceHashMatchesOutput": true
       },
       "key": {
         "fieldResult": "unavailable",
@@ -22526,7 +23264,7 @@
   ],
   "practicalEvidenceSummary": {
     "label": "practical source corroboration, not recording-specific correctness",
-    "interpretation": "The strict lyric count of zero means none of the selected lyrics has yet been adjudicated against a reviewed field-level correctness reference. It does not mean there are no source candidates: this replay finds 99 selected lyrics, with eligible exact-text support from multiple provider labels on 15 rows and one label on 84. Provider lineage is unresolved, so these are practical support tiers, not correctness claims.",
+    "interpretation": "The strict lyric count of zero means none of the selected lyrics has yet been adjudicated against a reviewed field-level correctness reference. It does not mean there are no source candidates: this replay finds 99 selected lyrics, with eligible exact-text support from multiple provider labels on 15 rows and one label on 84. Provider lineage is unresolved, so these are practical support tiers, not correctness claims. The benchmark now distinguishes the metadata record provider from the provider that actually supplied the combined base lyric text; two selected rows have only same-song, not recording-compatible, source support.",
     "lyrics": {
       "selectedExactTextSupportedByMultipleProviderLabels": 15,
       "selectedExactTextSupportedByOneProviderLabel": 84,
@@ -22550,6 +23288,25 @@
         "independentLineageConfirmed": false,
         "lyricBodiesRetained": false,
         "treatment": "Attributed source evidence. Exact hash match is practical corroboration; differences are review leads. Google is not counted as an independent lineage."
+      },
+      "selectedLyricsRecordingScope": {
+        "selectedLyrics": 99,
+        "selectedHashWithRecordingCompatibleSource": 97,
+        "selectedHashWithOnlySameSongSupport": 2,
+        "onlySameSongRows": [
+          {
+            "songId": "song-073",
+            "title": "Californication",
+            "selectedLyricsProvider": "ultimateguitar",
+            "match": "sameSong"
+          },
+          {
+            "songId": "song-074",
+            "title": "Stairway to Heaven",
+            "selectedLyricsProvider": "lrclib",
+            "match": "sameSong"
+          }
+        ]
       }
     },
     "keys": {
