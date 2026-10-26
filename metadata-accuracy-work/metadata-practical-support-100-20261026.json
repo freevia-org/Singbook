@@ -16,7 +16,8 @@
     "referenceDifference": "hash mismatch prompts text/version review and is not automatically incorrect",
     "copyright": "no lyric text retained",
     "practicalCorroboration": "Provider-labelled exact-hash agreement and public lyric or chart references are useful practical corroboration even when lineage is unknown. They do not by themselves establish that a selected value matches the specified recording or edition.",
-    "googleLyricsPanel": "Record visible source attribution (for example, Musixmatch) and song/result identity. Treat Google Search as the discovery/display surface, not an independent lyrics provider when an upstream provider is named. Compare the payload only after storing hashes and edition scope, never full lyric text."
+    "googleLyricsPanel": "Record visible source attribution (for example, Musixmatch) and song/result identity. Treat Google Search as the discovery/display surface, not an independent lyrics provider when an upstream provider is named. Compare the payload only after storing hashes and edition scope, never full lyric text.",
+    "strictCorrectnessMeaning": "Strict verifiedCorrect counts reviewed field-level references with compatible recording/edition scope only. It is separate from practical source corroboration; see practicalEvidenceSummary."
   },
   "summary": {
     "songs": 100,
@@ -21489,5 +21490,40 @@
         "editionNote": "Corpus specifies Jeff Buckley’s Grace recording; exact source recording binding needs review"
       }
     }
-  ]
+  ],
+  "practicalEvidenceSummary": {
+    "label": "practical source corroboration, not recording-specific correctness",
+    "interpretation": "A strict verifiedCorrect value of zero means no lyric row has yet been adjudicated against a reference matched to the corpus recording/edition. It does not mean zero usable evidence or zero likely-correct lyrics. Exact agreement across provider labels is reported as corroboration even when upstream independence is unknown; single-provider rows remain sourced support, not cross-source corroboration.",
+    "lyrics": {
+      "selectedExactTextSupportedByMultipleProviderLabels": 15,
+      "selectedExactTextSupportedByOneProviderLabel": 84,
+      "noSelectedLyrics": 1,
+      "songsWithAnyExactHashSharedAcrossProviderLabels": 30,
+      "publicLyricPagesCompared": 18,
+      "publicPageDifferencesClassified": 3,
+      "publicPageDifferencesAwaitingReview": 15,
+      "lineageConfirmedIndependentProviderPairs": 0,
+      "googleLyricsPanel": {
+        "observedSongs": 1,
+        "attributedUpstreamProvider": "Musixmatch",
+        "hashCompared": 0,
+        "treatment": "Useful attributed source observation; count as Musixmatch lineage rather than an independent Google source."
+      }
+    },
+    "keys": {
+      "comparableAdjudicatedReferences": 7,
+      "correctAmongComparable": 7,
+      "scopeMismatch": 1,
+      "referenceRowsIncludingScopeMismatch": 8,
+      "correctAmongComparablePercent": 100.0
+    },
+    "chords": {
+      "selectedChartsAvailable": 95,
+      "selectedRawExactMultiLabelSupport": 0,
+      "selectedAlignedExactMultiLabelSupport": 0,
+      "sourceProgressionsWithCrossLabelAgreement": 2,
+      "selectedProgressionsWithCrossLabelSupport": 0
+    },
+    "doNotInterpretAs": "Do not read strict verifiedCorrect=0 as a claim that all 100 selections are wrong or unsupported."
+  }
 }
