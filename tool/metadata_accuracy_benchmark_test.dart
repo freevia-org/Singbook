@@ -70,13 +70,18 @@ Map<String, Object?> _selectedLyricsSupport({
     return {
       'level': 'no_selected_lyrics',
       'providerLabels': <String>[],
+      'recordingCompatibleProviderLabels': <String>[],
       'matchingCandidateCount': 0,
       'matchingCandidateIdCount': 0,
       'independentLineageConfirmed': false,
     };
   }
   final matches = sources
-      .where((source) => source['normalizedLyricsSha256'] == selectedHash)
+      .where(
+        (source) =>
+            source['normalizedLyricsSha256'] == selectedHash &&
+            _practicalLyricsSupportEligible(source),
+      )
       .toList();
   final providers =
       matches
@@ -89,6 +94,14 @@ Map<String, Object?> _selectedLyricsSupport({
       .map((source) => source['candidateIdSha256'])
       .whereType<String>()
       .toSet();
+  final recordingCompatibleProviders =
+      matches
+          .where((source) => source['recordingCompatible'] == true)
+          .map((source) => source['provider'])
+          .whereType<String>()
+          .toSet()
+          .toList()
+        ..sort();
   return {
     'level': providers.length > 1
         ? 'multi_provider_exact_text_support'
@@ -96,6 +109,7 @@ Map<String, Object?> _selectedLyricsSupport({
         ? 'single_provider_exact_text_support'
         : 'no_exact_candidate_text_support',
     'providerLabels': providers,
+    'recordingCompatibleProviderLabels': recordingCompatibleProviders,
     'matchingCandidateCount': matches.length,
     'matchingCandidateIdCount': candidateIds.length,
     // Different adapter labels or catalog IDs do not prove independent
@@ -103,6 +117,43 @@ Map<String, Object?> _selectedLyricsSupport({
     'independentLineageConfirmed': false,
   };
 }
+
+bool _positiveSourceMatch(Map source) =>
+    const {'sameSong', 'sameRecording'}.contains(source['match']);
+
+bool _practicalLyricsSupportEligible(Map source) =>
+    _positiveSourceMatch(source) &&
+    source['explicitEditionCompatible'] == true &&
+    source['pendingMatchCheck'] != true &&
+    source['requiresLyricsAgreement'] != true &&
+    source['requiresRecordingLyricsAgreement'] != true;
+
+bool _practicalChordSupportEligible(Map source) {
+  if (source['explicitEditionCompatible'] != true ||
+      source['pendingMatchCheck'] == true) {
+    return false;
+  }
+  final contributed =
+      source['combinedContribution'] is Map &&
+      (source['combinedContribution'] as Map)['chords'] == true;
+  final acceptedMatch =
+      _positiveSourceMatch(source) ||
+      source['match'] == 'rejected' &&
+          source['reason'] == 'incomplete_or_different_lyrics' &&
+          contributed;
+  if (!acceptedMatch || !contributed) return false;
+  if ((source['requiresLyricsAgreement'] == true ||
+          source['requiresRecordingLyricsAgreement'] == true) &&
+      !contributed) {
+    return false;
+  }
+  return true;
+}
+
+bool _eligibleAgreementSource(Map source, String hashField) =>
+    hashField == 'normalizedLyricsSha256'
+    ? _practicalLyricsSupportEligible(source)
+    : _practicalChordSupportEligible(source);
 
 int _capoOf(Object? raw) =>
     raw is num ? raw.toInt() : int.tryParse('$raw') ?? 0;
@@ -131,17 +182,18 @@ String _keyClaimScope(SongDocument doc) {
     if (origin is String) {
       for (final source in doc.sources) {
         if (source.id != origin) continue;
-        final selected =
-            doc.selectedRecording ??
-            SongCandidate(
-              providerId: 'library',
-              id: doc.id,
-              title: doc.title,
-              artist: doc.artist,
-            );
-        return recordingCompatible(selected, source)
-            ? 'recording'
-            : 'arrangement';
+        final scopes = [
+          source.metadata['keyScope'],
+          source.extra['keyScope'],
+          source.candidate.metadata['keyScope'],
+          source.candidate.extra['keyScope'],
+        ].whereType<String>().map((value) => value.trim().toLowerCase());
+        if (scopes.contains('recording')) return 'recording';
+        if (source.hasChords) return 'arrangement';
+        if (scopes.contains('arrangement')) return 'arrangement';
+        // Same-recording identity does not prove a chart or catalog key is
+        // the original performance's home key. Require explicit scope.
+        return 'unknown';
       }
     }
     return 'unknown';
@@ -424,19 +476,42 @@ void main() {
     );
   });
   test('selected lyric support is visible without claiming correctness', () {
+    Map<String, Object?> lyricSource({
+      required String provider,
+      required String candidateId,
+      required String hash,
+      String match = 'sameRecording',
+      bool editionCompatible = true,
+      bool recordingCompatible = true,
+      bool pending = false,
+      bool requiresLyricsAgreement = false,
+      bool requiresRecordingLyricsAgreement = false,
+    }) => {
+      'normalizedLyricsSha256': hash,
+      'provider': provider,
+      'candidateIdSha256': candidateId,
+      'match': match,
+      'explicitEditionCompatible': editionCompatible,
+      'recordingCompatible': recordingCompatible,
+      'pendingMatchCheck': pending,
+      'requiresLyricsAgreement': requiresLyricsAgreement,
+      'requiresRecordingLyricsAgreement': requiresRecordingLyricsAgreement,
+    };
+
     final converged = _selectedLyricsSupport(
       selectedHash: 'selected',
       sources: [
-        {
-          'normalizedLyricsSha256': 'selected',
-          'provider': 'genius',
-          'candidateIdSha256': 'upstream-1',
-        },
-        {
-          'normalizedLyricsSha256': 'selected',
-          'provider': 'betterlyrics',
-          'candidateIdSha256': 'upstream-1',
-        },
+        lyricSource(
+          provider: 'genius',
+          candidateId: 'upstream-1',
+          hash: 'selected',
+        ),
+        lyricSource(
+          provider: 'betterlyrics',
+          candidateId: 'upstream-1',
+          hash: 'selected',
+          match: 'sameSong',
+        ),
       ],
     );
     expect(converged['level'], 'multi_provider_exact_text_support');
@@ -447,20 +522,96 @@ void main() {
     final singleLabel = _selectedLyricsSupport(
       selectedHash: 'selected',
       sources: [
-        {
-          'normalizedLyricsSha256': 'selected',
-          'provider': 'genius',
-          'candidateIdSha256': 'one',
-        },
-        {
-          'normalizedLyricsSha256': 'alternative',
-          'provider': 'lrclib',
-          'candidateIdSha256': 'two',
-        },
+        lyricSource(provider: 'genius', candidateId: 'one', hash: 'selected'),
+        lyricSource(
+          provider: 'lrclib',
+          candidateId: 'two',
+          hash: 'alternative',
+        ),
       ],
     );
     expect(singleLabel['level'], 'single_provider_exact_text_support');
     expect(singleLabel['independentLineageConfirmed'], isFalse);
+
+    final invalidAliases = _selectedLyricsSupport(
+      selectedHash: 'selected',
+      sources: [
+        lyricSource(provider: 'genius', candidateId: 'valid', hash: 'selected'),
+        lyricSource(
+          provider: 'rejected',
+          candidateId: 'rejected',
+          hash: 'selected',
+          match: 'rejected',
+        ),
+        lyricSource(
+          provider: 'pending',
+          candidateId: 'pending',
+          hash: 'selected',
+          pending: true,
+        ),
+        lyricSource(
+          provider: 'wrong-edition',
+          candidateId: 'edition',
+          hash: 'selected',
+          editionCompatible: false,
+        ),
+        lyricSource(
+          provider: 'unverified',
+          candidateId: 'unverified',
+          hash: 'selected',
+          match: 'unverified',
+        ),
+        lyricSource(
+          provider: 'needs-lyrics-proof',
+          candidateId: 'lyrics-proof',
+          hash: 'selected',
+          requiresLyricsAgreement: true,
+        ),
+        lyricSource(
+          provider: 'needs-recording-proof',
+          candidateId: 'recording-proof',
+          hash: 'selected',
+          requiresRecordingLyricsAgreement: true,
+        ),
+      ],
+    );
+    expect(invalidAliases['level'], 'single_provider_exact_text_support');
+    expect(invalidAliases['providerLabels'], ['genius']);
+    expect(invalidAliases['matchingCandidateCount'], 1);
+
+    expect(
+      _eligibleAgreementSource(
+        lyricSource(
+          provider: 'pending',
+          candidateId: 'pending',
+          hash: 'selected',
+          pending: true,
+        ),
+        'normalizedLyricsSha256',
+      ),
+      isFalse,
+    );
+
+    final sameSongChart = {
+      'match': 'sameSong',
+      'explicitEditionCompatible': true,
+      'pendingMatchCheck': false,
+      'recordingCompatible': false,
+      'combinedContribution': {'chords': true},
+    };
+    expect(
+      _eligibleAgreementSource(sameSongChart, 'chordSequenceSha256'),
+      isTrue,
+      reason: 'a contributed same-song chart is arrangement evidence',
+    );
+    expect(
+      _eligibleAgreementSource({
+        ...sameSongChart,
+        'combinedContribution': {'chords': false},
+      }, 'chordSequenceSha256'),
+      isFalse,
+      reason: 'an unused chart is not support for the selected output',
+    );
 
     expect(
       _selectedLyricsSupport(selectedHash: null, sources: const [])['level'],
@@ -532,7 +683,30 @@ void main() {
         'fieldOrigins': {'key': recordingSource.id},
       },
     );
-    expect(_keyClaimScope(recordingKey), 'recording');
+    expect(_keyClaimScope(recordingKey), 'arrangement');
+
+    final recordingKeyEstimate = recordingKey.copyWith(
+      extra: {
+        'fieldOrigins': {'key': recordingSource.id},
+        'chordKeyEstimate': {'hint': 'recording', 'key': 'Db'},
+      },
+    );
+    expect(_keyClaimScope(recordingKeyEstimate), 'recording');
+
+    final explicitlyScopedRecordingKey = recordingKey.copyWith(
+      sources: [
+        SourceResult(
+          candidate: selected,
+          body: 'Example lyric line',
+          metadata: const {'key': 'Db', 'keyScope': 'recording'},
+          matchKind: MatchKind.sameRecording,
+        ),
+      ],
+      extra: {
+        'fieldOrigins': {'key': 'genius:821238'},
+      },
+    );
+    expect(_keyClaimScope(explicitlyScopedRecordingKey), 'recording');
   });
   test(
     'reviewed edition proof requires the bound recording and target scope',
@@ -978,6 +1152,13 @@ Future<void> _benchmark() async {
           'match': source.matchKind.name,
           'reason': source.matchReason,
           'recordingCompatible': recordingCompatible(selected, source),
+          'explicitEditionCompatible': explicitEditionsCompatible(
+            selected,
+            source.candidate,
+            metadata: source.metadata,
+            extra: source.extra,
+          ),
+          'pendingMatchCheck': source.hasPendingMatchCheck,
           'lyricWordCount': sourceLyrics.isEmpty
               ? 0
               : sourceLyrics.split(' ').length,
@@ -1009,6 +1190,8 @@ Future<void> _benchmark() async {
           'keyConsensus': source.extra['keyConsensus'],
           'keyShift': source.extra['keyShift'],
           'requiresLyricsAgreement': source.extra['requiresLyricsAgreement'],
+          'requiresRecordingLyricsAgreement':
+              source.extra['requiresRecordingLyricsAgreement'],
         });
       }
       row['sourceSummary'] = sourceSummaries;
@@ -1366,13 +1549,37 @@ Future<void> _benchmark() async {
     var selectedOutputsWithOnlySingleProvider = 0;
     var selectedOutputsWithSharedAlternativeButSingleSupport = 0;
     var selectedOutputRows = 0;
+    var rawSongsWithCrossProviderAgreement = 0;
+    var rawSelectedOutputsWithCrossProviderSupport = 0;
+    final rawSelectedSupportCounts = <String, int>{};
     final selectedSupportCounts = <String, int>{};
     final selectedOutputReviewCandidates = <Map<String, Object?>>[];
     final variantCounts = <String, int>{};
     for (final row in rows) {
-      final sources = (row['sourceSummary'] as List? ?? const [])
+      final candidates = (row['sourceSummary'] as List? ?? const [])
           .whereType<Map>()
           .where((source) => source[hashField] is String)
+          .toList();
+      final rawHashes = <String, Set<String>>{};
+      for (final source in candidates) {
+        (rawHashes[source[hashField] as String] ??= <String>{}).add(
+          source['provider'] as String,
+        );
+      }
+      if (rawHashes.values.any((providers) => providers.length > 1)) {
+        rawSongsWithCrossProviderAgreement++;
+      }
+      if (selectedHashField != null && row[selectedHashField] is String) {
+        final rawSelectedSupport =
+            rawHashes[row[selectedHashField] as String]?.length ?? 0;
+        rawSelectedSupportCounts['$rawSelectedSupport'] =
+            (rawSelectedSupportCounts['$rawSelectedSupport'] ?? 0) + 1;
+        if (rawSelectedSupport > 1) {
+          rawSelectedOutputsWithCrossProviderSupport++;
+        }
+      }
+      final sources = candidates
+          .where((source) => _eligibleAgreementSource(source, hashField))
           .toList();
       if (hashField == 'normalizedLyricsSha256') {
         row['practicalLyricsSupport'] = _selectedLyricsSupport(
@@ -1484,6 +1691,17 @@ Future<void> _benchmark() async {
           songsWithAnyCrossProviderAgreement,
       'songsWithOneProviderLabelOnly': songsWithSingleProviderOnly,
       'hashVariantCountDistribution': variantCounts,
+      'rawCandidateAgreement': {
+        'songsWithAnyCrossProviderHashAgreement':
+            rawSongsWithCrossProviderAgreement,
+        if (selectedHashField != null) ...{
+          'selectedOutputHashProviderSupportCounts': rawSelectedSupportCounts,
+          'selectedOutputHashHasCrossProviderSupport':
+              rawSelectedOutputsWithCrossProviderSupport,
+        },
+        'interpretation':
+            'Raw discovered-candidate agreement includes rejected, pending, and edition-incompatible rows; use the eligibility-filtered counts above for practical support claims.',
+      },
       if (selectedHashField != null) ...{
         'selectedOutputRows': selectedOutputRows,
         'selectedOutputHashProviderSupportCounts': selectedSupportCounts,
