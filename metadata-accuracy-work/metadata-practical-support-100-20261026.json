@@ -26,9 +26,9 @@
     },
     "selectedRawChordSequencesWithMultiProviderSupport": 0,
     "selectedAlignedChartsWithMultiProviderSupport": 0,
-    "publicLyricPagesCompared": 17,
+    "publicLyricPagesCompared": 18,
     "classifiedDifferences": 3,
-    "unadjudicatedDifferences": 14,
+    "unadjudicatedDifferences": 15,
     "strictAccuracy": {
       "lyrics": {
         "verifiedCorrect": 0,
@@ -96,7 +96,21 @@
     },
     "songsWithMultiProviderSharedAlternativeButSelectedHashDiffers": 16,
     "suchRowsWhereSelectedHashHasRecordingCompatibleSupportAndAlternativesAreSameSongOnly": 16,
-    "interpretation": "For the reviewed rows, shared alternative text hashes are from sameSong candidates with no recording-compatible provider; the selected text retains recording-compatible support. Provider consensus is recorded but must not override edition identity."
+    "interpretation": "For the reviewed rows, shared alternative text hashes are from sameSong candidates with no recording-compatible provider; the selected text retains recording-compatible support. Provider consensus is recorded but must not override edition identity.",
+    "independentlyRecomputedSourceTextHashes": 5,
+    "readerInterpretation": {
+      "strictVerifiedMeans": "A song counts as verified-correct only after a reviewed, scope-compatible reference comparison supports the selected value. The current zero means no lyric comparison has been adjudicated to that standard; it does not mean the 99 selected lyric texts are all wrong or unsupported.",
+      "practicalEvidence": {
+        "selectedLyricsWithExactTextAgreementAcrossProviderLabels": 15,
+        "songsWithAnyCandidateHashSharedAcrossProviderLabels": 30,
+        "selectedLyricsWithOneProviderLabel": 84,
+        "publicLyricPagesCompared": 18,
+        "sourcePageDifferencesClassified": 3,
+        "sourcePageDifferencesAwaitingReview": 15,
+        "independentProviderLineagesConfirmed": 0
+      },
+      "qualification": "Provider-label agreement is useful corroboration, but it is not counted as independent-source verification until upstream lineage is known. Public-page observations count as coverage; text differences need review and recording/edition scope before correctness is assigned."
+    }
   },
   "songs": [
     {
@@ -3538,7 +3552,12 @@
         "reference": "https://www.bobdylan.com/songs/knockin-heavens-door/",
         "comparisonStatus": "full_text_hash_diff_unadjudicated",
         "result": "normalized text differs",
-        "editionNote": "Corpus edition unspecified"
+        "editionNote": "Corpus edition unspecified",
+        "referenceNormalizedWordCount": 104,
+        "referenceNormalizedSha256": "ed1de29e0a2080923e31b2546956693aa4db98d7ad630970e299b4b8e03d670f",
+        "selectedNormalizedWordCount": 108,
+        "selectedNormalizedSha256": "75298ec9db5afa40ef9e52d172df2b58bae7adb1feffbd69f91410a5f04377f2",
+        "adjudication": "unresolved; corpus edition is unspecified and the text difference has not been adjudicated. Hash mismatch is not automatically scored incorrect."
       }
     },
     {
@@ -3668,7 +3687,12 @@
         "reference": "https://www.bobdylan.com/songs/blowin-wind/",
         "comparisonStatus": "full_text_hash_diff_unadjudicated",
         "result": "normalized text differs",
-        "editionNote": "Corpus edition unspecified"
+        "editionNote": "Corpus edition unspecified",
+        "referenceNormalizedWordCount": 181,
+        "referenceNormalizedSha256": "0385fc18887db58c80fa4ae2a8a7dd0165973bf189c8a4673d58eb60ec168a1d",
+        "selectedNormalizedWordCount": 186,
+        "selectedNormalizedSha256": "5df8b925cbc493c9209490ef88d7b58cdb3e277d1d01457e203ed955a4074dfe",
+        "adjudication": "unresolved; corpus edition is unspecified and the text difference has not been adjudicated. Hash mismatch is not automatically scored incorrect."
       }
     },
     {
@@ -4588,7 +4612,12 @@
         "reference": "https://johndenver.com/tracks/take-me-home-country-roads/",
         "comparisonStatus": "full_text_hash_diff_unadjudicated",
         "result": "normalized text differs",
-        "editionNote": "Corpus edition unspecified"
+        "editionNote": "Corpus edition unspecified",
+        "referenceNormalizedWordCount": 188,
+        "referenceNormalizedSha256": "4e9630efe8bef79ae97dbf23c45bd3f7f2d246db517e34f8bbd79e5a685a798f",
+        "selectedNormalizedWordCount": 176,
+        "selectedNormalizedSha256": "ff1a24b9c3e22e42512bd39d89cd2372dd5a249239f2d7899fc7e5486002a43b",
+        "adjudication": "unresolved; corpus edition is unspecified and the text difference has not been adjudicated. Hash mismatch is not automatically scored incorrect."
       }
     },
     {
@@ -5706,7 +5735,21 @@
         "selectedAlignedChartSupportCount": 0,
         "independentLineageConfirmed": false
       },
-      "publicReferenceObservation": null
+      "publicReferenceObservation": {
+        "source": "Coldplay official artist lyric page",
+        "reference": "https://www.coldplay.com/song/yellow/",
+        "sourceRole": "Primary artist/rightsholder lyric page; companion official release page links the song to Parachutes and gives the 2000-06-26 release date.",
+        "comparisonStatus": "full_text_hash_diff_unadjudicated",
+        "result": "Official page and selected Genius candidate have different normalized text hashes.",
+        "referenceWordCount": 201,
+        "referenceNormalizedSha256": "86d7d3a043310a10bb1b81559d51912d0718a7caf09a87e0632b68af15a53843",
+        "selectedProvider": "genius",
+        "selectedCandidateId": "genius:77782",
+        "selectedWordCount": 210,
+        "selectedNormalizedSha256": "24e68fb6b8304b8c870bacf0512c0633df6d97ab499ea5a198c258f6e84fa7ad",
+        "editionNote": "Official page associates its text with Parachutes; corpus edition is unspecified and the page does not bind the text to an exact master.",
+        "accuracyDisposition": "Useful primary-source observation; wording/version difference is unresolved, so neither transcript is scored correct or incorrect."
+      }
     },
     {
       "songId": "song-041",
