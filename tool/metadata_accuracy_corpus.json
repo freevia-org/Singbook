@@ -175,7 +175,7 @@
       "id": "song-005",
       "title": "Hotel California",
       "artist": "Eagles",
-      "recordingEdition": null,
+      "recordingEdition": "1976 original Hotel California studio album performance",
       "language": "English",
       "genre": "unspecified",
       "expected": {
@@ -188,9 +188,14 @@
             "evidence": []
           },
           "key": {
-            "status": "unverified",
-            "value": null,
-            "evidence": []
+            "status": "verified",
+            "value": "Bm",
+            "evidence": [
+              "https://www.musicradar.com/news/eagles-hotel-california-don-felder-guitar-interview",
+              "https://www.guitarworld.com/artists/bands/the-making-of-the-eagles-hotel-california"
+            ],
+            "reviewRecord": "tool/metadata_reference_evidence/hotel_california_key.json",
+            "notes": "Global/home key only. The G-major chorus is a local center, not a claim that every section is B minor. First-hand testimony is independent of the app source charts; no exact mastering or full chord-placement claim."
           },
           "chords": {
             "status": "unverified",
@@ -202,12 +207,29 @@
           "recordingKey": "Bm"
         },
         "recordingReference": {
-          "status": "unverified",
-          "providerId": null,
-          "candidateId": null,
+          "status": "verified",
+          "providerId": "genius",
+          "candidateId": "1060",
           "isrc": null,
-          "evidence": []
+          "recordingEdition": "1976 original Hotel California studio album performance",
+          "evidence": [
+            "https://genius.com/Eagles-hotel-california-lyrics",
+            "https://music.apple.com/us/album/hotel-california/635770200?i=635770202"
+          ],
+          "notes": "Exact Apple track ID is linked by the resolved Genius song record. Fresh independent Apple lookup agrees on performer, title and original album. Performance-level binding; no bit-identical master claim."
         }
+      },
+      "recordingEditionStatus": "verified",
+      "catalogSelection": {
+        "providerId": "genius",
+        "candidateId": "1060",
+        "title": "Hotel California",
+        "artist": "Eagles",
+        "evidence": [
+          "https://genius.com/Eagles-hotel-california-lyrics",
+          "https://music.apple.com/us/album/hotel-california/635770200?i=635770202"
+        ],
+        "notes": "Exact Apple track ID is linked by the resolved Genius song record. Fresh independent Apple lookup agrees on performer, title and original album. Performance-level binding; no bit-identical master claim."
       }
     },
     {
@@ -474,7 +496,7 @@
       "id": "song-012",
       "title": "Fast Car",
       "artist": "Tracy Chapman",
-      "recordingEdition": null,
+      "recordingEdition": "1988 original Tracy Chapman studio album performance",
       "language": "English",
       "genre": "unspecified",
       "expected": {
@@ -487,9 +509,13 @@
             "evidence": []
           },
           "key": {
-            "status": "unverified",
-            "value": null,
-            "evidence": []
+            "status": "verified",
+            "value": "A",
+            "evidence": [
+              "https://www.musicradar.com/news/tracy-chapman-fast-car-theory"
+            ],
+            "reviewRecord": "tool/metadata_reference_evidence/fast_car_key.json",
+            "notes": "Global sounding key only. Harmonic ambiguity of individual voicings and melodic-harmonic divorce are acknowledged by the analysis. Guitar G shapes are not sounding G; no chord-placement or lyric reference is certified."
           },
           "chords": {
             "status": "unverified",
@@ -501,12 +527,29 @@
           "recordingKey": null
         },
         "recordingReference": {
-          "status": "unverified",
-          "providerId": null,
-          "candidateId": null,
+          "status": "verified",
+          "providerId": "genius",
+          "candidateId": "2408099",
           "isrc": null,
-          "evidence": []
+          "recordingEdition": "1988 original Tracy Chapman studio album performance",
+          "evidence": [
+            "https://genius.com/Tracy-chapman-fast-car-lyrics",
+            "https://music.apple.com/us/album/fast-car/79565550?i=79565507"
+          ],
+          "notes": "Exact Apple track ID is linked by the resolved Genius song record. Fresh independent Apple lookup agrees on performer, title and original album. Performance-level binding; no bit-identical master claim."
         }
+      },
+      "recordingEditionStatus": "verified",
+      "catalogSelection": {
+        "providerId": "genius",
+        "candidateId": "2408099",
+        "title": "Fast Car",
+        "artist": "Tracy Chapman",
+        "evidence": [
+          "https://genius.com/Tracy-chapman-fast-car-lyrics",
+          "https://music.apple.com/us/album/fast-car/79565550?i=79565507"
+        ],
+        "notes": "Exact Apple track ID is linked by the resolved Genius song record. Fresh independent Apple lookup agrees on performer, title and original album. Performance-level binding; no bit-identical master claim."
       }
     },
     {

@@ -1,0 +1,53 @@
+{
+  "songId": "song-005",
+  "reviewedOn": "2026-10-26",
+  "field": "key",
+  "status": "verified",
+  "value": "Bm",
+  "scope": "1976 original Hotel California studio album performance",
+  "recordingBinding": {
+    "status": "verified",
+    "providerId": "genius",
+    "candidateId": "1060",
+    "isrc": null,
+    "recordingEdition": "1976 original Hotel California studio album performance",
+    "evidence": [
+      "https://genius.com/Eagles-hotel-california-lyrics",
+      "https://music.apple.com/us/album/hotel-california/635770200?i=635770202"
+    ],
+    "notes": "Exact Apple track ID is linked by the resolved Genius song record. Fresh independent Apple lookup agrees on performer, title and original album. Performance-level binding; no bit-identical master claim."
+  },
+  "catalogCrosscheck": {
+    "genius": {
+      "candidateId": "1060",
+      "releaseDate": "1976-12-08",
+      "album": "Hotel California",
+      "appleMusicId": "635770202",
+      "cacheEnvelopeSha256": "49d87d5f071efa4aeaa6a7d1714c940f449920955592d219257c4625cce4bf0c"
+    },
+    "apple": {
+      "trackId": 635770202,
+      "trackName": "Hotel California",
+      "artistName": "Eagles",
+      "collectionName": "Hotel California",
+      "trackTimeMillis": 391357,
+      "releaseDate": "1976-12-08T08:00:00Z",
+      "trackViewUrl": "https://music.apple.com/us/album/hotel-california/635770200?i=635770202&uo=4"
+    }
+  },
+  "independentSources": [
+    {
+      "url": "https://www.musicradar.com/news/eagles-hotel-california-don-felder-guitar-interview",
+      "role": "Primary performer testimony by Don Felder",
+      "finding": "Describes lowering the demo from E minor and re-recording the released studio performance in B minor to suit Don Henley."
+    },
+    {
+      "url": "https://www.guitarworld.com/artists/bands/the-making-of-the-eagles-hotel-california",
+      "role": "Primary performer testimony by Don Henley",
+      "finding": "Identifies the final studio track as B minor and explicitly distinguishes the G-major choruses."
+    }
+  ],
+  "verificationDecision": "Global/home key only. The G-major chorus is a local center, not a claim that every section is B minor. First-hand testimony is independent of the app source charts; no exact mastering or full chord-placement claim.",
+  "notDerivedFromActualBenchmarkKey": true,
+  "rawLyricsOrAudioIncluded": false
+}
