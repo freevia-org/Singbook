@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "date": "2026-10-26",
   "task": "google_lyrics_panel_reference_observation",
-  "benchmarkReportSha256": "cca829d507ba46bcd912b89dae056514c0aadb4082b69b5904c80948b5c8f763",
+  "benchmarkReportSha256": "c5d76f488efe63cd4a3f386c165675ab17ca9147e15742abb26e09cb5bed0326",
   "recordingEdition": "unspecified",
   "lyricBodiesRetained": false,
   "observations": [
@@ -21,8 +21,8 @@
       "lyricBodyRetained": false,
       "comparisonStatus": "exact_selected_text_hash_match_attributed_source",
       "offlineProviderAlreadyPresent": false,
-      "sourceLineageInterpretation": "The panel text hash exactly matches the selected Genius output. Google attributes the panel to Musixmatch, so record the exact attributed-source match without counting Google as a separate independent lineage. The corpus edition remains unspecified.",
-      "limitations": "The Google result identifies Oasis and 1995, but the corpus recordingEdition is unspecified. Hash match is exact after benchmark normalization; no lyric text is retained.",
+      "sourceLineageInterpretation": "The exact panel hash is attributed to Musixmatch, not an independent Google lineage. It is useful practical exact-text corroboration after catalog binding; no lyric body is retained.",
+      "limitations": "Google panel identifies Oasis and release year 1995 and its text hash matches the selected Genius output. The target is now bound to the 1995 Morning Glory album performance; the panel does not identify an exact master or expose a distinct source-lineage identifier beyond Musixmatch attribution.",
       "normalizedTextSha256": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f",
       "selectedBenchmarkTextSha256": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f",
       "normalizedWordCount": 283,
@@ -32,8 +32,10 @@
       "independentLineageConfirmed": false,
       "sourceReferenceTier": "attributed_external_text_comparison",
       "independentGoogleLineageConfirmed": false,
-      "corpusEditionStatus": "unspecified",
-      "songId": "song-004"
+      "corpusEditionStatus": "verified",
+      "songId": "song-004",
+      "recordingEdition": "1995 original studio album performance on (What’s the Story) Morning Glory?",
+      "recordingBindingEvidence": "tool/metadata_reference_evidence/wonderwall_key.json"
     },
     {
       "songId": "song-006",
@@ -214,6 +216,9 @@
       "LyricFind": 2
     }
   },
-  "updatedAtUtc": "2026-10-26T20:51:17Z",
-  "recordedAtUtc": "2026-10-26T20:51:17Z"
+  "updatedAtUtc": "2026-10-26T21:46:50Z",
+  "recordedAtUtc": "2026-10-26T20:51:17Z",
+  "priorBenchmarkReportSha256": "b78927f980c48dd315cffd7e480abc4432b07a1d1cebe1a09230c9abfcb5acbc",
+  "lyricOutputHashesRevalidatedAgainstCurrentReport": true,
+  "lyricOutputHashesUnchangedAcrossReports": 100
 }

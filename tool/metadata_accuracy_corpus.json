@@ -136,7 +136,7 @@
       "id": "song-004",
       "title": "Wonderwall",
       "artist": "Oasis",
-      "recordingEdition": null,
+      "recordingEdition": "1995 original studio album performance on (What’s the Story) Morning Glory?",
       "language": "English",
       "genre": "unspecified",
       "expected": {
@@ -146,12 +146,22 @@
           "lyrics": {
             "status": "unverified",
             "value": null,
-            "evidence": []
+            "evidence": [],
+            "practicalEvidence": {
+              "status": "strong_practical_corroboration_with_repetition_variance",
+              "reviewRecord": "tool/metadata_reference_evidence/wonderwall_lyrics_practical_review.json",
+              "notes": "Google/Musixmatch panel hash exactly matches the selected Genius candidate. Official Oasis text is a 276-token ordered subsequence of the selected 283-token text; seven selected-only tokens align as repeats, with no substitutions. This supports wording but does not yet adjudicate exact album-performance repetitions."
+            }
           },
           "key": {
-            "status": "unverified",
-            "value": null,
-            "evidence": []
+            "status": "verified",
+            "value": "F#m",
+            "evidence": [
+              "https://apps.musicnotes.com/sheetmusic/oasis/wonderwall/MN0053372",
+              "https://www.musicradar.com/artists/just-because-some-of-your-university-friends-defaulted-to-it-doesnt-act-as-a-strike-against-it-a-music-professor-breaks-down-the-theory-behind-oasiss-wonderwall"
+            ],
+            "reviewRecord": "tool/metadata_reference_evidence/wonderwall_key.json",
+            "notes": "Recording home key F# minor. Licensed Musicnotes PVG listing identifies F# minor and the Morning Glory album; MusicRadar cites the capo-2 performance sounding in F# minor. These sources agree on the target key; the app currently selects F#m."
           },
           "chords": {
             "status": "unverified",
@@ -163,12 +173,31 @@
           "recordingKey": "F#m"
         },
         "recordingReference": {
-          "status": "unverified",
-          "providerId": null,
-          "candidateId": null,
+          "status": "verified",
+          "providerId": "genius",
+          "candidateId": "76654",
           "isrc": null,
-          "evidence": []
+          "recordingEdition": "1995 original studio album performance on (What’s the Story) Morning Glory?",
+          "evidence": [
+            "https://genius.com/Oasis-wonderwall-lyrics",
+            "https://music.apple.com/us/song/1517447333",
+            "https://oasisinet.com/music/whats-the-story-morning-glory/"
+          ],
+          "notes": "Genius record 76654 records Oasis Wonderwall, release date 1995-10-02 and Rockfield recording location. Apple Music track 1517447333 identifies Wonderwall on the 1995 Morning Glory album; Oasis official catalog lists Wonderwall on that album. Genius metadata's historical Apple Music ID 373957838 no longer resolves. Binding is by matching title, artist, release, album and recording location; no exact ISRC/master claim."
         }
+      },
+      "recordingEditionStatus": "verified",
+      "catalogSelection": {
+        "providerId": "genius",
+        "candidateId": "76654",
+        "title": "Wonderwall",
+        "artist": "Oasis",
+        "evidence": [
+          "https://genius.com/Oasis-wonderwall-lyrics",
+          "https://music.apple.com/us/song/1517447333",
+          "https://oasisinet.com/music/whats-the-story-morning-glory/"
+        ],
+        "notes": "Genius candidate 76654 and the official Oasis/Apple catalogs align on title, artist, 1995 release and Morning Glory album. This is album-performance identity, not exact-master identity."
       }
     },
     {

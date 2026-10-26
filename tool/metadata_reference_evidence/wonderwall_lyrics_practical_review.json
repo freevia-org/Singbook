@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "reviewedOn": "2026-10-26",
+  "songId": "song-004",
+  "title": "Wonderwall",
+  "recordingEdition": "1995 original studio album performance on (What’s the Story) Morning Glory?",
+  "assessment": "strong_practical_corroboration_with_repetition_variance",
+  "selectedText": {
+    "provider": "genius",
+    "candidateId": "76654",
+    "normalizedWordCount": 283,
+    "normalizedTextSha256": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f"
+  },
+  "references": [
+    {
+      "url": "https://www.google.com/search?q=Oasis+Wonderwall+lyrics",
+      "role": "Google lyrics panel attributed to Musixmatch",
+      "result": "exact normalized text hash match to selected Genius output",
+      "normalizedTextSha256": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f",
+      "displayedSong": "Oasis — Wonderwall",
+      "displayedReleaseYear": "1995",
+      "recordingEditionFit": "year aligns with the catalog-bound Morning Glory performance; panel does not identify exact album master",
+      "independentLineageConfirmed": false
+    },
+    {
+      "url": "https://oasisinet.com/lyrics/wonderwall-2/",
+      "role": "Official Oasis lyrics page",
+      "editionScope": "composition-level; page does not name an album performance or master",
+      "normalizedWordCount": 276,
+      "normalizedTextSha256": "d0d0f15f50f9626fafa8326cbc5545dd88f01d8f26b41513a5bc5bc1cd0c7626",
+      "officialPageSha256": "067c43009b163889cb51827f5ce78cca182ba951038dda893a1024c5a4f744b9",
+      "selectedWordCount": 283,
+      "selectedTextSha256": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f",
+      "tokenSequenceEditDistance": 7,
+      "tokenAlignment": {
+        "officialTokensMatchedInOrder": 276,
+        "selectedOnlyTokens": 7,
+        "officialOnlyTokens": 0,
+        "substitutions": 0,
+        "selectedOnlyTokenSegments": [
+          {
+            "start": 227,
+            "endExclusive": 230,
+            "count": 3,
+            "sameSequenceOccursEarlierInSelected": true
+          },
+          {
+            "start": 247,
+            "endExclusive": 248,
+            "count": 1,
+            "sameSequenceOccursEarlierInSelected": true
+          },
+          {
+            "start": 258,
+            "endExclusive": 259,
+            "count": 1,
+            "sameSequenceOccursEarlierInSelected": true
+          },
+          {
+            "start": 269,
+            "endExclusive": 270,
+            "count": 1,
+            "sameSequenceOccursEarlierInSelected": true
+          },
+          {
+            "start": 280,
+            "endExclusive": 281,
+            "count": 1,
+            "sameSequenceOccursEarlierInSelected": true
+          }
+        ]
+      },
+      "interpretation": "The official word sequence is fully present and in order in the selected text; the selected text adds seven tokens, each aligning as repeated material. This corroborates the wording but does not prove those repetitions against the named album performance."
+    }
+  ],
+  "practicalConclusion": "Strong wording corroboration from an exact Musixmatch-attributed panel hash plus an official artist text that is a complete ordered subsequence. The remaining discrepancy is repetition-only under token alignment.",
+  "strictAccuracyConclusion": "Not adjudicated as exact recording-performance lyrics. Keep the benchmark strict field result unverified until the seven selected-only repeated tokens are confirmed for the named performance.",
+  "privacy": "No lyric bodies, audio, or source candidate IDs beyond the public catalog candidate were retained; only counts, hashes, positions, and source URLs are stored."
+}

@@ -33,21 +33,21 @@
         "referenceCoverageMeaning": "Adjudicated field-level gold rows only; source-page observations are reported separately."
       },
       "key": {
-        "verifiedCorrect": 7,
+        "verifiedCorrect": 8,
         "verifiedIncorrect": 0,
         "scopeMismatch": 1,
-        "unverified": 67,
+        "unverified": 66,
         "unavailable": 25,
         "denominator": 100,
         "percent": null,
         "strictCorpusAccuracyPercent": null,
         "evaluationStatus": "partial_adjudicated_comparisons",
         "accuracyAmongEvaluatedPercent": 100.0,
-        "referenceCoverage": 9,
-        "evaluatedReferences": 7,
-        "referenceCoveragePercent": 9.0,
-        "adjudicatedGoldReferenceCoverage": 9,
-        "adjudicatedGoldReferenceCoveragePercent": 9.0,
+        "referenceCoverage": 10,
+        "evaluatedReferences": 8,
+        "referenceCoveragePercent": 10.0,
+        "adjudicatedGoldReferenceCoverage": 10,
+        "adjudicatedGoldReferenceCoveragePercent": 10.0,
         "correctnessBasis": "Only reviewed field-level gold references with comparable output scope count here. A mismatching arrangement-scoped key is reported separately as scopeMismatch, not as a wrong recording key. Observed source pages and provider candidates are evidence coverage, not correctness comparisons.",
         "scopeMismatchMeaning": "The selected key is supported as a chart/arrangement key, while the reviewed reference is the recording home key; the values are retained but not compared as like-scoped claims.",
         "scopeMismatchesExcludedFromEvaluatedDenominator": 1,
@@ -75,23 +75,37 @@
         "referenceCoverageMeaning": "Adjudicated field-level gold rows only; source-page observations are reported separately."
       }
     },
-    "reportSha256": "cca829d507ba46bcd912b89dae056514c0aadb4082b69b5904c80948b5c8f763",
+    "reportSha256": "c5d76f488efe63cd4a3f386c165675ab17ca9147e15742abb26e09cb5bed0326",
     "runtimeCodeHead": "271753d4f613cf642f04e2c3f9af496435595a65",
     "benchmarkLogicHead": "6e624afd235aaa3838257581b0be8b0ee2655e41",
     "referenceCoverage": {
       "lyrics": 0,
-      "key": 9,
+      "key": 10,
       "chords": 0
     },
     "strictComparisonsEvaluated": {
       "lyrics": 0,
-      "key": 7,
+      "key": 8,
       "chords": 0
     },
     "latestReport": {
-      "path": "/Users/tony/Documents/ChatGPT/Singbook/artifacts/integration-coordinator/metadata-accuracy-100-20261026/progress-27-stairway-key-reference/report.json",
-      "sha256": "b78927f980c48dd315cffd7e480abc4432b07a1d1cebe1a09230c9abfcb5acbc"
-    }
+      "path": "artifacts/integration-coordinator/metadata-accuracy-100-20261026/progress-28-wonderwall-reference/report.json",
+      "sha256": "c5d76f488efe63cd4a3f386c165675ab17ca9147e15742abb26e09cb5bed0326"
+    },
+    "googleObservationArtifact": {
+      "path": "tool/metadata_reference_evidence/google_lyrics_panel_observations_20261026.json",
+      "sha256": "ca2ad2603aa342da58a1e2e38702dff2f46e53c606f05c3a02f3bff5b46eabd8",
+      "lyricHashesRevalidatedAgainstReportSha256": "c5d76f488efe63cd4a3f386c165675ab17ca9147e15742abb26e09cb5bed0326",
+      "unchangedLyricRows": 100
+    },
+    "maxNetworkRequests": 0,
+    "unavailableCount": 1,
+    "cache": {
+      "hits": 3100,
+      "networkAttempts": 0,
+      "uncachedOffline": 1030
+    },
+    "corpusSha256": "ad7c9f02aad2134cce5b59544055c60b0bb9f0ef157eee015d0806eec311d3f6"
   },
   "sourceCoverage": {
     "lyrics": {
@@ -149,10 +163,29 @@
       "title": "Wonderwall",
       "reference": "https://oasisinet.com/lyrics/wonderwall-2/",
       "source": "Oasis official",
-      "result": "normalized text differs",
-      "editionNote": "Corpus edition unspecified",
-      "comparisonStatus": "full_text_hash_diff_unadjudicated",
-      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
+      "result": "Official Oasis sequence fully aligns in order; seven selected-only repeated tokens, no substitutions. Google/Musixmatch-attributed panel hash exactly matches selected text.",
+      "editionNote": "Corpus bound to 1995 Morning Glory album performance; official Oasis lyric page is composition-level and the panel identifies year but not exact master.",
+      "comparisonStatus": "practical_comparison_reviewed_repeat_only_variance_not_correctness_gold",
+      "accuracyDisposition": "Strong wording corroboration, but exact performed repetition count remains unadjudicated. Keep strict lyric field unverified.",
+      "differenceClass": "selected_only_repeated_material",
+      "reviewArtifact": "tool/metadata_reference_evidence/wonderwall_lyrics_practical_review.json",
+      "officialNormalizedWordCount": 276,
+      "officialNormalizedSha256": "d0d0f15f50f9626fafa8326cbc5545dd88f01d8f26b41513a5bc5bc1cd0c7626",
+      "selectedNormalizedWordCount": 283,
+      "selectedNormalizedSha256": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f",
+      "tokenSequenceEditDistance": 7,
+      "tokenEditShape": {
+        "substitutions": 0,
+        "officialOnlyInsertions": 0,
+        "selectedOnlyDeletions": 7
+      },
+      "tokenAlignmentReviewed": {
+        "officialTokensMatchedInOrder": 276,
+        "selectedOnlyTokens": 7,
+        "officialOnlyTokens": 0,
+        "substitutions": 0,
+        "allSelectedOnlyTokensAlignAsRepeatedMaterial": true
+      }
     },
     {
       "songId": "song-006",
@@ -557,7 +590,8 @@
       "googlePanelsHashed": 6,
       "googleExactSelectedHashMatches": 1,
       "googleDifferentHashesForReview": 5,
-      "interpretation": "Google panel observations count as practical external text evidence attributed to Musixmatch or LyricFind, not as a second independent lineage."
+      "recordingBoundExactPanelMatches": 1,
+      "interpretation": "One Google panel exact hash now also has an album-performance catalog binding; it is practical text corroboration attributed to Musixmatch, not counted as a separate independent Google lineage."
     }
   },
   "sourceContributions": {
@@ -1049,7 +1083,27 @@
       "currentApplicationKey": null,
       "result": "reference added; output unavailable; not counted correct",
       "evidenceRecord": "tool/metadata_reference_evidence/stairway_to_heaven_key.json"
-    }
+    },
+    "latestReviewedReferences": [
+      {
+        "songId": "song-004",
+        "title": "Wonderwall",
+        "recordingEdition": "1995 original studio album performance on (What’s the Story) Morning Glory?",
+        "expectedKey": "F#m",
+        "selectedKey": "F#m",
+        "result": "verifiedCorrect",
+        "evidenceRecord": "tool/metadata_reference_evidence/wonderwall_key.json"
+      },
+      {
+        "songId": "song-074",
+        "title": "Stairway to Heaven",
+        "recordingEdition": "1971 Led Zeppelin IV album performance",
+        "expectedKey": "Am",
+        "selectedKey": null,
+        "result": "unavailable; not counted correct",
+        "evidenceRecord": "tool/metadata_reference_evidence/stairway_to_heaven_key.json"
+      }
+    ]
   },
   "perSongSupportTiers": {
     "reportField": "build/metadata_accuracy/report.json:songs[].practicalLyricsSupport",
@@ -1073,11 +1127,11 @@
   },
   "perSongSupportScorecard": {
     "file": "metadata-accuracy-work/metadata-practical-support-100-20261026.json",
-    "sha256": "de3326d789ca17ffba2722baaad94978891b45dc0c2cfb7e3c7b224cccf984c6",
+    "sha256": "3f7b6bbdef3f3b2579bd6cf0b06c100e1057ea2e7794db14a2eaca06fe3931eb",
     "rows": 100,
     "containsLyricBodies": false,
     "sourceReport": "build/metadata_accuracy/report.json",
-    "sourceReportSha256": "cca829d507ba46bcd912b89dae056514c0aadb4082b69b5904c80948b5c8f763",
+    "sourceReportSha256": "c5d76f488efe63cd4a3f386c165675ab17ca9147e15742abb26e09cb5bed0326",
     "includesSelectedKeySourceClaims": true,
     "includesChordSequenceAndAlignmentSupport": true,
     "includesLyricHashVariants": true,
@@ -1106,7 +1160,11 @@
     },
     "selectedLyricsProviderCorrections": 2,
     "selectedHashWithRecordingCompatibleSource": 97,
-    "selectedHashWithOnlySameSongSupport": 2
+    "selectedHashWithOnlySameSongSupport": 2,
+    "lyricReferenceReviewArtifact": "tool/metadata_reference_evidence/wonderwall_lyrics_practical_review.json",
+    "lyricReferenceReviewArtifactSha256": "bc00030d9789e4a207fbc161fe8e73eaec5ca1e8867f3922ef2f38dad03b5813",
+    "corpusSha256": "ad7c9f02aad2134cce5b59544055c60b0bb9f0ef157eee015d0806eec311d3f6",
+    "sha256Scope": "complete metadata-practical-support scorecard file bytes"
   },
   "chordProgressionEvidence": {
     "sourceHashVariants": 202,
@@ -1126,15 +1184,15 @@
   "googleLyricsPanelInterpretation": "Google Search panels were hashed for six songs: one exact selected-text match (Wonderwall, attributed to Musixmatch) and five differing hashes (Let It Be, Hey Jude, Here Comes the Sun, Imagine, Blowin’ in the Wind); two additional searches (Yesterday and Knockin’ on Heaven’s Door) exposed no lyrics panel. These are attributed-source observations, not six independent Google sources. Differences remain pending review and do not establish which transcription is correct. No lyric bodies are retained.",
   "practicalEvidenceSummary": {
     "label": "practical source corroboration, not recording-specific correctness",
-    "interpretation": "The strict lyric count of zero means none of the selected lyrics has yet been adjudicated against a reviewed field-level correctness reference. It does not mean there are no source candidates: this replay finds 99 selected lyrics, with eligible exact-text support from multiple provider labels on 15 rows and one label on 84. Provider lineage is unresolved, so these are practical support tiers, not correctness claims.",
+    "interpretation": "Practical support and strict correctness are separate. The 100-song replay has 99 selected lyric candidates, 15 exact selected-text matches across multiple provider labels, and 84 with one label. Wonderwall now has a reviewed high-confidence practical comparison: exact Google/Musixmatch-attributed hash agreement plus the official Oasis sequence fully aligning in order, with seven selected-only repeated tokens and no substitutions. This still does not establish exact performance repetition, so it remains outside strict gold.",
     "lyrics": {
       "selectedExactTextSupportedByMultipleProviderLabels": 15,
       "selectedExactTextSupportedByOneProviderLabel": 84,
       "noSelectedLyrics": 1,
       "songsWithAnyExactHashSharedAcrossProviderLabels": 30,
       "publicLyricPagesCompared": 18,
-      "publicPageDifferencesClassified": 3,
-      "publicPageDifferencesAwaitingReview": 15,
+      "publicPageDifferencesClassified": 4,
+      "publicPageDifferencesAwaitingReview": 14,
       "lineageConfirmedIndependentProviderPairs": 0,
       "googleLyricsPanel": {
         "observedSongs": 8,
@@ -1153,7 +1211,12 @@
         "searches": 8,
         "displayedResult": "Wonderwall exact hash; five differing hashes across four additional songs",
         "corpusEditionStatus": "two searches specify edition context; remaining panel comparisons unspecified",
-        "hashCompared": 6
+        "hashCompared": 6,
+        "evidenceArtifact": "tool/metadata_reference_evidence/google_lyrics_panel_observations_20261026.json",
+        "evidenceArtifactSha256": "ca2ad2603aa342da58a1e2e38702dff2f46e53c606f05c3a02f3bff5b46eabd8",
+        "linkedBenchmarkReportSha256": "c5d76f488efe63cd4a3f386c165675ab17ca9147e15742abb26e09cb5bed0326",
+        "lyricHashesUnchangedAcrossReports": 100,
+        "recordingBoundExactPanelMatches": 1
       },
       "attributedExternalPanelExactSelectedHashMatches": 1,
       "googlePanelIndependentLineageConfirmed": false,
@@ -1165,7 +1228,9 @@
       "googleLyricsPanelAttributedProviders": {
         "musixmatch": 4,
         "lyricfind": 2
-      }
+      },
+      "practicalRowsReviewedWithRepeatOnlyVariance": 1,
+      "strictGoldRowsAdded": 0
     },
     "keys": {
       "comparableAdjudicatedReferences": 7,
@@ -1179,7 +1244,30 @@
         "currentApplicationKey": null,
         "status": "not passed: output unavailable",
         "evidenceRecord": "tool/metadata_reference_evidence/stairway_to_heaven_key.json"
-      }
+      },
+      "reviewedRecordingScopedReferences": 10,
+      "comparableCorrect": 8,
+      "comparableEvaluated": 8,
+      "latestReviewedReferences": [
+        {
+          "songId": "song-004",
+          "title": "Wonderwall",
+          "recordingEdition": "1995 original studio album performance on (What’s the Story) Morning Glory?",
+          "expectedKey": "F#m",
+          "selectedKey": "F#m",
+          "result": "verifiedCorrect",
+          "evidenceRecord": "tool/metadata_reference_evidence/wonderwall_key.json"
+        },
+        {
+          "songId": "song-074",
+          "title": "Stairway to Heaven",
+          "recordingEdition": "1971 Led Zeppelin IV album performance",
+          "expectedKey": "Am",
+          "selectedKey": null,
+          "result": "unavailable; not counted correct",
+          "evidenceRecord": "tool/metadata_reference_evidence/stairway_to_heaven_key.json"
+        }
+      ]
     },
     "chords": {
       "selectedChartsAvailable": 95,
