@@ -260,5 +260,16 @@
       },
       "interpretation": "Exact normalized lyric or chord-sequence hash agreement, including a shared hash within a conflicting group, is a consolidation signal, not proof of independent provenance or correctness."
     }
+  },
+  "crossProviderCandidateIdReuse": {
+    "songsWithCrossProviderIdReuse": 9,
+    "crossProviderIdGroups": 9,
+    "groupsWithDifferentLyricsHashes": 8,
+    "groupsWithSameLyricsHash": 1,
+    "providerPairGroupCounts": {
+      "betterlyrics+lrclib": 9
+    },
+    "interpretation": "Candidate-ID reuse across provider adapters is not enough to merge or count evidence as independent; compare field payload hashes and provider provenance.",
+    "betterLyricsAdapterNote": "BetterLyrics uses LRCLIB as its catalog and then resolves lyric content through the Better Lyrics API; a shared catalog ID does not guarantee identical lyric payloads."
   }
 }

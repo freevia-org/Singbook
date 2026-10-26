@@ -952,6 +952,62 @@ Future<void> _benchmark() async {
     'lyrics': sourceAgreement('normalizedLyricsSha256'),
     'chords': sourceAgreement('chordSequenceSha256'),
   };
+  final reusedCatalogIds = <String, Object?>{};
+  var songsWithCrossProviderIdReuse = 0;
+  var crossProviderIdGroups = 0;
+  var groupsWithDifferentLyrics = 0;
+  var groupsWithSameLyrics = 0;
+  final providerPairs = <String, int>{};
+  for (final row in rows) {
+    final sources = (row['sourceSummary'] as List? ?? const [])
+        .whereType<Map>()
+        .where((source) => source['candidateIdSha256'] is String)
+        .toList();
+    final groups = <String, List<Map>>{};
+    for (final source in sources) {
+      (groups[source['candidateIdSha256'] as String] ??= []).add(source);
+    }
+    final reused = groups.entries.where((entry) {
+      return entry.value
+              .map((source) => source['provider'] as String)
+              .toSet()
+              .length >
+          1;
+    }).toList();
+    if (reused.isEmpty) continue;
+    songsWithCrossProviderIdReuse++;
+    for (final entry in reused) {
+      crossProviderIdGroups++;
+      final providers =
+          entry.value
+              .map((source) => source['provider'] as String)
+              .toSet()
+              .toList()
+            ..sort();
+      final pair = providers.join('+');
+      providerPairs[pair] = (providerPairs[pair] ?? 0) + 1;
+      final lyricHashes = entry.value
+          .map((source) => source['normalizedLyricsSha256'])
+          .whereType<String>()
+          .toSet();
+      if (lyricHashes.length > 1) {
+        groupsWithDifferentLyrics++;
+      } else if (lyricHashes.length == 1) {
+        groupsWithSameLyrics++;
+      }
+    }
+  }
+  reusedCatalogIds.addAll({
+    'songsWithCrossProviderIdReuse': songsWithCrossProviderIdReuse,
+    'crossProviderIdGroups': crossProviderIdGroups,
+    'groupsWithDifferentLyricsHashes': groupsWithDifferentLyrics,
+    'groupsWithSameLyricsHash': groupsWithSameLyrics,
+    'providerPairGroupCounts': providerPairs,
+    'betterLyricsAdapterNote':
+        'BetterLyrics uses LRCLIB as its catalog and then resolves lyric content through the Better Lyrics API; a shared catalog ID does not guarantee identical lyric payloads.',
+    'interpretation':
+        'Candidate-ID reuse across provider adapters is not enough to merge or count evidence as independent; compare field payload hashes and provider provenance.',
+  });
   final report = {
     'mode': 'offline-cache-first',
     'jitterSeed': _jitterSeed,
@@ -962,6 +1018,7 @@ Future<void> _benchmark() async {
     'accuracy': accuracy,
     'sourceCoverage': sourceCoverage,
     'sourceAgreement': sourceAgreementSummary,
+    'crossProviderCandidateIdReuse': reusedCatalogIds,
     'cache': {
       'hits': client.hits,
       'networkAttempts': client.networkAttempts,
@@ -975,7 +1032,7 @@ Future<void> _benchmark() async {
     '${out.path}/report.json',
   ).writeAsStringSync(const JsonEncoder.withIndent('  ').convert(report));
   print(
-    'METADATA_ACCURACY ${jsonEncode({'coverage': report['coverage'], 'corpusSize': songs.length, 'unavailableCount': report['unavailableCount'], 'sourceCoverage': sourceCoverage, 'sourceAgreement': sourceAgreementSummary, 'accuracy': accuracy, 'cacheHits': client.hits, 'uncachedOffline': client.uncached})}',
+    'METADATA_ACCURACY ${jsonEncode({'coverage': report['coverage'], 'corpusSize': songs.length, 'unavailableCount': report['unavailableCount'], 'sourceCoverage': sourceCoverage, 'sourceAgreement': sourceAgreementSummary, 'crossProviderCandidateIdReuse': reusedCatalogIds, 'accuracy': accuracy, 'cacheHits': client.hits, 'uncachedOffline': client.uncached})}',
   );
   await transport.close();
 }
