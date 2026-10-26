@@ -111,7 +111,15 @@
         "publicLyricPagesCompared": 18,
         "sourcePageDifferencesClassified": 3,
         "sourcePageDifferencesAwaitingReview": 15,
-        "independentProviderLineagesConfirmed": 0
+        "independentProviderLineagesConfirmed": 0,
+        "googleLyricsPanelsHashed": 6,
+        "googleLyricsPanelExactMatches": 1,
+        "googleLyricsPanelDifferencesAwaitingReview": 5,
+        "googleLyricsSearchesWithoutPanel": 2,
+        "googleAttributedProviderPanels": {
+          "musixmatch": 4,
+          "lyricfind": 2
+        }
       },
       "qualification": "Provider-label agreement is useful corroboration, but it is not counted as independent-source verification until upstream lineage is known. Public-page observations count as coverage; text differences need review and recording/edition scope before correctness is assigned."
     },
@@ -144,13 +152,18 @@
       "officialHashMatchedCandidateCount": 0,
       "recordingEdition": "unspecified"
     },
-    "googleLyricsPanelObservations": 1,
+    "googleLyricsPanelObservations": 8,
     "googleLyricsPanelAttributedProviders": {
-      "musixmatch": 1
+      "musixmatch": 4,
+      "lyricfind": 2
     },
     "googleLyricsPanelsHashCompared": 1,
-    "googleLyricsPanelInterpretation": "Google lyrics Search can be recorded as a practical source when its panel attribution and selected song result are captured. In this sample, the live panel attributes the lyrics to Musixmatch; it is not counted as a distinct Google provider or independent corroboration, and no text hash has yet been computed.",
-    "googleLyricsPanelSelectedHashMatches": 1
+    "googleLyricsPanelInterpretation": "Eight searches were recorded: six displayed lyric panels that were hashed, one exact selected-text match, five differing hashes awaiting review, and two searches with no panel. Displayed panels attribute upstream providers; Google is not treated as an independent lineage. No lyric bodies are retained.",
+    "googleLyricsPanelSelectedHashMatches": 1,
+    "googleLyricsPanelsWithDisplayedTextHashed": 6,
+    "googleLyricsPanelExactSelectedHashMatches": 1,
+    "googleLyricsPanelDifferentSelectedHashes": 5,
+    "googleLyricsSearchesWithoutLyricsPanel": 2
   },
   "songs": [
     {
@@ -976,7 +989,7 @@
         "recordingCompatibleSupportProviderLabels": [
           "genius"
         ],
-        "attributedExternalReferenceHashMatches": [
+        "attributedExternalReferenceComparisons": [
           {
             "source": "Google Search lyrics panel",
             "sourceUrl": "https://www.google.com/search?q=Oasis+Wonderwall+lyrics",
@@ -984,6 +997,8 @@
             "displayedArtist": "Oasis",
             "displayedReleaseYear": "1995",
             "normalizedTextSha256": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f",
+            "selectedNormalizedTextSha256": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f",
+            "comparisonStatus": "exact_selected_text_hash_match_attributed_source",
             "selectedHashMatch": true,
             "normalizedWordCount": 283,
             "corpusEditionStatus": "unspecified",
@@ -1549,6 +1564,23 @@
         "selectedNormalizedTextSha256": "ae1bfe9f4f6858473cbf30c5126022d7279ebb1afc4602589ea56548be4c8f3d",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
+        ],
+        "attributedExternalReferenceComparisons": [
+          {
+            "source": "Google Search lyrics panel",
+            "sourceUrl": "https://www.google.com/search?q=The+Beatles+Let+It+Be+lyrics",
+            "attributedProvider": "Musixmatch",
+            "displayedArtist": "The Beatles",
+            "displayedReleaseYear": "1970",
+            "normalizedTextSha256": "6e072701d9a41f238d99c7998d0deb53efb366c0e7c3d7b51afa33ac3c5a18d7",
+            "selectedNormalizedTextSha256": "ae1bfe9f4f6858473cbf30c5126022d7279ebb1afc4602589ea56548be4c8f3d",
+            "comparisonStatus": "different_normalized_text_hash_pending_adjudication",
+            "selectedHashMatch": false,
+            "normalizedWordCount": 242,
+            "corpusEditionStatus": "Normalized hashes differ. 1970 original Let It Be album performance, 4:03 version",
+            "independentLineageConfirmed": false,
+            "lyricBodyRetained": false
+          }
         ]
       },
       "key": {
@@ -1793,6 +1825,23 @@
         "selectedNormalizedTextSha256": "6058a7352a847892b1541bfd7e5120450a183bb11a49f13519c95f74a75b141c",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
+        ],
+        "attributedExternalReferenceComparisons": [
+          {
+            "source": "Google Search lyrics panel",
+            "sourceUrl": "https://www.google.com/search?q=The+Beatles+Hey+Jude+lyrics",
+            "attributedProvider": "LyricFind",
+            "displayedArtist": "The Beatles",
+            "displayedReleaseYear": "1968",
+            "normalizedTextSha256": "6fb462e5388ca3b60190c9b41630699bf3aaea7ef3f058ee17f92328072e4f29",
+            "selectedNormalizedTextSha256": "6058a7352a847892b1541bfd7e5120450a183bb11a49f13519c95f74a75b141c",
+            "comparisonStatus": "different_normalized_text_hash_pending_adjudication",
+            "selectedHashMatch": false,
+            "normalizedWordCount": 208,
+            "corpusEditionStatus": "Normalized hashes differ. 1968 original Apple single performance, long 7:11 version",
+            "independentLineageConfirmed": false,
+            "lyricBodyRetained": false
+          }
         ]
       },
       "key": {
@@ -2366,6 +2415,23 @@
         "selectedNormalizedTextSha256": "7fa0f98d6f654916ff69085f378fef0284541bd9a4ff44843a8429e03ae7bccd",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
+        ],
+        "attributedExternalReferenceComparisons": [
+          {
+            "source": "Google Search lyrics panel",
+            "sourceUrl": "https://www.google.com/search?q=The+Beatles+Here+Comes+the+Sun+lyrics",
+            "attributedProvider": "Musixmatch",
+            "displayedArtist": "The Beatles",
+            "displayedReleaseYear": "1969",
+            "normalizedTextSha256": "ede53e132ac021a395ffbd542fd4d45e29760ce08315224e5df261dad5435353",
+            "selectedNormalizedTextSha256": "7fa0f98d6f654916ff69085f378fef0284541bd9a4ff44843a8429e03ae7bccd",
+            "comparisonStatus": "different_normalized_text_hash_pending_adjudication",
+            "selectedHashMatch": false,
+            "normalizedWordCount": 168,
+            "corpusEditionStatus": "Normalized hashes differ. unspecified",
+            "independentLineageConfirmed": false,
+            "lyricBodyRetained": false
+          }
         ]
       },
       "key": {
@@ -2596,6 +2662,23 @@
         "selectedNormalizedTextSha256": "32b7eb8d6b2b4720458d9ab2331d4b3342e1b0f2c841722d9d797beae56959c5",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
+        ],
+        "attributedExternalReferenceComparisons": [
+          {
+            "source": "Google Search lyrics panel",
+            "sourceUrl": "https://www.google.com/search?q=John+Lennon+Imagine+lyrics",
+            "attributedProvider": "LyricFind",
+            "displayedArtist": "John Lennon",
+            "displayedReleaseYear": "1971",
+            "normalizedTextSha256": "8a0f2a5733dd7d89288cde8789f3228f546892bc94f1440aa2a109812070843d",
+            "selectedNormalizedTextSha256": "32b7eb8d6b2b4720458d9ab2331d4b3342e1b0f2c841722d9d797beae56959c5",
+            "comparisonStatus": "different_normalized_text_hash_pending_adjudication",
+            "selectedHashMatch": false,
+            "normalizedWordCount": 130,
+            "corpusEditionStatus": "Normalized hashes differ. unspecified",
+            "independentLineageConfirmed": false,
+            "lyricBodyRetained": false
+          }
         ]
       },
       "key": {
@@ -6095,6 +6178,23 @@
         "selectedNormalizedTextSha256": "5df8b925cbc493c9209490ef88d7b58cdb3e277d1d01457e203ed955a4074dfe",
         "recordingCompatibleSupportProviderLabels": [
           "genius"
+        ],
+        "attributedExternalReferenceComparisons": [
+          {
+            "source": "Google Search lyrics panel",
+            "sourceUrl": "https://www.google.com/search?q=Bob+Dylan+Blowin+in+the+Wind+lyrics",
+            "attributedProvider": "Musixmatch",
+            "displayedArtist": "Bob Dylan",
+            "displayedReleaseYear": "1963",
+            "normalizedTextSha256": "f20f6a1a95a29a60d1476693038fc0449ab8e37c67026a61fb8989059980935b",
+            "selectedNormalizedTextSha256": "5df8b925cbc493c9209490ef88d7b58cdb3e277d1d01457e203ed955a4074dfe",
+            "comparisonStatus": "different_normalized_text_hash_pending_adjudication",
+            "selectedHashMatch": false,
+            "normalizedWordCount": 186,
+            "corpusEditionStatus": "Normalized hashes differ. unspecified",
+            "independentLineageConfirmed": false,
+            "lyricBodyRetained": false
+          }
         ]
       },
       "key": {
