@@ -157,8 +157,8 @@
       "musixmatch": 4,
       "lyricfind": 2
     },
-    "googleLyricsPanelsHashCompared": 1,
-    "googleLyricsPanelInterpretation": "Eight searches were recorded: six displayed lyric panels that were hashed, one exact selected-text match, five differing hashes awaiting review, and two searches with no panel. Displayed panels attribute upstream providers; Google is not treated as an independent lineage. No lyric bodies are retained.",
+    "googleLyricsPanelsHashCompared": 6,
+    "googleLyricsPanelInterpretation": "Eight searches produced six displayed panels with hashes (one exact selected-text match and five differences awaiting review) and two searches without a panel. Panel attributions identify Musixmatch or LyricFind; Google is not treated as an independent lineage. No lyric bodies retained.",
     "googleLyricsPanelSelectedHashMatches": 1,
     "googleLyricsPanelsWithDisplayedTextHashed": 6,
     "googleLyricsPanelExactSelectedHashMatches": 1,
@@ -1577,9 +1577,11 @@
             "comparisonStatus": "different_normalized_text_hash_pending_adjudication",
             "selectedHashMatch": false,
             "normalizedWordCount": 242,
-            "corpusEditionStatus": "Normalized hashes differ. 1970 original Let It Be album performance, 4:03 version",
+            "corpusEditionStatus": "1970 original Let It Be album performance, 4:03 version",
             "independentLineageConfirmed": false,
-            "lyricBodyRetained": false
+            "lyricBodyRetained": false,
+            "sourceReferenceTier": "attributed_external_text_comparison",
+            "independentGoogleLineageConfirmed": false
           }
         ]
       },
@@ -1838,9 +1840,11 @@
             "comparisonStatus": "different_normalized_text_hash_pending_adjudication",
             "selectedHashMatch": false,
             "normalizedWordCount": 208,
-            "corpusEditionStatus": "Normalized hashes differ. 1968 original Apple single performance, long 7:11 version",
+            "corpusEditionStatus": "1968 original Apple single performance, long 7:11 version",
             "independentLineageConfirmed": false,
-            "lyricBodyRetained": false
+            "lyricBodyRetained": false,
+            "sourceReferenceTier": "attributed_external_text_comparison",
+            "independentGoogleLineageConfirmed": false
           }
         ]
       },
@@ -2428,9 +2432,11 @@
             "comparisonStatus": "different_normalized_text_hash_pending_adjudication",
             "selectedHashMatch": false,
             "normalizedWordCount": 168,
-            "corpusEditionStatus": "Normalized hashes differ. unspecified",
+            "corpusEditionStatus": "unspecified",
             "independentLineageConfirmed": false,
-            "lyricBodyRetained": false
+            "lyricBodyRetained": false,
+            "sourceReferenceTier": "attributed_external_text_comparison",
+            "independentGoogleLineageConfirmed": false
           }
         ]
       },
@@ -2675,9 +2681,11 @@
             "comparisonStatus": "different_normalized_text_hash_pending_adjudication",
             "selectedHashMatch": false,
             "normalizedWordCount": 130,
-            "corpusEditionStatus": "Normalized hashes differ. unspecified",
+            "corpusEditionStatus": "unspecified",
             "independentLineageConfirmed": false,
-            "lyricBodyRetained": false
+            "lyricBodyRetained": false,
+            "sourceReferenceTier": "attributed_external_text_comparison",
+            "independentGoogleLineageConfirmed": false
           }
         ]
       },
@@ -6191,9 +6199,11 @@
             "comparisonStatus": "different_normalized_text_hash_pending_adjudication",
             "selectedHashMatch": false,
             "normalizedWordCount": 186,
-            "corpusEditionStatus": "Normalized hashes differ. unspecified",
+            "corpusEditionStatus": "unspecified",
             "independentLineageConfirmed": false,
-            "lyricBodyRetained": false
+            "lyricBodyRetained": false,
+            "sourceReferenceTier": "attributed_external_text_comparison",
+            "independentGoogleLineageConfirmed": false
           }
         ]
       },
@@ -22527,14 +22537,19 @@
       "publicPageDifferencesAwaitingReview": 15,
       "lineageConfirmedIndependentProviderPairs": 0,
       "googleLyricsPanel": {
-        "observedSongs": 1,
-        "attributedUpstreamProvider": "Musixmatch",
-        "hashCompared": 1,
+        "searches": 8,
+        "observedSongs": 8,
+        "displayedPanelsHashed": 6,
+        "attributedProviderCounts": {
+          "Musixmatch": 4,
+          "LyricFind": 2
+        },
         "exactSelectedHashMatches": 1,
-        "displayedResult": "Oasis, Wonderwall (1995)",
-        "corpusEditionStatus": "unspecified",
+        "differentHashComparisonsAwaitingReview": 5,
+        "searchesWithoutPanel": 2,
         "independentLineageConfirmed": false,
-        "treatment": "Exact normalized hash match to the selected benchmark text from a Musixmatch-attributed panel; count as an attributed-source match, not a distinct Google provider lineage."
+        "lyricBodiesRetained": false,
+        "treatment": "Attributed source evidence. Exact hash match is practical corroboration; differences are review leads. Google is not counted as an independent lineage."
       }
     },
     "keys": {

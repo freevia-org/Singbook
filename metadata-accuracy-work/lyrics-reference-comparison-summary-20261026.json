@@ -1003,7 +1003,7 @@
   },
   "perSongSupportScorecard": {
     "file": "metadata-accuracy-work/metadata-practical-support-100-20261026.json",
-    "sha256": "0c4a67bd9b0689a149bdcc6455410fd0e0887ce054c80fb8ac27a404100c2ea2",
+    "sha256": "fa809d803606121b2bd23b8b010feaa7f8e64099090c8a2188c0d287ea7b6120",
     "rows": 100,
     "containsLyricBodies": false,
     "sourceReport": "build/metadata_accuracy/report.json",
@@ -1067,20 +1067,32 @@
         "observedSongs": 8,
         "panelPayloadsHashed": 6,
         "attributedProviders": {
-          "Musixmatch": 3,
-          "LyricFind": 2,
-          "existingWonderwallMusixmatch": 1
+          "Musixmatch": 4,
+          "LyricFind": 2
         },
         "exactSelectedHashMatches": 1,
         "differentSelectedHashComparisons": 5,
         "searchesWithoutPanel": 2,
         "independentLineageConfirmed": false,
         "lyricBodiesRetained": false,
-        "treatment": "Google panel attribution is recorded as source evidence; hash differences are review leads, not correctness judgments. Google is not counted as an independent upstream lineage."
+        "treatment": "Attributed source evidence. Exact hash match is practical corroboration; differences are review leads and not correctness judgments. Google is not counted as an independent upstream lineage.",
+        "observedSongsWithPanel": 6,
+        "searches": 8,
+        "displayedResult": "Wonderwall exact hash; five differing hashes across four additional songs",
+        "corpusEditionStatus": "two searches specify edition context; remaining panel comparisons unspecified",
+        "hashCompared": 6
       },
       "attributedExternalPanelExactSelectedHashMatches": 1,
       "googlePanelIndependentLineageConfirmed": false,
-      "attributedExternalPanelDifferentHashComparisons": 5
+      "attributedExternalPanelDifferentHashComparisons": 5,
+      "googleLyricsPanelPayloadHashCompared": true,
+      "googleLyricsPanelsHashCompared": 6,
+      "googleLyricsPanelSelectedHashMatches": 1,
+      "googleLyricsPanelDifferentHashes": 5,
+      "googleLyricsPanelAttributedProviders": {
+        "musixmatch": 4,
+        "lyricfind": 2
+      }
     },
     "keys": {
       "comparableAdjudicatedReferences": 7,

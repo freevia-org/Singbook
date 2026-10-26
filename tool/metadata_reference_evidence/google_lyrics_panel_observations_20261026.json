@@ -29,7 +29,10 @@
       "normalization": "lowercase; remove straight/curly apostrophes; replace non-letter/digit runs with spaces; trim; matches benchmark lyrics normalization.",
       "selectedBenchmarkProvider": "genius",
       "selectedHashMatched": true,
-      "independentLineageConfirmed": false
+      "independentLineageConfirmed": false,
+      "sourceReferenceTier": "attributed_external_text_comparison",
+      "independentGoogleLineageConfirmed": false,
+      "corpusEditionStatus": "unspecified"
     },
     {
       "songId": "song-006",
@@ -52,7 +55,10 @@
       "normalization": "lowercase; remove straight/curly apostrophes; replace non-letter/digit runs with spaces; trim; matches benchmark lyrics normalization.",
       "selectedBenchmarkProvider": "genius",
       "selectedHashMatched": false,
-      "independentLineageConfirmed": false
+      "independentLineageConfirmed": false,
+      "sourceReferenceTier": "attributed_external_text_comparison",
+      "independentGoogleLineageConfirmed": false,
+      "corpusEditionStatus": "1970 original Let It Be album performance, 4:03 version"
     },
     {
       "songId": "song-007",
@@ -75,7 +81,10 @@
       "normalization": "lowercase; remove straight/curly apostrophes; replace non-letter/digit runs with spaces; trim; matches benchmark lyrics normalization.",
       "selectedBenchmarkProvider": "genius",
       "selectedHashMatched": false,
-      "independentLineageConfirmed": false
+      "independentLineageConfirmed": false,
+      "sourceReferenceTier": "attributed_external_text_comparison",
+      "independentGoogleLineageConfirmed": false,
+      "corpusEditionStatus": "1968 original Apple single performance, long 7:11 version"
     },
     {
       "songId": "song-009",
@@ -98,7 +107,10 @@
       "normalization": "lowercase; remove straight/curly apostrophes; replace non-letter/digit runs with spaces; trim; matches benchmark lyrics normalization.",
       "selectedBenchmarkProvider": "genius",
       "selectedHashMatched": false,
-      "independentLineageConfirmed": false
+      "independentLineageConfirmed": false,
+      "sourceReferenceTier": "attributed_external_text_comparison",
+      "independentGoogleLineageConfirmed": false,
+      "corpusEditionStatus": "unspecified"
     },
     {
       "songId": "song-010",
@@ -121,7 +133,10 @@
       "normalization": "lowercase; remove straight/curly apostrophes; replace non-letter/digit runs with spaces; trim; matches benchmark lyrics normalization.",
       "selectedBenchmarkProvider": "genius",
       "selectedHashMatched": false,
-      "independentLineageConfirmed": false
+      "independentLineageConfirmed": false,
+      "sourceReferenceTier": "attributed_external_text_comparison",
+      "independentGoogleLineageConfirmed": false,
+      "corpusEditionStatus": "unspecified"
     },
     {
       "songId": "song-025",
@@ -144,7 +159,10 @@
       "normalization": "lowercase; remove straight/curly apostrophes; replace non-letter/digit runs with spaces; trim; matches benchmark lyrics normalization.",
       "selectedBenchmarkProvider": "genius",
       "selectedHashMatched": false,
-      "independentLineageConfirmed": false
+      "independentLineageConfirmed": false,
+      "sourceReferenceTier": "attributed_external_text_comparison",
+      "independentGoogleLineageConfirmed": false,
+      "corpusEditionStatus": "unspecified"
     },
     {
       "songId": "song-008",
@@ -189,7 +207,12 @@
     "differentSelectedHashComparisons": 5,
     "searchesWithoutPanel": 2,
     "independentGoogleLineageConfirmed": 0,
-    "lyricBodiesRetained": false
+    "lyricBodiesRetained": false,
+    "attributedProviders": {
+      "Musixmatch": 4,
+      "LyricFind": 2
+    }
   },
-  "updatedAtUtc": "2026-10-26T20:51:17Z"
+  "updatedAtUtc": "2026-10-26T20:51:17Z",
+  "recordedAtUtc": "2026-10-26T20:51:17Z"
 }
