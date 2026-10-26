@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "catalogRevision": 12,
+  "measuredAt": "2026-10-26T23:38:04.631447Z",
+  "offline": false,
+  "summary": {
+    "healthy": 1
+  },
+  "sources": [
+    {
+      "id": "seanmcgrathmusic",
+      "name": "Sean McGrath Music",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "be-here-soon",
+          "status": "healthy",
+          "providerId": "seanmcgrathmusic",
+          "bodyCharacters": 1295,
+          "metadataFields": [
+            "identityScope",
+            "key",
+            "mediaLinks"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "chords",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": true,
+          "stableLegacyIdVerified": true
+        },
+        {
+          "id": "black-dog",
+          "status": "healthy",
+          "providerId": "seanmcgrathmusic",
+          "bodyCharacters": 855,
+          "metadataFields": [
+            "identityScope",
+            "key",
+            "mediaLinks"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "chords",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": true,
+          "stableLegacyIdVerified": true
+        }
+      ]
+    }
+  ],
+  "httpDiagnostics": {
+    "networkFailures": 0,
+    "hosts": {
+      "seanmcgrathmusic.com": {
+        "requests": 5,
+        "statuses": {
+          "200": 5
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      }
+    }
+  },
+  "scope": "targeted-followup",
+  "execution": {
+    "runtime": "managed-cloud",
+    "baseSha": "5012cd8bf34f3bf1308d757fa2fcd8fccce86400",
+    "sourceSha": "5012cd8bf34f3bf1308d757fa2fcd8fccce86400",
+    "catalogPath": "config/source-catalog-v2.json",
+    "sourceRevision": 2,
+    "command": "dart run tool/source_maintenance.dart --catalog config/source-catalog-v2.json --source seanmcgrathmusic --report artifacts/source-maintenance/2026-10-27-sean-targeted.json",
+    "exitCode": 0,
+    "lockedDependenciesExitCode": 0,
+    "adapter": "native production builtin SeanMcGrathProvider",
+    "networkExecutionMode": "approved_require_escalated",
+    "environment": {
+      "specRevision": "136",
+      "phase": "running",
+      "connectivity": "connected",
+      "observationsCurrent": true,
+      "networkPolicy": {
+        "mode": "unrestricted",
+        "state": "enforced"
+      }
+    },
+    "proxyAndTls": "inherited proxy and trusted CA; TLS verification enabled",
+    "sourceState": "clean detached current-public-main worktree; original unfinished changes preserved"
+  },
+  "identityEvidence": {
+    "legacyIds": "Both CLI selections matched expected stable /songs/<slug>/ identities.",
+    "currentUrlRouting": "Production adapter normalizes either path form to /songs_and_poems/<slug>/ and resolves publisher-linked chord chart URLs.",
+    "canaries": [
+      "Be Here Soon",
+      "Black Dog"
+    ],
+    "limitation": "Ordinary host CLI only; no new Android/UI/import/SQLite/ChordPro or regression execution claimed."
+  },
+  "publication": {
+    "targetedHistoryOnly": true,
+    "fullCloudLatestUntouched": true,
+    "localReportsUntouched": true,
+    "sourceChanges": false
+  }
+}
