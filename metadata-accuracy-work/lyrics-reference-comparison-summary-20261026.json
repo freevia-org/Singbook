@@ -217,7 +217,13 @@
       "result": "normalized text differs",
       "editionNote": "Corpus edition unspecified",
       "comparisonStatus": "full_text_hash_diff_unadjudicated",
-      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed",
+      "referenceNormalizedWordCount": 183,
+      "referenceNormalizedSha256": "2a692862102c1e113eda4a7f1a8ad0e4f5f43f9b3d8218e892270b2a7bf80bc7",
+      "selectedNormalizedWordCount": 189,
+      "selectedNormalizedSha256": "8a3a76fafa316288be12ef998fd4e5fc25376139ea6d025154c92c791b59dfa9",
+      "hashComparison": "Independently recomputed from the official artist-page rich-text block and matched against the benchmark selected-candidate report; normalized hashes differ.",
+      "adjudication": "unresolved; corpus edition remains unspecified and the wording/repeat difference has not been adjudicated."
     },
     {
       "songId": "song-077",
@@ -398,7 +404,9 @@
       "textDifferencesAwaitingReview": 14,
       "independentSourceLineageConfirmed": 0,
       "interpretation": "Provider-label consensus is useful evidence for a practical reference score, but do not call it independent-source verification until upstream lineage is checked. Directly inspected lyric pages are reported separately. Neither support metric claims exact performed wording."
-    }
+    },
+    "independentlyRecomputedSourceTextHashes": 1,
+    "selectedHashComparisonsIndependentlyConfirmed": 1
   },
   "sourceContributions": {
     "selectedBaseLyricsSongs": 99,
