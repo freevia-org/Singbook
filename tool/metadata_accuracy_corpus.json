@@ -761,7 +761,7 @@
       "id": "song-017",
       "title": "Sweet Home Alabama",
       "artist": "Lynyrd Skynyrd",
-      "recordingEdition": null,
+      "recordingEdition": "1974 original Second Helping studio album performance",
       "language": "English",
       "genre": "unspecified",
       "expected": {
@@ -774,9 +774,15 @@
             "evidence": []
           },
           "key": {
-            "status": "unverified",
-            "value": null,
-            "evidence": []
+            "status": "verified",
+            "value": "G",
+            "evidence": [
+              "https://ddmal.ca/research/The_McGill_Billboard_Project_(Chord_Analysis_Dataset)/",
+              "https://www.dropbox.com/s/o0olz0uwl9z9stb/billboard-2.0-index.csv?dl=1",
+              "https://www.dropbox.com/s/2lvny9ves8kns4o/billboard-2.0-salami_chords.tar.gz?dl=1"
+            ],
+            "reviewRecord": "tool/metadata_reference_evidence/sweet_home_alabama_key.json",
+            "notes": "Opening/home key G for the 1974 original Second Helping studio performance. McGill expert annotation gives tonic G and index entry0107 identifies the 1974 charting title/artist; artist catalog and frozen Genius detail bind the album edition. No full lyric or chord-placement accuracy claim."
           },
           "chords": {
             "status": "unverified",
@@ -788,12 +794,31 @@
           "recordingKey": null
         },
         "recordingReference": {
-          "status": "unverified",
-          "providerId": null,
-          "candidateId": null,
+          "status": "verified",
+          "providerId": "genius",
+          "candidateId": "1268",
           "isrc": null,
-          "evidence": []
+          "recordingEdition": "1974 original Second Helping studio album performance",
+          "evidence": [
+            "https://genius.com/Lynyrd-skynyrd-sweet-home-alabama-lyrics",
+            "https://lynyrdskynyrd.com/history",
+            "https://lynyrdskynyrd.com/music"
+          ],
+          "notes": "Frozen Genius song-detail response1268 identifies Second Helping, release1974-04-15 and Studio One, Doraville. Official artist history and discography identify the same song and album. Performance-level binding only; no exact-master claim."
         }
+      },
+      "recordingEditionStatus": "verified",
+      "catalogSelection": {
+        "providerId": "genius",
+        "candidateId": "1268",
+        "title": "Sweet Home Alabama",
+        "artist": "Lynyrd Skynyrd",
+        "evidence": [
+          "https://genius.com/Lynyrd-skynyrd-sweet-home-alabama-lyrics",
+          "https://lynyrdskynyrd.com/history",
+          "https://lynyrdskynyrd.com/music"
+        ],
+        "notes": "Frozen Genius song-detail response1268 identifies Second Helping, release1974-04-15 and Studio One, Doraville. Official artist history and discography identify the same song and album. Performance-level binding only; no exact-master claim."
       }
     },
     {

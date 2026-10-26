@@ -1,0 +1,61 @@
+{
+  "songId": "song-017",
+  "reviewedOn": "2026-10-26",
+  "field": "key",
+  "status": "verified",
+  "value": "G",
+  "scope": "1974 original Second Helping studio album performance",
+  "recordingBinding": {
+    "status": "verified",
+    "providerId": "genius",
+    "candidateId": "1268",
+    "isrc": null,
+    "recordingEdition": "1974 original Second Helping studio album performance",
+    "evidence": [
+      "https://genius.com/Lynyrd-skynyrd-sweet-home-alabama-lyrics",
+      "https://lynyrdskynyrd.com/history",
+      "https://lynyrdskynyrd.com/music"
+    ],
+    "notes": "The frozen Genius song-detail response for candidate1268 identifies Sweet Home Alabama by Lynyrd Skynyrd, album Second Helping, released1974-04-15 and recorded at Studio One, Doraville. The band's official history confirms the song is on Second Helping; its official discography gives the album release date. McGill's Billboard index independently identifies the same title/artist in the 1974 Hot100 chart sample (entry0107, chart date1974-10-26, actual rank8). This binds the charting studio performance to the album edition at performance level; it does not claim byte-identical master or pressing identity."
+  },
+  "independentSources": [
+    {
+      "url": "https://ddmal.ca/research/The_McGill_Billboard_Project_(Chord_Analysis_Dataset)/",
+      "role": "Primary dataset documentation and expert annotation provenance",
+      "finding": "The official project describes version2.0 as expert ground truth, CC0, and documents that the annotation header's tonic is the opening key. The project's index and chord/structure annotations identify the charted song and its tonic."
+    },
+    {
+      "url": "https://www.dropbox.com/s/o0olz0uwl9z9stb/billboard-2.0-index.csv?dl=1",
+      "role": "McGill Billboard 2.0 indexed chart-sample identity",
+      "finding": "Entry0107: Sweet Home Alabama, Lynyrd Skynyrd; chart date1974-10-26; actual rank8; target rank9. Download SHA256 fc39435098814f1a4f1dd5c95c72aff399b648b78f33a59682924dfb9b5280fb."
+    },
+    {
+      "url": "https://www.dropbox.com/s/2lvny9ves8kns4o/billboard-2.0-salami_chords.tar.gz?dl=1",
+      "role": "McGill Billboard 2.0 expert chord and structure annotation",
+      "finding": "Annotation member McGill-Billboard/0107/salami_chords.txt declares # tonic: G. Locally preserved XZ archive member SHA256 b0c8135447d8a30ea4d39a0759fcfd90f361d2d4298af10cf27db7d327a7ef3d (1956 bytes). The field is an opening tonic, not a claim that every local section has the same harmonic center."
+    },
+    {
+      "url": "https://lynyrdskynyrd.com/history",
+      "role": "Official artist catalog cross-check",
+      "finding": "The band history places Sweet Home Alabama on Second Helping, recorded and released in1974, and states the song reached number8 on the charts in summer1974."
+    }
+  ],
+  "catalogCrosscheck": {
+    "geniusCandidateId": "1268",
+    "geniusAlbum": "Second Helping",
+    "geniusReleaseDate": "1974-04-15",
+    "geniusRecordingLocation": "Studio One, Doraville, GA",
+    "apiCacheFile": "9034530f8d5567e20bd0887878f33cc2fa178715.json.gz",
+    "apiBodySha256": "dd59735df908b1d20dff1de5cced26ae4802afb662e90180f70c626bac4225ca",
+    "appleMusicTrackIdClaim": "1058711366",
+    "appleMusicIdUse": "Not used as identity proof; independent Apple lookup did not resolve a result."
+  },
+  "verificationDecision": "Opening/home key G for the original Second Helping studio performance. McGill's expert annotation supplies tonic G and a chart-date/title/artist binding; the frozen Genius detail and official artist catalog anchor the album performance. No claim about every section, full chord placement, lyric accuracy, exact pressing, or exact digital master.",
+  "notDerivedFromActualBenchmarkKey": true,
+  "limits": [
+    "Only the key field is verified. Lyrics and chord placement remain unverified.",
+    "McGill documents the opening key; it is not a section-by-section key analysis.",
+    "No ISRC or audio checksum was found for a byte-identical master claim.",
+    "The Genius Apple Music track ID is retained as an unverified source claim and was not used to bind the recording."
+  ]
+}
