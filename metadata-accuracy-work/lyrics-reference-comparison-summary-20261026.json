@@ -910,7 +910,7 @@
   },
   "perSongSupportScorecard": {
     "file": "metadata-accuracy-work/metadata-practical-support-100-20261026.json",
-    "sha256": "50c90a53e64eb33757f8df92cb2aaa256ea0d798f3daae23931c836c105968f9",
+    "sha256": "33c2ef47b1381ad9303916ac47965a7a461ba1f5d6a498cff93c1727808c8eef",
     "rows": 100,
     "containsLyricBodies": false,
     "sourceReport": "build/metadata_accuracy/report.json",
@@ -920,6 +920,10 @@
     "includesLyricHashVariants": true,
     "songsWithSharedMultiProviderAlternativeNotSelected": 16,
     "suchRowsWithSelectedRecordingCompatibleSupportAndUncompatibleSameSongAlternatives": 16,
-    "independentlyRecomputedSourceTextHashes": 5
+    "independentlyRecomputedSourceTextHashes": 5,
+    "includesNormalizedContentHashes": true,
+    "includesSourceChordVariantHashes": true,
+    "normalizedLyricHashVariants": 467,
+    "chordChartVariants": 204
   }
 }
