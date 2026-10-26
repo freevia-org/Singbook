@@ -168,9 +168,9 @@
       "songsWithChordChartContribution": null,
       "songsWithSectionContribution": 84,
       "contributingProviderCount": 3,
-      "corpusRowsWithVerifiedClaim": 0,
-      "rowsWithAdjudicatedCorrectnessReference": 0,
-      "comparisonsEvaluated": 0,
+      "corpusRowsWithVerifiedClaim": 2,
+      "rowsWithAdjudicatedCorrectnessReference": 2,
+      "comparisonsEvaluated": 2,
       "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness.",
       "referenceCoverageMeaning": "Count of corpus rows with reviewed field-level correctness gold; this is not a count of source pages discovered or checked."
     },
@@ -511,6 +511,22 @@
         "independentProvenanceEstablished": false
       },
       "accuracyDisposition": "Selected text is close to, but not identical with, the official album lyric text. Three localized wording differences are classified; source-label convergence does not establish independent lineage or exact performed wording."
+    },
+    {
+      "songId": "song-037",
+      "title": "Hurt",
+      "reference": "https://www.johnnycash.com/track/hurt-2/",
+      "source": "Official Johnny Cash track page",
+      "result": "Exact normalized 161-word hash match to selected Genius candidate 85072; official artist track and album pages corroborate American IV context.",
+      "editionNote": "Johnny Cash American IV album performance, released November 5, 2002; exact master/ISRC not claimed.",
+      "comparisonStatus": "reviewed_exact_normalized_match_correctness_gold",
+      "accuracyDisposition": "verifiedCorrect for the scoped album performance; exact digital master and independent upstream provider lineage are not claimed.",
+      "reviewArtifact": "tool/metadata_reference_evidence/hurt_lyrics.json",
+      "referenceNormalizedSha256": "e4f2a6d686d7903e82f3747b49dcd28e0fcebe12bd0d24a46db06ed65d1156f6",
+      "selectedNormalizedSha256": "e4f2a6d686d7903e82f3747b49dcd28e0fcebe12bd0d24a46db06ed65d1156f6",
+      "referenceWordCount": 161,
+      "selectedWordCount": 161,
+      "tokenSequenceEditDistance": 0
     }
   ],
   "existingAuditsNotRepeated": [
@@ -527,9 +543,9 @@
   ],
   "interpretation": "The offline replay found lyric candidates for 99/100 songs. Strict lyric verifiedCorrect remains zero because no row is adjudicated against a reviewed field-level correctness reference; this is not a measure of source discovery. Practical exact selected-text support is separately reported: 15 songs have eligible matching text under multiple provider labels and 84 under one label, with upstream independence unconfirmed. Eight Google searches yielded six attributed panel text hashes (one exact selected hash, five differing hashes) and two searches without a panel; panel differences await review and are not correctness judgments. Public lyric-page comparisons remain a separate review queue.",
   "referenceEvaluation": {
-    "sourceCandidateComparisons": 18,
-    "sourceCandidateComparisonPercent": 18.0,
-    "exactNormalizedFullTextMatches": 0,
+    "sourceCandidateComparisons": 19,
+    "sourceCandidateComparisonPercent": 19.0,
+    "exactNormalizedFullTextMatches": 1,
     "exactRecordingLevelGoldClaims": 0,
     "strictAccuracyPercent": null,
     "interpretation": "Public pages, licensed provider panels, and candidate consensus are useful references. Exact normalized matches from an attributed licensed lyrics provider count when a reviewer binds the reference to a compatible corpus recording scope. Provider lineage and exact-master identity remain separate claims. Hash differences still require review.",
@@ -541,11 +557,11 @@
       "source_or_song_match_failure",
       "unresolved"
     ],
-    "sourcePagesObservedAndCompared": 18,
-    "sourcePageCoveragePercent": 18.0,
+    "sourcePagesObservedAndCompared": 19,
+    "sourcePageCoveragePercent": 19.0,
     "fullTextHashDifferencesAwaitingAdjudication": 15,
     "fullTextDifferencesAdjudicated": 3,
-    "correctnessClaimsFromTheseComparisons": 1,
+    "correctnessClaimsFromTheseComparisons": 2,
     "accuracyStatus": "partial_reviewed_reference_comparisons",
     "practicalLevels": [
       {
@@ -570,11 +586,11 @@
       "selectedLyricsWithCandidate": 99,
       "songsWithAnyExactCandidateHashSharedAcrossProviderLabels": 30,
       "selectedLyricsWithExactHashSupportAcrossProviderLabels": 15,
-      "songsWithPublicLyricPageCompared": 18,
+      "songsWithPublicLyricPageCompared": 19,
       "classifiedTextDifferences": 3,
       "textDifferencesAwaitingReview": 15,
       "independentSourceLineageConfirmed": 0,
-      "interpretation": "Provider-label agreement and inspected pages are practical evidence. Wonderwall is now one reviewed field-level lyrics comparison because the licensed panel hash exactly matches the selected text and its named song/year align with the catalog-bound 1995 album performance; exact master is not asserted. Other mismatches remain unadjudicated.",
+      "interpretation": "Two reviewed lyric correctness references are available: Wonderwall matched a licensed Musixmatch-attributed Google panel, and Hurt exactly matched Johnny Cash’s official track lyric page for the catalog-bound American IV album performance. Neither asserts exact master identity or independent upstream lineage. Other mismatches remain unadjudicated.",
       "attributedExternalPanelExactSelectedHashMatches": 1,
       "googlePanelIndependentLineageConfirmed": false,
       "attributedExternalPanelDifferentHashComparisons": 5,
@@ -597,39 +613,40 @@
           "match": "sameSong"
         }
       ],
-      "reviewedLicensedLyricsReferenceCount": 1,
+      "reviewedLicensedLyricsReferenceCount": 2,
       "independentLineageConfirmed": false
     },
     "independentlyRecomputedSourceTextHashes": 5,
     "selectedHashComparisonsIndependentlyConfirmed": 5,
     "readerInterpretation": {
-      "strictVerifiedMeans": "The strict lyric verified-correct count is zero because no lyric source comparison has yet been reviewed and adjudicated as a scope-compatible gold reference. This is a gap in evaluation, not a finding that the selected lyrics are wrong.",
+      "strictVerifiedMeans": "The current reviewed evidence overlay has two verified-correct lyric rows (Wonderwall and Hurt); the other 97 selected lyric rows remain unverified and one song has no selected lyrics. This is partial coverage, not a 100-song accuracy claim.",
       "practicalEvidenceAlreadyAvailable": {
         "selectedLyricsWithExactTextAgreementAcrossProviderLabels": 15,
         "songsWithAnyCandidateHashSharedAcrossProviderLabels": 30,
         "selectedLyricsWithOneProviderLabel": 84,
-        "publicLyricPagesCompared": 17,
+        "publicLyricPagesCompared": 19,
         "sourcePageDifferencesClassified": 3,
-        "sourcePageDifferencesAwaitingReview": 14
+        "sourcePageDifferencesAwaitingReview": 14,
+        "lyricsVerifiedAgainstReviewedReference": 2
       },
       "nextStep": "Use attributed Google/Musixmatch/LyricFind panels and public lyric pages as practical reference evidence; adjudicate hash differences at the intended recording/edition level, and keep those results distinct from provider-label agreement and performance-specific correctness."
     },
     "strictAccuracy": {
-      "verifiedCorrect": 0,
+      "verifiedCorrect": 2,
       "verifiedIncorrect": 0,
       "scopeMismatch": 0,
-      "unverified": 99,
+      "unverified": 97,
       "unavailable": 1,
       "denominator": 100,
       "percent": null,
       "strictCorpusAccuracyPercent": null,
-      "evaluationStatus": "no_adjudicated_correctness_comparisons",
-      "accuracyAmongEvaluatedPercent": null,
-      "referenceCoverage": 0,
-      "evaluatedReferences": 0,
-      "referenceCoveragePercent": 0.0,
-      "adjudicatedGoldReferenceCoverage": 0,
-      "adjudicatedGoldReferenceCoveragePercent": 0.0,
+      "evaluationStatus": "partial_adjudicated_comparisons",
+      "accuracyAmongEvaluatedPercent": 100.0,
+      "referenceCoverage": 2,
+      "evaluatedReferences": 2,
+      "referenceCoveragePercent": 2.0,
+      "adjudicatedGoldReferenceCoverage": 2,
+      "adjudicatedGoldReferenceCoveragePercent": 2.0,
       "correctnessBasis": "Only reviewed field-level gold references with comparable output scope count here. A mismatching arrangement-scoped key is reported separately as scopeMismatch, not as a wrong recording key. Observed source pages and provider candidates are evidence coverage, not correctness comparisons.",
       "scopeMismatchMeaning": null,
       "scopeMismatchesExcludedFromEvaluatedDenominator": 0,
@@ -644,9 +661,12 @@
       "googleExactSelectedHashMatches": 1,
       "googleDifferentHashesForReview": 5,
       "recordingBoundExactPanelMatches": 1,
-      "interpretation": "One Google panel exact hash now also has an album-performance catalog binding; it is practical text corroboration attributed to Musixmatch, not counted as a separate independent Google lineage."
+      "interpretation": "One Google panel exact hash now also has an album-performance catalog binding; it is practical text corroboration attributed to Musixmatch, not counted as a separate independent Google lineage.",
+      "songsWithPublicPageCompared": 19,
+      "reviewedLicensedLyricsReferenceCount": 2,
+      "lyricsVerifiedAgainstReviewedReference": 2
     },
-    "reviewedFieldReferenceClaims": 1
+    "reviewedFieldReferenceClaims": 2
   },
   "sourceContributions": {
     "selectedBaseLyricsSongs": 99,
@@ -1363,5 +1383,12 @@
     ],
     "interpretation": "An exact attributed Google panel hash match is linked to the Wonderwall row as source corroboration, not independent Google lineage or recording-edition gold."
   },
-  "updatedAtUtc": "2026-10-26T22:48:08Z"
+  "updatedAtUtc": "2026-10-26T22:48:08Z",
+  "overlayLineage": {
+    "appliedAfterReplay": true,
+    "replayWasRerun": false,
+    "referenceEvidence": "tool/metadata_reference_evidence/hurt_lyrics.json",
+    "currentCorpusSha256": "869c55d0829fe6fd195b9b393f02629b49ee1fda479cdc4693db3357f1b4a9b5",
+    "offlineReplayReportSha256": "8de6ba6b2df4b4dd668aa16b7b604b08d17da9fdf3f4cf062207ac6e41426eb2"
+  }
 }

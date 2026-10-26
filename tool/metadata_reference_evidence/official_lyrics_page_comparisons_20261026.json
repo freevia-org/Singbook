@@ -4,8 +4,8 @@
   "task": "official_artist_lyrics_practical_reference_comparisons",
   "benchmarkReportSha256": "09824d06dcb00a23893d39cfc9021a0307aee07f1ef661b7471ff1a4cb3b81b4",
   "runtimeCodeHead": "271753d4f613cf642f04e2c3f9af496435595a65",
-  "corpusRows": 5,
-  "performanceGoldClaimsAdded": 0,
+  "corpusRows": 100,
+  "performanceGoldClaimsAdded": 1,
   "lyricBodiesRetained": false,
   "sourceCandidateIdsRetained": false,
   "method": "Fetched official Beatles artist pages; extracted lyric paragraphs locally; extracted selected Genius text through the production GeniusProvider parser from the protected offline response cache; normalized using benchmark rules; recorded raw page and normalized-text hashes, word counts, and token edit distances only. Exact recording/master performance was not claimed where the page does not bind it.",
@@ -130,14 +130,40 @@
       "sourceCandidateExactHashMatchCount": 0,
       "sourceCandidateExactHashMatchProviderLabels": [],
       "sourceCandidateExactHashMatched": false
+    },
+    {
+      "songId": "song-037",
+      "title": "Hurt",
+      "page": "official Johnny Cash track page",
+      "url": "https://www.johnnycash.com/track/hurt-2/",
+      "selectedWords": 161,
+      "selectedHash": "e4f2a6d686d7903e82f3747b49dcd28e0fcebe12bd0d24a46db06ed65d1156f6",
+      "referenceWords": 161,
+      "referenceHash": "e4f2a6d686d7903e82f3747b49dcd28e0fcebe12bd0d24a46db06ed65d1156f6",
+      "editDistance": 0,
+      "editionRelation": "Official track page and album catalog bind Hurt to the Johnny Cash American IV album performance; Genius candidate 85072 identifies that album and date. Exact mastering/ISRC not claimed.",
+      "recordingEdition": "Johnny Cash album performance of Hurt on American IV: The Man Comes Around (released November 5, 2002)",
+      "officialPageSha256": "24c0214e9a728df3e7d62d16b320ed71a96eb4c633556cdedc644d0aa475273a",
+      "sourceRole": "Official Johnny Cash artist lyric page",
+      "comparisonStatus": "reviewed_exact_normalized_match_correctness_gold",
+      "normalization": "Benchmark normalization: lowercase; remove apostrophes; replace non-letter/digit runs with spaces; remove bracketed section labels.",
+      "interpretation": "Official page lyric text has the same normalized 161-word hash as selected Genius candidate 85072. Album performance scope reviewed; exact master identity is not asserted.",
+      "sourceCandidateRowsCompared": 3,
+      "sourceCandidateExactHashMatchCount": 2,
+      "sourceCandidateExactHashMatchProviderLabels": [
+        "genius",
+        "lyricsovh"
+      ],
+      "sourceCandidateExactHashMatched": true
     }
   ],
-  "selectedCandidateExactPageHashMatches": 0,
-  "providerCandidateExactPageHashMatches": 0,
-  "candidateRowsReconciled": 36,
-  "artistCount": 2,
+  "selectedCandidateExactPageHashMatches": 1,
+  "providerCandidateExactPageHashMatches": 2,
+  "candidateRowsReconciled": 39,
+  "artistCount": 3,
   "artists": [
-    "The Beatles",
-    "Oasis"
+    "Johnny Cash",
+    "Oasis",
+    "The Beatles"
   ]
 }

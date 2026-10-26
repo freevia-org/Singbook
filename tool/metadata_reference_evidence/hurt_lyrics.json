@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "reviewedOn": "2026-10-27",
+  "songId": "song-037",
+  "title": "Hurt",
+  "field": "lyrics",
+  "status": "verified",
+  "value": "e4f2a6d686d7903e82f3747b49dcd28e0fcebe12bd0d24a46db06ed65d1156f6",
+  "scope": "Johnny Cash album performance of Hurt on American IV: The Man Comes Around (released November 5, 2002)",
+  "recordingBinding": {
+    "status": "verified",
+    "providerId": "genius",
+    "candidateId": "85072",
+    "isrc": null,
+    "recordingEdition": "Johnny Cash album performance of Hurt on American IV: The Man Comes Around (released November 5, 2002)",
+    "evidence": [
+      "https://genius.com/Johnny-cash-hurt-lyrics",
+      "https://www.johnnycash.com/track/hurt-2/",
+      "https://www.johnnycash.com/music/american-iv-the-man-comes-around/"
+    ]
+  },
+  "independentSources": [
+    {
+      "url": "https://www.johnnycash.com/track/hurt-2/",
+      "role": "Official Johnny Cash track lyric page",
+      "finding": "Identifies Hurt as a Johnny Cash track from American IV: The Man Comes Around. The page lyric container normalizes to 161 words and SHA-256 e4f2a6d686d7903e82f3747b49dcd28e0fcebe12bd0d24a46db06ed65d1156f6, exactly matching the selected benchmark text hash."
+    },
+    {
+      "url": "https://www.johnnycash.com/music/american-iv-the-man-comes-around/",
+      "role": "Official Johnny Cash album catalog page",
+      "finding": "Lists Hurt on American IV: The Man Comes Around and dates the album November 5, 2002."
+    }
+  ],
+  "recordingEdition": "Johnny Cash album performance of Hurt on American IV: The Man Comes Around (released November 5, 2002)",
+  "selectedText": {
+    "provider": "genius",
+    "candidateId": "85072",
+    "album": "American IV: The Man Comes Around",
+    "releaseDate": "2002-11-05",
+    "normalizedWordCount": 161,
+    "normalizedTextSha256": "e4f2a6d686d7903e82f3747b49dcd28e0fcebe12bd0d24a46db06ed65d1156f6"
+  },
+  "sourceText": {
+    "provider": "johnnycash.com official artist page",
+    "normalizedWordCount": 161,
+    "normalizedTextSha256": "e4f2a6d686d7903e82f3747b49dcd28e0fcebe12bd0d24a46db06ed65d1156f6",
+    "normalization": "Benchmark normalization: lowercase; remove apostrophes; replace non-letter/digit runs with spaces; remove bracketed section labels.",
+    "sourcePageBytes": 161394,
+    "sourcePageSha256": "24c0214e9a728df3e7d62d16b320ed71a96eb4c633556cdedc644d0aa475273a"
+  },
+  "assessment": "verified_exact_normalized_lyrics_match_to_official_artist_track_page",
+  "accuracyConclusion": "The selected Genius lyrics normalize to the same 161-word hash as the official Johnny Cash Hurt track page. Genius catalog metadata identifies Johnny Cash, Hurt, American IV: The Man Comes Around, and the November 5, 2002 album release; Johnny Cash official track and album pages corroborate the track-to-album binding. This verifies the normalized lyric text for the album performance scope used here, without asserting bit-identical mastering or exact ISRC identity.",
+  "privacy": "No lyric body or audio retained; only source URLs, hashes, word counts, catalog identifiers, and page fingerprint are stored."
+}

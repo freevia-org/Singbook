@@ -29,26 +29,26 @@
     },
     "selectedRawChordSequencesWithMultiProviderSupport": 0,
     "selectedAlignedChartsWithMultiProviderSupport": 0,
-    "publicLyricPagesCompared": 18,
+    "publicLyricPagesCompared": 19,
     "classifiedDifferences": 3,
     "unadjudicatedDifferences": 15,
     "strictAccuracy": {
       "lyrics": {
-        "verifiedCorrect": 1,
+        "verifiedCorrect": 2,
         "verifiedIncorrect": 0,
         "scopeMismatch": 0,
-        "unverified": 98,
+        "unverified": 97,
         "unavailable": 1,
         "denominator": 100,
         "percent": null,
         "strictCorpusAccuracyPercent": null,
         "evaluationStatus": "partial_adjudicated_comparisons",
         "accuracyAmongEvaluatedPercent": 100.0,
-        "referenceCoverage": 1,
-        "evaluatedReferences": 1,
-        "referenceCoveragePercent": 1.0,
-        "adjudicatedGoldReferenceCoverage": 1,
-        "adjudicatedGoldReferenceCoveragePercent": 1.0,
+        "referenceCoverage": 2,
+        "evaluatedReferences": 2,
+        "referenceCoveragePercent": 2.0,
+        "adjudicatedGoldReferenceCoverage": 2,
+        "adjudicatedGoldReferenceCoveragePercent": 2.0,
         "correctnessBasis": "Only reviewed field-level gold references with comparable output scope count here. A mismatching arrangement-scoped key is reported separately as scopeMismatch, not as a wrong recording key. Observed source pages and provider candidates are evidence coverage, not correctness comparisons.",
         "scopeMismatchMeaning": null,
         "scopeMismatchesExcludedFromEvaluatedDenominator": 0,
@@ -99,7 +99,7 @@
     },
     "songsWithMultiProviderSharedAlternativeButSelectedHashDiffers": 16,
     "suchRowsWhereSelectedHashHasRecordingCompatibleSupportAndAlternativesAreSameSongOnly": 16,
-    "interpretation": "The cache-only 100-song replay now adjudicates Wonderwall lyrics against a reviewed, licensed Musixmatch-attributed Google panel whose normalized hash exactly matches the selected text. The official Oasis page sequence is present in order with seven repeat-only additions. This verifies the lyrics text for the catalog-bound 1995 album performance under the reviewed reference policy; exact-master identity and independent upstream lineage remain unclaimed. Key evidence remains 8/8 comparable correct; chords still lack reviewed chart gold.",
+    "interpretation": "The unchanged cache-only 100-song replay has two reviewed lyric correctness overlays: Wonderwall (licensed Musixmatch-attributed Google panel exact hash, album scope) and Hurt (official Johnny Cash track page exact hash, American IV album scope). Neither establishes exact digital-master identity or independent provider lineage. The replay itself was not rerun for this overlay. Key evidence remains 8/8 comparable correct among 10 references (one scope mismatch and one unavailable); chords still have no reviewed correctness reference.",
     "independentlyRecomputedSourceTextHashes": 5,
     "readerInterpretation": {
       "strictVerifiedMeans": "A song counts as verified-correct when its selected field matches a reviewed, scope-compatible reference from an accepted source class. For lyrics, a licensed provider panel with an exact normalized hash can qualify when the reviewed recording scope is compatible; independent provider lineage and exact-master identity are reported separately.",
@@ -107,7 +107,7 @@
         "selectedLyricsWithExactTextAgreementAcrossProviderLabels": 15,
         "songsWithAnyCandidateHashSharedAcrossProviderLabels": 30,
         "selectedLyricsWithOneProviderLabel": 84,
-        "publicLyricPagesCompared": 18,
+        "publicLyricPagesCompared": 19,
         "sourcePageDifferencesClassified": 3,
         "sourcePageDifferencesAwaitingReview": 15,
         "independentProviderLineagesConfirmed": 0,
@@ -119,11 +119,18 @@
           "musixmatch": 4,
           "lyricfind": 2
         },
-        "reviewedLicensedLyricsReferences": 1,
-        "lyricsVerifiedAgainstReviewedReference": 1,
+        "reviewedLicensedLyricsReferences": 2,
+        "lyricsVerifiedAgainstReviewedReference": 2,
         "lyricsExactMasterClaims": 0
       },
-      "qualification": "Provider-label agreement is useful corroboration, but it is not counted as independent-source verification until upstream lineage is known. Public-page observations count as coverage; text differences need review and recording/edition scope before correctness is assigned."
+      "qualification": "Provider-label agreement is useful corroboration, but it is not counted as independent-source verification until upstream lineage is known. Public-page observations count as coverage; text differences need review and recording/edition scope before correctness is assigned.",
+      "accuracyOverlay": {
+        "appliedAfterReplay": true,
+        "replayReportSha256": null,
+        "replayRerun": false,
+        "addedReference": "tool/metadata_reference_evidence/hurt_lyrics.json",
+        "verifiedLyricsAfterOverlay": 2
+      }
     },
     "sourceHashInventory": {
       "normalizedLyricHashVariants": 467,
@@ -206,12 +213,12 @@
     },
     "benchmarkLogicHead": "e9c36f96adf6ea66cb55d0868af21c01b0b7f024",
     "reviewedFieldReferenceCounts": {
-      "lyrics": 1,
+      "lyrics": 2,
       "key": 10,
       "chords": 0
     },
     "strictComparisonsEvaluated": {
-      "lyrics": 1,
+      "lyrics": 2,
       "key": 8,
       "chords": 0
     },
@@ -9329,7 +9336,7 @@
       "songId": "song-037",
       "title": "Hurt",
       "artist": "Johnny Cash",
-      "recordingEditionStatus": "unspecified",
+      "recordingEditionStatus": "verified",
       "sources": {
         "lyricCandidateCount": 3,
         "lyricProviderLabels": [
@@ -9340,7 +9347,7 @@
         "recordingCompatibleLyricCandidateCount": 1
       },
       "lyrics": {
-        "fieldResult": "unverified",
+        "fieldResult": "verifiedCorrect",
         "selected": true,
         "selectedProvider": "genius",
         "supportLevel": "multi_provider_exact_text_support",
@@ -9403,7 +9410,9 @@
         "selectedBaseSourceRecordingCompatible": true,
         "selectedBaseSourceEditionCompatible": true,
         "selectedBaseSourcePending": false,
-        "selectedBaseSourceHashMatchesOutput": true
+        "selectedBaseSourceHashMatchesOutput": true,
+        "referenceArtifact": "tool/metadata_reference_evidence/hurt_lyrics.json",
+        "referenceScope": "Johnny Cash American IV album performance; exact master not claimed"
       },
       "key": {
         "fieldResult": "unavailable",
