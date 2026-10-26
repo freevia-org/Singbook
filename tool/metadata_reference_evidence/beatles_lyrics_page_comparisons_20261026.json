@@ -26,7 +26,11 @@
       "sourceRole": "Official Beatles artist/publisher lyric page",
       "comparisonStatus": "official_page_hash_difference_reviewed; not correctness-gold",
       "normalization": "Production GeniusProvider.extractLyrics then plainToChordPro; lowercase and normalize punctuation/whitespace identically to benchmark; no lyric body retained.",
-      "interpretation": "The official page is valid practical corroboration for the song/edition scope, but the normalized sequence differs. Counts/hashes alone do not decide which transcript matches every performed repetition."
+      "interpretation": "The official page is valid practical corroboration for the song/edition scope, but the normalized sequence differs. Counts/hashes alone do not decide which transcript matches every performed repetition.",
+      "sourceCandidateRowsCompared": 8,
+      "sourceCandidateExactHashMatchCount": 0,
+      "sourceCandidateExactHashMatchProviderLabels": [],
+      "sourceCandidateExactHashMatched": false
     },
     {
       "songId": "song-007",
@@ -44,7 +48,11 @@
       "sourceRole": "Official Beatles artist/publisher lyric page",
       "comparisonStatus": "official_page_hash_difference_reviewed; not correctness-gold",
       "normalization": "Production GeniusProvider.extractLyrics then plainToChordPro; lowercase and normalize punctuation/whitespace identically to benchmark; no lyric body retained.",
-      "interpretation": "The official page is valid practical corroboration for the song/edition scope, but the normalized sequence differs. Counts/hashes alone do not decide which transcript matches every performed repetition."
+      "interpretation": "The official page is valid practical corroboration for the song/edition scope, but the normalized sequence differs. Counts/hashes alone do not decide which transcript matches every performed repetition.",
+      "sourceCandidateRowsCompared": 7,
+      "sourceCandidateExactHashMatchCount": 0,
+      "sourceCandidateExactHashMatchProviderLabels": [],
+      "sourceCandidateExactHashMatched": false
     },
     {
       "songId": "song-008",
@@ -62,7 +70,11 @@
       "sourceRole": "Official Beatles artist/publisher lyric page",
       "comparisonStatus": "official_page_hash_difference_reviewed; not correctness-gold",
       "normalization": "Production GeniusProvider.extractLyrics then plainToChordPro; lowercase and normalize punctuation/whitespace identically to benchmark; no lyric body retained.",
-      "interpretation": "The official page is valid practical corroboration for the song/edition scope, but the normalized sequence differs. Counts/hashes alone do not decide which transcript matches every performed repetition."
+      "interpretation": "The official page is valid practical corroboration for the song/edition scope, but the normalized sequence differs. Counts/hashes alone do not decide which transcript matches every performed repetition.",
+      "sourceCandidateRowsCompared": 7,
+      "sourceCandidateExactHashMatchCount": 0,
+      "sourceCandidateExactHashMatchProviderLabels": [],
+      "sourceCandidateExactHashMatched": false
     },
     {
       "songId": "song-077",
@@ -80,7 +92,11 @@
       "sourceRole": "Official Beatles artist/publisher lyric page",
       "comparisonStatus": "official_page_hash_difference_reviewed; not correctness-gold",
       "normalization": "Production GeniusProvider.extractLyrics then plainToChordPro; lowercase and normalize punctuation/whitespace identically to benchmark; no lyric body retained.",
-      "interpretation": "The official page is valid practical corroboration for the song/edition scope, but the normalized sequence differs. Counts/hashes alone do not decide which transcript matches every performed repetition."
+      "interpretation": "The official page is valid practical corroboration for the song/edition scope, but the normalized sequence differs. Counts/hashes alone do not decide which transcript matches every performed repetition.",
+      "sourceCandidateRowsCompared": 6,
+      "sourceCandidateExactHashMatchCount": 0,
+      "sourceCandidateExactHashMatchProviderLabels": [],
+      "sourceCandidateExactHashMatched": false
     }
   ]
 }

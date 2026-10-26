@@ -969,7 +969,7 @@
   },
   "perSongSupportScorecard": {
     "file": "metadata-accuracy-work/metadata-practical-support-100-20261026.json",
-    "sha256": "9a78fd63647541ba2af79088db8618ae0074c3271c7b3722497a729fe98c0367",
+    "sha256": "6124478a12edfc277c1f839e49aaf32a12330f115958155218700e5db802e0ea",
     "rows": 100,
     "containsLyricBodies": false,
     "sourceReport": "build/metadata_accuracy/report.json",
@@ -987,7 +987,9 @@
     "selectedChordMultiProviderTranspositionInvariantSupport": 0,
     "songsWithCrossProviderProgressionAgreement": 2,
     "sourceProgressionHashVariants": 202,
-    "officialBeatlesPagesWithReproducibleTextComparison": 4
+    "officialBeatlesPagesWithReproducibleTextComparison": 4,
+    "officialBeatlesPagesMatchedAnyCachedCandidate": 0,
+    "officialBeatlesSourceCandidateRowsCompared": 28
   },
   "chordProgressionEvidence": {
     "sourceHashVariants": 202,
@@ -1002,5 +1004,6 @@
     "normalization": "Progressions compared after removing absolute root transposition while retaining chord quality and slash-bass structure.",
     "interpretation": "An exact ordered progression hash after transposition normalization corroborates chord quality and bass structure only. It does not establish sounding key, lyric placement, recording identity, independent provenance, or correctness."
   },
-  "manualLyricComparisonArtifact": "tool/metadata_reference_evidence/beatles_lyrics_page_comparisons_20261026.json"
+  "manualLyricComparisonArtifact": "tool/metadata_reference_evidence/beatles_lyrics_page_comparisons_20261026.json",
+  "officialBeatlesSourceCoverageInterpretation": "In addition to selected-text comparison, each official page hash was compared with every cached provider lyric candidate summary for its song. None of the four official hashes exactly matches any candidate in the current offline result set; this is a reference/source coverage gap, not proof that any one transcript is incorrect."
 }

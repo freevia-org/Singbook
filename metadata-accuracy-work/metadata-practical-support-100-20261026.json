@@ -126,7 +126,10 @@
     "officialBeatlesLyricComparisonsWithExactHashMatch": 0,
     "officialBeatlesLyricComparisonsWithTokenEditDistanceAtMostThree": 1,
     "officialBeatlesLyricPagesReviewedForFourRecordingAnchoredRows": 3,
-    "officialBeatlesComparisonInterpretation": "Four official artist lyric pages were compared against selected Genius text; all four normalized hashes differ. One has only a 3-token sequence difference. Official pages are retained as practical reference evidence, not automatic correctness gold."
+    "officialBeatlesComparisonInterpretation": "Four official artist lyric pages were compared against selected Genius text; all four normalized hashes differ. One has only a 3-token sequence difference. Official pages are retained as practical reference evidence, not automatic correctness gold.",
+    "officialBeatlesPagesMatchedAnyCachedCandidate": 0,
+    "officialBeatlesSourceCandidateRowsCompared": 28,
+    "officialBeatlesSourceCoverageInterpretation": "In addition to selected-text comparison, each official page hash was compared with every cached provider lyric candidate summary for its song. None of the four official hashes exactly matches any candidate in the current offline result set; this is a reference/source coverage gap, not proof that any one transcript is incorrect."
   },
   "songs": [
     {
@@ -1542,7 +1545,10 @@
         "officialPageSha256": "9ba7a717d582fd56c297f94d84c55c9c5cbb1e169907281248e70b4cf1987621",
         "editionRelation": "Page presents the song alongside both the 3:50 single and 4:03 album-version context; displayed lyric text is not explicitly bound to the corpus album mix.",
         "comparisonMethod": "Production GeniusProvider.extractLyrics then plainToChordPro; lowercase and normalize punctuation/whitespace identically to benchmark; no lyric body retained.",
-        "accuracyDisposition": "The official page is valid practical corroboration for the song/edition scope, but the normalized sequence differs. Counts/hashes alone do not decide which transcript matches every performed repetition."
+        "accuracyDisposition": "The official page is valid practical corroboration for the song/edition scope, but the normalized sequence differs. Counts/hashes alone do not decide which transcript matches every performed repetition.",
+        "sourceCandidateRowsCompared": 8,
+        "sourceCandidateExactHashMatched": false,
+        "sourceCandidateExactHashMatchProviderLabels": []
       }
     },
     {
@@ -1805,7 +1811,10 @@
         "officialPageSha256": "83a7b643a629876e60108456a7169c68da5838cf2ed2cbc9f556c8ece46a510b",
         "editionRelation": "Official page identifies the original 1968 single and its 7:11 duration, matching the corpus performance scope; displayed lyric text appears to abbreviate the long coda/repetitions.",
         "comparisonMethod": "Production GeniusProvider.extractLyrics then plainToChordPro; lowercase and normalize punctuation/whitespace identically to benchmark; no lyric body retained.",
-        "accuracyDisposition": "The official page is valid practical corroboration for the song/edition scope, but the normalized sequence differs. Counts/hashes alone do not decide which transcript matches every performed repetition."
+        "accuracyDisposition": "The official page is valid practical corroboration for the song/edition scope, but the normalized sequence differs. Counts/hashes alone do not decide which transcript matches every performed repetition.",
+        "sourceCandidateRowsCompared": 7,
+        "sourceCandidateExactHashMatched": false,
+        "sourceCandidateExactHashMatchProviderLabels": []
       }
     },
     {
@@ -2074,7 +2083,10 @@
         "officialPageSha256": "81378911ac592d1b32387d42315a951364ccaf41b1bb3dfa2af7f749b157661d",
         "editionRelation": "Official page is consistent with the corpus 1965 Help! album performance scope; a 3-token transcription difference remains.",
         "comparisonMethod": "Production GeniusProvider.extractLyrics then plainToChordPro; lowercase and normalize punctuation/whitespace identically to benchmark; no lyric body retained.",
-        "accuracyDisposition": "The official page is valid practical corroboration for the song/edition scope, but the normalized sequence differs. Counts/hashes alone do not decide which transcript matches every performed repetition."
+        "accuracyDisposition": "The official page is valid practical corroboration for the song/edition scope, but the normalized sequence differs. Counts/hashes alone do not decide which transcript matches every performed repetition.",
+        "sourceCandidateRowsCompared": 7,
+        "sourceCandidateExactHashMatched": false,
+        "sourceCandidateExactHashMatchProviderLabels": []
       }
     },
     {
@@ -17368,7 +17380,10 @@
         "officialPageSha256": "0e2b8a3c83b5c3efbf077808e3da1e69268c2e669d1b0cfffe5afdf787a7a48a",
         "editionRelation": "Official page identifies the Revolver-era single/album song matching the corpus performance; source display contracts repeated chorus material.",
         "comparisonMethod": "Production GeniusProvider.extractLyrics then plainToChordPro; lowercase and normalize punctuation/whitespace identically to benchmark; no lyric body retained.",
-        "accuracyDisposition": "The official page is valid practical corroboration for the song/edition scope, but the normalized sequence differs. Counts/hashes alone do not decide which transcript matches every performed repetition."
+        "accuracyDisposition": "The official page is valid practical corroboration for the song/edition scope, but the normalized sequence differs. Counts/hashes alone do not decide which transcript matches every performed repetition.",
+        "sourceCandidateRowsCompared": 6,
+        "sourceCandidateExactHashMatched": false,
+        "sourceCandidateExactHashMatchProviderLabels": []
       }
     },
     {
