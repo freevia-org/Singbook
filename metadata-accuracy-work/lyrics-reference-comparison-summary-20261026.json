@@ -77,7 +77,7 @@
     },
     "reportSha256": "45c40da8d0a13b0cd60503886eb029edeb266fd8d982b0736318f7014648d939",
     "runtimeCodeHead": "271753d4f613cf642f04e2c3f9af496435595a65",
-    "benchmarkLogicHead": "6e624afd235aaa3838257581b0be8b0ee2655e41",
+    "benchmarkLogicHead": "36e6211e2ae0ebf0eec90cc01ab1af6212b05aa8",
     "referenceCoverage": {
       "lyrics": 0,
       "key": 10,
