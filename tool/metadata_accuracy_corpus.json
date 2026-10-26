@@ -366,7 +366,7 @@
       "id": "song-008",
       "title": "Yesterday",
       "artist": "The Beatles",
-      "recordingEdition": null,
+      "recordingEdition": "1965 original Help! studio album performance",
       "language": "English",
       "genre": "unspecified",
       "expected": {
@@ -379,9 +379,14 @@
             "evidence": []
           },
           "key": {
-            "status": "unverified",
-            "value": null,
-            "evidence": []
+            "status": "verified",
+            "value": "F",
+            "evidence": [
+              "https://isophonics.net/files/annotations/keylab/The%20Beatles/05_-_Help%21/13_-_Yesterday.lab",
+              "https://symposium.music.org/49/articles/using-beatles-songs-to-demonstrate-modulation-concepts"
+            ],
+            "reviewRecord": "tool/metadata_reference_evidence/yesterday_key.json",
+            "notes": "Global sounding/home key F major only. Independent C4DM annotation identifies main key F; scholarly harmonic analysis distinguishes the relative D-minor regions. No claim that every section stays in F, and no full chord/lyric accuracy is certified."
           },
           "chords": {
             "status": "unverified",
@@ -393,12 +398,29 @@
           "recordingKey": "F"
         },
         "recordingReference": {
-          "status": "unverified",
-          "providerId": null,
-          "candidateId": null,
+          "status": "verified",
+          "providerId": "genius",
+          "candidateId": "2236",
           "isrc": null,
-          "evidence": []
+          "recordingEdition": "1965 original Help! studio album performance",
+          "evidence": [
+            "https://genius.com/The-beatles-yesterday-lyrics",
+            "https://www.thebeatles.com/yesterday"
+          ],
+          "notes": "Decoded Genius song 2236 identifies Help!, release 1965-08-06 and EMI Studios London. The artist catalog agrees on original album, release date and recording location. Performance-level binding; no ISRC or exact digital master claim. Initial search-row album null is not absence of resolved album metadata."
         }
+      },
+      "recordingEditionStatus": "verified",
+      "catalogSelection": {
+        "providerId": "genius",
+        "candidateId": "2236",
+        "title": "Yesterday",
+        "artist": "The Beatles",
+        "evidence": [
+          "https://genius.com/The-beatles-yesterday-lyrics",
+          "https://www.thebeatles.com/yesterday"
+        ],
+        "notes": "Decoded Genius song 2236 identifies Help!, release 1965-08-06 and EMI Studios London. The artist catalog agrees on original album, release date and recording location. Performance-level binding; no ISRC or exact digital master claim. Initial search-row album null is not absence of resolved album metadata."
       }
     },
     {
@@ -3797,7 +3819,7 @@
       "id": "song-094",
       "title": "The Girl from Ipanema",
       "artist": "Stan Getz & João Gilberto",
-      "recordingEdition": "1964 album recording",
+      "recordingEdition": "1964 original Getz/Gilberto studio album performance with João and Astrud vocals",
       "language": "Portuguese and English",
       "genre": "world/pop/soundtrack",
       "expected": {
@@ -3810,9 +3832,13 @@
             "evidence": []
           },
           "key": {
-            "status": "unverified",
-            "value": null,
-            "evidence": []
+            "status": "verified",
+            "value": "Db",
+            "evidence": [
+              "https://mtg.github.io/JAAH/data/girl_from_ipanema.html"
+            ],
+            "reviewRecord": "tool/metadata_reference_evidence/girl_from_ipanema_key.json",
+            "notes": "Global sounding key D-flat major for the original album performance. JAAH recording-linked annotation gives Db and Db-centered opening and vocal harmony. An F-key chart does not establish this recording key. Local chromatic harmony and full chord/lyric accuracy are outside this key-only reference."
           },
           "chords": {
             "status": "unverified",
@@ -3824,25 +3850,31 @@
           "recordingKey": null
         },
         "recordingReference": {
-          "status": "unverified",
-          "providerId": null,
-          "candidateId": null,
+          "status": "verified",
+          "providerId": "genius",
+          "candidateId": "821238",
           "isrc": null,
-          "evidence": []
+          "recordingEdition": "1964 original Getz/Gilberto studio album performance with João and Astrud vocals",
+          "evidence": [
+            "https://genius.com/Stan-getz-and-joao-gilberto-the-girl-from-ipanema-lyrics",
+            "https://music.apple.com/us/song/1422656474",
+            "https://mtg.github.io/JAAH/data/girl_from_ipanema.html"
+          ],
+          "notes": "Decoded Genius song 821238 identifies Getz/Gilberto, Stan Getz and João Gilberto, A&R Recording in New York, and April 1964. Label catalog corroborates the original album/performers with March 1964 date metadata. JAAH identifies both vocal sections and the March 1963 sessions. No exact master, take or day-level release-date identity is claimed."
         }
       },
-      "recordingEditionStatus": "unverified",
+      "recordingEditionStatus": "verified",
       "catalogSelection": {
         "providerId": "genius",
         "candidateId": "821238",
         "title": "The Girl from Ipanema",
         "artist": "Stan Getz & João Gilberto",
         "evidence": [
-          "https://music.apple.com/us/album/getz-gilberto/1422655717",
+          "https://genius.com/Stan-getz-and-joao-gilberto-the-girl-from-ipanema-lyrics",
           "https://music.apple.com/us/song/1422656474",
-          "https://www.kpl.gov/catalog/item/?i=ent%3A%2F%2FSD_ILS%2F0%2FSD_ILS%3A1464271"
+          "https://mtg.github.io/JAAH/data/girl_from_ipanema.html"
         ],
-        "notes": "Structured Genius primary_artists names agree with independently published duet/album credits. Select this exact catalog ID; recording and accuracy references remain unverified."
+        "notes": "Decoded Genius song 821238 identifies Getz/Gilberto, Stan Getz and João Gilberto, A&R Recording in New York, and April 1964. Label catalog corroborates the original album/performers with March 1964 date metadata. JAAH identifies both vocal sections and the March 1963 sessions. No exact master, take or day-level release-date identity is claimed."
       }
     },
     {
