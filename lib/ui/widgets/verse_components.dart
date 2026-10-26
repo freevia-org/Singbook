@@ -218,12 +218,14 @@ class LibraryCreateShortcut extends StatelessWidget {
     required this.onPressed,
     this.margin = EdgeInsets.zero,
     this.minHeight = 72,
+    this.songRowStyle = false,
   });
 
   final String label;
   final VoidCallback onPressed;
   final EdgeInsetsGeometry margin;
   final double minHeight;
+  final bool songRowStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -239,7 +241,9 @@ class LibraryCreateShortcut extends StatelessWidget {
             onTap: onPressed,
             borderRadius: BorderRadius.circular(12),
             child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: minHeight),
+              constraints: BoxConstraints(
+                minHeight: songRowStyle ? 64 : minHeight,
+              ),
               child: Padding(
                 padding: const EdgeInsetsDirectional.fromSTEB(4, 8, 4, 8),
                 child: Row(
@@ -263,8 +267,15 @@ class LibraryCreateShortcut extends StatelessWidget {
                     Expanded(
                       child: Text(
                         label,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.w700),
+                        style:
+                            (songRowStyle
+                                    ? Theme.of(context).textTheme.titleSmall
+                                    : Theme.of(context).textTheme.titleMedium)
+                                ?.copyWith(
+                                  fontWeight: songRowStyle
+                                      ? FontWeight.w600
+                                      : FontWeight.w700,
+                                ),
                       ),
                     ),
                   ],

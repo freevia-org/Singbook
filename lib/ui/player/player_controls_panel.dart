@@ -9,6 +9,7 @@ class PlayerControlsPanel extends StatefulWidget {
     required this.expandLabel,
     required this.collapseLabel,
     required this.side,
+    this.hideHandle = false,
     this.sideHeader,
     this.sideWidth,
     this.collapsedAction,
@@ -17,6 +18,7 @@ class PlayerControlsPanel extends StatefulWidget {
   });
 
   final bool expanded;
+  final bool hideHandle;
   final ValueChanged<bool> onChanged;
   final String expandLabel;
   final String collapseLabel;
@@ -73,8 +75,8 @@ class _PlayerControlsPanelState extends State<PlayerControlsPanel>
   @override
   Widget build(BuildContext context) {
     final label = widget.expanded ? widget.collapseLabel : widget.expandLabel;
-    final dragSign = widget.side &&
-            Directionality.of(context) == TextDirection.rtl
+    final dragSign =
+        widget.side && Directionality.of(context) == TextDirection.rtl
         ? 1.0
         : -1.0;
     void startDrag() {
@@ -91,7 +93,9 @@ class _PlayerControlsPanelState extends State<PlayerControlsPanel>
           ? (widget.side ? box.size.width : box.size.height)
           : 180.0;
       _reveal.value =
-          (_reveal.value + (widget.side ? delta * dragSign : -delta) / extent.clamp(80, 400))
+          (_reveal.value +
+                  (widget.side ? delta * dragSign : -delta) /
+                      extent.clamp(80, 400))
               .clamp(0.0, 1.0);
     }
 
@@ -163,12 +167,13 @@ class _PlayerControlsPanelState extends State<PlayerControlsPanel>
                           height: 64,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .surfaceContainerLow,
-                            borderRadius: const BorderRadiusDirectional.horizontal(
-                              end: Radius.circular(8),
-                            ),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerLow,
+                            borderRadius:
+                                const BorderRadiusDirectional.horizontal(
+                                  end: Radius.circular(8),
+                                ),
                           ),
                           child: Container(
                             width: 3,
@@ -192,9 +197,9 @@ class _PlayerControlsPanelState extends State<PlayerControlsPanel>
                           height: 12,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .surfaceContainerLow,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerLow,
                             borderRadius: const BorderRadius.vertical(
                               top: Radius.circular(8),
                             ),
@@ -225,12 +230,13 @@ class _PlayerControlsPanelState extends State<PlayerControlsPanel>
                   child: Stack(
                     children: [
                       Positioned.fill(child: widget.lyrics),
-                      PositionedDirectional(
-                        top: 0,
-                        bottom: 0,
-                        end: 0,
-                        child: Center(child: handle),
-                      ),
+                      if (!widget.hideHandle)
+                        PositionedDirectional(
+                          top: 0,
+                          bottom: 0,
+                          end: 0,
+                          child: Center(child: handle),
+                        ),
                       if (!widget.expanded && widget.collapsedAction != null)
                         PositionedDirectional(
                           top: 8,
@@ -269,12 +275,13 @@ class _PlayerControlsPanelState extends State<PlayerControlsPanel>
                             child: widget.collapsedAction!,
                           ),
                         ),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: Center(child: handle),
-                      ),
+                      if (!widget.hideHandle)
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Center(child: handle),
+                        ),
                     ],
                   ),
                 ),

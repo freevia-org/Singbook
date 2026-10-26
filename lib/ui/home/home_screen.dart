@@ -1208,6 +1208,11 @@ class _HomeModeSelectorState extends State<_HomeModeSelector> {
           child: Container(
             decoration: BoxDecoration(
               color: colors.surface,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            // Paint the outline over the opaque segment fills so they cannot
+            // cover the curved corners of the shared capsule border.
+            foregroundDecoration: BoxDecoration(
               border: Border.all(color: colors.outlineVariant),
               borderRadius: BorderRadius.circular(24),
             ),

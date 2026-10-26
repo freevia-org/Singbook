@@ -133,14 +133,12 @@ void main() {
         findsOneWidget,
       );
       expect(tester.getRect(frame).width, closeTo(scenario.$2.width, 1));
-      if (scenario.$1 == 'landscape') {
-        _expectLandscapeHeaderAndLyrics(tester, scenario.$2, lyrics);
-      } else {
-        expect(
-          tester.getRect(lyrics).height,
-          greaterThan(scenario.$2.height - 60),
-        );
-      }
+      expect(
+        find.byKey(const ValueKey('player-landscape-header')),
+        findsNothing,
+      );
+      expect(tester.getRect(lyrics).top, closeTo(0, 1));
+      expect(tester.getRect(lyrics).height, closeTo(scenario.$2.height, 1));
       if (capture) {
         await expectLater(
           find.byType(Scaffold).first,
@@ -243,7 +241,10 @@ void main() {
       await tester.pump();
       expect(calls, [true, false, false]);
     },
-    variant: TargetPlatformVariant.only(TargetPlatform.android),
+    variant: TargetPlatformVariant({
+      TargetPlatform.android,
+      TargetPlatform.macOS,
+    }),
   );
 
   testWidgets(
@@ -272,7 +273,10 @@ void main() {
       expect(calls, [true, false]);
       expect(tester.takeException(), isNull);
     },
-    variant: TargetPlatformVariant.only(TargetPlatform.android),
+    variant: TargetPlatformVariant({
+      TargetPlatform.android,
+      TargetPlatform.macOS,
+    }),
   );
 
   testWidgets(
@@ -308,7 +312,7 @@ void main() {
       expect(position().pixels, closeTo(before, 1));
       expect(
         find.byKey(const ValueKey('player-controls-handle')),
-        findsOneWidget,
+        findsNothing,
       );
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
@@ -346,6 +350,44 @@ void main() {
       expect(controller.calls, isNot(contains('playPause')));
     },
     variant: TargetPlatformVariant.only(TargetPlatform.windows),
+  );
+
+  testWidgets(
+    'Mac fullscreen survives focus changes without replaying requests',
+    (tester) async {
+      final calls = <bool>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        _bars,
+        (call) async => calls.add(call.arguments as bool),
+      );
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          _bars,
+          null,
+        ),
+      );
+      final controller = FakeUiController((_) => _reader());
+      addTearDown(controller.dispose);
+      await pumpShell(tester, controller);
+      await tester.tap(find.byKey(const ValueKey('player-enter-fullscreen')));
+      await tester.pumpAndSettle();
+      expect(calls, [true]);
+      for (var i = 0; i < 3; i++) {
+        for (final state in [
+          AppLifecycleState.inactive,
+          AppLifecycleState.hidden,
+          AppLifecycleState.resumed,
+        ]) {
+          tester.binding.handleAppLifecycleStateChanged(state);
+          await tester.pumpAndSettle();
+        }
+      }
+      expect(calls, [true]);
+      await tester.tap(find.byKey(const ValueKey('player-exit-fullscreen')));
+      await tester.pumpAndSettle();
+      expect(calls, [true, false]);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.macOS),
   );
 
   testWidgets('reader Edit remains reachable through the overflow menu', (
@@ -405,7 +447,10 @@ void main() {
       await tester.pump();
       expect(calls.last, isFalse);
     },
-    variant: TargetPlatformVariant.only(TargetPlatform.android),
+    variant: TargetPlatformVariant({
+      TargetPlatform.android,
+      TargetPlatform.macOS,
+    }),
   );
 
   for (final scenario in [

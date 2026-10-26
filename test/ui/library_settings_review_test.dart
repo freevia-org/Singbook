@@ -193,7 +193,9 @@ void main() {
       semantics.dispose();
     });
 
-    testWidgets('the two-column grid mirrors in Arabic', (tester) async {
+    testWidgets('full-width setlist rows stack in Arabic and English', (
+      tester,
+    ) async {
       final c = FakeUiController((_) => tab());
       addTearDown(c.dispose);
       await pumpShell(
@@ -203,15 +205,15 @@ void main() {
         locale: const Locale('ar'),
       );
       expect(
-        tester.getTopLeft(find.text('List 0')).dx,
-        greaterThan(tester.getTopLeft(find.text('List 1')).dx),
-        reason: 'the first card starts on the right',
+        tester.getTopLeft(find.text('List 0')).dy,
+        lessThan(tester.getTopLeft(find.text('List 1')).dy),
+        reason: 'setlists follow the same vertical order in RTL',
       );
 
       await pumpShell(tester, c, size: const Size(900, 700));
       expect(
-        tester.getTopLeft(find.text('List 0')).dx,
-        lessThan(tester.getTopLeft(find.text('List 1')).dx),
+        tester.getTopLeft(find.text('List 0')).dy,
+        lessThan(tester.getTopLeft(find.text('List 1')).dy),
       );
     });
   });

@@ -80,8 +80,11 @@ void main() {
             .whereType<PopupMenuItem<String>>()
             .map((item) => item.value),
         inferredPitch == null
-            ? ['edit-key']
-            : [for (var pitch = 0; pitch < 12; pitch++) 'pitch-$pitch'],
+            ? ['no-chords', 'edit-key']
+            : [
+                'no-chords',
+                for (var pitch = 0; pitch < 12; pitch++) 'pitch-$pitch',
+              ],
       );
       if (inferredPitch == null) {
         expect(controller.state.readerKeyEstimated, isFalse);
@@ -186,7 +189,10 @@ void main() {
               .itemBuilder(tester.element(dropdown))
               .whereType<PopupMenuItem<String>>()
               .map((item) => item.value),
-          [for (var pitch = 0; pitch < 12; pitch++) 'pitch-$pitch'],
+          [
+            'no-chords',
+            for (var pitch = 0; pitch < 12; pitch++) 'pitch-$pitch',
+          ],
         );
         await tester.tap(dropdown);
         await tester.pumpAndSettle();
@@ -269,6 +275,57 @@ void main() {
     expect(_chords(controller.state), ['C', 'G/B', 'Am7', 'Fmaj7']);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'No chords hides reversibly without changing saved music or offset',
+    (tester) async {
+      const body = '[C]Morning [G]road';
+      await tester.runAsync(() async {
+        await app.saveSong(
+          SongDocument(
+            id: 'visibility',
+            title: 'Visibility',
+            artist: 'Original regression fixture',
+            body: body,
+            metadata: {'key': 'C'},
+          ),
+        );
+        await controller.openSong('visibility');
+        await controller.transpose(2);
+        await controller.settlePlayerPreferences();
+      });
+      await pumpShell(tester, controller);
+      final before = await tester.runAsync(
+        () => repository.getSong('visibility'),
+      );
+      final chords = _chords(controller.state);
+      await _choose(tester, controller, 'transpose-no-chords');
+      expect(controller.state.showChords, isFalse);
+      expect(controller.state.readerTranspose, 2);
+      expect(_chords(controller.state), chords);
+      expect(
+        tester
+            .widgetList<ChordLyricsLine>(find.byType(ChordLyricsLine))
+            .every((line) => !line.showChords),
+        isTrue,
+      );
+      final after = await tester.runAsync(
+        () => repository.getSong('visibility'),
+      );
+      expect(after!.body, before!.body);
+      expect(after.metadata, before.metadata);
+      // Choosing even the same effective key restores chords, with no transpose.
+      await _choose(tester, controller, 'transpose-pitch-2');
+      expect(controller.state.showChords, isTrue);
+      expect(controller.state.readerTranspose, 2);
+      expect(_chords(controller.state), chords);
+      await _choose(tester, controller, 'transpose-no-chords');
+      await _choose(tester, controller, 'transpose-pitch-4');
+      expect(controller.state.showChords, isTrue);
+      expect(controller.state.readerTranspose, 4);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('lyrics without chords have no transpose control', (
     tester,

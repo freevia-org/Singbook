@@ -9,7 +9,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../application/app_controller.dart';
 import '../application/file_actions.dart';
+import '../application/startup_timings.dart';
 import '../l10n/generated/app_localizations.dart';
+import 'app_version.dart';
 import 'account_avatar.dart';
 import 'app_controller_adapter.dart';
 import 'home/home_screen.dart';
@@ -61,9 +63,11 @@ class _VerseAppState extends State<VerseApp> {
   @override
   void initState() {
     super.initState();
+    StartupTimings.mark('controller_create_begin');
     _ownsApp = widget.controller == null;
     _app =
         widget.controller ?? AppController(repositoryPath: widget.libraryPath);
+    StartupTimings.mark('controller_create_end');
     _files = VerseFileActions();
     unawaited(_files.cleanUpShareCache());
     _controller = AppControllerAdapter(
@@ -83,7 +87,11 @@ class _VerseAppState extends State<VerseApp> {
     _appearance = _AppAppearance.of(_controller.state);
     _updateThemes();
     _controller.addListener(_onControllerChanged);
-    _start();
+    // Paint the local loading shell before opening storage or loading config.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      StartupTimings.mark('first_flutter_frame');
+      if (mounted) unawaited(_start());
+    });
   }
 
   /// Rebuilds the MaterialApp only when something it renders from changed.
@@ -116,9 +124,12 @@ class _VerseAppState extends State<VerseApp> {
   Future<void> _start() async {
     if (mounted && _startupFailed) setState(() => _startupFailed = false);
     try {
+      StartupTimings.mark('local_initialize_begin');
       await _controller.initialize();
+      StartupTimings.mark('local_initialize_end');
       if (mounted) setState(() => _initialized = true);
     } catch (_) {
+      StartupTimings.mark('local_initialize_failed');
       if (mounted) setState(() => _startupFailed = true);
     }
   }
@@ -392,16 +403,25 @@ class _VerseAppShellState extends State<VerseAppShell>
             AppExitResponse.exit;
       });
     }
+    _playerSystemBars.listenForNativeToggle(() {
+      if (mounted && widget.controller.state.route == VerseRoute.reader) {
+        _setPlayerFullScreen(!_playerFullScreen);
+      }
+    }, onExit: () => _setPlayerFullScreen(false));
     _subscribe();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    _playerSystemBars.setEnabled(
-      _playerFullScreen &&
-          ((!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) ||
-              state == AppLifecycleState.resumed),
-    );
+    // Cocoa fullscreen changes temporarily deactivate the app. Native window
+    // state persists across focus changes; replaying it here causes a loop.
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.macOS) {
+      _playerSystemBars.setEnabled(
+        _playerFullScreen &&
+            ((!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) ||
+                state == AppLifecycleState.resumed),
+      );
+    }
     if (state == AppLifecycleState.resumed) widget.controller.onAppResumed();
   }
 
@@ -771,18 +791,41 @@ class _VerseAppShellState extends State<VerseAppShell>
                                   child: FittedBox(
                                     fit: BoxFit.scaleDown,
                                     alignment: AlignmentDirectional.centerStart,
-                                    child: singbookWordmark(
-                                      context,
-                                      l10n,
-                                      key: const ValueKey('appbar-brand-title'),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleLarge
-                                          ?.copyWith(
-                                            fontFamily: 'SingbookSerif',
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: -.25,
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        singbookWordmark(
+                                          context,
+                                          l10n,
+                                          key: const ValueKey(
+                                            'appbar-brand-title',
                                           ),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleLarge
+                                              ?.copyWith(
+                                                fontFamily: 'SingbookSerif',
+                                                fontWeight: FontWeight.w700,
+                                                letterSpacing: -.25,
+                                              ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          'v$singbookVersion',
+                                          key: const ValueKey('appbar-version'),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelSmall
+                                              ?.copyWith(
+                                                fontSize: 10,
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurfaceVariant,
+                                              ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),

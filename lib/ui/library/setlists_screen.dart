@@ -113,62 +113,23 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
                     ),
                   ],
                 )
-              : LayoutBuilder(
-                  builder: (context, constraints) {
-                    final wide = constraints.maxWidth >= 640;
-                    // A lone card should use the available desktop canvas
-                    // and stay visually centered instead of occupying only
-                    // the first half of an otherwise empty two-column grid.
-                    final centeredSingleCard = wide && lists.length == 1;
-                    final columns = wide && !centeredSingleCard ? 2 : 1;
-                    final cardWidth = centeredSingleCard
-                        ? (constraints.maxWidth - 32).clamp(0.0, 960.0)
-                        : wide
-                        ? (constraints.maxWidth - 40) / 2
-                        : constraints.maxWidth - 32;
-                    return ListView.builder(
-                      key: wide ? const ValueKey('tablet-setlists-grid') : null,
-                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-                      itemCount: (lists.length + columns) ~/ columns,
-                      itemBuilder: (context, rowIndex) => Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: Row(
-                          mainAxisAlignment: centeredSingleCard
-                              ? MainAxisAlignment.center
-                              : MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: List.generate(columns, (column) {
-                            final index = rowIndex * columns + column;
-                            return Padding(
-                              padding: EdgeInsetsDirectional.only(
-                                end: column == 0 && wide && !centeredSingleCard
-                                    ? 8
-                                    : 0,
-                              ),
-                              child: SizedBox(
-                                width: cardWidth.toDouble(),
-                                child: index < lists.length
-                                    ? _setlistCard(context, l10n, lists[index])
-                                    : index == lists.length
-                                    ? LibraryCreateShortcut(
-                                        minHeight: 100,
-                                        key: const ValueKey(
-                                          'setlists-create-shortcut',
-                                        ),
-                                        label: l10n.setlistCreate,
-                                        onPressed: () =>
-                                            widget.controller.createSetlist(
-                                              name: l10n.setlistCreate,
-                                            ),
-                                      )
-                                    : const SizedBox.shrink(),
-                              ),
-                            );
-                          }),
-                        ),
-                      ),
-                    );
-                  },
+              : ListView.builder(
+                  key: const ValueKey('setlists-library-list'),
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                  itemCount: lists.length + 1,
+                  itemBuilder: (context, index) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: index < lists.length
+                        ? _setlistCard(context, l10n, lists[index])
+                        : LibraryCreateShortcut(
+                            minHeight: 100,
+                            key: const ValueKey('setlists-create-shortcut'),
+                            label: l10n.setlistCreate,
+                            onPressed: () => widget.controller.createSetlist(
+                              name: l10n.setlistCreate,
+                            ),
+                          ),
+                  ),
                 ),
         ),
       ],

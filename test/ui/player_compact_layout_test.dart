@@ -179,6 +179,122 @@ Listener _speedSliderListener(WidgetTester tester) => tester.widget<Listener>(
 
 void main() {
   const capturePlayerVisuals = bool.fromEnvironment('CAPTURE_PLAYER_VISUALS');
+  for (final scenario in [
+    ('mac', const Size(1280, 900), 1.0, const Locale('en')),
+    ('compact-large-text', const Size(320, 640), 2.0, const Locale('en')),
+    ('compact-landscape', const Size(700, 360), 1.5, const Locale('bg')),
+    ('rtl', const Size(360, 780), 1.6, const Locale('ar')),
+  ]) {
+    for (final fullscreen in [false, true]) {
+      testWidgets(
+        'lyrics corner settings remains reachable ${scenario.$1} fullscreen=$fullscreen',
+        (tester) async {
+          final controller = _Controller()..playerControlsExpanded = true;
+          addTearDown(controller.dispose);
+          await _pump(
+            tester,
+            controller,
+            size: scenario.$2,
+            scale: scenario.$3,
+            locale: scenario.$4,
+            fullScreen: fullscreen,
+            onFullScreenChanged: (_) {},
+          );
+          final settings = find.byKey(const ValueKey('player-settings-button'));
+          expect(settings.hitTestable(), findsOneWidget);
+          expect(
+            tester.getSize(settings).height,
+            greaterThanOrEqualTo(
+              defaultTargetPlatform == TargetPlatform.macOS ? 32 : 48,
+            ),
+          );
+          final l10n = AppLocalizations.of(tester.element(settings));
+          await tester.tap(settings);
+          await tester.pumpAndSettle();
+          expect(
+            find.widgetWithText(SwitchListTile, l10n.editorChordsField),
+            findsOneWidget,
+          );
+          expect(controller.playerControlsExpanded, isTrue);
+          expect(tester.takeException(), isNull);
+        },
+        variant: TargetPlatformVariant({
+          TargetPlatform.macOS,
+          TargetPlatform.iOS,
+          TargetPlatform.android,
+        }),
+      );
+    }
+  }
+  testWidgets(
+    'wide mobile timeline retains a full touch target',
+    (tester) async {
+      final controller = _Controller();
+      addTearDown(controller.dispose);
+      await _pump(tester, controller, size: const Size(1100, 900));
+      expect(
+        tester.getSize(find.byKey(const ValueKey('player-seek-slider'))).height,
+        greaterThanOrEqualTo(48),
+      );
+    },
+    variant: TargetPlatformVariant({
+      TargetPlatform.android,
+      TargetPlatform.iOS,
+    }),
+  );
+
+  if (capturePlayerVisuals) {
+    for (final scenario in [
+      ('mac', const Size(1280, 900), 1.0),
+      ('compact-large-text', const Size(320, 640), 2.0),
+    ]) {
+      testWidgets(
+        'capture visible player settings and no-chords ${scenario.$1}',
+        (tester) async {
+          await tester.runAsync(() async {
+            await (FontLoader('MaterialIcons')
+                  ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf')))
+                .load();
+            for (final family in ['Roboto', 'sans-serif']) {
+              await (FontLoader(family)..addFont(
+                    rootBundle.load('assets/fonts/NotoSans-Regular.ttf'),
+                  ))
+                  .load();
+            }
+          });
+          final controller = _Controller();
+          addTearDown(controller.dispose);
+          await _pump(
+            tester,
+            controller,
+            size: scenario.$2,
+            scale: scenario.$3,
+            onFullScreenChanged: (_) {},
+          );
+          await expectLater(
+            find.byType(Scaffold).first,
+            matchesGoldenFile(
+              '../../artifacts/player-controls-demo/${scenario.$1}-player.png',
+            ),
+          );
+          await tester.tap(find.byKey(const ValueKey('pitch-key-dropdown')));
+          await tester.pumpAndSettle();
+          expect(
+            find.byKey(const ValueKey('transpose-no-chords')),
+            findsOneWidget,
+          );
+          await expectLater(
+            find.byType(Overlay).first,
+            matchesGoldenFile(
+              '../../artifacts/player-controls-demo/${scenario.$1}-transpose.png',
+            ),
+          );
+          expect(tester.takeException(), isNull);
+        },
+        variant: TargetPlatformVariant({TargetPlatform.macOS}),
+      );
+    }
+  }
   for (final missingKey in <String?>[null, 'H']) {
     for (final scenario in [
       ('phone', const Size(360, 800), 1.0, const Locale('en')),
@@ -547,25 +663,15 @@ void main() {
         await tester.pump();
         final expected = tester.widget<Slider>(slider).label;
         expect(expected, isNot('1×'));
-        final value = find.byKey(const ValueKey('scroll-speed-popup-value'));
-        expect(tester.widget<Text>(value).data, expected);
+        expect(
+          find.byKey(const ValueKey('scroll-speed-popup-value')),
+          findsNothing,
+        );
         expect(
           tester
               .widget<Text>(find.byKey(const ValueKey('scroll-speed-value')))
               .data,
           expected,
-        );
-        final popupRect = tester.getRect(
-          find.byKey(const ValueKey('scroll-speed-panel')),
-        );
-        final valueRect = tester.getRect(value);
-        expect(valueRect.left, greaterThanOrEqualTo(popupRect.left - 1));
-        expect(valueRect.right, lessThanOrEqualTo(popupRect.right + 1));
-        expect(valueRect.top, greaterThanOrEqualTo(popupRect.top - 1));
-        expect(valueRect.bottom, lessThanOrEqualTo(popupRect.bottom + 1));
-        expect(
-          tester.renderObject<RenderParagraph>(value).didExceedMaxLines,
-          isFalse,
         );
         expect(controller.speedWrites, 0);
       } finally {
@@ -576,9 +682,7 @@ void main() {
       expect(controller.speed, 1);
       expect(
         tester
-            .widget<Text>(
-              find.byKey(const ValueKey('scroll-speed-popup-value')),
-            )
+            .widget<Text>(find.byKey(const ValueKey('scroll-speed-value')))
             .data,
         '1×',
       );
@@ -593,7 +697,7 @@ void main() {
   );
 
   testWidgets(
-    'landscape fullscreen keeps a persistent header and lyrics exit action',
+    'landscape fullscreen hides header and playback panel with exit reachable',
     (tester) async {
       final controller = _Controller();
       addTearDown(controller.dispose);
@@ -605,38 +709,23 @@ void main() {
         fullScreen: true,
         onFullScreenChanged: (value) => fullscreen = value,
       );
-      final lyrics = find.byKey(const ValueKey('tablet-reader-content'));
-      final header = find.byKey(const ValueKey('player-landscape-header'));
-      expect(header, findsOneWidget);
-      final headerRect = tester.getRect(header);
-      final lyricsRect = tester.getRect(lyrics);
-      expect(lyricsRect.top, greaterThanOrEqualTo(headerRect.bottom));
-      expect(lyricsRect.height, greaterThan(250));
-      expect(
-        find.byKey(const ValueKey('player-fullscreen-header')),
-        findsOneWidget,
-      );
       expect(
         find.byKey(const ValueKey('player-landscape-header')),
-        findsOneWidget,
+        findsNothing,
       );
       expect(
-        find.byKey(const ValueKey('player-exit-fullscreen')),
-        findsOneWidget,
+        find.byKey(const ValueKey('player-fullscreen-header')),
+        findsNothing,
       );
-
-      await tester.tap(
-        find.byTooltip(
-          AppLocalizations.of(
-            tester.element(find.byType(PlayerScreen)),
-          ).playerCollapseControls,
-        ),
-      );
-      await tester.pumpAndSettle();
       expect(
-        find.byKey(const ValueKey('player-exit-fullscreen')),
-        findsOneWidget,
+        find.byKey(const ValueKey('player-controls-handle')),
+        findsNothing,
       );
+      final lyrics = tester.getRect(
+        find.byKey(const ValueKey('tablet-reader-content')),
+      );
+      expect(lyrics.top, 0);
+      expect(lyrics.height, 360);
       await tester.tap(find.byKey(const ValueKey('player-exit-fullscreen')));
       expect(fullscreen, isFalse);
       expect(tester.takeException(), isNull);
@@ -900,10 +989,10 @@ void main() {
       expect(actionFinder.hitTestable(), findsOneWidget);
       expect(tester.widget<IconButton>(actionFinder).tooltip, isNotEmpty);
       if (direction == TextDirection.rtl) {
-        expect(action.left, closeTo(lyricsRect.left, 1));
+        expect(action.left, closeTo(lyricsRect.left + 48, 1));
         expect(padding.left, padding.right);
       } else {
-        expect(action.right, closeTo(lyricsRect.right, 1));
+        expect(action.right, closeTo(lyricsRect.right - 48, 1));
         expect(padding.right, padding.left);
       }
       final paragraphFinder = find.text(text);

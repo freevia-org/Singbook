@@ -227,21 +227,7 @@ void main() {
             const ValueKey('scroll-speed-value'),
           )).data, expected);
           expect(controller.calls.where((call) => call.startsWith('setPlaybackSpeed')), isEmpty);
-          final popupValue = find.byKey(const ValueKey('scroll-speed-popup-value'));
-          expect(tester.widget<Text>(popupValue).data, expected);
-          final popupRect = tester.getRect(
-            find.byKey(const ValueKey('scroll-speed-panel')),
-          );
-          final valueRect = tester.getRect(popupValue);
-          expect(valueRect.left, greaterThanOrEqualTo(popupRect.left - 1));
-          expect(valueRect.right, lessThanOrEqualTo(popupRect.right + 1));
-          expect(valueRect.top, greaterThanOrEqualTo(popupRect.top - 1));
-          expect(valueRect.bottom, lessThanOrEqualTo(popupRect.bottom + 1));
-          expect(
-            tester.renderObject<RenderParagraph>(popupValue).didExceedMaxLines,
-            isFalse,
-          );
-          await _capture(tester, boundaryKey, '${scenario.$1}-speed-held');
+          expect(find.byKey(const ValueKey('scroll-speed-popup-value')), findsNothing);          await _capture(tester, boundaryKey, '${scenario.$1}-speed-held');
         } finally {
           await gesture.cancel();
         }

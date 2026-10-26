@@ -4,6 +4,17 @@ import XCTest
 
 class RunnerTests: XCTestCase {
 
+  func testDidFinishLaunchingDoesNotDispatchUnsupportedSuperclassSelector() throws {
+    // Exercise the real launch callback, including a window-less launch. A
+    // super call to the optional unimplemented ObjC callback raises an AppKit
+    // exception instead of letting this test finish.
+    let delegateType = try XCTUnwrap(NSClassFromString("Singbook.AppDelegate") as? NSObject.Type)
+    let delegate = delegateType.init()
+    let callback = NSSelectorFromString("applicationDidFinishLaunching:")
+    XCTAssertTrue(delegate.responds(to: callback))
+    delegate.perform(callback, with: Notification(name: NSApplication.didFinishLaunchingNotification) as NSNotification)
+  }
+
   func testReleaseIdentityAndResources() throws {
     let app = Bundle.main
     XCTAssertEqual(app.bundleIdentifier, "org.freevia.singbook")
