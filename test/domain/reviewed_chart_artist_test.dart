@@ -22,8 +22,8 @@ void main() {
     metadata: metadata,
     recordingIds: recordingIds,
     extra: {
-      if (providerArtistId != null) 'providerArtistId': providerArtistId,
-      if (providerSongId != null) 'providerSongId': providerSongId,
+      'providerArtistId': ?providerArtistId,
+      'providerSongId': ?providerSongId,
     },
   );
 

@@ -102,10 +102,7 @@ class SongsterrProvider implements LyricsProvider {
       album: clean(metadata['album']),
       url: 'https://www.songsterr.com$path',
       metadata: metadata,
-      extra: {
-        if (artistId != null) 'providerArtistId': artistId,
-        if (songId != null) 'providerSongId': songId,
-      },
+      extra: {'providerArtistId': ?artistId, 'providerSongId': ?songId},
     );
   }
 
