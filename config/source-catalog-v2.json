@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "extractionSchemaVersion": 1,
-  "revision": 11,
-  "publishedAt": "2026-10-26T22:14:03.295667Z",
+  "revision": 12,
+  "publishedAt": "2026-10-26T23:21:32.5805304Z",
   "sources": [
     {
       "id": "genius",
@@ -490,7 +490,7 @@
       "name": "Sean McGrath Music",
       "adapter": "builtin",
       "status": "active",
-      "revision": 1,
+      "revision": 2,
       "capabilities": [
         "catalog",
         "chords",
@@ -513,8 +513,20 @@
             "metadata",
             "chords"
           ]
+        },
+        {
+          "id": "black-dog",
+          "query": "Black Dog",
+          "expectedTitle": "Black Dog",
+          "expectedArtist": "Sean McGrath",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "chords"
+          ]
         }
-      ]
+      ],
+      "changeReason": "Publisher moved the public index and individual pages from /songs/ to /songs_and_poems/. Native adapter follows current paths while retaining legacy source IDs and resolving saved URLs. Compatible app update required."
     },
     {
       "id": "worshiptogether",
