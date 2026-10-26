@@ -118,6 +118,69 @@ String? _chordAlignmentHash(SongDocument doc) {
 }
 
 void main() {
+  test(
+    'reviewed edition proof requires the bound recording and target scope',
+    () {
+      const candidate = SongCandidate(
+        providerId: 'catalog',
+        id: 'original',
+        title: 'Harbor Song',
+        artist: 'Lantern Coast',
+      );
+      Map<String, dynamic> fixture() => {
+        'title': 'Harbor Song',
+        'artist': 'Lantern Coast',
+        'recordingEdition': 'Original studio performance',
+        'recordingEditionStatus': 'verified',
+        'expected': {
+          'recordingReference': {
+            'status': 'verified',
+            'providerId': 'catalog',
+            'candidateId': 'original',
+            'recordingEdition': 'Original studio performance',
+            'evidence': ['https://catalog.example.test/original'],
+          },
+        },
+      };
+      final song = fixture();
+      expect(corpusRecordingReferenceMatches(song, candidate), isTrue);
+      expect(corpusReviewedEditionMatches(song, candidate), isTrue);
+      expect(
+        corpusReviewedEditionMatches(
+          song,
+          const SongCandidate(
+            providerId: 'catalog',
+            id: 'live',
+            title: 'Harbor Song',
+            artist: 'Lantern Coast',
+          ),
+        ),
+        isFalse,
+      );
+      expect(
+        corpusRecordingReferenceMatches(
+          song,
+          const SongCandidate(
+            providerId: 'catalog',
+            id: 'original',
+            title: 'Harbor Song (Live)',
+            artist: 'Lantern Coast',
+          ),
+        ),
+        isFalse,
+      );
+      final changedEdition = fixture()
+        ..['recordingEdition'] = 'Live performance';
+      expect(corpusReviewedEditionMatches(changedEdition, candidate), isFalse);
+      final unreviewed = fixture()..['recordingEditionStatus'] = 'unverified';
+      expect(corpusReviewedEditionMatches(unreviewed, candidate), isFalse);
+      final noProof = fixture();
+      ((noProof['expected'] as Map)['recordingReference'] as Map)['evidence'] =
+          [];
+      expect(corpusRecordingReferenceMatches(noProof, candidate), isFalse);
+      expect(corpusReviewedEditionMatches(noProof, candidate), isFalse);
+    },
+  );
   test('reviewed catalog aliases select only the bound record and credits', () {
     const original = SongCandidate(
       providerId: 'catalog',
@@ -398,15 +461,10 @@ Future<void> _benchmark() async {
         );
       }
       final selected = group.representative;
-      final recordingReference =
-          expected['recordingReference'] as Map<String, dynamic>;
-      final recordingReferenceAnchored =
-          recordingReference['status'] == 'verified' &&
-          (recordingReference['evidence'] as List).isNotEmpty &&
-          ((recordingReference['providerId'] == selected.providerId &&
-                  recordingReference['candidateId'] == selected.id) ||
-              (recordingReference['isrc'] != null &&
-                  recordingReference['isrc'] == selected.recordingIds['isrc']));
+      final recordingReferenceAnchored = corpusRecordingReferenceMatches(
+        song,
+        selected,
+      );
       row['recordingReferenceAnchored'] = recordingReferenceAnchored;
 
       if (edition != null) {
@@ -429,11 +487,22 @@ Future<void> _benchmark() async {
               ? selected.extra['edition'] as String
               : null,
         ].whereType<String>().map(_normalize);
-        row['recordingEditionAnchored'] = evidence.any(
+        final catalogEditionTextMatched = evidence.any(
           (v) => v.contains(editionNorm),
         );
+        final reviewedEdition = corpusReviewedEditionMatches(song, selected);
+        row['catalogEditionTextMatched'] = catalogEditionTextMatched;
+        row['recordingEditionAnchored'] =
+            reviewedEdition || catalogEditionTextMatched;
+        row['recordingEditionEvidence'] = reviewedEdition
+            ? 'reviewed_recording_reference'
+            : catalogEditionTextMatched
+            ? 'catalog_text'
+            : null;
       } else {
         row['recordingEditionAnchored'] = null;
+        row['catalogEditionTextMatched'] = null;
+        row['recordingEditionEvidence'] = null;
       }
       // Check every alternate member against the selected candidate's explicit
       // edition signals; conflicts make recording-specific fields unavailable.
@@ -485,7 +554,9 @@ Future<void> _benchmark() async {
           .expand((l) => l.chords.map((a) => a.chord))
           .join(' ');
       final key = _soundingKey(doc);
-      final identityReady = recordingReferenceAnchored;
+      final identityReady =
+          recordingReferenceAnchored &&
+          (edition == null || row['recordingEditionAnchored'] == true);
       row.addAll({
         'selectedProvider': selected.providerId,
         'selectedTitle': selected.title,

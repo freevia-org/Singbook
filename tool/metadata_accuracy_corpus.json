@@ -2027,10 +2027,12 @@
             "status": "unverified",
             "value": null,
             "evidence": [
+              "https://academic.oup.com/book/32340/chapter-abstract/268586245",
               "https://www.musicnotes.com/sheetmusic/luis-fonsi-feat-daddy-yankee/despacito/MN0173584"
             ],
-            "notes": "Licensed original-artist PVG publisher lists B minor as original published key; still requires exact recording/audio cross-check, not promoted from notation alone.",
-            "candidateValue": "Bm"
+            "notes": "The primary published harmonic analysis describes two tonal homes and no unique major/minor global answer. The publisher arrangement key and an excerpt profile do not settle that ambiguity. Do not equate relative modes or count an unknown key as correct.",
+            "candidateValue": "Bm",
+            "reviewRecord": "tool/metadata_reference_evidence/despacito_key_ambiguity.json"
           },
           "chords": {
             "status": "unverified",
@@ -3189,7 +3191,7 @@
       "id": "song-081",
       "title": "Iris",
       "artist": "The Goo Goo Dolls",
-      "recordingEdition": null,
+      "recordingEdition": "1998 original studio performance on Dizzy Up the Girl",
       "language": "English",
       "genre": "unspecified",
       "expected": {
@@ -3199,7 +3201,13 @@
           "lyrics": {
             "status": "unverified",
             "value": null,
-            "evidence": []
+            "evidence": [
+              "https://www.googoodolls.com/album/dizzy-girl",
+              "https://genius.com/The-goo-goo-dolls-iris-lyrics",
+              "https://www.youtube.com/watch?v=zDOILKOOUCo"
+            ],
+            "reviewRecord": "tool/metadata_reference_evidence/iris_lyrics_conflict.json",
+            "notes": "An independently normalized official album text differs at three positions from the exact selected provider extraction. Two are wording differences and one is spelling. The official lyric-video text also differs from the album text; do not certify or silently rewrite the performed lyrics from either printed reference alone."
           },
           "key": {
             "status": "unverified",
@@ -3216,12 +3224,31 @@
           "recordingKey": null
         },
         "recordingReference": {
-          "status": "unverified",
-          "providerId": null,
-          "candidateId": null,
+          "status": "verified",
+          "providerId": "genius",
+          "candidateId": "138482",
           "isrc": null,
-          "evidence": []
+          "recordingEdition": "1998 original studio performance on Dizzy Up the Girl",
+          "evidence": [
+            "https://genius.com/The-goo-goo-dolls-iris-lyrics",
+            "https://www.googoodolls.com/album/dizzy-girl",
+            "https://music.apple.com/us/album/iris/1109658139?i=1109658204"
+          ],
+          "notes": "Performance-level binding from the original album catalog and the exact linked Apple track. The catalog dates differ by six days for the early single; both identify the 1998 original performance and original album. No ISRC or bit-identical master claim."
         }
+      },
+      "recordingEditionStatus": "verified",
+      "catalogSelection": {
+        "providerId": "genius",
+        "candidateId": "138482",
+        "title": "Iris",
+        "artist": "The Goo Goo Dolls",
+        "evidence": [
+          "https://genius.com/The-goo-goo-dolls-iris-lyrics",
+          "https://www.googoodolls.com/album/dizzy-girl",
+          "https://music.apple.com/us/album/iris/1109658139?i=1109658204"
+        ],
+        "notes": "The resolved catalog record names Dizzy Up the Girl and links Apple track 1109658204. Apple independently identifies the same artist, title, album and 289559 ms original performance. This does not certify the lyric text or a bit-identical mastering."
       }
     },
     {

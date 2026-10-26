@@ -85,15 +85,30 @@ class SongsterrProvider implements LyricsProvider {
     JsonMap data,
     String path, {
     JsonMap metadata = const {},
-  }) => SongCandidate(
-    providerId: 'songsterr',
-    id: path,
-    title: requiredText(data['title']),
-    artist: requiredText(data['artist']),
-    album: clean(metadata['album']),
-    url: 'https://www.songsterr.com$path',
-    metadata: metadata,
-  );
+  }) {
+    String? providerId(Object? value) {
+      if (value is! int && value is! String) return null;
+      final text = '$value';
+      return RegExp(r'^[1-9][0-9]{0,14}$').hasMatch(text) ? text : null;
+    }
+
+    final artistId = providerId(data['artistId']);
+    final songId = providerId(data['songId']);
+    return SongCandidate(
+      providerId: 'songsterr',
+      id: path,
+      title: requiredText(data['title']),
+      artist: requiredText(data['artist']),
+      album: clean(metadata['album']),
+      url: 'https://www.songsterr.com$path',
+      metadata: metadata,
+      extra: {
+        if (artistId != null) 'providerArtistId': artistId,
+        if (songId != null) 'providerSongId': songId,
+      },
+    );
+  }
+
   static List<SongCandidate> parseSearch(String source) {
     final doc = parseHtml(source),
         state = _state(source, doc),
