@@ -122,14 +122,25 @@
     "songsWithCrossProviderTranspositionInvariantProgressionAgreement": 2,
     "transpositionInvariantChordProgressionHashVariants": 202,
     "transpositionInvariantProgressionInterpretation": "An exact ordered progression hash after transposition normalization corroborates chord quality and bass structure only. It does not establish sounding key, lyric placement, recording identity, independent provenance, or correctness.",
-    "officialBeatlesLyricPagesWithReproducibleTextComparison": 4,
-    "officialBeatlesLyricComparisonsWithExactHashMatch": 0,
-    "officialBeatlesLyricComparisonsWithTokenEditDistanceAtMostThree": 1,
-    "officialBeatlesLyricPagesReviewedForFourRecordingAnchoredRows": 3,
-    "officialBeatlesComparisonInterpretation": "Four official artist lyric pages were compared against selected Genius text; all four normalized hashes differ. One has only a 3-token sequence difference. Official pages are retained as practical reference evidence, not automatic correctness gold.",
-    "officialBeatlesPagesMatchedAnyCachedCandidate": 0,
-    "officialBeatlesSourceCandidateRowsCompared": 28,
-    "officialBeatlesSourceCoverageInterpretation": "In addition to selected-text comparison, each official page hash was compared with every cached provider lyric candidate summary for its song. None of the four official hashes exactly matches any candidate in the current offline result set; this is a reference/source coverage gap, not proof that any one transcript is incorrect."
+    "officialLyricPagesWithReproducibleTextComparison": 5,
+    "officialLyricComparisonsWithExactHashMatch": 0,
+    "officialLyricComparisonsWithTokenEditDistanceAtMostThree": 1,
+    "officialLyricPagesReviewedForRecordingAnchoredRows": 3,
+    "officialLyricPageComparisonInterpretation": "Five official artist lyric pages across four Beatles songs and Oasis Wonderwall were compared against selected Genius text; all five normalized hashes differ. Token edit distances are 106, 339, 3, 72 and 7. Three pages have clear matching recording context; Let It Be page text spans the single/album variants, while Oasis corpus edition is unspecified. These pages are practical reference evidence, not automatic correctness gold.",
+    "officialLyricPagesMatchedAnyCachedCandidate": 0,
+    "officialLyricSourceCandidateRowsCompared": 36,
+    "officialLyricSourceCoverageInterpretation": "In addition to selected-text comparison, each official page hash was compared with every cached provider lyric candidate summary for its song. None of the five official hashes exactly matches any candidate in the current offline result set; this is a reference/source coverage gap, not proof that any one transcript is incorrect.",
+    "oasisWonderwallComparison": {
+      "selectedWords": 283,
+      "officialWords": 276,
+      "tokenEditDistance": 7,
+      "selectedProviderLabels": [
+        "betterlyrics",
+        "genius"
+      ],
+      "officialHashMatchedCandidateCount": 0,
+      "recordingEdition": "unspecified"
+    }
   },
   "songs": [
     {
@@ -1028,9 +1039,26 @@
       "publicReferenceObservation": {
         "source": "Oasis official",
         "reference": "https://oasisinet.com/lyrics/wonderwall-2/",
-        "comparisonStatus": "full_text_hash_diff_unadjudicated",
+        "comparisonStatus": "hash_and_token_alignment_reviewed; not correctness-gold",
         "result": "normalized text differs",
-        "editionNote": "Corpus edition unspecified"
+        "editionNote": "Corpus edition unspecified",
+        "officialNormalizedWordCount": 276,
+        "officialNormalizedSha256": "d0d0f15f50f9626fafa8326cbc5545dd88f01d8f26b41513a5bc5bc1cd0c7626",
+        "selectedNormalizedWordCount": 283,
+        "selectedNormalizedSha256": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f",
+        "tokenSequenceEditDistance": 7,
+        "tokenEditShape": {
+          "substitutions": 0,
+          "officialOnlyInsertions": 0,
+          "selectedOnlyDeletions": 7
+        },
+        "officialPageSha256": "067c43009b163889cb51827f5ce78cca182ba951038dda893a1024c5a4f744b9",
+        "sourceCandidateRowsCompared": 8,
+        "sourceCandidateExactHashMatched": false,
+        "sourceCandidateExactHashMatchProviderLabels": [],
+        "editionRelation": "Official artist lyric reference supports the composition text; corpus has no specific recording edition, so the page cannot yet adjudicate exact performed wording.",
+        "comparisonMethod": "Production GeniusProvider.extractLyrics then plainToChordPro for selected candidate; direct .post-content paragraphs for official page; benchmark lowercase and punctuation normalization.",
+        "accuracyDisposition": "The official sequence is 7 tokens shorter than the selected text under minimum token edit alignment, with no substitutions. It is useful practical corroboration, but the corpus edition is unspecified and the source lineage of the matching provider labels is unconfirmed. No side is declared correct."
       }
     },
     {

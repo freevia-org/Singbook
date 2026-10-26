@@ -1,15 +1,48 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-26",
-  "task": "official_lyrics_practical_reference_comparisons",
+  "task": "official_artist_lyrics_practical_reference_comparisons",
   "benchmarkReportSha256": "09824d06dcb00a23893d39cfc9021a0307aee07f1ef661b7471ff1a4cb3b81b4",
   "runtimeCodeHead": "271753d4f613cf642f04e2c3f9af496435595a65",
-  "corpusRows": 4,
+  "corpusRows": 5,
   "performanceGoldClaimsAdded": 0,
   "lyricBodiesRetained": false,
   "sourceCandidateIdsRetained": false,
   "method": "Fetched official Beatles artist pages; extracted lyric paragraphs locally; extracted selected Genius text through the production GeniusProvider parser from the protected offline response cache; normalized using benchmark rules; recorded raw page and normalized-text hashes, word counts, and token edit distances only. Exact recording/master performance was not claimed where the page does not bind it.",
   "rows": [
+    {
+      "songId": "song-004",
+      "title": "Wonderwall",
+      "url": "https://oasisinet.com/lyrics/wonderwall-2/",
+      "sourceRole": "Official Oasis artist lyric page",
+      "recordingEdition": "unspecified in corpus",
+      "selectedWords": 283,
+      "selectedHash": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f",
+      "referenceWords": 276,
+      "referenceHash": "d0d0f15f50f9626fafa8326cbc5545dd88f01d8f26b41513a5bc5bc1cd0c7626",
+      "tokenSequenceEditDistance": 7,
+      "tokenEditShape": {
+        "substitutions": 0,
+        "officialOnlyInsertions": 0,
+        "selectedOnlyDeletions": 7
+      },
+      "officialPageSha256": "067c43009b163889cb51827f5ce78cca182ba951038dda893a1024c5a4f744b9",
+      "sourceCandidateRowsCompared": 8,
+      "sourceCandidateExactHashMatchCount": 0,
+      "sourceCandidateExactHashMatchProviderLabels": [],
+      "selectedExactProviderLabels": [
+        "betterlyrics",
+        "genius"
+      ],
+      "selectedRecordingCompatibleProviderLabels": [
+        "genius"
+      ],
+      "editionRelation": "Official artist lyric reference supports the composition text; corpus has no specific recording edition, so the page cannot yet adjudicate exact performed wording.",
+      "comparisonStatus": "hash_and_token_alignment_reviewed; not correctness-gold",
+      "normalization": "Production GeniusProvider.extractLyrics then plainToChordPro for selected candidate; direct .post-content paragraphs for official page; benchmark lowercase and punctuation normalization.",
+      "interpretation": "The official sequence is 7 tokens shorter than the selected text under minimum token edit alignment, with no substitutions. It is useful practical corroboration, but the corpus edition is unspecified and the source lineage of the matching provider labels is unconfirmed. No side is declared correct.",
+      "lyricBodiesRetained": false
+    },
     {
       "songId": "song-006",
       "title": "Let It Be",
@@ -98,5 +131,13 @@
       "sourceCandidateExactHashMatchProviderLabels": [],
       "sourceCandidateExactHashMatched": false
     }
+  ],
+  "selectedCandidateExactPageHashMatches": 0,
+  "providerCandidateExactPageHashMatches": 0,
+  "candidateRowsReconciled": 36,
+  "artistCount": 2,
+  "artists": [
+    "The Beatles",
+    "Oasis"
   ]
 }
