@@ -679,6 +679,10 @@ Future<void> _benchmark() async {
             .join(' ');
         sourceSummaries.add({
           'provider': source.candidate.providerId,
+          // Stable join key for tying a discovered candidate to the source
+          // contribution recorded by combineSources, without retaining its
+          // catalog ID in the report.
+          'sourceIdentitySha256': _sha(source.id),
           'candidateIdSha256': _sha(source.candidate.id),
           'match': source.matchKind.name,
           'reason': source.matchReason,
@@ -718,7 +722,48 @@ Future<void> _benchmark() async {
           )
           .toList();
       final doc = combineSources(selected, compatibleResults);
+      final selectedSourceId = doc.extra['selectedSourceId'];
+      final chordSourceIds = (doc.extra['chordSourceIds'] as List? ?? const [])
+          .whereType<String>()
+          .toSet();
+      final sectionSourceIds =
+          (doc.extra['sectionSourceIds'] as List? ?? const [])
+              .whereType<String>()
+              .toSet();
+      final fieldContributors = doc.extra['fieldContributors'] is Map
+          ? (doc.extra['fieldContributors'] as Map).map(
+              (field, ids) => MapEntry(
+                field.toString(),
+                (ids is List ? ids : const []).whereType<String>().toSet(),
+              ),
+            )
+          : <String, Set<String>>{};
       final arrangement = parseArrangement(doc.body);
+      final combinedHasChords = arrangement.any(
+        (line) => line.chords.isNotEmpty,
+      );
+      final combinedHasSections = arrangement.any(
+        (line) => sectionLabelForLine(line) != null,
+      );
+      for (final summary in sourceSummaries) {
+        final identityHash = summary['sourceIdentitySha256'];
+        final source = results
+            .where((candidate) => _sha(candidate.id) == identityHash)
+            .firstOrNull;
+        if (source == null) continue;
+        summary['combinedContribution'] = {
+          'selectedBaseLyrics': selectedSourceId == source.id,
+          'chords': combinedHasChords && chordSourceIds.contains(source.id),
+          'sections':
+              combinedHasSections && sectionSourceIds.contains(source.id),
+          'metadataFields':
+              fieldContributors.entries
+                  .where((entry) => entry.value.contains(source.id))
+                  .map((entry) => entry.key)
+                  .toList()
+                ..sort(),
+        };
+      }
       final normalizedLyrics = _normalizedLyrics(doc.body);
       final lyricsHash = normalizedLyrics.isEmpty
           ? null
@@ -887,6 +932,10 @@ Future<void> _benchmark() async {
     final compatibleCandidateRows = <Map<String, Object?>>[];
     final candidateProviders = <String>{};
     final compatibleCandidateProviders = <String>{};
+    var baseLyricsContributionRows = 0;
+    var chordContributionRows = 0;
+    var sectionContributionRows = 0;
+    final contributingProviders = <String>{};
     for (final row in rows) {
       final summaries = (row['sourceSummary'] as List? ?? const [])
           .whereType<Map>()
@@ -906,6 +955,43 @@ Future<void> _benchmark() async {
           compatible.map((source) => source['provider'] as String),
         );
       }
+      final contributors = (row['sourceSummary'] as List? ?? const [])
+          .whereType<Map>()
+          .whereType<Map<String, Object?>>();
+      var rowHasBaseLyricsContribution = false;
+      var rowHasChordContribution = false;
+      var rowHasSectionContribution = false;
+      for (final source in contributors) {
+        final contribution = source['combinedContribution'];
+        if (contribution is! Map) continue;
+        final metadataFields =
+            (contribution['metadataFields'] as List? ?? const [])
+                .whereType<String>()
+                .toSet();
+        final used = switch (field) {
+          'lyrics' =>
+            contribution['selectedBaseLyrics'] == true ||
+                contribution['sections'] == true,
+          'chords' => contribution['chords'] == true,
+          'key' =>
+            metadataFields.contains('key') ||
+                contribution['chords'] == true && row['key'] != null,
+          _ => false,
+        };
+        if (used) contributingProviders.add(source['provider'] as String);
+        if (field == 'lyrics' && contribution['selectedBaseLyrics'] == true) {
+          rowHasBaseLyricsContribution = true;
+        }
+        if (field == 'chords' && contribution['chords'] == true) {
+          rowHasChordContribution = true;
+        }
+        if (field == 'lyrics' && contribution['sections'] == true) {
+          rowHasSectionContribution = true;
+        }
+      }
+      if (rowHasBaseLyricsContribution) baseLyricsContributionRows++;
+      if (rowHasChordContribution) chordContributionRows++;
+      if (rowHasSectionContribution) sectionContributionRows++;
     }
     final selectedValueRows = rows.where((row) {
       final value = switch (field) {
@@ -923,6 +1009,16 @@ Future<void> _benchmark() async {
           compatibleCandidateRows.length,
       'recordingCompatibleProviderCount': compatibleCandidateProviders.length,
       'songsWithSelectedValue': selectedValueRows,
+      'songsWithSelectedBaseLyricsContribution': field == 'lyrics'
+          ? baseLyricsContributionRows
+          : null,
+      'songsWithChordChartContribution': field == 'chords'
+          ? chordContributionRows
+          : null,
+      'songsWithSectionContribution': field == 'lyrics'
+          ? sectionContributionRows
+          : null,
+      'contributingProviderCount': contributingProviders.length,
       'corpusRowsWithVerifiedClaim': refs,
       'comparisonsEvaluated': evaluated,
       'compatibilityBasis':

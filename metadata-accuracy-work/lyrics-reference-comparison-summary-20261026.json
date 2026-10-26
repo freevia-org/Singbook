@@ -62,6 +62,9 @@
       "songsWithRecordingCompatibleCandidateData": 97,
       "recordingCompatibleProviderCount": 1,
       "songsWithSelectedValue": 99,
+      "songsWithSelectedBaseLyricsContribution": 99,
+      "songsWithSectionContribution": 84,
+      "contributingProviderCount": 3,
       "observedSourcePageComparisons": 15,
       "sourcePageComparisonCoveragePercent": 15.0,
       "corpusRowsWithVerifiedClaim": 0,
@@ -74,6 +77,7 @@
       "songsWithRecordingCompatibleCandidateData": 0,
       "recordingCompatibleProviderCount": 0,
       "songsWithSelectedValue": 75,
+      "contributingProviderCount": 3,
       "corpusRowsWithVerifiedClaim": 8,
       "comparisonsEvaluated": 8,
       "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness."
@@ -84,6 +88,8 @@
       "songsWithRecordingCompatibleCandidateData": 0,
       "recordingCompatibleProviderCount": 0,
       "songsWithSelectedValue": 95,
+      "songsWithChordChartContribution": 95,
+      "contributingProviderCount": 3,
       "corpusRowsWithVerifiedClaim": 0,
       "comparisonsEvaluated": 0,
       "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness."
@@ -244,6 +250,15 @@
       "source_or_song_match_failure",
       "unresolved"
     ]
+  },
+  "sourceContributions": {
+    "songsWithSelectedBaseLyrics": 99,
+    "songsWithMergedSections": 84,
+    "songsWithActualChordContributions": 95,
+    "songsWithSelectedKeyOrChordDerivedKey": 75,
+    "providerCountContributingByField": 3,
+    "method": "Each discovered source is joined to combineSources output through a SHA-256 source identity. The report marks selected base lyrics, chord contributors, section contributors, and metadata fields separately; it stores no source lyric text or raw candidate IDs.",
+    "interpretation": "Candidate availability is now distinct from actual use in the combined document. Counts are songs, not source rows. Contribution is not a correctness claim; separate reference evidence still determines accuracy."
   },
   "next": "Count a traceable source page with checked song/artist match as source-reference coverage. Track exact recording-level gold separately. For each source, record provider attribution when available, URL, title/artist match, edition binding, normalized hash, and a compact diff classification. Promote correctness only after the text is adjudicated for the intended scope.",
   "sourceAgreement": {
