@@ -158,6 +158,110 @@ bool _practicalChordSupportEligible(Map source) {
   return true;
 }
 
+List<Map<String, Object?>> _sharedRawHashRowsDifferingFromOutput(
+  List<Map> rows,
+  String hashField,
+  String selectedHashField,
+) {
+  final alternatives = <Map<String, Object?>>[];
+  for (final row in rows) {
+    final sources = (row['sourceSummary'] as List? ?? const [])
+        .whereType<Map>()
+        .where((source) => source[hashField] is String)
+        .toList();
+    final groups = <String, List<Map>>{};
+    for (final source in sources) {
+      (groups[source[hashField] as String] ??= <Map>[]).add(source);
+    }
+    final selectedHash = row[selectedHashField];
+    final selectedHashProviders = (groups[selectedHash] ?? const <Map>[])
+        .map((source) => source['provider'])
+        .whereType<String>()
+        .toSet()
+        .toList()
+      ..sort();
+    for (final entry in groups.entries) {
+      if (entry.key == selectedHash) continue;
+      final providers = entry.value
+          .map((source) => source['provider'])
+          .whereType<String>()
+          .toSet()
+          .toList()
+        ..sort();
+      if (providers.length < 2) continue;
+      final recordingCompatibleProviders = entry.value
+          .where((source) => source['recordingCompatible'] == true)
+          .map((source) => source['provider'])
+          .whereType<String>()
+          .toSet()
+          .toList()
+        ..sort();
+      final contributedProviders = entry.value
+          .where((source) {
+            final contribution = source['combinedContribution'];
+            return contribution is Map && contribution['chords'] == true;
+          })
+          .map((source) => source['provider'])
+          .whereType<String>()
+          .toSet()
+          .toList()
+        ..sort();
+      final editionCompatibleProviders = entry.value
+          .where((source) => source['explicitEditionCompatible'] == true)
+          .map((source) => source['provider'])
+          .whereType<String>()
+          .toSet()
+          .toList()
+        ..sort();
+      final outputContributorProviders = sources
+          .where((source) {
+            final contribution = source['combinedContribution'];
+            return contribution is Map && contribution['chords'] == true;
+          })
+          .map((source) => source['provider'])
+          .whereType<String>()
+          .toSet()
+          .toList()
+        ..sort();
+      alternatives.add({
+        'songId': row['id'],
+        'title': row['selectedTitle'] ?? row['title'],
+        'artist': row['selectedArtist'] ?? row['artist'],
+        'recordingEditionStatus': row['recordingEditionStatus'],
+        'selectedHashSupportingProviderLabels': selectedHashProviders,
+        'selectedHashProviderSupport': selectedHashProviders.length,
+        'selectedChordContributorProviderLabels': outputContributorProviders,
+        'alternativeHashSha256': entry.key,
+        'alternativeProviderLabels': providers,
+        'alternativeProviderCount': providers.length,
+        'recordingCompatibleAlternativeProviders':
+            recordingCompatibleProviders,
+        'editionCompatibleAlternativeProviders': editionCompatibleProviders,
+        'contributedAlternativeProviders': contributedProviders,
+        'independentLineageConfirmed': false,
+        'matchKinds': entry.value
+            .map((source) => source['match'])
+            .whereType<String>()
+            .toSet()
+            .toList()
+          ..sort(),
+        'pendingAlternativeSourceCount': entry.value
+            .where((source) => source['pendingMatchCheck'] == true)
+            .length,
+      });
+    }
+  }
+  alternatives.sort((a, b) {
+    final song = '${a['songId']}'.compareTo('${b['songId']}');
+    return song != 0
+        ? song
+        : '${a['alternativeHashSha256']}'.compareTo(
+            '${b['alternativeHashSha256']}',
+          );
+  });
+  return alternatives;
+}
+
 bool _eligibleAgreementSource(Map source, String hashField) =>
     hashField == 'normalizedLyricsSha256'
     ? _practicalLyricsSupportEligible(source)
@@ -1087,6 +1191,83 @@ void main() {
     expect(counts['selectedKeyUnavailable'], 3);
     expect(result['isStrictRecordingGold'], isFalse);
   });
+  test(
+    'shared chart hashes are visible without becoming output support',
+    () {
+      final sources = [
+        {
+          'provider': 'ultimateguitar',
+          'chordSequenceSha256': 'selected-chart',
+          'match': 'sameSong',
+          'recordingCompatible': false,
+          'explicitEditionCompatible': true,
+          'pendingMatchCheck': false,
+          'combinedContribution': {'chords': true},
+        },
+        {
+          'provider': 'chordie',
+          'chordSequenceSha256': 'shared-alternative',
+          'match': 'sameSong',
+          'recordingCompatible': false,
+          'explicitEditionCompatible': true,
+          'pendingMatchCheck': false,
+          'combinedContribution': {'chords': false},
+        },
+        {
+          'provider': 'songsterr',
+          'chordSequenceSha256': 'shared-alternative',
+          'match': 'sameSong',
+          'recordingCompatible': false,
+          'explicitEditionCompatible': true,
+          'pendingMatchCheck': false,
+          'combinedContribution': {'chords': false},
+        },
+      ];
+      final rows = [
+        {
+          'id': 'song-079',
+          'title': 'Hey, Soul Sister',
+          'artist': 'Train',
+          'recordingEditionStatus': 'unspecified',
+          'chordSequenceSha256': 'selected-chart',
+          'sourceSummary': sources,
+        },
+      ];
+
+      final alternatives = _sharedRawHashRowsDifferingFromOutput(
+        rows,
+        'chordSequenceSha256',
+        'chordSequenceSha256',
+      );
+
+      expect(alternatives, hasLength(1));
+      expect(alternatives.single['songId'], 'song-079');
+      expect(alternatives.single['selectedHashSupportingProviderLabels'], [
+        'ultimateguitar',
+      ]);
+      expect(alternatives.single['selectedChordContributorProviderLabels'], [
+        'ultimateguitar',
+      ]);
+      expect(alternatives.single['alternativeProviderLabels'], [
+        'chordie',
+        'songsterr',
+      ]);
+      expect(
+        alternatives.single['recordingCompatibleAlternativeProviders'],
+        isEmpty,
+      );
+      expect(alternatives.single['editionCompatibleAlternativeProviders'], [
+        'chordie',
+        'songsterr',
+      ]);
+      expect(
+        alternatives.single['contributedAlternativeProviders'],
+        isEmpty,
+      );
+      expect(_practicalChordSupportEligible(sources[1]), isFalse);
+      expect(_practicalChordSupportEligible(sources[2]), isFalse);
+    },
+  );
   test('chord accuracy includes word placement and sounding capo pitch', () {
     SongDocument song(String body, [int capo = 0]) => SongDocument(
       id: 'fixture',
@@ -1947,9 +2128,15 @@ Future<void> _benchmark() async {
           'selectedOutputHashProviderSupportCounts': rawSelectedSupportCounts,
           'selectedOutputHashHasCrossProviderSupport':
               rawSelectedOutputsWithCrossProviderSupport,
+          'sharedSourceHashRowsDifferingFromSelectedOutput':
+              _sharedRawHashRowsDifferingFromOutput(
+                rows,
+                hashField,
+                selectedHashField,
+              ),
         },
         'interpretation':
-            'Raw discovered-candidate agreement includes rejected, pending, and edition-incompatible rows; use the eligibility-filtered counts above for practical support claims.',
+            'Raw discovered-candidate agreement includes rejected, pending, and edition-incompatible rows. sharedSourceHashRowsDifferingFromSelectedOutput exposes shared source hashes that differ from the selected output and records which sources actually contributed; raw agreement and provider labels do not establish selected-output support, independent lineage, or correctness.',
       },
       if (selectedHashField != null) ...{
         'selectedOutputRows': selectedOutputRows,
