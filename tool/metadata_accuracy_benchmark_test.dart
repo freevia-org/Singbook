@@ -47,6 +47,12 @@ String _normalizedLyrics(String body) => _normalize(
 
 String _sha(String value) => sha256.convert(utf8.encode(value)).toString();
 
+double? _strictCorpusAccuracyPercent({
+  required int correct,
+  required int evaluated,
+  required int corpusSize,
+}) => evaluated == corpusSize ? 100 * correct / corpusSize : null;
+
 int _capoOf(Object? raw) =>
     raw is num ? raw.toInt() : int.tryParse('$raw') ?? 0;
 
@@ -258,6 +264,25 @@ void main() {
       expect(reviewedReferenceErrors(unknown, 'key', {}), isEmpty);
     },
   );
+
+  test('partial reference coverage has no strict corpus accuracy score', () {
+    expect(
+      _strictCorpusAccuracyPercent(correct: 0, evaluated: 0, corpusSize: 100),
+      isNull,
+    );
+    expect(
+      _strictCorpusAccuracyPercent(correct: 7, evaluated: 8, corpusSize: 100),
+      isNull,
+    );
+    expect(
+      _strictCorpusAccuracyPercent(
+        correct: 97,
+        evaluated: 100,
+        corpusSize: 100,
+      ),
+      97,
+    );
+  });
   test(
     'reviewed edition proof requires the bound recording and target scope',
     () {
@@ -827,9 +852,18 @@ Future<void> _benchmark() async {
     accuracy[field] = {
       ...counts,
       'denominator': songs.length,
-      // Keep the strict corpus score for the 100-song goal, but make a lack
-      // of reviewed references distinguishable from actual failed checks.
-      'percent': 100 * correct / songs.length,
+      // An unevaluated song is not a failed comparison. Do not print a
+      // misleading 0% corpus score until every row has a reviewed reference.
+      'percent': _strictCorpusAccuracyPercent(
+        correct: correct,
+        evaluated: evaluated,
+        corpusSize: songs.length,
+      ),
+      'strictCorpusAccuracyPercent': _strictCorpusAccuracyPercent(
+        correct: correct,
+        evaluated: evaluated,
+        corpusSize: songs.length,
+      ),
       'evaluationStatus': evaluated == 0
           ? 'no_reference_comparisons'
           : evaluated == songs.length

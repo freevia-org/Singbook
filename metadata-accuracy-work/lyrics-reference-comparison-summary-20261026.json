@@ -17,7 +17,8 @@
         "unverified": 99,
         "unavailable": 1,
         "denominator": 100,
-        "percent": 0.0,
+        "percent": null,
+        "strictCorpusAccuracyPercent": null,
         "evaluationStatus": "no_reference_comparisons",
         "accuracyAmongEvaluatedPercent": null,
         "referenceCoverage": 0,
@@ -30,7 +31,8 @@
         "unverified": 67,
         "unavailable": 25,
         "denominator": 100,
-        "percent": 7.0,
+        "percent": null,
+        "strictCorpusAccuracyPercent": null,
         "evaluationStatus": "partial_reference_coverage",
         "accuracyAmongEvaluatedPercent": 87.5,
         "referenceCoverage": 8,
@@ -43,7 +45,8 @@
         "unverified": 95,
         "unavailable": 5,
         "denominator": 100,
-        "percent": 0.0,
+        "percent": null,
+        "strictCorpusAccuracyPercent": null,
         "evaluationStatus": "no_reference_comparisons",
         "accuracyAmongEvaluatedPercent": null,
         "referenceCoverage": 0,
@@ -59,6 +62,8 @@
       "songsWithRecordingCompatibleCandidateData": 97,
       "recordingCompatibleProviderCount": 1,
       "songsWithSelectedValue": 99,
+      "observedSourcePageComparisons": 15,
+      "sourcePageComparisonCoveragePercent": 15.0,
       "corpusRowsWithVerifiedClaim": 0,
       "comparisonsEvaluated": 0,
       "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness."
@@ -224,8 +229,23 @@
       "result": "official album text differs from selected Genius text"
     }
   ],
-  "interpretation": "Fifteen additional full-text comparisons differ after the benchmark normalization. This does not by itself identify which text is wrong: authoritative composition lyrics, aggregator transcripts, and the performance selected by the corpus may represent different editions or repeat/formatting choices. The previous 0/100 means the offline benchmark evaluated no lyric references; it does not mean 100 songs were searched and rejected.",
-  "next": "Track source coverage separately from correctness. For each source, record attribution, URL, title/artist match, edition binding, normalized hash, and a compact diff classification (exact, formatting-only, wording variant, or unresolved). Promote only after the intended performance scope is established and the text is adjudicated.",
+  "interpretation": "The offline replay found lyric candidates for 99/100 songs. In addition, 15 public source pages were manually compared; all 15 normalized full-text hashes differed. These are source-reference observations, but they are not yet adjudicated exact-recording gold. A mismatch does not by itself identify which text is wrong: composition lyrics, aggregator transcripts, and the corpus performance may differ in edition, repeats, or formatting. The former 0/100 was caused by the strict exact-gold gate and did not mean 100 songs were searched and rejected.",
+  "referenceEvaluation": {
+    "sourceCandidateComparisons": 15,
+    "sourceCandidateComparisonPercent": 15.0,
+    "exactNormalizedFullTextMatches": 0,
+    "exactRecordingLevelGoldClaims": 0,
+    "strictAccuracyPercent": null,
+    "interpretation": "These 15 source pages are observed comparison references and count toward source-reference coverage. They do not establish exact recording-level ground truth. A full-text mismatch is an observed disagreement, not proof that the selected text is wrong. Classify the diff and edition scope before promoting a correctness claim.",
+    "futureDiffClasses": [
+      "formatting_only",
+      "wording_or_repetition_variant",
+      "edition_or_language_mismatch",
+      "source_or_song_match_failure",
+      "unresolved"
+    ]
+  },
+  "next": "Count a traceable source page with checked song/artist match as source-reference coverage. Track exact recording-level gold separately. For each source, record provider attribution when available, URL, title/artist match, edition binding, normalized hash, and a compact diff classification. Promote correctness only after the text is adjudicated for the intended scope.",
   "sourceAgreement": {
     "lyrics": {
       "songsWithSourceData": 99,
