@@ -1,0 +1,4397 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-26",
+  "generatedFrom": {
+    "benchmarkReport": "build/metadata_accuracy/report.json",
+    "runtimeCodeHead": "ebec30888b5353803902e837f12cbcda3caddefe",
+    "corpusSize": 100,
+    "cacheHits": 3100,
+    "networkAttempts": 0,
+    "uncachedOffline": 1030,
+    "benchmarkReportSha256": "8f24899e81176f448b95a3a26e11e105289f71a140eb237da0c5d22060570973"
+  },
+  "policy": {
+    "providerLabelAgreement": "practical exact-text support only; labels and candidate IDs do not establish independent source lineage",
+    "strictCorrectness": "only reviewed field-level gold references with compatible claim scope count as verified correctness",
+    "referenceDifference": "hash mismatch prompts text/version review and is not automatically incorrect",
+    "copyright": "no lyric text retained"
+  },
+  "summary": {
+    "songs": 100,
+    "selectedLyrics": 99,
+    "lyricsSupportLevels": {
+      "multi_provider_exact_text_support": 15,
+      "single_provider_exact_text_support": 84,
+      "no_selected_lyrics": 1
+    },
+    "publicLyricPagesCompared": 17,
+    "classifiedDifferences": 3,
+    "unadjudicatedDifferences": 14,
+    "strictAccuracy": {
+      "lyrics": {
+        "verifiedCorrect": 0,
+        "verifiedIncorrect": 0,
+        "scopeMismatch": 0,
+        "unverified": 99,
+        "unavailable": 1,
+        "denominator": 100,
+        "percent": null,
+        "strictCorpusAccuracyPercent": null,
+        "evaluationStatus": "no_adjudicated_correctness_comparisons",
+        "accuracyAmongEvaluatedPercent": null,
+        "referenceCoverage": 0,
+        "evaluatedReferences": 0,
+        "referenceCoveragePercent": 0.0,
+        "adjudicatedGoldReferenceCoverage": 0,
+        "adjudicatedGoldReferenceCoveragePercent": 0.0,
+        "correctnessBasis": "Only reviewed field-level gold references with comparable output scope count here. A mismatching arrangement-scoped key is reported separately as scopeMismatch, not as a wrong recording key. Observed source pages and provider candidates are evidence coverage, not correctness comparisons.",
+        "scopeMismatchMeaning": null,
+        "scopeMismatchesExcludedFromEvaluatedDenominator": 0,
+        "referenceCoverageMeaning": "Adjudicated field-level gold rows only; source-page observations are reported separately."
+      },
+      "key": {
+        "verifiedCorrect": 7,
+        "verifiedIncorrect": 0,
+        "scopeMismatch": 1,
+        "unverified": 67,
+        "unavailable": 25,
+        "denominator": 100,
+        "percent": null,
+        "strictCorpusAccuracyPercent": null,
+        "evaluationStatus": "partial_adjudicated_comparisons",
+        "accuracyAmongEvaluatedPercent": 100.0,
+        "referenceCoverage": 8,
+        "evaluatedReferences": 7,
+        "referenceCoveragePercent": 8.0,
+        "adjudicatedGoldReferenceCoverage": 8,
+        "adjudicatedGoldReferenceCoveragePercent": 8.0,
+        "correctnessBasis": "Only reviewed field-level gold references with comparable output scope count here. A mismatching arrangement-scoped key is reported separately as scopeMismatch, not as a wrong recording key. Observed source pages and provider candidates are evidence coverage, not correctness comparisons.",
+        "scopeMismatchMeaning": "The selected key is supported as a chart/arrangement key, while the reviewed reference is the recording home key; the values are retained but not compared as like-scoped claims.",
+        "scopeMismatchesExcludedFromEvaluatedDenominator": 1,
+        "referenceCoverageMeaning": "Adjudicated field-level gold rows only; source-page observations are reported separately."
+      },
+      "chords": {
+        "verifiedCorrect": 0,
+        "verifiedIncorrect": 0,
+        "scopeMismatch": 0,
+        "unverified": 95,
+        "unavailable": 5,
+        "denominator": 100,
+        "percent": null,
+        "strictCorpusAccuracyPercent": null,
+        "evaluationStatus": "no_adjudicated_correctness_comparisons",
+        "accuracyAmongEvaluatedPercent": null,
+        "referenceCoverage": 0,
+        "evaluatedReferences": 0,
+        "referenceCoveragePercent": 0.0,
+        "adjudicatedGoldReferenceCoverage": 0,
+        "adjudicatedGoldReferenceCoveragePercent": 0.0,
+        "correctnessBasis": "Only reviewed field-level gold references with comparable output scope count here. A mismatching arrangement-scoped key is reported separately as scopeMismatch, not as a wrong recording key. Observed source pages and provider candidates are evidence coverage, not correctness comparisons.",
+        "scopeMismatchMeaning": null,
+        "scopeMismatchesExcludedFromEvaluatedDenominator": 0,
+        "referenceCoverageMeaning": "Adjudicated field-level gold rows only; source-page observations are reported separately."
+      }
+    }
+  },
+  "songs": [
+    {
+      "songId": "song-001",
+      "title": "Tears in Heaven",
+      "artist": "Eric Clapton",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 6,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "multi_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh"
+        ],
+        "matchingCandidateCount": 3,
+        "matchingCandidateIdCount": 3,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "checkedChartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "songsterr"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-002",
+      "title": "Lonely Stranger",
+      "artist": "Eric Clapton",
+      "recordingEditionStatus": "unverified",
+      "sources": {
+        "lyricCandidateCount": 5,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "checkedChartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-003",
+      "title": "Wonderful Tonight",
+      "artist": "Eric Clapton",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 6,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "chartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "songsterr"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-004",
+      "title": "Wonderwall",
+      "artist": "Oasis",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 8,
+        "lyricProviderLabels": [
+          "betterlyrics",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "multi_provider_exact_text_support",
+        "supportProviderLabels": [
+          "betterlyrics",
+          "genius"
+        ],
+        "matchingCandidateCount": 2,
+        "matchingCandidateIdCount": 2,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": {
+        "source": "Oasis official",
+        "reference": "https://oasisinet.com/lyrics/wonderwall-2/",
+        "comparisonStatus": "full_text_hash_diff_unadjudicated",
+        "result": "normalized text differs",
+        "editionNote": "Corpus edition unspecified"
+      }
+    },
+    {
+      "songId": "song-005",
+      "title": "Hotel California",
+      "artist": "Eagles",
+      "recordingEditionStatus": "verified",
+      "sources": {
+        "lyricCandidateCount": 7,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "verifiedCorrect",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-006",
+      "title": "Let It Be",
+      "artist": "The Beatles",
+      "recordingEditionStatus": "verified",
+      "sources": {
+        "lyricCandidateCount": 8,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "verifiedCorrect",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "songsterr"
+        ]
+      },
+      "publicReferenceObservation": {
+        "source": "The Beatles official",
+        "reference": "https://www.thebeatles.com/let-it-be-1",
+        "comparisonStatus": "full_text_hash_diff_unadjudicated",
+        "result": "normalized text differs",
+        "editionNote": "Corpus names the 1970 album performance; source page text was not proven to be master-specific"
+      }
+    },
+    {
+      "songId": "song-007",
+      "title": "Hey Jude",
+      "artist": "The Beatles",
+      "recordingEditionStatus": "verified",
+      "sources": {
+        "lyricCandidateCount": 7,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "verifiedCorrect",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "checkedChartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": {
+        "source": "The Beatles official",
+        "reference": "https://www.thebeatles.com/hey-jude",
+        "comparisonStatus": "full_text_hash_diff_unadjudicated",
+        "result": "normalized text differs",
+        "editionNote": "Corpus names the 1968 long single performance; source page text was not proven to be master-specific"
+      }
+    },
+    {
+      "songId": "song-008",
+      "title": "Yesterday",
+      "artist": "The Beatles",
+      "recordingEditionStatus": "verified",
+      "sources": {
+        "lyricCandidateCount": 7,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "verifiedCorrect",
+        "selectedClaimScope": "recording",
+        "evidenceType": "checkedChartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "songsterr"
+        ]
+      },
+      "publicReferenceObservation": {
+        "source": "The Beatles official",
+        "reference": "https://www.thebeatles.com/yesterday",
+        "comparisonStatus": "full_text_diff_adjudicated",
+        "result": "Official displayed lyrics differ from the selected Genius text by three token-level edits; localized transcription variant classified.",
+        "editionNote": "Corpus edition is the 1965 original Help! studio album performance. The official page identifies the Help! album and recording date, but does not bind the displayed text to an exact digital master.",
+        "differenceClass": "localized_transcription_variant",
+        "referenceNormalizedWordCount": 131,
+        "referenceNormalizedSha256": "00bd4bc81c882df2f388c743b005fa1dcc10418e8f85d83362bde3017f03e657",
+        "selectedNormalizedWordCount": 133,
+        "selectedNormalizedSha256": "054ea2afab9218f4475d234bc533d7c21a246c9695157b978213838e364dd9b9",
+        "tokenSequenceEditDistance": 3,
+        "editionAssessment": "Artist page ties the lyric display to the 1965 Help! song and recording context; exact source-master transcription was not verified."
+      }
+    },
+    {
+      "songId": "song-009",
+      "title": "Here Comes the Sun",
+      "artist": "The Beatles",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 7,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "checkedChartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": {
+        "source": "The Beatles official",
+        "reference": "https://www.thebeatles.com/here-comes-sun",
+        "comparisonStatus": "full_text_hash_diff_unadjudicated",
+        "result": "normalized text differs",
+        "editionNote": "Corpus edition unspecified"
+      }
+    },
+    {
+      "songId": "song-010",
+      "title": "Imagine",
+      "artist": "John Lennon",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 3,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "checkedChartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-011",
+      "title": "Wish You Were Here",
+      "artist": "Pink Floyd",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 5,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "multi_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius",
+          "lyricsovh"
+        ],
+        "matchingCandidateCount": 2,
+        "matchingCandidateIdCount": 2,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "songsterr"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-012",
+      "title": "Fast Car",
+      "artist": "Tracy Chapman",
+      "recordingEditionStatus": "verified",
+      "sources": {
+        "lyricCandidateCount": 7,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "songsterr",
+          "synclrc",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "verifiedCorrect",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-013",
+      "title": "Hallelujah",
+      "artist": "Leonard Cohen",
+      "recordingEditionStatus": "unverified",
+      "sources": {
+        "lyricCandidateCount": 4,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-014",
+      "title": "Free Fallin'",
+      "artist": "Tom Petty",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 6,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "recording",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-015",
+      "title": "Stand By Me",
+      "artist": "Ben E. King",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 10,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "checkedChartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "chordie"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-016",
+      "title": "Brown Eyed Girl",
+      "artist": "Van Morrison",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 6,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "chartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "chordie"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-017",
+      "title": "Sweet Home Alabama",
+      "artist": "Lynyrd Skynyrd",
+      "recordingEditionStatus": "verified",
+      "sources": {
+        "lyricCandidateCount": 6,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "verifiedCorrect",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-018",
+      "title": "Perfect",
+      "artist": "Ed Sheeran",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 3,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-019",
+      "title": "Thinking Out Loud",
+      "artist": "Ed Sheeran",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 4,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "synclrc",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-020",
+      "title": "Shape of You",
+      "artist": "Ed Sheeran",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 3,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-021",
+      "title": "Zombie",
+      "artist": "The Cranberries",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 9,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "chordie",
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-022",
+      "title": "Creep",
+      "artist": "Radiohead",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 9,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "synclrc",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "chordie"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-023",
+      "title": "Riptide",
+      "artist": "Vance Joy",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 8,
+        "lyricProviderLabels": [
+          "betterlyrics",
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-024",
+      "title": "Knockin' on Heaven's Door",
+      "artist": "Bob Dylan",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 8,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "synclrc",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": {
+        "source": "Bob Dylan official",
+        "reference": "https://www.bobdylan.com/songs/knockin-heavens-door/",
+        "comparisonStatus": "full_text_hash_diff_unadjudicated",
+        "result": "normalized text differs",
+        "editionNote": "Corpus edition unspecified"
+      }
+    },
+    {
+      "songId": "song-025",
+      "title": "Blowin' in the Wind",
+      "artist": "Bob Dylan",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 7,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "recording",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": {
+        "source": "Bob Dylan official",
+        "reference": "https://www.bobdylan.com/songs/blowin-wind/",
+        "comparisonStatus": "full_text_hash_diff_unadjudicated",
+        "result": "normalized text differs",
+        "editionNote": "Corpus edition unspecified"
+      }
+    },
+    {
+      "songId": "song-026",
+      "title": "The House of the Rising Sun",
+      "artist": "The Animals",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 7,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-027",
+      "title": "Losing My Religion",
+      "artist": "R.E.M.",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 7,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "songsterr",
+          "synclrc",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "songsterr"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-028",
+      "title": "Every Breath You Take",
+      "artist": "The Police",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 6,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "checkedChartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "songsterr"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-029",
+      "title": "Hey There Delilah",
+      "artist": "Plain White T's",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 7,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "synclrc",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "recording",
+        "evidenceType": "checkedChartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-030",
+      "title": "Have You Ever Seen the Rain",
+      "artist": "Creedence Clearwater Revival",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 5,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "chordie",
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-031",
+      "title": "Take Me Home, Country Roads",
+      "artist": "John Denver",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 12,
+        "lyricProviderLabels": [
+          "betterlyrics",
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "chordie",
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": {
+        "source": "John Denver official",
+        "reference": "https://johndenver.com/tracks/take-me-home-country-roads/",
+        "comparisonStatus": "full_text_hash_diff_unadjudicated",
+        "result": "normalized text differs",
+        "editionNote": "Corpus edition unspecified"
+      }
+    },
+    {
+      "songId": "song-032",
+      "title": "Redemption Song",
+      "artist": "Bob Marley & The Wailers",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 6,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "recording",
+        "evidenceType": "checkedChartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-033",
+      "title": "Three Little Birds",
+      "artist": "Bob Marley & The Wailers",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 6,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unavailable",
+        "chartAvailable": false,
+        "contributingProviderLabels": []
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-034",
+      "title": "No Woman, No Cry",
+      "artist": "Bob Marley & The Wailers",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 5,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-035",
+      "title": "Jolene",
+      "artist": "Dolly Parton",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 5,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "recording",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-036",
+      "title": "Ring of Fire",
+      "artist": "Johnny Cash",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 7,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-037",
+      "title": "Hurt",
+      "artist": "Johnny Cash",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 3,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "multi_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius",
+          "lyricsovh"
+        ],
+        "matchingCandidateCount": 2,
+        "matchingCandidateIdCount": 2,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-038",
+      "title": "Shallow",
+      "artist": "Lady Gaga & Bradley Cooper",
+      "recordingEditionStatus": "unverified",
+      "sources": {
+        "lyricCandidateCount": 3,
+        "lyricProviderLabels": [
+          "genius",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-039",
+      "title": "Someone Like You",
+      "artist": "Adele",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 4,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-040",
+      "title": "Yellow",
+      "artist": "Coldplay",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 10,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "synclrc",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "recording",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-041",
+      "title": "Fix You",
+      "artist": "Coldplay",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 5,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "recording",
+        "evidenceType": "checkedChartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-042",
+      "title": "Chasing Cars",
+      "artist": "Snow Patrol",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 8,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "chartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-043",
+      "title": "Boulevard of Broken Dreams",
+      "artist": "Green Day",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 8,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "songsterr",
+          "synclrc",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-044",
+      "title": "Good Riddance (Time of Your Life)",
+      "artist": "Green Day",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 9,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lyricsovh",
+          "songsterr",
+          "synclrc",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-045",
+      "title": "Black",
+      "artist": "Pearl Jam",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 5,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "songsterr",
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-046",
+      "title": "Nothing Else Matters",
+      "artist": "Metallica",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 6,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "multi_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius",
+          "lrclib"
+        ],
+        "matchingCandidateCount": 3,
+        "matchingCandidateIdCount": 3,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "songsterr"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-047",
+      "title": "Smells Like Teen Spirit",
+      "artist": "Nirvana",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 4,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "multi_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius",
+          "lyricsovh"
+        ],
+        "matchingCandidateCount": 2,
+        "matchingCandidateIdCount": 2,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-048",
+      "title": "Take Me to Church",
+      "artist": "Hozier",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 9,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "synclrc",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-049",
+      "title": "Ho Hey",
+      "artist": "The Lumineers",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 9,
+        "lyricProviderLabels": [
+          "betterlyrics",
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "multi_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius",
+          "lyricsovh"
+        ],
+        "matchingCandidateCount": 2,
+        "matchingCandidateIdCount": 2,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-050",
+      "title": "Bohemian Rhapsody",
+      "artist": "Queen",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 9,
+        "lyricProviderLabels": [
+          "betterlyrics",
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-051",
+      "title": "Despacito",
+      "artist": "Luis Fonsi",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 7,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-052",
+      "title": "Someone You Loved",
+      "artist": "Lewis Capaldi",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 4,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "multi_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius",
+          "lyricsovh"
+        ],
+        "matchingCandidateCount": 2,
+        "matchingCandidateIdCount": 2,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "recording",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-053",
+      "title": "Shake It Off",
+      "artist": "Taylor Swift",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 6,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-054",
+      "title": "Love Story",
+      "artist": "Taylor Swift",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 5,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "chartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-055",
+      "title": "All of Me",
+      "artist": "John Legend",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 9,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "synclrc",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "multi_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius",
+          "lyricsovh"
+        ],
+        "matchingCandidateCount": 2,
+        "matchingCandidateIdCount": 2,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "recording",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-056",
+      "title": "Rolling in the Deep",
+      "artist": "Adele",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 7,
+        "lyricProviderLabels": [
+          "betterlyrics",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "synclrc",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-057",
+      "title": "Hello",
+      "artist": "Adele",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 3,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-058",
+      "title": "Let Her Go",
+      "artist": "Passenger",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 8,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-059",
+      "title": "Counting Stars",
+      "artist": "OneRepublic",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 4,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "recording",
+        "evidenceType": "checkedChartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-060",
+      "title": "Africa",
+      "artist": "Toto",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 6,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "recording",
+        "evidenceType": "checkedChartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-061",
+      "title": "Dreams",
+      "artist": "Fleetwood Mac",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 8,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "checkedChartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "songsterr"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-062",
+      "title": "Landslide",
+      "artist": "Fleetwood Mac",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 5,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-063",
+      "title": "The Sound of Silence",
+      "artist": "Simon & Garfunkel",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 7,
+        "lyricProviderLabels": [
+          "betterlyrics",
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-064",
+      "title": "Mrs. Robinson",
+      "artist": "Simon & Garfunkel",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 6,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "songsterr"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-065",
+      "title": "Piano Man",
+      "artist": "Billy Joel",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 6,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "songsterr"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-066",
+      "title": "Sweet Caroline",
+      "artist": "Neil Diamond",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 7,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "songsterr",
+          "synclrc",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "chartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-067",
+      "title": "Amazing Grace (My Chains Are Gone)",
+      "artist": "Chris Tomlin",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 5,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "multi_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh"
+        ],
+        "matchingCandidateCount": 3,
+        "matchingCandidateIdCount": 3,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "checkedChartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-068",
+      "title": "How Great Thou Art",
+      "artist": "Carrie Underwood",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 8,
+        "lyricProviderLabels": [
+          "betterlyrics",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "synclrc",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-069",
+      "title": "La Bamba",
+      "artist": "Ritchie Valens",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 9,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-070",
+      "title": "Cielito Lindo",
+      "artist": "Pedro Infante",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 4,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unavailable",
+        "chartAvailable": false,
+        "contributingProviderLabels": []
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-071",
+      "title": "99 Luftballons",
+      "artist": "Nena",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 10,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": {
+        "source": "Nena official",
+        "reference": "https://www.nena.de/songs/99-luftballons",
+        "comparisonStatus": "full_text_hash_diff_unadjudicated",
+        "result": "normalized text differs",
+        "editionNote": "Corpus edition unspecified",
+        "referenceNormalizedWordCount": 183,
+        "referenceNormalizedSha256": "2a692862102c1e113eda4a7f1a8ad0e4f5f43f9b3d8218e892270b2a7bf80bc7",
+        "selectedNormalizedWordCount": 189,
+        "selectedNormalizedSha256": "8a3a76fafa316288be12ef998fd4e5fc25376139ea6d025154c92c791b59dfa9",
+        "adjudication": "unresolved; corpus edition remains unspecified and the wording/repeat difference has not been adjudicated."
+      }
+    },
+    {
+      "songId": "song-072",
+      "title": "Under the Bridge",
+      "artist": "Red Hot Chili Peppers",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 7,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "multi_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius",
+          "lyricsovh"
+        ],
+        "matchingCandidateCount": 3,
+        "matchingCandidateIdCount": 3,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "checkedChartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "songsterr"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-073",
+      "title": "Californication",
+      "artist": "Red Hot Chili Peppers",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 3,
+        "lyricProviderLabels": [
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 0
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "betterlyrics",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "ultimateguitar"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-074",
+      "title": "Stairway to Heaven",
+      "artist": "Led Zeppelin",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 3,
+        "lyricProviderLabels": [
+          "lrclib",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 0
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "lrclib"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-075",
+      "title": "Dust in the Wind",
+      "artist": "Kansas",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 10,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "synclrc",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "checkedChartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-076",
+      "title": "Blackbird",
+      "artist": "The Beatles",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 8,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "multi_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius",
+          "lrclib"
+        ],
+        "matchingCandidateCount": 2,
+        "matchingCandidateIdCount": 2,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": {
+        "source": "The Beatles official",
+        "reference": "https://www.thebeatles.com/blackbird",
+        "comparisonStatus": "full_text_diff_adjudicated",
+        "result": "Official Beatles text differs from selected Genius text; localized wording/tokenization diff classified.",
+        "editionNote": "Official artist page and album track listing support the 1968 White Album performance scope; exact audio asset or mastering was not checked.",
+        "differenceClass": "localized_wording_and_compound_tokenization_variant",
+        "referenceNormalizedWordCount": 128,
+        "referenceNormalizedSha256": "7a6b93130bc42747fdd27909c1ec8a2e9c7816ee05b3397d9974a75fa60487b3",
+        "selectedNormalizedWordCount": 124,
+        "selectedNormalizedSha256": "67fbf90037de77d333062eaa89ac4c639959cf0ae82e1d5f4e6e16dfde121872"
+      }
+    },
+    {
+      "songId": "song-077",
+      "title": "Yellow Submarine",
+      "artist": "The Beatles",
+      "recordingEditionStatus": "verified",
+      "sources": {
+        "lyricCandidateCount": 6,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lyricsovh",
+          "songsterr"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "verifiedCorrect",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "chartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "songsterr"
+        ]
+      },
+      "publicReferenceObservation": {
+        "source": "The Beatles official",
+        "reference": "https://www.thebeatles.com/yellow-submarine-0",
+        "comparisonStatus": "full_text_hash_diff_unadjudicated",
+        "result": "normalized text differs",
+        "editionNote": "Corpus names the 1966 Revolver performance; source page text was not proven to be master-specific"
+      }
+    },
+    {
+      "songId": "song-078",
+      "title": "Halo",
+      "artist": "Beyoncé",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 5,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "songsterr"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-079",
+      "title": "Hey, Soul Sister",
+      "artist": "Train",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 6,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "checkedChartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-080",
+      "title": "I'm Yours",
+      "artist": "Jason Mraz",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 4,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "recording",
+        "evidenceType": "checkedChartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-081",
+      "title": "Iris",
+      "artist": "The Goo Goo Dolls",
+      "recordingEditionStatus": "verified",
+      "sources": {
+        "lyricCandidateCount": 5,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "multi_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius",
+          "lyricsovh"
+        ],
+        "matchingCandidateCount": 3,
+        "matchingCandidateIdCount": 3,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": {
+        "source": "Goo Goo Dolls official album page",
+        "reference": "https://www.googoodolls.com/album/dizzy-girl",
+        "comparisonStatus": "full_text_diff_adjudicated",
+        "result": "Official album lyric text differs from selected Genius text; localized three-token wording diff classified.",
+        "editionNote": "Artist album page identifies the track on Dizzy Up The Girl; official album audio independently confirms album identity.",
+        "differenceClass": "localized_wording_variant",
+        "referenceNormalizedWordCount": 244,
+        "referenceNormalizedSha256": "9730af186d72b4cb1e9428903cad25e4d6d5d81d336a6859a9633b49453dfc70",
+        "selectedNormalizedWordCount": 244,
+        "selectedNormalizedSha256": "4a4abab320c46d63343bc89e64e83277d6dec78390d25d80c8fa56cca935ccf9",
+        "editionAssessment": "Album-specific official lyric section for Dizzy Up The Girl; Warner-delivered official album audio separately identifies the 1998 album track. Audio was not played or transcribed."
+      }
+    },
+    {
+      "songId": "song-082",
+      "title": "Torn",
+      "artist": "Natalie Imbruglia",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 6,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "chartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-083",
+      "title": "Budapest",
+      "artist": "George Ezra",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 6,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "chartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-084",
+      "title": "Ride",
+      "artist": "Twenty One Pilots",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 3,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-085",
+      "title": "Mad World",
+      "artist": "Gary Jules",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 7,
+        "lyricProviderLabels": [
+          "genius",
+          "lyricsovh",
+          "synclrc",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "chartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-086",
+      "title": "Vienna",
+      "artist": "Billy Joel",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 6,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": {
+        "source": "Billy Joel official",
+        "reference": "https://www.billyjoel.com/song/vienna-2/",
+        "comparisonStatus": "full_text_hash_diff_unadjudicated",
+        "result": "normalized text differs",
+        "editionNote": "Corpus edition unspecified"
+      }
+    },
+    {
+      "songId": "song-087",
+      "title": "Tennessee Whiskey",
+      "artist": "Chris Stapleton",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 8,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lyricsovh",
+          "synclrc",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "chordie"
+        ]
+      },
+      "publicReferenceObservation": {
+        "source": "Chris Stapleton official",
+        "reference": "https://chrisstapleton.com/song/tennessee-whiskey/",
+        "comparisonStatus": "full_text_hash_diff_unadjudicated",
+        "result": "normalized text differs",
+        "editionNote": "Corpus edition unspecified"
+      }
+    },
+    {
+      "songId": "song-088",
+      "title": "Before He Cheats",
+      "artist": "Carrie Underwood",
+      "recordingEditionStatus": "unspecified",
+      "sources": {
+        "lyricCandidateCount": 7,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lyricsovh",
+          "synclrc",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "multi_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius",
+          "lyricsovh"
+        ],
+        "matchingCandidateCount": 2,
+        "matchingCandidateIdCount": 2,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "checkedChartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-089",
+      "title": "La Vie en Rose",
+      "artist": "Édith Piaf",
+      "recordingEditionStatus": "unverified",
+      "sources": {
+        "lyricCandidateCount": 5,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "songsterr"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "chartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "songsterr"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-090",
+      "title": "Oye Cómo Va",
+      "artist": "Santana",
+      "recordingEditionStatus": "unverified",
+      "sources": {
+        "lyricCandidateCount": 2,
+        "lyricProviderLabels": [
+          "genius",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-091",
+      "title": "Bésame Mucho",
+      "artist": "Los Panchos",
+      "recordingEditionStatus": "unverified",
+      "sources": {
+        "lyricCandidateCount": 2,
+        "lyricProviderLabels": [
+          "genius",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "chartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-092",
+      "title": "Ai Se Eu Te Pego",
+      "artist": "Michel Teló",
+      "recordingEditionStatus": "unverified",
+      "sources": {
+        "lyricCandidateCount": 8,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "songsterr",
+          "synclrc"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "songsterr"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-093",
+      "title": "99 Red Balloons",
+      "artist": "Nena",
+      "recordingEditionStatus": "unverified",
+      "sources": {
+        "lyricCandidateCount": 4,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "chartEstimate"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": {
+        "source": "Nena official",
+        "reference": "https://www.nena.de/songs/99-red-balloons",
+        "comparisonStatus": "full_text_hash_diff_unadjudicated",
+        "result": "normalized text differs",
+        "editionNote": "Corpus specifies English-language version; source text version binding needs review",
+        "differenceClass": "material_text_difference_unadjudicated",
+        "referenceNormalizedWordCount": 247,
+        "referenceNormalizedSha256": "a7080b1d60a13f62ba6fc97cadd9a0b21bc09359ca3b6dc7758bd8b024167efc",
+        "selectedNormalizedWordCount": 250,
+        "selectedNormalizedSha256": "45a9d8f7b237a6b4e038762d939e505a9868940afdaae64b5a375f9fb3f5815e",
+        "tokenSequenceEditDistance": 29,
+        "sequenceSimilarityPercent": 88.4,
+        "editionAssessment": "The official page is the English-language version named in the corpus; exact recording-master binding is not established.",
+        "adjudication": "The normalized sequences differ materially (29 token edits; 88.4% similarity). The official page matches the corpus English language, but exact recording/edition binding is unproven; review before assigning correctness."
+      }
+    },
+    {
+      "songId": "song-094",
+      "title": "The Girl from Ipanema",
+      "artist": "Stan Getz & João Gilberto",
+      "recordingEditionStatus": "verified",
+      "sources": {
+        "lyricCandidateCount": 5,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lrclib",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "scopeMismatch",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-095",
+      "title": "Sukiyaki",
+      "artist": "Kyu Sakamoto",
+      "recordingEditionStatus": "unverified",
+      "sources": {
+        "lyricCandidateCount": 1,
+        "lyricProviderLabels": [
+          "genius"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unavailable",
+        "chartAvailable": false,
+        "contributingProviderLabels": []
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-096",
+      "title": "Bella Ciao",
+      "artist": "Manu Pilas",
+      "recordingEditionStatus": "unverified",
+      "sources": {
+        "lyricCandidateCount": 1,
+        "lyricProviderLabels": [
+          "genius"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unavailable",
+        "chartAvailable": false,
+        "contributingProviderLabels": []
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-097",
+      "title": "Moliendo Café",
+      "artist": "Hugo Blanco",
+      "recordingEditionStatus": "unverified",
+      "sources": {
+        "lyricCandidateCount": 0,
+        "lyricProviderLabels": [],
+        "recordingCompatibleLyricCandidateCount": 0
+      },
+      "lyrics": {
+        "fieldResult": "unavailable",
+        "selected": false,
+        "selectedProvider": null,
+        "supportLevel": "no_selected_lyrics",
+        "supportProviderLabels": [],
+        "matchingCandidateCount": 0,
+        "matchingCandidateIdCount": 0,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unavailable",
+        "chartAvailable": false,
+        "contributingProviderLabels": []
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-098",
+      "title": "Dragostea Din Tei",
+      "artist": "O-Zone",
+      "recordingEditionStatus": "unverified",
+      "sources": {
+        "lyricCandidateCount": 10,
+        "lyricProviderLabels": [
+          "betterlyrics",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "songsterr",
+          "synclrc",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unverified",
+        "selectedClaimScope": "arrangement",
+        "evidenceType": "source"
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": {
+        "source": "Shazam",
+        "reference": "https://www.shazam.com/song/1231051240/dragostea-din-tei",
+        "comparisonStatus": "full_text_hash_diff_unadjudicated",
+        "result": "normalized text differs",
+        "editionNote": "Corpus specifies Romanian studio recording; exact source recording binding needs review"
+      }
+    },
+    {
+      "songId": "song-099",
+      "title": "A Whole New World",
+      "artist": "Brad Kane & Lea Salonga",
+      "recordingEditionStatus": "unverified",
+      "sources": {
+        "lyricCandidateCount": 6,
+        "lyricProviderLabels": [
+          "genius",
+          "lrclib",
+          "songsterr",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "multi_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius",
+          "lrclib"
+        ],
+        "matchingCandidateCount": 3,
+        "matchingCandidateIdCount": 3,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "songsterr"
+        ]
+      },
+      "publicReferenceObservation": null
+    },
+    {
+      "songId": "song-100",
+      "title": "Hallelujah",
+      "artist": "Jeff Buckley",
+      "recordingEditionStatus": "unverified",
+      "sources": {
+        "lyricCandidateCount": 7,
+        "lyricProviderLabels": [
+          "chordie",
+          "genius",
+          "lrclib",
+          "lyricsovh",
+          "ultimateguitar"
+        ],
+        "recordingCompatibleLyricCandidateCount": 1
+      },
+      "lyrics": {
+        "fieldResult": "unverified",
+        "selected": true,
+        "selectedProvider": "genius",
+        "supportLevel": "single_provider_exact_text_support",
+        "supportProviderLabels": [
+          "genius"
+        ],
+        "matchingCandidateCount": 1,
+        "matchingCandidateIdCount": 1,
+        "independentLineageConfirmed": false
+      },
+      "key": {
+        "fieldResult": "unavailable",
+        "selectedClaimScope": null,
+        "evidenceType": null
+      },
+      "chords": {
+        "fieldResult": "unverified",
+        "chartAvailable": true,
+        "contributingProviderLabels": [
+          "ultimateguitar"
+        ]
+      },
+      "publicReferenceObservation": {
+        "source": "Shazam",
+        "reference": "https://www.shazam.com/song/1476890067/hallelujah",
+        "comparisonStatus": "full_text_hash_diff_unadjudicated",
+        "result": "normalized text differs",
+        "editionNote": "Corpus specifies Jeff Buckley’s Grace recording; exact source recording binding needs review"
+      }
+    }
+  ]
+}
