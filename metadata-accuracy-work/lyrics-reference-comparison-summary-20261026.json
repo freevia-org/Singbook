@@ -75,8 +75,9 @@
         "referenceCoverageMeaning": "Adjudicated field-level gold rows only; source-page observations are reported separately."
       }
     },
-    "reportSha256": "09824d06dcb00a23893d39cfc9021a0307aee07f1ef661b7471ff1a4cb3b81b4",
-    "runtimeCodeHead": "271753d4f613cf642f04e2c3f9af496435595a65"
+    "reportSha256": "2cf1e5775c2dcc1f612c682db3dba39cc244927d0c0686576dc44455c4d57565",
+    "runtimeCodeHead": "271753d4f613cf642f04e2c3f9af496435595a65",
+    "benchmarkLogicHead": "6e624afd235aaa3838257581b0be8b0ee2655e41"
   },
   "sourceCoverage": {
     "lyrics": {
@@ -86,15 +87,13 @@
       "recordingCompatibleProviderCount": 1,
       "songsWithSelectedValue": 99,
       "songsWithSelectedBaseLyricsContribution": 99,
+      "songsWithChordChartContribution": null,
       "songsWithSectionContribution": 84,
       "contributingProviderCount": 3,
-      "observedSourcePageComparisons": 18,
-      "sourcePageComparisonCoveragePercent": 18.0,
       "corpusRowsWithVerifiedClaim": 0,
+      "rowsWithAdjudicatedCorrectnessReference": 0,
       "comparisonsEvaluated": 0,
       "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness.",
-      "songsWithChordChartContribution": null,
-      "rowsWithAdjudicatedCorrectnessReference": 0,
       "referenceCoverageMeaning": "Count of corpus rows with reviewed field-level correctness gold; this is not a count of source pages discovered or checked."
     },
     "key": {
@@ -103,14 +102,14 @@
       "songsWithRecordingCompatibleCandidateData": 0,
       "recordingCompatibleProviderCount": 0,
       "songsWithSelectedValue": 75,
-      "contributingProviderCount": 3,
-      "corpusRowsWithVerifiedClaim": 8,
-      "comparisonsEvaluated": 8,
-      "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness.",
       "songsWithSelectedBaseLyricsContribution": null,
       "songsWithChordChartContribution": null,
       "songsWithSectionContribution": null,
+      "contributingProviderCount": 3,
+      "corpusRowsWithVerifiedClaim": 8,
       "rowsWithAdjudicatedCorrectnessReference": 8,
+      "comparisonsEvaluated": 7,
+      "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness.",
       "referenceCoverageMeaning": "Count of corpus rows with reviewed field-level correctness gold; this is not a count of source pages discovered or checked."
     },
     "chords": {
@@ -119,14 +118,14 @@
       "songsWithRecordingCompatibleCandidateData": 0,
       "recordingCompatibleProviderCount": 0,
       "songsWithSelectedValue": 95,
+      "songsWithSelectedBaseLyricsContribution": null,
       "songsWithChordChartContribution": 95,
+      "songsWithSectionContribution": null,
       "contributingProviderCount": 3,
       "corpusRowsWithVerifiedClaim": 0,
+      "rowsWithAdjudicatedCorrectnessReference": 0,
       "comparisonsEvaluated": 0,
       "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness.",
-      "songsWithSelectedBaseLyricsContribution": null,
-      "songsWithSectionContribution": null,
-      "rowsWithAdjudicatedCorrectnessReference": 0,
       "referenceCoverageMeaning": "Count of corpus rows with reviewed field-level correctness gold; this is not a count of source pages discovered or checked."
     }
   },
@@ -428,7 +427,7 @@
       "result": "official album text differs from selected Genius text"
     }
   ],
-  "interpretation": "The offline replay found lyric candidates for 99/100 songs. Eighteen distinct public lyric pages have been compared (18% page coverage); three source differences are classified and 15 remain unadjudicated. Separately, 30 songs have at least one exact candidate hash shared across provider labels, while 15 selected outputs have such multi-label hash support. These are useful evidence tiers, not automatic independent-source verification or performance correctness. The strict gold-only score is 0 because no lyric comparison has been adjudicated to the scope-compatible correctness standard; it is not a finding that no lyrics are accurate. Per-song practical support remains 15 selected multi-label exact-hash matches, 84 one-label matches, and one no-lyrics row.",
+  "interpretation": "The offline replay found lyric candidates for 99/100 songs. Strict lyric verifiedCorrect remains zero because no row is adjudicated against a reviewed field-level correctness reference; this is not a measure of source discovery. Practical exact selected-text support is separately reported: 15 songs have eligible matching text under multiple provider labels and 84 under one label, with upstream independence unconfirmed. The report also records 95 selected charts, 2 exact raw chart hashes supported by one eligible provider label, and no exact selected chart hash supported by multiple labels. Public lyric-page comparisons remain a separate review queue.",
   "referenceEvaluation": {
     "sourceCandidateComparisons": 18,
     "sourceCandidateComparisonPercent": 18.0,
@@ -473,11 +472,11 @@
       "selectedLyricsWithCandidate": 99,
       "songsWithAnyExactCandidateHashSharedAcrossProviderLabels": 30,
       "selectedLyricsWithExactHashSupportAcrossProviderLabels": 15,
-      "songsWithPublicLyricPageCompared": 17,
+      "songsWithPublicLyricPageCompared": 18,
       "classifiedTextDifferences": 3,
-      "textDifferencesAwaitingReview": 14,
+      "textDifferencesAwaitingReview": 15,
       "independentSourceLineageConfirmed": 0,
-      "interpretation": "Provider-label consensus is useful evidence for a practical reference score, but do not call it independent-source verification until upstream lineage is checked. Directly inspected lyric pages are reported separately. Neither support metric claims exact performed wording."
+      "interpretation": "Provider-label agreement and inspected public pages are practical evidence, not adjudicated correctness. Three page differences are classified as source variants and fifteen remain awaiting review; neither group is counted correct or incorrect without field-level adjudication."
     },
     "independentlyRecomputedSourceTextHashes": 5,
     "selectedHashComparisonsIndependentlyConfirmed": 5,
@@ -515,20 +514,29 @@
   "sourceAgreement": {
     "lyrics": {
       "songsWithSourceData": 99,
-      "songsWithOneHashVariant": 2,
-      "songsWithMultipleHashVariants": 97,
+      "songsWithOneHashVariant": 6,
+      "songsWithMultipleHashVariants": 93,
       "songsWithAtLeastOneHashSharedAcrossProviderLabels": 30,
-      "songsWithOneProviderLabelOnly": 2,
+      "songsWithOneProviderLabelOnly": 5,
       "hashVariantCountDistribution": {
-        "4": 25,
-        "5": 24,
-        "7": 8,
-        "6": 19,
-        "3": 14,
-        "9": 1,
-        "2": 4,
-        "8": 2,
-        "1": 2
+        "3": 19,
+        "5": 21,
+        "6": 17,
+        "4": 28,
+        "7": 1,
+        "8": 1,
+        "2": 6,
+        "1": 6
+      },
+      "rawCandidateAgreement": {
+        "songsWithAnyCrossProviderHashAgreement": 30,
+        "selectedOutputHashProviderSupportCounts": {
+          "3": 2,
+          "1": 84,
+          "2": 13
+        },
+        "selectedOutputHashHasCrossProviderSupport": 15,
+        "interpretation": "Raw discovered-candidate agreement includes rejected, pending, and edition-incompatible rows; use the eligibility-filtered counts above for practical support claims."
       },
       "selectedOutputRows": 99,
       "selectedOutputHashProviderSupportCounts": {
@@ -843,19 +851,26 @@
         }
       ],
       "selectedOutputHashHasMaximumProviderLabelSupport": 84,
-      "interpretation": "Exact normalized lyric or chord-sequence hash agreement, including a shared hash within a conflicting group, is a consolidation signal, not proof of independent provenance or correctness."
+      "interpretation": "Exact normalized lyric or raw chord-sequence hash agreement, including a shared hash within a conflicting group, is a consolidation signal, not proof of independent provenance or correctness."
     },
     "chords": {
-      "songsWithSourceData": 96,
-      "songsWithOneHashVariant": 30,
-      "songsWithMultipleHashVariants": 66,
-      "songsWithAtLeastOneHashSharedAcrossProviderLabels": 2,
-      "songsWithOneProviderLabelOnly": 29,
+      "songsWithSourceData": 95,
+      "songsWithOneHashVariant": 91,
+      "songsWithMultipleHashVariants": 4,
+      "songsWithAtLeastOneHashSharedAcrossProviderLabels": 0,
+      "songsWithOneProviderLabelOnly": 91,
       "hashVariantCountDistribution": {
-        "3": 22,
-        "2": 35,
-        "1": 30,
-        "4": 9
+        "1": 91,
+        "2": 4
+      },
+      "rawCandidateAgreement": {
+        "songsWithAnyCrossProviderHashAgreement": 2,
+        "selectedOutputHashProviderSupportCounts": {
+          "0": 93,
+          "1": 2
+        },
+        "selectedOutputHashHasCrossProviderSupport": 0,
+        "interpretation": "Raw discovered-candidate agreement includes rejected, pending, and edition-incompatible rows; use the eligibility-filtered counts above for practical support claims."
       },
       "selectedOutputRows": 95,
       "selectedOutputHashProviderSupportCounts": {
@@ -867,20 +882,26 @@
       "selectedOutputHasSharedAlternativeButChosenHashHasOneProvider": 0,
       "selectedOutputReviewCandidates": [],
       "selectedOutputHashHasMaximumProviderLabelSupport": 2,
-      "interpretation": "Exact raw chord-symbol sequence agreement, using the same representation for source and combined output. It does not compare chord word placement, capo-normalized sounding pitch, or source independence.",
-      "metricStatus": "valid_exact_chord_symbol_sequence"
+      "interpretation": "Exact normalized lyric or raw chord-sequence hash agreement, including a shared hash within a conflicting group, is a consolidation signal, not proof of independent provenance or correctness."
     },
     "chordAlignment": {
-      "songsWithSourceData": 96,
-      "songsWithOneHashVariant": 29,
-      "songsWithMultipleHashVariants": 67,
+      "songsWithSourceData": 95,
+      "songsWithOneHashVariant": 91,
+      "songsWithMultipleHashVariants": 4,
       "songsWithAtLeastOneHashSharedAcrossProviderLabels": 0,
-      "songsWithOneProviderLabelOnly": 29,
+      "songsWithOneProviderLabelOnly": 91,
       "hashVariantCountDistribution": {
-        "3": 23,
-        "2": 35,
-        "1": 29,
-        "4": 9
+        "1": 91,
+        "2": 4
+      },
+      "rawCandidateAgreement": {
+        "songsWithAnyCrossProviderHashAgreement": 0,
+        "selectedOutputHashProviderSupportCounts": {
+          "0": 94,
+          "1": 1
+        },
+        "selectedOutputHashHasCrossProviderSupport": 0,
+        "interpretation": "Raw discovered-candidate agreement includes rejected, pending, and edition-incompatible rows; use the eligibility-filtered counts above for practical support claims."
       },
       "selectedOutputRows": 95,
       "selectedOutputHashProviderSupportCounts": {
@@ -892,19 +913,26 @@
       "selectedOutputHasSharedAlternativeButChosenHashHasOneProvider": 0,
       "selectedOutputReviewCandidates": [],
       "selectedOutputHashHasMaximumProviderLabelSupport": 1,
-      "interpretation": "Strict arrangement-level agreement: normalized lyric hash plus chord word positions and capo-normalized chord pitches. A mismatch can reflect lyric, placement, capo, or arrangement differences; it is not by itself a correctness failure."
+      "interpretation": "Exact lyric-anchor and capo-normalized chart agreement is a consolidation signal, not proof of independent provenance or correctness."
     },
     "transpositionInvariantChordProgression": {
-      "songsWithSourceData": 96,
-      "songsWithOneHashVariant": 30,
-      "songsWithMultipleHashVariants": 66,
-      "songsWithAtLeastOneHashSharedAcrossProviderLabels": 2,
-      "songsWithOneProviderLabelOnly": 29,
+      "songsWithSourceData": 95,
+      "songsWithOneHashVariant": 91,
+      "songsWithMultipleHashVariants": 4,
+      "songsWithAtLeastOneHashSharedAcrossProviderLabels": 0,
+      "songsWithOneProviderLabelOnly": 91,
       "hashVariantCountDistribution": {
-        "3": 22,
-        "2": 35,
-        "1": 30,
-        "4": 9
+        "1": 91,
+        "2": 4
+      },
+      "rawCandidateAgreement": {
+        "songsWithAnyCrossProviderHashAgreement": 2,
+        "selectedOutputHashProviderSupportCounts": {
+          "0": 92,
+          "1": 3
+        },
+        "selectedOutputHashHasCrossProviderSupport": 0,
+        "interpretation": "Raw discovered-candidate agreement includes rejected, pending, and edition-incompatible rows; use the eligibility-filtered counts above for practical support claims."
       },
       "selectedOutputRows": 95,
       "selectedOutputHashProviderSupportCounts": {
@@ -959,21 +987,21 @@
       "cacheHits": 3100,
       "uncachedOffline": 1030
     },
-    "interpretation": "This is a practical exact-text support signal, not a correctness score. Provider labels and distinct candidate IDs are recorded per song, while independent upstream lineage remains false unless separately established. Strict field-level correctness continues to require a reviewed reference and compatible scope.",
+    "interpretation": "Exact selected-text support counts only sameSong/sameRecording candidates explicitly compatible with the edition, not pending, and without an unmet lyric-agreement requirement. Chord support is chart-scoped and requires a candidate that contributed the selected chart value. These are practical source signals, not correctness scores. Provider labels do not prove independent upstream lineage; strict correctness requires a reviewed field-level reference and compatible claim scope.",
     "levels": {
-      "multi_provider_exact_text_support": "At least two provider labels carry the selected normalized text hash.",
-      "single_provider_exact_text_support": "One provider label carries the selected normalized text hash.",
-      "no_exact_candidate_text_support": "A selected text exists but no candidate summary has its hash.",
+      "multi_provider_exact_text_support": "At least two eligible provider labels carry the selected normalized text hash; this is practical corroboration, not proof of independent lineage or correctness.",
+      "single_provider_exact_text_support": "One eligible provider label carries the selected normalized text hash.",
+      "no_exact_candidate_text_support": "A selected text exists but no eligible candidate summary has its hash.",
       "no_selected_lyrics": "No selected lyric value."
     }
   },
   "perSongSupportScorecard": {
     "file": "metadata-accuracy-work/metadata-practical-support-100-20261026.json",
-    "sha256": "417130a5aece2f34acfb8fce1f509d652ffdaced00b09c2cbf5b13631053bb10",
+    "sha256": "b6e657dbeeb17fbb85cd4a0966caa4ee62cdce9bbc184a0e91fd40cf978a88b2",
     "rows": 100,
     "containsLyricBodies": false,
     "sourceReport": "build/metadata_accuracy/report.json",
-    "sourceReportSha256": "09824d06dcb00a23893d39cfc9021a0307aee07f1ef661b7471ff1a4cb3b81b4",
+    "sourceReportSha256": "2cf1e5775c2dcc1f612c682db3dba39cc244927d0c0686576dc44455c4d57565",
     "includesSelectedKeySourceClaims": true,
     "includesChordSequenceAndAlignmentSupport": true,
     "includesLyricHashVariants": true,
@@ -991,12 +1019,13 @@
     "officialLyricPagesMatchedAnyCachedCandidate": 0,
     "officialLyricSourceCandidateRowsCompared": 36,
     "googleLyricsPanelObservations": 1,
-    "googleLyricsPanelsHashCompared": 0
+    "googleLyricsPanelsHashCompared": 0,
+    "benchmarkLogicHead": "6e624afd235aaa3838257581b0be8b0ee2655e41"
   },
   "chordProgressionEvidence": {
     "sourceHashVariants": 202,
-    "songsWithSourceData": 96,
-    "songsWithAnyCrossProviderAgreement": 2,
+    "songsWithSourceData": 95,
+    "songsWithAnyCrossProviderAgreement": 0,
     "selectedOutputRows": 95,
     "selectedRowsWithCrossProviderAgreement": 0,
     "selectedProgressionProviderSupportCounts": {
@@ -1011,7 +1040,7 @@
   "googleLyricsPanelInterpretation": "Google lyrics Search can be recorded as a practical source when its panel attribution and selected song result are captured. In this sample, the live panel attributes the lyrics to Musixmatch; it is not counted as a distinct Google provider or independent corroboration, and no text hash has yet been computed.",
   "practicalEvidenceSummary": {
     "label": "practical source corroboration, not recording-specific correctness",
-    "interpretation": "A strict verifiedCorrect value of zero means no lyric row has yet been adjudicated against a reference matched to the corpus recording/edition. It does not mean zero usable evidence or zero likely-correct lyrics. Exact agreement across provider labels is reported as corroboration even when upstream independence is unknown; single-provider rows remain sourced support, not cross-source corroboration.",
+    "interpretation": "The strict lyric count of zero means none of the selected lyrics has yet been adjudicated against a reviewed field-level correctness reference. It does not mean there are no source candidates: this replay finds 99 selected lyrics, with eligible exact-text support from multiple provider labels on 15 rows and one label on 84. Provider lineage is unresolved, so these are practical support tiers, not correctness claims.",
     "lyrics": {
       "selectedExactTextSupportedByMultipleProviderLabels": 15,
       "selectedExactTextSupportedByOneProviderLabel": 84,
@@ -1038,10 +1067,13 @@
     "chords": {
       "selectedChartsAvailable": 95,
       "selectedRawExactMultiLabelSupport": 0,
+      "selectedRawExactOneLabelSupport": 2,
       "selectedAlignedExactMultiLabelSupport": 0,
-      "sourceProgressionsWithCrossLabelAgreement": 2,
+      "selectedAlignedExactOneLabelSupport": 1,
+      "eligibleSourceProgressionsWithCrossLabelAgreement": 0,
+      "rawSourceProgressionsWithCrossLabelAgreement": 2,
       "selectedProgressionsWithCrossLabelSupport": 0
     },
-    "doNotInterpretAs": "Do not read strict verifiedCorrect=0 as a claim that all 100 selections are wrong or unsupported."
+    "doNotInterpretAs": "Do not read strict verifiedCorrect=0 as a claim that the 99 selected lyrics are wrong or unsupported."
   }
 }

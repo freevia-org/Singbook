@@ -4,18 +4,19 @@
   "generatedFrom": {
     "benchmarkReport": "build/metadata_accuracy/report.json",
     "runtimeCodeHead": "271753d4f613cf642f04e2c3f9af496435595a65",
-    "benchmarkReportSha256": "09824d06dcb00a23893d39cfc9021a0307aee07f1ef661b7471ff1a4cb3b81b4",
+    "benchmarkReportSha256": "2cf1e5775c2dcc1f612c682db3dba39cc244927d0c0686576dc44455c4d57565",
     "corpusSize": 100,
     "cacheHits": 3100,
     "networkAttempts": 0,
-    "uncachedOffline": 1030
+    "uncachedOffline": 1030,
+    "benchmarkLogicHead": "6e624afd235aaa3838257581b0be8b0ee2655e41"
   },
   "policy": {
     "providerLabelAgreement": "practical exact-text support only; labels and candidate IDs do not establish independent source lineage",
     "strictCorrectness": "only reviewed field-level gold references with compatible claim scope count as verified correctness",
     "referenceDifference": "hash mismatch prompts text/version review and is not automatically incorrect",
     "copyright": "no lyric text retained",
-    "practicalCorroboration": "Provider-labelled exact-hash agreement and public lyric or chart references are useful practical corroboration even when lineage is unknown. They do not by themselves establish that a selected value matches the specified recording or edition.",
+    "practicalCorroboration": "Lyrics support counts only sameSong/sameRecording candidates explicitly compatible with the edition, not pending, and without an unmet lyric-agreement guard. Chord support is chart-scoped and requires an accepted same-song/same-recording candidate that contributed the selected chart value, is explicitly edition-compatible, and is not pending. Neither tier establishes correctness or independent upstream lineage.",
     "googleLyricsPanel": "Record visible source attribution (for example, Musixmatch) and song/result identity. Treat Google Search as the discovery/display surface, not an independent lyrics provider when an upstream provider is named. Compare the payload only after storing hashes and edition scope, never full lyric text.",
     "strictCorrectnessMeaning": "Strict verifiedCorrect counts reviewed field-level references with compatible recording/edition scope only. It is separate from practical source corroboration; see practicalEvidenceSummary."
   },
@@ -255,7 +256,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "0b26232bc7025d3344d97b3dfde73be80dbc33d7fd44f4e99c577eefdde4c3f1"
+        "selectedNormalizedTextSha256": "0b26232bc7025d3344d97b3dfde73be80dbc33d7fd44f4e99c577eefdde4c3f1",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -392,7 +396,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -511,7 +521,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "36321c6116eca8e96292c87911c9c8bd4d544ef3f9779accef9891d6a2226fc0"
+        "selectedNormalizedTextSha256": "36321c6116eca8e96292c87911c9c8bd4d544ef3f9779accef9891d6a2226fc0",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -602,7 +615,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -721,7 +740,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "b2d9681e845b0dc05f58a261b2371c47d05fb27f17cd8496a19d8140db0c4e7f"
+        "selectedNormalizedTextSha256": "b2d9681e845b0dc05f58a261b2371c47d05fb27f17cd8496a19d8140db0c4e7f",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -820,7 +842,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -943,7 +971,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f"
+        "selectedNormalizedTextSha256": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -1042,7 +1073,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": {
         "source": "Oasis official",
@@ -1235,7 +1272,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "e38ddbef1ae6476d0809d37a1341425093389541817b890914844ac446785248"
+        "selectedNormalizedTextSha256": "e38ddbef1ae6476d0809d37a1341425093389541817b890914844ac446785248",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "verifiedCorrect",
@@ -1365,7 +1405,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -1484,7 +1530,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "ae1bfe9f4f6858473cbf30c5126022d7279ebb1afc4602589ea56548be4c8f3d"
+        "selectedNormalizedTextSha256": "ae1bfe9f4f6858473cbf30c5126022d7279ebb1afc4602589ea56548be4c8f3d",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "verifiedCorrect",
@@ -1583,7 +1632,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": {
         "source": "The Beatles official",
@@ -1719,7 +1774,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "6058a7352a847892b1541bfd7e5120450a183bb11a49f13519c95f74a75b141c"
+        "selectedNormalizedTextSha256": "6058a7352a847892b1541bfd7e5120450a183bb11a49f13519c95f74a75b141c",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "verifiedCorrect",
@@ -1849,7 +1907,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": {
         "source": "The Beatles official",
@@ -1987,7 +2051,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "054ea2afab9218f4475d234bc533d7c21a246c9695157b978213838e364dd9b9"
+        "selectedNormalizedTextSha256": "054ea2afab9218f4475d234bc533d7c21a246c9695157b978213838e364dd9b9",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "verifiedCorrect",
@@ -2117,7 +2184,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": {
         "source": "The Beatles official",
@@ -2274,7 +2347,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "7fa0f98d6f654916ff69085f378fef0284541bd9a4ff44843a8429e03ae7bccd"
+        "selectedNormalizedTextSha256": "7fa0f98d6f654916ff69085f378fef0284541bd9a4ff44843a8429e03ae7bccd",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -2404,7 +2480,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": {
         "source": "The Beatles official",
@@ -2495,7 +2577,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "32b7eb8d6b2b4720458d9ab2331d4b3342e1b0f2c841722d9d797beae56959c5"
+        "selectedNormalizedTextSha256": "32b7eb8d6b2b4720458d9ab2331d4b3342e1b0f2c841722d9d797beae56959c5",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -2557,7 +2642,15 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [
+          "ultimateguitar"
+        ],
+        "eligibleExactProgressionProviderLabelCount": 1
       },
       "publicReferenceObservation": null
     },
@@ -2663,7 +2756,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "cb3cae8ebfb090c1a1484e7520a280e8f600cb1e05b81c3206571002e995d729"
+        "selectedNormalizedTextSha256": "cb3cae8ebfb090c1a1484e7520a280e8f600cb1e05b81c3206571002e995d729",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -2762,7 +2858,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -2881,7 +2983,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "88c14d71765d06b8ea99ac1fd339603ee285680100f2b4b820731db299f77b00"
+        "selectedNormalizedTextSha256": "88c14d71765d06b8ea99ac1fd339603ee285680100f2b4b820731db299f77b00",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "verifiedCorrect",
@@ -2980,7 +3085,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -3082,7 +3193,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "850a16ca8cdd8166a0c6c2e6e8d46038ad020f08ba5bf5c257e4df1c9ab30753"
+        "selectedNormalizedTextSha256": "850a16ca8cdd8166a0c6c2e6e8d46038ad020f08ba5bf5c257e4df1c9ab30753",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -3181,7 +3295,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -3299,7 +3419,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "50137f9328c0267fc0f35d12fbc442b85045bc71dc5b99239692736711d631fe"
+        "selectedNormalizedTextSha256": "50137f9328c0267fc0f35d12fbc442b85045bc71dc5b99239692736711d631fe",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -3405,7 +3528,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -3556,7 +3685,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "33dde58a26a576a123f7b786814262f665119a21b8d9c07deb70a6ea5b140ff2"
+        "selectedNormalizedTextSha256": "33dde58a26a576a123f7b786814262f665119a21b8d9c07deb70a6ea5b140ff2",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -3686,7 +3818,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -3822,7 +3960,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "1609e30fc7db3e2f379638e3024a8018de1bbe5120a916aa293145e83b1c3233"
+        "selectedNormalizedTextSha256": "1609e30fc7db3e2f379638e3024a8018de1bbe5120a916aa293145e83b1c3233",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -3952,7 +4093,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -4087,7 +4234,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "9887b2cbbaf3caba0e4d4bccea939fc198372d0d2555656e42f515170182c686"
+        "selectedNormalizedTextSha256": "9887b2cbbaf3caba0e4d4bccea939fc198372d0d2555656e42f515170182c686",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "verifiedCorrect",
@@ -4255,7 +4405,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -4340,7 +4496,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "8d51835703abfab1287be59622651046fdb8e1b36828e5cc6a0d0c8b0cfe2039"
+        "selectedNormalizedTextSha256": "8d51835703abfab1287be59622651046fdb8e1b36828e5cc6a0d0c8b0cfe2039",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -4408,7 +4567,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -4510,7 +4675,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "7fd7b49aa922e18a1326bdddc1fc52e26d770fa26f5b9606e60d9825936ea745"
+        "selectedNormalizedTextSha256": "7fd7b49aa922e18a1326bdddc1fc52e26d770fa26f5b9606e60d9825936ea745",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -4578,7 +4746,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -4663,7 +4837,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "9a5c82f94ac8508941e79e554da1989fa709269ad462ebb18210dac947f5fb8e"
+        "selectedNormalizedTextSha256": "9a5c82f94ac8508941e79e554da1989fa709269ad462ebb18210dac947f5fb8e",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -4731,7 +4908,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -4883,7 +5066,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "3d8524d49f59ac9b8c3e2c2df100e6dd51135718b547f53396d1117ae344317f"
+        "selectedNormalizedTextSha256": "3d8524d49f59ac9b8c3e2c2df100e6dd51135718b547f53396d1117ae344317f",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -5006,7 +5192,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -5160,7 +5352,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "7a8edf8c79f4f05128ad71c23deed83b42eaaf598d960cf2511f25dfe19e1931"
+        "selectedNormalizedTextSha256": "7a8edf8c79f4f05128ad71c23deed83b42eaaf598d960cf2511f25dfe19e1931",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -5321,7 +5516,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -5457,7 +5658,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "cbcd9e0cc1ba39268937a72dbb977446e25bd14708f700f00368db1a4f45a6e5"
+        "selectedNormalizedTextSha256": "cbcd9e0cc1ba39268937a72dbb977446e25bd14708f700f00368db1a4f45a6e5",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -5556,7 +5760,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -5676,7 +5886,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "75298ec9db5afa40ef9e52d172df2b58bae7adb1feffbd69f91410a5f04377f2"
+        "selectedNormalizedTextSha256": "75298ec9db5afa40ef9e52d172df2b58bae7adb1feffbd69f91410a5f04377f2",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -5744,7 +5957,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": {
         "source": "Bob Dylan official",
@@ -5857,7 +6076,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "5df8b925cbc493c9209490ef88d7b58cdb3e277d1d01457e203ed955a4074dfe"
+        "selectedNormalizedTextSha256": "5df8b925cbc493c9209490ef88d7b58cdb3e277d1d01457e203ed955a4074dfe",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -5925,7 +6147,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": {
         "source": "Bob Dylan official",
@@ -6072,7 +6300,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "1c4c0e0fe0625ff3b5a051ac9dfa611d5a2f3acce80baf12d15e38854836f4cf"
+        "selectedNormalizedTextSha256": "1c4c0e0fe0625ff3b5a051ac9dfa611d5a2f3acce80baf12d15e38854836f4cf",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -6202,7 +6433,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -6322,7 +6559,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "08ac6aa537ed99157c3bd87761dabdb125e678190639992512952afb31a6daf6"
+        "selectedNormalizedTextSha256": "08ac6aa537ed99157c3bd87761dabdb125e678190639992512952afb31a6daf6",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -6413,7 +6653,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -6548,7 +6794,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "7d0035be7af76af4d2335697b72549cbedc476e6f891e6e9b631d321dfe575ae"
+        "selectedNormalizedTextSha256": "7d0035be7af76af4d2335697b72549cbedc476e6f891e6e9b631d321dfe575ae",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -6709,7 +6958,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -6811,7 +7066,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "0b0cda77173d5fc0719f0a66274ed3bcc19287b42e0d3027de994d79e310c682"
+        "selectedNormalizedTextSha256": "0b0cda77173d5fc0719f0a66274ed3bcc19287b42e0d3027de994d79e310c682",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -6871,7 +7129,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -6990,7 +7254,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "ae8db0eef9f5e8dc3b8702c2e6ed008c856b0c05086487729f848dc70ed4cfe3"
+        "selectedNormalizedTextSha256": "ae8db0eef9f5e8dc3b8702c2e6ed008c856b0c05086487729f848dc70ed4cfe3",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -7121,7 +7388,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -7307,7 +7580,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "ff1a24b9c3e22e42512bd39d89cd2372dd5a249239f2d7899fc7e5486002a43b"
+        "selectedNormalizedTextSha256": "ff1a24b9c3e22e42512bd39d89cd2372dd5a249239f2d7899fc7e5486002a43b",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -7480,7 +7756,17 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [
+          "ultimateguitar"
+        ],
+        "eligibleExactRawSequenceProviderLabelCount": 1,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [
+          "ultimateguitar"
+        ],
+        "eligibleExactProgressionProviderLabelCount": 1
       },
       "publicReferenceObservation": {
         "source": "John Denver official",
@@ -7593,7 +7879,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "cdf45179805debaaab13883e6164e1c59cec11bf9a18fd0c28fed819b7dedd58"
+        "selectedNormalizedTextSha256": "cdf45179805debaaab13883e6164e1c59cec11bf9a18fd0c28fed819b7dedd58",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -7653,7 +7942,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -7772,7 +8067,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "02f5a59cfb198af740f71a84941f66f65f903f1a1824e7b9c8def9feaaea8ce2"
+        "selectedNormalizedTextSha256": "02f5a59cfb198af740f71a84941f66f65f903f1a1824e7b9c8def9feaaea8ce2",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -7869,7 +8167,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -7988,7 +8292,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "afae138f8d13517f4d9f3de659fe852e057eb90c3e49572166414200f42d797e"
+        "selectedNormalizedTextSha256": "afae138f8d13517f4d9f3de659fe852e057eb90c3e49572166414200f42d797e",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -8110,7 +8417,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -8195,7 +8508,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "567aa21cd1837c395358ebce10c54684d22fb303884b30efc3c8f4bf4c22ba0c"
+        "selectedNormalizedTextSha256": "567aa21cd1837c395358ebce10c54684d22fb303884b30efc3c8f4bf4c22ba0c",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -8263,7 +8579,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -8382,7 +8704,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "8c7d00b843604ecaa19b02b16142ec0bebd19666225990126e9859b746946f08"
+        "selectedNormalizedTextSha256": "8c7d00b843604ecaa19b02b16142ec0bebd19666225990126e9859b746946f08",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -8481,7 +8806,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -8553,7 +8884,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "e4f2a6d686d7903e82f3747b49dcd28e0fcebe12bd0d24a46db06ed65d1156f6"
+        "selectedNormalizedTextSha256": "e4f2a6d686d7903e82f3747b49dcd28e0fcebe12bd0d24a46db06ed65d1156f6",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -8613,7 +8947,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -8697,7 +9037,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "0106ac0cfee37ff83beba7eb81a4d11fa84b14da5cfaee58e49b6c363ee78c21"
+        "selectedNormalizedTextSha256": "0106ac0cfee37ff83beba7eb81a4d11fa84b14da5cfaee58e49b6c363ee78c21",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -8803,7 +9146,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -8905,7 +9254,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "ef53ae818ba3f9e66052e79676d4f1cfb1911ff3e4619e9d2023fdfdecd595c7"
+        "selectedNormalizedTextSha256": "ef53ae818ba3f9e66052e79676d4f1cfb1911ff3e4619e9d2023fdfdecd595c7",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -8973,7 +9325,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -9110,7 +9468,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "24e68fb6b8304b8c870bacf0512c0633df6d97ab499ea5a198c258f6e84fa7ad"
+        "selectedNormalizedTextSha256": "24e68fb6b8304b8c870bacf0512c0633df6d97ab499ea5a198c258f6e84fa7ad",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -9240,7 +9601,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": {
         "source": "Coldplay official artist lyric page",
@@ -9357,7 +9724,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "26d4a8667129259e7a84ad1805263e8743d08302ab34e12c6960ac5f976653d5"
+        "selectedNormalizedTextSha256": "26d4a8667129259e7a84ad1805263e8743d08302ab34e12c6960ac5f976653d5",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -9456,7 +9826,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -9593,7 +9969,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "c941eb7ad70e78a9f05542faa0820d507ff9489ff1ddd87c6d9811230c9884c0"
+        "selectedNormalizedTextSha256": "c941eb7ad70e78a9f05542faa0820d507ff9489ff1ddd87c6d9811230c9884c0",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -9746,7 +10125,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -9897,7 +10282,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "6381bcba5798a3a8e8a10b72b45f6d35ac8c2874a29e5805e89ef9e1db54b50b"
+        "selectedNormalizedTextSha256": "6381bcba5798a3a8e8a10b72b45f6d35ac8c2874a29e5805e89ef9e1db54b50b",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -10019,7 +10407,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -10172,7 +10566,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "d7c095d6dab574c4f904d2b4b5a70184be908e62fcd79064d6cdbddd06c28dce"
+        "selectedNormalizedTextSha256": "d7c095d6dab574c4f904d2b4b5a70184be908e62fcd79064d6cdbddd06c28dce",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -10333,7 +10730,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -10452,7 +10855,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "a55890b611d8421efe07aab988521150e51cf1fa46a47504c008d9f59d71849f"
+        "selectedNormalizedTextSha256": "a55890b611d8421efe07aab988521150e51cf1fa46a47504c008d9f59d71849f",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -10552,7 +10958,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -10658,7 +11070,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "dfbd4b20f7c0df272cae8e85a6483c519345216f03cd01e11abe6530ecc0471e"
+        "selectedNormalizedTextSha256": "dfbd4b20f7c0df272cae8e85a6483c519345216f03cd01e11abe6530ecc0471e",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -10757,7 +11172,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -10846,7 +11267,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "b9813665199a5625df09ba6c76b658680354f4beaf60d4a53bd904e35e70dbb5"
+        "selectedNormalizedTextSha256": "b9813665199a5625df09ba6c76b658680354f4beaf60d4a53bd904e35e70dbb5",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -10937,7 +11361,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -11074,7 +11504,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "29f1c67958bfc01edf803841b5d035d3785dd43cf3c96710ae77d9492879a0a6"
+        "selectedNormalizedTextSha256": "29f1c67958bfc01edf803841b5d035d3785dd43cf3c96710ae77d9492879a0a6",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -11173,7 +11606,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -11313,7 +11752,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "0b5863ce6df28be322a5a49749f7c5e409cb410452f243843b56fc36d139a1bb"
+        "selectedNormalizedTextSha256": "0b5863ce6df28be322a5a49749f7c5e409cb410452f243843b56fc36d139a1bb",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -11443,7 +11885,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -11612,7 +12060,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "c35b1cd2591f543a7f244ca56bb0cab96fbd7639d277d2d175ec2d9b585352e6"
+        "selectedNormalizedTextSha256": "c35b1cd2591f543a7f244ca56bb0cab96fbd7639d277d2d175ec2d9b585352e6",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -11773,7 +12224,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -11907,7 +12364,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "0728cdb2c569ba9226ce1337d8cf1321976d0a96833cc3ebc7ce840e2d409d12"
+        "selectedNormalizedTextSha256": "0728cdb2c569ba9226ce1337d8cf1321976d0a96833cc3ebc7ce840e2d409d12",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -11975,7 +12435,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -12064,7 +12530,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "bff72c79c19b226ad00588e085c022ab2da243fab5abd32f4549a3d59ebcda4b"
+        "selectedNormalizedTextSha256": "bff72c79c19b226ad00588e085c022ab2da243fab5abd32f4549a3d59ebcda4b",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -12132,7 +12601,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -12234,7 +12709,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "15919a9cb848c315ca7c9a1c823ae3f1c8dbbe62bff89ca7d908085baf36b7ad"
+        "selectedNormalizedTextSha256": "15919a9cb848c315ca7c9a1c823ae3f1c8dbbe62bff89ca7d908085baf36b7ad",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -12302,7 +12780,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -12404,7 +12888,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "40b086c2fc940b3da81cd785e52f6ae83fa6f14faf38078ca1baf107104e530a"
+        "selectedNormalizedTextSha256": "40b086c2fc940b3da81cd785e52f6ae83fa6f14faf38078ca1baf107104e530a",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -12495,7 +12982,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -12586,7 +13079,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "5ad23dae8c6cf0314e5b2608b1ef54a74ac5dd037c5e1bcbd0617dfb05940853"
+        "selectedNormalizedTextSha256": "5ad23dae8c6cf0314e5b2608b1ef54a74ac5dd037c5e1bcbd0617dfb05940853",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -12654,7 +13150,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -12792,7 +13294,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "066494e21786c960d0fd432f06d04b9798ae36e18f2ce2d4a320c1b078fa4d02"
+        "selectedNormalizedTextSha256": "066494e21786c960d0fd432f06d04b9798ae36e18f2ce2d4a320c1b078fa4d02",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -12891,7 +13396,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -12976,7 +13487,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "5324ed3a78d0b9d8236dac5cbf874848ab9a26001893bffbe6da4d367d043567"
+        "selectedNormalizedTextSha256": "5324ed3a78d0b9d8236dac5cbf874848ab9a26001893bffbe6da4d367d043567",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -13044,7 +13558,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -13196,7 +13716,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "bfabaee2487dbbab559442d600666c6b5663b41a9a891605ae8a417e489e5f54"
+        "selectedNormalizedTextSha256": "bfabaee2487dbbab559442d600666c6b5663b41a9a891605ae8a417e489e5f54",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -13357,7 +13880,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -13458,7 +13987,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "d0e593b2d8c5c65bb071560e214c3be7a76996aad113da1ae9818db4c334d087"
+        "selectedNormalizedTextSha256": "d0e593b2d8c5c65bb071560e214c3be7a76996aad113da1ae9818db4c334d087",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -13549,7 +14081,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -13651,7 +14189,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "9f3a140d85a99c272dcf01385ea77995ddef4ec3ff8d1455b7910692557fe16e"
+        "selectedNormalizedTextSha256": "9f3a140d85a99c272dcf01385ea77995ddef4ec3ff8d1455b7910692557fe16e",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -13742,7 +14283,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -13862,7 +14409,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "f42c894fa0226f367d1e6cb4d9e65c7e751e52b4632f5ff09968fb0c5afc7767"
+        "selectedNormalizedTextSha256": "f42c894fa0226f367d1e6cb4d9e65c7e751e52b4632f5ff09968fb0c5afc7767",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -13953,7 +14503,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -14071,7 +14627,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "a76b6b846e835a8bc1970ff9eb503a25e4d052399e21d7af1a623bbc82c9eb65"
+        "selectedNormalizedTextSha256": "a76b6b846e835a8bc1970ff9eb503a25e4d052399e21d7af1a623bbc82c9eb65",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -14201,7 +14760,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -14337,7 +14902,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "a8fdfcdc19e08b754f5e63611ece33ca79bbbe95c82dc97461232b8959b00831"
+        "selectedNormalizedTextSha256": "a8fdfcdc19e08b754f5e63611ece33ca79bbbe95c82dc97461232b8959b00831",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -14428,7 +14996,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -14530,7 +15104,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "83363da58f51d5ac60ede52ba8234cfbd63a420c8b7efb6781bbb1026b785e93"
+        "selectedNormalizedTextSha256": "83363da58f51d5ac60ede52ba8234cfbd63a420c8b7efb6781bbb1026b785e93",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -14590,7 +15167,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -14709,7 +15292,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "832758f73ff8c83f65647271c5b1bfd44f0d4ee99e6a5cb2f3a11840036a77b7"
+        "selectedNormalizedTextSha256": "832758f73ff8c83f65647271c5b1bfd44f0d4ee99e6a5cb2f3a11840036a77b7",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -14839,7 +15425,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -14958,7 +15550,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "105717c0ece96b6cf695316c4a6deda39fd5d757da94d81309dc0317f8a4a6e9"
+        "selectedNormalizedTextSha256": "105717c0ece96b6cf695316c4a6deda39fd5d757da94d81309dc0317f8a4a6e9",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -15049,7 +15644,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -15141,7 +15742,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "8429e119c0189d8ffae70482006199597272b7a53a602d8d77075095a777cfdb"
+        "selectedNormalizedTextSha256": "8429e119c0189d8ffae70482006199597272b7a53a602d8d77075095a777cfdb",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -15218,7 +15822,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -15355,7 +15965,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "8bfadea02da545a337f9e064e879d1834f6d64584bdd7b3a3d625af0195c10c1"
+        "selectedNormalizedTextSha256": "8bfadea02da545a337f9e064e879d1834f6d64584bdd7b3a3d625af0195c10c1",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -15423,7 +16036,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -15559,7 +16178,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "61270ce637372fd22d4250fb3e28f073d91a313712d36d905fbd54e7302e6784"
+        "selectedNormalizedTextSha256": "61270ce637372fd22d4250fb3e28f073d91a313712d36d905fbd54e7302e6784",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -15689,7 +16311,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -15757,7 +16385,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "b9c5ccb1ae1bdf4f7f27852b4e451bdb92792a8c891e3b1b66da919a75e0d718"
+        "selectedNormalizedTextSha256": "b9c5ccb1ae1bdf4f7f27852b4e451bdb92792a8c891e3b1b66da919a75e0d718",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -15782,7 +16413,13 @@
         "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
         "selectedTranspositionInvariantProgressionSupportCount": 0,
         "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
-        "sourceProgressionVariants": []
+        "sourceProgressionVariants": [],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -15950,7 +16587,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "8a3a76fafa316288be12ef998fd4e5fc25376139ea6d025154c92c791b59dfa9"
+        "selectedNormalizedTextSha256": "8a3a76fafa316288be12ef998fd4e5fc25376139ea6d025154c92c791b59dfa9",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -16118,7 +16758,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": {
         "source": "Nena official",
@@ -16235,7 +16881,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "df2d37cb20a90e09326c6d3c501f419095ea33b83e09b8568254569672c25fee"
+        "selectedNormalizedTextSha256": "df2d37cb20a90e09326c6d3c501f419095ea33b83e09b8568254569672c25fee",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -16326,7 +16975,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -16407,7 +17062,8 @@
         ],
         "sharedAlternativeHashGroupCount": 0,
         "selectedHashRecordingCompatibleProviderLabels": [],
-        "selectedNormalizedTextSha256": "3e3f1db18864477d9c87ba6e44606c1c25641d6885dce59d07475ef6c744cc8c"
+        "selectedNormalizedTextSha256": "3e3f1db18864477d9c87ba6e44606c1c25641d6885dce59d07475ef6c744cc8c",
+        "recordingCompatibleSupportProviderLabels": []
       },
       "key": {
         "fieldResult": "unverified",
@@ -16512,7 +17168,19 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [
+          "ultimateguitar"
+        ],
+        "eligibleExactRawSequenceProviderLabelCount": 1,
+        "eligibleExactAlignmentProviderLabels": [
+          "ultimateguitar"
+        ],
+        "eligibleExactAlignmentProviderLabelCount": 1,
+        "eligibleExactProgressionProviderLabels": [
+          "ultimateguitar"
+        ],
+        "eligibleExactProgressionProviderLabelCount": 1
       },
       "publicReferenceObservation": null
     },
@@ -16593,7 +17261,8 @@
         ],
         "sharedAlternativeHashGroupCount": 0,
         "selectedHashRecordingCompatibleProviderLabels": [],
-        "selectedNormalizedTextSha256": "6fc8633a4fb8fda90c95e83cbb0c1b41b41c1f3591b7c3c0c6491ccc8a52341d"
+        "selectedNormalizedTextSha256": "6fc8633a4fb8fda90c95e83cbb0c1b41b41c1f3591b7c3c0c6491ccc8a52341d",
+        "recordingCompatibleSupportProviderLabels": []
       },
       "key": {
         "fieldResult": "unavailable",
@@ -16684,7 +17353,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -16823,7 +17498,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "cc06e150233e43ecda064ce35c4fc06281838005861c7538a8b120e13b6bbd97"
+        "selectedNormalizedTextSha256": "cc06e150233e43ecda064ce35c4fc06281838005861c7538a8b120e13b6bbd97",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -16945,7 +17623,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -17084,7 +17768,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "67fbf90037de77d333062eaa89ac4c639959cf0ae82e1d5f4e6e16dfde121872"
+        "selectedNormalizedTextSha256": "67fbf90037de77d333062eaa89ac4c639959cf0ae82e1d5f4e6e16dfde121872",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -17214,7 +17901,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": {
         "source": "The Beatles official",
@@ -17327,7 +18020,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "5fa0891923f9af1874901cebe561c6f4a8dab2df1f52b174332b8de5f5582e3b"
+        "selectedNormalizedTextSha256": "5fa0891923f9af1874901cebe561c6f4a8dab2df1f52b174332b8de5f5582e3b",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "verifiedCorrect",
@@ -17418,7 +18114,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": {
         "source": "The Beatles official",
@@ -17538,7 +18240,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "3b95156d11babb67d0be0710eb4f6551a0d78d44bf051a1dd317dd4a735c500c"
+        "selectedNormalizedTextSha256": "3b95156d11babb67d0be0710eb4f6551a0d78d44bf051a1dd317dd4a735c500c",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -17598,7 +18303,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -17734,7 +18445,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "243d1e47e4d37605ee6280d53588b90dd8339d05796144e4280cc0f2fa6ce270"
+        "selectedNormalizedTextSha256": "243d1e47e4d37605ee6280d53588b90dd8339d05796144e4280cc0f2fa6ce270",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -17842,7 +18556,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -17944,7 +18664,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "dd209956a9bc871d3b43b053ec5c2c1e6951d8da45fb25c3ed1b4da6277bcfb0"
+        "selectedNormalizedTextSha256": "dd209956a9bc871d3b43b053ec5c2c1e6951d8da45fb25c3ed1b4da6277bcfb0",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -18004,7 +18727,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -18093,7 +18822,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "4a4abab320c46d63343bc89e64e83277d6dec78390d25d80c8fa56cca935ccf9"
+        "selectedNormalizedTextSha256": "4a4abab320c46d63343bc89e64e83277d6dec78390d25d80c8fa56cca935ccf9",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -18153,7 +18885,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": {
         "source": "Goo Goo Dolls official album page",
@@ -18284,7 +19022,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "c682e7329523cb01c0cd4dbe07fb582cf49ce68150281db7e4fdcc69207a6132"
+        "selectedNormalizedTextSha256": "c682e7329523cb01c0cd4dbe07fb582cf49ce68150281db7e4fdcc69207a6132",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -18375,7 +19116,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -18477,7 +19224,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "0f3a3247e13135d3069e606e474e935cb2f6c069b12a4742440d55ce9bc6d941"
+        "selectedNormalizedTextSha256": "0f3a3247e13135d3069e606e474e935cb2f6c069b12a4742440d55ce9bc6d941",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -18537,7 +19287,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -18622,7 +19378,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "6bbc0550d073d40466fb41c17c0c2795448d94e5707ff9baccda4b5df8e94ddb"
+        "selectedNormalizedTextSha256": "6bbc0550d073d40466fb41c17c0c2795448d94e5707ff9baccda4b5df8e94ddb",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -18682,7 +19441,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -18784,7 +19549,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "ffdeedc5581f185bdf9198e924085640a7745268d19fc97a3da743df597f1835"
+        "selectedNormalizedTextSha256": "ffdeedc5581f185bdf9198e924085640a7745268d19fc97a3da743df597f1835",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -18844,7 +19612,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -18963,7 +19737,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "eae37e575696702b54e59657da0013a132f62d537c750032b2bd4d6d2fe2557c"
+        "selectedNormalizedTextSha256": "eae37e575696702b54e59657da0013a132f62d537c750032b2bd4d6d2fe2557c",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -19062,7 +19839,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": {
         "source": "Billy Joel official",
@@ -19203,7 +19986,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "5c16bdeb481645273865ddcd574250c7edbdbb79175aa080d24d135cbb91685d"
+        "selectedNormalizedTextSha256": "5c16bdeb481645273865ddcd574250c7edbdbb79175aa080d24d135cbb91685d",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -19333,7 +20119,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": {
         "source": "Chris Stapleton official",
@@ -19461,7 +20253,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "a77f965d6ce4b2b9af50366bc08a1b454f88f56356b1eae8352d2bd6c16c5646"
+        "selectedNormalizedTextSha256": "a77f965d6ce4b2b9af50366bc08a1b454f88f56356b1eae8352d2bd6c16c5646",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -19552,7 +20347,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -19653,7 +20454,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "03530c278b9c35b55f8a153d7a7791cca0efd5b3440f42ae7b2950aa5a1a46c1"
+        "selectedNormalizedTextSha256": "03530c278b9c35b55f8a153d7a7791cca0efd5b3440f42ae7b2950aa5a1a46c1",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -19713,7 +20517,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -19781,7 +20591,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "85cb4e490b5b8e6c85d434ae332f8b92ed241be32791d1cf942778c953d964ae"
+        "selectedNormalizedTextSha256": "85cb4e490b5b8e6c85d434ae332f8b92ed241be32791d1cf942778c953d964ae",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -19849,7 +20662,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -19917,7 +20736,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "a890943c0505380c0830bface1be16906f80bbfd0edbb1787e42aa231012e3e4"
+        "selectedNormalizedTextSha256": "a890943c0505380c0830bface1be16906f80bbfd0edbb1787e42aa231012e3e4",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -19977,7 +20799,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -20081,7 +20909,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "1a1f380f97a5d1580db4bcfe094b3734cb80a5eb899da5184f3bd552ad2b478a"
+        "selectedNormalizedTextSha256": "1a1f380f97a5d1580db4bcfe094b3734cb80a5eb899da5184f3bd552ad2b478a",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -20141,7 +20972,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -20243,7 +21080,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "45a9d8f7b237a6b4e038762d939e505a9868940afdaae64b5a375f9fb3f5815e"
+        "selectedNormalizedTextSha256": "45a9d8f7b237a6b4e038762d939e505a9868940afdaae64b5a375f9fb3f5815e",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -20303,7 +21143,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": {
         "source": "Nena official",
@@ -20436,7 +21282,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "671a04820c91d42cdde7d46e93d1e1e1586216bb0f8a0065df3ca463417a207f"
+        "selectedNormalizedTextSha256": "671a04820c91d42cdde7d46e93d1e1e1586216bb0f8a0065df3ca463417a207f",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "scopeMismatch",
@@ -20573,7 +21422,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -20624,7 +21479,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "652b2b2640f6565aee03c166e193da6eade6a75260dc34cbd864579b6443ec02"
+        "selectedNormalizedTextSha256": "652b2b2640f6565aee03c166e193da6eade6a75260dc34cbd864579b6443ec02",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -20649,7 +21507,13 @@
         "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
         "selectedTranspositionInvariantProgressionSupportCount": 0,
         "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
-        "sourceProgressionVariants": []
+        "sourceProgressionVariants": [],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -20700,7 +21564,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "878b4d4fbd3cd913795c6f837ccffe79f7f7a7adb73da40d47105a25eb510556"
+        "selectedNormalizedTextSha256": "878b4d4fbd3cd913795c6f837ccffe79f7f7a7adb73da40d47105a25eb510556",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -20725,7 +21592,13 @@
         "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
         "selectedTranspositionInvariantProgressionSupportCount": 0,
         "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
-        "sourceProgressionVariants": []
+        "sourceProgressionVariants": [],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -20751,7 +21624,8 @@
         "hashVariants": [],
         "sharedAlternativeHashGroupCount": 0,
         "selectedHashRecordingCompatibleProviderLabels": [],
-        "selectedNormalizedTextSha256": null
+        "selectedNormalizedTextSha256": null,
+        "recordingCompatibleSupportProviderLabels": []
       },
       "key": {
         "fieldResult": "unavailable",
@@ -20776,7 +21650,13 @@
         "selectedTranspositionInvariantProgressionSupportProviderLabels": [],
         "selectedTranspositionInvariantProgressionSupportCount": 0,
         "selectedTranspositionInvariantProgressionHasCrossProviderSupport": false,
-        "sourceProgressionVariants": []
+        "sourceProgressionVariants": [],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -20930,7 +21810,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "1a10e03b06d0ba76b0a4c0436bd068940b46a00042185fe8fae111bfedf30aa5"
+        "selectedNormalizedTextSha256": "1a10e03b06d0ba76b0a4c0436bd068940b46a00042185fe8fae111bfedf30aa5",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unverified",
@@ -21029,7 +21912,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": {
         "source": "Shazam",
@@ -21140,7 +22029,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "1e6f924496f8cb44e29029a6cfb8e5c826f6550ed016f7033ee0d60c369af58d"
+        "selectedNormalizedTextSha256": "1e6f924496f8cb44e29029a6cfb8e5c826f6550ed016f7033ee0d60c369af58d",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -21270,7 +22162,13 @@
             ],
             "selectedContributor": false
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": null
     },
@@ -21389,7 +22287,10 @@
         "selectedHashRecordingCompatibleProviderLabels": [
           "genius"
         ],
-        "selectedNormalizedTextSha256": "63767873fa39273d11943fbb485e6f02a0d8024aaec8b342c84e7f8d5e229974"
+        "selectedNormalizedTextSha256": "63767873fa39273d11943fbb485e6f02a0d8024aaec8b342c84e7f8d5e229974",
+        "recordingCompatibleSupportProviderLabels": [
+          "genius"
+        ]
       },
       "key": {
         "fieldResult": "unavailable",
@@ -21480,7 +22381,13 @@
             ],
             "selectedContributor": true
           }
-        ]
+        ],
+        "eligibleExactRawSequenceProviderLabels": [],
+        "eligibleExactRawSequenceProviderLabelCount": 0,
+        "eligibleExactAlignmentProviderLabels": [],
+        "eligibleExactAlignmentProviderLabelCount": 0,
+        "eligibleExactProgressionProviderLabels": [],
+        "eligibleExactProgressionProviderLabelCount": 0
       },
       "publicReferenceObservation": {
         "source": "Shazam",
@@ -21493,7 +22400,7 @@
   ],
   "practicalEvidenceSummary": {
     "label": "practical source corroboration, not recording-specific correctness",
-    "interpretation": "A strict verifiedCorrect value of zero means no lyric row has yet been adjudicated against a reference matched to the corpus recording/edition. It does not mean zero usable evidence or zero likely-correct lyrics. Exact agreement across provider labels is reported as corroboration even when upstream independence is unknown; single-provider rows remain sourced support, not cross-source corroboration.",
+    "interpretation": "The strict lyric count of zero means none of the selected lyrics has yet been adjudicated against a reviewed field-level correctness reference. It does not mean there are no source candidates: this replay finds 99 selected lyrics, with eligible exact-text support from multiple provider labels on 15 rows and one label on 84. Provider lineage is unresolved, so these are practical support tiers, not correctness claims.",
     "lyrics": {
       "selectedExactTextSupportedByMultipleProviderLabels": 15,
       "selectedExactTextSupportedByOneProviderLabel": 84,
@@ -21520,10 +22427,13 @@
     "chords": {
       "selectedChartsAvailable": 95,
       "selectedRawExactMultiLabelSupport": 0,
+      "selectedRawExactOneLabelSupport": 2,
       "selectedAlignedExactMultiLabelSupport": 0,
-      "sourceProgressionsWithCrossLabelAgreement": 2,
+      "selectedAlignedExactOneLabelSupport": 1,
+      "eligibleSourceProgressionsWithCrossLabelAgreement": 0,
+      "rawSourceProgressionsWithCrossLabelAgreement": 2,
       "selectedProgressionsWithCrossLabelSupport": 0
     },
-    "doNotInterpretAs": "Do not read strict verifiedCorrect=0 as a claim that all 100 selections are wrong or unsupported."
+    "doNotInterpretAs": "Do not read strict verifiedCorrect=0 as a claim that the 99 selected lyrics are wrong or unsupported."
   }
 }
