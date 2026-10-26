@@ -252,13 +252,21 @@
     ]
   },
   "sourceContributions": {
-    "songsWithSelectedBaseLyrics": 99,
-    "songsWithMergedSections": 84,
-    "songsWithActualChordContributions": 95,
-    "songsWithSelectedKeyOrChordDerivedKey": 75,
-    "providerCountContributingByField": 3,
-    "method": "Each discovered source is joined to combineSources output through a SHA-256 source identity. The report marks selected base lyrics, chord contributors, section contributors, and metadata fields separately; it stores no source lyric text or raw candidate IDs.",
-    "interpretation": "Candidate availability is now distinct from actual use in the combined document. Counts are songs, not source rows. Contribution is not a correctness claim; separate reference evidence still determines accuracy."
+    "selectedBaseLyricsSongs": 99,
+    "mergedSectionSongs": 84,
+    "actualChordContributionSongs": 95,
+    "selectedValues": {
+      "lyrics": 99,
+      "keys": 75,
+      "chords": 95
+    },
+    "contributingProviderCountByField": {
+      "lyrics": 3,
+      "key": 3,
+      "chords": 3
+    },
+    "method": "SHA-256 source identity joins each discovered result to combineSources provenance. Candidate use is reported without raw candidate IDs or lyrics.",
+    "interpretation": "Candidate availability is distinct from actual use. Contribution counts are distinct songs. Agreement among provider labels is not proof of independent sourcing or correctness."
   },
   "next": "Count a traceable source page with checked song/artist match as source-reference coverage. Track exact recording-level gold separately. For each source, record provider attribution when available, URL, title/artist match, edition binding, normalized hash, and a compact diff classification. Promote correctness only after the text is adjudicated for the intended scope.",
   "sourceAgreement": {
@@ -279,6 +287,319 @@
         "8": 2,
         "1": 2
       },
+      "selectedOutputRows": 99,
+      "selectedOutputHashProviderSupportCounts": {
+        "3": 2,
+        "1": 84,
+        "2": 13
+      },
+      "selectedOutputHashHasCrossProviderSupport": 15,
+      "selectedOutputHashHasOnlyOneProviderLabel": 84,
+      "selectedOutputHasSharedAlternativeButChosenHashHasOneProvider": 15,
+      "selectedOutputReviewCandidates": [
+        {
+          "songId": "song-008",
+          "title": "Yesterday",
+          "artist": "The Beatles",
+          "recordingEditionStatus": "verified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "48513688f7c71ee2396e5b4f67e9db29401bcd0d463d9273aeb8455bb0dcfea6",
+              "providerLabels": [
+                "lrclib",
+                "lyricsovh"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-022",
+          "title": "Creep",
+          "artist": "Radiohead",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "ec30024b506d3893c0c3b50010585ae62d0c0957c2aaea9ecd71adceacdcf0cf",
+              "providerLabels": [
+                "lrclib",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-024",
+          "title": "Knockin’ on Heaven’s Door",
+          "artist": "Bob Dylan",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "886e59b8d39838729bb38b84de1037424afda2a89e40a4525ab8811391174794",
+              "providerLabels": [
+                "lrclib",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-027",
+          "title": "Losing My Religion",
+          "artist": "R.E.M.",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "c86321a0389140b263ccd56b6b860bccba0d2d391d88e9a1388fc78fc7fd8479",
+              "providerLabels": [
+                "lyricsovh",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-031",
+          "title": "Take Me Home, Country Roads",
+          "artist": "John Denver",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "d0a044b207d01e7398f04d8f52b97dc23225dbf4cd0a6a82882b1003646eaac4",
+              "providerLabels": [
+                "betterlyrics",
+                "lrclib"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-040",
+          "title": "Yellow",
+          "artist": "Coldplay",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "c6b9ffded297970a5c8816a13b0ec4f9c88135b99ca2c07e9bc15d6c621cc777",
+              "providerLabels": [
+                "lrclib",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-042",
+          "title": "Chasing Cars",
+          "artist": "Snow Patrol",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "ec612644561c109e0d253eebccbd46351d764bf92a8448e52aac6a9c2589732d",
+              "providerLabels": [
+                "lrclib",
+                "lyricsovh"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-044",
+          "title": "Good Riddance (Time of Your Life)",
+          "artist": "Green Day",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "7f7224c8f57c2086a44dae1cd0a5a3de9fb8ecf28a0b27317052546394803697",
+              "providerLabels": [
+                "synclrc",
+                "ultimateguitar"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-048",
+          "title": "Take Me to Church",
+          "artist": "Hozier",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "b702ea9dfdf3b88b1d34587325c9686c2286cc56a11a0982294395a8cfb15745",
+              "providerLabels": [
+                "lrclib",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-056",
+          "title": "Rolling in the Deep",
+          "artist": "Adele",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "fd4b121da720672de30327721de08c082d1cd3a2f753208b97f9d34e126692aa",
+              "providerLabels": [
+                "lrclib",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-061",
+          "title": "Dreams",
+          "artist": "Fleetwood Mac",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "762724e752bff294f447c98e86a35ad22ee388bd2228eb4247352b712badfe85",
+              "providerLabels": [
+                "lrclib",
+                "lyricsovh"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-068",
+          "title": "How Great Thou Art",
+          "artist": "Carrie Underwood",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "2ccc7a0196ad61e7eda2399a4a93a909858cbb71cfd30ed03b6add3c4edf49b4",
+              "providerLabels": [
+                "lrclib",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-075",
+          "title": "Dust in the Wind",
+          "artist": "Kansas",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "224a8bc8b0e039100a35c52374111ed83ea30ad510fd4e1a5a0bf11e8970773c",
+              "providerLabels": [
+                "lrclib",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            },
+            {
+              "normalizedHashSha256": "e8d67423254ff2dd3a9df8235fa2c2d18332dbb626457d099c9c84c5efe2d873",
+              "providerLabels": [
+                "lyricsovh",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-092",
+          "title": "Ai Se Eu Te Pego",
+          "artist": "Michel Teló",
+          "recordingEditionStatus": "unverified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "230bcf3a4623cc30d935dcc34bd3c435d03a9efc0e37c45d23056a3cd909e116",
+              "providerLabels": [
+                "lrclib",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            },
+            {
+              "normalizedHashSha256": "64a6c50a4a7230f4395a2f78d205b92cde40bc65b0e74166273a518e5cc68287",
+              "providerLabels": [
+                "lrclib",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-098",
+          "title": "Dragostea din tei",
+          "artist": "O-Zone",
+          "recordingEditionStatus": "unverified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "c6ea15edaab30ca4b4a0fbaec7156d3cdf79b983e1fa4706b17158be31e108f5",
+              "providerLabels": [
+                "lrclib",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        }
+      ],
+      "selectedOutputHashHasMaximumProviderLabelSupport": 84,
       "interpretation": "Exact normalized lyric or chord-sequence hash agreement, including a shared hash within a conflicting group, is a consolidation signal, not proof of independent provenance or correctness."
     },
     "chords": {
@@ -293,6 +614,16 @@
         "1": 30,
         "4": 9
       },
+      "selectedOutputRows": 95,
+      "selectedOutputHashProviderSupportCounts": {
+        "0": 93,
+        "1": 2
+      },
+      "selectedOutputHashHasCrossProviderSupport": 0,
+      "selectedOutputHashHasOnlyOneProviderLabel": 2,
+      "selectedOutputHasSharedAlternativeButChosenHashHasOneProvider": 0,
+      "selectedOutputReviewCandidates": [],
+      "selectedOutputHashHasMaximumProviderLabelSupport": 2,
       "interpretation": "Exact normalized lyric or chord-sequence hash agreement, including a shared hash within a conflicting group, is a consolidation signal, not proof of independent provenance or correctness."
     }
   },

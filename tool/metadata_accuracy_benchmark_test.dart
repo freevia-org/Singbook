@@ -1025,12 +1025,22 @@ Future<void> _benchmark() async {
           'Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness.',
     };
   }
-  Map<String, Object?> sourceAgreement(String hashField) {
+  Map<String, Object?> sourceAgreement(
+    String hashField, {
+    String? selectedHashField,
+  }) {
     var songsWithSources = 0;
     var songsWithOneTextVariant = 0;
     var songsWithConflictingVariants = 0;
     var songsWithAnyCrossProviderAgreement = 0;
     var songsWithSingleProviderOnly = 0;
+    var selectedOutputsWithCrossProviderSupport = 0;
+    var selectedOutputsWithMaxSupport = 0;
+    var selectedOutputsWithOnlySingleProvider = 0;
+    var selectedOutputsWithSharedAlternativeButSingleSupport = 0;
+    var selectedOutputRows = 0;
+    final selectedSupportCounts = <String, int>{};
+    final selectedOutputReviewCandidates = <Map<String, Object?>>[];
     final variantCounts = <String, int>{};
     for (final row in rows) {
       final sources = (row['sourceSummary'] as List? ?? const [])
@@ -1053,6 +1063,74 @@ Future<void> _benchmark() async {
         return providers.length > 1;
       });
       if (hasSharedVariant) songsWithAnyCrossProviderAgreement++;
+      if (selectedHashField != null && row[selectedHashField] is String) {
+        selectedOutputRows++;
+        final selectedHash = row[selectedHashField] as String;
+        final selectedSupport = (hashes[selectedHash] ?? const <Map>[])
+            .map((source) => source['provider'] as String)
+            .toSet()
+            .length;
+        selectedSupportCounts['$selectedSupport'] =
+            (selectedSupportCounts['$selectedSupport'] ?? 0) + 1;
+        if (selectedSupport > 1) {
+          selectedOutputsWithCrossProviderSupport++;
+        } else if (selectedSupport == 1) {
+          selectedOutputsWithOnlySingleProvider++;
+          if (hasSharedVariant) {
+            selectedOutputsWithSharedAlternativeButSingleSupport++;
+            final alternatives =
+                hashes.entries
+                    .where((entry) => entry.key != selectedHash)
+                    .map((entry) {
+                      final providers =
+                          entry.value
+                              .map((source) => source['provider'] as String)
+                              .toSet()
+                              .toList()
+                            ..sort();
+                      return (hash: entry.key, providers: providers);
+                    })
+                    .where((entry) => entry.providers.length > 1)
+                    .toList()
+                  ..sort((a, b) {
+                    final support = b.providers.length.compareTo(
+                      a.providers.length,
+                    );
+                    return support != 0 ? support : a.hash.compareTo(b.hash);
+                  });
+            selectedOutputReviewCandidates.add({
+              'songId': row['id'],
+              'title': row['selectedTitle'] ?? row['title'],
+              'artist': row['selectedArtist'] ?? row['artist'],
+              'recordingEditionStatus': row['recordingEditionStatus'],
+              'selectedProviderLabels':
+                  hashes[selectedHash]!
+                      .map((source) => source['provider'] as String)
+                      .toSet()
+                      .toList()
+                    ..sort(),
+              'alternativeSharedHashGroups': alternatives
+                  .map(
+                    (entry) => {
+                      'normalizedHashSha256': entry.hash,
+                      'providerLabels': entry.providers,
+                      'providerLabelCount': entry.providers.length,
+                    },
+                  )
+                  .toList(),
+            });
+          }
+        }
+        final maxSupport = hashes.values
+            .map(
+              (group) => group
+                  .map((source) => source['provider'] as String)
+                  .toSet()
+                  .length,
+            )
+            .fold<int>(0, (max, count) => count > max ? count : max);
+        if (selectedSupport == maxSupport) selectedOutputsWithMaxSupport++;
+      }
       if (variantCount == 1) {
         songsWithOneTextVariant++;
         final providers = hashes.values.single
@@ -1073,14 +1151,33 @@ Future<void> _benchmark() async {
           songsWithAnyCrossProviderAgreement,
       'songsWithOneProviderLabelOnly': songsWithSingleProviderOnly,
       'hashVariantCountDistribution': variantCounts,
+      if (selectedHashField != null) ...{
+        'selectedOutputRows': selectedOutputRows,
+        'selectedOutputHashProviderSupportCounts': selectedSupportCounts,
+        'selectedOutputHashHasCrossProviderSupport':
+            selectedOutputsWithCrossProviderSupport,
+        'selectedOutputHashHasOnlyOneProviderLabel':
+            selectedOutputsWithOnlySingleProvider,
+        'selectedOutputHasSharedAlternativeButChosenHashHasOneProvider':
+            selectedOutputsWithSharedAlternativeButSingleSupport,
+        'selectedOutputReviewCandidates': selectedOutputReviewCandidates,
+        'selectedOutputHashHasMaximumProviderLabelSupport':
+            selectedOutputsWithMaxSupport,
+      },
       'interpretation':
           'Exact normalized lyric or chord-sequence hash agreement, including a shared hash within a conflicting group, is a consolidation signal, not proof of independent provenance or correctness.',
     };
   }
 
   final sourceAgreementSummary = {
-    'lyrics': sourceAgreement('normalizedLyricsSha256'),
-    'chords': sourceAgreement('chordSequenceSha256'),
+    'lyrics': sourceAgreement(
+      'normalizedLyricsSha256',
+      selectedHashField: 'normalizedLyricsSha256',
+    ),
+    'chords': sourceAgreement(
+      'chordSequenceSha256',
+      selectedHashField: 'chordSequenceSha256',
+    ),
   };
   final reusedCatalogIds = <String, Object?>{};
   var songsWithCrossProviderIdReuse = 0;
