@@ -178,11 +178,11 @@
       "name": "lrc.red API",
       "firstSeen": "2026-10-25",
       "lastChecked": "2026-10-26",
-      "status": "deferred",
+      "status": "accepted",
       "documentation": [
         "https://lrc.red/api"
       ],
-      "reason": "2026-10-25: Publisher API documentation landing returned HTTP 200, but the available read exposed only a small application shell; detailed endpoint/field/access/attribution terms were not independently verified. Search-index descriptions suggest lyric lookup, but are not sufficient source-contract or rights evidence. No API, lyric or credential requests were made. Potential overlap with LRCLIB and other timed sources remains unmeasured, and distinct regional coverage is unproven. Defer pending a readable primary API contract, per-work rights and attribution review, compatible identity/extraction rules, and two independent live repository canaries. 2026-10-26: Parent read rendered publisher API docs: free app API requires identifying User-Agent with project link/contact email and visible attribution/link. Documented search.json and ISRC track JSON plus separate TTML/LRC/YAML files. Six bounded local requests (two exact search/track/TTML canaries) all returned HTTP200: Radiohead/Creep GBAYE9200070 and Queen/Bohemian Rhapsody (Remastered 2011) GBUM71029604. Each search contained its exact ISRC once and track title/artist/ISRC matched; duration, album, language, release date and songwriter fields observed. Production parseTtml retained raw documents and nonempty text but returned invalid with zero cues for both. Therefore timing extraction is NOT qualified. Keep deferred pending compatible native profile/multi-response adapter, content-use review and passing repository canaries; do not flatten claimed word timing or activate a builtin unknown to shipped clients. Regional uniqueness/catalog size and overlap remain unmeasured."
+      "reason": "2026-10-26 follow-up supersedes the earlier generic TTML parser failure. Rendered publisher API documentation establishes anonymous app access with an identifying User-Agent, project link/contact email, and visible source attribution/link. The native adapter and explicit lrc-red timing profile passed two independent production maintenance canaries: Creep/Radiohead (GBAYE9200070) and Bohemian Rhapsody (Remastered 2011)/Queen (GBUM71029604). Exact search/detail ISRC, title, artist, album and duration match; lyrics, metadata, positioned word/line cues and raw timing are verified. Qualification used six HTTP 200 responses without rate limits or network failures. Separate requests verified valid 600x600 WebP artwork for both exact ISRCs. Implementation merged in PR157 at public main commit 8c0b7ee2. Catalog channel 2 revision 8 keeps source lrcred disabled pending a compatible reviewed app release. Released channel 1/build 38 remain unchanged. No blanket redistribution license is claimed. Catalog size, distinct regional coverage and overlap remain unmeasured."
     },
     {
       "id": "folk-song-catalogue-eu",
@@ -265,6 +265,17 @@
       "firstSeen": "2026-10-26",
       "lastChecked": "2026-10-26",
       "status": "deferred"
+    },
+    {
+      "id": "roswell-music-jam",
+      "name": "Roswell Music Jam",
+      "firstSeen": "2026-10-26",
+      "lastChecked": "2026-10-26",
+      "status": "deferred",
+      "documentation": [
+        "https://www.roswellmusicjam.com/songbooks"
+      ],
+      "reason": "Publisher documents a free educational ChordPro archive for use in ChordPro apps, with OnSong import instructions. The latest listed release, Nov 25, 2025, was observed as a public ZIP of 293 files (486087 bytes; SHA256 8f45048f6497177e6adae2286a800e3ff26cc4f7699c6cd5faffe9c4646149e3), covering Bluegrass, Americana and Electric collections. Two final production-adapter canaries at 2026-10-26T11:33:56Z passed search/resolve, correct title/artist, lyrics, chords and required metadata: If Not For You/Bob Dylan and Breakdown/Tom Petty. The probes reused one page and one archive GET, both HTTP 200, without rate limits or network failures. Offline replay of the actual archive through AppController verified individual save, SQLite reopen hashes, ChordPro export/import, 132/60 chord tokens and retained original source evidence. Native device UI was not tested. PR159 stages disabled source roswellmusicjam on channel 2 revision 9 with bounded ZIP checks, a 24-hour memory cache, stable filename arrangement IDs and attribution. Publisher updates recheck title/artist and retain the current retrieval revision. No bulk library import, recording-identity claim or blanket redistribution license. Deferred pending implementation review, CI and a compatible app release. Broad-catalog overlap is unmeasured; no large or regionally unique catalog claim is made."
     }
   ]
 }
