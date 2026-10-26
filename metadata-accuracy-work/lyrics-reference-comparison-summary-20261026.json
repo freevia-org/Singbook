@@ -1,0 +1,264 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-26",
+  "scope": "Private text comparison summary; no lyric text retained",
+  "benchmark": {
+    "corpusSize": 100,
+    "mode": "offline-cache-first",
+    "networkAttempts": 0,
+    "cacheHits": 3100,
+    "uncachedOffline": 1030,
+    "coverage": 99,
+    "unavailable": 1,
+    "accuracy": {
+      "lyrics": {
+        "verifiedCorrect": 0,
+        "verifiedIncorrect": 0,
+        "unverified": 99,
+        "unavailable": 1,
+        "denominator": 100,
+        "percent": 0.0,
+        "evaluationStatus": "no_reference_comparisons",
+        "accuracyAmongEvaluatedPercent": null,
+        "referenceCoverage": 0,
+        "evaluatedReferences": 0,
+        "referenceCoveragePercent": 0.0
+      },
+      "key": {
+        "verifiedCorrect": 7,
+        "verifiedIncorrect": 1,
+        "unverified": 67,
+        "unavailable": 25,
+        "denominator": 100,
+        "percent": 7.0,
+        "evaluationStatus": "partial_reference_coverage",
+        "accuracyAmongEvaluatedPercent": 87.5,
+        "referenceCoverage": 8,
+        "evaluatedReferences": 8,
+        "referenceCoveragePercent": 8.0
+      },
+      "chords": {
+        "verifiedCorrect": 0,
+        "verifiedIncorrect": 0,
+        "unverified": 95,
+        "unavailable": 5,
+        "denominator": 100,
+        "percent": 0.0,
+        "evaluationStatus": "no_reference_comparisons",
+        "accuracyAmongEvaluatedPercent": null,
+        "referenceCoverage": 0,
+        "evaluatedReferences": 0,
+        "referenceCoveragePercent": 0.0
+      }
+    }
+  },
+  "sourceCoverage": {
+    "lyrics": {
+      "songsWithCandidateData": 99,
+      "candidateProviderCount": 8,
+      "songsWithRecordingCompatibleCandidateData": 97,
+      "recordingCompatibleProviderCount": 1,
+      "songsWithSelectedValue": 99,
+      "corpusRowsWithVerifiedClaim": 0,
+      "comparisonsEvaluated": 0,
+      "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness."
+    },
+    "key": {
+      "songsWithCandidateData": 59,
+      "candidateProviderCount": 1,
+      "songsWithRecordingCompatibleCandidateData": 0,
+      "recordingCompatibleProviderCount": 0,
+      "songsWithSelectedValue": 75,
+      "corpusRowsWithVerifiedClaim": 8,
+      "comparisonsEvaluated": 8,
+      "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness."
+    },
+    "chords": {
+      "songsWithCandidateData": 96,
+      "candidateProviderCount": 3,
+      "songsWithRecordingCompatibleCandidateData": 0,
+      "recordingCompatibleProviderCount": 0,
+      "songsWithSelectedValue": 95,
+      "corpusRowsWithVerifiedClaim": 0,
+      "comparisonsEvaluated": 0,
+      "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness."
+    }
+  },
+  "manualLyricComparisons": [
+    {
+      "songId": "song-004",
+      "title": "Wonderwall",
+      "reference": "https://oasisinet.com/lyrics/wonderwall-2/",
+      "source": "Oasis official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus edition unspecified"
+    },
+    {
+      "songId": "song-006",
+      "title": "Let It Be",
+      "reference": "https://www.thebeatles.com/let-it-be-1",
+      "source": "The Beatles official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus names the 1970 album performance; source page text was not proven to be master-specific"
+    },
+    {
+      "songId": "song-007",
+      "title": "Hey Jude",
+      "reference": "https://www.thebeatles.com/hey-jude",
+      "source": "The Beatles official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus names the 1968 long single performance; source page text was not proven to be master-specific"
+    },
+    {
+      "songId": "song-008",
+      "title": "Yesterday",
+      "reference": "https://www.thebeatles.com/yesterday",
+      "source": "The Beatles official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus names the 1965 Help! performance; source page text was not proven to be master-specific"
+    },
+    {
+      "songId": "song-009",
+      "title": "Here Comes the Sun",
+      "reference": "https://www.thebeatles.com/here-comes-sun",
+      "source": "The Beatles official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus edition unspecified"
+    },
+    {
+      "songId": "song-024",
+      "title": "Knockin’ on Heaven’s Door",
+      "reference": "https://www.bobdylan.com/songs/knockin-heavens-door/",
+      "source": "Bob Dylan official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus edition unspecified"
+    },
+    {
+      "songId": "song-025",
+      "title": "Blowin’ in the Wind",
+      "reference": "https://www.bobdylan.com/songs/blowin-wind/",
+      "source": "Bob Dylan official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus edition unspecified"
+    },
+    {
+      "songId": "song-031",
+      "title": "Take Me Home, Country Roads",
+      "reference": "https://johndenver.com/tracks/take-me-home-country-roads/",
+      "source": "John Denver official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus edition unspecified"
+    },
+    {
+      "songId": "song-071",
+      "title": "99 Luftballons",
+      "reference": "https://www.nena.de/songs/99-luftballons",
+      "source": "Nena official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus edition unspecified"
+    },
+    {
+      "songId": "song-077",
+      "title": "Yellow Submarine",
+      "reference": "https://www.thebeatles.com/yellow-submarine-0",
+      "source": "The Beatles official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus names the 1966 Revolver performance; source page text was not proven to be master-specific"
+    },
+    {
+      "songId": "song-086",
+      "title": "Vienna",
+      "reference": "https://www.billyjoel.com/song/vienna-2/",
+      "source": "Billy Joel official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus edition unspecified"
+    },
+    {
+      "songId": "song-087",
+      "title": "Tennessee Whiskey",
+      "reference": "https://chrisstapleton.com/song/tennessee-whiskey/",
+      "source": "Chris Stapleton official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus edition unspecified"
+    },
+    {
+      "songId": "song-093",
+      "title": "99 Red Balloons",
+      "reference": "https://www.nena.de/songs/99-red-balloons",
+      "source": "Nena official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus specifies English-language version; source text version binding needs review"
+    },
+    {
+      "songId": "song-098",
+      "title": "Dragostea Din Tei",
+      "reference": "https://www.shazam.com/song/1231051240/dragostea-din-tei",
+      "source": "Shazam",
+      "result": "normalized text differs",
+      "editionNote": "Corpus specifies Romanian studio recording; exact source recording binding needs review"
+    },
+    {
+      "songId": "song-100",
+      "title": "Hallelujah",
+      "reference": "https://www.shazam.com/song/1476890067/hallelujah",
+      "source": "Shazam",
+      "result": "normalized text differs",
+      "editionNote": "Corpus specifies Jeff Buckley’s Grace recording; exact source recording binding needs review"
+    }
+  ],
+  "existingAuditsNotRepeated": [
+    {
+      "songId": "song-040",
+      "title": "Yellow",
+      "artifact": "metadata-accuracy-work/independent-lyric-reference-audit.json",
+      "result": "official Coldplay text differs from selected Genius text; neither certified as exact performance text"
+    },
+    {
+      "songId": "song-076",
+      "title": "Blackbird",
+      "result": "official Beatles text differs from selected Genius text"
+    },
+    {
+      "songId": "song-081",
+      "title": "Iris",
+      "result": "official album text differs from selected Genius text"
+    }
+  ],
+  "interpretation": "Fifteen additional full-text comparisons differ after the benchmark normalization. This does not by itself identify which text is wrong: authoritative composition lyrics, aggregator transcripts, and the performance selected by the corpus may represent different editions or repeat/formatting choices. The previous 0/100 means the offline benchmark evaluated no lyric references; it does not mean 100 songs were searched and rejected.",
+  "next": "Track source coverage separately from correctness. For each source, record attribution, URL, title/artist match, edition binding, normalized hash, and a compact diff classification (exact, formatting-only, wording variant, or unresolved). Promote only after the intended performance scope is established and the text is adjudicated.",
+  "sourceAgreement": {
+    "lyrics": {
+      "songsWithSourceData": 99,
+      "songsWithOneHashVariant": 2,
+      "songsWithMultipleHashVariants": 97,
+      "songsWithAtLeastOneHashSharedAcrossProviderLabels": 30,
+      "songsWithOneProviderLabelOnly": 2,
+      "hashVariantCountDistribution": {
+        "4": 25,
+        "5": 24,
+        "7": 8,
+        "6": 19,
+        "3": 14,
+        "9": 1,
+        "2": 4,
+        "8": 2,
+        "1": 2
+      },
+      "interpretation": "Exact normalized lyric or chord-sequence hash agreement, including a shared hash within a conflicting group, is a consolidation signal, not proof of independent provenance or correctness."
+    },
+    "chords": {
+      "songsWithSourceData": 96,
+      "songsWithOneHashVariant": 30,
+      "songsWithMultipleHashVariants": 66,
+      "songsWithAtLeastOneHashSharedAcrossProviderLabels": 2,
+      "songsWithOneProviderLabelOnly": 29,
+      "hashVariantCountDistribution": {
+        "3": 22,
+        "2": 35,
+        "1": 30,
+        "4": 9
+      },
+      "interpretation": "Exact normalized lyric or chord-sequence hash agreement, including a shared hash within a conflicting group, is a consolidation signal, not proof of independent provenance or correctness."
+    }
+  }
+}

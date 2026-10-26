@@ -645,29 +645,43 @@ Future<void> _benchmark() async {
           .toList();
       row['editionCompatibleMemberCount'] = compatibleMembers.length;
       final results = await discovery.discover(selected);
-      row['sourceSummary'] = [
-        for (final source in results)
-          {
-            'provider': source.candidate.providerId,
-            'candidateIdSha256': _sha(source.candidate.id),
-            'match': source.matchKind.name,
-            'reason': source.matchReason,
-            'recordingCompatible': recordingCompatible(selected, source),
-            'lyricWordCount': _normalizedLyrics(source.body).isEmpty
-                ? 0
-                : _normalizedLyrics(source.body).split(' ').length,
-            'chordCount': parseArrangement(
-              source.body,
-            ).fold<int>(0, (n, line) => n + line.chords.length),
-            'declaredKey':
-                source.metadata['key'] ?? source.candidate.metadata['key'],
-            'capo':
-                source.metadata['capo'] ?? source.candidate.metadata['capo'],
-            'keyConsensus': source.extra['keyConsensus'],
-            'keyShift': source.extra['keyShift'],
-            'requiresLyricsAgreement': source.extra['requiresLyricsAgreement'],
-          },
-      ];
+      final sourceSummaries = <Map<String, Object?>>[];
+      for (final source in results) {
+        final sourceLyrics = _normalizedLyrics(source.body);
+        final sourceArrangement = parseArrangement(source.body);
+        final sourceChordSequence = sourceArrangement
+            .expand((line) => line.chords.map((annotation) => annotation.chord))
+            .join(' ');
+        sourceSummaries.add({
+          'provider': source.candidate.providerId,
+          'candidateIdSha256': _sha(source.candidate.id),
+          'match': source.matchKind.name,
+          'reason': source.matchReason,
+          'recordingCompatible': recordingCompatible(selected, source),
+          'lyricWordCount': sourceLyrics.isEmpty
+              ? 0
+              : sourceLyrics.split(' ').length,
+          // Hashes support private exact-text and arrangement comparisons
+          // without copying copyrighted source bodies into the audit report.
+          'normalizedLyricsSha256': sourceLyrics.isEmpty
+              ? null
+              : _sha(sourceLyrics),
+          'chordCount': sourceArrangement.fold<int>(
+            0,
+            (count, line) => count + line.chords.length,
+          ),
+          'chordSequenceSha256': sourceChordSequence.isEmpty
+              ? null
+              : _sha(sourceChordSequence),
+          'declaredKey':
+              source.metadata['key'] ?? source.candidate.metadata['key'],
+          'capo': source.metadata['capo'] ?? source.candidate.metadata['capo'],
+          'keyConsensus': source.extra['keyConsensus'],
+          'keyShift': source.extra['keyShift'],
+          'requiresLyricsAgreement': source.extra['requiresLyricsAgreement'],
+        });
+      }
+      row['sourceSummary'] = sourceSummaries;
       final compatibleResults = results
           .where(
             (r) => explicitEditionsCompatible(
@@ -791,6 +805,11 @@ Future<void> _benchmark() async {
     );
   }
   final accuracy = <String, Object?>{};
+  // Keep source availability distinct from evidence-backed accuracy. The
+  // collector can return useful candidate data even when the corpus has no
+  // reviewed gold reference yet; that is a coverage gap, not a failed
+  // comparison.
+  final sourceCoverage = <String, Object?>{};
   for (final field in _fields) {
     final counts = fieldCounts[field]!;
     final correct = counts['verifiedCorrect']!;
@@ -808,12 +827,131 @@ Future<void> _benchmark() async {
     accuracy[field] = {
       ...counts,
       'denominator': songs.length,
+      // Keep the strict corpus score for the 100-song goal, but make a lack
+      // of reviewed references distinguishable from actual failed checks.
       'percent': 100 * correct / songs.length,
+      'evaluationStatus': evaluated == 0
+          ? 'no_reference_comparisons'
+          : evaluated == songs.length
+          ? 'all_songs_compared'
+          : 'partial_reference_coverage',
+      'accuracyAmongEvaluatedPercent': evaluated == 0
+          ? null
+          : 100 * correct / evaluated,
       'referenceCoverage': refs,
       'evaluatedReferences': evaluated,
       'referenceCoveragePercent': 100 * refs / songs.length,
     };
+
+    bool hasFieldData(Map source) => switch (field) {
+      'lyrics' => (source['lyricWordCount'] as num? ?? 0) > 0,
+      'key' => source['declaredKey'] is String,
+      'chords' => (source['chordCount'] as num? ?? 0) > 0,
+      _ => false,
+    };
+    final candidateRows = <Map<String, Object?>>[];
+    final compatibleCandidateRows = <Map<String, Object?>>[];
+    final candidateProviders = <String>{};
+    final compatibleCandidateProviders = <String>{};
+    for (final row in rows) {
+      final summaries = (row['sourceSummary'] as List? ?? const [])
+          .whereType<Map>()
+          .where(hasFieldData)
+          .toList();
+      if (summaries.isEmpty) continue;
+      candidateRows.add(row);
+      candidateProviders.addAll(
+        summaries.map((source) => source['provider'] as String),
+      );
+      final compatible = summaries
+          .where((source) => source['recordingCompatible'] == true)
+          .toList();
+      if (compatible.isNotEmpty) {
+        compatibleCandidateRows.add(row);
+        compatibleCandidateProviders.addAll(
+          compatible.map((source) => source['provider'] as String),
+        );
+      }
+    }
+    final selectedValueRows = rows.where((row) {
+      final value = switch (field) {
+        'lyrics' => row['normalizedLyricsSha256'],
+        'key' => row['key'],
+        'chords' => row['chordSequenceSha256'],
+        _ => null,
+      };
+      return value != null;
+    }).length;
+    sourceCoverage[field] = {
+      'songsWithCandidateData': candidateRows.length,
+      'candidateProviderCount': candidateProviders.length,
+      'songsWithRecordingCompatibleCandidateData':
+          compatibleCandidateRows.length,
+      'recordingCompatibleProviderCount': compatibleCandidateProviders.length,
+      'songsWithSelectedValue': selectedValueRows,
+      'corpusRowsWithVerifiedClaim': refs,
+      'comparisonsEvaluated': evaluated,
+      'compatibilityBasis':
+          'Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness.',
+    };
   }
+  Map<String, Object?> sourceAgreement(String hashField) {
+    var songsWithSources = 0;
+    var songsWithOneTextVariant = 0;
+    var songsWithConflictingVariants = 0;
+    var songsWithAnyCrossProviderAgreement = 0;
+    var songsWithSingleProviderOnly = 0;
+    final variantCounts = <String, int>{};
+    for (final row in rows) {
+      final sources = (row['sourceSummary'] as List? ?? const [])
+          .whereType<Map>()
+          .where((source) => source[hashField] is String)
+          .toList();
+      if (sources.isEmpty) continue;
+      songsWithSources++;
+      final hashes = <String, List<Map>>{};
+      for (final source in sources) {
+        (hashes[source[hashField] as String] ??= []).add(source);
+      }
+      final variantCount = hashes.length;
+      variantCounts['$variantCount'] =
+          (variantCounts['$variantCount'] ?? 0) + 1;
+      final hasSharedVariant = hashes.values.any((group) {
+        final providers = group
+            .map((source) => source['provider'] as String)
+            .toSet();
+        return providers.length > 1;
+      });
+      if (hasSharedVariant) songsWithAnyCrossProviderAgreement++;
+      if (variantCount == 1) {
+        songsWithOneTextVariant++;
+        final providers = hashes.values.single
+            .map((source) => source['provider'] as String)
+            .toSet();
+        if (providers.length == 1) {
+          songsWithSingleProviderOnly++;
+        }
+      } else {
+        songsWithConflictingVariants++;
+      }
+    }
+    return {
+      'songsWithSourceData': songsWithSources,
+      'songsWithOneHashVariant': songsWithOneTextVariant,
+      'songsWithMultipleHashVariants': songsWithConflictingVariants,
+      'songsWithAtLeastOneHashSharedAcrossProviderLabels':
+          songsWithAnyCrossProviderAgreement,
+      'songsWithOneProviderLabelOnly': songsWithSingleProviderOnly,
+      'hashVariantCountDistribution': variantCounts,
+      'interpretation':
+          'Exact normalized lyric or chord-sequence hash agreement, including a shared hash within a conflicting group, is a consolidation signal, not proof of independent provenance or correctness.',
+    };
+  }
+
+  final sourceAgreementSummary = {
+    'lyrics': sourceAgreement('normalizedLyricsSha256'),
+    'chords': sourceAgreement('chordSequenceSha256'),
+  };
   final report = {
     'mode': 'offline-cache-first',
     'jitterSeed': _jitterSeed,
@@ -822,6 +960,8 @@ Future<void> _benchmark() async {
     'coverage': rows.where((r) => r.containsKey('selectedProvider')).length,
     'unavailableCount': rows.where((r) => r['availability'] != null).length,
     'accuracy': accuracy,
+    'sourceCoverage': sourceCoverage,
+    'sourceAgreement': sourceAgreementSummary,
     'cache': {
       'hits': client.hits,
       'networkAttempts': client.networkAttempts,
@@ -835,7 +975,7 @@ Future<void> _benchmark() async {
     '${out.path}/report.json',
   ).writeAsStringSync(const JsonEncoder.withIndent('  ').convert(report));
   print(
-    'METADATA_ACCURACY ${jsonEncode({'coverage': report['coverage'], 'corpusSize': songs.length, 'unavailableCount': report['unavailableCount'], 'accuracy': accuracy, 'cacheHits': client.hits, 'uncachedOffline': client.uncached})}',
+    'METADATA_ACCURACY ${jsonEncode({'coverage': report['coverage'], 'corpusSize': songs.length, 'unavailableCount': report['unavailableCount'], 'sourceCoverage': sourceCoverage, 'sourceAgreement': sourceAgreementSummary, 'accuracy': accuracy, 'cacheHits': client.hits, 'uncachedOffline': client.uncached})}',
   );
   await transport.close();
 }
