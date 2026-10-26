@@ -31,6 +31,7 @@ String? clean(dynamic value, [int max = 300]) {
       .trim();
   return text.isEmpty ? null : text;
 }
+
 Map<String, dynamic> object(dynamic value) {
   if (value is! Map) throw const ProviderException('invalid_response');
   return Map<String, dynamic>.from(value);
@@ -66,6 +67,7 @@ double? durationValue(dynamic value) =>
     value is num && value.isFinite && value > 0 && value <= 86400
     ? value.toDouble()
     : null;
+
 /// https only, no userinfo, public-looking host; null (dropped) otherwise.
 String? httpsUrl(dynamic value, {Set<String>? hosts}) =>
     safeHttpsUrl(value, hostSuffixes: hosts);
@@ -108,6 +110,8 @@ JsonMap sanitizeMetadata(JsonMap input) {
     'difficulty',
     'recording',
     'releaseDate',
+    'releaseDateDisplay',
+    'recordingLocation',
   ]) {
     final text = clean(input[key]);
     if (text != null) result[key] = text;
@@ -257,7 +261,9 @@ SourceResult lyricsResult(
   List<TimingTrack> timing = const [],
   String? attribution,
 }) {
-  final timingOnly = lyrics.trim().isEmpty && timing.any((track) => track.raw?.isNotEmpty == true);
+  final timingOnly =
+      lyrics.trim().isEmpty &&
+      timing.any((track) => track.raw?.isNotEmpty == true);
   return SourceResult(
     candidate: song,
     body: timingOnly ? '' : plainToChordPro(meaningfulLyrics(lyrics)),

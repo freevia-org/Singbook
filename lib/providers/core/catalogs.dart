@@ -109,6 +109,8 @@ class GeniusProvider implements LyricsProvider {
           httpsUrl(data['song_art_image_url'], hosts: geniusImageHosts) ??
           httpsUrl(data['header_image_url'], hosts: geniusImageHosts),
       'releaseDate': data['release_date'],
+      'releaseDateDisplay': data['release_date_for_display'],
+      'recordingLocation': data['recording_location'],
       'language': data['language'],
       'credits': credits,
       'year': int.tryParse(
@@ -128,6 +130,10 @@ class GeniusProvider implements LyricsProvider {
         },
       ],
     });
+    final rawAppleId = data['apple_music_id'];
+    final appleId = rawAppleId is int
+        ? rawAppleId.toString()
+        : clean(rawAppleId, 20);
     return SongCandidate(
       providerId: 'genius',
       id: numericId(data['id']),
@@ -136,6 +142,12 @@ class GeniusProvider implements LyricsProvider {
       album: clean(album['name']),
       url: url,
       metadata: meta,
+      extra: {
+        // Retain the publisher's identifier claim even if the old catalog item
+        // is retired. It is not validated recording identity or a fabricated URL.
+        if (appleId != null && RegExp(r'^[1-9][0-9]{0,19}$').hasMatch(appleId))
+          'sourceCatalogIdentifiers': {'appleMusicTrackId': appleId},
+      },
     );
   }
 

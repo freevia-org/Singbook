@@ -2931,6 +2931,8 @@ SongDocument combineSources(
     'mediaLinks',
     'recording',
     'releaseDate',
+    'releaseDateDisplay',
+    'recordingLocation',
     'year',
   };
   const nonFactFields = {
