@@ -2112,6 +2112,7 @@ Map<int, List<ChordAnchor>> _exactContextChords(
   final source = parseArrangement(chart);
   bool usable(ArrangementLine line) =>
       !line.directive &&
+      sectionLabelForLine(line) == null &&
       line.text.length <= 2000 &&
       line.text.characters.length == line.text.length &&
       _lineWords(line.text).isNotEmpty;

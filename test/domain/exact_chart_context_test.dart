@@ -86,6 +86,18 @@ void main() {
     expect(first.chords.where((c) => c.offset == 0), isEmpty);
     expect(plainLyrics(combined.body), plainLyrics(lyrics));
   });
+  test('a bracketed section label is not a sung context word', () {
+    const lyrics =
+        'Amber lanterns glow above quiet water bridge gentle sailors cross the harbor tonight';
+    const chart =
+        '[C]Amber lanterns\n[G]glow above quiet water\n[Bridge]\n[Am]gentle sailors cross the harbor tonight';
+    final combined = _combine(lyrics, chart);
+    final line = parseArrangement(
+      combined.body,
+    ).firstWhere((l) => l.text.contains('Amber lanterns'));
+    expect(line.chords.where((anchor) => anchor.offset == 0), isEmpty);
+    expect(plainLyrics(combined.body), lyrics);
+  });
   test('non-plain grapheme contexts retain safe existing placements only', () {
     final lyrics = _lyrics()
         .split('\n')
