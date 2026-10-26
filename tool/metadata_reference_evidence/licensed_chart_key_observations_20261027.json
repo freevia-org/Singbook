@@ -155,7 +155,7 @@
       "publisherClaimedKey": "Eb",
       "format": "Official Coldplay Piano/Vocal/Guitar arrangement",
       "scope": "artist arrangement associated with X&Y",
-      "scopeNote": "Musicnotes lists E-flat major as the original published key and associates the arrangement with Coldplay's X&Y. The selected chart estimate D-sharp is enharmonically equivalent; this is practical chart-level agreement, not a recording-key gold claim."
+      "scopeNote": "Musicnotes lists E-flat major as the original published key and associates the arrangement with Coldplay's X&Y. The selected D-sharp pitch class is enharmonically equivalent, but the app claim is recording-scoped while this listing is arrangement-scoped; count this as a scope mismatch, not a same-scope match or recording gold."
     },
     {
       "songId": "song-042",

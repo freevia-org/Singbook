@@ -7,7 +7,7 @@
     "corpusSha256": "e07d8790467de689f2d5181e9c571b784c54c503a432e290cf943783ee2f9d48",
     "licensedChartKeyObservations": {
       "path": "tool/metadata_reference_evidence/licensed_chart_key_observations_20261027.json",
-      "sha256": "fb477a9a07463a5a1b0a8434777030e831d931fa2fa4f2f44899016d8d77fd1a"
+      "sha256": "f7ad02e97c5d72775ea8b49d8c4c29d10861f7960ec5b440fc9a10da6d2f4fe6"
     }
   },
   "policy": {
@@ -10392,7 +10392,7 @@
         "source": "licensed publisher chart",
         "publisherClaimedValue": "Eb",
         "selectedValue": "D#",
-        "comparisonResult": "practical chart-key match (enharmonic); not recording gold",
+        "comparisonResult": "enharmonic value agreement; scope mismatch, not recording gold",
         "strictCorrectnessCredit": false,
         "note": "Musicnotes MN0049625_U2; official Coldplay arrangement associated with X&Y."
       }
@@ -23494,13 +23494,13 @@
       "licensedChartKeyComparisons": {
         "source": "tool/metadata_reference_evidence/licensed_chart_key_observations_20261027.json",
         "observations": 19,
-        "practicalChartKeyMatches": 11,
+        "practicalChartKeyMatches": 10,
         "differencesNeedingReview": 4,
-        "scopeMismatches": 1,
+        "scopeMismatches": 2,
         "selectedKeyUnavailable": 3,
         "strictRecordingGold": false,
         "interpretation": "Licensed publisher arrangement-key corroboration only. Exact and enharmonic matches are counted as practical chart support; matching chart keys do not establish exact recording-key correctness. Differences require edition/capo/transposition review, and unavailable selected outputs remain unavailable.",
-        "sha256": "fb477a9a07463a5a1b0a8434777030e831d931fa2fa4f2f44899016d8d77fd1a"
+        "sha256": "f7ad02e97c5d72775ea8b49d8c4c29d10861f7960ec5b440fc9a10da6d2f4fe6"
       }
     },
     "chords": {
