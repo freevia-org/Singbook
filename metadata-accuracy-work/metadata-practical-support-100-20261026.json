@@ -15,7 +15,8 @@
     "strictCorrectness": "only reviewed field-level gold references with compatible claim scope count as verified correctness",
     "referenceDifference": "hash mismatch prompts text/version review and is not automatically incorrect",
     "copyright": "no lyric text retained",
-    "practicalCorroboration": "Provider-labelled exact-hash agreement and public lyric or chart references are useful practical corroboration even when lineage is unknown. They do not by themselves establish that a selected value matches the specified recording or edition."
+    "practicalCorroboration": "Provider-labelled exact-hash agreement and public lyric or chart references are useful practical corroboration even when lineage is unknown. They do not by themselves establish that a selected value matches the specified recording or edition.",
+    "googleLyricsPanel": "Record visible source attribution (for example, Musixmatch) and song/result identity. Treat Google Search as the discovery/display surface, not an independent lyrics provider when an upstream provider is named. Compare the payload only after storing hashes and edition scope, never full lyric text."
   },
   "summary": {
     "songs": 100,
@@ -140,7 +141,13 @@
       ],
       "officialHashMatchedCandidateCount": 0,
       "recordingEdition": "unspecified"
-    }
+    },
+    "googleLyricsPanelObservations": 1,
+    "googleLyricsPanelAttributedProviders": {
+      "musixmatch": 1
+    },
+    "googleLyricsPanelsHashCompared": 0,
+    "googleLyricsPanelInterpretation": "Google lyrics Search can be recorded as a practical source when its panel attribution and selected song result are captured. In this sample, the live panel attributes the lyrics to Musixmatch; it is not counted as a distinct Google provider or independent corroboration, and no text hash has yet been computed."
   },
   "songs": [
     {
@@ -1059,6 +1066,24 @@
         "editionRelation": "Official artist lyric reference supports the composition text; corpus has no specific recording edition, so the page cannot yet adjudicate exact performed wording.",
         "comparisonMethod": "Production GeniusProvider.extractLyrics then plainToChordPro for selected candidate; direct .post-content paragraphs for official page; benchmark lowercase and punctuation normalization.",
         "accuracyDisposition": "The official sequence is 7 tokens shorter than the selected text under minimum token edit alignment, with no substitutions. It is useful practical corroboration, but the corpus edition is unspecified and the source lineage of the matching provider labels is unconfirmed. No side is declared correct."
+      },
+      "googleLyricsPanelObservation": {
+        "source": "Google Search lyrics panel",
+        "sourceUrl": "https://www.google.com/search?q=Oasis+Wonderwall+lyrics",
+        "query": "Oasis Wonderwall lyrics",
+        "capturedAtUtc": "2026-10-26T20:12:16Z",
+        "resultTitle": "Wonderwall",
+        "displayedArtist": "Oasis",
+        "displayedReleaseYear": "1995",
+        "attributedLyricsProvider": "Musixmatch",
+        "displayedSongwriter": "Noel Gallagher",
+        "displayedRightsHolder": "Oasis Music",
+        "panelDisplayedLyrics": true,
+        "lyricBodyRetained": false,
+        "comparisonStatus": "source_observed_not_hash_compared",
+        "offlineProviderAlreadyPresent": false,
+        "sourceLineageInterpretation": "Count this as a Musixmatch-attributed source observation, not an independent Google transcription. If a Musixmatch candidate is added later, compare the payloads and avoid double-counting provider lineage.",
+        "limitations": "Google panel selected a song/release result but the corpus recordingEdition is unspecified. Text not normalized or hash-compared in this observation."
       }
     },
     {

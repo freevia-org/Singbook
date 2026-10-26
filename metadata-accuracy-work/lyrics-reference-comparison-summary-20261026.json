@@ -969,7 +969,7 @@
   },
   "perSongSupportScorecard": {
     "file": "metadata-accuracy-work/metadata-practical-support-100-20261026.json",
-    "sha256": "4cf53d7cf4ffcec6255fced84b28031a157e1efcbb18cee67f37ede46f1ce90b",
+    "sha256": "417130a5aece2f34acfb8fce1f509d652ffdaced00b09c2cbf5b13631053bb10",
     "rows": 100,
     "containsLyricBodies": false,
     "sourceReport": "build/metadata_accuracy/report.json",
@@ -989,7 +989,9 @@
     "sourceProgressionHashVariants": 202,
     "officialBeatlesPagesWithReproducibleTextComparison": 5,
     "officialLyricPagesMatchedAnyCachedCandidate": 0,
-    "officialLyricSourceCandidateRowsCompared": 36
+    "officialLyricSourceCandidateRowsCompared": 36,
+    "googleLyricsPanelObservations": 1,
+    "googleLyricsPanelsHashCompared": 0
   },
   "chordProgressionEvidence": {
     "sourceHashVariants": 202,
@@ -1005,5 +1007,6 @@
     "interpretation": "An exact ordered progression hash after transposition normalization corroborates chord quality and bass structure only. It does not establish sounding key, lyric placement, recording identity, independent provenance, or correctness."
   },
   "manualLyricComparisonArtifact": "tool/metadata_reference_evidence/official_lyrics_page_comparisons_20261026.json",
-  "officialLyricSourceCoverageInterpretation": "In addition to selected-text comparison, each official page hash was compared with every cached provider lyric candidate summary for its song. None of the five official hashes exactly matches any candidate in the current offline result set; this is a reference/source coverage gap, not proof that any one transcript is incorrect."
+  "officialLyricSourceCoverageInterpretation": "In addition to selected-text comparison, each official page hash was compared with every cached provider lyric candidate summary for its song. None of the five official hashes exactly matches any candidate in the current offline result set; this is a reference/source coverage gap, not proof that any one transcript is incorrect.",
+  "googleLyricsPanelInterpretation": "Google lyrics Search can be recorded as a practical source when its panel attribution and selected song result are captured. In this sample, the live panel attributes the lyrics to Musixmatch; it is not counted as a distinct Google provider or independent corroboration, and no text hash has yet been computed."
 }

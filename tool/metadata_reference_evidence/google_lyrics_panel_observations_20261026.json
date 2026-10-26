@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-26",
+  "task": "google_lyrics_panel_reference_observation",
+  "benchmarkReportSha256": "09824d06dcb00a23893d39cfc9021a0307aee07f1ef661b7471ff1a4cb3b81b4",
+  "recordingEdition": "unspecified",
+  "lyricBodiesRetained": false,
+  "observations": [
+    {
+      "source": "Google Search lyrics panel",
+      "sourceUrl": "https://www.google.com/search?q=Oasis+Wonderwall+lyrics",
+      "query": "Oasis Wonderwall lyrics",
+      "capturedAtUtc": "2026-10-26T20:12:16Z",
+      "resultTitle": "Wonderwall",
+      "displayedArtist": "Oasis",
+      "displayedReleaseYear": "1995",
+      "attributedLyricsProvider": "Musixmatch",
+      "displayedSongwriter": "Noel Gallagher",
+      "displayedRightsHolder": "Oasis Music",
+      "panelDisplayedLyrics": true,
+      "lyricBodyRetained": false,
+      "comparisonStatus": "source_observed_not_hash_compared",
+      "offlineProviderAlreadyPresent": false,
+      "sourceLineageInterpretation": "Count this as a Musixmatch-attributed source observation, not an independent Google transcription. If a Musixmatch candidate is added later, compare the payloads and avoid double-counting provider lineage.",
+      "limitations": "Google panel selected a song/release result but the corpus recordingEdition is unspecified. Text not normalized or hash-compared in this observation."
+    }
+  ]
+}
