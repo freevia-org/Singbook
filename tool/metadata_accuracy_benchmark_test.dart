@@ -1497,8 +1497,14 @@ Future<void> _benchmark() async {
         'selectedOutputHashHasMaximumProviderLabelSupport':
             selectedOutputsWithMaxSupport,
       },
-      'interpretation':
-          'Exact normalized lyric or chord-sequence hash agreement, including a shared hash within a conflicting group, is a consolidation signal, not proof of independent provenance or correctness.',
+      'interpretation': switch (hashField) {
+        'transpositionInvariantChordProgressionSha256' =>
+          'An exact ordered progression hash after transposition normalization corroborates chord quality and bass structure only. It does not establish sounding key, lyric placement, recording identity, independent provenance, or correctness.',
+        'chordAlignmentSha256' =>
+          'Exact lyric-anchor and capo-normalized chart agreement is a consolidation signal, not proof of independent provenance or correctness.',
+        _ =>
+          'Exact normalized lyric or raw chord-sequence hash agreement, including a shared hash within a conflicting group, is a consolidation signal, not proof of independent provenance or correctness.',
+      },
     };
   }
 
