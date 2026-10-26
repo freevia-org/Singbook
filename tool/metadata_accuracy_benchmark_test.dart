@@ -19,6 +19,7 @@ import 'package:singbook/providers/provider.dart';
 
 import 'src/metadata_response_cache.dart';
 import 'src/metadata_corpus_identity.dart';
+import 'src/metadata_reference_validation.dart';
 
 const _jitterSeed = int.fromEnvironment(
   'METADATA_BENCHMARK_JITTER',
@@ -117,7 +118,146 @@ String? _chordAlignmentHash(SongDocument doc) {
   return _sha('${_sha(_normalizedLyrics(doc.body))}\n${anchors.join('\n')}');
 }
 
+Map<String, dynamic> _readCorpus() {
+  final data =
+      jsonDecode(File('tool/metadata_accuracy_corpus.json').readAsStringSync())
+          as Map<String, dynamic>;
+  for (final song in (data['songs'] as List).cast<Map<String, dynamic>>()) {
+    final expected = song['expected'] as Map<String, dynamic>;
+    for (final field in _fields) {
+      final claim = (expected['fields'] as Map)[field] as Map;
+      if (claim['status'] != 'verified') continue;
+      final value = claim['value'];
+      if (value is! String ||
+          (field == 'key'
+              ? _exactKeyIdentity(value) == null
+              : !RegExp(r'^[0-9a-f]{64}$').hasMatch(value))) {
+        throw StateError('${song['id']} $field has an invalid reference value');
+      }
+      final path = claim['reviewRecord'];
+      if (path is! String ||
+          !RegExp(
+            r'^tool/metadata_reference_evidence/[a-z0-9_]+\.json$',
+          ).hasMatch(path)) {
+        throw StateError('${song['id']} $field has no canonical review record');
+      }
+      final review =
+          jsonDecode(File(path).readAsStringSync()) as Map<String, dynamic>;
+      final errors = reviewedReferenceErrors(song, field, review);
+      if (errors.isNotEmpty) {
+        throw StateError('${song['id']} $field: ${errors.join('; ')}');
+      }
+    }
+  }
+  return data;
+}
+
 void main() {
+  test(
+    'reviewed references reject stale value, recording, field and scope',
+    () {
+      Map<String, dynamic> song() => {
+        'id': 'invented',
+        'recordingEdition': 'Original studio performance',
+        'recordingEditionStatus': 'verified',
+        'expected': {
+          'recordingReference': {
+            'status': 'verified',
+            'providerId': 'catalog',
+            'candidateId': 'original',
+            'isrc': null,
+            'recordingEdition': 'Original studio performance',
+            'evidence': ['https://example.test/original'],
+          },
+          'fields': {
+            'key': {
+              'status': 'verified',
+              'value': 'C',
+              'evidence': ['https://example.test/analysis'],
+            },
+          },
+        },
+      };
+      Map<String, dynamic> review() => {
+        'songId': 'invented',
+        'field': 'key',
+        'status': 'verified',
+        'value': 'C',
+        'scope': 'Original studio performance',
+        'recordingBinding': {
+          'status': 'verified',
+          'providerId': 'catalog',
+          'candidateId': 'original',
+          'isrc': null,
+          'recordingEdition': 'Original studio performance',
+          'evidence': ['https://example.test/original'],
+        },
+        'independentSources': [
+          {
+            'url': 'https://example.test/analysis',
+            'role': 'Invented educator',
+            'finding': 'Invented evidence',
+          },
+        ],
+        'notDerivedFromActualBenchmarkKey': true,
+      };
+      expect(reviewedReferenceErrors(song(), 'key', review()), isEmpty);
+      for (final entry in {
+        'value': 'D',
+        'songId': 'another-song',
+        'field': 'lyrics',
+        'scope': 'Live performance',
+        'status': 'unverified',
+        'notDerivedFromActualBenchmarkKey': false,
+      }.entries) {
+        expect(
+          reviewedReferenceErrors(
+            song(),
+            'key',
+            review()..[entry.key] = entry.value,
+          ),
+          isNotEmpty,
+          reason: entry.key,
+        );
+      }
+      final stale = review();
+      (stale['recordingBinding'] as Map)['candidateId'] = 'another-recording';
+      expect(reviewedReferenceErrors(song(), 'key', stale), isNotEmpty);
+      final missing = review()..['independentSources'] = [];
+      expect(reviewedReferenceErrors(song(), 'key', missing), isNotEmpty);
+      final noRecordingEvidence = review();
+      (noRecordingEvidence['recordingBinding'] as Map)['evidence'] = [];
+      expect(
+        reviewedReferenceErrors(song(), 'key', noRecordingEvidence),
+        isNotEmpty,
+      );
+      final staleEvidence = song();
+      (((staleEvidence['expected'] as Map)['fields'] as Map)['key']
+          as Map)['evidence'] = [
+        'https://example.test/unreviewed',
+      ];
+      expect(
+        reviewedReferenceErrors(staleEvidence, 'key', review()),
+        isNotEmpty,
+      );
+      final catalogOnly = song();
+      (((catalogOnly['expected'] as Map)['fields'] as Map)['key']
+          as Map)['evidence'] = [
+        'https://example.test/original',
+      ];
+      expect(reviewedReferenceErrors(catalogOnly, 'key', review()), isNotEmpty);
+      final unbound = song();
+      ((unbound['expected'] as Map)['recordingReference']
+              as Map)['candidateId'] =
+          null;
+      expect(reviewedReferenceErrors(unbound, 'key', review()), isNotEmpty);
+      final unknown = song();
+      (((unknown['expected'] as Map)['fields'] as Map)['key']
+              as Map)['status'] =
+          'unverified';
+      expect(reviewedReferenceErrors(unknown, 'key', {}), isEmpty);
+    },
+  );
   test(
     'reviewed edition proof requires the bound recording and target scope',
     () {
@@ -274,11 +414,7 @@ void main() {
   test(
     'metadata accuracy corpus has 100 entries and valid reference states',
     () {
-      final data =
-          jsonDecode(
-                File('tool/metadata_accuracy_corpus.json').readAsStringSync(),
-              )
-              as Map<String, dynamic>;
+      final data = _readCorpus();
       final songs = (data['songs'] as List).cast<Map<String, dynamic>>();
       expect(songs, hasLength(100));
       expect(songs.map((s) => s['id']).toSet(), hasLength(100));
@@ -347,9 +483,7 @@ void main() {
 }
 
 Future<void> _benchmark() async {
-  final data =
-      jsonDecode(File('tool/metadata_accuracy_corpus.json').readAsStringSync())
-          as Map<String, dynamic>;
+  final data = _readCorpus();
   final songs = (data['songs'] as List).cast<Map<String, dynamic>>();
   if (_maxNetwork != 0) {
     throw StateError(
