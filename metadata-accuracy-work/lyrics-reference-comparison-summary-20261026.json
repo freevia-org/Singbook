@@ -348,7 +348,7 @@
       "result": "official album text differs from selected Genius text"
     }
   ],
-  "interpretation": "The offline replay found lyric candidates for 99/100 songs. Seventeen public lyric pages were compared (17% source-page coverage); three localized/source text differences are classified (Yesterday, Blackbird, and Iris), and 14 remain to review. Separately, 30 songs have at least one exact candidate hash shared across provider labels, while 15 selected outputs have such multi-label hash support. These are practical support measures, not proof that provider data is independent. The gold-only score remains 0 because it required adjudicated exact-performance correctness; it must not be read as meaning zero lyrics have useful source support.",
+  "interpretation": "The offline replay found lyric candidates for 99/100 songs. Seventeen public lyric pages were compared (17% source-page coverage); three localized/source text differences are classified (Yesterday, Blackbird, and Iris), and 14 remain to review. Separately, 30 songs have at least one exact candidate hash shared across provider labels, while 15 selected outputs have such multi-label hash support. These are practical support measures, not proof that provider data is independent. The gold-only score remains 0 because it required adjudicated exact-performance correctness; it must not be read as meaning zero lyrics have useful source support. The latest offline report now exposes these practical support tiers for every song; 15 selected outputs have exact-hash matches across provider labels, 84 have one-label exact-hash support, and one song has no selected lyrics. These tiers are not labeled performance-correct.",
   "referenceEvaluation": {
     "sourceCandidateComparisons": 17,
     "sourceCandidateComparisonPercent": 17.0,
@@ -828,5 +828,25 @@
     },
     "corpusAccuracyPercent": null,
     "note": "100% among the seven like-scoped, adjudicated recording-key comparisons; this is partial coverage, not a 100-song score. One differing arrangement-scoped claim remains separately visible."
+  },
+  "perSongSupportTiers": {
+    "reportField": "build/metadata_accuracy/report.json:songs[].practicalLyricsSupport",
+    "cacheReplay": {
+      "songs": 100,
+      "selectedLyrics": 99,
+      "multiProviderExactTextSupport": 15,
+      "singleProviderExactTextSupport": 84,
+      "noSelectedLyrics": 1,
+      "networkAttempts": 0,
+      "cacheHits": 3100,
+      "uncachedOffline": 1030
+    },
+    "interpretation": "This is a practical exact-text support signal, not a correctness score. Provider labels and distinct candidate IDs are recorded per song, while independent upstream lineage remains false unless separately established. Strict field-level correctness continues to require a reviewed reference and compatible scope.",
+    "levels": {
+      "multi_provider_exact_text_support": "At least two provider labels carry the selected normalized text hash.",
+      "single_provider_exact_text_support": "One provider label carries the selected normalized text hash.",
+      "no_exact_candidate_text_support": "A selected text exists but no candidate summary has its hash.",
+      "no_selected_lyrics": "No selected lyric value."
+    }
   }
 }

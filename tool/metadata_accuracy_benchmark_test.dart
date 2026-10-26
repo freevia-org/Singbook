@@ -62,6 +62,48 @@ String _accuracyEvaluationStatus({
   _ => 'partial_adjudicated_comparisons',
 };
 
+Map<String, Object?> _selectedLyricsSupport({
+  required String? selectedHash,
+  required Iterable<Map> sources,
+}) {
+  if (selectedHash == null) {
+    return {
+      'level': 'no_selected_lyrics',
+      'providerLabels': <String>[],
+      'matchingCandidateCount': 0,
+      'matchingCandidateIdCount': 0,
+      'independentLineageConfirmed': false,
+    };
+  }
+  final matches = sources
+      .where((source) => source['normalizedLyricsSha256'] == selectedHash)
+      .toList();
+  final providers =
+      matches
+          .map((source) => source['provider'])
+          .whereType<String>()
+          .toSet()
+          .toList()
+        ..sort();
+  final candidateIds = matches
+      .map((source) => source['candidateIdSha256'])
+      .whereType<String>()
+      .toSet();
+  return {
+    'level': providers.length > 1
+        ? 'multi_provider_exact_text_support'
+        : providers.length == 1
+        ? 'single_provider_exact_text_support'
+        : 'no_exact_candidate_text_support',
+    'providerLabels': providers,
+    'matchingCandidateCount': matches.length,
+    'matchingCandidateIdCount': candidateIds.length,
+    // Different adapter labels or catalog IDs do not prove independent
+    // upstream lineage; retain that distinction in the audit output.
+    'independentLineageConfirmed': false,
+  };
+}
+
 int _capoOf(Object? raw) =>
     raw is num ? raw.toInt() : int.tryParse('$raw') ?? 0;
 
@@ -362,6 +404,50 @@ void main() {
     expect(
       _accuracyEvaluationStatus(evaluated: 100, corpusSize: 100),
       'all_songs_compared',
+    );
+  });
+  test('selected lyric support is visible without claiming correctness', () {
+    final converged = _selectedLyricsSupport(
+      selectedHash: 'selected',
+      sources: [
+        {
+          'normalizedLyricsSha256': 'selected',
+          'provider': 'genius',
+          'candidateIdSha256': 'upstream-1',
+        },
+        {
+          'normalizedLyricsSha256': 'selected',
+          'provider': 'betterlyrics',
+          'candidateIdSha256': 'upstream-1',
+        },
+      ],
+    );
+    expect(converged['level'], 'multi_provider_exact_text_support');
+    expect(converged['providerLabels'], ['betterlyrics', 'genius']);
+    expect(converged['matchingCandidateIdCount'], 1);
+    expect(converged['independentLineageConfirmed'], isFalse);
+
+    final singleLabel = _selectedLyricsSupport(
+      selectedHash: 'selected',
+      sources: [
+        {
+          'normalizedLyricsSha256': 'selected',
+          'provider': 'genius',
+          'candidateIdSha256': 'one',
+        },
+        {
+          'normalizedLyricsSha256': 'alternative',
+          'provider': 'lrclib',
+          'candidateIdSha256': 'two',
+        },
+      ],
+    );
+    expect(singleLabel['level'], 'single_provider_exact_text_support');
+    expect(singleLabel['independentLineageConfirmed'], isFalse);
+
+    expect(
+      _selectedLyricsSupport(selectedHash: null, sources: const [])['level'],
+      'no_selected_lyrics',
     );
   });
   test('recording key comparisons distinguish chart-scoped key claims', () {
@@ -1241,6 +1327,12 @@ Future<void> _benchmark() async {
           .whereType<Map>()
           .where((source) => source[hashField] is String)
           .toList();
+      if (hashField == 'normalizedLyricsSha256') {
+        row['practicalLyricsSupport'] = _selectedLyricsSupport(
+          selectedHash: row['normalizedLyricsSha256'] as String?,
+          sources: (row['sourceSummary'] as List? ?? const []).whereType<Map>(),
+        );
+      }
       if (sources.isEmpty) continue;
       songsWithSources++;
       final hashes = <String, List<Map>>{};
