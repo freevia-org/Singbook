@@ -78,6 +78,24 @@ void main() {
     },
   );
 
+  test('capoed chart recovers its declared sounding key', () {
+    final chosen = _source('chosen', _body, metadata: {'capo': 1});
+    final donor = _source(
+      'capo-donor',
+      _donorBody,
+      metadata: {'key': 'Gm', 'capo': 1},
+    );
+
+    final combined = combineSources(_candidate, [
+      chosen,
+      donor,
+    ], preferredSourceId: chosen.id);
+
+    expect(combined.metadata['capo'], 1);
+    expect(combined.metadata['key'], 'Gm');
+    expect(combined.extra['fieldOrigins']['key'], donor.id);
+  });
+
   test(
     'old saved chart resolves without rewriting metadata or source facts',
     () {

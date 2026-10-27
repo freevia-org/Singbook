@@ -1513,11 +1513,17 @@ List<JsonMap> arrangementKeySetupDiagnostics(SongDocument song) {
       }
       if (contradicts) break;
     }
+    final capo = _capoOf(
+      source.metadata['capo'] ?? source.candidate.metadata['capo'],
+    );
+    final soundingRoots = {
+      for (final root in roots) ((int.parse(root) + capo) % 12).toString(),
+    };
     if (contradicts ||
         agreements < 3 ||
         roots.length < 3 ||
         matchedLines.length < 2 ||
-        !roots.contains(identity.split(':').first)) {
+        !soundingRoots.contains(identity.split(':').first)) {
       continue;
     }
     final claim = claims.putIfAbsent(
