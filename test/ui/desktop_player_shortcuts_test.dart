@@ -168,13 +168,17 @@ void main() {
         expect(controller.state.playerControlsExpanded, preference);
         final lyrics = find.byKey(const ValueKey('player-lyrics-scroll'));
         expect(
-          tester.getRect(find.byKey(const ValueKey('tablet-reader-content'))).top,
+          tester
+              .getRect(find.byKey(const ValueKey('tablet-reader-content')))
+              .top,
           0,
         );
         expect(
           tester.getRect(lyrics).top,
           greaterThanOrEqualTo(
-            tester.getRect(find.byKey(const ValueKey('player-settings-button'))).bottom,
+            tester
+                .getRect(find.byKey(const ValueKey('player-settings-button')))
+                .bottom,
           ),
         );
         await tester.sendKeyEvent(LogicalKeyboardKey.escape);
