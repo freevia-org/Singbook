@@ -33,7 +33,7 @@ class CancellationToken {
 
 /// Application version sent in the User-Agent. Keep in sync with the
 /// `version:` line in pubspec.yaml (a unit test enforces this).
-const singbookVersion = '0.2.27';
+const singbookVersion = '0.2.28';
 
 /// Public project contact for API operators, including maintenance invocations
 /// without app build defines. An explicit contact URL may override this real
