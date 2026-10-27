@@ -81,6 +81,59 @@ Matcher failure(String code) =>
 
 void main() {
   test(
+    'context lookup searches title only and checks added album/artist evidence before reuse',
+    () async {
+      final p = provider((r) async {
+        expect(r.url.queryParameters['query'], 'Invented Song');
+        expect(r.url.queryParameters['fields'], contains('Albums'));
+        return response({
+          'items': [song()],
+        });
+      });
+      addTearDown(p.transport.close);
+      const reference = SongCandidate(
+        providerId: 'reference',
+        id: 'recording',
+        title: 'Invented Song',
+        artist: 'Invented Producer feat. Invented Voice',
+        album: 'First Album',
+      );
+      final rows = await p.searchForSelection(
+        reference,
+        fallbackQuery: 'Invented Song Invented Producer feat. Invented Voice',
+      );
+      expect(rows, hasLength(1));
+      expect(p.canReuseSearchForSelection(reference, rows), true);
+      expect(
+        p.canReuseSearchForSelection(
+          const SongCandidate(
+            providerId: 'reference',
+            id: 'wrong',
+            title: 'Invented Song',
+            artist: 'Wrong Artist',
+          ),
+          rows,
+        ),
+        false,
+      );
+      expect(
+        p.canReuseSearchForSelection(
+          const SongCandidate(
+            providerId: 'reference',
+            id: 'wrong',
+            title: 'Invented Song',
+            artist: 'Invented Producer feat. Invented Voice',
+            album: 'Wrong Album',
+          ),
+          rows,
+        ),
+        false,
+      );
+      expect(p.canReuseSearchForSelection(reference, [selected]), false);
+    },
+  );
+
+  test(
     'search uses a bounded documented rating sort and preserves identity aliases and artist roles',
     () async {
       final p = provider((r) async {

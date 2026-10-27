@@ -196,7 +196,7 @@ class VocaDbProvider implements LyricsProvider {
       await _get(
         Uri.https(_host, '/api/songs', {
           'query': text,
-          'fields': 'Names,Artists,Bpm,CultureCodes',
+          'fields': 'Names,Artists,Albums,Bpm,CultureCodes',
           'lang': 'English',
           'nameMatchMode': 'Auto',
           'sort': 'RatingScore',
@@ -219,9 +219,11 @@ class VocaDbProvider implements LyricsProvider {
   }
 
   bool _sameSelection(SongCandidate selected, SongCandidate found) {
-    final aliases = found.extra['sourceTitleAliases'] as List;
-    final albums = found.extra['sourceAlbums'] as List;
+    final aliases = found.extra['sourceTitleAliases'];
+    final albums = found.extra['sourceAlbums'];
+    if (aliases is! List || albums is! List) return false;
     return (selected.album == null ||
+            selected.album!.trim().isEmpty ||
             albums.whereType<Map>().any(
               (row) =>
                   row['name'] is String &&
@@ -236,6 +238,32 @@ class VocaDbProvider implements LyricsProvider {
               (v) => normalized(v) == normalized(selected.title),
             )) &&
         normalized(selected.artist) == normalized(found.artist);
+  }
+
+  // These methods follow PR173's shared contextual-search contract. Register
+  // that interface only after it reaches the integration base; this isolated
+  // adapter proposal does not duplicate or modify the shared interface.
+  bool canReuseSearchForSelection(
+    SongCandidate selection,
+    List<SongCandidate> candidates,
+  ) => candidates.any(
+    (row) => row.providerId == definition.id && _sameSelection(selection, row),
+  );
+
+  Future<List<SongCandidate>> searchForSelection(
+    SongCandidate selection, {
+    required String fallbackQuery,
+    CancellationToken? cancel,
+  }) async {
+    // The API query searches song names, not a concatenated artist credit.
+    // Apply artist/album/duration checks to the complete structured rows, then
+    // leave the normal service's independent identity checks in place.
+    final title = queryText(selection.title);
+    final rows = await search(
+      title.isEmpty ? fallbackQuery : title,
+      cancel: cancel,
+    );
+    return rows.where((row) => _sameSelection(selection, row)).toList();
   }
 
   @override
