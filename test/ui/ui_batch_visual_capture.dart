@@ -214,7 +214,11 @@ void main() {
             expect(viewport.left, panel.left);
             expect(viewport.right, panel.right);
             expect(viewport.bottom, panel.bottom);
-            expect(viewport.top, greaterThanOrEqualTo(settings.bottom));
+            if (scenario.$6 == TargetPlatform.android || scenario.$6 == TargetPlatform.iOS) {
+              expect(settings.overlaps(panel), isFalse);
+            } else {
+              expect(viewport.top, greaterThanOrEqualTo(settings.bottom));
+            }
           }
           if (stage == 'reader') {
             await _captureScrolling(tester, boundaryKey, '${scenario.$1}-$stage');

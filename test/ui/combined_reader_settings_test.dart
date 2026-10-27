@@ -353,7 +353,7 @@ void main() {
   );
 
   testWidgets(
-    'Mac fullscreen survives focus changes without replaying requests',
+    'native fullscreen survives focus changes without replaying requests',
     (tester) async {
       final calls = <bool>[];
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
@@ -376,6 +376,7 @@ void main() {
         for (final state in [
           AppLifecycleState.inactive,
           AppLifecycleState.hidden,
+          AppLifecycleState.paused,
           AppLifecycleState.resumed,
         ]) {
           tester.binding.handleAppLifecycleStateChanged(state);
@@ -387,7 +388,68 @@ void main() {
       await tester.pumpAndSettle();
       expect(calls, [true, false]);
     },
-    variant: TargetPlatformVariant.only(TargetPlatform.macOS),
+    variant: TargetPlatformVariant({
+      TargetPlatform.android,
+      TargetPlatform.macOS,
+      TargetPlatform.windows,
+    }),
+  );
+
+  testWidgets(
+    'iOS fullscreen ignores transient focus and restores once after background',
+    (tester) async {
+      final modes = <String>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (call) async {
+          if (call.method == 'SystemChrome.setEnabledSystemUIMode') {
+            modes.add(call.arguments as String);
+          }
+          return null;
+        },
+      );
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        ),
+      );
+      final controller = FakeUiController((_) => _reader());
+      addTearDown(controller.dispose);
+      await pumpShell(tester, controller);
+      await tester.tap(find.byKey(const ValueKey('player-enter-fullscreen')));
+      await tester.pumpAndSettle();
+      expect(modes, ['SystemUiMode.immersiveSticky']);
+      for (var i = 0; i < 3; i++) {
+        for (final state in [
+          AppLifecycleState.inactive,
+          AppLifecycleState.resumed,
+        ]) {
+          tester.binding.handleAppLifecycleStateChanged(state);
+          await tester.pumpAndSettle();
+        }
+      }
+      expect(modes, ['SystemUiMode.immersiveSticky']);
+      for (final state in [
+        AppLifecycleState.inactive,
+        AppLifecycleState.hidden,
+        AppLifecycleState.paused,
+        AppLifecycleState.resumed,
+      ]) {
+        tester.binding.handleAppLifecycleStateChanged(state);
+        await tester.pumpAndSettle();
+      }
+      expect(modes, [
+        'SystemUiMode.immersiveSticky',
+        'SystemUiMode.edgeToEdge',
+        'SystemUiMode.immersiveSticky',
+      ]);
+      await tester.tap(find.byKey(const ValueKey('player-exit-fullscreen')));
+      await tester.pumpAndSettle();
+      expect(modes.last, 'SystemUiMode.edgeToEdge');
+      expect(modes.length, 4);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.iOS),
   );
 
   testWidgets('reader Edit remains reachable through the overflow menu', (

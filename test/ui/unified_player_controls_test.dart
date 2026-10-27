@@ -407,31 +407,37 @@ void main() {
     },
   );
 
-  testWidgets('fullscreen keeps lyrics corner settings accessible', (
-    tester,
-  ) async {
-    await openFixture(tester);
-    await _pumpPlayer(
-      tester,
-      ui,
-      awake,
-      fullScreen: true,
-      onFullScreenChanged: (_) {},
-    );
-    final l10n = l10nOf(tester);
+  testWidgets(
+    'desktop fullscreen keeps lyrics corner settings accessible',
+    (tester) async {
+      await openFixture(tester);
+      await _pumpPlayer(
+        tester,
+        ui,
+        awake,
+        fullScreen: true,
+        onFullScreenChanged: (_) {},
+      );
+      final l10n = l10nOf(tester);
 
-    expect(
-      find.byKey(const ValueKey('player-settings-button')),
-      findsOneWidget,
-    );
-    await tester.tap(find.byKey(const ValueKey('player-settings-button')));
-    await tester.pumpAndSettle();
-    expect(
-      find.widgetWithText(SwitchListTile, l10n.editorChordsField),
-      findsOneWidget,
-    );
-    expect(tester.takeException(), isNull);
-  });
+      expect(
+        find.byKey(const ValueKey('player-settings-button')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const ValueKey('player-settings-button')));
+      await tester.pumpAndSettle();
+      expect(
+        find.widgetWithText(SwitchListTile, l10n.editorChordsField),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    },
+    variant: TargetPlatformVariant({
+      TargetPlatform.macOS,
+      TargetPlatform.windows,
+      TargetPlatform.linux,
+    }),
+  );
 
   testWidgets(
     'Settings Player exposes independent persisted chord and heading switches',

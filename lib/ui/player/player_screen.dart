@@ -853,6 +853,16 @@ class _PlayerScreenState extends State<PlayerScreen>
       TargetPlatform.linux => true,
       _ => false,
     };
+    final mobilePlaybackControls =
+        defaultTargetPlatform == TargetPlatform.android ||
+        defaultTargetPlatform == TargetPlatform.iOS;
+    Widget playerSettingsButton() => IconButton(
+      key: const ValueKey('player-settings-button'),
+      constraints: const BoxConstraints.tightFor(width: 48, height: 48),
+      tooltip: l10n.settingsPlayer,
+      onPressed: () => showPlayerSettings(context, controller),
+      icon: const Icon(Icons.settings_outlined, size: 20),
+    );
     Widget lyrics() => Listener(
       onPointerSignal: (event) {
         if (event is PointerScrollEvent) {
@@ -991,16 +1001,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                               : Icons.open_in_full_rounded,
                         ),
                       ),
-                    IconButton(
-                      key: const ValueKey('player-settings-button'),
-                      constraints: const BoxConstraints.tightFor(
-                        width: 48,
-                        height: 48,
-                      ),
-                      tooltip: l10n.settingsPlayer,
-                      onPressed: () => showPlayerSettings(context, controller),
-                      icon: const Icon(Icons.settings_outlined, size: 20),
-                    ),
+                    if (!mobilePlaybackControls) playerSettingsButton(),
                   ],
                 ),
               ),
@@ -1100,8 +1101,16 @@ class _PlayerScreenState extends State<PlayerScreen>
           children: [
             ValueListenableBuilder<PlayerPosition>(
               valueListenable: _position,
-              builder: (context, position, _) =>
-                  _seekBar(context, l10n, state, position, duration),
+              builder: (context, position, _) => _seekBar(
+                context,
+                l10n,
+                state,
+                position,
+                duration,
+                trailingAction: mobilePlaybackControls
+                    ? playerSettingsButton()
+                    : null,
+              ),
             ),
             // Stack narrow landscape controls before using horizontal scroll
             // as a fallback for panes too small even for the two-row layout.
@@ -1405,8 +1414,9 @@ class _PlayerScreenState extends State<PlayerScreen>
     AppLocalizations l10n,
     VerseUiState state,
     PlayerPosition position,
-    double duration,
-  ) {
+    double duration, {
+    Widget? trailingAction,
+  }) {
     final speed = state.playbackSpeed;
     final displayDuration = duration / speed;
     final displayPosition = position.seconds / speed;
@@ -1419,71 +1429,156 @@ class _PlayerScreenState extends State<PlayerScreen>
         ),
     ];
     final maxValue = displayDuration > 0 ? displayDuration : 1.0;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            trackShape: _SectionMarkerSliderTrackShape(
-              markers: displaySections,
-              durationSeconds: displayDuration,
+    final timeline = SliderTheme(
+      data: SliderTheme.of(context).copyWith(
+        trackShape: _SectionMarkerSliderTrackShape(
+          markers: displaySections,
+          durationSeconds: displayDuration,
+        ),
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final desktopTimeline =
+              constraints.maxWidth >= 560 &&
+              (trailingAction == null || displaySections.isNotEmpty);
+          final compactDesktopTimeline =
+              desktopTimeline &&
+              (defaultTargetPlatform == TargetPlatform.macOS ||
+                  defaultTargetPlatform == TargetPlatform.windows ||
+                  defaultTargetPlatform == TargetPlatform.linux);
+          final sliderTheme = SliderTheme.of(context);
+          return SizedBox(
+            height: desktopTimeline && !compactDesktopTimeline ? 64 : 48,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  top: desktopTimeline ? 16 : 0,
+                  child: SliderOverlayBoundary(
+                    child: Slider(
+                      key: const ValueKey('player-seek-slider'),
+                      min: 0,
+                      max: maxValue,
+                      // While the thumb is held, clock ticks must not move it.
+                      value: (_dragValue ?? displayPosition)
+                          .clamp(0, maxValue)
+                          .toDouble(),
+                      semanticFormatterCallback: (value) {
+                        final sourceSection = _sectionAt(
+                          state.playerSections,
+                          value * speed,
+                        );
+                        return '${sourceSection == null ? l10n.playerCurrentSection : localizedSectionName(l10n, sourceSection.name)}, '
+                            '${formatDuration(value)}';
+                      },
+                      onChangeStart: (value) => _dragValue = value,
+                      onChanged: (value) {
+                        _dragValue = value;
+                        _instantSeek = true;
+                        controller.seek(value * speed);
+                      },
+                      onChangeEnd: (_) => _dragValue = null,
+                    ),
+                  ),
+                ),
+                ..._sectionMarkerLabelWidgets(
+                  context: context,
+                  markers: displaySections,
+                  durationSeconds: displayDuration,
+                  progressSeconds: displayPosition,
+                  width: constraints.maxWidth,
+                  textDirection: Directionality.of(context),
+                  labelColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                  sliderTheme: sliderTheme,
+                  textScaler: MediaQuery.textScalerOf(context),
+                  l10n: l10n,
+                ),
+              ],
             ),
-          ),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final desktopTimeline = constraints.maxWidth >= 560;
-              final compactDesktopTimeline =
-                  desktopTimeline &&
-                  (defaultTargetPlatform == TargetPlatform.macOS ||
-                      defaultTargetPlatform == TargetPlatform.windows ||
-                      defaultTargetPlatform == TargetPlatform.linux);
-              final sliderTheme = SliderTheme.of(context);
-              return SizedBox(
-                height: desktopTimeline && !compactDesktopTimeline ? 64 : 48,
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      top: desktopTimeline ? 16 : 0,
-                      child: SliderOverlayBoundary(
-                        child: Slider(
-                          key: const ValueKey('player-seek-slider'),
-                          min: 0,
-                          max: maxValue,
-                          // While the thumb is held, clock ticks must not move it.
-                          value: (_dragValue ?? displayPosition)
-                              .clamp(0, maxValue)
-                              .toDouble(),
-                          semanticFormatterCallback: (value) {
-                            final sourceSection = _sectionAt(
-                              state.playerSections,
-                              value * speed,
-                            );
-                            return '${sourceSection == null ? l10n.playerCurrentSection : localizedSectionName(l10n, sourceSection.name)}, '
-                                '${formatDuration(value)}';
-                          },
-                          onChangeStart: (value) => _dragValue = value,
-                          onChanged: (value) {
-                            _dragValue = value;
-                            _instantSeek = true;
-                            controller.seek(value * speed);
-                          },
-                          onChangeEnd: (_) => _dragValue = null,
-                        ),
+          );
+        },
+      ),
+    );
+    final times = Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final times = Row(
+            children: [
+              Expanded(
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text(formatDuration(displayPosition)),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: Semantics(
+                    label: state.readerDurationEstimated
+                        ? l10n.playerEstimatedDuration(
+                            formatDuration(displayDuration),
+                          )
+                        : formatDuration(displayDuration),
+                    child: ExcludeSemantics(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: Text(formatDuration(displayDuration)),
                       ),
                     ),
-                    ..._sectionMarkerLabelWidgets(
-                      context: context,
-                      markers: displaySections,
-                      durationSeconds: displayDuration,
-                      progressSeconds: displayPosition,
-                      width: constraints.maxWidth,
-                      textDirection: Directionality.of(context),
-                      labelColor: Theme.of(
-                        context,
-                      ).colorScheme.onSurfaceVariant,
-                      sliderTheme: sliderTheme,
-                      textScaler: MediaQuery.textScalerOf(context),
-                      l10n: l10n,
+                  ),
+                ),
+              ),
+            ],
+          );
+          return times;
+        },
+      ),
+    );
+    if (trailingAction == null) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [timeline, times],
+      );
+    }
+    return Row(
+      key: const ValueKey('player-mobile-timeline'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final wideMarkers =
+                  constraints.maxWidth >= 560 && displaySections.isNotEmpty;
+              final timelineHeight = wideMarkers ? 64.0 : 48.0;
+              final labelPainter = TextPainter(
+                text: TextSpan(
+                  text: formatDuration(displayDuration),
+                  style: DefaultTextStyle.of(context).style,
+                ),
+                textDirection: Directionality.of(context),
+                textScaler: MediaQuery.textScalerOf(context),
+                locale: Localizations.localeOf(context),
+              )..layout();
+              final labelHeight = labelPainter.height.ceilToDouble();
+              labelPainter.dispose();
+              // The slider keeps its full 48 dp touch target. Reuse only its
+              // blank lower tail for the labels, leaving thumb/text clearance.
+              final timesTop = timelineHeight - 8;
+              return SizedBox(
+                height: timesTop + labelHeight,
+                child: Stack(
+                  children: [
+                    Positioned(top: 0, left: 0, right: 0, child: timeline),
+                    Positioned(
+                      top: timesTop,
+                      left: 0,
+                      right: 0,
+                      child: IgnorePointer(child: times),
                     ),
                   ],
                 ),
@@ -1491,47 +1586,7 @@ class _PlayerScreenState extends State<PlayerScreen>
             },
           ),
         ),
-        Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final times = Row(
-                children: [
-                  Expanded(
-                    child: Align(
-                      alignment: AlignmentDirectional.centerStart,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: AlignmentDirectional.centerStart,
-                        child: Text(formatDuration(displayPosition)),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Align(
-                      alignment: AlignmentDirectional.centerEnd,
-                      child: Semantics(
-                        label: state.readerDurationEstimated
-                            ? l10n.playerEstimatedDuration(
-                                formatDuration(displayDuration),
-                              )
-                            : formatDuration(displayDuration),
-                        child: ExcludeSemantics(
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: AlignmentDirectional.centerEnd,
-                            child: Text(formatDuration(displayDuration)),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              );
-              return times;
-            },
-          ),
-        ),
+        trailingAction,
       ],
     );
   }

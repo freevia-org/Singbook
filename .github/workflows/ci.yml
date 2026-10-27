@@ -331,3 +331,9 @@ jobs:
           flutter test integration_test/singbook_journey_device_test.dart
           -d windows --dart-define=SINGBOOK_SKIP_SCREENSHOTS=true
           --reporter=expanded
+
+      - name: Verify repeated native Windows fullscreen transitions
+        run: >-
+          flutter test integration_test/player_fullscreen_device_test.dart
+          -d windows --dart-define=SINGBOOK_SKIP_SCREENSHOTS=true
+          --reporter=expanded

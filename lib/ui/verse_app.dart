@@ -375,6 +375,7 @@ class _VerseAppShellState extends State<VerseAppShell>
   Timer? _exitBackTimer;
   bool _exitBackArmed = false;
   bool _playerFullScreen = false;
+  bool _playerSystemBarsSuspended = false;
   final _playerSystemBars = PlayerFullScreen();
   VerseUiController? _fullScreenController;
   Future<AppExitResponse>? _exitRequest;
@@ -413,14 +414,22 @@ class _VerseAppShellState extends State<VerseAppShell>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // Cocoa fullscreen changes temporarily deactivate the app. Native window
-    // state persists across focus changes; replaying it here causes a loop.
-    if (kIsWeb || defaultTargetPlatform != TargetPlatform.macOS) {
-      _playerSystemBars.setEnabled(
-        _playerFullScreen &&
-            ((!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) ||
-                state == AppLifecycleState.resumed),
-      );
+    // Android immersive changes and desktop fullscreen transitions can change
+    // focus. Their native runners own suspension/restoration; replaying the
+    // requested state from Flutter's inactive/resumed notifications can feed
+    // the same transition back into itself.
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) {
+      if (state == AppLifecycleState.resumed && _playerSystemBarsSuspended) {
+        _playerSystemBarsSuspended = false;
+        _playerSystemBars.setEnabled(_playerFullScreen);
+      } else if ((state == AppLifecycleState.hidden ||
+              state == AppLifecycleState.paused ||
+              state == AppLifecycleState.detached) &&
+          _playerFullScreen &&
+          !_playerSystemBarsSuspended) {
+        _playerSystemBarsSuspended = true;
+        _playerSystemBars.setEnabled(false);
+      }
     }
     if (state == AppLifecycleState.resumed) widget.controller.onAppResumed();
   }
