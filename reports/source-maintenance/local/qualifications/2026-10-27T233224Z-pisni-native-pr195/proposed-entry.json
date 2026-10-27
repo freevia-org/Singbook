@@ -1,0 +1,79 @@
+{
+  "id": "pisni",
+  "name": "Українські пісні",
+  "adapter": "builtin",
+  "status": "active",
+  "revision": 1,
+  "enabledByDefault": false,
+  "accessMode": "publicPage",
+  "capabilities": [
+    "catalog",
+    "lyrics",
+    "chords",
+    "metadata"
+  ],
+  "website": "https://www.pisni.org.ua/",
+  "hosts": [
+    "www.pisni.org.ua"
+  ],
+  "probes": [
+    {
+      "id": "3424",
+      "query": "Червона рута",
+      "expectedTitle": "Червона рута",
+      "candidate": {
+        "providerId": "pisni",
+        "id": "3424",
+        "title": "Червона рута",
+        "artist": "",
+        "url": "https://www.pisni.org.ua/songs/3424.html",
+        "metadata": {
+          "identityScope": "arrangement"
+        }
+      },
+      "requiredFields": [
+        "body",
+        "chords",
+        "metadata"
+      ],
+      "requiredMetadataFields": [
+        "identityScope",
+        "language",
+        "credits",
+        "performers",
+        "sourceChordNotation",
+        "notationEvidenceUrl"
+      ]
+    },
+    {
+      "id": "8878",
+      "query": "Ой у лузі",
+      "expectedTitle": "Ой у лузі",
+      "candidate": {
+        "providerId": "pisni",
+        "id": "8878",
+        "title": "Ой у лузі",
+        "artist": "",
+        "url": "https://www.pisni.org.ua/songs/8878.html",
+        "metadata": {
+          "identityScope": "arrangement"
+        }
+      },
+      "requiredFields": [
+        "body",
+        "chords",
+        "metadata"
+      ],
+      "requiredMetadataFields": [
+        "identityScope",
+        "language",
+        "credits",
+        "performers",
+        "sourceChordNotation",
+        "notationEvidenceUrl"
+      ]
+    }
+  ],
+  "attribution": "Українські пісні; source-specific credits and unknown per-work rights retained",
+  "changeReason": "Private candidate only; requires a compatible compiled native registry and selected future channel. Not a published catalog."
+}
