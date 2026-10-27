@@ -2,9 +2,11 @@
 
 **Website:** [freevia.org/singbook](https://freevia.org/singbook/) · **Privacy policy:** [freevia.org/singbook/privacy](https://freevia.org/singbook/privacy/) · **Support and feedback:** [freevia.org/singbook/support](https://freevia.org/singbook/support/)
 
-**Stores:** [Google Play for Android](https://play.google.com/store/apps/details?id=org.freevia.singbook) (0.2.23 was the last verified public version; 0.2.24 is in review) · [Microsoft Store for Windows](https://apps.microsoft.com/detail/9P2J824JLQGZ) (0.2.24 in certification; public version not exposed).
+**Stores:** [Google Play for Android](https://play.google.com/store/apps/details?id=org.freevia.singbook) (0.2.23 is the last verified public version; 0.2.26+40 is active internally and submitted to production, awaiting Google review) · [Microsoft Store for Windows](https://apps.microsoft.com/detail/9P2J824JLQGZ) (last recorded status: 0.2.24 in certification; public version not exposed).
 
-**GitHub 0.2.24 (build 38):** [Android APK](https://github.com/freevia-org/Singbook/releases/download/v0.2.24/singbook-0.2.24%2B38-release.apk) · [Portable Windows x64 ZIP](https://github.com/freevia-org/Singbook/releases/download/v0.2.24/singbook-0.2.24%2B38-windows-x64-release-f11a5341-20261025T071344096Z.zip) · [macOS universal ZIP](https://github.com/freevia-org/Singbook/releases/download/v0.2.24/Singbook-0.2.24-macos-universal.zip) · [Release notes and checksums](https://github.com/freevia-org/Singbook/releases/tag/v0.2.24).
+**GitHub Android 0.2.26 (build 40):** [Signed APK](https://github.com/freevia-org/Singbook/releases/download/v0.2.26/singbook-0.2.26%2B40-release.apk) · [Release notes and checksums](https://github.com/freevia-org/Singbook/releases/tag/v0.2.26).
+
+**GitHub desktop 0.2.24 (build 38):** [Portable Windows x64 ZIP](https://github.com/freevia-org/Singbook/releases/download/v0.2.24/singbook-0.2.24%2B38-windows-x64-release-f11a5341-20261025T071344096Z.zip) · [macOS universal ZIP](https://github.com/freevia-org/Singbook/releases/download/v0.2.24/Singbook-0.2.24-macos-universal.zip) · [Release notes](https://github.com/freevia-org/Singbook/releases/tag/v0.2.24).
 
 The [website](https://freevia.org/singbook/) shows real Android and Windows app screenshots using fictional sample-song content. iOS and macOS 0.2.24 are submitted and waiting for Apple review; App Store availability is not confirmed.
 
