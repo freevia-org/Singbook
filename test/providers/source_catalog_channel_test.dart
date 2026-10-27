@@ -9,11 +9,15 @@ import 'package:singbook/providers/source_catalog.dart';
 import 'package:singbook/providers/source_catalog_client.dart';
 import 'package:singbook/providers/transport.dart';
 import 'package:singbook/providers/configurable_provider.dart';
+import 'package:singbook/providers/provider.dart' show ContextualLyricsSearch;
+import 'package:singbook/domain/models.dart' show SongCandidate, MatchKind;
 
 const _releasedEndpoint =
     'https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog.json';
 const _channel2Endpoint =
     'https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog-v2.json';
+const _channel3Endpoint =
+    'https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog-v3.json';
 http.Response _catalogResponse(String text) => http.Response(
   text,
   200,
@@ -25,6 +29,7 @@ SourceCatalogRuntime _runtime(
   ProviderTransport transport, {
   bool released = false,
   bool channel2 = false,
+  bool channel3 = false,
 }) => SourceCatalogRuntime(
   builtins:
       [
@@ -33,10 +38,19 @@ SourceCatalogRuntime _runtime(
           ]
           .where(
             (p) =>
-                (!released && !channel2) ||
-                !(channel2
-                        ? {'amll'}
-                        : {'lrcred', 'roswellmusicjam', 'karamoe', 'amll'})
+                !(released
+                        ? {
+                            'lrcred',
+                            'roswellmusicjam',
+                            'karamoe',
+                            'amll',
+                            'vocadb',
+                          }
+                        : channel2
+                        ? {'amll', 'vocadb'}
+                        : channel3
+                        ? {'vocadb'}
+                        : <String>{})
                     .contains(p.definition.id),
           )
           .toList(),
@@ -63,6 +77,167 @@ String _next(String text, {bool unknown = false}) {
 }
 
 void main() {
+  test(
+    'channel4 preserves channel3 entries and routes ordinary foreign selection through VocaDB context',
+    () async {
+      final bundle = _bundle('-v4');
+      final seen = <Uri>[];
+      final row = {
+        'id': 123,
+        'name': 'Invented Song',
+        'artistString': 'Invented Producer feat. Invented Voice',
+        'songType': 'Original',
+        'names': [
+          {'value': 'Invented Song', 'language': 'English'},
+        ],
+        'artists': [
+          {'name': 'Invented Producer', 'roles': 'Composer, Lyricist'},
+        ],
+        'cultureCodes': ['en'],
+        'minMilliBpm': 100000,
+        'maxMilliBpm': 100000,
+        'lyrics': [
+          {
+            'id': 45,
+            'translationType': 'Original',
+            'value': 'Invented lyric line\nA second invented lyric line',
+          },
+        ],
+      };
+      final transport = ProviderTransport(
+        client: MockClient((r) async {
+          seen.add(r.url);
+          expect(r.url.host, 'vocadb.net');
+          if (r.url.path == '/api/songs') {
+            expect(r.url.queryParameters['query'], 'Invented Song');
+            return _catalogResponse(
+              jsonEncode({
+                'items': [row],
+              }),
+            );
+          }
+          expect(r.url.path, '/api/songs/123');
+          return _catalogResponse(jsonEncode(row));
+        }),
+        hostInterval: Duration.zero,
+        maxRetries: 0,
+      );
+      try {
+        final runtime = _runtime(transport);
+        final client = SourceCatalogClient(
+          runtime: runtime,
+          transport: transport,
+          loadBundled: () async => bundle,
+          readCache: () async => null,
+          writeCache: (_) async {},
+        );
+        await client.initialize();
+        expect(
+          SourceCatalogClient.bundledAsset,
+          'config/source-catalog-v4.json',
+        );
+        expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v4');
+        expect(client.endpoint.path, endsWith('/source-catalog-v4.json'));
+        expect(runtime.catalog!.sources, hasLength(24));
+        for (final previous in SourceCatalog.parse(_bundle('-v3')).sources) {
+          expect(
+            runtime.catalog!.sources
+                .singleWhere((s) => s.id == previous.id)
+                .toJson(),
+            previous.toJson(),
+          );
+        }
+        final source = runtime.catalog!.sources.singleWhere(
+          (s) => s.id == 'vocadb',
+        );
+        expect(source.status, 'active');
+        expect(source.enabledByDefault, true);
+        final provider = runtime.providers.singleWhere(
+          (p) => p.definition.id == 'vocadb',
+        );
+        expect(provider, isA<ContextualLyricsSearch>());
+        const reference = SongCandidate(
+          providerId: 'reference',
+          id: 'canonical',
+          title: 'Invented Song',
+          artist: 'Invented Producer feat. Invented Voice',
+        );
+        final result = await findMatchingSource(
+          provider,
+          reference,
+          maxAttempts: 1,
+        );
+        expect(result.matchKind, MatchKind.sameSong);
+        expect(result.candidate.recordingIds, isEmpty);
+        expect(result.body, contains('Invented lyric line'));
+        expect(result.metadata['tempo'], 100);
+        expect(result.extra['vocadb']['lyrics'], row['lyrics']);
+        expect(seen, hasLength(2));
+      } finally {
+        await transport.close();
+      }
+    },
+  );
+
+  test(
+    'channel1/2/3 runtimes reject even disabled VocaDB before changing a snapshot',
+    () async {
+      final entry =
+          (jsonDecode(_bundle('-v4'))['sources'] as List)
+              .cast<Map<String, dynamic>>()
+              .singleWhere((s) => s['id'] == 'vocadb')
+            ..['status'] = 'disabled';
+      for (final channel in ['', '-v2', '-v3']) {
+        final bundle = _bundle(channel);
+        final next = jsonDecode(bundle) as Map<String, dynamic>;
+        next['revision'] = (next['revision'] as int) + 1;
+        (next['sources'] as List).add(entry);
+        var cache = bundle;
+        final transport = ProviderTransport(
+          client: MockClient((_) async => _catalogResponse(jsonEncode(next))),
+          maxRetries: 0,
+          hostInterval: Duration.zero,
+        );
+        try {
+          final runtime = _runtime(
+            transport,
+            released: channel.isEmpty,
+            channel2: channel == '-v2',
+            channel3: channel == '-v3',
+          );
+          final client = SourceCatalogClient(
+            runtime: runtime,
+            transport: transport,
+            loadBundled: () async => bundle,
+            readCache: () async => cache,
+            writeCache: (text) async {
+              cache = text;
+            },
+            endpoint: Uri.parse(
+              channel.isEmpty
+                  ? _releasedEndpoint
+                  : channel == '-v2'
+                  ? _channel2Endpoint
+                  : _channel3Endpoint,
+            ),
+          );
+          await client.initialize();
+          final ids = runtime.providers.map((p) => p.definition.id).toList();
+          expect(await client.refresh(), false);
+          expect(cache, bundle);
+          expect(runtime.catalog!.revision, jsonDecode(bundle)['revision']);
+          expect(runtime.providers.map((p) => p.definition.id), ids);
+          expect(
+            runtime.providers.any((p) => p.definition.id == 'vocadb'),
+            false,
+          );
+        } finally {
+          await transport.close();
+        }
+      }
+    },
+  );
+
   test(
     'released roster keeps v1 and rejects channel2 without poisoning last good',
     () async {
@@ -289,11 +464,7 @@ void main() {
       try {
         await client.initialize();
         final previousEntries = SourceCatalog.parse(_bundle('-v2')).sources;
-        expect(
-          SourceCatalogClient.bundledAsset,
-          'config/source-catalog-v3.json',
-        );
-        expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v3');
+        expect(SourceCatalogClient.channel3CacheKey, 'sourceCatalog:v3');
         expect(runtime.catalog!.sources, hasLength(23));
         for (final previous in previousEntries) {
           expect(

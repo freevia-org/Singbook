@@ -3,10 +3,11 @@
 `config/source-catalog.json` remains the complete channel-1 source list used by
 released clients through build 38. Keep this file and its URL compatible with
 those clients. `config/source-catalog-v2.json` remains the complete channel-2
-bundle and refresh URL for the compatible build-39 runtime. New code uses
-`config/source-catalog-v3.json`, which adds the native AMLL adapter, as its
-complete channel-3 bundle and refresh URL on public GitHub `main`. These are
-distribution channels; all three files use envelope/extraction schema version 1.
+bundle and refresh URL for the compatible build-39 runtime.
+`config/source-catalog-v3.json` is the complete channel-3 bundle for the AMLL
+runtime. `config/source-catalog-v4.json` adds VocaDB and is the complete
+channel-4 bundle on public GitHub `main`. These are distribution channels;
+all four files use envelope/extraction schema version 1.
 `SINGBOOK_SOURCE_CATALOG_URL` can override
 the HTTPS publisher URL at build time. Settings → Sources → Refresh source list
 performs the same refresh manually. A new app build containing this implementation
@@ -19,7 +20,9 @@ and durable snapshot. Bundle and cache loading do not depend on a network call.
 No provider update changes saved songs, ChordPro provenance or user preferences.
 Catalog storage is separate from the user's synced application settings.
 Channel 3 reads/writes `sourceCatalog:v3` and never overwrites either
-`sourceCatalog:v2` or `sourceCatalog`, or provider preferences. Without a valid
+`sourceCatalog:v2` or `sourceCatalog`, or provider preferences. Channel 4
+reads/writes `sourceCatalog:v4` and preserves the channel-3, channel-2 and
+legacy cache streams as well as provider preferences. Without a valid
 current-channel cache, offline startup validates the closest older cached channel
 against its own bundle and the current compiled adapters. It carries newer
 compatible source revisions, added declarative sources, disabled/retired entries
@@ -35,16 +38,20 @@ downloads, invalid responses and failed cache writes retain the fallback.
 Subsequent offline starts use the valid current-channel cache. Independently
 higher old envelope/source revisions cannot lock out the new channel. A pending
 search is cancelled if the transition changes effective configuration, even if
-the envelope revision is unchanged. Channel 2 retains
-its existing cache and URL. Unknown native providers cause a refresh to fail
-before any live/cache mutation. Never add an unknown native ID to an older
-channel, even disabled. In particular AMLL is absent from both older channels.
+the envelope revision is unchanged. Older channels retain their existing cache
+and URL. Unknown native providers cause a refresh to fail before any live/cache
+mutation. Never add an unknown native ID to an older channel, even disabled.
+AMLL is absent from channels 1/2; VocaDB is absent from channels 1/2/3.
 
 Channel 2 enables lrc.red, Roswell Music Jam and kara.moe for compatible app
 builds. Channel 3 inherits all 22 channel-2 entries without altering them and
 adds AMLL enabled by default for the new compiled runtime. Existing saved
-opt-outs win. Channel-1 and channel-2 apps keep their source lists, URLs and
-cache streams. Frozen release-39 artifacts are not rebuilt by this change. Native
+opt-outs win. Channel 4 preserves all 23 channel-3 entries and adds VocaDB
+enabled by default for its compiled runtime. Contextual title lookup,
+complete lyric-variant and artist-role facts, and context-aware detail reuse
+use the ordinary provider service. Existing saved opt-outs still win. Older
+apps keep their source lists, URLs and cache streams. Frozen release artifacts
+are not rebuilt by this change. Native
 qualification covers real search/import, cached readers, artwork decoding and
 exact source-payload retention across SQLite reopening and ChordPro round trips;
 it does not establish independent lyric transcription or musical accuracy.
