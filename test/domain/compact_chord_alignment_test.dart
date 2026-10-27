@@ -147,6 +147,31 @@ void main() {
   });
 
   test(
+    'does not spread one partial phrase across different lyric contexts',
+    () {
+      final target = [
+        const ArrangementLine('Amber lanterns glow above the river', []),
+        const ArrangementLine('Amber lanterns glow beyond the station', []),
+      ];
+
+      expect(compactLineChords(target, '[C]Amber lanterns glow'), isEmpty);
+    },
+  );
+
+  test('allows one partial phrase across repeated exact lyric contexts', () {
+    const lyric = 'Amber lanterns glow above the river';
+    final target = [
+      const ArrangementLine(lyric, []),
+      const ArrangementLine(lyric, []),
+    ];
+    final placed = compactLineChords(target, '[C]Amber lanterns glow');
+
+    expect(placed.keys, {0, 1});
+    expect(placed[0]!.single.chord, 'C');
+    expect(placed[1]!.single.chord, 'C');
+  });
+
+  test(
     'ignores reordered or unrelated lyrics, directives, and chord-only lines',
     () {
       final target = [

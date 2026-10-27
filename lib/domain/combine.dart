@@ -216,8 +216,9 @@ bool _sameArrangedSong(SongCandidate a, SongCandidate b) {
   final songs = publishedNameVariants(
     a.title,
   ).map(title).where((s) => s.isNotEmpty).toSet();
-  if (!publishedNameVariants(b.title).map(title).any(songs.contains))
+  if (!publishedNameVariants(b.title).map(title).any(songs.contains)) {
     return false;
+  }
   final artistA = reviewedChartArtistCredit(a)?.canonicalName ?? a.artist;
   final artistB = reviewedChartArtistCredit(b)?.canonicalName ?? b.artist;
   return artistCreditsMatch(
@@ -5218,8 +5219,9 @@ EvidenceRanking _rankSourceCombination(
     final claim = claims[i];
     if (claim.field != 'metadata.key' ||
         claim.value is! String ||
-        !claim.contextCompatible)
+        !claim.contextCompatible) {
       continue;
+    }
     final source = byId[claim.sourceId];
     if (source == null || !source.hasChords) continue;
     final capo = _capoOf(_setupValue(source, selected, 'capo'));
@@ -5237,7 +5239,7 @@ EvidenceRanking _rankSourceCombination(
         harmonyFit: fit(source, claim.field, sounding),
         qualitySignals: {
           ...claim.qualitySignals,
-          'capoShapeInterpretation': shapeSupport ? 4 : 0,
+          'capoShapeInterpretation': shapeSupport ? 4 : -4,
         },
       ),
     );

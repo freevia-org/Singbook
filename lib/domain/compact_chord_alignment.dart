@@ -138,62 +138,90 @@ Map<int, List<ChordAnchor>> compactLineChords(
     donorRows.add((line: line, compact: compact));
   }
 
+  final targetRows = <({int index, _CompactText compact})>[];
+  for (var index = 0; index < target.length; index++) {
+    final line = target[index];
+    if (line.directive || line.text.isEmpty) continue;
+    final compact = _compact(line.text);
+    if (compact.starts.length <= _maxLineLetters) {
+      targetRows.add((index: index, compact: compact));
+    }
+  }
+
   final placements = <int, Map<String, Map<String, List<ChordAnchor>>>>{};
   var comparisons = 0;
   var occurrences = 0;
   var anchorOperations = 0;
-  for (var targetIndex = 0; targetIndex < target.length; targetIndex++) {
-    final line = target[targetIndex];
-    if (line.directive || line.text.isEmpty) continue;
-    final compactTarget = _compact(line.text);
-    if (compactTarget.starts.length > _maxLineLetters) continue;
-    for (final donor in donorRows) {
+  for (final donor in donorRows) {
+    final matches = <({int targetIndex, _CompactText target, int letter})>[];
+    final contexts = <String>{};
+    for (final targetRow in targetRows) {
       comparisons++;
       if (comparisons > _maxLineComparisons) return const {};
-      var matchAt = compactTarget.value.indexOf(donor.compact.value);
+      var matchAt = targetRow.compact.value.indexOf(donor.compact.value);
       while (matchAt >= 0) {
         occurrences++;
         if (occurrences > _maxOccurrences) return const {};
         // Every compact character is a Unicode letter, so the UTF-16 start
         // maps back to its corresponding source letter index.
-        final matchLetter = compactTarget.letterIndexAt[matchAt];
+        final matchLetter = targetRow.compact.letterIndexAt[matchAt];
         if (matchLetter == null) {
-          matchAt = compactTarget.value.indexOf(
+          matchAt = targetRow.compact.value.indexOf(
             donor.compact.value,
             matchAt + 1,
           );
           continue;
         }
-        final mapped = <ChordAnchor>[];
-        for (final chord in donor.line.chords) {
-          anchorOperations++;
-          if (anchorOperations > _maxAnchorOperations) return const {};
-          final lettersBefore =
-              donor.compact.graphemeLetterCounts[chord.offset
-                  .clamp(0, donor.compact.graphemeLetterCounts.length - 1)
-                  .toInt()];
-          final int targetOffset;
-          if (lettersBefore >= donor.compact.starts.length) {
-            targetOffset =
-                compactTarget.ends[matchLetter + donor.compact.ends.length - 1];
-          } else {
-            targetOffset = compactTarget.starts[matchLetter + lettersBefore];
-          }
-          mapped.add(ChordAnchor(targetOffset, chord.chord));
-        }
-        mapped.sort((a, b) {
-          final byOffset = a.offset.compareTo(b.offset);
-          return byOffset != 0 ? byOffset : a.chord.compareTo(b.chord);
-        });
-        final signature = _placementSignature(mapped);
-        final spanKey =
-            '$matchLetter:${matchLetter + donor.compact.ends.length}';
-        placements
-                .putIfAbsent(targetIndex, () => {})
-                .putIfAbsent(spanKey, () => {})[signature] =
-            mapped;
-        matchAt = compactTarget.value.indexOf(donor.compact.value, matchAt + 1);
+        final end = matchAt + donor.compact.value.length;
+        contexts.add(
+          '${targetRow.compact.value.substring(0, matchAt)}\u0000'
+          '${targetRow.compact.value.substring(end)}',
+        );
+        matches.add((
+          targetIndex: targetRow.index,
+          target: targetRow.compact,
+          letter: matchLetter,
+        ));
+        matchAt = targetRow.compact.value.indexOf(
+          donor.compact.value,
+          matchAt + 1,
+        );
       }
+    }
+
+    // A short exact lyric fragment cannot identify which of several different
+    // surrounding lines owns its chords. Identical contexts remain usable,
+    // which supports repeated choruses without spreading across unrelated lines.
+    if (contexts.length > 1) continue;
+    for (final match in matches) {
+      final mapped = <ChordAnchor>[];
+      for (final chord in donor.line.chords) {
+        anchorOperations++;
+        if (anchorOperations > _maxAnchorOperations) return const {};
+        final lettersBefore =
+            donor.compact.graphemeLetterCounts[chord.offset
+                .clamp(0, donor.compact.graphemeLetterCounts.length - 1)
+                .toInt()];
+        final int targetOffset;
+        if (lettersBefore >= donor.compact.starts.length) {
+          targetOffset =
+              match.target.ends[match.letter + donor.compact.ends.length - 1];
+        } else {
+          targetOffset = match.target.starts[match.letter + lettersBefore];
+        }
+        mapped.add(ChordAnchor(targetOffset, chord.chord));
+      }
+      mapped.sort((a, b) {
+        final byOffset = a.offset.compareTo(b.offset);
+        return byOffset != 0 ? byOffset : a.chord.compareTo(b.chord);
+      });
+      final signature = _placementSignature(mapped);
+      final spanKey =
+          '${match.letter}:${match.letter + donor.compact.ends.length}';
+      placements
+              .putIfAbsent(match.targetIndex, () => {})
+              .putIfAbsent(spanKey, () => {})[signature] =
+          mapped;
     }
   }
 
