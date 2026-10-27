@@ -1309,6 +1309,15 @@ bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
       final baseValue = song.metadata[field];
       final donorValue =
           source.metadata[field] ?? source.candidate.metadata[field];
+      // An absent capo claim means the displayed chart defaults to zero.
+      // Treat an explicit capo 0 claim as compatible after its chord anchors
+      // have been corroborated against that unchanged chart.
+      if (field == 'capo' &&
+          !_hasMetadata(baseValue) &&
+          _hasMetadata(donorValue) &&
+          _capoOf(donorValue) == 0) {
+        continue;
+      }
       String normalize(Object? value) {
         // ChordPro headers serialize list tuning as "[E, A, ...]". Compare
         // those saved headers with the provider's equivalent string array.
@@ -2685,6 +2694,8 @@ _overlayChords(
         continue;
       }
       var agrees = false, contradicts = false;
+      var agreeingAnchors = 0;
+      final agreeingLines = <int>{};
       for (final entry in candidate.chords.entries) {
         final previous = chartChords[entry.key];
         if (previous == null) continue;
@@ -2695,6 +2706,8 @@ _overlayChords(
             contradicts = true;
           } else {
             agrees = true;
+            agreeingAnchors++;
+            agreeingLines.add(entry.key);
           }
         }
       }
@@ -2719,6 +2732,35 @@ _overlayChords(
           _keyConsensusRank(candidate.source) > 0;
       if (contradicts || (!agrees && !explicitSetup && !checkedSameKey)) {
         continue;
+      }
+      // A same-song chart without a compatible explicit arrangement setup or
+      // affirmative key consensus may confirm overlapping anchors, but a
+      // single agreement cannot validate its otherwise unmatched changes.
+      // Keep only exact agreements in that case; in particular, do not let a
+      // repeated-line alignment use one matching chorus chord to authorize
+      // new chords elsewhere in the song.
+      if (candidate.confidence < 2 &&
+          !explicitSetup &&
+          !checkedSameKey &&
+          (agreeingAnchors < 3 || agreeingLines.length < 2)) {
+        candidate = (
+          source: candidate.source,
+          chords: {
+            for (final entry in candidate.chords.entries)
+              if (chartChords[entry.key] case final previous?)
+                entry.key: [
+                  for (final anchor in entry.value)
+                    if (previous.any(
+                      (known) =>
+                          known.offset == anchor.offset &&
+                          known.chord == anchor.chord,
+                    ))
+                      anchor,
+                ],
+          },
+          coverage: candidate.coverage,
+          confidence: candidate.confidence,
+        );
       }
     }
     var added = false;
@@ -3090,10 +3132,62 @@ SongDocument combineSources(
     );
   }
   final best = preferred.isEmpty ? rankedEligible.first : preferred.first;
+  final chordOverlaySources = <SourceResult>[
+    ...accepted.where((source) => source.id != best.id),
+  ];
+  // A chart rejected only for incomplete/different lyric coverage can still
+  // supply chords when the selected lyrics contain multiple exact anchored
+  // phrases. It never becomes a lyric, section, or general-metadata donor.
+  // Limit this path to a lyric-only selected base with no accepted chord
+  // chart, so it cannot compete with a qualified arrangement.
+  if (!best.hasChords && !accepted.any((source) => source.hasChords)) {
+    final plain = [
+      for (final line in parseArrangement(best.body))
+        ArrangementLine(line.text, const [], directive: line.directive),
+    ];
+    for (final source in results) {
+      if (source.matchKind != MatchKind.rejected ||
+          source.matchReason != 'incomplete_or_different_lyrics' ||
+          !source.hasChords ||
+          source.hasPendingMatchCheck ||
+          source.extra['requiresLyricsAgreement'] == true ||
+          source.extra['requiresRecordingLyricsAgreement'] == true ||
+          !_sameSong(source.candidate, selected) ||
+          _version(source.candidate.title) != _version(selected.title) ||
+          !explicitEditionsCompatible(
+            selected,
+            source.candidate,
+            metadata: source.metadata,
+            extra: source.extra,
+          )) {
+        continue;
+      }
+      if (shortRecordingReferences.isNotEmpty &&
+          !shortRecordingReferences.any(
+            (reference) => shortRecordingLyricAgreement(
+              source.body,
+              reference.body,
+            ),
+          )) {
+        continue;
+      }
+      final anchored = _phraseChords(plain, _keyCorrectedBody(source));
+      final matchedLines = anchored.entries
+          .where((entry) => entry.value.isNotEmpty)
+          .length;
+      final matchedAnchors = anchored.values.fold<int>(
+        0,
+        (total, chords) => total + chords.length,
+      );
+      if (matchedLines >= 2 && matchedAnchors >= 3) {
+        chordOverlaySources.add(source);
+      }
+    }
+  }
   final merged = preferredSourceId == null
       ? _overlayChords(
           _keyCorrectedBody(best),
-          accepted.where((source) => source.id != best.id).toList(),
+          chordOverlaySources,
           selected,
           best,
         )
