@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "kind": "local-android-datasource-qualification",
+  "atUtc": "2026-10-27T08:32:10.452418+00:00",
+  "sourceCommit": "843f87dcd8dc9ef4fa7cee3b19c9560f01b00a4b",
+  "pullRequests": [
+    173,
+    176,
+    177
+  ],
+  "runtime": "Android16 API36 x86_64 16KB emulator-5554",
+  "scope": "Actual UI search, detail extraction, save, stopped-database capture and cold offline reopening of two public canaries in a separate QA package. No production update or store release.",
+  "package": "org.freevia.singbook.qa843f87d",
+  "mode": "debug local QA only",
+  "apkSha256": "6033f8d77fee7e1e49e0a237d7d52580a9666ff37ded636325465e15a912246e",
+  "apkBytes": 102155819,
+  "abis": [
+    "x86_64"
+  ],
+  "catalogRevision": 14,
+  "catalogSources": 23,
+  "bundledCatalogSha256": "b27df30346ba9fd0b0e2db530c42cb621cc2fe9371f50b40c685bc58703ff069",
+  "localNativeOverrides": [
+    "android/app/build.gradle.kts",
+    "android/app/src/main/AndroidManifest.xml",
+    "scripts/build-android.ps1"
+  ],
+  "dartAndAssetsExactSourceCommit": true,
+  "credentialsOrProductionSigningCopied": false,
+  "sourceDefaultEnabledOnFirstLaunch": true,
+  "sourceCapture": "reports/source-maintenance/local/qualifications/2026-10-27T083210Z-amll-android-pr177/sources-amll-default.png",
+  "sourceCaptureSha256": "2b20a50a10dca834221f6826359eaedd8ac5aef6eb32c44a7f4e8118594f2eb8",
+  "uiSearchResults": {
+    "ME!": 13,
+    "Shape of You": 6
+  },
+  "onlyAmllEnabledDuringCanaryRequests": true,
+  "uiSearchDetailSaveBothPassed": true,
+  "offline": {
+    "startedAtUtc": "2026-10-27T08:31:49.441342+00:00",
+    "device": "emulator-5554",
+    "originalNetworkSettings": {
+      "airplane_mode_on": "0",
+      "wifi_on": "1",
+      "mobile_data": "1"
+    },
+    "offlineNetworkSettings": {
+      "airplane_mode_on": "1",
+      "wifi_on": "0",
+      "mobile_data": "0"
+    },
+    "meColdOfflineOpened": true,
+    "shapeColdOfflineOpened": true,
+    "offlineSettingsAtEnd": {
+      "airplane_mode_on": "1",
+      "wifi_on": "0",
+      "mobile_data": "0"
+    },
+    "restoredNetworkSettings": {
+      "airplane_mode_on": "0",
+      "wifi_on": "1",
+      "mobile_data": "1"
+    },
+    "networkRestoredExactly": true,
+    "finishedAtUtc": "2026-10-27T08:32:10.452418+00:00"
+  },
+  "persistence": [
+    {
+      "title": "Shape of You",
+      "artist": "Ed Sheeran",
+      "album": "Pop",
+      "source": "amll",
+      "lyricDocumentId": "638303942317135",
+      "songHash": "1162b8b05ff89588667d84c6edd9186ae6b4aaf0cf2bdd9c78b9d87af51fd6cb",
+      "documentJsonSha256": "2172cd05cc8ac5d7c9ee93c94ca24f2dd179a9f12f0bd44b03be2239aab2ed07",
+      "sourceFactsAndAllAliasesPlatformIdsContributorsExact": true,
+      "originalPayloadExactAgainstLiveNativeCanary": true,
+      "rawTtmlAndAllCuesExact": true,
+      "attributionExact": true,
+      "coldOfflineReopenJsonAndHashExact": true,
+      "noRecordingOrUsableTimingPromotion": true,
+      "cueCount": 826,
+      "rawTtmlSha256": "8014aff22a08d19631c91686478be95f05bc8e80f6a3ca5dcae36171686c5ad5"
+    },
+    {
+      "title": "ME!",
+      "artist": "Brendon Urie & Taylor Swift",
+      "album": "Lover",
+      "source": "amll",
+      "lyricDocumentId": "269710089745311",
+      "songHash": "8cbcb883ac3d2ede7ebc3989b7fb6c87a20d6b54a5ca48de48fb5bb102ef680a",
+      "documentJsonSha256": "eca821fc868f5b366021670273e47576610f2d2854d785bddf8987adadc82ee3",
+      "sourceFactsAndAllAliasesPlatformIdsContributorsExact": true,
+      "originalPayloadExactAgainstLiveNativeCanary": true,
+      "rawTtmlAndAllCuesExact": true,
+      "attributionExact": true,
+      "coldOfflineReopenJsonAndHashExact": true,
+      "noRecordingOrUsableTimingPromotion": true,
+      "cueCount": 651,
+      "rawTtmlSha256": "76d9b59330cdb2fa8c1c5b0b9e8fa87bd705e75bf1b7a16acf436cdd93e46826"
+    }
+  ],
+  "productionRepositoryVerification": "1 focused test passed against coherent stopped-Android SQLite snapshots; both full document JSONs and song hashes identical before/after offline reopening.",
+  "identityLimit": "Arrangement lyric documents; same song does not confirm a particular audio recording. Source timing remains unverified; no audio synchronization test claimed.",
+  "canonicalInstalledApkHashesBeforeAndAfter": [
+    "10648f17e6f0b2c738dbcdf0238114195f18392a07773435244b4158d5ee50be"
+  ],
+  "canonicalInstalledVersion": "0.2.25+39",
+  "canonicalPrivateDataAccessed": false,
+  "physicalDevicesTouched": false,
+  "resourceLease": "Root SDK/build/emulator reservation explicitly released to SB Integration after tests; QA package stopped and retained for review.",
+  "privacy": "Only a provider-settings screenshot is published. No lyric-reader screenshots, raw lyrics/TTML/API bodies, private DBs, credentials, account or user-library data.",
+  "remaining": [
+    "SB Integration review and main publication of173/176/177",
+    "verify served compatible catalog",
+    "cloud qualification",
+    "versioned production build/install rollout"
+  ],
+  "frozenRelease39Changed": false
+}
