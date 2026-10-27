@@ -1,0 +1,10 @@
+{
+  "atUtc": "2026-10-27T23:41:19.652403+00:00",
+  "sourceHead": "befcb0d6f5cbd108a62cf9de6bdf3319308937d4",
+  "path": "lib/providers/extra/pisni.dart",
+  "windowsWorkingFileSha256": "7a350a2a66f8933fa4b1a4a9db86a9eaf8178cab7b026606a17470851aff048e",
+  "repositoryLfBlobSha256": "bfc66bfa13e13d2628fc4fcecfe3fbacf5a99d00ac45c91173f3ae4a69455459",
+  "workingFileVsRepositoryDifference": "CRLF line endings only; normalized file equals exact committed blob.",
+  "liveTestedWindowsSourceSha256": "b0685815e90b8086a9279920d4ca845e9a4e707f14fc86bdb5f9567ee67e7e16",
+  "postLiveSemanticChange": "None; only braces around one conditional return. Original snapshot retained privately and compared exactly after line-ending normalization."
+}
