@@ -518,12 +518,24 @@ bool recordingCompatible(SongCandidate selected, SourceResult result) {
   )) {
     return false;
   }
+  const nonRecordingScopes = {
+    'composition',
+    'work',
+    'artist',
+    'image',
+    'historicalText',
+  };
+  final scopes = [
+    selected.metadata['identityScope'],
+    selected.extra['identityScope'],
+    result.candidate.metadata['identityScope'],
+    result.candidate.extra['identityScope'],
+    result.metadata['identityScope'],
+    result.extra['identityScope'],
+  ];
   if (selected.providerId == 'wikisource' ||
       result.candidate.providerId == 'wikisource' ||
-      selected.metadata['identityScope'] == 'historicalText' ||
-      result.candidate.metadata['identityScope'] == 'historicalText' ||
-      result.metadata['identityScope'] == 'historicalText' ||
-      result.extra['identityScope'] == 'historicalText') {
+      scopes.any((scope) => scope == 'historicalText')) {
     return false;
   }
   if (result.matchKind == MatchKind.rejected ||
@@ -546,18 +558,8 @@ bool recordingCompatible(SongCandidate selected, SourceResult result) {
   // Provider identity can name a composition, work, artist, or image. Only
   // treat identical candidate IDs as recording evidence when that identity
   // is explicitly scoped to a recording (or is a legacy unscoped ID).
-  final selectedScope = selected.metadata['identityScope'];
-  final foundScope = found.metadata['identityScope'];
-  const nonRecordingScopes = {
-    'composition',
-    'work',
-    'artist',
-    'image',
-    'historicalText',
-  };
   if (selected.identity == found.identity &&
-      !nonRecordingScopes.contains(selectedScope) &&
-      !nonRecordingScopes.contains(foundScope)) {
+      !scopes.any(nonRecordingScopes.contains)) {
     return true;
   }
   if (selected.recordingIds.entries.any(
@@ -2194,17 +2196,13 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
               _chordSignature(donors[d].line);
     }
     if (tied) {
-      abstainedLyrics.addAll(
-        List.generate(span, (i) => lyrics[l + i].index),
-      );
+      abstainedLyrics.addAll(List.generate(span, (i) => lyrics[l + i].index));
       continue;
     }
     if (weak((d, l, span)) &&
         (!matched.take(m).any((match) => !weak(match)) ||
             !matched.skip(m + 1).any((match) => !weak(match)))) {
-      abstainedLyrics.addAll(
-        List.generate(span, (i) => lyrics[l + i].index),
-      );
+      abstainedLyrics.addAll(List.generate(span, (i) => lyrics[l + i].index));
       continue;
     }
     place(d, l, span);
