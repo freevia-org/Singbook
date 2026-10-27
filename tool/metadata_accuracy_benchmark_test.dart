@@ -642,13 +642,10 @@ bool _eligibleAgreementSource(Map source, String hashField) =>
 int _capoOf(Object? raw) =>
     raw is num ? raw.toInt() : int.tryParse('$raw') ?? 0;
 
-/// Captures the player's key fallback without retaining song content.
+/// Captures the key shown by the lyric reader without retaining song content.
 ///
-/// This mirrors the replay's no-user-override path in
-/// `AppControllerAdapter._songKey`. `combineSources` may recover a sourced
-/// arrangement key into metadata, so it follows the explicit-key path. After
-/// that, the player tries the current body estimate before the checked estimate
-/// bound to that body's hash.
+/// This mirrors `AppControllerAdapter._buildState`: the stored/source key is
+/// preferred, then the reader can show a clearly labeled chord estimate.
 Map<String, Object?> _playerKeyResolution(SongDocument doc) {
   final checked = jsonMap(doc.extra['chordKeyEstimate']);
   final checkedHash = checked['bodyHash'];
@@ -1491,7 +1488,7 @@ void main() {
           'ambiguous base contributors must not be attributed to one source',
     );
   });
-  test('player key report follows metadata then chord estimate fallbacks', () {
+  test('player reader key report follows metadata then estimate fallbacks', () {
     const clearChart = '''
 [E] [A/E] [C#m] [F#]
 [G#m] [F#] [B] [B/A]
@@ -2649,6 +2646,8 @@ Future<void> _benchmark() async {
             ? 'chartEstimate'
             : null,
         'keyClaimScope': key == null ? null : keyClaimScope,
+        'arrangementKeySetupDiagnostics':
+            arrangementKeySetupDiagnostics(doc),
         'capo': doc.metadata['capo'],
         'chordAlignmentSha256': _chordAlignmentHash(doc),
         'baseLyricsSourceId': doc.extra['selectedSourceId'],

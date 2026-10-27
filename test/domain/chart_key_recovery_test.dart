@@ -90,6 +90,30 @@ void main() {
     },
   );
 
+  test('setup diagnostics report only redacted key-gate facts', () {
+    final donor = _source(
+      'donor',
+      _donorBody,
+      metadata: {'key': 'F#m', 'timeSignature': '3/4'},
+    );
+    final song = _saved(
+      metadata: {
+        'tuning': ['E', 'A', 'D', 'G', 'B', 'E'],
+        'timeSignature': '4/4',
+      },
+      sources: [donor],
+    );
+
+    final diagnostics = arrangementKeySetupDiagnostics(song);
+    expect(diagnostics, hasLength(1));
+    expect(diagnostics.single['basicEligible'], isTrue);
+    expect(diagnostics.single['keyFitsOwnChart'], isTrue);
+    expect(diagnostics.single['setupMismatchFields'], ['timeSignature']);
+    expect(diagnostics.single.keys, isNot(contains('body')));
+    expect(diagnostics.single.keys, isNot(contains('lyrics')));
+    expect(diagnostics.single.keys, isNot(contains('chords')));
+  });
+
   test('lyrics-only source key is usable without selecting its lyrics', () {
     const lyrics = 'Amber lanterns glow\nSilver rain returns';
     final song = _saved(
@@ -260,16 +284,21 @@ void main() {
         metadata: {'key': 'F#m'},
         matchKind: MatchKind.sameSong,
       );
-      final combined = combineSources(
-        _candidate,
-        [selected, groupedChart],
-        preferredSourceId: selected.id,
-      );
+      final combined = combineSources(_candidate, [
+        selected,
+        groupedChart,
+      ], preferredSourceId: selected.id);
 
       expect(combined.metadata['key'], 'F#m');
       expect(combined.body, _body);
       expect(combined.extra['fieldOrigins']['key'], groupedChart.id);
       expect(combined.extra['corroboratedKeySourceIds'], [groupedChart.id]);
+      expect(
+        arrangementKeySetupDiagnostics(
+          _saved(sources: [groupedChart]),
+        ).single['basicEligible'],
+        isTrue,
+      );
     },
   );
 
@@ -306,12 +335,7 @@ void main() {
       matchReason: 'identity_mismatch',
     );
 
-    expect(
-      corroboratedArrangementKey(
-        _saved(sources: [rejected]),
-      ),
-      isNull,
-    );
+    expect(corroboratedArrangementKey(_saved(sources: [rejected])), isNull);
   });
 
   test('explicit saved key always wins', () {
@@ -465,6 +489,65 @@ void main() {
       metadata: {'key': 'F#m', 'capo': 0},
     );
     expect(corroboratedArrangementKey(_saved(sources: [donor]))?.key, 'F#m');
+  });
+
+  test('an omitted tuning matches an explicitly standard guitar chart', () {
+    const standard = ['E', 'A', 'D', 'G', 'B', 'E'];
+    final standardDonor = _source(
+      'standard-donor',
+      _donorBody,
+      metadata: {'key': 'F#m', 'tuning': standard},
+    );
+    expect(
+      corroboratedArrangementKey(_saved(sources: [standardDonor]))?.key,
+      'F#m',
+    );
+
+    final standardSelected = _source(
+      'standard-selected',
+      _body,
+      metadata: {'tuning': standard},
+    );
+    final tuningUnspecifiedDonor = _source(
+      'unspecified-donor',
+      _donorBody,
+      metadata: {'key': 'F#m'},
+    );
+    expect(
+      corroboratedArrangementKey(
+        _saved(
+          metadata: {'tuning': standard},
+          sources: [standardSelected, tuningUnspecifiedDonor],
+        ),
+      )?.key,
+      'F#m',
+    );
+  });
+
+  test('an omitted tuning does not match a nonstandard guitar chart', () {
+    final nonstandardSelected = _source(
+      'nonstandard-selected',
+      _body,
+      metadata: {
+        'tuning': ['D', 'A', 'D', 'G', 'A', 'D'],
+      },
+    );
+    final tuningUnspecifiedDonor = _source(
+      'unspecified-donor',
+      _donorBody,
+      metadata: {'key': 'F#m'},
+    );
+    expect(
+      corroboratedArrangementKey(
+        _saved(
+          metadata: {
+            'tuning': ['D', 'A', 'D', 'G', 'A', 'D'],
+          },
+          sources: [nonstandardSelected, tuningUnspecifiedDonor],
+        ),
+      ),
+      isNull,
+    );
   });
 
   test(
