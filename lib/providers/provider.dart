@@ -13,3 +13,19 @@ abstract interface class LyricsProvider {
     CancellationToken? cancel,
   });
 }
+
+/// Optional native lookup for APIs that accept separate selected-song fields.
+/// The caller still validates every returned identity and recording context.
+abstract interface class ContextualLyricsSearch {
+  /// Cached rows must still satisfy context added by recording enrichment.
+  bool canReuseSearchForSelection(
+    SongCandidate selection,
+    List<SongCandidate> candidates,
+  );
+
+  Future<List<SongCandidate>> searchForSelection(
+    SongCandidate selection, {
+    required String fallbackQuery,
+    CancellationToken? cancel,
+  });
+}

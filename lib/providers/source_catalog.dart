@@ -481,7 +481,8 @@ class SourceCatalogEntry {
 }
 
 /// Exposes the catalog definition while preserving an existing builtin's work.
-class ConfiguredBuiltinProvider implements LyricsProvider {
+class ConfiguredBuiltinProvider
+    implements LyricsProvider, ContextualLyricsSearch {
   ConfiguredBuiltinProvider(this.entry, this.delegate) {
     if (entry.adapter != 'builtin' || entry.id != delegate.definition.id) {
       throw ArgumentError('Builtin entry and delegate ids must match');
@@ -514,6 +515,35 @@ class ConfiguredBuiltinProvider implements LyricsProvider {
     String query, {
     CancellationToken? cancel,
   }) => delegate.search(query, cancel: cancel);
+
+  @override
+  bool canReuseSearchForSelection(
+    SongCandidate selection,
+    List<SongCandidate> candidates,
+  ) {
+    final inner = delegate;
+    return inner is! ContextualLyricsSearch ||
+        (inner as ContextualLyricsSearch).canReuseSearchForSelection(
+          selection,
+          candidates,
+        );
+  }
+
+  @override
+  Future<List<SongCandidate>> searchForSelection(
+    SongCandidate selection, {
+    required String fallbackQuery,
+    CancellationToken? cancel,
+  }) {
+    final inner = delegate;
+    return inner is ContextualLyricsSearch
+        ? (inner as ContextualLyricsSearch).searchForSelection(
+            selection,
+            fallbackQuery: fallbackQuery,
+            cancel: cancel,
+          )
+        : inner.search(fallbackQuery, cancel: cancel);
+  }
 
   @override
   Future<SourceResult> resolve(

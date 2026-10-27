@@ -264,6 +264,21 @@ requests even in a once-daily job. Follow the publisher's
 and [current rate limits](https://www.mediawiki.org/wiki/Wikimedia_APIs/Rate_limits).
 A compliant User-Agent does not remove quotas or replace respecting Retry-After.
 
+SyncLRC's free-text search and its selected-song lookup have different contracts.
+App discovery supplies the separate track, artist, album and duration fields to
+the documented `/lyrics` route. It validates the returned title/artist and keeps
+returned album/duration for the existing recording and edition checks. It never
+copies requested context over a different upstream result. Canonical-ID resolve
+also rechecks the selected title, artist, album and duration: observed search
+rows can share a canonical ID despite differing recording context. Legacy
+carried selections remain readable. Channel-2 canaries cover two canonical
+retrievals and a separate title-only catalog search with exact expected fields;
+canonical-only retrieval does not count as search coverage. A failing search
+probe stays visible even when both direct extraction canaries pass. These native lookup
+changes require a compatible app build; frozen release artifacts are unchanged.
+All SyncLRC routes share a transport floor of 2.1 seconds between attempts,
+including retries, to respect the publisher's documented 30 requests/minute.
+
 Reports include timestamp, source/probe IDs, outcome, missing field names,
 lengths/counts and metadata field names. They contain no full lyrics, raw source
 documents or credentials. The normalized SourceResult JSON is round-tripped to

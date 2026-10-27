@@ -400,13 +400,14 @@ class ProviderTransport {
       throw const ProviderException('network');
     } finally {
       final key = _rateKey(url.host);
-      // MusicBrainz's per-second policy also applies to retries and redirects,
-      // which run inside the transport and bypass the adapter's outer queue.
-      const musicBrainzInterval = Duration(milliseconds: 1100);
-      final interval =
-          key == 'musicbrainz.org' && hostInterval < musicBrainzInterval
-          ? musicBrainzInterval
-          : hostInterval;
+      // Publisher limits include retries and redirects, which bypass an
+      // adapter's outer queue. SyncLRC shares its 30/min limit across routes.
+      final minimum = switch (key) {
+        'musicbrainz.org' => const Duration(milliseconds: 1100),
+        'api.synclrc.dev' => const Duration(milliseconds: 2100),
+        _ => Duration.zero,
+      };
+      final interval = hostInterval < minimum ? minimum : hostInterval;
       _next[key] = DateTime.now().add(interval);
     }
   }
