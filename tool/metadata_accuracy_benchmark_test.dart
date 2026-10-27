@@ -644,8 +644,10 @@ int _capoOf(Object? raw) =>
 
 /// Captures the key shown by the lyric reader without retaining song content.
 ///
-/// This mirrors `AppControllerAdapter._buildState`: the stored/source key is
-/// preferred, then the reader can show a clearly labeled chord estimate.
+/// This mirrors `AppControllerAdapter._songKey` and `_buildState`: explicit
+/// metadata is preferred, then a compatible sourced arrangement key, then the
+/// reader can show a clearly labeled chord-shape estimate. The capo remains a
+/// separate setup value in the player; this records the literal key label.
 Map<String, Object?> _playerKeyResolution(SongDocument doc) {
   final checked = jsonMap(doc.extra['chordKeyEstimate']);
   final checkedHash = checked['bodyHash'];
@@ -657,6 +659,15 @@ Map<String, Object?> _playerKeyResolution(SongDocument doc) {
     return {
       'key': explicit,
       'source': 'explicitMetadata',
+      'checkedEstimateBodyHashMatches': checkedBodyHashMatches,
+    };
+  }
+
+  final sourced = sourcedArrangementKey(doc);
+  if (sourced != null) {
+    return {
+      'key': sourced.key,
+      'source': 'sourcedArrangementKey',
       'checkedEstimateBodyHashMatches': checkedBodyHashMatches,
     };
   }
@@ -1520,6 +1531,47 @@ void main() {
     expect(_playerKeyResolution(inferred), {
       'key': 'E',
       'source': 'rawChordEstimate',
+      'checkedEstimateBodyHashMatches': null,
+    });
+  });
+
+  test('player key report includes a corroborated sourced arrangement key', () {
+    const selected = SongCandidate(
+      providerId: 'catalog',
+      id: 'sourced-key',
+      title: 'Fixture',
+      artist: 'Fixture',
+    );
+    const chart = '''
+[E]Amber lanterns [A/E]glow tonight
+[C#m]Silver rain [F#]returns in spring
+[G#m]Morning [B]light is on the water
+[D/F#]Evening [E]brings the song
+''';
+    final song = SongDocument(
+      id: 'sourced-key',
+      title: selected.title,
+      artist: selected.artist,
+      body: chart,
+      sources: [
+        SourceResult(
+          candidate: const SongCandidate(
+            providerId: 'chart',
+            id: 'fixture-chart',
+            title: 'Fixture',
+            artist: 'Fixture',
+          ),
+          body: chart,
+          metadata: const {'key': 'E'},
+          matchKind: MatchKind.sameSong,
+        ),
+      ],
+      selectedRecording: selected,
+    );
+
+    expect(_playerKeyResolution(song), {
+      'key': 'E',
+      'source': 'sourcedArrangementKey',
       'checkedEstimateBodyHashMatches': null,
     });
   });
