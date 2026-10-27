@@ -26,11 +26,12 @@ class SourceCatalogClient {
   static const defaultEndpoint = String.fromEnvironment(
     'SINGBOOK_SOURCE_CATALOG_URL',
     defaultValue:
-        'https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog-v3.json',
+        'https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog-v4.json',
   );
-  // Distribution channel 3 adds AMLL. Envelope/extraction grammar remains v1.
-  static const bundledAsset = 'config/source-catalog-v3.json';
-  static const cacheKey = 'sourceCatalog:v3';
+  // Channel 4 adds VocaDB; older compiled rosters keep their own streams.
+  static const bundledAsset = 'config/source-catalog-v4.json';
+  static const cacheKey = 'sourceCatalog:v4';
+  static const channel3CacheKey = 'sourceCatalog:v3';
   static const channel2CacheKey = 'sourceCatalog:v2';
   static const legacyCacheKey = 'sourceCatalog';
   static const maxBytes = 512 * 1024;
