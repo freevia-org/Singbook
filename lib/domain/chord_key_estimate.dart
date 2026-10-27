@@ -246,10 +246,9 @@ bool chartSupportsDeclaredTonic(String body, String shapeKey) {
   final chords = [
     for (final line in parseArrangement(body))
       if (!line.directive)
-        for (final anchor in line.chords)
-          ?_Chord.parse(anchor.chord),
+        for (final anchor in line.chords) ?_Chord.parse(anchor.chord),
   ];
-  if (chords.length < 3) return false;
+  if (chords.isEmpty) return false;
   final tonicChords = chords
       .where(
         (chord) =>
@@ -258,7 +257,10 @@ bool chartSupportsDeclaredTonic(String body, String shapeKey) {
                 chord.quality == (minor ? _Quality.minor : _Quality.major)),
       )
       .length;
-  return tonicChords >= 2 && tonicChords / chords.length >= 0.15;
+  // A bridge, instrumental passage, or alternate arrangement may dominate
+  // the chord count. Repeated compatible tonic chords still support an
+  // explicit declaration; their percentage is not a reason to discard it.
+  return tonicChords >= 2 || tonicChords == chords.length;
 }
 
 class _ScoredKey {

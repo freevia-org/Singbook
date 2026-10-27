@@ -49,7 +49,7 @@ void main() {
     );
     final claims = collectSourceEvidence(_candidate(), [
       source,
-    ], compatible: (_, __) => true);
+    ], compatible: (_, _) => true);
 
     expect(
       claims
@@ -80,7 +80,7 @@ void main() {
     final claims = collectSourceEvidence(
       _candidate(),
       [source],
-      compatible: (_, __) => true,
+      compatible: (_, _) => true,
     ).where((claim) => claim.field == 'metadata.credits.composer').toList();
 
     expect(claims.map((claim) => claim.value).toSet(), {
@@ -102,7 +102,7 @@ void main() {
     );
     final claims = collectSourceEvidence(_candidate(), [
       source,
-    ], compatible: (_, __) => false);
+    ], compatible: (_, _) => false);
     final key = claims.singleWhere((claim) => claim.field == 'metadata.key');
 
     expect(key.value, 'F#');
@@ -125,7 +125,7 @@ void main() {
       List<EvidenceClaim> collect(SourceResult source) => collectSourceEvidence(
         _candidate(),
         [source],
-        compatible: (_, __) => true,
+        compatible: (_, _) => true,
       );
       final firstClaims = collect(first);
       final secondClaims = collect(second);
@@ -159,7 +159,7 @@ void main() {
       final claims = collectSourceEvidence(
         _candidate(),
         [linked, unlinked],
-        compatible: (_, __) => true,
+        compatible: (_, _) => true,
         sourceLineage: (source) => source.id == 'one:song' ? 'work-7' : null,
       ).where((claim) => claim.field == 'lyrics').toList();
 
@@ -185,7 +185,7 @@ void main() {
       );
       final claims = collectSourceEvidence(_candidate(), [
         source,
-      ], compatible: (_, __) => true);
+      ], compatible: (_, _) => true);
       expect(
         claims.every((claim) => claim.origin == EvidenceOrigin.provider),
         isTrue,

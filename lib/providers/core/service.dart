@@ -222,6 +222,7 @@ SourceResult _matched(
   JsonMap extra = const {},
 }) => SourceResult(
   candidate: result.candidate,
+  arrangementId: result.arrangementId,
   body: result.body,
   metadata: result.metadata,
   timingTracks: result.timingTracks,
@@ -331,6 +332,8 @@ Future<SourceResult> findMatchingSource(
   JsonMap evidenceSnapshot(SourceResult source) =>
       {...source.toJson()}..remove('discoveryEvidence');
   JsonMap evidenceEnvelope() => {
+    'providerId': provider.definition.id,
+    'capabilities': provider.definition.capabilities.toList()..sort(),
     'searchCandidates': searchEvidence,
     'rejectedPayloads': rejectedEvidence,
     'unresolvedCandidates': unresolvedEvidence,
@@ -436,7 +439,11 @@ Future<SourceResult> findMatchingSource(
         code: 'identity_mismatch',
         candidate: song,
       );
-      final rejected = _matched(result, MatchKind.rejected, 'identity_mismatch');
+      final rejected = _matched(
+        result,
+        MatchKind.rejected,
+        'identity_mismatch',
+      );
       rejectedEvidence.add({
         'reason': 'identity_mismatch',
         'payload': evidenceSnapshot(rejected),
@@ -885,7 +892,9 @@ Future<SourceResult> findMatchingSource(
     }
     if (result == null) {
       if (evidence != null && evidence['state'] == 'attempted') {
-        evidence['state'] = rejectedEvidence.isNotEmpty ? 'rejected' : 'unavailable';
+        evidence['state'] = rejectedEvidence.isNotEmpty
+            ? 'rejected'
+            : 'unavailable';
       }
       continue;
     }
@@ -2062,6 +2071,10 @@ class SourceDiscoveryService {
   }) async {
     bool eligible(String providerId) =>
         providerCancellation[providerId]?.isCancelled != true;
+    JsonMap recordingEvidence(RecordingKey key) => {
+      ...key.toJson(),
+      'selectedIdentity': selection.identity,
+    };
     List<int> acceptedIndexes() => [
       for (var i = 0; i < results.length; i++)
         if (results[i].hasChords &&
@@ -2123,7 +2136,10 @@ class SourceDiscoveryService {
       if (heard != null && heard.providers.every(eligible)) {
         for (final i in indexes) {
           results[i] = results[i].copyWith(
-            extra: {...results[i].extra, 'keyRecording': heard.key.toJson()},
+            extra: {
+              ...results[i].extra,
+              'keyRecording': recordingEvidence(heard.key),
+            },
           );
         }
       }
@@ -2293,7 +2309,9 @@ class SourceDiscoveryService {
           'keyShift': ?(shift == 0 ? null : shift),
           'keyCheckCharts': all.length,
           'keyEstimate': ?keyEstimate,
-          'keyRecording': ?recording?.toJson(),
+          'keyRecording': ?(recording == null
+              ? null
+              : recordingEvidence(recording)),
         },
       );
     }

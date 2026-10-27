@@ -221,6 +221,40 @@ void main() {
     },
   );
 
+  test('positive coverage cannot mask negative reliability evidence', () {
+    final result = rankEvidenceClaims([
+      claim(
+        'lyrics',
+        'coverage heavy',
+        'coverage',
+        'p1',
+        qualitySignals: {
+          'coverage-a': 20,
+          'coverage-b': 20,
+          'coverage-c': 20,
+          'reliability': -20,
+        },
+      ),
+      claim(
+        'lyrics',
+        'coverage only',
+        'complete',
+        'p2',
+        qualitySignals: {'coverage-a': 20, 'coverage-b': 20, 'coverage-c': 20},
+      ),
+    ]);
+
+    final withReliabilityPenalty = result.claims.firstWhere(
+      (item) => item.claim.sourceId == 'coverage',
+    );
+    final coverageOnly = result.claims.firstWhere(
+      (item) => item.claim.sourceId == 'complete',
+    );
+    expect(withReliabilityPenalty.components['qualitySignals'], 12);
+    expect(coverageOnly.components['qualitySignals'], 32);
+    expect(withReliabilityPenalty.score, lessThan(coverageOnly.score));
+  });
+
   test('exact ties retain a deterministic winner and report ambiguity', () {
     final result = rankEvidenceClaims([
       claim('key', 'E', 'z', 'z-provider'),

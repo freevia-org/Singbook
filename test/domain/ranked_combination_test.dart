@@ -69,6 +69,467 @@ List<Map<String, dynamic>> _claims(SongDocument song, String field) => [
 
 void main() {
   test(
+    'archived compound payloads still expose separate arrangement views',
+    () {
+      final earlier = _source(
+        'chart',
+        metadata: {'capo': 1},
+        body:
+            '[Dm]Amber lanterns [F]glow above the quiet water\n'
+            '[C]Silver rain [Bb]returns beneath the evening sky\n'
+            'Version 2\nCapo VI\n'
+            '[Am]Every window [C]keeps a little golden light\n'
+            '[G]Morning carries [F]every dream back home',
+      );
+      final current = _source('chart', body: '');
+      final combined = combineSources(_selected, [
+        _source('lyrics'),
+        earlier,
+        current,
+      ]);
+      final parent = combined.sources.singleWhere(
+        (source) =>
+            source.extra['retainedPayloadView'] == true &&
+            source.extra['hasArrangementViews'] == true,
+      );
+      expect(parent.body, earlier.body);
+      final views = combined.sources.where(
+        (source) => source.extra['parentSourceId'] == parent.id,
+      );
+      expect(
+        views.map((source) => source.metadata['capo']),
+        containsAll([1, 6]),
+      );
+      expect(combined.extra['chordSourceIds'], isNot(contains(parent.id)));
+    },
+  );
+
+  test(
+    'saved same-ID payload alternatives remain actionable on recombination',
+    () {
+      final earlier = _source(
+        'chart',
+        metadata: {'key': 'Em'},
+        body:
+            '[Em]Amber lanterns [C]glow above the quiet water\n'
+            '[G]Silver rain [D]returns beneath the evening sky\n'
+            '[Em]Every window [C]keeps a little golden light\n'
+            '[G]Morning carries [D]every dream back home',
+      );
+      final later = _source('chart', body: '', metadata: {'language': 'en'});
+      final first = combineSources(_selected, [
+        _source('lyrics'),
+        earlier,
+        later,
+      ]);
+      expect(first.metadata['key'], 'Em');
+      expect(first.hasChords, isTrue);
+      final reopened = SongDocument.fromJson(first.toJson());
+      final second = combineSources(_selected, reopened.sources);
+      expect(second.metadata['key'], 'Em');
+      expect(second.hasChords, isTrue);
+      expect(second.body, first.body);
+      expect(
+        second.sources.any((source) => source.body == earlier.body),
+        isTrue,
+      );
+      expect(
+        second.sources
+            .singleWhere((source) => source.id == later.id)
+            .extra['sourceEvidenceSnapshots'],
+        hasLength(2),
+      );
+      final third = combineSources(
+        _selected,
+        SongDocument.fromJson(second.toJson()).sources,
+      );
+      expect(
+        third.sources.map((source) => source.id).toSet(),
+        second.sources.map((source) => source.id).toSet(),
+      );
+    },
+  );
+
+  test('a recording setup competes with and preserves the published capo', () {
+    final chart = _source(
+      'chart',
+      metadata: {'capo': 3},
+      body:
+          '[Em]Amber lanterns [G]glow above the quiet water\n'
+          '[D]Silver rain [C]returns beneath the evening sky\n'
+          '[Em]Every window [G]keeps a little golden light\n'
+          '[D]Morning carries [C]every dream back home',
+    );
+    final analysis = _source(
+      'analysis',
+      body: '',
+      extra: {
+        'keyRecording': {
+          'key': 'F#m',
+          'ids': ['USAAA2400001'],
+          'selectedIdentity': _selected.identity,
+        },
+      },
+    );
+    final combined = combineSources(_selected, [
+      _source('lyrics'),
+      chart,
+      analysis,
+    ]);
+    expect(combined.metadata['key'], 'F#m');
+    expect(combined.metadata['capo'], 2);
+    final original = combined.sources.singleWhere(
+      (source) => source.id == chart.id,
+    );
+    expect(original.body, chart.body);
+    expect(original.metadata['capo'], 3);
+    final derived = combined.sources.singleWhere(
+      (source) => source.extra['recordingArrangement'] is Map,
+    );
+    expect(derived.candidate.id, chart.candidate.id);
+    expect(derived.body, chart.body);
+    expect(derived.metadata['capo'], 2);
+    expect(recordingCompatible(_selected, derived), isFalse);
+    final capoDecision =
+        (_ranking(combined)['appliedFields'] as Map)['metadata.capo'] as Map;
+    expect(capoDecision['origin'], 'inferred');
+    expect(combined.extra['chordSourceIds'], contains(derived.id));
+    final restored = SongDocument.fromJson(combined.toJson());
+    expect(
+      restored.sources.map((source) => source.id),
+      containsAll([chart.id, derived.id]),
+    );
+  });
+
+  test(
+    'conflicting recording signatures retain competing setups across recombination',
+    () {
+      final chart = _source(
+        'chart',
+        metadata: {'capo': 3},
+        body:
+            '[Em]Amber lanterns [G]glow above the quiet water\n'
+            '[D]Silver rain [C]returns beneath the evening sky\n'
+            '[Em]Every window [G]keeps a little golden light\n'
+            '[D]Morning carries [C]every dream back home',
+      );
+      final analyses = [
+        for (final key in ['F#m', 'Am'])
+          _source(
+            'analysis',
+            id: key,
+            body: '',
+            extra: {
+              'keyRecording': {
+                'key': key,
+                'ids': ['USAAA2400001'],
+                'selectedIdentity': _selected.identity,
+              },
+            },
+          ),
+      ];
+      final first = combineSources(_selected, [
+        _source('lyrics'),
+        chart,
+        analyses.first,
+      ]);
+      final combined = combineSources(_selected, [
+        ...SongDocument.fromJson(first.toJson()).sources,
+        analyses.last,
+      ]);
+      expect(
+        combined.sources
+            .where((source) => source.extra['recordingArrangement'] is Map)
+            .map((source) => source.metadata['capo'])
+            .toSet(),
+        {2, 5},
+      );
+      expect(
+        combined.sources
+            .singleWhere((source) => source.id == chart.id)
+            .metadata['capo'],
+        3,
+      );
+      expect(
+        _claims(combined, 'metadata.key')
+            .where((claim) => claim['providerId'] == 'recording-key-analysis')
+            .map((claim) => claim['value']),
+        containsAll(['F#m', 'Am']),
+      );
+    },
+  );
+
+  test('a search preview cannot shadow a later resolved chart', () {
+    final resolved = _source(
+      'charts',
+      id: 'resolved',
+      metadata: {'capo': 9},
+      body:
+          '[Em]Amber lanterns [G]glow above the quiet water\n'
+          '[D]Silver rain [C]returns beneath the evening sky\n'
+          '[Em]Every window [G]keeps a little golden light\n'
+          '[D]Morning carries [C]every dream back home',
+      extra: {
+        'keyRecording': {
+          'key': 'C#m',
+          'ids': ['USAAA2400001'],
+          'selectedIdentity': _selected.identity,
+        },
+      },
+    );
+    final alternate = _source(
+      'charts',
+      id: 'alternate',
+      body:
+          '[Dm]Amber lanterns [F]glow above the quiet water\n'
+          '[C]Silver rain [Bb]returns beneath the evening sky\n'
+          '[Dm]Every window [F]keeps a little golden light\n'
+          '[C]Morning carries [Bb]every dream back home',
+      extra: {
+        'discoveryEvidence': {
+          'searchCandidates': [
+            {'candidate': resolved.candidate.toJson()},
+          ],
+        },
+      },
+    );
+    for (final charts in [
+      [alternate, resolved],
+      [resolved, alternate],
+    ]) {
+      final combined = combineSources(_selected, [
+        _source('lyrics'),
+        ...charts,
+      ]);
+      expect(combined.metadata['key'], 'C#m');
+      expect(combined.metadata['capo'], 9);
+      expect(combined.extra['chordSourceIds'], contains(resolved.id));
+      expect(combined.extra['chordSourceIds'], isNot(contains(alternate.id)));
+      expect(
+        combined.sources
+            .singleWhere((source) => source.id == alternate.id)
+            .extra['discoveryEvidence'],
+        isNotNull,
+      );
+    }
+  });
+
+  test(
+    'a ranked key with an agreeing source declaration is reported as sourced',
+    () {
+      final analysis = _source(
+        'analysis-holder',
+        body: '',
+        extra: {
+          'keyRecording': {
+            'key': 'Em',
+            'ids': ['USAAA2400001'],
+            'source': 'ReccoBeats',
+          },
+        },
+      );
+      final chart = _source(
+        'chart',
+        body:
+            '[Em]Amber [Am]lanterns [B7]glow [Em]above the quiet water\n'
+            '[Am]Silver rain [B7]returns [Em]beneath the evening sky\n'
+            '[Em]Every window [Am]keeps a [B7]little golden light\n'
+            '[Em]Morning carries every dream back home',
+      );
+      final combined = combineSources(_selected, [
+        _source('lyrics'),
+        chart,
+        analysis,
+      ]);
+      expect(combined.metadata['key'], 'Em');
+      expect(combined.extra['keySourceIds'], contains(analysis.id));
+      final decision =
+          (_ranking(combined)['appliedFields'] as Map)['metadata.key'] as Map;
+      expect(decision['origin'], 'provider');
+      expect(decision['sourceId'], analysis.id);
+      expect(decision['matchQuality'], 'sameSong');
+    },
+  );
+
+  test('recording key evidence survives selection of another chart', () {
+    final analysis = _source(
+      'analysis-holder',
+      body: '',
+      extra: {
+        'keyRecording': {
+          'key': 'Em',
+          'ids': ['USAAA2400001'],
+          'source': 'ReccoBeats',
+          'selectedIdentity': _selected.identity,
+        },
+      },
+    );
+    final chart = _source(
+      'chart',
+      body:
+          '[Em]Amber lanterns [C]glow above the quiet water\n'
+          '[G]Silver rain [D]returns beneath the evening sky\n'
+          '[Em]Every window [C]keeps a little golden light\n'
+          '[G]Morning carries [D]every dream back home',
+    );
+    final combined = combineSources(_selected, [
+      _source('lyrics'),
+      chart,
+      analysis,
+    ]);
+    expect(combined.metadata['key'], 'Em');
+    expect(combined.extra['keySourceIds'], contains(analysis.id));
+    final recording = _claims(
+      combined,
+      'metadata.key',
+    ).singleWhere((claim) => claim['providerId'] == 'recording-key-analysis');
+    expect(recording['matchQuality'], 'sameRecording');
+    expect(recording['origin'], 'provider');
+    expect(combined.extra['chordSourceIds'], contains(chart.id));
+  });
+
+  test(
+    'supported minor declaration can supersede an API relative-major reading',
+    () {
+      final chart = _source(
+        'chart',
+        metadata: {'key': 'Am'},
+        body:
+            '[Am]Amber lanterns [F]glow above the quiet water\n'
+            '[C]Silver rain [G]returns beneath the evening sky\n'
+            '[Am]Every window [F]keeps a little golden light\n'
+            '[C]Morning carries [G]every dream back home',
+      );
+      final analysis = _source(
+        'analysis-holder',
+        body: '',
+        extra: {
+          'keyRecording': {
+            'key': 'C',
+            'ids': ['USAAA2400001'],
+            'source': 'ReccoBeats',
+            'selectedIdentity': _selected.identity,
+          },
+        },
+      );
+      final combined = combineSources(_selected, [
+        _source('lyrics'),
+        chart,
+        analysis,
+      ]);
+      expect(combined.metadata['key'], 'Am');
+      final reading = _claims(
+        combined,
+        'metadata.key',
+      ).singleWhere((claim) => claim['providerId'] == 'recording-key-analysis');
+      expect(reading['value'], 'C');
+      expect(reading['qualitySignals']['relativeModeConflict'], -20);
+      expect(
+        combined.sources
+            .singleWhere((source) => source.id == analysis.id)
+            .extra['keyRecording']['key'],
+        'C',
+      );
+    },
+  );
+
+  test(
+    'chart search metadata can match a title article without a full fetch',
+    () {
+      final observation = _candidate(
+        'chart-provider',
+        id: 'known-key',
+        title: 'The Lantern Song',
+        metadata: {'key': 'Em'},
+      );
+      const unrelated = SongCandidate(
+        providerId: 'chart-provider',
+        id: 'wrong-artist',
+        title: 'The Lantern Song',
+        artist: 'Another Artist',
+        metadata: {'key': 'F#'},
+      );
+      final chart = _source(
+        'chart-provider',
+        title: 'The Lantern Song',
+        body:
+            '[Em]Amber lanterns [C]glow above the quiet water\n'
+            '[G]Silver rain [D]returns beneath the evening sky\n'
+            '[Em]Every window [C]keeps a little golden light\n'
+            '[G]Morning carries [D]every dream back home',
+        extra: {
+          'requiresLyricsAgreement': true,
+          'discoveryEvidence': {
+            'capabilities': ['chords'],
+            'searchCandidates': [
+              {'candidate': observation.toJson(), 'state': 'eligible'},
+              {'candidate': unrelated.toJson(), 'state': 'returned'},
+            ],
+          },
+        },
+      );
+      final combined = combineSources(_selected, [_source('lyrics'), chart]);
+      expect(combined.metadata['key'], 'Em');
+      expect(combined.extra['keySourceIds'], contains(observation.identity));
+      expect(
+        _claims(combined, 'metadata.key').singleWhere(
+          (claim) => claim['sourceId'] == unrelated.identity,
+        )['contextCompatible'],
+        isFalse,
+      );
+    },
+  );
+
+  test('a longer chart cannot mask its negative key-consistency evidence', () {
+    final good = _source(
+      'reliable-chart',
+      body:
+          '[G]Amber lanterns [B]glow above [C]the quiet [Cm]water\n'
+          '[G]Silver rain [B]returns beneath [C]the evening [Cm]sky',
+      metadata: {'key': 'G'},
+      extra: {'keyConsensus': true},
+    );
+    final earlierOutlier = _source(
+      'long-outlier',
+      body:
+          '[F]Amber lanterns [A]glow above [Bb]the quiet [Bbm]water\n'
+          '[F]Silver rain [A]returns beneath [Bb]the evening [Bbm]sky\n'
+          '[F]Every window [A]keeps a [Bb]little golden [Bbm]light\n'
+          '[F]Morning carries [A]every [Bb]dream back [Bbm]home',
+    );
+    final outlier = earlierOutlier.copyWith(
+      extra: {
+        'keyConsensus': false,
+        'discoveryEvidence': {
+          'acceptedPayloads': [earlierOutlier.toJson()],
+        },
+      },
+    );
+    for (final sources in [
+      [good, outlier],
+      [outlier, good],
+    ]) {
+      final combined = combineSources(_selected, [
+        _source('lyrics'),
+        ...sources,
+      ]);
+      expect(combined.metadata['key'], 'G');
+      expect(combined.body, contains('[G]Amber'));
+      expect(combined.body, isNot(contains('[F]')));
+      expect(combined.sources.map((source) => source.id), contains(outlier.id));
+      final raw =
+          combined.sources
+                  .singleWhere((source) => source.id == outlier.id)
+                  .extra['discoveryEvidence']
+              as Map;
+      expect(
+        (raw['acceptedPayloads'] as List).single.containsKey('keyConsensus'),
+        isFalse,
+      );
+    }
+  });
+
+  test(
     'matching search key declarations supersede an unsupported relative-key guess',
     () {
       final candidate = _candidate(

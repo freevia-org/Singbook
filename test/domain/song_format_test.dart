@@ -867,7 +867,10 @@ void main() {
         '[C]one two three four five six seven eight nine ten eleven twelve',
       ),
     );
-    expect(result.extra['excludedIncompleteSourceIds'], isNot(contains('ug:1')));
+    expect(
+      result.extra['excludedIncompleteSourceIds'],
+      isNot(contains('ug:1')),
+    );
     expect(result.sources.any((candidate) => candidate.id == 'ug:1'), isTrue);
     expect(result.extra['chordSourceIds'], contains('ug:1'));
     final explicit = combineSources(
@@ -978,10 +981,16 @@ void main() {
     final automatic = combineSources(selected, [base, otherRecording]);
     expect(automatic.body, contains('[C]First lyric line'));
     expect(automatic.body, contains('[F]Second lyric line'));
-    expect(automatic.metadata['key'], 'C');
+    // C shapes at capo 2 sound in D, agreeing with the stronger recording
+    // declaration rather than the donor's inconsistent C key label.
+    expect(automatic.metadata['key'], 'D');
+    expect(automatic.extra['keySourceIds'], contains(base.id));
     expect(automatic.metadata['capo'], 2);
     expect(automatic.extra['chordSourceIds'], contains(otherRecording.id));
-    expect(automatic.sources.map((source) => source.id), containsAll([base.id, otherRecording.id]));
+    expect(
+      automatic.sources.map((source) => source.id),
+      containsAll([base.id, otherRecording.id]),
+    );
     final ranking = jsonMap(automatic.extra['evidenceRanking']);
     final keyClaims = (ranking['claims'] as List).whereType<Map>().where(
       (claim) => claim['field'] == 'metadata.key',

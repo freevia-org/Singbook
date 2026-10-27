@@ -397,13 +397,20 @@ Map<String, int> _components(EvidenceClaim c, List<EvidenceClaim> fieldClaims) {
 }
 
 int _qualitySignalScore(Map<String, int> signals) {
-  var total = 0;
+  var positiveTotal = 0;
+  var negativeTotal = 0;
   final keys = signals.keys.toList()..sort();
   for (final key in keys) {
     if (key.trim().isEmpty) continue;
     final value = signals[key]!.clamp(-20, 20).toInt();
-    total += value;
+    if (value > 0) {
+      positiveTotal += value;
+    } else {
+      negativeTotal += value;
+    }
   }
+  final total =
+      positiveTotal.clamp(0, 32).toInt() + negativeTotal.clamp(-32, 0).toInt();
   return total.clamp(-32, 32).toInt();
 }
 
