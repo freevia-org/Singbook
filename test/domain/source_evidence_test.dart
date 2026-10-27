@@ -36,6 +36,150 @@ SourceResult _source({
 );
 
 void main() {
+  test(
+    'a song record P826 assertion remains composition key evidence only',
+    () {
+      final source = _source(
+        candidate: _candidate(provider: 'wikidata'),
+        metadata: {
+          'identityScope': 'song',
+          'key': 'A',
+          'language': 'en',
+          'keyAssertions': [
+            {
+              'normalizedKey': 'A',
+              'statement': {
+                'rank': 'normal',
+                'mainsnak': {'property': 'P826'},
+              },
+            },
+          ],
+        },
+      );
+      final claims = collectSourceEvidence(_candidate(), [
+        source,
+      ], compatible: (_, _) => true);
+      expect(
+        claims
+            .singleWhere((claim) => claim.field == 'metadata.key')
+            .sourceScope,
+        EvidenceSourceScope.composition,
+      );
+      expect(
+        claims
+            .singleWhere((claim) => claim.field == 'metadata.language')
+            .sourceScope,
+        EvidenceSourceScope.song,
+      );
+      expect(
+        claims.every((claim) => claim.origin == EvidenceOrigin.provider),
+        isTrue,
+      );
+    },
+  );
+
+  test(
+    'multiple literal keys retain their composition scope and statement ranks',
+    () {
+      final source = _source(
+        candidate: _candidate(provider: 'wikidata'),
+        metadata: {
+          'identityScope': 'composition',
+          'keys': ['A', 'Ebm', 'F#m'],
+          'keyAssertions': [
+            {
+              'normalizedKey': 'A',
+              'statement': {'rank': 'normal'},
+            },
+            {
+              'normalizedKey': 'Ebm',
+              'statement': {'rank': 'preferred'},
+            },
+            {
+              'normalizedKey': 'F#m',
+              'statement': {'rank': 'deprecated'},
+            },
+            {
+              'label': 'atonality',
+              'statement': {'rank': 'normal'},
+            },
+          ],
+        },
+      );
+      final claims = collectSourceEvidence(
+        _candidate(),
+        [source],
+        compatible: (_, field) => field == 'metadata.key',
+        keyFit: (_, _, value) => value == 'F#m'
+            ? EvidenceHarmonyFit.fitting
+            : EvidenceHarmonyFit.neutral,
+      );
+      final keys = claims
+          .where((claim) => claim.field == 'metadata.key')
+          .toList();
+      expect(keys.map((claim) => claim.value), ['A', 'Ebm', 'F#m']);
+      expect(
+        keys.every(
+          (claim) => claim.sourceScope == EvidenceSourceScope.composition,
+        ),
+        isTrue,
+      );
+      expect(
+        keys.every((claim) => claim.origin == EvidenceOrigin.provider),
+        isTrue,
+      );
+      expect(
+        keys.every(
+          (claim) => claim.matchQuality == EvidenceMatchQuality.sameSong,
+        ),
+        isTrue,
+      );
+      expect(keys.every((claim) => claim.contextCompatible), isTrue);
+      expect(keys.map((claim) => claim.qualitySignals['statementRank']), [
+        0,
+        3,
+        -20,
+      ]);
+      expect(keys.last.harmonyFit, EvidenceHarmonyFit.fitting);
+      expect(
+        claims.singleWhere((claim) => claim.field == 'metadata.keys').value,
+        ['A', 'Ebm', 'F#m'],
+      );
+      expect(
+        claims
+            .singleWhere((claim) => claim.field == 'metadata.keyAssertions')
+            .value,
+        source.metadata['keyAssertions'],
+      );
+    },
+  );
+
+  test('a current assertion supersedes a deprecated copy of the same key', () {
+    final source = _source(
+      candidate: _candidate(provider: 'wikidata'),
+      metadata: {
+        'identityScope': 'composition',
+        'key': 'A',
+        'keyAssertions': [
+          {
+            'normalizedKey': 'A',
+            'statement': {'rank': 'deprecated'},
+          },
+          {
+            'normalizedKey': 'A',
+            'statement': {'rank': 'normal'},
+          },
+        ],
+      },
+    );
+    final key = collectSourceEvidence(
+      _candidate(),
+      [source],
+      compatible: (_, _) => true,
+    ).singleWhere((claim) => claim.field == 'metadata.key');
+    expect(key.qualitySignals['statementRank'], 0);
+  });
+
   test('blank resolved metadata does not erase candidate facts', () {
     final source = _source(
       candidate: _candidate(

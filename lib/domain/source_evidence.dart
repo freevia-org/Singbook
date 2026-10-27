@@ -39,20 +39,38 @@ List<EvidenceClaim> collectSourceEvidence(
     MatchKind.sameRecording => EvidenceMatchQuality.sameRecording,
   };
 
+  bool compositionScoped(SourceResult source, String field) =>
+      [source.candidate.metadata, source.metadata, source.extra].any(
+        (metadata) =>
+            metadata['identityScope'] == 'composition' ||
+            field == 'metadata.key' &&
+                source.candidate.providerId == 'wikidata' &&
+                metadata['keyAssertions'] is List &&
+                (metadata['keyAssertions'] as List).whereType<Map>().any(
+                  (assertion) =>
+                      jsonMap(
+                        jsonMap(assertion['statement'])['mainsnak'],
+                      )['property'] ==
+                      'P826',
+                ),
+      );
+
   EvidenceSourceScope scopeOf(SourceResult source, String field) =>
       sourceScope?.call(source, field) ??
-      (field == 'chords' ||
-              const {
-                'metadata.key',
-                'metadata.capo',
-                'metadata.tuning',
-                'metadata.timeSignature',
-              }.contains(field)
-          ? EvidenceSourceScope.arrangement
-          : (sameRecording?.call(source) ??
-                source.matchKind == MatchKind.sameRecording)
-          ? EvidenceSourceScope.recording
-          : EvidenceSourceScope.song);
+      (compositionScoped(source, field)
+          ? EvidenceSourceScope.composition
+          : (field == 'chords' ||
+                    const {
+                      'metadata.key',
+                      'metadata.capo',
+                      'metadata.tuning',
+                      'metadata.timeSignature',
+                    }.contains(field)
+                ? EvidenceSourceScope.arrangement
+                : (sameRecording?.call(source) ??
+                      source.matchKind == MatchKind.sameRecording)
+                ? EvidenceSourceScope.recording
+                : EvidenceSourceScope.song));
   EvidenceOrigin originOf(SourceResult source, String field) =>
       source.id == preferredSourceId
       ? EvidenceOrigin.userProvided
@@ -109,6 +127,11 @@ List<EvidenceClaim> collectSourceEvidence(
     final lineage = sourceLineage?.call(source);
     void visit(String path, Object? value) {
       if (!present(value)) return;
+      if (path == '$prefix.keys' && value is List) {
+        for (final key in value.whereType<String>().toSet()) {
+          visit('$prefix.key', key);
+        }
+      }
       if (value is Map) {
         final keys = value.keys.whereType<String>().toList()..sort();
         for (final key in keys) {
@@ -121,6 +144,28 @@ List<EvidenceClaim> collectSourceEvidence(
         if (qualitySignals != null) ...qualitySignals(source, path),
         if (resolved) 'resolvedClaim': 2,
       };
+      if (path == '$prefix.key') {
+        final statementRanks = <int>[];
+        final assertions = values['keyAssertions'];
+        if (assertions is List) {
+          for (final raw in assertions) {
+            final assertion = jsonMap(raw);
+            if (assertion['normalizedKey'] != value) continue;
+            statementRanks.add(switch (jsonMap(
+              assertion['statement'],
+            )['rank']) {
+              'deprecated' => -20,
+              'preferred' => 3,
+              _ => 0,
+            });
+          }
+        }
+        if (statementRanks.isNotEmpty) {
+          signals['statementRank'] = statementRanks.reduce(
+            (a, b) => a > b ? a : b,
+          );
+        }
+      }
       emit(
         field: path,
         value: value,

@@ -69,6 +69,105 @@ List<Map<String, dynamic>> _claims(SongDocument song, String field) => [
 
 void main() {
   test(
+    'same-song recording donors retain native identity without assigning it to the selection',
+    () {
+      final donor = _source(
+        'musicbrainz',
+        body: '',
+        metadata: {
+          'identityScope': 'song',
+          'musicbrainzRecordingId': 'another-recording',
+          'musicbrainzReleaseId': 'another-release',
+          'isrcs': ['USAAA2400001'],
+          'relationships': [
+            {'type': 'performance', 'target': 'another-recording'},
+          ],
+          'customTag': 'retained-song-fact',
+        },
+        extra: {'metadataOnly': true},
+      );
+      final combined = combineSources(_selected, [_source('lyrics'), donor]);
+      for (final field in [
+        'musicbrainzRecordingId',
+        'musicbrainzReleaseId',
+        'isrcs',
+        'relationships',
+      ]) {
+        expect(combined.metadata, isNot(contains(field)));
+        expect(
+          combined.sources
+              .singleWhere((source) => source.id == donor.id)
+              .metadata[field],
+          donor.metadata[field],
+        );
+        expect(
+          _claims(
+            combined,
+            'metadata.$field',
+          ).every((claim) => claim['contextCompatible'] == false),
+          isTrue,
+        );
+      }
+      expect(combined.metadata['customTag'], 'retained-song-fact');
+      expect(combined.selectedRecording?.identity, _selected.identity);
+    },
+  );
+
+  test(
+    'native chart consensus can supersede unresolved search setup without rejecting relative modes',
+    () {
+      const body =
+          '[A]Amber lanterns [Bm]glow above the quiet water\n'
+          '[F#m]Silver rain [D]returns beneath the evening sky[A]\n'
+          '[A]Every window [Bm]keeps a little golden light\n'
+          '[F#m]Morning carries [D]every dream back home[A]';
+      for (final declaration in ['D', 'F#m']) {
+        final observed = _candidate(
+          'charts',
+          id: 'unresolved',
+          metadata: {'key': declaration},
+        );
+        final first = _source(
+          'charts',
+          body: body,
+          extra: {
+            'discoveryEvidence': {
+              'searchCandidates': [
+                {'candidate': observed.toJson()},
+              ],
+            },
+          },
+        );
+        final combined = combineSources(_selected, [
+          _source('lyrics'),
+          first,
+          _source('another-chart', body: body),
+        ]);
+        expect(
+          combined.metadata['key'] ?? rankedChordKeyEstimate(combined),
+          declaration == 'D' ? 'A' : 'F#m',
+        );
+        final claim = _claims(
+          combined,
+          'metadata.key',
+        ).firstWhere((claim) => claim['sourceId'] == observed.identity);
+        expect(claim['contextCompatible'], isTrue);
+        if (declaration == 'D') {
+          expect(
+            claim['qualitySignals']['unresolvedSearchVsChartConsensus'],
+            -8,
+          );
+        } else {
+          expect(
+            claim['qualitySignals'] ?? {},
+            isNot(contains('unresolvedSearchVsChartConsensus')),
+          );
+        }
+      }
+    },
+  );
+
+  test(
     'song-scoped recording evidence offers a setup without claiming recording identity',
     () {
       final chart = _source(

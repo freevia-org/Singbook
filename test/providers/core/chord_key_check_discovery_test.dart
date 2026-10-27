@@ -6,6 +6,7 @@ import 'package:http/testing.dart';
 import 'package:singbook/providers/core/recording_key.dart';
 import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/providers/provider.dart';
+import 'package:singbook/domain/combine.dart' show combineSources;
 
 // Invented lyrics and chords only.
 const _lines = [
@@ -108,9 +109,11 @@ class _MetadataProvider implements LyricsProvider {
     this.id, {
     this.version = 'album version',
     this.duration = 262,
+    this.identifiersOnlyOnAlternative = false,
   });
   final String id, version;
   final double duration;
+  final bool identifiersOnlyOnAlternative;
   @override
   ProviderDefinition get definition =>
       ProviderDefinition(id: id, name: id, capabilities: {'metadata'});
@@ -135,10 +138,33 @@ class _MetadataProvider implements LyricsProvider {
     ),
     body: '',
     metadata: {
-      'isrcs': ['USAAA2400001'],
+      if (!identifiersOnlyOnAlternative) 'isrcs': ['USAAA2400001'],
       'version': version,
     },
-    extra: {'metadataOnly': true},
+    extra: {
+      'metadataOnly': true,
+      if (identifiersOnlyOnAlternative)
+        'providerAlternatives': [
+          SourceResult(
+            candidate: SongCandidate(
+              providerId: id,
+              id: 'alternative-recording',
+              title: selection.title,
+              artist: selection.artist,
+              album: 'Harbor Album',
+              durationSeconds: duration,
+              metadata: {'identityScope': 'song'},
+            ),
+            body: '',
+            metadata: {
+              'isrcs': ['USAAA2400001'],
+              'identityScope': 'song',
+            },
+            matchKind: MatchKind.sameSong,
+            extra: {'metadataOnly': true},
+          ).toJson(),
+        ],
+    },
   );
 }
 
@@ -361,6 +387,62 @@ void main() {
         duration: duration,
       ),
     ];
+    test(
+      'alternative recording identifiers remain useful without a chart',
+      () async {
+        final requests = <Uri>[];
+        final results = await SourceDiscoveryService(
+          [
+            _Provider('lyrics', {'song': _lines.join('\n')}, chords: false),
+            _MetadataProvider('metadata', identifiersOnlyOnAlternative: true),
+          ],
+          recordingKeys: fallbackService(requests),
+        ).discover(fallbackSelection);
+        expect(results.every((source) => !source.hasChords), isTrue);
+        expect(requests.map((uri) => uri.queryParameters['ids']), [
+          '1kgdslQYmeTR4thk9whoRw',
+          'USAAA2400001',
+        ]);
+        final holder = results.singleWhere(
+          (source) => source.candidate.providerId == 'metadata',
+        );
+        final evidence = holder.extra['keyRecording'] as Map;
+        expect(evidence['identifierSourceIds'], [
+          'metadata:alternative-recording',
+        ]);
+        expect(evidence['recordingScope'], 'song');
+        final combined = combineSources(fallbackSelection, results);
+        expect(combined.metadata['key'], 'G');
+        expect(combined.hasChords, isFalse);
+        expect(
+          combined.extra['keySourceIds'],
+          contains('metadata:alternative-recording'),
+        );
+      },
+    );
+
+    test(
+      'a recording key remains usable when no chord chart is available',
+      () async {
+        final requests = <Uri>[];
+        final results = await SourceDiscoveryService(
+          [
+            _Provider('lyrics', {'song': _lines.join('\n')}, chords: false),
+          ],
+          recordingKeys: fallbackService(requests, exactWorks: true),
+        ).discover(fallbackSelection);
+        expect(results.every((source) => !source.hasChords), isTrue);
+        expect(requests, hasLength(1));
+        final evidence = results.single.extra['keyRecording'] as Map;
+        expect(evidence['key'], 'G');
+        expect(evidence['identifierSourceIds'], [results.single.id]);
+        final combined = combineSources(fallbackSelection, results);
+        expect(combined.metadata['key'], 'G');
+        expect(combined.hasChords, isFalse);
+        expect(combined.extra['keySourceIds'], contains(results.single.id));
+      },
+    );
+
     test(
       'empty exact analysis falls back without claiming recording identity',
       () async {

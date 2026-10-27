@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/domain/arrangement.dart';
+import 'package:singbook/domain/arrangement_context.dart';
 import 'package:singbook/domain/combine.dart';
 import 'package:singbook/domain/source_contributions.dart';
 import 'package:singbook/providers/core/service.dart';
@@ -144,6 +145,7 @@ class _ContextChart implements LyricsProvider {
     this.definition,
     this.rows, {
     String? body,
+    this.bodyById = const {},
     this.holdResolve = false,
     this.honorCancellation = true,
   }) : body = body ?? _composerChartBody;
@@ -152,6 +154,7 @@ class _ContextChart implements LyricsProvider {
   final ProviderDefinition definition;
   final List<SongCandidate> rows;
   final String body;
+  final Map<String, String> bodyById;
   final bool holdResolve;
   final bool honorCancellation;
   final startedSearch = Completer<void>();
@@ -179,7 +182,10 @@ class _ContextChart implements LyricsProvider {
     if (!startedResolve.isCompleted) startedResolve.complete(cancel);
     if (holdResolve) await releaseResolve.future;
     if (honorCancellation) cancel?.throwIfCancelled();
-    return SourceResult(candidate: candidate, body: body);
+    return SourceResult(
+      candidate: candidate,
+      body: bodyById[candidate.id] ?? body,
+    );
   }
 }
 
@@ -221,6 +227,41 @@ _ContextChart _soundtrackChart({String? body}) => _ContextChart(
     ),
   ],
   body: body ?? _soundtrackChartBody,
+);
+
+_ContextChart _alternatePerformerChart({
+  String? title,
+  Map<String, String> recordingIds = const {},
+  Map<String, dynamic> metadata = const {'identityScope': 'arrangement'},
+  String? body,
+  Map<String, String> bodyById = const {},
+  bool includeDirectCandidate = false,
+}) => _ContextChart(
+  const ProviderDefinition(
+    id: 'chordie',
+    name: 'Chordie',
+    capabilities: {'catalog', 'lyrics', 'chords'},
+  ),
+  [
+    if (includeDirectCandidate)
+      const SongCandidate(
+        providerId: 'chordie',
+        id: 'direct-chart',
+        title: 'Harbor Song',
+        artist: 'The Lantern Coast',
+        metadata: {'identityScope': 'arrangement'},
+      ),
+    SongCandidate(
+      providerId: 'chordie',
+      id: 'alternate-performer-chart',
+      title: title ?? 'Harbor Song',
+      artist: 'Divididos',
+      metadata: metadata,
+      recordingIds: recordingIds,
+    ),
+  ],
+  body: body,
+  bodyById: bodyById,
 );
 
 class _FailedThenContextChart extends _ContextChart {
@@ -725,7 +766,7 @@ void main() {
   );
 
   test(
-    'unrelated soundtrack work and a named cover artist do not trigger contextual fetches',
+    'unrelated soundtrack work stays excluded while an exact-title cover waits for recording lyrics',
     () async {
       final unrelatedFilm = _ContextChart(
         const ProviderDefinition(
@@ -757,16 +798,236 @@ void main() {
           ),
         ],
       );
-      await SourceDiscoveryService([
-        _RecordingLyrics(),
+      final reference = _RecordingLyrics(hold: true);
+      final discovery = SourceDiscoveryService([
+        reference,
         unrelatedFilm,
         namedCover,
       ]).discover(_selected);
+      await reference.started.future.timeout(const Duration(seconds: 2));
+      await _waitForInitialChartSearches([unrelatedFilm, namedCover]);
+
+      expect(unrelatedFilm.resolvedIds, isEmpty);
+      expect(namedCover.resolvedIds, isEmpty);
+      reference.release.complete();
+      final results = await discovery;
 
       expect(unrelatedFilm.queries, hasLength(1));
       expect(namedCover.queries, hasLength(1));
       expect(unrelatedFilm.resolvedIds, isEmpty);
-      expect(namedCover.resolvedIds, isEmpty);
+      expect(namedCover.resolvedIds, ['cover-artist-chart']);
+      final accepted = results.singleWhere(
+        (source) =>
+            source.candidate.id == 'cover-artist-chart' &&
+            source.matchKind != MatchKind.rejected,
+      );
+      expect(accepted.candidate.artist, 'The Night Sailors');
+      expect(accepted.extra['alternatePerformerChart'], isTrue);
+      expect(accepted.extra['requiresRecordingLyricsAgreement'], isTrue);
+    },
+  );
+
+  test('alternate performer matching is explicit and exact-title only', () {
+    const alternate = SongCandidate(
+      providerId: 'chordie',
+      id: 'alternate',
+      title: 'Harbor Song',
+      artist: 'Divididos',
+      metadata: {'identityScope': 'arrangement'},
+    );
+    expect(
+      contextualArrangementCandidate(_enrichedRecording(), alternate),
+      isFalse,
+    );
+    expect(
+      contextualArrangementCandidate(
+        _enrichedRecording(),
+        alternate,
+        allowAlternatePerformers: true,
+      ),
+      isTrue,
+    );
+    for (final mismatched in [
+      const SongCandidate(
+        providerId: 'chordie',
+        id: 'version',
+        title: 'Harbor Song (Live)',
+        artist: 'Divididos',
+        metadata: {'identityScope': 'arrangement'},
+      ),
+      const SongCandidate(
+        providerId: 'chordie',
+        id: 'conflicting-recording',
+        title: 'Harbor Song',
+        artist: 'Divididos',
+        metadata: {'identityScope': 'arrangement'},
+        recordingIds: {'isrc': 'US-OTHER-9999'},
+      ),
+      const SongCandidate(
+        providerId: 'chordie',
+        id: 'wrong-scope',
+        title: 'Harbor Song',
+        artist: 'Divididos',
+        metadata: {'identityScope': 'work'},
+      ),
+    ]) {
+      expect(
+        contextualArrangementCandidate(
+          _enrichedRecording(),
+          mismatched,
+          allowAlternatePerformers: true,
+        ),
+        isFalse,
+      );
+    }
+  });
+
+  test(
+    'deferred full-recording lyric agreement admits exact-title alternate chart without rewriting its credit',
+    () async {
+      final charts = _alternatePerformerChart(
+        includeDirectCandidate: true,
+        bodyById: {
+          'direct-chart':
+              '[D]Copper mountains sleep beside a silver railway\n'
+              '[A]Paper kites escape beyond the distant valley',
+          'alternate-performer-chart': _composerChartBody,
+        },
+      );
+      final results = await SourceDiscoveryService([
+        _RecordingLyrics(),
+        charts,
+      ]).discover(_selected);
+
+      expect(charts.resolvedIds, ['direct-chart', 'alternate-performer-chart']);
+      final accepted = results.singleWhere(
+        (source) =>
+            source.candidate.providerId == 'chordie' &&
+            source.hasChords &&
+            source.matchKind != MatchKind.rejected,
+      );
+      expect(accepted.matchKind, MatchKind.sameSong);
+      expect(accepted.candidate.artist, 'Divididos');
+      expect(accepted.extra['alternatePerformerChart'], isTrue);
+      expect(accepted.extra['requiresLyricsAgreement'], isTrue);
+      expect(accepted.extra['requiresRecordingLyricsAgreement'], isTrue);
+      expect(recordingCompatible(_selected, accepted), isFalse);
+      expect(plainLyrics(accepted.body), _lyricsText);
+      expect(
+        results.where(
+          (source) =>
+              source.candidate.providerId == 'genius' && !source.hasChords,
+        ),
+        hasLength(1),
+      );
+    },
+  );
+
+  test(
+    'alternate performer is not resolved without full recording lyrics',
+    () async {
+      final charts = _alternatePerformerChart();
+      final results = await SourceDiscoveryService([
+        _RecordingLyrics(body: 'A tiny phrase'),
+        charts,
+      ]).discover(_selected);
+
+      expect(charts.resolvedIds, isEmpty);
+      expect(
+        results.where(
+          (source) =>
+              source.candidate.providerId == 'chordie' && source.hasChords,
+        ),
+        isEmpty,
+      );
+    },
+  );
+
+  test(
+    'partial alternate chart lyrics are retained with an explicit proof flag',
+    () async {
+      final partial = [
+        for (var i = 0; i < 4; i++)
+          '[${['C', 'G', 'Am', 'F'][i]}]${_lyrics[i]}',
+      ].join('\n');
+      final charts = _alternatePerformerChart(body: partial);
+      final results = await SourceDiscoveryService([
+        _RecordingLyrics(),
+        charts,
+      ]).discover(_selected);
+
+      final accepted = results.singleWhere(
+        (source) =>
+            source.candidate.providerId == 'chordie' &&
+            source.hasChords &&
+            source.matchKind != MatchKind.rejected,
+      );
+      expect(accepted.matchKind, MatchKind.sameSong);
+      expect(accepted.candidate.artist, 'Divididos');
+      expect(accepted.extra['partialLyricSupport'], isTrue);
+      expect(accepted.body, partial);
+      final reference = results.singleWhere(
+        (source) =>
+            source.candidate.providerId == 'genius' && !source.hasChords,
+      );
+      expect(plainLyrics(reference.body), _lyricsText);
+    },
+  );
+
+  test(
+    'alternate performer requires exact title, compatible edition and IDs',
+    () async {
+      for (final charts in [
+        _alternatePerformerChart(title: 'Harbor Song (Live)'),
+        _alternatePerformerChart(recordingIds: const {'isrc': 'US-OTHER-9999'}),
+        _alternatePerformerChart(metadata: const {'identityScope': 'work'}),
+      ]) {
+        final results = await SourceDiscoveryService([
+          _RecordingLyrics(),
+          charts,
+        ]).discover(_selected);
+
+        expect(charts.resolvedIds, isEmpty);
+        expect(
+          results.where(
+            (source) =>
+                source.candidate.providerId == 'chordie' &&
+                source.hasChords &&
+                source.matchKind != MatchKind.rejected,
+          ),
+          isEmpty,
+        );
+      }
+    },
+  );
+
+  test(
+    'exact-title alternate chart with different words is rejected',
+    () async {
+      final wrongLyrics = [
+        '[D]Copper mountains watch the sleepy valley open wide',
+        '[A]Paper kites are lifting past the distant railway station',
+        '[G]Every traveler follows footprints through the orchard grass',
+        '[D]Summer rain is tapping on the windows of the train',
+        '[A]All the city lights are fading from the northern sky',
+        '[G]A quiet road will carry us beyond the old stone wall',
+      ].join('\n');
+      final charts = _alternatePerformerChart(body: wrongLyrics);
+      final results = await SourceDiscoveryService([
+        _RecordingLyrics(),
+        charts,
+      ]).discover(_selected);
+
+      expect(charts.resolvedIds, ['alternate-performer-chart']);
+      expect(
+        results.where(
+          (source) =>
+              source.candidate.providerId == 'chordie' &&
+              source.hasChords &&
+              source.matchKind != MatchKind.rejected,
+        ),
+        isEmpty,
+      );
     },
   );
 

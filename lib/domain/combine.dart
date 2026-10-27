@@ -10,6 +10,7 @@ import 'artist_credit.dart';
 import 'reviewed_chart_artist.dart';
 import 'metadata_artist_credit.dart';
 import 'arrangement_context.dart';
+import 'contextual_chart_lyrics.dart';
 import 'lyric_word_identity.dart';
 import 'short_lyric_reference.dart';
 import 'chord_key_estimate.dart'
@@ -588,7 +589,10 @@ bool? _chartSpelling(String body) {
 }
 
 bool recordingCompatible(SongCandidate selected, SourceResult result) {
-  if (result.extra['recordingArrangement'] is Map) return false;
+  if (result.extra['recordingArrangement'] is Map ||
+      result.extra['alternatePerformerChart'] == true) {
+    return false;
+  }
   if (!explicitEditionsCompatible(
     selected,
     result.candidate,
@@ -3167,7 +3171,18 @@ SongDocument combineSources(
 
   bool contextMatches(SourceResult chart) => arrangementContexts.any(
     (reference) =>
-        contextualArrangementCandidate(reference.candidate, chart.candidate) &&
+        contextualArrangementCandidate(
+          reference.candidate,
+          chart.candidate,
+          allowAlternatePerformers:
+              chart.extra['alternatePerformerChart'] == true,
+        ) &&
+        (chart.extra['alternatePerformerChart'] != true ||
+            contextualChartLyricsMatch(
+              chart.body,
+              reference.body,
+              allowPartial: true,
+            )) &&
         explicitEditionsCompatible(
           reference.candidate,
           chart.candidate,
@@ -4368,6 +4383,8 @@ List<SourceResult> _retainedSourceEvidence(
           'pendingMatchCheck',
           'requiresLyricsAgreement',
           'requiresRecordingLyricsAgreement',
+          'alternatePerformerChart',
+          'partialLyricSupport',
         ]) {
           data.remove(key);
           if (current.extra.containsKey(key)) data[key] = current.extra[key];
@@ -4496,6 +4513,13 @@ const _rankedRecordingFields = {
   'releaseDate',
   'releaseDateDisplay',
   'recordingLocation',
+  'recordingId',
+  'recordingIds',
+  'isrc',
+  'isrcs',
+  'musicbrainzRecordingId',
+  'musicbrainzReleaseId',
+  'relationships',
   'year',
 };
 const _rankedControlFields = {
@@ -4523,6 +4547,28 @@ const _rankedControlFields = {
   'sourceLineageId',
   'providerLineage',
 };
+
+Iterable<JsonMap> _recordingAnalyses(SourceResult source) sync* {
+  final primary = jsonMap(source.extra['keyRecording']);
+  if (primary.isEmpty) return;
+  yield primary;
+  for (final raw
+      in primary['alternatives'] is List
+          ? primary['alternatives'] as List
+          : const []) {
+    if (raw is! Map) continue;
+    yield {
+      ...jsonMap(raw),
+      for (final field in const [
+        'recordingScope',
+        'selectedIdentity',
+        'identifierSourceIds',
+        'identifierProviders',
+      ])
+        if (primary.containsKey(field)) field: primary[field],
+    };
+  }
+}
 
 bool _recordingKeyBound(
   SongCandidate selected,
@@ -4575,17 +4621,18 @@ List<SourceResult> _recordingArrangementViews(
 ) {
   final targets = <String>[];
   for (final source in sources) {
-    final recording = jsonMap(source.extra['keyRecording']);
-    final key = recording['key'];
-    if (key is String &&
-        _keyIdentity(key) != null &&
-        (_recordingKeyBound(selected, sources, recording) ||
-            const {
-                  MatchKind.sameSong,
-                  MatchKind.sameRecording,
-                }.contains(source.matchKind) &&
-                _sameArrangedSong(selected, source.candidate))) {
-      targets.add(key);
+    for (final recording in _recordingAnalyses(source)) {
+      final key = recording['key'];
+      if (key is String &&
+          _keyIdentity(key) != null &&
+          (_recordingKeyBound(selected, sources, recording) ||
+              const {
+                    MatchKind.sameSong,
+                    MatchKind.sameRecording,
+                  }.contains(source.matchKind) &&
+                  _sameArrangedSong(selected, source.candidate))) {
+        targets.add(key);
+      }
     }
   }
   targets.sort();
@@ -4597,13 +4644,14 @@ List<SourceResult> _recordingArrangementViews(
   }
   final views = <String, SourceResult>{};
   for (final target in signatures) {
-    final bound = sources.any((source) {
-      final recording = jsonMap(source.extra['keyRecording']);
-      final key = recording['key'];
-      return key is String &&
-          _keyDistance(key, target) == 0 &&
-          _recordingKeyBound(selected, sources, recording);
-    });
+    final bound = sources.any(
+      (source) => _recordingAnalyses(source).any((recording) {
+        final key = recording['key'];
+        return key is String &&
+            _keyDistance(key, target) == 0 &&
+            _recordingKeyBound(selected, sources, recording);
+      }),
+    );
     for (final source in sources) {
       if (!source.hasChords ||
           source.extra['hasArrangementViews'] == true ||
@@ -4784,20 +4832,34 @@ EvidenceRanking _rankSourceCombination(
   final recordingEvidence =
       <({SourceResult source, JsonMap data, String key, bool bound})>[
         for (final source in sources)
-          if (jsonMap(source.extra['keyRecording'])['key']
-              case final String key)
-            if (_keyIdentity(key) != null)
-              (
-                source: source,
-                data: jsonMap(source.extra['keyRecording']),
-                key: key,
-                bound: _recordingKeyBound(
-                  selected,
-                  sources,
-                  jsonMap(source.extra['keyRecording']),
+          for (final analysis in _recordingAnalyses(source))
+            if (analysis['key'] case final String key)
+              if (_keyIdentity(key) != null)
+                (
+                  source: source,
+                  data: analysis,
+                  key: key,
+                  bound: _recordingKeyBound(selected, sources, analysis),
                 ),
-              ),
       ];
+  // All matching charts remain witnesses even when only one contributes
+  // anchors to the saved body. Provider identity deduplicates copied versions.
+  final chartKeyLeads = <({String key, String provider})>[
+    for (final source in ordered)
+      if (factSourceIds.contains(source.id) &&
+          source.hasChords &&
+          source.extra['hasArrangementViews'] != true &&
+          source.extra['recordingArrangement'] is! Map &&
+          !source.hasPendingMatchCheck)
+        if (rankChordKeyCandidates(source.body).firstOrNull case final lead?)
+          (
+            key: transposeChord(
+              lead.key,
+              _capoOf(_setupValue(source, selected, 'capo')),
+            ),
+            provider: source.candidate.providerId,
+          ),
+  ];
   final references = [...lyrics]
     ..sort((a, b) {
       final recording = (recordingCompatible(selected, b) ? 1 : 0).compareTo(
@@ -4872,6 +4934,29 @@ EvidenceRanking _rankSourceCombination(
   }
 
   Map<String, int> quality(SourceResult source, String field) {
+    if (field == 'metadata.key' && source.extra['searchEvidenceOnly'] == true) {
+      final declared = _setupValue(source, selected, 'key');
+      if (declared is String && _keyIdentity(declared) != null) {
+        final supporting = chartKeyLeads
+            .where((lead) => _keyDistance(lead.key, declared) == 0)
+            .map((lead) => lead.provider)
+            .toSet()
+            .length;
+        final contraryConsensus = chartKeyLeads.any(
+          (lead) =>
+              _keyDistance(lead.key, declared) != 0 &&
+              chartKeyLeads
+                      .where((other) => _keyDistance(other.key, lead.key) == 0)
+                      .map((other) => other.provider)
+                      .toSet()
+                      .length >=
+                  math.max(2, supporting + 1),
+        );
+        if (contraryConsensus) {
+          return const {'unresolvedSearchVsChartConsensus': -8};
+        }
+      }
+    }
     if (const {
       'metadata.duration',
       'metadata.durationSeconds',
@@ -4929,6 +5014,12 @@ EvidenceRanking _rankSourceCombination(
         if (source.extra['keyConsensus'] == true) 'sourceKeyAgreement': 6,
         if (source.extra['keyConsensus'] == false)
           'sourceKeyAgreement': source.extra['keyShift'] is int ? -6 : -12,
+        if (source.extra['alternatePerformerChart'] == true)
+          'alternatePerformerChart': -8,
+        if (source.extra['alternatePerformerChart'] == true &&
+            reference != null &&
+            !contextualChartLyricsMatch(source.body, reference.body))
+          'partialLyricSupport': -6,
         if (source.extra['recordingArrangement'] is Map)
           'derivedRecordingSetup':
               jsonMap(source.extra['recordingArrangement'])['recordingScope'] ==
@@ -5183,9 +5274,19 @@ EvidenceRanking _rankSourceCombination(
             .whereType<String>()
             .toList()
           ..sort();
-    final witnessId = byId.containsKey(source.candidate.identity)
-        ? source.candidate.identity
-        : source.id;
+    final identifierWitness =
+        (observation.data['identifierSourceIds'] is List
+                ? observation.data['identifierSourceIds'] as List
+                : const [])
+            .whereType<String>()
+            .map((id) => byId[id])
+            .whereType<SourceResult>()
+            .where((witness) => witness.extra['searchEvidenceOnly'] != true)
+            .firstOrNull ??
+        source;
+    final witnessId = byId.containsKey(identifierWitness.candidate.identity)
+        ? identifierWitness.candidate.identity
+        : identifierWitness.id;
     if (!analysed.add('$witnessId:$measured:${ids.join(',')}')) continue;
     final supportingMode = <String>{}, opposingMode = <String>{};
     for (final declaration in claims.where(
@@ -5224,6 +5325,15 @@ EvidenceRanking _rankSourceCombination(
         origin: EvidenceOrigin.provider,
         qualitySignals: {
           'algorithmicModeUncertainty': -12,
+          'recordingAgreement':
+              (((observation.data['ids'] as List? ?? const [])
+                              .whereType<String>()
+                              .map((id) => id.toUpperCase())
+                              .toSet()
+                              .length -
+                          1) *
+                      2)
+                  .clamp(0, 6),
           if (opposingMode.length > supportingMode.length)
             'relativeModeConflict': -20,
         },

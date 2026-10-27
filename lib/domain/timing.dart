@@ -16,8 +16,14 @@ const _maxCueUs = 604800000000;
 const _maxLrcTimestampsPerLine = 64;
 const _maxCues = 100000;
 
+// Cue IDs repeat the track ID, so opaque provider IDs must not be repeated
+// thousands of times. The original source ID remains on the track unchanged.
+String _sourceIdPrefix(String source) => source.length <= 256
+    ? source
+    : 'source-${sha256.convert(utf8.encode(source))}';
+
 /// Profile and recording change how a document is interpreted, so they take part
-/// in the id; without either the id is the historic `source:hash(raw)`.
+/// in the id. Normal source IDs retain the historic `source:hash(raw)` form.
 String _trackId(
   String source,
   String raw, {
@@ -27,7 +33,7 @@ String _trackId(
   final key = profile == null && recordingId == null
       ? raw
       : '$raw\u0000${profile ?? ''}\u0000${recordingId ?? ''}';
-  return '$source:${sha256.convert(utf8.encode(key)).toString().substring(0, 20)}';
+  return '${_sourceIdPrefix(source)}:${sha256.convert(utf8.encode(key)).toString().substring(0, 20)}';
 }
 
 /// `prefix[i]` is the number of grapheme clusters in `text.substring(0, i)`,
@@ -97,7 +103,7 @@ TimingTrack parseTimingBytes(
     // Over-limit input is rejected without retaining its bytes: keeping them
     // would make the whole song unsaveable.
     return TimingTrack(
-      id: '$sourceDocumentId:${sha256.convert(bytes)}',
+      id: '${_sourceIdPrefix(sourceDocumentId)}:${sha256.convert(bytes)}',
       sourceDocumentId: sourceDocumentId,
       sourceLyrics: '',
       format: format,
@@ -146,7 +152,7 @@ TimingTrack parseTimingBytes(
   }
   final track = text == null
       ? TimingTrack(
-          id: '$sourceDocumentId:${sha256.convert(bytes)}',
+          id: '${_sourceIdPrefix(sourceDocumentId)}:${sha256.convert(bytes)}',
           sourceDocumentId: sourceDocumentId,
           sourceLyrics: '',
           format: format,

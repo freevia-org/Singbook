@@ -2,6 +2,7 @@ import 'dart:async';
 
 import '../../domain/models.dart';
 import '../../domain/metadata_artist_credit.dart';
+import '../../domain/edition_identity.dart';
 import '../provider.dart';
 import 'common.dart';
 
@@ -281,7 +282,7 @@ class MusicBrainzProvider implements LyricsProvider {
     );
   }
 
-  SongCandidate _candidate(JsonMap r) {
+  SongCandidate _candidate(JsonMap r, {bool searchRecord = false}) {
     final credits = maps(r['artist-credit']);
     final artist = credits
         .map(
@@ -305,9 +306,11 @@ class MusicBrainzProvider implements LyricsProvider {
       durationSeconds: length is num && length > 0 ? length / 1000 : null,
       url: 'https://musicbrainz.org/recording/$id',
       recordingIds: {'musicbrainz': id},
+      extra: {if (searchRecord) 'musicbrainzSearchRecording': r},
       metadata: {
         ...sanitizeExtraMetadata({
           'identityScope': 'recording',
+          if (r['isrcs'] is List) 'isrcs': r['isrcs'],
           if (stringValue(r['disambiguation']).isNotEmpty)
             'version': r['disambiguation'],
           'releases': releases
@@ -368,7 +371,7 @@ class MusicBrainzProvider implements LyricsProvider {
       throw const ProviderException('invalid_response');
     }
     return maps(data['recordings'])
-        .map(_candidate)
+        .map((recording) => _candidate(recording, searchRecord: true))
         .where((c) => c.id.isNotEmpty && c.title.isNotEmpty)
         .toList();
   }
@@ -400,34 +403,162 @@ class MusicBrainzProvider implements LyricsProvider {
       final query =
           'recording:"${escaped(candidate.title)}" AND $artists'
           '${album == null || album.isEmpty ? '' : ' AND release:"${escaped(album)}"'}';
-      final matches = (await search(query, cancel: cancel))
-          .where(
-            (c) =>
-                normalized(c.title) == normalized(candidate.title) &&
-                (normalized(c.artist) == normalized(candidate.artist) ||
-                    musicBrainzArtistCreditEvidence(candidate, c, normalized) !=
-                        null),
-          )
-          .where(
-            (c) =>
-                candidate.durationSeconds == null ||
-                c.durationSeconds == null ||
-                (candidate.durationSeconds! - c.durationSeconds!).abs() <= 2,
-          )
-          .where(
-            (c) =>
-                candidate.album == null ||
-                maps(c.metadata['releases']).any(
-                  (r) =>
-                      normalized(stringValue(r['title'])) ==
-                      normalized(candidate.album!),
-                ),
-          )
-          .toList();
+      final matchesById = <String, SongCandidate>{};
+      for (final found in await search(query, cancel: cancel)) {
+        if (_songCandidateMatches(candidate, found)) {
+          matchesById.putIfAbsent(found.id, () => found);
+        }
+      }
+      final matches = matchesById.values.toList()
+        ..sort((a, b) {
+          final exactArtist =
+              (normalized(a.artist) == normalized(candidate.artist) ? 0 : 1)
+                  .compareTo(
+                    normalized(b.artist) == normalized(candidate.artist)
+                        ? 0
+                        : 1,
+                  );
+          if (exactArtist != 0) return exactArtist;
+          if (candidate.durationSeconds case final double length) {
+            final distance = ((a.durationSeconds ?? length) - length)
+                .abs()
+                .compareTo(((b.durationSeconds ?? length) - length).abs());
+            if (distance != 0) return distance;
+          }
+          return a.id.compareTo(b.id);
+        });
       if (matches.isEmpty) throw const ProviderException('unavailable');
-      if (matches.length != 1) throw const ProviderException('ambiguous_match');
+      if (matches.length > 1) {
+        return _ambiguousSongRecordings(candidate, matches, cancel);
+      }
       id = matches.single.id;
     }
+    return _resolveRecording(candidate, id, cancel);
+  }
+
+  bool _songCandidateMatches(SongCandidate selection, SongCandidate found) =>
+      normalized(found.title) == normalized(selection.title) &&
+      (normalized(found.artist) == normalized(selection.artist) ||
+          musicBrainzArtistCreditEvidence(selection, found, normalized) !=
+              null) &&
+      explicitEditionsCompatible(selection, found) &&
+      (selection.durationSeconds == null ||
+          found.durationSeconds == null ||
+          (selection.durationSeconds! - found.durationSeconds!).abs() <= 2) &&
+      (selection.album == null ||
+          maps(found.metadata['releases']).any(
+            (release) =>
+                normalized(stringValue(release['title'])) ==
+                normalized(selection.album!),
+          ));
+
+  SongCandidate _songScopedCandidate(SongCandidate native) => SongCandidate(
+    providerId: native.providerId,
+    id: native.id,
+    title: native.title,
+    artist: native.artist,
+    album: native.album,
+    durationSeconds: native.durationSeconds,
+    url: native.url,
+    recordingIds: native.recordingIds,
+    metadata: {...native.metadata, 'identityScope': 'song'},
+    extra: native.extra,
+  );
+
+  Future<SourceResult> _ambiguousSongRecordings(
+    SongCandidate selection,
+    List<SongCandidate> matches,
+    CancellationToken? cancel,
+  ) async {
+    final donors = <SourceResult>[];
+    for (var index = 0; index < matches.length; index++) {
+      cancel?.throwIfCancelled();
+      final candidate = matches[index];
+      String? failure;
+      if (index < 3) {
+        try {
+          donors.add(
+            await _resolveRecording(
+              selection,
+              candidate.id,
+              cancel,
+              songMatch: true,
+              searchCandidate: candidate,
+            ),
+          );
+          continue;
+        } on ProviderException catch (error) {
+          cancel?.throwIfCancelled();
+          failure = error.code;
+        } catch (_) {
+          cancel?.throwIfCancelled();
+          failure = 'invalid_response';
+        }
+      }
+      final scoped = _songScopedCandidate(candidate);
+      donors.add(
+        SourceResult(
+          candidate: scoped,
+          body: '',
+          metadata: scoped.metadata,
+          matchKind: MatchKind.sameSong,
+          matchReason: 'matching_song_recording_search',
+          attribution: 'MusicBrainz',
+          extra: {
+            ...sourceEvidence(
+              candidate,
+              license: 'CC0 core data; supplementary data retains source terms',
+              licenseUrl: 'https://musicbrainz.org/doc/MusicBrainz_Database',
+              attribution: 'MusicBrainz',
+            ),
+            'metadataOnly': true,
+            'identityScope': 'song',
+            'searchEvidenceOnly': true,
+            'nativeCandidate': candidate.toJson(),
+            'recordingDetail': {
+              'state': index < 3 ? 'failed' : 'not_attempted',
+              'code': failure ?? 'detail_budget',
+            },
+          },
+        ),
+      );
+    }
+    // Keep a successfully resolved donor visible when an earlier native
+    // recording failed, without discarding the failed search observation.
+    donors.sort((a, b) {
+      final detail = (a.extra['searchEvidenceOnly'] == true ? 1 : 0).compareTo(
+        b.extra['searchEvidenceOnly'] == true ? 1 : 0,
+      );
+      return detail != 0
+          ? detail
+          : matches
+                .indexWhere((candidate) => candidate.id == a.candidate.id)
+                .compareTo(
+                  matches.indexWhere(
+                    (candidate) => candidate.id == b.candidate.id,
+                  ),
+                );
+    });
+    final primary = donors.first;
+    return primary.copyWith(
+      extra: {
+        ...primary.extra,
+        'recordingMatch': 'ambiguous_song_recordings',
+        'providerAlternatives': [
+          for (final donor in donors.skip(1)) donor.toJson(),
+        ],
+        'recordingDetailBudget': 3,
+      },
+    );
+  }
+
+  Future<SourceResult> _resolveRecording(
+    SongCandidate candidate,
+    String id,
+    CancellationToken? cancel, {
+    bool songMatch = false,
+    SongCandidate? searchCandidate,
+  }) async {
     if (!RegExp(r'^[a-f0-9-]{36}$').hasMatch(id)) {
       throw const ProviderException('invalid_response');
     }
@@ -439,7 +570,11 @@ class MusicBrainzProvider implements LyricsProvider {
       cancel,
     );
     if (data['id'] != id) throw const ProviderException('invalid_response');
-    final found = _candidate(data);
+    final native = _candidate(data);
+    if (songMatch && !_songCandidateMatches(candidate, native)) {
+      throw const ProviderException('identity_mismatch');
+    }
+    final found = songMatch ? _songScopedCandidate(native) : native;
     final metadata = <String, dynamic>{
       ...found.metadata,
       if (found.durationSeconds != null)
@@ -448,13 +583,26 @@ class MusicBrainzProvider implements LyricsProvider {
       if (data['isrcs'] is List) 'isrcs': data['isrcs'],
       'musicbrainzRecordingId': id,
       'relationships': maps(data['relations']),
+      'mediaLinks': [
+        for (final relation in maps(data['relations']))
+          if (httpsLink(jsonMap(relation['url'])['resource'])
+              case final String url)
+            if (Uri.parse(url).host == 'open.spotify.com')
+              {'kind': 'audio', 'url': url, 'label': 'Spotify'},
+      ],
     };
-    final coverArt = await _boundedCoverArtForRecording(
-      recording: data,
-      recordingId: id,
-      selection: candidate,
-      cancel: cancel,
-    );
+    final ({String? url, String? album, JsonMap evidence}) coverArt = songMatch
+        ? (
+            url: null,
+            album: null,
+            evidence: {'status': 'omitted', 'code': 'song_recording_ambiguous'},
+          )
+        : await _boundedCoverArtForRecording(
+            recording: data,
+            recordingId: id,
+            selection: candidate,
+            cancel: cancel,
+          );
     final resolvedCandidate = coverArt.url == null
         ? found
         : SongCandidate(
@@ -500,6 +648,8 @@ class MusicBrainzProvider implements LyricsProvider {
           'artworkAssets': artworkAssets,
         },
       },
+      matchKind: songMatch ? MatchKind.sameSong : MatchKind.unverified,
+      matchReason: songMatch ? 'matching_song_recording' : null,
       attribution: 'MusicBrainz',
       retrievedAt: DateTime.now().toUtc(),
       extra: {
@@ -511,6 +661,14 @@ class MusicBrainzProvider implements LyricsProvider {
           permissions: {'status': 'field_specific', 'coreData': 'CC0'},
         ),
         'metadataOnly': true,
+        if (songMatch) ...{
+          'identityScope': 'song',
+          'nativeCandidate': native.toJson(),
+          'nativeRecording': data,
+          if (searchCandidate != null)
+            'searchCandidate': searchCandidate.toJson(),
+          'recordingDetail': {'state': 'resolved'},
+        },
         'artistIdentityEvidence': ?musicBrainzArtistCreditEvidence(
           candidate,
           found,
@@ -551,6 +709,40 @@ String entityLabel(JsonMap entity) {
                 .firstOrNull ??
             '';
 }
+
+String? _tonalKeyLabel(String label) {
+  final match = RegExp(
+    r'^([a-g])(?:\s*-?\s*(sharp|flat)|\s*([#♯b♭]))?\s*-?\s*(major|minor)$',
+    caseSensitive: false,
+  ).firstMatch(label.trim());
+  if (match == null) return null;
+  final accidental = switch (match.group(2)?.toLowerCase() ?? match.group(3)) {
+    'sharp' || '#' || '♯' => '#',
+    'flat' || 'b' || '♭' => 'b',
+    _ => '',
+  };
+  return '${match.group(1)!.toUpperCase()}$accidental${match.group(4)!.toLowerCase() == 'minor' ? 'm' : ''}';
+}
+
+List<JsonMap> _keyAssertions(JsonMap entity, Map<String, JsonMap> labels) => [
+  for (final statement in maps(jsonMap(entity['claims'])['P826']))
+    {
+      'statement': statement,
+      if (stringValue(
+            jsonMap(
+              jsonMap(jsonMap(statement['mainsnak'])['datavalue'])['value'],
+            )['id'],
+          )
+          case final String id when RegExp(r'^Q\d+$').hasMatch(id)) ...{
+        'entityId': id,
+        if (stringValue(jsonMap(jsonMap(labels[id]?['labels'])['en'])['value'])
+            case final String label when label.isNotEmpty) ...{
+          'label': label,
+          if (_tonalKeyLabel(label) case final String key) 'normalizedKey': key,
+        },
+      },
+    },
+];
 
 class WikidataProvider implements LyricsProvider {
   WikidataProvider(this.transport);
@@ -617,25 +809,34 @@ class WikidataProvider implements LyricsProvider {
 
   Future<List<SongCandidate>> _candidates(
     List<String> ids,
-    CancellationToken? cancel,
-  ) async {
+    CancellationToken? cancel, {
+    bool includeKeySingles = false,
+  }) async {
     final entities = await _entities(ids, cancel);
+    bool isWork(JsonMap entity) {
+      final types = entityClaims(entity, 'P31');
+      return types.any(_compositionTypes.contains) &&
+          !types.any(_nonCompositionTypes.contains);
+    }
+
+    bool isKeySingle(JsonMap entity) {
+      final types = entityClaims(entity, 'P31');
+      return includeKeySingles &&
+          types.contains('Q134556') &&
+          !types.any(const {'Q482994', 'Q11424', 'Q193018'}.contains) &&
+          maps(jsonMap(entity['claims'])['P826']).isNotEmpty;
+    }
+
     final works = entities.entries
         .where(
           (entry) =>
               entry.value['missing'] == null &&
-              entityClaims(
-                entry.value,
-                'P31',
-              ).any(_compositionTypes.contains) &&
-              !entityClaims(
-                entry.value,
-                'P31',
-              ).any(_nonCompositionTypes.contains),
+              (isWork(entry.value) || isKeySingle(entry.value)),
         )
         .toList();
     if (works.isEmpty) return [];
-    final related = works
+    final typedWorks = works.where((entry) => isWork(entry.value)).toList();
+    final related = typedWorks
         .map((entry) => entry.value)
         .expand(
           (e) => [
@@ -647,8 +848,54 @@ class WikidataProvider implements LyricsProvider {
         )
         .toList();
     final labels = await _entities(related, cancel);
+    final keyIds = typedWorks
+        .expand(
+          (entry) => maps(jsonMap(entry.value['claims'])['P826']).map(
+            (statement) => stringValue(
+              jsonMap(
+                jsonMap(jsonMap(statement['mainsnak'])['datavalue'])['value'],
+              )['id'],
+            ),
+          ),
+        )
+        .toList();
+    var keyLabels = <String, JsonMap>{};
+    try {
+      // Optional labels use a separate bounded batch: an uncached key lookup
+      // must not invalidate cached performer, composer or work metadata.
+      keyLabels = await _entities(keyIds, cancel);
+    } on ProviderException {
+      cancel?.throwIfCancelled();
+    }
+    final singleIds = [
+      for (final entry in works.where((entry) => !isWork(entry.value))) ...[
+        ...entityClaims(entry.value, 'P175'),
+        for (final statement in maps(jsonMap(entry.value['claims'])['P826']))
+          stringValue(
+            jsonMap(
+              jsonMap(jsonMap(statement['mainsnak'])['datavalue'])['value'],
+            )['id'],
+          ),
+      ],
+    ];
+    try {
+      // Optional Single donors must not change the established work-label
+      // request or make its existing metadata depend on a new cache entry.
+      final singleLabels = await _entities(singleIds, cancel);
+      labels.addAll(singleLabels);
+      keyLabels.addAll(singleLabels);
+    } on ProviderException {
+      cancel?.throwIfCancelled();
+    }
+
     return works
         .map((e) {
+          final keyAssertions = _keyAssertions(e.value, keyLabels);
+          final keys = keyAssertions
+              .map((assertion) => assertion['normalizedKey'])
+              .whereType<String>()
+              .toSet()
+              .toList();
           final artists = entityClaims(e.value, 'P175')
               .map((id) => entityLabel(labels[id] ?? {}))
               .where((s) => s.isNotEmpty)
@@ -662,7 +909,7 @@ class WikidataProvider implements LyricsProvider {
                   .map((id) => entityLabel(labels[id] ?? {}))
                   .where((name) => name.isNotEmpty)
                   .toSet();
-          final metadata = <String, dynamic>{
+          var metadata = <String, dynamic>{
             'identityScope': 'composition',
             'wikidataId': e.key,
             'description': stringValue(
@@ -697,6 +944,8 @@ class WikidataProvider implements LyricsProvider {
                 .toList(),
             'publicationDates': claimValues(e.value, 'P577'),
             'durationClaims': claimValues(e.value, 'P2047'),
+            if (keys.length == 1) 'key': keys.single,
+            if (keys.length > 1) 'keys': keys,
             'externalIdentifiers': {
               for (final entry in jsonMap(e.value['claims']).entries)
                 if (maps(entry.value).any(
@@ -712,15 +961,37 @@ class WikidataProvider implements LyricsProvider {
           if (files.length == 1) {
             metadata['wikimediaCommonsFile'] = files.single;
           }
+          final keySingle = !isWork(e.value);
+          if (keySingle) {
+            // Singles are useful song-level key evidence, not permission to
+            // promote release, duration, artwork or recording identity facts.
+            metadata = {
+              'identityScope': 'song',
+              'wikidataId': e.key,
+              'types': entityClaims(e.value, 'P31'),
+              'performerIds': entityClaims(e.value, 'P175'),
+              'performers': artists,
+              'performerAssertions': maps(jsonMap(e.value['claims'])['P175']),
+              if (keys.length == 1) 'key': keys.single,
+              if (keys.length > 1) 'keys': keys,
+            };
+          }
           return SongCandidate(
             providerId: definition.id,
             id: e.key,
             title: entityLabel(e.value),
             // Work authorship is independent of the many recordings/covers
             // linked through P175; retain performers separately as metadata.
-            artist: creators.join(', '),
+            artist: (keySingle ? artists : creators).join(', '),
             url: 'https://www.wikidata.org/wiki/${e.key}',
-            metadata: sanitizeExtraMetadata(metadata),
+            metadata: {
+              ...sanitizeExtraMetadata(metadata),
+              // Preserve complete source statements, including qualifiers and
+              // references that exceed the generic metadata nesting depth.
+              if (keyAssertions.isNotEmpty) 'keyAssertions': keyAssertions,
+              if (keySingle)
+                'performerAssertions': maps(jsonMap(e.value['claims'])['P175']),
+            },
           );
         })
         .where((c) => c.title.isNotEmpty)
@@ -731,6 +1002,12 @@ class WikidataProvider implements LyricsProvider {
   Future<List<SongCandidate>> search(
     String query, {
     CancellationToken? cancel,
+  }) => _search(query, cancel);
+
+  Future<List<SongCandidate>> _search(
+    String query,
+    CancellationToken? cancel, {
+    bool includeKeySingles = false,
   }) async {
     final data = await _api({
       'action': 'wbsearchentities',
@@ -742,7 +1019,7 @@ class WikidataProvider implements LyricsProvider {
       'type': 'item',
     }, cancel);
     final ids = maps(data['search']).map((r) => stringValue(r['id'])).toList();
-    return _candidates(ids, cancel);
+    return _candidates(ids, cancel, includeKeySingles: includeKeySingles);
   }
 
   @override
@@ -750,17 +1027,21 @@ class WikidataProvider implements LyricsProvider {
     SongCandidate candidate, {
     CancellationToken? cancel,
   }) async {
+    final external = candidate.providerId != definition.id;
     final exactId = candidate.providerId == definition.id
         ? candidate.id
         : candidate.recordingIds['wikidata'] ??
               stringValue(candidate.metadata['wikidataId']);
     List<SongCandidate> found;
     if (exactId.isNotEmpty) {
-      found = await _candidates([exactId], cancel);
+      found = await _candidates([exactId], cancel, includeKeySingles: external);
     } else {
-      found = await search(candidate.title, cancel: cancel);
+      found = await _search(
+        candidate.title,
+        cancel,
+        includeKeySingles: external,
+      );
     }
-    final external = candidate.providerId != definition.id;
     if (external) {
       // A recording performer need not be the work's author. Require the
       // fetched work's own P175 evidence before associating it with that
@@ -780,12 +1061,19 @@ class WikidataProvider implements LyricsProvider {
           .toList();
     }
     if (found.isEmpty) throw const ProviderException('unavailable');
-    if (found.length != 1) throw const ProviderException('ambiguous_match');
-    final result = found.single;
-    return SourceResult(
+    if (!external && found.length != 1) {
+      throw const ProviderException('ambiguous_match');
+    }
+    found.sort((a, b) {
+      final work = (a.metadata['identityScope'] == 'composition' ? 0 : 1)
+          .compareTo(b.metadata['identityScope'] == 'composition' ? 0 : 1);
+      return work != 0 ? work : a.id.compareTo(b.id);
+    });
+    SourceResult document(SongCandidate result) => SourceResult(
       candidate: result,
       body: '',
       metadata: result.metadata,
+      matchKind: external ? MatchKind.sameSong : MatchKind.unverified,
       attribution: 'Wikidata contributors',
       retrievedAt: DateTime.now().toUtc(),
       extra: {
@@ -801,11 +1089,22 @@ class WikidataProvider implements LyricsProvider {
           },
         ),
         'metadataOnly': true,
-        'identityScope': 'composition',
+        'identityScope': result.metadata['identityScope'],
         if (external)
           'identityMatch': {'property': 'P175', 'performer': result.artist},
       },
     );
+    final primary = document(found.first);
+    return found.length == 1
+        ? primary
+        : primary.copyWith(
+            extra: {
+              ...primary.extra,
+              'providerAlternatives': [
+                for (final donor in found.skip(1)) document(donor).toJson(),
+              ],
+            },
+          );
   }
 
   SongCandidate? _forPerformer(SongCandidate work, SongCandidate selected) {
