@@ -571,7 +571,7 @@ Three little birds sit by my doorstep''';
     expect(pendingDocument.metadata['key'], isNull);
   });
 
-  test('unscoped same-song donor cannot add chords from a single agreement', () {
+  test('unscoped same-song donor cannot add uncorroborated anchors', () {
     const selected = SongCandidate(
       providerId: 'catalog',
       id: 'lantern-song',
@@ -580,10 +580,12 @@ Three little birds sit by my doorstep''';
     );
     const first = 'Lanterns drift over the harbor tonight';
     const second = 'Moonlight follows boats across the water';
+    const third = 'Quiet waves return beneath the bridge';
     final document = combineSources(selected, [
       SourceResult(
         candidate: selected,
-        body: '[G]$first\n$second',
+        body: '[G]Lanterns drift over the [D]harbor tonight\n'
+            '[D]Moonlight follows [C]boats across the water\n$third',
         matchKind: MatchKind.sameRecording,
       ),
       SourceResult(
@@ -593,13 +595,15 @@ Three little birds sit by my doorstep''';
           title: 'Lantern Song',
           artist: 'Test Artist',
         ),
-        body: '[G]$first\n[C]$second',
+        body: '[G]Lanterns drift over the [D]harbor tonight\n'
+            '[D]Moonlight follows [C]boats across the water\n[C]$third',
         matchKind: MatchKind.sameSong,
       ),
     ]);
 
-    expect(_chordsByLine(document.body)[first], ['G']);
-    expect(_chordsByLine(document.body)[second], isEmpty);
+    expect(_chordsByLine(document.body)[first], ['G', 'D']);
+    expect(_chordsByLine(document.body)[second], ['D', 'C']);
+    expect(_chordsByLine(document.body)[third], isEmpty);
     expect(document.extra['chordSourceIds'], isNull);
   });
 

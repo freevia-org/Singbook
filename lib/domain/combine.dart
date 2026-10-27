@@ -2694,8 +2694,6 @@ _overlayChords(
         continue;
       }
       var agrees = false, contradicts = false;
-      var agreeingAnchors = 0;
-      final agreeingLines = <int>{};
       for (final entry in candidate.chords.entries) {
         final previous = chartChords[entry.key];
         if (previous == null) continue;
@@ -2706,8 +2704,6 @@ _overlayChords(
             contradicts = true;
           } else {
             agrees = true;
-            agreeingAnchors++;
-            agreeingLines.add(entry.key);
           }
         }
       }
@@ -2734,15 +2730,13 @@ _overlayChords(
         continue;
       }
       // A same-song chart without a compatible explicit arrangement setup or
-      // affirmative key consensus may confirm overlapping anchors, but a
-      // single agreement cannot validate its otherwise unmatched changes.
-      // Keep only exact agreements in that case; in particular, do not let a
-      // repeated-line alignment use one matching chorus chord to authorize
-      // new chords elsewhere in the song.
+      // affirmative key consensus may confirm overlapping anchors, but those
+      // agreements cannot validate its otherwise unmatched changes. Keep only
+      // exact agreements in that case; repeated-line alignment must not let
+      // one matching chorus chord authorize new chords elsewhere in the song.
       if (candidate.confidence < 2 &&
           !explicitSetup &&
-          !checkedSameKey &&
-          (agreeingAnchors < 3 || agreeingLines.length < 2)) {
+          !checkedSameKey) {
         candidate = (
           source: candidate.source,
           chords: {
