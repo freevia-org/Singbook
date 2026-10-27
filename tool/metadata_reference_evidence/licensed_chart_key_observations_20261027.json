@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "reviewedOn": "2026-10-27",
-  "purpose": "Practical licensed-chart key comparisons. These product listings support chart-level comparison and do not automatically establish a particular recording's tonic.",
+  "purpose": "Practical licensed-chart key comparisons. Product-level key fields support arrangement-scope checks and do not automatically establish a particular recording master or the app chart key.",
   "sources": [
     {
       "songId": "song-001",
@@ -244,6 +244,46 @@
       "format": "Official Taylor Swift Lyrics/Melody/Chords leadsheet",
       "scope": "artist arrangement",
       "scopeNote": "Musicnotes lists D major as the original published key for this licensed Taylor Swift leadsheet. The selected D major matches at arrangement level; no exact performance-master binding is claimed."
+    },
+    {
+      "songId": "song-021",
+      "title": "Zombie",
+      "product": "Musicnotes MN0287856",
+      "url": "https://www.musicnotes.com/sheetmusic/the-cranberries/zombie/MN0287856",
+      "publisherClaimedKey": "Em",
+      "format": "Official guitar chord chart with lyrics",
+      "scope": "artist arrangement; product page associates The Cranberries song",
+      "scopeNote": "Musicnotes identifies this official chord-chart arrangement in E minor. The corpus row has no displayed key; this reference is arrangement-level and does not alone establish the exact master key."
+    },
+    {
+      "songId": "song-022",
+      "title": "Creep",
+      "product": "Musicnotes MN0153236",
+      "url": "https://apps.musicnotes.com/sheetmusic/radiohead/creep/MN0153236",
+      "publisherClaimedKey": "G",
+      "format": "Official lyrics/melody/chords leadsheet",
+      "scope": "Radiohead artist arrangement associated with Pablo Honey",
+      "scopeNote": "Musicnotes identifies this official leadsheet in G major. It is an arrangement key; the app row has no displayed key, and no chord-chart identity match is claimed."
+    },
+    {
+      "songId": "song-034",
+      "title": "No Woman, No Cry",
+      "product": "Musicnotes MN0072655",
+      "url": "https://www.musicnotes.com/sheetmusic/bob-marley-the-wailers/no-woman-no-cry/MN0072655",
+      "publisherClaimedKey": "C",
+      "format": "Official Piano/Vocal/Guitar arrangement",
+      "scope": "Bob Marley & the Wailers arrangement; page associates the song with Natty Dread and Confrontation",
+      "scopeNote": "Musicnotes/Hal Leonard lists C major for this PVG arrangement. The contributing app chord chart independently yields a C shape-key estimate, so this is a strong practical check, but neither reference proves the exact recording/master key."
+    },
+    {
+      "songId": "song-064",
+      "title": "Mrs. Robinson",
+      "product": "Musicnotes MN0107802",
+      "url": "https://www.musicnotes.com/sheetmusic/simon-garfunkel/mrs-robinson/MN0107802",
+      "publisherClaimedKey": "G",
+      "format": "Official Piano/Vocal/Guitar arrangement",
+      "scope": "Simon & Garfunkel arrangement associated with Bookends and The Graduate",
+      "scopeNote": "Musicnotes lists G major for this licensed PVG arrangement. The app chart has capo 3 but no key; the publisher key is not automatically equivalent to the app chart’s sounding key."
     }
   ],
   "interpretationPolicy": {
