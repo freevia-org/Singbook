@@ -419,6 +419,40 @@
       ],
       "endpoint": "https://vocadb.net/api",
       "reason": "Documented anonymous HTTPS API, free use with identifying User-Agent and response caching; excessive unapproved traffic prohibited. Publisher reports148860 song additions during2024, not a current lyric/catalog total. Native production search/detail qualification2026-10-27T08:48:38Z passed exact publisher-linked IDs1501 Rollin' Girl/wowaka feat.Hatsune Miku and68814 ECHO/Crusher,CIRCRUSH feat.V3 GUMI(English): four200 responses, zero retries/network failures. Default name-sorted first5 rows missed both known versions; documented RatingScore sort brought each exact ID into bounded12-row native searches. Original lyric selected by unique Original variant, never array position; complete translated/romanized variants and source credits, names, artist-role records, album entries, culture codes, BPM range and raw JSON retained. Only explicit composer/lyricist roles and fixed BPM become those fields; multiple albums are not a guessed first album. Source entries remain arrangements with no confirmed recording IDs or timing. Publisher metadata is CC-BY4.0 with link-back; lyrics and uploaded images are expressly excluded, so lyric rights remain unknown. No artwork/audio/video fetched, account/cookies/credential use or restriction workaround. Nine synthetic regressions and real native controller/SQLite/ChordPro persistence replay passed; all source facts, every variant, full raw JSON, song JSON and hashes retained through reopen. Adapter exists in a separate qualification branch but is not registered, activated or shipped. Title-only contextual lookup and album/artist/duration-aware cache reuse are prepared against the shared173 contract but not yet wired. Keep pending shared contextual search integration, safe compatible catalog rollout, full hosted checks, Android UI, cloud reachability and compatible app publication. Existing older catalog channels unchanged. Missing or multiple original variants remain explicit unavailable/ambiguous outcomes. Incremental overlap, broader language coverage and independent musical/transcription accuracy unmeasured. Compatible rollout qualification: channel4 candidate runtime now registers VocaDB, implements the existing shared contextual interface, and adds a complete revision15 catalog with all23 prior entries unchanged. Normal factory/configured-provider foreign selection and offline bootstrap/default-enabled checks pass; saved opt-outs and all older high-revision cache streams survive. A populated saved song with source payload, metadata and raw timing stays byte-equivalent at the JSON model level after refresh/recreation. Regular CLI2026-10-27T09:17:26Z passed all4 canonical/search probes with complete catalog/lyrics/metadata coverage,4HTTP200 and zero retries/network failures. Full24-source offline structural validation passes. This accepts qualified compatible code/catalog preparation, not served catalog publication or app availability; Android/device, cloud, integration and compatible production rollout remain pending."
+    },
+    {
+      "id": "touhoudb",
+      "name": "TouhouDB",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred",
+      "documentation": [
+        "https://wiki.vocadb.net/docs/touhoudb-what-is-it-for",
+        "https://wiki.vocadb.net/docs/touhoudb-songs",
+        "https://touhoudb.com/swagger/v1/swagger.json",
+        "https://wiki.vocadb.net/docs/public-api",
+        "https://wiki.vocadb.net/docs/license",
+        "https://wiki.vocadb.net/docs/services-that-make-use-of-vocadb-apis"
+      ],
+      "endpoint": "https://touhoudb.com/api",
+      "reason": "Touhou originals, arrangements, fanwork soundtracks and discography; Japanese and international audience. Host-specific OpenAPI returned HTTP200 at2026-10-27T10:10:57Z and documents anonymous numeric-ID song search/detail, aliases, artist roles, albums, original-version relationships, duration/BPM/culture fields and optional credited lyric variants. One documented metadata-only /api/songs?maxResults=1&getTotalCount=true request at2026-10-27T10:15:17.243023Z returned HTTP200 with totalCount190042, one row and no lyrics property/body. This is an unfiltered song/version-entry total, not lyric-bearing, deduplicated or incremental coverage. Two publisher-linked canonical HTML pages per host returned200; the combined six count/page checks had zero retries/denials and no lyric-body API calls. Exact version identities and request accounting are documented in docs/regional-source-qualification.md. Shared API guidance requires client identification/caching and prohibits excessive traffic. Shared metadata license names VocaDB and excludes lyric text/images; host-specific rendered attribution/license links were not visible in the small HTML shells, so applicability remains unverified. Defer pending that rendered host check, actual version/detail schema verification, two independent identity-correct lyric extraction canaries, compatible native registration/catalog rollout, preservation of all variants/source credits and Android/cloud qualification. No account, cookies, credentials, corpus/artwork/audio/video download, provider registration or source activation; overlap remains unmeasured."
+    },
+    {
+      "id": "utaitedb",
+      "name": "UtaiteDB",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred",
+      "documentation": [
+        "https://wiki.vocadb.net/docs/utaitedb-what-is-it-for",
+        "https://wiki.vocadb.net/docs/utaitedb-songs",
+        "https://utaitedb.net/swagger/v1/swagger.json",
+        "https://wiki.vocadb.net/docs/public-api",
+        "https://wiki.vocadb.net/docs/license",
+        "https://wiki.vocadb.net/docs/services-that-make-use-of-vocadb-apis"
+      ],
+      "endpoint": "https://utaitedb.net/api",
+      "reason": "Human-vocalist originals/covers and related versions; Japanese, Romanized and English names. Host-specific OpenAPI returned HTTP200 at2026-10-27T10:10:57Z and documents anonymous numeric-ID song search/detail, aliases, artist roles, albums, original-version relationships, duration/BPM/culture fields and optional credited lyric variants. One documented metadata-only /api/songs?maxResults=1&getTotalCount=true request at2026-10-27T10:15:17.737952Z returned HTTP200 with totalCount78943, one row and no lyrics property/body. This is an unfiltered song/version-entry total, not lyric-bearing, deduplicated or incremental coverage. Two publisher-linked canonical HTML pages per host returned200; the combined six count/page checks had zero retries/denials and no lyric-body API calls. Exact version identities and request accounting are documented in docs/regional-source-qualification.md. Shared API guidance requires client identification/caching and prohibits excessive traffic. Shared metadata license names VocaDB and excludes lyric text/images; host-specific rendered attribution/license links were not visible in the small HTML shells, so applicability remains unverified. Defer pending that rendered host check, actual version/detail schema verification, two independent identity-correct lyric extraction canaries, compatible native registration/catalog rollout, preservation of all variants/source credits and Android/cloud qualification. No account, cookies, credentials, corpus/artwork/audio/video download, provider registration or source activation; overlap remains unmeasured."
     }
   ]
 }

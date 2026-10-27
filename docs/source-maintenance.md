@@ -198,6 +198,40 @@ passing canaries with advertised but untested capabilities are `partial_coverage
 which also returns exit 1. Extend coverage when a representative real canary is
 available; incomplete coverage alone does not justify retiring a source.
 
+### Scheduled catalog selection and request budget
+
+For production daily runs, use an isolated checkout of current public `main`
+and the CLI's default catalog. Confirm that this default matches
+`SourceCatalogClient.bundledAsset` in `lib/providers/source_catalog_client.dart`.
+Derive the roster from that runtime's complete compiled registry and matching
+bundle. Do not pin a scheduled run to an older channel after a compatible runtime
+has advanced, or hardcode the number of providers. Keep every older served
+catalog compatible with its released app.
+
+Before live requests, run one offline structural check. A missing registered ID,
+unknown native ID or catalog/runtime mismatch is an explicit coverage problem;
+resolve the checkout/configuration mismatch without downgrading the roster.
+Record the source commit, runtime, catalog path/channel/revision and measurement
+time in each sanitized report. Pending feature branches use separate candidate
+qualification reports and never replace production `latest.json` for either
+runtime. Integrating a new channel does not prove that a released app consumes it.
+
+Run the complete live suite once per scheduled invocation. Each source can have
+multiple search/detail canaries, redirects and bounded transport retries, so one
+daily job does not mean one HTTP request per host. Retain those measured counts
+and timestamps, including any separate publisher file-import phase. A selected
+source recheck needs changed response evidence, an actual code/config repair or
+a specific new capability; state that reason and reuse fresh evidence for
+unchanged sources. Local and cloud jobs each retain their own daily run and
+provenance. A rate-limit response alone does not prove a daily scheduling problem
+or establish whether the limit is per client, shared IP or upstream global load.
+
+The saved local and cloud schedule prompts are account configuration. When
+changing their catalog selection, preserve both enabled jobs, cadence, target
+worker/environment, credentials and notification preferences. Verify each saved
+prompt separately; editing a repository guide or one runtime's prompt does not
+prove that the other runtime adopted the change.
+
 ### Publisher file-import checks
 
 The opt-in host check downloads two exact Ozbcoz guitar arrangements from links
