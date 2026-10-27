@@ -1698,6 +1698,8 @@ void main() {
     final observations = _readLicensedChartObservations();
     final rows = [
       {'id': 'song-001', 'key': 'A', 'keyClaimScope': 'arrangement'},
+      {'id': 'song-021', 'key': null, 'keyClaimScope': null},
+      {'id': 'song-022', 'key': null, 'keyClaimScope': null},
       {'id': 'song-004', 'key': 'F#m', 'keyClaimScope': 'arrangement'},
       {'id': 'song-006', 'key': 'C', 'keyClaimScope': 'arrangement'},
       {'id': 'song-008', 'key': 'F', 'keyClaimScope': 'recording'},
@@ -1706,6 +1708,7 @@ void main() {
       {'id': 'song-017', 'key': 'G', 'keyClaimScope': 'arrangement'},
       {'id': 'song-018', 'key': 'Ab', 'keyClaimScope': 'arrangement'},
       {'id': 'song-031', 'key': 'A', 'keyClaimScope': 'arrangement'},
+      {'id': 'song-034', 'key': null, 'keyClaimScope': null},
       {'id': 'song-035', 'key': 'C#m', 'keyClaimScope': 'arrangement'},
       {'id': 'song-036', 'key': 'G', 'keyClaimScope': 'arrangement'},
       {'id': 'song-037', 'key': null, 'keyClaimScope': null},
@@ -1714,6 +1717,7 @@ void main() {
       {'id': 'song-041', 'key': 'D#', 'keyClaimScope': 'recording'},
       {'id': 'song-042', 'key': 'A', 'keyClaimScope': 'arrangement'},
       {'id': 'song-046', 'key': null, 'keyClaimScope': null},
+      {'id': 'song-064', 'key': null, 'keyClaimScope': null},
       {'id': 'song-065', 'key': 'C', 'keyClaimScope': 'arrangement'},
       {'id': 'song-074', 'key': null, 'keyClaimScope': null},
       {'id': 'song-051', 'key': 'Bm', 'keyClaimScope': 'arrangement'},
@@ -1723,11 +1727,11 @@ void main() {
     ].cast<Map<String, Object?>>();
     final result = _practicalLicensedChartReview(rows, observations);
     final counts = result['counts'] as Map;
-    expect(counts['observations'], 23);
+    expect(counts['observations'], 27);
     expect(counts['practicalChartKeyMatches'], 14);
     expect(counts['scopeMismatches'], 2);
     expect(counts['differencesNeedingReview'], 4);
-    expect(counts['selectedKeyUnavailable'], 3);
+    expect(counts['selectedKeyUnavailable'], 7);
     expect(result['isStrictRecordingGold'], isFalse);
   });
   test(
