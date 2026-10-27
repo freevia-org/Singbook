@@ -1,0 +1,37 @@
+{
+  "atUtc": "2026-10-27T11:58:41.614951+00:00",
+  "kind": "primary-documentation discovery decisions pending next ledger integration",
+  "repositoryChanged": false,
+  "reasonSeparateFromFrozen184": "PR184 is frozen after code/Android qualification; preserve its current exact-head CI. These are deferred leads, no source additions.",
+  "candidates": [
+    {
+      "id": "discogs",
+      "name": "Discogs",
+      "status": "deferred",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "documentation": [
+        "https://support.discogs.com/hc/en-us/articles/360009334593-API-Terms-of-Use",
+        "https://support.discogs.com/hc/en-us/articles/360005055493-Database-Guidelines-16-Master-Release",
+        "https://www.discogs.com/developers/"
+      ],
+      "reason": "Primary API terms distinguish CC0 bibliographic metadata from restricted images. Clause5 prohibits showing API content more than6hours stale and limits caching; permanent offline saved-source snapshots and portable ChordPro export need a compatible permission/persistence design. Adjacent source credit/link and nonaffiliation notice required. Developer specifications returned403 to the bounded researcher; stopped that host. Current route-specific auth, numeric quotas and retry contract unverified. Master IDs group editions and must not become exact recording IDs or justify arbitrary artwork. No API canaries, credentials, acceptance or account creation."
+    },
+    {
+      "id": "deezer",
+      "name": "Deezer",
+      "status": "deferred",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "documentation": [
+        "https://developers.deezer.com/termsofuse",
+        "https://developers.deezer.com/api",
+        "https://en.deezercommunity.com/other-devices-49/deezer-api-current-track-82480"
+      ],
+      "reason": "Official API docs redirected to login. Official community staff said token-request process closed on2026-04-14; this is not proof every anonymous endpoint fails or current reopening status. Accessible developer terms restrict purpose/content use and do not establish the intended public-app/permanent-offline artwork and metadata use; permission contract needed. Artist/album/track families known, exact ID/ISRC/edition/country/attribution/quota/retry contract unverified. No catalog counts, API canaries, content downloads, credentials, acceptance, account creation or outreach."
+    }
+  ],
+  "review": "Coordinator independently read Discogs API terms, Deezer developer terms and dated official staff statement. Discovery evidence only; no API canaries/accounts/credentials/content downloads or source activation.",
+  "existingDiscoveryCommit": "0c45cdb4d983f8f5f1f3a5ffe8adb98536c47313",
+  "nextStep": "Reconcile these two deferred entries into the discovery ledger after the existing source stack integrates; do not disturb frozen PR184 or treat metadata API access as offline/artwork permission."
+}
