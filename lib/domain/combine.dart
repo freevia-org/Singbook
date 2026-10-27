@@ -9,8 +9,10 @@ import 'arrangement.dart';
 import 'artist_credit.dart';
 import 'reviewed_chart_artist.dart';
 import 'metadata_artist_credit.dart';
+import 'published_name_alias.dart';
 import 'arrangement_context.dart';
 import 'contextual_chart_lyrics.dart';
+import 'compact_chord_alignment.dart';
 import 'lyric_word_identity.dart';
 import 'short_lyric_reference.dart';
 import 'chord_key_estimate.dart'
@@ -189,8 +191,10 @@ bool _sameSong(SongCandidate a, SongCandidate b) {
   final artist = _identityNorm(a.artist), title = _baseTitle(a.title);
   // Two unknown (empty) artists or titles are not evidence of the same song.
   if (artist.isEmpty || title.isEmpty) return false;
-  return title == _baseTitle(b.title) &&
+  final titles = publishedNameVariants(a.title).map(_baseTitle).toSet();
+  return publishedNameVariants(b.title).map(_baseTitle).any(titles.contains) &&
       (artist == _identityNorm(b.artist) ||
+          publishedNamesMatch(a.artist, b.artist) ||
           sameGeniusPrimaryCredit(a, b, _identityNorm) ||
           sameReviewedChartArtist(a, b) ||
           musicBrainzArtistCreditEvidence(a, b, _identityNorm) != null);
@@ -209,13 +213,19 @@ bool _sameArrangedSong(SongCandidate a, SongCandidate b) {
   String title(String value) => _baseTitle(
     foldLyricVowelAccents(value),
   ).replaceFirst(RegExp(r'^(?:the|a|an) '), '');
-  final song = title(a.title);
-  if (song.isEmpty || song != title(b.title)) return false;
+  final songs = publishedNameVariants(
+    a.title,
+  ).map(title).where((s) => s.isNotEmpty).toSet();
+  if (!publishedNameVariants(b.title).map(title).any(songs.contains))
+    return false;
+  final artistA = reviewedChartArtistCredit(a)?.canonicalName ?? a.artist;
+  final artistB = reviewedChartArtistCredit(b)?.canonicalName ?? b.artist;
   return artistCreditsMatch(
-    reviewedChartArtistCredit(a)?.canonicalName ?? a.artist,
-    reviewedChartArtistCredit(b)?.canonicalName ?? b.artist,
-    (value) => _identityNorm(foldLyricVowelAccents(value)),
-  );
+        artistA,
+        artistB,
+        (value) => _identityNorm(foldLyricVowelAccents(value)),
+      ) ||
+      publishedNamesMatch(artistA, artistB);
 }
 
 bool _hasRecordingIdentityScope(SongCandidate candidate) =>
@@ -2797,6 +2807,15 @@ _overlayChords(
           );
       if (!agrees) chords[entry.key] = entry.value;
     }
+    // Some page layouts split words around chord anchors. Recover placements
+    // only where the complete donor line has the same ordered letters, keeping
+    // the selected lyrics and any placement already established above.
+    final compact = compactLineChords(plain, donorBody);
+    for (final entry in compact.entries) {
+      if (chords[entry.key]?.isNotEmpty ?? false) continue;
+      chords[entry.key] = entry.value;
+      contextSources.add(source.id);
+    }
     if (contexts.entries.any(
       (entry) =>
           identical(chords[entry.key], entry.value) &&
@@ -4783,6 +4802,7 @@ EvidenceClaim _rebuildClaim(
   String? equivalenceKey,
   bool? contextCompatible,
   String? incompatibilityReason,
+  Map<String, int>? qualitySignals,
 }) => EvidenceClaim(
   field: claim.field,
   value: value ?? claim.value,
@@ -4798,7 +4818,7 @@ EvidenceClaim _rebuildClaim(
   supportsCorroboration: claim.supportsCorroboration,
   incompatibilityReason: incompatibilityReason ?? claim.incompatibilityReason,
   equivalenceKey: equivalenceKey ?? claim.equivalenceKey,
-  qualitySignals: claim.qualitySignals,
+  qualitySignals: qualitySignals ?? claim.qualitySignals,
 );
 
 EvidenceRanking _rankSourceCombination(
@@ -5191,6 +5211,37 @@ EvidenceRanking _rankSourceCombination(
       ),
     );
   }
+  // Publishers use both shape-key and sounding-key labels on capo charts.
+  // Retain the literal declaration and rank its arithmetic sounding reading
+  // as another interpretation of that same source, never as another vote.
+  for (var i = 0, count = claims.length; i < count; i++) {
+    final claim = claims[i];
+    if (claim.field != 'metadata.key' ||
+        claim.value is! String ||
+        !claim.contextCompatible)
+      continue;
+    final source = byId[claim.sourceId];
+    if (source == null || !source.hasChords) continue;
+    final capo = _capoOf(_setupValue(source, selected, 'capo'));
+    if (capo == 0 || _keyIdentity(claim.value) == null) continue;
+    final sounding = transposeChord(claim.value as String, capo);
+    final lead = rankChordKeyCandidates(_keyCorrectedBody(source)).firstOrNull;
+    final shapeSupport =
+        lead != null && _keyIdentity(lead.key) == _keyIdentity(claim.value);
+    claims.add(
+      _rebuildClaim(
+        claim,
+        value: sounding,
+        equivalenceKey: _keyIdentity(sounding),
+        contextId: source.id,
+        harmonyFit: fit(source, claim.field, sounding),
+        qualitySignals: {
+          ...claim.qualitySignals,
+          'capoShapeInterpretation': shapeSupport ? 4 : 0,
+        },
+      ),
+    );
+  }
   // Inferred alternatives are kept separately from every provider declaration.
   // Ambiguity and section changes affect their rank, not their availability.
   for (final source in charts) {
@@ -5407,7 +5458,15 @@ EvidenceRanking _rankSourceCombination(
       }
       return declared is! String ||
           other.value is! String ||
-          _keyDistance(declared, other.value as String) == 0;
+          _keyDistance(declared, other.value as String) == 0 ||
+          _keyDistance(
+                transposeChord(
+                  declared,
+                  _capoOf(_setupValue(source, selected, 'capo')),
+                ),
+                other.value as String,
+              ) ==
+              0;
     }
     if (other.field == 'metadata.capo') {
       return _capoOf(other.value) ==

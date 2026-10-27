@@ -68,6 +68,52 @@ List<Map<String, dynamic>> _claims(SongDocument song, String field) => [
 ];
 
 void main() {
+  test('capo shape declaration is retained alongside its sounding reading', () {
+    final chart = _source(
+      'chart',
+      body:
+          '[C]Amber lanterns glow above the quiet water\n'
+          '[F]Silver rain returns beneath the evening sky\n'
+          '[G]Every window keeps a little golden light\n'
+          '[C]Morning carries every dream back home',
+      metadata: {'key': 'C', 'capo': 2},
+    );
+    final key = _source(
+      'metadata',
+      body: '',
+      metadata: {'key': 'D'},
+      extra: {'metadataOnly': true},
+    );
+    final combined = combineSources(_selected, [chart, key]);
+    expect(combined.metadata['key'], 'D');
+    expect(combined.metadata['capo'], 2);
+    expect(
+      combined.sources.singleWhere((s) => s.id == chart.id).metadata['key'],
+      'C',
+    );
+    expect(
+      _claims(
+        combined,
+        'metadata.key',
+      ).where((c) => c['sourceId'] == chart.id).map((c) => c['value']),
+      containsAll(['C', 'D']),
+    );
+  });
+
+  test('already sounding capo declaration is not transposed twice', () {
+    final chart = _source(
+      'chart',
+      body:
+          '[C]Amber lanterns glow above the quiet water\n'
+          '[F]Silver rain returns beneath the evening sky\n'
+          '[G]Every window keeps a little golden light\n'
+          '[C]Morning carries every dream back home',
+      metadata: {'key': 'D', 'capo': 2},
+    );
+    final combined = combineSources(_selected, [chart]);
+    expect(combined.metadata['key'], 'D');
+    expect(combined.sources.single.metadata['key'], 'D');
+  });
   test(
     'same-song recording donors retain native identity without assigning it to the selection',
     () {

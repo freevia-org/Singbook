@@ -14,6 +14,7 @@ import '../../domain/combine.dart'
 import '../../domain/artist_credit.dart';
 import '../../domain/reviewed_chart_artist.dart';
 import '../../domain/metadata_artist_credit.dart';
+import '../../domain/published_name_alias.dart';
 import '../../domain/arrangement_context.dart';
 import '../../domain/contextual_chart_lyrics.dart';
 import '../../domain/lyric_word_identity.dart';
@@ -98,15 +99,22 @@ String normalizedIdentity(String text) => text
     .replaceAll(RegExp("['‘’]"), '')
     .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
     .trim();
-String _titleKey(String title) => normalizedIdentity(
-  title.replaceFirst(
-    RegExp(
-      r'\s*(?:\((?:\d{4}\s+)?remaster(?:ed)?(?:\s+\d{4})?\)|\[(?:\d{4}\s+)?remaster(?:ed)?(?:\s+\d{4})?\]|\s[-–—]\s(?:\d{4}\s+)?remaster(?:ed)?(?:\s+\d{4})?)\s*$',
-      caseSensitive: false,
-    ),
-    '',
-  ),
+final _remasterTitleSuffix = RegExp(
+  r'\s*(?:\((?:\d{4}\s+)?remaster(?:ed)?(?:\s+\d{4})?\)|\[(?:\d{4}\s+)?remaster(?:ed)?(?:\s+\d{4})?\]|\s[-–—]\s(?:\d{4}\s+)?remaster(?:ed)?(?:\s+\d{4})?)\s*$',
+  caseSensitive: false,
 );
+String _titleKey(String title) =>
+    normalizedIdentity(title.replaceFirst(_remasterTitleSuffix, ''));
+Set<String> _publishedTitleKeys(String title) {
+  final withoutRemaster = title.replaceFirst(_remasterTitleSuffix, '');
+  return {
+    for (final name in publishedNameVariants(withoutRemaster)) _titleKey(name),
+  };
+}
+
+bool _samePublishedTitle(String first, String second) => _publishedTitleKeys(
+  first,
+).intersection(_publishedTitleKeys(second)).any((value) => value.isNotEmpty);
 String arrangementTitle(String title) => title
     .replaceFirst(
       RegExp(
@@ -124,9 +132,10 @@ bool sameSong(SongCandidate selected, SongCandidate result) {
       return false;
     }
   }
-  if (_titleKey(selected.title) != _titleKey(result.title) ||
+  if (!_samePublishedTitle(selected.title, result.title) ||
       (normalizedIdentity(selected.artist) !=
               normalizedIdentity(result.artist) &&
+          !publishedNamesMatch(selected.artist, result.artist) &&
           !sameGeniusPrimaryCredit(selected, result, normalizedIdentity) &&
           !sameReviewedChartArtist(selected, result) &&
           musicBrainzArtistCreditEvidence(
@@ -164,12 +173,17 @@ bool sameArrangement(
   SongCandidate result,
   LyricsProvider provider,
 ) {
+  final selectedArtist =
+      reviewedChartArtistCredit(selected)?.canonicalName ?? selected.artist;
+  final resultArtist =
+      reviewedChartArtistCredit(result)?.canonicalName ?? result.artist;
   if (!provider.definition.capabilities.contains('chords') ||
-      !artistCreditsMatch(
-        reviewedChartArtistCredit(selected)?.canonicalName ?? selected.artist,
-        reviewedChartArtistCredit(result)?.canonicalName ?? result.artist,
-        (value) => normalizedIdentity(foldLyricVowelAccents(value)),
-      )) {
+      (!artistCreditsMatch(
+            selectedArtist,
+            resultArtist,
+            (value) => normalizedIdentity(foldLyricVowelAccents(value)),
+          ) &&
+          !publishedNamesMatch(selectedArtist, resultArtist))) {
     return false;
   }
   for (final entry in selected.recordingIds.entries) {
@@ -186,7 +200,15 @@ bool sameArrangement(
   String key(String title) => _titleKey(
     foldLyricVowelAccents(title),
   ).replaceFirst(RegExp(r'^(?:the|a|an) '), '');
-  return key(a) == key(b);
+  Set<String> publishedTitleKeys(String title) => {
+    for (final name in publishedNameVariants(
+      foldLyricVowelAccents(title).replaceFirst(_remasterTitleSuffix, ''),
+    ))
+      key(name),
+  };
+  return publishedTitleKeys(
+    a,
+  ).intersection(publishedTitleKeys(b)).any((value) => value.isNotEmpty);
 }
 
 bool _sameAlbum(SongCandidate a, SongCandidate b) =>
@@ -783,15 +805,15 @@ Future<SourceResult> findMatchingSource(
   final searchQuery = '$title $artist';
   final searchWatch = Stopwatch()..start();
   report('search', 'pending', query: searchQuery);
-  late final List<SongCandidate> results;
+  late List<SongCandidate> results;
+  final canReuse =
+      searchedCandidates != null &&
+      (provider is! ContextualLyricsSearch ||
+          (provider as ContextualLyricsSearch).canReuseSearchForSelection(
+            selection,
+            searchedCandidates,
+          ));
   try {
-    final canReuse =
-        searchedCandidates != null &&
-        (provider is! ContextualLyricsSearch ||
-            (provider as ContextualLyricsSearch).canReuseSearchForSelection(
-              selection,
-              searchedCandidates,
-            ));
     results = !canReuse
         ? provider is ContextualLyricsSearch
               ? await (provider as ContextualLyricsSearch).searchForSelection(
@@ -843,6 +865,119 @@ Future<SourceResult> findMatchingSource(
     );
     rethrow;
   }
+  // Some providers index only the Latin alias that is explicitly printed
+  // beside a non-Latin name. Try that full title-and-artist query once when
+  // the primary query found no identity-compatible result. This bounded
+  // fallback runs before candidate resolution and keeps the provider's
+  // returned candidate unchanged.
+  final latinTitleAliases = publishedNameVariants(selection.title);
+  final latinArtistAliases = publishedNameVariants(selection.artist);
+  final latinTitle = latinTitleAliases.length > 1
+      ? latinTitleAliases.last
+      : null;
+  final latinArtist = latinArtistAliases.length > 1
+      ? latinArtistAliases.last
+      : null;
+  final hasIdentityMatch = results.any(
+    (candidate) =>
+        candidate.providerId == provider.definition.id &&
+        (matchesSelectedSong(selection, candidate) ||
+            arrangementMatches(candidate)),
+  );
+  var usedAliasFallback = false;
+  if (provider is! ContextualLyricsSearch &&
+      !hasIdentityMatch &&
+      latinTitle != null &&
+      latinArtist != null) {
+    var fallbackTitle = provider.definition.capabilities.contains('chords')
+        ? arrangementTitle(latinTitle)
+        : latinTitle;
+    var fallbackArtist = latinArtist;
+    if (fallbackArtist.length > 100) {
+      fallbackArtist = fallbackArtist.substring(0, 100);
+    }
+    if (fallbackTitle.length > 199 - fallbackArtist.length) {
+      fallbackTitle = fallbackTitle.substring(0, 199 - fallbackArtist.length);
+    }
+    final fallbackQuery = '$fallbackTitle $fallbackArtist';
+    if (normalizedIdentity(fallbackQuery) != normalizedIdentity(searchQuery)) {
+      report(
+        'search',
+        'completed',
+        query: searchQuery,
+        resultCount: results.length,
+        elapsedMilliseconds: searchWatch.elapsedMilliseconds,
+      );
+      usedAliasFallback = true;
+      final fallbackWatch = Stopwatch()..start();
+      report('search', 'pending', query: fallbackQuery);
+      try {
+        final fallbackResults = await provider.search(
+          fallbackQuery,
+          cancel: cancel,
+        );
+        cancel?.throwIfCancelled();
+        results = {
+          for (final candidate in results) candidate.identity: candidate,
+          for (final candidate in fallbackResults)
+            candidate.identity: candidate,
+        }.values.take(100).toList();
+        for (final candidate in fallbackResults.take(100)) {
+          final reason = candidate.providerId != provider.definition.id
+              ? 'provider_mismatch'
+              : !matchesSelectedSong(selection, candidate) &&
+                    !arrangementMatches(candidate)
+              ? 'identity_mismatch'
+              : candidate.metadata['instrumental'] == true
+              ? 'instrumental'
+              : candidate.metadata['hasLyrics'] == false
+              ? 'lyrics_unavailable'
+              : 'eligible';
+          searchEvidence.add({
+            'candidate': candidate.toJson(),
+            'state': 'returned',
+            'reason': reason,
+          });
+        }
+        onSearchCandidates?.call(List.unmodifiable(results.take(100)));
+        report(
+          'search',
+          'completed',
+          query: fallbackQuery,
+          resultCount: fallbackResults.length,
+          elapsedMilliseconds: fallbackWatch.elapsedMilliseconds,
+        );
+      } on ProviderException catch (error) {
+        cancel?.throwIfCancelled();
+        unresolvedEvidence.add({
+          'candidate': selection.toJson(),
+          'state': 'failed',
+          'code': _safeDiagnosticCode(error.code),
+        });
+        report(
+          'search',
+          'failed',
+          code: error.code,
+          query: fallbackQuery,
+          elapsedMilliseconds: fallbackWatch.elapsedMilliseconds,
+        );
+      } catch (_) {
+        cancel?.throwIfCancelled();
+        unresolvedEvidence.add({
+          'candidate': selection.toJson(),
+          'state': 'failed',
+          'code': 'invalid_response',
+        });
+        report(
+          'search',
+          'failed',
+          code: 'invalid_response',
+          query: fallbackQuery,
+          elapsedMilliseconds: fallbackWatch.elapsedMilliseconds,
+        );
+      }
+    }
+  }
   final candidates =
       results
           .take(100)
@@ -887,13 +1022,15 @@ Future<SourceResult> findMatchingSource(
       evidence['reason'] = 'candidate_window';
     }
   }
-  report(
-    'search',
-    'completed',
-    query: searchQuery,
-    resultCount: results.length,
-    elapsedMilliseconds: searchWatch.elapsedMilliseconds,
-  );
+  if (!usedAliasFallback) {
+    report(
+      'search',
+      'completed',
+      query: searchQuery,
+      resultCount: results.length,
+      elapsedMilliseconds: searchWatch.elapsedMilliseconds,
+    );
+  }
   SourceResult? best;
   final alternatives = <SourceResult>[];
   String? alternativeFailure;
