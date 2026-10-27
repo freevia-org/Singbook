@@ -3138,7 +3138,8 @@ SongDocument combineSources(
             wikiSource && historicalMatches(s) ||
             allowedRejectedAlternative);
   }).toList();
-  final hasLyricBase = matching.any(
+  bool? hasLyricBase;
+  bool matchingHasLyrics() => hasLyricBase ??= matching.any(
     (s) => plainLyrics(s.body).trim().isNotEmpty,
   );
   final accepted = matching
@@ -3147,7 +3148,7 @@ SongDocument combineSources(
             plainLyrics(s.body).trim().isNotEmpty ||
             (selectedArrangementMatches(s) &&
                 (s.id == preferredSourceId ||
-                    preferredSourceId == null && !hasLyricBase)),
+                    preferredSourceId == null && !matchingHasLyrics())),
       )
       .toList();
   if (accepted.isEmpty) {
