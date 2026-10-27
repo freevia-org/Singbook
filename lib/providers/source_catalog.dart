@@ -368,6 +368,18 @@ class SourceCatalogEntry {
         final candidate = _map(probe['candidate'], 'probe candidate');
         try {
           final parsedCandidate = SongCandidate.fromJson(candidate);
+          // Some canonical charts have no performer credit. Pin both search
+          // and stable identity instead of fabricating an artist for a probe.
+          // This does not relax the discovery/combine identity matchers.
+          final canonicalArrangement =
+              capabilities.contains('chords') &&
+              parsedCandidate.metadata['identityScope'] == 'arrangement' &&
+              parsedCandidate.recordingIds.isEmpty &&
+              probe['query'] is String &&
+              (probe['query'] as String).trim().isNotEmpty &&
+              probe['expectedTitle'] == parsedCandidate.title &&
+              safeHttpsUrl(parsedCandidate.url) != null &&
+              hostSet.contains(Uri.tryParse(parsedCandidate.url!)?.host);
           if (parsedCandidate.providerId != id ||
               parsedCandidate.id.trim().isEmpty ||
               parsedCandidate.id.length > 300 ||
@@ -375,6 +387,7 @@ class SourceCatalogEntry {
               parsedCandidate.title.length > 300 ||
               parsedCandidate.artist.length > 300 ||
               parsedCandidate.artist.trim().isEmpty &&
+                  !canonicalArrangement &&
                   (capabilities.contains('lyrics') ||
                       capabilities.contains('chords'))) {
             _invalid('probe candidate identity must be non-empty and bounded');
