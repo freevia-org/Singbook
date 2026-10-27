@@ -1,0 +1,443 @@
+{
+  "schemaVersion": 1,
+  "kind": "candidate-datasource-qualification",
+  "providerId": "synclrc",
+  "runtime": "local-windows",
+  "snapshotAt": "2026-10-27T06:04:29.996843+00:00",
+  "sourceCommit": "0228472ae0c73cb8fa05cacc0bbc99193f9044ce",
+  "baseMain": "bf785a157ff2fe211a38814c6dc259295ba81374",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/173",
+  "dependency": "https://github.com/freevia-org/Singbook/pull/171",
+  "catalogRevision": 13,
+  "sourceRevision": 4,
+  "catalogPublishedAtMeasurement": false,
+  "scope": "Local candidate qualification, not production daily health, cloud reachability, device install or publication. Signed release39 remains unchanged.",
+  "latestRegularCli": {
+    "schemaVersion": 1,
+    "catalogRevision": 13,
+    "measuredAt": "2026-10-27T06:01:21.903954Z",
+    "offline": false,
+    "summary": {
+      "unavailable": 1
+    },
+    "sources": [
+      {
+        "id": "synclrc",
+        "name": "SyncLRC",
+        "status": "unavailable",
+        "coverage": {
+          "status": "partial",
+          "verifiedCapabilities": [
+            "lineTiming",
+            "lyrics",
+            "metadata",
+            "wordTiming"
+          ],
+          "unverifiedCapabilities": [
+            "catalog"
+          ]
+        },
+        "probes": [
+          {
+            "id": "never-gonna-give-you-up-studio",
+            "status": "healthy",
+            "candidateId": "sha256:6d3b6b6a9c71c0ae",
+            "providerId": "synclrc",
+            "bodyCharacters": 1927,
+            "metadataFields": [
+              "album",
+              "duration",
+              "hasLyrics",
+              "instrumental",
+              "query"
+            ],
+            "verifiedCapabilities": [
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ],
+            "timingTrackCount": 2,
+            "timingGranularities": [
+              "line",
+              "word"
+            ],
+            "timingRawRetained": true,
+            "hasChords": false
+          },
+          {
+            "id": "wonderwall-oasis-timed-version",
+            "status": "healthy",
+            "candidateId": "sha256:3dd6e5220b2409a3",
+            "providerId": "synclrc",
+            "bodyCharacters": 1389,
+            "metadataFields": [
+              "album",
+              "duration",
+              "hasLyrics",
+              "instrumental",
+              "query"
+            ],
+            "verifiedCapabilities": [
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ],
+            "timingTrackCount": 2,
+            "timingGranularities": [
+              "line",
+              "word"
+            ],
+            "timingRawRetained": true,
+            "hasChords": false
+          },
+          {
+            "id": "never-gonna-give-you-up-catalog-search",
+            "status": "unavailable",
+            "reason": "empty_search_results"
+          }
+        ]
+      }
+    ],
+    "httpDiagnostics": {
+      "networkFailures": 0,
+      "hosts": {
+        "api.synclrc.dev": {
+          "requests": 3,
+          "statuses": {
+            "200": 3
+          },
+          "retryAfterSeconds": {},
+          "databaseLag": {}
+        }
+      }
+    }
+  },
+  "earlierRegularCli": {
+    "schemaVersion": 1,
+    "catalogRevision": 13,
+    "measuredAt": "2026-10-27T05:40:33.400915Z",
+    "offline": false,
+    "summary": {
+      "healthy": 1
+    },
+    "sources": [
+      {
+        "id": "synclrc",
+        "name": "SyncLRC",
+        "status": "healthy",
+        "coverage": {
+          "status": "complete",
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata",
+            "wordTiming"
+          ],
+          "unverifiedCapabilities": []
+        },
+        "probes": [
+          {
+            "id": "never-gonna-give-you-up-studio",
+            "status": "healthy",
+            "candidateId": "sha256:6d3b6b6a9c71c0ae",
+            "providerId": "synclrc",
+            "bodyCharacters": 1927,
+            "metadataFields": [
+              "album",
+              "duration",
+              "hasLyrics",
+              "instrumental",
+              "query"
+            ],
+            "verifiedCapabilities": [
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ],
+            "timingTrackCount": 2,
+            "timingGranularities": [
+              "line",
+              "word"
+            ],
+            "timingRawRetained": true,
+            "hasChords": false
+          },
+          {
+            "id": "wonderwall-oasis-timed-version",
+            "status": "healthy",
+            "candidateId": "sha256:3dd6e5220b2409a3",
+            "providerId": "synclrc",
+            "bodyCharacters": 1389,
+            "metadataFields": [
+              "album",
+              "duration",
+              "hasLyrics",
+              "instrumental",
+              "query"
+            ],
+            "verifiedCapabilities": [
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ],
+            "timingTrackCount": 2,
+            "timingGranularities": [
+              "line",
+              "word"
+            ],
+            "timingRawRetained": true,
+            "hasChords": false
+          },
+          {
+            "id": "never-gonna-give-you-up-catalog-search",
+            "status": "healthy",
+            "candidateId": "sha256:5760eacb45836101",
+            "providerId": "synclrc",
+            "bodyCharacters": 1927,
+            "metadataFields": [
+              "album",
+              "duration",
+              "hasLyrics",
+              "instrumental",
+              "query"
+            ],
+            "verifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ],
+            "timingTrackCount": 2,
+            "timingGranularities": [
+              "line",
+              "word"
+            ],
+            "timingRawRetained": true,
+            "hasChords": false
+          }
+        ]
+      }
+    ],
+    "httpDiagnostics": {
+      "networkFailures": 0,
+      "hosts": {
+        "api.synclrc.dev": {
+          "requests": 3,
+          "statuses": {
+            "200": 3
+          },
+          "retryAfterSeconds": {},
+          "databaseLag": {}
+        }
+      }
+    }
+  },
+  "configuredProductionDiscovery": {
+    "runtime": "local-windows",
+    "scope": "real configured provider through production findMatchingSource; request/response identity and extraction only, not independently verified musical or lyric accuracy or device installation",
+    "catalogRevision": 13,
+    "checks": [
+      {
+        "at": "2026-10-27T06:01:11.818096Z",
+        "title": "Never Gonna Give You Up",
+        "artist": "Rick Astley",
+        "requestedAlbum": "Rick Astley - Never Gonna Give You Up",
+        "requestedDuration": 214.0,
+        "status": "healthy",
+        "matchKind": "sameRecording",
+        "returnedAlbum": "Rick Astley - Never Gonna Give You Up",
+        "returnedDuration": 214.0,
+        "bodyCharacters": 1927,
+        "sourceSelectionFingerprint": "917e6294e681ef75c6b8282c136378fa7e327d710f561227b2dbe67c4ca817cf",
+        "timing": [
+          {
+            "format": "lrc",
+            "granularity": "line",
+            "cues": 58,
+            "rawCharacters": 2403,
+            "rawSha256": "2dd1e346903bbe2c8cbd47c22f067bada2d3b5a6143b712165fa441fe4a2ddc0"
+          },
+          {
+            "format": "enhanced-lrc",
+            "granularity": "word",
+            "cues": 424,
+            "rawCharacters": 6943,
+            "rawSha256": "f91ba0b4441d7c02fea2335e1a26448bdf46b0810bf40410e5392b9626a68dec"
+          }
+        ],
+        "operations": [
+          {
+            "phase": "search",
+            "state": "pending",
+            "code": null
+          },
+          {
+            "phase": "search",
+            "state": "completed",
+            "code": null
+          },
+          {
+            "phase": "fetch",
+            "state": "pending",
+            "code": null
+          },
+          {
+            "phase": "fetch",
+            "state": "completed",
+            "code": null
+          },
+          {
+            "phase": "validate",
+            "state": "pending",
+            "code": null
+          },
+          {
+            "phase": "validate",
+            "state": "completed",
+            "code": null
+          }
+        ]
+      },
+      {
+        "at": "2026-10-27T06:01:12.116921Z",
+        "title": "Wonderwall",
+        "artist": "Oasis",
+        "requestedAlbum": "(What's the Story) Morning Glory? [Deluxe Edition]",
+        "requestedDuration": 259.0,
+        "status": "healthy",
+        "matchKind": "sameRecording",
+        "returnedAlbum": "(What's the Story) Morning Glory? [Deluxe Edition]",
+        "returnedDuration": 259.0,
+        "bodyCharacters": 1389,
+        "sourceSelectionFingerprint": "6df95d74f2c5267b502969181dab1211561f63109a66fc52cd3ff89811ec1d48",
+        "timing": [
+          {
+            "format": "lrc",
+            "granularity": "line",
+            "cues": 42,
+            "rawCharacters": 1730,
+            "rawSha256": "52ca5ce0c0351e5bb432a95f0a61afb74af5eb525598a2dd9f34d53b3f83edac"
+          },
+          {
+            "format": "enhanced-lrc",
+            "granularity": "word",
+            "cues": 317,
+            "rawCharacters": 4940,
+            "rawSha256": "75afe2f2a41353cf515b81aae128a5a7bf1414d72a42d45a35474869572fa570"
+          }
+        ],
+        "operations": [
+          {
+            "phase": "search",
+            "state": "pending",
+            "code": null
+          },
+          {
+            "phase": "search",
+            "state": "completed",
+            "code": null
+          },
+          {
+            "phase": "fetch",
+            "state": "pending",
+            "code": null
+          },
+          {
+            "phase": "fetch",
+            "state": "completed",
+            "code": null
+          },
+          {
+            "phase": "validate",
+            "state": "pending",
+            "code": null
+          },
+          {
+            "phase": "validate",
+            "state": "completed",
+            "code": null
+          }
+        ]
+      }
+    ],
+    "httpDiagnostics": {
+      "networkFailures": 0,
+      "hosts": {
+        "api.synclrc.dev": {
+          "requests": 2,
+          "statuses": {
+            "200": 2
+          },
+          "retryAfterSeconds": {},
+          "databaseLag": {}
+        }
+      }
+    }
+  },
+  "offlineNativePersistence": {
+    "at": "2026-10-27T06:01:41.140453Z",
+    "runtime": "local-windows-Flutter-native-SQLite-FFI",
+    "scope": "offline replay of two real production-discovery snapshots; isolated new database, no user library, no device/UI or new HTTP calls. Source facts exclude only derived timing status/binding as in the production fingerprint contract.",
+    "checks": [
+      {
+        "title": "Never Gonna Give You Up",
+        "artist": "Rick Astley",
+        "bodyCharacters": 2299,
+        "songHash": "6c83e78ed83d11c24bd78b427a98e14e8569f1e63257bb134b497434e25d9a26",
+        "sourceSelectionFingerprint": "917e6294e681ef75c6b8282c136378fa7e327d710f561227b2dbe67c4ca817cf",
+        "timingTrackCount": 2,
+        "rawVariantsPreserved": true,
+        "chordProSourceFactsAndTimingExact": true,
+        "fullSourceJsonExactAfterExport": false,
+        "codecDerivedTimingAnnotations": "document-level status/binding shared by track ID; source facts, raw documents, cues, metadata and IDs are preserved"
+      },
+      {
+        "title": "Wonderwall",
+        "artist": "Oasis",
+        "bodyCharacters": 1569,
+        "songHash": "06e9145d328ac710bd6491c5e1a70d9c28d5b57f83d249ebe482121e18c36a5c",
+        "sourceSelectionFingerprint": "6df95d74f2c5267b502969181dab1211561f63109a66fc52cd3ff89811ec1d48",
+        "timingTrackCount": 2,
+        "rawVariantsPreserved": true,
+        "chordProSourceFactsAndTimingExact": true,
+        "fullSourceJsonExactAfterExport": false,
+        "codecDerivedTimingAnnotations": "document-level status/binding shared by track ID; source facts, raw documents, cues, metadata and IDs are preserved"
+      }
+    ],
+    "sqliteReopenSongHashesAndFactsExact": true,
+    "httpRequests": 0
+  },
+  "validation": {
+    "combinedTestsPassed": 252,
+    "scopedAnalysis": "No issues found",
+    "offlineCatalogSources": 22,
+    "independentReadOnlyReview": "No blocker; review did not rerun tests or make API requests"
+  },
+  "identityLimit": "Existing app matching classification is recorded; this is not independent verification of lyric transcription, musical correctness or a particular audio master. Canonical IDs do not by themselves prove unique recording context.",
+  "remainingRoadblocks": [
+    {
+      "step": "catalog search",
+      "reason": "Identical title search returned populated and empty200responses. Latest exact-head run is empty; direct extraction remains healthy.",
+      "resolved": false,
+      "userAction": "none currently; preserve and report upstream search instability"
+    },
+    {
+      "step": "integration and runtime rollout",
+      "reason": "PR review/CI/main integration and a compatible app build are separate gates. Cloud re-probe requested through authorized Integration workflow.",
+      "resolved": false,
+      "userAction": "none requested by this qualification"
+    }
+  ],
+  "evidenceSha256": {
+    "synclrc-postcommit-canaries.json": "92b25b426c56e4537df4cbdb6c2fe51f0505c64fd5d3e8269783eb52948c050b",
+    "synclrc-context-live-20261027.json": "5941b19cc907bffa4b2d993c644746b226ade7345e2b1c531e6faa4564f20ec7",
+    "synclrc-controller-roundtrip-20261027.json": "df41476a91eba02353ed03d53cee9aabe094e2b4f76e4337f611176220e29d10",
+    "synclrc-lookup-review-20261027.json": "1f86f832d2e6b9baff34812336f3fe3fe7e702279cab1a8c974b9a8b821ca688"
+  }
+}
