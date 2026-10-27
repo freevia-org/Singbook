@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "kind": "source-catalog-reachability-diagnostic",
+  "providerId": "ozbcoz",
+  "measuredAtUtc": "2026-10-27T06:32:43.994707Z",
+  "runtime": "local-windows-maintenance-DesktopMaintenanceClient",
+  "sourceCommit": "3ba169ff2e49d279106d87c22f1600bf17765557",
+  "catalogRevision": 12,
+  "probeHarnessSha256": "d8f694e8cb5d993c83e2350f308209e890d24dfe25c576a2c195505c98410c21",
+  "request": {
+    "method": "GET",
+    "url": "https://ozbcoz.com/Songs/cp_index.php",
+    "status": 403,
+    "cfMitigated": "challenge",
+    "retryAfter": null
+  },
+  "outcome": "blocked",
+  "reason": "Publisher menu-linked current cp_index.php also returned an access challenge; not an observed HTTP429 rate limit",
+  "publisherRouteEvidence": "https://ozbcoz.com/Songs/cp_index.php (current Chordpro Files menu target)",
+  "publisherHelp": "https://ozbcoz.com/Songs/myfaq/doku.php/chordpro_index",
+  "publisherTerms": "https://ozbcoz.com/Songs/terms.php",
+  "retries": 0,
+  "capabilityAssessed": "automatic catalog reachability only",
+  "regularProviderStatus": "import_only; unchanged",
+  "scope": "Single ordinary local GET with the standard maintenance client/TLS. No browser/cookies/account/challenge solving/alternate host, individual song download or source extraction. Prior downloaded-file import canaries are separate earlier evidence, not rerun or relabeled by this diagnostic. This is not a full maintenance run and does not replace local/latest.json or cloud reports.",
+  "privacy": "No raw response document, lyrics, credentials or private session data"
+}
