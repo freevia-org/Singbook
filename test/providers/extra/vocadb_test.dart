@@ -234,6 +234,8 @@ void main() {
         {'deleted': true},
         {'mergedTo': 987},
         {'id': 124},
+        {'name': 'Invented Song\n{x_verse: untrusted}'},
+        {'artistString': 'Invented Producer\u202e'},
         {
           'names': List.generate(101, (_) => {'value': 'Name'}),
         },

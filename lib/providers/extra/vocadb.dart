@@ -74,11 +74,14 @@ class VocaDbProvider implements LyricsProvider {
     }
   }
 
-  String _text(Object? value, {int max = 500}) {
+  String _text(Object? value, {int max = 500, bool multiline = false}) {
     if (value is! String ||
         value.trim().isEmpty ||
         value.length > max ||
-        RegExp(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]').hasMatch(value)) {
+        RegExp(
+          r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f\u202a-\u202e\u2066-\u2069]',
+        ).hasMatch(value) ||
+        (!multiline && RegExp(r'[\t\r\n]').hasMatch(value))) {
       throw const ProviderException('invalid_response');
     }
     return value.trim();
@@ -278,7 +281,7 @@ class VocaDbProvider implements LyricsProvider {
     }
     final original = originals.single;
     final lyricId = _id(original['id']);
-    final text = _text(original['value'], max: 256 * 1024);
+    final text = _text(original['value'], max: 256 * 1024, multiline: true);
     final body = remoteChordPro(plainToChordPro(meaningfulLyrics(text)));
     if (body.trim().isEmpty) throw const ProviderException('unavailable');
     final attribution = 'VocaDB — ${found.url}';
