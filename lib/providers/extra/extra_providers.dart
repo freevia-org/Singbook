@@ -36,5 +36,7 @@ List<LyricsProvider> createExtraProviders({ProviderTransport? transport}) {
     KaraMoeProvider(http),
     AmllProvider(http),
     VocaDbProvider(http),
+    TouhouDbProvider(http),
+    UtaiteDbProvider(http),
   ];
 }

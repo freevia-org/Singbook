@@ -14,7 +14,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   sqfliteFfiInit();
   test(
-    'fresh offline bootstrap exposes AMLL and VocaDB enabled without extra steps',
+    'fresh offline bootstrap exposes new channel5 sources enabled by default',
     () async {
       final repo = await LibraryRepository.open(
         path: inMemoryDatabasePath,
@@ -33,6 +33,11 @@ void main() {
         await app.initialize();
         expect(app.providerEnabled('amll'), true);
         expect(app.providerEnabled('vocadb'), true);
+        expect(app.providerEnabled('touhoudb'), true);
+        expect(app.providerEnabled('utaitedb'), true);
+        for (final id in ['touhoudb', 'utaitedb']) {
+          expect(app.providers.singleWhere((p) => p.id == id).configured, true);
+        }
         expect(
           app.providers.singleWhere((p) => p.id == 'vocadb').configured,
           true,
@@ -43,13 +48,18 @@ void main() {
         );
         expect(
           app.discovery.catalogClient!.runtime.catalog!.sources,
-          hasLength(24),
+          hasLength(26),
         );
+        expect(app.discovery.catalogClient!.runtime.catalog!.revision, 16);
         expect(requests, 0);
         await app.setProviderEnabled('amll', false);
         await app.setProviderEnabled('vocadb', false);
+        await app.setProviderEnabled('touhoudb', false);
+        await app.setProviderEnabled('utaitedb', false);
         expect(app.providerEnabled('amll'), false);
         expect(app.providerEnabled('vocadb'), false);
+        expect(app.providerEnabled('touhoudb'), false);
+        expect(app.providerEnabled('utaitedb'), false);
         expect(
           ((await repo.getSetting('app') as Map)['providers'] as Map)['amll'],
           false,
@@ -62,7 +72,7 @@ void main() {
     },
   );
   test(
-    'real bootstrap migrates to channel4 without changing older streams or choices',
+    'real bootstrap upgrades populated libraries into channel5 without changing older streams or choices',
     () async {
       final repo = await LibraryRepository.open(
         path: inMemoryDatabasePath,
@@ -86,12 +96,20 @@ void main() {
       old3['revision'] = 4000;
       final old3Text = jsonEncode(old3);
       await repo.setSetting(SourceCatalogClient.channel3CacheKey, old3Text);
+      final old4 =
+          jsonDecode(File('config/source-catalog-v4.json').readAsStringSync())
+              as Map<String, dynamic>;
+      old4['revision'] = 5000;
+      final old4Text = jsonEncode(old4);
+      await repo.setSetting(SourceCatalogClient.channel4CacheKey, old4Text);
       await repo.setSetting('app', {
         'providers': {
           'lrclib': false,
           'karamoe': false,
           'amll': false,
           'vocadb': false,
+          'touhoudb': false,
+          'utaitedb': false,
           'worshiptogether': true,
         },
         'themeMode': 'dark',
@@ -167,9 +185,15 @@ void main() {
       var app = AppController(repository: repo, transport: transport);
       try {
         await app.initialize();
+        expect(await repo.getSetting(SourceCatalogClient.cacheKey), isNull);
+        expect(app.discovery.catalogClient!.runtime.catalog!.revision, 16);
+        expect(
+          app.discovery.catalogClient!.runtime.catalog!.sources,
+          hasLength(26),
+        );
         await app.refreshSources();
         expect(app.discovery.catalogClient!.lastErrorCode, isNull);
-        expect(seen.single.path, endsWith('/source-catalog-v4.json'));
+        expect(seen.single.path, endsWith('/source-catalog-v5.json'));
         expect(
           app.discovery.catalogClient!.runtime.catalog!.revision,
           nextRevision,
@@ -184,10 +208,16 @@ void main() {
           await repo.getSetting(SourceCatalogClient.channel3CacheKey),
           old3Text,
         );
+        expect(
+          await repo.getSetting(SourceCatalogClient.channel4CacheKey),
+          old4Text,
+        );
         expect(app.providerEnabled('lrclib'), false);
         expect(app.providerEnabled('karamoe'), false);
         expect(app.providerEnabled('amll'), false);
         expect(app.providerEnabled('vocadb'), false);
+        expect(app.providerEnabled('touhoudb'), false);
+        expect(app.providerEnabled('utaitedb'), false);
         expect(
           app.discovery.catalogClient!.runtime.providers
               .singleWhere((p) => p.definition.id == 'amll')
@@ -213,11 +243,33 @@ void main() {
         expect(app.providerEnabled('lrcred'), true);
         expect(app.providerEnabled('roswellmusicjam'), true);
         expect(jsonEncode((await repo.listSongs()).single.toJson()), before);
+        expect(await repo.getSetting(SourceCatalogClient.cacheKey), nextText);
+        expect(await repo.getSetting('sourceCatalog'), old1Text);
+        expect(
+          await repo.getSetting(SourceCatalogClient.channel2CacheKey),
+          old2Text,
+        );
+        expect(
+          await repo.getSetting(SourceCatalogClient.channel3CacheKey),
+          old3Text,
+        );
+        expect(
+          await repo.getSetting(SourceCatalogClient.channel4CacheKey),
+          old4Text,
+        );
         expect(app.songs.single.id, 'preserved-user-song');
 
         app.dispose();
         app = AppController(repository: repo, transport: transport);
         await app.initialize();
+        expect(
+          app.discovery.catalogClient!.runtime.catalog!.revision,
+          nextRevision,
+        );
+        expect(
+          app.discovery.catalogClient!.runtime.catalog!.sources,
+          hasLength(26),
+        );
         expect(app.providerEnabled('amll'), false);
         expect(app.providerEnabled('vocadb'), false);
         expect(app.providerEnabled('lrclib'), false);

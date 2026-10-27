@@ -18,11 +18,13 @@ class SourceCatalogClient {
   static const defaultEndpoint = String.fromEnvironment(
     'SINGBOOK_SOURCE_CATALOG_URL',
     defaultValue:
-        'https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog-v4.json',
+        'https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog-v5.json',
   );
-  // Channel 4 adds VocaDB; older compiled rosters keep their own streams.
-  static const bundledAsset = 'config/source-catalog-v4.json';
-  static const cacheKey = 'sourceCatalog:v4';
+  // Channel 5 adds TouhouDB and UtaiteDB; older compiled rosters keep their
+  // own streams and are never promoted into this cache.
+  static const bundledAsset = 'config/source-catalog-v5.json';
+  static const cacheKey = 'sourceCatalog:v5';
+  static const channel4CacheKey = 'sourceCatalog:v4';
   static const channel3CacheKey = 'sourceCatalog:v3';
   static const channel2CacheKey = 'sourceCatalog:v2';
   static const legacyCacheKey = 'sourceCatalog';

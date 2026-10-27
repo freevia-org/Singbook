@@ -5,9 +5,12 @@ released clients through build 38. Keep this file and its URL compatible with
 those clients. `config/source-catalog-v2.json` remains the complete channel-2
 bundle and refresh URL for the compatible build-39 runtime.
 `config/source-catalog-v3.json` is the complete channel-3 bundle and refresh URL
-for the AMLL runtime. New code uses `config/source-catalog-v4.json`, adding
-VocaDB, as its complete channel-4 bundle and refresh URL on public GitHub `main`.
-These are distribution channels; all four files use envelope/extraction schema
+for the AMLL runtime. `config/source-catalog-v4.json` remains the complete
+channel-4 VocaDB bundle and refresh URL. New candidate code uses
+`config/source-catalog-v5.json`, adding TouhouDB and UtaiteDB, as its complete
+channel-5 bundle and refresh URL on public GitHub `main`. The new code/catalog
+still require integration and a compatible app release.
+These are distribution channels; all five files use envelope/extraction schema
 version 1.
 `SINGBOOK_SOURCE_CATALOG_URL` can override
 the HTTPS publisher URL at build time. Settings → Sources → Refresh source list
@@ -20,21 +23,26 @@ unsupported schema, rollback, or failed cache write preserves the previous live
 and durable snapshot. Bundle and cache loading do not depend on a network call.
 No provider update changes saved songs, ChordPro provenance or user preferences.
 Catalog storage is separate from the user's synced application settings.
-Channel 4 reads/writes `sourceCatalog:v4` and never overwrites
-`sourceCatalog:v3`, `sourceCatalog:v2`, `sourceCatalog`, or provider preferences. It starts from
+Channel 5 reads/writes `sourceCatalog:v5` and never overwrites
+`sourceCatalog:v4`, `sourceCatalog:v3`, `sourceCatalog:v2`, `sourceCatalog`, or provider preferences. It starts from
 its own bundled snapshot when the new cache is absent; independently higher
-older-channel revisions cannot lock out channel-4 updates. Channels 2 and 3 retain
+older-channel revisions cannot lock out channel-5 updates. Channels 2, 3 and 4 retain
 their existing caches and URLs. Unknown native providers cause a refresh to fail
 before any live/cache mutation. Never add an unknown native ID to an older
 channel, even disabled. AMLL is absent from channels 1/2; VocaDB is absent from
-channels 1/2/3.
+channels 1/2/3; TouhouDB and UtaiteDB are absent from channels 1/2/3/4.
 
 Channel 2 enables lrc.red, Roswell Music Jam and kara.moe for compatible app
 builds. Channel 3 inherits all 22 channel-2 entries without altering them and
 adds AMLL enabled by default for the new compiled runtime. Existing saved
 opt-outs win. Channel-1 and channel-2 apps keep their source lists, URLs and
 cache streams. Channel 4 preserves all 23 channel-3 entries and adds VocaDB
-active and enabled by default for its new compiled runtime. Contextual title
+active and enabled by default for its new compiled runtime. Channel 5 preserves
+all 24 channel-4 entries and adds TouhouDB and UtaiteDB active/default-on for its
+new compiled runtime. Their fixed-host parsers retain every lyric variant,
+credit, alias, role, album and original-version relationship. They do not borrow
+a parent's lyrics for a cover/remaster with no original lyric of its own.
+Contextual title
 lookup, complete lyric-variant/artist-role facts and mutable detail caching use
 the ordinary provider service. Existing saved opt-outs still win. Frozen
 release-39 artifacts are not rebuilt by this change. Native
@@ -150,7 +158,7 @@ dart run tool/source_maintenance.dart --source lrclib --report artifacts/lrclib-
 ```
 
 Options also include `--catalog path` to validate a candidate catalog. Both
-offline and live CLI defaults follow the app's current bundled channel (now 4).
+offline and live CLI defaults follow the app's current bundled channel (now 5).
 An explicit older `--catalog` still parses/applies that snapshot, but the full
 current registry reports newer compiled providers intentionally absent from it
 as coverage gaps; this is not evidence that an older app's source list is broken.
