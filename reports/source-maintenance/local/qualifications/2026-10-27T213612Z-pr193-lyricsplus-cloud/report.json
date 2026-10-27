@@ -1,0 +1,207 @@
+{
+  "schemaVersion": 1,
+  "catalogRevision": 19,
+  "measuredAt": "2026-10-27T21:36:12.436947Z",
+  "offline": false,
+  "summary": {
+    "healthy": 1
+  },
+  "sources": [
+    {
+      "id": "lyricsplus",
+      "name": "LyricsPlus",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "metadata",
+          "wordTiming"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "billie-jean-michael-jackson",
+          "status": "healthy",
+          "providerId": "lyricsplus",
+          "bodyCharacters": 2238,
+          "metadataFields": [
+            "agents",
+            "album",
+            "appleMusicIds",
+            "artworkUrl",
+            "country",
+            "discCount",
+            "discNumber",
+            "documentKind",
+            "durationSeconds",
+            "genre",
+            "identityScope",
+            "language",
+            "mediaLinks",
+            "primaryGenreName",
+            "releaseDate",
+            "songParts",
+            "songWriters",
+            "trackCount",
+            "trackNumber",
+            "writers"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata",
+            "wordTiming"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false
+        },
+        {
+          "id": "creep-radiohead",
+          "status": "healthy",
+          "providerId": "lyricsplus",
+          "bodyCharacters": 803,
+          "metadataFields": [
+            "agents",
+            "album",
+            "appleMusicIds",
+            "artworkUrl",
+            "country",
+            "discCount",
+            "discNumber",
+            "documentKind",
+            "durationSeconds",
+            "genre",
+            "identityScope",
+            "language",
+            "mediaLinks",
+            "primaryGenreName",
+            "releaseDate",
+            "songParts",
+            "songWriters",
+            "trackCount",
+            "trackNumber",
+            "writers"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata",
+            "wordTiming"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false
+        }
+      ]
+    }
+  ],
+  "scope": "isolated-candidate-reachability",
+  "candidateHead": "8ad48a83e930a877670d8b2252a3bdfe157ab4ec",
+  "startedAt": "2026-10-27T21:36:05.679512Z",
+  "runtime": {
+    "provider": "managed-cloud",
+    "environmentId": "ccarenv_b64_Y2NhcmVudl8zNTlhNzcxMDgzZjg4MTkxOTViMTY0OGM2YjNhZDg2NQ",
+    "specRevision": "3",
+    "phase": "running",
+    "connectivity": "connected",
+    "policyMode": "unrestricted",
+    "policyState": "enforced"
+  },
+  "offlineGate": {
+    "exitCode": 0,
+    "revision": 19,
+    "registryAndCatalogEntries": 28,
+    "channel6EntriesPreserved": 27,
+    "allPreviousEntriesStructurallyUnchanged": true
+  },
+  "requests": [
+    {
+      "startedAt": "2026-10-27T21:36:05.800204Z",
+      "host": "lyricsplus.prjktla.my.id",
+      "operation": "lyricsplus_search",
+      "httpStatus": 200,
+      "headersReceivedAt": "2026-10-27T21:36:08.302735Z"
+    },
+    {
+      "startedAt": "2026-10-27T21:36:08.617532Z",
+      "host": "lyricsplus.prjktla.my.id",
+      "operation": "lyricsplus_resolve",
+      "httpStatus": 200,
+      "headersReceivedAt": "2026-10-27T21:36:09.296544Z"
+    },
+    {
+      "startedAt": "2026-10-27T21:36:09.304559Z",
+      "host": "itunes.apple.com",
+      "operation": "apple_identity_lookup",
+      "publicAppleTrackId": "1883770432",
+      "httpStatus": 200,
+      "headersReceivedAt": "2026-10-27T21:36:09.607505Z"
+    },
+    {
+      "startedAt": "2026-10-27T21:36:09.716329Z",
+      "host": "lyricsplus.prjktla.my.id",
+      "operation": "lyricsplus_search",
+      "httpStatus": 200,
+      "headersReceivedAt": "2026-10-27T21:36:11.455257Z"
+    },
+    {
+      "startedAt": "2026-10-27T21:36:11.756107Z",
+      "host": "lyricsplus.prjktla.my.id",
+      "operation": "lyricsplus_resolve",
+      "httpStatus": 200,
+      "headersReceivedAt": "2026-10-27T21:36:12.268699Z"
+    },
+    {
+      "startedAt": "2026-10-27T21:36:12.270657Z",
+      "host": "itunes.apple.com",
+      "operation": "apple_identity_lookup",
+      "publicAppleTrackId": "1097862231",
+      "httpStatus": 200,
+      "headersReceivedAt": "2026-10-27T21:36:12.418382Z"
+    }
+  ],
+  "requestCount": 6,
+  "stoppedAfterFailure": false,
+  "identities": [
+    {
+      "title": "Billie Jean",
+      "artist": "Michael Jackson",
+      "independentlyVerifiedAppleTrackId": "1883770432"
+    },
+    {
+      "title": "Creep",
+      "artist": "Radiohead",
+      "independentlyVerifiedAppleTrackId": "1097862231"
+    }
+  ],
+  "limitations": [
+    "Candidate adapter and standard maintenance harness only; no production changes.",
+    "Zero transport retries; network requests stop after first non-success or network failure.",
+    "Search rows are hints; successful resolution requires independent official Apple identity checks.",
+    "Parsed timing is source-document evidence, not independently verified audio alignment; lyric rights unknown."
+  ],
+  "execution": {
+    "exitCode": 0,
+    "command": "dart --packages=.dart_tool/package_config.json /workspace/scratch/pr193-candidate-reachability.dart",
+    "sourceHead": "8ad48a83e930a877670d8b2252a3bdfe157ab4ec",
+    "executionMode": "approved_require_escalated",
+    "transportRetries": 0,
+    "inheritedProxyAndCaPreserved": true,
+    "tlsVerificationEnabled": true,
+    "productionCheckoutUnchanged": true,
+    "productionReportsUntouched": true
+  }
+}
