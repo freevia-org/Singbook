@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "kind": "source-catalog-reachability-diagnostic",
+  "providerId": "ozbcoz",
+  "measuredAtUtc": "2026-10-27T04:05:25.849048Z",
+  "runtime": "local-windows-maintenance-DesktopMaintenanceClient",
+  "sourceCommit": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+  "catalogRevision": 12,
+  "probeHarnessSha256": "90c036609fd2fdbb656e73efa097a39b6039eb45625fea8742badbbe3a62258e",
+  "request": {
+    "method": "GET",
+    "url": "https://ozbcoz.com/Songs/cp/",
+    "status": 403,
+    "cfMitigated": "challenge",
+    "retryAfter": null
+  },
+  "outcome": "blocked",
+  "reason": "access challenge, not an observed HTTP429 rate limit",
+  "retries": 0,
+  "capabilityAssessed": "automatic catalog reachability only",
+  "regularProviderStatus": "import_only; unchanged",
+  "scope": "Single ordinary local GET with the standard maintenance client/TLS. No browser/cookies/account/challenge solving/alternate host, individual song download or source extraction. Prior downloaded-file import canaries are separate earlier evidence, not rerun or relabeled by this diagnostic. This is not a full maintenance run and does not replace local/latest.json or cloud reports.",
+  "privacy": "No raw response document, lyrics, credentials or private session data"
+}
