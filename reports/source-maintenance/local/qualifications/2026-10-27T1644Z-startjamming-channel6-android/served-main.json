@@ -1,0 +1,13 @@
+{
+  "atUtc": "2026-10-27T16:58:16.143770+00:00",
+  "publicMainCommit": "05a708ba12b9e4914ae2051f2366aab3a58ad647",
+  "url": "https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog-v6.json",
+  "httpStatus": 200,
+  "channel": 6,
+  "revision": 18,
+  "sourceCount": 27,
+  "sha256": "bc698ebbbe0bdec8583a44d1dd05422a9e0d423228d61ccd7be20ea80c5f932d",
+  "servedBytesExactlyMatchPublicGit": true,
+  "compatibleAppReleaseVerified": false,
+  "managedCloudVerified": false
+}
