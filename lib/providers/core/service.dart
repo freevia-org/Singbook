@@ -265,6 +265,56 @@ Future<SourceResult> findMatchingSource(
       sameArrangement(selection, candidate, provider) ||
       (allowContextualArrangements &&
           contextualArrangementCandidate(selection, candidate));
+  String? publishedTitleAliasFor(
+    SongCandidate selected,
+    SongCandidate candidate, {
+    JsonMap metadata = const {},
+    JsonMap extra = const {},
+  }) {
+    if (candidate.providerId != provider.definition.id ||
+        provider is! PublishedTitleAliasEvidence ||
+        !explicitEditionsCompatible(
+          selected,
+          candidate,
+          metadata: metadata,
+          extra: extra,
+        )) {
+      return null;
+    }
+    final evidence = (provider as PublishedTitleAliasEvidence)
+        .publishedTitleAliasForSelection(selected, candidate);
+    if (evidence == null || evidence.trim().isEmpty) return null;
+    // Compare the publisher's alias temporarily. Keep its canonical candidate
+    // unchanged and retain every existing non-title identity constraint.
+    final aliasCandidate = SongCandidate(
+      providerId: candidate.providerId,
+      id: candidate.id,
+      title: evidence,
+      artist: candidate.artist,
+      album: candidate.album,
+      durationSeconds: candidate.durationSeconds,
+      url: candidate.url,
+      metadata: candidate.metadata,
+      recordingIds: candidate.recordingIds,
+      extra: candidate.extra,
+    );
+    return sameSong(selected, aliasCandidate) ? evidence : null;
+  }
+
+  bool matchesSelectedSong(
+    SongCandidate selected,
+    SongCandidate candidate, {
+    JsonMap metadata = const {},
+    JsonMap extra = const {},
+  }) =>
+      sameSong(selected, candidate) ||
+      publishedTitleAliasFor(
+            selected,
+            candidate,
+            metadata: metadata,
+            extra: extra,
+          ) !=
+          null;
   void observeCandidate(SourceResult result) {
     if (cancel?.isCancelled == true) return;
     try {
@@ -469,10 +519,27 @@ Future<SourceResult> findMatchingSource(
             song.metadata['resolvedTitle'] == song.title &&
             song.metadata['copyrightTags'] is List &&
             (song.metadata['copyrightTags'] as List).isNotEmpty,
-        strict = sameSong(selection, result.candidate);
+        strict = matchesSelectedSong(
+          selection,
+          result.candidate,
+          metadata: result.metadata,
+          extra: result.extra,
+        ),
+        publishedAlias = publishedTitleAliasFor(
+          selection,
+          result.candidate,
+          metadata: result.metadata,
+          extra: result.extra,
+        );
     if (song.providerId != provider.definition.id ||
         song.id != candidate.id ||
-        (!sameSong(candidate, song) && !historicalText) ||
+        (!matchesSelectedSong(
+              candidate,
+              song,
+              metadata: result.metadata,
+              extra: result.extra,
+            ) &&
+            !historicalText) ||
         (!strict && !arrangementMatches(song) && !historicalText)) {
       report(
         'validate',
@@ -538,16 +605,23 @@ Future<SourceResult> findMatchingSource(
           : strict
           ? 'same_song'
           : 'arrangement_requires_agreement',
-      extra: !strict && !historicalText
-          ? {
-              'requiresLyricsAgreement': true,
-              if (reviewedChartArtistCredit(song) case final credit?)
-                'artistIdentityEvidence': credit.toJson(),
-              if (allowContextualArrangements &&
-                  contextualArrangementCandidate(selection, song))
-                'requiresRecordingLyricsAgreement': true,
-            }
-          : {},
+      extra: {
+        if (publishedAlias != null)
+          'sourceTitleAliasEvidence': {
+            'sourceId': song.id,
+            'canonicalTitle': song.title,
+            'selectedTitle': selection.title,
+            'publishedAlias': publishedAlias,
+          },
+        if (!strict && !historicalText) ...{
+          'requiresLyricsAgreement': true,
+          if (reviewedChartArtistCredit(song) case final credit?)
+            'artistIdentityEvidence': credit.toJson(),
+          if (allowContextualArrangements &&
+              contextualArrangementCandidate(selection, song))
+            'requiresRecordingLyricsAgreement': true,
+        },
+      },
     );
     if (accept != null && !accept(matched)) {
       report(
@@ -637,16 +711,18 @@ Future<SourceResult> findMatchingSource(
           .where(
             (s) =>
                 s.providerId == provider.definition.id &&
-                (sameSong(selection, s) || arrangementMatches(s)),
+                (matchesSelectedSong(selection, s) || arrangementMatches(s)),
           )
           .toList()
         ..sort((a, b) {
           // Composer/work context broadens discovery, but must not displace
           // charts credited to the selected performer within the attempt cap.
           final aPerformer =
-              sameSong(selection, a) || sameArrangement(selection, a, provider);
+              matchesSelectedSong(selection, a) ||
+              sameArrangement(selection, a, provider);
           final bPerformer =
-              sameSong(selection, b) || sameArrangement(selection, b, provider);
+              matchesSelectedSong(selection, b) ||
+              sameArrangement(selection, b, provider);
           if (aPerformer != bPerformer) return aPerformer ? -1 : 1;
           final rank = _rank(selection, b).compareTo(_rank(selection, a));
           return rank != 0 ? rank : a.id.compareTo(b.id);

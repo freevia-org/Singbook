@@ -482,7 +482,10 @@ class SourceCatalogEntry {
 
 /// Exposes the catalog definition while preserving an existing builtin's work.
 class ConfiguredBuiltinProvider
-    implements LyricsProvider, ContextualLyricsSearch {
+    implements
+        LyricsProvider,
+        ContextualLyricsSearch,
+        PublishedTitleAliasEvidence {
   ConfiguredBuiltinProvider(this.entry, this.delegate) {
     if (entry.adapter != 'builtin' || entry.id != delegate.definition.id) {
       throw ArgumentError('Builtin entry and delegate ids must match');
@@ -543,6 +546,18 @@ class ConfiguredBuiltinProvider
             cancel: cancel,
           )
         : inner.search(fallbackQuery, cancel: cancel);
+  }
+
+  @override
+  String? publishedTitleAliasForSelection(
+    SongCandidate selection,
+    SongCandidate candidate,
+  ) {
+    final inner = delegate;
+    return inner is PublishedTitleAliasEvidence
+        ? (inner as PublishedTitleAliasEvidence)
+              .publishedTitleAliasForSelection(selection, candidate)
+        : null;
   }
 
   @override
