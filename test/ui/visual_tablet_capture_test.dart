@@ -139,7 +139,7 @@ void main() {
           await tester.pump();
           final rect = tester.getRect(card);
           final songListRect = tester.getRect(expandedSongs);
-          final expectedWidth = math.min(width - 32, 960.0);
+          final expectedWidth = width - 32;
           expect(rect.left, greaterThanOrEqualTo(0), reason: 'width $width');
           expect(rect.right, lessThanOrEqualTo(width), reason: 'width $width');
           expect(
@@ -197,11 +197,13 @@ void main() {
           find.byKey(const ValueKey('setlist-card-tablet-setlist-second')),
         );
         expect(
-          locale.languageCode == 'ar'
-              ? first.left - second.right
-              : second.left - first.right,
-          closeTo(8, 0.5),
+          (first.top < second.top
+              ? second.top - first.bottom
+              : first.top - second.bottom),
+          closeTo(8, .5),
         );
+        expect(first.width, closeTo(968, .5));
+        expect(second.width, closeTo(first.width, .5));
         expect(tester.takeException(), isNull);
         tester.view.resetDevicePixelRatio();
         tester.view.resetPhysicalSize();
@@ -638,7 +640,7 @@ ThemeData _captureTheme({required Brightness brightness}) {
 void _assertRouteGeometry(WidgetTester tester, String screen, Size viewport) {
   switch (screen) {
     case 'library':
-      final grid = find.byKey(const PageStorageKey('songs-library-grid'));
+      final grid = find.byKey(const PageStorageKey('songs-library-list'));
       expect(grid, findsOneWidget);
       _insideViewport(tester, grid, viewport);
     case 'setlists':

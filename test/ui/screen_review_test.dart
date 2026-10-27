@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -428,6 +429,91 @@ void main() {
       );
       expect(scrollable.position.pixels, greaterThan(1000));
     });
+
+    for (final input in ['wheel', 'touch']) {
+      testWidgets('$input reaches endpoints in a short fully visible chart', (
+        tester,
+      ) async {
+        final c = FakeUiController(
+          (_) => _reader(
+            lines: const [
+              LyricLineData(id: 'short-0', text: 'First lyric'),
+              LyricLineData(id: 'short-1', text: 'Middle lyric'),
+              LyricLineData(id: 'short-2', text: 'Last lyric'),
+            ],
+            sections: const [],
+          ),
+        );
+        addTearDown(c.dispose);
+        await pumpShell(tester, c, size: const Size(1100, 1000));
+        final lyrics = find.byKey(const ValueKey('player-lyrics-scroll'));
+        Future<void> scroll(double delta) async {
+          if (input == 'wheel') {
+            await tester.sendEventToBinding(
+              PointerScrollEvent(
+                position: tester.getCenter(lyrics),
+                scrollDelta: Offset(0, delta),
+                kind: PointerDeviceKind.mouse,
+              ),
+            );
+          } else {
+            await tester.drag(lyrics, Offset(0, -delta));
+          }
+          await tester.pumpAndSettle();
+        }
+
+        await scroll(200);
+        expect(c.positionNotifier.value.seconds, closeTo(200 * 2 / 3, .1));
+        await scroll(-200);
+        expect(c.positionNotifier.value.seconds, 0);
+      });
+    }
+
+    for (final input in ['wheel', 'touch']) {
+      testWidgets('$input scrolling reaches both song endpoints', (
+        tester,
+      ) async {
+        final c = FakeUiController((_) => _reader());
+        addTearDown(c.dispose);
+        await pumpShell(tester, c, size: const Size(1100, 800));
+        final lyrics = find.byKey(const ValueKey('player-lyrics-scroll'));
+        final center = tester.getCenter(lyrics);
+        if (input == 'touch') {
+          await tester.drag(lyrics, const Offset(0, -100000));
+        } else {
+          await tester.sendEventToBinding(
+            PointerScrollEvent(
+              position: center,
+              scrollDelta: const Offset(0, 100000),
+              kind: PointerDeviceKind.mouse,
+            ),
+          );
+        }
+        await tester.pumpAndSettle();
+        // Estimated playback assigns the final lyric its start time, not the
+        // end of its display duration.
+        expect(c.positionNotifier.value.seconds, closeTo(200 * 59 / 60, .1));
+        final bottom = tester.getRect(find.text('Lyric number 59'));
+        expect(
+          bottom.center.dy,
+          lessThanOrEqualTo(tester.getRect(lyrics).center.dy + 40),
+        );
+        if (input == 'touch') {
+          await tester.drag(lyrics, const Offset(0, 100000));
+        } else {
+          await tester.sendEventToBinding(
+            PointerScrollEvent(
+              position: center,
+              scrollDelta: const Offset(0, -100000),
+              kind: PointerDeviceKind.mouse,
+            ),
+          );
+        }
+        await tester.pumpAndSettle();
+        expect(c.positionNotifier.value.seconds, 0);
+        expect(tester.takeException(), isNull);
+      });
+    }
 
     testWidgets('scrolling does not seek when autoscroll is off', (
       tester,

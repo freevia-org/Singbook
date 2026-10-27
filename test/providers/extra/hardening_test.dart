@@ -75,10 +75,10 @@ void main() {
     test('Sean McGrath, Open Filk and Chordie', () async {
       final sean = SeanMcGrathProvider(
         mock((r) async {
-          if (r.url.path == '/songs/') {
+          if (r.url.path == '/songs_and_poems/') {
             return http.Response('<a href="/songs/example/">Example</a>', 200);
           }
-          if (r.url.path == '/songs/example/') {
+          if (r.url.path == '/songs_and_poems/example/') {
             return http.Response(
               '<a href="/assets/chordpro/example.pro">ChordPro</a>',
               200,
@@ -304,10 +304,10 @@ void main() {
     test('Sean McGrath only accepts well-formed YouTube embeds', () async {
       final provider = SeanMcGrathProvider(
         mock((r) async {
-          if (r.url.path == '/songs/') {
+          if (r.url.path == '/songs_and_poems/') {
             return http.Response('<a href="/songs/example/">Example</a>', 200);
           }
-          if (r.url.path == '/songs/example/') {
+          if (r.url.path == '/songs_and_poems/example/') {
             return http.Response(
               '<a href="/assets/chordpro/example.pro">ChordPro</a>'
               '<iframe src="https://www.youtube.com/embed/abc"></iframe>'

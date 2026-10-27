@@ -41,7 +41,7 @@ void main() {
   );
 
   testWidgets(
-    'macOS player uses Space and Command arrows, preserving text input',
+    'macOS player uses Space and Option arrows, preserving text input',
     (tester) async {
       final controller = FakeUiController(
         (_) => const VerseUiState(
@@ -56,7 +56,7 @@ void main() {
       await _pump(tester, PlayerScreen(controller: controller));
 
       await tester.sendKeyEvent(LogicalKeyboardKey.space);
-      await _commandKey(tester, LogicalKeyboardKey.arrowRight);
+      await _optionKey(tester, LogicalKeyboardKey.arrowRight);
       expect(controller.calls, ['playPause', 'seek(20.0)']);
       expect(find.byTooltip('Play (Space)'), findsOneWidget);
 
@@ -70,7 +70,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField), 'typing lyrics');
       await tester.sendKeyEvent(LogicalKeyboardKey.space);
-      await _commandKey(tester, LogicalKeyboardKey.arrowLeft);
+      await _optionKey(tester, LogicalKeyboardKey.arrowLeft);
       expect(text.text, 'typing lyrics');
       expect(controller.calls, ['playPause', 'seek(20.0)']);
       await tester.binding.handlePopRoute();
@@ -261,4 +261,11 @@ Future<void> _pump(WidgetTester tester, Widget screen) async {
     ),
   );
   await tester.pumpAndSettle();
+}
+
+Future<void> _optionKey(WidgetTester tester, LogicalKeyboardKey key) async {
+  await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+  await tester.sendKeyEvent(key);
+  await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+  await tester.pump();
 }

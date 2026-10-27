@@ -108,19 +108,53 @@ void main() {
   });
 
   group('rate limits', () {
-    test('503 (MusicBrainz rate limiting) maps to rate_limited after bounded retries', () async {
-      var calls = 0;
+    test('MusicBrainz apex and www requests share one paced queue', () async {
+      final clock = Stopwatch()..start();
+      final attempts = <int>[];
       final t = wire((_) async {
-        calls++;
-        return http.Response('busy', 503);
+        attempts.add(clock.elapsedMicroseconds);
+        return http.Response('ok', 200);
       });
-      await expectLater(
-        t.getText(Uri.parse('https://musicbrainz.org/')),
-        throwsA(errorCode('rate_limited')),
-      );
-      expect(calls, 3, reason: 'one request plus two retries');
-      await t.close();
+      try {
+        expect(
+          await Future.wait([
+            t.getText(Uri.parse('https://musicbrainz.org/ws/2/recording')),
+            t.getText(Uri.parse('https://www.musicbrainz.org/ws/2/recording')),
+          ]),
+          ['ok', 'ok'],
+        );
+        expect(attempts[1] - attempts[0], greaterThanOrEqualTo(1000000));
+      } finally {
+        await t.close();
+      }
     });
+    test(
+      '503 (MusicBrainz rate limiting) maps to rate_limited after bounded retries',
+      () async {
+        var calls = 0;
+        final clock = Stopwatch()..start();
+        final attempts = <int>[];
+        final t = wire((_) async {
+          calls++;
+          attempts.add(clock.elapsedMicroseconds);
+          return http.Response('busy', 503, headers: {'retry-after': '0'});
+        });
+        await expectLater(
+          t.getText(Uri.parse('https://musicbrainz.org/')),
+          throwsA(errorCode('rate_limited')),
+        );
+        expect(calls, 3, reason: 'one request plus two retries');
+        for (var i = 1; i < attempts.length; i++) {
+          expect(
+            attempts[i] - attempts[i - 1],
+            greaterThanOrEqualTo(1000000),
+            reason:
+                'Retries also count toward MusicBrainz one-request-per-second limit',
+          );
+        }
+        await t.close();
+      },
+    );
     test('a 429 with Retry-After recovers on the retry', () async {
       var calls = 0;
       final t = wire((_) async {

@@ -81,7 +81,7 @@
       "id": "lrcshare",
       "name": "LrcShare API",
       "firstSeen": "2026-10-18",
-      "lastChecked": "2026-10-18",
+      "lastChecked": "2026-10-24",
       "status": "deferred",
       "documentation": [
         "https://api.lrcshare.com/docs/",
@@ -92,7 +92,7 @@
         "https://api.lrcshare.com/docs/guide/requirements.html"
       ],
       "endpoint": "https://api.lrcshare.com",
-      "reason": "Publisher docs describe a niche manually curated catalog centered on Chinese rap, with original/translated/romanized lyrics in Chinese, Japanese, Korean and other languages, line/word timing formats, structured rows, metadata and per-version attribution. Quickstart says anonymous/no-key; lyric docs require X-API-Key and X-LrcShare-Session, and on 2026-10-18 at 05:57 UTC live GET requests to /v1/catalog and /v1/search returned HTTP 401 missing X-API-Key, so unauthenticated access was not verified and no credentials were requested. Publisher FAQ limits API use to noncommercial personal/local-library/player contexts; underlying lyric rights remain with rightsholders and the service disclaims ownership, so redistribution/display rights for Singbook remain uncleared. No live lyric extraction canaries or overlap assessment. Defer pending compatible identity/attribution and multilingual extraction support, eligible access, rights review, and two independent live canaries covering claimed capabilities."
+      "reason": "Publisher docs describe a niche manually curated catalog centered on Chinese rap, with original/translated/romanized lyrics in Chinese, Japanese, Korean and other languages, line/word timing formats, structured rows, metadata and per-version attribution. At 2026-10-21T06:00Z, primary docs were reviewed: https://api.lrcshare.com/docs/ says API key required; https://api.lrcshare.com/docs/guide/requirements.html says every request needs X-API-Key and non-catalog routes additionally require X-LrcShare-Session; https://api.lrcshare.com/docs/api/search.html documents keyword/title/artist and song/album/artist/lyric search types; https://api.lrcshare.com/docs/api/lyric.html documents language/kind variants, line/enhanced/verbatim/TTML output, structured rows and per-version source/comment attribution. The FAQ https://api.lrcshare.com/docs/faq.html still says anonymous access, contradicting those current requirements. A bounded anonymous GET https://api.lrcshare.com/v1/catalog at 2026-10-21T06:00:47Z returned HTTP 401; response body omitted. This matches prior 2026-10-18 anonymous 401s and indicates key-gated access, so no credentials were requested or used. Publisher FAQ says noncommercial personal learning/local music library/player display only; lyrics remain each rightsholder's property and source attribution comment must be preserved. No redistribution/display rights for Singbook are established. No lyric extraction canaries or overlap assessment; exact identity path is catalog/search song ID then detail by ID, while current Singbook declarative grammar support for this flow and multilingual row variants is unverified. Defer pending publisher-approved eligible access, compatible identity/attribution and multilingual extraction, rights review, overlap assessment and two independent live repository canaries covering claimed capabilities. Sanitized shape-only evidence: artifacts/source-maintenance/2026-10-21/discovery/lrcshare-docs-and-access.json. Publisher requirements reread on 2026-10-24 at https://api.lrcshare.com/docs/guide/requirements.html explicitly require X-API-Key on every request and a catalog-derived session valid for 24 hours on other endpoints. This was documentation review only; no key, session, authenticated request or new lyric extraction canary was used."
     },
     {
       "id": "musixmatch",
@@ -136,6 +136,219 @@
       ],
       "endpoint": "https://hymnal.rindra.org/api",
       "reason": "New multilingual candidate reviewed on 2026-10-20. Publisher page documents a public unauthenticated static JSON API, reporting 4,485 hymn records across seven collections and Malagasy, French and English. Metadata endpoints return collections or hymns without lyric bodies; a documented single-hymn endpoint returns a record with labeled verse text. A bounded live GET of https://hymnal.rindra.org/api/categories.json at 2026-10-20T06:01:43Z returned successfully with 7 records shaped as ID, Name and count; only collection names/counts were retained in sanitized evidence, no hymn/lyric IDs or text. Publisher documentation says free/open API but provides no explicit content license, per-work rights or attribution terms in the page reviewed; treat underlying hymn rights as unverified. Collections include two Malagasy sets (802 and 814 entries), French-language sets and English SDA Hymnal, a potentially useful regional/language supplement. Expected overlap with WorshipCommons, Wikisource and Open Hymnal is unmeasured. Documented routes expose metadata and static per-hymn lyrics, but no search endpoint; full single-hymn lyric extraction has not been tested, and grammar v1 cannot express the documented whole-catalog-plus-per-ID flow as normal search/resolve without adapter work. No chords or timing are documented. Keep deferred pending explicit rights/attribution and per-work provenance review, a compatible searchable adapter, and two independent live repository canaries covering identity and full lyric extraction."
+    },
+    {
+      "id": "pubdomainonly",
+      "name": "Public Domain Lyrics Database",
+      "firstSeen": "2026-10-21",
+      "lastChecked": "2026-10-21",
+      "status": "deferred",
+      "documentation": [
+        "https://github.com/kennethyork/PubDomainOnly",
+        "https://github.com/kennethyork/PubDomainOnly/blob/main/LICENSE.md"
+      ],
+      "endpoint": "https://kennethyork.github.io/PubDomainOnly",
+      "reason": "New candidate documented in https://github.com/kennethyork/PubDomainOnly README on 2026-10-21. Maintainer describes two static JSON catalogs: 1,334 songs it considers public domain in the US (published 1928 or earlier) and 3,653 CC0 original songs, with 4,987 total; advertised fields are title, author, year, category, lyrics and optional source_url. Categories include hymns, folk songs, spirituals, ballads and sea songs. Published docs claim about 87% of the public-domain set has source URLs and name Wikisource/Project Gutenberg as sources. HEAD checks at 2026-10-21T06:02:19Z returned HTTP 200 and application/json for https://kennethyork.github.io/PubDomainOnly/lyrics_data.json and /cc0_lyrics_data.json; no response bodies were fetched or retained. Keep deferred: the public-domain claim is explicitly US-limited, the CC0 set is maintainer-described as partly automatically generated and needs quality/provenance review, field docs show no stable per-song identity key, and source overlap with existing Wikisource/Open Hymnal coverage is unmeasured. No full extraction or repository canaries were run; endpoint reachability is not proof of response shape or rights. Reassess rights and jurisdiction, identity/deduplication, attribution/provenance, grammar compatibility and two independent real repository canaries before considering activation."
+    },
+    {
+      "id": "sanu-folklore-database",
+      "name": "SANU Ethnographic Institute Folklore Collection",
+      "firstSeen": "2026-10-23",
+      "lastChecked": "2026-10-23",
+      "status": "deferred",
+      "documentation": [
+        "https://folklornazbirka.ei.sanu.ac.rs/lppesme/index.php"
+      ],
+      "endpoint": "https://folklornazbirka.ei.sanu.ac.rs/lppesme/index.php",
+      "reason": "New institutional regional candidate reviewed 2026-10-23. Publisher page identifies a digital folklore database of Serbia's SANU Ethnographic Institute and reports 3,619 folklore texts by end-2025, mostly songs, with collector/narrator/place/date metadata. It documents search by assigned number, words/phrases, and language; current records include Serbian/Croatian, Macedonian and Bulgarian (Slovenian/Albanian options are offered for future additions but have no current records). A bounded HEAD request to https://folklornazbirka.ei.sanu.ac.rs/lppesme/index.php at 2026-10-23T06:03:18Z returned HTTP 200 text/html; no body was fetched in that request. This is homepage reachability only, not API or song extraction evidence. Publisher terms permit free use for scientific and noncommercial purposes only, prohibit commercial use, and request citation in scientific work. Defer pending clarity that intended app use is permitted, stable song identity plus complete metadata/lyrics response shape, machine-readable/search endpoint contract and grammar compatibility, overlap assessment with Wikisource and regional folk sources, and two independent repository canaries."
+    },
+    {
+      "id": "radio-smihun",
+      "name": "Radio Smihun REST API",
+      "firstSeen": "2026-10-24",
+      "lastChecked": "2026-10-24",
+      "status": "deferred",
+      "documentation": [
+        "https://docs.radiosmihun.com/reference/rest"
+      ],
+      "reason": "Publisher REST documentation reviewed on 2026-10-24 describes a public /api/library limited to the current day/night radio mode, with IDs shaped as radio filenames. The /api/lyrics route requires an art token, accepts title/artist and optional album, and returns synced line times plus an offset; responses are token-encoded and uncached lyrics come from LRCLIB. This does not establish independent Ukrainian lyric coverage; the documentation language alone is not catalog-language evidence. No live lyric request, credential, per-work rights or attribution grant, stable external song identity, or two repository canaries was established. Defer pending eligible access, compatible authenticated/encoded-response handling, actual identity and regional coverage evidence, rights/provenance review and independent canaries. Overlap with the registered LRCLIB source is documented; independent cache coverage is unmeasured."
+    },
+    {
+      "id": "lrc-red",
+      "name": "lrc.red API",
+      "firstSeen": "2026-10-25",
+      "lastChecked": "2026-10-26",
+      "status": "accepted",
+      "documentation": [
+        "https://lrc.red/api"
+      ],
+      "reason": "2026-10-26 follow-up supersedes the earlier generic TTML parser failure. Rendered publisher API documentation establishes anonymous app access with an identifying User-Agent, project link/contact email, and visible source attribution/link. The native adapter and explicit lrc-red timing profile passed two independent production maintenance canaries: Creep/Radiohead (GBAYE9200070) and Bohemian Rhapsody (Remastered 2011)/Queen (GBUM71029604). Exact search/detail ISRC, title, artist, album and duration match; lyric/metadata extraction, positioned word/line cue parsing and raw timing preservation passed. Qualification used six HTTP 200 responses without rate limits or network failures. Separate requests verified valid 600x600 WebP artwork for both exact ISRCs. Implementation merged in PR157 at public main commit 8c0b7ee2. Manual qualification follow-up: PR162 merged at 7717b330 with channel 2 revision 11 active by default. Android search/import/reader, native 600x600 artwork decoding and exact source/raw timing retention across native SQLite reopening and ChordPro round trips passed. The ordinary app entrypoint also showed the provider enabled by default and retained cached-song hashes across cold startup. Released channel 1/build 38 remain unchanged. No blanket redistribution license is claimed. Catalog size, distinct regional coverage and overlap remain unmeasured. These checks establish response identity consistency, field presence, extraction and preservation only; they do not independently verify musical, lyric transcription or recording accuracy."
+    },
+    {
+      "id": "folk-song-catalogue-eu",
+      "name": "Folk Song Catalogue",
+      "firstSeen": "2026-10-25",
+      "lastChecked": "2026-10-25",
+      "status": "deferred",
+      "documentation": [
+        "https://folksong.eu/en/home"
+      ],
+      "reason": "2026-10-25: Publisher describes a comparative European folk-song database of melodies/texts from printed/manuscript catalogues and audio, including digitized Susil 1860 texts. Its access notice says collaborators/researchers may obtain expanded access to complete search results and facsimiles, and it supplies citation guidance. No documented public machine API or content-reuse license was established by the reviewed page; citation is not a license. Potential Central European folk coverage is useful but languages, independent coverage and overlap with Wikisource/institutional catalogs remain unmeasured. No record bodies, accounts or API calls were requested. Defer pending public access and rights/attribution clarification, compatible identity/search extraction, and two independent live canaries."
+    },
+    {
+      "id": "little-songbook",
+      "name": "Little Songbook",
+      "firstSeen": "2026-10-25",
+      "lastChecked": "2026-10-25",
+      "status": "deferred",
+      "documentation": [
+        "https://littlesongbook.com/licensing/"
+      ],
+      "reason": "2026-10-25: Publisher describes traditional children songs from around the world with country/language, known author or tradition, and edition/variant context. Its licensing page distinguishes original English translations, essays, instructions and Q&A, allowing short quotations with links while asking that original writing not be republished wholesale. This does not establish per-work song/translation reuse rights for persistent app display/storage. No public machine API, lyric extraction or account access was verified. Potential regional/language supplement and overlap with folk/public-domain catalogs remain unmeasured. Defer pending an explicit access and per-work rights/attribution contract, compatible adapter and two independent live canaries; do not scrape original translations under quotation permission."
+    },
+    {
+      "id": "openlyrics-examples",
+      "name": "OpenLyrics format and examples",
+      "firstSeen": "2026-10-26",
+      "lastChecked": "2026-10-26",
+      "status": "rejected",
+      "documentation": [
+        "https://docs.openlyrics.org/en/latest/",
+        "https://docs.openlyrics.org/en/latest/dataformat.html"
+      ],
+      "reason": "Publisher identifies an XML interchange standard for Christian worship songs and an archive containing some examples, rather than a documented searchable regional catalog. This dedicated focus falls outside the owner's requested provider scope. Format language/chord/translation support does not establish catalog coverage. No per-work rights, attribution, stable source IDs, live query/extraction flow or independent canaries were established. No archive/lyric requests, credentials, accounts or source activation. Existing deferred regional candidates remain unchanged; overlap not measured."
+    },
+    {
+      "id": "chordify",
+      "name": "Chordify",
+      "documentation": [
+        "https://chordify.net/pages/chordify-app/",
+        "https://chordify.net/pages/terms-and-conditions/"
+      ],
+      "reason": "Publisher advertises over 36 million chordified songs, title/artist search, synchronized chord progressions, key/BPM and lyrics for selected songs. This is a publisher size claim, not measured coverage. API/Embed are named in terms but no public integration schema/price/quota was established. Terms restrict use to personal noncommercial use and require written permission for automated access. Defer pending publisher-approved API/access and content-use agreement, stable arrangement/recording identity and two live repository canaries. No automated content requests or account created; overlap unmeasured.",
+      "firstSeen": "2026-10-26",
+      "lastChecked": "2026-10-26",
+      "status": "deferred"
+    },
+    {
+      "id": "cifra-club",
+      "name": "Cifra Club",
+      "documentation": [
+        "https://www.cifraclub.com.br/aviso-legal.html",
+        "https://suporte.cifraclub.com.br/pt-BR/support/solutions/articles/64000236814-conheca-o-padr%C3%A3o-para-envio-de-cifras-e-tablaturas"
+      ],
+      "reason": "Potential Brazilian/Portuguese chord and tab catalog. Publisher arrangement-submission documentation surfaced during research, but the parent legal-page read returned403. Numeric catalog size, complete language coverage, authorized machine API, schema/identity, rights/attribution and quotas remain unverified. No lyric/download/account calls or canaries. Keep deferred pending readable primary contract and two exact extraction canaries; regional benefit and overlap unmeasured.",
+      "firstSeen": "2026-10-26",
+      "lastChecked": "2026-10-26",
+      "status": "deferred"
+    },
+    {
+      "id": "e-chords",
+      "name": "E-Chords",
+      "documentation": [
+        "https://www.e-chords.com/en/terms",
+        "https://www.e-chords.com/en/"
+      ],
+      "reason": "Publisher terms describe by-ear transcriptions for study, skill development and scholarship. They do not establish an app integration/API contract. Numeric catalog size, complete language coverage, stable machine identity/schema and content-use permission remain unverified; consumer access and a platform license are not an app reuse grant. No lyric/API/account requests or canaries performed. Defer pending publisher access and attribution/rights review, compatible adapter and two live canaries. Overlap unmeasured.",
+      "firstSeen": "2026-10-26",
+      "lastChecked": "2026-10-26",
+      "status": "deferred"
+    },
+    {
+      "id": "lololyrics",
+      "name": "Lololyrics",
+      "documentation": [
+        "https://www.lololyrics.com/faq",
+        "https://api.lololyrics.com"
+      ],
+      "reason": "Publisher FAQ explicitly directs application developers to its API and currently displays61953 lyrics; this is a dated publisher count. It says the catalog covers all music rather than only electronic dance music. The linked API documentation was not readable in this research, so exact endpoints, supported HTTPS access, auth/quota/price, fields/stable identities and content/attribution terms remain unverified. No API/lyric/account calls or canaries performed. Promising documented app-access lead, deferred until full API contract and two independent exact-identity extraction canaries pass. Distinct language benefit and overlap remain unmeasured. Follow-up 2026-10-27: the publisher FAQ still directs application developers to the API, but its linked HTTPS documentation root returned404 through the publisher link/web reader and an ordinary TLS-verified local HEAD request. This does not establish that versioned API routes are unavailable. The current contract, schema, authentication/quota and intended-use rights remain unverified; no lyric-body/API canaries, keys or scraping fallback were used.",
+      "firstSeen": "2026-10-26",
+      "lastChecked": "2026-10-27",
+      "status": "deferred"
+    },
+    {
+      "id": "roswell-music-jam",
+      "name": "Roswell Music Jam",
+      "firstSeen": "2026-10-26",
+      "lastChecked": "2026-10-26",
+      "status": "accepted",
+      "documentation": [
+        "https://www.roswellmusicjam.com/songbooks"
+      ],
+      "reason": "Publisher documents a free educational ChordPro archive for use in ChordPro apps, with OnSong import instructions. The latest listed release, Nov 25, 2025, was observed as a public ZIP of 293 files (486087 bytes; SHA256 8f45048f6497177e6adae2286a800e3ff26cc4f7699c6cd5faffe9c4646149e3), covering Bluegrass, Americana and Electric collections. Two final production-adapter canaries at 2026-10-26T11:33:56Z passed search/resolve, consistent source title/artist, lyrics, chords and required metadata: If Not For You/Bob Dylan and Breakdown/Tom Petty. The probes reused one page and one archive GET, both HTTP 200, without rate limits or network failures. Offline replay of the actual archive through AppController verified individual save, SQLite reopen hashes, ChordPro export/import, 132/60 chord tokens and retained original source evidence. Subsequent Android native search/import/reader checks passed, including cached readers and exact source/raw payload retention through a new SQLite connection and ChordPro round trips. PR159 merged at public main commit 3e879428 and stages disabled source roswellmusicjam on channel 2 revision 9 with bounded ZIP checks, a 24-hour memory cache, stable filename arrangement IDs and attribution. Publisher updates recheck title/artist and retain the current retrieval revision. No bulk library import, recording-identity claim or blanket redistribution license. Implementation accepted after independent archive/transport review, clean analysis/offline validation, combined regressions and all 11 applicable CI checks passed. Manual qualification follow-up: PR162 merged at 7717b330 and channel 2 revision 11 enables this source by default. Ordinary-app cold startup showed it enabled and preserved cached-song hashes. The official compatible app update remains a separate release step. Broad-catalog overlap is unmeasured; no large or regionally unique catalog claim is made. Canary chord counts and successful import/export establish extraction and preservation, not independently verified chord correctness, lyric completeness, musical or transcription accuracy."
+    },
+    {
+      "id": "kara-moe",
+      "documentation": [
+        "https://kara.moe/",
+        "https://api.karaokes.moe/server/swagger.json",
+        "https://github.com/karamoe/karaokebase/blob/master/LICENSE.md"
+      ],
+      "status": "accepted",
+      "reason": "Publisher reports about 31,000 karaoke entries across 61 languages. Documented anonymous public search/detail API returned lyric-line JSON with timestamps and subtitle tags. Two production repository canaries passed extraction/metadata/line-cue preservation for Man of war/Radiohead and Suna no Wakusei/Ai Kizuna; DUNE is the latter source's English alias, not its default romanized title. Four HTTP 200 responses, no rate limits or network failures. Real controller replay of public snapshots passed save, SQLite reopen hashes and ChordPro export/import with 35/67 line cues and raw JSON retained. These are source-video arrangements: KID is not a recording ID, and video year/duration do not become song release/recording facts. Timing remains sourceDemonstrationOnly and unverified for recording playback. Database ODbL, original sync CC-BY-SA and imported sync/underlying lyric rights remain distinct. PR162 merged at 7717b330 after all 11 applicable CI checks passed. Channel 2 revision 11 enables native source karamoe by default. Android live search/import/reader checks and exact incoming plus prior-cached payload retention through native SQLite reopening and ChordPro round trips passed. The ordinary app entrypoint showed it enabled by default and retained all four public-song test hashes across cold startup; the official compatible update remains a separate release step. No video downloads or independent musical/transcription accuracy claim; overlap unmeasured.",
+      "firstSeen": "2026-10-26",
+      "lastChecked": "2026-10-26",
+      "name": "kara.moe / Karaoke Mugen"
+    },
+    {
+      "id": "cover-art-archive",
+      "documentation": [
+        "https://musicbrainz.org/doc/Cover_Art_Archive/API",
+        "https://musicbrainz.org/doc/Cover_Art_Archive"
+      ],
+      "status": "deferred",
+      "reason": "Art is keyed by exact MusicBrainz release. Current service does not chain resolved MusicBrainz release context into a separate artwork provider, and common selections lack an exact release ID. Two bounded metadata responses showed multiple releases for one recording and valid front-image metadata for one explicit release; no image downloaded. CAA JSON redirected to a dynamic archive.org CDN which current exact-host transport policy rejects. A safe integration needs verified release selection and narrowly validated redirect handling. No arbitrary first-release or release-group cover, no transport weakening, and no general image-license claim.",
+      "firstSeen": "2026-10-26",
+      "lastChecked": "2026-10-26",
+      "name": "Cover Art Archive"
+    },
+    {
+      "id": "ukutabs",
+      "documentation": [
+        "https://ukutabs.com/blog/ukutabs-apps-ios-android/",
+        "https://ukutabs.com/terms-and-conditions/"
+      ],
+      "status": "deferred",
+      "reason": "Publisher advertises20,000+ full songs and chord search. Terms explicitly prohibit scraping/systematic extraction without written permission. No automated chart adapter or body extraction attempted; publisher permission/access contract needed.",
+      "firstSeen": "2026-10-26",
+      "lastChecked": "2026-10-26",
+      "name": "UkuTabs"
+    },
+    {
+      "id": "ukulele-tabs",
+      "documentation": [
+        "https://www.ukulele-tabs.com/mobile/android-app-ukulele.html",
+        "https://www.ukulele-tabs.com/faq.html"
+      ],
+      "status": "deferred",
+      "reason": "Publisher advertises100,000+ tabs and multilingual interface. FAQ describes jurisdiction-dependent lyric masking and instructs users not to bypass blocked pages. One canonical public chart ID 42901 was observed in publisher material, but no two extraction canaries or current integration/automation contract established. No masking/country restriction bypass, login or credential use.",
+      "firstSeen": "2026-10-26",
+      "lastChecked": "2026-10-26",
+      "name": "Ukulele-Tabs.com"
+    },
+    {
+      "id": "tab4u",
+      "documentation": [
+        "https://www.tab4u.com/terms.php",
+        "https://www.tab4u.com/tabs/songs/1810_%D7%94%D7%90%D7%95%D7%A8_%D7%91%D7%97%D7%99%D7%99.html"
+      ],
+      "status": "deferred",
+      "reason": "Hebrew chart catalog shows numeric source IDs and publisher artist/writer credits. Terms page exposed no readable text to web reader; one ordinary local terms GET returned HTTP 403, so policy and attribution cannot be verified. No restriction bypass, sign-in, API extraction or two independent adapter canaries claimed; catalog size/overlap unmeasured.",
+      "firstSeen": "2026-10-26",
+      "lastChecked": "2026-10-26",
+      "name": "Tab4U"
+    },
+    {
+      "id": "vagalume",
+      "name": "Vagalume",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred",
+      "documentation": [
+        "https://api.vagalume.com.br/docs/",
+        "https://www.vagalume.com.br/terms/"
+      ],
+      "reason": "Publisher developer documentation returned503 on 2026-10-27 through both the web reader and an ordinary TLS-verified local documentation GET; this is not proof that all API routes are unavailable. General platform terms2.3 and8.1 restrict copying and database collection, while9.10 requires prior authorization for passing content to third parties. No accessible API-specific contract established intended app display/storage rights, attribution, auth/quota/cost, routes/schema or stable identities. The publisher describes a Brazilian audience, making this a potential regional lead; API language coverage, catalog size and overlap remain unmeasured. No account, credential, song/lyric-body API query, canary or outreach was used. Defer pending a current permitted-access contract, compatible extraction and two independent identity-correct live repository canaries."
     }
   ]
 }

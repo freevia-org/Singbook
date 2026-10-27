@@ -20,8 +20,8 @@ void main() {
     'extra roster distinguishes imports, catalogs, and identity-bound artwork',
     () {
       final providers = createExtraProviders();
-      expect(providers.length, 12);
-      expect(providers.map((p) => p.definition.id).toSet().length, 12);
+      expect(providers.length, 13);
+      expect(providers.map((p) => p.definition.id).toSet().length, 13);
       expect(
         providers.whereType<FileImportProvider>().map((p) => p.definition.id),
         ['ozbcoz', 'worshiptogether'],
@@ -195,13 +195,14 @@ void main() {
     () async {
       final provider = SeanMcGrathProvider(
         mockTransport((r) async {
-          if (r.url.path == '/songs/') {
+          if (r.url.path == '/songs_and_poems/') {
             return http.Response(
-              '<a href="/songs/example/">Example</a><a href="/covers/cover/">Cover</a>',
+              '<a href="/songs_and_poems/example/">Example</a>'
+              '<a href="/songs/example/">More</a><a href="/covers/cover/">Cover</a>',
               200,
             );
           }
-          if (r.url.path == '/songs/example/') {
+          if (r.url.path == '/songs_and_poems/example/') {
             return http.Response(
               '<a href="/assets/chordpro/example.pro">ChordPro</a><iframe src="https://www.youtube.com/embed/abcdefghijk"></iframe>',
               200,
@@ -215,6 +216,11 @@ void main() {
       );
       final rows = await provider.search('Sean');
       expect(rows.length, 1);
+      expect(rows.single.id, '/songs/example/');
+      expect(
+        rows.single.url,
+        'https://seanmcgrathmusic.com/songs_and_poems/example/',
+      );
       final result = await provider.resolve(rows.single);
       expect(result.hasChords, true);
       expect(result.extra['rights']['license'], 'CC BY 4.0');
@@ -222,6 +228,50 @@ void main() {
         result.metadata['mediaLinks'][0]['url'],
         'https://www.youtube.com/watch?v=abcdefghijk',
       );
+    },
+  );
+  test(
+    'Sean resolves saved legacy URLs without changing identity or metadata',
+    () async {
+      final paths = <String>[];
+      final provider = SeanMcGrathProvider(
+        mockTransport((r) async {
+          paths.add(r.url.path);
+          if (r.url.path == '/songs_and_poems/example/') {
+            return http.Response(
+              '<a href="/assets/chordpro/example.pro">ChordPro</a>',
+              200,
+            );
+          }
+          if (r.url.path == '/assets/chordpro/example.pro') {
+            return http.Response('{title:Example}\n[C]Synthetic words', 200);
+          }
+          throw StateError('Unexpected request');
+        }),
+      );
+      final result = await provider.resolve(
+        const SongCandidate(
+          providerId: 'seanmcgrathmusic',
+          id: '/songs/example/',
+          title: 'Example',
+          artist: 'Sean McGrath',
+          url: 'https://seanmcgrathmusic.com/songs/example/',
+          metadata: {'identityScope': 'composition'},
+          extra: {'retained': true},
+        ),
+      );
+      expect(result.candidate.identity, 'seanmcgrathmusic:/songs/example/');
+      expect(
+        result.candidate.url,
+        'https://seanmcgrathmusic.com/songs_and_poems/example/',
+      );
+      expect(result.candidate.extra['retained'], true);
+      expect(result.candidate.metadata['identityScope'], 'composition');
+      expect(paths, [
+        '/songs_and_poems/example/',
+        '/assets/chordpro/example.pro',
+      ]);
+      expect(result.hasChords, true);
     },
   );
   test(

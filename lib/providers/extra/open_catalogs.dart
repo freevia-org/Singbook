@@ -286,27 +286,37 @@ class SeanMcGrathProvider implements LyricsProvider {
   }) async {
     if (_catalog == null) {
       final doc = parseHtml(
-        await transport.getText(base.resolve('songs/'), cancel: cancel),
+        await transport.getText(
+          base.resolve('songs_and_poems/'),
+          cancel: cancel,
+        ),
       );
       final found = <String, SongCandidate>{};
       for (final a in doc.querySelectorAll('a[href]')) {
         final u = base.resolve(a.attributes['href']!);
         if (u.scheme != 'https' ||
             u.host != base.host ||
-            !RegExp(r'^/songs/[^/]+/$').hasMatch(u.path) ||
+            !RegExp(
+              r'^/(?:songs|songs_and_poems)/[a-z0-9-]+/$',
+            ).hasMatch(u.path) ||
             a.text.trim().isEmpty) {
           continue;
         }
         // The first (title) link wins; later 'Listen'/'More' anchors to the same
         // song must not rename it.
-        found.putIfAbsent(u.path, () => SongCandidate(
-          providerId: definition.id,
-          id: u.path,
-          title: boundedText(a.text),
-          artist: 'Sean McGrath',
-          url: u.toString(),
-          metadata: const {'identityScope': 'composition'},
-        ));
+        // Keep identities from before the publisher's October 2026 path move.
+        final stablePath = '/songs/${u.pathSegments[1]}/';
+        found.putIfAbsent(
+          stablePath,
+          () => SongCandidate(
+            providerId: definition.id,
+            id: stablePath,
+            title: boundedText(a.text),
+            artist: 'Sean McGrath',
+            url: u.toString(),
+            metadata: const {'identityScope': 'composition'},
+          ),
+        );
       }
       _catalog = found.values.toList();
     }
@@ -333,10 +343,17 @@ class SeanMcGrathProvider implements LyricsProvider {
       if (exact.isEmpty) throw const ProviderException('unavailable');
       found = exact.first;
     }
-    final url = checkedUrl(found.url ?? '', {base.host}, prefix: '/songs/');
-    if (!RegExp(r'^/songs/[^/]+/$').hasMatch(url.path)) {
+    final supplied = checkedUrl(found.url ?? '', {base.host}, prefix: '/');
+    if (!RegExp(
+          r'^/(?:songs|songs_and_poems)/[a-z0-9-]+/$',
+        ).hasMatch(supplied.path) ||
+        supplied.hasQuery ||
+        supplied.hasFragment) {
       throw const ProviderException('invalid_url');
     }
+    // Resolve saved pre-migration candidates at the publisher's current URL.
+    final url = base.resolve('songs_and_poems/${supplied.pathSegments[1]}/');
+    found = SongCandidate.fromJson({...found.toJson(), 'url': url.toString()});
     final page = parseHtml(await transport.getText(url, cancel: cancel));
     final links = page
         .querySelectorAll('a[href]')
