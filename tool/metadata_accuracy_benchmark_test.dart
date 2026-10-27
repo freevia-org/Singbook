@@ -644,10 +644,11 @@ int _capoOf(Object? raw) =>
 
 /// Captures the player's key fallback without retaining song content.
 ///
-/// `combineSources` may recover a sourced arrangement key into metadata, so it
-/// follows the same explicit-key path as `AppControllerAdapter._songKey`.
-/// After that, the player tries the current body estimate before the checked
-/// estimate bound to that body's hash.
+/// This mirrors the replay's no-user-override path in
+/// `AppControllerAdapter._songKey`. `combineSources` may recover a sourced
+/// arrangement key into metadata, so it follows the explicit-key path. After
+/// that, the player tries the current body estimate before the checked estimate
+/// bound to that body's hash.
 Map<String, Object?> _playerKeyResolution(SongDocument doc) {
   final checked = jsonMap(doc.extra['chordKeyEstimate']);
   final checkedHash = checked['bodyHash'];
@@ -2616,6 +2617,13 @@ Future<void> _benchmark() async {
       }
       final keyClaimScope = _keyClaimScope(doc);
       final playerKeyResolution = _playerKeyResolution(doc);
+      final keyOrigin = jsonMap(doc.extra['fieldOrigins'])['key'];
+      final keySourceIds = doc.extra['keySourceIds'] is List
+          ? ((doc.extra['keySourceIds'] as List)
+                .whereType<String>()
+                .toList()
+              ..sort())
+          : const <String>[];
       final identityReady =
           recordingReferenceAnchored &&
           (edition == null || row['recordingEditionAnchored'] == true);
@@ -2631,6 +2639,8 @@ Future<void> _benchmark() async {
         'normalizedLyricsSha256': lyricsHash,
         'key': key,
         'playerKeyResolution': playerKeyResolution,
+        'keyOrigin': keyOrigin,
+        'keySourceIds': keySourceIds,
         'keyEvidence': doc.metadata['key'] != null
             ? 'source'
             : checkedChordKeyEstimate(doc) != null
