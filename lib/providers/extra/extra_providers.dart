@@ -5,6 +5,7 @@ import 'open_catalogs.dart';
 import 'lrc_red.dart';
 import 'roswell.dart';
 import 'kara_moe.dart';
+import 'amll.dart';
 import 'startjamming.dart';
 
 export 'import_sources.dart';
@@ -13,6 +14,7 @@ export 'open_catalogs.dart';
 export 'lrc_red.dart';
 export 'roswell.dart';
 export 'kara_moe.dart';
+export 'amll.dart';
 export 'startjamming.dart';
 
 /// All sources in the architecture, including truthful file-import-only routes.
@@ -32,6 +34,7 @@ List<LyricsProvider> createExtraProviders({ProviderTransport? transport}) {
     LrcRedProvider(http),
     RoswellMusicJamProvider(http),
     KaraMoeProvider(http),
+    AmllProvider(http),
     StartJammingProvider(http),
   ];
 }
