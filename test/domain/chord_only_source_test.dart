@@ -53,6 +53,48 @@ class ChartProvider implements LyricsProvider {
 
 void main() {
   test(
+    'preferred exact chart stays eligible when matching lyrics are also found',
+    () {
+      const selected = SongCandidate(
+        providerId: 'chart',
+        id: 'selected-arrangement',
+        title: 'Synthetic Song',
+        artist: 'Known Artist',
+        metadata: {'identityScope': 'arrangement'},
+      );
+      final selectedChart = SourceResult(
+        candidate: selected,
+        body:
+            '[C]Ashes drift softly across the cold mountain while the river follows home',
+        matchKind: MatchKind.sameSong,
+        attribution: 'Synthetic chart credit',
+      );
+      final matchingLyrics = SourceResult(
+        candidate: const SongCandidate(
+          providerId: 'lyrics',
+          id: 'synthetic-song',
+          title: 'Synthetic Song',
+          artist: 'Known Artist',
+        ),
+        body:
+            'Gentle flowers awaken beneath the morning sky while our hearts remember yesterday',
+        matchKind: MatchKind.sameSong,
+      );
+
+      final saved = combineSources(selected, [
+        selectedChart,
+        matchingLyrics,
+      ], preferredSourceId: selectedChart.id);
+
+      expect(saved.body, selectedChart.body);
+      expect(
+        saved.sources.map((source) => source.id),
+        containsAll([selectedChart.id, matchingLyrics.id]),
+      );
+    },
+  );
+
+  test(
     'explicit own-source instrumental chart saves without invented lyrics',
     () {
       final result = source();

@@ -3182,6 +3182,8 @@ SongDocument combineSources(
       .where(
         (source) =>
             (allowRejectedPreferredSource && source.id == preferredSourceId) ||
+            (source.id == preferredSourceId &&
+                selectedArrangementMatches(source)) ||
             !source.hasChords ||
             references.isEmpty ||
             _completeChart(source.body, references.first.body),
