@@ -16,7 +16,9 @@ class AppDelegate: FlutterAppDelegate {
   private static let credentialService = "org.freevia.singbook.drive"
 
   override func applicationDidFinishLaunching(_ notification: Notification) {
-    super.applicationDidFinishLaunching(notification)
+    // FlutterAppDelegate implements willFinishLaunching, not this optional
+    // NSApplicationDelegate callback. Calling super here sends an unsupported
+    // Objective-C selector and aborts normal startup with an AppKit exception.
     installNativeChannelsIfAvailable()
     activationObserver = NotificationCenter.default.addObserver(
       forName: NSApplication.didBecomeActiveNotification,

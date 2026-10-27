@@ -9,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
 
 import 'support/fake_controller.dart';
+import 'package:singbook/ui/widgets/verse_components.dart';
 
 // Optional synthetic host screenshots; these are not Android captures.
 const _captureOutput = String.fromEnvironment('SEARCH_RESULTS_CAPTURE_DIR');
@@ -47,10 +48,12 @@ void main() {
       final message = find.text(l10nOf(tester).songsEmptySearch);
       final create = find.byKey(const ValueKey('songs-create-shortcut'));
       expect(message, findsOneWidget);
-      final scrollable = find.descendant(
-        of: find.byKey(const PageStorageKey('songs-library-empty')),
-        matching: find.byType(Scrollable),
-      ).first;
+      final scrollable = find
+          .descendant(
+            of: find.byKey(const PageStorageKey('songs-library-empty')),
+            matching: find.byType(Scrollable),
+          )
+          .first;
       double scrollOffset() =>
           tester.state<ScrollableState>(scrollable).position.pixels;
       final messageBottom = tester.getRect(message).bottom + scrollOffset();
@@ -77,6 +80,77 @@ void main() {
       await tester.tap(create);
       await tester.pumpAndSettle();
       expect(controller.calls, contains('createSong'));
+    });
+  }
+
+  for (final count in [4, 9, 10]) {
+    testWidgets('alphabet headings start at ten displayed songs: $count', (
+      tester,
+    ) async {
+      final controller = FakeUiController(
+        (_) => VerseUiState(
+          activeTab: VerseTab.songs,
+          homeListMode: HomeListMode.library,
+          songs: [
+            for (var i = 0; i < count; i++)
+              SongCardData(
+                id: '$i',
+                title: '${String.fromCharCode(65 + i)} song',
+              ),
+          ],
+        ),
+      );
+      addTearDown(controller.dispose);
+      await pumpShell(tester, controller, size: const Size(1100, 900));
+      expect(
+        find.byType(VerseSectionLabel),
+        count < 10 ? findsNothing : findsWidgets,
+      );
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  for (final width in [360.0, 1100.0]) {
+    testWidgets('creation follows songs as a matching row at $width', (
+      tester,
+    ) async {
+      final controller = FakeUiController(
+        (_) => const VerseUiState(
+          activeTab: VerseTab.songs,
+          homeListMode: HomeListMode.library,
+          songs: [
+            SongCardData(
+              id: 'demo',
+              title: 'Demo song',
+              artist: 'Freevia Demo',
+            ),
+          ],
+        ),
+      );
+      addTearDown(controller.dispose);
+      await pumpShell(tester, controller, size: Size(width, 850));
+      final song = find.byType(SongRow);
+      final create = find.byKey(const ValueKey('songs-create-shortcut'));
+      expect(
+        tester.getRect(create).top,
+        greaterThanOrEqualTo(tester.getRect(song).bottom),
+      );
+      expect(
+        tester
+            .getRect(
+              find.descendant(of: create, matching: find.byType(InkWell)),
+            )
+            .width,
+        closeTo(tester.getRect(song).width, 1),
+      );
+      expect(
+        find.descendant(of: create, matching: find.byType(Card)),
+        findsOneWidget,
+      );
+      await tester.tap(create);
+      await tester.pumpAndSettle();
+      expect(controller.calls, contains('createSong'));
+      expect(tester.takeException(), isNull);
     });
   }
 

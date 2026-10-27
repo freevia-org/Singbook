@@ -347,62 +347,67 @@ void main() {
     },
   );
 
-  testWidgets(
-    'transpose popup has no visibility action and preserves hidden chords',
-    (tester) async {
-      await openFixture(tester);
-      await tester.runAsync(() => ui.setShowChords(false));
-      await _pumpPlayer(tester, ui, awake);
-      final dropdown = find.byKey(const ValueKey('pitch-key-dropdown'));
-      final menu = tester.widget<PopupMenuButton<String>>(dropdown);
-      final values = menu
-          .itemBuilder(tester.element(dropdown))
-          .whereType<PopupMenuItem<String>>()
-          .map((item) => item.value);
-      expect(values, isNot(contains('no-chords')));
-      expect(
-        tester
-            .widgetList<ChordLyricsLine>(find.byType(ChordLyricsLine))
-            .every((line) => !line.showChords),
-        isTrue,
-      );
-
-      await tester.tap(dropdown);
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('transpose-pitch-2')));
-      await tester.runAsync(ui.settlePlayerPreferences);
-      await tester.pumpAndSettle();
-      expect(ui.state.readerTranspose, 2);
-      expect(ui.state.showChords, isFalse);
-      expect(
-        tester
-            .widgetList<ChordLyricsLine>(find.byType(ChordLyricsLine))
-            .every((line) => !line.showChords),
-        isTrue,
-      );
-    },
-  );
-
-  testWidgets('reader overflow keeps player settings reachable', (
+  testWidgets('transpose popup restores hidden chords when a key is selected', (
     tester,
   ) async {
     await openFixture(tester);
+    await tester.runAsync(() => ui.setShowChords(false));
     await _pumpPlayer(tester, ui, awake);
-    final l10n = l10nOf(tester);
-
-    await tester.tap(find.byTooltip(l10n.songMenuLabel));
-    await tester.pumpAndSettle();
-    expect(find.text(l10n.settingsPlayer), findsOneWidget);
-    await tester.tap(find.text(l10n.settingsPlayer));
-    await tester.pumpAndSettle();
+    final dropdown = find.byKey(const ValueKey('pitch-key-dropdown'));
+    final menu = tester.widget<PopupMenuButton<String>>(dropdown);
+    final values = menu
+        .itemBuilder(tester.element(dropdown))
+        .whereType<PopupMenuItem<String>>()
+        .map((item) => item.value);
+    expect(values, contains('no-chords'));
     expect(
-      find.widgetWithText(SwitchListTile, l10n.editorChordsField),
-      findsOneWidget,
+      tester
+          .widgetList<ChordLyricsLine>(find.byType(ChordLyricsLine))
+          .every((line) => !line.showChords),
+      isTrue,
     );
-    expect(tester.takeException(), isNull);
+
+    await tester.tap(dropdown);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('transpose-pitch-2')));
+    await tester.runAsync(() async {
+      await repository.getSetting('app');
+      await ui.settlePlayerPreferences();
+    });
+    await tester.pumpAndSettle();
+    expect(ui.state.readerTranspose, 2);
+    expect(ui.state.showChords, isTrue);
+    expect(
+      tester
+          .widgetList<ChordLyricsLine>(find.byType(ChordLyricsLine))
+          .every((line) => line.showChords),
+      isTrue,
+    );
   });
 
-  testWidgets('fullscreen reader keeps player settings reachable', (
+  testWidgets(
+    'reader overflow omits player settings; playback cog opens them',
+    (tester) async {
+      await openFixture(tester);
+      await _pumpPlayer(tester, ui, awake);
+      final l10n = l10nOf(tester);
+
+      await tester.tap(find.byTooltip(l10n.songMenuLabel));
+      await tester.pumpAndSettle();
+      expect(find.text(l10n.settingsPlayer), findsNothing);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('player-settings-button')));
+      await tester.pumpAndSettle();
+      expect(
+        find.widgetWithText(SwitchListTile, l10n.editorChordsField),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('fullscreen keeps lyrics corner settings accessible', (
     tester,
   ) async {
     await openFixture(tester);

@@ -2,12 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'application/error_reporting.dart';
+import 'application/startup_timings.dart';
 import 'application/macos_startup_options.dart';
 import 'application/windows_startup_options.dart';
 import 'data/library_database.dart';
 import 'ui/verse_app.dart';
 
 void main(List<String> arguments) {
+  StartupTimings.start(arguments);
   final libraryPath = !kIsWeb && defaultTargetPlatform == TargetPlatform.macOS
       ? parseMacOSLibraryPath(arguments)
       : parseWindowsLibraryPath(

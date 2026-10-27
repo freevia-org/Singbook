@@ -206,62 +206,23 @@ class _SongsScreenState extends State<SongsScreen> {
                   builder: (context, constraints) => Row(
                     children: [
                       Expanded(
-                        child: constraints.maxWidth >= 640
-                            ? GridView.builder(
-                                key: const PageStorageKey('songs-library-grid'),
-                                controller: _scroll,
-                                gridDelegate:
-                                    SliverGridDelegateWithMaxCrossAxisExtent(
-                                      maxCrossAxisExtent: 520,
-                                      mainAxisExtent:
-                                          128 +
-                                          (MediaQuery.textScalerOf(
-                                                        context,
-                                                      ).scale(16) -
-                                                      16)
-                                                  .clamp(0.0, double.infinity)
-                                                  .toDouble() *
-                                              4,
-                                    ),
-                                itemCount: songs.length + 1,
-                                itemBuilder: (context, index) =>
-                                    index == songs.length
-                                    ? _createShortcut(
-                                        l10n,
-                                        margin: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                          vertical: 4,
-                                        ),
-                                      )
-                                    : _songListItem(
-                                        context,
-                                        l10n,
-                                        songs,
-                                        index,
-                                      ),
-                              )
-                            : ListView.builder(
-                                key: const PageStorageKey('songs-library-list'),
-                                controller: _scroll,
-                                itemCount: songs.length + 1,
-                                itemBuilder: (context, index) =>
-                                    index == songs.length
-                                    ? _createShortcut(
-                                        l10n,
-                                        margin: const EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                          vertical: 4,
-                                        ),
-                                      )
-                                    : _songListItem(
-                                        context,
-                                        l10n,
-                                        songs,
-                                        index,
-                                      ),
-                              ),
+                        child: ListView.builder(
+                          key: const PageStorageKey('songs-library-list'),
+                          controller: _scroll,
+                          itemCount: songs.length + 1,
+                          itemBuilder: (context, index) => index == songs.length
+                              ? _createShortcut(
+                                  l10n,
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 4,
+                                  ),
+                                )
+                              : _songListItem(context, l10n, songs, index),
+                        ),
                       ),
-                      if (sortedLetters.length > 5 &&
+                      if (songs.length >= 10 &&
+                          sortedLetters.length > 5 &&
                           constraints.maxWidth < 640)
                         _LetterRail(
                           letters: sortedLetters,
@@ -291,7 +252,7 @@ class _SongsScreenState extends State<SongsScreen> {
         index == 0 || songIndexLetter(songs[index - 1].title) != letter;
     return Column(
       children: [
-        if (firstOfLetter)
+        if (songs.length >= 10 && firstOfLetter)
           VerseSectionLabel(
             key: _letterKeys.putIfAbsent(letter, GlobalKey.new),
             letter,
@@ -333,6 +294,7 @@ class _SongsScreenState extends State<SongsScreen> {
   }) => LibraryCreateShortcut(
     key: const ValueKey('songs-create-shortcut'),
     label: l10n.menuTypeNewSong,
+    songRowStyle: true,
     margin: margin,
     onPressed: () => widget.controller.createSong(),
   );

@@ -7,6 +7,16 @@ class PlayerFullScreen {
   Future<void> _pending = Future<void>.value();
   bool _disposed = false;
 
+  void listenForNativeToggle(VoidCallback onToggle, {VoidCallback? onExit}) {
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.macOS) {
+      _channel.setMethodCallHandler((call) async {
+        if (_disposed) return;
+        if (call.method == 'toggleRequested') onToggle();
+        if (call.method == 'exited') onExit?.call();
+      });
+    }
+  }
+
   void setEnabled(bool enabled) {
     if (!_disposed) _enqueue(enabled);
   }
@@ -14,6 +24,9 @@ class PlayerFullScreen {
   void dispose() {
     if (_disposed) return;
     _disposed = true;
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.macOS) {
+      _channel.setMethodCallHandler(null);
+    }
     _enqueue(false);
   }
 
@@ -25,6 +38,7 @@ class PlayerFullScreen {
             case TargetPlatform.android:
               // Flutter's immersive SystemUiMode is ignored at target SDK 36.
               await _channel.invokeMethod<void>('setEnabled', enabled);
+            case TargetPlatform.macOS:
             case TargetPlatform.windows:
               await _channel.invokeMethod<void>('setEnabled', enabled);
             case TargetPlatform.iOS:
