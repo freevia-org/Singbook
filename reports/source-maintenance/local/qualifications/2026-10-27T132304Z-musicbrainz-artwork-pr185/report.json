@@ -1,0 +1,1130 @@
+{
+  "schemaVersion": 1,
+  "kind": "candidate-exact-release-artwork-native-and-Android-import-qualification",
+  "atUtc": "2026-10-27T13:23:04.637217+00:00",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/185",
+  "sourceCommit": "935d0845ef8ac8b7b87f951fdd288201313bbbf1",
+  "baseCommit": "0c45cdb4d983f8f5f1f3a5ffe8adb98536c47313",
+  "baseBranch": "codex/regional-native-qualification-20261027",
+  "files": [
+    "config/source-catalog-v5.json",
+    "config/source-discovery.json",
+    "docs/cover-art-qualification.md",
+    "docs/regional-source-qualification.md",
+    "docs/source-maintenance.md",
+    "docs/sources.md",
+    "lib/providers/extra/metadata.dart",
+    "lib/providers/source_maintenance.dart",
+    "lib/providers/transport.dart",
+    "test/application/musicbrainz_artwork_persistence_test.dart",
+    "test/application/source_channel_upgrade_test.dart",
+    "test/providers/core/transport_test.dart",
+    "test/providers/extra/musicbrainz_artwork_test.dart",
+    "test/providers/source_catalog_channel_test.dart",
+    "test/providers/source_maintenance_artwork_test.dart"
+  ],
+  "catalog": {
+    "channel": 5,
+    "revision": 17,
+    "entries": 26,
+    "musicbrainzRevision": 3,
+    "other25EntriesAndOlderCatalogsUnchanged": true,
+    "gitBlobSha256": "17b80d9ad891e2447b9dfbade1ba7d9b3e048f2f2ea53751672258a4dc7da90b",
+    "servedPublicCatalogVerified": false,
+    "matchingCompiledImplementationRequired": true
+  },
+  "design": {
+    "existingProvider": "musicbrainz",
+    "optionalFourSecondTotalDeadline": true,
+    "exactRecordingReleaseTrackAlbumAndFrontArtVerified": true,
+    "ambiguousOrTruncatedReleaseListsOmitArt": true,
+    "canonicalFixedCaaFront500UrlOnly": true,
+    "noTransportRedirectAllowlistExpansion": true,
+    "imageRightsStatus": "unknown",
+    "persistentOfflineImageCache": false,
+    "numericRetryAfterHostCooldownSurvivesCancellationAndRetryExhaustion": true,
+    "optionalArtFailureDoesNotMaskMandatoryMetadataSchemaRegression": true
+  },
+  "primaryDocumentation": [
+    "https://musicbrainz.org/doc/MusicBrainz_API",
+    "https://musicbrainz.org/doc/MusicBrainz_API/Rate_Limiting",
+    "https://musicbrainz.org/doc/Cover_Art_Archive",
+    "https://musicbrainz.org/doc/Cover_Art_Archive/API",
+    "https://github.com/metabrainz/artwork-redirect"
+  ],
+  "validation": {
+    "combinedCasesPassed": 721,
+    "focusedTransportAndMaintenanceCasesPassed": 30,
+    "scopedAnalysis": "clean",
+    "independentReview": "Final clear after optional deadline and mixed-art/schema-loss fixes",
+    "fullCatalogOffline": {
+      "schemaVersion": 1,
+      "catalogRevision": 17,
+      "measuredAt": "2026-10-27T12:43:28.781136Z",
+      "offline": true,
+      "summary": {
+        "offline_unverified": 24,
+        "import_only": 1,
+        "retired": 1
+      },
+      "sources": [
+        {
+          "id": "genius",
+          "name": "Genius",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "wonderwall-oasis",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "songsterr",
+          "name": "Songsterr",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "chords",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "wonderwall",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "ultimateguitar",
+          "name": "Ultimate Guitar",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "chords",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "wonderwall-oasis-chords",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "lrclib",
+          "name": "LRCLIB",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "sound-of-silence-studio-recording",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "youtubemusic",
+          "name": "YouTube Music",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "never-gonna-give-you-up",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "lyricsovh",
+          "name": "Lyrics.ovh",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "wonderwall-oasis-studio",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "synclrc",
+          "name": "SyncLRC",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ]
+          },
+          "probes": [
+            {
+              "id": "never-gonna-give-you-up-studio",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "wonderwall-oasis-timed-version",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "never-gonna-give-you-up-catalog-search",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "betterlyrics",
+          "name": "Better Lyrics",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ]
+          },
+          "probes": [
+            {
+              "id": "never-gonna-give-you-up-studio-recording",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "unison",
+          "name": "Unison",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "wordTiming"
+            ]
+          },
+          "probes": [
+            {
+              "id": "search-give-it-up-don-toliver",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "give-it-up-don-toliver",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "love-never-felt-so-good-michael-jackson",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "ozbcoz",
+          "name": "Ozbcoz",
+          "status": "import_only",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "chords",
+              "fileImport",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "import-only",
+              "status": "import_only"
+            }
+          ]
+        },
+        {
+          "id": "chordie",
+          "name": "Chordie",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "chords",
+              "fileImport",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "seventh-stranger-duran-duran",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "worshipcommons",
+          "name": "WorshipCommons",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "chords",
+              "lyrics",
+              "metadata",
+              "timing"
+            ]
+          },
+          "probes": [
+            {
+              "id": "amazing-grace",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "openfilksongbook",
+          "name": "Open Filk Songbook",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "chords",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "everything-lastalda",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "seanmcgrathmusic",
+          "name": "Sean McGrath Music",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "chords",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "be-here-soon",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "black-dog",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "worshiptogether",
+          "name": "Worship Together",
+          "status": "retired",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "chords",
+              "fileImport",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "import-only",
+              "status": "retired"
+            }
+          ]
+        },
+        {
+          "id": "musicbrainz",
+          "name": "MusicBrainz",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "artwork",
+              "catalog",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "wonderwall-oasis-recording",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "exact-release-artwork-b5558485-68a8-4c6c-8283-60e6ae940e06",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "exact-release-artwork-b5d7d380-f43a-4c1f-a5de-694150b093ac",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "wikidata",
+          "name": "Wikidata",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "imagine-composition",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "wonderwall-composition",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "wikimediacommons",
+          "name": "Wikimedia Commons",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "artwork",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "bach-portrait",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "wikisource",
+          "name": "Wikisource",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "fileImport",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "cleansing-wave-palmer",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "dunbar-hymn-1",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "lrcred",
+          "name": "lrc.red",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ]
+          },
+          "probes": [
+            {
+              "id": "creep-radiohead",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "bohemian-rhapsody-queen",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "roswellmusicjam",
+          "name": "Roswell Music Jam",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "chords",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "if-not-for-you-dylan",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "breakdown-petty",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "karamoe",
+          "name": "kara.moe",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "man-of-war-radiohead",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "dune-ai-kizuna-cover",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "amll",
+          "name": "AMLL Lyrics Database",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ]
+          },
+          "probes": [
+            {
+              "id": "269710089745311-canonical",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "269710089745311-search",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "638303942317135-canonical",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "638303942317135-search",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "vocadb",
+          "name": "VocaDB",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "1501-canonical",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "1501-search",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "68814-canonical",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "68814-search",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "touhoudb",
+          "name": "TouhouDB",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "138-search",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "51766-search",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "utaitedb",
+          "name": "UtaiteDB",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "72011-search",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "51300-canonical",
+              "status": "offline_unverified"
+            }
+          ]
+        }
+      ],
+      "httpDiagnostics": {
+        "networkFailures": 0,
+        "hosts": {}
+      }
+    },
+    "registeredCli": {
+      "schemaVersion": 1,
+      "catalogRevision": 17,
+      "measuredAt": "2026-10-27T12:44:07.956859Z",
+      "offline": false,
+      "summary": {
+        "healthy": 1
+      },
+      "sources": [
+        {
+          "id": "musicbrainz",
+          "name": "MusicBrainz",
+          "status": "healthy",
+          "coverage": {
+            "status": "complete",
+            "verifiedCapabilities": [
+              "artwork",
+              "catalog",
+              "metadata"
+            ],
+            "unverifiedCapabilities": []
+          },
+          "probes": [
+            {
+              "id": "wonderwall-oasis-recording",
+              "status": "healthy",
+              "candidateId": "9de3f212-2121-4c48-9240-96a52b512733",
+              "providerId": "musicbrainz",
+              "bodyCharacters": 0,
+              "metadataFields": [
+                "artistCredits",
+                "durationSeconds",
+                "identityScope",
+                "isrcs",
+                "musicbrainzRecordingId",
+                "relationships",
+                "releases",
+                "version"
+              ],
+              "verifiedCapabilities": [
+                "catalog",
+                "metadata"
+              ],
+              "timingTrackCount": 0,
+              "timingGranularities": [],
+              "timingRawRetained": false,
+              "hasChords": false
+            },
+            {
+              "id": "exact-release-artwork-b5558485-68a8-4c6c-8283-60e6ae940e06",
+              "status": "healthy",
+              "candidateId": "b5558485-68a8-4c6c-8283-60e6ae940e06",
+              "providerId": "musicbrainz",
+              "bodyCharacters": 0,
+              "metadataFields": [
+                "album",
+                "artistCredits",
+                "artworkAssets",
+                "artworkUrl",
+                "durationSeconds",
+                "identityScope",
+                "isrcs",
+                "musicbrainzRecordingId",
+                "musicbrainzReleaseId",
+                "relationships",
+                "releases"
+              ],
+              "verifiedCapabilities": [
+                "artwork",
+                "metadata"
+              ],
+              "timingTrackCount": 0,
+              "timingGranularities": [],
+              "timingRawRetained": false,
+              "hasChords": false,
+              "artworkEvidence": "source_declared_location_and_provenance",
+              "artworkImageBytesValidated": false
+            },
+            {
+              "id": "exact-release-artwork-b5d7d380-f43a-4c1f-a5de-694150b093ac",
+              "status": "healthy",
+              "candidateId": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+              "providerId": "musicbrainz",
+              "bodyCharacters": 0,
+              "metadataFields": [
+                "album",
+                "artistCredits",
+                "artworkAssets",
+                "artworkUrl",
+                "durationSeconds",
+                "identityScope",
+                "isrcs",
+                "musicbrainzRecordingId",
+                "musicbrainzReleaseId",
+                "relationships",
+                "releases"
+              ],
+              "verifiedCapabilities": [
+                "artwork",
+                "metadata"
+              ],
+              "timingTrackCount": 0,
+              "timingGranularities": [],
+              "timingRawRetained": false,
+              "hasChords": false,
+              "artworkEvidence": "source_declared_location_and_provenance",
+              "artworkImageBytesValidated": false
+            }
+          ]
+        }
+      ],
+      "httpDiagnostics": {
+        "networkFailures": 0,
+        "hosts": {
+          "musicbrainz.org": {
+            "requests": 6,
+            "statuses": {
+              "200": 6
+            },
+            "retryAfterSeconds": {},
+            "databaseLag": {}
+          }
+        }
+      }
+    },
+    "nativeMatching": {
+      "atUtc": "2026-10-27T12:18:42.316496Z",
+      "runtime": "local Windows actual optional MusicBrainz artwork provider + normal matching service",
+      "baseCommit": "0c45cdb4d983f8f5f1f3a5ffe8adb98536c47313",
+      "workingTreeQualification": true,
+      "nativeSourceSha256": "54a5b445f16f146b898cef14ca0b04c4695cbe565137a377699f0c000706d38e",
+      "checks": [
+        {
+          "releaseId": "5b07fe49-39a9-47a6-97b3-e5005992fb2a",
+          "recordingId": "b5558485-68a8-4c6c-8283-60e6ae940e06",
+          "startedAtUtc": "2026-10-27T12:18:37.096116Z",
+          "status": "healthy",
+          "title": "オープニング〜爆破ミッション",
+          "artist": "(S_S)",
+          "album": "Final Fantasy VII Chips",
+          "artworkUrl": "https://coverartarchive.org/release/5b07fe49-39a9-47a6-97b3-e5005992fb2a/front-500",
+          "recordingTrackReleaseRelationVerified": true,
+          "rightsStatus": "unknown",
+          "sourceJsonRoundtripExact": true,
+          "sourceResultJsonSha256": "66d5eb7543357a94c5750a8f4b65a718ef5cda4f5e4b5c6ca6ddb3b185a86493",
+          "normalizedReleaseEvidenceRetained": true,
+          "imageBytesValidatedByThisStep": false,
+          "finishedAtUtc": "2026-10-27T12:18:39.529938Z"
+        },
+        {
+          "releaseId": "76df3287-6cda-33eb-8e9a-044b5e15ffdd",
+          "recordingId": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+          "startedAtUtc": "2026-10-27T12:18:39.530939Z",
+          "status": "healthy",
+          "title": "Mysterons",
+          "artist": "Portishead",
+          "album": "Dummy",
+          "artworkUrl": "https://coverartarchive.org/release/76df3287-6cda-33eb-8e9a-044b5e15ffdd/front-500",
+          "recordingTrackReleaseRelationVerified": true,
+          "rightsStatus": "unknown",
+          "sourceJsonRoundtripExact": true,
+          "sourceResultJsonSha256": "881bbd769e5dcfd43b503c0ae07bcbb575ec82c7a79ab0a5519bbec5165a81a2",
+          "normalizedReleaseEvidenceRetained": true,
+          "imageBytesValidatedByThisStep": false,
+          "finishedAtUtc": "2026-10-27T12:18:42.315496Z"
+        }
+      ],
+      "httpDiagnostics": {
+        "networkFailures": 0,
+        "hosts": {
+          "musicbrainz.org": {
+            "requests": 4,
+            "statuses": {
+              "200": 4
+            },
+            "retryAfterSeconds": {},
+            "databaseLag": {}
+          }
+        }
+      },
+      "noCredentialsSessionsOrImageBytesByThisStep": true
+    },
+    "nativeMatchingProvenance": "Actual local optional provider plus matching service captured before final reporting fields; final registered CLI validates frozen runtime head. Original normalized release evidence is not claimed byte-identical HTTP response storage.",
+    "realImageDecoding": {
+      "atUtc": "2026-10-27T12:21:46.836174+00:00",
+      "runtime": "local Windows bounded TLS-verified image QA diagnostic",
+      "checks": [
+        {
+          "recordingId": "b5558485-68a8-4c6c-8283-60e6ae940e06",
+          "releaseId": "5b07fe49-39a9-47a6-97b3-e5005992fb2a",
+          "startedAtUtc": "2026-10-27T12:21:39.965788+00:00",
+          "scope": "QA-only standard published CAA image route; no ProviderTransport changes or direct CDN URL construction",
+          "status": "healthy",
+          "httpStatus": 200,
+          "contentType": "image/jpeg",
+          "bytes": 76883,
+          "sha256": "3f07fae1a002d02a6fd06566093cadab3d2010fca688ad0d84efb15dd96e2f23",
+          "width": 500,
+          "height": 500,
+          "imageDecoded": true,
+          "rightsStatus": "unknown",
+          "finishedAtUtc": "2026-10-27T12:21:42.708157+00:00",
+          "redirects": [
+            {
+              "status": 307,
+              "host": "archive.org",
+              "pathMatchesExactRelease": true
+            },
+            {
+              "status": 302,
+              "host": "dn710705.ca.archive.org",
+              "pathMatchesExactRelease": true
+            }
+          ]
+        },
+        {
+          "recordingId": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+          "releaseId": "76df3287-6cda-33eb-8e9a-044b5e15ffdd",
+          "startedAtUtc": "2026-10-27T12:21:43.908633+00:00",
+          "scope": "QA-only standard published CAA image route; no ProviderTransport changes or direct CDN URL construction",
+          "status": "healthy",
+          "httpStatus": 200,
+          "contentType": "image/jpeg",
+          "bytes": 35043,
+          "sha256": "ad193b58cfa5fc6ca885da05c76911e90b188ad9ace49a9ad02a968a346b3cdc",
+          "width": 494,
+          "height": 500,
+          "imageDecoded": true,
+          "rightsStatus": "unknown",
+          "finishedAtUtc": "2026-10-27T12:21:45.634367+00:00",
+          "redirects": [
+            {
+              "status": 307,
+              "host": "archive.org",
+              "pathMatchesExactRelease": true
+            },
+            {
+              "status": 302,
+              "host": "dn711103.ca.archive.org",
+              "pathMatchesExactRelease": true
+            }
+          ]
+        }
+      ],
+      "imagesRemainPrivate": true,
+      "credentialsOrCookiesUsed": false,
+      "retries": 0,
+      "appAndProviderTransportUnchangedByDiagnostic": true
+    },
+    "controllerSQLiteAndChordProCasesPassed": 2
+  },
+  "hostedExactHeadChecks": {
+    "CI": {
+      "run": 40507645380,
+      "conclusion": "success"
+    },
+    "macOS": {
+      "run": 40507645427,
+      "conclusion": "success"
+    },
+    "UX": {
+      "run": 40507645310,
+      "conclusion": "success"
+    }
+  },
+  "android": {
+    "apk": {
+      "atUtc": "2026-10-27T13:04:08.625227+00:00",
+      "sourceHead": "935d0845ef8ac8b7b87f951fdd288201313bbbf1",
+      "qaCombinedHead": "e70ac0d6295d00e4c30b58881dcd1c6379765b5a",
+      "package": "org.freevia.singbook.qa09a8bf9",
+      "bytes": 102208137,
+      "sha256": "5adb8f9f400002de84034e034c463fb6798371a187152d69203d6471a642757d",
+      "sameSigner": true,
+      "certificateSha256": "3fc9b99645962e4b5348a6d4ade05ae9671f0b7dcae6c3b5db42cd8bc8fe7a08",
+      "abis": [
+        "x86_64"
+      ],
+      "catalogRevision": 17,
+      "registeredEntries": 26,
+      "musicbrainzRevision": 3,
+      "allBundledCatalogBytesExactAgainstQaCheckout": true,
+      "catalogGitContentExactAfterCheckoutLineEndingNormalization": true,
+      "catalogSha256": "17b80d9ad891e2447b9dfbade1ba7d9b3e048f2f2ea53751672258a4dc7da90b",
+      "onlyValidatedNavGuardDiffersFromSourceHead": true,
+      "credentialsOrProductionSigningCopied": false,
+      "canonicalPrivateDataAccessed": false,
+      "physicalDevicesTouched": false
+    },
+    "runtime": "Android16 API36 x86_64 16KB; same persistent SudokuBuddy16K_API36 AVD",
+    "sameSignerInPlaceInstallPassed": true,
+    "normalAppFileImports": 2,
+    "importScope": "Actual captured native metadata-only SourceResults packaged using production ChordPro codec, imported through normal Android file picker; not a claim of live native lookup from Android UI. No synthetic lyrics/timing.",
+    "onlineLibraryBothCoverImagesVisiblyRendered": true,
+    "onlineVisualEvidencePrivateSha256": "9e51c7a4058dfdeb5866d0e99deae8895065d0b3f639b546eb292eed62e79bf1",
+    "readerVisualReview": "Existing reader displays title, artist/album and duration; metadata-only body is empty. Reader has no cover-art slot.",
+    "offline": {
+      "atUtc": "2026-10-27T13:21:43.783823+00:00",
+      "package": "org.freevia.singbook.qa09a8bf9",
+      "network": "no active default network; wifi/data disabled",
+      "checks": [
+        {
+          "index": 0,
+          "title": "CH4NGE",
+          "savedReaderOpened": true,
+          "capture": "offline-final-0-reader.png",
+          "bodyScope": "existing lyrics"
+        },
+        {
+          "index": 1,
+          "title": "Cirno's Perfect Math Class",
+          "savedReaderOpened": true,
+          "capture": "offline-final-1-reader.png",
+          "bodyScope": "existing lyrics"
+        },
+        {
+          "index": 2,
+          "title": "ECHO",
+          "savedReaderOpened": true,
+          "capture": "offline-final-2-reader.png",
+          "bodyScope": "existing lyrics"
+        },
+        {
+          "index": 3,
+          "title": "Mysterons",
+          "savedReaderOpened": true,
+          "capture": "offline-final-3-reader.png",
+          "bodyScope": "empty metadata only"
+        },
+        {
+          "index": 4,
+          "title": "Night dream in the cage",
+          "savedReaderOpened": true,
+          "capture": "offline-final-4-reader.png",
+          "bodyScope": "existing lyrics"
+        },
+        {
+          "index": 5,
+          "title": "Rollin' Girl",
+          "savedReaderOpened": true,
+          "capture": "offline-final-5-reader.png",
+          "bodyScope": "existing lyrics"
+        },
+        {
+          "index": 6,
+          "title": "Take you to an alien",
+          "savedReaderOpened": true,
+          "capture": "offline-final-6-reader.png",
+          "bodyScope": "existing lyrics"
+        },
+        {
+          "index": 7,
+          "title": "オープニング〜爆破ミッション",
+          "savedReaderOpened": true,
+          "capture": "offline-final-7-reader.png",
+          "bodyScope": "empty metadata only"
+        }
+      ],
+      "finishedAtUtc": "2026-10-27T13:22:33.637722+00:00"
+    },
+    "persistence": {
+      "atUtc": "2026-10-27T13:22:49.761002Z",
+      "sourceHead": "935d0845ef8ac8b7b87f951fdd288201313bbbf1",
+      "runtime": "Actual coherent stopped Android SQLite snapshots; production Dart ChordPro codec on host",
+      "checks": [
+        {
+          "recordingId": "b5558485-68a8-4c6c-8283-60e6ae940e06",
+          "releaseId": "5b07fe49-39a9-47a6-97b3-e5005992fb2a",
+          "allOriginalSourceFactsExact": true,
+          "creditsRightsAndNormalizedReleaseEvidenceExact": true,
+          "selectedRecordingExact": true,
+          "chordProSourceAndMetadataRoundtripExact": true,
+          "storedDocumentAndLyricHashesValid": true,
+          "metadataOnlyNoLyricOrTimingClaim": true
+        },
+        {
+          "recordingId": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+          "releaseId": "76df3287-6cda-33eb-8e9a-044b5e15ffdd",
+          "allOriginalSourceFactsExact": true,
+          "creditsRightsAndNormalizedReleaseEvidenceExact": true,
+          "selectedRecordingExact": true,
+          "chordProSourceAndMetadataRoundtripExact": true,
+          "storedDocumentAndLyricHashesValid": true,
+          "metadataOnlyNoLyricOrTimingClaim": true
+        }
+      ],
+      "priorSongRowsExact": 6,
+      "allEightStoredSongRowsExactAcrossOffline": true,
+      "priorSixOutboxRowsExact": true,
+      "allEightOutboxRowsExactAcrossOffline": true,
+      "providerChoicesExact": true,
+      "networkRequests": 0,
+      "canonicalPrivateDataAccessed": false,
+      "physicalDevicesTouched": false
+    },
+    "finalState": {
+      "atUtc": "2026-10-27T13:23:04.637217+00:00",
+      "networkRestoredExactly": {
+        "airplane_mode_on": "0",
+        "wifi_on": "1",
+        "mobile_data": "1"
+      },
+      "apkSha256": {
+        "org.freevia.singbook": "10648f17e6f0b2c738dbcdf0238114195f18392a07773435244b4158d5ee50be",
+        "org.freevia.singbook.qa09a8bf9": "5adb8f9f400002de84034e034c463fb6798371a187152d69203d6471a642757d"
+      },
+      "qaAppStopped": true,
+      "canonicalPrivateDataAccessed": false,
+      "physicalDevicesTouched": false,
+      "emulatorRestartSession": 89764,
+      "allBuildTestProcessesTerminal": true
+    },
+    "sdkAndDeviceLeasesExplicitlyReleased": true,
+    "uninstallClearDataOrPhysicalPhoneUsed": false,
+    "harnessIssues": [
+      "Android Downloads provider did not index ADB-pushed .cho files; standard device-storage Download path exposed same files and both imported normally.",
+      "Cold-boot System UI not-responding dialog recovered using Wait; dumpsys lastanr reported no activity ANR.",
+      "Two emulator graceful exits independently confirmed terminal before no-wipe restarts; no owner cleanup identified, cause unresolved.",
+      "Initial title assertion expected standalone semantics, reader groups title with newline details; corrected harness and all8 offline readers passed."
+    ],
+    "offlineArtBehavior": "Both art thumbnails show normal placeholders after cold offline boot, consistent with memory-only pixel cache. URLs and complete metadata remain stored."
+  },
+  "privacy": "Sanitized reports only. No API documents, lyrics, cover image bytes, reader screenshots, private databases, credentials or cookies published.",
+  "limits": [
+    "Not yet integrated on public main or served to production clients",
+    "Compatible production build/distribution not performed by this task; frozen Android40 artifacts unchanged",
+    "Actual managed-cloud reachability remains unqualified",
+    "Local native provider/matching probes and Android ordinary import/display proof are separate scopes; Android live native lookup not exercised",
+    "Cloud scheduled-job account ownership remains unresolved; ALI Chrome untouched",
+    "No blanket image/lyric redistribution license inferred from database metadata license",
+    "Emulator graceful exit cause unresolved; verification completed after recovery"
+  ]
+}
