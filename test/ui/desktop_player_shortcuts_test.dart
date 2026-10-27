@@ -167,7 +167,16 @@ void main() {
         expect(slider.hitTestable(), findsNothing);
         expect(controller.state.playerControlsExpanded, preference);
         final lyrics = find.byKey(const ValueKey('player-lyrics-scroll'));
-        expect(tester.getRect(lyrics).top, 0);
+        expect(
+          tester.getRect(find.byKey(const ValueKey('tablet-reader-content'))).top,
+          0,
+        );
+        expect(
+          tester.getRect(lyrics).top,
+          greaterThanOrEqualTo(
+            tester.getRect(find.byKey(const ValueKey('player-settings-button'))).bottom,
+          ),
+        );
         await tester.sendKeyEvent(LogicalKeyboardKey.escape);
         await tester.pumpAndSettle();
         expect(header, findsOneWidget);
