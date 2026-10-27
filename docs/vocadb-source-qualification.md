@@ -26,8 +26,10 @@ Context lookup searches the title alone, checks the full artist credit and any
 specified album/duration against structured search rows, and leaves the service's
 independent identity checks intact. Search includes album records for this
 purpose. Cached rows are reusable only when the added context still matches.
-The methods follow PR173's interface contract; that interface is deliberately
-not duplicated in this independent branch and must be wired after integration.
+The compatible channel-4 runtime implements PR173's shared interface and the
+configured wrapper delegates to it. A production-service regression checks a
+foreign selection through the normal factory/catalog path, not a manual call to
+the adapter's context helper. No separate interface is duplicated.
 
 The source ID identifies a VocaDB song/version. It does not become an ISRC or
 confirmed recording ID. The original/cover/remix classification stays attached
@@ -77,10 +79,13 @@ also passed. Both saved song JSONs and hashes survived reopening exactly; every
 source JSON field, lyric variant and source credit survived export/import. This
 host replay made no new HTTP calls and accessed no user library or device.
 
-This is native extraction qualification, not an activated app source. Registry,
-catalog-channel compatibility, wiring through the shared contextual-search
-interface, ordinary app bootstrap, Android UI, hosted checks, cloud reachability
-and a compatible published app remain required.
+VocaDB is registered and active/default-on in the candidate channel-4 runtime and
+catalog, which preserve all 23 prior entries. Channels 1/2/3, their URLs and cache
+keys remain unchanged; older compiled rosters reject even a disabled VocaDB ID
+before snapshot mutation. Ordinary offline bootstrap and saved choices use the
+same catalog path as the maintenance CLI. Android UI, hosted checks, cloud
+reachability and a compatible published app remain required before claiming a
+shipped provider.
 Do not add this unknown native ID to either released catalog channel. This work
 does not change the already qualified AMLL/SyncLRC stack or frozen release 39.
 Independent transcription, audio alignment and overlap with existing sources

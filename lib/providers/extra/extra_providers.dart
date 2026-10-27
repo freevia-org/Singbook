@@ -6,6 +6,7 @@ import 'lrc_red.dart';
 import 'roswell.dart';
 import 'kara_moe.dart';
 import 'amll.dart';
+import 'vocadb.dart';
 
 export 'import_sources.dart';
 export 'metadata.dart';
@@ -14,6 +15,7 @@ export 'lrc_red.dart';
 export 'roswell.dart';
 export 'kara_moe.dart';
 export 'amll.dart';
+export 'vocadb.dart';
 
 /// All sources in the architecture, including truthful file-import-only routes.
 List<LyricsProvider> createExtraProviders({ProviderTransport? transport}) {
@@ -33,5 +35,6 @@ List<LyricsProvider> createExtraProviders({ProviderTransport? transport}) {
     RoswellMusicJamProvider(http),
     KaraMoeProvider(http),
     AmllProvider(http),
+    VocaDbProvider(http),
   ];
 }
