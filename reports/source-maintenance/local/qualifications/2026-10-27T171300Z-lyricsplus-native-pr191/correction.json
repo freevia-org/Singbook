@@ -1,0 +1,31 @@
+{
+  "atUtc": "2026-10-27T17:30:59.306082+00:00",
+  "correctsHealthCommit": "405128ed26e8c1cd2eecee3b1c603c239d8e1adc",
+  "correctsPath": "reports/source-maintenance/local/qualifications/2026-10-27T171300Z-lyricsplus-native-pr191/report.json",
+  "incorrectPriorClaim": "The prior ignored prospective catalog did not preserve all27 existing entries exactly: Python used the Windows default encoding while reading the UTF-8 base catalog.",
+  "affectedPriorFieldPaths": [
+    "/sources/15/probes/1/candidate/title",
+    "/sources/15/probes/1/expectedTitle",
+    "/sources/22/attribution"
+  ],
+  "oldPrivateCandidateSha256": "62f25c05e13f2fffa874cccce2e058995cd423ee0cabd7e07b1064c64d392c49",
+  "correctedPrivateCandidateSha256": "861a0a1904b2c9f05fcdb49950508bbac0adfd1691745b4bea49013fc73fac13",
+  "fixed": "Generator now explicitly reads UTF-8; corrected prospective catalog retains all27 canonical v6 source objects exactly and passes the ordinary offline validator for all28 entries.",
+  "selectedLyricsPlusEntryExactlyUnchanged": true,
+  "selectedEntrySha256": "c3229dccfac7fad89df17ee2e4a992ac31d19262f69566416c962d1c7859e7ed",
+  "selectedLiveNativeAndMaintenanceEvidenceUnaffected": true,
+  "publishedCatalogsChanged": false,
+  "publicMainChannel6Sha256": "bc698ebbbe0bdec8583a44d1dd05422a9e0d423228d61ccd7be20ea80c5f932d",
+  "additionalLiveRequests": 0,
+  "priorEvidencePreserved": true,
+  "nativeDurationHardening": {
+    "head": "c9bb719ee405ccea7d1be05177e7b78d1d48fd2c",
+    "typedOversizedClockRejection": "passed direct-Dart offline assertion",
+    "exact24HourBoundary": "passed",
+    "extraMillisecondRejected": "passed",
+    "retainedActual549CuePayload": "passed",
+    "analysis": "No issues found",
+    "hostedCi": "running; not all platform jobs complete"
+  },
+  "privacy": "No credentials, source lyric text or raw documents included."
+}
