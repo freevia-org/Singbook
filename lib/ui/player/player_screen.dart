@@ -875,10 +875,14 @@ class _PlayerScreenState extends State<PlayerScreen>
             ? null
             : _handleLyricsHorizontalDragEnd,
         child: Stack(
+          key: const ValueKey('tablet-reader-content'),
           children: [
             Positioned.fill(
+              // Keep every scrolled lyric below the corner controls. Padding
+              // only the first line would still let later lines pass behind
+              // the buttons, especially on phones and with large text.
+              top: 48,
               child: LayoutBuilder(
-                key: const ValueKey('tablet-reader-content'),
                 builder: (context, constraints) {
                   final centeredInset = math.max(
                     0.0,

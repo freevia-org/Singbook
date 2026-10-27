@@ -206,7 +206,15 @@ void main() {
           } else {
             final bar = find.byKey(const ValueKey('player-lyrics-scrollbar'));
             final pane = find.byKey(const ValueKey('tablet-reader-content'));
-            expect(tester.getRect(bar), tester.getRect(pane));
+            final viewport = tester.getRect(bar);
+            final panel = tester.getRect(pane);
+            final settings = tester.getRect(
+              find.byKey(const ValueKey('player-settings-button')),
+            );
+            expect(viewport.left, panel.left);
+            expect(viewport.right, panel.right);
+            expect(viewport.bottom, panel.bottom);
+            expect(viewport.top, greaterThanOrEqualTo(settings.bottom));
           }
           if (stage == 'reader') {
             await _captureScrolling(tester, boundaryKey, '${scenario.$1}-$stage');

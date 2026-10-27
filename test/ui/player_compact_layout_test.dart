@@ -939,84 +939,107 @@ void main() {
     },
   );
 
-  testWidgets('collapsed fullscreen action overlays the full-width lyrics', (
-    tester,
-  ) async {
-    const text =
-        'A long first lyric line stretches across the whole page so its actual letters would run underneath the fullscreen button';
-    await tester.runAsync(() async {
-      for (final family in ['Roboto', 'sans-serif']) {
-        await (FontLoader(family)
-              ..addFont(rootBundle.load('assets/fonts/NotoSans-Regular.ttf')))
-            .load();
-      }
-      await (FontLoader(
-        'MaterialIcons',
-      )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
-    });
+  testWidgets(
+    'corner controls never obscure full-width lyrics',
+    (tester) async {
+      const text =
+          'A long first lyric line stretches across the whole page so its actual letters would run underneath the fullscreen button';
+      await tester.runAsync(() async {
+        for (final family in ['Roboto', 'sans-serif']) {
+          await (FontLoader(family)
+                ..addFont(rootBundle.load('assets/fonts/NotoSans-Regular.ttf')))
+              .load();
+        }
+        await (FontLoader(
+          'MaterialIcons',
+        )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
+      });
 
-    for (final locale in [const Locale('en'), const Locale('ar')]) {
-      final controller = _Controller()
-        ..playerControlsExpanded = false
-        ..lines = const [LyricLineData(id: 'long-first', text: text)];
-      addTearDown(controller.dispose);
-      await _pump(
-        tester,
-        controller,
-        size: const Size(700, 360),
-        locale: locale,
-        onFullScreenChanged: (_) {},
-      );
+      for (final scenario in [
+        (const Locale('en'), false),
+        (const Locale('ar'), false),
+        (const Locale('en'), true),
+        (const Locale('ar'), true),
+      ]) {
+        final locale = scenario.$1;
+        final controller = _Controller()
+          ..playerControlsExpanded = false
+          ..lines = const [LyricLineData(id: 'long-first', text: text)];
+        addTearDown(controller.dispose);
+        await _pump(
+          tester,
+          controller,
+          size: const Size(700, 360),
+          locale: locale,
+          fullScreen: scenario.$2,
+          onFullScreenChanged: (_) {},
+        );
 
-      final actionFinder = find.byKey(
-        const ValueKey('player-enter-fullscreen'),
-      );
-      final action = tester.getRect(actionFinder);
-      expect(action.width, 48);
-      expect(action.height, 48);
-      final lyricsRect = tester.getRect(
-        find.byKey(const ValueKey('tablet-reader-content')),
-      );
-      // The action overlays the viewport without reserving a text gutter.
-      final listFinder = find.byKey(const ValueKey('player-lyrics-scroll'));
-      final listRect = tester.getRect(listFinder);
-      final direction = Directionality.of(tester.element(listFinder));
-      final padding = tester
-          .widget<ListView>(listFinder)
-          .padding!
-          .resolve(direction);
-      expect(listRect, lyricsRect);
-      expect(actionFinder.hitTestable(), findsOneWidget);
-      expect(tester.widget<IconButton>(actionFinder).tooltip, isNotEmpty);
-      if (direction == TextDirection.rtl) {
-        expect(action.left, closeTo(lyricsRect.left + 48, 1));
-        expect(padding.left, padding.right);
-      } else {
-        expect(action.right, closeTo(lyricsRect.right - 48, 1));
-        expect(padding.right, padding.left);
-      }
-      final paragraphFinder = find.text(text);
-      final paragraph = tester.renderObject<RenderParagraph>(paragraphFinder);
-      final paragraphRect = tester.getRect(paragraphFinder);
-      final contentLeft = listRect.left + padding.left;
-      final contentRight = listRect.right - padding.right;
-      expect(paragraphRect.left, closeTo(contentLeft, 1));
-      expect(paragraphRect.right, closeTo(contentRight, 1));
-      expect(padding.left, 28);
-      expect(padding.right, 28);
-      expect(paragraph.didExceedMaxLines, isFalse);
-      if (capturePlayerVisuals) {
-        final orientation = locale.languageCode == 'ar' ? 'rtl' : 'ltr';
-        await expectLater(
-          find.byType(Scaffold).first,
-          matchesGoldenFile(
-            '../../artifacts/player-speed-landscape-qualification/captures-v2/collapsed-long-first-line-$orientation.png',
+        final actionFinder = find.byKey(
+          ValueKey(
+            scenario.$2 ? 'player-exit-fullscreen' : 'player-enter-fullscreen',
           ),
         );
+        final action = tester.getRect(actionFinder);
+        expect(action.width, 48);
+        expect(action.height, 48);
+        final lyricsRect = tester.getRect(
+          find.byKey(const ValueKey('tablet-reader-content')),
+        );
+        // Reserve a control strip, preserving the full-width text column.
+        final listFinder = find.byKey(const ValueKey('player-lyrics-scroll'));
+        final listRect = tester.getRect(listFinder);
+        final direction = Directionality.of(tester.element(listFinder));
+        final padding = tester
+            .widget<ListView>(listFinder)
+            .padding!
+            .resolve(direction);
+        expect(listRect.top, greaterThanOrEqualTo(action.bottom));
+        expect(listRect.left, lyricsRect.left);
+        expect(listRect.right, lyricsRect.right);
+        expect(listRect.bottom, lyricsRect.bottom);
+        final settingsRect = tester.getRect(
+          find.byKey(const ValueKey('player-settings-button')),
+        );
+        expect(listRect.top, greaterThanOrEqualTo(settingsRect.bottom));
+        expect(actionFinder.hitTestable(), findsOneWidget);
+        expect(tester.widget<IconButton>(actionFinder).tooltip, isNotEmpty);
+        if (direction == TextDirection.rtl) {
+          expect(action.left, closeTo(lyricsRect.left + 48, 1));
+          expect(padding.left, padding.right);
+        } else {
+          expect(action.right, closeTo(lyricsRect.right - 48, 1));
+          expect(padding.right, padding.left);
+        }
+        final paragraphFinder = find.text(text);
+        final paragraph = tester.renderObject<RenderParagraph>(paragraphFinder);
+        final paragraphRect = tester.getRect(paragraphFinder);
+        final contentLeft = listRect.left + padding.left;
+        final contentRight = listRect.right - padding.right;
+        expect(paragraphRect.left, closeTo(contentLeft, 1));
+        expect(paragraphRect.right, closeTo(contentRight, 1));
+        expect(padding.left, 28);
+        expect(padding.right, 28);
+        expect(paragraph.didExceedMaxLines, isFalse);
+        if (capturePlayerVisuals) {
+          final directionName = locale.languageCode == 'ar' ? 'rtl' : 'ltr';
+          final orientation = '$directionName-fullscreen-${scenario.$2}';
+          await expectLater(
+            find.byType(Scaffold).first,
+            matchesGoldenFile(
+              '../../artifacts/player-speed-landscape-qualification/captures-v2/collapsed-long-first-line-$orientation.png',
+            ),
+          );
+        }
+        expect(tester.takeException(), isNull);
       }
-      expect(tester.takeException(), isNull);
-    }
-  });
+    },
+    variant: TargetPlatformVariant({
+      TargetPlatform.macOS,
+      TargetPlatform.iOS,
+      TargetPlatform.android,
+    }),
+  );
 
   testWidgets(
     'missing key stays neutral and large-text controls can collapse',
