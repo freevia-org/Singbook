@@ -12,6 +12,7 @@ SongCandidate _song(
   double? duration,
   String? artwork,
   JsonMap metadata = const {},
+  JsonMap extra = const {},
   Map<String, String> recordingIds = const {},
 }) => SongCandidate(
   providerId: providerId,
@@ -21,6 +22,7 @@ SongCandidate _song(
   album: album,
   durationSeconds: duration,
   metadata: {...metadata, 'artworkUrl': ?artwork},
+  extra: extra,
   recordingIds: recordingIds,
 );
 
@@ -87,5 +89,38 @@ void main() {
       _song('genius', artwork: 'http://images.example/cover.jpg'),
     );
     expect(display.artworkUrl, isNull);
+  });
+
+  test('pending candidate matches cannot supply display facts', () {
+    const pending = {'pendingMatchCheck': true};
+    expect(
+      displayMetadataFor(_song('genius', extra: pending), [
+        _song('lyricsovh', album: 'Demo Album', duration: 200),
+      ]).album,
+      isNull,
+    );
+    expect(
+      displayMetadataFor(_song('genius', metadata: pending), [
+        _song('lyricsovh', album: 'Demo Album', duration: 200),
+      ]).album,
+      isNull,
+    );
+    expect(
+      displayMetadataFor(_song('genius'), [
+        _song('lyricsovh', album: 'Demo Album', duration: 200, extra: pending),
+      ]).album,
+      isNull,
+    );
+    expect(
+      displayMetadataFor(_song('genius'), [
+        _song(
+          'lyricsovh',
+          album: 'Demo Album',
+          duration: 200,
+          metadata: pending,
+        ),
+      ]).album,
+      isNull,
+    );
   });
 }

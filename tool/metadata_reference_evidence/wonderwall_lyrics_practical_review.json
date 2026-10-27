@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "reviewedOn": "2026-10-26",
+  "songId": "song-004",
+  "title": "Wonderwall",
+  "field": "lyrics",
+  "status": "verified",
+  "value": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f",
+  "scope": "1995 original studio album performance on (What’s the Story) Morning Glory?",
+  "recordingBinding": {
+    "status": "verified",
+    "providerId": "genius",
+    "candidateId": "76654",
+    "isrc": null,
+    "recordingEdition": "1995 original studio album performance on (What’s the Story) Morning Glory?",
+    "evidence": [
+      "https://genius.com/Oasis-wonderwall-lyrics",
+      "https://music.apple.com/us/song/1517447333",
+      "https://oasisinet.com/music/whats-the-story-morning-glory/"
+    ]
+  },
+  "trustedReferences": [
+    {
+      "url": "https://www.google.com/search?q=Oasis+Wonderwall+lyrics",
+      "role": "Google lyrics panel attributed to licensed provider Musixmatch",
+      "finding": "Exact normalized text hash match to the selected Genius output; panel identifies Oasis, Wonderwall, and release year 1995.",
+      "sourceClass": "licensed_lyrics_provider",
+      "provider": "Musixmatch",
+      "referenceTextSha256": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f",
+      "selectedTextSha256": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f",
+      "exactNormalizedTextMatch": true,
+      "scopeCompatibility": "compatible",
+      "lineageStatus": "attributed_not_independent"
+    }
+  ],
+  "independentSources": [
+    {
+      "url": "https://oasisinet.com/lyrics/wonderwall-2/",
+      "role": "Official artist lyric page",
+      "finding": "All 276 official-page normalized tokens occur in order in the selected 283-token text; the seven additional selected tokens align as repeated material, with no substitutions."
+    }
+  ],
+  "recordingEdition": "1995 original studio album performance on (What’s the Story) Morning Glory?",
+  "assessment": "verified_against_licensed_provider_and_official_artist_reference",
+  "selectedText": {
+    "provider": "genius",
+    "candidateId": "76654",
+    "normalizedWordCount": 283,
+    "normalizedTextSha256": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f"
+  },
+  "references": [
+    {
+      "url": "https://www.google.com/search?q=Oasis+Wonderwall+lyrics",
+      "role": "Google lyrics panel attributed to Musixmatch",
+      "result": "exact normalized text hash match to selected Genius output",
+      "normalizedTextSha256": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f",
+      "displayedSong": "Oasis — Wonderwall",
+      "displayedReleaseYear": "1995",
+      "recordingEditionFit": "year aligns with the catalog-bound Morning Glory performance; panel does not identify exact album master",
+      "independentLineageConfirmed": false
+    },
+    {
+      "url": "https://oasisinet.com/lyrics/wonderwall-2/",
+      "role": "Official Oasis lyrics page",
+      "editionScope": "composition-level; page does not name an album performance or master",
+      "normalizedWordCount": 276,
+      "normalizedTextSha256": "d0d0f15f50f9626fafa8326cbc5545dd88f01d8f26b41513a5bc5bc1cd0c7626",
+      "officialPageSha256": "067c43009b163889cb51827f5ce78cca182ba951038dda893a1024c5a4f744b9",
+      "selectedWordCount": 283,
+      "selectedTextSha256": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f",
+      "tokenSequenceEditDistance": 7,
+      "tokenAlignment": {
+        "officialTokensMatchedInOrder": 276,
+        "selectedOnlyTokens": 7,
+        "officialOnlyTokens": 0,
+        "substitutions": 0,
+        "selectedOnlyTokenSegments": [
+          {
+            "start": 227,
+            "endExclusive": 230,
+            "count": 3,
+            "sameSequenceOccursEarlierInSelected": true
+          },
+          {
+            "start": 247,
+            "endExclusive": 248,
+            "count": 1,
+            "sameSequenceOccursEarlierInSelected": true
+          },
+          {
+            "start": 258,
+            "endExclusive": 259,
+            "count": 1,
+            "sameSequenceOccursEarlierInSelected": true
+          },
+          {
+            "start": 269,
+            "endExclusive": 270,
+            "count": 1,
+            "sameSequenceOccursEarlierInSelected": true
+          },
+          {
+            "start": 280,
+            "endExclusive": 281,
+            "count": 1,
+            "sameSequenceOccursEarlierInSelected": true
+          }
+        ]
+      },
+      "interpretation": "The official word sequence is fully present and in order in the selected text; the selected text adds seven tokens, each aligning as repeated material. This corroborates the wording but does not prove those repetitions against the named album performance."
+    }
+  ],
+  "practicalConclusion": "Strong wording corroboration from an exact Musixmatch-attributed panel hash plus an official artist text that is a complete ordered subsequence. The remaining discrepancy is repetition-only under token alignment.",
+  "accuracyConclusion": "The selected lyric text is verified for the catalog-bound 1995 Morning Glory album performance against the exact Google panel hash attributed to Musixmatch and the official artist lyric page. The official page's 276-token sequence is present in order; the selected text adds seven repeated tokens and no substitutions. The Google panel identifies Oasis, Wonderwall, and 1995, but neither it nor the official composition-level page establishes an exact master or independent upstream lineage. Those limitations are retained separately from the verified text result.",
+  "privacy": "No lyric bodies, audio, or source candidate IDs beyond the public catalog candidate were retained; only counts, hashes, positions, and source URLs are stored."
+}

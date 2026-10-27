@@ -111,8 +111,7 @@ SongDocument enrichCombinedDisplayMetadata(
   if (selected.providerId == 'wikisource' ||
       excludedScopes.contains(selected.metadata['identityScope']) ||
       excludedScopes.contains(selected.extra['identityScope']) ||
-      selected.metadata['pendingMatchCheck'] == true ||
-      selected.extra['pendingMatchCheck'] == true) {
+      selected.hasPendingMatchCheck) {
     return song;
   }
   final title = _identity(selected.title), artist = _identity(selected.artist);
@@ -130,10 +129,7 @@ SongDocument enrichCombinedDisplayMetadata(
           MatchKind.sameSong,
           MatchKind.sameRecording,
         }.contains(source.matchKind) ||
-        source.extra['pendingMatchCheck'] == true ||
-        source.metadata['pendingMatchCheck'] == true ||
-        candidate.metadata['pendingMatchCheck'] == true ||
-        candidate.extra['pendingMatchCheck'] == true ||
+        source.hasPendingMatchCheck ||
         candidate.providerId == 'wikisource' ||
         [
           candidate.metadata,
@@ -425,8 +421,7 @@ DisplayMetadata displayMetadataFor(
       candidate.providerId == 'wikisource' ||
       excludedScopes.contains(candidate.metadata['identityScope']) ||
       excludedScopes.contains(candidate.extra['identityScope']) ||
-      candidate.metadata['pendingMatchCheck'] == true ||
-      candidate.extra['pendingMatchCheck'] == true;
+      candidate.hasPendingMatchCheck;
   final title = _identity(target.title), artist = _identity(target.artist);
   if (title.isEmpty || artist.isEmpty || excluded(target)) {
     return DisplayMetadata(

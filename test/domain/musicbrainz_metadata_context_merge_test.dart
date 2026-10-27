@@ -72,6 +72,45 @@ SourceResult metadata({
   },
   extra: {'metadataOnly': true, if (pending) 'pendingMatchCheck': true},
 );
+
+SourceResult _pendingAt(SourceResult source, String location) {
+  final candidate = source.candidate;
+  return SourceResult(
+    candidate: SongCandidate(
+      providerId: candidate.providerId,
+      id: candidate.id,
+      title: candidate.title,
+      artist: candidate.artist,
+      album: candidate.album,
+      durationSeconds: candidate.durationSeconds,
+      url: candidate.url,
+      recordingIds: candidate.recordingIds,
+      metadata: {
+        ...candidate.metadata,
+        if (location == 'candidate metadata') 'pendingMatchCheck': true,
+      },
+      extra: {
+        ...candidate.extra,
+        if (location == 'candidate extra') 'pendingMatchCheck': true,
+      },
+    ),
+    body: source.body,
+    metadata: {
+      ...source.metadata,
+      if (location == 'source metadata') 'pendingMatchCheck': true,
+    },
+    timingTracks: source.timingTracks,
+    matchKind: source.matchKind,
+    attribution: source.attribution,
+    matchReason: source.matchReason,
+    retrievedAt: source.retrievedAt,
+    extra: {
+      ...source.extra,
+      if (location == 'source extra') 'pendingMatchCheck': true,
+    },
+  );
+}
+
 void main() {
   test(
     'resolved selected lyrics admit structured metadata without replacing lyric body or claiming recording equality',
@@ -157,6 +196,51 @@ void main() {
       );
       final song = combineSources(selected, [reference, donor]);
       expect(song.metadata['artistCredits'], isNull);
+      expect(song.body, lyrics);
+    });
+  }
+
+  for (final location in [
+    'source extra',
+    'source metadata',
+    'candidate metadata',
+    'candidate extra',
+  ]) {
+    test(
+      'pending match check in $location cannot authorize contextual credits',
+      () {
+        final reference = SourceResult(
+          candidate: resolved(),
+          body: lyrics,
+          matchKind: MatchKind.sameRecording,
+        );
+        final donor = _pendingAt(metadata(), location);
+        final song = combineSources(selected, [reference, donor]);
+        expect(song.metadata['artistCredits'], isNull);
+        expect(song.metadata['moodTags'], isNull);
+        expect(song.body, lyrics);
+      },
+    );
+  }
+
+  for (final location in [
+    'source extra',
+    'source metadata',
+    'candidate metadata',
+    'candidate extra',
+  ]) {
+    test('pending lyrics reference in $location cannot authorize credits', () {
+      final reference = _pendingAt(
+        SourceResult(
+          candidate: resolved(),
+          body: lyrics,
+          matchKind: MatchKind.sameRecording,
+        ),
+        location,
+      );
+      final song = combineSources(selected, [reference, metadata()]);
+      expect(song.metadata['artistCredits'], isNull);
+      expect(song.metadata['moodTags'], isNull);
       expect(song.body, lyrics);
     });
   }
