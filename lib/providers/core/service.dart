@@ -403,9 +403,14 @@ Future<SourceResult> findMatchingSource(
   final unresolved = <ProviderException>[];
   Future<SourceResult?> attempt(SongCandidate candidate) async {
     cancel?.throwIfCancelled();
+    final explicitlySelectedChart =
+        candidate.identity == selection.identity &&
+        selection.providerId == provider.definition.id &&
+        provider.definition.capabilities.contains('chords');
     if (!seen.add(candidate.id) ||
-        candidate.metadata['instrumental'] == true ||
-        candidate.metadata['hasLyrics'] == false ||
+        (!explicitlySelectedChart &&
+            (candidate.metadata['instrumental'] == true ||
+                candidate.metadata['hasLyrics'] == false)) ||
         attempts >= maxAttempts) {
       return null;
     }

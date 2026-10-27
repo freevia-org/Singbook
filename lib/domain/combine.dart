@@ -311,8 +311,9 @@ int _capoOf(Object? capo) {
   return value == null || value < 0 ? 0 : value % 12;
 }
 
-bool _isExplicitZeroCapo(Object? capo) =>
-    capo is num ? capo.isFinite && capo == 0 : capo is String && capo.trim() == '0';
+bool _isExplicitZeroCapo(Object? capo) => capo is num
+    ? capo.isFinite && capo == 0
+    : capo is String && capo.trim() == '0';
 
 bool _isStandardTuning(Object? tuning) {
   final text = tuning is List ? tuning.join(' ') : tuning?.toString();
@@ -329,11 +330,12 @@ bool _compatibleChartTuning(Object? selected, Object? donor) {
   if (!_hasMetadata(selected) && !_hasMetadata(donor)) return true;
   if (!_hasMetadata(selected)) return _isStandardTuning(donor);
   if (!_hasMetadata(donor)) return _isStandardTuning(selected);
-  String normalize(Object? value) => (value is List ? value.join(' ') : '$value')
-      .toLowerCase()
-      .split(RegExp(r'[\s,\[\]]+'))
-      .where((note) => note.isNotEmpty)
-      .join(' ');
+  String normalize(Object? value) =>
+      (value is List ? value.join(' ') : '$value')
+          .toLowerCase()
+          .split(RegExp(r'[\s,\[\]]+'))
+          .where((note) => note.isNotEmpty)
+          .join(' ');
   return normalize(selected) == normalize(donor);
 }
 
@@ -1289,9 +1291,8 @@ bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
       ArrangementLine(line.text, const [], directive: line.directive),
   ];
   final claims = <String, ({String key, List<String> sourceIds})>{};
-  final chordSourceIds = (song.extra['chordSourceIds'] as List?)
-      ?.whereType<String>()
-      .toSet() ??
+  final chordSourceIds =
+      (song.extra['chordSourceIds'] as List?)?.whereType<String>().toSet() ??
       const <String>{};
   for (final source in song.sources) {
     final contributingChartCreditMatches =
@@ -1316,8 +1317,7 @@ bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
             // against the saved arrangement; it never promotes a rejected
             // or pending chart.
             (source.matchKind == MatchKind.sameSong &&
-                _version(source.candidate.title) ==
-                    _version(selected.title)) ||
+                _version(source.candidate.title) == _version(selected.title)) ||
             contributingChartCreditMatches) ||
         _version(source.candidate.title) != _version(selected.title)) {
       continue;
@@ -3012,6 +3012,34 @@ SongDocument combineSources(
   bool historicalMatches(SourceResult source) =>
       explicitHistoricalWorkMatches(selected, source) ||
       historicalCacheUses.any((use) => use.allows(selected, source));
+  // A canonical arrangement selection with no artist credit authorizes only
+  // its own resolved source. It never matches another provider by title alone.
+  bool selectedArrangementMatches(SourceResult source) =>
+      source.candidate.identity == selected.identity &&
+      source.candidate.metadata['identityScope'] == 'arrangement' &&
+      _identityNorm(source.candidate.title).isNotEmpty &&
+      _identityNorm(source.candidate.title) == _identityNorm(selected.title) &&
+      _identityNorm(source.candidate.artist) ==
+          _identityNorm(selected.artist) &&
+      source.hasChords &&
+      !source.hasPendingMatchCheck &&
+      source.extra['requiresLyricsAgreement'] != true &&
+      source.extra['requiresRecordingLyricsAgreement'] != true &&
+      !selected.recordingIds.entries.any(
+        (entry) =>
+            source.candidate.recordingIds.containsKey(entry.key) &&
+            source.candidate.recordingIds[entry.key] != entry.value,
+      ) &&
+      const {
+        MatchKind.sameSong,
+        MatchKind.sameRecording,
+      }.contains(source.matchKind) &&
+      explicitEditionsCompatible(
+        selected,
+        source.candidate,
+        metadata: source.metadata,
+        extra: source.extra,
+      );
   final lyricReferences = results
       .where(
         (source) =>
@@ -3095,7 +3123,8 @@ SongDocument combineSources(
         s.id == preferredSourceId;
     final identityMatches = wikiSource
         ? historicalMatches(s)
-        : ((_sameSong(s.candidate, selected) ||
+        : ((selectedArrangementMatches(s) ||
+                      _sameSong(s.candidate, selected) ||
                       metadataContextMatches(s) ||
                       (s.hasChords &&
                           s.extra['requiresLyricsAgreement'] == true &&
@@ -3109,8 +3138,18 @@ SongDocument combineSources(
             wikiSource && historicalMatches(s) ||
             allowedRejectedAlternative);
   }).toList();
+  bool? hasLyricBase;
+  bool matchingHasLyrics() => hasLyricBase ??= matching.any(
+    (s) => plainLyrics(s.body).trim().isNotEmpty,
+  );
   final accepted = matching
-      .where((s) => plainLyrics(s.body).trim().isNotEmpty)
+      .where(
+        (s) =>
+            plainLyrics(s.body).trim().isNotEmpty ||
+            (selectedArrangementMatches(s) &&
+                (s.id == preferredSourceId ||
+                    preferredSourceId == null && !matchingHasLyrics())),
+      )
       .toList();
   if (accepted.isEmpty) {
     throw const FormatException('No matching lyrics are available to save.');
@@ -3143,6 +3182,8 @@ SongDocument combineSources(
       .where(
         (source) =>
             (allowRejectedPreferredSource && source.id == preferredSourceId) ||
+            (source.id == preferredSourceId &&
+                selectedArrangementMatches(source)) ||
             !source.hasChords ||
             references.isEmpty ||
             _completeChart(source.body, references.first.body),
@@ -3227,10 +3268,8 @@ SongDocument combineSources(
       }
       if (shortRecordingReferences.isNotEmpty &&
           !shortRecordingReferences.any(
-            (reference) => shortRecordingLyricAgreement(
-              source.body,
-              reference.body,
-            ),
+            (reference) =>
+                shortRecordingLyricAgreement(source.body, reference.body),
           )) {
         continue;
       }

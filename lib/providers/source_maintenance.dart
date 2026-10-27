@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 
+import '../domain/arrangement.dart' show plainLyrics;
 import '../domain/models.dart';
 import 'provider.dart';
 import 'source_catalog.dart';
@@ -409,7 +410,7 @@ class SourceMaintenanceHarness {
       if (searchedCatalog && entry.capabilities.contains('catalog')) {
         verifiedCapabilities.add('catalog');
       }
-      if (result.body.trim().isNotEmpty &&
+      if (plainLyrics(result.body).trim().isNotEmpty &&
           entry.capabilities.contains('lyrics')) {
         verifiedCapabilities.add('lyrics');
       }

@@ -147,6 +147,79 @@ class ProviderTransport {
     }
   }
 
+  /// A bounded conditional GET for adapters with a publisher ETag contract.
+  /// Only a supplied, valid single entity tag can authorize a 304. Ordinary
+  /// request methods retain their existing non-2xx behavior. No other response
+  /// headers except Content-Type (in particular cookies) are exposed. Body
+  /// bytes are retained for source provenance, not reconstructed from JSON.
+  Future<
+    ({
+      dynamic value,
+      String? etag,
+      bool notModified,
+      Uint8List? bytes,
+      String? contentType,
+    })
+  >
+  getConditionalJson(
+    Uri url, {
+    String? etag,
+    CancellationToken? cancel,
+    int? maxBytes,
+    Duration? timeout,
+    Set<String>? allowedHosts,
+  }) async {
+    if (etag != null && !_validEntityTag(etag)) {
+      throw const ProviderException('invalid_response');
+    }
+    final reply = await _requestBytes(
+      url,
+      method: 'GET',
+      headers: {'Accept': 'application/json', 'If-None-Match': ?etag},
+      cancel: cancel,
+      maxBytes: maxBytes,
+      timeout: timeout,
+      allowedHosts: allowedHosts,
+      acceptNotModified: etag != null,
+    );
+    final received = reply.headers['etag'];
+    final nextTag = received != null && _validEntityTag(received)
+        ? received
+        : null;
+    if (reply.status == 304) {
+      // If supplied, the response tag must weakly match the cached entity.
+      // A 304 with a contradictory/new tag cannot validate cached bytes.
+      if (received != null &&
+          (nextTag == null || _opaqueTag(nextTag) != _opaqueTag(etag!))) {
+        throw const ProviderException('invalid_response');
+      }
+      return (
+        value: null,
+        etag: nextTag ?? etag,
+        notModified: true,
+        bytes: null,
+        contentType: reply.headers['content-type'],
+      );
+    }
+    try {
+      return (
+        value: jsonDecode(_decode(reply.bytes!, reply.headers['content-type'])),
+        etag: nextTag,
+        notModified: false,
+        bytes: reply.bytes!.asUnmodifiableView(),
+        contentType: reply.headers['content-type'],
+      );
+    } catch (_) {
+      throw const ProviderException('invalid_response', 'Invalid JSON');
+    }
+  }
+
+  static bool _validEntityTag(String value) =>
+      value.length <= 512 &&
+      RegExp(r'^(?:W/)?"[\x21\x23-\x7e]*"$').hasMatch(value);
+  static String _opaqueTag(String value) =>
+      value.startsWith('W/') ? value.substring(2) : value;
+
   static bool _validUrl(Uri url) =>
       url.scheme == 'https' &&
       url.host.isNotEmpty &&
@@ -187,6 +260,7 @@ class ProviderTransport {
     int? maxBytes,
     Duration? timeout,
     Set<String>? allowedHosts,
+    bool acceptNotModified = false,
   }) async {
     if (_closed) throw const ProviderException('transport_closed');
     if (!_validUrl(url)) throw const ProviderException('invalid_url');
@@ -201,8 +275,17 @@ class ProviderTransport {
     final queueKey = _rateKey(url.host);
     final previous = _queues[queueKey] ?? Future<void>.value();
     final result = previous.then(
-      (_) =>
-          _run(url, method, headers, body, cancel, limit, timeout, hostPolicy),
+      (_) => _run(
+        url,
+        method,
+        headers,
+        body,
+        cancel,
+        limit,
+        timeout,
+        hostPolicy,
+        acceptNotModified,
+      ),
     );
     _queues[queueKey] = result.then<void>((_) {}, onError: (Object _) {});
     return _cancellable(result, cancel);
@@ -240,6 +323,7 @@ class ProviderTransport {
     int limit,
     Duration? timeout,
     Set<String>? allowedHosts,
+    bool acceptNotModified,
   ) async {
     if (_closed) throw const ProviderException('transport_closed');
     cancel?.throwIfCancelled();
@@ -259,6 +343,7 @@ class ProviderTransport {
       );
       final code = reply.status;
       if (code >= 200 && code < 300) return reply;
+      if (code == 304 && acceptNotModified && verb == 'GET') return reply;
       if ({301, 302, 303, 307, 308}.contains(code)) {
         final location = reply.headers['location'];
         final parsed = location == null || location.trim().isEmpty
