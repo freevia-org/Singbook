@@ -369,14 +369,26 @@ TimingTrack parseLyricsPlusV2(
   if (rows is! List || rows.isEmpty || rows.length > 10000) invalid();
   final total = metadata['totalDuration'];
   if (total != null) {
-    if (total is! String) invalid();
-    final match = RegExp(r'^(\d+):(\d{2})(?:\.(\d{1,3}))?$').firstMatch(total);
-    if (match == null || int.parse(match[2]!) > 59) invalid();
-    final ms =
-        int.parse(match[1]!) * 60000 +
-        int.parse(match[2]!) * 1000 +
-        int.parse((match[3] ?? '').padRight(3, '0'));
-    if ((ms - sourceDurationMs).abs() > 3000) invalid();
+    // The independently verified source duration is bounded to 24 hours.
+    // Bound the clock before parsing so hostile minute strings cannot escape
+    // the provider's typed error contract through an integer FormatException.
+    if (total is! String || total.length > 11) invalid();
+    final match = RegExp(
+      r'^(\d{1,4}):(\d{2})(?:\.(\d{1,3}))?$',
+    ).firstMatch(total);
+    if (match == null) invalid();
+    final minutes = int.tryParse(match[1]!);
+    final seconds = int.tryParse(match[2]!);
+    final fraction = int.tryParse((match[3] ?? '').padRight(3, '0'));
+    if (minutes == null ||
+        minutes > 1440 ||
+        seconds == null ||
+        seconds > 59 ||
+        fraction == null) {
+      invalid();
+    }
+    final ms = minutes * 60000 + seconds * 1000 + fraction;
+    if (ms > 86400000 || (ms - sourceDurationMs).abs() > 3000) invalid();
   }
   final cues = <TimingCue>[];
   final lines = <String>[];

@@ -715,6 +715,48 @@ void main() {
     expect(track.cues.single.graphemeStart, isNull);
   });
 
+  test('oversized clock minutes produce a typed provider error', () {
+    final payload = _payload();
+    payload['metadata']['totalDuration'] =
+        '${List.filled(10000, '9').join()}:00.000';
+    expect(
+      () => parseLyricsPlusV2(
+        utf8.encode(jsonEncode(payload)),
+        sourceDocumentId: 'test:oversized-clock',
+        sourceDurationMs: 238640,
+      ),
+      throwsA(
+        isA<ProviderException>()
+            .having((e) => e.code, 'code', 'invalid_response')
+            .having((e) => e.message, 'message', 'unsupported_timing'),
+      ),
+    );
+  });
+
+  test(
+    'the 24-hour clock boundary is valid but an extra millisecond is not',
+    () {
+      final payload = _payload();
+      payload['metadata']['totalDuration'] = '1440:00.000';
+      final track = parseLyricsPlusV2(
+        utf8.encode(jsonEncode(payload)),
+        sourceDocumentId: 'test:maximum-clock',
+        sourceDurationMs: 86400000,
+      );
+      expect(track.sourceLyrics, 'Synthetic words');
+      expect(track.cues, hasLength(3));
+      payload['metadata']['totalDuration'] = '1440:00.001';
+      expect(
+        () => parseLyricsPlusV2(
+          utf8.encode(jsonEncode(payload)),
+          sourceDocumentId: 'test:clock-over-limit',
+          sourceDurationMs: 86400000,
+        ),
+        _timingFailure,
+      );
+    },
+  );
+
   test(
     'documented None type preserves plain lyrics without inventing timing',
     () {
