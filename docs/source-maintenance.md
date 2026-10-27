@@ -220,6 +220,16 @@ distinguish throttling from service unavailability, and database-lag evidence
 where supplied; do not infer that a daily quota was exceeded from that reason.
 The local and cloud jobs have separate request totals and reachability.
 
+The transport always identifies Singbook with its version and the public project
+URL, including plain Dart maintenance runs without app build defines.
+`SINGBOOK_CONTACT_URL` may supply another real operator contact; an empty value
+keeps the public project fallback. Wikimedia's 2026 limits apply across projects,
+so a short burst against Wikidata can affect subsequent Commons or Wikisource
+requests even in a once-daily job. Follow the publisher's
+[client identification policy](https://www.mediawiki.org/wiki/Wikimedia_APIs/Access_policy)
+and [current rate limits](https://www.mediawiki.org/wiki/Wikimedia_APIs/Rate_limits).
+A compliant User-Agent does not remove quotas or replace respecting Retry-After.
+
 Reports include timestamp, source/probe IDs, outcome, missing field names,
 lengths/counts and metadata field names. They contain no full lyrics, raw source
 documents or credentials. The normalized SourceResult JSON is round-tripped to

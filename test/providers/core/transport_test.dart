@@ -369,7 +369,7 @@ void main() {
         await t.close();
       }
     });
-    test('User-Agent carries the pubspec version', () async {
+    test('User-Agent carries the version and an API operator contact', () async {
       final pubspec = File('pubspec.yaml').readAsStringSync();
       final version = RegExp(
         r'^version:\s*(\d+\.\d+\.\d+)',
@@ -383,6 +383,11 @@ void main() {
       });
       await t.getText(Uri.parse('https://example.org/'));
       expect(agent, startsWith('Singbook/$version'));
+      expect(singbookContactUrl, isNotEmpty);
+      expect(agent, contains('(+$singbookContactUrl)'));
+      if (const String.fromEnvironment('SINGBOOK_CONTACT_URL') == '') {
+        expect(singbookContactUrl, 'https://github.com/freevia-org/Singbook');
+      }
       expect(agent, isNot(contains('freevia.org')));
       await t.close();
     });

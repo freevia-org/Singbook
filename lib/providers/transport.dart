@@ -35,13 +35,15 @@ class CancellationToken {
 /// `version:` line in pubspec.yaml (a unit test enforces this).
 const singbookVersion = '0.2.25';
 
-/// Optional contact URL for API operators (MusicBrainz and Wikimedia policies
-/// ask for one). Supply `SINGBOOK_CONTACT_URL` in config/local.defines.json; no
-/// placeholder address is invented when it is absent.
-const singbookContactUrl = String.fromEnvironment('SINGBOOK_CONTACT_URL');
-const providerUserAgent = singbookContactUrl == ''
-    ? 'Singbook/$singbookVersion (on-device songbook)'
-    : 'Singbook/$singbookVersion (+$singbookContactUrl)';
+/// Public project contact for API operators, including maintenance invocations
+/// without app build defines. An explicit contact URL may override this real
+/// repository URL; missing or empty configuration must not erase identification.
+const singbookProjectUrl = 'https://github.com/freevia-org/Singbook';
+const _configuredContactUrl = String.fromEnvironment('SINGBOOK_CONTACT_URL');
+const singbookContactUrl = _configuredContactUrl == ''
+    ? singbookProjectUrl
+    : _configuredContactUrl;
+const providerUserAgent = 'Singbook/$singbookVersion (+$singbookContactUrl)';
 
 /// Absolute ceiling for any single response, including per-request overrides.
 const _hardMaxBytes = 16 * 1024 * 1024;
