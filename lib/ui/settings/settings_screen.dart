@@ -307,9 +307,12 @@ class _AboutScreenState extends State<_AboutScreen> {
             state.activeTab == VerseTab.settings)) {
       return;
     }
+    final route = ModalRoute.of(context);
     _leaving = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) Navigator.of(context).pop();
+      // A manual Back may already be reversing this still-mounted route.
+      // Never let its delayed listener pop the page underneath it.
+      if (mounted && route?.isCurrent == true) Navigator.of(context).pop();
     });
   }
 
@@ -502,9 +505,12 @@ class _SettingsSectionScreenState extends State<_SettingsSectionScreen> {
             state.activeTab == VerseTab.settings)) {
       return;
     }
+    final route = ModalRoute.of(context);
     _leaving = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) Navigator.of(context).pop();
+      // The settings detail can still be mounted after a manual Back.
+      // Only dismiss the captured route while it remains current.
+      if (mounted && route?.isCurrent == true) Navigator.of(context).pop();
     });
   }
 
