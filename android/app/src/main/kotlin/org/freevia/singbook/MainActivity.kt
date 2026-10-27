@@ -20,6 +20,7 @@ import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
     private var playerFullScreen = false
+    private var playerFullScreenApplied = false
     private var playerActivityResumed = false
     private var previousSystemBarsBehavior: Int? = null
     private var clipboardWriteReceipt: Map<String, Any?>? = null
@@ -219,6 +220,10 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun applyPlayerFullScreen(enabled: Boolean) {
+        // Hiding/showing bars may itself change window focus. A focus callback
+        // must not start the same transition again while it is already applied.
+        if (playerFullScreenApplied == enabled) return
+        playerFullScreenApplied = enabled
         val controller = WindowCompat.getInsetsController(window, window.decorView)
         if (enabled) {
             if (previousSystemBarsBehavior == null) {
