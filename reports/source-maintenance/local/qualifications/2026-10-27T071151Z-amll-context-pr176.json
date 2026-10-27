@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "kind": "postcommit-contextual-source-qualification",
+  "providerId": "amll",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/176",
+  "sourceCommit": "9be6e11ec067c9c1651fa2d84f25d45326ccee31",
+  "report": {
+    "measuredAtUtc": "2026-10-27T07:11:51.147876Z",
+    "sourceCommit": "9be6e11ec067c9c1651fa2d84f25d45326ccee31",
+    "runtime": "local-windows-production-configured-provider-and-findMatchingSource",
+    "candidateOnly": true,
+    "checks": [
+      {
+        "title": "ME!",
+        "artist": "Brendon Urie & Taylor Swift",
+        "candidateId": "sha256:e07c109586e50740",
+        "matchKind": "sameSong",
+        "bodyCharacters": 2455,
+        "contextualSearchExactCanaryFound": true,
+        "rawTtmlUnchanged": true,
+        "automaticRecordingTimingPromotion": false
+      },
+      {
+        "title": "Shape of You",
+        "artist": "Ed Sheeran",
+        "candidateId": "sha256:45f8da888b675661",
+        "matchKind": "sameSong",
+        "bodyCharacters": 3186,
+        "contextualSearchExactCanaryFound": true,
+        "rawTtmlUnchanged": true,
+        "automaticRecordingTimingPromotion": false
+      }
+    ],
+    "httpDiagnostics": {
+      "networkFailures": 0,
+      "hosts": {
+        "api.amll.dev": {
+          "requests": 4,
+          "statuses": {
+            "200": 4
+          },
+          "retryAfterSeconds": {},
+          "databaseLag": {}
+        }
+      }
+    },
+    "scope": "Two live structured title/artist/album searches, then exact known canary candidates through the normal app matching service; one bounded resolution per song. This does not establish arbitrary query ranking, collaboration syntax coverage, independent transcription/audio alignment, device UI or cloud reachability."
+  },
+  "catalogPublication": "Unpublished candidate; no provider factory or production catalog entry",
+  "privacy": "Public canary metadata, redacted selection IDs/counts and status facts only; no raw lyrics/responses/credentials/session data"
+}
