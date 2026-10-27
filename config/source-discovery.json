@@ -403,6 +403,40 @@
       ],
       "endpoint": "https://api.betterlyrics.org",
       "reason": "Publisher describes a line-timed LRC Kugou route and word-timed QRC QQ route as alternatives to its TTML service and documents anonymous access including cache misses. Two ordinary local GET diagnostics on2026-10-27T05:02Z against /kugou/getLyrics, with the documented title/artist/album/duration fields for Never Gonna Give You Up/Rick Astley and The Sound Of Silence/Simon & Garfunkel, instead returned HTTP401 with X-Provider:kugou and X-Cache-Status:MISS. No retries, credentials or denial workaround; no lyric documents received or retained. This contradicts the reviewed anonymous-route contract for those two requests, not proof that every song or QQ is unavailable. QQ was not probed. Keep existing Better Lyrics/Unison adapters unchanged; defer additional routes pending an access-contract resolution, response identity validation, compatible LRC/QRC extraction, preserved source/timing provenance and two real production canaries. Catalog size, independent regional coverage and overlap unmeasured."
+    },
+    {
+      "id": "touhoudb",
+      "name": "TouhouDB",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred",
+      "documentation": [
+        "https://wiki.vocadb.net/docs/touhoudb-what-is-it-for",
+        "https://wiki.vocadb.net/docs/touhoudb-songs",
+        "https://touhoudb.com/swagger/v1/swagger.json",
+        "https://wiki.vocadb.net/docs/public-api",
+        "https://wiki.vocadb.net/docs/license",
+        "https://wiki.vocadb.net/docs/services-that-make-use-of-vocadb-apis"
+      ],
+      "endpoint": "https://touhoudb.com/api",
+      "reason": "Touhou originals, arrangements, fanwork soundtracks and discography; Japanese and international audience. Host-specific OpenAPI returned HTTP200 at2026-10-27T10:10:57Z and documents anonymous numeric-ID song search/detail, aliases, artist roles, albums, original-version relationships, duration/BPM/culture fields and optional credited lyric variants. One documented metadata-only /api/songs?maxResults=1&getTotalCount=true request at2026-10-27T10:15:17.243023Z returned HTTP200 with totalCount190042, one row and no lyrics property/body. This is an unfiltered song/version-entry total, not lyric-bearing, deduplicated or incremental coverage. Two publisher-linked canonical HTML pages per host returned200; the combined six count/page checks had zero retries/denials and no lyric-body API calls. Exact version identities and request accounting are documented in docs/regional-source-qualification.md. Shared API guidance requires client identification/caching and prohibits excessive traffic. Shared metadata license names VocaDB and excludes lyric text/images; host-specific rendered attribution/license links were not visible in the small HTML shells, so applicability remains unverified. Defer pending that rendered host check, actual version/detail schema verification, two independent identity-correct lyric extraction canaries, compatible native registration/catalog rollout, preservation of all variants/source credits and Android/cloud qualification. No account, cookies, credentials, corpus/artwork/audio/video download, provider registration or source activation; overlap remains unmeasured."
+    },
+    {
+      "id": "utaitedb",
+      "name": "UtaiteDB",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred",
+      "documentation": [
+        "https://wiki.vocadb.net/docs/utaitedb-what-is-it-for",
+        "https://wiki.vocadb.net/docs/utaitedb-songs",
+        "https://utaitedb.net/swagger/v1/swagger.json",
+        "https://wiki.vocadb.net/docs/public-api",
+        "https://wiki.vocadb.net/docs/license",
+        "https://wiki.vocadb.net/docs/services-that-make-use-of-vocadb-apis"
+      ],
+      "endpoint": "https://utaitedb.net/api",
+      "reason": "Human-vocalist originals/covers and related versions; Japanese, Romanized and English names. Host-specific OpenAPI returned HTTP200 at2026-10-27T10:10:57Z and documents anonymous numeric-ID song search/detail, aliases, artist roles, albums, original-version relationships, duration/BPM/culture fields and optional credited lyric variants. One documented metadata-only /api/songs?maxResults=1&getTotalCount=true request at2026-10-27T10:15:17.737952Z returned HTTP200 with totalCount78943, one row and no lyrics property/body. This is an unfiltered song/version-entry total, not lyric-bearing, deduplicated or incremental coverage. Two publisher-linked canonical HTML pages per host returned200; the combined six count/page checks had zero retries/denials and no lyric-body API calls. Exact version identities and request accounting are documented in docs/regional-source-qualification.md. Shared API guidance requires client identification/caching and prohibits excessive traffic. Shared metadata license names VocaDB and excludes lyric text/images; host-specific rendered attribution/license links were not visible in the small HTML shells, so applicability remains unverified. Defer pending that rendered host check, actual version/detail schema verification, two independent identity-correct lyric extraction canaries, compatible native registration/catalog rollout, preservation of all variants/source credits and Android/cloud qualification. No account, cookies, credentials, corpus/artwork/audio/video download, provider registration or source activation; overlap remains unmeasured."
     }
   ]
 }
