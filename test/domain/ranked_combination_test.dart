@@ -68,6 +68,40 @@ List<Map<String, dynamic>> _claims(SongDocument song, String field) => [
 ];
 
 void main() {
+  test('conflicting supplied keys weigh the chosen chart home key', () {
+    final chart = _source(
+      'chart',
+      body:
+          '[D]Amber lanterns glow above the quiet water\n'
+          '[G]Silver rain returns beneath the evening sky\n'
+          '[A]Every window keeps a little golden light\n'
+          '[D]Morning carries every dream back home',
+      metadata: {'capo': 5},
+    );
+    final first = _source(
+      'first',
+      body: '',
+      metadata: {'key': 'C'},
+      extra: {'metadataOnly': true},
+    );
+    final second = _source(
+      'second',
+      body: '',
+      metadata: {'key': 'G'},
+      extra: {'metadataOnly': true},
+    );
+    final combined = combineSources(_selected, [chart, first, second]);
+    expect(combined.metadata['key'], 'G');
+    expect(combined.metadata['capo'], 5);
+    expect(
+      _claims(combined, 'metadata.key').map((c) => c['value']),
+      containsAll(['C', 'G']),
+    );
+    expect(
+      combined.sources.singleWhere((s) => s.id == first.id).metadata['key'],
+      'C',
+    );
+  });
   test('capo shape declaration is retained alongside its sounding reading', () {
     final chart = _source(
       'chart',

@@ -1215,6 +1215,12 @@ class SourceDiscoveryService {
               reference.matchKind == MatchKind.sameRecording &&
               recordingCompatible(selection, reference),
         ) ||
+        publishedLyricScriptAlternative(
+          reference.candidate,
+          chart.candidate,
+          reference.body,
+          chart.body,
+        ) ||
         chart.extra['alternatePerformerChart'] == true &&
             contextualChartLyricsMatch(
               chart.body,
@@ -2146,6 +2152,24 @@ class SourceDiscoveryService {
             );
           }
         } else {
+          if (publishedLyricScriptAlternative(
+            references.first.candidate,
+            result.candidate,
+            references.first.body,
+            result.body,
+          )) {
+            results[i] = result.copyWith(
+              extra: {
+                ...result.extra,
+                'lyricRepresentation': 'latin_script_alternative',
+                'lyricRepresentationEvidence': {
+                  'referenceSourceId': references.first.id,
+                  'basis': 'publisher_name_alias_and_different_writing_system',
+                  'wordAgreementEstablished': false,
+                },
+              },
+            );
+          }
           recordCorroboration(result.candidate.providerId, 'completed');
         }
       }

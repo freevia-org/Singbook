@@ -4404,6 +4404,8 @@ List<SourceResult> _retainedSourceEvidence(
           'requiresLyricsAgreement',
           'requiresRecordingLyricsAgreement',
           'alternatePerformerChart',
+          'lyricRepresentation',
+          'lyricRepresentationEvidence',
           'partialLyricSupport',
         ]) {
           data.remove(key);
@@ -5396,6 +5398,53 @@ EvidenceRanking _rankSourceCombination(
         harmonyFit: fit(source, 'metadata.key', measured),
       ),
     );
+  }
+  // A subdominant chord can support a local tonic without establishing the
+  // song's home key. When published assertions actually conflict, use the
+  // chosen charts' clear home-key estimates to separate those assertions.
+  // Inference alone never creates a counterclaim to an uncontested source.
+  final clearChartKeys = <String>[
+    for (final chart in charts)
+      if (estimateChordKey(_keyCorrectedBody(chart)) case final estimate?)
+        transposeChord(
+          estimate.key,
+          _capoOf(_setupValue(chart, selected, 'capo')),
+        ),
+  ];
+  final declarations = claims
+      .where(
+        (claim) =>
+            claim.field == 'metadata.key' &&
+            claim.origin != EvidenceOrigin.inferred &&
+            claim.contextCompatible &&
+            claim.value is String &&
+            _keyIdentity(claim.value) != null,
+      )
+      .toList();
+  if (clearChartKeys.isNotEmpty) {
+    for (var i = 0; i < claims.length; i++) {
+      final claim = claims[i];
+      if (!declarations.contains(claim) ||
+          !declarations.any(
+            (other) =>
+                other.sourceId != claim.sourceId &&
+                _keyDistance(other.value as String, claim.value as String) != 0,
+          )) {
+        continue;
+      }
+      claims[i] = _rebuildClaim(
+        claim,
+        qualitySignals: {
+          ...claim.qualitySignals,
+          'contestedHomeKeyFit':
+              clearChartKeys.any(
+                (key) => _keyDistance(key, claim.value as String) == 0,
+              )
+              ? 8
+              : -8,
+        },
+      );
+    }
   }
   bool pairCompatible(EvidenceClaim a, EvidenceClaim b) {
     if (a.field.startsWith('${b.field}.') ||
