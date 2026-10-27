@@ -577,6 +577,51 @@ Three little birds sit by my doorstep''';
     expect(pendingDocument.metadata['key'], isNull);
   });
 
+  test('a rejected alternate-tuning chart does not donate guitar shapes', () {
+    const selected = SongCandidate(
+      providerId: 'genius',
+      id: 'three-little-birds',
+      title: 'Three Little Birds',
+      artist: 'Bob Marley & The Wailers',
+    );
+    const lyrics = '''Rise up this mornin'
+Smile with the rising sun
+Three little birds sit by my doorstep''';
+    const chart = '''[A]Rise up this mornin'
+[E]Smile with the rising sun
+[A]Three little birds sit by my doorstep''';
+    final document = combineSources(selected, [
+      SourceResult(
+        candidate: selected,
+        body: lyrics,
+        matchKind: MatchKind.sameRecording,
+      ),
+      SourceResult(
+        candidate: const SongCandidate(
+          providerId: 'ug',
+          id: 'alternate-tuning-chart',
+          title: 'Three Little Birds',
+          artist: 'Bob Marley',
+        ),
+        body: chart,
+        metadata: const {
+          'key': 'A',
+          'capo': 0,
+          'tuning': ['D', 'A', 'D', 'G', 'B', 'E'],
+        },
+        matchKind: MatchKind.rejected,
+        matchReason: 'incomplete_or_different_lyrics',
+        extra: const {'requiresLyricsAgreement': true},
+      ),
+    ]);
+
+    expect(
+      _chordsByLine(document.body).values.every((chords) => chords.isEmpty),
+      isTrue,
+    );
+    expect(document.metadata['key'], isNull);
+  });
+
   test('phrase overlap cannot bypass recording-specific chart identity', () {
     const selected = SongCandidate(
       providerId: 'genius',

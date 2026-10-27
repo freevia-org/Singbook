@@ -325,6 +325,18 @@ bool _isStandardTuning(Object? tuning) {
       'e a d g b e';
 }
 
+bool _compatibleChartTuning(Object? selected, Object? donor) {
+  if (!_hasMetadata(selected) && !_hasMetadata(donor)) return true;
+  if (!_hasMetadata(selected)) return _isStandardTuning(donor);
+  if (!_hasMetadata(donor)) return _isStandardTuning(selected);
+  String normalize(Object? value) => (value is List ? value.join(' ') : '$value')
+      .toLowerCase()
+      .split(RegExp(r'[\s,\[\]]+'))
+      .where((note) => note.isNotEmpty)
+      .join(' ');
+  return normalize(selected) == normalize(donor);
+}
+
 /// Whether a chart's declared (sounding) key fits its own chords played with
 /// [capo]. A chart whose chords give no key estimate is not contradicted.
 bool declaredKeyFitsChords(String chart, String declared, Object? capo) {
@@ -3218,11 +3230,15 @@ SongDocument combineSources(
           source.metadata['capo'] ?? source.candidate.metadata['capo'];
       final donorKey =
           source.metadata['key'] ?? source.candidate.metadata['key'];
+      final selectedTuning = _setupValue(best, selected, 'tuning');
+      final donorTuning =
+          source.metadata['tuning'] ?? source.candidate.metadata['tuning'];
       // This chord-only fallback does not have a primary chart to establish
       // a transposition target. Keep the donor in the selected shape/capo
       // system and reject a known key-consensus failure instead of silently
       // importing capoed or shifted shapes as if they were untransposed.
       if (_capoOf(selectedCapo) != _capoOf(donorCapo) ||
+          !_compatibleChartTuning(selectedTuning, donorTuning) ||
           source.extra['keyConsensus'] == false ||
           (donorKey is String &&
               donorKey.trim().isNotEmpty &&
