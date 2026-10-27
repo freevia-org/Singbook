@@ -571,6 +571,70 @@ Three little birds sit by my doorstep''';
     expect(pendingDocument.metadata['key'], isNull);
   });
 
+  test('a rejected chart cannot import unconverted capo or failed key consensus', () {
+    const selected = SongCandidate(
+      providerId: 'genius',
+      id: 'lantern-song',
+      title: 'Lantern Song',
+      artist: 'Test Artist',
+    );
+    const lyrics = '''Lanterns drift above the quiet harbor
+Moonlight follows boats across the water
+Morning finds the nets along the shore''';
+    final capoed = combineSources(selected, [
+      SourceResult(
+        candidate: selected,
+        body: lyrics,
+        matchKind: MatchKind.sameRecording,
+      ),
+      SourceResult(
+        candidate: const SongCandidate(
+          providerId: 'ug',
+          id: 'capoed-lantern-chart',
+          title: 'Lantern Song',
+          artist: 'Test Artist',
+        ),
+        body: '[Am]Lanterns drift above the quiet harbor\n'
+            '[F]Moonlight follows boats across the water\n'
+            '[C]Morning finds the nets along the shore [G]',
+        metadata: const {'key': 'Em', 'capo': 7},
+        matchKind: MatchKind.rejected,
+        matchReason: 'incomplete_or_different_lyrics',
+        extra: const {'keyConsensus': true},
+      ),
+    ]);
+    expect(_chordsByLine(capoed.body).values.every((c) => c.isEmpty), isTrue);
+    expect(capoed.metadata['key'], isNull);
+
+    final nonconsensus = combineSources(selected, [
+      SourceResult(
+        candidate: selected,
+        body: lyrics,
+        matchKind: MatchKind.sameRecording,
+      ),
+      SourceResult(
+        candidate: const SongCandidate(
+          providerId: 'ug',
+          id: 'nonconsensus-lantern-chart',
+          title: 'Lantern Song',
+          artist: 'Test Artist',
+        ),
+        body: '[G]Lanterns drift above the quiet harbor\n'
+            '[D]Moonlight follows boats across the water\n'
+            '[C]Morning finds the nets along the shore',
+        metadata: const {'key': 'G', 'capo': 0},
+        matchKind: MatchKind.rejected,
+        matchReason: 'incomplete_or_different_lyrics',
+        extra: const {'keyConsensus': false},
+      ),
+    ]);
+    expect(
+      _chordsByLine(nonconsensus.body).values.every((c) => c.isEmpty),
+      isTrue,
+    );
+    expect(nonconsensus.metadata['key'], isNull);
+  });
+
   test('unscoped same-song donor cannot add uncorroborated anchors', () {
     const selected = SongCandidate(
       providerId: 'catalog',

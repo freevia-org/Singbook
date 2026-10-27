@@ -3165,6 +3165,22 @@ SongDocument combineSources(
           )) {
         continue;
       }
+      final selectedCapo = _setupValue(best, selected, 'capo');
+      final donorCapo =
+          source.metadata['capo'] ?? source.candidate.metadata['capo'];
+      final donorKey =
+          source.metadata['key'] ?? source.candidate.metadata['key'];
+      // This chord-only fallback does not have a primary chart to establish
+      // a transposition target. Keep the donor in the selected shape/capo
+      // system and reject a known key-consensus failure instead of silently
+      // importing capoed or shifted shapes as if they were untransposed.
+      if (_capoOf(selectedCapo) != _capoOf(donorCapo) ||
+          source.extra['keyConsensus'] == false ||
+          (donorKey is String &&
+              donorKey.trim().isNotEmpty &&
+              !declaredKeyFitsChords(source.body, donorKey, donorCapo))) {
+        continue;
+      }
       final anchored = _phraseChords(plain, _keyCorrectedBody(source));
       final matchedLines = anchored.entries
           .where((entry) => entry.value.isNotEmpty)
