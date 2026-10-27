@@ -12,6 +12,7 @@ import 'package:singbook/domain/chord_key_estimate.dart';
 import 'package:singbook/domain/models.dart';
 import 'package:singbook/domain/source_contributions.dart';
 import 'package:singbook/domain/edition_identity.dart';
+import 'package:singbook/domain/lyric_word_identity.dart';
 import 'package:singbook/domain/search_grouping.dart';
 import 'package:singbook/providers/core/core_providers.dart';
 import 'package:singbook/providers/extra/extra_providers.dart';
@@ -44,6 +45,205 @@ String _normalizedLyrics(String body) => _normalize(
       .replaceAll(RegExp(r'\{[^}\n]*\}'), ' ')
       .replaceAll(RegExp(r'\[[^\]\n]*\]'), ''),
 );
+
+/// Compares the lyric text embedded in a chord chart with the selected lyrics.
+/// Repeated sections may differ, so this reports bidirectional vocabulary and
+/// ordered-bigram overlap rather than requiring an exact text hash. Only counts
+/// and ratios leave this function; lyric bodies stay out of the report.
+Map<String, Object?> _practicalLyricCorrespondence(
+  String chartBody,
+  String selectedLyricsBody,
+) {
+  List<List<String>> lines(String body) => body
+      .split(RegExp(r'\r?\n'))
+      .map((line) => foldLyricVowelAccents(_normalizedLyrics(line)))
+      .map((line) => line.split(' ').where((word) => word.isNotEmpty).toList())
+      .where((line) => line.isNotEmpty)
+      .toList();
+
+  Set<String> bigrams(List<List<String>> lyricLines) => {
+    for (final line in lyricLines)
+      for (var i = 1; i < line.length; i++) '${line[i - 1]}\u0000${line[i]}',
+  };
+
+  double coverage(Set<String> source, Set<String> reference) => source.isEmpty
+      ? 0
+      : source.intersection(reference).length / source.length;
+
+  final chartLines = lines(chartBody);
+  final selectedLines = lines(selectedLyricsBody);
+  final chartWords = chartLines.expand((line) => line).toSet();
+  final selectedWords = selectedLines.expand((line) => line).toSet();
+  final chartPairs = bigrams(chartLines);
+  final selectedPairs = bigrams(selectedLines);
+  final chordedLines = parseArrangement(chartBody)
+      .where((line) => !line.directive && line.chords.isNotEmpty)
+      .map((line) => foldLyricVowelAccents(_normalizedLyrics(line.text)))
+      .map((line) => line.split(' ').where((word) => word.isNotEmpty).toList())
+      .where((line) => line.isNotEmpty)
+      .toList();
+  final chordedWords = chordedLines.expand((line) => line).toSet();
+  final chordedPairs = bigrams(chordedLines);
+
+  return {
+    'chartWordCount': chartLines.expand((line) => line).length,
+    'selectedLyricsWordCount': selectedLines.expand((line) => line).length,
+    'chartVocabularyCoverageBySelectedLyrics':
+        coverage(chartWords, selectedWords),
+    'selectedLyricsVocabularyCoverageByChart':
+        coverage(selectedWords, chartWords),
+    'chartOrderedBigramCoverageBySelectedLyrics':
+        coverage(chartPairs, selectedPairs),
+    'selectedLyricsOrderedBigramCoverageByChart':
+        coverage(selectedPairs, chartPairs),
+    'chartChordedLineCount': chordedLines.length,
+    'chartChordedLineVocabularyCoverageBySelectedLyrics':
+        coverage(chordedWords, selectedWords),
+    'selectedLyricsVocabularyCoverageByChordedLines':
+        coverage(selectedWords, chordedWords),
+    'chartChordedLineOrderedBigramCoverageBySelectedLyrics':
+        coverage(chordedPairs, selectedPairs),
+    'selectedLyricsOrderedBigramCoverageByChordedLines':
+        coverage(selectedPairs, chordedPairs),
+    'interpretation':
+        'Coverage tolerates repeated or omitted sections and indicates whether chord-bearing chart lines use the selected song text. It is diagnostic support, not proof of recording identity or chord correctness.',
+  };
+}
+
+Map<String, Object?> _practicalChordLyricSummary(
+  List<Map<String, Object?>> rows,
+) {
+  final contributors = <Map>[];
+  var songsWithSelectedLyricsAndChords = 0;
+  for (final row in rows) {
+    final selected = row['practicalChordLyricCorrespondence'] as Map? ?? {};
+    if (selected['selectedLyricsAvailable'] == true &&
+        (selected['selectedChordContributors'] as List? ?? const []).isNotEmpty) {
+      songsWithSelectedLyricsAndChords++;
+    }
+    for (final source in (row['sourceSummary'] as List? ?? const [])
+        .whereType<Map>()) {
+      final contribution = source['combinedContribution'];
+      final overlap = source['practicalChordLyricCorrespondence'];
+      if (contribution is Map &&
+          contribution['chords'] == true &&
+          overlap is Map) {
+        contributors.add(overlap);
+      }
+    }
+  }
+
+  double? median(String field) {
+    final values = contributors
+        .map((row) => row[field])
+        .whereType<num>()
+        .map((value) => value.toDouble())
+        .toList()
+      ..sort();
+    if (values.isEmpty) return null;
+    final middle = values.length ~/ 2;
+    return values.length.isOdd
+        ? values[middle]
+        : (values[middle - 1] + values[middle]) / 2;
+  }
+  final chartedLineAlignment = contributors
+      .map((row) => row['chartChordedLineOrderedBigramCoverageBySelectedLyrics'])
+      .whereType<num>()
+      .map((value) => value.toDouble())
+      .toList();
+
+  return {
+    'songsWithSelectedLyricsAndChordContributors':
+        songsWithSelectedLyricsAndChords,
+    'selectedChordContributorsCompared': contributors.length,
+    'contributorsWithAtLeast80PercentChartedLineTextMatch':
+        chartedLineAlignment.where((value) => value >= .80).length,
+    'contributorsBelow80PercentChartedLineTextMatch':
+        chartedLineAlignment.where((value) => value < .80).length,
+    'medianChartOrderedBigramCoverageBySelectedLyrics':
+        median('chartOrderedBigramCoverageBySelectedLyrics'),
+    'medianSelectedLyricsOrderedBigramCoverageByChart':
+        median('selectedLyricsOrderedBigramCoverageByChart'),
+    'medianChartChordedLineOrderedBigramCoverageBySelectedLyrics':
+        median('chartChordedLineOrderedBigramCoverageBySelectedLyrics'),
+    'medianSelectedLyricsOrderedBigramCoverageByChordedLines':
+        median('selectedLyricsOrderedBigramCoverageByChordedLines'),
+    'interpretation':
+        'Charted-line text match is the chart-to-selected-lyrics direction and is the useful alignment screen: a high value means chord-bearing lyric fragments appear in the selected lyrics. The reverse direction measures how much of the selected lyrics has chorded coverage; low values can simply mean a partial chart, not an incorrect chart. Neither measure verifies chord symbols musically.',
+  };
+}
+
+Map<String, Object?> _practicalChordKeyConsistency({
+  required String chartBody,
+  required String? declaredKey,
+  required Object? rawCapo,
+  required String? selectedKey,
+}) {
+  final estimate = estimateChordKey(chartBody);
+  final capo = _capoOf(rawCapo);
+  final soundingEstimate = estimate == null
+      ? null
+      : capo == 0
+      ? estimate.key
+      : transposeChord(estimate.key, capo);
+  return {
+    'declaredKey': declaredKey,
+    'shapeKeyEstimate': estimate?.key,
+    'soundingKeyEstimate': soundingEstimate,
+    'capo': capo,
+    'separation': estimate?.separation,
+    'chordCount': estimate?.chordCount ?? 0,
+    'distinctRoots': estimate?.distinctRoots ?? 0,
+    'declaredKeyVsShapeEstimate':
+        _practicalKeyRelation(declaredKey, estimate?.key),
+    'selectedKeyVsSoundingEstimate':
+        _practicalKeyRelation(selectedKey, soundingEstimate),
+    'interpretation':
+        'Self-consistency diagnostic only. A chart-derived key estimate can flag conflicts but cannot independently establish the recording key or chord correctness.',
+  };
+}
+
+Map<String, Object?> _practicalChordKeySummary(
+  List<Map<String, Object?>> rows,
+) {
+  final contributors = <Map>[];
+  for (final row in rows) {
+    for (final source in (row['sourceSummary'] as List? ?? const [])
+        .whereType<Map>()) {
+      final contribution = source['combinedContribution'];
+      final keyCheck = source['practicalChordKeyConsistency'];
+      if (contribution is Map &&
+          contribution['chords'] == true &&
+          keyCheck is Map) {
+        contributors.add(keyCheck);
+      }
+    }
+  }
+
+  Map<String, int> countRelations(String field) => {
+    for (final relation in [
+      'same_tonic_and_mode',
+      'mode_difference',
+      'relative_major_minor',
+      'tonic_difference',
+      'unavailable',
+    ])
+      relation: contributors.where((source) => source[field] == relation).length,
+  };
+
+  return {
+    'selectedChordContributorsCompared': contributors.length,
+    'contributorsWithChordKeyEstimate': contributors
+        .where((source) => source['shapeKeyEstimate'] is String)
+        .length,
+    'declaredKeyVsShapeEstimate':
+        countRelations('declaredKeyVsShapeEstimate'),
+    'selectedKeyVsSoundingEstimate':
+        countRelations('selectedKeyVsSoundingEstimate'),
+    'interpretation':
+        'Counts compare key labels with a chord-derived chart estimate as a self-consistency screen. They are not independent recording-key or chord-correctness validation.',
+  };
+}
 
 String _sha(String value) => sha256.convert(utf8.encode(value)).toString();
 
@@ -357,6 +557,31 @@ String? _exactKeyIdentity(String value) {
           _ => raw.toLowerCase(),
         };
   return '${pitch % 12}:$mode';
+}
+
+String _practicalKeyRelation(String? left, String? right) {
+  if (left == null || right == null) return 'unavailable';
+  final a = _exactKeyIdentity(left), b = _exactKeyIdentity(right);
+  if (a == null || b == null) return 'unavailable';
+  if (a == b) return 'same_tonic_and_mode';
+  final leftParts = a.split(':');
+  final rightParts = b.split(':');
+  final leftPitch = int.parse(leftParts.first);
+  final rightPitch = int.parse(rightParts.first);
+  final leftMode = leftParts.last;
+  final rightMode = rightParts.last;
+  if (leftPitch == rightPitch) return 'mode_difference';
+  final relativeMajorMinor =
+      leftMode == 'major' &&
+          rightMode == 'minor' &&
+          (rightPitch + 3) % 12 == leftPitch ||
+      leftMode == 'minor' &&
+          rightMode == 'major' &&
+          (leftPitch + 3) % 12 == rightPitch;
+  if (relativeMajorMinor) {
+    return 'relative_major_minor';
+  }
+  return 'tonic_difference';
 }
 
 String _canonicalChord(String chord, int capo) {
@@ -1153,6 +1378,11 @@ void main() {
       expect(_exactKeyIdentity('Eb major'), _exactKeyIdentity('D#'));
       expect(_exactKeyIdentity('B Minor'), _exactKeyIdentity('Bm'));
       expect(_exactKeyIdentity('C MAJOR'), _exactKeyIdentity('C'));
+      expect(_practicalKeyRelation('Gbm', 'F#m'), 'same_tonic_and_mode');
+      expect(_practicalKeyRelation('A', 'Am'), 'mode_difference');
+      expect(_practicalKeyRelation('C', 'G'), 'tonic_difference');
+      expect(_practicalKeyRelation('Bbm', 'C#'), 'relative_major_minor');
+      expect(_practicalKeyRelation(null, 'G'), 'unavailable');
     },
   );
   test('licensed chart observations stay practical and scope-aware', () {
@@ -1306,6 +1536,96 @@ void main() {
       _transpositionInvariantChordProgressionHash(['C', 'G/B', 'Am']),
       isNot(_transpositionInvariantChordProgressionHash(['C', 'G', 'Am'])),
     );
+  });
+  test('practical chart lyric correspondence tolerates repetitions', () {
+    final chart = _practicalLyricCorrespondence(
+      '[Verse]\n[C]Walk the road tonight\n[G]We find the light\n'
+      '[Chorus]\n[F]Sing out to the morning',
+      '[Verse]\nWalk the road tonight\nWe find the light\n'
+      '[Chorus]\nSing out to the morning\nSing out to the morning',
+    );
+    expect(chart['chartVocabularyCoverageBySelectedLyrics'], 1);
+    expect(chart['selectedLyricsVocabularyCoverageByChart'], 1);
+    expect(chart['chartOrderedBigramCoverageBySelectedLyrics'], 1);
+    expect(chart['selectedLyricsOrderedBigramCoverageByChart'], 1);
+    expect(chart['chartChordedLineCount'], 3);
+    expect(chart['chartChordedLineOrderedBigramCoverageBySelectedLyrics'], 1);
+    expect(chart.containsKey('body'), isFalse);
+    expect(chart.containsKey('text'), isFalse);
+
+    final accents = _practicalLyricCorrespondence(
+      '[Am]Mi corazón vive aquí',
+      'Mi corazon vive aqui',
+    );
+    expect(accents['chartVocabularyCoverageBySelectedLyrics'], 1);
+    expect(accents['selectedLyricsOrderedBigramCoverageByChordedLines'], 1);
+
+    final unrelated = _practicalLyricCorrespondence(
+      '[C]Silver roads are calling\n[G]Across the empty sea',
+      'Walk the road tonight\nWe find the light\nSing out to the morning',
+    );
+    expect(
+      unrelated['chartVocabularyCoverageBySelectedLyrics'],
+      lessThan(chart['chartVocabularyCoverageBySelectedLyrics'] as num),
+    );
+    expect(
+      unrelated['chartOrderedBigramCoverageBySelectedLyrics'],
+      lessThan(chart['chartOrderedBigramCoverageBySelectedLyrics'] as num),
+    );
+  });
+  test('partial charts score alignment separately from song coverage', () {
+    const overlap = {
+      'chartChordedLineOrderedBigramCoverageBySelectedLyrics': 1.0,
+      'selectedLyricsOrderedBigramCoverageByChordedLines': 0.25,
+    };
+    final summary = _practicalChordLyricSummary([
+      {
+        'practicalChordLyricCorrespondence': {
+          'selectedLyricsAvailable': true,
+          'selectedChordContributors': [
+            {'provider': 'chart'},
+          ],
+        },
+        'sourceSummary': [
+          {
+            'combinedContribution': {'chords': true},
+            'practicalChordLyricCorrespondence': overlap,
+          },
+        ],
+      },
+    ]);
+    expect(summary['contributorsWithAtLeast80PercentChartedLineTextMatch'], 1);
+    expect(summary['contributorsBelow80PercentChartedLineTextMatch'], 0);
+    expect(summary['medianSelectedLyricsOrderedBigramCoverageByChordedLines'],
+        0.25);
+    expect(summary['interpretation'], contains('partial chart'));
+  });
+  test('practical chord key screen accounts for capo and flags mismatch', () {
+    const chart = '''
+[E] [A/E] [C#m] [F#]
+[G#m] [F#] [B] [B/A]
+[E] [A/E] [C#m] [F#]
+[D/F#] [A/E] [E]
+''';
+    final matching = _practicalChordKeyConsistency(
+      chartBody: chart,
+      declaredKey: 'E',
+      rawCapo: 2,
+      selectedKey: 'F#',
+    );
+    expect(matching['shapeKeyEstimate'], 'E');
+    expect(matching['soundingKeyEstimate'], 'F#');
+    expect(matching['declaredKeyVsShapeEstimate'], 'same_tonic_and_mode');
+    expect(matching['selectedKeyVsSoundingEstimate'], 'same_tonic_and_mode');
+    expect(matching.containsKey('body'), isFalse);
+
+    final mismatch = _practicalChordKeyConsistency(
+      chartBody: chart,
+      declaredKey: 'E',
+      rawCapo: 2,
+      selectedKey: 'G',
+    );
+    expect(mismatch['selectedKeyVsSoundingEstimate'], 'tonic_difference');
   });
   test('source chord evidence uses the selected chart alignment hash', () {
     const candidate = SongCandidate(
@@ -1676,6 +1996,24 @@ Future<void> _benchmark() async {
                 ..sort(),
         };
       }
+      final selectedLyricsSource = results
+          .where((source) => source.id == selectedSourceId)
+          .firstOrNull;
+      if (selectedLyricsSource != null) {
+        for (final summary in sourceSummaries) {
+          if ((summary['chordCount'] as num? ?? 0) == 0) continue;
+          final identityHash = summary['sourceIdentitySha256'];
+          final source = results
+              .where((candidate) => _sha(candidate.id) == identityHash)
+              .firstOrNull;
+          if (source == null) continue;
+          summary['practicalChordLyricCorrespondence'] =
+              _practicalLyricCorrespondence(
+            source.body,
+            selectedLyricsSource.body,
+          );
+        }
+      }
       final normalizedLyrics = _normalizedLyrics(doc.body);
       final lyricsHash = normalizedLyrics.isEmpty
           ? null
@@ -1684,6 +2022,23 @@ Future<void> _benchmark() async {
           .expand((l) => l.chords.map((a) => a.chord))
           .join(' ');
       final key = _soundingKey(doc);
+      for (final summary in sourceSummaries) {
+        final identityHash = summary['sourceIdentitySha256'];
+        final source = results
+            .where((candidate) => _sha(candidate.id) == identityHash)
+            .firstOrNull;
+        if (source == null) continue;
+        summary['practicalChordKeyConsistency'] =
+            _practicalChordKeyConsistency(
+          chartBody: source.body,
+          declaredKey: (source.metadata['key'] ??
+                  source.candidate.metadata['key'])
+              as String?,
+          rawCapo: source.metadata['capo'] ??
+              source.candidate.metadata['capo'],
+          selectedKey: key,
+        );
+      }
       final keyClaimScope = _keyClaimScope(doc);
       final identityReady =
           recordingReferenceAnchored &&
@@ -1725,6 +2080,31 @@ Future<void> _benchmark() async {
         'chordedLineCount': arrangement
             .where((l) => l.chords.isNotEmpty)
             .length,
+        'practicalChordLyricCorrespondence': {
+          'selectedLyricsAvailable': selectedLyricsSource != null,
+          'selectedChordContributors': sourceSummaries
+              .where((source) {
+                final contribution = source['combinedContribution'];
+                return contribution is Map && contribution['chords'] == true;
+              })
+              .map(
+                (source) => {
+                  'provider': source['provider'],
+                  'match': source['match'],
+                  'recordingCompatible': source['recordingCompatible'],
+                  'lyricOverlap':
+                      source['practicalChordLyricCorrespondence'],
+                  'keyConsistency':
+                      source['practicalChordKeyConsistency'],
+                },
+              )
+              .toList(),
+          'interpretation':
+              'Per-source word-order coverage measures whether contributed chart lines correspond to the selected lyric text. Repetition differences are tolerated; the metric does not prove exact recording or chord correctness.',
+        },
+        'practicalChordKeyConsistency': _practicalChordKeySummary([
+          row,
+        ]),
       });
       final fieldResults = <String, String>{};
       for (final field in _fields) {
@@ -2253,6 +2633,9 @@ Future<void> _benchmark() async {
       rows,
       _readLicensedChartObservations(),
     ),
+    'practicalChordLyricCorrespondence':
+        _practicalChordLyricSummary(rows),
+    'practicalChordKeyConsistency': _practicalChordKeySummary(rows),
     'cache': {
       'hits': client.hits,
       'networkAttempts': client.networkAttempts,
@@ -2266,7 +2649,7 @@ Future<void> _benchmark() async {
     '${out.path}/report.json',
   ).writeAsStringSync(const JsonEncoder.withIndent('  ').convert(report));
   print(
-    'METADATA_ACCURACY ${jsonEncode({'coverage': report['coverage'], 'corpusSize': songs.length, 'unavailableCount': report['unavailableCount'], 'sourceCoverage': sourceCoverage, 'sourceAgreement': sourceAgreementSummary, 'crossProviderCandidateIdReuse': reusedCatalogIds, 'practicalLicensedChartReview': report['practicalLicensedChartReview'], 'accuracy': accuracy, 'cacheHits': client.hits, 'uncachedOffline': client.uncached})}',
+    'METADATA_ACCURACY ${jsonEncode({'coverage': report['coverage'], 'corpusSize': songs.length, 'unavailableCount': report['unavailableCount'], 'sourceCoverage': sourceCoverage, 'sourceAgreement': sourceAgreementSummary, 'crossProviderCandidateIdReuse': reusedCatalogIds, 'practicalLicensedChartReview': report['practicalLicensedChartReview'], 'practicalChordLyricCorrespondence': report['practicalChordLyricCorrespondence'], 'practicalChordKeyConsistency': report['practicalChordKeyConsistency'], 'accuracy': accuracy, 'cacheHits': client.hits, 'uncachedOffline': client.uncached})}',
   );
   await transport.close();
 }
