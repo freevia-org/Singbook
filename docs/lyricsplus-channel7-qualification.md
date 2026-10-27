@@ -32,7 +32,13 @@ No extra live requests were made to prepare this channel.
 The new regression tests exercise both probe contracts through synthetic
 search, lyrics and independent metadata responses, reject a v7 update on a
 roster without the native adapter, preserve all prior entries, and cover
-bootstrap, opt-out and populated-library upgrade behavior. Validation execution
-and app/device qualification remain the coordinator's gates. This document
-does not claim an integrated native PR, passing channel checks, publication,
-cloud reachability or a compatible app release.
+bootstrap, opt-out and populated-library upgrade behavior. Thirty focused
+channel/cache tests and 1,484 combined provider/domain/application/chord-only UI
+tests pass, scoped analysis is clean, and independent read-only review found no
+concrete compatibility defect. The ordinary default offline CLI validates all
+28 entries with no registry/catalog gap. The previously live-probed LyricsPlus
+runtime/probe configuration is unchanged; only its change-reason text differs.
+
+App/device qualification, native PR integration, publication, cloud reachability
+and a compatible app release remain explicit gates. These local checks do not
+claim those outcomes.
