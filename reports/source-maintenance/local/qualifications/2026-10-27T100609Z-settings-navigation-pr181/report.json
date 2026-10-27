@@ -1,0 +1,198 @@
+{
+  "schemaVersion": 1,
+  "kind": "local-Android-navigation-regression-qualification",
+  "sourceCommit": "18f21e52b1c0188e1ee0e42ade2ca5721bcfcef7",
+  "baseCommit": "66a74d0e7f5d6eb78aef60666be0c44cd7de5e9f",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/181",
+  "atUtc": "2026-10-27T10:06:09.235203+00:00",
+  "change": "Settings and About only pop their captured route while it remains current, preserving the root during manual Back and shell-tab changes.",
+  "changedFiles": [
+    "lib/ui/settings/settings_screen.dart",
+    "test/ui/settings_route_lifecycle_test.dart"
+  ],
+  "hostValidation": {
+    "beforeFix": "Four new regression cases failed because VerseAppShell disappeared.",
+    "afterFix": "All five detail cases pass; 38 lifecycle, navigation and live-preview checks pass.",
+    "analysis": "clean",
+    "contexts": [
+      "compact",
+      "landscape",
+      "large text",
+      "English",
+      "Ukrainian",
+      "Arabic"
+    ]
+  },
+  "hostedChecks": {
+    "CI": {
+      "run": 40483541665,
+      "conclusion": "success"
+    },
+    "macOS": {
+      "run": 40483541579,
+      "conclusion": "success"
+    },
+    "UX": {
+      "run": 40483541600,
+      "conclusion": "success"
+    }
+  },
+  "android": {
+    "runtime": "Android16 API36 x86_64 16KB emulator-5554",
+    "combinedQaHead": "690ba2900977cbda01bd431369edefd561d109af",
+    "sourceCandidateHead": "09a8bf95e6c226e34445293902a83dd36071df47",
+    "package": "org.freevia.singbook.qa09a8bf9",
+    "apkSha256": "12de3fc6bed83d4eedd2c8ea2884cd85a192089aa581647ff5d7525c07e5e372",
+    "apkBytes": 102181856,
+    "sameSignerUpdate": true,
+    "mode": "isolated debug QA update",
+    "catalogRevision": 15,
+    "catalogSources": 24,
+    "localNativeOverrideFiles": [
+      "android/app/build.gradle.kts",
+      "android/app/src/main/AndroidManifest.xml",
+      "scripts/build-android.ps1"
+    ],
+    "inPlaceInstall": "adb install -r --no-streaming succeeded; no uninstall fallback",
+    "regression": {
+      "startedAtUtc": "2026-10-27T10:03:13.022977+00:00",
+      "package": "org.freevia.singbook.qa09a8bf9",
+      "network": {
+        "airplane_mode_on": "1",
+        "wifi_on": "0",
+        "mobile_data": "0"
+      },
+      "cases": [
+        {
+          "section": "Lyrics sources",
+          "rapidBackThenTabTap": true,
+          "rootVisible": true,
+          "libraryCount": 2,
+          "settledSongsTapNeeded": true,
+          "capture": "root-after-0.png",
+          "timingLimit": "Android input delivery and animated route hit testing differ from the exact 30 ms widget reproduction; a settled Songs tap also verifies content."
+        },
+        {
+          "section": "Appearance",
+          "rapidBackThenTabTap": true,
+          "rootVisible": true,
+          "libraryCount": 2,
+          "settledSongsTapNeeded": true,
+          "capture": "root-after-1.png",
+          "timingLimit": "Android input delivery and animated route hit testing differ from the exact 30 ms widget reproduction; a settled Songs tap also verifies content."
+        },
+        {
+          "section": "Lyrics player",
+          "rapidBackThenTabTap": true,
+          "rootVisible": true,
+          "libraryCount": 2,
+          "settledSongsTapNeeded": true,
+          "capture": "root-after-2.png",
+          "timingLimit": "Android input delivery and animated route hit testing differ from the exact 30 ms widget reproduction; a settled Songs tap also verifies content."
+        },
+        {
+          "section": "Account and sync",
+          "rapidBackThenTabTap": true,
+          "rootVisible": true,
+          "libraryCount": 2,
+          "settledSongsTapNeeded": true,
+          "capture": "root-after-3.png",
+          "timingLimit": "Android input delivery and animated route hit testing differ from the exact 30 ms widget reproduction; a settled Songs tap also verifies content."
+        },
+        {
+          "section": "Singbook\nAbout",
+          "rapidBackThenTabTap": true,
+          "rootVisible": true,
+          "libraryCount": 2,
+          "settledSongsTapNeeded": true,
+          "capture": "root-after-4.png",
+          "timingLimit": "Android input delivery and animated route hit testing differ from the exact 30 ms widget reproduction; a settled Songs tap also verifies content."
+        }
+      ],
+      "finishedAtUtc": "2026-10-27T10:04:03.042873+00:00"
+    },
+    "offlineReaders": {
+      "atUtc": "2026-10-27T10:05:32.792624+00:00",
+      "offline": {
+        "airplane_mode_on": "1",
+        "wifi_on": "0",
+        "mobile_data": "0"
+      },
+      "opened": [
+        {
+          "title": "Rollin' Girl",
+          "openedOfflineAfterInPlaceUpdate": true
+        },
+        {
+          "title": "ECHO",
+          "openedOfflineAfterInPlaceUpdate": true
+        }
+      ]
+    },
+    "persistence": {
+      "atUtc": "2026-10-27T10:06:09.235203+00:00",
+      "completeStoredRows": [
+        {
+          "table": "songs",
+          "rows": 2,
+          "allFieldsExact": true
+        },
+        {
+          "table": "setlists",
+          "rows": 0,
+          "allFieldsExact": true
+        },
+        {
+          "table": "setlist_entries",
+          "rows": 0,
+          "allFieldsExact": true
+        },
+        {
+          "table": "outbox",
+          "rows": 2,
+          "allFieldsExact": true
+        },
+        {
+          "table": "sync_items",
+          "rows": 0,
+          "allFieldsExact": true
+        }
+      ],
+      "providerOptoutsExact": true,
+      "intentionalSettingsChanges": [],
+      "activity": "Two additional offline reader opens are expected; activity is not asserted byte-identical.",
+      "canonicalPrivateDataAccessed": false,
+      "physicalDevicesTouched": false
+    },
+    "network": {
+      "atUtc": "2026-10-27T10:06:06.670026+00:00",
+      "original": {
+        "airplane_mode_on": "0",
+        "wifi_on": "1",
+        "mobile_data": "1"
+      },
+      "restored": {
+        "airplane_mode_on": "0",
+        "wifi_on": "1",
+        "mobile_data": "1"
+      },
+      "exact": true
+    },
+    "canonicalApkSha256Unchanged": "10648f17e6f0b2c738dbcdf0238114195f18392a07773435244b4158d5ee50be",
+    "canonicalPrivateDataAccessed": false,
+    "physicalDevicesTouched": false,
+    "qaStoppedAndDeviceSdkLeasesReleased": true
+  },
+  "testHarnessRecovery": [
+    "The same AVD was restarted without wiping after its emulator process stopped. Android System UI showed a cold-boot not-responding dialog; Wait recovered it.",
+    "An initial shell quoting error omitted the Back tap and toggled Better Lyrics in the isolated QA app. Corrected the harness and restored the switch through the app; every final app preference matches the pre-update snapshot exactly.",
+    "The initial cached-reader selector expected a newline; actual library semantics use a comma. Corrected the selector and both cached readers opened offline."
+  ],
+  "visualReview": "Settings menu and About screenshots inspected; no clipping or blank root observed. Reader images remain private.",
+  "privacy": "No lyrics, raw source documents, private database, reader images, account credentials or cookies are published.",
+  "limits": [
+    "Native input timing and animated hit testing differ from the deterministic 30 ms widget reproduction. Native rapid taps landed on Setlists, then settled observed Songs taps recovered its content in every case.",
+    "Candidate QA build only; public-main merge and production release are not claimed.",
+    "No new cloud source qualification is claimed."
+  ]
+}
