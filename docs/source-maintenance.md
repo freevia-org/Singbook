@@ -49,11 +49,15 @@ builds. Channel 3 inherits all 22 channel-2 entries without altering them and
 adds AMLL enabled by default for the new compiled runtime. Existing saved
 opt-outs win. Channel-1 and channel-2 apps keep their source lists, URLs and
 cache streams. Channel 4 preserves all 23 channel-3 entries and adds VocaDB
-enabled by default for its compiled runtime. Channel 5 preserves
-all 24 channel-4 entries and adds TouhouDB and UtaiteDB active/default-on for its
+enabled by default for its compiled runtime. Channel 5 preserves all 24
+channel-4 source entries and adds TouhouDB and UtaiteDB active/default-on for its
 new compiled runtime. Their fixed-host parsers retain every lyric variant,
 credit, alias, role, album and original-version relationship. They do not borrow
 a parent's lyrics for a cover/remaster with no original lyric of its own.
+Channel-5 revision 17 additionally revises MusicBrainz to source revision 3
+with optional exact-release Cover Art Archive front previews and two artwork
+canaries. Other 25 entries stay unchanged. The matching compiled extension is
+required; ambiguous editions omit art. See [artwork qualification](cover-art-qualification.md).
 Contextual title
 lookup, complete lyric-variant/artist-role facts and mutable detail caching use
 the ordinary provider service. Existing saved opt-outs still win. Release-40
@@ -214,6 +218,11 @@ coverage requires an explicit line cue; word coverage requires positioned word
 cues with valid grapheme bounds. A combined word track may contain both. A raw
 document alone proves retention, not working cues.
 Reports list `coverage.verifiedCapabilities` and `coverage.unverifiedCapabilities`;
+structured `artworkAssets` can verify image locations, binding and provenance
+with explicitly unknown rights. `artworkImageBytesValidated: false` separates
+this from actual image decoding or a license grant. Optional artwork failures
+are classified separately; unrelated missing required recording metadata still
+reports `changed_schema`, with the art failure alongside it.
 passing canaries with advertised but untested capabilities are `partial_coverage`,
 which also returns exit 1. Extend coverage when a representative real canary is
 available; incomplete coverage alone does not justify retiring a source.

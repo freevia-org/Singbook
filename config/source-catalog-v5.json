@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "extractionSchemaVersion": 1,
-  "revision": 16,
-  "publishedAt": "2026-10-27T10:52:18.516Z",
+  "revision": 17,
+  "publishedAt": "2026-10-27T12:29:02.577243Z",
   "sources": [
     {
       "id": "genius",
@@ -589,10 +589,11 @@
       "name": "MusicBrainz",
       "adapter": "builtin",
       "status": "active",
-      "revision": 2,
+      "revision": 3,
       "capabilities": [
         "catalog",
-        "metadata"
+        "metadata",
+        "artwork"
       ],
       "enabledByDefault": true,
       "accessMode": "noncommercialApi",
@@ -619,9 +620,69 @@
             "musicbrainzRecordingId"
           ],
           "query": "recording:\"Wonderwall\" AND artist:\"Oasis\" AND dur:[269000 TO 269500]"
+        },
+        {
+          "id": "exact-release-artwork-b5558485-68a8-4c6c-8283-60e6ae940e06",
+          "candidate": {
+            "providerId": "musicbrainz",
+            "id": "b5558485-68a8-4c6c-8283-60e6ae940e06",
+            "title": "オープニング〜爆破ミッション",
+            "artist": "(S_S)",
+            "album": "Final Fantasy VII Chips",
+            "durationSeconds": 238.986,
+            "recordingIds": {
+              "musicbrainz": "b5558485-68a8-4c6c-8283-60e6ae940e06"
+            },
+            "metadata": {
+              "musicbrainzReleaseId": "5b07fe49-39a9-47a6-97b3-e5005992fb2a"
+            }
+          },
+          "expectedTitle": "オープニング〜爆破ミッション",
+          "expectedArtist": "(S_S)",
+          "expectedAlbum": "Final Fantasy VII Chips",
+          "expectedDurationSeconds": 238.986,
+          "requiredFields": [
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "musicbrainzRecordingId",
+            "musicbrainzReleaseId",
+            "artworkUrl",
+            "artworkAssets"
+          ]
+        },
+        {
+          "id": "exact-release-artwork-b5d7d380-f43a-4c1f-a5de-694150b093ac",
+          "candidate": {
+            "providerId": "musicbrainz",
+            "id": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+            "title": "Mysterons",
+            "artist": "Portishead",
+            "album": "Dummy",
+            "durationSeconds": 306.2,
+            "recordingIds": {
+              "musicbrainz": "b5d7d380-f43a-4c1f-a5de-694150b093ac"
+            },
+            "metadata": {
+              "musicbrainzReleaseId": "76df3287-6cda-33eb-8e9a-044b5e15ffdd"
+            }
+          },
+          "expectedTitle": "Mysterons",
+          "expectedArtist": "Portishead",
+          "expectedAlbum": "Dummy",
+          "expectedDurationSeconds": 306.2,
+          "requiredFields": [
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "musicbrainzRecordingId",
+            "musicbrainzReleaseId",
+            "artworkUrl",
+            "artworkAssets"
+          ]
         }
       ],
-      "changeReason": "2026-10-23: Add an exact search canary for the existing recording UUID using title, artist and observed duration, followed by the same ID-bound metadata resolve. Other recordings and ambiguous same-name matches are never substituted."
+      "changeReason": "2026-10-27: Optional Cover Art Archive front artwork is bound to a validated exact release/recording track. Preserve existing recording search canary; add two explicit independent release-artwork canaries. Ambiguity or missing/darkened art omits the optional image without losing recording metadata. Requires the compiled optional artwork adapter; no first-release or release-group fallback and no blanket artwork license."
     },
     {
       "id": "wikidata",

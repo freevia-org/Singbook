@@ -377,13 +377,23 @@ class ProviderTransport {
         url = target;
         continue;
       }
+      Duration? retryAfter;
+      if (code == 429 || code == 503) {
+        final asked = int.tryParse(reply.headers['retry-after']?.trim() ?? '');
+        if (asked != null) {
+          retryAfter = Duration(seconds: asked.clamp(0, 86400));
+          // A server cooldown belongs to the host, not just this retry. Keep
+          // it after cancellation or when the retry budget is exhausted.
+          final key = _rateKey(url.host);
+          final until = DateTime.now().add(retryAfter);
+          final previous = _next[key];
+          if (previous == null || until.isAfter(previous)) _next[key] = until;
+        }
+      }
       if ((code == 429 || code == 503) &&
           verb == 'GET' &&
           retries < maxRetries) {
-        final asked = int.tryParse(reply.headers['retry-after']?.trim() ?? '');
-        final delay = asked != null
-            ? Duration(seconds: asked.clamp(0, 86400))
-            : retryBaseDelay * (1 << retries);
+        final delay = retryAfter ?? retryBaseDelay * (1 << retries);
         if (delay <= maxRetryDelay) {
           retries++;
           await _cancellable(Future<void>.delayed(delay), cancel);
@@ -493,7 +503,11 @@ class ProviderTransport {
         _ => Duration.zero,
       };
       final interval = hostInterval < minimum ? minimum : hostInterval;
-      _next[key] = DateTime.now().add(interval);
+      final pacedUntil = DateTime.now().add(interval);
+      final previous = _next[key];
+      _next[key] = previous != null && previous.isAfter(pacedUntil)
+          ? previous
+          : pacedUntil;
     }
   }
 

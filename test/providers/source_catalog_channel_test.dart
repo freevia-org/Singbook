@@ -160,12 +160,32 @@ void main() {
           expect(client.endpoint.path, endsWith('/source-catalog-v5.json'));
           expect(runtime.catalog!.sources, hasLength(26));
           for (final previous in SourceCatalog.parse(_bundle('-v4')).sources) {
-            expect(
-              runtime.catalog!.sources
-                  .singleWhere((s) => s.id == previous.id)
-                  .toJson(),
-              previous.toJson(),
+            final current = runtime.catalog!.sources.singleWhere(
+              (s) => s.id == previous.id,
             );
+            if (previous.id == 'musicbrainz') {
+              // Optional exact-release artwork is the one deliberately
+              // revised existing provider; its earlier canary/contract stays.
+              expect(current.revision, 3);
+              expect(current.capabilities, {
+                ...previous.capabilities,
+                'artwork',
+              });
+              expect(
+                current.probes.take(previous.probes.length).toList(),
+                previous.probes,
+              );
+              expect(current.probes.length, previous.probes.length + 2);
+              expect({
+                ...current.toJson(),
+                'revision': previous.revision,
+                'capabilities': previous.toJson()['capabilities'],
+                'probes': previous.probes,
+                'changeReason': previous.toJson()['changeReason'],
+              }, previous.toJson());
+              continue;
+            }
+            expect(current.toJson(), previous.toJson());
           }
           final source = runtime.catalog!.sources.singleWhere(
             (s) => s.id == sourceId,

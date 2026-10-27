@@ -108,6 +108,74 @@ void main() {
   });
 
   group('rate limits', () {
+    test('Retry-After survives cancellation of an optional retry', () async {
+      final firstResponse = Completer<void>();
+      final cancel = CancellationToken();
+      final clock = Stopwatch()..start();
+      final attempts = <int>[];
+      final t = wire((request) async {
+        attempts.add(clock.elapsedMicroseconds);
+        if (attempts.length == 1) {
+          firstResponse.complete();
+          return http.Response('busy', 503, headers: {'retry-after': '1'});
+        }
+        return http.Response('ok', 200);
+      });
+      try {
+        final first = expectLater(
+          t.getText(Uri.parse('https://example.org/art'), cancel: cancel),
+          throwsA(errorCode('cancelled')),
+        );
+        await firstResponse.future;
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        cancel.cancel();
+        await first;
+        expect(
+          await t.getText(Uri.parse('https://example.org/recording')),
+          'ok',
+        );
+        expect(attempts, hasLength(2), reason: 'no cancelled retry is sent');
+        expect(attempts[1] - attempts[0], greaterThanOrEqualTo(950000));
+      } finally {
+        await t.close();
+      }
+    });
+    test(
+      'exhausted retry budget preserves cooldown without blocking other hosts',
+      () async {
+        final clock = Stopwatch()..start();
+        final attempts = <String, int>{};
+        final t = wire((request) async {
+          attempts[request.url.host + request.url.path] =
+              clock.elapsedMicroseconds;
+          return request.url.path == '/limited'
+              ? http.Response('busy', 429, headers: {'retry-after': '1'})
+              : http.Response('ok', 200);
+        }, maxRetries: 0);
+        try {
+          await expectLater(
+            t.getText(Uri.parse('https://example.org/limited')),
+            throwsA(errorCode('rate_limited')),
+          );
+          final next = t.getText(Uri.parse('https://example.org/next'));
+          expect(
+            await t.getText(Uri.parse('https://other.example.org/free')),
+            'ok',
+          );
+          expect(await next, 'ok');
+          expect(
+            attempts['other.example.org/free']!,
+            lessThan(attempts['example.org/next']!),
+          );
+          expect(
+            attempts['example.org/next']! - attempts['example.org/limited']!,
+            greaterThanOrEqualTo(950000),
+          );
+        } finally {
+          await t.close();
+        }
+      },
+    );
     test('SyncLRC routes and immediate retries share the 30/min queue', () async {
       final clock = Stopwatch()..start();
       final attempts = <int>[];
