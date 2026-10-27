@@ -573,6 +573,11 @@ class SourceCatalogRuntime {
   SourceCatalog? get catalog => _catalog;
   final Map<String, SourceCatalogEntry> _entryHistory = {};
 
+  /// An independent validation/transition boundary for a distribution channel.
+  /// It reuses compiled adapters, never the previous channel's revision history.
+  SourceCatalogRuntime fresh() =>
+      SourceCatalogRuntime(builtins: _builtins, createProvider: createProvider);
+
   List<LyricsProvider> _providers = const [];
   List<LyricsProvider> get providers =>
       _catalog == null ? _builtins : _providers;
