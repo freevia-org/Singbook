@@ -177,29 +177,38 @@ Map<String, Object?> _practicalChordKeyConsistency({
   required String chartBody,
   required String? declaredKey,
   required Object? rawCapo,
+  required Object? rawKeyShift,
   required String? selectedKey,
 }) {
   final estimate = estimateChordKey(chartBody);
   final capo = _capoOf(rawCapo);
-  final soundingEstimate = estimate == null
+  final keyShift = rawKeyShift is int ? rawKeyShift : 0;
+  final correctedShapeEstimate = estimate == null
+      ? null
+      : keyShift == 0
+      ? estimate.key
+      : transposeChord(estimate.key, keyShift);
+  final correctedSoundingEstimate = correctedShapeEstimate == null
       ? null
       : capo == 0
-      ? estimate.key
-      : transposeChord(estimate.key, capo);
+      ? correctedShapeEstimate
+      : transposeChord(correctedShapeEstimate, capo);
   return {
     'declaredKey': declaredKey,
     'shapeKeyEstimate': estimate?.key,
-    'soundingKeyEstimate': soundingEstimate,
+    'correctedShapeKeyEstimate': correctedShapeEstimate,
+    'correctedSoundingKeyEstimate': correctedSoundingEstimate,
     'capo': capo,
+    'keyShift': keyShift,
     'separation': estimate?.separation,
     'chordCount': estimate?.chordCount ?? 0,
     'distinctRoots': estimate?.distinctRoots ?? 0,
     'declaredKeyVsShapeEstimate':
         _practicalKeyRelation(declaredKey, estimate?.key),
-    'selectedKeyVsSoundingEstimate':
-        _practicalKeyRelation(selectedKey, soundingEstimate),
+    'selectedKeyVsCorrectedSoundingEstimate':
+        _practicalKeyRelation(selectedKey, correctedSoundingEstimate),
     'interpretation':
-        'Self-consistency diagnostic only. A chart-derived key estimate can flag conflicts but cannot independently establish the recording key or chord correctness.',
+        'Self-consistency diagnostic applies the recorded majority-key transposition and capo. A chart-derived estimate can flag conflicts but cannot independently establish the recording key or chord correctness.',
   };
 }
 
@@ -238,8 +247,8 @@ Map<String, Object?> _practicalChordKeySummary(
         .length,
     'declaredKeyVsShapeEstimate':
         countRelations('declaredKeyVsShapeEstimate'),
-    'selectedKeyVsSoundingEstimate':
-        countRelations('selectedKeyVsSoundingEstimate'),
+    'selectedKeyVsCorrectedSoundingEstimate':
+        countRelations('selectedKeyVsCorrectedSoundingEstimate'),
     'interpretation':
         'Counts compare key labels with a chord-derived chart estimate as a self-consistency screen. They are not independent recording-key or chord-correctness validation.',
   };
@@ -1611,21 +1620,37 @@ void main() {
       chartBody: chart,
       declaredKey: 'E',
       rawCapo: 2,
+      rawKeyShift: null,
       selectedKey: 'F#',
     );
     expect(matching['shapeKeyEstimate'], 'E');
-    expect(matching['soundingKeyEstimate'], 'F#');
+    expect(matching['correctedSoundingKeyEstimate'], 'F#');
     expect(matching['declaredKeyVsShapeEstimate'], 'same_tonic_and_mode');
-    expect(matching['selectedKeyVsSoundingEstimate'], 'same_tonic_and_mode');
+    expect(matching['selectedKeyVsCorrectedSoundingEstimate'],
+        'same_tonic_and_mode');
     expect(matching.containsKey('body'), isFalse);
 
     final mismatch = _practicalChordKeyConsistency(
       chartBody: chart,
       declaredKey: 'E',
       rawCapo: 2,
+      rawKeyShift: null,
       selectedKey: 'G',
     );
-    expect(mismatch['selectedKeyVsSoundingEstimate'], 'tonic_difference');
+    expect(mismatch['selectedKeyVsCorrectedSoundingEstimate'],
+        'tonic_difference');
+
+    final moved = _practicalChordKeyConsistency(
+      chartBody: chart,
+      declaredKey: 'E',
+      rawCapo: 0,
+      rawKeyShift: 5,
+      selectedKey: 'A',
+    );
+    expect(moved['shapeKeyEstimate'], 'E');
+    expect(moved['correctedShapeKeyEstimate'], 'A');
+    expect(moved['selectedKeyVsCorrectedSoundingEstimate'],
+        'same_tonic_and_mode');
   });
   test('source chord evidence uses the selected chart alignment hash', () {
     const candidate = SongCandidate(
@@ -2036,6 +2061,7 @@ Future<void> _benchmark() async {
               as String?,
           rawCapo: source.metadata['capo'] ??
               source.candidate.metadata['capo'],
+          rawKeyShift: source.extra['keyShift'],
           selectedKey: key,
         );
       }
