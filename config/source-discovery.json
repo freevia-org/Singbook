@@ -363,6 +363,45 @@
         "https://tucuatro.com/terms-of-service/"
       ],
       "reason": "Publisher index advertises thousands of multi-instrument song arrangements with Latin American/traditional and international repertoire. This is a publisher claim, not an independently counted or deduplicated catalog; incremental language/regional coverage and overlap are unmeasured. Public Moliendo Cafe page labels Hugo Blanco as artist and composer and offers instrument selection; those are arrangement facts, not recording IDs. Contributor guide describes moderated submissions and chords positioned above lyric lines. Use of the Site terms explicitly restrict automated data gathering/extraction. Intellectual Property terms permit bounded personal/educational copying of unmodified content with notices, which does not establish access for an automated Singbook adapter. No API/app-access agreement was verified. Deferred pending explicit publisher authorization covering automated search/extraction, app display/storage and attribution. Existing grammar compatibility, stable identity mapping and two independent live extraction canaries remain unverified. No provider API probing, extraction-canary runs, accounts, cookies, bulk collection, parser changes or outreach were undertaken; no source was registered or enabled."
+    },
+    {
+      "id": "itunes-search",
+      "name": "Apple iTunes Search API",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred",
+      "documentation": [
+        "https://performance-partners.apple.com/search-api"
+      ],
+      "endpoint": "https://itunes.apple.com/search",
+      "reason": "Current publisher documentation describes music search and ID lookup with storefront/country context and approximately20 calls/minute. Its artwork terms require a promotional purpose and a nearby approved store badge linking to the promoted item; a generic songbook cover display does not establish that use. No artwork download or song API canaries were run. Defer pending an intended-use design consistent with those terms, exact storefront/track/release identity, compatible extraction and two independent canaries. Numerical catalog size, regional benefit and incremental overlap are unmeasured; no account, contract, expense or app activation."
+    },
+    {
+      "id": "theaudiodb",
+      "name": "TheAudioDB",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred",
+      "documentation": [
+        "https://www.theaudiodb.com/free_music_api",
+        "https://www.theaudiodb.com/docs_terms_of_use.php"
+      ],
+      "endpoint": "https://www.theaudiodb.com/api/v1/json",
+      "reason": "Publisher documents artist/album/track metadata, artwork, v1/v2 APIs, numeric entity IDs and MusicBrainz lookup options. Terms allow official API use with notices and attribution, but distinguish free development from app-store publication, which requires a paid subscription; third-party content permission remains separate. A public development key is not production access authorization. Defer pending an approved production access plan and credential handling, exact recording/release identity, per-asset rights/credit handling and two independent extraction canaries. No subscription, account, API content/artwork calls, credentials or source activation; catalog size, languages and overlap unmeasured."
+    },
+    {
+      "id": "betterlyrics-optional-providers",
+      "name": "Better Lyrics provider-specific Kugou and QQ routes",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred",
+      "documentation": [
+        "https://docs.betterlyrics.org/docs/providers",
+        "https://docs.betterlyrics.org/docs/authentication",
+        "https://docs.betterlyrics.org/reference/get-lyrics"
+      ],
+      "endpoint": "https://api.betterlyrics.org",
+      "reason": "Publisher describes a line-timed LRC Kugou route and word-timed QRC QQ route as alternatives to its TTML service and documents anonymous access including cache misses. Two ordinary local GET diagnostics on2026-10-27T05:02Z against /kugou/getLyrics, with the documented title/artist/album/duration fields for Never Gonna Give You Up/Rick Astley and The Sound Of Silence/Simon & Garfunkel, instead returned HTTP401 with X-Provider:kugou and X-Cache-Status:MISS. No retries, credentials or denial workaround; no lyric documents received or retained. This contradicts the reviewed anonymous-route contract for those two requests, not proof that every song or QQ is unavailable. QQ was not probed. Keep existing Better Lyrics/Unison adapters unchanged; defer additional routes pending an access-contract resolution, response identity validation, compatible LRC/QRC extraction, preserved source/timing provenance and two real production canaries. Catalog size, independent regional coverage and overlap unmeasured."
     }
   ]
 }
