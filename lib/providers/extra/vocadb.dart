@@ -35,7 +35,10 @@ enum _Database {
 }
 
 abstract class _VocaDbFamilyProvider
-    implements LyricsProvider, ContextualLyricsSearch {
+    implements
+        LyricsProvider,
+        ContextualLyricsSearch,
+        PublishedTitleAliasEvidence {
   _VocaDbFamilyProvider._(
     this._database,
     this.transport, {
@@ -277,6 +280,26 @@ abstract class _VocaDbFamilyProvider
               (v) => normalized(v) == normalized(selected.title),
             )) &&
         normalized(selected.artist) == normalized(found.artist);
+  }
+
+  @override
+  String? publishedTitleAliasForSelection(
+    SongCandidate selection,
+    SongCandidate candidate,
+  ) {
+    if (candidate.providerId != definition.id ||
+        !_sameSelection(selection, candidate)) {
+      return null;
+    }
+    final aliases = candidate.extra['sourceTitleAliases'];
+    if (aliases is! List) return null;
+    for (final alias in aliases.whereType<String>()) {
+      if (normalized(alias) == normalized(selection.title) &&
+          normalized(alias) != normalized(candidate.title)) {
+        return alias;
+      }
+    }
+    return null;
   }
 
   @override

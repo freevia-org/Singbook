@@ -133,6 +133,19 @@ The channel-5 bundle/URL/cache use revision 16 and `sourceCatalog:v5`, leaving
 all older catalogs and cache streams unchanged. Existing opt-outs win, including
 saved choices for either new source. No new release version is allocated here.
 
+Independent review also found that native contextual lookup recognized published
+Japanese/romanized aliases while the shared matcher discarded their canonical
+English candidates. An optional native-provider evidence interface now admits
+only an exact published alias after all existing artist, album, duration,
+recording-ID and explicit edition checks. Canonical source titles and documents
+remain unchanged; alias provenance is recorded separately. Detail responses must
+retain the alias and cannot contradict the selected edition through their title,
+metadata or extra fields. Declarative alias-shaped data alone grants no trust.
+The two actual Japanese aliases passed normal configured-factory matching with
+unchanged lyric bodies and structured facts. These targeted probes do not imply
+Android or cloud reachability. Ten focused synthetic tests cover positive aliases
+and conflicting context, recording IDs, title editions and detail-only editions.
+
 Before production availability:
 
 1. Complete final registered-runtime CLI and hosted checks on the committed
