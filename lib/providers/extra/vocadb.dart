@@ -9,7 +9,7 @@ import 'common.dart'
 /// Public HTTPS API: https://wiki.vocadb.net/docs/public-api.
 /// A VocaDB entry identifies a source song/version, not a confirmed recording.
 /// Database metadata is CC BY 4.0; lyrics and artwork are explicitly excluded.
-class VocaDbProvider implements LyricsProvider {
+class VocaDbProvider implements LyricsProvider, ContextualLyricsSearch {
   VocaDbProvider(
     this.transport, {
     this.requestInterval = const Duration(seconds: 1),
@@ -240,9 +240,7 @@ class VocaDbProvider implements LyricsProvider {
         normalized(selected.artist) == normalized(found.artist);
   }
 
-  // These methods follow PR173's shared contextual-search contract. Register
-  // that interface only after it reaches the integration base; this isolated
-  // adapter proposal does not duplicate or modify the shared interface.
+  @override
   bool canReuseSearchForSelection(
     SongCandidate selection,
     List<SongCandidate> candidates,
@@ -250,6 +248,7 @@ class VocaDbProvider implements LyricsProvider {
     (row) => row.providerId == definition.id && _sameSelection(selection, row),
   );
 
+  @override
   Future<List<SongCandidate>> searchForSelection(
     SongCandidate selection, {
     required String fallbackQuery,

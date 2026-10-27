@@ -14,7 +14,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   sqfliteFfiInit();
   test(
-    'fresh offline bootstrap exposes AMLL enabled without a consent step',
+    'fresh offline bootstrap exposes AMLL and VocaDB enabled without extra steps',
     () async {
       final repo = await LibraryRepository.open(
         path: inMemoryDatabasePath,
@@ -32,17 +32,24 @@ void main() {
       try {
         await app.initialize();
         expect(app.providerEnabled('amll'), true);
+        expect(app.providerEnabled('vocadb'), true);
+        expect(
+          app.providers.singleWhere((p) => p.id == 'vocadb').configured,
+          true,
+        );
         expect(
           app.providers.singleWhere((p) => p.id == 'amll').configured,
           true,
         );
         expect(
           app.discovery.catalogClient!.runtime.catalog!.sources,
-          hasLength(23),
+          hasLength(24),
         );
         expect(requests, 0);
         await app.setProviderEnabled('amll', false);
+        await app.setProviderEnabled('vocadb', false);
         expect(app.providerEnabled('amll'), false);
+        expect(app.providerEnabled('vocadb'), false);
         expect(
           ((await repo.getSetting('app') as Map)['providers'] as Map)['amll'],
           false,
@@ -55,7 +62,7 @@ void main() {
     },
   );
   test(
-    'real bootstrap migrates to channel3 without changing legacy data or choices',
+    'real bootstrap migrates to channel4 without changing older streams or choices',
     () async {
       final repo = await LibraryRepository.open(
         path: inMemoryDatabasePath,
@@ -73,11 +80,18 @@ void main() {
       final old2Text = jsonEncode(old2);
       await repo.setSetting('sourceCatalog', old1Text);
       await repo.setSetting(SourceCatalogClient.channel2CacheKey, old2Text);
+      final old3 =
+          jsonDecode(File('config/source-catalog-v3.json').readAsStringSync())
+              as Map<String, dynamic>;
+      old3['revision'] = 4000;
+      final old3Text = jsonEncode(old3);
+      await repo.setSetting(SourceCatalogClient.channel3CacheKey, old3Text);
       await repo.setSetting('app', {
         'providers': {
           'lrclib': false,
           'karamoe': false,
           'amll': false,
+          'vocadb': false,
           'worshiptogether': true,
         },
         'themeMode': 'dark',
@@ -87,6 +101,47 @@ void main() {
         title: 'Saved title',
         artist: 'Saved artist',
         body: '[C]My original words',
+        metadata: {'album': 'Saved album', 'tempo': 90},
+        sources: [
+          SourceResult(
+            candidate: const SongCandidate(
+              providerId: 'lrclib',
+              id: 'saved-source',
+              title: 'Saved title',
+              artist: 'Saved artist',
+            ),
+            body: '[C]My original words',
+            attribution: 'Synthetic prior-source attribution',
+            extra: {
+              'originalPayload': {
+                'contentType': 'text/plain',
+                'encoding': 'utf-8',
+                'base64': base64Encode(
+                  utf8.encode('Synthetic original source payload'),
+                ),
+              },
+              'rights': {'license': 'unknown'},
+            },
+          ),
+        ],
+        timingTracks: const [
+          TimingTrack(
+            id: 'saved-timing',
+            sourceDocumentId: 'lrclib:saved-source',
+            sourceLyrics: 'My original words',
+            format: 'lrc',
+            raw: '[00:01.00]My original words',
+            cues: [
+              TimingCue(
+                id: 'saved-cue',
+                occurrenceId: 'line-0',
+                text: 'My original words',
+                startUs: 1000000,
+                endUs: 2000000,
+              ),
+            ],
+          ),
+        ],
       );
       await repo.saveSong(song);
       final before = jsonEncode((await repo.listSongs()).single.toJson());
@@ -114,7 +169,7 @@ void main() {
         await app.initialize();
         await app.refreshSources();
         expect(app.discovery.catalogClient!.lastErrorCode, isNull);
-        expect(seen.single.path, endsWith('/source-catalog-v3.json'));
+        expect(seen.single.path, endsWith('/source-catalog-v4.json'));
         expect(
           app.discovery.catalogClient!.runtime.catalog!.revision,
           nextRevision,
@@ -125,9 +180,14 @@ void main() {
           old2Text,
         );
         expect(await repo.getSetting(SourceCatalogClient.cacheKey), nextText);
+        expect(
+          await repo.getSetting(SourceCatalogClient.channel3CacheKey),
+          old3Text,
+        );
         expect(app.providerEnabled('lrclib'), false);
         expect(app.providerEnabled('karamoe'), false);
         expect(app.providerEnabled('amll'), false);
+        expect(app.providerEnabled('vocadb'), false);
         expect(
           app.discovery.catalogClient!.runtime.providers
               .singleWhere((p) => p.definition.id == 'amll')
@@ -141,7 +201,13 @@ void main() {
               as Map)['worshiptogether'],
           true,
         );
-        for (final id in ['lrcred', 'roswellmusicjam', 'karamoe', 'amll']) {
+        for (final id in [
+          'lrcred',
+          'roswellmusicjam',
+          'karamoe',
+          'amll',
+          'vocadb',
+        ]) {
           expect(app.providers.any((p) => p.id == id), true);
         }
         expect(app.providerEnabled('lrcred'), true);
@@ -153,6 +219,7 @@ void main() {
         app = AppController(repository: repo, transport: transport);
         await app.initialize();
         expect(app.providerEnabled('amll'), false);
+        expect(app.providerEnabled('vocadb'), false);
         expect(app.providerEnabled('lrclib'), false);
         expect(app.providerEnabled('karamoe'), false);
         expect(jsonEncode((await repo.listSongs()).single.toJson()), before);
