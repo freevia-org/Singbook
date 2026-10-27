@@ -2457,6 +2457,23 @@ Future<void> _benchmark() async {
             .where((candidate) => _sha(candidate.id) == identityHash)
             .firstOrNull;
         if (source == null) continue;
+        final contribution = summary['combinedContribution'];
+        if (contribution is Map && contribution['chords'] == true) {
+          final sourceKey = (source.metadata['key'] ??
+                  source.candidate.metadata['key'])
+              as String?;
+          final sourceCapo = source.metadata['capo'] ??
+              source.candidate.metadata['capo'];
+          summary['practicalChordAnchorAudit'] =
+              _practicalChordAnchorAudit(
+            parseArrangement(source.body),
+            sourceKey,
+            _capoOf(sourceCapo),
+          );
+          summary['practicalChordAnchorKeyShift'] =
+              source.extra['keyShift'] ??
+              source.candidate.extra['keyShift'];
+        }
         summary['practicalChordKeyConsistency'] =
             _practicalChordKeyConsistency(
           chartBody: source.body,
@@ -2532,6 +2549,9 @@ Future<void> _benchmark() async {
                       source['practicalChordLyricCorrespondence'],
                   'keyConsistency':
                       source['practicalChordKeyConsistency'],
+                  'anchorAudit': source['practicalChordAnchorAudit'],
+                  'anchorKeyShift':
+                      source['practicalChordAnchorKeyShift'],
                 },
               )
               .toList(),
