@@ -25,20 +25,28 @@ const _candidate = SongCandidate(
 const _body = '{start_of_part: A}\n[G] [C] [D7]\n{end_of_part}';
 
 class _Provider implements LyricsProvider {
-  const _Provider();
+  const _Provider({this.candidate = _candidate, this.chords = true});
+
+  final SongCandidate candidate;
+  final bool chords;
 
   @override
-  ProviderDefinition get definition => const ProviderDefinition(
-    id: 'startjamming',
-    name: 'Start Jamming',
-    capabilities: {'catalog', 'lyrics', 'chords', 'metadata'},
+  ProviderDefinition get definition => ProviderDefinition(
+    id: candidate.providerId,
+    name: chords ? 'Start Jamming' : 'Lyrics fixture',
+    capabilities: {
+      if (chords) 'catalog',
+      'lyrics',
+      if (chords) 'chords',
+      'metadata',
+    },
   );
 
   @override
   Future<List<SongCandidate>> search(
     String query, {
     CancellationToken? cancel,
-  }) async => [_candidate];
+  }) async => [candidate];
 
   @override
   Future<SourceResult> resolve(
@@ -50,8 +58,17 @@ class _Provider implements LyricsProvider {
 /// Supplies already validated discovery outcomes to exercise presentation and
 /// persistence independently of the provider's HTTP/identity regression suite.
 class _Discovery extends SourceDiscoveryService {
-  _Discovery(this.result) : super(const [_Provider()]);
+  _Discovery(
+    this.result, {
+    SongCandidate selection = _candidate,
+    this.additionalResults = const [],
+  }) : super([
+         _Provider(candidate: selection),
+         for (final source in additionalResults)
+           _Provider(candidate: source.candidate, chords: false),
+       ]);
   final SourceResult result;
+  final List<SourceResult> additionalResults;
 
   @override
   Future<List<SourceResult>> discover(
@@ -62,10 +79,17 @@ class _Discovery extends SourceDiscoveryService {
     Map<String, CancellationToken> providerCancellation = const {},
     Duration alternativeTimeout = const Duration(seconds: 30),
   }) async {
-    onProgress?.call(
-      ProviderCheck(providerId: 'startjamming', state: 'found', result: result),
-    );
-    return [result];
+    final results = [result, ...additionalResults];
+    for (final source in results) {
+      onProgress?.call(
+        ProviderCheck(
+          providerId: source.candidate.providerId,
+          state: 'found',
+          result: source,
+        ),
+      );
+    }
+    return results;
   }
 }
 
@@ -73,18 +97,24 @@ void main() {
   sqfliteFfiInit();
 
   Future<(LibraryRepository, AppController, AppControllerAdapter)> open(
-    SourceResult result,
-  ) async {
+    SourceResult result, {
+    SongCandidate selection = _candidate,
+    List<SourceResult> additionalResults = const [],
+  }) async {
     final repository = await LibraryRepository.open(
       path: inMemoryDatabasePath,
       factory: databaseFactoryFfi,
     );
     final app = AppController(
       repository: repository,
-      discovery: _Discovery(result),
+      discovery: _Discovery(
+        result,
+        selection: selection,
+        additionalResults: additionalResults,
+      ),
     );
     await app.initialize();
-    app.settings['catalog'] = 'startjamming';
+    app.settings['catalog'] = selection.providerId;
     final ui = AppControllerAdapter(app);
     addTearDown(() async {
       ui.dispose();
@@ -92,13 +122,13 @@ void main() {
       await repository.close();
     });
     ui.setHomeListMode(HomeListMode.online);
-    ui.setQuery(_candidate.title);
+    ui.setQuery(selection.title);
     await ui.submitSearch();
     await ui.selectReference(
       SearchReferenceData(
-        id: _candidate.identity,
-        title: _candidate.title,
-        artist: '',
+        id: selection.identity,
+        title: selection.title,
+        artist: selection.artist,
       ),
     );
     return (repository, app, ui);
@@ -147,6 +177,78 @@ void main() {
       },
     );
   }
+
+  test(
+    'matching lyrics remain suggested while own chord-only chart can be explicitly saved',
+    () async {
+      const selected = SongCandidate(
+        providerId: 'startjamming',
+        id: 'mixed-fixture',
+        title: 'Mixed Fixture',
+        artist: 'Fixture Ensemble',
+        metadata: {'identityScope': 'arrangement'},
+      );
+      const lyricCandidate = SongCandidate(
+        providerId: 'lyrics-fixture',
+        id: 'mixed-lyrics',
+        title: 'Mixed Fixture',
+        artist: 'Fixture Ensemble',
+      );
+      const lyrics =
+          'Silver lanterns follow quiet rivers through the valley beneath a golden morning sky\n'
+          'Every distant hillside keeps a melody that brings the wandering travelers home';
+      final chart = SourceResult(
+        candidate: selected,
+        body: _body,
+        matchKind: MatchKind.sameSong,
+        metadata: const {'key': 'G', 'identityScope': 'arrangement'},
+      );
+      final lyricResult = SourceResult(
+        candidate: lyricCandidate,
+        body: lyrics,
+        matchKind: MatchKind.sameSong,
+      );
+      final (repository, app, ui) = await open(
+        chart,
+        selection: selected,
+        additionalResults: [lyricResult],
+      );
+      final comparison = ui.state.comparison!;
+      expect(comparison.selectedVersionId, 'combined');
+      expect(comparison.suggested!.hasLyrics, isTrue);
+      expect(comparison.suggested!.isUsableVersion, isTrue);
+      expect(arrangement.plainLyrics(app.combined!.body).trim(), lyrics);
+      expect(app.combined!.extra['selectedSourceId'], lyricResult.id);
+      final defaultCombined = app.combined;
+
+      final rawChart = comparison.alternatives.singleWhere(
+        (version) => version.id == chart.id,
+      );
+      expect(rawChart.hasLyrics, isFalse);
+      expect(rawChart.hasChords, isTrue);
+      expect(rawChart.isUsableVersion, isTrue);
+      expect(rawChart.canSave, isTrue);
+
+      ui.selectVersion(rawChart.id);
+      expect(ui.state.comparison!.selectedVersionId, chart.id);
+      expect(ui.state.comparison!.suggested!.hasLyrics, isTrue);
+      expect(identical(app.combined, defaultCombined), isTrue);
+      expect(app.combined!.extra['selectedSourceId'], lyricResult.id);
+      await ui.saveSelectedVersion();
+      expect(ui.state.route, VerseRoute.reader);
+      final saved = (await repository.getSong(app.songs.single.id))!;
+      expect(saved.extra['selectedSourceId'], chart.id);
+      expect(saved.artist, selected.artist);
+      expect(saved.hasChords, isTrue);
+      expect(arrangement.plainLyrics(saved.body).trim(), isEmpty);
+      expect(
+        saved.sources.singleWhere((source) => source.id == chart.id).body,
+        _body,
+      );
+      expect(app.combined!.extra['selectedSourceId'], lyricResult.id);
+      expect(arrangement.plainLyrics(app.combined!.body).trim(), lyrics);
+    },
+  );
 
   final invalid = <String, SourceResult>{
     'metadata-only': SourceResult(
