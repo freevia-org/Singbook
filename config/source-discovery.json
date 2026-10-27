@@ -261,9 +261,9 @@
         "https://www.lololyrics.com/faq",
         "https://api.lololyrics.com"
       ],
-      "reason": "Publisher FAQ explicitly directs application developers to its API and currently displays61953 lyrics; this is a dated publisher count. It says the catalog covers all music rather than only electronic dance music. The linked API documentation was not readable in this research, so exact endpoints, supported HTTPS access, auth/quota/price, fields/stable identities and content/attribution terms remain unverified. No API/lyric/account calls or canaries performed. Promising documented app-access lead, deferred until full API contract and two independent exact-identity extraction canaries pass. Distinct language benefit and overlap remain unmeasured.",
+      "reason": "Publisher FAQ explicitly directs application developers to its API and currently displays61953 lyrics; this is a dated publisher count. It says the catalog covers all music rather than only electronic dance music. The linked API documentation was not readable in this research, so exact endpoints, supported HTTPS access, auth/quota/price, fields/stable identities and content/attribution terms remain unverified. No API/lyric/account calls or canaries performed. Promising documented app-access lead, deferred until full API contract and two independent exact-identity extraction canaries pass. Distinct language benefit and overlap remain unmeasured. Follow-up 2026-10-27: the publisher FAQ still directs application developers to the API, but its linked HTTPS documentation root returned404 through the publisher link/web reader and an ordinary TLS-verified local HEAD request. This does not establish that versioned API routes are unavailable. The current contract, schema, authentication/quota and intended-use rights remain unverified; no lyric-body/API canaries, keys or scraping fallback were used.",
       "firstSeen": "2026-10-26",
-      "lastChecked": "2026-10-26",
+      "lastChecked": "2026-10-27",
       "status": "deferred"
     },
     {
@@ -337,6 +337,18 @@
       "firstSeen": "2026-10-26",
       "lastChecked": "2026-10-26",
       "name": "Tab4U"
+    },
+    {
+      "id": "vagalume",
+      "name": "Vagalume",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred",
+      "documentation": [
+        "https://api.vagalume.com.br/docs/",
+        "https://www.vagalume.com.br/terms/"
+      ],
+      "reason": "Publisher developer documentation returned503 on 2026-10-27 through both the web reader and an ordinary TLS-verified local documentation GET; this is not proof that all API routes are unavailable. General platform terms2.3 and8.1 restrict copying and database collection, while9.10 requires prior authorization for passing content to third parties. No accessible API-specific contract established intended app display/storage rights, attribution, auth/quota/cost, routes/schema or stable identities. The publisher describes a Brazilian audience, making this a potential regional lead; API language coverage, catalog size and overlap remain unmeasured. No account, credential, song/lyric-body API query, canary or outreach was used. Defer pending a current permitted-access contract, compatible extraction and two independent identity-correct live repository canaries."
     }
   ]
 }
