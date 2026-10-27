@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "kind": "local-maintenance-coverage-investigation",
+  "atUtc": "2026-10-27T10:30:04.177184+00:00",
+  "runtime": "local-Windows",
+  "sourceCommit": "66a74d0e7f5d6eb78aef60666be0c44cd7de5e9f",
+  "sourceCatalogPath": "config/source-catalog-v2.json",
+  "sourceCatalogRevision": 12,
+  "wikisource": {
+    "scope": "Optional publisher-file import, independent of passing automatic source search/detail extraction.",
+    "documentedExportForm": "https://ws-export.wmcloud.org/",
+    "form": {
+      "method": "GET",
+      "action": "/",
+      "lang": "en",
+      "page": "exact selected work title",
+      "format": "txt",
+      "omitCreditsFalse": "Unchecked Exclude editor credits checkbox; omit to retain credits.",
+      "omitNocache": "Preserve normal caching."
+    },
+    "formReachability": "Ordinary local identified TLS-verified GET returned the actual form; web reader and isolated browser instead showed Anubis. Outcomes are runtime-specific.",
+    "metadataOnlyCanaryChecks": [
+      {
+        "pageId": "1490913",
+        "title": "Cleansing Wave",
+        "author": "Phoebe W. Palmer",
+        "revision": 13876835,
+        "rightsTemplate": "Template:PD-old"
+      },
+      {
+        "pageId": "212021",
+        "title": "The Complete Poems of Paul Laurence Dunbar/Hymn (1)",
+        "author": "Paul Laurence Dunbar",
+        "revision": 13810942,
+        "rightsTemplate": "Template:PD-old"
+      }
+    ],
+    "initialExportAttempts": {
+      "runtime": "local-Windows Dart",
+      "documentsPrivate": true,
+      "creditsExcluded": false,
+      "cacheBypass": false,
+      "probes": [
+        {
+          "id": "1490913",
+          "sourceUrl": "https://ws-export.wmcloud.org/?lang=en&page=Cleansing+Wave&format=txt",
+          "measuredAt": "2026-10-27T10:23:19.284924Z",
+          "status": "unverified",
+          "reason": "network"
+        },
+        {
+          "id": "212021",
+          "sourceUrl": "https://ws-export.wmcloud.org/?lang=en&page=The+Complete+Poems+of+Paul+Laurence+Dunbar%2FHymn+%281%29&format=txt",
+          "measuredAt": "2026-10-27T10:23:34.434675Z",
+          "status": "unverified",
+          "reason": "network"
+        }
+      ],
+      "httpDiagnostics": {
+        "networkFailures": 2,
+        "hosts": {
+          "ws-export.wmcloud.org": {
+            "requests": 2,
+            "statuses": {},
+            "retryAfterSeconds": {},
+            "databaseLag": {}
+          }
+        }
+      }
+    },
+    "boundedSelectedDiagnostic": {
+      "runtime": "local-Windows Dart",
+      "diagnosticCurlSeconds": 45,
+      "reason": "Selected-source diagnostic after finding DesktopMaintenanceClient hardcodes15seconds despite outer45second timeout; no retry or access-policy change.",
+      "documentsPrivate": true,
+      "creditsExcluded": false,
+      "cacheBypass": false,
+      "probes": [
+        {
+          "id": "1490913",
+          "sourceUrl": "https://ws-export.wmcloud.org/?lang=en&page=Cleansing+Wave&format=txt",
+          "measuredAt": "2026-10-27T10:25:04.299738Z",
+          "status": "unverified",
+          "reason": "timeout"
+        }
+      ],
+      "httpDiagnostics": {
+        "networkFailures": 1,
+        "hosts": {
+          "ws-export.wmcloud.org": {
+            "requests": 1,
+            "statuses": {},
+            "retryAfterSeconds": {},
+            "databaseLag": {}
+          }
+        }
+      }
+    },
+    "exportHttpRequestsInThisPhase": 3,
+    "status": "fileImport remains unverified",
+    "ordinaryBrowserObservation": "Normal isolated-browser homepage displayed an Anubis calculating/bot-check page. Closed without interacting with the challenge or attempting an export. Browser-internal HTTP is not counted in the three CLI export requests.",
+    "decodedImportedOrSavedDocuments": 0,
+    "noDocumentsReturnedOrRetained": true,
+    "runtimeOrCatalogChanges": false,
+    "userActionNeeded": "None required for existing automatic extraction. Publisher export/service access must recover or an ordinary permitted download be available before qualifying optional file import; no challenge workaround or login is requested."
+  },
+  "chordie": {
+    "scope": "Optional publisher-file import, independent of passing automatic source search/detail extraction.",
+    "primaryScript": "https://www.chordie.com/js/custom_230416.js",
+    "observation": "View ChordPro reveals the existing textarea for copying; Print invokes browser printing. No verified publisher file download/export handler was found. A .pro-looking chord.pere URL is an HTML wrapper.",
+    "status": "fileImport remains unverified",
+    "nextStep": "Test the documented text-copy route separately; materializing it as a local file does not prove a publisher download.",
+    "lyricBodyRequestsByThisInvestigation": 0,
+    "sourceRetiredOrDisabled": false
+  },
+  "localAutomation": {
+    "id": "singbook-datasource-maintenance",
+    "status": "ACTIVE",
+    "sameDailyCadenceAndTargetVerified": true,
+    "catalogPinRemoved": true,
+    "publicMainBundledCatalogAndFullRegistryPreflight": true,
+    "oneCompleteLivePassPerInvocation": true,
+    "targetedRechecksNeedEvidenceAndReason": true,
+    "promptSha256": "f29a64a63e5cdbd2bd62478da59d82b04b0e9fd48da3ec2ca7add69a5a3f892a",
+    "updatedAtMilliseconds": 1793095878083,
+    "updatedThroughAutomationTool": true,
+    "savedTomlIndependentlyReread": true,
+    "nextScheduledExecutionVerified": false
+  },
+  "cloudAutomation": {
+    "id": "6ad21cd17c54819189484516cdff9f6b",
+    "promptOrScheduleChanged": false,
+    "currentSavedPromptVerified": false,
+    "browserObservation": "Human-directed Freevia Chrome profile is signed into ChatGPT Info Freevia (Free), whose Active schedule view does not show Singbook. Official Codex Cloud link returns to ChatGPT home. ALI profile was left alone after human instruction.",
+    "existingManagedWorkerReadable": true,
+    "latestFullCloudMeasuredAt": "2026-10-26T23:11:43.549780Z",
+    "latestFullCloudCatalogRevision": 11,
+    "newSourceCloudReachabilityClaimed": false
+  },
+  "discovery": {
+    "pullRequest": "https://github.com/freevia-org/Singbook/pull/183",
+    "head": "95955dee427f9ff500f5fcf5afb2165707e064b6",
+    "base": "66a74d0e7f5d6eb78aef60666be0c44cd7de5e9f",
+    "newDeferredCandidates": [
+      {
+        "id": "touhoudb",
+        "metadataOnlyTotalCount": 190042,
+        "measuredAt": "2026-10-27T10:15:17.243023Z"
+      },
+      {
+        "id": "utaitedb",
+        "metadataOnlyTotalCount": 78943,
+        "measuredAt": "2026-10-27T10:15:17.737952Z"
+      }
+    ],
+    "countsAreSongVersionEntriesNotLyricsOrIncrementalCoverage": true,
+    "newProvidersRegisteredOrEnabled": false,
+    "prior32MainLedgerEntriesExact": true,
+    "preserveSeparateVocadbEntryOnIntegration": true,
+    "hostedChecks": {
+      "CI": {
+        "run": 40487572003,
+        "conclusion": "success"
+      },
+      "macOS": {
+        "run": 40487572061,
+        "conclusion": "success"
+      },
+      "UX": {
+        "run": 40487572041,
+        "conclusion": "success"
+      }
+    }
+  },
+  "resources": {
+    "flutterHostTestLeaseReleased": true,
+    "flutterBuildsOrTestsRunForThisImportInvestigation": false,
+    "pubGetEnforceLockfileSucceeded": true,
+    "deviceOrEmulatorTouched": false,
+    "userLibraryAccessed": false,
+    "credentialsOrSigningMaterialUsed": false
+  },
+  "privacy": "Only redacted request outcomes, public identities, derived source counts and configuration audit facts. No lyrics, documents, private database, credentials, cookies, browser profiles or full saved prompts."
+}
