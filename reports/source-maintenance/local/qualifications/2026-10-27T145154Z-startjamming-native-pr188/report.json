@@ -1,0 +1,192 @@
+{
+  "schemaVersion": 1,
+  "kind": "source_native_qualification",
+  "runtime": "local_windows_flutter_host",
+  "source": "startjamming",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/188",
+  "integrationBase": "91b34521c43e1a704b3ef69e97165e94882ba900",
+  "integrationHead": "405339a26c86b8784f788fb97dd0d959589d3726",
+  "sourceFiles": {
+    "docs/startjamming-source-qualification.md": "f6f7077b1e7d65fade2e1ccad71681d3fdbfbe4b05e03ad1a50873892fe42ec6",
+    "lib/domain/combine.dart": "e017763551f89b414518b704945028ebf34ac26688e944fd38e1c7c2da150922",
+    "lib/providers/core/service.dart": "a0ed7a6a6ef75d1d9842a36dce3635171a0ceb5e3a7a0156196a3914f1f0d060",
+    "lib/providers/extra/extra_providers.dart": "43ec7c1e9e90a20eff887f90b0e493dbcf0c263af3cca7ac3eba0638e2a11e4b",
+    "lib/providers/extra/startjamming.dart": "181d11e4ac647e3822401e88446ebaa0b38082216550310ce1a418c272f47233",
+    "lib/providers/source_maintenance.dart": "a657fd7f69b67a18b74da2431e9053d3a334e80079b66668346f5ecb01ffc31a",
+    "lib/providers/transport.dart": "ed7436bc2309837803ebd47afcd4d9db8bc81e5e97f80643cf7fcc2031a8f015",
+    "test/domain/chord_only_source_test.dart": "e39c233bc0de2928232ae5f75dfd9bfcf4c9916d5fae1d1162af721fb52820b3",
+    "test/providers/core/conditional_transport_test.dart": "2b5eb330f84d30ee1a3826bff09ef5458435f43b46c9d2cc1635b55f5d2d3b7b",
+    "test/providers/extra/extra_providers_test.dart": "3a20f6955c3566c26b4440d491047258034110110e35aadf2f0877ef098d2b7e",
+    "test/providers/extra/startjamming_test.dart": "a503b59019a9dcb2e9817e802ea875247f4b567a4b7ff2c9d42ee7e1d12e7b24",
+    "test/providers/source_maintenance_test.dart": "4688a4585090863fcfce1044c9c6d3e32dc198f0fa9da47f66648eff62025673",
+    "test/providers/startjamming_catalog_boundary_test.dart": "5311c5fea16732e259426748d29801bd55a75d2c43aee3ad1aeac33740096d66",
+    "tool/startjamming_import_maintenance_test.dart": "4fa3da7ac92c8c295bec6a7e513ac0071b2aaf36160ad4727af5fddfbe7a0deb"
+  },
+  "nativeLiveQualification": {
+    "atUtc": "2026-10-27T14:51:54.107247Z",
+    "scope": "Four local live native HTTP requests through normal AppController, real SQLite save/reopen and production ChordPro codec; no Android UI or cloud claim",
+    "sourceCommit": "cd44fb3ca8d7ee7bf7122dce4c32f6d98ce93be5",
+    "workingTreeQualification": true,
+    "sourceSha256": "181d11e4ac647e3822401e88446ebaa0b38082216550310ce1a418c272f47233",
+    "transportSha256": "ed7436bc2309837803ebd47afcd4d9db8bc81e5e97f80643cf7fcc2031a8f015",
+    "httpDiagnostics": {
+      "networkFailures": 0,
+      "hosts": {
+        "www.startjamming.com": {
+          "requests": 4,
+          "statuses": {
+            "200": 4
+          },
+          "retryAfterSeconds": {},
+          "databaseLag": {}
+        }
+      }
+    },
+    "maxRetries": 0,
+    "minimumHostIntervalMs": 1000,
+    "credentialsOrCookiesUsed": false,
+    "checks": [
+      {
+        "id": "clinch-mountain-backstep",
+        "status": "healthy_local_live_native",
+        "canonicalUrl": "https://www.startjamming.com/song/clinch-mountain-backstep",
+        "lyricLines": 0,
+        "unknownArtistAndUnconfirmedRecordingPreserved": true,
+        "normalizedChordMeasures": 8,
+        "httpBodyBytes": 2403,
+        "httpBodySha256": "292cdd4b29dc02325d5691fb60737018daa39ed110c55f41714dd662612cffc9",
+        "expandedBeatsRendered": 33,
+        "lyricOrderExact": true,
+        "allSourceFactsAndHttpBodyBytesExact": true,
+        "normalControllerSearchSelectSavePassed": true,
+        "chordProSourceFactsExact": true,
+        "metadataFields": [
+          "identityScope",
+          "key",
+          "mediaLinks",
+          "rightsStatus",
+          "sourceType",
+          "timeSignature"
+        ]
+      },
+      {
+        "id": "blue-moon-of-kentucky",
+        "status": "healthy_local_live_native",
+        "canonicalUrl": "https://www.startjamming.com/song/blue-moon-of-kentucky",
+        "lyricLines": 10,
+        "unknownArtistAndUnconfirmedRecordingPreserved": true,
+        "normalizedChordMeasures": 33,
+        "httpBodyBytes": 6041,
+        "httpBodySha256": "854a5065dec11f34b69f7079260aa2e662df739945f89803397302553e940330",
+        "expandedBeatsRendered": 99,
+        "lyricOrderExact": true,
+        "allSourceFactsAndHttpBodyBytesExact": true,
+        "normalControllerSearchSelectSavePassed": true,
+        "chordProSourceFactsExact": true,
+        "metadataFields": [
+          "identityScope",
+          "key",
+          "mediaLinks",
+          "rightsStatus",
+          "sourceType",
+          "timeSignature"
+        ]
+      }
+    ],
+    "savedSongCount": 2,
+    "completeSavedSongJsonExactAfterSQLiteReopen": true,
+    "catalogActivationVerified": false,
+    "androidUiVerified": false,
+    "cloudVerified": false
+  },
+  "liveAdapterAndTransportHashesMatchIntegrationHead": true,
+  "offlineQualification": {
+    "atUtc": "2026-10-27T15:04:35.467448Z",
+    "scope": "Offline replay of four captured actual public responses through native adapter, normal AppController, real SQLite and production ChordPro codec; zero external requests",
+    "sourceCommit": "405339a26c86b8784f788fb97dd0d959589d3726",
+    "workingTreeQualification": true,
+    "sourceSha256": "181d11e4ac647e3822401e88446ebaa0b38082216550310ce1a418c272f47233",
+    "transportSha256": "ed7436bc2309837803ebd47afcd4d9db8bc81e5e97f80643cf7fcc2031a8f015",
+    "mockedResponses": 4,
+    "checks": [
+      {
+        "id": "clinch-mountain-backstep",
+        "status": "healthy_offline_replay",
+        "canonicalUrl": "https://www.startjamming.com/song/clinch-mountain-backstep",
+        "unknownArtistAndUnconfirmedRecordingPreserved": true,
+        "normalizedChordMeasures": 8,
+        "expandedBeatsRendered": 33,
+        "lyricOrderExact": true,
+        "allSourceFactsAndHttpBodyBytesExact": true,
+        "normalControllerSearchSelectSavePassed": true,
+        "chordProSourceFactsExact": true,
+        "metadataFields": [
+          "identityScope",
+          "key",
+          "mediaLinks",
+          "rightsStatus",
+          "sourceType",
+          "timeSignature"
+        ]
+      },
+      {
+        "id": "blue-moon-of-kentucky",
+        "status": "healthy_offline_replay",
+        "canonicalUrl": "https://www.startjamming.com/song/blue-moon-of-kentucky",
+        "unknownArtistAndUnconfirmedRecordingPreserved": true,
+        "normalizedChordMeasures": 33,
+        "expandedBeatsRendered": 99,
+        "lyricOrderExact": true,
+        "allSourceFactsAndHttpBodyBytesExact": true,
+        "normalControllerSearchSelectSavePassed": true,
+        "chordProSourceFactsExact": true,
+        "metadataFields": [
+          "identityScope",
+          "key",
+          "mediaLinks",
+          "rightsStatus",
+          "sourceType",
+          "timeSignature"
+        ]
+      }
+    ],
+    "savedSongCount": 2,
+    "completeSavedSongJsonExactAfterSQLiteReopen": true,
+    "catalogActivationVerified": false,
+    "androidUiVerified": false,
+    "cloudVerified": false
+  },
+  "servedCatalog": {
+    "url": "https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog-v3.json",
+    "revision": 14,
+    "sources": 23,
+    "sha256": "b27df30346ba9fd0b0e2db530c42cb621cc2fe9371f50b40c685bc58703ff069",
+    "bundledSha256": "b27df30346ba9fd0b0e2db530c42cb621cc2fe9371f50b40c685bc58703ff069",
+    "amllActive": true,
+    "productionAppOrCloudCoverageNotEstablished": true
+  },
+  "checks": {
+    "providersDomainApplicationPassed": 1367,
+    "liveOptInSkippedInOfflineRun": true,
+    "staticAnalysis": "passed",
+    "independentReadOnlyReview": "no_blocking_findings",
+    "catalogBoundary": "older_bundled_stream_rosters_preserved",
+    "lyricsCapabilityRequiresPlainLyricText": true,
+    "localPerformanceNote": "An earlier concurrent suite exceeded the existing3s large-song bound; isolated check passed and interleaved baseline/current benchmark was comparable. Final serial suite result is recorded above; threshold unchanged. Removed new eager lyric rescan from ordinary combine path."
+  },
+  "preservedLatestReports": {
+    "reports\\source-maintenance\\latest.json": "775610cfe42d78ef194759c0516c0c70dfcb285f5e02c59ca13618cc18979604",
+    "reports\\source-maintenance\\local\\latest.json": "dbc4dd6a482174003e66a351d6416d9b26f491bc14fe03719c869de8cec696ca"
+  },
+  "gates": {
+    "hostedChecks": "pending",
+    "catalogActivation": "pending_compatible_channel",
+    "androidUi": "not_tested",
+    "managedCloudReachability": "not_tested",
+    "appRelease": "not_released"
+  },
+  "documentation": [
+    "https://www.startjamming.com/api",
+    "https://www.startjamming.com/llms-full.txt"
+  ]
+}
